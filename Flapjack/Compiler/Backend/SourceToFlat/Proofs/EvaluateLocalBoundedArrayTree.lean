@@ -88,11 +88,23 @@ where
   | .raise body => localEnvBounded_raise interp transform limit body (go body)
   | .handle body rows => localEnvBounded_handle interp transform limit body rows (go body)
       (fun pat row _member => go row)
-  | .lit lit => localEnvBounded_literal interp transform limit lit
+  | .lit lit => by
+      intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen _ _ _ _ invariant generation _
+      refine ⟨genv, exprSim_literal genv _ trace _ flatEnv source flat invariant.2.2.1 lit, ?_⟩
+      simpa only [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate] using
+        And.intro (GlobalGrowth.refl genv) (And.intro invariant
+          (And.intro generation (oracForwardRel_refl interp source.evalState)))
   | .con none args => localEnvBounded_tuple interp transform limit args (fun expr _member => go expr)
   | .con (some id) args => localEnvBounded_constructor interp transform limit id args (fun expr _member => go expr)
   | .var id => localEnvBounded_variable interp transform limit id
-  | .fn name body => localEnvBounded_function interp transform limit name body
+  | .fn name body => by
+      intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen _ localRel envInv length
+        invariant generation _
+      refine ⟨genv, exprSim_function genv baseMap baseEnv sourceLocal flatEnv localRel envInv traces length
+        source flat invariant.2.2.1 trace name body, ?_⟩
+      simpa only [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate] using
+        And.intro (GlobalGrowth.refl genv) (And.intro invariant
+          (And.intro generation (oracForwardRel_refl interp source.evalState)))
   | .app op args => applicationExpression_bounded interp transform limit calledIH decsIH op args
       (fun expr _member => go expr)
   | .log op left right => localEnvBounded_log interp transform limit op left right (go left) (go right)
