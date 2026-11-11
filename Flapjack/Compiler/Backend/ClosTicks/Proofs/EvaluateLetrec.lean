@@ -51,9 +51,7 @@ infrastructure for the recursive-closure case. -/
 theorem removeFuns_all (maxApp : Nat) (functions : List (Nat × ClosLang.Exp)) :
     (removeFuns functions).all (fun (arity, _) => arity ≤ maxApp && arity != 0) =
       functions.all (fun (arity, _) => arity ≤ maxApp && arity != 0) := by
-  induction functions with
-  | nil => rfl
-  | cons function rest ih => cases function; simp [removeFuns, ih]
+  simp [removeFuns_eq_map, Function.comp_def]
 
 /-- Related environments yield related recursive closures. This is Flapjack
 infrastructure for the recursive-closure case. -/
