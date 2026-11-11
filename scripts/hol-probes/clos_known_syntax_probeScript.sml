@@ -365,6 +365,28 @@ val _ = show "ssgc_free_clock_typed=" closPropsTheory.ssgc_free_clockupd;
 val _ = show "ssgc_free_dec_clock_typed=" closPropsTheory.ssgc_free_dec_clock;
 
 (* Local theorem: replay its statement with inferred source and target types. *)
+(* Replay the original source-local decoder lemmas with their shared proof. *)
+local open closSemTheory clos_knownProofTheory in
+fun known_decode_list_tac goal =
+  (ho_match_mp_tac closSemTheory.v_to_list_ind >> rw [] >>
+   fs [closSemTheory.v_to_list_def] >>
+   Cases_on `tag = backend_common$cons_tag` >> fs [] >> res_tac >>
+   fs [case_eq_thms] >> Cases_on `ns` >> fs [] >> eq_tac >> rw [] >> fs [] >>
+   Cases_on `h` >> fs []) goal;
+end;
+val known_bytes_list_replay = prove(
+  ``!x y c g. clos_knownProof$v_rel c g x y ==> !ns.
+    (closSem$v_to_list x = SOME (MAP (closSem$Number o $& o (w2n:word8->num)) ns)) <=>
+    (closSem$v_to_list y = SOME (MAP (closSem$Number o $& o (w2n:word8->num)) ns))``,
+  known_decode_list_tac);
+val _ = show "known_bytes_list_replay_typed=" known_bytes_list_replay;
+val known_words_list_replay = prove(
+  ``!x y c g. clos_knownProof$v_rel c g x y ==> !ns.
+    (closSem$v_to_list x = SOME (MAP closSem$Word64 ns)) <=>
+    (closSem$v_to_list y = SOME (MAP closSem$Word64 ns))``,
+  known_decode_list_tac);
+val _ = show "known_words_list_replay_typed=" known_words_list_replay;
+
 (* Replay the original source-local theorem with its original proof tactic. *)
 val known_state_rel_opt_rel_refs_replay = prove(
   ``(clos_knownProof$state_rel c g s1 s2 ∧ FLOOKUP s1.refs n = r1 ⇒

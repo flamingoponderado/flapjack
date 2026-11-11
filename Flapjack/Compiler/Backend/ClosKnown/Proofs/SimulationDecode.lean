@@ -33,6 +33,24 @@ theorem valueRelSimple (c : Config) (g : Spt ValApprox) : simpleValRel (ValueRel
     cases h
     simp [isClos]
 
+/-- Related values agree on whether they encode a particular byte list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "v_rel_IMP_v_to_bytes_lemma"]
+theorem valueRelBytesList (x y : Value) (c : Config) (g : Spt ValApprox)
+    (related : ValueRel c g x y) (ns : List (BitVec 8)) :
+    valueToList x = some (ns.map (fun b => .number b.toNat)) ↔
+      valueToList y = some (ns.map (fun b => .number b.toNat)) := by
+  rw [← valueToBytes_eq_some, ← valueToBytes_eq_some,
+    simpleValRel_valueToBytes (ValueRel c g) x y ⟨valueRelSimple c g, related⟩]
+
+/-- Related values agree on whether they encode a particular word list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "v_rel_IMP_v_to_words_lemma"]
+theorem valueRelWordsList (x y : Value) (c : Config) (g : Spt ValApprox)
+    (related : ValueRel c g x y) (ns : List (BitVec 64)) :
+    valueToList x = some (ns.map Value.word64) ↔
+      valueToList y = some (ns.map Value.word64) := by
+  rw [← valueToWords_eq_some, ← valueToWords_eq_some,
+    simpleValRel_valueToWords x y (ValueRel c g) ⟨valueRelSimple c g, related⟩]
+
 /-- Related values decode to the same installation bytes. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "v_rel_IMP_v_to_bytes"]
 theorem valueRelImpValueToBytes (c : Config) (g : Spt ValApprox) (x y : Value)

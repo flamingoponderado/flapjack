@@ -10825,19 +10825,6 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationCall.lean",
-  "lean_name": "knownCorrect0Call",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed (a typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. The Call case retains the original argument and successful-callee evaluator induction hypotheses. The source state relation provides empty code after argument evaluation, as in the HOL proof. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationFn.lean",
   "lean_name": "knownCorrect0Fn",
   "statement_status": "reviewed_fmap_as_finite_support",
@@ -10989,6 +10976,22 @@
     "refs",
     "code"
   ]
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "v_rel_IMP_v_to_bytes_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationDecode.lean",
+  "lean_name": "valueRelBytesList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_bytes_list_replay_typed, replaying the original source-local proof: related full values agree on decoding the arbitrary fixed-width list, with the same hypotheses and iff conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "v_rel_IMP_v_to_words_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationDecode.lean",
+  "lean_name": "valueRelWordsList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_words_list_replay_typed, replaying the original source-local proof: related full values agree on decoding the arbitrary fixed-width list, with the same hypotheses and iff conclusion."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
