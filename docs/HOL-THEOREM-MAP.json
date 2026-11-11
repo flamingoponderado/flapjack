@@ -132987,6 +132987,39 @@
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "BAG_INSERT",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "bagInsert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared bag_insert_typed: insertion increments the chosen element and preserves every other multiplicity, for an arbitrary element type."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "FINITE_BAG",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "finiteBag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared finite_bag_typed: the original induction principle quantifies over all predicates on bags and requires empty and insertion closure."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "FINITE_EMPTY_BAG",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "finiteEmptyBag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared finite_empty_bag_typed: the empty bag is finite for arbitrary element type."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "FINITE_BAG_INSERT",
+  "hol_line": 1262,
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "finiteBagInsert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared finite_bag_insert_typed: for any finite bag, insertion of every element yields a finite bag."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
   "hol_name": "BAG_UNION_EMPTY",
   "lean_path": "Flapjack/Misc/Bag.lean",
   "lean_name": "bagUnion_empty",

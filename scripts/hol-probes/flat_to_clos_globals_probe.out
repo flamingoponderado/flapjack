@@ -5,6 +5,10 @@ elist_globals_empty=∀(es :closLang$exp list). elist_globals es = ({||} :num ->
 smartcons_globals=set_globals (SmartCons (t :tra) (tag :num) (xs :closLang$exp list)) = elist_globals xs
 smartcons_esgc=esgc_free (SmartCons (t :tra) (tag :num) (xs :closLang$exp list)) ⇔ EVERY esgc_free xs
 bag_image_definition=∀(f :β -> α) (b :β -> num). BAG_IMAGE f b = (λ(e :α). (let (sb :β -> num) = BAG_FILTER (λ(e0 :β). f e0 = e) b in if FINITE_BAG sb then BAG_CARD sb else (1 :num)))
+bag_insert_typed=∀(e :α) (b :α -> num). BAG_INSERT e b = (λ(x :α). if x = e then b e + (1 :num) else b x)
+finite_bag_typed=∀(b :α -> num). FINITE_BAG b ⇔ ∀(P :(α -> num) -> bool). P ({||} :α -> num) ∧ (∀(b :α -> num). P b ⇒ ∀(e :α). P (BAG_INSERT e b)) ⇒ P b
+finite_empty_bag_typed=FINITE_BAG ({||} :α -> num)
+finite_bag_insert_typed=∀(b :α -> num). FINITE_BAG b ⇒ ∀(e :α). FINITE_BAG (BAG_INSERT e b)
 compile_globals=∀(m :mlstring option list) (e :exp list). EVERY no_Mat e ⇒ elist_globals (compile m e) = BAG_IMAGE SUC (elist_globals e)
 compile_decs_globals=∀(decs :exp list). no_Mat_decs decs ⇒ elist_globals (compile_decs decs) = BAG_IMAGE SUC (elist_globals decs)
 compile_eq_globals=compile (m :mlstring option list) (exps :exp list) = (exps' :closLang$exp list) ∧ EVERY no_Mat exps ⇒ elist_globals exps' = BAG_IMAGE SUC (elist_globals exps)

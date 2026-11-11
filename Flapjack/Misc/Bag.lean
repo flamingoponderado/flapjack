@@ -53,6 +53,30 @@ def emptyBag {α : Type} : Bag α := fun _ => 0
 @[hol "HOL/src/bag/bagScript.sml" "BAG_UNION"]
 def bagUnion {α : Type} (left right : Bag α) : Bag α := fun x => left x + right x
 
+/-- Insert one occurrence of an element into a HOL bag. -/
+@[hol "HOL/src/bag/bagScript.sml" "BAG_INSERT"]
+noncomputable def bagInsert {α : Type} (element : α) (bag : Bag α) : Bag α := by
+  classical
+  exact fun x => if x = element then bag element + 1 else bag x
+
+/-- A finite bag belongs to every collection closed under insertion. -/
+@[hol "HOL/src/bag/bagScript.sml" "FINITE_BAG"]
+def finiteBag {α : Type} (bag : Bag α) : Prop :=
+  ∀ P : Bag α → Prop, P emptyBag ∧ (∀ b, P b → ∀ e, P (bagInsert e b)) → P bag
+
+/-- The empty bag is finite. -/
+@[hol "HOL/src/bag/bagScript.sml" "FINITE_EMPTY_BAG"]
+theorem finiteEmptyBag {α : Type} : finiteBag (emptyBag : Bag α) := by
+  intro P h
+  exact h.1
+
+/-- Inserting an element preserves bag finiteness. -/
+@[hol "HOL/src/bag/bagScript.sml" "FINITE_BAG_INSERT" 1262]
+theorem finiteBagInsert {α : Type} (b : Bag α) (h : finiteBag b) :
+    ∀ e, finiteBag (bagInsert e b) := by
+  intro e P hP
+  exact hP.2 b (h P hP) e
+
 /-- The two union identities and the characterization of empty unions.
 The three conjuncts have independently quantified element types, as in HOL. -/
 @[hol "HOL/src/bag/bagScript.sml" "BAG_UNION_EMPTY"]
