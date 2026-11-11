@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationFn
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Simulation
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxLetrec
 
 @[expose] public section

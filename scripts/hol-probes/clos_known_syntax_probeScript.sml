@@ -220,6 +220,8 @@ val _ = show "val_approx_val_rules_typed=" clos_knownProofTheory.val_approx_val_
 val _ = show "val_approx_merge_left_typed=" clos_knownProofTheory.val_approx_val_merge_I_lemma;
 val _ = show "val_approx_merge_typed=" clos_knownProofTheory.val_approx_val_merge_I;
 val _ = show "known_merge_comm_typed=" clos_knownPropsTheory.merge_comm;
+val _ = show "known_subapprox_def_typed=" clos_knownPropsTheory.subapprox_def;
+val _ = show "known_subapprox_antisym_typed=" clos_knownPropsTheory.subapprox_antisym;
 val _ = show "state_globals_approx_typed=" clos_knownProofTheory.state_globals_approx_def;
 val _ = show "state_globals_clock_typed=" clos_knownProofTheory.state_globals_approx_clock_fupd;
 val _ = show "state_globals_dec_clock_typed=" clos_knownProofTheory.state_globals_approx_dec_clock;

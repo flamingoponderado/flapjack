@@ -61,4 +61,17 @@ theorem mergeComm (a b : ValApprox) : mergeHOL a b = mergeHOL b a := by
         · rfl
   exact all (sizeOf a + 1) a b (by omega)
 
+/-- An approximation is below another when merging yields the latter. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_def"]
+def subapprox (a1 a2 : ValApprox) : Prop := mergeHOL a1 a2 = a2
+
+/-- Approximation ordering is antisymmetric. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_antisym"]
+theorem subapproxAntisym (a1 a2 : ValApprox)
+    (h : subapprox a1 a2 ∧ subapprox a2 a1) : a1 = a2 := by
+  obtain ⟨left, right⟩ := h
+  unfold subapprox at left right
+  rw [mergeComm] at left
+  exact right.symm.trans left
+
 end Flapjack.Compiler.Backend.ClosKnownProps

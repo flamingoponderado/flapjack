@@ -252,7 +252,48 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
           | nil =>
             cases first with
             | var trace index => exact knownCorrect0Var trace index env state
-            | fn name location selected arity body => exact Fn.knownCorrect0Fn name location selected arity body env state
+            | fn name location selected arity body =>
+              intro res1 s env1 xenv1 env2 xenv2 t0 c g0 g aenv eas h
+              obtain ⟨run, known, initialRel, inputSyntax, _, _, oracle, _, _, _, _, approxRel, _, globalSafe,
+                approxSafe, globals, _, sub1, _, free, envRel, _, stateOracle, envEq, noType⟩ := h
+              have syntaxParts : selected = none ∧ everyFnVarsNone [body] := by
+                simpa [everyFnVarsNone, fnVarsNoneExp] using inputSyntax
+              obtain ⟨selectedEq, bodySyntax⟩ := syntaxParts
+              subst selected
+              have maxEq : state.maxApp = t0.maxApp := initialRel.2.2.2.2.2.2.1
+              have fv : fvMax (arity + env1.length) [body] := by
+                have h := (fvMaxFn env1.length arity name location none body).1 free
+                simpa [Nat.add_comm] using h
+              have approxEnvSafe : ∀ a ∈ List.replicate arity ValApprox.other ++ aenv, valApproxSgcFree a := by
+                intro a member
+                rcases List.mem_append.mp member with replicated | old
+                · have same : a = .other := (List.mem_replicate.mp replicated).2
+                  subst a
+                  simp [valApproxSgcFree]
+                · exact approxSafe a old
+              cases hk : knownListTotal c [body] (List.replicate arity .other ++ aenv) g0 with
+              | mk bodyEas bodyG =>
+                obtain ⟨be, ba, eq⟩ := knownListTotal_single_result c body (List.replicate arity .other ++ aenv) g0 bodyG bodyEas hk
+                subst bodyEas
+                rw [knownListTotal_fn, hk] at known
+                simp [knownSourceHead] at known
+                rcases known with ⟨rfl, rfl⟩
+                have bodyRel : expRel c (List.replicate arity .other ++ aenv) (nextG state) body be := by
+                  refine ⟨g0, bodyG, ba, c.inlineFactor, sub1, approxEnvSafe, globalSafe, ?_⟩
+                  simpa using hk
+                by_cases valid : arity ≤ state.maxApp ∧ arity ≠ 0
+                · simp [evaluate, valid, envEq] at run
+                  rcases run with ⟨rfl, rfl⟩
+                  have closureRel : ValueRel c (nextG state)
+                      (.closure location [] (env1 ++ xenv1) arity body) (.closure location [] (env2 ++ xenv2) arity be) :=
+                    .closure location [] [] env1 xenv1 env2 xenv2 arity body be aenv bodySyntax fv
+                      .nil envRel approxRel bodyRel
+                  refine ⟨.val [.closure location [] (env2 ++ xenv2) arity be], t0, ?_, ?_, initialRel, globals, stateOracle, oracle⟩
+                  · simp [evaluate, ← maxEq, valid]
+                  · exact .cons closureRel .nil
+                · simp [evaluate, valid] at run
+                  rcases run with ⟨rfl, rfl⟩
+                  exact False.elim (noType rfl)
             | raise trace body =>
               have bodyIH : KnownSimulationAt [body] env state := by
                 apply exprIH [body] env state (by omega)
