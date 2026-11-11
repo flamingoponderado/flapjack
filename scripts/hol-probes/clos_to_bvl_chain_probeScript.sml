@@ -15,6 +15,7 @@ val _ = show_thm "evaluate_code_submap_typed=" closPropsTheory.evaluate_code_SUB
 val _ = show_thm "chain_exps_semantics_typed=" clos_to_bvlProofTheory.chain_exps_semantics;
 val _ = show_thm "chain_exps_semantics_call_typed=" clos_to_bvlProofTheory.chain_exps_semantics_call;
 val _ = show_thm "clos_state_cc_def_typed=" clos_to_bvlProofTheory.clos_state_cc_def;
+val _ = show_thm "kcompile_csyntax_ok_typed=" clos_to_bvlProofTheory.kcompile_csyntax_ok;
 val _ = show_thm "semantics_cond_call_compile_inc_typed=" clos_to_bvlProofTheory.semantics_cond_call_compile_inc;
 val _ = show_thm "compile_common_semantics_typed=" clos_to_bvlProofTheory.compile_common_semantics;
 val _ = show_thm "compile_semantics_typed=" clos_to_bvlProofTheory.compile_semantics;

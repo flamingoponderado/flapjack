@@ -2594,6 +2594,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "kcompile_csyntax_ok",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownSyntax.lean",
+  "lean_name": "kcompile_csyntaxOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL source and kcompile_csyntax_ok_typed confirms both optional configuration carriers, expression lists, the two ordered hypotheses and the complete syntaxOk conclusion. The proof derives all three syntax conditions from the original premises, including code-location distinctness through the original bag containment argument; no representation qualifiers are needed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "semantics_cond_call_compile_inc",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallSemantics.lean",
   "lean_name": "semanticsCondCallCompileInc",
