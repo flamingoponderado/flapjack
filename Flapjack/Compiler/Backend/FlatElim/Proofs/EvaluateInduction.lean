@@ -452,7 +452,8 @@ theorem evaluate_selectedRow_bounded {C F : Type} (rows : List (FlatLang.Pat × 
     rowsClosed rowsSafe valueClosed valueSafe related.2.2.2.2.1 related.2.2.2.2.2
   exact rowIH pattern body member { env with v := bindings ++ env.v } source stateBound next result reachable target run
     (singletonLookups_within body reachable invariants.1) related
-    (bindingsWithin_append bindings env.v reachable invariants.2.2.1 envClosed)
+    (by simpa only [bindingsWithin, findEnvGlobals, List.map_append, findValuesGlobals_append,
+      globalsWithin_union] using And.intro invariants.2.2.1 envClosed)
     (bindingsNoEval_append bindings env.v invariants.2.2.2 envSafe)
     (singletonExpression_noEval body invariants.2.1) notTypeError
 

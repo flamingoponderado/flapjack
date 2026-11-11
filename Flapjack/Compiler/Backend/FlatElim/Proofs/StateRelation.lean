@@ -213,17 +213,6 @@ Eval-free store payloads; it has no separate HOL declaration. -/
 def storeHasNoEval (refs : List (Flapjack.SemanticPrimitivesHOL.StoreValue FlatSem.Value)) : Prop :=
   ∀ ref ∈ refs, ∀ value ∈ FlatProps.storeValueValues ref, valueHasEval value = false
 
-/-- Updating a store with an Eval-free entry preserves the store invariant.
-This is a Flapjack helper for the evaluator simulation. -/
-theorem storeHasNoEval_set (refs : List (Flapjack.SemanticPrimitivesHOL.StoreValue FlatSem.Value))
-    (index : Nat) (value : Flapjack.SemanticPrimitivesHOL.StoreValue FlatSem.Value)
-    (old : storeHasNoEval refs) (new : storeHasNoEval [value]) :
-    storeHasNoEval (refs.set index value) := by
-  intro ref member
-  rcases List.mem_or_eq_of_mem_set member with oldMember | rfl
-  · exact old ref oldMember
-  · exact new ref (by simp)
-
 /-- The original flat state relation, including all reference dependencies
 and the absence of Eval in stored values. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "flat_state_rel_def"]
@@ -245,7 +234,10 @@ theorem flatStateRel_setRefs {C F : Type} (reachable : NumSet) (source target : 
   obtain ⟨clock, refs, ffi, globals, refsReachable, refsSafe⟩ := related
   refine ⟨clock, by simp [refs], ffi, globals, ?_, ?_⟩
   · exact findRefsGlobals_set_within source.refs index value reachable refsReachable valueReachable
-  · exact storeHasNoEval_set source.refs index value refsSafe valueSafe
+  · intro ref member
+    rcases List.mem_or_eq_of_mem_set member with oldMember | rfl
+    · exact refsSafe ref oldMember
+    · exact valueSafe ref (by simp)
 
 /-- Allocating the same Eval-free, reachable entry preserves related states.
 This Flapjack helper applies to reference, array, and thunk allocation. -/

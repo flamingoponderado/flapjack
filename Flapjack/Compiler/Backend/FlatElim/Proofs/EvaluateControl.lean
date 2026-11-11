@@ -105,17 +105,6 @@ theorem hasEvalPats_member (rows : List (FlatLang.Pat × FlatLang.Exp))
       exact safe.1
     · exact ih member safe.2
 
-/-- Appending two closed pattern environments preserves the global bound. -/
-theorem bindingsWithin_append (left right : List (Flapjack.AstHOL.VarN × FlatSem.Value))
-    (reachable : NumSet) (leftClosed : bindingsWithin left reachable) (rightClosed : bindingsWithin right reachable) :
-    bindingsWithin (left ++ right) reachable := by
-  apply (findValuesGlobals_within_iff _ _).mpr
-  intro value member
-  simp only [List.map_append, List.mem_append] at member
-  rcases member with leftMember | rightMember
-  · exact (findValuesGlobals_within_iff _ _).mp leftClosed value leftMember
-  · exact (findValuesGlobals_within_iff _ _).mp rightClosed value rightMember
-
 /-- Appending two Eval-free pattern environments preserves that invariant. -/
 theorem bindingsNoEval_append (left right : List (Flapjack.AstHOL.VarN × FlatSem.Value))
     (leftSafe : bindingsNoEval left) (rightSafe : bindingsNoEval right) : bindingsNoEval (left ++ right) := by
