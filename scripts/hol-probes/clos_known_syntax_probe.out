@@ -209,6 +209,9 @@ val_approx_val_rules_typed=(∀(v :v). val_approx_val Other v) ∧ (∀(i :int).
 val_approx_merge_left_typed=∀(a1 :val_approx) (v :v). val_approx_val a1 v ⇒ ∀(a2 :val_approx). val_approx_val (merge a1 a2 :val_approx) v
 val_approx_merge_typed=∀(a1 :val_approx) (v :v) (a2 :val_approx). val_approx_val a1 v ∨ val_approx_val a2 v ⇒ val_approx_val (merge a1 a2 :val_approx) v
 known_merge_comm_typed=∀(a1 :val_approx) (a2 :val_approx). (merge a1 a2 :val_approx) = (merge a2 a1 :val_approx)
+known_subapprox_int_typed=((a :val_approx) ◁ (Int (i :int) :val_approx) ⇔ a = (Int i :val_approx) ∨ a = Impossible) ∧ ((Int i :val_approx) ◁ a ⇔ a = (Int i :val_approx) ∨ a = Other)
+known_subapprox_clos_noinline_typed=((a :val_approx) ◁ ClosNoInline (m :num) (n :num) ⇔ a = ClosNoInline m n ∨ a = Impossible) ∧ (ClosNoInline m n ◁ a ⇔ a = ClosNoInline m n ∨ a = Other)
+known_subapprox_clos_typed=((a :val_approx) ◁ Clos (m :num) (n :num) (e :closLang$exp) (s :num) ⇔ a = Clos m n e s ∨ a = Impossible) ∧ (Clos m n e s ◁ a ⇔ a = Clos m n e s ∨ a = Other)
 known_merge_other_typed=(merge Other (a :val_approx) :val_approx) = Other ∧ (merge a Other :val_approx) = Other
 known_merge_impossible_typed=(merge (a :val_approx) Impossible :val_approx) = a
 known_subapprox_other_typed=(Other ◁ (a :val_approx) ⇔ a = Other) ∧ a ◁ Other

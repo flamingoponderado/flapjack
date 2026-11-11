@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpOrdinary
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationGlobal
 
 @[expose] public section
 
@@ -107,12 +108,12 @@ theorem globalSelectedSimulation {C F : Type} (c : Config) (tree : Spt ValApprox
       argsRun targetArgsRun states argsRelated ?_ run noType
     intro vs ws next value eq rel app
     have approx := List.rel_reverse (argsApprox vs eq)
-    obtain ⟨_, _, _, stateEq, valueEq⟩ := knownGlobalIntShape index (argEas.map Prod.snd).reverse
+    obtain ⟨_, empty, _, stateEq, valueEq⟩ := knownGlobalIntShape index (argEas.map Prod.snd).reverse
       g0 g i vs.reverse middle next value known approx globals app
-    have targetApp := (knownGlobalIntReplacement c tree index (argEas.map Prod.snd).reverse
-      g0 g i vs.reverse ws middle next target value known approx rel globals app).2.2
+    rw [empty] at rel
+    cases rel
     subst value
-    exact ⟨stateEq, targetApp, .number i⟩
+    exact ⟨stateEq, by simp [doApp, applyNumeric, doIntApp], .number i⟩
   | tuple tag elements =>
     cases elements with
     | nil =>
@@ -121,12 +122,12 @@ theorem globalSelectedSimulation {C F : Type} (c : Config) (tree : Spt ValApprox
         argsRun targetArgsRun states argsRelated ?_ run noType
       intro vs ws next value eq rel app
       have approx := List.rel_reverse (argsApprox vs eq)
-      obtain ⟨_, _, _, stateEq, valueEq⟩ := knownGlobalEmptyTupleShape index (argEas.map Prod.snd).reverse
+      obtain ⟨_, empty, _, stateEq, valueEq⟩ := knownGlobalEmptyTupleShape index (argEas.map Prod.snd).reverse
         g0 g tag vs.reverse middle next value known approx globals app
-      have targetApp := (knownGlobalEmptyTupleReplacement c tree index (argEas.map Prod.snd).reverse
-        g0 g tag vs.reverse ws middle next target value known approx rel globals app).2.2
+      rw [empty] at rel
+      cases rel
       subst value
-      exact ⟨stateEq, targetApp, .block tag [] [] .nil⟩
+      exact ⟨stateEq, by simp [doApp, applyBlock], .block tag [] [] .nil⟩
     | cons first rest => simpa [Ordinary.selectedOutput] using fallback
   | _ => simpa [Ordinary.selectedOutput] using fallback
 

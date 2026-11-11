@@ -14312,6 +14312,30 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_Int",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxInt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_int_typed: full approximation carrier and both original ordering equivalences agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_ClosNoInline",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxClosNoInline",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_clos_noinline_typed: full approximation carrier and both original ordering equivalences agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_Clos",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxClos",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_clos_typed: full approximation carrier and both original ordering equivalences agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
   "hol_name": "subapprox_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
   "lean_name": "subapprox",

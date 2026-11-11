@@ -122,6 +122,37 @@ theorem subapproxImpossible (a : ValApprox) :
     (subapprox a .impossible ↔ a = .impossible) ∧ subapprox .impossible a := by
   simp [subapprox, mergeImpossible, mergeHOL]
 
+/-- Integer approximations have the original lower and upper bounds. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_Int"]
+theorem subapproxInt (a : ValApprox) (i : Int) :
+    (subapprox a (.int i) ↔ a = .int i ∨ a = .impossible) ∧
+      (subapprox (.int i) a ↔ a = .int i ∨ a = .other) := by
+  cases a <;> simp [subapprox, mergeHOL, beq_iff_eq]
+  case int j =>
+    by_cases h : j = i
+    · subst j; simp
+    · have reverse : i ≠ j := Ne.symm h
+      simp [h, reverse]
+
+/-- Non-inlineable closures have the original lower and upper bounds. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_ClosNoInline"]
+theorem subapproxClosNoInline (a : ValApprox) (m n : Nat) :
+    (subapprox a (.closNoInline m n) ↔ a = .closNoInline m n ∨ a = .impossible) ∧
+      (subapprox (.closNoInline m n) a ↔ a = .closNoInline m n ∨ a = .other) := by
+  cases a <;> simp [subapprox, mergeHOL, beq_iff_eq]
+  case closNoInline x y =>
+    by_cases hm : x = m <;> by_cases hn : y = n <;> simp [hm, hn, Ne.symm]
+
+/-- Inlineable closures have the original lower and upper bounds. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_Clos"]
+theorem subapproxClos (a : ValApprox) (m n : Nat) (e : ClosLang.Exp) (size : Nat) :
+    (subapprox a (.clos m n e size) ↔ a = .clos m n e size ∨ a = .impossible) ∧
+      (subapprox (.clos m n e size) a ↔ a = .clos m n e size ∨ a = .other) := by
+  cases a <;> simp [subapprox, mergeHOL, beq_iff_eq]
+  case clos x y body count =>
+    by_cases hm : x = m <;> by_cases hn : y = n <;> by_cases he : body = e <;>
+      by_cases hs : count = size <;> simp [hm, hn, he, hs, Ne.symm]
+
 /-- Approximation ordering is antisymmetric. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_antisym"]
 theorem subapproxAntisym (a1 a2 : ValApprox)
