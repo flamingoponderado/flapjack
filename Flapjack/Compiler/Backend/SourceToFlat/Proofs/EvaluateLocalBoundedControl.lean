@@ -476,35 +476,15 @@ theorem localEnvBounded_raise {C F : Type} [Nonempty C]
 theorem localEnvBounded_tannot {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (limit : Nat) (expr : AstHOL.Exp) (typ : AstT) (ih : LocalEnvBoundedIH (F := F) interp transform limit expr) : LocalEnvBoundedIH (F := F) interp transform limit (.tannot expr typ) := by
-  intro genv start finish other source flat env sourceLocal flatEnv traces trace map gen clockBound localRel envInv tracesLen invariant generation safe
-  have exprSafe : ∀ last, EvaluateHOL.evaluate source { env with v := nsAppend sourceLocal env.v } [expr] ≠
-      (last, .err (.abort .typeError)) := by
-    intro last bad
-    apply safe last
-    simpa [EvaluateHOL.evaluate] using bad
-  obtain ⟨next, sim, post⟩ := ih genv start finish other source flat env sourceLocal flatEnv traces trace map gen clockBound localRel envInv tracesLen
-    invariant generation exprSafe
-  refine ⟨next, by simpa only [ExprSim, EvaluateHOL.evaluate, compileExp] using sim, ?_⟩
-  simpa only [EvaluateHOL.evaluate, compileExp] using post
+  simpa only [LocalEnvBoundedIH, LocalExpressionStep, ExprSim, EvaluateHOL.evaluate, compileExp] using ih
 
 
 /-- Compose localEnvBounded_lannot in any related local environment. -/
 theorem localEnvBounded_lannot {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (limit : Nat) (expr : AstHOL.Exp) (loc : Flapjack.Misc.Location.Locs) (ih : LocalEnvBoundedIH (F := F) interp transform limit expr) : LocalEnvBoundedIH (F := F) interp transform limit (.lannot expr loc) := by
-  intro genv start finish other source flat env sourceLocal flatEnv traces trace map gen clockBound localRel envInv tracesLen invariant generation safe
-  have exprSafe : ∀ last, EvaluateHOL.evaluate source { env with v := nsAppend sourceLocal env.v } [expr] ≠
-      (last, .err (.abort .typeError)) := by
-    intro last bad
-    apply safe last
-    cases loc
-    simpa [EvaluateHOL.evaluate] using bad
-  obtain ⟨next, sim, post⟩ := ih genv start finish other source flat env sourceLocal flatEnv traces trace map gen clockBound localRel envInv tracesLen
-    invariant generation exprSafe
-  refine ⟨next, by cases loc; simpa only [ExprSim, EvaluateHOL.evaluate, compileExp] using sim, ?_⟩
   cases loc
-  simpa only [EvaluateHOL.evaluate, compileExp] using post
-
+  simpa only [LocalEnvBoundedIH, LocalExpressionStep, ExprSim, EvaluateHOL.evaluate, compileExp] using ih
 
 
 /-- Local mutually recursive bindings preserve the arbitrary-environment

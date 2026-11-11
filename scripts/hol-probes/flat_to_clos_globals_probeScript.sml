@@ -15,6 +15,12 @@ val _ = show "bag_insert_typed=" bagTheory.BAG_INSERT;
 val _ = show "finite_bag_typed=" bagTheory.FINITE_BAG;
 val _ = show "finite_empty_bag_typed=" bagTheory.FINITE_EMPTY_BAG;
 val _ = show "finite_bag_insert_typed=" bagTheory.FINITE_BAG_INSERT;
+val finite_bag_union_1_replay = Q.prove (
+  `!b1:'a -> num. FINITE_BAG b1 ==> !b2. FINITE_BAG b2 ==> FINITE_BAG (BAG_UNION b1 b2)`,
+  simp [bagTheory.FINITE_BAG_UNION]);
+val _ = show "finite_bag_union_1_replay_typed=" finite_bag_union_1_replay;
+val _ = show "flat_finite_bag_globals_typed=" flat_to_closProofTheory.flat_FINITE_BAG_set_globals;
+val _ = show "clos_finite_bag_globals_typed=" flat_to_closProofTheory.clos_FINITE_BAG_set_globals;
 val _ = show "compile_globals=" flat_to_closProofTheory.compile_set_globals;
 val _ = show "compile_decs_globals=" flat_to_closProofTheory.compile_decs_set_globals;
 val _ = show "compile_eq_globals=" flat_to_closProofTheory.compile_eq_set_globals;

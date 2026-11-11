@@ -133020,6 +133020,30 @@
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "FINITE_BAG_UNION_1",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "finiteBagUnion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source local theorem and finite_bag_union_1_replay_typed: two arbitrary finite bags over one element type have a finite union."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "flat_FINITE_BAG_set_globals",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/FiniteGlobals.lean",
+  "lean_name": "flatFiniteBagSetGlobals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared flat_finite_bag_globals_typed: both all-expression and all-expression-list finite bag conclusions hold over the full flat syntax."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "clos_FINITE_BAG_set_globals",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/FiniteGlobals.lean",
+  "lean_name": "closFiniteBagSetGlobals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_finite_bag_globals_typed: both all-expression and all-expression-list finite bag conclusions hold over the full closure syntax."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
   "hol_name": "BAG_UNION_EMPTY",
   "lean_path": "Flapjack/Misc/Bag.lean",
   "lean_name": "bagUnion_empty",

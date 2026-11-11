@@ -77,6 +77,27 @@ theorem finiteBagInsert {α : Type} (b : Bag α) (h : finiteBag b) :
   intro e P hP
   exact hP.2 b (h P hP) e
 
+private theorem bagUnion_insert_left {α : Type} (e : α) (a b : Bag α) :
+    bagUnion (bagInsert e a) b = bagInsert e (bagUnion a b) := by
+  classical
+  funext x
+  by_cases h : x = e <;> simp [bagUnion, bagInsert, h, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
+
+/-- The union of two finite bags is finite. -/
+@[hol "HOL/src/bag/bagScript.sml" "FINITE_BAG_UNION_1"]
+theorem finiteBagUnion {α : Type} (a : Bag α) (ha : finiteBag a)
+    (b : Bag α) (hb : finiteBag b) : finiteBag (bagUnion a b) := by
+  apply ha (fun x => finiteBag (bagUnion x b))
+  constructor
+  · have eq : bagUnion emptyBag b = b := by
+      funext x
+      simp [bagUnion, emptyBag]
+    rw [eq]
+    exact hb
+  · intro x hx e
+    rw [bagUnion_insert_left]
+    exact finiteBagInsert _ hx e
+
 /-- The two union identities and the characterization of empty unions.
 The three conjuncts have independently quantified element types, as in HOL. -/
 @[hol "HOL/src/bag/bagScript.sml" "BAG_UNION_EMPTY"]
