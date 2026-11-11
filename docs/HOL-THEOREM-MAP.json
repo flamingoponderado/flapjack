@@ -9042,6 +9042,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "no_Labels_mk_Ticks",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TicksSyntax.lean",
+  "lean_name": "ticks_noLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: trace, index, tick count and expression retain their order, with exactly the input label-absence premise and output label-absence conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "obeys_max_app_mk_Ticks",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TicksSyntax.lean",
+  "lean_name": "ticks_obeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: the free application limit and quantified trace, index, tick count and expression are retained, with exactly the input bound premise and output bound conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "get_code_labels_mk_Ticks",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InlineCodeLocations.lean",
   "lean_name": "ticks_getCodeLabels",

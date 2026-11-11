@@ -323,8 +323,9 @@ approximation lookup and update definitions, the source approximation merge and
 known-operation definition,
 the original closure-detection
 traversal, the inliner size definitions and their HOL properties, recursive
-closure approximation generation, tick construction and its code-label theorem, and the
-free-variable and inlining-decision definitions, plus the free-variable-bound
+closure approximation generation, tick construction and its code-label and
+syntax-preservation theorems, the free-variable and inlining-decision
+definitions, plus the free-variable-bound
 and approximation-to-value relations and their source theorems. Regenerate with
 `HOL_PROBE_ONLY=clos_known_syntax_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
