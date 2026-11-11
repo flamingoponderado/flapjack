@@ -67,21 +67,6 @@ theorem GlobalGrowth.fillSlot (genv : GlobalEnv) (idx : Nat) (value : FlatSem.Va
     simp [empty] at slot
   · simpa [List.getElem?_set, Ne.symm same] using slot
 
-/-- The future compiler generation contains the environment inserted by the
-current declaration. -/
-theorem envGenFutureRel_insert_lookup {C : Type}
-    (interp : Option (Value → Option (Config × C))) (gen : EnvironmentGenerationStore)
-    (compMap : Environment) (evalState : Option EvalState) (config : Config)
-    (future : envGenFutureRel interp
-      { gen with next := gen.next + 1, envs := Flapjack.sptInsert gen.next compMap gen.envs } evalState)
-    (next : srcOracNextCfg interp evalState = some config) :
-    ∃ mapGen, Flapjack.sptLookup gen.generation config.envs.envGens = some mapGen ∧
-      Flapjack.sptLookup gen.next mapGen = some compMap := by
-  obtain ⟨mapGen, lookup, subspt⟩ := by simpa [envGenFutureRel, next] using future
-  refine ⟨mapGen, lookup, ?_⟩
-  exact (Flapjack.sptSubsptLookup _ _).mp subspt gen.next compMap
-    (Flapjack.sptLookup_sptInsert_same _ _ _)
-
 /-- The factored invariant is insensitive to the generation store beyond its
 allocation-bound condition. -/
 theorem factoredInvariant_changeGen {C F : Type} [Nonempty C]
@@ -388,8 +373,11 @@ theorem factoredInvariant_denv {C F : Type} [Nonempty C]
             Flapjack.sptLookup storedEnvs.length mapGen = some compMap' ∧
             GlobalEnvInv genv compMap' (fun _ => False) env := by
         intro config next
-        obtain ⟨mapGen, lookup, mapLookup⟩ := envGenFutureRel_insert_lookup interp gen compMap
-          source.evalState config future' (by simpa [sourceState] using next)
+        have next' : srcOracNextCfg interp source.evalState = some config := by
+          simpa [sourceState] using next
+        obtain ⟨mapGen, lookup, subspt⟩ := by simpa [envGenFutureRel, next'] using future'
+        have mapLookup := (Flapjack.sptSubsptLookup _ _).mp subspt gen.next compMap
+          (Flapjack.sptLookup_sptInsert_same _ _ _)
         exact ⟨mapGen, compMap, by simpa [genEq] using lookup, by simpa [idEq] using mapLookup, envInv⟩
       simp [declareEnv, found] at decl
       obtain ⟨_, afterEq⟩ := decl

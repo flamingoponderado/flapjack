@@ -65,28 +65,4 @@ theorem oracRel_some {C : Type} [Nonempty C]
     | evalDecs state => simp [oracRel] at related
     | evalOracle state => exact ⟨decode, state, rfl, rfl⟩
 
-/-- A successful source compiler call at oracle entry zero has the same
-compiled bytes and words as the flat compiler callback. -/
-theorem oracRelInner_first {C : Type} [Nonempty C]
-    (decode : Value → Option (Config × C)) (state : EvalOracleState)
-    (compiler : CompilerFun) (transform : List Dec → List Dec) (flat : FlatSem.InstallConfig C)
-    (related : oracRelInner decode state compiler transform flat)
-    (envId : Nat × Nat) (stateValue nextValue : Value) (decs : List Dec)
-    (config : Config) (payload : C) (bytes : List (BitVec 8)) (words : List (BitVec 64))
-    (entry : state.oracle 0 = (envId, stateValue, decs))
-    (decoded : decode stateValue = some (config, payload))
-    (compiled : compiler (envId, stateValue, decs) = some (nextValue, bytes, words)) :
-    ∃ nextFlat,
-      flat.compileOracle 0 = (payload, (incCompileProg envId config (transform decs)).2) ∧
-      flat.compile payload (incCompileProg envId config (transform decs)).2 = some (bytes, words, nextFlat) ∧
-      ∀ nextDecoded, decode nextValue = some nextDecoded → nextDecoded.2 = nextFlat := by
-  have h := related 0 envId stateValue decs entry
-  simp only [decoded, Flapjack.holThe] at h
-  obtain ⟨oracle, callbacks⟩ := h
-  obtain ⟨bytes', words', nextFlat, nextValue', flatCompiled, sourceCompiled, nextRel⟩ :=
-    callbacks (by rw [compiled]; simp)
-  rw [compiled] at sourceCompiled
-  cases sourceCompiled
-  exact ⟨nextFlat, oracle, flatCompiled, nextRel⟩
-
 end Flapjack.Compiler.Backend.SourceToFlat.OracleInvariant

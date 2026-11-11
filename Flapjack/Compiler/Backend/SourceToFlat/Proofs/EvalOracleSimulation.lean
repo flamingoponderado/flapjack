@@ -600,9 +600,13 @@ theorem doEval_oracle_flatCallback {C : Type} [Nonempty C]
           SourceEval.Proofs.doEvalOracle_six_inv compiler transform state.oracle first second third fourth
             bytesValue wordsValue envId stateValue decs result entry success
         obtain ⟨config, payload, decoded⟩ := steps.1 0 envId stateValue decs entry
-        obtain ⟨nextFlat, flatOracle, flatCompiled, nextRel⟩ :=
-          oracRelInner_first decode state compiler transform flatConfig inner envId stateValue nextValue
-            decs config payload bytes words entry decoded compiled
+        have entryRel := inner 0 envId stateValue decs entry
+        simp only [decoded, Flapjack.holThe] at entryRel
+        obtain ⟨flatOracle, callbacks⟩ := entryRel
+        obtain ⟨bytes', words', nextFlat, nextValue', flatCompiled, sourceCompiled, nextRel⟩ :=
+          callbacks (by rw [compiled]; simp)
+        rw [compiled] at sourceCompiled
+        cases sourceCompiled
         have flatBytesDecoded := valueToWord8List_related genv bytesValue flatBytes bytes ⟨decodedBytes, bytesRel, constructors⟩
         have flatWordsDecoded := valueToWord64List_related genv wordsValue flatWords words ⟨decodedWords, wordsRel, constructors⟩
         cases nextEntry : state.oracle 1 with
