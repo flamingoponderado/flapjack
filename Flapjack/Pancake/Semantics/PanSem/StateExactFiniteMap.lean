@@ -511,9 +511,11 @@ theorem shMemLoadHOLFiniteExact_toExact {width : Nat} {σ : Type} [NeZero width]
 
 /-- HOL `sh_mem_store_def` (`cakeml/pancake/semantics/panSemScript.sml:529-547`)
     over the finite-map state carrier.  The typed HOL statement quantifies the
-    stored word and the address at independent word types (`w :γ word`,
-    `addr :α word`, state `(α,'ffi)`), so the exact twin keeps two widths; the
-    production `shMemStoreHOLExact` uses a single width.  The branches follow
+    stored word, the address and the result at independent word types
+    (`w :γ word`, `addr :α word`, result `β result`, state `(α,'ffi)`), and its
+    argument order is `word, address, nb, state`; the exact twin keeps all three
+    dimensions and HOL's order, while the production `shMemStoreHOLExact` uses a
+    single width and the state-first order.  The branches follow
     HOL directly: test the raw address when `nb = 0`, otherwise the byte-aligned
     address; call `call_FFI` with `SharedMem MappedWrite`, `[n2w nb]`, and the
     stored word's bytes followed by the address bytes (truncated to `nb` in the
@@ -524,9 +526,10 @@ theorem shMemLoadHOLFiniteExact_toExact {width : Nat} {σ : Type} [NeZero width]
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 def shMemStoreHOLFiniteExact {w : Nat} [NeZero w] {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs]
-    (word : RiscV.Word w) (address : RiscV.Word width) (nb : Nat) :
-    Option (PanSemResultExact width) × PanSemStateFiniteExact width σ :=
+    {resultWidth : Nat} [NeZero resultWidth]
+    (word : RiscV.Word w) (address : RiscV.Word width) (nb : Nat)
+    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs] :
+    Option (PanSemResultExact resultWidth) × PanSemStateFiniteExact width σ :=
   if nb = 0 then
     if state.shMemaddrs address then
       match callFFIHOL state.ffi (.sharedMem .mappedWrite) [BitVec.ofNat 8 nb]
@@ -4510,32 +4513,55 @@ theorem kvarSimpHOLFinite {width : Nat} {σ : Type} [NeZero width]
       (lookupKvarHOLFinite .global name state = state.globals.lookup name) :=
   ⟨rfl, rfl, rfl, rfl⟩
 
+/-- Flapjack-only mixed-width rendering of HOL `panSem$is_valid_value`
+    (`panSemScript.sml:469-475`): HOL's candidate value has its own word
+    dimension (`value :γ v`) independent of the state's stored values (`α v`).
+    The clauses are HOL's `case lookup_kvar vk v s of NONE => F | SOME w =>
+    shape_of value = shape_of w`; the helper exists so the tagged
+    `isValidValueSimpHOLFinite` can keep that independence without changing the
+    reviewed `isValidValueHOLFinite` interface.  Untagged infrastructure. -/
+def isValidValueMixedHOLFinite {width : Nat} {σ : Type} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
+    (state : PanSemStateFiniteExact width σ) (kind : VarKind) (name : MlS)
+    (value : ValueHOL valueWidth) : Bool :=
+  match lookupKvarHOLFinite kind name state with
+  | some existing => shapeEqHOL (shapeOfHOLExact value) (shapeOfHOLExact existing)
+  | none => false
+
 /-- Exact port of HOL `panSem$is_valid_value_simps` (`panSemScript.sml:476-487`):
     the `Local` and `Global` `FLOOKUP` clauses of `is_valid_value`, over the
-    finite-support carrier and in HOL's binder order `s v value`.  HOL's
+    finite-support carrier and in HOL's binder order `s v value`, with the
+    candidate value's word dimension (`γ`) independent of the state's (`width`),
+    as in the typed HOL statement `(value :γ v)`.  HOL's
     `shape_of value = shape_of w` is the tagged Boolean `shapeEqHOL`. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "is_valid_value_simps"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem isValidValueSimpHOLFinite {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateFiniteExact width σ) (name : MlS) (value : ValueHOL width) :
-    (isValidValueHOLFinite state .local name value =
+    {valueWidth : Nat} [NeZero valueWidth]
+    (state : PanSemStateFiniteExact width σ) (name : MlS) (value : ValueHOL valueWidth) :
+    (isValidValueMixedHOLFinite state .local name value =
         (match state.locals.lookup name with
           | some existing => shapeEqHOL (shapeOfHOLExact value) (shapeOfHOLExact existing)
           | none => false)) ∧
-      (isValidValueHOLFinite state .global name value =
+      (isValidValueMixedHOLFinite state .global name value =
         (match state.globals.lookup name with
           | some existing => shapeEqHOL (shapeOfHOLExact value) (shapeOfHOLExact existing)
           | none => false)) :=
   ⟨rfl, rfl⟩
 
-/-- Exact port of HOL `panSem$is_valid_value_simps2` (`panSemScript.sml:489-500`):
-    the eight clock/ffi/code/memory update-invariance equations for
-    `is_valid_value` and `lookup_kvar`, over the finite-support carrier and in
-    HOL's binder order `s k vk v vl ffi cd m`. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "is_valid_value_simps2"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
+/-- Flapjack-specific / NOT an exact HOL port.  HOL
+    `panSem$is_valid_value_simps2` (`panSemScript.sml:489-500`) keeps three type
+    dimensions independent: the candidate value (`vl :γ v`) versus the state's
+    stored values (`α v`), and the replacement FFI host (`ffi :δ ffi_state`)
+    versus the state's host (`'ffi`).  The `s with ffi := ffi` equation therefore
+    relates states of different carriers, which `PanSemStateFiniteExact width σ`
+    cannot express (its `ffi` field is fixed at `σ`), so the statement below
+    specialises the FFI host to the state's own host and the candidate value to
+    the state width.  The eight equations are HOL's and are proved by `rfl`, but
+    the interface is not the source shape; the `@[hol]` tag is withdrawn.  A
+    faithful port needs a state carrier that is polymorphic in the FFI host.
+    The `lookup_kvar` equations do not mention the candidate value and remain
+    valid at the specialised interface. -/
 theorem isValidValueSimps2HOLFinite {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (clock : Nat) (kind : VarKind)
     (name : MlS) (value : ValueHOL width) (ffi : HolFfiState σ)

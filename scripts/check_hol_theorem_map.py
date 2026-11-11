@@ -378,6 +378,16 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean", "isValidValueSimps2HOLFinite"): (
+        "cakeml/pancake/semantics/panSemScript.sml",
+        "is_valid_value_simps2",
+        "codewhale source comparison (2026-11-11; bead flapjack-4ac.3.30/.3.38/.3.39): tag withdrawn. "
+        "HOL is_valid_value_simps2 keeps the candidate value width (vl :γ v) and the replacement FFI host "
+        "(ffi :δ ffi_state) independent of the state's (α,'ffi), so the `s with ffi := ffi` equation relates "
+        "states of different carriers. PanSemStateFiniteExact fixes the FFI host at σ and the candidate value at "
+        "width, so the Lean statement specialises both. The eight equations are HOL's, but the interface is not "
+        "the source shape; a faithful port needs a state carrier polymorphic in the FFI host."
+    ),
     ("Flapjack/Compiler/Backend/ClosFvs/Source.lean", "compile"): ("cakeml/compiler/backend/clos_fvsScript.sml", "compile_def", "The executable uses removeList; compileSource is the source-shaped definition and compileSource_eq_compile proves agreement."),
     ("Flapjack/Compiler/Backend/ClosFvs/Source.lean", "compileInc"): ("cakeml/compiler/backend/clos_fvsScript.sml", "compile_inc_def", "The executable uses compile; compileIncSource is the source-shaped definition and compileIncSource_eq_compileInc proves agreement."),
     ("Flapjack/Compiler/Backend/ClosKnown/Compile.lean", "knownCompileInc"): ("cakeml/compiler/backend/clos_knownScript.sml", "known_compile_inc_def", "The executable uses the total traversals; knownCompileIncSource is the source-shaped definition and knownCompileIncSource_eq proves agreement."),
