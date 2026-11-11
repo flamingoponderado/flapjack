@@ -134643,5 +134643,20 @@
     "statement_status": "reviewed_fmap_as_finite_support_result",
     "fmap_as_finite_support_result": true,
     "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-pxn.18.5.6.31.3 family; typed capture make_vmap_def_typed in scripts/hol-probes/crep_to_loop_make_vmap_probe.out gives \u2200(params :\u03b1 list). make_vmap params = (FEMPTY :\u03b1 |-> num) |++ ZIP (params,GENLIST I (LENGTH params)), 0 hypotheses). Lean keeps HOL's generic key type \u03b1 (DecidableEq is HOL equality) and num values, and renders FEMPTY |++ ZIP as updateListEq over HolFiniteMapExact.empty with the zipped params/GENLIST list; the same-module witness holFmapAsFiniteSupportResultWitness_makeVmapExact states the lookup correspondence with the raw FUPDATE_LIST_HOL operation. Binder order and equation compared with HOL."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "upd_locals_def",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "updLocalsHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.3.31; panSemScript.sml:431-434: typed capture upd_locals_def_typed in pan_upd_locals_probe.out gives \u2200(varargs :(mlstring # \u03b1 v) list) (s :(\u03b1, 'ffi) state). upd_locals varargs s = s with locals := (FEMPTY :mlstring |-> \u03b1 v) |++ varargs, 0 hypotheses). Lean keeps HOL's binder order varargs s, the mlstring keyed finite map and the FUPDATE_LIST semantics: FEMPTY |++ varargs is HolFiniteMapExact.empty.updateList varargs, so later duplicate bindings win as in HOL. The finite-map fields locals/globals/code/eshapes are the canonical HolFiniteMapExact translation (witness holFmapAsFiniteSupportWitness); word payloads use the type-indexed BitVec translation. The production updLocalsHOLExact stays untagged with its documented_mismatch row. Qualifier is representation-only."
   }
 ]

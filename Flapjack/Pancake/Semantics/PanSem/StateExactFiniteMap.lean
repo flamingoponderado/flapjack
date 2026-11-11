@@ -386,6 +386,21 @@ def emptyLocalsHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (emptyLocalsHOLFinite state).toExact = emptyLocalsHOLExact state.toExact :=
   rfl
 
+/-- HOL `upd_locals_def` (`cakeml/pancake/semantics/panSemScript.sml:431-434`):
+    `upd_locals varargs s = s with locals := FEMPTY |++ varargs`.  HOL's `|++`
+    is `FUPDATE_LIST`, i.e. the canonical `HolFiniteMapExact.updateList` from
+    the empty map, so later duplicate bindings win exactly as in HOL.  The
+    `locals`/`globals`/`code`/`eshapes` fields are the canonical finite-map
+    representation recorded by the `fmap_as_finite_support` qualifier
+    (canonical witness `holFmapAsFiniteSupportWitness` in this module). -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "upd_locals_def"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+def updLocalsHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (varargs : List (MlS × ValueHOL width)) (state : PanSemStateFiniteExact width σ) :
+    PanSemStateFiniteExact width σ :=
+  { state with locals := HolFiniteMapExact.empty.updateList varargs }
+
 /-- Flapjack-specific composition of finite-map `set_kvar` with the FFI field
     update used by a successful shared-memory read. HOL has no standalone
     declaration for this composed helper; `sh_mem_load_def` names the two
