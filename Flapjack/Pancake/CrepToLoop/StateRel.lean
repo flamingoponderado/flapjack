@@ -172,44 +172,6 @@ theorem crepToLoopStateRel_intro {width : Nat} [NeZero width] {σ : Type} (s : C
 def wlabWloc {width : Nat} [NeZero width] : PanWordLab (BitVec width) → LoopValue (BitVec width)
   | .word value => .word value
 
-/-- Production-carrier analogue of HOL `globals_rel_def`
-    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:54-58`), retained for
-    the executable bridge. This is not an exact HOL port: its inputs are raw
-    option-valued functions rather than HOL `|->` finite maps, and its values
-    use production `PanWordLab`/`LoopValue` instead of `HolWordLab`/`WordLocW`.
-    The exact-carrier port is the tagged `crepToLoopGlobalsRelHOLExact` in
-    `Proofs/RelationsExact.lean`; this production-carrier relation is
-    Flapjack-specific infrastructure and carries no manifest row (bead
-    `flapjack-pxn.18.5.6.33.18`). -/
-def crepToLoopGlobalsRel {width : Nat} [NeZero width]
-    (sglobals : BitVec 5 → Option (PanWordLab (BitVec width)))
-    (tglobals : BitVec 5 → Option (LoopValue (BitVec width))) : Prop :=
-  ∀ address value, sglobals address = some value → tglobals address = some (wlabWloc value)
-
-/-- Production-carrier analogue of HOL `globals_rel_intro`
-    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:211-216`), retained for
-    the executable bridge. It inherits the raw-function and production-value
-    carrier mismatch documented on `crepToLoopGlobalsRel`, so it is not tagged
-    as an exact HOL port. The exact-carrier theorem is the tagged
-    `crepToLoopGlobalsRelHOLExact_intro` in `Proofs/RelationsExact.lean`; this
-    production-carrier helper is Flapjack-specific infrastructure and carries no
-    manifest row (bead `flapjack-pxn.18.5.6.33.18`). -/
-theorem crepToLoopGlobalsRel_intro {width : Nat} [NeZero width]
-    (sglobals : BitVec 5 → Option (PanWordLab (BitVec width)))
-    (tglobals : BitVec 5 → Option (LoopValue (BitVec width)))
-    (h : crepToLoopGlobalsRel sglobals tglobals) :
-    ∀ address value, sglobals address = some value → tglobals address = some (wlabWloc value) :=
-  fun address value hv => h address value hv
-
-/-- Untagged iff form of `crepToLoopGlobalsRel`, kept for rewriting/rewriting
-    the relation to its unfolded implication. -/
-theorem crepToLoopGlobalsRel_iff {width : Nat} [NeZero width]
-    (sglobals : BitVec 5 → Option (PanWordLab (BitVec width)))
-    (tglobals : BitVec 5 → Option (LoopValue (BitVec width))) :
-    crepToLoopGlobalsRel sglobals tglobals ↔
-      ∀ address value, sglobals address = some value → tglobals address = some (wlabWloc value) :=
-  Iff.rfl
-
 /-- Flapjack analogue of HOL `state_rel_clock_add_zero`
     (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:219-223`):
     `!s t. state_rel s t ==> ?ck. state_rel s (t with clock := ck + t.clock)`.
@@ -304,48 +266,6 @@ theorem crepToLoopStateRelExact_clock_add_zero {width : Nat} [NeZero width] {σ 
   ⟨0, by
     rw [crepToLoopStateRelExact] at h ⊢
     simpa using h⟩
-
-/-- Production-carrier analogue of HOL `mem_rel_def`
-    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:49-52`), retained for
-    the executable bridge. It is not an exact port: it uses `PanWordLab` and
-    `LoopValue` rather than `HolWordLab` and `WordLocW`, and the domain is
-    `BitVec width → Bool` rather than HOL's set predicate
-    (`BitVec width → Prop`). HOL's memories are total functions; production's
-    loop memory is option-valued and uses a total view at the bridge boundary.
-    The exact total-memory/Prop-domain port is the tagged
-    `crepToLoopMemRelHOLExact` in `Proofs/RelationsExact.lean`; this
-    production-carrier relation is Flapjack-specific infrastructure and carries
-    no manifest row (bead `flapjack-pxn.18.5.6.33.18`). -/
-def crepToLoopMemRel {width : Nat} [NeZero width]
-    (smem : BitVec width → PanWordLab (BitVec width))
-    (tmem : BitVec width → LoopValue (BitVec width))
-    (dom : BitVec width → Bool) : Prop :=
-  ∀ ad, dom ad = true → wlabWloc (smem ad) = tmem ad
-
-/-- Production-carrier analogue of HOL `mem_rel_intro`
-    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:203-209`), retained for
-    the executable bridge. It inherits the domain/value-carrier mismatch
-    documented on `crepToLoopMemRel`, so it is not tagged as an exact HOL port.
-    The exact-carrier theorem is the tagged `crepToLoopMemRelHOLExact_intro` in
-    `Proofs/RelationsExact.lean`; this production-carrier helper is
-    Flapjack-specific infrastructure and carries no manifest row (bead
-    `flapjack-pxn.18.5.6.33.18`). -/
-theorem crepToLoopMemRel_intro {width : Nat} [NeZero width]
-    (smem : BitVec width → PanWordLab (BitVec width))
-    (tmem : BitVec width → LoopValue (BitVec width))
-    (dom : BitVec width → Bool)
-    (h : crepToLoopMemRel smem tmem dom) :
-    ∀ ad, dom ad = true → wlabWloc (smem ad) = tmem ad :=
-  fun ad hd => h ad hd
-
-/-- Untagged iff form of `crepToLoopMemRel`, kept for rewriting. -/
-theorem crepToLoopMemRel_iff {width : Nat} [NeZero width]
-    (smem : BitVec width → PanWordLab (BitVec width))
-    (tmem : BitVec width → LoopValue (BitVec width))
-    (dom : BitVec width → Bool) :
-    crepToLoopMemRel smem tmem dom ↔
-      ∀ ad, dom ad = true → wlabWloc (smem ad) = tmem ad :=
-  Iff.rfl
 
 /-- Total view of the Option-valued `LoopMachineState.memory`, giving the total
     target memory that HOL's `loopSem$state.memory` has. Since `mem_rel` only
