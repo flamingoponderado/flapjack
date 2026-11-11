@@ -88,7 +88,8 @@ decreasing_by
   all_goals try (cases y <;> simp_wf <;> omega)
   all_goals (cases entry; simp only [Prod.mk.sizeOf_spec] at *; omega)
 
-private theorem compileFuns_as_map (functions : List (Nat × Exp)) :
+/-- Recursive bodies retain their arities; used for traversal agreement. -/
+theorem compileFuns_eq_map (functions : List (Nat × Exp)) :
     compileFuns functions = functions.map (fun (n, x) => (n, compileSing x)) := by
   induction functions with
   | nil => rfl
@@ -98,7 +99,7 @@ private theorem compileFuns_as_map (functions : List (Nat × Exp)) :
 @[simp] theorem compileSource_eq_list (expressions : List Exp) :
     compileSource expressions = compileList expressions := by
   induction expressions using compileSource.induct <;>
-    simp_all [compileSource, compileList, compileSing, Flapjack.holHd, compileFuns_as_map]
+    simp_all [compileSource, compileList, compileSing, Flapjack.holHd, compileFuns_eq_map]
   all_goals try (split <;> rfl)
   case case14 =>
     rename_i names loc vs fns x ihF ihBody
@@ -119,7 +120,7 @@ theorem compileSource_sing_eq :
   · intro e
     simp [compileList]
   · intro fns
-    simp [compileFuns_as_map, compileSource_eq_list, compileList, Flapjack.holHd]
+    simp [compileFuns_eq_map, compileSource_eq_list, compileList, Flapjack.holHd]
 
 /-- The optimized list traversal preserves length; the original HOL theorem
 is stated separately about the source-shaped traversal. -/
