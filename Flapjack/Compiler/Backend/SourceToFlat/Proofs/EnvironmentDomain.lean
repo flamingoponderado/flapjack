@@ -305,9 +305,8 @@ theorem evalDeclare_incremental_success {C F : Type} [Nonempty C]
       ⟨declared, invariant, generation, rfl, rfl, mapCase⟩
   have nextInv := OracleInvariant.factoredInvariant_changeEvalRef interp transform _ newGenv idxs _ flatMiddle
     stored nextInvariant
-  have full := evaluateIncCompileProg_continue flatStart flatMiddle envId config decs n next newMap gen body
-    compiledBody bodyRun
-  rw [compiled] at full
+  have full := evaluateIncCompileProg_body flatStart envId config decs n next newMap gen body compiledBody
+  rw [bodyRun, compiled] at full
   exact ⟨stored, full.trans storeRun, nextInv, related, nextForward, nextGeneration⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat

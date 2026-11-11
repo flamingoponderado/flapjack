@@ -559,9 +559,9 @@ theorem eval_error_from_declarations {C F : Type} [Nonempty C]
   have bodyRun' : FlatSem.evaluateDecs
       { flatStart with globals := flatStart.globals ++ List.replicate (nextConfig.next.vidx - config.next.vidx) none }
         body = (flatLast, some errorValue) := by simpa [flatStart, flatNext, FlatSem.decClock] using bodyRun
-  have flatDeclarations := evaluateIncCompileProg_error flatStart flatLast envId config decs n nextConfig.next
-    newMap nextGen body errorValue bodyEq bodyRun'
-  rw [compiled] at flatDeclarations
+  have flatDeclarations := evaluateIncCompileProg_body flatStart envId config decs n nextConfig.next
+    newMap nextGen body bodyEq
+  rw [bodyRun', compiled] at flatDeclarations
   have flatResult := evaluate_compileEval_declarations flatEnv flatInitial flatArguments flatLast trace compMap exprs
     a b c d bytes words flatDecs flatNext (.err errorValue) (by simpa using flatRun) (by simpa [flatNext] using flatDecoded)
     flatPositive (by simpa [flatStart] using flatDeclarations) trivial
