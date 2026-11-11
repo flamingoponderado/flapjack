@@ -191,7 +191,8 @@ theorem oracleTie_extCallResidues {width : Nat} [NeZero width] {S Q C : Type} {F
   let mc2 := { mc with nextInterfer := holShiftSeq l mc.nextInterfer }
   have hn := nextInterferenceShift mc mc2 s.ffi s.ffi ms1 ms2 l h.2.1
   have he := nextInterferenceExtCall mc2 s.ffi ms2 index name bytes bytes2 newBytes newFfi (by
-    simpa only [mc2, readFfiBytearraysHOL, readFfiBytearrayHOL, sptAListLookup_eq_lookup] using h.2.2)
+    simpa only [mc2, readFfiBytearraysHOL, readFfiBytearrayHOL, sptAListLookup_eq_lookup]
+      using h.2.2)
   have hp := oracleTie_ffiStep mc ms1 s index newBytes ms2
     (mc.ffiInterfer 0 (index, newBytes, ms2))
     { mc2 with ffiInterfer := holShiftSeq 1 mc2.ffiInterfer } newFfi ⟨h.1, hn.trans he⟩

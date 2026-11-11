@@ -14,7 +14,8 @@ namespace Flapjack.Compiler.Backend.ClosSem
 open Flapjack.SemanticPrimitivesHOL Flapjack.Basis.Pure.MlString
 
 /-- A finite-support reference map always has an unused natural index. -/
-theorem unusedRef_exists (refs : HolFiniteMapExact Nat (Ref Value)) : ∃ index, refs.lookup index = none :=
+theorem unusedRef_exists (refs : HolFiniteMapExact Nat (Ref Value)) :
+    ∃ index, refs.lookup index = none :=
   holFiniteMapExact_exists_unused refs
 
 /-- Least unallocated reference, matching the HOL `LEAST` selection. -/
