@@ -66,18 +66,6 @@ private theorem varsNone_append (xs ys : List Exp) :
   | nil => simp [everyFnVarsNone]
   | cons x xs ih => simp [everyFnVarsNone, ih, and_assoc]
 
-private theorem locationSome_reverse (xs : List Exp) :
-    everyFnLocationSome xs.reverse ↔ everyFnLocationSome xs := by
-  induction xs with
-  | nil => simp [everyFnLocationSome]
-  | cons x xs ih => simp [List.reverse_cons, locationSome_append, everyFnLocationSome, ih, and_comm]
-
-private theorem varsNone_reverse (xs : List Exp) :
-    everyFnVarsNone xs.reverse ↔ everyFnVarsNone xs := by
-  induction xs with
-  | nil => simp [everyFnVarsNone]
-  | cons x xs ih => simp [List.reverse_cons, varsNone_append, everyFnVarsNone, ih, and_comm]
-
 /-- Generated variable lists contain no unlocated or annotated functions. -/
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "every_Fn_GENLIST_Var"]
 theorem everyFn_variables : ∀ n i t,
@@ -116,7 +104,11 @@ theorem everyFn_codeList {α β : Type} : ∀ (ls : List (α × Exp)) n (rest : 
       everyFnVarsNone (ls.map Prod.snd) ∧ everyFnVarsNone (rest.2.map (fun p => p.2.2))) := by
   intro ls n rest
   rw [codeList_bodies]
-  simp [locationSome_append, varsNone_append, locationSome_reverse, varsNone_reverse]
+  simp only [locationSome_append, varsNone_append]
+  rw [everyFnLocationSome_every (ls.map Prod.snd).reverse,
+    everyFnLocationSome_every (ls.map Prod.snd),
+    everyFnVarsNone_every (ls.map Prod.snd).reverse, everyFnVarsNone_every (ls.map Prod.snd)]
+  simp only [List.mem_reverse, iff_self, and_self]
 
 /-- Shared structural proof for direct-call annotation preservation. The two
 HOL predicates differ only at function annotations. The `fns` parameter names
