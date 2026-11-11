@@ -287,6 +287,12 @@
   "reviewer": "Compared snd_insert_each_prime_type and source: the exact reversed generated label and HOL THE/ALOOKUP payload list precedes the unchanged old code; generic payload remains inhabited only for HOL THE."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_acc_0",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/SuffixReplacement.lean", "lean_name": "callsAcc0",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed local-theorem replay preserves expression list, complete calls state, code lists and the suffix equality premise; the conclusion maps the unchanged output and first state component while appending the suffix to the returned code."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "calls_acc",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/SuffixReplacement.lean", "lean_name": "calls_acc",
   "statement_status": "reviewed_exact",

@@ -14,6 +14,19 @@ val _ = (print "calls_code_subset_type="; Lib.with_flag (Globals.show_types,true
 val _ = (print "calls_domain_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_domain); print "\n");
 val _ = (print "calls_replace_snd_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_replace_SND); print "\n");
 val _ = (print "calls_acc_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_acc); print "\n");
+(* Replay the local accumulator theorem from its exported consequence. *)
+val calls_acc_0_replay = prove
+  (``!xs tmp x r. x ++ r = SND tmp ==>
+      clos_call$calls xs tmp = (I ## I ## (combin$C (++) r)) (clos_call$calls xs (FST tmp,x))``,
+   rpt gen_tac >> Cases_on `tmp` >> simp [] >> strip_tac >>
+   qabbrev_tac `z = clos_call$calls xs (q,[])` >> PairCases_on `z` >>
+   fs [] >>
+   `clos_call$calls xs (q,x) = (z0,z1,z2 ++ x)` by
+     (irule clos_callProofTheory.calls_acc >> simp []) >>
+   `clos_call$calls xs (q,x ++ r) = (z0,z1,z2 ++ (x ++ r))` by
+     (irule clos_callProofTheory.calls_acc >> simp []) >>
+   fs [listTheory.APPEND_ASSOC] >> metis_tac []);
+val _ = (print "calls_acc_0_replay_type="; Lib.with_flag (Globals.show_types,true) print_term (concl calls_acc_0_replay); print "\n");
 val _ = (print "calls_el_sing_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_el_sing); print "\n");
 val _ = (print "v_rel_exists_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.v_rel_exists); print "\n");
 val _ = (print "is_recclosure_def_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.is_Recclosure_def); print "\n");

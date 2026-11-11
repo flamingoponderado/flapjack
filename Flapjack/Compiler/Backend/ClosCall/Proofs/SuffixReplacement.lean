@@ -276,4 +276,23 @@ theorem calls_acc (xs : List Exp) (d : NumSet) (old : List (Nat × Nat × Exp))
     calls xs (d, old) = (res, (d1, aux ++ old)) := by
   exact calls_replace_snd xs (d, []) res (d1, aux) (d, old) aux ⟨h, rfl, by simp⟩
 
+/-- A suffix on the input code is retained as a suffix on the result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "calls_acc_0"]
+theorem callsAcc0 (xs : List Exp) (tmp : State)
+    (x r : List (Nat × Nat × Exp)) (h : x ++ r = tmp.2) :
+    calls xs tmp =
+      (let result := calls xs (tmp.1, x)
+       (result.1, (result.2.1, result.2.2 ++ r))) := by
+  cases tmp with
+  | mk d old =>
+    simp only at h
+    subst old
+    cases he : calls xs (d, []) with
+    | mk ys g =>
+      cases g with
+      | mk d1 aux =>
+        have a := calls_acc xs d x ys d1 aux he
+        have b := calls_acc xs d (x ++ r) ys d1 aux he
+        simp [a, b, List.append_assoc]
+
 end Flapjack.Compiler.Backend.ClosCall
