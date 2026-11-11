@@ -35,40 +35,6 @@ theorem checkedOperands_eq (es : EvalOracleState) (typ : PrimType) (xs ys : List
 
 
 set_option maxHeartbeats 3000000 in
-private theorem arithmeticResult_transport {F : Type} (es : EvalOracleState) (state target : Store Value × HolFfiState F)
-    (action : Arith) (typ : PrimType) (xs : List Value) (refs : Store Value)
-    (ffi : HolFfiState F) (result : Result Value Value)
-    (run : doApp state (.arith action typ) xs = some ((refs, ffi), result)) :
-    xs.all (checkType typ) = true ∧ refs = state.1 ∧ ffi = state.2 ∧
-    doApp target (.arith action typ) xs = some (target, result) ∧
-    resultRel (ValueRel es) (ValueRel es) result result := by
-  simp only [doApp] at run
-  split at run
-  · rename_i checked
-    simp only [Option.map_eq_some_iff] at run
-    obtain ⟨out, evaluated, equal⟩ := run
-    cases out with
-    | inl exn =>
-      have exception := doArith_exception action typ xs exn evaluated
-      subst exn
-      simp only [Prod.mk.injEq] at equal
-      obtain ⟨same, rfl⟩ := equal
-      cases same
-      refine ⟨checked, rfl, rfl, ?_, ?_⟩
-      · simp [doApp, checked, evaluated]
-      · simp only [resultRel, excRel]
-        exact (valueRel_concrete es).1 divExnV (by simp [concreteValue, concreteValues, divExnV])
-    | inr value =>
-      have valueType := doArith_checkType action typ xs value evaluated
-      simp only [Prod.mk.injEq] at equal
-      obtain ⟨same, rfl⟩ := equal
-      cases same
-      refine ⟨checked, rfl, rfl, ?_, ?_⟩
-      · simp [doApp, checked, evaluated]
-      · simp only [resultRel]
-        exact (valueRel_concrete es).1 value (checkTypeConcrete typ value valueType)
-  · simp at run
-
 /-- A successful arithmetic application transports to related operands and a
 new state while preserving the result relation. HOL proves this step inside
 `do_app_sim`; it is not a separate HOL declaration. -/
@@ -80,10 +46,33 @@ theorem arithmeticApp_transport {F : Type} (es : EvalOracleState)
     refs = state.1 ∧ ffi = state.2 ∧
     doApp target (.arith action typ) ys = some (target, result) ∧
     resultRel (ValueRel es) (ValueRel es) result result := by
-  obtain ⟨checked, refEq, ffiEq, targetRun, resultRelated⟩ :=
-    arithmeticResult_transport es state target action typ xs refs ffi result run
-  have same := checkedOperands_eq es typ xs ys checked related
-  subst ys
-  exact ⟨refEq, ffiEq, targetRun, resultRelated⟩
+  simp only [doApp] at run
+  split at run
+  · rename_i checked
+    have same := checkedOperands_eq es typ xs ys checked related
+    subst ys
+    simp only [Option.map_eq_some_iff] at run
+    obtain ⟨out, evaluated, equal⟩ := run
+    cases out with
+    | inl exn =>
+      have exception := doArith_exception action typ xs exn evaluated
+      subst exn
+      simp only [Prod.mk.injEq] at equal
+      obtain ⟨same, rfl⟩ := equal
+      cases same
+      refine ⟨rfl, rfl, ?_, ?_⟩
+      · simp [doApp, checked, evaluated]
+      · simp only [resultRel, excRel]
+        exact (valueRel_concrete es).1 divExnV (by simp [concreteValue, concreteValues, divExnV])
+    | inr value =>
+      have valueType := doArith_checkType action typ xs value evaluated
+      simp only [Prod.mk.injEq] at equal
+      obtain ⟨same, rfl⟩ := equal
+      cases same
+      refine ⟨rfl, rfl, ?_, ?_⟩
+      · simp [doApp, checked, evaluated]
+      · simp only [resultRel]
+        exact (valueRel_concrete es).1 value (checkTypeConcrete typ value valueType)
+  · simp at run
 
 end Flapjack.Compiler.Backend.SourceEval.Proofs

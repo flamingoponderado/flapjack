@@ -77,11 +77,4 @@ def altFreeFuns (m : Nat) : List (Nat × Exp) → List ((Nat × Exp) × DbVarSet
       ((n, e), .shift (n + m) live) :: altFreeFuns m xs
 end
 
-/-- The executable list traversal implements the original `EVERY pure` test.
-This supporting equation has no separate HOL declaration. -/
-theorem pureList_eq_all (expressions : List Exp) : pureList expressions = expressions.all pure := by
-  induction expressions with
-  | nil => rfl
-  | cons first rest ih => simp [pureList, ih]
-
 end Flapjack.Compiler.Backend.ClosAnnotate

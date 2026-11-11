@@ -61,38 +61,23 @@ theorem evaluateCompileProg_continue {C F : Type} (state : FlatSem.State C F)
   rw [show globAlloc next config :: allocEnvRef :: body = [globAlloc next config, allocEnvRef] ++ body by rfl,
     FlatSem.evaluateDecs_append, evaluateCompileProg_prefix state next config globalsEmpty refsEmpty positive]
 
-/-- Once the declaration body succeeds, the incremental sequence continues
-exactly with the generated environment-ID store. -/
-theorem evaluateIncCompileProg_continue {C F : Type} (state middle : FlatSem.State C F)
+/-- Incremental execution runs the body after global allocation, storing its
+new environment ID only when the body succeeds. This sequence equation is
+Flapjack infrastructure with no separate HOL declaration. -/
+theorem evaluateIncCompileProg_body {C F : Type} (state : FlatSem.State C F)
     (envId : Nat × Nat) (config : Config) (decs : List Dec) (n : Nat) (next : NextIndices)
     (env : Environment) (gen : EnvironmentGenerationStore) (body : List FlatLang.Exp)
     (compiled : compileDecs [] 1 config.next (lookupEnvId envId config.envs)
-      ⟨0, config.envs.next, .ln⟩ decs = (n, next, env, gen, body))
-    (bodyRun : FlatSem.evaluateDecs
-      { state with globals := state.globals ++ List.replicate (next.vidx - config.next.vidx) none } body =
-      (middle, none)) :
+      ⟨0, config.envs.next, .ln⟩ decs = (n, next, env, gen, body)) :
     FlatSem.evaluateDecs state (incCompileProg envId config decs).2 =
-      FlatSem.evaluateDecs middle [storeEnvId gen.generation gen.next] := by
+      match FlatSem.evaluateDecs
+          { state with globals := state.globals ++ List.replicate (next.vidx - config.next.vidx) none } body with
+      | (middle, none) => FlatSem.evaluateDecs middle [storeEnvId gen.generation gen.next]
+      | (middle, some error) => (middle, some error) := by
   simp only [incCompileProg, compiled]
   rw [← List.singleton_append, FlatSem.evaluateDecs_append, evaluateDecs_globAlloc]
   simp only
-  rw [FlatSem.evaluateDecs_append, bodyRun]
-
-/-- A declaration-body error stops the incremental sequence before the ID
-store, preserving the exact error and state returned by the body. -/
-theorem evaluateIncCompileProg_error {C F : Type} (state middle : FlatSem.State C F)
-    (envId : Nat × Nat) (config : Config) (decs : List Dec) (n : Nat) (next : NextIndices)
-    (env : Environment) (gen : EnvironmentGenerationStore) (body : List FlatLang.Exp)
-    (error : ErrorResult FlatSem.Value)
-    (compiled : compileDecs [] 1 config.next (lookupEnvId envId config.envs)
-      ⟨0, config.envs.next, .ln⟩ decs = (n, next, env, gen, body))
-    (bodyRun : FlatSem.evaluateDecs
-      { state with globals := state.globals ++ List.replicate (next.vidx - config.next.vidx) none } body =
-      (middle, some error)) :
-    FlatSem.evaluateDecs state (incCompileProg envId config decs).2 = (middle, some error) := by
-  simp only [incCompileProg, compiled]
-  rw [← List.singleton_append, FlatSem.evaluateDecs_append, evaluateDecs_globAlloc]
-  simp only
-  rw [FlatSem.evaluateDecs_append, bodyRun]
+  rw [FlatSem.evaluateDecs_append]
+  rfl
 
 end Flapjack.Compiler.Backend.SourceToFlat

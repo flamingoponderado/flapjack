@@ -29,6 +29,19 @@ theorem stateExtends_refl {A K V : Type} (g : Spt A × List (K × V))
   · intro _ _ h
     exact h
 
+/-- A well-formed direct-call state extends itself. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "wfg_subg_refl"]
+theorem wfg_subg_refl {A B : Type} (g : Spt A × List (Nat × B))
+    (h : wellFormed g) : stateExtends g g :=
+  stateExtends_refl g h.2
+
+/-- A well-formed state has an extension satisfying any property it already has. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "wfg_subg_EX_helper"]
+theorem wfg_subg_ex_helper {A B : Type} (g : Spt A × List (Nat × B))
+    (P : Spt A × List (Nat × B) → Prop) (h : wellFormed g ∧ P g) :
+    ∃ g2, stateExtends g g2 ∧ P g2 :=
+  ⟨g, wfg_subg_refl g h.1, h.2⟩
+
 /-- Compiler-state extension is transitive. -/
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "subg_trans"]
 theorem stateExtends_trans {A K V : Type} (g1 g2 g3 : Spt A × List (K × V))

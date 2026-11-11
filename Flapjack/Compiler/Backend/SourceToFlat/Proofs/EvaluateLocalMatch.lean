@@ -27,7 +27,8 @@ theorem globalEnvInv_local_for_patterns (genv : GlobalEnv) (baseMap : Environmen
       | long moduleName rest =>
         apply values (.long moduleName rest) value (by intro ⟨_, _, impossible⟩; cases impossible)
         change nsLookup (nsAppend sourceLocal baseEnv.v) (.long moduleName rest) = some value at lookup
-        rw [nsLookup_append_long, envRel_no_modules genv sourceLocal flatLocals localRel moduleName] at lookup
+        obtain ⟨entries, sourceShape, _⟩ := envRel_dom genv sourceLocal flatLocals localRel
+        rw [nsLookup_append_long, sourceShape] at lookup
         exact lookup
     · exact constructors
 

@@ -9,11 +9,6 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
 namespace Flapjack.Compiler.Backend.ClosTicks
 open ClosLang ClosProps
 
-private theorem removeFuns_length (fns : List (Nat × Exp)) : (removeFuns fns).length = fns.length := by
-  induction fns with
-  | nil => rfl
-  | cons first rest ih => cases first; simp [removeFuns, ih]
-
 mutual
 /-- Tick removal preserves the locations of an expression. This structural helper has no standalone HOL declaration. -/
 theorem removeSing_codeLocations (e : Exp) : codeLocationsExp (removeSing e) = codeLocationsExp e := by
@@ -27,7 +22,9 @@ theorem removeSing_codeLocations (e : Exp) : codeLocationsExp (removeSing e) = c
   | call t ticks dest xs => simp [removeSing, codeLocationsExp, removeList_codeLocations xs]
   | app t loc x xs => simp [removeSing, codeLocationsExp, removeSing_codeLocations x, removeList_codeLocations xs]
   | fn name loc vs arity body => simp [removeSing, codeLocationsExp, removeSing_codeLocations body]
-  | letrec names loc vs fns body => simp [removeSing, codeLocationsExp, removeFuns_codeLocations fns, removeSing_codeLocations body, removeFuns_length]
+  | letrec names loc vs fns body =>
+    have length : (removeFuns fns).length = fns.length := by simp [removeFuns_eq_map]
+    simp [removeSing, codeLocationsExp, removeFuns_codeLocations fns, removeSing_codeLocations body, length]
   | op t op xs => simp [removeSing, codeLocationsExp, removeList_codeLocations xs]
 termination_by sizeOf e
 

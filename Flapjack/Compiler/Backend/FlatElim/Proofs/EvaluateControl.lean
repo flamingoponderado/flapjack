@@ -90,22 +90,6 @@ theorem selectRow_success {C F : Type} (state : FlatSem.State C F)
       exact ⟨pattern, rfl⟩
     · simp [FlatSem.selectRow, matched, distinct] at selected
 
-/-- A row body contributes its lookups to the pattern-row analysis. -/
-theorem findGlobalsPats_member (rows : List (FlatLang.Pat × FlatLang.Exp))
-    (pattern : FlatLang.Pat) (body : FlatLang.Exp) (member : (pattern, body) ∈ rows)
-    (key : Nat) (found : sptMem key (findLookups body)) :
-    sptMem key (findGlobalsPats destGlobalVarLookup rows) := by
-  induction rows with
-  | nil => simp at member
-  | cons row rest ih =>
-    obtain ⟨p, e⟩ := row
-    simp only [List.mem_cons] at member
-    simp only [findGlobalsPats, sptMem_sptUnion]
-    rcases member with same | member
-    · cases same
-      exact Or.inl found
-    · exact Or.inr (ih member)
-
 /-- An Eval-free pattern-row analysis makes each row body Eval-free. -/
 theorem hasEvalPats_member (rows : List (FlatLang.Pat × FlatLang.Exp))
     (pattern : FlatLang.Pat) (body : FlatLang.Exp) (member : (pattern, body) ∈ rows)
@@ -153,12 +137,24 @@ theorem selectRow_invariants {C F : Type} (reachable : NumSet) (state : FlatSem.
     globalsWithin (findLookups body) reachable ∧ hasEval body = false ∧
       bindingsWithin bindings reachable ∧ bindingsNoEval bindings := by
   obtain ⟨pattern, matched⟩ := selectRow_success state rows value noMatch bindings body selected
-  have member := (FlatProps.pmatchRows_imp_pmatch rows state value bindings pattern body matched).2
-  have bindingInvariants := pmatchRows_selected_invariants rows state value bindings pattern body reachable
-    matched valueSafe refsSafe valueClosed refsClosed
-  refine ⟨?_, hasEvalPats_member rows pattern body member rowsSafe, bindingInvariants.2, bindingInvariants.1⟩
-  intro key found
-  exact rowsClosed key (findGlobalsPats_member rows pattern body member key found)
+  obtain ⟨patternMatch, member⟩ :=
+    FlatProps.pmatchRows_imp_pmatch rows state value bindings pattern body matched
+  have mapped : findGlobalsPats destGlobalVarLookup rows =
+      findGlobalsList destGlobalVarLookup (rows.map Prod.snd) := by
+    clear matched selected member rowsClosed rowsSafe
+    induction rows with
+    | nil => rfl
+    | cons row rest ih =>
+      obtain ⟨_, _⟩ := row
+      simp only [List.map_cons, findGlobalsPats, findGlobalsList, ih]
+  exact ⟨pmatchRows_findLookups rows state value bindings pattern body reachable
+      ⟨matched, mapped ▸ rowsClosed⟩,
+    hasEvalPats_member rows pattern body member rowsSafe,
+    pmatch_Match_reachable.1 state pattern value [] bindings reachable
+      ⟨patternMatch, valueClosed,
+        by simp [bindingsWithin, globalsWithin, findValuesGlobals, sptMem, sptDomain], refsClosed⟩,
+    pmatch_not_has_Eval.1 state pattern value [] bindings
+      ⟨patternMatch, valueSafe, refsSafe, by simp [bindingsNoEval]⟩⟩
 
 /-- Row selection can fail only with a type error or the supplied no-match
 exception. -/

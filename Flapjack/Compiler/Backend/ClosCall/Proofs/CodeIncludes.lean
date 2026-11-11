@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.StateExtension
 public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.FiniteMap.SubmapExact
 
 @[expose] public section
 
@@ -33,6 +34,31 @@ Key and value types are independent; lookup uses HOL logical equality. -/
   (fmap_as_finite_support_parameters := [code])]
 def codeIncludes {K V : Type} (al : List (K × V)) (code : HolFiniteMapExact K V) : Prop :=
   ∀ key value, holALookup al key = some value → code.lookup key = some value
+
+/-- Canonical codec for the original code map in inclusion monotonicity. -/
+theorem holFmapAsFiniteSupportParamWitness_codeIncludes_submap_y1 {K V : Type}
+    (y1 : HolFiniteMapExact K V) (key : K) :
+    (ofBroad (toBroad y1) y1.finiteSupport).lookup key = y1.lookup key ∧
+    (ofBroad (toBroad y1) y1.finiteSupport).finiteSupport = y1.finiteSupport ∧
+    ofBroad (toBroad y1) y1.finiteSupport = y1 :=
+  holFmapAsFiniteSupportParamWitness_codeIncludes_code y1 key
+
+/-- Canonical codec for the extended code map in inclusion monotonicity. -/
+theorem holFmapAsFiniteSupportParamWitness_codeIncludes_submap_y2 {K V : Type}
+    (y2 : HolFiniteMapExact K V) (key : K) :
+    (ofBroad (toBroad y2) y2.finiteSupport).lookup key = y2.lookup key ∧
+    (ofBroad (toBroad y2) y2.finiteSupport).finiteSupport = y2.finiteSupport ∧
+    ofBroad (toBroad y2) y2.finiteSupport = y2 :=
+  holFmapAsFiniteSupportParamWitness_codeIncludes_code y2 key
+
+/-- Code inclusion is preserved by finite-map extension. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "code_includes_SUBMAP"
+  (fmap_as_finite_support_parameters := [y1, y2])]
+theorem codeIncludes_submap {K V : Type} (x : List (K × V))
+    (y1 : HolFiniteMapExact K V) (y2 : HolFiniteMapExact K V)
+    (h : codeIncludes x y1 ∧ y1.submap y2) : codeIncludes x y2 := by
+  intro key value found
+  exact h.2 key value (h.1 key value found)
 
 /-- Canonical lookup codec for the map in the state-extension theorem. -/
 theorem holFmapAsFiniteSupportParamWitness_codeIncludes_subg_code {K V : Type}

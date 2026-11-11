@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+public import Flapjack.Misc.ShiftSeq
 public import Mathlib.Data.Set.Lattice
 
 @[expose] public section
@@ -29,6 +30,32 @@ theorem oracleMonotonic_subset {α β γ : Type} (small large : Set α)
     exact ordered.1 i j x y lt (subsets.2 i hx) (subsets.2 j hy)
   · intro i x y hx hy
     exact ordered.2 i x y (subsets.1 hx) (subsets.2 i hy)
+
+/-- Shifting a monotonic oracle preserves its ordering for an initial set
+contained in the previous entry and the original initial set. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "oracle_monotonic_shift_seq"]
+theorem oracleMonotonic_shiftSeq {A B : Type} (f : A → Set B) (r : B → B → Prop) (st : Set B)
+    (co : Nat → A) (stNext : Set B) (i : Nat)
+    (h : oracleMonotonic f r st co ∧ i > 0 ∧ stNext ⊆ f (co (i-1)) ∪ st) :
+    oracleMonotonic f r stNext (Flapjack.holShiftSeq i co) := by
+  obtain ⟨ordered, positive, subset⟩ := h
+  constructor
+  · intro j k x y lt hx hy
+    exact ordered.1 (j+i) (k+i) x y (by omega) hx hy
+  · intro j x y hx hy
+    rcases subset hx with hprev | hold
+    · exact ordered.1 (i-1) (j+i) x y (by omega) hprev hy
+    · exact ordered.2 (j+i) x y hold hy
+
+/-- An irreflexive oracle ordering keeps its initial set disjoint from
+every oracle entry. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "oracle_monotonic_DISJOINT_init"]
+theorem oracleMonotonic_disjointInit {A B : Type} (f : A → Set B) (r : B → B → Prop) (st : Set B)
+    (co : Nat → A) (i : Nat)
+    (h : oracleMonotonic f r st co ∧ ∀ x, ¬ r x x) : Disjoint st (f (co i)) := by
+  apply Set.disjoint_left.mpr
+  intro x hx hy
+  exact h.2 x (h.1.2 i x x hx hy)
 
 /-- Each entry's next compiler state equals the next oracle entry's state. -/
 @[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "is_state_oracle_def"]

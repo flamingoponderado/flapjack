@@ -118,9 +118,7 @@ theorem removeFuns_related (count captured : Nat) (functions : List (Nat × Clos
 theorem removeFuns_all (count captured maxApp : Nat) (functions : List (Nat × ClosLang.Exp)) :
     (removeFuns count captured functions).all (fun (arity, _) => arity ≤ maxApp && arity != 0) =
       functions.all (fun (arity, _) => arity ≤ maxApp && arity != 0) := by
-  induction functions with
-  | nil => rfl
-  | cons function rest ih => cases function; simp [removeFuns, ih]
+  simp [removeFuns_eq_map, Function.comp_def]
 
 /-- Corresponding recursive closures retain their shared indices and captured
 environments. -/

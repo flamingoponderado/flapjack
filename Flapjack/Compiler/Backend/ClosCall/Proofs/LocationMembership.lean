@@ -12,14 +12,18 @@ import Mathlib.Data.List.Perm.Subperm
 namespace Flapjack.Compiler.Backend.ClosCall
 open ClosLang ClosProps
 
-private theorem locations_variables (t : BackendCommon.Tra) (i n : Nat) :
+/-- Generated variable lists contain no code locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "code_locs_GENLIST_Var"]
+theorem locations_variables (n : Nat) (t : BackendCommon.Tra) (i : Nat) :
     codeLocations (variablesSource t i n) = [] := by
   induction n generalizing i with
   | zero => rfl
   | succ n ih =>
     simp [variablesSource, codeLocations_append, ih, codeLocations, codeLocationsExp]
 
-private theorem locations_callsList {A : Type} (fns : List (Nat × A))
+/-- Generated call stubs contain no code locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "code_locs_calls_list"]
+theorem locations_callsList {A : Type} (fns : List (Nat × A))
     (n : Nat) (tr : BackendCommon.Tra) (i : Nat) :
     codeLocations ((callsListSource tr i n fns).map Prod.snd) = [] := by
   induction fns generalizing n i with
@@ -28,8 +32,10 @@ private theorem locations_callsList {A : Type} (fns : List (Nat × A))
     obtain ⟨arity, body⟩ := f
     simp [callsListSource, codeLocations, codeLocationsExp, locations_variables, ih]
 
-private theorem length_callsList {A : Type} (fns : List (Nat × A))
-    (n : Nat) (tr : BackendCommon.Tra) (i : Nat) :
+/-- Generated direct-call stubs preserve the number of input functions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "calls_list_length"]
+theorem length_callsList {A : Type} (tr : BackendCommon.Tra) (i n : Nat)
+    (fns : List (Nat × A)) :
     (callsListSource tr i n fns).length = fns.length := by
   induction fns generalizing n i with
   | nil => rfl
@@ -59,18 +65,6 @@ private theorem varsNone_append (xs ys : List Exp) :
   induction xs with
   | nil => simp [everyFnVarsNone]
   | cons x xs ih => simp [everyFnVarsNone, ih, and_assoc]
-
-private theorem locationSome_reverse (xs : List Exp) :
-    everyFnLocationSome xs.reverse ↔ everyFnLocationSome xs := by
-  induction xs with
-  | nil => simp [everyFnLocationSome]
-  | cons x xs ih => simp [List.reverse_cons, locationSome_append, everyFnLocationSome, ih, and_comm]
-
-private theorem varsNone_reverse (xs : List Exp) :
-    everyFnVarsNone xs.reverse ↔ everyFnVarsNone xs := by
-  induction xs with
-  | nil => simp [everyFnVarsNone]
-  | cons x xs ih => simp [List.reverse_cons, varsNone_append, everyFnVarsNone, ih, and_comm]
 
 /-- Generated variable lists contain no unlocated or annotated functions. -/
 @[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "every_Fn_GENLIST_Var"]
@@ -110,7 +104,11 @@ theorem everyFn_codeList {α β : Type} : ∀ (ls : List (α × Exp)) n (rest : 
       everyFnVarsNone (ls.map Prod.snd) ∧ everyFnVarsNone (rest.2.map (fun p => p.2.2))) := by
   intro ls n rest
   rw [codeList_bodies]
-  simp [locationSome_append, varsNone_append, locationSome_reverse, varsNone_reverse]
+  simp only [locationSome_append, varsNone_append]
+  rw [everyFnLocationSome_every (ls.map Prod.snd).reverse,
+    everyFnLocationSome_every (ls.map Prod.snd),
+    everyFnVarsNone_every (ls.map Prod.snd).reverse, everyFnVarsNone_every (ls.map Prod.snd)]
+  simp only [List.mem_reverse, iff_self, and_self]
 
 /-- Shared structural proof for direct-call annotation preservation. The two
 HOL predicates differ only at function annotations. The `fns` parameter names
@@ -356,6 +354,8 @@ private theorem locations_perm {xs ys : List Exp} (h : xs.Perm ys) :
   simp only [locations_flatMap]
   exact h.flatMap (fun _ _ => List.Perm.refl _)
 
+/-- Flapjack-specific multiplicity infrastructure: the membership theorem alone
+cannot prove the distinctness and location-count consumers. -/
 private theorem codeLocations_codeList_perm {A C : Type} (ls : List (A × Exp))
     (n : Nat) (rest : C × List (Nat × A × Exp)) :
     (codeLocations ((codeListSource n ls rest).2.map (fun t => t.2.2))).Perm
@@ -363,6 +363,14 @@ private theorem codeLocations_codeList_perm {A C : Type} (ls : List (A × Exp))
   rw [codeList_bodies, codeLocations_append, codeLocations_append]
   exact ((locations_perm (List.reverse_perm (ls.map Prod.snd))).append_right _).trans
     List.perm_append_comm
+
+/-- Emitting code preserves membership in the combined set of body locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "code_locs_code_list_MEM"]
+theorem codeLocations_codeList_mem {A C : Type} (ls : List (A × Exp))
+    (n : Nat) (rest : C × List (Nat × A × Exp)) (x : Nat) :
+    x ∈ codeLocations ((codeListSource n ls rest).2.map (fun t => t.2.2)) ↔
+      x ∈ codeLocations (rest.2.map (fun t => t.2.2) ++ ls.map Prod.snd) :=
+  (codeLocations_codeList_perm ls n rest).mem_iff
 
 /-- Moving the bodies into the auxiliary code list preserves location
 distinctness, including when the state and function metadata are polymorphic. -/

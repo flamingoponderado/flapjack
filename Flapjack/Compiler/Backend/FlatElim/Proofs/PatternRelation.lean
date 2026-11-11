@@ -353,23 +353,4 @@ theorem pmatch_not_has_Eval {C F : Type} :
   · intro state patterns values bindings result ⟨matched, valuesSafe, refsSafe, bindingsSafe⟩
     exact (pmatchNoEval_aux state).2 patterns values bindings result matched valuesSafe refsSafe bindingsSafe
 
-/-- The selected row's environment satisfies both invariants needed by the
-flat-elimination evaluation simulation. This combines the original matching
-lemmas with the row-selection definition. -/
-theorem pmatchRows_selected_invariants {C F : Type} (rows : List (FlatLang.Pat × FlatLang.Exp))
-    (state : FlatSem.State C F) (value : FlatSem.Value) (bindings : List (VarN × FlatSem.Value))
-    (pattern : FlatLang.Pat) (body : FlatLang.Exp) (reachable : NumSet)
-    (selected : FlatSem.pmatchRows rows state value = .match (bindings, pattern, body))
-    (valueSafe : valueHasEval value = false) (storeSafe : storeHasNoEval state.refs)
-    (valueReachable : globalsWithin (findValueGlobals value) reachable)
-    (storeReachable : globalsWithin (findRefsGlobals state.refs) reachable) :
-    bindingsNoEval bindings ∧ bindingsWithin bindings reachable := by
-  have matched := (FlatProps.pmatchRows_imp_pmatch rows state value bindings pattern body selected).1
-  constructor
-  · exact pmatch_not_has_Eval.1 state pattern value [] bindings
-      ⟨matched, valueSafe, storeSafe, by simp [bindingsNoEval]⟩
-  · exact pmatch_Match_reachable.1 state pattern value [] bindings reachable
-      ⟨matched, valueReachable, by simp [bindingsWithin, globalsWithin, findValuesGlobals, sptMem, sptDomain],
-        storeReachable⟩
-
 end Flapjack.Compiler.Backend.FlatElim

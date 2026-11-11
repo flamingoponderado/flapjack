@@ -53,87 +53,39 @@ theorem vRelListToValue (es : EvalOracleState) :
         | cons head tail =>
           exact .con (.cons head (.cons ((ih ys).mpr tail) .nil))
 
-private theorem decode_list_encoding (value : Value) (xs : List Value)
-    (decoded : valueToList value = some xs) : value = listToValue xs := by
-  induction xs generalizing value with
-  | nil =>
-    cases value with
-    | conv stamp fields =>
-      cases stamp with
-      | none => simp [valueToList] at decoded
-      | some stamp =>
-        cases fields with
-        | nil =>
-          simp only [valueToList] at decoded
-          split at decoded <;> simp_all [listToValue]
-        | cons head rest =>
-          cases rest with
-          | nil => simp [valueToList] at decoded
-          | cons tail extra =>
-            cases extra with
-            | nil =>
-              simp only [valueToList] at decoded
-              split at decoded <;> simp_all
-            | cons _ _ => simp [valueToList] at decoded
-    | _ => simp [valueToList] at decoded
-  | cons head tail ih =>
-    cases value with
-    | conv stamp fields =>
-      cases stamp with
-      | none => simp [valueToList] at decoded
-      | some stamp =>
-        cases fields with
-        | nil =>
-          simp only [valueToList] at decoded
-          split at decoded <;> simp_all
-        | cons value rest =>
-          cases rest with
-          | nil => simp [valueToList] at decoded
-          | cons next extra =>
-            cases extra with
-            | nil =>
-              simp only [valueToList] at decoded
-              split at decoded <;> simp_all
-              cases result : valueToList next with
-              | none => simp [result] at decoded
-              | some values =>
-                simp [result] at decoded
-                obtain ⟨rfl, rfl⟩ := decoded
-                simp [listToValue, ih next result]
-            | cons _ _ => simp [valueToList] at decoded
-    | _ => simp [valueToList] at decoded
-private theorem related_list_encoding (es : EvalOracleState) (xs : List Value) (y : Value)
-    (related : ValueRel es (listToValue xs) y) :
-    ∃ ys, y = listToValue ys ∧ List.Forall₂ (ValueRel es) xs ys := by
-  induction xs generalizing y with
-  | nil =>
-    simp only [listToValue] at related
-    cases related with
-    | con fields =>
-      cases fields
-      exact ⟨[], rfl, .nil⟩
-  | cons x xs ih =>
-    simp only [listToValue] at related
-    cases related with
-    | con fields =>
-      cases fields with
-      | cons head rest =>
-        cases rest with
-        | cons tail rest =>
-          cases rest
-          obtain ⟨ys, rfl, paired⟩ := ih _ tail
-          exact ⟨_ :: ys, rfl, .cons head paired⟩
-
 /-- Successful list decoding is preserved by the source value relation. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "v_to_list"]
 theorem valueToList_related (es : EvalOracleState) :
     ∀ x y xs, valueToList x = some xs ∧ ValueRel es x y →
       ∃ ys, valueToList y = some ys ∧ List.Forall₂ (ValueRel es) xs ys := by
   intro x y xs ⟨decoded, related⟩
-  have encoding := decode_list_encoding x xs decoded
-  subst x
-  obtain ⟨ys, rfl, paired⟩ := related_list_encoding es xs y related
-  exact ⟨ys, valueToList_listToValue ys, paired⟩
+  induction x using valueToList.induct generalizing y xs with
+  | case1 =>
+    simp only [valueToList, if_true, Option.some.injEq] at decoded
+    subst xs
+    cases related with
+    | con fields =>
+      cases fields
+      exact ⟨[], by simp [valueToList], .nil⟩
+  | case2 stamp ne => simp [valueToList, ne] at decoded
+  | case3 head tail ih =>
+    simp only [valueToList, if_true] at decoded
+    cases related with
+    | con fields =>
+      cases fields with
+      | cons headRel rest =>
+        cases rest with
+        | cons tailRel nilRel =>
+          cases nilRel
+          cases hv : valueToList tail with
+          | none => simp [hv] at decoded
+          | some rest =>
+            simp [hv] at decoded
+            subst xs
+            obtain ⟨ys, target, paired⟩ := ih _ _ hv tailRel
+            exact ⟨_ :: ys, by simp [valueToList, target], .cons headRel paired⟩
+  | case4 stamp head tail ne => simp [valueToList, ne] at decoded
+  | case5 x hnil hcons => simp [valueToList] at decoded
 
 /-- Character-list decoding is unchanged for related source values. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "v_to_char_list"]

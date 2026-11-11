@@ -20,7 +20,7 @@ open OracleInvariant
 /-- A successful local block supplies its bindings to the body, while only
 the body's environment escapes. The body premise is the declaration
 induction hypothesis, including its ordinary invariant and oracle premises. -/
-theorem factoredDecCase_local_success {C F : Type} [Nonempty C]
+private theorem factoredDecCase_local_success {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (genv : GlobalEnv) (baseMap localMap bodyMap : Environment)
     (baseEnv localEnv : SemEnv Value) (source middle last : State F) (flat : FlatSem.State C F)
@@ -60,7 +60,7 @@ theorem factoredDecCase_local_success {C F : Type} [Nonempty C]
 
 /-- Changing the returned compiler environment is irrelevant when the source
 declaration ended in an error. -/
-theorem factoredDecCase_error_changeEnv {C F : Type} [Nonempty C]
+private theorem factoredDecCase_error_changeEnv {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (genv : GlobalEnv) (source last : State F) (flat : FlatSem.State C F)
     (finish next : NextIndices) (other : Set (Nat × IndexKind)) (gen : EnvironmentGenerationStore)
@@ -73,7 +73,7 @@ theorem factoredDecCase_error_changeEnv {C F : Type} [Nonempty C]
   cases impossible
 
 /- Bounded versions retain the source clock bound across nested declarations. -/
-theorem factoredDecBoundedIH_dmod {C F : Type} [Nonempty C]
+private theorem factoredDecBoundedIH_dmod {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (limit : Nat) (moduleName : ModN) (decs : List Dec) (innerIH : FactoredDecBoundedIH (F := F) interp transform limit decs) :
     FactoredDecBoundedIH (F := F) interp transform limit [.dmod moduleName decs] := by
@@ -110,11 +110,25 @@ theorem factoredDecBoundedIH_dmod {C F : Type} [Nonempty C]
   have inner := innerIH genv env innerEnv sourceEnv (moduleName :: trace) source innerLast flat start finish
     innerNext other n innerN gen innerGen innerCode innerResult clockBound innerRun invariant innerCompiled envInv innerSafe
     generation future bounded
-  cases innerResult <;>
-    exact factoredDecCase_liftModule interp transform genv source innerLast flat finish innerNext other innerGen
-      innerEnv moduleName innerCode _ inner
+  cases innerResult with
+  | err error =>
+    exact factoredDecCase_error_changeEnv interp transform genv source innerLast flat finish innerNext other
+      innerGen innerEnv (liftEnv moduleName innerEnv) innerCode error inner
+  | val returnedEnv =>
+    obtain ⟨finalState, finalGenv, flatError, flatRun, states, post, success, _⟩ := inner
+    refine ⟨finalState, finalGenv, flatError, flatRun, states, post, ?_, ?_⟩
+    · intro resultEnv same
+      cases same
+      obtain ⟨noError, ⟨values, valueModules, constructors, constructorModules⟩, finalGen, finalInv⟩ :=
+        success returnedEnv rfl
+      exact ⟨noError, ⟨nsDom_lift_eq moduleName _ _ values,
+        nsDomMod_lift_eq moduleName _ _ valueModules, nsDom_lift_eq moduleName _ _ constructors,
+        nsDomMod_lift_eq moduleName _ _ constructorModules⟩, finalGen,
+        globalEnvInv_lift finalGenv moduleName innerEnv returnedEnv finalInv⟩
+    · intro error impossible
+      cases impossible
 
-theorem factoredDecBoundedIH_dlocal {C F : Type} [Nonempty C]
+private theorem factoredDecBoundedIH_dlocal {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (limit : Nat) (locals body : List Dec) (localIH : FactoredDecBoundedIH (F := F) interp transform limit locals)
     (bodyIH : FactoredDecBoundedIH (F := F) interp transform limit body) :
@@ -150,15 +164,12 @@ theorem factoredDecBoundedIH_dlocal {C F : Type} [Nonempty C]
   have clockFix : EvaluateHOL.fixClock source (EvaluateHOL.evaluateDecs source sourceEnv locals) =
       EvaluateHOL.evaluateDecs source sourceEnv locals :=
     (EvaluateHOL.fixClockEvaluate source sourceEnv [] locals).2
+  rw [localRun] at clockFix
   cases localResult with
   | err error =>
-    have fixed : EvaluateHOL.fixClock source (middle, (Result.err error : Result (SemEnv Value) Value)) =
-        (middle, .err error) := by
-      rw [← localRun]
-      exact clockFix
     have sourceEq : sourceLast = middle ∧ result = .err error := by
       have h := sourceRun
-      simp only [EvaluateHOL.evaluateDecs, localRun, fixed] at h
+      simp only [EvaluateHOL.evaluateDecs, localRun, clockFix] at h
       exact Prod.mk.inj h.symm
     obtain ⟨lastEq, resultEq⟩ := sourceEq
     subst sourceLast
@@ -170,13 +181,9 @@ theorem factoredDecBoundedIH_dlocal {C F : Type} [Nonempty C]
     exact factoredDecCase_error_changeEnv interp transform genv source middle flat finish next2 other gen2
       (extendEnv env2 env1) env2 (code1 ++ code2) error combined
   | val localEnv =>
-    have fixed : EvaluateHOL.fixClock source (middle, (Result.val localEnv : Result (SemEnv Value) Value)) =
-        (middle, .val localEnv) := by
-      rw [← localRun]
-      exact clockFix
     have bodyRun : EvaluateHOL.evaluateDecs middle (extendDecEnv localEnv sourceEnv) body = (sourceLast, result) := by
       have h := sourceRun
-      simpa only [EvaluateHOL.evaluateDecs, localRun, fixed] using h
+      simpa only [EvaluateHOL.evaluateDecs, localRun, clockFix] using h
     have localCase := localIH genv env env1 sourceEnv trace source middle flat start finish next1 other n n1
       gen gen1 code1 (.val localEnv) clockBound localRun invariant localCompiled envInv (by simp) generation firstFuture firstBound
     apply factoredDecCase_local_success interp transform genv env env1 env2 sourceEnv localEnv source middle
@@ -189,7 +196,7 @@ theorem factoredDecBoundedIH_dlocal {C F : Type} [Nonempty C]
 
 /-- Every singleton declaration has a bounded simulation, by structural
 induction on the source declaration and its nested declaration lists. -/
-theorem factoredDecBoundedIH_singleton {C F : Type} [Nonempty C]
+private theorem factoredDecBoundedIH_singleton {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
     (smallerExprs : ∀ n, n < limit → ∀ expr, LocalEnvBoundedIH (F := F) interp transform n expr)
     (smallerDecs : ∀ n, n < limit → ∀ decs, FactoredDecBoundedIH (F := F) interp transform n decs)
@@ -413,45 +420,6 @@ theorem invariantBeginAllocBlanks {C F A : Type} [Nonempty C]
         omega
   simpa [outputNext, globalsEq, startVar] using invariant
 
-/-- Compose whole-program prefix execution with the factored declaration
-simulation. The prepared invariant and oracle conditions are explicit until
-their derivation from the original whole-program precondition is ported. -/
-theorem factoredCompileProg_prepared {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (config : Config) (decs : List Dec) (genv : GlobalEnv) (sourceEnv : SemEnv Value)
-    (source sourceLast : State F) (flat : FlatSem.State C F)
-    (n : Nat) (next : NextIndices) (outEnv : Environment) (outGen : EnvironmentGenerationStore)
-    (body : List FlatLang.Exp) (result : Result (SemEnv Value) Value)
-    (compiled : compileDecs [] 1 { config.next with vidx := config.next.vidx + 1 } config.modEnv
-      ⟨0, config.envs.next, .ln⟩ decs = (n, next, outEnv, outGen, body))
-    (sourceRun : EvaluateHOL.evaluateDecs source sourceEnv decs = (sourceLast, result))
-    (globalsEmpty : flat.globals = []) (refsEmpty : flat.refs = [])
-    (initialEnv : InitialEnv.initGlobalEnvInv genv config.modEnv sourceEnv)
-    (invariant : factoredInvariant interp transform ⟨0, config.envs.next, .ln⟩ genv
-      ({ config.next with vidx := config.next.vidx + 1 }, next, ∅) source
-      { flat with globals := some (.loc true 0) :: List.replicate (next.vidx - config.next.vidx - 1) none,
-                  refs := [.refv (.conv none [])] })
-    (safe : result ≠ .err (.abort .typeError))
-    (generation : envGenRel ⟨0, config.envs.next, .ln⟩ source.evalState)
-    (future : envGenFutureRel interp outGen source.evalState) :
-    ∃ finalFlat nextGenv flatError,
-      FlatSem.evaluateDecs flat (compileProg config decs).2 = (finalFlat, flatError) ∧
-      StateRel nextGenv sourceLast finalFlat ∧
-      (∀ resultEnv, result = .val resultEnv → flatError = none ∧ EnvDomainEq outEnv resultEnv ∧
-        envGenRel outGen sourceLast.evalState ∧ GlobalEnvInv nextGenv outEnv (fun _ => False) resultEnv) ∧
-      (∀ error, result = .err error → ∃ flatErr, flatError = some flatErr ∧
-        ResultRel (fun _ (_ : SemEnv Value) (_ : Unit) => True) nextGenv (.err error) (.err flatErr)) := by
-  obtain ⟨finalFlat, nextGenv, flatError, flatRun, states, _, success, errors⟩ :=
-    factoredCompileDeclarations interp transform decs genv config.modEnv outEnv sourceEnv [] source sourceLast
-      { flat with globals := some (.loc true 0) :: List.replicate (next.vidx - config.next.vidx - 1) none,
-                  refs := [.refv (.conv none [])] }
-      { config.next with vidx := config.next.vidx + 1 } next next ∅ 1 n ⟨0, config.envs.next, .ln⟩ outGen body result
-      sourceRun invariant compiled (initGlobalEnvInv_imp genv config.modEnv sourceEnv initialEnv)
-      safe generation future (idxPrev_refl next)
-  refine ⟨finalFlat, nextGenv, flatError, ?_, states, success, errors⟩
-  rw [evaluateCompileProg_continue flat config decs n next outEnv outGen body globalsEmpty refsEmpty compiled]
-  exact flatRun
-
 /-- Changing the source clock preserves the whole-program precondition. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "precondition1_change_clock"]
 theorem factoredPrecondition1_changeClock {C F A : Type} [Nonempty C]
@@ -508,10 +476,18 @@ theorem factoredCompileProg_correct {C F : Type} [Nonempty C]
     simpa [emptyStore, emptyConfig] using initEvalStateOk_envGenRel source.evalState initialEval
   have future := compileProg_envGenFutureRel interp source.evalState config decs n next outEnv outGen body
     bodyCompiled oracleConfig
-  have actual := factoredCompileProg_prepared interp transform config decs { initGenv with v := blanks }
-    sourceEnv source sourceLast (FlatSem.initialState source.ffi source.clock evalConfig)
-    n next outEnv outGen body result bodyCompiled sourceRun rfl rfl envInv invariant safe generation future
-  obtain ⟨finalFlat, nextGenv, flatError, flatRun, states, success, errors⟩ := actual
+  obtain ⟨finalFlat, nextGenv, flatError, bodyRun, states, _, success, errors⟩ :=
+    factoredCompileDeclarations interp transform decs { initGenv with v := blanks } config.modEnv outEnv
+      sourceEnv [] source sourceLast
+      { FlatSem.initialState source.ffi source.clock evalConfig with
+        globals := blanks, refs := [.refv (.conv none [])] }
+      { config.next with vidx := config.next.vidx + 1 } next next ∅ 1 n ⟨0, config.envs.next, .ln⟩ outGen body result
+      sourceRun invariant bodyCompiled
+      (initGlobalEnvInv_imp _ config.modEnv sourceEnv envInv) safe generation future (idxPrev_refl next)
+  have flatRun : FlatSem.evaluateDecs (FlatSem.initialState source.ffi source.clock evalConfig)
+      (compileProg config decs).2 = (finalFlat, flatError) := by
+    rw [evaluateCompileProg_continue _ config decs n next outEnv outGen body rfl rfl bodyCompiled]
+    exact bodyRun
   refine ⟨FlatSem.initialState source.ffi source.clock evalConfig, finalFlat, nextGenv, flatError,
     rfl, ?_, states, ?_, ?_⟩
   · simpa [compiled] using flatRun
@@ -528,17 +504,17 @@ theorem factoredCompileProg_correct {C F : Type} [Nonempty C]
       | raise related => exact .raise related
       | abort error => exact .abort error
 
-/-- Source type safety at every clock rules out a flat type error at every
-clock for the compiled program, over the factored simulation relations. -/
-theorem factoredCompileProg_noTypeError {C F : Type} [Nonempty C]
+/-- The compiled flat program cannot have failure behavior when the source
+program is safe, under the factored source-to-flat preconditions. -/
+theorem factoredCompileProg_semantics_ne_fail {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (source : State F) (sourceEnv : SemEnv Value) (config outputConfig : Config)
     (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (flatDecs : List FlatLang.Exp)
     (precondition : FactoredPrecondition1 interp transform source sourceEnv config evalConfig decs)
     (compiled : compileProg config decs = (outputConfig, flatDecs))
     (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv decs .fail) :
-    ∀ clock, (FlatSem.evaluateDecs (FlatSem.initialState source.ffi clock evalConfig) flatDecs).2 ≠
-      some (.abort .typeError) := by
+    FlatSem.semantics evalConfig source.ffi flatDecs ≠ .fail := by
+  apply FlatSem.semantics_ne_fail evalConfig source.ffi flatDecs
   intro clock
   generalize sourceRun : EvaluateHOL.evaluateDecs { source with clock } sourceEnv decs = resultPair
   obtain ⟨sourceLast, result⟩ := resultPair
@@ -562,24 +538,10 @@ theorem factoredCompileProg_noTypeError {C F : Type} [Nonempty C]
     obtain ⟨flatErr, eq, notTypeError, _⟩ := errors error rfl
     simp [eq, notTypeError]
 
-/-- The compiled flat program cannot have failure behavior when the source
-program is safe, under the factored source-to-flat preconditions. -/
-theorem factoredCompileProg_semantics_ne_fail {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (source : State F) (sourceEnv : SemEnv Value) (config outputConfig : Config)
-    (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (flatDecs : List FlatLang.Exp)
-    (precondition : FactoredPrecondition1 interp transform source sourceEnv config evalConfig decs)
-    (compiled : compileProg config decs = (outputConfig, flatDecs))
-    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv decs .fail) :
-    FlatSem.semantics evalConfig source.ffi flatDecs ≠ .fail := by
-  exact FlatSem.semantics_ne_fail evalConfig source.ffi flatDecs
-    (factoredCompileProg_noTypeError interp transform source sourceEnv config outputConfig
-      evalConfig decs flatDecs precondition compiled safe)
-
 /-- Every terminating flat observation is a source-program observation,
 including the outcome and complete FFI event list. This uses the preliminary
 factored simulation relations. -/
-theorem factoredCompileProg_semantics_terminate {C F : Type} [Nonempty C]
+private theorem factoredCompileProg_semantics_terminate {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (source : State F) (sourceEnv : SemEnv Value) (config outputConfig : Config)
     (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (flatDecs : List FlatLang.Exp)
@@ -628,58 +590,8 @@ theorem factoredCompileProg_semantics_terminate {C F : Type} [Nonempty C]
         | ffiError event => simpa using flatOutcome
   · simpa [equalFfi] using eventEq
 
-/-- Divergence of the flat program forces the source run to time out at
-every clock, under the factored compilation conditions. -/
-theorem factoredCompileProg_diverge_sourceTimeout {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (source : State F) (sourceEnv : SemEnv Value) (config outputConfig : Config)
-    (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (flatDecs : List FlatLang.Exp)
-    (precondition : FactoredPrecondition1 interp transform source sourceEnv config evalConfig decs)
-    (compiled : compileProg config decs = (outputConfig, flatDecs))
-    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv decs .fail)
-    (events : HolLList HolIoEvent)
-    (diverges : FlatSem.semantics evalConfig source.ffi flatDecs = .diverge events) :
-    ∀ clock, ∃ ffi, Flapjack.SemanticsHOL.evaluateProgWithClock source sourceEnv clock decs =
-      (ffi, .err (.abort .timeoutError)) := by
-  have noTerm := (FlatSem.semantics_diverge evalConfig source.ffi flatDecs events diverges).1
-  intro clock
-  generalize sourceRun : EvaluateHOL.evaluateDecs { source with clock } sourceEnv decs = sourcePair
-  obtain ⟨sourceLast, result⟩ := sourcePair
-  have sourceSafe : result ≠ .err (.abort .typeError) := by
-    intro error
-    apply safe
-    change ∃ k, (Flapjack.SemanticsHOL.evaluateProgWithClock source sourceEnv k decs).2 =
-      .err (.abort .typeError)
-    refine ⟨clock, ?_⟩
-    simp [Flapjack.SemanticsHOL.evaluateProgWithClock, sourceRun, error]
-  obtain ⟨initialFlat, flatLast, genv, flatResult, initialEq, flatRun, _, success, errors⟩ :=
-    factoredCompileProg_correct interp transform { source with clock } sourceLast sourceEnv config outputConfig
-      evalConfig decs flatDecs result
-      ⟨factoredPrecondition1_changeClock interp transform source sourceEnv config evalConfig decs clock precondition,
-        compiled, sourceRun, sourceSafe⟩
-  subst initialFlat
-  have timeout : result = .err (.abort .timeoutError) := by
-    cases result with
-    | val env =>
-      have eq := success env rfl
-      subst flatResult
-      exact False.elim (noTerm clock flatLast none .success flatRun rfl)
-    | err error =>
-      obtain ⟨flatError, eq, _, related⟩ := errors error rfl
-      subst flatResult
-      cases related with
-      | raise related =>
-        exact False.elim (noTerm clock flatLast (some (.raise _)) .success flatRun rfl)
-      | abort error =>
-        cases error with
-        | typeError => exact False.elim (sourceSafe rfl)
-        | timeoutError => rfl
-        | ffiError event =>
-          exact False.elim (noTerm clock flatLast (some (.abort (.ffiError event))) (.ffiOutcome event) flatRun rfl)
-  exact ⟨sourceLast.ffi, by simp [Flapjack.SemanticsHOL.evaluateProgWithClock, sourceRun, timeout]⟩
-
 /-- Every clock produces the same FFI state in the source and flat runs. -/
-theorem factoredCompileProg_clockFfi {C F : Type} [Nonempty C]
+private theorem factoredCompileProg_clockFfi {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (source : State F) (sourceEnv : SemEnv Value) (config outputConfig : Config)
     (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (flatDecs : List FlatLang.Exp)
@@ -709,7 +621,7 @@ theorem factoredCompileProg_clockFfi {C F : Type} [Nonempty C]
 
 /-- A flat divergence observation is a source divergence observation,
 including equality of the complete least-upper-bound event trace. -/
-theorem factoredCompileProg_semantics_diverge {C F : Type} [Nonempty C]
+private theorem factoredCompileProg_semantics_diverge {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (source : State F) (sourceEnv : SemEnv Value) (config outputConfig : Config)
     (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (flatDecs : List FlatLang.Exp)
@@ -719,25 +631,62 @@ theorem factoredCompileProg_semantics_diverge {C F : Type} [Nonempty C]
     (events : HolLList HolIoEvent)
     (diverges : FlatSem.semantics evalConfig source.ffi flatDecs = .diverge events) :
     Flapjack.SemanticsHOL.semanticsProg source sourceEnv decs (.diverge events) := by
-  refine ⟨factoredCompileProg_diverge_sourceTimeout interp transform source sourceEnv config outputConfig
-    evalConfig decs flatDecs precondition compiled safe events diverges, ?_⟩
-  have eventEq := (FlatSem.semantics_diverge evalConfig source.ffi flatDecs events diverges).2
-  have families : (fun trace => ∃ clock,
-      trace = HolLList.fromList (FlatSem.evaluateDecs (FlatSem.initialState source.ffi clock evalConfig) flatDecs).1.ffi.ioEvents) =
-      (fun trace => ∃ clock,
-        HolLList.fromList (Flapjack.SemanticsHOL.evaluateProgWithClock source sourceEnv clock decs).1.ioEvents = trace) := by
-    funext trace
-    apply propext
-    constructor <;> rintro ⟨clock, eq⟩ <;> refine ⟨clock, ?_⟩
-    · rw [factoredCompileProg_clockFfi interp transform source sourceEnv config outputConfig
-        evalConfig decs flatDecs precondition compiled safe clock]
-      exact eq.symm
-    · rw [factoredCompileProg_clockFfi interp transform source sourceEnv config outputConfig
-        evalConfig decs flatDecs precondition compiled safe clock] at eq
-      exact eq.symm
-  rw [families] at eventEq
-  rw [eventEq]
-  exact HolLList.buildLprefixLub_thm (Flapjack.SemanticsProps.evaluateProg_ioEventsChain source sourceEnv decs)
+  refine ⟨?_, ?_⟩
+  ·
+    have noTerm := (FlatSem.semantics_diverge evalConfig source.ffi flatDecs events diverges).1
+    intro clock
+    generalize sourceRun : EvaluateHOL.evaluateDecs { source with clock } sourceEnv decs = sourcePair
+    obtain ⟨sourceLast, result⟩ := sourcePair
+    have sourceSafe : result ≠ .err (.abort .typeError) := by
+      intro error
+      apply safe
+      change ∃ k, (Flapjack.SemanticsHOL.evaluateProgWithClock source sourceEnv k decs).2 =
+        .err (.abort .typeError)
+      refine ⟨clock, ?_⟩
+      simp [Flapjack.SemanticsHOL.evaluateProgWithClock, sourceRun, error]
+    obtain ⟨initialFlat, flatLast, genv, flatResult, initialEq, flatRun, _, success, errors⟩ :=
+      factoredCompileProg_correct interp transform { source with clock } sourceLast sourceEnv config outputConfig
+        evalConfig decs flatDecs result
+        ⟨factoredPrecondition1_changeClock interp transform source sourceEnv config evalConfig decs clock precondition,
+          compiled, sourceRun, sourceSafe⟩
+    subst initialFlat
+    have timeout : result = .err (.abort .timeoutError) := by
+      cases result with
+      | val env =>
+        have eq := success env rfl
+        subst flatResult
+        exact False.elim (noTerm clock flatLast none .success flatRun rfl)
+      | err error =>
+        obtain ⟨flatError, eq, _, related⟩ := errors error rfl
+        subst flatResult
+        cases related with
+        | raise related =>
+          exact False.elim (noTerm clock flatLast (some (.raise _)) .success flatRun rfl)
+        | abort error =>
+          cases error with
+          | typeError => exact False.elim (sourceSafe rfl)
+          | timeoutError => rfl
+          | ffiError event =>
+            exact False.elim (noTerm clock flatLast (some (.abort (.ffiError event))) (.ffiOutcome event) flatRun rfl)
+    exact ⟨sourceLast.ffi, by simp [Flapjack.SemanticsHOL.evaluateProgWithClock, sourceRun, timeout]⟩
+  ·
+    have eventEq := (FlatSem.semantics_diverge evalConfig source.ffi flatDecs events diverges).2
+    have families : (fun trace => ∃ clock,
+        trace = HolLList.fromList (FlatSem.evaluateDecs (FlatSem.initialState source.ffi clock evalConfig) flatDecs).1.ffi.ioEvents) =
+        (fun trace => ∃ clock,
+          HolLList.fromList (Flapjack.SemanticsHOL.evaluateProgWithClock source sourceEnv clock decs).1.ioEvents = trace) := by
+      funext trace
+      apply propext
+      constructor <;> rintro ⟨clock, eq⟩ <;> refine ⟨clock, ?_⟩
+      · rw [factoredCompileProg_clockFfi interp transform source sourceEnv config outputConfig
+          evalConfig decs flatDecs precondition compiled safe clock]
+        exact eq.symm
+      · rw [factoredCompileProg_clockFfi interp transform source sourceEnv config outputConfig
+          evalConfig decs flatDecs precondition compiled safe clock] at eq
+        exact eq.symm
+    rw [families] at eventEq
+    rw [eventEq]
+    exact HolLList.buildLprefixLub_thm (Flapjack.SemanticsProps.evaluateProg_ioEventsChain source sourceEnv decs)
 
 /-- A pair has a given second component exactly when it can be decomposed with it. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "SND_eq"]

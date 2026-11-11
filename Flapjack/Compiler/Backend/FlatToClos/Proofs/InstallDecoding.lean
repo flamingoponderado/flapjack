@@ -9,28 +9,6 @@ public import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
 /-! Installation payload decoding across the proof-side value relation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
 
-private theorem byteList_related (bytes : List (BitVec 8)) (target : List ClosSem.Value)
-    (related : List.Forall₂ ValueRel (bytes.map (FlatSem.Value.litv ∘ Flapjack.AstHOL.Lit.word8)) target) :
-    target = bytes.map (fun byte => ClosSem.Value.number byte.toNat) := by
-  induction bytes generalizing target with
-  | nil => cases related; rfl
-  | cons byte bytes ih =>
-    cases related with
-    | cons head tail =>
-      cases head
-      simp [ih _ tail]
-
-private theorem wordList_related (words : List (BitVec 64)) (target : List ClosSem.Value)
-    (related : List.Forall₂ ValueRel (words.map (FlatSem.Value.litv ∘ Flapjack.AstHOL.Lit.word64)) target) :
-    target = words.map ClosSem.Value.word64 := by
-  induction words generalizing target with
-  | nil => cases related; rfl
-  | cons word words ih =>
-    cases related with
-    | cons head tail =>
-      cases head
-      simp [ih _ tail]
-
 /-- Related flat and closure values decode to the same installation bytes. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "v_rel_to_bytes"]
 theorem installBytes_related {α : Type} [Nonempty α] (source : FlatSem.Value) (target : ClosSem.Value)
@@ -42,7 +20,18 @@ theorem installBytes_related {α : Type} [Nonempty α] (source : FlatSem.Value) 
   have listDecoded := (FlatSem.valueToBytes_eq_some source bytes).1 decoded
   obtain ⟨values, targetDecoded, valuesRelated⟩ := valueToList_related source target _ related listDecoded
   apply (ClosSem.valueToBytes_eq_some target bytes).2
-  simpa [byteList_related bytes values valuesRelated] using targetDecoded
+  have same : values = bytes.map (fun byte => ClosSem.Value.number byte.toNat) := by
+    clear decoded listDecoded targetDecoded
+    induction bytes generalizing values with
+    | nil =>
+      cases valuesRelated
+      rfl
+    | cons byte rest ih =>
+      cases valuesRelated with
+      | cons head tail =>
+        cases head
+        simp [ih _ tail]
+  simpa [same] using targetDecoded
 
 /-- Related flat and closure values decode to the same installation words. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "v_rel_to_words"]
@@ -55,6 +44,17 @@ theorem installWords_related {α : Type} [Nonempty α] (source : FlatSem.Value) 
   have listDecoded := (FlatSem.valueToWords_eq_some source words).1 decoded
   obtain ⟨values, targetDecoded, valuesRelated⟩ := valueToList_related source target _ related listDecoded
   apply (ClosSem.valueToWords_eq_some target words).2
-  simpa [wordList_related words values valuesRelated] using targetDecoded
+  have same : values = words.map ClosSem.Value.word64 := by
+    clear decoded listDecoded targetDecoded
+    induction words generalizing values with
+    | nil =>
+      cases valuesRelated
+      rfl
+    | cons word rest ih =>
+      cases valuesRelated with
+      | cons head tail =>
+        cases head
+        simp [ih _ tail]
+  simpa [same] using targetDecoded
 
 end Flapjack.Compiler.Backend.FlatToClos

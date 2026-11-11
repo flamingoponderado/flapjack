@@ -18,16 +18,6 @@ theorem removeList_eq_map (bound : Nat) (expressions : List Exp) :
   | nil => rfl
   | cons first rest ih => simp [removeList, ih]
 
-/-- The recursive bundle traversal preserves arities and source order. -/
-theorem removeFuns_eq_map (count captured : Nat) (functions : List (Nat × Exp)) :
-    removeFuns count captured functions =
-      functions.map (fun (arity, body) => (arity, removeSing (arity + count + captured) body)) := by
-  induction functions with
-  | nil => rfl
-  | cons function rest ih =>
-    obtain ⟨arity, body⟩ := function
-    simp [removeFuns, ih]
-
 /-- Every successful bounded traversal agrees with the total source traversal. -/
 theorem removeFuel_eq_source (fuel bound : Nat) (expression result : Exp)
     (run : removeFuel fuel bound expression = some result) : result = removeSing bound expression := by

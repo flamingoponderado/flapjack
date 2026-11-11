@@ -148,9 +148,11 @@ theorem inlineApplicationSimulation {C F : Type} (trace : BackendCommon.Tra)
               | false => rfl
               | true =>
                 have sourcePure : ClosLang.pureList [x] = true := by simpa [ClosLang.pureList] using hp
-                obtain ⟨_, impossible, _⟩ := evaluate_pure [x] env1full middle next (.err error)
-                  sourcePure fnRun fnNoType
-                cases impossible
+                obtain ⟨_, outcome⟩ := evaluatePure [x] env1full middle (.err error) next
+                  ⟨fnRun, by simpa [ClosLang.pureList_eq_all, List.all_eq_true] using sourcePure⟩
+                rcases outcome with ⟨impossible, _⟩ | bad
+                · cases impossible
+                · exact False.elim (fnNoType bad)
             refine ⟨.err targetError, targetNext, ?_, fnRel, nextState, nextGlobals, nextStateOracle, nextOracle⟩
             simpa [impure] using InlineLetEvaluation.inlineLetFunctionError
               (BackendCommon.mkCons trace 0) (argsEas.map Prod.fst) fnExp

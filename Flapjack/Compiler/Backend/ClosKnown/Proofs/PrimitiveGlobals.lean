@@ -122,24 +122,6 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
       (∀ s : State C F, State.ofBroad s.toBroad = s) :=
   ClosSem.holFmapAsFiniteSupportWitness
 
-/-- The integer-constant case of primitive safety retains both the successful
-result and raised-exception conclusions of the source theorem. -/
-@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
-  (fmap_as_finite_support := [refs, code])]
-theorem doAppSsgcIntConst {C F : Type} (i : Int) (args : List ClosSem.Value)
-    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
-    (h : doApp (.intOp (.const i)) args s0 = res ∧
-      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
-    (∀ v s, res = .val (v, s) →
-      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
-        mglobalsExtend s0.globals {k | opGlobalBag (.intOp (.const i)) k ≠ 0} s.globals) ∧
-    (∀ v, res = .err (.raise v) → vsgcFree v) := by
-  rcases h with ⟨rfl, _, stateSafe⟩
-  cases args with
-  | nil =>
-    simp [ClosSem.doApp, applyNumeric, doIntApp, vsgcFree, stateSafe, mglobalsExtendRefl]
-  | cons x xs => simp [ClosSem.doApp, applyNumeric, doIntApp]
-
 /-- Every successful integer operation yields a safe scalar or Boolean value.
 This is proof infrastructure for the source primitive-safety theorem. -/
 private theorem intResultSafe (op : ClosLang.IntOp) (args : List ClosSem.Value)
@@ -203,21 +185,6 @@ theorem doAppSsgcWordOp {C F : Type} (op : ClosLang.WordOp) (args : List ClosSem
   | some value =>
     have valueSafe := wordResultSafe op args value found
     simp [ClosSem.doApp, applyNumeric, found, valueSafe, stateSafe, mglobalsExtendRefl]
-
-/-- The constructor case builds a safe block from safe arguments. -/
-@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "do_app_ssgc"
-  (fmap_as_finite_support := [refs, code])]
-theorem doAppSsgcCons {C F : Type} (tag : Nat) (args : List ClosSem.Value)
-    (s0 : State C F) (res : Result (ClosSem.Value × State C F) ClosSem.Value)
-    (h : doApp (.blockOp (.cons tag)) args s0 = res ∧
-      (∀ value ∈ args, vsgcFree value) ∧ ssgcFree s0) :
-    (∀ v s, res = .val (v, s) →
-      vsgcFree v ∧ ssgcFree s ∧ s.compileOracle = s0.compileOracle ∧
-        mglobalsExtend s0.globals {k | opGlobalBag (.blockOp (.cons tag)) k ≠ 0} s.globals) ∧
-    (∀ v, res = .err (.raise v) → vsgcFree v) := by
-  rcases h with ⟨rfl, argsSafe, stateSafe⟩
-  simp [ClosSem.doApp, applyBlock, vsgcFree, stateSafe, mglobalsExtendRefl]
-  exact argsSafe
 
 /-- Literal constants contain no global-writing closures. -/
 private theorem makeConstSafe (constant : ClosLang.Const) : vsgcFree (makeConst constant) := by

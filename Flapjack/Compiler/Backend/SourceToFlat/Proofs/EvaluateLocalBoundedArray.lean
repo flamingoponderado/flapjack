@@ -147,7 +147,7 @@ theorem localEnvBounded_aallocEmpty {C F : Type} [Nonempty C]
           (.varray []) (.varray []) (.varray .nil)
         have finalInvariant := factoredInvariant_changeStores interp transform gen nextGenv (start, finish, other)
           nextSource nextFlat (storeAlloc (.varray []) nextSource.refs).1
-          (storeAlloc (.varray []) nextFlat.refs).1 nextInvariant stateRel reserved
+          (storeAlloc (.varray []) nextFlat.refs).1 nextSource.ffi nextFlat.ffi nextInvariant stateRel reserved
         have locationRel : ValueRel nextGenv (.loc true (storeAlloc (.varray []) nextSource.refs).2)
             (.loc true (storeAlloc (.varray []) nextFlat.refs).2) := by
           rw [offset]

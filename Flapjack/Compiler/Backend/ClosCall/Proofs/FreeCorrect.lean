@@ -1,8 +1,8 @@
 module
 
-public import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeTotal
+public import Flapjack.Compiler.Backend.ClosCall.Free
+public import Flapjack.Compiler.Backend.ClosKnown.Inline.Free.Correct
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.FreeVars
-public import Flapjack.Compiler.Backend.DbVars.Proofs.Lookup
 public import Mathlib.Tactic
 
 @[expose] public section
@@ -11,23 +11,12 @@ public import Mathlib.Tactic
 namespace Flapjack.Compiler.Backend.ClosCall
 open ClosLang ClosProps DbVars
 
-/-- Free-variable annotation preserves the length of an expression list. -/
-theorem freeListFuel_length (fuel : Nat) (es result : List Exp) (vars : DbVarSet)
-    (run : freeListFuel fuel es = some (result, vars)) : result.length = es.length := by
-  induction fuel generalizing es result vars with
-  | zero =>
-    cases es with
-    | nil => simp [freeListFuel] at run; obtain ⟨rfl, _⟩ := run; rfl
-    | cons e es => simp [freeListFuel] at run
-  | succ fuel ih =>
-    cases es with
-    | nil => simp [freeListFuel] at run; obtain ⟨rfl, _⟩ := run; rfl
-    | cons e es =>
-      simp only [freeListFuel, Bind.bind, Option.bind_eq_some_iff, Pure.pure,
-        Option.some.injEq, Prod.mk.injEq] at run
-      obtain ⟨⟨e', a⟩, _, ⟨es', b⟩, hs, rfl, _⟩ := run
-      simp only [List.length_cons]
-      exact congrArg Nat.succ (ih es es' b hs)
+/-- Pointwise agreement on a list preserves existence over that list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "IMP_EXISTS_IFF"]
+theorem impExistsIff {A : Type} (P Q : A → Prop) (xs : List A)
+    (agree : ∀ x ∈ xs, P x ↔ Q x) :
+    (∃ x, x ∈ xs ∧ P x) ↔ ∃ x, x ∈ xs ∧ Q x := by
+  exact exists_congr fun x => and_congr_right (agree x)
 
 private theorem freeFuns_agreement (fuel count : Nat)
     (agree : ∀ (e result : Exp) (vars : DbVarSet), freeFuel fuel e = some (result, vars) →
@@ -66,7 +55,7 @@ mutual
 /-- On success, free-variable analysis computes membership for both the
 original expression and the annotated result. HOL's analysis is total;
 the success premise records the executable traversal's fuel. -/
-theorem freeFuel_freeVars (fuel : Nat) (e result : Exp) (vars : DbVarSet)
+private theorem freeFuel_freeVars (fuel : Nat) (e result : Exp) (vars : DbVarSet)
     (run : freeFuel fuel e = some (result, vars)) :
     ∀ n, (freeVarExp n e ↔ hasVar n vars = true) ∧
       (freeVarExp n result ↔ hasVar n vars = true) := by
@@ -151,7 +140,7 @@ termination_by fuel
 
 /-- The list traversal computes the same free variables before and after
 annotation. -/
-theorem freeListFuel_freeVars (fuel : Nat) (es result : List Exp) (vars : DbVarSet)
+private theorem freeListFuel_freeVars (fuel : Nat) (es result : List Exp) (vars : DbVarSet)
     (run : freeListFuel fuel es = some (result, vars)) :
     ∀ n, (freeVars n es ↔ hasVar n vars = true) ∧
       (freeVars n result ↔ hasVar n vars = true) := by
@@ -174,8 +163,25 @@ theorem freeListFuel_freeVars (fuel : Nat) (es result : List Exp) (vars : DbVarS
 termination_by fuel
 end
 
+/-- The source free-variable traversal preserves membership and computes its
+exact variable set. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "free_thm"]
+theorem freeThm (expressions : List Exp) :
+    let (output, vars) := free expressions
+    ∀ n, (freeVars n output ↔ hasVar n vars = true) ∧
+      (freeVars n expressions ↔ hasVar n vars = true) := by
+  obtain ⟨⟨output, vars⟩, run⟩ :=
+    freeListFuel_succeeds (listBudget expressions + 1) expressions (Nat.lt_succ_self _)
+  have sourceEq : (output, vars) = free expressions :=
+    (ClosKnown.freeFuel_correct _).2 expressions output vars run
+  rw [← sourceEq]
+  intro n
+  have agreement := freeListFuel_freeVars _ expressions output vars run n
+  exact ⟨agreement.2, agreement.1⟩
+
+
 /-- The production retry wrapper retains free-variable agreement. -/
-theorem freeBounded_freeVars (fuel : Nat) (e result : Exp) (vars : DbVarSet)
+private theorem freeBounded_freeVars (fuel : Nat) (e result : Exp) (vars : DbVarSet)
     (run : freeBounded fuel e = some (result, vars)) :
     ∀ n, (freeVarExp n e ↔ hasVar n vars = true) ∧
       (freeVarExp n result ↔ hasVar n vars = true) := by
@@ -208,7 +214,7 @@ private theorem materializedEmpty_iff (vars : DbVarSet) :
 
 /-- The executable closedness check succeeds exactly when its input has no
 free variables. -/
-theorem closedFuel_iff_noFreeVars (fuel : Nat) (e : Exp) :
+private theorem closedFuel_iff_noFreeVars (fuel : Nat) (e : Exp) :
     closedFuel fuel e = some true ↔ ∀ n, ¬ freeVarExp n e := by
   obtain ⟨⟨result, vars⟩, run⟩ := freeBounded_succeeds fuel e
   have agreement := freeBounded_freeVars fuel e result vars run
@@ -224,7 +230,7 @@ theorem closedFuel_iff_noFreeVars (fuel : Nat) (e : Exp) :
 
 /-- A closure is reported closed precisely when its body has no free
 variable beyond its argument prefix. -/
-theorem closedFuel_fn (fuel : Nat) (name : Flapjack.Basis.Pure.MlString.MlString)
+private theorem closedFuel_fn (fuel : Nat) (name : Flapjack.Basis.Pure.MlString.MlString)
     (loc : Option Nat) (vars : Option (List Nat)) (arity : Nat) (body : Exp) :
     closedFuel fuel (.fn name loc vars arity body) = some true ↔
       ∀ n, freeVarExp n body → n < arity := by
@@ -239,5 +245,32 @@ theorem closedFuel_fn (fuel : Nat) (name : Flapjack.Basis.Pure.MlString.MlString
   · intro bound n free
     have := bound (n + arity) free
     omega
+
+/-- A source function is closed exactly when its body's free variables lie
+inside its argument prefix. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "closed_Fn_fv"]
+theorem closedFn_fv (name : Flapjack.Basis.Pure.MlString.MlString)
+    (loc : Option Nat) (vars : Option (List Nat)) (arity : Nat) (body : Exp) :
+    closed (.fn name loc vars arity body) = true ↔
+      ∀ n, freeVars n [body] → n < arity := by
+  have bridge := ClosKnown.closedFuel_correct 0 (.fn name loc vars arity body)
+  have result := closedFuel_fn 0 name loc vars arity body
+  rw [bridge] at result
+  simpa [closed, freeVars] using result
+
+/-- Source closedness is characterized by the body's computed variable set. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "closed_Fn"]
+theorem closedFn (name : Flapjack.Basis.Pure.MlString.MlString)
+    (loc : Option Nat) (vars : Option (List Nat)) (arity : Nat) (body : Exp) :
+    closed (.fn name loc vars arity body) = true ↔
+      ∀ n, hasVar n (free [body]).2 = true → n < arity := by
+  rw [closedFn_fv]
+  have correct := freeThm [body]
+  cases result : free [body] with
+  | mk output live =>
+    rw [result] at correct
+    constructor <;> intro h n member
+    · exact h n ((correct n).2.mpr member)
+    · exact h n ((correct n).2.mp member)
 
 end Flapjack.Compiler.Backend.ClosCall

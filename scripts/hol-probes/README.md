@@ -263,7 +263,8 @@ operations used by closure annotation, including sparse-tree traversal order.
 singleton/list equations, length and compiler definitions, code, function,
 value, reference and state relations, a typed replay of the local clock-decrement
 lemma, the inferred types of transcribed local primitive, payload-decoding,
-installation and thunk-update statements, closure inspection, evaluator simulation and whole-program correctness
+installation and thunk-update statements, closure inspection, the application
+arity preservation theorem, evaluator simulation and whole-program correctness
 statement. The local statement captures are not HOL proof replays. These
 captures support review; the evaluator proof covers the empty-list, sequencing,
 variable, conditional, let, raise, handler, function, recursive-let,
@@ -323,8 +324,10 @@ approximation lookup and update definitions, the source approximation merge and
 known-operation definition,
 the original closure-detection
 traversal, the inliner size definitions and their HOL properties, recursive
-closure approximation generation, tick construction, and the
-free-variable and inlining-decision definitions, plus the free-variable-bound
+closure approximation generation, tick construction and its code-label and
+syntax-preservation theorems, application-bound approximation definitions and
+the non-inlineable closure theorem, the free-variable and inlining-decision
+definitions, plus the free-variable-bound
 and approximation-to-value relations and their source theorems. Regenerate with
 `HOL_PROBE_ONLY=clos_known_syntax_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
@@ -723,7 +726,15 @@ exported global-invariant equation and replay its original simplifier derivation
 
 `clos_call_frontend_probe.out` captures the typed direct-call traversal and compiler entry points, closure free-variable annotations, direct-call conversion, effectful calls, mutually recursive code extraction, and enabled and disabled incremental conversion. `ClosCallParity` replays both conditional results through the total entry point and the enabled result at two fuel values through the bounded executable. `full_clos_call_cake_word_probe.out` captures the complete word program for a nested-function CakeML declaration with direct-call conversion and the ported BVL/BVI optimizations enabled; known-function optimization is disabled.
 
-`clos_call_code_list_probe.out` captures the polymorphic source type and typed label-accounting theorems for the direct-call code-list helper, the typed `insert_each` equations, and a concrete example replayed by the executable-pass parity tests.
+`clos_call_scalar_lists_probe.out` replays the two local closure-call byte-list and
+word-list relation lemmas with inferred types shown. Regenerate with
+`HOL_PROBE_ONLY=clos_call_scalar_lists_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`clos_call_install_probe.out` captures the full typed direct-call code and state
+installation simulation. Regenerate with
+`HOL_PROBE_ONLY=clos_call_install_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`clos_call_code_list_probe.out` captures typed replays of the local existential congruence, distinctness, and accumulator-suffix theorems and the inferred full `calls_correct` statement, including the independent type of its unused application binder, typed original-proof replays of the generated-stub and code-list location lemmas, the typed oracle-union theorem, finite-map list-update definition, whole-program direct-call semantics theorems, nth-code and union/update statements, the state-syntax definition and preservation theorems, and the whole-pass arity and label preservation statements. It also captures the polymorphic source type and typed label-accounting theorems for the direct-call code-list helper, the typed `insert_each` equations, the full list and singleton direct-call purity theorems, the well-formed-state extension lemmas, the inferred code-state constructor and pure-evaluation correctness statements, the typed replay of the local reference-relation lemma, the independently typed result-predicate equations, closure-evaluation clock-extension and code-growth theorems, successor-set and sparse-subtree domain lemmas, and a concrete example replayed by the executable-pass parity tests.
 
 `clos_call_wfg_probe.out` captures the inferred polymorphic compiler-state and recursive-closure invariants, state-extension, code-inclusion and location-traversal definitions, and their structural theorems. Its state-extension, code-inclusion and location-order cases are replayed in Lean.
 
@@ -9915,3 +9926,10 @@ The capture supports source comparison; it does not establish Lean correspondenc
 `code_locs_code_list_ALL_DISTINCT` proof and captures its independent
 polymorphic metadata and state types for statement comparison. It also captures
 the known-oracle address invariant and its entry-marker and length prerequisites.
+
+`clossem_generated_size_probe.out` captures the typed datatype-generated
+closure-value, closure-expression, and closure-operator size equations, the
+original local value-size lemma proof, and concrete closure, word and nested
+constant sizes. Regenerate with
+`HOL_PROBE_ONLY=clossem_generated_size_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source review; it is not a cross-language proof.

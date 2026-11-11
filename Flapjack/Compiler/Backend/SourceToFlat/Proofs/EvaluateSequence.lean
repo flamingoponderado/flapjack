@@ -40,10 +40,12 @@ theorem factoredDecBoundedIH_empty {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat) :
     FactoredDecBoundedIH (F := F) interp transform limit [] := by
   intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result _ sourceRun invariant compiled envInv notTypeError generation future bounded
-  exact evaluateDecs_empty_case interp transform genv env nextEnv sourceEnv trace source sourceLast flat
-    start finish next other n n' gen nextGen flatDecs result sourceRun invariant compiled envInv notTypeError
-    generation future bounded
+    flatDecs result _ sourceRun invariant compiled _ _ generation _ _
+  simp only [EvaluateHOL.evaluateDecs, Prod.mk.injEq] at sourceRun
+  simp only [compileDecs, Prod.mk.injEq] at compiled
+  obtain ⟨rfl, rfl⟩ := sourceRun
+  obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := compiled
+  exact evaluateDecs_noop_factored interp transform genv source flat start finish other gen invariant generation
 
 /-- Type-abbreviation declarations satisfy the factored induction hypothesis. -/
 theorem factoredDecBoundedIH_dtabbrev {C F : Type} [Nonempty C]
@@ -51,10 +53,12 @@ theorem factoredDecBoundedIH_dtabbrev {C F : Type} [Nonempty C]
     (location : Flapjack.Misc.Location.Locs) (typeVars : List TvarN) (name : TypeN) (typ : AstT) :
     FactoredDecBoundedIH (F := F) interp transform limit [.dtabbrev location typeVars name typ] := by
   intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result _ sourceRun invariant compiled envInv notTypeError generation future bounded
-  exact evaluateDtabbrev_case interp transform genv env nextEnv sourceEnv trace source sourceLast flat
-    start finish next other n n' gen nextGen location typeVars name typ flatDecs result sourceRun invariant compiled
-    envInv notTypeError generation future bounded
+    flatDecs result _ sourceRun invariant compiled _ _ generation _ _
+  simp only [EvaluateHOL.evaluateDecs, Prod.mk.injEq] at sourceRun
+  simp only [compileDecs, Prod.mk.injEq] at compiled
+  obtain ⟨rfl, rfl⟩ := sourceRun
+  obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := compiled
+  exact evaluateDecs_noop_factored interp transform genv source flat start finish other gen invariant generation
 
 /-- Recursive declarations satisfy the factored induction hypothesis. -/
 theorem factoredDecBoundedIH_dletrec {C F : Type} [Nonempty C]
@@ -62,10 +66,34 @@ theorem factoredDecBoundedIH_dletrec {C F : Type} [Nonempty C]
     (location : Flapjack.Misc.Location.Locs) (funs : List (VarN × VarN × AstHOL.Exp)) :
     FactoredDecBoundedIH (F := F) interp transform limit [.dletrec location funs] := by
   intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result _ sourceRun invariant compiled envInv notTypeError generation future bounded
-  exact evaluateDletrec_case_factored interp transform genv env nextEnv sourceEnv trace funs source sourceLast flat
-    start finish next other n n' gen nextGen location flatDecs result sourceRun invariant compiled envInv
-    notTypeError generation future bounded
+    flatDecs result _ sourceRun invariant compiled envInv notTypeError generation _ bounded
+  have checked :
+      (decide (funs.map (fun (name, _, _) => name)).Nodup &&
+        funs.all (fun (_, _, expr) => everyExp (oneConCheck sourceEnv.c) expr)) = true := by
+    by_contra failed
+    simp only [EvaluateHOL.evaluateDecs, if_neg failed, EvaluateHOL.typeError] at sourceRun
+    exact notTypeError (congrArg Prod.snd sourceRun).symm
+  have distinct : (funs.map Prod.fst).Nodup := by
+    have guards := checked
+    simp only [Bool.and_eq_true, decide_eq_true_eq] at guards
+    exact guards.1
+  simp only [EvaluateHOL.evaluateDecs, if_pos checked, Prod.mk.injEq] at sourceRun
+  obtain ⟨rfl, rfl⟩ := sourceRun
+  have bound : idxPrev (compileDecs trace n start env gen [.dletrec location funs]).2.1 finish := by
+    simpa only [compiled] using bounded
+  obtain ⟨finalGenv, finalState, flatRun, growth, states, domain, finalEnv,
+    finalInvariant, finalGeneration, forward⟩ :=
+    evaluateDletrec_factored interp transform genv env sourceEnv trace funs source flat start finish other
+      n gen location distinct envInv invariant generation bound
+  simp only [compiled] at flatRun domain finalEnv finalInvariant finalGeneration
+  refine ⟨finalState, finalGenv, none, flatRun, states, ?_, ?_, ?_⟩
+  · intro _
+    exact ⟨finalInvariant, forward, growth⟩
+  · intro resultEnv same
+    cases same
+    exact ⟨rfl, domain, finalGeneration, finalEnv⟩
+  · intro error impossible
+    cases impossible
 
 /-- Environment declarations satisfy the factored induction hypothesis,
 including the oracle and generation updates. -/
@@ -93,18 +121,6 @@ theorem factoredDecBoundedIH_denv {C F : Type} [Nonempty C]
     exact ⟨rfl, domain, finalGeneration, finalEnv⟩
   · intro error impossible
     cases impossible
-
-/-- The source-safety condition for a value declaration excludes a type
-error from its initializer. -/
-theorem dlet_expression_safe {F : Type} (source : State F) (env : SemEnv Value)
-    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
-    (safe : ∀ last, EvaluateHOL.evaluateDecs source env [.dlet location pattern expr] ≠
-      (last, .err (.abort .typeError))) :
-    ∀ last, EvaluateHOL.evaluate source env [expr] ≠ (last, .err (.abort .typeError)) := by
-  obtain ⟨distinct, wellformed⟩ := dlet_conditions_of_safe source env location pattern expr safe
-  intro last bad
-  apply safe last
-  simp [EvaluateHOL.evaluateDecs, distinct, wellformed, bad]
 
 /-- Compose a successful first declaration with a tail induction hypothesis.
 The tail hypothesis has the same invariant, environment, generation and
@@ -251,15 +267,12 @@ theorem factoredDecBoundedIH_cons {C F : Type} [Nonempty C]
   have clockFix : EvaluateHOL.fixClock source (EvaluateHOL.evaluateDecs source sourceEnv [first]) =
       EvaluateHOL.evaluateDecs source sourceEnv [first] :=
     (EvaluateHOL.fixClockEvaluate source sourceEnv [] [first]).2
+  rw [firstRun] at clockFix
   cases firstResult with
   | err error =>
-    have fixed : EvaluateHOL.fixClock source (middle, (Result.err error : Result (SemEnv Value) Value)) =
-        (middle, .err error) := by
-      rw [← firstRun]
-      exact clockFix
     have sourceEq : sourceLast = middle ∧ result = .err error := by
       have h := sourceRun
-      simp only [EvaluateHOL.evaluateDecs, firstRun, fixed] at h
+      simp only [EvaluateHOL.evaluateDecs, firstRun, clockFix] at h
       exact Prod.mk.inj h.symm
     obtain ⟨lastEq, resultEq⟩ := sourceEq
     subst sourceLast
@@ -269,15 +282,11 @@ theorem factoredDecBoundedIH_cons {C F : Type} [Nonempty C]
     exact factoredDecCase_append_error interp transform genv env1 env2 source middle flat finish next1 next2 other
       gen1 gen2 code1 code2 error firstCase previous bounded validFinal
   | val firstEnv =>
-    have fixed : EvaluateHOL.fixClock source (middle, (Result.val firstEnv : Result (SemEnv Value) Value)) =
-        (middle, .val firstEnv) := by
-      rw [← firstRun]
-      exact clockFix
     generalize tailRun : EvaluateHOL.evaluateDecs middle (extendDecEnv firstEnv sourceEnv) (second :: rest) = tailResult
     obtain ⟨last, tailResult⟩ := tailResult
     have sourceEq : sourceLast = last ∧ result = combineDecResult firstEnv tailResult := by
       have h := sourceRun
-      simp only [EvaluateHOL.evaluateDecs, firstRun, fixed, tailRun] at h
+      simp only [EvaluateHOL.evaluateDecs, firstRun, clockFix, tailRun] at h
       exact Prod.mk.inj h.symm
     obtain ⟨lastEq, resultEq⟩ := sourceEq
     subst sourceLast

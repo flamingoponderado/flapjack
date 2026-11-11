@@ -67,6 +67,25 @@ theorem stateRel_lookupRefs {C F : Type} (g : State) (allowed : Nat → Prop)
   | none => simp [optionRel, found] at rel
   | some value' => exact ⟨value', rfl, by simpa [optionRel, found] using rel⟩
 
+/-- Either reference lookup in related states has an optionally related
+counterpart, including the case where the reference is absent. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "state_rel_opt_rel_refs"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code])]
+theorem stateRel_optRefs {C F : Type} (g : State) (allowed : Nat → Prop)
+    (source : ClosSem.State (NumSet × C) F) (target : ClosSem.State C F)
+    (key : Nat) (r1 r2 : Option (ClosSem.Ref ClosSem.Value)) :
+    ((stateRel g allowed source target ∧ source.refs.lookup key = r1) →
+      ∃ r2, target.refs.lookup key = r2 ∧
+        optionRel (ClosProps.refRel (valueRel g allowed target.code)) r1 r2) ∧
+    ((stateRel g allowed source target ∧ target.refs.lookup key = r2) →
+      ∃ r1, source.refs.lookup key = r1 ∧
+        optionRel (ClosProps.refRel (valueRel g allowed target.code)) r1 r2) := by
+  constructor
+  · rintro ⟨rel, rfl⟩
+    exact ⟨target.refs.lookup key, rfl, rel.2.2.2.2.1 key⟩
+  · rintro ⟨rel, rfl⟩
+    exact ⟨source.refs.lookup key, rfl, rel.2.2.2.2.1 key⟩
+
 /-- Fixing the target code makes direct-call state correspondence satisfy the
 generic primitive-operation simulation. HOL proves these clauses inline in
 do_app_thm. -/

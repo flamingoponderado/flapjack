@@ -86,6 +86,26 @@ theorem valueRel_primitive (x : Value) (i : Int) (ws : List (BitVec 8)) (w : Bit
   all_goals intro h
   all_goals first | (cases h; rfl) | (subst x; constructor)
 
+/-- Related boolean values are equal in either direction. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_rel_Boolv"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
+theorem valueRel_bool (x : Value) (b : Bool) :
+    (ValueRel x (boolValue b) ↔ x = boolValue b) ∧
+      (ValueRel (boolValue b) x ↔ x = boolValue b) := by
+  cases b <;> simp only [boolValue, Bool.false_eq_true, ↓reduceIte] <;>
+    constructor <;> constructor <;> intro h
+  all_goals first | (cases h with | block _ _ _ rel => cases rel; rfl) | (subst x; exact .block _ [] [] .nil)
+
+/-- Related unit values are equal in either direction. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_rel_Unit"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
+theorem valueRel_unit (x : Value) :
+    (ValueRel x unitValue ↔ x = unitValue) ∧
+      (ValueRel unitValue x ↔ x = unitValue) := by
+  simp only [unitValue]
+  constructor <;> constructor <;> intro h
+  all_goals first | (cases h with | block _ _ _ rel => cases rel; rfl) | (subst x; exact .block _ [] [] .nil)
+
 /-- Every set of variables is valid in an empty source environment. -/
 @[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "env_set_default"
   (nested_list_rel_as_mutual := [FunctionsRel])]
@@ -123,6 +143,177 @@ theorem functionsRel_iff (env nextEnv : List Value) (count : Nat)
       simp only at same shifted live safe length
       subst nextArity
       exact .cons env nextEnv count arity m body nextBody index functions nextFunctions shifted live safe length ih
+
+private theorem vRelSimp_closureL (loc : Option Nat) (args env : List Value) (arity : Nat) (body : ClosLang.Exp) (y : Value) :
+    ValueRel (.closure loc args env arity body) y ↔
+      ∃ bodyNext envNext index argsNext,
+        y = .closure loc argsNext envNext arity bodyNext ∧
+        shiftSource (altFreeSource [body]).1 env.length arity index = [bodyNext] ∧
+        (∀ n, altFvOneSource n body = true ∧ arity ≤ n → EnvOk env.length 0 index env envNext (n - arity)) ∧
+        everyFnVarsNone [body] ∧ List.Forall₂ ValueRel args argsNext := by
+  constructor
+  · intro rel
+    cases rel with
+    | closure _ _ nextArgs _ nextEnv _ m _ nextBody index shifted envok safe length argsrel =>
+      subst m
+      exact ⟨nextBody, nextEnv, index, nextArgs, rfl, shifted, envok, safe, argsrel⟩
+  · rintro ⟨bodyNext, envNext, index, argsNext, rfl, shifted, envok, safe, argsrel⟩
+    exact .closure loc args argsNext env envNext arity env.length body bodyNext index shifted envok safe rfl argsrel
+
+private theorem vRelSimp_closureR (loc : Option Nat) (args env : List Value) (arity : Nat) (body : ClosLang.Exp) (y : Value) :
+    ValueRel y (.closure loc args env arity body) ↔
+      ∃ bodyPrev envPrev index argsPrev,
+        y = .closure loc argsPrev envPrev arity bodyPrev ∧
+        shiftSource (altFreeSource [bodyPrev]).1 envPrev.length arity index = [body] ∧
+        (∀ n, altFvOneSource n bodyPrev = true ∧ arity ≤ n → EnvOk envPrev.length 0 index envPrev env (n - arity)) ∧
+        everyFnVarsNone [bodyPrev] ∧ List.Forall₂ ValueRel argsPrev args := by
+  constructor
+  · intro rel
+    cases rel with
+    | closure _ prevArgs _ prevEnv _ _ m prevBody _ index shifted envok safe length argsrel =>
+      subst m
+      exact ⟨prevBody, prevEnv, index, prevArgs, rfl, shifted, envok, safe, argsrel⟩
+  · rintro ⟨bodyPrev, envPrev, index, argsPrev, rfl, shifted, envok, safe, argsrel⟩
+    exact .closure loc argsPrev args envPrev env arity envPrev.length bodyPrev body index shifted envok safe rfl argsrel
+
+private theorem vRelSimp_functionsRel (env nextEnv : List Value) (count : Nat) (functions nextFunctions : List (Nat × ClosLang.Exp)) :
+    FunctionsRel env nextEnv count functions nextFunctions ↔
+      List.Forall₂ (fun left right => ∃ i,
+        right.1 = left.1 ∧
+        shiftSource (altFreeSource [left.2]).1 env.length (count + left.1) i = [right.2] ∧
+        (∀ n, altFvOneSource n left.2 = true ∧ left.1 + count ≤ n →
+          EnvOk env.length 0 i env nextEnv (n - (left.1 + count))) ∧
+        everyFnVarsNone [left.2]) functions nextFunctions := by
+  rw [functionsRel_iff]
+  constructor <;> intro relation
+  · induction relation with
+    | nil => exact .nil
+    | cons head tail ih =>
+      obtain ⟨m, i, same, shifted, live, safe, length⟩ := head
+      subst m
+      exact .cons ⟨i, same, shifted, live, safe⟩ ih
+  · induction relation with
+    | nil => exact .nil
+    | cons head tail ih =>
+      obtain ⟨i, same, shifted, live, safe⟩ := head
+      exact .cons ⟨env.length, i, same, shifted, live, safe, rfl⟩ ih
+
+private theorem vRelSimp_recL (loc : Option Nat) (args env : List Value) (functions : List (Nat × ClosLang.Exp)) (index : Nat) (y : Value) :
+    ValueRel (.recclosure loc args env functions index) y ↔
+      ∃ nextFunctions nextEnv nextArgs,
+        y = .recclosure loc nextArgs nextEnv nextFunctions index ∧
+        List.Forall₂ (fun left right => ∃ i,
+          right.1 = left.1 ∧
+          shiftSource (altFreeSource [left.2]).1 env.length (functions.length + left.1) i = [right.2] ∧
+          (∀ n, altFvOneSource n left.2 = true ∧ left.1 + functions.length ≤ n →
+            EnvOk env.length 0 i env nextEnv (n - (left.1 + functions.length))) ∧
+          everyFnVarsNone [left.2]) functions nextFunctions ∧
+        List.Forall₂ ValueRel args nextArgs ∧ index < functions.length := by
+  constructor
+  · intro rel
+    cases rel with
+    | recclosure _ _ nextArgs _ nextEnv _ nextFunctions _ funrel argsrel bounds =>
+      exact ⟨nextFunctions, nextEnv, nextArgs, rfl,
+        (vRelSimp_functionsRel _ _ _ _ _).mp funrel, argsrel, bounds⟩
+  · rintro ⟨nextFunctions, nextEnv, nextArgs, rfl, funrel, argsrel, bounds⟩
+    exact .recclosure loc args nextArgs env nextEnv functions nextFunctions index
+      ((vRelSimp_functionsRel _ _ _ _ _).mpr funrel) argsrel bounds
+
+private theorem vRelSimp_recR (loc : Option Nat) (args env : List Value) (functions : List (Nat × ClosLang.Exp)) (index : Nat) (y : Value) :
+    ValueRel y (.recclosure loc args env functions index) ↔
+      ∃ prevFunctions prevEnv prevArgs,
+        y = .recclosure loc prevArgs prevEnv prevFunctions index ∧
+        List.Forall₂ (fun left right => ∃ i,
+          right.1 = left.1 ∧
+          shiftSource (altFreeSource [left.2]).1 prevEnv.length (prevFunctions.length + left.1) i = [right.2] ∧
+          (∀ n, altFvOneSource n left.2 = true ∧ left.1 + prevFunctions.length ≤ n →
+            EnvOk prevEnv.length 0 i prevEnv env (n - (left.1 + prevFunctions.length))) ∧
+          everyFnVarsNone [left.2]) prevFunctions functions ∧
+        List.Forall₂ ValueRel prevArgs args ∧ index < prevFunctions.length := by
+  constructor
+  · intro rel
+    cases rel with
+    | recclosure _ prevArgs _ prevEnv _ prevFunctions _ _ funrel argsrel bounds =>
+      exact ⟨prevFunctions, prevEnv, prevArgs, rfl,
+        (vRelSimp_functionsRel _ _ _ _ _).mp funrel, argsrel, bounds⟩
+  · rintro ⟨prevFunctions, prevEnv, prevArgs, rfl, funrel, argsrel, bounds⟩
+    exact .recclosure loc prevArgs args prevEnv env prevFunctions functions index
+      ((vRelSimp_functionsRel _ _ _ _ _).mpr funrel) argsrel bounds
+
+/-- The source simplification equations for all closure-value constructors. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_rel_simp"
+  (nested_list_rel_as_mutual := [FunctionsRel])]
+theorem valueRel_simp (xInt : Int) (y : Value) (nWord : BitVec 64) (nBlock : Nat) (l : List Value)
+    (ws : List (BitVec 8)) (b : Bool) (xNat : Nat) (nLoc : Option Nat) (v : List Value)
+    (w : ClosLang.Exp) (x1 : Option Nat) (x2 x3 : List Value)
+    (x4 : List (Nat × ClosLang.Exp)) (x5 : Nat) :
+    (ValueRel (.number xInt) y ↔ y = .number xInt) ∧
+    (ValueRel (.word64 nWord) y ↔ y = .word64 nWord) ∧
+    (ValueRel (.block nBlock l) y ↔ ∃ ys, y = .block nBlock ys ∧ List.Forall₂ ValueRel l ys) ∧
+    (ValueRel (.byteVector ws) y ↔ y = .byteVector ws) ∧
+    (ValueRel (.refPtr b xNat) y ↔ y = .refPtr b xNat) ∧
+    (ValueRel (.closure nLoc l v xNat w) y ↔ ∃ bodyNext envNext index argsNext,
+      y = .closure nLoc argsNext envNext xNat bodyNext ∧
+      shiftSource (altFreeSource [w]).1 v.length xNat index = [bodyNext] ∧
+      (∀ n, altFvOneSource n w = true ∧ xNat ≤ n → EnvOk v.length 0 index v envNext (n - xNat)) ∧
+      everyFnVarsNone [w] ∧ List.Forall₂ ValueRel l argsNext) ∧
+    (ValueRel (.recclosure x1 x2 x3 x4 x5) y ↔ ∃ nextFunctions nextEnv nextArgs,
+      y = .recclosure x1 nextArgs nextEnv nextFunctions x5 ∧
+      List.Forall₂ (fun left right => ∃ i, right.1 = left.1 ∧
+        shiftSource (altFreeSource [left.2]).1 x3.length (x4.length + left.1) i = [right.2] ∧
+        (∀ n, altFvOneSource n left.2 = true ∧ left.1 + x4.length ≤ n →
+          EnvOk x3.length 0 i x3 nextEnv (n - (left.1 + x4.length))) ∧
+        everyFnVarsNone [left.2]) x4 nextFunctions ∧
+      List.Forall₂ ValueRel x2 nextArgs ∧ x5 < x4.length) ∧
+    (ValueRel y (.number xInt) ↔ y = .number xInt) ∧
+    (ValueRel y (.block nBlock l) ↔ ∃ xs, y = .block nBlock xs ∧ List.Forall₂ ValueRel xs l) ∧
+    (ValueRel y (.byteVector ws) ↔ y = .byteVector ws) ∧
+    (ValueRel y (.refPtr b xNat) ↔ y = .refPtr b xNat) ∧
+    (ValueRel y (.closure nLoc l v xNat w) ↔ ∃ bodyPrev envPrev index argsPrev,
+      y = .closure nLoc argsPrev envPrev xNat bodyPrev ∧
+      shiftSource (altFreeSource [bodyPrev]).1 envPrev.length xNat index = [w] ∧
+      (∀ n, altFvOneSource n bodyPrev = true ∧ xNat ≤ n → EnvOk envPrev.length 0 index envPrev v (n - xNat)) ∧
+      everyFnVarsNone [bodyPrev] ∧ List.Forall₂ ValueRel argsPrev l) ∧
+    (ValueRel y (.word64 nWord) ↔ y = .word64 nWord) ∧
+    (ValueRel y (.recclosure x1 x2 x3 x4 x5) ↔ ∃ prevFunctions prevEnv prevArgs,
+      y = .recclosure x1 prevArgs prevEnv prevFunctions x5 ∧
+      List.Forall₂ (fun left right => ∃ i, right.1 = left.1 ∧
+        shiftSource (altFreeSource [left.2]).1 prevEnv.length (prevFunctions.length + left.1) i = [right.2] ∧
+        (∀ n, altFvOneSource n left.2 = true ∧ left.1 + prevFunctions.length ≤ n →
+          EnvOk prevEnv.length 0 i prevEnv x3 (n - (left.1 + prevFunctions.length))) ∧
+        everyFnVarsNone [left.2]) prevFunctions x4 ∧
+      List.Forall₂ ValueRel prevArgs x2 ∧ x5 < prevFunctions.length) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, vRelSimp_closureL _ _ _ _ _ _, vRelSimp_recL _ _ _ _ _ _, ?_, ?_, ?_, ?_, vRelSimp_closureR _ _ _ _ _ _, ?_, vRelSimp_recR _ _ _ _ _ _⟩
+  · constructor
+    · intro h; cases h; rfl
+    · intro h; subst y; constructor
+  · constructor
+    · intro h; cases h; rfl
+    · intro h; subst y; constructor
+  · constructor
+    · intro h; cases h with | block _ _ ys related => exact ⟨ys, rfl, related⟩
+    · rintro ⟨ys, rfl, related⟩; exact .block _ _ _ related
+  · constructor
+    · intro h; cases h; rfl
+    · intro h; subst y; constructor
+  · constructor
+    · intro h; cases h; rfl
+    · intro h; subst y; constructor
+  · constructor
+    · intro h; cases h; rfl
+    · intro h; subst y; constructor
+  · constructor
+    · intro h; cases h with | block _ xs _ related => exact ⟨xs, rfl, related⟩
+    · rintro ⟨xs, rfl, related⟩; exact .block _ _ _ related
+  · constructor
+    · intro h; cases h; rfl
+    · intro h; subst y; constructor
+  · constructor
+    · intro h; cases h; rfl
+    · intro h; subst y; constructor
+  · constructor
+    · intro h; cases h; rfl
+    · intro h; subst y; constructor
 
 /-- A tracked environment slot maps to an in-range target slot carrying a
 related value. -/

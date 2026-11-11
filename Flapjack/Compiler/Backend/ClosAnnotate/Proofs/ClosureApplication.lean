@@ -21,25 +21,21 @@ theorem functionsRel_getElem (env nextEnv : List Value) (count : Nat)
         EnvOk m 0 index env nextEnv (n - (arity + count))) ∧
       everyFnVarsNone [body] ∧ env.length = m := by
   have pairs := (functionsRel_iff env nextEnv count functions nextFunctions).mp related
-  induction pairs generalizing i arity body with
-  | nil => simp at found
-  | @cons left right functions nextFunctions head tail ih =>
-    cases i with
-    | zero =>
-      simp only [List.getElem?_cons_zero, Option.some.injEq] at found
-      subst left
-      obtain ⟨m, index, equalArity, shifted, live, safe, length⟩ := head
-      obtain ⟨nextArity, nextBody⟩ := right
-      simp only at equalArity shifted
-      subst nextArity
-      simp only [shiftSource_eq_shiftList, altFreeSource_eq_altFree] at shifted
-      simp only [altFvSource_eq_altFv, and_imp] at live
-      exact ⟨nextBody, m, index, by simp, shifted, live, safe, length⟩
-    | succ i =>
-      have rest : functions[i]? = some (arity, body) := by simpa using found
-      obtain ⟨nextBody, m, index, target, shifted, live, safe, length⟩ :=
-        ih i arity body ((functionsRel_iff env nextEnv count functions nextFunctions).mpr tail) rest
-      exact ⟨nextBody, m, index, by simpa using target, shifted, live, safe, length⟩
+  have sourceBound : i < functions.length := (List.getElem?_eq_some_iff.mp found).1
+  have sourceEq : functions[i]'sourceBound = (arity, body) := (List.getElem?_eq_some_iff.mp found).2
+  have targetBound : i < nextFunctions.length := by simpa only [pairs.length_eq] using sourceBound
+  have head := pairs.get sourceBound targetBound
+  simp only [List.get_eq_getElem, sourceEq] at head
+  cases targetEq : nextFunctions[i]'targetBound with
+  | mk nextArity nextBody =>
+    rw [targetEq] at head
+    obtain ⟨m, index, equalArity, shifted, live, safe, length⟩ := head
+    simp only at equalArity shifted
+    subst nextArity
+    simp only [shiftSource_eq_shiftList, altFreeSource_eq_altFree] at shifted
+    simp only [altFvSource_eq_altFv, and_imp] at live
+    exact ⟨nextBody, m, index, by simpa [List.getElem?_eq_getElem targetBound] using congrArg some targetEq,
+      shifted, live, safe, length⟩
 
 /-- The corresponding function bundles have the same length. -/
 theorem functionsRel_length (env nextEnv : List Value) (count : Nat)

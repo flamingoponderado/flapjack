@@ -12,6 +12,8 @@ val _ = (print "env_rel_type="; print_type (type_of ``clos_callProof$env_rel``);
 val _ = (print "env_rel_def="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.env_rel_def); print "\n");
 val _ = (print "env_rel_mono="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.env_rel_mono); print "\n");
 val _ = (print "env_rel_cong="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.env_rel_cong); print "\n");
+val _ = (print "env_rel_drop="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.env_rel_DROP); print "\n");
+val _ = (print "env_rel_drop_args="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.env_rel_DROP_args); print "\n");
 val fv_cases = EVAL ``(closProps$fv 1 [closLang$Let None [closLang$Var None 2] (closLang$Var None 2)], closProps$fv 0 [closLang$Fn «f» NONE NONE 2 (closLang$Var None 2)], closProps$fv 0 [closLang$Letrec [«f»;«g»] (SOME 10) NONE [(1,closLang$Var None 3);(0,closLang$Var None 1)] (closLang$Var None 0)], closProps$fv 0 [closLang$Handle None (closLang$Var None 2) (closLang$Var None 1)])``;
 val _ = (print "fv_cases="; print_term (rhs (concl fv_cases)); print "\n");
 val fv_negative = EVAL ``(closProps$fv 1 [closLang$Let None [closLang$Var None 2] (closLang$Var None 1)], closProps$fv 0 [closLang$Fn «f» NONE NONE 2 (closLang$Var None 1)], closProps$fv 0 [closLang$Letrec [«f»;«g»] (SOME 10) NONE [(1,closLang$Var None 1);(0,closLang$Var None 1)] (closLang$Var None 0)], closProps$fv 0 [closLang$Handle None (closLang$Var None 2) (closLang$Var None 0)])``;

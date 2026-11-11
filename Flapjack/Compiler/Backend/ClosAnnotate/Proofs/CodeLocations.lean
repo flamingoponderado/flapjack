@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosAnnotate.Shift
+public import Flapjack.Compiler.Backend.ClosAnnotate.Shift.OriginalEquivalence
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
 
 @[expose] public section
@@ -64,6 +65,13 @@ termination_by sizeOf functions
 decreasing_by all_goals subst_vars; simp_wf <;> omega
 
 end
+
+/-- Source-shaped shifting preserves the code locations of an expression list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "shift_code_locs"]
+theorem shiftSource_codeLocations (expressions : List Exp) (m l : Nat) (index : Spt Nat) :
+    codeLocations (shiftSource expressions m l index) = codeLocations expressions := by
+  rw [shiftSource_eq_shiftList]
+  exact shiftList_codeLocations expressions m l index
 
 /-- Free-variable discovery preserves the size of a recursive group. -/
 theorem altFreeFuns_length (functions : List (Nat × Exp)) (count : Nat) :

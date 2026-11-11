@@ -20,13 +20,6 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
       (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
   ClosSem.holFmapAsFiniteSupportWitness
 
-/-- Sparse-tree inclusion composes. This is Flapjack infrastructure. -/
-private theorem subsptTrans {A : Type} (a b c : Spt A) (h1 : sptSubspt a b) (h2 : sptSubspt b c) : sptSubspt a c := by
-  intro k member
-  obtain ⟨mid, e1⟩ := h1 k member
-  obtain ⟨last, e2⟩ := h2 k mid
-  exact ⟨last, e2.trans e1⟩
-
 /-- Conditional case of the original optimizer simulation, retaining the
 source evaluator's condition and branch induction hypotheses. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_correct0"
@@ -109,7 +102,7 @@ theorem knownCorrect0If {C F : Type} (trace : BackendCommon.Tra) (cond yes no : 
           ([yes] ++ [no]) aenv [(ey, ay), (en, an)] g3 ⟨hc, branchesKnown, sub0, condDisjointBags⟩
         have ⟨subYes, subNo⟩ := subsptKnownElistGlobals c [yes] aenv g1 [(ey, ay)] g2
           [no] aenv [(en, an)] g3 ⟨hy, hn, subBranches, yesNoDisjointBags⟩
-        have subCondNext : sptSubspt g1 (nextG s0) := subsptTrans _ _ _ subBranches sub1
+        have subCondNext : sptSubspt g1 (nextG s0) := sptSubsptTrans _ _ _ ⟨subBranches, sub1⟩
         cases hr : evaluate [cond] env1full s0 with
         | mk condResult middle =>
           rw [evaluate, fixClock_evaluate, hr] at run
@@ -189,7 +182,7 @@ theorem knownCorrect0If {C F : Type} (trace : BackendCommon.Tra) (cond yes no : 
                       yesResult last env1 xenv1 env2 xenv2 targetMiddle c g1 g2 aenv [(ey, ay)]
                       ⟨yesRun, hy, midState, syntaxParts.2.1, nextCoSyntax, yesDisjoint', midOracle, nextStateOracleDisjoint,
                         yesSafe, safety.1, envSafe, approxRel, nextOracleSafe, nextSafe, approxSafe, midGlobals,
-                        subYes, subsptTrans _ _ _ (subsptTrans _ _ _ subNo sub1) nextTree, nextMono, freeParts.2.1,
+                        subYes, sptSubsptTrans _ _ _ ⟨sptSubsptTrans _ _ _ ⟨subNo, sub1⟩, nextTree⟩, nextMono, freeParts.2.1,
                         nextRel, yesUnique, midStateOracle, envEq, yesNoType⟩
                     obtain ⟨res2, targetLast, targetRun, result, finalState, finalGlobals, finalOracle, finalDisjoint⟩ := yesStep
                     rw [yesRun] at run
@@ -211,7 +204,7 @@ theorem knownCorrect0If {C F : Type} (trace : BackendCommon.Tra) (cond yes no : 
                       noResult last env1 xenv1 env2 xenv2 targetMiddle c g2 g3 aenv [(en, an)]
                       ⟨noRun, hn, midState, syntaxParts.2.2, nextCoSyntax, noDisjoint', midOracle, nextStateOracleDisjoint,
                         noSafe, safety.1, envSafe, approxRel, nextOracleSafe, g2Safe, approxSafe, midGlobals,
-                        subNo, subsptTrans _ _ _ sub1 nextTree, nextMono, freeParts.2.2,
+                        subNo, sptSubsptTrans _ _ _ ⟨sub1, nextTree⟩, nextMono, freeParts.2.2,
                         nextRel, noUnique, midStateOracle, envEq, noNoType⟩
                     obtain ⟨res2, targetLast, targetRun, result, finalState, finalGlobals, finalOracle, finalDisjoint⟩ := noStep
                     rw [noRun] at run

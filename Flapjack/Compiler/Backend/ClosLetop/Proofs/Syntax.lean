@@ -3,12 +3,31 @@ module
 public import Flapjack.Compiler.Backend.ClosLetop.Source
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic.LabelsAndArity
 
 @[expose] public section
 
 /-! Closure annotation invariance for let-operation cleanup. -/
 namespace Flapjack.Compiler.Backend.ClosLetop
 open ClosLang ClosProps
+
+/-- A recognized variable list contains neither labels nor excessive applications. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "var_list_no_Labels"]
+theorem varList_noLabels {α : Type} (n : Nat) (xs : List Exp) (ys : List α)
+    (limit : Nat) (h : varList n xs ys = true) :
+    (∀ e ∈ xs, noLabels e) ∧ (∀ e ∈ xs, obeysMaxApp limit e) := by
+  have aux : noLabelsList xs ∧ obeysMaxAppList limit xs := by
+    induction xs generalizing n ys with
+    | nil => simp [noLabelsList, obeysMaxAppList]
+    | cons x xs ih =>
+      cases ys with
+      | nil => simp [varList] at h
+      | cons y ys =>
+        cases x <;> simp [varList] at h
+        case var t index =>
+          have tail := ih (n + 1) ys h.2
+          simpa [noLabelsList, noLabels, obeysMaxAppList, obeysMaxApp] using tail
+  exact ⟨(noLabelsList_iff xs).mp aux.1, (obeysMaxAppList_iff limit xs).mp aux.2⟩
 
 /-- Recognized variable lists contain no annotated function nodes. -/
 theorem varList_varsNone {α : Type} (n : Nat) (xs : List Exp) (ys : List α)

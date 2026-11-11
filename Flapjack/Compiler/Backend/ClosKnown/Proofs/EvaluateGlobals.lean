@@ -255,7 +255,7 @@ theorem evaluateChangedGlobalsTick {C F : Type} (trace : BackendCommon.Tra) (bod
 
 /-- Selecting values from a safe environment preserves value safety. This
 helper has no separate HOL declaration. -/
-private theorem lookupVarsSafe (indices : List Nat) (env selected : List ClosSem.Value)
+theorem lookupVarsSafe (indices : List Nat) (env selected : List ClosSem.Value)
     (safe : ∀ v ∈ env, vsgcFree v) (run : lookupVars indices env = some selected) :
     ∀ v ∈ selected, vsgcFree v := by
   induction indices generalizing selected with

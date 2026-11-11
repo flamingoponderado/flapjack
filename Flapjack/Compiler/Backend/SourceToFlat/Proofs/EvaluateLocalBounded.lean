@@ -90,7 +90,12 @@ theorem factoredDecBoundedIH_dlet_expression {C F : Type} [Nonempty C]
     intro last bad
     apply notTypeError
     exact congrArg Prod.snd (sourceRun.symm.trans bad)
-  have expressionSafe := dlet_expression_safe source sourceEnv location pattern expr safe
+  have expressionSafe : ∀ last, EvaluateHOL.evaluate source sourceEnv [expr] ≠
+      (last, .err (.abort .typeError)) := by
+    obtain ⟨distinct, wellformed⟩ := dlet_conditions_of_safe source sourceEnv location pattern expr safe
+    intro last bad
+    apply safe last
+    simp [EvaluateHOL.evaluateDecs, distinct, wellformed, bad]
   have sourceEq : { sourceEnv with v := nsAppend nsEmpty sourceEnv.v } = sourceEnv := by
     simp only [(nsAppend_nsEmpty sourceEnv.v).2]
   have mapEq : { env with v := bindLocals [] [] env.v } = env := by

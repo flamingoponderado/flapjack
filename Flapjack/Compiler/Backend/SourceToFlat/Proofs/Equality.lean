@@ -60,43 +60,6 @@ theorem equality_constructor_step (genv : GlobalEnv) (ok : genvCOk genv.c)
         fun h => sameType (typeEq.mpr h)
       simp [FlatSem.doEq, SemanticPrimitivesHOL.doEq, sourceMatch, flatMismatch, sameType, flatDifferent]
 
-/-- Tuple equality follows from the list induction hypothesis. This is a
-Flapjack case lemma over the factored value relation. -/
-theorem equality_tuple_step (genv : GlobalEnv)
-    (xs ys : List SemanticPrimitivesHOL.Value) (fxs fys : List FlatSem.Value)
-    (relXs : List.Forall₂ (ValueRel genv) xs fxs) (relYs : List.Forall₂ (ValueRel genv) ys fys)
-    (listIH : FlatSem.doEqList fxs fys = SemanticPrimitivesHOL.doEqList xs ys) :
-    FlatSem.doEq (.conv none fxs) (.conv none fys) =
-      SemanticPrimitivesHOL.doEq (.conv none xs) (.conv none ys) := by
-  have lenXs := relXs.length_eq
-  have lenYs := relYs.length_eq
-  simp [FlatSem.doEq, SemanticPrimitivesHOL.doEq, SemanticPrimitivesHOL.ctorSameType,
-    FlatSem.ctorSameType, ← lenXs, ← lenYs, listIH]
-
-/-- Vector equality follows from the list induction hypothesis. This is a
-Flapjack case lemma over the factored value relation. -/
-theorem equality_vector_step (genv : GlobalEnv)
-    (xs ys : List SemanticPrimitivesHOL.Value) (fxs fys : List FlatSem.Value)
-    (relXs : List.Forall₂ (ValueRel genv) xs fxs) (relYs : List.Forall₂ (ValueRel genv) ys fys)
-    (listIH : FlatSem.doEqList fxs fys = SemanticPrimitivesHOL.doEqList xs ys) :
-    FlatSem.doEq (.vectorv fxs) (.vectorv fys) =
-      SemanticPrimitivesHOL.doEq (.vectorv xs) (.vectorv ys) := by
-  have lenXs := relXs.length_eq
-  have lenYs := relYs.length_eq
-  simp [FlatSem.doEq, SemanticPrimitivesHOL.doEq, ← lenXs, ← lenYs, listIH]
-
-/-- The nonempty list case composes the head and tail induction hypotheses.
-This is Flapjack infrastructure for the mutual equality proof. -/
-theorem equality_list_cons_step (x y : SemanticPrimitivesHOL.Value) (xs ys : List SemanticPrimitivesHOL.Value)
-    (fx fy : FlatSem.Value) (fxs fys : List FlatSem.Value)
-    (headIH : FlatSem.doEq fx fy = SemanticPrimitivesHOL.doEq x y)
-    (tailIH : FlatSem.doEqList fxs fys = SemanticPrimitivesHOL.doEqList xs ys) :
-    FlatSem.doEqList (fx :: fxs) (fy :: fys) = SemanticPrimitivesHOL.doEqList (x :: xs) (y :: ys) := by
-  simp only [FlatSem.doEqList, SemanticPrimitivesHOL.doEqList, headIH]
-  cases SemanticPrimitivesHOL.doEq x y with
-  | typeError => rfl
-  | val b => cases b <;> simp [tailIH]
-
 mutual
 /-- Equality preservation for the source-to-flat value relation. This is
 Flapjack proof infrastructure for the HOL-shaped equality simulation below. -/
@@ -114,14 +77,16 @@ theorem equality_preserved (genv : GlobalEnv) (ok : genvCOk genv.c)
       lookup1 lookup2 (equality_list_preserved genv ok xs ys fxs fys relXs relYs)
   case tuple.tuple =>
     rename_i xs fxs relXs ys fys relYs
-    exact equality_tuple_step genv xs ys fxs fys
-      ((valueListRel_iff genv xs fxs).mp relXs) ((valueListRel_iff genv ys fys).mp relYs)
-      (equality_list_preserved genv ok xs ys fxs fys relXs relYs)
+    have lenXs := ((valueListRel_iff genv xs fxs).mp relXs).length_eq
+    have lenYs := ((valueListRel_iff genv ys fys).mp relYs).length_eq
+    simp [FlatSem.doEq, SemanticPrimitivesHOL.doEq, SemanticPrimitivesHOL.ctorSameType,
+      FlatSem.ctorSameType, ← lenXs, ← lenYs, equality_list_preserved genv ok xs ys fxs fys relXs relYs]
   case vector.vector =>
     rename_i xs fxs relXs ys fys relYs
-    exact equality_vector_step genv xs ys fxs fys
-      ((valueListRel_iff genv xs fxs).mp relXs) ((valueListRel_iff genv ys fys).mp relYs)
-      (equality_list_preserved genv ok xs ys fxs fys relXs relYs)
+    have lenXs := ((valueListRel_iff genv xs fxs).mp relXs).length_eq
+    have lenYs := ((valueListRel_iff genv ys fys).mp relYs).length_eq
+    simp [FlatSem.doEq, SemanticPrimitivesHOL.doEq, ← lenXs, ← lenYs,
+      equality_list_preserved genv ok xs ys fxs fys relXs relYs]
 termination_by sizeOf a
 
 /-- List case of equality preservation for the factored relation. -/
@@ -133,9 +98,10 @@ theorem equality_list_preserved (genv : GlobalEnv) (ok : genvCOk genv.c)
     try (solve | simp [FlatSem.doEqList, SemanticPrimitivesHOL.doEqList])
   case cons.cons =>
     rename_i x fx xs fxs hx tx y fy ys fys hy ty
-    exact equality_list_cons_step x y xs ys fx fy fxs fys
-      (equality_preserved genv ok x y fx fy hx hy)
-      (equality_list_preserved genv ok xs ys fxs fys tx ty)
+    simp only [FlatSem.doEqList, SemanticPrimitivesHOL.doEqList, equality_preserved genv ok x y fx fy hx hy]
+    cases SemanticPrimitivesHOL.doEq x y with
+    | typeError => rfl
+    | val b => cases b <;> simp [equality_list_preserved genv ok xs ys fxs fys tx ty]
 termination_by sizeOf xs
 end
 

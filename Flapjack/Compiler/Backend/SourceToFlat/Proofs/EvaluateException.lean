@@ -37,18 +37,6 @@ theorem idxRangeRel_exception_free {C : Type}
     rw [separate] at member
     exact member.elim
 
-/-- The next source exception stamp is absent from the current constructor
-map, by the index-range freshness condition. -/
-theorem idxRangeRel_exceptionStamp_fresh {C : Type}
-    (interp : Option (Value → Option (Config × C))) (genv : GlobalEnv)
-    (nextType nextExn : Nat) (evalState : Option EvalState)
-    (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (range : idxRangeRel interp genv nextType nextExn evalState (start, finish, other)) :
-    ∀ key, genv.c.lookup key ≠ some (.exnStamp nextExn) := by
-  obtain ⟨_, _, _, _, _, _, _, _, _, fresh⟩ := range
-  intro key found
-  exact fresh nextExn (Nat.le_refl _) ⟨key, found⟩
-
 /-- Installing a fresh exception constructor extends the factored global
 environment while leaving existing values and type entries unchanged. -/
 theorem GlobalGrowth.installException (genv : GlobalEnv) (idx arity stamp : Nat)
@@ -157,8 +145,10 @@ theorem factoredInvariant_installException {C F : Type} [Nonempty C]
   obtain ⟨cOk, typesOk, states, range, invs, oracle, globals, reserved, genInv, fin⟩ := copy
   have free := idxRangeRel_exception_free interp genv source.nextTypeStamp source.nextExnStamp source.evalState
     start finish other range (by omega) arity
-  have fresh := idxRangeRel_exceptionStamp_fresh interp genv source.nextTypeStamp source.nextExnStamp
-    source.evalState start finish other range
+  have fresh (key : ConstructorKey) : genv.c.lookup key ≠ some (.exnStamp source.nextExnStamp) := by
+    obtain ⟨_, _, _, _, _, _, _, _, _, exceptionFresh⟩ := range
+    intro found
+    exact exceptionFresh source.nextExnStamp (Nat.le_refl _) ⟨key, found⟩
   have growth := GlobalGrowth.installException genv start.eidx arity source.nextExnStamp free
   have grownStates := stateRel_growth genv _ growth source flat states
   have nextStates : StateRel
@@ -226,29 +216,6 @@ theorem factoredInvariant_installException {C F : Type} [Nonempty C]
     simpa [finiteUpdate, FUPDATE_HOL] using present
   exact ⟨constructorOk, typesOk', nextStates, nextRange, nextInvs, oracle, globals, reserved, genInv, fin⟩
 
-/-- The source and compiler exception declarations export the same domains. -/
-theorem envDomainEq_exception (name : ConN) (idx arity stamp : Nat) :
-    EnvDomainEq { v := nsEmpty, c := nsSing name (idx, none) }
-      ({ v := nsEmpty, c := nsSing name (arity, .exnStamp stamp) } : SemEnv Value) := by
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · funext id
-    apply propext
-    cases id <;> simp [nsDom, nsLookup, nsEmpty]
-  · funext path
-    apply propext
-    cases path <;> simp [nsDomMod, nsLookupMod, nsEmpty]
-  · funext id
-    apply propext
-    cases id with
-    | short key =>
-      by_cases same : key = name
-      · subst key; simp [nsDom, nsLookup, nsSing]
-      · simp [nsDom, nsLookup, nsSing, List.lookup, BEq.beq, same]
-    | long moduleName rest => simp [nsDom, nsLookup, nsSing]
-  · funext path
-    apply propext
-    cases path <;> simp [nsDomMod, nsLookupMod, nsSing]
-
 /-- The newly installed exception stamp relates the singleton constructor
 environments returned by source and compiler. -/
 theorem globalEnvInv_exception (genv : GlobalEnv) (name : ConN) (idx arity stamp : Nat) :
@@ -307,8 +274,13 @@ theorem factoredDecBoundedIH_dexn {C F : Type} [Nonempty C]
     exact ⟨finalInvariant, oracForwardRel_refl interp source.evalState, growth⟩
   · intro resultEnv same
     cases same
-    exact ⟨rfl, envDomainEq_exception name start.eidx types.length source.nextExnStamp,
-      generation, globalEnvInv_exception genv name start.eidx types.length source.nextExnStamp⟩
+    obtain ⟨values, valueModules⟩ := alistToNs_domains_eq (M := ModN) (N := VarN)
+      (V := VarName) (W := Value) [] [] (fun _ => Iff.rfl)
+    obtain ⟨ctors, ctorModules⟩ := alistToNs_domains_eq (M := ModN)
+      [(name, (start.eidx, (none : Option (Nat × List (Nat × Nat)))))]
+      [(name, (types.length, Stamp.exnStamp source.nextExnStamp))] (fun _ => Iff.rfl)
+    exact ⟨rfl, ⟨values, valueModules, ctors, ctorModules⟩, generation,
+      globalEnvInv_exception genv name start.eidx types.length source.nextExnStamp⟩
   · intro error impossible
     cases impossible
 

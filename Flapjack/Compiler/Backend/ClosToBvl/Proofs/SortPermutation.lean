@@ -26,26 +26,18 @@ theorem codeSplit_imp_perm {α : Type} (xs1 xs2 xs3 ts1 ts2 : List α)
     simp only [List.count_append, List.count_cons] at h ⊢
     omega
 
-private theorem merge_perm {α : Type} (xs ys : List (Nat × α)) :
-    (codeMerge xs ys).Perm (xs ++ ys) := by
-  cases xs with
-  | nil => simp [codeMerge]
-  | cons x xs =>
-    cases ys with
-    | nil => simp [codeMerge]
-    | cons y ys =>
-      simp only [codeMerge]
-      split
-      · exact (merge_perm xs (y :: ys)).cons x
-      · exact ((merge_perm (x :: xs) ys).cons y).trans (by simpa using (List.perm_middle (l₁ := x :: xs) (l₂ := ys) (a := y)).symm)
-termination_by xs.length + ys.length
-decreasing_by all_goals simp_wf
-
 /-- Merge preserves any permutation of its two inputs. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "IMP_PERM_code_merge"]
 theorem codeMerge_imp_perm {α : Type} (xs ys zs : List (Nat × α))
-    (h : (xs ++ ys).Perm zs) : (codeMerge xs ys).Perm zs :=
-  (merge_perm xs ys).trans h
+    (h : (xs ++ ys).Perm zs) : (codeMerge xs ys).Perm zs := by
+  fun_induction codeMerge xs ys generalizing zs with
+  | case1 ys => simpa [codeMerge] using h
+  | case2 xs ne => simpa [codeMerge] using h
+  | case3 x xs y ys _ ih =>
+    exact ((ih _ (List.Perm.refl _)).cons x).trans h
+  | case4 x xs y ys _ ih =>
+    exact ((ih _ (List.Perm.refl _)).cons y).trans
+      ((List.perm_middle (l₁ := x :: xs) (l₂ := ys) (a := y)).symm.trans h)
 
 /-- Sorting preserves the complete list of code entries. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "PERM_code_sort"]
@@ -54,7 +46,8 @@ theorem codeSort_perm {α : Type} (xs : List (Nat × α)) : (codeSort xs).Perm x
   | case1 => rfl
   | case2 => rfl
   | case3 x y rest left right =>
-    refine (merge_perm _ _).trans ((left.append right).trans ?_)
+    apply codeMerge_imp_perm
+    refine (left.append right).trans ?_
     have split := codeSplit_imp_perm rest [x] [y] (codeSplit rest [x] [y]).1
       (codeSplit rest [x] [y]).2 (Prod.eta _).symm
     simpa using split

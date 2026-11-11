@@ -204,48 +204,6 @@ theorem globalEnvInv_allocDefs (genv : GlobalEnv)
   · intro id arity stamp lookup
     cases id <;> simp [nsEmpty, nsLookup] at lookup
 
-/-- Distinct names make membership determine lookup; this is list infrastructure
-for the original initializer proof, with no separate HOL declaration. -/
-theorem lookup_of_mem_nodup {α : Type} (entries : List (VarN × α))
-    (name : VarN) (value : α) (member : (name, value) ∈ entries)
-    (distinct : (entries.map Prod.fst).Nodup) : entries.lookup name = some value := by
-  induction entries with
-  | nil => simp at member
-  | cons head tail ih =>
-    rcases head with ⟨key, current⟩
-    simp only [List.map_cons, List.nodup_cons] at distinct
-    rcases List.mem_cons.mp member with h | h
-    · cases h
-      simp
-    · have different : name ≠ key := by
-        intro equal
-        subst key
-        exact distinct.1 (List.mem_map.mpr ⟨(name, value), h, rfl⟩)
-      have compare : (name == key) = false := by
-        change decide (name = key) = false
-        simp [different]
-      simp [List.lookup_cons, compare, ih h distinct.2]
-
-private theorem lookup_reverse_of_nodup {α : Type} (entries : List (VarN × α))
-    (name : VarN) (distinct : (entries.map Prod.fst).Nodup) :
-    entries.reverse.lookup name = entries.lookup name := by
-  have reversedDistinct : (entries.reverse.map Prod.fst).Nodup := by
-    rw [List.map_reverse, List.Nodup, List.pairwise_reverse]
-    exact distinct.imp (fun h => Ne.symm h)
-  cases lookup : entries.lookup name with
-  | none =>
-    cases reversed : entries.reverse.lookup name with
-    | none => rfl
-    | some value =>
-      have member := List.mem_reverse.mp (holALookup_member entries.reverse name value
-        (by simpa [holALookup_eq_lookup] using reversed))
-      have impossible := lookup_of_mem_nodup entries name value member distinct
-      rw [lookup] at impossible
-      cases impossible
-  | some value =>
-    exact lookup_of_mem_nodup entries.reverse name value
-      (List.mem_reverse.mpr (holALookup_member entries name value (by simpa [holALookup_eq_lookup] using lookup))) reversedDistinct
-
 namespace AllocDefsReversePort
 /-- Canonical global-environment finite-map carrier roundtrip. -/
 theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
@@ -280,7 +238,13 @@ theorem globalEnvInv_allocDefs_reverse (source : List (VarN × SemanticPrimitive
       apply values id value unshadowed
       cases id with
       | short name =>
-        simpa [alistToNs, nsLookup, lookup_reverse_of_nodup source name distinct] using lookup
+        simp only [alistToNs, nsLookup] at lookup ⊢
+        rw [← holALookup_eq_lookup] at lookup ⊢
+        have reversedDistinct : (source.reverse.map Prod.fst).Nodup := by
+          rw [List.map_reverse, List.Nodup, List.pairwise_reverse]
+          exact distinct.imp (fun h => Ne.symm h)
+        exact holALookup_of_distinct_member source.reverse name value
+          ⟨reversedDistinct, List.mem_reverse.mpr (holALookup_member source name value lookup)⟩
       | long moduleName id => simp [alistToNs, nsLookup] at lookup
     · exact constructors
 

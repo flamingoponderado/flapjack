@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosCall.Proofs.LabelOrigins
+public import Flapjack.Compiler.Backend.ClosCall.Proofs.TotalCorrespondence
 
 @[expose] public section
 
@@ -8,8 +9,35 @@ public import Flapjack.Compiler.Backend.ClosCall.Proofs.LabelOrigins
 namespace Flapjack.Compiler.Backend.ClosCall
 open ClosLang ClosProps
 
+private theorem labelsBoundOfCalls (xs : List Exp) (initial : State)
+    (ys : List Exp) (final : State) (run : calls xs initial = (ys, final)) :
+    LabelsBound initial final (codeLocations xs) := by
+  intro label member
+  rcases calls_addSucc_codeLocations xs initial ys final run member with old | ⟨loc, inLocs, eq⟩
+  · exact Or.inl old
+  · exact Or.inr ⟨loc, inLocs, by simpa only [Nat.succ_eq_add_one] using eq.symm⟩
+
+private theorem labelsBoundOfListRun (fuel : Nat) (xs : List Exp) (initial final : State)
+    (ys : List Exp) (run : callsListFuel fuel xs initial = some (ys, final)) :
+    LabelsBound initial final (codeLocations xs) := by
+  have boundedRun : callsListBounded fuel xs initial = some (ys, final) := by
+    simp [callsListBounded, run]
+  have totalRun : calls xs initial = (ys, final) := by
+    have h := callsListBounded_correct fuel xs initial
+    rw [boundedRun] at h
+    exact (Option.some.inj h).symm
+  exact labelsBoundOfCalls xs initial ys final totalRun
+
+private theorem labelsBoundOfExpressionRun (fuel : Nat) (e : Exp) (initial final : State)
+    (out : Exp) (run : callsFuel fuel e initial = some (out, final)) :
+    LabelsBound initial final (codeLocationsExp e) := by
+  have singletonRun : callsListFuel (fuel + 1) [e] initial = some ([out], final) := by
+    simp [callsListFuel, run]
+  have h := labelsBoundOfListRun (fuel + 1) [e] initial final [out] singletonRun
+  simpa [codeLocations] using h
+
 /-- None of the successor labels of these input locations is already emitted. -/
-def LabelsFresh (locations : List Nat) (state : State) : Prop :=
+private def LabelsFresh (locations : List Nat) (state : State) : Prop :=
   ∀ loc ∈ locations, loc + 1 ∉ state.2.map Prod.fst
 
 private theorem fresh_subset {xs ys : List Nat} {state : State}
@@ -53,7 +81,7 @@ mutual
 /-- A successful traversal preserves distinct emitted labels when its input
 closure locations are distinct and their successors are fresh. This theorem
 is specific to the fuel-bounded executable pass. -/
-theorem callsFuel_labelsDistinct (fuel : Nat) (e : Exp) (initial final : State) (out : Exp)
+private theorem callsFuel_labelsDistinct (fuel : Nat) (e : Exp) (initial final : State) (out : Exp)
     (run : callsFuel fuel e initial = some (out, final))
     (distinct : (codeLocationsExp e).Nodup) (fresh : LabelsFresh (codeLocationsExp e) initial)
     (oldDistinct : (initial.2.map Prod.fst).Nodup) : (final.2.map Prod.fst).Nodup := by
@@ -68,10 +96,10 @@ theorem callsFuel_labelsDistinct (fuel : Nat) (e : Exp) (initial final : State) 
       obtain ⟨⟨x', s1⟩, hx, ⟨y', s2⟩, hy, ⟨z', s3⟩, hz, _, rfl⟩ := run
       simp only [codeLocationsExp] at distinct fresh
       apply distinct_sequence distinct fresh oldDistinct
-        (bound_sequence (callsFuel_labelsBound fuel x initial s1 x' hx)
-          (callsFuel_labelsBound fuel y s1 s2 y' hy))
+        (bound_sequence (labelsBoundOfExpressionRun fuel x initial s1 x' hx)
+          (labelsBoundOfExpressionRun fuel y s1 s2 y' hy))
       · intro d f old
-        exact distinct_sequence d f old (callsFuel_labelsBound fuel x initial s1 x' hx)
+        exact distinct_sequence d f old (labelsBoundOfExpressionRun fuel x initial s1 x' hx)
           (callsFuel_labelsDistinct fuel x initial s1 x' hx)
           (callsFuel_labelsDistinct fuel y s1 s2 y' hy)
       · exact callsFuel_labelsDistinct fuel z s2 s3 z' hz
@@ -80,7 +108,7 @@ theorem callsFuel_labelsDistinct (fuel : Nat) (e : Exp) (initial final : State) 
         Option.some.injEq, Prod.mk.injEq] at run
       obtain ⟨⟨xs', s1⟩, hx, ⟨body', s2⟩, hb, _, rfl⟩ := run
       exact distinct_sequence distinct fresh oldDistinct
-        (callsListFuel_labelsBound fuel xs initial s1 xs' hx)
+        (labelsBoundOfListRun fuel xs initial s1 xs' hx)
         (callsListFuel_labelsDistinct fuel xs initial s1 xs' hx)
         (callsFuel_labelsDistinct fuel body s1 s2 body' hb)
     | raise tr x | tick tr x =>
@@ -93,7 +121,7 @@ theorem callsFuel_labelsDistinct (fuel : Nat) (e : Exp) (initial final : State) 
         Option.some.injEq, Prod.mk.injEq] at run
       obtain ⟨⟨x', s1⟩, hx, ⟨y', s2⟩, hy, _, rfl⟩ := run
       exact distinct_sequence distinct fresh oldDistinct
-        (callsFuel_labelsBound fuel x initial s1 x' hx)
+        (labelsBoundOfExpressionRun fuel x initial s1 x' hx)
         (callsFuel_labelsDistinct fuel x initial s1 x' hx)
         (callsFuel_labelsDistinct fuel y s1 s2 y' hy)
     | call tr ticks dest xs | op tr dest xs =>
@@ -116,7 +144,7 @@ theorem callsFuel_labelsDistinct (fuel : Nat) (e : Exp) (initial final : State) 
         apply fresh n
         simpa [codeLocationsExp, List.mem_append, or_comm] using member
       exact distinct_sequence dis fr oldDistinct
-        (callsListFuel_labelsBound fuel xs initial s1 xs' hx)
+        (labelsBoundOfListRun fuel xs initial s1 xs' hx)
         (callsListFuel_labelsDistinct fuel xs initial s1 xs' hx)
         (callsFuel_labelsDistinct fuel x s1 s2 x' hy)
     | fn name loc ws arity body =>
@@ -137,7 +165,7 @@ theorem callsFuel_labelsDistinct (fuel : Nat) (e : Exp) (initial final : State) 
         obtain ⟨_, rfl⟩ := rest
         have bound : LabelsBound initial s1 (codeLocationsExp body) := by
           simpa only [LabelsBound, insertEach] using
-            callsFuel_labelsBound fuel body (insertEach (loc.getD 0) 1 initial) s1 body' hb
+            labelsBoundOfExpressionRun fuel body (insertEach (loc.getD 0) 1 initial) s1 body' hb
         have before : (s1.2.map Prod.fst).Nodup := by
           apply callsFuel_labelsDistinct fuel body (insertEach (loc.getD 0) 1 initial) s1 body' hb
             (List.Nodup.of_append_left distinct)
@@ -170,26 +198,26 @@ theorem callsFuel_labelsDistinct (fuel : Nat) (e : Exp) (initial final : State) 
           simp only [List.mem_append] at member ⊢
           aesop
         apply distinct_sequence d f oldDistinct
-        · simpa only [codeLocations_map_snd] using
-            callsListFuel_labelsBound fuel (fns.map Prod.snd) initial s2 bodies' hb'
+        · simpa only [← codeLocationsFuns_map] using
+            labelsBoundOfListRun fuel (fns.map Prod.snd) initial s2 bodies' hb'
         · intro d f old
           exact callsListFuel_labelsDistinct fuel (fns.map Prod.snd) initial s2 bodies' hb'
-            (by simpa only [codeLocations_map_snd] using d)
-            (by simpa only [codeLocations_map_snd] using f) old
+            (by simpa only [← codeLocationsFuns_map] using d)
+            (by simpa only [← codeLocationsFuns_map] using f) old
         · exact callsFuel_labelsDistinct fuel body s2 s3 body' he
       | true =>
         simp only [↓reduceIte, Option.bind_eq_some_iff, Option.some.injEq,
           Prod.mk.injEq] at rest
         obtain ⟨⟨body', s2⟩, he, _, rfl⟩ := rest
         have bound : LabelsBound initial s1 (codeLocationsFuns fns) := by
-          simpa only [LabelsBound, insertEach, codeLocations_map_snd] using
-            callsListFuel_labelsBound fuel (fns.map Prod.snd)
+          simpa only [LabelsBound, insertEach, ← codeLocationsFuns_map] using
+            labelsBoundOfListRun fuel (fns.map Prod.snd)
               (insertEach (loc.getD 0) fns.length initial) s1 bodies hb
         have d1 : (s1.2.map Prod.fst).Nodup := by
           apply callsListFuel_labelsDistinct fuel (fns.map Prod.snd)
             (insertEach (loc.getD 0) fns.length initial) s1 bodies hb
-          · simpa only [codeLocations_map_snd] using List.Nodup.of_append_left distinct
-          · simpa only [LabelsFresh, insertEach, codeLocations_map_snd] using
+          · simpa only [← codeLocationsFuns_map] using List.Nodup.of_append_left distinct
+          · simpa only [LabelsFresh, insertEach, ← codeLocationsFuns_map] using
               (fresh_subset fresh (fun _ h => List.mem_append_left _ h) :
                 LabelsFresh (codeLocationsFuns fns) initial)
           · simpa only [insertEach] using oldDistinct
@@ -216,7 +244,7 @@ theorem callsFuel_labelsDistinct (fuel : Nat) (e : Exp) (initial final : State) 
 termination_by fuel
 
 /-- The list traversal preserves distinctness under the same conditions. -/
-theorem callsListFuel_labelsDistinct (fuel : Nat) (es : List Exp) (initial final : State)
+private theorem callsListFuel_labelsDistinct (fuel : Nat) (es : List Exp) (initial final : State)
     (out : List Exp) (run : callsListFuel fuel es initial = some (out, final))
     (distinct : (codeLocations es).Nodup) (fresh : LabelsFresh (codeLocations es) initial)
     (oldDistinct : (initial.2.map Prod.fst).Nodup) : (final.2.map Prod.fst).Nodup := by
@@ -230,14 +258,14 @@ theorem callsListFuel_labelsDistinct (fuel : Nat) (es : List Exp) (initial final
         Option.some.injEq, Prod.mk.injEq] at run
       obtain ⟨⟨e', s1⟩, he, ⟨es', s2⟩, hs, _, rfl⟩ := run
       exact distinct_sequence distinct fresh oldDistinct
-        (callsFuel_labelsBound fuel e initial s1 e' he)
+        (labelsBoundOfExpressionRun fuel e initial s1 e' he)
         (callsFuel_labelsDistinct fuel e initial s1 e' he)
         (callsListFuel_labelsDistinct fuel es s1 s2 es' hs)
 termination_by fuel
 end
 
 /-- The production retry wrapper preserves label distinctness. -/
-theorem callsListBounded_labelsDistinct (fuel : Nat) (es : List Exp) (initial final : State)
+private theorem callsListBounded_labelsDistinct (fuel : Nat) (es : List Exp) (initial final : State)
     (out : List Exp) (run : callsListBounded fuel es initial = some (out, final))
     (distinct : (codeLocations es).Nodup) (fresh : LabelsFresh (codeLocations es) initial)
     (oldDistinct : (initial.2.map Prod.fst).Nodup) : (final.2.map Prod.fst).Nodup := by
@@ -250,5 +278,39 @@ theorem callsListBounded_labelsDistinct (fuel : Nat) (es : List Exp) (initial fi
   | none =>
     simp only [first] at run
     exact callsListFuel_labelsDistinct _ es initial final out run distinct fresh oldDistinct
+
+/-- Direct-call conversion preserves distinctness of auxiliary labels under
+the source location and disjointness conditions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "calls_ALL_DISTINCT"]
+theorem calls_allDistinct (xs : List Exp) (initial : State) (ys : List Exp)
+    (final : State) (h : calls xs initial = (ys, final) ∧
+      (initial.2.map Prod.fst).Nodup ∧ (codeLocations xs).Nodup ∧
+      (∀ label, ¬ (label ∈ Nat.succ '' {x | x ∈ codeLocations xs} ∧
+        label ∈ initial.2.map Prod.fst))) :
+    (final.2.map Prod.fst).Nodup := by
+  have bounded := callsListBounded_correct 0 xs initial
+  have run : callsSingList xs initial = (ys, final) := h.1
+  rw [run] at bounded
+  apply callsListBounded_labelsDistinct 0 xs initial final ys bounded h.2.2.1 ?_ h.2.1
+  intro loc locMem labelMem
+  apply h.2.2.2 (Nat.succ loc)
+  exact ⟨⟨loc, locMem, rfl⟩, by simpa [Nat.succ_eq_add_one] using labelMem⟩
+
+/-- Compiling input with distinct closure locations produces distinct auxiliary labels. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "compile_ALL_DISTINCT"]
+theorem compile_allDistinct (enabled : Bool) (xs ys : List Exp) (known : Flapjack.NumSet)
+    (aux : List (Nat × Nat × Exp))
+    (h : compile enabled xs = (ys, (known, aux)) ∧ (codeLocations xs).Nodup) :
+    (aux.map Prod.fst).Nodup := by
+  cases enabled with
+  | false =>
+    simp [compile] at h
+    obtain ⟨⟨_, _, rfl⟩, _⟩ := h
+    simp
+  | true =>
+    apply calls_allDistinct xs (.ln, []) ys (known, aux)
+    simp only [compile, ↓reduceIte] at h
+    exact ⟨h.1, by simp, h.2, by simp⟩
+
 
 end Flapjack.Compiler.Backend.ClosCall

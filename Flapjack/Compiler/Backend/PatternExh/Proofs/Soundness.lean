@@ -156,13 +156,6 @@ theorem holFmapAsFiniteSupportParamWitness_defaultMat_member_refs
     ofBroad (toBroad refs) refs.finiteSupport = refs :=
   holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
 
-theorem holFmapAsFiniteSupportParamWitness_exhMatrix_sound_refs
-    (refs : HolFiniteMapExact Nat Term) (key : Nat) :
-    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
-    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
-    ofBroad (toBroad refs) refs.finiteSupport = refs :=
-  holFmapAsFiniteSupportParamWitness_pmatch_any_refs refs key
-
 theorem holFmapAsFiniteSupportParamWitness_matchRows_exists_success_refs
     (refs : HolFiniteMapExact Nat Term) (key : Nat) :
     (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
@@ -610,97 +603,6 @@ theorem colCtors_sound (matrix : List (List Pat)) (constructors : List Ctor)
           rw [ctorKeep_eq_HOL]
           exact (mem_ctorKeep headCtors tailCtors headCtor).mpr ⟨headMember, tailMember⟩
 
-/-- A matrix accepted by the exhaustiveness checker contains a matching row
-whenever every row is free of type errors. -/
-@[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_matrix_thm"
-  (fmap_as_finite_support_parameters := [refs])]
-theorem exhMatrix_sound (matrix : List (List Pat)) (refs : HolFiniteMapExact Nat Term) :
-    ∀ (values : List Term),
-      exhMatrix matrix = true →
-      (∀ row ∈ matrix, pmatchList refs row values ≠ .typeFailure) →
-      ∃ row ∈ matrix, pmatchList refs row values = .success := by
-  revert refs
-  refine exhMatrix.induct
-    (motive1 := fun matrix => ∀ (refs : HolFiniteMapExact Nat Term) (values : List Term),
-      exhMatrix matrix = true →
-      (∀ row ∈ matrix, pmatchList refs row values ≠ .typeFailure) →
-      ∃ row ∈ matrix, pmatchList refs row values = .success)
-    (motive2 := fun matrices => ∀ (matrix : List (List Pat)), matrix ∈ matrices →
-      ∀ (refs : HolFiniteMapExact Nat Term) (values : List Term),
-        exhMats matrices = true →
-        (∀ row ∈ matrix, pmatchList refs row values ≠ .typeFailure) →
-        ∃ row ∈ matrix, pmatchList refs row values = .success)
-    ?_ ?_ ?_ ?_ ?_ ?_ matrix
-  · intro refs values accepted
-    simp [exhMatrix] at accepted
-  · intro row rows empty refs values accepted safe
-    cases row with
-    | cons first rest => simp at empty
-    | nil =>
-      cases values with
-      | nil => exact ⟨[], by simp, by simp [pmatchList]⟩
-      | cons value values =>
-        have bad := safe [] (by simp)
-        simp [pmatchList] at bad
-  · intro row rows nonempty unknown ih refs values accepted safe
-    have defaultAccepted : exhMatrix (defaultMat (row :: rows)) = true := by
-      rw [exhMatrix] at accepted
-      split at accepted
-      · simp_all
-      · split at accepted <;> simp_all
-    cases values with
-    | nil =>
-      cases row with
-      | nil => simp at nonempty
-      | cons first rest =>
-        have bad := safe (first :: rest) (by simp)
-        simp [pmatchList] at bad
-    | cons value values =>
-      have defaultSafe : ∀ r ∈ defaultMat (row :: rows), pmatchList refs r values ≠ .typeFailure := by
-        intro r member
-        obtain ⟨original, originalMember, result⟩ := defaultMat_member refs value values (row :: rows) r member
-        rw [result]
-        exact safe original originalMember
-      obtain ⟨r, member, hit⟩ := ih refs values defaultAccepted defaultSafe
-      obtain ⟨original, originalMember, result⟩ := defaultMat_member refs value values (row :: rows) r member
-      exact ⟨original, originalMember, result ▸ hit⟩
-  · intro row rows nonempty constructors known ih refs values accepted safe
-    have allAccepted : exhMats (specMats constructors (row :: rows)) = true := by
-      rw [exhMatrix] at accepted
-      split at accepted
-      · simp_all
-      · split at accepted <;> simp_all
-    cases values with
-    | nil =>
-      cases row with
-      | nil => simp at nonempty
-      | cons first rest =>
-        have bad := safe (first :: rest) (by simp)
-        simp [pmatchList] at bad
-    | cons value values =>
-      obtain ⟨constructor, fields, found, member⟩ := colCtors_sound (row :: rows) constructors refs value values ⟨known, safe⟩
-      have specializedSafe : ∀ r ∈ specMat constructor (row :: rows),
-          pmatchList refs r (fields ++ values) ≠ .typeFailure := by
-        intro r inMatrix
-        obtain ⟨original, originalMember, result⟩ :=
-          specMat_member (row :: rows) constructor fields refs value values r ⟨found, inMatrix⟩
-        rw [result]
-        exact safe original originalMember
-      obtain ⟨r, inMatrix, hit⟩ := ih (specMat constructor (row :: rows))
-        (specMat_mem_specMats constructors constructor (row :: rows) member)
-        refs (fields ++ values) allAccepted specializedSafe
-      obtain ⟨original, originalMember, result⟩ :=
-        specMat_member (row :: rows) constructor fields refs value values r ⟨found, inMatrix⟩
-      exact ⟨original, originalMember, result ▸ hit⟩
-  · intro matrix member
-    simp at member
-  · intro first rest ihFirst ihRest matrix member refs values accepted safe
-    have both : exhMatrix first = true ∧ exhMats rest = true := by simpa [exhMats] using accepted
-    simp only [List.mem_cons] at member
-    rcases member with rfl | member
-    · exact ihFirst refs values both.1 safe
-    · exact ihRest matrix member refs values both.2 safe
-
 /-- Both source matrix and matrix-list soundness statements, with independent
 reference maps for the two conjuncts. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "exh_matrix_thm"
@@ -714,20 +616,101 @@ theorem exh_matrix_thm :
       exhMats matrices = true ∧ matrix ∈ matrices ∧
         (∀ row ∈ matrix, pmatchList matricesRefs row values ≠ .typeFailure) →
       ∃ row ∈ matrix, pmatchList matricesRefs row values = .success) := by
-  constructor
-  · intro matrix refs values ⟨accepted, safe⟩
-    exact exhMatrix_sound matrix refs values accepted safe
-  · intro matrices
-    induction matrices with
-    | nil =>
-      intro matrix refs values ⟨_, member, _⟩
+  have all :
+      (∀ (matrix : List (List Pat)) (refs : HolFiniteMapExact Nat Term) (values : List Term),
+        exhMatrix matrix = true →
+        (∀ row ∈ matrix, pmatchList refs row values ≠ .typeFailure) →
+        ∃ row ∈ matrix, pmatchList refs row values = .success) ∧
+      (∀ (matrices : List (List (List Pat))) (matrix : List (List Pat)), matrix ∈ matrices →
+        ∀ (refs : HolFiniteMapExact Nat Term) (values : List Term),
+          exhMats matrices = true →
+          (∀ row ∈ matrix, pmatchList refs row values ≠ .typeFailure) →
+          ∃ row ∈ matrix, pmatchList refs row values = .success) := by
+    refine exhMatrix.mutual_induct
+      (motive1 := fun matrix => ∀ (refs : HolFiniteMapExact Nat Term) (values : List Term),
+        exhMatrix matrix = true →
+        (∀ row ∈ matrix, pmatchList refs row values ≠ .typeFailure) →
+        ∃ row ∈ matrix, pmatchList refs row values = .success)
+      (motive2 := fun matrices => ∀ (matrix : List (List Pat)), matrix ∈ matrices →
+        ∀ (refs : HolFiniteMapExact Nat Term) (values : List Term),
+          exhMats matrices = true →
+          (∀ row ∈ matrix, pmatchList refs row values ≠ .typeFailure) →
+          ∃ row ∈ matrix, pmatchList refs row values = .success)
+      ?_ ?_ ?_ ?_ ?_ ?_
+    · intro refs values accepted
+      simp [exhMatrix] at accepted
+    · intro row rows empty refs values accepted safe
+      cases row with
+      | cons first rest => simp at empty
+      | nil =>
+        cases values with
+        | nil => exact ⟨[], by simp, by simp [pmatchList]⟩
+        | cons value values =>
+          have bad := safe [] (by simp)
+          simp [pmatchList] at bad
+    · intro row rows nonempty unknown ih refs values accepted safe
+      have defaultAccepted : exhMatrix (defaultMat (row :: rows)) = true := by
+        rw [exhMatrix] at accepted
+        split at accepted
+        · simp_all
+        · split at accepted <;> simp_all
+      cases values with
+      | nil =>
+        cases row with
+        | nil => simp at nonempty
+        | cons first rest =>
+          have bad := safe (first :: rest) (by simp)
+          simp [pmatchList] at bad
+      | cons value values =>
+        have defaultSafe : ∀ r ∈ defaultMat (row :: rows), pmatchList refs r values ≠ .typeFailure := by
+          intro r member
+          obtain ⟨original, originalMember, result⟩ := defaultMat_member refs value values (row :: rows) r member
+          rw [result]
+          exact safe original originalMember
+        obtain ⟨r, member, hit⟩ := ih refs values defaultAccepted defaultSafe
+        obtain ⟨original, originalMember, result⟩ := defaultMat_member refs value values (row :: rows) r member
+        exact ⟨original, originalMember, result ▸ hit⟩
+    · intro row rows nonempty constructors known ih refs values accepted safe
+      have allAccepted : exhMats (specMats constructors (row :: rows)) = true := by
+        rw [exhMatrix] at accepted
+        split at accepted
+        · simp_all
+        · split at accepted <;> simp_all
+      cases values with
+      | nil =>
+        cases row with
+        | nil => simp at nonempty
+        | cons first rest =>
+          have bad := safe (first :: rest) (by simp)
+          simp [pmatchList] at bad
+      | cons value values =>
+        obtain ⟨constructor, fields, found, member⟩ := colCtors_sound (row :: rows) constructors refs value values ⟨known, safe⟩
+        have specializedSafe : ∀ r ∈ specMat constructor (row :: rows),
+            pmatchList refs r (fields ++ values) ≠ .typeFailure := by
+          intro r inMatrix
+          obtain ⟨original, originalMember, result⟩ :=
+            specMat_member (row :: rows) constructor fields refs value values r ⟨found, inMatrix⟩
+          rw [result]
+          exact safe original originalMember
+        obtain ⟨r, inMatrix, hit⟩ := ih (specMat constructor (row :: rows))
+          (specMat_mem_specMats constructors constructor (row :: rows) member)
+          refs (fields ++ values) allAccepted specializedSafe
+        obtain ⟨original, originalMember, result⟩ :=
+          specMat_member (row :: rows) constructor fields refs value values r ⟨found, inMatrix⟩
+        exact ⟨original, originalMember, result ▸ hit⟩
+    · intro matrix member
       simp at member
-    | cons first rest ih =>
-      intro matrix refs values ⟨accepted, member, safe⟩
+    · intro first rest ihFirst ihRest matrix member refs values accepted safe
       have both : exhMatrix first = true ∧ exhMats rest = true := by simpa [exhMats] using accepted
-      rcases List.mem_cons.mp member with rfl | member
-      · exact exhMatrix_sound _ refs values both.1 safe
-      · exact ih matrix refs values ⟨both.2, member, safe⟩
+      simp only [List.mem_cons] at member
+      rcases member with rfl | member
+      · exact ihFirst refs values both.1 safe
+      · exact ihRest matrix member refs values both.2 safe
+  refine ⟨?_, ?_⟩
+  · intro matrix refs values ⟨accepted, safe⟩
+    exact all.1 matrix refs values accepted safe
+  · intro matrices matrix refs values ⟨accepted, member, safe⟩
+    exact all.2 matrices matrix member refs values accepted safe
 
 /-- Prefixing rows preserves their membership witnesses. -/
 @[hol "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml" "MEM_add_head"]
@@ -897,7 +880,7 @@ theorem expand_thm :
 
 /-- Each expanded matrix row originates in one input row and one of its
 expanded patterns. This Flapjack helper replaces the HOL proofs' row induction. -/
-theorem orRows_member {α : Type} (rows : List (Pat × α)) (row : List Pat) (member : row ∈ orRows rows) :
+private theorem orRows_member {α : Type} (rows : List (Pat × α)) (row : List Pat) (member : row ∈ orRows rows) :
     ∃ pattern index, (pattern, index) ∈ rows ∧
       ∃ expanded ∈ expand pattern, row = [expanded] := by
   induction rows with
@@ -948,7 +931,7 @@ theorem exhRows_sound (refs : HolFiniteMapExact Nat Term) (rows : List (Pat × N
   obtain ⟨safe, exhaustive⟩ := premises
   have rowSafe := matchRows_member_safe refs value rows safe
   have matrixSafe := orRows_safe refs value rows rowSafe
-  have matrixHit := exhMatrix_sound (orRows rows) refs [value] exhaustive matrixSafe
+  have matrixHit := exh_matrix_thm.1 (orRows rows) refs [value] ⟨exhaustive, matrixSafe⟩
   exact matchRows_exists_success refs value rows ⟨safe, orRows_hit refs value rows ⟨rowSafe, matrixHit⟩⟩
 
 

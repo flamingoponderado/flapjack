@@ -13,21 +13,6 @@ public import Mathlib.Data.List.Forall2
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps Flapjack.AstHOL
 
-/-- Flapjack proof infrastructure: a successful indexed read leaves its state unchanged. -/
-private theorem indexedReadState {F A : Type} (state out : Store Value × HolFfiState F)
-    (isUnsafe : Bool) (index : Int) (items : List A) (toValue : A → Value) (r : Result Value Value)
-    (run : readIndexed state isUnsafe items index toValue = some (out, r)) : out = state := by
-  by_cases negative : index < 0
-  · cases isUnsafe <;> simp [readIndexed, boundsFailure, negative] at run
-    exact run.1.symm
-  · cases found : items[index.toNat]? with
-    | none =>
-      cases isUnsafe <;> simp [readIndexed, boundsFailure, negative, found] at run
-      exact run.1.symm
-    | some value =>
-      simp [readIndexed, negative, found] at run
-      exact run.1.symm
-
 /-- Flapjack infrastructure for the indexed-read clauses of `do_app_sim`.
 The source evaluator factors those HOL cases through `readIndexed`; this
 generic relation has no separate HOL declaration. -/
@@ -39,13 +24,10 @@ theorem indexedRead_related {F A B : Type} (oracle : EvalOracleState)
     (r : Result Value Value) (run : readIndexed source isUnsafe left index toLeft = some (out, r)) :
     out = source ∧ ∃ r', readIndexed target isUnsafe right index toRight = some (target, r') ∧
       resultRel (ValueRel oracle) (ValueRel oracle) r r' := by
-  have same := indexedReadState source out isUnsafe index left toLeft r run
-  subst out
-  refine ⟨rfl, ?_⟩
   by_cases negative : index < 0
   · cases isUnsafe <;> simp [readIndexed, boundsFailure, negative] at run ⊢
-    subst r
-    exact ValueRel.con .nil
+    obtain ⟨rfl, rfl⟩ := run
+    exact ⟨rfl, ValueRel.con .nil⟩
   · cases found : left[index.toNat]? with
     | none =>
       have absent : right[index.toNat]? = none := by
@@ -54,13 +36,13 @@ theorem indexedRead_related {F A B : Type} (oracle : EvalOracleState)
         | none => rfl
         | some value => simp [found, targetFound, Flapjack.optionRel] at relatedLookup
       cases isUnsafe <;> simp [readIndexed, boundsFailure, negative, found, absent] at run ⊢
-      subst r
-      exact ValueRel.con .nil
+      obtain ⟨rfl, rfl⟩ := run
+      exact ⟨rfl, ValueRel.con .nil⟩
     | some value =>
       obtain ⟨value', found', same⟩ := Flapjack.forall₂_lookup related index.toNat value found
       simp [readIndexed, negative, found] at run
-      subst r
-      exact ⟨.val (toRight value'), by simp [readIndexed, negative, found'], values value value' same⟩
+      obtain ⟨rfl, rfl⟩ := run
+      exact ⟨rfl, .val (toRight value'), by simp [readIndexed, negative, found'], values value value' same⟩
 
 /-- Flapjack infrastructure for the indexed-update clauses of `do_app_sim`.
 The source evaluator factors those HOL cases through `updateIndexed`; this

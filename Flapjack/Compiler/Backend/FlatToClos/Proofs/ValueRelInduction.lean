@@ -17,77 +17,6 @@ theorem nameIndex_eq_holFindi (name : Option MlString) (names : List (Option MlS
   | nil => rfl
   | cons head tail ih => simp [nameIndex, Flapjack.holFindi, ih, Nat.add_comm]
 
-/-- Rules for predicates on related values and environments. The lookup
-formulation exposes a bounded target entry and is equivalent to the HOL
-index-and-element formulation on valid indices. -/
-structure ValueRelInductionSteps
-    (P : FlatSem.Value → ClosSem.Value → Prop)
-    (Q : FlatSem.Environment FlatSem.Value → List (Option MlString) → List ClosSem.Value → Prop) : Prop where
-  loc : ∀ flag index, P (.loc flag index) (.refPtr flag index)
-  int : ∀ value, P (.litv (.intLit value)) (.number value)
-  char : ∀ value, P (.litv (.char value)) (.number value.toNat)
-  string : ∀ value, P (.litv (.strLit value)) (.byteVector value.explode)
-  word8 : ∀ value, P (.litv (.word8 value)) (.number value.toNat)
-  word64 : ∀ value, P (.litv (.word64 value)) (.word64 value)
-  float64 : ∀ value, P (.litv (.float64 value)) (.word64 value)
-  tuple : ∀ source target, List.Forall₂ P source target → P (.conv none source) (.block 0 target)
-  con : ∀ source target tag typeId, List.Forall₂ P source target →
-    P (.conv (some (tag, typeId)) source) (.block tag target)
-  vector : ∀ source target, List.Forall₂ P source target → P (.vectorv source) (.block 0 target)
-  closure : ∀ env names values name body, Q env names values → FlatProps.noMat body = true →
-    P (.closure env name body) (.closure none [] values 1 (compileExp (some name :: names) body))
-  recclosure : ∀ env names values funs index (bound : index < funs.length), Q env names values →
-    (funs.map Prod.fst).Nodup → FlatProps.noMatFuns funs = true →
-    P (.recclosure env funs (funs[index]'bound).1)
-      (.recclosure none [] values (compileFuns (funs.map (fun f => some f.1) ++ names) funs) index)
-  env : ∀ env names values,
-    (∀ name value, env.v.lookup name = some value →
-      ∃ target, values[nameIndex (some name) names]? = some target ∧ P value target) → Q env names values
-
-/-- Source-shaped mutual induction, derived from the positivity-friendly Lean
-relations. This infrastructure has no separate HOL declaration. -/
-theorem valueRel_source_induction
-    (P : FlatSem.Value → ClosSem.Value → Prop)
-    (Q : FlatSem.Environment FlatSem.Value → List (Option MlString) → List ClosSem.Value → Prop)
-    (steps : ValueRelInductionSteps P Q) :
-    (∀ source target, ValueRel source target → P source target) ∧
-    (∀ env names values, EnvRel env names values → Q env names values) := by
-  refine ⟨?_, ?_⟩
-  all_goals
-    intros
-    first
-    | refine ValueRel.rec (motive_1 := fun x y _ => P x y)
-        (motive_2 := fun env names values _ => Q env names values)
-        (motive_3 := fun xs ys _ => List.Forall₂ P xs ys)
-        ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ‹ValueRel _ _›
-    | refine EnvRel.rec (motive_1 := fun x y _ => P x y)
-        (motive_2 := fun env names values _ => Q env names values)
-        (motive_3 := fun xs ys _ => List.Forall₂ P xs ys)
-        ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ‹EnvRel _ _ _›
-  all_goals
-    try first
-    | exact steps.loc
-    | exact steps.int
-    | exact steps.char
-    | exact steps.string
-    | exact steps.word8
-    | exact steps.word64
-    | exact steps.float64
-    | exact fun {source} {target} _ ih => steps.tuple source target ih
-    | exact fun {source} {target} {tag} {typeId} _ ih => steps.con source target tag typeId ih
-    | exact fun {source} {target} _ ih => steps.vector source target ih
-    | exact fun _ safe ih => steps.closure _ _ _ _ _ ih safe
-    | exact fun bound _ distinct safe ih => steps.recclosure _ _ _ _ _ bound ih distinct safe
-    | exact .nil
-    | exact fun {_} {_} {_} {_} _ _ ihHead ihTail => .cons ihHead ihTail
-    | exact fun {env} {names} {values} present _ ih => steps.env env names values (by
-        intro name value found
-        cases selected : values[nameIndex (some name) names]? with
-        | none =>
-          have impossible := present name value found
-          simp [selected] at impossible
-        | some target => exact ⟨target, rfl, ih name value target found selected⟩)
-
 /-- Optional indexing and the HOL bound-plus-`EL` formulation give the same
 environment induction premise. This is a bounded-index representation fact. -/
 theorem envLookup_source_shape
@@ -189,26 +118,61 @@ theorem valueRel_hol_induction
     (steps : ValueRelSourceSteps P Q) :
     (∀ env names values, EnvRel env names values → Q env names values) ∧
     (∀ source target, ValueRel source target → P source target) := by
-  have derived : ValueRelInductionSteps P Q := {
-    loc := steps.loc, int := steps.int, char := steps.char, string := steps.string
-    word8 := steps.word8, word64 := steps.word64, float64 := steps.float64
-    tuple := steps.tuple, con := steps.con, vector := steps.vector
-    env := by
-      intro env names values ih
-      apply steps.env env names values
-      simpa only [← nameIndex_eq_holFindi] using (envLookup_source_shape P env names values).mp ih
-    closure := by
-      intro env names values name body ih safe
-      simpa only [← compileExp_eq_holHd] using steps.closure env names values name body ih safe
-    recclosure := by
-      intro env names values funs index bound ih distinct safe
-      have bodySafe := (noMatFuns_eq_source funs).mp safe
-      have result := steps.recclosure env names values funs index bound ih distinct bodySafe
-      letI : Nonempty (MlString × MlString × FlatLang.Exp) :=
-        ⟨(ofString "", ofString "", .lit .none (.intLit 0))⟩
-      simpa only [Flapjack.holEl_eq_getElem _ _ bound, ← compileFuns_eq_source] using result }
-  have induction := valueRel_source_induction P Q derived
-  exact ⟨induction.2, induction.1⟩
+  have closureStep : ∀ env names values name body, Q env names values → FlatProps.noMat body = true →
+      P (.closure env name body) (.closure none [] values 1 (compileExp (some name :: names) body)) := by
+    intro env names values name body ih safe
+    simpa only [← compileExp_eq_holHd] using steps.closure env names values name body ih safe
+  have recclosureStep : ∀ env names values funs index (bound : index < funs.length), Q env names values →
+      (funs.map Prod.fst).Nodup → FlatProps.noMatFuns funs = true →
+      P (.recclosure env funs (funs[index]'bound).1)
+        (.recclosure none [] values (compileFuns (funs.map (fun f => some f.1) ++ names) funs) index) := by
+    intro env names values funs index bound ih distinct safe
+    have bodySafe := (noMatFuns_eq_source funs).mp safe
+    have result := steps.recclosure env names values funs index bound ih distinct bodySafe
+    letI : Nonempty (MlString × MlString × FlatLang.Exp) :=
+      ⟨(ofString "", ofString "", .lit .none (.intLit 0))⟩
+    simpa only [Flapjack.holEl_eq_getElem _ _ bound, ← compileFuns_eq_source] using result
+  have envStep : ∀ env names values,
+      (∀ name value, env.v.lookup name = some value →
+        ∃ target, values[nameIndex (some name) names]? = some target ∧ P value target) → Q env names values := by
+    intro env names values ih
+    apply steps.env env names values
+    simpa only [← nameIndex_eq_holFindi] using (envLookup_source_shape P env names values).mp ih
+  refine ⟨?_, ?_⟩
+  all_goals
+    intros
+    first
+    | refine ValueRel.rec (motive_1 := fun x y _ => P x y)
+        (motive_2 := fun env names values _ => Q env names values)
+        (motive_3 := fun xs ys _ => List.Forall₂ P xs ys)
+        ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ‹ValueRel _ _›
+    | refine EnvRel.rec (motive_1 := fun x y _ => P x y)
+        (motive_2 := fun env names values _ => Q env names values)
+        (motive_3 := fun xs ys _ => List.Forall₂ P xs ys)
+        ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ‹EnvRel _ _ _›
+  all_goals
+    try first
+    | exact steps.loc
+    | exact steps.int
+    | exact steps.char
+    | exact steps.string
+    | exact steps.word8
+    | exact steps.word64
+    | exact steps.float64
+    | exact fun {source} {target} _ ih => steps.tuple source target ih
+    | exact fun {source} {target} {tag} {typeId} _ ih => steps.con source target tag typeId ih
+    | exact fun {source} {target} _ ih => steps.vector source target ih
+    | exact fun _ safe ih => closureStep _ _ _ _ _ ih safe
+    | exact fun bound _ distinct safe ih => recclosureStep _ _ _ _ _ bound ih distinct safe
+    | exact .nil
+    | exact fun {_} {_} {_} {_} _ _ ihHead ihTail => .cons ihHead ihTail
+    | exact fun {env} {names} {values} present _ ih => envStep env names values (by
+        intro name value found
+        cases selected : values[nameIndex (some name) names]? with
+        | none =>
+          have impossible := present name value found
+          simp [selected] at impossible
+        | some target => exact ⟨target, rfl, ih name value target found selected⟩)
 
 /-- Case decomposition of the value relation in the shape of the source
 mutual relation, with the original singleton compiler and bounded `EL`. -/

@@ -61,36 +61,6 @@ theorem listComparisonSim_cons_nil (head : FlatSem.Value) (tail : List FlatSem.V
   cases second
   simpa [FlatSem.doEqList, ClosSem.doEqList] using result
 
-/-- Successful vector comparison is preserved when the field-list comparison is preserved. -/
-theorem doEq_vector_related_of_lists
-    {s₁ s₂ : List FlatSem.Value} {t₁ t₂ : List ClosSem.Value}
-    (step : ListComparisonSim s₁ s₂)
-    (first : List.Forall₂ ValueRel s₁ t₁) (second : List.Forall₂ ValueRel s₂ t₂)
-    (b : Bool) (result : FlatSem.doEq (.vectorv s₁) (.vectorv s₂) = .val b) :
-    ClosSem.doEq (.block 0 t₁) (.block 0 t₂) = .val b := by
-  have lengths : (s₁.length = s₂.length) ↔ (t₁.length = t₂.length) := by
-    rw [← first.length_eq, ← second.length_eq]
-  by_cases same : s₁.length = s₂.length
-  · have related := step t₁ t₂ b first second (by simpa [FlatSem.doEq, same] using result)
-    simpa [ClosSem.doEq, lengths.mp same] using related
-  · have targetDifferent : t₁.length ≠ t₂.length := fun h => same (lengths.mpr h)
-    simpa [FlatSem.doEq, ClosSem.doEq, same, targetDifferent] using result
-
-/-- Successful tuple comparison is preserved when the field-list comparison is preserved. -/
-theorem doEq_tuple_related_of_lists
-    {s₁ s₂ : List FlatSem.Value} {t₁ t₂ : List ClosSem.Value}
-    (step : ListComparisonSim s₁ s₂)
-    (first : List.Forall₂ ValueRel s₁ t₁) (second : List.Forall₂ ValueRel s₂ t₂)
-    (b : Bool) (result : FlatSem.doEq (.conv none s₁) (.conv none s₂) = .val b) :
-    ClosSem.doEq (.block 0 t₁) (.block 0 t₂) = .val b := by
-  have lengths : (s₁.length = s₂.length) ↔ (t₁.length = t₂.length) := by
-    rw [← first.length_eq, ← second.length_eq]
-  by_cases same : s₁.length = s₂.length
-  · have related := step t₁ t₂ b first second (by simpa [FlatSem.doEq, same] using result)
-    simpa [ClosSem.doEq, lengths.mp same] using related
-  · have targetDifferent : t₁.length ≠ t₂.length := fun h => same (lengths.mpr h)
-    simpa [FlatSem.doEq, FlatSem.ctorSameType, ClosSem.doEq, same, targetDifferent] using result
-
 /-- Successful tagged-constructor comparison is preserved when the field-list comparison is preserved. A source type error is not assumed to
 have a corresponding target result. -/
 theorem doEq_con_related_of_lists
@@ -122,7 +92,9 @@ theorem valueComparisonSim_vector {xs ys : List FlatSem.Value}
   cases first with
   | vector first =>
     cases second with
-    | vector second => exact doEq_vector_related_of_lists fields first second b result
+    | vector second =>
+      exact doEq_con_related_of_lists fields first second 0 0 none none b
+        (by simpa [FlatSem.doEq, FlatSem.ctorSameType] using result)
 
 /-- Tuple comparison uses exactly the invariant for its two field lists. -/
 theorem valueComparisonSim_tuple {xs ys : List FlatSem.Value}
@@ -131,7 +103,9 @@ theorem valueComparisonSim_tuple {xs ys : List FlatSem.Value}
   cases first with
   | tuple first =>
     cases second with
-    | tuple second => exact doEq_tuple_related_of_lists fields first second b result
+    | tuple second =>
+      exact doEq_con_related_of_lists fields first second 0 0 none none b
+        (by simpa [FlatSem.doEq, FlatSem.ctorSameType] using result)
 
 /-- Tagged constructor comparison uses the invariant for its two field lists. -/
 theorem valueComparisonSim_con {xs ys : List FlatSem.Value}

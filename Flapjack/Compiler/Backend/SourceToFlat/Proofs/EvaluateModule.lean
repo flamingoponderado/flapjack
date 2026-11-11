@@ -10,18 +10,6 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL
 open OracleInvariant
 
-/-- Lifting corresponding environments into the same module preserves their
-value, constructor, and module domains. -/
-theorem envDomainEq_lift (moduleName : ModN) (compMap : Environment) (sourceEnv : SemEnv Value)
-    (domain : EnvDomainEq compMap sourceEnv) :
-    EnvDomainEq (liftEnv moduleName compMap)
-      ⟨nsLift moduleName sourceEnv.v, nsLift moduleName sourceEnv.c⟩ := by
-  obtain ⟨values, valueModules, constructors, constructorModules⟩ := domain
-  exact ⟨nsDom_lift_eq moduleName _ _ values,
-    nsDomMod_lift_eq moduleName _ _ valueModules,
-    nsDom_lift_eq moduleName _ _ constructors,
-    nsDomMod_lift_eq moduleName _ _ constructorModules⟩
-
 /-- Lifting related environments into a module preserves the factored
 global-environment invariant. -/
 theorem globalEnvInv_lift (genv : GlobalEnv) (moduleName : ModN)
@@ -54,47 +42,5 @@ theorem globalEnvInv_lift (genv : GlobalEnv) (moduleName : ModN)
           obtain ⟨cn, group, compiled, mapped, types⟩ := constructors rest arity stamp inner
           exact ⟨cn, group, by simpa [liftEnv, nsLookup_nsLift] using compiled, mapped, types⟩
         · simp [nsLookup_nsLift, Ne.symm same] at lookup
-
-/-- Lift the result of an inner declaration simulation into a module. The
-flat code, state, index and oracle outcomes remain those of the inner case. -/
-theorem factoredDecCase_liftModule {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (genv : GlobalEnv) (source sourceLast : State F) (flat : FlatSem.State C F)
-    (finish next : NextIndices) (other : Set (Nat × IndexKind)) (nextGen : EnvironmentGenerationStore)
-    (innerMap : Environment) (moduleName : ModN) (flatDecs : List FlatLang.Exp)
-    (innerResult : Result (SemEnv Value) Value)
-    (inner : FactoredDecCase interp transform genv source sourceLast flat finish next other nextGen innerMap
-      flatDecs innerResult) :
-    FactoredDecCase interp transform genv source sourceLast flat finish next other nextGen
-      (liftEnv moduleName innerMap) flatDecs
-      (match innerResult with
-       | .val resultEnv => .val ⟨nsLift moduleName resultEnv.v, nsLift moduleName resultEnv.c⟩
-       | .err error => .err error) := by
-  obtain ⟨finalState, finalGenv, flatError, flatRun, states, post, success, errors⟩ := inner
-  refine ⟨finalState, finalGenv, flatError, flatRun, states, ?_⟩
-  cases innerResult with
-  | val innerEnv =>
-    obtain ⟨invariant, forward, growth⟩ := post trivial
-    obtain ⟨noError, domain, generation, envInv⟩ := success innerEnv rfl
-    refine ⟨?_, ?_, ?_⟩
-    · intro _
-      exact ⟨invariant, forward, growth⟩
-    · intro resultEnv same
-      cases same
-      exact ⟨noError, envDomainEq_lift moduleName innerMap innerEnv domain, generation,
-        globalEnvInv_lift finalGenv moduleName innerMap innerEnv envInv⟩
-    · intro error impossible
-      cases impossible
-  | err error =>
-    refine ⟨?_, ?_, ?_⟩
-    · cases error with
-      | abort kind => intro impossible; exact False.elim impossible
-      | raise value => intro _; exact post trivial
-    · intro resultEnv impossible
-      cases impossible
-    · intro error' same
-      cases same
-      exact errors error rfl
-
 
 end Flapjack.Compiler.Backend.SourceToFlat

@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.ClosKnown.Inline
 public import Flapjack.Compiler.Backend.ClosKnown.Fuel
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxGlobalSafety
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLabels
 
 @[expose] public section
 
@@ -77,6 +78,16 @@ theorem ticks_codeLocations (trace : BackendCommon.Tra) (index n : Nat) (e : Exp
   | zero => rfl
   | succ n ih =>
     simpa [ticks, codeLocations, codeLocationsExp] using
+      ih (index + 1) (.tick (BackendCommon.mkCons trace index) e)
+
+/-- Inserting ticks leaves the set of code labels unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "get_code_labels_mk_Ticks"]
+theorem ticks_getCodeLabels (trace : BackendCommon.Tra) (index n : Nat) (e : Exp) :
+    getCodeLabels (ticks trace index n e) = getCodeLabels e := by
+  induction n generalizing index e with
+  | zero => rfl
+  | succ n ih =>
+    simpa [ticks, getCodeLabels] using
       ih (index + 1) (.tick (BackendCommon.mkCons trace index) e)
 
 end Flapjack.Compiler.Backend.ClosKnown

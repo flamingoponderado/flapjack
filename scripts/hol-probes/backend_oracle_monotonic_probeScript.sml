@@ -11,6 +11,8 @@ val _ = show "monotonic_with_invariant=" backendPropsTheory.oracle_monotonic_sta
 val _ = show "state_cc=" backendPropsTheory.state_cc_def;
 val _ = show "FST_state_co=" backendPropsTheory.FST_state_co;
 val _ = show "SND_state_co=" backendPropsTheory.SND_state_co;
+val _ = show "monotonic_shift=" backendPropsTheory.oracle_monotonic_shift_seq;
+val _ = show "monotonic_disjoint_init=" backendPropsTheory.oracle_monotonic_DISJOINT_init;
 val _ = show "state_cc_success=" (EVAL ``state_cc
   (\s p. (s + 1:num, p + 2:num))
   (\c p. SOME (p, T, c + 3:num)) (4,5) 6``);

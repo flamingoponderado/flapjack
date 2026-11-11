@@ -5,5 +5,7 @@ monotonic_with_invariant=∀(P :α -> bool) (n_f :α -> num). P (FST (FST ((orac
 state_cc=∀(f :α -> γ -> ζ # θ) (cc :β -> θ -> (δ # ε # η) option). state_cc f cc = (λ((state :α),(cfg :β)) (prog :γ). (let ((state1 :ζ),(prog1 :θ)) = f state prog in case cc cfg prog1 of (NONE :(δ # ε # η) option) => (NONE :(δ # ε # ζ # η) option) | SOME (code,data,cfg1) => SOME (code,data,state1,cfg1)))
 FST_state_co=FST (state_co (f :γ -> δ -> ε # β) (co :ζ -> (γ # α) # δ) (n :ζ)) = SND (FST (co n))
 SND_state_co=SND (state_co (f :γ -> δ -> ε # α) (co :ζ -> (γ # β) # δ) (n :ζ)) = SND (f (FST (FST (co n))) (SND (co n)))
+monotonic_shift=∀(i :num). oracle_monotonic (f :α -> β -> bool) (R :β -> β -> bool) (St :β -> bool) (co :num -> α) ∧ i > (0 :num) ∧ (St' :β -> bool) ⊆ f (co (i − (1 :num))) ∪ St ⇒ oracle_monotonic f R St' (shift_seq i co)
+monotonic_disjoint_init=∀(i :num). oracle_monotonic (f :α -> β -> bool) (R :β -> β -> bool) (St :β -> bool) (co :num -> α) ∧ (irreflexive R :bool) ⇒ DISJOINT St (f (co i))
 state_cc_success=state_cc (λ(s :num) (p :num). (s + (1 :num),p + (2 :num))) (λ(c :num) (p :num). SOME (p,T,c + (3 :num))) ((4 :num),(5 :num)) (6 :num) = SOME ((8 :num),T,(5 :num),(8 :num))
 state_cc_failure=state_cc (λ(s :num) (p :num). (s + (1 :num),p + (2 :num))) (λ(c :num) (p :num). (NONE :(num # bool # num) option)) ((4 :num),(5 :num)) (6 :num) = (NONE :(num # bool # num # num) option)

@@ -40,11 +40,4 @@ theorem evaluate_ordinary_op_values {C F : Type} (trace : BackendCommon.Tra) (op
   | label _ | ffi _ | intOp _ | wordOp _ | blockOp _ | globOp _ | memOp _ =>
     rfl
 
-/-- Constructing a block preserves the primitive relation for any related fields. -/
-theorem primitiveSimulation_cons {C F : Type} (tag : Nat) :
-    PrimitiveSimulation (C := C) (F := F) (.blockOp (.cons tag)) := by
-  intro values nextValues source target related states
-  exact ⟨.val (.block tag nextValues, target), by simp [doApp, applyBlock], by
-    simpa [doApp, applyBlock, AppResultRel] using And.intro (ValueRel.block tag values nextValues related) states⟩
-
 end Flapjack.Compiler.Backend.ClosAnnotate

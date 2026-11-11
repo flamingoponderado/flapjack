@@ -7,5 +7,16 @@ val _ = (print "variables_def="; Lib.with_flag (Globals.show_types,true) print_t
 val _ = (print "calls_list_type="; print_type (type_of ``clos_call$calls_list``); print "\n");
 val _ = (print "calls_list_def="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callTheory.calls_list_def); print "\n");
 val _ = (print "calls_list_mapi="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_list_MAPi); print "\n");
+val _ = (print "calls_list_length_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_list_length); print "\n");
+val _ = (print "code_locs_GENLIST_Var_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.code_locs_GENLIST_Var); print "\n");
+val _ = (print "fv_GENLIST_Var_tra_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.fv_GENLIST_Var_tra); print "\n");
+val _ = (print "evaluate_GENLIST_Var_tra_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.evaluate_GENLIST_Var_tra); print "\n");
+val _ = (print "compile_ALL_DISTINCT_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.compile_ALL_DISTINCT); print "\n");
+val _ = (print "calls_fv1_subset_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_fv1_subset); print "\n");
+val _ = (print "calls_fv_imp_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_fv_imp); print "\n");
+val _ = (print "no_Labels_GENLIST_Var_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.no_Labels_GENLIST_Var); print "\n");
+val _ = (print "no_Labels_calls_list_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.no_Labels_calls_list); print "\n");
+val _ = (print "obeys_max_app_GENLIST_Var_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.obeys_max_app_GENLIST_Var); print "\n");
+val _ = (print "obeys_max_app_calls_list_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.obeys_max_app_calls_list); print "\n");
 val cases = EVAL ``(clos_call$GENLIST_Var None 7 3, clos_call$calls_list None 4 10 [(2,T);(0,F);(1,T)])``;
 val _ = (print "cases="; print_term (rhs (concl cases)); print "\n");

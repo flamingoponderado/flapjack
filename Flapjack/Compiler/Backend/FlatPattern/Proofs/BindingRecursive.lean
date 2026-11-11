@@ -443,24 +443,6 @@ theorem bindingSimulation_con {C F : Type} (trace : BackendCommon.Tra) (upper ke
         · exact nextRelated
         · exact nextBounds
 
-/-- The complete work-list simulation follows the compiler's own recursive
-induction. This assembling helper is not a separate HOL declaration. -/
-theorem bindingSimulation_all {C F : Type} (trace : BackendCommon.Tra) (upper : Nat)
-    (todo : List (FlatLang.Pat × Nat × FlatLang.Exp)) (body : FlatLang.Exp) :
-    @BindingSimulation C F trace upper todo body := by
-  induction upper, todo using compilePatBindings.induct trace body with
-  | case1 i => exact bindingSimulation_nil trace i body
-  | case2 i key expression rest ih => exact bindingSimulation_any trace i key expression body rest ih
-  | case3 i key expression rest lit ih => exact bindingSimulation_lit trace i key lit expression body rest ih
-  | case4 i key expression rest name used continuation compiled ih =>
-    exact bindingSimulation_var trace i key name expression body rest ih
-  | case5 i key expression rest stamp patterns entries used continuation compiled ih =>
-    exact bindingSimulation_con trace i key stamp patterns expression body rest ih
-  | case6 i key expression rest pattern name generated used continuation compiled ih =>
-    exact bindingSimulation_as trace i key pattern name expression body rest ih
-  | case7 i key expression rest pattern generated used continuation compiled ih =>
-    exact bindingSimulation_ref trace i key pattern expression body rest ih
-
 /-- Work-list binding simulation with the compiler result exposed explicitly. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "compile_pat_bindings_simulation"]
 theorem compilePatBindings_simulation {C F V : Type} (lower : Nat) (base : List (VarN × FlatSem.Value))
@@ -482,8 +464,22 @@ theorem compilePatBindings_simulation {C F V : Type} (lower : Nat) (base : List 
       lower < item.2.1 ∧ item.2.1 < upper)) :
     ∃ env2, FlatSem.evaluate env2 state [body] = (final, result) ∧
       aLookupRel (fun name => decNameToNum name < lower) Eq env2.v (bindings ++ base) := by
+  have simulation : @BindingSimulation C F trace upper todo body := by
+    clear premises
+    induction upper, todo using compilePatBindings.induct trace body with
+    | case1 i => exact bindingSimulation_nil trace i body
+    | case2 i key expression rest ih => exact bindingSimulation_any trace i key expression body rest ih
+    | case3 i key expression rest lit ih => exact bindingSimulation_lit trace i key lit expression body rest ih
+    | case4 i key expression rest name used continuation compiled ih =>
+      exact bindingSimulation_var trace i key name expression body rest ih
+    | case5 i key expression rest stamp patterns entries used continuation compiled ih =>
+      exact bindingSimulation_con trace i key stamp patterns expression body rest ih
+    | case6 i key expression rest pattern name generated used continuation compiled ih =>
+      exact bindingSimulation_as trace i key pattern name expression body rest ih
+    | case7 i key expression rest pattern generated used continuation compiled ih =>
+      exact bindingSimulation_ref trace i key pattern expression body rest ih
   obtain ⟨compiled, matched, evaluated, inputs, preBound, bound, related, itemBounds⟩ := premises
-  apply bindingSimulation_all trace upper todo body lower state values pre bindings env final result base matched
+  apply simulation lower state values pre bindings env final result base matched
   · simpa [compiled] using evaluated
   · have inputs' : BindingInputs lower upper used env state todo values := by
       simpa only [BindingInputs, sptMem, sptDomain, and_imp] using inputs
