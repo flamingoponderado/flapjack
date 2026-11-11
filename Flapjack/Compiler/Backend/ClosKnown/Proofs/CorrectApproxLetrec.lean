@@ -41,26 +41,6 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
       (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
   ClosSem.holFmapAsFiniteSupportWitness
 
-/-- Selection of safe captured values preserves safety. This is Flapjack
-proof infrastructure. -/
-private theorem lookupVarsSafe (indices : List Nat) (env selected : List ClosSem.Value)
-    (safe : ∀ v ∈ env, vsgcFree v) (run : lookupVars indices env = some selected) :
-    ∀ v ∈ selected, vsgcFree v := by
-  induction indices generalizing selected with
-  | nil => simp [lookupVars] at run; subst selected; simp
-  | cons index rest ih =>
-    simp only [lookupVars] at run
-    cases found : env[index]? with
-    | none => simp [found] at run
-    | some value =>
-      simp only [found] at run
-      cases remaining : lookupVars rest env with
-      | none => simp [remaining] at run
-      | some values =>
-        simp [remaining] at run
-        subst selected
-        exact by simpa using And.intro (safe value (List.mem_of_getElem? found)) (ih values remaining)
-
 /-- Recursive-closure case of the original approximation theorem. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_correct_approx"
   (fmap_as_finite_support := [refs, code])]
@@ -132,7 +112,7 @@ theorem knownCorrectApproxLetrec {C F : Type} (c : Config) (names : List Basis.P
         have capturesSafe : ∀ v ∈ captures, vsgcFree v := by
           cases selected with
           | none => simp at captured; simpa [← captured] using envSafe
-          | some indices => exact lookupVarsSafe indices (env ++ extra) captures envSafe captured
+          | some indices => exact EvaluateGlobalsPort.lookupVarsSafe indices (env ++ extra) captures envSafe captured
         let recs := (List.range fns.length).map (fun i => ClosSem.Value.recclosure loc [] captures fns i)
         have recSafe : ∀ v ∈ recs, vsgcFree v := by
           intro v member
