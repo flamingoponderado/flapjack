@@ -9042,6 +9042,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_obeys_max_app_merge",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxArity.lean",
+  "lean_name": "valApproxObeysMaxAppMerge",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: arbitrary approximation operands share the same free bound, both input invariants form the sole grouped premise, and the full merged approximation satisfies that bound."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "val_approx_obeys_max_app_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxArity.lean",
   "lean_name": "valApproxObeysMaxApp",

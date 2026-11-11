@@ -27,6 +27,23 @@ decreasing_by
 def globalsApproxObeysMaxApp (limit : Nat) (g : Spt ValApprox) : Prop :=
   ∀ n a, sptLookup n g = some a → valApproxObeysMaxApp limit a
 
+/-- Merging approximations preserves their application-arity bound. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "val_approx_obeys_max_app_merge"]
+theorem valApproxObeysMaxAppMerge (limit : Nat) (a b : ValApprox)
+    (safe : valApproxObeysMaxApp limit a ∧ valApproxObeysMaxApp limit b) :
+    valApproxObeysMaxApp limit (mergeHOL a b) := by
+  obtain ⟨ha, hb⟩ := safe
+  induction a using (measure (fun a : ValApprox => sizeOf a)).wf.induction generalizing b with
+  | h a ih =>
+    cases a <;> cases b <;> simp_all [mergeHOL, valApproxObeysMaxApp]
+    all_goals split <;> simp_all [valApproxObeysMaxApp]
+    rw [mergeListHOL_eq_zip]
+    intro z member
+    obtain ⟨⟨x, y⟩, paired, rfl⟩ := List.mem_map.mp member
+    obtain ⟨hx, hy⟩ := List.of_mem_zip paired
+    have smaller := List.sizeOf_lt_of_mem hx
+    exact ih x (by simp_wf; omega) y (ha x hx) (hb y hy)
+
 /-- A body selected for inlining obeys the approximation's application bound. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "decide_inline_obeys_max_app"]
 theorem decideInlineObeysMaxApp {L : Type} (limit : Nat) (c : Config) (approx : ValApprox)
