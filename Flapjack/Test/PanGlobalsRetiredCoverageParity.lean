@@ -281,29 +281,49 @@ def compileDecsExtraRows : Bool :=
 
 The retired `PanGlobalsDecShapesParity.clusterGuard` observed the
 `pan_globalsProofScript.sml:2328-2361` cluster through the production
-`globalDeclShapes`/`globalDeclsFilter`/`globalResortDecls` forms.  The same
-seven filtered fixtures now run on the exact twin. -/
+`globalDeclShapes`/`globalDeclsFilter`/`globalResortDecls` forms, and the
+retired `PanGlobalsDecShapesClusterParity.decShapesClusterGuard` observed the
+same compositions plus the `globalRenameDecls` row and a function-only
+fixture.  Every one of those observations is replayed here on the exact twin,
+with the production filters replaced by their exact-carrier predicates and
+`globalRenameDecls` by `fpermDecsHOL`. -/
 def clusterDecls : List (DeclHOL 64) :=
   [functionDecl (width := 64) (ofString "f"),
    .decl (.comb [.one, .named (ofString "S")]) (ofString "g") (.const 7),
    .name (ofString "S") [], .exnDecl (ofString "E") (.named (ofString "T")),
    .decl .one (ofString "h") (.const 9)]
 
+def clusterFunctionOnly : List (DeclHOL 64) :=
+  [functionDecl (width := 64) (ofString "f"),
+   functionDecl (width := 64) (ofString "g")]
+
 example : decShapesHOL (width := 64)
     (clusterDecls ++ [.decl .one (ofString "k") (.const 11)]) =
     [.comb [.one, .named (ofString "S")], .one, .one] := rfl
 
-example : decShapesHOL (width := 64)
-    [.decl (.comb [.one, .named (ofString "S")]) (ofString "g") (.const 7),
-     .decl .one (ofString "h") (.const 9)] =
-    [.comb [.one, .named (ofString "S")], .one] := rfl
+example : decShapesHOL (width := 64) clusterFunctionOnly = [] := rfl
 
 example : decShapesHOL (width := 64)
-    ([.name (ofString "S") [], .exnDecl (ofString "E") (.named (ofString "T"))] :
-      List (DeclHOL 64)) = [] := rfl
+    (clusterDecls.filter (fun declaration => !isFunctionHOL declaration)) =
+    [.comb [.one, .named (ofString "S")], .one] := rfl
+
+example : decShapesHOL (width := 64) (clusterDecls.filter isFunctionHOL) = [] := rfl
+
+example : decShapesHOL (width := 64) (clusterDecls.filter isNameHOL) = [] := rfl
+
+example : decShapesHOL (width := 64) (clusterDecls.filter isExnDeclHOL) = [] := rfl
+
+example : decShapesHOL (width := 64) (clusterDecls.filter isDeclHOL) =
+    [.comb [.one, .named (ofString "S")], .one] := rfl
 
 example : decShapesHOL (width := 64) (resortDeclsHOL clusterDecls) =
     [.comb [.one, .named (ofString "S")], .one] := rfl
+
+example : decShapesHOL (width := 64)
+    (fpermDecsHOL (ofString "foo") (ofString "bar") clusterDecls) =
+    [.comb [.one, .named (ofString "S")], .one] := by
+  rw [dec_shapes_fperm_decsHOL]
+  rfl
 
 
 /-! ## Exact-twin theorem replays for the retired `dec_shapes`/`new_main_name`
