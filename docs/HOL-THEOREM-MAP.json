@@ -133919,6 +133919,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "fst_lem",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileExp.lean",
+  "lean_name": "fst_triple",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original local proof and freshly replayed fst_lem_typed: three independent component types, right-associated triple carrier and equality of the whole destructuring function with first projection. No premises or representation qualifiers are added. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "funion_submap",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/FiniteMapGrowth.lean",
   "lean_name": "funionSubmap",

@@ -36,6 +36,12 @@ theorem compileExps_length (t : List Basis.Pure.MlString.MlString)
   | nil => rfl
   | cons e es ih => simp [compileExps, ih]
 
+/-- Destructuring a triple to select its first component is first projection. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "fst_lem"]
+theorem fst_triple {α β γ : Type} :
+    (fun (p : α × β × γ) => let (first, _, _) := p; first) =
+      (Prod.fst : α × β × γ → α) := by rfl
+
 /-- Index-aware mapping commutes with an ordinary map. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "mapi_map"]
 theorem mapIdx_map {α β γ : Type} (f : Nat → β → γ) (g : α → β) (xs : List α) :

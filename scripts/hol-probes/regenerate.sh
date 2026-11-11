@@ -325,7 +325,7 @@ run_probe clos_sem_call_helpers_probeScript.sml clos_sem_call_helpers_probe.out 
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe source_to_flat_mapi_probeScript.sml source_to_flat_mapi_probe.out \
-  mapi_map_typed filter_mapi_typed \
+  mapi_map_typed filter_mapi_typed fst_lem_typed \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe clos_to_bvl_incremental_probeScript.sml clos_to_bvl_incremental_probe.out \
