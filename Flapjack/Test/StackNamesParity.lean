@@ -49,13 +49,14 @@ private def isHalt7 (p : PT) : Bool :=
 
 /-- The reviewed predicate's decidable instance, unfolded once here rather than
 restated, so the executable view below is `decide` on `namesOkSptHOL` itself. -/
-@[reducible] private def namesOkDecidable (names : Spt Nat) (regCount : Nat) (avoidRegs : List Nat) :
-    Decidable (namesOkSptHOL names regCount avoidRegs) := by
+@[reducible] private def namesOkDecidable (names : Spt Nat) (regCount : Nat)
+    (avoidRegs : List Nat) : Decidable (namesOkSptHOL names regCount avoidRegs) := by
   unfold namesOkSptHOL
   infer_instance
 
 /-- Executable view of the reviewed `names_ok` predicate (no restated clauses). -/
-@[reducible] private def namesOkB (names : Spt Nat) (regCount : Nat) (avoidRegs : List Nat) : Bool :=
+@[reducible] private def namesOkB (names : Spt Nat) (regCount : Nat)
+    (avoidRegs : List Nat) : Bool :=
   @decide (namesOkSptHOL names regCount avoidRegs) (namesOkDecidable names regCount avoidRegs)
 
 private def mapFstSample : List (Nat × PT) := [(1, .halt 3), (2, .raise 4)]
