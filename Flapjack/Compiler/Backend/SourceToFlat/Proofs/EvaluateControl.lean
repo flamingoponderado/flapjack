@@ -141,22 +141,15 @@ theorem exprSim_tuple {C F : Type} (genv : GlobalEnv) (compMap : Environment) (t
     | mk flatNext flatResult =>
       rw [flatRun] at argsSim
       obtain ⟨related, nextRel⟩ := argsSim
-      cases related with
-      | value valuesRel =>
+      cases related
+      all_goals
         unfold ExprSim
         rw [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate, sourceRun, flatRun]
         simp only [doConCheck, ↓reduceIte, buildConv]
+      case value valuesRel =>
         exact ⟨.value (.cons (valueRel_tuple genv _ _ (List.rel_reverse valuesRel)) .nil), nextRel⟩
-      | raise valueRel =>
-        unfold ExprSim
-        rw [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate, sourceRun, flatRun]
-        simp only [doConCheck, ↓reduceIte]
-        exact ⟨.raise valueRel, nextRel⟩
-      | abort error =>
-        unfold ExprSim
-        rw [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate, sourceRun, flatRun]
-        simp only [doConCheck, ↓reduceIte]
-        exact ⟨.abort error, nextRel⟩
+      case raise valueRel => exact ⟨.raise valueRel, nextRel⟩
+      case abort error => exact ⟨.abort error, nextRel⟩
 
 /-- A conditional propagates a related condition error on both sides. -/
 theorem exprSim_if_error {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)

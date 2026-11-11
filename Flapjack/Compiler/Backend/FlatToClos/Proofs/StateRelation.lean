@@ -167,6 +167,13 @@ theorem lookup_thunk {C F : Type} {source : FlatSem.State C F} {target : ClosSem
   change source.refs[index]? = some (.thunk mode value) at found
   simpa [found] using store
 
+/-- Related states have equal clocks. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "state_rel_IMP_clock"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRel_impClock {C F : Type} {source : FlatSem.State C F} {target : ClosSem.State C F}
+    (related : StateRel source target) : source.clock = target.clock :=
+  related.2.2.1
+
 /-- Decrementing both clocks preserves the state relation. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "state_rel_dec_clock"
   (fmap_as_finite_support := [refs, code])]

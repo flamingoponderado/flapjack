@@ -34,6 +34,13 @@ val _ = (print "cases_typed="; Lib.with_flag (Globals.show_types,true) print_ter
 val _ = (print "env_rel_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl env_rel_def); print "\n");
 val _ = (print "proof_initial_state_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl initial_state'_def); print "\n");
 val _ = (print "state_rel_initial_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl state_rel_initial_state); print "\n");
+(* Replay the local state-relation clock lemma with the source proof. *)
+val state_rel_imp_clock_replay = Q.prove (
+  `state_rel s t ==> s.clock = t.clock`,
+  fs [state_rel_def]);
+val _ = if null (hyp state_rel_imp_clock_replay) then () else raise Fail "local theorem has hypotheses";
+val _ = (print "state_rel_imp_clock_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl state_rel_imp_clock_replay); print "\n");
 val _ = (print "v_rel_bool_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_Boolv); print "\n");
 val _ = (print "v_rel_unit_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_Unitv); print "\n");
 val _ = (print "v_rel_to_list_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_to_list); print "\n");
