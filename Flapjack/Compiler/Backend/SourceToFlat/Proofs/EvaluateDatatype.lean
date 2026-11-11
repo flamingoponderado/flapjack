@@ -285,17 +285,6 @@ private theorem zipConstructor_member_arity {N A : Type} (constructors : List (N
       · obtain ⟨args, found, length⟩ := ih restTags arities'.2 name tag arity member
         exact ⟨args, List.mem_cons_of_mem _ found, length⟩
 
-private theorem constructorLookup_exists_iff_key_mem {α : Type} (entries : List (ConN × α)) (name : ConN) :
-    (∃ value, entries.lookup name = some value) ↔ name ∈ entries.map Prod.fst := by
-  induction entries with
-  | nil => simp
-  | cons entry entries ih =>
-    obtain ⟨key, value⟩ := entry
-    by_cases equal : name = key
-    · subst key
-      simp
-    · simp [List.lookup_cons, BEq.beq, equal, ih]
-
 /-- A named source constructor with a unique name appears in the allocator's
 entry list with its source arity. -/
 theorem allocatedConstructorEntries_find {M A : Type} (constructors : List (ConN × List A))
@@ -391,38 +380,14 @@ theorem envDomainEq_allocTags (idx stamp : Nat) (constructors : List (ConN × Li
     EnvDomainEq { v := nsEmpty, c := (allocTags idx constructors :
       Namespace ModN ConN (Nat × Option (Nat × List (Nat × Nat))) × Spt Nat).1 }
       ({ v := nsEmpty, c := alistToNs (buildConstrs stamp constructors).reverse } : SemEnv Value) := by
-  have namespaceEq := allocTags1_namespace (M := ModN) constructors.reverse
-  have lengthEq := allocTags1_length (M := ModN) constructors.reverse
-  generalize eq : (allocTags1 constructors.reverse : Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)) = result
-    at namespaceEq lengthEq ⊢
-  rcases result with ⟨ns, cids, tags⟩
-  change ns = alistToNs ((constructors.reverse.map Prod.fst).zip (tags.map Prod.fst)) at namespaceEq
-  change tags.length = constructors.reverse.length at lengthEq
-  have keys : (((constructors.reverse.map Prod.fst).zip (tags.map Prod.fst)).map Prod.fst) =
-      constructors.reverse.map Prod.fst := by
-    apply List.map_fst_zip
-    simp [lengthEq]
-  simp only [allocTags, eq, namespaceEq, nsMap, alistToNs]
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · funext id
-    apply propext
-    cases id <;> simp [nsDom, nsLookup, nsEmpty]
-  · funext path
-    apply propext
-    cases path <;> simp [nsDomMod, nsLookupMod, nsEmpty]
-  · funext id
-    apply propext
-    cases id with
-    | short name =>
-      simp only [nsDom, nsLookup]
-      rw [constructorLookup_exists_iff_key_mem, constructorLookup_exists_iff_key_mem]
-      simp only [List.map_map, Function.comp_def, List.map_reverse, buildConstrs]
-      simpa only [List.map_map, Function.comp_def, List.map_reverse] using
-        Iff.of_eq (congrArg (fun xs => name ∈ xs) keys)
-    | long moduleName rest => simp [nsDom, nsLookup]
-  · funext path
-    apply propext
-    cases path <;> simp [nsDomMod, nsLookupMod]
+  refine ⟨envDomainEq_empty.1, envDomainEq_empty.2.1, ?_⟩
+  rw [allocTags_namespace_entries]
+  apply alistToNs_domains_eq
+  intro name
+  simp only [List.map_map, Function.comp_def, List.map_reverse, buildConstrs]
+  change name ∈ (allocatedConstructorEntries (M := ModN) constructors.reverse).map Prod.fst ↔
+    name ∈ (constructors.map Prod.fst).reverse
+  rw [(allocatedConstructorEntries_projections (M := ModN) constructors.reverse).1, List.map_reverse]
 
 /-- Recording a type's tag table allocates exactly that type index. -/
 theorem allocatedIndices_installTypeTable (genv : GlobalEnv) (idx : Nat) (tags : List (Nat × Nat)) :
@@ -1286,21 +1251,6 @@ theorem compileDecs_dtype_constructorNamespace (trace : List VarN) (n : Nat) (ne
   cases result : datatypeConstructorNamespace next.tidx types
   simp [nsAppend, nsEmpty]
 
-/-- Each type definition preserves constructor and module domains, and the
-property composes in the declaration's shadowing order. -/
-theorem envDomainEq_datatypeConstructorNamespace (idx stamp : Nat) (types : TypeDef) :
-    EnvDomainEq { v := nsEmpty, c := datatypeConstructorNamespace idx types }
-      ({ v := nsEmpty, c := buildTdefs stamp types } : SemEnv Value) := by
-  induction types generalizing idx stamp with
-  | nil =>
-    simpa [datatypeConstructorNamespace, buildTdefs, emptyEnv] using envDomainEq_empty
-  | cons td rest ih =>
-    rcases td with ⟨parameters, typeName, constructors⟩
-    have first := envDomainEq_allocTags idx stamp constructors
-    have remaining := ih (idx + 1) (stamp + 1)
-    have combined := envDomainEq_append _ _ _ _ ⟨remaining, first⟩
-    simpa [datatypeConstructorNamespace, buildTdefs, extendEnv, extendDecEnv, nsAppend, nsEmpty] using combined
-
 /-- Proof-side global environment produced by allocating each type in a
 declaration, using consecutive compiler IDs and source stamps. -/
 noncomputable def allocateTypeDefinitions : Nat → Nat → TypeDef → GlobalEnv → GlobalEnv
@@ -1326,12 +1276,15 @@ theorem factoredInvariant_allocateTypeDefinitions {C F : Type} [Nonempty C]
         { source with nextTypeStamp := source.nextTypeStamp + types.length } flat ∧
       GlobalGrowth genv finalGenv ∧
       GlobalEnvInv finalGenv { v := nsEmpty, c := datatypeConstructorNamespace start.tidx types }
-        (fun _ => False) { v := nsEmpty, c := buildTdefs source.nextTypeStamp types } := by
+        (fun _ => False) { v := nsEmpty, c := buildTdefs source.nextTypeStamp types } ∧
+      EnvDomainEq { v := nsEmpty, c := datatypeConstructorNamespace start.tidx types }
+        ({ v := nsEmpty, c := buildTdefs source.nextTypeStamp types } : SemEnv Value) := by
   induction types with
   | nil =>
     intro genv start source valid _ _
     exact ⟨by simpa [allocateTypeDefinitions] using valid, GlobalGrowth.refl genv,
-      by simpa [allocateTypeDefinitions, datatypeConstructorNamespace, buildTdefs, emptyEnv] using globalEnvInv_empty genv⟩
+      by simpa [allocateTypeDefinitions, datatypeConstructorNamespace, buildTdefs, emptyEnv] using globalEnvInv_empty genv,
+      by simpa [datatypeConstructorNamespace, buildTdefs, emptyEnv] using envDomainEq_empty⟩
   | cons td rest ih =>
     rcases td with ⟨parameters, typeName, constructors⟩
     intro genv start source valid fits checked
@@ -1357,15 +1310,18 @@ theorem factoredInvariant_allocateTypeDefinitions {C F : Type} [Nonempty C]
           Namespace ModN ConN (Nat × Option (Nat × List (Nat × Nat))) × Spt Nat).1 }
         (fun _ => False) { v := nsEmpty, c := alistToNs (buildConstrs source.nextTypeStamp constructors).reverse } :=
       globalEnvInv_allocTags genv start.tidx source.nextTypeStamp constructors names
-    obtain ⟨lastValid, lastGrowth, lastInv⟩ := ih nextGenv nextStart nextSource nextValid (by simp [nextStart] at fits ⊢; omega) checkedRest
+    obtain ⟨lastValid, lastGrowth, lastInv, lastDomain⟩ := ih nextGenv nextStart nextSource nextValid (by simp [nextStart] at fits ⊢; omega) checkedRest
     have carriedInv := globalEnvInv_growth nextGenv _ lastGrowth _ (fun _ => False) _ nextInv
-    have domain := envDomainEq_datatypeConstructorNamespace nextStart.tidx nextSource.nextTypeStamp rest
-    have combined := globalEnvInv_append_factored _ _ _ _ _ ⟨domain, lastInv, carriedInv⟩
-    refine ⟨?_, ?_, ?_⟩
+    have combined := globalEnvInv_append_factored _ _ _ _ _ ⟨lastDomain, lastInv, carriedInv⟩
+    have headDomain := envDomainEq_allocTags start.tidx source.nextTypeStamp constructors
+    have combinedDomain := envDomainEq_append _ _ _ _ ⟨lastDomain, headDomain⟩
+    refine ⟨?_, ?_, ?_, ?_⟩
     · simpa [allocateTypeDefinitions, nextGenv, nextStart, nextSource, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using lastValid
     · simpa [allocateTypeDefinitions, nextGenv, nextStart, nextSource] using nextGrowth.trans lastGrowth
     · simpa [allocateTypeDefinitions, datatypeConstructorNamespace, buildTdefs, extendEnv, extendDecEnv,
         nsAppend, nsEmpty, nextGenv, nextStart, nextSource] using combined
+    · simpa [datatypeConstructorNamespace, buildTdefs, extendEnv, extendDecEnv,
+        nsAppend, nsEmpty, nextStart, nextSource] using combinedDomain
 
 /-- Datatype declarations satisfy the factored declaration simulation. The
 factored relations remain subject to the separate HOL correspondence review. -/
@@ -1401,7 +1357,7 @@ theorem factoredDecBoundedIH_dtype {C F : Type} [Nonempty C]
   subst nextGen
   subst flatDecs
   have fits : start.tidx + types.length ≤ finish.tidx := bounded.2.1
-  obtain ⟨finalInvariant, growth, envResult⟩ :=
+  obtain ⟨finalInvariant, growth, envResult, domain⟩ :=
     factoredInvariant_allocateTypeDefinitions interp transform gen finish other flat types genv start source
       invariant fits checked
   refine ⟨flat, _, none, ?_, finalInvariant.2.2.1, ?_, ?_, ?_⟩
@@ -1410,8 +1366,7 @@ theorem factoredDecBoundedIH_dtype {C F : Type} [Nonempty C]
     exact ⟨finalInvariant, oracForwardRel_refl interp source.evalState, growth⟩
   · intro resultEnv same
     cases same
-    exact ⟨rfl, envDomainEq_datatypeConstructorNamespace start.tidx source.nextTypeStamp types,
-      generation, envResult⟩
+    exact ⟨rfl, domain, generation, envResult⟩
   · intro error impossible
     cases impossible
 
