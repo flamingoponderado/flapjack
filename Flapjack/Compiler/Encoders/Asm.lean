@@ -600,15 +600,6 @@ def asmHwOffsetOk {width : Nat} (config : AsmConfig width) (offset : BitVec widt
 def asmByteOffsetOk {width : Nat} (config : AsmConfig width) (offset : BitVec width) : Bool :=
   asmOffsetOk 0 config.byteOffset offset
 
-def asmJumpOffsetOk {width : Nat} (config : AsmConfig width) (offset : BitVec width) : Bool :=
-  asmOffsetOk config.codeAlignment config.jumpOffset offset
-
-def asmCjumpOffsetOk {width : Nat} (config : AsmConfig width) (offset : BitVec width) : Bool :=
-  asmOffsetOk config.codeAlignment config.cjumpOffset offset
-
-def asmLocOffsetOk {width : Nat} (config : AsmConfig width) (offset : BitVec width) : Bool :=
-  asmOffsetOk config.codeAlignment config.locOffset offset
-
 /-- HOL `asmScript$arith_ok_def` (`asmScript.sml:191-229`).
     Not an exact HOL port: this Lean declaration quantifies `width : Nat`
     without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
@@ -714,17 +705,6 @@ def asmFpOk {width : Nat} (config : AsmConfig width) : WordLangFp → Bool
   | .fpFromInt destination source =>
       asmFpRegOk config destination && asmFpRegOk config source
 
-/-- HOL `asmScript$cmp_ok_def` (`asmScript.sml:270-272`).
-    Not an exact HOL port: this Lean declaration quantifies `width : Nat`
-    without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
-    dimensions are positive.  The manifest records this mismatch (bead
-    flapjack-4ac.6); restore the HOL tag only after correcting the width
-    binder and reviewing callers.
-    -/
-def asmCmpOk {width : Nat} (config : AsmConfig width) (operator : Cmp)
-    (register : Nat) (right : WordRegImm (BitVec width)) : Bool :=
-  asmRegOk config register && asmRegImmOk config (.inr operator) right
-
 /-- HOL `asmScript$inst_ok_def` (`asmScript.sml:286-299`).
     Not an exact HOL port: this Lean declaration quantifies `width : Nat`
     without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
@@ -746,26 +726,6 @@ def asmInstOk {width : Nat} (config : AsmConfig width) : WordLangInst (BitVec wi
           asmHwOffsetOk config offset && !(config.isa == .ag32)
          else
           asmByteOffsetOk config offset)
-
-/-- HOL `asmScript$asm_ok_def` (`asmScript.sml:301-313`).
-    Not an exact HOL port: this Lean declaration quantifies `width : Nat`
-    without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
-    dimensions are positive.  The manifest records this mismatch (bead
-    flapjack-4ac.6); restore the HOL tag only after correcting the width
-    binder and reviewing callers.
-    -/
-def asmOk {width : Nat} (config : AsmConfig width) : AsmData width → Bool
-  | .inst inner => asmInstOk config inner
-  | .jump target => asmJumpOffsetOk config target
-  | .jumpCmp operator source right target =>
-      asmCjumpOffsetOk config target && asmCmpOk config operator source right
-  | .call target =>
-      (match config.linkReg with
-        | some register => asmRegOk config register
-        | none => false) &&
-        asmJumpOffsetOk config target
-  | .jumpReg target => asmRegOk config target
-  | .loc register offset => asmRegOk config register && asmLocOffsetOk config offset
 
 
 /-! ## RISC-V configuration

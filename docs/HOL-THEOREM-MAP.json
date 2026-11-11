@@ -68043,14 +68043,6 @@
     "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
     "hol_name": "cmp_ok_def",
     "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
-    "lean_name": "asmCmpOk",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6): non-exact source review of the held reviewed_exact promotion for HOL cmp_ok_def (cakeml/compiler/encoders/asm/asmScript.sml). HOL cmp_ok_def uses a positive-dimensional word type; the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 is admitted. The HOL tag was withdrawn; faithful width-restricted restatement tracked separately."
-  },
-  {
-    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
-    "hol_name": "cmp_ok_def",
-    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
     "lean_name": "asmCmpOkExact",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): HOL asmScript.sml:270-272 cmp_ok cmp r ri c <=> reg_ok r c /\\ reg_imm_ok (INR cmp) ri c, ported clause-for-clause over the exact AsmConfigExact carrier and the exact HolRegImm ('a reg_imm) with asmRegOkExact/asmRegImmOkExact; Sum.inr operator renders INR cmp."
@@ -68126,14 +68118,6 @@
     "lean_name": "asmOffsetOkExact",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2.1): HOL asmScript$offset_ok_def takes no asm_config and uses only num/word bounds/offset; the positive-width Lean form asmOffsetOkExact matches clause-for-clause (signed word <= as toInt, aligned as asmAligned). Coordinator source review confirmed the tag is exact."
-  },
-  {
-    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
-    "hol_name": "asm_ok_def",
-    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
-    "lean_name": "asmOk",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6): non-exact source review of the held reviewed_exact promotion for HOL asm_ok_def (cakeml/compiler/encoders/asm/asmScript.sml). HOL asm_ok_def uses a positive-dimensional word type; the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 is admitted. The HOL tag was withdrawn; faithful width-restricted restatement tracked separately."
   },
   {
     "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
