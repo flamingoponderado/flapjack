@@ -122,11 +122,13 @@ def lookupOkGuard : Bool :=
 
 /-- `lookup_code_bad_arg=(F,NONE)`. -/
 def lookupBadArgGuard : Bool :=
-  (PanSemStateFiniteExact.lookupCodeCanonicalHOL canonicalCodeMap (ml "f") [.rStruct []]).isNone
+  (PanSemStateFiniteExact.lookupCodeCanonicalHOL (valueWidth := 64) canonicalCodeMap (ml "f")
+    [.rStruct []]).isNone
 
 /-- `lookup_code_dup_param=(F,NONE)`. -/
 def lookupDupParamGuard : Bool :=
-  (PanSemStateFiniteExact.lookupCodeCanonicalHOL canonicalDuplicateCodeMap (ml "f") [.val (.word 3)]).isNone
+  (PanSemStateFiniteExact.lookupCodeCanonicalHOL (valueWidth := 64) canonicalDuplicateCodeMap
+    (ml "f") [.val (.word 3)]).isNone
 
 /-- `deccall_clause_ok=(SOME (Return (ValWord 3w)),SOME (ValWord 0w),NONE)`. -/
 def decCallOkGuard : Bool :=

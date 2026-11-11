@@ -76,7 +76,7 @@ private noncomputable def bodyOutput :=
 
 private theorem fivePremises :
     evalListHOLFiniteClassical sourceState [] = some [] ∧
-    Flapjack.lookupCodeHOLExact sourceState.code.lookup sourceName [] =
+    Flapjack.lookupCodeHOLExact (valueWidth := Width) sourceState.code.lookup sourceName [] =
       some (returnBody, (fun _ => none), ShapeHOL.one) ∧
     bodyOutput = (some (.returned (.val (.word resultWord))), bodyOutput.2) ∧
     panToCrepStateRelFiniteExact sourceState targetState ∧

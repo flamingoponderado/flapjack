@@ -943,10 +943,10 @@ def evaluateHOLFiniteViaExact {width : Nat} {σ : Type} [NeZero width]
     `HolFiniteMapExact`, so the finite evaluator can bind the lookup result in a
     plain `match` instead of a dependent `match hlookup : ...` (whose equation
     blocks the projection proofs). -/
-def lookupCodeHOLFinite {width : Nat} [NeZero width]
+def lookupCodeHOLFinite {width : Nat} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
     (code : MlS → Option (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
-    (fname : MlS) (values : List (ValueHOL width)) :
-    Option (ProgHOL width × HolFiniteMapExact MlS (ValueHOL width) × ShapeHOL) :=
+    (fname : MlS) (values : List (ValueHOL valueWidth)) :
+    Option (ProgHOL width × HolFiniteMapExact MlS (ValueHOL valueWidth) × ShapeHOL) :=
   match h : lookupCodeHOLExact code fname values with
   | none => none
   | some (body, calleeLocals, returnShape) =>
@@ -961,14 +961,18 @@ FLOOKUP, ALL_DISTINCT, LIST_REL and ordered FUPDATE_LIST over ZIP. LIST_REL is
 rendered by equal lengths and zipped shapeEqHOL; shapeEqHOL_eq_true supplies
 structural equality. Both code and callee locals use canonical finite support;
 MlS, ProgHOL, ShapeHOL and ValueHOL retain the reviewed source carriers.
-The recursive finite evaluator uses this entry point in Call and DecCall. -/
+The typed HOL statement keeps the argument value type `γ v` independent of the
+code map's prog type `α prog`, so the exact twin binds `{valueWidth}` separately
+from the prog/state width `{width}`; the callee-locals map is
+`HolFiniteMapExact MlS (ValueHOL valueWidth)`.  The recursive finite evaluator
+uses this entry point in Call and DecCall at `valueWidth = width`. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "lookup_code_def"
   (fmap_as_finite_support_heterogeneous_function := [argument_1, result_2])
   (words_as_type_indexed_bitvec)]
-def lookupCodeCanonicalHOL {width : Nat} [NeZero width]
+def lookupCodeCanonicalHOL {width : Nat} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
     (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
-    (fname : MlS) (arguments : List (ValueHOL width)) :
-    Option (ProgHOL width × HolFiniteMapExact MlS (ValueHOL width) × ShapeHOL) :=
+    (fname : MlS) (arguments : List (ValueHOL valueWidth)) :
+    Option (ProgHOL width × HolFiniteMapExact MlS (ValueHOL valueWidth) × ShapeHOL) :=
   lookupCodeHOLFinite code.lookup fname arguments
 
 attribute [reducible] lookupCodeCanonicalHOL
@@ -978,9 +982,9 @@ raw lookup operation. Both failure and successful structured callee maps are
 covered; no success equation is assumed. This is representation infrastructure
 with no independently named HOL declaration. -/
 theorem holFmapAsFiniteSupportHeterogeneousFunctionWitness_lookupCodeCanonicalHOL
-    {width : Nat} [NeZero width]
+    {width : Nat} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
     (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
-    (fname : MlS) (arguments : List (ValueHOL width)) :
+    (fname : MlS) (arguments : List (ValueHOL valueWidth)) :
     (lookupCodeCanonicalHOL code fname arguments).map
       (fun (body, locals, shape) => (body, locals.lookup, shape)) =
       lookupCodeHOLExact code.lookup fname arguments := by
@@ -989,8 +993,9 @@ theorem holFmapAsFiniteSupportHeterogeneousFunctionWitness_lookupCodeCanonicalHO
 
 /-- `lookupCodeHOLFinite` fails exactly when the underlying HOL lookup fails. -/
 theorem lookupCodeHOLFinite_eq_none_iff {width : Nat} [NeZero width]
+    {valueWidth : Nat} [NeZero valueWidth]
     (code : MlS → Option (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
-    (fname : MlS) (values : List (ValueHOL width)) :
+    (fname : MlS) (values : List (ValueHOL valueWidth)) :
     lookupCodeHOLFinite code fname values = none ↔
       lookupCodeHOLExact code fname values = none := by
   unfold lookupCodeHOLFinite
@@ -999,9 +1004,10 @@ theorem lookupCodeHOLFinite_eq_none_iff {width : Nat} [NeZero width]
 /-- A successful `lookupCodeHOLFinite` forgets to the underlying HOL lookup
     result (the callee map is projected through `.lookup`). -/
 theorem lookupCodeHOLFinite_eq_some {width : Nat} [NeZero width]
+    {valueWidth : Nat} [NeZero valueWidth]
     (code : MlS → Option (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
-    (fname : MlS) (values : List (ValueHOL width)) (body : ProgHOL width)
-    (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape : ShapeHOL)
+    (fname : MlS) (values : List (ValueHOL valueWidth)) (body : ProgHOL width)
+    (callee : HolFiniteMapExact MlS (ValueHOL valueWidth)) (returnShape : ShapeHOL)
     (h : lookupCodeHOLFinite code fname values = some (body, callee, returnShape)) :
     lookupCodeHOLExact code fname values = some (body, callee.lookup, returnShape) := by
   unfold lookupCodeHOLFinite at h

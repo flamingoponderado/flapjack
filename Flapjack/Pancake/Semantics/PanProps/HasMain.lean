@@ -43,7 +43,7 @@ theorem callAtZeroNonError_has_zeroArgCodeEntry
   | none =>
       have hentry0 : state0.code.lookup start = none := by
         simpa [state0] using hentry
-      have hlookup : lookupCodeHOLFinite state0.code.lookup start [] = none := by
+      have hlookup : lookupCodeHOLFinite (valueWidth := width) state0.code.lookup start [] = none := by
         apply (lookupCodeHOLFinite_eq_none_iff _ _ _).2
         simp [lookupCodeHOLExact, hentry0]
       have hrun : PanSemStateFiniteExact.evaluateHOLFiniteState state0
@@ -59,7 +59,7 @@ theorem callAtZeroNonError_has_zeroArgCodeEntry
       | nil =>
           exact ⟨body, returnShape, rfl⟩
       | cons parameter parameters =>
-          have hlookup : lookupCodeHOLFinite state0.code.lookup start [] = none := by
+          have hlookup : lookupCodeHOLFinite (valueWidth := width) state0.code.lookup start [] = none := by
             apply (lookupCodeHOLFinite_eq_none_iff _ _ _).2
             simp [lookupCodeHOLExact, hentry0]
           have hrun : PanSemStateFiniteExact.evaluateHOLFiniteState state0
