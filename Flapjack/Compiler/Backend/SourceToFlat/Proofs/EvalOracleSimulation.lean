@@ -678,61 +678,6 @@ theorem doEval_oracle_preserves_oracles {C : Type} [Nonempty C]
             (envGenRel_advance state (Flapjack.holShiftSeq 1 state.oracle)).1,
             (envGenRel_advance state (Flapjack.holShiftSeq 1 state.oracle)).2⟩
 
-/-- The compiler configuration selected by a successful source Eval retains
-the previous environment-generation map. This isolates the corresponding
-postcondition of the full source-to-flat Eval simulation. -/
-theorem doEval_oracle_envStoreAdvance {C : Type} [Nonempty C]
-    (decode : Value → Option (Config × C)) (transform : List Dec → List Dec)
-    (state : EvalOracleState) (flat : FlatSem.InstallConfig C) (genv : GlobalEnv)
-    (steps : srcOracStepInvs (some decode) transform (some (.evalOracle state)))
-    (envs : srcOracEnvInvs (some decode) genv (some (.evalOracle state)))
-    (related : oracRel (some decode) transform (some (.evalOracle state)) flat)
-    (first second third fourth bytesValue wordsValue : Value)
-    (output : SemEnv Value × List Dec × Option EvalState)
-    (success : SemanticPrimitivesHOL.doEval
-      [first, second, third, fourth, bytesValue, wordsValue] (some (.evalOracle state)) = some output) :
-    ∃ current next,
-      srcOracNextCfg (some decode) (some (.evalOracle state)) = some current ∧
-      srcOracNextCfg (some decode) output.2.2 = some next ∧
-      current.envs.next = state.envs.length ∧ envStoreInv next.envs ∧
-      Flapjack.sptSubspt current.envs.envGens next.envs.envGens ∧
-      envGenRel ⟨0, current.envs.next, .ln⟩ output.2.2 := by
-  obtain ⟨post, _, _, _, nextGenRel⟩ :=
-    doEval_oracle_preserves_oracles decode transform state flat steps related
-      first second third fourth bytesValue wordsValue output success
-  obtain ⟨current, next, currentCfg, nextCfg, length, _, valid, submap⟩ :=
-    sourceOracle_envStoreAdvance decode transform genv state steps envs
-  refine ⟨current, next, currentCfg, ?_, length, valid, submap, ?_⟩
-  · simpa [post] using nextCfg
-  · simpa [length] using nextGenRel
-
-/-- Successful Eval preserves the combined source oracle invariants, including
-the stored environments, when the global environment grows. The relation is
-the factored source-to-flat relation, not the full reviewed HOL invariant. -/
-theorem doEval_oracle_preserves_sourceInvs {C : Type} [Nonempty C]
-    (decode : Value → Option (Config × C)) (transform : List Dec → List Dec)
-    (state : EvalOracleState) (flat : FlatSem.InstallConfig C)
-    (old new : GlobalEnv) (growth : GlobalGrowth old new)
-    (invs : srcOracInvs (some decode) transform old (some (.evalOracle state)))
-    (related : oracRel (some decode) transform (some (.evalOracle state)) flat)
-    (first second third fourth bytesValue wordsValue : Value)
-    (output : SemEnv Value × List Dec × Option EvalState)
-    (success : SemanticPrimitivesHOL.doEval
-      [first, second, third, fourth, bytesValue, wordsValue] (some (.evalOracle state)) = some output) :
-    srcOracInvs (some decode) transform new output.2.2 ∧
-      oracRel (some decode) transform output.2.2
-        { flat with compileOracle := Flapjack.holShiftSeq 1 flat.compileOracle } := by
-  obtain ⟨post, nextSteps, nextRelated, nextGen, _⟩ :=
-    doEval_oracle_preserves_oracles decode transform state flat invs.1 related
-      first second third fourth bytesValue wordsValue output success
-  have nextEnvs := srcOracEnvInvs_advance decode transform old state invs.1 invs.2.1
-  rw [post]
-  refine ⟨⟨?_, ?_, ?_⟩, ?_⟩
-  · simpa [post] using nextSteps
-  · exact srcOracEnvInvs_growth (some decode) old new growth _ nextEnvs
-  · simpa [post] using nextGen
-  · simpa [post] using nextRelated
-
 /-- The declaration compiler's environment generation survives in the next
 oracle configuration selected by a successful source Eval. -/
 theorem doEval_oracle_envGenFuture {C : Type} [Nonempty C]
@@ -870,9 +815,16 @@ theorem doEval_oracle_combined {C F : Type} [Nonempty C]
   subst flatDecs'
   let expanded := { genv with v := genv.v ++ List.replicate (next.next.vidx - config.next.vidx) none }
   have growth : GlobalGrowth genv expanded := GlobalGrowth.append genv _
-  obtain ⟨nextInvs, nextRelated⟩ :=
-    doEval_oracle_preserves_sourceInvs decode transform state flat.evalConfig genv expanded growth invs related
+  obtain ⟨post, nextSteps, nextRelated, nextGenInv, nextGenRel⟩ :=
+    doEval_oracle_preserves_oracles decode transform state flat.evalConfig invs.1 related
       a b c d bytes words output success
+  have nextInvs : srcOracInvs (some decode) transform expanded output.2.2 := by
+    rw [post]
+    refine ⟨?_, ?_, ?_⟩
+    · simpa [post] using nextSteps
+    · exact srcOracEnvInvs_growth (some decode) genv expanded growth _
+        (srcOracEnvInvs_advance decode transform genv state invs.1 invs.2.1)
+    · simpa [post] using nextGenInv
   have nextRange := idxRangeRel_advance (some decode) genv source.nextTypeStamp source.nextExnStamp
     (some (.evalOracle state)) output.2.2 start finish other config next
     (next.next.vidx - config.next.vidx) range currentCfg nextCfg prev
@@ -881,13 +833,14 @@ theorem doEval_oracle_combined {C F : Type} [Nonempty C]
     simp only [nextCfg, finIdxMatch, expanded, List.length_append, List.length_replicate]
     have bound : config.next.vidx ≤ next.next.vidx := prev.1
     omega
-  obtain ⟨configStore, nextStore, storeCfg, storeNext, _, _, submap, genRel⟩ :=
-    doEval_oracle_envStoreAdvance decode transform state flat.evalConfig genv invs.1 invs.2.1 related
-      a b c d bytes words output success
+  obtain ⟨configStore, nextStore, storeCfg, storeNext, storeLength, _, _, submap⟩ :=
+    sourceOracle_envStoreAdvance decode transform genv state invs.1 invs.2.1
   rw [currentCfg] at storeCfg
   cases storeCfg
-  rw [nextCfg] at storeNext
+  rw [← post, nextCfg] at storeNext
   cases storeNext
+  have genRel : envGenRel ⟨0, config.envs.next, .ln⟩ output.2.2 := by
+    simpa [storeLength] using nextGenRel
   obtain ⟨config', payload', mapGen, compMap, decoded', generation, mapping, mapInv⟩ :=
     srcOracEnvInvs_lookup (some decode) genv state envId output.1 value decs ⟨lookup, invs.2.1, entry⟩
   have envInv : GlobalEnvInv genv (lookupEnvId envId config'.envs) (fun _ => False) output.1 := by
