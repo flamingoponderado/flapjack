@@ -8,12 +8,6 @@ public import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelInduction
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.AstHOL Flapjack.Basis.Pure.MlString Flapjack.Compiler.Backend.BackendCommon
 
-private theorem compileExps_eq_map (names : List (Option MlString)) (expressions : List FlatLang.Exp) :
-    compileExps names expressions = expressions.map (compileExp names) := by
-  induction expressions with
-  | nil => simp [compileExps]
-  | cons head tail ih => simp [compileExps, ih]
-
 /-- The executed compiler satisfies the source list equations. This is a
 kernel-checked source-comparison witness, not a separate HOL theorem. -/
 theorem compile_source_equations :
