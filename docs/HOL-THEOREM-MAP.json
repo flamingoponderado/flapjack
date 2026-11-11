@@ -17553,7 +17553,7 @@
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "v_rel",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared all four typed source mutual rules and complete captured induction/case principles against the reviewed flat value, environment and syntax carriers. Basic contents use List.Forall₂; closure and recursive-closure bodies and bounds match the source. The kernel-checked source-shaped rules, induction and cases establish the same least relation with the positivity-friendly environment rule."
+    "reviewer": "Compared all four typed source mutual rules and complete captured induction/case principles against the reviewed flat value, environment and syntax carriers. Basic contents use List.Forall₂; closure and recursive-closure bodies and bounds match the source. The constructors, envRel_iff_lookup, and source-shaped induction and cases establish the same least relation with the positivity-friendly environment rule."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelation.lean",
@@ -17562,38 +17562,6 @@
     "hol_name": "v_rel",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the typed source environment rule over natural bounds and flat value environments. The explicit domain and paired-lookup premises are equivalent to the source bounded ALOOKUP_rel by envRel_iff_lookup; the source-shaped mutual induction and cases establish that this positivity rendering preserves the least relation."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationRules.lean",
-    "lean_name": "valueRel_basic_source",
-    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
-    "hol_name": "v_rel",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed basic-value source rule: the same shape relation and pointwise contained-value relation are the only premises. This is one original rule; complete inductive correspondence remains a separate obligation."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationRules.lean",
-    "lean_name": "valueRel_closure_source",
-    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
-    "hol_name": "v_rel",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed closure source rule: the same environment relation and compiled-name bound imply related closures, with the same name and compiled expression projection. This is one original rule; complete inductive correspondence remains a separate obligation."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationRules.lean",
-    "lean_name": "valueRel_recclosure_source",
-    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
-    "hol_name": "v_rel",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed recursive-closure rule: every original function body has the same compiled-name bound; the output maps the compiled expression projection over the original function triples. This is one original rule; complete inductive correspondence remains a separate obligation."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationRules.lean",
-    "lean_name": "envRel_source",
-    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
-    "hol_name": "v_rel",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed environment rule: bounded ALOOKUP_rel on the value fields is the sole premise. The proof uses the checked equivalence between source-shaped lookup relation and the positivity-friendly environment constructor. This is one original rule; complete inductive correspondence remains a separate obligation."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileSemantics.lean",
@@ -17612,22 +17580,6 @@
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared the complete typed source_compile_semantics capture: independent compiler and FFI carriers, the original existential precondition, absence of source Fail, and the source behavior of the flat semantics of SND (compile cfg prog) are retained without extra simulation or target-execution assumptions. Nonempty C supplies HOL type inhabitation used by the reviewed precondition. The checked proof composes the source-to-flat program, flat elimination and pattern semantics. Its Lean axioms are propext, Classical.choice and Quot.sound; floating-point evaluation inherits the rational-cut assumption in SOUNDNESS item 8. The source comparison and HOL probe are not a cross-language equivalence proof. Inherits the reals_as_rational_cuts assumption through its dependencies."
 },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
-    "lean_name": "ctorsOf_siblings_source",
-    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
-    "hol_name": "ctors_of_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed source known-sibling constructor clause: preserve the natural tag, child-list length and sibling list and apply the polymorphic source duplicate elimination. The proof rewrites the executed Ctor specialization to its source-shaped operation without additional premises."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
-    "lean_name": "colCtors_cons_source",
-    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
-    "hol_name": "col_ctors_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed source nonempty-row clause: combine the head pattern's constructor information and the recursive tail using polymorphic source intersection. The proof rewrites the executed Ctor specialization to its source-shaped operation without additional premises."
-  },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
     "lean_name": "ctorNubHOL",

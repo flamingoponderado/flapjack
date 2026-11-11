@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationRules
+public import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
 
 @[expose] public section
 

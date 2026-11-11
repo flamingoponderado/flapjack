@@ -112,7 +112,6 @@ import Flapjack.Compiler.Backend.FlatProps.NoMat
 import Flapjack.Compiler.Backend.FlatProps.InstallConfig
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternRowsSame
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationRules
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationInduction
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.StateRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationCases
