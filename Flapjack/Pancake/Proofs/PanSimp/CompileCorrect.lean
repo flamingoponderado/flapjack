@@ -321,7 +321,7 @@ theorem lookupCodeRel {width : Nat} [NeZero width]
     rfl
   apply Option.map_injective hinj
   have w := PanSemStateFiniteExact.holFmapAsFiniteSupportHeterogeneousFunctionWitness_lookupCodeCanonicalHOL
-    (width := width) (valueWidth := width)
+    (ε := MlS) (β := MlS) (δ := ShapeHOL) (width := width) (valueWidth := width)
   simp only [PanSemStateFiniteExact.lookupCodeCanonicalHOL] at w
   rw [w, Option.map_map]
   change _ = Option.map ((fun (entry : ProgHOL width × (MlS → Option (ValueHOL width)) × ShapeHOL) =>

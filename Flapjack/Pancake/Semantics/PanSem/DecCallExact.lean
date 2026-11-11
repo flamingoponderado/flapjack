@@ -42,10 +42,11 @@ open Flapjack.Pancake.PanLang (MlS ShapeHOL ExpHOL ProgHOL)
     because `code` is an unrestricted function rather than a HOL finite map.
     Exact finite-support replacement tracked by
     `flapjack-pxn.18.3.7.1.3.1.1.2.5` (parent `.2.3`). -/
-def lookupCodeHOLExact {width : Nat} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
-    (code : MlS → Option (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
-    (fname : MlS) (arguments : List (ValueHOL valueWidth)) :
-    Option (ProgHOL width × (MlS → Option (ValueHOL valueWidth)) × ShapeHOL) :=
+def lookupCodeHOLExact {ε β δ : Type} [DecidableEq β]
+    {width : Nat} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
+    (code : ε → Option (List (β × ShapeHOL) × ProgHOL width × δ))
+    (fname : ε) (arguments : List (ValueHOL valueWidth)) :
+    Option (ProgHOL width × (β → Option (ValueHOL valueWidth)) × δ) :=
   match code fname with
   | none => none
   | some (parameters, body, returnShape) =>
@@ -54,16 +55,16 @@ def lookupCodeHOLExact {width : Nat} [NeZero width] {valueWidth : Nat} [NeZero v
             (fun pair => shapeEqHOL pair.1.2 (shapeOfHOLExact pair.2))) = true then
         some (body,
           List.foldl
-            (fun (map : MlS → Option (ValueHOL valueWidth)) (entry : MlS × ValueHOL valueWidth) =>
+            (fun (map : β → Option (ValueHOL valueWidth)) (entry : β × ValueHOL valueWidth) =>
               fun current => if current = entry.1 then some entry.2 else map current)
             (fun _ => none) ((parameters.map Prod.fst).zip arguments),
           returnShape)
       else none
 
-@[simp] theorem lookupCodeHOLExact_of_code_none {width : Nat} [NeZero width]
-    {valueWidth : Nat} [NeZero valueWidth]
-    (code : MlS → Option (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
-    (fname : MlS) (arguments : List (ValueHOL valueWidth))
+@[simp] theorem lookupCodeHOLExact_of_code_none {ε β δ : Type} [DecidableEq β]
+    {width : Nat} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
+    (code : ε → Option (List (β × ShapeHOL) × ProgHOL width × δ))
+    (fname : ε) (arguments : List (ValueHOL valueWidth))
     (h : code fname = none) :
     lookupCodeHOLExact code fname arguments = none := by
   simp [lookupCodeHOLExact, h]
