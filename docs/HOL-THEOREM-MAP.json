@@ -642,6 +642,24 @@
   "reviewer": "Source comparison: the typed original preserves independent oracle and element types, function and relation arguments, both initial sets and the full union equivalence."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "state_syntax_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateSyntax.lean", "lean_name": "stateSyntax",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original uses a predicate on closure expressions and the fixed calls state of a number set and list of two numbers paired with an expression; the predicate holds for every expression in the list."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "state_syntax_insert_each",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateSyntax.lean", "lean_name": "stateSyntax_insertEach",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original universally quantifies the count, location and complete calls state and states the unconditional equivalence after insert_each."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "state_syntax_code_list",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/StateSyntax.lean", "lean_name": "stateSyntax_codeList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: the typed original universally quantifies the location, list of number-expression pairs and calls state, with the complete equivalence to the prior property and EVERY predicate over the second projections."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "semantics_calls",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/Semantics.lean", "lean_name": "semanticsCalls",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations",
