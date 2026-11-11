@@ -14352,6 +14352,38 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "merge_assoc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "mergeAssoc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_merge_assoc_typed: associativity ranges over all three full approximation values."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_trans",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxTrans",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_trans_typed: the original pair of ordering premises implies the full transitive conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_merge",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxMerge",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_merge_typed: both argument-order conclusions hold for arbitrary approximations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "better_definedg_trans",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "betterDefinedGTrans",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_better_definedg_trans_typed: the original pair of global ordering premises implies the transitive conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
   "hol_name": "subapprox_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
   "lean_name": "subapprox",

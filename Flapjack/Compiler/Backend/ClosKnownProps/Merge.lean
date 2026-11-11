@@ -75,6 +75,47 @@ theorem mergeComm (a b : ValApprox) : mergeHOL a b = mergeHOL b a := by
         · rfl
   exact all (sizeOf a + 1) a b (by omega)
 
+private theorem mergeListLength (xs ys : List ValApprox) :
+    (mergeListHOL xs ys).length = min xs.length ys.length := by
+  simp [mergeListHOL_eq_zip]
+
+private theorem mergeListAssoc (xs ys zs : List ValApprox)
+    (hxy : xs.length = ys.length) (hyz : ys.length = zs.length)
+    (step : ∀ x ∈ xs, ∀ y z, mergeHOL x (mergeHOL y z) = mergeHOL (mergeHOL x y) z) :
+    mergeListHOL xs (mergeListHOL ys zs) = mergeListHOL (mergeListHOL xs ys) zs := by
+  induction xs generalizing ys zs with
+  | nil => cases ys <;> cases zs <;> simp_all [mergeListHOL]
+  | cons x xs ih =>
+    cases ys with
+    | nil => simp at hxy
+    | cons y ys =>
+      cases zs with
+      | nil => simp at hyz
+      | cons z zs =>
+        simp only [List.length_cons, Nat.succ.injEq] at hxy hyz
+        simp only [mergeListHOL]
+        rw [step x (by simp) y z, ih ys zs hxy hyz (fun v hv => step v (by simp [hv]))]
+
+/-- Approximation merge is associative, including nested tuples. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "merge_assoc"]
+theorem mergeAssoc (a b c : ValApprox) :
+    mergeHOL a (mergeHOL b c) = mergeHOL (mergeHOL a b) c := by
+  have all : ∀ n (a b c : ValApprox), sizeOf a < n →
+      mergeHOL a (mergeHOL b c) = mergeHOL (mergeHOL a b) c := by
+    intro n
+    induction n using Nat.strongRecOn with
+    | ind n ih =>
+      intro a b c bound
+      cases a <;> cases b <;> cases c <;> simp [mergeHOL] at * <;>
+        repeat' first | split | simp_all [mergeHOL, beq_iff_eq, mergeListLength] | omega
+      apply mergeListAssoc
+      · omega
+      · omega
+      · intro x member y z
+        have small := List.sizeOf_lt_of_mem member
+        exact ih (sizeOf x + 1) (by omega) x y z (by omega)
+  exact all (sizeOf a + 1) a b c (by omega)
+
 private theorem mergeListIdem (xs : List ValApprox)
     (step : ∀ x ∈ xs, mergeHOL x x = x) : mergeListHOL xs xs = xs := by
   induction xs with
@@ -110,6 +151,26 @@ def subapprox (a1 a2 : ValApprox) : Prop := mergeHOL a1 a2 = a2
 /-- Every approximation is below itself. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_refl"]
 theorem subapproxRefl (a : ValApprox) : subapprox a a := mergeIdem a
+
+/-- Approximation ordering is transitive. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_trans"]
+theorem subapproxTrans (a1 a2 a3 : ValApprox)
+    (h : subapprox a1 a2 ∧ subapprox a2 a3) : subapprox a1 a3 := by
+  obtain ⟨h1, h2⟩ := h
+  unfold subapprox at *
+  calc
+    mergeHOL a1 a3 = mergeHOL a1 (mergeHOL a2 a3) := by rw [h2]
+    _ = mergeHOL (mergeHOL a1 a2) a3 := mergeAssoc _ _ _
+    _ = a3 := by rw [h1, h2]
+
+/-- Each operand is below the merge in either argument order. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_merge"]
+theorem subapproxMerge (a b : ValApprox) :
+    subapprox a (mergeHOL a b) ∧ subapprox a (mergeHOL b a) := by
+  have first : subapprox a (mergeHOL a b) := by
+    unfold subapprox
+    rw [mergeAssoc, mergeIdem]
+  exact ⟨first, by simpa [mergeComm b a] using first⟩
 
 /-- Unknown is the greatest approximation in the source ordering. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_Other"]
@@ -198,5 +259,14 @@ noncomputable def betterDefinedG (g1 g2 : Spt ValApprox) : Prop :=
 theorem betterDefinedGRefl (g : Spt ValApprox) : betterDefinedG g g := by
   intro key member
   exact ⟨member, subapproxRefl _⟩
+
+/-- Better-defined global approximations compose. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "better_definedg_trans"]
+theorem betterDefinedGTrans (g1 g2 g3 : Spt ValApprox)
+    (h : betterDefinedG g1 g2 ∧ betterDefinedG g2 g3) : betterDefinedG g1 g3 := by
+  intro k member
+  obtain ⟨middle, first⟩ := h.1 k member
+  obtain ⟨last, second⟩ := h.2 k middle
+  exact ⟨last, subapproxTrans _ _ _ ⟨first, second⟩⟩
 
 end Flapjack.Compiler.Backend.ClosKnownProps

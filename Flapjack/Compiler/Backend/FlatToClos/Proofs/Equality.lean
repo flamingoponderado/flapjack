@@ -45,39 +45,6 @@ theorem doEq_con_related_of_lists
     · simpa [FlatSem.doEq, FlatSem.ctorSameType, ClosSem.doEq, tags] using result
   · simp [FlatSem.doEq, FlatSem.ctorSameType, types] at result
 
-/-- Vector comparison uses exactly the invariant for its two element lists. -/
-theorem valueComparisonSim_vector {xs ys : List FlatSem.Value}
-    (fields : ListComparisonSim xs ys) : ValueComparisonSim (.vectorv xs) (.vectorv ys) := by
-  intro t₁ t₂ b first second result
-  cases first with
-  | vector first =>
-    cases second with
-    | vector second =>
-      exact doEq_con_related_of_lists fields first second 0 0 none none b
-        (by simpa [FlatSem.doEq, FlatSem.ctorSameType] using result)
-
-/-- Tuple comparison uses exactly the invariant for its two field lists. -/
-theorem valueComparisonSim_tuple {xs ys : List FlatSem.Value}
-    (fields : ListComparisonSim xs ys) : ValueComparisonSim (.conv none xs) (.conv none ys) := by
-  intro t₁ t₂ b first second result
-  cases first with
-  | tuple first =>
-    cases second with
-    | tuple second =>
-      exact doEq_con_related_of_lists fields first second 0 0 none none b
-        (by simpa [FlatSem.doEq, FlatSem.ctorSameType] using result)
-
-/-- Tagged constructor comparison uses the invariant for its two field lists. -/
-theorem valueComparisonSim_con {xs ys : List FlatSem.Value}
-    (tag₁ tag₂ : FlatLang.CtorId) (type₁ type₂ : FlatLang.TypeId)
-    (fields : ListComparisonSim xs ys) :
-    ValueComparisonSim (.conv (some (tag₁, type₁)) xs) (.conv (some (tag₂, type₂)) ys) := by
-  intro t₁ t₂ b first second result
-  cases first with
-  | con first =>
-    cases second with
-    | con second => exact doEq_con_related_of_lists fields first second tag₁ tag₂ type₁ type₂ b result
-
 /-- Related locations preserve every successful source comparison. -/
 theorem valueComparisonSim_locations (flag₁ flag₂ : Bool) (index₁ index₂ : Nat) :
     ValueComparisonSim (.loc flag₁ index₁) (.loc flag₂ index₂) := by
@@ -158,7 +125,14 @@ theorem doEq_simulation :
     cases a with
     | none =>
       cases b with
-      | none => exact valueComparisonSim_tuple ih
+      | none =>
+        intro t₁ t₂ result first second run
+        cases first with
+        | tuple first =>
+          cases second with
+          | tuple second =>
+            exact doEq_con_related_of_lists ih first second 0 0 none none result
+              (by simpa [FlatSem.doEq, FlatSem.ctorSameType] using run)
       | some stamp =>
         intro t₁ t₂ result first second h
         simp [FlatSem.doEq, FlatSem.ctorSameType] at h
@@ -170,10 +144,21 @@ theorem doEq_simulation :
       | some stamp₂ =>
         obtain ⟨tag₁, type₁⟩ := stamp₁
         obtain ⟨tag₂, type₂⟩ := stamp₂
-        exact valueComparisonSim_con tag₁ tag₂ type₁ type₂ ih
+        intro t₁ t₂ result first second run
+        cases first with
+        | con first =>
+          cases second with
+          | con second =>
+            exact doEq_con_related_of_lists ih first second tag₁ tag₂ type₁ type₂ result run
   · intro a xs b ys diff _; exact valueComparisonSim_conv_no_rec a b xs ys diff
   · intro a xs b ys diff _; exact valueComparisonSim_conv_no_rec a b xs ys diff
-  · intro xs ys _ ih; exact valueComparisonSim_vector ih
+  · intro xs ys _ ih t₁ t₂ result first second run
+    cases first with
+    | vector first =>
+      cases second with
+      | vector second =>
+        exact doEq_con_related_of_lists ih first second 0 0 none none result
+          (by simpa [FlatSem.doEq, FlatSem.ctorSameType] using run)
   · intro xs ys diff; exact valueComparisonSim_vector_no_rec xs ys diff
   · intro a n body b m body₂ t₁ t₂ result first second run
     cases first
