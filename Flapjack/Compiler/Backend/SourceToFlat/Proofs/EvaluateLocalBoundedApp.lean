@@ -94,8 +94,8 @@ theorem localEnvBounded_simpleApp {C F : Type} [Nonempty C]
       have afterRel : StateRel nextGenv { nextSource with refs := sourceRefs, ffi := sourceFfi }
           { nextFlat with refs := flatLast.refs, ffi := sourceFfi } := by
         simpa only [← flatShape] using afterRel0
-      have afterInv := factoredInvariant_changeStoresFfi interp transform gen nextGenv (start, finish, other)
-        nextSource nextFlat sourceRefs flatLast.refs sourceFfi nextInvariant afterRel reserved.symm
+      have afterInv := factoredInvariant_changeStores interp transform gen nextGenv (start, finish, other)
+        nextSource nextFlat sourceRefs flatLast.refs sourceFfi sourceFfi nextInvariant afterRel reserved.symm
       cases resultRel with
       | value valueRel =>
         refine ⟨nextGenv, ?_, ?_⟩

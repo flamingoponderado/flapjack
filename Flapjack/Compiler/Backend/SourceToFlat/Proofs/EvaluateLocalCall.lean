@@ -569,7 +569,7 @@ theorem localThunkCallUpdate_related {C F : Type} [Nonempty C]
           obtain ⟨flatRefs, flatUpdated, reserved, nextStates⟩ :=
             updateThunk_related nextGenv after flatAfter nextInvariant.2.2.1 address value flatValue valueRel sourceRefs updated
           have finalInvariant := factoredInvariant_changeStores interp transform gen nextGenv (start, finish, other)
-            after flatAfter sourceRefs flatRefs nextInvariant nextStates reserved
+            after flatAfter sourceRefs flatRefs after.ffi flatAfter.ffi nextInvariant nextStates reserved
           have relatedResult : EvalResultRel nextGenv (.val [value]) (.val [flatValue]) := .value (.cons valueRel .nil)
           refine ⟨nextGenv, ?_, ?_⟩
           · simpa [sourceThunkCallResult, flatThunkCallResult, srcRun, dstRun, updated, flatUpdated] using
