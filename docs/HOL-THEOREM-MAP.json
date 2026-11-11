@@ -129220,6 +129220,22 @@
   "reviewer": "Compared all typed source clauses in clos_call_env_rel_probe.out: independent value types, LIST_REL for arrays, fixed word8 byte-list equality, thunk-mode equality and related payloads, and false for every constructor mismatch. The Lean Ref carrier and fixed byte widths match. Source comparison does not establish cross-language equivalence."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalArity.lean",
+  "lean_name": "knownObeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_obeys_max_app_typed in clos_known_syntax_probe.out: arbitrary optimizer configuration, expression and approximation lists, sparse-tree globals and common bound retain all three premises and all three mapped-result conclusions. The proof covers the complete total traversal, including inlining and recursive function bodies."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "compile_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileArity.lean",
+  "lean_name": "compileObeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_obeys_max_app_typed in clos_known_syntax_probe.out: the enabled source compiler equation, input EVERY premise, existential output configuration, output EVERY conclusion, and global approximation invariant agree. Source and executed compiler agree via compileSource_eq_compile."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
   "hol_name": "var_list_no_Labels",
   "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Syntax.lean",
