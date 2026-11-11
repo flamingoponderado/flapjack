@@ -105442,7 +105442,7 @@
     "lean_path": "Flapjack/Pancake/WordLang.lean",
     "lean_name": "everyVarImm",
     "statement_status": "documented_mismatch",
-    "reviewer": "Coordinator source review (bead flapjack-pxn.18.5.15.1.4): HOL every_var_imm_def uses a positive-dimensional word type; Lean everyVarImm allows BitVec 0 because width : Nat has no [NeZero width] binder. The HOL tag was withdrawn. The executable helper remains untagged until the width binder and callers are reviewed."
+    "reviewer": "Coordinator source review (bead flapjack-pxn.18.5.15.1.4): HOL every_var_imm_def uses a positive-dimensional word type; Lean everyVarImm allows BitVec 0 because width : Nat has no [NeZero width] binder. The HOL tag was withdrawn. The executable helper remains untagged until the width binder and callers are reviewed. 2026-11-11 (task 130): caller review done for the program recursor. `everyVar` now requires `[NeZero width]` and calls the reviewed `everyVarImm` twin, so no production path reaches this untagged helper; it stays untagged because its own binder still admits `BitVec 0`."
   },
   {
     "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
@@ -105459,7 +105459,7 @@
     "lean_path": "Flapjack/Pancake/WordLang.lean",
     "lean_name": "everyVarInst",
     "statement_status": "documented_mismatch",
-    "reviewer": "Coordinator source review (bead flapjack-pxn.18.5.15.1.4): HOL every_var_inst_def uses a positive-dimensional word type; Lean everyVarInst allows BitVec 0 because width : Nat has no [NeZero width] binder. The HOL tag was withdrawn. The executable helper remains untagged until the width binder and callers are reviewed."
+    "reviewer": "Coordinator source review (bead flapjack-pxn.18.5.15.1.4): HOL every_var_inst_def uses a positive-dimensional word type; Lean everyVarInst allows BitVec 0 because width : Nat has no [NeZero width] binder. The HOL tag was withdrawn. The executable helper remains untagged until the width binder and callers are reviewed. 2026-11-11 (task 130): caller review done for the program recursor. `everyVar` now requires `[NeZero width]` and calls the reviewed `everyVarImm` twin, so no production path reaches this untagged helper; it stays untagged because its own binder still admits `BitVec 0`."
   },
   {
     "hol_path": "cakeml/compiler/backend/wordLangScript.sml",

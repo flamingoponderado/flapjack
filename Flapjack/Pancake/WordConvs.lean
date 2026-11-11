@@ -522,7 +522,8 @@ It asserts the post-allocation convention on a backend program: every register
 is a physical register (`is_phy_var`), every name in the cut sets is at least
 `2 * k`, and the call argument convention holds.  Untagged for the same reason
 as `preAllocConventions`. -/
-def postAllocConventions {width : Nat} (k : Nat) (program : WordLangProg (BitVec width)) : Prop :=
+def postAllocConventions {width : Nat} [NeZero width] (k : Nat)
+    (program : WordLangProg (BitVec width)) : Prop :=
   everyVar isPhyVar program ∧
     everyStackVar (fun name => decide (name ≥ 2 * k)) program ∧
     callArgConvention program
