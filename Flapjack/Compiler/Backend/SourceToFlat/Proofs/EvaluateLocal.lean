@@ -164,15 +164,12 @@ private theorem factoredDecBoundedIH_dlocal {C F : Type} [Nonempty C]
   have clockFix : EvaluateHOL.fixClock source (EvaluateHOL.evaluateDecs source sourceEnv locals) =
       EvaluateHOL.evaluateDecs source sourceEnv locals :=
     (EvaluateHOL.fixClockEvaluate source sourceEnv [] locals).2
+  rw [localRun] at clockFix
   cases localResult with
   | err error =>
-    have fixed : EvaluateHOL.fixClock source (middle, (Result.err error : Result (SemEnv Value) Value)) =
-        (middle, .err error) := by
-      rw [← localRun]
-      exact clockFix
     have sourceEq : sourceLast = middle ∧ result = .err error := by
       have h := sourceRun
-      simp only [EvaluateHOL.evaluateDecs, localRun, fixed] at h
+      simp only [EvaluateHOL.evaluateDecs, localRun, clockFix] at h
       exact Prod.mk.inj h.symm
     obtain ⟨lastEq, resultEq⟩ := sourceEq
     subst sourceLast
@@ -184,13 +181,9 @@ private theorem factoredDecBoundedIH_dlocal {C F : Type} [Nonempty C]
     exact factoredDecCase_error_changeEnv interp transform genv source middle flat finish next2 other gen2
       (extendEnv env2 env1) env2 (code1 ++ code2) error combined
   | val localEnv =>
-    have fixed : EvaluateHOL.fixClock source (middle, (Result.val localEnv : Result (SemEnv Value) Value)) =
-        (middle, .val localEnv) := by
-      rw [← localRun]
-      exact clockFix
     have bodyRun : EvaluateHOL.evaluateDecs middle (extendDecEnv localEnv sourceEnv) body = (sourceLast, result) := by
       have h := sourceRun
-      simpa only [EvaluateHOL.evaluateDecs, localRun, fixed] using h
+      simpa only [EvaluateHOL.evaluateDecs, localRun, clockFix] using h
     have localCase := localIH genv env env1 sourceEnv trace source middle flat start finish next1 other n n1
       gen gen1 code1 (.val localEnv) clockBound localRun invariant localCompiled envInv (by simp) generation firstFuture firstBound
     apply factoredDecCase_local_success interp transform genv env env1 env2 sourceEnv localEnv source middle

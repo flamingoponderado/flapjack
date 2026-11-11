@@ -267,15 +267,12 @@ theorem factoredDecBoundedIH_cons {C F : Type} [Nonempty C]
   have clockFix : EvaluateHOL.fixClock source (EvaluateHOL.evaluateDecs source sourceEnv [first]) =
       EvaluateHOL.evaluateDecs source sourceEnv [first] :=
     (EvaluateHOL.fixClockEvaluate source sourceEnv [] [first]).2
+  rw [firstRun] at clockFix
   cases firstResult with
   | err error =>
-    have fixed : EvaluateHOL.fixClock source (middle, (Result.err error : Result (SemEnv Value) Value)) =
-        (middle, .err error) := by
-      rw [← firstRun]
-      exact clockFix
     have sourceEq : sourceLast = middle ∧ result = .err error := by
       have h := sourceRun
-      simp only [EvaluateHOL.evaluateDecs, firstRun, fixed] at h
+      simp only [EvaluateHOL.evaluateDecs, firstRun, clockFix] at h
       exact Prod.mk.inj h.symm
     obtain ⟨lastEq, resultEq⟩ := sourceEq
     subst sourceLast
@@ -285,15 +282,11 @@ theorem factoredDecBoundedIH_cons {C F : Type} [Nonempty C]
     exact factoredDecCase_append_error interp transform genv env1 env2 source middle flat finish next1 next2 other
       gen1 gen2 code1 code2 error firstCase previous bounded validFinal
   | val firstEnv =>
-    have fixed : EvaluateHOL.fixClock source (middle, (Result.val firstEnv : Result (SemEnv Value) Value)) =
-        (middle, .val firstEnv) := by
-      rw [← firstRun]
-      exact clockFix
     generalize tailRun : EvaluateHOL.evaluateDecs middle (extendDecEnv firstEnv sourceEnv) (second :: rest) = tailResult
     obtain ⟨last, tailResult⟩ := tailResult
     have sourceEq : sourceLast = last ∧ result = combineDecResult firstEnv tailResult := by
       have h := sourceRun
-      simp only [EvaluateHOL.evaluateDecs, firstRun, fixed, tailRun] at h
+      simp only [EvaluateHOL.evaluateDecs, firstRun, clockFix, tailRun] at h
       exact Prod.mk.inj h.symm
     obtain ⟨lastEq, resultEq⟩ := sourceEq
     subst sourceLast
