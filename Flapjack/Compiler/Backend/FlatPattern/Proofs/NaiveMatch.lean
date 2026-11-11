@@ -173,42 +173,46 @@ private theorem pmatchList_con_failed_decision {C F : Type} (state : FlatSem.Sta
   cases tail : FlatSem.pmatchList state rest values bindings <;>
     simp [FlatSem.pmatchList, head, tail, matchDecision, combineMatchDecisions]
 
+open Classical in
+/-- Smart conditionals select literal Boolean branches and retain other tests. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "SmartIf_thm"]
+theorem smartIf_thm (trace : Tra) (expression yes no : FlatLang.Exp) :
+    FlatLang.smartIf trace expression yes no =
+      if ∃ t, expression = FlatLang.mkBool t true then yes else
+      if ∃ t, expression = FlatLang.mkBool t false then no else
+        .if_ trace expression yes no := by
+  cases expression <;> simp [FlatLang.smartIf, FlatLang.mkBool]
+  case con t stamp args =>
+    cases args with
+    | cons first rest => cases stamp <;> simp
+    | nil =>
+      cases stamp with
+      | none => simp
+      | some pair =>
+        obtain ⟨tag, typeId⟩ := pair
+        cases typeId with
+        | none => simp
+        | some id =>
+          by_cases hid : id = FlatLang.boolId <;>
+          by_cases ht : tag = trueTag <;>
+          by_cases hf : tag = falseTag <;>
+          simp [boolToTag, hid, ht, hf]
+
 /-- Smart conditionals agree with ordinary conditionals in flat evaluation. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "evaluate_SmartIf"]
 theorem evaluate_smartIf {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (state : FlatSem.State C F) (trace : Tra) (guard yes no : FlatLang.Exp) :
     FlatSem.evaluate env state [FlatLang.smartIf trace guard yes no] =
       FlatSem.evaluate env state [.if_ trace guard yes no] := by
-  cases guard <;> try rfl
-  case con guardTrace stamp values =>
-    cases values with
-    | cons _ _ => cases stamp <;> simp [FlatLang.smartIf]
-    | nil =>
-      cases stamp with
-      | none => rfl
-      | some tagged =>
-        obtain ⟨tag, typeId⟩ := tagged
-        cases typeId with
-        | none => rfl
-        | some typeId =>
-          simp only [FlatLang.smartIf]
-          split
-          · split
-            · rename_i tagEq typeEq
-              subst typeId
-              subst tag
-              simpa [FlatLang.mkBool, boolToTag] using
-                (evaluate_if_pure_bool trace (.con guardTrace (some (trueTag, some FlatLang.boolId)) []) yes no true
-                  env state (by simpa [FlatLang.mkBool, boolToTag] using evaluate_bool env state guardTrace true)).symm
-            · split
-              · rename_i tagEq tagNe typeEq
-                subst typeId
-                subst tag
-                simpa [FlatLang.mkBool, boolToTag] using
-                  (evaluate_if_pure_bool trace (.con guardTrace (some (falseTag, some FlatLang.boolId)) []) yes no false
-                    env state (by simpa [FlatLang.mkBool, boolToTag] using evaluate_bool env state guardTrace false)).symm
-              · rfl
-          · rfl
+  rw [smartIf_thm]
+  split_ifs with yesBool noBool
+  · obtain ⟨t, rfl⟩ := yesBool
+    simpa using (evaluate_if_pure_bool trace (FlatLang.mkBool t true) yes no true
+      env state (evaluate_bool env state t true)).symm
+  · obtain ⟨t, rfl⟩ := noBool
+    simpa using (evaluate_if_pure_bool trace (FlatLang.mkBool t false) yes no false
+      env state (evaluate_bool env state t false)).symm
+  · rfl
 
 /-- Constructor work items use their recursive field guard when the source
 constructor and pattern have the same tag and arity. -/

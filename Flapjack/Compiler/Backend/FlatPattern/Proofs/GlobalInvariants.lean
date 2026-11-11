@@ -32,13 +32,8 @@ HOL uses the cases within its proofs. -/
 theorem esgcFree_smartIf (t : Tra) (c x y : FlatLang.Exp)
     (hc : esgcFree c) (hx : esgcFree x) (hy : esgcFree y) :
     esgcFree (smartIf t c x y) := by
-  cases c <;> simp_all [smartIf, esgcFree]
-  case con t tag args =>
-    cases tag <;> cases args <;> try simp_all [esgcFree]
-    case some.nil pair =>
-      obtain ⟨tag, typ⟩ := pair
-      cases typ <;> try simp_all [esgcFree]
-      all_goals split_ifs <;> simp_all [esgcFree]
+  rw [smartIf_thm]
+  split_ifs <;> simp_all [esgcFree]
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "esgc_free_decode_pos"]
 theorem esgcFree_decodePos (t : Tra) (p : Position) (exp : FlatLang.Exp)
@@ -219,13 +214,8 @@ private theorem setGlobals_smartIf (t : Tra) (c x y : FlatLang.Exp)
     (hc : setGlobals c = emptyGlobalBag) (hx : setGlobals x = emptyGlobalBag)
     (hy : setGlobals y = emptyGlobalBag) :
     setGlobals (smartIf t c x y) = emptyGlobalBag := by
-  cases c <;> simp_all [smartIf, setGlobals, Flapjack.bagUnion_empty_right]
-  case con t tag args =>
-    cases tag <;> cases args <;> try simp_all [setGlobals, Flapjack.bagUnion_empty_right]
-    case some.nil pair =>
-      obtain ⟨tag, typ⟩ := pair
-      cases typ <;> try simp_all [setGlobals, Flapjack.bagUnion_empty_right]
-      all_goals split_ifs <;> simp_all [setGlobals, Flapjack.bagUnion_empty_right]
+  rw [smartIf_thm]
+  split_ifs <;> simp_all [setGlobals, Flapjack.bagUnion_empty_right]
 
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_decode_pos"]
 theorem setGlobals_decodePos (t : Tra) (p : Position) (exp : FlatLang.Exp)
@@ -328,13 +318,8 @@ theorem setGlobals_naivePatternMatch (t : Tra) (xs : List (FlatLang.Pat × FlatL
 theorem setGlobals_smartIf_le (t : Tra) (c x y : FlatLang.Exp) (key : Nat) :
     setGlobals (smartIf t c x y) key ≤
       setGlobals c key + setGlobals x key + setGlobals y key := by
-  cases c <;> simp [smartIf, setGlobals, unionGlobalBag, Flapjack.bagUnion]
-  case con t tag args =>
-    cases tag <;> cases args <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag, Flapjack.emptyBag, Flapjack.bagUnion]
-    case some.nil pair =>
-      obtain ⟨tag, typ⟩ := pair
-      cases typ <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag, Flapjack.emptyBag, Flapjack.bagUnion]
-      all_goals split_ifs <;> simp [setGlobals, elistGlobals, emptyGlobalBag, unionGlobalBag, Flapjack.emptyBag, Flapjack.bagUnion]
+  rw [smartIf_thm]
+  split_ifs <;> (try simp only [setGlobals, unionGlobalBag, Flapjack.bagUnion]) <;> omega
 
 /-- The generated naive branch chain cannot add global writes. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "set_globals_naive_pattern_matches"]

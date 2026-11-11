@@ -133414,6 +133414,15 @@
 }
 ,
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "SmartIf_thm",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NaiveMatch.lean",
+  "lean_name": "smartIf_thm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared smart_if_thm_typed: both existential Boolean-expression trace tests, the selected true and false branches, and the original conditional fallback are retained."
+}
+,
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "find_recfun_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",

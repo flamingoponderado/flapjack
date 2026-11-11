@@ -19,6 +19,7 @@ sub_bag_2_typed=(x :α -> num) ≤ (y :α -> num) ∧ (x' :α -> num) ≤ (y' :�
 inv_on_foldr_typed=∀(f :α -> β). (∀(x :γ) (v :α). MEM x (xs :γ list) ⇒ f ((g :γ -> α -> α) x v) = f v) ⇒ f (FOLDR g (v :α) xs) = f v
 evaluate_decs_sing_typed=(evaluate_decs (s :(α, β) state) [(d :exp)] :(α, β) state # v error_result option) = evaluate_dec s d
 option_all_forall_typed=OPTION_ALL (P :α -> bool) (x :α option) ⇔ ∀(y :α). x = SOME y ⇒ P y
+smart_if_thm_typed=SmartIf (t :tra) (e :exp) (p :exp) (q :exp) = if ∃(t :tra). e = Bool t T then p else if ∃(t :tra). e = Bool t F then q else (If t e p q :exp)
 global_bag_list_empty=elist_globals (l :exp list) = ({||} :num -> num) ⇔ ∀(e :exp). MEM e l ⇒ set_globals e = ({||} :num -> num)
 sum_string_ords=sum_string_ords (i :num) (s :mlstring) = (SUM (MAP (λ(c :char). ORD c − (35 :num)) (DROP i (explode s))) :num)
 sum_string_ords_def=∀(str :mlstring) (i :num). sum_string_ords i str = if i < strlen str then ORD (strsub str i) − (35 :num) + sum_string_ords (i + (1 :num)) str else (0 :num)
