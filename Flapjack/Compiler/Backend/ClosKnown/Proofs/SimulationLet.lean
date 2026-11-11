@@ -18,13 +18,6 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
       (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
   ClosSem.holFmapAsFiniteSupportWitness
 
-/-- Sparse-tree inclusion composes. This is Flapjack infrastructure. -/
-private theorem subsptTrans {A : Type} (a b c : Spt A) (h1 : sptSubspt a b) (h2 : sptSubspt b c) : sptSubspt a c := by
-  intro k member
-  obtain ⟨mid, e1⟩ := h1 k member
-  obtain ⟨last, e2⟩ := h2 k mid
-  exact ⟨last, e2.trans e1⟩
-
 /-- Let-binding case of the original optimizer simulation, with the source
 binding and successful-binding body induction hypotheses. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_correct0"
@@ -74,8 +67,8 @@ theorem knownCorrect0Let {C F : Type} (trace : BackendCommon.Tra) (xs : List Clo
       rcases known with ⟨rfl, rfl⟩
       have ⟨subBind, subBody⟩ := subsptKnownElistGlobals c xs aenv g0 bindEas g1
         [body] (bindEas.map Prod.snd ++ aenv) [(be, ba)] g2 ⟨hk, hb, sub0, bagDisjoint⟩
-      have subBindNext : sptSubspt g1 (nextG s0) := subsptTrans _ _ _ subBody sub1
-      have startSub : sptSubspt g0 (nextG s0) := subsptTrans _ _ _ sub0 sub1
+      have subBindNext : sptSubspt g1 (nextG s0) := sptSubsptTrans _ _ _ ⟨subBody, sub1⟩
+      have startSub : sptSubspt g0 (nextG s0) := sptSubsptTrans _ _ _ ⟨sub0, sub1⟩
       have startApprox := stateGlobalsApproxSubspt g0 (nextG s0) s0 ⟨startSub, globals⟩
       have startOracle := oracleGapproxDisjointSubspt g0 (nextG s0) s0.compileOracle ⟨startSub, oracle⟩
       cases hr : evaluate xs env1full s0 with
@@ -155,7 +148,7 @@ theorem knownCorrect0Let {C F : Type} (trace : BackendCommon.Tra) (xs : List Clo
                 (bindEas.map Prod.snd ++ aenv) [(be, ba)]
                 ⟨bodyRun, hb, midState, syntaxParts.2, nextCoSyntax, nextDisjoint, midOracle, nextStateOracleDisjoint,
                   bodySafe, safety.1, extendSafe, extendApproxRel, nextOracleSafe, optimizerSafe.2.2, extendApproxSafe,
-                  midGlobals, subBody, subsptTrans _ _ _ sub1 nextTree, nextMono, extendedFree, extendEnvRel,
+                  midGlobals, subBody, sptSubsptTrans _ _ _ ⟨sub1, nextTree⟩, nextMono, extendedFree, extendEnvRel,
                   nextUnique, midStateOracle, by simpa [List.append_assoc] using congrArg (values ++ ·) envEq, bodyNoType⟩
               obtain ⟨targetBodyResult, targetLast, targetBodyRun, result, finalState, finalGlobals, finalOracle, finalDisjoint⟩ := bodyStep
               simp only [bodyRun] at run

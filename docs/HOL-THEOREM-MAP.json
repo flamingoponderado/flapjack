@@ -13977,32 +13977,6 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "do_app_ssgc",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
-  "lean_name": "doAppSsgcIntConst",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared do_app_ssgc_typed with the original integer constant case: only the operation is specialized, with the evaluation equality, EVERY value-safety and state-safety premises and both universally quantified success and raise conclusions unchanged. In this case successful execution returns the safe numeric constant and preserves the state. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full source theorem. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "do_app_ssgc",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
-  "lean_name": "doAppSsgcCons",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared do_app_ssgc_typed with the original block constructor case: only the operation is specialized, with the evaluation equality, EVERY value-safety and state-safety premises and both universally quantified success and raise conclusions unchanged. In this case the block contains exactly the safe input values and the state is preserved. The state uses canonical finite-support refs and code with the local roundtrip witness; doApp inherits rational-cut reals. This case alone does not establish the full source theorem. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "do_app_ssgc",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PrimitiveGlobals.lean",
   "lean_name": "doAppSsgcGlobal",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [
@@ -129242,6 +129216,54 @@
   "lean_name": "compileSource_noLabels",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared let_op_no_labels_typed in clos_letop_source_probe.out: arbitrary expression list and full label-free equivalence agree, including the optimized operator."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_no_Labels_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLabels.lean",
+  "lean_name": "valApproxNoLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared val_approx_no_labels_typed: closures inspect the complete body, tuples recurse over all elements, and all other approximation constructors are true."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "globals_approx_no_Labels_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLabels.lean",
+  "lean_name": "globalsApproxNoLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared globals_approx_no_labels_typed: every successful sparse-tree lookup yields a label-free approximation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_no_Labels_merge",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLabels.lean",
+  "lean_name": "valApproxNoLabelsMerge",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared val_approx_no_labels_merge_typed: both approximations are label-free and the full merged result is label-free."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLabels.lean",
+  "lean_name": "knownOpNoLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_op_no_labels_typed: operation equation, all argument and incoming global assumptions, and both resulting invariants agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "decide_inline_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLabels.lean",
+  "lean_name": "decideInlineNoLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared decide_inline_no_labels_typed: the independently polymorphic optional location, source premises, and label-free selected body agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "clos_gen_no_inline_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLabels.lean",
+  "lean_name": "closGenNoInline_noLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_gen_noinline_no_labels_typed: arbitrary natural/function-body pairs and both numeric inputs produce entirely label-free approximations."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",

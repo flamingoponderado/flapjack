@@ -18,13 +18,6 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
       (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
   ClosSem.holFmapAsFiniteSupportWitness
 
-/-- Sparse-tree inclusion composes. This is Flapjack infrastructure. -/
-private theorem subsptTrans {A : Type} (a b c : Spt A) (h1 : sptSubspt a b) (h2 : sptSubspt b c) : sptSubspt a c := by
-  intro k member
-  obtain ⟨mid, e1⟩ := h1 k member
-  obtain ⟨last, e2⟩ := h2 k mid
-  exact ⟨last, e2.trans e1⟩
-
 /-- Handler case of the original optimizer simulation, with its source body
 and raised-exception handler induction hypotheses. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_correct0"
@@ -77,7 +70,7 @@ theorem knownCorrect0Handle {C F : Type} (trace : BackendCommon.Tra) (body handl
       rcases known with ⟨rfl, rfl⟩
       have ⟨subBody, subHandler⟩ := subsptKnownElistGlobals c [body] aenv g0 [(be, ba)] g1
         [handler] (.other :: aenv) [(he, ha)] g2 ⟨hk, hh, sub0, bagDisjoint⟩
-      have subBodyNext : sptSubspt g1 (nextG s0) := subsptTrans _ _ _ subHandler sub1
+      have subBodyNext : sptSubspt g1 (nextG s0) := sptSubsptTrans _ _ _ ⟨subHandler, sub1⟩
       cases hr : evaluate [body] env1full s0 with
       | mk bodyResult middle =>
         rw [evaluate, fixClock_evaluate, hr] at run
@@ -164,7 +157,7 @@ theorem knownCorrect0Handle {C F : Type} (trace : BackendCommon.Tra) (body handl
                     (.other :: aenv) [(he, ha)]
                     ⟨handlerRun, hh, midState, syntaxParts.2, nextCoSyntax, nextDisjoint, midOracle, nextStateOracleDisjoint,
                       handlerSafe, safety.1, extendedSafe, .cons (.other value) approxRel, nextOracleSafe, nextSafe,
-                      extendedApproxSafe, midGlobals, subHandler, subsptTrans _ _ _ sub1 nextTree, nextMono,
+                      extendedApproxSafe, midGlobals, subHandler, sptSubsptTrans _ _ _ ⟨sub1, nextTree⟩, nextMono,
                       by simpa [Nat.add_comm] using handlerFree, .cons valueRel nextRel, nextUnique, midStateOracle,
                       by simp [envEq], handlerNoType⟩
                   obtain ⟨targetHandlerResult, targetLast, targetHandlerRun, result, finalState, finalGlobals, finalOracle, finalDisjoint⟩ := handlerStep

@@ -46,6 +46,12 @@ val _ = show "globals_approx_obeys_max_app_typed=" clos_knownProofTheory.globals
 val _ = show "clos_gen_noinline_obeys_max_app_typed=" clos_knownProofTheory.clos_gen_no_inline_obeys_max_app;
 val _ = show "known_obeys_max_app_typed=" clos_knownProofTheory.known_obeys_max_app;
 val _ = show "compile_obeys_max_app_typed=" clos_knownProofTheory.compile_obeys_max_app;
+val _ = show "val_approx_no_labels_typed=" clos_knownProofTheory.val_approx_no_Labels_def;
+val _ = show "globals_approx_no_labels_typed=" clos_knownProofTheory.globals_approx_no_Labels_def;
+val _ = show "val_approx_no_labels_merge_typed=" clos_knownProofTheory.val_approx_no_Labels_merge;
+val _ = show "known_op_no_labels_typed=" clos_knownProofTheory.known_op_no_Labels;
+val _ = show "decide_inline_no_labels_typed=" clos_knownProofTheory.decide_inline_no_Labels;
+val _ = show "clos_gen_noinline_no_labels_typed=" clos_knownProofTheory.clos_gen_no_inline_no_Labels;
 val _ = show "contains_closures_code_locs_typed=" clos_knownProofTheory.contains_closures_code_locs;
 val _ = show "inline_code_locs_typed=" clos_knownProofTheory.code_locs_decide_inline;
 val _ = show "known_code_bag_typed=" clos_knownProofTheory.known_code_locs_bag;
