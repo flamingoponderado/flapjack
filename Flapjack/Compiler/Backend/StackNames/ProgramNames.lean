@@ -47,31 +47,6 @@ def progCompHOL {width : Nat} [NeZero width] (names : Flapjack.Spt Nat) :
   | .jumpLower r1 r2 target => .jumpLower (findNameSpt names r1) (findNameSpt names r2) target
   | program => program
 
-/-- Exact-name-tree correspondence to the existing raw lookup compiler.
-This is Flapjack infrastructure; no target evaluation or equality premise. -/
-theorem progCompHOL_eq_lookupHelper {width : Nat} [NeZero width]
-    (names : Flapjack.Spt Nat) (program : HolProg width) :
-    progCompHOL names program = progComp (fun key => Flapjack.sptLookup key names) program := by
-  induction program using progCompHOL.induct <;>
-    try simp_all [progCompHOL, progComp, findNameSpt_eq_lookupHelper,
-      ← instFindNameHOL_toWord, ← riFindNameHOL_toWord]
-
-  case case11 rh target handler ihHandler ihReturn =>
-    cases rh with
-    | none =>
-      cases handler with
-      | none => simp [progCompHOL, progComp, destFindNameHOL_eq_lookupHelper]
-      | some h =>
-        obtain ⟨body, l1, l2⟩ := h
-        simp_all [progCompHOL, progComp, destFindNameHOL_eq_lookupHelper]
-    | some ret =>
-      obtain ⟨body, reg, l1, l2⟩ := ret
-      cases handler with
-      | none => simp_all [progCompHOL, progComp, destFindNameHOL_eq_lookupHelper, findNameSpt_eq_lookupHelper]
-      | some h =>
-        obtain ⟨body, l1, l2⟩ := h
-        simp_all [progCompHOL, progComp, destFindNameHOL_eq_lookupHelper, findNameSpt_eq_lookupHelper]
-
 @[hol "cakeml/compiler/backend/stack_namesScript.sml" "prog_comp_def"
   (words_as_type_indexed_bitvec)]
 def progCompEntryHOL {width : Nat} [NeZero width] {Name : Type} (names : Flapjack.Spt Nat)

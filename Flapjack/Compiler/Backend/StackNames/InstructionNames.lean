@@ -38,26 +38,4 @@ def instFindNameHOL {width : Nat} [NeZero width] (names : Flapjack.Spt Nat) :
   | .fp (.fpMovFromReg d r1 r2) => .fp (.fpMovFromReg d (findNameSpt names r1) (findNameSpt names r2))
   | instruction => instruction
 
-/-- Flapjack codec correspondence to the existing lookup-based instruction helper.
-No target equality is assumed. Full production naming migration remains open. -/
-theorem instFindNameHOL_toWord {width : Nat} [NeZero width]
-    (names : Flapjack.Spt Nat) (instruction : HolInst width) :
-    HolInst.toWordLangInst (instFindNameHOL names instruction) =
-      instFindName (fun key => Flapjack.sptLookup key names) (HolInst.toWordLangInst instruction) := by
-  cases instruction with
-  | skip => rfl
-  | const destination value =>
-      simp only [instFindNameHOL, instFindName, HolInst.toWordLangInst, findNameSpt_eq_lookupHelper]
-  | arith operation =>
-      cases operation <;>
-        simp only [instFindNameHOL, instFindName, HolInst.toWordLangInst,
-          HolArith.toWordLangArith, findNameSpt_eq_lookupHelper, riFindNameHOL_toWord]
-  | mem operator destination address =>
-      cases address
-      simp only [instFindNameHOL, instFindName, HolInst.toWordLangInst,
-        HolAddr.toWordLangAddr, findNameSpt_eq_lookupHelper]
-  | fp operation =>
-      cases operation <;>
-        simp only [instFindNameHOL, instFindName, HolInst.toWordLangInst, findNameSpt_eq_lookupHelper]
-
 end Flapjack.Compiler.Backend.StackNames

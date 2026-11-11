@@ -452,38 +452,6 @@ DOCUMENTED_MISMATCHES = {
         "cakeml/pancake/proofs/crep_inlineProofScript.sml", "unreach_elim_prog_size",
         "flapjack-ds10 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.5.50; documented_mismatch). HOL unreach_elim_prog_size (crep_inlineProofScript.sml:1730-1733), elaborated type in scripts/hol-probes/crep_inline_prog_size_type_probe.out, is forall (p q : 'a crepLang$prog) (r : early_exit option) (f : 'a -> num). unreach_elim p = (q,r) ==> prog_size f q <= prog_size f p, where 'a is the same bare HOL type index that indexes 'a word. The untagged Lean declaration quantifies an independent {alpha : Type} (f : alpha -> Nat), an extra type quantifier: it is implied by each HOL instance only because prog_size never applies f, which does not license replacing the bare index carrier. A BitVec-width-domain rendering was attempted and rejected by coordinator review (words_as_type_indexed_bitvec licenses HOL word values, not arbitrary bare alpha; checker-green is not review acceptance). Faithful translation/review of the bare index carrier, or a reviewed size-family translation removing the irrelevant function uniformly, remains open."
     ),
-    ("Flapjack/Compiler/Backend/StackNames.lean", "riFindName"): (
-        "cakeml/compiler/backend/stack_namesScript.sml", "ri_find_name_def",
-        "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."
-    ),
-    ("Flapjack/Compiler/Backend/StackNames.lean", "instFindName"): (
-        "cakeml/compiler/backend/stack_namesScript.sml", "inst_find_name_def",
-        "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."
-    ),
-    ("Flapjack/Compiler/Backend/StackNames.lean", "destFindName"): (
-        "cakeml/compiler/backend/stack_namesScript.sml", "dest_find_name_def",
-        "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."
-    ),
-    ("Flapjack/Compiler/Backend/StackNames.lean", "progComp"): (
-        "cakeml/compiler/backend/stack_namesScript.sml", "comp_def",
-        "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."
-    ),
-    ("Flapjack/Compiler/Backend/StackNames.lean", "progCompEntry"): (
-        "cakeml/compiler/backend/stack_namesScript.sml", "prog_comp_def",
-        "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."
-    ),
-    ("Flapjack/Compiler/Backend/StackNames.lean", "compile"): (
-        "cakeml/compiler/backend/stack_namesScript.sml", "compile_def",
-        "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."
-    ),
-    ("Flapjack/Compiler/Backend/StackNames.lean", "map_fst_compile"): (
-        "cakeml/compiler/backend/proofs/stack_namesProofScript.sml", "MAP_FST_compile",
-        "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."
-    ),
-    ("Flapjack/Compiler/Backend/StackNames.lean", "namesOkHOL"): (
-        "cakeml/compiler/backend/stack_namesScript.sml", "names_ok_def",
-        "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."
-    ),
 
     ("Flapjack/Pancake/CrepToLoop/StateRel.lean", "crepToLoopGlobalsRel_intro"): (
         "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
@@ -2024,10 +1992,6 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Compiler/Backend/StackRemove.lean", "loadInst"),
         ("Flapjack/Compiler/Backend/StackRemove.lean", "storeInst"),
         ("Flapjack/Compiler/Backend/StackRemove.lean", "haltInst"),
-        ("Flapjack/Compiler/Backend/StackNames.lean", "progComp"),
-        ("Flapjack/Compiler/Backend/StackNames.lean", "progCompEntry"),
-        ("Flapjack/Compiler/Backend/StackNames.lean", "compile"),
-        ("Flapjack/Compiler/Backend/StackNames.lean", "map_fst_compile"),
         ("Flapjack/Pancake/PanStructs.lean", "afindi"),
         ("Flapjack/Misc/Sptree.lean", "NumSet"),
         ("Flapjack/Pancake/WordConvs.lean", "distinctTarRegExact"),
