@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.LabProps
+public import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
 
 -- Checks below run compiled code from these modules.
 public meta import Flapjack.Parser.Basic
@@ -8,6 +9,7 @@ public meta import Flapjack.LoopGetVarImm
 public meta import Flapjack.Pancake.WordLang
 public meta import Flapjack.Compiler.Encoders.Asm
 public meta import Flapjack.Compiler.Backend.LabProps
+public meta import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
 @[expose] public section
 
 -- Public declarations below use private helpers.
@@ -27,6 +29,7 @@ namespace Flapjack.Test.RiscvConfigParity
 
 open Flapjack
 open Flapjack.Compiler.Encoders.Asm
+open Flapjack.Compiler.Encoders.RiscV.Target
 open Flapjack.Compiler.Backend.StackProps
 
 private def isaIsRiscv (config : AsmConfig width) : Bool :=
@@ -65,10 +68,11 @@ def riscvConfigForChecksGuard : Bool :=
 
 #guard riscvConfigForChecksGuard
 
--- The config drives the StackProps instruction checks.
-private def riscvChecks := asmChecksOfConfig riscvConfigForChecks
+-- The exact config drives the StackProps instruction checks through the
+-- reviewed `asm*OkExact` predicates.
+private def riscvChecks := asmChecksOfConfigExact riscvConfig
 
-#guard riscvChecks.instOk (.skip : WordLangInst (BitVec 64)) == true
+#guard riscvChecks.instOk (.skip : HolInst 64) == true
 #guard riscvChecks.regOk 1 == true
 #guard riscvChecks.regOk 0 == false
 #guard riscvChecks.regOk 31 == false
