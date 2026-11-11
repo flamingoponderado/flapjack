@@ -24,9 +24,14 @@ inductive CallBlock where
   | callBlock : Nat → List Nat → CallBlock → List Nat → CallBlock
   | rCall : Nat → List Nat → CallBlock
 
-/-- Check whether an operation is pure under the source TMC analysis. -/
+/-- Exact port of HOL `bvi_tmc$pure_op_def`: an operation is pure under the
+    source TMC analysis.  The typed capture (`pure_op_def_typed` in
+    `scripts/hol-probes/bvi_tmc_source_probe.out`) keeps the argument list's
+    element type generic (`pure_op (op : op) (args :α list)`), so the twin
+    binds `{α : Type}`; the operation argument is HOL's fixed `op` type,
+    matching `ClosLang.Op`. -/
 @[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "pure_op_def"]
-def pureOp (op : ClosLang.Op) (args : List Exp) : Bool :=
+def pureOp {α : Type} (op : ClosLang.Op) (args : List α) : Bool :=
   match op, args with
   | .intOp (.const n), [] => -268435457 ≤ n && n ≤ 268435457
   | .blockOp (.cons _), _ => true

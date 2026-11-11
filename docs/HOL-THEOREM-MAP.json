@@ -120351,7 +120351,7 @@
     "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
     "hol_name": "pure_op_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared pure_op_def_typed with source lines 10-22: the Label, FFI, IntOp Const with empty args, WordOp, BlockOp Cons and remaining operation clauses match; small_enough_int n is the -268435457 <= n <= 268435457 bound, and Lean's match on op and args covers the same eleven clauses."
+    "reviewer": "Compared pure_op_def_typed with source lines 10-22: the Label, FFI, IntOp Const with empty args, WordOp, BlockOp Cons and remaining operation clauses match; small_enough_int n is the -268435457 <= n <= 268435457 bound, and Lean's match on op and args covers the same eleven clauses. Task 147: the typed capture keeps the argument list's element type generic (`pure_op (op : op) (args :α list)`); the twin now binds {α : Type} for that list while the operation stays HOL's fixed op type (ClosLang.Op), so no type variable is identified."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviTmc.lean",
