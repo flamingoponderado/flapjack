@@ -4,7 +4,8 @@ public import Flapjack.Compiler.Backend.BviToData.Compile
 public import Flapjack.Compiler.Backend.BviToData.CompileTotal
 public import Flapjack.Compiler.Backend.Bvi.Budget
 public import Flapjack.Misc.ListEl
-public import Aesop
+-- Only the agreement proofs below use `aesop`; nothing exported needs it.
+import Aesop
 
 @[expose] public section
 
@@ -101,7 +102,9 @@ noncomputable def compileSource (n : Nat) (env : List Nat) (tail : Bool) (live :
 termination_by xs => Bvi.listBudget xs
 decreasing_by
   all_goals try (have positive := listBudget_pos xs)
-  all_goals (simp_wf; simp [Bvi.listBudget, Bvi.expBudget] <;> omega)
+  all_goals
+    simp_wf
+    simp [Bvi.listBudget, Bvi.expBudget] <;> omega
 
 /-- Executable twin of the reviewed `compileSource`: the same clauses, with
 `List.headD 0` in place of HOL's unspecified `HD []`. Every `HD` argument is
@@ -170,7 +173,9 @@ def compileSourceImpl (n : Nat) (env : List Nat) (tail : Bool) (live : List Nat)
 termination_by xs => Bvi.listBudget xs
 decreasing_by
   all_goals try (have positive := listBudget_pos xs)
-  all_goals (simp_wf; simp [Bvi.listBudget, Bvi.expBudget] <;> omega)
+  all_goals
+    simp_wf
+    simp [Bvi.listBudget, Bvi.expBudget] <;> omega
 
 /-- The executable twin agrees with the executable single/list rewrites, the
 same target as `compileSource_agrees`. -/
