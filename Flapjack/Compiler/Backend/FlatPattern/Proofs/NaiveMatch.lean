@@ -72,45 +72,6 @@ private theorem pmatchList_as_decision {C F : Type} (state : FlatSem.State C F) 
       cases right : FlatSem.pmatchList state rest values ((name, value) :: bindings) <;>
       simp_all [FlatSem.pmatchList, FlatSem.pmatch, matchDecision]
 
-/-- The empty work-list guard evaluates to true. -/
-private theorem naiveList_nil {C F : Type} (trace : Tra) : @NaiveListCorrect C F trace [] := by
-  intro env state values bindings answer pure decision
-  cases values with
-  | nil =>
-    simp [FlatSem.pmatchList, matchDecision] at decision
-    subst answer
-    simpa [naivePatternMatch] using evaluate_bool env state trace true
-  | cons _ _ => simp [FlatSem.pmatchList, matchDecision] at decision
-
-/-- Wildcards pass the work-list match and guard directly to the tail. -/
-private theorem naiveList_any {C F : Type} (trace : Tra) (expression : FlatLang.Exp)
-    (rest : List (FlatLang.Pat × FlatLang.Exp)) (ih : @NaiveListCorrect C F trace rest) :
-    @NaiveListCorrect C F trace ((.pany, expression) :: rest) := by
-  intro env state values bindings answer pure decision
-  cases values with
-  | nil => simp [FlatSem.pmatchList, matchDecision] at decision
-  | cons value values =>
-    cases pure with
-    | cons _ tail =>
-      have tailDecision : matchDecision (FlatSem.pmatchList state (rest.map Prod.fst) values bindings) = some answer := by
-        simpa [FlatSem.pmatchList, FlatSem.pmatch] using decision
-      simpa [naivePatternMatch] using ih env state values bindings answer tail tailDecision
-
-/-- Variable patterns pass the work-list decision to the tail with an
-additional binding, while emitting no guard code. -/
-private theorem naiveList_var {C F : Type} (trace : Tra) (name : VarN) (expression : FlatLang.Exp)
-    (rest : List (FlatLang.Pat × FlatLang.Exp)) (ih : @NaiveListCorrect C F trace rest) :
-    @NaiveListCorrect C F trace ((.pvar name, expression) :: rest) := by
-  intro env state values bindings answer pure decision
-  cases values with
-  | nil => simp [FlatSem.pmatchList, matchDecision] at decision
-  | cons value values =>
-    cases pure with
-    | cons _ tail =>
-      have tailDecision : matchDecision (FlatSem.pmatchList state (rest.map Prod.fst) values ((name, value) :: bindings)) = some answer := by
-        simpa [FlatSem.pmatchList, FlatSem.pmatch] using decision
-      simpa [naivePatternMatch] using ih env state values ((name, value) :: bindings) answer tail tailDecision
-
 /-- The alias case reuses the nested work-list simulation. -/
 private theorem naiveList_as {C F : Type} (trace : Tra) (pattern : FlatLang.Pat) (name : VarN)
     (expression : FlatLang.Exp) (rest : List (FlatLang.Pat × FlatLang.Exp))
@@ -456,9 +417,34 @@ theorem naivePatternMatch_correct {C F : Type} (state : FlatSem.State C F)
   intro trace todo values bindings expression result ⟨pure, matched, safe, rfl⟩
   have workAll (t : Tra) (xs : List (FlatLang.Pat × FlatLang.Exp)) : @NaiveListCorrect C F t xs := by
     induction xs using naivePatternMatch.induct t with
-    | case1 => exact naiveList_nil t
-    | case2 expression rest ih => exact naiveList_any t expression rest ih
-    | case3 expression rest name ih => exact naiveList_var t name expression rest ih
+    | case1 =>
+      intro env state values bindings answer pure decision
+      cases values with
+      | nil =>
+        simp [FlatSem.pmatchList, matchDecision] at decision
+        subst answer
+        simpa [naivePatternMatch] using evaluate_bool env state t true
+      | cons _ _ => simp [FlatSem.pmatchList, matchDecision] at decision
+    | case2 expression rest ih =>
+      intro env state values bindings answer pure decision
+      cases values with
+      | nil => simp [FlatSem.pmatchList, matchDecision] at decision
+      | cons value values =>
+        cases pure with
+        | cons _ tail =>
+          have tailDecision : matchDecision (FlatSem.pmatchList state (rest.map Prod.fst) values bindings) = some answer := by
+            simpa [FlatSem.pmatchList, FlatSem.pmatch] using decision
+          simpa [naivePatternMatch] using ih env state values bindings answer tail tailDecision
+    | case3 expression rest name ih =>
+      intro env state values bindings answer pure decision
+      cases values with
+      | nil => simp [FlatSem.pmatchList, matchDecision] at decision
+      | cons value values =>
+        cases pure with
+        | cons _ tail =>
+          have tailDecision : matchDecision (FlatSem.pmatchList state (rest.map Prod.fst) values ((name, value) :: bindings)) = some answer := by
+            simpa [FlatSem.pmatchList, FlatSem.pmatch] using decision
+          simpa [naivePatternMatch] using ih env state values ((name, value) :: bindings) answer tail tailDecision
     | case4 expression rest lit ih => exact naiveList_literal t lit expression rest ih
     | case5 expression rest patterns ih => exact naiveList_con t none patterns expression rest ih
     | case6 expression rest patterns tag group ih => exact naiveList_con t (some (tag, group)) patterns expression rest ih

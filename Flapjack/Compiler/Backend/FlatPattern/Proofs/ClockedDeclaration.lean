@@ -13,6 +13,14 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)
 
+/-- Evaluating a singleton declaration list evaluates that declaration. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "evaluate_decs_sing"]
+theorem evaluate_decs_sing {C F : Type} (state : FlatSem.State C F) (declaration : FlatLang.Exp) :
+    FlatSem.evaluateDecs state [declaration] = FlatSem.evaluateDec state declaration := by
+  rw [FlatSem.evaluateDecs_cons]
+  cases evaluated : FlatSem.evaluateDec state declaration with
+  | mk next result => cases result <;> simp [FlatSem.evaluateDecs]
+
 /-- Compiled declaration evaluation preserves successful and non-type-error
 outcomes when the declaration expression satisfies its induction hypothesis. -/
 theorem evaluateDec_simulation_upTo {C F : Type} (cfg stateCfg : Config) (clock : Nat) (declaration : FlatLang.Exp)

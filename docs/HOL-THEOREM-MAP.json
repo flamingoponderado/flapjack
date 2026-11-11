@@ -133365,6 +133365,16 @@
 }
 ,
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "evaluate_decs_sing",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ClockedDeclaration.lean",
+  "lean_name": "evaluate_decs_sing",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_decs_sing_typed: singleton declaration-list evaluation equals single-declaration evaluation for independent compiler and FFI state types. Both evaluated definitions inherit reals_as_rational_cuts."
+}
+,
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "find_recfun_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",
