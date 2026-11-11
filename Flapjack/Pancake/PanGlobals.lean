@@ -700,6 +700,24 @@ theorem globalDeclsFilter_all (predicate : Decl α → Bool)
       · rw [if_pos hpred]; simp [hpred, ih]
       · rw [if_neg hpred]; exact ih
 
+/-- Flapjack-specific filter support: membership in a filtered list reports the
+    predicate. This generic fact has no separate HOL theorem declaration. -/
+theorem mem_globalDeclsFilter {predicate : Decl α → Bool} {declaration : Decl α}
+    {declarations : List (Decl α)}
+    (hmem : declaration ∈ globalDeclsFilter predicate declarations) :
+    predicate declaration = true := by
+  induction declarations with
+  | nil => rw [globalDeclsFilter.eq_def] at hmem; simp at hmem
+  | cons head tail ih =>
+      simp only [globalDeclsFilter] at hmem
+      by_cases hpred : predicate head = true
+      · simp [hpred] at hmem
+        rcases hmem with heq | htail
+        · subst heq; exact hpred
+        · exact ih htail
+      · simp [hpred] at hmem
+        exact ih hmem
+
 def globalDeclIsName : Decl α → Bool
   | .name _ _ => true
   | _ => false
@@ -1021,38 +1039,6 @@ def globalResortDecls (declarations : List (Decl α)) : List (Decl α) :=
     globalDeclsFilter globalDeclIsGlobal declarations ++
     globalDeclsFilter globalDeclIsFunction declarations
 
-/-! Flapjack-specific production counterpart of Cake's `new_main_name_def`
-    (`pan_globalsScript.sml:224`): it calls `freshNameHOL "main"` on the
-    function names projected from the declaration list. The direct behavior
-    fixture is `scripts/hol-probes/pan_globals_new_main_name_probe.out`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port; @[hol] tag WITHDRAWN, documented
--- mismatch, audit bead `flapjack-dlc.15`): the body `freshNameHOL "main"
--- (globalFunctionNames declarations)` matches HOL `new_main_name decls =
--- fresh_name «main» (MAP FST (functions decls))` (`pan_globalsScript.sml:224`)
--- once the production projections `globalFunctionNames`/`freshNameHOL` stand
--- for HOL `functions`/`fresh_name`. The mismatch is the input carrier: this
--- consumes generic production `List (Decl α)`, whose expressions carry `Const
--- : α` and whose identifiers and `Shape` are `String`; HOL `new_main_name`
--- consumes word-valued declarations with `Const : 'a word` and `mlstring`
--- identifiers. `names_as_string` and the generated-name boundary witness only
--- address the String/mlstring name difference, not this input-carrier
--- mismatch, so the tag stays withdrawn pending the exact-carrier replacement
--- (bead `flapjack-6nn.3.1`; MlString carrier `flapjack-pxn.18.3.5.8`). Direct
--- HOL rows empty / two_collisions / mixed / absent are in
--- `scripts/hol-probes/pan_globals_new_main_name_probe.out` and sampled by
--- `Flapjack/Test/PanGlobalsNewMainNameParity.lean`.
-def globalNewMainName (declarations : List (Decl α)) : FunName :=
-  freshNameHOL "main" (globalFunctionNames declarations)
-
-/-! Flapjack-specific freshness property for the synthesized `main` entry-point
-    name. The proof-level statement is over generic production `Decl α`, while
-    HOL `new_main_name_correct` ranges over word-valued declarations; see the
-    exact-carrier replacement bead `flapjack-6nn.3.1`. -/
-theorem globalNewMainName_not_mem
-    (declarations : List (Decl α)) :
-    globalNewMainName declarations ∉ globalFunctionNames declarations :=
-  freshNameHOL_not_mem "main" (globalFunctionNames declarations)
-
 /-! ## `holMlStringWitness_*`: same-module byte-boundary witnesses
 
 The `names_as_string` qualifier (`Flapjack/HolRef.lean`) records Lean `String`
@@ -1129,136 +1115,6 @@ theorem holMlStringWitness_globalFreshName [BEq String] (name : String)
     (h : Flapjack.Pancake.PanLang.NameRanged name) (names : List String) :
     Flapjack.Pancake.PanLang.NameRanged (globalFreshName name names) :=
   holMlStringWitness_globalFreshNameAux name h names 0 names.length
-
-/-! Flapjack-specific source-shaped counterpart (NOT an exact HOL port) of Cake's `dec_shapes_def` (`pan_globalsScript.sml:228`): the
-    shape projection skips function, name, and exception declarations and
-    keeps the shape of each value declaration, in order. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): source review for bead
--- `flapjack-dlc.12`. HOL `dec_shapes_def` (`pan_globalsScript.sml:228-234`) is
--- the five-clause projection `Function _::ds |-> dec_shapes ds`,
--- `Decl sh _ _::ds |-> sh::dec_shapes ds`, `Name _ _::ds |-> dec_shapes ds`,
--- `ExnDecl _ _::ds |-> dec_shapes ds`, `[] |-> []`; the Lean clauses match that
--- order and shape selection clause-for-clause. The mismatch is the imported
--- declaration carrier: the executed function consumes production `Decl α`
--- (whose `Exp α.Const` payload is a generic word `α`, not HOL's
--- `ExpHOL width.Const : 'a word` fixed width, and whose identifiers/`Shape`
--- are `String`, not HOL `mlstring`), so the statement ranges over inputs HOL
--- cannot represent. `(names_as_string := ...)` cannot authorize a whole
--- declaration carrier; no byte witness applies. Keep untagged until an
--- exact-carrier definition is connected to the executed path; tracked by
--- `flapjack-6nn.3.1` with `flapjack-pxn.18.3.5.8`. Clause/order evidence:
--- `scripts/hol-probes/pan_globals_dec_shapes_probe.out` rows `empty=[]`,
--- `mixed=[Comb [One; Named «S»]; One]`, `functions_only=[]`, sampled by
--- `Flapjack/Test/PanGlobalsDecShapesParity.lean`.
-def globalDeclShapes : List (Decl α) → List Shape
-  | [] => []
-  | .function _ :: declarations => globalDeclShapes declarations
-  | .decl shape _ _ :: declarations => shape :: globalDeclShapes declarations
-  | .name _ _ :: declarations => globalDeclShapes declarations
-  | .exnDecl _ _ :: declarations => globalDeclShapes declarations
-termination_by declarations => sizeOf declarations
-
-/-! Shape-projection counterparts of Cake's `dec_shapes` lemmas from
-    `pan_globalsProofScript.sml:2328-2361`.  The global pass reassociates and
-    filters declarations, and these lemmas record that the shape projection is
-    unchanged by that reorganisation. -/
-
-theorem globalDeclShapes_nil : globalDeclShapes ([] : List (Decl α)) = [] := by
-  rw [globalDeclShapes.eq_def]
-
-theorem globalDeclShapes_cons (declaration : Decl α) (declarations : List (Decl α)) :
-    globalDeclShapes (declaration :: declarations) =
-      (match declaration with
-       | .decl shape _ _ => shape :: globalDeclShapes declarations
-       | _ => globalDeclShapes declarations) := by
-  cases declaration <;> rw [globalDeclShapes.eq_def]
-
-theorem globalDeclShapes_append (declarations rest : List (Decl α)) :
-    globalDeclShapes (declarations ++ rest) =
-      globalDeclShapes declarations ++ globalDeclShapes rest := by
-  induction declarations with
-  | nil => rw [List.nil_append, globalDeclShapes_nil, List.nil_append]
-  | cons declaration declarations ih =>
-      cases declaration <;> simp [globalDeclShapes_cons, ih]
-
-theorem globalDeclShapes_of_functions (declarations : List (Decl α))
-    (hfunctions : ∀ declaration ∈ declarations, globalDeclIsFunction declaration = true) :
-    globalDeclShapes declarations = [] := by
-  induction declarations with
-  | nil => rw [globalDeclShapes.eq_def]
-  | cons declaration declarations ih =>
-      have hdecl : globalDeclIsFunction declaration = true :=
-        hfunctions declaration (by simp)
-      have hrest : ∀ d ∈ declarations, globalDeclIsFunction d = true :=
-        fun d hd => hfunctions d (by simp [hd])
-      cases declaration <;> simp_all [globalDeclIsFunction, globalDeclShapes_cons]
-
-theorem mem_globalDeclsFilter {predicate : Decl α → Bool} {declaration : Decl α}
-    {declarations : List (Decl α)}
-    (hmem : declaration ∈ globalDeclsFilter predicate declarations) :
-    predicate declaration = true := by
-  induction declarations with
-  | nil => rw [globalDeclsFilter.eq_def] at hmem; simp at hmem
-  | cons head tail ih =>
-      simp only [globalDeclsFilter] at hmem
-      by_cases hpred : predicate head = true
-      · simp [hpred] at hmem
-        rcases hmem with heq | htail
-        · subst heq; exact hpred
-        · exact ih htail
-      · simp [hpred] at hmem
-        exact ih hmem
-
-theorem globalDeclShapes_globalDeclsFilter_not_function (declarations : List (Decl α)) :
-    globalDeclShapes
-        (globalDeclsFilter (fun declaration => !globalDeclIsFunction declaration)
-          declarations) =
-      globalDeclShapes declarations := by
-  induction declarations with
-  | nil => rw [globalDeclsFilter.eq_def, globalDeclShapes.eq_def]
-  | cons declaration declarations ih =>
-      simp only [globalDeclsFilter]
-      cases declaration <;> simp only [globalDeclIsFunction] at ih ⊢ <;> simp [globalDeclShapes_cons, ih]
-
-theorem globalDeclShapes_globalDeclsFilter_function (declarations : List (Decl α)) :
-    globalDeclShapes (globalDeclsFilter globalDeclIsFunction declarations) = [] :=
-  globalDeclShapes_of_functions _
-    (fun _ hmem => mem_globalDeclsFilter (predicate := globalDeclIsFunction) hmem)
-
-theorem globalDeclShapes_globalDeclsFilter_name (declarations : List (Decl α)) :
-    globalDeclShapes (globalDeclsFilter globalDeclIsName declarations) = [] := by
-  induction declarations with
-  | nil => rw [globalDeclsFilter.eq_def, globalDeclShapes.eq_def]
-  | cons declaration declarations ih =>
-      simp only [globalDeclsFilter]
-      cases declaration <;> simp only [globalDeclIsName] at ih ⊢ <;> simp [globalDeclShapes_cons, ih]
-
-theorem globalDeclShapes_globalDeclsFilter_exception (declarations : List (Decl α)) :
-    globalDeclShapes (globalDeclsFilter globalDeclIsException declarations) = [] := by
-  induction declarations with
-  | nil => rw [globalDeclsFilter.eq_def, globalDeclShapes.eq_def]
-  | cons declaration declarations ih =>
-      simp only [globalDeclsFilter]
-      cases declaration <;> simp only [globalDeclIsException] at ih ⊢ <;> simp [globalDeclShapes_cons, ih]
-
-theorem globalDeclShapes_globalDeclsFilter_global (declarations : List (Decl α)) :
-    globalDeclShapes (globalDeclsFilter globalDeclIsGlobal declarations) =
-      globalDeclShapes declarations := by
-  induction declarations with
-  | nil => rw [globalDeclsFilter.eq_def, globalDeclShapes.eq_def]
-  | cons declaration declarations ih =>
-      simp only [globalDeclsFilter]
-      cases declaration <;> simp only [globalDeclIsGlobal] at ih ⊢ <;> simp [globalDeclShapes_cons, ih]
-
-theorem globalDeclShapes_globalResortDecls (declarations : List (Decl α)) :
-    globalDeclShapes (globalResortDecls declarations) =
-      globalDeclShapes declarations := by
-  rw [globalResortDecls, globalDeclShapes_append, globalDeclShapes_append,
-    globalDeclShapes_append, globalDeclShapes_globalDeclsFilter_name,
-    globalDeclShapes_globalDeclsFilter_exception,
-    globalDeclShapes_globalDeclsFilter_global,
-    globalDeclShapes_globalDeclsFilter_function]
-  simp
 
 /-! Counterpart of Cake's `exceptions_FILTER_is_function`
     (`pan_globalsProofScript.sml:2515`). -/
@@ -2098,51 +1954,6 @@ theorem globalCompileDecs_filter_isDecl [BEq String] [Add α] [Mul α]
   · rw [globalCollect_filter_isDecl, globalCompileDecls_filter_isDecl]
     simp [globalDeclsFilter]
   · exact globalCollect_filter_isDecl context code
-
-/-! Successful-start helper for Flapjack's top-level global compiler. This
-    Option-valued helper is used by invariants that require a named start
-    function to exist. HOL's public `compile_top` is total and returns `[]`
-    when the start function is absent; `globalCompileTopForStart` below
-    implements that behavior. -/
-def globalCompileTopForStartSome [BEq String] [Add α] [Mul α]
-    (bytesInWord : α) (fromNat : Nat → α) (declarations : List (Decl α))
-    (start : FunName) : Option (List (Decl α)) :=
-  match globalFindFunction start declarations with
-  | none => none
-  | some entry =>
-      let resorted := globalResortDecls declarations
-      let renamedStart := globalNewMainName declarations
-      let renamed := globalRenameDecls start renamedStart resorted
-      let maxGlobalsSize :=
-        bytesInWord * fromNat
-          ((globalDeclShapes renamed).map Shape.shapeSize |>.foldl (· + ·) 0)
-      let initial : GlobalPassContext α :=
-        { globals := []
-          globalsSize := fromNat 0
-          maxGlobalsSize := maxGlobalsSize
-          bytesInWord := bytesInWord
-          fromNat := fromNat }
-      let compiled := globalCompileDecs initial renamed
-      let parameters := entry.params.map (fun (name, _) => Exp.var .local name)
-      let newMain : Decl α :=
-        .function
-          { name := start
-            inline := false
-            exported := false
-            params := entry.params
-            body := .seq (nestedSeq compiled.initializers)
-              (.call none renamedStart parameters)
-            returnShape := entry.returnShape }
-      some (compiled.exceptions ++ [newMain] ++ compiled.functions)
-
-/-! Generalized total compiler analogue. Its word size and natural-number
-    conversion are explicit so Flapjack callers can use different targets; it
-    is not itself the exact HOL `compile_top` interface. The fixed-word
-    `globalCompileTopCake` wrapper below is the source-shaped interface. -/
-def globalCompileTopForStart [BEq String] [Add α] [Mul α]
-    (bytesInWord : α) (fromNat : Nat → α) (declarations : List (Decl α))
-    (start : FunName) : List (Decl α) :=
-  (globalCompileTopForStartSome bytesInWord fromNat declarations start).getD []
 
 theorem globalDecls_all_or_of_all_left (predicate other : Decl α → Bool)
     (declarations : List (Decl α))

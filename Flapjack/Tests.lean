@@ -265,7 +265,6 @@ public import Flapjack.Test.CrepHolStateParity
 public import Flapjack.Test.ParserByteNamesParity
 public import Flapjack.Test.ParserByteRangedParity
 public import Flapjack.Test.ParserKeywordParity
-public import Flapjack.Test.PanGlobalsNameByteRangedParity
 public import Flapjack.Test.LoopPropsCutSetsParity
 public import Flapjack.Test.LoopPropsCompSyntaxOkParity
 public import Flapjack.Test.CrepToLoopCompFuncParity

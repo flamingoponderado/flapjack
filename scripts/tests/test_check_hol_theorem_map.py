@@ -186,14 +186,6 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                 "cakeml/pancake/pan_globalsScript.sml",
                 "resort_decls_def",
             ),
-            ("Flapjack/Pancake/PanGlobals.lean", "globalNewMainName"): (
-                "cakeml/pancake/pan_globalsScript.sml",
-                "new_main_name_def",
-            ),
-            ("Flapjack/Pancake/PanGlobals.lean", "globalDeclShapes"): (
-                "cakeml/pancake/pan_globalsScript.sml",
-                "dec_shapes_def",
-            ),
         }
         inventory = {
             (record["lean_path"], record["lean_name"]): record
@@ -211,6 +203,13 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                 self.assertIn("flapjack-6nn.3.1", record["reviewer"])
                 self.assertTrue(MAP["lean_definition_exists"](MAP["ROOT"], *key))
                 self.assertNotIn(key, tagged)
+        # The generic-α dec_shapes/new_main_name production forms are retired;
+        # the HOL declarations stay mapped by the exact tagged twins.
+        for key in (("Flapjack/Pancake/PanGlobals.lean", "globalNewMainName"),
+                    ("Flapjack/Pancake/PanGlobals.lean", "globalDeclShapes")):
+            self.assertNotIn(key, inventory)
+        self.assertIn(("Flapjack/Pancake/PanGlobals.lean", "decShapesHOL"), tagged)
+        self.assertIn(("Flapjack/Pancake/PanGlobals.lean", "newMainNameHOL"), tagged)
 
     def test_pan_globals_exception_carrier_mismatches_are_documented(self):
         manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
