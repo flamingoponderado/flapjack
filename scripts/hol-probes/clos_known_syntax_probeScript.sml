@@ -397,6 +397,16 @@ val known_words_list_replay = prove(
   known_decode_list_tac);
 val _ = show "known_words_list_replay_typed=" known_words_list_replay;
 
+(* Replay the source-local letrec case equation with its original proof. *)
+val known_letrec_case_eq_replay = prove(
+  ``!limit loc fns.
+    (case loc of NONE => REPLICATE (LENGTH fns) clos_known$Other |
+      SOME n => clos_known$clos_gen_noinline n 0 fns) =
+    GENLIST (case loc of NONE => K clos_known$Other |
+      SOME n => λi. clos_known$ClosNoInline (n + 2 * i) (FST (EL i fns))) (LENGTH fns)``,
+  Cases_on `loc` >> fs [clos_knownProofTheory.clos_gen_noinline_eq, rich_listTheory.REPLICATE_GENLIST]);
+val _ = show "known_letrec_case_eq_replay_typed=" known_letrec_case_eq_replay;
+
 (* Replay the original source-local theorem with its original proof tactic. *)
 val known_state_rel_opt_rel_refs_replay = prove(
   ``(clos_knownProof$state_rel c g s1 s2 ∧ FLOOKUP s1.refs n = r1 ⇒

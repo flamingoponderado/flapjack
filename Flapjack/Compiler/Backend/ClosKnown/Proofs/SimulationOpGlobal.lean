@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpSetGlobal
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpOrdinary
 
 @[expose] public section
 

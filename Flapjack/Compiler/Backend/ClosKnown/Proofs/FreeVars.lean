@@ -22,6 +22,22 @@ theorem closGenNoInlineEq {α : Type} (n c : Nat) (fns : List (Nat × α)) :
     | mk arity body =>
       simp [closGenNoInline, List.ofFn_succ, ih, Nat.add_comm, Nat.add_left_comm, Nat.mul_add]
 
+/-- Closure approximations enumerate either unknown values or indexed closures. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "letrec_case_eq"]
+theorem letrecCaseEq {L α : Type} (_limit : L) (loc : Option Nat) (fns : List (Nat × α)) :
+    (match loc with
+      | none => List.replicate fns.length ValApprox.other
+      | some n => closGenNoInline n 0 fns) =
+    List.ofFn (fun i : Fin fns.length => match loc with
+      | none => ValApprox.other
+      | some n => ValApprox.closNoInline (n + 2 * i.val) (fns[i.val]'i.isLt).1) := by
+  cases loc with
+  | none =>
+    induction fns with
+    | nil => rfl
+    | cons x xs ih => simp [List.ofFn_succ, List.replicate_succ, ih]
+  | some n => simpa [Nat.add_comm] using closGenNoInlineEq n 0 fns
+
 /-- Check a predicate on every variable represented by a shifted set. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "every_var_def"]
 def everyVar (P : Nat → Prop) : DbVars.DbVarSet → Prop

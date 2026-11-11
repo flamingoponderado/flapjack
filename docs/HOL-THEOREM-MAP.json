@@ -10578,19 +10578,6 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpSetGlobal.lean",
-  "lean_name": "knownCorrect0OpSetGlobal",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out with the original SetGlobal branch. KnownSimulationAt unfolds to the full expression conjunct, retaining the argument induction hypothesis; the install and force-body hypotheses are inapplicable. The proof derives disjoint writes from uniqueness, obtains the argument approximation from known_correct_approx, and uses the inserted approximation's lookup and tree inclusion to justify the written runtime value in the larger oracle tree. It preserves the original primitive state and result relations and oracle invariants. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpForce.lean",
   "lean_name": "knownCorrect0OpForce",
   "statement_status": "reviewed_fmap_as_finite_support",
@@ -10972,6 +10959,14 @@
   "lean_name": "decideInlineLetInlineFvMax",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared decide_inline_imp_clos_fv_max_typed in clos_known_syntax_probe.out and the source theorem. The location payload remains polymorphic, and the decision, existential closure approximation and original free-variable bound match. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "letrec_case_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
+  "lean_name": "letrecCaseEq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_letrec_case_eq_replay_typed, replaying the source-local proof: the independent unused limit type and function payload, both location cases and all generated indices agree."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
