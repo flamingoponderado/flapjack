@@ -4408,6 +4408,84 @@ theorem evaluateHOLFiniteState_global_shape_invariant {width : Nat} {σ : Type} 
 
 end GlobalsShapesInvariant
 
+/-! ## `panSem` state-accessor simplification lemmas over the finite carrier
+
+HOL `panSemScript.sml:422-429` (`kvar_simps`), `:476-487`
+(`is_valid_value_simps`) and `:489-500` (`is_valid_value_simps2`) are the
+state-accessor simp equations over `panSem$state`'s finite-map fields.  The
+twins below state them over `PanSemStateFiniteExact`; the function-backed
+versions in `PanSem/StateSimpExact.lean` stay for `AddClock.lean` and carry no
+manifest rows.  HOL's `FLOOKUP` is `.lookup`, `shape_of` is `shapeOfHOLExact`,
+and HOL's Boolean shape equality is `shapeEqHOL`.  The typed captures are in
+`scripts/hol-probes/pan_sem_state_simp_probe.out`. -/
+
+/-- Exact port of HOL `panSem$kvar_simps` (`panSemScript.sml:422-429`):
+    `set_kvar Local v value s = set_var v value s`,
+    `set_kvar Global v value s = set_global v value s`,
+    `lookup_kvar Local v s = FLOOKUP s.locals v`, and
+    `lookup_kvar Global v s = FLOOKUP s.globals v`, over the finite-support
+    carrier and in HOL's binder order `v value s`. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "kvar_simps"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem kvarSimpHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (name : MlS) (value : ValueHOL width) (state : PanSemStateFiniteExact width σ) :
+    (setKvarHOLFinite .local name value state = setVarHOLFinite name value state) ∧
+      (setKvarHOLFinite .global name value state =
+        setGlobalHOLFinite name value state) ∧
+      (lookupKvarHOLFinite .local name state = state.locals.lookup name) ∧
+      (lookupKvarHOLFinite .global name state = state.globals.lookup name) :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Exact port of HOL `panSem$is_valid_value_simps` (`panSemScript.sml:476-487`):
+    the `Local` and `Global` `FLOOKUP` clauses of `is_valid_value`, over the
+    finite-support carrier and in HOL's binder order `s v value`.  HOL's
+    `shape_of value = shape_of w` is the tagged Boolean `shapeEqHOL`. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "is_valid_value_simps"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem isValidValueSimpHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (name : MlS) (value : ValueHOL width) :
+    (isValidValueHOLFinite state .local name value =
+        (match state.locals.lookup name with
+          | some existing => shapeEqHOL (shapeOfHOLExact value) (shapeOfHOLExact existing)
+          | none => false)) ∧
+      (isValidValueHOLFinite state .global name value =
+        (match state.globals.lookup name with
+          | some existing => shapeEqHOL (shapeOfHOLExact value) (shapeOfHOLExact existing)
+          | none => false)) :=
+  ⟨rfl, rfl⟩
+
+/-- Exact port of HOL `panSem$is_valid_value_simps2` (`panSemScript.sml:489-500`):
+    the eight clock/ffi/code/memory update-invariance equations for
+    `is_valid_value` and `lookup_kvar`, over the finite-support carrier and in
+    HOL's binder order `s k vk v vl ffi cd m`. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "is_valid_value_simps2"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem isValidValueSimps2HOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (clock : Nat) (kind : VarKind)
+    (name : MlS) (value : ValueHOL width) (ffi : HolFfiState σ)
+    (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
+    (memory : RiscV.Word width → HolWordLab width) :
+    (isValidValueHOLFinite { state with clock := clock } kind name value =
+        isValidValueHOLFinite state kind name value) ∧
+      (isValidValueHOLFinite { state with ffi := ffi } kind name value =
+        isValidValueHOLFinite state kind name value) ∧
+      (isValidValueHOLFinite { state with code := code } kind name value =
+        isValidValueHOLFinite state kind name value) ∧
+      (isValidValueHOLFinite { state with memory := memory } kind name value =
+        isValidValueHOLFinite state kind name value) ∧
+      (lookupKvarHOLFinite kind name { state with clock := clock } =
+        lookupKvarHOLFinite kind name state) ∧
+      (lookupKvarHOLFinite kind name { state with ffi := ffi } =
+        lookupKvarHOLFinite kind name state) ∧
+      (lookupKvarHOLFinite kind name { state with code := code } =
+        lookupKvarHOLFinite kind name state) ∧
+      (lookupKvarHOLFinite kind name { state with memory := memory } =
+        lookupKvarHOLFinite kind name state) :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
 end PanSemStateFiniteExact
 
 end Flapjack

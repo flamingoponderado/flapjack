@@ -46,8 +46,10 @@ open Flapjack.Pancake.PanLang (MlS ShapeHOL ProgHOL)
 
 /-- Function-backed rendering of HOL `panSem$kvar_simps` (`panSemScript.sml:422-429`);
     untagged because the state map fields are unrestricted functions rather than
-    HOL finite maps. Exact finite-support replacement tracked by
-    `flapjack-pxn.18.3.7.1.3.1.1.2.5` (parent `.2.3`). -/
+    HOL finite maps. The exact finite-support port over `PanSemStateFiniteExact`
+    is the tagged `kvarSimpHOLFinite` (`PanSem/StateExactFiniteMap.lean`); this
+    function-carrier version is Flapjack-specific infrastructure for
+    `AddClock.lean` and carries no manifest row. -/
 theorem kvar_simps {width : Nat} {σ : Type} [NeZero width]
     (name : MlS) (value : ValueHOL width) (state : PanSemStateExact width σ) :
     (setKvarHOLExact .local name value state = setVarHOLExact name value state) ∧
@@ -58,8 +60,10 @@ theorem kvar_simps {width : Nat} {σ : Type} [NeZero width]
 
 /-- Function-backed rendering of HOL `panSem$is_valid_value_simps`
     (`panSemScript.sml:476-487`); untagged because the carrier's maps are not
-    finite-map fields. Exact finite-support replacement tracked by
-    `flapjack-pxn.18.3.7.1.3.1.1.2.5` (parent `.2.3`). -/
+    finite-map fields. The exact finite-support port over
+    `PanSemStateFiniteExact` is the tagged `isValidValueSimpHOLFinite`
+    (`PanSem/StateExactFiniteMap.lean`); this function-carrier version is
+    Flapjack-specific infrastructure and carries no manifest row. -/
 theorem is_valid_value_simps {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateExact width σ) (name : MlS) (value : ValueHOL width) :
     (isValidValueHOLExact state .local name value =
@@ -74,8 +78,10 @@ theorem is_valid_value_simps {width : Nat} {σ : Type} [NeZero width]
 
 /-- Function-backed rendering of HOL `panSem$is_valid_value_simps2`
     (`panSemScript.sml:489-500`); untagged because its whole-state binder uses
-    function fields in place of HOL finite maps. Exact finite-support
-    replacement tracked by `flapjack-pxn.18.3.7.1.3.1.1.2.5` (parent `.2.3`). -/
+    function fields in place of HOL finite maps. The exact finite-support port
+    over `PanSemStateFiniteExact` is the tagged `isValidValueSimps2HOLFinite`
+    (`PanSem/StateExactFiniteMap.lean`); this function-carrier version is
+    Flapjack-specific infrastructure and carries no manifest row. -/
 theorem is_valid_value_simps2 {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateExact width σ) (kind : VarKind) (name : MlS)
     (value : ValueHOL width) (clock : Nat) (ffi : HolFfiState σ)

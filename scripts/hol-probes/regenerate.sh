@@ -3522,6 +3522,16 @@ run_probe pan_props_with_shape_probeScript.sml pan_props_with_shape_probe.out \
   "$cake_dir/pancake/semantics/panPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 
+# The panSem state-accessor simplification probe captures the typed statements
+# of kvar_simps / is_valid_value_simps / is_valid_value_simps2
+# (panSemScript.sml:422-429, :476-487, :489-500).
+run_probe pan_sem_state_simp_probeScript.sml pan_sem_state_simp_probe.out \
+  kvar_simps_typed kvar_simps_hypotheses \
+  is_valid_value_simps_typed is_valid_value_simps_hypotheses \
+  is_valid_value_simps2_typed is_valid_value_simps2_hypotheses \
+  "$cake_dir/pancake/semantics/panSemScript.sml" \
+  "$cake_dir/pancake/semantics"
+
 # The pan_commonProps zip/fupdate and disjoint take/drop probe observes the
 # finite-map update-not-mem and list-disjointness lemmas
 # (pan_commonPropsScript.sml:289, :399, :413).

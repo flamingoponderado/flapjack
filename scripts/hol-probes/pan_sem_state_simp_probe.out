@@ -1,0 +1,29 @@
+kvar_simps_typed=set_kvar Local (v :mlstring) (value :α v) (s :(α, β) state) =
+set_var v value s ∧ set_kvar Global v value s = set_global v value s ∧
+lookup_kvar Local v s = FLOOKUP s.locals v ∧
+lookup_kvar Global v s = FLOOKUP s.globals v
+kvar_simps_hypotheses=0
+is_valid_value_simps_typed=(is_valid_value (s :(α, β) state) Local (v :mlstring) (value :γ v) ⇔
+ case FLOOKUP s.locals v of
+   (NONE :α v option) => F
+ | SOME w => shape_of value = shape_of w) ∧
+(is_valid_value s Global v value ⇔
+ case FLOOKUP s.globals v of
+   (NONE :α v option) => F
+ | SOME w => shape_of value = shape_of w)
+is_valid_value_simps_hypotheses=0
+is_valid_value_simps2_typed=(is_valid_value ((s :(α, β) state) with clock := (k :num)) (vk :varkind)
+   (v :mlstring) (vl :γ v) ⇔ is_valid_value s vk v vl) ∧
+(is_valid_value (s with ffi := (ffi :δ ffi_state)) vk v vl ⇔
+ is_valid_value s vk v vl) ∧
+(is_valid_value
+   (s with
+    code := (cd :mlstring |-> (mlstring # shape) list # α prog # shape)) vk v
+   vl ⇔ is_valid_value s vk v vl) ∧
+(is_valid_value (s with memory := (m :α word -> α word_lab)) vk v vl ⇔
+ is_valid_value s vk v vl) ∧
+lookup_kvar vk v (s with clock := k) = lookup_kvar vk v s ∧
+lookup_kvar vk v (s with ffi := ffi) = lookup_kvar vk v s ∧
+lookup_kvar vk v (s with code := cd) = lookup_kvar vk v s ∧
+lookup_kvar vk v (s with memory := m) = lookup_kvar vk v s
+is_valid_value_simps2_hypotheses=0

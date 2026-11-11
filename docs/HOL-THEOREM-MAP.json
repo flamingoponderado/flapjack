@@ -104532,30 +104532,6 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "is_valid_value_simps",
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateSimpExact.lean",
-    "lean_name": "is_valid_value_simps",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.3.38; FLAPJACK-SPECIFIC, documented_mismatch). HOL is_valid_value_simps (panSemScript.sml:476-487) gives the Local/Global FLOOKUP clauses of is_valid_value over panSem$state finite maps. is_valid_value_simps (StateSimpExact.lean:55) matches the two clauses but its PanSemStateExact carrier reads arbitrary functions rather than HOL finite-map fields. Exact finite-support replacement tracked by flapjack-pxn.18.3.7.1.3.1.1.2.5 (parent .2.3)."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "is_valid_value_simps2",
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateSimpExact.lean",
-    "lean_name": "is_valid_value_simps2",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.3.39; FLAPJACK-SPECIFIC, documented_mismatch). HOL is_valid_value_simps2 (panSemScript.sml:489-500) is the eight clock/ffi/code/memory update-invariance equations for is_valid_value and lookup_kvar over panSem$state. is_valid_value_simps2 (StateSimpExact.lean:70) keeps the equations but binds whole-state records with function-typed code/memory in place of HOL finite maps. Exact finite-support replacement tracked by flapjack-pxn.18.3.7.1.3.1.1.2.5 (parent .2.3)."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "kvar_simps",
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateSimpExact.lean",
-    "lean_name": "kvar_simps",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.3.30; FLAPJACK-SPECIFIC, documented_mismatch). HOL kvar_simps (panSemScript.sml:422-429) is the four set_kvar/lookup_kvar simp equations over panSem$state finite maps. Lean kvar_simps (StateSimpExact.lean:44) keeps the four equations but its PanSemStateExact carrier exposes unrestricted lookup functions instead of HOL finite maps. Exact finite-support replacement tracked by flapjack-pxn.18.3.7.1.3.1.1.2.5 (parent .2.3)."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "v",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/ValueHOL.lean",
     "lean_name": "ValueHOL",
@@ -133811,5 +133787,50 @@
     "lean_name": "stateRel_globals",
     "statement_status": "documented_mismatch",
     "reviewer": "Flapjack-specific source-shaped statement (NOT an exact HOL port; reviewed under flapjack-pxn.18.3.7.1.3): hypothesis is the Flapjack-specific stateRel over production PanSemState/CrepRuntimeState (optional PanValue source memory vs total word_lab target memory), not HOL state_rel; conclusion is over FiniteMap VarName (PanValue alpha) vs HOL varname-keyed value map; VarName = String vs varname = mlstring is only one of several mismatches, so the names_as_string qualifier does not apply. Exact projection is the tagged panToCrepStateRelFiniteExact_globals (Proofs/PanToCrep/StateRelFiniteSupport.lean); this production theorem is Flapjack-specific infrastructure and keeps this row only because Proofs theorems require manifest coverage (carrier flapjack-pxn.18.3.5.8, parent flapjack-pxn.18.3.5.7.2)."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "kvar_simps",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "kvarSimpHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.3.30/.3.38/.3.39; panSemScript.sml:422-429: typed capture kvar_simps_typed in scripts/hol-probes/pan_sem_state_simp_probe.out gives (set_kvar Local (v :mlstring) (value :\u03b1 v) (s :(\u03b1,\u03b2) state) = set_var v value s) \u2227 (set_kvar Global v value s = set_global v value s) \u2227 (lookup_kvar Local v s = FLOOKUP s.locals v) \u2227 (lookup_kvar Global v s = FLOOKUP s.globals v), 0 hypotheses. Lean keeps HOL's binder order v value s, the four conjuncts in HOL order, and the finite-support carrier fields locals/globals/code/eshapes; FLOOKUP is .lookup and set_kvar/set_var/set_global/lookup_kvar are the tagged finite-carrier definitions. Binder order and premise grouping compared with HOL; the function-backed StateSimpExact versions stay untagged with no manifest row."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "is_valid_value_simps",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "isValidValueSimpHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.3.30/.3.38/.3.39; panSemScript.sml:476-487: typed capture is_valid_value_simps_typed in pan_sem_state_simp_probe.out gives (is_valid_value (s :(\u03b1,\u03b2) state) Local (v :mlstring) (value :\u03b3 v) \u21d4 case FLOOKUP s.locals v of NONE => F | SOME w => shape_of value = shape_of w) \u2227 (same for Global), 0 hypotheses. Lean keeps HOL's binder order s v value, both conjuncts and the NONE/SOME branches; FLOOKUP is .lookup and HOL's Boolean shape equality is the tagged shapeEqHOL. Binder order and premise grouping compared with HOL; the function-backed StateSimpExact versions stay untagged with no manifest row."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "is_valid_value_simps2",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "isValidValueSimps2HOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.3.30/.3.38/.3.39; panSemScript.sml:489-500: typed capture is_valid_value_simps2_typed in pan_sem_state_simp_probe.out gives the eight clock/ffi/code/memory update-invariance equations for is_valid_value and lookup_kvar over (s :(\u03b1,\u03b2) state), with free variables s k vk v vl ffi cd m and 0 hypotheses. Lean keeps HOL's binder order s k vk v vl ffi cd m, all eight conjuncts in HOL order, and the finite-support carrier fields locals/globals/code/eshapes (code is a HolFiniteMapExact, memory a total word_lab map). Binder order and premise grouping compared with HOL; the function-backed StateSimpExact versions stay untagged with no manifest row."
   }
 ]
