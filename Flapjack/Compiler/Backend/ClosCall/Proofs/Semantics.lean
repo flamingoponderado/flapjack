@@ -52,22 +52,6 @@ private theorem initialCodeInvariant {C : Type} (xs : List ClosLang.Exp)
     · intro n x hx
       exact hx
   · exact (alistToFmapDistinct aux well.2).symm
-/-- HOL discharges initial state well-formedness inline from empty globals, references and code. -/
-private theorem initialStateWell {C F : Type} (ffi : HolFfiState F) (maxApp clock : Nat)
-    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
-    (co : ClosSem.CompileOracle (NumSet × C)) (cc : ClosSem.Compiler (NumSet × C))
-    (g : State) (allowed : Set Nat) :
-    stateValuesWellFormed g allowed code (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty co cc clock) := by
-  simp [stateValuesWellFormed, ClosSem.initialState, HolFiniteMapExact.empty]
-
-/-- HOL derives the initial state relation inline from the two initial-state definitions. -/
-private theorem initialStateRelated {C F : Type} (ffi : HolFfiState F) (maxApp clock : Nat)
-    (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
-    (co : ClosSem.CompileOracle (NumSet × C)) (cc : ClosSem.Compiler (NumSet × C))
-    (co1 : ClosSem.CompileOracle C) (cc1 : ClosSem.Compiler C) (g : State) (allowed : Set Nat) :
-    stateRel g allowed (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty co cc clock)
-      (ClosSem.initialState ffi maxApp code co1 cc1 clock) := by
-  simp [stateRel, ClosSem.initialState, HolFiniteMapExact.empty, optionRel]
 /-- HOL derives code inclusion inline from distinct auxiliary labels and finite-map lookup. -/
 private theorem initialCodeIncludes (aux : List (Nat × Nat × ClosLang.Exp))
     (well : (aux.map Prod.fst).Nodup) :
@@ -123,8 +107,10 @@ theorem semanticsCalls {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
   let target := ClosSem.initialState ffi maxApp (HolFiniteMapExact.empty.updateListEq aux) co1 cc1 clock
   have invariant : codeInv (some (known, aux)) allowed source.code source.compile source.compileOracle
       target.code target.compile target.compileOracle := by simpa [source, target, allowed, ClosSem.initialState] using inv'
-  have stateWell := initialStateWell ffi maxApp clock (HolFiniteMapExact.empty.updateListEq aux) co cc (known, aux) allowed
-  have stateRel' := initialStateRelated ffi maxApp clock (HolFiniteMapExact.empty.updateListEq aux) co cc co1 cc1 (known, aux) allowed
+  have stateWell : stateValuesWellFormed (known, aux) allowed target.code source := by
+    simp [source, target, stateValuesWellFormed, ClosSem.initialState, HolFiniteMapExact.empty]
+  have stateRel' : stateRel (known, aux) allowed source target := by
+    simp [source, target, stateRel, ClosSem.initialState, HolFiniteMapExact.empty, optionRel]
   have emptyEnv : envRel (valueRel (known, aux) allowed target.code) [] [] 0 (ys.map (fun e => (0, e))) := by
     simp [envRel]
   have disjoint : Disjoint allowed (sptDomain known) := by
