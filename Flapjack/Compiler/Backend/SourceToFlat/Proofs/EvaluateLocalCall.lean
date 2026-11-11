@@ -174,27 +174,6 @@ theorem lookup_build_rec_env {α β : Type} {v : Value} :
   rw [mapped, lookup_recursive_bindings] at found
   split at found <;> simp_all
 
-/-- Every global slot in a top-level recursive group contains a closure
-related to the corresponding source recursive closure. -/
-theorem topRec_group_slot_related (genv : GlobalEnv) (baseMap : Environment) (sourceEnv : SemEnv Value)
-    (funs : List (VarN × VarN × AstHOL.Exp)) (flatEnv : FlatSem.Environment FlatSem.Value)
-    (newVars : List (VarN × VarName))
-    (names : newVars.map Prod.fst = funs.reverse.map Prod.fst)
-    (globals : GlobalEnvInv genv baseMap (fun _ => False) sourceEnv) (empty : flatEnv.v = [])
-    (closures : ∀ x, x ∈ funs.map Prod.fst → ∃ n y e storedTrace bodyTrace localTrace,
-      newVars.lookup x = some (.glob storedTrace n) ∧ n < genv.v.length ∧
-      findRecFun x funs = some (y, e) ∧
-      genv.v[n]?.getD none = some (.closure flatEnv y
-        (compileExp bodyTrace { baseMap with v := nsBindList ((y, .localName localTrace y) :: newVars) baseMap.v } e)))
-    (name : VarN) (member : name ∈ funs.map Prod.fst) :
-    ∃ n storedTrace flatValue, newVars.lookup name = some (.glob storedTrace n) ∧
-      n < genv.v.length ∧ genv.v[n]?.getD none = some flatValue ∧
-      ValueRel genv (.recclosure sourceEnv funs name) flatValue := by
-  obtain ⟨n, arg, body, storedTrace, bodyTrace, argTrace, lookup, bound, found, slot⟩ := closures name member
-  refine ⟨n, storedTrace, _, lookup, bound, slot, ?_⟩
-  exact .topRecclosure genv baseMap sourceEnv funs flatEnv name arg body newVars bodyTrace argTrace
-    names globals empty found closures
-
 /-- The global slots of a top-level recursive group establish the global
 invariant for the rebuilt source environment and the extended compiler map. -/
 theorem topRec_rebuilt_globalInv (genv : GlobalEnv) (baseMap : Environment) (sourceEnv : SemEnv Value)
@@ -230,9 +209,10 @@ theorem topRec_rebuilt_globalInv (genv : GlobalEnv) (baseMap : Environment) (sou
           rw [sourceFound] at lookup
           cases lookup
           have originalInv : GlobalEnvInv genv baseMap (fun _ => False) sourceEnv := .intro genv baseMap _ sourceEnv values constructors
-          obtain ⟨n, storedTrace, flatValue, found, bound, slot, related⟩ :=
-            topRec_group_slot_related genv baseMap sourceEnv funs flatEnv newVars names originalInv empty closures name member
-          apply GlobalLookupRel.intro genv _ (.short name) _ n flatValue storedTrace _ bound slot related
+          obtain ⟨n, arg, body, storedTrace, bodyTrace, argTrace, found, bound, function, slot⟩ := closures name member
+          apply GlobalLookupRel.intro genv _ (.short name) _ n _ storedTrace _ bound slot
+            (.topRecclosure genv baseMap sourceEnv funs flatEnv name arg body newVars bodyTrace argTrace
+              names originalInv empty function closures)
           rw [← nsAppend_to_nsBindList, nsLookup_append_short]
           simp [alistToNs, nsLookup, found]
         · have absent : newVars.lookup name = none := by
