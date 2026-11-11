@@ -58,17 +58,6 @@ theorem envOk_extend_ignore (nextFront front : List Value) (n prefixLength m l :
       rw [sameIndex, holEl_append_right nextFront nextEnv _ targetBound]
       exact valueRel
 
-private theorem forall₂_holEl {front nextFront : List Value}
-    (related : List.Forall₂ ValueRel front nextFront) (n : Nat) (bound : n < front.length) :
-    ValueRel (@Flapjack.holEl Value ⟨unitValue⟩ n front) (@Flapjack.holEl Value ⟨unitValue⟩ n nextFront) := by
-  induction related generalizing n with
-  | nil => simp at bound
-  | cons head tail ih =>
-    cases n with
-    | zero => simpa [Flapjack.holEl, Flapjack.holHd] using head
-    | succ n =>
-      simpa [Flapjack.holEl_cons_succ] using ih n (by simpa using bound)
-
 /-- Prepending related bindings extends the local prefix while preserving
 the compact mapping of all previously bound variables. -/
 @[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "env_ok_EXTEND"
@@ -84,7 +73,9 @@ theorem envOk_extend (front nextFront : List Value) (prefixLength n m l : Nat) (
   · have targetBound : n < nextFront.length := by omega
     apply EnvOk.local m (l + front.length) index (front ++ env) (nextFront ++ nextEnv) n (by omega)
     · rw [holEl_append_left front env n inFront, holEl_append_left nextFront nextEnv n targetBound]
-      exact forall₂_holEl frontRel n inFront
+      rw [@Flapjack.holEl_eq_getElem Value ⟨unitValue⟩ n front inFront,
+        @Flapjack.holEl_eq_getElem Value ⟨unitValue⟩ n nextFront targetBound]
+      exact frontRel.get inFront targetBound
     · simp only [List.length_append]; omega
     · simp only [List.length_append]; omega
   · exact envOk_extend_ignore nextFront front n front.length m l index env nextEnv
