@@ -52,6 +52,8 @@ val _ = show "val_approx_no_labels_merge_typed=" clos_knownProofTheory.val_appro
 val _ = show "known_op_no_labels_typed=" clos_knownProofTheory.known_op_no_Labels;
 val _ = show "decide_inline_no_labels_typed=" clos_knownProofTheory.decide_inline_no_Labels;
 val _ = show "clos_gen_noinline_no_labels_typed=" clos_knownProofTheory.clos_gen_no_inline_no_Labels;
+val _ = show "known_no_labels_typed=" clos_knownProofTheory.known_no_Labels;
+val _ = show "compile_no_labels_typed=" clos_knownProofTheory.compile_no_Labels;
 val _ = show "contains_closures_code_locs_typed=" clos_knownProofTheory.contains_closures_code_locs;
 val _ = show "inline_code_locs_typed=" clos_knownProofTheory.code_locs_decide_inline;
 val _ = show "known_code_bag_typed=" clos_knownProofTheory.known_code_locs_bag;

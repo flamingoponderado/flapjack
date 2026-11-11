@@ -129267,6 +129267,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLabels.lean",
+  "lean_name": "knownNoLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_no_labels_typed: arbitrary configuration, expression and approximation lists and sparse-tree globals retain all three source premises and mapped-result conclusions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "compile_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileLabels.lean",
+  "lean_name": "compileNoLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_no_labels_typed: enabled source compiler equation, input label-freedom, existential output configuration, output label-freedom and global approximation conclusion agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_obeys_max_app",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalArity.lean",
   "lean_name": "knownObeysMaxApp",
