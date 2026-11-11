@@ -205,7 +205,7 @@ def runChecks : IO Bool := do
     ]
   let ok := guards.all id
   if ok then
-    IO.println "PASS labProps line_ok_pre/all_enc_ok_pre over concrete AsmConfigExact match all 14 oracle rows"
+    IO.println "PASS labProps line_ok_pre/all_enc_ok_pre over AsmConfigExact: 14 rows"
   else
     IO.println "FAIL labProps line_ok_pre/all_enc_ok_pre over concrete AsmConfigExact"
   pure ok
