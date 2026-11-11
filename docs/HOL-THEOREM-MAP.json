@@ -133919,6 +133919,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "flookup_funion_submap",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/FiniteMapGrowth.lean",
+  "lean_name": "flookupFUnionSubmap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["x", "y", "z"],
+  "reviewer": "Compared the freshly replayed local theorem and its typed GEN_ALL closure: independent generic key and value types, three maps over the same types, arbitrary value and key, and the original conjunctive submap and union-lookup premise. The canonical union is left-biased and the proof applies binding preservation directly. Parameters x, y and z use HolFiniteMapExact with same-module codec roundtrip witnesses. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "v_rel_eqns",
   "hol_line": 336,
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRelCases.lean",

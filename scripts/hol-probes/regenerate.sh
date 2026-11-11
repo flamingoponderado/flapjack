@@ -492,7 +492,7 @@ run_probe source_to_flat_state_pattern_probeScript.sml source_to_flat_state_patt
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_global_env_probeScript.sml source_to_flat_global_env_probe.out \
-  globals_type constructors_type types_type has_bools has_lists has_exns genv_c_ok genv_c_tys_ok genv_lookup_nil genv_lookup_cons same_type_fst_same_ctor pmatch_stamps_ok bind_tag chr_tag div_tag subscript_tag nil_tag cons_tag empty_bools empty_lists empty_exns empty_types \
+  globals_type constructors_type types_type has_bools has_lists has_exns genv_c_ok genv_c_tys_ok genv_lookup_nil genv_lookup_cons same_type_fst_same_ctor pmatch_stamps_ok bind_tag chr_tag div_tag subscript_tag nil_tag cons_tag empty_bools empty_lists empty_exns empty_types flookup_funion_submap_typed flookup_funion_submap_gen_all \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_value_relation_probeScript.sml source_to_flat_value_relation_probe.out \

@@ -20,3 +20,5 @@ empty_bools=F
 empty_lists=F
 empty_exns=F
 empty_types=∀(cn :num) (ty_id :bool) (arity :num). T
+flookup_funion_submap_typed=(x :α |-> β) ⊌ (y :α |-> β) ⊑ (z :α |-> β) ∧ FLOOKUP (x ⊌ y) (k :α) = SOME (v :β) ⇒ FLOOKUP z k = SOME v
+flookup_funion_submap_gen_all=∀(z :α |-> β) (y :α |-> β) (x :α |-> β) (v :β) (k :α). x ⊌ y ⊑ z ∧ FLOOKUP (x ⊌ y) k = SOME v ⇒ FLOOKUP z k = SOME v

@@ -30,3 +30,11 @@ val _ = show_eval "empty_lists=" ``source_to_flatProof$has_lists FEMPTY``;
 val _ = show_eval "empty_exns=" ``source_to_flatProof$has_exns (FEMPTY : (num # bool option) # num |-> stamp)``;
 val _ = (print "empty_types="; print_term (rhs (concl (EVAL ``source_to_flatProof$genv_c_tys_ok
   (FEMPTY : (num # bool option) # num |-> stamp) (FEMPTY : bool |-> (num # num) list)``))));
+val _ = print "\n";
+
+(* Replay the original local lookup/submap theorem with inferred carriers. *)
+val flookup_funion_submap_replay = prove (
+  ``(x ⊌ y) SUBMAP z ∧ FLOOKUP (x ⊌ y) k = SOME v ⇒ FLOOKUP z k = SOME v``,
+  rw [finite_mapTheory.SUBMAP_DEF, finite_mapTheory.FLOOKUP_DEF] >> metis_tac []);
+val _ = show_thm "flookup_funion_submap_typed=" flookup_funion_submap_replay;
+val _ = show_thm "flookup_funion_submap_gen_all=" (GEN_ALL flookup_funion_submap_replay);

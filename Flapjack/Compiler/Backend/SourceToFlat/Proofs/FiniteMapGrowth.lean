@@ -49,6 +49,31 @@ theorem holFmapAsFiniteSupportParamWitness_finiteSubmap_update_g {α β : Type}
   cases g
   rfl
 
+theorem holFmapAsFiniteSupportParamWitness_flookupFUnionSubmap_x {α β : Type}
+    (x : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup x) x.finiteSupport = x := by
+  cases x
+  rfl
+
+theorem holFmapAsFiniteSupportParamWitness_flookupFUnionSubmap_y {α β : Type}
+    (y : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup y) y.finiteSupport = y := by
+  cases y
+  rfl
+
+theorem holFmapAsFiniteSupportParamWitness_flookupFUnionSubmap_z {α β : Type}
+    (z : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup z) z.finiteSupport = z := by
+  cases z
+  rfl
+
+/-- A binding in a union persists in every finite-map extension of it. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "flookup_funion_submap"
+  (fmap_as_finite_support_parameters := [x, y, z])]
+theorem flookupFUnionSubmap {α β : Type}
+    (z : HolFiniteMapExact α β) (y : HolFiniteMapExact α β) (x : HolFiniteMapExact α β)
+    (v : β) (k : α)
+    (premises : (x.union y).submap z ∧ (x.union y).lookup k = some v) :
+    z.lookup k = some v :=
+  premises.1 k v premises.2
+
 /-- Updating a fresh key preserves the earlier map when the updated map is a
 submap. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "submap_distinct_fupdate_flookup"
