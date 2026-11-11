@@ -16779,7 +16779,7 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "lean_name": "doApp_conversion_source",
-  "reviewer": "Compared the literal clause in typed do_app_typed in cake_flat_sem_apply_probe.out, including projection, guard and flat result and exception behavior. Inherits reals_as_rational_cuts through doApp. Independently source-reviewed."
+  "reviewer": "Compared the HOL conversion clause and fallback with do_app_conversion_all_typed: arbitrary argument lists, projection, type guard, flat result, exception and wrong-arity behavior agree. Compiler and FFI types remain independent; doApp inherits reals_as_rational_cuts."
 },
 
   {

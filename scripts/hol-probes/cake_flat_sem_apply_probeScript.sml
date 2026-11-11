@@ -29,6 +29,20 @@ val do_app_shift_all_replay = Q.prove (
   Cases_on `t` >> simp [flatSemTheory.do_app_def] >>
   Cases_on `h` >> simp [flatSemTheory.do_app_def]);
 val _ = show_thm "do_app_shift_all_typed=" do_app_shift_all_replay;
+(* Replay the conversion clause for every argument list, including wrong arities. *)
+val do_app_conversion_all_replay = Q.prove (
+  `flatSem$do_app s (Src (FromTo ty1 ty2)) vs =
+    case vs of
+      [v] => let v = flat_to_v v in
+        if check_type ty1 v then
+          (case do_conversion v ty1 ty2 of
+            NONE => NONE | SOME (INL exn) => SOME (s, Rerr (Rraise chr_exn_v))
+            | SOME (INR result) => SOME (s, Rval (v_to_flat result)))
+        else NONE
+    | _ => NONE`,
+  Cases_on `vs` >> simp [flatSemTheory.do_app_def] >>
+  Cases_on `t` >> simp [flatSemTheory.do_app_def]);
+val _ = show_thm "do_app_conversion_all_typed=" do_app_conversion_all_replay;
 val _ = show_eval "fallback_opapp=" ``OPTION_MAP SND
   (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src Opapp) [Litv (IntLit 1); Litv (IntLit 2)])``;
 val _ = show_eval "fallback_eval=" ``OPTION_MAP SND

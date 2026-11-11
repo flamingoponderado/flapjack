@@ -25,7 +25,11 @@ private theorem pureEvaluationSimulation_all {C F : Type} (env : FlatSem.Environ
         intro newEnv newState es smaller
         exact ih (expsWeight es) smaller newEnv newState es rfl
       cases expressions with
-      | nil => exact pureEvaluation_empty env state
+      | nil =>
+        intro next result reachable target run _ _ _ _ related _
+        simp [FlatSem.evaluate] at run
+        rcases run with ⟨rfl, rfl⟩
+        exact ⟨[], related, rfl, by simp [valuesNoEval]⟩
       | cons first rest =>
         cases rest with
         | cons second tail =>
@@ -39,7 +43,11 @@ private theorem pureEvaluationSimulation_all {C F : Type} (env : FlatSem.Environ
             omega
         | nil =>
           cases first with
-          | lit tra literal => exact pureEvaluation_lit env state tra literal
+          | lit tra literal =>
+            intro next result reachable target run _ _ _ _ related _
+            simp [FlatSem.evaluate] at run
+            rcases run with ⟨rfl, rfl⟩
+            exact ⟨[.litv literal], related, rfl, by simp [valuesNoEval, valueHasEval]⟩
           | varLocal tra name => exact pureEvaluation_var env state tra name
           | fn name argument body => exact pureEvaluation_fn env state name argument body
           | raise tra body =>
