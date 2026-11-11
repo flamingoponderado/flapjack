@@ -76,20 +76,7 @@ theorem sectionLabelsAppend {width : Nat} [NeZero width]
     sectionLabels pos (left ++ right) labs =
       sectionLabels (pos + (left.map lineLen).sum) right
         (sectionLabels pos left labs).2 := by
-  induction left generalizing pos labs with
-  | nil => simp [sectionLabels]
-  | cons line left ih =>
-    cases line with
-    | label secId labelId len =>
-      simp only [List.cons_append, sectionLabels, List.map_cons, List.sum_cons, lineLen]
-      split <;> rw [ih] <;> congr 1 <;> omega
-    | asm instruction bytes len =>
-      simp only [List.cons_append, sectionLabels, List.map_cons, List.sum_cons, lineLen]
-      rw [ih]
-      congr 1 <;> omega
-    | labAsm instruction value bytes len =>
-      simp only [List.cons_append, sectionLabels, List.map_cons, List.sum_cons, lineLen]
-      rw [ih]
-      congr 1 <;> omega
+  fun_induction sectionLabels pos left labs <;> simp_all [sectionLabels, lineLen] <;>
+    (congr 1 <;> omega)
 
 end Flapjack.Compiler.Backend.LabToTarget

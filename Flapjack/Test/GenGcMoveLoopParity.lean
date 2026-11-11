@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveLoop
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveLoop
+
+import all Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveLoop
+
+@[expose] public section
 
 /-! Kernel replay of the five original HOL collector observations captured in
 `stack_alloc_gen_loop_statement_probe.out`; no native-decide oracle. -/

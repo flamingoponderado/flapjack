@@ -1,8 +1,16 @@
-import Flapjack.Compiler.Backend.SourceToFlat.ToBviIncremental
-import Flapjack.Compiler.Backend.SourceToFlat.ToDataIncremental
-import Flapjack.Compiler.Backend.SourceToFlat.ToWordIncremental
-import Flapjack.Compiler.Backend.SourceToFlat.ToRiscVIncremental
-import Flapjack.Compiler.Backend.RiscVConfig.Executable
+module
+
+public import Flapjack.Compiler.Backend.SourceToFlat.ToBviIncremental
+public import Flapjack.Compiler.Backend.SourceToFlat.ToDataIncremental
+public import Flapjack.Compiler.Backend.SourceToFlat.ToWordIncremental
+public import Flapjack.Compiler.Backend.SourceToFlat.ToRiscVIncremental
+public import Flapjack.Compiler.Backend.RiscVConfig.Executable
+public meta import Flapjack.Compiler.Encoders.Asm
+public meta import Flapjack.AstHOL.Syntax
+public meta import Flapjack.Compiler.Backend.SourceToFlat.ToRiscVIncremental
+public meta import Flapjack.Compiler.Backend.RiscVConfig.Executable
+
+@[expose] public section
 
 /-! Replay incremental source-to-BVI observations from pinned CakeML/HOL. -/
 namespace Flapjack.Test.CakeIncrementalBviParity

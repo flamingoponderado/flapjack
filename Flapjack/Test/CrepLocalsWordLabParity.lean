@@ -1,9 +1,11 @@
 module
 
 public import Flapjack.Pancake.Semantics.CrepSem
+public import Flapjack.Test.Fixtures.Crep
 
 -- Checks below run compiled code from these modules.
 public meta import Flapjack.Pancake.Semantics.CrepSem
+public meta import Flapjack.Test.Fixtures.Crep
 @[expose] public section
 
 /-!
@@ -16,27 +18,7 @@ cell unchanged, while `upd_locals`/repeated `set_var` keep the last write.
 namespace Flapjack.Test.CrepLocalsWordLabParity
 
 open Flapjack
-
-def noNatMemory : Nat → PanWordLab Nat := fun _ => .word 0
-def noNatDomain : Nat → Bool := fun _ => false
-
-/-- Base state with an empty local map, matching the probe's `s with locals :=
-FEMPTY`. -/
-def baseState : CrepRuntimeState Nat Unit :=
-  { locals := fun _ => none
-    globals := fun _ => none
-    code := FEMPTY
-    memory := noNatMemory
-    memaddrs := noNatDomain
-    shMemaddrs := noNatDomain
-    memoryModel := natCrepRuntimeMemoryModel
-    bytesInWord := 0
-    ffiContext := natCrepRuntimeFfiContext
-    clock := 3
-    bigEndian := false
-    ffi := natCrepRuntimeFfiState
-    baseAddress := 12
-    topAddress := 13 }
+open Flapjack.Test.Fixtures.Crep
 
 def setThree : Nat → Option (PanWordLab Nat) :=
   updateCrepRuntimeLocal (fun _ => none) 3 (.word 7)

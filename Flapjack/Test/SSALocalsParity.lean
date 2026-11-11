@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsBounds
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsBounds
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap
+
+import all Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsBounds
+import all Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap
+
+@[expose] public section
 namespace Flapjack.Test.SSALocalsParity
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
 -- Same arbitrary-tree/generic-Bool inputs as the original source-clause probe.

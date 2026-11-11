@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.WordGcFunctions
-import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
+module
+
+public import Flapjack.Compiler.Backend.WordGcFunctions
+public import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
+
+import all Flapjack.Compiler.Backend.WordGcFunctions
+import all Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
+
+@[expose] public section
 
 /-!
 # `word_gcFunctions`: original-oracle rows

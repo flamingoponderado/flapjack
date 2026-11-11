@@ -5,6 +5,8 @@ val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
 val _ = (print "merge_locs="; print_thm locationTheory.merge_locs_def; print "\n");
 val _ = (print "merge_list="; print_thm locationTheory.merge_list_locs_def; print "\n");
+val _ = (print "symbol_axiom="; print_thm grammarTheory.symbol_Axiom; print "\n");
+val _ = (print "parsetree_axiom="; print_thm grammarTheory.parsetree_Axiom; print "\n");
 val _ = (print "is_tok="; print_thm grammarTheory.isTOK_def; print "\n");
 val _ = (print "dest_tok="; print_thm grammarTheory.destTOK_def; print "\n");
 val _ = (print "ptree_loc="; print_thm grammarTheory.ptree_loc_def; print "\n");

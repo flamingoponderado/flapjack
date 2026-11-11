@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.NativePrograms
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.NativePrograms
+
+import all Flapjack.Compiler.Backend.WordToStack.NativePrograms
+
+@[expose] public section
 
 /-! Identical inputs and observations from the original native wrapper probes. -/
 namespace Flapjack.Test.WordToStackNativeProgramsParity

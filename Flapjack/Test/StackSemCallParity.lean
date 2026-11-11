@@ -1,4 +1,15 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Call
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Call
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Pancake.Semantics.LoopSemStateExact
+public meta import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 /-! Kernel replay of all fourteen original HOL observations in
 `scripts/hol-probes/stacksem_call_probe.out`. The concrete `evaluate` stub

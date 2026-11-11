@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Control
-import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+
+import all Flapjack.Compiler.Backend.Semantics.StackSem.Control
+import all Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+
+@[expose] public section
 
 /-! Kernel replay of all 28 original HOL observations in
 `scripts/hol-probes/stacksem_loop_control_probe.out`. The lookup fixture
@@ -10,7 +17,7 @@ namespace Flapjack.Test.StackSemLoopControlParity
 
 open StackSemControl StackSemStateOps
 
-private def fixture {C F : Type} (s : StackSemStateFiniteExact 8 C F) :=
+def fixture {C F : Type} (s : StackSemStateFiniteExact 8 C F) :=
   { s with regs :=
       ((HolFiniteMapExact.empty : HolFiniteMapExact Nat (WordLocW 8)).updateEq
         (1, .word 7)).updateEq (2, .loc 4 5) }
@@ -78,7 +85,7 @@ example : StackSemControl.exitLoop (some .error : Option (StackSemResult 8)) = s
 example (event : HolFinalEvent) :
     StackSemControl.exitLoop (some (.finalFFI event) : Option (StackSemResult 8)) = some (.finalFFI event) := rfl
 
-private def observe : Option (StackSemResult 8) → Nat × Nat
+def observe : Option (StackSemResult 8) → Nat × Nat
   | none => (0, 0)
   | some (.continue n) => (1, n)
   | some (.break n) => (2, n)
@@ -89,12 +96,12 @@ private def observe : Option (StackSemResult 8) → Nat × Nat
   | some .error => (7, 0)
   | _ => (8, 0)
 
-private def inputs : List (Option (StackSemResult 8)) :=
+def inputs : List (Option (StackSemResult 8)) :=
   [none, some (.continue 0), some (.continue 3), some (.break 0),
    some (.break 1), some (.break 3), some (.result (.loc 4 5)),
    some (.exception (.loc 4 5)), some (.halt (.word 7)), some .timeOut, some .error]
 
-private def checks : Bool :=
+def checks : Bool :=
   inputs.map StackSemControl.contLoop == [true, true, false, false, false, false, false, false, false, false, false] &&
   inputs.map (fun result => observe (StackSemControl.exitLoop result)) ==
     [(0,0), (1,0), (1,2), (0,0), (2,0), (2,2), (3,405), (4,405), (5,7), (6,0), (7,0)]

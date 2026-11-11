@@ -1,22 +1,54 @@
-import Flapjack.Compiler.Backend.DataToWord.Config
-import Flapjack.Compiler.Backend.DataToWord.Header
-import Flapjack.Compiler.Backend.DataToWord.Locations
-import Flapjack.Compiler.Backend.DataToWord.WordOp
-import Flapjack.Compiler.Backend.DataToWord.Control
-import Flapjack.Compiler.Backend.DataToWord.Stubs
-import Flapjack.Test.CakeMLFlatOracle
-import Flapjack.Test.ByteCopyWordOracle
-import Flapjack.Test.FromListWordOracle
-import Flapjack.Test.AppendWordOracle
-import Flapjack.Test.InstallXorWordOracle
-import Flapjack.Test.CompareEqualWordOracle
-import Flapjack.Test.LongDivWordOracle
-import Flapjack.Test.AnyArithWordOracle
-import Flapjack.Test.RefByte64WordOracle
-import Flapjack.Test.RefByte32WordOracle
-import Flapjack.Test.FixedStubsWordOracle
-import Flapjack.Test.MtiOpsWordOracle
-import Flapjack.Test.TmcOpsWordOracle
+module
+
+public import Flapjack.Compiler.Backend.DataToWord.Config
+public import Flapjack.Compiler.Backend.DataToWord.Header
+public import Flapjack.Compiler.Backend.DataToWord.Locations
+public import Flapjack.Compiler.Backend.DataToWord.WordOp
+public import Flapjack.Compiler.Backend.DataToWord.Control
+public import Flapjack.Compiler.Backend.DataToWord.Stubs
+public import Flapjack.Test.CakeMLFlatOracle
+public import Flapjack.Test.ByteCopyWordOracle
+public import Flapjack.Test.FromListWordOracle
+public import Flapjack.Test.AppendWordOracle
+public import Flapjack.Test.InstallXorWordOracle
+public import Flapjack.Test.CompareEqualWordOracle
+public import Flapjack.Test.LongDivWordOracle
+public import Flapjack.Test.AnyArithWordOracle
+public import Flapjack.Test.RefByte64WordOracle
+public import Flapjack.Test.RefByte32WordOracle
+public import Flapjack.Test.FixedStubsWordOracle
+public import Flapjack.Test.MtiOpsWordOracle
+public import Flapjack.Test.TmcOpsWordOracle
+
+import all Flapjack.Compiler.Backend.DataToWord.Config
+import all Flapjack.Compiler.Backend.DataToWord.Header
+import all Flapjack.Compiler.Backend.DataToWord.Locations
+import all Flapjack.Compiler.Backend.DataToWord.WordOp
+import all Flapjack.Compiler.Backend.DataToWord.Control
+import all Flapjack.Compiler.Backend.DataToWord.Stubs
+import all Flapjack.Test.CakeMLFlatOracle
+import all Flapjack.Test.ByteCopyWordOracle
+import all Flapjack.Test.FromListWordOracle
+import all Flapjack.Test.AppendWordOracle
+import all Flapjack.Test.InstallXorWordOracle
+import all Flapjack.Test.CompareEqualWordOracle
+import all Flapjack.Test.LongDivWordOracle
+import all Flapjack.Test.AnyArithWordOracle
+import all Flapjack.Test.RefByte64WordOracle
+import all Flapjack.Test.RefByte32WordOracle
+import all Flapjack.Test.FixedStubsWordOracle
+import all Flapjack.Test.MtiOpsWordOracle
+import all Flapjack.Test.TmcOpsWordOracle
+public meta import Flapjack.Pancake.WordLang
+public meta import Flapjack.Compiler.Backend.DataToWord.Variables
+public meta import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
+public meta import Flapjack.Compiler.Backend.ClosLang.Syntax
+public meta import Flapjack.Compiler.Backend.DataLang.Syntax
+public meta import Flapjack.Compiler.Backend.DataToWord.Numbers
+public meta import Flapjack.Compiler.Backend.DataToWord.Build
+public meta import Flapjack.Test.CakeWordOracleHelpers
+
+@[expose] public section
 
 /-!
 # `data_to_word` configuration helpers: original-oracle rows
@@ -28,7 +60,7 @@ namespace Flapjack.Test.DataToWordConfigParity
 
 open Flapjack.Compiler.Backend.DataToWord
 
-private def conf : Config :=
+def conf : Config :=
   { tagBits := 1, lenBits := 2, padBits := 3, lenSize := 16, hasDiv := false,
     hasLongdiv := false, hasFpOps := false, hasFpTern := false, be := false,
     callEmptyFfi := false, gcKind := .simple }
@@ -120,7 +152,7 @@ example : (getGenSize [2305843009213693952] : BitVec 64) = 0xFFFFFFFFFFFFFFF8 :=
 -- gen_size_three_32=12w
 example : (getGenSize [3] : BitVec 32) = 12 := by decide
 
-private def headerConfig : Config := { conf with lenSize := 4 }
+def headerConfig : Config := { conf with lenSize := 4 }
 #guard match encodeHeader (width := 64) headerConfig 3 5 with
   | some w => w.toNat == 5764607523034234895
   | none => false
@@ -374,12 +406,13 @@ private def headerConfig : Config := { conf with lenSize := 4 }
   | some (.assign 8 (.const 2), 2) => true
   | _ => false
 -- Installation checks and call captured from the original data-to-word pass.
-private def matchesInstallFailure {width : Nat} [NeZero width] (p : Flapjack.WordLangProgHOL (BitVec width)) : Bool :=
+def matchesInstallFailure {width : Nat} [NeZero width]
+    (p : Flapjack.WordLangProgHOL (BitVec width)) : Bool :=
   match p with
   | .seq (.assign 1 (.const n)) (.alloc 1 (.ls (), .ln)) => n == -1
   | _ => false
 
-private def matchesInstall64 (shift : BitVec 64)
+def matchesInstall64 (shift : BitVec 64)
     (names : Flapjack.NumSet) : Bool :=
   match compileControl? (width := 64) conf 5 2 (.assign 3 .install [1, 2, 3, 4] (some names)) with
   | some (.seq (.ite .test 8 (.imm 1) .skip failure1)
@@ -398,7 +431,7 @@ private def matchesInstall64 (shift : BitVec 64)
         matchesInstallFailure failure3 && matchesInstallFailure failure4 && live == adjustSets names
   | _ => false
 #guard matchesInstall64 3 (.ls ())
-private def matchesInstall32 (shift : BitVec 32)
+def matchesInstall32 (shift : BitVec 32)
     (names : Flapjack.NumSet) : Bool :=
   match compileControl? (width := 32) conf 5 2 (.assign 3 .install [1, 2, 3, 4] (some names)) with
   | some (.seq (.ite .test 8 (.imm 1) .skip failure1)
@@ -453,7 +486,7 @@ private def matchesInstall32 (shift : BitVec 32)
   | some (.skip, 2) => true
   | _ => false
 -- Thunk allocation and force programs captured from the pinned HOL pass.
-private def thunkAllocMatches (mode : Flapjack.AstHOL.ThunkMode) (header : BitVec 64) : Bool :=
+def thunkAllocMatches (mode : Flapjack.AstHOL.ThunkMode) (header : BitVec 64) : Bool :=
   match compileControl? (width := 64) conf 5 2 (.assign 3 (.thunkOp (.allocThunk mode)) [1] none) with
   | some (.seq (.set .triggerGC (.op .sub [.lookup .triggerGC, .const 16]))
       (.seq (.assign 1 (.op .sub [.lookup .endOfHeap, .const 16]))

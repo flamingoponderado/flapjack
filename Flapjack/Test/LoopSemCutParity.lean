@@ -1,4 +1,11 @@
-import Flapjack.Pancake.Semantics.LoopSemStateExact
+module
+
+public import Flapjack.Pancake.Semantics.LoopSemStateExact
+
+import all Flapjack.Pancake.Semantics.LoopSemStateExact
+public meta import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-!
 # Exact `loopSem` `cut_state` / `cut_res` regression tests

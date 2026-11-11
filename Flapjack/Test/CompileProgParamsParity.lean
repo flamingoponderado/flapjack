@@ -1,4 +1,13 @@
-import Flapjack.Pancake.Proofs.PanToCrep.CompileProgParams
+module
+
+public import Flapjack.Pancake.Proofs.PanToCrep.CompileProgParams
+
+import all Flapjack.Pancake.Proofs.PanToCrep.CompileProgParams
+public meta import Flapjack.Pancake.PanLang
+public meta import Flapjack.Pancake.PanLang.Decl
+public meta import Flapjack.Pancake.PanToCrep.Compile
+
+@[expose] public section
 
 namespace Flapjack.Test.CompileProgParamsParity
 

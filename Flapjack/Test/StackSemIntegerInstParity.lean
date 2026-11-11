@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.IntegerInstructions
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.IntegerInstructions
+
+import all Flapjack.Compiler.Backend.Semantics.StackSem.IntegerInstructions
+
+@[expose] public section
 
 /-! Kernel replay of the 33 canonicalized original HOL instruction rows. -/
 namespace Flapjack.Test.StackSemIntegerInstParity

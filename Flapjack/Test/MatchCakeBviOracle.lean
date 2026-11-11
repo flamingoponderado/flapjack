@@ -1,5 +1,13 @@
 -- Generated from the pinned original HOL compiler; do not edit.
-import Flapjack.Compiler.Backend.Bvi.Syntax
+module
+
+public import Flapjack.Compiler.Backend.Bvi.Syntax
+
+@[expose] public section
+
+-- Public declarations below use private helpers.
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
 
 namespace Flapjack.Test.MatchCakeBviOracle
 

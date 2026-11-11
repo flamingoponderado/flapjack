@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConstsGuard
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConstsGuard
+
+import all Flapjack.Compiler.Backend.Semantics.StackSem.StoreConstsGuard
+
+@[expose] public section
 
 open Flapjack Flapjack.StackSemStoreConstsGuard
 open Flapjack.Compiler.Backend.StackLang

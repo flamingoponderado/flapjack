@@ -1,5 +1,12 @@
-import Flapjack.Pancake.Proofs.CrepInline
-import Flapjack.Test.CrepGlobalShapeParity
+module
+
+public import Flapjack.Pancake.Proofs.CrepInline
+public import Flapjack.Test.CrepGlobalShapeParity
+
+import all Flapjack.Pancake.Proofs.CrepInline
+import all Flapjack.Test.CrepGlobalShapeParity
+
+@[expose] public section
 
 namespace Flapjack.Test.CrepInlineRelParity
 

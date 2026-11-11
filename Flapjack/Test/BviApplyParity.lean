@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
+
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Apply
+
+@[expose] public section
 
 /-! Checks BVI installation failure, special dispatch, and BVL fallback. -/
 namespace Flapjack.Compiler.Backend.BviSem

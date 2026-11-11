@@ -1,4 +1,9 @@
-import Flapjack.Pancake.Proofs.PanGlobals
+module
+
+public import Flapjack.Pancake.Proofs.PanGlobals
+public meta import Flapjack.Pancake.PanGlobals
+
+@[expose] public section
 
 namespace Flapjack.Test.PanGlobalsFpermDecsParity
 

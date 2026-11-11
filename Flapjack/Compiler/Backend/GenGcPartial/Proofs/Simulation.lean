@@ -1022,10 +1022,10 @@ theorem majorMoveList_append {α β : Type} (conf : GenGc.Config β) (state : Gc
     simp only
     rw [ih middle]
 
-/-- Reference-object traversal simulates a major root-list traversal over the
-flattened translated children and preserves the protected-pointer subset. -/
-@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_ref_list_simulation"]
-theorem gcMoveRefList_simulation {α β γ : Type} (conf : Config β)
+/-- Flapjack generalisation of `gc_move_ref_list_simulation`: the reference
+payload `γ` is independent of the heap payload `β`. HOL's theorem is the
+instance `γ := β`; the tagged statement below is that instance. -/
+theorem gcMoveRefList_simulation_general {α β γ : Type} (conf : Config β)
     (state state1 : GcState α β) (refs0 refs1 : List (HeapElement α γ))
     (heap0 : List (HeapElement α β))
     (majorRoots : List (HeapAddress (DataSort (HeapAddress α) α)))
@@ -1098,6 +1098,33 @@ theorem gcMoveRefList_simulation {α β γ : Type} (conf : Config β)
       · obtain ⟨xs, size, payload, v, oldMember, oldChild, outside⟩ :=
           tailOld p ⟨xs, size, payload, u, member, child, outside⟩
         exact ⟨xs, size, payload, v, by simp [oldMember], oldChild, outside⟩
+
+/-- HOL `gc_move_ref_list_simulation`: the reference payload is the state's
+heap payload, so HOL's `('b,'a)` refs are `HeapElement α β` here. The binders
+follow HOL's order `conf state refs0 heap0 state1 state1' refs1 refs1'`, and
+the seven HOL premises are one conjoined premise in HOL's order. -/
+@[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_ref_list_simulation"]
+theorem gcMoveRefList_simulation {α β : Type} (conf : Config β)
+    (state : GcState α β) (refs0 : List (HeapElement α β))
+    (heap0 : List (HeapElement α β)) (state1 : GcState α β)
+    (majorState : GcState (DataSort (HeapAddress α) α) β)
+    (refs1 : List (HeapElement α β))
+    (majorRoots : List (HeapAddress (DataSort (HeapAddress α) α))) :
+    gcMoveRefList conf state refs0 = (refs1, state1) ∧
+      GenGc.gcMoveList (toGenConf conf) (toGenState conf state) (refsToRoots conf refs0) =
+        (majorRoots, majorState) ∧
+      majorState.ok = true ∧
+      simInv conf heap0 state ∧
+      (∀ ptrs len data ptr u, .pointer ptr u ∈ ptrs ∧ .dataElement ptrs len data ∈ refs0 →
+        ptr < heapLength state.heap) ∧
+      heapLength state.heap = conf.limit ∧
+      List.Forall isDataElement refs0 →
+    simInv conf heap0 state1 ∧ majorRoots = refsToRoots conf refs1 ∧
+      majorState = toGenState conf state1 ∧
+    ∀ p, hasOldPtr conf refs1 p → hasOldPtr conf refs0 p := by
+  rintro ⟨partialRun, majorRun, majorOk, invariant, bounded, heapLengthEq, allData⟩
+  exact gcMoveRefList_simulation_general conf state state1 refs0 refs1 heap0 majorRoots majorState
+    partialRun majorRun majorOk invariant bounded heapLengthEq allData
 
 /-- Flapjack proof infrastructure: functional form of the partial copied-data
 scan simulation. -/
@@ -1462,8 +1489,9 @@ theorem partialGc_simulation {α β : Type} (conf : Config β)
           have refsBound := heapOk_referenceSegmentBound conf heap old current refs afterRoots validHeap segment rootsSize
           have rootsLimit : heapLength afterRoots.heap = conf.limit := rootsSize.trans validHeap.1
           obtain ⟨refsInv, majorRefsEq, majorRefsStateEq, oldRefs⟩ :=
-            gcMoveRefList_simulation conf afterRoots afterRefs refs movedRefs heap majorMovedRefs majorAfterRefs
-              refsRun majorRefsRun refsOk rootsInv refsBound rootsLimit refData
+            gcMoveRefList_simulation conf afterRoots refs heap afterRefs majorAfterRefs movedRefs
+              majorMovedRefs
+              ⟨refsRun, majorRefsRun, refsOk, rootsInv, refsBound, rootsLimit, refData⟩
           subst majorMovedRefs
           subst majorAfterRefs
           have originalRefs : ∀ ptr, hasOldPtr conf refs ptr → hasOldPtr conf heap ptr := by

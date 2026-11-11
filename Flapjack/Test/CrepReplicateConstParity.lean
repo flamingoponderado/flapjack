@@ -2,9 +2,11 @@ module
 
 public import Flapjack.Pancake.Proofs.PanToCrep
 public import Flapjack.Pancake.Semantics.CrepSem.ExecutedWordLabBridge
+public import Flapjack.Test.Fixtures.Crep
 
 -- Checks below run compiled code from these modules.
 public meta import Flapjack.Pancake.Semantics.CrepSem
+public meta import Flapjack.Test.Fixtures.Crep
 @[expose] public section
 
 /-!
@@ -19,27 +21,7 @@ against the recorded HOL rows.
 namespace Flapjack.Test.CrepReplicateConstParity
 
 open Flapjack
-
-def noNatMemory : Nat → PanWordLab Nat := fun _ => .word 0
-def noNatDomain : Nat → Bool := fun _ => false
-
-/-- Base state with empty locals/globals, matching the probe's `s with locals
-:= FEMPTY`. -/
-def baseState : CrepRuntimeState Nat Unit :=
-  { locals := fun _ => none
-    globals := fun _ => none
-    code := FEMPTY
-    memory := noNatMemory
-    memaddrs := noNatDomain
-    shMemaddrs := noNatDomain
-    memoryModel := natCrepRuntimeMemoryModel
-    bytesInWord := 0
-    ffiContext := natCrepRuntimeFfiContext
-    clock := 3
-    bigEndian := false
-    ffi := natCrepRuntimeFfiState
-    baseAddress := 12
-    topAddress := 13 }
+open Flapjack.Test.Fixtures.Crep
 
 def evalConsts (values : List Nat) : Option (List (PanWordLab Nat)) :=
   evalCrepRuntimeExpsWordLab baseState (values.map (fun value => .const value))

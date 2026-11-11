@@ -79,21 +79,4 @@ noncomputable def compileList (n : Nat) (env live : List Nat) :
 termination_by xs => sizeOf xs
 end
 
-/-- Compile a complete expression, then apply the original optimization sequence.
-This uses the source's `compile_exp_eq` rewrite through `compile_sing`; its
-agreement with the original list traversal is proved in `Proofs.CompileSource`. -/
-@[hol "cakeml/compiler/backend/bvi_to_dataScript.sml" "compile_exp_def"]
-noncomputable def compileExp (argc : Nat) (exp : Bvi.Exp) : DataLang.Prog :=
-  optimise (compileSing argc (List.range argc) true [] exp).1
-
-/-- Compile one labeled BVI function. -/
-@[hol "cakeml/compiler/backend/bvi_to_dataScript.sml" "compile_part_def"]
-noncomputable def compilePart (part : Nat × Nat × Bvi.Exp) : Nat × Nat × DataLang.Prog :=
-  (part.1, part.2.1, compileExp part.2.1 part.2.2)
-
-/-- Compile each labeled BVI function in source order. -/
-@[hol "cakeml/compiler/backend/bvi_to_dataScript.sml" "compile_prog_def"]
-noncomputable def compileProg (program : List (Nat × Nat × Bvi.Exp)) : List (Nat × Nat × DataLang.Prog) :=
-  program.map compilePart
-
 end Flapjack.Compiler.Backend.BviToData

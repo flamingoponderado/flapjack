@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.StackAlloc.Compile
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Compile
+
+import all Flapjack.Compiler.Backend.StackAlloc.Compile
+
+@[expose] public section
 
 /-!
 # `stack_alloc` GC code: original-oracle rows

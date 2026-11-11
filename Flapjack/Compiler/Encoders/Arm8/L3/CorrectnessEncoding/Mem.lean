@@ -52,6 +52,177 @@ def arm8LoadStoreImm12Word (sz : BitVec 2) (opc : BitVec 2) (imm12 : BitVec 12)
           BitVec.setWidth 10 (rn ++ rt)))))
 
 
+/-- `holW2v` of a `width`-bit word has `width` bits (Flapjack infrastructure;
+    the generic form of `holW2v_length{8,16,32}`). -/
+theorem holW2v_lengthN {width : Nat} [NeZero width] (value : BitVec width) :
+    (holW2v value).length = width := by
+  simp [holW2v]
+
+/-- `holW2v` at index `m` is the `m`-th high-to-low bit (Flapjack
+    infrastructure; the generic form of `holW2v_getElem?_{16,32}`). -/
+theorem holW2v_getElem?N {width : Nat} [NeZero width] (value : BitVec width) (m : Nat) :
+    (holW2v value)[m]? = if m < width then some (value.getLsbD (width - 1 - m)) else none := by
+  simp only [holW2v, List.getElem?_map]
+  by_cases hm : m < width
+  · simp [hm]
+  · simp [hm]
+
+/-- The `i`-th eight-bit field of a `8 * n`-bit word has eight bits (Flapjack
+    infrastructure; the generic form of `holField_{two,four}_length`). -/
+theorem holFieldN_length {n : Nat} [NeZero (8 * n)] (value : BitVec (8 * n)) (i : Nat)
+    (hi : i < n) :
+    (holField (8 * i + 7) (8 * i) (holW2v value)).length = 8 := by
+  have h8 : 8 * i + 7 + 1 - 8 * i = 8 := by omega
+  have hge : ¬ (8 * n - 8 * i < 8) := by omega
+  have hmin : min (8 * n - 8 * i) (8 * n) = 8 * n - 8 * i := Nat.min_eq_left (by omega)
+  simp only [holField, holShiftr, h8, holFixwidth, holW2v_lengthN, hmin, hge, if_false,
+    List.length_take, List.length_drop]
+  omega
+
+/-- The `i`-th eight-bit field of a `8 * n`-bit word is the byte `8i .. 8i+7`
+    (Flapjack infrastructure; the generic form of
+    `holField_{two,four}_getElem?`). -/
+theorem holFieldN_getElem? {n : Nat} [NeZero (8 * n)] (value : BitVec (8 * n)) (i j : Nat)
+    (hi : i < n) (hj : j < 8) :
+    (holField (8 * i + 7) (8 * i) (holW2v value))[7 - j]? =
+      some (value.getLsbD (8 * i + j)) := by
+  have h8 : 8 * i + 7 + 1 - 8 * i = 8 := by omega
+  have hge : ¬ (8 * n - 8 * i < 8) := by omega
+  have hmin : min (8 * n - 8 * i) (8 * n) = 8 * n - 8 * i := Nat.min_eq_left (by omega)
+  simp only [holField, holShiftr, h8, holFixwidth, holW2v_lengthN, List.length_take, hmin, hge,
+    if_false]
+  rw [List.getElem?_drop]
+  rw [show 8 * n - 8 * i - 8 + (7 - j) = 8 * n - 1 - 8 * i - j by omega]
+  rw [List.getElem?_take_of_lt (by omega : 8 * n - 1 - 8 * i - j < 8 * n - 8 * i)]
+  rw [holW2v_getElem?N]
+  have hlt : 8 * n - 1 - 8 * i - j < 8 * n := by omega
+  have hidx : 8 * n - 1 - (8 * n - 1 - 8 * i - j) = 8 * i + j := by omega
+  simp only [hlt, if_true, hidx]
+
+/-- The byte `write'Mem` stores at `address + i` for a `8 * n`-bit value
+    (Flapjack infrastructure; the generic form of `arm8HolByte{8,16,32}`). -/
+theorem arm8HolByteN {n : Nat} [NeZero (8 * n)] (value : BitVec (8 * n)) (i : Nat)
+    (hi : i < n) :
+    holV2w 8 (holField (8 * i + 7) (8 * i) (holW2v value)) =
+      (value >>> (8 * i)).setWidth 8 := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro j hj
+  simp only [Flapjack.RiscV.L3.holV2w]
+  rw [getLsbD_holFcpWord]
+  have hlen := holFieldN_length value i hi
+  simp only [hj, decide_true, Bool.true_and, hlen, show 8 - 1 - j = 7 - j by omega]
+  rw [List.getD_eq_getElem?_getD, holFieldN_getElem? value i j hi hj]
+  simp only [Option.getD_some, BitVec.getLsbD_setWidth, hj, decide_true, Bool.true_and,
+    BitVec.getLsbD_ushiftRight]
+
+/-- `Aligned` at a power-of-two size is `toNat` divisibility
+(Flapjack infrastructure; the generic form of `Aligned_two_iff`/`Aligned_four_iff`/
+`arm8Aligned_eight_iff`). -/
+theorem arm8Aligned_iff (a : BitVec 64) {n : Nat} :
+    Aligned (TN := 64) (a, n) = true ↔ a.toNat % n = 0 := by
+  simp only [Aligned, Align, beq_iff_eq]
+  constructor
+  · intro h
+    have ht := congrArg BitVec.toNat h
+    have hle : n * (a.toNat / n) ≤ a.toNat := by
+      rw [Nat.mul_comm]
+      exact Nat.div_mul_le_self _ _
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt hle a.isLt)] at ht
+    rw [ht]
+    exact Nat.mul_mod_right n (a.toNat / n)
+  · intro h
+    apply BitVec.eq_of_toNat_eq
+    have hle : n * (a.toNat / n) ≤ a.toNat := by
+      rw [Nat.mul_comm]
+      exact Nat.div_mul_le_self _ _
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt hle a.isLt), Nat.mul_comm]
+    exact (Nat.div_mul_cancel (Nat.dvd_of_mod_eq_zero h)).symm
+
+/-- `holAligned` at `k` bits implies `Aligned` at the power-of-two size `2 ^ k`
+(Flapjack infrastructure; the generic form of
+`arm8Aligned_{one,two,four,eight}_of_holAligned`). -/
+theorem arm8AlignedN_of_holAligned (a : BitVec 64) {n k : Nat}
+    (hpow : n = 2 ^ k) (h : holAligned k a = true) :
+    Aligned (TN := 64) (a, n) = true := by
+  rw [arm8Aligned_iff a, hpow]
+  exact (holAligned_iff k a).mp h
+
+/-- A successful store of `n = 2 ^ k` bytes has its effective address
+`n`-byte aligned (Flapjack infrastructure; the generic form of
+`arm8MemStore_aligned_{one,two,four,eight}`). -/
+theorem arm8MemStore_alignedN {n k : Nat} (hpow : n = 2 ^ k) (op : HolMemop)
+    (r base : Nat) (off : BitVec 64) (s1 s2 : AsmState 64) (pc : BitVec 64)
+    (hspec : memOp (width := 64) op = memStore (width := 64) n)
+    (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
+    (hbe : s1.be = false) (hok : ¬ s2.failed) :
+    Aligned (TN := 64) (s1.regs base + off, n) = true := by
+  have hlog : holLOG2 n = k := by
+    rw [hpow]
+    exact holLOG_UNIQUE 2 (2 ^ k) k
+      ⟨Nat.le_refl _, Nat.pow_lt_pow_succ (a := 2) (n := k) (by decide)⟩
+  have hfail : s2.failed = false := boolOfNotTrue hok
+  rw [← hupd] at hfail
+  simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+  obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
+  rw [hlog] at hal
+  exact arm8AlignedN_of_holAligned _ hpow (by simpa using hal)
+
+/-- A successful store of `n = 2 ^ k` bytes has every written address in the
+source memory domain (Flapjack infrastructure; the generic form of
+`arm8MemStore_domain_{one,two,four,eight}`). -/
+theorem arm8MemStore_domainN {n : Nat} (op : HolMemop)
+    (r base : Nat) (off : BitVec 64) (s1 s2 : AsmState 64) (pc : BitVec 64)
+    (hspec : memOp (width := 64) op = memStore (width := 64) n)
+    (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
+    (hbe : s1.be = false) (hok : ¬ s2.failed) :
+    ∀ i, i < n → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 i) := by
+  have hfail : s2.failed = false := boolOfNotTrue hok
+  rw [← hupd] at hfail
+  simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+  obtain ⟨-, hf⟩ := (Bool.or_eq_false_iff).1 hfail
+  exact writeMemWord_domain (s1.regs base + off) n (s1.regs r) s1 hbe (not_of_eq_false hf)
+
+/-- A successful load of `n = 2 ^ k` bytes has its effective address
+`n`-byte aligned (Flapjack infrastructure; the generic form of
+`arm8MemLoad_aligned_{one,two,four,eight}`). -/
+theorem arm8MemLoad_alignedN {n k : Nat} (hpow : n = 2 ^ k) (op : HolMemop)
+    (r base : Nat) (off : BitVec 64) (s1 s2 : AsmState 64) (pc : BitVec 64)
+    (hspec : memOp (width := 64) op = memLoad (width := 64) n)
+    (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
+    (hbe : s1.be = false) (hok : ¬ s2.failed) :
+    Aligned (TN := 64) (s1.regs base + off, n) = true := by
+  have hlog : holLOG2 n = k := by
+    rw [hpow]
+    exact holLOG_UNIQUE 2 (2 ^ k) k
+      ⟨Nat.le_refl _, Nat.pow_lt_pow_succ (a := 2) (n := k) (by decide)⟩
+  have hfail : s2.failed = false := boolOfNotTrue hok
+  rw [← hupd] at hfail
+  simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+  obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
+  rw [hlog] at hal
+  exact arm8AlignedN_of_holAligned _ hpow (by simpa using hal)
+
+/-- A successful load of `n = 2 ^ k` bytes reads only addresses in the source
+memory domain (Flapjack infrastructure; the generic form of
+`arm8MemLoad_domain_{one,two,four,eight}`). -/
+theorem arm8MemLoad_domainN {n k : Nat} (hpow : n = 2 ^ k) (op : HolMemop)
+    (r base : Nat) (off : BitVec 64) (s1 s2 : AsmState 64) (pc : BitVec 64)
+    (hspec : memOp (width := 64) op = memLoad (width := 64) n)
+    (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
+    (hbe : s1.be = false) (hok : ¬ s2.failed) :
+    ∀ i, i < n → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 i) := by
+  have hspec' : memOp (width := 64) op = memLoad (width := 64) (2 ^ k) := by
+    rw [← hpow]
+    exact hspec
+  have h := memLoadDomain op r base off s1 s2 k pc hspec' hupd hbe hok
+  intro i hi
+  exact h i (by
+    rw [← hpow]
+    exact hi)
+
 /-- `e_load_store` of `LoadStoreImmediate@64` on the scaled twelve-bit path:
 the word `arm8LoadStoreImm12Word` (Flapjack infrastructure; the rendered
 `e_LoadStoreImmediate` body at `wback = postindex = false`). -/
@@ -692,76 +863,37 @@ theorem arm8Aligned_eight_iff (a : BitVec 64) :
 /-- `holAligned` at three bits is the rendered `Aligned` at eight bytes. -/
 theorem arm8Aligned_eight_of_holAligned (a : BitVec 64)
     (h : holAligned 3 a = true) : Aligned (TN := 64) (a, 8) = true := by
-  rw [arm8Aligned_eight_iff]
-  have h' := (holAligned_iff 3 a).mp h
-  simpa using h'
-
-
-/-- A successful eight-byte store has its effective address eight-byte aligned,
-derived from `asm_step`'s `¬ s2.failed` (Flapjack infrastructure). -/
+  exact arm8AlignedN_of_holAligned a (n := 8) (k := 3) (by decide) h
 theorem arm8MemStore_aligned (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memStore (width := 64) 8)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     Aligned (TN := 64) (s1.regs base + off, 8) = true := by
-  have hfail : s2.failed = false := boolOfNotTrue hok
-  rw [← hupd] at hfail
-  simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
-  obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
-  have h3 : holLOG2 8 = 3 := holLOG_UNIQUE 2 8 3 ⟨by decide, by decide⟩
-  rw [h3] at hal
-  exact arm8Aligned_eight_of_holAligned _ (by simpa using hal)
-
-/-- A successful eight-byte store has its eight addresses in the source memory
-domain (Flapjack infrastructure; the store analogue of `arm8MemLoad_domain`). -/
+  exact arm8MemStore_alignedN (n := 8) (k := 3) (by decide)
+    op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemStore_domain (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memStore (width := 64) 8)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     ∀ k, k < 8 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) := by
-  have hfail : s2.failed = false := boolOfNotTrue hok
-  rw [← hupd] at hfail
-  simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
-  obtain ⟨-, hf⟩ := (Bool.or_eq_false_iff).1 hfail
-  exact writeMemWord_domain (s1.regs base + off) 8 (s1.regs r) s1 hbe (not_of_eq_false hf)
-
-/-- A successful eight-byte load has its effective address aligned: the source
-`mem_load` asserts `aligned (LOG2 n)`, and `asm_step` carries `¬ s2.failed`
-(Flapjack infrastructure; the alignment half of `memLoadDomain`). -/
+  exact arm8MemStore_domainN op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemLoad_aligned (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memLoad (width := 64) 8)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     Aligned (TN := 64) (s1.regs base + off, 8) = true := by
-  have hfail : s2.failed = false := boolOfNotTrue hok
-  rw [← hupd] at hfail
-  simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
-  obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
-  have h3 : holLOG2 8 = 3 := holLOG_UNIQUE 2 8 3 ⟨by decide, by decide⟩
-  rw [h3] at hal
-  exact arm8Aligned_eight_of_holAligned _ (by simpa using hal)
-
-
-/-- A successful eight-byte load has its eight addresses in the source memory
-domain (Flapjack infrastructure; the domain half of `memLoadDomain`, at the
-L3 `asmUpd` shape). -/
+  exact arm8MemLoad_alignedN (n := 8) (k := 3) (by decide)
+    op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemLoad_domain (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memLoad (width := 64) 8)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     ∀ k, k < 8 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) := by
-  have h := memLoadDomain op r base off s1 s2 3 pc (by simpa using hspec) hupd hbe hok
-  simpa using h
-
-
-/-- Extracting the low nine bits of a 64-bit word is its nine-bit truncation. -/
+  exact arm8MemLoad_domainN (n := 8) (k := 3) (by decide) op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8HolWordExtract_nine (off : BitVec 64) :
     holWordExtract 9 8 0 off = BitVec.ofNat 9 off.toNat := by
   apply BitVec.eq_of_toNat_eq
@@ -917,19 +1049,7 @@ there (Flapjack infrastructure). -/
 theorem arm8HolByte (value : BitVec 64) (i : Nat) (hi : i < 8) :
     holV2w 8 (holField (8 * i + 7) (8 * i) (holW2v value)) =
       (value >>> (8 * i)).setWidth 8 := by
-  apply BitVec.eq_of_getLsbD_eq
-  intro j hj
-  simp only [Flapjack.RiscV.L3.holV2w]
-  rw [getLsbD_holFcpWord]
-  have hlen := holField_eight_length value i hi
-  simp only [hj, decide_true, Bool.true_and, hlen, show 8 - 1 - j = 7 - j by omega]
-  rw [List.getD_eq_getElem?_getD, holField_eight_getElem? value i j hi hj]
-  simp only [Option.getD_some, BitVec.getLsbD_setWidth, hj, decide_true, Bool.true_and,
-    BitVec.getLsbD_ushiftRight]
-
-
-/-- The L3 eight-byte write agrees with the machine's eight-byte write at every
-byte (Flapjack infrastructure; the write analogue of `arm8Mem_eight_pair`). -/
+  exact arm8HolByteN (n := 8) value i hi
 theorem arm8WriteMem_eight (ms : arm8_state) (address : BitVec 64) (value : BitVec 64)
     (acctype : AccType)
     (hal : Aligned (TN := 64) (address, 8) = true)
@@ -971,57 +1091,21 @@ theorem arm8WriteMem_only_mem (ms : arm8_state) (value : BitVec 64) (address : B
 /-! ## The four-byte `Mem` helpers -/
 
 theorem holW2v_length32 (value : BitVec 32) : (holW2v value).length = 32 := by
-  simp [holW2v]
-
+  exact holW2v_lengthN value
 theorem holW2v_getElem?_32 (value : BitVec 32) (m : Nat) :
     (holW2v value)[m]? = if m < 32 then some (value.getLsbD (31 - m)) else none := by
-  simp only [holW2v, List.getElem?_map]
-  by_cases hm : m < 32
-  · simp [hm]
-  · simp [hm]
-
+  exact holW2v_getElem?N value m
 theorem holField_four_length (value : BitVec 32) (i : Nat) (hi : i < 4) :
     (holField (8 * i + 7) (8 * i) (holW2v value)).length = 8 := by
-  have h8 : 8 * i + 7 + 1 - 8 * i = 8 := by omega
-  have hge : ¬ (32 - 8 * i < 8) := by omega
-  have hmin : min (32 - 8 * i) 32 = 32 - 8 * i := Nat.min_eq_left (by omega)
-  simp only [holField, holShiftr, h8, holFixwidth, holW2v_length32, hmin, hge, if_false,
-    List.length_take, List.length_drop]
-  omega
-
+  exact holFieldN_length (n := 4) value i hi
 theorem holField_four_getElem? (value : BitVec 32) (i j : Nat) (hi : i < 4) (hj : j < 8) :
     (holField (8 * i + 7) (8 * i) (holW2v value))[7 - j]? =
       some (value.getLsbD (8 * i + j)) := by
-  have h8 : 8 * i + 7 + 1 - 8 * i = 8 := by omega
-  have hge : ¬ (32 - 8 * i < 8) := by omega
-  have hmin : min (32 - 8 * i) 32 = 32 - 8 * i := Nat.min_eq_left (by omega)
-  simp only [holField, holShiftr, h8, holFixwidth, holW2v_length32, List.length_take, hmin, hge,
-    if_false]
-  rw [List.getElem?_drop]
-  rw [show 32 - 8 * i - 8 + (7 - j) = 31 - 8 * i - j by omega]
-  rw [List.getElem?_take_of_lt (by omega : 31 - 8 * i - j < 32 - 8 * i)]
-  rw [holW2v_getElem?_32]
-  have hlt : 31 - 8 * i - j < 32 := by omega
-  have hidx : 31 - (31 - 8 * i - j) = 8 * i + j := by omega
-  simp only [hlt, if_true, hidx]
-
-/-- The byte `write'Mem` stores at `address + i` for a 32-bit value
-(Flapjack infrastructure; the four-byte analogue of `arm8HolByte`). -/
+  exact holFieldN_getElem? (n := 4) value i j hi hj
 theorem arm8HolByte32 (value : BitVec 32) (i : Nat) (hi : i < 4) :
     holV2w 8 (holField (8 * i + 7) (8 * i) (holW2v value)) =
       (value >>> (8 * i)).setWidth 8 := by
-  apply BitVec.eq_of_getLsbD_eq
-  intro j hj
-  simp only [Flapjack.RiscV.L3.holV2w]
-  rw [getLsbD_holFcpWord]
-  have hlen := holField_four_length value i hi
-  simp only [hj, decide_true, Bool.true_and, hlen, show 8 - 1 - j = 7 - j by omega]
-  rw [List.getD_eq_getElem?_getD, holField_four_getElem? value i j hi hj]
-  simp only [Option.getD_some, BitVec.getLsbD_setWidth, hj, decide_true, Bool.true_and,
-    BitVec.getLsbD_ushiftRight]
-
-/-- The low four bytes of `setWidth 64 (setWidth 32 w)` are those of `w`
-(Flapjack infrastructure). -/
+  exact arm8HolByteN (n := 4) value i hi
 theorem arm8ByteSetWidth32_64 (w : BitVec 64) (i : Nat) (hi : i < 4) :
     (((BitVec.setWidth 64 (BitVec.setWidth 32 w)) >>> (8 * i : Nat)).setWidth 8) =
       ((w >>> (8 * i : Nat)).setWidth 8) := by
@@ -1098,62 +1182,37 @@ theorem arm8WriteMem_only_mem_four (ms : arm8_state) (value : BitVec 32) (addres
 
 theorem arm8Aligned_four_of_holAligned (a : BitVec 64)
     (h : holAligned 2 a = true) : Aligned (TN := 64) (a, 4) = true := by
-  rw [Aligned_four_iff]
-  have h' := (holAligned_iff 2 a).mp h
-  simpa using h'
-
+  exact arm8AlignedN_of_holAligned a (n := 4) (k := 2) (by decide) h
 theorem arm8MemStore_aligned_four (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memStore (width := 64) 4)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     Aligned (TN := 64) (s1.regs base + off, 4) = true := by
-  have hfail : s2.failed = false := boolOfNotTrue hok
-  rw [← hupd] at hfail
-  simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
-  obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
-  have h2 : holLOG2 4 = 2 := holLOG_UNIQUE 2 4 2 ⟨by decide, by decide⟩
-  rw [h2] at hal
-  exact arm8Aligned_four_of_holAligned _ (by simpa using hal)
-
+  exact arm8MemStore_alignedN (n := 4) (k := 2) (by decide)
+    op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemStore_domain_four (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memStore (width := 64) 4)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     ∀ k, k < 4 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) := by
-  have hfail : s2.failed = false := boolOfNotTrue hok
-  rw [← hupd] at hfail
-  simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
-  obtain ⟨-, hf⟩ := (Bool.or_eq_false_iff).1 hfail
-  exact writeMemWord_domain (s1.regs base + off) 4 (s1.regs r) s1 hbe (not_of_eq_false hf)
-
+  exact arm8MemStore_domainN op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemLoad_aligned_four (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memLoad (width := 64) 4)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     Aligned (TN := 64) (s1.regs base + off, 4) = true := by
-  have hfail : s2.failed = false := boolOfNotTrue hok
-  rw [← hupd] at hfail
-  simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
-  obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
-  have h2 : holLOG2 4 = 2 := holLOG_UNIQUE 2 4 2 ⟨by decide, by decide⟩
-  rw [h2] at hal
-  exact arm8Aligned_four_of_holAligned _ (by simpa using hal)
-
+  exact arm8MemLoad_alignedN (n := 4) (k := 2) (by decide)
+    op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemLoad_domain_four (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memLoad (width := 64) 4)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     ∀ k, k < 4 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) := by
-  have h := memLoadDomain op r base off s1 s2 2 pc (by simpa using hspec) hupd hbe hok
-  simpa using h
-
+  exact arm8MemLoad_domainN (n := 4) (k := 2) (by decide) op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8Mem_four_of_bytes (ms : arm8_state) (address : BitVec 64)
     (m : BitVec 64 → BitVec 8)
     (hbytes : ∀ i, i < 4 →
@@ -1438,8 +1497,7 @@ theorem arm8ShiftRight_zero (x : BitVec 64) : x >>> (0 : Nat) = x := rfl
 /-! ## The one-byte `Mem` helpers -/
 
 theorem holW2v_length8 (value : BitVec 8) : (holW2v value).length = 8 := by
-  simp [holW2v]
-
+  exact holW2v_lengthN value
 theorem holField_eight_of_length (l : List Bool) (h : l.length = 8) : holField 7 0 l = l := by
   have ht : (l.take 8).length = 8 := by rw [List.length_take, h]; omega
   simp only [holField, holShiftr, holFixwidth, h, Nat.sub_zero, ht, Nat.sub_self]
@@ -1451,8 +1509,7 @@ theorem arm8HolByte8 (value : BitVec 8) :
 
 theorem arm8Aligned_one_of_holAligned (a : BitVec 64)
     (_h : holAligned 0 a = true) : Aligned (TN := 64) (a, 1) = true := by
-  simp [Aligned, Align]
-
+  exact arm8AlignedN_of_holAligned a (n := 1) (k := 0) (by decide) _h
 theorem arm8Mem_one (ms : arm8_state) (address : BitVec 64)
     (hal : Aligned (TN := 64) (address, 1) = true)
     (he0 : ms.SCTLR_EL1.E0E = false) (hel : ms.PSTATE.EL = (0 : BitVec 2)) :
@@ -1514,52 +1571,30 @@ theorem arm8MemStore_aligned_one (op : HolMemop) (r base : Nat) (off : BitVec 64
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     Aligned (TN := 64) (s1.regs base + off, 1) = true := by
-  have hfail : s2.failed = false := boolOfNotTrue hok
-  rw [← hupd] at hfail
-  simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
-  obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
-  have h0 : holLOG2 1 = 0 := holLOG_UNIQUE 2 1 0 ⟨by decide, by decide⟩
-  rw [h0] at hal
-  exact arm8Aligned_one_of_holAligned _ (by simpa using hal)
-
+  exact arm8MemStore_alignedN (n := 1) (k := 0) (by decide)
+    op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemStore_domain_one (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memStore (width := 64) 1)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     ∀ k, k < 1 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) := by
-  have hfail : s2.failed = false := boolOfNotTrue hok
-  rw [← hupd] at hfail
-  simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
-  obtain ⟨-, hf⟩ := (Bool.or_eq_false_iff).1 hfail
-  exact writeMemWord_domain (s1.regs base + off) 1 (s1.regs r) s1 hbe (not_of_eq_false hf)
-
+  exact arm8MemStore_domainN op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemLoad_aligned_one (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memLoad (width := 64) 1)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     Aligned (TN := 64) (s1.regs base + off, 1) = true := by
-  have hfail : s2.failed = false := boolOfNotTrue hok
-  rw [← hupd] at hfail
-  simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
-  obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
-  have h0 : holLOG2 1 = 0 := holLOG_UNIQUE 2 1 0 ⟨by decide, by decide⟩
-  rw [h0] at hal
-  exact arm8Aligned_one_of_holAligned _ (by simpa using hal)
-
+  exact arm8MemLoad_alignedN (n := 1) (k := 0) (by decide)
+    op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemLoad_domain_one (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memLoad (width := 64) 1)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     ∀ k, k < 1 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) := by
-  have h := memLoadDomain op r base off s1 s2 0 pc (by simpa using hspec) hupd hbe hok
-  simpa using h
-
+  exact arm8MemLoad_domainN (n := 1) (k := 0) (by decide) op r base off s1 s2 pc hspec hupd hbe hok
 /-! ## The `LoadStoreImmediate@8` words -/
 
 theorem arm8ELoadStoreImm9_load8 (offset : BitVec 64) (unsigned_offset : Bool)
@@ -1835,53 +1870,21 @@ transfer is two bytes, and the register write is the zero-extended halfword.
 -/
 
 theorem holW2v_length16 (value : BitVec 16) : (holW2v value).length = 16 := by
-  simp [holW2v]
-
+  exact holW2v_lengthN value
 theorem holW2v_getElem?_16 (value : BitVec 16) (m : Nat) :
     (holW2v value)[m]? = if m < 16 then some (value.getLsbD (15 - m)) else none := by
-  simp only [holW2v, List.getElem?_map]
-  by_cases hm : m < 16
-  · simp [hm]
-  · simp [hm]
-
+  exact holW2v_getElem?N value m
 theorem holField_two_length (value : BitVec 16) (i : Nat) (hi : i < 2) :
     (holField (8 * i + 7) (8 * i) (holW2v value)).length = 8 := by
-  have h8 : 8 * i + 7 + 1 - 8 * i = 8 := by omega
-  have hge : ¬ (16 - 8 * i < 8) := by omega
-  have hmin : min (16 - 8 * i) 16 = 16 - 8 * i := Nat.min_eq_left (by omega)
-  simp only [holField, holShiftr, h8, holFixwidth, holW2v_length16, hmin, hge, if_false,
-    List.length_take, List.length_drop]
-  omega
-
+  exact holFieldN_length (n := 2) value i hi
 theorem holField_two_getElem? (value : BitVec 16) (i j : Nat) (hi : i < 2) (hj : j < 8) :
     (holField (8 * i + 7) (8 * i) (holW2v value))[7 - j]? =
       some (value.getLsbD (8 * i + j)) := by
-  have h8 : 8 * i + 7 + 1 - 8 * i = 8 := by omega
-  have hge : ¬ (16 - 8 * i < 8) := by omega
-  have hmin : min (16 - 8 * i) 16 = 16 - 8 * i := Nat.min_eq_left (by omega)
-  simp only [holField, holShiftr, h8, holFixwidth, holW2v_length16, List.length_take, hmin, hge,
-    if_false]
-  rw [List.getElem?_drop]
-  rw [show 16 - 8 * i - 8 + (7 - j) = 15 - 8 * i - j by omega]
-  rw [List.getElem?_take_of_lt (by omega : 15 - 8 * i - j < 16 - 8 * i)]
-  rw [holW2v_getElem?_16]
-  have hlt : 15 - 8 * i - j < 16 := by omega
-  have hidx : 15 - (15 - 8 * i - j) = 8 * i + j := by omega
-  simp only [hlt, if_true, hidx]
-
+  exact holFieldN_getElem? (n := 2) value i j hi hj
 theorem arm8HolByte16 (value : BitVec 16) (i : Nat) (hi : i < 2) :
     holV2w 8 (holField (8 * i + 7) (8 * i) (holW2v value)) =
       (value >>> (8 * i)).setWidth 8 := by
-  apply BitVec.eq_of_getLsbD_eq
-  intro j hj
-  simp only [Flapjack.RiscV.L3.holV2w]
-  rw [getLsbD_holFcpWord]
-  have hlen := holField_two_length value i hi
-  simp only [hj, decide_true, Bool.true_and, hlen, show 8 - 1 - j = 7 - j by omega]
-  rw [List.getD_eq_getElem?_getD, holField_two_getElem? value i j hi hj]
-  simp only [Option.getD_some, BitVec.getLsbD_setWidth, hj, decide_true, Bool.true_and,
-    BitVec.getLsbD_ushiftRight]
-
+  exact arm8HolByteN (n := 2) value i hi
 theorem arm8ByteSetWidth16_64 (w : BitVec 64) (i : Nat) (hi : i < 2) :
     (((BitVec.setWidth 64 (BitVec.setWidth 16 w)) >>> (8 * i : Nat)).setWidth 8) =
       ((w >>> (8 * i : Nat)).setWidth 8) := by
@@ -1941,66 +1944,37 @@ theorem arm8WriteMem_only_mem_two (ms : arm8_state) (value : BitVec 16) (address
 
 theorem arm8Aligned_two_of_holAligned (a : BitVec 64)
     (h : holAligned 1 a = true) : Aligned (TN := 64) (a, 2) = true := by
-  have ha : a.toNat % 2 = 0 := by simpa using (holAligned_iff 1 a).mp h
-  simp only [Aligned, Align]
-  rw [beq_iff_eq]
-  apply BitVec.eq_of_toNat_eq
-  simp only [BitVec.toNat_ofNat]
-  rw [Nat.mul_comm, Nat.div_mul_cancel (Nat.dvd_of_mod_eq_zero ha)]
-  rw [Nat.mod_eq_of_lt a.isLt]
-
+  exact arm8AlignedN_of_holAligned a (n := 2) (k := 1) (by decide) h
 theorem arm8MemStore_aligned_two (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memStore (width := 64) 2)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     Aligned (TN := 64) (s1.regs base + off, 2) = true := by
-  have hfail : s2.failed = false := boolOfNotTrue hok
-  rw [← hupd] at hfail
-  simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
-  obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
-  have h1 : holLOG2 2 = 1 := holLOG_UNIQUE 2 2 1 ⟨by decide, by decide⟩
-  rw [h1] at hal
-  exact arm8Aligned_two_of_holAligned _ (by simpa using hal)
-
+  exact arm8MemStore_alignedN (n := 2) (k := 1) (by decide)
+    op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemStore_domain_two (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memStore (width := 64) 2)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     ∀ k, k < 2 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) := by
-  have hfail : s2.failed = false := boolOfNotTrue hok
-  rw [← hupd] at hfail
-  simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
-  obtain ⟨-, hf⟩ := (Bool.or_eq_false_iff).1 hfail
-  exact writeMemWord_domain (s1.regs base + off) 2 (s1.regs r) s1 hbe (not_of_eq_false hf)
-
+  exact arm8MemStore_domainN op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemLoad_aligned_two (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memLoad (width := 64) 2)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     Aligned (TN := 64) (s1.regs base + off, 2) = true := by
-  have hfail : s2.failed = false := boolOfNotTrue hok
-  rw [← hupd] at hfail
-  simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
-  obtain ⟨hal, -⟩ := (Bool.or_eq_false_iff).1 hfail
-  have h1 : holLOG2 2 = 1 := holLOG_UNIQUE 2 2 1 ⟨by decide, by decide⟩
-  rw [h1] at hal
-  exact arm8Aligned_two_of_holAligned _ (by simpa using hal)
-
+  exact arm8MemLoad_alignedN (n := 2) (k := 1) (by decide)
+    op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8MemLoad_domain_two (op : HolMemop) (r base : Nat) (off : BitVec 64)
     (s1 s2 : AsmState 64) (pc : BitVec 64)
     (hspec : memOp (width := 64) op = memLoad (width := 64) 2)
     (hupd : asmUpd (.inst (.mem op r (.addr base off))) pc s1 = s2)
     (hbe : s1.be = false) (hok : ¬ s2.failed) :
     ∀ k, k < 2 → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k) := by
-  have h := memLoadDomain op r base off s1 s2 1 pc (by simpa using hspec) hupd hbe hok
-  simpa using h
-
+  exact arm8MemLoad_domainN (n := 2) (k := 1) (by decide) op r base off s1 s2 pc hspec hupd hbe hok
 theorem arm8Mem_two (ms : arm8_state) (address : BitVec 64)
     (b0 b1 : BitVec 8)
     (h0 : ms.MEM address = b0)

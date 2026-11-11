@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.WordAlloc.SelectRegAlloc
-import Flapjack.Misc.Sptree.ToAList
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.SelectRegAlloc
+public import Flapjack.Misc.Sptree.ToAList
+
+import all Flapjack.Compiler.Backend.WordAlloc.SelectRegAlloc
+import all Flapjack.Misc.Sptree.ToAList
+
+@[expose] public section
 namespace Flapjack.Test.WordAllocSelectRegAllocParity
 open Flapjack Flapjack.RegAlloc Flapjack.WordAlloc Flapjack.Translator.Monadic.MonadBase
 

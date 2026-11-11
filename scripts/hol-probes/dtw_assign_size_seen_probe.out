@@ -1,0 +1,7 @@
+size_of_cons_seen_Block=⊢ ∀lims vs refs seen ts tag l.
+    MEM (Block ts tag l) vs ⇒
+    size_of lims (Block ts tag l::vs) refs seen = size_of lims vs refs seen
+size_of_type=:limits ->
+v list ->
+v ref sptree$num_map ->
+sptree$num_set -> num # v ref sptree$num_map # sptree$num_set

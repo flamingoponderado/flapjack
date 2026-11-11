@@ -1,4 +1,10 @@
-import Flapjack.X64.NativeCLIAdapter
+module
+
+public import Flapjack.X64.NativeCLIAdapter
+
+import all Flapjack.X64.NativeCLIAdapter
+
+@[expose] public section
 
 /-! x86-64 source-to-assembly parity with the original CakeML Pancake compiler.
 

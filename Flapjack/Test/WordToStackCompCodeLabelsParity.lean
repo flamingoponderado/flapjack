@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCodeLabels
+module
+
+public import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCodeLabels
+
+import all Flapjack.Compiler.Backend.WordToStack.Proofs.CompCodeLabels
+
+@[expose] public section
 
 /-! Identical-input replay of original actual compiler full-set/guard observations.
 These kernel regressions do not prove cross-language equivalence. The unrestricted

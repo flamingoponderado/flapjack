@@ -22,19 +22,6 @@ theorem isAtemp_production (node : Nat) {native : State} {production : CakeRaSta
     simp [isAtemp, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, tagBound,
       holEl_eq_getElem node native.node_tag tagBound, read, tag, Tag.toProduction, ret] <;> rfl
 
-private theorem stateFilter_pure {α : Type} (predicate : α → M State Bool StateException)
-    (pure : α → Bool) (nodes acc : List α) (state : State)
-    (reads : ∀ node ∈ nodes, predicate node state = (.success (pure node), state)) :
-    stExFilter predicate nodes acc state = (.success ((nodes.filter pure).reverse ++ acc), state) := by
-  induction nodes generalizing acc with
-  | nil => rfl
-  | cons node rest ih =>
-    simp only [stExFilter, Translator.Monadic.MonadBase.bind, reads node List.mem_cons_self]
-    cases selected : pure node <;>
-      simp only [Bool.false_eq_true, if_false, if_true, List.filter_cons, selected,
-        List.reverse_cons, List.append_assoc, List.singleton_append]
-    all_goals exact ih _ (fun next member => reads next (List.mem_cons_of_mem node member))
-
 /-- The original initializer's complete Atemp collection has the same reverse
 order as the fused production traversal. All tag domains follow from COUNT_LIST
 and the original state invariant. No desired collection is assumed. This
@@ -44,7 +31,7 @@ theorem initAllocCollection_production {native : State} {production : CakeRaStat
     stExFilter isAtemp (List.range native.dim) [] native =
       (.success (((List.range native.dim).filter (fun node =>
         (production.nodeTag.get node).getD .aTemp == .aTemp)).reverse), native) := by
-  simpa only [List.append_nil] using stateFilter_pure isAtemp
+  simpa only [List.append_nil] using stExFilter_pure isAtemp
     (fun node => (production.nodeTag.get node).getD .aTemp == .aTemp)
     (List.range native.dim) [] native
     (fun node member => isAtemp_production node related good (List.mem_range.mp member))
@@ -75,7 +62,7 @@ theorem initAllocDegree_production (limit node : Nat) {native : State} {producti
       (List.getElem_mem adjacencyBound) neighbour member
   have filterRun : stExFilter (fun neighbour => consideredVar limit neighbour) neighbours [] native =
       (.success (neighbours.filter predicate).reverse, native) := by
-    simpa only [List.append_nil] using stateFilter_pure
+    simpa only [List.append_nil] using stExFilter_pure
       (fun neighbour => consideredVar limit neighbour) predicate neighbours [] native
       (fun neighbour member => consideredVar_production limit neighbour related good
         (neighbourBounds neighbour member))

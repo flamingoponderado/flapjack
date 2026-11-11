@@ -78,10 +78,11 @@ TOKEN = re.compile(r'\s*(«(?:\\\^.|\\.|[^»])*»|#"(?:\\\^.|\\.|[^"\\])*"|0x[0-
 
 def generate():
     rows = INPUT.read_text().splitlines()
-    if len(rows) != 2 or rows[1] != 'length=96': raise ValueError('unexpected basis length capture')
-    text = rows[0]
-    if not text.startswith('basis='): raise ValueError('missing basis capture')
-    text = text[len('basis='):]
+    length_rows = [row for row in rows if row.startswith('length=')]
+    if length_rows != ['length=96']: raise ValueError('unexpected basis length capture')
+    basis_rows = [row for row in rows if row.startswith('basis=')]
+    if len(basis_rows) != 1: raise ValueError('missing basis capture')
+    text = basis_rows[0][len('basis='):]
     tokens = []
     while text.strip():
         m = TOKEN.match(text)

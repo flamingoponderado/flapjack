@@ -1,34 +1,14 @@
 module
 
 public import Flapjack.Compiler.Backend.WordToStack.Proofs.CallLocalRecovery
+public import Flapjack.Test.Fixtures.WordToStack
 
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.Fixtures.WordToStack
 @[expose] public section
-open Flapjack Flapjack.WordToStackProofs
+open Flapjack Flapjack.WordToStackProofs Flapjack.Test.Fixtures.WordToStack
+
 set_option maxRecDepth 8192
-private def base {width : Nat} [NeZero width] : WordSemStateFiniteExact width Unit Unit where
-  locals := .ln
-  localsSize := none
-  fpRegs := HolFiniteMapExact.empty
-  store := HolFiniteMapExact.empty
-  stack := []
-  stackLimit := 0
-  stackMax := none
-  stackSize := .ln
-  memory := fun _ => .word 0
-  mdomain := fun _ => false
-  shMdomain := fun _ => false
-  permute := fun _ i => i
-  compile := fun _ _ => none
-  compileOracle := fun _ => ((), [])
-  codeBuffer := { position := 0, buffer := [], spaceLeft := 0 }
-  dataBuffer := { position := 0, buffer := [], spaceLeft := 0 }
-  gcFun := fun _ => none
-  handler := 0
-  clock := 0
-  termdep := 0
-  code := .ln
-  be := false
-  ffi := { oracle := fun _ state _ _ => .ret state [], ffiState := (), ioEvents := [] }
 -- cl_read_1_0_0_0
 example : (fun s : WordSemStateFiniteExact 1 Unit Unit => (WordSemStateFiniteExact.getVars [] s, (WordSemStateFiniteExact.getVars [] s).map (fun xs => [0, 1, 2, 3, 99, 900].map (fun n => sptLookup n (sptFromList2 xs))), [0, 1, 2, 3, 99, 900].map (fun n => sptLookup n s.locals))) ({ (base : WordSemStateFiniteExact 1 Unit Unit) with locals := .ln }) = (some [], some [none, none, none, none, none, none], [none, none, none, none, none, none]) := by decide +kernel
 

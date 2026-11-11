@@ -1,5 +1,7 @@
 merge_locs=⊢ merge_locs (Locs (l1 :locn) (l2 :locn)) (Locs (l3 :locn) (l4 :locn)) = Locs l1 l4
 merge_list=⊢ merge_list_locs ([] :locs list) = unknown_loc ∧ (∀(h :locs). merge_list_locs [h] = h) ∧ (∀(h2 :locs) (h1 :locs). merge_list_locs [h1; h2] = merge_locs h1 h2) ∧ ∀(v5 :locs list) (v4 :locs) (h2 :locs) (h1 :locs). merge_list_locs (h1::h2::v4::v5) = merge_list_locs (h1::v4::v5)
+symbol_axiom=⊢ ∀(f0 :α -> γ) (f1 :β + num -> γ). ∃(fn :(α, β) symbol -> γ). (∀(a :α). fn (TOK a :(α, β) symbol) = f0 a) ∧ ∀(a :β + num). fn (NT a :(α, β) symbol) = f1 a
+parsetree_axiom=⊢ ∀(f0 :(α, β) symbol # 'locs -> γ) (f1 :(β + num) # 'locs -> (α, β, 'locs) parsetree list -> δ -> γ) (f2 :δ) (f3 :(α, β, 'locs) parsetree -> (α, β, 'locs) parsetree list -> γ -> δ -> δ). ∃(fn0 :(α, β, 'locs) parsetree -> γ) (fn1 :(α, β, 'locs) parsetree list -> δ). (∀(a :(α, β) symbol # 'locs). fn0 (Lf a) = f0 a) ∧ (∀(a0 :(β + num) # 'locs) (a1 :(α, β, 'locs) parsetree list). fn0 (Nd a0 a1) = f1 a0 a1 (fn1 a1)) ∧ fn1 ([] :(α, β, 'locs) parsetree list) = f2 ∧ ∀(a0 :(α, β, 'locs) parsetree) (a1 :(α, β, 'locs) parsetree list). fn1 (a0::a1) = f3 a0 a1 (fn0 a0) (fn1 a1)
 is_tok=⊢ (∀(tok :α). isTOK (TOK tok :(α, β) symbol) ⇔ T) ∧ ∀(n :β + num). isTOK (NT n :(α, β) symbol) ⇔ F
 dest_tok=⊢ destTOK ((TOK (tk :α) :(α, β) symbol),(v0 :γ)) = SOME tk ∧ destTOK ((NT (v6 :β + num) :(α, β) symbol),(v2 :γ)) = (NONE :α option)
 ptree_loc=⊢ ptree_loc (Lf ((v0 :(β, γ) symbol),(l :α))) = l ∧ ptree_loc (Nd ((v1 :γ + num),l) (v2 :(β, γ, α) parsetree list)) = l

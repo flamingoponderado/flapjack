@@ -1,21 +1,10 @@
-/-
-Parity for the exact HOL `pan_globalsProof$evaluate_two` / `num_cases_lemma`
-pure-clock slice (`cakeml/pancake/proofs/pan_globalsProofScript.sml:2631-2657`):
-the ports `evaluateTwo` and `numCasesLemma` over the reviewed finite-support
-carrier.
-
-`evaluate_two` is a conditional statement about two arbitrary clock-bounded runs
-of an arbitrary `ProgHOL`, so no concrete original-HOL `EVAL` oracle row
-applies, and `evaluateHOLFiniteState` is a classical noncomputable evaluator, so
-`#guard` cannot compute its result.  As for the sibling
-`PanGlobalsResortDeclsEvaluateParity`, this module therefore replays each HOL
-statement kernel-checked with concrete clock values plus `example`s that apply
-the ported theorems.  No oracle row is fabricated.
--/
 module
 
 public import Flapjack.Pancake.Proofs.PanGlobals
+public import Flapjack.Test.Fixtures.PanGlobals
 
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Test.Fixtures.PanGlobals
 @[expose] public section
 
 -- Public declarations below use private helpers.
@@ -27,31 +16,7 @@ namespace Flapjack.Test.PanGlobalsEvaluateTwoParity
 open Flapjack
 open Flapjack.Pancake.PanLang
 open Flapjack.PanSemStateFiniteExact
-
-private abbrev emptyValues : HolFiniteMapExact MlS (ValueHOL 8) :=
-  HolFiniteMapExact.empty
-
-private abbrev emptyShapes : HolFiniteMapExact MlS ShapeHOL :=
-  HolFiniteMapExact.empty
-
-private abbrev emptyCode :
-    HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL 8 × ShapeHOL) :=
-  HolFiniteMapExact.empty
-
-abbrev state0 : PanSemStateFiniteExact 8 Unit :=
-  { locals := emptyValues
-    globals := emptyValues
-    structs := []
-    code := emptyCode
-    eshapes := emptyShapes
-    memory := fun _ => .word 0
-    memaddrs := fun _ => False
-    shMemaddrs := fun _ => False
-    clock := 5
-    be := false
-    ffi := { oracle := fun _ _ _ _ => .final .failed, ffiState := (), ioEvents := [] }
-    baseAddr := 0
-    topAddr := 100 }
+open Flapjack.Test.Fixtures.PanGlobals
 
 /-- `num_cases_lemma[local]` (`pan_globalsProofScript.sml:2654-2657`): from a
     predicate holding at every `num`, it holds at `0` and at every `SUC x`. -/

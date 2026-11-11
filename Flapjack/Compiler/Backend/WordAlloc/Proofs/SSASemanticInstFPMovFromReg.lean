@@ -8,22 +8,6 @@ public import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticSeq
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 
-/-- Flapjack proof factoring of the native Seq clause after the original
-fix_clock_evaluate theorem discharges clock normalization. This has no
-independent HOL declaration; the full semantic Seq case uses this equation
-without assuming a target execution or successful first result. -/
-private theorem evaluateSeqFPMove {width : Nat} [NeZero width] {C F : Type}
-    (first second : WordLangProgHOL (BitVec width))
-    (state : WordSemStateFiniteExact width C F) :
-    WordSemStateFiniteExact.evaluate (.seq first second) state =
-      match WordSemStateFiniteExact.evaluate first state with
-      | (none, after) => WordSemStateFiniteExact.evaluate second after
-      | (some result, after) => (some result, after) := by
-  simp only [WordSemStateFiniteExact.evaluate,
-    WordSemStateFiniteExact.fix_clock_evaluate]
-  cases WordSemStateFiniteExact.evaluate first state with
-  | mk result after => cases result <;> rfl
-
 namespace SemanticInstFPMovFromRegWitnesses
 
 /-- Canonical imported native WordSem finite-map roundtrip. -/
@@ -121,7 +105,7 @@ theorem ssaCcTransCorrectInstFPMovFromReg {width : Nat} [NeZero width] {C F : Ty
                   (.seq (.move 0 [(next, optionLookup ssa right)])
                     (.inst (.fp (.fpMovFromReg fp (optionLookup ssa left) next)))) target =
                   (none, WordSemStateFiniteExact.setFpVar fp ((rightWord ++ leftWord).setWidth 64) moved) := by
-                rw [evaluateSeqFPMove, moveRun]
+                rw [evaluateSeqNative, moveRun]
                 simp only [WordSemStateFiniteExact.evaluate, WordSemStateFiniteExact.inst,
                   size, if_false, movedLeft, movedRight]
               have sourceRun : WordSemStateFiniteExact.evaluate

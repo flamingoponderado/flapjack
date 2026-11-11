@@ -1,4 +1,10 @@
-import Flapjack.Pancake.PanGlobals
+module
+
+public import Flapjack.Pancake.PanGlobals
+
+import all Flapjack.Pancake.PanGlobals
+
+@[expose] public section
 
 namespace Flapjack.Test.PanGlobalsNewMainNameParity
 

@@ -1,6 +1,16 @@
-import Flapjack.Compiler.Backend.StackProps
-import Flapjack.Compiler.Backend.StackLang
-import Flapjack.Compiler.Backend.StackLang.Prog
+module
+
+public import Flapjack.Compiler.Backend.StackProps
+public import Flapjack.Compiler.Backend.StackLang
+public import Flapjack.Compiler.Backend.StackLang.Prog
+public meta import Flapjack.Compiler.Encoders.Asm
+public meta import Flapjack.Compiler.Backend.StackProps
+public import Flapjack.Compiler.Encoders.Asm
+import all Flapjack.Compiler.Encoders.Asm
+import all Init.Data.Sum.Basic
+
+@[expose] public section
+
 
 /-!
 Kernel-checked parity guards for the assembler configuration validity
@@ -26,11 +36,11 @@ open Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.StackLang (HolProg)
 open Flapjack.Compiler.Backend.StackProps
 
-private abbrev W := BitVec 8
+abbrev W := BitVec 8
 
-private def w8 (n : Nat) : BitVec 8 := BitVec.ofNat 8 n
+def w8 (n : Nat) : BitVec 8 := BitVec.ofNat 8 n
 
-private def asmConfig8 : AsmConfig 8 :=
+def asmConfig8 : AsmConfig 8 :=
   { isa := .riscv
     encode := fun _ => []
     bigEndian := false
@@ -48,68 +58,68 @@ private def asmConfig8 : AsmConfig 8 :=
     cjumpOffset := (w8 0, w8 100)
     locOffset := (w8 0, w8 100) }
 
-private def aligned0 : Bool := asmAligned 0 (w8 8)
-private def aligned2 : Bool := asmAligned 2 (w8 8)
-private def unaligned2 : Bool := asmAligned 2 (w8 10)
-private def regOk2 : Bool := asmRegOk asmConfig8 2
-private def regOk3 : Bool := asmRegOk asmConfig8 3
-private def regOk8 : Bool := asmRegOk asmConfig8 8
-private def fpRegOk3 : Bool := asmFpRegOk asmConfig8 3
-private def fpRegOk4 : Bool := asmFpRegOk asmConfig8 4
-private def regImmReg : Bool :=
+def aligned0 : Bool := asmAligned 0 (w8 8)
+def aligned2 : Bool := asmAligned 2 (w8 8)
+def unaligned2 : Bool := asmAligned 2 (w8 10)
+def regOk2 : Bool := asmRegOk asmConfig8 2
+def regOk3 : Bool := asmRegOk asmConfig8 3
+def regOk8 : Bool := asmRegOk asmConfig8 8
+def fpRegOk3 : Bool := asmFpRegOk asmConfig8 3
+def fpRegOk4 : Bool := asmFpRegOk asmConfig8 4
+def regImmReg : Bool :=
   asmRegImmOk asmConfig8 (.inl .add) (.reg 2)
-private def regImmXorMinus1 : Bool :=
+def regImmXorMinus1 : Bool :=
   asmRegImmOk asmConfig8 (.inl .xor) (.imm (w8 255))
-private def regImmXorOther : Bool :=
+def regImmXorOther : Bool :=
   asmRegImmOk asmConfig8 (.inl .xor) (.imm (w8 5))
-private def arithBinopOk : Bool :=
+def arithBinopOk : Bool :=
   asmArithOk asmConfig8 (.binop .add 2 2 (.imm (w8 1)))
-private def arithBinopTwoRegBad : Bool :=
+def arithBinopTwoRegBad : Bool :=
   asmArithOk asmConfig8 (.binop .add 2 1 (.imm (w8 1)))
-private def arithShiftOk : Bool :=
+def arithShiftOk : Bool :=
   asmArithOk asmConfig8 (.shift .lsl 2 2 (.imm (w8 3)))
-private def arithShiftWidth : Bool :=
+def arithShiftWidth : Bool :=
   asmArithOk asmConfig8 (.shift .lsl 2 2 (.imm (w8 8)))
-private def arithDivOk : Bool := asmArithOk asmConfig8 (.div 1 2 3)
-private def arithAddCarryOk : Bool :=
+def arithDivOk : Bool := asmArithOk asmConfig8 (.div 1 2 3)
+def arithAddCarryOk : Bool :=
   asmArithOk asmConfig8 (.addCarry 1 2 3 4)
-private def arithAddCarryBad : Bool :=
+def arithAddCarryBad : Bool :=
   asmArithOk asmConfig8 (.addCarry 1 2 1 4)
-private def arithLongDivBad : Bool :=
+def arithLongDivBad : Bool :=
   asmArithOk asmConfig8 (.longDiv 0 2 2 0 3)
-private def fpLessOk : Bool := asmFpOk asmConfig8 (.fpLess 1 2 3)
-private def fpFmaBad : Bool := asmFpOk asmConfig8 (.fpFma 1 2 3)
-private def fpAbsTwoReg : Bool := asmFpOk asmConfig8 (.fpAbs 2 2)
-private def cmpOk : Bool := asmCmpOk asmConfig8 .equal 2 (.imm (w8 1))
-private def addrOffsetOk : Bool := asmAddrOffsetOk asmConfig8 (w8 8)
-private def hwOffsetOk : Bool := asmHwOffsetOk asmConfig8 (w8 8)
-private def byteOffsetOk : Bool := asmByteOffsetOk asmConfig8 (w8 101)
-private def jumpOffsetOk : Bool := asmJumpOffsetOk asmConfig8 (w8 200)
-private def jumpOffsetUnaligned : Bool := asmJumpOffsetOk asmConfig8 (w8 3)
-private def instConstOk : Bool := asmInstOk asmConfig8 (.const 2 (w8 0))
-private def instArithOk : Bool := asmInstOk asmConfig8 (.arith (.div 1 2 3))
-private def instFpOk : Bool := asmInstOk asmConfig8 (.fp (.fpLess 1 2 3))
-private def instMemLoadOk : Bool :=
+def fpLessOk : Bool := asmFpOk asmConfig8 (.fpLess 1 2 3)
+def fpFmaBad : Bool := asmFpOk asmConfig8 (.fpFma 1 2 3)
+def fpAbsTwoReg : Bool := asmFpOk asmConfig8 (.fpAbs 2 2)
+def cmpOk : Bool := asmCmpOk asmConfig8 .equal 2 (.imm (w8 1))
+def addrOffsetOk : Bool := asmAddrOffsetOk asmConfig8 (w8 8)
+def hwOffsetOk : Bool := asmHwOffsetOk asmConfig8 (w8 8)
+def byteOffsetOk : Bool := asmByteOffsetOk asmConfig8 (w8 101)
+def jumpOffsetOk : Bool := asmJumpOffsetOk asmConfig8 (w8 200)
+def jumpOffsetUnaligned : Bool := asmJumpOffsetOk asmConfig8 (w8 3)
+def instConstOk : Bool := asmInstOk asmConfig8 (.const 2 (w8 0))
+def instArithOk : Bool := asmInstOk asmConfig8 (.arith (.div 1 2 3))
+def instFpOk : Bool := asmInstOk asmConfig8 (.fp (.fpLess 1 2 3))
+def instMemLoadOk : Bool :=
   asmInstOk asmConfig8 (.mem .load 2 (.addr 2 (w8 8)))
-private def instMemHwOk : Bool :=
+def instMemHwOk : Bool :=
   asmInstOk asmConfig8 (.mem .load16 2 (.addr 2 (w8 8)))
-private def instMemByteOk : Bool :=
+def instMemByteOk : Bool :=
   asmInstOk asmConfig8 (.mem .load8 2 (.addr 2 (w8 8)))
-private def stackAddrLoad : Bool := asmAddrOk asmConfig8 .load (.addr 2 (w8 8))
-private def stackAddrHw : Bool := asmAddrOk asmConfig8 .load16 (.addr 2 (w8 8))
-private def stackAddrByte : Bool := asmAddrOk asmConfig8 .store8 (.addr 2 (w8 8))
-private def signedHighLeZero : Bool := decide ((w8 128).toInt ≤ (w8 0).toInt)
-private def unsignedHighLeZero : Bool := decide ((w8 128) < (w8 0))
-private def signedOffsetBounds : Bool := asmOffsetOk 0 (w8 0, w8 255) (w8 200)
+def stackAddrLoad : Bool := asmAddrOk asmConfig8 .load (.addr 2 (w8 8))
+def stackAddrHw : Bool := asmAddrOk asmConfig8 .load16 (.addr 2 (w8 8))
+def stackAddrByte : Bool := asmAddrOk asmConfig8 .store8 (.addr 2 (w8 8))
+def signedHighLeZero : Bool := decide ((w8 128).toInt ≤ (w8 0).toInt)
+def unsignedHighLeZero : Bool := decide ((w8 128) < (w8 0))
+def signedOffsetBounds : Bool := asmOffsetOk 0 (w8 0, w8 255) (w8 200)
 
-private def asmOkInstConst : Bool := asmOk asmConfig8 (.inst (.const 2 (w8 0)))
-private def asmOkJump : Bool := asmOk asmConfig8 (.jump (w8 100))
-private def asmOkJumpCmp : Bool := asmOk asmConfig8 (.jumpCmp .equal 1 (.reg 2) (w8 100))
-private def asmOkCallNone : Bool := asmOk asmConfig8 (.call (w8 100))
-private def asmOkJumpReg : Bool := asmOk asmConfig8 (.jumpReg 3)
-private def asmOkLoc : Bool := asmOk asmConfig8 (.loc 1 (w8 100))
+def asmOkInstConst : Bool := asmOk asmConfig8 (.inst (.const 2 (w8 0)))
+def asmOkJump : Bool := asmOk asmConfig8 (.jump (w8 100))
+def asmOkJumpCmp : Bool := asmOk asmConfig8 (.jumpCmp .equal 1 (.reg 2) (w8 100))
+def asmOkCallNone : Bool := asmOk asmConfig8 (.call (w8 100))
+def asmOkJumpReg : Bool := asmOk asmConfig8 (.jumpReg 3)
+def asmOkLoc : Bool := asmOk asmConfig8 (.loc 1 (w8 100))
 
-private def asmConfigGuard : Bool :=
+def asmConfigGuard : Bool :=
   aligned0 == true && aligned2 == true && unaligned2 == false &&
   regOk2 == true && regOk3 == false && regOk8 == false &&
   fpRegOk3 == true && fpRegOk4 == false &&
@@ -188,39 +198,39 @@ Parity for the width-indexed exact carriers in
 `inst` constructors at the numeral word type `64`; the guards below read the
 Lean mirror at `width = 64`. -/
 
-private def w64 (n : Nat) : BitVec 64 := BitVec.ofNat 64 n
+def w64 (n : Nat) : BitVec 64 := BitVec.ofNat 64 n
 
-private def regImmTag {width : Nat} [NeZero width] : HolRegImm width → Nat
+def regImmTag {width : Nat} [NeZero width] : HolRegImm width → Nat
   | .reg name => name
   | .imm value => value.toNat
 
-private def addrBase {width : Nat} [NeZero width] : HolAddr width → Nat
+def addrBase {width : Nat} [NeZero width] : HolAddr width → Nat
   | .addr base _ => base
 
-private def addrOff {width : Nat} [NeZero width] : HolAddr width → Nat
+def addrOff {width : Nat} [NeZero width] : HolAddr width → Nat
   | .addr _ offset => offset.toNat
 
-private def instSkip {width : Nat} [NeZero width] : HolInst width → Nat
+def instSkip {width : Nat} [NeZero width] : HolInst width → Nat
   | .skip => 1
   | _ => 0
 
-private def instConstReg {width : Nat} [NeZero width] : HolInst width → Nat
+def instConstReg {width : Nat} [NeZero width] : HolInst width → Nat
   | .const register _ => register
   | _ => 0
 
-private def instConstVal {width : Nat} [NeZero width] : HolInst width → Nat
+def instConstVal {width : Nat} [NeZero width] : HolInst width → Nat
   | .const _ value => value.toNat
   | _ => 0
 
-private def instMemReg {width : Nat} [NeZero width] : HolInst width → Nat
+def instMemReg {width : Nat} [NeZero width] : HolInst width → Nat
   | .mem _ register _ => register
   | _ => 0
 
-private def instMemBase {width : Nat} [NeZero width] : HolInst width → Nat
+def instMemBase {width : Nat} [NeZero width] : HolInst width → Nat
   | .mem _ _ address => addrBase address
   | _ => 0
 
-private def asmFragmentGuard : Bool :=
+def asmFragmentGuard : Bool :=
   regImmTag (.reg 3 : HolRegImm 64) == 3 &&
   regImmTag (.imm (w64 5) : HolRegImm 64) == 5 &&
   addrBase (.addr 3 (w64 5) : HolAddr 64) == 3 &&
@@ -253,14 +263,14 @@ The oracle rows `ab_*`/`ac_*`/`am_*`/`aa_*`/`af_*`/`as_*` read the HOL
 the Lean mirrors: the monomorphic aliases `HolBinop`/`HolCmp`/`HolMemop`/
 `HolFp` and the width-indexed `HolArith 64`/`HolAsm 64`. -/
 
-private def binopTag : HolBinop → Nat
+def binopTag : HolBinop → Nat
   | .add => 1
   | .sub => 2
   | .and => 3
   | .or => 4
   | .xor => 5
 
-private def cmpTag : HolCmp → Nat
+def cmpTag : HolCmp → Nat
   | .equal => 0
   | .lower => 1
   | .less => 2
@@ -270,7 +280,7 @@ private def cmpTag : HolCmp → Nat
   | .notLess => 6
   | .notTest => 7
 
-private def memopTag : HolMemop → Nat
+def memopTag : HolMemop → Nat
   | .load => 0
   | .load8 => 1
   | .load16 => 2
@@ -280,39 +290,39 @@ private def memopTag : HolMemop → Nat
   | .store16 => 6
   | .store32 => 7
 
-private def arithDivSum {width : Nat} [NeZero width] : HolArith width → Nat
+def arithDivSum {width : Nat} [NeZero width] : HolArith width → Nat
   | .div a b c => a + b + c
   | _ => 0
 
-private def arithLongDivSum {width : Nat} [NeZero width] : HolArith width → Nat
+def arithLongDivSum {width : Nat} [NeZero width] : HolArith width → Nat
   | .longDiv a b c d e => a + b + c + d + e
   | _ => 0
 
-private def fpMovToRegSum : HolFp → Nat
+def fpMovToRegSum : HolFp → Nat
   | .fpMovToReg a b c => a + b + c
   | _ => 0
 
-private def fpFromIntSum : HolFp → Nat
+def fpFromIntSum : HolFp → Nat
   | .fpFromInt a b => a + b
   | _ => 0
 
-private def asmJumpTarget {width : Nat} [NeZero width] : HolAsm width → Nat
+def asmJumpTarget {width : Nat} [NeZero width] : HolAsm width → Nat
   | .jump target => target.toNat
   | _ => 0
 
-private def asmJumpCmpReg {width : Nat} [NeZero width] : HolAsm width → Nat
+def asmJumpCmpReg {width : Nat} [NeZero width] : HolAsm width → Nat
   | .jumpCmp _ register _ _ => register
   | _ => 0
 
-private def asmJumpRegTarget {width : Nat} [NeZero width] : HolAsm width → Nat
+def asmJumpRegTarget {width : Nat} [NeZero width] : HolAsm width → Nat
   | .jumpReg register => register
   | _ => 0
 
-private def asmLocSum {width : Nat} [NeZero width] : HolAsm width → Nat
+def asmLocSum {width : Nat} [NeZero width] : HolAsm width → Nat
   | .loc register offset => register + offset.toNat
   | _ => 0
 
-private def asmSyntaxGuard : Bool :=
+def asmSyntaxGuard : Bool :=
   binopTag .add == 1 &&
   cmpTag .notTest == 7 &&
   memopTag .store32 == 7 &&
@@ -339,68 +349,68 @@ example : (HolProg 64) = Flapjack.Compiler.Backend.StackLang.Prog (HolInst 64)
 `64 stackLang$prog` FFI field (`mlstring`) and representative constructor
 shapes.  The rows below reproduce every oracle line with `HolProg 64`. -/
 
-private abbrev P64 := HolProg 64
+abbrev P64 := HolProg 64
 
-private def pSkip : P64 := Flapjack.Compiler.Backend.StackLang.Prog.skip
+def pSkip : P64 := Flapjack.Compiler.Backend.StackLang.Prog.skip
 
-private def pSeq (first second : P64) : P64 :=
+def pSeq (first second : P64) : P64 :=
   Flapjack.Compiler.Backend.StackLang.Prog.seq first second
 
-private def pInst (instruction : HolInst 64) : P64 :=
+def pInst (instruction : HolInst 64) : P64 :=
   Flapjack.Compiler.Backend.StackLang.Prog.inst instruction
 
-private def pGet (destination : Nat) (store : Flapjack.Compiler.Backend.StackLang.StoreName) : P64 :=
+def pGet (destination : Nat) (store : Flapjack.Compiler.Backend.StackLang.StoreName) : P64 :=
   Flapjack.Compiler.Backend.StackLang.Prog.get destination store
 
-private def pStackAlloc (words : Nat) : P64 :=
+def pStackAlloc (words : Nat) : P64 :=
   Flapjack.Compiler.Backend.StackLang.Prog.stackAlloc words
 
-private def pShMem (operator : HolMemop) (register : Nat) (address : HolAddr 64) : P64 :=
+def pShMem (operator : HolMemop) (register : Nat) (address : HolAddr 64) : P64 :=
   Flapjack.Compiler.Backend.StackLang.Prog.shMemOp operator register address
 
-private def pFfi (function : Flapjack.Basis.Pure.MlString.MlString)
+def pFfi (function : Flapjack.Basis.Pure.MlString.MlString)
     (configuration configurationLength array arrayLength returnAddress : Nat) : P64 :=
   Flapjack.Compiler.Backend.StackLang.Prog.ffi function configuration configurationLength
     array arrayLength returnAddress
 
-private def c8 (n : Nat) : Flapjack.Basis.Pure.MlString.HolChar := BitVec.ofNat 8 n
+def c8 (n : Nat) : Flapjack.Basis.Pure.MlString.HolChar := BitVec.ofNat 8 n
 
-private def progInstTag : Nat :=
+def progInstTag : Nat :=
   match pInst (.const 3 (w64 5)) with
   | .inst (.const r v) => r + v.toNat
   | _ => 0
 
-private def progGetTag : Nat :=
+def progGetTag : Nat :=
   match pGet 7 (.temp 3) with
   | .get n _ => n
   | _ => 0
 
-private def progAllocTag : Nat :=
+def progAllocTag : Nat :=
   match pStackAlloc 4 with
   | .stackAlloc n => n
   | _ => 0
 
-private def progShMemTag : Nat :=
+def progShMemTag : Nat :=
   match pShMem (.load) 3 (.addr 4 (w64 5)) with
   | .shMemOp _ r (.addr b off) => r + b + off.toNat
   | _ => 0
 
-private def progFfiLen : Nat :=
+def progFfiLen : Nat :=
   match pFfi (Flapjack.Basis.Pure.MlString.MlString.implode [c8 65, c8 66]) 1 2 3 4 5 with
   | .ffi s _ _ _ _ _ => s.explode.length
   | _ => 0
 
-private def progSkipSeq : Bool :=
+def progSkipSeq : Bool :=
   match pSeq pSkip pSkip with
   | .seq .skip .skip => true
   | _ => false
 
-private def progFfiExplode : List Flapjack.Basis.Pure.MlString.HolChar :=
+def progFfiExplode : List Flapjack.Basis.Pure.MlString.HolChar :=
   match pFfi (Flapjack.Basis.Pure.MlString.MlString.implode [c8 65, c8 66]) 1 2 3 4 5 with
   | .ffi s _ _ _ _ _ => s.explode
   | _ => []
 
-private def progCarrierGuard : Bool :=
+def progCarrierGuard : Bool :=
   progSkipSeq &&
   progInstTag == 8 && progGetTag == 7 && progAllocTag == 4 &&
   progShMemTag == 12 && progFfiLen == 2 &&
@@ -410,7 +420,7 @@ private def progCarrierGuard : Bool :=
 
 /-- The exact `is_load` port: the four loads are `true`, the four stores
     `false`, matching HOL `asmScript$is_load_def`. -/
-private def asmIsLoadGuard : Bool :=
+def asmIsLoadGuard : Bool :=
   asmIsLoad .load && asmIsLoad .load8 && asmIsLoad .load16 && asmIsLoad .load32 &&
   !asmIsLoad .store && !asmIsLoad .store8 && !asmIsLoad .store16 && !asmIsLoad .store32
 

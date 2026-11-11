@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.StackProps.AllocationConstants
+module
+
+public import Flapjack.Compiler.Backend.StackProps.AllocationConstants
+
+import all Flapjack.Compiler.Backend.StackProps.AllocationConstants
+
+@[expose] public section
 
 /-! Actual operation regressions paired with the full original 47-row
 StackProps allocation-constants source probe. Generic untouched state fields

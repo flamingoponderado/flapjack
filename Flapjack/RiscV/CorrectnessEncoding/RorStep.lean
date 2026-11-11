@@ -173,23 +173,6 @@ theorem ror_step_ok (i : instruction) (kind : RorInstruction i)
     ⟨fields.1, fields.2.1, fields.2.2.1, fields.2.2.2.1,
       aligned_add_four _ fields.2.2.2.2⟩
 
-private theorem gpr_projection_eq (d : BitVec 64 → Prop) (ms ns : riscv_state)
-    (r : BitVec 5) (h : riscvProj d ms = riscvProj d ns) : GPR r ms = GPR r ns := by
-  simp only [riscvProj, Prod.mk.injEq] at h
-  simp [GPR, gpr, h.2.2.2.2.1]
-
-private theorem write_gpr_projection_eq (d : BitVec 64 → Prop)
-    (ms ns : riscv_state) (r : BitVec 5) (v : BitVec 64)
-    (h : riscvProj d ms = riscvProj d ns) :
-    riscvProj d («write'GPR» (v,r) ms) = riscvProj d («write'GPR» (v,r) ns) := by
-  by_cases zero : r = 0#5
-  · subst r
-    simpa [«write'GPR»] using h
-  · simp only [riscvProj, Prod.mk.injEq] at h
-    simpa [riscvProj, «write'GPR», «write'gpr», holUpdate, zero] using
-      ⟨h.1,h.2.1,h.2.2.1,h.2.2.2.1,
-        congrArg (holUpdate r v) h.2.2.2.2.1,h.2.2.2.2.2.1,h.2.2.2.2.2.2⟩
-
 /-- Full original Run projection congruence, including every scratch GPR. -/
 theorem ror_run_projection_eq (d : BitVec 64 → Prop) (i : instruction)
     (kind : RorInstruction i) (ms ns : riscv_state)

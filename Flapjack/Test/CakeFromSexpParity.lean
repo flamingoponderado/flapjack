@@ -1,5 +1,15 @@
-import Flapjack.CakeParser.FromSexp.Ast
-import Flapjack.CakeParser.ToSexp
+module
+
+public import Flapjack.CakeParser.FromSexp.Ast
+public import Flapjack.CakeParser.ToSexp
+
+import all Flapjack.CakeParser.FromSexp.Ast
+import all Flapjack.CakeParser.ToSexp
+public meta import Flapjack.CakeParser.FromSexp
+public meta import Flapjack.CakeParser.FromSexp.Encode
+public meta import Flapjack.CakeParser.FromSexp.Operators
+
+@[expose] public section
 
 /-! Finite observations from `cake_from_sexp_probe.out`. -/
 namespace Flapjack.Test.CakeFromSexpParity

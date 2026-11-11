@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+
+import all Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+
+@[expose] public section
 
 /-! Original evaluator observations from bvi_sem_state_probe.out. -/
 namespace Flapjack.Compiler.Backend.BviSem

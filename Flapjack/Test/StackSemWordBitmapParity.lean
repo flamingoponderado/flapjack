@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
+
+import all Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
+
+@[expose] public section
 /- Original HOL results captured in scripts/hol-probes/stacksem_word_bitmap_probe.out.
    Eleven kernel-reduced rows cover zero, terminal/trailing, bit order,
    missing continuation, continuation concatenation, and positive width one.

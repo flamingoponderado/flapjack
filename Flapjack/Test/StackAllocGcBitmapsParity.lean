@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcBitmaps
+module
+
+public import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcBitmaps
+
+import all Flapjack.Compiler.Backend.StackAlloc.Proofs.GcBitmaps
+
+@[expose] public section
 
 /-!
 # `stack_allocProof` GC bitmap definitions: original-oracle rows

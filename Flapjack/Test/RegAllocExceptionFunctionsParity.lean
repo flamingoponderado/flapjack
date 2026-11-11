@@ -1,5 +1,12 @@
-import Flapjack.Compiler.Backend.RegAlloc.ExceptionFunctions
-import Flapjack.Compiler.Backend.RegAlloc.Accessors
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ExceptionFunctions
+public import Flapjack.Compiler.Backend.RegAlloc.Accessors
+
+import all Flapjack.Compiler.Backend.RegAlloc.ExceptionFunctions
+import all Flapjack.Compiler.Backend.RegAlloc.Accessors
+
+@[expose] public section
 namespace Flapjack.Test.RegAllocExceptionFunctionsParity
 open Flapjack Flapjack.RegAlloc Flapjack.Translator.Monadic.MonadBase
 

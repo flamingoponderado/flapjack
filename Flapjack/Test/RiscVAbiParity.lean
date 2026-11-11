@@ -1,4 +1,11 @@
-import Flapjack.RiscV.PipelineDiagnostics
+module
+
+public import Flapjack.RiscV.PipelineDiagnostics
+
+import all Flapjack.RiscV.PipelineDiagnostics
+public meta import Flapjack.RiscV.RegisterMap
+
+@[expose] public section
 
 /-!
 # CakeML RISC-V calling-convention parity

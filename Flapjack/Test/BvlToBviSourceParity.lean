@@ -1,5 +1,23 @@
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ProgramAgreement
-import Flapjack.Compiler.Backend.BvlToBvi.Incremental
+module
+
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ProgramAgreement
+public import Flapjack.Compiler.Backend.BvlToBvi.Incremental
+
+import all Flapjack.Compiler.Backend.BvlToBvi.Proofs.ProgramAgreement
+import all Flapjack.Compiler.Backend.BvlToBvi.Incremental
+public meta import Flapjack.Compiler.Backend.Bvi.Syntax
+public meta import Flapjack.Compiler.Backend.Bvl.Syntax
+public meta import Flapjack.Misc.Sptree
+public meta import Flapjack.Compiler.Backend.BvlToBvi.Config
+public meta import Flapjack.Compiler.Backend.BviInline
+public meta import Flapjack.Compiler.Backend.BvlInline
+public meta import Flapjack.Compiler.Backend.BvlToBvi.Compile
+public meta import Flapjack.Compiler.Backend.BviTailrec.Rewrite
+public meta import Flapjack.Compiler.Backend.BviTmc
+public meta import Flapjack.Misc.AppList
+public meta import Flapjack.Compiler.Backend.BvlToBvi.SourceSing
+
+@[expose] public section
 
 /-! Replays the typed HOL auxiliary-tree observations. -/
 open Flapjack Flapjack.Compiler.Backend.BvlToBvi

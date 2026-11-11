@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.RemoveDead
+module
+
+public import Flapjack.Compiler.Backend.WordAlloc.Proofs.RemoveDead
+
+import all Flapjack.Compiler.Backend.WordAlloc.Proofs.RemoveDead
+
+@[expose] public section
 namespace Flapjack.Test.WordAllocRemoveDeadParity
 open Flapjack Flapjack.WordAlloc
 

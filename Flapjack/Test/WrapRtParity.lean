@@ -1,4 +1,11 @@
-import Flapjack.Pancake.PanToCrep
+module
+
+public import Flapjack.Pancake.PanToCrep
+
+import all Flapjack.Pancake.PanToCrep
+public meta import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 
 /-!
 # Original-domain parity for `pan_to_crep$wrap_rt`

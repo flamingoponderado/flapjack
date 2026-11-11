@@ -1,7 +1,19 @@
-import Flapjack.Pancake.Semantics.CrepSem
-import Flapjack.Pancake.Semantics.CrepSem.Eval
-import Flapjack.Pancake.Semantics.CrepProps
-import Flapjack.Pancake.Proofs.CrepInline
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem
+public import Flapjack.Pancake.Semantics.CrepSem.Eval
+public import Flapjack.Pancake.Semantics.CrepProps
+public import Flapjack.Pancake.Proofs.CrepInline
+
+import all Flapjack.Pancake.Semantics.CrepSem
+import all Flapjack.Pancake.Semantics.CrepSem.Eval
+import all Flapjack.Pancake.Semantics.CrepProps
+import all Flapjack.Pancake.Proofs.CrepInline
+public meta import Flapjack.PanValues
+public meta import Flapjack.RiscV.Model
+public meta import Flapjack.RiscV.PanMemory
+
+@[expose] public section
 
 /-!
 Direct runtime checks against `scripts/hol-probes/crep_eval_probe.out` and

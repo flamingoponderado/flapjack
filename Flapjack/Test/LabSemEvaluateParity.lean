@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.LabSem.Evaluate
+module
+
+public import Flapjack.Compiler.Backend.LabSem.Evaluate
+
+import all Flapjack.Compiler.Backend.LabSem.Evaluate
+
+@[expose] public section
 
 /-! Whole native executions paired with original labSem evaluate_def.
 The source state is arbitrary outside fields fixed by each original probe. -/

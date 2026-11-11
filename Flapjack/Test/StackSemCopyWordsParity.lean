@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
+
+import all Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
+
+@[expose] public section
 
 /-! Kernel replay of all four direct original HOL `copy_words_def` observations.
 Source: `cakeml/compiler/backend/semantics/stackSemScript.sml:711-722`; fixture
@@ -8,7 +14,7 @@ open StackSemStoreConsts
 
 /-- Project a successful outer-copy result onto the final address and the memory
 cells at the listed addresses, matching the HOL probe's observed tuple. -/
-private def project {width : Nat} [NeZero width] (addrs : List (BitVec width))
+def project {width : Nat} [NeZero width] (addrs : List (BitVec width))
     (r : Option (BitVec width × (BitVec width → WordLocW width))) :
     Option (BitVec width × List (WordLocW width)) :=
   match r with

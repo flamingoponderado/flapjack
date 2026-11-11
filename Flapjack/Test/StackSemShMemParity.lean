@@ -1,4 +1,14 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.ShMem
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.ShMem
+
+import all Flapjack.Compiler.Backend.Semantics.StackSem.ShMem
+public meta import Flapjack.Compiler.Backend.ClosAnnotate.Shift
+public meta import Flapjack.Compiler.Backend.Semantics.DataSem.State
+public meta import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+public meta import Flapjack.Pancake.Semantics.PanSem.ShMemExact
+
+@[expose] public section
 
 /-!
 Direct HOL oracle rows for the exact stackSem shared-memory helpers
@@ -16,16 +26,16 @@ namespace Flapjack.Test.StackSemShMemParity
 open Flapjack
 open Flapjack.StackSemShMem
 
-private abbrev W := WordLocW 64
+abbrev W := WordLocW 64
 
-private def incFfi : HolFfiState Nat :=
+def incFfi : HolFfiState Nat :=
   { oracle := fun _ st _ bytes => .ret (st + 1) (bytes.map (· + 1)), ffiState := 0,
     ioEvents := [] }
 
-private def divFfi : HolFfiState Nat :=
+def divFfi : HolFfiState Nat :=
   { oracle := fun _ _ _ _ => .final .diverged, ffiState := 0, ioEvents := [] }
 
-private def s0 : StackSemStateFiniteExact 64 Unit Nat where
+def s0 : StackSemStateFiniteExact 64 Unit Nat where
   regs := ((HolFiniteMapExact.empty : HolFiniteMapExact Nat W).updateEq
     (3, .word 0x1122)).updateEq (4, .loc 1 0)
   fpRegs := HolFiniteMapExact.empty
@@ -52,32 +62,32 @@ private def s0 : StackSemStateFiniteExact 64 Unit Nat where
 
 /-- The observed result: `none`, `SOME Error`, or `SOME (FinalFFI (Final_event
     name conf bytes outcome))`. -/
-private inductive Res where
+inductive Res where
   | none
   | error
   | final (name : HolFfiName) (conf bytes : List (BitVec 8)) (outcome : HolFfiOutcome)
   | other
   deriving DecidableEq
 
-private def resView : Option (StackSemResult 64) → Res
+def resView : Option (StackSemResult 64) → Res
   | none => .none
   | some .error => .error
   | some (.finalFFI e) => .final e.name e.configuration e.bytes e.outcome
   | some _ => .other
 
-private def proj (r : Option (StackSemResult 64) × StackSemStateFiniteExact 64 Unit Nat) :
+def proj (r : Option (StackSemResult 64) × StackSemStateFiniteExact 64 Unit Nat) :
     Res × Nat × List HolIoEvent × Option W × Option W × Option W × Nat :=
   (resView r.1, r.2.ffi.ffiState, r.2.ffi.ioEvents,
    r.2.regs.lookup 3, r.2.regs.lookup 4, r.2.regs.lookup 5, r.2.stack.length)
 
-private def ev (op : HolShmemOp) (conf : BitVec 8) (bytes : List (BitVec 8)) : HolIoEvent :=
+def ev (op : HolShmemOp) (conf : BitVec 8) (bytes : List (BitVec 8)) : HolIoEvent :=
   { name := .sharedMem op, configuration := [conf], bytes := bytes.zip (bytes.map (· + 1)) }
 
-private def z (n : Nat) : List (BitVec 8) := List.replicate n 0
+def z (n : Nat) : List (BitVec 8) := List.replicate n 0
 
-private def r3 : Option W := some (.word 4386)
-private def r4 : Option W := some (.loc 1 0)
-private def miss : Res × Nat × List HolIoEvent × Option W × Option W × Option W × Nat :=
+def r3 : Option W := some (.word 4386)
+def r4 : Option W := some (.loc 1 0)
+def miss : Res × Nat × List HolIoEvent × Option W × Option W × Option W × Nat :=
   (.error, 0, [], r3, r4, none, 0)
 
 /-- All 15 rows of the probe output, in order. -/

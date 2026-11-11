@@ -1,0 +1,4 @@
+push_env_clock_typed=∀(env :v sptree$num_map) (b :bool) (s :(α, β) state). (push_env env b s).clock = s.clock
+pop_env_clock_typed=∀(s :(α, β) state) (s1 :(α, β) state). pop_env s = SOME s1 ⇒ s1.clock = s.clock
+do_stack_clock_typed=(do_stack (op :closLang$op) (args :v list) (s1 :(α, β) state)).clock = s1.clock
+vb_size_def_typed=(∀(ts :num) (t :num) (ls :v list). vb_size (Block ts t ls :v) = (1 :num) + t + (SUM (MAP (λ(a :v). vb_size a) ls) :num) + LENGTH ls) ∧ (∀(v :int). vb_size (Number v :v) = (1 :num)) ∧ (∀(v1 :word64). vb_size (Word64 v1 :v) = (1 :num)) ∧ (∀(v5 :num). vb_size (CodePtr v5 :v) = (1 :num)) ∧ ∀(v7 :num) (v6 :bool). vb_size (RefPtr v6 v7 :v) = (1 :num)

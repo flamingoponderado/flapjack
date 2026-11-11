@@ -1,5 +1,12 @@
-import Flapjack.PanValueFfiClockSemantics
-import Flapjack.Test.PanValueMemoryFfi
+module
+
+public import Flapjack.PanValueFfiClockSemantics
+public import Flapjack.Test.PanValueMemoryFfi
+
+import all Flapjack.PanValueFfiClockSemantics
+import all Flapjack.Test.PanValueMemoryFfi
+
+@[expose] public section
 
 /-! The clocked source evaluator must retain the accelerator-style memory FFI
     boundary.  This is the same memory-mutating handler that stepped-flapjack

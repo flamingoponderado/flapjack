@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.WordRemove
+module
+
+public import Flapjack.Compiler.Backend.WordRemove
+
+import all Flapjack.Compiler.Backend.WordRemove
+
+@[expose] public section
 
 /-!
 # `word_remove$remove_must_terminate` original-oracle rows

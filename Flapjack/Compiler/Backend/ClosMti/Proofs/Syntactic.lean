@@ -47,33 +47,16 @@ theorem collectApps_noLabels (maxApp : Nat) (args : List Exp) (expression : Exp)
     (premises : collectApps maxApp args expression = (collected, head) ∧
       (∀ e ∈ args, noLabels e) ∧ noLabels expression) :
     (∀ e ∈ collected, noLabels e) ∧ noLabels head := by
-  obtain ⟨run, argsValid, valid⟩ := premises
-  cases expression with
-  | app trace location inner more =>
-    cases location with
-    | some location =>
-      simp only [collectApps, Prod.mk.injEq] at run
-      obtain ⟨rfl, rfl⟩ := run
-      exact ⟨argsValid, valid⟩
-    | none =>
-      simp only [collectApps] at run
-      split at run
-      · simp only [noLabels] at valid
-        have innerValid : noLabels inner := valid.1
-        have moreValid : ∀ e ∈ more, noLabels e := (noLabelsList_iff more).mp valid.2
-        have allValid : ∀ e ∈ args ++ more, noLabels e := by
-          intro e member
-          rcases List.mem_append.mp member with member | member
-          · exact argsValid e member
-          · exact moreValid e member
-        exact collectApps_noLabels maxApp (args ++ more) inner collected head ⟨run, allValid, innerValid⟩
-      · cases run
-        exact ⟨argsValid, valid⟩
-  | _ =>
-    simp only [collectApps, Prod.mk.injEq] at run
-    obtain ⟨rfl, rfl⟩ := run
-    exact ⟨argsValid, valid⟩
-termination_by sizeOf expression
+  revert collected head
+  fun_induction collectApps maxApp args expression <;> simp_all
+  case case1 =>
+    rename_i ih
+    intro collected head hr argsValid valid
+    simp only [noLabels] at valid
+    refine ih collected head hr (fun e member => ?_) valid.1
+    rcases member with h | h
+    · exact argsValid e h
+    · exact (noLabelsList_iff _).mp valid.2 e h
 
 /-- Flapjack projection form of `every_Fn_vs_NONE_collect_args`, used by the
 recursive traversal proof. -/

@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
+module
+
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
+
+import all Flapjack.Compiler.Backend.Semantics.ClosSem.Call
+
+@[expose] public section
 
 /-! Replay representative original closure applications from the pinned HOL
 probe; finite cases do not establish general evaluator correspondence. -/

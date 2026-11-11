@@ -1,5 +1,14 @@
-import Flapjack.Pancake.PanToCrep
-import Flapjack.Pancake.PanToCrep.ExpHdlExact
+module
+
+public import Flapjack.Pancake.PanToCrep
+public import Flapjack.Pancake.PanToCrep.ExpHdlExact
+
+import all Flapjack.Pancake.PanToCrep
+import all Flapjack.Pancake.PanToCrep.ExpHdlExact
+public meta import Flapjack.Basis.Pure.MlString
+public meta import Flapjack.Pancake.CrepLang.Prog
+
+@[expose] public section
 
 /-!
 # Carrier parity fixtures for `pan_to_crep$exp_hdl`
@@ -24,26 +33,26 @@ namespace Flapjack.Test.ExpHdlHOLParity
 
 open Flapjack
 
-private abbrev MlS := Flapjack.Pancake.PanLang.MlS
-private abbrev ShapeHOL := Flapjack.Pancake.PanLang.ShapeHOL
-private abbrev P64 := CrepProgHOL 64
+abbrev MlS := Flapjack.Pancake.PanLang.MlS
+abbrev ShapeHOL := Flapjack.Pancake.PanLang.ShapeHOL
+abbrev P64 := CrepProgHOL 64
 
-private def nm (s : String) : MlS := Flapjack.Basis.Pure.MlString.ofString s
+def nm (s : String) : MlS := Flapjack.Basis.Pure.MlString.ofString s
 
-private def keyX : MlS := nm "x"
+def keyX : MlS := nm "x"
 
-private def w5 (n : Nat) : BitVec 5 := BitVec.ofNat 5 n
+def w5 (n : Nat) : BitVec 5 := BitVec.ofNat 5 n
 
-private def knownFM : FiniteMap MlS (ShapeHOL × List Nat) :=
+def knownFM : FiniteMap MlS (ShapeHOL × List Nat) :=
   fun k => if k = keyX then some (.one, [3, 4]) else none
 
-private def threeWordFM : FiniteMap MlS (ShapeHOL × List Nat) :=
+def threeWordFM : FiniteMap MlS (ShapeHOL × List Nat) :=
   fun k => if k = keyX then some (.one, [3, 4, 5]) else none
 
-private def dupFM : FiniteMap MlS (ShapeHOL × List Nat) :=
+def dupFM : FiniteMap MlS (ShapeHOL × List Nat) :=
   fun k => if k = keyX then some (.one, [7]) else none
 
-private theorem knownSupport :
+theorem knownSupport :
     ∃ keys : List MlS, ∀ key, knownFM key ≠ none → key ∈ keys := by
   refine ⟨[keyX], ?_⟩
   intro key hk
@@ -51,39 +60,39 @@ private theorem knownSupport :
 
 /-- The exact finite-map carrier driving the tagged `expHdlExact`, built from
     the same lookup function as the raw `knownFM` with an explicit support. -/
-private def knownExact : HolFiniteMapExact MlS (ShapeHOL × List Nat) :=
+def knownExact : HolFiniteMapExact MlS (ShapeHOL × List Nat) :=
   ⟨knownFM, knownSupport⟩
 
-private def exactMissingRow : Bool :=
+def exactMissingRow : Bool :=
   match expHdlExact (width := 64) knownExact (nm "missing") with
   | .skip => true
   | _ => false
 
-private def exactKnownRow : Bool :=
+def exactKnownRow : Bool :=
   match expHdlExact (width := 64) knownExact keyX with
   | .seq (.assign 3 (.loadGlob a0)) (.seq (.assign 4 (.loadGlob a1)) .skip) =>
       a0.toNat == 0 && a1.toNat == 1
   | _ => false
 
-private def missingRow : Bool :=
+def missingRow : Bool :=
   match expHdlHOL (width := 64) knownFM (nm "missing") with
   | .skip => true
   | _ => false
 
-private def knownRow : Bool :=
+def knownRow : Bool :=
   match expHdlHOL (width := 64) knownFM keyX with
   | .seq (.assign 3 (.loadGlob a0)) (.seq (.assign 4 (.loadGlob a1)) .skip) =>
       a0.toNat == 0 && a1.toNat == 1
   | _ => false
 
-private def threeWordRow : Bool :=
+def threeWordRow : Bool :=
   match expHdlHOL (width := 64) threeWordFM keyX with
   | .seq (.assign 3 (.loadGlob a0))
       (.seq (.assign 4 (.loadGlob a1)) (.seq (.assign 5 (.loadGlob a2)) .skip)) =>
       a0.toNat == 0 && a1.toNat == 1 && a2.toNat == 2
   | _ => false
 
-private def dupRow (fm : FiniteMap MlS (ShapeHOL × List Nat)) : Bool :=
+def dupRow (fm : FiniteMap MlS (ShapeHOL × List Nat)) : Bool :=
   match expHdlHOL (width := 64) fm keyX with
   | .seq (.assign 7 (.loadGlob a0)) .skip => a0.toNat == 0
   | _ => false

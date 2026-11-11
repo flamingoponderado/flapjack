@@ -18,9 +18,12 @@ val _ = (print "compile_RANGE_statement="; print_term
   ``!n env tail live xs ys vs k.
     (bvi_to_data$compile n env tail live xs = (ys,vs,k)) ==>
       EVERY (\v. v < k) vs``; print "\n");
+val _ = show "compile_exp_def=" bvi_to_dataTheory.compile_exp_def;
 val _ = show "compile_exp_eq=" bvi_to_dataTheory.compile_exp_eq;
 val _ = show "compile_part=" bvi_to_dataTheory.compile_part_def;
 val _ = show "compile_prog=" bvi_to_dataTheory.compile_prog_def;
+val _ = show "i_assign=" bvi_to_dataTheory.iAssign_def;
+val _ = show "optimise=" bvi_to_dataTheory.optimise_def;
 val _ = show "code_rel=" bvi_to_dataProofTheory.code_rel_def;
 val _ = show "state_rel=" bvi_to_dataProofTheory.state_rel_def;
 val _ = show "compile_correct=" bvi_to_dataProofTheory.compile_correct;

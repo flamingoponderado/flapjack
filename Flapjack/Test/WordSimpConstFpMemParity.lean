@@ -1,4 +1,10 @@
-import Flapjack.RiscV.WordExpressionFlatten
+module
+
+public import Flapjack.RiscV.WordExpressionFlatten
+
+import all Flapjack.RiscV.WordExpressionFlatten
+
+@[expose] public section
 
 /-! Original HOL `const_fp` rows captured in
 `scripts/hol-probes/word_simp_const_fp_mem_probe.out`: through

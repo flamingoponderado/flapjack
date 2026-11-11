@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.Parmove.FstepDstep
+module
+
+public import Flapjack.Compiler.Backend.Parmove.FstepDstep
+
+import all Flapjack.Compiler.Backend.Parmove.FstepDstep
+public meta import Flapjack.Compiler.Backend.Parmove
+
+@[expose] public section
 
 namespace Flapjack.Test.ParmoveFstepParity
 open Flapjack.Compiler.Backend.Parmove

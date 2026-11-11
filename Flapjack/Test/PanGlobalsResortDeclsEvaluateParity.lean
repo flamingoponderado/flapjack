@@ -1,27 +1,13 @@
-/-
-Parity for the exact HOL `pan_globalsProof$resort_decls_evaluate` cluster
-(`cakeml/pancake/proofs/pan_globalsProofScript.sml:1854-1950`): the ports
-`evaluateDeclsOneFunLast`, `resortDeclsEvaluate`, and
-`resortDeclsEvaluateImp` over the reviewed finite-support carrier.
-
-There is no direct original-HOL `EVAL` oracle row for these *theorems*: the HOL
-statements quantify over an arbitrary state and declaration list, and the
-`scripts/hol-probes` harness records concrete evaluator values, not proof-engine
-theorem instances.  This module therefore replays each HOL statement
-kernel-checked against a concrete declaration list (`resortOrderGuard` shows
-`resort_decls` moving the `ExnDecl` before the `Decl` before the `Function`,
-and the `example`s apply the ported theorems to concrete lists), plus `#guard`
-rows that the concrete `evaluate_decls` results agree on both orderings.  No
-oracle row is fabricated.
--/
 module
 
 public import Flapjack.Pancake.Proofs.PanGlobals
 public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Test.Fixtures.PanGlobals
 
 -- Checks below run compiled code from these modules.
 public meta import Flapjack.Pancake.Proofs.PanGlobals
 public meta import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public meta import Flapjack.Test.Fixtures.PanGlobals
 @[expose] public section
 
 -- Public declarations below use private helpers.
@@ -33,35 +19,9 @@ namespace Flapjack.Test.PanGlobalsResortDeclsEvaluateParity
 open Flapjack
 open Flapjack.Pancake.PanLang
 open Flapjack.PanSemStateFiniteExact
+open Flapjack.Test.Fixtures.PanGlobals
 
-private abbrev Word8 := RiscV.Word 8
 
-abbrev ml (s : String) : MlS := Flapjack.Basis.Pure.MlString.ofString s
-
-private abbrev emptyValues : HolFiniteMapExact MlS (ValueHOL 8) :=
-  HolFiniteMapExact.empty
-
-private abbrev emptyShapes : HolFiniteMapExact MlS ShapeHOL :=
-  HolFiniteMapExact.empty
-
-private abbrev emptyCode :
-    HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL 8 × ShapeHOL) :=
-  HolFiniteMapExact.empty
-
-abbrev state0 : PanSemStateFiniteExact 8 Unit :=
-  { locals := emptyValues
-    globals := emptyValues
-    structs := []
-    code := emptyCode
-    eshapes := emptyShapes
-    memory := fun _ => .word 0
-    memaddrs := fun _ => False
-    shMemaddrs := fun _ => False
-    clock := 5
-    be := false
-    ffi := { oracle := fun _ _ _ _ => .final .failed, ffiState := (), ioEvents := [] }
-    baseAddr := 0
-    topAddr := 100 }
 
 abbrev functionDecl : FunDeclHOL 8 :=
   { name := ml "f"

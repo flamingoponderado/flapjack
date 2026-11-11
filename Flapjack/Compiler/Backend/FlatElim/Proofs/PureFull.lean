@@ -111,7 +111,9 @@ private theorem pureEvaluationSimulation_all {C F : Type} (env : FlatSem.Environ
 
 /-- Evaluation of pure, Eval-free expressions that initialize no reachable
 globals leaves the result state related to the unchanged target and returns
-only Eval-free values. The evaluator and carriers remain pending HOL review. -/
+only Eval-free values. The statement has been reviewed against the pinned HOL
+source; the evaluator and carrier renderings are recorded in
+docs/HOL-THEOREM-MAP.json. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "evaluate_flat_state_rel_lemma"]
 theorem evaluate_pure_flatStateRel {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (state : FlatSem.State C F) (expressions : List FlatLang.Exp) (next : FlatSem.State C F)

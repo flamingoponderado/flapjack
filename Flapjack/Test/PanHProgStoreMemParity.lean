@@ -1,5 +1,13 @@
-import Flapjack.PanHProgStoreMem
+module
 
+public import Flapjack.PanHProgStoreMem
+
+import all Flapjack.PanHProgStoreMem
+
+public meta import Flapjack.PanHProgStoreMem
+public meta import Flapjack.PanValues
+
+@[expose] public section
 /-!
 # Parity checks for Pancake `h_prog_store_def`
 

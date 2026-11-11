@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.LabSem.SharedMemory
+module
+
+public import Flapjack.Compiler.Backend.LabSem.SharedMemory
+
+import all Flapjack.Compiler.Backend.LabSem.SharedMemory
+
+@[expose] public section
 
 /-! Kernel replay of the original labsem_shared_memory_probe.out rows.
 Checks actual protocol bytes/configuration, all eight operations, final and

@@ -7,7 +7,11 @@ review.  It is not an equivalence proof.
 """
 import argparse
 import re
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from lean_module_header import to_module  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 PROBE = ROOT / 'scripts/hol-probes/cake_cfg_grammar_probe.out'
@@ -158,7 +162,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--check', action='store_true')
     args = parser.parse_args()
-    result = generate()
+    result = to_module(generate())
     if args.check:
         if not OUTPUT.exists() or OUTPUT.read_text() != result: raise SystemExit('CakeML CFG grammar is stale')
         print('CakeML CFG grammar matches the pinned HOL capture')

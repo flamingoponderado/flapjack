@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
+module
+
+public import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
+
+import all Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
+
+@[expose] public section
 
 /-! Kernel replay of26 original HOL rows in stacksem_stack_codec_probe.out.
 The three captured type rows additionally show independent bitmap/stack widths.

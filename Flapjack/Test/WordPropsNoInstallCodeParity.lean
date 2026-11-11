@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallCode
+module
+
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallCode
+
+import all Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallCode
+
+@[expose] public section
 namespace Flapjack.Test.WordPropsNoInstallCodeParity
 open Flapjack Flapjack.WordProps
 -- nic_empty_1

@@ -1,4 +1,10 @@
-import Flapjack.Compiler.Backend.WordCse.Proofs.KeyInjectivity
+module
+
+public import Flapjack.Compiler.Backend.WordCse.Proofs.KeyInjectivity
+
+import all Flapjack.Compiler.Backend.WordCse.Proofs.KeyInjectivity
+
+@[expose] public section
 namespace Flapjack.Test.WordCseRegisterKeysParity
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.WordCse
 -- rk_a0_firstRegOfArith_8

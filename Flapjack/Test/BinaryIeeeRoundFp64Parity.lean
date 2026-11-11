@@ -1,5 +1,12 @@
-import Flapjack.Misc.BinaryIeeeRoundFp64
-import Flapjack.Misc.MachineIeee
+module
+
+public import Flapjack.Misc.BinaryIeeeRoundFp64
+public import Flapjack.Misc.MachineIeee
+
+import all Flapjack.Misc.BinaryIeeeRoundFp64
+import all Flapjack.Misc.MachineIeee
+
+@[expose] public section
 
 /-!
 Direct HOL oracle rows for `float_round roundTiesToEven` at binary64

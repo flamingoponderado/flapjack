@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Render the pinned CakeML/HOL flat-pass observations as Lean constants."""
 import argparse
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parent))
+from lean_module_header import to_module  # noqa: E402
 import ast
 from pathlib import Path
 
@@ -78,7 +82,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    expected = render()
+    expected = to_module(render())
     if args.check:
         if not OUTPUT.exists() or OUTPUT.read_text() != expected:
             raise SystemExit(f"{OUTPUT} is stale; regenerate it from the HOL capture")

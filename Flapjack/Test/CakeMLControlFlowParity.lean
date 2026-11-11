@@ -1,15 +1,31 @@
-import Flapjack.Compiler.Backend.ClosToBvl.Compile
-import Flapjack.Compiler.Backend.BvlToBvi.Compile
-import Flapjack.Compiler.Backend.BviToData.Compile
-import Flapjack.Compiler.Backend.DataToWord.Control
-import Flapjack.Compiler.Backend.SourceToFlat.ToWord
-import Flapjack.Test.CakeMLFlatOracle
-import Flapjack.Test.EmptyCakeWordOracle
-import Flapjack.Test.ReferenceCakeWordOracle
-import Flapjack.Test.MatchCakeWordOracle
-import Flapjack.Test.FixedStubsWordOracle
-import Flapjack.Test.BignumWordOracle
-import Flapjack.Test.FullCakeWordOracle
+module
+
+public import Flapjack.Compiler.Backend.ClosToBvl.Compile
+public import Flapjack.Compiler.Backend.BvlToBvi.Compile
+public import Flapjack.Compiler.Backend.BviToData.Compile
+public import Flapjack.Compiler.Backend.DataToWord.Control
+public import Flapjack.Compiler.Backend.SourceToFlat.ToWord
+public import Flapjack.Test.CakeMLFlatOracle
+public import Flapjack.Test.EmptyCakeWordOracle
+public import Flapjack.Test.ReferenceCakeWordOracle
+public import Flapjack.Test.MatchCakeWordOracle
+public import Flapjack.Test.FixedStubsWordOracle
+public import Flapjack.Test.BignumWordOracle
+public import Flapjack.Test.FullCakeWordOracle
+public meta import Flapjack.Compiler.Backend.DataToWord.Control
+public meta import Flapjack.Compiler.Backend.BvlToBvi.Compile
+public meta import Flapjack.Compiler.Backend.ClosToBvl.Compile
+public meta import Flapjack.Compiler.Backend.BviToData.Compile
+public meta import Flapjack.Test.CakeMLFlatOracle
+public meta import Flapjack.Test.EmptyCakeWordOracle
+public meta import Flapjack.Compiler.Backend.SourceToFlat.ToWord
+public meta import Flapjack.Test.BignumWordOracle
+public meta import Flapjack.Test.FixedStubsWordOracle
+public meta import Flapjack.Test.FullCakeWordOracle
+public meta import Flapjack.Test.ReferenceCakeWordOracle
+public meta import Flapjack.Test.MatchCakeWordOracle
+
+@[expose] public section
 
 /-! A small cross-pass parity observation through word-language control flow. -/
 namespace Flapjack.Test.CakeMLControlFlowParity

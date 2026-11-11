@@ -1,5 +1,11 @@
-import Flapjack.NumSet
-import Flapjack.RiscV.Allocator
+module
+
+public import Flapjack.NumSet
+public import Flapjack.RiscV.Allocator
+public meta import Flapjack.NumSet
+public meta import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-! Direct HOL parity for CakeML's `sptree$toAList` enumeration order, which
     the word allocator uses at its three SSA boundaries (`fix_inconsistencies`,

@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateOp
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.SimpleRelations
 public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Install
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
@@ -12,20 +13,6 @@ namespace Flapjack.Compiler.Backend.ClosTicks
 open Flapjack.Compiler.Backend.ClosSem
 open Flapjack.Compiler.Backend.ClosProps
 open Flapjack.SemanticPrimitivesHOL (Result)
-
-/-- Related nonempty lists have related HOL last values. This is Flapjack
-infrastructure for the installation continuation. -/
-theorem related_holLast {left right : List Value} (related : List.Forall₂ ValueRel left right)
-    (nonempty : left ≠ []) :
-    ValueRel (@Flapjack.holLast Value ⟨unitValue⟩ left) (@Flapjack.holLast Value ⟨unitValue⟩ right) := by
-  induction related with
-  | nil => exact (nonempty rfl).elim
-  | @cons first nextFirst rest nextRest head tail ih =>
-    cases tail with
-    | nil => simpa [Flapjack.holLast] using head
-    | @cons second nextSecond tail nextTail nextHead restRel =>
-      simp only [Flapjack.holLast]
-      exact ih (by simp)
 
 /-- The installation branch of the operation simulation. This is Flapjack
 infrastructure for assembling the original operation induction case. -/
@@ -160,7 +147,7 @@ theorem evaluate_install {C F : Type} (trace : BackendCommon.Tra)
                         subst sourceReturned
                         cases resultRel
                         exact returnedNonempty rfl
-                      have lastValueRel := related_holLast resultRel sourceReturnedNonempty
+                      have lastValueRel := forall₂_holLast resultRel sourceReturnedNonempty
                       rw [evaluate_install_eq, argsRun] at run
                       simp only [runInstalled, targetInstall, programRun] at run
                       cases run

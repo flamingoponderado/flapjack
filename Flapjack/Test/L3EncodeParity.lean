@@ -1,4 +1,8 @@
-import Flapjack.RiscV.L3.Defs.Encode
+module
+
+public import Flapjack.RiscV.L3.Defs.Encode
+
+@[expose] public section
 
 /-! Original HOL numeric Encode observations over every constructor, including
 zero/max/nonuniform/sign-bit payloads. Finite fixtures are not universal equivalence. -/
