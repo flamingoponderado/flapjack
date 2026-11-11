@@ -525,31 +525,6 @@ theorem localCallResult_related {C F : Type} [Nonempty C]
         rw [result] at bodyPost
         simpa [EvaluateHOL.decClock] using bodyPost
 
-/-- After a deferred call returns, update the original thunk cell in both
-stores and preserve the factored invariant. This is an intermediate step in
-forcing, over relations that still require HOL correspondence review. -/
-theorem localThunkReturn_related {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (genv : GlobalEnv) (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
-    (source : State F) (flat : FlatSem.State C F) (gen : EnvironmentGenerationStore)
-    (invariant : factoredInvariant interp transform gen genv idxs source flat)
-    (generation : envGenRel gen source.evalState) (address : Nat)
-    (value : Value) (flatValue : FlatSem.Value) (related : ValueRel genv value flatValue)
-    (sourceRefs : Store Value)
-    (updated : SemanticPrimitivesHOL.updateThunk [.loc false address] source.refs [value] = some sourceRefs) :
-    ∃ flatRefs,
-      FlatSem.updateThunk [.loc false (address + 1)] flat.refs [flatValue] = some flatRefs ∧
-      EvalResultRel genv (.val [value]) (.val [flatValue]) ∧
-      StateRel genv { source with refs := sourceRefs } { flat with refs := flatRefs } ∧
-      factoredInvariant interp transform gen genv idxs
-        { source with refs := sourceRefs } { flat with refs := flatRefs } ∧
-      envGenRel gen { source with refs := sourceRefs }.evalState := by
-  obtain ⟨flatRefs, flatUpdated, reserved, stateRel⟩ :=
-    updateThunk_related genv source flat invariant.2.2.1 address value flatValue related sourceRefs updated
-  refine ⟨flatRefs, flatUpdated, .value (.cons related .nil), stateRel, ?_, generation⟩
-  exact factoredInvariant_changeStores interp transform gen genv idxs source flat sourceRefs flatRefs
-    invariant stateRel reserved
-
 /-- Inspecting a thunk succeeds only at a non-reference location. -/
 theorem destThunk_isThunk_location (operand : Value) (store : Store Value)
     (mode : ThunkMode) (value : Value)
@@ -641,14 +616,16 @@ theorem localThunkCallUpdate_related {C F : Type} [Nonempty C]
           have impossible := safe after
           simp [sourceThunkCallResult, srcRun, updated, EvaluateHOL.typeError] at impossible
         | some sourceRefs =>
-          obtain ⟨flatRefs, flatUpdated, relatedResult, nextStates, finalInvariant, finalGeneration⟩ :=
-            localThunkReturn_related interp transform nextGenv (start, finish, other) after flatAfter gen
-              nextInvariant nextGeneration address value flatValue valueRel sourceRefs updated
+          obtain ⟨flatRefs, flatUpdated, reserved, nextStates⟩ :=
+            updateThunk_related nextGenv after flatAfter nextInvariant.2.2.1 address value flatValue valueRel sourceRefs updated
+          have finalInvariant := factoredInvariant_changeStores interp transform gen nextGenv (start, finish, other)
+            after flatAfter sourceRefs flatRefs nextInvariant nextStates reserved
+          have relatedResult : EvalResultRel nextGenv (.val [value]) (.val [flatValue]) := .value (.cons valueRel .nil)
           refine ⟨nextGenv, ?_, ?_⟩
           · simpa [sourceThunkCallResult, flatThunkCallResult, srcRun, dstRun, updated, flatUpdated] using
               And.intro relatedResult nextStates
           · simpa [sourceThunkCallResult, flatThunkCallResult, srcRun, dstRun, updated, flatUpdated] using
-              And.intro growth (And.intro finalInvariant (And.intro finalGeneration forward))
+              And.intro growth (And.intro finalInvariant (And.intro nextGeneration forward))
 
 /-- Simulate a two-operand function application at a given clock bound,
 using the smaller-clock induction hypothesis for the called body. -/
