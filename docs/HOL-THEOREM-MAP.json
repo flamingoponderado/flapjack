@@ -133338,6 +133338,24 @@
 }
 ,
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "FST_SND_EQ_CASE",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalBounds.lean",
+  "lean_name": "fstSndEqCase",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared fst_snd_eq_case_typed: both projection equalities retain the four independently inferred component types."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "SUB_BAG_2",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalBounds.lean",
+  "lean_name": "subBag_union",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared sub_bag_2_typed: both sub-bag premises and the union conclusion retain the polymorphic bag element carrier and original multiplicity semantics."
+}
+,
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "find_recfun_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",

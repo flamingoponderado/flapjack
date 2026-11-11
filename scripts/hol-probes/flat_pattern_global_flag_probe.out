@@ -14,6 +14,8 @@ operator_sets_globals_def=(op_sets_globals (GlobalVarInit (n :num)) ⇔ T) ∧ (
 singleton_global_bag=∀(n :num). op_gbag (GlobalVarInit n) = (λ(x :num). if x = n then (1 :num) else (0 :num))
 expression_global_flag=(∀(cfg :config) (x :exp). FST (SND (compile_exp cfg x)) ⇔ set_globals x ≠ ({||} :num -> num)) ∧ (∀(cfg :config) (xs :exp list). FST (SND (compile_exps cfg xs)) ⇔ elist_globals xs ≠ ({||} :num -> num)) ∧ ∀(cfg :config) (ps :(flatLang$pat # exp) list). FST (SND (compile_match cfg ps)) ⇔ elist_globals (MAP (SND :flatLang$pat # exp -> exp) ps) ≠ ({||} :num -> num)
 tuple_global_flag=(∀(cfg :config) (x :exp) (i :num) (sg :bool) (y :exp). compile_exp cfg x = (i,sg,y) ⇒ (sg ⇔ set_globals x ≠ ({||} :num -> num))) ∧ (∀(cfg :config) (xs :exp list) (i :num) (sg :bool) (ys :exp list). compile_exps cfg xs = (i,sg,ys) ⇒ (sg ⇔ elist_globals xs ≠ ({||} :num -> num))) ∧ ∀(cfg :config) (ps :(flatLang$pat # exp) list) (i :num) (sg :bool) (ps2 :(flatLang$pat # exp) list). compile_match cfg ps = (i,sg,ps2) ⇒ (sg ⇔ elist_globals (MAP (SND :flatLang$pat # exp -> exp) ps) ≠ ({||} :num -> num))
+fst_snd_eq_case_typed=(FST :α # β -> α) = (λ((a :α),(b :β)). a) ∧ (SND :γ # δ -> δ) = (λ((a :γ),(b :δ)). b)
+sub_bag_2_typed=(x :α -> num) ≤ (y :α -> num) ∧ (x' :α -> num) ≤ (y' :α -> num) ⇒ x ⊎ x' ≤ y ⊎ y'
 global_bag_list_empty=elist_globals (l :exp list) = ({||} :num -> num) ⇔ ∀(e :exp). MEM e l ⇒ set_globals e = ({||} :num -> num)
 sum_string_ords=sum_string_ords (i :num) (s :mlstring) = (SUM (MAP (λ(c :char). ORD c − (35 :num)) (DROP i (explode s))) :num)
 sum_string_ords_def=∀(str :mlstring) (i :num). sum_string_ords i str = if i < strlen str then ORD (strsub str i) − (35 :num) + sum_string_ords (i + (1 :num)) str else (0 :num)
