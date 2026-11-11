@@ -1071,19 +1071,46 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
                 simp only [expsWeight] at measure
                 omega
               cases op with
-              | label label => exact Ordinary.knownCorrect0OpLabel trace label args env state argsIH
-              | ffi name => exact Ordinary.knownCorrect0OpFfi trace name args env state argsIH
-              | intOp operation => exact Ordinary.knownCorrect0OpInt trace operation args env state argsIH
-              | wordOp operation => exact Ordinary.knownCorrect0OpWord trace operation args env state argsIH
-              | blockOp operation => exact Ordinary.knownCorrect0OpBlock trace operation args env state argsIH
-              | memOp operation => exact Ordinary.knownCorrect0OpMemory trace operation args env state argsIH
+              | label label =>
+                exact Ordinary.knownCorrect0OpNoWrites trace (.label label) args env state
+                  (by simp) (by simp) (by intro index; simp)
+                  (by intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]) argsIH
+              | ffi name =>
+                exact Ordinary.knownCorrect0OpNoWrites trace (.ffi name) args env state
+                  (by simp) (by simp) (by intro index; simp)
+                  (by intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]) argsIH
+              | intOp operation =>
+                exact Ordinary.knownCorrect0OpNoWrites trace (.intOp operation) args env state
+                  (by simp) (by simp) (by intro index; simp)
+                  (by intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]) argsIH
+              | wordOp operation =>
+                exact Ordinary.knownCorrect0OpNoWrites trace (.wordOp operation) args env state
+                  (by simp) (by simp) (by intro index; simp)
+                  (by intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]) argsIH
+              | blockOp operation =>
+                exact Ordinary.knownCorrect0OpNoWrites trace (.blockOp operation) args env state
+                  (by simp) (by simp) (by intro index; simp)
+                  (by intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]) argsIH
+              | memOp operation =>
+                exact Ordinary.knownCorrect0OpNoWrites trace (.memOp operation) args env state
+                  (by simp) (by simp) (by intro index; simp)
+                  (by intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]) argsIH
               | globOp operation =>
                 cases operation with
                 | global index => exact Global.knownCorrect0OpGlobal trace index args env state argsIH
                 | setGlobal index => exact SetGlobal.knownCorrect0OpSetGlobal trace index args env state argsIH
-                | allocGlobal => exact Ordinary.knownCorrect0OpAllocGlobal trace args env state argsIH
-                | globalsPtr => exact Ordinary.knownCorrect0OpGlobalsPtr trace args env state argsIH
-                | setGlobalsPtr => exact Ordinary.knownCorrect0OpSetGlobalsPtr trace args env state argsIH
+                | allocGlobal =>
+                  exact Ordinary.knownCorrect0OpNoWrites trace (.globOp .allocGlobal) args env state
+                    (by simp) (by simp) (by intro index; simp)
+                    (by intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]) argsIH
+                | globalsPtr =>
+                  exact Ordinary.knownCorrect0OpNoWrites trace (.globOp .globalsPtr) args env state
+                    (by simp) (by simp) (by intro index; simp)
+                    (by intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]) argsIH
+                | setGlobalsPtr =>
+                  exact Ordinary.knownCorrect0OpNoWrites trace (.globOp .setGlobalsPtr) args env state
+                    (by simp) (by simp) (by intro index; simp)
+                    (by intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]) argsIH
               | install =>
                 apply Install.knownCorrect0OpInstall trace args env state ?_ argsIH
                 intro values middle program installed run install
@@ -1095,8 +1122,14 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
                 omega
               | thunkOp operation =>
                 cases operation with
-                | allocThunk mode => exact Ordinary.knownCorrect0OpAllocThunk trace mode args env state argsIH
-                | updateThunk mode => exact Ordinary.knownCorrect0OpUpdateThunk trace mode args env state argsIH
+                | allocThunk mode =>
+                  exact Ordinary.knownCorrect0OpNoWrites trace (.thunkOp (.allocThunk mode)) args env state
+                    (by simp) (by simp) (by intro index; simp)
+                    (by intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]) argsIH
+                | updateThunk mode =>
+                  exact Ordinary.knownCorrect0OpNoWrites trace (.thunkOp (.updateThunk mode)) args env state
+                    (by simp) (by simp) (by intro index; simp)
+                    (by intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]) argsIH
                 | forceThunk =>
                   apply Force.knownCorrect0OpForce trace args env state ?_ argsIH
                   intro values middle value run found

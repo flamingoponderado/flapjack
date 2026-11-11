@@ -9,6 +9,20 @@ public import Flapjack.Compiler.Backend.ClosKnown.Fuel
 namespace Flapjack.Compiler.Backend.ClosKnown
 open ClosLang ClosProps
 
+/-- Check a predicate on every variable represented by a shifted set. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "every_var_def"]
+def everyVar (P : Nat → Prop) : DbVars.DbVarSet → Prop
+  | .empty => True
+  | .var v => P v
+  | .shift k d => everyVar (fun v => k ≤ v → P (v - k)) d
+  | .union d1 d2 => everyVar P d1 ∧ everyVar P d2
+
+/-- The smart union retains exactly the predicates of both inputs. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "every_var_mk_Union"]
+theorem everyVarMkUnion (P : Nat → Prop) (d1 d2 : DbVars.DbVarSet) :
+    everyVar P (DbVars.mkUnion d1 d2) ↔ everyVar P d1 ∧ everyVar P d2 := by
+  cases d1 <;> cases d2 <;> simp [DbVars.mkUnion, everyVar]
+
 /-- Every free de Bruijn index is below the given bound. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "fv_max_def"]
 def fvMax (n : Nat) (xs : List ClosLang.Exp) : Prop :=
