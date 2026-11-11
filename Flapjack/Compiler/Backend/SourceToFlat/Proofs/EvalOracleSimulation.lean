@@ -562,63 +562,6 @@ theorem envGenRel_advance (state : EvalOracleState) (oracle : EvalOracleFun) :
       envGenRel ⟨0, state.envs.length, .ln⟩ (some (.evalOracle next)) := by
   simp [srcOracGenInv, envGenRel, addEnvGeneration]
 
-/-- A successful source Eval callback has a corresponding flat Eval callback.
-This is factored infrastructure: the value relation and surrounding evaluator
-state invariant have not yet been reviewed as the full HOL theorem. -/
-theorem doEvalOracle_flatCallback {C : Type} [Nonempty C]
-    (decode : Value → Option (Config × C)) (transform : List Dec → List Dec)
-    (compiler : CompilerFun) (state : EvalOracleState) (flatConfig : FlatSem.InstallConfig C)
-    (steps : srcOracStepInvs (some decode) transform (some (.evalOracle state)))
-    (oracleRel : oracRelInner decode state compiler transform flatConfig)
-    (genv : GlobalEnv) (constructors : genvCOk genv.c)
-    (first second third fourth bytesValue wordsValue : Value)
-    (flatBytes flatWords : FlatSem.Value)
-    (bytesRel : ValueRel genv bytesValue flatBytes) (wordsRel : ValueRel genv wordsValue flatWords)
-    (sourceResult : (Nat × Nat) × EvalOracleFun × List Dec)
-    (sourceSuccess : SourceEval.Proofs.doEvalOracle compiler transform
-      [first, second, third, fourth, bytesValue, wordsValue] state.oracle = some sourceResult) :
-    ∃ envId stateValue decs config payload flatDecs,
-      state.oracle 0 = (envId, stateValue, decs) ∧
-      decode stateValue = some (config, payload) ∧
-      sourceResult = (envId, Flapjack.holShiftSeq 1 state.oracle, transform decs) ∧
-      flatDecs = (incCompileProg envId config (transform decs)).2 ∧
-      FlatSem.doEval [flatBytes, flatWords] flatConfig =
-        some (flatDecs, { flatConfig with compileOracle := Flapjack.holShiftSeq 1 flatConfig.compileOracle },
-          FlatSem.unitValue) := by
-  simp only [srcOracStepInvs] at steps
-  cases entry : state.oracle 0 with
-  | mk envId rest =>
-    cases rest with
-    | mk stateValue decs =>
-      obtain ⟨nextValue, bytes, words, compiled, decodedBytes, decodedWords, nextValueEq, resultEq⟩ :=
-        SourceEval.Proofs.doEvalOracle_six_inv compiler transform state.oracle first second third fourth
-          bytesValue wordsValue envId stateValue decs sourceResult entry sourceSuccess
-      obtain ⟨config, payload, decoded⟩ := steps.1 0 envId stateValue decs entry
-      obtain ⟨nextFlat, flatOracle, flatCompiled, nextRel⟩ :=
-        oracRelInner_first decode state compiler transform flatConfig oracleRel envId stateValue nextValue
-          decs config payload bytes words entry decoded compiled
-      have flatBytesDecoded := valueToWord8List_related genv bytesValue flatBytes bytes ⟨decodedBytes, bytesRel, constructors⟩
-      have flatWordsDecoded := valueToWord64List_related genv wordsValue flatWords words ⟨decodedWords, wordsRel, constructors⟩
-      cases nextEntry : state.oracle 1 with
-      | mk nextId nextRest =>
-        cases nextRest with
-        | mk nextState nextDecs =>
-          have sameState : nextValue = nextState := by simpa [nextEntry] using nextValueEq
-          obtain ⟨nextConfig, nextPayload, nextDecoded⟩ := steps.1 1 nextId nextState nextDecs nextEntry
-          have nextDecoded' : decode nextValue = some (nextConfig, nextPayload) := by simpa [sameState] using nextDecoded
-          have samePayload : nextPayload = nextFlat := nextRel (nextConfig, nextPayload) nextDecoded'
-          have nextOracle := oracleRel 1 nextId nextState nextDecs nextEntry
-          simp only [nextDecoded, Flapjack.holThe] at nextOracle
-          have flatNext : (Flapjack.holShiftSeq 1 flatConfig.compileOracle 0).1 = nextFlat := by
-            simp [Flapjack.holShiftSeq, nextOracle.1, samePayload]
-          have nonempty : (incCompileProg envId config (transform decs)).2 ≠ [] := by
-            apply incCompileProg_nonempty envId config (incCompileProg envId config (transform decs)).1
-              (transform decs)
-            exact Prod.eta _ |>.symm
-          refine ⟨envId, stateValue, decs, config, payload,
-            (incCompileProg envId config (transform decs)).2, rfl, decoded, resultEq, rfl, ?_⟩
-          simp [FlatSem.doEval, flatBytesDecoded, flatWordsDecoded, flatOracle, flatCompiled, nonempty, flatNext]
-
 /-- A successful source `doEval` in oracle mode yields a successful flat
 `doEval` on the corresponding byte and word arguments. The source and flat
 evaluator state simulation is still a separate obligation. -/
@@ -648,19 +591,46 @@ theorem doEval_oracle_flatCallback {C : Type} [Nonempty C]
     have success : SourceEval.Proofs.doEvalOracle compiler transform
         [first, second, third, fourth, bytesValue, wordsValue] state.oracle = some result := by
       simpa [callback] using called
-    obtain ⟨envId, stateValue, decs, config, payload, flatDecs,
-      entry, decoded, resultEq, flatEq, flatSuccess⟩ :=
-      doEvalOracle_flatCallback decode transform compiler state flatConfig steps inner genv constructors
-        first second third fourth bytesValue wordsValue flatBytes flatWords bytesRel wordsRel result success
-    rw [resultEq] at called
-    have sourceDecls : output.2.1 = transform decs := by
-      cases found : lookupEnv state envId with
-      | none => simp [SemanticPrimitivesHOL.doEval, called, found] at sourceSuccess
-      | some env =>
-        simp [SemanticPrimitivesHOL.doEval, called, found] at sourceSuccess
-        rw [← sourceSuccess]
-    exact ⟨envId, stateValue, decs, config, payload, flatDecs,
-      entry, decoded, sourceDecls, flatEq, flatSuccess⟩
+    simp only [srcOracStepInvs] at steps
+    cases entry : state.oracle 0 with
+    | mk envId rest =>
+      cases rest with
+      | mk stateValue decs =>
+        obtain ⟨nextValue, bytes, words, compiled, decodedBytes, decodedWords, nextValueEq, resultEq⟩ :=
+          SourceEval.Proofs.doEvalOracle_six_inv compiler transform state.oracle first second third fourth
+            bytesValue wordsValue envId stateValue decs result entry success
+        obtain ⟨config, payload, decoded⟩ := steps.1 0 envId stateValue decs entry
+        obtain ⟨nextFlat, flatOracle, flatCompiled, nextRel⟩ :=
+          oracRelInner_first decode state compiler transform flatConfig inner envId stateValue nextValue
+            decs config payload bytes words entry decoded compiled
+        have flatBytesDecoded := valueToWord8List_related genv bytesValue flatBytes bytes ⟨decodedBytes, bytesRel, constructors⟩
+        have flatWordsDecoded := valueToWord64List_related genv wordsValue flatWords words ⟨decodedWords, wordsRel, constructors⟩
+        cases nextEntry : state.oracle 1 with
+        | mk nextId nextRest =>
+          cases nextRest with
+          | mk nextState nextDecs =>
+            have sameState : nextValue = nextState := by simpa [nextEntry] using nextValueEq
+            obtain ⟨nextConfig, nextPayload, nextDecoded⟩ := steps.1 1 nextId nextState nextDecs nextEntry
+            have nextDecoded' : decode nextValue = some (nextConfig, nextPayload) := by simpa [sameState] using nextDecoded
+            have samePayload : nextPayload = nextFlat := nextRel (nextConfig, nextPayload) nextDecoded'
+            have nextOracle := inner 1 nextId nextState nextDecs nextEntry
+            simp only [nextDecoded, Flapjack.holThe] at nextOracle
+            have flatNext : (Flapjack.holShiftSeq 1 flatConfig.compileOracle 0).1 = nextFlat := by
+              simp [Flapjack.holShiftSeq, nextOracle.1, samePayload]
+            have nonempty : (incCompileProg envId config (transform decs)).2 ≠ [] := by
+              apply incCompileProg_nonempty envId config (incCompileProg envId config (transform decs)).1
+                (transform decs)
+              exact Prod.eta _ |>.symm
+            rw [resultEq] at called
+            have sourceDecls : output.2.1 = transform decs := by
+              cases found : lookupEnv state envId with
+              | none => simp [SemanticPrimitivesHOL.doEval, called, found] at sourceSuccess
+              | some env =>
+                simp [SemanticPrimitivesHOL.doEval, called, found] at sourceSuccess
+                rw [← sourceSuccess]
+            refine ⟨envId, stateValue, decs, config, payload,
+              (incCompileProg envId config (transform decs)).2, rfl, decoded, sourceDecls, rfl, ?_⟩
+            simp [FlatSem.doEval, flatBytesDecoded, flatWordsDecoded, flatOracle, flatCompiled, nonempty, flatNext]
 
 /-- Successful source and flat Eval callbacks advance to related oracles and
 preserve the source oracle's incremental-step invariant. This establishes the
