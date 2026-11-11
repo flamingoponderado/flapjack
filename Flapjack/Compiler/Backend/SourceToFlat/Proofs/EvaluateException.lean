@@ -37,18 +37,6 @@ theorem idxRangeRel_exception_free {C : Type}
     rw [separate] at member
     exact member.elim
 
-/-- The next source exception stamp is absent from the current constructor
-map, by the index-range freshness condition. -/
-theorem idxRangeRel_exceptionStamp_fresh {C : Type}
-    (interp : Option (Value → Option (Config × C))) (genv : GlobalEnv)
-    (nextType nextExn : Nat) (evalState : Option EvalState)
-    (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (range : idxRangeRel interp genv nextType nextExn evalState (start, finish, other)) :
-    ∀ key, genv.c.lookup key ≠ some (.exnStamp nextExn) := by
-  obtain ⟨_, _, _, _, _, _, _, _, _, fresh⟩ := range
-  intro key found
-  exact fresh nextExn (Nat.le_refl _) ⟨key, found⟩
-
 /-- Installing a fresh exception constructor extends the factored global
 environment while leaving existing values and type entries unchanged. -/
 theorem GlobalGrowth.installException (genv : GlobalEnv) (idx arity stamp : Nat)
@@ -157,8 +145,10 @@ theorem factoredInvariant_installException {C F : Type} [Nonempty C]
   obtain ⟨cOk, typesOk, states, range, invs, oracle, globals, reserved, genInv, fin⟩ := copy
   have free := idxRangeRel_exception_free interp genv source.nextTypeStamp source.nextExnStamp source.evalState
     start finish other range (by omega) arity
-  have fresh := idxRangeRel_exceptionStamp_fresh interp genv source.nextTypeStamp source.nextExnStamp
-    source.evalState start finish other range
+  have fresh (key : ConstructorKey) : genv.c.lookup key ≠ some (.exnStamp source.nextExnStamp) := by
+    obtain ⟨_, _, _, _, _, _, _, _, _, exceptionFresh⟩ := range
+    intro found
+    exact exceptionFresh source.nextExnStamp (Nat.le_refl _) ⟨key, found⟩
   have growth := GlobalGrowth.installException genv start.eidx arity source.nextExnStamp free
   have grownStates := stateRel_growth genv _ growth source flat states
   have nextStates : StateRel

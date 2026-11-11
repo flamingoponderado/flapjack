@@ -103,17 +103,6 @@ theorem idxRangeRel_type_free {C : Type}
       left
       exact ⟨cn, arity, by simp [lookup]⟩
 
-/-- The next source type stamp is absent from the global constructor map. -/
-theorem idxRangeRel_typeStamp_fresh {C : Type}
-    (interp : Option (Value → Option (Config × C))) (genv : GlobalEnv)
-    (nextType nextExn : Nat) (evalState : Option EvalState)
-    (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (range : idxRangeRel interp genv nextType nextExn evalState (start, finish, other)) :
-    ∀ name key, genv.c.lookup key ≠ some (.typeStamp name nextType) := by
-  obtain ⟨_, _, _, _, _, _, _, _, fresh, _⟩ := range
-  intro name key found
-  exact fresh name nextType (Nat.le_refl _) ⟨key, found⟩
-
 /-- Tag allocation records the arity of every constructor in input order. -/
 theorem allocTags1_arities {M N A : Type} (constructors : List (N × List A)) :
     ((allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2).map Prod.snd =
@@ -914,8 +903,11 @@ theorem factoredInvariant_allocateConstructorList {C F : Type} [Nonempty C]
     have range := valid.2.2.2.1
     have free := (idxRangeRel_type_free interp genv source.nextTypeStamp source.nextExnStamp source.evalState
       start finish other range (by omega)).2
-    have fresh := idxRangeRel_typeStamp_fresh interp genv source.nextTypeStamp source.nextExnStamp source.evalState
-      start finish other range
+    have fresh (name : ConN) (key : ConstructorKey) :
+        genv.c.lookup key ≠ some (.typeStamp name source.nextTypeStamp) := by
+      obtain ⟨_, _, _, _, _, _, _, _, typeFresh, _⟩ := range
+      intro found
+      exact typeFresh name source.nextTypeStamp (Nat.le_refl _) ⟨key, found⟩
     let reserved := { genv with tys := finiteUpdate genv.tys start.tidx tags }
     have reservedInv := factoredInvariant_installTypeTable interp transform gen genv start finish other
       source flat tags valid fits
