@@ -484,23 +484,37 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             (record["lean_path"], record["lean_name"]): record
             for record in MAP["build_inventory"]()
         }
-        cases = {
-            "resVarHOLExact_flookup_some_eq_lookup": "flookup_res_var_some_eq_lookup",
-            "resVarHOLExact_flookup_of_ne": "flookup_res_var_diff_eq_org",
-            "resVarHOLExact_flookup": "FLOOKUP_pan_res_var_thm",
+        # The function-carrier renderings are retired; the HOL declarations stay
+        # mapped by the tagged exact finite-map twins.
+        for lean_name in ("resVarHOLExact_flookup",
+                          "resVarHOLExact_flookup_of_ne",
+                          "resVarHOLExact_flookup_some_eq_lookup"):
+            self.assertNotIn(
+                ("Flapjack/Pancake/Semantics/PanProps.lean", lean_name), inventory
+            )
+        tagged = MAP["tagged_declarations"]()
+        manifest = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in json.loads(MAP["DEFAULT_MANIFEST"].read_text())
         }
-        for lean_name, hol_name in cases.items():
-            key = ("Flapjack/Pancake/Semantics/PanProps.lean", lean_name)
-            record = inventory[key]
+        for lean_name, hol_name in (
+            ("flookupPanResVarThmHOL", "FLOOKUP_pan_res_var_thm"),
+            ("flookupResVarDiffEqOrgHOL", "flookup_res_var_diff_eq_org"),
+            ("flookupResVarSomeEqLookupHOL", "flookup_res_var_some_eq_lookup"),
+        ):
+            key = ("Flapjack/Pancake/Semantics/PanProps/ResVar.lean", lean_name)
+            self.assertIn(key, inventory)
+            record = manifest[key]
             self.assertEqual(
                 (record["hol_path"], record["hol_name"]),
                 ("cakeml/pancake/semantics/panPropsScript.sml", hol_name),
             )
-            self.assertEqual(record["statement_status"], "documented_mismatch")
-            self.assertIn("finite-map", record["reviewer"])
-            self.assertIn("flapjack-pxn.18.3.7.1.3.1.1.2.4", record["reviewer"])
-            self.assertTrue(MAP["lean_definition_exists"](MAP["ROOT"], *key))
-            self.assertNotIn(key, MAP["tagged_declarations"]())
+            self.assertEqual(
+                record["statement_status"],
+                "reviewed_fmap_as_finite_support_relation",
+            )
+            self.assertIn("source", record["reviewer"])
+            self.assertIn(key, tagged)
 
     def test_pan_lang_with_shape_mismatches_are_documented(self):
         inventory = {
