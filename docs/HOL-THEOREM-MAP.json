@@ -120531,7 +120531,7 @@
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml",
     "hol_name": "nt_rule_fo_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: Flapjack/CakeParser/PegGrammar.lean is generated from this definition by scripts/generate-cake-peg-grammar.py, which parses the pinned cakeml/compiler/parsing/pegexec_cml_foScript.sml and rejects unfamiliar syntax; the generator --check gate keeps the Lean definition in sync. The typed nt_rule_fo_def capture in pegexec_cml_fo_source_probe.out confirms the clause order, the INL/INR rule keys and the final `nt_rule_fo _ = NONE` default that Lean renders as `| _ => none`."
+    "reviewer": "source comparison 2026-11-10: Flapjack/CakeParser/PegGrammar.lean is generated from this definition by scripts/generate-cake-peg-grammar.py, which parses the pinned cakeml/compiler/parsing/pegexec_cml_foScript.sml and rejects unfamiliar syntax; the generator --check gate keeps the Lean definition in sync. The typed nt_rule_fo_def capture in pegexec_cml_fo_source_probe.out confirms the clause order, the INL/INR rule keys and the final `nt_rule_fo _ = NONE` default that Lean renders as `| _ => none`. Task 147: the typed capture applies the rule to `(INL nV : MMLnonT + α)` with the rule-index summand generic; the twin now binds {α : Type} and takes `Sum Nonterminal α`, leaving the used CakeML instance `Rule = Sum Nonterminal Nat` to the callers. The 69 INL branches and the `INR` fallback to NONE are unchanged."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegEval.lean",

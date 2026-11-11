@@ -8,9 +8,13 @@ public import Flapjack.CakeParser.PegSyntax
 namespace Flapjack.CakeParser.PegGrammar
 open Flapjack.Basis.Pure.MlString PegSyntax
 
-/-- The complete first-order CakeML grammar, including the default failure rule. -/
+/-- The complete first-order CakeML grammar, including the default failure rule.
+    Exact port of HOL `pegexec_cml_fo$nt_rule_fo_def`: the typed capture
+    (`nt_rule_fo_def_typed` in `scripts/hol-probes/pegexec_cml_fo_source_probe.out`)
+    applies the rule to `(INL nV : MMLnonT + α)`, so the twin binds `{α : Type}`
+    for the rule-index summand instead of fixing it to CakeML's `Rule`. -/
 @[hol "cakeml/compiler/parsing/pegexec_cml_foScript.sml" "nt_rule_fo_def"]
-def ntRule : Rule → Option PegExpr
+def ntRule {α : Type} : Sum Nonterminal α → Option PegExpr
   | .inl .nV => some (.choice (.token (.alpha .lowerInitialNotReserved) (.bindNT (Sum.inl .nV))) (.seq (.token (.symbol .validPrefix) .leaf) (.empty []) (.bindNT0 (Sum.inl .nV))))
   | .inl .nFQV => some (.choice (.nt (Sum.inl .nV) (.bindNT (Sum.inl .nFQV))) (.token (.longid .tailNonemptyHeadAlphaNotUpper) (.bindNT (Sum.inl .nFQV))))
   | .inl .nEliteral => some (.choice (.token .isInt (.bindNT (Sum.inl .nEliteral))) (.choice (.token .isString (.bindNT (Sum.inl .nEliteral))) (.choice (.token .isChar (.bindNT (Sum.inl .nEliteral))) (.choice (.token .isWord (.bindNT (Sum.inl .nEliteral))) (.token .isFfi (.bindNT (Sum.inl .nEliteral)))))))
