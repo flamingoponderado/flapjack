@@ -231,8 +231,9 @@ theorem pcCompileCorrectAt_shMemLoad {width : Nat} {σ : Type} [NeZero width]
                                           ffi := newFfi }) := by
                                       unfold crepShMemLoadExactHOL
                                       rw [if_pos hnb, if_pos hdomT, hcallT]
-                                    have hsource' : shMemLoadHOLFiniteExact s VarKind.local
-                                        name addr (nbOpHOL operator) = (none, s1) := by
+                                    have hsource' : shMemLoadHOLFiniteExact
+                                        (resultWidth := width) VarKind.local
+                                        name addr (nbOpHOL operator) s = (none, s1) := by
                                       unfold shMemLoadHOLFiniteExact
                                       rw [if_pos hnb, if_pos hdom, hcall]
                                       rw [hs1]
@@ -343,8 +344,9 @@ theorem pcCompileCorrectAt_shMemLoad {width : Nat} {σ : Type} [NeZero width]
                                           ffi := newFfi }) := by
                                       unfold crepShMemLoadExactHOL
                                       rw [if_neg hnb, if_pos hdomT, hcallT]
-                                    have hsource' : shMemLoadHOLFiniteExact s VarKind.local
-                                        name addr (nbOpHOL operator) = (none, s1) := by
+                                    have hsource' : shMemLoadHOLFiniteExact
+                                        (resultWidth := width) VarKind.local
+                                        name addr (nbOpHOL operator) s = (none, s1) := by
                                       unfold shMemLoadHOLFiniteExact
                                       rw [if_neg hnb, if_pos hdom, hcall]
                                       rw [hs1]

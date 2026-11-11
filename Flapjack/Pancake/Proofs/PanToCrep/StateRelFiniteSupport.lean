@@ -334,7 +334,8 @@ theorem shMemLoadHOLFiniteExact_ret_corresponds {width : Nat} [NeZero width] {σ
     (hlocals : panToCrepLocalsRelFiniteExact ctxt source.locals target.locals)
     (hvar : ctxt.vars.lookup name = some (ShapeHOL.one, [destination]))
     {sourcePost : PanSemStateFiniteExact width σ} {targetPost : CrepSemHOLState width σ}
-    (hsource : shMemLoadHOLFiniteExact source .local name address nb = (none, sourcePost))
+    (hsource : shMemLoadHOLFiniteExact (resultWidth := width) .local name address nb
+      source = (none, sourcePost))
     (htarget : crepShMemLoadExactHOL destination address nb target = (none, targetPost)) :
     panToCrepStateRelFiniteExact sourcePost targetPost ∧
       panToCrepLocalsRelFiniteExact ctxt sourcePost.locals targetPost.locals := by

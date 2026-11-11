@@ -26,11 +26,12 @@ private theorem loadFresh {width : Nat} {σ : Type} [NeZero width]
     (address : BitVec width) (nb : Nat) (state : PanSemStateFiniteExact width σ)
     (hne : kind = .local → name ≠ destination)
     (result : Option (PanSemResultExact width)) (post : PanSemStateFiniteExact width σ)
-    (heval : @shMemLoadHOLFiniteExact width σ _ state
-      (fun a => Classical.propDecidable (state.shMemaddrs a)) kind destination address nb = (result, post)) :
+    (heval : @shMemLoadHOLFiniteExact width σ _ width _ kind destination address nb state
+      (fun a => Classical.propDecidable (state.shMemaddrs a)) = (result, post)) :
     ∃ locals,
-      @shMemLoadHOLFiniteExact width σ _ {state with locals := state.locals.updateEq (name, value)}
-        (fun a => Classical.propDecidable (state.shMemaddrs a)) kind destination address nb =
+      @shMemLoadHOLFiniteExact width σ _ width _ kind destination address nb
+        {state with locals := state.locals.updateEq (name, value)}
+        (fun a => Classical.propDecidable (state.shMemaddrs a)) =
         (result, {post with locals := locals}) ∧
       (goodResHOL result = true ∧ result ≠ some .error →
         locals = post.locals.updateEq (name, value)) := by

@@ -447,19 +447,26 @@ def setKvarFfiHOLFinite {width : Nat} {σ : Type} [NeZero width]
   rw [toExact_setKvarHOLFinite]
 
 /-- HOL `sh_mem_load_def` (`cakeml/pancake/semantics/panSemScript.sml:510-527`)
-    over the finite-map state carrier. The branches follow HOL directly: test
-    the raw address when `nb = 0`, otherwise the byte-aligned address; call
-    `call_FFI` with `SharedMem MappedRead`, `[n2w nb]`, and
-    `word_to_bytes addr F`; on `FFI_final`, clear locals; on `FFI_return`,
-    install the loaded word with `set_kvar` and update only `ffi`. The four
-    map fields use the canonical finite-support carrier recorded by the tag. -/
+    over the finite-map state carrier.  The typed HOL statement quantifies the
+    target variable, the address, the byte count, the state and the result at
+    independent types (`vk :varkind`, `v :mlstring`, `addr :α word`, `nb :num`,
+    `s :(α,'ffi) state`, result `β result`), and its argument order is
+    `vk, v, addr, nb, s`; the exact twin keeps the independent result width and
+    HOL's order, while the production `shMemLoadHOLExact` uses a single width
+    and the state-first order.  The branches follow HOL directly: test the raw
+    address when `nb = 0`, otherwise the byte-aligned address; call `call_FFI`
+    with `SharedMem MappedRead`, `[n2w nb]`, and `word_to_bytes addr F`; on
+    `FFI_final`, clear locals; on `FFI_return`, install the loaded word with
+    `set_kvar` and update only `ffi`.  The four map fields use the canonical
+    finite-support carrier recorded by the tag. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "sh_mem_load_def"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 def shMemLoadHOLFiniteExact {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs]
-    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat) :
-    Option (PanSemResultExact width) × PanSemStateFiniteExact width σ :=
+    {resultWidth : Nat} [NeZero resultWidth]
+    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat)
+    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs] :
+    Option (PanSemResultExact resultWidth) × PanSemStateFiniteExact width σ :=
   if nb = 0 then
     if state.shMemaddrs address then
       match callFFIHOL state.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
@@ -483,9 +490,9 @@ def shMemLoadHOLFiniteExact {width : Nat} {σ : Type} [NeZero width]
     forgetting finite-map support after the direct finite-carrier load gives
     the broad helper's result on the same finite input. -/
 theorem shMemLoadHOLFiniteExact_toExact {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs]
-    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat) :
-    let loaded := shMemLoadHOLFiniteExact state kind name address nb
+    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat)
+    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs] :
+    let loaded := shMemLoadHOLFiniteExact (resultWidth := width) kind name address nb state
     (loaded.1, loaded.2.toExact) =
       shMemLoadHOLExact state.toExact kind name address nb := by
   classical
@@ -559,20 +566,20 @@ private theorem ofExact_eq_finite_of_toExact_eq {width : Nat} {σ : Type}
     rebuilding the broad load result with its finite-support proof gives the
     direct finite-carrier helper's result. -/
 theorem shMemLoadHOLFiniteExact_repack {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs]
-    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat) :
-    let loaded := shMemLoadHOLFiniteExact state kind name address nb
+    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat)
+    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs] :
+    let loaded := shMemLoadHOLFiniteExact (resultWidth := width) kind name address nb state
     let broad := shMemLoadHOLExact state.toExact kind name address nb
     (broad.1, ofExact broad.2
     (shMemLoadHOLExact_finiteSupport state.toExact kind name address nb
         state.toExact_finiteSupport)) = (loaded.1, loaded.2) := by
-  have h := shMemLoadHOLFiniteExact_toExact state kind name address nb
+  have h := shMemLoadHOLFiniteExact_toExact kind name address nb state
   dsimp only at h
   apply Prod.ext
   · exact (congrArg Prod.fst h).symm
   · have hsnd :
         (shMemLoadHOLExact state.toExact kind name address nb).2 =
-          (shMemLoadHOLFiniteExact state kind name address nb).2.toExact :=
+          (shMemLoadHOLFiniteExact (resultWidth := width) kind name address nb state).2.toExact :=
       (congrArg Prod.snd h).symm
     exact ofExact_eq_finite_of_toExact_eq _ _ hsnd
       (shMemLoadHOLExact_finiteSupport state.toExact kind name address nb
@@ -2817,9 +2824,9 @@ theorem evaluateHOLFiniteState_shMemLoad_source {width : Nat} {σ : Type}
       | some (.val (.word addr)) =>
           match lookupKvarHOLFinite kind name state with
           | some (.val (.word _)) =>
-              let loaded := @shMemLoadHOLFiniteExact width σ _ state
+              let loaded := @shMemLoadHOLFiniteExact width σ _ width _ kind name addr
+                (nbOpHOL operator) state
                 (fun current => Classical.propDecidable (state.shMemaddrs current))
-                kind name addr (nbOpHOL operator)
               (loaded.1, loaded.2)
           | _ => (some .error, state)
       | _ => (some .error, state) := by
@@ -2831,7 +2838,7 @@ theorem evaluateHOLFiniteState_shMemLoad_source {width : Nat} {σ : Type}
     repeat' split <;> simp_all <;> try apply ofExact_toExact_any
   case h_1 =>
     exact (Prod.mk.inj
-      (shMemLoadHOLFiniteExact_repack state kind name _ (nbOpHOL operator)))
+      (shMemLoadHOLFiniteExact_repack kind name _ (nbOpHOL operator) state))
 
 /-- HOL `evaluate_def`'s `ExtCall` equation (`panSemScript.sml:711-726`,
     restated at line 780). It preserves the four ordered expression checks,

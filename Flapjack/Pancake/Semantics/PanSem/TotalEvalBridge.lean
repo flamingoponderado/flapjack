@@ -1339,16 +1339,14 @@ theorem panShMemLoad_agree {σ : Type}
         (panSemTotalShMemLoadResult production
           (panShMemLoad (panSemTotalShMemContext production)
             (panSemTotalShMemState production) kind (toStringOfBytes name) size addr)).1
-        (@shMemLoadHOLFiniteExact 64 σ _ exact
-          (fun current => Classical.propDecidable (exact.shMemaddrs current))
-          kind name addr (nbOpHOL size)).1 ∧
+        (@shMemLoadHOLFiniteExact 64 σ _ 64 _ kind name addr (nbOpHOL size) exact
+          (fun current => Classical.propDecidable (exact.shMemaddrs current))).1 ∧
       PanSemStateRelExec
         (panSemTotalShMemLoadResult production
           (panShMemLoad (panSemTotalShMemContext production)
             (panSemTotalShMemState production) kind (toStringOfBytes name) size addr)).2
-        (@shMemLoadHOLFiniteExact 64 σ _ exact
-          (fun current => Classical.propDecidable (exact.shMemaddrs current))
-          kind name addr (nbOpHOL size)).2.toExact := by
+        (@shMemLoadHOLFiniteExact 64 σ _ 64 _ kind name addr (nbOpHOL size) exact
+          (fun current => Classical.propDecidable (exact.shMemaddrs current))).2.toExact := by
   obtain ⟨hlocals, hglobals, hstructs, hcode, heshapes, hmem, hmemaddrs, hshared,
     hclock, hbe, hffiRel, hbase, htop⟩ := hrel
   have hrelRaw : PanSemStateRelExec production exact.toExact :=

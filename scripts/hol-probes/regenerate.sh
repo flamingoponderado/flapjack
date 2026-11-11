@@ -2161,6 +2161,16 @@ run_probe pan_upd_locals_probeScript.sml pan_upd_locals_probe.out \
   res_var_def_typed res_var_def_hypotheses \
   sh_mem_store_def_typed sh_mem_store_def_hypotheses \
   "$cake_dir/pancake/semantics/panSemScript.sml"
+run_probe pan_phase4_exact_probeScript.sml pan_phase4_exact_probe.out \
+  empty_locals_def_typed empty_locals_def_hypotheses \
+  lookup_code_def_typed lookup_code_def_hypotheses \
+  sh_mem_load_def_typed sh_mem_load_def_hypotheses \
+  mk_ctxt_def_typed mk_ctxt_def_hypotheses \
+  make_funcs_def_typed make_funcs_def_hypotheses \
+  compile_prog_def_typed compile_prog_def_hypotheses \
+  evaluate_nested_decs_load_globals_typed evaluate_nested_decs_load_globals_hypotheses \
+  pan_phase4_exact_probe_done \
+  "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_sem_lookup_code_probeScript.sml pan_sem_lookup_code_probe.out \
   lookup_code_nonempty_success lookup_code_wf_shape_invariant_step_success \
   lookup_code_missing_function \

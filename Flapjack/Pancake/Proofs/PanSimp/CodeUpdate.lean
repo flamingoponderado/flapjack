@@ -440,12 +440,11 @@ preserves the input `code` field. -/
 theorem shMemLoadHOLFiniteExact_codeUpd {width : Nat} {σ : Type} [NeZero width]
     (c : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL)) (state : PanSemStateFiniteExact width σ)
     (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat) :
-    let loaded := @shMemLoadHOLFiniteExact width σ _ state
+    let loaded := @shMemLoadHOLFiniteExact width σ _ width _ kind name address nb state
         (fun current => Classical.propDecidable (state.shMemaddrs current))
-        kind name address nb
-    @shMemLoadHOLFiniteExact width σ _ { state with code := c }
-        (fun current => Classical.propDecidable (state.shMemaddrs current))
-        kind name address nb =
+    @shMemLoadHOLFiniteExact width σ _ width _ kind name address nb
+        { state with code := c }
+        (fun current => Classical.propDecidable (state.shMemaddrs current)) =
       (loaded.1, { loaded.2 with code := c }) := by
   classical
   cases state with

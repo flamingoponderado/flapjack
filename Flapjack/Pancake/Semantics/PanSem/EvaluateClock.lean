@@ -2134,9 +2134,9 @@ theorem evaluateHOLFiniteState_eq_evaluate_def {width : Nat} {σ : Type} [NeZero
       | some (.val (.word addr)) =>
           match lookupKvarHOLFinite kind name state with
           | some (.val (.word _)) =>
-              let loaded := @shMemLoadHOLFiniteExact width σ _ state
+              let loaded := @shMemLoadHOLFiniteExact width σ _ width _ kind name addr
+                (nbOpHOL operator) state
                 (fun current => Classical.propDecidable (state.shMemaddrs current))
-                kind name addr (nbOpHOL operator)
               (loaded.1, loaded.2)
           | _ => (some .error, state)
       | _ => (some .error, state)
