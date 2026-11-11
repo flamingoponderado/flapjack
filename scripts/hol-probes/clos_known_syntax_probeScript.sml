@@ -364,6 +364,16 @@ val _ = show "ssgc_free_clock_typed=" closPropsTheory.ssgc_free_clockupd;
 val _ = show "ssgc_free_dec_clock_typed=" closPropsTheory.ssgc_free_dec_clock;
 
 (* Local theorem: replay its statement with inferred source and target types. *)
+(* Replay the original source-local theorem with its original proof tactic. *)
+val known_state_rel_opt_rel_refs_replay = prove(
+  ``(clos_knownProof$state_rel c g s1 s2 ∧ FLOOKUP s1.refs n = r1 ⇒
+      ∃r2. FLOOKUP s2.refs n = r2 ∧ OPTREL (clos_knownProof$ref_rel c g) r1 r2) ∧
+    (clos_knownProof$state_rel c g s1 s2 ∧ FLOOKUP s2.refs n = r2 ⇒
+      ∃r1. FLOOKUP s1.refs n = r1 ∧ OPTREL (clos_knownProof$ref_rel c g) r1 r2)``,
+  rw [] >> gvs [clos_knownProofTheory.state_rel_def, finite_mapTheory.fmap_rel_def,
+                finite_mapTheory.FLOOKUP_DEF] >> rw []);
+val _ = show "known_state_rel_opt_rel_refs_statement_typed=" known_state_rel_opt_rel_refs_replay;
+
 val _ = (print "rel_update_thunk_statement_typed="; print_term
   ``clos_knownProof$state_rel c g s1 s2 ∧
     LIST_REL (clos_knownProof$v_rel c g) vs ys ⇒

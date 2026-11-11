@@ -7,7 +7,6 @@ public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationBool
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLetrec
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationRaise
-public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationTick
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationCall
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOp
 
@@ -100,10 +99,55 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
               apply exprIH [body] env state (by omega)
               simp only [expsWeight, expWeight] at measure ⊢; omega
             | tick trace body =>
-              apply Tick.knownCorrect0Tick trace body env state
-              intro nonzero
-              apply smaller [body] env (decClock 1 state)
-              simp only [decClock]; omega
+              intro res1 s env1 xenv1 env2 xenv2 t0 c g0 g aenv eas h
+              obtain ⟨run, known, initialRel, inputSyntax, coSyntax, disjoint, oracle, stateOracleDisjoint,
+                exprSafe, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
+                sub0, sub1, mono, free, envRel, unique, stateOracle, envEq, noType⟩ := h
+              have clockEq : state.clock = t0.clock := initialRel.2.2.2.2.1
+              have bodySyntax : everyFnVarsNone [body] := by simpa [everyFnVarsNone, fnVarsNoneExp] using inputSyntax
+              have bodyDisjoint : mglobalsDisjoint state.globals [body] := by
+                simpa [mglobalsDisjoint, elistGlobals, setGlobals] using disjoint
+              have bodySafe : ∀ e ∈ [body], esgcFree e := by
+                have h := exprSafe (.tick trace body) (by simp)
+                simpa [esgcFree] using h
+              have bodyFree : fvMax env1.length [body] := by
+                simpa [fvMax, freeVars, freeVarExp] using free
+              have bodyUnique : uniqueSetGlobals [body] state.compileOracle := by
+                simpa [uniqueSetGlobals, elistGlobals, setGlobals, FlatProps.unionGlobalBag,
+                  FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using unique
+              cases hk : knownListTotal c [body] aenv g0 with
+              | mk bodyEas bodyG =>
+                obtain ⟨be, ba, eq⟩ := knownListTotal_single_result c body aenv g0 bodyG bodyEas hk
+                subst bodyEas
+                rw [knownListTotal_tickSource, hk] at known
+                simp [knownSourceHead] at known
+                rcases known with ⟨rfl, rfl⟩
+                by_cases zero : state.clock = 0
+                · simp [evaluate, zero] at run
+                  rcases run with ⟨rfl, rfl⟩
+                  refine ⟨.err (.abort .timeoutError), t0, ?_, ?_, initialRel, globals, stateOracle, oracle⟩
+                  · simp [evaluate, ← clockEq, zero]
+                  · simp [resultRel, excRel]
+                · have bodyIH : KnownSimulationAt [body] env (decClock 1 state) := by
+                    apply smaller [body] env (decClock 1 state)
+                    simp only [decClock]; omega
+                  have bodyRun : evaluate [body] env (decClock 1 state) = (res1, s) := by
+                    simpa [evaluate, zero] using run
+                  have stateDec : StateRel c (nextG (decClock 1 state)) (decClock 1 state) (decClock 1 t0) := by
+                    simpa [StateRel, decClock, nextG, clockEq] using initialRel
+                  have step := bodyIH res1 s env1 xenv1 env2 xenv2 (decClock 1 t0) c g0 bodyG aenv [(be, ba)]
+                    ⟨bodyRun, hk, stateDec, bodySyntax, by simpa [decClock] using coSyntax,
+                      by simpa [decClock] using bodyDisjoint, by simpa [decClock, nextG] using oracle,
+                      by simpa [decClock, stateOracleMglobalsDisjoint] using stateOracleDisjoint,
+                      bodySafe, (ssgcFreeDecClock 1 state).2 safe, envSafe, approxRel,
+                      by simpa [decClock] using oracleSafe, globalSafe, approxSafe,
+                      by simpa [decClock, nextG, stateGlobalsApprox] using globals,
+                      sub0, by simpa [decClock, nextG] using sub1, by simpa [decClock] using mono,
+                      bodyFree, by simpa [decClock, nextG] using envRel, by simpa [decClock] using bodyUnique,
+                      by simpa [decClock] using stateOracle, envEq, noType⟩
+                  obtain ⟨res2, t, targetRun, result, finalState, finalGlobals, finalOracle, finalDisjoint⟩ := step
+                  refine ⟨res2, t, ?_, result, finalState, finalGlobals, finalOracle, finalDisjoint⟩
+                  simpa [evaluate, ← clockEq, zero] using targetRun
             | «let» trace xs body =>
               have bindIH : KnownSimulationAt xs env state := by
                 apply exprIH xs env state (by omega)
