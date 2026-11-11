@@ -65,29 +65,23 @@ theorem memoryRel_numberImpWord2 {width : Nat} [NeZero width] (conf : Config) (b
       ((.number i, first) :: (.number j, second) :: vars) →
       ∃ w1 w2 : BitVec width, first = .word w1 ∧ second = .word w2 := by
   rintro ⟨heap, limit, a, sp, sp1, gens, _, hword, _, _⟩
-  dsimp [wordMlInv] at hword
-  rcases hword with ⟨roots, habs, haddresses⟩
-  dsimp [absMlInv] at habs
-  rcases habs with ⟨_, _, _, _, hstack⟩
-  dsimp [bcStackRefInv] at hstack
-  rcases hstack with ⟨f, tf, _, _, _, _, _, _, _, hvalues, _⟩
-  cases roots with
-  | nil => cases hvalues
-  | cons root roots =>
-      cases roots with
-      | nil => cases hvalues with | cons _ rest => cases rest
-      | cons root' rest =>
-          cases hvalues with
-          | cons hvalue more =>
-            cases more with
-            | cons hvalue' _ =>
-              cases haddresses with
-              | cons haddress more =>
-                cases more with
-                | cons haddress' _ =>
-                  obtain ⟨w1, hw1⟩ := numberValueWordAddr conf i refs root f tf heap hvalue
-                  obtain ⟨w2, hw2⟩ := numberValueWordAddr conf j refs root' f tf heap hvalue'
-                  exact ⟨w1, w2, haddress.symm.trans hw1, haddress'.symm.trans hw2⟩
+  obtain ⟨roots, habs, haddresses⟩ := hword
+  obtain ⟨_, _, _, _, hstack⟩ := habs
+  obtain ⟨f, tf, _, _, _, _, _, _, _, hvalues, _⟩ := hstack
+  rcases roots with _ | ⟨root, _ | ⟨root', _⟩⟩
+  · cases hvalues
+  · cases hvalues with | cons _ rest => cases rest
+  · cases hvalues with
+    | cons hvalue more =>
+      cases more with
+      | cons hvalue' _ =>
+        cases haddresses with
+        | cons haddress more =>
+          cases more with
+          | cons haddress' _ =>
+            obtain ⟨w1, hw1⟩ := numberValueWordAddr conf i refs root f tf heap hvalue
+            obtain ⟨w2, hw2⟩ := numberValueWordAddr conf j refs root' f tf heap hvalue'
+            exact ⟨w1, w2, haddress.symm.trans hw1, haddress'.symm.trans hw2⟩
 
 /-- The target location of a small integer is its immediate encoding. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_Number_IMP"
