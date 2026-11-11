@@ -38,26 +38,6 @@ theorem dlet_conditions_of_safe {F : Type} (source : SemanticPrimitivesHOL.State
       simp [EvaluateHOL.evaluateDecs, distinct, EvaluateHOL.typeError]
     exact False.elim (safe source bad)
 
-/-- A singleton source alias and compiler binding share a global slot. -/
-theorem globalEnvInv_alias (genv : GlobalEnv) (name : VarN) (idx : Nat) (trace : Tra)
-    (value : Value) (stored : FlatSem.Value) (bound : idx < genv.v.length)
-    (slot : genv.v[idx]?.getD none = some stored) (related : ValueRel genv value stored) :
-    GlobalEnvInv genv { v := nsSing name (.glob trace idx), c := nsEmpty }
-      (fun _ => False) { v := nsSing name value, c := nsEmpty } := by
-  apply GlobalEnvInv.intro
-  · intro id v _ lookup
-    cases id with
-    | short key =>
-      by_cases keyEq : key = name
-      · subst key
-        simp [nsLookup, nsSing] at lookup
-        subst v
-        exact .intro _ _ _ _ idx stored trace (by simp [nsLookup, nsSing]) bound slot related
-      · simp [nsLookup, nsSing, List.lookup, BEq.beq, keyEq] at lookup
-    | long moduleName inner => simp [nsLookup, nsSing] at lookup
-  · intro id arity stamp lookup
-    cases id <;> simp [nsLookup, nsEmpty] at lookup
-
 /-- A failing expression propagates through a non-alias declaration before
 the generated pattern match can initialize any globals. -/
 theorem evaluateDlet_pattern_flat_error {C F : Type}
@@ -365,7 +345,7 @@ theorem evaluateDlet_alias_growing {C F : Type} [Nonempty C]
     rw [sourceDec, compiled]
     exact ⟨flat, genv, none, by simp [FlatSem.evaluateDecs], invariant.2.2.1, rfl,
       ⟨valueDomain, valueModules, envDomainEq_empty.2.2⟩,
-      globalEnvInv_alias genv name idx nameTrace value stored bound slot related,
+      globalEnvInv_singleton genv name idx nameTrace value stored bound slot related,
       GlobalGrowth.refl genv, invariant, generation, oracForwardRel_refl interp source.evalState⟩
 
 /-- The `Dlet` declaration case in the shared factored result shape, using

@@ -257,12 +257,14 @@ theorem evaluate_compileDenv {C F : Type} (state : FlatSem.State C F)
   simp [compileDecs, FlatSem.evaluateDecs, FlatSem.evaluate, envIdTuple, FlatSem.fixClock,
     FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppFlat, FlatSem.unitValue, empty]
 
-/-- A singleton environment ID is related to the compiler's singleton global
-binding when the global slot contains the related flat value. -/
-theorem globalEnvInv_denv (genv : GlobalEnv) (name : VarN) (idx : Nat)
+/-- A singleton source binding relates to a compiler global binding at any
+trace when its slot contains the related Flat value. This Flapjack helper
+packages a singleton case of HOL's relation and has no separate source theorem. -/
+theorem globalEnvInv_singleton (genv : GlobalEnv) (name : VarN) (idx : Nat)
+    (trace : BackendCommon.Tra)
     (value : Value) (stored : FlatSem.Value) (bound : idx < genv.v.length)
     (slot : genv.v[idx]?.getD none = some stored) (related : ValueRel genv value stored) :
-    GlobalEnvInv genv { v := nsBind name (.glob .none idx) nsEmpty, c := nsEmpty }
+    GlobalEnvInv genv { v := nsBind name (.glob trace idx) nsEmpty, c := nsEmpty }
       (fun _ => False) { v := nsSing name value, c := nsEmpty } := by
   apply GlobalEnvInv.intro
   · intro id v _ lookup
@@ -272,7 +274,7 @@ theorem globalEnvInv_denv (genv : GlobalEnv) (name : VarN) (idx : Nat)
       · subst key
         simp [nsLookup, nsSing] at lookup
         subst v
-        exact .intro _ _ _ _ idx stored .none (by simp [nsLookup, nsBind, nsEmpty]) bound slot related
+        exact .intro _ _ _ _ idx stored trace (by simp [nsLookup, nsBind, nsEmpty]) bound slot related
       · simp [nsLookup, nsSing, List.lookup, BEq.beq, keyEq] at lookup
     | long moduleName inner => simp [nsLookup, nsSing] at lookup
   · intro id arity stamp lookup
@@ -513,10 +515,10 @@ theorem evaluateDenv_factored_complete {C F : Type} [Nonempty C]
   have bound : start.vidx < genv.v.length := by
     rw [globals]
     exact (List.getElem?_eq_some_iff.mp blank).1
-  have newEnvInv := globalEnvInv_denv
+  have newEnvInv := globalEnvInv_singleton
     { genv with v := genv.v.set start.vidx (some (.conv none
       [.litv (.intLit (gen.generation : Int)), .litv (.intLit (gen.next : Int))])) }
-    name start.vidx value _ (by simpa using bound) (by simp [bound]) step.2.2.2.1
+    name start.vidx .none value _ (by simpa using bound) (by simp [bound]) step.2.2.2.1
   refine ⟨step.1, step.2.1, invariant, step.2.2.1, step.2.2.2.1,
     step.2.2.2.2.1, genRel, step.2.2.2.2.2.2.2, by simpa [compileDecs] using newEnvInv,
     ?_⟩
