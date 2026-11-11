@@ -9042,6 +9042,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "get_code_labels_mk_Ticks",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InlineCodeLocations.lean",
+  "lean_name": "ticks_getCodeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: arbitrary trace, index, tick count and complete expression retain their order, and the full code-label set equality is unconditional."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "code_locs_mk_Ticks",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/InlineCodeLocations.lean",
   "lean_name": "ticks_codeLocations",

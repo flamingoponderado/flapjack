@@ -27,6 +27,7 @@ decide_inline_locations_typed=val_approx_every_Fn_SOME (b :val_approx) ∧ decid
 clos_gen_locations_typed=∀(xs :(num # closLang$exp) list) (n :num) (x :num). EVERY val_approx_every_Fn_SOME (clos_gen_noinline x n xs)
 known_locations_typed=∀(a :config) (b :closLang$exp list) (c :val_approx list) (d :val_approx sptree$num_map). every_Fn_SOME b ∧ EVERY val_approx_every_Fn_SOME c ∧ globals_approx_every_Fn_SOME d ⇒ every_Fn_SOME (MAP (FST :closLang$exp # val_approx -> closLang$exp) (FST (known a b c d))) ∧ EVERY val_approx_every_Fn_SOME (MAP (SND :closLang$exp # val_approx -> val_approx) (FST (known a b c d))) ∧ globals_approx_every_Fn_SOME (SND (known a b c d))
 ticks_code_locs_typed=∀(a :tra) (b :num) (c :num) (d :closLang$exp). code_locs [(mk_Ticks a b c d :closLang$exp)] = code_locs [d]
+ticks_code_labels_typed=∀(a :tra) (b :num) (c :num) (d :closLang$exp). get_code_labels (mk_Ticks a b c d :closLang$exp) = get_code_labels d
 contains_closures_code_locs_typed=∀(es :closLang$exp list). ¬contains_closures es ⇒ code_locs es = ([] :num list)
 inline_code_locs_typed=decide_inline (a :config) (b :val_approx) (c :α option) (d :num) = inlD_LetInline (e :closLang$exp) ⇒ code_locs [e] = ([] :num list)
 known_code_bag_typed=∀(c :config) (xs :closLang$exp list) (aenv :val_approx list) (g0 :val_approx sptree$num_map) (eas :(closLang$exp # val_approx) list) (g :val_approx sptree$num_map). known c xs aenv g0 = (eas,g) ⇒ LIST_TO_BAG (code_locs (MAP (FST :closLang$exp # val_approx -> closLang$exp) eas)) ≤ LIST_TO_BAG (code_locs xs)
