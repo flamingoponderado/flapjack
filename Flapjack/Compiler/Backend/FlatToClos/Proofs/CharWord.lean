@@ -1,4 +1,8 @@
-import Flapjack.Basis.Pure.MlString.CharWord
+module
+
+public import Flapjack.Basis.Pure.MlString.CharWord
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.FlatToClos
 
