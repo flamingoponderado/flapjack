@@ -51,7 +51,17 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
           exact (noType rfl).elim
         | some kind =>
           cases kind with
-          | partialApp value => exact ApplyPartial.knownAppPartialCase location f first rest state value found
+          | partialApp value =>
+            intro res1 s loc2 targetFn targetArgs t0 c argsopt h
+            obtain ⟨run, fnRel, oracleDisjoint, _, _, _, _, _, _, _, oracle, argsRel, states, globals,
+              _, locRel, constraint, _⟩ := h
+            obtain ⟨sourceResult, sourceFinal, targetResult, targetFinal, sourceRun, targetRun,
+              resultRel, finalState, finalGlobals, finalOracle, finalDisjoint⟩ :=
+              ApplyPartial.partialApplicationSimulation c state t0 location loc2 f targetFn first rest targetArgs
+                argsopt value states fnRel argsRel locRel constraint found globals oracle oracleDisjoint
+            rw [run] at sourceRun
+            cases sourceRun
+            exact ⟨targetResult, targetFinal, targetRun, resultRel, finalState, finalGlobals, finalOracle, finalDisjoint⟩
           | fullApp body env remaining =>
             by_cases timeout : state.clock < (first :: rest).length - remaining.length
             · exact ApplyFull.fullApplicationTimeoutCase location f first rest state body env remaining found timeout

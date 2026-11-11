@@ -1,12 +1,29 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownGlobals
+public import Flapjack.Compiler.Backend.ClosKnownProps.Merge
 
 @[expose] public section
 
 /-! Tree inclusion across sequential known-function traversals. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.SubsptComposition
 open ClosProps
+
+/-- An intermediate better-defined tree is included when the endpoints agree. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "subspt_better_definedg"]
+theorem subsptBetterDefinedG (sp1 sp2 sp3 : Spt ValApprox)
+    (h : sptSubspt sp1 sp3 ∧ ClosKnownProps.betterDefinedG sp1 sp2 ∧
+      ClosKnownProps.betterDefinedG sp2 sp3) : sptSubspt sp1 sp2 := by
+  intro k member
+  obtain ⟨member2, related12⟩ := h.2.1 k member
+  obtain ⟨_, related23⟩ := h.2.2 k member2
+  obtain ⟨a, ha⟩ := (sptMem_iff_lookup k sp1).mp member
+  obtain ⟨b, hb⟩ := (sptMem_iff_lookup k sp2).mp member2
+  have hc : sptLookup k sp3 = some a := by rw [(h.1 k member).2, ha]
+  simp only [ha, hb, Flapjack.holThe] at related12
+  simp only [hb, hc, Flapjack.holThe] at related23
+  have eq := ClosKnownProps.subapproxAntisym a b ⟨related12, related23⟩
+  exact ⟨member2, by rw [ha, hb, eq]⟩
 
 /-- Two disjoint write frames cannot hide an intermediate change when the
 initial tree is included in the final tree. This is Flapjack infrastructure. -/

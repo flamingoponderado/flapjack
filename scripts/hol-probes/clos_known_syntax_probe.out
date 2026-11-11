@@ -205,6 +205,8 @@ val_approx_merge_left_typed=∀(a1 :val_approx) (v :v). val_approx_val a1 v ⇒ 
 val_approx_merge_typed=∀(a1 :val_approx) (v :v) (a2 :val_approx). val_approx_val a1 v ∨ val_approx_val a2 v ⇒ val_approx_val (merge a1 a2 :val_approx) v
 known_merge_comm_typed=∀(a1 :val_approx) (a2 :val_approx). (merge a1 a2 :val_approx) = (merge a2 a1 :val_approx)
 known_subapprox_def_typed=∀(a1 :val_approx) (a2 :val_approx). a1 ◁ a2 ⇔ (merge a1 a2 :val_approx) = a2
+known_better_definedg_typed=∀(g1 :val_approx sptree$num_map) (g2 :val_approx sptree$num_map). better_definedg g1 g2 ⇔ ∀(k :num). k ∈ (domain g1 :num -> bool) ⇒ k ∈ (domain g2 :num -> bool) ∧ THE (lookup k g1) ◁ THE (lookup k g2)
+known_subspt_better_definedg_typed=∀(sp1 :val_approx sptree$num_map) (sp2 :val_approx sptree$num_map) (sp3 :val_approx sptree$num_map). subspt sp1 sp3 ∧ better_definedg sp1 sp2 ∧ better_definedg sp2 sp3 ⇒ subspt sp1 sp2
 known_subapprox_antisym_typed=(a1 :val_approx) ◁ (a2 :val_approx) ∧ a2 ◁ a1 ⇒ a1 = a2
 state_globals_approx_typed=∀(s :(α, β) state) (g :val_approx sptree$num_map). state_globals_approx s g ⇔ ∀(k :num) (v :v) (a :val_approx). get_global k s.globals = SOME (SOME v) ∧ lookup k g = SOME a ⇒ val_approx_val a v
 state_globals_clock_typed=state_globals_approx ((s :(α, β) state) with clock updated_by (f :num -> num)) (g :val_approx sptree$num_map) ⇔ state_globals_approx s g

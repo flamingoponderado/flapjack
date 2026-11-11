@@ -1,6 +1,8 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosKnown.Merge
+public import Flapjack.Misc.Option
+public import Flapjack.Misc.Sptree
 
 @[expose] public section
 
@@ -73,5 +75,12 @@ theorem subapproxAntisym (a1 a2 : ValApprox)
   unfold subapprox at left right
   rw [mergeComm] at left
   exact right.symm.trans left
+
+/-- Each present approximation is preserved or becomes more general. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "better_definedg_def"]
+noncomputable def betterDefinedG (g1 g2 : Spt ValApprox) : Prop :=
+  ∀ k, sptMem k g1 → sptMem k g2 ∧
+    subapprox (@Flapjack.holThe ValApprox ⟨.other⟩ (sptLookup k g1))
+      (@Flapjack.holThe ValApprox ⟨.other⟩ (sptLookup k g2))
 
 end Flapjack.Compiler.Backend.ClosKnownProps

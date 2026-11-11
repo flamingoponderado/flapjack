@@ -10947,6 +10947,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "subspt_better_definedg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SubsptComposition.lean",
+  "lean_name": "subsptBetterDefinedG",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subspt_better_definedg_typed: both better-defined relations and the endpoint subtree premise imply the original intermediate subtree conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "letrec_case_eq",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
   "lean_name": "letrecCaseEq",
@@ -14205,6 +14213,14 @@
   "lean_name": "valApproxValMerge",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared val_approx_merge_typed: either source approximation related to the same value suffices for the merged approximation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "better_definedg_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "betterDefinedG",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_better_definedg_typed: both source sparse-tree domains, THE lookups and full approximation ordering agree."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
