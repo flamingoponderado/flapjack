@@ -499,6 +499,7 @@ import Flapjack.Compiler.Backend.Semantics.ClosProps.DestClosure
 import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
 import Flapjack.Compiler.Backend.Semantics.ClosProps.ResultObservations
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.FreeVars
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.FreeVarsAgreement
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxValue
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateGlobalsApprox
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.MappedGlobals

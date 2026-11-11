@@ -11,6 +11,7 @@ public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLetrec
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpGlobal
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpSetGlobal
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationInstallDispatch
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpForce
 
 @[expose] public section
 
@@ -1311,16 +1312,56 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
                     (by simp) (by simp) (by intro index; simp)
                     (by intro k; simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]) argsIH
                 | forceThunk =>
-                  apply Force.knownCorrect0OpForce trace args env state ?_ argsIH
-                  intro values middle value run found
-                  have bound := evaluate_clock_le args env state
-                  rw [run] at bound
-                  simp only at bound
-                  apply exprIH [appUnit (.var .none 0)] [value] middle (by omega)
-                  have hweight := appUnit_var_weight
-                  simp only [expsWeight, expWeight] at measure
-                  simp only [appUnit, expsWeight, expWeight] at hweight ⊢
-                  omega
+                  intro res1 s env1 xenv1 env2 xenv2 t0 c g0 g aenv eas h
+                  obtain ⟨run, known, initialRel, inputSyntax, coSyntax, disjoint, oracle, stateOracleDisjoint,
+                    exprSafe, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
+                    sub0, sub1, mono, free, envRel, unique, stateOracle, envEq, noType⟩ := h
+                  have argsUnique : uniqueSetGlobals args state.compileOracle := by
+                    simpa [uniqueSetGlobals, elistGlobals_append, elistGlobals, setGlobals, opGlobalBag,
+                      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using unique
+                  have argsDisjoint : mglobalsDisjoint state.globals args := by
+                    simpa [mglobalsDisjoint, elistGlobals, setGlobals, opGlobalBag,
+                      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using disjoint
+                  have argsSafe : ∀ e ∈ args, esgcFree e := by
+                    have safeOp := exprSafe (.op trace (.thunkOp .forceThunk) args) (by simp)
+                    simpa [esgcFree, esgcFreeList_iff] using safeOp
+                  have argsSyntax : everyFnVarsNone args := by
+                    simpa [everyFnVarsNone, fnVarsNoneExp] using inputSyntax
+                  have argsFree : fvMax env1.length args := by
+                    simpa [fvMax, freeVars, freeVarExp] using free
+                  cases hk : knownListTotal c args aenv g0 with
+                  | mk argEas g1 =>
+                    rw [knownListTotal_op, hk] at known
+                    simp [knownOpHOL] at known
+                    rcases known with ⟨rfl, rfl⟩
+                    cases hr : evaluate args env state with
+                    | mk argResult middle =>
+                      have argsNoType : argResult ≠ .err (.abort .typeError) := by
+                        intro eq
+                        subst argResult
+                        rw [evaluate, fixClock_evaluate, hr] at run
+                        simp at run
+                        rcases run with ⟨rfl, rfl⟩
+                        exact noType rfl
+                      obtain ⟨targetArgResult, targetMiddle, targetArgs, argsRelated, midState, midGlobals,
+                          midOracleState, midOracle⟩ := argsIH argResult middle env1 xenv1 env2 xenv2 t0 c g0 g1
+                        aenv argEas ⟨hr, hk, initialRel, argsSyntax, coSyntax, argsDisjoint, oracle, stateOracleDisjoint,
+                          argsSafe, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
+                          sub0, sub1, mono, argsFree, envRel, argsUnique, stateOracle, envEq, argsNoType⟩
+                      have step := Force.forceSmartOpAfterArguments c trace args (argEas.map Prod.fst) env (env2 ++ xenv2)
+                        state middle t0 targetMiddle argResult targetArgResult res1 s hr targetArgs midState argsRelated
+                        safe envSafe argsSafe coSyntax oracleSafe stateOracleDisjoint argsDisjoint argsUnique mono
+                        midOracle midGlobals midOracleState (fun values value eq found => by
+                          subst argResult
+                          have bound := evaluate_clock_le args env state
+                          rw [hr] at bound
+                          simp only at bound
+                          apply exprIH [appUnit (.var .none 0)] [value] middle (by omega)
+                          have hweight := appUnit_var_weight
+                          simp only [expsWeight, expWeight] at measure
+                          simp only [appUnit, expsWeight, expWeight] at hweight ⊢
+                          omega) run noType
+                      simpa using step
 
 /-- The closure state uses canonical finite-map fields. -/
 theorem holFmapAsFiniteSupportWitness {C F : Type} :

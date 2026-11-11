@@ -10565,19 +10565,6 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpForce.lean",
-  "lean_name": "knownCorrect0OpForce",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out with the force-operation branch of the source proof. KnownSimulationAt unfolds to the original expression conjunct. The operation is specialized to ForceThunk, making the install induction hypothesis impossible; the argument hypothesis and the forced-body hypothesis retain the source argument-evaluation and unevaluated-thunk conditions. Argument errors, invalid and evaluated thunks, body exceptions, and successful updates follow the original evaluator, with type errors excluded by the source theorem. Source and target compiler carriers remain separate and the FFI carrier shared; refs and code use canonical finite support with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationFn.lean",
   "lean_name": "knownCorrect0Fn",
   "statement_status": "reviewed_fmap_as_finite_support",
@@ -10954,6 +10941,22 @@
   "lean_name": "notLessZeroImp",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared known_not_less_zero_replay_typed, replaying the source-local proof: integer nonnegativity implies the original natural-number existential."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "fv_alt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVarsAgreement.lean",
+  "lean_name": "fvAlt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_fv_alt_typed: original closure free-variable predicate and computed de Bruijn-set membership agree with the full HOL statement."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "fv1_alt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVarsAgreement.lean",
+  "lean_name": "fv1Alt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_fv1_alt_typed: original closure free-variable predicate and computed de Bruijn-set membership agree with the full HOL statement."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
