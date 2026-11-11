@@ -1812,7 +1812,10 @@ theorem OPT_MMAP_MEM_IMP {α : Type} {β : Type} (f : α → Option β) (xs : Li
     `List.Forall₂`); `EL n args = v` is the indexed `arguments[n]'hn = value`;
     `flat`/`with_shape`/`size_of_shape`/`shape_of`/`is_wf_shape_v_nil` are
     `panValueFlatten`/`withShape`/`Shape.shapeSize`/`panValueShape`/
-    `panValueIsWf []` respectively. -/
+    `panValueIsWf []` respectively.  The exact port over `ShapeHOL`/`ValueHOL`/
+    `HolFiniteMapExact` is the tagged `listRelFlattenWithShapeLengthHOL`
+    (`PanProps/ListRelFlatten.lean`); this production-carrier version is
+    Flapjack-specific infrastructure and carries no manifest row. -/
 theorem listRelFlattenWithShapeLength (shapes : List Shape) (names : List Nat)
     (arguments : List (PanValue α)) (value : PanValue α) (n : Nat)
     (hnames : names.length = (arguments.map panValueFlatten).flatten.length)
@@ -1872,7 +1875,11 @@ theorem getElem?_flatten_take_sum {α : Type} {l : List (List α)} {n n' : Nat}
     HOL tag): HOL `LIST_REL`/`shape_of`/`is_wf_shape_v_nil`/`EL` are rendered
     here as the indexed `get` equality, `panValueShape []`, `panValueIsWf []`
     and `getElem`; HOL `FEMPTY |++ ZIP (ns, FLAT (MAP flatten args))` is
-    `FUPDATE_LIST FEMPTY (names.zip ((arguments.map panValueFlatten).flatten))`. -/
+    `FUPDATE_LIST FEMPTY (names.zip ((arguments.map panValueFlatten).flatten))`.
+    The exact port over `ShapeHOL`/`ValueHOL`/`HolFiniteMapExact` is the tagged
+    `listRelFlattenWithShapeFlookupHOL` (`PanProps/ListRelFlatten.lean`); this
+    production-carrier version is Flapjack-specific infrastructure and carries
+    no manifest row. -/
 theorem listRelFlattenWithShapeFlookup (shapes : List Shape) (names : List Nat)
     (arguments : List (PanValue α)) (value : PanValue α) (n n' : Nat)
     (hdistinct : names.Nodup)

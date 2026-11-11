@@ -102163,22 +102163,6 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "list_rel_flatten_with_shape_flookup",
-    "lean_path": "Flapjack/Pancake/Semantics/PanProps.lean",
-    "lean_name": "listRelFlattenWithShapeFlookup",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.4.37; FLAPJACK-SPECIFIC, documented_mismatch). HOL panProps$list_rel_flatten_with_shape_flookup (panPropsScript.sml:585-599) states ALL_DISTINCT ns, LENGTH ns = LENGTH (FLAT (MAP flatten args)), size_of_shape (Comb sh) = LENGTH (FLAT (MAP flatten args)), EL n args = v, n < LENGTH args, LENGTH args = LENGTH sh, LIST_REL (fun sh arg => sh = shape_of arg) sh args, EVERY is_wf_shape_v_nil args, LENGTH (EL n (with_shape sh ns)) = LENGTH (flatten v) and n' < LENGTH (EL n (with_shape sh ns)) imply FLOOKUP (FEMPTY |++ ZIP (ns,FLAT (MAP flatten args))) (EL n' (EL n (with_shape sh ns))) = SOME (EL n' (flatten v)). The Lean analogue listRelFlattenWithShapeFlookup (PanProps.lean:767) renders HOL's FEMPty |++ ZIP finite-map update as FUPDATE_LIST FEMPTY (names.zip ...) and LIST_REL/shape_of/flatten/is_wf_shape_v_nil/EL by indexed getElem/panValueShape []/panValueFlatten/panValueIsWf [] over the production Shape/PanValue carriers, so the tag is withheld; its docstring already states the representation differences and exact ShapeHOL route (flapjack-pxn.18.3.5.8)."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "list_rel_flatten_with_shape_length",
-    "lean_path": "Flapjack/Pancake/Semantics/PanProps.lean",
-    "lean_name": "listRelFlattenWithShapeLength",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.4.35; FLAPJACK-SPECIFIC, documented_mismatch). HOL panProps$list_rel_flatten_with_shape_length (panPropsScript.sml:549-559) states LENGTH ns = LENGTH (FLAT (MAP flatten args)), size_of_shape (Comb sh) = LENGTH (FLAT (MAP flatten args)), EL n args = v, n < LENGTH args, LENGTH args = LENGTH sh, LIST_REL (fun sh arg => sh = shape_of arg) sh args and EVERY is_wf_shape_v_nil args imply LENGTH (EL n (with_shape sh ns)) = LENGTH (flatten v). The Lean analogue listRelFlattenWithShapeLength (PanProps.lean:707) keeps the same length equality but renders EL/gettable by indexed getElem and LIST_REL/shape_of/flatten/is_wf_shape_v_nil by getElem equality/panValueShape []/panValueFlatten/panValueIsWf [] over the production Shape/PanValue carriers instead of HOL's mlstring-named shape; its docstring already states there is no exact HOL tag, so the tag is withheld; exact ShapeHOL route tracked by flapjack-pxn.18.3.5.8."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
     "hol_name": "localised_exp_real_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanProps.lean",
     "lean_name": "localisedExpHOL",
@@ -103700,6 +103684,24 @@
     "lean_name": "elElWithShapeHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.4.24/.26-.32/.36 family; typed HOL capture in scripts/hol-probes/pan_props_with_shape_probe.out). panPropsScript.sml:568-583: LENGTH (xs :\u03b1 list) = size_of_shape (Comb (shs :shape list)) \u2227 (n :num) < LENGTH shs \u2227 (n' :num) < size_of_shape shs\u2772n\u2773 \u2227 EVERY is_wf_shape_nil shs \u21d2 (with_shape shs xs)\u2772n\u2773\u2772n'\u2773 = xs\u2772n' + size_of_shape (Comb (TAKE n shs))\u2773, 0 hypotheses. Lean keeps all four hypotheses including EVERY is_wf_shape_nil shs (as \u2200 shape \u2208 shs, isWfShapeNilHOL shape = true) and the index sum in HOL's order; the inner getElem bound is discharged from the size hypotheses (withShapeHOLGetElemLength) rather than assumed, matching HOL's total EL."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "list_rel_flatten_with_shape_length",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/ListRelFlatten.lean",
+    "lean_name": "listRelFlattenWithShapeLengthHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.4.35/.37 family; typed HOL capture in scripts/hol-probes/pan_props_with_shape_probe.out). panPropsScript.sml:549-567: \u2200(sh :shape list) (ns :\u03b1 list) (args :\u03b2 v list) (v :\u03b2 v) (n :num). LENGTH ns = LENGTH (FLAT (MAP (flatten :\u03b2 v -> \u03b2 word_lab list) args)) \u2227 size_of_shape (Comb sh) = LENGTH (FLAT (MAP flatten args)) \u2227 args\u2772n\u2773 = v \u2227 n < LENGTH args \u2227 LENGTH args = LENGTH sh \u2227 LIST_REL (\u03bb(sh :shape) (arg :\u03b2 v). sh = shape_of arg) sh args \u2227 EVERY is_wf_shape_v_nil args \u21d2 LENGTH (with_shape sh ns)\u2772n\u2773 = LENGTH (flatten v), 0 hypotheses. Lean keeps HOL's generic key type \u03b1, the polymorphic value type (ValueHOL width, words_as_type_indexed_bitvec), all seven hypotheses and the conclusion over ShapeHOL/withShapeHOL/sizeOfShapeHOL. LIST_REL is the exact ListRel and EVERY is_wf_shape_v_nil args is membership over isWfShapeValueHOLExact []; the EL/getElem bound needed by Lean's total-index API is supplied by n < LENGTH args (HOL's own hypothesis), and the EL n args = v binder follows n < LENGTH args because Lean's getElem requires it."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "list_rel_flatten_with_shape_flookup",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/ListRelFlatten.lean",
+    "lean_name": "listRelFlattenWithShapeFlookupHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.4.35/.37 family; typed HOL capture in scripts/hol-probes/pan_props_with_shape_probe.out). panPropsScript.sml:585-613: \u2200(sh :shape list) (ns :\u03b1 list) (args :\u03b2 v list) (v :\u03b2 v) (n n' :num). ALL_DISTINCT ns \u2227 LENGTH ns = LENGTH (FLAT (MAP flatten args)) \u2227 size_of_shape (Comb sh) = LENGTH (FLAT (MAP flatten args)) \u2227 args\u2772n\u2773 = v \u2227 n < LENGTH args \u2227 LENGTH args = LENGTH sh \u2227 LIST_REL (\u03bb(sh :shape) (arg :\u03b2 v). sh = shape_of arg) sh args \u2227 EVERY is_wf_shape_v_nil args \u2227 LENGTH (with_shape sh ns)\u2772n\u2773 = LENGTH (flatten v) \u2227 n' < LENGTH (with_shape sh ns)\u2772n\u2773 \u21d2 FLOOKUP ((FEMPTY :\u03b1 |-> \u03b2 word_lab) |++ ZIP (ns,FLAT (MAP flatten args))) (with_shape sh ns)\u2772n\u2773\u2772n'\u2773 = SOME (flatten v)\u2772n'\u2773, 0 hypotheses. Lean keeps the generic key type \u03b1 (HOL equality is the DecidableEq instance), the ValueHOL width carrier (words_as_type_indexed_bitvec), all ten hypotheses and the lookup conclusion. HOL FEMPTY is HolFiniteMapExact.empty, |++ ZIP is updateListEq over the canonical finite-support carrier, and the lookup is proved by the tagged updateEqZipFlookupExactHOL together with the tagged elElWithShapeHOL; EVERY is_wf_shape_v_nil sh (the shape-side premise HOL discharges) is derived from the LIST_REL and EVERY is_wf_shape_v_nil args hypotheses. The EL/getElem bounds come from HOL's own size and index hypotheses; the binder order follows HOL except that n < LENGTH args precedes EL n args = v, which Lean's getElem requires."
   },
   {
     "lean_path": "Flapjack/Pancake/Semantics/PanProps/SemanticsWrapper.lean",

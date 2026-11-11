@@ -1,5 +1,6 @@
 (* Typed captures of the panProps `with_shape` lemmas
-   (panPropsScript.sml:265, :286, :307, :328, :341, :357, :409, :452, :568).
+   (panPropsScript.sml:265, :286, :307, :328, :341, :357, :409, :452, :568)
+   and of `list_rel_flatten_with_shape_length` / `_flookup` (:549, :585).
    Each row prints the exported theorem's conclusion with inferred types
    (`show_types`) plus its hypothesis count, so the Lean ports can be compared
    against the original carriers (`shape`, `mlstring` names, list carriers). *)
@@ -74,3 +75,17 @@ val _ = (print "el_el_with_shape_typed=";
   print "\n");
 val _ = print ("el_el_with_shape_hypotheses=" ^
   Int.toString (length (hyp panPropsTheory.el_el_with_shape)) ^ "\n");
+
+val _ = (print "list_rel_flatten_with_shape_length_typed=";
+  Lib.with_flag (Globals.show_types, true)
+    print_term (concl panPropsTheory.list_rel_flatten_with_shape_length);
+  print "\n");
+val _ = print ("list_rel_flatten_with_shape_length_hypotheses=" ^
+  Int.toString (length (hyp panPropsTheory.list_rel_flatten_with_shape_length)) ^ "\n");
+
+val _ = (print "list_rel_flatten_with_shape_flookup_typed=";
+  Lib.with_flag (Globals.show_types, true)
+    print_term (concl panPropsTheory.list_rel_flatten_with_shape_flookup);
+  print "\n");
+val _ = print ("list_rel_flatten_with_shape_flookup_hypotheses=" ^
+  Int.toString (length (hyp panPropsTheory.list_rel_flatten_with_shape_flookup)) ^ "\n");

@@ -43,3 +43,27 @@ el_el_with_shape_typed=LENGTH (xs :α list) = size_of_shape (Comb (shs :shape li
 EVERY is_wf_shape_nil shs ⇒
 (with_shape shs xs)❲n❳❲n'❳ = xs❲n' + size_of_shape (Comb (TAKE n shs))❳
 el_el_with_shape_hypotheses=0
+list_rel_flatten_with_shape_length_typed=∀(sh :shape list) (ns :α list) (args :β v list) (v :β v) (n :num).
+  LENGTH ns = LENGTH (FLAT (MAP (flatten :β v -> β word_lab list) args)) ∧
+  size_of_shape (Comb sh) =
+  LENGTH (FLAT (MAP (flatten :β v -> β word_lab list) args)) ∧ args❲n❳ = v ∧
+  n < LENGTH args ∧ LENGTH args = LENGTH sh ∧
+  LIST_REL (λ(sh :shape) (arg :β v). sh = shape_of arg) sh args ∧
+  EVERY is_wf_shape_v_nil args ⇒
+  LENGTH (with_shape sh ns)❲n❳ = LENGTH (flatten v)
+list_rel_flatten_with_shape_length_hypotheses=0
+list_rel_flatten_with_shape_flookup_typed=∀(sh :shape list) (ns :α list) (args :β v list) (v :β v) (n :num) (n' :num).
+  ALL_DISTINCT ns ∧
+  LENGTH ns = LENGTH (FLAT (MAP (flatten :β v -> β word_lab list) args)) ∧
+  size_of_shape (Comb sh) =
+  LENGTH (FLAT (MAP (flatten :β v -> β word_lab list) args)) ∧ args❲n❳ = v ∧
+  n < LENGTH args ∧ LENGTH args = LENGTH sh ∧
+  LIST_REL (λ(sh :shape) (arg :β v). sh = shape_of arg) sh args ∧
+  EVERY is_wf_shape_v_nil args ∧
+  LENGTH (with_shape sh ns)❲n❳ = LENGTH (flatten v) ∧
+  n' < LENGTH (with_shape sh ns)❲n❳ ⇒
+  FLOOKUP
+    ((FEMPTY :α |-> β word_lab) |++
+     ZIP (ns,FLAT (MAP (flatten :β v -> β word_lab list) args)))
+    (with_shape sh ns)❲n❳❲n'❳ = SOME (flatten v)❲n'❳
+list_rel_flatten_with_shape_flookup_hypotheses=0
