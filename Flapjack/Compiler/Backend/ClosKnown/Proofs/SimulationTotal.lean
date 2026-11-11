@@ -6,7 +6,6 @@ public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationCons
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationBool
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLetrec
-public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationRaise
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationCall
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOp
 
@@ -95,9 +94,66 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
             | var trace index => exact knownCorrect0Var trace index env state
             | fn name location selected arity body => exact Fn.knownCorrect0Fn name location selected arity body env state
             | raise trace body =>
-              apply Raise.knownCorrect0Raise trace body env state
-              apply exprIH [body] env state (by omega)
-              simp only [expsWeight, expWeight] at measure ⊢; omega
+              have bodyIH : KnownSimulationAt [body] env state := by
+                apply exprIH [body] env state (by omega)
+                simp only [expsWeight, expWeight] at measure ⊢; omega
+              intro res1 s env1 xenv1 env2 xenv2 t0 c g0 g aenv eas h
+              obtain ⟨run, known, initialRel, inputSyntax, coSyntax, disjoint, oracle, stateOracleDisjoint,
+                exprSafe, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
+                sub0, sub1, mono, free, envRel, unique, stateOracle, envEq, noType⟩ := h
+              have bodySyntax : everyFnVarsNone [body] := by simpa [everyFnVarsNone, fnVarsNoneExp] using inputSyntax
+              have bodyDisjoint : mglobalsDisjoint state.globals [body] := by
+                simpa [mglobalsDisjoint, elistGlobals, setGlobals] using disjoint
+              have bodySafe : ∀ e ∈ [body], esgcFree e := by
+                have h := exprSafe (.raise trace body) (by simp)
+                simpa [esgcFree] using h
+              have bodyFree : fvMax env1.length [body] := by
+                simpa [fvMax, freeVars, freeVarExp] using free
+              have bodyUnique : uniqueSetGlobals [body] state.compileOracle := by
+                simpa [uniqueSetGlobals, elistGlobals, setGlobals] using unique
+              cases hk : knownListTotal c [body] aenv g0 with
+              | mk bodyEas bodyG =>
+                obtain ⟨be, ba, eq⟩ := knownListTotal_single_result c body aenv g0 bodyG bodyEas hk
+                subst bodyEas
+                rw [knownListTotal_raise, hk] at known
+                simp [knownSourceHead] at known
+                rcases known with ⟨rfl, rfl⟩
+                cases hr : evaluate [body] env state with
+                | mk bodyResult next =>
+                  have bodyNoType : bodyResult ≠ .err (.abort .typeError) := by
+                    intro eq
+                    subst bodyResult
+                    simp [evaluate, hr] at run
+                    rcases run with ⟨rfl, rfl⟩
+                    exact noType rfl
+                  have step := bodyIH bodyResult next env1 xenv1 env2 xenv2 t0 c g0 bodyG aenv [(be, ba)]
+                    ⟨hr, hk, initialRel, bodySyntax, coSyntax, bodyDisjoint, oracle, stateOracleDisjoint,
+                      bodySafe, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
+                      sub0, sub1, mono, bodyFree, envRel, bodyUnique, stateOracle, envEq, bodyNoType⟩
+                  obtain ⟨res2, t, targetRun, result, finalState, finalGlobals, finalOracle, finalDisjoint⟩ := step
+                  cases bodyResult with
+                  | err error =>
+                    simp [evaluate, hr] at run
+                    rcases run with ⟨rfl, rfl⟩
+                    cases res2 with
+                    | val vals => simp [resultRel] at result
+                    | err error2 =>
+                      refine ⟨.err error2, t, ?_, result, finalState, finalGlobals, finalOracle, finalDisjoint⟩
+                      have targetRun' : evaluate [be] (env2 ++ xenv2) t0 = (.err error2, t) := by simpa using targetRun
+                      simp [evaluate, targetRun']
+                  | val vals =>
+                    obtain ⟨v, rfl⟩ := evaluate_singleton_value body env state next vals hr
+                    simp [evaluate, hr] at run
+                    rcases run with ⟨rfl, rfl⟩
+                    cases res2 with
+                    | err error2 => simp [resultRel] at result
+                    | val values2 =>
+                      obtain ⟨v2, rfl⟩ := evaluate_singleton_value be (env2 ++ xenv2) t0 t values2 (by simpa using targetRun)
+                      have valRel : ValueRel c (nextG next) v v2 := by cases result with | cons rel _ => exact rel
+                      refine ⟨.err (.raise v2), t, ?_, ?_, finalState, finalGlobals, finalOracle, finalDisjoint⟩
+                      · have targetRun' : evaluate [be] (env2 ++ xenv2) t0 = (.val [v2], t) := by simpa using targetRun
+                        simp [evaluate, targetRun']
+                      · exact valRel
             | tick trace body =>
               intro res1 s env1 xenv1 env2 xenv2 t0 c g0 g aenv eas h
               obtain ⟨run, known, initialRel, inputSyntax, coSyntax, disjoint, oracle, stateOracleDisjoint,

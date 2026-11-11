@@ -525,7 +525,6 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.AppExact
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracle
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownSubspt
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.StateOracleDisjoint
-import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationRaise
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationCall
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationFn
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLetrec

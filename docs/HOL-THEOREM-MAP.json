@@ -10825,19 +10825,6 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationRaise.lean",
-  "lean_name": "knownCorrect0Raise",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed (a typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. The Raise case retains the source body induction hypothesis, and handles successful values, raised exceptions, and aborts with the original result relation. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationCall.lean",
   "lean_name": "knownCorrect0Call",
   "statement_status": "reviewed_fmap_as_finite_support",
@@ -11002,6 +10989,14 @@
     "refs",
     "code"
   ]
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "ref_rel_simps",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ValueRelation.lean",
+  "lean_name": "refRelSimps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_ref_rel_simps_typed: all three reference constructors and the full value-array, byte-array and thunk conclusions agree."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
