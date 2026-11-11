@@ -64,19 +64,134 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
             exact ⟨targetResult, targetFinal, targetRun, resultRel, finalState, finalGlobals, finalOracle, finalDisjoint⟩
           | fullApp body env remaining =>
             by_cases timeout : state.clock < (first :: rest).length - remaining.length
-            · exact ApplyFull.fullApplicationTimeoutCase location f first rest state body env remaining found timeout
-            · apply ApplyFull.fullApplicationBodyCase location f first rest state body env remaining found timeout
-              · have shorter := destClosure_full_remaining_lt _ _ _ _ _ _ _ found
+            ·
+              intro res1 s loc2 targetFn targetArgs t0 c argsopt h
+              obtain ⟨run, fnRel, oracleDisjoint, _, _, _, _, _, _, _, oracle, argsRel, states, globals,
+                _, locRel, constraint, _⟩ := h
+              obtain ⟨targetBody, sourcePrefix, sourceExtra, targetPrefix, targetExtra, targetRemaining, approxEnv,
+                sourceEnv, targetFound, prefixRel, remainingRel, approxRel, bodyRel, fv, safe, annotation⟩ :=
+                ApplyFull.relatedFullApplication c (nextG state) state.maxApp location loc2 f targetFn (first :: rest) targetArgs
+                  argsopt body env remaining fnRel argsRel locRel constraint found
+              have maxEq : state.maxApp = t0.maxApp := states.2.2.2.2.2.2.1
+              have clockEq : state.clock = t0.clock := states.2.2.2.2.1
+              have argsLen := argsRel.length_eq
+              have remainingLen := remainingRel.length_eq
+              have targetNonempty : targetArgs ≠ [] := by
+                intro eq
+                subst targetArgs
+                cases argsRel
+              cases targetArgs with
+              | nil => contradiction
+              | cons targetFirst targetRest =>
+                have targetTimeout : t0.clock < (targetFirst :: targetRest).length - targetRemaining.length := by omega
+                rw [evaluateApp, found] at run
+                simp only [timeout, ↓reduceIte] at run
+                cases run
+                refine ⟨.err (.abort .timeoutError), { t0 with clock := 0 }, ?_, ?_, ?_, ?_, ?_, ?_⟩
+                · rw [evaluateApp, ← maxEq, targetFound]
+                  simp only [List.length_cons] at targetTimeout
+                  simp [targetTimeout, maxEq]
+                · simp [resultRel, excRel]
+                · rcases states with ⟨aux, free, codeS, codeT, clock, ffi, maxApp, globs, refs, compiler, co⟩
+                  exact ⟨aux, free, codeS, codeT, rfl, ffi, maxApp, globs, refs, compiler, co⟩
+                · simpa [stateGlobalsApprox, nextG] using globals
+                · exact oracle
+                · simpa [nextG] using oracleDisjoint
+            · have bodyIH : KnownSimulationAt [body] env
+                  (decClock ((first :: rest).length - remaining.length) state) := by
+                have shorter := destClosure_full_remaining_lt _ _ _ _ _ _ _ found
                 have small : (decClock ((first :: rest).length - remaining.length) state).clock < clock := by
                   simp only [decClock]; omega
                 exact (clockIH _ small).2 _ [body] env _ rfl rfl
-              · intro value middle run
-                have shorter := destClosure_full_remaining_lt _ _ _ _ _ _ _ found
-                have bound := evaluate_clock_le [body] env (decClock ((first :: rest).length - remaining.length) state)
-                rw [run] at bound
-                simp only at bound
-                have small : middle.clock < clock := by simp only [decClock] at bound; omega
-                exact (clockIH _ small).1 location value remaining middle rfl
+              intro res1 s loc2 targetFn targetArgs t0 c argsopt h
+              obtain ⟨run, fnRel, oracleDisjoint, disjoint, stateSafe, fnSafe, argsSafe, oracleSafe, oracleSyntax,
+                unique, oracle, argsRel, states, globals, mono, locRel, constraint, noType⟩ := h
+              have targetNonempty : targetArgs ≠ [] := by
+                intro eq
+                subst targetArgs
+                cases argsRel
+              cases targetArgs with
+              | nil => contradiction
+              | cons targetFirst targetRest =>
+                have clockEq : state.clock = t0.clock := states.2.2.2.2.1
+                rw [evaluateApp, found] at run
+                simp only [timeout, ↓reduceIte, fixClock_evaluate] at run
+                cases bodyRun : evaluate [body] env (decClock ((first :: rest).length - remaining.length) state) with
+                | mk bodyResult middle =>
+                  rw [bodyRun] at run
+                  cases bodyResult with
+                  | err error =>
+                    simp at run
+                    rcases run with ⟨rfl, rfl⟩
+                    obtain ⟨targetBody, targetEnv, targetRemaining, targetResult, targetMiddle, targetFound,
+                      targetBodyRun, related, finalState, finalGlobals, finalOracle, finalDisjoint, restRel, annotation⟩ :=
+                      ApplyFull.fullApplicationBodySimulation c state t0 location loc2 f targetFn first rest (targetFirst :: targetRest)
+                        argsopt body env remaining (.err error) middle states fnRel argsRel locRel constraint found
+                        stateSafe fnSafe argsSafe oracleSafe oracleSyntax unique oracle globals oracleDisjoint disjoint mono
+                        bodyIH bodyRun noType
+                    cases targetResult with
+                    | val values => simp [resultRel] at related
+                    | err targetError =>
+                      have targetEnough : ¬ t0.clock < (targetFirst :: targetRest).length - targetRemaining.length := by
+                        have a := argsRel.length_eq
+                        have b := restRel.length_eq
+                        omega
+                      refine ⟨.err targetError, targetMiddle, ?_, related, finalState, finalGlobals, finalOracle, finalDisjoint⟩
+                      rw [evaluateApp, targetFound]
+                      dsimp only
+                      rw [if_neg targetEnough, fixClock_evaluate, targetBodyRun]
+                  | val values =>
+                    have singleton := evaluate_singleton_value body env
+                      (decClock ((first :: rest).length - remaining.length) state) middle values bodyRun
+                    obtain ⟨value, rfl⟩ := singleton
+                    dsimp only at run
+                    obtain ⟨targetBody, targetEnv, targetRemaining, targetResult, targetMiddle, targetFound,
+                      targetBodyRun, related, midState, midGlobals, midOracle, midDisjoint, restRel, annotation⟩ :=
+                      ApplyFull.fullApplicationBodySimulation c state t0 location loc2 f targetFn first rest (targetFirst :: targetRest)
+                        argsopt body env remaining (.val [value]) middle states fnRel argsRel locRel constraint found
+                        stateSafe fnSafe argsSafe oracleSafe oracleSyntax unique oracle globals oracleDisjoint disjoint mono
+                        bodyIH bodyRun (by simp)
+                    cases targetResult with
+                    | err error => simp [resultRel] at related
+                    | val values2 =>
+                      cases related with
+                      | cons valueRel tail =>
+                        cases tail
+                        rename_i targetValue
+                        have targetEnough : ¬ t0.clock < (targetFirst :: targetRest).length - targetRemaining.length := by
+                          have a := argsRel.length_eq
+                          have b := restRel.length_eq
+                          omega
+                        by_cases same : location = loc2
+                        · subst loc2
+                          have continuationIH : KnownAppSimulationAt location value remaining middle := by
+                            have shorter := destClosure_full_remaining_lt _ _ _ _ _ _ _ found
+                            have bound := evaluate_clock_le [body] env (decClock ((first :: rest).length - remaining.length) state)
+                            rw [bodyRun] at bound
+                            simp only at bound
+                            have small : middle.clock < clock := by simp only [decClock] at bound; omega
+                            exact (clockIH _ small).1 location value remaining middle rfl
+                          obtain ⟨targetResult, targetLast, continuation, resultRelated, finalState, finalGlobals,
+                            finalOracle, finalDisjoint⟩ :=
+                            ApplyFull.fullBodyContinuationSimulation c state targetMiddle location f first rest body env remaining
+                              targetRemaining value targetValue middle s res1 found stateSafe fnSafe argsSafe oracleSafe
+                              oracleSyntax unique disjoint mono bodyRun midState valueRel restRel midGlobals midOracle
+                              midDisjoint continuationIH run noType
+                          refine ⟨targetResult, targetLast, ?_, resultRelated, finalState, finalGlobals, finalOracle, finalDisjoint⟩
+                          rw [evaluateApp, targetFound]
+                          dsimp only
+                          rw [if_neg targetEnough, fixClock_evaluate, targetBodyRun]
+                          exact continuation
+                        · obtain ⟨sourceEmpty, targetEmpty⟩ := annotation same
+                          subst remaining
+                          subst targetRemaining
+                          simp [evaluateApp] at run
+                          rcases run with ⟨rfl, rfl⟩
+                          refine ⟨.val [targetValue], targetMiddle, ?_, .cons valueRel .nil, midState, midGlobals, midOracle, midDisjoint⟩
+                          rw [evaluateApp, targetFound]
+                          dsimp only
+                          rw [if_neg targetEnough, fixClock_evaluate, targetBodyRun]
+                          simp [evaluateApp]
     constructor
     · exact appAll
     · intro weight

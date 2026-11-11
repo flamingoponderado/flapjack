@@ -28,6 +28,54 @@ inductive ValApproxVal : ValApprox → Value → Prop where
   | clos (loc arity size : Nat) (body : ClosLang.Exp) (env : List Value) :
       ValApproxVal (.clos loc arity body size) (.closure (some loc) [] env arity body)
 
+/-- The complete constructor equations for approximation-to-value matching. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "val_approx_val_simps"]
+theorem valApproxValSimps (v : Value) (i : Int) (tg : Nat) (vas : List ValApprox)
+    (m n : Nat) (b1 : ClosLang.Exp) (s : Nat) :
+    (ValApproxVal .other v ↔ True) ∧
+    (ValApproxVal (.int i) v ↔ v = .number i) ∧
+    (ValApproxVal (.tuple tg vas) v ↔ ∃ vs, v = .block tg vs ∧ List.Forall₂ ValApproxVal vas vs) ∧
+    (ValApproxVal (.closNoInline m n) v ↔
+      (∃ env body, v = .closure (some m) [] env n body) ∨
+      ∃ env base fs j, (m = base + 2 * j ∧
+        n = (@Flapjack.holEl (Nat × ClosLang.Exp) ⟨(0, .var .none 0)⟩ j fs).1) ∧
+        v = .recclosure (some base) [] env fs j ∧ j < fs.length) ∧
+    (ValApproxVal (.clos m n b1 s) v ↔ ∃ env, v = .closure (some m) [] env n b1) ∧
+    (ValApproxVal .impossible v ↔ False) := by
+  constructor
+  · exact ⟨fun _ => True.intro, fun _ => .other v⟩
+  constructor
+  · constructor
+    · intro h; cases h; rfl
+    · intro h; cases h; exact .int i
+  constructor
+  · constructor
+    · intro h; cases h with
+      | tuple _ _ vs rel => exact ⟨vs, rfl, rel⟩
+    · rintro ⟨vs, rfl, rel⟩; exact .tuple _ _ _ rel
+  constructor
+  · constructor
+    · intro h
+      cases h with
+      | closNoInline _ _ env body => exact .inl ⟨env, body, rfl⟩
+      | recNoInline _ _ base env fs j conditions =>
+        obtain ⟨loc, bound, arity⟩ := conditions
+        exact .inr ⟨env, base, fs, j, ⟨loc, arity⟩, rfl, bound⟩
+    · intro h
+      rcases h with h | h
+      · obtain ⟨env, body, rfl⟩ := h
+        exact .closNoInline m n env body
+      · obtain ⟨env, base, fs, j, ⟨loc, arity⟩, rfl, bound⟩ := h
+        exact .recNoInline m n base env fs j ⟨loc, bound, arity⟩
+  constructor
+  · constructor
+    · intro h; cases h with
+      | clos _ _ _ _ env => exact ⟨env, rfl⟩
+    · rintro ⟨env, rfl⟩; exact .clos _ _ _ _ env
+  · constructor
+    · intro h; cases h
+    · intro h; exact False.elim h
+
 /-- Merging another approximation preserves a value described by the first. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "val_approx_val_merge_I_lemma"]
 theorem valApproxValMergeLeft (a : ValApprox) (v : Value) (h : ValApproxVal a v) :

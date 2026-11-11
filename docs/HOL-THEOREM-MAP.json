@@ -14192,6 +14192,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_val_simps",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxValue.lean",
+  "lean_name": "valApproxValSimps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_val_approx_simps_typed: all six constructor equivalences, including ordinary and recursive closures and the in-bounds lookup, agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "val_approx_val",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxValue.lean",
   "lean_name": "ValApproxVal",
