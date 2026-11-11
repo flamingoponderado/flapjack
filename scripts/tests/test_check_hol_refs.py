@@ -4020,6 +4020,30 @@ class FmapResultObservationTest(unittest.TestCase):
 
 
 class FmapParameterObservationTest(unittest.TestCase):
+    def test_scope_allows_only_reviewed_union_site(self):
+        allowed = CHECKER["fmap_parameter_observations_site_allowed"]
+        hol = "cakeml/compiler/backend/proofs/clos_callProofScript.sml"
+        path = "Flapjack/Compiler/Backend/ClosCall/Proofs/FiniteMap.lean"
+        self.assertTrue(allowed(hol, "FUNION_FEMPTY_FUPDATE_LIST", path, "unionEmptyUpdateList"))
+        self.assertFalse(allowed(hol, "FUNION_FEMPTY_FUPDATE_LIST", path, "other"))
+        self.assertFalse(allowed(hol, "other", path, "unionEmptyUpdateList"))
+        self.assertFalse(allowed(hol, "FUNION_FEMPTY_FUPDATE_LIST", path + ".other", "unionEmptyUpdateList"))
+        self.assertFalse(allowed(hol + ".other", "FUNION_FEMPTY_FUPDATE_LIST", path, "unionEmptyUpdateList"))
+
+    def test_union_scope_requires_all_maps_and_producers(self):
+        errors = CHECKER["fmap_parameter_observations_site_errors"]
+        hol = "cakeml/compiler/backend/proofs/clos_callProofScript.sml"
+        path = "Flapjack/Compiler/Backend/ClosCall/Proofs/FiniteMap.lean"
+        producers = ("Flapjack.HolFiniteMapExact.union", "Flapjack.HolFiniteMapExact.holEmpty",
+                     "Flapjack.HolFiniteMapExact.holUpdateList")
+        args = (hol, "FUNION_FEMPTY_FUPDATE_LIST", path, "unionEmptyUpdateList")
+        self.assertEqual([], errors(*args, ("code",), producers))
+        self.assertTrue(errors(*args, (), producers))
+        self.assertTrue(errors(*args, ("code", "other"), producers))
+        self.assertTrue(errors(*args, ("code",), producers[:-1]))
+        self.assertTrue(errors(*args, ("code",), producers[::-1]))
+        self.assertTrue(errors(*args, ("code",), producers + ("Flapjack.Other.map",)))
+
     def test_scanner_retains_both_lists(self):
         lines = ['@[hol "cakeml/exampleScript.sml" "result"',
                  ' (fmap_as_finite_support_parameter_observations :=',

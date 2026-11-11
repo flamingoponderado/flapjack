@@ -421,9 +421,14 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
       (fmapAsFiniteSupportParameters.isEmpty || fmapAsFiniteSupportResultObservations.isEmpty) then
     throwError "@[hol]: parameter observations require parameters and producers"
   if fmapAsFiniteSupportParameterObservations then
-    unless path == "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" &&
-        (name == "chain_exps_semantics" || name == "chain_exps_semantics_call") do
-      throwError "@[hol]: parameter observations are restricted to the reviewed closure-chain semantics declarations"
+    let chainAllowed := path == "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" &&
+      (name == "chain_exps_semantics" || name == "chain_exps_semantics_call")
+    let unionAllowed := path == "cakeml/compiler/backend/proofs/clos_callProofScript.sml" &&
+      name == "FUNION_FEMPTY_FUPDATE_LIST" && fmapAsFiniteSupportParameters == #["code"] &&
+      fmapAsFiniteSupportResultObservations == #["Flapjack.HolFiniteMapExact.union",
+        "Flapjack.HolFiniteMapExact.holEmpty", "Flapjack.HolFiniteMapExact.holUpdateList"]
+    unless chainAllowed || unionAllowed do
+      throwError "@[hol]: parameter observations are restricted to reviewed declarations and their map lists"
     unless fmapAsFiniteSupportResultObservations.all (fun p => p.startsWith "Flapjack.") do
       throwError "@[hol]: parameter observation producers must use fully qualified Flapjack names"
     if fmapAsFiniteSupportResultObservations.any (fun p =>
@@ -1220,6 +1225,26 @@ run_cmd do
       HolRef.qualifierSuffix combinedRef ==
         " (fmap_as_finite_support_parameter_observations := (map_parameters := [code]) (map_producers := [Flapjack.HolFiniteMapExact.alistToFmap]))" do
     throwError "@[hol] combined parameter observation syntax regression"
+  let unionSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "FUNION_FEMPTY_FUPDATE_LIST"
+    (fmap_as_finite_support_parameter_observations :=
+      (map_parameters := [code]) (map_producers := [Flapjack.HolFiniteMapExact.union,
+        Flapjack.HolFiniteMapExact.holEmpty, Flapjack.HolFiniteMapExact.holUpdateList])))
+  let unionRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute unionSyntax)
+  unless unionRef.fmapAsFiniteSupportParameterObservations &&
+      unionRef.fmapAsFiniteSupportParameters == #["code"] &&
+      unionRef.fmapAsFiniteSupportResultObservations.size == 3 do
+    throwError "@[hol] union parameter observation syntax regression"
+  let incompleteUnionSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "FUNION_FEMPTY_FUPDATE_LIST"
+    (fmap_as_finite_support_parameter_observations :=
+      (map_parameters := [code]) (map_producers := [Flapjack.HolFiniteMapExact.union,
+        Flapjack.HolFiniteMapExact.holEmpty])))
+  let incompleteUnionRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute incompleteUnionSyntax
+      pure false
+    catch _ => pure true
+  unless incompleteUnionRejected do
+    throwError "@[hol] union observations must name every reviewed producer"
   let combinedConflictSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_exps_semantics"
     (fmap_as_finite_support_parameter_observations :=
       (map_parameters := [code]) (map_producers := [Flapjack.HolFiniteMapExact.alistToFmap]))

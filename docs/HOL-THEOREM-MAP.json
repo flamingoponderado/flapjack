@@ -658,6 +658,14 @@
   "reviewer": "Source comparison: compared the complete typed semantics_compile statement, including nonfailure, compilation and both enabled/disabled callback and oracle conditions, and the target-to-source behavior equality. The holEmpty and holUpdateList producers represent HOL empty and list-updated finite maps. The evaluator inherits reals_as_rational_cuts and the real-agreement assumption in SOUNDNESS item 8."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "FUNION_FEMPTY_FUPDATE_LIST",
+  "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/FiniteMap.lean", "lean_name": "unionEmptyUpdateList",
+  "statement_status": "reviewed_fmap_as_finite_support_parameter_observations",
+  "fmap_as_finite_support_parameters": ["code"],
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.union", "Flapjack.HolFiniteMapExact.holEmpty", "Flapjack.HolFiniteMapExact.holUpdateList"],
+  "reviewer": "Source comparison: compared the typed FUNION_FEMPTY_FUPDATE_LIST statement, including independent key/value types, the sole disjointness premise, left-biased union and left-to-right updates with duplicate keys allowed. code is a canonical map parameter; Flapjack.HolFiniteMapExact.union, Flapjack.HolFiniteMapExact.holEmpty and Flapjack.HolFiniteMapExact.holUpdateList are reviewed computed-map producers."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "nth_code_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosCall/Proofs/NthCode.lean", "lean_name": "nthCode",
   "statement_status": "reviewed_fmap_as_finite_support_result",
