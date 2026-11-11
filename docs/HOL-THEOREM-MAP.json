@@ -133320,6 +133320,16 @@
 ,
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "initate_state'_clock",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StateRelation.lean",
+  "lean_name": "initialStateProofSide_clock",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "reviewer": "Compared the local source and initial_state_clock_typed replay: the original empty code map, independent compiler and FFI carriers, clock update equation and clock projection are preserved. Closure-state refs and code use the reviewed canonical finite-support carrier and witness."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "find_recfun_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",
   "lean_name": "findRecFun_get",

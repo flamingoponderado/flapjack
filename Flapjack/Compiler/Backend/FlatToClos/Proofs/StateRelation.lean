@@ -198,6 +198,18 @@ def initialStateProofSide {C F : Type} (interpreter : Bool) (ffi : HolFfiState F
   { ClosSem.initialState ffi maxApp code oracle compiler clock with
     globals := [some (if interpreter then .closure none [] [] 1 ClosInterp.closInterpreter else ClosSem.unitValue)] }
 
+/-- Updating the initial proof-side state's clock changes exactly that clock. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "initate_state'_clock"
+  (fmap_as_finite_support := [refs, code])]
+theorem initialStateProofSide_clock {C F : Type} (interpreter : Bool) (ffi : HolFfiState F)
+    (maxApp : Nat) (oracle : ClosSem.CompileOracle C) (compiler : ClosSem.Compiler C)
+    (oldClock clock : Nat) :
+    ({ initialStateProofSide interpreter ffi maxApp HolFiniteMapExact.empty oracle compiler oldClock with
+      clock := clock } : ClosSem.State C F) =
+        initialStateProofSide interpreter ffi maxApp HolFiniteMapExact.empty oracle compiler clock ∧
+      (initialStateProofSide interpreter ffi maxApp HolFiniteMapExact.empty oracle compiler clock).clock = clock := by
+  exact ⟨rfl, rfl⟩
+
 /-- Initial states satisfy the proof-side relation when the installation
 configurations agree and at least unary calls are supported. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "state_rel_initial_state"

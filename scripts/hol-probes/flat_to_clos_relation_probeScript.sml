@@ -41,6 +41,15 @@ val state_rel_imp_clock_replay = Q.prove (
 val _ = if null (hyp state_rel_imp_clock_replay) then () else raise Fail "local theorem has hypotheses";
 val _ = (print "state_rel_imp_clock_typed="; Lib.with_flag (Globals.show_types,true)
   print_term (concl state_rel_imp_clock_replay); print "\n");
+(* Replay the local initial-state clock theorem with the source proof. *)
+val initial_state_clock_replay = Q.prove (
+  `(initial_state' b ffi max_app FEMPTY co cc k' with clock := k) =
+     initial_state' b ffi max_app FEMPTY co cc k /\
+   (initial_state' b ffi max_app FEMPTY co cc k).clock = k`,
+  fs [initial_state'_def]);
+val _ = if null (hyp initial_state_clock_replay) then () else raise Fail "local theorem has hypotheses";
+val _ = (print "initial_state_clock_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl initial_state_clock_replay); print "\n");
 val _ = (print "v_rel_bool_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_Boolv); print "\n");
 val _ = (print "v_rel_unit_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_Unitv); print "\n");
 val _ = (print "v_rel_to_list_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_to_list); print "\n");

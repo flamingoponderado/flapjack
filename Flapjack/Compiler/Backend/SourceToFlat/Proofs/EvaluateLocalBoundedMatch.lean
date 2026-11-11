@@ -203,20 +203,15 @@ theorem localEnvBounded_handle {C F : Type} [Nonempty C]
         rw [sourceOuter, flatOuter]
         exact matching
       · rw [sourceOuter, flatOuter]
-        cases result : (EvaluateHOL.evaluateMatch middleSource sourceEnv value rows value).2 with
-        | err error =>
-          cases error with
-          | abort error => simp
-          | raise raised =>
-            rw [result] at matchingPost
+        cases result : (EvaluateHOL.evaluateMatch middleSource sourceEnv value rows value).2
+        case' err error => cases error
+        all_goals first
+          | trivial
+          | rw [result] at matchingPost
             obtain ⟨growth, finalInvariant, finalGeneration, rowForward⟩ := matchingPost
             exact ⟨bodyGrowth.trans growth, finalInvariant, finalGeneration,
               oracForwardRel_trans interp _ _ _ ⟨bodyForward, rowForward⟩⟩
-        | val values =>
-          rw [result] at matchingPost
-          obtain ⟨growth, finalInvariant, finalGeneration, rowForward⟩ := matchingPost
-          exact ⟨bodyGrowth.trans growth, finalInvariant, finalGeneration,
-            oracForwardRel_trans interp _ _ _ ⟨bodyForward, rowForward⟩⟩
+
 
 /-- Compose pattern matching with the scrutinee and every row
 body in arbitrary related local environments. -/
@@ -309,20 +304,14 @@ theorem localEnvBounded_mat {C F : Type} [Nonempty C]
             rw [sourceOuter, flatOuter]
             exact matching
           · rw [sourceOuter, flatOuter]
-            cases result : (EvaluateHOL.evaluateMatch middleSource sourceEnv value rows bindExnV).2 with
-            | err error =>
-              cases error with
-              | abort error => simp
-              | raise raised =>
-                rw [result] at matchingPost
+            cases result : (EvaluateHOL.evaluateMatch middleSource sourceEnv value rows bindExnV).2
+            case' err error => cases error
+            all_goals first
+              | trivial
+              | rw [result] at matchingPost
                 obtain ⟨growth, finalInvariant, finalGeneration, rowForward⟩ := matchingPost
                 exact ⟨bodyGrowth.trans growth, finalInvariant, finalGeneration,
                   oracForwardRel_trans interp _ _ _ ⟨bodyForward, rowForward⟩⟩
-            | val values =>
-              rw [result] at matchingPost
-              obtain ⟨growth, finalInvariant, finalGeneration, rowForward⟩ := matchingPost
-              exact ⟨bodyGrowth.trans growth, finalInvariant, finalGeneration,
-                oracForwardRel_trans interp _ _ _ ⟨bodyForward, rowForward⟩⟩
 
 
 end Flapjack.Compiler.Backend.SourceToFlat
