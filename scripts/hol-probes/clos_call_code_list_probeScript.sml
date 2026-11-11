@@ -32,6 +32,11 @@ val distinct_map_fst_add1_replay = prove
   (``!xs. ALL_DISTINCT (MAP (\k. FST k + 1n) xs) = ALL_DISTINCT (MAP FST xs)``,
    Induct >> fs [listTheory.MEM_MAP]);
 val _ = (print "distinct_map_fst_add1_replay_type="; Lib.with_flag (Globals.show_types,true) print_term (concl distinct_map_fst_add1_replay); print "\n");
+(* Replay the local existential congruence lemma with its original proof. *)
+val imp_exists_iff_replay = prove
+  (``!xs. (!x. MEM x xs ==> (P x <=> Q x)) ==> (EXISTS P xs <=> EXISTS Q xs)``,
+   Induct >> fs []);
+val _ = (print "imp_exists_iff_replay_type="; Lib.with_flag (Globals.show_types,true) print_term (concl imp_exists_iff_replay); print "\n");
 val _ = (print "calls_el_sing_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.calls_el_sing); print "\n");
 val _ = (print "v_rel_exists_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.v_rel_exists); print "\n");
 val _ = (print "is_recclosure_def_type="; Lib.with_flag (Globals.show_types,true) print_term (concl clos_callProofTheory.is_Recclosure_def); print "\n");

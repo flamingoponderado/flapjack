@@ -13,6 +13,13 @@ public import Mathlib.Tactic
 namespace Flapjack.Compiler.Backend.ClosCall
 open ClosLang ClosProps DbVars
 
+/-- Pointwise agreement on a list preserves existence over that list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "IMP_EXISTS_IFF"]
+theorem impExistsIff {A : Type} (P Q : A → Prop) (xs : List A)
+    (agree : ∀ x ∈ xs, P x ↔ Q x) :
+    (∃ x, x ∈ xs ∧ P x) ↔ ∃ x, x ∈ xs ∧ Q x := by
+  exact exists_congr fun x => and_congr_right (agree x)
+
 private theorem freeFuns_agreement (fuel count : Nat)
     (agree : ∀ (e result : Exp) (vars : DbVarSet), freeFuel fuel e = some (result, vars) →
       ∀ n, (freeVarExp n e ↔ hasVar n vars = true) ∧
