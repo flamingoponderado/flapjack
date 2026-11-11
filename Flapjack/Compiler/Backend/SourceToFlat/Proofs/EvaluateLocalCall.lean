@@ -192,60 +192,39 @@ theorem topRec_rebuilt_globalInv (genv : GlobalEnv) (baseMap : Environment) (sou
       nsAppend (alistToNs ((funs.map Prod.fst).map (fun x => (x, Value.recclosure sourceEnv funs x)))) sourceEnv.v := by
     simpa only [List.map_map, Function.comp_def] using
       Flapjack.SemanticPrimitivesProps.buildRecEnv_merge funs () sourceEnv sourceEnv.v
-  cases globals with
-  | intro _ _ _ values constructors =>
+  let added : Namespace ModN VarN Value :=
+    alistToNs ((funs.map Prod.fst).map (fun x => (x, Value.recclosure sourceEnv funs x)))
+  have domain : (fun id => id ∈ newVars.map (fun p => Ident.short p.1)) = nsDom added := by
+    have keyNames : newVars.map (fun p => (Ident.short p.1 : Ident ModN VarN)) =
+        (funs.map Prod.fst).reverse.map Ident.short := by
+      change newVars.map (Ident.short ∘ Prod.fst) = _
+      rw [← List.map_map, names, List.map_reverse]
+    funext id
+    apply propext
+    cases id <;> simp [keyNames, nsDom, added, alistToNs, nsLookup, Flapjack.lookup_exists_iff_mem_keys]
+  have addedInv : GlobalEnvInv genv { baseMap with v := alistToNs newVars } (fun _ => False)
+      ⟨added, nsEmpty⟩ := by
     apply GlobalEnvInv.intro
     · intro id value _ lookup
       cases id with
+      | long moduleName rest => simp [added, alistToNs, nsLookup] at lookup
       | short name =>
-        by_cases member : name ∈ funs.map Prod.fst
-        · have sourceFound : nsLookup (buildRecEnv funs sourceEnv sourceEnv.v) (.short name) =
-              some (.recclosure sourceEnv funs name) := by
-            rw [sourceShape, nsLookup_append_short]
-            change (((funs.map Prod.fst).map (fun x => (x, Value.recclosure sourceEnv funs x))).lookup name).orElse (fun _ => nsLookup sourceEnv.v (.short name)) = some (.recclosure sourceEnv funs name)
-            rw [lookup_recursive_bindings]
-            simp [member]
-          change nsLookup (buildRecEnv funs sourceEnv sourceEnv.v) (.short name) = some value at lookup
-          rw [sourceFound] at lookup
+        change ((funs.map Prod.fst).map (fun x => (x, Value.recclosure sourceEnv funs x))).lookup name = some value at lookup
+        rw [lookup_recursive_bindings] at lookup
+        split at lookup
+        next member =>
           cases lookup
-          have originalInv : GlobalEnvInv genv baseMap (fun _ => False) sourceEnv := .intro genv baseMap _ sourceEnv values constructors
           obtain ⟨n, arg, body, storedTrace, bodyTrace, argTrace, found, bound, function, slot⟩ := closures name member
-          apply GlobalLookupRel.intro genv _ (.short name) _ n _ storedTrace _ bound slot
+          exact .intro genv _ (.short name) _ n _ storedTrace
+            (by simpa [alistToNs, nsLookup] using found) bound slot
             (.topRecclosure genv baseMap sourceEnv funs flatEnv name arg body newVars bodyTrace argTrace
-              names originalInv empty function closures)
-          rw [← nsAppend_to_nsBindList, nsLookup_append_short]
-          simp [alistToNs, nsLookup, found]
-        · have absent : newVars.lookup name = none := by
-            cases found : newVars.lookup name with
-            | none => rfl
-            | some item =>
-              have key := (Flapjack.lookup_exists_iff_mem_keys newVars name).mp ⟨item, found⟩
-              rw [names] at key
-              simp only [List.map_reverse, List.mem_reverse] at key
-              exact (member key).elim
-          have baseLookup : nsLookup sourceEnv.v (.short name) = some value := by
-            change nsLookup (buildRecEnv funs sourceEnv sourceEnv.v) (.short name) = some value at lookup
-            rw [sourceShape, nsLookup_append_short] at lookup
-            change (((funs.map Prod.fst).map (fun x => (x, Value.recclosure sourceEnv funs x))).lookup name).orElse (fun _ => nsLookup sourceEnv.v (.short name)) = some value at lookup
-            rw [lookup_recursive_bindings] at lookup
-            simpa [member] using lookup
-          have rel := values (.short name) value (by simp) baseLookup
-          cases rel with
-          | intro _ _ _ n flatValue trace found bound slot related =>
-            apply GlobalLookupRel.intro genv _ (.short name) value n flatValue trace _ bound slot related
-            rw [← nsAppend_to_nsBindList, nsLookup_append_short]
-            simpa [alistToNs, nsLookup, absent] using found
-      | long moduleName rest =>
-        have baseLookup : nsLookup sourceEnv.v (.long moduleName rest) = some value := by
-          change nsLookup (buildRecEnv funs sourceEnv sourceEnv.v) (.long moduleName rest) = some value at lookup
-          simpa [sourceShape, nsLookup_append_long, alistToNs, nsLookupMod] using lookup
-        have rel := values (.long moduleName rest) value (by simp) baseLookup
-        cases rel with
-        | intro _ _ _ n flatValue trace found bound slot related =>
-          apply GlobalLookupRel.intro genv _ (.long moduleName rest) value n flatValue trace _ bound slot related
-          rw [← nsAppend_to_nsBindList, nsLookup_append_long]
-          simpa [alistToNs, nsLookupMod] using found
-    · exact constructors
+              names globals empty function closures)
+        next => simp at lookup
+    · intro id arity stamp lookup
+      cases id <;> simp [nsEmpty, nsLookup] at lookup
+  simpa only [added, ← sourceShape] using
+    globalEnvInv_extendBindings genv baseMap sourceEnv newVars added (fun _ => False) nsEmpty
+      ⟨domain, globals, addedInv⟩
 
 /-- A source top-level recursive closure related to a flat ordinary closure
 selects the same function body and argument. The retained global-slot
