@@ -181,7 +181,7 @@ private theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     exact localEnvBounded_simpleApp interp transform limit op notEmpty notEval notEnvId simple args ih
   | eval args _ ih => exact localEnvBounded_eval interp transform limit decsIH args ih
   | call left right _ _ leftIH rightIH =>
-    exact localEnvBounded_opapp interp transform limit calledIH left right leftIH rightIH
+    exact localEnvStep_opapp interp transform limit calledIH left right leftIH rightIH
   | callBadArity args badArity _ ih => exact localEnvBounded_opapp_badArity interp transform limit args badArity ih
   | arrayEmpty body _ ih => exact localEnvBounded_aallocEmpty interp transform limit body ih
   | arrayEmptyBadArity args badArity _ ih =>

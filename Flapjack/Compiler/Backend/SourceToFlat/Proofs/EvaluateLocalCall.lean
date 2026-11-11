@@ -816,19 +816,6 @@ theorem localEnvStep_opapp {C F : Type} [Nonempty C]
               exact ⟨growth.trans nextGrowth, finalInvariant, finalGeneration,
                 oracForwardRel_trans interp _ _ _ ⟨forward, callForward⟩⟩
 
-/-- The function-application case composes two bounded operand simulations
-with the smaller-clock called-body hypothesis. -/
-theorem localEnvBounded_opapp {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (limit : Nat) (calledIH : LocalEnvClockIH (F := F) interp transform limit)
-    (left right : AstHOL.Exp) (leftIH : LocalEnvBoundedIH (F := F) interp transform limit left)
-    (rightIH : LocalEnvBoundedIH (F := F) interp transform limit right) :
-    LocalEnvBoundedIH (F := F) interp transform limit (.app .opapp [left, right]) := by
-  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen bound
-    localRel envInv tracesLen invariant generation safe
-  exact localEnvStep_opapp interp transform limit calledIH left right leftIH rightIH genv start finish other source flat
-    baseEnv sourceLocal flatEnv traces trace baseMap gen bound localRel envInv tracesLen invariant generation safe
-
 /-- Compose thunk forcing with its operand simulation and the smaller-clock
 induction hypothesis for the deferred function. -/
 theorem localEnvBounded_forceThunk {C F : Type} [Nonempty C]
