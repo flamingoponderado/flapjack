@@ -17614,27 +17614,11 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileOrder.lean",
-    "lean_name": "compileExp_letrec_source",
+    "lean_name": "compileExp_source_equations",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "compile_exp_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the captured typed Letrec conjunct: arbitrary config, mlstring trace, recursive function triples and body; map compilation over bodies, take MAX_LIST of generated-name maxima and EXISTS of flags, rebuild the same function triples, and combine metadata with the separately compiled body. The helper equivalence proves the executed recursive fold has this source shape."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileOrder.lean",
-    "lean_name": "compileExp_con_source",
-    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
-    "hol_name": "compile_exp_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the captured typed constructor conjunct: arbitrary flat-pattern config, trace, optional constructor/type identifier and expression list; the same compile_exps over the reversed list, returned metadata, and reversed output. The proof establishes equivalence to the executed direct-order traversal."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileOrder.lean",
-    "lean_name": "compileExp_app_source",
-    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
-    "hol_name": "compile_exp_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the captured typed application conjunct: arbitrary flat-pattern config, trace, operator and expression list; the same reverse/traverse/reverse order and disjunction with op_sets_globals. The proof establishes equivalence to the executed direct-order traversal."
+    "reviewer": "Compared all 15 conjuncts of freshly replayed typed compile_exp_all in source order, including each binder and carrier, both mutual list traversals, generated-name bounds and branches, reverse/traverse/reverse Con and App, mapped MAX_LIST and EXISTS Letrec aggregation, and source bind_tag. The unconditional checked conjunction establishes the complete source equations for the executed total compiler without additional hypotheses. Independently source-reviewed."
   },
   {
     "lean_path": "Flapjack/Misc/Sptree/FromList.lean",
