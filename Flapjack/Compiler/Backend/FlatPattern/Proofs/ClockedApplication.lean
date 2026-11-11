@@ -67,28 +67,19 @@ theorem compile_simpleApp_simulation_upTo {C F : Type} (cfg stateCfg : Config) (
         exact (safe bad).elim
       | some outcome =>
         obtain ⟨sourceAfter, result⟩ := outcome
-        obtain ⟨targetAfter, result', relation, afterStates, targetPrimitive⟩ := doApp_simulation
-          op stateCfg sourceFixed sourceValues.reverse sourceAfter result targetFixed targetValues.reverse
-          primitive ⟨fixedStates, List.forall₂_reverse_iff.mpr valuesRel⟩
-        cases result with
-        | val value =>
-          cases result' with
-          | err error' => exact False.elim relation
-          | val value' =>
-            have eq := sourceOuter.symm.trans sourceEval
-            simp [FlatSem.applyResult, sourceFixed, primitive] at eq
-            rcases eq with ⟨rfl, rfl⟩
-            refine ⟨targetAfter, .val [_], ?_, afterStates, (.cons relation .nil)⟩
-            simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
-        | err error =>
-          cases result' with
-          | val value' => exact False.elim relation
-          | err error' =>
-            have eq := sourceOuter.symm.trans sourceEval
-            simp [FlatSem.applyResult, sourceFixed, primitive] at eq
-            rcases eq with ⟨rfl, rfl⟩
-            refine ⟨targetAfter, .err error', ?_, afterStates, relation⟩
-            simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
+        obtain ⟨targetAfter, result', relation, afterStates, targetPrimitive⟩ := doApp_simulation_reverse
+          sourceFixed op sourceValues sourceAfter result stateCfg targetFixed targetValues
+          ⟨primitive, fixedStates, valuesRel⟩
+        cases result <;> cases result'
+        all_goals try exact False.elim relation
+        all_goals
+          have eq := sourceOuter.symm.trans sourceEval
+          simp [FlatSem.applyResult, sourceFixed, primitive] at eq
+          rcases eq with ⟨rfl, rfl⟩
+        · refine ⟨targetAfter, .val [_], ?_, afterStates, (.cons relation .nil)⟩
+          simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
+        · refine ⟨targetAfter, .err _, ?_, afterStates, relation⟩
+          simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
 
 
 /-- Calls simulate their selected closure body, using an induction hypothesis

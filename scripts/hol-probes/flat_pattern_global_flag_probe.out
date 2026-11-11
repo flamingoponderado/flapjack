@@ -24,6 +24,7 @@ do_eq_boolv_typed=do_eq (Boolv (x :bool) :v) (Boolv (y :bool) :v) = Eq_val (x �
 fold_boolv_typed=(∀(b :bool). Conv (SOME (bool_to_tag b,SOME bool_id)) ([] :v list) = (Boolv b :v)) ∧ ∀(b :bool). (if b then true_tag else false_tag) = bool_to_tag b
 max_list_less_every_typed=MAX_LIST (xs :num list) < (N :num) ⇔ (0 :num) < N ∧ EVERY (λ(x :num). x < N) xs
 do_if_helper_typed=do_if (b :v) (x :α) (y :α) = SOME (e :α) ∧ v_rel b (b' :v) ⇒ (b' = (Boolv T :v) ⇔ b = (Boolv T :v)) ∧ (b' = (Boolv F :v) ⇔ b = (Boolv F :v))
+do_app_thm_reverse_typed=do_app (s1 :(α, β) state) (op :op) (REVERSE (vs1 :v list)) = SOME ((t1 :(α, β) state),(r1 :(v, v) result)) ∧ state_rel (cfg :config) s1 (s2 :(α, β) state) ∧ LIST_REL v_rel vs1 (vs2 :v list) ⇒ ∃(t2 :(α, β) state) (r2 :(v, v) result). result_rel v_rel v_rel r1 r2 ∧ state_rel cfg t1 t2 ∧ do_app s2 op (REVERSE vs2) = SOME (t2,r2)
 global_bag_list_empty=elist_globals (l :exp list) = ({||} :num -> num) ⇔ ∀(e :exp). MEM e l ⇒ set_globals e = ({||} :num -> num)
 sum_string_ords=sum_string_ords (i :num) (s :mlstring) = (SUM (MAP (λ(c :char). ORD c − (35 :num)) (DROP i (explode s))) :num)
 sum_string_ords_def=∀(str :mlstring) (i :num). sum_string_ords i str = if i < strlen str then ORD (strsub str i) − (35 :num) + sum_string_ords (i + (1 :num)) str else (0 :num)

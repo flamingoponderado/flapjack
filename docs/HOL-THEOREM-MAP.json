@@ -133469,6 +133469,16 @@
 }
 ,
 {
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "do_app_thm_REVERSE",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/SourceApplication.lean",
+  "lean_name": "doApp_simulation_reverse",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_thm_reverse_typed: the original grouped primitive execution, state relation and unreversed list relation premises imply the existential result relation, final state relation and target execution on reversed arguments. Compiler and FFI types remain independent; primitive evaluation inherits reals_as_rational_cuts."
+}
+,
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "find_recfun_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",

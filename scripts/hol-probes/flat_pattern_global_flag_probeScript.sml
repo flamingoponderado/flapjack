@@ -36,6 +36,7 @@ val _ = show_thm "do_eq_boolv_typed=" flat_patternProofTheory.do_eq_Boolv;
 val _ = show_thm "fold_boolv_typed=" flat_patternProofTheory.fold_Boolv;
 val _ = show_thm "max_list_less_every_typed=" flat_patternProofTheory.MAX_LIST_LESS_EVERY;
 val _ = show_thm "do_if_helper_typed=" flat_patternProofTheory.do_if_helper;
+val _ = show_thm "do_app_thm_reverse_typed=" flat_patternProofTheory.do_app_thm_REVERSE;
 val _ = show_thm "global_bag_list_empty=" flatPropsTheory.elist_globals_eq_empty;
 val _ = show_thm "sum_string_ords=" flat_patternProofTheory.sum_string_ords_eq;
 val _ = show_thm "sum_string_ords_def=" flat_patternTheory.sum_string_ords_def;
