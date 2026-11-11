@@ -133330,6 +133330,15 @@
 ,
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "v_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ValueRelInduction.lean",
+  "lean_name": "valueRel_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared v_rel_def_typed: all eleven original value-constructor equivalences, shared free variables, nested existential and disjunct ordering, closure compilation and bounded recursive-closure selection are retained. The original HOL HD and EL use the existing holHd and holEl translations."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "find_recfun_EL",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",
   "lean_name": "findRecFun_get",
