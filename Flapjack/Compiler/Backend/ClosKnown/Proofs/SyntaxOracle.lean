@@ -18,6 +18,30 @@ open ClosLang ClosProps BackendProps
 open Relations.StateRelation.Oracle PreserveSafety
 open OracleGlobals UniqueGlobalsPort KnownSubspt OracleMonotonic
 
+/-- Global bags of a prefix and flattened lists form a right fold. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "elist_globals_FLAT_APPEND_FOLDR"]
+theorem elistGlobalsFlatAppendFoldr (xs : List ClosLang.Exp) (ys : List (List ClosLang.Exp)) :
+    elistGlobals (xs ++ ys.flatten) =
+      ((xs :: ys).map elistGlobals).foldr FlatProps.unionGlobalBag FlatProps.emptyGlobalBag := by
+  induction ys generalizing xs with
+  | nil =>
+    simp only [List.flatten_nil, List.append_nil, List.map_cons, List.map_nil, List.foldr_cons, List.foldr_nil]
+    funext key
+    simp [FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
+  | cons head tail ih =>
+    simp only [List.flatten_cons, List.map_cons, List.foldr_cons]
+    rw [ClosProps.elistGlobals_append, ih head]
+    rfl
+
+/-- Global bags of flattened lists form a right fold. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "elist_globals_FLAT_FOLDR"]
+theorem elistGlobalsFlatFoldr (ys : List (List ClosLang.Exp)) :
+    elistGlobals ys.flatten =
+      FlatProps.unionGlobalBag (elistGlobals [])
+        ((ys.map elistGlobals).foldr FlatProps.unionGlobalBag FlatProps.emptyGlobalBag) := by
+  simpa only [List.nil_append, List.map_cons, List.foldr_cons] using
+    elistGlobalsFlatAppendFoldr [] ys
+
 /-- Applying a pure program transformation preserves both oracle properties. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "pure_co_oracle_props"]
 theorem pureCoOracleProps {C P Q : Type} (f : P → Q)

@@ -10747,19 +10747,6 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOp.lean",
-  "lean_name": "knownCorrect0Op",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out with the source Op induction case. The theorem keeps the full argument, installation, and force induction hypotheses, including the original intermediate result equations, operation discriminants, and thunk mode, and concludes KnownSimulationAt for the original Op. It assembles the constructor-specific cases including global read replacement and global writes. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationApplyFullBody.lean",
   "lean_name": "knownCorrect0AppCons",
   "statement_status": "reviewed_fmap_as_finite_support",
@@ -10966,6 +10953,22 @@
   "lean_name": "valueRelWordsList",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared known_words_list_replay_typed, replaying the original source-local proof: related full values agree on decoding the arbitrary fixed-width list, with the same hypotheses and iff conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "elist_globals_FLAT_APPEND_FOLDR",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SyntaxOracle.lean",
+  "lean_name": "elistGlobalsFlatAppendFoldr",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_elist_flat_append_foldr_typed: closure expression lists, bag union and empty bag, and full flattened-fold equation agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "elist_globals_FLAT_FOLDR",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SyntaxOracle.lean",
+  "lean_name": "elistGlobalsFlatFoldr",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_elist_flat_foldr_typed: closure expression lists, bag union and empty bag, and full flattened-fold equation agree."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",

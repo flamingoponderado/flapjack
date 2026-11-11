@@ -7,7 +7,8 @@ public import Flapjack.Compiler.Backend.ClosKnown.Proofs.CorrectApproxCons
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationBool
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationLetrec
-public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOp
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpGlobal
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationInstallDispatch
 
 @[expose] public section
 
@@ -993,29 +994,49 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
                 apply exprIH args env state (by omega)
                 simp only [expsWeight, expWeight] at measure ⊢; omega
             | op trace op args =>
-              apply Op.knownCorrect0Op trace op args env state ?_ ?_ ?_
-              · intro result next values installResult installed program ⟨run, _, _, installRun, success⟩
-                subst installResult
-                have bound := evaluate_clock_le args env state
-                rw [run] at bound
-                simp only at bound
-                have installClock := doInstall_success_clock values.reverse next installed program installRun
-                apply smaller program [] installed
-                omega
-              · intro result next values mode value ⟨run, _, _, opEq, _, _⟩
-                have bound := evaluate_clock_le args env state
-                rw [run] at bound
-                simp only at bound
-                apply exprIH [appUnit (.var .none 0)] [value] next (by omega)
-                subst op
-                have hweight := appUnit_var_weight
-                simp only [expsWeight, expWeight] at measure
-                simp only [appUnit, expsWeight, expWeight] at hweight ⊢
-                omega
-              · apply exprIH args env state (by omega)
+              have argsIH : KnownSimulationAt args env state := by
+                apply exprIH args env state (by omega)
                 have opBound := opWeight_gt trace op args
                 simp only [expsWeight] at measure
                 omega
+              cases op with
+              | label label => exact Ordinary.knownCorrect0OpLabel trace label args env state argsIH
+              | ffi name => exact Ordinary.knownCorrect0OpFfi trace name args env state argsIH
+              | intOp operation => exact Ordinary.knownCorrect0OpInt trace operation args env state argsIH
+              | wordOp operation => exact Ordinary.knownCorrect0OpWord trace operation args env state argsIH
+              | blockOp operation => exact Ordinary.knownCorrect0OpBlock trace operation args env state argsIH
+              | memOp operation => exact Ordinary.knownCorrect0OpMemory trace operation args env state argsIH
+              | globOp operation =>
+                cases operation with
+                | global index => exact Global.knownCorrect0OpGlobal trace index args env state argsIH
+                | setGlobal index => exact SetGlobal.knownCorrect0OpSetGlobal trace index args env state argsIH
+                | allocGlobal => exact Ordinary.knownCorrect0OpAllocGlobal trace args env state argsIH
+                | globalsPtr => exact Ordinary.knownCorrect0OpGlobalsPtr trace args env state argsIH
+                | setGlobalsPtr => exact Ordinary.knownCorrect0OpSetGlobalsPtr trace args env state argsIH
+              | install =>
+                apply Install.knownCorrect0OpInstall trace args env state ?_ argsIH
+                intro values middle program installed run install
+                have bound := evaluate_clock_le args env state
+                rw [run] at bound
+                simp only at bound
+                have installClock := doInstall_success_clock values.reverse middle installed program install
+                apply smaller program [] installed
+                omega
+              | thunkOp operation =>
+                cases operation with
+                | allocThunk mode => exact Ordinary.knownCorrect0OpAllocThunk trace mode args env state argsIH
+                | updateThunk mode => exact Ordinary.knownCorrect0OpUpdateThunk trace mode args env state argsIH
+                | forceThunk =>
+                  apply Force.knownCorrect0OpForce trace args env state ?_ argsIH
+                  intro values middle value run found
+                  have bound := evaluate_clock_le args env state
+                  rw [run] at bound
+                  simp only at bound
+                  apply exprIH [appUnit (.var .none 0)] [value] middle (by omega)
+                  have hweight := appUnit_var_weight
+                  simp only [expsWeight, expWeight] at measure
+                  simp only [appUnit, expsWeight, expWeight] at hweight ⊢
+                  omega
 
 /-- The closure state uses canonical finite-map fields. -/
 theorem holFmapAsFiniteSupportWitness {C F : Type} :
