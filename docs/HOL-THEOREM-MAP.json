@@ -134655,6 +134655,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "do_app_cases",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyCases.lean",
+  "lean_name": "doAppCases",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete freshly replayed flat_do_app_cases_typed: independent state carriers and result types, unconditional iff, all eight alternatives and every residual guard and witness. An independently reviewed exhaustive source dispatcher abbreviates the expanded AST op_CASE; the flat alternatives retain the original HOL EL, HD and THE values and bounds. The full theorem is kernel-checked and independently source-reviewed. Numeric dependencies inherit reals_as_rational_cuts (SOUNDNESS item 8); the probe and review are not a HOL-to-Lean equivalence proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
   "hol_name": "pair_case_eq",
   "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/PairCases.lean",
   "lean_name": "pairCase_eq",
