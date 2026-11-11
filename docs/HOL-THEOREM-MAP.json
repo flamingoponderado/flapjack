@@ -133918,6 +133918,16 @@
   "reviewer": "Compared pmatch_rows_same_FST_typed in flat_pattern_rows_same_probe.out. The two row payload types are independent, as are the state parameters; HOL's inhabited types are represented by Nonempty where EL requires them. The pattern-projection premise and all three cases are unchanged, including the existential index, target-list bound, original EL equality and target result using EL."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "v_rel_eqns",
+  "hol_line": 336,
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRelCases.lean",
+  "lean_name": "valueRel_eqns_local",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared the original local v_rel_eqns construction and freshly replayed typed v_rel_eqns_local capture, which is identical to v_rel_eqns_non_global_replay. All seven conjuncts, binders, witnesses, constructor branches and the false Env case are preserved. The kernel-checked alias reuses the reviewed complete proof with the same elaborated type; GlobalEnv c and tys use the canonical carrier and existing local roundtrip witness. Independently source-reviewed."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
   "hol_name": "find_refs_globals_MEM",
   "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
