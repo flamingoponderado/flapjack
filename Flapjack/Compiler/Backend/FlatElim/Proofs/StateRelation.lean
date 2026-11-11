@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.FlatProps.StoreValues
-public import Flapjack.Compiler.Backend.FlatElim.Proofs.ValueGlobals
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.GlobalLists
 public import Flapjack.Compiler.Backend.FlatElim.Proofs.Reachability
 public import Flapjack.Misc.ListEl
 
@@ -250,17 +250,10 @@ theorem flatStateRel_appendRef {C F : Type} (reachable : NumSet) (source target 
       { target with refs := target.refs ++ [value] } := by
   obtain ⟨clock, refs, ffi, globals, refsReachable, refsSafe⟩ := related
   refine ⟨clock, by simp [refs], ffi, globals, ?_, ?_⟩
-  · apply (findRefsGlobals_within_iff _ _).mpr
-    intro ref member
-    rcases List.mem_append.mp member with old | new
-    · exact (findRefsGlobals_within_iff _ _).mp refsReachable ref old
-    · have : ref = value := by simpa using new
-      subst ref
-      exact valueReachable
-  · intro ref member
-    rcases List.mem_append.mp member with old | new
-    · exact refsSafe ref old
-    · exact valueSafe ref new
+  · rw [findRefsGlobals_append]
+    exact (globalsWithin_union _ _ _).mpr
+      ⟨refsReachable, (findRefsGlobals_within_iff _ _).mpr (by simpa using valueReachable)⟩
+  · simpa only [storeHasNoEval, List.forall_mem_append] using And.intro refsSafe valueSafe
 
 /-- The flat state relation composes for a fixed reachable set. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "flat_state_rel_trans"]
