@@ -164,20 +164,6 @@ theorem oracleTie_cacheNext {width : Nat} [NeZero width] {S Q C : Type} {F : Typ
     h.2.2.2.2.2.1, h.2.2.2.2.2.2]
   exact ⟨hp.2.2.2.2.1.symm, hp.2.2.2.2.2.symm, hp.2.2.1.symm, hp.2.2.2.1.symm⟩
 
-/-- Flapjack natural-key ALOOKUP infrastructure: both native implementations
-read the first equal key with the same equality, including duplicate keys. -/
-private theorem alookup_eq_lookup {α : Type} (key : Nat) (entries : List (Nat × α)) :
-    sptAListLookup key entries = entries.lookup key := by
-  induction entries with
-  | nil => rfl
-  | cons entry entries ih =>
-    rcases entry with ⟨k, value⟩
-    by_cases h : key = k
-    · simp [sptAListLookup, List.lookup, h]
-    · cases hb : (key == k) with
-      | false => simp [sptAListLookup, List.lookup, h, hb, ih]
-      | true => exact False.elim (h (by simpa only [beq_iff_eq] using hb))
-
 /-- Full original external-call residue theorem. The returned register
 functions are derived from the actual external interference and read/FFI guards,
 not assumed as a simulation premise. Literal total holEl is retained. -/
@@ -205,7 +191,7 @@ theorem oracleTie_extCallResidues {width : Nat} [NeZero width] {S Q C : Type} {F
   let mc2 := { mc with nextInterfer := holShiftSeq l mc.nextInterfer }
   have hn := nextInterferenceShift mc mc2 s.ffi s.ffi ms1 ms2 l h.2.1
   have he := nextInterferenceExtCall mc2 s.ffi ms2 index name bytes bytes2 newBytes newFfi (by
-    simpa only [mc2, readFfiBytearraysHOL, readFfiBytearrayHOL, alookup_eq_lookup] using h.2.2)
+    simpa only [mc2, readFfiBytearraysHOL, readFfiBytearrayHOL, sptAListLookup_eq_lookup] using h.2.2)
   have hp := oracleTie_ffiStep mc ms1 s index newBytes ms2
     (mc.ffiInterfer 0 (index, newBytes, ms2))
     { mc2 with ffiInterfer := holShiftSeq 1 mc2.ffiInterfer } newFfi ⟨h.1, hn.trans he⟩

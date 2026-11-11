@@ -85,19 +85,6 @@ theorem wordOfBytesHOL8_eq {width : Nat} [NeZero width] (be : Bool) (a : BitVec 
   | nil => rfl
   | cons b bs ih => simp [wordOfBytesHOL8, HolByte.wordOfBytes, ih, setByteHOL8_eq]
 
-/-- Both natural-key association-list lookups read the first equal key. -/
-theorem sptAListLookup_eq_lookup {α : Type} (key : Nat) (entries : List (Nat × α)) :
-    sptAListLookup key entries = entries.lookup key := by
-  induction entries with
-  | nil => rfl
-  | cons entry entries ih =>
-    rcases entry with ⟨k, value⟩
-    by_cases h : key = k
-    · simp [sptAListLookup, List.lookup, h]
-    · cases hb : (key == k) with
-      | false => simp [sptAListLookup, List.lookup, h, hb, ih]
-      | true => exact False.elim (h (by simpa only [beq_iff_eq] using hb))
-
 /-- Every shared-memory operation is a load or a store of size 0, 1, 2 or 4
 whose `get_memop_info` size byte and mapped-access validity match the
 instruction; the original obtains these facts by `Cases_on m`. -/
