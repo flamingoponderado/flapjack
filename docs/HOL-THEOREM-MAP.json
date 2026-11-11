@@ -14399,6 +14399,14 @@
   "reviewer": "Compared known_better_definedg_full_typed: arbitrary configuration, full expression list, approximation environment and exact result equation imply the full global ordering."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_preserves_fv_max",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalFreeVars.lean",
+  "lean_name": "knownPreservesFvMax",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_preserves_fv_max_typed: arbitrary optimizer inputs, result equation and source free-variable bound imply the bound on the full transformed expression list."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
   "hol_name": "subapprox_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
