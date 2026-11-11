@@ -6,6 +6,8 @@ let_op_sing_eq_typed=(∀(e :closLang$exp). let_op [e] = [let_op_sing e]) ∧ (�
 compile_inc_typed=∀(e :closLang$exp list) (xs :β). (compile_inc (e,xs) :closLang$exp list # α list) = (let_op e,([] :α list))
 let_op_vars_none_typed=∀(es :closLang$exp list). every_Fn_vs_NONE (let_op es) ⇔ every_Fn_vs_NONE es
 var_list_length_typed=∀(n :num) (xs :closLang$exp list) (ys :α list). var_list n xs ys ⇒ LENGTH xs = LENGTH ys
+var_list_no_labels_typed=∀(n :num) (l :closLang$exp list) (m :α list). var_list n l m ⇒ EVERY no_Labels l ∧ EVERY (obeys_max_app (k :num)) l
+let_op_obeys_max_app_typed=∀(es :closLang$exp list). EVERY (obeys_max_app (k :num)) (let_op es) ⇔ EVERY (obeys_max_app k) es
 var_list_evaluate_replay_typed=∀(a2 :v list) (a1 :v list) (xs :closLang$exp list) (ys :closLang$exp list) (s :(γ, 'ffi) state) (env :v list). var_list (LENGTH a1) xs ys ∧ LENGTH ys = LENGTH a2 ⇒ evaluate (xs,a1 ++ a2 ++ env,s) = ((Rval a2 :(v list, v) result),s)
 var_list_evaluate_zero_replay_typed=∀(vs :v list) (xs :closLang$exp list) (ys :closLang$exp list) (s :(γ, 'ffi) state) (env :v list). var_list (0 :num) xs ys ∧ LENGTH ys = LENGTH vs ⇒ evaluate (xs,vs ++ env,s) = ((Rval vs :(v list, v) result),s)
 code_rel_typed=∀(e1 :closLang$exp list) (e2 :closLang$exp list). code_rel e1 e2 ⇔ e2 = let_op e1

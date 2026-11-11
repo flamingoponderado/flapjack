@@ -129221,6 +129221,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "var_list_no_Labels",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Syntax.lean",
+  "lean_name": "varList_noLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared var_list_no_labels_typed in clos_letop_source_probe.out: the index, expression list, independently polymorphic comparison list, recognition premise, and both label-free and arbitrary application-bound conclusions agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+  "hol_name": "let_op_obeys_max_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Arity.lean",
+  "lean_name": "compileSource_obeysMaxApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared let_op_obeys_max_app_typed in clos_letop_source_probe.out: both EVERY predicates, their equivalence, arbitrary expression list and common arbitrary application bound agree. The source traversal agrees with the executed list traversal by compileSource_eq_list."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
   "hol_name": "var_list_IMP_LENGTH",
   "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/VarListEvaluate.lean",
   "lean_name": "varList_length",

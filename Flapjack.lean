@@ -1084,6 +1084,7 @@ import Flapjack.Compiler.Backend.ClosLetop.Proofs.Apply
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Simulation
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Syntax
+import Flapjack.Compiler.Backend.ClosLetop.Proofs.Arity
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownLabelOracle
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownAddresses
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Syntax
