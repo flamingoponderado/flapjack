@@ -9,8 +9,7 @@ public import Flapjack.Misc.Sptree.ToList
 set_option backward.privateInPublic true
 set_option backward.privateInPublic.warn false
 
-/-! The decision-tree path of flat pattern compilation. Its evaluator and
-finite-map carrier remain pending HOL correspondence review. -/
+/-! The decision-tree path of flat pattern compilation. -/
 namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.Compiler.Backend
 

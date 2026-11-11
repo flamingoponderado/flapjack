@@ -1239,10 +1239,16 @@ python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake 
   --compile-seed 20261114 --edge-seed 20261114 --timeout 45
 ```
 
+The Flapjack executable revisions for the `20261113` and `20261114` runs
+were not recorded. The results were recorded in commits `f325ff36b8` and
+`85ad63bcfd`, respectively; those commits do not establish which executable
+revision was tested.
+
 The same harness also compared type reports for parentheses and local bindings
 nested 40,000 levels deep using `--nesting-depth 40000` with the case counts
 above set to zero. This checks finite inputs; it does not prove that the
-bounded parser has sufficient fuel for all inputs.
+bounded parser has sufficient fuel for all inputs. The Flapjack executable
+revision was not recorded; the result was recorded in `5e8be42bd8`.
 
 `python3 scripts/check-cake-benchmark-parity.py` compares the complete RISC-V
 output for 28 benchmark programs, three bootstrap hello programs, and the
