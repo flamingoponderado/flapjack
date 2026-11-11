@@ -10565,19 +10565,6 @@
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationInstallDispatch.lean",
-  "lean_name": "knownCorrect0OpInstall",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out with the Install operation branch of the original proof. KnownSimulationAt unfolds to the full expression conjunct; the argument hypothesis and successful-installation program hypothesis retain the source evaluation and installation premises. Specializing the operation to Install makes the force induction hypothesis impossible. The proof covers argument errors, non-type-error installation timeout with its advanced oracle, installed-program errors, and the related last returned values of nonempty successful programs. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpForce.lean",
   "lean_name": "knownCorrect0OpForce",
   "statement_status": "reviewed_fmap_as_finite_support",
@@ -10959,6 +10946,14 @@
   "lean_name": "decideInlineLetInlineFvMax",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared decide_inline_imp_clos_fv_max_typed in clos_known_syntax_probe.out and the source theorem. The location payload remains polymorphic, and the decision, existential closure approximation and original free-variable bound match. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "not_less_zero_imp",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OpEvaluateGlobals.lean",
+  "lean_name": "notLessZeroImp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_not_less_zero_replay_typed, replaying the source-local proof: integer nonnegativity implies the original natural-number existential."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",

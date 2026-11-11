@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationInstall
-public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationForceArgs
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartEvaluate
 
 @[expose] public section
 
@@ -333,69 +333,5 @@ theorem installSmartOpAfterArguments {C F : Type} (c : Config) (trace : BackendC
   exact ⟨result', targetFinal, ClosOp.smartOpThm trace .install ys targetEnv
     targetInitial targetFinal result' ⟨targetRun, targetNoType⟩, related, finalState,
     finalGlobals, finalOracle, finalDisjoint⟩
-
-/-- The closure state uses canonical finite-map fields. -/
-theorem holFmapAsFiniteSupportWitness {C F : Type} :
-    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
-      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
-  ClosSem.holFmapAsFiniteSupportWitness
-
-/-- Install-operation case of the original optimizer simulation. -/
-@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_correct0"
-  (fmap_as_finite_support := [refs, code])]
-theorem knownCorrect0OpInstall {C F : Type} (trace : BackendCommon.Tra)
-    (xs : List ClosLang.Exp) (env1full : List ClosSem.Value)
-    (s0 : ClosSem.State (Spt ValApprox × C) F)
-    (installIH : ∀ (args : List ClosSem.Value) (middle : ClosSem.State (Spt ValApprox × C) F)
-      (program : List ClosLang.Exp) (installed : ClosSem.State (Spt ValApprox × C) F),
-      evaluate xs env1full s0 = (.val args, middle) →
-      doInstall args.reverse middle = (.val program, installed) →
-      KnownSimulationAt program [] installed)
-    (argsIH : KnownSimulationAt xs env1full s0) :
-    KnownSimulationAt [.op trace .install xs] env1full s0 := by
-  intro res1 s env1 xenv1 env2 xenv2 t0 c g0 g aenv eas h
-  obtain ⟨run, known, state, inputSyntax, coSyntax, disjoint, oracle, stateOracleDisjoint,
-    exprSafe, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
-    sub0, sub1, mono, free, envRel, unique, stateOracle, envEq, noType⟩ := h
-  have argsUnique : uniqueSetGlobals xs s0.compileOracle := by
-    simpa [uniqueSetGlobals, elistGlobals_append, elistGlobals, setGlobals, opGlobalBag,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using unique
-  have argsDisjoint : mglobalsDisjoint s0.globals xs := by
-    simpa [mglobalsDisjoint, elistGlobals, setGlobals, opGlobalBag,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using disjoint
-  have argsSafe : ∀ e ∈ xs, esgcFree e := by
-    have safeOp := exprSafe (.op trace .install xs) (by simp)
-    simpa [esgcFree, esgcFreeList_iff] using safeOp
-  have argsSyntax : everyFnVarsNone xs := by
-    simpa [everyFnVarsNone, fnVarsNoneExp] using inputSyntax
-  have argsFree : fvMax env1.length xs := by
-    simpa [fvMax, freeVars, freeVarExp] using free
-  cases hk : knownListTotal c xs aenv g0 with
-  | mk argEas g1 =>
-    rw [knownListTotal_op, hk] at known
-    simp [knownOpHOL] at known
-    rcases known with ⟨rfl, rfl⟩
-    cases hr : evaluate xs env1full s0 with
-    | mk argResult middle =>
-      have argsNoType : argResult ≠ .err (.abort .typeError) := by
-        intro eq
-        subst argResult
-        rw [evaluate, fixClock_evaluate, hr] at run
-        simp at run
-        rcases run with ⟨rfl, rfl⟩
-        exact noType rfl
-      obtain ⟨targetArgResult, targetMiddle, targetArgs, argsRelated, midState, midGlobals,
-          midOracleState, midOracle⟩ := argsIH argResult middle env1 xenv1 env2 xenv2 t0 c g0 g1
-        aenv argEas ⟨hr, hk, state, argsSyntax, coSyntax, argsDisjoint, oracle, stateOracleDisjoint,
-          argsSafe, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
-          sub0, sub1, mono, argsFree, envRel, argsUnique, stateOracle, envEq, argsNoType⟩
-      have step := installSmartOpAfterArguments c trace xs (argEas.map Prod.fst) env1full (env2 ++ xenv2)
-        s0 middle t0 targetMiddle argResult targetArgResult res1 s hr targetArgs midState argsRelated
-        safe envSafe argsSafe coSyntax oracleSafe stateOracleDisjoint argsDisjoint argsUnique mono
-        midOracle midGlobals midOracleState (fun args program installed eq install => by
-          subst argResult
-          exact installIH args middle program installed hr install) run noType
-      simpa using step
-
 
 end Flapjack.Compiler.Backend.ClosKnown.Simulation.Install

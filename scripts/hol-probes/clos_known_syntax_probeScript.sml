@@ -407,6 +407,11 @@ val known_letrec_case_eq_replay = prove(
   Cases_on `loc` >> fs [clos_knownProofTheory.clos_gen_noinline_eq, rich_listTheory.REPLICATE_GENLIST]);
 val _ = show "known_letrec_case_eq_replay_typed=" known_letrec_case_eq_replay;
 
+(* Replay the original source-local nonnegative-integer lemma. *)
+val known_not_less_zero_replay = prove(
+  ``~(i < 0:int) ⇒ ∃k. i = &k``, Cases_on `i` >> fs []);
+val _ = show "known_not_less_zero_replay_typed=" known_not_less_zero_replay;
+
 (* Replay the original source-local theorem with its original proof tactic. *)
 val known_state_rel_opt_rel_refs_replay = prove(
   ``(clos_knownProof$state_rel c g s1 s2 ∧ FLOOKUP s1.refs n = r1 ⇒
