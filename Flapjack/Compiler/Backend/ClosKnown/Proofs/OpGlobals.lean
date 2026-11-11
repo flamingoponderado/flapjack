@@ -15,39 +15,11 @@ theorem knownOpLookupUnchanged (op : ClosLang.Op) (args : List ValApprox)
     (g0 : Spt ValApprox) (a : ValApprox) (g : Spt ValApprox) (key : Nat)
     (known : knownOpHOL op args g0 = (a, g)) (outside : opGlobalBag op key = 0) :
     sptLookup key g = sptLookup key g0 := by
-  cases op with
-  | globOp op =>
-    cases op with
-    | global index =>
-      cases args <;> simp_all [knownOpHOL]
-      all_goals split at known <;> simp_all
-    | setGlobal index =>
-      cases args with
-      | nil => simp_all [knownOpHOL]
-      | cons x xs =>
-        simp only [knownOpHOL, Prod.mk.injEq] at known
-        rcases known with ⟨_, rfl⟩
-        have different : key ≠ index := by simpa [opGlobalBag] using outside
-        exact sptLookup_sptInsert_ne index key _ g0 different
-    | _ => simp_all [knownOpHOL]
-  | blockOp op => cases op <;> simp_all [knownOpHOL]
-  | intOp op => cases op <;> simp_all [knownOpHOL]
-  | memOp op =>
-    cases op with
-    | el =>
-      cases args with
-      | nil => simp_all [knownOpHOL]
-      | cons x xs =>
-        cases xs with
-        | nil => cases x <;> simp_all [knownOpHOL]
-        | cons y ys =>
-          cases ys with
-          | nil =>
-            cases x <;> cases y <;> simp_all [knownOpHOL]
-            all_goals split at known <;> simp_all
-          | cons z zs => cases x <;> cases y <;> simp_all [knownOpHOL]
-    | _ => simp_all [knownOpHOL]
-  | _ => simp_all [knownOpHOL]
+  unfold knownOpHOL at known
+  split at known <;> simp_all [opGlobalBag]
+  all_goals try (split at known <;> simp_all)
+  rcases known with ⟨_, rfl⟩
+  exact sptLookup_sptInsert_ne _ _ _ _ outside
 
 /-- Any resulting lookup either was present unchanged or belongs to the
 operation's global-write bag. -/
