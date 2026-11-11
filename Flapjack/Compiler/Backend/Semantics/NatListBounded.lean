@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Data.Nat.Find
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
 
 @[expose] public section
 
@@ -27,5 +28,20 @@ theorem natList_bounded (keys : List Nat) : ∃ bound, ∀ key ∈ keys, key < b
     · omega
     · have := h key member
       omega
+
+/-- Flapjack infrastructure: a finite-support map over natural keys has an
+unallocated index, whatever its payload type. No separately named HOL original. -/
+theorem holFiniteMapExact_exists_unused {β : Type} (refs : HolFiniteMapExact Nat β) :
+    ∃ index, refs.lookup index = none := by
+  classical
+  obtain ⟨keys, support⟩ := refs.finiteSupport
+  obtain ⟨bound, bounded⟩ := natList_bounded keys
+  refine ⟨bound, ?_⟩
+  cases h : refs.lookup bound with
+  | none => rfl
+  | some value =>
+    have member := support bound (by simp [h])
+    have impossible := bounded bound member
+    omega
 
 end Flapjack.Compiler.Backend
