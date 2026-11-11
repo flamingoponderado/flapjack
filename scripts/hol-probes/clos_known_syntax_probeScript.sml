@@ -54,6 +54,8 @@ val _ = show "decide_inline_no_labels_typed=" clos_knownProofTheory.decide_inlin
 val _ = show "clos_gen_noinline_no_labels_typed=" clos_knownProofTheory.clos_gen_no_inline_no_Labels;
 val _ = show "known_no_labels_typed=" clos_knownProofTheory.known_no_Labels;
 val _ = show "compile_no_labels_typed=" clos_knownProofTheory.compile_no_Labels;
+val _ = show "ticks_vars_none_typed=" clos_knownProofTheory.every_Fn_vs_NONE_mk_Ticks;
+val _ = show "known_ticks_locations_typed=" clos_knownProofTheory.every_Fn_SOME_mk_Ticks;
 val _ = show "contains_closures_code_locs_typed=" clos_knownProofTheory.contains_closures_code_locs;
 val _ = show "inline_code_locs_typed=" clos_knownProofTheory.code_locs_decide_inline;
 val _ = show "known_code_bag_typed=" clos_knownProofTheory.known_code_locs_bag;
