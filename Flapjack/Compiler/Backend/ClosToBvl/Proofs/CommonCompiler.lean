@@ -18,4 +18,10 @@ noncomputable def compileCommonInc {C : Type} (config : Config) (cc : Compiler C
         (stateCc (ClosCall.condCallCompileInc config.doCall)
           (pureCc ClosAnnotate.compileIncSource cc))))
 
+/-- Adapt a closure compiler callback by threading an incremental pass state. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "clos_state_cc_def"]
+def closStateCc {S C : Type} (inc : S → Program → S × Program) (cc : Compiler C) :
+    Compiler (S × C) :=
+  stateCc inc cc
+
 end Flapjack.Compiler.Backend.ClosToBvl

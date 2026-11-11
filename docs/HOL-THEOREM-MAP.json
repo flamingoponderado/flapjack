@@ -133926,6 +133926,14 @@
   "reviewer": "Compared the original local proof and freshly replayed fst_lem_typed: three independent component types, right-associated triple carrier and equality of the whole destructuring function with first projection. No premises or representation qualifiers are added. Independently source-reviewed."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "clos_state_cc_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CommonCompiler.lean",
+  "lean_name": "closStateCc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source and typed HOL review confirms the state types remain independent, the program and fixed-width output carriers match, and the definition is exactly state_cc inc cc; no additional assumptions or representation qualifiers are required."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "funion_submap",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/FiniteMapGrowth.lean",
