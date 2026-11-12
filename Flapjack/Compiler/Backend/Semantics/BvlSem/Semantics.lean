@@ -60,9 +60,9 @@ theorem terminatingObservation_unique {C F : Type} (ffi : HolFfiState F)
       | abort abort => cases abort <;> simp_all
   rw [outcomeEq, eventsEq]
 
-/-- Observable behavior of an initial BVL program. This is untagged pending
-representation review of the finite map in the internally used evaluator
-state; the existing finite-map qualifier requires its owner in the signature. -/
+/-- Observable behavior of an initial BVL program. Its HOL cross-reference is
+the source-shaped `semantics_def` equation below, which exposes the original
+existential state and records the reference-map representation. -/
 noncomputable def semantics {C F : Type} (ffi : HolFfiState F)
     (code : Spt (Nat × Bvl.Exp)) (oracle : CompileOracle C)
     (compiler : Compiler C) (start : Nat) : HolBehaviour :=
@@ -74,6 +74,58 @@ noncomputable def semantics {C F : Type} (ffi : HolFfiState F)
   | some behavior => behavior
   | none => .diverge (HolLList.buildLprefixLub (fun trace => ∃ clock,
       trace = HolLList.fromList (run clock).2.ffi.ioEvents))
+
+namespace SemanticsCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : Flapjack.Compiler.Backend.BvlSem.State C F, State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end SemanticsCarrier
+
+open Classical in
+/-- The complete source semantics equation, with its terminating state binder
+shown explicitly. -/
+@[hol "cakeml/compiler/backend/semantics/bvlSemScript.sml" "semantics_def"
+  (fmap_as_finite_support := [refs])]
+theorem semantics_def {C F : Type} (ffi : HolFfiState F)
+    (code : Spt (Nat × Bvl.Exp)) (oracle : CompileOracle C)
+    (compiler : Compiler C) (start : Nat) :
+    semantics ffi code oracle compiler start =
+      if ∃ clock, (evaluateTuple ([.call 0 (some start) []], [],
+          initialState ffi code oracle compiler clock)).1 = .err (.abort .typeError) then .fail
+      else match holOptionSome (fun behavior =>
+        ∃ clock, ∃ state : Flapjack.Compiler.Backend.BvlSem.State C F, ∃ result outcome,
+          evaluateTuple ([.call 0 (some start) []], [], initialState ffi code oracle compiler clock) =
+            (result, state) ∧
+          (match result with
+           | .err (.abort .timeoutError) => False
+           | .err (.abort (.ffiError event)) => outcome = HolOutcome.ffiOutcome event
+           | _ => outcome = HolOutcome.success) ∧
+          behavior = HolBehaviour.terminate outcome state.ffi.ioEvents) with
+      | some behavior => behavior
+      | none => .diverge (HolLList.buildLprefixLub (fun trace => ∃ clock,
+          trace = HolLList.fromList (evaluateTuple ([.call 0 (some start) []], [],
+            initialState ffi code oracle compiler clock)).2.ffi.ioEvents)) := by
+  have terminating : terminatingObservation ffi code oracle compiler start =
+      (fun behavior => ∃ clock, ∃ state : Flapjack.Compiler.Backend.BvlSem.State C F, ∃ result outcome,
+        evaluateTuple ([.call 0 (some start) []], [], initialState ffi code oracle compiler clock) =
+          (result, state) ∧
+        (match result with
+         | .err (.abort .timeoutError) => False
+         | .err (.abort (.ffiError event)) => outcome = HolOutcome.ffiOutcome event
+         | _ => outcome = HolOutcome.success) ∧
+        behavior = HolBehaviour.terminate outcome state.ffi.ioEvents) := by
+    funext behavior
+    apply propext
+    constructor
+    · rintro ⟨clock, result, state, outcome, run, ending, rfl⟩
+      exact ⟨clock, state, result, outcome, run, ending, rfl⟩
+    · rintro ⟨clock, state, result, outcome, run, ending, rfl⟩
+      exact ⟨clock, result, state, outcome, run, ending, rfl⟩
+  unfold semantics
+  rw [terminating]
+  rfl
 
 /-- Whole-program behavior is non-failing exactly when no initial call has a
 type error. This Flapjack-specific characterization covers every source

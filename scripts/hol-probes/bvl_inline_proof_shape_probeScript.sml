@@ -99,3 +99,4 @@ val _ = show "let_do_app_lemma_replay_typed" let_do_app_lemma_replay;
 val _ = show "bvl_inline_cc_def_typed" bvl_inlineProofTheory.bvl_inline_cc_def;
 val _ = show "bvl_inline_co_def_typed" bvl_inlineProofTheory.bvl_inline_co_def;
 val _ = show "evaluate_add_clock_initial_state_typed" bvlPropsTheory.evaluate_add_clock_initial_state;
+val _ = show "bvl_semantics_def_typed" bvlSemTheory.semantics_def;

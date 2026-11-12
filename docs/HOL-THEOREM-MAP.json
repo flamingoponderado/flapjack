@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "semantics_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Semantics.lean", "lean_name": "semantics_def",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed original source equation: the type-error guard, full existential final-state terminating predicate, FFI outcomes, guarded choice and divergent prefix-trace least upper bound retain their original scope and carriers. The actual existential state uses canonical refs with a same-module roundtrip witness; evaluation inherits the reals_as_rational_cuts assumption."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "evaluate_add_clock_initial_state",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateClockShift.lean", "lean_name": "evaluateAddClockInitialState",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
