@@ -1,0 +1,92 @@
+addr_add_clock_eq_typed=(addr (a :α addr) ((s :(α, β, γ) labSem$state) with clock := (extra :num) + s.clock) :α word option) = (addr a s :α word option)
+asm_inst_with_clock_typed=asm_inst (i :α inst) ((s :(α, β, γ) labSem$state) with clock := (z :num)) = asm_inst i s with clock := z
+reg_imm_with_clock_typed=(reg_imm (r :α reg_imm) ((s :(α, β, γ) labSem$state) with clock := (z :num)) :α word_loc) = (reg_imm r s :α word_loc)
+share_mem_op_add_clock_same_typed=((s :(α, β, γ) labSem$state).clock ≠ (0 :num) ∧ share_mem_op (m :memop) (n :num) (a :α addr) s = (NONE :(γ ffi_result # (α, β, γ) labSem$state) option) ⇒ share_mem_op m n a (s with clock := (extra :num) + s.clock) = (NONE :(γ ffi_result # (α, β, γ) labSem$state) option)) ∧ (s.clock ≠ (0 :num) ∧ share_mem_op m n a s = SOME (FFI_return (f :γ ffi_state) (l' :word8 list),(r :(α, β, γ) labSem$state)) ⇒ share_mem_op m n a (s with clock := extra + s.clock) = SOME (FFI_return f l',r with clock := extra + r.clock)) ∧ (s.clock ≠ (0 :num) ∧ share_mem_op m n a s = SOME ((FFI_final (f2 :final_event) :γ ffi_result),(r2 :(α, β, γ) labSem$state)) ⇒ share_mem_op m n a (s with clock := extra + s.clock) = SOME ((FFI_final f2 :γ ffi_result),r2 with clock := extra + r2.clock))
+no_install_def_typed=∀(code :α sec list). no_install code ⇔ ∀(p :num) (w :α word) (bytes :word8 list) (l :num). asm_fetch_aux p code ≠ SOME (LabAsm (Install :α asm_with_lab) w bytes l)
+no_share_mem_inst_def_typed=∀(code :α sec list). no_share_mem_inst code ⇔ ∀(p :num) (op :memop) (re :num) (a :α addr) (inst :word8 list) (len :num). asm_fetch_aux p code ≠ SOME (Asm (ShareMem op re a) inst len)
+align_dm_def_typed=∀(s :(α, γ, 'ffi) labSem$state). align_dm s = s with mem_domain := s.mem_domain ∩ (byte_aligned :α word -> bool)
+align_dm_const_typed=(align_dm (s :(α, β, γ) labSem$state)).clock = s.clock ∧ (align_dm s).pc = s.pc ∧ (align_dm s).code = s.code ∧ (align_dm s).mem = s.mem ∧ (align_dm s).shared_mem_domain = s.shared_mem_domain ∧ ((align_dm s).be ⇔ s.be) ∧ (align_dm s).len_reg = s.len_reg ∧ (align_dm s).link_reg = s.link_reg ∧ (align_dm s).ptr_reg = s.ptr_reg ∧ (align_dm s).ptr2_reg = s.ptr2_reg ∧ (align_dm s).len2_reg = s.len2_reg ∧ (align_dm s).io_regs = s.io_regs ∧ (align_dm s).io_fp_regs = s.io_fp_regs ∧ (align_dm s).code_buffer = s.code_buffer ∧ (align_dm s).compile = s.compile ∧ (align_dm s).compile_oracle = s.compile_oracle ∧ (align_dm s).ffi = s.ffi ∧ ((align_dm s).failed ⇔ s.failed)
+align_dm_with_clock_typed=align_dm ((s :(α, β, γ) labSem$state) with clock := (k :num)) = align_dm s with clock := k
+align_sdm_def_typed=∀(s :(α, γ, 'ffi) labSem$state). align_sdm s = s with shared_mem_domain := s.shared_mem_domain ∩ (byte_aligned :α word -> bool)
+align_sdm_const_typed=(align_sdm (s :(α, β, γ) labSem$state)).clock = s.clock ∧ (align_sdm s).pc = s.pc ∧ (align_sdm s).code = s.code ∧ (align_sdm s).mem = s.mem ∧ (align_sdm s).mem_domain = s.mem_domain ∧ ((align_sdm s).be ⇔ s.be) ∧ (align_sdm s).len_reg = s.len_reg ∧ (align_sdm s).link_reg = s.link_reg ∧ (align_sdm s).ptr_reg = s.ptr_reg ∧ (align_sdm s).ptr2_reg = s.ptr2_reg ∧ (align_sdm s).len2_reg = s.len2_reg ∧ (align_sdm s).io_regs = s.io_regs ∧ (align_sdm s).io_fp_regs = s.io_fp_regs ∧ (align_sdm s).code_buffer = s.code_buffer ∧ (align_sdm s).compile = s.compile ∧ (align_sdm s).compile_oracle = s.compile_oracle ∧ (align_sdm s).ffi = s.ffi ∧ ((align_sdm s).failed ⇔ s.failed)
+align_sdm_with_clock_typed=align_sdm ((s :(α, β, γ) labSem$state) with clock := (k :num)) = align_sdm s with clock := k
+dec_clock_align_dm_typed=dec_clock (align_dm (s :(α, β, γ) labSem$state)) = align_dm (dec_clock s)
+get_pc_value_align_dm_typed=get_pc_value (x :lab) (align_dm (s :(α, β, γ) labSem$state)) = get_pc_value x s
+get_ret_Loc_align_dm_typed=(get_ret_Loc (align_dm (s :(β, γ, δ) labSem$state)) :α word_loc option) = (get_ret_Loc s :α word_loc option)
+inc_pc_align_dm_typed=inc_pc (align_dm (s :(α, β, γ) labSem$state)) = align_dm (inc_pc s)
+share_mem_op_align_dm_simp_typed=(share_mem_op (m :memop) (r :num) (a :β addr) (s :(β, γ, α) labSem$state) = (NONE :(α ffi_result # (β, γ, α) labSem$state) option) ⇒ share_mem_op m r a (align_dm s) = (NONE :(α ffi_result # (β, γ, α) labSem$state) option)) ∧ (share_mem_op m r a s = SOME ((FFI_final (f :final_event) :α ffi_result),(s' :(β, γ, α) labSem$state)) ⇒ share_mem_op m r a (align_dm s) = SOME ((FFI_final f :α ffi_result),align_dm s')) ∧ (share_mem_op m r a s = SOME (FFI_return (fs :α ffi_state) (l :word8 list),s') ⇒ share_mem_op m r a (align_dm s) = SOME (FFI_return fs l,align_dm s'))
+upd_pc_align_dm_typed=upd_pc (p :num) (align_dm (s :(α, β, γ) labSem$state)) = align_dm (upd_pc p s)
+evaluate_align_dm_typed=good_dimindex (:α) ⇒ ∀(s :(α, γ, 'ffi) labSem$state). (evaluate (align_dm s) :machine_result # (α, γ, 'ffi) labSem$state) = (let ((r :machine_result),(s' :(α, γ, 'ffi) labSem$state)) = (evaluate s :machine_result # (α, γ, 'ffi) labSem$state) in (r,align_dm s'))
+implements_align_dm_typed=good_dimindex (:α) ⇒ implements' T {(semantics (s :(α, γ, 'ffi) labSem$state) :behaviour)} {(semantics (align_dm s) :behaviour)}
+asm_inst_align_dm_typed=good_dimindex (:α) ⇒ asm_inst (i :α inst) (align_dm (s :(α, β, γ) labSem$state)) = align_dm (asm_inst i s)
+mem_load32_align_dm_typed=good_dimindex (:α) ⇒ mem_load32 (n :num) (a :α addr) (align_dm (s :(α, β, γ) labSem$state)) = align_dm (mem_load32 n a s)
+mem_load_byte_align_dm_typed=good_dimindex (:α) ⇒ mem_load_byte (n :num) (a :α addr) (align_dm (s :(α, β, γ) labSem$state)) = align_dm (mem_load_byte n a s)
+mem_op_align_dm_typed=good_dimindex (:α) ⇒ mem_op (m :memop) (n :num) (a :α addr) (align_dm (s :(α, β, γ) labSem$state)) = align_dm (mem_op m n a s)
+mem_store32_align_dm_typed=good_dimindex (:α) ⇒ mem_store32 (n :num) (a :α addr) (align_dm (s :(α, β, γ) labSem$state)) = align_dm (mem_store32 n a s)
+mem_store_byte_align_dm_typed=good_dimindex (:α) ⇒ mem_store_byte (n :num) (a :α addr) (align_dm (s :(α, β, γ) labSem$state)) = align_dm (mem_store_byte n a s)
+addr_align_dm_typed=(addr (a :α addr) (align_dm (s :(α, β, γ) labSem$state)) :α word option) = (addr a s :α word option)
+addr_align_sdm_typed=(addr (a :α addr) (align_sdm (s :(α, β, γ) labSem$state)) :α word option) = (addr a s :α word option)
+arith_upd_align_dm_typed=arith_upd (x :α arith) (align_dm (s :(α, β, γ) labSem$state)) = align_dm (arith_upd x s)
+arith_upd_align_sdm_typed=arith_upd (x :α arith) (align_sdm (s :(α, β, γ) labSem$state)) = align_sdm (arith_upd x s)
+fp_upd_align_dm_typed=fp_upd (f :fp) (align_dm (s :(α, β, γ) labSem$state)) = align_dm (fp_upd f s)
+fp_upd_align_sdm_typed=fp_upd (f :fp) (align_sdm (s :(α, β, γ) labSem$state)) = align_sdm (fp_upd f s)
+asm_fetch_align_dm_typed=asm_fetch (align_dm (s :(α, β, γ) labSem$state)) = asm_fetch s
+asm_fetch_align_sdm_typed=asm_fetch (align_sdm (s :(α, β, γ) labSem$state)) = asm_fetch s
+assert_align_dm_typed=assert (b :bool) (align_dm (s :(α, β, γ) labSem$state)) = align_dm (assert b s)
+assert_align_sdm_typed=assert (b :bool) (align_sdm (s :(α, β, γ) labSem$state)) = align_sdm (assert b s)
+binop_upd_align_dm_typed=binop_upd (x :num) (y :binop) (z :α word) (w :α word) (align_dm (s :(α, β, γ) labSem$state)) = align_dm (binop_upd x y z w s)
+binop_upd_align_sdm_typed=binop_upd (x :num) (y :binop) (z :α word) (w :α word) (align_sdm (s :(α, β, γ) labSem$state)) = align_sdm (binop_upd x y z w s)
+read_reg_align_dm_typed=(read_reg (n :num) (align_dm (s :(α, β, γ) labSem$state)) :α word_loc) = (read_reg n s :α word_loc)
+read_reg_align_sdm_typed=(read_reg (n :num) (align_sdm (s :(α, β, γ) labSem$state)) :α word_loc) = (read_reg n s :α word_loc)
+reg_imm_align_dm_typed=(reg_imm (r :α reg_imm) (align_dm (s :(α, β, γ) labSem$state)) :α word_loc) = (reg_imm r s :α word_loc)
+reg_imm_align_sdm_typed=(reg_imm (r :α reg_imm) (align_sdm (s :(α, β, γ) labSem$state)) :α word_loc) = (reg_imm r s :α word_loc)
+upd_mem_align_dm_typed=upd_mem (x :α word) (y :α word_loc) (align_dm (s :(α, β, γ) labSem$state)) = align_dm (upd_mem x y s)
+upd_mem_align_sdm_typed=upd_mem (x :α word) (y :α word_loc) (align_sdm (s :(α, β, γ) labSem$state)) = align_sdm (upd_mem x y s)
+upd_reg_align_dm_typed=upd_reg (x :num) (y :α word_loc) (align_dm (s :(α, β, γ) labSem$state)) = align_dm (upd_reg x y s)
+upd_reg_align_sdm_typed=upd_reg (x :num) (y :α word_loc) (align_sdm (s :(α, β, γ) labSem$state)) = align_sdm (upd_reg x y s)
+evaluate_align_sdm_typed=good_dimindex (:α) ⇒ ∀(s :(α, γ, 'ffi) labSem$state). (evaluate (align_sdm s) :machine_result # (α, γ, 'ffi) labSem$state) = (let ((r :machine_result),(s' :(α, γ, 'ffi) labSem$state)) = (evaluate s :machine_result # (α, γ, 'ffi) labSem$state) in (r,align_sdm s'))
+implements_align_sdm_typed=good_dimindex (:α) ⇒ implements' T {(semantics (s :(α, γ, 'ffi) labSem$state) :behaviour)} {(semantics (align_sdm s) :behaviour)}
+asm_inst_align_sdm_typed=asm_inst (i :α inst) (align_sdm (s :(α, β, γ) labSem$state)) = align_sdm (asm_inst i s)
+mem_load32_align_sdm_typed=mem_load32 (n :num) (a :α addr) (align_sdm (s :(α, β, γ) labSem$state)) = align_sdm (mem_load32 n a s)
+mem_load_align_sdm_typed=(mem_load (n :num) (a :α addr) (align_sdm (s :(α, β, γ) labSem$state)) :(α, β, γ) labSem$state) = align_sdm (mem_load n a s :(α, β, γ) labSem$state)
+mem_load_byte_align_sdm_typed=mem_load_byte (n :num) (a :α addr) (align_sdm (s :(α, β, γ) labSem$state)) = align_sdm (mem_load_byte n a s)
+mem_op_align_sdm_typed=mem_op (m :memop) (n :num) (a :α addr) (align_sdm (s :(α, β, γ) labSem$state)) = align_sdm (mem_op m n a s)
+mem_store32_align_sdm_typed=mem_store32 (n :num) (a :α addr) (align_sdm (s :(α, β, γ) labSem$state)) = align_sdm (mem_store32 n a s)
+mem_store_align_sdm_typed=(mem_store (n :num) (a :α addr) (align_sdm (s :(α, β, γ) labSem$state)) :(α, β, γ) labSem$state) = align_sdm (mem_store n a s :(α, β, γ) labSem$state)
+mem_store_byte_align_sdm_typed=mem_store_byte (n :num) (a :α addr) (align_sdm (s :(α, β, γ) labSem$state)) = align_sdm (mem_store_byte n a s)
+dec_clock_align_sdm_typed=dec_clock (align_sdm (s :(α, β, γ) labSem$state)) = align_sdm (dec_clock s)
+get_pc_value_align_sdm_typed=get_pc_value (x :lab) (align_sdm (s :(α, β, γ) labSem$state)) = get_pc_value x s
+get_ret_Loc_align_sdm_typed=(get_ret_Loc (align_sdm (s :(β, γ, δ) labSem$state)) :α word_loc option) = (get_ret_Loc s :α word_loc option)
+inc_pc_align_sdm_typed=inc_pc (align_sdm (s :(α, β, γ) labSem$state)) = align_sdm (inc_pc s)
+read_bytearray_mem_load_byte_aux_align_sdm_typed=∀(y :num) (x :α word). read_bytearray x y (mem_load_byte_aux (s :(α, β, γ) labSem$state).mem (align_sdm s).mem_domain s.be) = read_bytearray x y (mem_load_byte_aux s.mem s.mem_domain s.be)
+upd_pc_align_sdm_typed=upd_pc (p :num) (align_sdm (s :(α, β, γ) labSem$state)) = align_sdm (upd_pc p s)
+write_bytearray_align_sdm_typed=∀(y :word8 list) (x :α word). write_bytearray x y (s :(α, β, γ) labSem$state).mem (align_sdm s).mem_domain s.be = write_bytearray x y s.mem s.mem_domain s.be
+align_sdm_aligned_typed=good_dimindex (:α) ⇒ ((x :α word) ∈ (s :(α, β, γ) labSem$state).shared_mem_domain ∧ w2n x MOD (dimindex (:α) DIV (8 :num)) = (0 :num) ⇔ x ∈ (align_sdm s).shared_mem_domain)
+share_mem_load_align_sdm_typed=good_dimindex (:α) ⇒ (share_mem_load (r :num) (ad :α addr) (align_sdm (s :(α, γ, β) labSem$state)) (n :num) = (NONE :(β ffi_result # (α, γ, β) labSem$state) option) ⇔ share_mem_load r ad s n = (NONE :(β ffi_result # (α, γ, β) labSem$state) option)) ∧ (share_mem_load r ad s n = SOME ((res :β ffi_result),(s' :(α, γ, β) labSem$state)) ⇒ share_mem_load r ad (align_sdm s) n = SOME (res,align_sdm s'))
+share_mem_op_align_sdm_simp_typed=good_dimindex (:α) ⇒ (share_mem_op (m :memop) (r :num) (a :α addr) (s :(α, γ, β) labSem$state) = (NONE :(β ffi_result # (α, γ, β) labSem$state) option) ⇔ share_mem_op m r a (align_sdm s) = (NONE :(β ffi_result # (α, γ, β) labSem$state) option)) ∧ (share_mem_op m r a s = SOME ((res :β ffi_result),(s' :(α, γ, β) labSem$state)) ⇒ share_mem_op m r a (align_sdm s) = SOME (res,align_sdm s'))
+share_mem_store_align_sdm_typed=good_dimindex (:α) ⇒ (share_mem_store (r :num) (ad :α addr) (align_sdm (s :(α, γ, β) labSem$state)) (n :num) = (NONE :(β ffi_result # (α, γ, β) labSem$state) option) ⇔ share_mem_store r ad s n = (NONE :(β ffi_result # (α, γ, β) labSem$state) option)) ∧ (share_mem_store r ad s n = SOME ((res :β ffi_result),(s' :(α, γ, β) labSem$state)) ⇒ share_mem_store r ad (align_sdm s) n = SOME (res,align_sdm s'))
+mem_load_align_dm_typed=good_dimindex (:α) ⇒ (mem_load (n :num) (a :α addr) (align_dm (s :(α, β, γ) labSem$state)) :(α, β, γ) labSem$state) = align_dm (mem_load n a s :(α, β, γ) labSem$state)
+mem_store_align_dm_typed=good_dimindex (:α) ⇒ (mem_store (n :num) (a :α addr) (align_dm (s :(α, β, γ) labSem$state)) :(α, β, γ) labSem$state) = align_dm (mem_store n a s :(α, β, γ) labSem$state)
+evaluate_ADD_clock_typed=∀(s :(α, β, γ) labSem$state) (res :machine_result) (r :(α, β, γ) labSem$state) (k :num). (evaluate s :machine_result # (α, β, γ) labSem$state) = (res,r) ∧ res ≠ TimeOut ⇒ (evaluate (s with clock := s.clock + k) :machine_result # (α, β, γ) labSem$state) = (res,r with clock := r.clock + k)
+evaluate_add_clock_io_events_mono_typed=∀(s :(α, β, γ) labSem$state). (SND (evaluate s :machine_result # (α, β, γ) labSem$state)).ffi.io_events ≼ (SND (evaluate (s with clock := s.clock + (extra :num)) :machine_result # (α, β, γ) labSem$state)).ffi.io_events
+evaluate_io_events_mono_typed=∀(s1 :(α, β, γ) labSem$state) (r :machine_result) (s2 :(α, β, γ) labSem$state). (evaluate s1 :machine_result # (α, β, γ) labSem$state) = (r,s2) ⇒ s1.ffi.io_events ≼ s2.ffi.io_events
+sec_label_ok_extract_labels_typed=EVERY (sec_label_ok (n1 :num) :α line -> bool) (lines :α line list) ∧ MEM ((n1' :num),(n2 :num)) (extract_labels lines) ⇒ n1' = n1 ∧ n2 ≠ (0 :num)
+extract_labels_def_typed=extract_labels ([] :α line list) = ([] :(num # num) list) ∧ (∀(xs :α line list) (v0 :num) (l2 :num) (l1 :num). extract_labels ((Label l1 l2 v0 :α line)::xs) = (l1,l2)::extract_labels xs) ∧ (∀(xs :α line list) (v7 :num) (v6 :word8 list) (v5 :α asm_or_cbw). extract_labels (Asm v5 v6 v7::xs) = extract_labels xs) ∧ ∀(xs :α line list) (v9 :α word) (v8 :α asm_with_lab) (v11 :num) (v10 :word8 list). extract_labels (LabAsm v8 v9 v10 v11::xs) = extract_labels xs
+extract_labels_append_typed=∀(A :α line list) (B :α line list). extract_labels (A ++ B) = extract_labels A ++ extract_labels B
+get_code_labels_def_typed=∀(code :α sec list). get_code_labels code = BIGUNION (IMAGE (sec_get_code_labels :α sec -> num # num -> bool) (set code))
+get_code_labels_cons_typed=get_code_labels ((s :α sec)::(secs :α sec list)) = sec_get_code_labels s ∪ get_code_labels secs
+get_code_labels_nil_typed=get_code_labels ([] :α sec list) = (∅ :num # num -> bool)
+get_labels_def_typed=∀(code :α sec list). get_labels code = BIGUNION (IMAGE (sec_get_labels :α sec -> num # num -> bool) (set code))
+get_labels_cons_typed=get_labels ((x :α sec)::(xs :α sec list)) = sec_get_labels x ∪ get_labels xs
+labs_of_def_typed=labs_of (LocValue (v0 :num) (Lab (n1 :num) (n2 :num)) :α asm_with_lab) = {(n1,n2)} ∧ labs_of (Jump (Lab n1 n2) :α asm_with_lab) = {(n1,n2)} ∧ labs_of (JumpCmp (v1 :cmp) (v2 :num) (v3 :α reg_imm) (Lab n1 n2) :α asm_with_lab) = {(n1,n2)} ∧ labs_of (Call (v9 :lab) :α asm_with_lab) = (∅ :num # num -> bool) ∧ labs_of (CallFFI (v12 :mlstring) :α asm_with_lab) = (∅ :num # num -> bool) ∧ labs_of (Install :α asm_with_lab) = (∅ :num # num -> bool) ∧ labs_of (Halt :α asm_with_lab) = (∅ :num # num -> bool)
+line_get_code_labels_def_typed=line_get_code_labels (Label (v0 :num) (l :num) (v1 :num) :α line) = {l} ∧ line_get_code_labels (Asm (v5 :α asm_or_cbw) (v6 :word8 list) (v7 :num)) = (∅ :num -> bool) ∧ line_get_code_labels (LabAsm (v8 :α asm_with_lab) (v9 :α word) (v10 :word8 list) (v11 :num)) = (∅ :num -> bool)
+line_get_labels_def_typed=line_get_labels (LabAsm (a :α asm_with_lab) (v0 :α word) (v1 :word8 list) (v2 :num)) = labs_of a ∧ line_get_labels (Label (v :num) (v4 :num) (v5 :num) :α line) = (∅ :num # num -> bool) ∧ line_get_labels (Asm (v6 :α asm_or_cbw) (v7 :word8 list) (v8 :num)) = (∅ :num # num -> bool)
+sec_get_code_labels_def_typed=∀(n1 :num) (lines :α line list). sec_get_code_labels (Section n1 lines) = (n1,(0 :num)) INSERT IMAGE (λ(n2 :num). (n1,n2)) (BIGUNION (IMAGE (line_get_code_labels :α line -> num -> bool) (set lines)))
+sec_get_labels_def_typed=∀(v0 :num) (lines :α line list). sec_get_labels (Section v0 lines) = BIGUNION (IMAGE (line_get_labels :α line -> num # num -> bool) (set lines))
+sec_label_ok_def_typed=(sec_label_ok (k :num) (Label (l1 :num) (l2 :num) (len :num) :α line) ⇔ l1 = k ∧ l2 ≠ (0 :num)) ∧ (sec_label_ok (v0 :num) (Asm (v6 :α asm_or_cbw) (v7 :word8 list) (v8 :num)) ⇔ T) ∧ (sec_label_ok v0 (LabAsm (v9 :α asm_with_lab) (v10 :α word) (v11 :word8 list) (v12 :num)) ⇔ T)
+sec_labels_ok_def_typed=∀(k :num) (ls :α line list). sec_labels_ok (Section k ls) ⇔ EVERY (sec_label_ok k :α line -> bool) ls
+line_length_def_typed=(∀(k1 :num) (k2 :num) (l :num). line_length (Label k1 k2 l :α line) = if l = (0 :num) then (0 :num) else (1 :num)) ∧ (∀(b :α asm_or_cbw) (bytes :word8 list) (l :num). line_length (Asm b bytes l) = LENGTH bytes) ∧ ∀(a :α asm_with_lab) (w :α word) (bytes :word8 list) (l :num). line_length (LabAsm a w bytes l) = LENGTH bytes
+line_ok_pre_def_typed=(line_ok_pre (c :α asm_config) (Asm (b :α asm_or_cbw) (bytes :word8 list) (l :num)) ⇔ asm_ok (cbw_to_asm b) c) ∧ (line_ok_pre c (Label (v2 :num) (v3 :num) (v4 :num) :α line) ⇔ T) ∧ (line_ok_pre c (LabAsm (v8 :α asm_with_lab) (v9 :α word) (v10 :word8 list) (v11 :num)) ⇔ T)
+sec_ok_pre_def_typed=∀(c :α asm_config) (k :num) (ls :α line list). sec_ok_pre c (Section k ls) ⇔ EVERY (line_ok_pre c) ls
+sec_ends_with_label_def_typed=∀(v0 :num) (ls :α line list). sec_ends_with_label (Section v0 ls) ⇔ ¬NULL ls ∧ is_Label (LAST ls)
+EVERY_sec_label_ok_typed=EVERY (λ((l1 :num),(l2 :num)). l1 = (n :num) ∧ l2 ≠ (0 :num)) (extract_labels (l :α line list)) ⇔ EVERY (sec_label_ok n :α line -> bool) l
