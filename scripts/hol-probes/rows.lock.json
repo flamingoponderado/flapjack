@@ -1805,6 +1805,7 @@
     {"bytes": 560, "out": "stack_sem_atomic_clocks_probe.out", "rows": 10, "sha256": "12ff9d1858e8a107f19a8f6013cf0897bcb5fd2c16395dc4287b7573afc013b4"},
     {"bytes": 1056, "out": "stack_sem_clock_control_probe.out", "rows": 6, "sha256": "4c4749100cac0d1411fac34188cba459adbe880acc7594d18184891021d11b72"},
     {"bytes": 792, "out": "stack_sem_evaluate_clock_probe.out", "rows": 14, "sha256": "51fa7fbe66ca10a6a2ed3b1489ee6d290546c1bde997de6b68eb02883df26847"},
+    {"bytes": 69704, "out": "stack_sem_typed_probe.out", "rows": 57, "sha256": "9054af2e95b877f287ff629834736c471d55abfe40a82f2c58ecef7fa53c4535"},
     {"bytes": 7047, "out": "stack_to_lab_code_installed_probe.out", "rows": 41, "sha256": "a5dfb20e032cbc04eeb81cfb7bd23161e7c414ad66fa3b4cd001584fe0ab6ec4"},
     {"bytes": 1481, "out": "stack_to_lab_compile_lab_pres_probe.out", "rows": 5, "sha256": "ba24f39556b75381c286fe4061c2aa1c1a78bf32cd2ac458070d4477a84ff90b"},
     {"bytes": 2290, "out": "stack_to_lab_compile_probe.out", "rows": 11, "sha256": "6be8f5d5e49f0682273a47fa06b0512d442ca94b2d02c1ecd76843b262af1357"},

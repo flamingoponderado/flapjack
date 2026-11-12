@@ -10503,3 +10503,15 @@ run_probe bvl_handle_typed_probeScript.sml bvl_handle_typed_probe.out \
   OptionalLetLet_def_typed OptionalLetLet_sing_eq_typed compile_sing_def_typed \
   "$cake_dir/compiler/backend/bvl_handleScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe stack_sem_typed_probeScript.sml stack_sem_typed_probe.out \
+  alloc_def_typed gc_def_typed has_space_def_typed filter_bitmap_def_typed filter_bitmap_LENGTH_typed map_bitmap_def_typed map_bitmap_LENGTH_typed alloc_clock_typed \
+  gc_clock_typed store_const_sem_clock_typed evaluate_clock_typed bad_fun_return_def_typed cont_loop_def_typed dest_Seq_def_typed exit_loop_def_typed find_code_def_typed \
+  fix_clock_def_typed fix_clock_evaluate_typed evaluate_def_typed assign_def_typed word_exp_def_typed inst_def_typed get_labels_def_typed loc_check_def_typed \
+  semantics_def_typed sh_mem_load_def_typed sh_mem_load16_def_typed sh_mem_load32_def_typed sh_mem_load_byte_def_typed sh_mem_op_def_typed sh_mem_store_def_typed sh_mem_store16_def_typed \
+  sh_mem_store32_def_typed sh_mem_store_byte_def_typed dec_stack_def_typed enc_stack_def_typed full_read_bitmap_def_typed result_typed state_typed dec_clock_def_typed \
+  empty_env_def_typed get_fp_var_def_typed get_var_def_typed get_var_imm_def_typed get_vars_def_typed mem_load_def_typed mem_store_def_typed set_fp_var_def_typed \
+  set_store_def_typed set_var_def_typed copy_words_def_typed copy_words_for_pattern_def_typed copy_words_for_pattern_LESS_EQ_typed store_const_sem_def_typed check_store_consts_opt_def_typed bit_length_def_typed \
+  read_bitmap_def_typed \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
