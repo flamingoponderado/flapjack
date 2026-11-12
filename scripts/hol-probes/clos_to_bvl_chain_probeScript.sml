@@ -133,6 +133,23 @@ in
     rw [bvlSemTheory.v_to_bytes_def,closSemTheory.v_to_bytes_def] >>
     old_drule v_rel_IMP_v_to_bytes_lemma_replay >> fs []);
   val _ = show_thm "v_rel_IMP_v_to_bytes_replay=" v_rel_IMP_v_to_bytes_replay;
+  val v_rel_IMP_v_to_words_lemma_replay = Q.prove (
+    `!x y. v_rel max_app f refs code x y ==>
+      !ns. (closSem$v_to_list x = SOME (MAP closSem$Word64 ns)) <=>
+           (bvlSem$v_to_list y = SOME (MAP bvlSem$Word64 ns))`,
+    ho_match_mp_tac closSemTheory.v_to_list_ind >> rw [] >>
+    fs [bvlSemTheory.v_to_list_def,closSemTheory.v_to_list_def,v_rel_SIMP] >>
+    Cases_on `tag = cons_tag` >> fs [] >> rveq >> fs [] >>
+    res_tac >> fs [bvlPropsTheory.case_eq_thms,v_rel_SIMP] >-
+      (Cases_on `ns` >> fs [] >> rveq >> fs [v_rel_SIMP] >> rveq >> fs [] >>
+       rw [] >> fs [] >> eq_tac >> rw [] >> fs [v_rel_SIMP]) >>
+    Cases_on `ys` >> fs [bvlSemTheory.v_to_list_def]);
+  val _ = show_thm "v_rel_IMP_v_to_words_lemma_replay=" v_rel_IMP_v_to_words_lemma_replay;
+  val v_rel_IMP_v_to_words_replay = Q.prove (
+    `v_rel max_app f refs code x y ==> bvlSem$v_to_words y = closSem$v_to_words x`,
+    rw [bvlSemTheory.v_to_words_def,closSemTheory.v_to_words_def] >>
+    old_drule v_rel_IMP_v_to_words_lemma_replay >> fs []);
+  val _ = show_thm "v_rel_IMP_v_to_words_replay=" v_rel_IMP_v_to_words_replay;
 end;
 (* Replay the original local chain-compilation accumulator theorem. *)
 local

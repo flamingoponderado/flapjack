@@ -157,6 +157,18 @@
   "reviewer": "Compared the literal local HOL source proof and typed replay: related source and target values have equal full optional byte decodings, including NONE, with fixed word8 bytes. The f and refs inputs use canonical finite support and same-module codec witnesses."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "v_rel_IMP_v_to_words_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "vRel_valueToWords_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Compared the local HOL proof and typed replay: arbitrary related source and target values satisfy both directions of word-list decoding equivalence for every fixed word64 list. The f and refs inputs use canonical finite support and same-module codec witnesses."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "v_rel_IMP_v_to_words",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "vRel_valueToWords",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Compared the local HOL proof and typed replay: related source and target values have equal full optional word decodings, including NONE, with fixed word64 elements. The f and refs inputs use canonical finite support and same-module codec witnesses."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "not_domain_lookup",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode/Original.lean", "lean_name": "notDomainLookup",
   "statement_status": "reviewed_exact",
