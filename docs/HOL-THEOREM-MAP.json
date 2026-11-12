@@ -1,5 +1,29 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_append_aux",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/AccumulatorAppend.lean", "lean_name": "compileExps_append_aux",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the generalized extra, maxApp, source list and accumulator binder order, full pair-lambda equality and unrestricted source and BVL carriers. The proof covers all expression and recursive-function cases."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_eq_append",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/AccumulatorAppend.lean", "lean_name": "compileExps_eq_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the original three binders, empty initial accumulator on the right, full compiled-expression component and generated suffix order."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_IMP_acc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Accumulator.lean", "lean_name": "compileExps_imp_acc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the original compilation equality, full length and suffix conclusions, binder order, and faithful closure and BVL carriers."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "build_aux_append_aux",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Accumulator.lean", "lean_name": "buildAux_append_aux",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the original xs, n, aux and extra binder order and the complete pair-lambda equality, including the unchanged natural-number first component."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "trivia_1",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "incrementalAddress_trivia",
   "statement_status": "reviewed_exact",
