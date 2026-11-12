@@ -138,6 +138,7 @@ in
   fs [GENLIST, SUM_SNOC, GSYM ADD1] >>
   simp [ADD1] >>
   ARITH_TAC);
+  val _ = show_thm "sum_genlist_triangle_help_replay=" sum_genlist_triangle_help_replay;
   val sum_genlist_triangle_help = sum_genlist_triangle_help_replay;
   val sum_genlist_triangle_replay = Q.prove (
     `  !x. SUM (GENLIST (\y. y) x) = x * (x - 1) DIV 2`,
@@ -145,6 +146,7 @@ in
   mp_tac (Q.SPEC `x-1` sum_genlist_triangle_help) >>
   Cases_on `x = 0` >>
   simp []);
+  val _ = show_thm "sum_genlist_triangle_replay=" sum_genlist_triangle_replay;
   val sum_genlist_triangle = sum_genlist_triangle_replay;
   val if_expand_replay = Q.prove (
     `!w x y z. (if x then y else z) = w ⇔ x ∧ y = w ∨ ~x ∧ z = w`,
@@ -172,6 +174,7 @@ in
   Induct_on `max_app` >>
   rw [ADD1] >>
   ARITH_TAC);
+  val _ = show_thm "tri_lemma_replay=" tri_lemma_replay;
   val tri_lemma = tri_lemma_replay;
   val triangle_div_lemma_replay = Q.prove (
     `  !max_app n tot.

@@ -61,8 +61,11 @@ FEVERY_FUPDATE_LIST_SUFF_typed=∀(progs :(α # β) list) (x :α |-> β) (p :α 
 not_domain_lookup_typed=(n :num) ∉ (domain (x :α sptree$num_map) :num -> bool) ⇔ lookup n x = (NONE :α option)
 cl_rel_union_replay=∀(a :closSem$v list # v list) (x :closSem$v) (y :v). cl_rel (max_app :num) (f2 :num -> bool) (refs :num |-> v ref) (code :(num # bvl$exp) sptree$num_map) a x y ⇒ cl_rel max_app f2 refs (union code (c2 :(num # bvl$exp) sptree$num_map)) a x y
 v_rel_union_replay=∀(c2 :(num # bvl$exp) sptree$num_map) (x :closSem$v) (y :v). (v_rel (max_app :num) (f2 :num |-> num) (refs :num |-> v ref) (code :(num # bvl$exp) sptree$num_map) x y :bool) ⇒ (v_rel max_app f2 refs (union code c2) x y :bool)
+sum_genlist_triangle_help_replay=∀(x :num). (SUM (GENLIST (λ(y :num). y) (x + (1 :num))) :num) = x * (x + (1 :num)) DIV (2 :num)
+sum_genlist_triangle_replay=∀(x :num). (SUM (GENLIST (λ(y :num). y) x) :num) = x * (x − (1 :num)) DIV (2 :num)
 if_expand_replay=∀(w :α) (x :bool) (y :α) (z :α). (if x then y else z) = w ⇔ x ∧ y = w ∨ ¬x ∧ z = w
 triangle_table_size_replay=∀(max :num) (f :num -> num -> α). LENGTH (FLAT (GENLIST (λ(x :num). GENLIST (λ(y :num). f x y) x) max)) = max * (max − (1 :num)) DIV (2 :num)
+tri_lemma_replay=∀(tot :num) (max_app :num). tot < max_app ⇒ tot + tot * (tot − (1 :num)) DIV (2 :num) < max_app + (max_app − (1 :num)) * (max_app − (2 :num)) DIV (2 :num)
 triangle_div_lemma_replay=∀(max_app :num) (n :num) (tot :num). tot < max_app ∧ n < tot ⇒ n + tot * (tot − (1 :num)) DIV (2 :num) < max_app * (max_app − (1 :num)) DIV (2 :num)
 triangle_el_replay=∀(n :num) (tot :num) (max_app :num) (stuff :α list) (f :num -> num -> α) (g :β). n < tot ∧ tot < max_app ⇒ (FLAT (GENLIST (λ(tot :num). GENLIST (λ(prev :num). f tot prev) tot) max_app) ++ stuff)❲n + tot * (tot − (1 :num)) DIV (2 :num)❳ = f tot n
 triangle_el_no_suff_replay=∀(n :num) (tot :num) (max_app :num) (f :num -> num -> α) (g :β). n < tot ∧ tot < max_app ⇒ (FLAT (GENLIST (λ(tot :num). GENLIST (λ(prev :num). f tot prev) tot) max_app))❲n + tot * (tot − (1 :num)) DIV (2 :num)❳ = f tot n

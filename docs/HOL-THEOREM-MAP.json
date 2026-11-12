@@ -233,6 +233,24 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: args and prev lists have independent polymorphic element types, with exactly the three original conjuncts and all three arithmetic conclusions."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "sum_genlist_triangle_help",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean", "lean_name": "sumGenlistTriangleHelp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: the natural-number binder, sum of the generated identity list of length x+1 and triangular formula agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "sum_genlist_triangle",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean", "lean_name": "sumGenlistTriangle",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: the natural-number binder, identity-generated list, sum and natural subtraction/division formula agree, including x=0."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "tri_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean", "lean_name": "triLemma",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: both natural-number binders, strict bound, truncated subtractions and complete triangular-offset inequality agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "if_expand",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean", "lean_name": "ifExpand",
   "statement_status": "reviewed_exact",

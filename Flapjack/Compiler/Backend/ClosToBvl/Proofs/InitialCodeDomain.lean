@@ -73,6 +73,45 @@ theorem triangleDivLemma (maxApp n tot : Nat) :
   have bound := (List.getElem?_eq_some_iff.mp entry).1
   simpa only [triangleTableSize] using bound
 
+/-- The sum of the first natural numbers is their triangular number. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "sum_genlist_triangle"]
+theorem sumGenlistTriangle (x : Nat) :
+    ((List.range x).map (fun y => y)).sum = x * (x - 1) / 2 := by
+  simpa [List.length_flatten, List.map_map, Function.comp_def] using
+    triangleTableSize x (fun _ _ => ())
+
+/-- The successor form of the triangular sum. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "sum_genlist_triangle_help"]
+theorem sumGenlistTriangleHelp (x : Nat) :
+    ((List.range (x + 1)).map (fun y => y)).sum = x * (x + 1) / 2 := by
+  simpa only [Nat.add_sub_cancel, Nat.mul_comm] using sumGenlistTriangle (x + 1)
+
+/-- Successive triangular offsets grow across distinct table rows. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "tri_lemma"]
+theorem triLemma (tot maxApp : Nat) :
+    tot < maxApp →
+      tot + tot * (tot - 1) / 2 < maxApp + (maxApp - 1) * (maxApp - 2) / 2 := by
+  intro ht
+  cases maxApp with
+  | zero => omega
+  | succ k =>
+    have step : (k + 1) * ((k + 1) - 1) / 2 = k * (k - 1) / 2 + k := by
+      have h := triangleTableSize (k + 1) (fun _ _ => ())
+      simp only [List.range_succ, List.map_append, List.map_cons, List.map_nil,
+        List.flatten_append, List.flatten_cons, List.flatten_nil, List.append_nil,
+        List.length_append, List.length_map, List.length_range, triangleTableSize] at h
+      omega
+    have sub : k + 1 - 2 = k - 1 := by omega
+    simp only [Nat.add_sub_cancel, sub] at step ⊢
+    by_cases positive : 0 < tot
+    · have bound := triangleDivLemma (k + 1) (tot - 1) tot ⟨ht, by omega⟩
+      simp only [Nat.add_sub_cancel] at bound
+      omega
+    · have zero : tot = 0 := by omega
+      subst tot
+      simp only [Nat.zero_sub, Nat.zero_mul, Nat.zero_div, Nat.zero_add]
+      omega
+
 /-- A bounded entry of a triangular table is unaffected by a suffix. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "triangle_el"]
 theorem triangleEl {α β : Type} (n tot maxApp : Nat) (stuff : List α)
