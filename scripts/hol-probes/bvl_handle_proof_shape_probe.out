@@ -26,6 +26,7 @@ handle_ok_OptionalLetLet_typed=handle_ok [(e :bvl$exp)] ∧ bVarBound (n :num) [
 handle_ok_Var_Const_list_typed=EVERY (λ(x :bvl$exp). ∃(v :num) (i :int). x = (Var v :bvl$exp) ∨ x = (Op (IntOp (Const i)) ([] :bvl$exp list) :bvl$exp)) (xs :bvl$exp list) ⇒ handle_ok xs
 compile_length_typed=∀(l :num) (n :num) (xs :bvl$exp list). LENGTH (FST (compile l n xs :bvl$exp list # db_var_set # num # bool)) = LENGTH xs
 compile_IMP_LENGTH_typed=(compile (l :num) (n :num) (xs :bvl$exp list) :bvl$exp list # db_var_set # num # bool) = ((ys :bvl$exp list),(l1 :db_var_set),(s1 :num # bool)) ⇒ LENGTH ys = LENGTH xs
+compile_code_labels_typed=∀(a :num) (b :num) (c :bvl$exp list). BIGUNION (set (MAP get_code_labels (FST (compile a b c :bvl$exp list # db_var_set # num # bool)))) ⊆ BIGUNION (set (MAP get_code_labels c))
 bVarBound_MEM_typed=bVarBound (n :num) (xs :bvl$exp list) ⇔ ∀(x :bvl$exp). MEM x xs ⇒ bVarBound n [x]
 bVarBound_LESS_EQ_typed=∀(m :num) (xs :bvl$exp list) (n :num). bVarBound m xs ∧ m ≤ n ⇒ bVarBound n xs
 bVarBound_LetLet_typed=bVarBound (m :num) [(y :bvl$exp)] ∧ (n :num) ≤ m ⇒ bVarBound m [LetLet n (l1 :sptree$num_set) y]

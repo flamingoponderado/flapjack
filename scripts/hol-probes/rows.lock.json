@@ -115,7 +115,7 @@
     {"bytes": 6947, "out": "bvl_const_rel_probe.out", "rows": 26, "sha256": "ee59233067316c87281653e2f27d5fb1eed2cbcab61aac373f5768202ce37cfb"},
     {"bytes": 6425, "out": "bvl_handle_cake_bvi_probe.out", "rows": 1, "sha256": "eeb821c0eb299280f229a8ed8e73cfa0fbd8f65d0c9b796c2f5b38ac8b67c86a"},
     {"bytes": 20041, "out": "bvl_handle_frontend_probe.out", "rows": 25, "sha256": "14d857a40f7ff9a14f206cfa9873e9e1481ce9b9ef2c011fb68f35fe9b829498"},
-    {"bytes": 6468, "out": "bvl_handle_proof_shape_probe.out", "rows": 31, "sha256": "920497f04b9c8328f31da098719dba0476b42f010c1470747470b7be60bac655"},
+    {"bytes": 6676, "out": "bvl_handle_proof_shape_probe.out", "rows": 32, "sha256": "87cb8bc32d243b7f1ecd1d407219ca26f26fb3b30268b67a2f83be196fbd6077"},
     {"bytes": 6148, "out": "bvl_inline_cake_bvi_probe.out", "rows": 1, "sha256": "321fa250e583ca25630e763036b800d17c061c670d3a42b14ada04d84aceaf1d"},
     {"bytes": 1238, "out": "bvl_inline_frontend_probe.out", "rows": 7, "sha256": "20f3103499a07e242557ef2b531d596b76d89696d4df0cf779029624a858a473"},
     {"bytes": 35363, "out": "bvl_inline_state_rel_probe.out", "rows": 61, "sha256": "d311248ff5c44b4340ba556411b18f407175c5ab5d8c0efd25d3961e9dc6f9c7"},

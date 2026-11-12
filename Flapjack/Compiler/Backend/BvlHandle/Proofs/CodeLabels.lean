@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.HelpersProduction
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.LetLet
+public import Flapjack.Compiler.Backend.BvlHandle.SourceCompile
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.CodeLabels
 
 @[expose] public section
@@ -98,5 +99,135 @@ theorem letLet_codeLabels {α : Type} (n : Nat) (live : Spt α) (body : Bvl.Exp)
   by_cases empty : long.isEmpty
   · simp [smartLet, empty]
   · simp [smartLet, empty, getCodeLabels, longLabels]
+
+private theorem optionalLetLetSing_labels (e : Bvl.Exp) (n : Nat) (live : DbVars.DbVarSet)
+    (size limit : Nat) (nr : Bool) :
+    getCodeLabels (optionalLetLetSing e n live size limit nr).1 = getCodeLabels e := by
+  unfold optionalLetLetSing
+  split <;> simp [getCodeLabels, getCodeLabelsList, letLet_codeLabels]
+
+mutual
+private theorem compileSing_labels (limit env : Nat) (e : Bvl.Exp) :
+    getCodeLabels (compileSing limit env e).1 ⊆ getCodeLabels e := by
+  cases e with
+  | var n =>
+    simp only [compileSing]
+    split <;> simp [getCodeLabels, getCodeLabelsList, ClosLang.assignGetCodeLabel]
+  | force loc n =>
+    simp only [compileSing]
+    split <;> simp [getCodeLabels, getCodeLabelsList, ClosLang.assignGetCodeLabel]
+  | tick x =>
+    cases h : compileSing limit env x with
+    | mk y rest =>
+      obtain ⟨live, size, nr⟩ := rest
+      have ih := compileSing_labels limit env x
+      simp only [h] at ih
+      simpa [compileSing, h, getCodeLabels] using ih
+  | raise x =>
+    cases h : compileSing limit env x with
+    | mk y rest =>
+      obtain ⟨live, size, nr⟩ := rest
+      have ih := compileSing_labels limit env x
+      simp only [h] at ih
+      simpa only [compileSing, h, optionalLetLetSing_labels, getCodeLabels] using ih
+  | call ticks dest xs =>
+    cases h : compileList limit env xs with
+    | mk ys rest =>
+      obtain ⟨live, size, nr⟩ := rest
+      have ih := compileList_labels limit env xs
+      simp only [h] at ih
+      simp only [compileSing, h, optionalLetLetSing_labels, getCodeLabels]
+      exact Set.union_subset_union (Set.Subset.rfl) ih
+  | op op xs =>
+    cases h : compileList limit env xs with
+    | mk ys rest =>
+      obtain ⟨live, size, nr⟩ := rest
+      have ih := compileList_labels limit env xs
+      simp only [h] at ih
+      cases op <;> simp only [compileSing, h, optionalLetLetSing_labels, getCodeLabels] <;>
+        try exact Set.union_subset_union (Set.Subset.rfl) ih
+      rename_i thunk
+      cases thunk <;> simp only [optionalLetLetSing_labels, getCodeLabels] <;>
+        exact Set.union_subset_union (Set.Subset.rfl) ih
+  | handle x y =>
+    cases hx : compileSing limit env x with
+    | mk cx rest =>
+      obtain ⟨lx, sx, nx⟩ := rest
+      have ix := compileSing_labels limit env x
+      simp only [hx] at ix
+      cases nx with
+      | true =>
+        simp only [compileSing, hx, getCodeLabels, ↓reduceIte]
+        exact Set.Subset.trans ix Set.subset_union_left
+      | false =>
+        cases hy : compileSing limit (env + 1) y with
+        | mk cy rest =>
+          obtain ⟨ly, sy, ny⟩ := rest
+          have iy := compileSing_labels limit (env + 1) y
+          simp only [hy] at iy
+          simp only [compileSing, hx, hy, getCodeLabels, Bool.false_eq_true, ↓reduceIte,
+            letLet_codeLabels]
+          exact Set.union_subset_union ix iy
+  | ifThenElse x y z =>
+    cases hx : compileSing limit env x with
+    | mk cx rest =>
+      obtain ⟨lx, sx, nx⟩ := rest
+      cases hy : compileSing limit env y with
+      | mk cy rest =>
+        obtain ⟨ly, sy, ny⟩ := rest
+        cases hz : compileSing limit env z with
+        | mk cz rest =>
+          obtain ⟨lz, sz, nz⟩ := rest
+          have ix := compileSing_labels limit env x
+          have iy := compileSing_labels limit env y
+          have iz := compileSing_labels limit env z
+          simp only [hx, hy, hz] at ix iy iz
+          simp only [compileSing, hx, hy, hz, optionalLetLetSing_labels, getCodeLabels]
+          exact Set.union_subset_union (Set.union_subset_union ix iy) iz
+  | «let» xs body =>
+    by_cases empty : xs.isEmpty
+    · have ih := compileSing_labels limit env body
+      have eq : xs = [] := List.isEmpty_iff.mp empty
+      subst xs
+      simpa [compileSing, getCodeLabels, getCodeLabelsList] using ih
+    · cases hx : compileList limit env xs with
+      | mk ys rest =>
+        obtain ⟨lx, sx, nx⟩ := rest
+        cases hy : compileSing limit (env + xs.length) body with
+        | mk cy rest =>
+          obtain ⟨ly, sy, ny⟩ := rest
+          have ix := compileList_labels limit env xs
+          have iy := compileSing_labels limit (env + xs.length) body
+          simp only [hx, hy] at ix iy
+          simp only [compileSing, empty, Bool.false_eq_true, ↓reduceIte, hx, hy, optionalLetLetSing_labels, getCodeLabels]
+          exact Set.union_subset_union ix iy
+termination_by sizeOf e
+
+private theorem compileList_labels (limit env : Nat) (xs : List Bvl.Exp) :
+    getCodeLabelsList (compileList limit env xs).1 ⊆ getCodeLabelsList xs := by
+  cases xs with
+  | nil => simp [compileList, getCodeLabelsList]
+  | cons x xs =>
+    cases hx : compileSing limit env x with
+    | mk y rest =>
+      obtain ⟨live, size, nr⟩ := rest
+      cases hs : compileList limit env xs with
+      | mk ys rest =>
+        obtain ⟨live2, size2, nr2⟩ := rest
+        have ix := compileSing_labels limit env x
+        have is := compileList_labels limit env xs
+        simp only [hx, hs] at ix is
+        simp only [compileList, hx, hs, getCodeLabelsList]
+        exact Set.union_subset_union ix is
+termination_by sizeOf xs
+end
+
+/-- Handler compilation introduces no code labels in its output expressions. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "compile_code_labels"]
+theorem compile_codeLabels (limit env : Nat) (expressions : List Bvl.Exp) :
+    (⋃₀ (getCodeLabels '' {e | e ∈ (compile limit env expressions).1})) ⊆
+      (⋃₀ (getCodeLabels '' {e | e ∈ expressions})) := by
+  rw [← getCodeLabelsList_eq, ← getCodeLabelsList_eq]
+  exact compileList_labels limit env expressions
 
 end Flapjack.Compiler.Backend.BvlHandle.Proofs
