@@ -47,7 +47,7 @@ theorem holFmapAsFiniteSupportParamWitness_expHdlExact_fm {α γ : Type}
     fixed 5-bit word in HOL and Lean; the program word parameter is translated
     by `CrepProgHOL width` and `[NeZero width]`.
 
-    The typed capture `exp_hdl_def_typed` (`pan_to_crep_proof_typed_probe.out`)
+    The typed capture `exp_hdl_def_typed` (`pan_to_crep_typed_probe.out`)
     types the map as `fm :β |-> γ # num list`: the key β, the discarded shape
     component γ and the program payload are independent HOL type variables.
     `vshp` is never used, so γ is arbitrary and the port keeps it generic as
