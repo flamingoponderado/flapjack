@@ -99,6 +99,18 @@ val _ = show_thm "compile_exps_APPEND_typed=" clos_to_bvlProofTheory.compile_exp
 val _ = show_thm "chain_exps_cons_typed=" clos_to_bvlProofTheory.chain_exps_cons;
 val _ = show_thm "code_installed_insert_typed=" clos_to_bvlProofTheory.code_installed_insert;
 val _ = show_thm "FEVERY_FUPDATE_LIST_SUFF_typed=" clos_to_bvlProofTheory.FEVERY_FUPDATE_LIST_SUFF;
+(* The original union lemmas are local; replay their full statements from the
+   exported sparse-tree monotonicity theorems. *)
+val cl_rel_union_replay = Q.prove (
+  `!a x y. clos_to_bvlProof$cl_rel max_app f2 refs code a x y ==>
+           clos_to_bvlProof$cl_rel max_app f2 refs (sptree$union code c2) a x y`,
+  metis_tac [clos_to_bvlProofTheory.cl_rel_subspt, sptreeTheory.subspt_union]);
+val _ = show_thm "cl_rel_union_replay=" cl_rel_union_replay;
+val v_rel_union_replay = Q.prove (
+  `!c2 x y. clos_to_bvlProof$v_rel max_app f2 refs code x y ==>
+            clos_to_bvlProof$v_rel max_app f2 refs (sptree$union code c2) x y`,
+  metis_tac [clos_to_bvlProofTheory.v_rel_subspt, sptreeTheory.subspt_union]);
+val _ = show_thm "v_rel_union_replay=" v_rel_union_replay;
 (* Replay the original local chain-compilation accumulator theorem. *)
 local
   open preamble listTheory clos_to_bvlTheory

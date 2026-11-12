@@ -145,6 +145,18 @@
   "reviewer": "Independent typed HOL comparison confirms the original compilation equality, full length and suffix conclusions, binder order, and faithful closure and BVL carriers."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "cl_rel_union",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureRelation.lean", "lean_name": "clRel_union",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["refs"],
+  "reviewer": "Compared the original local source and typed HOL replay: the arbitrary natural-number set, source/target closure values and environment pair, reference map, left-biased sparse-tree union and complete implication agree. The refs parameter uses canonical finite support with its same-module codec witness."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "v_rel_union",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueRelation.lean", "lean_name": "vRel_union",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Compared the original local source and typed HOL replay: the arbitrary added code tree and source/target values, left-biased union and entire implication agree. The relocation map f and refs use canonical finite support with same-module codec witnesses."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "FEVERY_FUPDATE_LIST_SUFF",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/FiniteMapEvery.lean", "lean_name": "fEvery_fupdateList_suff",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",

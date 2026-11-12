@@ -403,9 +403,8 @@ theorem install_code_relation {C F : Type} (s : ClosSem.State C F) (t : BvlSem.S
     exact install_auxiliary_entry s t config expressions auxiliary name arity body sourceHead newEntry oracle
   | inr oldEntry =>
     obtain ⟨auxBefore, target, auxAfter, compiled, lookup, installed⟩ := oldCode name arity body oldEntry
-    have growth := sptSubsptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))
-    refine ⟨auxBefore, target, auxAfter, compiled, ?_, codeInstalled_subspt installed growth⟩
-    exact (sptSubsptLookup _ _).1 growth _ _ lookup
+    refine ⟨auxBefore, target, auxAfter, compiled, ?_, codeInstalled_union1 _ _ _ installed⟩
+    rw [sptLookup_sptUnion, lookup]
 
 /-- Installing an oracle program preserves the candidate source/target state
 relation, including old values, newly compiled code and the shifted oracle. -/
@@ -425,9 +424,7 @@ theorem install_stateRel {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State 
     generic, partialCode, force, oracle, oldCode⟩ := states
   let added := sptFromAList (compileInc s.maxApp (expressions, auxiliary))
   have growth : sptSubspt t.code (sptUnion t.code added) := sptSubsptUnion _ _
-  have valuesGrow : ∀ a b, vRel s.maxApp f t.refs t.code a b → vRel s.maxApp f t.refs (sptUnion t.code added) a b := by
-    intro a b related
-    exact vRel_subspt f t.refs ⟨related, growth⟩
+  have valuesGrow := vRel_union s.maxApp f t.refs t.code added
   have shift := compileOracleInv_shift s.maxApp s.code (s.code.updateListEq auxiliary)
     s.compile s.compileOracle t.code t.compile t.compileOracle oracle
   have oracleHead : t.compileOracle 0 = (config, compileInc s.maxApp (expressions, auxiliary)) := by

@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InstalledCode
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.State
 public import Flapjack.Misc.ListEl
+public import Flapjack.Misc.Sptree.Subspt
 
 @[expose] public section
 
@@ -89,5 +90,24 @@ theorem clRel_subspt {maxApp : Nat} {fs : Nat → Prop}
   | mutualRec exps ps positions values fresh stored length index loc vars installed =>
       exact .mutualRec exps ps positions values fresh stored length index loc vars
         (closureCodeInstalled_subspt installed sub)
+
+/-- Canonical reference-map codec for the code-union closure theorem. -/
+theorem holFmapAsFiniteSupportParamWitness_clRel_union_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_clRel_refs refs key
+
+/-- Adding code on the right of a left-biased union preserves closure layouts. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_union"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem clRel_union (maxApp : Nat) (fs : Nat → Prop)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
+    (code extra : Spt (Nat × Bvl.Exp)) :
+    ∀ env source target, clRel maxApp fs refs code env source target →
+      clRel maxApp fs refs (sptUnion code extra) env source target := by
+  intro env source target related
+  exact clRel_subspt refs related (sptSubsptUnion code extra)
 
 end Flapjack.Compiler.Backend.ClosToBvl
