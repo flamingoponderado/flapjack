@@ -1,5 +1,23 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "map_fromAList",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/WholeProgram.lean", "lean_name": "map_fromAList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: for arbitrary sparse-tree payload and result types, mapping after association-list construction equals construction after mapping each value."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "state_cc_compile_inc_eq",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/WholeProgram.lean", "lean_name": "stateCc_compileInc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: the complete stateful callback equality retains independent callback configuration, code, data and output configuration types; both failure and success preserve the full result."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "state_co_compile_inc_eq",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/WholeProgram.lean", "lean_name": "stateCo_compileInc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: the full stateful oracle equality preserves independent index and configuration types and composes inlining, tick removal and let optimization over every oracle entry."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "MAP_FST_MAP_optimise",
   "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/ProgramProperties.lean", "lean_name": "mapFstMapOptimise",
   "statement_status": "reviewed_exact",

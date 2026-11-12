@@ -16,12 +16,14 @@ def letOpTransform (splitSeq : Bool) (limit arity : Nat) (body : Bvl.Exp) : Bvl.
   BvlHandle.compileAny splitSeq limit arity (letOpSing body)
 
 /-- Compiler callback induced by the combined transformation. -/
-def letOpCompiler {C : Type} (splitSeq : Bool) (limit : Nat) (compiler : Compiler C) : Compiler C :=
+def letOpCompiler {C D : Type} (splitSeq : Bool) (limit : Nat)
+    (compiler : C → List (Nat × Nat × Bvl.Exp) → D) : C → List (Nat × Nat × Bvl.Exp) → D :=
   fun config program => compiler config (program.map fun (name, arity, body) =>
     (name, arity, letOpTransform splitSeq limit arity body))
 
 /-- Oracle induced by the combined transformation. -/
-def letOpOracle {C : Type} (splitSeq : Bool) (limit : Nat) (oracle : CompileOracle C) : CompileOracle C :=
+def letOpOracle {I C : Type} (splitSeq : Bool) (limit : Nat)
+    (oracle : I → C × List (Nat × Nat × Bvl.Exp)) : I → C × List (Nat × Nat × Bvl.Exp) :=
   fun clock => ((oracle clock).1, (oracle clock).2.map fun (name, arity, body) =>
     (name, arity, letOpTransform splitSeq limit arity body))
 

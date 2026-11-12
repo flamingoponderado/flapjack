@@ -59,44 +59,6 @@ theorem attachInterpreter_noInstall_semantics {C F : Type} (expressions : List C
       rw [stateRel1_replaceCompiler sourceFinal targetFinal related.1]
     simp [targetRun, ffiEq]
 
-/-- If the source observation does not fail, attaching the interpreter
-also cannot introduce a target type error and preserves all terminating
-observations, whether or not the program uses installation. -/
-theorem attachInterpreter_terminating_observations {C F : Type} (expressions : List ClosLang.Exp)
-    (ffi : HolFfiState F) (maxApp : Nat) (oracle : ClosSem.CompileOracle C)
-    (compiler : ClosSem.Compiler C) (oracleSafe : ∀ index, (oracle index).2.2 = [])
-    (positive : 1 ≤ maxApp)
-    (sourceNoFail : ClosSem.semantics ffi maxApp HolFiniteMapExact.empty oracle
-      (pureCc insertProgram compiler) (attachInterpreter expressions) ≠ .fail) :
-    ClosSem.semantics ffi maxApp HolFiniteMapExact.empty (pureCo insertProgram ∘ oracle)
-        compiler (attachInterpreter expressions) ≠ .fail ∧
-      ClosSem.terminatingObservation ffi maxApp HolFiniteMapExact.empty oracle
-        (pureCc insertProgram compiler) (attachInterpreter expressions) =
-      ClosSem.terminatingObservation ffi maxApp HolFiniteMapExact.empty (pureCo insertProgram ∘ oracle)
-        compiler (attachInterpreter expressions) := by
-  have sourceSafe := (ClosSem.semantics_ne_fail_iff ffi maxApp HolFiniteMapExact.empty oracle
-    (pureCc insertProgram compiler) (attachInterpreter expressions)).1 sourceNoFail
-  have simulation : ∀ clock result final,
-      ClosSem.evaluate (attachInterpreter expressions) []
-        (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty oracle (pureCc insertProgram compiler) clock) = (result, final) →
-      ∃ extra targetFinal, ClosSem.evaluate (attachInterpreter expressions) []
-        (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty (pureCo insertProgram ∘ oracle) compiler (clock + extra)) =
-          (result, targetFinal) ∧ final.ffi = targetFinal.ffi := by
-    intro clock result final run
-    have notTypeError : result ≠ .err (.abort .typeError) := by
-      intro bad
-      exact sourceSafe clock (by simpa [run] using bad)
-    obtain ⟨extra, targetFinal, targetRun, ffiEq⟩ :=
-      attachInterpreter_initial_observation expressions ffi maxApp clock oracle compiler final result oracleSafe positive run notTypeError
-    exact ⟨extra, targetFinal, by simpa [Nat.add_comm] using targetRun, ffiEq⟩
-  constructor
-  · apply (ClosSem.semantics_ne_fail_iff ffi maxApp HolFiniteMapExact.empty (pureCo insertProgram ∘ oracle)
-      compiler (attachInterpreter expressions)).2
-    exact ClosSem.simulation_target_noTypeError ffi maxApp HolFiniteMapExact.empty oracle (pureCo insertProgram ∘ oracle)
-      (pureCc insertProgram compiler) compiler (attachInterpreter expressions) sourceSafe simulation
-  · exact ClosSem.simulation_terminatingObservation_eq ffi maxApp HolFiniteMapExact.empty oracle (pureCo insertProgram ∘ oracle)
-      (pureCc insertProgram compiler) compiler (attachInterpreter expressions) simulation
-
 /-- The interpreter insertion simulation preserves all proof-side behavior
 once the evaluator's clock-indexed event traces are known to be monotone.
 The unconditional trace monotonicity result is applied below. -/

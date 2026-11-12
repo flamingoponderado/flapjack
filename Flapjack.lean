@@ -921,6 +921,7 @@ import Flapjack.Compiler.Backend.BvlHandle.Proofs.IndexedLookup
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.Every
 import Flapjack.Compiler.Backend.BvlInline.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.BvlInline.Proofs.ProgramProperties
+import Flapjack.Compiler.Backend.BvlInline.Proofs.WholeProgram
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.Simplify
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyProduction
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.LetLet

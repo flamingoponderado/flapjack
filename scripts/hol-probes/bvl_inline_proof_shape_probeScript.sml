@@ -18,3 +18,7 @@ val _ = show "MAP_FST_MAP_optimise_typed" bvl_inlineProofTheory.MAP_FST_MAP_opti
 val _ = show "compile_prog_names_typed" bvl_inlineProofTheory.compile_prog_names;
 val _ = show "handle_ok_optimise_typed" bvl_inlineProofTheory.handle_ok_optimise;
 val _ = show "compile_prog_handle_ok_typed" bvl_inlineProofTheory.compile_prog_handle_ok;
+val _ = show "map_fromAList_typed" bvl_inlineProofTheory.map_fromAList;
+val _ = show "state_cc_compile_inc_eq_typed" bvl_inlineProofTheory.state_cc_compile_inc_eq;
+val _ = show "state_co_compile_inc_eq_typed" bvl_inlineProofTheory.state_co_compile_inc_eq;
+val _ = show "compile_prog_semantics_typed" bvl_inlineProofTheory.compile_prog_semantics;
