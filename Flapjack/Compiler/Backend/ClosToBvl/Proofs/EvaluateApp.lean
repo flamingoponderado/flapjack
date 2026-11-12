@@ -3829,8 +3829,8 @@ theorem evaluate_genericAppOverBranch {C F : Type} (s : BvlSem.State C F)
       ((List.range (numArgs + 1)).map (fun arg => .var (arg + 2 + n - numArgs)) ++
         [.var (n + 3), .op (.blockOp (.elemAt 0)) [.var (n + 3)]])]
       (mkClCall (.var 0) ((List.range (n - numArgs)).map fun i => .var (i + 3)))
-  have run := BvlJump.evaluate_jump (.op (.blockOp (.elemAt 1)) [.var (n + 2)]) branches env s s total selector
-    (by simpa [branches] using totalBound)
+  have run := BvlJump.evaluate_jump (.op (.blockOp (.elemAt 1)) [.var (n + 2)]) branches env s s total
+    ⟨selector, by simpa [branches] using totalBound⟩
   simpa [env, branches, List.getElem_map] using run
 
 /-- An overapplied generic stub dispatches to the case for the closure's

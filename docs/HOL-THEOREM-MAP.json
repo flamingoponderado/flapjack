@@ -1,5 +1,19 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_jumpProofScript.sml", "hol_name": "evaluate_JumpList",
+  "lean_path": "Flapjack/Compiler/Backend/BvlJump/Proofs.lean", "lean_name": "evaluate_jumpList",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed replay of the original local source proof: the arbitrary BVL environment and state, offset, list and bounded index yield the complete equality of generated-tree and selected-branch evaluations. The bounded Lean list index agrees with HOL EL. The BVL state's refs field uses the canonical finite-support map with a local roundtrip witness; compiler and FFI state carriers remain independent. Evaluator dependencies inherit reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_jumpProofScript.sml", "hol_name": "evaluate_Jump",
+  "lean_path": "Flapjack/Compiler/Backend/BvlJump/Proofs.lean", "lean_name": "evaluate_jump",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed original: the grouped selector-evaluation and in-bounds premises imply the full equality with the selected branch evaluation in the returned state. The bounded Lean index agrees with HOL EL. The BVL state's refs field uses the canonical finite-support map with a local roundtrip witness; compiler and FFI state carriers remain independent. Evaluator dependencies inherit reals_as_rational_cuts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_jumpProofScript.sml", "hol_name": "bvl_get_code_labels_JumpList",
   "lean_path": "Flapjack/Compiler/Backend/BvlJump/Proofs.lean", "lean_name": "jumpList_codeLabels",
   "statement_status": "reviewed_exact",
