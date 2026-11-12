@@ -1587,6 +1587,35 @@ in
   \\ full_simp_tac(srw_ss())[FDIFF_def,SUBMAP_DEF,DRESTRICT_DEF,FLOOKUP_DEF]
   \\ FIRST_X_ASSUM (MP_TAC o Q.SPEC `r`) \\ full_simp_tac(srw_ss())[] );
   val _ = show_thm "cl_rel_SUBMAP_replay=" cl_rel_SUBMAP_replay;
+  val v_rel_SUBMAP_replay = Q.prove(
+  `!x y. v_rel max_app f1 refs1 code x y ==>
+      f1 SUBMAP f2 /\ FDIFF refs1 (FRANGE f1) SUBMAP FDIFF refs2 (FRANGE f2) ==>
+      v_rel max_app f2 refs2 code x y`,
+  HO_MATCH_MP_TAC v_rel_ind \\ REPEAT STRIP_TAC
+  \\ ONCE_REWRITE_TAC [v_rel_cases] \\ full_simp_tac(srw_ss())[]
+  THEN1 (REPEAT (POP_ASSUM MP_TAC) \\ CONV_TAC (DEPTH_CONV ETA_CONV) \\ full_simp_tac(srw_ss())[])
+  THEN1 ( fs[SUBMAP_DEF,FLOOKUP_DEF,FDIFF_def,DRESTRICT_DEF] )
+  THEN1 (fs[SUBMAP_DEF,FLOOKUP_DEF] )
+  THEN1 (imp_res_tac SUBMAP_FRANGE >>
+         imp_res_tac cl_rel_SUBMAP_replay >>
+         disj2_tac >>
+         full_simp_tac(srw_ss())[ETA2_THM] >>
+         metis_tac [])
+  THEN1 (imp_res_tac cl_rel_SUBMAP_replay >>
+         disj2_tac >>
+         full_simp_tac(srw_ss())[ETA2_THM] >>
+         metis_tac [SUBMAP_FRANGE] ))
+  |> SPEC_ALL |> MP_CANON;
+
+  val _ = show_thm "v_rel_SUBMAP_replay=" v_rel_SUBMAP_replay;
+  val env_rel_SUBMAP_replay = Q.prove(
+  `!env1 env2.
+      env_rel max_app f1 refs1 code env1 env2 /\
+      f1 SUBMAP f2 /\ FDIFF refs1 (FRANGE f1) SUBMAP FDIFF refs2 (FRANGE f2) ==>
+      env_rel max_app f2 refs2 code env1 env2`,
+  Induct \\ Cases_on `env2` \\ full_simp_tac(srw_ss())[env_rel_def]
+  \\ REPEAT STRIP_TAC \\ IMP_RES_TAC v_rel_SUBMAP_replay) |> GEN_ALL;
+  val _ = show_thm "env_rel_SUBMAP_replay=" env_rel_SUBMAP_replay;
   val cl_rel_NEW_REF_replay = Q.prove (
     `!x y. cl_rel max_app f1 refs1 code (env,ys) x y ==> ~(r IN FDOM refs1) ==>
          cl_rel max_app f1 (refs1 |+ (r,t)) code (env,ys) x y`,
@@ -1615,6 +1644,8 @@ in
          full_simp_tac(srw_ss())[ETA2_THM] >>
          metis_tac [] ))
   |> SPEC_ALL |> MP_CANON;
+
+  val _ = show_thm "v_rel_NEW_REF_replay=" v_rel_NEW_REF;
 
   val env_rel_NEW_REF_replay = Q.prove (
     `!x y.
@@ -1660,6 +1691,8 @@ in
          metis_tac [] ))
   |> SPEC_ALL |> MP_CANON;
 
+  val _ = show_thm "v_rel_UPDATE_REF_replay=" v_rel_UPDATE_REF;
+
   val OPTREL_v_rel_UPDATE_REF_replay = Q.prove (
     `OPTREL (v_rel max_app f1 refs1 code) x y /\ r IN FRANGE f1 ==>
     OPTREL (v_rel max_app f1 (refs1 |+ (r,t)) code) x y`,
@@ -1677,6 +1710,36 @@ in
     \\ DISJ2_TAC \\ Q.LIST_EXISTS_TAC [`exps_ps`,`r`] \\ full_simp_tac(srw_ss())[]
     \\ strip_tac >> full_simp_tac(srw_ss())[FLOOKUP_DEF]);
   val _ = show_thm "cl_rel_NEW_F_replay=" cl_rel_NEW_F_replay;
+  val v_rel_NEW_F_replay = Q.prove(
+  `!x y.
+      v_rel max_app f2 t2.refs t2.code x y ==>
+      ~(pp IN FDOM f2) ==>
+      ~(qq IN FDOM t2.refs) ==>
+      v_rel max_app (f2 |+ (pp,qq)) t2.refs t2.code x y`,
+  HO_MATCH_MP_TAC v_rel_ind \\ REPEAT STRIP_TAC
+  \\ ONCE_REWRITE_TAC [v_rel_cases] \\ full_simp_tac(srw_ss())[]
+  THEN1 (REPEAT (POP_ASSUM MP_TAC) \\ CONV_TAC (DEPTH_CONV ETA_CONV) \\ full_simp_tac(srw_ss())[])
+  THEN1 ( fs[IN_FRANGE,FLOOKUP_DEF,DOMSUB_FAPPLY_THM] \\ metis_tac[] )
+  THEN1 (full_simp_tac(srw_ss())[FLOOKUP_UPDATE] \\ SRW_TAC [] [] \\ full_simp_tac(srw_ss())[FLOOKUP_DEF])
+  THEN1 (imp_res_tac cl_rel_NEW_F_replay >>
+         disj2_tac >>
+         full_simp_tac(srw_ss())[ETA2_THM,DOMSUB_NOT_IN_DOM] >>
+         metis_tac [])
+  THEN1 (imp_res_tac cl_rel_NEW_F_replay >>
+         disj2_tac >>
+         full_simp_tac(srw_ss())[ETA2_THM,DOMSUB_NOT_IN_DOM] >>
+         metis_tac [] ))
+  |> SPEC_ALL |> MP_CANON;
+
+  val _ = show_thm "v_rel_NEW_F_replay=" v_rel_NEW_F_replay;
+  val OPTREL_v_rel_NEW_F_replay = Q.prove(
+  `OPTREL (v_rel max_app f2 t2.refs t2.code) x y ==>
+    ~(pp IN FDOM f2) ==>
+    ~(qq IN FDOM t2.refs) ==>
+    OPTREL (v_rel max_app (f2 |+ (pp,qq)) t2.refs t2.code) x y`,
+  Cases_on `x` \\ Cases_on `y` \\ full_simp_tac(srw_ss())[OPTREL_def]
+  \\ METIS_TAC [v_rel_NEW_F_replay]) |> MP_CANON;
+  val _ = show_thm "OPTREL_v_rel_NEW_F_replay=" OPTREL_v_rel_NEW_F_replay;
   val _ = show_thm "state_rel_UPDATE_REF_typed=" clos_to_bvlProofTheory.state_rel_UPDATE_REF;
   val _ = show_thm "state_rel_NEW_REF_typed=" clos_to_bvlProofTheory.state_rel_NEW_REF;
   val _ = show_thm "not_isClos_typed=" clos_to_bvlProofTheory.not_isClos;

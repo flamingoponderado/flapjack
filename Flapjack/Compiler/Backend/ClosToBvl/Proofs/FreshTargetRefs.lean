@@ -36,18 +36,7 @@ theorem optionValueRel_newRef (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
     (premises : optionValueRel (vRel maxApp f refs code) x y ∧ refs.lookup r = none) :
     optionValueRel (vRel maxApp f (refs.updateEq (r, cell)) code) x y := by
   obtain ⟨related, fresh⟩ := premises
-  have extension : ∀ key value, refs.lookup key = some value →
-      (refs.updateEq (r, cell)).lookup key = some value := by
-    intro key value found
-    have different : key ≠ r := by
-      intro eq
-      subst key
-      rw [fresh] at found
-      contradiction
-    simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found
-  have frame := unmappedRefsSubmap_of_extension refs _ f extension
-  have submap : f.submap f := by intro key value found; exact found
-  exact optionValueRel_mono (fun _ _ rel => vRel_grow_refs rel submap frame) related
+  exact optionValueRel_mono (fun a b rel => vRelNewRef maxApp f refs code a b r cell ⟨rel, fresh⟩) related
 
 /-- A reference cell remains related when its contained values remain related. -/
 theorem refRel_mono {R S : ClosSem.Value → BvlSem.Value → Prop}

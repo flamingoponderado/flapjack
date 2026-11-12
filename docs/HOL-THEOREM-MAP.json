@@ -531,6 +531,48 @@
   "reviewer": "Compared the HOL source and typed local proof replay: related optional closure and BVL values and membership of r in the relocation-map range imply their relation after updating the target reference map at r with an arbitrary cell. Range membership is expressed as an existing lookup witness. Both finite maps use canonical finite-support carriers; code remains a sparse tree."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "v_rel_SUBMAP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueGrowth.lean", "lean_name": "vRelSubmap",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["f1", "f2", "refs1", "refs2"],
+  "reviewer": "Compared the typed replay of the post-MP_CANON HOL source: the related-value premise, relocation submap, finite-map difference submap and resulting value relation agree. The frame uses the reviewed lookup characterization of the two FDIFF maps; all four map binders use canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "env_rel_SUBMAP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueGrowth.lean", "lean_name": "envRelSubmap",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["refs2", "refs1", "f2", "f1"],
+  "reviewer": "Compared the typed GEN_ALL HOL source replay, including binder order, environment relation, relocation submap, finite-map difference submap and conclusion. The frame uses the reviewed lookup characterization of FDIFF; all four map binders use canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "v_rel_NEW_REF",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueGrowth.lean", "lean_name": "vRelNewRef",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["f", "refs"],
+  "reviewer": "Compared the typed post-MP_CANON HOL source replay: related values and freshness in the target-reference domain imply the same relation after the original reference update. Both map binders use canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "v_rel_UPDATE_REF",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueGrowth.lean", "lean_name": "vRelUpdateRef",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["f", "refs"],
+  "reviewer": "Compared the typed post-MP_CANON HOL source replay: related values and membership in the relocation-map range imply the original updated-reference relation. Both map binders use canonical finite support."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "v_rel_NEW_F",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueGrowth.lean", "lean_name": "vRelNewF",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BvlSem.State.refs", "f"],
+  "reviewer": "Compared the typed post-MP_CANON HOL source replay: related values, freshness in the relocation map and target state reference map, and the original map-update conclusion agree. The state refs field and relocation parameter use canonical finite support with the local state witness."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "OPTREL_v_rel_NEW_F",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueGrowth.lean", "lean_name": "optionValueRelNewF",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BvlSem.State.refs", "f"],
+  "reviewer": "Compared the typed post-MP_CANON HOL source replay: the original optional value relation, both freshness conditions, state carriers and updated-map conclusion agree. The state refs field and relocation parameter use canonical finite support with the local state witness."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "env_rel_NEW_REF",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueGrowth.lean", "lean_name": "envRel_newRef",
   "statement_status": "reviewed_fmap_as_finite_support_relation",
