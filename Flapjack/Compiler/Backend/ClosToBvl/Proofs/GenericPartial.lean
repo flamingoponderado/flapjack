@@ -26,6 +26,31 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   BvlSem.holFmapAsFiniteSupportWitness
 end GenericPartialCarrier
 
+/-- Generic application extends an existing partial closure. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_generic_app2"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateGenericApp2 {C F : Type} (maxApp : Nat) :
+    ∀ (n : Nat) (args : List BvlSem.Value) (st : Flapjack.Compiler.Backend.BvlSem.State C F)
+      (remaining : Nat) (prev : List BvlSem.Value) (l : Nat) (clo cl : BvlSem.Value),
+      sptDomain st.code (partialAppFnLocation maxApp (remaining + prev.length) (n + prev.length)) ∧
+      n < remaining ∧ n + 1 = args.length ∧ prev.length > 0 ∧
+      remaining + prev.length < maxApp ∧
+      ClosSem.getGlobal 0 st.globals = some (some (globalTable maxApp)) ∧
+      cl = .block BackendCommon.partialAppTag (.codePtr l :: .number (Int.ofNat remaining) :: clo :: prev) →
+      BvlSem.evaluate [generateGenericApp maxApp n] (args ++ [cl]) st =
+        if st.clock < n then (.err (.abort .timeoutError), { st with clock := 0 })
+        else (.val [.block BackendCommon.partialAppTag
+          (.codePtr (partialAppFnLocation maxApp (remaining + prev.length) (n + prev.length)) ::
+            .number (Int.ofNat remaining - Int.ofNat (n + 1)) :: clo :: args ++ prev)],
+          BvlSem.decClock n st) := by
+  intro n args st remaining prev l clo cl ⟨_, bound, length, _, totalBound, global, clEq⟩
+  subst cl
+  have h := evaluate_genericApp_partial_extend st maxApp n remaining args prev (.codePtr l) clo
+    length.symm bound totalBound global
+  have sub : Int.ofNat remaining - Int.ofNat (n + 1) = Int.ofNat (remaining - (n + 1)) := by
+    exact (Int.ofNat_sub (by omega)).symm
+  simpa only [BackendCommon.partialAppTag, Nat.add_comm n prev.length, sub, List.cons_append] using h
+
 /-- A generic stub saves a still-unsaturated argument group. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_generic_app_partial"
   (fmap_as_finite_support := [refs])]

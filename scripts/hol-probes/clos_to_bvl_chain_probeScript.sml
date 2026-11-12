@@ -345,6 +345,7 @@ in
     `rem_args + LENGTH prev_args < max_app` by decide_tac >>
     REWRITE_TAC [ADD_ASSOC] >>
     simp [triangle_div_lemma]));
+  val _ = show_thm "evaluate_generic_app2_replay=" evaluate_generic_app2_replay;
   val evaluate_generic_app2 = evaluate_generic_app2_replay;
   val evaluate_generic_app_partial_replay = Q.prove (
     `  !total_args prev_args st args cl sub_cl.

@@ -163,6 +163,13 @@
   "reviewer": "Compared the typed HOL inductive rules and cases: both arbitrary integer metadata values retain their nonnegativity premises and Num/toNat conversions, the partial layout requires a nonempty saved list and an arbitrary original value, and all block tags and output triples agree."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_generic_app2",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/GenericPartial.lean", "lean_name": "evaluateGenericApp2",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the HOL source and typed local proof replay: all original domain, argument, nonempty saved-list, bound, global and closure-layout premises, the timeout state and complete partial-closure result are retained. Integer subtraction is preserved in the conclusion. The target refs field uses the canonical finite-support carrier with a same-module state roundtrip; evaluation inherits reals_as_rational_cuts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_generic_app_partial",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/GenericPartial.lean", "lean_name": "evaluateGenericAppPartial",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
