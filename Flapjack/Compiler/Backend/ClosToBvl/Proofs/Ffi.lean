@@ -1,20 +1,14 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MappedRefsUpdate
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
 
 @[expose] public section
 
 /-! Foreign-call correspondence, including observable FFI state. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
-open Flapjack.SemanticPrimitivesHOL
+open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 open Flapjack.Basis.Pure.MlString
-
-/-- Updating both FFI states to the same state preserves the candidate state
-relation. -/
-theorem stateRel_set_ffi {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State C F)
-    (f : HolFiniteMapExact Nat Nat) (states : stateRel f s t) (ffi : HolFfiState F) :
-    stateRel f { s with ffi := ffi } { t with ffi := ffi } := by
-  exact ⟨rfl, states.2⟩
 
 /-- A valid foreign call uses a byte-vector configuration and a mutable byte
 array, and both semantics invoke the same FFI state and arguments. -/
@@ -45,7 +39,7 @@ theorem ffi_valid_related {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State
     · simp [BvlSem.doApp, configFound, targetFound, ffiEq, oracle]
     · have updatedRel := stateRel_update_mapped s t f sourcePtr targetPtr (.byteArray updated)
         (.byteArray false updated) states mapped (by simp) ⟨rfl, rfl⟩
-      exact stateRel_set_ffi _ _ f updatedRel ffi
+      exact ⟨rfl, updatedRel.2⟩
   | final event =>
     exact ⟨by simp [ClosSem.doApp, sourceFound, oracle],
       by simp [BvlSem.doApp, configFound, targetFound, ffiEq, oracle]⟩
@@ -75,5 +69,64 @@ theorem ffi_ready {C F : Type} (name : MlString) (args : List ClosSem.Value)
             | valueArray values => simp [found] at notType
             | thunk mode value => simp [found] at notType
             | byteArray bytes => exact ⟨config, bytes, flag, ptr, rfl, found⟩
+
+namespace DoAppErrorCarrier
+/-- Closure state finite-map roundtrip. -/
+theorem holFmapAsFiniteSupportRelationWitness_ClosSem.State {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
+/-- BVL state finite-map roundtrip. -/
+theorem holFmapAsFiniteSupportRelationWitness_BvlSem.State {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end DoAppErrorCarrier
+
+/-- Non-type primitive errors are matched by related target errors. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "do_app_err"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code, BvlSem.State.refs, f])]
+theorem doAppErr {C F : Type} (op : ClosLang.Op) (xs : List ClosSem.Value) (s1 : ClosSem.State C F)
+    (err : ErrorResult ClosSem.Value) (f : HolFiniteMapExact Nat Nat) (t1 : BvlSem.State C F)
+    (ys : List BvlSem.Value)
+    (premises : ClosSem.doApp op xs s1 = .err err ∧ err ≠ .abort .typeError ∧
+      stateRel f s1 t1 ∧ List.Forall₂ (vRel s1.maxApp f t1.refs t1.code) xs ys) :
+    ∃ e, BvlSem.doApp (compileOp op) ys t1 = .err e ∧
+      excRel (vRel s1.maxApp f t1.refs t1.code) err e := by
+  obtain ⟨run, notType, states, related⟩ := premises
+  have isFfi : ∃ name, op = .ffi name := by
+    cases op
+    all_goals try { exact ⟨_, rfl⟩ }
+    all_goals simp only [ClosSem.doApp] at run
+    all_goals repeat' split at run
+    all_goals simp_all
+  obtain ⟨name, rfl⟩ := isFfi
+  have notTypeApp : ClosSem.doApp (.ffi name) xs s1 ≠ .err (.abort .typeError) := by
+    rw [run]
+    simpa using notType
+  obtain ⟨config, bytes, flag, ptr, argsEq, sourceFound⟩ := ffi_ready name xs s1 notTypeApp
+  subst xs
+  cases related with
+  | cons configRel tail =>
+    cases tail with
+    | cons ptrRel tail =>
+      cases tail
+      obtain ⟨configPtr, rfl, configFound⟩ := vRel_byteVector_inv configRel
+      obtain ⟨targetPtr, rfl, mapped⟩ := vRel_refPtr_inv ptrRel
+      have valid := ffi_valid_related s1 t1 f states name config bytes configPtr flag ptr targetPtr
+        configFound mapped sourceFound
+      cases ffiCall : callFFIHOL s1.ffi (.extCall name) config bytes with
+      | ret ffi updated =>
+        rw [ffiCall] at valid
+        obtain ⟨sourceApp, _, _⟩ := valid
+        rw [sourceApp] at run
+        contradiction
+      | final event =>
+        rw [ffiCall] at valid
+        obtain ⟨sourceApp, targetApp⟩ := valid
+        rw [sourceApp] at run
+        cases run
+        exact ⟨_, by simpa [compileOp] using targetApp, by simp [excRel]⟩
 
 end Flapjack.Compiler.Backend.ClosToBvl

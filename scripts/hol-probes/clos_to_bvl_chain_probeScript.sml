@@ -1108,6 +1108,46 @@ in
     PROVE_TAC[lookup_vars_IMP2]);
   val _ = show_thm "lookup_vars_IMP_replay=" lookup_vars_IMP_replay;
 end;
+(* Replay primitive-operation error simulation using the original proof. *)
+local
+  open preamble clos_to_bvlTheory clos_to_bvlProofTheory closSemTheory bvlSemTheory listTheory backend_commonTheory semanticPrimitivesPropsTheory
+in
+  fun cases_on_op q = Cases_on q >|
+  map (MAP_EVERY Cases_on) [[], [], [], [], [`b`], [`g`], [`m`], [], [`t`]];
+  val v_case_eq_thms =
+  LIST_CONJ [
+    TypeBase.case_eq_of ``:closSem$v``,
+    TypeBase.case_eq_of ``:bvlSem$v``];
+  val do_app_err_replay = Q.prove (
+    `  do_app op xs s1 = Rerr err ∧
+   err ≠ Rabort Rtype_error ∧
+   state_rel f s1 t1 ∧
+   LIST_REL (v_rel s1.max_app f t1.refs t1.code) xs ys
+   ⇒
+   ∃e. do_app (compile_op op) ys t1 = Rerr e ∧
+       exc_rel (v_rel s1.max_app f t1.refs t1.code) err e`,
+  Cases_on `?i. op = BlockOp (EqualConst i)` THEN1
+    (srw_tac[][closSemTheory.do_app_def] \\ fs [] \\ every_case_tac \\ fs []) >>
+  Cases_on `?tag. op = BlockOp (ConsExtend tag)`
+  >- (
+    Cases_on `err` >> gvs [] >> rw []
+    >> gvs [closSemTheory.do_app_def,AllCaseEqs(),do_app_def]
+  )
+  \\ Cases_on `?n. op = FFI n`
+  >- (Cases_on `err` >> gvs [] >> rw []
+      >> gvs [closSemTheory.do_app_def,AllCaseEqs(),do_app_def,v_rel_SIMP]
+      >> simp [PULL_EXISTS]
+      >> rfs[state_rel_def]
+      >> res_tac
+      >> gvs[ref_rel_simp])
+  \\ cases_on_op `op`
+  \\ srw_tac[][closSemTheory.do_app_def,bvlSemTheory.do_app_def]
+  \\ TRY (fs[case_eq_thms,bool_case_eq,v_case_eq_thms] \\ NO_TAC)
+  \\ gvs[AllCaseEqs()]
+  (* MutCons/UpdateCons/FinaliseCons: vacuous, closSem$do_app is Error *)
+  \\ metis_tac []);
+  val _ = show_thm "do_app_err_replay=" do_app_err_replay;
+end;
 (* Replay the equality-result and closure-test statements. *)
 local
   open preamble clos_to_bvlTheory clos_to_bvlProofTheory bvlSemTheory listTheory backend_commonTheory
