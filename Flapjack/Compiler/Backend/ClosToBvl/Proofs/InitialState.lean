@@ -38,22 +38,6 @@ theorem initial_stateRel {C F : Type} (ffi : HolFfiState F) (maxApp clock : Nat)
     HolFiniteMapExact.empty, force, oracle]
   exact ⟨generic, fun total n h1 h2 => partialStubs total n ⟨h1, h2⟩, compiledCode⟩
 
-/-- A list of installed code labels evaluates to its corresponding code
-pointers without changing the target state. -/
-theorem evaluate_installed_labels {C F : Type} (labels : List Nat) (env : List BvlSem.Value)
-    (state : BvlSem.State C F)
-    (installed : ∀ label ∈ labels, ∃ entry, sptLookup label state.code = some entry) :
-    BvlSem.evaluate (labels.map mkLabel) env state = (.val (labels.map BvlSem.Value.codePtr), state) := by
-  induction labels with
-  | nil => simp [BvlSem.evaluate]
-  | cons label rest ih =>
-    obtain ⟨entry, lookup⟩ := installed label (by simp)
-    have headRun : BvlSem.evaluate [mkLabel label] env state = (.val [.codePtr label], state) := by
-      simp [mkLabel, BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, lookup]
-    have tailRun := ih (fun name member => installed name (by simp [member]))
-    have combined := BvlProps.evaluateAppend [mkLabel label] env state (rest.map mkLabel)
-    simpa [BvlSem.evaluateTuple, headRun, tailRun] using combined
-
 namespace InitDomain
 
 /-- The BVL reference store roundtrips through its finite-support view. -/
@@ -61,6 +45,28 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
     (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
     (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
   BvlSem.holFmapAsFiniteSupportWitness
+
+/-- Each installed partial-application label evaluates to its code pointer. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_init1"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_init1 {C F : Type} (mapp2 mapp1 total : Nat)
+    (state : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (installed : ∀ n, n < mapp2 → sptMem (partialAppFnLocation mapp1 total n) state.code) :
+    BvlSem.evaluate ((List.range mapp2).map (fun n => mkLabel (partialAppFnLocation mapp1 total n))).reverse
+      [BvlSem.unitValue] state =
+    (.val ((List.range mapp2).map (fun n => BvlSem.Value.codePtr (partialAppFnLocation mapp1 total n))).reverse, state) := by
+  induction mapp2 with
+  | zero => simp [BvlSem.evaluate]
+  | succ n ih =>
+    obtain ⟨entry, lookup⟩ := (sptMem_iff_lookup _ _).mp (installed n (by omega))
+    have headRun : BvlSem.evaluate [mkLabel (partialAppFnLocation mapp1 total n)]
+        [BvlSem.unitValue] state = (.val [.codePtr (partialAppFnLocation mapp1 total n)], state) := by
+      simp [mkLabel, BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, lookup]
+    have tailRun := ih (fun k bound => installed k (by omega))
+    have combined := BvlProps.evaluateAppend [mkLabel (partialAppFnLocation mapp1 total n)]
+      [BvlSem.unitValue] state
+      (((List.range n).map (fun k => mkLabel (partialAppFnLocation mapp1 total k))).reverse)
+    simpa [List.range_succ, List.map_append, BvlSem.evaluateTuple, headRun, tailRun] using combined
 
 /-- The generated partial-application labels evaluate to code pointers when
 all of their locations occur in the target code domain. -/
@@ -76,18 +82,17 @@ theorem evaluate_init {C F : Type} (mapp2 mapp1 : Nat)
     (.val (((List.range mapp2).map fun total =>
       (List.range total).map fun previous => BvlSem.Value.codePtr
         (partialAppFnLocation mapp1 total previous)).flatten.reverse), state) := by
-  let labels := ((List.range mapp2).map fun total =>
-    (List.range total).map fun previous => partialAppFnLocation mapp1 total previous).flatten
-  have labelInstalled : ∀ label ∈ labels.reverse, ∃ entry, sptLookup label state.code = some entry := by
-    intro label member
-    simp only [List.mem_reverse, labels, List.mem_flatten, List.mem_map, List.mem_range] at member
-    obtain ⟨inner, ⟨total, totalBound, innerEq⟩, labelMember⟩ := member
-    subst inner
-    obtain ⟨previous, previousBound, labelEq⟩ := List.mem_map.mp labelMember
-    subst label
-    exact (sptMem_iff_lookup _ _).mp (installed total previous ⟨totalBound, List.mem_range.mp previousBound⟩)
-  have result := evaluate_installed_labels labels.reverse [BvlSem.unitValue] state labelInstalled
-  simpa [labels, List.map_reverse, List.map_flatten, List.map_map, Function.comp_def] using result
+  induction mapp2 with
+  | zero => simp [BvlSem.evaluate]
+  | succ n ih =>
+    have headRun := evaluate_init1 n mapp1 n state (fun k bound => installed n k ⟨by omega, bound⟩)
+    have tailRun := ih (fun m k bounds => installed m k ⟨by omega, bounds.2⟩)
+    have combined := BvlProps.evaluateAppend
+      (((List.range n).map fun k => mkLabel (partialAppFnLocation mapp1 n k)).reverse)
+      [BvlSem.unitValue] state
+      (((List.range n).map fun total =>
+        (List.range total).map fun k => mkLabel (partialAppFnLocation mapp1 total k)).flatten.reverse)
+    simpa [List.range_succ, List.map_append, BvlSem.evaluateTuple, headRun, tailRun] using combined
 
 end InitDomain
 

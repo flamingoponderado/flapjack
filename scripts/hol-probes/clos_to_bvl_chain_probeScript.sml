@@ -100,6 +100,7 @@ local
     `∀n. n < mapp2 ⇒ partial_app_fn_location mapp1 mapp2 n ∈ domain st.code` by fs[] >>
     old_drule evaluate_init1_replay >> simp[]);
 in
+  val _ = show_thm "evaluate_init1_replay=" evaluate_init1_replay;
   val _ = show_thm "evaluate_init_replay=" evaluate_init_replay;
 end;
 val _ = show_thm "renumber_code_locs_fv1_typed=" clos_to_bvlProofTheory.renumber_code_locs_fv1;
