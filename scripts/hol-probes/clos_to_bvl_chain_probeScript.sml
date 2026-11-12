@@ -1217,6 +1217,11 @@ in
   Induct \\ Cases_on `y` \\ full_simp_tac(srw_ss())[env_rel_def] \\ REPEAT STRIP_TAC
   \\ IMP_RES_TAC v_rel_NEW_REF \\ full_simp_tac(srw_ss())[] );
   val _ = show_thm "env_rel_NEW_REF_replay=" env_rel_NEW_REF_replay;
+  val OPTREL_v_rel_NEW_REF_replay = Q.prove (
+    `OPTREL (v_rel max_app f1 refs1 code) x y /\ ~(r IN FDOM refs1) ==>
+    OPTREL (v_rel max_app f1 (refs1 |+ (r,t)) code) x y`,
+  Cases_on `x` \\ Cases_on `y` \\ full_simp_tac(srw_ss())[OPTREL_def,v_rel_NEW_REF] );
+  val _ = show_thm "OPTREL_v_rel_NEW_REF_replay=" OPTREL_v_rel_NEW_REF_replay;
   val cl_rel_UPDATE_REF_replay = Q.prove (
     `!x y. cl_rel max_app f1 refs1 code (env,ys) x y ==>
           (r IN f1) ==>

@@ -34,8 +34,7 @@ theorem optionValueRel_updateRef (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
   obtain ⟨related, source, mapped⟩ := premises
   have frame := mappedUpdate_frame f refs source r mapped cell
   have submap : f.submap f := by intro key value found; exact found
-  cases x <;> cases y <;> simp only [optionValueRel] at related ⊢
-  exact vRel_grow_refs related submap frame
+  exact optionValueRel_mono (fun _ _ rel => vRel_grow_refs rel submap frame) related
 
 /-- Simultaneously replacing related mapped cells preserves the candidate
 state relation, with the relocation map unchanged. -/

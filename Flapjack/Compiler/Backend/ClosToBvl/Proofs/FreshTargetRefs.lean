@@ -17,6 +17,38 @@ theorem unmappedRefsSubmap_of_extension
   intro key value lookup fresh
   exact ⟨extension key value lookup, fresh⟩
 
+/-- A pointwise implication lifts to optional-value relations. This general
+helper supports the reference-store growth proofs. -/
+theorem optionValueRel_mono {R S : ClosSem.Value → BvlSem.Value → Prop}
+    {x : Option ClosSem.Value} {y : Option BvlSem.Value}
+    (preserves : ∀ a b, R a b → S a b) (related : optionValueRel R x y) :
+    optionValueRel S x y := by
+  cases x <;> cases y <;> simp only [optionValueRel] at related ⊢
+  exact preserves _ _ related
+
+/-- A fresh target reference preserves the relation between optional values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "OPTREL_v_rel_NEW_REF"
+  (fmap_as_finite_support_relation := [f, refs])]
+theorem optionValueRel_newRef (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (x : Option ClosSem.Value) (y : Option BvlSem.Value) (r : Nat)
+    (cell : BvlSem.Ref BvlSem.Value)
+    (premises : optionValueRel (vRel maxApp f refs code) x y ∧ refs.lookup r = none) :
+    optionValueRel (vRel maxApp f (refs.updateEq (r, cell)) code) x y := by
+  obtain ⟨related, fresh⟩ := premises
+  have extension : ∀ key value, refs.lookup key = some value →
+      (refs.updateEq (r, cell)).lookup key = some value := by
+    intro key value found
+    have different : key ≠ r := by
+      intro eq
+      subst key
+      rw [fresh] at found
+      contradiction
+    simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found
+  have frame := unmappedRefsSubmap_of_extension refs _ f extension
+  have submap : f.submap f := by intro key value found; exact found
+  exact optionValueRel_mono (fun _ _ rel => vRel_grow_refs rel submap frame) related
+
 /-- A reference cell remains related when its contained values remain related. -/
 theorem refRel_mono {R S : ClosSem.Value → BvlSem.Value → Prop}
     (preserves : ∀ a b, R a b → S a b) (source : ClosSem.Ref ClosSem.Value)
@@ -44,8 +76,7 @@ theorem stateRel_targetRefs_extend {C F : Type} (s : ClosSem.State C F) (t : Bvl
   refine ⟨ffi, ?_, table, injective, ?_, sourceDomain, ?_, ?_, generic, partialCode, force, oracle, code⟩
   · apply globals.imp
     intro source target related
-    cases source <;> cases target <;> simp only [optionValueRel] at related ⊢
-    exact valuesGrow _ _ related
+    exact optionValueRel_mono valuesGrow related
   · intro x y bytes mapped newFrozen
     have occupied := targetDomain x y mapped
     obtain ⟨cell, oldLookup⟩ := Option.ne_none_iff_exists.mp occupied
