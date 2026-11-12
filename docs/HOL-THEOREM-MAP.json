@@ -2152,7 +2152,7 @@
   "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml", "hol_name": "compile_common_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Common.lean", "lean_name": "compileCommon",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared compile_common_def_typed: configuration and expression carriers and all eight ordered steps agree, including post-mti length for fresh-location reservation, even alignment, the original next_loc for chain_exps, and source annotation. Numbering, known-function and direct-call results and all four updated configuration fields agree. compileCallMtiFuel_eq_common proves the executed bounded pipeline reaches this result."
+  "reviewer": "Compared compile_common_def_typed: configuration and expression carriers and all eight ordered steps agree, including post-mti length for fresh-location reservation, even alignment, the original next_loc for chain_exps, and source annotation. Numbering, known-function and direct-call results and all four updated configuration fields agree. compileCallMtiFuel_eq_source proves whole-result agreement with the executed compiler using the pass equations directly."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "shift_correct",
