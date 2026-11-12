@@ -268,6 +268,14 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: arbitrary closure value, intermediate values, argument list, block tag, code pointer, numeric arity and fields; both full generated calls with matching environments and counts; arbitrary independent compiler and FFI state carriers; and unconditional equality of complete evaluations agree. The refs field uses the canonical finite-support carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "do_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvaluateOrdinary.lean", "lean_name": "doAppSuccess",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code", "BvlSem.State.refs", "f"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the literal HOL source proof and typed replay: the successful source application, related states and arguments, twelve operation exclusions, existential target value and state, pre-state value relation, post-state relation, and unchanged target refs and code agree. The state fields and pointer map use canonical finite-support carriers with same-module roundtrips. Primitive semantics inherits reals_as_rational_cuts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "do_app_err",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Ffi.lean", "lean_name": "doAppErr",
   "statement_status": "reviewed_fmap_as_finite_support_relation",

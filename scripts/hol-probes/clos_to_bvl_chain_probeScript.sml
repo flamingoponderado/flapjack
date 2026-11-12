@@ -1108,6 +1108,343 @@ in
     PROVE_TAC[lookup_vars_IMP2]);
   val _ = show_thm "lookup_vars_IMP_replay=" lookup_vars_IMP_replay;
 end;
+(* Replay primitive-operation success simulation using the original proof. *)
+local
+  open preamble clos_to_bvlTheory clos_to_bvlProofTheory closSemTheory bvlSemTheory listTheory backend_commonTheory semanticPrimitivesPropsTheory
+in
+  fun cases_on_op q = Cases_on q >|
+  map (MAP_EVERY Cases_on) [[], [], [], [], [`b`], [`g`], [`m`], [], [`t`]];
+  val add_args_F = Q.prove (
+    `  !cl args p i tag xs.
+   add_args cl args ≠ SOME (RefPtr b p) ∧
+   add_args cl args ≠ SOME (Number i) ∧
+   add_args cl args ≠ SOME (Word64 w) ∧
+   add_args cl args ≠ SOME (Block tag xs) ∧
+   add_args cl args ≠ SOME (ByteVector bs)`,
+  Cases_on `cl` >>
+  srw_tac[][add_args_def]);
+  val state_rel_globals = Q.prove (
+    `  state_rel f s t ⇒
+    get_global 0 t.globals = SOME (SOME (global_table s.max_app)) ∧
+    LIST_REL (OPTREL (v_rel s.max_app f t.refs t.code)) s.globals (DROP num_added_globals t.globals)`,
+  srw_tac[][state_rel_def]);
+  val v_to_list = Q.prove (
+    `  ∀v l v'.
+   v_to_list v = SOME l ∧
+   v_rel max_app f r c v v'
+   ⇒
+   ∃l'. v_to_list v' = SOME l' ∧
+        LIST_REL (v_rel max_app f r c) l l'`,
+  ho_match_mp_tac closSemTheory.v_to_list_ind >>
+  srw_tac[][v_rel_SIMP,closSemTheory.v_to_list_def,bvlSemTheory.v_to_list_def] >>
+  every_case_tac >> full_simp_tac(srw_ss())[] >> srw_tac[][] >>
+  srw_tac[][bvlSemTheory.v_to_list_def] >> res_tac >> srw_tac[][]);
+  val do_eq = Q.prove (
+    `  INJ ($' f) (FDOM f) (FRANGE f) ∧
+   (∀x y bs. FLOOKUP f x = SOME y ⇒ FLOOKUP r y ≠ SOME (ByteArray T bs)) ⇒
+    (∀x y x1 y1.
+           v_rel max_app f r c x x1 ∧
+           v_rel max_app f r c y y1 ⇒
+           do_eq x y = do_eq r x1 y1) ∧
+    (∀x y x1 y1.
+           LIST_REL (v_rel max_app f r c) x x1 ∧
+           LIST_REL (v_rel max_app f r c) y y1 ⇒
+           do_eq_list x y = do_eq_list r x1 y1)`,
+  strip_tac >>
+  HO_MATCH_MP_TAC closSemTheory.do_eq_ind >>
+  srw_tac[][]
+  >- (srw_tac[][closSemTheory.do_eq_def] >>
+      Cases_on `x` >>
+      fs[v_rel_SIMP] >> fs[add_args_def] >> srw_tac[][] >>
+      Cases_on `y` >>
+      fs[v_rel_SIMP] >> fs[add_args_def] >> srw_tac[][] >>
+      rev_full_simp_tac(srw_ss())[] >>
+      imp_res_tac LIST_REL_LENGTH >>
+      full_simp_tac(srw_ss())[closure_tag_def,partial_app_tag_def,clos_tag_shift_def] >>
+      BasicProvers.EVERY_CASE_TAC >>
+      rev_full_simp_tac (srw_ss()++ARITH_ss) [] >>
+      full_simp_tac(srw_ss())[INJ_DEF, FLOOKUP_DEF] >>
+      fs [bvlSemTheory.isClos_def,closure_tag_def,partial_app_tag_def] >>
+      metis_tac [])
+  >- full_simp_tac(srw_ss())[closSemTheory.do_eq_def]
+  >- (res_tac >>
+      srw_tac[][closSemTheory.do_eq_def] >>
+      Cases_on `do_eq x y` >>
+      full_simp_tac(srw_ss())[] >>
+      qpat_x_assum `X = do_eq _ y'' y'''` (mp_tac o GSYM) >>
+      srw_tac[][])
+  >- full_simp_tac(srw_ss())[closSemTheory.do_eq_def]
+  >- full_simp_tac(srw_ss())[closSemTheory.do_eq_def]);
+  val do_app_success_replay = Q.prove (
+    `   (do_app op xs s1 = Rval (v,s2)) /\
+   state_rel f s1 t1 /\
+   LIST_REL (v_rel s1.max_app f t1.refs t1.code) xs ys /\
+   (* store updates need special treatment *)
+   (op <> MemOp Ref) /\ (op <> MemOp Update) ∧ (op <> MemOp XorByte) ∧
+   (op ≠ MemOp RefArray) ∧ (∀f. op ≠ MemOp (RefByte f)) ∧ (op ≠ MemOp UpdateByte) ∧
+   (op ≠ MemOp FromListByte) ∧ op ≠ MemOp ConcatByteVec ∧
+   (∀b. op ≠ MemOp (CopyByte b)) ∧ (∀c. op ≠ BlockOp (Constant c)) ∧
+   (∀n. op ≠ (FFI n)) ∧
+   (∀t. op ≠ (ThunkOp t)) ==>
+   ?w t2.
+     (do_app (compile_op op) ys t1 = Rval (w,t2)) /\
+     v_rel s1.max_app f t1.refs t1.code v w /\
+     state_rel f s2 t2 /\
+     (t1.refs = t2.refs) /\ (t1.code = t2.code)`,
+  Cases_on `∃test. op = BlockOp (BoolTest test)`
+  >-
+   (gvs [closSemTheory.do_app_def,AllCaseEqs()] \\ rw []
+    \\ gvs [bvlSemTheory.do_app_def])
+  \\ Cases_on `op = BlockOp BoolNot`
+  >-
+   (gvs [closSemTheory.do_app_def,AllCaseEqs()] \\ rw []
+    \\ gvs [bvlSemTheory.do_app_def])
+  \\ Cases_on `∃ws test. op = WordOp (WordTest ws test)`
+  >-
+   (fs [] \\ Cases_on ‘ws’ \\ Cases_on ‘test’
+    \\ gvs [closSemTheory.do_app_def,AllCaseEqs()] \\ rw []
+    \\ gvs [oneline closSemTheory.do_word_app_def,AllCaseEqs()] \\ rw []
+    \\ gvs [v_rel_SIMP,bvlSemTheory.do_app_def]
+    \\ gvs [bvlSemTheory.do_word_app_def])
+  \\ Cases_on `op = BlockOp ListAppend`
+  >-
+   (rw []
+    \\ fs [do_app_def, closSemTheory.do_app_def, case_eq_thms, PULL_EXISTS]
+    \\ rw [] \\ fs [] \\ rw [] \\ fs []
+    \\ imp_res_tac v_to_list \\ fs [] \\ rveq \\ rfs [] \\ rw []
+    \\ match_mp_tac list_to_v_v_rel
+    \\ fs [EVERY2_APPEND_suff])
+  \\ Cases_on `?i. op = IntOp (LessConstSmall i)` THEN1
+    (srw_tac[][closSemTheory.do_app_def,oneline closSemTheory.do_int_app_def] \\ fs [] \\ every_case_tac \\ fs []
+     \\ fs[v_rel_SIMP] \\ rveq \\ fs [bvlSemTheory.do_app_def,bvlSemTheory.do_int_app_def])
+  \\ Cases_on `op = BlockOp BoundsCheckBlock` THEN1
+    (srw_tac[][closSemTheory.do_app_def] \\ fs [] \\ every_case_tac \\ fs []
+     \\ fs[v_rel_SIMP] \\ rveq \\ fs [bvlSemTheory.do_app_def]
+     \\ imp_res_tac LIST_REL_LENGTH \\ fs [])
+  \\ Cases_on `∃b. op = MemOp (BoundsCheckByte b)` THEN1
+    (srw_tac[][closSemTheory.do_app_def] \\ fs [] \\ every_case_tac \\ fs []
+     \\ fs[v_rel_SIMP] \\ rveq \\ fs [bvlSemTheory.do_app_def]
+     \\ imp_res_tac LIST_REL_LENGTH \\ fs [state_rel_def]
+     \\ res_tac \\ fs [] \\ rveq \\ fs []
+     \\ rw [] \\ res_tac \\ fs [])
+  \\ Cases_on `op = MemOp BoundsCheckArray` THEN1
+    (srw_tac[][closSemTheory.do_app_def] \\ fs [] \\ every_case_tac \\ fs []
+     \\ fs[v_rel_SIMP] \\ rveq \\ fs [bvlSemTheory.do_app_def]
+     \\ imp_res_tac LIST_REL_LENGTH \\ fs [state_rel_def]
+     \\ res_tac \\ fs [] \\ rveq \\ fs []
+     \\ rw [] \\ res_tac \\ fs []
+     \\ imp_res_tac LIST_REL_LENGTH \\ fs [])
+  \\ Cases_on `?i. op = BlockOp (EqualConst i)` THEN1
+    (srw_tac[][closSemTheory.do_app_def] \\ fs [] \\ every_case_tac
+     \\ gvs [bvlSemTheory.do_app_def,v_rel_SIMP])
+  \\ Cases_on `op = Install` THEN1 fs[closSemTheory.do_app_def]
+  \\ Cases_on `op = BlockOp Equal` THEN1
+   (srw_tac[][closSemTheory.do_app_def,bvlSemTheory.do_app_def,
+                            bvlSemTheory.do_eq_def]
+    \\ `?x1 x2 y1 y2. xs = [x1;x2] /\ ys = [y1;y2]` by
+          (every_case_tac \\ fs [] \\ NO_TAC) \\ fs []
+    \\ Cases_on `do_eq x1 x2` \\ fs [] \\ rveq
+    \\ `INJ ($' f) (FDOM f) (FRANGE f) ∧
+        (∀x y bs. FLOOKUP f x = SOME y ⇒ FLOOKUP t1.refs y ≠ SOME (ByteArray T bs))`
+    by (fs [state_rel_def] \\ metis_tac[])
+    \\ old_drule (do_eq |> UNDISCH |> CONJUNCT1 |> DISCH_ALL |> GEN_ALL)
+    \\ disch_then old_drule
+    \\ strip_tac
+    \\ `do_eq t1.refs y1 y2 = Eq_val b` by metis_tac [] \\ fs [])
+  \\ Cases_on `op = MemOp ToListByte` THEN1
+   (fs [] \\ rveq \\ fs [do_app_def]
+    \\ Cases_on `xs` \\ fs [closSemTheory.do_app_def,bvlSemTheory.do_app_def]
+    \\ Cases_on `h` \\ fs [] \\ Cases_on `t` \\ fs []
+    \\ strip_tac \\ rveq \\ fs []
+    \\ pop_assum mp_tac \\ simp [Once v_rel_cases]
+    \\ Cases_on `y` \\ fs []
+    THEN1 (CCONTR_TAC \\ fs [] \\ fs [cl_rel_cases] \\ rveq \\ fs [add_args_F])
+    \\ disch_then kall_tac
+    \\ Induct_on `l` \\ fs [closSemTheory.list_to_v_def,bvlSemTheory.list_to_v_def]
+    \\ simp [Once v_rel_cases] \\ fs []
+    \\ simp [Once v_rel_cases] \\ fs [])
+  \\ Cases_on `?tag. op = BlockOp (Cons tag)`
+  >- (
+    rw [closSemTheory.do_app_def] >>
+    fs [] >>
+    every_case_tac >>
+    fs [] >>
+    rw [do_app_def] >>
+    fs [v_rel_SIMP] >>
+    rw []) >>
+  Cases_on `?tag. op = BlockOp (ConsExtend tag)`
+  >- (
+    fs [closSemTheory.do_app_def,AllCaseEqs(),bvlSemTheory.do_app_def,PULL_EXISTS]
+    \\ rpt strip_tac \\ gvs []
+    \\ imp_res_tac LIST_REL_LENGTH
+    \\ gvs [v_rel_SIMP]
+    \\ imp_res_tac LIST_REL_LENGTH
+    \\ conj_tac
+    >- intLib.ARITH_TAC
+    \\ irule EVERY2_APPEND_suff
+    \\ simp []
+    \\ metis_tac [EVERY2_TAKE, EVERY2_DROP]) >>
+  Cases_on `?l. op = BlockOp (LenEq l)`
+  >- (
+    fs [closSemTheory.do_app_def,bvlSemTheory.do_app_def,bvlSemTheory.do_eq_def] >>
+    Cases_on`xs`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    Cases_on `h` >> fs []>>
+    Cases_on `t` >> fs []>>
+    rpt strip_tac >> rveq \\ fs [] >>
+    fs[v_rel_SIMP] \\ rw[] >>
+    rveq \\ fs [listTheory.LIST_REL_EL_EQN]) >>
+  Cases_on `op = MemOp El`
+  >- (
+    fs [closSemTheory.do_app_def,bvlSemTheory.do_app_def,bvlSemTheory.do_eq_def] >>
+    Cases_on`xs`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    Cases_on `h` >> fs []>>
+    Cases_on `t` >> fs []>>
+    Cases_on `h` >> fs []>>
+    Cases_on `t'` >> fs [CaseEq"bool",PULL_EXISTS]>>
+    rpt strip_tac >> rveq \\ fs [] >>
+    fs[v_rel_SIMP] \\ rw[] >>
+    imp_res_tac integerTheory.NUM_POSINT_EXISTS >>
+    rveq \\ fs [listTheory.LIST_REL_EL_EQN] >>
+    every_case_tac >> full_simp_tac(srw_ss())[v_rel_SIMP] >> srw_tac[][v_rel_SIMP] >>
+    full_simp_tac(srw_ss())[state_rel_def] >> res_tac >>
+    full_simp_tac(srw_ss())[v_rel_SIMP] >>
+    srw_tac[][] >> full_simp_tac(srw_ss())[LIST_REL_EL_EQN] >>
+    srw_tac[][]>>full_simp_tac(srw_ss())[] >>
+    first_x_assum match_mp_tac >> intLib.COOPER_TAC) >>
+  Cases_on `op = GlobOp AllocGlobal`
+  >- (
+    strip_tac \\ gvs [closSemTheory.do_app_def,AllCaseEqs(),do_app_def,PULL_EXISTS]
+    \\ pop_assum mp_tac
+    \\ simp [Once v_rel_cases]
+    \\ simp [Once cl_rel_cases]
+    \\ simp [add_args_def |> DefnBase.one_line_ify NONE,AllCaseEqs()]
+    \\ strip_tac
+    \\ gvs []
+    \\ fs [state_rel_def,SF SFY_ss,OPTREL_def,get_global_def]
+    \\ Cases_on `t1.globals` \\ gvs [EVAL “num_added_globals”]
+    \\ irule_at Any EVERY2_APPEND_suff \\ fs []
+    \\ rename [‘REPLICATE n’] \\ qid_spec_tac ‘n’ \\ Induct \\ fs []) >>
+  `?this_is_case. this_is_case op` by (qexists_tac `K T` \\ simp []) >>
+  cases_on_op`op` \\ fs[]
+  >~ [`IntOp`]
+  >-(
+   fsrw_tac[][closSemTheory.do_app_def,oneline closSemTheory.do_int_app_def] >>
+   rw[AllCaseEqs()] >> gvs[v_rel_SIMP] >>
+   simp[bvlSemTheory.do_app_def,bvlSemTheory.do_int_app_def])
+  >~ [`WordOp`]
+  >-(
+   fsrw_tac[][closSemTheory.do_app_def,oneline closSemTheory.do_word_app_def] >>
+   rw[AllCaseEqs()] >> gvs[v_rel_SIMP] >>
+   simp[bvlSemTheory.do_app_def,bvlSemTheory.do_word_app_def])
+  \\ srw_tac [] [closSemTheory.do_app_def,
+    bvlSemTheory.do_app_def, bvlSemTheory.do_eq_def]
+  >>~- ([`Global`],
+    imp_res_tac state_rel_globals >>
+    gvs [AllCaseEqs()] >>
+    gvs [v_rel_SIMP] >>
+    rw [] >> fs [] >>
+    fs [get_global_def, num_added_globals_def] >>
+    rw [] >>
+    imp_res_tac LIST_REL_LENGTH >>
+    fs [LIST_REL_EL_EQN] >>
+    rw [] >>
+    first_x_assum old_drule >>
+    simp [EL_DROP, optionTheory.OPTREL_def])
+  >>~- ([`SetGlobal`],
+    imp_res_tac state_rel_globals >>
+    every_case_tac >>
+    fs [get_global_def, num_added_globals_def] >>
+    rw [] >>
+    imp_res_tac LIST_REL_LENGTH
+    >- fs [DROP_CONS_EL, ADD1] >>
+    fs [LIST_REL_EL_EQN] >>
+    rw [] >>
+    first_x_assum old_drule >>
+    simp [EL_DROP, optionTheory.OPTREL_def] >>
+    full_simp_tac(srw_ss())[state_rel_def] >>
+    rw []
+    >- (
+      fs [num_added_globals_def, DROP_LUPDATE] >>
+      MATCH_MP_TAC EVERY2_LUPDATE_same >>
+      rev_full_simp_tac(srw_ss())[OPTREL_def] )
+    >- fs [get_global_def, HD_LUPDATE]
+    >- metis_tac [])
+  >>~- ([`ElemAt`],
+    Cases_on`xs`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    Cases_on`t`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    Cases_on`h`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    rw[v_rel_SIMP] >> fs[LIST_REL_EL_EQN]>>
+    every_case_tac \\ fs[v_rel_SIMP] \\ rw[]
+    \\ full_simp_tac(srw_ss())[state_rel_def] >> res_tac >> full_simp_tac(srw_ss())[v_rel_SIMP] >>
+    rw[] \\ fs[LIST_REL_EL_EQN])
+  >>~- ([`LengthBlock`],
+    Cases_on`xs`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    Cases_on`t`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    Cases_on`h`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    rw[v_rel_SIMP] >> fs[LIST_REL_EL_EQN]>>
+    every_case_tac \\ fs[v_rel_SIMP] \\ rw[]
+    \\ full_simp_tac(srw_ss())[state_rel_def] >> res_tac >> full_simp_tac(srw_ss())[v_rel_SIMP] >>
+    rw[] \\ fs[LIST_REL_EL_EQN])
+  >>~- ([`Length`],
+    Cases_on`xs`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    Cases_on`t`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    Cases_on`h`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    rw[v_rel_SIMP] >> fs[LIST_REL_EL_EQN]>>
+    every_case_tac \\ fs[v_rel_SIMP] \\ rw[]
+    \\ full_simp_tac(srw_ss())[state_rel_def] >> res_tac >> full_simp_tac(srw_ss())[v_rel_SIMP] >>
+    rw[] \\ fs[LIST_REL_EL_EQN])
+  >>~- ([`LengthByte`],
+    gvs [AllCaseEqs(),PULL_EXISTS,v_rel_SIMP]
+    \\ gvs [state_rel_def]
+    \\ res_tac \\ gvs [])
+  >>~- ([`DerefByte`],
+    Cases_on`xs`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    Cases_on`t`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    Cases_on`h`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    Cases_on`t'`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    Cases_on`h'`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    rw[v_rel_SIMP] >> fs[LIST_REL_EL_EQN]>>
+    every_case_tac \\ fs[v_rel_SIMP] \\ rw[]
+    \\ full_simp_tac(srw_ss())[state_rel_def] >> res_tac >> full_simp_tac(srw_ss())[v_rel_SIMP] >>
+    rw[] \\ fs[LIST_REL_EL_EQN] >>
+    rw[] \\ fs[])
+  >>~- ([`FromList`],
+    every_case_tac >> full_simp_tac(srw_ss())[v_rel_SIMP] >> srw_tac[][v_rel_SIMP] >>
+    imp_res_tac v_to_list >> full_simp_tac(srw_ss())[] >> srw_tac[][] )
+  >>~- ([`LengthByteVec`],
+    Cases_on`xs` \\ fs []
+    \\ Cases_on`t` \\ fs []
+    \\ Cases_on`h` \\ fs []
+    \\ rw[] \\ fs[v_rel_SIMP]
+    \\ metis_tac[clos_tag_shift_inj,LIST_REL_LENGTH])
+  >>~- ([`DerefByteVec`],
+    Cases_on`xs`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    Cases_on`h`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    Cases_on`t`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    Cases_on`h`>>full_simp_tac(srw_ss())[v_rel_SIMP]>>
+    every_case_tac >> full_simp_tac(srw_ss())[v_rel_SIMP] >> srw_tac[][v_rel_SIMP] >>
+    full_simp_tac(srw_ss())[state_rel_def] >> res_tac >> full_simp_tac(srw_ss())[v_rel_SIMP] >>
+    srw_tac[][] >> full_simp_tac(srw_ss())[LIST_REL_EL_EQN] >>srw_tac[][]>>full_simp_tac(srw_ss())[] >>
+    first_x_assum match_mp_tac >> intLib.COOPER_TAC)
+  >>~- ([`TagLenEq`],
+    Cases_on`xs`\\fs[]
+    \\ Cases_on`t`\\fs[]
+    \\ Cases_on`h`\\fs[]
+    \\ rw[] \\ fs[v_rel_SIMP]
+    \\ metis_tac[clos_tag_shift_inj,LIST_REL_LENGTH])
+  >>~- ([`TagEq`],
+    Cases_on`xs`\\fs[]
+    \\ Cases_on`t`\\fs[]
+    \\ Cases_on`h`\\fs[]
+    \\ rw[] \\ fs[v_rel_SIMP]
+    \\ metis_tac[clos_tag_shift_inj,LIST_REL_LENGTH])
+  \\ rpt (pop_assum mp_tac)
+  \\ rpt (TOP_CASE_TAC \\ fs [])
+  \\ full_simp_tac(srw_ss())[v_rel_SIMP] \\ srw_tac[][v_rel_SIMP]
+  \\ full_simp_tac(srw_ss())[v_rel_SIMP] \\ srw_tac[][v_rel_SIMP]
+  \\ CCONTR_TAC \\ fs []);
+  val _ = show_thm "do_app_success_replay=" do_app_success_replay;
+end;
 (* Replay primitive-operation error simulation using the original proof. *)
 local
   open preamble clos_to_bvlTheory clos_to_bvlProofTheory closSemTheory bvlSemTheory listTheory backend_commonTheory semanticPrimitivesPropsTheory
