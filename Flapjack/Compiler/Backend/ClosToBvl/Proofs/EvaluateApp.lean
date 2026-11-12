@@ -717,18 +717,70 @@ theorem clRel_singletonRec_exact_call {C F : Type}
   | mutualRec exps ps positions values fresh stored impossible index locations vars installed =>
     simp at impossible
 
-/-- A singleton recursive closure given exactly its arity selects the body
-with itself between the argument prefix and captured environment. -/
-theorem destClosure_singletonRec_exact (maxApp ptr arity : Nat) (sourceEnv args : List ClosSem.Value)
-    (body : ClosLang.Exp) (bound : arity ≤ maxApp) (positive : arity ≠ 0)
-    (length : args.length = arity) :
-    ClosSem.destClosure maxApp none (.recclosure (some ptr) [] sourceEnv [(arity, body)] 0) args =
-      some (.fullApp body (args ++ [.recclosure (some ptr) [] sourceEnv [(arity, body)] 0] ++ sourceEnv) []) := by
-  have positiveArity : 0 < arity := Nat.pos_of_ne_zero positive
-  have take : args.reverse.take arity = args.reverse := by
+/-- A saturated recursive closure selects its body with all newly supplied
+and saved arguments followed by the recursive group and captured environment. -/
+theorem destClosure_recclosure_exact (maxApp ptr arity index : Nat)
+    (captured oldArgs newArgs : List ClosSem.Value) (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
+    (found : functions[index]? = some (arity, body)) (oldBound : oldArgs.length < arity)
+    (bound : newArgs.length ≤ maxApp) (length : newArgs.length + oldArgs.length = arity) :
+    ClosSem.destClosure maxApp none (.recclosure (some ptr) oldArgs captured functions index) newArgs =
+      some (.fullApp body (newArgs ++ oldArgs ++
+        (List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i) ++ captured) []) := by
+  have take : newArgs.reverse.take (arity - oldArgs.length) = newArgs.reverse := by
     apply List.take_of_length_le
-    simp [length]
-  simp [ClosSem.destClosure, ClosSem.checkLoc, length, bound, positiveArity, take]
+    simp only [List.length_reverse]
+    omega
+  have drop : newArgs.reverse.drop (arity - oldArgs.length) = [] := by
+    apply List.drop_eq_nil_of_le
+    simp only [List.length_reverse]
+    omega
+  simp [ClosSem.destClosure, found, ClosSem.checkLoc, bound, oldBound, length, take, drop, List.append_assoc]
+
+/-- A saturated recursive closure either times out or evaluates the selected
+body with the whole recursive group in its environment. -/
+theorem evaluateApp_recclosure_exact {C F : Type} (s : ClosSem.State C F)
+    (ptr arity index : Nat) (captured oldArgs newArgs : List ClosSem.Value)
+    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
+    (found : functions[index]? = some (arity, body)) (nonempty : newArgs ≠ [])
+    (oldBound : oldArgs.length < arity) (bound : newArgs.length ≤ s.maxApp)
+    (length : newArgs.length + oldArgs.length = arity) :
+    ClosSem.evaluateApp none (.recclosure (some ptr) oldArgs captured functions index) newArgs s =
+      if s.clock < newArgs.length then (.err (.abort .timeoutError), { s with clock := 0 })
+      else
+        let next := ClosSem.fixClock (ClosSem.decClock newArgs.length s)
+          (ClosSem.evaluate [body] (newArgs ++ oldArgs ++
+            (List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i) ++ captured)
+            (ClosSem.decClock newArgs.length s))
+        match next.1 with
+        | .val [value] => (.val [value], next.2)
+        | other => (other, next.2) := by
+  have selected := destClosure_recclosure_exact s.maxApp ptr arity index captured oldArgs newArgs functions body
+    found oldBound bound length
+  cases newArgs with
+  | nil => contradiction
+  | cons head tail =>
+    rw [ClosSem.evaluateApp, selected]
+    simp [ClosSem.evaluateApp]
+    split <;> rfl
+
+/-- A saturated recursive partial closure returns its selected body result when its clock suffices. -/
+theorem evaluateApp_recclosure_partial_exact_body {C F : Type} (s sFinal : ClosSem.State C F)
+    (ptr index arity : Nat) (captured oldArgs newArgs : List ClosSem.Value)
+    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
+    (found : functions[index]? = some (arity, body))
+    (nonempty : newArgs ≠ []) (oldBound : oldArgs.length < arity)
+    (bound : newArgs.length ≤ s.maxApp) (length : newArgs.length + oldArgs.length = arity)
+    (enough : newArgs.length ≤ s.clock) (result : Result (List ClosSem.Value) ClosSem.Value)
+    (bodyRun : ClosSem.evaluate [body] (newArgs ++ oldArgs ++ ((List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i)) ++ captured) (ClosSem.decClock newArgs.length s) =
+      (result, sFinal)) :
+    ClosSem.evaluateApp none (.recclosure (some ptr) oldArgs captured functions index) newArgs s = (result, sFinal) := by
+  rw [evaluateApp_recclosure_exact s ptr arity index captured oldArgs newArgs functions body found nonempty oldBound bound length]
+  rw [if_neg (Nat.not_lt.mpr enough), ClosSem.fixClock_evaluate, bodyRun]
+  cases result with
+  | err error => rfl
+  | val values => cases values with
+    | nil => rfl
+    | cons value tail => cases tail <;> rfl
 
 /-- The exact singleton recursive call preserves the simulation postcondition
 when the recursive body simulation holds. -/
@@ -802,33 +854,6 @@ theorem evaluatePost_singletonRec_exact_call {C F : Type}
     finalStates, map, frame, finalAnnotations, finalClock⟩
 
 /-- Singleton recursive closure simulation step. -/
-theorem evaluateApp_singletonRec_exact {C F : Type} (s sFinal : ClosSem.State C F)
-    (ptr arity : Nat) (sourceEnv args : List ClosSem.Value) (body : ClosLang.Exp)
-    (bound : arity ≤ s.maxApp) (positive : arity ≠ 0) (length : args.length = arity)
-    (enough : arity ≤ s.clock) (result : Result (List ClosSem.Value) ClosSem.Value)
-    (bodyRun : ClosSem.evaluate [body] (args ++ [.recclosure (some ptr) [] sourceEnv [(arity, body)] 0] ++ sourceEnv) (ClosSem.decClock arity s) = (result, sFinal)) :
-    ClosSem.evaluateApp none (.recclosure (some ptr) [] sourceEnv [(arity, body)] 0) args s = (result, sFinal) := by
-  have found := destClosure_singletonRec_exact s.maxApp ptr arity sourceEnv args body bound positive length
-  have nonempty : args ≠ [] := by
-    intro empty
-    simp [empty] at length
-    exact positive length.symm
-  cases args with
-  | nil => contradiction
-  | cons head tail =>
-    rw [ClosSem.evaluateApp, found]
-    simp only [List.length_nil, Nat.sub_zero, length, Nat.not_lt.mpr enough, ↓reduceIte]
-    rw [ClosSem.fixClock_evaluate, bodyRun]
-    cases result with
-    | err error => rfl
-    | val values =>
-      cases values with
-      | nil => rfl
-      | cons value tail =>
-        cases tail <;> simp [ClosSem.evaluateApp]
-
-
-/-- Singleton recursive closure simulation step. -/
 theorem evaluateApp_singletonRec_exact_simulation {C F : Type}
     (s sFinal : ClosSem.State C F) (t : BvlSem.State C F) (f : HolFiniteMapExact Nat Nat)
     (ptr arity : Nat) (sourceEnv sourceArgs : List ClosSem.Value) (fields targetArgs rest : List BvlSem.Value)
@@ -853,8 +878,14 @@ theorem evaluateApp_singletonRec_exact_simulation {C F : Type}
   obtain ⟨bound, positive, locations, vars⟩ := info
   cases bodyRun : ClosSem.evaluate [sourceBody] (sourceArgs ++ [.recclosure (some ptr) [] sourceEnv [(arity, sourceBody)] 0] ++ sourceEnv) (ClosSem.decClock arity s) with
   | mk bodyResult bodyFinal =>
-    have sourceStep := evaluateApp_singletonRec_exact s bodyFinal ptr arity sourceEnv sourceArgs sourceBody
-      bound positive arityMatch enough bodyResult bodyRun
+    have sourceNonempty : sourceArgs ≠ [] := by
+      intro empty
+      simp [empty] at arityMatch
+      exact positive arityMatch.symm
+    have sourceStep := evaluateApp_recclosure_partial_exact_body s bodyFinal ptr 0 arity sourceEnv [] sourceArgs
+      [(arity, sourceBody)] sourceBody (by simp) sourceNonempty (by simpa using Nat.pos_of_ne_zero positive)
+      (by simpa [arityMatch] using bound) (by simpa using arityMatch)
+      (by simpa [arityMatch] using enough) bodyResult (by simpa [arityMatch] using bodyRun)
     rw [appRun] at sourceStep
     cases sourceStep
     exact evaluatePost_singletonRec_exact_call s sFinal t f ptr arity sourceEnv sourceArgs fields targetArgs rest
@@ -883,7 +914,10 @@ theorem evaluateApp_singletonRec_exact_timeout {C F : Type}
     | singletonRec bound positive _ _ _ _ _ => exact ⟨bound, positive⟩
     | mutualRec _ _ _ _ _ _ impossible _ _ _ _ => simp at impossible
   obtain ⟨bound, positive⟩ := info
-  have found := destClosure_singletonRec_exact s.maxApp ptr arity sourceEnv sourceArgs sourceBody bound positive arityMatch
+  have found := destClosure_recclosure_exact s.maxApp ptr arity 0 sourceEnv [] sourceArgs [(arity, sourceBody)] sourceBody
+    (by simp) (by simpa using Nat.pos_of_ne_zero positive)
+    (by simpa [arityMatch] using bound) (by simpa using arityMatch)
+  simp only [List.length_singleton, List.range_one, List.map_cons, List.map_nil, List.append_nil] at found
   have nonempty : sourceArgs ≠ [] := by
     intro empty
     simp [empty] at arityMatch
@@ -2637,71 +2671,6 @@ theorem evaluateApp_ordinary_partial_exact_related {C F : Type}
     rw [sourceTimeout] at appRun
     cases appRun
     exact targetTimeout
-
-/-- A saturated recursive closure selects its body with all newly supplied
-and saved arguments followed by the recursive group and captured environment. -/
-theorem destClosure_recclosure_exact (maxApp ptr arity index : Nat)
-    (captured oldArgs newArgs : List ClosSem.Value) (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
-    (found : functions[index]? = some (arity, body)) (oldBound : oldArgs.length < arity)
-    (bound : newArgs.length ≤ maxApp) (length : newArgs.length + oldArgs.length = arity) :
-    ClosSem.destClosure maxApp none (.recclosure (some ptr) oldArgs captured functions index) newArgs =
-      some (.fullApp body (newArgs ++ oldArgs ++
-        (List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i) ++ captured) []) := by
-  have take : newArgs.reverse.take (arity - oldArgs.length) = newArgs.reverse := by
-    apply List.take_of_length_le
-    simp only [List.length_reverse]
-    omega
-  have drop : newArgs.reverse.drop (arity - oldArgs.length) = [] := by
-    apply List.drop_eq_nil_of_le
-    simp only [List.length_reverse]
-    omega
-  simp [ClosSem.destClosure, found, ClosSem.checkLoc, bound, oldBound, length, take, drop, List.append_assoc]
-
-/-- A saturated recursive closure either times out or evaluates the selected
-body with the whole recursive group in its environment. -/
-theorem evaluateApp_recclosure_exact {C F : Type} (s : ClosSem.State C F)
-    (ptr arity index : Nat) (captured oldArgs newArgs : List ClosSem.Value)
-    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
-    (found : functions[index]? = some (arity, body)) (nonempty : newArgs ≠ [])
-    (oldBound : oldArgs.length < arity) (bound : newArgs.length ≤ s.maxApp)
-    (length : newArgs.length + oldArgs.length = arity) :
-    ClosSem.evaluateApp none (.recclosure (some ptr) oldArgs captured functions index) newArgs s =
-      if s.clock < newArgs.length then (.err (.abort .timeoutError), { s with clock := 0 })
-      else
-        let next := ClosSem.fixClock (ClosSem.decClock newArgs.length s)
-          (ClosSem.evaluate [body] (newArgs ++ oldArgs ++
-            (List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i) ++ captured)
-            (ClosSem.decClock newArgs.length s))
-        match next.1 with
-        | .val [value] => (.val [value], next.2)
-        | other => (other, next.2) := by
-  have selected := destClosure_recclosure_exact s.maxApp ptr arity index captured oldArgs newArgs functions body
-    found oldBound bound length
-  cases newArgs with
-  | nil => contradiction
-  | cons head tail =>
-    rw [ClosSem.evaluateApp, selected]
-    simp [ClosSem.evaluateApp]
-    split <;> rfl
-
-/-- A saturated recursive partial closure returns its selected body result when its clock suffices. -/
-theorem evaluateApp_recclosure_partial_exact_body {C F : Type} (s sFinal : ClosSem.State C F)
-    (ptr index arity : Nat) (captured oldArgs newArgs : List ClosSem.Value)
-    (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
-    (found : functions[index]? = some (arity, body))
-    (nonempty : newArgs ≠ []) (oldBound : oldArgs.length < arity)
-    (bound : newArgs.length ≤ s.maxApp) (length : newArgs.length + oldArgs.length = arity)
-    (enough : newArgs.length ≤ s.clock) (result : Result (List ClosSem.Value) ClosSem.Value)
-    (bodyRun : ClosSem.evaluate [body] (newArgs ++ oldArgs ++ ((List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i)) ++ captured) (ClosSem.decClock newArgs.length s) =
-      (result, sFinal)) :
-    ClosSem.evaluateApp none (.recclosure (some ptr) oldArgs captured functions index) newArgs s = (result, sFinal) := by
-  rw [evaluateApp_recclosure_exact s ptr arity index captured oldArgs newArgs functions body found nonempty oldBound bound length]
-  rw [if_neg (Nat.not_lt.mpr enough), ClosSem.fixClock_evaluate, bodyRun]
-  cases result with
-  | err error => rfl
-  | val values => cases values with
-    | nil => rfl
-    | cons value tail => cases tail <;> rfl
 
 /-- The completion stub enters a singleton recursive closure's compiled body with both
 argument groups and captured values, after the target's additional call tick. -/
@@ -7116,8 +7085,14 @@ theorem evaluateApp_singletonRec_exact_simulation_below {C F : Type}
   obtain ⟨bound, positive, locations, vars⟩ := info
   cases bodyRun : ClosSem.evaluate [sourceBody] (sourceArgs ++ [.recclosure (some ptr) [] sourceEnv [(arity, sourceBody)] 0] ++ sourceEnv) (ClosSem.decClock arity s) with
   | mk bodyResult bodyFinal =>
-    have sourceStep := evaluateApp_singletonRec_exact s bodyFinal ptr arity sourceEnv sourceArgs sourceBody
-      bound positive arityMatch enough bodyResult bodyRun
+    have sourceNonempty : sourceArgs ≠ [] := by
+      intro empty
+      simp [empty] at arityMatch
+      exact positive arityMatch.symm
+    have sourceStep := evaluateApp_recclosure_partial_exact_body s bodyFinal ptr 0 arity sourceEnv [] sourceArgs
+      [(arity, sourceBody)] sourceBody (by simp) sourceNonempty (by simpa using Nat.pos_of_ne_zero positive)
+      (by simpa [arityMatch] using bound) (by simpa using arityMatch)
+      (by simpa [arityMatch] using enough) bodyResult (by simpa [arityMatch] using bodyRun)
     rw [appRun] at sourceStep
     cases sourceStep
     exact evaluatePost_singletonRec_exact_call_below s sFinal t f ptr arity clockBound sourceEnv sourceArgs fields targetArgs rest
