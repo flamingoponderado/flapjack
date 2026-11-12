@@ -1024,6 +1024,7 @@
     {"bytes": 75, "out": "pan_lang_size_of_sh_with_ctxt_probe.out", "rows": 5, "sha256": "4174982ed75aec2ad04d7f015ff9229fed9b3eb1510119e6fa99999051b6add0"},
     {"bytes": 38, "out": "pan_lang_size_of_shape_probe.out", "rows": 4, "sha256": "32604fa007d67683a2d9d2db3688149d109cabd9ee5857ddce37e3328092e8eb"},
     {"bytes": 2165, "out": "pan_lang_size_probe.out", "rows": 17, "sha256": "e7721eaf17e274f7c186d2d435489f0f5e0fa3f3159905e64059a8f2a276dbfa"},
+    {"bytes": 19020, "out": "pan_lang_typed_probe.out", "rows": 37, "sha256": "a7c81dc423f5afc121c857260c1201880d6ee713cacaf522415f22e95e7b5fe2"},
     {"bytes": 2484, "out": "pan_lang_var_exp_probe.out", "rows": 6, "sha256": "a543d03b9fb5ea361922ce8cfdd6474f7425454566da0b0f69c87c66af77588c"},
     {"bytes": 119, "out": "pan_lang_wf_fields_context_probe.out", "rows": 6, "sha256": "f30b43ad3334e1ed02c66f3c469ec61cb0908871d8f5e5ce2b6a3e53ed94517f"},
     {"bytes": 85, "out": "pan_lang_wf_shape_probe.out", "rows": 6, "sha256": "775b0d00a1608f6ff345f4cc9835cd7e647fc175b14826a762e8638f1ebd0be3"},

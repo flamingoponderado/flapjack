@@ -10297,3 +10297,12 @@ run_probe data_to_word_gc_proof_typed_probeScript.sml data_to_word_gc_proof_type
   flat_def_typed flat_APPEND_typed limits_inv_def_typed stack_rel_def_typed the_global_def_typed contains_loc_def_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_lang_typed_probeScript.sml pan_lang_typed_probe.out \
+  opsize_typed shift_typed panop_typed primop_typed varkind_typed decl_typed fun_decl_typed struct_info_typed \
+  exceptions_def_typed functions_def_typed inlinable_def_typed is_decl_def_typed is_exn_decl_def_typed is_function_def_typed is_name_def_typed is_wf_ctxt_def_typed \
+  is_wf_flds_def_typed is_wf_shape_def_typed size_of_eids_def_typed size_of_sh_with_ctxt_def_typed exp_typed global_var_exp_def_typed MEM_IMP_exp_size_typed shape_val_def_typed \
+  var_exp_def_typed prog_typed exp_ids_def_typed free_var_ids_def_typed fun_ids_def_typed nested_seq_def_typed shape_typed MEM_IMP_shape_size_typed \
+  shape_to_str_def_typed size_of_shape_def_typed with_shape_def_typed load_op_def_typed store_op_def_typed \
+  "$cake_dir/pancake/panLangScript.sml" \
+  "$cake_dir/pancake"
