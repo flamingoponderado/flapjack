@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.FiniteMap.BroadCodec
-public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.HolRef
 
 @[expose] public section
 
