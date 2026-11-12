@@ -239,6 +239,105 @@ in
               by srw_tac [ARITH_ss] [] >>
   srw_tac [ARITH_ss] [mk_cl_lem]);
   val _ = show_thm "evaluate_mk_cl_simpl_replay=" evaluate_mk_cl_simpl_replay;
+  val evaluate_generic_app_full = evaluate_generic_app_full_replay;
+  val evaluate_mk_cl_simpl = evaluate_mk_cl_simpl_replay;
+  val evaluate_mk_cl_call_replay = Q.prove (
+    `  !cl env s tag p n args args' exp exp2 xs.
+    evaluate ([cl],env,s) = (Rval [Block tag (CodePtr p::Number &n::xs)], s) ∧
+    evaluate (args,env,s) = (Rval args', s) ∧
+    lookup p s.code = SOME (n+2, exp) ∧
+    lookup (generic_app_fn_location (LENGTH args' - 1)) s.code =
+      SOME (LENGTH args' + 1, generate_generic_app max_app (LENGTH args' - 1)) ∧
+    LENGTH args' - 1 ≥ n ∧
+    n < max_app ∧
+    LENGTH args ≠ 0
+    ⇒
+    evaluate ([mk_cl_call cl args],env,s) =
+     if n = LENGTH args - 1 then
+       if s.clock < LENGTH args
+       then (Rerr(Rabort Rtimeout_error),s with clock := 0)
+       else evaluate ([exp],
+                   args' ++ [Block tag (CodePtr p::Number (&(LENGTH args − 1))::xs)],
+                   dec_clock (LENGTH args) s)
+     else
+         if s.clock < n + 2
+         then (Rerr(Rabort Rtimeout_error),s with clock := 0)
+         else
+         case evaluate ([exp],
+                     DROP (LENGTH args' − (n + 1)) args' ++ [Block tag (CodePtr p::Number (&n)::xs)],
+                     dec_clock (n + 2) s)
+           of
+            | (Rval [v],st') =>
+                (case evaluate ([mk_cl_call (Var 0) (GENLIST (λn. Var (n + 1)) (LENGTH args' − (n + 1)))],
+                              v::(args' ++ [Block tag (CodePtr p::Number (&n)::xs)]),
+                              st') of
+                    | (Rval v,s2) => (Rval [HD v],s2)
+                    | x => x)
+            | x => x`,
+  srw_tac[][Once mk_cl_call_def, evaluate_def, do_app_def, do_int_app_def,do_eq_def, generic_app_fn_location_def] >>
+  full_simp_tac(srw_ss())[ADD1] >>
+  Cases_on `n = &(LENGTH args − 1)` >>
+  srw_tac[][evaluate_APPEND, evaluate_def, do_app_def, do_int_app_def, do_eq_def, find_code_def, FRONT_APPEND] >>
+  simp [] >>
+  imp_res_tac bvlPropsTheory.evaluate_IMP_LENGTH >>
+  rev_full_simp_tac (srw_ss()++ARITH_ss) [] >>
+  `LENGTH args <> 0` by simp[] >>
+  `LENGTH args' - 1 + 1 = LENGTH args'` by decide_tac >>
+  TRY(fs[] \\ NO_TAC) \\
+  `lookup p (dec_clock 1 s).code = SOME (n+2,exp)` by srw_tac[][] >>
+  imp_res_tac evaluate_generic_app_full >>
+  srw_tac[][] >>
+  full_simp_tac (srw_ss()++ARITH_ss) [dec_clock_def] >>
+  simp [evaluate_mk_cl_simpl]);
+  val _ = show_thm "evaluate_mk_cl_call_replay=" evaluate_mk_cl_call_replay;
+  val evaluate_mk_cl_call = evaluate_mk_cl_call_replay;
+  val bEval_def = bvlSemTheory.evaluate_def;
+  val evaluate_mk_cl_call_spec_replay = Q.prove (
+    `  !s env tag p n args exp xs.
+    lookup p s.code = SOME (n+2, exp) ∧
+    lookup (generic_app_fn_location (LENGTH args - 1)) s.code =
+      SOME (LENGTH args + 1, generate_generic_app max_app (LENGTH args - 1)) ∧
+    LENGTH args - 1 ≥ n ∧
+    n < max_app ∧
+    LENGTH args ≠ 0
+    ⇒
+    evaluate ([mk_cl_call (Var (LENGTH args)) (GENLIST Var (LENGTH args))],args ++ [Block tag (CodePtr p::Number (&n)::xs)] ++ env,s) =
+     if n = LENGTH args - 1 then
+       if s.clock < LENGTH args
+       then (Rerr(Rabort Rtimeout_error),s with clock := 0)
+       else evaluate ([exp],
+                   args ++ [Block tag (CodePtr p::Number (&(LENGTH args − 1))::xs)],
+                   dec_clock (LENGTH args) s)
+     else
+         if s.clock < n + 2
+         then (Rerr(Rabort Rtimeout_error),s with clock := 0)
+         else
+         case evaluate ([exp],
+                     DROP (LENGTH args − (n + 1)) args ++ [Block tag (CodePtr p::Number (&n)::xs)],
+                     dec_clock (n + 2) s)
+           of
+            | (Rval [v],st') =>
+                (case evaluate ([mk_cl_call (Var 0) (GENLIST (λn. Var (n + 1)) (LENGTH args − (n + 1)))],
+                              v::(args ++ [Block tag (CodePtr p::Number (&n)::xs)]),
+                              st') of
+                    | (Rval v,s2) => (Rval [HD v],s2)
+                    | x => x)
+            | x => x`,
+  rpt strip_tac >>
+  `evaluate ([Var (LENGTH args)], args ++ [Block tag (CodePtr p::Number (&n)::xs)] ++ env,s) =
+   (Rval [Block tag (CodePtr p::Number (&n)::xs)], s)`
+           by simp [bEval_def, el_append3] >>
+  `evaluate (GENLIST Var (LENGTH args), args ++ [Block tag (CodePtr p::Number (&n)::xs)] ++ env,s) =
+    (Rval args, s)`
+           by (qspecl_then [`0`, `args++[Block tag (CodePtr p::Number (&n)::xs)]++env`, `LENGTH args`]mp_tac evaluate_genlist_vars >>
+               simp [ETA_THM] >>
+               metis_tac [APPEND_ASSOC, TAKE_LENGTH_APPEND]) >>
+  strip_assume_tac (SIMP_RULE (srw_ss()) [GSYM AND_IMP_INTRO] evaluate_mk_cl_call) >>
+  rpt (pop_assum (fn th => first_assum (strip_assume_tac o MATCH_MP th))) >>
+  rev_full_simp_tac(srw_ss())[] >>
+  first_x_assum match_mp_tac >>
+  Cases_on`LENGTH args` \\ fs[GENLIST_CONS]);
+  val _ = show_thm "evaluate_mk_cl_call_spec_replay=" evaluate_mk_cl_call_spec_replay;
   val cl_rel_run_lemma1_replay = Q.prove (
     `  num_args ≤ LENGTH args'
    ⇒
