@@ -10396,3 +10396,12 @@ run_probe bvl_props_typed_probeScript.sml bvl_props_typed_probe.out \
   bVarBound_def_typed do_app_refs_SUBSET_typed evaluate_refs_SUBSET_typed \
   "$cake_dir/compiler/backend/semantics/bvlPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
+
+run_probe pan_common_props_typed_probeScript.sml pan_common_props_typed_probe.out \
+  MAP3_MAP2_typed MAX_LIST_add_not_mem_typed MAX_LIST_i_genlist_typed all_distinct_drop_typed all_distinct_el_fst_same_eq_typed all_distinct_take_typed all_distinct_take_frop_disjoint_typed disjoint_drop_take_sum_typed \
+  disjoint_not_mem_el_typed disjoint_take_drop_sum_typed distinct_lists_append_typed distinct_lists_append_intro_typed distinct_lists_append_right_elim_typed distinct_lists_commutes_typed distinct_lists_cons_typed distinct_lists_eq_disjoint_typed \
+  distinct_lists_simp_cons_typed el_pair_map_fst_el_typed el_reduc_tl_typed genlist_distinct_max_typed map_the_some_cancel_typed map_append_eq_drop_typed max_foldr_lt_typed mem_genlist_add_suc_val_typed \
+  opt_mmap_eq_some_typed opt_mmap_el_typed opt_mmap_length_eq_typed opt_mmap_mem_defined_typed opt_mmap_mem_func_typed opt_mmap_opt_map_typed set_eq_membership_typed ctxt_max_def_typed \
+  no_overlap_def_typed update_eq_zip_flookup_typed \
+  "$cake_dir/pancake/semantics/pan_commonPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
