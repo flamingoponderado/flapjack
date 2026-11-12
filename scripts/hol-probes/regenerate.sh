@@ -10614,3 +10614,8 @@ run_probe word_inst_typed_probeScript.sml word_inst_typed_probe.out \
   pull_exp_def_typed pull_ops_def_typed reduce_const_def_typed rm_const_def_typed three_to_two_reg_def_typed three_to_two_reg_prog_def_typed \
   "$cake_dir/compiler/backend/word_instScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe semantics_props_typed_probeScript.sml semantics_props_typed_probe.out \
+  extend_with_resource_limit_def_typed extend_with_resource_limit_not_fail_typed implements_def_typed implements_trans_typed evaluate_prog_events_determ_typed evaluate_prog_io_events_chain_typed semantics_prog_total_typed semantics_prog_deterministic_typed \
+  "$cake_dir/semantics/proofs/semanticsPropsScript.sml" \
+  "$cake_dir/semantics/proofs"

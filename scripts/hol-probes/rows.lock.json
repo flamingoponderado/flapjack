@@ -1446,6 +1446,7 @@
     {"bytes": 705, "out": "semantic_primitives_source_probe.out", "rows": 10, "sha256": "dd9119d1af14f862133cb07cf13057b20c82ba6e1819eca9c7ade5e6d92f3944"},
     {"bytes": 168806, "out": "semantic_primitives_typed_probe.out", "rows": 98, "sha256": "ed167011d2aff20a05558371452cb1e5037d1b73f3b27d596d59845d2342172a"},
     {"bytes": 985, "out": "semantics_props_implements_probe.out", "rows": 5, "sha256": "f53da98daaa2a6e22393170064c07d3e6061da99974fe450827eef806ca8415a"},
+    {"bytes": 1732, "out": "semantics_props_typed_probe.out", "rows": 8, "sha256": "593f4175ca1ff12065afa9ac05c8f00a13a80d8afaaed9bebafb9ff55321e9a0"},
     {"bytes": 104, "out": "seq_assoc_probe.out", "rows": 4, "sha256": "8ab5e367a9c452fccd1b21d7336832c7a367af7cbddda67f170d0645699f5892"},
     {"bytes": 147, "out": "seq_call_ret_probe.out", "rows": 3, "sha256": "d1b446c7ea60af5120fc2c1103e2b564d2eb064d0550eb52fa39cb5efa2a2012"},
     {"bytes": 181, "out": "set_sep_assoc_probe.out", "rows": 4, "sha256": "472eede40f3af29408dfac8b09479a08eb332298f7abd822a1b9976ed295c972"},
