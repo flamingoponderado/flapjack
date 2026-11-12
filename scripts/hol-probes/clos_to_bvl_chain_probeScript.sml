@@ -192,6 +192,19 @@ in
   IS_SUBLIST ls ls`,
   Induct>>fs[IS_SUBLIST]);
   val _ = show_thm "IS_SUBLIST_REFL_replay=" IS_SUBLIST_REFL_replay;
+  val EVERY_ZIP_GENLIST_replay = Q.prove (
+    `!xs.
+      (!i. i < LENGTH xs ==> P (EL i xs,f i)) ==>
+      EVERY P (ZIP (xs,GENLIST f (LENGTH xs)))`,
+  HO_MATCH_MP_TAC SNOC_INDUCT \\ full_simp_tac(srw_ss())[GENLIST] \\ REPEAT STRIP_TAC
+  \\ full_simp_tac(srw_ss())[ZIP_SNOC,EVERY_SNOC] \\ REPEAT STRIP_TAC
+  THEN1
+   (FIRST_X_ASSUM MATCH_MP_TAC \\ REPEAT STRIP_TAC
+    \\ IMP_RES_TAC EL_SNOC \\ full_simp_tac(srw_ss())[]
+    \\ `i < SUC (LENGTH xs)` by DECIDE_TAC \\ RES_TAC \\ METIS_TAC [])
+  \\ `LENGTH xs < SUC (LENGTH xs)` by DECIDE_TAC \\ RES_TAC
+  \\ full_simp_tac(srw_ss())[SNOC_APPEND,EL_LENGTH_APPEND]);
+  val _ = show_thm "EVERY_ZIP_GENLIST_replay=" EVERY_ZIP_GENLIST_replay;
   val twod_table_lemma_replay = Q.prove (
     `!x y z.
     z ≤ y ⇒

@@ -8,6 +8,25 @@ public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 /-! Selectors for stored partial-closure arguments. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
+/-- An indexed property holds for every pair in the corresponding generated zip. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "EVERY_ZIP_GENLIST"]
+theorem everyZipGenlist {α β : Type} (P : α × β → Bool) (f : Nat → β) (xs : List α) :
+    (∀ (i : Nat) (bound : i < xs.length),
+      letI : Nonempty α := ⟨xs[i]'bound⟩
+      P (holEl i xs, f i) = true) →
+    (xs.zip ((List.range xs.length).map f)).all P = true := by
+  intro indexed
+  apply List.all_eq_true.mpr
+  intro pair member
+  obtain ⟨i, hi, rfl⟩ := List.mem_iff_getElem.mp member
+  have bound : i < xs.length := by
+    simp only [List.length_zip, List.length_map, List.length_range, Nat.min_self] at hi
+    exact hi
+  let _ : Nonempty α := ⟨xs[i]'bound⟩
+  have selected := indexed i bound
+  rw [holEl_eq_getElem i xs bound] at selected
+  simpa only [List.getElem_zip, List.getElem_map, List.getElem_range] using selected
+
 /-- Zipping equal-length lists extended by one element extends the result. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "map2_snoc"]
 theorem map2Snoc {α β γ : Type} (l1 : List α) (l2 : List β)

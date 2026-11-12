@@ -233,6 +233,12 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: args and prev lists have independent polymorphic element types, with exactly the three original conjuncts and all three arithmetic conclusions."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "EVERY_ZIP_GENLIST",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "everyZipGenlist",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: independent list and generated element types, arbitrary Boolean predicate and generator, bounded indexed HOL EL premise and EVERY over the full zipped generated list agree. Each existing index bound supplies local inhabitance."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "IS_SUBLIST_MEM",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "isSublistMem",
   "statement_status": "reviewed_exact",

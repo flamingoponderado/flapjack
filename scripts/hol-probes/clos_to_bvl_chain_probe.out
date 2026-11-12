@@ -71,6 +71,7 @@ IS_SUBLIST_MEM_replay=∀(ls :α list) (ls' :α list) (x :α). MEM x ls ∧ IS_S
 IS_SUBLIST_APPEND1_replay=∀(A :α list) (B :α list) (C :α list). IS_SUBLIST A C ⇒ IS_SUBLIST (A ++ B) C
 IS_SUBLIST_APPEND2_replay=∀(A :α list) (B :α list) (C :α list). IS_SUBLIST B C ⇒ IS_SUBLIST (A ++ B) C
 IS_SUBLIST_REFL_replay=∀(ls :α list). IS_SUBLIST ls ls
+EVERY_ZIP_GENLIST_replay=∀(xs :α list). (∀(i :num). i < LENGTH xs ⇒ (P :α # β -> bool) (xs❲i❳,(f :num -> β) i)) ⇒ EVERY P (ZIP (xs,GENLIST f (LENGTH xs)))
 twod_table_lemma_replay=∀(x :num) (y :num) (z :num). z ≤ y ⇒ GENLIST (λ(t :num). (f :num -> num -> α) ((t + x * y) DIV y) ((t + x * y) MOD y)) z = GENLIST (λ(t :num). f x t) z
 twod_table_replay=∀(f :num -> num -> α) (x :num) (y :num). (0 :num) < y ⇒ FLAT (GENLIST (λ(m :num). GENLIST (λ(n :num). f m n) y) x) = GENLIST (λ(n :num). f (n DIV y) (n MOD y)) (x * y)
 less_rectangle_replay=∀(x :num) (y :num) (m :num) (n :num). m < x ∧ n < y ⇒ x * n + m < x * y
