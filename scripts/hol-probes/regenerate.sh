@@ -9942,3 +9942,13 @@ run_probe stack_props_typed_probeScript.sml stack_props_typed_probe.out \
   set_store_const_typed set_store_with_const_typed set_var_const_typed set_var_with_const_typed \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
+
+run_probe flat_sem_typed_probeScript.sml flat_sem_typed_probe.out \
+  semantics_def_typed evaluate_clock_typed fix_clock_evaluate_typed evaluate_def_typed do_app_def_typed initial_state_def_typed environment_typed v_typed \
+  install_config_typed state_typed list_id_def_typed Boolv_def_typed Unitv_def_typed build_rec_env_def_typed ctor_same_type_def_typed do_eq_def_typed \
+  do_opapp_def_typed v_to_list_def_typed list_to_v_def_typed v_to_char_list_def_typed vs_to_string_def_typed check_type_def_typed dest_Litv_def_typed v_to_flat_def_typed \
+  flat_to_v_def_typed do_test_def_typed bind_exn_v_def_typed chr_exn_v_def_typed div_exn_v_def_typed subscript_exn_v_def_typed pmatch_def_typed pmatch_rows_def_typed \
+  do_if_def_typed do_if_either_or_typed AppUnit_def_typed dec_clock_def_typed fix_clock_def_typed v_to_bytes_def_typed v_to_words_def_typed do_eval_def_typed \
+  dest_thunk_ret_typed dest_thunk_def_typed update_thunk_def_typed bad_thunk_update_def_typed do_app_const_typed \
+  "$cake_dir/compiler/backend/semantics/flatSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
