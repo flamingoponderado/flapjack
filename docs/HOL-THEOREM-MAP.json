@@ -233,6 +233,18 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: args and prev lists have independent polymorphic element types, with exactly the three original conjuncts and all three arithmetic conclusions."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "map2_snoc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "map2Snoc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: input and output types are independent, the equal-length premise is preserved, and MAP2/SNOC match zipWith and append on those equal-length lists."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "el_map2",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "elMap2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: all three carrier types are independent, both bounds and all three HOL EL occurrences agree. Existing bounds supply local inhabitants, and equal input lengths make MAP2 and zipWith agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "length_take2",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "lengthTake2",
   "statement_status": "reviewed_exact",

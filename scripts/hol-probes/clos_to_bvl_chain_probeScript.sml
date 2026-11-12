@@ -154,6 +154,18 @@ in
     `!l1 l2. 0 < LENGTH l1 ⇒ HD (l1 ++ l2) = HD l1`,
   Cases_on `l1` >> srw_tac[][]);
   val _ = show_thm "hd_append_replay=" hd_append_replay;
+  val el_map2_replay = Q.prove (
+    `!x f l1 l2.
+    LENGTH l1 = LENGTH l2 ∧ x < LENGTH l1
+    ⇒
+    EL x (MAP2 f l1 l2) = f (EL x l1) (EL x l2)`,
+  Induct_on `x` >>
+  srw_tac[][] >>
+  Cases_on `l2` >>
+  full_simp_tac(srw_ss())[] >>
+  Cases_on `l1` >>
+  full_simp_tac(srw_ss())[]);
+  val _ = show_thm "el_map2_replay=" el_map2_replay;
   val twod_table_lemma_replay = Q.prove (
     `!x y z.
     z ≤ y ⇒
@@ -1078,6 +1090,7 @@ in
   Cases_on `l2` >>
   full_simp_tac(srw_ss())[] >>
   metis_tac[SNOC_APPEND]);
+  val _ = show_thm "map2_snoc_replay=" map2_snoc;
   val tl_append = Q.prove (
     `  !l1 l2. 0 < LENGTH l1 ⇒ TL (l1 ++ l2) = TL l1 ++ l2`,
   Cases_on `l1` >> srw_tac[][]);

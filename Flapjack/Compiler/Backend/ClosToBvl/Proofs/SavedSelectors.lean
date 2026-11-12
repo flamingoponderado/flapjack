@@ -8,6 +8,32 @@ public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 /-! Selectors for stored partial-closure arguments. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
+/-- Zipping equal-length lists extended by one element extends the result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "map2_snoc"]
+theorem map2Snoc {α β γ : Type} (l1 : List α) (l2 : List β)
+    (f : α → β → γ) (x : α) (y : β) :
+    l1.length = l2.length →
+      List.zipWith f (l1 ++ [x]) (l2 ++ [y]) = List.zipWith f l1 l2 ++ [f x y] := by
+  intro h
+  rw [List.zipWith_append h]
+  rfl
+
+/-- A bounded entry of a paired map applies the function to both entries. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "el_map2"]
+theorem elMap2 {α β γ : Type} (x : Nat) (f : α → β → γ)
+    (l1 : List α) (l2 : List β) (h : l1.length = l2.length ∧ x < l1.length) :
+    letI : Nonempty α := ⟨l1[x]'h.2⟩
+    letI : Nonempty β := ⟨l2[x]'(by omega)⟩
+    letI : Nonempty γ := ⟨f (l1[x]'h.2) (l2[x]'(by omega))⟩
+    holEl x (List.zipWith f l1 l2) = f (holEl x l1) (holEl x l2) := by
+  have h2 : x < l2.length := by omega
+  let _ : Nonempty α := ⟨l1[x]'h.2⟩
+  let _ : Nonempty β := ⟨l2[x]'h2⟩
+  let _ : Nonempty γ := ⟨f (l1[x]'h.2) (l2[x]'h2)⟩
+  have hz : x < (List.zipWith f l1 l2).length := by simp [List.length_zipWith]; omega
+  rw [holEl_eq_getElem x _ hz, holEl_eq_getElem x l1 h.2, holEl_eq_getElem x l2 h2]
+  exact List.getElem_zipWith
+
 /-- Taking beyond a list's length keeps its entire length. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "length_take2"]
 theorem lengthTake2 {α : Type} (x : Nat) (l : List α) :
