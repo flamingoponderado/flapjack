@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml", "hol_name": "SmartOp1_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/CodeLabels.lean", "lean_name": "smartOp1_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source statement: for arbitrary BVL operation and expression the unary optimizer preserves the complete code-label set of the original operation. The successful integer equality rewrite uses the reviewed simple-expression label lemma."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml", "hol_name": "MEM_extract_list_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/CodeLabels.lean", "lean_name": "extractList_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: every expression appearing as SOME in the extracted list has the empty code-label set. The induction uses the production extractList equation and covers variable aliases, integer constants, and empty block constructors."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml", "hol_name": "delete_var_code_labels",
   "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/CodeLabels.lean", "lean_name": "deleteVar_codeLabels",
   "statement_status": "reviewed_exact",

@@ -6,6 +6,8 @@ compile_thm=∀(xs :bvl$exp list) (s1 :(γ, 'ffi) state) (env :v list) (res :(v 
 evaluate_compile_exp=evaluate ([(d :bvl$exp)],(env :v list),(s :(α, β) state)) = ((r :(v list, v) result),(t :(α, β) state)) ∧ r ≠ (Rerr (Rabort Rtype_error :v error_result) :(v list, v) result) ⇒ evaluate ([compile_exp d],env,s) = (r,t)
 delete_var_code_labels=∀(x :bvl$exp). get_code_labels (delete_var x) = get_code_labels x
 dest_simple_SOME_code_labels=∀(x :bvl$exp) (y :int). dest_simple x = SOME y ⇒ get_code_labels x = (∅ :num -> bool)
+SmartOp1_code_labels=get_code_labels (SmartOp1 (op :closLang$op) (x :bvl$exp)) = get_code_labels (Op op [x] :bvl$exp)
+MEM_extract_list_code_labels=∀(xs :bvl$exp list) (x :bvl$exp). MEM (SOME x) (extract_list xs) ⇒ get_code_labels x = (∅ :num -> bool)
 env_rel_LLOOKUP_NONE_replay=∀(ax :bvl$exp option list) (env :v list) (env2 :v list) (n :num). env_rel (:γ) (:'ffi) ax env env2 ∧ (LLOOKUP ax n = (NONE :bvl$exp option option) ∨ LLOOKUP ax n = SOME (NONE :bvl$exp option)) ⇒ env2❲n❳ = env❲n❳
 env_rel_LOOKUP_SOME_replay=∀(env :v list) (env2 :v list) (ax :bvl$exp option list) (x :bvl$exp) (n :num). env_rel (:γ) (:'ffi) ax env env2 ∧ LLOOKUP ax n = SOME (SOME x) ⇒ v_rel (:γ) (:'ffi) x env❲n❳ env2❲n❳ (DROP n env) (DROP n env2)
 evaluate_delete_var_Rerr_SING=∀(x :bvl$exp) (s :(α, β) state) (r :(α, β) state) (e :v error_result) (env2 :v list). evaluate ([x],env2,s) = ((Rerr e :(v list, v) result),r) ∧ e ≠ (Rabort Rtype_error :v error_result) ⇒ evaluate ([delete_var x],env2,s) = ((Rerr e :(v list, v) result),r)
