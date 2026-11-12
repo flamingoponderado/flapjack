@@ -10687,3 +10687,9 @@ run_probe infer_t_typed_probeScript.sml infer_t_typed_probe.out \
   infer_t_typed get_tyname_def_typed type_ident_to_string_def_typed ty_var_name_def_typed add_parens_def_typed inf_type_to_string_rec_def_typed inf_type_to_string_def_typed \
   "$cake_dir/compiler/inference/infer_tScript.sml" \
   "$cake_dir/compiler/inference"
+
+run_probe evaluate_typed_probeScript.sml evaluate_typed_probe.out \
+  evaluate_def_typed full_evaluate_ind_typed evaluate_clock_typed fix_clock_evaluate_typed full_evaluate_def_typed dec_clock_def_typed fix_clock_def_typed fix_clock_do_eval_res_typed \
+  list_result_def_typed sing_env_def_typed do_eval_res_def_typed \
+  "$cake_dir/semantics/evaluateScript.sml" \
+  "$cake_dir/semantics"
