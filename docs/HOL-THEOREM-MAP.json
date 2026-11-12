@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_jumpProofScript.sml", "hol_name": "bvl_get_code_labels_JumpList",
+  "lean_path": "Flapjack/Compiler/Backend/BvlJump/Proofs.lean", "lean_name": "jumpList_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL statement: for every offset and branch list, the generated jump tree has exactly the union of the code-label sets of the original branches. The mapped image union implements BIGUNION of the set of mapped label sets. Independently reviewed the BVL expression carrier, executable JumpList, getCodeLabels and assignment-label cases against their HOL definitions."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "renumber_code_locs_fv1",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberFreeVars.lean", "lean_name": "renumberCodeLocs_freeVar",
   "statement_status": "reviewed_exact",

@@ -58,6 +58,8 @@ probe_needs_refresh() {
        "$cake_dir/compiler/backend/proofs/clos_callProofScript.sml" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == data_sem_stack_probeScript.sml &&
        "$cake_dir/compiler/backend/data_to_wordScript.sml" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == bvl_jump_probeScript.sml &&
+       "$cake_dir/compiler/backend/bvl_jumpScript.sml" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == source_to_flat_opassign_probeScript.sml &&
        "$cake_dir/semantics/semanticPrimitivesScript.sml" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == source_to_flat_opderef_probeScript.sml &&
@@ -9560,9 +9562,9 @@ run_probe tokens_carriers_probeScript.sml tokens_carriers_probe.out \
   "$cake_dir/semantics"
 
 run_probe bvl_jump_probeScript.sml bvl_jump_probe.out \
-  JumpList_def_typed Jump_def_typed \
-  "$cake_dir/compiler/backend/bvl_jumpScript.sml" \
-  "$cake_dir/compiler/backend"
+  JumpList_def_typed Jump_def_typed evaluate_Jump_typed bvl_get_code_labels_JumpList_typed evaluate_JumpList_replay \
+  "$cake_dir/compiler/backend/proofs/bvl_jumpProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
 
 run_probe bvi_inline_probeScript.sml bvi_inline_probe.out \
   bvi_mk_tick_def_typed canonical_wrapper_def_typed \

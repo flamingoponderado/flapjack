@@ -75,9 +75,10 @@ private theorem applicationExpression_bounded {C F : Type} [Nonempty C]
     cases op <;> simp_all [getOpClass]
   exact localEnvBounded_simpleApp interp transform limit op hEmpty hEval hEnv simple args each
 
-/-- Structural source-expression induction using the existing bounded cases.
-The factored simulation relations retain their pending HOL correspondence status. -/
-private theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
+/-- Structural source-expression induction from the expression and declaration
+induction hypotheses at smaller clocks. This Flapjack-specific helper assembles
+the bounded cases used to prove the source-to-flat correctness theorem. -/
+theorem localEnvBounded_arrayTree_of_smaller {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (limit : Nat)
     (calledIH : LocalEnvClockIH (F := F) interp transform limit)
@@ -123,17 +124,5 @@ where
     all_goals have h := List.sizeOf_lt_of_mem _member
     all_goals try simp only [Prod.mk.sizeOf_spec] at h
     all_goals omega
-
-/-- Every expression satisfies the bounded simulation from the expression and
-declaration induction hypotheses at smaller clocks. -/
-theorem localEnvBounded_arrayTree_of_smaller {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
-    (smallerExprs : ∀ n, n < limit → ∀ expr, LocalEnvBoundedIH (F := F) interp transform n expr)
-    (smallerDecs : ∀ n, n < limit → ∀ decs, FactoredDecBoundedIH (F := F) interp transform n decs)
-    (expr : AstHOL.Exp) :
-    LocalEnvBoundedIH (F := F) interp transform limit expr :=
-  localEnvBounded_arrayTree interp transform limit
-    smallerExprs
-    smallerDecs expr
 
 end Flapjack.Compiler.Backend.SourceToFlat
