@@ -1178,6 +1178,7 @@ in
       srw_tac[][])
   >- full_simp_tac(srw_ss())[closSemTheory.do_eq_def]
   >- full_simp_tac(srw_ss())[closSemTheory.do_eq_def]);
+  val _ = show_thm "state_rel_UPDATE_REF_typed=" clos_to_bvlProofTheory.state_rel_UPDATE_REF;
   val _ = show_thm "state_rel_NEW_REF_typed=" clos_to_bvlProofTheory.state_rel_NEW_REF;
   val _ = show_thm "not_isClos_typed=" clos_to_bvlProofTheory.not_isClos;
   val _ = show_thm "do_eq_replay=" do_eq;

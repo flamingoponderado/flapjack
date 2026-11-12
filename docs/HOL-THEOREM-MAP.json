@@ -280,6 +280,13 @@
   "reviewer": "Compared the typed HOL source and original proof: the arbitrary related values and source decoding premises, target decoding and pointwise related result agree. The f and refs parameters use canonical finite-support carriers with same-module codec witnesses; code remains a sparse tree."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "state_rel_UPDATE_REF",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MappedRefsUpdate.lean", "lean_name": "stateRel_updateRef",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code", "BvlSem.State.refs", "f"],
+  "reviewer": "Compared the HOL source theorem: the state relation, relocation lookup, old source cell lookup, pre-update related replacement cells and non-frozen target cell are retained in order, and the conclusion updates both corresponding cells. The listed state fields and relocation parameter use canonical finite-support maps with state codec witnesses; target code remains a sparse tree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "state_rel_NEW_REF",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/FreshTargetRefs.lean", "lean_name": "stateRel_newRef",
   "statement_status": "reviewed_fmap_as_finite_support_relation",

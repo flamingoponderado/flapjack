@@ -78,6 +78,40 @@ theorem stateRel_update_mapped {C F : Type} (s : ClosSem.State C F) (t : BvlSem.
       refine ⟨target, ptr, lookup, ?_, refRel_mono grow source target rel⟩
       simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, ptrNe] using targetFound
 
+namespace MappedRefsUpdateHOL
+
+/-- The source state maps use their canonical finite-support carriers. -/
+theorem holFmapAsFiniteSupportRelationWitness_ClosSem.State {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
+/-- The target state maps use their canonical finite-support carrier. -/
+theorem holFmapAsFiniteSupportRelationWitness_BvlSem.State {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+
+/-- Updating corresponding cells with related values preserves the state relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "state_rel_UPDATE_REF"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code, BvlSem.State.refs, f])]
+theorem stateRel_updateRef {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (sourcePtr targetPtr : Nat)
+    (oldCell sourceCell : ClosSem.Ref ClosSem.Value) (targetCell : BvlSem.Ref BvlSem.Value)
+    (premises : stateRel f s t ∧ f.lookup sourcePtr = some targetPtr ∧
+      s.refs.lookup sourcePtr = some oldCell ∧
+      refRel (vRel s.maxApp f t.refs t.code) sourceCell targetCell ∧
+      (∀ bytes, targetCell ≠ .byteArray true bytes)) :
+    stateRel f { s with refs := s.refs.updateEq (sourcePtr, sourceCell) }
+      { t with refs := t.refs.updateEq (targetPtr, targetCell) } := by
+  obtain ⟨states, mapped, _, related, notFrozen⟩ := premises
+  have frame := mappedUpdate_frame f t.refs sourcePtr targetPtr mapped targetCell
+  have submap : f.submap f := by intro key value found; exact found
+  apply stateRel_update_mapped s t f sourcePtr targetPtr sourceCell targetCell states mapped notFrozen
+  exact refRel_mono (fun _ _ rel => vRel_grow_refs rel submap frame) sourceCell targetCell related
+
+end MappedRefsUpdateHOL
+
 /-- Writing a validated byte to corresponding mutable byte arrays preserves
 the state relation and all unmapped target references. -/
 theorem doApp_updateByte_related {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State C F)
@@ -191,9 +225,6 @@ theorem doApp_updateArray_related {C F : Type} (s : ClosSem.State C F) (t : BvlS
   obtain ⟨targetFields, targetFound, fieldsRel⟩ := stateRel_array_lookup states sourcePtr targetPtr fields mapped found
   let newCell := BvlSem.Ref.valueArray (targetFields.set index.toNat targetValue)
   have frame := mappedUpdate_frame f t.refs sourcePtr targetPtr mapped newCell
-  have submap : f.submap f := by intro key val lookup; exact lookup
-  have grownFields := fieldsRel.imp (fun _ _ rel => vRel_grow_refs rel submap frame)
-  have grownValue := vRel_grow_refs valueRel submap frame
   have targetBound : ¬ index.toNat ≥ targetFields.length := by
     rw [← fieldsRel.length_eq]
     omega
@@ -201,8 +232,8 @@ theorem doApp_updateArray_related {C F : Type} (s : ClosSem.State C F) (t : BvlS
   refine ⟨targetFields, ?_, ?_, ?_, .block .nil, frame⟩
   · simp [ClosSem.doApp, ClosSem.applyMemory, found, nonnegative, sourceBound]
   · simp [BvlSem.doApp, BvlSem.applyMemory, targetFound, nonnegative, targetBound]
-  · exact stateRel_update_mapped s t f sourcePtr targetPtr _ _ states mapped (by simp)
-      (relatedFields_set grownFields index.toNat value targetValue grownValue)
+  · exact MappedRefsUpdateHOL.stateRel_updateRef f s t sourcePtr targetPtr (.valueArray fields) _ _
+      ⟨states, mapped, found, relatedFields_set fieldsRel index.toNat value targetValue valueRel, by simp⟩
 
 /-- Successful value-array writes have a valid pointer and in-bounds index. -/
 theorem updateArray_success {C F : Type} (args : List ClosSem.Value)
