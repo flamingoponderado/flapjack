@@ -1,5 +1,41 @@
 [
  {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_IMAGE_DEF",
+  "lean_path": "Flapjack/Misc/Bag/Image.lean", "lean_name": "bagImage",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms independent input and output carriers, the actual filtered fiber and its cardinality, and the original value one for an infinite fiber. No finiteness premise is imposed on the input bag."
+ },
+ {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_CARD",
+  "lean_path": "Flapjack/Misc/Bag/Card.lean", "lean_name": "holBagCard",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with BAG_CARD_typed and HOL new_specification confirms the total function and its finite-bag relation specification over arbitrary bag carriers. The global choice imposes no constraint on cardinality for infinite bags."
+ },
+ {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_CARD",
+  "lean_path": "Flapjack/Misc/Bag/Card.lean", "lean_name": "holBagCard_spec",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with BAG_CARD_typed and HOL new_specification confirms the total function and its finite-bag relation specification over arbitrary bag carriers. The global choice imposes no constraint on cardinality for infinite bags."
+ },
+ {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_FILTER_DEF",
+  "lean_path": "Flapjack/Misc/Bag/Filter.lean", "lean_name": "bagFilter",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms arbitrary element type, unrestricted bag and predicate, and original pointwise multiplicities including infinite bags."
+ },
+ {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "FINITE_BAG_FILTER",
+  "lean_path": "Flapjack/Misc/Bag/Filter.lean", "lean_name": "finiteBag_filter",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the original finite-bag premise and full conclusion for arbitrary predicates and bags. The proof follows finite-bag induction."
+ },
+ {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_CARD_RELn",
+  "lean_path": "Flapjack/Misc/Bag/Card.lean", "lean_name": "bagCardRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the entire impredicative relation, including all quantifiers, base and insertion closure, without finiteness or cardinality hypotheses."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "BAG_UNION_MONO",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Bag.lean", "lean_name": "bagUnion_mono",
   "statement_status": "reviewed_exact",
