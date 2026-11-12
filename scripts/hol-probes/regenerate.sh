@@ -10413,3 +10413,8 @@ run_probe word_remove_proof_typed_probeScript.sml word_remove_proof_typed_probe.
   set_fp_var_compile_state_typed set_store_compile_state_typed set_var_compile_state_typed set_vars_compile_state_typed unset_var_compile_state_typed word_exp_compile_state_typed word_remove_correct_typed \
   "$cake_dir/compiler/backend/proofs/word_removeProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe word_inst_proof_typed_probeScript.sml word_inst_proof_typed_probe.out \
+  inst_select_Loop_helper_typed inst_select_thm_typed binary_branch_exp_def_typed pull_ops_simp_def_typed evaluate_three_to_two_reg_prog_typed three_to_two_reg_Loop_typed three_to_two_reg_correct_typed \
+  "$cake_dir/compiler/backend/proofs/word_instProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
