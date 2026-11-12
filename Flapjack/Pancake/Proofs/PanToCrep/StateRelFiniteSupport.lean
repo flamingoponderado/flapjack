@@ -236,7 +236,12 @@ theorem panToCrepCallStateRelFiniteExactLocalUpdate
     The remaining HOL side conditions (`no_overlap`, `ctxt_max`, `shape_of`,
     `OPT_MMAP`, `flatten`, `is_wf_shape_nil`) are rendered clause-for-clause.
     `ValueHOL width` and `HolWordLab width` use the positive `BitVec width`
-    model of HOL's type-indexed words, recorded by the word qualifier. -/
+    model of HOL's type-indexed words, recorded by the word qualifier.
+    The typed capture `locals_rel_def_typed`
+    (`pan_to_crep_proof_typed_probe.out`) also shows the context at
+    `β context`, but this relation reads only `ctxt.vars`/`ctxt.vmax`, which do
+    not depend on the context's `eids` word dimension, so that HOL type
+    variable is vacuous here and the single `width` parameter is harmless. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_def"
   (fmap_as_finite_support_relation :=
     [PanToCrepContextExact.vars, sourceLocals, targetLocals])
@@ -416,17 +421,20 @@ theorem shMemLoadHOLFiniteExact_ret_corresponds {width : Nat} [NeZero width] {σ
 /-- Exact port of HOL `excp_rel_def`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:16-23`). Both maps are
     standalone exact finite-map parameters, so the qualifier records them as
-    bare entries: `compilerCodes` is HOL's `ceids : eid |-> 'a word` and
-    `sourceShapes` is HOL's `seids`, the source `eshapes : eid |-> shape`. HOL
+    bare entries. The typed capture `excp_rel_def_typed`
+    (`pan_to_crep_proof_typed_probe.out`) gives
+    `ceids : α |-> β` and `seids : α |-> γ`: the key type and both value types
+    are independent, so the Lean relation binds them generically (in use
+    `α = MlS`, `β = BitVec width`, `γ = ShapeHOL`). HOL
     `FDOM seids = FDOM ceids` is rendered pointwise on the canonical
     `HolFiniteMapExact` lookup (equality of definedness), and `FLOOKUP` becomes
     `.lookup`. The source map's values are not related to the compiler's; only
     the domains and the injectivity of the compiler codes are asserted. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "excp_rel_def"
   (fmap_as_finite_support_relation := [compilerCodes, sourceShapes])]
-def panToCrepExcpRelFiniteExact {width : Nat} [NeZero width]
-    (compilerCodes : HolFiniteMapExact MlS (BitVec width))
-    (sourceShapes : HolFiniteMapExact MlS ShapeHOL) : Prop :=
+def panToCrepExcpRelFiniteExact {α β γ : Type}
+    (compilerCodes : HolFiniteMapExact α β)
+    (sourceShapes : HolFiniteMapExact α γ) : Prop :=
   (∀ key, (sourceShapes.lookup key).isSome =
     (compilerCodes.lookup key).isSome) ∧
     ∀ exception exception' code code',
@@ -470,7 +478,10 @@ theorem panToCrepLocalsRelFiniteExact_valueShapeProjection {width : Nat} [NeZero
     lookup premises imply `is_wf_shape_v_nil` for that value. The result is the
     exact value-level predicate; its finite-map translations are the three
     named carriers, and its word values use positive `BitVec width` as recorded
-    by the word qualifier. -/
+    by the word qualifier. The typed capture `locals_rel_wf_shape_typed` shows
+    the context at `α context` and the locals at `β`, but only `ctxt.vars` is
+    read, so the context's word dimension is vacuous and fixing it at `width`
+    loses nothing. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_wf_shape" 2345
   (fmap_as_finite_support_relation :=
     [PanToCrepContextExact.vars, sourceLocals, targetLocals])
@@ -501,7 +512,10 @@ theorem panToCrepLocalsRelWfShapeFiniteExact {width : Nat} [NeZero width]
     `List.mapM`, `shape_of`/`flatten`/`is_wf_shape_nil` become
     `shapeOfHOLExact`/`flattenHOL`/`isWfShapeExactHOL []`, and `LENGTH` is
     `List.length`. The slot-length clause follows from the tagged HOL
-    `opt_mmap_length_eq` applied to the relation's successful map. -/
+    `opt_mmap_length_eq` applied to the relation's successful map.
+    The typed capture `locals_rel_lookup_ctxt_typed` shows the context at
+    `α context` and the locals at `β`, but only `ctxt.vars` is read, so the
+    context's word dimension is vacuous and fixing it at `width` loses nothing. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_lookup_ctxt"
   (fmap_as_finite_support_relation :=
     [PanToCrepContextExact.vars, sourceLocals, targetLocals])]
@@ -987,10 +1001,13 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst2 {width : Nat} {σ : Type}
 
 /-- Exact port of HOL `tlc_def`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2317-2319`):
-    `tlc ns args = FEMPTY |++ ZIP (ns, FLAT (MAP flatten args))`. Keys are
-    `num` (`Nat`) and values are `'a word_lab` (`HolWordLab width`), so the
+    `tlc ns args = FEMPTY |++ ZIP (ns, FLAT (MAP flatten args))`. The typed
+    capture `tlc_def_typed` (`pan_to_crep_proof_typed_probe.out`) gives
+    `ns : α list` and the result `α |-> β word_lab`, so the slot key type is
+    independent of the word dimension; the Lean definition binds it generically
+    (in use `α = Nat`) and values are `'a word_lab` (`HolWordLab width`), so the
     result carrier is the canonical finite-support
-    `HolFiniteMapExact Nat (HolWordLab width)`; `|++` is the reviewed
+    `HolFiniteMapExact α (HolWordLab width)`; `|++` is the reviewed
     `HolFiniteMapExact.updateListEq` rendering of HOL `FUPDATE_LIST` (HOL `=`),
     and HOL `flatten` is the tagged `flattenHOL`. The standalone
     `fmap_as_finite_support_result` qualifier records only that finite-support
@@ -998,17 +1015,18 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst2 {width : Nat} {σ : Type}
     lookup-level correspondence to the raw `FUPDATE_LIST_HOL` operation. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "tlc_def"
   (fmap_as_finite_support_result)]
-def tlcHOL {width : Nat} [NeZero width] (slots : List Nat)
-    (arguments : List (ValueHOL width)) : HolFiniteMapExact Nat (HolWordLab width) :=
+def tlcHOL {α : Type} [DecidableEq α] {width : Nat} [NeZero width] (slots : List α)
+    (arguments : List (ValueHOL width)) : HolFiniteMapExact α (HolWordLab width) :=
   HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
     (slots.zip ((arguments.map flattenHOL).flatten))
 
 /-- Canonical standalone finite-map witness for `tlcHOL`: its `lookup` is
     exactly the HOL-shaped raw `FUPDATE_LIST_HOL` operation applied to the
     everywhere-undefined function, with no premises. -/
-theorem holFmapAsFiniteSupportResultWitness_tlcHOL {width : Nat} [NeZero width]
-    (slots : List Nat) (arguments : List (ValueHOL width)) (key : Nat) :
-    ((tlcHOL slots arguments : HolFiniteMapExact Nat (HolWordLab width))).lookup key =
+theorem holFmapAsFiniteSupportResultWitness_tlcHOL {α : Type} [DecidableEq α]
+    {width : Nat} [NeZero width]
+    (slots : List α) (arguments : List (ValueHOL width)) (key : α) :
+    ((tlcHOL slots arguments : HolFiniteMapExact α (HolWordLab width))).lookup key =
       FUPDATE_LIST_HOL (fun _ => none)
         (slots.zip ((arguments.map flattenHOL).flatten)) key := rfl
 /-- Finite-support view of the independent HOL `t_locs` map parameter. -/
@@ -1180,27 +1198,31 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {σ : Type}
   | _ => trivial
 
 /-- Exact port of HOL `slc_def` (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2313-2315`):
-    `slc vshs args = FEMPTY |++ ZIP (MAP FST vshs, args)`. The keys are the
-    `varname` components (`MlS`) of the `(varname # shape)` pairs and the values
-    are the `panSem$v` arguments (`ValueHOL width`), so the result is the
+    `slc vshs args = FEMPTY |++ ZIP (MAP FST vshs, args)`. The typed capture
+    `slc_def_typed` (`pan_to_crep_proof_typed_probe.out`) gives
+    `vshs :(α # γ) list`, `args :β list` and result `α |-> β`: the key type, the
+    (phantom) shape type and the value type are independent, so the Lean
+    definition binds them generically (in use the keys are the `varname`
+    components `MlS` of the `(varname # shape)` pairs, `γ = ShapeHOL`, and the
+    values are the `panSem$v` arguments `ValueHOL width`). The result is the
     canonical finite-support map over exact carriers. The
     `fmap_as_finite_support_result` qualifier records only that finite-support
     representation; the same-module witness below states the unconditional
     lookup-level correspondence to the raw `FUPDATE_LIST_HOL` operation. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "slc_def"
   (fmap_as_finite_support_result)]
-def slcHOL {width : Nat} [NeZero width] (variables : List (MlS × ShapeHOL))
-    (arguments : List (ValueHOL width)) : HolFiniteMapExact MlS (ValueHOL width) :=
+def slcHOL {α γ β : Type} [DecidableEq α] (variables : List (α × γ))
+    (arguments : List β) : HolFiniteMapExact α β :=
   HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
     ((variables.map Prod.fst).zip arguments)
 
 /-- Canonical standalone finite-map witness for `slcHOL`: its `lookup` is
     exactly the HOL-shaped raw `FUPDATE_LIST_HOL` operation applied to the
     everywhere-undefined function, with no premises. -/
-theorem holFmapAsFiniteSupportResultWitness_slcHOL {width : Nat} [NeZero width]
-    (variables : List (MlS × ShapeHOL)) (arguments : List (ValueHOL width))
-    (key : MlS) :
-    ((slcHOL variables arguments : HolFiniteMapExact MlS (ValueHOL width))).lookup key =
+theorem holFmapAsFiniteSupportResultWitness_slcHOL {α γ β : Type} [DecidableEq α]
+    (variables : List (α × γ)) (arguments : List β)
+    (key : α) :
+    ((slcHOL variables arguments : HolFiniteMapExact α β)).lookup key =
       FUPDATE_LIST_HOL (fun _ => none)
         ((variables.map Prod.fst).zip arguments) key := rfl
 
@@ -1209,10 +1231,13 @@ theorem holFmapAsFiniteSupportResultWitness_slcHOL {width : Nat} [NeZero width]
     `FEMPTY |++ ZIP (MAP FST vsh,args) = slc vsh args ∧
      FEMPTY |++ ZIP (ns,FLAT (MAP flatten args)) = tlc ns args`.
     Both conjuncts state that the raw finite-map update on `FEMPTY` is
-    definitionally the named `slc`/`tlc` constructor, over the exact
-    `MlS`/`ShapeHOL`/`ValueHOL`/`HolWordLab` carriers, matching `slcHOL`/`tlcHOL`
-    clause-for-clause; the HOL finite maps are represented by the reviewed
-    `HolFiniteMapExact` carrier.
+    definitionally the named `slc`/`tlc` constructor, matching
+    `slcHOL`/`tlcHOL` clause-for-clause; the HOL finite maps are represented by
+    the reviewed `HolFiniteMapExact` carrier. The typed capture
+    `slc_tlc_rw_typed` (`pan_to_crep_proof_typed_probe.out`) gives four
+    independent type variables (`α` key, `γ` shape, `β` word dimension, `δ`
+    second key), so the Lean theorem binds the key and shape types generically
+    (in use `α = MlS`, `γ = ShapeHOL`, `δ = Nat`, `β = width`).
 
     This is a theorem-level finite-map equality: its conclusion is a conjunction
     of two `HolFiniteMapExact` map equalities, so it carries the dedicated
@@ -1223,8 +1248,9 @@ theorem holFmapAsFiniteSupportResultWitness_slcHOL {width : Nat} [NeZero width]
     ignored-proof threading. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "slc_tlc_rw"
   (fmap_as_finite_support_equalities)]
-theorem slcTlcRwHOL {width : Nat} [NeZero width]
-    (variables : List (MlS × ShapeHOL)) (slots : List Nat)
+theorem slcTlcRwHOL {α γ δ : Type} [DecidableEq α] [DecidableEq δ]
+    {width : Nat} [NeZero width]
+    (variables : List (α × γ)) (slots : List δ)
     (arguments : List (ValueHOL width)) :
     (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
         ((variables.map Prod.fst).zip arguments) = slcHOL variables arguments) ∧
@@ -1233,15 +1259,17 @@ theorem slcTlcRwHOL {width : Nat} [NeZero width]
   constructor <;> rfl
 
 /-- Lookup-level witness for the first `slc_tlc_rw` conjunct (the `slc` side). -/
-theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1 {width : Nat} [NeZero width]
-    (variables : List (MlS × ShapeHOL)) (arguments : List (ValueHOL width)) (key : MlS) :
+theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1 {α γ : Type} [DecidableEq α]
+    {width : Nat} [NeZero width]
+    (variables : List (α × γ)) (arguments : List (ValueHOL width)) (key : α) :
     (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
         ((variables.map Prod.fst).zip arguments)).lookup key =
       (slcHOL variables arguments).lookup key := rfl
 
 /-- Lookup-level witness for the second `slc_tlc_rw` conjunct (the `tlc` side). -/
-theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2 {width : Nat} [NeZero width]
-    (slots : List Nat) (arguments : List (ValueHOL width)) (key : Nat) :
+theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2 {δ : Type} [DecidableEq δ]
+    {width : Nat} [NeZero width]
+    (slots : List δ) (arguments : List (ValueHOL width)) (key : δ) :
     (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
         (slots.zip ((arguments.map flattenHOL).flatten))).lookup key =
       (tlcHOL slots arguments).lookup key := rfl
