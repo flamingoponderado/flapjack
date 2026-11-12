@@ -116,6 +116,32 @@ val _ = show_thm "v_rel_union_replay=" v_rel_union_replay;
 local
   open preamble clos_to_bvlTheory clos_to_bvlProofTheory bvlSemTheory bvlPropsTheory listTheory backend_commonTheory
 in
+  val cl_rel_run_lemma1_replay = Q.prove (
+    `  num_args ≤ LENGTH args'
+   ⇒
+   evaluate (GENLIST Var num_args, DROP (LENGTH args' - num_args) args' ++ stuff, t1) =
+   (Rval (DROP (LENGTH args' - num_args) args'), t1)`,
+  srw_tac[][] >>
+  assume_tac (Q.SPECL [`0`, `DROP (LENGTH args' - num_args) args'++stuff`, `num_args`, `t1`] evaluate_genlist_vars) >>
+  rev_full_simp_tac(srw_ss())[] >>
+  rpt (pop_assum mp_tac) >>
+  srw_tac [ARITH_ss] [ETA_THM] >>
+  `LENGTH (DROP (LENGTH args' - num_args) args') = num_args` by srw_tac [ARITH_ss] [] >>
+  metis_tac [TAKE_LENGTH_APPEND]);
+  val _ = show_thm "cl_rel_run_lemma1_replay=" cl_rel_run_lemma1_replay;
+  val cl_rel_run_lemma2_replay = Q.prove (
+  `num_args ≤ LENGTH args'
+   ⇒
+   evaluate (GENLIST Var (num_args + 1), DROP (LENGTH args' - num_args) args' ++ [f] ++ stuff, t1) =
+   (Rval (DROP (LENGTH args' - num_args) args' ++ [f]), t1)`,
+  srw_tac[][] >>
+  assume_tac (Q.SPECL [`0`, `DROP (LENGTH args' - num_args) args'++[f]++stuff`, `num_args+1`, `t1`] evaluate_genlist_vars) >>
+  rev_full_simp_tac(srw_ss())[] >>
+  rpt (pop_assum mp_tac) >>
+  srw_tac [ARITH_ss] [ETA_THM] >>
+  `LENGTH (DROP (LENGTH args' - num_args) args'++[f]) = num_args+1` by srw_tac [ARITH_ss] [] >>
+  metis_tac [TAKE_LENGTH_APPEND]) |> Q.INST [`stuff`|-> `[]`] |> SIMP_RULE (srw_ss()) [];
+  val _ = show_thm "cl_rel_run_lemma2_replay=" cl_rel_run_lemma2_replay;
   (* Replay the local polymorphic list-relation theorem. *)
   val cl_rel_run_lemma3_replay = Q.prove (
     `LIST_REL R args args' ⇒

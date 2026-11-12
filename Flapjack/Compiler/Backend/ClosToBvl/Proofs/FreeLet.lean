@@ -16,6 +16,46 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   BvlSem.holFmapAsFiniteSupportWitness
 end FreeLetCarrier
 
+/-- A suffix of the supplied arguments evaluates as a generated variable list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_run_lemma1"
+  (fmap_as_finite_support := [refs])]
+theorem clRelRunLemma1 {C F : Type} (numArgs : Nat) (args stuff : List BvlSem.Value)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) (bound : numArgs ≤ args.length) :
+    BvlSem.evaluate ((List.range numArgs).map Bvl.Exp.var)
+      (args.drop (args.length - numArgs) ++ stuff) s =
+        (.val (args.drop (args.length - numArgs)), s) := by
+  have suffixLength : (args.drop (args.length - numArgs)).length = numArgs := by
+    simp only [List.length_drop]
+    omega
+  have run := BvlProps.evaluateGenlistVars 0 (args.drop (args.length - numArgs) ++ stuff)
+    numArgs s (by simp [suffixLength])
+  have takeEq : (args.drop (args.length - numArgs) ++ stuff).take numArgs =
+      args.drop (args.length - numArgs) := by
+    rw [List.take_append_of_le_length (by omega)]
+    exact List.take_of_length_le (by omega)
+  simpa only [BvlSem.evaluateTuple, Nat.add_zero, List.drop_zero, takeEq] using run
+
+/-- A suffix followed by the closure evaluates as the generated variable list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_run_lemma2"
+  (fmap_as_finite_support := [refs])]
+theorem clRelRunLemma2 {C F : Type} (numArgs : Nat) (args : List BvlSem.Value)
+    (f : BvlSem.Value) (s : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (bound : numArgs ≤ args.length) :
+    BvlSem.evaluate ((List.range (numArgs + 1)).map Bvl.Exp.var)
+      (args.drop (args.length - numArgs) ++ [f]) s =
+        (.val (args.drop (args.length - numArgs) ++ [f]), s) := by
+  have suffixLength : (args.drop (args.length - numArgs)).length = numArgs := by
+    simp only [List.length_drop]
+    omega
+  have run := BvlProps.evaluateGenlistVars 0 (args.drop (args.length - numArgs) ++ [f])
+    (numArgs + 1) s (by simp [suffixLength])
+  have allLength : (args.drop (args.length - numArgs) ++ [f]).length = numArgs + 1 := by
+    simp [suffixLength]
+  have takeEq : (args.drop (args.length - numArgs) ++ [f]).take (numArgs + 1) =
+      args.drop (args.length - numArgs) ++ [f] := by
+    exact List.take_of_length_le (by omega)
+  simpa only [BvlSem.evaluateTuple, Nat.add_zero, List.drop_zero, takeEq] using run
+
 /-- Free selectors recover all fields following a block's two header values. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "bEval_free_let_Block"
   (fmap_as_finite_support := [refs])]

@@ -157,6 +157,20 @@
   "reviewer": "Compared the literal local HOL source proof and typed replay: related source and target values have equal full optional byte decodings, including NONE, with fixed word8 bytes. The f and refs inputs use canonical finite support and same-module codec witnesses."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "cl_rel_run_lemma1",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/FreeLet.lean", "lean_name": "clRelRunLemma1",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the literal local HOL proof and typed replay: independent compiler and FFI state types, arbitrary argument suffix and trailing environment, the sole length bound, generated variables, and unchanged-state result agree. The refs field uses the canonical finite-support state carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "cl_rel_run_lemma2",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/FreeLet.lean", "lean_name": "clRelRunLemma2",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the literal local HOL proof and typed replay after its final substitution stuff := [] and simplification: independent compiler and FFI state types, arbitrary argument suffix and last value, the sole length bound, generated variables, and unchanged-state result agree. The refs field uses the canonical finite-support state carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "cl_rel_run_lemma3",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArgumentRelation.lean", "lean_name": "clRelRunLemma3",
   "statement_status": "reviewed_exact",
