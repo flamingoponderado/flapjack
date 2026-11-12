@@ -10388,3 +10388,11 @@ run_probe backend_props_typed_probeScript.sml backend_props_typed_probe.out \
   option_le_eq_eqns_typed option_map2_max_add_typed OPTION_MAP2_MAX_COMM_typed OPTION_MAP2_MAX_ASSOC_typed state_cc_def_typed FST_state_co_typed SND_state_co_typed \
   "$cake_dir/compiler/backend/semantics/backendPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
+
+run_probe bvl_props_typed_probeScript.sml bvl_props_typed_probe.out \
+  get_code_labels_def_typed find_code_EVERY_IMP_typed do_app_err_typed evaluate_CONS_typed evaluate_APPEND_typed evaluate_SNOC_typed evaluate_LENGTH_typed evaluate_IMP_LENGTH_typed \
+  evaluate_SING_typed do_app_change_clock_typed do_app_change_clock_err_typed do_app_io_events_mono_typed inc_clock_def_typed evaluate_add_clock_typed evaluate_io_events_mono_typed evaluate_add_to_clock_io_events_mono_typed \
+  do_app_with_code_typed do_app_with_code_err_not_Install_typed do_app_Rval_swap_typed do_app_Rerr_swap_typed evaluate_mk_tick_typed evaluate_mono_typed evaluate_expand_env_typed isVar_def_typed \
+  bVarBound_def_typed do_app_refs_SUBSET_typed evaluate_refs_SUBSET_typed \
+  "$cake_dir/compiler/backend/semantics/bvlPropsScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
