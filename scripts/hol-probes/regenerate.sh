@@ -10338,3 +10338,12 @@ run_probe gen_gc_partial_typed_probeScript.sml gen_gc_partial_typed_probe.out \
   gc_move_ref_list_def_typed gc_move_data_def_typed partial_gc_def_typed \
   "$cake_dir/compiler/backend/gc/gen_gc_partialScript.sml" \
   "$cake_dir/compiler/backend/gc"
+
+run_probe pattern_comp_typed_probeScript.sml pattern_comp_typed_probe.out \
+  is_const_row_def_typed is_Any_def_typed is_Or_row_def_typed take_until_Any_def_typed move_const_up_def_typed insert_Any_def_typed is_True_def_typed mk_Disj_def_typed \
+  mk_Conj_def_typed mk_If_def_typed get_pos_def_typed pat_to_guard_def_typed pats_to_code_def_typed pmatch_list_LENGTH_typed is_Any_pmatch_typed match_take_until_Any_typed \
+  match_append_typed pmatchResult_case_NONE_typed is_const_row_lemma_typed not_is_const_row_typed EVERY_take_until_Any_typed matdch_FILTER_NOT_NONE_typed match_move_const_up_typed match_insert_Any_typed \
+  walk_def_typed walk_list_def_typed app_pos_Pos_typed walk_thm_typed walk_append_typed dt_eval_guard_pat_to_guard_typed pat_to_code_thm_typed comp_thm_typed \
+  comp_def_typed \
+  "$cake_dir/compiler/backend/pattern_matching/pattern_compScript.sml" \
+  "$cake_dir/compiler/backend/pattern_matching"
