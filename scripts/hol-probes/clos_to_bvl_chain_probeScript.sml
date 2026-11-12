@@ -1182,6 +1182,14 @@ in
   val ETA2_THM = Q.prove (
     `(\x y. f a b c x y) = f a b c`,
   srw_tac[][FUN_EQ_THM]);
+  val LESS_LENGTH_env_rel_IMP_replay = Q.prove (
+    `!env env2 n.
+      n < LENGTH env /\ env_rel max_app f refs code env env2 ==>
+      n < LENGTH env2 /\ v_rel max_app f refs code (EL n env) (EL n env2)`,
+  Induct \\ full_simp_tac(srw_ss())[LENGTH] \\ REPEAT STRIP_TAC
+  \\ Cases_on `env2` \\ full_simp_tac(srw_ss())[env_rel_def]
+  \\ Cases_on `n` \\ full_simp_tac(srw_ss())[] );
+  val _ = show_thm "LESS_LENGTH_env_rel_IMP_replay=" LESS_LENGTH_env_rel_IMP_replay;
   val state_rel_globals_replay = Q.prove (
     `state_rel f s t ⇒
     get_global 0 t.globals = SOME (SOME (global_table s.max_app)) ∧

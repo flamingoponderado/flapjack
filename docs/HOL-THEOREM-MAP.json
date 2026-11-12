@@ -301,6 +301,13 @@
   "reviewer": "Compared the HOL source theorem and local proof replay: for arbitrary related source and target environments, freshness in the target reference domain implies the same relation after insertion of an arbitrary target reference cell. The relocation and target reference maps use canonical finite-support carriers; code remains a sparse tree."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "LESS_LENGTH_env_rel_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvaluateVar.lean", "lean_name": "envRel_index",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["f", "refs"],
+  "reviewer": "Compared the HOL source and typed local proof replay: a bounded source index and prefix-related environments imply both a bounded target index and the value relation at HOL EL in each list. The relation permits an arbitrary extra target suffix. The relocation and target reference maps use canonical finite-support carriers; code remains a sparse tree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "state_rel_globals",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/StateRelation.lean", "lean_name": "stateRel_globals",
   "statement_status": "reviewed_fmap_as_finite_support_relation",
