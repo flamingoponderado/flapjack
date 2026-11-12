@@ -150,7 +150,7 @@ theorem compileExpsCorrect_tick {C F : Type} (body : Bvl.Exp) (env : List Value)
     have bodyRun : BvlSem.evaluate [body] env (BvlSem.decClock 1 source) = (res, next) := by
       simpa [BvlSem.evaluate, zero] using run
     have relatedDec := stateRel_decClock relocate source target related 1
-    have sourceOkDec : stateOk (BvlSem.decClock 1 source) := (stateOk_decClock 1 source).2 sourceOk
+    have sourceOkDec : stateOk (BvlSem.decClock 1 source) := (evaluateOk_lemma 1 source).1.2 sourceOk
     have bodyHandlers : BvlHandle.Proofs.handleOk [body] := by
       simpa [BvlHandle.Proofs.handleOk] using handlers
     obtain ⟨targetNext, newRelocate, clock, targetRun, relatedNext, envEq, refsEq⟩ :=

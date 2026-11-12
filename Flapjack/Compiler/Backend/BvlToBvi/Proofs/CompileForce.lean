@@ -103,7 +103,7 @@ theorem simulation_force_unevaluated {C F : Type} (location index : Nat) (env : 
         apply findCode_bvOk (some location) [thunk, function] args source.code body source.refs selected
         simpa [bvOkList] using And.intro thunkOk functionOk
       have relatedDec := stateRel_decClock relocate source target related 1
-      have sourceOkDec : stateOk (BvlSem.decClock 1 source) := (stateOk_decClock 1 source).2 sourceOk
+      have sourceOkDec : stateOk (BvlSem.decClock 1 source) := (evaluateOk_lemma 1 source).1.2 sourceOk
       have bodyClockSmaller : (BvlSem.decClock 1 source).clock < source.clock := by
         simp [BvlSem.decClock]
         omega

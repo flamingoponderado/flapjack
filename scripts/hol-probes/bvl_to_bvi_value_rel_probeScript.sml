@@ -56,6 +56,11 @@ val _ = show "bv_ok_def=" bv_ok_def;
 val _ = show "bv_ok_Unit=" bv_ok_Unit;
 val _ = show "bv_ok_Boolv=" bv_ok_Boolv;
 val _ = show "state_ok_def=" state_ok_def;
+val evaluate_ok_lemma_replay = prove(
+  ``(state_ok (bvlSem$dec_clock n s) = state_ok s) /\
+    ((bvlSem$dec_clock n s).refs = s.refs)``,
+  full_simp_tac (srw_ss()) [state_ok_def, bvlSemTheory.dec_clock_def]);
+val _ = show "evaluate_ok_lemma_replay=" evaluate_ok_lemma_replay;
 val _ = show "bvi_inc_clock_def=" bviPropsTheory.inc_clock_def;
 val _ = show "bvi_inc_clock_ZERO=" bviPropsTheory.inc_clock_ZERO;
 val _ = show "bvi_dec_clock_inv_clock1=" bviPropsTheory.dec_clock_inv_clock1;

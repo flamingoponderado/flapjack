@@ -26,9 +26,12 @@ def stateOk {C F : Type} (s : Flapjack.Compiler.Backend.BvlSem.State C F) : Prop
     | some (.thunk _ value) => bvOk s.refs value
     | _ => True
 
-/-- Clock decrement does not affect source value well-formedness. This is the
-well-formedness part of the source's local clock lemma. -/
-theorem stateOk_decClock {C F : Type} (n : Nat) (s : BvlSem.State C F) :
-    stateOk (BvlSem.decClock n s) ↔ stateOk s := Iff.rfl
+/-- Clock decrement preserves source value well-formedness and references. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "evaluate_ok_lemma"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateOk_lemma {C F : Type} (n : Nat)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    (stateOk (BvlSem.decClock n s) ↔ stateOk s) ∧
+      (BvlSem.decClock n s).refs = s.refs := ⟨Iff.rfl, rfl⟩
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

@@ -74,7 +74,7 @@ theorem simulation_call {C F : Type} (ticks : Nat) (dest : Option Nat) (argument
             findCode_bvOk dest values callArgs mid.code body mid.refs selected sourcePreserved.2.1
           have relatedDec := stateRel_decClock midRelocate mid targetMid relatedMid (ticks + 1)
           have sourceOkDec : stateOk (BvlSem.decClock (ticks + 1) mid) :=
-            (stateOk_decClock (ticks + 1) mid).2 sourcePreserved.1
+            (evaluateOk_lemma (ticks + 1) mid).1.2 sourcePreserved.1
           have bodyClockSmaller : (BvlSem.decClock (ticks + 1) mid).clock < source.clock := by
             simp only [BvlSem.decClock] at *
             omega

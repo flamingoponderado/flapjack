@@ -74,7 +74,7 @@ theorem evaluateOk_tick {C F : Type} (clock : Nat) (body : Bvl.Exp) (ih : @evalO
     exact ⟨ok, trivial, envOk⟩
   · simp only [evaluate, zero, if_false] at run
     exact ih env (BvlSem.decClock 1 s) t result (by simp only [BvlSem.decClock]; omega) run
-      ((stateOk_decClock 1 s).2 ok) envOk
+      ((evaluateOk_lemma 1 s).1.2 ok) envOk
 
 /-- Primitive-operation case of the BVL evaluator invariant. -/
 theorem evaluateOk_op {C F : Type} (clock : Nat) (op : ClosLang.Op) (args : List Bvl.Exp)
@@ -297,7 +297,7 @@ theorem evaluateOk_call {C F : Type} (clock : Nat) (ticks : Nat) (dest : Option 
         · have selectedOk := findCode_bvOk dest values selected mid.code body mid.refs found prior.2.1
           have called := bodyIH [body] selected (BvlSem.decClock (ticks + 1) mid) t result
             (by simp only [BvlSem.decClock]; omega) run
-            ((stateOk_decClock (ticks + 1) mid).2 prior.1) selectedOk
+            ((evaluateOk_lemma (ticks + 1) mid).1.2 prior.1) selectedOk
           have subset := BvlProps.evaluate_refs_mono [body] selected (BvlSem.decClock (ticks + 1) mid)
           rw [run] at subset
           have finalEnv := bvOkList_domain_mono mid.refs env t.refs prior.2.2 subset
@@ -342,7 +342,7 @@ theorem evaluateOk_force {C F : Type} (location index : Nat)
       simp [bvOkList, thunkOk, functionOk]
     have selectedOk := findCode_bvOk (some location) [thunk, function] selected s.code body s.refs code argsOk
     have called := bodyIH [body] selected (BvlSem.decClock 1 s) t result
-      (by simp only [BvlSem.decClock]; omega) run ((stateOk_decClock 1 s).2 ok) selectedOk
+      (by simp only [BvlSem.decClock]; omega) run ((evaluateOk_lemma 1 s).1.2 ok) selectedOk
     have subset := BvlProps.evaluate_refs_mono [body] selected (BvlSem.decClock 1 s)
     rw [run] at subset
     have finalEnv := bvOkList_domain_mono s.refs env t.refs envOk subset
