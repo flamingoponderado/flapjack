@@ -145,6 +145,13 @@
   "reviewer": "Independent typed HOL comparison confirms the original compilation equality, full length and suffix conclusions, binder order, and faithful closure and BVL carriers."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "chained_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainEvaluation.lean", "lean_name": "chained_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed HOL source: the original quantifier order, arbitrary initial accumulator, HD premise, mapped chain and tail, two compilation equations, installation and nonempty conditions, and the extra-clock final-state and LAST/error conclusions agree. MAP2 is zip followed by map and Abbrev is identity. The BVL state's refs use canonical finite support and a same-module roundtrip witness; evaluation inherits reals_as_rational_cuts and SOUNDNESS item 8."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_IMP_evaluate_chained",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainEvaluation.lean", "lean_name": "evaluate_imp_evaluate_chained",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
