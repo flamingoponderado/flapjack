@@ -9918,7 +9918,8 @@ It also replays the local `evaluate_init1` and
 `show_SUBSET` with its polymorphic set carrier, `REPLICATE_1` with its
 polymorphic list element type, `obvious_arith_comm` over naturals, the
 polymorphic pair-projection lemma, the local closure and BVL initial-clock
-lemmas, and the recursive-layout accumulator-suffix and label-list theorems.
+lemmas, the thunk-inspection relation theorems, and the recursive-layout
+accumulator-suffix and label-list theorems.
 Regenerate with
 `HOL_PROBE_ONLY=clos_to_bvl_chain_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean correspondence.

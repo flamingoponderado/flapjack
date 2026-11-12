@@ -145,6 +145,20 @@
   "reviewer": "Independent typed HOL comparison confirms the original compilation equality, full length and suffix conclusions, binder order, and faithful closure and BVL carriers."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "rel_dest_thunk_NotThunk",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Thunk.lean", "lean_name": "destThunk_notThunk_related",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code", "BvlSem.State.refs", "f"],
+  "reviewer": "Compared the typed HOL theorem: the shared compiler and FFI carriers, finite pointer map, three conjunctive premises, source singleton thunk inspection, and target NotThunk conclusion agree. The state fields and pointer map use canonical finite-support maps, with same-module carrier roundtrips."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "rel_dest_thunk",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Thunk.lean", "lean_name": "destThunk_isThunk_related",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code", "BvlSem.State.refs", "f"],
+  "reviewer": "Compared the typed HOL theorem: the shared state carriers, finite pointer map, three conjunctive premises, source singleton inspection, existential target payload, equal thunk mode and related payload conclusion agree. The state fields and pointer map use canonical finite-support maps, with same-module carrier roundtrips."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "build_aux_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/LabelOrigins.lean", "lean_name": "buildAux_thm",
   "statement_status": "reviewed_exact",
