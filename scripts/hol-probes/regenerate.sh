@@ -10602,3 +10602,9 @@ run_probe word_copy_typed_probeScript.sml word_copy_typed_probe.out \
   lookup_eq_imm_def_typed lookup_store_eq_def_typed merge_eqs_def_typed remove_eq_def_typed remove_eqs_def_typed set_eq_def_typed set_store_eq_def_typed \
   "$cake_dir/compiler/backend/proofs/word_copyScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe word_bignum_typed_probeScript.sml word_bignum_typed_probe.out \
+  compile_def_typed mini_typed address_typed TempIn1_def_typed TempIn2_def_typed TempOut_def_typed div_location_def_typed SeqTemp_def_typed \
+  SeqTempImm_def_typed SeqTempImmNot_def_typed SeqIndex_def_typed DivCode_def_typed LoadRegs_def_typed SaveRegs_def_typed compile_exp_def_typed \
+  "$cake_dir/compiler/backend/word_bignumScript.sml" \
+  "$cake_dir/compiler/backend"
