@@ -125,4 +125,53 @@ theorem evaluateGenlistVars {C F : Type} (skip : Nat) (env : List Value) (n : Na
     rw [← List.take_append_getElem droppedBound]
     simp [List.getElem_drop, Nat.add_comm]
 
+/-- Reversing a successfully evaluated list of variables reverses its values. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "evaluate_var_reverse"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateVarReverse {C F : Type} (xs : List Nat) (env ys : List Value)
+    (state : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (run : evaluateTuple ((xs.map Bvl.Exp.var), env, state) = (.val ys, state)) :
+    evaluateTuple (((xs.map Bvl.Exp.var).reverse), env, state) = (.val ys.reverse, state) := by
+  induction xs generalizing ys with
+  | nil =>
+    simp [evaluateTuple, evaluate] at run ⊢
+    subst ys
+    rfl
+  | cons x xs ih =>
+    cases found : env[x]? with
+    | none =>
+      simp only [List.map_cons] at run
+      rw [evaluateCons] at run
+      simp [evaluateTuple, evaluate, found, typeError] at run
+    | some v =>
+      simp only [List.map_cons] at run
+      rw [evaluateCons] at run
+      simp only [evaluateTuple, evaluate, found] at run
+      cases tailRun : evaluate (xs.map Bvl.Exp.var) env state with
+      | mk result last =>
+        cases result with
+        | err e => simp [tailRun] at run
+        | val values =>
+          simp [tailRun, Flapjack.holHd] at run
+          obtain ⟨rfl, rfl⟩ := run
+          have revRun := ih values tailRun
+          simp only [List.map_cons, List.reverse_cons]
+          rw [evaluateAppend]
+          change evaluate _ env _ = _ at revRun
+          dsimp only [evaluateTuple]
+          rw [revRun]
+          simp [evaluate, found]
+
+/-- Generated variable selectors can be evaluated in reverse order. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "evaluate_genlist_vars_rev"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateGenlistVarsRev {C F : Type} (skip : Nat) (env : List Value) (n : Nat)
+    (state : Flapjack.Compiler.Backend.BvlSem.State C F) (bound : n + skip ≤ env.length) :
+    evaluateTuple ((((List.range n).map (fun arg => Bvl.Exp.var (arg + skip))).reverse), env, state) =
+      (.val ((env.drop skip).take n).reverse, state) := by
+  have run := evaluateGenlistVars skip env n state bound
+  have rev := evaluateVarReverse ((List.range n).map (fun arg => arg + skip)) env
+    ((env.drop skip).take n) state (by simpa [List.map_map, Function.comp_def] using run)
+  simpa [List.map_map, Function.comp_def] using rev
+
 end Flapjack.Compiler.Backend.BvlProps

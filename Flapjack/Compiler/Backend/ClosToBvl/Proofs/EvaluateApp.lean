@@ -1348,29 +1348,6 @@ theorem evaluate_genericApp_partial_normal {C F : Type} (s : BvlSem.State C F)
     rw [test]
     simp [BvlSem.boolValue, BackendCommon.boolToTag, BackendCommon.trueTag, BvlSem.asBool]
 
-/-- The reversed generated variable sequence reads a prefix of the argument
-list in reverse order without changing the state. -/
-theorem evaluate_reverse_offsetVars {C F : Type} (n : Nat) (first : BvlSem.Value)
-    (args rest : List BvlSem.Value) (s : BvlSem.State C F) (bound : n ≤ args.length) :
-    BvlSem.evaluate (((List.range n).map (fun i => Bvl.Exp.var (i + 1))).reverse)
-      (first :: (args ++ rest)) s = (.val (args.take n).reverse, s) := by
-  induction n with
-  | zero => simp [BvlSem.evaluate]
-  | succ n ih =>
-    have smaller : n ≤ args.length := by omega
-    have indexBound : n < args.length := by omega
-    have varRun : BvlSem.evaluate [.var (n + 1)] (first :: (args ++ rest)) s = (.val [args[n]], s) := by
-      simp [BvlSem.evaluate, List.getElem?_append, indexBound]
-    rw [List.range_succ, List.map_append, List.reverse_append]
-    change BvlSem.evaluateTuple (.var (n + 1) :: _, first :: (args ++ rest), s) = _
-    rw [BvlProps.evaluateCons]
-    simp only [BvlSem.evaluateTuple, varRun]
-    dsimp only [List.append]
-    rw [ih smaller]
-    simp only [Flapjack.holHd, Prod.mk.injEq, Result.val.injEq, and_true]
-    simpa only [List.reverse_append, List.reverse_singleton, List.singleton_append] using
-      (congrArg List.reverse (List.take_append_getElem indexBound))
-
 /-- The normal partial-application branch constructs a block from the table
 pointer, remaining arity, original closure and saved arguments. -/
 theorem genericAppPartialNormal_shape (maxApp n : Nat) :
@@ -1402,7 +1379,8 @@ theorem evaluate_genericAppPartialNormal {C F : Type} (s : BvlSem.State C F)
     (partialAppFnLocationCode maxApp (.op (.blockOp (.elemAt 1)) [.var (n + 2)]) (mkConst n))
   have varsRun : BvlSem.evaluate (((List.range (n + 1)).map (fun i => Bvl.Exp.var (i + 1))).reverse) env s =
       (.val args.reverse, s) := by
-    simpa [env, ← length] using evaluate_reverse_offsetVars (n + 1) (.number remaining) args [closure] s (by omega)
+    have bound : (n + 1) + 1 ≤ env.length := by simp [env, length]
+    simpa [env, ← length, BvlSem.evaluateTuple] using BvlProps.evaluateGenlistVarsRev 1 env (n + 1) s bound
   have closureRun : BvlSem.evaluate [.var (n + 2)] env s = (.val [closure], s) := by
     simp [BvlSem.evaluate, env, ← length]
   have remainingRun : BvlSem.evaluate [.var 0] env s = (.val [.number remaining], s) := by
@@ -1822,28 +1800,6 @@ theorem evaluate_genericAppPartialExisting_pointer {C F : Type} (s : BvlSem.Stat
       (.val [.codePtr (partialAppFnLocation maxApp (remaining + saved.length) (saved.length + n))], s) :=
   evaluate_existingPartial_pointer s _ maxApp n remaining saved.length bound totalBound global
 
-/-- The two-slot offset version reads new arguments in reverse order. -/
-theorem evaluate_reverse_offsetVars2 {C F : Type} (n : Nat) (first second : BvlSem.Value)
-    (args rest : List BvlSem.Value) (s : BvlSem.State C F) (bound : n ≤ args.length) :
-    BvlSem.evaluate (((List.range n).map (fun i => Bvl.Exp.var (i + 2))).reverse)
-      (first :: second :: (args ++ rest)) s = (.val (args.take n).reverse, s) := by
-  induction n with
-  | zero => simp [BvlSem.evaluate]
-  | succ n ih =>
-    have smaller : n ≤ args.length := by omega
-    have indexBound : n < args.length := by omega
-    have varRun : BvlSem.evaluate [.var (n + 2)] (first :: second :: (args ++ rest)) s = (.val [args[n]], s) := by
-      simp [BvlSem.evaluate, List.getElem?_append, indexBound]
-    rw [List.range_succ, List.map_append, List.reverse_append]
-    change BvlSem.evaluateTuple (.var (n + 2) :: _, first :: second :: (args ++ rest), s) = _
-    rw [BvlProps.evaluateCons]
-    simp only [BvlSem.evaluateTuple, varRun]
-    dsimp only [List.append]
-    rw [ih smaller]
-    simp only [Flapjack.holHd, Prod.mk.injEq, Result.val.injEq, and_true]
-    simpa only [List.reverse_append, List.reverse_singleton, List.singleton_append] using
-      (congrArg List.reverse (List.take_append_getElem indexBound))
-
 /-- The extension body uses block extension to prepend the new saved fields. -/
 theorem genericAppPartialExistingBody_shape (maxApp n : Nat) :
     genericAppPartialExistingBody maxApp n = .op (.blockOp (.consExtend 31))
@@ -1904,8 +1860,8 @@ theorem evaluate_genericAppPartialExistingBody {C F : Type} (s : BvlSem.State C 
   let originalExp := Bvl.Exp.op (.blockOp (.elemAt 2)) [.var (n + 3)]
   have varsRun : BvlSem.evaluate (((List.range (n + 1)).map (fun i => Bvl.Exp.var (i + 2))).reverse) env s =
       (.val args.reverse, s) := by
-    simpa [env, ← length] using evaluate_reverse_offsetVars2 (n + 1) (.number (Int.ofNat saved.length))
-      (.number (Int.ofNat (remaining - (n + 1)))) args [old] s (by omega)
+    have bound : (n + 1) + 2 ≤ env.length := by simp [env, length]
+    simpa [env, ← length, BvlSem.evaluateTuple] using BvlProps.evaluateGenlistVarsRev 2 env (n + 1) s bound
   have oldRun : BvlSem.evaluate [.var (n + 3)] env s = (.val [old], s) := by
     simp [BvlSem.evaluate, env, ← length]
   have originalRun : BvlSem.evaluate [originalExp] env s = (.val [original], s) := by

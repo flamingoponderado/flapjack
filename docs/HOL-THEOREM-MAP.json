@@ -20019,6 +20019,26 @@
 },
   {
   "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+  "hol_name": "evaluate_var_reverse",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateList.lean",
+  "lean_name": "evaluateVarReverse",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the HOL source and typed exported theorem: arbitrary natural indices, environment and result list, independent compiler and FFI state carriers, the single unchanged-state successful evaluation premise and reversed values and expressions in the unchanged-state conclusion agree. The refs field uses the canonical finite-support carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
+},
+  {
+  "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+  "hol_name": "evaluate_genlist_vars_rev",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateList.lean",
+  "lean_name": "evaluateGenlistVarsRev",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the HOL source and typed exported theorem: arbitrary skip, environment, count and independent compiler and FFI state carriers; exactly the count-plus-skip bound; and reversed generated variable expressions and reversed environment slice with unchanged state agree. The refs field uses the canonical finite-support carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
+},
+  {
+  "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
   "hol_name": "evaluate_genlist_vars",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateList.lean",
   "lean_name": "evaluateGenlistVars",
