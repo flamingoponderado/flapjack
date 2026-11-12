@@ -301,6 +301,25 @@
   "reviewer": "Compared the HOL source theorem and local proof replay: for arbitrary related source and target environments, freshness in the target reference domain implies the same relation after insertion of an arbitrary target reference cell. The relocation and target reference maps use canonical finite-support carriers; code remains a sparse tree."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "add_args_F",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "addArgs_nonValues",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed local proof replay: all five impossible result constructors and the original quantifiers are retained, with fixed 64-bit words and 8-bit byte lists."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "cl_rel_F",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureRelation.lean", "lean_name": "clRel_nonValues",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["refs"],
+  "reviewer": "Compared the HOL source and typed local proof replay: all five non-closure source constructors are excluded for arbitrary target and protected set. The target references use the canonical finite-support carrier; code remains a sparse tree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "add_args_append",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "addArgs_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed local proof replay: successful first argument extension implies the original equality for a second prefix, with arbitrary source values and argument lists."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "v_rel_SIMP",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueRelation.lean", "lean_name": "vRel_simp_full",
   "statement_status": "reviewed_fmap_as_finite_support_relation",

@@ -1182,6 +1182,32 @@ in
   val ETA2_THM = Q.prove (
     `(\x y. f a b c x y) = f a b c`,
   srw_tac[][FUN_EQ_THM]);
+  val add_args_append_replay = Q.prove (
+    `add_args cl arg_env = SOME func
+   ⇒
+   add_args cl (args ++ arg_env) = add_args func args`,
+  Cases_on `cl` >>
+  srw_tac[][add_args_def] >>
+  srw_tac[][add_args_def] );
+  val _ = show_thm "add_args_append_replay=" add_args_append_replay;
+  val cl_rel_F_replay = Q.prove (
+    `~cl_rel max_app f refs code (env,ys) (Number i) cl ∧
+   ~cl_rel max_app f refs code (env,ys) (Word64 w) cl ∧
+   ~cl_rel max_app f refs code (env,ys) (RefPtr b p) cl ∧
+   ~cl_rel max_app f refs code (env,ys) (Block tag xs) cl ∧
+   ~cl_rel max_app f refs code (env,ys) (ByteVector bs) cl`,
+  srw_tac[][cl_rel_cases] );
+  val _ = show_thm "cl_rel_F_replay=" cl_rel_F_replay;
+  val add_args_F_replay = Q.prove (
+    `!cl args p i tag xs.
+   add_args cl args ≠ SOME (RefPtr b p) ∧
+   add_args cl args ≠ SOME (Number i) ∧
+   add_args cl args ≠ SOME (Word64 w) ∧
+   add_args cl args ≠ SOME (Block tag xs) ∧
+   add_args cl args ≠ SOME (ByteVector bs)`,
+  Cases_on `cl` >>
+  srw_tac[][add_args_def] );
+  val _ = show_thm "add_args_F_replay=" add_args_F_replay;
   val _ = show_thm "v_rel_SIMP_typed=" clos_to_bvlProofTheory.v_rel_SIMP;
   val env_rel_APPEND_replay = Q.prove (
     `!xs1 xs2.

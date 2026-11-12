@@ -16,14 +16,27 @@ def addArgs : ClosSem.Value → List ClosSem.Value → Option ClosSem.Value
   | .recclosure loc args env funs index, added => some (.recclosure loc (added ++ args) env funs index)
   | _, _ => none
 
-/-- Flapjack helper: successive argument prefixes associate. The source's
-local theorem has not yet had its inferred HOL type captured. -/
+/-- Successive argument prefixes associate. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "add_args_append"]
 theorem addArgs_append (cl : ClosSem.Value) (argEnv : List ClosSem.Value)
     (func : ClosSem.Value) (args : List ClosSem.Value)
     (h : addArgs cl argEnv = some func) : addArgs cl (args ++ argEnv) = addArgs func args := by
   cases cl <;> simp [addArgs] at h
   all_goals subst func
   all_goals simp [addArgs, List.append_assoc]
+
+/-- Adding arguments cannot produce a non-closure value. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "add_args_F"]
+theorem addArgs_nonValues (b : Bool) (w : BitVec 64) (bs : List (BitVec 8)) :
+    ∀ (cl : ClosSem.Value) (args : List ClosSem.Value) (p : Nat) (i : Int)
+      (tag : Nat) (xs : List ClosSem.Value),
+      addArgs cl args ≠ some (.refPtr b p) ∧
+      addArgs cl args ≠ some (.number i) ∧
+      addArgs cl args ≠ some (.word64 w) ∧
+      addArgs cl args ≠ some (.block tag xs) ∧
+      addArgs cl args ≠ some (.byteVector bs) := by
+  intro cl args p i tag xs
+  cases cl <;> simp [addArgs]
 
 instance closureArgumentsInst1 : Nonempty (Nat × ClosLang.Exp) := ⟨(0, .var .none 0)⟩
 
