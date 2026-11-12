@@ -1046,6 +1046,137 @@ in
   simp [LENGTH_NIL_SYM] >>
   srw_tac[][TAKE_LENGTH_APPEND]);
   val _ = show_thm "evaluate_code_for_recc_case_replay=" evaluate_code_for_recc_case_replay;
+  val env_rel_APPEND = Q.prove (
+    `!xs1 xs2.
+      EVERY2 (v_rel max_app f1 refs code) xs1 xs2 /\
+      env_rel max_app f1 refs code ys1 ys2 ==>
+      env_rel max_app f1 refs code (xs1 ++ ys1) (xs2 ++ ys2)`,
+  Induct \\ Cases_on `xs2` \\ full_simp_tac(srw_ss())[env_rel_def]);
+  val list_rel_IMP_env_rel = Q.prove (
+    `!xs ys.
+      LIST_REL (v_rel max_app f refs code) xs ys ==>
+      env_rel max_app f refs code xs (ys ++ ts)`,
+  Induct \\ Cases_on `ys` \\ full_simp_tac(srw_ss())[env_rel_def]
+  \\ Cases_on `ts` \\ full_simp_tac(srw_ss())[env_rel_def]);
+  val cl_rel_run_lemma1 = cl_rel_run_lemma1_replay;
+  val cl_rel_run_lemma2 = cl_rel_run_lemma2_replay;
+  val cl_rel_run_lemma3 = cl_rel_run_lemma3_replay;
+  val bEval_APPEND = bvlPropsTheory.evaluate_APPEND;
+  val check_loc_def = closSemTheory.check_loc_def;
+  val bEval_free_let_Block = bEval_free_let_Block_replay;
+  val evaluate_code_for_recc_case = evaluate_code_for_recc_case_replay;
+  val cl_rel_run_tac =
+  qexists_tac `c` >>
+  qexists_tac `aux` >>
+  qexists_tac `aux1` >>
+  imp_res_tac EVERY2_LENGTH >>
+  full_simp_tac(srw_ss())[] >>
+  srw_tac[][bEval_def, bEval_APPEND] >>
+  rw_tac (std_ss) [GSYM APPEND_ASSOC] >>
+  simp [cl_rel_run_lemma1, cl_rel_run_lemma2] >>
+  `LENGTH (DROP (LENGTH args' − num_args) args') = num_args`
+             by (srw_tac[][] >> decide_tac) >>
+  qexists_tac `witness` >>
+  srw_tac[][] >>
+  `evaluate ([Var num_args], DROP (LENGTH args' − num_args) args' ++ [func'],t1 with <| refs := refs; code := code |>)
+      = (Rval [func'],t1 with <| refs := refs; code := code |>)`
+          by (srw_tac[][bEval_def]
+              >- metis_tac [EL_LENGTH_APPEND, NULL, HD]) >>
+  simp [TAKE_REVERSE, LASTN_DROP] >>
+  unabbrev_all_tac >>
+  imp_res_tac bEval_free_let_Block >>
+  rev_full_simp_tac(srw_ss())[] >>
+  srw_tac[][] >>
+  metis_tac [list_rel_IMP_env_rel, APPEND_ASSOC, LASTN_LENGTH_ID, env_rel_APPEND, LIST_REL_def, cl_rel_run_lemma3];
+  val cl_rel_run_replay = Q.prove (
+    `!loc f1 refs code args args' env env' ptr body new_env func func' rest n fvs.
+    func' = Block closure_tag (CodePtr ptr::Number (&n)::env') ∧
+    dest_closure' loc func args = SOME (Full_app body new_env rest) ∧
+    v_rel max_app f1 refs code func func' ∧
+    cl_rel max_app (FRANGE f1) refs code (env,fvs) func func' ∧
+    LIST_REL (v_rel max_app f1 refs code) env fvs ∧
+    LIST_REL (v_rel max_app f1 refs code) args args'
+    ⇒
+    ∃body' aux1 aux2 new_env' exp'.
+      lookup ptr code = SOME (n + 2,exp') ∧
+      compile_exps max_app [body] aux1 = ([body'],aux2) ∧ code_installed aux2 code ∧
+      env_rel max_app f1 refs code new_env new_env' ∧
+      !t1. evaluate ([exp'], DROP (LENGTH args' - (n + 1)) args'++[func'], t1 with <| refs := refs; code := code |>) =
+           evaluate ([body'], new_env', t1 with <| refs := refs; code := code |>)`,
+  srw_tac[][cl_rel_cases, dest_closure'_def] >>
+  full_simp_tac(srw_ss())[int_arithTheory.INT_NUM_SUB, closure_code_installed_def] >>
+  rev_full_simp_tac(srw_ss())[] >>
+  simp [] >>
+  full_simp_tac(srw_ss())[check_loc_def, LET_THM] >>
+  BasicProvers.EVERY_CASE_TAC >>
+  srw_tac[][]
+  >- (qabbrev_tac `func' = Block closure_tag (CodePtr (p + num_stubs max_app)::Number (&num_args − 1):: env')` >>
+      qabbrev_tac `witness = DROP (LENGTH args' − num_args) args'++env'++DROP (LENGTH args' − num_args) args' ++ [func']` >>
+      cl_rel_run_tac)
+  >- (qabbrev_tac `func' = Block closure_tag (CodePtr (p + num_stubs max_app)::Number (&num_args − 1):: env')` >>
+      qabbrev_tac `witness = DROP (LENGTH args' − num_args) args'++[func']++env'++DROP (LENGTH args' − num_args) args' ++ [func']` >>
+      cl_rel_run_tac) >>
+  full_simp_tac(srw_ss())[EL_MAP] >>
+  `?n e p. EL k exps_ps = ((n,e),p)` by metis_tac [pair_CASES] >>
+  full_simp_tac(srw_ss())[] >>
+  srw_tac[][] >>
+  Cases_on `LENGTH args < n'` >>
+  full_simp_tac(srw_ss())[EVERY_EL, closure_code_installed_def] >>
+  srw_tac[][] >>
+  first_assum (fn th => first_assum (mp_tac o MATCH_MP th)) >>
+  ASM_REWRITE_TAC [] >>
+  simp [] >>
+  srw_tac[][] >>
+  simp [] >>
+  MAP_EVERY qexists_tac [`c`, `aux`, `aux1`,
+        `DROP (LENGTH args' − (n + 1)) args' ++
+         MAP (λ((n,e),p). Block closure_tag [CodePtr p; Number (if n = 0 then 0 else &n − 1); RefPtr T r])
+             exps_ps ++
+         fvs ++
+         [RefPtr T r] ++
+         DROP (LENGTH args' − (n + 1)) args' ++
+         [Block closure_tag [CodePtr p; Number (&n); RefPtr T r]]`] >>
+  srw_tac[][]
+  >- ARITH_TAC
+  >- (simp [TAKE_REVERSE, LASTN_DROP] >>
+      `LIST_REL (v_rel max_app f1 refs code)
+                (DROP (LENGTH args − n') args)
+                (DROP (LENGTH args' − (n + 1)) args')`
+              by (`n' = n+1` by ARITH_TAC >>
+                  metis_tac [cl_rel_run_lemma3, EVERY2_LENGTH]) >>
+      `LIST_REL (v_rel max_app f1 refs code)
+                (GENLIST (Recclosure (SOME loc') [] env (MAP FST exps_ps)) (LENGTH exps_ps))
+                (MAP (λ((n,e),p).
+                       Block closure_tag [CodePtr p; Number (if n = 0 then 0 else &n − 1); RefPtr T r])
+                     exps_ps)`
+            by (srw_tac[][LIST_REL_EL_EQN] >>
+                simp [v_rel_cases] >>
+                simp [EL_MAP, cl_rel_cases] >>
+                `?n e p. EL n'' exps_ps = ((n,e),p)` by metis_tac [pair_CASES] >>
+                full_simp_tac(srw_ss())[] >>
+                simp [] >>
+                qexists_tac `env` >>
+                simp [] >>
+                qexists_tac `fvs` >>
+                simp [] >>
+                DISJ2_TAC >>
+                qexists_tac `exps_ps` >>
+                simp [EL_MAP] >>
+                srw_tac[][int_arithTheory.INT_NUM_SUB] >>
+                srw_tac[][closure_code_installed_def] >>
+                srw_tac[][EVERY_EL]) >>
+      metis_tac [list_rel_IMP_env_rel, APPEND_ASSOC, EVERY2_APPEND])
+  >- (`FLOOKUP refs r = FLOOKUP (t1 with <| refs := refs; code := code|>).refs r` by srw_tac[][] >>
+      full_simp_tac std_ss [] >>
+      imp_res_tac evaluate_code_for_recc_case >>
+      full_simp_tac(srw_ss())[LENGTH_MAP] >>
+      pop_assum (qspecl_then [`p`, `n`, `[]`, `c`, `DROP (LENGTH args' − (n + 1)) args'`] mp_tac) >>
+      srw_tac[][] >>
+      imp_res_tac EVERY2_LENGTH >>
+      `LENGTH args' − (LENGTH args' − (n + 1)) = n'` by ARITH_TAC >>
+      full_simp_tac(srw_ss())[] >>
+      srw_tac[][Once ADD_COMM]));
+  val _ = show_thm "cl_rel_run_replay=" cl_rel_run_replay;
 end;
 val _ = show_thm "get_loc_def_typed=" clos_to_bvlProofTheory.get_loc_def;
 (* Replay the original location theorem and its local generated-label prerequisite. *)

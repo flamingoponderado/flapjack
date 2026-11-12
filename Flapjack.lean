@@ -1145,6 +1145,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateIf
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateHandle
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateCall
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateApp
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureRun
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CallEnvironment
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.GenericFull
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.GenericPartial
