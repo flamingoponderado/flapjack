@@ -4090,6 +4090,52 @@ class FmapParameterPredicateDomainSignatureTest(unittest.TestCase):
         self.assertEqual("def x' := 3", CHECKER["_predicate_domain_code_only"]("def x' := 3"))
 
 
+class FmapParameterPredicateDomainDefinitionBodyTest(unittest.TestCase):
+    body = """∀ (k : Nat) (res1 : Result (List ClosSem.Value) ClosSem.Value) (s2 : ClosSem.State C₁ F),
+      ClosSem.evaluate es1 [] (ClosSem.initialState ffi maxApp code1 co1 cc1 k) = (res1, s2) ∧
+      res1 ≠ .err (.abort .typeError) ∧ rel code1 co1 cc1 es1 code2 co2 cc2 start →
+      ∃ (ck : Nat) (res2 : Result (List BvlSem.Value) BvlSem.Value) (t2 : BvlSem.State C₂ F),
+        BvlSem.evaluate [.call 0 (some start) []] []
+          (BvlSem.initialState ffi code2 co2 cc2 (k + ck)) = (res2, t2) ∧
+        resultRel (fun _ _ => True) (fun _ _ => True) res1 res2 ∧ s2.ffi = t2.ffi"""
+
+    def errors(self, body, prefix="def evalSim : Prop :=\n", suffix="\nend Example"):
+        return CHECKER["fmap_parameter_predicate_domain_definition_body_errors"](prefix + body + suffix)
+
+    def test_complete_body_and_following_attribute(self):
+        self.assertEqual([], self.errors(self.body))
+        self.assertEqual([], self.errors(self.body, suffix='\n@[hol "cakeml/x.sml" "x"]\ntheorem next : True := by trivial'))
+
+    def test_rejects_weakened_or_changed_simulation(self):
+        changes = [
+            ("res1 ≠ .err (.abort .typeError)", "True"),
+            ("rel code1 co1 cc1 es1 code2 co2 cc2 start", "True"),
+            ("∃ (ck : Nat)", "∀ (ck : Nat)"),
+            ("(k + ck)", "k"),
+            ("ClosSem.State C₁ F", "ClosSem.State C₂ F"),
+            ("BvlSem.State C₂ F", "BvlSem.State C₁ F"),
+            (".call 0 (some start) []", ".call 0 none []"),
+            ("(fun _ _ => True) res1 res2", "(fun _ _ => False) res1 res2"),
+            ("s2.ffi = t2.ffi", "True"),
+            ("= (res2, t2)", "= (res1, s2)"),
+        ]
+        for before, after in changes:
+            with self.subTest(before=before):
+                changed = self.body.replace(before, after, 1)
+                self.assertNotEqual(self.body, changed)
+                self.assertTrue(self.errors(changed))
+        self.assertTrue(self.errors(self.body + " ∧ True"))
+
+    def test_rejects_missing_duplicate_and_quoted_definitions(self):
+        self.assertTrue(self.errors(self.body, prefix="theorem other : Prop :=\n"))
+        for name in ("evalSim'", "evalSim.ghost", "evalSim?", "evalSim!"):
+            with self.subTest(name=name):
+                self.assertTrue(self.errors(self.body, prefix=f"def {name} : Prop :=\n"))
+        self.assertTrue(self.errors(self.body, suffix="\ndef evalSim : Prop := True"))
+        self.assertTrue(self.errors(self.body, prefix='def decoy : String := "\ndef evalSim : Prop :=\n', suffix='\n"'))
+        self.assertTrue(self.errors(self.body, prefix="namespace X variable (bad : Prop)\ndef evalSim : Prop :=\n"))
+
+
 class FmapParameterPredicateDomainWitnessTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

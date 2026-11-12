@@ -1,6 +1,7 @@
 import Flapjack.Test.NestedRelationAudit
 import Flapjack.Test.PredicateDomainAudit
 import Flapjack.Test.PredicateCodecOwnershipAudit
+import Flapjack.Test.SimulationBodyAudit
 import Flapjack.Test.ClosSemGeneratedSizeParity
 import Flapjack.Test.DataToWordWordEqualityParity
 import Flapjack.Test.CopyingGcParity

@@ -2873,6 +2873,45 @@ def fmap_parameter_predicate_domain_signature_errors(
     return []
 
 
+def fmap_parameter_predicate_domain_definition_body_errors(source: str) -> list[str]:
+    """Check the written `evalSim` body before any future qualification.
+
+    This is a narrowly scoped source check, not elaborated validation or a
+    HOL-to-Lean proof. The separate signature, codec, elaborated and source
+    review checks remain necessary; this helper does not enable a qualifier.
+    """
+    clean = _predicate_domain_code_only(source)
+    if clean is None:
+        return ["simulation source does not support raw strings, character literals or escaped identifiers"]
+    if re.search(r"\b(?:variable|variables|include|omit)\b", clean):
+        return ["simulation definition requires self-contained binders"]
+    declarations = list(re.finditer(r"(?m)^[ \t]*def\s+evalSim(?=\s|[({\[:])", clean))
+    if len(declarations) != 1:
+        return ["simulation source must contain exactly one evalSim definition"]
+    start = clean.find(":=", declarations[0].end())
+    if start < 0:
+        return ["simulation definition has no body"]
+    tail = clean[start + 2:]
+    next_declaration = re.search(
+        r"(?m)^[ \t]*(?:(?:private|protected|noncomputable|unsafe)\s+)*"
+        r"(?:def|theorem|lemma|abbrev|axiom|opaque|instance|structure|inductive|end)\b"
+        r"|^[ \t]*@\[", tail,
+    )
+    body = tail[:next_declaration.start()] if next_declaration else tail
+    expected = (
+        "∀ (k : Nat) (res1 : Result (List ClosSem.Value) ClosSem.Value) (s2 : ClosSem.State C₁ F), "
+        "ClosSem.evaluate es1 [] (ClosSem.initialState ffi maxApp code1 co1 cc1 k) = (res1, s2) ∧ "
+        "res1 ≠ .err (.abort .typeError) ∧ rel code1 co1 cc1 es1 code2 co2 cc2 start → "
+        "∃ (ck : Nat) (res2 : Result (List BvlSem.Value) BvlSem.Value) (t2 : BvlSem.State C₂ F), "
+        "BvlSem.evaluate [.call 0 (some start) []] [] "
+        "(BvlSem.initialState ffi code2 co2 cc2 (k + ck)) = (res2, t2) ∧ "
+        "resultRel (fun _ _ => True) (fun _ _ => True) res1 res2 ∧ s2.ffi = t2.ffi"
+    )
+    if " ".join(body.split()) != expected:
+        return ["simulation definition must retain the complete reviewed evaluation and FFI result"]
+    return []
+
+
 def fmap_parameter_predicate_domain_witness_errors(source: str) -> list[str]:
     """Check the written two-sided predicate codec used by the proposed qualifier.
 
