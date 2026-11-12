@@ -916,6 +916,7 @@ import Flapjack.Compiler.Backend.BvlInline.Proofs.MappedApply
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.Helpers
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.HandleOk
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.HelpersProduction
+import Flapjack.Compiler.Backend.BvlHandle.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.Simplify
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyProduction
 import Flapjack.Compiler.Backend.BvlHandle.Proofs.LetLet

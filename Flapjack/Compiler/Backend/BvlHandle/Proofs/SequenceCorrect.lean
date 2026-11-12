@@ -77,8 +77,8 @@ theorem evaluate_compiledSequenceLeaf {C F : Type} (limit : Nat) (expression : B
   cases run : evaluate [expression] [] state with
   | mk result next =>
     have safe' : result ≠ .err (.abort .typeError) := by simpa [run] using safe
-    have compiled := evaluate_compileExpression limit expression [] state next result run safe'
-    simp only [List.length_nil] at compiled
+    have compiled := compileExpression_correct expression [] state result next 0 limit ⟨run, safe', rfl⟩
+    simp only [evaluateTuple, compileExp] at compiled
     cases acc with
     | none => simpa [sequenceLeaf, sequenceContinue, run] using compiled
     | some rest =>
@@ -207,12 +207,12 @@ theorem compileAny_correct {C F : Type} (x : Bvl.Exp) (env : List Value)
     cases splitSeq with
     | false =>
       simpa [compileAny, compileExp, evaluateTuple] using
-        evaluate_compileExpression l x [] s1 s2 res run safe
+        compileExpression_correct x [] s1 res s2 0 l ⟨run, safe, rfl⟩
     | true =>
       simpa [compileAny] using
         compileSeqs_correct l x none s1 s2 s2 res res ⟨run, by simp, safe⟩
   | cons first rest =>
     simpa [compileAny, compileExp, evaluateTuple] using
-      evaluate_compileExpression l x (first :: rest) s1 s2 res run safe
+      compileExpression_correct x (first :: rest) s1 res s2 (first :: rest).length l ⟨run, safe, rfl⟩
 
 end Flapjack.Compiler.Backend.BvlHandle.Proofs

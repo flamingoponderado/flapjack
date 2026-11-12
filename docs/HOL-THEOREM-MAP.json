@@ -1,5 +1,23 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "LetLet_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/CodeLabels.lean", "lean_name": "letLet_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL theorem for arbitrary natural number, polymorphic sptree num_map and BVL expression: environment packing preserves the entire code-label set. The proof uses the source equation for the executed LetLet and the reviewed tree-map carrier."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "get_code_labels_handle_adj_vars",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/CodeLabels.lean", "lean_name": "handleAdjVars_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original local proof replay: arbitrary expression, depth and shift preserve the complete code-label set, and the list form preserves the ordered list of code-label sets. The proof covers every source adjustment constructor and binder-depth change."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "get_code_labels_dest_handle_Raise",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/CodeLabels.lean", "lean_name": "destHandleRaise_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original local proof replay: for arbitrary source expression and recognized operand, the source recognizer equality implies equality of their complete code-label sets. The executed source-shaped recognizer and label collector are used."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "compile_seqs_correct",
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/SequenceCorrect.lean", "lean_name": "compileSeqs_correct",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
