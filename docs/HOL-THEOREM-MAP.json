@@ -227,13 +227,13 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_same_aux",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "compileExps_same_aux",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the typed HOL source: both empty-accumulator compilation equations, name-extraction equation and resulting original/chain auxiliary equality match, including the empty-program case."
+  "reviewer": "Compared the typed HOL source: both empty-accumulator compilation equations, name-extraction equation and resulting original/chain auxiliary equality match, including the empty-program case. extractNameSource_eq_extractName kernel-proves the executable extractName equals the reviewed HOL-shaped extractNameSource."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_twice_IS_SUBLIST",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "compileExps_twice_isSublist",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the typed HOL source and IS_SUBLIST definition: all three premises and fixed expression and auxiliary carriers match. HOL IS_SUBLIST aux x7 says x7 is a contiguous infix of aux, represented by Lean originalAux <:+: aux."
+  "reviewer": "Compared the typed HOL source and IS_SUBLIST definition: all three premises and fixed expression and auxiliary carriers match. HOL IS_SUBLIST aux x7 says x7 is a contiguous infix of aux, represented by Lean originalAux <:+: aux. extractNameSource_eq_extractName kernel-proves the executable extractName equals the reviewed HOL-shaped extractNameSource."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "code_installed_cons",
@@ -253,7 +253,7 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainEvaluation.lean", "lean_name": "evaluate_imp_evaluate_chained",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared the typed HOL source: the eight premises retain the supplied program-prefix installation, both compilation equations, extracted name and nonempty compiled list. MAP2 is zip followed by map, Abbrev is identity, and the existential extra clock and result preserve the original final state and LAST/error cases. The BVL state's refs field uses canonical finite support with a same-module roundtrip witness; code is an Spt tree. Evaluation inherits reals_as_rational_cuts and SOUNDNESS item 8."
+  "reviewer": "Compared the typed HOL source: the eight premises retain the supplied program-prefix installation, both compilation equations, extracted name and nonempty compiled list. MAP2 is zip followed by map, Abbrev is identity, and the existential extra clock and result preserve the original final state and LAST/error cases. The BVL state's refs field uses canonical finite support with a same-module roundtrip witness; code is an Spt tree. extractNameSource_eq_extractName kernel-proves the executable extractName equals the reviewed HOL-shaped extractNameSource. Evaluation inherits reals_as_rational_cuts and SOUNDNESS item 8."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "refs_lemma",
