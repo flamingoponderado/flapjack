@@ -233,6 +233,30 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: args and prev lists have independent polymorphic element types, with exactly the three original conjuncts and all three arithmetic conclusions."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "twod_table_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean", "lean_name": "twodTableLemma",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: arbitrary result type and function, the z≤y premise, and generated division/remainder and row lists agree, including the zero-width case."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "twod_table",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean", "lean_name": "twodTable",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: arbitrary result type and function, positive width premise, nested generated lists and flattened division/remainder-indexed list agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "less_rectangle",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean", "lean_name": "lessRectangle",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: all four natural-number binders, both strict bounds and the original product-plus-index inequality agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "less_rectangle2",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean", "lean_name": "lessRectangle2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: all four natural-number binders, both strict bounds and the original index-plus-product inequality agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "sum_genlist_triangle_help",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean", "lean_name": "sumGenlistTriangleHelp",
   "statement_status": "reviewed_exact",

@@ -9,6 +9,53 @@ public import Flapjack.Misc.ListEl
 /-! Domain of the generated closure-application stubs. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
+/-- A row of a flattened rectangular table recovers its row and column. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "twod_table_lemma"]
+theorem twodTableLemma {α : Type} (f : Nat → Nat → α) (x y z : Nat) :
+    z ≤ y →
+    (List.range z).map (fun t => f ((t + x * y) / y) ((t + x * y) % y)) =
+      (List.range z).map (fun t => f x t) := by
+  intro hz
+  apply List.map_congr_left
+  intro t ht
+  have bound : t < y := by simp only [List.mem_range] at ht; omega
+  have positive : 0 < y := by omega
+  simp [Nat.add_mul_div_right t x positive, Nat.div_eq_of_lt bound, Nat.mod_eq_of_lt bound]
+
+/-- Flattening a rectangular table gives row-major division and remainder indices. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "twod_table"]
+theorem twodTable {α : Type} (f : Nat → Nat → α) (x y : Nat) :
+    0 < y →
+    (((List.range x).map fun m => (List.range y).map (f m)).flatten) =
+      (List.range (x * y)).map (fun n => f (n / y) (n % y)) := by
+  intro hy
+  induction x with
+  | zero => simp
+  | succ x ih =>
+    simp only [List.range_succ, List.map_append, List.map_cons, List.map_nil,
+      List.flatten_append, List.flatten_cons, List.flatten_nil, List.append_nil]
+    rw [ih]
+    have size : (x + 1) * y = x * y + y := by simp [Nat.add_mul]
+    rw [size, List.range_add, List.map_append, List.map_map]
+    congr 1
+    simpa only [Function.comp_def, Nat.add_comm] using (twodTableLemma f x y y (Nat.le_refl y)).symm
+
+/-- A row and column within a rectangle determine an index within its area. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "less_rectangle"]
+theorem lessRectangle (x y m n : Nat) :
+    m < x ∧ n < y → x * n + m < x * y := by
+  intro ⟨hm, hn⟩
+  have h := Nat.mul_le_mul_left x (show n + 1 ≤ y by omega)
+  simp only [Nat.mul_add, Nat.mul_one] at h
+  omega
+
+/-- The same rectangle bound with the summands and factors exchanged. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "less_rectangle2"]
+theorem lessRectangle2 (x y m n : Nat) :
+    m < x ∧ n < y → m + n * x < x * y := by
+  intro h
+  simpa only [Nat.add_comm, Nat.mul_comm] using lessRectangle x y m n h
+
 /-- Split equality with a conditional into its two Boolean cases. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "if_expand"]
 theorem ifExpand {α : Type} (w : α) (x : Bool) (y z : α) :

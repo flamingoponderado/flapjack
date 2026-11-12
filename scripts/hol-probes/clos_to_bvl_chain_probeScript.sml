@@ -132,6 +132,45 @@ in
   Induct_on `args` >> srw_tac[][] >>
   full_simp_tac (srw_ss()++ARITH_ss) [ADD1, el_append2]);
   val el_append2_lemma = el_append2_lemma_replay;
+  val twod_table_lemma_replay = Q.prove (
+    `!x y z.
+    z ≤ y ⇒
+    GENLIST (λt. f ((t + x * y) DIV y) ((t + x * y) MOD y)) z
+    =
+    GENLIST (λt. f x t) z`,
+  Induct_on `z` >>
+  srw_tac[][GENLIST] >>
+  `z < y ∧ z ≤ y` by decide_tac >>
+  full_simp_tac(srw_ss())[] >>
+  `z+x*y = x*y+z` by decide_tac >>
+  rw_tac std_ss [MOD_MULT, DIV_MULT, LESS_DIV_EQ_ZERO]);
+  val _ = show_thm "twod_table_lemma_replay=" twod_table_lemma_replay;
+  val twod_table_lemma = twod_table_lemma_replay;
+  val twod_table_replay = Q.prove (
+    `!f x y.
+    0 < y ⇒
+    FLAT (GENLIST (\m. GENLIST (\n. f m n) y) x) =
+    GENLIST (\n. f (n DIV y) (n MOD y)) (x * y)`,
+  Induct_on `x` >>
+  srw_tac[][GENLIST] >>
+  `(x+1) * y = y + x * y` by decide_tac >>
+  full_simp_tac(srw_ss())[ADD1, GENLIST_APPEND, twod_table_lemma,SNOC_APPEND]);
+  val _ = show_thm "twod_table_replay=" twod_table_replay;
+  val twod_table = twod_table_replay;
+  val less_rectangle_replay = Q.prove (
+    `!(x:num) y m n. m < x ∧ n < y ⇒ x * n +m < x * y`,
+  REPEAT STRIP_TAC
+  \\ `SUC n <= y` by full_simp_tac(srw_ss())[LESS_EQ]
+  \\ `x * (SUC n) <= x * y` by full_simp_tac(srw_ss())[]
+  \\ FULL_SIMP_TAC bool_ss [MULT_CLAUSES]
+  \\ DECIDE_TAC);
+  val _ = show_thm "less_rectangle_replay=" less_rectangle_replay;
+  val less_rectangle = less_rectangle_replay;
+  val less_rectangle2_replay = Q.prove (
+    `!(x:num) y m n. m < x ∧ n < y ⇒ m + n * x< x * y`,
+  metis_tac [less_rectangle, ADD_COMM, MULT_COMM]);
+  val _ = show_thm "less_rectangle2_replay=" less_rectangle2_replay;
+  val less_rectangle2 = less_rectangle2_replay;
   val sum_genlist_triangle_help_replay = Q.prove (
     `  !x. SUM (GENLIST (\y. y) (x+1)) = x * (x + 1) DIV 2`,
   Induct >>

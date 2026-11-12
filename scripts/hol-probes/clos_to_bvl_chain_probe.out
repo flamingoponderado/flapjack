@@ -61,6 +61,10 @@ FEVERY_FUPDATE_LIST_SUFF_typed=∀(progs :(α # β) list) (x :α |-> β) (p :α 
 not_domain_lookup_typed=(n :num) ∉ (domain (x :α sptree$num_map) :num -> bool) ⇔ lookup n x = (NONE :α option)
 cl_rel_union_replay=∀(a :closSem$v list # v list) (x :closSem$v) (y :v). cl_rel (max_app :num) (f2 :num -> bool) (refs :num |-> v ref) (code :(num # bvl$exp) sptree$num_map) a x y ⇒ cl_rel max_app f2 refs (union code (c2 :(num # bvl$exp) sptree$num_map)) a x y
 v_rel_union_replay=∀(c2 :(num # bvl$exp) sptree$num_map) (x :closSem$v) (y :v). (v_rel (max_app :num) (f2 :num |-> num) (refs :num |-> v ref) (code :(num # bvl$exp) sptree$num_map) x y :bool) ⇒ (v_rel max_app f2 refs (union code c2) x y :bool)
+twod_table_lemma_replay=∀(x :num) (y :num) (z :num). z ≤ y ⇒ GENLIST (λ(t :num). (f :num -> num -> α) ((t + x * y) DIV y) ((t + x * y) MOD y)) z = GENLIST (λ(t :num). f x t) z
+twod_table_replay=∀(f :num -> num -> α) (x :num) (y :num). (0 :num) < y ⇒ FLAT (GENLIST (λ(m :num). GENLIST (λ(n :num). f m n) y) x) = GENLIST (λ(n :num). f (n DIV y) (n MOD y)) (x * y)
+less_rectangle_replay=∀(x :num) (y :num) (m :num) (n :num). m < x ∧ n < y ⇒ x * n + m < x * y
+less_rectangle2_replay=∀(x :num) (y :num) (m :num) (n :num). m < x ∧ n < y ⇒ m + n * x < x * y
 sum_genlist_triangle_help_replay=∀(x :num). (SUM (GENLIST (λ(y :num). y) (x + (1 :num))) :num) = x * (x + (1 :num)) DIV (2 :num)
 sum_genlist_triangle_replay=∀(x :num). (SUM (GENLIST (λ(y :num). y) x) :num) = x * (x − (1 :num)) DIV (2 :num)
 if_expand_replay=∀(w :α) (x :bool) (y :α) (z :α). (if x then y else z) = w ⇔ x ∧ y = w ∨ ¬x ∧ z = w
