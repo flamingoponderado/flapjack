@@ -335,6 +335,9 @@ FMAP_AS_FINITE_SUPPORT_RESULT_RE = re.compile(
 FMAP_AS_FINITE_SUPPORT_PARAMS_RE = re.compile(
     r'\(\s*fmap_as_finite_support_parameters\s*:=\s*\[([^]]*)\]\s*\)'
 )
+FMAP_PARAMETER_PREDICATE_DOMAIN_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_parameter_predicate_domain\s*:=\s*\[([^]]*)\]\s*\)'
+)
 FMAP_AS_FINITE_SUPPORT_EXISTENTIALS_RE = re.compile(
     r'\(\s*fmap_as_finite_support_existentials\s*:=\s*\[([^]]*)\]\s*\)'
 )
@@ -569,7 +572,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_result_observations: bool = False,
                         include_word_dimensions_widths: bool = False,
                         include_fmap_tuple: bool = False,
-                        include_nested_list_rel: bool = False):
+                        include_nested_list_rel: bool = False,
+                        include_predicate_domain: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -673,6 +677,12 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     site += (positions,)
                 if include_nested_list_rel:
                     matches = list(NESTED_LIST_REL_AS_MUTUAL_RE.finditer(attribute))
+                    names = tuple(field.strip() for match in matches for field in match.group(1).split(","))
+                    if len(matches) > 1:
+                        names += ("",)
+                    site += (names,)
+                if include_predicate_domain:
+                    matches = list(FMAP_PARAMETER_PREDICATE_DOMAIN_RE.finditer(attribute))
                     names = tuple(field.strip() for match in matches for field in match.group(1).split(","))
                     if len(matches) > 1:
                         names += ("",)
@@ -5289,7 +5299,8 @@ def main(argv: list[str]) -> int:
              fmap_relation, fmap_equalities, words_bitvec,
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
-             fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel) in hol_attribute_sites(
+             fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
+             predicate_domain) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
@@ -5300,8 +5311,26 @@ def main(argv: list[str]) -> int:
                 include_word_dimensions_widths=True,
                 include_fmap_tuple=True,
                 include_nested_list_rel=True,
+                include_predicate_domain=True,
              ):
             where = f"{rel}:{number}"
+            if predicate_domain:
+                lean_name = find_lean_decl(lines, number - 1)
+                if predicate_domain != ("code1", "rel"):
+                    errors.append(f"{where}: predicate-domain qualifier requires exactly [code1, rel]")
+                if (list_fields or names_fields or boundary_fields or fmap_fields or fmap_result or
+                        fmap_relation or fmap_equalities or words_bitvec or fmap_parameters or
+                        fmap_existentials or dimension_width or fmap_function_positions or
+                        fmap_heterogeneous_function_positions or reals_cuts or fmap_equality or
+                        result_observations or dimension_widths or fmap_tuple or nested_list_rel):
+                    errors.append(f"{where}: predicate-domain qualifier cannot combine with other representation qualifiers")
+                source = "\n".join(lines)
+                errors.extend(f"{where}: {error}" for error in fmap_parameter_predicate_domain_signature_errors(
+                    hol_path, hol_name, rel, lean_name, source))
+                errors.extend(f"{where}: {error}" for error in fmap_parameter_predicate_domain_definition_body_errors(source))
+                errors.extend(f"{where}: {error}" for error in fmap_parameter_predicate_domain_witness_errors(source))
+                errors.extend(f"{where}: {error}" for error in fmap_as_finite_support_parameters_errors(
+                    lines, module, tagged_declaration_source(lines, number), lean_name, ("code1",)))
             if nested_list_rel:
                 errors.extend(f"{where}: {error}" for error in nested_list_rel_errors(
                     lines, rel, number, hol_path, hol_name, nested_list_rel))

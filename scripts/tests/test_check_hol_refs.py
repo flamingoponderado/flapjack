@@ -4079,6 +4079,16 @@ class FmapParameterPredicateDomainSignatureTest(unittest.TestCase):
         self.assertTrue(self.errors("evalSim", source, hol_name="IMP_semantics_eq"))
         self.assertTrue(self.errors("different", source, hol_name="eval_sim_def"))
 
+    def test_scanner_retains_order_and_duplicate_qualifiers(self):
+        prefix = '@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "eval_sim_def"'
+        qualifier = ' (fmap_as_finite_support_parameter_predicate_domain := [code1, rel])'
+        source = [prefix + qualifier + ']', 'def evalSim : Prop := True']
+        self.assertEqual(("code1", "rel"), next(SITES(source, include_predicate_domain=True))[-1])
+        source[0] = prefix + qualifier + qualifier + ']'
+        self.assertNotEqual(("code1", "rel"), next(SITES(source, include_predicate_domain=True))[-1])
+        source[0] = prefix + ' (fmap_as_finite_support_parameter_predicate_domain := [])]'
+        self.assertTrue(next(SITES(source, include_predicate_domain=True))[-1])
+
     def test_string_cannot_impersonate_a_declaration(self):
         source = f"def evalSim {self.header} : Prop := True"
         self.assertEqual([], self.errors("evalSim", '@[hol "cakeml/x.sml" "x"]\n' + source))
@@ -4134,6 +4144,46 @@ class FmapParameterPredicateDomainDefinitionBodyTest(unittest.TestCase):
         self.assertTrue(self.errors(self.body, suffix="\ndef evalSim : Prop := True"))
         self.assertTrue(self.errors(self.body, prefix='def decoy : String := "\ndef evalSim : Prop :=\n', suffix='\n"'))
         self.assertTrue(self.errors(self.body, prefix="namespace X variable (bad : Prop)\ndef evalSim : Prop :=\n"))
+
+
+class FmapParameterPredicateDomainIntegrationTest(unittest.TestCase):
+    def run_checker(self, source):
+        main = CHECKER["main"]
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "cakeml/pancake").mkdir(parents=True)
+            hol = root / "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml"
+            hol.parent.mkdir(parents=True)
+            hol.write_text("Definition eval_sim_def: T End\nTheorem IMP_semantics_eq: T Proof simp[] QED\n")
+            lean = root / "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvalSim.lean"
+            lean.parent.mkdir(parents=True)
+            lean.write_text(source)
+            output = io.StringIO()
+            with patch.dict(main.__globals__, {
+                "ROOT": root, "lean_files": lambda: [lean],
+                "reachable_modules": lambda: {"Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvalSim"},
+                "reals_rendering_names": lambda _: set(),
+            }), contextlib.redirect_stderr(output), contextlib.redirect_stdout(output):
+                status = main([])
+            return status, output.getvalue()
+
+    def test_main_enforces_source_codec_witness_and_qualifier(self):
+        path = Path(__file__).resolve().parents[2] / "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvalSim.lean"
+        source = path.read_text()
+        self.assertEqual(0, self.run_checker(source)[0])
+        changes = [
+            ("[code1, rel]", "[rel, code1]"),
+            ("[code1, rel])", "[code1, rel]) (fmap_as_finite_support_parameters := [code1])"),
+            ("res1 ≠ .err (.abort .typeError)", "True"),
+            ("fromBroadPredicate (toBroadPredicate rel) code = rel code", "True"),
+            ("holFmapAsFiniteSupportParamWitness_impSemanticsEq_code1", "missingWitness"),
+        ]
+        for before, after in changes:
+            with self.subTest(before=before):
+                changed = source.replace(before, after, 1)
+                self.assertNotEqual(source, changed)
+                status, output = self.run_checker(changed)
+                self.assertNotEqual(0, status, output)
 
 
 class FmapParameterPredicateDomainWitnessTest(unittest.TestCase):

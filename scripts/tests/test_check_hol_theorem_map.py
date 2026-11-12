@@ -1467,6 +1467,30 @@ class ValidateInventoryTest(unittest.TestCase):
         self.assertNotIn(mismatch, MAP["tagged_declarations"]())
 
 
+class PredicateDomainStatusTest(unittest.TestCase):
+    def test_exact_site_binders_status_and_review_are_required(self):
+        key = ("Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvalSim.lean", "evalSim")
+        record = {
+            "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+            "hol_name": "eval_sim_def", "lean_path": key[0], "lean_name": key[1],
+            "statement_status": "reviewed_fmap_as_finite_support_parameter_predicate_domain",
+            "fmap_as_finite_support_parameter_predicate_domain": ["code1", "rel"],
+            "reviewer": "Source comparison of code1 and rel.",
+        }
+        tag = (record["hol_path"], record["hol_name"], (), (), (), (), False, (), False,
+               False, (), (), None, (), (), False, False, (), (), (), (), ("code1", "rel"))
+        validate = MAP["validate_inventory"]
+        self.assertEqual([], validate([record], set(), {key: tag}, set()))
+        for changed in ({"fmap_as_finite_support_parameter_predicate_domain": ["rel", "code1"]},
+                        {"statement_status": "reviewed_exact"}, {"reviewer": "source comparison"}):
+            self.assertTrue(validate([{**record, **changed}], set(), {key: tag}, set()))
+        bad_key = ("Flapjack/Example.lean", "evalSim")
+        self.assertTrue(validate([{**record, "lean_path": bad_key[0]}], set(), {bad_key: tag}, set()))
+        combined = list(tag)
+        combined[2] = ("field",)
+        self.assertTrue(validate([{**record, "list_as_array": ["field"]}], set(), {key: tuple(combined)}, set()))
+
+
 class NestedRelationStatusTest(unittest.TestCase):
     def test_qualifier_requires_matching_manifest_and_status(self):
         key = ("Flapjack/Example.lean", "ValueRel")

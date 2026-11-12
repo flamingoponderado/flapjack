@@ -2155,6 +2155,22 @@
   "reviewer": "Compared compile_common_def_typed: configuration and expression carriers and all eight ordered steps agree, including post-mti length for fresh-location reservation, even alignment, the original next_loc for chain_exps, and source annotation. Numbering, known-function and direct-call results and all four updated configuration fields agree. compileCallMtiFuel_eq_source proves whole-result agreement with the executed compiler using the pass equations directly."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "eval_sim_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvalSim.lean", "lean_name": "evalSim",
+  "statement_status": "reviewed_fmap_as_finite_support_parameter_predicate_domain",
+  "fmap_as_finite_support_parameter_predicate_domain": ["code1", "rel"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared eval_sim_def_typed and the original HOL source: code1 and the first map domain of rel use the canonical finite-support carrier. Independent source and target compiler types, shared FFI type, source evaluation and safety guard, complete relation application, existential target run, result relation and whole FFI equality agree. The evaluator inherits the reals_as_rational_cuts assumption in docs/SOUNDNESS.md item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "IMP_semantics_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvalSim.lean", "lean_name": "impSemanticsEq",
+  "statement_status": "reviewed_fmap_as_finite_support_parameter_predicate_domain",
+  "fmap_as_finite_support_parameter_predicate_domain": ["code1", "rel"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared IMP_semantics_eq_typed and the original HOL source: code1 and the first map domain of rel use the canonical finite-support carrier. The independent compiler types, shared FFI type, grouped simulation and nonfailure premise, relation premise and target-to-source semantics equality agree. The evaluator inherits the reals_as_rational_cuts assumption in docs/SOUNDNESS.md item 8."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "shift_correct",
   "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/AnnotateCorrect.lean", "lean_name": "shift_correct",
   "statement_status": "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual",

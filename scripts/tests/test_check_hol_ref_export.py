@@ -53,6 +53,12 @@ class HolRefExportTest(unittest.TestCase):
             "reviewed_fmap_as_finite_support_parameter_observations", fields,
             {**fields, "fmap_as_finite_support_parameter_observations": True}, fields)
 
+    def test_predicate_domain_binders_must_match_export_in_order(self):
+        key = "fmap_as_finite_support_parameter_predicate_domain"
+        self.check_qualifier(
+            "reviewed_fmap_as_finite_support_parameter_predicate_domain",
+            {key: ["code1", "rel"]}, {key: ["code1", "rel"]}, {key: ["rel", "code1"]})
+
     def test_nested_list_qualifier_must_match_both_directions(self):
         self.check_qualifier(
             "reviewed_nested_list_rel_as_mutual",
