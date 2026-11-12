@@ -157,6 +157,13 @@
   "reviewer": "Compared the literal local HOL source proof and typed replay: related source and target values have equal full optional byte decodings, including NONE, with fixed word8 bytes. The f and refs inputs use canonical finite support and same-module codec witnesses."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_generic_app_full",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/GenericFull.lean", "lean_name": "evaluateGenericAppFull",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the literal local HOL proof, its prerequisites and typed replay, including the independently polymorphic unused clo binder: arbitrary argument list, code lookup, exact length and overapplication bounds, numeric values and block fields, timeout state, all complete result branches, singleton continuation and HOL HD match. Compiler and FFI carriers remain independent. The refs field uses the canonical finite-support carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "mk_cl_lem",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallEnvironment.lean", "lean_name": "mkClLem",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],

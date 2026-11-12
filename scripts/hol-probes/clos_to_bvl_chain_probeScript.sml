@@ -116,6 +116,96 @@ val _ = show_thm "v_rel_union_replay=" v_rel_union_replay;
 local
   open preamble clos_to_bvlTheory clos_to_bvlProofTheory bvlSemTheory bvlPropsTheory listTheory backend_commonTheory
 in
+  open bvl_jumpProofTheory;
+  val el_append2 = Q.prove (`∀l x. EL (LENGTH l) (l++[x]) = x`,
+    Induct_on `l` >> srw_tac[][]);
+  val take_drop_lemma_replay = Q.prove (
+    `  !rem_args arg_list.
+   LENGTH arg_list > rem_args
+   ⇒
+   TAKE (rem_args + 1) (DROP (LENGTH arg_list − (rem_args + 1)) (arg_list ++ stuff)) =
+   DROP (LENGTH arg_list − (rem_args + 1)) arg_list`,
+  Induct_on `arg_list` >>fs[ADD1]>>rw[]>>
+  Cases_on`rem_args = LENGTH arg_list`>>fs[TAKE_LENGTH_APPEND]);
+  val take_drop_lemma = take_drop_lemma_replay;
+  val evaluate_generic_app_full_replay = Q.prove (
+    `  !n args st rem_args vs l tag exp clo.
+    lookup l st.code = SOME (rem_args + 2, exp) ∧
+    n + 1 = LENGTH args ∧
+    n > rem_args ∧
+    rem_args < max_app
+    ⇒
+    evaluate ([generate_generic_app max_app n], args++[Block tag (CodePtr l :: Number (&rem_args) :: vs)], st) =
+    if st.clock < rem_args + 1 then (Rerr(Rabort Rtimeout_error), st with clock := 0) else
+      case evaluate ([exp],
+                     DROP (LENGTH args − (rem_args + 1)) args ++
+                     [Block tag (CodePtr l::Number (&rem_args)::vs)],
+                     dec_clock (rem_args + 1) st) of
+        | (Rval [v], st') =>
+            (case
+               evaluate
+                 ([mk_cl_call (Var 0) (GENLIST (λn. Var (n + 3)) (n − rem_args))],
+                  v::Number (&rem_args)::Number (&rem_args − &LENGTH args)::
+                      args++[Block tag (CodePtr l::Number (&rem_args)::vs)],
+                  st')
+             of
+               (Rval v,s2) => (Rval [HD v],s2)
+             | x => x)
+        | x => x`,
+  srw_tac[][generate_generic_app_def, mk_const_def] >>
+  srw_tac[][evaluate_def, do_app_def, do_int_app_def, el_append2] >>
+  full_simp_tac (srw_ss() ++ ARITH_ss) [partial_app_tag_def] >>
+  fsrw_tac[][do_int_app_def] >>
+  `(&rem_args − &(LENGTH args):int < 0)` by intLib.ARITH_TAC >>
+  srw_tac[][] >>
+  `evaluate ([mk_elem_at (Var (LENGTH args + 1)) 1],
+          Number (&rem_args − &LENGTH args):: (args ++ [Block tag (CodePtr l::Number (&rem_args)::vs)]),
+          st) =
+    (Rval [Number (&rem_args)], st)`
+          by srw_tac [ARITH_ss] [evaluate_def, do_app_def,do_int_app_def, PRE_SUB1, EL_CONS, el_append2] >>
+  `n + 2 = LENGTH args + 1` by decide_tac >>
+  full_simp_tac(srw_ss())[] >>
+  imp_res_tac evaluate_Jump >>
+  srw_tac [ARITH_ss] [LENGTH_GENLIST, evaluate_def, do_app_def] >>
+  srw_tac [ARITH_ss] [evaluate_APPEND, do_app_def, evaluate_def] >>
+  srw_tac [ARITH_ss] [Once evaluate_CONS, evaluate_def, evaluate_APPEND] >>
+  full_simp_tac(srw_ss())[] >>
+  `(rem_args + 1) + ((LENGTH args + 1) - rem_args) ≤
+     LENGTH (Number (&rem_args)::Number (&rem_args − &LENGTH args)::
+                 (args ++
+                  [Block tag (CodePtr l::Number (&rem_args)::vs)]))`
+             by (srw_tac[][] >>
+                 decide_tac) >>
+  imp_res_tac evaluate_genlist_vars >>
+  pop_assum (qspec_then `st` mp_tac) >>
+  `LENGTH args + 1 - rem_args = (LENGTH args + 1) - rem_args` by decide_tac >>
+  simp [do_int_app_def] >>
+  srw_tac[][] >>
+  simp [EL_CONS, PRE_SUB1, el_append2, find_code_def, bvlSemTheory.state_component_equality, FRONT_APPEND] >>
+  `LENGTH args > rem_args` by decide_tac >>
+  srw_tac[][take_drop_lemma] >>
+  qabbrev_tac `res1 =
+    bvlSem$evaluate
+      ([exp],
+       DROP (LENGTH args − (rem_args + 1)) args ++ [Block tag (CodePtr l::Number (&rem_args)::vs)],
+       dec_clock (rem_args + 1) st)` >>
+  Cases_on `res1` >>
+  full_simp_tac(srw_ss())[] >>
+  Cases_on `q` >>
+  full_simp_tac(srw_ss())[] >>
+  `LENGTH a = 1` by metis_tac [bvlPropsTheory.evaluate_IMP_LENGTH, LENGTH, DECIDE ``SUC 0 = 1``] >>
+  Cases_on `a` >>
+  full_simp_tac(srw_ss())[] >>
+  Cases_on `t` >>
+  full_simp_tac(srw_ss())[] >>
+  BasicProvers.FULL_CASE_TAC >>
+  BasicProvers.FULL_CASE_TAC >>
+  `LENGTH a = 1` by metis_tac [bvlPropsTheory.evaluate_IMP_LENGTH, LENGTH, DECIDE ``SUC 0 = 1``] >>
+  Cases_on `a` >>
+  full_simp_tac(srw_ss())[] >>
+  Cases_on `t` >>
+  full_simp_tac(srw_ss())[]);
+  val _ = show_thm "evaluate_generic_app_full_replay=" evaluate_generic_app_full_replay;
   val mk_cl_lem_replay = Q.prove (
     `  l < LENGTH env
    ⇒
