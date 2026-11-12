@@ -941,6 +941,74 @@ in
   srw_tac[][]);
   val _ = show_thm "evaluate_app_helper2_replay=" evaluate_app_helper2_replay;
 end;
+(* Replay the recursive-closure array and environment construction theorem. *)
+local
+  open preamble clos_to_bvlTheory clos_to_bvlProofTheory bvlSemTheory bvlPropsTheory listTheory backend_commonTheory
+in
+  val map2_snoc = Q.prove (
+    `  !l1 l2 f x y.
+    LENGTH l1 = LENGTH l2 ⇒
+    MAP2 f (SNOC x l1) (SNOC y l2) = MAP2 f l1 l2 ++ [f x y]`,
+  Induct_on `l1` >>
+  srw_tac[][] >>
+  `l2 = [] ∨ ?h l2'. l2 = h::l2'` by (Cases_on `l2` >> srw_tac[][]) >>
+  Cases_on `l2` >>
+  full_simp_tac(srw_ss())[] >>
+  metis_tac[SNOC_APPEND]);
+  val tl_append = Q.prove (
+    `  !l1 l2. 0 < LENGTH l1 ⇒ TL (l1 ++ l2) = TL l1 ++ l2`,
+  Cases_on `l1` >> srw_tac[][]);
+  val evaluate_recc_Lets_replay = Q.prove (
+    `  !(ll:(num#'a) list) n7 rr env' (t1:('c,'ffi) bvlSem$state) ys c8 (x:(num#'a)) (x':(num#'a)) ck.
+     EVERY (\n. n7 + ns + 2* n IN domain t1.code) (GENLIST I (LENGTH ll)) ==>
+     (evaluate
+       ([recc_Lets (n7 + ns) (REVERSE (MAP FST ll)) (LENGTH ll) (HD c8)],
+        Block closure_tag [CodePtr (n7 + (ns + 2 * LENGTH ll)); Number (&(FST x-1)); RefPtr T rr]::env',
+        t1 with <| refs := t1.refs |+ (rr,
+               ValueArray
+               (MAP (K (Number 0)) (MAP FST ll) ++
+                [Block closure_tag [CodePtr (n7 + (ns + 2* LENGTH ll)); Number (&(FST x'-1)); RefPtr T rr]]++ys));clock := ck |>) =
+      evaluate
+       ([HD c8],
+        MAP2 (\n args. Block closure_tag [CodePtr (n7 + ns + 2* n); Number &(args-1); RefPtr T rr])
+                  (GENLIST I (LENGTH ll + 1)) (MAP FST ll ++ [FST x]) ++ env',
+        t1 with <| refs := t1.refs |+ (rr,
+               ValueArray
+               (MAP2 (\n args. Block closure_tag [CodePtr (n7 + ns + 2* n); Number &(args-1); RefPtr T rr])
+                  (GENLIST I (LENGTH ll + 1)) (MAP FST ll ++ [FST x']) ++ ys)); clock := ck |>))`,
+  recInduct SNOC_INDUCT \\ full_simp_tac(srw_ss())[] \\ REPEAT STRIP_TAC
+  \\ ONCE_REWRITE_TAC [recc_Lets_def] \\ full_simp_tac(srw_ss())[LET_DEF]
+  \\ full_simp_tac(srw_ss())[bvlSemTheory.evaluate_def,recc_Let_def,
+     bvlSemTheory.do_app_def,bvlSemTheory.do_int_app_def]
+  \\ simp []
+  \\ full_simp_tac(srw_ss())[DECIDE ``0 < k + SUC n:num``,EVERY_SNOC,GENLIST, ADD_ASSOC]
+  \\ full_simp_tac(srw_ss())[FLOOKUP_UPDATE,DECIDE ``n < SUC n + m``,DECIDE ``0 < 1 + SUC n``,
+         DECIDE ``0 < 1 + n:num``,DECIDE ``2 < 1 + (1 + (1 + n:num))``]
+  \\ simp []
+  \\ full_simp_tac(srw_ss())[SNOC_APPEND,MAP_APPEND,MAP, MAP_REVERSE, REVERSE_APPEND, tl_append]
+  \\ `LENGTH l = LENGTH (MAP (K (Number 0:bvlSem$v)) (MAP FST (l:(num#'a) list)))` by srw_tac[][]
+  \\ ONCE_ASM_REWRITE_TAC []
+  \\ pop_assum kall_tac
+  \\ rw_tac std_ss [SIMP_RULE std_ss [GSYM APPEND_ASSOC] lupdate_append2, GSYM APPEND_ASSOC]
+  \\ simp []
+  \\ rw_tac std_ss [PROVE [APPEND_ASSOC] ``!(a:'a list) b c d. a ++ b ++ c ++ d = a ++ b ++ (c ++ d)``] >>
+  first_x_assum (qspecl_then [`n7`, `rr`,
+                   `Block closure_tag [CodePtr (n7 + (ns + 2 * SUC (LENGTH l))); Number (&(FST x'-1)); RefPtr T rr]::env'`,
+                   `t1`,
+                   `[Block closure_tag [CodePtr (n7 + (ns + 2 * SUC (LENGTH l))); Number (&(FST x''-1)); RefPtr T rr]] ++ ys`,
+                   `c8`,
+                    `x`,
+                    `x`,
+                    `ck`] assume_tac) >>
+  rev_full_simp_tac std_ss [ADD_ASSOC] >>
+  rw_tac std_ss [ADD_ASSOC] >>
+  simp [GENLIST, GSYM ADD1, GSYM SNOC_APPEND, map2_snoc] >>
+  simp [SNOC_APPEND, APPEND_ASSOC]
+  \\ FULL_SIMP_TAC std_ss [DECIDE ``SUC n + 1 = SUC (n+1)``,GENLIST]
+  \\ FULL_SIMP_TAC std_ss [ADD1,SNOC_APPEND]
+  \\ SIMP_TAC std_ss [GSYM APPEND_ASSOC,APPEND]);
+  val _ = show_thm "evaluate_recc_Lets_replay=" evaluate_recc_Lets_replay;
+end;
 (* Replay the generated-variable evaluation theorem. *)
 local
   open preamble clos_to_bvlProofTheory bvlPropsTheory bvlSemTheory listTheory

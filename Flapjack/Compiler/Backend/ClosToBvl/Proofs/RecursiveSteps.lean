@@ -46,26 +46,6 @@ theorem evaluate_reccLet {C F : Type} (state : BvlSem.State C F)
   rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, extract]
   exact evaluate_reccLet0 state (oldClosure :: env) ptr label arity index values labelInstalled lookup bound
 
-/-- One iteration of the generated recursive builder performs its write and
-continues with the new closure at the front of the target environment. -/
-theorem evaluate_reccLets_succ {C F : Type} (state : BvlSem.State C F)
-    (env : List BvlSem.Value) (ptr base arity index previousLabel : Nat) (previousArity : Int)
-    (values : List BvlSem.Value) (remaining : List Nat) (body : Bvl.Exp)
-    (labelInstalled : ∃ entry, sptLookup (base + 2 * index) state.code = some entry)
-    (lookup : state.refs.lookup ptr = some (.valueArray values)) (bound : index < values.length) :
-    let oldClosure := BvlSem.Value.block 30 [.codePtr previousLabel, .number previousArity, .refPtr true ptr]
-    let block := BvlSem.Value.block 30 [.codePtr (base + 2 * index),
-      .number (Int.ofNat (arity - 1)), .refPtr true ptr]
-    let next := { state with refs := state.refs.updateEq (ptr, .valueArray (values.set index block)) }
-    BvlSem.evaluate [reccLetsHOL base (arity :: remaining) (index + 1) body] (oldClosure :: env) state =
-      BvlSem.evaluate [reccLetsHOL base remaining index body] (block :: oldClosure :: env) next := by
-  have step := evaluate_reccLet state env ptr (base + 2 * index) arity index previousLabel previousArity
-    values labelInstalled lookup bound
-  change BvlSem.evaluate [.let [reccLet (base + 2 * index) arity index]
-      (reccLetsHOL base remaining index body)] _ state = _
-  rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, step]
-  rfl
-
 /-- A list of zero constants evaluates without changing the BVL state. -/
 theorem evaluate_zero_constants {C F : Type} (count : Nat) (env : List BvlSem.Value)
     (state : BvlSem.State C F) :

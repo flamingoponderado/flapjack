@@ -79,8 +79,16 @@ theorem evaluate_reccLets_fill {C F : Type} (count : Nat) (arities : List Nat)
       have currentLookup : state.refs.lookup ptr = some (.valueArray current) := lookup
       have indexBound : count < current.length := by simp [current]; omega
       have label := labels count (by omega)
-      have step := evaluate_reccLets_succ state env ptr base arity count previousLabel previousArity
-        current rest body label currentLookup indexBound
+      have write := evaluate_reccLet state env ptr (base + 2 * count) arity count previousLabel previousArity
+        current label currentLookup indexBound
+      have step : BvlSem.evaluate [reccLetsHOL base (arity :: rest) (count + 1) body]
+          (oldClosure :: env) state =
+          BvlSem.evaluate [reccLetsHOL base rest count body] (block :: oldClosure :: env)
+            { state with refs := state.refs.updateEq (ptr, .valueArray (current.set count block)) } := by
+        change BvlSem.evaluate [.let [reccLet (base + 2 * count) arity count]
+          (reccLetsHOL base rest count body)] (oldClosure :: env) state = _
+        rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, write]
+        rfl
       have setEq : current.set count block = List.replicate count (.number 0) ++ (block :: finished) ++ captured := by
         simpa [current, List.append_assoc] using
           set_last_placeholder count (BvlSem.Value.number 0) block (finished ++ captured)
@@ -107,6 +115,69 @@ theorem recursiveBlocks_reverse (base ptr : Nat) (arities : List Nat) :
   | nil => rfl
   | cons arity rest ih =>
     simp [recursiveBlocks, ih, List.reverse_cons, List.zipIdx_append]
+
+/-- The indexed source-order blocks agree with the recursive write layout. -/
+private theorem recursiveBlocks_zipWith (base ptr : Nat) (arities : List Nat) (last : Nat) :
+    (List.range (arities.length + 1)).zipWith
+      (fun n arity => BvlSem.Value.block 30 [.codePtr (base + 2*n), .number (Int.ofNat (arity-1)), .refPtr true ptr])
+      (arities ++ [last]) =
+    recursiveBlocks base ptr arities.reverse arities.length ++
+      [.block 30 [.codePtr (base + 2*arities.length), .number (Int.ofNat (last-1)), .refPtr true ptr]] := by
+  have h := recursiveBlocks_reverse base ptr arities.reverse
+  simp only [List.length_reverse, List.reverse_reverse] at h
+  rw [h, List.range_succ, List.zipWith_append (by simp)]
+  simp only [List.zipWith_cons_cons, List.zipWith_nil_left, List.append_cancel_right_eq]
+  rw [List.zipWith_comm, ← List.map_uncurry_zip_eq_zipWith, List.zipIdx_eq_zip_range']
+  simp [← List.range_eq_range']
+
+
+namespace RecursiveFillCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end RecursiveFillCarrier
+
+/-- The recursive writes construct the source's indexed closure environment and array. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_recc_Lets"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateReccLets {α C F : Type} (ll : List (Nat × α)) (n7 ns rr : Nat)
+    (env : List BvlSem.Value) (t : Flapjack.Compiler.Backend.BvlSem.State C F) (ys : List BvlSem.Value)
+    (c8 : List Bvl.Exp) (x x' : Nat × α) (ck : Nat)
+    (labels : ∀ n ∈ List.range ll.length, sptDomain t.code (n7 + ns + 2*n)) :
+    let block := fun n arity => BvlSem.Value.block 30
+      [.codePtr (n7 + ns + 2*n), .number (Int.ofNat (arity - 1)), .refPtr true rr]
+    let zeroes := (ll.map Prod.fst).map (fun _ => BvlSem.Value.number 0)
+    let initial := zeroes ++ [.block 30 [.codePtr (n7 + (ns + 2*ll.length)), .number (Int.ofNat (x'.1 - 1)), .refPtr true rr]] ++ ys
+    let body := @Flapjack.holHd Bvl.Exp ⟨.var 0⟩ c8
+    BvlSem.evaluate [reccLetsHOL (n7 + ns) (ll.map Prod.fst).reverse ll.length body]
+      (.block 30 [.codePtr (n7 + (ns + 2*ll.length)), .number (Int.ofNat (x.1 - 1)), .refPtr true rr] :: env) { t with refs := t.refs.updateEq (rr, .valueArray initial), clock := ck } =
+    BvlSem.evaluate [body]
+      ((List.range (ll.length + 1)).zipWith block (ll.map Prod.fst ++ [x.1]) ++ env)
+      { t with refs := t.refs.updateEq (rr, .valueArray
+          ((List.range (ll.length + 1)).zipWith block (ll.map Prod.fst ++ [x'.1]) ++ ys)), clock := ck } := by
+  let block := fun n arity => BvlSem.Value.block 30
+    [.codePtr (n7 + ns + 2*n), .number (Int.ofNat (arity - 1)), .refPtr true rr]
+  let zeros := List.replicate ll.length (BvlSem.Value.number 0)
+  let state := { t with refs := t.refs.updateEq (rr, .valueArray (zeros ++ [block ll.length x'.1] ++ ys)), clock := ck }
+  have lookup : state.refs.lookup rr = some (.valueArray (zeros ++ [block ll.length x'.1] ++ ys)) := by
+    simp [state, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
+  have domain : ∀ i, i < ll.length → ∃ entry, sptLookup (n7 + ns + 2*i) state.code = some entry := by
+    intro i bound
+    have h := labels i (List.mem_range.mpr bound)
+    simp only [sptDomain] at h
+    cases e : sptLookup (n7 + ns + 2*i) t.code with
+    | none => simp [e] at h
+    | some entry => exact ⟨entry, rfl⟩
+  have run := evaluate_reccLets_fill ll.length (ll.map Prod.fst).reverse state env rr (n7 + ns)
+    (n7 + ns + 2*ll.length) (Int.ofNat (x.1-1)) [block ll.length x'.1] ys
+    (@Flapjack.holHd Bvl.Exp ⟨.var 0⟩ c8) (by simp) lookup domain
+  have bx := recursiveBlocks_zipWith (n7+ns) rr (ll.map Prod.fst) x.1
+  have bx' := recursiveBlocks_zipWith (n7+ns) rr (ll.map Prod.fst) x'.1
+  simp only [List.length_map] at bx bx'
+  simp only [bx, bx']
+  simpa [state, zeros, block, List.map_map, Function.comp_def, List.map_const', List.length_map, updateEq_twice_same, List.append_assoc, Nat.add_assoc] using run
 
 /-- The recursive write loop's block list is the same target layout used by
 the closure-value relation, for the compiled source function order. -/
