@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileCases
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.ConstantComposition
+public import Flapjack.Compiler.Backend.BvlHandle.SourceCompile
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.VarBound
 
 @[expose] public section
@@ -175,7 +176,7 @@ theorem compileSing_varBound (limit env m : Nat) (expression : Bvl.Exp) (envBoun
     generalize run : compileList limit env args = data
     obtain ⟨compiled, live, size, flag⟩ := data
     have bound : bVarBound m compiled := by
-      simpa [run] using compileList_varBound limit env m args envBound
+      simpa [run] using compileList_varBound limit env args m envBound
     simp only [compileSing, run]
     apply bVarBound_optionalLetLetSing _ env m live (size + 1) limit false envBound
     simpa [bVarBound] using bound
@@ -183,7 +184,7 @@ theorem compileSing_varBound (limit env m : Nat) (expression : Bvl.Exp) (envBoun
     generalize run : compileList limit env args = data
     obtain ⟨compiled, live, size, flag⟩ := data
     have bound : bVarBound m compiled := by
-      simpa [run] using compileList_varBound limit env m args envBound
+      simpa [run] using compileList_varBound limit env args m envBound
     by_cases force : op = .thunkOp .forceThunk
     · subst op
       simpa [compileSing, run, bVarBound] using bound
@@ -229,7 +230,7 @@ theorem compileSing_varBound (limit env m : Nat) (expression : Bvl.Exp) (envBoun
       generalize bodyEq : compileSing limit (env + (first :: rest).length) body = bodyData
       obtain ⟨compiledBody, bodyLive, bodySize, bodyFlag⟩ := bodyData
       have bindingsBound : bVarBound m compiledBindings := by
-        simpa [bindingsEq] using compileList_varBound limit env m (first :: rest) envBound
+        simpa [bindingsEq] using compileList_varBound limit env (first :: rest) m envBound
       have length : compiledBindings.length = (first :: rest).length := by
         simpa [bindingsEq] using compileList_length limit env (first :: rest)
       have bodyBound : bVarBound (m + compiledBindings.length) [compiledBody] := by
@@ -243,8 +244,9 @@ theorem compileSing_varBound (limit env m : Nat) (expression : Bvl.Exp) (envBoun
 termination_by sizeOf expression
 
 /-- Every list emitted by the handler traversal is in scope. -/
-theorem compileList_varBound (limit env m : Nat) (expressions : List Bvl.Exp) (envBound : env ≤ m) :
-    bVarBound m (compileList limit env expressions).1 := by
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "bVarBound_compile"]
+theorem compileList_varBound (limit env : Nat) (expressions : List Bvl.Exp) (m : Nat) (envBound : env ≤ m) :
+    bVarBound m (compile limit env expressions).1 := by
   cases expressions with
   | nil => simp [compileList, bVarBound]
   | cons head tail =>
@@ -255,7 +257,7 @@ theorem compileList_varBound (limit env m : Nat) (expressions : List Bvl.Exp) (e
     have headBound : bVarBound m [compiledHead] := by
       simpa [headEq] using compileSing_varBound limit env m head envBound
     have tailBound : bVarBound m compiledTail := by
-      simpa [tailEq] using compileList_varBound limit env m tail envBound
+      simpa [tailEq] using compileList_varBound limit env tail m envBound
     simp only [compileList, headEq, tailEq]
     rw [bVarBound_every] at tailBound ⊢
     intro expression member
@@ -268,15 +270,18 @@ end
 
 /-- The complete expression pipeline emits an expression bounded by its
 declared arity. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "compile_exp_bVarBound"]
 theorem compileExpression_varBound (limit arity : Nat) (expression : Bvl.Exp) :
-    bVarBound arity [compileExpression limit arity expression] := by
+    bVarBound arity [compileExp limit arity expression] := by
   exact compileSing_varBound limit arity arity _ (Nat.le_refl _)
 
 /-- Sequence splitting preserves a closed variable bound for any closed
 continuation. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "compile_seqs_bVarBound"]
 theorem compileSeqsWith_varBound (limit : Nat) (expression : Bvl.Exp) (acc : Option Bvl.Exp)
     (accBound : ∀ rest, acc = some rest → bVarBound 0 [rest]) :
-    bVarBound 0 [compileSeqsWith (fun l e => compileExpression l 0 e) limit expression acc] := by
+    bVarBound 0 [compileSeqs limit expression acc] := by
+  change bVarBound 0 [compileSeqsWith (fun l e => compileExpression l 0 e) limit expression acc]
   by_cases shape : ∃ first second, expression = .let [first, second] (.var 1)
   · obtain ⟨first, second, rfl⟩ := shape
     simp only [compileSeqsWith]
@@ -297,20 +302,19 @@ theorem compileSeqsWith_varBound (limit : Nat) (expression : Bvl.Exp) (acc : Opt
       simpa [bVarBound] using And.intro (compileExpression_varBound limit 0 expression) continuation
 termination_by sizeOf expression
 
-/-- The production handler entry point emits an expression bounded by its
-declared arity in either sequence-splitting mode. -/
-theorem compileAnyFuel_varBound (fuel : Nat) (splitSeq : Bool) (limit arity : Nat)
+/-- The composed source entry point is bounded in either mode; this combines
+the source expression and sequence bound theorems for Flapjack callers. -/
+theorem compileAny_varBound (splitSeq : Bool) (limit arity : Nat)
     (expression : Bvl.Exp) :
-    ∃ output, compileAnyFuel fuel splitSeq limit arity expression = some output ∧
-      bVarBound arity [output] := by
-  rw [compileAnyFuel_eq_source]
+    bVarBound arity [compileAny splitSeq limit arity expression] := by
+  unfold compileAny
   split
   · rename_i condition
     have zero : arity = 0 := by
       simp only [Bool.and_eq_true, beq_iff_eq] at condition
       exact condition.1
     subst arity
-    exact ⟨_, rfl, compileSeqsWith_varBound limit expression none (by simp)⟩
-  · exact ⟨_, rfl, compileExpression_varBound limit arity expression⟩
+    exact compileSeqsWith_varBound limit expression none (by simp)
+  · exact compileExpression_varBound limit arity expression
 
 end Flapjack.Compiler.Backend.BvlHandle.Proofs

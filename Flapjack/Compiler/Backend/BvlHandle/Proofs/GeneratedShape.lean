@@ -116,7 +116,7 @@ theorem compileSing_handleOk (limit env : Nat) (expression : Bvl.Exp) :
     generalize run : compileList limit env args = data
     obtain ⟨compiled, live, size, flag⟩ := data
     have shape : handleOk compiled := by simpa [run] using compileList_handleOk limit env args
-    have bound : bVarBound env compiled := by simpa [run] using compileList_varBound limit env env args (Nat.le_refl _)
+    have bound : bVarBound env compiled := by simpa [run] using compileList_varBound limit env args env (Nat.le_refl _)
     simp only [compileSing, run]
     apply handleOk_optionalLetLetSing _ env live (size + 1) limit false
     · simpa [bVarBound] using bound
@@ -125,7 +125,7 @@ theorem compileSing_handleOk (limit env : Nat) (expression : Bvl.Exp) :
     generalize run : compileList limit env args = data
     obtain ⟨compiled, live, size, flag⟩ := data
     have shape : handleOk compiled := by simpa [run] using compileList_handleOk limit env args
-    have bound : bVarBound env compiled := by simpa [run] using compileList_varBound limit env env args (Nat.le_refl _)
+    have bound : bVarBound env compiled := by simpa [run] using compileList_varBound limit env args env (Nat.le_refl _)
     by_cases force : op = .thunkOp .forceThunk
     · subst op
       simpa [compileSing, run, handleOk] using shape
@@ -176,7 +176,7 @@ theorem compileSing_handleOk (limit env : Nat) (expression : Bvl.Exp) :
         have h := compileSing_handleOk limit (env + (first :: rest).length) body
         rw [bodyEq] at h
         exact h
-      have bindingsBound : bVarBound env compiledBindings := by simpa [bindingsEq] using compileList_varBound limit env env (first :: rest) (Nat.le_refl _)
+      have bindingsBound : bVarBound env compiledBindings := by simpa [bindingsEq] using compileList_varBound limit env (first :: rest) env (Nat.le_refl _)
       have length : compiledBindings.length = (first :: rest).length := by simpa [bindingsEq] using compileList_length limit env (first :: rest)
       have nonempty : compiledBindings ≠ [] := by
         intro empty
@@ -192,8 +192,9 @@ theorem compileSing_handleOk (limit env : Nat) (expression : Bvl.Exp) :
 termination_by sizeOf expression
 
 /-- Every generated expression list satisfies the handler-shape invariant. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "compile_handle_ok"]
 theorem compileList_handleOk (limit env : Nat) (expressions : List Bvl.Exp) :
-    handleOk (compileList limit env expressions).1 := by
+    handleOk (compile limit env expressions).1 := by
   cases expressions with
   | nil => simp [compileList, handleOk]
   | cons head tail =>
@@ -210,15 +211,18 @@ end
 
 /-- The constant-and-handler expression pipeline produces a legal handler
 shape at every arity. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "compile_exp_handle_ok"]
 theorem compileExpression_handleOk (limit arity : Nat) (expression : Bvl.Exp) :
-    handleOk [compileExpression limit arity expression] :=
+    handleOk [compileExp limit arity expression] :=
   compileSing_handleOk limit arity _
 
 /-- Sequence splitting preserves handler shape when its continuation is
 both closed and handler-safe. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "compile_seqs_handle_ok"]
 theorem compileSeqsWith_handleOk (limit : Nat) (expression : Bvl.Exp) (acc : Option Bvl.Exp)
     (accSafe : ∀ rest, acc = some rest → handleOk [rest] ∧ bVarBound 0 [rest]) :
-    handleOk [compileSeqsWith (fun l e => compileExpression l 0 e) limit expression acc] := by
+    handleOk [compileSeqs limit expression acc] := by
+  change handleOk [compileSeqsWith (fun l e => compileExpression l 0 e) limit expression acc]
   by_cases shape : ∃ first second, expression = .let [first, second] (.var 1)
   · obtain ⟨first, second, rfl⟩ := shape
     simp only [compileSeqsWith]
@@ -247,12 +251,13 @@ termination_by sizeOf expression
 
 /-- The actual handler entry point emits a handler-safe expression in both
 sequence-splitting modes. -/
-theorem compileAnyFuel_handleOk (fuel : Nat) (splitSeq : Bool) (limit arity : Nat)
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "compile_any_handle_ok"]
+theorem compileAny_handleOk (splitSeq : Bool) (limit arity : Nat)
     (expression : Bvl.Exp) :
-    ∃ output, compileAnyFuel fuel splitSeq limit arity expression = some output ∧ handleOk [output] := by
-  rw [compileAnyFuel_eq_source]
+    handleOk [compileAny splitSeq limit arity expression] := by
+  unfold compileAny
   split
-  · exact ⟨_, rfl, compileSeqsWith_handleOk limit expression none (by simp)⟩
-  · exact ⟨_, rfl, compileExpression_handleOk limit arity expression⟩
+  · exact compileSeqsWith_handleOk limit expression none (by simp)
+  · exact compileExpression_handleOk limit arity expression
 
 end Flapjack.Compiler.Backend.BvlHandle.Proofs

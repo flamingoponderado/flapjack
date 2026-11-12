@@ -1,5 +1,47 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "bVarBound_compile",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/VarBound.lean", "lean_name": "compileList_varBound",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: for arbitrary limit, environment size, expression list and bound in that order, the environment bound implies bVarBound of the source compile result's first component."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "compile_exp_bVarBound",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/VarBound.lean", "lean_name": "compileExpression_varBound",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source theorem: the singleton source compile_exp output is bounded by arbitrary input arity, with no additional assumptions."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "compile_seqs_bVarBound",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/VarBound.lean", "lean_name": "compileSeqsWith_varBound",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source theorem for arbitrary limit, expression and optional continuation: a zero bound for every present continuation implies the same bound for the singleton source compile_seqs output."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "compile_handle_ok",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/GeneratedShape.lean", "lean_name": "compileList_handleOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source theorem: for arbitrary limit, environment size and expression list, the first component of the source compile result satisfies handle_ok. The source compile entry is the reviewed list traversal."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "compile_exp_handle_ok",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/GeneratedShape.lean", "lean_name": "compileExpression_handleOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source theorem: the singleton containing compile_exp at arbitrary limit and arity satisfies handle_ok. The conclusion uses the reviewed source entry point."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "compile_seqs_handle_ok",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/GeneratedShape.lean", "lean_name": "compileSeqsWith_handleOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source theorem: arbitrary limit, expression and optional continuation; every present continuation must be handler-safe and bounded at zero, and the singleton source compile_seqs output is handler-safe."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "compile_any_handle_ok",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/GeneratedShape.lean", "lean_name": "compileAny_handleOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source theorem for arbitrary split flag, limit, arity and expression: the singleton source compile_any output satisfies handle_ok without extra assumptions."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "handle_ok_EVERY",
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/HandleOk.lean", "lean_name": "handleOk_every",
   "statement_status": "reviewed_exact",

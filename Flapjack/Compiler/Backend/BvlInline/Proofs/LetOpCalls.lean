@@ -286,18 +286,8 @@ shape required by BVL-to-BVI. -/
 theorem letOpTransform_wellFormed (splitSeq : Bool) (limit arity : Nat) (body : Bvl.Exp) :
     BvlProps.bVarBound arity [letOpTransform splitSeq limit arity body] ∧
       BvlHandle.Proofs.handleOk [letOpTransform splitSeq limit arity body] := by
-  obtain ⟨bounded, boundRun, bound⟩ :=
-    BvlHandle.Proofs.compileAnyFuel_varBound 0 splitSeq limit arity (letOpSing body)
-  obtain ⟨shaped, shapeRun, shape⟩ :=
-    BvlHandle.Proofs.compileAnyFuel_handleOk 0 splitSeq limit arity (letOpSing body)
-  have actual := BvlHandle.compileAnyFuel_eq_compileAny 0 splitSeq limit arity (letOpSing body)
-  have boundEq : bounded = letOpTransform splitSeq limit arity body := by
-    rw [boundRun] at actual
-    simpa [letOpTransform] using actual
-  have shapeEq : shaped = letOpTransform splitSeq limit arity body := by
-    have actual := BvlHandle.compileAnyFuel_eq_compileAny 0 splitSeq limit arity (letOpSing body)
-    rw [shapeRun] at actual
-    simpa [letOpTransform] using actual
-  simpa [boundEq, shapeEq] using And.intro bound shape
+  have bound := BvlHandle.Proofs.compileAny_varBound splitSeq limit arity (letOpSing body)
+  have shape := BvlHandle.Proofs.compileAny_handleOk splitSeq limit arity (letOpSing body)
+  simpa [letOpTransform] using And.intro bound shape
 
 end Flapjack.Compiler.Backend.BvlInline.Proofs
