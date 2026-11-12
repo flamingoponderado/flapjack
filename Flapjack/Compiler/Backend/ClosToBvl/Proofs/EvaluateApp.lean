@@ -1179,29 +1179,21 @@ def partialAppEntries (maxApp count : Nat) : List BvlSem.Value :=
     (List.range total).map fun previous =>
       BvlSem.Value.codePtr (partialAppFnLocation maxApp total previous)).flatten
 
-/-- Extending the table by one arity appends exactly that arity's entries. -/
-theorem partialAppEntries_succ (maxApp count : Nat) :
-    partialAppEntries maxApp (count + 1) = partialAppEntries maxApp count ++
-      (List.range count).map (fun previous => BvlSem.Value.codePtr (partialAppFnLocation maxApp count previous)) := by
-  simp [partialAppEntries, List.range_succ]
-
 /-- Table lookup by the length of the preceding arity rows. -/
 theorem partialAppEntries_lookup (maxApp count total previous : Nat)
     (inTable : total < count) (inRow : previous < total) :
     (partialAppEntries maxApp count)[(partialAppEntries maxApp total).length + previous]? =
       some (.codePtr (partialAppFnLocation maxApp total previous)) := by
-  induction count with
-  | zero => omega
-  | succ count ih =>
-    rw [partialAppEntries_succ]
-    by_cases equal : total = count
-    · subst total
-      simp [inRow]
-    · have smaller : total < count := by omega
-      have run := ih smaller
-      have bound : (partialAppEntries maxApp total).length + previous < (partialAppEntries maxApp count).length := by
-        exact (List.getElem?_eq_some_iff.mp run).1
-      simp [List.getElem?_append, bound, (List.getElem?_eq_some_iff.mp run).2]
+  have bound : previous + total * (total - 1) / 2 < (partialAppEntries maxApp count).length := by
+    simpa only [partialAppEntries, triangleTableSize] using
+      triangleDivLemma count previous total ⟨inTable, inRow⟩
+  have selected := triangleElNoSuff previous total count
+    (fun t p => BvlSem.Value.codePtr (partialAppFnLocation maxApp t p)) () ⟨inRow, inTable⟩
+  dsimp only [partialAppEntries] at bound
+  rw [holEl_eq_getElem _ _ bound] at selected
+  simp only [partialAppEntries, triangleTableSize] at ⊢
+  rw [Nat.add_comm, List.getElem?_eq_getElem bound]
+  exact congrArg some selected
 
 /-- The preceding table rows have the triangular length used by the generated
 index calculation. -/

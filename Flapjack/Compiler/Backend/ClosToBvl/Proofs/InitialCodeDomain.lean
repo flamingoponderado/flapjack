@@ -9,6 +9,13 @@ public import Flapjack.Misc.ListEl
 /-! Domain of the generated closure-application stubs. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
+/-- Split equality with a conditional into its two Boolean cases. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "if_expand"]
+theorem ifExpand {α : Type} (w : α) (x : Bool) (y z : α) :
+    ((if x then y else z) = w) ↔
+      ((x = true ∧ y = w) ∨ (¬ x = true ∧ z = w)) := by
+  cases x <;> simp
+
 /-- The length of the generated triangular table. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "triangle_table_size"]
 theorem triangleTableSize {α : Type} (count : Nat) (f : Nat → Nat → α) :
@@ -55,6 +62,16 @@ private theorem triangleLookup {α : Type} (f : Nat → Nat → α) (limit total
         List.getElem?_eq_some_iff.mp prior |>.choose
       rw [if_pos idxBound]
       exact prior
+
+/-- A generated triangular-table slot lies within the table. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "triangle_div_lemma"]
+theorem triangleDivLemma (maxApp n tot : Nat) :
+    tot < maxApp ∧ n < tot →
+      n + tot * (tot - 1) / 2 < maxApp * (maxApp - 1) / 2 := by
+  intro ⟨ht, hn⟩
+  have entry := triangleLookup (fun _ _ => ()) maxApp tot n hn ht
+  have bound := (List.getElem?_eq_some_iff.mp entry).1
+  simpa only [triangleTableSize] using bound
 
 /-- A bounded entry of a triangular table is unaffected by a suffix. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "triangle_el"]

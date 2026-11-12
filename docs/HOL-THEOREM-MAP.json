@@ -233,6 +233,18 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: args and prev lists have independent polymorphic element types, with exactly the three original conjuncts and all three arithmetic conclusions."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "if_expand",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean", "lean_name": "ifExpand",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL local proof replay: arbitrary same-typed branch results and target, Boolean condition, branch equalities, negation and disjunction preserve the source formula."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "triangle_div_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean", "lean_name": "triangleDivLemma",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL local proof replay: all three natural-number binders, both strict bounds in their original order, truncated subtraction, division and resulting inequality agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "triangle_table_size",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean", "lean_name": "triangleTableSize",
   "statement_status": "reviewed_exact",

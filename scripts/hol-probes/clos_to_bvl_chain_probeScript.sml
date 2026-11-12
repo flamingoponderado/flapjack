@@ -146,6 +146,10 @@ in
   Cases_on `x = 0` >>
   simp []);
   val sum_genlist_triangle = sum_genlist_triangle_replay;
+  val if_expand_replay = Q.prove (
+    `!w x y z. (if x then y else z) = w ⇔ x ∧ y = w ∨ ~x ∧ z = w`,
+    metis_tac []);
+  val _ = show_thm "if_expand_replay=" if_expand_replay;
   val triangle_table_size_replay = Q.prove (
     `  !max f. LENGTH (FLAT (GENLIST (\x. (GENLIST (\y. f x y) x)) max)) =
     max * (max -1) DIV 2`,
@@ -190,6 +194,7 @@ in
   Cases_on `n'` >>
   fs [ADD1] >>
   ARITH_TAC);
+  val _ = show_thm "triangle_div_lemma_replay=" triangle_div_lemma_replay;
   val triangle_div_lemma = triangle_div_lemma_replay;
   val triangle_el_replay = Q.prove (
     `  !n tot max_app stuff f g.
