@@ -10483,3 +10483,11 @@ run_probe asm_sem_typed_probeScript.sml asm_sem_typed_probe.out \
   jump_to_offset_def_typed \
   "$cake_dir/compiler/encoders/asm/asmSemScript.sml" \
   "$cake_dir/compiler/encoders/asm"
+
+run_probe backend_common_typed_probeScript.sml backend_common_typed_probe.out \
+  closure_tag_def_typed partial_app_tag_def_typed tuple_tag_def_typed data_num_stubs_def_typed stack_num_stubs_def_typed word_add_carry_def_typed word_num_stubs_def_typed word_shift_def_typed \
+  bvl_num_stub_MOD_typed bvl_num_stubs_def_typed bvl_to_bvi_namespaces_def_typed opw_typed tra_typed mk_cons_def_typed orphan_trace_def_typed list_delete_def_typed \
+  false_tag_def_typed true_tag_def_typed bool_to_tag_def_typed clos_tag_shift_def_typed bind_tag_def_typed chr_tag_def_typed div_tag_def_typed subscript_tag_def_typed \
+  nil_tag_def_typed cons_tag_def_typed small_enough_int_def_typed \
+  "$cake_dir/compiler/backend/backend_commonScript.sml" \
+  "$cake_dir/compiler/backend"
