@@ -10662,3 +10662,9 @@ run_probe pattern_semantics_typed_probeScript.sml pattern_semantics_typed_probe.
   match_def_typed app_pos_def_typed dt_eval_guard_def_typed dt_eval_def_typed \
   "$cake_dir/compiler/backend/pattern_matching/pattern_semanticsScript.sml" \
   "$cake_dir/compiler/backend/pattern_matching"
+
+run_probe fpSem_typed_probeScript.sml fpSem_typed_probe.out \
+  fp_bop_typed fp_cmp_typed fp_top_typed fp_uop_typed fp_bop_comp_def_typed fp_cmp_def_typed fp_cmp_comp_def_typed fp_top_comp_def_typed \
+  fp_uop_comp_def_typed fpfma_def_typed \
+  "$cake_dir/semantics/fpSemScript.sml" \
+  "$cake_dir/semantics"
