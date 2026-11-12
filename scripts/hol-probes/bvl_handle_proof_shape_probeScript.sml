@@ -19,6 +19,7 @@ val _ = show "handle_adj_vars_evaluate_typed" bvl_handleProofTheory.handle_adj_v
 val _ = show "evaluate_handle_simp_typed" bvl_handleProofTheory.evaluate_handle_simp;
 val _ = show "compile_correct_typed" bvl_handleProofTheory.compile_correct;
 val _ = show "compile_any_correct_typed" bvl_handleProofTheory.compile_any_correct;
+val _ = show "compile_seqs_correct_typed" bvl_handleProofTheory.compile_seqs_correct;
 val _ = show "bVarBound_MEM_typed" bvl_handleProofTheory.bVarBound_MEM;
 val _ = show "bVarBound_LESS_EQ_typed" bvl_handleProofTheory.bVarBound_LESS_EQ;
 val _ = show "bVarBound_LetLet_typed" bvl_handleProofTheory.bVarBound_LetLet;

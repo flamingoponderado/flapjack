@@ -21,13 +21,9 @@ theorem evaluate_letOpTransform {C F : Type} (splitSeq : Bool) (limit : Nat)
     (run : evaluate [letOpSing body] env state = (result, final))
     (notType : result ≠ .err (.abort .typeError)) :
     evaluate [letOpTransform splitSeq limit env.length body] env state = (result, final) := by
-  obtain ⟨output, compiled, evaluation⟩ := BvlHandle.Proofs.evaluate_compileAnyFuel
-    0 splitSeq limit (letOpSing body) env state final result run notType
-  have source := BvlHandle.compileAnyFuel_eq_compileAny 0 splitSeq limit env.length (letOpSing body)
-  rw [compiled] at source
-  have same : output = letOpTransform splitSeq limit env.length body := by
-    simpa [letOpTransform] using source
-  simpa [same] using evaluation
+  simpa [letOpTransform, evaluateTuple] using
+    BvlHandle.Proofs.compileAny_correct (letOpSing body) env state result final
+      env.length splitSeq limit ⟨run, notType, rfl⟩
 
 /-- Setting both clocks to zero preserves a mapped state relation. -/
 theorem mappedStateRel_zeroClock {C F : Type} (transform : Nat → Bvl.Exp → Bvl.Exp)
