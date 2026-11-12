@@ -1,4 +1,5 @@
 load "clos_to_bvlProofTheory";
+load "preamble";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
@@ -67,6 +68,35 @@ val _ = show_thm "eval_sim_def_typed=" clos_to_bvlProofTheory.eval_sim_def;
 val _ = show_thm "IMP_semantics_eq_typed=" clos_to_bvlProofTheory.IMP_semantics_eq;
 val _ = show_thm "clos_init_def_typed=" clos_to_bvlProofTheory.clos_init_def;
 val _ = show_thm "clos_init_with_clock_typed=" clos_to_bvlProofTheory.clos_init_with_clock;
+(* These local declarations are replayed with the proofs from the original script. *)
+local
+  open preamble clos_to_bvlTheory bvlSemTheory
+  val evaluate_init1_replay = Q.prove (
+    `∀mapp2 mapp1 tot st.
+      (∀n. n < mapp2 ⇒ partial_app_fn_location mapp1 tot n ∈ domain st.code) ⇒
+      bvlSem$evaluate (REVERSE
+        (GENLIST (λprev. Op (Label (partial_app_fn_location mapp1 tot prev))[]) mapp2), [Unit], st) =
+      (Rval (REVERSE (GENLIST (λprev. CodePtr (partial_app_fn_location mapp1 tot prev)) mapp2)), st)`,
+    Induct >> fs[bvlSemTheory.evaluate_def] >>
+    rw[] >> simp[GENLIST,REVERSE_SNOC] >>
+    ONCE_REWRITE_TAC[CONS_APPEND] >>
+    simp[bvlPropsTheory.evaluate_APPEND,bvlSemTheory.evaluate_def,do_app_def]);
+  val evaluate_init_replay = Q.prove (
+    `∀mapp2 mapp1 st.
+      (∀m n. m < mapp2 ∧ n < m ⇒ partial_app_fn_location mapp1 m n ∈ domain st.code) ⇒
+      bvlSem$evaluate (REVERSE (FLAT (GENLIST (λtot. GENLIST
+        (λprev. Op (Label (partial_app_fn_location mapp1 tot prev))[]) tot) mapp2)), [Unit], st) =
+      (Rval (REVERSE (FLAT (GENLIST (λtot. GENLIST
+        (λprev. CodePtr (partial_app_fn_location mapp1 tot prev)) tot) mapp2))), st)`,
+    Induct >> fs[bvlSemTheory.evaluate_def] >>
+    simp[GENLIST,FLAT_SNOC] >>
+    simp[REVERSE_APPEND,bvlPropsTheory.evaluate_APPEND] >>
+    rw[] >>
+    `∀n. n < mapp2 ⇒ partial_app_fn_location mapp1 mapp2 n ∈ domain st.code` by fs[] >>
+    old_drule evaluate_init1_replay >> simp[]);
+in
+  val _ = show_thm "evaluate_init_replay=" evaluate_init_replay;
+end;
 val _ = show_thm "renumber_code_locs_fv1_typed=" clos_to_bvlProofTheory.renumber_code_locs_fv1;
 val _ = show_thm "renumber_code_locs_list_fv_typed=" clos_to_bvlProofTheory.renumber_code_locs_list_fv;
 val _ = show_thm "collect_apps_fv1_typed=" clos_to_bvlProofTheory.collect_apps_fv1;

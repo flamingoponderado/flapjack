@@ -54,6 +54,43 @@ theorem evaluate_installed_labels {C F : Type} (labels : List Nat) (env : List B
     have combined := BvlProps.evaluateAppend [mkLabel label] env state (rest.map mkLabel)
     simpa [BvlSem.evaluateTuple, headRun, tailRun] using combined
 
+namespace InitDomain
+
+/-- The BVL reference store roundtrips through its finite-support view. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+
+/-- The generated partial-application labels evaluate to code pointers when
+all of their locations occur in the target code domain. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_init"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_init {C F : Type} (mapp2 mapp1 : Nat)
+    (state : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (installed : ∀ m n, m < mapp2 ∧ n < m →
+      sptMem (partialAppFnLocation mapp1 m n) state.code) :
+    BvlSem.evaluate (((List.range mapp2).map fun total =>
+      (List.range total).map fun previous => mkLabel (partialAppFnLocation mapp1 total previous)).flatten.reverse)
+      [BvlSem.unitValue] state =
+    (.val (((List.range mapp2).map fun total =>
+      (List.range total).map fun previous => BvlSem.Value.codePtr
+        (partialAppFnLocation mapp1 total previous)).flatten.reverse), state) := by
+  let labels := ((List.range mapp2).map fun total =>
+    (List.range total).map fun previous => partialAppFnLocation mapp1 total previous).flatten
+  have labelInstalled : ∀ label ∈ labels.reverse, ∃ entry, sptLookup label state.code = some entry := by
+    intro label member
+    simp only [List.mem_reverse, labels, List.mem_flatten, List.mem_map, List.mem_range] at member
+    obtain ⟨inner, ⟨total, totalBound, innerEq⟩, labelMember⟩ := member
+    subst inner
+    obtain ⟨previous, previousBound, labelEq⟩ := List.mem_map.mp labelMember
+    subst label
+    exact (sptMem_iff_lookup _ _).mp (installed total previous ⟨totalBound, List.mem_range.mp previousBound⟩)
+  have result := evaluate_installed_labels labels.reverse [BvlSem.unitValue] state labelInstalled
+  simpa [labels, List.map_reverse, List.map_flatten, List.map_map, Function.comp_def] using result
+
+end InitDomain
+
 /-- The initialization wrapper creates the reserved partial-application
 table before entering the compiled source entry. -/
 theorem evaluate_initGlobals {C F : Type} (maxApp start : Nat) (state : BvlSem.State C F)
@@ -65,15 +102,9 @@ theorem evaluate_initGlobals {C F : Type} (maxApp start : Nat) (state : BvlSem.S
   let labels := ((List.range maxApp).map fun total =>
     (List.range total).map fun previous => partialAppFnLocation maxApp total previous).flatten
   let allocated := { state with globals := [none] }
-  have labelInstalled : ∀ label ∈ labels.reverse, ∃ entry, sptLookup label allocated.code = some entry := by
-    intro label member
-    simp only [List.mem_reverse, labels, List.mem_flatten, List.mem_map, List.mem_range] at member
-    obtain ⟨inner, ⟨total, totalBound, innerEq⟩, labelMember⟩ := member
-    subst inner
-    obtain ⟨previous, previousBound, labelEq⟩ := List.mem_map.mp labelMember
-    subst label
-    exact installed total previous totalBound (List.mem_range.mp previousBound)
-  have labelRun := evaluate_installed_labels labels.reverse [BvlSem.unitValue] allocated labelInstalled
+  have labelRun := InitDomain.evaluate_init maxApp maxApp allocated (by
+    intro total previous bounds
+    exact (sptMem_iff_lookup _ _).2 (installed total previous bounds.1 bounds.2))
   have allocRun : BvlSem.evaluate [.op (.globOp .allocGlobal) [.op (.intOp (.const 1)) []]] [] state =
       (.val [BvlSem.unitValue], allocated) := by
     simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyGlobal,
@@ -82,7 +113,7 @@ theorem evaluate_initGlobals {C F : Type} (maxApp start : Nat) (state : BvlSem.S
       (((List.range maxApp).map fun total =>
         (List.range total).map fun previous => mkLabel (partialAppFnLocation maxApp total previous)).flatten.reverse)
       [BvlSem.unitValue] allocated = (.val (labels.reverse.map BvlSem.Value.codePtr), allocated) := by
-    simpa [labels, List.map_flatten, List.map_map, Function.comp_def] using labelRun
+    simpa [labels, List.map_reverse, List.map_flatten, List.map_map, Function.comp_def] using labelRun
   have blockRun : BvlSem.evaluate
       [.op (.blockOp (.cons 0)) (((List.range maxApp).map fun total =>
         (List.range total).map fun previous => mkLabel (partialAppFnLocation maxApp total previous)).flatten.reverse)]

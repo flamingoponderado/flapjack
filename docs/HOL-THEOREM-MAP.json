@@ -16227,6 +16227,16 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "evaluate_init",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialState.lean",
+    "lean_name": "evaluate_init",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the original local evaluate_init proof and typed replay: the independent mapp2 and mapp1 bounds, arbitrary BVL state, sparse-tree domain premise, reversed flattened label expressions and code-pointer results, Unit environment, and unchanged result state agree. The BVL state's refs field uses the canonical finite-support map and its local roundtrip witness; code uses the sparse tree. The evaluator inherits reals_as_rational_cuts. HOL replay and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
     "hol_name": "compile_prog_semantics",
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialState.lean",
     "lean_name": "compileProgSemantics_source",
