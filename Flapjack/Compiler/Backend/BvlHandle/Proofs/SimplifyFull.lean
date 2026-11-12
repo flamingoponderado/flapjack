@@ -60,7 +60,8 @@ theorem evaluate_handleSimp {C F : Type} (expression : Bvl.Exp)
     rw [h]
     apply evaluate_handle_congr _ _ _ _ env state rfl
     intro value next
-    simpa using evaluate_handleAdjVars handler [value] [] env next
+    simpa [evaluateTuple] using
+      (evaluate_handleAdjVars_source (C := C) (F := F)).1 handler [value] [] env next
 termination_by handleSize expression
 decreasing_by all_goals (simp only [handleSize]; omega)
 

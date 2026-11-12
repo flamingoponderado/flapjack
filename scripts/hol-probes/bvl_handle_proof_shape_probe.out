@@ -20,6 +20,10 @@ compile_any_handle_ok_typed=handle_ok [compile_any (split_seq :bool) (l :num) (n
 bVarBound_compile_typed=∀(l :num) (n :num) (xs :bvl$exp list) (m :num). n ≤ m ⇒ bVarBound m (FST (compile l n xs :bvl$exp list # db_var_set # num # bool))
 compile_exp_bVarBound_typed=bVarBound (n :num) [(compile_exp (l :num) n (x :bvl$exp) :bvl$exp)]
 compile_seqs_bVarBound_typed=∀(l :num) (x :bvl$exp) (acc :bvl$exp option). (∀(y :bvl$exp). acc = SOME y ⇒ bVarBound (0 :num) [y]) ⇒ bVarBound (0 :num) [compile_seqs l x acc]
+bVarBound_OptionalLetLet_typed=bVarBound (m :num) [(e :bvl$exp)] ∧ (n :num) ≤ m ⇒ bVarBound m (FST (OptionalLetLet e n (l :db_var_set) (s :num) (limit :num) (nr :bool)))
+compile_IMP_bVarBound_typed=(compile (l :num) (n :num) (xs :bvl$exp list) :bvl$exp list # db_var_set # num # bool) = ((ys :bvl$exp list),(l2 :db_var_set),(s2 :num # bool)) ⇒ bVarBound n ys
+handle_ok_OptionalLetLet_typed=handle_ok [(e :bvl$exp)] ∧ bVarBound (n :num) [e] ⇒ handle_ok (FST (OptionalLetLet e n (lx :db_var_set) (s :num) (l :num) (nr :bool)))
+handle_ok_Var_Const_list_typed=EVERY (λ(x :bvl$exp). ∃(v :num) (i :int). x = (Var v :bvl$exp) ∨ x = (Op (IntOp (Const i)) ([] :bvl$exp list) :bvl$exp)) (xs :bvl$exp list) ⇒ handle_ok xs
 bVarBound_MEM_typed=bVarBound (n :num) (xs :bvl$exp list) ⇔ ∀(x :bvl$exp). MEM x xs ⇒ bVarBound n [x]
 bVarBound_LESS_EQ_typed=∀(m :num) (xs :bvl$exp list) (n :num). bVarBound m xs ∧ m ≤ n ⇒ bVarBound n xs
 bVarBound_LetLet_typed=bVarBound (m :num) [(y :bvl$exp)] ∧ (n :num) ≤ m ⇒ bVarBound m [LetLet n (l1 :sptree$num_set) y]

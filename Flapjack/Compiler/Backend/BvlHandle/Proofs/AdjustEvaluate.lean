@@ -240,13 +240,6 @@ theorem evaluate_handleAdjVarsList {C F : Type} (expressions : List Bvl.Exp)
               simpa [handleAdjVarsList] using h
   exact allWeights (expsWeight expressions) expressions before inserted env state rfl
 
-/-- Singleton form of environment insertion for handler variable adjustment. -/
-theorem evaluate_handleAdjVars {C F : Type} (expression : Bvl.Exp)
-    (before inserted env : List Value) (state : State C F) :
-    evaluate [handleAdjVars before.length inserted.length expression]
-      (before ++ (inserted ++ env)) state = evaluate [expression] (before ++ env) state := by
-  simpa [handleAdjVarsList] using evaluate_handleAdjVarsList [expression] before inserted env state
-
 /-- Both expression and expression-list forms of environment insertion. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "evaluate_handle_adj_vars_lemma"
   (fmap_as_finite_support := [refs])]
@@ -261,7 +254,7 @@ theorem evaluate_handleAdjVars_source {C F : Type} :
         evaluateTuple (x, xs ++ env, r)) := by
   constructor
   · intro x xs a env r
-    exact evaluate_handleAdjVars x xs a env r
+    simpa [evaluateTuple, handleAdjVarsList] using evaluate_handleAdjVarsList [x] xs a env r
   · intro x xs a env r
     exact evaluate_handleAdjVarsList x xs a env r
 
@@ -278,10 +271,10 @@ theorem evaluate_handleAdjVars_extend_source {C F : Type} (x : Bvl.Exp)
   let rest := env.drop l
   have split : first ++ rest = env := List.take_append_drop l env
   have length : first.length = l := by simp [first, Nat.min_eq_left bound]
-  have extended := evaluate_handleAdjVars x xs (a ++ first) rest r
-  have original := evaluate_handleAdjVars x xs first rest r
+  have extended := (evaluate_handleAdjVars_source (C := C) (F := F)).1 x xs (a ++ first) rest r
+  have original := (evaluate_handleAdjVars_source (C := C) (F := F)).1 x xs first rest r
   simp only [List.length_append, length, List.append_assoc, split] at extended original
-  simpa [Nat.add_comm] using extended.trans original.symm
+  simpa [Nat.add_comm, evaluateTuple] using extended.trans original.symm
 
 /-- Adjustment preserves an extensional equality under the source bound. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "handle_adj_vars_evaluate"
@@ -308,8 +301,8 @@ theorem handleAdjVars_evaluate_source {C F : Type} (x1 x2 : Bvl.Exp)
     have parts : inserted ++ rest = afterBefore := List.take_append_drop l afterBefore
     rw [parts]
     exact List.take_append_drop d env
-  have firstEq := evaluate_handleAdjVars x1 before inserted rest r
-  have secondEq := evaluate_handleAdjVars x2 before inserted rest r
+  have firstEq := (evaluate_handleAdjVars_source (C := C) (F := F)).1 x1 before inserted rest r
+  have secondEq := (evaluate_handleAdjVars_source (C := C) (F := F)).1 x2 before inserted rest r
   rw [beforeLength, insertedLength, decomposition] at firstEq secondEq
   exact firstEq.trans ((equal (before ++ rest)).trans secondEq.symm)
 

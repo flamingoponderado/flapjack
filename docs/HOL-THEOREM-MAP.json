@@ -1,5 +1,29 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "handle_ok_Var_Const_list",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/GeneratedShape.lean", "lean_name": "handleOk_varConstList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source theorem: EVERY expression in the arbitrary list has existential natural variable and integer constant witnesses and is one of those two constructors, implying handle_ok for the entire list. List.Forall expresses the source EVERY."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "bVarBound_OptionalLetLet",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/VarBound.lean", "lean_name": "bVarBound_optionalLetLet",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed original: the conjunction of the body bound and environment-size inequality implies the bound on the first component of the list-valued OptionalLetLet; all size, limit, live-set and no-raise inputs are arbitrary."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "compile_IMP_bVarBound",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/VarBound.lean", "lean_name": "compile_imp_bVarBound",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed original: equality of source compile with output list, live set and a single arbitrary num × bool remainder implies the output's environment bound. The remainder stays a pair binder as in HOL."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "handle_ok_OptionalLetLet",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/GeneratedShape.lean", "lean_name": "handleOk_optionalLetLet",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source theorem: handler safety and the environment bound of the body jointly imply handler safety of the list-valued OptionalLetLet result, for arbitrary remaining inputs."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "bVarBound_compile",
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/VarBound.lean", "lean_name": "compileList_varBound",
   "statement_status": "reviewed_exact",

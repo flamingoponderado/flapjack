@@ -11,6 +11,17 @@ public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SequenceCorrect
 namespace Flapjack.Compiler.Backend.BvlHandle.Proofs
 open Flapjack.Compiler.Backend.BvlProps (bVarBound isVar)
 
+/-- Lists consisting of variables and integer constants satisfy the handler invariant. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "handle_ok_Var_Const_list"]
+theorem handleOk_varConstList (xs : List Bvl.Exp)
+    (shape : xs.Forall (fun x => ∃ (v : Nat) (i : Int),
+      x = .var v ∨ x = .op (.intOp (.const i)) [])) :
+    handleOk xs := by
+  rw [handleOk_every, List.forall_iff_forall_mem]
+  rw [List.forall_iff_forall_mem] at shape
+  intro x member
+  obtain ⟨v, i, rfl | rfl⟩ := shape x member <;> simp [handleOk]
+
 /-- A smart let is handler-safe precisely when its bindings and body are. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "handle_ok_SmartLet"]
 theorem handleOk_smartLet (bindings : List Bvl.Exp) (body : Bvl.Exp) :
@@ -45,11 +56,13 @@ theorem letLet_shape {α : Type} (n : Nat) (live : Spt α) (body : Bvl.Exp)
       have packedBound : packed < retained.length := (List.getElem?_eq_some_iff.mp slot).1
       simpa [bVarBound] using packedBound
   have longShape : handleOk long := by
-    rw [handleOk_every]
+    apply handleOk_varConstList
     rw [List.forall_iff_forall_mem]
     intro expression member
     obtain ⟨index, _, rfl⟩ := List.mem_map.mp member
-    cases retained.zipIdx.lookup index <;> simp [handleOk, zero]
+    cases retained.zipIdx.lookup index with
+    | none => exact ⟨0, 0, Or.inr (by simp [zero])⟩
+    | some slot => exact ⟨slot, 0, Or.inl (by simp)⟩
   have bodyBound : bVarBound (retained.length + long.length) [body] := by
     apply bVarBound_mono [body] n _ ?_ bound
     simp [long]
@@ -63,11 +76,14 @@ theorem letLet_shape {α : Type} (n : Nat) (live : Spt α) (body : Bvl.Exp)
   simp only [letOk, List.length_map]
   exact ⟨⟨vars, smartBound⟩, smartShape⟩
 
-/-- A size cut preserves handler shape when its body is bounded and safe. -/
-theorem handleOk_optionalLetLetSing (body : Bvl.Exp) (n : Nat) (live : DbVars.DbVarSet)
-    (size limit : Nat) (noRaise : Bool) (bound : bVarBound n [body]) (shape : handleOk [body]) :
-    handleOk [(optionalLetLetSing body n live size limit noRaise).1] := by
-  unfold optionalLetLetSing
+/-- Optional environment packing preserves the source handler invariant. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "handle_ok_OptionalLetLet"]
+theorem handleOk_optionalLetLet (body : Bvl.Exp) (n : Nat) (live : DbVars.DbVarSet)
+    (size limit : Nat) (noRaise : Bool)
+    (premises : handleOk [body] ∧ bVarBound n [body]) :
+    handleOk (optionalLetLet body n live size limit noRaise).1 := by
+  obtain ⟨shape, bound⟩ := premises
+  unfold optionalLetLet
   split
   · exact shape
   · simp only [handleOk_emptyLet]
@@ -109,18 +125,18 @@ theorem compileSing_handleOk (limit env : Nat) (expression : Bvl.Exp) :
     have shape : handleOk [compiled] := by simpa [run] using compileSing_handleOk limit env body
     have bound : bVarBound env [compiled] := by simpa [run] using compileSing_varBound limit env env body (Nat.le_refl _)
     simp only [compileSing, run]
-    apply handleOk_optionalLetLetSing _ env live (size + 1) limit false
-    · simpa [bVarBound] using bound
-    · simpa [handleOk] using shape
+    simpa only [optionalLetLetSing_eq] using
+      handleOk_optionalLetLet _ env live (size + 1) limit false
+        ⟨by simpa [handleOk] using shape, by simpa [bVarBound] using bound⟩
   | call ticks dest args =>
     generalize run : compileList limit env args = data
     obtain ⟨compiled, live, size, flag⟩ := data
     have shape : handleOk compiled := by simpa [run] using compileList_handleOk limit env args
     have bound : bVarBound env compiled := by simpa [run] using compileList_varBound limit env args env (Nat.le_refl _)
     simp only [compileSing, run]
-    apply handleOk_optionalLetLetSing _ env live (size + 1) limit false
-    · simpa [bVarBound] using bound
-    · simpa [handleOk] using shape
+    simpa only [optionalLetLetSing_eq] using
+      handleOk_optionalLetLet _ env live (size + 1) limit false
+        ⟨by simpa [handleOk] using shape, by simpa [bVarBound] using bound⟩
   | op op args =>
     generalize run : compileList limit env args = data
     obtain ⟨compiled, live, size, flag⟩ := data
@@ -130,9 +146,9 @@ theorem compileSing_handleOk (limit env : Nat) (expression : Bvl.Exp) :
     · subst op
       simpa [compileSing, run, handleOk] using shape
     · rw [compileSing_op_other limit env op args force, run]
-      apply handleOk_optionalLetLetSing _ env live (size + 1) limit flag
-      · simpa [bVarBound] using bound
-      · simpa [handleOk] using shape
+      simpa only [optionalLetLetSing_eq] using
+        handleOk_optionalLetLet _ env live (size + 1) limit flag
+          ⟨by simpa [handleOk] using shape, by simpa [bVarBound] using bound⟩
   | ifThenElse condition yes no =>
     generalize conditionEq : compileSing limit env condition = conditionData
     obtain ⟨compiledCondition, conditionLive, conditionSize, conditionFlag⟩ := conditionData
@@ -147,9 +163,10 @@ theorem compileSing_handleOk (limit env : Nat) (expression : Bvl.Exp) :
     have yesBound : bVarBound env [compiledYes] := by simpa [yesEq] using compileSing_varBound limit env env yes (Nat.le_refl _)
     have noBound : bVarBound env [compiledNo] := by simpa [noEq] using compileSing_varBound limit env env no (Nat.le_refl _)
     simp only [compileSing, conditionEq, yesEq, noEq]
-    apply handleOk_optionalLetLetSing _ env _ _ limit _
-    · simpa [bVarBound] using And.intro conditionBound (And.intro yesBound noBound)
-    · simpa [handleOk] using And.intro conditionShape (And.intro yesShape noShape)
+    simpa only [optionalLetLetSing_eq] using
+      handleOk_optionalLetLet _ env _ _ limit _
+        ⟨by simpa [handleOk] using And.intro conditionShape (And.intro yesShape noShape),
+         by simpa [bVarBound] using And.intro conditionBound (And.intro yesBound noBound)⟩
   | handle body handler =>
     generalize bodyEq : compileSing limit env body = bodyData
     obtain ⟨compiledBody, bodyLive, bodySize, bodyFlag⟩ := bodyData
@@ -186,9 +203,10 @@ theorem compileSing_handleOk (limit env : Nat) (expression : Bvl.Exp) :
         rw [bodyEq] at h
         simpa [length] using h
       simp only [compileSing, List.isEmpty_cons, Bool.false_eq_true, ↓reduceIte, bindingsEq, bodyEq]
-      apply handleOk_optionalLetLetSing _ env _ _ limit _
-      · simpa only [bVarBound] using And.intro bindingsBound bodyBound
-      · exact (handleOk_nonemptyLet compiledBindings compiledBody nonempty).mpr ⟨bindingsShape, bodyShape⟩
+      simpa only [optionalLetLetSing_eq] using
+        handleOk_optionalLetLet _ env _ _ limit _
+          ⟨(handleOk_nonemptyLet compiledBindings compiledBody nonempty).mpr ⟨bindingsShape, bodyShape⟩,
+           by simpa only [bVarBound] using And.intro bindingsBound bodyBound⟩
 termination_by sizeOf expression
 
 /-- Every generated expression list satisfies the handler-shape invariant. -/

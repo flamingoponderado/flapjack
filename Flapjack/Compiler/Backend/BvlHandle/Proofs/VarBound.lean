@@ -123,11 +123,14 @@ theorem bVarBound_letLet_numSet (n m : Nat) (live : NumSet) (body : Bvl.Exp)
     bVarBound m [letLet n live body] :=
   bVarBound_letLet n m live body envBound bodyBound
 
-/-- Singleton size cuts preserve an existing variable bound. -/
-theorem bVarBound_optionalLetLetSing (body : Bvl.Exp) (n m : Nat) (live : DbVars.DbVarSet)
-    (size limit : Nat) (noRaise : Bool) (envBound : n ≤ m) (bodyBound : bVarBound m [body]) :
-    bVarBound m [(optionalLetLetSing body n live size limit noRaise).1] := by
-  unfold optionalLetLetSing
+/-- Optional environment packing preserves a bound on the source list result. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "bVarBound_OptionalLetLet"]
+theorem bVarBound_optionalLetLet (body : Bvl.Exp) (n m : Nat) (live : DbVars.DbVarSet)
+    (size limit : Nat) (noRaise : Bool)
+    (premises : bVarBound m [body] ∧ n ≤ m) :
+    bVarBound m (optionalLetLet body n live size limit noRaise).1 := by
+  obtain ⟨bodyBound, envBound⟩ := premises
+  unfold optionalLetLet
   split
   · exact bodyBound
   · simp only [bVarBound, List.length_nil, Nat.add_zero, true_and]
@@ -170,16 +173,18 @@ theorem compileSing_varBound (limit env m : Nat) (expression : Bvl.Exp) (envBoun
     have bound : bVarBound m [compiled] := by
       simpa [run] using compileSing_varBound limit env m body envBound
     simp only [compileSing, run]
-    apply bVarBound_optionalLetLetSing _ env m live (size + 1) limit false envBound
-    simpa [bVarBound] using bound
+    simpa only [optionalLetLetSing_eq] using
+      bVarBound_optionalLetLet _ env m live (size + 1) limit false
+        ⟨by simpa [bVarBound] using bound, envBound⟩
   | call ticks dest args =>
     generalize run : compileList limit env args = data
     obtain ⟨compiled, live, size, flag⟩ := data
     have bound : bVarBound m compiled := by
       simpa [run] using compileList_varBound limit env args m envBound
     simp only [compileSing, run]
-    apply bVarBound_optionalLetLetSing _ env m live (size + 1) limit false envBound
-    simpa [bVarBound] using bound
+    simpa only [optionalLetLetSing_eq] using
+      bVarBound_optionalLetLet _ env m live (size + 1) limit false
+        ⟨by simpa [bVarBound] using bound, envBound⟩
   | op op args =>
     generalize run : compileList limit env args = data
     obtain ⟨compiled, live, size, flag⟩ := data
@@ -189,8 +194,9 @@ theorem compileSing_varBound (limit env m : Nat) (expression : Bvl.Exp) (envBoun
     · subst op
       simpa [compileSing, run, bVarBound] using bound
     · rw [compileSing_op_other limit env op args force, run]
-      apply bVarBound_optionalLetLetSing _ env m live (size + 1) limit flag envBound
-      simpa [bVarBound] using bound
+      simpa only [optionalLetLetSing_eq] using
+        bVarBound_optionalLetLet _ env m live (size + 1) limit flag
+          ⟨by simpa [bVarBound] using bound, envBound⟩
   | ifThenElse condition yes no =>
     generalize conditionEq : compileSing limit env condition = conditionData
     obtain ⟨compiledCondition, conditionLive, conditionSize, conditionFlag⟩ := conditionData
@@ -205,8 +211,9 @@ theorem compileSing_varBound (limit env m : Nat) (expression : Bvl.Exp) (envBoun
     have noBound : bVarBound m [compiledNo] := by
       simpa [noEq] using compileSing_varBound limit env m no envBound
     simp only [compileSing, conditionEq, yesEq, noEq]
-    apply bVarBound_optionalLetLetSing _ env m _ _ limit _ envBound
-    simpa [bVarBound] using And.intro conditionBound (And.intro yesBound noBound)
+    simpa only [optionalLetLetSing_eq] using
+      bVarBound_optionalLetLet _ env m _ _ limit _
+        ⟨by simpa [bVarBound] using And.intro conditionBound (And.intro yesBound noBound), envBound⟩
   | handle body handler =>
     generalize bodyEq : compileSing limit env body = bodyData
     obtain ⟨compiledBody, bodyLive, bodySize, bodyFlag⟩ := bodyData
@@ -239,8 +246,9 @@ theorem compileSing_varBound (limit env m : Nat) (expression : Bvl.Exp) (envBoun
         rw [bodyEq] at bound
         simpa [length] using bound
       simp only [compileSing, List.isEmpty_cons, Bool.false_eq_true, ↓reduceIte, bindingsEq, bodyEq]
-      apply bVarBound_optionalLetLetSing _ env m _ _ limit _ envBound
-      simpa only [bVarBound] using And.intro bindingsBound bodyBound
+      simpa only [optionalLetLetSing_eq] using
+        bVarBound_optionalLetLet _ env m _ _ limit _
+          ⟨by simpa only [bVarBound] using And.intro bindingsBound bodyBound, envBound⟩
 termination_by sizeOf expression
 
 /-- Every list emitted by the handler traversal is in scope. -/
@@ -267,6 +275,15 @@ theorem compileList_varBound (limit env : Nat) (expressions : List Bvl.Exp) (m :
     · exact tailBound expression member
 termination_by sizeOf expressions
 end
+
+/-- A successful source compilation result is bounded by its environment. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "compile_IMP_bVarBound"]
+theorem compile_imp_bVarBound (limit env : Nat) (expressions output : List Bvl.Exp)
+    (live : DbVars.DbVarSet) (remainder : Nat × Bool)
+    (compiled : compile limit env expressions = (output, live, remainder)) :
+    bVarBound env output := by
+  have bound := compileList_varBound limit env expressions env (Nat.le_refl _)
+  simpa [compiled] using bound
 
 /-- The complete expression pipeline emits an expression bounded by its
 declared arity. -/
