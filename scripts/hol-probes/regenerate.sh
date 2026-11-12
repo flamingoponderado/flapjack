@@ -10632,3 +10632,9 @@ run_probe pan_to_crep_typed_probeScript.sml pan_to_crep_typed_probe.out \
   exp_hdl_def_typed make_vmap_def_typed \
   "$cake_dir/pancake/pan_to_crepScript.sml" \
   "$cake_dir/pancake"
+
+run_probe arm8_target_typed_probeScript.sml arm8_target_typed_probe.out \
+  arm8_shv_def_typed arm8_proj_def_typed arm8_ok_def_typed arm8_next_def_typed arm8_encode_fail_def_typed arm8_encode_def_typed arm8_enc_mov_imm_def_typed cmp_cond_def_typed \
+  arm8_load_store_ast_def_typed arm8_load_store_ast32_def_typed arm8_load_store_ast16_def_typed arm8_ast_def_typed arm8_enc_def_typed valid_immediate_def_typed arm8_config_def_typed arm8_target_def_typed \
+  "$cake_dir/compiler/encoders/arm8/arm8_targetScript.sml" \
+  "$cake_dir/compiler/encoders/arm8"
