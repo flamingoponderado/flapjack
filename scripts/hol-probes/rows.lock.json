@@ -800,6 +800,7 @@
     {"bytes": 747, "out": "lexer_impl_tokens_probe.out", "rows": 1, "sha256": "8eadff1d5cc3d9ed2d35d7abfe0aea88cc7fb92d65456b88e33a9130d996fbc7"},
     {"bytes": 1312, "out": "linear_scan_generic_types_probe.out", "rows": 11, "sha256": "15f482c1fa9a9ffb0d84b1784bb4eaeb1b6a3c99c8c0c525c4b92550ee272f1d"},
     {"bytes": 7322, "out": "linear_scan_monad_probe.out", "rows": 34, "sha256": "3a112a38123c86a48e7ac2e51e76ef815dac456a0a71a90d05fc0e98741a9dba"},
+    {"bytes": 88561, "out": "linear_scan_proof_typed_probe.out", "rows": 203, "sha256": "db83b9d4d00789a19344bef838c469f291a209e964ce174492da36737109ea80"},
     {"bytes": 344, "out": "linear_scan_pure_defs_probe.out", "rows": 15, "sha256": "e0342044f7fe5ae648ada9b4a01b9dffd35166b6fd5fb3547778434065869dd0"},
     {"bytes": 346, "out": "linear_scan_pure_props_probe.out", "rows": 18, "sha256": "054321ef3a4bd557f4a9cf75aa922cadc3390ad22375fcd640bf5620619a2c0e"},
     {"bytes": 1057, "out": "linear_scan_top_probe.out", "rows": 14, "sha256": "277f3dd3f16a3e5ed4890b5258e29d5bb9bffe69f95d3dc62e2b65bd1b18b39c"},
