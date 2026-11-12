@@ -10582,3 +10582,10 @@ run_probe ffi_typed_probeScript.sml ffi_typed_probe.out \
   outcome_typed shmem_op_typed call_FFI_def_typed initial_ffi_state_def_typed \
   "$cake_dir/semantics/ffi/ffiScript.sml" \
   "$cake_dir/semantics/ffi"
+
+run_probe stack_rawcall_proof_typed_probeScript.sml stack_rawcall_proof_typed_probe.out \
+  stack_alloc_stack_asm_convs_typed stack_asm_name_comp_typed comp_correct_typed comp_LN_typed comp_seq_neq_IMP_typed domain_fromAList_compile_typed lookup_collect_info_typed state_ok_collect_info_typed \
+  compile_semantics_typed call_arg_comp_typed call_args_comp_typed MAP_FST_compile_typed reg_bound_comp_typed stack_alloc_call_args_typed stack_rawcall_reg_bound_typed extract_labels_comp_typed \
+  stack_get_handler_labels_comp_typed evaluate_comp_Inst_typed get_labels_comp_typed state_ok_def_typed state_rel_def_typed \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
