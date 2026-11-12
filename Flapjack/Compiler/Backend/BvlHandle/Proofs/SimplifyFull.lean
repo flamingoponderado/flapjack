@@ -112,7 +112,8 @@ theorem evaluate_makeHandle {C F : Type} (body handler : Bvl.Exp) (depth : Nat)
     simp only [makeHandle]
     all_goals apply evaluate_handle_congr _ _ _ _ env state (evaluate_handleSimp _ env state)
     all_goals intro value next
-    all_goals apply handleAdjVars_evaluate_congr _ _ 1 depth (value :: env) next
+    all_goals apply handleAdjVars_evaluate_source _ _ next 1 depth (value :: env)
+    all_goals constructor
     all_goals try (intro env; exact evaluate_handleSimp handler env next)
     all_goals simp only [List.length_cons]; omega
 termination_by handleSize body + handleSize handler

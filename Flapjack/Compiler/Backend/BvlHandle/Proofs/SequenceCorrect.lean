@@ -10,6 +10,14 @@ public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateExpandEnv
 namespace Flapjack.Compiler.Backend.BvlHandle.Proofs
 open Flapjack.Compiler.Backend.BvlSem
 
+namespace SequenceCorrectCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+    (∀ s : Flapjack.Compiler.Backend.BvlSem.State C F, State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end SequenceCorrectCarrier
+
 /-- A source sequence runs its second expression after a successful first
 expression and returns that second expression's result. -/
 theorem evaluate_sourceSequence {C F : Type} (first second : Bvl.Exp)
@@ -169,5 +177,22 @@ theorem evaluate_compileAnyFuel {C F : Type} (fuel : Nat) (splitSeq : Bool) (lim
     refine ⟨compileExpression limit (first :: rest).length expression, ?_,
       evaluate_compileExpression limit expression (first :: rest) state final result run notType⟩
     simpa using compileAnyFuel_eq_source fuel splitSeq limit (first :: rest).length expression
+
+/-- The source handler entry point preserves every non-type-error evaluation. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "compile_any_correct"
+  (fmap_as_finite_support := [refs])]
+theorem compileAny_correct {C F : Type} (x : Bvl.Exp) (env : List Value)
+    (s1 : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (res : SemanticPrimitivesHOL.Result (List Value) Value)
+    (s2 : Flapjack.Compiler.Backend.BvlSem.State C F) (k : Nat) (splitSeq : Bool) (l : Nat)
+    (premises : evaluateTuple ([x], env, s1) = (res, s2) ∧
+      res ≠ .err (.abort .typeError) ∧ k = env.length) :
+    evaluateTuple ([compileAny splitSeq l k x], env, s1) = (res, s2) := by
+  rcases premises with ⟨run, safe, rfl⟩
+  obtain ⟨output, compiled, evaluation⟩ :=
+    evaluate_compileAnyFuel 0 splitSeq l x env s1 s2 res run safe
+  rw [compileAnyFuel_eq_compileAny] at compiled
+  cases compiled
+  exact evaluation
 
 end Flapjack.Compiler.Backend.BvlHandle.Proofs

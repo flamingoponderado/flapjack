@@ -247,33 +247,6 @@ theorem evaluate_handleAdjVars {C F : Type} (expression : Bvl.Exp)
       (before ++ (inserted ++ env)) state = evaluate [expression] (before ++ env) state := by
   simpa [handleAdjVarsList] using evaluate_handleAdjVarsList [expression] before inserted env state
 
-/-- Extensional singleton evaluation equality is preserved under handler
-variable adjustment when the requested segment is available. -/
-theorem handleAdjVars_evaluate_congr {C F : Type} (first second : Bvl.Exp)
-    (depth shift : Nat) (env : List Value) (state : State C F)
-    (equal : ∀ env, evaluate [first] env state = evaluate [second] env state)
-    (bound : depth + shift ≤ env.length) :
-    evaluate [handleAdjVars depth shift first] env state =
-      evaluate [handleAdjVars depth shift second] env state := by
-  let before := env.take depth
-  let afterBefore := env.drop depth
-  let inserted := afterBefore.take shift
-  let rest := afterBefore.drop shift
-  have beforeLength : before.length = depth := by
-    simp only [before, List.length_take]
-    omega
-  have insertedLength : inserted.length = shift := by
-    simp only [inserted, afterBefore, List.length_take, List.length_drop]
-    omega
-  have decomposition : before ++ (inserted ++ rest) = env := by
-    have parts : inserted ++ rest = afterBefore := List.take_append_drop shift afterBefore
-    rw [parts]
-    exact List.take_append_drop depth env
-  have firstEq := evaluate_handleAdjVars first before inserted rest state
-  have secondEq := evaluate_handleAdjVars second before inserted rest state
-  rw [beforeLength, insertedLength, decomposition] at firstEq secondEq
-  exact firstEq.trans ((equal (before ++ rest)).trans secondEq.symm)
-
 /-- Both expression and expression-list forms of environment insertion. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "evaluate_handle_adj_vars_lemma"
   (fmap_as_finite_support := [refs])]
@@ -318,7 +291,26 @@ theorem handleAdjVars_evaluate_source {C F : Type} (x1 x2 : Bvl.Exp)
     (premises : (∀ env, evaluateTuple ([x1], env, r) = evaluateTuple ([x2], env, r)) ∧
       d + l ≤ env.length) :
     evaluateTuple ([handleAdjVars d l x1], env, r) =
-      evaluateTuple ([handleAdjVars d l x2], env, r) :=
-  handleAdjVars_evaluate_congr x1 x2 d l env r premises.1 premises.2
+      evaluateTuple ([handleAdjVars d l x2], env, r) := by
+  obtain ⟨equal, bound⟩ := premises
+  simp only [evaluateTuple] at equal ⊢
+  let before := env.take d
+  let afterBefore := env.drop d
+  let inserted := afterBefore.take l
+  let rest := afterBefore.drop l
+  have beforeLength : before.length = d := by
+    simp only [before, List.length_take]
+    omega
+  have insertedLength : inserted.length = l := by
+    simp only [inserted, afterBefore, List.length_take, List.length_drop]
+    omega
+  have decomposition : before ++ (inserted ++ rest) = env := by
+    have parts : inserted ++ rest = afterBefore := List.take_append_drop l afterBefore
+    rw [parts]
+    exact List.take_append_drop d env
+  have firstEq := evaluate_handleAdjVars x1 before inserted rest r
+  have secondEq := evaluate_handleAdjVars x2 before inserted rest r
+  rw [beforeLength, insertedLength, decomposition] at firstEq secondEq
+  exact firstEq.trans ((equal (before ++ rest)).trans secondEq.symm)
 
 end Flapjack.Compiler.Backend.BvlHandle.Proofs

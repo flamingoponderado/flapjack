@@ -9526,7 +9526,7 @@ run_probe gram_valid_sym_probeScript.sml gram_valid_sym_probe.out \
   "$cake_dir/semantics"
 
 run_probe bvl_handle_proof_shape_probeScript.sml bvl_handle_proof_shape_probe.out \
-  IS_SOME_lookup_db_to_set_typed handle_ok_SmartLet_typed can_raise_thm_typed handle_adj_vars_0_typed evaluate_handle_adj_vars_lemma_typed evaluate_handle_adj_vars_typed handle_adj_vars_evaluate_typed evaluate_handle_simp_typed bVarBound_MEM_typed bVarBound_LESS_EQ_typed bVarBound_LetLet_typed \
+  IS_SOME_lookup_db_to_set_typed handle_ok_SmartLet_typed can_raise_thm_typed handle_adj_vars_0_typed evaluate_handle_adj_vars_lemma_typed evaluate_handle_adj_vars_typed handle_adj_vars_evaluate_typed evaluate_handle_simp_typed compile_correct_typed compile_any_correct_typed bVarBound_MEM_typed bVarBound_LESS_EQ_typed bVarBound_LetLet_typed \
   "$cake_dir/compiler/backend/proofs/bvl_handleProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 

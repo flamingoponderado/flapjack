@@ -1,5 +1,23 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "compile_correct", "hol_line": 478,
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/ExpressionCorrect.lean", "lean_name": "compileExpression_correct",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed final rebound source theorem: original singleton evaluation, non-type-error and arity-equals-environment-length premises are grouped, and evaluation of the source compile_exp has the same full result and final state. Independent compiler/FFI state carriers use canonical refs, witnessed locally; evaluator dependencies inherit reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "compile_any_correct",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/SequenceCorrect.lean", "lean_name": "compileAny_correct",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed source theorem for arbitrary split flag: the grouped singleton run, non-type-error and arity-equals-environment-length premises imply the full evaluation equality for source compile_any. The production bounded traversal is proved to return this source entry. Independent compiler/FFI carriers use canonical refs with a local witness; evaluator dependencies inherit reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "handle_adj_vars_0",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/HelpersProduction.lean", "lean_name": "handleAdjVars_zero",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the complete typed source conjunction: for every BVL expression and depth, zero adjustment returns the expression unchanged; for every expression list and depth, the list adjustment returns the list unchanged. The proof uses the executed source-shaped mutual adjustment definitions."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "evaluate_handle_adj_vars_lemma",
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/AdjustEvaluate.lean", "lean_name": "evaluate_handleAdjVars_source",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,

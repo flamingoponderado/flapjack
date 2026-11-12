@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileCases
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyFull
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.ConstantComposition
 public import Flapjack.Compiler.Backend.BvlConst.Proofs.Simulation
+public import Flapjack.Compiler.Backend.BvlHandle.SourceCompile
 
 @[expose] public section
 
@@ -11,6 +12,14 @@ public import Flapjack.Compiler.Backend.BvlConst.Proofs.Simulation
 /-! End-to-end expression preservation for the executed BVL handler stage. -/
 namespace Flapjack.Compiler.Backend.BvlHandle.Proofs
 open Flapjack.Compiler.Backend.BvlSem
+
+namespace ExpressionCorrectCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+    (∀ s : Flapjack.Compiler.Backend.BvlSem.State C F, State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end ExpressionCorrectCarrier
 
 /-- The constant, handler-simplification, and handler-compilation pipeline
 preserves every non-type-error BVL expression evaluation. This remains
@@ -31,5 +40,18 @@ theorem evaluate_compileExpression {C F : Type} (limit : Nat) (expression : Bvl.
   have correct := compileSingCorrect_all limit (handleSimp (BvlConst.compileSing [] expression))
     C F env env [] state (envRel_refl _ env) safe
   simpa [compileExpression, simplified] using correct.1
+
+/-- The source expression compiler preserves every non-type-error evaluation. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "compile_correct" 478
+  (fmap_as_finite_support := [refs])]
+theorem compileExpression_correct {C F : Type} (x : Bvl.Exp) (env : List Value)
+    (s1 : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (res : SemanticPrimitivesHOL.Result (List Value) Value)
+    (s2 : Flapjack.Compiler.Backend.BvlSem.State C F) (k l : Nat)
+    (premises : evaluateTuple ([x], env, s1) = (res, s2) ∧
+      res ≠ .err (.abort .typeError) ∧ k = env.length) :
+    evaluateTuple ([compileExp l k x], env, s1) = (res, s2) := by
+  rcases premises with ⟨run, safe, rfl⟩
+  exact evaluate_compileExpression l x env s1 s2 res run safe
 
 end Flapjack.Compiler.Backend.BvlHandle.Proofs

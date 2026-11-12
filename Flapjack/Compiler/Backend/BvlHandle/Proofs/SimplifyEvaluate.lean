@@ -47,7 +47,8 @@ theorem evaluate_makeHandle_raise {C F : Type} (operand handler : Bvl.Exp) (dept
       evaluate [handleAdjVars 1 depth (handleSimp handler)] (value :: env) next =
         evaluate [handleAdjVars 1 depth handler] (value :: env) next := by
     intro value next
-    apply handleAdjVars_evaluate_congr _ _ 1 depth (value :: env) next
+    apply handleAdjVars_evaluate_source _ _ next 1 depth (value :: env)
+    constructor
     · exact fun env => handlerIH env next
     · simp only [List.length_cons]; omega
   cases raises : canRaise operand with
@@ -122,7 +123,8 @@ theorem evaluate_makeHandle_let {C F : Type} (bindings : List Bvl.Exp)
       evaluate [handleAdjVars 1 depth (handleSimp handler)] (value :: env) next =
         evaluate [handleAdjVars 1 depth handler] (value :: env) next := by
     intro value next
-    apply handleAdjVars_evaluate_congr _ _ 1 depth (value :: env) next
+    apply handleAdjVars_evaluate_source _ _ next 1 depth (value :: env)
+    constructor
     · exact fun env => handlerIH env next
     · simp only [List.length_cons]; omega
   cases raises : canRaiseList bindings with
@@ -232,7 +234,8 @@ theorem evaluate_makeHandle_if {C F : Type} (condition yes no handler : Bvl.Exp)
       evaluate [handleAdjVars 1 depth (handleSimp handler)] (value :: env) next =
         evaluate [handleAdjVars 1 depth handler] (value :: env) next := by
     intro value next
-    apply handleAdjVars_evaluate_congr _ _ 1 depth (value :: env) next
+    apply handleAdjVars_evaluate_source _ _ next 1 depth (value :: env)
+    constructor
     · exact fun env => handlerIH env next
     · simp only [List.length_cons]; omega
   have conditionSame : ∀ next : State C F,
