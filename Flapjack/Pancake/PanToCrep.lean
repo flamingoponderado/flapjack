@@ -308,7 +308,8 @@ def retVar (shape : Shape) (names : List Nat) : Option Nat :=
     narrow kernel bridge on every production shape; the name is discarded, so
     no byte-rangedness premise is needed. -/
 @[hol "cakeml/pancake/pan_to_crepScript.sml" "ret_var_def"]
-def retVarHOL (shape : Flapjack.Pancake.PanLang.ShapeHOL) (names : List Nat) : Option Nat :=
+def retVarHOL {α : Type} (shape : Flapjack.Pancake.PanLang.ShapeHOL) (names : List α) :
+    Option α :=
   match shape with
   | .one => names.head?
   | .comb shapes =>

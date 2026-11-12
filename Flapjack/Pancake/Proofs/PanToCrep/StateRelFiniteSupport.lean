@@ -786,11 +786,12 @@ theorem localsRelExtendNewVarHOL {width ctxtWidth : Nat} [NeZero width]
 theorem ctxtMaxElLeqFiniteExact {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width) (v : MlS) (shape : ShapeHOL)
     (slots : List Nat) (n : Nat)
-    (hmax : ctxtMaxFiniteExact context.vmax context.vars)
-    (hlookup : context.vars.lookup v = some (shape, slots))
-    (hindex : n < slots.length) :
-    slots[n] ≤ context.vmax :=
-  hmax.2 v shape slots hlookup slots[n] (List.getElem_mem hindex)
+    (h : ctxtMaxFiniteExact context.vmax context.vars ∧
+      context.vars.lookup v = some (shape, slots) ∧
+      n < slots.length) :
+    slots[n] ≤ context.vmax := by
+  obtain ⟨hmax, hlookup, hindex⟩ := h
+  exact hmax.2 v shape slots hlookup slots[n] (List.getElem_mem hindex)
 
 /-- Exact port of HOL `state_rel_structs[local]`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:59-63`), the
@@ -865,12 +866,13 @@ theorem panToCrepExactInitialShapeInvariant {width ctxtWidth : Nat} {σ : Type}
     proposition to the HOL premises. This is proof infrastructure rather than
     a standalone HOL declaration, so it has no `@[hol]` tag and does not assume
     any body-evaluation result. -/
-theorem panToCrepCallEntryShapeInvariantFiniteExact {width : Nat} {σ : Type}
-    [NeZero width] (source : PanSemStateFiniteExact width σ)
+theorem panToCrepCallEntryShapeInvariantFiniteExact {width : Nat} {ctxtWidth : Nat}
+    {σ : Type} [NeZero width] [NeZero ctxtWidth]
+    (source : PanSemStateFiniteExact width σ)
     [DecidablePred source.memaddrs]
     (target : CrepSemHOLState width σ)
     (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
-    (relationContext : PanToCrepContextExact width)
+    (relationContext : PanToCrepContextExact ctxtWidth)
     (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
     (fname : MlS) (body : ProgHOL width)
     (newlocals : HolFiniteMapExact MlS (ValueHOL width))
@@ -982,15 +984,18 @@ theorem optMmapEvalIsWfShapeVHOL {width ctxtWidth : Nat} {σ : Type} [NeZero wid
     The classical expression-evaluation wrapper hides only Lean's membership
     decider plumbing. HOL's type-indexed words and FFI host use the positive
     `BitVec width` and universe-0 `σ : Type` carriers, recorded solely by
-    `words_as_type_indexed_bitvec`. -/
+    `words_as_type_indexed_bitvec`; the typed capture
+    `evaluate_shape_invariant_ret_inst2_typed`
+    (`pan_to_crep_local_typed_probe.out:6`) types the context at `γ context`,
+    independent of the state's `α`, so `{ctxtWidth}` is bound separately. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "evaluate_shape_invariant_ret_inst2"
   (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals,
     PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code,
     PanSemStateFiniteExact.eshapes, PanToCrepContextExact.vars,
     targetLocals, newlocals])
   (words_as_type_indexed_bitvec)]
-theorem panToCrepFiniteEvaluateShapeInvariantRetInst2 {width : Nat} {σ : Type}
-    [NeZero width]
+theorem panToCrepFiniteEvaluateShapeInvariantRetInst2 {width : Nat} {ctxtWidth : Nat}
+    {σ : Type} [NeZero width] [NeZero ctxtWidth]
     (arguments : List (ExpHOL width))
     (source : PanSemStateFiniteExact width σ)
     (fname : MlS) (values : List (ValueHOL width))
@@ -1000,7 +1005,7 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst2 {width : Nat} {σ : Type}
     (result : PanSemResultExact width)
     (postState : PanSemStateFiniteExact width σ)
     (target : CrepSemHOLState width σ)
-    (relationContext : PanToCrepContextExact width)
+    (relationContext : PanToCrepContextExact ctxtWidth)
     (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (hargs : evalListHOLFiniteClassical source arguments = some values)
     (hlookup : Flapjack.lookupCodeHOLExact source.code.lookup fname values =
@@ -1163,7 +1168,10 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
     independent HOL `t_locs` map use the named finite-support owners and their
     same-module roundtrip witnesses. `ValueHOL`, `PanSemResultExact`,
     `ProgHOL`, `ShapeHOL`, and `MlS` have exact constructor/field carriers, and
-    `[NeZero width]` matches HOL's positive word dimension.
+    `[NeZero width]` matches HOL's positive word dimension. The typed capture
+    `evaluate_shape_invariant_ret_inst_typed` (`pan_to_crep_local_typed_probe.out:5`)
+    types the context at `γ context`, independent of the state's `α`, so the
+    statement binds `{ctxtWidth}` (with its own positivity) separately.
 
     The premise is semantically the successful-result clause of HOL
     `evaluate`, not merely a pair-shaped assumption. The wrapper is
@@ -1190,12 +1198,13 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
     PanSemStateFiniteExact.eshapes, PanToCrepContextExact.vars,
     PanToCrepTargetLocalsExact.targetLocals])
   (words_as_type_indexed_bitvec)]
-theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {σ : Type}
-    [NeZero width] (program : ProgHOL width)
+theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {ctxtWidth : Nat}
+    {σ : Type} [NeZero width] [NeZero ctxtWidth]
+    (program : ProgHOL width)
     (source : PanSemStateFiniteExact width σ)
     (target : CrepSemHOLState width σ)
     (targetLocals : PanToCrepTargetLocalsExact width)
-    (relationContext : PanToCrepContextExact width)
+    (relationContext : PanToCrepContextExact ctxtWidth)
     (result : PanSemResultExact width)
     (postState : PanSemStateFiniteExact width σ)
     (hstate : panToCrepStateRelFiniteExact source target)

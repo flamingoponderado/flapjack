@@ -242,7 +242,7 @@ private theorem loadShapeBytes_length {width : Nat}
     carries the HOL premise `index < count` without an Option result. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "load_shape_el_rel"]
 theorem loadShapeBytes_getElem_rel {width : Nat} [NeZero width]
-    (address : BitVec width) (count index : Nat)
+    (count index : Nat) (address : BitVec width)
     (value : CrepExp (BitVec width)) (hindex : index < count) :
     (loadShapeBytes address count value)[index]'(by
       simpa [loadShapeBytes_length] using hindex) =
@@ -1821,11 +1821,11 @@ open Flapjack.Pancake.PanLang
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "is_wf_shape_nil_length_flatten"]
 theorem isWfShapeExactHOL_length_flatten {width : Nat} [NeZero width]
     (value : ValueHOL width) (words : List (HolWordLab width))
-    (hwf : isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true)
-    (hzero : sizeOfShapeHOL (shapeOfHOLExact value) = 0 → words = [])
-    (hpositive : 0 < sizeOfShapeHOL (shapeOfHOLExact value) →
-      words = flattenHOL value) :
+    (h : isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true ∧
+      (sizeOfShapeHOL (shapeOfHOLExact value) = 0 → words = []) ∧
+      (0 < sizeOfShapeHOL (shapeOfHOLExact value) → words = flattenHOL value)) :
     words.length = sizeOfShapeHOL (shapeOfHOLExact value) := by
+  obtain ⟨hwf, hzero, hpositive⟩ := h
   by_cases hz : sizeOfShapeHOL (shapeOfHOLExact value) = 0
   · simp [hzero hz, hz]
   · have hpos : 0 < sizeOfShapeHOL (shapeOfHOLExact value) := Nat.pos_of_ne_zero hz
@@ -1837,7 +1837,7 @@ a declaration list containing only function or exception declarations leaves the
 structure context unchanged. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "decs_stcnames_lemma"]
 theorem decsStcnamesHOLExact_of_functions_or_exnDecls {width : Nat} [NeZero width]
-    (context : StructContextExact) (code : List (DeclHOL width))
+    (code : List (DeclHOL width)) (context : StructContextExact)
     (h : code.all (fun declaration =>
       isFunctionHOL declaration || isExnDeclHOL declaration) = true) :
     decsStcnamesHOLExact (width := width) context code = some context := by

@@ -185,9 +185,9 @@ def iwfStruct : ValueHOL 64 := .rStruct [.val (.word 1), .val (.word 2)]
 theorem isWfShapeExactHOL_length_flatten_fixture :
     (flattenHOL iwfStruct).length = sizeOfShapeHOL (shapeOfHOLExact iwfStruct) :=
   isWfShapeExactHOL_length_flatten iwfStruct (flattenHOL iwfStruct)
-    (by simp [iwfStruct, shapeOfHOLExact, isWfShapeExactHOL])
-    (by intro h; simp [iwfStruct, shapeOfHOLExact, sizeOfShapeHOL] at h)
-    (by intro _; rfl)
+    ⟨by simp [iwfStruct, shapeOfHOLExact, isWfShapeExactHOL],
+     by intro h; simp [iwfStruct, shapeOfHOLExact, sizeOfShapeHOL] at h,
+     by intro _; rfl⟩
 
 def isWfShapeNilLengthFlattenGuard : Bool :=
   (flattenHOL iwfStruct).length == sizeOfShapeHOL (shapeOfHOLExact iwfStruct) &&

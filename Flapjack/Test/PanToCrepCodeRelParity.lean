@@ -194,12 +194,13 @@ example : codeRelExactHOLW exactCodeContext exactSourceCode exactTargetCode := b
     `alist_to_fmap (compile_to_crep ...)` satisfy the exact `code_rel` theorem. -/
 example : codeRelExactHOLW generatedInitialContext generatedInitialSource
     generatedInitialTarget :=
-  mkCtxtCodeImpCodeRelExactHOLW generatedInitialDecls (by decide) (by
-    intro entry hmem
-    have hentry : entry = (ml "f", [], ProgHOL.skip, ShapeHOL.one) := by
-      simpa [generatedInitialDecls, functionsHOL] using hmem
-    subst entry
-    rfl)
+  mkCtxtCodeImpCodeRelExactHOLW generatedInitialDecls
+    ⟨by decide, by
+      intro entry hmem
+      have hentry : entry = (ml "f", [], ProgHOL.skip, ShapeHOL.one) := by
+        simpa [generatedInitialDecls, functionsHOL] using hmem
+      subst entry
+      rfl⟩
 
 def generatedInitialCodeRelGuard : Bool :=
   match generatedInitialSource.lookup (ml "f"),

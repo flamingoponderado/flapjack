@@ -93,8 +93,8 @@ private theorem getEidsEntriesHOL_mem {width : Nat} [NeZero width]
     `excp_rel_def`. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "get_eids_imp_excp_rel"
   (fmap_as_finite_support_relation := [seids]) (words_as_type_indexed_bitvec)]
-theorem getEidsImpExcpRelExact {width : Nat} [NeZero width] :
-    ∀ (seids : HolFiniteMapExact MlS ShapeHOL) (pc : List (DeclHOL width)),
+theorem getEidsImpExcpRelExact {width : Nat} [NeZero width] {β : Type} :
+    ∀ (seids : HolFiniteMapExact MlS β) (pc : List (DeclHOL width)),
       sizeOfEidsHOL pc < 2 ^ width ∧
         (∀ key, (seids.lookup key).isSome = ((getEidsFromDeclsHOL pc).lookup key).isSome) →
       panToCrepExcpRelFiniteExact (getEidsFromDeclsHOL pc) seids := by
@@ -305,7 +305,7 @@ theorem stateRelImpSemanticsToCrep {width : Nat} {σ : Type} [NeZero width] :
         ({ t with clock := k } : CrepSemHOLState width σ).code := by
       show codeRelExactHOLW ctxt s.code t.code
       rw [hscode, htcode]
-      exact mkCtxtCodeImpCodeRelExactHOLW pan_code hdist hlocal
+      exact mkCtxtCodeImpCodeRelExactHOLW pan_code ⟨hdist, hlocal⟩
     have hexcp : panToCrepExcpRelFiniteExact ctxt.eids
         ({ s with clock := k } : PanSemStateFiniteExact width σ).eshapes :=
       getEidsImpExcpRelExact s.eshapes pan_code ⟨hsize, hdom⟩

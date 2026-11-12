@@ -594,7 +594,7 @@ example {width : Nat} [NeZero width]
     (hlookup : context.vars.lookup name = some (shape, slots))
     (hindex : n < slots.length) :
     slots[n] ≤ context.vmax :=
-  ctxtMaxElLeqFiniteExact context name shape slots n hmax hlookup hindex
+  ctxtMaxElLeqFiniteExact context name shape slots n ⟨hmax, hlookup, hindex⟩
 
 /-- Concrete exact-carrier instance: the one-slot `lookupCtxtContext` fixture
     (`vars` maps `x` to `(One, [0])`, `vmax = 0`) bounds its selected slot. -/
@@ -608,7 +608,7 @@ private theorem ctxtMaxElLeqFixture :
     rw [lookupCtxtVars_lookup]
     simp
   exact ctxtMaxElLeqFiniteExact lookupCtxtContext lookupCtxtName ShapeHOL.one
-    [0] 0 hmax hlookup (by simp)
+    [0] 0 ⟨hmax, hlookup, by simp⟩
 
 private def lookupCtxtGuard : Bool :=
   (match lookupCtxtContext.vars.lookup lookupCtxtName with

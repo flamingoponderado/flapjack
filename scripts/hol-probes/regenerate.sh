@@ -10709,3 +10709,8 @@ run_probe crep_arith_typed_probeScript.sml crep_arith_typed_probe.out \
   dest_2exp_def_typed dest_2exp_thm_typed dest_const_def_typed mul_const_def_typed simp_exp_def_typed simp_prog_def_typed dest_2exp_lemma_typed \
   "$cake_dir/pancake/crep_arithScript.sml" \
   "$cake_dir/pancake"
+
+run_probe pan_to_crep_local_typed_probeScript.sml pan_to_crep_local_typed_probe.out \
+  state_rel_structs_typed state_rel_globals_typed pair_map_I_typed decs_stcnames_lemma_typed evaluate_shape_invariant_ret_inst_typed evaluate_shape_invariant_ret_inst2_typed \
+  "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
+  "$cake_dir/pancake/proofs"
