@@ -23,6 +23,22 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   BvlSem.holFmapAsFiniteSupportWitness
 end DeleteVarCarrier
 
+/-- Evaluation returns an empty value list exactly for an empty expression list,
+without changing the state. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "evaluate_EQ_NIL"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_eq_nil {C F : Type} (xs : List Bvl.Exp) (env : List Value)
+    (s t : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    evaluateTuple (xs, env, s) = (.val [], t) ↔ xs = [] ∧ s = t := by
+  constructor
+  · intro run
+    have length := evaluate_length xs env s t [] run
+    have empty : xs = [] := by simpa using length.symm
+    subst xs
+    exact ⟨rfl, by simpa [evaluateTuple, evaluate] using run⟩
+  · rintro ⟨rfl, rfl⟩
+    simp [evaluateTuple, evaluate]
+
 /-- Relate one propagated expression to its source and transformed values. -/
 noncomputable def valueRel (C F : Type) (expression : Bvl.Exp)
     (source target : Value) (_sourceEnv targetEnv : List Value) : Prop :=

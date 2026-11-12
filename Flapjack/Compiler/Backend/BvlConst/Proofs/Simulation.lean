@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BvlConst.Proofs.Let
+public import Flapjack.Compiler.Backend.BvlConst.SourceCompile
 
 @[expose] public section
 
@@ -8,11 +9,16 @@ public import Flapjack.Compiler.Backend.BvlConst.Proofs.Let
 namespace Flapjack.Compiler.Backend.BvlConst.Proofs
 open Flapjack.Compiler.Backend.BvlSem Flapjack.Compiler.Backend.BvlProps
 
-/-- Full simulation corresponding to `evaluate_env_rel`, using the total
-`compileList` traversal (the source `compile_eq` relates it to `compile`).
-Untagged because the environment relation quantifies over a state containing
-a finite map, which has no supported nested qualifier. -/
-theorem evaluate_envRel {C F : Type} (xs : List Bvl.Exp)
+namespace SimulationCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+    (∀ s : Flapjack.Compiler.Backend.BvlSem.State C F, State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end SimulationCarrier
+
+/-- Curried induction engine for the constant-propagation simulation. -/
+private theorem evaluate_envRel {C F : Type} (xs : List Bvl.Exp)
     (annotations : List (Option Bvl.Exp)) (source target : List Value)
     (state final : State C F) (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
     (run : evaluateTuple (xs, source, state) = (result, final))
@@ -100,25 +106,42 @@ decreasing_by
   all_goals try omega
   all_goals cases y <;> simp_wf <;> omega
 
-/-- Empty-annotation specialization corresponding to `compile_thm`. It remains
-untagged until the source `compile`/`compileList` correspondence is recorded
-in Lean. -/
-theorem evaluate_compileList {C F : Type} (xs : List Bvl.Exp) (env : List Value)
-    (state final : State C F) (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
-    (run : evaluateTuple (xs, env, state) = (result, final))
-    (notTypeError : result ≠ .err (.abort .typeError)) :
-    evaluateTuple (compileList [] xs, env, state) = (result, final) :=
-  evaluate_envRel xs [] env env state final result run rfl notTypeError
+/-- Full source-shaped constant-propagation simulation. The final `ys` binder
+is vacuous in the HOL statement and has an independent type. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "evaluate_env_rel"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_envRel_source {C F α : Type} (xs : List Bvl.Exp) (env1 : List Value)
+    (s1 : Flapjack.Compiler.Backend.BvlSem.State C F) (ax : List (Option Bvl.Exp))
+    (env2 : List Value) (res : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (s2 : Flapjack.Compiler.Backend.BvlSem.State C F) (_ys : α)
+    (premises : evaluateTuple (xs, env1, s1) = (res, s2) ∧
+      envRel C F ax env1 env2 ∧ res ≠ .err (.abort .typeError)) :
+    evaluateTuple (BvlConst.compile ax xs, env2, s1) = (res, s2) := by
+  exact evaluate_envRel xs ax env1 env2 s1 s2 res premises.1 premises.2.1 premises.2.2
 
-/-- Singleton specialization corresponding to `evaluate_compile_exp`. It is
-untagged until the source `compile_exp`/`compileSing` correspondence is
-recorded in Lean. -/
+/-- Empty-annotation specialization used by the production simulation. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "compile_thm"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_compileList {C F : Type} (xs : List Bvl.Exp)
+    (state : Flapjack.Compiler.Backend.BvlSem.State C F) (env : List Value)
+    (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (final : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (premises : evaluateTuple (xs, env, state) = (result, final) ∧
+      result ≠ .err (.abort .typeError)) :
+    evaluateTuple (BvlConst.compile [] xs, env, state) = (result, final) :=
+  evaluate_envRel xs [] env env state final result premises.1 rfl premises.2
+
+/-- Singleton specialization used by the production simulation. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "evaluate_compile_exp"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_compileSing {C F : Type} (expression : Bvl.Exp) (env : List Value)
-    (state final : State C F) (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
-    (run : evaluateTuple ([expression], env, state) = (result, final))
-    (notTypeError : result ≠ .err (.abort .typeError)) :
-    evaluateTuple ([compileSing [] expression], env, state) = (result, final) := by
-  simpa [compileList] using evaluate_compileList [expression] env state final result run notTypeError
+    (state final : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (premises : evaluateTuple ([expression], env, state) = (result, final) ∧
+      result ≠ .err (.abort .typeError)) :
+    evaluateTuple ([BvlConst.compileExp expression], env, state) = (result, final) := by
+  simpa [BvlConst.compile, compileList, BvlConst.compileExp_eq] using
+    evaluate_compileList [expression] state env result final premises
 
 /-- The production traversal returns a transformed expression that preserves
 all non-type-error evaluations, for any initial fuel. -/
@@ -129,6 +152,7 @@ theorem evaluate_compileBounded {C F : Type} (fuel : Nat) (expression : Bvl.Exp)
     ∃ output, compileBounded fuel [] expression = some output ∧
       evaluateTuple ([output], env, state) = (result, final) :=
   ⟨compileSing [] expression, compileBounded_eq fuel [] expression,
-    evaluate_compileSing expression env state final result run notTypeError⟩
+    by simpa [BvlConst.compileExp_eq] using
+      evaluate_compileSing expression env state final result ⟨run, notTypeError⟩⟩
 
 end Flapjack.Compiler.Backend.BvlConst.Proofs

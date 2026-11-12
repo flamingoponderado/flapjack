@@ -22,7 +22,8 @@ theorem evaluate_compileExpression {C F : Type} (limit : Nat) (expression : Bvl.
     (notType : result ≠ .err (.abort .typeError)) :
     evaluate [compileExpression limit env.length expression] env state = (result, final) := by
   have folded : evaluate [BvlConst.compileSing [] expression] env state = (result, final) := by
-    exact BvlConst.Proofs.evaluate_compileSing expression env state final result run notType
+    simpa [BvlConst.compileExp_eq, BvlSem.evaluateTuple] using
+      BvlConst.Proofs.evaluate_compileSing expression env state final result ⟨run, notType⟩
   have simplified : evaluate [handleSimp (BvlConst.compileSing [] expression)] env state = (result, final) := by
     rw [evaluate_handleSimp, folded]
   have safe : (evaluate [handleSimp (BvlConst.compileSing [] expression)] env state).1 ≠

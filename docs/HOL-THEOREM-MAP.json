@@ -1,5 +1,33 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml", "hol_name": "compile_thm",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/Simulation.lean", "lean_name": "evaluate_compileList",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the transformed typed HOL theorem, including binder order, grouped source evaluation and non-type-error premises, and exact target evaluation with the source compile entry and the same result and state. Compiler and FFI carriers remain independent; the BVL state's canonical finite-support refs map has a local roundtrip witness. Evaluator dependencies inherit reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml", "hol_name": "evaluate_compile_exp",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/Simulation.lean", "lean_name": "evaluate_compileSing",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed HOL theorem: singleton source evaluation and the non-type-error test are grouped, and evaluation of compile_exp retains the same complete result and final state. Independent compiler and FFI carriers use the BVL state's canonical finite-support refs map with a local roundtrip witness. Evaluator dependencies inherit reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml", "hol_name": "evaluate_env_rel",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/Simulation.lean", "lean_name": "evaluate_envRel_source",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete typed source statement, including ordered binders, the independent vacuous ys binder, grouped evaluation, environment-relation and non-type-error premises, and the exact target evaluation equality. The source compile entry is the executed list traversal. Reviewed the relation's recursive cases and its universal BVL state evaluator against HOL; the explicitly named BVL state and the state quantified in valueRel use the same canonical refs finite-map carrier, witnessed by the local roundtrip. Evaluator dependencies inherit reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml", "hol_name": "evaluate_EQ_NIL",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/Relations.lean", "lean_name": "evaluate_eq_nil",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed source statement: arbitrary expression list, environment and independent compiler/FFI state carriers satisfy the full iff between evaluation to an empty value list in the final state and an empty expression list with equal states. The BVL reference map uses the canonical finite-support carrier with a same-module roundtrip witness; the evaluator inherits reals_as_rational_cuts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_jumpProofScript.sml", "hol_name": "evaluate_JumpList",
   "lean_path": "Flapjack/Compiler/Backend/BvlJump/Proofs.lean", "lean_name": "evaluate_jumpList",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],

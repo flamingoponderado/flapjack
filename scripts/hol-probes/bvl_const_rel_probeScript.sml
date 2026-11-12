@@ -9,6 +9,9 @@ fun show label th = if null (hyp th) then (print label; print_term (concl th); p
 val _ = show "value_rel=" v_rel_def;
 val _ = show "env_rel=" env_rel_def;
 val _ = show "env_rel_length=" env_rel_length;
+val _ = show "evaluate_EQ_NIL=" evaluate_EQ_NIL;
+val _ = show "compile_thm=" compile_thm;
+val _ = show "evaluate_compile_exp=" evaluate_compile_exp;
 val env_rel_LLOOKUP_NONE_replay = prove (``
   !ax env env2 n.
     env_rel (:'c) (:'ffi) ax env env2 /\

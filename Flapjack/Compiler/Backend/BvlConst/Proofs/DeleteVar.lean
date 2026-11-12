@@ -49,20 +49,6 @@ theorem evaluate_deleteVar_var_rel {C F : Type} (index : Nat) (tail : List Bvl.E
       simp [evaluate, fixClock, doApp, applyNumeric, doIntApp]
     · exact extracted_var_valueRel C F index tail found (.number 0) sourceSuffix outputValues env lengths lookup
 
-/-- Extend the induction relation with an extracted variable alias. This is a
-Flapjack case lemma for the successful-list simulation. -/
-theorem envRel_extend_extracted_var (C F : Type) (index : Nat) (tail : List Bvl.Exp)
-    (annotations : List (Option Bvl.Exp)) (value : Value)
-    (values source outputValues env : List Value)
-    (lengths : outputValues.length = tail.length) (lookup : env[index]? = some value)
-    (related : envRel C F (extractList tail ++ annotations)
-      (values ++ source) (outputValues ++ env)) :
-    envRel C F (extractList (.var index :: tail) ++ annotations)
-      ((value :: values) ++ source) ((.number 0 :: outputValues) ++ env) := by
-  simp only [extractList_cons, extractSource, List.cons_append, envRel]
-  exact ⟨extracted_var_valueRel C F index tail value (.number 0)
-    (values ++ source) outputValues env lengths lookup, related⟩
-
 /-- Integer constants evaluate to the same number in every state and
 environment. This Flapjack helper supplies the operation branch of the value
 relation for extracted constants. -/
@@ -208,25 +194,6 @@ theorem evaluate_deleteVar_list_success {C F : Type} (expressions : List Bvl.Exp
                 simp only [envRel]
                 exact ⟨headRel, tailRel⟩
 
-/-- A successfully evaluated singleton still succeeds after variable deletion
-and leaves the same state, though its value may change. This helper has no
-standalone HOL declaration. -/
-theorem evaluate_deleteVar_success {C F : Type} (expression : Bvl.Exp)
-    (state next : State C F) (env : List Value) (values : List Value)
-    (run : evaluate [expression] env state = (.val values, next)) :
-    ∃ output, evaluate [BvlConst.deleteVar expression] env state = (.val output, next) := by
-  cases expression with
-  | var index =>
-    cases lookup : env[index]? with
-    | none => simp [evaluate, lookup] at run
-    | some value =>
-      simp [evaluate, lookup] at run
-      obtain ⟨_, rfl⟩ := run
-      refine ⟨[.number 0], ?_⟩
-      change evaluate [.op (.intOp (.const 0)) []] env state = (.val [.number 0], state)
-      simp [evaluate, fixClock, doApp, applyNumeric, doIntApp]
-  | _ => exact ⟨values, by simpa [BvlConst.deleteVar] using run⟩
-
 /-- Deleting variable aliases in an expression list preserves a non-type-error
 result and its final state. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "evaluate_delete_var_Rerr"
@@ -251,8 +218,8 @@ theorem evaluate_deleteVar_list_error {C F : Type} (expressions : List Bvl.Exp)
         rcases run with ⟨rfl, rfl⟩
         rw [evaluate_deleteVar_error head state next headError env headRun notTypeError]
       | val values =>
-        have headRun' : evaluate [head] env state = (.val values, next) := headRun
-        obtain ⟨output, transformedHead⟩ := evaluate_deleteVar_success head state next env values headRun'
+        obtain ⟨output, transformedHead, _⟩ :=
+          evaluate_deleteVar_list_success [head] env env state next values [] headRun rfl
         change evaluateTuple ([BvlConst.deleteVar head], env, state) = (.val output, next) at transformedHead
         simp only [headRun] at run
         rw [transformedHead]
