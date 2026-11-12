@@ -318,8 +318,8 @@ theorem compCorrectInstall {width : Nat} [NeZero width] {C F : Type}
     try exact absurd execution.1.symm notError
   rcases hor : source.compileOracle 0 with ⟨⟨bm0, cfg⟩, progs⟩
   simp only [hor] at execution
-  rcases hcf : wordSemBufferFlush source.codeBuffer w1 w2 with _ | ⟨bytes, cb⟩ <;>
-    rcases hdf : wordSemBufferFlush source.dataBuffer w3 w4 with _ | ⟨data, db⟩ <;>
+  rcases hcf : wordSemBufferFlush (outBw := 8) source.codeBuffer w1 w2 with _ | ⟨bytes, cb⟩ <;>
+    rcases hdf : wordSemBufferFlush (outBw := width) source.dataBuffer w3 w4 with _ | ⟨data, db⟩ <;>
     simp only [hcf, hdf, Prod.mk.injEq] at execution <;>
     try exact absurd execution.1.symm notError
   rcases hsc : source.compile (bm0, cfg) progs with _ | ⟨bytes', data', cfg'⟩ <;>
