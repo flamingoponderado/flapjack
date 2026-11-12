@@ -10589,3 +10589,10 @@ run_probe stack_rawcall_proof_typed_probeScript.sml stack_rawcall_proof_typed_pr
   stack_get_handler_labels_comp_typed evaluate_comp_Inst_typed get_labels_comp_typed state_ok_def_typed state_rel_def_typed \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe gen_gc_typed_probeScript.sml gen_gc_typed_probe.out \
+  is_final_def_typed heap_lookup_APPEND_typed gc_move_list_length_typed gen_gc_LENGTH_typed gc_move_loop_ok_typed gc_move_refs_ok_typed gc_move_data_ok_typed gc_move_data_h2_typed \
+  gc_move_ok_typed gc_move_list_ok_typed gen_gc_conf_typed gc_move_def_typed gc_move_list_def_typed gc_move_data_def_typed gc_move_refs_def_typed gc_move_loop_def_typed \
+  gen_gc_def_typed heap_lookup_IMP_heap_addresses_typed \
+  "$cake_dir/compiler/backend/gc/gen_gcScript.sml" \
+  "$cake_dir/compiler/backend/gc"
