@@ -435,6 +435,7 @@
     {"bytes": 1614, "out": "data_to_word_ops_probe.out", "rows": 3, "sha256": "2297c9a316c217e756c37e692a2405d1c1799cb73d72ef73e61edff05bb185b2"},
     {"bytes": 494, "out": "data_to_word_option_le_probe.out", "rows": 2, "sha256": "6630a4257537cc4d79d2e80e53add5278ac8a30c5305748206629e0be2a05567"},
     {"bytes": 631, "out": "data_to_word_space_control_probe.out", "rows": 3, "sha256": "f14fbef8fd0064997020a495ec40596ebc76d1d648af18ccd5a6d9062b04e249"},
+    {"bytes": 44815, "out": "data_to_word_typed_probe.out", "rows": 113, "sha256": "5567f9e027ffce71c450a8618ef9e532efc2aec710cc32ef701dfdfc75a7e62e"},
     {"bytes": 1858, "out": "data_to_word_word_test_probe.out", "rows": 5, "sha256": "6304f0469bc8741b185d7990c32042d15120bef99db64713ad2f9776d193338e"},
     {"bytes": 2147, "out": "db_vars_definitions_probe.out", "rows": 14, "sha256": "62f0464897db7d9c02af876b3140aae3e116140d03324c41b852f2574928f68f"},
     {"bytes": 107, "out": "default_frontend_config_probe.out", "rows": 1, "sha256": "c0d860973f9f454f3db5978bc39ead06507cf34f0095adc3c8c8e42f508e38b1"},
