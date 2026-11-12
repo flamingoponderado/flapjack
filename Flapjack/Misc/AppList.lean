@@ -65,17 +65,32 @@ theorem appendAux_thm {α : Type} (values : AppList α) (suffix : List α) :
 
 /-- HOL `append_thm`:
 `append (Append l1 l2) = append l1 ++ append l2 /\ append (List xs) = xs /\
-append Nil = []`. -/
+append Nil = []`. The typed capture `append_thm_typed`
+(`misc_typed_probe.out`) shows the three conjuncts at independent types
+(`α app_list`, `β list`, `γ app_list`), so the Lean statement binds three
+type variables.
+
+`appListAppend_thm_sameType` below is the same-type instance the compiler
+proofs use; it has no standalone HOL declaration. -/
 @[hol "cakeml/misc/miscScript.sml" "append_thm"]
-theorem appListAppend_thm {α : Type} (left right : AppList α) (entries : List α) :
+theorem appListAppend_thm {α β γ : Type} (left right : AppList α) (entries : List β) :
     appListAppend (.append left right) = appListAppend left ++ appListAppend right ∧
       appListAppend (.list entries) = entries ∧
-      appListAppend (.nil : AppList α) = [] := by
+      appListAppend (.nil : AppList γ) = [] := by
   refine ⟨?_, ?_, ?_⟩
   · rw [appListAppend, appendAux, appendAux_thm]
     rfl
   · simp [appListAppend, appendAux]
   · rfl
+
+/-- Flapjack-specific same-type instance of `appListAppend_thm` used by the
+    compiler proofs. It has no standalone HOL declaration: HOL states the
+    three conjuncts at independent types. -/
+theorem appListAppend_thm_sameType {α : Type} (left right : AppList α) (entries : List α) :
+    appListAppend (.append left right) = appListAppend left ++ appListAppend right ∧
+      appListAppend (.list entries) = entries ∧
+      appListAppend (.nil : AppList α) = [] :=
+  appListAppend_thm left right entries
 
 /-- Flattening a smart append preserves left-to-right list concatenation. -/
 theorem appListAppend_smartAppend {α : Type} (left right : AppList α) :
@@ -85,13 +100,15 @@ theorem appListAppend_smartAppend {α : Type} (left right : AppList α) :
   | list values =>
     cases right with
     | nil => simp [smartAppend, appListAppend, appendAux]
-    | list other => exact (appListAppend_thm (.list values) (.list other) []).1
-    | append left right => exact (appListAppend_thm (.list values) (.append left right) []).1
+    | list other => exact (appListAppend_thm_sameType (.list values) (.list other) []).1
+    | append left right =>
+      exact (appListAppend_thm_sameType (.list values) (.append left right) []).1
   | append first second =>
     cases right with
     | nil => simp [smartAppend, appListAppend, appendAux]
-    | list values => exact (appListAppend_thm (.append first second) (.list values) []).1
-    | append third fourth => exact (appListAppend_thm (.append first second) (.append third fourth) []).1
+    | list values => exact (appListAppend_thm_sameType (.append first second) (.list values) []).1
+    | append third fourth =>
+      exact (appListAppend_thm_sameType (.append first second) (.append third fourth) []).1
 
 /-- Flatten the leading `AppList` of a `(AppList α × Bool × Nat)` (the shape of
 HOL `flatten`'s result) with `misc$append`. -/

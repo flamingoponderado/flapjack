@@ -185,10 +185,10 @@ theorem noRetCorrect {width : Nat} [NeZero width] {C F : Type} :
 
 private theorem appAppend {α : Type} (a b : AppList α) :
     appListAppend (.append a b) = appListAppend a ++ appListAppend b :=
-  (appListAppend_thm a b []).1
+  (appListAppend_thm_sameType a b []).1
 
 private theorem appList {α : Type} (l : List α) : appListAppend (.list l) = l :=
-  (appListAppend_thm .nil .nil l).2.1
+  (appListAppend_thm_sameType .nil .nil l).2.1
 
 /-- The label-preservation invariant of `stack_to_lab_lab_pres`, for a
 flattening of a program with labels `E` from `nl` to `nl'` producing labels `L`. -/

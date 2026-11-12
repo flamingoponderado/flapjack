@@ -36,7 +36,7 @@ example : appendAux (AppList.append (AppList.list [1, 2]) (AppList.list [3])) []
 example :
     appListAppend (.append (.list [4]) (.list [5]) : AppList Nat) =
       appListAppend (.list [4] : AppList Nat) ++ appListAppend (.list [5] : AppList Nat) :=
-  (appListAppend_thm (.list [4]) (.list [5]) []).1
+  (appListAppend_thm_sameType (.list [4]) (.list [5]) []).1
 
 example : (List.replicate 3 ([] : List Nat)).flatten = [] := flatReplicateNilHOL 3
 

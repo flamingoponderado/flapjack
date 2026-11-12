@@ -69751,7 +69751,7 @@
     "lean_path": "Flapjack/Misc/AppList.lean",
     "lean_name": "appListAppend_thm",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-main (2026-09-24: Append/List/Nil conjunction and universal variables match miscScript.sml:218-224)"
+    "reviewer": "flapjack-main (2026-09-24: Append/List/Nil conjunction and universal variables match miscScript.sml:218-224) Task-149 typed capture re-review: append_thm_typed in misc_typed_probe.out shows the three conjuncts at independent types (α app_list, β list, γ app_list); the tagged theorem now binds α β γ, and the compiler proofs use the untagged same-type instance appListAppend_thm_sameType."
   },
   {
     "hol_path": "cakeml/misc/miscScript.sml",

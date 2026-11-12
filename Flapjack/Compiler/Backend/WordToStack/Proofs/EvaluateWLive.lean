@@ -318,8 +318,9 @@ theorem evaluateWLive {width : Nat} [NeZero width] {C F : Type}
     exact hslot
   -- the frame header word names the freshly written bitmap
   have hpre' := hpre
-  rw [(appListAppend_thm _ _ ([] : List (BitVec width))).1,
-    (appListAppend_thm bs bs (writeBitmapExact names.2 k f' : List (BitVec width))).2.1] at hpre'
+  rw [(appListAppend_thm_sameType _ _ ([] : List (BitVec width))).1,
+    (appListAppend_thm_sameType bs bs
+      (writeBitmapExact names.2 k f' : List (BitVec width))).2.1] at hpre'
   obtain ⟨extra, hextra⟩ := hpre'
   have hdropn : t.bitmaps.drop n =
       (writeBitmapExact names.2 k f' : List (BitVec width)) ++ extra := by
