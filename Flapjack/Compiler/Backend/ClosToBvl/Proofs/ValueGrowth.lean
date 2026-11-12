@@ -114,6 +114,27 @@ theorem envRel_grow_refs {maxApp : Nat} {f1 f2 : HolFiniteMapExact Nat Nat}
       | cons targetHead targetTail =>
           exact ⟨vRel_grow_refs related.1 submap frame, ih related.2⟩
 
+/-- Extending the target store at a fresh address preserves related environments. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "env_rel_NEW_REF"
+  (fmap_as_finite_support_relation := [f, refs])]
+theorem envRel_newRef (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (r : Nat) (cell : BvlSem.Ref BvlSem.Value) :
+    ∀ x y, envRel maxApp f refs code x y ∧ refs.lookup r = none →
+      envRel maxApp f (refs.updateEq (r, cell)) code x y := by
+  intro x y ⟨related, fresh⟩
+  apply envRel_grow_refs related
+  · intro key value found
+    exact found
+  · intro key value found outside
+    have different : key ≠ r := by
+      intro eq
+      subst key
+      rw [fresh] at found
+      contradiction
+    exact ⟨by simpa [HolFiniteMapExact.lookup_updateEq,
+      Flapjack.FUPDATE_HOL, different] using found, outside⟩
+
 /-- Sequential evaluation can grow the relocation map, references, and code
 together while preserving a value relation. -/
 theorem vRel_grow {maxApp : Nat} {f1 f2 : HolFiniteMapExact Nat Nat}

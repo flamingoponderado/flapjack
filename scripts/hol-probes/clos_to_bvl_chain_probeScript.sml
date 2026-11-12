@@ -1178,6 +1178,45 @@ in
       srw_tac[][])
   >- full_simp_tac(srw_ss())[closSemTheory.do_eq_def]
   >- full_simp_tac(srw_ss())[closSemTheory.do_eq_def]);
+  (* Replay the source local lemmas needed for env_rel_NEW_REF. *)
+  val ETA2_THM = Q.prove (
+    `(\x y. f a b c x y) = f a b c`,
+  srw_tac[][FUN_EQ_THM]);
+  val cl_rel_NEW_REF_replay = Q.prove (
+    `!x y. cl_rel max_app f1 refs1 code (env,ys) x y ==> ~(r IN FDOM refs1) ==>
+         cl_rel max_app f1 (refs1 |+ (r,t)) code (env,ys) x y`,
+  srw_tac[][cl_rel_cases]
+  >- metis_tac []
+  >- metis_tac []
+  \\ DISJ2_TAC \\ Q.LIST_EXISTS_TAC [`exps_ps`,`r'`] \\ full_simp_tac(srw_ss())[]
+  \\ rev_full_simp_tac(srw_ss())[]
+  \\ CONV_TAC (DEPTH_CONV ETA_CONV) \\ full_simp_tac(srw_ss())[]
+  \\ full_simp_tac(srw_ss())[FDIFF_def,SUBMAP_DEF,DRESTRICT_DEF,FLOOKUP_DEF]
+  \\ full_simp_tac(srw_ss())[FAPPLY_FUPDATE_THM] \\ SRW_TAC [] [] \\ full_simp_tac(srw_ss())[] );
+  val v_rel_NEW_REF = Q.prove(
+  `!x y. v_rel max_app f1 refs1 code x y ==> ~(r IN FDOM refs1) ==>
+          v_rel max_app f1 (refs1 |+ (r,t)) code x y`,
+  HO_MATCH_MP_TAC v_rel_ind \\ REPEAT STRIP_TAC
+  \\ ONCE_REWRITE_TAC [v_rel_cases] \\ full_simp_tac(srw_ss())[]
+  THEN1 (REPEAT (POP_ASSUM MP_TAC) \\ CONV_TAC (DEPTH_CONV ETA_CONV) \\ full_simp_tac(srw_ss())[])
+  THEN1 (rw[FLOOKUP_UPDATE] \\ fs[FLOOKUP_DEF])
+  THEN1 (imp_res_tac cl_rel_NEW_REF_replay >>
+         disj2_tac >>
+         full_simp_tac(srw_ss())[ETA2_THM] >>
+         metis_tac [])
+  THEN1 (imp_res_tac cl_rel_NEW_REF_replay >>
+         disj2_tac >>
+         full_simp_tac(srw_ss())[ETA2_THM] >>
+         metis_tac [] ))
+  |> SPEC_ALL |> MP_CANON;
+
+  val env_rel_NEW_REF_replay = Q.prove (
+    `!x y.
+      env_rel max_app f1 refs1 code x y /\ ~(r IN FDOM refs1) ==>
+      env_rel max_app f1 (refs1 |+ (r,t)) code x y`,
+  Induct \\ Cases_on `y` \\ full_simp_tac(srw_ss())[env_rel_def] \\ REPEAT STRIP_TAC
+  \\ IMP_RES_TAC v_rel_NEW_REF \\ full_simp_tac(srw_ss())[] );
+  val _ = show_thm "env_rel_NEW_REF_replay=" env_rel_NEW_REF_replay;
   (* Replay the original local closure-set freshness theorem. *)
   val cl_rel_NEW_F_replay = Q.prove (
     `!x y.
