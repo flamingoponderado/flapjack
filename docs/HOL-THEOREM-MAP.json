@@ -1,5 +1,53 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "env_rel_refl",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/EnvRel.lean", "lean_name": "envRel_refl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original for arbitrary live set and polymorphic list: the environment relation is reflexive."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "env_rel_length",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/EnvRel.lean", "lean_name": "envRel_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original for arbitrary live set and polymorphic source and target lists: the relation implies that target length equals source length."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "env_rel_mk_Union",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/EnvRel.lean", "lean_name": "envRel_mkUnion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original for arbitrary live sets and polymorphic source and target lists: agreement on their mk_Union is equivalent to agreement on each."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "compile_correct", "hol_line": 352,
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/CompileCases.lean", "lean_name": "compileCorrect_source",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed source Q.prove result after its Q.SPECL and SIMP_RULE pipeline: compilation equality, full source evaluation and non-type-error premises imply full target evaluation in the same environment and the conditional no-raise result. The live-set, size and flag remain universally quantified. Compiler and FFI state parameters are independent; canonical refs have a local roundtrip witness. Evaluator dependencies inherit reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "env_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/EnvRel.lean", "lean_name": "envRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed polymorphic HOL definition and LIST_RELi_EL_EQN. Both require equal list lengths and equality at every live in-range index. The generic envRel_getElem_iff proves that Lean's optional lookups are exactly bounded element equality; equal lengths supply the target bound and no out-of-range element is observed. The DbVarSet and hasVar carriers retain their reviewed source definitions."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "bVarBound_SmartLet",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/VarBound.lean", "lean_name": "bVarBound_smartLet",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source theorem: for arbitrary bound, binding list and body, the singleton SmartLet is bounded exactly when the corresponding singleton ordinary Let is bounded."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "bVarBound_CONS",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/VarBound.lean", "lean_name": "bVarBound_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source theorem: the conjunction of a bounded singleton and bounded tail implies the corresponding bounded cons list, for arbitrary bound, expression and tail."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "OptionalLetLet_nr",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/VarBound.lean", "lean_name": "optionalLetLet_noRaise",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source theorem: equality of the complete list-valued OptionalLetLet result implies equality of its output and input Boolean no-raise flags. The environment list retains HOL's arbitrary polymorphic element type and all other result and input fields are arbitrary."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "compile_exp_code_labels",
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/CodeLabels.lean", "lean_name": "compileExp_codeLabels",
   "statement_status": "reviewed_exact",
@@ -132617,7 +132665,7 @@
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/VarBound.lean",
   "lean_name": "bVarBound_mono",
   "statement_status": "reviewed_exact",
-  "reviewer": "Independently compared the typed bvl_handle_proof_shape_probe capture (`\u2200m xs n. bVarBound m xs \u2227 m \u2264 n \u21d2 bVarBound n xs`) with bVarBound_mono (expressions) (n m) (le : n \u2264 m) (bound : bVarBound n expressions) : bVarBound m expressions; only the bound-variable names differ, and both state monotonicity in the environment size."
+  "reviewer": "Compared the typed source theorem: input bound, expression list and output bound appear in source order; the original conjunction of input bound and bound inequality implies the output bound."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",

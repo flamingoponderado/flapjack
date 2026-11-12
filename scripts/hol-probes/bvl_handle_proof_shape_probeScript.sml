@@ -1,6 +1,7 @@
 (* Typed source theorems for the variable-bound and handler-shape lemmas in
    cakeml/compiler/backend/proofs/bvl_handleProofScript.sml. *)
 load "bvl_handleProofTheory";
+load "indexedListsTheory";
 load "preamble";
 open HolKernel Parse boolLib bossLib;
 open preamble bvl_handleTheory bvlPropsTheory;
@@ -51,6 +52,14 @@ val _ = show "compile_code_labels_typed" bvl_handleProofTheory.compile_code_labe
 val _ = show "get_code_labels_handle_simp_typed" bvl_handleProofTheory.get_code_labels_handle_simp;
 val _ = show "compile_exp_code_labels_typed" bvl_handleProofTheory.compile_exp_code_labels;
 val _ = show "compile_seqs_code_labels_typed" bvl_handleProofTheory.compile_seqs_code_labels;
+val _ = show "bVarBound_SmartLet_typed" bvl_handleProofTheory.bVarBound_SmartLet;
+val _ = show "bVarBound_CONS_typed" bvl_handleProofTheory.bVarBound_CONS;
+val _ = show "OptionalLetLet_nr_typed" bvl_handleProofTheory.OptionalLetLet_nr;
+val _ = show "env_rel_def_typed" bvl_handleProofTheory.env_rel_def;
+val _ = show "LIST_RELi_EL_EQN_typed" indexedListsTheory.LIST_RELi_EL_EQN;
+val _ = show "env_rel_refl_typed" bvl_handleProofTheory.env_rel_refl;
+val _ = show "env_rel_length_typed" bvl_handleProofTheory.env_rel_length;
+val _ = show "env_rel_mk_Union_typed" bvl_handleProofTheory.env_rel_mk_Union;
 val _ = show "bVarBound_MEM_typed" bvl_handleProofTheory.bVarBound_MEM;
 val _ = show "bVarBound_LESS_EQ_typed" bvl_handleProofTheory.bVarBound_LESS_EQ;
 val _ = show "bVarBound_LetLet_typed" bvl_handleProofTheory.bVarBound_LetLet;

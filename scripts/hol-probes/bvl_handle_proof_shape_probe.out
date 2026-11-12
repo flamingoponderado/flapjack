@@ -30,6 +30,14 @@ compile_code_labels_typed=∀(a :num) (b :num) (c :bvl$exp list). BIGUNION (set 
 get_code_labels_handle_simp_typed=(∀(c :bvl$exp). get_code_labels (handle_simp c) ⊆ get_code_labels c) ∧ (∀(c :bvl$exp list). BIGUNION (set (MAP get_code_labels (handle_simp_list c))) ⊆ BIGUNION (set (MAP get_code_labels c))) ∧ ∀(c :bvl$exp) (d :bvl$exp) (l :num). get_code_labels (make_handle c d l) ⊆ get_code_labels c ∪ get_code_labels d
 compile_exp_code_labels_typed=∀(a :num) (b :num) (c :bvl$exp). get_code_labels (compile_exp a b c :bvl$exp) ⊆ get_code_labels c
 compile_seqs_code_labels_typed=∀(cut :num) (e :bvl$exp) (acc :bvl$exp option). get_code_labels (compile_seqs cut e acc) ⊆ get_code_labels e ∪ case acc of (NONE :bvl$exp option) => (∅ :num -> bool) | SOME r => get_code_labels r
+bVarBound_SmartLet_typed=bVarBound (m :num) [SmartLet (x :bvl$exp list) (xs :bvl$exp)] ⇔ bVarBound m [(Let x xs :bvl$exp)]
+bVarBound_CONS_typed=bVarBound (m :num) [(x :bvl$exp)] ∧ bVarBound m (xs :bvl$exp list) ⇒ bVarBound m (x::xs)
+OptionalLetLet_nr_typed=((ys :bvl$exp list),(l :db_var_set),(s' :num),(nr' :bool)) = OptionalLetLet (e :bvl$exp) (LENGTH (env :α list)) (lx :db_var_set) (s1 :num) (limit :num) (nr :bool) ⇒ (nr' ⇔ nr)
+env_rel_def_typed=∀(l :db_var_set) (env :α list) (env1 :α list). (env_rel l env env1 :bool) ⇔ LIST_RELi (λ(i :num) (v1 :α) (v2 :α). has_var i l ⇒ v1 = v2) env env1
+LIST_RELi_EL_EQN_typed=LIST_RELi (R :num -> α -> β -> bool) (l1 :α list) (l2 :β list) ⇔ LENGTH l1 = LENGTH l2 ∧ ∀(i :num). i < LENGTH l1 ⇒ R i l1❲i❳ l2❲i❳
+env_rel_refl_typed=(env_rel (l :db_var_set) (env :α list) env :bool)
+env_rel_length_typed=(env_rel (l :db_var_set) (env :α list) (env1 :α list) :bool) ⇒ LENGTH env1 = LENGTH env
+env_rel_mk_Union_typed=∀(env :α list) (env1 :α list). (env_rel (mk_Union (lx :db_var_set) (ly :db_var_set)) env env1 :bool) ⇔ (env_rel lx env env1 :bool) ∧ (env_rel ly env env1 :bool)
 bVarBound_MEM_typed=bVarBound (n :num) (xs :bvl$exp list) ⇔ ∀(x :bvl$exp). MEM x xs ⇒ bVarBound n [x]
 bVarBound_LESS_EQ_typed=∀(m :num) (xs :bvl$exp list) (n :num). bVarBound m xs ∧ m ≤ n ⇒ bVarBound n xs
 bVarBound_LetLet_typed=bVarBound (m :num) [(y :bvl$exp)] ∧ (n :num) ≤ m ⇒ bVarBound m [LetLet n (l1 :sptree$num_set) y]

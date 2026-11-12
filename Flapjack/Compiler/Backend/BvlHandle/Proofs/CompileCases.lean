@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.LetLetEvaluate
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.CanRaise
+public import Flapjack.Compiler.Backend.BvlHandle.SourceCompile
 
 @[expose] public section
 
@@ -10,9 +11,8 @@ namespace Flapjack.Compiler.Backend.BvlHandle.Proofs
 open Flapjack.Compiler.Backend.DbVars
 open Flapjack.Compiler.Backend.BvlSem
 
-/-- The source-shaped simulation and no-raise guarantee for a compiled
-singleton. This is untagged infrastructure for assembling the HOL theorem;
-the evaluator and indexed environment relation still require source review. -/
+/-- The general simulation and no-raise guarantee for a compiled singleton.
+This is infrastructure for the specialized source compiler theorem. -/
 def compileSingCorrect (limit : Nat) (expression : Bvl.Exp) : Prop :=
   ∀ (C F : Type) (source target extra : List Value) (state : State C F),
     envRel (compileSing limit source.length expression).2.1 source target →
@@ -616,5 +616,39 @@ theorem compileListCorrect_all (limit : Nat) (expressions : List Bvl.Exp) :
       (compileListCorrect_all limit tail)
 termination_by sizeOf expressions
 end
+
+namespace CompileCorrectCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+    (∀ s : Flapjack.Compiler.Backend.BvlSem.State C F, State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end CompileCorrectCarrier
+
+/-- The source handler compiler preserves list evaluation and its no-raise guarantee. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "compile_correct" 352
+  (fmap_as_finite_support := [refs])]
+theorem compileCorrect_source {C F : Type} (limit : Nat) (xs : List Bvl.Exp)
+    (env : List Value) (s1 : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (ys : List Bvl.Exp) (res : SemanticPrimitivesHOL.Result (List Value) Value)
+    (s2 : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    ∀ (live : DbVarSet) (size : Nat) (nr : Bool),
+      compile limit env.length xs = (ys, live, size, nr) ∧
+      evaluateTuple (xs, env, s1) = (res, s2) ∧
+      res ≠ .err (.abort .typeError) →
+      evaluateTuple (ys, env, s1) = (res, s2) ∧
+      (nr = true → ∀ value, res ≠ .err (.raise value)) := by
+  intro live size nr ⟨compiled, run, safe⟩
+  simp only [evaluateTuple] at run ⊢
+  have sourceSafe : (evaluate xs env s1).1 ≠ .err (.abort .typeError) := by
+    simpa [run] using safe
+  obtain ⟨evaluation, noRaise⟩ := compileListCorrect_all limit xs C F env env [] s1
+    (envRel_refl _ env) sourceSafe
+  have compiled' : compileList limit env.length xs = (ys, live, size, nr) := compiled
+  rw [compiled'] at evaluation noRaise
+  constructor
+  · simpa [run] using evaluation
+  · intro flag value
+    simpa [run] using noRaise flag value
 
 end Flapjack.Compiler.Backend.BvlHandle.Proofs

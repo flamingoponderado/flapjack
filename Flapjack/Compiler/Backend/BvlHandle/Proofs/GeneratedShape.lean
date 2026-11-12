@@ -64,10 +64,10 @@ theorem letLet_shape {α : Type} (n : Nat) (live : Spt α) (body : Bvl.Exp)
     | none => exact ⟨0, 0, Or.inr (by simp [zero])⟩
     | some slot => exact ⟨slot, 0, Or.inl (by simp)⟩
   have bodyBound : bVarBound (retained.length + long.length) [body] := by
-    apply bVarBound_mono [body] n _ ?_ bound
-    simp [long]
+    apply bVarBound_mono n [body] _
+    exact ⟨bound, by simp [long]⟩
   have smartBound : bVarBound retained.length [smartLet long body] :=
-    (bVarBound_smartLet _ long body).mpr ⟨longBound, bodyBound⟩
+    (bVarBound_smartLet _ long body).mpr (by simpa only [bVarBound] using And.intro longBound bodyBound)
   have smartShape : handleOk [smartLet long body] := (handleOk_smartLet long body).mpr ⟨longShape, shape⟩
   have definition : letLet n live body = .let (retained.map Bvl.Exp.var) (smartLet long body) := by
     simp [letLet, retained, long, List.zipIdx_eq_zip_range', ← List.range_eq_range']

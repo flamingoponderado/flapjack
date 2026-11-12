@@ -12,12 +12,31 @@ namespace Flapjack.Compiler.Backend.BvlHandle.Proofs
 open Flapjack.Compiler.Backend.DbVars
 open Flapjack.Compiler.Backend.BvlSem
 
-/-- Two environments have the same length and agree at every live index.
-This indexed formulation is untagged pending review against HOL's LIST_RELi
-representation. -/
-def envRel (live : DbVarSet) (source target : List Value) : Prop :=
+/-- Two lists have the same length and agree at every live index. This is
+the bounded-index form of HOL's indexed list relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "env_rel_def"]
+def envRel {α : Type} (live : DbVarSet) (source target : List α) : Prop :=
   source.length = target.length ∧
     ∀ index, index < source.length → hasVar index live = true → source[index]? = target[index]?
+
+/-- The option-lookup presentation agrees with bounded element comparison.
+This supports the source `LIST_RELi` comparison and has no separate HOL declaration. -/
+theorem envRel_getElem_iff {α : Type} (live : DbVarSet) (source target : List α) :
+    envRel live source target ↔ source.length = target.length ∧
+      ∀ (i : Nat) (hs : i < source.length) (ht : i < target.length),
+        hasVar i live = true → source[i] = target[i] := by
+  constructor
+  · rintro ⟨length, agree⟩
+    refine ⟨length, ?_⟩
+    intro i hs ht present
+    have equal := agree i hs present
+    simpa only [List.getElem?_eq_getElem hs, List.getElem?_eq_getElem ht, Option.some.injEq] using equal
+  · rintro ⟨length, agree⟩
+    refine ⟨length, ?_⟩
+    intro i hs present
+    have ht : i < target.length := by omega
+    simpa only [List.getElem?_eq_getElem hs, List.getElem?_eq_getElem ht] using
+      congrArg some (agree i hs ht present)
 
 /-- Flattening live-variable annotations does not change environment agreement. -/
 theorem envRel_flatten (live : DbVarSet) (source target : List Value) :
@@ -32,15 +51,18 @@ theorem isSomeLookupDbToSet (n : Nat) (live : DbVarSet) :
   cases hasVar n live <;> simp
 
 /-- Related environments have the same length. -/
-theorem envRel_length (live : DbVarSet) (source target : List Value)
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "env_rel_length"]
+theorem envRel_length {α : Type} (live : DbVarSet) (source target : List α)
     (related : envRel live source target) : target.length = source.length := related.1.symm
 
 /-- Every environment agrees with itself at its live indices. -/
-theorem envRel_refl (live : DbVarSet) (env : List Value) : envRel live env env := by
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "env_rel_refl"]
+theorem envRel_refl {α : Type} (live : DbVarSet) (env : List α) : envRel live env env := by
   exact ⟨rfl, fun _ _ _ => rfl⟩
 
 /-- Agreement on a union of live variables is agreement on both sets. -/
-theorem envRel_mkUnion (left right : DbVarSet) (source target : List Value) :
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "env_rel_mk_Union"]
+theorem envRel_mkUnion {α : Type} (left right : DbVarSet) (source target : List α) :
     envRel (mkUnion left right) source target ↔ envRel left source target ∧ envRel right source target := by
   simp only [envRel, hasVar_mkUnion, Bool.or_eq_true]
   constructor

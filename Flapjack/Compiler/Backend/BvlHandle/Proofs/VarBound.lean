@@ -14,42 +14,43 @@ open Flapjack.Compiler.Backend.BvlProps (bVarBound)
 
 /-- Variable bounds are monotone in the available environment size. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "bVarBound_LESS_EQ"]
-theorem bVarBound_mono (expressions : List Bvl.Exp) (n m : Nat)
-    (le : n ≤ m) (bound : bVarBound n expressions) : bVarBound m expressions := by
+theorem bVarBound_mono (n : Nat) (expressions : List Bvl.Exp) (m : Nat)
+    (premises : bVarBound n expressions ∧ n ≤ m) : bVarBound m expressions := by
+  obtain ⟨bound, le⟩ := premises
   cases expressions with
   | nil => simp [bVarBound]
   | cons first rest =>
     cases rest with
     | cons second tail =>
       simp only [bVarBound] at bound ⊢
-      exact ⟨bVarBound_mono [first] n m le bound.1,
-        bVarBound_mono (second :: tail) n m le bound.2⟩
+      exact ⟨bVarBound_mono n [first] m ⟨bound.1, le⟩,
+        bVarBound_mono n (second :: tail) m ⟨bound.2, le⟩⟩
     | nil =>
       cases first with
       | var index => simp only [bVarBound] at bound ⊢; omega
       | force location index => simp only [bVarBound] at bound ⊢; omega
-      | tick body => simp only [bVarBound] at bound ⊢; exact bVarBound_mono [body] n m le bound
-      | raise body => simp only [bVarBound] at bound ⊢; exact bVarBound_mono [body] n m le bound
+      | tick body => simp only [bVarBound] at bound ⊢; exact bVarBound_mono n [body] m ⟨bound, le⟩
+      | raise body => simp only [bVarBound] at bound ⊢; exact bVarBound_mono n [body] m ⟨bound, le⟩
       | op operation args =>
         simp only [bVarBound] at bound ⊢
-        exact bVarBound_mono args n m le bound
+        exact bVarBound_mono n args m ⟨bound, le⟩
       | call ticks dest args =>
         simp only [bVarBound] at bound ⊢
-        exact bVarBound_mono args n m le bound
+        exact bVarBound_mono n args m ⟨bound, le⟩
       | ifThenElse condition yes no =>
         simp only [bVarBound] at bound ⊢
-        exact ⟨bVarBound_mono [condition] n m le bound.1,
-          bVarBound_mono [yes] n m le bound.2.1,
-          bVarBound_mono [no] n m le bound.2.2⟩
+        exact ⟨bVarBound_mono n [condition] m ⟨bound.1, le⟩,
+          bVarBound_mono n [yes] m ⟨bound.2.1, le⟩,
+          bVarBound_mono n [no] m ⟨bound.2.2, le⟩⟩
       | handle body handler =>
         simp only [bVarBound] at bound ⊢
-        exact ⟨bVarBound_mono [body] n m le bound.1,
-          bVarBound_mono [handler] (n + 1) (m + 1) (by omega) bound.2⟩
+        exact ⟨bVarBound_mono n [body] m ⟨bound.1, le⟩,
+          bVarBound_mono (n + 1) [handler] (m + 1) ⟨bound.2, by omega⟩⟩
       | «let» bindings body =>
         simp only [bVarBound] at bound ⊢
-        exact ⟨bVarBound_mono bindings n m le bound.1,
-          bVarBound_mono [body] (n + bindings.length) (m + bindings.length) (by omega)
-            bound.2⟩
+        exact ⟨bVarBound_mono n bindings m ⟨bound.1, le⟩,
+          bVarBound_mono (n + bindings.length) [body] (m + bindings.length)
+            ⟨bound.2, by omega⟩⟩
 termination_by expsWeight expressions
 decreasing_by
   all_goals simp_all only [expsWeight, expWeight]
@@ -70,11 +71,22 @@ theorem bVarBound_every (n : Nat) (expressions : List Bvl.Exp) :
       rw [ih]
       simp
 
-/-- A smart let has the same variable-bound obligations as an ordinary let. -/
+/-- A smart let has the same variable-bound condition as an ordinary let. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "bVarBound_SmartLet"]
 theorem bVarBound_smartLet (n : Nat) (bindings : List Bvl.Exp) (body : Bvl.Exp) :
     bVarBound n [smartLet bindings body] ↔
-      bVarBound n bindings ∧ bVarBound (n + bindings.length) [body] := by
+      bVarBound n [.let bindings body] := by
   cases bindings <;> simp [smartLet, bVarBound]
+
+/-- A bounded singleton and bounded tail form a bounded list. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "bVarBound_CONS"]
+theorem bVarBound_cons (m : Nat) (x : Bvl.Exp) (xs : List Bvl.Exp)
+    (premises : bVarBound m [x] ∧ bVarBound m xs) : bVarBound m (x :: xs) := by
+  apply (bVarBound_every m (x :: xs)).2
+  intro e member
+  rcases List.mem_cons.mp member with rfl | member
+  · exact premises.1
+  · exact (bVarBound_every m xs).1 premises.2 e member
 
 /-- The environment packer stays within any bound at least as large as
 its original environment and the body's existing bound. -/
@@ -107,9 +119,9 @@ theorem bVarBound_letLet {α : Type} (n m : Nat) (live : Spt α) (body : Bvl.Exp
       simp only [bVarBound]
       omega
   have enlarged : bVarBound (m + retained.length + long.length) [body] :=
-    bVarBound_mono [body] m _ (by omega) bodyBound
+    bVarBound_mono m [body] _ ⟨bodyBound, by omega⟩
   have inner : bVarBound (m + retained.length) [smartLet long body] :=
-    (bVarBound_smartLet _ long body).mpr ⟨longBound, enlarged⟩
+    (bVarBound_smartLet _ long body).mpr (by simpa only [bVarBound] using And.intro longBound enlarged)
   have definition : letLet n live body = .let (retained.map Bvl.Exp.var) (smartLet long body) := by
     simp [letLet, retained, long, List.zipIdx_eq_zip_range', ← List.range_eq_range']
     rfl
@@ -135,6 +147,17 @@ theorem bVarBound_optionalLetLet (body : Bvl.Exp) (n m : Nat) (live : DbVars.DbV
   · exact bodyBound
   · simp only [bVarBound, List.length_nil, Nat.add_zero, true_and]
     exact bVarBound_letLet n m (DbVars.dbToSet live) body envBound bodyBound
+
+/-- Optional packing preserves the compiler's no-raise flag. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "OptionalLetLet_nr"]
+theorem optionalLetLet_noRaise {α : Type} (output : List Bvl.Exp) (resultLive : DbVars.DbVarSet)
+    (resultSize : Nat) (resultNoRaise : Bool) (body : Bvl.Exp) (env : List α)
+    (live : DbVars.DbVarSet) (size limit : Nat) (noRaise : Bool)
+    (result : (output, resultLive, resultSize, resultNoRaise) =
+      optionalLetLet body env.length live size limit noRaise) : resultNoRaise = noRaise := by
+  have flag := congrArg (fun p : List Bvl.Exp × DbVars.DbVarSet × Nat × Bool => p.2.2.2) result
+  simp only [optionalLetLet] at flag
+  split at flag <;> exact flag
 
 /-- A source compiler result has the same length as its input list. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "compile_IMP_LENGTH"]
@@ -261,12 +284,7 @@ theorem compileList_varBound (limit env : Nat) (expressions : List Bvl.Exp) (m :
     have tailBound : bVarBound m compiledTail := by
       simpa [tailEq] using compileList_varBound limit env tail m envBound
     simp only [compileList, headEq, tailEq]
-    rw [bVarBound_every] at tailBound ⊢
-    intro expression member
-    simp only [List.mem_cons] at member
-    rcases member with rfl | member
-    · exact headBound
-    · exact tailBound expression member
+    exact bVarBound_cons m compiledHead compiledTail ⟨headBound, tailBound⟩
 termination_by sizeOf expressions
 end
 
@@ -309,7 +327,7 @@ theorem compileSeqsWith_varBound (limit : Nat) (expression : Bvl.Exp) (acc : Opt
       exact compileExpression_varBound limit 0 expression
     | some rest =>
       rw [compileSeqsWith.eq_3 _ limit expression rest notShape]
-      have continuation : bVarBound 1 [rest] := bVarBound_mono [rest] 0 1 (by omega) (accBound rest rfl)
+      have continuation : bVarBound 1 [rest] := bVarBound_mono 0 [rest] 1 ⟨accBound rest rfl, by omega⟩
       simpa [bVarBound] using And.intro (compileExpression_varBound limit 0 expression) continuation
 termination_by sizeOf expression
 
