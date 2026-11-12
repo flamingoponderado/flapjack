@@ -145,6 +145,18 @@
   "reviewer": "Independent typed HOL comparison confirms the original compilation equality, full length and suffix conclusions, binder order, and faithful closure and BVL carriers."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "chain_exps_cons",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "chainExps_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: every source-expression list, including the empty list, yields an existential zero-arity head and tail of the generated chain."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_chain_exps_cons",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "compileExps_chainExps_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original local proof and typed HOL replay: the nonempty source list, arbitrary initial accumulator, both compilation-result equations and resulting auxiliary equality retain the fixed source and target carriers and original quantifier order."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_APPEND",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "compileExps_append",
   "statement_status": "reviewed_exact",

@@ -96,6 +96,21 @@ val _ = show_thm "code_installed_cons_typed=" clos_to_bvlProofTheory.code_instal
 val _ = show_thm "compile_exps_same_aux_typed=" clos_to_bvlProofTheory.compile_exps_same_aux;
 val _ = show_thm "compile_exps_twice_IS_SUBLIST_typed=" clos_to_bvlProofTheory.compile_exps_twice_IS_SUBLIST;
 val _ = show_thm "compile_exps_APPEND_typed=" clos_to_bvlProofTheory.compile_exps_APPEND;
+val _ = show_thm "chain_exps_cons_typed=" clos_to_bvlProofTheory.chain_exps_cons;
+(* Replay the original local chain-compilation accumulator theorem. *)
+local
+  open preamble listTheory clos_to_bvlTheory
+in
+  val compile_exps_chain_exps_cons_replay = Q.prove (
+    `!n h t a new_exps aux x6 x7.
+      compile_exps max_app (MAP (SND o SND) (chain_exps n (h::t))) a = (new_exps,aux) /\
+      compile_exps max_app (h::t) a = (x6,x7) ==> x7 = aux`,
+    Induct_on `t` >> fs [chain_exps_def] >> rw [] >> fs [] >>
+    ntac 2 (pop_assum mp_tac) >>
+    simp [Once compile_exps_CONS] >> fs [compile_exps_def] >>
+    rpt (pairarg_tac >> fs []) >> rveq >> fs [] >> rw [] >> res_tac >> fs []);
+  val _ = show_thm "compile_exps_chain_exps_cons_replay=" compile_exps_chain_exps_cons_replay;
+end;
 val _ = show_thm "build_aux_append_aux_typed=" clos_to_bvlProofTheory.build_aux_append_aux;
 val _ = show_thm "compile_exps_append_aux_typed=" clos_to_bvlProofTheory.compile_exps_append_aux;
 val _ = show_thm "compile_exps_eq_append_typed=" clos_to_bvlProofTheory.compile_exps_eq_append;

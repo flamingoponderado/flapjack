@@ -70,6 +70,14 @@ theorem compileProgExps_head_zero (maxApp start : Nat) (expression : ClosLang.Ex
       refine ⟨body, (rest.zip bodies).map (fun ((loc, args, _), exp) => (loc + numStubs maxApp, args, exp)) ++ finalAux, ?_⟩
       simp [compileProgExpsHOL, compileExps_eq_list, compileExpListHOL, first, remaining]
 
+/-- Every source chain begins with a zero-arity entry. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_exps_cons"]
+theorem chainExps_cons (n : Nat) (expressions : List ClosLang.Exp) :
+    ∃ k1 k2 other, chainExps n expressions = (k1, 0, k2) :: other := by
+  cases expressions with
+  | nil => simp [chainExps]
+  | cons first rest => cases rest <;> simp [chainExps]
+
 /-- Every incremental compilation has a zero-arity entry for the extracted
 main location, even when the expression list is empty. -/
 theorem compileInc_head (maxApp : Nat) (program : ClosSem.Program) :
@@ -543,6 +551,20 @@ theorem compileExps_chain_aux (maxApp : Nat) (expressions : List ClosLang.Exp)
         have tailEq := ih (start + 1) middle
         simp only [compileExps_eq_list] at tailEq ⊢
         simpa [chainExps, compileExpListHOL, compileExpHOL, firstRun] using tailEq
+
+/-- Compiling a nonempty chain and its original expressions produces the same
+final auxiliary accumulator from the same initial accumulator. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_exps_chain_exps_cons"]
+theorem compileExps_chainExps_cons (maxApp start : Nat) (first : ClosLang.Exp)
+    (rest : List ClosLang.Exp) (initial : List (Nat × Nat × Bvl.Exp))
+    (newExps : List Bvl.Exp) (aux : List (Nat × Nat × Bvl.Exp))
+    (compiled : List Bvl.Exp) (originalAux : List (Nat × Nat × Bvl.Exp))
+    (premises : compileExpsHOL maxApp ((chainExps start (first :: rest)).map (fun (_, _, exp) => exp)) initial =
+        (newExps, aux) ∧
+      compileExpsHOL maxApp (first :: rest) initial = (compiled, originalAux)) :
+    originalAux = aux := by
+  have same := compileExps_chain_aux maxApp (first :: rest) start initial
+  simpa only [premises.1, premises.2] using same.symm
 
 /-- Removing an entry-name marker does not change generated auxiliary code. -/
 theorem extractName_aux (maxApp : Nat) (expressions : List ClosLang.Exp)
