@@ -1,0 +1,47 @@
+oracle_monotonic_shift_seq_typed=∀(i :num). oracle_monotonic (f :α -> β -> bool) (R :β -> β -> bool) (St :β -> bool) (co :num -> α) ∧ i > (0 :num) ∧ (St' :β -> bool) ⊆ f (co (i − (1 :num))) ∪ St ⇒ oracle_monotonic f R St' (shift_seq i co)
+oracle_monotonic_DISJOINT_init_typed=∀(i :num). oracle_monotonic (f :α -> β -> bool) (R :β -> β -> bool) (St :β -> bool) (co :num -> α) ∧ (irreflexive R :bool) ⇒ DISJOINT St (f (co i))
+is_state_oracle_k_typed=∀(k :num). is_state_oracle (compile_inc_f :α -> β -> α # γ) (co :num -> (α # δ) # β) ⇒ ∃(st :α) (oth_st :δ) (prog :β). co k = ((st,oth_st),prog) ∧ FST (FST (co (SUC k))) = FST (compile_inc_f st prog)
+oracle_monotonic_subset_typed=(St' :α -> bool) ⊆ (St :α -> bool) ∧ (∀(n :num). (f' :β -> α -> bool) ((co' :num -> β) n) ⊆ (f :γ -> α -> bool) ((co :num -> γ) n)) ⇒ oracle_monotonic f (R :α -> α -> bool) St co ⇒ oracle_monotonic f' R St' co'
+state_orac_states_inv_typed=(P :α -> bool) (st :α) ∧ (∀(st :α) (prog :β) (st' :α) (prog' :γ). (f_inc :α -> β -> α # γ) st prog = (st',prog') ∧ P st ⇒ P st') ⇒ P (state_orac_states f_inc st (orac :num -> β) (i :num))
+syntax_to_full_oracle_def_typed=∀(mk :(γ -> β) -> γ -> α) (progs :γ -> β) (i :γ). syntax_to_full_oracle mk progs i = (mk progs i,progs i)
+state_orac_states_def_typed=(∀(f :α -> β -> α # γ) (st :α) (progs :num -> β). state_orac_states f st progs (0 :num) = st) ∧ ∀(f :α -> β -> α # γ) (st :α) (progs :num -> β) (n :num). state_orac_states f st progs (SUC n) = FST (f (state_orac_states f st progs n) (progs n))
+state_co_progs_def_typed=∀(f :β -> γ -> β # α) (st :β) (orac :num -> γ). state_co_progs f st orac = (let (states :num -> β) = state_orac_states f st orac in λ(i :num). SND (f (states i) (orac i)))
+add_state_co_def_typed=∀(f :α -> γ -> α # δ) (st :α) (mk :(num -> δ) -> num -> β) (progs :num -> γ). add_state_co f st mk progs = (let (states :num -> α) = state_orac_states f st progs; (next_progs :num -> δ) = state_co_progs f st progs; (next_orac :num -> β) = mk next_progs in λ(i :num). (states i,next_orac i))
+state_co_def_typed=∀(f :δ -> ε -> ζ # γ) (co :α -> (δ # β) # ε). state_co f co = (λ(n :α). (let (((state :δ),(cfg :β)),(progs :ε)) = co n; ((state1 :ζ),(progs :γ)) = f state progs in (cfg,progs)))
+oracle_monotonic_def_typed=∀(f :α -> β -> bool) (R :β -> β -> bool) (S :β -> bool) (orac :num -> α). oracle_monotonic f R S orac ⇔ (∀(i :num) (j :num) (x :β) (y :β). i < j ∧ x ∈ f (orac i) ∧ y ∈ f (orac j) ⇒ R x y) ∧ ∀(i :num) (x :β) (y :β). x ∈ S ∧ y ∈ f (orac i) ⇒ R x y
+is_state_oracle_def_typed=∀(compile_inc_f :α -> β -> α # γ) (co :num -> (α # δ) # β). is_state_oracle compile_inc_f co ⇔ ∀(n :num). FST (FST (co (SUC n))) = FST (compile_inc_f (FST (FST (co n))) (SND (co n)))
+oracle_monotonic_state_with_inv_typed=∀(P :α -> bool) (n_f :α -> num). P (FST (FST ((orac :num -> (α # β) # γ) (0 :num)))) ∧ (∀(x :num). x ∈ (St :num -> bool) ⇒ x < n_f (FST (FST (orac (0 :num))))) ∧ (∀(st :α) (prog :γ) (st' :α) (prog' :δ). (f_inc :α -> γ -> α # δ) st prog = (st',prog') ∧ P st ⇒ P st' ∧ n_f st ≤ n_f st' ∧ ∀(cfg :β) (x :num). x ∈ (f :β # δ -> num -> bool) (cfg,prog') ⇒ n_f st ≤ x ∧ x < n_f st') ∧ is_state_oracle f_inc orac ⇒ oracle_monotonic f $< St (state_co f_inc orac)
+oracle_monotonic_state_with_inv_init_typed=∀(P :α -> bool) (n_f :α -> num). (f_inc :α -> γ -> α # β) (st0 :α) (prog0 :γ) = ((st :α),(prog :β)) ∧ P st0 ∧ (St :num -> bool) ⊆ (f :δ # β -> num -> bool) ((cfg :δ),prog) ∧ FST (FST ((orac :num -> (α # δ) # γ) (0 :num))) = st ∧ (∀(st :α) (prog :γ) (st' :α) (prog' :β). f_inc st prog = (st',prog') ∧ P st ⇒ P st' ∧ n_f st ≤ n_f st' ∧ ∀(cfg :δ) (x :num). x ∈ f (cfg,prog') ⇒ n_f st ≤ x ∧ x < n_f st') ∧ is_state_oracle f_inc orac ⇒ oracle_monotonic f $< St (state_co f_inc orac)
+oracle_monotonic_state_typed=∀(n_f :α -> num). (∀(x :num). x ∈ (St :num -> bool) ⇒ x < n_f (FST (FST ((orac :num -> (α # β) # γ) (0 :num))))) ∧ (∀(st :α) (prog :γ) (st' :α) (prog' :δ). (f_inc :α -> γ -> α # δ) st prog = (st',prog') ⇒ n_f st ≤ n_f st' ∧ ∀(cfg :β) (x :num). x ∈ (f :β # δ -> num -> bool) (cfg,prog') ⇒ n_f st ≤ x ∧ x < n_f st') ∧ is_state_oracle f_inc orac ⇒ oracle_monotonic f $< St (state_co f_inc orac)
+oracle_monotonic_state_init_typed=∀(n_f :α -> num). (f_inc :α -> γ -> α # β) (st0 :α) (prog0 :γ) = ((st :α),(prog :β)) ∧ (St :num -> bool) ⊆ (f :δ # β -> num -> bool) ((cfg :δ),prog) ∧ FST (FST ((orac :num -> (α # δ) # γ) (0 :num))) = st ∧ (∀(st :α) (prog :γ) (st' :α) (prog' :β). f_inc st prog = (st',prog') ⇒ n_f st ≤ n_f st' ∧ ∀(cfg :δ) (x :num). x ∈ f (cfg,prog') ⇒ n_f st ≤ x ∧ x < n_f st') ∧ is_state_oracle f_inc orac ⇒ oracle_monotonic f $< St (state_co f_inc orac)
+option_le_SOME_0_typed=option_le (SOME (0 :num)) (x :num option)
+option_add_comm_typed=OPTION_MAP2 $+ (n :num option) (m :num option) = OPTION_MAP2 $+ m n
+option_add_assoc_typed=OPTION_MAP2 $+ (n :num option) (OPTION_MAP2 $+ (m :num option) (p :num option)) = OPTION_MAP2 $+ (OPTION_MAP2 $+ n m) p
+option_le_add_typed=option_le (n :num option) (OPTION_MAP2 $+ n (m :num option))
+pure_cc_def_typed=∀(f :β -> δ) (cc :α -> δ -> γ). pure_cc f cc = (λ(cfg :α) (prog :β). (let (prog1 :δ) = f prog in cc cfg prog1))
+pure_co_def_typed=∀(f :β -> γ). (pure_co f :α # β -> α # γ) = (I :α -> α) ## f
+SND_pure_co_typed=SND (pure_co (co :γ -> α) (x :β # γ)) = co (SND x)
+FST_pure_co_typed=FST (pure_co (co :γ -> β) (x :α # γ)) = FST x
+pure_co_comb_pure_co_typed=(pure_co (f :δ -> γ) :β # δ -> β # γ) ∘ (pure_co (g :ε -> δ) :β # ε -> β # δ) ∘ (co :α -> β # ε) = (pure_co (f ∘ g) :β # ε -> β # γ) ∘ co
+pure_co_I_typed=(pure_co (I :β -> β) :α # β -> α # β) = (I :α # β -> α # β)
+pure_cc_I_typed=(pure_cc (I :β -> β) :(α -> β -> γ) -> α -> β -> γ) = (I :(α -> β -> γ) -> α -> β -> γ)
+option_le_def_typed=(option_le (v0 :num option) (NONE :num option) ⇔ T) ∧ (option_le (NONE :num option) (SOME (v1 :num)) ⇔ F) ∧ (option_le (SOME (n1 :num)) (SOME (n2 :num)) ⇔ n1 ≤ n2)
+option_le_max_right_typed=option_le (x :num option) (OPTION_MAP2 MAX (n :num option) (m :num option)) ⇔ option_le x n ∨ option_le x m
+option_le_refl_typed=∀(x :num option). option_le x x
+option_le_trans_typed=∀(x :num option) (y :num option) (z :num option). option_le x y ∧ option_le y z ⇒ option_le x z
+restrict_nonzero_def_typed=∀(labels :num # num -> bool). restrict_nonzero labels = {l | l ∈ labels ∧ SND l ≠ (0 :num)}
+restrict_nonzero_BIGUNION_typed=restrict_nonzero (BIGUNION (ss :(num # num -> bool) -> bool)) = BIGUNION (IMAGE restrict_nonzero ss)
+restrict_nonzero_left_union_typed=restrict_nonzero (s :num # num -> bool) ⊆ (a :num # num -> bool) ∪ (b :num # num -> bool) ⇒ restrict_nonzero s ⊆ restrict_nonzero a ∪ b
+restrict_nonzero_mono_typed=(s :num # num -> bool) ⊆ (t :num # num -> bool) ⇒ restrict_nonzero s ⊆ restrict_nonzero t
+restrict_nonzero_right_union_typed=restrict_nonzero (s :num # num -> bool) ⊆ (a :num # num -> bool) ∪ (b :num # num -> bool) ⇒ restrict_nonzero s ⊆ a ∪ restrict_nonzero b
+restrict_nonzero_SUBSET_typed=restrict_nonzero (l :num # num -> bool) ⊆ l
+restrict_nonzero_SUBSET_left_typed=(s :num # num -> bool) ⊆ (t :num # num -> bool) ⇒ restrict_nonzero s ⊆ t
+restrict_zero_def_typed=∀(labels :num # num -> bool). restrict_zero labels = {l | l ∈ labels ∧ SND l = (0 :num)}
+option_le_max_typed=option_le (OPTION_MAP2 MAX (n :num option) (m :num option)) (x :num option) ⇔ option_le n x ∧ option_le m x
+option_le_eq_eqns_typed=(option_le (OPTION_MAP2 $+ (n :num option) (m :num option)) (OPTION_MAP2 $+ n (p :num option)) ⇔ n = (NONE :num option) ∨ option_le m p) ∧ (option_le (OPTION_MAP2 $+ n m) (OPTION_MAP2 $+ p n) ⇔ n = (NONE :num option) ∨ option_le m p) ∧ (option_le (OPTION_MAP2 $+ n m) (OPTION_MAP2 $+ p m) ⇔ m = (NONE :num option) ∨ option_le n p) ∧ (option_le (OPTION_MAP2 $+ n m) (OPTION_MAP2 $+ m p) ⇔ m = (NONE :num option) ∨ option_le n p)
+option_map2_max_add_typed=OPTION_MAP2 $+ (n :num option) (OPTION_MAP2 MAX (m :num option) (p :num option)) = OPTION_MAP2 MAX (OPTION_MAP2 $+ n m) (OPTION_MAP2 $+ n p) ∧ OPTION_MAP2 $+ (OPTION_MAP2 MAX m p) n = OPTION_MAP2 MAX (OPTION_MAP2 $+ m n) (OPTION_MAP2 $+ p n)
+OPTION_MAP2_MAX_COMM_typed=OPTION_MAP2 MAX (x :num option) (y :num option) = OPTION_MAP2 MAX y x
+OPTION_MAP2_MAX_ASSOC_typed=OPTION_MAP2 MAX (x :num option) (OPTION_MAP2 MAX (y :num option) (z :num option)) = OPTION_MAP2 MAX (OPTION_MAP2 MAX x y) z
+state_cc_def_typed=∀(f :α -> γ -> ζ # θ) (cc :β -> θ -> (δ # ε # η) option). state_cc f cc = (λ((state :α),(cfg :β)) (prog :γ). (let ((state1 :ζ),(prog1 :θ)) = f state prog in case cc cfg prog1 of (NONE :(δ # ε # η) option) => (NONE :(δ # ε # ζ # η) option) | SOME (code,data,cfg1) => SOME (code,data,state1,cfg1)))
+FST_state_co_typed=FST (state_co (f :γ -> δ -> ε # β) (co :ζ -> (γ # α) # δ) (n :ζ)) = SND (FST (co n))
+SND_state_co_typed=SND (state_co (f :γ -> δ -> ε # α) (co :ζ -> (γ # β) # δ) (n :ζ)) = SND (f (FST (FST (co n))) (SND (co n)))
