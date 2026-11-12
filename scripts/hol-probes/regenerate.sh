@@ -10650,3 +10650,9 @@ run_probe db_vars_typed_probeScript.sml db_vars_typed_probe.out \
   vars_flatten_def_typed has_var_def_typed has_var_vars_flatten_typed lookup_db_to_set_typed lookup_db_to_set_acc_typed MEM_vars_from_list_typed MEM_vars_to_list_typed \
   "$cake_dir/compiler/backend/db_varsScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe bvi_to_data_proof_typed_probeScript.sml bvi_to_data_proof_typed_probe.out \
+  var_corr_inter_typed get_vars_mk_wf_typed get_vars_inter_typed data_to_bvi_result_def_typed data_to_bvi_result_eq_typed var_corr_map_typed get_vars_lift_thm_typed data_to_bvi_v_list_to_v_APPEND_typed \
+  data_to_bvi_v_list_to_v_Nil_typed v_to_bytes_eq_typed v_to_words_eq_typed code_rel_def_typed data_to_bvi_ref_def_typed data_to_bvi_v_def_typed data_to_bvi_v_Boolv_typed data_to_bvi_v_Unit_typed \
+  "$cake_dir/compiler/backend/proofs/bvi_to_dataProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
