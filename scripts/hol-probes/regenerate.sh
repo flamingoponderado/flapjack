@@ -10644,3 +10644,9 @@ run_probe crep_inline_typed_probeScript.sml crep_inline_typed_probe.out \
   has_return_def_typed inline_nontail_def_typed inline_tail_def_typed not_branch_ret_def_typed transform_branch_def_typed transform_eoc_def_typed \
   "$cake_dir/pancake/crep_inlineScript.sml" \
   "$cake_dir/pancake"
+
+run_probe db_vars_typed_probeScript.sml db_vars_typed_probe.out \
+  has_var_mk_Union_typed db_var_set_typed mk_Union_def_typed list_mk_Union_def_typed db_to_set_acc_def_typed db_to_set_def_typed vars_to_list_def_typed vars_from_list_def_typed \
+  vars_flatten_def_typed has_var_def_typed has_var_vars_flatten_typed lookup_db_to_set_typed lookup_db_to_set_acc_typed MEM_vars_from_list_typed MEM_vars_to_list_typed \
+  "$cake_dir/compiler/backend/db_varsScript.sml" \
+  "$cake_dir/compiler/backend"

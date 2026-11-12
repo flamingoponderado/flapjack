@@ -458,6 +458,7 @@
     {"bytes": 44815, "out": "data_to_word_typed_probe.out", "rows": 113, "sha256": "5567f9e027ffce71c450a8618ef9e532efc2aec710cc32ef701dfdfc75a7e62e"},
     {"bytes": 1858, "out": "data_to_word_word_test_probe.out", "rows": 5, "sha256": "6304f0469bc8741b185d7990c32042d15120bef99db64713ad2f9776d193338e"},
     {"bytes": 2147, "out": "db_vars_definitions_probe.out", "rows": 14, "sha256": "62f0464897db7d9c02af876b3140aae3e116140d03324c41b852f2574928f68f"},
+    {"bytes": 2328, "out": "db_vars_typed_probe.out", "rows": 15, "sha256": "8affa97d7208f403e8e352aa8fb9872f6c4f411b4ec8a1d0aa27c8c96ebfb251"},
     {"bytes": 107, "out": "default_frontend_config_probe.out", "rows": 1, "sha256": "c0d860973f9f454f3db5978bc39ead06507cf34f0095adc3c8c8e42f508e38b1"},
     {"bytes": 287, "out": "dtw_assign_size_seen_probe.out", "rows": 2, "sha256": "a387a4311f61acf1f3a6fa52477ee9b38dc93446808def8702de80f67801f5e7"},
     {"bytes": 487, "out": "dtw_memory_gen_split_probe.out", "rows": 4, "sha256": "0af53e4d4575dc6079703499ccb299efad8df4148a65da9f2b8d17f1a368629b"},
