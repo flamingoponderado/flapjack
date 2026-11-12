@@ -46,6 +46,7 @@ theorem letLet_shape {α : Type} (n : Nat) (live : Spt α) (body : Bvl.Exp)
       simpa [bVarBound] using packedBound
   have longShape : handleOk long := by
     rw [handleOk_every]
+    rw [List.forall_iff_forall_mem]
     intro expression member
     obtain ⟨index, _, rfl⟩ := List.mem_map.mp member
     cases retained.zipIdx.lookup index <;> simp [handleOk, zero]

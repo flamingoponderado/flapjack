@@ -12,6 +12,7 @@ compile_seqs_correct_typed=∀(l :num) (x :bvl$exp) (acc :bvl$exp option) (s1 :(
 get_code_labels_handle_adj_vars_replay=(∀(x :bvl$exp) (d :num) (l :num). get_code_labels (handle_adj_vars d l x) = get_code_labels x) ∧ ∀(x :bvl$exp list) (d :num) (l :num). MAP get_code_labels (handle_adj_vars1 d l x) = MAP get_code_labels x
 get_code_labels_dest_handle_Raise_replay=∀(c :bvl$exp) (x :bvl$exp). dest_handle_Raise c = SOME x ⇒ get_code_labels c = get_code_labels x
 LetLet_code_labels_typed=get_code_labels (LetLet (x :num) (y :α sptree$num_map) (z :bvl$exp)) = get_code_labels z
+handle_ok_EVERY_typed=∀(xs :bvl$exp list). handle_ok xs ⇔ EVERY (λ(x :bvl$exp). handle_ok [x]) xs
 bVarBound_MEM_typed=bVarBound (n :num) (xs :bvl$exp list) ⇔ ∀(x :bvl$exp). MEM x xs ⇒ bVarBound n [x]
 bVarBound_LESS_EQ_typed=∀(m :num) (xs :bvl$exp list) (n :num). bVarBound m xs ∧ m ≤ n ⇒ bVarBound n xs
 bVarBound_LetLet_typed=bVarBound (m :num) [(y :bvl$exp)] ∧ (n :num) ≤ m ⇒ bVarBound m [LetLet n (l1 :sptree$num_set) y]

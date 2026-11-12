@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "handle_ok_EVERY",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/HandleOk.lean", "lean_name": "handleOk_every",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source theorem: for every list of BVL expressions, handle_ok holds exactly when EVERY singleton satisfies handle_ok. List.Forall represents the source Prop-valued EVERY, and the reviewed handleOk definition is unchanged."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "LetLet_code_labels",
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/CodeLabels.lean", "lean_name": "letLet_codeLabels",
   "statement_status": "reviewed_exact",

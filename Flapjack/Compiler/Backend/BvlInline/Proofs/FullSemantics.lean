@@ -45,6 +45,7 @@ theorem letOpTransform_program_handleOk (splitSeq : Bool) (limit : Nat)
       ((program.map fun (name, arity, body) => (name, arity, letOpTransform splitSeq limit arity body)).map
         (fun (_, _, body) => body)) := by
   rw [BvlHandle.Proofs.handleOk_every]
+  rw [List.forall_iff_forall_mem]
   intro body member
   simp only [List.mem_map] at member
   obtain ⟨entry, ⟨original, _, rfl⟩, rfl⟩ := member

@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.VarBound
+public import Mathlib.Data.List.Basic
 
 @[expose] public section
 
@@ -57,14 +58,13 @@ theorem handleOk_cons (x : Bvl.Exp) (xs : List Bvl.Exp) :
   | nil => simp [handleOk]
   | cons y ys => rw [handleOk]
 
-/-- Membership formulation of the handler invariant, used as Flapjack
-infrastructure. The source theorem is stated with `EVERY`. -/
+/-- The handler invariant holds exactly when it holds for every singleton. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "handle_ok_EVERY"]
 theorem handleOk_every (xs : List Bvl.Exp) :
-    handleOk xs ↔ ∀ x ∈ xs, handleOk [x] := by
+    handleOk xs ↔ xs.Forall (fun x => handleOk [x]) := by
   induction xs with
   | nil => simp [handleOk]
   | cons x xs ih =>
-    rw [handleOk_cons, ih]
-    simp only [List.mem_cons, forall_eq_or_imp]
+    rw [handleOk_cons, List.forall_cons, ih]
 
 end Flapjack.Compiler.Backend.BvlHandle.Proofs

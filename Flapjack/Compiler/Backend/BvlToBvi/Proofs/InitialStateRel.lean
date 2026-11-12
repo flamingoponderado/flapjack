@@ -148,12 +148,12 @@ theorem compileProgFuelEvaluate {C F : Type} (fuel optFuel start counter clock :
   obtain ⟨rfl, rfl, rfl⟩ := compiled
   have sourceHandlers : ∀ name arity body, (name, arity, body) ∈ programs → BvlHandle.Proofs.handleOk [body] := by
     intro name arity body member
-    apply (BvlHandle.Proofs.handleOk_every _).1 handlers body
+    apply List.forall_iff_forall_mem.mp ((BvlHandle.Proofs.handleOk_every _).1 handlers) body
     exact List.mem_map.mpr ⟨(name, arity, body), member, rfl⟩
   have futureHandlers : ∀ index name arity body,
       (name, arity, body) ∈ (oracle index).2 → BvlHandle.Proofs.handleOk [body] := by
     intro index name arity body member
-    apply (BvlHandle.Proofs.handleOk_every _).1 (oracleHandlers index) body
+    apply List.forall_iff_forall_mem.mp ((BvlHandle.Proofs.handleOk_every _).1 (oracleHandlers index)) body
     exact List.mem_map.mpr ⟨(name, arity, body), member, rfl⟩
   obtain ⟨extra, newRelocate, targetNext, targetRun, finalRel⟩ :=
     compileProgramEvaluate start (globalCountList (programs.map (fun (_, _, body) => body))) counter clock ffi

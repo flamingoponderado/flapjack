@@ -33,6 +33,7 @@ val get_code_labels_dest_handle_Raise_replay = Q.prove (
   ho_match_mp_tac dest_handle_Raise_ind \\ rpt strip_tac \\ gvs [dest_handle_Raise_def,AllCaseEqs()]);
 val _ = show "get_code_labels_dest_handle_Raise_replay" get_code_labels_dest_handle_Raise_replay;
 val _ = show "LetLet_code_labels_typed" bvl_handleProofTheory.LetLet_code_labels;
+val _ = show "handle_ok_EVERY_typed" bvl_handleProofTheory.handle_ok_EVERY;
 val _ = show "bVarBound_MEM_typed" bvl_handleProofTheory.bVarBound_MEM;
 val _ = show "bVarBound_LESS_EQ_typed" bvl_handleProofTheory.bVarBound_LESS_EQ;
 val _ = show "bVarBound_LetLet_typed" bvl_handleProofTheory.bVarBound_LetLet;

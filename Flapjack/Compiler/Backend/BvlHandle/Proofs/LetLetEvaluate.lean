@@ -11,23 +11,22 @@ namespace Flapjack.Compiler.Backend.BvlHandle.Proofs
 open Flapjack.Compiler.Backend.DbVars
 open Flapjack.Compiler.Backend.BvlSem
 
-/-- Evaluating a list of variable references reads each specified value in
-order and does not change the state. -/
-theorem evaluate_vars {C F : Type} (indices : List Nat) (env : List Value)
-    (state : State C F) (value : Nat → Value)
-    (lookup : ∀ index ∈ indices, env[index]? = some (value index)) :
-    evaluate (indices.map Bvl.Exp.var) env state = (.val (indices.map value), state) := by
+/-- Independent, state-preserving singleton evaluations compose in order. -/
+theorem evaluate_map_pure {C F : Type} (indices : List Nat) (expression : Nat → Bvl.Exp)
+    (value : Nat → Value) (env : List Value) (state : State C F)
+    (runs : ∀ index ∈ indices, evaluate [expression index] env state = (.val [value index], state)) :
+    evaluate (indices.map expression) env state = (.val (indices.map value), state) := by
   induction indices with
   | nil => simp [evaluate]
   | cons index indices ih =>
-    have head := lookup index (by simp)
-    have tail : ∀ i ∈ indices, env[i]? = some (value i) := by
+    have head := runs index (by simp)
+    have tail : ∀ i ∈ indices, evaluate [expression i] env state = (.val [value i], state) := by
       intro i member
-      exact lookup i (by simp [member])
-    have cons := BvlProps.evaluateCons (.var index) (indices.map Bvl.Exp.var) env state
+      exact runs i (by simp [member])
+    have cons := BvlProps.evaluateCons (expression index) (indices.map expression) env state
     simp only [evaluateTuple] at cons
     rw [List.map_cons, cons]
-    simp [evaluate, head, ih tail, Flapjack.holHd]
+    simp [head, ih tail, Flapjack.holHd]
 
 /-- The first let in environment packing extracts exactly the original
 values at the live indices, even when the target environment has a suffix. -/
@@ -38,8 +37,9 @@ theorem evaluate_retained_vars {C F : Type} (live : DbVarSet)
     evaluate (retained.map Bvl.Exp.var) (target ++ extra) state =
       (.val (retained.map fun i => (source[i]?).getD (.number 0)), state) := by
   dsimp only
-  apply evaluate_vars
+  apply evaluate_map_pure
   intro index member
+  simp only [evaluate]
   have bounds : index < source.length := by
     have h := (List.mem_filter.mp member).1
     simpa using h
@@ -109,23 +109,6 @@ theorem evaluate_reconstructed_binding {C F : Type} (live : DbVarSet)
     have read : ((retained.map value) ++ rest)[packed]? = some (value index) := by
       simp [List.getElem?_append, packedBound, slotEq]
     simp [present, evaluate, read]
-
-/-- Independent, state-preserving singleton evaluations compose in order. -/
-theorem evaluate_map_pure {C F : Type} (indices : List Nat) (expression : Nat → Bvl.Exp)
-    (value : Nat → Value) (env : List Value) (state : State C F)
-    (runs : ∀ index ∈ indices, evaluate [expression index] env state = (.val [value index], state)) :
-    evaluate (indices.map expression) env state = (.val (indices.map value), state) := by
-  induction indices with
-  | nil => simp [evaluate]
-  | cons index indices ih =>
-    have head := runs index (by simp)
-    have tail : ∀ i ∈ indices, evaluate [expression i] env state = (.val [value i], state) := by
-      intro i member
-      exact runs i (by simp [member])
-    have cons := BvlProps.evaluateCons (expression index) (indices.map expression) env state
-    simp only [evaluateTuple] at cons
-    rw [List.map_cons, cons]
-    simp [head, ih tail, Flapjack.holHd]
 
 /-- The second set of bindings reconstructs the source environment with
 non-live positions replaced by zero. -/

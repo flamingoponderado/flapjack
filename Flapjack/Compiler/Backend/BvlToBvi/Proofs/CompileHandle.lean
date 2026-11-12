@@ -12,6 +12,7 @@ open Flapjack.SemanticPrimitivesHOL (Result)
 private theorem handleOk_varList (xs : List Bvl.Exp) (onlyVars : xs.all BvlProps.isVar = true) :
     BvlHandle.Proofs.handleOk xs := by
   rw [BvlHandle.Proofs.handleOk_every]
+  rw [List.forall_iff_forall_mem]
   intro expression member
   have isVariable := (List.all_eq_true.mp onlyVars) expression member
   cases expression <;> simp_all [BvlProps.isVar, BvlHandle.Proofs.handleOk]
