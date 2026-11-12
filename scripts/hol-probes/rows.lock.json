@@ -340,6 +340,7 @@
     {"bytes": 415, "out": "crep_primop_loop_primop_probe.out", "rows": 13, "sha256": "c63ffb6a414740a3f3590978c17aa9ce983d735d0dc158ca13fe3c45d4feab51"},
     {"bytes": 108, "out": "crep_primop_probe.out", "rows": 4, "sha256": "61fd9df80fca4077f557b267eea6a2e1c7121aee47d1da57862e5e8a05918328"},
     {"bytes": 59, "out": "crep_props_assigned_vars_probe.out", "rows": 5, "sha256": "a9e3191e0345c1fe41b69008ef2c69dc1b3b69f5ac767959a360cf22f3132b22"},
+    {"bytes": 14839, "out": "crep_props_typed_probe.out", "rows": 42, "sha256": "0c259efde9507193a8adfc96fa1359cdf5a9803214376c5d07d1e35a4e3c0316"},
     {"bytes": 168, "out": "crep_replicate_const_probe.out", "rows": 4, "sha256": "28dffd5cd7a7a7f0834d1239ffa120fdd4344731a2a04e6401069754ccfb3a5a"},
     {"bytes": 59, "out": "crep_res_var_probe.out", "rows": 2, "sha256": "038231d8f498cdd9308c2354a81228ed635ef1a1572a322f594c05c484f7e090"},
     {"bytes": 90, "out": "crep_runtime_ext_call_probe.out", "rows": 4, "sha256": "1296f560b3c9e7e8812f4d6dd8c553b63ab7fc9c64e6c39d95220421b9c996b9"},
