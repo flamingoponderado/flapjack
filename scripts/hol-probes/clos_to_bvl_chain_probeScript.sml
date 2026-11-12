@@ -150,6 +150,7 @@ in
     `  !max f. LENGTH (FLAT (GENLIST (\x. (GENLIST (\y. f x y) x)) max)) =
     max * (max -1) DIV 2`,
   rw [LENGTH_FLAT, MAP_GENLIST, combinTheory.o_DEF, sum_genlist_triangle]);
+  val _ = show_thm "triangle_table_size_replay=" triangle_table_size_replay;
   val triangle_table_size = triangle_table_size_replay;
   val tri_lemma_replay = Q.prove (
     `  !tot max_app.
@@ -211,6 +212,7 @@ in
   res_tac >>
   fs [] >>
   metis_tac [APPEND_ASSOC]);
+  val _ = show_thm "triangle_el_replay=" triangle_el_replay;
   val triangle_el = triangle_el_replay;
   val triangle_el_no_suff_replay = Q.prove (
     `  !n tot max_app f g.
@@ -225,6 +227,7 @@ in
             max_app)) =
     f tot n`,
   metis_tac [triangle_el, APPEND_NIL]);
+  val _ = show_thm "triangle_el_no_suff_replay=" triangle_el_no_suff_replay;
   val triangle_el_no_suff = triangle_el_no_suff_replay;
   val evaluate_partial_app_fn_location_code_replay = Q.prove (
     `  !max_app n total_args st args tag ptr x fvs.

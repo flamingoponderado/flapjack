@@ -2,13 +2,16 @@ module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.Stubs
 public import Flapjack.Misc.Sptree.FromList.Domain
+public import Flapjack.Misc.ListEl
 
 @[expose] public section
 
 /-! Domain of the generated closure-application stubs. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
-private theorem triangleLength {α : Type} (f : Nat → Nat → α) (count : Nat) :
+/-- The length of the generated triangular table. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "triangle_table_size"]
+theorem triangleTableSize {α : Type} (count : Nat) (f : Nat → Nat → α) :
     (((List.range count).map fun total => (List.range total).map (f total)).flatten).length =
       count * (count - 1) / 2 := by
   have twice : ∀ n, (((List.range n).map fun total => (List.range total).map (f total)).flatten).length * 2 =
@@ -43,7 +46,7 @@ private theorem triangleLookup {α : Type} (f : Nat → Nat → α) (limit total
     rw [expand, List.getElem?_append]
     by_cases same : total = limit
     · subst limit
-      rw [triangleLength f total]
+      rw [triangleTableSize total f]
       simp [hp]
     · have inside : total < limit := by omega
       have prior := ih inside
@@ -52,6 +55,33 @@ private theorem triangleLookup {α : Type} (f : Nat → Nat → α) (limit total
         List.getElem?_eq_some_iff.mp prior |>.choose
       rw [if_pos idxBound]
       exact prior
+
+/-- A bounded entry of a triangular table is unaffected by a suffix. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "triangle_el"]
+theorem triangleEl {α β : Type} (n tot maxApp : Nat) (stuff : List α)
+    (f : Nat → Nat → α) (_g : β) :
+    letI : Nonempty α := ⟨f 0 0⟩
+    n < tot ∧ tot < maxApp →
+    holEl (n + tot * (tot - 1) / 2)
+      ((((List.range maxApp).map fun t => (List.range t).map (f t)).flatten) ++ stuff) =
+      f tot n := by
+  let _ : Nonempty α := ⟨f 0 0⟩
+  intro ⟨hn, ht⟩
+  have entry := triangleLookup f maxApp tot n hn ht
+  have entryBound := (List.getElem?_eq_some_iff.mp entry).1
+  rw [holEl_eq_getElem _ _ (by simp only [List.length_append]; omega)]
+  rw [List.getElem_append_left entryBound]
+  exact (List.getElem?_eq_some_iff.mp entry).2
+
+/-- A bounded entry of a triangular table has its generated value. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "triangle_el_no_suff"]
+theorem triangleElNoSuff {α β : Type} (n tot maxApp : Nat)
+    (f : Nat → Nat → α) (g : β) :
+    letI : Nonempty α := ⟨f 0 0⟩
+    n < tot ∧ tot < maxApp →
+    holEl (n + tot * (tot - 1) / 2)
+      (((List.range maxApp).map fun t => (List.range t).map (f t)).flatten) = f tot n := by
+  simpa using triangleEl n tot maxApp [] f g
 
 /-- Initial code contains every generic and partial-application stub. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "init_code_ok"]
@@ -81,7 +111,7 @@ theorem domain_initCode (maxApp : Nat) (_positive : 0 < maxApp) :
     sptDomain (initCode maxApp) =
       fun key => key < maxApp + maxApp * (maxApp - 1) / 2 := by
   rw [initCode, sptDomainFromList]
-  simp only [List.length_append, List.length_map, List.length_range, triangleLength]
+  simp only [List.length_append, List.length_map, List.length_range, triangleTableSize]
 
 /-- Every generated stub lies below the reserved-stub count. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "domain_init_code_lt_num_stubs"]

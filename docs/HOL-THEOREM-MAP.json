@@ -233,6 +233,24 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: args and prev lists have independent polymorphic element types, with exactly the three original conjuncts and all three arithmetic conclusions."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "triangle_table_size",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean", "lean_name": "triangleTableSize",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: the nested generated lists, arbitrary result type, table count and natural triangular-size formula agree, without any bound premise."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "triangle_el",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean", "lean_name": "triangleEl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: both strict bounds, appended list, index, result and independently typed unused g binder agree. The HOL EL inhabitance is supplied by f 0 0 without an added premise."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "triangle_el_no_suff",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean", "lean_name": "triangleElNoSuff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: the generated list, both bounds, natural index, result and independently typed unused g binder agree. The HOL EL inhabitance is supplied by f 0 0 without an added premise."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "ETA2_THM",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "eta2Thm",
   "statement_status": "reviewed_exact",

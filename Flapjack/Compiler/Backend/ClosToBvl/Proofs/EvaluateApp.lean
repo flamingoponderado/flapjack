@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureShape
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveEntry
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreeLet
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SavedSelectors
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InitialCodeDomain
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArgumentRelation
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateCall
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
@@ -1206,21 +1207,8 @@ theorem partialAppEntries_lookup (maxApp count total previous : Nat)
 index calculation. -/
 theorem partialAppEntries_length (maxApp count : Nat) :
     (partialAppEntries maxApp count).length = count * (count - 1) / 2 := by
-  have twice : ∀ n, (partialAppEntries maxApp n).length * 2 = n * (n - 1) := by
-    intro n
-    induction n with
-    | zero => simp [partialAppEntries]
-    | succ n ih =>
-      rw [partialAppEntries_succ]
-      simp only [List.length_append, List.length_map, List.length_range]
-      cases n with
-      | zero => simp [partialAppEntries]
-      | succ n =>
-        simp only [Nat.add_sub_cancel] at *
-        simp only [Nat.add_mul, Nat.mul_add, Nat.one_mul, Nat.mul_one] at ih ⊢
-        omega
-  have h := congrArg (fun n : Nat => n / 2) (twice count)
-  simpa using h
+  exact triangleTableSize count (fun total previous =>
+    BvlSem.Value.codePtr (partialAppFnLocation maxApp total previous))
 
 /-- The triangular slot in the global partial-application table contains the
 corresponding generated code pointer. -/
@@ -4636,7 +4624,7 @@ theorem evaluate_overApp_continue_canonical {C F : Type} (s : BvlSem.State C F)
   · intro u
     simp [BvlSem.evaluate]
   · intro u
-    simp [BvlSem.evaluate]
+    simp [BvlSem.evaluate, Nat.min_eq_left (by omega : n - total ≤ args.length)]
   · intro u
     have bound : (n - total) + 3 ≤ (value :: first :: second :: (args ++ rest)).length := by
       simp only [List.length_cons, List.length_append]
