@@ -10442,3 +10442,11 @@ run_probe bvl_inline_typed_probeScript.sml bvl_inline_typed_probe.out \
   let_op_sing_def_typed let_op_one_typed \
   "$cake_dir/compiler/backend/bvl_inlineScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe word_simp_typed_probeScript.sml word_simp_typed_probe.out \
+  all_names_def_typed compile_exp_def_typed const_fp_def_typed const_fp_exp_def_typed const_fp_inst_cs_def_typed const_fp_loop_def_typed const_fp_move_cs_def_typed dest_If_def_typed \
+  dest_If_Eq_Imm_def_typed dest_Raise_num_pmatch_def_typed dest_Seq_def_typed dest_Seq_Assign_Const_def_typed drop_consts_def_typed get_var_imm_cs_def_typed is_gc_const_def_typed is_simple_pmatch_def_typed \
+  push_out_if_def_typed push_out_if_aux_def_typed rewrite_duplicate_if_max_reassoc_def_typed Seq_assoc_def_typed simp_duplicate_if_def_typed SmartSeq_def_typed strip_const_def_typed try_if_hoist1_def_typed \
+  try_if_hoist2_def_typed \
+  "$cake_dir/compiler/backend/word_simpScript.sml" \
+  "$cake_dir/compiler/backend"
