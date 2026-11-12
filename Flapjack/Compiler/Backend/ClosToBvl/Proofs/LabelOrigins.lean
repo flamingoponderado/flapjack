@@ -28,6 +28,18 @@ theorem buildAux_label_list (entries : List (Nat × Bvl.Exp)) (start : Nat) (aux
     simp only [Function.comp_def]
     omega
 
+/-- The labels produced by recursive-group construction, in output order. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "build_aux_thm"]
+theorem buildAux_thm (entries : List (Nat × Bvl.Exp)) (start : Nat)
+    (aux : List (Nat × Nat × Bvl.Exp)) (next : Nat)
+    (added : List (Nat × Nat × Bvl.Exp))
+    (run : buildAux start entries aux = (next, added ++ aux)) :
+    added.map Prod.fst =
+      ((List.range entries.length).map (fun index => start + 2 * index)).reverse := by
+  have labels := buildAux_label_list entries start aux
+  rw [run, List.map_append] at labels
+  simpa only [List.append_cancel_right_eq] using labels
+
 mutual
 
 /-- Compiling an expression prepends its closure labels, shifted by the stub

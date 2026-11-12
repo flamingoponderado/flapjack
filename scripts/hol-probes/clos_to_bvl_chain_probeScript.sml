@@ -64,6 +64,24 @@ val build_aux_lemma2_replay = Q.prove (
   `clos_to_bvl$build_aux n k aux = (a,b) ==> ?z. b = z ++ aux`,
   mp_tac (SPEC_ALL clos_to_bvlTheory.build_aux_acc) >> rw[] >> fs[]);
 val _ = show_thm "build_aux_lemma2_replay=" build_aux_lemma2_replay;
+(* Replay the original local recursive-layout label theorem. *)
+local
+  open preamble listTheory clos_to_bvlTheory
+in
+  val build_aux_thm_replay = Q.prove (
+    `!c n aux n7 aux7.
+      build_aux n c aux = (n7,aux7++aux) ==>
+      MAP FST aux7 = REVERSE (GENLIST ($+ n o $* 2) (LENGTH c))`,
+    Induct >> simp[build_aux_def] >> srw_tac[][] >>
+    qmatch_assum_abbrev_tac `build_aux nn kk auxx = Z` >>
+    qspecl_then [`kk`,`nn`,`auxx`] strip_assume_tac build_aux_acc >>
+    Cases_on `build_aux nn kk auxx` >> UNABBREV_ALL_TAC >> full_simp_tac(srw_ss())[] >> srw_tac[][] >>
+    full_simp_tac std_ss [Once (CONS_APPEND)] >>
+    full_simp_tac std_ss [Once (GSYM APPEND_ASSOC)] >> res_tac >>
+    srw_tac[][GENLIST,REVERSE_APPEND,REVERSE_GENLIST,PRE_SUB1] >>
+    simp[LIST_EQ_REWRITE]);
+  val _ = show_thm "build_aux_thm_replay=" build_aux_thm_replay;
+end;
 val _ = show_thm "build_aux_append_aux_typed=" clos_to_bvlProofTheory.build_aux_append_aux;
 val _ = show_thm "compile_exps_append_aux_typed=" clos_to_bvlProofTheory.compile_exps_append_aux;
 val _ = show_thm "compile_exps_eq_append_typed=" clos_to_bvlProofTheory.compile_exps_eq_append;

@@ -145,6 +145,12 @@
   "reviewer": "Independent typed HOL comparison confirms the original compilation equality, full length and suffix conclusions, binder order, and faithful closure and BVL carriers."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "build_aux_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/LabelOrigins.lean", "lean_name": "buildAux_thm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original local proof and typed HOL replay: all five binders, fixed BVL carriers, complete build_aux equality, and reversed generated label sequence agree. GENLIST (n + 2 * i) is translated to a mapped range."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "lemma2",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Accumulator.lean", "lean_name": "buildAux_result_suffix",
   "statement_status": "reviewed_exact",
