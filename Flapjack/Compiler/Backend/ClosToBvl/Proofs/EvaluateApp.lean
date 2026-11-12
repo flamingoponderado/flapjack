@@ -305,18 +305,63 @@ theorem clRel_ordinary_exact_call {C F : Type}
       simpa [length] using evaluate_closure_entry (BvlSem.decClock arity s) values fields 30
         (.codePtr (ptr + numStubs maxApp)) (.number (Int.ofNat (arity - 1))) _
 
-/-- An un-applied ordinary closure given exactly its arity selects its body,
-with no arguments left for a subsequent application. -/
-theorem destClosure_ordinary_exact (maxApp ptr arity : Nat) (sourceEnv args : List ClosSem.Value)
-    (body : ClosLang.Exp) (bound : arity ≤ maxApp) (positive : arity ≠ 0)
-    (length : args.length = arity) :
-    ClosSem.destClosure maxApp none (.closure (some ptr) [] sourceEnv arity body) args =
-      some (.fullApp body (args ++ sourceEnv) []) := by
-  have positiveArity : 0 < arity := Nat.pos_of_ne_zero positive
-  have take : args.reverse.take arity = args.reverse := by
+/-- Saturating an ordinary partial closure selects its body with the new
+arguments before the previously saved arguments. -/
+theorem destClosure_ordinary_partial_exact (maxApp ptr arity : Nat)
+    (captured oldArgs newArgs : List ClosSem.Value) (body : ClosLang.Exp)
+    (oldBound : oldArgs.length < arity) (bound : newArgs.length ≤ maxApp)
+    (length : newArgs.length + oldArgs.length = arity) :
+    ClosSem.destClosure maxApp none (.closure (some ptr) oldArgs captured arity body) newArgs =
+      some (.fullApp body (newArgs ++ oldArgs ++ captured) []) := by
+  have take : newArgs.reverse.take (arity - oldArgs.length) = newArgs.reverse := by
     apply List.take_of_length_le
-    simp [length]
-  simp [ClosSem.destClosure, ClosSem.checkLoc, length, bound, positiveArity, take]
+    simp only [List.length_reverse]
+    omega
+  have drop : newArgs.reverse.drop (arity - oldArgs.length) = [] := by
+    apply List.drop_eq_nil_of_le
+    simp only [List.length_reverse]
+    omega
+  simp [ClosSem.destClosure, ClosSem.checkLoc, bound, oldBound, length, take, drop, List.append_assoc]
+
+/-- A saturated ordinary partial closure runs its body or times out after
+charging one source tick per newly supplied argument. -/
+theorem evaluateApp_ordinary_partial_exact {C F : Type} (s : ClosSem.State C F)
+    (ptr arity : Nat) (captured oldArgs newArgs : List ClosSem.Value) (body : ClosLang.Exp)
+    (nonempty : newArgs ≠ []) (oldBound : oldArgs.length < arity)
+    (bound : newArgs.length ≤ s.maxApp) (length : newArgs.length + oldArgs.length = arity) :
+    ClosSem.evaluateApp none (.closure (some ptr) oldArgs captured arity body) newArgs s =
+      if s.clock < newArgs.length then (.err (.abort .timeoutError), { s with clock := 0 })
+      else
+        let next := ClosSem.fixClock (ClosSem.decClock newArgs.length s)
+          (ClosSem.evaluate [body] (newArgs ++ oldArgs ++ captured) (ClosSem.decClock newArgs.length s))
+        match next.1 with
+        | .val [value] => (.val [value], next.2)
+        | other => (other, next.2) := by
+  have found := destClosure_ordinary_partial_exact s.maxApp ptr arity captured oldArgs newArgs body oldBound bound length
+  cases newArgs with
+  | nil => contradiction
+  | cons head tail =>
+    rw [ClosSem.evaluateApp, found]
+    simp [ClosSem.evaluateApp]
+    split <;> rfl
+
+/-- With enough source clock, saturating an ordinary partial closure produces
+the result of its selected body. -/
+theorem evaluateApp_ordinary_partial_exact_body {C F : Type} (s sFinal : ClosSem.State C F)
+    (ptr arity : Nat) (captured oldArgs newArgs : List ClosSem.Value) (body : ClosLang.Exp)
+    (nonempty : newArgs ≠ []) (oldBound : oldArgs.length < arity)
+    (bound : newArgs.length ≤ s.maxApp) (length : newArgs.length + oldArgs.length = arity)
+    (enough : newArgs.length ≤ s.clock) (result : Result (List ClosSem.Value) ClosSem.Value)
+    (bodyRun : ClosSem.evaluate [body] (newArgs ++ oldArgs ++ captured) (ClosSem.decClock newArgs.length s) =
+      (result, sFinal)) :
+    ClosSem.evaluateApp none (.closure (some ptr) oldArgs captured arity body) newArgs s = (result, sFinal) := by
+  rw [evaluateApp_ordinary_partial_exact s ptr arity captured oldArgs newArgs body nonempty oldBound bound length]
+  rw [if_neg (Nat.not_lt.mpr enough), ClosSem.fixClock_evaluate, bodyRun]
+  cases result with
+  | err error => rfl
+  | val values => cases values with
+    | nil => rfl
+    | cons value tail => cases tail <;> rfl
 
 /-- A related ordinary closure called with exactly its arity simulates its
 source body, assuming the body simulation and enough source clock. The target
@@ -382,33 +427,6 @@ theorem evaluatePost_ordinary_exact_call {C F : Type}
   exact ⟨clock, targetResult, tFinal, fFinal, finalRun, by simpa [ClosSem.decClock] using resultRel,
     finalStates, map, frame, finalAnnotations, finalClock⟩
 
-/-- Exact ordinary closure application evaluates the selected source body
-and returns its result when there are no remaining arguments. -/
-theorem evaluateApp_ordinary_exact {C F : Type} (s sFinal : ClosSem.State C F)
-    (ptr arity : Nat) (sourceEnv args : List ClosSem.Value) (body : ClosLang.Exp)
-    (bound : arity ≤ s.maxApp) (positive : arity ≠ 0) (length : args.length = arity)
-    (enough : arity ≤ s.clock) (result : Result (List ClosSem.Value) ClosSem.Value)
-    (bodyRun : ClosSem.evaluate [body] (args ++ sourceEnv) (ClosSem.decClock arity s) = (result, sFinal)) :
-    ClosSem.evaluateApp none (.closure (some ptr) [] sourceEnv arity body) args s = (result, sFinal) := by
-  have found := destClosure_ordinary_exact s.maxApp ptr arity sourceEnv args body bound positive length
-  have nonempty : args ≠ [] := by
-    intro empty
-    simp [empty] at length
-    exact positive length.symm
-  cases args with
-  | nil => contradiction
-  | cons head tail =>
-    rw [ClosSem.evaluateApp, found]
-    simp only [List.length_nil, Nat.sub_zero, length, Nat.not_lt.mpr enough, ↓reduceIte]
-    rw [ClosSem.fixClock_evaluate, bodyRun]
-    cases result with
-    | err error => rfl
-    | val values =>
-      cases values with
-      | nil => rfl
-      | cons value tail =>
-        cases tail <;> simp [ClosSem.evaluateApp]
-
 /-- A successful-clock exact application of a related ordinary closure
 simulates the source application itself. The remaining premise is the
 simulation induction hypothesis for the closure body. -/
@@ -435,8 +453,14 @@ theorem evaluateApp_ordinary_exact_simulation {C F : Type}
   obtain ⟨bound, positive, locations, vars⟩ := info
   cases bodyRun : ClosSem.evaluate [sourceBody] (sourceArgs ++ sourceEnv) (ClosSem.decClock arity s) with
   | mk bodyResult bodyFinal =>
-    have sourceStep := evaluateApp_ordinary_exact s bodyFinal ptr arity sourceEnv sourceArgs sourceBody
-      bound positive arityMatch enough bodyResult bodyRun
+    have sourceNonempty : sourceArgs ≠ [] := by
+      intro empty
+      simp [empty] at arityMatch
+      exact positive arityMatch.symm
+    have sourceStep := evaluateApp_ordinary_partial_exact_body s bodyFinal ptr arity sourceEnv [] sourceArgs sourceBody
+      sourceNonempty (by simpa using Nat.pos_of_ne_zero positive) (by simpa [arityMatch] using bound)
+      (by simpa using arityMatch) (by simpa [arityMatch] using enough) bodyResult
+      (by simpa [arityMatch] using bodyRun)
     rw [appRun] at sourceStep
     cases sourceStep
     exact evaluatePost_ordinary_exact_call s sFinal t f ptr arity sourceEnv sourceArgs fields targetArgs rest
@@ -464,7 +488,9 @@ theorem evaluateApp_ordinary_exact_timeout {C F : Type}
     cases related with
     | closure bound positive _ _ _ _ _ => exact ⟨bound, positive⟩
   obtain ⟨bound, positive⟩ := info
-  have found := destClosure_ordinary_exact s.maxApp ptr arity sourceEnv sourceArgs sourceBody bound positive arityMatch
+  have found := destClosure_ordinary_partial_exact s.maxApp ptr arity sourceEnv [] sourceArgs sourceBody
+    (by simpa using Nat.pos_of_ne_zero positive) (by simpa [arityMatch] using bound) (by simpa using arityMatch)
+  simp only [List.append_nil] at found
   have nonempty : sourceArgs ≠ [] := by
     intro empty
     simp [empty] at arityMatch
@@ -2339,46 +2365,6 @@ theorem evaluate_mkClCall_partial_complete {C F : Type} (s : BvlSem.State C F)
     · have clocks : s.clock - args.length - 1 = s.clock - (args.length + 1) := by omega
       simp [BvlSem.decClock, clocks]
 
-/-- Saturating an ordinary partial closure selects its body with the new
-arguments before the previously saved arguments. -/
-theorem destClosure_ordinary_partial_exact (maxApp ptr arity : Nat)
-    (captured oldArgs newArgs : List ClosSem.Value) (body : ClosLang.Exp)
-    (oldBound : oldArgs.length < arity) (bound : newArgs.length ≤ maxApp)
-    (length : newArgs.length + oldArgs.length = arity) :
-    ClosSem.destClosure maxApp none (.closure (some ptr) oldArgs captured arity body) newArgs =
-      some (.fullApp body (newArgs ++ oldArgs ++ captured) []) := by
-  have take : newArgs.reverse.take (arity - oldArgs.length) = newArgs.reverse := by
-    apply List.take_of_length_le
-    simp only [List.length_reverse]
-    omega
-  have drop : newArgs.reverse.drop (arity - oldArgs.length) = [] := by
-    apply List.drop_eq_nil_of_le
-    simp only [List.length_reverse]
-    omega
-  simp [ClosSem.destClosure, ClosSem.checkLoc, bound, oldBound, length, take, drop, List.append_assoc]
-
-/-- A saturated ordinary partial closure runs its body or times out after
-charging one source tick per newly supplied argument. -/
-theorem evaluateApp_ordinary_partial_exact {C F : Type} (s : ClosSem.State C F)
-    (ptr arity : Nat) (captured oldArgs newArgs : List ClosSem.Value) (body : ClosLang.Exp)
-    (nonempty : newArgs ≠ []) (oldBound : oldArgs.length < arity)
-    (bound : newArgs.length ≤ s.maxApp) (length : newArgs.length + oldArgs.length = arity) :
-    ClosSem.evaluateApp none (.closure (some ptr) oldArgs captured arity body) newArgs s =
-      if s.clock < newArgs.length then (.err (.abort .timeoutError), { s with clock := 0 })
-      else
-        let next := ClosSem.fixClock (ClosSem.decClock newArgs.length s)
-          (ClosSem.evaluate [body] (newArgs ++ oldArgs ++ captured) (ClosSem.decClock newArgs.length s))
-        match next.1 with
-        | .val [value] => (.val [value], next.2)
-        | other => (other, next.2) := by
-  have found := destClosure_ordinary_partial_exact s.maxApp ptr arity captured oldArgs newArgs body oldBound bound length
-  cases newArgs with
-  | nil => contradiction
-  | cons head tail =>
-    rw [ClosSem.evaluateApp, found]
-    simp [ClosSem.evaluateApp]
-    split <;> rfl
-
 /-- The completion stub enters an ordinary closure's compiled body with both
 argument groups and captured values, after the target's additional call tick. -/
 theorem evaluate_partialComplete_ordinary_entry {C F : Type} (s : BvlSem.State C F)
@@ -2532,24 +2518,6 @@ theorem evaluatePost_ordinary_partial_exact {C F : Type}
     simpa [start, BvlSem.decClock, ClosSem.decClock, clockEq] using targetRun
   exact ⟨clock + 1, targetResult, tFinal, fFinal, finalRun, by simpa [ClosSem.decClock] using resultRel,
     finalStates, map, frame, finalAnnotations, finalClock⟩
-
-/-- With enough source clock, saturating an ordinary partial closure produces
-the result of its selected body. -/
-theorem evaluateApp_ordinary_partial_exact_body {C F : Type} (s sFinal : ClosSem.State C F)
-    (ptr arity : Nat) (captured oldArgs newArgs : List ClosSem.Value) (body : ClosLang.Exp)
-    (nonempty : newArgs ≠ []) (oldBound : oldArgs.length < arity)
-    (bound : newArgs.length ≤ s.maxApp) (length : newArgs.length + oldArgs.length = arity)
-    (enough : newArgs.length ≤ s.clock) (result : Result (List ClosSem.Value) ClosSem.Value)
-    (bodyRun : ClosSem.evaluate [body] (newArgs ++ oldArgs ++ captured) (ClosSem.decClock newArgs.length s) =
-      (result, sFinal)) :
-    ClosSem.evaluateApp none (.closure (some ptr) oldArgs captured arity body) newArgs s = (result, sFinal) := by
-  rw [evaluateApp_ordinary_partial_exact s ptr arity captured oldArgs newArgs body nonempty oldBound bound length]
-  rw [if_neg (Nat.not_lt.mpr enough), ClosSem.fixClock_evaluate, bodyRun]
-  cases result with
-  | err error => rfl
-  | val values => cases values with
-    | nil => rfl
-    | cons value tail => cases tail <;> rfl
 
 /-- The source application and generated target call agree for a saturated
 ordinary partial closure when the source has enough clock. -/
@@ -3481,28 +3449,6 @@ theorem clRel_recclosure_annotations {maxApp : Nat} {fs : Nat → Prop}
     exact ⟨by simpa [ClosProps.everyFnLocationSome] using locationMember _ locations body member,
       by simpa [ClosProps.everyFnVarsSome] using varsMember _ vars body member⟩
 
-/-- A saturated recursive closure with no saved arguments returns its body
-result when the source has enough clock. -/
-theorem evaluateApp_recclosure_exact_body {C F : Type} (s sFinal : ClosSem.State C F)
-    (ptr arity index : Nat) (captured args : List ClosSem.Value) (functions : List (Nat × ClosLang.Exp))
-    (body : ClosLang.Exp) (found : functions[index]? = some (arity, body)) (nonempty : args ≠ [])
-    (bound : args.length ≤ s.maxApp) (length : args.length = arity) (enough : arity ≤ s.clock)
-    (result : Result (List ClosSem.Value) ClosSem.Value)
-    (bodyRun : ClosSem.evaluate [body] (args ++
-      (List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i) ++ captured)
-      (ClosSem.decClock arity s) = (result, sFinal)) :
-    ClosSem.evaluateApp none (.recclosure (some ptr) [] captured functions index) args s = (result, sFinal) := by
-  have positive : 0 < arity := by have h := List.length_pos_iff.mpr nonempty; omega
-  rw [evaluateApp_recclosure_exact s ptr arity index captured [] args functions body found nonempty (by simp; omega)
-    bound (by simpa using length)]
-  simp only [List.append_nil, length]
-  rw [if_neg (Nat.not_lt.mpr enough), ClosSem.fixClock_evaluate, bodyRun]
-  cases result with
-  | err error => rfl
-  | val values => cases values with
-    | nil => rfl
-    | cons value tail => cases tail <;> rfl
-
 /-- Exact mutual-recursive application simulates the selected body when the
 source has enough clock. -/
 theorem evaluateApp_mutualRec_exact_simulation {C F : Type}
@@ -3529,8 +3475,9 @@ theorem evaluateApp_mutualRec_exact_simulation {C F : Type}
       (List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i) ++ captured)
       (ClosSem.decClock arity s) with
   | mk bodyResult bodyFinal =>
-    have sourceStep := evaluateApp_recclosure_exact_body s bodyFinal ptr arity index captured args functions body
-      found nonempty bound length enough bodyResult bodyRun
+    have sourceStep := evaluateApp_recclosure_partial_exact_body s bodyFinal ptr index arity captured [] args functions body
+      found nonempty (by simp only [List.length_nil]; have h := List.length_pos_iff.mpr nonempty; omega)
+      bound (by simpa using length) (by simpa [length] using enough) bodyResult (by simpa [length] using bodyRun)
     rw [appRun] at sourceStep
     cases sourceStep
     exact evaluatePost_mutualRec_exact_call s sFinal t f ptr index arity captured args fields targetArgs rest
@@ -5317,8 +5264,10 @@ theorem evaluatePost_recclosure_over_body {C F : Type}
   have targetLength : targetSuffix.length = arity := by rw [← sourceLength]; exact relatedSuffix.length_eq.symm
   have sourceNonempty : sourceSuffix ≠ [] := by intro empty; simp [empty] at sourceLength; omega
   have targetNonempty : targetSuffix ≠ [] := by intro empty; simp [empty] at targetLength; omega
-  have sourceExact := evaluateApp_recclosure_exact_body s sMiddle ptr arity index captured sourceSuffix functions body
-    found sourceNonempty (by omega) sourceLength enough bodyResult (by simpa [sourceSuffix, sourceLength] using bodyRun)
+  have sourceExact := evaluateApp_recclosure_partial_exact_body s sMiddle ptr index arity captured [] sourceSuffix functions body
+    found sourceNonempty (by simp only [List.length_nil]; have h := List.length_pos_iff.mpr sourceNonempty; omega)
+    (by omega) (by simpa using sourceLength) (by simpa [sourceLength] using enough) bodyResult
+    (by simpa [sourceSuffix, sourceLength] using bodyRun)
   have exactPost : evaluatePost s sMiddle t (targetSuffix ++ [target] ++ []) f bodyResult
       [mkClCall (.var targetSuffix.length) ((List.range targetSuffix.length).map Bvl.Exp.var)] := by
     by_cases many : 1 < functions.length
@@ -6044,8 +5993,14 @@ theorem evaluateApp_ordinary_exact_all_below {C F : Type}
     obtain ⟨bound, positive, locations, vars⟩ := info
     cases bodyRun : ClosSem.evaluate [sourceBody] (sourceArgs ++ sourceEnv) (ClosSem.decClock arity s) with
     | mk bodyResult bodyFinal =>
-      have sourceStep := evaluateApp_ordinary_exact s bodyFinal ptr arity sourceEnv sourceArgs sourceBody
-        bound positive arityMatch enough bodyResult bodyRun
+      have sourceNonempty : sourceArgs ≠ [] := by
+        intro empty
+        simp [empty] at arityMatch
+        exact positive arityMatch.symm
+      have sourceStep := evaluateApp_ordinary_partial_exact_body s bodyFinal ptr arity sourceEnv [] sourceArgs sourceBody
+        sourceNonempty (by simpa using Nat.pos_of_ne_zero positive) (by simpa [arityMatch] using bound)
+        (by simpa using arityMatch) (by simpa [arityMatch] using enough) bodyResult
+        (by simpa [arityMatch] using bodyRun)
       rw [appRun] at sourceStep
       cases sourceStep
       exact evaluatePost_ordinary_exact_call_below s sFinal t f ptr arity clockBound sourceEnv sourceArgs fields targetArgs rest
@@ -7245,8 +7200,9 @@ theorem evaluateApp_mutualRec_exact_simulation_below {C F : Type}
       (List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i) ++ captured)
       (ClosSem.decClock arity s) with
   | mk bodyResult bodyFinal =>
-    have sourceStep := evaluateApp_recclosure_exact_body s bodyFinal ptr arity index captured args functions body
-      found nonempty bound length enough bodyResult bodyRun
+    have sourceStep := evaluateApp_recclosure_partial_exact_body s bodyFinal ptr index arity captured [] args functions body
+      found nonempty (by simp only [List.length_nil]; have h := List.length_pos_iff.mpr nonempty; omega)
+      bound (by simpa using length) (by simpa [length] using enough) bodyResult (by simpa [length] using bodyRun)
     rw [appRun] at sourceStep
     cases sourceStep
     exact evaluatePost_mutualRec_exact_call_below s sFinal t f ptr index arity clockBound captured args fields targetArgs rest
@@ -7385,8 +7341,10 @@ theorem evaluatePost_recclosure_over_body_below {C F : Type}
   have targetLength : targetSuffix.length = arity := by rw [← sourceLength]; exact relatedSuffix.length_eq.symm
   have sourceNonempty : sourceSuffix ≠ [] := by intro empty; simp [empty] at sourceLength; omega
   have targetNonempty : targetSuffix ≠ [] := by intro empty; simp [empty] at targetLength; omega
-  have sourceExact := evaluateApp_recclosure_exact_body s sMiddle ptr arity index captured sourceSuffix functions body
-    found sourceNonempty (by omega) sourceLength enough bodyResult (by simpa [sourceSuffix, sourceLength] using bodyRun)
+  have sourceExact := evaluateApp_recclosure_partial_exact_body s sMiddle ptr index arity captured [] sourceSuffix functions body
+    found sourceNonempty (by simp only [List.length_nil]; have h := List.length_pos_iff.mpr sourceNonempty; omega)
+    (by omega) (by simpa using sourceLength) (by simpa [sourceLength] using enough) bodyResult
+    (by simpa [sourceSuffix, sourceLength] using bodyRun)
   have exactPost : evaluatePost s sMiddle t (targetSuffix ++ [target] ++ []) f bodyResult
       [mkClCall (.var targetSuffix.length) ((List.range targetSuffix.length).map Bvl.Exp.var)] := by
     by_cases many : 1 < functions.length
