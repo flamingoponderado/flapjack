@@ -2775,6 +2775,68 @@ def _function_declaration_signature(source: str, decl_name: str, *, all_binders:
     return groups, header[result_start:].strip()
 
 
+def fmap_parameter_predicate_domain_signature_errors(
+    hol_path: str, hol_name: str, lean_path: str, lean_name: str, source: str,
+) -> list[str]:
+    """Check the two reviewed evaluation-simulation signatures, before qualification.
+
+    This is only the source-signature component of a prospective qualifier. It
+    does not validate the codec witnesses, elaborated types, or HOL fidelity,
+    and must not by itself authorize an attribute or a reviewed manifest row.
+    """
+    expected_sites = {
+        ("eval_sim_def", "evalSim"), ("IMP_semantics_eq", "impSemanticsEq"),
+    }
+    if (hol_path != "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" or
+            lean_path != "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvalSim.lean" or
+            (hol_name, lean_name) not in expected_sites):
+        return ["predicate-domain representation is restricted to the reviewed simulation declarations"]
+
+    clean = strip_lean_comments(source)
+    if re.search(r"\b(?:variable|variables|include|omit)\b", clean):
+        return ["predicate-domain declarations require self-contained binders"]
+    declarations = re.findall(
+        rf"(?m)^\s*(def|theorem|lemma)\s+{re.escape(lean_name)}\b", clean,
+    )
+    if declarations != ["def" if lean_name == "evalSim" else "theorem"]:
+        return ["predicate-domain site must contain exactly one declaration of the reviewed kind"]
+    parsed = _function_declaration_signature(clean, lean_name, all_binders=True)
+    if parsed is None:
+        return ["predicate-domain declaration signature could not be parsed"]
+
+    normalize = lambda text: " ".join(text.split())
+    binders, result = parsed
+    actual = [(kind, normalize(binder)) for kind, binder in binders]
+    expected = [
+        ("{", "C₁ C₂ F : Type"),
+        ("(", "ffi : HolFfiState F"),
+        ("(", "maxApp : Nat"),
+        ("(", "code1 : HolFiniteMapExact Nat (Nat × ClosLang.Exp)"),
+        ("(", "co1 : ClosSem.CompileOracle C₁"),
+        ("(", "cc1 : ClosSem.Compiler C₁"),
+        ("(", "es1 : List ClosLang.Exp"),
+        ("(", "code2 : Spt (Nat × Bvl.Exp)"),
+        ("(", "co2 : BvlSem.CompileOracle C₂"),
+        ("(", "cc2 : BvlSem.Compiler C₂"),
+        ("(", "start : Nat"),
+        ("(", "rel : HolFiniteMapExact Nat (Nat × ClosLang.Exp) → ClosSem.CompileOracle C₁ → "
+              "ClosSem.Compiler C₁ → List ClosLang.Exp → Spt (Nat × Bvl.Exp) → "
+              "BvlSem.CompileOracle C₂ → BvlSem.Compiler C₂ → Nat → Prop"),
+    ]
+    expected_result = "Prop"
+    if lean_name == "impSemanticsEq":
+        expected += [
+            ("(", "h : evalSim ffi maxApp code1 co1 cc1 es1 code2 co2 cc2 start rel ∧ "
+                  "ClosSem.semantics ffi maxApp code1 co1 cc1 es1 ≠ .fail"),
+            ("(", "relation : rel code1 co1 cc1 es1 code2 co2 cc2 start"),
+        ]
+        expected_result = ("BvlSem.semantics ffi code2 co2 cc2 start = "
+                           "ClosSem.semantics ffi maxApp code1 co1 cc1 es1")
+    if actual != expected or normalize(result) != expected_result:
+        return ["predicate-domain declaration must have the complete reviewed signature and independent compiler types"]
+    return []
+
+
 def _same_module_heterogeneous_fmap_witness_errors(
     lines: list[str], decl_name: str,
     target_arguments: list[tuple[str, str]], input_position: int,

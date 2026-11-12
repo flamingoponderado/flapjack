@@ -4019,6 +4019,67 @@ class FmapResultObservationTest(unittest.TestCase):
         self.assertEqual(("BalancedMap.toFmap",), next(SITES(source, include_result_observations=True))[-1])
 
 
+class FmapParameterPredicateDomainSignatureTest(unittest.TestCase):
+    hol = "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml"
+    lean = "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvalSim.lean"
+    header = """{C₁ C₂ F : Type} (ffi : HolFfiState F) (maxApp : Nat)
+      (code1 : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (co1 : ClosSem.CompileOracle C₁)
+      (cc1 : ClosSem.Compiler C₁) (es1 : List ClosLang.Exp) (code2 : Spt (Nat × Bvl.Exp))
+      (co2 : BvlSem.CompileOracle C₂) (cc2 : BvlSem.Compiler C₂) (start : Nat)
+      (rel : HolFiniteMapExact Nat (Nat × ClosLang.Exp) → ClosSem.CompileOracle C₁ →
+        ClosSem.Compiler C₁ → List ClosLang.Exp → Spt (Nat × Bvl.Exp) →
+        BvlSem.CompileOracle C₂ → BvlSem.Compiler C₂ → Nat → Prop)"""
+
+    def errors(self, name, source, hol=None, lean=None, hol_name=None):
+        return CHECKER["fmap_parameter_predicate_domain_signature_errors"](
+            hol or self.hol, hol_name or ("eval_sim_def" if name == "evalSim" else "IMP_semantics_eq"),
+            lean or self.lean, name, source)
+
+    def test_both_original_signatures(self):
+        definition = f"def evalSim {self.header} : Prop := True"
+        theorem = (f"theorem impSemanticsEq {self.header} "
+                   "(h : evalSim ffi maxApp code1 co1 cc1 es1 code2 co2 cc2 start rel ∧ "
+                   "ClosSem.semantics ffi maxApp code1 co1 cc1 es1 ≠ .fail) "
+                   "(relation : rel code1 co1 cc1 es1 code2 co2 cc2 start) : "
+                   "BvlSem.semantics ffi code2 co2 cc2 start = "
+                   "ClosSem.semantics ffi maxApp code1 co1 cc1 es1 := by trivial")
+        self.assertEqual([], self.errors("evalSim", definition))
+        self.assertEqual([], self.errors("impSemanticsEq", theorem))
+        self.assertTrue(self.errors("impSemanticsEq", theorem.replace(
+            "(relation : rel code1 co1 cc1 es1 code2 co2 cc2 start)", "")))
+        self.assertTrue(self.errors("impSemanticsEq", theorem.replace(
+            "ClosSem.semantics ffi maxApp code1 co1 cc1 es1 ≠ .fail", "True")))
+        self.assertTrue(self.errors("impSemanticsEq", theorem.replace(
+            "BvlSem.semantics ffi code2 co2 cc2 start =", "BvlSem.semantics ffi code2 co2 cc2 start ≠")))
+
+    def test_rejects_changed_carriers_predicate_and_premises(self):
+        source = f"def evalSim {self.header} : Prop := True"
+        changes = [
+            ("C₁ C₂ F : Type", "C₁ F : Type"),
+            ("BvlSem.Compiler C₂", "BvlSem.Compiler C₁"),
+            ("code1 : HolFiniteMapExact Nat (Nat × ClosLang.Exp)", "code1 : Nat → Option Nat"),
+            ("rel : HolFiniteMapExact", "rel : List (HolFiniteMapExact"),
+            ("Nat → Prop)", "Nat → Bool)"),
+            ("(start : Nat)", "(extra : HolFiniteMapExact Nat Nat) (start : Nat)"),
+            (" : Prop :=", " : Nat :="),
+        ]
+        for before, after in changes:
+            with self.subTest(before=before):
+                self.assertNotEqual(source, source.replace(before, after))
+                self.assertTrue(self.errors("evalSim", source.replace(before, after)))
+        self.assertTrue(self.errors("evalSim", "variable (bad : Prop)\n" + source))
+        self.assertTrue(self.errors("evalSim", "namespace Test variable (bad : Prop)\n" + source))
+        self.assertTrue(self.errors("evalSim", source.replace("def evalSim", "theorem evalSim")))
+        self.assertTrue(self.errors("evalSim", source + "\n" + source))
+
+    def test_scope_is_exact(self):
+        source = f"def evalSim {self.header} : Prop := True"
+        self.assertTrue(self.errors("evalSim", source, hol=self.hol + ".other"))
+        self.assertTrue(self.errors("evalSim", source, lean=self.lean + ".other"))
+        self.assertTrue(self.errors("evalSim", source, hol_name="IMP_semantics_eq"))
+        self.assertTrue(self.errors("different", source, hol_name="eval_sim_def"))
+
+
 class FmapParameterObservationTest(unittest.TestCase):
     def test_conditional_call_scope_and_required_producers(self):
         allowed = CHECKER["fmap_parameter_observations_site_allowed"]
