@@ -10638,3 +10638,9 @@ run_probe arm8_target_typed_probeScript.sml arm8_target_typed_probe.out \
   arm8_load_store_ast_def_typed arm8_load_store_ast32_def_typed arm8_load_store_ast16_def_typed arm8_ast_def_typed arm8_enc_def_typed valid_immediate_def_typed arm8_config_def_typed arm8_target_def_typed \
   "$cake_dir/compiler/encoders/arm8/arm8_targetScript.sml" \
   "$cake_dir/compiler/encoders/arm8"
+
+run_probe crep_inline_typed_probeScript.sml crep_inline_typed_probe.out \
+  early_exit_typed var_prog_def_typed vmax_prog_def_typed unreach_elim_def_typed compile_inl_prog_def_typed compile_inl_top_def_typed inline_prog_def_typed arg_load_def_typed \
+  has_return_def_typed inline_nontail_def_typed inline_tail_def_typed not_branch_ret_def_typed transform_branch_def_typed transform_eoc_def_typed \
+  "$cake_dir/pancake/crep_inlineScript.sml" \
+  "$cake_dir/pancake"
