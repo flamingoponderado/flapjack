@@ -10312,3 +10312,13 @@ run_probe lab_filter_proof_typed_probeScript.sml lab_filter_proof_typed_probe.ou
   share_mem_op_NONE_filter_correct_typed state_rel_def_typed \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_typed_probeScript.sml lab_to_target_typed_probe.out \
+  config_typed compile_def_typed compile_lab_def_typed enc_line_def_typed enc_sec_def_typed enc_sec_list_def_typed ffi_offset_def_typed lab_inst_def_typed \
+  compute_labels_alt_def_typed section_labels_def_typed cbw_to_asm_def_typed add_nop_def_typed get_symbols_def_typed line_ok_light_def_typed pad_bytes_def_typed pad_code_def_typed \
+  pad_code_MAP_typed pad_section_def_typed sec_length_def_typed sec_ok_light_def_typed find_pos_def_typed get_ffi_index_def_typed get_jump_offset_def_typed get_label_def_typed \
+  get_zero_labs_acc_def_typed line_bytes_def_typed line_get_zero_labs_acc_def_typed prog_to_bytes_def_typed prog_to_bytes_MAP_typed remove_labels_def_typed remove_labels_loop_def_typed sec_get_zero_labs_acc_def_typed \
+  zero_labs_acc_exist_def_typed zero_labs_acc_of_def_typed enc_lines_again_def_typed enc_secs_again_def_typed lines_upd_lab_len_def_typed upd_lab_len_def_typed shmem_info_num_typed find_ffi_names_def_typed \
+  get_memop_info_def_typed get_shmem_info_def_typed list_add_if_fresh_def_typed \
+  "$cake_dir/compiler/backend/lab_to_targetScript.sml" \
+  "$cake_dir/compiler/backend"
