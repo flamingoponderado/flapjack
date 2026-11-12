@@ -2091,6 +2091,7 @@
     {"bytes": 13136, "out": "word_inst_selector_executable_probe.out", "rows": 39, "sha256": "04ad8f0e5e66fafeae121d04e9dbd05d92ed4d313929984efdddb205f4098088"},
     {"bytes": 285, "out": "word_inst_sub_probe.out", "rows": 7, "sha256": "df11370c61c9ff914fc29a5cfa17e2a2475a1f1b3b1e5ab489b04d736e483f3a"},
     {"bytes": 1127, "out": "word_inst_three_to_two_probe.out", "rows": 7, "sha256": "c8a137f908b6b70edbeb01a91d1ff62dda85bc5365a9ea286c2041b996edd698"},
+    {"bytes": 34166, "out": "word_inst_typed_probe.out", "rows": 14, "sha256": "7214526a0ae7e7348a0a0efc284b432656e5e4287cd0eb7c7eb1e34e628f5bd5"},
     {"bytes": 273, "out": "word_lang_every_name_probe.out", "rows": 19, "sha256": "afde27a71299ee28fe4eaaf94575b09f29a456819c5e6a437d9cb9e2ffedaeff"},
     {"bytes": 472, "out": "word_lang_every_var_probe.out", "rows": 28, "sha256": "df4a74c979343cb6a83fc5e06aa4de603f13a91c8d552a17a886c6a37b4ee077"},
     {"bytes": 106, "out": "word_lang_max_var_exp_probe.out", "rows": 8, "sha256": "adb9ad15af4932dc80fe7de85c5b26337738432175bfdc178c5d3293bae1d654"},

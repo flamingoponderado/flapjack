@@ -10608,3 +10608,9 @@ run_probe word_bignum_typed_probeScript.sml word_bignum_typed_probe.out \
   SeqTempImm_def_typed SeqTempImmNot_def_typed SeqIndex_def_typed DivCode_def_typed LoadRegs_def_typed SaveRegs_def_typed compile_exp_def_typed \
   "$cake_dir/compiler/backend/word_bignumScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe word_inst_typed_probeScript.sml word_inst_typed_probe.out \
+  convert_sub_def_typed flatten_exp_def_typed inst_select_def_typed inst_select_exp_def_typed is_const_def_typed is_Lookup_CurrHeap_def_typed op_consts_def_typed optimize_consts_def_typed \
+  pull_exp_def_typed pull_ops_def_typed reduce_const_def_typed rm_const_def_typed three_to_two_reg_def_typed three_to_two_reg_prog_def_typed \
+  "$cake_dir/compiler/backend/word_instScript.sml" \
+  "$cake_dir/compiler/backend"
