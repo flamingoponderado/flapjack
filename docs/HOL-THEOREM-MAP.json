@@ -122644,7 +122644,7 @@
     "lean_path": "Flapjack/TypeSystemHOL/Declarations.lean",
     "lean_name": "buildCtorTenv",
     "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed `build_ctor`: [] [] = alist_to_ns []; (tvs,tn,ctors)::tds with id::ids = nsAppend (recursive) (alist_to_ns (REVERSE (MAP (λ(cn,ts). (cn,(tvs,MAP (type_name_subst tenvT) ts,id))) ctors))); fallback alist_to_ns []; Lean is clause-identical with alistToNs."
+    "reviewer": "source comparison 2026-11-10: typed `build_ctor`: [] [] = alist_to_ns []; (tvs,tn,ctors)::tds with id::ids = nsAppend (recursive) (alist_to_ns (REVERSE (MAP (λ(cn,ts). (cn,(tvs,MAP (type_name_subst tenvT) ts,id))) ctors))); fallback alist_to_ns []; Lean is clause-identical with alistToNs. Task-148 typed capture re-review: build_ctor_tenv_def_typed keeps five independent type variables (namespace module α, constructor name β, type variable γ, type identifier δ, type name ε); the Lean definition now binds all five generically and the datatype rule instantiates them at MlString/MlString/MlString/Nat/MlString."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",
