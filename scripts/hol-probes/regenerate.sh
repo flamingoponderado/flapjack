@@ -10227,3 +10227,13 @@ run_probe gc_shared_typed_probeScript.sml gc_shared_typed_probe.out \
   roots_ok_def_typed heap_ok_def_typed \
   "$cake_dir/compiler/backend/gc/gc_sharedScript.sml" \
   "$cake_dir/compiler/backend/gc"
+
+run_probe word_to_stack_typed_probeScript.sml word_to_stack_typed_probe.out \
+  bits_to_word_def_typed chunk_to_bitmap_def_typed chunk_to_bits_def_typed const_words_to_bitmap_def_typed handler_slots_def_typed insert_bitmap_def_typed num_stack_ret_def_typed perf_rbp_def_typed \
+  perf_rsp_def_typed skip_free_def_typed stack_arg_count_def_typed stack_free_def_typed word_list_def_typed wLive_def_typed write_bitmap_def_typed call_dest_def_typed \
+  StackArgs_def_typed stack_move_def_typed comp_def_typed config_typed PopHandler_def_typed PushHandler_def_typed StackHandlerArgs_def_typed wInst_def_typed \
+  wRegWrite1_def_typed wRegWrite2_def_typed wStackLoad_def_typed wMoveAux_def_typed wMove_def_typed wMoveSingle_def_typed perf_call_prefix_def_typed perf_call_suffix_def_typed \
+  compile_prog_def_typed compile_word_to_stack_def_typed copy_ret_aux_def_typed copy_ret_def_typed SeqStackFree_def_typed wShareInst_def_typed wStackStore_def_typed raise_stub_def_typed \
+  store_consts_stub_def_typed compile_def_typed stub_names_def_typed format_var_def_typed wReg1_def_typed wReg2_def_typed \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" \
+  "$cake_dir/compiler/backend"
