@@ -10306,3 +10306,9 @@ run_probe pan_lang_typed_probeScript.sml pan_lang_typed_probe.out \
   shape_to_str_def_typed size_of_shape_def_typed with_shape_def_typed load_op_def_typed store_op_def_typed \
   "$cake_dir/pancake/panLangScript.sml" \
   "$cake_dir/pancake"
+
+run_probe lab_filter_proof_typed_probeScript.sml lab_filter_proof_typed_probe.out \
+  filter_correct_typed adjust_pc_def_typed all_skips_def_typed asm_fetch_aux_eq_typed sec_ends_with_label_filter_skip_typed filter_skip_semantics_typed share_mem_op_FFI_final_filter_correct_typed share_mem_op_FFI_return_filter_correct_typed \
+  share_mem_op_NONE_filter_correct_typed state_rel_def_typed \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
