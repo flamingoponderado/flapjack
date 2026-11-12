@@ -67,6 +67,21 @@ theorem bvOk_unit (refs : HolFiniteMapExact Nat (Ref Value)) :
     bvOk refs Flapjack.Compiler.Backend.BvlSem.unitValue := by
   simp [Flapjack.Compiler.Backend.BvlSem.unitValue, bvOk, bvOkList]
 
+/-- The Boolean theorem uses the canonical reference-map roundtrip. -/
+theorem holFmapAsFiniteSupportParamWitness_bvOk_bool_refs
+    (refs : HolFiniteMapExact Nat (Ref Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_bvOk_refs refs key
+
+/-- A Boolean value contains no reference pointer. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "bv_ok_Boolv"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem bvOk_bool (refs : HolFiniteMapExact Nat (Ref Value)) (b : Bool) :
+    bvOk refs (Flapjack.Compiler.Backend.BvlSem.boolValue b) := by
+  simp [Flapjack.Compiler.Backend.BvlSem.boolValue, bvOk, bvOkList]
+
 /-- The reference-cell case split used by the source state relation. This is
 Flapjack infrastructure: the original relation inlines the case split. -/
 def adjustRef (relocate : Nat → Nat) : Ref Value → Ref Value

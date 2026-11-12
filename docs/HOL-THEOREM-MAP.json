@@ -129881,6 +129881,17 @@
   "reviewer": "Compared source bv_ok_Unit in bvl_to_bvi_value_rel_probe.out with inferred refs type num |-> bvlSem$v ref: the sole input is the reference map, and the conclusion is bv_ok refs Unit without premises. Unit is Block tuple_tag [] with tuple_tag zero; Lean unitValue matches. The reviewed bvOk clauses and local refs witness use the canonical finite-map translation."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Refs.lean",
+  "hol_name": "bv_ok_Boolv",
+  "lean_name": "bvOk_bool",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": [
+    "refs"
+  ],
+  "reviewer": "Compared source bv_ok_Boolv in bvl_to_bvi_value_rel_probe.out with inferred refs type num |-> bvlSem$v ref and Boolean b: the conclusion is bv_ok refs (Boolv b) without premises. Boolv constructs Block (bool_to_tag b) [] in both developments. The reviewed bvOk clauses and local refs witness use the canonical finite-map translation."
+},
+{
   "hol_path": "cakeml/compiler/backend/bvi_letScript.sml",
   "lean_path": "Flapjack/Compiler/Backend/BviLet/SourceSing.lean",
   "hol_name": "compile_sing_def",
