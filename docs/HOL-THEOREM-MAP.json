@@ -96648,6 +96648,22 @@
     "reviewer": "Flapjack-specific bridge from the literal is_wf_shape_nil (shape_of v) conjunct in the exact local relation to value-level is_wf_shape_v. The proof uses the exact is_wf_shape_v_nil equivalence and supports, but is not itself, the tagged locals_rel_wf_shape port."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepLocalsRelWfShapeFiniteExact_curried",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific curried wrapper around the tagged locals_rel_wf_shape port: it takes the relation and the present-local lookup as two separate premises and passes them to panToCrepLocalsRelWfShapeFiniteExact as the single HOL conjunction (PR #1395 review finding 3). It has no HOL declaration of its own; callers that already hold the premises separately use it."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepLocalsRelLookupCtxtFiniteExact_curried",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific curried wrapper around the tagged locals_rel_lookup_ctxt port: it takes the relation and the present-local lookup as two separate premises and passes them to panToCrepLocalsRelLookupCtxtFiniteExact as the single HOL conjunction (PR #1395 review finding 3). It has no HOL declaration of its own; callers that already hold the premises separately use it."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "locals_rel_lookup_ctxt",
     "hol_line": 527,
@@ -96659,7 +96675,7 @@
       "sourceLocals",
       "targetLocals"
     ],
-    "reviewer": "flapjack-ds9 source comparison (2026-09-27, flapjack-4ac.5.88; pan_to_crepProofScript.sml:527-534): HOL locals_rel_lookup_ctxt has the conjunction locals_rel ctxt lcl lcl' /\\ FLOOKUP lcl vr = SOME v as its only premise and concludes ?ns. FLOOKUP ctxt.vars vr = SOME (shape_of v,ns) /\\ LENGTH ns = LENGTH (flatten v) /\\ OPT_MMAP (FLOOKUP lcl') ns = SOME (flatten v) /\\ is_wf_shape_nil (shape_of v). Lean keeps exactly those two premises (curried) and the four existential conjuncts in the same order: FLOOKUP becomes .lookup, shape_of/flatten/is_wf_shape_nil become shapeOfHOLExact/flattenHOL/isWfShapeExactHOL ([] : StructContextExact), and OPT_MMAP becomes List.mapM. The relation traverses the named PanToCrepContextExact.vars field and the standalone sourceLocals/targetLocals parameters; the PanToCrepContextExact same-module canonical witness and the bare parameter binders establish the reviewed finite-support translations. The LENGTH clause is derived from the tagged HOL opt_mmap_length_eq. [NeZero width] models HOL's positive word dimension. This exact-carrier port replaces the withdrawn String-keyed localsRelLookupCtxt analogue (still recorded below as documented_mismatch). Task-148 typed capture re-review: locals_rel_lookup_ctxt_typed shows the context at α context and the locals at β, so the context's word dimension is independent of the locals'; the declaration binds {ctxtWidth} and {width} separately with their own [NeZero] discharges (PR #1395 review finding 2). The context's word dimension is loses nothing."
+    "reviewer": "flapjack-ds9 source comparison (2026-09-27, flapjack-4ac.5.88; pan_to_crepProofScript.sml:527-534): HOL locals_rel_lookup_ctxt has the conjunction locals_rel ctxt lcl lcl' /\\ FLOOKUP lcl vr = SOME v as its only premise and concludes ?ns. FLOOKUP ctxt.vars vr = SOME (shape_of v,ns) /\\ LENGTH ns = LENGTH (flatten v) /\\ OPT_MMAP (FLOOKUP lcl') ns = SOME (flatten v) /\\ is_wf_shape_nil (shape_of v). Lean takes exactly that single conjunctive premise and keeps the four existential conjuncts in the same order (PR #1395 review finding 3): FLOOKUP becomes .lookup, shape_of/flatten/is_wf_shape_nil become shapeOfHOLExact/flattenHOL/isWfShapeExactHOL ([] : StructContextExact), and OPT_MMAP becomes List.mapM. The relation traverses the named PanToCrepContextExact.vars field and the standalone sourceLocals/targetLocals parameters; the PanToCrepContextExact same-module canonical witness and the bare parameter binders establish the reviewed finite-support translations. The LENGTH clause is derived from the tagged HOL opt_mmap_length_eq. [NeZero width] models HOL's positive word dimension. This exact-carrier port replaces the withdrawn String-keyed localsRelLookupCtxt analogue (still recorded below as documented_mismatch). Task-148 typed capture re-review: locals_rel_lookup_ctxt_typed shows the context at α context and the locals at β, so the context's word dimension is independent of the locals'; the declaration binds {ctxtWidth} and {width} separately with their own [NeZero] discharges (PR #1395 review finding 2). The context's word dimension is loses nothing."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -96674,7 +96690,7 @@
       "targetLocals"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison (2026-09-27, flapjack-4ac.5.83; pan_to_crepProofScript.sml:2345-2351): HOL locals_rel_wf_shape has exactly locals_rel ctxt s_locs t_locs and FLOOKUP s_locs nm = SOME v as premises, concluding is_wf_shape_v_nil v. Lean preserves these premises using panToCrepLocalsRelFiniteExact and sourceLocals.lookup, and concludes isWfShapeValueHOLExact [] value = true, the exact is_wf_shape_v_nil value rendering. The relation's three traversed map carriers are the named PanToCrepContextExact.vars, sourceLocals, and targetLocals; their same-module canonical witnesses establish the reviewed finite-support translations. [NeZero width] models HOL's positive word dimension. Source-reviewed carrier qualifier: ValueHOL/ShapeHOL and HolWordLab use the same positive BitVec width with [NeZero width]; words_as_type_indexed_bitvec records only this word-dimension translation. Task-148 typed capture re-review: locals_rel_wf_shape_typed shows the context at α context and the locals at β, so the context's word dimension is independent of the locals'; the declaration binds {ctxtWidth} and {width} separately with their own [NeZero] discharges (PR #1395 review finding 2)."
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27, flapjack-4ac.5.83; pan_to_crepProofScript.sml:2345-2351): HOL locals_rel_wf_shape has the single conjunctive premise locals_rel ctxt s_locs t_locs \\/ FLOOKUP s_locs nm = SOME v and concludes is_wf_shape_v_nil v. Lean takes that same conjunction as one premise (PR #1395 review finding 3), destructures it into panToCrepLocalsRelFiniteExact and sourceLocals.lookup, and concludes isWfShapeValueHOLExact [] value = true, the exact is_wf_shape_v_nil value rendering. The relation's three traversed map carriers are the named PanToCrepContextExact.vars, sourceLocals, and targetLocals; their same-module canonical witnesses establish the reviewed finite-support translations. [NeZero width] models HOL's positive word dimension. Source-reviewed carrier qualifier: ValueHOL/ShapeHOL and HolWordLab use the same positive BitVec width with [NeZero width]; words_as_type_indexed_bitvec records only this word-dimension translation. Task-148 typed capture re-review: locals_rel_wf_shape_typed shows the context at α context and the locals at β, so the context's word dimension is independent of the locals'; the declaration binds {ctxtWidth} and {width} separately with their own [NeZero] discharges (PR #1395 review finding 2)."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",

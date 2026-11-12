@@ -136,7 +136,7 @@ theorem compileExpValRelHOL_var_local {width : Nat} {σ : Type} [NeZero width]
   have hval : state.locals.lookup name = some value := by
     simpa only [PanSemStateFiniteExact.evalHOLFinite_var_local] using heval
   obtain ⟨slots, hcontext, hslotsLen, hmapM, hwf⟩ :=
-    panToCrepLocalsRelLookupCtxtFiniteExact context state.locals targetState.locals
+    panToCrepLocalsRelLookupCtxtFiniteExact_curried context state.locals targetState.locals
       name value hlocals hval
   have hcomp := hcompile
   simp only [compileExpExactHOLW] at hcomp

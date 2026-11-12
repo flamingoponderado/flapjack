@@ -478,14 +478,15 @@ theorem panToCrepLocalsRelFiniteExact_valueShapeProjection {width ctxtWidth : Na
   exact hshape
 
 /-- Exact port of HOL `locals_rel_wf_shape` at
-    `pan_to_crepProofScript.sml:2345`: the same `locals_rel` and present-local
-    lookup premises imply `is_wf_shape_v_nil` for that value. The result is the
-    exact value-level predicate; its finite-map translations are the three
-    named carriers, and its word values use positive `BitVec width` as recorded
-    by the word qualifier. The typed capture `locals_rel_wf_shape_typed` shows
-    the context at `α context` and the locals at `β`, so the context's word
-    dimension is independent of the locals'; the statement binds `{ctxtWidth}`
-    and `{width}` separately (PR #1395 review finding 2). -/
+    `pan_to_crepProofScript.sml:2345`: the single conjunctive premise
+    `locals_rel ctxt lcl lcl' /\ FLOOKUP lcl nm = SOME v` implies
+    `is_wf_shape_v_nil` for that value (capture `locals_rel_wf_shape_typed`,
+    `pan_to_crep_proof_typed_probe.out:43`). The result is the exact
+    value-level predicate; its finite-map translations are the three named
+    carriers, and its word values use positive `BitVec width` as recorded by
+    the word qualifier. HOL's context word dimension `α` is independent of the
+    locals' `β`, so the statement binds `{ctxtWidth}` and `{width}` separately
+    (PR #1395 review findings 2 and 3). -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_wf_shape" 2345
   (fmap_as_finite_support_relation :=
     [PanToCrepContextExact.vars, sourceLocals, targetLocals])
@@ -496,11 +497,26 @@ theorem panToCrepLocalsRelWfShapeFiniteExact {width ctxtWidth : Nat} [NeZero wid
     (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
     (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (name : MlS) (value : ValueHOL width)
+    (h : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals ∧
+      sourceLocals.lookup name = some value) :
+    isWfShapeValueHOLExact ([] : StructContextExact) value = true := by
+  obtain ⟨hrel, hlookup⟩ := h
+  exact panToCrepLocalsRelFiniteExact_valueShapeProjection
+    context sourceLocals targetLocals name value hrel hlookup
+
+/-- Untagged curried wrapper for callers that already hold the two premises
+    separately. -/
+theorem panToCrepLocalsRelWfShapeFiniteExact_curried {width ctxtWidth : Nat}
+    [NeZero width] [NeZero ctxtWidth]
+    (context : PanToCrepContextExact ctxtWidth)
+    (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
+    (name : MlS) (value : ValueHOL width)
     (hrel : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals)
     (hlookup : sourceLocals.lookup name = some value) :
     isWfShapeValueHOLExact ([] : StructContextExact) value = true :=
-  panToCrepLocalsRelFiniteExact_valueShapeProjection
-    context sourceLocals targetLocals name value hrel hlookup
+  panToCrepLocalsRelWfShapeFiniteExact context sourceLocals targetLocals
+    name value ⟨hrel, hlookup⟩
 
 /-- Exact port of HOL `locals_rel_lookup_ctxt`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:527-534`):
@@ -519,14 +535,39 @@ theorem panToCrepLocalsRelWfShapeFiniteExact {width ctxtWidth : Nat} [NeZero wid
     `List.length`. The slot-length clause follows from the tagged HOL
     `opt_mmap_length_eq` applied to the relation's successful map.
     The typed capture `locals_rel_lookup_ctxt_typed`
-    (`pan_to_crep_proof_typed_probe.out:42`) shows the context at `α context`
-    and the locals at `β`, so the context's word dimension is independent of
-    the locals'; the statement binds `{ctxtWidth}` and `{width}` separately
-    (PR #1395 review finding 2). -/
+    (`pan_to_crep_proof_typed_probe.out:42`) types the context at `α context`
+    and the locals at `β`, and the premise is the single conjunction
+    `locals_rel ctxt lcl lcl' /\ FLOOKUP lcl vr = SOME v`, so the statement
+    binds `{ctxtWidth}` and `{width}` separately and takes that one premise
+    (PR #1395 review findings 2 and 3). -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_lookup_ctxt"
   (fmap_as_finite_support_relation :=
     [PanToCrepContextExact.vars, sourceLocals, targetLocals])]
 theorem panToCrepLocalsRelLookupCtxtFiniteExact {width ctxtWidth : Nat}
+    [NeZero width] [NeZero ctxtWidth]
+    (context : PanToCrepContextExact ctxtWidth)
+    (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
+    (name : MlS) (value : ValueHOL width)
+    (h : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals ∧
+      sourceLocals.lookup name = some value) :
+    ∃ slots,
+      context.vars.lookup name = some (shapeOfHOLExact value, slots) ∧
+      slots.length = (flattenHOL value).length ∧
+      slots.mapM targetLocals.lookup = some (flattenHOL value) ∧
+      isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true := by
+  obtain ⟨hrel, hlookup⟩ := h
+  obtain ⟨slots, words, hcontext, hmap, hflatten, hwf⟩ :=
+    hrel.2.2 name value hlookup
+  refine ⟨slots, hcontext, ?_, ?_, hwf⟩
+  · calc slots.length = words.length :=
+        opt_mmap_length_eq slots targetLocals.lookup words hmap
+      _ = (flattenHOL value).length := by rw [← hflatten]
+  · rw [hmap, ← hflatten]
+
+/-- Untagged curried wrapper for callers that already hold the two premises
+    separately. -/
+theorem panToCrepLocalsRelLookupCtxtFiniteExact_curried {width ctxtWidth : Nat}
     [NeZero width] [NeZero ctxtWidth]
     (context : PanToCrepContextExact ctxtWidth)
     (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
@@ -538,14 +579,9 @@ theorem panToCrepLocalsRelLookupCtxtFiniteExact {width ctxtWidth : Nat}
       context.vars.lookup name = some (shapeOfHOLExact value, slots) ∧
       slots.length = (flattenHOL value).length ∧
       slots.mapM targetLocals.lookup = some (flattenHOL value) ∧
-      isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true := by
-  obtain ⟨slots, words, hcontext, hmap, hflatten, hwf⟩ :=
-    hrel.2.2 name value hlookup
-  refine ⟨slots, hcontext, ?_, ?_, hwf⟩
-  · calc slots.length = words.length :=
-        opt_mmap_length_eq slots targetLocals.lookup words hmap
-      _ = (flattenHOL value).length := by rw [← hflatten]
-  · rw [hmap, ← hflatten]
+      isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true :=
+  panToCrepLocalsRelLookupCtxtFiniteExact context sourceLocals targetLocals
+    name value ⟨hrel, hlookup⟩
 
 /-- Exact port of HOL `local_rel_gt_vmax_preserved`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2245-2261`):
@@ -795,7 +831,7 @@ theorem panToCrepExactInitialShapeInvariant {width : Nat} {σ : Type}
       isWfShapeValueHOLExact source.structs value = true) := by
   constructor
   · intro name value hlookup
-    have hshape := panToCrepLocalsRelWfShapeFiniteExact
+    have hshape := panToCrepLocalsRelWfShapeFiniteExact_curried
       context source.locals targetLocals name value hlocals hlookup
     have hstruct := panToCrepStateRelFiniteExact_structs source target hstate
     simpa [hstruct] using hshape

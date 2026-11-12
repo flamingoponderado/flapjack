@@ -550,14 +550,14 @@ example {width : Nat} [NeZero width]
     (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
     (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (name : MlS) (value : ValueHOL width)
-    (hrel : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals)
-    (hlookup : sourceLocals.lookup name = some value) :
+    (h : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals ∧
+      sourceLocals.lookup name = some value) :
     ∃ slots, context.vars.lookup name = some (shapeOfHOLExact value, slots) ∧
       slots.length = (flattenHOL value).length ∧
       slots.mapM targetLocals.lookup = some (flattenHOL value) ∧
       isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true :=
   panToCrepLocalsRelLookupCtxtFiniteExact context sourceLocals targetLocals
-    name value hrel hlookup
+    name value h
 
 /-- Concrete exact-carrier derivations recovering the slot `[0]`, shape `One`,
     flattened word `5`, and well-formedness for the one-word local. -/
@@ -570,7 +570,7 @@ private theorem lookupCtxtExactFixture :
       (shapeOfHOLExact lookupCtxtValue) = true := by
   have hextract := panToCrepLocalsRelLookupCtxtFiniteExact lookupCtxtContext
     lookupCtxtSourceLocals lookupCtxtTargetLocals lookupCtxtName lookupCtxtValue
-    lookupCtxtLocalsRel lookupCtxtSource_lookup_self
+    ⟨lookupCtxtLocalsRel, lookupCtxtSource_lookup_self⟩
   obtain ⟨slots, hcontext, _hlen, hmap, hwf⟩ := hextract
   have hslots : slots = [0] := by
     have h := congrArg (fun option => option.map Prod.snd) hcontext
