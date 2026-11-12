@@ -53,4 +53,11 @@ theorem listRelApp {α : Type} (maxApp : Nat) (R : ClosSem.Value → α → Prop
   have sameLength := rel.length_eq
   simpa [sameLength] using List.forall₂_take (args.length - remArgs) rel
 
+/-- Dropping the same argument prefix preserves the pointwise value relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_run_lemma3"]
+theorem clRelRunLemma3 {α β : Type} (R : α → β → Prop) (args : List α)
+    (args' : List β) (n : Nat) (related : List.Forall₂ R args args') :
+    List.Forall₂ R (args.drop (args'.length - n)) (args'.drop (args'.length - n)) :=
+  List.forall₂_drop (args'.length - n) related
+
 end Flapjack.Compiler.Backend.ClosToBvl

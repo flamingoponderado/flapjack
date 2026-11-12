@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.DirectApplication
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureShape
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveEntry
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreeLet
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArgumentRelation
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateCall
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 public import Flapjack.Compiler.Backend.BvlJump.Proofs
@@ -2216,32 +2217,6 @@ theorem vRel_singletonRec_partial_existing {C F : Type}
         exact ⟨ys, _, rfl, .closure envRel (.singletonRec bound positive locs vars compiled codeInstalled lookup), argRel⟩
       | mutualRec _ _ _ _ _ _ impossible _ _ _ _ => simp at impossible
 
-/-- The completion stub reads the newly supplied arguments after binding the
-original closure at the front of its environment. -/
-theorem evaluate_completion_newArgs {C F : Type} (args rest : List BvlSem.Value)
-    (original : BvlSem.Value) (s : BvlSem.State C F) :
-    BvlSem.evaluate ((List.range args.length).map (fun i => Bvl.Exp.var (i + 1)))
-      (original :: (args ++ rest)) s = (.val args, s) := by
-  have shifted : ∀ n, n ≤ args.length →
-      BvlSem.evaluate ((List.range n).map (fun i => Bvl.Exp.var (i + 1)))
-        (original :: (args ++ rest)) s = (.val (args.take n), s) := by
-    intro n bound
-    induction n with
-    | zero => simp [BvlSem.evaluate]
-    | succ n ih =>
-      have boundN : n ≤ args.length := by omega
-      have indexBound : n < args.length := by omega
-      rw [List.range_succ, List.map_append]
-      change BvlSem.evaluateTuple (((List.range n).map (fun i => Bvl.Exp.var (i + 1)) ++
-        [.var (n + 1)]), original :: (args ++ rest), s) = _
-      rw [BvlProps.evaluateAppend]
-      simp only [BvlSem.evaluateTuple, ih boundN]
-      have varRun : BvlSem.evaluate [.var (n + 1)] (original :: (args ++ rest)) s = (.val [args[n]], s) := by
-        simp [BvlSem.evaluate, List.getElem?_append_left, indexBound]
-      rw [varRun]
-      simp only [List.take_append_getElem indexBound]
-  simpa using shifted args.length (by omega)
-
 /-- The completion stub reads its saved arguments in their stored order. -/
 theorem evaluate_completion_savedArgs {C F : Type} (args saved : List BvlSem.Value)
     (original ptr arity : BvlSem.Value) (s : BvlSem.State C F) :
@@ -2291,7 +2266,9 @@ theorem evaluate_partialAppClosureFn {C F : Type} (s : BvlSem.State C F)
     simp [newCount, BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyBlock, partialValue]
   have newRun : BvlSem.evaluate ((List.range (total - previous)).map (fun i => Bvl.Exp.var (i + 1))) env s =
       (.val args, s) := by
-    simpa [newCount, env] using evaluate_completion_newArgs args [partialValue] original s
+    have bound : args.length + 1 ≤ env.length := by simp [env]
+    simpa [newCount, env, BvlSem.evaluateTuple] using
+      BvlProps.evaluateGenlistVars 1 env args.length s bound
   have savedRun : BvlSem.evaluate ((List.range (previous + 1)).map (fun i =>
       Bvl.Exp.op (.blockOp (.elemAt (i + 3))) [.var (total - previous + 1)])) env s =
       (.val saved, s) := by
@@ -4178,42 +4155,6 @@ theorem evaluate_genericApp_over_dispatch {C F : Type} (s : BvlSem.State C F)
   rw [evaluate_genericApp_over_branch s maxApp n total tag args fields ptr length over]
   exact evaluate_genericAppOverBranch s maxApp n total tag args fields ptr length totalBound
 
-/-- The first overapplication call reads the suffix that saturates the
-closure; earlier arguments are retained for the continuation. -/
-theorem evaluate_overApp_saturatedArgs {C F : Type} (s : BvlSem.State C F)
-    (n total : Nat) (args rest : List BvlSem.Value) (first second : BvlSem.Value)
-    (length : args.length = n + 1) (over : total < n + 1) :
-    BvlSem.evaluate ((List.range (total + 1)).map (fun arg => Bvl.Exp.var (arg + 2 + n - total)))
-      (first :: second :: (args ++ rest)) s = (.val (args.drop (n - total)), s) := by
-  have totalLe : total ≤ n := by omega
-  have readPrefix : ∀ count, count ≤ total + 1 →
-      BvlSem.evaluate ((List.range count).map (fun arg => Bvl.Exp.var (arg + 2 + n - total)))
-        (first :: second :: (args ++ rest)) s = (.val ((args.drop (n - total)).take count), s) := by
-    intro count bound
-    induction count with
-    | zero => simp [BvlSem.evaluate]
-    | succ count ih =>
-      have smaller : count ≤ total + 1 := by omega
-      have indexBound : count < (args.drop (n - total)).length := by simp [List.length_drop, length]; omega
-      rw [List.range_succ, List.map_append]
-      change BvlSem.evaluateTuple (((List.range count).map (fun arg => Bvl.Exp.var (arg + 2 + n - total)) ++
-        [.var (count + 2 + n - total)]), first :: second :: (args ++ rest), s) = _
-      rw [BvlProps.evaluateAppend]
-      simp only [BvlSem.evaluateTuple, ih smaller]
-      have indexEq : count + 2 + n - total = (n - total + count) + 2 := by omega
-      have argBound : n - total + count < args.length := by omega
-      have varRun : BvlSem.evaluate [.var (count + 2 + n - total)] (first :: second :: (args ++ rest)) s =
-          (.val [(args.drop (n - total))[count]], s) := by
-        rw [indexEq]
-        simp [BvlSem.evaluate, List.getElem?_append_left, argBound, List.getElem_drop]
-      rw [varRun]
-      simp only [List.take_append_getElem indexBound]
-  have dropLength : (args.drop (n - total)).length = total + 1 := by simp [List.length_drop, length]; omega
-  have run := readPrefix (total + 1) (by omega)
-  rw [← dropLength] at run
-  rw [List.take_of_length_le (Nat.le_refl _)] at run
-  simpa only [dropLength] using run
-
 /-- The first overapplication call applies the argument suffix to the
 original closure and charges its full arity in target ticks. -/
 theorem evaluate_overApp_firstCall {C F : Type} (s : BvlSem.State C F)
@@ -4231,7 +4172,22 @@ theorem evaluate_overApp_firstCall {C F : Type} (s : BvlSem.State C F)
   let env := first :: second :: (args ++ [closure])
   have argsRun : BvlSem.evaluate ((List.range (total + 1)).map (fun arg => Bvl.Exp.var (arg + 2 + n - total))) env s =
       (.val (args.drop (n - total)), s) := by
-    exact evaluate_overApp_saturatedArgs s n total args [closure] first second length over
+    dsimp only [env]
+    have shift (arg : Nat) : arg + 2 + n - total = arg + (n - total + 2) := by omega
+    simp only [shift]
+    have h := BvlProps.evaluateGenlistVars (n - total + 2)
+      (first :: second :: (args ++ [closure])) (total + 1) s (by simp; omega)
+    have off : n - total + 2 = Nat.succ (Nat.succ (n - total)) := by omega
+    have dropEq : (first :: second :: (args ++ [closure])).drop (n - total + 2) =
+        args.drop (n - total) ++ [closure] := by
+      rw [off]
+      simp only [List.drop_succ_cons]
+      exact List.drop_append_of_le_length (by omega)
+    have suffixLength : (args.drop (n - total)).length = total + 1 := by simp; omega
+    change BvlSem.evaluate _ _ _ = _ at h
+    rw [dropEq, List.take_append_of_le_length (by omega : total + 1 ≤ (args.drop (n - total)).length),
+      ← suffixLength, List.take_length] at h
+    simpa only [suffixLength] using h
   have closureRun : BvlSem.evaluate [.var (n + 3)] env s = (.val [closure], s) := by
     simp [BvlSem.evaluate, env, ← length]
   have pointerRun : BvlSem.evaluate [.op (.blockOp (.elemAt 0)) [.var (n + 3)]] env s =
@@ -4260,37 +4216,6 @@ theorem evaluate_overApp_firstCall {C F : Type} (s : BvlSem.State C F)
   change BvlSem.evaluate [.call total none _] env s = _
   rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, allRun]
   simp [BvlSem.findCode, lookup, lastPair, suffixLength, closure]
-
-/-- After the first call returns, the overapplication continuation reads the
-unconsumed prefix of the original arguments. -/
-theorem evaluate_overApp_remainingArgs {C F : Type} (s : BvlSem.State C F)
-    (n total : Nat) (args rest : List BvlSem.Value) (result first second : BvlSem.Value)
-    (length : args.length = n + 1) (over : total < n + 1) :
-    BvlSem.evaluate ((List.range (n - total)).map (fun i => Bvl.Exp.var (i + 3)))
-      (result :: first :: second :: (args ++ rest)) s = (.val (args.take (n - total)), s) := by
-  have bound : n - total ≤ args.length := by omega
-  have readPrefix : ∀ count, count ≤ args.length →
-      BvlSem.evaluate ((List.range count).map (fun i => Bvl.Exp.var (i + 3)))
-        (result :: first :: second :: (args ++ rest)) s = (.val (args.take count), s) := by
-    intro count countBound
-    induction count with
-    | zero => simp [BvlSem.evaluate]
-    | succ count ih =>
-      have smaller : count ≤ args.length := by omega
-      have indexBound : count < args.length := by omega
-      rw [List.range_succ, List.map_append]
-      change BvlSem.evaluateTuple (((List.range count).map (fun i => Bvl.Exp.var (i + 3)) ++ [.var (count + 3)]),
-        result :: first :: second :: (args ++ rest), s) = _
-      rw [BvlProps.evaluateAppend]
-      simp only [BvlSem.evaluateTuple, ih smaller]
-      have indexEq : count + 3 = Nat.succ (Nat.succ (Nat.succ count)) := by omega
-      have varRun : BvlSem.evaluate [.var (count + 3)] (result :: first :: second :: (args ++ rest)) s =
-          (.val [args[count]], s) := by
-        rw [indexEq]
-        simp [BvlSem.evaluate, List.getElem?_append_left, indexBound]
-      rw [varRun]
-      simp only [List.take_append_getElem indexBound]
-  exact readPrefix (n - total) bound
 
 /-- An overapplied generic stub first runs the saturated call. Errors and
 timeouts propagate; successful values are bound for the remaining call. -/
@@ -4422,8 +4347,9 @@ theorem overApp_related_split {α β : Type} (r : α → β → Prop)
   have sameLength : source.length = target.length := related.length_eq
   have splitEq : source.length - (arity - saved) = n - total := by omega
   have takeRel := List.forall₂_take (n - total) related
-  have dropRel := List.forall₂_drop (n - total) related
-  exact ⟨splitEq, by simpa [splitEq] using takeRel, by simpa [splitEq] using dropRel⟩
+  have dropRel := clRelRunLemma3 r source target (arity - saved) related
+  exact ⟨splitEq, by simpa [splitEq] using takeRel,
+    by simpa [← sameLength, splitEq] using dropRel⟩
 
 /-- Overapplication suffix facts shared by the partial-completion cases: the
 saved group has the source length and is nonempty, the dropped suffix groups
@@ -5015,7 +4941,11 @@ theorem evaluate_overApp_continue_canonical {C F : Type} (s : BvlSem.State C F)
   · intro u
     simp [BvlSem.evaluate]
   · intro u
-    exact evaluate_overApp_remainingArgs u n total args rest value first second length (by omega)
+    have bound : (n - total) + 3 ≤ (value :: first :: second :: (args ++ rest)).length := by
+      simp only [List.length_cons, List.length_append]
+      omega
+    simpa [BvlSem.evaluateTuple, List.take_append_of_le_length (by omega : n - total ≤ args.length)] using
+      BvlProps.evaluateGenlistVars 3 (value :: first :: second :: (args ++ rest)) (n - total) u bound
   · intro u
     have bound : remaining.length ≤ (remaining ++ [value] ++ extra).length := by simp
     change BvlSem.evaluate ((List.range remaining.length).map Bvl.Exp.var)

@@ -116,6 +116,16 @@ val _ = show_thm "v_rel_union_replay=" v_rel_union_replay;
 local
   open preamble clos_to_bvlTheory clos_to_bvlProofTheory bvlSemTheory bvlPropsTheory listTheory backend_commonTheory
 in
+  (* Replay the local polymorphic list-relation theorem. *)
+  val cl_rel_run_lemma3_replay = Q.prove (
+    `LIST_REL R args args' ⇒
+     LIST_REL R (DROP (LENGTH args' − n) args) (DROP (LENGTH args' − n) args')`,
+    full_simp_tac(srw_ss())[LIST_REL_EL_EQN] >>
+    srw_tac[][] >>
+    `n' + (LENGTH args' − n) < LENGTH args` by decide_tac >>
+    `n' + (LENGTH args' − n) < LENGTH args'` by metis_tac [] >>
+    srw_tac[][EL_DROP]);
+  val _ = show_thm "cl_rel_run_lemma3_replay=" cl_rel_run_lemma3_replay;
   val bEval_def = bvlSemTheory.evaluate_def;
   val bEvalOp_def = bvlSemTheory.do_app_def;
   val bEval_free_let_Block_replay = Q.prove (
