@@ -280,6 +280,13 @@
   "reviewer": "Compared the typed HOL source and original proof: the arbitrary related values and source decoding premises, target decoding and pointwise related result agree. The f and refs parameters use canonical finite-support carriers with same-module codec witnesses; code remains a sparse tree."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "do_eq_sym",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Equality.lean", "lean_name": "doEqSym",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["refsScalar", "refsList"],
+  "reviewer": "Compared the literal local HOL source proof and typed replay: both original conjuncts universally quantify their own reference map and compare arbitrary values or lists in both orders, with the shared arbitrary reference payload type. refsScalar and refsList use the canonical finite-support carrier."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "do_eq_list_T_every",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Equality.lean", "lean_name": "doEqListTrueIff",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["refs"],

@@ -8,6 +8,7 @@ public import Flapjack.FiniteMap.BroadCodec
 /-! Reference and constructor equality in the closure-to-BVL simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.Compiler.Backend.BackendCommon
+open Flapjack.SemanticPrimitivesHOL
 
 /-- Shifted source blocks cannot be mistaken for closure blocks. -/
 theorem shiftedTag_notClosure (tag : Nat) (fields : List BvlSem.Value) :
@@ -240,6 +241,50 @@ theorem doEq_nonClosure_closure {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     cases a <;> cases b <;> simp_all [sourceIsClosure, ClosSem.doEq, BvlSem.doEq]
   | number | word64 | codePtr | refPtr =>
     cases a <;> cases b <;> simp_all [sourceIsClosure, ClosSem.doEq, BvlSem.doEq]
+
+-- Scalar and list comparison recurse together on the structure of their inputs.
+mutual
+private theorem doEqSymCore {α : Type} (refs : HolFiniteMapExact Nat (BvlSem.Ref α))
+    (x y : BvlSem.Value) : BvlSem.doEq refs x y = BvlSem.doEq refs y x := by
+  cases x <;> cases y <;> simp only [BvlSem.doEq] <;> try rfl
+  case number.number => simp [eq_comm]
+  case word64.word64 => simp [eq_comm]
+  case block.block a xs b ys =>
+    repeat' split <;> simp_all [doEqListSymCore refs xs ys, eq_comm]
+    all_goals aesop
+  case refPtr.refPtr a x b y =>
+    cases a <;> cases b <;> simp
+    cases h1 : refs.lookup x <;> cases h2 : refs.lookup y
+    all_goals repeat' (casesm BvlSem.Ref _)
+    all_goals repeat' (casesm Bool)
+    all_goals simp_all [eq_comm]
+
+termination_by sizeOf x
+
+private theorem doEqListSymCore {α : Type} (refs : HolFiniteMapExact Nat (BvlSem.Ref α))
+    (xs ys : List BvlSem.Value) : BvlSem.doEqList refs xs ys = BvlSem.doEqList refs ys xs := by
+  cases xs with
+  | nil => cases ys <;> simp [BvlSem.doEqList]
+  | cons x xs =>
+    cases ys with
+    | nil => simp [BvlSem.doEqList]
+    | cons y ys =>
+      rw [BvlSem.doEqList, BvlSem.doEqList, doEqSymCore refs x y]
+      cases BvlSem.doEq refs y x with
+      | typeError => rfl
+      | val flag => cases flag <;> simp [doEqListSymCore refs xs ys]
+termination_by sizeOf xs
+end
+
+/-- BVL value and list equality are symmetric for every reference map. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "do_eq_sym"
+  (fmap_as_finite_support_relation := [refsScalar, refsList])]
+theorem doEqSym {α : Type} :
+    (∀ (refsScalar : HolFiniteMapExact Nat (BvlSem.Ref α)) x y,
+      BvlSem.doEq refsScalar x y = BvlSem.doEq refsScalar y x) ∧
+    (∀ (refsList : HolFiniteMapExact Nat (BvlSem.Ref α)) xs ys,
+      BvlSem.doEqList refsList xs ys = BvlSem.doEqList refsList ys xs) := by
+  exact ⟨fun refs x y => doEqSymCore refs x y, fun refs xs ys => doEqListSymCore refs xs ys⟩
 
 /-- The comparator's reference map has the canonical finite-support codec. -/
 theorem holFmapAsFiniteSupportParamWitness_doEqListTrueIff_refs {α : Type}

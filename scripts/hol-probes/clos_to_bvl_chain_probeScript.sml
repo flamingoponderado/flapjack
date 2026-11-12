@@ -1448,6 +1448,26 @@ in
   \\ CCONTR_TAC \\ fs []);
   val _ = show_thm "do_app_success_replay=" do_app_success_replay;
 end;
+(* Replay the source's universally quantified equality symmetry theorem. *)
+local
+  open preamble clos_to_bvlProofTheory bvlSemTheory listTheory finite_mapTheory
+  val r = mk_var("r", ``:num |-> 'a ref``)
+in
+  val do_eq_sym_replay = Q.prove (
+    `  (∀^r x y. do_eq r x y = do_eq r y x) ∧
+   (∀^r x y. do_eq_list r x y = do_eq_list r y x)`,
+  ho_match_mp_tac do_eq_ind >> simp[] >>
+  conj_tac >- ( ntac 2 gen_tac >> Cases >> srw_tac[][] ) >>
+  conj_tac >- METIS_TAC[] >>
+  conj_tac >- METIS_TAC[] >>
+  conj_tac >- ( rw[] \\ every_case_tac \\ fs[] \\ metis_tac[] ) \\
+  conj_tac >- (
+    rpt gen_tac >> strip_tac >>
+    IF_CASES_TAC >> full_simp_tac(srw_ss())[] >>
+    srw_tac[][] >> full_simp_tac(srw_ss())[] ) >>
+  srw_tac[][] >> every_case_tac >> fs[]);
+  val _ = show_thm "do_eq_sym_replay=" do_eq_sym_replay;
+end;
 (* Replay primitive-operation error simulation using the original proof. *)
 local
   open preamble clos_to_bvlTheory clos_to_bvlProofTheory closSemTheory bvlSemTheory listTheory backend_commonTheory semanticPrimitivesPropsTheory
