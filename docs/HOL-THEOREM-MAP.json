@@ -1,5 +1,23 @@
 [
  {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "FINITE_SUB_BAG",
+  "lean_path": "Flapjack/Misc/Bag/SubBag.lean", "lean_name": "finiteSubBag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL review confirms arbitrary bag carriers and the original implication from finiteness of the larger bag and sub-bag inclusion. The proof derives the smaller bag finiteness by insertion induction."
+ },
+ {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "SUB_BAG_CARD",
+  "lean_path": "Flapjack/Misc/Bag/CardOrder.lean", "lean_name": "subBag_card",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL review confirms the full original premises, requiring finiteness only of the larger bag, and cardinality inequality. Smaller-bag finiteness is derived from FINITE_SUB_BAG."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "BAG_IMAGE_SUB_BAG",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/BagImage.lean", "lean_name": "bagImage_subBag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL review confirms independent input and output types, both original finiteness premises, sub-bag premise and full image inclusion. The proof uses the full SUB_BAG_CARD on each filtered fiber."
+ },
+ {
   "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_IMAGE_DEF",
   "lean_path": "Flapjack/Misc/Bag/Image.lean", "lean_name": "bagImage",
   "statement_status": "reviewed_exact",

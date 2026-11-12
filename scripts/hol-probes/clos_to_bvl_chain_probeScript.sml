@@ -38,6 +38,8 @@ val _ = show_thm "FINITE_BAG_FILTER_typed=" bagTheory.FINITE_BAG_FILTER;
 val _ = show_thm "BAG_IMAGE_DEF_typed=" bagTheory.BAG_IMAGE_DEF;
 val _ = show_thm "BAG_CARD_RELn_typed=" bagTheory.BAG_CARD_RELn;
 val _ = show_thm "BAG_CARD_typed=" bagTheory.BAG_CARD;
+val _ = show_thm "FINITE_SUB_BAG_typed=" bagTheory.FINITE_SUB_BAG;
+val _ = show_thm "SUB_BAG_CARD_typed=" bagTheory.SUB_BAG_CARD;
 val _ = show_thm "BAG_IMAGE_SUB_BAG_typed=" clos_to_bvlProofTheory.BAG_IMAGE_SUB_BAG;
 val _ = show_thm "compile_every_Fn_SOME_typed=" clos_to_bvlProofTheory.compile_every_Fn_SOME;
 val _ = show_thm "calls_preserves_every_Fn_vs_NONE_typed=" clos_callProofTheory.calls_preserves_every_Fn_vs_NONE;

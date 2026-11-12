@@ -1223,9 +1223,12 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IncrementalEquations
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CommonSemantics
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WholeSemantics
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Bag
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BagImage
 import Flapjack.Misc.Bag.Filter
 import Flapjack.Misc.Bag.Card
 import Flapjack.Misc.Bag.Image
+import Flapjack.Misc.Bag.SubBag
+import Flapjack.Misc.Bag.CardOrder
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WholeProgram
 import Flapjack.Compiler.Backend.ClosKnown.Inline.SizeShortCircuit
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CodeLabels

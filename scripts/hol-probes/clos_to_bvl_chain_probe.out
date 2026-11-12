@@ -31,6 +31,8 @@ FINITE_BAG_FILTER_typed=∀(b :α -> num). FINITE_BAG b ⇒ FINITE_BAG (BAG_FILT
 BAG_IMAGE_DEF_typed=∀(f :β -> α) (b :β -> num). BAG_IMAGE f b = (λ(e :α). (let (sb :β -> num) = BAG_FILTER (λ(e0 :β). f e0 = e) b in if FINITE_BAG sb then BAG_CARD sb else (1 :num)))
 BAG_CARD_RELn_typed=∀(b :α -> num) (n :num). BAG_CARD_RELn b n ⇔ ∀(P :(α -> num) -> num -> bool). P ({||} :α -> num) (0 :num) ∧ (∀(b :α -> num) (n :num). P b n ⇒ ∀(e :α). P (BAG_INSERT e b) (SUC n)) ⇒ P b n
 BAG_CARD_typed=∀(b :α -> num). FINITE_BAG b ⇒ BAG_CARD_RELn b (BAG_CARD b)
+FINITE_SUB_BAG_typed=∀(b1 :α -> num). FINITE_BAG b1 ⇒ ∀(b2 :α -> num). b2 ≤ b1 ⇒ FINITE_BAG b2
+SUB_BAG_CARD_typed=∀(b1 :α -> num) (b2 :α -> num). FINITE_BAG b2 ∧ b1 ≤ b2 ⇒ BAG_CARD b1 ≤ BAG_CARD b2
 BAG_IMAGE_SUB_BAG_typed=(x :α -> num) ≤ (y :α -> num) ∧ FINITE_BAG x ∧ FINITE_BAG y ⇒ BAG_IMAGE (f :α -> β) x ≤ BAG_IMAGE f y
 compile_every_Fn_SOME_typed=every_Fn_SOME (MAP ((SND :num # closLang$exp -> closLang$exp) ∘ (SND :α # num # closLang$exp -> num # closLang$exp)) (es :(α # num # closLang$exp) list)) ⇒ every_Fn_SOME (MAP ((SND :num # closLang$exp -> closLang$exp) ∘ (SND :α # num # closLang$exp -> num # closLang$exp)) (compile es :(α # num # closLang$exp) list))
 calls_preserves_every_Fn_vs_NONE_typed=∀(xs :closLang$exp list) (g0 :sptree$num_set # (num # num # closLang$exp) list) (ys :closLang$exp list) (g :sptree$num_set # (num # num # closLang$exp) list). calls xs g0 = (ys,g) ⇒ every_Fn_vs_NONE xs ∧ every_Fn_vs_NONE (MAP ((SND :num # closLang$exp -> closLang$exp) ∘ (SND :num # num # closLang$exp -> num # closLang$exp)) (SND g0)) ⇒ every_Fn_vs_NONE ys ∧ every_Fn_vs_NONE (MAP ((SND :num # closLang$exp -> closLang$exp) ∘ (SND :num # num # closLang$exp -> num # closLang$exp)) (SND g))
