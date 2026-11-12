@@ -10491,3 +10491,8 @@ run_probe backend_common_typed_probeScript.sml backend_common_typed_probe.out \
   nil_tag_def_typed cons_tag_def_typed small_enough_int_def_typed \
   "$cake_dir/compiler/backend/backend_commonScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe stack_lang_typed_probeScript.sml stack_lang_typed_probe.out \
+  store_name_typed gc_stub_location_def_typed list_Seq_def_typed prog_typed \
+  "$cake_dir/compiler/backend/stackLangScript.sml" \
+  "$cake_dir/compiler/backend"
