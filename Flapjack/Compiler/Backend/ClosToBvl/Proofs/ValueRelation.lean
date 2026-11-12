@@ -69,6 +69,19 @@ inductive vRel (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
         (.block 31 (.codePtr (partialAppFnLocation maxApp (numArgs - 1) (ys.length - 1)) ::
           .number (Int.ofNat (numArgs - 1 - argEnv.length)) :: cl' :: ys))
 
+/-- Reference-pointer inversion used in the source value-relation cases.
+This Flapjack helper supports the reference-pointer case of HOL's value-relation
+simplification theorem. -/
+theorem vRel_refPtr_inv {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    {flag : Bool} {pointer : Nat} {target : BvlSem.Value}
+    (related : vRel maxApp f refs code (.refPtr flag pointer) target) :
+    ∃ targetPointer, target = .refPtr flag targetPointer ∧ f.lookup pointer = some targetPointer := by
+  cases related with
+  | refPtr found => exact ⟨_, rfl, found⟩
+  | closure _ closure => cases closure
+  | partialClosure _ _ _ _ _ added _ closure => cases closure <;> simp [addArgs] at added
+
 /-- Canonical finite-map codec witnesses for Boolean value relatedness. -/
 theorem holFmapAsFiniteSupportParamWitness_vRel_bool_iff_f
     (f : HolFiniteMapExact Nat Nat) (key : Nat) :

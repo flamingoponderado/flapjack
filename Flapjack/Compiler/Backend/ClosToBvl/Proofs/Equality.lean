@@ -111,17 +111,6 @@ theorem doEq_class_mismatch {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     simpa [← vRel_eqClass first, ← vRel_eqClass second] using different
   rw [sourceEq_class_mismatch a b different, targetEq_class_mismatch refs x y targetDifferent]
 
-/-- A source reference pointer is mapped to the corresponding target pointer. -/
-theorem vRel_refPtr_inv {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {flag : Bool} {ptr : Nat} {target : BvlSem.Value}
-    (related : vRel maxApp f refs code (.refPtr flag ptr) target) :
-    ∃ targetPtr, target = .refPtr flag targetPtr ∧ f.lookup ptr = some targetPtr := by
-  cases related with
-  | refPtr found => exact ⟨_, rfl, found⟩
-  | closure _ closure => cases closure
-  | partialClosure _ _ _ _ _ added _ closure => cases closure <;> simp [addArgs] at added
-
 /-- Injection makes source reference equality agree with relocated equality. -/
 theorem relocated_pointer_eq {f : HolFiniteMapExact Nat Nat}
     (injective : ∀ x₁ x₂ y, f.lookup x₁ = some y → f.lookup x₂ = some y → x₁ = x₂)

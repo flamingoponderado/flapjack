@@ -9,31 +9,6 @@ public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockCompare
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL
 
-/-- A source reference pointer is related only to the corresponding relocated
-pointer with the same mutability flag. -/
-theorem vRel_refPtr_inv {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {flag : Bool} {pointer : Nat} {target : BvlSem.Value}
-    (related : vRel maxApp f refs code (.refPtr flag pointer) target) :
-    ∃ targetPointer, target = .refPtr flag targetPointer ∧ f.lookup pointer = some targetPointer := by
-  cases related with
-  | refPtr found => exact ⟨_, rfl, found⟩
-  | closure _ closure => cases closure
-  | partialClosure _ _ _ _ _ added _ closure => cases closure <;> simp [addArgs] at added
-
-/-- The state relation relates the cells at any relocated source reference. -/
-theorem stateRel_ref_lookup {C F : Type} {f : HolFiniteMapExact Nat Nat}
-    {s : ClosSem.State C F} {t : BvlSem.State C F} (states : stateRel f s t)
-    (sourcePtr targetPtr : Nat) (cell : ClosSem.Ref ClosSem.Value)
-    (mapped : f.lookup sourcePtr = some targetPtr) (found : s.refs.lookup sourcePtr = some cell) :
-    ∃ targetCell, t.refs.lookup targetPtr = some targetCell ∧
-      refRel (vRel s.maxApp f t.refs t.code) cell targetCell := by
-  obtain ⟨_, _, _, _, _, _, _, cells, _⟩ := states
-  obtain ⟨targetCell, ptr, mapFound, targetFound, related⟩ := cells sourcePtr cell found
-  have ptrEq : ptr = targetPtr := Option.some.inj (mapFound.symm.trans mapped)
-  subst ptr
-  exact ⟨targetCell, targetFound, related⟩
-
 /-- Reading a relocated array preserves its pointwise value relation. -/
 theorem stateRel_array_lookup {C F : Type} {f : HolFiniteMapExact Nat Nat}
     {s : ClosSem.State C F} {t : BvlSem.State C F} (states : stateRel f s t)
@@ -42,7 +17,7 @@ theorem stateRel_array_lookup {C F : Type} {f : HolFiniteMapExact Nat Nat}
     (found : s.refs.lookup sourcePtr = some (.valueArray values)) :
     ∃ targetValues, t.refs.lookup targetPtr = some (.valueArray targetValues) ∧
       List.Forall₂ (vRel s.maxApp f t.refs t.code) values targetValues := by
-  obtain ⟨target, targetFound, related⟩ := stateRel_ref_lookup states sourcePtr targetPtr _ mapped found
+  obtain ⟨target, targetFound, related⟩ := stateRel_refs_lookup states found mapped
   cases target <;> simp [refRel] at related
   exact ⟨_, targetFound, related⟩
 
@@ -54,7 +29,7 @@ theorem stateRel_bytes_lookup {C F : Type} {f : HolFiniteMapExact Nat Nat}
     (mapped : f.lookup sourcePtr = some targetPtr)
     (found : s.refs.lookup sourcePtr = some (.byteArray bytes)) :
     t.refs.lookup targetPtr = some (.byteArray false bytes) := by
-  obtain ⟨target, targetFound, related⟩ := stateRel_ref_lookup states sourcePtr targetPtr _ mapped found
+  obtain ⟨target, targetFound, related⟩ := stateRel_refs_lookup states found mapped
   cases target <;> simp [refRel] at related
   obtain ⟨rfl, rfl⟩ := related
   exact targetFound

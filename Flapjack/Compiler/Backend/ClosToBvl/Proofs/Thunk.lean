@@ -45,7 +45,7 @@ theorem destThunk_notThunk_related {C F : Type} {f : HolFiniteMapExact Nat Nat}
     obtain ⟨cell, found⟩ := Option.ne_none_iff_exists.mp sourceOccupied
     have sourceFound : s.refs.lookup sourcePtr = some cell := found.symm
     obtain ⟨targetCell, targetFound, cellRel⟩ :=
-      stateRel_ref_lookup states sourcePtr targetPtr cell mapped sourceFound
+      stateRel_refs_lookup states sourceFound mapped
     cases cell with
     | valueArray values =>
       cases targetCell <;> simp [refRel] at cellRel
@@ -150,7 +150,7 @@ theorem stateRel_thunk_lookup {C F : Type} {f : HolFiniteMapExact Nat Nat}
     (mapped : f.lookup sourcePtr = some targetPtr) (found : s.refs.lookup sourcePtr = some (.thunk mode value)) :
     ∃ targetValue, t.refs.lookup targetPtr = some (.thunk mode targetValue) ∧
       vRel s.maxApp f t.refs t.code value targetValue := by
-  obtain ⟨target, targetFound, related⟩ := stateRel_ref_lookup states sourcePtr targetPtr _ mapped found
+  obtain ⟨target, targetFound, related⟩ := stateRel_refs_lookup states found mapped
   cases target <;> simp [refRel] at related
   obtain ⟨rfl, valueRel⟩ := related
   exact ⟨_, targetFound, valueRel⟩
