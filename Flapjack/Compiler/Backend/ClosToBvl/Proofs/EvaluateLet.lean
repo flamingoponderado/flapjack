@@ -16,9 +16,7 @@ theorem envRel_prepend {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     (valuesRel : List.Forall₂ (vRel maxApp f refs code) values targetValues)
     (envRelated : envRel maxApp f refs code env targetEnv) :
     envRel maxApp f refs code (values ++ env) (targetValues ++ targetEnv) := by
-  induction valuesRel with
-  | nil => exact envRelated
-  | cons head tail ih => exact ⟨head, ih⟩
+  exact envRel_append env targetEnv values targetValues ⟨valuesRel, envRelated⟩
 
 /-- An error in the bindings exits the target let with the same postcondition. -/
 theorem evaluatePost_let_error {C F : Type} (s sFinal : ClosSem.State C F)
