@@ -10357,3 +10357,10 @@ run_probe crep_props_typed_probeScript.sml crep_props_typed_probe.out \
   evaluate_add_clock_io_events_mono_typed mem_load_flat_rel_typed \
   "$cake_dir/pancake/semantics/crepPropsScript.sml" \
   "$cake_dir/pancake/semantics"
+
+run_probe bvl_inline_proof_typed_probeScript.sml bvl_inline_proof_typed_probe.out \
+  state_rel_def_typed evaluate_remove_ticks_typed remove_ticks_cc_def_typed remove_ticks_co_def_typed evaluate_compile_prog_typed subspt_exp_rel_typed exp_rel_swap_typed exp_rel_refl_typed \
+  exp_rel_tick_inline_typed tick_inline_all_names_typed in_cc_def_typed in_co_def_typed in_state_rel_def_typed MAP_FST_tick_inline_all_typed evaluate_inline_typed tick_compile_prog_res_range_typed \
+  LENGTH_let_op_typed HD_let_op_typed \
+  "$cake_dir/compiler/backend/proofs/bvl_inlineProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
