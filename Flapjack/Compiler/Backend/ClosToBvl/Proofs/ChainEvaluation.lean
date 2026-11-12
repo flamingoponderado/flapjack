@@ -54,14 +54,6 @@ theorem compile_chain_entries (maxApp start : Nat) (expressions : List ClosLang.
               tailRun, bvlChain, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] at tailShape ⊢
             exact tailShape
 
-/-- When the first expression fails, the chained entry propagates that error
-without entering the next code block. -/
-theorem evaluate_chain_first_error {C F : Type} (s next : BvlSem.State C F)
-    (first : Bvl.Exp) (address : Nat) (error : ErrorResult BvlSem.Value)
-    (run : BvlSem.evaluate [first] [] s = (.err error, next)) :
-    BvlSem.evaluate [.let [first] (.call 0 (some address) [])] [] s = (.err error, next) := by
-  rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
-
 /-- A successful chain step supplies one clock unit for the generated call,
 then continues with the next installed body at the requested extra clock. -/
 theorem evaluate_chain_first_success {C F : Type} (s middle final : BvlSem.State C F)
@@ -116,7 +108,9 @@ theorem evaluate_bvlChain {C F : Type} (expressions : List Bvl.Exp) (start : Nat
           simp at decomposed
           rcases decomposed with ⟨rfl, rfl⟩
           exact ⟨.let [first] (.call 0 (some (start + 1)) []), 0, by simp [bvlChain],
-            by simpa [chainResult] using evaluate_chain_first_error s middle first (start + 1) error headRun⟩
+            by
+              change BvlSem.evaluate [.let [first] (.call 0 (some (start + 1)) [])] [] s = (.err error, middle)
+              rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, headRun]⟩
         | val values =>
           have length := BvlSem.evaluate_length [first] [] s middle values headRun
           cases values with

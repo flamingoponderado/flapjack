@@ -145,6 +145,13 @@
   "reviewer": "Independent typed HOL comparison confirms the original compilation equality, full length and suffix conclusions, binder order, and faithful closure and BVL carriers."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "refs_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ConstantBuild.lean", "lean_name": "refs_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BvlSem.State.refs"],
+  "reviewer": "Compared the original local source proof and typed HOL replay: the BVL state's independent compiler and FFI carriers and self-update equality agree. Its refs field uses the canonical finite-support representation with a same-module state roundtrip witness."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "do_build_const_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ConstantBuild.lean", "lean_name": "doBuildConst_thm",
   "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
