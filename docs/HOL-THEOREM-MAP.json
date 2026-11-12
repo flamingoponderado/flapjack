@@ -233,6 +233,18 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: args and prev lists have independent polymorphic element types, with exactly the three original conjuncts and all three arithmetic conclusions."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Accumulator.lean", "lean_name": "compileExps_length_and_suffix",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: the compilation result equation entails exactly the output-length equality and an accumulator suffix witness. HOL repeats this proposition as compile_exps_IMP_acc, whose Lean proof is reused."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "code_installed_fromAList",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode/Original.lean", "lean_name": "codeInstalled_fromAList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL theorem with the typed local code_installed_fromAList_strong replay: both preserve independent tuple component types, distinct keys, the same contiguous-sublist direction, and installed-code conclusion. The existing Lean proof of the repeated proposition is reused."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "EVERY_ZIP_GENLIST",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "everyZipGenlist",
   "statement_status": "reviewed_exact",

@@ -93,6 +93,7 @@ val _ = show_thm "refs_lemma_replay=" refs_lemma_replay;
 val _ = show_thm "evaluate_IMP_evaluate_chained_typed=" clos_to_bvlProofTheory.evaluate_IMP_evaluate_chained;
 val _ = show_thm "chained_lemma_typed=" clos_to_bvlProofTheory.chained_lemma;
 val _ = show_thm "code_installed_cons_typed=" clos_to_bvlProofTheory.code_installed_cons;
+val _ = show_thm "code_installed_fromAList_typed=" clos_to_bvlProofTheory.code_installed_fromAList;
 val _ = show_thm "compile_exps_same_aux_typed=" clos_to_bvlProofTheory.compile_exps_same_aux;
 val _ = show_thm "compile_exps_twice_IS_SUBLIST_typed=" clos_to_bvlProofTheory.compile_exps_twice_IS_SUBLIST;
 val _ = show_thm "compile_exps_APPEND_typed=" clos_to_bvlProofTheory.compile_exps_APPEND;
@@ -173,6 +174,7 @@ in
   Induct>>Induct_on`ls'`>>rw[IS_SUBLIST]>>
   metis_tac[MEM,IS_PREFIX_IS_SUBLIST]);
   val _ = show_thm "IS_SUBLIST_MEM_replay=" IS_SUBLIST_MEM_replay;
+  val IS_SUBLIST_MEM = IS_SUBLIST_MEM_replay;
   val IS_SUBLIST_APPEND1_replay = Q.prove (
     `∀A B C.
   IS_SUBLIST A C ⇒
@@ -205,6 +207,20 @@ in
   \\ `LENGTH xs < SUC (LENGTH xs)` by DECIDE_TAC \\ RES_TAC
   \\ full_simp_tac(srw_ss())[SNOC_APPEND,EL_LENGTH_APPEND]);
   val _ = show_thm "EVERY_ZIP_GENLIST_replay=" EVERY_ZIP_GENLIST_replay;
+  val compiler_acc_lemma_replay = Q.prove (
+    `compile_exps max_app xs aux = (c,aux1) ⇒
+  LENGTH c = LENGTH xs ∧ ∃ys. aux1 = ys ++ aux`,
+  mp_tac (SPEC_ALL compile_exps_acc) \\ rw[] \\
+  pairarg_tac \\ fs[] \\ rw[]);
+  val _ = show_thm "compiler_acc_lemma_replay=" compiler_acc_lemma_replay;
+  val code_installed_fromAList_strong_replay = Q.prove (
+    `∀ls ls'.
+  ALL_DISTINCT(MAP FST ls) ∧
+  IS_SUBLIST ls ls' ⇒
+  code_installed ls' (fromAList ls)`,
+  srw_tac[][code_installed_def,EVERY_MEM,FORALL_PROD,lookup_fromAList] >>
+  metis_tac[ALOOKUP_ALL_DISTINCT_MEM,IS_SUBLIST_MEM]);
+  val _ = show_thm "code_installed_fromAList_strong_replay=" code_installed_fromAList_strong_replay;
   val twod_table_lemma_replay = Q.prove (
     `!x y z.
     z ≤ y ⇒
