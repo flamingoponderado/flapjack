@@ -1235,6 +1235,7 @@ in
   \\ full_simp_tac(srw_ss())[FDIFF_def,SUBMAP_DEF,DRESTRICT_DEF,FLOOKUP_DEF]
   \\ full_simp_tac(srw_ss())[FAPPLY_FUPDATE_THM] \\ SRW_TAC [] []
   \\ full_simp_tac(srw_ss())[FRANGE_DEF] \\ METIS_TAC [] );
+  val _ = show_thm "cl_rel_UPDATE_REF_replay=" cl_rel_UPDATE_REF_replay;
   val v_rel_UPDATE_REF = Q.prove(
   `!x y. v_rel max_app f1 refs1 code x y ==>
           (r IN FRANGE f1) ==>
