@@ -11,7 +11,8 @@ open Flapjack.Compiler.Backend.BackendCommon
 open Flapjack.SemanticPrimitivesHOL
 
 /-- Shifted source blocks cannot be mistaken for closure blocks. -/
-theorem shiftedTag_notClosure (tag : Nat) (fields : List BvlSem.Value) :
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "not_isClos"]
+theorem shiftedTag_notClosure {α : Type} (tag : Nat) (fields : List α) :
     ¬ BvlSem.isClosure (closTagShift tag) fields := by
   simp only [BvlSem.isClosure, closTagShift]
   split <;> omega

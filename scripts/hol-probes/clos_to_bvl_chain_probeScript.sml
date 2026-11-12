@@ -1178,6 +1178,7 @@ in
       srw_tac[][])
   >- full_simp_tac(srw_ss())[closSemTheory.do_eq_def]
   >- full_simp_tac(srw_ss())[closSemTheory.do_eq_def]);
+  val _ = show_thm "not_isClos_typed=" clos_to_bvlProofTheory.not_isClos;
   val _ = show_thm "do_eq_replay=" do_eq;
   val do_app_success_replay = Q.prove (
     `   (do_app op xs s1 = Rval (v,s2)) /\

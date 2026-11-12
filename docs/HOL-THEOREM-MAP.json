@@ -280,6 +280,12 @@
   "reviewer": "Compared the typed HOL source and original proof: the arbitrary related values and source decoding premises, target decoding and pointwise related result agree. The f and refs parameters use canonical finite-support carriers with same-module codec witnesses; code remains a sparse tree."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "not_isClos",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Equality.lean", "lean_name": "shiftedTag_notClosure",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: the arbitrary natural tag, polymorphic field list and negated closure predicate agree. closTagShift is the original conditional tag shift."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "do_eq",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EqualityFull.lean", "lean_name": "doEqCorrespondence",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["f", "refs"],
