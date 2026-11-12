@@ -11,6 +11,14 @@ namespace Flapjack.Compiler.Backend.BvlHandle.Proofs
 open Flapjack.Compiler.Backend.BvlSem
 open Flapjack.SemanticPrimitivesHOL (Result)
 
+namespace CanRaiseCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+    (∀ s : Flapjack.Compiler.Backend.BvlSem.State C F, State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end CanRaiseCarrier
+
 /-- A non-raising operation has a non-raising argument list. -/
 theorem canRaise_op_args_false (op : ClosLang.Op) (args : List Bvl.Exp)
     (safe : canRaise (.op op args) = false) : canRaiseList args = false := by
@@ -24,8 +32,8 @@ theorem doApp_not_raise {C F : Type} (op : ClosLang.Op) (args : List Value)
   have impossible := BvlProps.doAppError op args state (.raise value) run
   simp at impossible
 
-/-- If a list is classified as unable to raise, its evaluation cannot return
-a raised value. This remains untagged pending evaluator source review. -/
+/-- Contrapositive induction used to establish the source raise-analysis
+theorem and to simplify handlers. This helper has no separate HOL declaration. -/
 theorem evaluate_not_raise_of_canRaiseList_false {C F : Type} (expressions : List Bvl.Exp)
     (env : List Value) (state : State C F) (value : Value)
     (safe : canRaiseList expressions = false) :
@@ -140,22 +148,29 @@ theorem evaluate_not_raise_of_canRaiseList_false {C F : Type} (expressions : Lis
   exact allWeights (expsWeight expressions) expressions env state value rfl safe
 
 /-- A raised result implies the source handler pass marks the singleton or
-expression list as potentially raising. This is untagged pending evaluator
-source review and representation qualification. -/
-theorem canRaise_of_evaluate {C F : Type} :
-    (∀ (expression : Bvl.Exp) (env : List Value) (state final : State C F) (value : Value),
-      evaluate [expression] env state = (.err (.raise value), final) → canRaise expression = true) ∧
-    (∀ (expressions : List Bvl.Exp) (env : List Value) (state final : State C F) (value : Value),
-      evaluate expressions env state = (.err (.raise value), final) → canRaiseList expressions = true) := by
+expression list as potentially raising. The two unused binders have independent
+types, as in the inferred HOL statement. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "can_raise_thm"
+  (fmap_as_finite_support := [refs])]
+theorem canRaise_of_evaluate {C F A B : Type} (value : Value)
+    (final : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    (∀ (expression : Bvl.Exp) (env : List Value) (_unused : A)
+      (state : Flapjack.Compiler.Backend.BvlSem.State C F),
+      evaluateTuple ([expression], env, state) = (.err (.raise value), final) → canRaise expression = true) ∧
+    (∀ (expressions : List Bvl.Exp) (env : List Value) (_unused : B)
+      (state : Flapjack.Compiler.Backend.BvlSem.State C F),
+      evaluateTuple (expressions, env, state) = (.err (.raise value), final) → canRaiseList expressions = true) := by
   constructor
-  · intro expression env state final value run
+  · intro expression env _ state run
+    change evaluate [expression] env state = _ at run
     cases safe : canRaise expression with
     | true => rfl
     | false =>
       have impossible := evaluate_not_raise_of_canRaiseList_false [expression] env state value
         (by simpa [canRaiseList] using safe)
       exact False.elim (impossible (by rw [run]))
-  · intro expressions env state final value run
+  · intro expressions env _ state run
+    change evaluate expressions env state = _ at run
     cases safe : canRaiseList expressions with
     | true => rfl
     | false =>

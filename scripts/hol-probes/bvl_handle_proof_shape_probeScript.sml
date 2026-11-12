@@ -11,6 +11,7 @@ fun show label th = if null (hyp th) then
 
 val _ = show "IS_SOME_lookup_db_to_set_typed" bvl_handleProofTheory.IS_SOME_lookup_db_to_set;
 val _ = show "handle_ok_SmartLet_typed" bvl_handleProofTheory.handle_ok_SmartLet;
+val _ = show "can_raise_thm_typed" bvl_handleProofTheory.can_raise_thm;
 val _ = show "bVarBound_MEM_typed" bvl_handleProofTheory.bVarBound_MEM;
 val _ = show "bVarBound_LESS_EQ_typed" bvl_handleProofTheory.bVarBound_LESS_EQ;
 val _ = show "bVarBound_LetLet_typed" bvl_handleProofTheory.bVarBound_LetLet;

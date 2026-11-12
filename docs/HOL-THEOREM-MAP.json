@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "can_raise_thm",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/CanRaise.lean", "lean_name": "canRaise_of_evaluate",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete typed source conjunction: the raised value and final BVL state are shared across both conjuncts; each retains its separate unused independently typed binder before the actual initial state, with independent compiler and FFI carriers. Both singleton and list implications preserve the original evaluation equality and raise predicate. The BVL state's refs field uses the canonical finite-support map with a local roundtrip witness; evaluator dependencies inherit reals_as_rational_cuts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml", "hol_name": "compile_code_labels",
   "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/CompileLabels.lean", "lean_name": "compile_codeLabels",
   "statement_status": "reviewed_exact",

@@ -1,5 +1,6 @@
 IS_SOME_lookup_db_to_set_typed=∀(n :num). IS_SOME (lookup n (db_to_set (l :db_var_set))) ⇔ has_var n l
 handle_ok_SmartLet_typed=handle_ok [SmartLet (xs :bvl$exp list) (x :bvl$exp)] ⇔ handle_ok xs ∧ handle_ok [x]
+can_raise_thm_typed=(∀(e :bvl$exp) (env :v list) (s :γ) (s :(α, β) state). evaluate ([e],env,s) = ((Rerr (Rraise (a :v)) :(v list, v) result),(r :(α, β) state)) ⇒ can_raise e) ∧ ∀(es :bvl$exp list) (env :v list) (s :δ) (s :(α, β) state). evaluate (es,env,s) = ((Rerr (Rraise a) :(v list, v) result),r) ⇒ can_raise1 es
 bVarBound_MEM_typed=bVarBound (n :num) (xs :bvl$exp list) ⇔ ∀(x :bvl$exp). MEM x xs ⇒ bVarBound n [x]
 bVarBound_LESS_EQ_typed=∀(m :num) (xs :bvl$exp list) (n :num). bVarBound m xs ∧ m ≤ n ⇒ bVarBound n xs
 bVarBound_LetLet_typed=bVarBound (m :num) [(y :bvl$exp)] ∧ (n :num) ≤ m ⇒ bVarBound m [LetLet n (l1 :sptree$num_set) y]
