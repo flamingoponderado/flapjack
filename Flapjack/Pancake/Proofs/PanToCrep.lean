@@ -2005,6 +2005,19 @@ theorem ctxtFcEidsEqHOL {width : Nat} [NeZero width]
     (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
     (ctxtFcExactHOL cvs em vs shs ns : PanToCrepContextExact width).eids = em := rfl
 
+namespace CtxtFcVmaxRelationWitnesses
+
+/-- Same-module canonical carrier witness for the `ctxt_fc_vmax` relation
+    qualifier: the imported exact context carrier roundtrips through its broad
+    counterpart. It is declared under a fresh local namespace so it does not
+    clash with the imported witness of the same leaf name. -/
+theorem holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact {width : Nat}
+    [NeZero width] (context : PanToCrepContextExact width) :
+    PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context :=
+  PanToCrepContextExact.holFmapAsFiniteSupportWitness context
+
+end CtxtFcVmaxRelationWitnesses
+
 /-- Exact port of HOL `ctxt_fc_vmax`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2307`):
     `(ctxt_fc ctxt.funcs em vs shs ns).vmax = MAX_LIST ns`. The typed capture
@@ -2016,11 +2029,14 @@ theorem ctxtFcEidsEqHOL {width : Nat} [NeZero width]
     `(ctxt, em, vs, shs, ns)` and HOL's unrestricted quantifiers are kept; the
     constructed context's `vmax` field is definitionally `maxList ns`, so the
     statement is a no-premise projection. `.vmax` is a `Nat` that depends only
-    on `ns`, so the conclusion does not traverse any finite-map field; the
-    `fmap_as_finite_support := [funcs]` qualifier records the canonical
-    `HolFiniteMapExact` translation of the traversed `ctxt.funcs` field
-    (same-module witness `CtxtFcExact.holFmapAsFiniteSupportWitness`). `em` is
-    a standalone canonical map parameter and needs no qualifier. The signature
+    on `ns`, so the conclusion does not traverse any finite-map field, but the
+    statement still binds two canonical maps: HOL's `ctxt.funcs` field and the
+    standalone `em : mlstring |-> 'a word`. The multi-carrier relation
+    qualifier `(fmap_as_finite_support_relation :=
+    [PanToCrepContextExact.funcs, em])` records both `HolFiniteMapExact`
+    translations, with the same-module carrier witness
+    `holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact` for the
+    imported exact context carrier (task 153 item 2). The signature
     is width-indexed with `BitVec width` exception codes and `[NeZero width]`,
     so HOL's type-indexed `'a word` translation is recorded by the
     `(words_as_type_indexed_bitvec)` qualifier. Direct HOL-EVAL rows
@@ -2028,7 +2044,7 @@ theorem ctxtFcEidsEqHOL {width : Nat} [NeZero width]
     `scripts/hol-probes/ctxt_fc_probe.out` are replayed by the kernel-checked
     regression in `Flapjack.Test.PanToCrepContextExactParity`. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_fc_vmax"
-  (fmap_as_finite_support := [funcs])
+  (fmap_as_finite_support_relation := [PanToCrepContextExact.funcs, em])
   (words_as_type_indexed_bitvec)]
 theorem ctxtFcVmaxHOL {width : Nat} {ctxtWidth : Nat} [NeZero width] [NeZero ctxtWidth]
     (ctxt : PanToCrepContextExact ctxtWidth)
