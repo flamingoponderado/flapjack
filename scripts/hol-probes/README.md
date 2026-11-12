@@ -9914,8 +9914,8 @@ The capture supports source comparison; it does not prove Lean correspondence.
 and theorems, including the quantifier order and vacuous type in
 `chain_installed_thm`. It also replays the local `evaluate_init1` and
 `evaluate_init` proofs with their inferred BVL state and evaluation types,
-`show_SUBSET` with its polymorphic set carrier, and `REPLICATE_1` with its
-polymorphic list element type. Regenerate with
+`show_SUBSET` with its polymorphic set carrier, `REPLICATE_1` with its
+polymorphic list element type, and `obvious_arith_comm` over naturals. Regenerate with
 `HOL_PROBE_ONLY=clos_to_bvl_chain_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean correspondence.
 

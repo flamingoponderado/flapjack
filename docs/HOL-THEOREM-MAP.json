@@ -2885,6 +2885,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "obvious_arith_comm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CommonSemantics.lean",
+  "lean_name": "obviousArithComm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original local statement and typed proof replay: a and b are independent naturals, and a equals b plus a exactly when b is zero, with no extra premises."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "compile_common_semantics",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CommonSemantics.lean",
   "lean_name": "compileCommon_semantics",

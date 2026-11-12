@@ -50,6 +50,10 @@ val show_SUBSET_replay = Q.prove (
 val _ = show_thm "show_SUBSET_replay=" show_SUBSET_replay;
 val REPLICATE_1_replay = Q.prove (`REPLICATE 1 x = [x]`, EVAL_TAC);
 val _ = show_thm "REPLICATE_1_replay=" REPLICATE_1_replay;
+val obvious_arith_comm_replay = Q.prove (
+  `((a : num) = b + a) = (b = 0)`,
+  Cases_on `b` >> fs []);
+val _ = show_thm "obvious_arith_comm_replay=" obvious_arith_comm_replay;
 val _ = show_thm "EXISTS_CONS_NOT_NULL_typed=" clos_to_bvlProofTheory.EXISTS_CONS_NOT_NULL;
 val _ = show_thm "code_locs_Op_cons_typed=" clos_to_bvlProofTheory.code_locs_Op_cons;
 val _ = show_thm "compile_exps_IMP_acc_typed=" clos_to_bvlProofTheory.compile_exps_IMP_acc;
