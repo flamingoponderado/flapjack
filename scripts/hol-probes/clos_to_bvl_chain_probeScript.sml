@@ -242,6 +242,7 @@ in
       EL_CONS, el_append2, PRE_SUB1, partial_app_fn_location_def] >>
   rw [integerTheory.INT_ADD, integerTheory.INT_MUL, integerTheory.INT_DIV,
       integerTheory.INT_SUB]);
+  val _ = show_thm "evaluate_partial_app_fn_location_code_replay=" evaluate_partial_app_fn_location_code_replay;
   val evaluate_partial_app_fn_location_code = evaluate_partial_app_fn_location_code_replay;
   val evaluate_generic_app1_replay = Q.prove (
     `  !n args st total_args l fvs cl.

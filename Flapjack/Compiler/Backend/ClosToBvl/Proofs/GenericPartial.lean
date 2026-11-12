@@ -26,6 +26,22 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   BvlSem.holFmapAsFiniteSupportWitness
 end GenericPartialCarrier
 
+/-- The generated location expression computes the partial-application index. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_partial_app_fn_location_code"
+  (fmap_as_finite_support := [refs])]
+theorem evaluatePartialAppFnLocationCode {C F : Type} :
+    ∀ (maxApp n total : Nat) (st : Flapjack.Compiler.Backend.BvlSem.State C F)
+      (args : List BvlSem.Value) (tag : Nat) (ptr x : BvlSem.Value) (fvs : List BvlSem.Value),
+      sptDomain st.code (partialAppFnLocation maxApp total n) ∧ n < total ∧ total < maxApp →
+      BvlSem.evaluate [partialAppFnLocationCode maxApp
+        (.op (.blockOp (.elemAt 1)) [.var (args.length + 1)])
+        (.op (.intOp (.const (Int.ofNat n))) [])]
+        (x :: (args ++ [.block tag (ptr :: .number (Int.ofNat total) :: fvs)])) st =
+      (.val [.number (Int.ofNat (total * (total - 1) / 2 + n))], st) := by
+  intro maxApp n total st args tag ptr x fvs ⟨_, bound, _⟩
+  have h := evaluate_partialAppFnLocationCode_stub maxApp st args x ptr tag fvs total n bound
+  simpa only [mkConst, Nat.add_comm] using h
+
 /-- Generic application creates a partial closure from an ordinary closure. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_generic_app1"
   (fmap_as_finite_support := [refs])]
