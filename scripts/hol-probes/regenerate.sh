@@ -10369,3 +10369,12 @@ run_probe bvl_const_proof_typed_probeScript.sml bvl_const_proof_typed_probe.out 
   evaluate_delete_var_Rerr_SING_typed SmartOp1_thm_typed SmartOp_thm_typed \
   "$cake_dir/compiler/backend/proofs/bvl_constProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_sem_typed_probeScript.sml lab_sem_typed_probe.out \
+  arith_upd_def_typed binop_upd_def_typed is_Label_def_typed evaluate_def_typed fp_upd_def_typed asm_inst_def_typed asm_inst_consts_typed addr_def_typed \
+  mem_load_def_typed mem_load32_def_typed mem_load_byte_def_typed mem_op_def_typed mem_store_def_typed mem_store32_def_typed mem_store_byte_def_typed asm_code_length_def_typed \
+  asm_fetch_def_typed asm_fetch_aux_def_typed get_lab_after_def_typed get_pc_value_def_typed get_ret_Loc_def_typed lab_to_loc_def_typed loc_to_pc_def_typed next_label_def_typed \
+  semantics_def_typed share_mem_load_def_typed share_mem_op_def_typed share_mem_store_def_typed state_typed word8_loc_typed assert_def_typed dec_clock_def_typed \
+  inc_pc_def_typed read_fp_reg_def_typed reg_imm_def_typed upd_fp_reg_def_typed upd_mem_def_typed upd_pc_def_typed upd_reg_def_typed \
+  "$cake_dir/compiler/backend/semantics/labSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
