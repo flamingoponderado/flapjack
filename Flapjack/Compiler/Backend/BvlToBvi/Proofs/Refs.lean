@@ -52,8 +52,17 @@ theorem bvOkList_iff (refs : HolFiniteMapExact Nat (Ref Value)) (values : List V
   | nil => simp [bvOkList]
   | cons value values ih => simp [bvOkList, ih]
 
-/-- The unit value contains no reference pointer. This is Flapjack's local
-consequence of `bvOk`; the HOL theorem remains untagged here. -/
+/-- The unit theorem uses the canonical reference-map roundtrip. -/
+theorem holFmapAsFiniteSupportParamWitness_bvOk_unit_refs
+    (refs : HolFiniteMapExact Nat (Ref Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_bvOk_refs refs key
+
+/-- The unit value contains no reference pointer. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "bv_ok_Unit"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem bvOk_unit (refs : HolFiniteMapExact Nat (Ref Value)) :
     bvOk refs Flapjack.Compiler.Backend.BvlSem.unitValue := by
   simp [Flapjack.Compiler.Backend.BvlSem.unitValue, bvOk, bvOkList]
