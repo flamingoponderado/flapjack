@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.ClosSem
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
 public import Flapjack.Misc.ListEl
 
 @[expose] public section
@@ -50,5 +51,77 @@ theorem noPartialArgs (func cl : ClosSem.Value) (x : Nat) (argEnv : List ClosSem
   all_goals subst func
   all_goals simp only [numRemainingArgs, getNumArgs, Option.some.injEq, List.length_append] at remaining arity
   all_goals cases argEnv <;> simp_all <;> omega
+
+/-- Direct-call location check without the maximum-application bound. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "check_loc'_def"]
+noncomputable def checkLocPrime {α β : Type} (requested location : Option α)
+    (parameters arguments : β) (supplied : Nat) : Bool := by
+  classical
+  exact match requested with
+    | none => true
+    | some address => decide (parameters = arguments ∧ supplied = 0 ∧ some address = location)
+
+/-- Closure application with the source proof's unbounded location check. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "dest_closure'_def"]
+noncomputable def destClosurePrime (requested : Option Nat) (function : ClosSem.Value)
+    (args : List ClosSem.Value) : Option ClosSem.AppKind :=
+  match function with
+  | .closure location supplied env arity body =>
+    if checkLocPrime requested location arity args.length supplied.length && supplied.length < arity then
+      if args.length + supplied.length < arity then
+        some (.partialApp (.closure location (args ++ supplied) env arity body))
+      else
+        let needed := arity - supplied.length
+        some (.fullApp body (args.reverse.take needed |>.reverse |>.append (supplied ++ env))
+          (args.reverse.drop needed |>.reverse))
+    else none
+  | .recclosure location supplied env functions index =>
+    match functions[index]? with
+    | none => none
+    | some (arity, body) =>
+      let codeLocation := location.map (fun loc => 2 * index + loc)
+      if checkLocPrime requested codeLocation arity args.length supplied.length && supplied.length < arity then
+        if args.length + supplied.length < arity then
+          some (.partialApp (.recclosure location (args ++ supplied) env functions index))
+        else
+          let needed := arity - supplied.length
+          let recursive := (List.range functions.length).map (fun i => ClosSem.Value.recclosure location [] env functions i)
+          some (.fullApp body (args.reverse.take needed |>.reverse |>.append (supplied ++ recursive ++ env))
+            (args.reverse.drop needed |>.reverse))
+      else none
+  | _ => none
+
+/-- Any bounded closure destination is also an unbounded destination. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "dest_cl_imp_dest_cl'"]
+theorem destClosure_imp_prime (maxApp : Nat) (location : Option Nat) (function : ClosSem.Value)
+    (args : List ClosSem.Value) (result : ClosSem.AppKind)
+    (found : ClosSem.destClosure maxApp location function args = some result) :
+    destClosurePrime location function args = some result := by
+  have check (loc : Option Nat) (arity count supplied : Nat)
+      (valid : (ClosSem.checkLoc maxApp location loc arity count supplied && decide (supplied < arity)) = true) :
+      (checkLocPrime location loc arity count supplied && decide (supplied < arity)) = true := by
+    cases location <;> simp [ClosSem.checkLoc, checkLocPrime] at valid ⊢
+    · exact valid.2
+    · exact valid
+  cases function <;> simp only [ClosSem.destClosure, destClosurePrime] at found ⊢ <;> try contradiction
+  case closure loc supplied env arity body =>
+    split at found
+    · rename_i valid
+      simp only [check loc arity args.length supplied.length valid, ↓reduceIte]
+      exact found
+    · simp at found
+  case recclosure loc supplied env functions index =>
+    cases selected : functions[index]? with
+    | none => simp [selected] at found
+    | some entry =>
+      cases entry with
+      | mk arity body =>
+        simp only [selected] at found ⊢
+        split at found
+        · rename_i valid
+          simp only [check (loc.map (fun loc => 2 * index + loc)) arity args.length supplied.length valid,
+            ↓reduceIte]
+          exact found
+        · simp at found
 
 end Flapjack.Compiler.Backend.ClosToBvl

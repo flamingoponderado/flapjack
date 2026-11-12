@@ -157,6 +157,24 @@
   "reviewer": "Compared the literal local HOL source proof and typed replay: related source and target values have equal full optional byte decodings, including NONE, with fixed word8 bytes. The f and refs inputs use canonical finite support and same-module codec witnesses."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "check_loc'_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "checkLocPrime",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL definition: location and arity-comparison types are independent polymorphic types; the supplied count is natural. NONE always succeeds, SOME requires equal parameters and arguments, zero supplied and equal locations; classical equality adds no binder."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "dest_closure'_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "destClosurePrime",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all typed HOL clauses: the unbounded location guard, full and partial result order, list reversals and recursive closure environment match; recursive out-of-range indices return NONE before the unspecified total EL value can affect the result."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "dest_cl_imp_dest_cl'",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "destClosure_imp_prime",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local original proof and typed replay: arbitrary maximum, optional location, closure value, argument list and complete application result are preserved; the sole bounded-destination premise implies the identical unbounded destination."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "list_rel_app",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArgumentRelation.lean", "lean_name": "listRelApp",
   "statement_status": "reviewed_exact",

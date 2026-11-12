@@ -112,6 +112,23 @@ val v_rel_union_replay = Q.prove (
             clos_to_bvlProof$v_rel max_app f2 refs (sptree$union code c2) x y`,
   metis_tac [clos_to_bvlProofTheory.v_rel_subspt, sptreeTheory.subspt_union]);
 val _ = show_thm "v_rel_union_replay=" v_rel_union_replay;
+val _ = show_thm "check_loc_prime_def_typed=" clos_to_bvlProofTheory.check_loc'_def;
+val _ = show_thm "dest_closure_prime_def_typed=" clos_to_bvlProofTheory.dest_closure'_def;
+(* Replay the original bounded-to-unbounded destination lemma. *)
+local
+  open preamble clos_to_bvlProofTheory closSemTheory
+in
+  val dest_cl_imp_dest_cl_prime_replay = Q.prove (
+    `dest_closure max_app l f a = SOME x ⇒ dest_closure' l f a = SOME x`,
+  srw_tac[][dest_closure_def, dest_closure'_def] >>
+  BasicProvers.EVERY_CASE_TAC >>
+  full_simp_tac(srw_ss())[] >>
+  Cases_on `l` >>
+  full_simp_tac(srw_ss())[check_loc_def, check_loc'_def, LET_THM] >>
+  Cases_on `EL n l1` >>
+  full_simp_tac(srw_ss())[]);
+  val _ = show_thm "dest_cl_imp_dest_cl_prime_replay=" dest_cl_imp_dest_cl_prime_replay;
+end;
 (* Replay the original local list-relation theorem. *)
 local
   open preamble clos_to_bvlProofTheory closSemTheory listTheory
