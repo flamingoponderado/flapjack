@@ -4079,6 +4079,65 @@ class FmapParameterPredicateDomainSignatureTest(unittest.TestCase):
         self.assertTrue(self.errors("evalSim", source, hol_name="IMP_semantics_eq"))
         self.assertTrue(self.errors("different", source, hol_name="eval_sim_def"))
 
+    def test_string_cannot_impersonate_a_declaration(self):
+        source = f"def evalSim {self.header} : Prop := True"
+        self.assertEqual([], self.errors("evalSim", '@[hol "cakeml/x.sml" "x"]\n' + source))
+        self.assertTrue(self.errors("evalSim", 'def decoy : String := "\n' + source + '\n"'))
+        self.assertTrue(self.errors("evalSim", 'def decoy : String := r#"\n' + source + '\n"#'))
+        self.assertTrue(self.errors("evalSim", 'def decoy : String := "escaped \\\" quote\n' + source + '\n"'))
+        quote = "def quote : Char := " + chr(39) + chr(34) + chr(39) + "\n"
+        self.assertTrue(self.errors("evalSim", quote + 'def decoy : String := "\n' + source + '\n"'))
+        self.assertEqual("def x' := 3", CHECKER["_predicate_domain_code_only"]("def x' := 3"))
+
+
+class FmapParameterPredicateDomainWitnessTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.source = (Path(__file__).resolve().parents[2] /
+                      "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvalSim.lean").read_text()
+        cls.validate = staticmethod(CHECKER["fmap_parameter_predicate_domain_witness_errors"])
+
+    def test_current_two_sided_witness(self):
+        self.assertEqual([], self.validate(self.source))
+
+    def test_rejects_altered_codecs_and_vacuous_roundtrips(self):
+        changes = [
+            ("code.lookup", "fun _ => none"),
+            ("⟨lookup, support⟩", "HolFiniteMapExact.empty"),
+            ("rel (ofBroad lookup support)", "fun _ _ _ _ _ _ _ => True"),
+            ("rel (toBroad code) code.finiteSupport", "fun _ _ _ _ _ _ _ => True"),
+            ("= rel code) ∧", "= rel code) ∨"),
+            ("= rel lookup support) := by", "= True) := by"),
+            ("{C₁ C₂ : Type} :\n    (∀", "{C₁ C₂ : Type} (extra : Prop) :\n    (∀"),
+        ]
+        for before, after in changes:
+            with self.subTest(before=before):
+                changed = self.source.replace(before, after)
+                self.assertNotEqual(self.source, changed)
+                self.assertTrue(self.validate(changed))
+
+    def test_rejects_missing_or_duplicated_witness_and_helpers(self):
+        self.assertTrue(self.validate(self.source.replace("theorem simulationPredicateRoundtrips",
+                                                          "axiom simulationPredicateRoundtrips")))
+        self.assertTrue(self.validate(self.source.replace("private def toBroad ", "def toBroad ")))
+        self.assertTrue(self.validate(self.source + "\nprivate def toBroad := 0\n"))
+        self.assertTrue(self.validate(self.source + "\naxiom simulationPredicateRoundtrips : True\n"))
+        self.assertTrue(self.validate(self.source + "\naxiom ReviewGhost.simulationPredicateRoundtrips : True\n"))
+        self.assertTrue(self.validate(self.source + "\naxiom Ω.simulationPredicateRoundtrips : True\n"))
+        self.assertTrue(self.validate(self.source + "\naxiom «ReviewGhost».simulationPredicateRoundtrips : True\n"))
+        self.assertTrue(self.validate(self.source + "\naxiom ReviewGhost.«simulationPredicateRoundtrips» : True\n"))
+        self.assertTrue(self.validate("namespace Test variable (bad : Prop)\n" + self.source))
+        self.assertTrue(self.validate(self.source.replace("private def ofBroad", "set_option pp.universes true\nprivate def ofBroad")))
+
+    def test_string_cannot_impersonate_the_witness_block(self):
+        clean = CHECKER["strip_lean_comments"](self.source)
+        block = clean[clean.index("private abbrev SimulationTail"):
+                      clean.rindex("end Flapjack.Compiler.Backend.ClosToBvl")].strip()
+        self.assertTrue(self.validate('module\n\ndef decoy : String := "\n' + block + '\n"\n'))
+        self.assertTrue(self.validate('module\n\ndef decoy : String := r#"\n' + block + '\n"#\n'))
+        quote = "def quote : Char := " + chr(39) + chr(34) + chr(39) + "\n"
+        self.assertTrue(self.validate('module\n' + quote + 'def decoy : String := "\n' + block + '\n"\n'))
+
 
 class FmapParameterObservationTest(unittest.TestCase):
     def test_conditional_call_scope_and_required_producers(self):

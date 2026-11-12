@@ -2775,6 +2775,40 @@ def _function_declaration_signature(source: str, decl_name: str, *, all_binders:
     return groups, header[result_start:].strip()
 
 
+def _predicate_domain_code_only(source: str) -> str | None:
+    """Mask ordinary Lean strings for these narrow, string-free checks.
+
+    Raw strings, character literals and escaped identifiers are conservatively
+    rejected: the shared comment stripper does not track the first two, and
+    these reviewed declarations need none of them.
+    """
+    if ("«" in source or "»" in source or
+            re.search(r"(?<![\w'])r#*\"", source) or
+            re.search(r"(?<![\w'])'(?:\\.|[^'\\\n])'", source)):
+        return None
+    clean = strip_lean_comments(source)
+    result = list(clean)
+    index = 0
+    while index < len(clean):
+        if clean[index] != '"':
+            index += 1
+            continue
+        result[index] = " "
+        index += 1
+        while index < len(clean):
+            char = clean[index]
+            if char != "\n":
+                result[index] = " "
+            index += 1
+            if char == "\\" and index < len(clean):
+                if clean[index] != "\n":
+                    result[index] = " "
+                index += 1
+            elif char == '"':
+                break
+    return "".join(result)
+
+
 def fmap_parameter_predicate_domain_signature_errors(
     hol_path: str, hol_name: str, lean_path: str, lean_name: str, source: str,
 ) -> list[str]:
@@ -2792,7 +2826,9 @@ def fmap_parameter_predicate_domain_signature_errors(
             (hol_name, lean_name) not in expected_sites):
         return ["predicate-domain representation is restricted to the reviewed simulation declarations"]
 
-    clean = strip_lean_comments(source)
+    clean = _predicate_domain_code_only(source)
+    if clean is None:
+        return ["predicate-domain declarations do not support raw strings, character literals or escaped identifiers"]
     if re.search(r"\b(?:variable|variables|include|omit)\b", clean):
         return ["predicate-domain declarations require self-contained binders"]
     declarations = re.findall(
@@ -2834,6 +2870,80 @@ def fmap_parameter_predicate_domain_signature_errors(
                            "ClosSem.semantics ffi maxApp code1 co1 cc1 es1")
     if actual != expected or normalize(result) != expected_result:
         return ["predicate-domain declaration must have the complete reviewed signature and independent compiler types"]
+    return []
+
+
+def fmap_parameter_predicate_domain_witness_errors(source: str) -> list[str]:
+    """Check the written two-sided predicate codec used by the proposed qualifier.
+
+    This checks the reviewed helper definitions and witness statement only; it
+    does not check elaborated names, kernel validity, the target declaration,
+    or HOL correspondence. It is not connected to attribute validation.
+    """
+    clean = _predicate_domain_code_only(source)
+    if clean is None:
+        return ["predicate-domain witness does not support raw strings, character literals or escaped identifiers"]
+    if re.search(r"\b(?:variable|variables|include|omit)\b", clean):
+        return ["predicate-domain witness requires self-contained binders"]
+    expected = [
+        ("SimulationTail", "private abbrev SimulationTail (C₁ C₂ : Type) := "
+         "ClosSem.CompileOracle C₁ → ClosSem.Compiler C₁ → List ClosLang.Exp → "
+         "Spt (Nat × Bvl.Exp) → BvlSem.CompileOracle C₂ → BvlSem.Compiler C₂ → Nat → Prop"),
+        ("RawCode", "private abbrev RawCode := Nat → Option (Nat × ClosLang.Exp)"),
+        ("RawCodeSupport", "private abbrev RawCodeSupport (lookup : RawCode) := "
+         "∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys"),
+        ("toBroad", "private def toBroad (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) : "
+         "RawCode := code.lookup"),
+        ("ofBroad", "private def ofBroad (lookup : RawCode) (support : RawCodeSupport lookup) : "
+         "HolFiniteMapExact Nat (Nat × ClosLang.Exp) := ⟨lookup, support⟩"),
+        ("toBroadPredicate", "private def toBroadPredicate {C₁ C₂ : Type} "
+         "(rel : HolFiniteMapExact Nat (Nat × ClosLang.Exp) → SimulationTail C₁ C₂) "
+         "(lookup : RawCode) (support : RawCodeSupport lookup) : SimulationTail C₁ C₂ := "
+         "rel (ofBroad lookup support)"),
+        ("fromBroadPredicate", "private def fromBroadPredicate {C₁ C₂ : Type} "
+         "(rel : (lookup : RawCode) → RawCodeSupport lookup → SimulationTail C₁ C₂) "
+         "(code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) : SimulationTail C₁ C₂ := "
+         "rel (toBroad code) code.finiteSupport"),
+    ]
+    # A contiguous reviewed block prevents an unexamined command from changing
+    # the meaning of one helper before the next one is declared.
+    declared_names = re.findall(
+        r"\b(?:abbrev|def|theorem|lemma|axiom|opaque|instance|structure|inductive|class)\s+([^\s:({]+)",
+        clean,
+    )
+    def count_leaf(name: str) -> int:
+        return sum(candidate == name or candidate.endswith("." + name) for candidate in declared_names)
+
+    matches = []
+    for name, _ in expected:
+        found = list(re.finditer(
+            rf"(?m)^[ \t]*private\s+(?:abbrev|def)\s+{re.escape(name)}\b", clean,
+        ))
+        if count_leaf(name) != 1 or len(found) != 1:
+            return [f"predicate-domain witness requires exactly one private `{name}` helper"]
+        matches.append(found[0].start())
+    witness_name = "simulationPredicateRoundtrips"
+    witness = list(re.finditer(r"(?m)^[ \t]*theorem\s+simulationPredicateRoundtrips\b", clean))
+    if count_leaf(witness_name) != 1 or len(witness) != 1:
+        return ["predicate-domain witness requires exactly one roundtrip theorem"]
+    ends = matches[1:] + [witness[0].start()]
+    if matches != sorted(matches) or ends[-1] <= matches[-1]:
+        return ["predicate-domain codec helpers must precede the roundtrip theorem in reviewed order"]
+    for (name, declaration), start, end in zip(expected, matches, ends):
+        if " ".join(clean[start:end].split()) != declaration:
+            return [f"predicate-domain witness helper `{name}` differs from the reviewed codec"]
+    statement = _statements_of_declaration(clean, "simulationPredicateRoundtrips")
+    expected_statement = (
+        "{C₁ C₂ : Type} : "
+        "(∀ (rel : HolFiniteMapExact Nat (Nat × ClosLang.Exp) → SimulationTail C₁ C₂) "
+        "(code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)), "
+        "fromBroadPredicate (toBroadPredicate rel) code = rel code) ∧ "
+        "(∀ (rel : (lookup : RawCode) → RawCodeSupport lookup → SimulationTail C₁ C₂) "
+        "(lookup : RawCode) (support : RawCodeSupport lookup), "
+        "toBroadPredicate (fromBroadPredicate rel) lookup support = rel lookup support)"
+    )
+    if len(statement) != 1 or " ".join(statement[0].split()) != expected_statement:
+        return ["predicate-domain witness must state both complete unconditional predicate roundtrips"]
     return []
 
 
