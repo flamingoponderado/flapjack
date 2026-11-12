@@ -84,6 +84,7 @@ in
 end;
 val _ = show_thm "rel_dest_thunk_NotThunk_typed=" clos_to_bvlProofTheory.rel_dest_thunk_NotThunk;
 val _ = show_thm "rel_dest_thunk_typed=" clos_to_bvlProofTheory.rel_dest_thunk;
+val _ = show_thm "do_build_const_thm_typed=" clos_to_bvlProofTheory.do_build_const_thm;
 val _ = show_thm "build_aux_append_aux_typed=" clos_to_bvlProofTheory.build_aux_append_aux;
 val _ = show_thm "compile_exps_append_aux_typed=" clos_to_bvlProofTheory.compile_exps_append_aux;
 val _ = show_thm "compile_exps_eq_append_typed=" clos_to_bvlProofTheory.compile_exps_eq_append;

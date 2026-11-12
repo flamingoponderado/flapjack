@@ -1,5 +1,6 @@
 module
 
+public import Flapjack.FiniteMap.BroadCodec
 public import Flapjack.Compiler.Backend.ClosConstant.Proofs.Reconstruct
 public import Flapjack.Compiler.Backend.ClosConstant.Proofs.HashParts
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshTargetRefs
@@ -97,6 +98,52 @@ theorem constantBuildConst_related {C F : Type} (parts : List ClosLang.ConstPart
   have memoryRel : ∀ _ : Nat, vRel s.maxApp f t.refs t.code (.number 0) (.number 0) :=
     fun _ => .number 0
   exact constantBuild_related parts (fun _ => .number 0) (fun _ => .number 0) 0 s t f states memoryRel
+
+namespace ConstantBuildCarrier
+
+/-- The closure state's finite maps have canonical finite support. -/
+theorem holFmapAsFiniteSupportRelationWitness_ClosSem.State {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
+/-- The BVL state's reference map has canonical finite support. -/
+theorem holFmapAsFiniteSupportRelationWitness_BvlSem.State {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+
+/-- The existential relocation map roundtrips through the canonical codec. -/
+theorem holFmapAsFiniteSupportExistentialWitness_doBuildConst_thm_f2out
+    (f2out : HolFiniteMapExact Nat Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f2out)).lookup = f2out.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f2out)).finiteSupport = f2out.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f2out) = f2out := by
+  cases f2out
+  exact ⟨rfl, rfl, rfl⟩
+
+end ConstantBuildCarrier
+
+/-- Building a constant preserves the earlier reference frame and relations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "do_build_const_thm"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code, BvlSem.State.refs, f1, f2, refs])
+  (fmap_as_finite_support_existentials := [f2out])]
+theorem doBuildConst_thm {C F D G : Type} (parts : List ClosLang.ConstPart)
+    (t1 : BvlSem.State D G) (t2 : BvlSem.State C F) (s : ClosSem.State C F)
+    (f1 : HolFiniteMapExact Nat Nat) (f2 : HolFiniteMapExact Nat Nat) (value : BvlSem.Value)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
+    (premises : BvlSem.doBuildConst (parts.map updateTag) t2.refs = (value, refs) ∧
+      stateRel f2 s t2 ∧ f1.submap f2 ∧ unmappedRefsSubmap t1.refs t2.refs f1 f2) :
+    ∃ (f2out : HolFiniteMapExact Nat Nat),
+      vRel s.maxApp f2out refs t2.code (buildConst parts) value ∧
+      stateRel f2out s { t2 with refs := refs } ∧ f1.submap f2out ∧
+      unmappedRefsSubmap t1.refs refs f1 f2out := by
+  obtain ⟨run, states, submap, previousFrame⟩ := premises
+  obtain ⟨builtValue, builtRefs, builtRun, valueRel, finalStates, frame⟩ :=
+    constantBuildConst_related parts s t2 f2 states
+  have resultEq : (builtValue, builtRefs) = (value, refs) := builtRun.symm.trans run
+  cases resultEq
+  exact ⟨f2, valueRel, finalStates, submap, unmappedRefsSubmap_trans previousFrame frame⟩
 
 /-- For constants emitted as a build operation, the executed part builder
 produces a value related to the original constant. The state and value

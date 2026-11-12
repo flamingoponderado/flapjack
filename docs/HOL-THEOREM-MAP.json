@@ -145,6 +145,14 @@
   "reviewer": "Independent typed HOL comparison confirms the original compilation equality, full length and suffix conclusions, binder order, and faithful closure and BVL carriers."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "do_build_const_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ConstantBuild.lean", "lean_name": "doBuildConst_thm",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+  "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code", "BvlSem.State.refs", "f1", "f2", "refs"],
+  "fmap_as_finite_support_existentials": ["f2out"],
+  "reviewer": "Compared the typed HOL theorem: the historical BVL state's compiler and FFI carriers are independent of the shared source/current BVL carriers; all four premises, existential relocation map, value and updated-state relations, submap and frame conclusions agree. State fields and the f1, f2, refs and f2out maps use canonical finite support, with local state and existential codec roundtrips."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "rel_dest_thunk_NotThunk",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Thunk.lean", "lean_name": "destThunk_notThunk_related",
   "statement_status": "reviewed_fmap_as_finite_support_relation",
