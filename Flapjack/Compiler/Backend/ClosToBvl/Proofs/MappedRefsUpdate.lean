@@ -21,6 +21,22 @@ theorem mappedUpdate_frame (f : HolFiniteMapExact Nat Nat)
     exact fresh ⟨sourcePtr, mapped⟩
   exact ⟨by simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, ne] using found, fresh⟩
 
+/-- Updating a mapped target reference preserves related optional values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "OPTREL_v_rel_UPDATE_REF"
+  (fmap_as_finite_support_relation := [f, refs])]
+theorem optionValueRel_updateRef (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (x : Option ClosSem.Value) (y : Option BvlSem.Value) (r : Nat)
+    (cell : BvlSem.Ref BvlSem.Value)
+    (premises : optionValueRel (vRel maxApp f refs code) x y ∧
+      ∃ source, f.lookup source = some r) :
+    optionValueRel (vRel maxApp f (refs.updateEq (r, cell)) code) x y := by
+  obtain ⟨related, source, mapped⟩ := premises
+  have frame := mappedUpdate_frame f refs source r mapped cell
+  have submap : f.submap f := by intro key value found; exact found
+  cases x <;> cases y <;> simp only [optionValueRel] at related ⊢
+  exact vRel_grow_refs related submap frame
+
 /-- Simultaneously replacing related mapped cells preserves the candidate
 state relation, with the relocation map unchanged. -/
 theorem stateRel_update_mapped {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State C F)
@@ -42,8 +58,8 @@ theorem stateRel_update_mapped {C F : Type} (s : ClosSem.State C F) (t : BvlSem.
   refine ⟨ffi, ?_, table, injective, ?_, ?_, ?_, ?_, generic, partialCode, force, oracle, code⟩
   · apply globals.imp
     intro a b rel
-    cases a <;> cases b <;> simp only [optionValueRel] at rel ⊢
-    exact grow _ _ rel
+    exact optionValueRel_updateRef s.maxApp f t.refs t.code a b targetPtr targetCell
+      ⟨rel, sourcePtr, mapped⟩
   · intro x y bytes lookup frozen
     by_cases eq : y = targetPtr
     · subst y
