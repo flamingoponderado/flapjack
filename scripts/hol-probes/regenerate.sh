@@ -10329,3 +10329,12 @@ run_probe bvl_to_bvi_proof_typed_probeScript.sml bvl_to_bvi_proof_typed_probe.ou
   do_build_ok_typed do_app_ok_typed evaluate_ok_typed compile_inc_no_mutcons_typed bvi_tailrec_compile_prog_no_mutcons_typed \
   "$cake_dir/compiler/backend/proofs/bvl_to_bviProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe gen_gc_partial_typed_probeScript.sml gen_gc_partial_typed_probe.out \
+  partial_gc_related_typed isSomeDataElement_heap_lookup_heap_expand_typed new_f_def_typed f_old_ptrs_def_typed f_old_ptrs_finite_typed isSomeDataElement_to_gen_heap_list_typed gc_move_ref_list_heap_length_typed data_sort_typed \
+  to_gen_heap_address_def_typed to_gen_conf_def_typed to_gen_heap_element_def_typed to_gen_heap_list_def_typed to_gen_heap_def_typed to_gen_state_def_typed to_gen_roots_def_typed refs_to_roots_def_typed \
+  heap_element_is_ref_def_typed heap_gen_ok_def_typed gen_inv_def_typed has_old_ptr_def_typed all_old_ptrs_def_typed sim_inv_def_typed heap_length_to_gen_heap_list_typed similar_ptr_def_typed \
+  similar_data_def_typed LIST_REL_similar_data_IMP_typed gc_move_list_heap_length_typed gc_forward_ptr_heap_length_typed gc_move_heap_length_typed gen_gc_partial_conf_typed gc_move_def_typed gc_move_list_def_typed \
+  gc_move_ref_list_def_typed gc_move_data_def_typed partial_gc_def_typed \
+  "$cake_dir/compiler/backend/gc/gen_gc_partialScript.sml" \
+  "$cake_dir/compiler/backend/gc"

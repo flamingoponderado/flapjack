@@ -6723,7 +6723,7 @@
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "gcMoveData_simulation",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared gc_move_data_simulation_typed with source lines 979-988: the partial run, sim_inv, the child pointer bound, the heap-length equation, the major gcMoveData run and its ok imply sim_inv after the move and the translated state equality."
+  "reviewer": "Compared gc_move_data_simulation_typed with source lines 979-988: the partial run, sim_inv, the child pointer bound, the heap-length equation, the major gcMoveData run and its ok imply sim_inv after the move and the translated state equality. Task-149 typed capture re-review: gc_move_data_simulation_typed binds a vacuous ptr1' : γ that the statement never uses; its omission is documented in the Lean docstring."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
