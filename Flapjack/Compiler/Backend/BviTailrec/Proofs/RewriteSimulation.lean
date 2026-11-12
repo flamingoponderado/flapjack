@@ -1840,39 +1840,6 @@ theorem evaluate_checked_worker_candidate_through {C F : Type}
     exact appliedRun
 
 
-/-- The unrestricted candidate hypotheses supply the bounded worker proof. -/
-theorem evaluate_checked_worker_candidate {C F : Type}
-    (loc arity workerLoc acc : Nat) (body e checked : Bvi.Exp) (op : AssocOp)
-    (env1 env2 : List Value) (source sourceNext : BviSem.BviState (Nat × C) F)
-    (target : BviSem.BviState C F) (ctx : List ValueType) (ty : ValueType)
-    (sourceResult : BviSem.BviResult)
-    (subIH : ∀ pure ticks args,
-      (e = applyOp op pure (.call ticks (some loc) args none) ∨
-        (op ≠ .append ∧ e = applyOp op (.call ticks (some loc) args none) pure)) →
-      rewriteTailProperty (C := C) (F := F) [pure] ∧ rewriteTailProperty (C := C) (F := F) args)
-    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
-      (values : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
-      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
-        rewriteTailHyp [body] called values r last optimized target acc env2 loc ts ty →
-        rewriteTailPost [body] called values r last optimized target acc env2 loc ts ty)
-    (envRelated : envRel ty true acc env1 env2) (related : stateRel source target)
-    (types : tyRel env1 ctx) (sameType : opType op = ty)
-    (sourceCode : sptLookup loc source.code = some (arity, body))
-    (optimized : optimizedCode loc arity body workerLoc target.code op)
-    (check : checkOp ctx op loc e = some checked)
-    (sourceRun : BviSem.evaluate [e] env1 source = (sourceResult, sourceNext))
-    (notTypeError : sourceResult ≠ .err (.abort .typeError)) :
-    ∃ result' t1 t2,
-      BviSem.evaluate [(rewriteSource loc workerLoc op acc ctx e).2] env2 target = (result', t1) ∧
-      BviSem.evaluate [applyOp op (.var acc) e] env2 target = (result', t2) ∧
-      stateRel sourceNext t1 ∧ stateRel sourceNext t2 := by
-  apply evaluate_checked_worker_candidate_through loc arity workerLoc acc body e checked op env1 env2
-    source sourceNext target ctx ty sourceResult ?_ clockIH envRelated related types sameType sourceCode
-    optimized check sourceRun notTypeError
-  intro pure ticks args shape
-  obtain ⟨termIH, argsIH⟩ := subIH pure ticks args shape
-  exact ⟨rewriteTailProperty_through termIH _, rewriteTailProperty_through argsIH _⟩
-
 /-- Force case of the rewrite simulation. The induction hypothesis applies
 to any called body at a strictly smaller clock, as in the source induction. -/
 theorem rewriteTail_force {C F : Type} (place index : Nat)
