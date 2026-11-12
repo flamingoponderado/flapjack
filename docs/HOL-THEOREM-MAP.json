@@ -2593,6 +2593,16 @@
   "reviewer": "Compared compile_every_Fn_SOME_typed with the HOL source: the program label type is independently polymorphic, both body projections and the function-location predicate match, and compileSource is the reviewed source annotation definition. The proof applies the reviewed every_Fn_SOME_ann, whose generalised statement is the same HOL result."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "compile_common_semantics",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CommonSemantics.lean",
+  "lean_name": "compileCommon_semantics",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty", "Flapjack.HolFiniteMapExact.alistToFmap"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Independent comparison with the HOL source and compile_common_semantics_typed confirms all twelve outer premises, every guarded oracle and syntax condition, independent FFI and compiler-state types, fixed callback word widths, and the complete target-to-source behavior equality. The observed maps are Flapjack.HolFiniteMapExact.holEmpty and Flapjack.HolFiniteMapExact.alistToFmap. The proof derives intermediate safety, strict chain-label freshness, and annotation conditions from the original premises. Both uses of holThe are guarded by knownConf.isSome, and the known compiler preserves option shape. Inherits reals_as_rational_cuts and the SOUNDNESS item 8 assumption through ClosSem.semantics."
+},
+{
   "hol_path": "HOL/src/finite_maps/alistScript.sml",
   "hol_name": "alist_to_fmap_APPEND",
   "lean_path": "Flapjack/FiniteMap/AlistExact/Append.lean",
