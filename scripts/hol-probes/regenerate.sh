@@ -10682,3 +10682,8 @@ run_probe loop_live_typed_probeScript.sml loop_live_typed_probe.out \
   vars_of_exp_def_typed fixedpoint_thm_typed \
   "$cake_dir/pancake/loop_liveScript.sml" \
   "$cake_dir/pancake"
+
+run_probe infer_t_typed_probeScript.sml infer_t_typed_probe.out \
+  infer_t_typed get_tyname_def_typed type_ident_to_string_def_typed ty_var_name_def_typed add_parens_def_typed inf_type_to_string_rec_def_typed inf_type_to_string_def_typed \
+  "$cake_dir/compiler/inference/infer_tScript.sml" \
+  "$cake_dir/compiler/inference"
