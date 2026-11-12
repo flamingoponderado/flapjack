@@ -287,6 +287,7 @@
     {"bytes": 190, "out": "crep_arith_store_32_probe.out", "rows": 7, "sha256": "e7dd99dc14cb0f439e1bc80ea12ebf7830c4238c1b705515ab8a19306187a406"},
     {"bytes": 229, "out": "crep_arith_store_byte_probe.out", "rows": 7, "sha256": "2a574ecffb6d2a6360b34211e2eaf05b87af9c8378e9b7793e50d61b649d60ae"},
     {"bytes": 133, "out": "crep_arith_store_glob_probe.out", "rows": 5, "sha256": "abdc9749082e91445d41b6af112669a221b2d24e203a3f129eaa5fdf6e9a90f1"},
+    {"bytes": 5678, "out": "crep_arith_typed_probe.out", "rows": 7, "sha256": "13d5278c08a6f4da7684b6761cd1a008fc65b211fd639e798217d2d51db669f5"},
     {"bytes": 89, "out": "crep_assign_eval_probe.out", "rows": 3, "sha256": "ba46acf651f52da51d4382a4a1c0362f707d26baf24813e9a7f0d888525906fc"},
     {"bytes": 118, "out": "crep_assign_ret_probe.out", "rows": 3, "sha256": "1f8a1d6a226400dda4283d2e1a3e5f7587aa8981dcb4756d034a41a827181e73"},
     {"bytes": 91, "out": "crep_assigned_free_vars_probe.out", "rows": 6, "sha256": "5bb3477f73b775fd73d1356c7e38e7e2d8854e894863fabd351eb0c5c60971b9"},

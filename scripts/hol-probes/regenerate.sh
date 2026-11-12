@@ -10704,3 +10704,8 @@ run_probe source_letProof_typed_probeScript.sml source_letProof_typed_probe.out 
   compile_semantics_oracle_typed compile_decs_correct_typed compile_semantics_typed evaluate_lift_lets_typed evaluate_lift_let_typed lift_lets_is_prefix_typed \
   "$cake_dir/compiler/backend/proofs/source_letProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe crep_arith_typed_probeScript.sml crep_arith_typed_probe.out \
+  dest_2exp_def_typed dest_2exp_thm_typed dest_const_def_typed mul_const_def_typed simp_exp_def_typed simp_prog_def_typed dest_2exp_lemma_typed \
+  "$cake_dir/pancake/crep_arithScript.sml" \
+  "$cake_dir/pancake"
