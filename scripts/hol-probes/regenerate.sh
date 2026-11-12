@@ -10496,3 +10496,10 @@ run_probe stack_lang_typed_probeScript.sml stack_lang_typed_probe.out \
   store_name_typed gc_stub_location_def_typed list_Seq_def_typed prog_typed \
   "$cake_dir/compiler/backend/stackLangScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe bvl_handle_typed_probeScript.sml bvl_handle_typed_probe.out \
+  compile_def_typed compile_sing_eq_typed compile_exp_def_typed compile_exp_eq_typed compile_seqs_def_typed compile_any_def_typed can_raise_def_typed dest_handle_Raise_def_typed \
+  dest_handle_Let_def_typed dest_handle_If_def_typed handle_adj_vars_def_typed handle_size_def_typed handle_simp_def_typed SmartLet_def_typed LetLet_def_typed OptionalLetLet_sing_def_typed \
+  OptionalLetLet_def_typed OptionalLetLet_sing_eq_typed compile_sing_def_typed \
+  "$cake_dir/compiler/backend/bvl_handleScript.sml" \
+  "$cake_dir/compiler/backend"
