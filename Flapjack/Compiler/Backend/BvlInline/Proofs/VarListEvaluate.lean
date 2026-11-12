@@ -64,22 +64,6 @@ theorem varListEvaluate_zero {C F : Type} (expressions xs : List Bvl.Exp)
     evaluateTuple (expressions, values ++ env, state) = (.val values, state) := by
   simpa using varListEvaluate values [] expressions xs state env h
 
-/-- A successful variable-list test compares lists of the same length. This
-helper has no standalone HOL declaration. -/
-theorem varListHOL_length {α : Type} (n : Nat) (expressions : List Bvl.Exp) (xs : List α)
-    (valid : varListHOL n expressions xs = true) : expressions.length = xs.length := by
-  induction expressions generalizing n xs with
-  | nil => cases xs <;> simp_all [varListHOL]
-  | cons expression rest ih =>
-    cases xs with
-    | nil => cases expression <;> simp_all [varListHOL]
-    | cons x xs =>
-      cases expression with
-      | var index =>
-        simp only [varListHOL, Bool.and_eq_true] at valid
-        simp [ih (n + 1) xs valid.2]
-      | _ => simp [varListHOL] at valid
-
 /-- The local reduction underlying the let-operation pass preserves BVL
 evaluation for all results, including type errors. This is a proof helper,
 not a standalone HOL declaration. -/

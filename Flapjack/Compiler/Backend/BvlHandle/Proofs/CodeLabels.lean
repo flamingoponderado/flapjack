@@ -2,8 +2,10 @@ module
 
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.HelpersProduction
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.LetLet
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.Simplify
 public import Flapjack.Compiler.Backend.BvlHandle.SourceCompile
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.CodeLabels
+public import Flapjack.Compiler.Backend.BvlConst.Proofs.CompileLabels
 
 @[expose] public section
 
@@ -229,5 +231,142 @@ theorem compile_codeLabels (limit env : Nat) (expressions : List Bvl.Exp) :
       (⋃₀ (getCodeLabels '' {e | e ∈ expressions})) := by
   rw [← getCodeLabelsList_eq, ← getCodeLabelsList_eq]
   exact compileList_labels limit env expressions
+
+mutual
+private theorem handleSimp_labels_expr (e : Bvl.Exp) : getCodeLabels (handleSimp e) ⊆ getCodeLabels e := by
+  cases e with
+  | var n => simp [handleSimp]
+  | force l n => simp [handleSimp]
+  | raise e => simpa only [handleSimp, getCodeLabels] using handleSimp_labels_expr e
+  | tick e => simpa only [handleSimp, getCodeLabels] using handleSimp_labels_expr e
+  | call t d xs =>
+    simp only [handleSimp, getCodeLabels]
+    exact Set.union_subset_union Set.Subset.rfl (handleSimp_labels_list xs)
+  | op op xs =>
+    simp only [handleSimp, getCodeLabels]
+    exact Set.union_subset_union Set.Subset.rfl (handleSimp_labels_list xs)
+  | «let» xs e =>
+    simp only [handleSimp, getCodeLabels]
+    exact Set.union_subset_union (handleSimp_labels_list xs) (handleSimp_labels_expr e)
+  | ifThenElse x y z =>
+    simp only [handleSimp, getCodeLabels]
+    exact Set.union_subset_union (Set.union_subset_union (handleSimp_labels_expr x) (handleSimp_labels_expr y)) (handleSimp_labels_expr z)
+  | handle x y =>
+    simp only [handleSimp, getCodeLabels]
+    exact makeHandle_labels x y 0
+termination_by handleSize e
+decreasing_by all_goals simp_all [handleSize] <;> omega
+private theorem handleSimp_labels_list (xs : List Bvl.Exp) :
+    getCodeLabelsList (handleSimpList xs) ⊆ getCodeLabelsList xs := by
+  cases xs with
+  | nil => simp [handleSimpList, getCodeLabelsList]
+  | cons e es =>
+    simp only [handleSimpList, getCodeLabelsList]
+    exact Set.union_subset_union (handleSimp_labels_expr e) (handleSimp_labels_list es)
+termination_by handleSizeList xs
+decreasing_by all_goals (simp_all [handleSizeList]; omega)
+
+private theorem makeHandle_labels (e d : Bvl.Exp) (l : Nat) :
+    getCodeLabels (makeHandle e d l) ⊆ getCodeLabels e ∪ getCodeLabels d := by
+  cases e with
+  | raise e =>
+    simp only [makeHandle]
+    split
+    · simp only [getCodeLabels, handleAdjVars_codeLabels.1]
+      exact Set.union_subset_union (handleSimp_labels_expr (.raise e)) (handleSimp_labels_expr d)
+    · simp only [getCodeLabels, getCodeLabelsList, Set.union_empty, handleAdjVars_codeLabels.1]
+      exact Set.union_subset_union Set.Subset.rfl (handleSimp_labels_expr d)
+  | «let» xs e =>
+    simp only [makeHandle]
+    split
+    · simp only [getCodeLabels, handleAdjVars_codeLabels.1]
+      exact Set.union_subset_union (handleSimp_labels_expr (.let xs e)) (handleSimp_labels_expr d)
+    · simp only [getCodeLabels]
+      have h := Set.union_subset_union (handleSimp_labels_list xs) (makeHandle_labels e d (l + xs.length))
+      simpa only [Set.union_assoc] using h
+  | ifThenElse x y z =>
+    have ix := handleSimp_labels_expr x
+    have iy := handleSimp_labels_expr y
+    have iz := handleSimp_labels_expr z
+    have id := handleSimp_labels_expr d
+    have hy := makeHandle_labels y d l
+    have hz := makeHandle_labels z d l
+    have whole := handleSimp_labels_expr (.ifThenElse x y z)
+    simp only [makeHandle]
+    repeat' split
+    all_goals simp only [getCodeLabels, handleAdjVars_codeLabels.1] at *
+    all_goals simp only [Set.subset_def, Set.mem_union] at *
+    all_goals intro k hk
+    all_goals specialize ix k
+    all_goals specialize iy k
+    all_goals specialize iz k
+    all_goals specialize id k
+    all_goals specialize hy k
+    all_goals specialize hz k
+    all_goals specialize whole k
+    all_goals aesop
+  | _ =>
+    simp only [makeHandle, getCodeLabels, handleAdjVars_codeLabels.1]
+    exact Set.union_subset_union (handleSimp_labels_expr _) (handleSimp_labels_expr d)
+termination_by handleSize e + handleSize d
+decreasing_by
+  all_goals simp_wf
+  all_goals try simp only [handleSize]
+  all_goals have h := handleSize_nonzero d
+  all_goals try omega
+end
+
+/-- Handler simplification introduces no code labels in expressions, lists, or handlers. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "get_code_labels_handle_simp"]
+theorem handleSimp_codeLabels :
+    (∀ c, getCodeLabels (handleSimp c) ⊆ getCodeLabels c) ∧
+    (∀ c, (⋃₀ (getCodeLabels '' {e | e ∈ handleSimpList c})) ⊆
+      (⋃₀ (getCodeLabels '' {e | e ∈ c}))) ∧
+    (∀ c d l, getCodeLabels (makeHandle c d l) ⊆ getCodeLabels c ∪ getCodeLabels d) := by
+  refine ⟨handleSimp_labels_expr, ?_, makeHandle_labels⟩
+  intro c
+  rw [← getCodeLabelsList_eq, ← getCodeLabelsList_eq]
+  exact handleSimp_labels_list c
+
+/-- The complete expression pass introduces no code labels. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "compile_exp_code_labels"]
+theorem compileExp_codeLabels (limit arity : Nat) (e : Bvl.Exp) :
+    getCodeLabels (compileExp limit arity e) ⊆ getCodeLabels e := by
+  have compiled := compile_codeLabels limit arity [handleSimp (BvlConst.compileExp e)]
+  rw [← getCodeLabelsList_eq, ← getCodeLabelsList_eq, compileExp_list_head] at compiled
+  simp only [getCodeLabelsList, Set.union_empty] at compiled
+  exact compiled.trans ((handleSimp_codeLabels.1 _).trans (BvlConst.Proofs.compileExp_codeLabels e))
+
+/-- Sequence splitting introduces no labels beyond its expression and continuation. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "compile_seqs_code_labels"]
+theorem compileSeqs_codeLabels (limit : Nat) (e : Bvl.Exp) (acc : Option Bvl.Exp) :
+    getCodeLabels (compileSeqs limit e acc) ⊆
+      getCodeLabels e ∪ (match acc with | none => ∅ | some rest => getCodeLabels rest) := by
+  change getCodeLabels (compileSeqsWith (fun limit e => compileExp limit 0 e) limit e acc) ⊆ _
+  by_cases shape : ∃ first second, e = .let [first, second] (.var 1)
+  · obtain ⟨first, second, rfl⟩ := shape
+    simp only [compileSeqsWith]
+    have outer := compileSeqs_codeLabels limit first (some (compileSeqs limit second acc))
+    have inner := compileSeqs_codeLabels limit second acc
+    simp only [getCodeLabels, getCodeLabelsList, Set.union_empty, Set.subset_def,
+      Set.mem_union] at outer inner ⊢
+    intro label present
+    rcases outer label present with firstLabel | restLabel
+    · exact Or.inl (Or.inl firstLabel)
+    · rcases inner label restLabel with secondLabel | accLabel
+      · exact Or.inl (Or.inr secondLabel)
+      · exact Or.inr accLabel
+  · have notShape : ∀ first second, e = .let [first, second] (.var 1) → False := by
+      intro first second equal
+      exact shape ⟨first, second, equal⟩
+    cases acc with
+    | none =>
+      rw [compileSeqsWith.eq_2 _ limit e notShape]
+      simpa only [Set.union_empty] using compileExp_codeLabels limit 0 e
+    | some rest =>
+      rw [compileSeqsWith.eq_3 _ limit e rest notShape]
+      simpa only [getCodeLabels, getCodeLabelsList, Set.union_empty, Set.empty_union] using
+        Set.union_subset_union (compileExp_codeLabels limit 0 e) (Set.Subset.rfl)
+termination_by sizeOf e
 
 end Flapjack.Compiler.Backend.BvlHandle.Proofs

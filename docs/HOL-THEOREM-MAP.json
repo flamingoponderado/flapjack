@@ -1,5 +1,23 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "compile_exp_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/CodeLabels.lean", "lean_name": "compileExp_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: for arbitrary limit, arity and BVL expression, the labels of source compile_exp form a subset of the input labels, with no hypotheses. The proof composes the reviewed constant propagation, handler simplification and handler traversal bounds."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "compile_seqs_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/CodeLabels.lean", "lean_name": "compileSeqs_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: arbitrary cut, expression and optional continuation, with source compile_seqs labels bounded by the union of input labels and the original NONE/ SOME continuation case; no hypotheses."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "get_code_labels_handle_simp",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/CodeLabels.lean", "lean_name": "handleSimp_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original conjunction: arbitrary expression simplification preserves the label subset; arbitrary expression-list simplification preserves the subset of the full mapped label union; and make_handle has labels bounded by the union of body and handler labels for arbitrary depth. Set image of list membership represents set (MAP get_code_labels xs)."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "compile_code_labels",
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/CodeLabels.lean", "lean_name": "compile_codeLabels",
   "statement_status": "reviewed_exact",
