@@ -10468,3 +10468,10 @@ run_probe pan_sem_typed_probeScript.sml pan_sem_typed_probe.out \
   pan_op_def_typed write_bytearray_def_typed theWord_def_typed kvar_simps_typed is_valid_value_simps_typed upd_locals_def_typed res_var_def_typed sh_mem_store_def_typed \
   "$cake_dir/pancake/semantics/panSemScript.sml" \
   "$cake_dir/pancake/semantics"
+
+run_probe ast_typed_probeScript.sml ast_typed_probe.out \
+  opb_typed shift_typed test_typed thunk_mode_typed thunk_op_typed word_size_typed lit_typed arith_typed \
+  prim_type_typed op_typed op_class_typed getOpClass_def_typed lop_typed ast_t_typed pat_typed exp_typed \
+  dec_typed pat_bindings_def_typed every_exp_def_typed \
+  "$cake_dir/semantics/astScript.sml" \
+  "$cake_dir/semantics"
