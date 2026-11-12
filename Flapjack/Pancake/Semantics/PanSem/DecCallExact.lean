@@ -40,13 +40,17 @@ open Flapjack.Pancake.PanLang (MlS ShapeHOL ExpHOL ProgHOL)
 /-- Function-backed rendering of HOL `panSem$lookup_code` (`panSemScript.sml:458-467`).
     The lookup and argument checks are retained, but this helper is untagged
     because `code` is an unrestricted function rather than a HOL finite map.
+    HOL leaves the body payload polymorphic
+    (`code :ε |-> (β # shape) list # α # δ` in `lookup_code_def_typed`,
+    `pan_sem_typed_probe.out:22`), so the payload stays generic as `P` here;
+    the evaluator instantiates it with `ProgHOL width`.
     Exact finite-support replacement tracked by
     `flapjack-pxn.18.3.7.1.3.1.1.2.5` (parent `.2.3`). -/
-def lookupCodeHOLExact {ε β δ : Type} [DecidableEq β]
-    {width : Nat} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
-    (code : ε → Option (List (β × ShapeHOL) × ProgHOL width × δ))
+def lookupCodeHOLExact {ε β δ P : Type} [DecidableEq β]
+    {valueWidth : Nat} [NeZero valueWidth]
+    (code : ε → Option (List (β × ShapeHOL) × P × δ))
     (fname : ε) (arguments : List (ValueHOL valueWidth)) :
-    Option (ProgHOL width × (β → Option (ValueHOL valueWidth)) × δ) :=
+    Option (P × (β → Option (ValueHOL valueWidth)) × δ) :=
   match code fname with
   | none => none
   | some (parameters, body, returnShape) =>
@@ -61,9 +65,9 @@ def lookupCodeHOLExact {ε β δ : Type} [DecidableEq β]
           returnShape)
       else none
 
-@[simp] theorem lookupCodeHOLExact_of_code_none {ε β δ : Type} [DecidableEq β]
-    {width : Nat} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
-    (code : ε → Option (List (β × ShapeHOL) × ProgHOL width × δ))
+@[simp] theorem lookupCodeHOLExact_of_code_none {ε β δ P : Type} [DecidableEq β]
+    {valueWidth : Nat} [NeZero valueWidth]
+    (code : ε → Option (List (β × ShapeHOL) × P × δ))
     (fname : ε) (arguments : List (ValueHOL valueWidth))
     (h : code fname = none) :
     lookupCodeHOLExact code fname arguments = none := by

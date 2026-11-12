@@ -401,11 +401,11 @@ theorem PanSemStateExact.finiteSupport_setLocals_clock {width : Nat} {σ : Type}
   exact ⟨hl, hg, hc, he⟩
 
 /-- The Zipped `lookup_code` locals map has finite support. -/
-theorem lookupCodeHOLExact_calleeLocals_finiteSupport {ε β δ : Type} [DecidableEq β]
-    {width : Nat} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
-    (code : ε → Option (List (β × ShapeHOL) × ProgHOL width × δ))
+theorem lookupCodeHOLExact_calleeLocals_finiteSupport {ε β δ P : Type} [DecidableEq β]
+    {valueWidth : Nat} [NeZero valueWidth]
+    (code : ε → Option (List (β × ShapeHOL) × P × δ))
     (fname : ε) (arguments : List (ValueHOL valueWidth))
-    (body : ProgHOL width) (calleeLocals : β → Option (ValueHOL valueWidth))
+    (body : P) (calleeLocals : β → Option (ValueHOL valueWidth))
     (returnShape : δ)
     (h : lookupCodeHOLExact code fname arguments = some (body, calleeLocals, returnShape)) :
     ∃ keys : List β, ∀ key, calleeLocals key ≠ none → key ∈ keys := by

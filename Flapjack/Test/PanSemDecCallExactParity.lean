@@ -186,7 +186,7 @@ def decCallExactGuard : Bool :=
     decCallClockZeroGuard && decCallBadShapeGuard && decCallMissingFunctionGuard
 
 -- `lookupCodeHOLExact_of_code_none`: a code map missing the function returns none.
-example : lookupCodeHOLExact (ε := MlS) (β := MlS) (δ := ShapeHOL) (width := 8)
+example : lookupCodeHOLExact (ε := MlS) (β := MlS) (δ := ShapeHOL) (P := BitVec 8)
       (fun _ => none) (ml "g") [.val (.word (3 : BitVec 8))] = none :=
   lookupCodeHOLExact_of_code_none _ _ _ rfl
 

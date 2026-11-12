@@ -942,12 +942,14 @@ def evaluateHOLFiniteViaExact {width : Nat} {σ : Type} [NeZero width]
     lookup.  It wraps `lookupCodeHOLExact`'s callee-local function as a
     `HolFiniteMapExact`, so the finite evaluator can bind the lookup result in a
     plain `match` instead of a dependent `match hlookup : ...` (whose equation
-    blocks the projection proofs). -/
-def lookupCodeHOLFinite {ε β δ : Type} [DecidableEq β]
-    {width : Nat} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
-    (code : ε → Option (List (β × ShapeHOL) × ProgHOL width × δ))
+    blocks the projection proofs).  HOL's body payload is polymorphic
+    (`α` in `lookup_code_def_typed`), so it stays generic as `P`; the evaluator
+    instantiates `P = ProgHOL width`. -/
+def lookupCodeHOLFinite {ε β δ P : Type} [DecidableEq β]
+    {valueWidth : Nat} [NeZero valueWidth]
+    (code : ε → Option (List (β × ShapeHOL) × P × δ))
     (fname : ε) (values : List (ValueHOL valueWidth)) :
-    Option (ProgHOL width × HolFiniteMapExact β (ValueHOL valueWidth) × δ) :=
+    Option (P × HolFiniteMapExact β (ValueHOL valueWidth) × δ) :=
   match h : lookupCodeHOLExact code fname values with
   | none => none
   | some (body, calleeLocals, returnShape) =>
@@ -965,21 +967,23 @@ The typed HOL statement
 (`lookup_code_def_typed` in `scripts/hol-probes/pan_phase4_exact_probe.out`)
 quantifies `code :ε |-> (β # shape) list # α # δ`, `fname :ε` and
 `args :γ v list`: the map key ε, the variable name β and the return shape δ are
-all generic, the prog type α and the argument value type γ are independent word
-widths.  The exact twin keeps every one of them: `{ε β δ : Type}` with
-`[DecidableEq ε] [DecidableEq β]` (Lean's rendering of HOL equality on the
-generic key and variable types, no BEq), `{width}` for α, `{valueWidth}` for γ,
-and the callee-locals map is `HolFiniteMapExact β (ValueHOL valueWidth)`.  The
-recursive finite evaluator instantiates ε = β = MlS, δ = ShapeHOL and
+all generic, the body payload α is an arbitrary type (the definition only
+passes it through; it is not a word or program type), and only the argument
+value type γ is a type-indexed word.  The exact twin keeps every one of them:
+`{ε β δ P : Type}` with `[DecidableEq ε] [DecidableEq β]` (Lean's rendering of
+HOL equality on the generic key and variable types, no BEq), `P` for α,
+`{valueWidth}` for γ, and the callee-locals map is
+`HolFiniteMapExact β (ValueHOL valueWidth)`.  The recursive finite evaluator
+instantiates ε = β = MlS, δ = ShapeHOL, `P = ProgHOL width` and
 `valueWidth = width` in Call and DecCall. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "lookup_code_def"
   (fmap_as_finite_support_heterogeneous_function := [argument_1, result_2])
   (words_as_type_indexed_bitvec)]
-def lookupCodeCanonicalHOL {ε β δ : Type} [DecidableEq ε] [DecidableEq β]
-    {width : Nat} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
-    (code : HolFiniteMapExact ε (List (β × ShapeHOL) × ProgHOL width × δ))
+def lookupCodeCanonicalHOL {ε β δ P : Type} [DecidableEq ε] [DecidableEq β]
+    {valueWidth : Nat} [NeZero valueWidth]
+    (code : HolFiniteMapExact ε (List (β × ShapeHOL) × P × δ))
     (fname : ε) (arguments : List (ValueHOL valueWidth)) :
-    Option (ProgHOL width × HolFiniteMapExact β (ValueHOL valueWidth) × δ) :=
+    Option (P × HolFiniteMapExact β (ValueHOL valueWidth) × δ) :=
   lookupCodeHOLFinite code.lookup fname arguments
 
 attribute [reducible] lookupCodeCanonicalHOL
@@ -989,9 +993,9 @@ raw lookup operation. Both failure and successful structured callee maps are
 covered; no success equation is assumed. This is representation infrastructure
 with no independently named HOL declaration. -/
 theorem holFmapAsFiniteSupportHeterogeneousFunctionWitness_lookupCodeCanonicalHOL
-    {ε β δ : Type} [DecidableEq ε] [DecidableEq β]
-    {width : Nat} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
-    (code : HolFiniteMapExact ε (List (β × ShapeHOL) × ProgHOL width × δ))
+    {ε β δ P : Type} [DecidableEq ε] [DecidableEq β]
+    {valueWidth : Nat} [NeZero valueWidth]
+    (code : HolFiniteMapExact ε (List (β × ShapeHOL) × P × δ))
     (fname : ε) (arguments : List (ValueHOL valueWidth)) :
     (lookupCodeCanonicalHOL code fname arguments).map
       (fun (body, locals, shape) => (body, locals.lookup, shape)) =
@@ -1000,9 +1004,9 @@ theorem holFmapAsFiniteSupportHeterogeneousFunctionWitness_lookupCodeCanonicalHO
   split <;> simp_all
 
 /-- `lookupCodeHOLFinite` fails exactly when the underlying HOL lookup fails. -/
-theorem lookupCodeHOLFinite_eq_none_iff {ε β δ : Type} [DecidableEq β]
-    {width : Nat} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
-    (code : ε → Option (List (β × ShapeHOL) × ProgHOL width × δ))
+theorem lookupCodeHOLFinite_eq_none_iff {ε β δ P : Type} [DecidableEq β]
+    {valueWidth : Nat} [NeZero valueWidth]
+    (code : ε → Option (List (β × ShapeHOL) × P × δ))
     (fname : ε) (values : List (ValueHOL valueWidth)) :
     lookupCodeHOLFinite code fname values = none ↔
       lookupCodeHOLExact code fname values = none := by
@@ -1011,10 +1015,10 @@ theorem lookupCodeHOLFinite_eq_none_iff {ε β δ : Type} [DecidableEq β]
 
 /-- A successful `lookupCodeHOLFinite` forgets to the underlying HOL lookup
     result (the callee map is projected through `.lookup`). -/
-theorem lookupCodeHOLFinite_eq_some {ε β δ : Type} [DecidableEq β]
-    {width : Nat} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
-    (code : ε → Option (List (β × ShapeHOL) × ProgHOL width × δ))
-    (fname : ε) (values : List (ValueHOL valueWidth)) (body : ProgHOL width)
+theorem lookupCodeHOLFinite_eq_some {ε β δ P : Type} [DecidableEq β]
+    {valueWidth : Nat} [NeZero valueWidth]
+    (code : ε → Option (List (β × ShapeHOL) × P × δ))
+    (fname : ε) (values : List (ValueHOL valueWidth)) (body : P)
     (callee : HolFiniteMapExact β (ValueHOL valueWidth)) (returnShape : δ)
     (h : lookupCodeHOLFinite code fname values = some (body, callee, returnShape)) :
     lookupCodeHOLExact code fname values = some (body, callee.lookup, returnShape) := by
