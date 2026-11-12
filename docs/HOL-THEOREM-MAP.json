@@ -2593,6 +2593,14 @@
   "reviewer": "Compared compile_every_Fn_SOME_typed with the HOL source: the program label type is independently polymorphic, both body projections and the function-location predicate match, and compileSource is the reviewed source annotation definition. The proof applies the reviewed every_Fn_SOME_ann, whose generalised statement is the same HOL result."
 },
 {
+  "hol_path": "HOL/src/finite_maps/sptreeScript.sml",
+  "hol_name": "lookup_fromList",
+  "lean_path": "Flapjack/Misc/Sptree/FromList/Domain.lean",
+  "lean_name": "sptLookupFromList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL source and lookup_fromList_typed confirms arbitrary element type, list and index, with the original guarded lookup equation. Dependent indexing equals HOL EL in the in-bounds branch; the out-of-bounds branch returns none without assuming a nonempty carrier. The optional-index helper also replaces an identical private proof in BviToData."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "compile_common_semantics",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CommonSemantics.lean",
