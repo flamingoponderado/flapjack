@@ -508,7 +508,9 @@ def wrapRt : Option (Shape × List Nat) → Option (Shape × List Nat)
     stays `NONE`, the empty one-word slot `SOME (One, [])` is normalized to
     `NONE`, and every other option is returned unchanged. -/
 @[hol "cakeml/pancake/pan_to_crepScript.sml" "wrap_rt_def"]
-def wrapRtHOL : Option (Flapjack.Pancake.PanLang.ShapeHOL × List Nat) → Option (Flapjack.Pancake.PanLang.ShapeHOL × List Nat)
+def wrapRtHOL {α : Type} :
+    Option (Flapjack.Pancake.PanLang.ShapeHOL × List α) →
+      Option (Flapjack.Pancake.PanLang.ShapeHOL × List α)
   | none => none
   | some (.one, []) => none
   | value => value

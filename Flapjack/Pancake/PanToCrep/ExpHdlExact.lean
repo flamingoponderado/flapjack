@@ -19,17 +19,18 @@ namespace Flapjack
 
 open Flapjack.Pancake.PanLang (MlS ShapeHOL)
 
-private def expHdlMaptoBroadlookup (fm : HolFiniteMapExact MlS (ShapeHOL × List Nat)) :
-    MlS → Option (ShapeHOL × List Nat) := fm.lookup
+private def expHdlMaptoBroadlookup {α : Type}
+    (fm : HolFiniteMapExact α (ShapeHOL × List Nat)) :
+    α → Option (ShapeHOL × List Nat) := fm.lookup
 
-private def expHdlMapofBroad (fm : MlS → Option (ShapeHOL × List Nat))
-    (support : ∃ keys : List MlS, ∀ key, fm key ≠ none → key ∈ keys) :
-    HolFiniteMapExact MlS (ShapeHOL × List Nat) := ⟨fm, support⟩
+private def expHdlMapofBroad {α : Type} (fm : α → Option (ShapeHOL × List Nat))
+    (support : ∃ keys : List α, ∀ key, fm key ≠ none → key ∈ keys) :
+    HolFiniteMapExact α (ShapeHOL × List Nat) := ⟨fm, support⟩
 
 /-- Canonical map-parameter witness for `expHdlExact.fm`: the direct
     `HolFiniteMapExact` input roundtrips through its lookup and support proof. -/
-theorem holFmapAsFiniteSupportParamWitness_expHdlExact_fm
-    (fm : HolFiniteMapExact MlS (ShapeHOL × List Nat)) :
+theorem holFmapAsFiniteSupportParamWitness_expHdlExact_fm {α : Type}
+    (fm : HolFiniteMapExact α (ShapeHOL × List Nat)) :
     expHdlMapofBroad (expHdlMaptoBroadlookup fm) fm.finiteSupport = fm := by
   cases fm
   rfl
@@ -48,9 +49,9 @@ theorem holFmapAsFiniteSupportParamWitness_expHdlExact_fm
 @[hol "cakeml/pancake/pan_to_crepScript.sml" "exp_hdl_def"
   (fmap_as_finite_support_parameters := [fm])
   (words_as_type_indexed_bitvec)]
-def expHdlExact {width : Nat} [NeZero width]
-    (fm : HolFiniteMapExact MlS (ShapeHOL × List Nat))
-    (v : MlS) : CrepProgHOL width :=
+def expHdlExact {α : Type} {width : Nat} [NeZero width]
+    (fm : HolFiniteMapExact α (ShapeHOL × List Nat))
+    (v : α) : CrepProgHOL width :=
   match fm.lookup v with
   | none => .skip
   | some (_, names) =>

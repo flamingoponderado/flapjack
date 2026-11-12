@@ -10625,3 +10625,10 @@ run_probe namespace_props_typed_probeScript.sml namespace_props_typed_probe.out 
   nsLookup_nsBind_typed nsAppend_assoc_typed nsAppend_to_nsBindList_typed nsAll_nsAppend_typed \
   "$cake_dir/semantics/proofs/namespacePropsScript.sml" \
   "$cake_dir/semantics/proofs"
+
+run_probe pan_to_crep_typed_probeScript.sml pan_to_crep_typed_probe.out \
+  cexp_heads_def_typed comp_field_def_typed compile_panop_def_typed ret_hdl_def_typed ret_var_def_typed wrap_rt_def_typed crep_vars_def_typed comp_func_def_typed \
+  compile_exp_def_typed compile_prog_def_typed compile_def_typed compile_to_crep_def_typed context_typed get_eids_from_decls_def_typed make_funcs_def_typed mk_ctxt_def_typed \
+  exp_hdl_def_typed make_vmap_def_typed \
+  "$cake_dir/pancake/pan_to_crepScript.sml" \
+  "$cake_dir/pancake"

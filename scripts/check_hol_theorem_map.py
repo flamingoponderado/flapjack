@@ -378,6 +378,18 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/Pancake/PanToCrep/MakeVmapHOL.lean", "panToCrepMakeVmapHOLExact"): (
+        "cakeml/pancake/pan_to_crepScript.sml",
+        "make_vmap_def",
+        "Tag withdrawn (task 149): the typed capture make_vmap_def_typed in "
+        "scripts/hol-probes/pan_to_crep_typed_probe.out gives params :(\u03b1 # shape) list "
+        "and result \u03b1 |-> shape # num list, so HOL's variable-name type \u03b1 is generic, "
+        "while this definition fixes it to MlS. Generalising the key would need "
+        "[BEq \u03b1] [LawfulBEq \u03b1] for HolFiniteMapExact.updateList, whereas the accepted "
+        "rendering of HOL equality on a generic key type is [DecidableEq \u03b1]; the "
+        "definition is the \u03b1 = MlS instance. A faithful port needs a key-generic "
+        "finite-map update that follows the DecidableEq convention."
+    ),
     ("Flapjack/Compiler/Backend/Semantics/TargetSem/EncodedBytes.lean", "encodedBytesInMemHOL"): (
         "cakeml/compiler/backend/semantics/targetSemScript.sml",
         "encoded_bytes_in_mem_def",
