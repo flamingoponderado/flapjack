@@ -145,6 +145,12 @@
   "reviewer": "Independent typed HOL comparison confirms the original compilation equality, full length and suffix conclusions, binder order, and faithful closure and BVL carriers."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "lemma2",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Accumulator.lean", "lean_name": "buildAux_result_suffix",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original local proof and typed HOL replay: the complete build_aux result equality implies its output accumulator has the input accumulator as a suffix, with fixed BVL expression carriers and no additional premises."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "build_aux_append_aux",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Accumulator.lean", "lean_name": "buildAux_append_aux",
   "statement_status": "reviewed_exact",

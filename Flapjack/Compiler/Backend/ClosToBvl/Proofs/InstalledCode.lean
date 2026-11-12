@@ -110,17 +110,6 @@ theorem alookup_lemma {α β γ : Type} [Nonempty α] [Nonempty β] [Nonempty γ
 def codeInstalled {A B : Type} (aux : List (Nat × A × B)) (code : Spt (A × B)) : Prop :=
   ∀ entry ∈ aux, sptLookup entry.1 code = some entry.2
 
-/-- If generated recursive entries and their accumulator are installed,
-the original accumulator is installed as well. -/
-theorem codeInstalled_buildAux (entries : List (Nat × Bvl.Exp)) (i : Nat)
-    (aux : List (Nat × Nat × Bvl.Exp)) (code : Spt (Nat × Bvl.Exp))
-    (installed : codeInstalled (buildAux i entries aux).2 code) : codeInstalled aux code := by
-  obtain ⟨added, result⟩ := buildAux_acc entries i aux
-  intro entry member
-  apply installed entry
-  rw [result]
-  exact List.mem_append_right added member
-
 /-- Installed output auxiliary code also installs the input accumulator. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_exps_IMP_code_installed"]
 theorem compileExps_codeInstalled (maxApp : Nat) (expressions : List ClosLang.Exp)

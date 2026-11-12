@@ -59,6 +59,11 @@ val _ = show_thm "code_locs_Op_cons_typed=" clos_to_bvlProofTheory.code_locs_Op_
 val _ = show_thm "MAP_FST_chain_exps_typed=" clos_to_bvlProofTheory.MAP_FST_chain_exps;
 val _ = show_thm "set_MAP_code_sort_typed=" clos_to_bvlProofTheory.set_MAP_code_sort;
 val _ = show_thm "compile_exps_IMP_acc_typed=" clos_to_bvlProofTheory.compile_exps_IMP_acc;
+(* Replay the local accumulator-suffix theorem with its inferred carriers. *)
+val build_aux_lemma2_replay = Q.prove (
+  `clos_to_bvl$build_aux n k aux = (a,b) ==> ?z. b = z ++ aux`,
+  mp_tac (SPEC_ALL clos_to_bvlTheory.build_aux_acc) >> rw[] >> fs[]);
+val _ = show_thm "build_aux_lemma2_replay=" build_aux_lemma2_replay;
 val _ = show_thm "build_aux_append_aux_typed=" clos_to_bvlProofTheory.build_aux_append_aux;
 val _ = show_thm "compile_exps_append_aux_typed=" clos_to_bvlProofTheory.compile_exps_append_aux;
 val _ = show_thm "compile_exps_eq_append_typed=" clos_to_bvlProofTheory.compile_exps_eq_append;

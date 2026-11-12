@@ -200,6 +200,14 @@ theorem compileExps_imp_acc (maxApp : Nat) (xs : List ClosLang.Exp) (aux : Aux)
   have result := compileExps_acc maxApp xs aux
   simpa [run] using result
 
+/-- A completed recursive layout retains the input accumulator as a suffix. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "lemma2"]
+theorem buildAux_result_suffix (n : Nat) (entries : List (Nat × Bvl.Exp)) (aux : Aux)
+    (a : Nat) (b : Aux) (run : buildAux n entries aux = (a, b)) :
+    ∃ z, b = z ++ aux := by
+  have result := buildAux_acc entries n aux
+  simpa [run] using result
+
 /-- Extending the initial accumulator extends the recursive-layout result. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "build_aux_append_aux"]
 theorem buildAux_append_aux (xs : List (Nat × Bvl.Exp)) (n : Nat)
