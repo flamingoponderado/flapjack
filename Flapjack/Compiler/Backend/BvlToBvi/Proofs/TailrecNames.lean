@@ -105,19 +105,6 @@ theorem initialProgram_tailrec_inputCondition (start count counter next : Nat)
   · exact compileIncSource_outside_tailrec_namespace counter program entry.1
       (List.mem_map.mpr ⟨entry, compiled, rfl⟩)
 
-/-- An executed incremental lowering result meets the tail-recursion input
-condition, including the future programs supplied by the compiler oracle. -/
-theorem compileIncFuel_tailrec_inputCondition (fuel optFuel counter next last : Nat)
-    (program : List (Nat × Nat × Bvl.Exp)) (compiled : List (Nat × Nat × Bvi.Exp))
-    (distinct : (program.map Prod.fst).Nodup)
-    (nextBound : bvlNumStubs ≤ next) (worker : inWorkerNamespace next)
-    (run : compileIncFuel fuel optFuel counter program = some (last, compiled)) :
-    inputCondition next compiled := by
-  have equal := (compileIncFuel_eq_source fuel optFuel counter program).symm.trans run
-  have codeEq : (compileIncSource counter program).2 = compiled := congrArg Prod.snd (Option.some.inj equal)
-  rw [← codeEq]
-  exact compileIncSource_tailrec_inputCondition counter next program distinct nextBound worker
-
 /-- The executed initial BVL-to-BVI program, including stubs, meets the
 tail-recursion input condition. -/
 theorem compileProgFuel_tailrec_inputCondition (fuel optFuel start counter next targetStart targetCounter : Nat)
