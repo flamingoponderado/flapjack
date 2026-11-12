@@ -49,20 +49,6 @@ theorem sptLookup_fromAList_of_distinct {α : Type} (entries : List (Nat × α))
   have same := List.inj_on_of_nodup_map distinct member otherMem (by rfl)
   exact (Prod.mk.inj same).2.symm
 
-/-- If all entries of a list occur in a distinct-key association list, then
-they are installed by that list's sparse tree. -/
-theorem auxCodeInstalled_fromAList {α β : Type} (aux entries : List (Nat × α × β))
-    (distinct : (entries.map Prod.fst).Nodup)
-    (subset : ∀ entry ∈ aux, entry ∈ entries) : auxCodeInstalled aux (sptFromAList entries) := by
-  induction aux with
-  | nil => trivial
-  | cons entry rest ih =>
-    rcases entry with ⟨key, arity, body⟩
-    refine ⟨sptLookup_fromAList_of_distinct entries key (arity, body) distinct (subset _ (by simp)), ?_⟩
-    apply ih
-    intro entry member
-    exact subset entry (by simp [member])
-
 /-- Existing auxiliary code remains available in a left-biased code union. -/
 theorem auxCodeInstalled_union_left {α β : Type} (aux : List (Nat × α × β)) (old fresh : Spt (α × β))
     (installed : auxCodeInstalled aux old) : auxCodeInstalled aux (sptUnion old fresh) := by

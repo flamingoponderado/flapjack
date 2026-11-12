@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "OptionalLetLet_limit",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/EnvRel.lean", "lean_name": "optionalLetLet_limit",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source theorem: the complete optional-cut result equality and relation on the returned live set jointly imply the input live-set relation. Both source and target environment lists have the same arbitrary polymorphic element type."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "evaluate_GENLIST",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/LetLetEvaluate.lean", "lean_name": "evaluate_genlist",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed original specialization: evaluating the generated variable list of source environment length in that environment followed by any suffix returns the entire environment and unchanged state. Independent compiler and FFI carriers and the canonical refs witness are retained; evaluator dependencies inherit reals_as_rational_cuts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "OptionalLetLet_IMP",
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/LetLetEvaluate.lean", "lean_name": "optionalLetLet_imp",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,

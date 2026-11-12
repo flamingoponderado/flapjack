@@ -39,9 +39,26 @@ theorem envRel_getElem_iff {α : Type} (live : DbVarSet) (source target : List �
       congrArg some (agree i hs ht present)
 
 /-- Flattening live-variable annotations does not change environment agreement. -/
-theorem envRel_flatten (live : DbVarSet) (source target : List Value) :
+theorem envRel_flatten {α : Type} (live : DbVarSet) (source target : List α) :
     envRel (varsFlatten live) source target ↔ envRel live source target := by
   simp [envRel, hasVarVarsFlatten]
+
+/-- The live-variable relation returned by an optional cut implies the input relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "OptionalLetLet_limit"]
+theorem optionalLetLet_limit {α : Type} (ys : List Bvl.Exp) (resultLive : DbVarSet)
+    (resultSize : Nat) (resultNoRaise : Bool) (body : Bvl.Exp)
+    (source target : List α) (live : DbVarSet) (size limit : Nat) (noRaise : Bool)
+    (premises : (ys, resultLive, resultSize, resultNoRaise) =
+        optionalLetLet body source.length live size limit noRaise ∧
+      envRel resultLive source target) : envRel live source target := by
+  obtain ⟨compiled, related⟩ := premises
+  by_cases small : size < limit
+  · simp only [optionalLetLet, small, ↓reduceIte, Prod.mk.injEq] at compiled
+    obtain ⟨_, rfl, _, _⟩ := compiled
+    exact related
+  · simp only [optionalLetLet, small, ↓reduceIte, Prod.mk.injEq] at compiled
+    obtain ⟨_, rfl, _, _⟩ := compiled
+    exact (envRel_flatten live source target).1 related
 
 /-- Materialized live-variable lookup agrees with direct membership. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "IS_SOME_lookup_db_to_set"]

@@ -19,6 +19,16 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   BvlSem.holFmapAsFiniteSupportWitness
 end LetLetEvaluateCarrier
 
+/-- Generated variables recover an environment prefix, even with a suffix. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "evaluate_GENLIST"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_genlist {C F : Type} (env suffix : List Value)
+    (state : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    evaluateTuple ((List.range env.length).map Bvl.Exp.var, env ++ suffix, state) =
+      (.val env, state) := by
+  have h := BvlProps.evaluateGenlistVars 0 (env ++ suffix) env.length state (by simp)
+  simpa using h
+
 /-- A smart let evaluates exactly as the corresponding ordinary let. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "evaluate_SmartLet"
   (fmap_as_finite_support := [refs])]
@@ -244,9 +254,8 @@ theorem evaluate_optionalLetLetSing {C F : Type} (live : DbVarSet) (body : Bvl.E
     rfl
   have transport : ∀ env, envRel output.2.1 source env → envRel live source env := by
     intro env rel
-    by_cases small : size < limit
-    · simpa [output, optionalLetLetSing, small] using rel
-    · exact (envRel_flatten live source env).1 (by simpa [output, optionalLetLetSing, small] using rel)
+    exact optionalLetLet_limit [output.1] output.2.1 output.2.2.1 output.2.2.2
+      body source env live size limit noRaise ⟨compiled, rel⟩
   exact (optionalLetLet_imp [output.1] output.2.1 output.2.2.1 output.2.2.2 body source
     live size limit noRaise state result target extra true
     ⟨compiled, fun env suffix rel => bodyRun env suffix (transport env rel), related, rfl⟩).1
