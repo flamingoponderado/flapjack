@@ -1577,6 +1577,7 @@
     {"bytes": 9141, "out": "stack_alloc_generational_statement_probe.out", "rows": 4, "sha256": "b276b6610f0315d7796c995e36e44c6be596aa1ae49dc7c6c2b2d8a984d1cc69"},
     {"bytes": 258, "out": "stack_alloc_get_bits_probe.out", "rows": 4, "sha256": "fd6f34db5f7ab17ad98ae0ffe1277e1b9e87b2c206c5a50e5489f5f6e4cec970"},
     {"bytes": 162, "out": "stack_alloc_next_lab_probe.out", "rows": 7, "sha256": "2dad09d4e127dcc00ab71b52e6618a378c119dd12e48f09864344c2bf7628a35"},
+    {"bytes": 65603, "out": "stack_alloc_proof_typed_probe.out", "rows": 76, "sha256": "d78056f5ba8387798e79be07ce2ac0f24a02ac048720b4f86d2bd4958c6f083c"},
     {"bytes": 3152, "out": "stack_alloc_trigger_statement_probe.out", "rows": 16, "sha256": "abc613099374333f77c99bb8010f4873ffb18996db38d5b6a6b99658d79cdee8"},
     {"bytes": 644, "out": "stack_code_bitmaps_alloc_probe.out", "rows": 3, "sha256": "15cbe3769187816460a6ec7478b0b2224efe576c3e43688c52d00e6f79e1dc14"},
     {"bytes": 657, "out": "stack_code_bitmaps_call_probe.out", "rows": 3, "sha256": "70aa5cabe85dff671736c3c95ff02b9080a550d6ae69158b43e3f4fcc640b287"},
