@@ -75,17 +75,35 @@ noncomputable def semantics {C F : Type} (ffi : HolFfiState F)
   | none => .diverge (HolLList.buildLprefixLub (fun trace => ∃ clock,
       trace = HolLList.fromList (run clock).2.ffi.ioEvents))
 
-/-- A non-failing whole-program behavior excludes type errors at every clock. -/
-theorem noTypeError_of_semantics_ne_fail {C F : Type} (ffi : HolFfiState F)
+/-- Whole-program behavior is non-failing exactly when no initial call has a
+type error. This Flapjack-specific characterization covers every source
+semantics branch and introduces no semantic assumption. -/
+theorem semantics_ne_fail_iff {C F : Type} (ffi : HolFfiState F)
     (code : Spt (Nat × Bvl.Exp)) (oracle : CompileOracle C)
-    (compiler : Compiler C) (start : Nat)
-    (nonfail : semantics ffi code oracle compiler start ≠ .fail) :
-    ∀ clock, (evaluateTuple ([.call 0 (some start) []], [],
-      initialState ffi code oracle compiler clock)).1 ≠ .err (.abort .typeError) := by
-  intro clock error
-  apply nonfail
-  simp [semantics, show ∃ k, (evaluateTuple ([.call 0 (some start) []], [],
-    initialState ffi code oracle compiler k)).1 = .err (.abort .typeError) from ⟨clock, error⟩]
+    (compiler : Compiler C) (start : Nat) :
+    semantics ffi code oracle compiler start ≠ .fail ↔
+      ∀ clock, (evaluateTuple ([.call 0 (some start) []], [],
+        initialState ffi code oracle compiler clock)).1 ≠ .err (.abort .typeError) := by
+  classical
+  constructor
+  · intro nonfail clock error
+    apply nonfail
+    simp [semantics, show ∃ k, (evaluateTuple ([.call 0 (some start) []], [],
+      initialState ffi code oracle compiler k)).1 = .err (.abort .typeError) from ⟨clock, error⟩]
+  · intro safe
+    unfold semantics
+    have noBad : ¬ ∃ clock, (evaluateTuple ([.call 0 (some start) []], [],
+        initialState ffi code oracle compiler clock)).1 = .err (.abort .typeError) := by
+      intro h
+      obtain ⟨clock, bad⟩ := h
+      exact safe clock bad
+    simp only [noBad, if_false]
+    cases selected : holOptionSome (terminatingObservation ffi code oracle compiler start) with
+    | none => simp
+    | some behavior =>
+      have observed := holOptionSome_some selected
+      obtain ⟨_, _, _, outcome, _, _, rfl⟩ := observed
+      simp
 
 /-- Termination is characterized by the absence of type errors at every clock
 and the unique terminating observation. This Flapjack-specific equivalence
@@ -102,7 +120,7 @@ theorem semantics_eq_terminate_iff {C F : Type} (ffi : HolFfiState F)
     have nonfail : semantics ffi code oracle compiler start ≠ .fail := by
       rw [terminates]
       simp
-    refine ⟨noTypeError_of_semantics_ne_fail ffi code oracle compiler start nonfail, ?_⟩
+    refine ⟨(semantics_ne_fail_iff ffi code oracle compiler start).1 nonfail, ?_⟩
     classical
     unfold semantics at terminates
     by_cases bad : ∃ clock, (evaluateTuple ([.call 0 (some start) []], [],
@@ -149,7 +167,7 @@ theorem semantics_eq_diverge_iff {C F : Type} (ffi : HolFfiState F)
     have nonfail : semantics ffi code oracle compiler start ≠ .fail := by
       rw [diverges]
       simp
-    have safe := noTypeError_of_semantics_ne_fail ffi code oracle compiler start nonfail
+    have safe := (semantics_ne_fail_iff ffi code oracle compiler start).1 nonfail
     refine ⟨safe, ?_⟩
     unfold semantics at diverges
     have noBad : ¬ ∃ clock, (evaluateTuple ([.call 0 (some start) []], [],

@@ -47,14 +47,6 @@ theorem factoredDecBoundedIH_empty {C F : Type} [Nonempty C]
   obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := compiled
   exact evaluateDecs_noop_factored interp transform genv source flat start finish other gen invariant generation
 
-/-- Type-abbreviation declarations satisfy the factored induction hypothesis. -/
-theorem factoredDecBoundedIH_dtabbrev {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
-    (location : Flapjack.Misc.Location.Locs) (typeVars : List TvarN) (name : TypeN) (typ : AstT) :
-    FactoredDecBoundedIH (F := F) interp transform limit [.dtabbrev location typeVars name typ] := by
-  simpa only [FactoredDecBoundedIH, EvaluateHOL.evaluateDecs, compileDecs] using
-    factoredDecBoundedIH_empty (F := F) interp transform limit
-
 /-- Recursive declarations satisfy the factored induction hypothesis. -/
 theorem factoredDecBoundedIH_dletrec {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)

@@ -89,8 +89,8 @@ theorem letOp_semantics {C F : Type} (splitSeq : Bool) (limit start : Nat)
       (sptMap (fun (arity, body) => (arity, letOpTransform splitSeq limit arity body)) program)
       (letOpOracle splitSeq limit oracle) compiler start =
     BvlSem.semantics ffi program oracle (letOpCompiler splitSeq limit compiler) start := by
-  have safe := BvlSem.noTypeError_of_semantics_ne_fail ffi program oracle
-    (letOpCompiler splitSeq limit compiler) start nonFail
+  have safe := (BvlSem.semantics_ne_fail_iff ffi program oracle
+    (letOpCompiler splitSeq limit compiler) start).1 nonFail
   have observations : initialObservation ffi
       (sptMap (fun (arity, body) => (arity, letOpTransform splitSeq limit arity body)) program)
       (letOpOracle splitSeq limit oracle) compiler start =

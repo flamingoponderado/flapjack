@@ -200,8 +200,8 @@ theorem compileProgFuel_semantics_of_terminates {C F : Type}
   have nonfail : BvlSem.semantics ffi (sptFromAList programs) oracle
       (BackendProps.stateCc compileIncSource compiler) start ≠ .fail := by
     rw [terminates]; intro impossible; cases impossible
-  have noTypeError := BvlSem.noTypeError_of_semantics_ne_fail ffi (sptFromAList programs)
-    oracle (BackendProps.stateCc compileIncSource compiler) start nonfail
+  have noTypeError := (BvlSem.semantics_ne_fail_iff ffi (sptFromAList programs)
+    oracle (BackendProps.stateCc compileIncSource compiler) start).1 nonfail
   have noFatal := compileProgFuel_noFatalError fuel optFuel start counter ffi programs oracle compiler
     targetStart targetNextName targetProgram compiled distinct handlers oracleHandlers counterBound noTypeError
   have sourceObserved := ((BvlSem.semantics_eq_terminate_iff ffi
