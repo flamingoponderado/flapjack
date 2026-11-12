@@ -166,6 +166,32 @@ in
   Cases_on `l1` >>
   full_simp_tac(srw_ss())[]);
   val _ = show_thm "el_map2_replay=" el_map2_replay;
+  val IS_SUBLIST_MEM_replay = Q.prove (
+    `∀ls ls' x.
+  MEM x ls ∧ IS_SUBLIST ls' ls ⇒
+  MEM x ls'`,
+  Induct>>Induct_on`ls'`>>rw[IS_SUBLIST]>>
+  metis_tac[MEM,IS_PREFIX_IS_SUBLIST]);
+  val _ = show_thm "IS_SUBLIST_MEM_replay=" IS_SUBLIST_MEM_replay;
+  val IS_SUBLIST_APPEND1_replay = Q.prove (
+    `∀A B C.
+  IS_SUBLIST A C ⇒
+  IS_SUBLIST (A++B) C`,
+  rw[]>>match_mp_tac (snd(EQ_IMP_RULE (SPEC_ALL IS_SUBLIST_APPEND)))>>
+  fs[IS_SUBLIST_APPEND]>>
+  metis_tac[APPEND_ASSOC]);
+  val _ = show_thm "IS_SUBLIST_APPEND1_replay=" IS_SUBLIST_APPEND1_replay;
+  val IS_SUBLIST_APPEND2_replay = Q.prove (
+    `∀A B C.
+  IS_SUBLIST B C ⇒
+  IS_SUBLIST (A++B) C`,
+  Induct_on`A`>>Induct_on`B`>>Induct_on`C`>>fs[IS_SUBLIST]);
+  val _ = show_thm "IS_SUBLIST_APPEND2_replay=" IS_SUBLIST_APPEND2_replay;
+  val IS_SUBLIST_REFL_replay = Q.prove (
+    `∀ls.
+  IS_SUBLIST ls ls`,
+  Induct>>fs[IS_SUBLIST]);
+  val _ = show_thm "IS_SUBLIST_REFL_replay=" IS_SUBLIST_REFL_replay;
   val twod_table_lemma_replay = Q.prove (
     `!x y z.
     z ≤ y ⇒

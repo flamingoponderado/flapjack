@@ -13,6 +13,30 @@ public import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
 
 /-! Value decoding needed by the dynamic-installation simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
+
+/-- Membership in a contiguous sublist implies membership in its containing list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "IS_SUBLIST_MEM"]
+theorem isSublistMem {α : Type} (ls ls' : List α) (x : α) :
+    x ∈ ls ∧ ls <:+: ls' → x ∈ ls' := by
+  intro ⟨member, contained⟩
+  exact contained.mem member
+
+/-- Appending to a list preserves its contiguous sublists. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "IS_SUBLIST_APPEND1"]
+theorem isSublistAppend1 {α : Type} (a b c : List α) :
+    c <:+: a → c <:+: a ++ b := by
+  exact List.infix_append_of_infix_left
+
+/-- Prepending to a list preserves its contiguous sublists. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "IS_SUBLIST_APPEND2"]
+theorem isSublistAppend2 {α : Type} (a b c : List α) :
+    c <:+: b → c <:+: a ++ b := by
+  exact List.infix_append_of_infix_right
+
+/-- Every list is a contiguous sublist of itself. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "IS_SUBLIST_REFL"]
+theorem isSublistRefl {α : Type} (ls : List α) : ls <:+: ls := by
+  exact List.infix_refl ls
 open Flapjack.SemanticPrimitivesHOL
 
 /-- Canonical relocation-map codec for byte-decoding correspondence. -/

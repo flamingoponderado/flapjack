@@ -233,6 +233,30 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: args and prev lists have independent polymorphic element types, with exactly the three original conjuncts and all three arithmetic conclusions."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "IS_SUBLIST_MEM",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "isSublistMem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: arbitrary element type, list and element binders, membership premise and conclusion agree. HOL IS_SUBLIST takes the containing list first, represented by reversed Lean IsInfix arguments."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "IS_SUBLIST_APPEND1",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "isSublistAppend1",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: the three arbitrary same-typed lists and original contiguous-segment premise and append conclusion agree, with HOL IS_SUBLIST argument order reversed for Lean IsInfix."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "IS_SUBLIST_APPEND2",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "isSublistAppend2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: the three arbitrary same-typed lists and original contiguous-segment premise and prepend conclusion agree, with HOL IS_SUBLIST argument order reversed for Lean IsInfix."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "IS_SUBLIST_REFL",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "isSublistRefl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: every list over an arbitrary element type is a contiguous segment of itself, with no premises."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "map2_snoc",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "map2Snoc",
   "statement_status": "reviewed_exact",
