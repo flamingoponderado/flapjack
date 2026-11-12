@@ -1,6 +1,11 @@
 (* Typed statement captures for the [local] theorems of pan_to_crepProof
-   (task 152 manual sweep). Each statement is replayed and proved with the
-   source proof's lemmas, so show_types prints the inferred carriers. *)
+   (task 152 manual sweep). The first four statements (state_rel_structs,
+   state_rel_globals, pair_map_I, decs_stcnames_lemma) are replayed and proved
+   with the source proof's lemmas, so show_types prints the inferred carriers
+   of the proved replays. The last two (evaluate_shape_invariant_ret_inst and
+   evaluate_shape_invariant_ret_inst2) are only parsed typed statements: their
+   replayed proofs fail on this tree's local locals_rel_wf_shape variant, so
+   the script prints the typed statement text without proving it. *)
 load "preamble"; load "pan_to_crepProofTheory";
 open HolKernel Parse boolLib bossLib;
 open preamble pan_to_crepProofTheory pan_to_crepTheory panSemTheory crepSemTheory;
