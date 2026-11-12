@@ -163,6 +163,9 @@ def deleteVar : Exp → Exp
   | .var _ => const 0
   | e => e
 
+/-- The variable case of the executable alias deletion. -/
+theorem deleteVar_var (n : Nat) : deleteVar (.var n) = .op (.intOp (.const 0)) [] := rfl
+
 /-- Apply constant propagation with explicit recursion fuel. -/
 def compileFuel : Nat → List (Option Exp) → Exp → Option Exp
   | 0, _, _ => none

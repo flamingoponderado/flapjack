@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml", "hol_name": "delete_var_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/CodeLabels.lean", "lean_name": "deleteVar_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: alias deletion preserves the complete code-label set for every BVL expression. The variable case uses the executable zero-constant equation; all other constructors are unchanged."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml", "hol_name": "dest_simple_SOME_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/CodeLabels.lean", "lean_name": "simple_some_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: for every expression and integer, recognition by dest_simple implies an empty code-label set. The source-shaped recognizer equation establishes that the expression is precisely the argument-free integer constant."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml", "hol_name": "compile_thm",
   "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/Simulation.lean", "lean_name": "evaluate_compileList",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],

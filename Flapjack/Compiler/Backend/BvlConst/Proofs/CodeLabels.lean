@@ -1,0 +1,27 @@
+module
+
+public import Flapjack.Compiler.Backend.BvlConst.Proofs.SmartOp
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.CodeLabels
+
+@[expose] public section
+
+/-! Code-label facts for constant propagation. -/
+namespace Flapjack.Compiler.Backend.BvlConst.Proofs
+open Flapjack.Compiler.Backend.BvlProps
+
+/-- Deleting a variable alias preserves the expression's code labels. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "delete_var_code_labels"]
+theorem deleteVar_codeLabels (x : Bvl.Exp) :
+    getCodeLabels (deleteVar x) = getCodeLabels x := by
+  cases x <;> try rfl
+  simp [deleteVar_var, getCodeLabels, getCodeLabelsList, ClosLang.assignGetCodeLabel]
+
+/-- A recognized integer constant contains no code labels. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "dest_simple_SOME_code_labels"]
+theorem simple_some_codeLabels (x : Bvl.Exp) (y : Int)
+    (found : simple x = some y) : getCodeLabels x = ∅ := by
+  have eq := (simple_eq x y).1 found
+  subst x
+  simp [getCodeLabels, getCodeLabelsList, ClosLang.assignGetCodeLabel]
+
+end Flapjack.Compiler.Backend.BvlConst.Proofs

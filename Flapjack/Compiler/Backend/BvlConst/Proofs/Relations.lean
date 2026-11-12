@@ -40,8 +40,8 @@ theorem evaluate_eq_nil {C F : Type} (xs : List Bvl.Exp) (env : List Value)
     simp [evaluateTuple, evaluate]
 
 /-- Relate one propagated expression to its source and transformed values. -/
-noncomputable def valueRel (C F : Type) (expression : Bvl.Exp)
-    (source target : Value) (_sourceEnv targetEnv : List Value) : Prop :=
+noncomputable def valueRel {α : Type} (C F : Type) (expression : Bvl.Exp)
+    (source target : Value) (_sourceEnv : α) (targetEnv : List Value) : Prop :=
   match expression with
   | .var index => targetEnv[index]? = some source
   | .op _ _ => source = target ∧
