@@ -485,6 +485,7 @@ in
    DROP (LENGTH arg_list − (rem_args + 1)) arg_list`,
   Induct_on `arg_list` >>fs[ADD1]>>rw[]>>
   Cases_on`rem_args = LENGTH arg_list`>>fs[TAKE_LENGTH_APPEND]);
+  val _ = show_thm "take_drop_lemma_replay=" take_drop_lemma_replay;
   val take_drop_lemma = take_drop_lemma_replay;
   val evaluate_generic_app_full_replay = Q.prove (
     `  !n args st rem_args vs l tag exp clo.
@@ -1232,6 +1233,7 @@ in
   val ETA2_THM = Q.prove (
     `(\x y. f a b c x y) = f a b c`,
   srw_tac[][FUN_EQ_THM]);
+  val _ = show_thm "ETA2_THM_replay=" ETA2_THM;
   val add_args_append_replay = Q.prove (
     `add_args cl arg_env = SOME func
    ⇒

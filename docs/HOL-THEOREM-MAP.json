@@ -233,6 +233,18 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: args and prev lists have independent polymorphic element types, with exactly the three original conjuncts and all three arithmetic conclusions."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "ETA2_THM",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "eta2Thm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed replay of the local HOL proof: all five argument types and the result type are independent, and the same curried function and first three arguments occur on both sides."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "take_drop_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "takeDropLemma",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed replay of the local HOL proof: the two lists have the same arbitrary element type, and the bound, natural subtraction, take and drop are unchanged."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "p_genlist",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "pGenlist",
   "statement_status": "reviewed_exact",

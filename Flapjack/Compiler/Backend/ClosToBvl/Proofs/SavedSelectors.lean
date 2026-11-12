@@ -8,6 +8,25 @@ public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 /-! Selectors for stored partial-closure arguments. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
+/-- Eta expansion of the last two arguments of a curried function. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "ETA2_THM"]
+theorem eta2Thm {α β γ δ ε ζ : Type} (f : α → β → γ → δ → ε → ζ)
+    (a : α) (b : β) (c : γ) :
+    (fun x y => f a b c x y) = f a b c := by
+  rfl
+
+/-- Taking the bounded suffix of an appended list discards the appended tail. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "take_drop_lemma"]
+theorem takeDropLemma {α : Type} (stuff : List α) (remArgs : Nat) (argList : List α)
+    (bound : argList.length > remArgs) :
+    ((argList ++ stuff).drop (argList.length - (remArgs + 1))).take (remArgs + 1) =
+      argList.drop (argList.length - (remArgs + 1)) := by
+  have len : (argList.drop (argList.length - (remArgs + 1))).length = remArgs + 1 := by
+    simp only [List.length_drop]
+    omega
+  rw [List.drop_append_of_le_length (by omega), List.take_append_of_le_length (by omega)]
+  exact List.take_of_length_le (by omega)
+
 /-- Evaluating the original list through its constructor cases returns the
 same result as applying the function directly. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "list_CASE_same"]
