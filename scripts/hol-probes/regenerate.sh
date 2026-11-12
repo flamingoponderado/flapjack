@@ -10458,3 +10458,13 @@ run_probe stack_remove_typed_probeScript.sml stack_remove_typed_probe.out \
   store_init_def_typed store_list_code_def_typed check_init_stubs_length_typed stub_names_def_typed \
   "$cake_dir/compiler/backend/stack_removeScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe pan_sem_typed_probeScript.sml pan_sem_typed_probe.out \
+  word_lab_typed vshapes_args_rel_imp_eq_len_MAP_typed result_typed decs_stcnames_def_typed eval_ind_typed evaluate_def_typed evaluate_clock_typed fix_clock_evaluate_typed \
+  evaluate_ind_typed mem_load_32_alt_typed mem_load_def_typed mem_store_32_alt_typed semantics_def_typed semantics_decls_def_typed state_typed dec_clock_def_typed \
+  empty_locals_def_typed eval_def_typed evaluate_decls_def_typed fix_clock_def_typed is_valid_value_def_typed lookup_code_def_typed lookup_kvar_def_typed set_global_def_typed \
+  set_kvar_def_typed set_var_def_typed sh_mem_load_def_typed v_typed flatten_def_typed isValWord_def_typed pan_primop_def_typed theValWord_def_typed \
+  isWord_def_typed nb_op_def_typed mem_load_32_def_typed mem_load_byte_def_typed mem_store_32_def_typed mem_store_byte_def_typed mem_store_def_typed mem_stores_def_typed \
+  pan_op_def_typed write_bytearray_def_typed theWord_def_typed kvar_simps_typed is_valid_value_simps_typed upd_locals_def_typed res_var_def_typed sh_mem_store_def_typed \
+  "$cake_dir/pancake/semantics/panSemScript.sml" \
+  "$cake_dir/pancake/semantics"

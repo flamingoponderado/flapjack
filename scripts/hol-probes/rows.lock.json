@@ -1123,6 +1123,7 @@
     {"bytes": 469, "out": "pan_sem_store_error_probe.out", "rows": 16, "sha256": "2445299e9c5d9dd5bb73d8a0e668b83aa5782b33a3b6db1e29cedf3566f1f9e6"},
     {"bytes": 163, "out": "pan_sem_tick_e2e_probe.out", "rows": 6, "sha256": "8c86037207137e41b7b6111a52c58904dc6f33d922c2d651d11ee8366d6002d4"},
     {"bytes": 1202, "out": "pan_sem_total_fragment_stmt_probe.out", "rows": 29, "sha256": "ac7eb23cb2ce1e4dc4fa56ac743e0059dc07ea0838b33a359063a749f8265196"},
+    {"bytes": 45005, "out": "pan_sem_typed_probe.out", "rows": 48, "sha256": "15779fa69d216442b00ed17f0415af05dfffee26f704033277263d4d9c179467"},
     {"bytes": 58, "out": "pan_sem_vshapes_args_rel_probe.out", "rows": 5, "sha256": "97d936601a091e2bbc1165553dc0e6481cc9ba297819d008c262473bb5458f42"},
     {"bytes": 269, "out": "pan_sem_while_error_probe.out", "rows": 10, "sha256": "af3e15aa2786ba55fc193bfe2435a2e95937dcac62c75763e18bb1a83ae69799"},
     {"bytes": 61, "out": "pan_sem_write_bytearray_probe.out", "rows": 3, "sha256": "9cff2df548a07011462ab680694a17b3391eea5243234bd610505f9c91b15d6e"},

@@ -140,10 +140,13 @@ inductive ListRel {α β : Type} (R : α → β → Prop) : List α → List β 
 /-- Exact port of HOL `panSem$vshapes_args_rel_imp_eq_len_MAP`
     (`panSemScript.sml:740`): the shape relation between declared parameters
     and evaluated arguments implies both the length and the `MAP SND`/`MAP
-    shape_of` equalities. -/
+    shape_of` equalities. The typed capture
+    `vshapes_args_rel_imp_eq_len_MAP_typed` (`pan_sem_typed_probe.out`) gives
+    `vshapes :(α # shape) list`, so the parameter-name type is generic in HOL;
+    the Lean statement binds it too (in use `α = MlS`). -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "vshapes_args_rel_imp_eq_len_MAP"]
-theorem vshapesArgsRel_imp_eq_len_MAP {width : Nat} [NeZero width]
-    (vshapes : List (MlS × ShapeHOL)) (args : List (ValueHOL width))
+theorem vshapesArgsRel_imp_eq_len_MAP {α : Type} {width : Nat} [NeZero width]
+    (vshapes : List (α × ShapeHOL)) (args : List (ValueHOL width))
     (h : ListRel (fun vshape arg => vshape.2 = shapeOfHOLExact arg) vshapes args) :
     vshapes.length = args.length ∧
       vshapes.map Prod.snd = args.map shapeOfHOLExact := by

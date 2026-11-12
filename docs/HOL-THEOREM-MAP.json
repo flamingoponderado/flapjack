@@ -104401,7 +104401,7 @@
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/DecCallExact.lean",
     "lean_name": "vshapesArgsRel_imp_eq_len_MAP",
     "statement_status": "reviewed_exact",
-    "reviewer": "Codex (source comparison against panSemScript.sml:740 `!vshapes args. LIST_REL (\\vshape arg. SND vshape = shape_of arg) vshapes args ==> LENGTH vshapes = LENGTH args /\\ MAP SND vshapes = MAP shape_of args`; exact carriers vshapes : List (MlS # ShapeHOL), args : List (ValueHOL width), shape_of = shapeOfHOLExact (untagged pending nested-word qualifier support); HOL LIST_REL carried by the propositional ListRel because this core has no List.Forall2; oracle rows vra_one/vra_two/vra_bad/vra_len_one/vra_map_two in scripts/hol-probes/pan_sem_vshapes_args_rel_probe.out reproduced by Flapjack/Test/PanSemDecCallExactParity.lean)"
+    "reviewer": "Codex (source comparison against panSemScript.sml:740 `!vshapes args. LIST_REL (\\vshape arg. SND vshape = shape_of arg) vshapes args ==> LENGTH vshapes = LENGTH args /\\ MAP SND vshapes = MAP shape_of args`; exact carriers vshapes : List (MlS # ShapeHOL), args : List (ValueHOL width), shape_of = shapeOfHOLExact (untagged pending nested-word qualifier support); HOL LIST_REL carried by the propositional ListRel because this core has no List.Forall2; oracle rows vra_one/vra_two/vra_bad/vra_len_one/vra_map_two in scripts/hol-probes/pan_sem_vshapes_args_rel_probe.out reproduced by Flapjack/Test/PanSemDecCallExactParity.lean) Task-149 typed capture re-review: vshapes_args_rel_imp_eq_len_MAP_typed gives vshapes :(α # shape) list, so the parameter-name type is generic in HOL; the Lean statement now binds it (in use α = MlS)."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
