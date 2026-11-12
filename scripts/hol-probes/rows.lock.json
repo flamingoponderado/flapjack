@@ -1621,6 +1621,7 @@
     {"bytes": 36856, "out": "stack_props_register_bounds_probe.out", "rows": 507, "sha256": "4183a57a92328f3d98beebc7d7e13a5d862e4b1d4dd0ee77d53c51dc933c376e"},
     {"bytes": 11936, "out": "stack_props_remove_independent_probe.out", "rows": 402, "sha256": "25ae5bfec4ce951afcbb48d86896b2e0c21c620260c10bf7f43b618f6f321dfc"},
     {"bytes": 322, "out": "stack_props_remove_name_probe.out", "rows": 22, "sha256": "6a12b22c110cb82870cdb808f94ca89e433e533ad08042cd17d5af1fd083991e"},
+    {"bytes": 75872, "out": "stack_props_typed_probe.out", "rows": 68, "sha256": "9d71b112a7ae2afead1e368fe636408a6a9a03ec4a15f6865321a0dc65632fda"},
     {"bytes": 1965, "out": "stack_rawcall_allocation_store_probe.out", "rows": 6, "sha256": "f90b93d64dbffef8fc6bfd61147bb3b452b436dd9beb23d888e351c1146f98de"},
     {"bytes": 1548, "out": "stack_rawcall_asm_names_probe.out", "rows": 6, "sha256": "3d67e406297a181714f1d9f66967ee37383b65be8e06a214917340781c4ed111"},
     {"bytes": 3809, "out": "stack_rawcall_basic_cases_probe.out", "rows": 8, "sha256": "b753bd06ddd1d669e64803319e73b8ebdbf09c54ee4a7f82da5eaee915d8db20"},
