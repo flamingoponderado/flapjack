@@ -1,5 +1,23 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "trivia_1",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "incrementalAddress_trivia",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all three conjuncts and their order, COUNT_LIST as List.range, arbitrary list element carrier, and no decidable-equality instance."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "EXISTS_CONS_NOT_NULL",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "existsCons_notNull",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms arbitrary list element carrier, both existential binders, and equivalence with negated NULL as List.isEmpty."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "code_locs_Op_cons",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "codeLocations_op_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all four binder types and order, faithful trace and operation carriers, and the full ordered list equality."
+ },
+ {
   "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "FINITE_SUB_BAG",
   "lean_path": "Flapjack/Misc/Bag/SubBag.lean", "lean_name": "finiteSubBag",
   "statement_status": "reviewed_exact",
