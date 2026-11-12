@@ -19,18 +19,18 @@ namespace Flapjack
 
 open Flapjack.Pancake.PanLang (MlS ShapeHOL)
 
-private def expHdlMaptoBroadlookup {α : Type}
-    (fm : HolFiniteMapExact α (ShapeHOL × List Nat)) :
-    α → Option (ShapeHOL × List Nat) := fm.lookup
+private def expHdlMaptoBroadlookup {α γ : Type}
+    (fm : HolFiniteMapExact α (γ × List Nat)) :
+    α → Option (γ × List Nat) := fm.lookup
 
-private def expHdlMapofBroad {α : Type} (fm : α → Option (ShapeHOL × List Nat))
+private def expHdlMapofBroad {α γ : Type} (fm : α → Option (γ × List Nat))
     (support : ∃ keys : List α, ∀ key, fm key ≠ none → key ∈ keys) :
-    HolFiniteMapExact α (ShapeHOL × List Nat) := ⟨fm, support⟩
+    HolFiniteMapExact α (γ × List Nat) := ⟨fm, support⟩
 
 /-- Canonical map-parameter witness for `expHdlExact.fm`: the direct
     `HolFiniteMapExact` input roundtrips through its lookup and support proof. -/
-theorem holFmapAsFiniteSupportParamWitness_expHdlExact_fm {α : Type}
-    (fm : HolFiniteMapExact α (ShapeHOL × List Nat)) :
+theorem holFmapAsFiniteSupportParamWitness_expHdlExact_fm {α γ : Type}
+    (fm : HolFiniteMapExact α (γ × List Nat)) :
     expHdlMapofBroad (expHdlMaptoBroadlookup fm) fm.finiteSupport = fm := by
   cases fm
   rfl
@@ -45,12 +45,19 @@ theorem holFmapAsFiniteSupportParamWitness_expHdlExact_fm {α : Type}
     `nested_seq` is `crepNestedSeqHOL`, `MAP2 Assign` is `panMap2`, and
     `load_globals 0w n` is `loadGlobalsHOL 0w n`. The `LoadGlob` address is a
     fixed 5-bit word in HOL and Lean; the program word parameter is translated
-    by `CrepProgHOL width` and `[NeZero width]`. -/
+    by `CrepProgHOL width` and `[NeZero width]`.
+
+    The typed capture `exp_hdl_def_typed` (`pan_to_crep_proof_typed_probe.out`)
+    types the map as `fm :β |-> γ # num list`: the key β, the discarded shape
+    component γ and the program payload are independent HOL type variables.
+    `vshp` is never used, so γ is arbitrary and the port keeps it generic as
+    `{γ : Type}` (task 151); callers instantiate γ = ShapeHOL, the source
+    shape carrier. -/
 @[hol "cakeml/pancake/pan_to_crepScript.sml" "exp_hdl_def"
   (fmap_as_finite_support_parameters := [fm])
   (words_as_type_indexed_bitvec)]
-def expHdlExact {α : Type} {width : Nat} [NeZero width]
-    (fm : HolFiniteMapExact α (ShapeHOL × List Nat))
+def expHdlExact {α γ : Type} {width : Nat} [NeZero width]
+    (fm : HolFiniteMapExact α (γ × List Nat))
     (v : α) : CrepProgHOL width :=
   match fm.lookup v with
   | none => .skip
@@ -64,6 +71,6 @@ def expHdlExact {α : Type} {width : Nat} [NeZero width]
 theorem expHdlExact_eq_expHdlHOL {width : Nat} [NeZero width]
     (fm : HolFiniteMapExact MlS (ShapeHOL × List Nat)) (v : MlS) :
     expHdlExact (width := width) fm v = expHdlHOL fm.lookup v := by
-  cases hlookup : fm.lookup v <;> rfl
+  cases hlookup : fm.lookup v <;> simp [expHdlExact, expHdlHOL, FLOOKUP, hlookup]
 
 end Flapjack
