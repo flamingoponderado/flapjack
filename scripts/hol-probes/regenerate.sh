@@ -10557,3 +10557,9 @@ run_probe data_props_typed_probeScript.sml data_props_typed_probe.out \
   do_app_aux_safe_peak_swap_typed do_app_aux_sm_safe_peak_swap_typed do_app_err_safe_peak_swap_typed do_app_err_sm_safe_peak_swap_typed size_of_heap_with_safe_typed \
   "$cake_dir/compiler/backend/semantics/dataPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
+
+run_probe word_unreach_proof_typed_probeScript.sml word_unreach_proof_typed_probe.out \
+  ALL_DISTINCT_merge_moves_typed copy_vars_def_typed copy_vars_anub_typed copy_vars_append_typed copy_vars_MEM_acc_typed evaluate_Move_typed evaluate_remove_unreach_typed evaluate_Seq_assoc_typed \
+  evaluate_Seq_assoc_right_lemma_typed evaluate_Seq_Skip_typed evaluate_Skip_Seq_typed IMP_EVERY_MAP_SND_anub_typed lookup_copy_vars_typed lookup_copy_vars_ignore_typed merge_moves_Skip_typed merge_moves_thm_typed \
+  "$cake_dir/compiler/backend/proofs/word_unreachProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
