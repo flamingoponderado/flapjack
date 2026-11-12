@@ -16249,6 +16249,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "FST_EQ_LEMMA",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Semantics.lean",
+    "lean_name": "fstEqLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original local proof and typed replay: the pair's two component types are independent, the given value has the first type, and first-projection equality is equivalent to the existence of a matching second component."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
     "hol_name": "clos_init_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Semantics.lean",
     "lean_name": "closInit",

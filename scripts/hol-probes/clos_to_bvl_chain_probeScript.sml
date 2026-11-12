@@ -80,6 +80,10 @@ val _ = show_thm "IMP_semantics_eq_typed=" clos_to_bvlProofTheory.IMP_semantics_
 (* Capture the complete closure initial-state predicate and clock invariance. *)
 val _ = show_thm "clos_init_def_typed=" clos_to_bvlProofTheory.clos_init_def;
 val _ = show_thm "clos_init_with_clock_typed=" clos_to_bvlProofTheory.clos_init_with_clock;
+val FST_EQ_LEMMA_replay = Q.prove (
+  `FST x = y <=> ?y1. x = (y,y1)`,
+  Cases_on `x` >> fs []);
+val _ = show_thm "FST_EQ_LEMMA_replay=" FST_EQ_LEMMA_replay;
 (* This closure initial-clock theorem is local in the original script. *)
 val initial_state_with_clock_replay = Q.prove (
   `(closSem$initial_state ffi ma code co cc k with clock :=

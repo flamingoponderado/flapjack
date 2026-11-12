@@ -13,6 +13,14 @@ The evaluators and their carriers remain subject to source review. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
+/-- A pair's first component is the given value exactly when its second
+component completes the corresponding pair. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "FST_EQ_LEMMA"]
+theorem fstEqLemma {α β : Type} (x : α × β) (y : α) :
+    x.1 = y ↔ ∃ y1, x = (y, y1) := by
+  cases x
+  simp
+
 namespace ClosInitialState
 
 /-- The closure state roundtrips through its finite-support map view. -/
@@ -105,19 +113,6 @@ def initialEvaluationSimulation {C₁ C₂ F : Type} (ffi : HolFfiState F) (maxA
         (BvlSem.initialState ffi targetCode targetOracle targetCompiler (clock + extra)) = (targetResult, targetFinal) ∧
       observableResultRel result targetResult ∧ final.ffi = targetFinal.ffi
 
-/-- A related target type error is necessarily a source type error. -/
-theorem observableResultRel_target_typeError {source : Result (List ClosSem.Value) ClosSem.Value}
-    (related : observableResultRel source (.err (.abort .typeError))) :
-    source = .err (.abort .typeError) := by
-  cases source with
-  | val values => simp [observableResultRel, resultRel] at related
-  | err error =>
-    cases error with
-    | raise value => simp [observableResultRel, resultRel, excRel] at related
-    | abort reason =>
-      simp [observableResultRel, resultRel, excRel] at related
-      simp [related]
-
 /-- Source safety and forward clock extension rule out target type errors at
 every initial clock, including clocks below the chosen simulation clock. -/
 theorem initialSimulation_targetSafe {C₁ C₂ F : Type} (ffi : HolFfiState F) (maxApp : Nat)
@@ -138,22 +133,19 @@ theorem initialSimulation_targetSafe {C₁ C₂ F : Type} (ffi : HolFfiState F) 
     have notType : sourceResult ≠ .err (.abort .typeError) := by simpa [sourceRun] using sourceSafe clock
     obtain ⟨extra, targetResult, targetFinal, targetRun, related, _⟩ :=
       simulation clock sourceResult sourceFinal sourceRun notType
-    cases targetRun0 : BvlSem.evaluate [.call 0 (some start) []] []
-        (BvlSem.initialState ffi targetCode targetOracle targetCompiler clock) with
-    | mk result0 final0 =>
-      have resultEq : result0 = .err (.abort .typeError) := by simpa [targetRun0] using targetError
-      subst result0
-      have shifted := BvlProps.evaluate_addClock [.call 0 (some start) []] []
-        (BvlSem.initialState ffi targetCode targetOracle targetCompiler clock) final0
-        (.err (.abort .typeError)) extra targetRun0 (by simp)
-      have shifted' : BvlSem.evaluate [.call 0 (some start) []] []
-          (BvlSem.initialState ffi targetCode targetOracle targetCompiler (clock + extra)) =
-          (.err (.abort .typeError), { final0 with clock := final0.clock + extra }) := by
-        simpa only [(BvlInitialClock.initialState_withClock ffi targetCode targetOracle targetCompiler clock extra).1] using shifted
-      rw [targetRun] at shifted'
-      have targetEq : targetResult = .err (.abort .typeError) := (Prod.mk.inj shifted').1
-      rw [targetEq] at related
-      exact notType (observableResultRel_target_typeError related)
+    obtain ⟨final0, targetRun0⟩ := (fstEqLemma _ _).mp targetError
+    have shifted := BvlProps.evaluate_addClock [.call 0 (some start) []] []
+      (BvlSem.initialState ffi targetCode targetOracle targetCompiler clock) final0
+      (.err (.abort .typeError)) extra targetRun0 (by simp)
+    have shifted' : BvlSem.evaluate [.call 0 (some start) []] []
+        (BvlSem.initialState ffi targetCode targetOracle targetCompiler (clock + extra)) =
+        (.err (.abort .typeError), { final0 with clock := final0.clock + extra }) := by
+      simpa only [(BvlInitialClock.initialState_withClock ffi targetCode targetOracle targetCompiler clock extra).1] using shifted
+    rw [targetRun] at shifted'
+    have targetEq : targetResult = .err (.abort .typeError) := (Prod.mk.inj shifted').1
+    rw [targetEq] at related
+    rcases sourceResult with values | (value | reason) <;>
+      simp_all [observableResultRel, resultRel, excRel]
 
 /-- The termination outcome records only timeout and the final FFI event,
 not the language-specific value returned by the evaluator. -/
