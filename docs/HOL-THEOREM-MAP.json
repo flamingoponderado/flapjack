@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "tick_inline_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/CodeLabels.lean", "lean_name": "tickInline_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: for arbitrary cache payload type and expression list, labels after tick_inline are included in the input label union and the union over cache entries. The proof uses the complete sparse-tree lookup-to-list correspondence."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "optimise_get_code_labels",
   "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/CodeLabels.lean", "lean_name": "optimise_codeLabels",
   "statement_status": "reviewed_exact",

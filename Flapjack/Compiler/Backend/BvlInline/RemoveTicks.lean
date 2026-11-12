@@ -49,18 +49,6 @@ theorem removeTicksSing_equivalence :
   · intro expression; simp [removeTicks, removeTicksList]
   · intro expressions; rfl
 
-/-- The source list recursion and singleton tick/call cases hold for the
-total representation. Other singleton constructor equations follow by the
-same unfolding of the mutual traversal. -/
-theorem removeTicks_source_cases (first second body : Bvl.Exp) (tail args : List Bvl.Exp)
-    (ticks : Nat) (destination : Option Nat) :
-    removeTicks [] = [] ∧
-    removeTicks (first :: second :: tail) =
-      removeTicksSing first :: removeTicks (second :: tail) ∧
-    removeTicks [.tick body] = removeTicks [body] ∧
-    removeTicks [.call ticks destination args] = [.call 0 destination (removeTicks args)] := by
-  simp [removeTicks, removeTicksList, removeTicksSing]
-
 /-- The list traversal is the map of the corresponding single-expression traversal. -/
 theorem removeTicksList_eq_map (expressions : List Bvl.Exp) :
     removeTicksList expressions = expressions.map removeTicksSing := by

@@ -3,6 +3,8 @@ module
 public import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
 public import Flapjack.Compiler.Backend.BvlInline.LetOp
 public import Flapjack.Compiler.Backend.BvlInline.SourceCompile
+public import Flapjack.Compiler.Backend.BvlInline.TickInline
+public import Flapjack.Misc.Sptree.ToList
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.CodeLabels
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.CodeLabels
 
@@ -135,5 +137,85 @@ theorem optimise_codeLabels {α : Type} (splitSeq : Bool) (limit : Nat)
       BvlHandle.Proofs.compileSeqs_codeLabels limit (letOpSing (removeTicksSing body)) none
   · simpa only [letOpSing_codeLabels, removeTicksSing_labels] using
       BvlHandle.Proofs.compileExp_codeLabels limit arity (letOpSing (removeTicksSing body))
+
+
+private def cacheLabels {α : Type} (code : Spt (α × Bvl.Exp)) : Set Nat :=
+  ⋃₀ ((fun entry => getCodeLabels entry.2) '' {entry | entry ∈ sptToList code})
+
+private theorem mkTick_labels (n : Nat) (e : Bvl.Exp) :
+    getCodeLabels (Bvl.mkTick n e) = getCodeLabels e := by
+  induction n with
+  | zero => rfl
+  | succ n ih => simpa [Bvl.mkTick, getCodeLabels] using ih
+
+mutual
+private theorem tickInlineSing_labels {α : Type} (code : Spt (α × Bvl.Exp)) (e : Bvl.Exp) :
+    getCodeLabels (tickInlineSing code e) ⊆ getCodeLabels e ∪ cacheLabels code := by
+  cases e with
+  | var n => simp [tickInlineSing, getCodeLabels]
+  | force loc n => simp [tickInlineSing, getCodeLabels]
+  | ifThenElse x y z =>
+    have hx := tickInlineSing_labels code x
+    have hy := tickInlineSing_labels code y
+    have hz := tickInlineSing_labels code z
+    simp only [tickInlineSing, getCodeLabels, Set.subset_def, Set.mem_union] at *
+    intro label; specialize hx label; specialize hy label; specialize hz label; aesop
+  | «let» xs body =>
+    have hx := tickInlineList_labels code xs
+    have hy := tickInlineSing_labels code body
+    simp only [tickInlineSing, getCodeLabels, Set.subset_def, Set.mem_union] at *
+    intro label; specialize hx label; specialize hy label; aesop
+  | raise x => simpa [tickInlineSing, getCodeLabels] using tickInlineSing_labels code x
+  | tick x => simpa [tickInlineSing, getCodeLabels] using tickInlineSing_labels code x
+  | handle x y =>
+    have hx := tickInlineSing_labels code x
+    have hy := tickInlineSing_labels code y
+    simp only [tickInlineSing, getCodeLabels, Set.subset_def, Set.mem_union] at *
+    intro label; specialize hx label; specialize hy label; aesop
+  | op op xs =>
+    have hx := tickInlineList_labels code xs
+    simp only [tickInlineSing, getCodeLabels, Set.subset_def, Set.mem_union] at *
+    intro label; specialize hx label; aesop
+  | call ticks dest xs =>
+    have hx := tickInlineList_labels code xs
+    cases dest with
+    | none =>
+      simp only [tickInlineSing, getCodeLabels, Set.subset_def, Set.mem_union, Set.mem_empty_iff_false, false_or] at *
+      intro label; specialize hx label; aesop
+    | some name =>
+      cases found : sptLookup name code with
+      | none =>
+        simp only [tickInlineSing, found, getCodeLabels, Set.subset_def, Set.mem_union] at *
+        intro label; specialize hx label; aesop
+      | some pair =>
+        obtain ⟨arity, body⟩ := pair
+        have hb : getCodeLabels body ⊆ cacheLabels code := by
+          intro label h
+          apply Set.mem_sUnion.mpr
+          exact ⟨getCodeLabels body, ⟨(arity, body), (sptMemToList _ _).2 ⟨name, found⟩, rfl⟩, h⟩
+        simp only [tickInlineSing, found, getCodeLabels, mkTick_labels, Set.subset_def, Set.mem_union] at *
+        intro label; specialize hx label; specialize hb label; aesop
+termination_by sizeOf e
+
+private theorem tickInlineList_labels {α : Type} (code : Spt (α × Bvl.Exp)) (xs : List Bvl.Exp) :
+    getCodeLabelsList (tickInlineList code xs) ⊆ getCodeLabelsList xs ∪ cacheLabels code := by
+  cases xs with
+  | nil => simp [tickInlineList, getCodeLabelsList]
+  | cons x xs =>
+    have hx := tickInlineSing_labels code x
+    have hy := tickInlineList_labels code xs
+    simp only [tickInlineList, getCodeLabelsList, Set.subset_def, Set.mem_union] at *
+    intro label; specialize hx label; specialize hy label; aesop
+termination_by sizeOf xs
+end
+
+/-- Tick inlining only introduces labels already present in the input or cache. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "tick_inline_code_labels"]
+theorem tickInline_codeLabels {α : Type} (code : Spt (α × Bvl.Exp)) (xs : List Bvl.Exp) :
+    (⋃₀ (getCodeLabels '' {e | e ∈ tickInline code xs})) ⊆
+      (⋃₀ (getCodeLabels '' {e | e ∈ xs})) ∪
+        (⋃₀ ((fun entry => getCodeLabels entry.2) '' {entry | entry ∈ sptToList code})) := by
+  rw [← getCodeLabelsList_eq, ← getCodeLabelsList_eq]
+  exact tickInlineList_labels code xs
 
 end Flapjack.Compiler.Backend.BvlInline.Proofs

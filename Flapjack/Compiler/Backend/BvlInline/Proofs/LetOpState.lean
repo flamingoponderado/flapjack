@@ -15,17 +15,6 @@ after let-operation optimization. -/
 def letOpTransform (splitSeq : Bool) (limit arity : Nat) (body : Bvl.Exp) : Bvl.Exp :=
   BvlHandle.compileAny splitSeq limit arity (letOpSing body)
 
-/-- A successful production let-operation traversal followed by handler
-compilation returns the source-shaped combined transformation. -/
-theorem letOpTransform_production (fuel optFuel : Nat) (splitSeq : Bool) (limit arity : Nat)
-    (body optimized : Bvl.Exp) (run : letOpFuel fuel body = some optimized) :
-    BvlHandle.compileAnyFuel optFuel splitSeq limit arity optimized =
-      some (letOpTransform splitSeq limit arity body) := by
-  have equal := letOpFuel_eq fuel body optimized run
-  have one : letOpOne body = letOpSing body := by simp [letOpSing, letOp, letOpList]
-  rw [equal, one, BvlHandle.compileAnyFuel_eq_source]
-  rfl
-
 /-- Compiler callback induced by the combined transformation. -/
 def letOpCompiler {C : Type} (splitSeq : Bool) (limit : Nat) (compiler : Compiler C) : Compiler C :=
   fun config program => compiler config (program.map fun (name, arity, body) =>
