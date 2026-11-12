@@ -16,6 +16,48 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   BvlSem.holFmapAsFiniteSupportWitness
 end SavedSelectorsCarrier
 
+/-- Select a block suffix in reverse order after arbitrary prefixes. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_genlist_prev_args"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateGenlistPrevArgs {C F : Type} (saved stored context : List BvlSem.Value)
+    (tag : Nat) (rest : List BvlSem.Value) (s : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    BvlSem.evaluate ((List.range saved.length).map (fun i =>
+      Bvl.Exp.op (.blockOp (.elemAt (i + stored.length))) [.var context.length])).reverse
+      (context ++ .block tag (stored ++ saved) :: rest) s = (.val saved.reverse, s) := by
+  have run : ∀ n, n ≤ saved.length →
+      BvlSem.evaluate ((List.range n).map (fun i =>
+        Bvl.Exp.op (.blockOp (.elemAt (i + stored.length))) [.var context.length])).reverse
+        (context ++ .block tag (stored ++ saved) :: rest) s = (.val (saved.take n).reverse, s) := by
+    intro n bound
+    induction n with
+    | zero => simp [BvlSem.evaluate]
+    | succ n ih =>
+      have smaller : n ≤ saved.length := by omega
+      have indexBound : n < saved.length := by omega
+      rw [List.range_succ, List.map_append, List.reverse_append]
+      change BvlSem.evaluateTuple ([_] ++ _, context ++ .block tag (stored ++ saved) :: rest, s) = _
+      rw [BvlProps.evaluateAppend]
+      have elemRun : BvlSem.evaluate [.op (.blockOp (.elemAt (n + stored.length))) [.var context.length]]
+          (context ++ .block tag (stored ++ saved) :: rest) s = (.val [saved[n]], s) := by
+        simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyBlock,
+          indexBound, Nat.add_comm]
+      simp only [BvlSem.evaluateTuple, elemRun, ih smaller]
+      rw [← List.take_append_getElem indexBound, List.reverse_append]
+      rfl
+  simpa using run saved.length (by omega)
+
+/-- Select stored closure arguments in reverse from a four-entry environment. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_genlist_prev_args1_simpl"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateGenlistPrevArgs1Simpl {C F : Type} (saved : List BvlSem.Value)
+    (x y : BvlSem.Value) (tag : Nat) (ptr arity original a : BvlSem.Value)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    BvlSem.evaluate ((List.range saved.length).map (fun i =>
+      Bvl.Exp.op (.blockOp (.elemAt (i + 3))) [.var 3])).reverse
+      [x, y, a, .block tag (ptr :: arity :: original :: saved)] s = (.val saved.reverse, s) := by
+  have h := evaluateGenlistPrevArgs saved [ptr, arity, original] [x, y, a] tag [] s
+  simpa using h
+
 /-- Select a complete block suffix after arbitrary stored and environment prefixes. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_genlist_prev_args_no_rev"
   (fmap_as_finite_support := [refs])]

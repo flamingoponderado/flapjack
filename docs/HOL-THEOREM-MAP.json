@@ -233,6 +233,20 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: args and prev lists have independent polymorphic element types, with exactly the three original conjuncts and all three arithmetic conclusions."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_genlist_prev_args",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "evaluateGenlistPrevArgs",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the HOL source and typed local proof replay: arbitrary stored and environment prefixes, remaining environment, tag, reversed generated selectors and reversed result with unchanged state are retained. Target refs use the canonical finite-support carrier with a same-module roundtrip; evaluation inherits reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_genlist_prev_args1_simpl",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "evaluateGenlistPrevArgs1Simpl",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the HOL source and typed local proof replay: the arbitrary saved values and closure fields, complete reversed selector list, four-entry environment, reversed result and unchanged state agree. Target refs use the canonical finite-support carrier with a same-module roundtrip; evaluation inherits reals_as_rational_cuts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_genlist_prev_args_no_rev",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "evaluateGenlistPrevArgsNoRev",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],

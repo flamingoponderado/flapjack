@@ -564,6 +564,42 @@ in
   Cases_on `t` >>
   full_simp_tac(srw_ss())[]);
   val _ = show_thm "evaluate_generic_app_full_replay=" evaluate_generic_app_full_replay;
+  val evaluate_genlist_prev_args_replay = Q.prove (
+    `!prev_args z x tag arg_list st.
+    evaluate (REVERSE (GENLIST (λprev_arg.
+      mk_elem_at (Var (LENGTH x)) (prev_arg + LENGTH z)) (LENGTH prev_args)),
+           x++(Block tag (z++prev_args))::arg_list,
+           st)
+    =
+    (Rval (REVERSE prev_args),st)`,
+  Induct_on `prev_args` >>
+  srw_tac[][evaluate_def, GENLIST_CONS] >>
+  srw_tac[][evaluate_APPEND, evaluate_def, do_app_def,do_int_app_def] >>
+  full_simp_tac (srw_ss()++ARITH_ss) [] >>
+  srw_tac[][] >>
+  pop_assum (qspecl_then [`z++[h]`] mp_tac) >>
+  srw_tac [ARITH_ss] [combinTheory.o_DEF, ADD1] >>
+  `z ++ h :: prev_args = z ++ [h] ++ prev_args` by metis_tac [APPEND, APPEND_ASSOC] >>
+  srw_tac[][el_append3] >>
+  `x ++ Block tag (z ++ [h] ++ prev_args)::arg_list = x ++ [Block tag (z ++ [h] ++ prev_args)] ++ arg_list`
+          by metis_tac [APPEND, APPEND_ASSOC] >>
+  srw_tac[][el_append3] >>
+  decide_tac );
+  val evaluate_genlist_prev_args = evaluate_genlist_prev_args_replay;
+  val _ = show_thm "evaluate_genlist_prev_args_replay=" evaluate_genlist_prev_args_replay;
+  val evaluate_genlist_prev_args1_simpl_replay = Q.prove (
+    `!prev_args x y tag p n cl a st.
+    evaluate (REVERSE (GENLIST (λprev_arg.
+      mk_elem_at (Var 3) (prev_arg + 3)) (LENGTH prev_args)),
+           [x;y;a; Block tag (p::n::cl::prev_args)],
+           st)
+    =
+    (Rval (REVERSE prev_args),st)`,
+  srw_tac[][] >>
+  (Q.SPECL_THEN [`prev_args`, `[p;n;cl]`, `[x;y;a]`] assume_tac evaluate_genlist_prev_args) >>
+  full_simp_tac (srw_ss()++ARITH_ss) [ADD1] );
+  val evaluate_genlist_prev_args1_simpl = evaluate_genlist_prev_args1_simpl_replay;
+  val _ = show_thm "evaluate_genlist_prev_args1_simpl_replay=" evaluate_genlist_prev_args1_simpl_replay;
   val evaluate_genlist_prev_args_no_rev_replay = Q.prove (
     `  !prev_args z x tag arg_list st.
     evaluate (GENLIST (λprev_arg.
