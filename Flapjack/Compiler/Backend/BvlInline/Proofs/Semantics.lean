@@ -31,11 +31,10 @@ theorem initialObservation_stable {C F : Type} (ffi : HolFfiState F)
     (compiler : Compiler C) (start : Nat) :
     clockStable (initialObservation ffi program oracle compiler start) := by
   intro clock extra notTimeout
-  let state := initialState ffi program oracle compiler clock
-  let run := evaluate [.call 0 (some start) []] [] state
-  have shifted := evaluate_addClock [.call 0 (some start) []] [] state run.2 run.1 extra
-    (by simp [run]) notTimeout
-  simpa [initialObservation, state, run, initialState] using
+  let run := evaluate [.call 0 (some start) []] [] (initialState ffi program oracle compiler clock)
+  have shifted := evaluateAddClockInitialState [.call 0 (some start) []] [] ffi program oracle compiler
+    clock run.1 run.2 ⟨by simp [run, evaluateTuple], notTimeout⟩ extra
+  simpa [initialObservation, run, evaluateTuple] using
     congrArg (fun output => (output.1, output.2.ffi.ioEvents)) shifted
 
 /-- Increasing the initial clock extends the observed event trace. -/

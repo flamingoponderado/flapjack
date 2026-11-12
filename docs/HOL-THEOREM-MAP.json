@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "evaluate_add_clock_initial_state",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateClockShift.lean", "lean_name": "evaluateAddClockInitialState",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed original: a non-timeout initial evaluation at any clock yields the identical result and full final state with its clock increased by every extra amount. The state witness accounts for canonical refs; evaluation inherits the reals_as_rational_cuts assumption."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "bvl_inline_cc_def",
   "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/FullSemantics.lean", "lean_name": "bvlInlineCc",
   "statement_status": "reviewed_exact",

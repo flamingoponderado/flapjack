@@ -171,12 +171,6 @@ theorem valuesNoInstall_lookup (values : List ClosSem.Value) (index : Nat) (valu
     (valid : valuesNoInstall values = true) (found : values[index]? = some value) : valueNoInstall value = true :=
   (valuesNoInstall_iff values).1 valid value (List.mem_of_getElem? found)
 
-/-- A value array in a safe store contains a safe value list. -/
-theorem refsNoInstall_valueArray (refs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value))
-    (index : Nat) (values : List ClosSem.Value) (valid : refsNoInstall refs)
-    (found : refs.lookup index = some (.valueArray values)) : valuesNoInstall values = true :=
-  valid index (.valueArray values) found
-
 /-- Successful memory primitives preserve no-install values and references. -/
 theorem applyMemory_noInstall {C F : Type} (op : ClosLang.MemOp) (args : List ClosSem.Value)
     (state next : ClosSem.State C F) (value : ClosSem.Value)
@@ -195,7 +189,7 @@ theorem applyMemory_noInstall {C F : Type} (op : ClosLang.MemOp) (args : List Cl
     apply refsNoInstall_update <;> first | exact refsOk | (simp only [refNoInstall] <;> first | trivial | assumption | (apply valuesNoInstall_replicate <;> assumption)))
   all_goals try (solve | apply listToValue_noInstall <;> exact encodedBytes_noInstall _)
   all_goals try (solve | exact boolValue_noInstall _)
-  all_goals try (have arrayOk := refsNoInstall_valueArray _ _ _ refsOk (by assumption))
+  all_goals try (have arrayOk := refsOk _ (.valueArray _) (by assumption))
   all_goals try (solve | constructor <;> first | exact refsOk | (apply valuesNoInstall_lookup <;> assumption))
   all_goals try (solve | simp only [valueNoInstall, ClosSem.unitValue, valuesNoInstall, true_and] <;>
     apply refsNoInstall_update <;> first | exact refsOk | (simp only [refNoInstall]; apply valuesNoInstall_set <;> assumption))
