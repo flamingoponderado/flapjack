@@ -50,6 +50,12 @@ val _ = show_thm "compile_exps_append_aux_typed=" clos_to_bvlProofTheory.compile
 val _ = show_thm "compile_exps_eq_append_typed=" clos_to_bvlProofTheory.compile_exps_eq_append;
 val _ = show_thm "SND_SND_known_compile_inc_typed=" clos_to_bvlProofTheory.SND_SND_known_compile_inc;
 val _ = show_thm "alist_to_fmap_FEMPTY_typed=" clos_to_bvlProofTheory.alist_to_fmap_FEMPTY;
+val _ = show_thm "code_locs_FST_ticks_compile_inc_typed=" clos_to_bvlProofTheory.code_locs_FST_ticks_compile_inc;
+val _ = show_thm "code_locs_FST_letop_compile_inc_typed=" clos_to_bvlProofTheory.code_locs_FST_letop_compile_inc;
+val _ = show_thm "ncompile_inc_code_locs_distinct_typed=" clos_to_bvlProofTheory.ncompile_inc_code_locs_distinct;
+val _ = show_thm "every_Fn_vs_NONE_ncompile_inc_typed=" clos_to_bvlProofTheory.every_Fn_vs_NONE_ncompile_inc;
+val _ = show_thm "every_Fn_SOME_ncompile_inc_typed=" clos_to_bvlProofTheory.every_Fn_SOME_ncompile_inc;
+val _ = show_thm "set_code_locs_collect_apps_typed=" clos_to_bvlProofTheory.set_code_locs_collect_apps;
 val _ = show_thm "compile_every_Fn_SOME_typed=" clos_to_bvlProofTheory.compile_every_Fn_SOME;
 val _ = show_thm "calls_preserves_every_Fn_vs_NONE_typed=" clos_callProofTheory.calls_preserves_every_Fn_vs_NONE;
 val _ = show_thm "every_Fn_vs_NONE_cond_call_compile_inc_typed=" clos_to_bvlProofTheory.every_Fn_vs_NONE_cond_call_compile_inc;

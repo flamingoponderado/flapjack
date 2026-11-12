@@ -1,5 +1,41 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "set_code_locs_collect_apps",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiLocations.lean", "lean_name": "collectApps_codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the five original binders, collector equality and complete set-union conclusion. The source singleton code_locs form agrees with the typed code_loc prime rendering; all collector branches are covered."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "code_locs_FST_ticks_compile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalInvariants.lean", "lean_name": "ticksCompileInc_codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all original quantified carriers, assumptions and complete conclusion. Tick and letop output and input payload types remain independent; numbering includes the original entry sentinel even for empty input."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "code_locs_FST_letop_compile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalInvariants.lean", "lean_name": "letopCompileInc_codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all original quantified carriers, assumptions and complete conclusion. Tick and letop output and input payload types remain independent; numbering includes the original entry sentinel even for empty input."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "ncompile_inc_code_locs_distinct",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalInvariants.lean", "lean_name": "numberCompileInc_codeLocations_distinct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all original quantified carriers, assumptions and complete conclusion. Tick and letop output and input payload types remain independent; numbering includes the original entry sentinel even for empty input."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "every_Fn_vs_NONE_ncompile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalInvariants.lean", "lean_name": "numberCompileInc_everyFnVarsNone",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all original quantified carriers, assumptions and complete conclusion. Tick and letop output and input payload types remain independent; numbering includes the original entry sentinel even for empty input."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "every_Fn_SOME_ncompile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalInvariants.lean", "lean_name": "numberCompileInc_everyFnLocationSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all original quantified carriers, assumptions and complete conclusion. Tick and letop output and input payload types remain independent; numbering includes the original entry sentinel even for empty input."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "alist_to_fmap_FEMPTY",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/AlistMap.lean", "lean_name": "alistToFmap_fempty",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations",
