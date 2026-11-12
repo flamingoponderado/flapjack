@@ -2593,6 +2593,14 @@
   "reviewer": "Compared compile_every_Fn_SOME_typed with the HOL source: the program label type is independently polymorphic, both body projections and the function-location predicate match, and compileSource is the reviewed source annotation definition. The proof applies the reviewed every_Fn_SOME_ann, whose generalised statement is the same HOL result."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "init_code_ok",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean",
+  "lean_name": "initCode_ok",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL source and init_code_ok_typed confirms the original positive maximum-arity guard and both complete lookup conjuncts, including strict index guards, natural subtraction, arities and generated BVL bodies. The proof indexes the original generic prefix and triangular partial-application table and retains the reviewed Spt carrier."
+},
+{
   "hol_path": "HOL/src/finite_maps/sptreeScript.sml",
   "hol_name": "lookup_fromList",
   "lean_path": "Flapjack/Misc/Sptree/FromList/Domain.lean",
