@@ -378,6 +378,18 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateLaws.lean", "stackSizeEq2"): (
+        "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+        "stack_size_eq2",
+        "Tag withdrawn (task 148): HOL stack_size_eq2 (wordPropsScript.sml:1785-1791) conjoins two "
+        "instances of the polymorphic stack_size: the typed capture stack_size_eq2_typed in "
+        "scripts/hol-probes/word_props_typed_probe.out types the cons conjunct at "
+        "(sfrm :\u03b1 stack_frame) and (stack :\u03b1 stack_frame list), and the empty-list conjunct "
+        "at an independent ([] :\u03b2 stack_frame list). The Lean statement fixes both at width-indexed "
+        "frames, so it is the \u03b2 = width instance of HOL's universal empty-list equation. The cons "
+        "conjunct remains the reviewed word-translated instance; a faithful port needs a stack-size "
+        "function generic in the frame type."
+    ),
     ("Flapjack/CakeParser/PegActions.lean", "evalUnary"): (
         "cakeml/compiler/parsing/pegexec_cml_foScript.sml",
         "eval_unary_def",
