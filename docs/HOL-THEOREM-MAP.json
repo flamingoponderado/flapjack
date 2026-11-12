@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml", "hol_name": "dest_Seq_def",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle.lean", "lean_name": "destSeq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all typed pattern-match clauses: exactly a two-binding Let whose body is Var 1 returns the ordered pair; all other BVL expressions return NONE. The executable sequence traversal calls this definition."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "dest_Seq_thm",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/SequenceRecognition.lean", "lean_name": "destSeq_iff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source theorem: for arbitrary two expressions, for every input the recognizer returns their pair exactly when the input is Let [x,y] (Var 1)."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "bEvery_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/Every.lean", "lean_name": "bEvery",
   "statement_status": "reviewed_exact",

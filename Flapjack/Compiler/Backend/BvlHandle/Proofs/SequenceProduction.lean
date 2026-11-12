@@ -53,14 +53,20 @@ theorem compileSeqsFuel_eq_of (compileExp : Nat → Exp → Exp)
     by_cases shape : ∃ x y, e = Exp.let [x, y] (Exp.var 1)
     · obtain ⟨x, y, rfl⟩ := shape
       cases h : compileSeqsFuel fuel limit y acc with
-      | none => simp [compileSeqsFuel, h] at run
+      | none => simp [compileSeqsFuel, destSeq, h] at run
       | some rest =>
         have erest := ih y acc rest h
-        have erun := ih x (some rest) result (by simpa [compileSeqsFuel, h] using run)
+        have erun := ih x (some rest) result (by simpa [compileSeqsFuel, destSeq, h] using run)
         simpa [compileSeqsWith, ← erest] using erun
     · have notShape : ∀ x y, e = Exp.let [x, y] (Exp.var 1) → False := by
         intro x y h; exact shape ⟨x, y, h⟩
-      rw [compileSeqsFuel.eq_3 limit e acc fuel notShape] at run
+      have notSeq : destSeq e = none := by
+        cases found : destSeq e with
+        | none => rfl
+        | some pair =>
+          obtain ⟨x, y⟩ := pair
+          exact False.elim (shape ⟨x, y, (destSeq_iff x y e).1 found⟩)
+      simp only [compileSeqsFuel, notSeq] at run
       rw [expressionEq fuel limit e] at run
       cases acc with
       | none =>

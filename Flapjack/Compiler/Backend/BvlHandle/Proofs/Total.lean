@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyTotal
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileTotal
 public import Flapjack.Compiler.Backend.BvlConst.Proofs.Total
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SequenceRecognition
 
 @[expose] public section
 
@@ -39,12 +40,15 @@ theorem compileSeqsFuel_succeeds (fuel limit : Nat) (e : Exp) (acc : Option Exp)
       have by' : expBudget y < fuel := by simp_all [expBudget, listBudget] <;> omega
       obtain ⟨rest, hr⟩ := ih y acc by'
       obtain ⟨result, hx⟩ := ih x (some rest) bx
-      exact ⟨result, by simp [compileSeqsFuel.eq_2, hr, hx]⟩
-    · have notShape : ∀ x y, e = Exp.let [x, y] (Exp.var 1) → False := by
-        intro x y h; exact shape ⟨x, y, h⟩
+      exact ⟨result, by simp [compileSeqsFuel, destSeq, hr, hx]⟩
+    · have notSeq : destSeq e = none := by
+        cases found : destSeq e with
+        | none => rfl
+        | some pair =>
+          obtain ⟨x, y⟩ := pair
+          exact False.elim (shape ⟨x, y, (destSeq_iff x y e).1 found⟩)
       obtain ⟨result, h⟩ := compileExpFuel_succeeds fuel limit 0 e
-      rw [compileSeqsFuel.eq_3 limit e acc fuel notShape]
-      cases acc <;> exact ⟨_, by simp [h]; rfl⟩
+      cases acc <;> exact ⟨_, by simp [compileSeqsFuel, notSeq, h]; rfl⟩
 
 /-- The executable sequence retry cannot exhaust traversal fuel. -/
 theorem compileSeqsBounded_succeeds (fuel limit : Nat) (e : Exp) (acc : Option Exp) :

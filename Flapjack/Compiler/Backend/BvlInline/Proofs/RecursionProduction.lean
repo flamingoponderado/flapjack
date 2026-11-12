@@ -83,15 +83,4 @@ theorem recursiveBounded_eq (fuel name : Nat) (e : Exp) :
     have correct := recursiveFuel_eq _ name e result run
     simp [recursiveBounded, first, run, correct]
 
-/-- The actual bounded size and recursion checks make the same cache decision
-as the original `must_inline`. This executable correspondence has no
-standalone HOL declaration. -/
-theorem mustInline_executable_eq (fuel name limit : Nat) (e : Exp) :
-    (do
-      let size ← smallExpBounded fuel limit e
-      let recurs ← if size == 0 then pure false else recursiveBounded fuel name e
-      pure (size != 0 && !recurs)) = some (mustInline name limit e) := by
-  by_cases zero : isSmallSing limit e = 0 <;>
-    simp [smallExpBounded_eq, recursiveBounded_eq, mustInline, isSmall, isRec, isRecList, zero]
-
 end Flapjack.Compiler.Backend.BvlInline
