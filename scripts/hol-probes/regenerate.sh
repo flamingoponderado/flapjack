@@ -10434,3 +10434,11 @@ run_probe stack_alloc_typed_probeScript.sml stack_alloc_typed_probe.out \
   word_gen_gc_partial_move_bitmap_code_def_typed word_gen_gc_partial_move_bitmaps_code_def_typed word_gen_gc_partial_move_code_def_typed word_gen_gc_partial_move_data_code_def_typed word_gen_gc_partial_move_list_code_def_typed word_gen_gc_partial_move_ref_list_code_def_typed word_gen_gc_partial_move_roots_bitmaps_code_def_typed stub_names_def_typed \
   "$cake_dir/compiler/backend/stack_allocScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe bvl_inline_typed_probeScript.sml bvl_inline_typed_probe.out \
+  optimise_def_typed optimise_eq_typed compile_inc_def_typed compile_prog_def_typed remove_ticks_sing_def_typed remove_ticks_def_typed remove_ticks_sing_typed tick_inline_sing_def_typed \
+  tick_inline_def_typed tick_inline_sing_typed is_small_sing_def_typed is_small_aux_def_typed is_small_sing_typed is_small_def_typed is_rec_sing_def_typed is_rec_def_typed \
+  is_rec_sing_typed must_inline_def_typed tick_inline_all_def_typed tick_compile_prog_def_typed var_list_def_typed dest_op_def_typed let_op_one_def_typed let_op_def_typed \
+  let_op_sing_def_typed let_op_one_typed \
+  "$cake_dir/compiler/backend/bvl_inlineScript.sml" \
+  "$cake_dir/compiler/backend"
