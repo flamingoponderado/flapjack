@@ -378,6 +378,15 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/Compiler/Backend/Semantics/TargetSem/EncodedBytes.lean", "encodedBytesInMemHOL"): (
+        "cakeml/compiler/backend/semantics/targetSemScript.sml",
+        "encoded_bytes_in_mem_def",
+        "Tag withdrawn (task 149): the typed capture encoded_bytes_in_mem_def_typed in "
+        "scripts/hol-probes/target_sem_typed_probe.out gives c : \u03b1 asm_config and pc : \u03b2 word, "
+        "so HOL's instruction type \u03b1 is independent of the word dimension. Lean's AsmConfigExact "
+        "fixes encode : HolAsm width \u2192 List (BitVec 8), so the definition is the \u03b1 = HolAsm width "
+        "instance; a faithful port needs an asm-config carrier generic in its instruction type."
+    ),
     ("Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateLaws.lean", "stackSizeEq2"): (
         "cakeml/compiler/backend/semantics/wordPropsScript.sml",
         "stack_size_eq2",

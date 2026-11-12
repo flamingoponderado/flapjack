@@ -10515,3 +10515,10 @@ run_probe stack_sem_typed_probeScript.sml stack_sem_typed_probe.out \
   read_bitmap_def_typed \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
+
+run_probe target_sem_typed_probeScript.sml target_sem_typed_probe.out \
+  apply_oracle_def_typed encoded_bytes_in_mem_def_typed evaluate_def_typed read_ffi_bytearray_def_typed read_ffi_bytearrays_def_typed good_init_state_def_typed start_pc_ok_def_typed ccache_interfer_ok_def_typed \
+  ffi_interfer_ok_def_typed code_loaded_def_typed get_reg_value_def_typed target_configured_def_typed machine_sem_def_typed is_valid_mapped_read_def_typed is_valid_mapped_write_def_typed mmio_pcs_min_index_def_typed \
+  post_ccache_asm_def_typed post_ffi_asm_def_typed machine_config_typed machine_result_typed installed_def_typed \
+  "$cake_dir/compiler/backend/semantics/targetSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"

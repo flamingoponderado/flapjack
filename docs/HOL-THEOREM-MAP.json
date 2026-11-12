@@ -36132,9 +36132,8 @@
     "hol_name": "encoded_bytes_in_mem_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/EncodedBytes.lean",
     "lean_name": "encodedBytesInMemHOL",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pbmi) against targetSemScript.sml:52-57: encoded_bytes_in_mem c pc m md <=> ?i k. k * (2 ** c.code_alignment) < LENGTH (c.encode i) /\\ bytes_in_memory pc (DROP (k * (2 ** c.code_alignment)) (c.encode i)) m md, verbatim; 2 ** code_alignment -> 2 ^ codeAlignment, DROP -> List.drop, encode : 'a asm -> word8 list -> HolAsm width -> List (BitVec 8), words qualifier for the BitVec width/8 carriers; bytes_in_memory is the tagged bytesInMemoryHOL."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 149): the typed capture encoded_bytes_in_mem_def_typed (target_sem_typed_probe.out) gives c : \u03b1 asm_config and pc : \u03b2 word, so HOL's instruction type \u03b1 is independent of the word dimension; Lean's AsmConfigExact fixes encode : HolAsm width -> List (BitVec 8). The clauses are HOL's, but this is the \u03b1 = HolAsm width instance, not an exact port; a faithful port needs an asm-config carrier generic in its instruction type."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/Evaluate.lean",

@@ -26,11 +26,17 @@ def applyOracleHOL {α β : Type} (oracle : Nat → α → β) (x : α) :
     β × (Nat → α → β) :=
   (oracle 0 x, holShiftSeq 1 oracle)
 
-/-- Exact HOL `encoded_bytes_in_mem_def`: some encoded instruction block
+/-- HOL `encoded_bytes_in_mem_def`: some encoded instruction block
     (`c.encode i`) appears in memory at `pc` after dropping a whole number of
-    alignment blocks. -/
-@[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "encoded_bytes_in_mem_def"
-  (words_as_type_indexed_bitvec)]
+    alignment blocks.
+
+    Tag withdrawn (task 149): the typed capture
+    `encoded_bytes_in_mem_def_typed` (`target_sem_typed_probe.out`) gives
+    `c : α asm_config` and `pc : β word`, so HOL's instruction type `α` is
+    independent of the word dimension. Lean's `AsmConfigExact` fixes the
+    instruction type at `HolAsm width` (`encode : HolAsm width → List (BitVec 8)`),
+    so this is the `α = HolAsm width` instance, not an exact port. A faithful
+    port needs an asm-config carrier generic in its instruction type. -/
 def encodedBytesInMemHOL {width : Nat} [NeZero width] (c : AsmConfigExact width)
     (pc : BitVec width) (m : BitVec width → BitVec 8)
     (md : BitVec width → Prop) : Prop :=
