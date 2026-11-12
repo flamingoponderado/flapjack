@@ -1,5 +1,41 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "optimise_get_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/CodeLabels.lean", "lean_name": "optimise_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original for arbitrary split flag, cut size and entry with independently polymorphic name: the source optimise result's body labels are a subset of the original body labels. The proof composes the complete source tick-removal, let-operation and handler expression/sequence bounds."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "var_list_code_labels_imp",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/CodeLabels.lean", "lean_name": "varList_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: for arbitrary start index, BVL expression list and independently polymorphic comparison list, the var_list premise implies the complete mapped union of expression labels is empty."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "let_op_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/CodeLabels.lean", "lean_name": "letOp_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: for every expression list, the complete union of labels after source let_op equals that before it. The proof covers the recognized variable-list reduction and all recursive cases."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "let_op_sing_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/CodeLabels.lean", "lean_name": "letOpSing_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: source let_op_sing preserves the entire label set of any BVL expression."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "remove_ticks_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/CodeLabels.lean", "lean_name": "removeTicks_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: the full union of labels after source remove_ticks equals the input union for every expression list; the recursive proof preserves destination and operation labels."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "opt_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/EnvRel.lean", "lean_name": "optionUnit_eq_iff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed replay of the original local theorem: two unit options are equal exactly when their equality to SOME () agrees. The source uses this fact in the optional-cut environment proof."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/bvl_handleScript.sml", "hol_name": "dest_Seq_def",
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle.lean", "lean_name": "destSeq",
   "statement_status": "reviewed_exact",

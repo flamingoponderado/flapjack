@@ -718,6 +718,10 @@ run_probe tmc_program_word_probeScript.sml tmc_program_word_probe.out \
 run_probe bvl_inline_frontend_probeScript.sml bvl_inline_frontend_probe.out \
   inline size letop optimise_def_typed optimise_eq_typed compile_inc_def_typed compile_prog_def_typed "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
 
+run_probe bvl_inline_proof_shape_probeScript.sml bvl_inline_proof_shape_probe.out \
+  var_list_code_labels_imp_typed let_op_code_labels_typed let_op_sing_code_labels_typed remove_ticks_code_labels_typed optimise_get_code_labels_typed tick_inline_code_labels_typed tick_inline_all_code_labels_typed compile_prog_get_code_labels_typed \
+  "$cake_dir/compiler/backend/proofs/bvl_inlineProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe bvl_handle_frontend_probeScript.sml bvl_handle_frontend_probe.out \
   compile_def_typed compile_sing_eq_typed compile_exp_def_typed compile_exp_eq_typed compile_seqs_def_typed compile_any_def_typed simplify compiled cut seq can_raise dest_handle_Raise dest_handle_Let dest_handle_If handle_adj_vars handle_size handle_simp handle_size_non_zero_replay "$cake_dir/compiler/backend/bvl_handleScript.sml" "$cake_dir/compiler/backend"
 
@@ -9531,7 +9535,7 @@ run_probe bvl_handle_proof_shape_probeScript.sml bvl_handle_proof_shape_probe.ou
   "$cake_dir/compiler/backend/proofs"
 
 run_probe bvl_handle_compile_correct_probeScript.sml bvl_handle_compile_correct_probe.out \
-  OptionalLetLet_IMP_replay general_compile_correct_replay exported_compile_correct_352_replay \
+  opt_lemma_replay OptionalLetLet_IMP_replay general_compile_correct_replay exported_compile_correct_352_replay \
   "$cake_dir/compiler/backend/proofs/bvl_handleProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 

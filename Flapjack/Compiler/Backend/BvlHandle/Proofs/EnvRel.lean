@@ -12,6 +12,12 @@ namespace Flapjack.Compiler.Backend.BvlHandle.Proofs
 open Flapjack.Compiler.Backend.DbVars
 open Flapjack.Compiler.Backend.BvlSem
 
+/-- Unit-valued options are equal exactly when they agree on being present. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "opt_lemma"]
+theorem optionUnit_eq_iff (x y : Option Unit) :
+    x = y ↔ (x = some () ↔ y = some ()) := by
+  cases x <;> cases y <;> simp_all
+
 /-- Two lists have the same length and agree at every live index. This is
 the bounded-index form of HOL's indexed list relation. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "env_rel_def"]

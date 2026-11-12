@@ -150,6 +150,7 @@ val general_compile_correct = Q.prove(`
 val exported_compile_correct = general_compile_correct
   |> Q.SPECL [`xs`,`env`,`s1`,`ys`,`env`,`res`,`s2`,`[]`]
   |> SIMP_RULE std_ss [APPEND_NIL,env_rel_refl];
+val _ = show "opt_lemma_replay" opt_lemma;
 val _ = show "OptionalLetLet_IMP_replay" OptionalLetLet_IMP;
 val _ = show "general_compile_correct_replay" general_compile_correct;
 val _ = show "exported_compile_correct_352_replay" exported_compile_correct;

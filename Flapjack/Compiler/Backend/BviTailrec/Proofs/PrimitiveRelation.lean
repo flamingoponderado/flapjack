@@ -223,15 +223,6 @@ theorem stateRel_doApp_toOp {C F : Type} (op : AssocOp) (args : List Value)
     obtain ⟨rfl, rfl⟩ := run
     exact ⟨target, by simp [doApp_toOp_pure, found], related⟩
 
-/-- Accumulator dispatch errors do not depend on compiler state. -/
-theorem doApp_toOp_error {C F D G : Type} (op : AssocOp) (args : List Value)
-    (source : BviSem.BviState C F) (target : BviSem.BviState D G)
-    (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
-    (run : BviSem.doApp (toOp op) args source = .err error) :
-    BviSem.doApp (toOp op) args target = .err error := by
-  rw [doApp_toOp_pure] at run ⊢
-  cases found : accumulatorApply op args <;> simp_all
-
 /-- Updating related states with the same reference map preserves the state
 relation. -/
 theorem stateRel_withRefs {C F : Type} (source : BviSem.BviState (Nat × C) F)
