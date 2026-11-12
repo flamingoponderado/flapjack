@@ -1384,6 +1384,12 @@
   "reviewer": "Compared imp_perm_code_merge_typed and independent review: polymorphic payload, binder order, premise and permutation orientation match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "set_MAP_code_sort",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SortPermutation.lean", "lean_name": "set_map_codeSort",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared set_MAP_code_sort_typed: the natural-keyed code payload and the mapped result have independent arbitrary types, the function is unrestricted, and the complete sets of mapped entries agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "PERM_code_sort",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SortPermutation.lean", "lean_name": "codeSort_perm",
   "statement_status": "reviewed_exact",
@@ -2003,6 +2009,12 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "canExtract",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared can_extract_def_typed: existential order, expression constructors and int_of_num as Int.ofNat agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "MAP_FST_chain_exps",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainLocations.lean", "lean_name": "mapFst_chainExps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared MAP_FST_chain_exps_typed: an arbitrary start and nonempty closure-expression list yield the complete mapped COUNT_LIST/LENGTH entry-label sequence. The nonempty premise and addition order are unchanged."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "MAP_FST_chain_exps_any",

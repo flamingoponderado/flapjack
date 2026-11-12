@@ -40,6 +40,8 @@ REPLICATE_1_replay=REPLICATE (1 :num) (x :α) = [x]
 obvious_arith_comm_replay=(a :num) = (b :num) + a ⇔ b = (0 :num)
 EXISTS_CONS_NOT_NULL_typed=(∃(x :α) (xs :α list). (ys :α list) = x::xs) ⇔ ¬NULL ys
 code_locs_Op_cons_typed=∀(c :closLang$exp list) (b :closLang$op) (a :tra) (xs :closLang$exp list). code_locs ((Op a b c :closLang$exp)::xs) = code_locs c ++ code_locs xs
+MAP_FST_chain_exps_typed=∀(i :num) (ls :closLang$exp list). ls ≠ ([] :closLang$exp list) ⇒ MAP (FST :num # num # closLang$exp -> num) (chain_exps i ls) = MAP ($+ i) (COUNT_LIST (LENGTH ls))
+set_MAP_code_sort_typed=set (MAP (f :num # β -> α) (code_sort (x :(num # β) list))) = set (MAP f x)
 compile_exps_IMP_acc_typed=compile_exps (max_app :num) (xs :closLang$exp list) (aux :(num # num # bvl$exp) list) = ((c :bvl$exp list),(aux1 :(num # num # bvl$exp) list)) ⇒ LENGTH c = LENGTH xs ∧ ∃(ys :(num # num # bvl$exp) list). aux1 = ys ++ aux
 build_aux_append_aux_typed=∀(xs :(num # bvl$exp) list) (n :num) (aux :(num # num # bvl$exp) list) (aux_extra :(num # num # bvl$exp) list). build_aux n xs (aux ++ aux_extra) = (λ((ys :num),(aux2 :(num # num # bvl$exp) list)). (ys,aux2 ++ aux_extra)) (build_aux n xs aux)
 compile_exps_append_aux_typed=∀(max_app :num) (xs :closLang$exp list) (aux :(num # num # bvl$exp) list). compile_exps max_app xs (aux ++ (aux_extra :(num # num # bvl$exp) list)) = (λ((ys :bvl$exp list),(aux2 :(num # num # bvl$exp) list)). (ys,aux2 ++ aux_extra)) (compile_exps max_app xs aux)

@@ -56,6 +56,8 @@ val obvious_arith_comm_replay = Q.prove (
 val _ = show_thm "obvious_arith_comm_replay=" obvious_arith_comm_replay;
 val _ = show_thm "EXISTS_CONS_NOT_NULL_typed=" clos_to_bvlProofTheory.EXISTS_CONS_NOT_NULL;
 val _ = show_thm "code_locs_Op_cons_typed=" clos_to_bvlProofTheory.code_locs_Op_cons;
+val _ = show_thm "MAP_FST_chain_exps_typed=" clos_to_bvlProofTheory.MAP_FST_chain_exps;
+val _ = show_thm "set_MAP_code_sort_typed=" clos_to_bvlProofTheory.set_MAP_code_sort;
 val _ = show_thm "compile_exps_IMP_acc_typed=" clos_to_bvlProofTheory.compile_exps_IMP_acc;
 val _ = show_thm "build_aux_append_aux_typed=" clos_to_bvlProofTheory.build_aux_append_aux;
 val _ = show_thm "compile_exps_append_aux_typed=" clos_to_bvlProofTheory.compile_exps_append_aux;
