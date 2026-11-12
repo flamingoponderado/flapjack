@@ -268,6 +268,20 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: arbitrary closure value, intermediate values, argument list, block tag, code pointer, numeric arity and fields; both full generated calls with matching environments and counts; arbitrary independent compiler and FFI state carriers; and unconditional equality of complete evaluations agree. The refs field uses the canonical finite-support carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_app_helper",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvaluateApp.lean", "lean_name": "evaluateAppHelper",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the literal local HOL proof and typed replay: the non-value premise and argument evaluation with its complete final state, independent compiler and FFI state types, and both application expression branches agree. appTarget unfolds to the original case expression. The refs field uses the canonical finite-support carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_app_helper2",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvaluateApp.lean", "lean_name": "evaluateAppHelper2",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the literal local HOL proof and typed replay: the non-value premise, successful argument evaluation and function evaluation in the original environment with threaded state, independent compiler and FFI state types, and both application expression branches agree. appTarget unfolds to the original case expression. The refs field uses the canonical finite-support carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_simple_genlist_vars",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/FreeLet.lean", "lean_name": "evaluateSimpleGenlistVars",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],

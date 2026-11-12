@@ -911,6 +911,36 @@ in
   intLib.ARITH_TAC);
   val _ = show_thm "cl_rel_get_num_args_replay=" cl_rel_get_num_args_replay;
 end;
+(* Replay the two application error propagation theorems. *)
+local
+  open preamble clos_to_bvlTheory clos_to_bvlProofTheory bvlSemTheory bvlPropsTheory listTheory backend_commonTheory
+in
+  val evaluate_app_helper_replay = Q.prove (
+    `  (!x. r ≠ Rval x) ∧ evaluate (c8,env,s) = (r,s')
+    ⇒
+    evaluate
+           ([case loc of
+              NONE => Let (c8++[c7]) (mk_cl_call (Var (LENGTH c8)) (GENLIST Var (LENGTH c8)))
+            | SOME loc => Call (LENGTH c8 - 1) (SOME (loc + num_stubs max_app)) (c8++[c7])],env,s) = (r, s')`,
+  srw_tac[][] >>
+  Cases_on `loc` >>
+  srw_tac[][bvlSemTheory.evaluate_def, bvlPropsTheory.evaluate_APPEND] >>
+  Cases_on `r` >>
+  srw_tac[][]);
+  val _ = show_thm "evaluate_app_helper_replay=" evaluate_app_helper_replay;
+  val evaluate_app_helper2_replay = Q.prove (
+    `  (!x. r ≠ Rval x) ∧ evaluate (c8,env,s) = (Rval x, s') ∧ evaluate ([c7],env,s') = (r,s'')
+    ⇒
+    evaluate ([case loc of
+              NONE => Let (c8++[c7]) (mk_cl_call (Var (LENGTH c8)) (GENLIST Var (LENGTH c8)))
+            | SOME loc => Call (LENGTH c8 - 1) (SOME (loc + num_stubs max_app)) (c8++[c7])],env,s) = (r, s'')`,
+  srw_tac[][] >>
+  Cases_on `loc` >>
+  srw_tac[][bvlSemTheory.evaluate_def, bvlPropsTheory.evaluate_APPEND] >>
+  Cases_on `r` >>
+  srw_tac[][]);
+  val _ = show_thm "evaluate_app_helper2_replay=" evaluate_app_helper2_replay;
+end;
 (* Replay the generated-variable evaluation theorem. *)
 local
   open preamble clos_to_bvlProofTheory bvlPropsTheory bvlSemTheory listTheory

@@ -26,35 +26,53 @@ def appTarget (maxApp : Nat) (location : Option Nat) (args : List Bvl.Exp) (func
       (mkClCall (.var args.length) ((List.range args.length).map Bvl.Exp.var))
   | some loc => .call (args.length - 1) (some (loc + numStubs maxApp)) (args ++ [function])
 
-/-- An error in the compiled argument list propagates through either form of
-application before the function expression or call is executed. -/
-theorem evaluate_appTarget_args_error {C F : Type} (s next : BvlSem.State C F)
-    (env : List BvlSem.Value) (maxApp : Nat) (location : Option Nat)
-    (args : List Bvl.Exp) (function : Bvl.Exp) (error : ErrorResult BvlSem.Value)
-    (run : BvlSem.evaluate args env s = (.err error, next)) :
-    BvlSem.evaluate [appTarget maxApp location args function] env s = (.err error, next) := by
-  have appended : BvlSem.evaluate (args ++ [function]) env s = (.err error, next) := by
-    change BvlSem.evaluateTuple (args ++ [function], env, s) = _
-    rw [BvlProps.evaluateAppend]
-    simp [BvlSem.evaluateTuple, run]
-  cases location <;> simp only [appTarget] <;>
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, appended]
+namespace AppHelperCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end AppHelperCarrier
 
-/-- An error in the compiled function expression propagates after successful
-argument evaluation through either application form. -/
-theorem evaluate_appTarget_function_error {C F : Type} (s middle next : BvlSem.State C F)
+/-- A non-value argument result propagates through the compiled application. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_app_helper"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateAppHelper {C F : Type} (s next : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (env : List BvlSem.Value) (maxApp : Nat) (location : Option Nat)
+    (args : List Bvl.Exp) (function : Bvl.Exp) (result : Result (List BvlSem.Value) BvlSem.Value)
+    (premises : (∀ x, result ≠ .val x) ∧ BvlSem.evaluate args env s = (result, next)) :
+    BvlSem.evaluate [appTarget maxApp location args function] env s = (result, next) := by
+  rcases premises with ⟨nonvalue, run⟩
+  cases result with
+  | val values => exact False.elim (nonvalue values rfl)
+  | err error =>
+    have appended : BvlSem.evaluate (args ++ [function]) env s = (.err error, next) := by
+      change BvlSem.evaluateTuple (args ++ [function], env, s) = _
+      rw [BvlProps.evaluateAppend]
+      simp [BvlSem.evaluateTuple, run]
+    cases location <;> simp only [appTarget] <;>
+      rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, appended]
+
+/-- A non-value function result propagates after successful argument evaluation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_app_helper2"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateAppHelper2 {C F : Type} (s middle next : Flapjack.Compiler.Backend.BvlSem.State C F)
     (env : List BvlSem.Value) (maxApp : Nat) (location : Option Nat)
     (args : List Bvl.Exp) (function : Bvl.Exp) (values : List BvlSem.Value)
-    (error : ErrorResult BvlSem.Value)
-    (argsRun : BvlSem.evaluate args env s = (.val values, middle))
-    (functionRun : BvlSem.evaluate [function] env middle = (.err error, next)) :
-    BvlSem.evaluate [appTarget maxApp location args function] env s = (.err error, next) := by
-  have appended : BvlSem.evaluate (args ++ [function]) env s = (.err error, next) := by
-    change BvlSem.evaluateTuple (args ++ [function], env, s) = _
-    rw [BvlProps.evaluateAppend]
-    simp [BvlSem.evaluateTuple, argsRun, functionRun]
-  cases location <;> simp only [appTarget] <;>
-    rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, appended]
+    (result : Result (List BvlSem.Value) BvlSem.Value)
+    (premises : (∀ x, result ≠ .val x) ∧ BvlSem.evaluate args env s = (.val values, middle) ∧
+      BvlSem.evaluate [function] env middle = (result, next)) :
+    BvlSem.evaluate [appTarget maxApp location args function] env s = (result, next) := by
+  rcases premises with ⟨nonvalue, argsRun, functionRun⟩
+  cases result with
+  | val values => exact False.elim (nonvalue values rfl)
+  | err error =>
+    have appended : BvlSem.evaluate (args ++ [function]) env s = (.err error, next) := by
+      change BvlSem.evaluateTuple (args ++ [function], env, s) = _
+      rw [BvlProps.evaluateAppend]
+      simp [BvlSem.evaluateTuple, argsRun, functionRun]
+    cases location <;> simp only [appTarget] <;>
+      rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, appended]
 
 /-- An argument error preserves the candidate simulation postcondition for
 both direct and generic application. -/
@@ -69,7 +87,7 @@ theorem evaluatePost_app_args_error {C F : Type}
   | val values => simp [resultRel] at related
   | err targetError =>
     exact ⟨clock, .err targetError, tFinal, fFinal,
-      evaluate_appTarget_args_error _ _ _ _ _ _ _ _ run, related, states, map, frame, annotations, clocks⟩
+      evaluateAppHelper _ _ _ _ _ _ _ _ ⟨by simp, run⟩, related, states, map, frame, annotations, clocks⟩
 
 /-- After successful argument evaluation, a simulated function-expression
 error propagates through the target application. -/
@@ -113,7 +131,7 @@ theorem evaluatePost_app_function_error {C F : Type}
         simpa [Nat.add_assoc, clocks1] using shifted
       refine ⟨clock1 + clock2, .err targetError, tFinal, fFinal, ?_, ?_, state2,
         HolFiniteMapExact.submap_trans map1 map2, unmappedRefsSubmap_trans frame1 frame2, annotations2, clocks2⟩
-      · exact evaluate_appTarget_function_error _ _ _ _ _ _ _ _ _ _ runArgs run2
+      · exact evaluateAppHelper2 _ _ _ _ _ _ _ _ _ _ ⟨by simp, runArgs, run2⟩
       · simpa [maxApp] using related2
 
 /-- A generic application first evaluates arguments and the function, then
