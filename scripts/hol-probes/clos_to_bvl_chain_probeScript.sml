@@ -1008,6 +1008,68 @@ in
   \\ FULL_SIMP_TAC std_ss [ADD1,SNOC_APPEND]
   \\ SIMP_TAC std_ss [GSYM APPEND_ASSOC,APPEND]);
   val _ = show_thm "evaluate_recc_Lets_replay=" evaluate_recc_Lets_replay;
+  val compile_exps_LIST_IMP_compile_exps_EL_replay = Q.prove (
+    `  !exps aux1 c7 aux7 i n8 n4 aux5 num_args e.
+      EL i exps = (num_args, e) ∧
+      (compile_exps max_app (MAP SND exps) aux1 = (c7,aux7)) /\ i < LENGTH exps /\
+      (build_aux n8 (MAP2 (code_for_recc_case k) (MAP FST exps) c7) aux7 = (n4,aux5)) /\
+      code_installed aux5 t1.code ==>
+      ?aux c aux1'.
+        compile_exps max_app [e] aux = ([c],aux1') /\
+        lookup (n8 + 2*i) t1.code = SOME (num_args + 1,SND (code_for_recc_case k num_args c)) /\
+        code_installed aux1' t1.code`,
+  HO_MATCH_MP_TAC SNOC_INDUCT \\ full_simp_tac(srw_ss())[] \\ REPEAT STRIP_TAC
+  \\ Cases_on `i = LENGTH exps` \\ full_simp_tac(srw_ss())[] THEN1
+   (full_simp_tac(srw_ss())[SNOC_APPEND,EL_LENGTH_APPEND]
+    \\ full_simp_tac(srw_ss())[GSYM SNOC_APPEND,compile_exps_SNOC]
+    \\ fs[] \\ rpt (pairarg_tac \\ fs[])
+    \\ qmatch_assum_rename_tac`_ = (c2,aux3)`
+    \\ qmatch_assum_rename_tac`_ = (c1,aux2)`
+    \\ SRW_TAC [] []
+    \\ Q.LIST_EXISTS_TAC [`aux2`] \\ full_simp_tac(srw_ss())[]
+    \\ IMP_RES_TAC compile_exps_SING \\ full_simp_tac(srw_ss())[]
+    \\ full_simp_tac(srw_ss())[code_installed_def]
+    \\ full_simp_tac(srw_ss())[]
+    \\ rpt BasicProvers.VAR_EQ_TAC
+    \\ IMP_RES_TAC compile_exps_LENGTH \\ full_simp_tac(srw_ss())[]
+    \\ full_simp_tac(srw_ss())[GSYM SNOC_APPEND, map2_snoc]
+    \\ full_simp_tac(srw_ss())[SNOC_APPEND, build_aux_APPEND1]
+    \\ Cases_on `build_aux n8 (MAP2 (code_for_recc_case k) (MAP FST exps) c1) aux3`
+    \\ full_simp_tac(srw_ss())[LET_DEF]
+    \\ IMP_RES_TAC build_aux_LENGTH
+    \\ full_simp_tac(srw_ss())[AC ADD_COMM ADD_ASSOC]
+    \\ rpt BasicProvers.VAR_EQ_TAC
+    \\ full_simp_tac(srw_ss())[LENGTH_MAP2]
+    \\ Cases_on `code_for_recc_case k num_args d`
+    \\ full_simp_tac(srw_ss())[]
+    \\ (qspecl_then [`MAP2 (code_for_recc_case k) (MAP FST exps) c1`,`n8`,`aux3`]
+           mp_tac build_aux_acc) \\ full_simp_tac(srw_ss())[]
+    \\ REPEAT STRIP_TAC \\ full_simp_tac(srw_ss())[]
+    \\ rev_full_simp_tac(srw_ss())[]
+    \\ full_simp_tac(srw_ss())[code_for_recc_case_def] )
+  \\ `i < LENGTH exps` by DECIDE_TAC
+  \\ full_simp_tac(srw_ss())[EL_SNOC]
+  \\ full_simp_tac(srw_ss())[MAP_SNOC, compile_exps_SNOC]
+  \\ fs[] \\ rpt (pairarg_tac \\ fs[])
+  \\ qmatch_assum_rename_tac`_ = (c2,aux3)`
+  \\ qmatch_assum_rename_tac`_ = (c1,aux2)`
+  \\ FIRST_X_ASSUM (MP_TAC o Q.SPECL [`aux1`]) \\ full_simp_tac(srw_ss())[]
+  \\ SRW_TAC [] [] \\ POP_ASSUM (MP_TAC o Q.SPECL [`i`,`n8`])
+  \\ full_simp_tac(srw_ss())[] \\ REPEAT STRIP_TAC
+  \\ IMP_RES_TAC compile_exps_SING \\ SRW_TAC [] []
+  \\ imp_res_tac compile_exps_LENGTH
+  \\ full_simp_tac(srw_ss())[GSYM SNOC_APPEND, map2_snoc]
+  \\ full_simp_tac(srw_ss())[SNOC_APPEND, MAP,build_aux_APPEND1]
+  \\ Cases_on `build_aux n8 (MAP2 (code_for_recc_case k) (MAP FST exps) c1) aux3`
+  \\ full_simp_tac(srw_ss())[LET_DEF] \\ NTAC 4 (POP_ASSUM MP_TAC)
+  \\ qspecl_then [`max_app`,`[SND x]`,`aux2`] mp_tac compile_exps_acc
+  \\ full_simp_tac(srw_ss())[LET_DEF] \\ REPEAT STRIP_TAC \\ SRW_TAC [] []
+  \\ FIRST_X_ASSUM MATCH_MP_TAC
+  \\ POP_ASSUM MP_TAC
+  \\ ONCE_REWRITE_TAC [build_aux_MOVE]
+  \\ REPEAT STRIP_TAC \\ full_simp_tac(srw_ss())[]
+  \\ full_simp_tac(srw_ss())[code_installed_def]);
+  val _ = show_thm "compile_exps_LIST_IMP_compile_exps_EL_replay=" compile_exps_LIST_IMP_compile_exps_EL_replay;
 end;
 (* Replay the generated-variable evaluation theorem. *)
 local
