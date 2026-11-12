@@ -63,6 +63,39 @@ theorem stateRel_targetRefs_extend {C F : Type} (s : ClosSem.State C F) (t : Bvl
     exact ⟨target, ptr, mapped, extension ptr target targetLookup,
       refRel_mono valuesGrow source target cellRel⟩
 
+namespace FreshTargetRefHOL
+
+/-- The source and target state maps use their canonical finite-support carriers. -/
+theorem holFmapAsFiniteSupportRelationWitness_ClosSem.State {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
+/-- The target state maps use their canonical finite-support carrier. -/
+theorem holFmapAsFiniteSupportRelationWitness_BvlSem.State {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+
+/-- Adding a fresh target reference preserves the closure-to-BVL state relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "state_rel_NEW_REF"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code, BvlSem.State.refs, f])]
+theorem stateRel_newRef {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (s : ClosSem.State C F) (t : BvlSem.State C F) (ptr : Nat)
+    (cell : BvlSem.Ref BvlSem.Value)
+    (states : stateRel f s t ∧ t.refs.lookup ptr = none) :
+    stateRel f s { t with refs := t.refs.updateEq (ptr, cell) } := by
+  apply stateRel_targetRefs_extend s t f _ states.1
+  intro key value found
+  have different : key ≠ ptr := by
+    intro equal
+    subst key
+    rw [states.2] at found
+    contradiction
+  simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found
+
+end FreshTargetRefHOL
+
 /-- Allocating an unused target-only reference preserves the state relation,
 the unmapped-reference frame, and freshness with respect to the relocation
 map. The allocated value may be any target reference cell. -/
@@ -86,7 +119,7 @@ theorem stateRel_targetRefs_update_fresh {C F : Type} (s : ClosSem.State C F) (t
       rw [unused] at found
       contradiction
     simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found
-  exact ⟨stateRel_targetRefs_extend s t f _ states extension,
+  exact ⟨FreshTargetRefHOL.stateRel_newRef f s t ptr cell ⟨states, unused⟩,
     unmappedRefsSubmap_of_extension t.refs _ f extension, outside,
     by simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]⟩
 
