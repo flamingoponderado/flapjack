@@ -694,10 +694,10 @@ theorem holFmapAsFiniteSupportParamWitness_compileInlProgHOLExact_inl_fs
 
 @[hol "cakeml/pancake/crep_inlineScript.sml" "compile_inl_prog_def"
   (fmap_as_finite_support_parameters := [inl_fs]) (words_as_type_indexed_bitvec)]
-noncomputable def compileInlProgHOLExact
+noncomputable def compileInlProgHOLExact {α : Type}
     (inl_fs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
-    (prog : List (CrepInlineMapHOLName × List Nat × CrepProgHOL width)) :
-    List (CrepInlineMapHOLName × List Nat × CrepProgHOL width) :=
+    (prog : List (CrepInlineMapHOLName × α × CrepProgHOL width)) :
+    List (CrepInlineMapHOLName × α × CrepProgHOL width) :=
   prog.map fun triple =>
     (triple.1, triple.2.1,
       inlineProgHOLExact (inl_fs.erase triple.1) triple.2.2)
