@@ -238,16 +238,18 @@ theorem panToCrepCallStateRelFiniteExactLocalUpdate
     `ValueHOL width` and `HolWordLab width` use the positive `BitVec width`
     model of HOL's type-indexed words, recorded by the word qualifier.
     The typed capture `locals_rel_def_typed`
-    (`pan_to_crep_proof_typed_probe.out`) also shows the context at
-    `β context`, but this relation reads only `ctxt.vars`/`ctxt.vmax`, which do
-    not depend on the context's `eids` word dimension, so that HOL type
-    variable is vacuous here and the single `width` parameter is harmless. -/
+    (`pan_to_crep_proof_typed_probe.out`) types the context at `β context` and
+    both locals maps at `α`, so the context's word dimension is independent of
+    the locals' word dimension (PR #1395 review finding 2). The relation binds
+    them separately: `{ctxtWidth}` for the context's `eids` words and
+    `{width}` for the source/target local values. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_def"
   (fmap_as_finite_support_relation :=
     [PanToCrepContextExact.vars, sourceLocals, targetLocals])
   (words_as_type_indexed_bitvec)]
-def panToCrepLocalsRelFiniteExact {width : Nat} [NeZero width]
-    (context : PanToCrepContextExact width)
+def panToCrepLocalsRelFiniteExact {width ctxtWidth : Nat} [NeZero width]
+    [NeZero ctxtWidth]
+    (context : PanToCrepContextExact ctxtWidth)
     (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
     (targetLocals : HolFiniteMapExact Nat (HolWordLab width)) : Prop :=
   noOverlapFiniteExact context.vars ∧
@@ -444,8 +446,9 @@ def panToCrepExcpRelFiniteExact {α β γ : Type}
 
 /-- The exact finite-support locals relation immediately supplies the literal
     `is_wf_shape_nil (shape_of v)` fact for every present source local. -/
-theorem panToCrepLocalsRelFiniteExact_shapeProjection {width : Nat} [NeZero width]
-    (context : PanToCrepContextExact width)
+theorem panToCrepLocalsRelFiniteExact_shapeProjection {width ctxtWidth : Nat}
+    [NeZero width] [NeZero ctxtWidth]
+    (context : PanToCrepContextExact ctxtWidth)
     (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
     (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (name : MlS) (value : ValueHOL width)
@@ -458,8 +461,9 @@ theorem panToCrepLocalsRelFiniteExact_shapeProjection {width : Nat} [NeZero widt
 
 /-- The value-level well-formedness fact is a separate bridge from the literal
     HOL `locals_rel` conjunct `is_wf_shape_nil (shape_of v)`. -/
-theorem panToCrepLocalsRelFiniteExact_valueShapeProjection {width : Nat} [NeZero width]
-    (context : PanToCrepContextExact width)
+theorem panToCrepLocalsRelFiniteExact_valueShapeProjection {width ctxtWidth : Nat}
+    [NeZero width] [NeZero ctxtWidth]
+    (context : PanToCrepContextExact ctxtWidth)
     (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
     (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (name : MlS) (value : ValueHOL width)
@@ -479,15 +483,16 @@ theorem panToCrepLocalsRelFiniteExact_valueShapeProjection {width : Nat} [NeZero
     exact value-level predicate; its finite-map translations are the three
     named carriers, and its word values use positive `BitVec width` as recorded
     by the word qualifier. The typed capture `locals_rel_wf_shape_typed` shows
-    the context at `α context` and the locals at `β`, but only `ctxt.vars` is
-    read, so the context's word dimension is vacuous and fixing it at `width`
-    loses nothing. -/
+    the context at `α context` and the locals at `β`, so the context's word
+    dimension is independent of the locals'; the statement binds `{ctxtWidth}`
+    and `{width}` separately (PR #1395 review finding 2). -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_wf_shape" 2345
   (fmap_as_finite_support_relation :=
     [PanToCrepContextExact.vars, sourceLocals, targetLocals])
   (words_as_type_indexed_bitvec)]
-theorem panToCrepLocalsRelWfShapeFiniteExact {width : Nat} [NeZero width]
-    (context : PanToCrepContextExact width)
+theorem panToCrepLocalsRelWfShapeFiniteExact {width ctxtWidth : Nat} [NeZero width]
+    [NeZero ctxtWidth]
+    (context : PanToCrepContextExact ctxtWidth)
     (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
     (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (name : MlS) (value : ValueHOL width)
@@ -513,14 +518,17 @@ theorem panToCrepLocalsRelWfShapeFiniteExact {width : Nat} [NeZero width]
     `shapeOfHOLExact`/`flattenHOL`/`isWfShapeExactHOL []`, and `LENGTH` is
     `List.length`. The slot-length clause follows from the tagged HOL
     `opt_mmap_length_eq` applied to the relation's successful map.
-    The typed capture `locals_rel_lookup_ctxt_typed` shows the context at
-    `α context` and the locals at `β`, but only `ctxt.vars` is read, so the
-    context's word dimension is vacuous and fixing it at `width` loses nothing. -/
+    The typed capture `locals_rel_lookup_ctxt_typed`
+    (`pan_to_crep_proof_typed_probe.out:42`) shows the context at `α context`
+    and the locals at `β`, so the context's word dimension is independent of
+    the locals'; the statement binds `{ctxtWidth}` and `{width}` separately
+    (PR #1395 review finding 2). -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_lookup_ctxt"
   (fmap_as_finite_support_relation :=
     [PanToCrepContextExact.vars, sourceLocals, targetLocals])]
-theorem panToCrepLocalsRelLookupCtxtFiniteExact {width : Nat} [NeZero width]
-    (context : PanToCrepContextExact width)
+theorem panToCrepLocalsRelLookupCtxtFiniteExact {width ctxtWidth : Nat}
+    [NeZero width] [NeZero ctxtWidth]
+    (context : PanToCrepContextExact ctxtWidth)
     (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
     (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (name : MlS) (value : ValueHOL width)
