@@ -586,6 +586,17 @@ in
   srw_tac[][el_append3] >>
   decide_tac );
   val evaluate_genlist_prev_args = evaluate_genlist_prev_args_replay;
+  val p_genlist_replay = Q.prove (
+    `EL k exps_ps = ((n',e),p) ∧
+   MAP SND exps_ps = GENLIST (λn. loc + (num_stubs max_app) + 2*n) (LENGTH exps_ps) ∧
+   k < LENGTH exps_ps
+   ⇒
+   p = EL k (GENLIST (λn. loc + (num_stubs max_app) + 2*n) (LENGTH exps_ps))`,
+  srw_tac[][] >>
+  `EL k (MAP SND exps_ps) = EL k (GENLIST (λn. loc + (num_stubs max_app) + 2*n) (LENGTH exps_ps))` by metis_tac [] >>
+  rev_full_simp_tac(srw_ss())[EL_MAP] );
+  val _ = show_thm "p_genlist_replay=" p_genlist_replay;
+  val _ = show_thm "list_CASE_same_typed=" clos_to_bvlProofTheory.list_CASE_same;
   val _ = show_thm "evaluate_genlist_prev_args_replay=" evaluate_genlist_prev_args_replay;
   val evaluate_genlist_prev_args1_simpl_replay = Q.prove (
     `!prev_args x y tag p n cl a st.

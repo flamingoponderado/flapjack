@@ -233,6 +233,18 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: args and prev lists have independent polymorphic element types, with exactly the three original conjuncts and all three arithmetic conclusions."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "p_genlist",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "pGenlist",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL source and typed local proof replay: both tuple component types are independently polymorphic, all three premises and both HOL EL occurrences are retained. Local inhabitance witnesses come from the quantified tuple components and add no theorem hypotheses."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "list_CASE_same",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "listCaseSame",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: the list element and result types are independently polymorphic, and the list-case branches and equality preserve the same arbitrary function."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_genlist_prev_args",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "evaluateGenlistPrevArgs",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],

@@ -8,6 +8,40 @@ public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 /-! Selectors for stored partial-closure arguments. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
+/-- Evaluating the original list through its constructor cases returns the
+same result as applying the function directly. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "list_CASE_same"]
+theorem listCaseSame {α β : Type} (xs : List α) (P : List α → β) :
+    xs.casesOn (P []) (fun x rest => P (x :: rest)) = P xs := by
+  cases xs <;> rfl
+
+/-- A bounded entry in a generated recursive-code layout has the
+corresponding generated label. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "p_genlist"]
+theorem pGenlist {α β : Type} (expsPs : List ((α × β) × Nat))
+    (k : Nat) (n : α) (e : β) (p loc maxApp : Nat) :
+    letI : Nonempty α := ⟨n⟩
+    letI : Nonempty β := ⟨e⟩
+    holEl k expsPs = ((n, e), p) ∧
+      expsPs.map Prod.snd = (List.range expsPs.length).map (fun i => loc + numStubs maxApp + 2 * i) ∧
+      k < expsPs.length →
+    p = holEl k ((List.range expsPs.length).map (fun i => loc + numStubs maxApp + 2 * i)) := by
+  let _ : Nonempty α := ⟨n⟩
+  let _ : Nonempty β := ⟨e⟩
+  intro ⟨entry, labels, bound⟩
+  have entryEq : expsPs[k] = ((n, e), p) := by
+    simpa only [holEl_eq_getElem k expsPs bound] using entry
+  have mappedBound : k < (expsPs.map Prod.snd).length := by simpa using bound
+  have generatedBound : k < ((List.range expsPs.length).map (fun i => loc + numStubs maxApp + 2 * i)).length := by
+    simpa using bound
+  rw [holEl_eq_getElem k _ generatedBound]
+  have same : (expsPs.map Prod.snd)[k]'mappedBound =
+      ((List.range expsPs.length).map (fun i => loc + numStubs maxApp + 2 * i))[k]'generatedBound := by
+    have selected := congrArg (fun values : List Nat => values[k]?) labels
+    rw [List.getElem?_eq_getElem mappedBound, List.getElem?_eq_getElem generatedBound] at selected
+    exact Option.some.inj selected
+  simpa only [List.getElem_map, entryEq] using same
+
 namespace SavedSelectorsCarrier
 /-- Canonical BVL reference-map state roundtrip. -/
 theorem holFmapAsFiniteSupportWitness {C F : Type} :
