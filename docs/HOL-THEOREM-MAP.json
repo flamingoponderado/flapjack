@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "renumber_code_locs_fv1",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberFreeVars.lean", "lean_name": "renumberCodeLocs_freeVar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the complete conjunction, including the vacuous independently polymorphic binder in the first conjunct and the separate universal natural index inside each ordered list-relation pair. The original singleton iff is retained."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "renumber_code_locs_list_fv",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberFreeVars.lean", "lean_name": "renumberList_freeVars",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all original binders, the returned-pair equality premise and the complete free-variable iff for the output list."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "intro_multi_fv1",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiIntroFreeVars.lean", "lean_name": "introMulti_freeVar",
   "statement_status": "reviewed_exact",
