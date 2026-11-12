@@ -12,6 +12,10 @@ set_option backward.privateInPublic.warn false
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
+/-- Replicating a value once produces a singleton list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "REPLICATE_1"]
+theorem replicateOne {α : Type} (x : α) : List.replicate 1 x = [x] := rfl
+
 /-- Once the target's reserved global table has been installed, empty source
 and target stores satisfy the candidate state relation. The hypotheses are
 the installed application stubs, compiler-oracle relation, and compiled source
@@ -215,33 +219,6 @@ theorem initialEvaluationSimulation_of_entry {C F : Type} (ffi : HolFfiState F) 
   rw [show clock + (extra + 1) = (clock + extra) + 1 by omega, entryRun]
   simpa [source, target, ClosSem.initialState, BvlSem.initialState] using targetRun
 
-/-- The installed entry code preserves the proof-side whole-program behavior
-of a non-failing source entry call. This candidate remains untagged pending
-review of the evaluator and state carriers against HOL. -/
-theorem entry_semantics_eq {C F : Type} (ffi : HolFfiState F) (maxApp sourceStart targetStart : Nat)
-    (sourceCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (sourceOracle : ClosSem.CompileOracle C)
-    (sourceCompiler : ClosSem.Compiler C) (targetCode : Spt (Nat × Bvl.Exp))
-    (targetOracle : BvlSem.CompileOracle C) (targetCompiler : BvlSem.Compiler C)
-    (nonfail : ClosSem.semantics ffi maxApp sourceCode sourceOracle sourceCompiler [.call .none 0 sourceStart []] ≠ .fail)
-    (generic : ∀ n, n < maxApp → sptLookup (genericAppFnLocation n) targetCode =
-      some (n + 2, generateGenericApp maxApp n))
-    (partialStubs : ∀ total n, total < maxApp ∧ n < total →
-      sptLookup (partialAppFnLocation maxApp total n) targetCode =
-        some (total - n + 1, generatePartialAppClosureFn total n))
-    (force : sptLookup (numStubs maxApp - 2) targetCode = some (2, forceThunkCode))
-    (oracle : compileOracleInv maxApp sourceCode sourceCompiler sourceOracle targetCode targetCompiler targetOracle)
-    (compiledCode : ∀ name arity body, sourceCode.lookup name = some (arity, body) →
-      ∃ aux targetBody finalAux, compileExpsHOL maxApp [body] aux = ([targetBody], finalAux) ∧
-        sptLookup (name + numStubs maxApp) targetCode = some (arity, targetBody) ∧ codeInstalled finalAux targetCode)
-    (annotations : codeAnnotations (ClosSem.initialState ffi maxApp sourceCode sourceOracle sourceCompiler 0))
-    (entry : sptLookup targetStart targetCode = some (0, initGlobals maxApp (sourceStart + numStubs maxApp))) :
-    BvlSem.semantics ffi targetCode targetOracle targetCompiler targetStart =
-      ClosSem.semantics ffi maxApp sourceCode sourceOracle sourceCompiler [.call .none 0 sourceStart []] := by
-  apply semantics_eq_of_initialSimulation ffi maxApp sourceCode sourceOracle sourceCompiler _
-    targetCode targetOracle targetCompiler targetStart nonfail
-  exact initialEvaluationSimulation_of_entry ffi maxApp sourceStart targetStart sourceCode sourceOracle sourceCompiler
-    targetCode targetOracle targetCompiler generic partialStubs force oracle compiledCode annotations entry
-
 private def toBroad (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) := code.lookup
 private def ofBroad (lookup : Nat → Option (Nat × ClosLang.Exp))
     (finite : ∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys) :
@@ -301,8 +278,10 @@ theorem compileProgSemantics_source {C F : Type} (ffi : HolFfiState F) (maxApp :
     BvlSem.semantics ffi code2 co2 cc2 nsm1 =
       ClosSem.semantics ffi maxApp code1 co1 cc1 [.call .none 0 start []] := by
   rcases hypotheses with ⟨nonfail, compiled, _, ⟨generic, partialStubs, _⟩, locations, vars, entry, force, oracle, _⟩
-  apply entry_semantics_eq ffi maxApp start nsm1 code1 co1 cc1 code2 co2 cc2 nonfail generic
-    ?_ force oracle compiled ?_ ?_
+  apply semantics_eq_of_initialSimulation ffi maxApp code1 co1 cc1 _
+    code2 co2 cc2 nsm1 nonfail
+  apply initialEvaluationSimulation_of_entry ffi maxApp start nsm1 code1 co1 cc1 code2 co2 cc2
+    generic ?_ force oracle compiled ?_ ?_
   · intro total previous bounds
     have arithmetic : total + 1 - previous = total - previous + 1 := by omega
     simpa [arithmetic] using partialStubs total previous bounds

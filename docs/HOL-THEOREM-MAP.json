@@ -16233,6 +16233,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "REPLICATE_1",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialState.lean",
+    "lean_name": "replicateOne",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local original and typed proof replay: a singleton replication returns the same element in a one-element list, for an arbitrary element type and without extra premises."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
     "hol_name": "evaluate_init1",
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialState.lean",
     "lean_name": "evaluate_init1",

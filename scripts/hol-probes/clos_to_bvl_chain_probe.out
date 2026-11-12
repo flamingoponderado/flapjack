@@ -36,6 +36,7 @@ SUB_BAG_CARD_typed=∀(b1 :α -> num) (b2 :α -> num). FINITE_BAG b2 ∧ b1 ≤ 
 BAG_IMAGE_SUB_BAG_typed=(x :α -> num) ≤ (y :α -> num) ∧ FINITE_BAG x ∧ FINITE_BAG y ⇒ BAG_IMAGE (f :α -> β) x ≤ BAG_IMAGE f y
 trivia_1_typed=COUNT_LIST (1 :num) = [(0 :num)] ∧ MAX (1 :num) (SUC (x :num)) = SUC x ∧ LENGTH (if (xs :α list) = ([] :α list) then [(v :α)] else xs) = MAX (1 :num) (LENGTH xs)
 show_SUBSET_replay=(∀(x :α). x ∈ (s :α -> bool) ⇒ x ∈ (t :α -> bool)) ⇒ s ⊆ t
+REPLICATE_1_replay=REPLICATE (1 :num) (x :α) = [x]
 EXISTS_CONS_NOT_NULL_typed=(∃(x :α) (xs :α list). (ys :α list) = x::xs) ⇔ ¬NULL ys
 code_locs_Op_cons_typed=∀(c :closLang$exp list) (b :closLang$op) (a :tra) (xs :closLang$exp list). code_locs ((Op a b c :closLang$exp)::xs) = code_locs c ++ code_locs xs
 compile_exps_IMP_acc_typed=compile_exps (max_app :num) (xs :closLang$exp list) (aux :(num # num # bvl$exp) list) = ((c :bvl$exp list),(aux1 :(num # num # bvl$exp) list)) ⇒ LENGTH c = LENGTH xs ∧ ∃(ys :(num # num # bvl$exp) list). aux1 = ys ++ aux
