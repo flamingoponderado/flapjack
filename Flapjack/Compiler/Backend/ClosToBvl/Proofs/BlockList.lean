@@ -10,6 +10,14 @@ namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.Compiler.Backend.BackendCommon
 open Flapjack.SemanticPrimitivesHOL
 
+/-- Shifting constructor tags preserves exactly the nil and cons tags. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "clos_tag_shift_eq_nil_tag"]
+theorem closTagShift_eq_nilTag (tag : Nat) :
+    (closTagShift tag = nilTag ↔ tag = nilTag) ∧
+      (closTagShift tag = consTag ↔ tag = consTag) := by
+  simp only [closTagShift, nilTag, consTag]
+  split <;> omega
+
 /-- Encoding pointwise related lists produces related list values. -/
 theorem listToValue_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}

@@ -112,6 +112,7 @@ val v_rel_union_replay = Q.prove (
             clos_to_bvlProof$v_rel max_app f2 refs (sptree$union code c2) x y`,
   metis_tac [clos_to_bvlProofTheory.v_rel_subspt, sptreeTheory.subspt_union]);
 val _ = show_thm "v_rel_union_replay=" v_rel_union_replay;
+val _ = show_thm "clos_tag_shift_eq_nil_tag_typed=" clos_to_bvlProofTheory.clos_tag_shift_eq_nil_tag;
 (* Replay the original local byte-list and optional-decoding theorems. *)
 local
   open preamble clos_to_bvlProofTheory backend_commonTheory

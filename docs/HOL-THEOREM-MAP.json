@@ -157,6 +157,12 @@
   "reviewer": "Compared the literal local HOL source proof and typed replay: related source and target values have equal full optional byte decodings, including NONE, with fixed word8 bytes. The f and refs inputs use canonical finite support and same-module codec witnesses."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "clos_tag_shift_eq_nil_tag",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/BlockList.lean", "lean_name": "closTagShift_eq_nilTag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original theorem: an arbitrary natural tag satisfies both nil and cons tag equivalences. The reviewed tag definitions match HOL, including the shared zero value and the shift threshold."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "v_rel_IMP_v_to_words_lemma",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "vRel_valueToWords_lemma",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["f", "refs"],
