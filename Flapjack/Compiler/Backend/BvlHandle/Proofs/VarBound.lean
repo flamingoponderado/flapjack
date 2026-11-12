@@ -331,19 +331,4 @@ theorem compileSeqsWith_varBound (limit : Nat) (expression : Bvl.Exp) (acc : Opt
       simpa [bVarBound] using And.intro (compileExpression_varBound limit 0 expression) continuation
 termination_by sizeOf expression
 
-/-- The composed source entry point is bounded in either mode; this combines
-the source expression and sequence bound theorems for Flapjack callers. -/
-theorem compileAny_varBound (splitSeq : Bool) (limit arity : Nat)
-    (expression : Bvl.Exp) :
-    bVarBound arity [compileAny splitSeq limit arity expression] := by
-  unfold compileAny
-  split
-  · rename_i condition
-    have zero : arity = 0 := by
-      simp only [Bool.and_eq_true, beq_iff_eq] at condition
-      exact condition.1
-    subst arity
-    exact compileSeqsWith_varBound limit expression none (by simp)
-  · exact compileExpression_varBound limit arity expression
-
 end Flapjack.Compiler.Backend.BvlHandle.Proofs
