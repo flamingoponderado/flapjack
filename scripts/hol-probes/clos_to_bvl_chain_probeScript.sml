@@ -112,6 +112,26 @@ val v_rel_union_replay = Q.prove (
             clos_to_bvlProof$v_rel max_app f2 refs (sptree$union code c2) x y`,
   metis_tac [clos_to_bvlProofTheory.v_rel_subspt, sptreeTheory.subspt_union]);
 val _ = show_thm "v_rel_union_replay=" v_rel_union_replay;
+(* Replay the original local closure arity theorem. *)
+local
+  open preamble clos_to_bvlProofTheory closSemTheory bvlSemTheory listTheory backend_commonTheory
+in
+  val cl_rel_get_num_args_replay = Q.prove (
+    `cl_rel max_app f1 refs code (env,ys) func (Block tag (p::Number (&(total_args) - 1)::fvs))
+   ⇒
+   get_num_args func = SOME total_args`,
+  srw_tac[][cl_rel_cases] >>
+  full_simp_tac(srw_ss())[get_num_args_def, int_arithTheory.INT_NUM_SUB, EL_MAP, closure_code_installed_def, EVERY_EL] >>
+  `?n e p. EL k exps_ps = ((n,e),p)` by metis_tac [pair_CASES] >>
+  full_simp_tac(srw_ss())[] >>
+  srw_tac[][] >>
+  pop_assum mp_tac >>
+  res_tac >>
+  srw_tac[][] >>
+  full_simp_tac(srw_ss())[] >>
+  intLib.ARITH_TAC);
+  val _ = show_thm "cl_rel_get_num_args_replay=" cl_rel_get_num_args_replay;
+end;
 val _ = show_thm "get_old_args_def_typed=" clos_to_bvlProofTheory.get_old_args_def;
 (* Replay the original local closure relation shape theorem. *)
 local

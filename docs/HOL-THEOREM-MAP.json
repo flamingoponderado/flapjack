@@ -157,6 +157,12 @@
   "reviewer": "Compared the literal local HOL source proof and typed replay: related source and target values have equal full optional byte decodings, including NONE, with fixed word8 bytes. The f and refs inputs use canonical finite support and same-module codec witnesses."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "cl_rel_get_num_args",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureShape.lean", "lean_name": "clRel_getNumArgs",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["refs"],
+  "reviewer": "Compared the original local HOL proof and typed replay: arbitrary source closure and target block/tag/first field/payload, with integer stored arity ofNat(totalArgs)-1, imply the identical getNumArgs result. The refs parameter uses canonical finite support and a same-module codec witness; mutual recursive arity positivity follows the original installed-code relation."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "get_old_args_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "getOldArgs",
   "statement_status": "reviewed_exact",

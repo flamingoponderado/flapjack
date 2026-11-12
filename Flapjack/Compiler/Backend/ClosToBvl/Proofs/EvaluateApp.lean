@@ -3231,35 +3231,6 @@ theorem evaluateApp_recclosure_partial_again_related {C F : Type}
   exact evaluateApp_recclosure_partial_again_simulation s t f ptr arity index captured oldArgs newArgs functions
     fields oldTargets newTargets rest body original states annotations envRel closure found oldRel newRel oldNonempty nonempty partialBound
 
-/-- The target of a directly related recursive closure is a closure block
-whose stored arity agrees with the selected source function. -/
-theorem clRel_recclosure_target_shape {maxApp : Nat} {fs : Nat → Prop}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {captured : List ClosSem.Value} {fields : List BvlSem.Value} {ptr index arity : Nat}
-    {functions : List (Nat × ClosLang.Exp)} {body : ClosLang.Exp} {target : BvlSem.Value}
-    (related : clRel maxApp fs refs code (captured, fields) (.recclosure (some ptr) [] captured functions index) target)
-    (found : functions[index]? = some (arity, body)) :
-    ∃ address payload, target = .block 30 (.codePtr address :: .number (Int.ofNat (arity - 1)) :: payload) := by
-  cases related with
-  | singletonRec bound positive loc vars compiled installed lookup =>
-    simp only [List.getElem?_cons_zero, Option.some.injEq, Prod.mk.injEq] at found
-    obtain ⟨rfl, rfl⟩ := found
-    exact ⟨_, _, rfl⟩
-  | @mutualRec exps entries ps rs loc r env ys k expsEq psEq positions values fresh stored many indexBound locations vars installed =>
-    have entryBound : index < entries.length := by simpa [expsEq] using indexBound
-    have entryEq : (entries[index]'entryBound).1 = (arity, body) := by
-      have h : functions[index]? = some (arity, body) := found
-      rw [expsEq, List.getElem?_map, List.getElem?_eq_getElem entryBound] at h
-      simpa using h
-    subst rs
-    rw [Flapjack.holEl_eq_getElem index _ (by simpa using entryBound)]
-    simp only [List.getElem_map]
-    cases h : entries[index]'entryBound with
-    | mk pair label =>
-      have pairEq : pair = (arity, body) := by simpa [h] using entryEq
-      subst pair
-      exact ⟨label, _, rfl⟩
-
 /-- A recursive closure relation uses the closure's captured environment. -/
 theorem clRel_recclosure_env {maxApp : Nat} {fs : Nat → Prop}
     {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
@@ -3334,7 +3305,18 @@ theorem evaluateApp_recclosure_partial_simulation {C F : Type}
   obtain ⟨fields, envRel, closure⟩ := vRel_recclosure_original functionRel
   have bounds := clRel_recclosure_arity closure found
   obtain ⟨arityBound, positive⟩ := bounds
-  obtain ⟨address, payload, targetEq⟩ := clRel_recclosure_target_shape closure found
+  obtain ⟨address, stored, payload, targetEq⟩ := (clRel_dest _ _ _ _ _ _ _ _ closure).2
+  have getStored : getNumArgs (.recclosure (some ptr) [] captured functions index) = some (stored + 1) := by
+    apply clRel_getNumArgs _ _ _ _ _ _ _ 30 (.codePtr address) (stored + 1) payload
+    simpa [targetEq] using closure
+  have indexBound : index < functions.length := List.getElem?_eq_some_iff.mp found |>.1
+  have entryEq : functions[index] = (arity, body) := by
+    simpa [List.getElem?_eq_getElem indexBound] using found
+  have storedEq : stored = arity - 1 := by
+    rw [getNumArgs, Flapjack.holEl_eq_getElem index functions indexBound, entryEq] at getStored
+    simp only [Option.some.injEq] at getStored
+    omega
+  rw [storedEq] at targetEq
   have argsLength : targetArgs.length = args.length := argsRel.length_eq.symm
   have argsPositive : 0 < args.length := List.length_pos_iff.mpr nonempty
   have argsBound : args.length ≤ s.maxApp := by omega
@@ -3643,15 +3625,12 @@ theorem clRel_mutualRec_selected_related {maxApp : Nat} {f : HolFiniteMapExact N
         have groupRel : clRel maxApp (fun p => ∃ r, f.lookup r = some p) refs code
             (captured, fields) (.recclosure (some ptr) [] captured functions j) (holEl j rs) :=
           .mutualRec expsEq psEq positions values fresh stored groupSize bound locations vars installed
-        cases entry : functions[j] with
-        | mk arity' body' =>
-          have found' : functions[j]? = some (arity', body') := by rw [List.getElem?_eq_getElem bound, entry]
-          obtain ⟨address', payload, shape⟩ := clRel_recclosure_target_shape groupRel found'
-          have valueRel : vRel maxApp f refs code (.recclosure (some ptr) [] captured functions j) (holEl j rs) := by
-            rw [shape] at groupRel ⊢
-            exact .closure envRel' groupRel
-          rw [Flapjack.holEl_eq_getElem j rs targetBound] at valueRel
-          simpa using valueRel
+        obtain ⟨address', storedArity, payload, shape⟩ := (clRel_dest _ _ _ _ _ _ _ _ groupRel).2
+        have valueRel : vRel maxApp f refs code (.recclosure (some ptr) [] captured functions j) (holEl j rs) := by
+          rw [shape] at groupRel ⊢
+          exact .closure envRel' groupRel
+        rw [Flapjack.holEl_eq_getElem j rs targetBound] at valueRel
+        simpa using valueRel
     have entryBound : index < entries.length := by simpa [expsEq] using indexBound
     have entryEq : (entries[index]'entryBound).1 = (arity, body) := by
       have h : functions[index]? = some (arity, body) := found
