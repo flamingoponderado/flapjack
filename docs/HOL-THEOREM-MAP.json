@@ -157,6 +157,20 @@
   "reviewer": "Compared the literal local HOL source proof and typed replay: related source and target values have equal full optional byte decodings, including NONE, with fixed word8 bytes. The f and refs inputs use canonical finite support and same-module codec witnesses."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "genlist_el",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/RecursiveEntry.lean", "lean_name": "genlistEl",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the literal local HOL proof and typed replay: independent compiler and FFI state types, array lookup, arbitrary prefix and skip equality, complete generated selectors and unchanged-state result agree. The refs field uses the canonical finite-support state carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_code_for_recc_case",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/RecursiveEntry.lean", "lean_name": "evaluateCodeForReccCase",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the literal local HOL proof and typed replay: the sole shared-array lookup premise, arbitrary trailing environment, recursive-entry code, both complete evaluation results and independent compiler/FFI types agree. The refs field uses the canonical finite-support state carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "get_loc_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "getLoc",
   "statement_status": "reviewed_exact",

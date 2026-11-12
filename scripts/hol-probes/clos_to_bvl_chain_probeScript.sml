@@ -112,6 +112,53 @@ val v_rel_union_replay = Q.prove (
             clos_to_bvlProof$v_rel max_app f2 refs (sptree$union code c2) x y`,
   metis_tac [clos_to_bvlProofTheory.v_rel_subspt, sptreeTheory.subspt_union]);
 val _ = show_thm "v_rel_union_replay=" v_rel_union_replay;
+(* Replay original shared-array selector theorem. *)
+local
+  open preamble clos_to_bvlTheory clos_to_bvlProofTheory bvlSemTheory bvlPropsTheory listTheory backend_commonTheory
+in
+  val genlist_el_replay = Q.prove (
+    `!skip st r xs args p n env ys.
+    FLOOKUP st.refs r = SOME (ValueArray (ys++xs)) ∧
+    skip = LENGTH ys
+    ⇒
+    bvlSem$evaluate (GENLIST (λi. mk_elem_at (Var 0) (i+skip)) (LENGTH xs),
+           RefPtr T r:: (args ++ Block closure_tag [CodePtr p; Number (&n); RefPtr T r]::env),
+           st)
+    =
+    (Rval xs, st)`,
+  Induct_on `xs` >>
+  srw_tac[][evaluate_def, GENLIST_CONS] >>
+  srw_tac[][Once evaluate_CONS, evaluate_def, do_app_def, do_int_app_def,combinTheory.o_DEF] >>
+  `FLOOKUP st.refs r = SOME (ValueArray ((ys++[h])++xs))` by srw_tac[][] >>
+  first_x_assum (fn th => first_assum (assume_tac o MATCH_MP (SIMP_RULE (srw_ss()) [GSYM AND_IMP_INTRO] th))) >>
+  simp [ADD1] >>
+  srw_tac[][] >>
+  full_simp_tac(srw_ss())[ADD1] >>
+  srw_tac[][EL_LENGTH_APPEND]);
+  val _ = show_thm "genlist_el_replay=" genlist_el_replay;
+  val genlist_el = genlist_el_replay;
+  val evaluate_code_for_recc_case_replay = Q.prove (
+    `!st r xs args c p n env.
+    FLOOKUP st.refs r = SOME (ValueArray xs)
+    ⇒
+    evaluate ([SND (code_for_recc_case (LENGTH xs) (LENGTH args) c)],
+              args ++ Block closure_tag [CodePtr p;Number &n;RefPtr T r]::env,
+              st) =
+    evaluate ([c],
+              args ++ xs ++ [RefPtr T r] ++ args ++ Block closure_tag [CodePtr p; Number (&n); RefPtr T r]::env,
+              st)`,
+  simp [code_for_recc_case_def, evaluate_def, do_app_def,do_int_app_def] >>
+  simp [evaluate_APPEND, EL_LENGTH_APPEND] >>
+  rpt strip_tac >>
+  `LENGTH args + 1 ≤ LENGTH (RefPtr T r::(args ++ Block closure_tag [CodePtr p; Number (&n); RefPtr T r]::env))`
+              by (srw_tac[][] >> intLib.ARITH_TAC) >>
+  imp_res_tac evaluate_genlist_vars >>
+  full_simp_tac(srw_ss())[] >>
+  mp_tac (Q.SPEC `0` genlist_el) >>
+  simp [LENGTH_NIL_SYM] >>
+  srw_tac[][TAKE_LENGTH_APPEND]);
+  val _ = show_thm "evaluate_code_for_recc_case_replay=" evaluate_code_for_recc_case_replay;
+end;
 val _ = show_thm "get_loc_def_typed=" clos_to_bvlProofTheory.get_loc_def;
 (* Replay the original location theorem and its local generated-label prerequisite. *)
 local

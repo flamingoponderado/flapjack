@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.DirectApplication
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureShape
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveEntry
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateCall
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 public import Flapjack.Compiler.Backend.BvlJump.Proofs
@@ -3402,70 +3403,6 @@ theorem evaluateApp_recclosure_partial_related {C F : Type}
     exact evaluateApp_recclosure_partial_again_related s t f ptr arity index captured (head :: tail) args
       functions targetArgs rest body target states annotations related argsRel found (by simp) nonempty partialBound
 
-/-- Recursive entry selectors read the shared environment array in order. -/
-theorem evaluate_recursiveEnv {C F : Type} (s : BvlSem.State C F)
-    (ptr : Nat) (values rest : List BvlSem.Value)
-    (stored : s.refs.lookup ptr = some (.valueArray values)) :
-    BvlSem.evaluate ((List.range values.length).map (fun i =>
-      Bvl.Exp.op (.blockOp (.elemAt i)) [.var 0])) (.refPtr true ptr :: rest) s = (.val values, s) := by
-  have prefixRun : ∀ n, n ≤ values.length →
-      BvlSem.evaluate ((List.range n).map (fun i => Bvl.Exp.op (.blockOp (.elemAt i)) [.var 0]))
-        (.refPtr true ptr :: rest) s = (.val (values.take n), s) := by
-    intro n bound
-    induction n with
-    | zero => simp [BvlSem.evaluate]
-    | succ n ih =>
-      have smaller : n ≤ values.length := by omega
-      have indexBound : n < values.length := by omega
-      rw [List.range_succ, List.map_append]
-      change BvlSem.evaluateTuple (((List.range n).map (fun i => Bvl.Exp.op (.blockOp (.elemAt i)) [.var 0]) ++
-        [.op (.blockOp (.elemAt n)) [.var 0]]), .refPtr true ptr :: rest, s) = _
-      rw [BvlProps.evaluateAppend]
-      simp only [BvlSem.evaluateTuple, ih smaller]
-      have elemRun : BvlSem.evaluate [.op (.blockOp (.elemAt n)) [.var 0]] (.refPtr true ptr :: rest) s =
-          (.val [values[n]], s) := by
-        simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyBlock, stored, indexBound]
-      rw [elemRun]
-      simp only [List.take_append_getElem indexBound]
-  simpa using prefixRun values.length (by omega)
-
-/-- A mutually recursive closure entry binds its arguments followed by the
-shared recursive environment before evaluating its compiled body. -/
-theorem evaluate_recursive_entry {C F : Type} (s : BvlSem.State C F)
-    (args values : List BvlSem.Value) (ptr tag : Nat) (code arity : BvlSem.Value) (body : Bvl.Exp)
-    (stored : s.refs.lookup ptr = some (.valueArray values)) :
-    BvlSem.evaluate [(codeForReccCase values.length args.length body).2]
-      (args ++ [.block tag (code :: arity :: [.refPtr true ptr])]) s =
-    BvlSem.evaluate [body]
-      ((args ++ values) ++ [.refPtr true ptr] ++ args ++ [.block tag (code :: arity :: [.refPtr true ptr])]) s := by
-  let closure := BvlSem.Value.block tag (code :: arity :: [.refPtr true ptr])
-  let env := .refPtr true ptr :: (args ++ [closure])
-  have refRun : BvlSem.evaluate [.op (.blockOp (.elemAt 2)) [.var args.length]] (args ++ [closure]) s =
-      (.val [.refPtr true ptr], s) := by
-    simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyBlock, closure]
-  have argsRun : BvlSem.evaluate ((List.range args.length).map (fun i => Bvl.Exp.var (i + 1))) env s =
-      (.val args, s) := by
-    simpa [env] using evaluate_completion_newArgs args [closure] (.refPtr true ptr) s
-  have envRun : BvlSem.evaluate ((List.range values.length).map (fun i =>
-      Bvl.Exp.op (.blockOp (.elemAt i)) [.var 0])) env s = (.val values, s) := by
-    exact evaluate_recursiveEnv s ptr values (args ++ [closure]) stored
-  have bindings : BvlSem.evaluate (((List.range args.length).map (fun i => Bvl.Exp.var (i + 1))) ++
-      ((List.range values.length).map (fun i => Bvl.Exp.op (.blockOp (.elemAt i)) [.var 0]))) env s =
-      (.val (args ++ values), s) := by
-    change BvlSem.evaluateTuple (_, env, s) = _
-    rw [BvlProps.evaluateAppend]
-    simp [BvlSem.evaluateTuple, argsRun, envRun]
-  change BvlSem.evaluate [.let [.op (.blockOp (.elemAt 2)) [.var args.length]]
-    (.let (((List.range args.length).map (fun i => .var (i + 1))) ++
-      ((List.range values.length).map (fun i => .op (.blockOp (.elemAt i)) [.var 0]))) body)]
-    (args ++ [closure]) s = _
-  rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, refRun]
-  dsimp only
-  rw [BvlSem.evaluate, BvlSem.fixClock_evaluate]
-  simp only [List.singleton_append]
-  rw [bindings]
-  simp [closure, List.append_assoc]
-
 /-- A selected member of a related mutual-recursion group has a matching
 target closure, shared array, and installed compiled entry. -/
 theorem clRel_mutualRec_selected {maxApp : Nat} {fs : Nat → Prop}
@@ -3544,8 +3481,8 @@ theorem clRel_mutualRec_exact_call {C F : Type} (s : BvlSem.State C F)
     have sharedLength : (targets ++ fields).length = captured.length + functions.length := by
       simp [targetsLength, fieldsLength, Nat.add_comm]
     simpa [← sharedLength, ← length] using
-      evaluate_recursive_entry (BvlSem.decClock arity s) args (targets ++ fields) shared 30
-        (.codePtr address) (.number (Int.ofNat (arity - 1))) targetBody storedDec
+      evaluateCodeForReccCase (BvlSem.decClock arity s) shared (targets ++ fields) args
+        targetBody address (arity - 1) [] storedDec
 
 /-- A saturated recursive closure selects its body with all newly supplied
 and saved arguments followed by the recursive group and captured environment. -/
@@ -3707,8 +3644,8 @@ theorem evaluatePost_mutualRec_exact_call {C F : Type}
     simpa [start, BvlSem.decClock] using stored
   have sharedLength : (targets ++ fields).length = captured.length + functions.length := by
     simp [targetsLength, envRel'.length_eq, Nat.add_comm]
-  have entryRun := evaluate_recursive_entry (BvlSem.decClock targetArgs.length start) targetArgs (targets ++ fields)
-    shared 30 (.codePtr address) (.number (Int.ofNat (arity - 1))) targetBody storedStart
+  have entryRun := evaluateCodeForReccCase (BvlSem.decClock targetArgs.length start) shared (targets ++ fields) targetArgs
+    targetBody address (arity - 1) [] storedStart
   have clockEq : s.clock + clock - arity = s.clock - arity + clock := by omega
   have finalRun : BvlSem.evaluate [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)]
       (targetArgs ++ [target] ++ rest) start = (targetResult, tFinal) := by
@@ -3933,8 +3870,8 @@ theorem evaluate_partialComplete_mutualRec_entry {C F : Type} (s : BvlSem.State 
     have sharedLength : (targets ++ fields).length = captured.length + functions.length := by
       simp [targetsLength, envRel'.length_eq, Nat.add_comm]
     simpa [← sharedLength, ← length, List.length_append, List.append_assoc] using
-      evaluate_recursive_entry (BvlSem.decClock (newArgs.length + 1) s) (newArgs ++ saved) (targets ++ fields)
-        shared 30 (.codePtr address) (.number (Int.ofNat (arity - 1))) targetBody storedDec
+      evaluateCodeForReccCase (BvlSem.decClock (newArgs.length + 1) s) shared (targets ++ fields) (newArgs ++ saved)
+        targetBody address (arity - 1) [] storedDec
 
 /-- Saturated mutual-recursive partial application simulates the selected body. -/
 theorem evaluatePost_mutualRec_partial_exact {C F : Type}
@@ -4009,9 +3946,8 @@ theorem evaluatePost_mutualRec_partial_exact {C F : Type}
     have targetsLength := groupRel.length_eq.symm
     simp only [List.length_map, List.length_range] at targetsLength
     simp [targetsLength, envRel'.length_eq, Nat.add_comm]
-  have entryRun := evaluate_recursive_entry (BvlSem.decClock (newTargets.length + 1) start)
-    (newTargets ++ oldTargets) (targets ++ fields) shared 30 (.codePtr address)
-    (.number (Int.ofNat (arity - 1))) targetBody storedStart
+  have entryRun := evaluateCodeForReccCase (BvlSem.decClock (newTargets.length + 1) start)
+    shared (targets ++ fields) (newTargets ++ oldTargets) targetBody address (arity - 1) [] storedStart
   have clockEq : s.clock + (clock + 1) - (newTargets.length + 1) = s.clock - newArgs.length + clock := by omega
   have finalRun : BvlSem.evaluate [mkClCall (.var newTargets.length) ((List.range newTargets.length).map Bvl.Exp.var)]
       (newTargets ++ [.block 31 (.codePtr (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) ::
@@ -7322,8 +7258,8 @@ theorem evaluatePost_mutualRec_exact_call_below {C F : Type}
     simpa [start, BvlSem.decClock] using stored
   have sharedLength : (targets ++ fields).length = captured.length + functions.length := by
     simp [targetsLength, envRel'.length_eq, Nat.add_comm]
-  have entryRun := evaluate_recursive_entry (BvlSem.decClock targetArgs.length start) targetArgs (targets ++ fields)
-    shared 30 (.codePtr address) (.number (Int.ofNat (arity - 1))) targetBody storedStart
+  have entryRun := evaluateCodeForReccCase (BvlSem.decClock targetArgs.length start) shared (targets ++ fields) targetArgs
+    targetBody address (arity - 1) [] storedStart
   have clockEq : s.clock + clock - arity = s.clock - arity + clock := by omega
   have finalRun : BvlSem.evaluate [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)]
       (targetArgs ++ [target] ++ rest) start = (targetResult, tFinal) := by
@@ -7413,9 +7349,8 @@ theorem evaluatePost_mutualRec_partial_exact_below {C F : Type}
     have targetsLength := groupRel.length_eq.symm
     simp only [List.length_map, List.length_range] at targetsLength
     simp [targetsLength, envRel'.length_eq, Nat.add_comm]
-  have entryRun := evaluate_recursive_entry (BvlSem.decClock (newTargets.length + 1) start)
-    (newTargets ++ oldTargets) (targets ++ fields) shared 30 (.codePtr address)
-    (.number (Int.ofNat (arity - 1))) targetBody storedStart
+  have entryRun := evaluateCodeForReccCase (BvlSem.decClock (newTargets.length + 1) start)
+    shared (targets ++ fields) (newTargets ++ oldTargets) targetBody address (arity - 1) [] storedStart
   have clockEq : s.clock + (clock + 1) - (newTargets.length + 1) = s.clock - newArgs.length + clock := by omega
   have finalRun : BvlSem.evaluate [mkClCall (.var newTargets.length) ((List.range newTargets.length).map Bvl.Exp.var)]
       (newTargets ++ [.block 31 (.codePtr (partialAppFnLocation s.maxApp (arity - 1) (oldTargets.length - 1)) ::
