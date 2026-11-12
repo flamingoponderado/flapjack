@@ -1182,6 +1182,7 @@ in
   val ETA2_THM = Q.prove (
     `(\x y. f a b c x y) = f a b c`,
   srw_tac[][FUN_EQ_THM]);
+  val _ = show_thm "v_rel_SIMP_typed=" clos_to_bvlProofTheory.v_rel_SIMP;
   val env_rel_APPEND_replay = Q.prove (
     `!xs1 xs2.
       EVERY2 (v_rel max_app f1 refs code) xs1 xs2 /\

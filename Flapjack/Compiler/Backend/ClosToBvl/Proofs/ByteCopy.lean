@@ -29,7 +29,7 @@ theorem sourceByteView_related {C F : Type} {f : HolFiniteMapExact Nat Nat}
   | byteVector data =>
     simp [sourceByteView] at view
     subst bytes
-    obtain ⟨ptr, rfl, found⟩ := vRel_byteVector_inv related
+    obtain ⟨ptr, rfl, found, _⟩ := vRel_byteVector_iff.mp related
     exact ⟨true, ptr, true, rfl, found⟩
   | refPtr flag ptr =>
     obtain ⟨targetPtr, rfl, mapped⟩ := vRel_refPtr_inv related

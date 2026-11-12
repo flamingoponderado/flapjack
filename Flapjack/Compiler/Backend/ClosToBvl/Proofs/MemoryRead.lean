@@ -369,7 +369,7 @@ theorem memoryBoundsByte_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
             cases tail with
             | cons secondRel tail =>
               cases tail
-              obtain ⟨targetPtr, rfl, found⟩ := vRel_byteVector_inv firstRel
+              obtain ⟨targetPtr, rfl, found, _⟩ := vRel_byteVector_iff.mp firstRel
               have secondEq := vRel_number_inv secondRel
               subst_vars
               simp at run
@@ -448,7 +448,7 @@ theorem byteVectorRead_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
           cases related with
           | cons head tail =>
             cases tail
-            obtain ⟨ptr, rfl, found⟩ := vRel_byteVector_inv head
+            obtain ⟨ptr, rfl, found, _⟩ := vRel_byteVector_iff.mp head
             exact ⟨.number bytes.length, by simp [ByteVectorRead.targetOp, BvlSem.doApp, BvlSem.applyMemory, found], rfl, .number _⟩
   | deref =>
     cases args with
@@ -468,7 +468,7 @@ theorem byteVectorRead_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
               cases tail with
               | cons indexRel tail =>
                 cases tail
-                obtain ⟨ptr, rfl, found⟩ := vRel_byteVector_inv head
+                obtain ⟨ptr, rfl, found, _⟩ := vRel_byteVector_iff.mp head
                 have indexEq := vRel_number_inv indexRel
                 subst_vars
                 by_cases negative : index < 0

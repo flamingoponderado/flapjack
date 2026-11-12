@@ -42,7 +42,7 @@ theorem byteToList_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
         cases related with
         | cons head tail =>
           cases tail
-          obtain ⟨ptr, rfl, found⟩ := vRel_byteVector_inv head
+          obtain ⟨ptr, rfl, found, _⟩ := vRel_byteVector_iff.mp head
           refine ⟨BvlSem.listToValue (bytes.map fun b => .number b.toNat), ?_, rfl,
             listToValue_related (byteNumbers_related bytes)⟩
           simp [BvlSem.doApp, BvlSem.applyMemory, found]
@@ -82,8 +82,8 @@ theorem byteStringCmp_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
             cases tail with
             | cons secondRel tail =>
               cases tail
-              obtain ⟨firstPtr, rfl, firstFound⟩ := vRel_byteVector_inv firstRel
-              obtain ⟨secondPtr, rfl, secondFound⟩ := vRel_byteVector_inv secondRel
+              obtain ⟨firstPtr, rfl, firstFound, _⟩ := vRel_byteVector_iff.mp firstRel
+              obtain ⟨secondPtr, rfl, secondFound, _⟩ := vRel_byteVector_iff.mp secondRel
               refine ⟨BvlSem.boolValue (strCmp fast op (.implode firstBytes) (.implode secondBytes)), ?_, rfl, (vRel_bool_iff _ _ _ _ _ (.number 0) _).1.mpr rfl⟩
               simp [BvlSem.doApp, BvlSem.applyMemory, firstFound, secondFound]
 
@@ -136,7 +136,7 @@ theorem byteVectors_decode_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat
     cases first <;> simp only [ClosSem.byteVectors] at decoded
     all_goals try contradiction
     case byteVector bytes =>
-      obtain ⟨ptr, rfl, found⟩ := vRel_byteVector_inv head
+      obtain ⟨ptr, rfl, found, _⟩ := vRel_byteVector_iff.mp head
       cases restRun : ClosSem.byteVectors rest with
       | none => simp [restRun] at decoded
       | some restChunks =>

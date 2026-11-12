@@ -112,7 +112,7 @@ theorem doAppErr {C F : Type} (op : ClosLang.Op) (xs : List ClosSem.Value) (s1 :
     cases tail with
     | cons ptrRel tail =>
       cases tail
-      obtain ⟨configPtr, rfl, configFound⟩ := vRel_byteVector_inv configRel
+      obtain ⟨configPtr, rfl, configFound, _⟩ := vRel_byteVector_iff.mp configRel
       obtain ⟨targetPtr, rfl, mapped⟩ := vRel_refPtr_inv ptrRel
       have valid := ffi_valid_related s1 t1 f states name config bytes configPtr flag ptr targetPtr
         configFound mapped sourceFound

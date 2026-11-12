@@ -62,7 +62,7 @@ theorem xorByte_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
     | cons sourceRel tail =>
       cases tail
       obtain ⟨targetPtr, rfl, mapped⟩ := vRel_refPtr_inv dstRel
-      obtain ⟨sourcePtr, rfl, sourceFound⟩ := vRel_byteVector_inv sourceRel
+      obtain ⟨sourcePtr, rfl, sourceFound, _⟩ := vRel_byteVector_iff.mp sourceRel
       have dstFound := stateRel_bytes_lookup states ptr targetPtr old mapped found
       let targetNext := { t with refs := t.refs.updateEq (targetPtr, .byteArray false result) }
       refine ⟨BvlSem.unitValue, targetNext, ?_, ?_, .block .nil,

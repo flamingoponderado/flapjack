@@ -53,7 +53,7 @@ theorem evaluatePost_ffi_call {C F : Type} (s sMiddle sLast : ClosSem.State C F)
       cases tail with
       | cons ptrRel tail =>
         cases tail
-        obtain ⟨configPtr, rfl, configFound⟩ := vRel_byteVector_inv configRel
+        obtain ⟨configPtr, rfl, configFound, _⟩ := vRel_byteVector_iff.mp configRel
         obtain ⟨targetPtr, rfl, mapped⟩ := vRel_refPtr_inv ptrRel
         have valid := ffi_valid_related sMiddle tMiddle fMiddle state name config bytes configPtr flag ptr targetPtr
           configFound mapped sourceFound

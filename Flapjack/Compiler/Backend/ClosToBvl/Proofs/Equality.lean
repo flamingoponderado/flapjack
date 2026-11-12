@@ -151,8 +151,8 @@ theorem doEq_related_byteVectors {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     (first : vRel maxApp f refs code (.byteVector a) x)
     (second : vRel maxApp f refs code (.byteVector b) y) :
     ClosSem.doEq (.byteVector a) (.byteVector b) = BvlSem.doEq refs x y := by
-  obtain ⟨targetA, rfl, foundA⟩ := vRel_byteVector_inv first
-  obtain ⟨targetB, rfl, foundB⟩ := vRel_byteVector_inv second
+  obtain ⟨targetA, rfl, foundA, _⟩ := vRel_byteVector_iff.mp first
+  obtain ⟨targetB, rfl, foundB, _⟩ := vRel_byteVector_iff.mp second
   simp [ClosSem.doEq, BvlSem.doEq, foundA, foundB]
 
 /-- Equality of a source byte vector and source reference remains a type
@@ -164,7 +164,7 @@ theorem doEq_byteVector_refPtr {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     (first : vRel maxApp f refs code (.byteVector bytes) x)
     (second : vRel maxApp f refs code (.refPtr flag ptr) y) :
     ClosSem.doEq (.byteVector bytes) (.refPtr flag ptr) = BvlSem.doEq refs x y := by
-  obtain ⟨bytePtr, rfl, byteLookup⟩ := vRel_byteVector_inv first
+  obtain ⟨bytePtr, rfl, byteLookup, _⟩ := vRel_byteVector_iff.mp first
   obtain ⟨targetPtr, rfl, map⟩ := vRel_refPtr_inv second
   have notFrozen : ∀ bs, refs.lookup targetPtr ≠ some (.byteArray true bs) :=
     fun bs => noFrozen ptr targetPtr bs map
@@ -180,7 +180,7 @@ theorem doEq_refPtr_byteVector {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     (second : vRel maxApp f refs code (.byteVector bytes) y) :
     ClosSem.doEq (.refPtr flag ptr) (.byteVector bytes) = BvlSem.doEq refs x y := by
   obtain ⟨targetPtr, rfl, map⟩ := vRel_refPtr_inv first
-  obtain ⟨bytePtr, rfl, byteLookup⟩ := vRel_byteVector_inv second
+  obtain ⟨bytePtr, rfl, byteLookup, _⟩ := vRel_byteVector_iff.mp second
   have notFrozen : ∀ bs, refs.lookup targetPtr ≠ some (.byteArray true bs) :=
     fun bs => noFrozen ptr targetPtr bs map
   cases flag <;> simp [ClosSem.doEq, BvlSem.doEq, byteLookup]
