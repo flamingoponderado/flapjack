@@ -135,22 +135,24 @@ theorem relocated_pointer_eq {f : HolFiniteMapExact Nat Nat}
     exact injective a b x first second
 
 /-- Equality of related mutable-reference pointers agrees when the target
-state satisfies the existing injection and frozen-byte-array exclusions. -/
-theorem doEq_related_refPtrs {C F : Type} {f : HolFiniteMapExact Nat Nat}
-    (s : ClosSem.State C F) (t : BvlSem.State C F) (states : stateRel f s t)
+map satisfies the original injection and frozen-byte-array conditions. -/
+theorem doEq_related_refPtrs {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    (injective : ∀ a b y, f.lookup a = some y → f.lookup b = some y → a = b)
+    (noFrozen : ∀ a y bytes, f.lookup a = some y → refs.lookup y ≠ some (.byteArray true bytes))
     (flagA flagB : Bool) (a b : Nat) (x y : BvlSem.Value)
-    (first : vRel s.maxApp f t.refs t.code (.refPtr flagA a) x)
-    (second : vRel s.maxApp f t.refs t.code (.refPtr flagB b) y) :
-    ClosSem.doEq (.refPtr flagA a) (.refPtr flagB b) = BvlSem.doEq t.refs x y := by
+    (first : vRel maxApp f refs code (.refPtr flagA a) x)
+    (second : vRel maxApp f refs code (.refPtr flagB b) y) :
+    ClosSem.doEq (.refPtr flagA a) (.refPtr flagB b) = BvlSem.doEq refs x y := by
   obtain ⟨targetA, rfl, mapA⟩ := vRel_refPtr_inv first
   obtain ⟨targetB, rfl, mapB⟩ := vRel_refPtr_inv second
-  have pointerEq := relocated_pointer_eq states.2.2.2.1 mapA mapB
-  have notFrozenA : ∀ bytes, t.refs.lookup targetA ≠ some (.byteArray true bytes) :=
-    fun bytes => states.2.2.2.2.1 a targetA bytes mapA
-  have notFrozenB : ∀ bytes, t.refs.lookup targetB ≠ some (.byteArray true bytes) :=
-    fun bytes => states.2.2.2.2.1 b targetB bytes mapB
+  have pointerEq := relocated_pointer_eq injective mapA mapB
+  have notFrozenA : ∀ bytes, refs.lookup targetA ≠ some (.byteArray true bytes) :=
+    fun bytes => noFrozen a targetA bytes mapA
+  have notFrozenB : ∀ bytes, refs.lookup targetB ≠ some (.byteArray true bytes) :=
+    fun bytes => noFrozen b targetB bytes mapB
   cases flagA <;> cases flagB <;> simp [ClosSem.doEq, BvlSem.doEq]
-  cases firstRef : t.refs.lookup targetA <;> cases secondRef : t.refs.lookup targetB <;> simp_all
+  cases firstRef : refs.lookup targetA <;> cases secondRef : refs.lookup targetB <;> simp_all
 
 /-- Equality of related byte vectors reads the same frozen target arrays. -/
 theorem doEq_related_byteVectors {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
@@ -165,30 +167,32 @@ theorem doEq_related_byteVectors {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
 
 /-- Equality of a source byte vector and source reference remains a type
 error: a relocated reference cannot point at a frozen byte array. -/
-theorem doEq_byteVector_refPtr {C F : Type} {f : HolFiniteMapExact Nat Nat}
-    (s : ClosSem.State C F) (t : BvlSem.State C F) (states : stateRel f s t)
+theorem doEq_byteVector_refPtr {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    (noFrozen : ∀ a y bytes, f.lookup a = some y → refs.lookup y ≠ some (.byteArray true bytes))
     (bytes : List (BitVec 8)) (flag : Bool) (ptr : Nat) (x y : BvlSem.Value)
-    (first : vRel s.maxApp f t.refs t.code (.byteVector bytes) x)
-    (second : vRel s.maxApp f t.refs t.code (.refPtr flag ptr) y) :
-    ClosSem.doEq (.byteVector bytes) (.refPtr flag ptr) = BvlSem.doEq t.refs x y := by
+    (first : vRel maxApp f refs code (.byteVector bytes) x)
+    (second : vRel maxApp f refs code (.refPtr flag ptr) y) :
+    ClosSem.doEq (.byteVector bytes) (.refPtr flag ptr) = BvlSem.doEq refs x y := by
   obtain ⟨bytePtr, rfl, byteLookup⟩ := vRel_byteVector_inv first
   obtain ⟨targetPtr, rfl, map⟩ := vRel_refPtr_inv second
-  have notFrozen : ∀ bs, t.refs.lookup targetPtr ≠ some (.byteArray true bs) :=
-    fun bs => states.2.2.2.2.1 ptr targetPtr bs map
+  have notFrozen : ∀ bs, refs.lookup targetPtr ≠ some (.byteArray true bs) :=
+    fun bs => noFrozen ptr targetPtr bs map
   cases flag <;> simp [ClosSem.doEq, BvlSem.doEq, byteLookup]
 
 /-- Equality of a source reference and source byte vector remains a type
 error in the reversed argument order as well. -/
-theorem doEq_refPtr_byteVector {C F : Type} {f : HolFiniteMapExact Nat Nat}
-    (s : ClosSem.State C F) (t : BvlSem.State C F) (states : stateRel f s t)
+theorem doEq_refPtr_byteVector {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    (noFrozen : ∀ a y bytes, f.lookup a = some y → refs.lookup y ≠ some (.byteArray true bytes))
     (flag : Bool) (ptr : Nat) (bytes : List (BitVec 8)) (x y : BvlSem.Value)
-    (first : vRel s.maxApp f t.refs t.code (.refPtr flag ptr) x)
-    (second : vRel s.maxApp f t.refs t.code (.byteVector bytes) y) :
-    ClosSem.doEq (.refPtr flag ptr) (.byteVector bytes) = BvlSem.doEq t.refs x y := by
+    (first : vRel maxApp f refs code (.refPtr flag ptr) x)
+    (second : vRel maxApp f refs code (.byteVector bytes) y) :
+    ClosSem.doEq (.refPtr flag ptr) (.byteVector bytes) = BvlSem.doEq refs x y := by
   obtain ⟨targetPtr, rfl, map⟩ := vRel_refPtr_inv first
   obtain ⟨bytePtr, rfl, byteLookup⟩ := vRel_byteVector_inv second
-  have notFrozen : ∀ bs, t.refs.lookup targetPtr ≠ some (.byteArray true bs) :=
-    fun bs => states.2.2.2.2.1 ptr targetPtr bs map
+  have notFrozen : ∀ bs, refs.lookup targetPtr ≠ some (.byteArray true bs) :=
+    fun bs => noFrozen ptr targetPtr bs map
   cases flag <;> simp [ClosSem.doEq, BvlSem.doEq, byteLookup]
 
 /-- Source closures and their related target closures compare equal, whether
