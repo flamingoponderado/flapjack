@@ -1,5 +1,29 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "OptionalLetLet_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/LetLetEvaluate.lean", "lean_name": "optionalLetLet_imp",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed replay of the original local theorem: full optional-cut result equality, universal body-evaluation premise, environment relation and arbitrary Boolean premise jointly imply full result equality and the same Boolean. Both size branches and the arbitrary suffix remain. State compiler and FFI parameters are independent, canonical refs have a local witness, and evaluator dependencies inherit reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "env_rel_MAPi",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/EnvRel.lean", "lean_name": "envRel_mask",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source theorem: for any live-variable set and BVL value list, the original list is related to its indexed map that retains live values and substitutes Number 0 elsewhere."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "evaluate_SmartLet",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/LetLetEvaluate.lean", "lean_name": "evaluate_smartLet",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed source theorem for arbitrary binding list, body, environment and BVL state with independent compiler and FFI parameters: evaluation of SmartLet equals evaluation of the corresponding ordinary Let. Canonical refs have a local roundtrip witness; evaluator dependencies inherit reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "evaluate_LetLet",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/LetLetEvaluate.lean", "lean_name": "evaluate_letLet",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed source theorem: the grouped universal body-evaluation premise and source/target environment relation imply the full evaluation result pair for the source LetLet over the target environment and arbitrary suffix. State compiler and FFI parameters are independent, canonical refs have a local witness, and evaluator dependencies inherit reals_as_rational_cuts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "env_rel_refl",
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/EnvRel.lean", "lean_name": "envRel_refl",
   "statement_status": "reviewed_exact",

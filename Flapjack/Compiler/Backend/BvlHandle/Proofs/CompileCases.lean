@@ -423,7 +423,7 @@ theorem compileSingCorrect_handle_mayRaise (limit : Nat) (body handler : Bvl.Exp
     simpa [bodyEq] using correct.1
   have packedRun : evaluate [letLet source.length (dbToSet bodyLive) compiledBody]
       (target ++ extra) state = evaluate [body] source state :=
-    evaluate_letLet bodyLive compiledBody source target extra state _ bodySimulation bodyRel
+    evaluate_letLet bodyLive compiledBody source target extra state _ ⟨bodySimulation, bodyRel⟩
   cases bodyRun : evaluate [body] source state with
   | mk result next =>
     cases result with

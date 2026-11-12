@@ -38,6 +38,9 @@ LIST_RELi_EL_EQN_typed=LIST_RELi (R :num -> α -> β -> bool) (l1 :α list) (l2 
 env_rel_refl_typed=(env_rel (l :db_var_set) (env :α list) env :bool)
 env_rel_length_typed=(env_rel (l :db_var_set) (env :α list) (env1 :α list) :bool) ⇒ LENGTH env1 = LENGTH env
 env_rel_mk_Union_typed=∀(env :α list) (env1 :α list). (env_rel (mk_Union (lx :db_var_set) (ly :db_var_set)) env env1 :bool) ⇔ (env_rel lx env env1 :bool) ∧ (env_rel ly env env1 :bool)
+env_rel_MAPi_typed=(env_rel (l1 :db_var_set) (env :v list) (MAPi (λ(i :num) (v :v). if has_var i l1 then v else (Number (0 :int) :v)) env) :bool)
+evaluate_LetLet_typed=(∀(env2 :v list) (extra :v list). (env_rel (l1 :db_var_set) (env :v list) env2 :bool) ⇒ evaluate ([(y :bvl$exp)],env2 ++ extra,(s1 :(α, β) state)) = (res :(v list, v) result # (α, β) state)) ∧ (env_rel l1 env (env1 :v list) :bool) ⇒ evaluate ([LetLet (LENGTH env) (db_to_set l1) y],env1 ++ (extra :v list),s1) = res
+evaluate_SmartLet_typed=evaluate ([SmartLet (xs :bvl$exp list) (x :bvl$exp)],(env :v list),(s :(α, β) state)) = evaluate ([(Let xs x :bvl$exp)],env,s)
 bVarBound_MEM_typed=bVarBound (n :num) (xs :bvl$exp list) ⇔ ∀(x :bvl$exp). MEM x xs ⇒ bVarBound n [x]
 bVarBound_LESS_EQ_typed=∀(m :num) (xs :bvl$exp list) (n :num). bVarBound m xs ∧ m ≤ n ⇒ bVarBound n xs
 bVarBound_LetLet_typed=bVarBound (m :num) [(y :bvl$exp)] ∧ (n :num) ≤ m ⇒ bVarBound m [LetLet n (l1 :sptree$num_set) y]

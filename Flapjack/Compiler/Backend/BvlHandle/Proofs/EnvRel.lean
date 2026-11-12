@@ -74,6 +74,7 @@ theorem envRel_mkUnion {α : Type} (left right : DbVarSet) (source target : List
 
 /-- Replacing non-live values with zero retains exactly the agreement needed
 by the handler compiler's environment relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "env_rel_MAPi"]
 theorem envRel_mask (live : DbVarSet) (env : List Value) :
     envRel live env (env.mapIdx fun index value =>
       if hasVar index live then value else .number 0) := by

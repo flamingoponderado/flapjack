@@ -161,15 +161,6 @@ theorem let_compileExp_noMutcons (expression : Bvi.Exp) (safe : noMutcons expres
   exact let_compileSing_noMutcons [] 0 expression safe
 
 
-/-- Every successful run of the executable let pass preserves the invariant. -/
-theorem let_compileBounded_noMutcons (fuel : Nat) (env : List Nat) (d : Nat)
-    (expression result : Bvi.Exp) (safe : noMutcons expression)
-    (run : BviLet.compileBounded fuel env d expression = some result) : noMutcons result := by
-  rw [BviLet.compileBounded_eq_compileSing] at run
-  have eq := Option.some.inj run
-  rw [← eq]
-  exact let_compileSing_noMutcons env d expression safe
-
 /-- Integer literal lowering never emits mutable-block allocation. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_int_no_mutcons"]
 theorem compileInt_noMutcons (value : Int) : noMutcons (compileInt value) := by
