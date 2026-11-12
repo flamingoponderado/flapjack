@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml", "hol_name": "SmartOp_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/CodeLabels.lean", "lean_name": "smartOp_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: for any operation and operand list, the optimized operation has exactly the union of the operation's assigned label and the union of all operand label sets. The proof covers every list length and the production operand-orientation step."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml", "hol_name": "SmartOp2_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/CodeLabels.lean", "lean_name": "smartOp2_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the complete typed original: for arbitrary operation and two expressions, the output of SmartOp2 has exactly the union of the operation's assigned label and both operand label sets. The proof covers the executed arithmetic rewrites, comparisons, equality and memory cases as well as unchanged label-bearing operations."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml", "hol_name": "SmartOp1_code_labels",
   "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/CodeLabels.lean", "lean_name": "smartOp1_codeLabels",
   "statement_status": "reviewed_exact",
