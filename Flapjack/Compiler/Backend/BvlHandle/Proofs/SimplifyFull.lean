@@ -10,6 +10,14 @@ public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyProduction
 namespace Flapjack.Compiler.Backend.BvlHandle.Proofs
 open Flapjack.Compiler.Backend.BvlSem
 
+namespace SimplifyCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+    (∀ s : Flapjack.Compiler.Backend.BvlSem.State C F, State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end SimplifyCarrier
+
 private theorem evaluate_handle_congr {C F : Type} (body body' handler handler' : Bvl.Exp)
     (env : List Value) (state : State C F)
     (bodyEq : evaluate [body] env state = evaluate [body'] env state)
@@ -114,5 +122,22 @@ decreasing_by
   all_goals have h := handleSize_nonzero handler
   all_goals try omega
 end
+
+/-- The complete source simplification theorem for expressions, lists and
+handler construction. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "evaluate_handle_simp"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_handleSimp_source {C F : Type} :
+    (∀ (x : Bvl.Exp) (env : List Value)
+      (s : Flapjack.Compiler.Backend.BvlSem.State C F),
+      evaluateTuple ([handleSimp x], env, s) = evaluateTuple ([x], env, s)) ∧
+    (∀ (xs : List Bvl.Exp) (env : List Value)
+      (s : Flapjack.Compiler.Backend.BvlSem.State C F),
+      evaluateTuple (handleSimpList xs, env, s) = evaluateTuple (xs, env, s)) ∧
+    (∀ (x1 x2 : Bvl.Exp) (l : Nat) (env : List Value)
+      (s : Flapjack.Compiler.Backend.BvlSem.State C F), l ≤ env.length →
+      evaluateTuple ([makeHandle x1 x2 l], env, s) =
+        evaluateTuple ([.handle x1 (handleAdjVars 1 l x2)], env, s)) := by
+  exact ⟨evaluate_handleSimp, evaluate_handleSimpList, evaluate_makeHandle⟩
 
 end Flapjack.Compiler.Backend.BvlHandle.Proofs

@@ -97,7 +97,8 @@ theorem evaluate_handle_let_push {C F : Type} (bindings : List Bvl.Exp)
           cases error with
           | abort reason => simp [Nat.min_eq_right bodyBound]
           | raise value =>
-            have shifted := evaluate_handleAdjVars_extend handler depth [value] values env after bound
+            have shifted := evaluate_handleAdjVars_extend_source handler [value] depth values env after bound
+            simp only [evaluateTuple] at shifted
             simp only [List.length_singleton, List.cons_append, List.nil_append, ← len] at shifted
             simpa [bodyRun, fixClock, Nat.min_eq_right bodyBound] using shifted.symm
 

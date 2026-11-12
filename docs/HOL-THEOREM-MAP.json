@@ -1,5 +1,29 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "evaluate_handle_adj_vars_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/AdjustEvaluate.lean", "lean_name": "evaluate_handleAdjVars_source",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared both typed HOL conjuncts: expression and list forms preserve full BVL evaluation under insertion of an arbitrary environment segment and the corresponding variable adjustment, with original binder order and independent compiler/FFI carriers. The BVL state uses canonical finite-support refs, witnessed locally; evaluator dependencies inherit reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "evaluate_handle_adj_vars",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/AdjustEvaluate.lean", "lean_name": "evaluate_handleAdjVars_extend_source",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed original, including the free source expression, ordered environment-segment/depth/state binders, depth bound and exact evaluation equality. The BVL state's canonical refs carrier has a local roundtrip witness; evaluator dependencies inherit reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "handle_adj_vars_evaluate",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/AdjustEvaluate.lean", "lean_name": "handleAdjVars_evaluate_source",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed source implication: the universal environment-evaluation equality and variable-depth bound remain grouped, with the full adjusted evaluation equality as conclusion. The independent state carriers and canonical refs witness are preserved; evaluator dependencies inherit reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "evaluate_handle_simp",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/SimplifyFull.lean", "lean_name": "evaluate_handleSimp_source",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared all three typed original conjuncts: expression and list simplification preserve full BVL evaluation, and handler construction preserves the source adjusted-handler evaluation under its original depth bound. Independent compiler/FFI state carriers use canonical refs with a local roundtrip witness; evaluator dependencies inherit reals_as_rational_cuts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "can_raise_thm",
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/CanRaise.lean", "lean_name": "canRaise_of_evaluate",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
