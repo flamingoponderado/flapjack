@@ -3952,6 +3952,8 @@ import Flapjack.Misc.Anub
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
 import Flapjack.Compiler.Backend.LinearScan.Proofs
 import Flapjack.Misc.Sptree.ToAList
+import Flapjack.Misc.Sptree.FromAList.Lookup
+import Flapjack.Misc.Sptree.FromAList.Append
 import Flapjack.Translator.Monadic.MonadBase.Arrays
 import Flapjack.Misc.AppList
 import Flapjack.Misc.Sptree

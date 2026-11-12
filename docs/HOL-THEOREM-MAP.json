@@ -2593,6 +2593,22 @@
   "reviewer": "Compared compile_every_Fn_SOME_typed with the HOL source: the program label type is independently polymorphic, both body projections and the function-location predicate match, and compileSource is the reviewed source annotation definition. The proof applies the reviewed every_Fn_SOME_ann, whose generalised statement is the same HOL result."
 },
 {
+  "hol_path": "HOL/src/finite_maps/sptreeScript.sml",
+  "hol_name": "fromAList_append",
+  "lean_path": "Flapjack/Misc/Sptree/FromAList/Append.lean",
+  "lean_name": "sptFromAList_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL source and fromAList_append_typed confirms arbitrary association lists and payload type, unconditional structural sparse-tree equality, and left-biased union preserving first-match behavior for duplicate keys. No well-formedness or distinctness premise is required."
+},
+{
+  "hol_path": "HOL/src/finite_maps/sptreeScript.sml",
+  "hol_name": "lookup_fromAList",
+  "lean_path": "Flapjack/Misc/Sptree/FromAList/Lookup.lean",
+  "lean_name": "sptLookupFromAList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL source and lookup_fromAList_typed confirms arbitrary payload type, natural key and association list, with unconditional equality to HOL ALOOKUP. Both sides retain first-match behavior for duplicate keys, and the sparse-tree carrier is the reviewed Spt."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "init_code_ok",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean",
