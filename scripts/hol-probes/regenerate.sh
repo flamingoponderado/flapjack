@@ -10322,3 +10322,10 @@ run_probe lab_to_target_typed_probeScript.sml lab_to_target_typed_probe.out \
   get_memop_info_def_typed get_shmem_info_def_typed list_add_if_fresh_def_typed \
   "$cake_dir/compiler/backend/lab_to_targetScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe bvl_to_bvi_proof_typed_probeScript.sml bvl_to_bvi_proof_typed_probe.out \
+  adjust_bv_def_typed adjust_bv_Unit_typed adjust_bv_Boolv_typed aux_code_installed_def_typed aux_code_installed_subspt_typed names_ok_def_typed bv_ok_def_typed state_rel_def_typed \
+  state_rel_FLOOKUP_byteArray_typed state_rel_FLOOKUP_valueArray_typed state_rel_FLOOKUP_MutBlock_typed state_rel_FLOOKUP_Thunk_typed state_ok_def_typed list_to_v_ok_typed list_to_v_ok_APPEND_typed find_code_bv_ok_typed \
+  do_build_ok_typed do_app_ok_typed evaluate_ok_typed compile_inc_no_mutcons_typed bvi_tailrec_compile_prog_no_mutcons_typed \
+  "$cake_dir/compiler/backend/proofs/bvl_to_bviProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
