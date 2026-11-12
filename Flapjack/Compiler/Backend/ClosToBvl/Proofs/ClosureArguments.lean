@@ -88,6 +88,67 @@ theorem noPartialArgs (func cl : ClosSem.Value) (x : Nat) (argEnv : List ClosSem
   all_goals simp only [numRemainingArgs, getNumArgs, Option.some.injEq, List.length_append] at remaining arity
   all_goals cases argEnv <;> simp_all <;> omega
 
+/-- A full closure application determines its source arguments and arity. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "dest_closure_full_app"]
+theorem destClosureFullApp {α β γ : Type} (locOpt : Option Nat) (func : ClosSem.Value)
+    (args : List ClosSem.Value) (_c : α) (_f1 : β) (_t1 : γ) (body : ClosLang.Exp)
+    (args1 args2 : List ClosSem.Value) (maxApp : Nat)
+    (found : ClosSem.destClosure maxApp locOpt func args = some (.fullApp body args1 args2)) :
+    ∃ rem loc num old captured,
+      getLoc func = loc ∧ numRemainingArgs func = some rem ∧ getNumArgs func = some num ∧
+      getOldArgs func = some old ∧ getClEnv func = some captured ∧ rem ≤ args.length ∧ rem ≤ num ∧
+      num ≤ old.length + args.length ∧ args2.length = args.length - rem ∧
+      ClosSem.checkLoc maxApp locOpt loc num args.length (num - rem) = true := by
+  cases func <;> simp only [ClosSem.destClosure] at found <;> try contradiction
+  case closure location supplied captured arity expression =>
+    split at found
+    · rename_i valid
+      split at found
+      · simp at found
+      · rename_i full
+        simp only [Option.some.injEq, ClosSem.AppKind.fullApp.injEq] at found
+        rcases found with ⟨_, _, rfl⟩
+        have suppliedBound : supplied.length < arity := by
+          simp only [Bool.and_eq_true, decide_eq_true_eq] at valid
+          exact valid.2
+        have check : ClosSem.checkLoc maxApp locOpt location arity args.length supplied.length = true := by
+          simp only [Bool.and_eq_true, decide_eq_true_eq] at valid
+          exact valid.1
+        have back : arity - (arity - supplied.length) = supplied.length := by omega
+        refine ⟨arity - supplied.length, location, arity, supplied, captured, ?_⟩
+        cases location <;> simp [getLoc, numRemainingArgs, getNumArgs, getOldArgs, getClEnv,
+          List.length_reverse, List.length_drop, back, check] <;> omega
+    · simp at found
+  case recclosure location supplied captured functions index =>
+    split at found
+    · simp at found
+    · rename_i arity expression selected
+      split at found
+      · rename_i valid
+        split at found
+        · simp at found
+        · rename_i full
+          simp only [Option.some.injEq, ClosSem.AppKind.fullApp.injEq] at found
+          rcases found with ⟨_, _, rfl⟩
+          have suppliedBound : supplied.length < arity := by
+            simp only [Bool.and_eq_true, decide_eq_true_eq] at valid
+            exact valid.2
+          have check : ClosSem.checkLoc maxApp locOpt (location.map (fun loc => 2 * index + loc))
+              arity args.length supplied.length = true := by
+            simp only [Bool.and_eq_true, decide_eq_true_eq] at valid
+            exact valid.1
+          have indexBound : index < functions.length := (List.getElem?_eq_some_iff.mp selected).1
+          have entry : Flapjack.holEl index functions = (arity, expression) := by
+            rw [Flapjack.holEl_eq_getElem _ _ indexBound]
+            have h := (List.getElem?_eq_some_iff.mp selected).2
+            exact h
+          have back : arity - (arity - supplied.length) = supplied.length := by omega
+          refine ⟨arity - supplied.length, location.map (fun loc => loc + 2 * index), arity, supplied, captured, ?_⟩
+          cases location <;> simp [getLoc, numRemainingArgs, getNumArgs, getOldArgs, getClEnv,
+            entry, List.length_reverse, List.length_drop, back, Nat.add_comm] <;>
+              exact ⟨by omega, by simpa [Nat.add_comm] using check⟩
+      · simp at found
+
 /-- Direct-call location check without the maximum-application bound. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "check_loc'_def"]
 noncomputable def checkLocPrime {α β : Type} (requested location : Option α)

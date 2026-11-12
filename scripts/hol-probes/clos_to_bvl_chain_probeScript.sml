@@ -911,6 +911,40 @@ in
   intLib.ARITH_TAC);
   val _ = show_thm "cl_rel_get_num_args_replay=" cl_rel_get_num_args_replay;
 end;
+(* Replay the full application destination theorem, including unused binders. *)
+local
+  open preamble clos_to_bvlProofTheory closSemTheory listTheory
+in
+  val dest_closure_full_app_replay = Q.prove (
+    `  !loc_opt func args c f1 t1 exp args1 args2.
+    dest_closure max_app loc_opt func args = SOME (Full_app exp args1 args2)
+    ⇒
+    ?rem_args loc num_args old_args cl_env.
+      get_loc func = loc ∧
+      num_remaining_args func = SOME rem_args ∧
+      get_num_args func = SOME num_args ∧
+      get_old_args func = SOME old_args ∧
+      get_cl_env func = SOME cl_env ∧
+      rem_args ≤ LENGTH args ∧
+      rem_args ≤ num_args ∧
+      num_args ≤ LENGTH old_args + LENGTH args ∧
+      LENGTH args2 = LENGTH args - rem_args ∧
+      check_loc max_app loc_opt loc num_args (LENGTH args) (num_args - rem_args)`,
+  srw_tac[][dest_closure_def] >>
+  BasicProvers.EVERY_CASE_TAC >>
+  full_simp_tac(srw_ss())[] >>
+  TRY (Cases_on `EL n l1`) >>
+  full_simp_tac(srw_ss())[LET_THM] >>
+  BasicProvers.EVERY_CASE_TAC >>
+  full_simp_tac(srw_ss())[get_cl_env_def, get_old_args_def, get_loc_def, num_remaining_args_def, get_num_args_def] >>
+  full_simp_tac (srw_ss()++ARITH_ss) [] >>
+  srw_tac[][] >>
+  TRY (Cases_on `o'`) >>
+  full_simp_tac(srw_ss())[get_loc_def] >>
+  simp [] >>
+  decide_tac);
+  val _ = show_thm "dest_closure_full_app_replay=" dest_closure_full_app_replay;
+end;
 val _ = show_thm "get_old_args_def_typed=" clos_to_bvlProofTheory.get_old_args_def;
 (* Replay the original local closure relation shape theorem. *)
 local
