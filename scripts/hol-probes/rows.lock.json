@@ -1616,6 +1616,7 @@
     {"bytes": 104, "out": "stack_names_operand_probe.out", "rows": 6, "sha256": "bfcc8e9f264a178766e4bce3662d03342bb4f3ff037d9d1fe27ace53a084d4c9"},
     {"bytes": 427, "out": "stack_names_ports_probe.out", "rows": 17, "sha256": "db56b84fed0c397dee7c6446e16f3d342c5c5c5cf99a7e9b005fa6a160589acf"},
     {"bytes": 497, "out": "stack_names_program_probe.out", "rows": 15, "sha256": "d513fd60b3b7f032c7b59f844b976016e319bb1cc4896cdf13c8eb761cc9ba14"},
+    {"bytes": 11148, "out": "stack_names_proof_typed_probe.out", "rows": 31, "sha256": "3e6df41680845b13a32859577eee6dd95733092dbe1a3710c5cbeccd195c0055"},
     {"bytes": 138, "out": "stack_props_addr_name_probe.out", "rows": 12, "sha256": "5fd0fd365b37d0206833401906569ace5f7f03136e9f72b8eabbf3fc57e6d82c"},
     {"bytes": 182, "out": "stack_props_alloc_arg_probe.out", "rows": 15, "sha256": "ce988bd06feaa1791be6b8e4bb0a9802618e22979edd58008a59a14bbebcbc32"},
     {"bytes": 321, "out": "stack_props_arith_name_probe.out", "rows": 22, "sha256": "c919a689288e8afb3e3a3833dc7304067b87da9dbbc2190117c3c663673c5153"},
