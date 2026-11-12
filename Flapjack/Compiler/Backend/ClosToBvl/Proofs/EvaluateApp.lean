@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.DirectApplication
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureShape
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateCall
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 public import Flapjack.Compiler.Backend.BvlJump.Proofs
@@ -3172,16 +3173,6 @@ theorem evaluateApp_recclosure_partial_again_simulation {C F : Type}
       · intro key value mapped fresh; exact ⟨mapped, fresh⟩
       · simp [ClosSem.decClock, next, BvlSem.decClock, start]
 
-/-- Every recursive closure represented directly by `clRel` has an empty
-saved-argument list; saved arguments use the partial-closure representation. -/
-theorem clRel_recclosure_empty {maxApp : Nat} {fs : Nat → Prop}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {env captured supplied : List ClosSem.Value} {fields : List BvlSem.Value} {ptr index : Nat}
-    {functions : List (Nat × ClosLang.Exp)} {target : BvlSem.Value}
-    (related : clRel maxApp fs refs code (env, fields) (.recclosure (some ptr) supplied captured functions index) target) :
-    supplied = [] := by
-  cases related <;> rfl
-
 /-- A related recursive partial closure exposes its original closure relation
 and pointwise related saved arguments, for any recursive group. -/
 theorem vRel_recclosure_partial_existing {C F : Type}
@@ -3200,12 +3191,16 @@ theorem vRel_recclosure_partial_existing {C F : Type}
   have indexBound : index < functions.length := List.getElem?_eq_some_iff.mp found |>.1
   have entryEq : functions[index] = (arity, body) := by simpa [List.getElem?_eq_getElem indexBound] using found
   cases related with
-  | closure envRel closure => exact (nonempty (clRel_recclosure_empty closure)).elim
+  | closure envRel closure =>
+    have empty : oldArgs = [] := by
+      simpa [getOldArgs] using (clRel_dest _ _ _ _ _ _ _ _ closure).1
+    exact (nonempty empty).elim
   | @partialClosure env fvs argEnv ys numArgs cl clApp cl' envRel argRel argsNonempty argsBound installed added arityEq closure =>
     cases cl <;> simp [addArgs] at added
     case recclosure loc supplied captured' functions' index' =>
       obtain ⟨rfl, argsEq, rfl, rfl, rfl⟩ := added
-      have suppliedEmpty := clRel_recclosure_empty closure
+      have suppliedEmpty : supplied = [] := by
+        simpa [getOldArgs] using (clRel_dest _ _ _ _ _ _ _ _ closure).1
       subst supplied
       simp only [List.append_nil] at argsEq
       subst oldArgs

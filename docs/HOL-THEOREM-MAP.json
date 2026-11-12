@@ -157,6 +157,18 @@
   "reviewer": "Compared the literal local HOL source proof and typed replay: related source and target values have equal full optional byte decodings, including NONE, with fixed word8 bytes. The f and refs inputs use canonical finite support and same-module codec witnesses."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "get_old_args_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "getOldArgs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all typed HOL clauses: ordinary and recursive closures return their saved argument list, and the remaining five value constructors return NONE."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "cl_rel_dest",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureShape.lean", "lean_name": "clRel_dest",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["refs"],
+  "reviewer": "Compared the literal local HOL proof and typed replay: arbitrary related closures have no saved source arguments and the full existential closure-tagged target block, code pointer, integer natural arity and payload; the refs input uses canonical finite support and a same-module codec witness."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "dest_closure_full_of_part",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "destClosure_full_of_part",
   "statement_status": "reviewed_exact",

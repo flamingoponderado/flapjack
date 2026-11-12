@@ -34,6 +34,13 @@ noncomputable def getNumArgs : ClosSem.Value → Option Nat
   | .recclosure _ _ _ funs index => some (Flapjack.holEl index funs).1
   | _ => none
 
+/-- Previously accumulated arguments of a closure or recursive closure. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "get_old_args_def"]
+def getOldArgs : ClosSem.Value → Option (List ClosSem.Value)
+  | .closure _ args _ _ _ => some args
+  | .recclosure _ args _ _ _ => some args
+  | _ => none
+
 /-- Remaining arity of an ordinary or recursive closure. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "num_remaining_args_def"]
 noncomputable def numRemainingArgs : ClosSem.Value → Option Nat

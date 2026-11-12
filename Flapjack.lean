@@ -1147,6 +1147,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateCall
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateApp
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CallEnvironment
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArgumentRelation
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureShape
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateClosure
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateLetrec
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveInstalled

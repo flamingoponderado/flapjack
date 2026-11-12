@@ -112,6 +112,24 @@ val v_rel_union_replay = Q.prove (
             clos_to_bvlProof$v_rel max_app f2 refs (sptree$union code c2) x y`,
   metis_tac [clos_to_bvlProofTheory.v_rel_subspt, sptreeTheory.subspt_union]);
 val _ = show_thm "v_rel_union_replay=" v_rel_union_replay;
+val _ = show_thm "get_old_args_def_typed=" clos_to_bvlProofTheory.get_old_args_def;
+(* Replay the original local closure relation shape theorem. *)
+local
+  open preamble clos_to_bvlProofTheory closSemTheory bvlSemTheory listTheory backend_commonTheory
+in
+  val cl_rel_dest_replay = Q.prove (
+    `!f refs code cl cl' fvs fvs'.
+    cl_rel max_app f refs code (fvs,fvs') cl cl'
+    ⇒
+    get_old_args cl = SOME [] ∧
+    ?l num_args fvs.
+      cl' = Block closure_tag (CodePtr l::Number (&num_args)::fvs)`,
+  srw_tac[][cl_rel_cases] >>
+  srw_tac[][get_old_args_def, EL_MAP] >>
+  `?n e p. EL k exps_ps = ((n,e),p)` by metis_tac [pair_CASES] >>
+  srw_tac[][]);
+  val _ = show_thm "cl_rel_dest_replay=" cl_rel_dest_replay;
+end;
 val _ = show_thm "check_loc_prime_def_typed=" clos_to_bvlProofTheory.check_loc'_def;
 val _ = show_thm "dest_closure_prime_def_typed=" clos_to_bvlProofTheory.dest_closure'_def;
 (* Replay the original local partial-to-full destination theorem. *)
