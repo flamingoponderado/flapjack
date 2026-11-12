@@ -1,11 +1,31 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateSequence
+public import Flapjack.FiniteMap.DomainExact
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 
 @[expose] public section
 
 /-! Captured-environment facts for the closure-to-BVL simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
+
+namespace FreshRefsCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end FreshRefsCarrier
+
+/-- Every BVL state has a natural reference outside its finite domain. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "EXISTS_NOT_IN_refs"
+  (fmap_as_finite_support := [refs])]
+theorem existsNotInRefs {C F : Type} (t1 : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    ∃ x, x ∉ t1.refs.domain := by
+  obtain ⟨x, unused⟩ := BvlSem.unusedRef_exists t1.refs
+  refine ⟨x, ?_⟩
+  change ¬ (t1.refs.lookup x ≠ none)
+  exact fun present => present unused
 
 /-- Restricting related environments to valid source indices produces
 pointwise related captured values, in the original order. -/
@@ -69,6 +89,39 @@ theorem evaluate_vars {C F : Type} (indices : List Nat) (env : List BvlSem.Value
           rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, headRun, tailRun]
           rfl
 
+namespace LookupVarsCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportRelationWitness_BvlSem.State {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end LookupVarsCarrier
+
+/-- Related variable selections evaluate to related values in any BVL state. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "lookup_vars_IMP2"
+  (fmap_as_finite_support_relation := [BvlSem.State.refs, f, refs])]
+theorem lookupVarsImp2 {C F : Type} (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (vs : List Nat) (env : List ClosSem.Value) (xs : List ClosSem.Value) (env2 : List BvlSem.Value)
+    (premises : ClosSem.lookupVars vs env = some xs ∧ envRel maxApp f refs code env env2) :
+    ∃ ys, (∀ t1 : BvlSem.State C F, BvlSem.evaluate (vs.map Bvl.Exp.var) env2 t1 = (.val ys, t1)) ∧
+      List.Forall₂ (vRel maxApp f refs code) xs ys ∧ vs.length = xs.length := by
+  obtain ⟨ys, selected, related, length⟩ := lookupVars_related vs env env2 xs premises.2 premises.1
+  exact ⟨ys, fun t1 => evaluate_vars vs env2 t1 ys selected, related, length⟩
+
+/-- A successful source selection has a related target evaluation in the given state. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "lookup_vars_IMP"
+  (fmap_as_finite_support_relation := [BvlSem.State.refs, f, refs])]
+theorem lookupVarsImp {C F : Type} (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (vs : List Nat) (env : List ClosSem.Value) (xs : List ClosSem.Value) (env2 : List BvlSem.Value)
+    (t1 : BvlSem.State C F)
+    (premises : ClosSem.lookupVars vs env = some xs ∧ envRel maxApp f refs code env env2) :
+    ∃ ys, BvlSem.evaluate (vs.map Bvl.Exp.var) env2 t1 = (.val ys, t1) ∧
+      List.Forall₂ (vRel maxApp f refs code) xs ys ∧ vs.length = xs.length := by
+  obtain ⟨ys, run, related, length⟩ := lookupVarsImp2 (C := C) (F := F) maxApp f refs code vs env xs env2 premises
+  exact ⟨ys, run t1, related, length⟩
+
 /-- Successful environment selections compose over concatenated indices. -/
 theorem lookupVars_append {α : Type} (first second : List Nat) (env : List α)
     (values more : List α) (firstLookup : ClosSem.lookupVars first env = some values)
@@ -111,42 +164,16 @@ theorem lookupVars_reverse {α : Type} (indices : List Nat) (env : List α) (val
           simp [ClosSem.lookupVars, headLookup]
         simpa using lookupVars_append tail.reverse [index] env rest.reverse [value] reverseTail single
 
-/-- Variable evaluation may be prefixed to a successful nonempty target
-expression list, preserving its final state and concatenating its values. -/
+/-- Variable evaluation may be prefixed to a successful target expression
+list, preserving its final state and concatenating its values. -/
 theorem evaluate_vars_append {C F : Type} (indices : List Nat) (env : List BvlSem.Value)
     (state final : BvlSem.State C F) (values more : List BvlSem.Value) (tail : List Bvl.Exp)
-    (tailNonempty : tail ≠ []) (lookup : ClosSem.lookupVars indices env = some values)
+    (lookup : ClosSem.lookupVars indices env = some values)
     (tailRun : BvlSem.evaluate tail env state = (.val more, final)) :
     BvlSem.evaluate (indices.map Bvl.Exp.var ++ tail) env state = (.val (values ++ more), final) := by
-  induction indices generalizing values with
-  | nil =>
-    simp [ClosSem.lookupVars] at lookup
-    subst values
-    simpa using tailRun
-  | cons index indices ih =>
-    cases headLookup : env[index]? with
-    | none => simp [ClosSem.lookupVars, headLookup] at lookup
-    | some value =>
-      cases restLookup : ClosSem.lookupVars indices env with
-      | none => simp [ClosSem.lookupVars, headLookup, restLookup] at lookup
-      | some rest =>
-        simp [ClosSem.lookupVars, headLookup, restLookup] at lookup
-        subst values
-        have headRun : BvlSem.evaluate [.var index] env state = (.val [value], state) := by
-          simp [BvlSem.evaluate, headLookup]
-        have remaining := ih rest restLookup
-        have nonempty : indices.map Bvl.Exp.var ++ tail ≠ [] := by
-          cases indices with
-          | nil => simpa using tailNonempty
-          | cons first rest => simp
-        cases remainingExpressions : indices.map Bvl.Exp.var ++ tail with
-        | nil => exact False.elim (nonempty remainingExpressions)
-        | cons next later =>
-          simp only [List.map_cons, List.cons_append, remainingExpressions]
-          rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, headRun]
-          simp only [remainingExpressions] at remaining
-          rw [remaining]
-          rfl
+  change BvlSem.evaluateTuple (indices.map Bvl.Exp.var ++ tail, env, state) = _
+  rw [BvlProps.evaluateAppend]
+  simp [BvlSem.evaluateTuple, evaluate_vars indices env state values lookup, tailRun]
 
 /-- The closure constructor's arguments evaluate in reverse order, leaving
 the target state unchanged when the generated code label is installed. -/
@@ -163,7 +190,7 @@ theorem evaluate_closure_arguments {C F : Type} (indices : List Nat) (env : List
       BvlSem.applyNumeric, BvlSem.doIntApp, labelLookup]
   have reversed := lookupVars_reverse indices env values lookup
   have evaluated := evaluate_vars_append indices.reverse env state state values.reverse
-    [.number (Int.ofNat arity), .codePtr label] [mkConst arity, mkLabel label] (by simp) reversed tailRun
+    [.number (Int.ofNat arity), .codePtr label] [mkConst arity, mkLabel label] reversed tailRun
   simpa using evaluated
 
 /-- The generated closure block contains its installed code pointer, arity,

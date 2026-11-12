@@ -268,6 +268,28 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: arbitrary closure value, intermediate values, argument list, block tag, code pointer, numeric arity and fields; both full generated calls with matching environments and counts; arbitrary independent compiler and FFI state carriers; and unconditional equality of complete evaluations agree. The refs field uses the canonical finite-support carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "lookup_vars_IMP2",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvaluateClosure.lean", "lean_name": "lookupVarsImp2",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BvlSem.State.refs", "f", "refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the literal HOL source proof and typed replay: the selection and environment-relation premises, the existential target values contain the universally quantified arbitrary target state, pairwise value relation and source selection length agree. The state refs and the independent f and refs parameters use canonical finite-support carriers with the state roundtrip witness. Evaluation inherits reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "lookup_vars_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvaluateClosure.lean", "lean_name": "lookupVarsImp",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BvlSem.State.refs", "f", "refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the literal HOL source proof and typed replay: the selection and environment-relation premises, the evaluation uses the arbitrary given target state, pairwise value relation and source selection length agree. The state refs and the independent f and refs parameters use canonical finite-support carriers with the state roundtrip witness. Evaluation inherits reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "EXISTS_NOT_IN_refs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvaluateClosure.lean", "lean_name": "existsNotInRefs",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "reviewer": "Compared the literal local HOL proof and typed replay: the independent compiler and FFI state types and existence of a natural outside the state reference-map domain agree. The refs field uses the canonical finite-support carrier and same-module roundtrip; its domain is defined by lookup."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_LIST_IMP_compile_exps_EL",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/RecursiveInstalled.lean", "lean_name": "compileExpsListImpCompileExpsEl",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],

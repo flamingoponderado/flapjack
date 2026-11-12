@@ -68,7 +68,7 @@ per function followed by the captured values, and uses the evaluator's least
 unused reference. -/
 theorem evaluate_recursiveArray_allocate {C F : Type} (arities indices : List Nat)
     (env : List BvlSem.Value) (state : BvlSem.State C F) (values : List BvlSem.Value)
-    (nonempty : arities ≠ []) (lookup : ClosSem.lookupVars indices env = some values) :
+    (lookup : ClosSem.lookupVars indices env = some values) :
     let ptr := BvlSem.leastUnusedRef state.refs
     let initial := List.replicate arities.length (BvlSem.Value.number 0) ++ values
     BvlSem.evaluate [.op (.memOp .ref)
@@ -76,15 +76,11 @@ theorem evaluate_recursiveArray_allocate {C F : Type} (arities indices : List Na
       (.val [.refPtr true ptr], { state with refs := state.refs.updateEq (ptr, .valueArray initial) }) := by
   have zeros : (arities.map (fun _ => mkConst 0)).reverse = List.replicate arities.length (mkConst 0) := by
     simp
-  have zerosNonempty : List.replicate arities.length (mkConst 0) ≠ [] := by
-    cases arities with
-    | nil => contradiction
-    | cons first rest => simp
   have zeroRun := evaluate_zero_constants arities.length env state
   have captured := lookupVars_reverse indices env values lookup
   have argRun := evaluate_vars_append indices.reverse env state state values.reverse
     (List.replicate arities.length (.number 0)) (List.replicate arities.length (mkConst 0))
-    zerosNonempty captured zeroRun
+    captured zeroRun
   have argRun' : BvlSem.evaluate
       (((arities.map fun _ => mkConst 0) ++ indices.map Bvl.Exp.var).reverse) env state =
       (.val (values.reverse ++ List.replicate arities.length (.number 0)), state) := by
@@ -96,7 +92,7 @@ theorem evaluate_recursiveArray_allocate {C F : Type} (arities indices : List Na
 the first recursive closure block, leaving the captured suffix intact. -/
 theorem evaluate_recursiveArray_first {C F : Type} (arities indices : List Nat)
     (env : List BvlSem.Value) (state : BvlSem.State C F) (values : List BvlSem.Value)
-    (label arity index : Nat) (nonempty : arities ≠ []) (indexBound : index < arities.length)
+    (label arity index : Nat) (indexBound : index < arities.length)
     (lookup : ClosSem.lookupVars indices env = some values)
     (labelInstalled : ∃ entry, sptLookup label state.code = some entry) :
     let ptr := BvlSem.leastUnusedRef state.refs
@@ -110,7 +106,7 @@ theorem evaluate_recursiveArray_first {C F : Type} (arities indices : List Nat)
   let ptr := BvlSem.leastUnusedRef state.refs
   let initial := List.replicate arities.length (BvlSem.Value.number 0) ++ values
   let allocated := { state with refs := state.refs.updateEq (ptr, .valueArray initial) }
-  have allocatedRun := evaluate_recursiveArray_allocate arities indices env state values nonempty lookup
+  have allocatedRun := evaluate_recursiveArray_allocate arities indices env state values lookup
   change BvlSem.evaluate [.op (.memOp .ref)
       (((arities.map fun _ => mkConst 0) ++ indices.map Bvl.Exp.var).reverse)] env state =
       (.val [.refPtr true ptr], allocated) at allocatedRun

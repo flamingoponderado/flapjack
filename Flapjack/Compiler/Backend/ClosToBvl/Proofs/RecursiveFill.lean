@@ -222,7 +222,7 @@ theorem evaluate_buildReccLets {C F : Type} (arities indices : List Nat)
     let allocated := { state with refs := state.refs.updateEq (ptr, .valueArray initial) }
     let firstState := { allocated with refs := allocated.refs.updateEq (ptr, .valueArray (initial.set index block)) }
     have firstRun := evaluate_recursiveArray_first arities indices env state captured (base + 2 * index)
-      lastArity index nonempty indexBound lookup (labels index indexBound)
+      lastArity index indexBound lookup (labels index indexBound)
     change BvlSem.evaluate [.let [.op (.memOp .ref)
       (((arities.map fun _ => mkConst 0) ++ indices.map Bvl.Exp.var).reverse)]
         (reccLet0 (base + 2 * index) lastArity index)] env state = (.val [block], firstState) at firstRun

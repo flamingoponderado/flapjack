@@ -1071,6 +1071,52 @@ in
   \\ full_simp_tac(srw_ss())[code_installed_def]);
   val _ = show_thm "compile_exps_LIST_IMP_compile_exps_EL_replay=" compile_exps_LIST_IMP_compile_exps_EL_replay;
 end;
+(* Replay the original related-variable selection theorems. *)
+local
+  open preamble clos_to_bvlProofTheory closSemTheory bvlSemTheory bvlPropsTheory listTheory finite_mapTheory
+in
+  val LESS_LENGTH_env_rel_IMP = Q.prove (
+    `  !env env2 n.
+      n < LENGTH env /\ env_rel max_app f refs code env env2 ==>
+      n < LENGTH env2 /\ v_rel max_app f refs code (EL n env) (EL n env2)`,
+  Induct \\ full_simp_tac(srw_ss())[LENGTH] \\ REPEAT STRIP_TAC
+  \\ Cases_on `env2` \\ full_simp_tac(srw_ss())[env_rel_def]
+  \\ Cases_on `n` \\ full_simp_tac(srw_ss())[]);
+  val lookup_vars_IMP2 = Q.prove(
+  `!vs env xs env2.
+      (lookup_vars vs env = SOME xs) /\
+      env_rel max_app f refs code env env2 ==>
+      ?ys. (!t1. (evaluate (MAP Var vs,env2,t1) = (Rval ys,t1))) /\
+           EVERY2 (v_rel max_app f refs code) xs ys /\
+           (LENGTH vs = LENGTH xs)`,
+  Induct \\ full_simp_tac(srw_ss())[lookup_vars_def,evaluate_def]
+  \\ REPEAT STRIP_TAC
+  \\ Cases_on `lookup_vars vs env` \\ full_simp_tac(srw_ss())[] \\ SRW_TAC [] []
+  \\ ONCE_REWRITE_TAC [evaluate_CONS]
+  \\ full_simp_tac(srw_ss())[evaluate_def]
+  \\ RES_TAC \\ IMP_RES_TAC LESS_LENGTH_env_rel_IMP \\ full_simp_tac(srw_ss())[])
+  |> INST_TYPE[alpha|->``:'c``,beta|->``:'ffi``];
+  val _ = show_thm "lookup_vars_IMP2_replay=" lookup_vars_IMP2;
+  val lookup_vars_IMP_replay = Q.prove (
+    `  !vs env xs env2.
+      (lookup_vars vs env = SOME xs) /\
+      env_rel max_app f refs code env env2 ==>
+      ?ys. (evaluate (MAP Var vs,env2,t1) = (Rval ys,t1:('c, 'ffi) bvlSem$state)) /\
+           EVERY2 (v_rel max_app f refs code) xs ys /\
+           (LENGTH vs = LENGTH xs)`,
+  (* TODO: metis_tac is not VALID here *)
+    PROVE_TAC[lookup_vars_IMP2]);
+  val _ = show_thm "lookup_vars_IMP_replay=" lookup_vars_IMP_replay;
+end;
+(* Replay finite reference-domain freshness. *)
+local
+  open preamble clos_to_bvlProofTheory bvlSemTheory finite_mapTheory
+in
+  val EXISTS_NOT_IN_refs_replay = Q.prove (
+    `  ?x. ~(x IN FDOM (t1:('c,'ffi) bvlSem$state).refs)`,
+  METIS_TAC [NUM_NOT_IN_FDOM]);
+  val _ = show_thm "EXISTS_NOT_IN_refs_replay=" EXISTS_NOT_IN_refs_replay;
+end;
 (* Replay the generated-variable evaluation theorem. *)
 local
   open preamble clos_to_bvlProofTheory bvlPropsTheory bvlSemTheory listTheory
