@@ -10,22 +10,6 @@ public import Flapjack.Compiler.Backend.BviTmc.Proofs.Observation
 namespace Flapjack.Compiler.Backend.BviInline
 open BviSem BackendProps
 
-/-- Flapjack infrastructure: the executed whole-program inliner and tick
-remover preserve function labels in their original order. -/
-theorem compileProgFuel_names (fuel : Nat) (program output : List (Nat × Nat × Bvi.Exp))
-    (cache : Spt (Nat × Bvi.Exp)) (run : BviInline.compileProgFuel fuel program = some (cache, output)) :
-    output.map Prod.fst = program.map Prod.fst := by
-  have sourceRun := compileProgFuel_eq_source fuel program
-  rw [run] at sourceRun
-  have same : compileIncSource .ln program = (cache, output) := (Option.some.inj sourceRun).symm
-  have names := inlineAllSource_names program .ln
-  cases inlineRun : inlineAllSource .ln program with
-  | mk finalCache inlined =>
-    have outputEq : cleanProg inlined = output := by
-      simpa [compileIncSource, inlineRun, cleanProg] using congrArg Prod.snd same
-    rw [← outputEq, cleanProg_names]
-    simpa [inlineRun] using names
-
 /-- Flapjack infrastructure: the executed TMC and BVI inlining stages
 preserve whole-program observations in sequence, using the TMC input
 condition to establish the inliner's distinct-label requirement. The

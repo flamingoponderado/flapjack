@@ -177,14 +177,4 @@ termination_by sizeOf expressions
 decreasing_by all_goals (simp_wf; omega)
 end
 
-/-- Flapjack infrastructure: a production inlining result satisfies the
-expression relation when the code tree contains its wrapper cache. -/
-theorem inlineExpBounded_rel (fuel : Nat) (cache code : Spt (Nat × Bvi.Exp)) (expression result : Bvi.Exp)
-    (subset : sptSubspt cache code) (run : inlineExpBounded fuel cache expression = some result) :
-    ExpRel code expression result := by
-  rw [inlineExpBounded_eq_source] at run
-  have same : inlineExpSource cache expression = result := Option.some.inj run
-  rw [← same]
-  exact inlineExpSource_rel cache code expression subset
-
 end Flapjack.Compiler.Backend.BviInline
