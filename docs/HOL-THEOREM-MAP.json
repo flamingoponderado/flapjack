@@ -1,5 +1,23 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "every_Fn_SOME_intro_multi",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiIntroLocations.lean", "lean_name": "introMulti_everyFnLocationSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the unconditional two-way location-annotation equivalence for all bounds and source lists. The total introList is connected to the executed traversal by proved fuel success and stability; all collector and function cases are covered."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "every_Fn_SOME_collect_apps",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiLocations.lean", "lean_name": "collectApps_everyFnLocationSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all five binders, the collector equality and the complete bidirectional annotation equivalence over both returned components."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "HD_FST_calls",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallAddresses.lean", "lean_name": "head_calls_singleton",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the source expression and full sparse-tree/code state carriers and the unconditional singleton head equality. The compiler output is singleton, so empty-list head choice is unobserved."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "set_code_locs_collect_apps",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiLocations.lean", "lean_name": "collectApps_codeLocations",
   "statement_status": "reviewed_exact",

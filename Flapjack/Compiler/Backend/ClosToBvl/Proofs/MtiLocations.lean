@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.ClosMti
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
 public import Mathlib.Data.Set.Basic
 
 @[expose] public section
@@ -38,4 +39,38 @@ theorem collectApps_codeLocations (maxApp : Nat) (es : List ClosLang.Exp) (e : C
     obtain ⟨rfl, rfl⟩ := run
     rfl
 termination_by sizeOf e
+/-- Collecting applications preserves function-location annotations in both outputs. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "every_Fn_SOME_collect_apps"]
+theorem collectApps_everyFnLocationSome (maxApp : Nat) (es : List ClosLang.Exp) (e : ClosLang.Exp)
+    (es' : List ClosLang.Exp) (e' : ClosLang.Exp)
+    (run : ClosMti.collectApps maxApp es e = (es', e')) :
+    (everyFnLocationSome es' ∧ everyFnLocationSome [e'] ↔
+      everyFnLocationSome es ∧ everyFnLocationSome [e]) := by
+  have append (xs ys : List ClosLang.Exp) : everyFnLocationSome (xs ++ ys) ↔
+      everyFnLocationSome xs ∧ everyFnLocationSome ys := by
+    rw [everyFnLocationSome_every (xs ++ ys), everyFnLocationSome_every xs,
+      everyFnLocationSome_every ys]
+    simp only [List.mem_append, or_imp, forall_and]
+  cases e with
+  | app trace location inner more =>
+    cases location with
+    | some loc =>
+      simp only [ClosMti.collectApps, Prod.mk.injEq] at run
+      obtain ⟨rfl, rfl⟩ := run
+      rfl
+    | none =>
+      simp only [ClosMti.collectApps] at run
+      split at run
+      · have ih := collectApps_everyFnLocationSome maxApp (es ++ more) inner es' e' run
+        simp only [append] at ih
+        simpa [everyFnLocationSome, fnLocationSomeExp, and_assoc, and_left_comm, and_comm] using ih
+      · cases run
+        rfl
+  | _ =>
+    simp only [ClosMti.collectApps, Prod.mk.injEq] at run
+    obtain ⟨rfl, rfl⟩ := run
+    rfl
+termination_by sizeOf e
+
+
 end Flapjack.Compiler.Backend.ClosToBvl

@@ -14,6 +14,14 @@ import Mathlib.Data.List.Perm.Subperm
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open ClosLang ClosProps
 
+/-- The direct-call compiler preserves the singleton result shape. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "HD_FST_calls"]
+theorem head_calls_singleton (x : ClosLang.Exp) (y : ClosCall.State) :
+    [Flapjack.holHd (ClosCall.calls [x] y).1] = (ClosCall.calls [x] y).1 := by
+  rw [ClosCall.callsSing_eq.1 x y]
+  cases ClosCall.callsSing x y
+  simp [Flapjack.holHd]
+
 /-- Numbering produces valid direct-call syntax from unannotated inputs. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "renumber_code_locs_list_csyntax_ok"]
 theorem renumberList_callSyntaxOk (n : Nat) (es : List ClosLang.Exp) (k : Nat) (out : List ClosLang.Exp)

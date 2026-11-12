@@ -56,6 +56,9 @@ val _ = show_thm "ncompile_inc_code_locs_distinct_typed=" clos_to_bvlProofTheory
 val _ = show_thm "every_Fn_vs_NONE_ncompile_inc_typed=" clos_to_bvlProofTheory.every_Fn_vs_NONE_ncompile_inc;
 val _ = show_thm "every_Fn_SOME_ncompile_inc_typed=" clos_to_bvlProofTheory.every_Fn_SOME_ncompile_inc;
 val _ = show_thm "set_code_locs_collect_apps_typed=" clos_to_bvlProofTheory.set_code_locs_collect_apps;
+val _ = show_thm "every_Fn_SOME_collect_apps_typed=" clos_to_bvlProofTheory.every_Fn_SOME_collect_apps;
+val _ = show_thm "every_Fn_SOME_intro_multi_typed=" clos_to_bvlProofTheory.every_Fn_SOME_intro_multi;
+val _ = show_thm "HD_FST_calls_typed=" clos_to_bvlProofTheory.HD_FST_calls;
 val _ = show_thm "compile_every_Fn_SOME_typed=" clos_to_bvlProofTheory.compile_every_Fn_SOME;
 val _ = show_thm "calls_preserves_every_Fn_vs_NONE_typed=" clos_callProofTheory.calls_preserves_every_Fn_vs_NONE;
 val _ = show_thm "every_Fn_vs_NONE_cond_call_compile_inc_typed=" clos_to_bvlProofTheory.every_Fn_vs_NONE_cond_call_compile_inc;

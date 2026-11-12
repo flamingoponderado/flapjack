@@ -1242,6 +1242,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CallAddresses
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberAddresses
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IncrementalInvariants
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MtiLocations
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MtiIntroLocations
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberOracle
 import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLabels
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InitialCodeDomain
