@@ -48,6 +48,28 @@ def getOldArgs : ClosSem.Value → Option (List ClosSem.Value)
   | .recclosure _ args _ _ _ => some args
   | _ => none
 
+/-- Captured environment of an ordinary or recursive source closure. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "get_cl_env_def"]
+def getClEnv : ClosSem.Value → Option (List ClosSem.Value)
+  | .closure _ _ env _ _ => some env
+  | .recclosure _ _ env _ _ => some env
+  | _ => none
+
+/-- Subtracting one and the predecessor of a nonempty length. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "arith_helper_lem"]
+theorem arithHelperLem {α : Type} (args : List α) (x : Nat) (nonempty : args.length ≠ 0) :
+    x - 1 - (args.length - 1) = x - args.length := by
+  omega
+
+/-- Arithmetic facts for a nonempty partially supplied argument group. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "arith_helper_lem3"]
+theorem arithHelperLem3 {α β : Type} (args : List α) (prev : List β) (totalArgs numArgs : Nat)
+    (premises : args.length < totalArgs + 1 - prev.length ∧ args.length ≠ 0 ∧
+      totalArgs - prev.length + 1 = numArgs - prev.length) :
+    totalArgs - (args.length + prev.length - 1) = totalArgs + 1 - (args.length + prev.length) ∧
+      args.length + prev.length < totalArgs + 1 ∧ numArgs = totalArgs + 1 := by
+  omega
+
 /-- Remaining arity of an ordinary or recursive closure. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "num_remaining_args_def"]
 noncomputable def numRemainingArgs : ClosSem.Value → Option Nat

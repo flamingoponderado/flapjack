@@ -170,6 +170,24 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: both closure layouts, all six original premises including sparse-tree domain membership and exact unpacking relation, complete timeout state and success payload, and independent compiler and FFI state types agree. The refs field uses the canonical finite-support carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "get_cl_env_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "getClEnv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL definition: Closure and Recclosure return their captured environment and each other source value constructor returns NONE."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "arith_helper_lem",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "arithHelperLem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the literal local HOL proof and typed replay: arbitrary polymorphic list and natural x, exactly the nonzero length premise and both natural-subtraction sides agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "arith_helper_lem3",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "arithHelperLem3",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the literal local HOL proof and typed replay: args and prev lists have independent polymorphic element types, with exactly the three original conjuncts and all three arithmetic conclusions."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_genlist_prev_args1_no_rev",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "evaluateGenlistPrevArgs1NoRev",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],

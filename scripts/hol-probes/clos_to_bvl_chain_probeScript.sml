@@ -393,6 +393,54 @@ in
          integerTheory.int_ge, int_arithTheory.INT_NUM_SUB] >>
       ‘LENGTH args <> 0’ by simp [] \\ gs[]));
   val _ = show_thm "evaluate_generic_app_partial_replay=" evaluate_generic_app_partial_replay;
+  val unpack_closure_thm_replay = Q.prove (
+  `v_rel max_app f1 t1.refs t1.code func (Block tag (ptr::Number (&n-1)::rest)) ∧
+   num_remaining_args func = SOME n
+   ⇒
+   ?prev_args total_args clo.
+     unpack_closure (Block tag (ptr::Number (&n-1)::rest)) (prev_args, total_args, clo) ∧
+     total_args < max_app ∧
+     n = total_args − LENGTH prev_args + 1  ∧
+     (tag = closure_tag ⇒ prev_args = [] ∧ clo = Block tag (ptr::Number (&n-1)::rest))`,
+  srw_tac[][unpack_closure_cases, v_rel_cases, cl_rel_cases, num_remaining_args_def] >>
+  full_simp_tac(srw_ss())[num_remaining_args_def] >>
+  rw_tac bool_ss [] >>
+  TRY ARITH_TAC >>
+  full_simp_tac(srw_ss())[EL_MAP] >>
+  `?n e p. EL k exps_ps = ((n,e),p)` by metis_tac [pair_CASES] >>
+  full_simp_tac(srw_ss())[closure_code_installed_def, EVERY_EL] >>
+  res_tac >>
+  rev_full_simp_tac(srw_ss())[] >>
+  TRY ARITH_TAC >>
+  srw_tac [boolSimps.DNF_ss] [partial_app_tag_def, int_arithTheory.INT_NUM_SUB] >>
+  imp_res_tac EVERY2_LENGTH >>
+  full_simp_tac(srw_ss())[add_args_def, get_num_args_def, EL_MAP] >>
+  TRY ARITH_TAC >>
+  srw_tac [boolSimps.DNF_ss] [partial_app_tag_def, int_arithTheory.INT_NUM_SUB] >>
+  TRY decide_tac >>
+  TRY (Cases_on `ys`) >>
+  full_simp_tac(srw_ss())[ADD1, num_remaining_args_def] >>
+  srw_tac [ARITH_ss] [integerTheory.int_ge, integerTheory.INT_LE_SUB_LADD, integerTheory.INT_LE_LT1] >>
+  TRY(simp[closure_tag_def]>>NO_TAC) >>
+  first_x_assum (fn th => first_assum (mp_tac o MATCH_MP th)) >>
+  srw_tac[][EL_MAP] >>
+  decide_tac) |> INST_TYPE[alpha|->``:'ffi``];
+  val _ = show_thm "unpack_closure_thm_replay=" unpack_closure_thm_replay;
+  val arith_helper_lem_replay = Q.prove (
+    `  LENGTH args' ≠ 0 ⇒ x − 1 − (LENGTH args' − 1) = x − LENGTH args'`,
+  decide_tac);
+  val _ = show_thm "arith_helper_lem_replay=" arith_helper_lem_replay;
+  val arith_helper_lem3_replay = Q.prove (
+    `  LENGTH args' < total_args + 1 − LENGTH prev_args ∧
+   LENGTH args' ≠ 0 ∧
+   total_args − LENGTH prev_args + 1 = num_args − LENGTH prev_args
+   ⇒
+   total_args − (LENGTH args' + LENGTH prev_args − 1) = total_args + 1 − (LENGTH args' + LENGTH prev_args) ∧
+   LENGTH args' + LENGTH prev_args < total_args + 1 ∧
+   num_args = total_args+1`,
+  simp_tac(std_ss++ARITH_ss)[int_arithTheory.INT_NUM_SUB]);
+  val _ = show_thm "arith_helper_lem3_replay=" arith_helper_lem3_replay;
+  val _ = show_thm "get_cl_env_def_typed=" clos_to_bvlProofTheory.get_cl_env_def;
   val _ = show_thm "unpack_closure_rules_typed=" clos_to_bvlProofTheory.unpack_closure_rules;
   val _ = show_thm "unpack_closure_cases_typed=" clos_to_bvlProofTheory.unpack_closure_cases;
   val take_drop_lemma_replay = Q.prove (
