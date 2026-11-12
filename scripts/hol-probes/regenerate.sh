@@ -10563,3 +10563,10 @@ run_probe word_unreach_proof_typed_probeScript.sml word_unreach_proof_typed_prob
   evaluate_Seq_assoc_right_lemma_typed evaluate_Seq_Skip_typed evaluate_Skip_Seq_typed IMP_EVERY_MAP_SND_anub_typed lookup_copy_vars_typed lookup_copy_vars_ignore_typed merge_moves_Skip_typed merge_moves_thm_typed \
   "$cake_dir/compiler/backend/proofs/word_unreachProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe asm_typed_probeScript.sml asm_typed_probe.out \
+  architecture_typed asm_config_typed addr_typed arith_typed asm_typed binop_typed cmp_typed fp_typed \
+  inst_typed memop_typed reg_imm_typed arith_ok_def_typed cmp_ok_def_typed fp_ok_def_typed fp_reg_ok_def_typed inst_ok_def_typed \
+  is_load_def_typed offset_ok_def_typed asm_ok_def_typed reg_imm_ok_def_typed reg_ok_def_typed word_cmp_def_typed \
+  "$cake_dir/compiler/encoders/asm/asmScript.sml" \
+  "$cake_dir/compiler/encoders/asm"

@@ -68775,8 +68775,9 @@
     "hol_name": "word_cmp_def",
     "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
     "lean_name": "wordCmpHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (placed in the asm counterpart; compared all eight source constructors, signed and unsigned order, tests, and negations against word_cmp_def and crep_eval_cmp_rv64_probe.out)"
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Task-149 source comparison against the typed capture word_cmp_def_typed in scripts/hol-probes/asm_typed_probe.out: HOL compares `w1 w2 :\u03b1 word` and returns a Boolean, so the only carrier difference is HOL's type-indexed `'a word` rendered as positive-width `BitVec width` with `[NeZero width]`; all eight constructors, signed and unsigned order, tests and negations match word_cmp_def and crep_eval_cmp_rv64_probe.out."
   },
   {
     "lean_path": "Flapjack/Compiler/Encoders/AsmProps/ArithmeticPreservation.lean",
