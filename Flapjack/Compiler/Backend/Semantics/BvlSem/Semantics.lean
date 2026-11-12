@@ -124,31 +124,58 @@ theorem semantics_eq_terminate_iff {C F : Type} (ffi : HolFfiState F)
       obtain ⟨clock, bad⟩ := h
       exact safe clock bad
     simp only [noBad, if_false]
-    cases selected : holOptionSome (terminatingObservation ffi code oracle compiler start) with
-    | none => exact (holOptionSome_none selected _ observed).elim
-    | some behavior =>
-      have chosen := holOptionSome_some selected
-      have same := terminatingObservation_unique ffi code oracle compiler start behavior
-        (.terminate outcome events) chosen observed
-      simpa only [selected] using same
+    have selected := (holOptionSome_eq_some_iff
+      (terminatingObservation ffi code oracle compiler start)
+      (terminatingObservation_unique ffi code oracle compiler start)
+      (.terminate outcome events)).2 observed
+    simp only [selected]
 
-/-- A divergent whole-program behavior excludes terminating observations. -/
-theorem no_terminatingObservation_of_semantics_eq_diverge {C F : Type} (ffi : HolFfiState F)
+/-- Divergence is characterized by the absence of type errors and terminating
+observations, together with the full least upper bound of event traces. This
+Flapjack-specific equivalence exposes every branch of the source-shaped semantics. -/
+theorem semantics_eq_diverge_iff {C F : Type} (ffi : HolFfiState F)
     (code : Spt (Nat × Bvl.Exp)) (oracle : CompileOracle C)
-    (compiler : Compiler C) (start : Nat) (trace : HolLList HolIoEvent)
-    (diverges : semantics ffi code oracle compiler start = .diverge trace) :
-    ∀ behavior, ¬ terminatingObservation ffi code oracle compiler start behavior := by
+    (compiler : Compiler C) (start : Nat) (trace : HolLList HolIoEvent) :
+    semantics ffi code oracle compiler start = .diverge trace ↔
+      (∀ clock, (evaluateTuple ([.call 0 (some start) []], [],
+        initialState ffi code oracle compiler clock)).1 ≠ .err (.abort .typeError)) ∧
+      (∀ behavior, ¬ terminatingObservation ffi code oracle compiler start behavior) ∧
+      trace = HolLList.buildLprefixLub (fun tr => ∃ clock, tr = HolLList.fromList
+        (evaluateTuple ([.call 0 (some start) []], [],
+          initialState ffi code oracle compiler clock)).2.ffi.ioEvents) := by
   classical
-  unfold semantics at diverges
-  by_cases bad : ∃ clock, (evaluateTuple ([.call 0 (some start) []], [],
-      initialState ffi code oracle compiler clock)).1 = .err (.abort .typeError)
-  · simp [bad] at diverges
-  · simp only [bad, if_false] at diverges
+  constructor
+  · intro diverges
+    have nonfail : semantics ffi code oracle compiler start ≠ .fail := by
+      rw [diverges]
+      simp
+    have safe := noTypeError_of_semantics_ne_fail ffi code oracle compiler start nonfail
+    refine ⟨safe, ?_⟩
+    unfold semantics at diverges
+    have noBad : ¬ ∃ clock, (evaluateTuple ([.call 0 (some start) []], [],
+        initialState ffi code oracle compiler clock)).1 = .err (.abort .typeError) := by
+      intro h
+      obtain ⟨clock, bad⟩ := h
+      exact safe clock bad
+    simp only [noBad, if_false] at diverges
     cases selected : holOptionSome (terminatingObservation ffi code oracle compiler start) with
-    | none => exact holOptionSome_none selected
+    | none =>
+      refine ⟨holOptionSome_none selected, ?_⟩
+      simpa only [selected, HolBehaviour.diverge.injEq] using diverges.symm
     | some behavior =>
       have observed := holOptionSome_some selected
       obtain ⟨_, _, _, outcome, _, _, rfl⟩ := observed
       simp [selected] at diverges
+  · rintro ⟨safe, noTermination, rfl⟩
+    unfold semantics
+    have noBad : ¬ ∃ clock, (evaluateTuple ([.call 0 (some start) []], [],
+        initialState ffi code oracle compiler clock)).1 = .err (.abort .typeError) := by
+      intro h
+      obtain ⟨clock, bad⟩ := h
+      exact safe clock bad
+    have noChoice : holOptionSome (terminatingObservation ffi code oracle compiler start) = none := by
+      unfold holOptionSome
+      simp [not_exists.mpr noTermination]
+    simp [noBad, noChoice]
 
 end Flapjack.Compiler.Backend.BvlSem

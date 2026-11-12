@@ -116,37 +116,25 @@ theorem compileProgFuel_semantics {C F : Type}
     simpa [sourceBehavior] using compileProgFuel_semantics_of_terminates fuel optFuel start counter ffi programs oracle compiler
       targetStart targetNextName targetProgram compiled distinct handlers oracleHandlers counterBound outcome events sourceBehavior
   | diverge trace =>
-    have noTypeError := BvlSem.noTypeError_of_semantics_ne_fail ffi (sptFromAList programs)
-      oracle (BackendProps.stateCc compileIncSource compiler) start nonfail
+    obtain ⟨noTypeError, sourceNoObservation, sourceTrace⟩ :=
+      (BvlSem.semantics_eq_diverge_iff ffi (sptFromAList programs) oracle
+        (BackendProps.stateCc compileIncSource compiler) start trace).1 sourceBehavior
     have noFatal := compileProgFuel_noFatalError fuel optFuel start counter ffi programs oracle compiler
       targetStart targetNextName targetProgram compiled distinct handlers oracleHandlers counterBound noTypeError
-    have sourceNoObservation := BvlSem.no_terminatingObservation_of_semantics_eq_diverge ffi
-      (sptFromAList programs) oracle (BackendProps.stateCc compileIncSource compiler) start trace sourceBehavior
     have targetNoObservation : ∀ behavior, ¬ BviSem.terminatingObservation ffi (sptFromAList targetProgram)
         (BackendProps.stateCo compileIncSource oracle) compiler targetStart behavior := by
       intro behavior observed
       exact sourceNoObservation behavior (compileProgFuel_reflect_terminatingObservation fuel optFuel start counter
         ffi programs oracle compiler targetStart targetNextName targetProgram compiled distinct handlers
         oracleHandlers counterBound noTypeError behavior observed)
-    have sourceNone : holOptionSome (BvlSem.terminatingObservation ffi (sptFromAList programs)
-        oracle (BackendProps.stateCc compileIncSource compiler) start) = none := by
-      unfold holOptionSome
-      simp [not_exists.mpr sourceNoObservation]
     have targetNone : holOptionSome (BviSem.terminatingObservation ffi (sptFromAList targetProgram)
         (BackendProps.stateCo compileIncSource oracle) compiler targetStart) = none := by
       unfold holOptionSome
       simp [not_exists.mpr targetNoObservation]
     have traceEqual := compileProgFuel_traceLub_eq fuel optFuel start counter ffi programs oracle compiler
       targetStart targetNextName targetProgram compiled distinct handlers oracleHandlers counterBound noTypeError
-    have sourceTrace : HolBehaviour.diverge trace = HolBehaviour.diverge
-        (HolLList.buildLprefixLub (fun tr => ∃ clock, tr = HolLList.fromList
-          (BvlSem.evaluate [.call 0 (some start) []] [] (BvlSem.initialState ffi
-            (sptFromAList programs) oracle (BackendProps.stateCc compileIncSource compiler) clock)).2.ffi.ioEvents)) := by
-      have h := sourceBehavior.symm
-      simp only [BvlSem.semantics] at h
-      rw [if_neg (not_exists.mpr noTypeError)] at h
-      simpa only [sourceNone, BvlSem.evaluateTuple] using h
     simp only [BviSem.semantics, BviSem.evaluateTuple, noFatal, if_false, targetNone]
-    exact (congrArg HolBehaviour.diverge traceEqual.symm).trans sourceTrace.symm
+    exact (congrArg HolBehaviour.diverge traceEqual.symm).trans
+      (congrArg HolBehaviour.diverge sourceTrace).symm
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs
