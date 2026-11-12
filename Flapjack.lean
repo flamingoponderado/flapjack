@@ -2259,6 +2259,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
 import Flapjack.FiniteMap.Comparison
 import Flapjack.FiniteMap.Comparison.Properties
 import Flapjack.FiniteMap.AlistExact
+import Flapjack.FiniteMap.AlistExact.Append
 import Flapjack.Misc.BalancedMap.Core
 import Flapjack.Misc.BalancedMap.Insert
 import Flapjack.Misc.BalancedMap.Invariants

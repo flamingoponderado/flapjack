@@ -2593,6 +2593,15 @@
   "reviewer": "Compared compile_every_Fn_SOME_typed with the HOL source: the program label type is independently polymorphic, both body projections and the function-location predicate match, and compileSource is the reviewed source annotation definition. The proof applies the reviewed every_Fn_SOME_ann, whose generalised statement is the same HOL result."
 },
 {
+  "hol_path": "HOL/src/finite_maps/alistScript.sml",
+  "hol_name": "alist_to_fmap_APPEND",
+  "lean_path": "Flapjack/FiniteMap/AlistExact/Append.lean",
+  "lean_name": "alistToFmap_append",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.alistToFmap", "Flapjack.HolFiniteMapExact.union"],
+  "reviewer": "Independent comparison with the HOL source and typed alist_to_fmap_APPEND capture confirms both arbitrary association lists, independent key and value types, and unconditional equality of the canonical maps produced by Flapjack.HolFiniteMapExact.alistToFmap and Flapjack.HolFiniteMapExact.union. Both conversions choose the first binding and union is left-biased, including duplicate and overlapping keys."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
   "hol_name": "acompile_inc_uncurry",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalEquations.lean",
