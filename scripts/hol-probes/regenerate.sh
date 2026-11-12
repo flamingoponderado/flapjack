@@ -10596,3 +10596,9 @@ run_probe gen_gc_typed_probeScript.sml gen_gc_typed_probe.out \
   gen_gc_def_typed heap_lookup_IMP_heap_addresses_typed \
   "$cake_dir/compiler/backend/gc/gen_gcScript.sml" \
   "$cake_dir/compiler/backend/gc"
+
+run_probe word_copy_typed_probeScript.sml word_copy_typed_probe.out \
+  copy_state_typed copy_prop_def_typed copy_prop_inst_def_typed copy_prop_move_def_typed copy_prop_prog_def_typed copy_prop_share_def_typed empty_eq_def_typed lookup_eq_def_typed \
+  lookup_eq_imm_def_typed lookup_store_eq_def_typed merge_eqs_def_typed remove_eq_def_typed remove_eqs_def_typed set_eq_def_typed set_store_eq_def_typed \
+  "$cake_dir/compiler/backend/proofs/word_copyScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
