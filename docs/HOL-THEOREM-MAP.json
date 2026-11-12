@@ -16249,6 +16249,15 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "initial_state_with_clock_bvl",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Semantics.lean",
+    "lean_name": "initialState_withClock",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Compared the original local proof and typed replay: compiler and FFI carriers remain independent; target code is a sparse tree; both the direct clock update and incClock return the entire initial state at k + ck. The BVL state's refs field uses the canonical finite-support map, with its same-module roundtrip witness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
     "hol_name": "evaluate_init1",
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialState.lean",
     "lean_name": "evaluate_init1",

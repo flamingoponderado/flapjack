@@ -9915,7 +9915,8 @@ and theorems, including the quantifier order and vacuous type in
 `chain_installed_thm`. It also replays the local `evaluate_init1` and
 `evaluate_init` proofs with their inferred BVL state and evaluation types,
 `show_SUBSET` with its polymorphic set carrier, `REPLICATE_1` with its
-polymorphic list element type, and `obvious_arith_comm` over naturals. Regenerate with
+polymorphic list element type, `obvious_arith_comm` over naturals, and both
+conjuncts of the local BVL initial-clock lemma. Regenerate with
 `HOL_PROBE_ONLY=clos_to_bvl_chain_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean correspondence.
 

@@ -13,6 +13,30 @@ The evaluators and their carriers remain subject to source review. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
+namespace BvlInitialClock
+
+/-- The target reference store roundtrips through its finite-support view. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+
+/-- Updating or increasing the initial BVL clock gives the shifted initial state. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "initial_state_with_clock_bvl"
+  (fmap_as_finite_support := [refs])]
+theorem initialState_withClock {C F : Type} (ffi : HolFfiState F)
+    (code : Spt (Nat × Bvl.Exp)) (co : BvlSem.CompileOracle C)
+    (cc : BvlSem.Compiler C) (k ck : Nat) :
+    (show Flapjack.Compiler.Backend.BvlSem.State C F from
+      { BvlSem.initialState ffi code co cc k with
+        clock := (BvlSem.initialState ffi code co cc k).clock + ck }) =
+      BvlSem.initialState ffi code co cc (k + ck) ∧
+    BvlProps.incClock ck (BvlSem.initialState ffi code co cc k) =
+      BvlSem.initialState ffi code co cc (k + ck) := by
+  exact ⟨rfl, rfl⟩
+
+end BvlInitialClock
+
 /-- Result relation after discarding the different value representations. -/
 def observableResultRel (source : Result (List ClosSem.Value) ClosSem.Value)
     (target : Result (List BvlSem.Value) BvlSem.Value) : Prop :=
@@ -77,7 +101,7 @@ theorem initialSimulation_targetSafe {C₁ C₂ F : Type} (ffi : HolFfiState F) 
       have shifted' : BvlSem.evaluate [.call 0 (some start) []] []
           (BvlSem.initialState ffi targetCode targetOracle targetCompiler (clock + extra)) =
           (.err (.abort .typeError), { final0 with clock := final0.clock + extra }) := by
-        simpa [BvlSem.initialState] using shifted
+        simpa only [(BvlInitialClock.initialState_withClock ffi targetCode targetOracle targetCompiler clock extra).1] using shifted
       rw [targetRun] at shifted'
       have targetEq : targetResult = .err (.abort .typeError) := (Prod.mk.inj shifted').1
       rw [targetEq] at related
@@ -116,13 +140,6 @@ theorem observableResultRel_outcome {source : Result (List ClosSem.Value) ClosSe
           have same : sourceReason = targetReason := by simpa [observableResultRel, resultRel, excRel] using related
           subst targetReason
           cases sourceReason <;> rfl
-
-/-- A result that has a terminating observation cannot be a timeout. -/
-theorem resultObservesOutcome_notTimeout {α β : Type} (result : Result α β) (outcome : HolOutcome)
-    (observes : resultObservesOutcome result outcome) : result ≠ .err (.abort .timeoutError) := by
-  intro equal
-  subst result
-  exact observes
 
 /-- Forward simulation and source safety determine the same terminating
 observations even though the two languages return different value types. -/
@@ -166,7 +183,9 @@ theorem initialSimulation_terminatingObservation_eq {C₁ C₂ F : Type} (ffi : 
       | err error => cases error with
         | raise value => exact observes
         | abort reason => cases reason <;> exact observes
-    have notTimeout := resultObservesOutcome_notTimeout targetResult outcome targetOutcome
+    have notTimeout : targetResult ≠ .err (.abort .timeoutError) := by
+      rintro rfl
+      exact targetOutcome
     cases sourceRun : ClosSem.evaluate program []
         (ClosSem.initialState ffi maxApp sourceCode sourceOracle sourceCompiler clock) with
     | mk sourceResult sourceFinal =>
@@ -179,7 +198,7 @@ theorem initialSimulation_terminatingObservation_eq {C₁ C₂ F : Type} (ffi : 
       have shifted' : BvlSem.evaluate [.call 0 (some start) []] []
           (BvlSem.initialState ffi targetCode targetOracle targetCompiler (clock + extra)) =
           (targetResult, { targetFinal with clock := targetFinal.clock + extra }) := by
-        simpa [BvlSem.initialState] using shifted
+        simpa only [(BvlInitialClock.initialState_withClock ffi targetCode targetOracle targetCompiler clock extra).1] using shifted
       rw [targetRun2] at shifted'
       obtain ⟨resultEq, stateEq⟩ := Prod.mk.inj shifted'
       subst result2
@@ -223,7 +242,7 @@ theorem semantics_eq_of_initialSimulation {C₁ C₂ F : Type} (ffi : HolFfiStat
     · exact ClosSem.evaluate_initial_ioEvents_mono ffi maxApp sourceCode sourceOracle sourceCompiler program
     · intro k l bound
       obtain ⟨extra, rfl⟩ := Nat.exists_eq_add_of_le bound
-      simpa [BvlSem.initialState] using BvlProps.evaluate_addClock_ioEvents_prefix [.call 0 (some start) []] []
+      simpa only [(BvlInitialClock.initialState_withClock ffi targetCode targetOracle targetCompiler k extra).1] using BvlProps.evaluate_addClock_ioEvents_prefix [.call 0 (some start) []] []
         (BvlSem.initialState ffi targetCode targetOracle targetCompiler k) extra
     · intro clock
       cases sourceRun : ClosSem.evaluate program []
