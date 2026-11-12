@@ -10364,3 +10364,8 @@ run_probe bvl_inline_proof_typed_probeScript.sml bvl_inline_proof_typed_probe.ou
   LENGTH_let_op_typed HD_let_op_typed \
   "$cake_dir/compiler/backend/proofs/bvl_inlineProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe bvl_const_proof_typed_probeScript.sml bvl_const_proof_typed_probe.out \
+  evaluate_delete_var_Rerr_SING_typed SmartOp1_thm_typed SmartOp_thm_typed \
+  "$cake_dir/compiler/backend/proofs/bvl_constProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
