@@ -301,6 +301,13 @@
   "reviewer": "Compared the HOL source theorem and local proof replay: for arbitrary related source and target environments, freshness in the target reference domain implies the same relation after insertion of an arbitrary target reference cell. The relocation and target reference maps use canonical finite-support carriers; code remains a sparse tree."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "v_rel_SIMP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueRelation.lean", "lean_name": "vRel_simp_full",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["f", "refs"],
+  "reviewer": "Compared the typed HOL source and all nine generated equivalences, preserving shared and independent outer variables, both source and target numeric and word cases, the byte-vector range exclusion, and both full and partial closure alternatives for ordinary and recursive closures with their existential scopes and natural arithmetic. The relocation and reference maps use canonical finite-support carriers; code remains a sparse tree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "env_rel_APPEND",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueRelation.lean", "lean_name": "envRel_append",
   "statement_status": "reviewed_fmap_as_finite_support_relation",

@@ -82,6 +82,145 @@ theorem vRel_refPtr_inv {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
   | closure _ closure => cases closure
   | partialClosure _ _ _ _ _ added _ closure => cases closure <;> simp [addArgs] at added
 
+/-- Block inversion supports the corresponding clause of the full value-relation
+simplification theorem below and the evaluator proofs. -/
+theorem vRel_block_inv {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    {tag : Nat} {fields : List ClosSem.Value} {target : BvlSem.Value}
+    (related : vRel maxApp f refs code (.block tag fields) target) :
+    ∃ targetFields, target = .block (closTagShift tag) targetFields ∧
+      List.Forall₂ (vRel maxApp f refs code) fields targetFields := by
+  cases related with
+  | block fields => exact ⟨_, rfl, fields⟩
+  | closure _ closure => cases closure
+  | partialClosure _ _ _ _ _ added _ closure => cases closure <;> simp [addArgs] at added
+
+/-- Integer inversion supports the corresponding clause of the full theorem
+below and the integer evaluator proofs. -/
+theorem vRel_number_inv {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    {n : Int} {target : BvlSem.Value} (related : vRel maxApp f refs code (.number n) target) :
+    target = .number n := by
+  cases related with
+  | number => rfl
+  | closure _ closure => cases closure
+  | partialClosure _ _ _ _ _ added _ closure => cases closure <;> simp [addArgs] at added
+
+/-- Word inversion supports the corresponding clause of the full theorem below
+and the word evaluator proofs. -/
+theorem vRel_word64_inv {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    {w : BitVec 64} {target : BvlSem.Value} (related : vRel maxApp f refs code (.word64 w) target) :
+    target = .word64 w := by
+  cases related with
+  | word64 => rfl
+  | closure _ closure => cases closure
+  | partialClosure _ _ _ _ _ added _ closure => cases closure <;> simp [addArgs] at added
+
+/-- Byte-vector equivalence supports the corresponding clause of the full theorem
+below and the comparison proofs; HOL bundles the clauses in one theorem. -/
+theorem vRel_byteVector_iff {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    {bytes : List (BitVec 8)} {target : BvlSem.Value} :
+    vRel maxApp f refs code (.byteVector bytes) target ↔
+      ∃ ptr, target = .refPtr true ptr ∧ refs.lookup ptr = some (.byteArray true bytes) ∧
+        (¬ ∃ sourcePtr, f.lookup sourcePtr = some ptr) := by
+  constructor
+  · intro related
+    cases related with
+    | byteVector found fresh => exact ⟨_, rfl, found, fresh⟩
+    | closure _ closure => cases closure
+    | partialClosure _ _ _ _ _ added _ closure => cases closure <;> simp [addArgs] at added
+  · rintro ⟨ptr, rfl, found, fresh⟩
+    exact .byteVector found fresh
+
+/-- Complete constructor-by-constructor characterization of the value relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_SIMP"
+  (fmap_as_finite_support_relation := [f, refs])]
+theorem vRel_simp_full (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (b : Bool) (p tag : Nat) (xs : List ClosSem.Value) (bytes : List (BitVec 8))
+    (i : Int) (w : BitVec 64) (target : BvlSem.Value) (source : ClosSem.Value)
+    (loc : Option Nat) (args env : List ClosSem.Value) (numArgs : Nat) (exp : ClosLang.Exp)
+    (funs : List (Nat × ClosLang.Exp)) (k : Nat) :
+    (vRel maxApp f refs code (.refPtr b p) target ↔
+      ∃ r2, target = .refPtr b r2 ∧ f.lookup p = some r2) ∧
+    (vRel maxApp f refs code (.block tag xs) target ↔
+      ∃ ys, target = .block (closTagShift tag) ys ∧ List.Forall₂ (vRel maxApp f refs code) xs ys) ∧
+    (vRel maxApp f refs code (.byteVector bytes) target ↔
+      ∃ r, target = .refPtr true r ∧ refs.lookup r = some (.byteArray true bytes) ∧
+        ¬ ∃ p, f.lookup p = some r) ∧
+    (vRel maxApp f refs code (.number i) target ↔ target = .number i) ∧
+    (vRel maxApp f refs code source (.number i) ↔ source = .number i) ∧
+    (vRel maxApp f refs code (.word64 w) target ↔ target = .word64 w) ∧
+    (vRel maxApp f refs code source (.word64 w) ↔ source = .word64 w) ∧
+    (vRel maxApp f refs code (.closure loc args env numArgs exp) target ↔
+      (∃ env' fvs n p ys, target = .block 30 (.codePtr p :: .number n :: ys) ∧
+        List.Forall₂ (vRel maxApp f refs code) env' fvs ∧
+        clRel maxApp (fun p => ∃ r, f.lookup r = some p) refs code (env', fvs)
+          (.closure loc args env numArgs exp) (.block 30 (.codePtr p :: .number n :: ys))) ∨
+      ∃ argEnv cl cl' env' fvs numArgs' ys,
+        target = .block 31 (.codePtr (partialAppFnLocation maxApp (numArgs' - 1) (ys.length - 1)) ::
+          .number (Int.ofNat (numArgs' - 1 - argEnv.length)) :: cl' :: ys) ∧
+        List.Forall₂ (vRel maxApp f refs code) env' fvs ∧
+        List.Forall₂ (vRel maxApp f refs code) argEnv ys ∧ argEnv ≠ [] ∧ argEnv.length < numArgs' ∧
+        sptLookup (partialAppFnLocation maxApp (numArgs' - 1) (ys.length - 1)) code =
+          some (numArgs' - argEnv.length + 1, generatePartialAppClosureFn (numArgs' - 1) (ys.length - 1)) ∧
+        addArgs cl argEnv = some (.closure loc args env numArgs exp) ∧ getNumArgs cl = some numArgs' ∧
+        clRel maxApp (fun p => ∃ r, f.lookup r = some p) refs code (env', fvs) cl cl') ∧
+    (vRel maxApp f refs code (.recclosure loc args env funs k) target ↔
+      (∃ env' fvs n p ys, target = .block 30 (.codePtr p :: .number n :: ys) ∧
+        List.Forall₂ (vRel maxApp f refs code) env' fvs ∧
+        clRel maxApp (fun p => ∃ r, f.lookup r = some p) refs code (env', fvs)
+          (.recclosure loc args env funs k) (.block 30 (.codePtr p :: .number n :: ys))) ∨
+      ∃ argEnv cl cl' env' fvs numArgs' ys,
+        target = .block 31 (.codePtr (partialAppFnLocation maxApp (numArgs' - 1) (ys.length - 1)) ::
+          .number (Int.ofNat (numArgs' - 1 - argEnv.length)) :: cl' :: ys) ∧
+        List.Forall₂ (vRel maxApp f refs code) env' fvs ∧
+        List.Forall₂ (vRel maxApp f refs code) argEnv ys ∧ argEnv ≠ [] ∧ argEnv.length < numArgs' ∧
+        sptLookup (partialAppFnLocation maxApp (numArgs' - 1) (ys.length - 1)) code =
+          some (numArgs' - argEnv.length + 1, generatePartialAppClosureFn (numArgs' - 1) (ys.length - 1)) ∧
+        addArgs cl argEnv = some (.recclosure loc args env funs k) ∧ getNumArgs cl = some numArgs' ∧
+        clRel maxApp (fun p => ∃ r, f.lookup r = some p) refs code (env', fvs) cl cl') := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · constructor
+    · exact vRel_refPtr_inv
+    · rintro ⟨r, rfl, found⟩; exact .refPtr found
+  · constructor
+    · exact vRel_block_inv
+    · rintro ⟨ys, rfl, related⟩; exact .block related
+  · exact vRel_byteVector_iff
+  · constructor
+    · exact vRel_number_inv
+    · rintro rfl; exact .number i
+  · constructor
+    · intro rel; cases rel; rfl
+    · rintro rfl; exact .number i
+  · constructor
+    · exact vRel_word64_inv
+    · rintro rfl; exact .word64 w
+  · constructor
+    · intro rel; cases rel; rfl
+    · rintro rfl; exact .word64 w
+  · constructor
+    · intro rel
+      cases rel with
+      | closure rel cl => exact Or.inl ⟨_, _, _, _, _, rfl, rel, cl⟩
+      | partialClosure rel argsRel nonempty bound lookup added arity cl =>
+          exact Or.inr ⟨_, _, _, _, _, _, _, rfl, rel, argsRel, nonempty, bound, lookup, added, arity, cl⟩
+    · rintro (⟨env', fvs, n, p, ys, rfl, rel, cl⟩ | ⟨argEnv, cl, cl', env', fvs, numArgs', ys, rfl, rel, argsRel, nonempty, bound, lookup, added, arity, clRel⟩)
+      · exact .closure rel cl
+      · exact .partialClosure rel argsRel nonempty bound lookup added arity clRel
+  · constructor
+    · intro rel
+      cases rel with
+      | closure rel cl => exact Or.inl ⟨_, _, _, _, _, rfl, rel, cl⟩
+      | partialClosure rel argsRel nonempty bound lookup added arity cl =>
+          exact Or.inr ⟨_, _, _, _, _, _, _, rfl, rel, argsRel, nonempty, bound, lookup, added, arity, cl⟩
+    · rintro (⟨env', fvs, n, p, ys, rfl, rel, cl⟩ | ⟨argEnv, cl, cl', env', fvs, numArgs', ys, rfl, rel, argsRel, nonempty, bound, lookup, added, arity, clRel⟩)
+      · exact .closure rel cl
+      · exact .partialClosure rel argsRel nonempty bound lookup added arity clRel
+
 /-- Canonical finite-map codec witnesses for Boolean value relatedness. -/
 theorem holFmapAsFiniteSupportParamWitness_vRel_bool_iff_f
     (f : HolFiniteMapExact Nat Nat) (key : Nat) :

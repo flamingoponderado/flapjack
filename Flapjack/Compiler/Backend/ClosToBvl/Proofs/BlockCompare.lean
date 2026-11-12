@@ -24,23 +24,6 @@ def BlockCompare.op : BlockCompare → ClosLang.Op
   | .stringEq text => .blockOp (.equalConst (.str text))
   | .bounds => .blockOp .boundsCheckBlock
 
-/-- Full byte-vector case of value-relation inversion, used by comparison
-proofs and the source value-relation simplification theorem. -/
-theorem vRel_byteVector_iff {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {bytes : List (BitVec 8)} {target : BvlSem.Value} :
-    vRel maxApp f refs code (.byteVector bytes) target ↔
-      ∃ ptr, target = .refPtr true ptr ∧ refs.lookup ptr = some (.byteArray true bytes) ∧
-        (¬ ∃ sourcePtr, f.lookup sourcePtr = some ptr) := by
-  constructor
-  · intro related
-    cases related with
-    | byteVector found fresh => exact ⟨_, rfl, found, fresh⟩
-    | closure _ closure => cases closure
-    | partialClosure _ _ _ _ _ added _ closure => cases closure <;> simp [addArgs] at added
-  · rintro ⟨ptr, rfl, found, fresh⟩
-    exact .byteVector found fresh
-
 /-- Successful comparisons preserve related values and leave both states unchanged. -/
 theorem blockCompare_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
     (op : BlockCompare) (args : List ClosSem.Value) (targets : List BvlSem.Value)

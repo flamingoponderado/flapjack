@@ -10,19 +10,6 @@ namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 open Flapjack.Compiler.Backend.BackendCommon
 
-/-- A source block is related only to a target block with the shifted tag and
-pointwise related fields. -/
-theorem vRel_block_inv {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {tag : Nat} {fields : List ClosSem.Value} {target : BvlSem.Value}
-    (related : vRel maxApp f refs code (.block tag fields) target) :
-    ∃ targetFields, target = .block (closTagShift tag) targetFields ∧
-      List.Forall₂ (vRel maxApp f refs code) fields targetFields := by
-  cases related with
-  | block fields => exact ⟨_, rfl, fields⟩
-  | closure _ closure => cases closure
-  | partialClosure _ _ _ _ _ added _ closure => cases closure <;> simp [addArgs] at added
-
 /-- An error while evaluating the arguments propagates through the target
 block construction. -/
 theorem evaluatePost_consBlock_error {C F : Type} (s sFinal : ClosSem.State C F)
