@@ -25,3 +25,5 @@ val _ = show "compile_prog_semantics_typed" bvl_inlineProofTheory.compile_prog_s
 val _ = show "let_op_cc_def_typed" bvl_inlineProofTheory.let_op_cc_def;
 val _ = show "let_opt_def_typed" bvl_inlineProofTheory.let_opt_def;
 val _ = show "let_opt_remove_def_typed" bvl_inlineProofTheory.let_opt_remove_def;
+val _ = show "let_state_rel_def_typed" bvl_inlineProofTheory.let_state_rel_def;
+val _ = show "evaluate_let_op_typed" bvl_inlineProofTheory.evaluate_let_op;

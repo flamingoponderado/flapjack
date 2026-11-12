@@ -38,6 +38,21 @@ def letOpOracle {I C : Type} (splitSeq : Bool) (limit : Nat)
   fun clock => ((oracle clock).1, (oracle clock).2.map fun (name, body) =>
     (name, letOpt splitSeq limit body))
 
+namespace LetStateCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : BvlSem.State C F, State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end LetStateCarrier
+
+/-- The source relation for let optimization and handler compilation. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "let_state_rel_def" 1422
+  (fmap_as_finite_support := [refs])]
+def letStateRel {C F : Type} (splitSeq : Bool) (limit : Nat)
+    (source target : Flapjack.Compiler.Backend.BvlSem.State C F) : Prop :=
+  mappedStateRel (letOpTransform splitSeq limit) source target
+
 /-- The initial states of the source and transformed programs satisfy the
 generic code-mapping relation. -/
 theorem letOp_initialStateRel {C F : Type} (splitSeq : Bool) (limit clock : Nat)

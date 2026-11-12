@@ -265,6 +265,29 @@ theorem letOpSimulation_all {C F : Type} (splitSeq : Bool) (limit : Nat)
             simp only [expsWeight, expWeight] at ⊢
             omega
 
+namespace LetEvaluationCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : BvlSem.State C F, State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end LetEvaluationCarrier
+
+/-- Let optimization simulates every source evaluation that is not a type error. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "evaluate_let_op"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateLetOp {C F : Type} (expressions : List Bvl.Exp) (env : List Value)
+    (source : Flapjack.Compiler.Backend.BvlSem.State C F) (result : Result (List Value) Value)
+    (target sourceFinal : Flapjack.Compiler.Backend.BvlSem.State C F) (splitSeq : Bool) (limit : Nat)
+    (premises : letStateRel splitSeq limit source target ∧
+      evaluateTuple (expressions, env, source) = (result, sourceFinal) ∧
+      result ≠ .err (.abort .typeError)) :
+    ∃ targetFinal, evaluateTuple (letOp expressions, env, target) = (result, targetFinal) ∧
+      letStateRel splitSeq limit sourceFinal targetFinal := by
+  obtain ⟨related, run, safe⟩ := premises
+  exact letOpSimulation_all splitSeq limit expressions env source result sourceFinal target
+    related run safe
+
 /-- Every combined-pass code body satisfies the variable bound and handler
 shape required by BVL-to-BVI. -/
 theorem letOpTransform_wellFormed (splitSeq : Bool) (limit arity : Nat) (body : Bvl.Exp) :

@@ -59,38 +59,6 @@ theorem attachInterpreter_noInstall_semantics {C F : Type} (expressions : List C
       rw [stateRel1_replaceCompiler sourceFinal targetFinal related.1]
     simp [targetRun, ffiEq]
 
-/-- The interpreter insertion simulation preserves all proof-side behavior
-once the evaluator's clock-indexed event traces are known to be monotone.
-The unconditional trace monotonicity result is applied below. -/
-theorem attachInterpreter_semantics_of_trace_monotonicity {C F : Type} (expressions : List ClosLang.Exp)
-    (ffi : HolFfiState F) (maxApp : Nat) (oracle : ClosSem.CompileOracle C)
-    (compiler : ClosSem.Compiler C) (oracleSafe : ∀ index, (oracle index).2.2 = [])
-    (positive : 1 ≤ maxApp)
-    (sourceNoFail : ClosSem.semantics ffi maxApp HolFiniteMapExact.empty oracle
-      (pureCc insertProgram compiler) (attachInterpreter expressions) ≠ .fail)
-    (sourceMono : ∀ k l, k ≤ l →
-      (ClosSem.evaluate (attachInterpreter expressions) []
-        (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty oracle (pureCc insertProgram compiler) k)).2.ffi.ioEvents <+:
-      (ClosSem.evaluate (attachInterpreter expressions) []
-        (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty oracle (pureCc insertProgram compiler) l)).2.ffi.ioEvents)
-    (targetMono : ∀ k l, k ≤ l →
-      (ClosSem.evaluate (attachInterpreter expressions) []
-        (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty (pureCo insertProgram ∘ oracle) compiler k)).2.ffi.ioEvents <+:
-      (ClosSem.evaluate (attachInterpreter expressions) []
-        (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty (pureCo insertProgram ∘ oracle) compiler l)).2.ffi.ioEvents) :
-    ClosSem.semantics ffi maxApp HolFiniteMapExact.empty oracle (pureCc insertProgram compiler) (attachInterpreter expressions) =
-      ClosSem.semantics ffi maxApp HolFiniteMapExact.empty (pureCo insertProgram ∘ oracle) compiler (attachInterpreter expressions) := by
-  have sourceSafe := (ClosSem.semantics_ne_fail_iff ffi maxApp HolFiniteMapExact.empty oracle
-    (pureCc insertProgram compiler) (attachInterpreter expressions)).1 sourceNoFail
-  apply ClosSem.semantics_eq_of_clocked_simulation _ _ _ _ _ _ _ _ sourceSafe ?_ sourceMono targetMono
-  intro clock result final run
-  have notTypeError : result ≠ .err (.abort .typeError) := by
-    intro bad
-    exact sourceSafe clock (by simpa [run] using bad)
-  obtain ⟨extra, targetFinal, targetRun, ffiEq⟩ :=
-    attachInterpreter_initial_observation expressions ffi maxApp clock oracle compiler final result oracleSafe positive run notTypeError
-  exact ⟨extra, targetFinal, by simpa [Nat.add_comm] using targetRun, ffiEq⟩
-
 /-- Interpreter attachment preserves the proof-side closure observations,
 including divergence, when the source does not fail. The hypotheses and
 equality direction follow `semantics_attach_interpreter`; this result is
@@ -105,10 +73,20 @@ theorem attachInterpreter_semantics {C F : Type} (expressions : List ClosLang.Ex
     ClosSem.semantics ffi maxApp HolFiniteMapExact.empty (pureCo insertProgram ∘ oracle) compiler (attachInterpreter expressions) =
       ClosSem.semantics ffi maxApp HolFiniteMapExact.empty oracle (pureCc insertProgram compiler) (attachInterpreter expressions) := by
   symm
-  apply attachInterpreter_semantics_of_trace_monotonicity expressions ffi maxApp oracle compiler assumptions.1 assumptions.2 sourceNoFail
-  · exact ClosSem.evaluate_initial_ioEvents_mono ffi maxApp HolFiniteMapExact.empty oracle
-      (pureCc insertProgram compiler) (attachInterpreter expressions)
-  · exact ClosSem.evaluate_initial_ioEvents_mono ffi maxApp HolFiniteMapExact.empty (pureCo insertProgram ∘ oracle)
-      compiler (attachInterpreter expressions)
+  have sourceSafe := (ClosSem.semantics_ne_fail_iff ffi maxApp HolFiniteMapExact.empty oracle
+    (pureCc insertProgram compiler) (attachInterpreter expressions)).1 sourceNoFail
+  apply ClosSem.semantics_eq_of_clocked_simulation _ _ _ _ _ _ _ _ sourceSafe ?_
+    (ClosSem.evaluate_initial_ioEvents_mono ffi maxApp HolFiniteMapExact.empty oracle
+      (pureCc insertProgram compiler) (attachInterpreter expressions))
+    (ClosSem.evaluate_initial_ioEvents_mono ffi maxApp HolFiniteMapExact.empty (pureCo insertProgram ∘ oracle)
+      compiler (attachInterpreter expressions))
+  intro clock result final run
+  have notTypeError : result ≠ .err (.abort .typeError) := by
+    intro bad
+    exact sourceSafe clock (by simpa [run] using bad)
+  obtain ⟨extra, targetFinal, targetRun, ffiEq⟩ :=
+    attachInterpreter_initial_observation expressions ffi maxApp clock oracle compiler final result assumptions.1 assumptions.2 run notTypeError
+  exact ⟨extra, targetFinal, by simpa [Nat.add_comm] using targetRun, ffiEq⟩
+
 
 end Flapjack.Compiler.Backend.ClosInterp

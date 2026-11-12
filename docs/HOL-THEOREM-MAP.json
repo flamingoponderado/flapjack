@@ -1,5 +1,18 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "let_state_rel_def", "hol_line": 1422,
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/LetOpState.lean", "lean_name": "letStateRel",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "reviewer": "Compared the typed source relation: mapped code, compiler, and oracle have exactly the source state-update and callback shape for the same configuration and FFI carriers. The canonical BVL state witness accounts for refs."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "evaluate_let_op",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/LetOpCalls.lean", "lean_name": "evaluateLetOp",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete typed source theorem: arbitrary expressions, environment, states and result retain the exact relation, source evaluation and non-type-error conjunction, and the conclusion existentially gives target evaluation and final relation. The canonical BVL state witness accounts for refs; the evaluator inherits the reals_as_rational_cuts real-carrier assumption."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "let_opt_def",
   "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/LetOpState.lean", "lean_name": "letOpt",
   "statement_status": "reviewed_exact",
