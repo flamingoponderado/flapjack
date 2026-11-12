@@ -979,24 +979,6 @@ theorem doApp_blockCons {C F : Type} (tag : Nat) (args : List Value) (state : Bv
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
     BvlSem.applyBlock, BviSem.fromBvl_toBvl]
 
-/-- A constant-block build returns the value and reference store produced by
-the shared builder; nonempty argument lists are rejected. -/
-theorem doApp_blockBuild_effect {C F : Type} (parts : List ClosLang.ConstPart)
-    (args : List Value) (state : BviSem.BviState C F) :
-    BviSem.doApp (.blockOp (.build parts)) args state =
-      match args with
-      | [] => let (value, refs) := doBuildConst parts state.refs
-        .val (value, { state with refs := refs })
-      | _ => .err (.abort .typeError) := by
-  cases args with
-  | nil =>
-    cases built : doBuildConst parts state.refs with
-    | mk value refs =>
-      simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
-        BvlSem.applyBlock, BviSem.toBvl, BviSem.fromBvl, built]
-  | cons value rest =>
-    simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock]
-
 /-- Value computed by BVI's two-argument block-from-list primitive. -/
 def blockFromListValue (tag : Nat) (args : List Value) : Option Value :=
   match args with

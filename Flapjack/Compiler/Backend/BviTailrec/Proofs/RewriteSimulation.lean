@@ -372,18 +372,6 @@ theorem term_prefix_simulation_all_through {C F : Type} (e : Bvi.Exp) (ctx : Lis
   · simpa [targetEq] using targetAll
 
 
-/-- The unrestricted term hypothesis supplies the bounded simulation. -/
-theorem term_prefix_simulation_all {C F : Type} (e : Bvi.Exp) (ctx : List ValueType) (termTy : ValueType)
-    (env1 env2 : List Value) (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (loc : Nat) (termIH : rewriteTailProperty (C := C) (F := F) [e])
-    (accepted : term ctx termTy e = true) (types : tyRel env1 ctx)
-    (prefixRel : env1 <+: env2) (related : stateRel source target) :
-    ∃ value, valueMatchesType value termTy ∧
-      (∀ s : BviSem.BviState (Nat × C) F, BviSem.evaluate [e] env1 s = (.val [value], s)) ∧
-      (∀ s : BviSem.BviState C F, BviSem.evaluate [e] env2 s = (.val [value], s)) := by
-  exact term_prefix_simulation_all_through e ctx termTy env1 env2 source target loc (rewriteTailProperty_through termIH _)
-    accepted types prefixRel related
-
 /-- An enabled environment relation supplies a well-typed accumulator value. -/
 theorem envRel_accumulator (ty : ValueType) (acc : Nat) (env1 env2 : List Value)
     (related : envRel ty true acc env1 env2) :
