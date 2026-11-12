@@ -32,6 +32,7 @@ val _ = show_thm "fcompile_inc_uncurry_typed=" clos_to_bvlProofTheory.fcompile_i
 val _ = show_thm "semantics_cond_call_compile_inc_typed=" clos_to_bvlProofTheory.semantics_cond_call_compile_inc;
 val _ = show_thm "compile_common_semantics_typed=" clos_to_bvlProofTheory.compile_common_semantics;
 val _ = show_thm "compile_semantics_typed=" clos_to_bvlProofTheory.compile_semantics;
+val _ = show_thm "BAG_UNION_MONO_typed=" clos_to_bvlProofTheory.BAG_UNION_MONO;
 val _ = show_thm "compile_every_Fn_SOME_typed=" clos_to_bvlProofTheory.compile_every_Fn_SOME;
 val _ = show_thm "calls_preserves_every_Fn_vs_NONE_typed=" clos_callProofTheory.calls_preserves_every_Fn_vs_NONE;
 val _ = show_thm "every_Fn_vs_NONE_cond_call_compile_inc_typed=" clos_to_bvlProofTheory.every_Fn_vs_NONE_cond_call_compile_inc;

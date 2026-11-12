@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "BAG_UNION_MONO",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Bag.lean", "lean_name": "bagUnion_mono",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with BAG_UNION_MONO_typed and the HOL source confirms arbitrary bag element type, four unrestricted multiplicity-function bags, both original sub-bag premises and the complete union conclusion. The identical flat_pattern SUB_BAG_2 is a separate original declaration in its own counterpart."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_semantics",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/WholeSemantics.lean", "lean_name": "compile_semantics",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations",
