@@ -4079,6 +4079,22 @@ class FmapParameterPredicateDomainSignatureTest(unittest.TestCase):
         self.assertTrue(self.errors("evalSim", source, hol_name="IMP_semantics_eq"))
         self.assertTrue(self.errors("different", source, hol_name="eval_sim_def"))
 
+    def test_rejects_prefixed_and_qualified_decoy_declarations(self):
+        theorem_tail = ("(h : evalSim ffi maxApp code1 co1 cc1 es1 code2 co2 cc2 start rel ∧ "
+                        "ClosSem.semantics ffi maxApp code1 co1 cc1 es1 ≠ .fail) "
+                        "(relation : rel code1 co1 cc1 es1 code2 co2 cc2 start) : "
+                        "BvlSem.semantics ffi code2 co2 cc2 start = "
+                        "ClosSem.semantics ffi maxApp code1 co1 cc1 es1 := by trivial")
+        for name, kind, tail in [("evalSim", "def", ": Prop := True"),
+                                 ("impSemanticsEq", "theorem", theorem_tail)]:
+            for modifier in ["private ", "protected ", ""]:
+                with self.subTest(name=name, modifier=modifier):
+                    decoy = f"namespace Decoy\n{modifier}{kind} {name} {self.header} {tail}\nend Decoy\n"
+                    actual = f"{kind} {name} (bogus : False) : True := by trivial"
+                    self.assertTrue(self.errors(name, decoy + actual))
+            qualified = f"{kind} Decoy.{name} {self.header} {tail}\n"
+            self.assertTrue(self.errors(name, qualified + actual))
+
     def test_string_cannot_impersonate_a_declaration(self):
         source = f"def evalSim {self.header} : Prop := True"
         self.assertEqual([], self.errors("evalSim", '@[hol "cakeml/x.sml" "x"]\n' + source))

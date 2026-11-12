@@ -2831,12 +2831,19 @@ def fmap_parameter_predicate_domain_signature_errors(
         return ["predicate-domain declarations do not support raw strings, character literals or escaped identifiers"]
     if re.search(r"\b(?:variable|variables|include|omit)\b", clean):
         return ["predicate-domain declarations require self-contained binders"]
-    declarations = re.findall(
-        rf"(?m)^\s*(def|theorem|lemma)\s+{re.escape(lean_name)}\b", clean,
+    declared_names = re.findall(
+        r"\b(?:abbrev|def|theorem|lemma|axiom|opaque|instance|structure|inductive|class)\s+([^\s:({]+)",
+        clean,
     )
-    if declarations != ["def" if lean_name == "evalSim" else "theorem"]:
+    leaf_count = sum(name == lean_name or name.endswith("." + lean_name)
+                     for name in declared_names)
+    declarations = list(re.finditer(
+        rf"(?m)^[ \t]*(def|theorem|lemma)\s+{re.escape(lean_name)}\b", clean,
+    ))
+    if (leaf_count != 1 or len(declarations) != 1 or
+            declarations[0].group(1) != ("def" if lean_name == "evalSim" else "theorem")):
         return ["predicate-domain site must contain exactly one declaration of the reviewed kind"]
-    parsed = _function_declaration_signature(clean, lean_name, all_binders=True)
+    parsed = _function_declaration_signature(clean[declarations[0].start():], lean_name, all_binders=True)
     if parsed is None:
         return ["predicate-domain declaration signature could not be parsed"]
 
