@@ -280,6 +280,7 @@ in
   srw_tac[][evaluate_def, do_app_def, int_arithTheory.INT_NUM_SUB, el_append2, TAKE_LENGTH_APPEND] >>
   CCONTR_TAC >>
   intLib.ARITH_TAC);
+  val _ = show_thm "evaluate_generic_app1_replay=" evaluate_generic_app1_replay;
   val evaluate_generic_app1 = evaluate_generic_app1_replay;
   val evaluate_generic_app2_replay = Q.prove (
     `  !n args st rem_args prev_args l clo cl.

@@ -26,6 +26,27 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   BvlSem.holFmapAsFiniteSupportWitness
 end GenericPartialCarrier
 
+/-- Generic application creates a partial closure from an ordinary closure. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_generic_app1"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateGenericApp1 {C F : Type} (maxApp : Nat) :
+    ∀ (n : Nat) (args : List BvlSem.Value) (st : Flapjack.Compiler.Backend.BvlSem.State C F)
+      (total : Nat) (l : Nat) (fvs : List BvlSem.Value) (cl : BvlSem.Value),
+      sptDomain st.code (partialAppFnLocation maxApp total n) ∧
+      n < total ∧ total < maxApp ∧ n + 1 = args.length ∧
+      ClosSem.getGlobal 0 st.globals = some (some (globalTable maxApp)) ∧
+      cl = .block BackendCommon.closureTag (.codePtr l :: .number (Int.ofNat total) :: fvs) →
+      BvlSem.evaluate [generateGenericApp maxApp n] (args ++ [cl]) st =
+        if st.clock < n then (.err (.abort .timeoutError), { st with clock := 0 })
+        else (.val [.block BackendCommon.partialAppTag
+          (.codePtr (partialAppFnLocation maxApp total n) ::
+            .number (Int.ofNat (total - (n + 1))) :: cl :: args)], BvlSem.decClock n st) := by
+  intro n args st total l fvs cl ⟨_, bound, totalBound, length, global, clEq⟩
+  subst cl
+  have h := evaluate_genericApp_partial_new st maxApp n total args fvs (.codePtr l)
+    length.symm bound totalBound global
+  simpa only [BackendCommon.closureTag, BackendCommon.partialAppTag] using h
+
 /-- Generic application extends an existing partial closure. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_generic_app2"
   (fmap_as_finite_support := [refs])]
