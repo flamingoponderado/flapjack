@@ -1182,6 +1182,13 @@ in
   val ETA2_THM = Q.prove (
     `(\x y. f a b c x y) = f a b c`,
   srw_tac[][FUN_EQ_THM]);
+  val list_rel_IMP_env_rel_replay = Q.prove (
+    `!xs ys.
+      LIST_REL (v_rel max_app f refs code) xs ys ==>
+      env_rel max_app f refs code xs (ys ++ ts)`,
+  Induct \\ Cases_on `ys` \\ full_simp_tac(srw_ss())[env_rel_def]
+  \\ Cases_on `ts` \\ full_simp_tac(srw_ss())[env_rel_def] );
+  val _ = show_thm "list_rel_IMP_env_rel_replay=" list_rel_IMP_env_rel_replay;
   val env_rel_IMP_LENGTH_replay = Q.prove (
     `!env1 env2.
       env_rel max_app f refs code env1 env2 ==>

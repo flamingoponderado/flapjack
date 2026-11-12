@@ -235,6 +235,19 @@ def envRel (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
   | _ :: _, [] => False
   | x :: xs, y :: ys => vRel maxApp f refs code x y ∧ envRel maxApp f refs code xs ys
 
+/-- Pointwise related lists remain related environments with any target suffix. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "list_rel_IMP_env_rel"
+  (fmap_as_finite_support_relation := [f, refs])]
+theorem listRel_imp_envRel {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    (ts : List BvlSem.Value) :
+    ∀ (xs : List ClosSem.Value) (ys : List BvlSem.Value),
+      List.Forall₂ (vRel maxApp f refs code) xs ys → envRel maxApp f refs code xs (ys ++ ts) := by
+  intro xs ys related
+  induction related with
+  | nil => trivial
+  | cons head tail ih => exact ⟨head, ih⟩
+
 /-- Related environments have at least as many target as source values. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "env_rel_IMP_LENGTH"
   (fmap_as_finite_support_relation := [f, refs])]
