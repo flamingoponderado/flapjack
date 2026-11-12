@@ -268,6 +268,25 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: arbitrary closure value, intermediate values, argument list, block tag, code pointer, numeric arity and fields; both full generated calls with matching environments and counts; arbitrary independent compiler and FFI state carriers; and unconditional equality of complete evaluations agree. The refs field uses the canonical finite-support carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "eq_res_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvaluateClosure.lean", "lean_name": "eqRes",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source definition: both equality-result cases, BVL boolean value, type-error result and independent arbitrary error payload type agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "eq_res_not_timeout",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvaluateClosure.lean", "lean_name": "eqResNotTimeout",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the literal HOL source proof and typed replay: arbitrary equality result and independent error payload type, with the exact non-timeout conclusion, agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_check_closure",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvaluateClosure.lean", "lean_name": "evaluateCheckClosure",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the literal HOL source proof and typed replay: the index bound and total element equality, both closure-tag branches, unchanged state and exact fallback evaluation agree for independent compiler and FFI types. The refs field uses the canonical finite-support carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "lookup_vars_IMP2",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvaluateClosure.lean", "lean_name": "lookupVarsImp2",
   "statement_status": "reviewed_fmap_as_finite_support_relation",

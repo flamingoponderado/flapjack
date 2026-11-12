@@ -1108,6 +1108,28 @@ in
     PROVE_TAC[lookup_vars_IMP2]);
   val _ = show_thm "lookup_vars_IMP_replay=" lookup_vars_IMP_replay;
 end;
+(* Replay the equality-result and closure-test statements. *)
+local
+  open preamble clos_to_bvlTheory clos_to_bvlProofTheory bvlSemTheory listTheory backend_commonTheory
+in
+  val _ = show_thm "eq_res_def_typed=" eq_res_def;
+  val eq_res_not_timeout_replay = Q.prove (
+    `  eq_res x ≠ Rerr (Rabort Rtimeout_error)`,
+  Cases_on`x`>>simp[]);
+  val _ = show_thm "eq_res_not_timeout_replay=" eq_res_not_timeout_replay;
+  val evaluate_check_closure_replay = Q.prove (
+    `  n < LENGTH env ∧
+   EL n env = bvlSem$Block t vs
+   ⇒
+   evaluate ([check_closure n e],env,s) =
+   if t = closure_tag ∨ t = partial_app_tag then
+     (eq_res (Eq_val T),s)
+   else
+     evaluate ([e],env,s)`,
+  srw_tac[][check_closure_def,bvlSemTheory.evaluate_def,bvlSemTheory.do_app_def] >>
+  full_simp_tac(srw_ss())[]);
+  val _ = show_thm "evaluate_check_closure_replay=" evaluate_check_closure_replay;
+end;
 (* Replay finite reference-domain freshness. *)
 local
   open preamble clos_to_bvlProofTheory bvlSemTheory finite_mapTheory

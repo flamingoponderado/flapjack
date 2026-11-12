@@ -8,6 +8,19 @@ public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 
 /-! Captured-environment facts for the closure-to-BVL simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
+open Flapjack.SemanticPrimitivesHOL
+
+/-- Convert the source equality outcome to the BVL result used in this proof. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "eq_res_def"]
+def eqRes {α : Type} : EqResult → Result (List BvlSem.Value) α
+  | .val b => .val [BvlSem.boolValue b]
+  | .typeError => .err (.abort .typeError)
+
+/-- Converting an equality outcome cannot yield a timeout. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "eq_res_not_timeout"]
+theorem eqResNotTimeout {α : Type} (x : EqResult) :
+    (eqRes x : Result (List BvlSem.Value) α) ≠ .err (.abort .timeoutError) := by
+  cases x <;> simp [eqRes]
 
 namespace FreshRefsCarrier
 /-- Canonical BVL reference-map state representation roundtrip. -/
@@ -26,6 +39,24 @@ theorem existsNotInRefs {C F : Type} (t1 : Flapjack.Compiler.Backend.BvlSem.Stat
   refine ⟨x, ?_⟩
   change ¬ (t1.refs.lookup x ≠ none)
   exact fun present => present unused
+
+/-- A closure tag returns true; other block tags evaluate the fallback. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_check_closure"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateCheckClosure {C F : Type} (n : Nat) (env : List BvlSem.Value) (t : Nat)
+    (vs : List BvlSem.Value) (e : Bvl.Exp) (s : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (premises : n < env.length ∧ holEl n env = .block t vs) :
+    BvlSem.evaluate [checkClosure n e] env s =
+      if t = BackendCommon.closureTag ∨ t = BackendCommon.partialAppTag then
+        (eqRes (.val true), s)
+      else BvlSem.evaluate [e] env s := by
+  obtain ⟨bound, selected⟩ := premises
+  have lookup : env[n]? = some (.block t vs) := by
+    rw [holEl_eq_getElem n env bound] at selected
+    rw [List.getElem?_eq_getElem bound, selected]
+  by_cases h : t = 30 <;> by_cases h2 : t = 31 <;>
+    simp [h, h2, checkClosure, BvlSem.asBool, BackendCommon.boolToTag, BackendCommon.trueTag, BackendCommon.falseTag, BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyBlock,
+    BvlSem.boolValue, BackendCommon.closureTag, BackendCommon.partialAppTag, Bvl.boolExp, eqRes, lookup]
 
 /-- Restricting related environments to valid source indices produces
 pointwise related captured values, in the original order. -/
