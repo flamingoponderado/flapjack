@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "bvl_inline_cc_def",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/FullSemantics.lean", "lean_name": "bvlInlineCc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: arbitrary split and numeric limits compose let-operation, tick-removal and inlining callbacks with independent input configuration, code, data and output configuration types."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "bvl_inline_co_def",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/FullSemantics.lean", "lean_name": "bvlInlineCo",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: for arbitrary oracle-index and downstream-configuration types, the oracle maps let_opt over every tick-removed inlined program while preserving its downstream configuration."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "do_app_lemma", "hol_line": 1483,
   "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/LetOpState.lean", "lean_name": "letOp_doApp",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],

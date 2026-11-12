@@ -9,17 +9,6 @@ semantics and finite-map carriers remain pending HOL correspondence review. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL Flapjack.Compiler.Backend.BackendProps
 
-/-- Updating a finite map with no entries leaves it unchanged. -/
-theorem finiteMap_updateListEq_nil {α β : Type} [DecidableEq α] (map : HolFiniteMapExact α β) :
-    map.updateListEq [] = map := by
-  cases map
-  simp [HolFiniteMapExact.updateListEq, FUPDATE_LIST_HOL]
-
-/-- Interpreter insertion preserves whether a program is empty. -/
-theorem insertInterp_eq_nil (expressions : List ClosLang.Exp) :
-    insertInterp expressions = [] ↔ expressions = [] := by
-  simp [insertInterp]
-
 /-- Related installation oracles supply the same configuration, with
 interpreter insertion applied to the target expressions. -/
 theorem stateRel_oracle_head {C F : Type} (source target : ClosSem.State C F)
@@ -46,7 +35,7 @@ theorem stateRel_installNext {C F : Type} (source target : ClosSem.State C F)
   have shifted := stateRel_shift related 1
   have clockEq : target.clock = source.clock := related.1.2.2.2.2.2.1
   have shiftedClock := stateRel_withClock shifted (source.clock - 1)
-  simpa [finiteMap_updateListEq_nil, clockEq] using shiftedClock
+  simpa [HolFiniteMapExact.updateListEq, FUPDATE_LIST_HOL, clockEq] using shiftedClock
 
 /-- Non-type-error installation outcomes correspond in related states. -/
 theorem doInstall_stateRel {C F : Type} (values : List ClosSem.Value)
@@ -103,7 +92,7 @@ theorem doInstall_stateRel {C F : Type} (values : List ClosSem.Value)
                   · have targetValid : bytes = compiledBytes ∧ words = compiledWords ∧
                         (Flapjack.holShiftSeq 1 target.compileOracle 0).1 = nextConfig ∧ insertInterp expressions ≠ [] := by
                       rcases valid with ⟨bytesEq, wordsEq, configEq, nonempty⟩
-                      exact ⟨bytesEq, wordsEq, shiftConfig.trans configEq, fun h => nonempty (insertInterp_eq_nil expressions |>.mp h)⟩
+                      exact ⟨bytesEq, wordsEq, shiftConfig.trans configEq, fun h => nonempty (by simpa [insertInterp] using h)⟩
                     have nextRel := stateRel_installNext source target related
                     by_cases zero : source.clock = 0
                     · have sourceResult : ClosSem.doInstall [bytesValue, wordsValue] source =

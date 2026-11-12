@@ -11,6 +11,18 @@ public import Flapjack.Compiler.Backend.BvlInline.SourceCompile
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs
 open Flapjack.Compiler.Backend.BvlSem
 
+/-- Compose the source callbacks for inlining, tick removal, and let optimization. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "bvl_inline_cc_def"]
+def bvlInlineCc {C A B D : Type} (limit : Nat) (splitSeq : Bool) (cutSize : Nat)
+    (compiler : C → List (Nat × Nat × Bvl.Exp) → Option (A × B × D)) :=
+  inCc limit (removeTicksCc (letOpCompiler splitSeq cutSize compiler))
+
+/-- Compose the source oracle transformations for the full BVL inlining pass. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "bvl_inline_co_def"]
+def bvlInlineCo {I C : Type} (limit : Nat) (splitSeq : Bool) (cutSize : Nat)
+    (oracle : I → (Spt (Nat × Bvl.Exp) × C) × List (Nat × Nat × Bvl.Exp)) :=
+  letOpOracle splitSeq cutSize (removeTicksCo ∘ inCo limit oracle)
+
 /-- The executed program optimizer returns the total inlining, tick-removal,
 let-operation, and handler transformations. -/
 theorem compileProgFuel_eq (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
@@ -35,11 +47,11 @@ theorem compileProgFuel_semantics {C F : Type} (fuel inlineLimit cutSize start :
     (cacheEq : (oracle 0).1.1 = cache)
     (distinct : (program.map Prod.fst).Nodup)
     (nonFail : BvlSem.semantics ffi (sptFromAList program) oracle
-      (inCc inlineLimit (removeTicksCc (letOpCompiler splitSeq cutSize compiler))) start ≠ .fail) :
+      (bvlInlineCc inlineLimit splitSeq cutSize compiler) start ≠ .fail) :
     BvlSem.semantics ffi (sptFromAList output)
-      (letOpOracle splitSeq cutSize (removeTicksCo ∘ inCo inlineLimit oracle)) compiler start =
+      (bvlInlineCo inlineLimit splitSeq cutSize oracle) compiler start =
     BvlSem.semantics ffi (sptFromAList program) oracle
-      (inCc inlineLimit (removeTicksCc (letOpCompiler splitSeq cutSize compiler))) start := by
+      (bvlInlineCc inlineLimit splitSeq cutSize compiler) start := by
   let inlined := (tickCompileProg inlineLimit .ln program).2
   let unticked := inlined.map fun (name, arity, body) => (name, arity, removeTicksSing body)
   have exactRun := compileProgFuel_eq fuel inlineLimit cutSize splitSeq program
@@ -63,6 +75,6 @@ theorem compileProgFuel_semantics {C F : Type} (fuel inlineLimit cutSize start :
     exact nonFail
   have finalSame := letOp_semantics splitSeq cutSize start ffi (sptFromAList unticked)
     (removeTicksCo ∘ inCo inlineLimit oracle) compiler middleNonFail
-  simpa [outputRun, sptMap_sptFromAList] using finalSame.trans middleSame
+  simpa [outputRun, sptMap_sptFromAList, bvlInlineCc, bvlInlineCo] using finalSame.trans middleSame
 
 end Flapjack.Compiler.Backend.BvlInline.Proofs

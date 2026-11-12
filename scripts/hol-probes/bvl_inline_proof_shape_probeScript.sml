@@ -96,3 +96,5 @@ val let_do_app_lemma_replay = prove(
         s1.compile_oracle`] mp_tac)
   \\ qpat_x_assum `t1 = _` (assume_tac o GSYM) \\ fs []);
 val _ = show "let_do_app_lemma_replay_typed" let_do_app_lemma_replay;
+val _ = show "bvl_inline_cc_def_typed" bvl_inlineProofTheory.bvl_inline_cc_def;
+val _ = show "bvl_inline_co_def_typed" bvl_inlineProofTheory.bvl_inline_co_def;
