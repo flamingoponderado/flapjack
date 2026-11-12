@@ -1182,6 +1182,26 @@ in
   val ETA2_THM = Q.prove (
     `(\x y. f a b c x y) = f a b c`,
   srw_tac[][FUN_EQ_THM]);
+  (* Lookup characterization used by the Lean source-shaped premise. *)
+  val fdiff_submap_lookup = Q.prove (
+    `FDIFF refs1 fs1 SUBMAP FDIFF refs2 fs2 ⇔
+     ∀p v. FLOOKUP refs1 p = SOME v ∧ p ∉ fs1 ⇒
+       FLOOKUP refs2 p = SOME v ∧ p ∉ fs2`,
+    rw [SUBMAP_FLOOKUP_EQN,FLOOKUP_FDIFF] >> metis_tac [optionTheory.NOT_SOME_NONE]);
+  val _ = show_thm "fdiff_submap_lookup_typed=" fdiff_submap_lookup;
+  val cl_rel_SUBMAP_replay = Q.prove (
+    `cl_rel max_app f1 refs1 code (env,ys) x y ∧
+   f1 ⊆ f2 /\ FDIFF refs1 f1 SUBMAP FDIFF refs2 f2 ==>
+   cl_rel max_app f2 refs2 code (env,ys) x y`,
+  srw_tac[][cl_rel_cases]
+  >- metis_tac []
+  >- metis_tac []
+  \\ DISJ2_TAC \\ Q.LIST_EXISTS_TAC [`exps_ps`,`r`] \\ full_simp_tac(srw_ss())[]
+  \\ rev_full_simp_tac(srw_ss())[]
+  \\ CONV_TAC (DEPTH_CONV ETA_CONV) \\ full_simp_tac(srw_ss())[] \\ STRIP_TAC
+  \\ full_simp_tac(srw_ss())[FDIFF_def,SUBMAP_DEF,DRESTRICT_DEF,FLOOKUP_DEF]
+  \\ FIRST_X_ASSUM (MP_TAC o Q.SPEC `r`) \\ full_simp_tac(srw_ss())[] );
+  val _ = show_thm "cl_rel_SUBMAP_replay=" cl_rel_SUBMAP_replay;
   val cl_rel_NEW_REF_replay = Q.prove (
     `!x y. cl_rel max_app f1 refs1 code (env,ys) x y ==> ~(r IN FDOM refs1) ==>
          cl_rel max_app f1 (refs1 |+ (r,t)) code (env,ys) x y`,

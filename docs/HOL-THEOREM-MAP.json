@@ -301,6 +301,13 @@
   "reviewer": "Compared the HOL source theorem and local proof replay: for arbitrary related source and target environments, freshness in the target reference domain implies the same relation after insertion of an arbitrary target reference cell. The relocation and target reference maps use canonical finite-support carriers; code remains a sparse tree."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "cl_rel_SUBMAP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueGrowth.lean", "lean_name": "clRel_submap",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["refs1", "refs2"],
+  "reviewer": "Compared the HOL source and typed local proof replay: the two protected sets are predicates, the subset hypothesis remains explicit, and the finite-map differences SUBMAP premise is stated by its equivalent lookup characterization, including preservation of both binding and exclusion from the second set. Both refs use canonical finite-support maps; code remains a sparse tree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "cl_rel_NEW_REF",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueGrowth.lean", "lean_name": "clRel_newRef",
   "statement_status": "reviewed_fmap_as_finite_support_relation",

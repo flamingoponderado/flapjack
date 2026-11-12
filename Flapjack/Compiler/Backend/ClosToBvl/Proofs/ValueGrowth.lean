@@ -37,6 +37,22 @@ theorem clRel_grow_refs {maxApp : Nat} {fs1 fs2 : Nat → Prop}
       obtain ⟨stored', fresh'⟩ := frame _ _ stored fresh
       exact .mutualRec exps ps positions values fresh' stored' length index loc vars installed
 
+/-- Closure relations survive protected-set growth and preservation of the
+unprotected part of the reference store. The quantified lookup condition is
+the lookup characterization of the submap between the two store differences. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_SUBMAP"
+  (fmap_as_finite_support_relation := [refs1, refs2])]
+theorem clRel_submap (maxApp : Nat) (fs1 fs2 : Nat → Prop)
+    (refs1 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
+    (refs2 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (env : List ClosSem.Value) (ys : List BvlSem.Value) (x : ClosSem.Value) (y : BvlSem.Value)
+    (premises : clRel maxApp fs1 refs1 code (env, ys) x y ∧
+      (∀ p, fs1 p → fs2 p) ∧
+      (∀ p cell, refs1.lookup p = some cell → ¬ fs1 p →
+        refs2.lookup p = some cell ∧ ¬ fs2 p)) :
+    clRel maxApp fs2 refs2 code (env, ys) x y := by
+  exact clRel_grow_refs premises.1 premises.2.2
+
 /-- Adding a fresh target reference preserves the closure relation. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_NEW_REF"
   (fmap_as_finite_support_relation := [refs])]
