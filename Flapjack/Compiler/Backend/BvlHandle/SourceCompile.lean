@@ -30,6 +30,22 @@ theorem compileSing_eq :
   · intro es limit env
     rfl
 
+/-- The source compiler preserves the number of expressions. -/
+@[hol "cakeml/compiler/backend/bvl_handleScript.sml" "compile_length"]
+theorem compileList_length (limit env : Nat) (expressions : List Exp) :
+    (compile limit env expressions).1.length = expressions.length := by
+  induction expressions with
+  | nil => simp [compile, compileList]
+  | cons head tail ih =>
+    cases headRun : compileSing limit env head with
+    | mk headExp headData =>
+      obtain ⟨headLive, headSize, headFlag⟩ := headData
+      cases tailRun : compileList limit env tail with
+      | mk tailExp tailData =>
+        obtain ⟨tailLive, tailSize, tailFlag⟩ := tailData
+        simp [compile, compileList, headRun, tailRun] at ih ⊢
+        exact ih
+
 /-- Check the empty and multi-element clauses of the original list traversal. -/
 theorem compile_list_equations (limit env : Nat) (x y : Exp) (xs : List Exp) :
     compile limit env [] = ([], .empty, 0, true) ∧

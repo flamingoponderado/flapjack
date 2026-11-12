@@ -11,29 +11,6 @@ namespace Flapjack.Compiler.Backend.BvlInline.Proofs
 open Flapjack.Compiler.Backend.BvlSem Flapjack.Compiler.Backend.BvlProps
 open Flapjack.SemanticPrimitivesHOL
 
-/-- Non-install primitives preserve a generic mapped-state relation. This is
-Flapjack proof infrastructure, not a standalone HOL declaration. -/
-theorem mappedDoApp_nonInstall {C F : Type} (transform : Nat → Bvl.Exp → Bvl.Exp)
-    (s t : State C F) (related : mappedStateRel transform s t)
-    (op : ClosLang.Op) (args : List BvlSem.Value) (notInstall : op ≠ .install) :
-    match doApp op args t with
-    | .err error => doApp op args s = .err error
-    | .val (value, next) => ∃ sourceNext, mappedStateRel transform sourceNext next ∧
-        doApp op args s = .val (value, sourceNext) := by
-  have domains := mappedStateRel_codeDomain transform s t related
-  have unframe := mappedStateRel_unframe transform s t related
-  cases run : doApp op args t with
-  | err error =>
-    have errorRun := doApp_withCodeErr op args t error s.code s.compile s.compileOracle
-      run notInstall (Or.inl (by intro key present; rwa [domains]))
-    simpa [unframe] using errorRun
-  | val pair =>
-    obtain ⟨value, next⟩ := pair
-    have frame := doApp_code op args t next value notInstall run
-    have successRun := doApp_withCode op args t next value s.code s.compile s.compileOracle
-      run notInstall (by intro key present; rwa [domains] at present)
-    exact ⟨_, mappedStateRel_reframe transform s t next related frame, by simpa [unframe] using successRun⟩
-
 /-- Installation is simulated by an arity-preserving body map, in both its
 success and error branches. This is Flapjack proof infrastructure. -/
 theorem mappedDoInstall {C F : Type} (transform : Nat → Bvl.Exp → Bvl.Exp)

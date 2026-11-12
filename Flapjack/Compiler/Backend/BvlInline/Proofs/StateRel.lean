@@ -52,12 +52,6 @@ theorem stateRel_lookup {C F : Type} (s t : State C F) (related : stateRel s t) 
   have fields := congrArg (fun state : State C F => sptLookup name state.code) related.1
   simpa [sptLookup_sptMap] using fields
 
-/-- Each oracle program is transformed while its configuration is retained. -/
-theorem stateRel_oracle {C F : Type} (s t : State C F) (related : stateRel s t) (n : Nat) :
-    t.compileOracle n = ((s.compileOracle n).1,
-      (s.compileOracle n).2.map fun (name, arity, body) => (name, arity, removeTicksSing body)) := by
-  exact congrArg (fun state : State C F => state.compileOracle n) related.1
-
 /-- Related compiler callbacks agree after transforming their program input. -/
 theorem stateRel_compile {C F : Type} (s t : State C F) (related : stateRel s t)
     (config : C) (program : List (Nat × Nat × Bvl.Exp)) :

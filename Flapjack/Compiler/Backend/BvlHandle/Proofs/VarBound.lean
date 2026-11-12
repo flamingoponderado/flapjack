@@ -136,20 +136,14 @@ theorem bVarBound_optionalLetLet (body : Bvl.Exp) (n m : Nat) (live : DbVars.DbV
   · simp only [bVarBound, List.length_nil, Nat.add_zero, true_and]
     exact bVarBound_letLet n m (DbVars.dbToSet live) body envBound bodyBound
 
-/-- The list compiler preserves the number of expressions. -/
-theorem compileList_length (limit env : Nat) (expressions : List Bvl.Exp) :
-    (compileList limit env expressions).1.length = expressions.length := by
-  induction expressions with
-  | nil => simp [compileList]
-  | cons head tail ih =>
-    cases headRun : compileSing limit env head with
-    | mk headExp headData =>
-      obtain ⟨headLive, headSize, headFlag⟩ := headData
-      cases tailRun : compileList limit env tail with
-      | mk tailExp tailData =>
-        obtain ⟨tailLive, tailSize, tailFlag⟩ := tailData
-        simp [compileList, headRun, tailRun] at ih ⊢
-        exact ih
+/-- A source compiler result has the same length as its input list. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "compile_IMP_LENGTH"]
+theorem compile_imp_length (limit env : Nat) (expressions output : List Bvl.Exp)
+    (live : DbVars.DbVarSet) (remainder : Nat × Bool)
+    (compiled : compile limit env expressions = (output, live, remainder)) :
+    output.length = expressions.length := by
+  have length := compileList_length limit env expressions
+  simpa [compiled] using length
 
 mutual
 /-- Every singleton emitted by the handler traversal is in scope whenever

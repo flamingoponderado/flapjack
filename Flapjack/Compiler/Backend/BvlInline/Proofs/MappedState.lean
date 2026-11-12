@@ -27,30 +27,6 @@ theorem mappedStateRel_codeDomain {C F : Type} (transform : Nat → Bvl.Exp → 
   have code := congrArg (fun state : State C F => state.code) related.1
   rw [code, sptDomain_sptMap]
 
-/-- Replacing mapped code fields recovers the source state. -/
-theorem mappedStateRel_unframe {C F : Type} (transform : Nat → Bvl.Exp → Bvl.Exp)
-    (s t : State C F) (related : mappedStateRel transform s t) :
-    { t with code := s.code, compile := s.compile, compileOracle := s.compileOracle } = s := by
-  have fields := related.1
-  cases s
-  cases t
-  simp_all
-
-/-- Related states remain related after an update retaining the mapped code
-fields. -/
-theorem mappedStateRel_reframe {C F : Type} (transform : Nat → Bvl.Exp → Bvl.Exp)
-    (s t next : State C F) (related : mappedStateRel transform s t)
-    (frame : next.code = t.code ∧ next.compile = t.compile ∧ next.compileOracle = t.compileOracle) :
-    mappedStateRel transform
-      { next with code := s.code, compile := s.compile, compileOracle := s.compileOracle } next := by
-  have code := congrArg (fun state : State C F => state.code) related.1
-  have oracle := congrArg (fun state : State C F => state.compileOracle) related.1
-  obtain ⟨hcode, hcompile, horacle⟩ := frame
-  constructor
-  · cases next
-    simp_all
-  · simpa [hcompile] using related.2
-
 /-- Mapping bodies preserves program labels. -/
 theorem mappedProgram_labels (transform : Nat → Bvl.Exp → Bvl.Exp)
     (program : List (Nat × Nat × Bvl.Exp)) :

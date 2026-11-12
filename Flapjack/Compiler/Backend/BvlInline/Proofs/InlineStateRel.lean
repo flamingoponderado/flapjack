@@ -72,12 +72,4 @@ theorem inStateRel_fields {C F : Type} (limit : Nat)
       target.clock = source.clock ∧ target.ffi = source.ffi :=
   ⟨related.1, related.2.1, related.2.2.1, related.2.2.2.1⟩
 
-/-- The oracle field uses the original inlining adapter. This is a projection
-of the source relation, not a separate HOL declaration. -/
-theorem inStateRel_oracle {C F : Type} (limit : Nat)
-    (source : State (Spt (Nat × Bvl.Exp) × C) F) (target : State C F)
-    (related : inStateRel limit source target) :
-    target.compileOracle = inCo limit source.compileOracle :=
-  related.2.2.2.2.1
-
 end Flapjack.Compiler.Backend.BvlInline.Proofs
