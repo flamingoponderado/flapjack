@@ -11,7 +11,7 @@ names and excluding axioms does not validate codec bodies, witness statements,
 or correspondence with HOL. -/
 
 namespace Flapjack
-open Lean
+open Lean Meta
 
 private def predicateCodecOwner : Name :=
   `Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvalSim
@@ -99,5 +99,100 @@ def predicateCodecOwnerAndAxiomProblems : CoreM (Array String) := do
   match resolvePredicateCodec (← getEnv) with
   | .error message => return #[message]
   | .ok names => predicateCodecAxiomProblems names
+
+/-- Check one complete, unconditional equality in the prospective transport
+witness. `names` must be the owner-validated codec bundle; the codec bodies are
+checked separately. The equality applications are compared before reduction. -/
+private def predicateCodecWitnessHalfProblems (names : Array Name) (c₁ c₂ : Expr)
+    (first : Bool) (type : Expr) : MetaM (Array String) := do
+  forallTelescope type fun args result => do
+    let count := if first then 2 else 3
+    if args.size != count then
+      return #[s!"roundtrip half has {args.size} binders instead of {count}"]
+    let mut errors : Array String := #[]
+    let mut types : Array Expr := #[]
+    for arg in args do
+      let d ← arg.fvarId!.getDecl
+      types := types.push d.type
+      if d.binderInfo != BinderInfo.default then
+        errors := errors.push "roundtrip half has a non-explicit binder"
+    let nat := mkConst `Nat
+    let exp := mkConst `Flapjack.Compiler.Backend.ClosLang.Exp
+    let payload := mkApp2 (mkConst `Prod [Level.zero, Level.zero]) nat exp
+    let code := mkApp2 (mkConst `Flapjack.HolFiniteMapExact) nat payload
+    let tail := mkApp2 (mkConst names[0]!) c₁ c₂
+    let raw := mkConst names[1]!
+    let support := mkConst names[2]!
+    if first then
+      let relProblems ← forallTelescope types[0]! fun domains conclusion => do
+        if domains.size != 1 then return #["canonical predicate must have one domain"]
+        let d ← domains[0]!.fvarId!.getDecl
+        let mut issues : Array String := #[]
+        if d.binderInfo != BinderInfo.default then
+          issues := issues.push "canonical predicate domain must be explicit"
+        unless ← isDefEq d.type code do
+          issues := issues.push "canonical predicate domain has the wrong type"
+        if conclusion != tail then
+          issues := issues.push "canonical predicate tail has the wrong application spine"
+        return issues
+      errors := errors ++ relProblems
+      unless ← isDefEq types[1]! code do
+        errors := errors.push "canonical code has the wrong type"
+      let toRaw := mkAppN (mkConst names[5]!) #[c₁, c₂, args[0]!]
+      let lhs := mkAppN (mkConst names[6]!) #[c₁, c₂, toRaw, args[1]!]
+      let rhs := mkApp args[0]! args[1]!
+      let expected := mkApp3 (mkConst `Eq [Level.succ Level.zero]) tail lhs rhs
+      if result != expected then
+        errors := errors.push "canonical predicate roundtrip equality has the wrong application spine"
+    else
+      let relProblems ← forallTelescope types[0]! fun domains conclusion => do
+        if domains.size != 2 then return #["raw predicate must have two domains"]
+        let lookup ← domains[0]!.fvarId!.getDecl
+        let finite ← domains[1]!.fvarId!.getDecl
+        let mut issues : Array String := #[]
+        if lookup.binderInfo != BinderInfo.default || finite.binderInfo != BinderInfo.default then
+          issues := issues.push "raw predicate domains must be explicit"
+        unless ← isDefEq lookup.type raw do
+          issues := issues.push "raw predicate lookup has the wrong type"
+        unless ← isDefEq finite.type (mkApp support domains[0]!) do
+          issues := issues.push "raw predicate support has the wrong type"
+        if conclusion != tail then
+          issues := issues.push "raw predicate tail has the wrong application spine"
+        return issues
+      errors := errors ++ relProblems
+      unless ← isDefEq types[1]! raw do
+        errors := errors.push "raw lookup has the wrong type"
+      unless ← isDefEq types[2]! (mkApp support args[1]!) do
+        errors := errors.push "raw support has the wrong type"
+      let fromRaw := mkAppN (mkConst names[6]!) #[c₁, c₂, args[0]!]
+      let lhs := mkAppN (mkConst names[5]!) #[c₁, c₂, fromRaw, args[1]!, args[2]!]
+      let rhs := mkApp2 args[0]! args[1]! args[2]!
+      let expected := mkApp3 (mkConst `Eq [Level.succ Level.zero]) tail lhs rhs
+      if result != expected then
+        errors := errors.push "raw predicate roundtrip equality has the wrong application spine"
+    return errors
+
+/-- Check the elaborated type of the prospective predicate-transport witness.
+This does not validate the codec definitions, declaration ownership or axioms,
+and remains unconnected to `@[hol]`. -/
+def predicateCodecWitnessTypeProblems (names : Array Name) (type : Expr) :
+    MetaM (Array String) := do
+  unless names.size == 8 do return #["witness type check requires the resolved codec bundle"]
+  unless names.toList.eraseDups.length == names.size do
+    return #["witness type check requires distinct codec declarations"]
+  forallTelescope type fun args result => do
+    unless args.size == 2 do return #["witness must have exactly two compiler type parameters"]
+    let mut errors : Array String := #[]
+    for arg in args do
+      let d ← arg.fvarId!.getDecl
+      if d.binderInfo != BinderInfo.implicit then
+        errors := errors.push "witness compiler type parameters must be implicit"
+      unless ← isDefEq d.type (mkSort (Level.succ Level.zero)) do
+        errors := errors.push "witness compiler parameter must have type Type"
+    let .app (.app (.const ``And []) first) second := result
+      | return errors.push "witness must be a conjunction of both roundtrips"
+    errors := errors ++ (← predicateCodecWitnessHalfProblems names args[0]! args[1]! true first)
+    errors := errors ++ (← predicateCodecWitnessHalfProblems names args[0]! args[1]! false second)
+    return errors
 
 end Flapjack

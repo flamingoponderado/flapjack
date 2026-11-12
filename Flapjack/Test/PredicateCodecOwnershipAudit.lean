@@ -49,6 +49,44 @@ run_cmd do
   unless problems.isEmpty do throwError "current codec has axiom problems: {problems}"
   let combined ← liftCoreM predicateCodecOwnerAndAxiomProblems
   unless combined.isEmpty do throwError "combined owner and axiom check failed: {combined}"
+  let some witness := env.find? names[7]! | throwError "missing witness"
+  let goodType ← liftTermElabM (predicateCodecWitnessTypeProblems names witness.type)
+  unless goodType.isEmpty do throwError "valid witness type rejected: {goodType}"
+  let oneSided := witness.type.replace fun e =>
+    match e with
+    | .app (.app (.const ``And []) first) _ => some first
+    | _ => none
+  let selfEqual := witness.type.replace fun e =>
+    match e with
+    | .app (.app (.app eq ty) _) right =>
+      if eq.isConstOf ``Eq then some (mkApp3 eq ty right right) else none
+    | _ => none
+  let reversed := witness.type.replace fun e =>
+    match e with
+    | .app (.app (.app eq ty) left) right =>
+      if eq.isConstOf ``Eq then some (mkApp3 eq ty right left) else none
+    | _ => none
+  let implicitPredicateDomain := witness.type.replace fun e =>
+    match e with
+    | .forallE `rel (.forallE n domain body _) result binderInfo =>
+      some (.forallE `rel (.forallE n domain body BinderInfo.implicit) result binderInfo)
+    | _ => none
+  let implicitSupportDomain := witness.type.replace fun e =>
+    match e with
+    | .forallE `rel (.forallE n domain (.forallE s support tail _) info) result binderInfo =>
+      some (.forallE `rel (.forallE n domain (.forallE s support tail BinderInfo.implicit) info)
+        result binderInfo)
+    | _ => none
+  let extraBinder := Expr.forallE `extra (mkSort Level.zero) witness.type BinderInfo.implicit
+  for (label, bad) in [("one-sided", oneSided), ("self-equality", selfEqual),
+      ("reversed equality", reversed), ("implicit predicate domain", implicitPredicateDomain),
+      ("implicit support domain", implicitSupportDomain), ("extra binder", extraBinder)] do
+    let errors ← liftTermElabM (predicateCodecWitnessTypeProblems names bad)
+    if errors.isEmpty then throwError "invalid {label} witness type was accepted"
+  let noNames ← liftTermElabM (predicateCodecWitnessTypeProblems #[] witness.type)
+  if noNames.isEmpty then throwError "witness type was accepted without a codec bundle"
+  let duplicateNames ← liftTermElabM (predicateCodecWitnessTypeProblems (names.set! 7 names[0]!) witness.type)
+  if duplicateNames.isEmpty then throwError "witness type was accepted with duplicate codec names"
   let badAxiom ← liftCoreM (predicateCodecAxiomProblems (names.set! 7 ``Classical.choice))
   if badAxiom.isEmpty then throwError "axiom dependency was accepted"
   let indirect ← liftCoreM (predicateCodecAxiomProblems (names.set! 7 ``axiomCarrier))
