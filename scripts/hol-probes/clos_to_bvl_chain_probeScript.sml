@@ -1182,6 +1182,12 @@ in
   val ETA2_THM = Q.prove (
     `(\x y. f a b c x y) = f a b c`,
   srw_tac[][FUN_EQ_THM]);
+  val state_rel_globals_replay = Q.prove (
+    `state_rel f s t ⇒
+    get_global 0 t.globals = SOME (SOME (global_table s.max_app)) ∧
+    LIST_REL (OPTREL (v_rel s.max_app f t.refs t.code)) s.globals (DROP num_added_globals t.globals)`,
+  srw_tac[][state_rel_def] );
+  val _ = show_thm "state_rel_globals_replay=" state_rel_globals_replay;
   (* Lookup characterization used by the Lean source-shaped premise. *)
   val fdiff_submap_lookup = Q.prove (
     `FDIFF refs1 fs1 SUBMAP FDIFF refs2 fs2 ⇔

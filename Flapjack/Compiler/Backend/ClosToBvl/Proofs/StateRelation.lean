@@ -83,8 +83,9 @@ def stateRel {C F : Type} (f : HolFiniteMapExact Nat Nat)
       sptLookup (name + numStubs s.maxApp) t.code = some (arity, c2) ∧
       codeInstalled aux2 t.code
 
-/-- Flapjack helper extracting the related globals and partial-application
-table from the state relation. -/
+/-- Related states have a matching global table and related global values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "state_rel_globals"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code, BvlSem.State.refs, f])]
 theorem stateRel_globals {C F : Type} {f : HolFiniteMapExact Nat Nat}
     {s : ClosSem.State C F} {t : BvlSem.State C F} (related : stateRel f s t) :
     ClosSem.getGlobal 0 t.globals = some (some (globalTable s.maxApp)) ∧
