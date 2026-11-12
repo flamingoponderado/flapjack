@@ -1139,6 +1139,9 @@ in
   srw_tac[][v_rel_SIMP,closSemTheory.v_to_list_def,bvlSemTheory.v_to_list_def] >>
   every_case_tac >> full_simp_tac(srw_ss())[] >> srw_tac[][] >>
   srw_tac[][bvlSemTheory.v_to_list_def] >> res_tac >> srw_tac[][]);
+  val _ = show_thm "v_to_list_replay=" v_to_list;
+  val _ = show_thm "list_to_v_v_rel_typed=" clos_to_bvlProofTheory.list_to_v_v_rel;
+  val _ = show_thm "do_eq_list_T_every_typed=" clos_to_bvlProofTheory.do_eq_list_T_every;
   val do_eq = Q.prove (
     `  INJ ($' f) (FDOM f) (FRANGE f) ∧
    (∀x y bs. FLOOKUP f x = SOME y ⇒ FLOOKUP r y ≠ SOME (ByteArray T bs)) ⇒

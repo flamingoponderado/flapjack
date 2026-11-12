@@ -177,7 +177,7 @@ theorem byteConstruct_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
         cases decoded : ClosSem.valueToList first with
         | none => cases op <;> simp [ByteConstruct.op, ClosSem.doApp, ClosSem.applyMemory, decoded] at run
         | some sourceValues =>
-          obtain ⟨targetValues, targetDecoded, listsRel⟩ := decodedList_related first _ sourceValues firstRel decoded
+          obtain ⟨targetValues, targetDecoded, listsRel⟩ := decodedList_related first sourceValues _ ⟨decoded, firstRel⟩
           cases op with
           | fromList =>
             cases sourceBytes : ClosSem.byteNumbers sourceValues with

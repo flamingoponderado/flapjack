@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockCompare
+public import Flapjack.FiniteMap.BroadCodec
 
 @[expose] public section
 
@@ -240,28 +241,33 @@ theorem doEq_nonClosure_closure {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
   | number | word64 | codePtr | refPtr =>
     cases a <;> cases b <;> simp_all [sourceIsClosure, ClosSem.doEq, BvlSem.doEq]
 
-/-- Pointwise equality correspondence lifts to the recursive list comparator. -/
-theorem doEqList_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    (pointwise : ∀ a b x y, vRel maxApp f refs code a x → vRel maxApp f refs code b y →
-      ClosSem.doEq a b = BvlSem.doEq refs x y)
-    {xs ys : List ClosSem.Value} {xs' ys' : List BvlSem.Value}
-    (first : List.Forall₂ (vRel maxApp f refs code) xs xs')
-    (second : List.Forall₂ (vRel maxApp f refs code) ys ys') :
-    ClosSem.doEqList xs ys = BvlSem.doEqList refs xs' ys' := by
-  induction first generalizing ys ys' with
-  | nil => cases second <;> simp [ClosSem.doEqList, BvlSem.doEqList]
-  | cons head tail ih =>
-    cases second with
-    | nil => simp [ClosSem.doEqList, BvlSem.doEqList]
-    | cons head' tail' =>
-      simp only [ClosSem.doEqList, BvlSem.doEqList, ← pointwise _ _ _ _ head head']
-      cases ClosSem.doEq _ _ with
-      | typeError => rfl
-      | val result =>
-        cases result with
-        | false => rfl
-        | true => exact ih tail'
+/-- The comparator's reference map has the canonical finite-support codec. -/
+theorem holFmapAsFiniteSupportParamWitness_doEqListTrueIff_refs {α : Type}
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref α)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).lookup key = refs.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).finiteSupport = refs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs) = refs := by
+  cases refs
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- List equality returns true exactly when all corresponding comparisons do. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "do_eq_list_T_every"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem doEqListTrueIff {α : Type} (refs : HolFiniteMapExact Nat (BvlSem.Ref α)) :
+    ∀ vs1 vs2 : List BvlSem.Value,
+      BvlSem.doEqList refs vs1 vs2 = .val true ↔
+        List.Forall₂ (fun a b => BvlSem.doEq refs a b = .val true) vs1 vs2 := by
+  intro vs1
+  induction vs1 with
+  | nil => intro vs2; cases vs2 <;> simp [BvlSem.doEqList]
+  | cons a rest ih =>
+    intro vs2
+    cases vs2 with
+    | nil => simp [BvlSem.doEqList]
+    | cons b tail =>
+      cases h : BvlSem.doEq refs a b with
+      | typeError => simp [BvlSem.doEqList, h]
+      | val flag => cases flag <;> simp [BvlSem.doEqList, h, ih]
 
 /-- Equality of related ordinary blocks reduces to equality of their field
 lists; shifted tags never enter the reserved closure range. -/

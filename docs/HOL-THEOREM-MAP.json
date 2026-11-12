@@ -268,6 +268,24 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: arbitrary closure value, intermediate values, argument list, block tag, code pointer, numeric arity and fields; both full generated calls with matching environments and counts; arbitrary independent compiler and FFI state carriers; and unconditional equality of complete evaluations agree. The refs field uses the canonical finite-support carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "list_to_v_v_rel",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/BlockList.lean", "lean_name": "listToValue_related",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Compared the typed HOL source and original proof: arbitrary source and target lists, their pointwise relation and related encoded values agree. The f and refs parameters use canonical finite-support carriers with same-module codec witnesses; code remains a sparse tree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "v_to_list",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/BlockList.lean", "lean_name": "decodedList_related",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Compared the typed HOL source and original proof: the arbitrary related values and source decoding premises, target decoding and pointwise related result agree. The f and refs parameters use canonical finite-support carriers with same-module codec witnesses; code remains a sparse tree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "do_eq_list_T_every",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Equality.lean", "lean_name": "doEqListTrueIff",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["refs"],
+  "reviewer": "Compared the typed HOL source: the arbitrary reference payload type, reference map and both value lists, and the equivalence between list equality returning true and pairwise equality returning true agree. The refs parameter uses the canonical finite-support carrier with same-module codec witness."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "do_app",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvaluateOrdinary.lean", "lean_name": "doAppSuccess",
   "statement_status": "reviewed_fmap_as_finite_support_relation",

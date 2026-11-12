@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateBlockCons
 public import Mathlib.Data.List.Forall2
+public import Flapjack.FiniteMap.BroadCodec
 
 @[expose] public section
 
@@ -18,7 +19,41 @@ theorem closTagShift_eq_nilTag (tag : Nat) :
   simp only [closTagShift, nilTag, consTag]
   split <;> omega
 
+/-- Canonical finite-map roundtrip for the source relation. -/
+theorem holFmapAsFiniteSupportParamWitness_listToValue_related_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup key = f.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f :=
+  holFmapAsFiniteSupportParamWitness_vRel_f f key
+
+/-- Canonical finite-map roundtrip for the source relation. -/
+theorem holFmapAsFiniteSupportParamWitness_listToValue_related_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).lookup key = refs.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).finiteSupport = refs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs) = refs :=
+  holFmapAsFiniteSupportParamWitness_vRel_refs refs key
+
+/-- Canonical finite-map roundtrip for the source relation. -/
+theorem holFmapAsFiniteSupportParamWitness_decodedList_related_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup key = f.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f :=
+  holFmapAsFiniteSupportParamWitness_vRel_f f key
+
+/-- Canonical finite-map roundtrip for the source relation. -/
+theorem holFmapAsFiniteSupportParamWitness_decodedList_related_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).lookup key = refs.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).finiteSupport = refs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs) = refs :=
+  holFmapAsFiniteSupportParamWitness_vRel_refs refs key
+
 /-- Encoding pointwise related lists produces related list values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "list_to_v_v_rel"
+  (fmap_as_finite_support_parameters := [f, refs])]
 theorem listToValue_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
     {xs : List ClosSem.Value} {ys : List BvlSem.Value}
@@ -53,11 +88,14 @@ theorem valueToList_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
         simpa [BvlSem.valueToList, closTagShift, consTag] using congrArg (Option.map (targetHead :: ·)) decode
 
 /-- Related list values decode to pointwise related lists. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_to_list"
+  (fmap_as_finite_support_parameters := [f, refs])]
 theorem decodedList_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    (source : ClosSem.Value) (target : BvlSem.Value) (xs : List ClosSem.Value)
-    (related : vRel maxApp f refs code source target) (decode : ClosSem.valueToList source = some xs) :
+    (source : ClosSem.Value) (xs : List ClosSem.Value) (target : BvlSem.Value)
+    (premises : ClosSem.valueToList source = some xs ∧ vRel maxApp f refs code source target) :
     ∃ ys, BvlSem.valueToList target = some ys ∧ List.Forall₂ (vRel maxApp f refs code) xs ys := by
+  obtain ⟨decode, related⟩ := premises
   have sourceEq := ClosSem.listToValue_valueToList source xs decode
   rw [← sourceEq] at related
   exact valueToList_related xs target related
@@ -136,7 +174,7 @@ theorem blockList_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
           cases decode : ClosSem.valueToList a with
           | none => simp [BlockListOp.op, ClosSem.doApp, ClosSem.applyBlock, decode] at run
           | some xs =>
-            obtain ⟨ys, targetDecode, listsRel⟩ := decodedList_related a _ xs first decode
+            obtain ⟨ys, targetDecode, listsRel⟩ := decodedList_related a xs _ ⟨decode, first⟩
             simp [BlockListOp.op, ClosSem.doApp, ClosSem.applyBlock, decode] at run
             rcases run with ⟨rfl, rfl⟩
             refine ⟨.block (closTagShift tag) ys, ?_, rfl, .block listsRel⟩
@@ -162,8 +200,8 @@ theorem blockList_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
                 cases decodeB : ClosSem.valueToList b with
                 | none => simp [BlockListOp.op, ClosSem.doApp, ClosSem.applyBlock, decodeA, decodeB] at run
                 | some more =>
-                  obtain ⟨ys, targetA, firstRel⟩ := decodedList_related a _ xs first decodeA
-                  obtain ⟨moreTarget, targetB, secondRel⟩ := decodedList_related b _ more second decodeB
+                  obtain ⟨ys, targetA, firstRel⟩ := decodedList_related a xs _ ⟨decodeA, first⟩
+                  obtain ⟨moreTarget, targetB, secondRel⟩ := decodedList_related b more _ ⟨decodeB, second⟩
                   simp [BlockListOp.op, ClosSem.doApp, ClosSem.applyBlock, decodeA, decodeB] at run
                   rcases run with ⟨rfl, rfl⟩
                   refine ⟨BvlSem.listToValue (ys ++ moreTarget), ?_, rfl, ?_⟩

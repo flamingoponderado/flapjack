@@ -44,7 +44,7 @@ theorem vRel_valueToBytes_lemma (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
   intro source target related bytes
   constructor
   · intro decoded
-    obtain ⟨values, targetList, valuesRel⟩ := decodedList_related source target _ related decoded
+    obtain ⟨values, targetList, valuesRel⟩ := decodedList_related source _ target ⟨decoded, related⟩
     have valuesEq : values = bytes.map (fun b => BvlSem.Value.number b.toNat) := by
       clear decoded targetList related
       induction bytes generalizing values with
@@ -128,7 +128,7 @@ theorem vRel_valueToWords_lemma (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
   intro source target related words
   constructor
   · intro decoded
-    obtain ⟨values, targetList, valuesRel⟩ := decodedList_related source target _ related decoded
+    obtain ⟨values, targetList, valuesRel⟩ := decodedList_related source _ target ⟨decoded, related⟩
     have valuesEq : values = words.map BvlSem.Value.word64 := by
       clear decoded targetList related
       induction words generalizing values with
