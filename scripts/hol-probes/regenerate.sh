@@ -10576,3 +10576,9 @@ run_probe ml_monad_base_typed_probeScript.sml ml_monad_base_typed_probe.out \
   Marray_update_def_typed Msub_eq_typed Mupdate_eq_typed Msub_def_typed Msub_exn_eq_typed Mupdate_def_typed Mupdate_exn_eq_typed \
   "$cake_dir/translator/monadic/monad_base/ml_monadBaseScript.sml" \
   "$cake_dir/translator/monadic/monad_base"
+
+run_probe ffi_typed_probeScript.sml ffi_typed_probe.out \
+  behaviour_typed ffiname_typed ffi_outcome_typed ffi_result_typed ffi_state_typed final_event_typed io_event_typed oracle_result_typed \
+  outcome_typed shmem_op_typed call_FFI_def_typed initial_ffi_state_def_typed \
+  "$cake_dir/semantics/ffi/ffiScript.sml" \
+  "$cake_dir/semantics/ffi"

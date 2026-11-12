@@ -1,0 +1,12 @@
+behaviour_typed=Diverge::io_event llist -> behaviour; Terminate::outcome -> io_event list -> behaviour; Fail::behaviour
+ffiname_typed=ExtCall::mlstring -> ffiname; SharedMem::shmem_op -> ffiname
+ffi_outcome_typed=FFI_failed::ffi_outcome; FFI_diverged::ffi_outcome
+ffi_result_typed=FFI_return::'ffi ffi_state -> word8 list -> 'ffi ffi_result; FFI_final::final_event -> 'ffi ffi_result
+ffi_state_typed=recordtype.ffi_state::(ffiname -> 'ffi -> word8 list -> word8 list -> 'ffi oracle_result) -> 'ffi -> io_event list -> 'ffi ffi_state
+final_event_typed=Final_event::ffiname -> word8 list -> word8 list -> ffi_outcome -> final_event
+io_event_typed=IO_event::ffiname -> word8 list -> (word8 # word8) list -> io_event
+oracle_result_typed=Oracle_return::'ffi -> word8 list -> 'ffi oracle_result; Oracle_final::ffi_outcome -> 'ffi oracle_result
+outcome_typed=Success::outcome; Resource_limit_hit::outcome; FFI_outcome::final_event -> outcome
+shmem_op_typed=MappedRead::shmem_op; MappedWrite::shmem_op
+call_FFI_def_typed=∀(st :'ffi ffi_state) (s :ffiname) (conf :word8 list) (bytes :word8 list). call_FFI st s conf bytes = if s ≠ ExtCall «» then case st.oracle s st.ffi_state conf bytes of Oracle_return ffi' bytes' => if LENGTH bytes' = LENGTH bytes then FFI_return (st with <|ffi_state := ffi'; io_events := st.io_events ++ [IO_event s conf (ZIP (bytes,bytes'))]|>) bytes' else (FFI_final (Final_event s conf bytes FFI_failed) :'ffi ffi_result) | (Oracle_final outcome :'ffi oracle_result) => (FFI_final (Final_event s conf bytes outcome) :'ffi ffi_result) else FFI_return st bytes
+initial_ffi_state_def_typed=∀(oc :ffiname -> 'ffi -> word8 list -> word8 list -> 'ffi oracle_result) (ffi :'ffi). initial_ffi_state oc ffi = <|oracle := oc; ffi_state := ffi; io_events := ([] :io_event list)|>
