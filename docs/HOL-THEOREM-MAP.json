@@ -145,6 +145,13 @@
   "reviewer": "Independent typed HOL comparison confirms the original compilation equality, full length and suffix conclusions, binder order, and faithful closure and BVL carriers."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "FEVERY_FUPDATE_LIST_SUFF",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/FiniteMapEvery.lean", "lean_name": "fEvery_fupdateList_suff",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["x"],
+  "reviewer": "Compared the typed HOL source: independent arbitrary key and value types, the predicate on key/value pairs, original map and list predicate premises, and the updated-map predicate conclusion agree, including repeated keys. The input x is canonical finite support with a same-module lookup/support codec witness; updates use HOL equality internally."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "code_installed_insert",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode/Original.lean", "lean_name": "codeInstalled_insert",
   "statement_status": "reviewed_exact",

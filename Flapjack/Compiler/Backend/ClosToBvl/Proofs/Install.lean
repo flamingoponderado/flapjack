@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockList
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WordRelation
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshTargetRefs
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InstalledCode.Original
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FiniteMapEvery
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
@@ -461,19 +462,22 @@ theorem install_codeAnnotations {C F : Type} (s : ClosSem.State C F) (t : BvlSem
     (oracle : compileOracleInv s.maxApp s.code s.compile s.compileOracle t.code t.compile t.compileOracle) :
     codeAnnotations { s with code := s.code.updateListEq auxiliary } := by
   have oracleAnnotations := oracle.2.2.2.2 0 config expressions auxiliary sourceHead
-  have newLocations : ∀ entry ∈ auxiliary, ClosProps.everyFnLocationSome [entry.2.2] := by
-    exact oracleAnnotations.2.2.1
-  have newVars : ∀ entry ∈ auxiliary, ClosProps.everyFnVarsSome [entry.2.2] := by
-    exact oracleAnnotations.2.2.2
+  have allAnnotations := fEvery_fupdateList_suff auxiliary s.code
+    (fun entry => ClosProps.everyFnLocationSome [entry.2.2] ∧ ClosProps.everyFnVarsSome [entry.2.2])
+    ⟨by
+      intro name value found
+      obtain ⟨arity, body⟩ := value
+      exact ⟨annotations.1 name arity body found, annotations.2 name arity body found⟩,
+     fun entry member => ⟨oracleAnnotations.2.2.1 entry member, oracleAnnotations.2.2.2 entry member⟩⟩
+  have sameDecision : (fun (a b : Nat) => Classical.propDecidable (a = b)) = instDecidableEqNat :=
+    Subsingleton.elim _ _
+  simp only [HolFiniteMapExact.lookup_updateListEq] at allAnnotations
+  rw [sameDecision] at allAnnotations
   constructor
   · intro name arity body found
-    cases install_source_lookup s.code auxiliary name arity body found with
-    | inl member => exact newLocations (name, arity, body) member
-    | inr old => exact annotations.1 name arity body old
+    exact (allAnnotations name (arity, body) (by simpa only [HolFiniteMapExact.lookup_updateListEq] using found)).1
   · intro name arity body found
-    cases install_source_lookup s.code auxiliary name arity body found with
-    | inl member => exact newVars (name, arity, body) member
-    | inr old => exact annotations.2 name arity body old
+    exact (allAnnotations name (arity, body) (by simpa only [HolFiniteMapExact.lookup_updateListEq] using found)).2
 
 /-- The next installation's compiled main entry can be called indirectly
 with no arguments in the extended target code. -/
