@@ -10656,3 +10656,9 @@ run_probe bvi_to_data_proof_typed_probeScript.sml bvi_to_data_proof_typed_probe.
   data_to_bvi_v_list_to_v_Nil_typed v_to_bytes_eq_typed v_to_words_eq_typed code_rel_def_typed data_to_bvi_ref_def_typed data_to_bvi_v_def_typed data_to_bvi_v_Boolv_typed data_to_bvi_v_Unit_typed \
   "$cake_dir/compiler/backend/proofs/bvi_to_dataProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe pattern_semantics_typed_probeScript.sml pattern_semantics_typed_probe.out \
+  term_typed dt_test_def_typed pat_typed dTest_typed dGuard_typed dTree_typed is_sibling_def_typed pmatch_def_typed \
+  match_def_typed app_pos_def_typed dt_eval_guard_def_typed dt_eval_def_typed \
+  "$cake_dir/compiler/backend/pattern_matching/pattern_semanticsScript.sml" \
+  "$cake_dir/compiler/backend/pattern_matching"
