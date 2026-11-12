@@ -329,27 +329,35 @@ private theorem compFieldHOL_mem_of_index_lt {width : Nat} [NeZero width]
               (Flapjack.Pancake.PanLang.sizeOfShapeHOL shape)) hindex' hmem')
 
 /-- Exact port of HOL `mem_comp_field`
-    (`pan_to_crepProofScript.sml:666`). The value, shape, and expression
-    carriers are `ValueHOL`, `ShapeHOL`, and `CrepExpHOL`; `hindex`, the
-    flattened-size premise, the `comp_field` result equation, the record-shape
-    equation, and the membership conclusion match HOL directly. -/
-@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "mem_comp_field"]
+    (`pan_to_crepProofScript.sml:666-672`). The value, shape, and expression
+    carriers are `ValueHOL`, `ShapeHOL`, and `CrepExpHOL`; the typed capture
+    `mem_comp_field_typed` (`pan_to_crep_proof_typed_probe.out:14`) gives
+    `e :α crepLang$exp list` and `vs :β v list`, so the expression width α and
+    the value width β are independent. HOL has the single five-part
+    conjunctive premise
+    `i < LENGTH vs ∧ LENGTH e = size_of_shape (shape_of (RStruct vs)) ∧
+     comp_field i sh e = (es,shp) ∧ Comb sh = shape_of (RStruct vs) ∧
+     MEM ce es`; the port takes that one premise and destructures it
+    (task 152 item 3). -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "mem_comp_field"
+  (words_as_type_indexed_bitvec)]
 theorem memCompFieldHOLExact {width : Nat} [NeZero width]
+    {valueWidth : Nat} [NeZero valueWidth]
     (shapes : List Flapjack.Pancake.PanLang.ShapeHOL) (index : Nat)
     (expressions : List (CrepExpHOL width))
     (selectedShape : Flapjack.Pancake.PanLang.ShapeHOL)
     (candidate : CrepExpHOL width) (selected : List (CrepExpHOL width))
-    (values : List (ValueHOL width))
-    (hindex : index < values.length)
-    (_hlength : expressions.length =
-      Flapjack.Pancake.PanLang.sizeOfShapeHOL
-        (shapeOfHOLExact (.rStruct values)))
-    (hcompiled : compFieldHOL index shapes expressions =
-      (selected, selectedShape))
-    (hshape : Flapjack.Pancake.PanLang.ShapeHOL.comb shapes =
-      shapeOfHOLExact (.rStruct values))
-    (hmem : candidate ∈ selected) :
+    (values : List (ValueHOL valueWidth))
+    (h : index < values.length ∧
+      expressions.length =
+        Flapjack.Pancake.PanLang.sizeOfShapeHOL
+          (shapeOfHOLExact (.rStruct values)) ∧
+      compFieldHOL index shapes expressions = (selected, selectedShape) ∧
+      Flapjack.Pancake.PanLang.ShapeHOL.comb shapes =
+        shapeOfHOLExact (.rStruct values) ∧
+      candidate ∈ selected) :
     candidate ∈ expressions := by
+  obtain ⟨hindex, _hlength, hcompiled, hshape, hmem⟩ := h
   have hshapes : shapes = values.map shapeOfHOLExact :=
     Flapjack.Pancake.PanLang.ShapeHOL.comb.inj
       (by simpa [shapeOfHOLExact] using hshape)
@@ -358,6 +366,28 @@ theorem memCompFieldHOLExact {width : Nat} [NeZero width]
   have hmem' : candidate ∈ (compFieldHOL index shapes expressions).1 := by
     simpa [hcompiled] using hmem
   exact compFieldHOL_mem_of_index_lt index shapes expressions candidate hindex' hmem'
+
+/-- Untagged curried wrapper for callers that hold the five premises
+    separately; the tagged theorem takes HOL's single conjunction. -/
+theorem memCompFieldHOLExact_curried {width : Nat} [NeZero width]
+    {valueWidth : Nat} [NeZero valueWidth]
+    (shapes : List Flapjack.Pancake.PanLang.ShapeHOL) (index : Nat)
+    (expressions : List (CrepExpHOL width))
+    (selectedShape : Flapjack.Pancake.PanLang.ShapeHOL)
+    (candidate : CrepExpHOL width) (selected : List (CrepExpHOL width))
+    (values : List (ValueHOL valueWidth))
+    (hindex : index < values.length)
+    (hlength : expressions.length =
+      Flapjack.Pancake.PanLang.sizeOfShapeHOL
+        (shapeOfHOLExact (.rStruct values)))
+    (hcompiled : compFieldHOL index shapes expressions =
+      (selected, selectedShape))
+    (hshape : Flapjack.Pancake.PanLang.ShapeHOL.comb shapes =
+      shapeOfHOLExact (.rStruct values))
+    (hmem : candidate ∈ selected) :
+    candidate ∈ expressions :=
+  memCompFieldHOLExact shapes index expressions selectedShape candidate selected
+    values ⟨hindex, hlength, hcompiled, hshape, hmem⟩
 
 /-- Exact port of HOL `mem_comp_field_lem`
     (`pan_to_crepProofScript.sml:397-406`), which states

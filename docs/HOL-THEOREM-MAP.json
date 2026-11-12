@@ -93732,8 +93732,17 @@
     "hol_name": "mem_comp_field",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "memCompFieldHOLExact",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Exact port of pan_to_crepProofScript.sml:666: i < LENGTH vs, LENGTH e = size_of_shape (shape_of (RStruct vs)), comp_field i sh e = (es, shp), Comb sh = shape_of (RStruct vs), and MEM ce es imply MEM ce e. Uses exact ShapeHOL, ValueHOL, and CrepExpHOL carriers; [NeZero width] reflects positive HOL word dimension. The source theorem's length premise is retained even though this proof does not need it. Direct HOL-EVAL comp_field rows first/second in scripts/hol-probes/comp_field_probe.out are reproduced over exact carriers in CompFieldParity, which also exercises this theorem at both selections."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+    "reviewer": "Exact port of pan_to_crepProofScript.sml:666-672: the single conjunctive premise i < LENGTH vs ∧ LENGTH e = size_of_shape (shape_of (RStruct vs)) ∧ comp_field i sh e = (es, shp) ∧ Comb sh = shape_of (RStruct vs) ∧ MEM ce es implies MEM ce e. Uses exact ShapeHOL, ValueHOL, and CrepExpHOL carriers. The typed capture mem_comp_field_typed (pan_to_crep_proof_typed_probe.out:14) gives e :α crepLang$exp list and vs :β v list, so the expression width α and value width β are independent: the statement binds {width} and {valueWidth} separately with their own [NeZero] discharges and takes HOL's one conjunction, destructured in the proof (task 152 item 3). The source theorem's length premise is retained even though this proof does not need it. Direct HOL-EVAL comp_field rows first/second in scripts/hol-probes/comp_field_probe.out are reproduced over exact carriers in CompFieldParity, which also exercises this theorem at both selections."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "memCompFieldHOLExact_curried",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific curried wrapper around the tagged mem_comp_field port: it takes the five premises separately and passes them as HOL's single conjunction (task 152 item 3). It has no HOL declaration of its own; callers that already hold the premises separately use it."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
