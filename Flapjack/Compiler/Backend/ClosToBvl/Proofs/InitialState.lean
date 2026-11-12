@@ -199,15 +199,14 @@ theorem initialEvaluationSimulation_of_entry {C F : Type} (ffi : HolFfiState F) 
   have states : stateRel HolFiniteMapExact.empty source target :=
     initial_stateRel ffi maxApp clock sourceCode sourceOracle sourceCompiler targetCode targetOracle targetCompiler
       generic partialStubs force oracle compiledCode
-  have codeAnnotations' : codeAnnotations source := by
-    simpa [source, codeAnnotations, ClosSem.initialState] using annotations
+  have codeAnnotations' : codeAnnotations source := annotations
   have compilation : compileExpsHOL maxApp [.call .none 0 sourceStart []] [] =
       ([.call 0 (some (sourceStart + numStubs maxApp)) []], []) := by
     rw [compileExps_eq_list]
     simp [compileExpListHOL, compileExpHOL]
   have post := expressionSimulation_all (C := C) (F := F) [.call .none 0 sourceStart []]
     source final target [] [] HolFiniteMapExact.empty [] [] [.call 0 (some (sourceStart + numStubs maxApp)) []]
-    result run noType (by simpa [source, ClosSem.initialState] using compilation)
+    result run noType compilation
     (by simp [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp]) codeAnnotations'
     (by simp [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp]) (by simp [codeInstalled])
     (by simp [envRel]) states
@@ -285,7 +284,7 @@ theorem compileProgSemantics_source {C F : Type} (ffi : HolFfiState F) (maxApp :
   · intro total previous bounds
     have arithmetic : total + 1 - previous = total - previous + 1 := by omega
     simpa [arithmetic] using partialStubs total previous bounds
-  · simpa [codeAnnotations, ClosSem.initialState] using And.intro locations vars
+  · exact ⟨locations, vars⟩
   · simpa [Nat.add_comm] using entry
 
 end Flapjack.Compiler.Backend.ClosToBvl

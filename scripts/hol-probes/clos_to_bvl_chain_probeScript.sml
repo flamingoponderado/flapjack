@@ -79,6 +79,13 @@ val _ = show_thm "eval_sim_def_typed=" clos_to_bvlProofTheory.eval_sim_def;
 val _ = show_thm "IMP_semantics_eq_typed=" clos_to_bvlProofTheory.IMP_semantics_eq;
 val _ = show_thm "clos_init_def_typed=" clos_to_bvlProofTheory.clos_init_def;
 val _ = show_thm "clos_init_with_clock_typed=" clos_to_bvlProofTheory.clos_init_with_clock;
+(* This closure initial-clock theorem is local in the original script. *)
+val initial_state_with_clock_replay = Q.prove (
+  `(closSem$initial_state ffi ma code co cc k with clock :=
+      (closSem$initial_state ffi ma code co cc k).clock + ck) =
+      closSem$initial_state ffi ma code co cc (k + ck)`,
+  fs [closSemTheory.initial_state_def]);
+val _ = show_thm "initial_state_with_clock_replay=" initial_state_with_clock_replay;
 (* The BVL clock theorem is local; replay the original proof and inferred types. *)
 val initial_state_with_clock_bvl_replay = Q.prove (
   `(bvlSem$initial_state ffi code co cc k with clock :=

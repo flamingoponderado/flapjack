@@ -16249,6 +16249,15 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "initial_state_with_clock",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Semantics.lean",
+    "lean_name": "closInitialState_withClock",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code", "code"],
+    "reviewer": "Compared the original local proof and typed replay: compiler and FFI carriers remain independent, the source code map and callbacks are unchanged, and updating the initial clock gives the full initial state at k + ck. The code parameter and closure state's refs and code fields use canonical finite-support maps, with a same-module state roundtrip witness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
     "hol_name": "initial_state_with_clock_bvl",
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Semantics.lean",
     "lean_name": "initialState_withClock",
