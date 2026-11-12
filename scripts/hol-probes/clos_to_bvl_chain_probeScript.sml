@@ -116,6 +116,22 @@ val _ = show_thm "v_rel_union_replay=" v_rel_union_replay;
 local
   open preamble clos_to_bvlTheory clos_to_bvlProofTheory bvlSemTheory bvlPropsTheory listTheory backend_commonTheory
 in
+  val bEval_def = bvlSemTheory.evaluate_def;
+  val bEvalOp_def = bvlSemTheory.do_app_def;
+  val bEval_free_let_Block_replay = Q.prove (
+  `!ys zs.
+    evaluate ([x],env,s) = (Rval [Block n (y::z::ys ++ zs)], s)
+    ⇒
+    evaluate (free_let x (LENGTH ys),env,s) = (Rval ys,s)`,
+  ho_match_mp_tac SNOC_INDUCT >>
+  srw_tac[][free_let_def, bEval_def] >>
+  full_simp_tac(srw_ss())[SNOC_APPEND] \\ FULL_SIMP_TAC std_ss [GSYM APPEND_ASSOC] >>
+  res_tac >>
+  full_simp_tac(srw_ss())[GENLIST, bvlPropsTheory.evaluate_SNOC, bEvalOp_def, bEval_def,
+  do_int_app_def] >>
+  simp [EL_CONS, PRE_SUB1, el_append3])
+   |> Q.SPECL [`ys`,`[]`] |> SIMP_RULE std_ss [APPEND_NIL];
+  val _ = show_thm "bEval_free_let_Block_replay=" bEval_free_let_Block_replay;
   val genlist_el_replay = Q.prove (
     `!skip st r xs args p n env ys.
     FLOOKUP st.refs r = SOME (ValueArray (ys++xs)) ∧

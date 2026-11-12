@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.DirectApplication
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureShape
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveEntry
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreeLet
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateCall
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 public import Flapjack.Compiler.Backend.BvlJump.Proofs
@@ -239,28 +240,6 @@ theorem evaluate_mkClCall_direct_env {C F : Type} (s : BvlSem.State C F)
     values tag ptr fields body (by simpa [closure] using clRun) argsRun argsNonempty lookup
   simpa [env, closure] using h
 
-/-- The generated free-variable selectors read the payload after the two
-closure metadata fields, preserving both its order and the target state. -/
-theorem evaluate_freeLet {C F : Type} (n : Nat) (s : BvlSem.State C F)
-    (env : List BvlSem.Value) (closure : Bvl.Exp) (tag : Nat)
-    (code arity : BvlSem.Value) (fields : List BvlSem.Value)
-    (clRun : BvlSem.evaluate [closure] env s = (.val [.block tag (code :: arity :: fields)], s))
-    (bound : n ≤ fields.length) :
-    BvlSem.evaluate (freeLet closure n) env s = (.val (fields.take n), s) := by
-  induction n with
-  | zero => simp [freeLet, BvlSem.evaluate]
-  | succ n ih =>
-    have boundN : n ≤ fields.length := by omega
-    have indexBound : n < fields.length := by omega
-    have elemRun : BvlSem.evaluate [.op (.blockOp (.elemAt (n + 2))) [closure]] env s =
-        (.val [fields[n]], s) := by
-      rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, clRun]
-      simp [BvlSem.doApp, BvlSem.applyBlock, indexBound]
-    simp only [freeLet, List.range_succ, List.map_append, List.map_singleton]
-    change BvlSem.evaluateTuple (freeLet closure n ++ [.op (.blockOp (.elemAt (n + 2))) [closure]], env, s) = _
-    rw [BvlProps.evaluateAppend]
-    simp only [BvlSem.evaluateTuple, ih boundN, elemRun, List.take_append_getElem indexBound]
-
 /-- An ordinary closure's entry code exposes arguments followed by captured
 values to its compiled body. -/
 theorem evaluate_closure_entry {C F : Type} (s : BvlSem.State C F)
@@ -277,7 +256,7 @@ theorem evaluate_closure_entry {C F : Type} (s : BvlSem.State C F)
   have clRun : BvlSem.evaluate [.var args.length] env s = (.val [.block tag (code :: arity :: fields)], s) := by
     simp [BvlSem.evaluate, env]
   have freeRun : BvlSem.evaluate (freeLet (.var args.length) fields.length) env s = (.val fields, s) := by
-    simpa using evaluate_freeLet fields.length s env (.var args.length) tag code arity fields clRun (by simp)
+    simpa using bEval_freeLet_block fields (.var args.length) env s tag code arity clRun
   have bindingsRun : BvlSem.evaluate ((List.range args.length).map Bvl.Exp.var ++
       freeLet (.var args.length) fields.length) env s = (.val (args ++ fields), s) := by
     change BvlSem.evaluateTuple (((List.range args.length).map Bvl.Exp.var ++
@@ -686,8 +665,8 @@ theorem evaluate_singletonRec_entry {C F : Type} (s : BvlSem.State C F)
   have clRun : BvlSem.evaluate [.var args.length] env s = (.val [closure], s) := by
     simp [BvlSem.evaluate, env]
   have freeRun : BvlSem.evaluate (freeLet (.var args.length) fields.length) env s = (.val fields, s) := by
-    simpa [closure] using evaluate_freeLet fields.length s env (.var args.length) tag code arity fields
-      (by simpa [closure] using clRun) (by simp)
+    simpa [closure] using bEval_freeLet_block fields (.var args.length) env s tag code arity
+      (by simpa [closure] using clRun)
   have bindingsRun : BvlSem.evaluate ((List.range (args.length + 1)).map Bvl.Exp.var ++
       freeLet (.var args.length) fields.length) env s = (.val ((args ++ [closure]) ++ fields), s) := by
     change BvlSem.evaluateTuple (((List.range (args.length + 1)).map Bvl.Exp.var ++
