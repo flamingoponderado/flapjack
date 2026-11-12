@@ -19911,6 +19911,16 @@
 },
   {
   "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+  "hol_name": "evaluate_genlist_vars",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateList.lean",
+  "lean_name": "evaluateGenlistVars",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed HOL theorem: arbitrary skip, environment, length and independent compiler/FFI state types, the original n + skip bound, generated shifted variables, exact TAKE/DROP result and unchanged state are retained. The state's refs field uses the canonical finite-support carrier and same-module roundtrip witness. Evaluation inherits reals_as_rational_cuts."
+},
+  {
+  "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
   "hol_name": "evaluate_SNOC",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/EvaluateList.lean",
   "lean_name": "evaluateSnoc",

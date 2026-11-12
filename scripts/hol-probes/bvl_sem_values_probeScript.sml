@@ -195,6 +195,7 @@ val _ = show "bvl_evaluate_sing=" bvlPropsTheory.evaluate_SING;
 val _ = show "bvl_evaluate_cons=" bvlPropsTheory.evaluate_CONS;
 val _ = show "bvl_evaluate_append=" bvlPropsTheory.evaluate_APPEND;
 val _ = show "bvl_evaluate_snoc=" bvlPropsTheory.evaluate_SNOC;
+val _ = show "bvl_evaluate_genlist_vars=" bvlPropsTheory.evaluate_genlist_vars;
 val _ = example "eval_var=" ``FST (bvlSem$evaluate ([bvl$Var 0], [bvlSem$Number 7], ^base_state))``;
 val _ = example "eval_let=" ``FST (bvlSem$evaluate
   ([bvl$Let [bvl$Var 0; bvl$Var 1] (bvl$Var 1)], [bvlSem$Number 7; bvlSem$Number 9], ^base_state))``;

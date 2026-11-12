@@ -168,7 +168,7 @@ theorem evaluate_directCall_env {C F : Type} (s : BvlSem.State C F)
   let env := values ++ [closure] ++ rest
   have argsRun : BvlSem.evaluate ((List.range values.length).map Bvl.Exp.var) env s = (.val values, s) := by
     have bound : values.length ≤ env.length := by simp [env]
-    simpa [env] using evaluate_rangeVars values.length env s bound
+    simpa [env, BvlSem.evaluateTuple] using BvlProps.evaluateGenlistVars 0 env values.length s bound
   have closureRun : BvlSem.evaluate [.var values.length] env s = (.val [closure], s) := by
     simp [BvlSem.evaluate, env]
   have arguments : BvlSem.evaluate ((List.range values.length).map Bvl.Exp.var ++ [.var values.length]) env s =

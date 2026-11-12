@@ -213,25 +213,6 @@ theorem evaluate_mkClCall_direct {C F : Type} (s : BvlSem.State C F)
     | cons z zs ih => simp [Flapjack.holLast_cons, ih]
   simp [BvlSem.findCode, count, BackendCommon.trueTag, lastPair, lookup]
 
-/-- The generated sequence of variables reads a prefix of the target
-environment without changing the state. -/
-theorem evaluate_rangeVars {C F : Type} (n : Nat) (env : List BvlSem.Value)
-    (s : BvlSem.State C F) (bound : n ≤ env.length) :
-    BvlSem.evaluate ((List.range n).map Bvl.Exp.var) env s = (.val (env.take n), s) := by
-  induction n with
-  | zero => simp [BvlSem.evaluate]
-  | succ n ih =>
-    have boundN : n ≤ env.length := by omega
-    have indexBound : n < env.length := by omega
-    rw [List.range_succ, List.map_append]
-    change BvlSem.evaluateTuple (((List.range n).map Bvl.Exp.var ++ [.var n]), env, s) = _
-    rw [BvlProps.evaluateAppend]
-    simp only [BvlSem.evaluateTuple, ih boundN]
-    have varRun : BvlSem.evaluate [.var n] env s = (.val [env[n]], s) := by
-      simp [BvlSem.evaluate, indexBound]
-    rw [varRun]
-    simp only [List.take_append_getElem indexBound]
-
 /-- The compiler's generated variable call enters the closure body when its
 remaining arity exactly matches the nonempty argument prefix. -/
 theorem evaluate_mkClCall_direct_env {C F : Type} (s : BvlSem.State C F)
@@ -249,7 +230,7 @@ theorem evaluate_mkClCall_direct_env {C F : Type} (s : BvlSem.State C F)
     simp [BvlSem.evaluate, env]
   have argsRun : BvlSem.evaluate ((List.range values.length).map Bvl.Exp.var) env s = (.val values, s) := by
     have bound : values.length ≤ env.length := by simp [env]
-    simpa [env] using evaluate_rangeVars values.length env s bound
+    simpa [env, BvlSem.evaluateTuple] using BvlProps.evaluateGenlistVars 0 env values.length s bound
   have argsNonempty : (List.range values.length).map Bvl.Exp.var ≠ [] := by
     simpa using nonempty
   have h := evaluate_mkClCall_direct s env (.var values.length) ((List.range values.length).map Bvl.Exp.var)
@@ -290,7 +271,7 @@ theorem evaluate_closure_entry {C F : Type} (s : BvlSem.State C F)
   let env := args ++ [.block tag (code :: arity :: fields)]
   have argsRun : BvlSem.evaluate ((List.range args.length).map Bvl.Exp.var) env s = (.val args, s) := by
     have bound : args.length ≤ env.length := by simp [env]
-    simpa [env] using evaluate_rangeVars args.length env s bound
+    simpa [env, BvlSem.evaluateTuple] using BvlProps.evaluateGenlistVars 0 env args.length s bound
   have clRun : BvlSem.evaluate [.var args.length] env s = (.val [.block tag (code :: arity :: fields)], s) := by
     simp [BvlSem.evaluate, env]
   have freeRun : BvlSem.evaluate (freeLet (.var args.length) fields.length) env s = (.val fields, s) := by
@@ -699,7 +680,7 @@ theorem evaluate_singletonRec_entry {C F : Type} (s : BvlSem.State C F)
   have argsRun : BvlSem.evaluate ((List.range (args.length + 1)).map Bvl.Exp.var) env s =
       (.val (args ++ [closure]), s) := by
     have bound : args.length + 1 ≤ env.length := by simp [env]
-    simpa [env, List.take_of_length_le] using evaluate_rangeVars (args.length + 1) env s bound
+    simpa [env, List.take_of_length_le, BvlSem.evaluateTuple] using BvlProps.evaluateGenlistVars 0 env (args.length + 1) s bound
   have clRun : BvlSem.evaluate [.var args.length] env s = (.val [closure], s) := by
     simp [BvlSem.evaluate, env]
   have freeRun : BvlSem.evaluate (freeLet (.var args.length) fields.length) env s = (.val fields, s) := by
@@ -1552,7 +1533,7 @@ theorem evaluate_mkClCall_partial_new {C F : Type} (s : BvlSem.State C F)
     simp [BvlSem.evaluate, env]
   have argsRun : BvlSem.evaluate ((List.range args.length).map Bvl.Exp.var) env s = (.val args, s) := by
     have bound : args.length ≤ env.length := by simp [env]
-    simpa [env] using evaluate_rangeVars args.length env s bound
+    simpa [env, BvlSem.evaluateTuple] using BvlProps.evaluateGenlistVars 0 env args.length s bound
   have different : ((List.range args.length).map Bvl.Exp.var).length - 1 ≠ total := by
     simp only [List.length_map, List.length_range, length]
     omega
@@ -2042,7 +2023,7 @@ theorem evaluate_mkClCall_partial_extend {C F : Type} (s : BvlSem.State C F)
     simp [BvlSem.evaluate, env]
   have argsRun : BvlSem.evaluate ((List.range args.length).map Bvl.Exp.var) env s = (.val args, s) := by
     have envBound : args.length ≤ env.length := by simp [env]
-    simpa [env] using evaluate_rangeVars args.length env s envBound
+    simpa [env, BvlSem.evaluateTuple] using BvlProps.evaluateGenlistVars 0 env args.length s envBound
   have different : ((List.range args.length).map Bvl.Exp.var).length - 1 ≠ remaining := by
     simp only [List.length_map, List.length_range, length]
     omega
@@ -4626,7 +4607,7 @@ theorem evaluate_mkClCall_over_step {C F : Type} (s : BvlSem.State C F)
   have clRun : BvlSem.evaluate [.var args.length] env s = (.val [closure], s) := by simp [BvlSem.evaluate, env]
   have argsRun : BvlSem.evaluate ((List.range args.length).map Bvl.Exp.var) env s = (.val args, s) := by
     have bound : args.length ≤ env.length := by simp [env]
-    simpa [env] using evaluate_rangeVars args.length env s bound
+    simpa [env, BvlSem.evaluateTuple] using BvlProps.evaluateGenlistVars 0 env args.length s bound
   have different : ((List.range args.length).map Bvl.Exp.var).length - 1 ≠ total := by
     simp only [List.length_map, List.length_range, length]
     omega
@@ -5163,7 +5144,7 @@ theorem evaluate_overApp_continue_canonical {C F : Type} (s : BvlSem.State C F)
     have bound : remaining.length ≤ (remaining ++ [value] ++ extra).length := by simp
     change BvlSem.evaluate ((List.range remaining.length).map Bvl.Exp.var)
       (remaining ++ [value] ++ extra) u = (.val remaining, u)
-    simpa using evaluate_rangeVars remaining.length (remaining ++ [value] ++ extra) u bound
+    simpa [BvlSem.evaluateTuple] using BvlProps.evaluateGenlistVars 0 (remaining ++ [value] ++ extra) remaining.length u bound
 
 /-- Lift the canonical remaining-call simulation to the environment used by
 the generated overapplication continuation. -/

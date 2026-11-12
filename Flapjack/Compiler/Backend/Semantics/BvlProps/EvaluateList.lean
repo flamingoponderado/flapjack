@@ -102,4 +102,27 @@ theorem evaluateSnoc {C F : Type} (expressions : List Bvl.Exp) (env : List Value
       | other => other :=
   evaluateAppend expressions env state [expression]
 
+/-- Generated variable indices evaluate to the requested environment slice. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "evaluate_genlist_vars"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateGenlistVars {C F : Type} (skip : Nat) (env : List Value) (n : Nat)
+    (state : Flapjack.Compiler.Backend.BvlSem.State C F) (bound : n + skip ≤ env.length) :
+    evaluateTuple (((List.range n).map (fun arg => Bvl.Exp.var (arg + skip))), env, state) =
+      (.val ((env.drop skip).take n), state) := by
+  induction n with
+  | zero => simp [evaluateTuple, evaluate]
+  | succ n ih =>
+    have boundN : n + skip ≤ env.length := by omega
+    have indexBound : n + skip < env.length := by omega
+    rw [List.range_succ, List.map_append]
+    rw [evaluateAppend]
+    simp only [ih boundN, List.map_cons, List.map_nil]
+    have varRun : evaluateTuple ([.var (n + skip)], env, state) =
+        (.val [env[n + skip]], state) := by
+      simp [evaluateTuple, evaluate, indexBound]
+    rw [varRun]
+    have droppedBound : n < (env.drop skip).length := by simp; omega
+    rw [← List.take_append_getElem droppedBound]
+    simp [List.getElem_drop, Nat.add_comm]
+
 end Flapjack.Compiler.Backend.BvlProps
