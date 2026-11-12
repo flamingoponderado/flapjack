@@ -552,6 +552,7 @@ in
   srw_tac[][el_append3] >>
   decide_tac);
   val evaluate_genlist_prev_args_no_rev = evaluate_genlist_prev_args_no_rev_replay;
+  val _ = show_thm "evaluate_genlist_prev_args_no_rev_replay=" evaluate_genlist_prev_args_no_rev_replay;
   val evaluate_genlist_prev_args1_no_rev_replay = Q.prove (
     `  !prev_args x tag p n cl args st.
     evaluate (GENLIST (λprev_arg.
