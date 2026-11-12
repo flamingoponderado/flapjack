@@ -10699,3 +10699,8 @@ run_probe stack_to_lab_typed_probeScript.sml stack_to_lab_typed_probe.out \
   negate_def_typed prog_to_section_def_typed \
   "$cake_dir/compiler/backend/stack_to_labScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe source_letProof_typed_probeScript.sml source_letProof_typed_probe.out \
+  compile_semantics_oracle_typed compile_decs_correct_typed compile_semantics_typed evaluate_lift_lets_typed evaluate_lift_let_typed lift_lets_is_prefix_typed \
+  "$cake_dir/compiler/backend/proofs/source_letProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
