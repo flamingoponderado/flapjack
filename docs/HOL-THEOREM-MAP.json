@@ -145,6 +145,18 @@
   "reviewer": "Independent typed HOL comparison confirms the original compilation equality, full length and suffix conclusions, binder order, and faithful closure and BVL carriers."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "v_rel_IMP_v_to_bytes_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "vRel_valueToBytes_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Compared the literal local HOL source proof and typed replay: arbitrary related source and target values satisfy both directions of byte-list decoding equivalence for every fixed-width word8 list, using the original integer encoding. The f and refs inputs use canonical finite support and same-module codec witnesses."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "v_rel_IMP_v_to_bytes",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "vRel_valueToBytes",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Compared the literal local HOL source proof and typed replay: related source and target values have equal full optional byte decodings, including NONE, with fixed word8 bytes. The f and refs inputs use canonical finite support and same-module codec witnesses."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "not_domain_lookup",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode/Original.lean", "lean_name": "notDomainLookup",
   "statement_status": "reviewed_exact",

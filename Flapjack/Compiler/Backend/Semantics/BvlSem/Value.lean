@@ -59,6 +59,44 @@ theorem valueToList_listToValue (values : List Value) :
   | nil => simp [valueToList, listToValue]
   | cons v vs ih => simp [valueToList, listToValue, ih]
 
+/-- Flapjack inverse used by compiler proofs: successful decoding recovers the
+canonical list encoding. HOL unfolds these list functions in those proofs. -/
+theorem listToValue_valueToList (value : Value) (values : List Value)
+    (decode : valueToList value = some values) : listToValue values = value := by
+  cases value with
+  | block tag fields =>
+    cases fields with
+    | nil =>
+      simp only [valueToList] at decode
+      split at decode
+      · rename_i equal
+        simp only [Option.some.injEq] at decode
+        subst values
+        subst tag
+        rfl
+      · contradiction
+    | cons head tail =>
+      cases tail with
+      | nil => simp [valueToList] at decode
+      | cons next rest =>
+        cases rest with
+        | cons other rest => simp [valueToList] at decode
+        | nil =>
+          simp only [valueToList] at decode
+          split at decode
+          · rename_i equal
+            cases nextDecode : valueToList next with
+            | none => simp [nextDecode] at decode
+            | some vs =>
+              simp [nextDecode] at decode
+              subst values
+              have ih := listToValue_valueToList next vs nextDecode
+              subst tag
+              simp [listToValue, ih]
+          · contradiction
+  | _ => simp [valueToList] at decode
+termination_by sizeOf value
+
 /-- Whether a tagged nonempty block is a full or partial closure. -/
 @[hol "cakeml/compiler/backend/semantics/bvlSemScript.sml" "isClos_def"]
 def isClosure {α : Type} (tag : Nat) (values : List α) : Prop :=

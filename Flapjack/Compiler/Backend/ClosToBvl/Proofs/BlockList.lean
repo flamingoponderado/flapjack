@@ -54,6 +54,49 @@ theorem decodedList_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
   rw [← sourceEq] at related
   exact valueToList_related xs target related
 
+/-- Flapjack inversion for small target tags: closure-specific tags cannot
+occur, so related fields come from a source block with the same tag. -/
+private theorem related_target_smallBlock {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    (tag : Nat) (small : tag < 30) (fields : List BvlSem.Value) (source : ClosSem.Value)
+    (related : vRel maxApp f refs code source (.block tag fields)) :
+    ∃ xs, source = .block tag xs ∧ List.Forall₂ (vRel maxApp f refs code) xs fields := by
+  cases related with
+  | @block actualTag xs ys related =>
+    have eq : closTagShift actualTag = actualTag := by
+      by_cases low : actualTag < 30
+      · simp [closTagShift, low]
+      · have impossible : actualTag + 2 < 30 := by simpa [closTagShift, low] using small
+        omega
+    exact ⟨xs, by rw [eq], related⟩
+  | closure _ _ => omega
+  | partialClosure _ _ _ _ _ _ _ _ => omega
+
+/-- Flapjack reverse list-decoding support: a related encoded BVL list has a
+source list with pointwise related elements. HOL unfolds the relation in its
+byte- and word-decoding proofs. -/
+theorem valueToList_related_reverse {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    (ys : List BvlSem.Value) (source : ClosSem.Value)
+    (related : vRel maxApp f refs code source (BvlSem.listToValue ys)) :
+    ∃ xs, ClosSem.valueToList source = some xs ∧ List.Forall₂ (vRel maxApp f refs code) xs ys := by
+  induction ys generalizing source with
+  | nil =>
+    obtain ⟨xs, rfl, fields⟩ := related_target_smallBlock nilTag (by decide) [] source
+      (by simpa [BvlSem.listToValue] using related)
+    cases fields
+    exact ⟨[], by simp [ClosSem.valueToList], .nil⟩
+  | cons y ys ih =>
+    obtain ⟨xs, rfl, fields⟩ := related_target_smallBlock consTag (by decide) [y, BvlSem.listToValue ys] source
+      (by simpa [BvlSem.listToValue] using related)
+    cases fields with
+    | cons head fields =>
+      cases fields with
+      | cons tail fields =>
+        cases fields
+        obtain ⟨xs, decoded, rel⟩ := ih _ tail
+        exact ⟨_ :: xs, by simp [ClosSem.valueToList, decoded], .cons head rel⟩
+
 /-- List construction operations that retain the current state. -/
 inductive BlockListOp where
   | fromList : Nat → BlockListOp

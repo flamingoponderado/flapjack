@@ -15,27 +15,91 @@ public import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL
 
-/-- A source byte list and a related target value decode to identical bytes. -/
-theorem install_valueToBytes_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    (source : ClosSem.Value) (target : BvlSem.Value) (bytes : List (BitVec 8))
-    (related : vRel maxApp f refs code source target)
-    (decoded : ClosSem.valueToBytes source = some bytes) :
-    BvlSem.valueToBytes target = some bytes := by
-  have sourceList := (ClosSem.valueToBytes_eq_some source bytes).1 decoded
-  obtain ⟨values, targetList, valuesRel⟩ := decodedList_related source target _ related sourceList
-  have valuesEq : values = bytes.map (fun b => BvlSem.Value.number b.toNat) := by
-    clear decoded sourceList targetList related
-    induction bytes generalizing values with
-    | nil => cases valuesRel; rfl
-    | cons byte rest ih =>
-      cases valuesRel with
-      | cons head tail =>
-        have first := vRel_number_inv head
-        have remaining := ih _ tail
-        simp [first, remaining]
-  apply (BvlSem.valueToBytes_eq_some target bytes).2
-  simpa [valuesEq] using targetList
+/-- Canonical relocation-map codec for byte-decoding correspondence. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_valueToBytes_lemma_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup key = f.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f := by
+  cases f
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Canonical reference-map codec for byte-decoding correspondence. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_valueToBytes_lemma_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).lookup key = refs.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).finiteSupport = refs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs) = refs := by
+  cases refs
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Related values decode to the same byte-encoded list in both directions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_IMP_v_to_bytes_lemma"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem vRel_valueToBytes_lemma (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp)) :
+    ∀ source target, vRel maxApp f refs code source target → ∀ bytes : List (BitVec 8),
+      (ClosSem.valueToList source = some (bytes.map (fun b => .number b.toNat))) ↔
+      (BvlSem.valueToList target = some (bytes.map (fun b => .number b.toNat))) := by
+  intro source target related bytes
+  constructor
+  · intro decoded
+    obtain ⟨values, targetList, valuesRel⟩ := decodedList_related source target _ related decoded
+    have valuesEq : values = bytes.map (fun b => BvlSem.Value.number b.toNat) := by
+      clear decoded targetList related
+      induction bytes generalizing values with
+      | nil => cases valuesRel; rfl
+      | cons byte rest ih =>
+        cases valuesRel with
+        | cons head tail =>
+          have first := vRel_number_inv head
+          have remaining := ih _ tail
+          simp [first, remaining]
+    simpa [valuesEq] using targetList
+  · intro decoded
+    have targetEq := BvlSem.listToValue_valueToList target _ decoded
+    rw [← targetEq] at related
+    obtain ⟨values, sourceList, valuesRel⟩ := valueToList_related_reverse _ source related
+    have valuesEq : values = bytes.map (fun b => ClosSem.Value.number b.toNat) := by
+      clear decoded targetEq sourceList related
+      induction bytes generalizing values with
+      | nil => cases valuesRel; rfl
+      | cons byte rest ih =>
+        cases valuesRel with
+        | cons head tail =>
+          cases head
+          have remaining := ih _ tail
+          simp [remaining]
+    simpa [valuesEq] using sourceList
+
+/-- Canonical relocation-map codec for full byte-decoding equality. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_valueToBytes_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup key = f.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f :=
+  holFmapAsFiniteSupportParamWitness_vRel_valueToBytes_lemma_f f key
+
+/-- Canonical reference-map codec for full byte-decoding equality. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_valueToBytes_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).lookup key = refs.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).finiteSupport = refs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs) = refs :=
+  holFmapAsFiniteSupportParamWitness_vRel_valueToBytes_lemma_refs refs key
+
+/-- Related source and target values have identical optional byte decodings. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_IMP_v_to_bytes"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem vRel_valueToBytes (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (source : ClosSem.Value) (target : BvlSem.Value)
+    (related : vRel maxApp f refs code source target) :
+    BvlSem.valueToBytes target = ClosSem.valueToBytes source := by
+  apply Option.ext
+  intro bytes
+  simp only [BvlSem.valueToBytes_eq_some, ClosSem.valueToBytes_eq_some]
+  exact (vRel_valueToBytes_lemma maxApp f refs code source target related bytes).symm
 
 /-- A source word list and a related target value decode to identical words. -/
 theorem install_valueToWords_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
@@ -123,7 +187,9 @@ theorem install_target_run {C F : Type} (s : ClosSem.State C F) (t : BvlSem.Stat
           code := sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))
           compileOracle := fun n => t.compileOracle (n + 1) }) := by
   obtain ⟨start, body, tail, extracted, program⟩ := compileInc_head s.maxApp (expressions, auxiliary)
-  have targetBytesDecoded := install_valueToBytes_related sourceBytes targetBytes bytes bytesRel bytesDecoded
+  have targetBytesDecoded : BvlSem.valueToBytes targetBytes = some bytes := by
+    rw [vRel_valueToBytes s.maxApp f t.refs t.code sourceBytes targetBytes bytesRel]
+    exact bytesDecoded
   have targetWordsDecoded := install_valueToWords_related sourceWords targetWords words wordsRel wordsDecoded
   obtain ⟨headEq, compileEq, nodup, fresh⟩ := compileOracleInv_head s.maxApp s.code s.compile s.compileOracle
     t.code t.compile t.compileOracle oracle
