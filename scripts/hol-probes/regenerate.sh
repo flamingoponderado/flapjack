@@ -10676,3 +10676,9 @@ run_probe bvl_to_bvi_config_typed_probeScript.sml bvl_to_bvi_config_typed_probe.
   get_names_def_typed compile_aux_def_typed compile_exps_sing_def_typed compile_single_def_typed compile_list_def_typed compile_inc_def_typed \
   "$cake_dir/compiler/backend/bvl_to_bviScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe loop_live_typed_probeScript.sml loop_live_typed_probe.out \
+  arith_vars_typed comp_def_typed mark_all_def_typed optimise_def_typed shrink_def_typed size_inter_typed size_mk_BN_typed size_mk_BS_typed \
+  vars_of_exp_def_typed fixedpoint_thm_typed \
+  "$cake_dir/pancake/loop_liveScript.sml" \
+  "$cake_dir/pancake"
