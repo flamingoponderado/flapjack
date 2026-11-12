@@ -37,6 +37,26 @@ theorem clRel_grow_refs {maxApp : Nat} {fs1 fs2 : Nat → Prop}
       obtain ⟨stored', fresh'⟩ := frame _ _ stored fresh
       exact .mutualRec exps ps positions values fresh' stored' length index loc vars installed
 
+/-- Adding a fresh target reference preserves the closure relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_NEW_REF"
+  (fmap_as_finite_support_relation := [refs])]
+theorem clRel_newRef (maxApp : Nat) (fs : Nat → Prop)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (env : List ClosSem.Value) (ys : List BvlSem.Value) (r : Nat)
+    (cell : BvlSem.Ref BvlSem.Value) :
+    ∀ x y, clRel maxApp fs refs code (env, ys) x y → refs.lookup r = none →
+      clRel maxApp fs (refs.updateEq (r, cell)) code (env, ys) x y := by
+  intro x y related fresh
+  apply clRel_grow_refs related
+  intro key value found outside
+  have different : key ≠ r := by
+    intro eq
+    subst key
+    rw [fresh] at found
+    contradiction
+  exact ⟨by simpa [HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL, different] using found,
+    outside⟩
+
 /-- Updating a protected target reference preserves the closure relation. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_UPDATE_REF"
   (fmap_as_finite_support_relation := [refs])]
