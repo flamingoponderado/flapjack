@@ -96859,7 +96859,7 @@
       "es"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.4.4.2): HOL mk_ctxt_imp_locals_rel (pan_to_crepProofScript.sml:4677-4679): !pc lcl es. locals_rel (mk_ctxt FEMPTY (make_funcs pc) 0 es) FEMPTY lcl. Lean keeps the binders pc lcl es over the tagged mkCtxtExactHOL, makeFuncsExactHOL and panToCrepLocalsRelFiniteExact. FEMPTY is HolFiniteMapExact.empty. pc has make_funcs' input type (name, params, body, return shape). lcl and es are standalone finite-map parameters, and vars is the context field locals_rel traverses (same-module witness PanToCrepStateRelImpSemanticsWitnesses). No premise. Kernel-checked."
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.4.4.2): HOL mk_ctxt_imp_locals_rel (pan_to_crepProofScript.sml:4677-4679): !pc lcl es. locals_rel (mk_ctxt FEMPTY (make_funcs pc) 0 es) FEMPTY lcl. Lean keeps the binders pc lcl es over the tagged mkCtxtExactHOL, makeFuncsExactHOL and panToCrepLocalsRelFiniteExact. FEMPTY is HolFiniteMapExact.empty. pc has make_funcs' input type (name, params, body, return shape), with the body payload α arbitrary (bound as {P}, task 152 item 2). The typed capture mk_ctxt_imp_locals_rel_typed (pan_to_crep_proof_typed_probe.out:49) types lcl at β word_lab and es at γ word, so those widths are independent and bound separately. lcl and es are standalone finite-map parameters, and vars is the context field locals_rel traverses (same-module witness PanToCrepStateRelImpSemanticsWitnesses). No premise. Kernel-checked."
   },
   {
     "hol_path": null,
