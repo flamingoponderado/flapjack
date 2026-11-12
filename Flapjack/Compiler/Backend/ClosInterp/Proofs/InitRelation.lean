@@ -20,15 +20,6 @@ theorem evaluate_compileInit_true {C F : Type} (state : ClosSem.State C F)
     ClosSem.fixClock, ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp,
     ClosSem.applyGlobal, ClosSem.getGlobal, emptyGlobals, positive, ClosSem.unitValue]
 
-/-- Initialization without installation reserves global slot zero as unit. -/
-theorem evaluate_compileInit_false {C F : Type} (state : ClosSem.State C F)
-    (emptyGlobals : state.globals = []) :
-    ClosSem.evaluate [compileInit false] [] state =
-      (.val [ClosSem.unitValue], { state with globals := [some ClosSem.unitValue] }) := by
-  simp [compileInit, interpreterCons_eq, interpreterVar_eq, ClosSem.evaluate,
-    ClosSem.fixClock, ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp,
-    ClosSem.applyGlobal, ClosSem.applyBlock, ClosSem.getGlobal, emptyGlobals, ClosSem.unitValue]
-
 /-- Initial states become related after the interpreter is installed in slot zero. -/
 theorem initialized_states_related {C F : Type} (ffi : HolFfiState F) (maxApp clock : Nat)
     (oracle : ClosSem.CompileOracle C) (compiler : ClosSem.Compiler C)

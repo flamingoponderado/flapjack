@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "let_opt_def",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/LetOpState.lean", "lean_name": "letOpt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: for every split flag, cutoff, arity and expression, the pair keeps its arity and applies source let-operation and handler compilation to the body."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "let_opt_remove_def",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/LetOpState.lean", "lean_name": "letOptRemove",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original for all split flags, cutoffs, arities and bodies. The singleton tick-removal equivalence ensures its result is exactly the HOL head of remove_ticks [body], so no empty-list head is observed."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "let_op_cc_def",
   "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/LetOpState.lean", "lean_name": "letOpCompiler",
   "statement_status": "reviewed_exact",

@@ -28,12 +28,15 @@ theorem stateCc_compileInc {C A B D : Type} (limit : Nat) (splitSeq : Bool) (cut
   cases run : tickCompileProg limit cache program with
   | mk cache' program' =>
     have optEq : (fun x : Nat × Nat × Bvl.Exp =>
-        (x.1, x.2.1, BvlHandle.compileAny splitSeq cutSize x.2.1
-          (letOpSing (removeTicksSing x.2.2)))) = optimise splitSeq cutSize := by
+        (x.1, letOptRemove splitSeq cutSize x.2)) = optimise splitSeq cutSize := by
       funext entry
       obtain ⟨name, arity, body⟩ := entry
       rfl
-    simp only [List.map_map, Function.comp_def, letOpTransform, optEq]
+    have optEqUnfolded : (fun x : Nat × Nat × Bvl.Exp =>
+        (x.1, letOpt splitSeq cutSize (x.2.1, removeTicksSing x.2.2))) =
+        optimise splitSeq cutSize := by
+      simpa only [letOptRemove] using optEq
+    simp only [List.map_map, Function.comp_def, optEqUnfolded]
     cases answer : compiler cfg (program'.map (optimise splitSeq cutSize)) with
     | none => rfl
     | some result =>

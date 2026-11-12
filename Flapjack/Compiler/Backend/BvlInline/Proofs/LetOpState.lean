@@ -15,18 +15,28 @@ after let-operation optimization. -/
 def letOpTransform (splitSeq : Bool) (limit arity : Nat) (body : Bvl.Exp) : Bvl.Exp :=
   BvlHandle.compileAny splitSeq limit arity (letOpSing body)
 
+/-- Optimize one arity and body pair with the source let-operation pass. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "let_opt_def"]
+def letOpt (splitSeq : Bool) (limit : Nat) (entry : Nat × Bvl.Exp) : Nat × Bvl.Exp :=
+  (entry.1, letOpTransform splitSeq limit entry.1 entry.2)
+
+/-- Optimize a body after the source singleton tick-removal pass. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "let_opt_remove_def"]
+def letOptRemove (splitSeq : Bool) (limit : Nat) (entry : Nat × Bvl.Exp) : Nat × Bvl.Exp :=
+  letOpt splitSeq limit (entry.1, removeTicksSing entry.2)
+
 /-- Compiler callback induced by the combined transformation. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "let_op_cc_def"]
 def letOpCompiler {Name C D : Type} (splitSeq : Bool) (limit : Nat)
     (compiler : C → List (Name × Nat × Bvl.Exp) → D) : C → List (Name × Nat × Bvl.Exp) → D :=
-  fun config program => compiler config (program.map fun (name, arity, body) =>
-    (name, arity, letOpTransform splitSeq limit arity body))
+  fun config program => compiler config (program.map fun (name, body) =>
+    (name, letOpt splitSeq limit body))
 
 /-- Oracle induced by the combined transformation. -/
 def letOpOracle {I C : Type} (splitSeq : Bool) (limit : Nat)
     (oracle : I → C × List (Nat × Nat × Bvl.Exp)) : I → C × List (Nat × Nat × Bvl.Exp) :=
-  fun clock => ((oracle clock).1, (oracle clock).2.map fun (name, arity, body) =>
-    (name, arity, letOpTransform splitSeq limit arity body))
+  fun clock => ((oracle clock).1, (oracle clock).2.map fun (name, body) =>
+    (name, letOpt splitSeq limit body))
 
 /-- The initial states of the source and transformed programs satisfy the
 generic code-mapping relation. -/
