@@ -157,6 +157,19 @@
   "reviewer": "Compared the literal local HOL source proof and typed replay: related source and target values have equal full optional byte decodings, including NONE, with fixed word8 bytes. The f and refs inputs use canonical finite support and same-module codec witnesses."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "unpack_closure",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/GenericPartial.lean", "lean_name": "UnpackClosure",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL inductive rules and cases: both arbitrary integer metadata values retain their nonnegativity premises and Num/toNat conversions, the partial layout requires a nonempty saved list and an arbitrary original value, and all block tags and output triples agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_generic_app_partial",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/GenericPartial.lean", "lean_name": "evaluateGenericAppPartial",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the literal local HOL proof and typed replay: both closure layouts, all six original premises including sparse-tree domain membership and exact unpacking relation, complete timeout state and success payload, and independent compiler and FFI state types agree. The refs field uses the canonical finite-support carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_genlist_prev_args1_no_rev",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "evaluateGenlistPrevArgs1NoRev",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],

@@ -119,6 +119,282 @@ in
   open bvl_jumpProofTheory;
   val el_append2 = Q.prove (`∀l x. EL (LENGTH l) (l++[x]) = x`,
     Induct_on `l` >> srw_tac[][]);
+  val _ = temp_delsimps ["NORMEQ_CONV"];
+  val _ = diminish_srw_ss ["ABBREV"];
+  val _ = temp_delsimps ["lift_disj_eq", "lift_imp_disj", "fromAList_def", "domain_union", "domain_insert"];
+  val _ = set_trace "BasicProvers.var_eq_old" 1;
+  val ARITH_TAC = intLib.ARITH_TAC;
+  val el_append2_lemma_replay = Q.prove (
+    `  !n args.
+    n+1 = LENGTH args
+    ⇒
+    EL (SUC n) (args ++ [x]) = x`,
+  Induct_on `args` >> srw_tac[][] >>
+  full_simp_tac (srw_ss()++ARITH_ss) [ADD1, el_append2]);
+  val el_append2_lemma = el_append2_lemma_replay;
+  val sum_genlist_triangle_help_replay = Q.prove (
+    `  !x. SUM (GENLIST (\y. y) (x+1)) = x * (x + 1) DIV 2`,
+  Induct >>
+  fs [GENLIST, SUM_SNOC, GSYM ADD1] >>
+  simp [ADD1] >>
+  ARITH_TAC);
+  val sum_genlist_triangle_help = sum_genlist_triangle_help_replay;
+  val sum_genlist_triangle_replay = Q.prove (
+    `  !x. SUM (GENLIST (\y. y) x) = x * (x - 1) DIV 2`,
+  rw [] >>
+  mp_tac (Q.SPEC `x-1` sum_genlist_triangle_help) >>
+  Cases_on `x = 0` >>
+  simp []);
+  val sum_genlist_triangle = sum_genlist_triangle_replay;
+  val triangle_table_size_replay = Q.prove (
+    `  !max f. LENGTH (FLAT (GENLIST (\x. (GENLIST (\y. f x y) x)) max)) =
+    max * (max -1) DIV 2`,
+  rw [LENGTH_FLAT, MAP_GENLIST, combinTheory.o_DEF, sum_genlist_triangle]);
+  val triangle_table_size = triangle_table_size_replay;
+  val tri_lemma_replay = Q.prove (
+    `  !tot max_app.
+    tot < max_app ⇒
+    tot + tot * (tot − 1) DIV 2 < max_app + (max_app − 1) * (max_app − 2) DIV 2`,
+  Induct_on `max_app` >>
+  rw [ADD1] >>
+  `tot = max_app ∨ tot < max_app` by decide_tac >>
+  rw [] >>
+  res_tac >>
+  `max_app + (max_app − 1) * (max_app − 2) DIV 2 < max_app + (max_app * (max_app − 1) DIV 2 + 1)`
+  suffices_by decide_tac >>
+  simp [] >>
+  rpt (pop_assum kall_tac) >>
+  Induct_on `max_app` >>
+  rw [ADD1] >>
+  ARITH_TAC);
+  val tri_lemma = tri_lemma_replay;
+  val triangle_div_lemma_replay = Q.prove (
+    `  !max_app n tot.
+    tot < max_app ∧ n < tot
+    ⇒
+    n + tot * (tot − 1) DIV 2 < max_app * (max_app − 1) DIV 2`,
+  rw [] >>
+  `(tot - 1) + (tot * (tot − 1) DIV 2) < max_app * (max_app − 1) DIV 2`
+  suffices_by decide_tac >>
+  `((max_app - 1) - 1) + ((max_app - 1) * ((max_app - 1) − 1) DIV 2) < max_app * (max_app − 1) DIV 2`
+  suffices_by (
+    rw [] >>
+    `tot + tot * (tot − 1) DIV 2 < max_app + (max_app − 1) * (max_app − 2) DIV 2`
+    suffices_by rw [] >>
+    simp [tri_lemma]) >>
+  Cases_on `max_app` >>
+  fs [] >>
+  Cases_on `tot` >>
+  fs [ADD1] >>
+  Cases_on `n'` >>
+  fs [ADD1] >>
+  ARITH_TAC);
+  val triangle_div_lemma = triangle_div_lemma_replay;
+  val triangle_el_replay = Q.prove (
+    `  !n tot max_app stuff f g.
+    n < tot ∧ tot < max_app
+    ⇒
+    EL (n + tot * (tot − 1) DIV 2)
+      (FLAT
+         (GENLIST
+            (λtot.
+               GENLIST
+                 (λprev. f tot prev) tot)
+            max_app) ++
+       stuff) =
+    f tot n`,
+  Induct_on `max_app` >>
+  rw [GENLIST, FLAT_SNOC] >>
+  `tot = max_app ∨ tot < max_app` by decide_tac >>
+  rw []
+  >- simp [triangle_table_size, EL_APPEND_EQN] >>
+  res_tac >>
+  fs [] >>
+  metis_tac [APPEND_ASSOC]);
+  val triangle_el = triangle_el_replay;
+  val triangle_el_no_suff_replay = Q.prove (
+    `  !n tot max_app f g.
+    n < tot ∧ tot < max_app
+    ⇒
+    EL (n + tot * (tot − 1) DIV 2)
+      (FLAT
+         (GENLIST
+            (λtot.
+               GENLIST
+                 (λprev. f tot prev) tot)
+            max_app)) =
+    f tot n`,
+  metis_tac [triangle_el, APPEND_NIL]);
+  val triangle_el_no_suff = triangle_el_no_suff_replay;
+  val evaluate_partial_app_fn_location_code_replay = Q.prove (
+    `  !max_app n total_args st args tag ptr x fvs.
+     partial_app_fn_location max_app total_args n ∈ domain st.code ∧
+     n < total_args ∧ total_args < max_app ⇒
+     evaluate
+       ([partial_app_fn_location_code max_app
+               (mk_elem_at (Var (LENGTH args + 1)) 1)
+               (Op (IntOp (Const (&n))) [])],
+        (x::(args++[Block tag (ptr::Number(&total_args)::fvs)])),
+        st)
+     =
+     (Rval [Number (&(total_args * (total_args - 1) DIV 2 + n))], st)`,
+  rw [partial_app_fn_location_code_def, evaluate_def, do_app_def,do_int_app_def,
+      EL_CONS, el_append2, PRE_SUB1, partial_app_fn_location_def] >>
+  rw [integerTheory.INT_ADD, integerTheory.INT_MUL, integerTheory.INT_DIV,
+      integerTheory.INT_SUB]);
+  val evaluate_partial_app_fn_location_code = evaluate_partial_app_fn_location_code_replay;
+  val evaluate_generic_app1_replay = Q.prove (
+    `  !n args st total_args l fvs cl.
+    partial_app_fn_location max_app total_args n ∈ domain st.code ∧
+    n < total_args ∧
+    total_args < max_app ∧
+    n + 1 = LENGTH args ∧
+    get_global 0 st.globals = SOME (SOME (global_table max_app)) ∧
+    cl = Block closure_tag (CodePtr l :: Number (&total_args) :: fvs)
+    ⇒
+    evaluate ([generate_generic_app max_app n], args++[cl], st) =
+      if st.clock < n then
+        (Rerr(Rabort Rtimeout_error), st with clock := 0)
+      else
+        (Rval [Block partial_app_tag (CodePtr (partial_app_fn_location max_app total_args n) ::
+                                      Number (&(total_args - (n + 1))) ::
+                                      cl::
+                                      args)],
+         dec_clock n st)`,
+  srw_tac[][generate_generic_app_def] >>
+  srw_tac[][evaluate_def, do_app_def,do_int_app_def] >>
+  full_simp_tac (srw_ss() ++ ARITH_ss) [el_append2] >>
+  fsrw_tac[][do_int_app_def] >>
+  `((&total_args):int − &(n+1) >= 0)` by intLib.ARITH_TAC >>
+  srw_tac[][] >>
+  TRY (rfs [] >> NO_TAC) >>
+  rev_full_simp_tac(srw_ss())[evaluate_mk_tick, evaluate_def, do_app_def] >>
+  full_simp_tac (srw_ss() ++ ARITH_ss) [el_append2] >>
+  srw_tac[][DECIDE ``x + 2 = SUC (SUC x)``, el_append2_lemma, evaluate_APPEND] >>
+  srw_tac [ARITH_ss] [ADD1, evaluate_genlist_vars_rev, evaluate_def] >>
+  rw [LENGTH_GENLIST, evaluate_def, do_app_def, evaluate_APPEND, el_append2] >>
+  TRY (fs [dec_clock_def, LESS_OR_EQ]) >>
+  simp [evaluate_partial_app_fn_location_code, global_table_def] >>
+  simp [triangle_table_size, partial_app_fn_location_def, triangle_el_no_suff,
+        triangle_div_lemma] >>
+  srw_tac[][evaluate_def, do_app_def, int_arithTheory.INT_NUM_SUB, el_append2, TAKE_LENGTH_APPEND] >>
+  CCONTR_TAC >>
+  intLib.ARITH_TAC);
+  val evaluate_generic_app1 = evaluate_generic_app1_replay;
+  val evaluate_generic_app2_replay = Q.prove (
+    `  !n args st rem_args prev_args l clo cl.
+    partial_app_fn_location max_app (rem_args + LENGTH prev_args) (n + LENGTH prev_args) ∈ domain st.code ∧
+    n < rem_args ∧
+    n + 1 = LENGTH args ∧
+    LENGTH prev_args > 0 ∧
+    rem_args + LENGTH prev_args < max_app ∧
+    get_global 0 st.globals = SOME (SOME (global_table max_app)) ∧
+    cl = Block partial_app_tag (CodePtr l :: Number (&rem_args) :: clo :: prev_args)
+    ⇒
+    evaluate ([generate_generic_app max_app n], args++[cl], st) =
+      if st.clock < n then
+        (Rerr(Rabort Rtimeout_error), st with clock := 0)
+      else
+        (Rval [Block partial_app_tag (CodePtr (partial_app_fn_location max_app (rem_args + LENGTH prev_args) (n + LENGTH prev_args)) ::
+                                      Number (&rem_args - &(n+1)) ::
+                                      clo ::
+                                      args ++
+                                      prev_args)],
+         dec_clock n st)`,
+  srw_tac[][generate_generic_app_def, mk_const_def] >>
+  srw_tac[][evaluate_def, do_app_def, do_int_app_def] >>
+  full_simp_tac (srw_ss() ++ ARITH_ss) [] >>
+  `~(&rem_args − &(n+1):int < 0)` by intLib.ARITH_TAC >>
+  srw_tac[][el_append2] >>
+  fsrw_tac[][do_int_app_def] >>
+  TRY (fs [dec_clock_def, LESS_OR_EQ] >> NO_TAC) >>
+  rev_full_simp_tac(srw_ss())[evaluate_mk_tick] >>
+  full_simp_tac (srw_ss()++ARITH_ss) [] >>
+  srw_tac[][evaluate_def, do_app_def] >>
+  srw_tac[][DECIDE ``x + 2 = SUC (SUC x)``, el_append2_lemma, evaluate_APPEND] >>
+  srw_tac[][ADD1] >>
+  full_simp_tac(srw_ss())[do_int_app_def] >>
+  TRY (fs [dec_clock_def, LESS_OR_EQ] >> NO_TAC) >>
+  fs [] >>
+  srw_tac [ARITH_ss] [evaluate_genlist_vars_rev, EL_CONS, PRE_SUB1, el_append2] >>
+  simp [evaluate_def, do_app_def] >>
+  srw_tac [ARITH_ss] [EL_CONS, PRE_SUB1, el_append2] >>
+  fsrw_tac[][do_int_app_def] >>
+  simp [dec_clock_def] >>
+  `&rem_args − &LENGTH args + &(n + (LENGTH prev_args + 1)):int = &(rem_args + LENGTH prev_args)` by intLib.ARITH_TAC >>
+  fs [partial_app_fn_location_code_def, global_table_def] >>
+  simp [evaluate_APPEND, REVERSE_APPEND, TAKE_LENGTH_APPEND, LENGTH_GENLIST,
+        evaluate_def, do_app_def, do_int_app_def,mk_label_def] >>
+  simp [integerTheory.INT_ADD, integerTheory.INT_MUL, integerTheory.INT_DIV, integerTheory.INT_SUB] >>
+  rw [REVERSE_APPEND, ADD1] >>
+  rw [] >>
+  fs [ADD1]
+  >- intLib.ARITH_TAC
+  >- intLib.ARITH_TAC
+  >- (
+    REWRITE_TAC [ADD_ASSOC, triangle_el_no_suff] >>
+    `n + LENGTH prev_args < rem_args + LENGTH prev_args` by decide_tac >>
+    `rem_args + LENGTH prev_args < max_app` by decide_tac >>
+    REWRITE_TAC [ADD_ASSOC] >>
+    simp [triangle_el_no_suff, triangle_div_lemma])
+  >- (
+    fs [triangle_table_size] >>
+    pop_assum mp_tac >>
+    REWRITE_TAC [ADD_ASSOC, triangle_el_no_suff] >>
+    `n + LENGTH prev_args < rem_args + LENGTH prev_args` by decide_tac >>
+    `rem_args + LENGTH prev_args < max_app` by decide_tac >>
+    REWRITE_TAC [ADD_ASSOC] >>
+    simp [triangle_div_lemma]));
+  val evaluate_generic_app2 = evaluate_generic_app2_replay;
+  val evaluate_generic_app_partial_replay = Q.prove (
+    `  !total_args prev_args st args cl sub_cl.
+    partial_app_fn_location
+      max_app
+      total_args
+      (LENGTH prev_args + (LENGTH args - 1)) ∈ domain st.code ∧
+    total_args < max_app ∧
+    LENGTH args < (total_args + 1) - LENGTH prev_args ∧
+    LENGTH args ≠ 0 ∧
+    get_global 0 st.globals = SOME (SOME (global_table max_app)) ∧
+    unpack_closure cl (prev_args, total_args, sub_cl)
+    ⇒
+    evaluate ([generate_generic_app max_app (LENGTH args-1)], args++[cl], st) =
+    if st.clock < LENGTH args - 1 then
+      (Rerr(Rabort Rtimeout_error), st with clock := 0)
+    else
+      (Rval [Block partial_app_tag
+                   (CodePtr (partial_app_fn_location
+                               max_app total_args
+                               (LENGTH prev_args + (LENGTH args - 1))) ::
+                            Number (&(total_args -
+                                      (LENGTH prev_args + LENGTH args))) ::
+                            sub_cl:: args++ prev_args)],
+         dec_clock (LENGTH args - 1) st)`,
+  rpt GEN_TAC >>
+  strip_tac >>
+  full_simp_tac(srw_ss())[unpack_closure_cases]
+  >- (qspecl_then [‘LENGTH args - 1’, ‘args’, ‘st’, ‘total_args’] mp_tac
+                  evaluate_generic_app1 >>
+      srw_tac [ARITH_ss] [] >>
+      rev_full_simp_tac(srw_ss())[] >>
+      ‘&Num total_args' = total_args'’ by intLib.COOPER_TAC >>
+      ‘LENGTH args <> 0’ by simp[] >>
+      full_simp_tac(std_ss++ARITH_ss)[])
+  >- (qspecl_then [‘LENGTH args - 1’, ‘args’, ‘st’, ‘Num rem_args’, ‘prev_args’]
+                  mp_tac evaluate_generic_app2 >>
+      full_simp_tac (srw_ss()++ARITH_ss) [] >>
+      srw_tac [ARITH_ss] [] >>
+      ‘LENGTH args <> 0’ by simp [] \\ full_simp_tac (std_ss++ARITH_ss)[] >>
+      Cases_on ‘prev_args’ >>
+      full_simp_tac(srw_ss())[] >>
+      srw_tac[][] >>
+      rfs [] >>
+      gs[iffRL integerTheory.INT_OF_NUM, Excl "INT_OF_NUM",
+         integerTheory.int_ge, int_arithTheory.INT_NUM_SUB] >>
+      ‘LENGTH args <> 0’ by simp [] \\ gs[]));
+  val _ = show_thm "evaluate_generic_app_partial_replay=" evaluate_generic_app_partial_replay;
+  val _ = show_thm "unpack_closure_rules_typed=" clos_to_bvlProofTheory.unpack_closure_rules;
+  val _ = show_thm "unpack_closure_cases_typed=" clos_to_bvlProofTheory.unpack_closure_cases;
   val take_drop_lemma_replay = Q.prove (
     `  !rem_args arg_list.
    LENGTH arg_list > rem_args

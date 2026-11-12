@@ -2864,17 +2864,6 @@ theorem clRel_recclosure_arity {maxApp : Nat} {fs : Nat → Prop}
       subst function
       exact ⟨(installed _ entryMember).1, (installed _ entryMember).2.1⟩
 
-/-- The recursive source dispatcher saves any undersaturated argument group,
-including for a function in a mutually recursive group. -/
-theorem destClosure_recclosure_partial (maxApp ptr arity index : Nat)
-    (captured supplied args : List ClosSem.Value) (functions : List (Nat × ClosLang.Exp))
-    (body : ClosLang.Exp) (found : functions[index]? = some (arity, body))
-    (bound : args.length ≤ maxApp) (partialBound : args.length + supplied.length < arity) :
-    ClosSem.destClosure maxApp none (.recclosure (some ptr) supplied captured functions index) args =
-      some (.partialApp (.recclosure (some ptr) (args ++ supplied) captured functions index)) := by
-  have oldBound : supplied.length < arity := by omega
-  simp [ClosSem.destClosure, found, ClosSem.checkLoc, bound, oldBound, partialBound]
-
 /-- Undersaturated recursive closure application saves arguments or times out
 after one source tick per newly supplied argument. -/
 theorem evaluateApp_recclosure_partial {C F : Type} (s : ClosSem.State C F)
@@ -2886,8 +2875,11 @@ theorem evaluateApp_recclosure_partial {C F : Type} (s : ClosSem.State C F)
       if s.clock < args.length then (.err (.abort .timeoutError), { s with clock := 0 })
       else (.val [.recclosure (some ptr) (args ++ supplied) captured functions index],
         ClosSem.decClock args.length s) := by
-  have selected := destClosure_recclosure_partial s.maxApp ptr arity index captured supplied args functions body
-    found bound partialBound
+  have oldBound : supplied.length < arity := by omega
+  have selected : ClosSem.destClosure s.maxApp none
+      (.recclosure (some ptr) supplied captured functions index) args =
+      some (.partialApp (.recclosure (some ptr) (args ++ supplied) captured functions index)) := by
+    simp [ClosSem.destClosure, found, ClosSem.checkLoc, bound, oldBound, partialBound]
   cases args with
   | nil => contradiction
   | cons head tail =>
