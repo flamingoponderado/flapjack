@@ -1,4 +1,4 @@
-(* Typed statements for the BVL inlining proof's code-label results. *)
+(* Typed statements for the BVL inlining proof's code-label and name-preservation results. *)
 load "bvl_inlineProofTheory";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
@@ -14,3 +14,7 @@ val _ = show "optimise_get_code_labels_typed" bvl_inlineProofTheory.optimise_get
 val _ = show "tick_inline_code_labels_typed" bvl_inlineProofTheory.tick_inline_code_labels;
 val _ = show "tick_inline_all_code_labels_typed" bvl_inlineProofTheory.tick_inline_all_code_labels;
 val _ = show "compile_prog_get_code_labels_typed" bvl_inlineProofTheory.compile_prog_get_code_labels;
+val _ = show "MAP_FST_MAP_optimise_typed" bvl_inlineProofTheory.MAP_FST_MAP_optimise;
+val _ = show "compile_prog_names_typed" bvl_inlineProofTheory.compile_prog_names;
+val _ = show "handle_ok_optimise_typed" bvl_inlineProofTheory.handle_ok_optimise;
+val _ = show "compile_prog_handle_ok_typed" bvl_inlineProofTheory.compile_prog_handle_ok;

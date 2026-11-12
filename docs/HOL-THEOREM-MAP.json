@@ -1,5 +1,29 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "MAP_FST_MAP_optimise",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/ProgramProperties.lean", "lean_name": "mapFstMapOptimise",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: optimization preserves the complete ordered list of first components for an arbitrary program-name type, split flag, cutoff and entry list."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "compile_prog_names",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/ProgramProperties.lean", "lean_name": "compileProg_names",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: for arbitrary compiler inputs and full result pair, successful compile_prog preserves the complete ordered list of program names."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "handle_ok_optimise",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/ProgramProperties.lean", "lean_name": "handleOk_optimise",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: for arbitrary program-name type, split flag, cutoff and entry list, the bodies of all optimized entries satisfy the original handler invariant; the two maps compose to the source MAP."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "compile_prog_handle_ok",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/ProgramProperties.lean", "lean_name": "compileProg_handleOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: the complete compile_prog pair equation implies that all output bodies satisfy the original handler invariant."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "tick_inline_all_code_labels",
   "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/CodeLabels.lean", "lean_name": "tickInlineAll_codeLabels",
   "statement_status": "reviewed_exact",

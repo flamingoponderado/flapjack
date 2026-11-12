@@ -24,46 +24,6 @@ theorem compileProgFuel_eq (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
   simp [compileInc, optimise, letOpTransform, List.map_map,
     Function.comp_def]
 
-/-- The production optimizer preserves the ordered list of program labels. -/
-theorem compileProgFuel_names (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
-    (program : List (Nat × Nat × Bvl.Exp)) (cache : Spt (Nat × Bvl.Exp))
-    (output : List (Nat × Nat × Bvl.Exp))
-    (compiled : compileProgFuel fuel inlineLimit cutSize splitSeq program = some (cache, output)) :
-    output.map Prod.fst = program.map Prod.fst := by
-  rw [compileProgFuel_eq] at compiled
-  have pair := Option.some.inj compiled
-  have outputEq := congrArg Prod.snd pair
-  simp only [List.map_map, Function.comp_def] at outputEq
-  rw [← outputEq]
-  simpa [tickCompileProg, List.map_map, Function.comp_def] using mapFstTickInlineAll inlineLimit .ln program
-
-/-- Mapping the combined transformation over program entries establishes the
-handler invariant for every generated body. -/
-theorem letOpTransform_program_handleOk (splitSeq : Bool) (limit : Nat)
-    (program : List (Nat × Nat × Bvl.Exp)) :
-    BvlHandle.Proofs.handleOk
-      ((program.map fun (name, arity, body) => (name, arity, letOpTransform splitSeq limit arity body)).map
-        (fun (_, _, body) => body)) := by
-  rw [BvlHandle.Proofs.handleOk_every]
-  rw [List.forall_iff_forall_mem]
-  intro body member
-  simp only [List.mem_map] at member
-  obtain ⟨entry, ⟨original, _, rfl⟩, rfl⟩ := member
-  obtain ⟨name, arity, originalBody⟩ := original
-  exact (letOpTransform_wellFormed splitSeq limit arity originalBody).2
-
-/-- Every body emitted by the actual BVL optimizer has legal handler shape. -/
-theorem compileProgFuel_handleOk (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
-    (program : List (Nat × Nat × Bvl.Exp)) (cache : Spt (Nat × Bvl.Exp))
-    (output : List (Nat × Nat × Bvl.Exp))
-    (compiled : compileProgFuel fuel inlineLimit cutSize splitSeq program = some (cache, output)) :
-    BvlHandle.Proofs.handleOk (output.map (fun (_, _, body) => body)) := by
-  rw [compileProgFuel_eq] at compiled
-  have outputEq := congrArg Prod.snd (Option.some.inj compiled)
-  dsimp only at outputEq
-  rw [← outputEq]
-  exact letOpTransform_program_handleOk splitSeq cutSize _
-
 /-- The full executed BVL optimizer preserves whole-program behavior for a
 non-failing source program, including its divergent I/O trace. This remains
 untagged pending HOL review of the underlying evaluator and state carriers. -/
