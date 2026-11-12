@@ -10528,3 +10528,10 @@ run_probe crep_lang_typed_probeScript.sml crep_lang_typed_probe.out \
   store_globals_def_typed stores_def_typed exp_typed load_shape_def_typed prog_typed \
   "$cake_dir/pancake/crepLangScript.sml" \
   "$cake_dir/pancake"
+
+run_probe semantic_primitives_props_typed_probeScript.sml semantic_primitives_props_typed_probe.out \
+  every_error_result_def_typed every_result_def_typed do_opapp_cases_typed extend_dec_env_assoc_typed sv_rel_mono_typed exc_rel_def_typed result_rel_def_typed sv_rel_cases_typed \
+  sv_rel_def_typed map_error_result_def_typed map_error_result_Rtype_error_typed map_error_result_I_typed map_result_def_typed map_result_Rval_typed map_result_Rerr_typed build_rec_env_merge_typed \
+  find_recfun_ALOOKUP_typed lit_same_type_refl_typed lit_same_type_sym_typed map_match_def_typed do_conversion_check_type_typed do_arith_check_type_typed shift_lookup_def_typed do_shift_def_typed \
+  "$cake_dir/semantics/proofs/semanticPrimitivesPropsScript.sml" \
+  "$cake_dir/semantics/proofs"
