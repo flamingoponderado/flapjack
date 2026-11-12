@@ -10535,3 +10535,9 @@ run_probe semantic_primitives_props_typed_probeScript.sml semantic_primitives_pr
   find_recfun_ALOOKUP_typed lit_same_type_refl_typed lit_same_type_sym_typed map_match_def_typed do_conversion_check_type_typed do_arith_check_type_typed shift_lookup_def_typed do_shift_def_typed \
   "$cake_dir/semantics/proofs/semanticPrimitivesPropsScript.sml" \
   "$cake_dir/semantics/proofs"
+
+run_probe flat_elim_typed_probeScript.sml flat_elim_typed_probe.out \
+  remove_flat_prog_def_typed is_hidden_def_typed total_pat_def_typed is_pure_def_typed has_Eval_def_typed dest_GlobalVarInit_def_typed dest_GlobalVarLookup_def_typed find_loc_def_typed \
+  find_lookups_def_typed analyse_exp_def_typed code_analysis_union_def_typed analyse_code_def_typed keep_def_typed remove_unreachable_def_typed has_Eval_dec_def_typed \
+  "$cake_dir/compiler/backend/flat_elimScript.sml" \
+  "$cake_dir/compiler/backend"
