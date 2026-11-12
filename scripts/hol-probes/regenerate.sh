@@ -10570,3 +10570,9 @@ run_probe asm_typed_probeScript.sml asm_typed_probe.out \
   is_load_def_typed offset_ok_def_typed asm_ok_def_typed reg_imm_ok_def_typed reg_ok_def_typed word_cmp_def_typed \
   "$cake_dir/compiler/encoders/asm/asmScript.sml" \
   "$cake_dir/compiler/encoders/asm"
+
+run_probe ml_monad_base_typed_probeScript.sml ml_monad_base_typed_probe.out \
+  exc_typed Marray_alloc_def_typed st_ex_bind_def_typed st_ex_ignore_bind_def_typed st_ex_return_def_typed run_def_typed Marray_length_def_typed Marray_sub_def_typed \
+  Marray_update_def_typed Msub_eq_typed Mupdate_eq_typed Msub_def_typed Msub_exn_eq_typed Mupdate_def_typed Mupdate_exn_eq_typed \
+  "$cake_dir/translator/monadic/monad_base/ml_monadBaseScript.sml" \
+  "$cake_dir/translator/monadic/monad_base"

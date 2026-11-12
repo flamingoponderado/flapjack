@@ -1,0 +1,15 @@
+exc_typed=M_success::α -> (α, β) exc; M_failure::β -> (α, β) exc
+Marray_alloc_def_typed=∀(set_arr :δ list -> α -> γ) (n :num) (x :δ). (Marray_alloc set_arr n x :α -> (unit, β) exc # γ) = (λ(s :α). ((M_success () :(unit, β) exc),set_arr (REPLICATE n x) s))
+st_ex_bind_def_typed=∀(x :α -> (β, γ) exc # α) (f :β -> α -> (δ, γ) exc # α). st_ex_bind x f = (λ(s :α). case x s of ((M_success y :(β, γ) exc),s) => f y s | ((M_failure x :(β, γ) exc),s) => ((M_failure x :(δ, γ) exc),s))
+st_ex_ignore_bind_def_typed=∀(x :α -> (β, γ) exc # α) (f :α -> (δ, γ) exc # α). st_ex_ignore_bind x f = (λ(s :α). case x s of ((M_success y :(β, γ) exc),s) => f s | ((M_failure x :(β, γ) exc),s) => ((M_failure x :(δ, γ) exc),s))
+st_ex_return_def_typed=∀(x :β). (st_ex_return x :α -> (β, γ) exc # α) = (λ(s :α). ((M_success x :(β, γ) exc),s))
+run_def_typed=∀(x :α -> (β, γ) exc # α) (state :α). run x state = FST (x state)
+Marray_length_def_typed=∀(get_arr :α -> γ list). (Marray_length get_arr :α -> (num, β) exc # α) = (λ(s :α). ((M_success (LENGTH (get_arr s)) :(num, β) exc),s))
+Marray_sub_def_typed=∀(get_arr :α -> β list) (e :γ) (n :num). Marray_sub get_arr e n = (λ(s :α). (Msub e n (get_arr s),s))
+Marray_update_def_typed=∀(get_arr :α -> γ list) (set_arr :γ list -> α -> α) (e :β) (n :num) (x :γ). Marray_update get_arr set_arr e n x = (λ(s :α). case Mupdate e x n (get_arr s) of (M_success a :(γ list, β) exc) => ((M_success () :(unit, β) exc),set_arr a s) | (M_failure e :(γ list, β) exc) => ((M_failure e :(unit, β) exc),s))
+Msub_eq_typed=∀(l :α list) (n :num) (e :β). n < LENGTH l ⇒ Msub e n l = (M_success l❲n❳ :(α, β) exc)
+Mupdate_eq_typed=∀(l :α list) (n :num) (x :α) (e :β). n < LENGTH l ⇒ Mupdate e x n l = (M_success l❲n ↦ x❳ :(α list, β) exc)
+Msub_def_typed=∀(n :num) (l :α list) (e :β). Msub e n l = case l of ([] :α list) => (M_failure e :(α, β) exc) | x::l' => if n = (0 :num) then (M_success x :(α, β) exc) else Msub e (n − (1 :num)) l'
+Msub_exn_eq_typed=∀(l :α list) (n :num) (e :β). n ≥ LENGTH l ⇒ Msub e n l = (M_failure e :(α, β) exc)
+Mupdate_def_typed=∀(x :α) (n :num) (l :α list) (e :β). Mupdate e x n l = case l of ([] :α list) => (M_failure e :(α list, β) exc) | x'::l' => if n = (0 :num) then (M_success (x::l') :(α list, β) exc) else case Mupdate e x (n − (1 :num)) l' of (M_success l'' :(α list, β) exc) => (M_success (x'::l'') :(α list, β) exc) | (M_failure v3 :(α list, β) exc) => (M_failure v3 :(α list, β) exc)
+Mupdate_exn_eq_typed=∀(l :α list) (n :num) (x :α) (e :β). n ≥ LENGTH l ⇒ Mupdate e x n l = (M_failure e :(α list, β) exc)
