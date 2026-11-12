@@ -10619,3 +10619,9 @@ run_probe semantics_props_typed_probeScript.sml semantics_props_typed_probe.out 
   extend_with_resource_limit_def_typed extend_with_resource_limit_not_fail_typed implements_def_typed implements_trans_typed evaluate_prog_events_determ_typed evaluate_prog_io_events_chain_typed semantics_prog_total_typed semantics_prog_deterministic_typed \
   "$cake_dir/semantics/proofs/semanticsPropsScript.sml" \
   "$cake_dir/semantics/proofs"
+
+run_probe namespace_props_typed_probeScript.sml namespace_props_typed_probe.out \
+  nsLookup_nsEmpty_typed nsLookupMod_nsEmpty_typed nsLookup_nsLift_typed nsLookupMod_nsLift_typed nsDom_nsLift_typed nsDomMod_nsLift_typed nsDom_nsAppend_equal_typed nsAppend_nsEmpty_typed \
+  nsLookup_nsBind_typed nsAppend_assoc_typed nsAppend_to_nsBindList_typed nsAll_nsAppend_typed \
+  "$cake_dir/semantics/proofs/namespacePropsScript.sml" \
+  "$cake_dir/semantics/proofs"
