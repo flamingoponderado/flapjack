@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml", "hol_name": "compile_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/CompileLabels.lean", "lean_name": "compile_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the full typed source statement: for every constant environment and expression list, the labels of the source compiler output are a subset of the union of input-expression labels and labels of present environment expressions. The set of expressions in SOME entries is the source FILTER IS_SOME/MAP THE set."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml", "hol_name": "compile_exp_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/CompileLabels.lean", "lean_name": "compileExp_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the full typed source statement: the labels of the source single-expression compiler output are a subset of the original expression's labels. The proof specializes the list theorem to the empty constant environment and source compileExp entry."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml", "hol_name": "SmartOp_code_labels",
   "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/CodeLabels.lean", "lean_name": "smartOp_codeLabels",
   "statement_status": "reviewed_exact",

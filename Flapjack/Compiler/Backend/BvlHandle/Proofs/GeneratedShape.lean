@@ -254,26 +254,4 @@ theorem compileAnyFuel_handleOk (fuel : Nat) (splitSeq : Bool) (limit arity : Na
   · exact ⟨_, rfl, compileSeqsWith_handleOk limit expression none (by simp)⟩
   · exact ⟨_, rfl, compileExpression_handleOk limit arity expression⟩
 
-/-- The executed handler pipeline preserves a non-type-error run and
-produces the variable bounds and handler shape needed by BVL-to-BVI. The
-semantic conclusion remains untagged pending BVL evaluator review. -/
-theorem compileAnyFuel_preserves_and_wellFormed {C F : Type} (fuel : Nat) (splitSeq : Bool) (limit : Nat)
-    (expression : Bvl.Exp) (env : List BvlSem.Value) (state final : BvlSem.State C F)
-    (result : SemanticPrimitivesHOL.Result (List BvlSem.Value) BvlSem.Value)
-    (run : BvlSem.evaluate [expression] env state = (result, final))
-    (notType : result ≠ .err (.abort .typeError)) :
-    ∃ output, compileAnyFuel fuel splitSeq limit env.length expression = some output ∧
-      BvlSem.evaluate [output] env state = (result, final) ∧
-      bVarBound env.length [output] ∧ handleOk [output] := by
-  obtain ⟨output, compiled, evaluation⟩ :=
-    evaluate_compileAnyFuel fuel splitSeq limit expression env state final result run notType
-  obtain ⟨boundedOutput, boundedCompiled, bounded⟩ :=
-    compileAnyFuel_varBound fuel splitSeq limit env.length expression
-  obtain ⟨shapedOutput, shapedCompiled, shape⟩ :=
-    compileAnyFuel_handleOk fuel splitSeq limit env.length expression
-  rw [compiled] at boundedCompiled shapedCompiled
-  cases boundedCompiled
-  cases shapedCompiled
-  exact ⟨output, compiled, evaluation, bounded, shape⟩
-
 end Flapjack.Compiler.Backend.BvlHandle.Proofs

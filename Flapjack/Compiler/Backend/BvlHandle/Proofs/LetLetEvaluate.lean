@@ -211,20 +211,4 @@ theorem evaluate_optionalLetLetSing {C F : Type} (live : DbVarSet) (body : Bvl.E
     have run := evaluate_letLet live body source target extra state result bodyRun related'
     simpa [evaluate, fixClock] using run
 
-/-- The list-valued size cut has the same evaluation behavior as the
-singleton cut, with the same returned live-variable relation. -/
-theorem evaluate_optionalLetLet {C F : Type} (live : DbVarSet) (body : Bvl.Exp)
-    (size limit : Nat) (noRaise : Bool) (source target extra : List Value)
-    (state : State C F) (result : SemanticPrimitivesHOL.Result (List Value) Value × State C F)
-    (bodyRun : ∀ env suffix, envRel live source env → evaluate [body] (env ++ suffix) state = result)
-    (related : envRel (optionalLetLet body source.length live size limit noRaise).2.1 source target) :
-    evaluate (optionalLetLet body source.length live size limit noRaise).1 (target ++ extra) state = result := by
-  by_cases small : size < limit
-  · simp only [optionalLetLet, small, ↓reduceIte] at related ⊢
-    exact bodyRun target extra related
-  · simp only [optionalLetLet, small, ↓reduceIte] at related ⊢
-    have related' : envRel live source target := (envRel_flatten live source target).mp related
-    have run := evaluate_letLet live body source target extra state result bodyRun related'
-    simpa [evaluate, fixClock] using run
-
 end Flapjack.Compiler.Backend.BvlHandle.Proofs

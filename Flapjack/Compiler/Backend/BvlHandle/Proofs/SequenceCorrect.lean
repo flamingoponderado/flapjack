@@ -152,7 +152,10 @@ theorem evaluate_compileAnyFuel {C F : Type} (fuel : Nat) (splitSeq : Bool) (lim
   cases env with
   | nil =>
     cases splitSeq with
-    | false => exact evaluate_compileAnyFuel_noSplit fuel limit expression [] state final result run notType
+    | false =>
+      refine ⟨compileExpression limit 0 expression, ?_,
+        evaluate_compileExpression limit expression [] state final result run notType⟩
+      simpa using compileAnyFuel_eq_source fuel false limit 0 expression
     | true =>
       refine ⟨compileSeqsWith (fun l e => compileExpression l 0 e) limit expression none, ?_, ?_⟩
       · simpa using compileAnyFuel_eq_source fuel true limit 0 expression

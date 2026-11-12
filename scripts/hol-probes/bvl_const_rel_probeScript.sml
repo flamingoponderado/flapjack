@@ -17,6 +17,8 @@ val _ = show "dest_simple_SOME_code_labels=" dest_simple_SOME_code_labels;
 val _ = show "SmartOp1_code_labels=" SmartOp1_code_labels;
 val _ = show "SmartOp2_code_labels=" SmartOp2_code_labels;
 val _ = show "SmartOp_code_labels=" SmartOp_code_labels;
+val _ = show "compile_code_labels=" compile_code_labels;
+val _ = show "compile_exp_code_labels=" compile_exp_code_labels;
 val _ = show "MEM_extract_list_code_labels=" MEM_extract_list_code_labels;
 val env_rel_LLOOKUP_NONE_replay = prove (``
   !ax env env2 n.
