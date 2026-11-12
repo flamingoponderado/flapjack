@@ -3,7 +3,6 @@ module
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IncrementalAddresses
 public import Flapjack.Compiler.Backend.ClosCall.Compile
 import Flapjack.Compiler.Backend.ClosCall.Proofs.LocationMembership
-import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationInvariants
 @[expose] public section
 
 /-! Exact label and numbering facts for incremental closure compilation. -/

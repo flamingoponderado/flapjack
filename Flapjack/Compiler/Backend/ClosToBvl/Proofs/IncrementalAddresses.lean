@@ -14,6 +14,10 @@ public import Flapjack.HolRef
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open ClosLang ClosProps
 
+/-- Pointwise membership preservation implies set inclusion. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "show_SUBSET"]
+theorem showSubset {α : Type} (s t : Set α) (h : ∀ x, x ∈ s → x ∈ t) : s ⊆ t := h
+
 /-- The list arithmetic used when reserving at least one entry address. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "trivia_1"]
 theorem incrementalAddress_trivia {α : Type} (x : Nat) (xs : List α) (v : α) :

@@ -43,6 +43,11 @@ val _ = show_thm "FINITE_SUB_BAG_typed=" bagTheory.FINITE_SUB_BAG;
 val _ = show_thm "SUB_BAG_CARD_typed=" bagTheory.SUB_BAG_CARD;
 val _ = show_thm "BAG_IMAGE_SUB_BAG_typed=" clos_to_bvlProofTheory.BAG_IMAGE_SUB_BAG;
 val _ = show_thm "trivia_1_typed=" clos_to_bvlProofTheory.trivia_1;
+(* The source declaration is local; replay its original proof with inferred types. *)
+val show_SUBSET_replay = Q.prove (
+  `(!x. x IN s ==> x IN t) ==> s SUBSET t`,
+  fs [pred_setTheory.SUBSET_DEF]);
+val _ = show_thm "show_SUBSET_replay=" show_SUBSET_replay;
 val _ = show_thm "EXISTS_CONS_NOT_NULL_typed=" clos_to_bvlProofTheory.EXISTS_CONS_NOT_NULL;
 val _ = show_thm "code_locs_Op_cons_typed=" clos_to_bvlProofTheory.code_locs_Op_cons;
 val _ = show_thm "compile_exps_IMP_acc_typed=" clos_to_bvlProofTheory.compile_exps_IMP_acc;

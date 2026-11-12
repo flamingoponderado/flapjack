@@ -151,6 +151,12 @@
   "reviewer": "Independent typed HOL comparison confirms the original xs, n, aux and extra binder order and the complete pair-lambda equality, including the unchanged natural-number first component."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "show_SUBSET",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "showSubset",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original local statement and typed proof replay: both sets have the same arbitrary element type, and pointwise membership implication yields set inclusion without extra premises. Lean Set.Subset is the same membership implication."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "trivia_1",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "incrementalAddress_trivia",
   "statement_status": "reviewed_exact",

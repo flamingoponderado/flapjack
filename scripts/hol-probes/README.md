@@ -9913,7 +9913,8 @@ The capture supports source comparison; it does not prove Lean correspondence.
 `clos_to_bvl_chain_probe.out` captures typed HOL closure-code chain definitions
 and theorems, including the quantifier order and vacuous type in
 `chain_installed_thm`. It also replays the local `evaluate_init` proof with
-its inferred BVL state and evaluation types. Regenerate with
+its inferred BVL state and evaluation types and `show_SUBSET` with its
+polymorphic set carrier. Regenerate with
 `HOL_PROBE_ONLY=clos_to_bvl_chain_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean correspondence.
 
