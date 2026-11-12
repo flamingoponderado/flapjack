@@ -593,20 +593,26 @@ theorem panToCrepLocalsRelLookupCtxtFiniteExact_curried {width ctxtWidth : Nat}
     free conclusion is preserved: `ctxtMaxFiniteExact` bounds every source slot
     by `context.vmax`, so the strictly larger new slot `n` cannot occur in any
     source slot list and the target `List.mapM`/`OPT_MMAP` clause is unchanged
-    pointwise. No hypotheses, quantifiers, side conditions, or conclusions are
-    changed. -/
+    pointwise. The typed capture `local_rel_gt_vmax_preserved_typed`
+    (`pan_to_crep_proof_typed_probe.out:40`) types the context at `α context`
+    and the locals at `β`, so the statement binds `{ctxtWidth}` and `{width}`
+    separately and takes HOL's single conjunctive premise
+    `locals_rel ct l l' /\ ct.vmax < n` (task 152 item 1). No hypotheses,
+    quantifiers, side conditions, or conclusions are changed. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "local_rel_gt_vmax_preserved"
   (fmap_as_finite_support_relation :=
     [PanToCrepContextExact.vars, sourceLocals, targetLocals])]
-theorem panToCrepLocalRelGtVmaxPreservedFiniteExact {width : Nat} [NeZero width]
-    (context : PanToCrepContextExact width)
+theorem panToCrepLocalRelGtVmaxPreservedFiniteExact {width ctxtWidth : Nat}
+    [NeZero width] [NeZero ctxtWidth]
+    (context : PanToCrepContextExact ctxtWidth)
     (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
     (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (slot : Nat) (newValue : HolWordLab width)
-    (hrel : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals)
-    (habove : context.vmax < slot) :
+    (h : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals ∧
+      context.vmax < slot) :
     panToCrepLocalsRelFiniteExact context sourceLocals
       (targetLocals.updateEq (slot, newValue)) := by
+  obtain ⟨hrel, habove⟩ := h
   refine ⟨hrel.1, hrel.2.1, ?_⟩
   intro name value hlookup
   obtain ⟨slots, words, hcontext, hmap, hflatten, hwf⟩ :=
@@ -652,12 +658,16 @@ end CtxtMaxElLeqExact
     the exact compiler's DecCall context and by the Pan evaluator's `set_var`.
     `|++ ZIP` on the target is `updateListEq`, as in the Crep evaluator. The other
     helpers are the tagged exact ports. The relation qualifier names the context
-    `vars` field and the standalone source/target locals. -/
+    `vars` field and the standalone source/target locals. The typed capture
+    `locals_rel_extend_new_var_typed` (`pan_to_crep_proof_typed_probe.out:36`)
+    types the context at `α context` and the locals at `β`, so the statement
+    binds `{ctxtWidth}` and `{width}` separately (task 152 item 1). -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_extend_new_var"
   (fmap_as_finite_support_relation := [PanToCrepContextExact.vars, s, t])
   (words_as_type_indexed_bitvec)]
-theorem localsRelExtendNewVarHOL {width : Nat} [NeZero width] :
-    ∀ (ct : PanToCrepContextExact width) (s : HolFiniteMapExact MlS (ValueHOL width))
+theorem localsRelExtendNewVarHOL {width ctxtWidth : Nat} [NeZero width]
+    [NeZero ctxtWidth] :
+    ∀ (ct : PanToCrepContextExact ctxtWidth) (s : HolFiniteMapExact MlS (ValueHOL width))
       (t : HolFiniteMapExact Nat (HolWordLab width)) (v : ValueHOL width) (x : MlS)
       (ns : List Nat),
       panToCrepLocalsRelFiniteExact ct s t ∧
@@ -818,11 +828,11 @@ theorem panToCrepStateRelFiniteExact_globals {width : Nat} {σ : Type}
 
 /-- The exact Pan-to-Crep relations provide the initial locals/globals shape
     hypotheses used by the PanSem evaluator invariant. -/
-theorem panToCrepExactInitialShapeInvariant {width : Nat} {σ : Type}
-    [NeZero width] (source : PanSemStateFiniteExact width σ)
+theorem panToCrepExactInitialShapeInvariant {width ctxtWidth : Nat} {σ : Type}
+    [NeZero width] [NeZero ctxtWidth] (source : PanSemStateFiniteExact width σ)
     (target : CrepSemHOLState width σ)
     (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
-    (context : PanToCrepContextExact width)
+    (context : PanToCrepContextExact ctxtWidth)
     (hstate : panToCrepStateRelFiniteExact source target)
     (hlocals : panToCrepLocalsRelFiniteExact context source.locals targetLocals) :
     (∀ name value, source.locals.lookup name = some value →
@@ -904,15 +914,19 @@ noncomputable def evalListHOLFiniteClassical {width : Nat} {σ : Type}
     the finite maps that `state_rel`/`locals_rel` traverse: the source
     `globals`, the context `vars`, the source locals, and the standalone target
     locals `tLocs`. HOL's `'a word`/`'ffi` are the positive-width `BitVec width`
-    and `σ : Type` carriers (`words_as_type_indexed_bitvec`). -/
+    and `σ : Type` carriers (`words_as_type_indexed_bitvec`). The typed capture
+    `opt_mmap_eval_is_wf_shape_v_typed` (`pan_to_crep_proof_typed_probe.out:38`)
+    types the context at `γ context`, independent of the state's `α`, so the
+    statement binds `{ctxtWidth}` separately (task 152 item 1). -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "opt_mmap_eval_is_wf_shape_v"
   (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals,
     PanSemStateFiniteExact.locals, PanToCrepContextExact.vars, tLocs])
   (words_as_type_indexed_bitvec)]
-theorem optMmapEvalIsWfShapeVHOL {width : Nat} {σ : Type} [NeZero width]
+theorem optMmapEvalIsWfShapeVHOL {width ctxtWidth : Nat} {σ : Type} [NeZero width]
+    [NeZero ctxtWidth]
     (es : List (ExpHOL width)) (vs : List (ValueHOL width))
     (s : PanSemStateFiniteExact width σ) (t : CrepSemHOLState width σ)
-    (ctxt : PanToCrepContextExact width)
+    (ctxt : PanToCrepContextExact ctxtWidth)
     (tLocs : HolFiniteMapExact Nat (HolWordLab width))
     (h : evalListHOLFiniteClassical s es = some vs ∧
       panToCrepStateRelFiniteExact s t ∧

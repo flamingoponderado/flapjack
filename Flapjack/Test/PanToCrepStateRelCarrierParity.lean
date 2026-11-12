@@ -631,12 +631,12 @@ example {width : Nat} [NeZero width]
     (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
     (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (slot : Nat) (newValue : HolWordLab width)
-    (hrel : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals)
-    (habove : context.vmax < slot) :
+    (h : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals ∧
+      context.vmax < slot) :
     panToCrepLocalsRelFiniteExact context sourceLocals
       (targetLocals.updateEq (slot, newValue)) :=
   panToCrepLocalRelGtVmaxPreservedFiniteExact context sourceLocals targetLocals
-    slot newValue hrel habove
+    slot newValue h
 
 /-- Concrete exact-carrier instance: the one-slot `lookupCtxtContext` fixture
     (`vars` maps `x` to `(One, [0])`, `vmax = 0`) stays related after the target
@@ -650,7 +650,7 @@ private theorem localRelGtVmaxFixture :
       some (HolWordLab.word (7 : BitVec 8)) := by
   refine ⟨panToCrepLocalRelGtVmaxPreservedFiniteExact lookupCtxtContext
     lookupCtxtSourceLocals lookupCtxtTargetLocals 1
-    (HolWordLab.word (7 : BitVec 8)) lookupCtxtLocalsRel (by decide), ?_⟩
+    (HolWordLab.word (7 : BitVec 8)) ⟨lookupCtxtLocalsRel, by decide⟩, ?_⟩
   simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
 
 private def localRelGtVmaxGuard : Bool :=
