@@ -170,6 +170,12 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: both closure layouts, all six original premises including sparse-tree domain membership and exact unpacking relation, complete timeout state and success payload, and independent compiler and FFI state types agree. The refs field uses the canonical finite-support carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "v_rel_num_rem_args",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/RemainingArgs.lean", "lean_name": "vRelNumRemArgs",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Compared the literal local HOL proof and typed replay: both original premise conjuncts, arbitrary source/target values, signed Int.ofNat n - 1, all existential shape, nonzero and sparse-tree lookup conclusions agree. Explicit f and refs maps use canonical finite support and same-module codec witnesses; code remains Spt."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "get_cl_env_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "getClEnv",
   "statement_status": "reviewed_exact",

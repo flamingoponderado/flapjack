@@ -393,6 +393,37 @@ in
          integerTheory.int_ge, int_arithTheory.INT_NUM_SUB] >>
       ‘LENGTH args <> 0’ by simp [] \\ gs[]));
   val _ = show_thm "evaluate_generic_app_partial_replay=" evaluate_generic_app_partial_replay;
+  val v_rel_num_rem_args_replay = Q.prove (
+    `  !f refs code v1 v2 n.
+    v_rel max_app f refs code v1 v2 ∧
+    num_remaining_args v1 = SOME n
+    ⇒
+    ?tag ptr rest exp.
+      v2 = Block tag (CodePtr ptr::Number (&n-1)::rest) ∧
+      n ≠ 0 ∧
+      lookup ptr code = SOME (n+1, exp)`,
+  srw_tac[][v_rel_cases] >>
+  full_simp_tac(srw_ss())[num_remaining_args_def]
+  >- (full_simp_tac(srw_ss())[cl_rel_cases] >>
+      srw_tac[][] >>
+      full_simp_tac(srw_ss())[num_remaining_args_def, int_arithTheory.INT_NUM_SUB,closure_code_installed_def,
+          EVERY_EL, EL_MAP] >>
+      pop_assum (mp_tac o GSYM) >>
+      srw_tac[][] >>
+      pop_assum (fn th => first_assum (mp_tac o MATCH_MP th)) >>
+      Cases_on `EL k exps_ps` >>
+      simp [] >>
+      Cases_on `q` >>
+      full_simp_tac(srw_ss())[] >>
+      srw_tac[][] >>
+      simp [EL_MAP])
+  >- (full_simp_tac(srw_ss())[cl_rel_cases] >>
+      srw_tac[][] >>
+      full_simp_tac(srw_ss())[get_num_args_def, add_args_def] >>
+      srw_tac[][] >>
+      full_simp_tac(srw_ss())[num_remaining_args_def, int_arithTheory.INT_NUM_SUB] >>
+      intLib.ARITH_TAC));
+  val _ = show_thm "v_rel_num_rem_args_replay=" v_rel_num_rem_args_replay;
   val unpack_closure_thm_replay = Q.prove (
   `v_rel max_app f1 t1.refs t1.code func (Block tag (ptr::Number (&n-1)::rest)) ∧
    num_remaining_args func = SOME n
