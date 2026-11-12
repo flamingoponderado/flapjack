@@ -116,6 +116,39 @@ val _ = show_thm "v_rel_union_replay=" v_rel_union_replay;
 local
   open preamble clos_to_bvlTheory clos_to_bvlProofTheory bvlSemTheory bvlPropsTheory listTheory backend_commonTheory
 in
+  val mk_cl_lem_replay = Q.prove (
+    `  l < LENGTH env
+   ⇒
+   evaluate (GENLIST (λn. Var (n + 3)) l, a::b::c::env, st) =
+   evaluate (GENLIST (λn. Var (n + 1)) l, a::env, st)`,
+  srw_tac[][] >>
+  `l + 3 ≤ LENGTH (a::b::c::env)` by srw_tac [ARITH_ss] [ADD1] >>
+  `l + 1 ≤ LENGTH (a::env)` by srw_tac [ARITH_ss] [ADD1] >>
+  imp_res_tac evaluate_genlist_vars >>
+  srw_tac[][]);
+  val _ = show_thm "mk_cl_lem_replay=" mk_cl_lem_replay;
+  val mk_cl_lem = mk_cl_lem_replay;
+  val evaluate_mk_cl_simpl_replay = Q.prove (
+    `  evaluate ([mk_cl_call (Var 0) (GENLIST (λn. Var (n + 3)) (LENGTH args' − (n + 1)))],
+                               v::a::b::(args' ++ [Block tag (CodePtr p::Number (&n)::xs)]),
+                               st')
+   =
+   evaluate ([mk_cl_call (Var 0) (GENLIST (λn. Var (n + 1)) (LENGTH args' − (n + 1)))],
+                               v::(args' ++ [Block tag (CodePtr p::Number (&n)::xs)]),
+                               st')`,
+  srw_tac[][mk_cl_call_def, evaluate_def, do_app_def] >>
+  reverse (Cases_on `v`) >>
+  srw_tac[][] >>
+  TRY (Cases_on `FLOOKUP st'.refs n'` \\ fs []) >>
+  BasicProvers.FULL_CASE_TAC >>
+  srw_tac[][evaluate_APPEND] >>
+  ntac 2 (pop_assum (mp_tac o GSYM)) >>
+  srw_tac[][] >>
+  full_simp_tac (srw_ss()++ARITH_ss) [evaluate_def, do_app_def] >>
+  `LENGTH args' - (n + 1) < LENGTH (args' ++ [Block tag (CodePtr p::Number (&n)::xs)])`
+              by srw_tac [ARITH_ss] [] >>
+  srw_tac [ARITH_ss] [mk_cl_lem]);
+  val _ = show_thm "evaluate_mk_cl_simpl_replay=" evaluate_mk_cl_simpl_replay;
   val cl_rel_run_lemma1_replay = Q.prove (
     `  num_args ≤ LENGTH args'
    ⇒

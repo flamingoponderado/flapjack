@@ -51,4 +51,46 @@ theorem mkCallSimp2 {C F : Type} (n : Nat) (args stuff stuff' : List BvlSem.Valu
   · exact run1
   · exact run2
 
+/-- Removing two leading environment values leaves the selected arguments unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "mk_cl_lem"
+  (fmap_as_finite_support := [refs])]
+theorem mkClLem {C F : Type} (l : Nat) (env : List BvlSem.Value) (a b c : BvlSem.Value)
+    (st : Flapjack.Compiler.Backend.BvlSem.State C F) (bound : l < env.length) :
+    BvlSem.evaluate ((List.range l).map (fun n => Bvl.Exp.var (n + 3))) (a :: b :: c :: env) st =
+      BvlSem.evaluate ((List.range l).map (fun n => Bvl.Exp.var (n + 1))) (a :: env) st := by
+  have h1 := BvlProps.evaluateGenlistVars 3 (a :: b :: c :: env) l st (by simp; omega)
+  have h2 := BvlProps.evaluateGenlistVars 1 (a :: env) l st (by simp; omega)
+  simpa [BvlSem.evaluateTuple] using h1.trans h2.symm
+
+/-- The overapplication continuation ignores its two intermediate values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_mk_cl_simpl"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateMkClSimpl {C F : Type} (args : List BvlSem.Value) (n : Nat)
+    (v a b : BvlSem.Value) (tag p : Nat) (xs : List BvlSem.Value)
+    (st : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    BvlSem.evaluate [mkClCall (.var 0) ((List.range (args.length - (n + 1))).map (fun i => .var (i + 3)))]
+      (v :: a :: b :: (args ++ [.block tag (.codePtr p :: .number (Int.ofNat n) :: xs)])) st =
+    BvlSem.evaluate [mkClCall (.var 0) ((List.range (args.length - (n + 1))).map (fun i => .var (i + 1)))]
+      (v :: (args ++ [.block tag (.codePtr p :: .number (Int.ofNat n) :: xs)])) st := by
+  let env := args ++ [.block tag (.codePtr p :: .number (Int.ofNat n) :: xs)]
+  let count := args.length - (n + 1)
+  have bound : count < env.length := by simp [count, env]; omega
+  have run1 (u : BvlSem.State C F) :
+      BvlSem.evaluate ((List.range count).map (fun i => .var (i + 3))) (v :: a :: b :: env) u =
+        (.val (env.take count), u) := by
+    simpa [BvlSem.evaluateTuple] using
+      BvlProps.evaluateGenlistVars 3 (v :: a :: b :: env) count u (by simp; omega)
+  have run2 (u : BvlSem.State C F) :
+      BvlSem.evaluate ((List.range count).map (fun i => .var (i + 1))) (v :: env) u =
+        (.val (env.take count), u) := (mkClLem count env v a b u bound).symm.trans (run1 u)
+  change BvlSem.evaluate [mkClCall (.var 0) ((List.range count).map (fun i => .var (i + 3)))]
+      (v :: a :: b :: env) st =
+    BvlSem.evaluate [mkClCall (.var 0) ((List.range count).map (fun i => .var (i + 1)))] (v :: env) st
+  apply evaluate_mkClCall_congr st _ _ _ _ _ _ v (env.take count)
+  · simp
+  · intro u; simp [BvlSem.evaluate]
+  · intro u; simp [BvlSem.evaluate]
+  · exact run1
+  · exact run2
+
 end Flapjack.Compiler.Backend.ClosToBvl
