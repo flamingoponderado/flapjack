@@ -99,6 +99,7 @@ val _ = show_thm "compile_exps_APPEND_typed=" clos_to_bvlProofTheory.compile_exp
 val _ = show_thm "chain_exps_cons_typed=" clos_to_bvlProofTheory.chain_exps_cons;
 val _ = show_thm "code_installed_insert_typed=" clos_to_bvlProofTheory.code_installed_insert;
 val _ = show_thm "FEVERY_FUPDATE_LIST_SUFF_typed=" clos_to_bvlProofTheory.FEVERY_FUPDATE_LIST_SUFF;
+val _ = show_thm "not_domain_lookup_typed=" clos_to_bvlProofTheory.not_domain_lookup;
 (* The original union lemmas are local; replay their full statements from the
    exported sparse-tree monotonicity theorems. *)
 val cl_rel_union_replay = Q.prove (

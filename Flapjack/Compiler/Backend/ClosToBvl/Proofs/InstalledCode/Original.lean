@@ -8,6 +8,12 @@ import Mathlib.Data.List.Nodup
 /-! Original code-installation properties for sparse-tree unions. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
+/-- A sparse-tree key is outside its domain exactly when lookup fails. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "not_domain_lookup"]
+theorem notDomainLookup {A : Type} (n : Nat) (tree : Spt A) :
+    ¬ sptDomain tree n ↔ sptLookup n tree = none := by
+  cases found : sptLookup n tree <;> simp [sptDomain, found]
+
 /-- A contiguous portion of distinct-key code is installed in its source tree. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "code_installed_fromAList_strong"]
 theorem codeInstalled_fromAList_strong {A B : Type} : ∀ (ls ls' : List (Nat × A × B)),
@@ -31,14 +37,10 @@ theorem codeInstalled_union {A B : Type} (aux : List (Nat × A × B))
     (h : codeInstalled aux y ∧ ∀ k, ¬ (k ∈ aux.map Prod.fst ∧ sptDomain x k)) :
     codeInstalled aux (sptUnion x y) := by
   intro entry member
-  have absent : sptLookup entry.1 x = none := by
-    cases lookup : sptLookup entry.1 x with
-    | none => rfl
-    | some value =>
-      have keyMem : entry.1 ∈ aux.map Prod.fst :=
-        List.mem_map.mpr ⟨entry, member, rfl⟩
-      have inDomain : sptDomain x entry.1 := (sptDomain_iff_lookup x entry.1).2 ⟨value, lookup⟩
-      exact False.elim (h.2 entry.1 ⟨keyMem, inDomain⟩)
+  have absent : sptLookup entry.1 x = none := (notDomainLookup entry.1 x).1 (by
+    intro inDomain
+    have keyMem : entry.1 ∈ aux.map Prod.fst := List.mem_map.mpr ⟨entry, member, rfl⟩
+    exact h.2 entry.1 ⟨keyMem, inDomain⟩)
   simpa [sptLookup_sptUnion, absent] using h.1 entry member
 
 /-- Left-biased tree union retains code already installed in its left tree. -/

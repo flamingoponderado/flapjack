@@ -145,6 +145,12 @@
   "reviewer": "Independent typed HOL comparison confirms the original compilation equality, full length and suffix conclusions, binder order, and faithful closure and BVL carriers."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "not_domain_lookup",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode/Original.lean", "lean_name": "notDomainLookup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: the natural-number key, arbitrary sparse-tree payload type, negated domain membership and lookup-equals-NONE equivalence agree without well-formedness assumptions."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "cl_rel_union",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureRelation.lean", "lean_name": "clRel_union",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["refs"],
