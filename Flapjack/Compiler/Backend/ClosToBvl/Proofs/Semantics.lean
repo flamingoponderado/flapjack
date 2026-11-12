@@ -13,6 +13,32 @@ The evaluators and their carriers remain subject to source review. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
+namespace ClosInitialState
+
+/-- The closure state roundtrips through its finite-support map view. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
+/-- The initial closure-state condition before installing source code. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "clos_init_def"
+  (fmap_as_finite_support := [refs, code])]
+def closInit {C F : Type} (maxApp : Nat)
+    (state : Flapjack.Compiler.Backend.ClosSem.State C F) : Prop :=
+  state.globals = [] ∧ state.refs = HolFiniteMapExact.empty ∧
+    state.code = HolFiniteMapExact.empty ∧ state.maxApp = maxApp
+
+/-- The initial closure-state condition is independent of the clock. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "clos_init_with_clock"
+  (fmap_as_finite_support := [refs, code])]
+theorem closInit_withClock {C F : Type} (maxApp : Nat)
+    (state : Flapjack.Compiler.Backend.ClosSem.State C F) (k : Nat) :
+    closInit maxApp { state with clock := k } ↔ closInit maxApp state := by
+  rfl
+
+end ClosInitialState
+
 namespace ClosInitialClock
 
 /-- The closure state roundtrips through its finite-support map view. -/

@@ -77,6 +77,7 @@ val _ = show_thm "set_globals_SND_renumber_code_locs_typed=" clos_to_bvlProofThe
 val _ = show_thm "elist_globals_FLAT_typed=" clos_to_bvlProofTheory.elist_globals_FLAT;
 val _ = show_thm "eval_sim_def_typed=" clos_to_bvlProofTheory.eval_sim_def;
 val _ = show_thm "IMP_semantics_eq_typed=" clos_to_bvlProofTheory.IMP_semantics_eq;
+(* Capture the complete closure initial-state predicate and clock invariance. *)
 val _ = show_thm "clos_init_def_typed=" clos_to_bvlProofTheory.clos_init_def;
 val _ = show_thm "clos_init_with_clock_typed=" clos_to_bvlProofTheory.clos_init_with_clock;
 (* This closure initial-clock theorem is local in the original script. *)

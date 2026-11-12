@@ -16,32 +16,6 @@ open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "REPLICATE_1"]
 theorem replicateOne {α : Type} (x : α) : List.replicate 1 x = [x] := rfl
 
-/-- Once the target's reserved global table has been installed, empty source
-and target stores satisfy the candidate state relation. The hypotheses are
-the installed application stubs, compiler-oracle relation, and compiled source
-code required by that relation. -/
-theorem initial_stateRel {C F : Type} (ffi : HolFfiState F) (maxApp clock : Nat)
-    (sourceCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (sourceOracle : ClosSem.CompileOracle C)
-    (sourceCompiler : ClosSem.Compiler C) (targetCode : Spt (Nat × Bvl.Exp))
-    (targetOracle : BvlSem.CompileOracle C) (targetCompiler : BvlSem.Compiler C)
-    (generic : ∀ n, n < maxApp → sptLookup (genericAppFnLocation n) targetCode =
-      some (n + 2, generateGenericApp maxApp n))
-    (partialStubs : ∀ total n, total < maxApp ∧ n < total →
-      sptLookup (partialAppFnLocation maxApp total n) targetCode =
-        some (total - n + 1, generatePartialAppClosureFn total n))
-    (force : sptLookup (numStubs maxApp - 2) targetCode = some (2, forceThunkCode))
-    (oracle : compileOracleInv maxApp sourceCode sourceCompiler sourceOracle targetCode targetCompiler targetOracle)
-    (compiledCode : ∀ name arity body, sourceCode.lookup name = some (arity, body) →
-      ∃ aux targetBody finalAux, compileExpsHOL maxApp [body] aux = ([targetBody], finalAux) ∧
-        sptLookup (name + numStubs maxApp) targetCode = some (arity, targetBody) ∧
-        codeInstalled finalAux targetCode) :
-    stateRel HolFiniteMapExact.empty
-      (ClosSem.initialState ffi maxApp sourceCode sourceOracle sourceCompiler clock)
-      { BvlSem.initialState ffi targetCode targetOracle targetCompiler clock with globals := [some (globalTable maxApp)] } := by
-  simp [stateRel, ClosSem.initialState, BvlSem.initialState, numAddedGlobals, ClosSem.getGlobal,
-    HolFiniteMapExact.empty, force, oracle]
-  exact ⟨generic, fun total n h1 h2 => partialStubs total n ⟨h1, h2⟩, compiledCode⟩
-
 namespace InitDomain
 
 /-- The BVL reference store roundtrips through its finite-support view. -/
@@ -196,9 +170,10 @@ theorem initialEvaluationSimulation_of_entry {C F : Type} (ffi : HolFfiState F) 
   let source := ClosSem.initialState ffi maxApp sourceCode sourceOracle sourceCompiler clock
   let target := { BvlSem.initialState ffi targetCode targetOracle targetCompiler clock with
     globals := [some (globalTable maxApp)] }
-  have states : stateRel HolFiniteMapExact.empty source target :=
-    initial_stateRel ffi maxApp clock sourceCode sourceOracle sourceCompiler targetCode targetOracle targetCompiler
-      generic partialStubs force oracle compiledCode
+  have states : stateRel HolFiniteMapExact.empty source target := by
+    simp [source, target, stateRel, ClosSem.initialState, BvlSem.initialState,
+      numAddedGlobals, ClosSem.getGlobal, HolFiniteMapExact.empty, force, oracle]
+    exact ⟨generic, fun total n h1 h2 => partialStubs total n ⟨h1, h2⟩, compiledCode⟩
   have codeAnnotations' : codeAnnotations source := annotations
   have compilation : compileExpsHOL maxApp [.call .none 0 sourceStart []] [] =
       ([.call 0 (some (sourceStart + numStubs maxApp)) []], []) := by

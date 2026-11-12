@@ -16249,6 +16249,24 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "clos_init_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Semantics.lean",
+    "lean_name": "closInit",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared clos_init_def_typed: independent compiler and FFI carriers, empty globals, empty reference and code maps, and equality of maxApp all match the original. The two state maps use canonical finite support, witnessed by the local state roundtrip."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "clos_init_with_clock",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Semantics.lean",
+    "lean_name": "closInit_withClock",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared clos_init_with_clock_typed: replacing only the clock in an arbitrary closure state preserves and reflects the complete closInit condition. The two state maps use canonical finite support, witnessed by the local state roundtrip."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
     "hol_name": "initial_state_with_clock",
     "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Semantics.lean",
     "lean_name": "closInitialState_withClock",
