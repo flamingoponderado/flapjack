@@ -4520,20 +4520,6 @@ theorem evaluateApp_recclosure_over {C F : Type} (s : ClosSem.State C F)
     simp only [cost]
     split <;> rfl
 
-/-- Pointwise related lists remain related after taking and dropping the same
-number of elements. -/
-theorem forall₂_take_drop {α β : Type} (r : α → β → Prop) (xs : List α) (ys : List β)
-    (related : List.Forall₂ r xs ys) (n : Nat) :
-    List.Forall₂ r (xs.take n) (ys.take n) ∧ List.Forall₂ r (xs.drop n) (ys.drop n) := by
-  induction related generalizing n with
-  | nil => simp
-  | cons head tail ih =>
-    cases n with
-    | zero => simp [List.Forall₂.cons head tail]
-    | succ n =>
-      obtain ⟨takeRel, dropRel⟩ := ih n
-      exact ⟨by simpa using List.Forall₂.cons head takeRel, by simpa using dropRel⟩
-
 /-- The source overapplication split and generated target split agree on
 related argument lists and preserve the relation in each segment. -/
 theorem overApp_related_split {α β : Type} (r : α → β → Prop)
@@ -4546,7 +4532,8 @@ theorem overApp_related_split {α β : Type} (r : α → β → Prop)
     List.Forall₂ r (source.drop (source.length - (arity - saved))) (target.drop (n - total)) := by
   have sameLength : source.length = target.length := related.length_eq
   have splitEq : source.length - (arity - saved) = n - total := by omega
-  have ⟨takeRel, dropRel⟩ := forall₂_take_drop r source target related (n - total)
+  have takeRel := List.forall₂_take (n - total) related
+  have dropRel := List.forall₂_drop (n - total) related
   exact ⟨splitEq, by simpa [splitEq] using takeRel, by simpa [splitEq] using dropRel⟩
 
 /-- Overapplication suffix facts shared by the partial-completion cases: the

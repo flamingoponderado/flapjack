@@ -157,6 +157,12 @@
   "reviewer": "Compared the literal local HOL source proof and typed replay: related source and target values have equal full optional byte decodings, including NONE, with fixed word8 bytes. The f and refs inputs use canonical finite support and same-module codec witnesses."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "list_rel_app",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArgumentRelation.lean", "lean_name": "listRelApp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the literal local HOL proof and typed replay: arbitrary target element type and relation, original full-application, remaining-arity and LIST_REL premises, and remaining-prefix LIST_REL conclusion agree. Recursive closure indexing retains total EL under the original destination bound."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "mk_call_simp2",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallEnvironment.lean", "lean_name": "mkCallSimp2",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],

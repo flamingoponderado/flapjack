@@ -112,6 +112,30 @@ val v_rel_union_replay = Q.prove (
             clos_to_bvlProof$v_rel max_app f2 refs (sptree$union code c2) x y`,
   metis_tac [clos_to_bvlProofTheory.v_rel_subspt, sptreeTheory.subspt_union]);
 val _ = show_thm "v_rel_union_replay=" v_rel_union_replay;
+(* Replay the original local list-relation theorem. *)
+local
+  open preamble clos_to_bvlProofTheory closSemTheory listTheory
+in
+  val list_rel_app_replay = Q.prove (
+    `!R args args' l0 c l func rem_args.
+    dest_closure max_app NONE func args = SOME (Full_app c l l0) ∧
+    num_remaining_args func = SOME rem_args ∧
+    LIST_REL R args args'
+    ⇒
+    LIST_REL R l0 (TAKE (LENGTH args' − rem_args) args')`,
+  srw_tac[][dest_closure_def, LET_THM] >>
+  BasicProvers.EVERY_CASE_TAC >>
+  full_simp_tac(srw_ss())[] >>
+  TRY (Cases_on `EL n l1`) >>
+  full_simp_tac(srw_ss())[] >>
+  srw_tac[][] >>
+  BasicProvers.EVERY_CASE_TAC >>
+  full_simp_tac(srw_ss())[] >>
+  srw_tac[][] >>
+  full_simp_tac(srw_ss())[LIST_REL_EL_EQN, check_loc_def, num_remaining_args_def] >>
+  srw_tac [ARITH_ss] [EL_TAKE, EL_REVERSE, EL_DROP, PRE_SUB1]);
+  val _ = show_thm "list_rel_app_replay=" list_rel_app_replay;
+end;
 (* Replay the original local call-environment lemma and its local list prerequisite. *)
 local
   open preamble clos_to_bvlTheory bvlSemTheory bvlPropsTheory
