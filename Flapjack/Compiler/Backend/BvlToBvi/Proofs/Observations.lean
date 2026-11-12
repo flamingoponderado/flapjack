@@ -204,8 +204,8 @@ theorem compileProgFuel_semantics_of_terminates {C F : Type}
     oracle (BackendProps.stateCc compileIncSource compiler) start nonfail
   have noFatal := compileProgFuel_noFatalError fuel optFuel start counter ffi programs oracle compiler
     targetStart targetNextName targetProgram compiled distinct handlers oracleHandlers counterBound noTypeError
-  have sourceObserved := BvlSem.terminatingObservation_of_semantics_eq_terminate ffi
-    (sptFromAList programs) oracle (BackendProps.stateCc compileIncSource compiler) start outcome events terminates
+  have sourceObserved := ((BvlSem.semantics_eq_terminate_iff ffi
+    (sptFromAList programs) oracle (BackendProps.stateCc compileIncSource compiler) start outcome events).1 terminates).2
   have targetObserved := compileProgFuel_terminatingObservation fuel optFuel start counter ffi programs oracle compiler
     targetStart targetNextName targetProgram compiled distinct handlers oracleHandlers counterBound noTypeError
     (.terminate outcome events) sourceObserved

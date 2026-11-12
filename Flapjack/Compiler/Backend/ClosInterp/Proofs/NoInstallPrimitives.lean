@@ -148,24 +148,6 @@ theorem valuesNoInstall_set (values : List ClosSem.Value) (index : Nat) (value :
     | zero => simp [List.set, valuesNoInstall, valueOk, valid.2]
     | succ index => simp [List.set, valuesNoInstall, valid.1, ih index valid.2]
 
-/-- Replicating a safe value produces a safe list. -/
-theorem valuesNoInstall_replicate (count : Nat) (value : ClosSem.Value)
-    (valid : valueNoInstall value = true) : valuesNoInstall (List.replicate count value) = true := by
-  apply (valuesNoInstall_iff _).2
-  intro item member
-  simp only [List.mem_replicate] at member
-  rcases member with ⟨_, rfl⟩
-  exact valid
-
-/-- A list of integer-encoded bytes contains no installation closures. -/
-theorem encodedBytes_noInstall (bytes : List (BitVec 8)) :
-    valuesNoInstall (bytes.map (fun b => ClosSem.Value.number b.toNat)) = true := by
-  apply (valuesNoInstall_iff _).2
-  intro value member
-  simp only [List.mem_map] at member
-  obtain ⟨byte, _, rfl⟩ := member
-  simp [valueNoInstall]
-
 /-- Looking up a value in a safe list yields a safe value. -/
 theorem valuesNoInstall_lookup (values : List ClosSem.Value) (index : Nat) (value : ClosSem.Value)
     (valid : valuesNoInstall values = true) (found : values[index]? = some value) : valueNoInstall value = true :=
@@ -186,8 +168,8 @@ theorem applyMemory_noInstall {C F : Type} (op : ClosLang.MemOp) (args : List Cl
   all_goals try (solve | simp_all [valueNoInstall, ClosSem.unitValue, valuesNoInstall])
   all_goals try (solve | constructor <;> first | exact refsOk | (apply valuesNoInstall_lookup <;> assumption))
   all_goals try (solve | simp only [valueNoInstall, ClosSem.unitValue, valuesNoInstall, true_and] <;>
-    apply refsNoInstall_update <;> first | exact refsOk | (simp only [refNoInstall] <;> first | trivial | assumption | (apply valuesNoInstall_replicate <;> assumption)))
-  all_goals try (solve | apply listToValue_noInstall <;> exact encodedBytes_noInstall _)
+    apply refsNoInstall_update <;> first | exact refsOk | (simp only [refNoInstall] <;> first | trivial | assumption | (simp_all [valuesNoInstall_iff])))
+  all_goals try (solve | apply listToValue_noInstall <;> simp [valuesNoInstall_iff, valueNoInstall])
   all_goals try (solve | exact boolValue_noInstall _)
   all_goals try (have arrayOk := refsOk _ (.valueArray _) (by assumption))
   all_goals try (solve | constructor <;> first | exact refsOk | (apply valuesNoInstall_lookup <;> assumption))
