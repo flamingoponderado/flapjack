@@ -10668,3 +10668,11 @@ run_probe fpSem_typed_probeScript.sml fpSem_typed_probe.out \
   fp_uop_comp_def_typed fpfma_def_typed \
   "$cake_dir/semantics/fpSemScript.sml" \
   "$cake_dir/semantics"
+
+run_probe bvl_to_bvi_config_typed_probeScript.sml bvl_to_bvi_config_typed_probe.out \
+  AllocGlobal_location_def_typed CopyGlobals_location_def_typed InitGlobals_location_def_typed config_typed default_config_def_typed destLet_def_typed compile_int_def_typed global_count_sing_def_typed \
+  compile_op_def_typed ListLength_location_def_typed FromListByte_location_def_typed ToListByte_location_def_typed SumListLength_location_def_typed ConcatByte_location_def_typed AllocGlobal_code_def_typed CopyGlobals_code_def_typed \
+  InitGlobals_max_def_typed InitGlobals_code_def_typed ListLength_code_def_typed FromListByte_code_def_typed ToListByte_code_def_typed SumListLength_code_def_typed ConcatByte_code_def_typed stubs_def_typed \
+  get_names_def_typed compile_aux_def_typed compile_exps_sing_def_typed compile_single_def_typed compile_list_def_typed compile_inc_def_typed \
+  "$cake_dir/compiler/backend/bvl_to_bviScript.sml" \
+  "$cake_dir/compiler/backend"
