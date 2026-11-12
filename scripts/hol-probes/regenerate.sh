@@ -10693,3 +10693,9 @@ run_probe evaluate_typed_probeScript.sml evaluate_typed_probe.out \
   list_result_def_typed sing_env_def_typed do_eval_res_def_typed \
   "$cake_dir/semantics/evaluateScript.sml" \
   "$cake_dir/semantics"
+
+run_probe stack_to_lab_typed_probeScript.sml stack_to_lab_typed_probe.out \
+  config_typed compile_def_typed compile_no_stubs_def_typed is_gen_gc_def_typed compile_jump_def_typed find_lab_def_typed flatten_def_typed is_Seq_def_typed \
+  negate_def_typed prog_to_section_def_typed \
+  "$cake_dir/compiler/backend/stack_to_labScript.sml" \
+  "$cake_dir/compiler/backend"
