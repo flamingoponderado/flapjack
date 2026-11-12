@@ -21,6 +21,7 @@ val _ = show "compile_prog_handle_ok_typed" bvl_inlineProofTheory.compile_prog_h
 val _ = show "map_fromAList_typed" bvl_inlineProofTheory.map_fromAList;
 val _ = show "state_cc_compile_inc_eq_typed" bvl_inlineProofTheory.state_cc_compile_inc_eq;
 val _ = show "state_co_compile_inc_eq_typed" bvl_inlineProofTheory.state_co_compile_inc_eq;
+val _ = show "semantics_remove_ticks_typed" bvl_inlineProofTheory.semantics_remove_ticks;
 val _ = show "compile_prog_semantics_typed" bvl_inlineProofTheory.compile_prog_semantics;
 val _ = show "let_op_cc_def_typed" bvl_inlineProofTheory.let_op_cc_def;
 val _ = show "let_opt_def_typed" bvl_inlineProofTheory.let_opt_def;
