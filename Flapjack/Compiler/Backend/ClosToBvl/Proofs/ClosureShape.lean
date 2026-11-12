@@ -89,4 +89,49 @@ theorem clRel_getNumArgs (maxApp : Nat) (fs : Nat → Prop)
         simp only [List.getElem_map, entry]
         omega
 
+/-- Canonical reference-map codec for the location theorem. -/
+theorem holFmapAsFiniteSupportParamWitness_clRel_getLoc_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).lookup key = refs.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).finiteSupport = refs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs) = refs :=
+  holFmapAsFiniteSupportParamWitness_clRel_dest_refs refs key
+
+/-- The target code pointer recovers the source closure location. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_get_loc"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem clRel_getLoc (maxApp : Nat) (fs : Nat → Prop)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (env : List ClosSem.Value) (values : List BvlSem.Value) (func : ClosSem.Value)
+    (tag p : Nat) (n : BvlSem.Value) (ys : List BvlSem.Value)
+    (related : clRel maxApp fs refs code (env, values) func
+      (.block tag (.codePtr p :: n :: ys))) :
+    numStubs maxApp ≤ p ∧ getLoc func = some (p - numStubs maxApp) := by
+  generalize targetEq : BvlSem.Value.block tag (.codePtr p :: n :: ys) = target at related
+  cases related with
+  | closure bound positive loc vars compiled installed lookup =>
+    simp [getLoc] at *
+    omega
+  | singletonRec bound positive loc vars compiled installed lookup =>
+    simp [getLoc] at *
+    omega
+  | @mutualRec exps entries ps rs loc r env ys k expsEq psEq positions valuesEq fresh stored length index locs vars installed =>
+    have bound : k < entries.length := by simpa [expsEq] using index
+    have entryAddress : (entries[k]'bound).2 = loc + numStubs maxApp + 2 * k := by
+      have actual : ps[k]? = some (entries[k]'bound).2 := by
+        simp [psEq, List.getElem?_map, List.getElem?_eq_getElem bound]
+      have expected : ps[k]? = some (loc + numStubs maxApp + 2 * k) := by
+        simp [positions, bound]
+      exact Option.some.inj (actual.symm.trans expected)
+    subst rs
+    rw [Flapjack.holEl_eq_getElem _ _ (by simpa using bound)] at targetEq
+    simp only [List.getElem_map] at targetEq
+    cases entry : entries[k] with
+    | mk pair address =>
+      cases pair with
+      | mk arity body =>
+        simp [entry] at targetEq entryAddress
+        simp [getLoc]
+        omega
+
 end Flapjack.Compiler.Backend.ClosToBvl

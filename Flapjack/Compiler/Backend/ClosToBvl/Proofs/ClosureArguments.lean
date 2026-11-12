@@ -34,6 +34,13 @@ noncomputable def getNumArgs : ClosSem.Value → Option Nat
   | .recclosure _ _ _ funs index => some (Flapjack.holEl index funs).1
   | _ => none
 
+/-- Extract the source location of a closure or recursive closure. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "get_loc_def"]
+def getLoc : ClosSem.Value → Option Nat
+  | .closure (some location) _ _ _ _ => some location
+  | .recclosure (some location) _ _ _ index => some (location + 2 * index)
+  | _ => none
+
 /-- Previously accumulated arguments of a closure or recursive closure. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "get_old_args_def"]
 def getOldArgs : ClosSem.Value → Option (List ClosSem.Value)

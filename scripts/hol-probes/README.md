@@ -9918,7 +9918,7 @@ It also replays the local `evaluate_init1` and
 `show_SUBSET` with its polymorphic set carrier, `REPLICATE_1` with its
 polymorphic list element type, `obvious_arith_comm` over naturals, the
 polymorphic pair-projection lemma, the local closure and BVL initial-clock
-lemmas, closure arity, saved-argument and representation shape, bounded and unbounded closure destination definitions and partial-application implications, full-application remaining-argument relations, closure-call environment equality, remaining-arity and no-partial-arguments statements, list-tag shift equivalences, bidirectional byte and word decoding, sparse-tree domain lookup,
+lemmas, closure location, arity, saved-argument and representation shape, bounded and unbounded closure destination definitions and partial-application implications, full-application remaining-argument relations, closure-call environment equality, remaining-arity and no-partial-arguments statements, list-tag shift equivalences, bidirectional byte and word decoding, sparse-tree domain lookup,
 value/closure code-union preservation, finite-map predicate preservation,
 chain-head and compilation accumulator relations, sparse-tree code
 installation, both

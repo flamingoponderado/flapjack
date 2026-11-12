@@ -6250,17 +6250,6 @@ theorem evaluateApp_recclosure_bounds {C F : Type} (s sFinal : ClosSem.State C F
       · simp [ClosSem.destClosure, found, ClosSem.checkLoc, bound, savedBound] at selected
     · simp [ClosSem.destClosure, found, ClosSem.checkLoc, bound] at selected
 
-/-- A closure related by the target closure relation has a code location. -/
-theorem clRel_location_some {maxApp : Nat} {fs : Nat → Prop}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {environment : List ClosSem.Value × List BvlSem.Value} {source : ClosSem.Value} {target : BvlSem.Value}
-    (related : clRel maxApp fs refs code environment source target) :
-    match source with
-    | .closure location _ _ _ _ => location.isSome = true
-    | .recclosure location _ _ _ _ => location.isSome = true
-    | _ => False := by
-  cases related <;> simp
-
 /-- Related ordinary closures always carry the code location required by the
 target representation. -/
 theorem vRel_ordinary_location_some {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
@@ -6270,8 +6259,8 @@ theorem vRel_ordinary_location_some {maxApp : Nat} {f : HolFiniteMapExact Nat Na
     ∃ ptr, location = some ptr := by
   cases related with
   | closure envRel closure =>
-    have h := clRel_location_some closure
-    cases location <;> simp_all
+    have h := (clRel_getLoc _ _ _ _ _ _ _ _ _ _ _ closure).2
+    cases location <;> simp_all [getLoc]
   | @partialClosure env fvs argEnv ys numArgs cl clApp clTarget envRel argsRel nonempty bound lookup added getArgs closure =>
     cases cl <;> simp [addArgs] at added
     all_goals (cases closure; simp_all; aesop)
@@ -6285,8 +6274,8 @@ theorem vRel_recclosure_location_some {maxApp : Nat} {f : HolFiniteMapExact Nat 
     ∃ ptr, location = some ptr := by
   cases related with
   | closure envRel closure =>
-    have h := clRel_location_some closure
-    cases location <;> simp_all
+    have h := (clRel_getLoc _ _ _ _ _ _ _ _ _ _ _ closure).2
+    cases location <;> simp_all [getLoc]
   | @partialClosure env fvs argEnv ys numArgs cl clApp clTarget envRel argsRel nonempty bound lookup added getArgs closure =>
     cases cl <;> simp [addArgs] at added
     all_goals cases closure <;> simp_all <;> aesop

@@ -112,6 +112,40 @@ val v_rel_union_replay = Q.prove (
             clos_to_bvlProof$v_rel max_app f2 refs (sptree$union code c2) x y`,
   metis_tac [clos_to_bvlProofTheory.v_rel_subspt, sptreeTheory.subspt_union]);
 val _ = show_thm "v_rel_union_replay=" v_rel_union_replay;
+val _ = show_thm "get_loc_def_typed=" clos_to_bvlProofTheory.get_loc_def;
+(* Replay the original location theorem and its local generated-label prerequisite. *)
+local
+  open preamble clos_to_bvlProofTheory closSemTheory bvlSemTheory listTheory backend_commonTheory
+  val p_genlist = Q.prove (
+    `EL k exps_ps = ((n',e),p) ∧
+   MAP SND exps_ps = GENLIST (λn. loc + (num_stubs max_app) + 2*n) (LENGTH exps_ps) ∧
+   k < LENGTH exps_ps
+   ⇒
+   p = EL k (GENLIST (λn. loc + (num_stubs max_app) + 2*n) (LENGTH exps_ps))`,
+  srw_tac[][] >>
+  `EL k (MAP SND exps_ps) = EL k (GENLIST (λn. loc + (num_stubs max_app) + 2*n) (LENGTH exps_ps))` by metis_tac [] >>
+  rev_full_simp_tac(srw_ss())[EL_MAP]);
+in
+  val cl_rel_get_loc_replay = Q.prove (
+    `cl_rel max_app f1 refs code (env,fvs) func (Block tag (CodePtr p::n::ys))
+   ⇒
+   num_stubs max_app ≤ p ∧
+   get_loc func = SOME (p-(num_stubs max_app))`,
+  srw_tac[][cl_rel_cases] >>
+  full_simp_tac(srw_ss())[get_loc_def, closure_code_installed_def, EVERY_EL] >>
+  `?n e p. EL k exps_ps = ((n,e),p)` by metis_tac [pair_CASES] >>
+  full_simp_tac(srw_ss())[] >>
+  srw_tac[][] >>
+  pop_assum mp_tac >>
+  res_tac >>
+  srw_tac[][] >>
+  full_simp_tac(srw_ss())[EL_MAP] >>
+  srw_tac[][] >>
+  `p = EL k (GENLIST (λn. loc + num_stubs max_app + 2*n) (LENGTH exps_ps))` by metis_tac [p_genlist] >>
+  srw_tac[][] >>
+  intLib.ARITH_TAC);
+  val _ = show_thm "cl_rel_get_loc_replay=" cl_rel_get_loc_replay;
+end;
 (* Replay the original local closure arity theorem. *)
 local
   open preamble clos_to_bvlProofTheory closSemTheory bvlSemTheory listTheory backend_commonTheory

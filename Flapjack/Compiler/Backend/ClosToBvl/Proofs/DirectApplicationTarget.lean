@@ -8,47 +8,6 @@ public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateApp
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
-/-- The code pointer in a related recursive closure is its source location,
-shifted by the stub count and the recursive function index. -/
-theorem clRel_recclosure_direct_address {maxApp : Nat} {fs : Nat → Prop}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {captured : List ClosSem.Value} {fields : List BvlSem.Value} {ptr index arity : Nat}
-    {functions : List (Nat × ClosLang.Exp)} {body : ClosLang.Exp} {target : BvlSem.Value}
-    (related : clRel maxApp fs refs code (captured, fields) (.recclosure (some ptr) [] captured functions index) target)
-    (found : functions[index]? = some (arity, body)) :
-    ∃ payload, target = .block 30
-      (.codePtr ((ptr + 2 * index) + numStubs maxApp) :: .number (Int.ofNat (arity - 1)) :: payload) := by
-  cases related with
-  | singletonRec bound positive loc vars compiled installed lookup =>
-    simp only [List.getElem?_cons_zero, Option.some.injEq, Prod.mk.injEq] at found
-    obtain ⟨rfl, rfl⟩ := found
-    exact ⟨fields, by simp⟩
-  | @mutualRec exps entries ps rs loc r env ys k expsEq psEq positions values fresh stored many indexBound locations vars installed =>
-    have entryBound : index < entries.length := by simpa [expsEq] using indexBound
-    have entryEq : (entries[index]'entryBound).1 = (arity, body) := by
-      have h : functions[index]? = some (arity, body) := found
-      rw [expsEq, List.getElem?_map, List.getElem?_eq_getElem entryBound] at h
-      simpa using h
-    have entryAddress : (entries[index]'entryBound).2 = ptr + numStubs maxApp + 2 * index := by
-      have actual : ps[index]? = some (entries[index]'entryBound).2 := by
-        simp [psEq, List.getElem?_map, List.getElem?_eq_getElem entryBound]
-      have expected : ps[index]? = some (ptr + numStubs maxApp + 2 * index) := by
-        simp [positions, entryBound]
-      exact Option.some.inj (actual.symm.trans expected)
-    subst rs
-    rw [Flapjack.holEl_eq_getElem index _ (by simpa using entryBound)]
-    simp only [List.getElem_map]
-    cases h : entries[index]'entryBound with
-    | mk pair label =>
-      have pairEq : pair = (arity, body) := by simpa [h] using entryEq
-      have labelEq : label = (ptr + 2 * index) + numStubs maxApp := by
-        have := entryAddress
-        simp only [h] at this
-        omega
-      subst pair
-      subst label
-      exact ⟨_, rfl⟩
-
 /-- A related recursive closure resolves its known-location target call with
 one extra argument for the closure block itself. -/
 theorem vRel_recclosure_direct_findCode {maxApp ptr index arity : Nat}
@@ -63,12 +22,13 @@ theorem vRel_recclosure_direct_findCode {maxApp ptr index arity : Nat}
     ∃ entry, BvlSem.findCode (some ((ptr + 2 * index) + numStubs maxApp))
       (targetArgs ++ [target]) code = some (targetArgs ++ [target], entry) := by
   obtain ⟨fields, _, closure⟩ := vRel_recclosure_original related
-  obtain ⟨expectedPayload, expectedShape⟩ := clRel_recclosure_direct_address closure found
   obtain ⟨address, payload, entry, actualShape, lookup⟩ := clRel_recclosure_target_code closure found
+  have locationInfo := clRel_getLoc _ _ _ _ _ _ _ _ _ _ _ (by simpa [actualShape] using closure)
   have addressEq : address = (ptr + 2 * index) + numStubs maxApp := by
-    have equal := actualShape.symm.trans expectedShape
-    simp only [BvlSem.Value.block.injEq, List.cons.injEq, BvlSem.Value.codePtr.injEq] at equal
-    exact equal.2.1
+    have sourceLocation := locationInfo.2
+    simp only [getLoc, Option.some.injEq] at sourceLocation
+    have stubBound := locationInfo.1
+    omega
   subst address
   have length : targetArgs.length = arity := argsRel.length_eq.symm.trans arityMatch
   exact ⟨entry, by simp [BvlSem.findCode, lookup, length]⟩
@@ -151,7 +111,14 @@ theorem vRel_direct_shape {maxApp address : Nat} {f : HolFiniteMapExact Nat Nat}
       simp only [Option.map, Option.some.injEq] at locationEq
       subst address
       obtain ⟨fields, _, closure⟩ := vRel_recclosure_original related
-      obtain ⟨payload, targetEq⟩ := clRel_recclosure_direct_address closure selected
+      obtain ⟨targetAddress, payload, entry, targetEq, lookup⟩ := clRel_recclosure_target_code closure selected
+      have locationInfo := clRel_getLoc _ _ _ _ _ _ _ _ _ _ _ (by simpa [targetEq] using closure)
+      have addressEq : targetAddress = (ptr + 2 * index) + numStubs maxApp := by
+        have sourceLocation := locationInfo.2
+        simp only [getLoc, Option.some.injEq] at sourceLocation
+        have stubBound := locationInfo.1
+        omega
+      rw [addressEq] at targetEq
       exact ⟨payload, by simpa [argLength, arityEq, Nat.add_comm] using targetEq⟩
 
 /-- Generated direct-call argument variables read the same values as the
