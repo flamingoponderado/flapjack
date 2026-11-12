@@ -2007,29 +2007,39 @@ theorem ctxtFcEidsEqHOL {width : Nat} [NeZero width]
 
 /-- Exact port of HOL `ctxt_fc_vmax`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2307`):
-    `(ctxt_fc ctxt.funcs em vs shs ns).vmax = MAX_LIST ns`. HOL's first
-    argument `ctxt.funcs` is a projection of an implicitly universally
-    quantified `context` record and `ctxt_fc` ignores it in the `vmax` clause,
-    so the Lean statement's bare `cvs` argument is equivalent. The statement
-    keeps HOL's argument order `(cvs, em, vs, shs, ns)` and its unrestricted
-    quantifiers; the constructed context's `vmax` field is definitionally
-    `maxList ns`, so the statement is a no-premise projection. `.vmax` is a
-    `Nat` that depends only on `ns`, so the conclusion does not traverse any
-    finite-map field, but the term is stated over the imported exact
-    `PanToCrepContextExact` carrier and binds the `cvs`/`em` maps to its
-    `funcs`/`eids` fields; the `fmap_as_finite_support := [funcs, eids]`
-    qualifier records that canonical `HolFiniteMapExact` translation
-    (same-module witness `CtxtFcExact.holFmapAsFiniteSupportWitness`). The
-    signature is width-indexed with `BitVec width` exception codes and
-    `[NeZero width]`, so HOL's type-indexed `'a word` translation is recorded by
-    the `(words_as_type_indexed_bitvec)` qualifier. Direct HOL-EVAL rows
+    `(ctxt_fc ctxt.funcs em vs shs ns).vmax = MAX_LIST ns`. The typed capture
+    `ctxt_fc_vmax_typed` (`pan_to_crep_proof_typed_probe.out:4`) types the
+    context at `β context` and `em` at `α word`, so the context's word
+    dimension is independent of the exception-code width; the statement binds
+    `{ctxtWidth}` and `{width}` separately and states HOL's `ctxt` binder with
+    its `.funcs` projection (task 152 item 4). The argument order
+    `(ctxt, em, vs, shs, ns)` and HOL's unrestricted quantifiers are kept; the
+    constructed context's `vmax` field is definitionally `maxList ns`, so the
+    statement is a no-premise projection. `.vmax` is a `Nat` that depends only
+    on `ns`, so the conclusion does not traverse any finite-map field; the
+    `fmap_as_finite_support := [funcs]` qualifier records the canonical
+    `HolFiniteMapExact` translation of the traversed `ctxt.funcs` field
+    (same-module witness `CtxtFcExact.holFmapAsFiniteSupportWitness`). `em` is
+    a standalone canonical map parameter and needs no qualifier. The signature
+    is width-indexed with `BitVec width` exception codes and `[NeZero width]`,
+    so HOL's type-indexed `'a word` translation is recorded by the
+    `(words_as_type_indexed_bitvec)` qualifier. Direct HOL-EVAL rows
     `vmax_nonempty_list=T`/`vmax_empty_list=T` in
     `scripts/hol-probes/ctxt_fc_probe.out` are replayed by the kernel-checked
     regression in `Flapjack.Test.PanToCrepContextExactParity`. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_fc_vmax"
-  (fmap_as_finite_support := [funcs, eids])
+  (fmap_as_finite_support := [funcs])
   (words_as_type_indexed_bitvec)]
-theorem ctxtFcVmaxHOL {width : Nat} [NeZero width]
+theorem ctxtFcVmaxHOL {width : Nat} {ctxtWidth : Nat} [NeZero width] [NeZero ctxtWidth]
+    (ctxt : PanToCrepContextExact ctxtWidth)
+    (em : HolFiniteMapExact MlS (BitVec width))
+    (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
+    (ctxtFcExactHOL ctxt.funcs em vs shs ns : PanToCrepContextExact width).vmax =
+      maxList ns := rfl
+
+/-- Untagged bare-map form of `ctxt_fc_vmax` for callers that only hold the
+    `funcs` map; the tagged statement follows HOL's `ctxt` binder. -/
+theorem ctxtFcVmaxHOL_bare {width : Nat} [NeZero width]
     (cvs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
     (em : HolFiniteMapExact MlS (BitVec width))
     (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :

@@ -93552,11 +93552,18 @@
     "lean_name": "ctxtFcVmaxHOL",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "fmap_as_finite_support": [
-      "funcs",
-      "eids"
+      "funcs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-09-27; beads flapjack-4ac.5.93, recovered after the words/imported-owner policy landed): HOL ctxt_fc_vmax (pan_to_crepProofScript.sml:2307-2312) proves the no-premise projection (ctxt_fc ctxt.funcs em vs shs ns).vmax = MAX_LIST ns by rw [ctxt_fc_def]. HOL's first argument ctxt.funcs is a projection of an implicitly universally quantified context record and ctxt_fc ignores it in the vmax clause, so the Lean statement's bare cvs argument is equivalent. The Lean theorem ctxtFcVmaxHOL states the same projection over the exact PanToCrepContextExact carrier; the argument order (cvs, em, vs, shs, ns) and the unrestricted quantifiers match, and MAX_LIST is maxList. The conclusion is a Nat that depends only on ns and does not traverse a finite-map field, but the term is stated over the imported exact carrier and binds the cvs/em maps to its funcs/eids fields, so the fmap_as_finite_support := [funcs, eids] qualifier records that canonical HolFiniteMapExact translation (same-module witness CtxtFcExact.holFmapAsFiniteSupportWitness). HOL word-dimension audit (flapjack-4ac.14 policy): the signature is width-indexed with BitVec width exception codes and [NeZero width], so (words_as_type_indexed_bitvec) also applies and the combined status is used. Direct HOL-EVAL rows vmax_nonempty_list=T and vmax_empty_list=T in scripts/hol-probes/ctxt_fc_probe.out are replayed by the kernel-checked regression in Flapjack/Test/PanToCrepContextExactParity.lean."
+    "reviewer": "flapjack-ds9 source comparison (2026-09-27; beads flapjack-4ac.5.93, recovered after the words/imported-owner policy landed): HOL ctxt_fc_vmax (pan_to_crepProofScript.sml:2307-2312) proves the no-premise projection (ctxt_fc ctxt.funcs em vs shs ns).vmax = MAX_LIST ns by rw [ctxt_fc_def]. The typed capture ctxt_fc_vmax_typed (pan_to_crep_proof_typed_probe.out:4) types the context at β context and em at α word, so the context's word dimension is independent of the exception-code width. The Lean theorem ctxtFcVmaxHOL states HOL's ctxt binder with its .funcs projection and binds {ctxtWidth} and {width} separately (task 152 item 4); the argument order (ctxt, em, vs, shs, ns) and the unrestricted quantifiers match, and MAX_LIST is maxList. The untagged ctxtFcVmaxHOL_bare keeps the earlier bare-map form for callers. The conclusion is a Nat that depends only on ns and does not traverse a finite-map field, but the term is stated over the imported exact carrier and binds ctxt.funcs, so the fmap_as_finite_support := [funcs] qualifier records that canonical HolFiniteMapExact translation (same-module witness CtxtFcExact.holFmapAsFiniteSupportWitness); em is a standalone canonical map parameter. HOL word-dimension audit (flapjack-4ac.14 policy): the signature is width-indexed with BitVec width exception codes and [NeZero width], so (words_as_type_indexed_bitvec) also applies and the combined status is used. Direct HOL-EVAL rows vmax_nonempty_list=T and vmax_empty_list=T in scripts/hol-probes/ctxt_fc_probe.out are replayed by the kernel-checked regression in Flapjack/Test/PanToCrepContextExactParity.lean."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "ctxtFcVmaxHOL_bare",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific bare-map form of the tagged ctxt_fc_vmax port: it takes the funcs map directly instead of HOL's ctxt binder, for callers that only hold that map (task 152 item 4). It has no HOL declaration of its own."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
