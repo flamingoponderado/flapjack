@@ -53,26 +53,15 @@ def letStateRel {C F : Type} (splitSeq : Bool) (limit : Nat)
     (source target : Flapjack.Compiler.Backend.BvlSem.State C F) : Prop :=
   mappedStateRel (letOpTransform splitSeq limit) source target
 
-/-- The initial states of the source and transformed programs satisfy the
-generic code-mapping relation. -/
-theorem letOp_initialStateRel {C F : Type} (splitSeq : Bool) (limit clock : Nat)
-    (ffi : HolFfiState F) (code : Spt (Nat × Bvl.Exp))
-    (oracle : CompileOracle C) (compiler : Compiler C) :
-    mappedStateRel (letOpTransform splitSeq limit)
-      (initialState ffi code oracle (letOpCompiler splitSeq limit compiler) clock)
-      (initialState ffi (sptMap (fun (arity, body) => (arity, letOpTransform splitSeq limit arity body)) code)
-        (letOpOracle splitSeq limit oracle) compiler clock) := by
-  constructor <;> rfl
-
-/-- Primitive applications, including dynamic installation, preserve the
-combined pass's state relation. This specializes the generic mapped-state
-simulation and remains untagged pending review of the complete pass. -/
-theorem letOp_doApp {C F : Type} (splitSeq : Bool) (limit : Nat) (s t : State C F)
-    (related : mappedStateRel (letOpTransform splitSeq limit) s t)
-    (op : ClosLang.Op) (args : List Value) :
+/-- Primitive application preserves the let-optimization state relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "do_app_lemma" 1483
+  (fmap_as_finite_support := [refs])]
+theorem letOp_doApp {C F : Type} (splitSeq : Bool) (limit : Nat)
+    (s t : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (related : letStateRel splitSeq limit s t) (op : ClosLang.Op) (args : List Value) :
     match doApp op args s with
     | .err error => doApp op args t = .err error
-    | .val (value, next) => ∃ targetNext, mappedStateRel (letOpTransform splitSeq limit) next targetNext ∧
+    | .val (value, next) => ∃ targetNext, letStateRel splitSeq limit next targetNext ∧
         doApp op args t = .val (value, targetNext) :=
   mappedDoApp (letOpTransform splitSeq limit) s t related op args
 

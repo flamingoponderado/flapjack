@@ -38,14 +38,8 @@ theorem letEvaluateCall {C F : Type} (splitSeq : Bool) (limit start clock : Nat)
   let source := initialState ffi program oracle (letOpCompiler splitSeq limit compiler) clock
   let target := initialState ffi (sptMap (letOpt splitSeq limit) program)
     (letOpOracle splitSeq limit oracle) compiler clock
-  have transformEq : (fun (arity, body) => (arity, letOpTransform splitSeq limit arity body)) =
-      letOpt splitSeq limit := by
-    funext entry
-    obtain ⟨arity, body⟩ := entry
-    rfl
   have related : letStateRel splitSeq limit source target := by
-    simpa only [source, target, letStateRel, transformEq] using
-      letOp_initialStateRel splitSeq limit clock ffi program oracle compiler
+    constructor <;> rfl
   obtain ⟨targetFinal, targetRun, finalRel⟩ :=
     evaluateLetOp [.call 0 (some start) []] [] source result target final splitSeq limit
       ⟨related, run, safe⟩

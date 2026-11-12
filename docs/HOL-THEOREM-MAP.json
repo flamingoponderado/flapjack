@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "do_app_lemma", "hol_line": 1483,
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/LetOpState.lean", "lean_name": "letOp_doApp",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the original local theorem and typed HOL proof replay: related BVL states produce the same primitive error or the same value with an existential related target state, including installation. The canonical BVL state witness accounts for refs; primitive evaluation inherits the reals_as_rational_cuts assumption."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "let_evaluate_Call",
   "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/LetOpSemantics.lean", "lean_name": "letEvaluateCall",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
