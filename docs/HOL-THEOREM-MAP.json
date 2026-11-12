@@ -233,6 +233,14 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: args and prev lists have independent polymorphic element types, with exactly the three original conjuncts and all three arithmetic conclusions."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "v_rel_run",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueRun.lean", "lean_name": "vRelRun",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BvlSem.State.refs", "f1", "refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete typed replay of the original HOL source proof: all five premises, arbitrary target tag, bounded closure destination, six witnesses outside the arbitrary target-state quantifier, lookup, compilation, installed-code and environment-relation conclusions, and full evaluation equality with the clock increment on its left agree. The BVL state refs field and independent f1 and refs parameters use canonical finite-support maps, with the state roundtrip witness; code remains a sparse tree. Evaluation inherits reals_as_rational_cuts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "cl_rel_run",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureRun.lean", "lean_name": "clRelRun",
   "statement_status": "reviewed_fmap_as_finite_support_relation",

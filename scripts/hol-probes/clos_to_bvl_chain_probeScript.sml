@@ -2186,6 +2186,118 @@ in
   full_simp_tac(srw_ss())[]);
   val _ = show_thm "dest_cl_imp_dest_cl_prime_replay=" dest_cl_imp_dest_cl_prime_replay;
 end;
+(* Replay the full value-application theorem with its local source prerequisites. *)
+local
+  open preamble clos_to_bvlTheory clos_to_bvlProofTheory closSemTheory bvlSemTheory bvlPropsTheory listTheory backend_commonTheory
+  val cl_rel_run = cl_rel_run_replay;
+  val cl_rel_get_loc = cl_rel_get_loc_replay;
+  val cl_rel_get_num_args = cl_rel_get_num_args_replay;
+  val cl_rel_dest = cl_rel_dest_replay;
+  val dest_closure_full_of_part = dest_closure_full_of_part_replay;
+  val dest_cl_imp_dest_cl' = dest_cl_imp_dest_cl_prime_replay;
+  val dest_closure_full_app = dest_closure_full_app_replay;
+  val evaluate_partial_app_fn = evaluate_partial_app_fn_replay;
+in
+  val v_rel_run_replay = Q.prove (
+  `!f1 refs code args args' env' ptr body newenv func func' rest tag n loc.
+    LENGTH args ≠ 0 ∧
+    func' = Block tag (CodePtr ptr::Number (&n)::env') ∧
+    dest_closure max_app loc func args = SOME (Full_app body newenv rest) ∧
+    v_rel max_app f1 refs code func func' ∧
+    LIST_REL (v_rel max_app f1 refs code) args args'
+    ⇒
+    ∃ck' body' aux1 aux2 newenv' exp'.
+      lookup ptr code = SOME (n + 2,exp') ∧
+      compile_exps max_app [body] aux1 = ([body'],aux2) ∧ code_installed aux2 code ∧
+      env_rel max_app f1 refs code newenv newenv' ∧
+      !t1.
+        evaluate ([exp'], DROP (LENGTH args' - (n + 1)) args' ++ [func'], inc_clock ck' (t1 with <|refs := refs; code := code|>)) =
+        evaluate ([body'], newenv', (t1 with <| refs := refs; code := code |>))`,
+  srw_tac[][] >>
+  qpat_x_assum `v_rel _ x0 x1 x2 x3 x4` (fn x => mp_tac x >> simp [v_rel_cases] >> assume_tac x) >>
+  srw_tac[][] >>
+  imp_res_tac EVERY2_LENGTH >>
+  imp_res_tac cl_rel_get_loc
+  >- (qexists_tac `0` >>
+      srw_tac[][] >>
+      imp_res_tac dest_cl_imp_dest_cl' >>
+      (* TODO: metis_tac[cl_rel_run] is not VALID here *)
+      match_mp_tac cl_rel_run >> metis_tac[]) >>
+  CONV_TAC (RESORT_EXISTS_CONV List.rev) >>
+  qexists_tac `generate_partial_app_closure_fn (num_args − 1) (LENGTH ys − 1)` >>
+  srw_tac [ARITH_ss] [] >>
+  imp_res_tac cl_rel_dest >>
+  srw_tac[][] >>
+  `v_rel max_app f1 refs code cl (Block closure_tag (CodePtr l::Number (&num_args')::fvs'))`
+            by (srw_tac[][v_rel_cases, partial_app_tag_def] >>
+                metis_tac [closure_tag_def]) >>
+  `LENGTH arg_env ≠ 0 ∧ LENGTH ys ≠ 0 ∧ LENGTH ys < num_args` by metis_tac [LENGTH_EQ_NUM] >>
+  `LIST_REL (v_rel max_app f1 refs code) (args++arg_env) (args'++ys)`
+             by metis_tac [EVERY2_APPEND] >>
+  assume_tac (SIMP_RULE (srw_ss()) [GSYM AND_IMP_INTRO] dest_closure_full_of_part |> GEN_ALL) >>
+  rpt (pop_assum (fn th => first_assum (assume_tac o MATCH_MP th))) >>
+  strip_assume_tac (SIMP_RULE (srw_ss()) [GSYM AND_IMP_INTRO] cl_rel_run) >>
+  full_simp_tac(srw_ss())[] >>
+  rpt (pop_assum (fn x => first_assum (strip_assume_tac o MATCH_MP x))) >>
+  MAP_EVERY qexists_tac [`new_env'`, `aux2`, `aux1`, `body'`] >>
+  srw_tac[][] >>
+  `?total_args. (&num_args'):int = &total_args - 1`
+        by (qexists_tac `&num_args' + 1` >>
+            srw_tac[][] >>
+            ARITH_TAC) >>
+  full_simp_tac(srw_ss())[] >>
+  imp_res_tac cl_rel_get_num_args >>
+  full_simp_tac(srw_ss())[] >>
+  srw_tac[][] >>
+  qexists_tac `1` >>
+  srw_tac[][] >>
+  full_simp_tac(srw_ss())[] >>
+  `num_args' + 2 = LENGTH (DROP (LENGTH args' + LENGTH ys − num_args) args') + (LENGTH ys +1) ∧
+   0 < LENGTH (DROP (LENGTH args' + LENGTH ys − num_args) args')`
+            by (srw_tac[][LENGTH_DROP, SUB_LEFT_SUB] >>
+                full_simp_tac(srw_ss())[LESS_OR_EQ] >>
+                TRY ARITH_TAC >>
+                `num_args' = num_args -1`  by ARITH_TAC >>
+                simp [] >>
+                imp_res_tac dest_closure_full_app >>
+                `num_args'' = num_args ∧ LENGTH old_args = LENGTH ys`
+                         by (Cases_on `cl` >>
+                             full_simp_tac(srw_ss())[add_args_def] >>
+                             qpat_x_assum `X = func` (assume_tac o GSYM) >>
+                             full_simp_tac(srw_ss())[get_old_args_def, get_num_args_def] >>
+                             srw_tac[][] >>
+                             simp []) >>
+                decide_tac) >>
+  full_simp_tac bool_ss [] >>
+  assume_tac (SIMP_RULE (srw_ss()++ARITH_ss) [GSYM AND_IMP_INTRO] evaluate_partial_app_fn) >>
+  pop_assum (fn th => first_assum (mp_tac o MATCH_MP th)) >>
+  full_simp_tac(srw_ss())[] >>
+  srw_tac[][] >>
+  full_simp_tac(srw_ss())[] >>
+  full_simp_tac(srw_ss())[inc_clock_def] >>
+  srw_tac[][] >>
+  rev_full_simp_tac(srw_ss())[] >>
+  pop_assum (qspecl_then [`Number (&num_args − 1)`,
+                          `partial_app_tag`,
+                          `Number (&(num_args − (LENGTH ys + 1)))`,
+                          `closure_tag`,
+                          `CodePtr (partial_app_fn_location max_app (num_args − 1) (LENGTH ys − 1))`,
+                          `fvs'`,
+                          `t1 with <|refs:=refs;clock := t1.clock + 1; code := code|>`] mp_tac) >>
+  srw_tac[][partial_app_tag_def] >>
+  srw_tac[][] >>
+  srw_tac[][dec_clock_def] >>
+  `t1 with <|clock := t1.clock; code := code|> = t1 with code := code`
+         by srw_tac[][bvlSemTheory.state_component_equality] >>
+  `LENGTH args' − (LENGTH args' + LENGTH ys − num_args) + LENGTH ys − 1 = num_args -1` by ARITH_TAC >>
+  full_simp_tac(srw_ss())[] >>
+  `num_args' + 1 = num_args` by ARITH_TAC >>
+  `LENGTH args' + LENGTH ys − (num_args' + 1) ≤ LENGTH args'` by ARITH_TAC >>
+  first_x_assum (qspec_then `t1 with <| clock := t1.clock; code := code |>` mp_tac) >>
+  full_simp_tac(srw_ss())[DROP_APPEND1] >>
+  srw_tac[][dec_clock_def]) |> INST_TYPE[alpha|->``:'c``,beta|->``:'ffi``];
+  val _ = show_thm "v_rel_run_replay=" v_rel_run_replay;
+end;
 (* Replay the original local list-relation theorem. *)
 local
   open preamble clos_to_bvlProofTheory closSemTheory listTheory
