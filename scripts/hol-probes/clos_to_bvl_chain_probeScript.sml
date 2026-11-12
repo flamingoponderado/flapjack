@@ -206,6 +206,74 @@ in
   Cases_on `t` >>
   full_simp_tac(srw_ss())[]);
   val _ = show_thm "evaluate_generic_app_full_replay=" evaluate_generic_app_full_replay;
+  val evaluate_genlist_prev_args_no_rev_replay = Q.prove (
+    `  !prev_args z x tag arg_list st.
+    evaluate (GENLIST (λprev_arg.
+      mk_elem_at (Var (LENGTH x)) (prev_arg + LENGTH z)) (LENGTH prev_args),
+           x++(Block tag (z++prev_args))::arg_list,
+           st)
+    =
+    (Rval prev_args,st)`,
+  Induct_on `prev_args` >>
+  srw_tac[][evaluate_def, GENLIST_CONS] >>
+  srw_tac[][Once evaluate_CONS, evaluate_def, do_app_def,do_int_app_def] >>
+  full_simp_tac (srw_ss()++ARITH_ss) [] >>
+  srw_tac[][] >>
+  pop_assum (qspecl_then [`z++[h]`] mp_tac) >>
+  srw_tac [ARITH_ss] [combinTheory.o_DEF, ADD1] >>
+  `z ++ h :: prev_args = z ++ [h] ++ prev_args` by metis_tac [APPEND, APPEND_ASSOC] >>
+  srw_tac[][el_append3] >>
+  `x ++ Block tag (z ++ [h] ++ prev_args)::arg_list = x ++ [Block tag (z ++ [h] ++ prev_args)] ++ arg_list`
+          by metis_tac [APPEND, APPEND_ASSOC] >>
+  srw_tac[][el_append3] >>
+  decide_tac);
+  val evaluate_genlist_prev_args_no_rev = evaluate_genlist_prev_args_no_rev_replay;
+  val evaluate_genlist_prev_args1_no_rev_replay = Q.prove (
+    `  !prev_args x tag p n cl args st.
+    evaluate (GENLIST (λprev_arg.
+      mk_elem_at (Var (LENGTH args + 1)) (prev_arg + 3)) (LENGTH prev_args),
+           x::(args++[Block tag (p::n::cl::prev_args)]),
+           st)
+    =
+    (Rval prev_args,st)`,
+  metis_tac [evaluate_genlist_prev_args_no_rev, APPEND, LENGTH, DECIDE ``SUC (SUC (SUC 0)) = 3``,
+             DECIDE ``(SUC 0) = 1``, DECIDE ``SUC (SUC 0) = 2``, ADD1]);
+  val evaluate_genlist_prev_args1_no_rev = evaluate_genlist_prev_args1_no_rev_replay;
+  val _ = show_thm "evaluate_genlist_prev_args1_no_rev_replay=" evaluate_genlist_prev_args1_no_rev_replay;
+  val evaluate_partial_app_fn_replay = Q.prove (
+    `  !num_args args' num_args' prev_args tag num tag' l l' fvs exp code.
+    lookup l code = SOME (LENGTH args' + LENGTH prev_args + 1,exp) /\
+    LENGTH prev_args ≠ 0 ∧
+    LENGTH prev_args < num_args ∧
+    num_args = LENGTH prev_args + LENGTH args'
+    ⇒
+    !st. evaluate ([generate_partial_app_closure_fn (num_args - 1) (LENGTH prev_args - 1)],
+           DROP (LENGTH args' + LENGTH prev_args − num_args) args' ++
+           [Block tag (l'::num::Block tag' (CodePtr l::num_args'::fvs)::prev_args)],
+           (st with code := code)) =
+     if st.clock = 0 then
+       (Rerr(Rabort Rtimeout_error), (st with code := code))
+     else
+       evaluate ([exp],
+              DROP (LENGTH args' + LENGTH prev_args − num_args) args'++prev_args++[Block tag' (CodePtr l::num_args'::fvs)],
+              dec_clock 1 (st with code := code))`,
+  srw_tac[][evaluate_def, generate_partial_app_closure_fn_def, mk_const_def, do_app_def, do_int_app_def] >>
+  `LENGTH prev_args <> 0` by simp[] >>
+  full_simp_tac (srw_ss()++ARITH_ss) [el_append2, evaluate_APPEND] >>
+  `LENGTH prev_args <> 0` by simp[] >>
+  full_simp_tac (std_ss++ARITH_ss) [ADD1] >>
+  srw_tac[][evaluate_def] >>
+  qabbrev_tac `cl = Block tag (l'::num::Block tag' (CodePtr l::num_args'::fvs):: prev_args)` >>
+  qspecl_then [`1`, `Block tag' (CodePtr l::num_args'::fvs)::(args' ++ [cl])`,
+                       `LENGTH (args')`, `st with code := code`] assume_tac evaluate_genlist_vars >>
+  full_simp_tac (srw_ss()++ARITH_ss) [ADD1] >>
+  `LENGTH prev_args <> 0` by simp[] >>
+  full_simp_tac (std_ss++ARITH_ss) [ADD1,EL_LENGTH_APPEND] >>
+  srw_tac[][evaluate_genlist_prev_args1_no_rev, Abbr `cl`, evaluate_def, do_app_def, find_code_def] >>
+  full_simp_tac (srw_ss()++ARITH_ss) [ADD1,EL_LENGTH_APPEND] >>
+  srw_tac[][evaluate_genlist_prev_args1_no_rev, evaluate_def, do_app_def, do_int_app_def,find_code_def] >>
+  srw_tac[][FRONT_APPEND, TAKE_LENGTH_APPEND, bvlSemTheory.state_component_equality] >> fs[]);
+  val _ = show_thm "evaluate_partial_app_fn_replay=" evaluate_partial_app_fn_replay;
   val mk_cl_lem_replay = Q.prove (
     `  l < LENGTH env
    ⇒

@@ -157,6 +157,20 @@
   "reviewer": "Compared the literal local HOL source proof and typed replay: related source and target values have equal full optional byte decodings, including NONE, with fixed word8 bytes. The f and refs inputs use canonical finite support and same-module codec witnesses."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_genlist_prev_args1_no_rev",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "evaluateGenlistPrevArgs1NoRev",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the literal local HOL proof and typed replay: the arbitrary leading value is independent of the stored closure field, block tag and all three header values are arbitrary, generated indices and complete unchanged-state result agree. Compiler and FFI carriers remain independent. The refs field uses the canonical finite-support carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_partial_app_fn",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/PartialApplication.lean", "lean_name": "evaluatePartialAppFn",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the literal local HOL proof and typed replay: all four premise conjuncts, arbitrary outer and inner block tags and stored values, sparse-tree code update, universal independent compiler/FFI state, exact DROP and timeout state and successful body call agree. The refs field uses the canonical finite-support carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_mk_cl_call_spec",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/GenericFull.lean", "lean_name": "evaluateMkClCallSpec",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],

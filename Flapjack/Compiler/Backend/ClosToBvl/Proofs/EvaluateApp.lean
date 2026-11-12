@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.DirectApplication
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureShape
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveEntry
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreeLet
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SavedSelectors
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ClosureArgumentRelation
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateCall
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
@@ -1084,14 +1085,24 @@ theorem vRel_ordinary_partial {C F : Type}
       some (.closure (some ptr) args captured arity body) := by simp [addArgs]
   exact .partialClosure envRel argsRel nonempty partialBound installed' added (by simp [getNumArgs]) closure
 
-/-- The source ordinary-closure dispatcher saves an undersaturated argument
-prefix for a later application. -/
-theorem destClosure_ordinary_partial (maxApp ptr arity : Nat) (captured args : List ClosSem.Value)
-    (body : ClosLang.Exp) (bound : args.length ≤ maxApp) (partialBound : args.length < arity) :
-    ClosSem.destClosure maxApp none (.closure (some ptr) [] captured arity body) args =
-      some (.partialApp (.closure (some ptr) args captured arity body)) := by
-  have positive : 0 < arity := by omega
-  simp [ClosSem.destClosure, ClosSem.checkLoc, bound, partialBound, positive]
+/-- Source evaluation saves a second, still undersaturating argument group. -/
+theorem evaluateApp_ordinary_partial_again {C F : Type} (s : ClosSem.State C F)
+    (ptr arity : Nat) (captured oldArgs newArgs : List ClosSem.Value) (body : ClosLang.Exp)
+    (nonempty : newArgs ≠ []) (bound : newArgs.length ≤ s.maxApp)
+    (partialBound : (newArgs ++ oldArgs).length < arity) :
+    ClosSem.evaluateApp none (.closure (some ptr) oldArgs captured arity body) newArgs s =
+      if s.clock < newArgs.length then (.err (.abort .timeoutError), { s with clock := 0 })
+      else (.val [.closure (some ptr) (newArgs ++ oldArgs) captured arity body],
+        ClosSem.decClock newArgs.length s) := by
+  have oldBound : oldArgs.length < arity := by simp only [List.length_append] at partialBound; omega
+  have found : ClosSem.destClosure s.maxApp none (.closure (some ptr) oldArgs captured arity body) newArgs =
+      some (.partialApp (.closure (some ptr) (newArgs ++ oldArgs) captured arity body)) := by
+    simp [ClosSem.destClosure, ClosSem.checkLoc, bound, oldBound, ← List.length_append, partialBound]
+  cases newArgs with
+  | nil => contradiction
+  | cons head tail =>
+    rw [ClosSem.evaluateApp, found]
+    simp
 
 /-- The computed partial-application slot evaluates the triangular index plus
 the number of previously supplied arguments. -/
@@ -1580,21 +1591,6 @@ theorem evaluate_mkClCall_partial_new {C F : Type} (s : BvlSem.State C F)
     · have clocks : s.clock - 1 - n = s.clock - (n + 1) := by omega
       simp [BvlSem.decClock, clocks]
 
-/-- Source partial application either times out or returns a closure with its
-newly supplied arguments saved. -/
-theorem evaluateApp_ordinary_partial {C F : Type} (s : ClosSem.State C F)
-    (ptr arity : Nat) (captured args : List ClosSem.Value) (body : ClosLang.Exp)
-    (nonempty : args ≠ []) (bound : args.length ≤ s.maxApp) (partialBound : args.length < arity) :
-    ClosSem.evaluateApp none (.closure (some ptr) [] captured arity body) args s =
-      if s.clock < args.length then (.err (.abort .timeoutError), { s with clock := 0 })
-      else (.val [.closure (some ptr) args captured arity body], ClosSem.decClock args.length s) := by
-  have found := destClosure_ordinary_partial s.maxApp ptr arity captured args body bound partialBound
-  cases args with
-  | nil => contradiction
-  | cons head tail =>
-    rw [ClosSem.evaluateApp, found]
-    simp
-
 /-- The target partial closure is related to the source partial result, with
 both sides charging exactly one tick per supplied argument. -/
 theorem evaluateApp_ordinary_partial_simulation {C F : Type}
@@ -1631,7 +1627,9 @@ theorem evaluateApp_ordinary_partial_simulation {C F : Type}
     (.codePtr (ptr + numStubs s.maxApp)) targetLength previousBound totalBound lookup global
   have tickEq : n + 1 = args.length := by omega
   have remainingEq : arity - 1 - (n + 1) = arity - 1 - args.length := by omega
-  have sourceRun := evaluateApp_ordinary_partial s ptr arity captured args body nonempty argsBound partialBound
+  have sourceRun := evaluateApp_ordinary_partial_again s ptr arity captured [] args body nonempty argsBound
+    (by simpa using partialBound)
+  simp only [List.append_nil] at sourceRun
   by_cases timeout : s.clock < args.length
   · refine ⟨.err (.abort .timeoutError), { s with clock := 0 }, ?_, ?_⟩
     · simpa [timeout] using sourceRun
@@ -2049,25 +2047,6 @@ theorem evaluate_mkClCall_partial_extend {C F : Type} (s : BvlSem.State C F)
     · have clocks : s.clock - 1 - n = s.clock - (n + 1) := by omega
       simp [BvlSem.decClock, clocks]
 
-/-- Source evaluation saves a second, still undersaturating argument group. -/
-theorem evaluateApp_ordinary_partial_again {C F : Type} (s : ClosSem.State C F)
-    (ptr arity : Nat) (captured oldArgs newArgs : List ClosSem.Value) (body : ClosLang.Exp)
-    (nonempty : newArgs ≠ []) (bound : newArgs.length ≤ s.maxApp)
-    (partialBound : (newArgs ++ oldArgs).length < arity) :
-    ClosSem.evaluateApp none (.closure (some ptr) oldArgs captured arity body) newArgs s =
-      if s.clock < newArgs.length then (.err (.abort .timeoutError), { s with clock := 0 })
-      else (.val [.closure (some ptr) (newArgs ++ oldArgs) captured arity body],
-        ClosSem.decClock newArgs.length s) := by
-  have oldBound : oldArgs.length < arity := by simp only [List.length_append] at partialBound; omega
-  have found : ClosSem.destClosure s.maxApp none (.closure (some ptr) oldArgs captured arity body) newArgs =
-      some (.partialApp (.closure (some ptr) (newArgs ++ oldArgs) captured arity body)) := by
-    simp [ClosSem.destClosure, ClosSem.checkLoc, bound, oldBound, ← List.length_append, partialBound]
-  cases newArgs with
-  | nil => contradiction
-  | cons head tail =>
-    rw [ClosSem.evaluateApp, found]
-    simp
-
 /-- Repeated partial application of an ordinary closure preserves the value and
 state relations for the emitted call and its exact clock cost. -/
 theorem evaluateApp_ordinary_partial_again_simulation {C F : Type}
@@ -2235,49 +2214,20 @@ theorem vRel_recclosure_partial_existing {C F : Type}
       subst env
       exact ⟨fvs, ys, cl', rfl, envRel, argRel, closure⟩
 
-/-- The completion stub reads its saved arguments in their stored order. -/
-theorem evaluate_completion_savedArgs {C F : Type} (args saved : List BvlSem.Value)
-    (original ptr arity : BvlSem.Value) (s : BvlSem.State C F) :
-    BvlSem.evaluate ((List.range saved.length).map (fun i =>
-      Bvl.Exp.op (.blockOp (.elemAt (i + 3))) [.var (args.length + 1)]))
-      (original :: (args ++ [.block 31 (ptr :: arity :: original :: saved)])) s = (.val saved, s) := by
-  have savedPrefix : ∀ n, n ≤ saved.length →
-      BvlSem.evaluate ((List.range n).map (fun i => Bvl.Exp.op (.blockOp (.elemAt (i + 3))) [.var (args.length + 1)]))
-        (original :: (args ++ [.block 31 (ptr :: arity :: original :: saved)])) s =
-        (.val (saved.take n), s) := by
-    intro n bound
-    induction n with
-    | zero => simp [BvlSem.evaluate]
-    | succ n ih =>
-      have boundN : n ≤ saved.length := by omega
-      have indexBound : n < saved.length := by omega
-      rw [List.range_succ, List.map_append]
-      change BvlSem.evaluateTuple (((List.range n).map (fun i => Bvl.Exp.op (.blockOp (.elemAt (i + 3))) [.var (args.length + 1)]) ++
-        [Bvl.Exp.op (.blockOp (.elemAt (n + 3))) [.var (args.length + 1)]]),
-        original :: (args ++ [.block 31 (ptr :: arity :: original :: saved)]), s) = _
-      rw [BvlProps.evaluateAppend]
-      simp only [BvlSem.evaluateTuple, ih boundN]
-      have elemRun : BvlSem.evaluate [Bvl.Exp.op (.blockOp (.elemAt (n + 3))) [.var (args.length + 1)]]
-          (original :: (args ++ [.block 31 (ptr :: arity :: original :: saved)])) s = (.val [saved[n]], s) := by
-        simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyBlock, indexBound]
-      rw [elemRun]
-      simp only [List.take_append_getElem indexBound]
-  simpa using savedPrefix saved.length (by omega)
-
 /-- The generated completion stub restores new and saved arguments in order,
 then calls the original closure, charging the call tick. -/
 theorem evaluate_partialAppClosureFn {C F : Type} (s : BvlSem.State C F)
-    (total previous : Nat) (args saved : List BvlSem.Value) (stub originalPtr : Nat)
+    (total previous : Nat) (args saved : List BvlSem.Value) (stub : BvlSem.Value) (originalPtr tag originalTag : Nat)
     (remaining : BvlSem.Value) (originalFields : List BvlSem.Value) (body : Bvl.Exp)
     (newCount : total - previous = args.length) (savedCount : previous + 1 = saved.length)
     (lookup : sptLookup originalPtr s.code = some (args.length + saved.length + 1, body)) :
-    let original := BvlSem.Value.block 30 (.codePtr originalPtr :: originalFields)
-    let partialValue := BvlSem.Value.block 31 (.codePtr stub :: remaining :: original :: saved)
+    let original := BvlSem.Value.block originalTag (.codePtr originalPtr :: originalFields)
+    let partialValue := BvlSem.Value.block tag (stub :: remaining :: original :: saved)
     BvlSem.evaluate [generatePartialAppClosureFn total previous] (args ++ [partialValue]) s =
       if s.clock = 0 then (.err (.abort .timeoutError), { s with clock := 0 })
       else BvlSem.evaluate [body] (args ++ saved ++ [original]) (BvlSem.decClock 1 s) := by
-  let original := BvlSem.Value.block 30 (.codePtr originalPtr :: originalFields)
-  let partialValue := BvlSem.Value.block 31 (.codePtr stub :: remaining :: original :: saved)
+  let original := BvlSem.Value.block originalTag (.codePtr originalPtr :: originalFields)
+  let partialValue := BvlSem.Value.block tag (stub :: remaining :: original :: saved)
   let env := original :: (args ++ [partialValue])
   have originalRun : BvlSem.evaluate [.op (.blockOp (.elemAt 2)) [.var (total - previous)]]
       (args ++ [partialValue]) s = (.val [original], s) := by
@@ -2291,7 +2241,7 @@ theorem evaluate_partialAppClosureFn {C F : Type} (s : BvlSem.State C F)
       Bvl.Exp.op (.blockOp (.elemAt (i + 3))) [.var (total - previous + 1)])) env s =
       (.val saved, s) := by
     simpa [newCount, savedCount, env, partialValue] using
-      evaluate_completion_savedArgs args saved original (.codePtr stub) remaining s
+      evaluateGenlistPrevArgs1NoRev saved original tag stub remaining original args s
   have tailRun : BvlSem.evaluate [.var 0, .op (.blockOp (.elemAt 0)) [.var 0]] env s =
       (.val [original, .codePtr originalPtr], s) := by
     simp [env, original, BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyBlock]
@@ -2354,7 +2304,7 @@ theorem evaluate_mkClCall_partial_complete {C F : Type} (s : BvlSem.State C F)
   · simp only [timeout, ↓reduceIte]
     have lookupDec : sptLookup originalPtr (BvlSem.decClock args.length s).code =
         some (args.length + saved.length + 1, body) := by simpa [BvlSem.decClock] using originalLookup
-    rw [evaluate_partialAppClosureFn (BvlSem.decClock args.length s) total previous args saved stub originalPtr
+    rw [evaluate_partialAppClosureFn (BvlSem.decClock args.length s) total previous args saved (.codePtr stub) originalPtr 31 30
       (.number (Int.ofNat (args.length - 1))) originalFields body newCount savedCount lookupDec]
     have clockTest : (BvlSem.decClock args.length s).clock = 0 ↔ s.clock < args.length + 1 := by
       simp only [BvlSem.decClock]
