@@ -1213,6 +1213,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateThunk
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateForce
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateAll
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Semantics
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvalSim
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InitialState
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ProgramCode
 import Flapjack.Compiler.Backend.ClosToBvl.FullIncremental
