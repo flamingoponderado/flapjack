@@ -1,5 +1,29 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "IMP_EL_SING",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/IndexedLookup.lean", "lean_name": "impElSing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: for arbitrary element type, index, prefix, element and suffix, the index-equals-prefix-length premise implies HOL EL of the concatenation equals the element. The element supplies the nonemptiness required by holEl without an additional premise; the index is in range."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "ALOOKUP_MAPi_SWAP",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/IndexedLookup.lean", "lean_name": "alookupMapIdx_swap",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source specialization at zero offset: for arbitrary key type, keys and list, inequality implies that appending the other key leaves indexed ALOOKUP unchanged. holALookup uses propositional equality and mapIdx retains the source index order."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "ALOOKUP_MAPi_APPEND2",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/IndexedLookup.lean", "lean_name": "alookupMapIdx_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed source specialization at zero offset: for an arbitrary list and absent key over any key type, indexed ALOOKUP after appending the key yields SOME of the original length."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "ALOOKUP_MAPi",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/IndexedLookup.lean", "lean_name": "alookupMapIdx_bound",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original including its independently polymorphic unused quantified variable: a successful propositional indexed ALOOKUP returns an index strictly less than the original list length."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "OptionalLetLet_limit",
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/EnvRel.lean", "lean_name": "optionalLetLet_limit",
   "statement_status": "reviewed_exact",

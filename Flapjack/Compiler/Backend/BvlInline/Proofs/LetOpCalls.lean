@@ -265,22 +265,6 @@ theorem letOpSimulation_all {C F : Type} (splitSeq : Bool) (limit : Nat)
             simp only [expsWeight, expWeight] at ⊢
             omega
 
-/-- The combined transformation preserves a non-type-error singleton run
-between mapped states, including calls and dynamic code installation. -/
-theorem evaluate_letOpTransform_mapped {C F : Type} (splitSeq : Bool) (limit : Nat)
-    (body : Bvl.Exp) (env : List Value) (source target final : State C F)
-    (result : Result (List Value) Value)
-    (related : mappedStateRel (letOpTransform splitSeq limit) source target)
-    (run : evaluate [body] env source = (result, final))
-    (notType : result ≠ .err (.abort .typeError)) :
-    ∃ targetFinal, evaluate [letOpTransform splitSeq limit env.length body] env target = (result, targetFinal) ∧
-      mappedStateRel (letOpTransform splitSeq limit) final targetFinal := by
-  obtain ⟨targetFinal, transformed, finalRel⟩ :=
-    letOpSimulation_all splitSeq limit [body] env source result final target related run notType
-  have optimized : evaluate [letOpSing body] env target = (result, targetFinal) := by
-    simpa [letOp, letOpList, letOpSing] using transformed
-  exact ⟨targetFinal, evaluate_letOpTransform splitSeq limit body env target targetFinal result optimized notType, finalRel⟩
-
 /-- Every combined-pass code body satisfies the variable bound and handler
 shape required by BVL-to-BVI. -/
 theorem letOpTransform_wellFormed (splitSeq : Bool) (limit arity : Nat) (body : Bvl.Exp) :
