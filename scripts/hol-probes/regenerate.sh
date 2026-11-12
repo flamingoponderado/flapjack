@@ -10418,3 +10418,11 @@ run_probe word_inst_proof_typed_probeScript.sml word_inst_proof_typed_probe.out 
   inst_select_Loop_helper_typed inst_select_thm_typed binary_branch_exp_def_typed pull_ops_simp_def_typed evaluate_three_to_two_reg_prog_typed three_to_two_reg_Loop_typed three_to_two_reg_correct_typed \
   "$cake_dir/compiler/backend/proofs/word_instProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe asm_props_typed_probeScript.sml asm_props_typed_probe.out \
+  arith_upd_consts_typed binop_upd_consts_typed upd_pc_simps_typed asm_consts_typed asm_failed_ignore_new_pc_typed asm_mem_ignore_new_pc_typed asserts_def_typed asserts2_def_typed \
+  asserts2_change_interfer_typed asserts2_every_typed asserts2_first_typed asserts_IMP_FOLDR_COUNT_LIST_typed asserts_IMP_FOLDR_COUNT_LIST_LESS_typed asserts_WEAKEN_typed encoder_correct_def_typed enc_ok_def_typed \
+  offset_monotonic_def_typed target_ok_def_typed fp_upd_consts_typed interference_ok_def_typed read_mem_word_IMP_mem_eq_typed write_mem_word_mem_domain_typed write_mem_word_mem_eq_typed all_pcs_def_typed \
+  all_pcs_thm_typed bytes_in_memory_all_pcs_typed target_typed target_state_rel_def_typed \
+  "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" \
+  "$cake_dir/compiler/encoders/asm"

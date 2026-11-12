@@ -11,6 +11,7 @@
     {"bytes": 251, "out": "asm_inst_fragment_probe.out", "rows": 20, "sha256": "fb00053f44698704d47ad72155116e228341abdc8a31fca36f84735d31fe6183"},
     {"bytes": 126, "out": "asm_memory_shift_probe.out", "rows": 8, "sha256": "4127bc37122a7ca758123fa08ca515b75dff3b9cbd6b4fcced2fe7800703b78c"},
     {"bytes": 1369, "out": "asm_props_encoder_correct_probe.out", "rows": 3, "sha256": "52271f08372005d4a4d0de5588704a15c46b8db7fdd73e5ed7908dfd70c833ac"},
+    {"bytes": 7522, "out": "asm_props_typed_probe.out", "rows": 28, "sha256": "a05b1b95a66337f3d18700dbc1e88ac664e688329677125f35796ebdf4cf843e"},
     {"bytes": 520, "out": "asm_sem_mem_ops_probe.out", "rows": 14, "sha256": "aa65a4253cb8aaa1b827be5a3ff97b1c8208dba666b64111eafad722c4fcea9d"},
     {"bytes": 164, "out": "asm_sem_mem_word_probe.out", "rows": 15, "sha256": "d2c433230958dbc3bdfe4abd9baf8ec6e871987e98709ca900c8c536b8dfd4b4"},
     {"bytes": 270, "out": "asm_sem_step_probe.out", "rows": 12, "sha256": "19e9aa5f29af9a75b49ba78e58c6bfda5dc4be2e18b1f971946fb10bba27f13a"},
