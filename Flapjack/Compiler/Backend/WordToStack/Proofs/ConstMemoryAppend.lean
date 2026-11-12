@@ -36,11 +36,13 @@ theorem constWritesAppend {width : Nat} [NeZero width]
 
 /-- Full original native constant-address append law. Both full domain
 predicates are checked at exactly the original modularly advanced addresses;
-there is no disjointness, address-range, or stride-width assumption. -/
+there is no disjointness, address-range, or stride-width assumption. The typed
+capture (`const_addresses_append_typed`) keeps the list element type `α`
+independent of the word dimension `β`, so the twin binds `{α : Type}`. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "const_addresses_append"
   (words_as_type_indexed_bitvec)]
-theorem constAddressesAppend {width : Nat} [NeZero width]
-    (xs ys : List (Bool × BitVec width)) (dm : BitVec width → Bool) (a : BitVec width) :
+theorem constAddressesAppend {α : Type} {width : Nat} [NeZero width]
+    (xs ys : List α) (dm : BitVec width → Bool) (a : BitVec width) :
     wordSemConstAddresses a (xs ++ ys) dm = true ↔
       wordSemConstAddresses a xs dm = true ∧
       wordSemConstAddresses (a + wordSemBytesInWord * BitVec.ofNat width xs.length) ys dm = true := by
