@@ -157,6 +157,12 @@
   "reviewer": "Compared the literal local HOL source proof and typed replay: related source and target values have equal full optional byte decodings, including NONE, with fixed word8 bytes. The f and refs inputs use canonical finite support and same-module codec witnesses."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "dest_closure_full_of_part",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "destClosure_full_of_part",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the literal local HOL proof and typed replay: the full bounded-destination result, nonempty saved arguments, addArgs and arity equalities and strict saved-length bound imply the identical unbounded destination for args appended to saved arguments. Ordinary and recursive closures retain the original carriers and total-index guard."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "check_loc'_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "checkLocPrime",
   "statement_status": "reviewed_exact",

@@ -124,4 +124,99 @@ theorem destClosure_imp_prime (maxApp : Nat) (location : Option Nat) (function :
           exact found
         · simp at found
 
+/-- Completing a partial closure agrees with applying its original closure. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "dest_closure_full_of_part"]
+theorem destClosure_full_of_part (maxApp : Nat) (location : Option Nat) (func : ClosSem.Value)
+    (args : List ClosSem.Value) (body : ClosLang.Exp) (newEnv rest argEnv : List ClosSem.Value)
+    (cl : ClosSem.Value) (numArgs : Nat)
+    (premises : ClosSem.destClosure maxApp location func args = some (.fullApp body newEnv rest) ∧
+      argEnv.length ≠ 0 ∧ addArgs cl argEnv = some func ∧ getNumArgs cl = some numArgs ∧
+      argEnv.length < numArgs) :
+    destClosurePrime location cl (args ++ argEnv) = some (.fullApp body newEnv rest) := by
+  rcases premises with ⟨found, nonempty, added, arity, bound⟩
+  cases cl <;> simp only [addArgs, Option.some.injEq, reduceCtorEq] at added
+  all_goals subst func
+  case closure loc supplied captured arity0 expression =>
+    simp only [getNumArgs, Option.some.injEq] at arity
+    subst numArgs
+    simp only [ClosSem.destClosure] at found
+    split at found
+    · rename_i valid
+      split at found
+      · simp at found
+      · rename_i enough
+        simp only [Option.some.injEq, ClosSem.AppKind.fullApp.injEq] at found
+        rcases found with ⟨rfl, rfl, rfl⟩
+        cases location with
+        | some address =>
+          simp [ClosSem.checkLoc] at valid
+          simp [valid.1.2.1] at nonempty
+        | none =>
+          simp only [ClosSem.checkLoc, Bool.and_eq_true, decide_eq_true_eq] at valid
+          simp only [destClosurePrime, checkLocPrime, Bool.true_and, decide_eq_true_eq]
+          have suppliedLt : supplied.length < arity0 := by
+            simp only [List.length_append] at valid
+            omega
+          have notPartial : ¬ (args ++ argEnv).length + supplied.length < arity0 := by
+            simp only [List.length_append] at enough ⊢
+            omega
+          simp only [if_pos suppliedLt, if_neg notPartial, Option.some.injEq,
+            ClosSem.AppKind.fullApp.injEq, true_and]
+          have prefixBound : argEnv.length ≤ arity0 - supplied.length := by
+            simp only [List.length_append] at valid
+            omega
+          have reverseBound : argEnv.reverse.length ≤ arity0 - supplied.length := by simpa using prefixBound
+          have takeSaved := List.take_of_length_le reverseBound
+          have dropSaved := List.drop_eq_nil_of_le reverseBound
+          simp [List.reverse_append, List.take_append, List.drop_append, takeSaved, dropSaved,
+            List.length_append, Nat.sub_sub, Nat.add_comm, List.append_assoc]
+    · simp at found
+  case recclosure loc supplied captured functions index =>
+    simp only [ClosSem.destClosure] at found
+    cases selected : functions[index]? with
+    | none => simp [selected] at found
+    | some entry =>
+      cases entry with
+      | mk arity0 expression =>
+        simp only [selected] at found
+        have idx : index < functions.length := List.getElem?_eq_some_iff.mp selected |>.1
+        have get := List.getElem?_eq_getElem idx
+        rw [selected] at get
+        simp only [Option.some.injEq] at get
+        have el : Flapjack.holEl index functions = (arity0, expression) := by
+          rw [Flapjack.holEl_eq_getElem index functions idx, ← get]
+        simp only [getNumArgs, el, Option.some.injEq] at arity
+        subst numArgs
+        split at found
+        · rename_i valid
+          split at found
+          · simp at found
+          · rename_i enough
+            simp only [Option.some.injEq, ClosSem.AppKind.fullApp.injEq] at found
+            rcases found with ⟨rfl, rfl, rfl⟩
+            cases location with
+            | some address =>
+              simp [ClosSem.checkLoc] at valid
+              simp [valid.1.2.1] at nonempty
+            | none =>
+              simp only [ClosSem.checkLoc, Bool.and_eq_true, decide_eq_true_eq] at valid
+              simp only [destClosurePrime, selected, checkLocPrime, Bool.true_and, decide_eq_true_eq]
+              have suppliedLt : supplied.length < arity0 := by
+                simp only [List.length_append] at valid
+                omega
+              have notPartial : ¬ (args ++ argEnv).length + supplied.length < arity0 := by
+                simp only [List.length_append] at enough ⊢
+                omega
+              simp only [if_pos suppliedLt, if_neg notPartial, Option.some.injEq,
+                ClosSem.AppKind.fullApp.injEq, true_and]
+              have prefixBound : argEnv.length ≤ arity0 - supplied.length := by
+                simp only [List.length_append] at valid
+                omega
+              have reverseBound : argEnv.reverse.length ≤ arity0 - supplied.length := by simpa using prefixBound
+              have takeSaved := List.take_of_length_le reverseBound
+              have dropSaved := List.drop_eq_nil_of_le reverseBound
+              simp [List.reverse_append, List.take_append, List.drop_append, takeSaved, dropSaved,
+                List.length_append, Nat.sub_sub, Nat.add_comm, List.append_assoc]
+        · simp at found
+
 end Flapjack.Compiler.Backend.ClosToBvl

@@ -114,6 +114,45 @@ val v_rel_union_replay = Q.prove (
 val _ = show_thm "v_rel_union_replay=" v_rel_union_replay;
 val _ = show_thm "check_loc_prime_def_typed=" clos_to_bvlProofTheory.check_loc'_def;
 val _ = show_thm "dest_closure_prime_def_typed=" clos_to_bvlProofTheory.dest_closure'_def;
+(* Replay the original local partial-to-full destination theorem. *)
+local
+  open preamble clos_to_bvlProofTheory closSemTheory
+in
+  val dest_closure_full_of_part_replay = Q.prove (
+    `dest_closure max_app loc func args = SOME (Full_app body newenv rest) ∧
+   LENGTH arg_env ≠ 0 ∧
+   add_args cl arg_env = SOME func ∧
+   get_num_args cl = SOME num_args ∧
+   LENGTH arg_env < num_args
+   ⇒
+   dest_closure' loc cl (args++arg_env) = SOME (Full_app body newenv rest)`,
+  srw_tac[][dest_closure_def, dest_closure'_def] >>
+  BasicProvers.EVERY_CASE_TAC >>
+  full_simp_tac(srw_ss())[add_args_def, check_loc_def, check_loc'_def, get_num_args_def] >>
+  srw_tac[][] >>
+  full_simp_tac(srw_ss())[] >>
+  TRY decide_tac
+  >- (`LENGTH (REVERSE arg_env) ≤ n - LENGTH l` by (srw_tac [ARITH_ss] []) >>
+      srw_tac[][TAKE_APPEND2] >>
+      srw_tac [ARITH_ss] [])
+  >- (`LENGTH (REVERSE arg_env) ≤ n - LENGTH l` by (srw_tac [ARITH_ss] []) >>
+      srw_tac[][DROP_APPEND2] >>
+      srw_tac [ARITH_ss] [])
+  >- (Cases_on `loc` >> full_simp_tac(srw_ss())[check_loc_def, check_loc'_def])
+  >- (full_simp_tac(srw_ss())[LET_THM] >>
+      BasicProvers.EVERY_CASE_TAC >>
+      srw_tac[][] >>
+      full_simp_tac(srw_ss())[] >>
+      TRY decide_tac
+      >- (Cases_on `loc` >> full_simp_tac(srw_ss())[check_loc_def, check_loc'_def])
+      >- (`LENGTH (REVERSE arg_env) ≤ num_args' - LENGTH l` by (srw_tac [ARITH_ss] []) >>
+          srw_tac[][TAKE_APPEND2] >>
+          srw_tac [ARITH_ss] [])
+      >- (`LENGTH (REVERSE arg_env) ≤ num_args' - LENGTH l` by (srw_tac [ARITH_ss] []) >>
+          srw_tac[][DROP_APPEND2] >>
+          srw_tac [ARITH_ss] [])));
+  val _ = show_thm "dest_closure_full_of_part_replay=" dest_closure_full_of_part_replay;
+end;
 (* Replay the original bounded-to-unbounded destination lemma. *)
 local
   open preamble clos_to_bvlProofTheory closSemTheory
