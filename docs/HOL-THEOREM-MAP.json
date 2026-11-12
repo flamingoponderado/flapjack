@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "let_evaluate_Call",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/LetOpSemantics.lean", "lean_name": "letEvaluateCall",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the original local theorem and its typed HOL proof replay: a non-type-error initial call is reproduced with the same result and an existential final state having the same FFI and clock. The canonical BVL state witness accounts for refs; the evaluator inherits the reals_as_rational_cuts assumption."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "let_state_rel_def", "hol_line": 1422,
   "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/LetOpState.lean", "lean_name": "letStateRel",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],

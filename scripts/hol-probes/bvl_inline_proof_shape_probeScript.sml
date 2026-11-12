@@ -27,3 +27,26 @@ val _ = show "let_opt_def_typed" bvl_inlineProofTheory.let_opt_def;
 val _ = show "let_opt_remove_def_typed" bvl_inlineProofTheory.let_opt_remove_def;
 val _ = show "let_state_rel_def_typed" bvl_inlineProofTheory.let_state_rel_def;
 val _ = show "evaluate_let_op_typed" bvl_inlineProofTheory.evaluate_let_op;
+
+load "preamble";
+open preamble bvl_inlineProofTheory bvl_inlineTheory bvlSemTheory bvlPropsTheory;
+val _ = temp_delsimps ["lift_disj_eq", "lift_imp_disj", "fromAList_def"];
+val let_state_rel_def = let_state_rel_def |> SIMP_RULE (srw_ss()) [state_component_equality, GSYM CONJ_ASSOC];
+val let_evaluate_Call_replay = prove(
+  ``evaluate ([Call 0 (SOME start) []], [],
+             initial_state ffi0 prog co (let_op_cc q4 l4 cc) k) = (r, s) /\
+    r <> Rerr (Rabort Rtype_error) ⇒
+    ∃(s2:('c,'ffi) bvlSem$state).
+      evaluate ([Call 0 (SOME start) []], [],
+        initial_state ffi0 (map (let_opt q4 l4) prog)
+          ((I ## MAP (I ## let_opt q4 l4)) o co) cc k) = (r, s2) ∧
+      s2.ffi = s.ffi /\ s.clock = s2.clock``,
+  strip_tac \\ fs [let_op_cc_def]
+  \\ imp_res_tac evaluate_let_op
+  \\ fs [let_op_def]
+  \\ qmatch_goalsub_abbrev_tac `([_],[],t4)`
+  \\ first_x_assum (qspecl_then [`t4`,`q4`,`l4`] mp_tac)
+  \\ impl_tac \\ rw [] \\ fs []
+  \\ fs [let_state_rel_def]
+  \\ unabbrev_all_tac \\ fs [initial_state_def]);
+val _ = show "let_evaluate_Call_replay_typed" let_evaluate_Call_replay;

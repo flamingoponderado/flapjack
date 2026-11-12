@@ -219,24 +219,4 @@ theorem evaluate_simulation {C F : Type} :
   · intro location function args source target sourceFinal result run related notTypeError
     exact (all source.clock).1 location function args source target sourceFinal result rfl run related notTypeError
 
-/-- The clock-bounded simulation assumption holds for every bound. -/
-theorem interpAssum_all {C F : Type} (bound : Nat) : InterpAssum C F bound := by
-  constructor
-  · intro expressions source env target result sourceFinal _ run notTypeError related
-    exact evaluate_simulation.1 expressions env source target sourceFinal result run related notTypeError
-  · intro args source location function target result sourceFinal _ run notTypeError related
-    exact evaluate_simulation.2 location function args source target sourceFinal result run related notTypeError
-
-/-- Interpreter insertion simulates evaluation without an extra simulation
-assumption. This remains proof-side until the evaluator and state carriers
-have been reviewed against their HOL counterparts. -/
-theorem insertInterp_simulates {C F : Type} (expressions : List ClosLang.Exp)
-    (source target sourceFinal : ClosSem.State C F) (result : Result (List ClosSem.Value) ClosSem.Value)
-    (run : ClosSem.evaluate expressions [] source = (result, sourceFinal))
-    (related : StateRel source target) (notTypeError : result ≠ .err (.abort .typeError)) :
-    ∃ extra targetFinal,
-      ClosSem.evaluate (insertInterp expressions) [] { target with clock := extra + target.clock } =
-        (result, targetFinal) ∧ StateRel sourceFinal targetFinal :=
-  insertInterp_correct expressions source target sourceFinal result run (interpAssum_all source.clock) related notTypeError
-
 end Flapjack.Compiler.Backend.ClosInterp
