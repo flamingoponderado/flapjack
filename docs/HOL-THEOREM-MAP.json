@@ -233,6 +233,42 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: args and prev lists have independent polymorphic element types, with exactly the three original conjuncts and all three arithmetic conclusions."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "length_take2",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "lengthTake2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: arbitrary element type, natural x, negated length bound and length equality agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "el_take_append",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "elTakeAppend",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: arbitrary same-typed lists and element, original inclusive prefix bound and full HOL EL result agree; x supplies local inhabitance."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "el_append2",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "elAppend2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: arbitrary list and element, index, appended singleton and HOL EL result agree; x supplies local inhabitance."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "el_append2_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "elAppend2Lemma",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: free element x, quantified natural and list, length premise and successor-indexed HOL EL equality agree; x supplies local inhabitance."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "hd_append",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "hdAppend",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: arbitrary same-typed lists, positive first length and both HOL HD occurrences agree. The existing bound supplies local inhabitance without an additional premise."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "tl_append",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SavedSelectors.lean", "lean_name": "tlAppend",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay: arbitrary same-typed lists, positive first length and both tail operations agree on the nonempty lists in the conclusion."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "twod_table_lemma",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean", "lean_name": "twodTableLemma",
   "statement_status": "reviewed_exact",

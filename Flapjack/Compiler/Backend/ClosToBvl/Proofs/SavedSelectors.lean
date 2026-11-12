@@ -8,6 +8,57 @@ public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 /-! Selectors for stored partial-closure arguments. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
+/-- Taking beyond a list's length keeps its entire length. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "length_take2"]
+theorem lengthTake2 {α : Type} (x : Nat) (l : List α) :
+    ¬ x ≤ l.length → (l.take x).length = l.length := by
+  intro h
+  simp only [List.length_take]
+  omega
+
+/-- The element appended after a list is at the list's length. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "el_append2"]
+theorem elAppend2 {α : Type} (l : List α) (x : α) :
+    letI : Nonempty α := ⟨x⟩
+    holEl l.length (l ++ [x]) = x := by
+  let _ : Nonempty α := ⟨x⟩
+  rw [holEl_eq_getElem _ _ (by simp)]
+  simp
+
+/-- A list with length n+1 has its appended element at successor n. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "el_append2_lemma"]
+theorem elAppend2Lemma {α : Type} (x : α) (n : Nat) (args : List α) :
+    letI : Nonempty α := ⟨x⟩
+    n + 1 = args.length → holEl (Nat.succ n) (args ++ [x]) = x := by
+  intro h
+  simpa only [Nat.succ_eq_add_one, h] using elAppend2 args x
+
+/-- Taking a bounded prefix places the appended element at its boundary. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "el_take_append"]
+theorem elTakeAppend {α : Type} (n : Nat) (l : List α) (x : α) (l2 : List α) :
+    letI : Nonempty α := ⟨x⟩
+    n ≤ l.length → holEl n (l.take n ++ [x] ++ l2) = x := by
+  let _ : Nonempty α := ⟨x⟩
+  intro bound
+  have length : (l.take n).length = n := by simp [List.length_take, Nat.min_eq_left bound]
+  rw [holEl_eq_getElem _ _ (by simp [length])]
+  simp [length]
+
+/-- A nonempty prefix determines the head of an appended list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "hd_append"]
+theorem hdAppend {α : Type} (l1 l2 : List α) (h : 0 < l1.length) :
+    letI : Nonempty α := ⟨l1[0]'(by omega)⟩
+    holHd (l1 ++ l2) = holHd l1 := by
+  cases l1 with
+  | nil => simp at h
+  | cons a as => rfl
+
+/-- Removing the head from an appended list preserves the nonempty prefix's tail. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "tl_append"]
+theorem tlAppend {α : Type} (l1 l2 : List α) :
+    0 < l1.length → (l1 ++ l2).tail = l1.tail ++ l2 := by
+  cases l1 <;> simp
+
 /-- Eta expansion of the last two arguments of a curried function. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "ETA2_THM"]
 theorem eta2Thm {α β γ δ ε ζ : Type} (f : α → β → γ → δ → ε → ζ)

@@ -119,6 +119,7 @@ in
   open bvl_jumpProofTheory;
   val el_append2 = Q.prove (`∀l x. EL (LENGTH l) (l++[x]) = x`,
     Induct_on `l` >> srw_tac[][]);
+  val _ = show_thm "el_append2_replay=" el_append2;
   val _ = temp_delsimps ["NORMEQ_CONV"];
   val _ = diminish_srw_ss ["ABBREV"];
   val _ = temp_delsimps ["lift_disj_eq", "lift_imp_disj", "fromAList_def", "domain_union", "domain_insert"];
@@ -131,7 +132,28 @@ in
     EL (SUC n) (args ++ [x]) = x`,
   Induct_on `args` >> srw_tac[][] >>
   full_simp_tac (srw_ss()++ARITH_ss) [ADD1, el_append2]);
+  val _ = show_thm "el_append2_lemma_replay=" el_append2_lemma_replay;
   val el_append2_lemma = el_append2_lemma_replay;
+  val length_take2_replay = Q.prove (
+    `!x l. ¬(x ≤ LENGTH l) ⇒ LENGTH (TAKE x l) = LENGTH l`,
+  Induct_on `l` >>
+  srw_tac[][TAKE_def] >>
+  Cases_on `x` >>
+  full_simp_tac(srw_ss())[] >>
+  first_x_assum match_mp_tac >>
+  decide_tac);
+  val _ = show_thm "length_take2_replay=" length_take2_replay;
+  val el_take_append_replay = Q.prove (
+    `!n l x l2. n ≤ LENGTH l ⇒ EL n (TAKE n l ++ [x] ++ l2) = x`,
+  Induct_on `l` >>
+  srw_tac[][] >>
+  ONCE_REWRITE_TAC [GSYM APPEND_ASSOC]>>
+  fs[EL_APPEND2,LENGTH_TAKE]);
+  val _ = show_thm "el_take_append_replay=" el_take_append_replay;
+  val hd_append_replay = Q.prove (
+    `!l1 l2. 0 < LENGTH l1 ⇒ HD (l1 ++ l2) = HD l1`,
+  Cases_on `l1` >> srw_tac[][]);
+  val _ = show_thm "hd_append_replay=" hd_append_replay;
   val twod_table_lemma_replay = Q.prove (
     `!x y z.
     z ≤ y ⇒
@@ -1059,6 +1081,7 @@ in
   val tl_append = Q.prove (
     `  !l1 l2. 0 < LENGTH l1 ⇒ TL (l1 ++ l2) = TL l1 ++ l2`,
   Cases_on `l1` >> srw_tac[][]);
+  val _ = show_thm "tl_append_replay=" tl_append;
   val evaluate_recc_Lets_replay = Q.prove (
     `  !(ll:(num#'a) list) n7 rr env' (t1:('c,'ffi) bvlSem$state) ys c8 (x:(num#'a)) (x':(num#'a)) ck.
      EVERY (\n. n7 + ns + 2* n IN domain t1.code) (GENLIST I (LENGTH ll)) ==>
