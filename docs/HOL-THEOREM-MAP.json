@@ -268,6 +268,13 @@
   "reviewer": "Compared the literal local HOL proof and typed replay: arbitrary closure value, intermediate values, argument list, block tag, code pointer, numeric arity and fields; both full generated calls with matching environments and counts; arbitrary independent compiler and FFI state carriers; and unconditional equality of complete evaluations agree. The refs field uses the canonical finite-support carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_simple_genlist_vars",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/FreeLet.lean", "lean_name": "evaluateSimpleGenlistVars",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the literal local HOL proof and typed replay: the independent compiler and FFI state types, arbitrary prefix and suffix, original nonempty premise, generated variables, full prefix result, and unchanged state agree. The refs field uses the canonical finite-support carrier and same-module roundtrip; evaluation inherits reals_as_rational_cuts."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "cl_rel_run_lemma1",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/FreeLet.lean", "lean_name": "clRelRunLemma1",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],

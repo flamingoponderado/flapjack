@@ -911,6 +911,23 @@ in
   intLib.ARITH_TAC);
   val _ = show_thm "cl_rel_get_num_args_replay=" cl_rel_get_num_args_replay;
 end;
+(* Replay the generated-variable evaluation theorem. *)
+local
+  open preamble clos_to_bvlProofTheory bvlPropsTheory bvlSemTheory listTheory
+in
+  val evaluate_simple_genlist_vars_replay = Q.prove (
+    `  !env1 env2 s.
+    0 < LENGTH env1
+    ⇒
+    evaluate (GENLIST Var (LENGTH env1), env1++env2, s) = (Rval env1, s)`,
+  srw_tac[][] >>
+  qspecl_then [`0`, `env1++env2`, `LENGTH env1`, `s`] assume_tac evaluate_genlist_vars >>
+  rev_full_simp_tac(srw_ss())[] >>
+  rpt (pop_assum mp_tac) >>
+  srw_tac [ARITH_ss] [TAKE_LENGTH_APPEND] >>
+  metis_tac []);
+  val _ = show_thm "evaluate_simple_genlist_vars_replay=" evaluate_simple_genlist_vars_replay;
+end;
 (* Replay the full application destination theorem, including unused binders. *)
 local
   open preamble clos_to_bvlProofTheory closSemTheory listTheory

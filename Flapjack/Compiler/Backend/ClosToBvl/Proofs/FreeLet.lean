@@ -16,6 +16,16 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   BvlSem.holFmapAsFiniteSupportWitness
 end FreeLetCarrier
 
+/-- Generated variables evaluate to a nonempty prefix of the environment. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_simple_genlist_vars"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateSimpleGenlistVars {C F : Type} (env1 env2 : List BvlSem.Value)
+    (s : Flapjack.Compiler.Backend.BvlSem.State C F) (_nonempty : 0 < env1.length) :
+    BvlSem.evaluate ((List.range env1.length).map Bvl.Exp.var) (env1 ++ env2) s =
+      (.val env1, s) := by
+  have run := BvlProps.evaluateGenlistVars 0 (env1 ++ env2) env1.length s (by simp)
+  simpa [BvlSem.evaluateTuple, List.take_append_of_le_length] using run
+
 /-- A suffix of the supplied arguments evaluates as a generated variable list. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_run_lemma1"
   (fmap_as_finite_support := [refs])]
@@ -47,14 +57,8 @@ theorem clRelRunLemma2 {C F : Type} (numArgs : Nat) (args : List BvlSem.Value)
   have suffixLength : (args.drop (args.length - numArgs)).length = numArgs := by
     simp only [List.length_drop]
     omega
-  have run := BvlProps.evaluateGenlistVars 0 (args.drop (args.length - numArgs) ++ [f])
-    (numArgs + 1) s (by simp [suffixLength])
-  have allLength : (args.drop (args.length - numArgs) ++ [f]).length = numArgs + 1 := by
-    simp [suffixLength]
-  have takeEq : (args.drop (args.length - numArgs) ++ [f]).take (numArgs + 1) =
-      args.drop (args.length - numArgs) ++ [f] := by
-    exact List.take_of_length_le (by omega)
-  simpa only [BvlSem.evaluateTuple, Nat.add_zero, List.drop_zero, takeEq] using run
+  have run := evaluateSimpleGenlistVars (args.drop (args.length - numArgs) ++ [f]) [] s (by simp)
+  simpa [suffixLength] using run
 
 /-- Free selectors recover all fields following a block's two header values. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "bEval_free_let_Block"
