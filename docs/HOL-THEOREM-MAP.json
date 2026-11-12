@@ -1,5 +1,53 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "intro_multi_fv1",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiIntroFreeVars.lean", "lean_name": "introMulti_freeVar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the complete ordered LIST_REL with an independent universal free-variable index in each pair, for all bounds and input lists. The total traversal is connected to execution by proved fuel success and stability; the proof retains all function and recursive-group binder shifts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "fv_append",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/FreeVars/Append.lean", "lean_name": "freeVars_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the generalized free list binder, variable and first-list order, and the complete append iff. The old private duplicate was removed from the direct-call proof."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "collect_apps_fv1",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiFreeVars.lean", "lean_name": "collectApps_freeVars",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all four binders and unconditional full iff over the collector output pair and input components."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "collect_args_fv1",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiFreeVars.lean", "lean_name": "collectArgs_freeVar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all six binders, the sole collector equality premise, and full free-variable iff with original adjusted binder indices."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "elist_globals_sing",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/GlobalFacts.lean", "lean_name": "elistGlobals_singleton",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms singleton equality of the full multiplicity bags, without additional assumptions."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "set_globals_HD_intro_multi",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/GlobalFacts.lean", "lean_name": "setGlobals_head_introMulti",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the complete singleton-HD bag equality; the total traversal produces a singleton so the unspecified empty HD case is unobserved."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "set_globals_SND_renumber_code_locs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/GlobalFacts.lean", "lean_name": "setGlobals_renumber",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the original natural-number and expression binders and full bag equality on the returned expression."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "elist_globals_FLAT",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/GlobalFacts.lean", "lean_name": "elistGlobals_flatten",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the complete flatten, mapped bags and right-fold union over the original zero bag, preserving multiplicities."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "every_Fn_SOME_intro_multi",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiIntroLocations.lean", "lean_name": "introMulti_everyFnLocationSome",
   "statement_status": "reviewed_exact",

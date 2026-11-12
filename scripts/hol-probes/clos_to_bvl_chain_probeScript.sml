@@ -59,6 +59,15 @@ val _ = show_thm "set_code_locs_collect_apps_typed=" clos_to_bvlProofTheory.set_
 val _ = show_thm "every_Fn_SOME_collect_apps_typed=" clos_to_bvlProofTheory.every_Fn_SOME_collect_apps;
 val _ = show_thm "every_Fn_SOME_intro_multi_typed=" clos_to_bvlProofTheory.every_Fn_SOME_intro_multi;
 val _ = show_thm "HD_FST_calls_typed=" clos_to_bvlProofTheory.HD_FST_calls;
+val _ = show_thm "elist_globals_sing_typed=" clos_to_bvlProofTheory.elist_globals_sing;
+val _ = show_thm "set_globals_HD_intro_multi_typed=" clos_to_bvlProofTheory.set_globals_HD_intro_multi;
+val _ = show_thm "set_globals_SND_renumber_code_locs_typed=" clos_to_bvlProofTheory.set_globals_SND_renumber_code_locs;
+val _ = show_thm "elist_globals_FLAT_typed=" clos_to_bvlProofTheory.elist_globals_FLAT;
+val _ = show_thm "renumber_code_locs_list_fv_typed=" clos_to_bvlProofTheory.renumber_code_locs_list_fv;
+val _ = show_thm "collect_apps_fv1_typed=" clos_to_bvlProofTheory.collect_apps_fv1;
+val _ = show_thm "collect_args_fv1_typed=" clos_to_bvlProofTheory.collect_args_fv1;
+val _ = show_thm "intro_multi_fv1_typed=" clos_to_bvlProofTheory.intro_multi_fv1;
+val _ = show_thm "fv_append_typed=" closPropsTheory.fv_append;
 val _ = show_thm "compile_every_Fn_SOME_typed=" clos_to_bvlProofTheory.compile_every_Fn_SOME;
 val _ = show_thm "calls_preserves_every_Fn_vs_NONE_typed=" clos_callProofTheory.calls_preserves_every_Fn_vs_NONE;
 val _ = show_thm "every_Fn_vs_NONE_cond_call_compile_inc_typed=" clos_to_bvlProofTheory.every_Fn_vs_NONE_cond_call_compile_inc;
