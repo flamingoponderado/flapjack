@@ -10541,3 +10541,10 @@ run_probe flat_elim_typed_probeScript.sml flat_elim_typed_probe.out \
   find_lookups_def_typed analyse_exp_def_typed code_analysis_union_def_typed analyse_code_def_typed keep_def_typed remove_unreachable_def_typed has_Eval_dec_def_typed \
   "$cake_dir/compiler/backend/flat_elimScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe word_lang_typed_probeScript.sml word_lang_typed_probe.out \
+  exp_typed prog_typed word_loc_typed every_var_exp_def_typed every_var_imm_def_typed every_var_inst_def_typed exp_to_addr_def_typed raise_stub_location_def_typed \
+  store_consts_stub_location_def_typed word_op_def_typed word_sh_def_typed cutsets_max_def_typed max_var_def_typed max_var_exp_def_typed max_var_inst_def_typed every_name_def_typed \
+  every_stack_var_def_typed every_var_def_typed \
+  "$cake_dir/compiler/backend/wordLangScript.sml" \
+  "$cake_dir/compiler/backend"

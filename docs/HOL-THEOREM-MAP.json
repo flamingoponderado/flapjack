@@ -105871,16 +105871,18 @@
     "hol_name": "word_op_def",
     "lean_path": "Flapjack/Pancake/WordLang.lean",
     "lean_name": "wordOpHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (compared source word_op cases, fold identities, and binary Sub arity)"
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Task-149 source comparison against the typed capture word_op_def_typed in scripts/hol-probes/word_lang_typed_probe.out: HOL quantifies over `ws : \u03b1 word list` and returns `\u03b1 word option`, so the only carrier difference is HOL's type-indexed `'a word` rendered as positive-width `BitVec width` with `[NeZero width]`; the cases, fold identities and binary Sub arity match the source."
   },
   {
     "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
     "hol_name": "word_sh_def",
     "lean_path": "Flapjack/Pancake/WordLang.lean",
     "lean_name": "wordShiftHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (compared nonzero width-bound guard and all Lsl/Lsr/Asr/Ror cases against source)"
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Task-149 source comparison against the typed capture word_sh_def_typed in scripts/hol-probes/word_lang_typed_probe.out: HOL takes `w :\u03b1 word` and returns `\u03b1 word option`, so the only carrier difference is HOL's type-indexed `'a word` rendered as positive-width `BitVec width` with `[NeZero width]`; the nonzero width-bound guard and all Lsl/Lsr/Asr/Ror cases match the source."
   },
   {
     "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
