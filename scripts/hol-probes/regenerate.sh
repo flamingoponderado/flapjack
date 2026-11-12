@@ -10522,3 +10522,9 @@ run_probe target_sem_typed_probeScript.sml target_sem_typed_probe.out \
   post_ccache_asm_def_typed post_ffi_asm_def_typed machine_config_typed machine_result_typed installed_def_typed \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
+
+run_probe crep_lang_typed_probeScript.sml crep_lang_typed_probe.out \
+  assign_ret_def_typed assigned_free_vars_def_typed assigned_vars_def_typed var_cexp_def_typed exps_def_typed nested_seq_def_typed load_globals_def_typed nested_decs_def_typed \
+  store_globals_def_typed stores_def_typed exp_typed load_shape_def_typed prog_typed \
+  "$cake_dir/pancake/crepLangScript.sml" \
+  "$cake_dir/pancake"
