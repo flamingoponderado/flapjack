@@ -26,21 +26,6 @@ theorem stateRelNoInstall_evalStates {C F : Type} (source target : ClosSem.State
     · rw [sourceCode]; exact emptyCode_noInstall
   · exact ⟨globalsOk, refsOk, by rw [targetCode]; exact emptyCode_noInstall⟩
 
-/-- Either related state can evaluate safe expressions without producing an
-unsafe value or store. This does not assert that the two evaluations agree. -/
-theorem stateRelNoInstall_evaluate_safe {C F : Type} (expressions : List ClosLang.Exp)
-    (env : List ClosSem.Value) (source target sourceFinal targetFinal : ClosSem.State C F)
-    (sourceResult targetResult : Result (List ClosSem.Value) ClosSem.Value)
-    (related : StateRelNoInstall source target) (safe : ClosLang.hasInstallList expressions = false)
-    (envOk : valuesNoInstall env = true)
-    (sourceRun : ClosSem.evaluate expressions env source = (sourceResult, sourceFinal))
-    (targetRun : ClosSem.evaluate expressions env target = (targetResult, targetFinal)) :
-    (resultNoInstall sourceResult ∧ evalStateNoInstall sourceFinal) ∧
-      (resultNoInstall targetResult ∧ evalStateNoInstall targetFinal) := by
-  obtain ⟨sourceOk, targetOk⟩ := stateRelNoInstall_evalStates source target related
-  exact ⟨evaluate_noInstall.1 expressions env source sourceFinal sourceResult safe envOk sourceOk sourceRun,
-    evaluate_noInstall.1 expressions env target targetFinal targetResult safe envOk targetOk targetRun⟩
-
 /-- If a program has no installation, its attached initializer has none either. -/
 theorem attachInterpreter_noInstall (expressions : List ClosLang.Exp)
     (safe : ClosLang.hasInstallList expressions = false) :

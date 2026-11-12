@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.BvlInline.RemoveTicks
 public import Flapjack.Compiler.Backend.BvlInline.LetOp
 public import Flapjack.Compiler.Backend.BvlInline.SourceCompile
 public import Flapjack.Compiler.Backend.BvlInline.TickInline
+public import Flapjack.Compiler.Backend.BvlInline.Program
 public import Flapjack.Misc.Sptree.ToList
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.CodeLabels
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.CodeLabels
@@ -217,5 +218,108 @@ theorem tickInline_codeLabels {α : Type} (code : Spt (α × Bvl.Exp)) (xs : Lis
         (⋃₀ ((fun entry => getCodeLabels entry.2) '' {entry | entry ∈ sptToList code})) := by
   rw [← getCodeLabelsList_eq, ← getCodeLabelsList_eq]
   exact tickInlineList_labels code xs
+
+
+private def programLabels (program : List (Nat × Nat × Bvl.Exp)) : Set Nat :=
+  ⋃₀ ((fun entry => getCodeLabels entry.2.2) '' {entry | entry ∈ program})
+
+private theorem cacheLabels_insert {α : Type} (name : Nat) (entry : α × Bvl.Exp)
+    (cache : Spt (α × Bvl.Exp)) :
+    cacheLabels (sptInsert name entry cache) ⊆ getCodeLabels entry.2 ∪ cacheLabels cache := by
+  intro label h
+  obtain ⟨_, ⟨value, member, rfl⟩, h⟩ := Set.mem_sUnion.mp h
+  obtain ⟨key, found⟩ := (sptMemToList _ _).1 member
+  by_cases same : key = name
+  · subst key
+    rw [sptLookup_sptInsert_same] at found
+    cases found
+    exact Or.inl h
+  · rw [sptLookup_sptInsert_ne name key entry cache same] at found
+    apply Or.inr
+    exact Set.mem_sUnion.mpr ⟨getCodeLabels value.2,
+      ⟨value, (sptMemToList _ _).2 ⟨key, found⟩, rfl⟩, h⟩
+
+private theorem programLabels_cons (entry : Nat × Nat × Bvl.Exp)
+    (entries : List (Nat × Nat × Bvl.Exp)) :
+    programLabels (entry :: entries) = getCodeLabels entry.2.2 ∪ programLabels entries := by
+  ext label
+  simp [programLabels]
+
+private theorem programLabels_reverse (entries : List (Nat × Nat × Bvl.Exp)) :
+    programLabels entries.reverse = programLabels entries := by
+  ext label
+  simp [programLabels]
+
+private theorem tickInlineAll_labels (limit : Nat) (program : List (Nat × Nat × Bvl.Exp))
+    (cache : Spt (Nat × Bvl.Exp)) (acc : List (Nat × Nat × Bvl.Exp)) :
+    programLabels (tickInlineAll limit cache program acc).2 ⊆
+      programLabels program ∪ programLabels acc ∪ cacheLabels cache := by
+  induction program generalizing cache acc with
+  | nil =>
+    simp only [tickInlineAll, programLabels_reverse]
+    intro label h
+    exact Or.inl (Or.inr h)
+  | cons entry rest ih =>
+    obtain ⟨name, arity, body⟩ := entry
+    simp only [tickInlineAll]
+    let newBody := tickInlineSing cache body
+    have bodyBound : getCodeLabels newBody ⊆ getCodeLabels body ∪ cacheLabels cache :=
+      tickInlineSing_labels cache body
+    split
+    · have cacheBound := cacheLabels_insert name (arity, newBody) cache
+      have restBound := ih (sptInsert name (arity, newBody) cache) ((name, arity, newBody) :: acc)
+      simp only [programLabels_cons, Set.subset_def, Set.mem_union] at *
+      intro label
+      specialize bodyBound label
+      specialize cacheBound label
+      specialize restBound label
+      aesop
+    · have restBound := ih cache ((name, arity, newBody) :: acc)
+      simp only [programLabels_cons, Set.subset_def, Set.mem_union] at *
+      intro label
+      specialize bodyBound label
+      specialize restBound label
+      aesop
+
+/-- Program-wide tick inlining introduces only input, accumulator or cache labels. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "tick_inline_all_code_labels"]
+theorem tickInlineAll_codeLabels (limit : Nat) (cache : Spt (Nat × Bvl.Exp))
+    (program acc : List (Nat × Nat × Bvl.Exp)) (finalCache : Spt (Nat × Bvl.Exp))
+    (output : List (Nat × Nat × Bvl.Exp))
+    (run : tickInlineAll limit cache program acc = (finalCache, output)) :
+    (⋃₀ ((fun entry => getCodeLabels entry.2.2) '' {entry | entry ∈ output})) ⊆
+      (⋃₀ ((fun entry => getCodeLabels entry.2.2) '' {entry | entry ∈ program})) ∪
+      (⋃₀ ((fun entry => getCodeLabels entry.2.2) '' {entry | entry ∈ acc})) ∪
+      (⋃₀ ((fun entry => getCodeLabels entry.2) '' {entry | entry ∈ sptToList cache})) := by
+  have result := tickInlineAll_labels limit program cache acc
+  rw [run] at result
+  exact result
+
+
+private theorem optimise_programLabels (splitSeq : Bool) (limit : Nat)
+    (program : List (Nat × Nat × Bvl.Exp)) :
+    programLabels (program.map (optimise splitSeq limit)) ⊆ programLabels program := by
+  induction program with
+  | nil => simp [programLabels]
+  | cons entry rest ih =>
+    simp only [List.map_cons, programLabels_cons]
+    exact Set.union_subset_union (optimise_codeLabels splitSeq limit entry) ih
+
+/-- Whole-program BVL inlining introduces no new code labels. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "compile_prog_get_code_labels"]
+theorem compileProg_codeLabels (limit : Nat) (splitSeq : Bool) (cutSize : Nat)
+    (program : List (Nat × Nat × Bvl.Exp)) (inlines : Spt (Nat × Bvl.Exp))
+    (output : List (Nat × Nat × Bvl.Exp))
+    (run : compileProg limit splitSeq cutSize program = (inlines, output)) :
+    (⋃₀ ((fun entry => getCodeLabels entry.2.2) '' {entry | entry ∈ output})) ⊆
+      (⋃₀ ((fun entry => getCodeLabels entry.2.2) '' {entry | entry ∈ program})) := by
+  cases inlineRun : tickInlineAll limit .ln program [] with
+  | mk cache inlined =>
+    have bound := tickInlineAll_codeLabels limit .ln program [] cache inlined inlineRun
+    have optimised := optimise_programLabels splitSeq cutSize inlined
+    simp only [compileProg, compileInc, tickCompileProg, inlineRun] at run
+    cases run
+    apply Set.Subset.trans optimised
+    simpa [programLabels, sptToList, sptToListA] using bound
 
 end Flapjack.Compiler.Backend.BvlInline.Proofs

@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "tick_inline_all_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/CodeLabels.lean", "lean_name": "tickInlineAll_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: for arbitrary limit, initial cache, program, accumulator and final result, the tick_inline_all result equation implies that all output labels belong to the program, accumulator or initial-cache label union."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "compile_prog_get_code_labels",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/CodeLabels.lean", "lean_name": "compileProg_codeLabels",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: the full compile_prog result equation implies that the mapped union of output body labels is a subset of the mapped union of input body labels, for arbitrary limit, split flag, cutoff and program."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "tick_inline_code_labels",
   "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/CodeLabels.lean", "lean_name": "tickInline_codeLabels",
   "statement_status": "reviewed_exact",
