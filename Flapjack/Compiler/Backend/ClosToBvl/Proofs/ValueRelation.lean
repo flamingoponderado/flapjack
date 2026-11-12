@@ -235,6 +235,23 @@ def envRel (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
   | _ :: _, [] => False
   | x :: xs, y :: ys => vRel maxApp f refs code x y ∧ envRel maxApp f refs code xs ys
 
+/-- Related environments have at least as many target as source values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "env_rel_IMP_LENGTH"
+  (fmap_as_finite_support_relation := [f, refs])]
+theorem envRel_length (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp)) :
+    ∀ (env : List ClosSem.Value) (targetEnv : List BvlSem.Value),
+      envRel maxApp f refs code env targetEnv → env.length ≤ targetEnv.length := by
+  intro env
+  induction env with
+  | nil => intro targetEnv _; simp
+  | cons head tail ih =>
+      intro targetEnv related
+      cases targetEnv with
+      | nil => exact False.elim related
+      | cons targetHead targetTail =>
+          simpa using ih targetTail related.2
+
 theorem holFmapAsFiniteSupportParamWitness_envRel_subspt_f
     (f : HolFiniteMapExact Nat Nat) (key : Nat) :
     (ofBroad (toBroad f) f.finiteSupport).lookup key = f.lookup key ∧
