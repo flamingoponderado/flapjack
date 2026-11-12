@@ -10475,3 +10475,11 @@ run_probe ast_typed_probeScript.sml ast_typed_probe.out \
   dec_typed pat_bindings_def_typed every_exp_def_typed \
   "$cake_dir/semantics/astScript.sml" \
   "$cake_dir/semantics"
+
+run_probe asm_sem_typed_probeScript.sml asm_sem_typed_probe.out \
+  word_shift_def_typed arith_upd_def_typed assert_def_typed binop_upd_def_typed is_test_def_typed read_fp_reg_def_typed read_mem_def_typed read_reg_def_typed \
+  reg_imm_def_typed upd_fp_reg_def_typed upd_mem_def_typed upd_pc_def_typed upd_reg_def_typed fp_upd_def_typed mem_load_def_typed mem_op_def_typed \
+  mem_store_def_typed addr_def_typed read_mem_word_def_typed write_mem_word_def_typed asm_state_typed asm_step_def_typed asm_def_typed inst_def_typed \
+  jump_to_offset_def_typed \
+  "$cake_dir/compiler/encoders/asm/asmSemScript.sml" \
+  "$cake_dir/compiler/encoders/asm"
