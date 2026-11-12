@@ -92,6 +92,7 @@ val refs_lemma_replay = Q.prove (
 val _ = show_thm "refs_lemma_replay=" refs_lemma_replay;
 val _ = show_thm "evaluate_IMP_evaluate_chained_typed=" clos_to_bvlProofTheory.evaluate_IMP_evaluate_chained;
 val _ = show_thm "chained_lemma_typed=" clos_to_bvlProofTheory.chained_lemma;
+val _ = show_thm "code_installed_cons_typed=" clos_to_bvlProofTheory.code_installed_cons;
 val _ = show_thm "build_aux_append_aux_typed=" clos_to_bvlProofTheory.build_aux_append_aux;
 val _ = show_thm "compile_exps_append_aux_typed=" clos_to_bvlProofTheory.compile_exps_append_aux;
 val _ = show_thm "compile_exps_eq_append_typed=" clos_to_bvlProofTheory.compile_exps_eq_append;

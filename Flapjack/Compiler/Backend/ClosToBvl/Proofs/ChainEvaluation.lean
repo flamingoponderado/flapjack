@@ -165,10 +165,7 @@ theorem evaluate_bvlChain {C F : Type} (expressions : List Bvl.Exp) (start : Nat
                   BvlProps.evaluateMono [first] [] s (.val [value]) middle headRun
                 have tailInstalled : codeInstalled (bvlChain (start + 1) (second :: tail)) middle.code := by
                   apply codeInstalled_subspt (code2 := middle.code) ?_ growth
-                  intro entry member
-                  apply installed entry
-                  simp only [bvlChain, List.mem_cons]
-                  exact Or.inr member
+                  exact codeInstalled_cons _ _ _ installed
                 obtain ⟨body, extra, member, chainRun⟩ := ih (start + 1) middle last tailResult (by simp) tailInstalled tailRun
                 have lookup : sptLookup (start + 1) middle.code = some (0, body) := tailInstalled _ member
                 have chained := evaluate_chain_first_success s middle last first body (start + 1) extra value

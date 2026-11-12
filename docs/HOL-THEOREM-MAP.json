@@ -145,6 +145,12 @@
   "reviewer": "Independent typed HOL comparison confirms the original compilation equality, full length and suffix conclusions, binder order, and faithful closure and BVL carriers."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "code_installed_cons",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode.lean", "lean_name": "codeInstalled_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: the independent polymorphic entry payloads, sparse-tree carrier, installed cons premise and installed tail conclusion agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "chained_lemma",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainEvaluation.lean", "lean_name": "chained_lemma",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
