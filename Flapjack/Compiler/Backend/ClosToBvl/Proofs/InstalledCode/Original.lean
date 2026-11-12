@@ -49,4 +49,19 @@ theorem codeInstalled_union1 {A B : Type} (aux : List (Nat × A × B))
   intro entry member
   rw [sptLookup_sptUnion, installed entry member]
 
+/-- Inserting a key absent from an installed list preserves its installation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "code_installed_insert"]
+theorem codeInstalled_insert {A B : Type} (aux : List (Nat × A × B))
+    (tree : Spt (A × B)) (key : Nat) (value : A × B)
+    (premises : codeInstalled aux tree ∧ key ∉ aux.map Prod.fst) :
+    codeInstalled aux (sptInsert key value tree) := by
+  obtain ⟨installed, fresh⟩ := premises
+  intro entry member
+  have different : entry.1 ≠ key := by
+    intro equal
+    apply fresh
+    exact List.mem_map.mpr ⟨entry, member, equal⟩
+  rw [sptLookup_sptInsert_ne key entry.1 value tree different]
+  exact installed entry member
+
 end Flapjack.Compiler.Backend.ClosToBvl

@@ -145,6 +145,12 @@
   "reviewer": "Independent typed HOL comparison confirms the original compilation equality, full length and suffix conclusions, binder order, and faithful closure and BVL carriers."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "code_installed_insert",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode/Original.lean", "lean_name": "codeInstalled_insert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: independently polymorphic payloads, arbitrary sparse tree and inserted value, installed-code and fresh-key premises, and the updated-tree installation conclusion agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "chain_exps_cons",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "chainExps_cons",
   "statement_status": "reviewed_exact",

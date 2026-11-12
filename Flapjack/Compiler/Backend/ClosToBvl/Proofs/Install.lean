@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockList
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WordRelation
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshTargetRefs
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InstalledCode.Original
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
@@ -315,37 +316,22 @@ theorem compileProgExps_entry_installed (maxApp : Nat) (program : List (Nat × N
       exact ⟨((name, arity, source), target), zipped, rfl⟩
     exact ⟨auxBefore, target, auxAfter, singleton, allInstalled _ outputMember, auxInstalled⟩
 
-private theorem install_assoc_lookup {α : Type} (entries : List (Nat × α)) (key : Nat) (value : α)
-    (distinct : (entries.map Prod.fst).Nodup) (member : (key, value) ∈ entries) :
-    sptAListLookup key entries = some value := by
-  induction entries with
-  | nil => simp at member
-  | cons entry rest ih =>
-    obtain ⟨other, payload⟩ := entry
-    simp only [List.map_cons, List.nodup_cons] at distinct
-    simp only [List.mem_cons] at member
-    cases member with
-    | inl same =>
-      cases same
-      simp [sptAListLookup]
-    | inr inRest =>
-      have different : key ≠ other := by
-        intro equal
-        subst other
-        apply distinct.1
-        exact List.mem_map.mpr ⟨(key, value), inRest, rfl⟩
-      simp [sptAListLookup, different, ih distinct.2 inRest]
-
 /-- Fresh, distinct target entries are all installed in the union of the old
-code and the tree built from those entries. -/
+code and the tree built from those entries. This Flapjack-specific composition
+reuses the HOL association-list and disjoint-union theorems at installation sites. -/
 theorem install_codeInstalled (code : Spt (Nat × Bvl.Exp)) (entries : List (Nat × Nat × Bvl.Exp))
     (distinct : (entries.map Prod.fst).Nodup)
     (fresh : ∀ entry ∈ entries, sptLookup entry.1 code = none) :
     codeInstalled entries (sptUnion code (sptFromAList entries)) := by
-  intro entry member
-  obtain ⟨key, arity, body⟩ := entry
-  rw [sptLookup_sptUnion, fresh (key, arity, body) member, sptLookup_sptFromAList]
-  exact install_assoc_lookup entries key (arity, body) distinct member
+  apply codeInstalled_union entries (sptFromAList entries) code
+  constructor
+  · exact codeInstalled_fromAList_strong entries entries ⟨distinct, List.infix_refl entries⟩
+  · intro key ⟨member, present⟩
+    obtain ⟨entry, entryMember, entryKey⟩ := List.mem_map.mp member
+    obtain ⟨value, lookup⟩ := (sptMem_iff_lookup _ _).1 present
+    have absent := fresh entry entryMember
+    rw [entryKey, lookup] at absent
+    contradiction
 
 /-- Every auxiliary source entry in the next oracle program has a compiled
 entry and installed auxiliary code after the target installation. -/

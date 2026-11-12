@@ -97,6 +97,7 @@ val _ = show_thm "compile_exps_same_aux_typed=" clos_to_bvlProofTheory.compile_e
 val _ = show_thm "compile_exps_twice_IS_SUBLIST_typed=" clos_to_bvlProofTheory.compile_exps_twice_IS_SUBLIST;
 val _ = show_thm "compile_exps_APPEND_typed=" clos_to_bvlProofTheory.compile_exps_APPEND;
 val _ = show_thm "chain_exps_cons_typed=" clos_to_bvlProofTheory.chain_exps_cons;
+val _ = show_thm "code_installed_insert_typed=" clos_to_bvlProofTheory.code_installed_insert;
 (* Replay the original local chain-compilation accumulator theorem. *)
 local
   open preamble listTheory clos_to_bvlTheory
