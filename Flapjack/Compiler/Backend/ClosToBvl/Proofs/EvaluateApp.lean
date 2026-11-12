@@ -3944,33 +3944,6 @@ theorem evaluate_genericApp_over_step {C F : Type} (s : BvlSem.State C F)
     cases BvlSem.evaluate [body] (args.drop (n - total) ++ [closure]) (BvlSem.decClock (total + 1) s) with
     | mk result next => cases result <;> simp [closure, List.append_assoc]
 
-/-- The ordinary source dispatcher splits overapplication into the suffix
-that saturates the closure and the prefix applied to the result. -/
-theorem destClosure_ordinary_over (maxApp ptr arity : Nat)
-    (captured saved args : List ClosSem.Value) (body : ClosLang.Exp)
-    (savedBound : saved.length < arity) (bound : args.length ≤ maxApp)
-    (over : arity < args.length + saved.length) :
-    ClosSem.destClosure maxApp none (.closure (some ptr) saved captured arity body) args =
-      some (.fullApp body (args.drop (args.length - (arity - saved.length)) ++ saved ++ captured)
-        (args.take (args.length - (arity - saved.length)))) := by
-  have notPartial : ¬ args.length + saved.length < arity := by omega
-  simp [ClosSem.destClosure, ClosSem.checkLoc, bound, savedBound, notPartial,
-    List.reverse_take, List.reverse_drop, List.append_assoc]
-
-/-- A recursive source closure uses the same overapplication split and
-adds its recursive group to the selected body's environment. -/
-theorem destClosure_recclosure_over (maxApp ptr arity index : Nat)
-    (captured saved args : List ClosSem.Value) (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp)
-    (found : functions[index]? = some (arity, body)) (savedBound : saved.length < arity)
-    (bound : args.length ≤ maxApp) (over : arity < args.length + saved.length) :
-    ClosSem.destClosure maxApp none (.recclosure (some ptr) saved captured functions index) args =
-      some (.fullApp body (args.drop (args.length - (arity - saved.length)) ++ saved ++
-        (List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i) ++ captured)
-        (args.take (args.length - (arity - saved.length)))) := by
-  have notPartial : ¬ args.length + saved.length < arity := by omega
-  simp [ClosSem.destClosure, found, ClosSem.checkLoc, bound, savedBound, notPartial,
-    List.reverse_take, List.reverse_drop, List.append_assoc]
-
 /-- Overapplication of an ordinary closure evaluates its saturated body, then
 applies any remaining prefix to a singleton result. -/
 theorem evaluateApp_ordinary_over {C F : Type} (s : ClosSem.State C F)
@@ -3991,7 +3964,12 @@ theorem evaluateApp_ordinary_over {C F : Type} (s : ClosSem.State C F)
   have cost : args.length - (args.take (args.length - (arity - saved.length))).length = arity - saved.length := by
     simp [List.length_take]
     omega
-  have selected := destClosure_ordinary_over s.maxApp ptr arity captured saved args body savedBound bound over
+  have notPartial : ¬ args.length + saved.length < arity := by omega
+  have selected : ClosSem.destClosure s.maxApp none (.closure (some ptr) saved captured arity body) args =
+      some (.fullApp body (args.drop (args.length - (arity - saved.length)) ++ saved ++ captured)
+        (args.take (args.length - (arity - saved.length)))) := by
+    simp [ClosSem.destClosure, ClosSem.checkLoc, bound, savedBound, notPartial,
+      List.reverse_take, List.reverse_drop, List.append_assoc]
   cases args with
   | nil => contradiction
   | cons head tail =>
@@ -4021,8 +3999,13 @@ theorem evaluateApp_recclosure_over {C F : Type} (s : ClosSem.State C F)
   have cost : args.length - (args.take (args.length - (arity - saved.length))).length = arity - saved.length := by
     simp [List.length_take]
     omega
-  have selected := destClosure_recclosure_over s.maxApp ptr arity index captured saved args functions body
-    found savedBound bound over
+  have notPartial : ¬ args.length + saved.length < arity := by omega
+  have selected : ClosSem.destClosure s.maxApp none (.recclosure (some ptr) saved captured functions index) args =
+      some (.fullApp body (args.drop (args.length - (arity - saved.length)) ++ saved ++
+        (List.range functions.length).map (fun i => .recclosure (some ptr) [] captured functions i) ++ captured)
+        (args.take (args.length - (arity - saved.length)))) := by
+    simp [ClosSem.destClosure, found, ClosSem.checkLoc, bound, savedBound, notPartial,
+      List.reverse_take, List.reverse_drop, List.append_assoc]
   cases args with
   | nil => contradiction
   | cons head tail =>
