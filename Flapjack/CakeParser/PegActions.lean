@@ -28,14 +28,23 @@ inductive Binary where
 
 private def nt (n : Nonterminal) : Rule := .inl n
 
-/-- Evaluate a unary PEG action. -/
-@[hol "cakeml/compiler/parsing/pegexec_cml_foScript.sml" "eval_unary_def"]
+/-- Evaluate a unary PEG action.
+
+    Tag withdrawn (task 147): HOL `eval_unary_def` applies `eval_unary` to `(α, MMLnonT, locs)
+    parsetree list` with the terminal type `α` generic, while Lean's `ParseTree` fixes the terminal
+    type to CakeML's `Token`. The clauses are HOL's, but a specialised instance is not an exact
+    port; a faithful port needs a parsetree carrier generic in the terminal type. -/
 def evalUnary : Unary → List ParseTree → List ParseTree
   | .id, xs => xs
   | .bindNT n, xs => [mkNode n xs]
 
-/-- Left-associate the alternating operator and operand sequence. -/
-@[hol "cakeml/compiler/parsing/pegexec_cml_foScript.sml" "mk_linfix_fo_def"]
+/-- Left-associate the alternating operator and operand sequence.
+
+    Tag withdrawn (task 147): HOL `mk_linfix_fo_def` is generic in the terminal type `α` and the
+    rule-index type `β` of `(α, β, locs) parsetree` and `β + num`, while Lean's `ParseTree`/`Rule`
+    fix them to `Token` and `Sum Nonterminal Nat`. The clauses are HOL's, but a specialised
+    instance is not an exact port; a faithful port needs a parsetree carrier generic in both
+    type parameters. -/
 def mkLinfix (target : Rule) : ParseTree → List ParseTree → ParseTree
   | acc, [] | acc, [_] => acc
   | acc, op :: value :: rest => mkLinfix target (mkNode target [acc, op, value]) rest

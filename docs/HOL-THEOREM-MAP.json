@@ -120497,12 +120497,12 @@
   {
     "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "evalUnary",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_unary_def",
-    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed eval_unary_def_typed: eval_unary SemU_id v = v; eval_unary (SemU_bindNT nt) v = [Nd (nt, ptree_list_loc v) v]. Lean's clauses match, with mkNode n xs = Nd (n, listLocation xs) xs."
+    "statement_status": "documented_mismatch", "reviewer": "Tag withdrawn (task 147): HOL `eval_unary_def` applies `eval_unary` to `(α, MMLnonT, locs) parsetree list` with the terminal type `α` generic, while Lean's `ParseTree` fixes the terminal type to CakeML's `Token`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the terminal type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "mkLinfix",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "mk_linfix_fo_def",
-    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed mk_linfix_fo_def_typed: mk_linfix_fo tgt acc [] = acc; [t] = acc; (opt::t::rest) = mk_linfix_fo tgt (mkNd_fo tgt [acc; opt; t]) rest. Lean's three clauses match with mkNode."
+    "statement_status": "documented_mismatch", "reviewer": "Tag withdrawn (task 147): HOL `mk_linfix_fo_def` is generic in the terminal type `α` and the rule-index type `β` of `(α, β, locs) parsetree` and `β + num`, while Lean's `ParseTree`/`Rule` fix them to `Token` and `Sum Nonterminal Nat`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in both type parameters."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "evalBinary",
@@ -120546,8 +120546,8 @@
     "lean_name": "tokcheck",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "tokcheck_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed tokcheck_def_typed in cml_ptree_conversion_source_probe.out: tokcheck pt tok ⇔ OPTION_BIND (destLf pt) destTOK = SOME tok. Lean pt.token == some tok where ParseTree.token is exactly OPTION_BIND destLf destTOK (some only for a terminal leaf), so the equality is the same."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `tokcheck_def` is `∀(pt :(α, β, γ) parsetree) (tok :α)`, generic in the terminal type `α`, the nonterminal type `β` and the location type `γ`; Lean fixes them to `Token`, `Nonterminal` and `Locs`. `pt.token == some tok` implements HOL's `OPTION_BIND (destLf pt) destTOK = SOME tok`, but a specialised instance is not an exact port; a faithful port needs a generic parsetree and terminal carrier."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
@@ -120562,40 +120562,40 @@
     "lean_name": "ptreeUQTyop",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_UQTyop_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_UQTyop_def_typed: Lf → NONE; Nd nt args → if FST nt ≠ mkNT nUQTyOp then NONE else case args of [] → NONE | [pt] → OPTION_BIND (destLf pt) (λlf. OPTION_BIND (destTOK lf) (λtk. OPTION_CHOICE (destSymbolT tk) (destAlphaT tk))) | _ → NONE. Lean's children .nUQTyOp / singleton / leaf.token / symbolT-alphaT clauses implement the same branches."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_UQTyop_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeTyvarN",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_TyvarN_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_TyvarN_def_typed: Nd with FST = mkNT nTyvarN and [tyv] → destTyvarPT tyv, all else NONE. Lean's tyvar helper is destTyvarPT (token = TyvarT s → SOME s) applied to the single child."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_TyvarN_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeTyop",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_Tyop_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_Tyop_def_typed: Nd with FST = mkNT nTyOp and [pt] → OPTION_CHOICE (OPTION_BIND (OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destLongidT) (λ(xs,s). SOME (Long_Short xs s))) (OPTION_BIND (ptree_UQTyop pt) (λnm. SOME (Short nm))); all else NONE. Lean matches with child.token longidT and (ptreeUQTyop child).map Ident.short."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_Tyop_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeV",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_V_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_V_def_typed: Nd guarded by FST nt = mkNT nV, then [] → NONE | [pt] → OPTION_BIND (OPTION_BIND (destLf pt) destTOK) (λt. OPTION_CHOICE (destAlphaT t) (destSymbolT t)) | _ → NONE. Lean's children .nV and singleton alphaT-symbolT clauses match."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_V_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeFQV",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_FQV_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_FQV_def_typed: [pt] → OPTION_CHOICE (OPTION_MAP Short (ptree_V pt)) (OPTION_BIND (OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destLongidT) (λ(xs,s). SOME (Long_Short xs s))). Lean's match on ptreeV first and the longidT fallback match."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_FQV_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
@@ -120610,24 +120610,24 @@
     "lean_name": "ptreeUQConstructorName",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_UQConstructorName_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_UQConstructorName_def_typed: Nd with FST = mkNT nUQConstructorName and [pt] → OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destAlphaT; all else NONE. Lean's children/singleton/alphaT clause matches."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_UQConstructorName_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeConstructorName",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_ConstructorName_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_ConstructorName_def_typed: Nd with FST = mkNT nConstructorName and [pt] → OPTION_CHOICE (OPTION_BIND (ptree_UQConstructorName pt) (λs. SOME (Short s))) (OPTION_BIND (OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destLongidT) (λ(xs,s). SOME (Long_Short xs s))); all else NONE. Lean matches."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_ConstructorName_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeOpID",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_OpID_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_OpID_def_typed: Nd with FST = mkNT nOpID and [Lf (TK tk)] → OPTION_CHOICE chain: destAlphaT tk with isConstructor (explode s) choosing Con (Short s) [] or Var (Short s); destSymbolT tk with isSymbolicConstructor choosing Con or Var; destLongidT tk with isConstructor choosing Con (Long_Short path s) [] or Var; then StarT via isSymbolicConstructor \"*\" (false, so Var (Short «*»)), EqualsT → Var (Short «=»), else NONE. Lean's constructorName = (s == \"::\" || uppercase s) implements isConstructor (isSymbolicConstructor or upper-alpha head), and the symbol/longid/star/equals clauses match."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_OpID_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
@@ -120658,16 +120658,16 @@
     "lean_name": "ptreeEliteral",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_Eliteral_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_Eliteral_def_typed: Nd guarded by LENGTH subs = 1 ∧ FST nt = mkNT nEliteral, then destIntT → Lit (IntLit i), destCharT → Lit (Char c), destStringT → Lit (StrLit s), destWordT → Lit (Word64 (n2w n)), destFFIT → App (FFI s) []; all else NONE. Lean's singleton/leaf.token clauses match, with BitVec.ofNat 64 n for n2w n."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_Eliteral_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeOp",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_Op_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_Op_def_typed: nMultOps → StarT → Short «*», AlphaT «mod»/«div» → those, else singleSymP (validMultSym o explode) subs; nAddOps/nListOps → singleSymP validAddSym/validListSym; nRelOps → OPTION_CHOICE (singleSymP validRelSym subs) (EqualsT → Short «=»); nCompOps → SymbolT «:=» → «:=», AlphaT «o» → «o»; else NONE. Lean's ptreeOp branches and symOp helper (singleton symbol leaf with the predicate on explode) match each case."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_Op_def` is generic in the identifier name type `α` (its result is `(α, mlstring) id option`) and the location type `β`, while Lean fixes them to `MlString` and `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs generic name and location carriers."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
@@ -120730,8 +120730,8 @@
     "lean_name": "ptreeStructName",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_StructName_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_StructName_def_typed: Nd with FST = mkNT nStructName and [pt] → OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destAlphaT; all else NONE. Lean's children/singleton/alphaT clause matches."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_StructName_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/TypeSystemHOL.lean",

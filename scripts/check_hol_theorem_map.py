@@ -378,6 +378,76 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/CakeParser/PegActions.lean", "evalUnary"): (
+        "cakeml/compiler/parsing/pegexec_cml_foScript.sml",
+        "eval_unary_def",
+        "Tag withdrawn (task 147): HOL `eval_unary_def` applies `eval_unary` to `(\u03b1, MMLnonT, locs) parsetree list` with the terminal type `\u03b1` generic, while Lean's `ParseTree` fixes the terminal type to CakeML's `Token`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the terminal type."
+    ),
+    ("Flapjack/CakeParser/PegActions.lean", "mkLinfix"): (
+        "cakeml/compiler/parsing/pegexec_cml_foScript.sml",
+        "mk_linfix_fo_def",
+        "Tag withdrawn (task 147): HOL `mk_linfix_fo_def` is generic in the terminal type `\u03b1` and the rule-index type `\u03b2` of `(\u03b1, \u03b2, locs) parsetree` and `\u03b2 + num`, while Lean's `ParseTree`/`Rule` fix them to `Token` and `Sum Nonterminal Nat`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in both type parameters."
+    ),
+    ("Flapjack/CakeParser/PtreeConversion.lean", "tokcheck"): (
+        "cakeml/semantics/cmlPtreeConversionScript.sml",
+        "tokcheck_def",
+        "Tag withdrawn (task 147): HOL `tokcheck_def` is `\u2200(pt :(\u03b1, \u03b2, \u03b3) parsetree) (tok :\u03b1)`, generic in the terminal type `\u03b1`, the nonterminal type `\u03b2` and the location type `\u03b3`; Lean fixes them to `Token`, `Nonterminal` and `Locs`. `pt.token == some tok` implements HOL's `OPTION_BIND (destLf pt) destTOK = SOME tok`, but a specialised instance is not an exact port; a faithful port needs a generic parsetree and terminal carrier."
+    ),
+    ("Flapjack/CakeParser/PtreeConversion.lean", "ptreeUQTyop"): (
+        "cakeml/semantics/cmlPtreeConversionScript.sml",
+        "ptree_UQTyop_def",
+        "Tag withdrawn (task 147): HOL `ptree_UQTyop_def` takes `(token, MMLnonT, \u03b1) parsetree` with the location type `\u03b1` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
+    ),
+    ("Flapjack/CakeParser/PtreeConversion.lean", "ptreeTyvarN"): (
+        "cakeml/semantics/cmlPtreeConversionScript.sml",
+        "ptree_TyvarN_def",
+        "Tag withdrawn (task 147): HOL `ptree_TyvarN_def` takes `(token, MMLnonT, \u03b1) parsetree` with the location type `\u03b1` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
+    ),
+    ("Flapjack/CakeParser/PtreeConversion.lean", "ptreeTyop"): (
+        "cakeml/semantics/cmlPtreeConversionScript.sml",
+        "ptree_Tyop_def",
+        "Tag withdrawn (task 147): HOL `ptree_Tyop_def` takes `(token, MMLnonT, \u03b1) parsetree` with the location type `\u03b1` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
+    ),
+    ("Flapjack/CakeParser/PtreeConversion.lean", "ptreeV"): (
+        "cakeml/semantics/cmlPtreeConversionScript.sml",
+        "ptree_V_def",
+        "Tag withdrawn (task 147): HOL `ptree_V_def` takes `(token, MMLnonT, \u03b1) parsetree` with the location type `\u03b1` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
+    ),
+    ("Flapjack/CakeParser/PtreeConversion.lean", "ptreeFQV"): (
+        "cakeml/semantics/cmlPtreeConversionScript.sml",
+        "ptree_FQV_def",
+        "Tag withdrawn (task 147): HOL `ptree_FQV_def` takes `(token, MMLnonT, \u03b1) parsetree` with the location type `\u03b1` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
+    ),
+    ("Flapjack/CakeParser/PtreeConversion.lean", "ptreeUQConstructorName"): (
+        "cakeml/semantics/cmlPtreeConversionScript.sml",
+        "ptree_UQConstructorName_def",
+        "Tag withdrawn (task 147): HOL `ptree_UQConstructorName_def` takes `(token, MMLnonT, \u03b1) parsetree` with the location type `\u03b1` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
+    ),
+    ("Flapjack/CakeParser/PtreeConversion.lean", "ptreeConstructorName"): (
+        "cakeml/semantics/cmlPtreeConversionScript.sml",
+        "ptree_ConstructorName_def",
+        "Tag withdrawn (task 147): HOL `ptree_ConstructorName_def` takes `(token, MMLnonT, \u03b1) parsetree` with the location type `\u03b1` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
+    ),
+    ("Flapjack/CakeParser/PtreeConversion.lean", "ptreeOpID"): (
+        "cakeml/semantics/cmlPtreeConversionScript.sml",
+        "ptree_OpID_def",
+        "Tag withdrawn (task 147): HOL `ptree_OpID_def` takes `(token, MMLnonT, \u03b1) parsetree` with the location type `\u03b1` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
+    ),
+    ("Flapjack/CakeParser/PtreeConversion.lean", "ptreeEliteral"): (
+        "cakeml/semantics/cmlPtreeConversionScript.sml",
+        "ptree_Eliteral_def",
+        "Tag withdrawn (task 147): HOL `ptree_Eliteral_def` takes `(token, MMLnonT, \u03b1) parsetree` with the location type `\u03b1` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
+    ),
+    ("Flapjack/CakeParser/PtreeConversion.lean", "ptreeOp"): (
+        "cakeml/semantics/cmlPtreeConversionScript.sml",
+        "ptree_Op_def",
+        "Tag withdrawn (task 147): HOL `ptree_Op_def` is generic in the identifier name type `\u03b1` (its result is `(\u03b1, mlstring) id option`) and the location type `\u03b2`, while Lean fixes them to `MlString` and `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs generic name and location carriers."
+    ),
+    ("Flapjack/CakeParser/PtreeConversion.lean", "ptreeStructName"): (
+        "cakeml/semantics/cmlPtreeConversionScript.sml",
+        "ptree_StructName_def",
+        "Tag withdrawn (task 147): HOL `ptree_StructName_def` takes `(token, MMLnonT, \u03b1) parsetree` with the location type `\u03b1` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
+    ),
     ("Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean", "isValidValueSimps2HOLFinite"): (
         "cakeml/pancake/semantics/panSemScript.sml",
         "is_valid_value_simps2",
