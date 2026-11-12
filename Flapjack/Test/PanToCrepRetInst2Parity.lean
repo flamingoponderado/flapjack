@@ -106,7 +106,7 @@ private theorem fivePremises :
 
 theorem returnShapeInvariantFixture :
     isWfShapeValueHOLExact ([] : StructContextExact) (.val (.word resultWord)) = true := by
-  have h := panToCrepFiniteEvaluateShapeInvariantRetInst2
+  have h := panToCrepFiniteEvaluateShapeInvariantRetInst2_curried
     (arguments := []) (source := sourceState) (fname := sourceName)
     (values := []) (lookupBody := returnBody)
     (newlocals := HolFiniteMapExact.empty) (returnShape := .one)
@@ -118,7 +118,7 @@ theorem returnShapeInvariantFixture :
     (hbody := by exact fivePremises.2.2.1)
     (hstate := fivePremises.2.2.2.1)
     (hlocals := fivePremises.2.2.2.2)
-  simpa [resultWord] using h
+  simpa [resultWord, panSemResultShapeInvariantHOL] using h
 
 def runChecks : IO Bool := do
   IO.println "PASS Pan-to-Crep ret_inst2 exact five-premise HOL fixture"

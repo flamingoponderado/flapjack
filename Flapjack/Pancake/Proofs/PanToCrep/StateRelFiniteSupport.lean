@@ -970,6 +970,19 @@ theorem optMmapEvalIsWfShapeVHOL {width ctxtWidth : Nat} {σ : Type} [NeZero wid
     PanSemStateFiniteExact.evalListHOLFinite] using heval) v hv
   simpa [hstructs] using this
 
+/-- FLAPJACK-SPECIFIC helper: HOL's `case v of Return retv => … | Exception eid exn
+    => … | _ => T` conclusion of `evaluate_shape_invariant_ret_inst{,_2}` as a
+    function of the result alone. Untagged curried wrappers state it through this
+    definition so Lean does not generalise their premise hypotheses over the
+    scrutinee; it is definitionally the tagged theorems' `match` and has no HOL
+    declaration of its own. -/
+def panSemResultShapeInvariantHOL {width : Nat} [NeZero width]
+    (result : PanSemResultExact width) : Prop :=
+  match result with
+  | .returned value => isWfShapeValueHOLExact ([] : StructContextExact) value = true
+  | .exception _ value => isWfShapeValueHOLExact ([] : StructContextExact) value = true
+  | _ => True
+
 /-- Exact-carrier assembly of HOL `evaluate_shape_invariant_ret_inst2`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:3031-3044`). The binders
     preserve HOL's argument evaluation, successful `lookup_code`, body
@@ -987,7 +1000,13 @@ theorem optMmapEvalIsWfShapeVHOL {width ctxtWidth : Nat} {σ : Type} [NeZero wid
     `words_as_type_indexed_bitvec`; the typed capture
     `evaluate_shape_invariant_ret_inst2_typed`
     (`pan_to_crep_local_typed_probe.out:6`) types the context at `γ context`,
-    independent of the state's `α`, so `{ctxtWidth}` is bound separately. -/
+    independent of the state's `α`, so `{ctxtWidth}` is bound separately. The
+    binders follow the capture's `s, argexps, args, fname, p, p2, newlocals,
+    rsh, v, s', t, ctxt, t_locs` order, and the five premises are HOL's single
+    conjunction in HOL's order (argument evaluation ∧ code lookup ∧ body
+    evaluation ∧ state relation ∧ locals relation). The curried
+    `panToCrepFiniteEvaluateShapeInvariantRetInst2_curried` is untagged
+    convenience API for callers, not a HOL declaration. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "evaluate_shape_invariant_ret_inst2"
   (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals,
     PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code,
@@ -996,31 +1015,31 @@ theorem optMmapEvalIsWfShapeVHOL {width ctxtWidth : Nat} {σ : Type} [NeZero wid
   (words_as_type_indexed_bitvec)]
 theorem panToCrepFiniteEvaluateShapeInvariantRetInst2 {width : Nat} {ctxtWidth : Nat}
     {σ : Type} [NeZero width] [NeZero ctxtWidth]
-    (arguments : List (ExpHOL width))
     (source : PanSemStateFiniteExact width σ)
-    (fname : MlS) (values : List (ValueHOL width))
-    (lookupBody : ProgHOL width)
+    (arguments : List (ExpHOL width))
+    (values : List (ValueHOL width))
+    (fname : MlS) (program : ProgHOL width) (lookupBody : ProgHOL width)
     (newlocals : HolFiniteMapExact MlS (ValueHOL width))
-    (returnShape : ShapeHOL) (program : ProgHOL width)
+    (returnShape : ShapeHOL)
     (result : PanSemResultExact width)
     (postState : PanSemStateFiniteExact width σ)
     (target : CrepSemHOLState width σ)
     (relationContext : PanToCrepContextExact ctxtWidth)
-    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
-    (hargs : evalListHOLFiniteClassical source arguments = some values)
-    (hlookup : Flapjack.lookupCodeHOLExact source.code.lookup fname values =
-      some (lookupBody, newlocals.lookup, returnShape))
-    (hbody : PanSemStateFiniteExact.evaluateHOLFiniteState
-      ({source.decClockHOLFinite with locals := newlocals}) program =
-        (some result, postState))
-    (hstate : panToCrepStateRelFiniteExact source target)
-    (hlocals : panToCrepLocalsRelFiniteExact relationContext
-      source.locals targetLocals) :
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width)) :
+    evalListHOLFiniteClassical source arguments = some values ∧
+      Flapjack.lookupCodeHOLExact source.code.lookup fname values =
+        some (lookupBody, newlocals.lookup, returnShape) ∧
+      PanSemStateFiniteExact.evaluateHOLFiniteState
+        ({source.decClockHOLFinite with locals := newlocals}) program =
+          (some result, postState) ∧
+      panToCrepStateRelFiniteExact source target ∧
+      panToCrepLocalsRelFiniteExact relationContext source.locals targetLocals →
     match result with
     | .returned value => isWfShapeValueHOLExact ([] : StructContextExact) value = true
     | .exception _ value => isWfShapeValueHOLExact ([] : StructContextExact) value = true
     | _ => True := by
   classical
+  intro ⟨hargs, hlookup, hbody, hstate, hlocals⟩
   have hargsFinite : source.evalListHOLFinite arguments = some values := by
     simpa [evalListHOLFiniteClassical] using hargs
   have hentry := panToCrepCallEntryShapeInvariantFiniteExact source target
@@ -1061,6 +1080,38 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst2 {width : Nat} {ctxtWidth :
   | returned value => simpa [Flapjack.panSemResultHOLWf, hsourceStructs] using hresultWf
   | exception _ value => simpa [Flapjack.panSemResultHOLWf, hsourceStructs] using hresultWf
   | _ => trivial
+
+/-- Untagged curried API for the tagged
+    `panToCrepFiniteEvaluateShapeInvariantRetInst2`. Production callers pass
+    the five HOL premises separately; this convenience wrapper adds no HOL
+    declaration, and the tagged statement keeps HOL's single conjunction
+    premise and binder order. -/
+theorem panToCrepFiniteEvaluateShapeInvariantRetInst2_curried {width : Nat}
+    {ctxtWidth : Nat} {σ : Type} [NeZero width] [NeZero ctxtWidth]
+    (arguments : List (ExpHOL width))
+    (source : PanSemStateFiniteExact width σ)
+    (fname : MlS) (values : List (ValueHOL width))
+    (lookupBody : ProgHOL width)
+    (newlocals : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL) (program : ProgHOL width)
+    (result : PanSemResultExact width)
+    (postState : PanSemStateFiniteExact width σ)
+    (target : CrepSemHOLState width σ)
+    (relationContext : PanToCrepContextExact ctxtWidth)
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
+    (hargs : evalListHOLFiniteClassical source arguments = some values)
+    (hlookup : Flapjack.lookupCodeHOLExact source.code.lookup fname values =
+      some (lookupBody, newlocals.lookup, returnShape))
+    (hbody : PanSemStateFiniteExact.evaluateHOLFiniteState
+      ({source.decClockHOLFinite with locals := newlocals}) program =
+        (some result, postState))
+    (hstate : panToCrepStateRelFiniteExact source target)
+    (hlocals : panToCrepLocalsRelFiniteExact relationContext
+      source.locals targetLocals) :
+    panSemResultShapeInvariantHOL result :=
+  panToCrepFiniteEvaluateShapeInvariantRetInst2 source arguments values fname
+    program lookupBody newlocals returnShape result postState target
+    relationContext targetLocals ⟨hargs, hlookup, hbody, hstate, hlocals⟩
 
 /-- Exact port of HOL `tlc_def`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2317-2319`):
@@ -1158,11 +1209,16 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
   CrepSemBroadState.ofBroad_toBroad state
 
 /-- Source-reviewed port of HOL `evaluate_shape_invariant_ret_inst`
-    (`pan_to_crepProofScript.sml:3016-3028`). The binders `program`, source,
-    result, and postState render HOL `p`, `s`, `v`, and `s'`; the only premises
-    are the successful `evaluate` result, `state_rel`, and `locals_rel`, and the
-    Return/Exception cases conclude the value-level rendering of
-    `is_wf_shape_v_nil`. `state_rel_def` and `locals_rel_def` were compared at
+    (`pan_to_crepProofScript.sml:3016-3028`). The binders follow HOL's
+    `p, s, v, s', t, ctxt, t_locs` order (`program`, `source`, `result`,
+    `postState`, `target`, `relationContext`, `targetLocals`), and HOL's single
+    conjunction premise is preserved in HOL's order: the successful `evaluate`
+    result ∧ `state_rel` ∧ `locals_rel` (capture
+    `evaluate_shape_invariant_ret_inst_typed`, `pan_to_crep_local_typed_probe.out:5`).
+    The Return/Exception cases conclude the value-level rendering of
+    `is_wf_shape_v_nil`. The curried `panToCrepFiniteEvaluateShapeInvariantRetInst_curried`
+    is untagged convenience API for callers, not a HOL declaration.
+    `state_rel_def` and `locals_rel_def` were compared at
     `pan_to_crepProofScript.sml:45-82`; `ctxt_max_def` and `no_overlap_def` at
     `pan_commonPropsScript.sml:11-24`. PanSem maps, context `vars`, and the
     independent HOL `t_locs` map use the named finite-support owners and their
@@ -1202,16 +1258,16 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {ctxtWidth : 
     {σ : Type} [NeZero width] [NeZero ctxtWidth]
     (program : ProgHOL width)
     (source : PanSemStateFiniteExact width σ)
-    (target : CrepSemHOLState width σ)
-    (targetLocals : PanToCrepTargetLocalsExact width)
-    (relationContext : PanToCrepContextExact ctxtWidth)
     (result : PanSemResultExact width)
     (postState : PanSemStateFiniteExact width σ)
-    (hstate : panToCrepStateRelFiniteExact source target)
-    (hlocals : panToCrepLocalsRelFiniteExact relationContext
-      source.locals targetLocals.targetLocals)
-    (heval : PanSemStateFiniteExact.evaluateHOLFiniteState source program =
-      (some result, postState)) :
+    (target : CrepSemHOLState width σ)
+    (relationContext : PanToCrepContextExact ctxtWidth)
+    (targetLocals : PanToCrepTargetLocalsExact width) :
+    PanSemStateFiniteExact.evaluateHOLFiniteState source program =
+        (some result, postState) ∧
+      panToCrepStateRelFiniteExact source target ∧
+      panToCrepLocalsRelFiniteExact relationContext source.locals
+        targetLocals.targetLocals →
     match result with
     | .returned value =>
         isWfShapeValueHOLExact ([] : StructContextExact) value = true
@@ -1219,6 +1275,7 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {ctxtWidth : 
         isWfShapeValueHOLExact ([] : StructContextExact) value = true
     | _ => True := by
   classical
+  intro ⟨heval, hstate, hlocals⟩
   let resultSource := PanPropsEvalStateFiniteExact.ofPanSemFinite source
   let resultPost := PanPropsEvalStateFiniteExact.ofPanSemFinite postState
   have hinitial := panToCrepExactInitialShapeInvariant
@@ -1263,6 +1320,29 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {ctxtWidth : 
         simpa [Flapjack.panSemResultHOLWf] using hresultWf
       simpa [hstructs] using hvalue
   | _ => trivial
+
+/-- Untagged curried API for the tagged
+    `panToCrepFiniteEvaluateShapeInvariantRetInst`. It keeps the previous
+    argument order for callers and adds no HOL declaration; the tagged
+    statement follows HOL's `p, s, v, s', t, ctxt, t_locs` binder order and
+    single conjunction premise. -/
+theorem panToCrepFiniteEvaluateShapeInvariantRetInst_curried {width : Nat}
+    {ctxtWidth : Nat} {σ : Type} [NeZero width] [NeZero ctxtWidth]
+    (program : ProgHOL width)
+    (source : PanSemStateFiniteExact width σ)
+    (target : CrepSemHOLState width σ)
+    (targetLocals : PanToCrepTargetLocalsExact width)
+    (relationContext : PanToCrepContextExact ctxtWidth)
+    (result : PanSemResultExact width)
+    (postState : PanSemStateFiniteExact width σ)
+    (hstate : panToCrepStateRelFiniteExact source target)
+    (hlocals : panToCrepLocalsRelFiniteExact relationContext
+      source.locals targetLocals.targetLocals)
+    (heval : PanSemStateFiniteExact.evaluateHOLFiniteState source program =
+      (some result, postState)) :
+    panSemResultShapeInvariantHOL result :=
+  panToCrepFiniteEvaluateShapeInvariantRetInst program source result postState
+    target relationContext targetLocals ⟨heval, hstate, hlocals⟩
 
 /-- Exact port of HOL `slc_def` (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2313-2315`):
     `slc vshs args = FEMPTY |++ ZIP (MAP FST vshs, args)`. The typed capture

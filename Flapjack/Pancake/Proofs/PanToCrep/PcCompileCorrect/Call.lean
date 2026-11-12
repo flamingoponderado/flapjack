@@ -1121,11 +1121,11 @@ theorem pcCompileCorrectAt_callRetReturn {width : Nat} {σ : Type} [NeZero width
   simp only [pcCompileCorrectResultRel] at hrr
   subst hrr
   have hwfv : isWfShapeValueHOLExact ([] : StructContextExact) v = true := by
-    have := panToCrepFiniteEvaluateShapeInvariantRetInst2 argexps source fname values prog newlocals
-      rsh prog (.returned v) st t ctxt t.locals
+    have := panToCrepFiniteEvaluateShapeInvariantRetInst2_curried argexps source
+      fname values prog newlocals rsh prog (.returned v) st t ctxt t.locals
       (by simpa [evalListHOLFiniteClassical] using hargs)
       (PanSemStateFiniteExact.lookupCodeHOLFinite_eq_some _ _ _ _ _ _ hlk) hbody hstate hlocals
-    simpa using this
+    simpa [panSemResultShapeInvariantHOL] using this
   have hwf : isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact v) = true := by
     rw [isWfShapeExactHOL_shapeOfHOLExact_eq_isWfShapeValueHOLExact_nil [] rfl v]; exact hwfv
   have hflen : (flattenHOL v).length = sizeOfShapeHOL (shapeOfHOLExact v) :=
@@ -1595,11 +1595,12 @@ theorem pcCompileCorrectAt_callRetException {width : Nat} {σ : Type} [NeZero wi
             exact (shapeEqHOL_eq_true _ _).mp this
           obtain ⟨nsE, words, hvar, hmm, hfl, hwfo⟩ := hlocals.2.2 hv old hold
           have hwfvE : isWfShapeValueHOLExact ([] : StructContextExact) exn = true := by
-            have := panToCrepFiniteEvaluateShapeInvariantRetInst2 argexps source fname values prog
-              newlocals rsh prog (.exception eid exn) st t ctxt t.locals
+            have := panToCrepFiniteEvaluateShapeInvariantRetInst2_curried argexps
+              source fname values prog newlocals rsh prog (.exception eid exn)
+              st t ctxt t.locals
               (by simpa [evalListHOLFiniteClassical] using hargs)
               (PanSemStateFiniteExact.lookupCodeHOLFinite_eq_some _ _ _ _ _ _ hlk) hbody hstate hlocals
-            simpa using this
+            simpa [panSemResultShapeInvariantHOL] using this
           have hwfE : isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact exn) = true := by
             rw [isWfShapeExactHOL_shapeOfHOLExact_eq_isWfShapeValueHOLExact_nil [] rfl exn]
             exact hwfvE

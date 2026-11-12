@@ -369,11 +369,12 @@ theorem pcCompileCorrectAt_decCall {width : Nat} {σ : Type} [NeZero width]
       simp only [pcCompileCorrectResultRel] at hrr
       subst hrr
       have hwfv : isWfShapeValueHOLExact ([] : StructContextExact) retv = true := by
-        have := panToCrepFiniteEvaluateShapeInvariantRetInst2 argexps source fname values prog
-          newlocals rsh prog (.returned retv) st t ctxt t.locals
+        have := panToCrepFiniteEvaluateShapeInvariantRetInst2_curried argexps
+          source fname values prog newlocals rsh prog (.returned retv) st t
+          ctxt t.locals
           (by simpa [evalListHOLFiniteClassical] using hargs)
           (PanSemStateFiniteExact.lookupCodeHOLFinite_eq_some _ _ _ _ _ _ hlk) hbody hstate hlocals
-        simpa using this
+        simpa [panSemResultShapeInvariantHOL] using this
       have hwf : isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact retv) = true := by
         rw [isWfShapeExactHOL_shapeOfHOLExact_eq_isWfShapeValueHOLExact_nil [] rfl retv]
         exact hwfv
