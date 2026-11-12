@@ -112,6 +112,24 @@ val v_rel_union_replay = Q.prove (
             clos_to_bvlProof$v_rel max_app f2 refs (sptree$union code c2) x y`,
   metis_tac [clos_to_bvlProofTheory.v_rel_subspt, sptreeTheory.subspt_union]);
 val _ = show_thm "v_rel_union_replay=" v_rel_union_replay;
+val _ = show_thm "num_remaining_args_def_typed=" clos_to_bvlProofTheory.num_remaining_args_def;
+(* Replay the original local no-partial-arguments theorem. *)
+local
+  open preamble clos_to_bvlProofTheory
+in
+  val no_partial_args_replay = Q.prove (
+    `num_remaining_args func = SOME x /\
+     get_num_args func = SOME x /\ x <> 0 /\
+     add_args cl arg_env = SOME func ==> arg_env = []`,
+    Cases_on `cl` >>
+    srw_tac[][add_args_def] >>
+    full_simp_tac(srw_ss())[get_num_args_def, num_remaining_args_def] >>
+    srw_tac[][] >>
+    Cases_on `arg_env` >>
+    full_simp_tac(srw_ss())[] >>
+    decide_tac);
+  val _ = show_thm "no_partial_args_replay=" no_partial_args_replay;
+end;
 val _ = show_thm "clos_tag_shift_eq_nil_tag_typed=" clos_to_bvlProofTheory.clos_tag_shift_eq_nil_tag;
 (* Replay the original local byte-list and optional-decoding theorems. *)
 local

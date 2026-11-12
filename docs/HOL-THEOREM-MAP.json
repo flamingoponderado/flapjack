@@ -157,6 +157,18 @@
   "reviewer": "Compared the literal local HOL source proof and typed replay: related source and target values have equal full optional byte decodings, including NONE, with fixed word8 bytes. The f and refs inputs use canonical finite support and same-module codec witnesses."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "num_remaining_args_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "numRemainingArgs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared all typed HOL clauses: ordinary and recursive closures subtract the accumulated argument length from the arity using natural subtraction; recursive arity uses total holEl including out-of-range behavior, and every other value returns NONE. This proof-side definition is not an executed compiler pass."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "no_partial_args",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureArguments.lean", "lean_name": "noPartialArgs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original local HOL proof and its typed replay: all four conjuncts, unrestricted source values and argument list, nonzero arity condition, and the empty-list conclusion are preserved."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "clos_tag_shift_eq_nil_tag",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/BlockList.lean", "lean_name": "closTagShift_eq_nilTag",
   "statement_status": "reviewed_exact",
