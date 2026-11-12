@@ -1221,6 +1221,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CallSemantics
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownSyntax
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IncrementalEquations
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CommonSemantics
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WholeSemantics
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WholeProgram
 import Flapjack.Compiler.Backend.ClosKnown.Inline.SizeShortCircuit
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CodeLabels

@@ -1,5 +1,13 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_semantics",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/WholeSemantics.lean", "lean_name": "compile_semantics",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Independent comparison against compile_semantics_typed and the HOL source confirms the three original premises, independent FFI and compiler carriers, fixed callback word widths, faithful MlString names, and complete target-to-source behavior equality with the original oracle composition. The reviewed Flapjack.HolFiniteMapExact.holEmpty producer represents FEMPTY. The proof derives all intermediate annotation, installation, stub and oracle facts from those premises. Both semantics inherit reals_as_rational_cuts and the real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
   "hol_path": "cakeml/misc/miscScript.sml", "hol_name": "subspt_domain_SUBSET",
   "lean_path": "Flapjack/Misc/Sptree/Subspt/DomainSubset.lean", "lean_name": "sptSubspt_domainSubset",
   "statement_status": "reviewed_exact",
