@@ -42,12 +42,6 @@ theorem inStateRel_decClock {C F : Type} (source : BviState (Spt (Nat × Bvi.Exp
     InStateRel (BviSem.decClock ticks source) (BviSem.decClock ticks target) := by
   simpa [BviSem.decClock, states.2.1] using inStateRel_with_clock source target states (source.clock - ticks)
 
-/-- Flapjack infrastructure: an inliner-related state has the same clock and
-observable FFI state as its source. -/
-theorem inStateRel_observables {C F : Type} (source : BviState (Spt (Nat × Bvi.Exp) × C) F)
-    (target : BviState C F) (states : InStateRel source target) :
-    target.clock = source.clock ∧ target.ffi = source.ffi := ⟨states.2.1, states.2.2.2.1⟩
-
 /-- Flapjack infrastructure: both direct and indirect code lookup preserve
 arguments and select related bodies under the inliner state relation. -/
 theorem findCode_inStateRel {C F : Type} (source : BviState (Spt (Nat × Bvi.Exp) × C) F)

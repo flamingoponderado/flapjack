@@ -288,13 +288,4 @@ theorem evaluateLetOp {C F : Type} (expressions : List Bvl.Exp) (env : List Valu
   exact letOpSimulation_all splitSeq limit expressions env source result sourceFinal target
     related run safe
 
-/-- Every combined-pass code body satisfies the variable bound and handler
-shape required by BVL-to-BVI. -/
-theorem letOpTransform_wellFormed (splitSeq : Bool) (limit arity : Nat) (body : Bvl.Exp) :
-    BvlProps.bVarBound arity [letOpTransform splitSeq limit arity body] ∧
-      BvlHandle.Proofs.handleOk [letOpTransform splitSeq limit arity body] := by
-  have bound := BvlHandle.Proofs.compileAny_varBound splitSeq limit arity (letOpSing body)
-  have shape := BvlHandle.Proofs.compileAny_handleOk splitSeq limit arity (letOpSing body)
-  simpa [letOpTransform] using And.intro bound shape
-
 end Flapjack.Compiler.Backend.BvlInline.Proofs
