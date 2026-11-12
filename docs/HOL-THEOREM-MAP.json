@@ -1,5 +1,18 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "alist_to_fmap_FEMPTY",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/AlistMap.lean", "lean_name": "alistToFmap_fempty",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.alistToFmap", "Flapjack.HolFiniteMapExact.holUpdateList", "Flapjack.HolFiniteMapExact.holEmpty"],
+  "reviewer": "Independent typed HOL comparison confirms independent key and value carriers, the original distinct-key premise and equality of the full finite maps. The reviewed alistToFmap, holUpdateList and holEmpty producers preserve first-binding and left-to-right update semantics; distinct keys make the results agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "SND_SND_known_compile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownAddresses.lean", "lean_name": "knownCompileInc_snd_snd",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the arbitrary auxiliary payload type, original config and sparse-map arguments, and exact second projection of the incremental compiler result without extra assumptions."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_append_aux",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/AccumulatorAppend.lean", "lean_name": "compileExps_append_aux",
   "statement_status": "reviewed_exact",

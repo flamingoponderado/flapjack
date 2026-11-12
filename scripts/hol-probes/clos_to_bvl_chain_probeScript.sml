@@ -48,6 +48,8 @@ val _ = show_thm "compile_exps_IMP_acc_typed=" clos_to_bvlProofTheory.compile_ex
 val _ = show_thm "build_aux_append_aux_typed=" clos_to_bvlProofTheory.build_aux_append_aux;
 val _ = show_thm "compile_exps_append_aux_typed=" clos_to_bvlProofTheory.compile_exps_append_aux;
 val _ = show_thm "compile_exps_eq_append_typed=" clos_to_bvlProofTheory.compile_exps_eq_append;
+val _ = show_thm "SND_SND_known_compile_inc_typed=" clos_to_bvlProofTheory.SND_SND_known_compile_inc;
+val _ = show_thm "alist_to_fmap_FEMPTY_typed=" clos_to_bvlProofTheory.alist_to_fmap_FEMPTY;
 val _ = show_thm "compile_every_Fn_SOME_typed=" clos_to_bvlProofTheory.compile_every_Fn_SOME;
 val _ = show_thm "calls_preserves_every_Fn_vs_NONE_typed=" clos_callProofTheory.calls_preserves_every_Fn_vs_NONE;
 val _ = show_thm "every_Fn_vs_NONE_cond_call_compile_inc_typed=" clos_to_bvlProofTheory.every_Fn_vs_NONE_cond_call_compile_inc;
