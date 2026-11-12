@@ -676,19 +676,6 @@ theorem tailrec_compileProgFuel_noMutcons (fuel : Nat) (enabled : Bool) (next ne
   rw [BviTailrec.compileProgFuel_eq_source] at compiled
   exact tailrec_compileProg_noMutcons enabled next next' program result (Option.some.inj compiled) safe
 
-/-- The TMC precondition follows from safety of the tail-recursion input;
-the pass itself preserves that safety. -/
-theorem tailrec_output_tmc_inputCondition_of_input_noMutcons
-    (fuel : Nat) (enabled : Bool) (next last tmcNext : Nat)
-    (program output : List (Nat × Nat × Bvi.Exp)) (condition : BviTailrec.inputCondition next program)
-    (outside : ∀ name ∈ program.map Prod.fst, bvlNumStubs ≤ name → ¬BviTmc.inWorkerNamespace name)
-    (safe : ∀ entry ∈ program, noMutcons entry.2.2)
-    (tmcBound : bvlNumStubs ≤ tmcNext) (tmcWorker : BviTmc.inWorkerNamespace tmcNext)
-    (run : BviTailrec.compileProgFuel fuel enabled next program = some (last, output)) :
-    BviTmc.inputCondition tmcNext output := by
-  exact tailrec_output_tmc_inputCondition fuel enabled next last tmcNext program output condition outside
-    (tailrec_compileProgFuel_noMutcons fuel enabled next last program output run safe) tmcBound tmcWorker run
-
 private theorem noMutcons_binary (op : ClosLang.Op) (x y : Bvi.Exp)
     (safe : noMutconsOp op) (hx : noMutcons x) (hy : noMutcons y) :
     noMutcons (.op op [x, y]) := by
@@ -741,9 +728,13 @@ theorem lowered_tailrec_tmc_inputCondition_complete
     (lowerRun : compileProgFuel fuel optFuel start counter program = some (targetStart, lowered, targetCounter))
     (tailRun : BviTailrec.compileProgFuel fuel enabled (bvlNumStubs + 2) lowered = some (last, output)) :
     BviTmc.inputCondition (bvlNumStubs + 3) output := by
-  apply lowered_tailrec_tmc_inputCondition fuel optFuel start counter targetStart targetCounter enabled
-    program lowered output last distinct lowerRun tailRun
-  exact tailrec_compileProgFuel_noMutcons fuel enabled _ last lowered output tailRun
+  have condition := compileProgFuel_production_tailrec_inputCondition fuel optFuel start counter
+    targetStart targetCounter program lowered distinct lowerRun
+  have outside := compileProgFuel_outside_tmc_namespace fuel optFuel start counter
+    targetStart targetCounter program lowered lowerRun
+  have safe := tailrec_compileProgFuel_noMutcons fuel enabled _ last lowered output tailRun
     (compileProgFuel_noMutcons fuel optFuel start counter targetStart targetCounter program lowered lowerRun)
+  exact tailrec_output_tmc_inputCondition fuel enabled (bvlNumStubs + 2) last (bvlNumStubs + 3)
+    lowered output condition outside safe production_tmc_start_valid.1 production_tmc_start_valid.2 tailRun
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

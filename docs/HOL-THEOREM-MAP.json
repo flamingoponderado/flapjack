@@ -1,5 +1,29 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "bEvery_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/Every.lean", "lean_name": "bEvery",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original definition, including empty and multiple-element list clauses and every BVL expression constructor: the predicate applies to each node and recurses over precisely the source children. HOL's Boolean predicate is expressed as a Lean proposition."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "bEvery_EVERY",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/Every.lean", "lean_name": "bEvery_every",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: for arbitrary expression predicate and expression list, bEvery holds exactly when EVERY singleton satisfies bEvery; List.Forall expresses source EVERY."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "bEvery_MEM",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/Every.lean", "lean_name": "bEvery_mem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: bEvery on an arbitrary list is equivalent to its singleton condition for every member."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "bEvery_CONS",
+  "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/Every.lean", "lean_name": "bEvery_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: the grouped singleton and tail bEvery premises imply bEvery for the cons list, for an arbitrary expression predicate."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml", "hol_name": "IMP_EL_SING",
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/IndexedLookup.lean", "lean_name": "impElSing",
   "statement_status": "reviewed_exact",

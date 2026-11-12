@@ -120,22 +120,4 @@ theorem tailrec_output_tmc_inputCondition (fuel : Nat) (enabled : Bool) (next la
   exact tailrec_output_outside_tmc_namespace fuel enabled next last program output condition.2.2.2.2 outside run
     entry.1 (List.mem_map.mpr ⟨entry, member, rfl⟩) above
 
-/-- Production lowering followed by tail-recursion satisfies all TMC input
-conditions except that no-mutable-allocation preservation is still supplied
-as a premise. -/
-theorem lowered_tailrec_tmc_inputCondition (fuel optFuel start counter targetStart targetCounter : Nat)
-    (enabled : Bool) (program : List (Nat × Nat × Bvl.Exp))
-    (lowered output : List (Nat × Nat × Bvi.Exp)) (last : Nat)
-    (distinct : (program.map Prod.fst).Nodup)
-    (lowerRun : BvlToBvi.compileProgFuel fuel optFuel start counter program = some (targetStart, lowered, targetCounter))
-    (tailRun : BviTailrec.compileProgFuel fuel enabled (bvlNumStubs + 2) lowered = some (last, output))
-    (noMutable : ∀ entry ∈ output, BviTmc.noMutcons entry.2.2) :
-    BviTmc.inputCondition (bvlNumStubs + 3) output := by
-  have tailCondition := compileProgFuel_production_tailrec_inputCondition fuel optFuel start counter
-    targetStart targetCounter program lowered distinct lowerRun
-  have outside := compileProgFuel_outside_tmc_namespace fuel optFuel start counter targetStart targetCounter
-    program lowered lowerRun
-  exact tailrec_output_tmc_inputCondition fuel enabled (bvlNumStubs + 2) last (bvlNumStubs + 3)
-    lowered output tailCondition outside noMutable production_tmc_start_valid.1 production_tmc_start_valid.2 tailRun
-
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs
