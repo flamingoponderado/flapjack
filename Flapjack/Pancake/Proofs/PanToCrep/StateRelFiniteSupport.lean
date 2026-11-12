@@ -457,7 +457,7 @@ theorem panToCrepLocalsRelFiniteExact_valueShapeProjection {width : Nat} [NeZero
     (name : MlS) (value : ValueHOL width)
     (hrel : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals)
     (hlookup : sourceLocals.lookup name = some value) :
-    isWfShapeValueHOLExact [] value = true := by
+    isWfShapeValueHOLExact ([] : StructContextExact) value = true := by
   have hshape := panToCrepLocalsRelFiniteExact_shapeProjection
     context sourceLocals targetLocals name value hrel hlookup
   have hbridge := isWfShapeExactHOL_shapeOfHOLExact_eq_isWfShapeValueHOLExact_nil
@@ -482,7 +482,7 @@ theorem panToCrepLocalsRelWfShapeFiniteExact {width : Nat} [NeZero width]
     (name : MlS) (value : ValueHOL width)
     (hrel : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals)
     (hlookup : sourceLocals.lookup name = some value) :
-    isWfShapeValueHOLExact [] value = true :=
+    isWfShapeValueHOLExact ([] : StructContextExact) value = true :=
   panToCrepLocalsRelFiniteExact_valueShapeProjection
     context sourceLocals targetLocals name value hrel hlookup
 
@@ -840,7 +840,7 @@ noncomputable def evalListHOLFiniteClassical {width : Nat} {σ : Type}
       locals_rel ctxt s.locals t_locs ==> EVERY is_wf_shape_v_nil vs`.
     `OPT_MMAP (eval s)` is the exact list evaluator with the classical
     address-set decision (`evalListHOLFiniteClassical`), `EVERY` is list
-    membership, and `is_wf_shape_v_nil` is `isWfShapeValueHOLExact []`. HOL's
+    membership, and `is_wf_shape_v_nil` is `isWfShapeValueHOLExact ([] : StructContextExact)`. HOL's
     free variables `es vs s t ctxt t_locs` are the explicit binders, and the
     three premises keep HOL's conjunction order. The relation qualifier records
     the finite maps that `state_rel`/`locals_rel` traverse: the source
@@ -859,7 +859,7 @@ theorem optMmapEvalIsWfShapeVHOL {width : Nat} {σ : Type} [NeZero width]
     (h : evalListHOLFiniteClassical s es = some vs ∧
       panToCrepStateRelFiniteExact s t ∧
       panToCrepLocalsRelFiniteExact ctxt s.locals tLocs) :
-    ∀ v, v ∈ vs → isWfShapeValueHOLExact [] v = true := by
+    ∀ v, v ∈ vs → isWfShapeValueHOLExact ([] : StructContextExact) v = true := by
   classical
   obtain ⟨heval, hstate, hlocals⟩ := h
   obtain ⟨hl, hg⟩ := panToCrepExactInitialShapeInvariant s t tLocs ctxt hstate hlocals
@@ -940,8 +940,8 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst2 {width : Nat} {σ : Type}
     (hlocals : panToCrepLocalsRelFiniteExact relationContext
       source.locals targetLocals) :
     match result with
-    | .returned value => isWfShapeValueHOLExact [] value = true
-    | .exception _ value => isWfShapeValueHOLExact [] value = true
+    | .returned value => isWfShapeValueHOLExact ([] : StructContextExact) value = true
+    | .exception _ value => isWfShapeValueHOLExact ([] : StructContextExact) value = true
     | _ => True := by
   classical
   have hargsFinite : source.evalListHOLFinite arguments = some values := by
@@ -1129,9 +1129,9 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {σ : Type}
       (some result, postState)) :
     match result with
     | .returned value =>
-        isWfShapeValueHOLExact [] value = true
+        isWfShapeValueHOLExact ([] : StructContextExact) value = true
     | .exception _ value =>
-        isWfShapeValueHOLExact [] value = true
+        isWfShapeValueHOLExact ([] : StructContextExact) value = true
     | _ => True := by
   classical
   let resultSource := PanPropsEvalStateFiniteExact.ofPanSemFinite source

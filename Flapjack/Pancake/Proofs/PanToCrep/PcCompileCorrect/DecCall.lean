@@ -368,7 +368,7 @@ theorem pcCompileCorrectAt_decCall {width : Nat} {σ : Type} [NeZero width]
       have h2 : shapeOfHOLExact retv = rsh := (shapeEqHOL_eq_true _ _).mp hsh.2
       simp only [pcCompileCorrectResultRel] at hrr
       subst hrr
-      have hwfv : isWfShapeValueHOLExact [] retv = true := by
+      have hwfv : isWfShapeValueHOLExact ([] : StructContextExact) retv = true := by
         have := panToCrepFiniteEvaluateShapeInvariantRetInst2 argexps source fname values prog
           newlocals rsh prog (.returned retv) st t ctxt t.locals
           (by simpa [evalListHOLFiniteClassical] using hargs)
