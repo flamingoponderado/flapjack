@@ -18,14 +18,13 @@ theorem unmappedRefsSubmap_trans
   obtain ⟨intermediate, stillFresh⟩ := first key value found fresh
   exact second key value intermediate stillFresh
 
-/-- Extending the protected set and preserving the unprotected part of the
-reference store preserves a closure relation. This candidate remains untagged
-pending review of its finite-map carriers against the original local lemma. -/
+/-- Preserving the unprotected references and keeping them unprotected
+preserves a closure relation. This general frame lemma supports simulations
+across changes to the store and protected set. -/
 theorem clRel_grow_refs {maxApp : Nat} {fs1 fs2 : Nat → Prop}
     {refs1 refs2 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)}
     {code : Spt (Nat × Bvl.Exp)} {env cl target}
     (related : clRel maxApp fs1 refs1 code env cl target)
-    (_subset : ∀ p, fs1 p → fs2 p)
     (frame : ∀ p cell, refs1.lookup p = some cell → ¬ fs1 p →
       refs2.lookup p = some cell ∧ ¬ fs2 p) :
     clRel maxApp fs2 refs2 code env cl target := by
@@ -38,6 +37,33 @@ theorem clRel_grow_refs {maxApp : Nat} {fs1 fs2 : Nat → Prop}
       obtain ⟨stored', fresh'⟩ := frame _ _ stored fresh
       exact .mutualRec exps ps positions values fresh' stored' length index loc vars installed
 
+namespace FreshProtectedRefHOL
+
+/-- The target reference map uses its canonical finite-support carrier. -/
+theorem holFmapAsFiniteSupportRelationWitness_BvlSem.State {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+
+/-- Adding a fresh reference address to the protected set preserves closure relations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_NEW_F"
+  (fmap_as_finite_support_relation := [BvlSem.State.refs])]
+theorem clRel_newProtected {C F : Type} (maxApp : Nat) (fs : Nat → Prop)
+    (t : BvlSem.State C F) (env : List ClosSem.Value) (ys : List BvlSem.Value) (qq : Nat) :
+    ∀ x y, clRel maxApp fs t.refs t.code (env, ys) x y → t.refs.lookup qq = none →
+      clRel maxApp (fun p => p = qq ∨ fs p) t.refs t.code (env, ys) x y := by
+  intro x y related fresh
+  apply clRel_grow_refs related
+  intro p cell found outside
+  have different : p ≠ qq := by
+    intro equal
+    subst p
+    rw [fresh] at found
+    contradiction
+  exact ⟨found, by simp [different, outside]⟩
+
+end FreshProtectedRefHOL
+
 /-- Growing the relocation map and preserving unmapped references preserves
 related values. This candidate is not tagged as the HOL lemma until its
 finite-map representation and inferred source type are reviewed. -/
@@ -47,9 +73,6 @@ theorem vRel_grow_refs {maxApp : Nat} {f1 f2 : HolFiniteMapExact Nat Nat}
     (related : vRel maxApp f1 refs1 code x y)
     (submap : f1.submap f2) (frame : unmappedRefsSubmap refs1 refs2 f1 f2) :
     vRel maxApp f2 refs2 code x y := by
-  have rangeSubset : ∀ p, (∃ n, f1.lookup n = some p) → ∃ n, f2.lookup n = some p := by
-    intro p ⟨n, lookup⟩
-    exact ⟨n, submap n p lookup⟩
   refine vRel.rec
     (motive_1 := fun x y _ => vRel maxApp f2 refs2 code x y)
     (motive_2 := fun xs ys _ => List.Forall₂ (vRel maxApp f2 refs2 code) xs ys)
@@ -66,11 +89,11 @@ theorem vRel_grow_refs {maxApp : Nat} {f1 f2 : HolFiniteMapExact Nat Nat}
   · intro b r1 r2 lookup
     exact .refPtr (submap r1 r2 lookup)
   · intro env fvs cl p n ys envRel closure ih
-    exact .closure ih (clRel_grow_refs closure rangeSubset frame)
+    exact .closure ih (clRel_grow_refs closure frame)
   · intro env fvs argEnv ys numArgs cl clApp cl' envRel argRel nonempty bound lookup added arity closure
       envIh argIh
     exact .partialClosure envIh argIh nonempty bound lookup added arity
-      (clRel_grow_refs closure rangeSubset frame)
+      (clRel_grow_refs closure frame)
   · exact .nil
   · intro a b xs ys head tail headIh tailIh
     exact .cons headIh tailIh

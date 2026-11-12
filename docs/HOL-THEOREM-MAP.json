@@ -280,6 +280,13 @@
   "reviewer": "Compared the typed HOL source and original proof: the arbitrary related values and source decoding premises, target decoding and pointwise related result agree. The f and refs parameters use canonical finite-support carriers with same-module codec witnesses; code remains a sparse tree."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "cl_rel_NEW_F",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueGrowth.lean", "lean_name": "clRel_newProtected",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BvlSem.State.refs"],
+  "reviewer": "Compared the original HOL source and typed local proof replay: the arbitrary target state carries independently polymorphic parameters; the protected address set, both environments and closure values are arbitrary. A related closure and an address outside the target reference domain imply the same closure relation with that address inserted in the set and unchanged target state. The target reference field uses canonical finite-support maps with a state codec witness; target code remains a sparse tree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "state_rel_UPDATE_REF",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MappedRefsUpdate.lean", "lean_name": "stateRel_updateRef",
   "statement_status": "reviewed_fmap_as_finite_support_relation",

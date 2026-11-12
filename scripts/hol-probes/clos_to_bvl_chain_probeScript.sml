@@ -1178,6 +1178,18 @@ in
       srw_tac[][])
   >- full_simp_tac(srw_ss())[closSemTheory.do_eq_def]
   >- full_simp_tac(srw_ss())[closSemTheory.do_eq_def]);
+  (* Replay the original local closure-set freshness theorem. *)
+  val cl_rel_NEW_F_replay = Q.prove (
+    `!x y.
+      cl_rel max_app f2 t2.refs t2.code (env,ys) x y ==>
+      ~(qq IN FDOM t2.refs) ==>
+      cl_rel max_app (qq INSERT f2) t2.refs t2.code (env,ys) x y`,
+    srw_tac[][cl_rel_cases]
+    >- metis_tac []
+    >- metis_tac []
+    \\ DISJ2_TAC \\ Q.LIST_EXISTS_TAC [`exps_ps`,`r`] \\ full_simp_tac(srw_ss())[]
+    \\ strip_tac >> full_simp_tac(srw_ss())[FLOOKUP_DEF]);
+  val _ = show_thm "cl_rel_NEW_F_replay=" cl_rel_NEW_F_replay;
   val _ = show_thm "state_rel_UPDATE_REF_typed=" clos_to_bvlProofTheory.state_rel_UPDATE_REF;
   val _ = show_thm "state_rel_NEW_REF_typed=" clos_to_bvlProofTheory.state_rel_NEW_REF;
   val _ = show_thm "not_isClos_typed=" clos_to_bvlProofTheory.not_isClos;
