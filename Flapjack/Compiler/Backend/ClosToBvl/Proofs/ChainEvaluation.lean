@@ -642,7 +642,7 @@ theorem install_success_body_simulation {C F : Type}
     have originalCompile : compileExpsHOL s.maxApp expressions [] = (compiled, aux) := by simpa [maxApp] using compile
     have codeInstalled' : codeInstalled aux targetNext.code := by
       simpa [targetNext] using install_original_aux_installed s t config expressions auxiliary compiled aux
-        sourceHead nonempty originalCompile oracle
+        sourceHead originalCompile oracle
     have post := bodyIH installedSource finalSource targetNext [] [] f [] aux compiled result smaller bodyRun noType compile
       locations annotations' vars codeInstalled' (by simp [envRel]) states'
     obtain ⟨bodyExtra, targetResult, targetFinal, fFinal, targetRun, resultRelated, finalStates,

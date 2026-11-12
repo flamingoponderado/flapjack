@@ -526,21 +526,21 @@ theorem evaluate_install_target_call {C F : Type}
   rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, opRun]
   simp [mainFound]
 
-/-- For a nonempty expression list, adding chain calls changes the generated
+/-- Adding chain calls changes the generated
 expressions but leaves the compiler's auxiliary-code accumulator unchanged. -/
 theorem compileExps_chain_aux (maxApp : Nat) (expressions : List ClosLang.Exp)
-    (start : Nat) (aux : List (Nat × Nat × Bvl.Exp)) (nonempty : expressions ≠ []) :
+    (start : Nat) (aux : List (Nat × Nat × Bvl.Exp)) :
     (compileExpsHOL maxApp ((chainExps start expressions).map (fun (_, _, exp) => exp)) aux).2 =
       (compileExpsHOL maxApp expressions aux).2 := by
   induction expressions generalizing start aux with
-  | nil => contradiction
+  | nil => simp [chainExps, compileExps_eq_list, compileExpListHOL, compileExpHOL]
   | cons first rest ih =>
     cases rest with
     | nil => simp [chainExps]
     | cons second tail =>
       cases firstRun : compileExpHOL maxApp first aux with
       | mk target middle =>
-        have tailEq := ih (start + 1) middle (by simp)
+        have tailEq := ih (start + 1) middle
         simp only [compileExps_eq_list] at tailEq ⊢
         simpa [chainExps, compileExpListHOL, compileExpHOL, firstRun] using tailEq
 
@@ -576,18 +576,22 @@ theorem extractName_nonempty (expressions : List ClosLang.Exp) (start : Nat)
   · cases extract
     exact nonempty
 
-/-- The extracted, chained body produces the same auxiliary accumulator as
-the original nonempty source program. -/
-theorem compileExps_extract_chain_aux (maxApp : Nat) (expressions : List ClosLang.Exp)
-    (start : Nat) (real : List ClosLang.Exp) (aux : List (Nat × Nat × Bvl.Exp))
-    (extract : extractName expressions = (start, real)) (nonempty : expressions ≠ []) :
-    (compileExpsHOL maxApp ((chainExps start real).map (fun (_, _, exp) => exp)) aux).2 =
-      (compileExpsHOL maxApp expressions aux).2 := by
-  rw [compileExps_chain_aux maxApp real start aux (extractName_nonempty expressions start real extract nonempty)]
-  exact (extractName_aux maxApp expressions start real aux extract).symm
+/-- Name extraction and chaining preserve the original auxiliary code. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_exps_same_aux"]
+theorem compileExps_same_aux (maxApp start : Nat) (real expressions : List ClosLang.Exp)
+    (newExps compiled : List Bvl.Exp) (aux originalAux : List (Nat × Nat × Bvl.Exp))
+    (premises : compileExpsHOL maxApp ((chainExps start real).map (fun (_, _, exp) => exp)) [] = (newExps, aux) ∧
+      extractName expressions = (start, real) ∧
+      compileExpsHOL maxApp expressions [] = (compiled, originalAux)) : originalAux = aux := by
+  obtain ⟨chainRun, extract, originalRun⟩ := premises
+  have same := compileExps_chain_aux maxApp real start []
+  have extractSame := extractName_aux maxApp expressions start real [] extract
+  simp only [chainRun, originalRun] at same extractSame
+  exact extractSame.trans same.symm
 
 /-- Compiling concatenated expression lists threads the same auxiliary state
 as compiling each list in sequence. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_exps_APPEND"]
 theorem compileExps_append (maxApp : Nat) (left right : List ClosLang.Exp)
     (aux : List (Nat × Nat × Bvl.Exp)) :
     compileExpsHOL maxApp (left ++ right) aux =
@@ -608,49 +612,62 @@ theorem compileExps_append (maxApp : Nat) (left right : List ClosLang.Exp)
           simp [restRun, rightRun] at step
           simp [compileExpListHOL, firstRun, step, restRun, rightRun]
 
-/-- Installing the incrementally compiled program also installs the
-auxiliary code produced by compiling its original nonempty expression list. -/
+/-- Auxiliary code from the original program occurs in the compilation of
+the extracted chain followed by additional expressions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_exps_twice_IS_SUBLIST"]
+theorem compileExps_twice_isSublist (expressions real additional : List ClosLang.Exp)
+    (start maxApp : Nat) (newExps compiled : List Bvl.Exp)
+    (aux originalAux : List (Nat × Nat × Bvl.Exp))
+    (premises : extractName expressions = (start, real) ∧
+      compileExpsHOL maxApp ((chainExps start real).map (fun (_, _, exp) => exp) ++ additional) [] =
+        (newExps, aux) ∧
+      compileExpsHOL maxApp expressions [] = (compiled, originalAux)) :
+    originalAux <:+: aux := by
+  obtain ⟨extract, whole, originalRun⟩ := premises
+  cases chainRun : compileExpsHOL maxApp ((chainExps start real).map (fun (_, _, exp) => exp)) [] with
+  | mk chainTargets chainAux =>
+    cases extraRun : compileExpsHOL maxApp additional chainAux with
+    | mk extraTargets finalAux =>
+      have pairEq : (chainTargets ++ extraTargets, finalAux) = (newExps, aux) := by
+        simpa [compileExps_append, chainRun, extraRun] using whole
+      cases pairEq
+      have same := compileExps_same_aux maxApp start real expressions chainTargets compiled chainAux originalAux
+        ⟨chainRun, extract, originalRun⟩
+      have suffix := compileExps_acc maxApp additional chainAux
+      rw [extraRun] at suffix
+      obtain ⟨_, added, finalEq⟩ := suffix
+      have included : chainAux <:+ aux := ⟨added, finalEq.symm⟩
+      simpa [same] using included.isInfix
+
+/-- Installing the incremental program also installs its original auxiliary code. -/
 theorem compileInc_original_aux_installed (maxApp : Nat) (expressions : List ClosLang.Exp)
     (auxiliary : List (Nat × Nat × ClosLang.Exp)) (compiled : List Bvl.Exp)
     (originalAux : List (Nat × Nat × Bvl.Exp)) (code : Spt (Nat × Bvl.Exp))
-    (nonempty : expressions ≠ [])
     (originalRun : compileExpsHOL maxApp expressions [] = (compiled, originalAux))
     (installed : codeInstalled (compileInc maxApp (expressions, auxiliary)) code) :
     codeInstalled originalAux code := by
   cases extract : extractName expressions with
   | mk start real =>
-    let chained := (chainExps start real).map (fun (_, _, exp) => exp)
-    let extra := auxiliary.map (fun (_, _, exp) => exp)
-    cases chainRun : compileExpsHOL maxApp chained [] with
-    | mk chainTargets chainAux =>
-      have auxEq : chainAux = originalAux := by
-        have h := compileExps_extract_chain_aux maxApp expressions start real [] extract nonempty
-        simpa [chained, chainRun, originalRun] using h
-      cases extraRun : compileExpsHOL maxApp extra chainAux with
-      | mk extraTargets finalAux =>
-        have whole : compileExpsHOL maxApp (chained ++ extra) [] =
-            (chainTargets ++ extraTargets, finalAux) := by
-          simp [compileExps_append, chainRun, extraRun]
-        have installed' : codeInstalled
-            (((chainExps start real ++ auxiliary).zip (chainTargets ++ extraTargets)).map
-              (fun ((loc, args, _), exp) => (loc + numStubs maxApp, args, exp)) ++ finalAux) code := by
-          have h : (chainExps start real ++ auxiliary).map (fun (_, _, exp) => exp) = chained ++ extra := by
-            simp [chained, extra]
-          simp only [compileInc, extractNameSource_eq_extractName, extract, compileProgExpsHOL, h, whole] at installed
-          exact installed
-        have outputInstalled : codeInstalled finalAux code := by
-          intro entry member
-          exact installed' entry (List.mem_append_right _ member)
-        have chainInstalled : codeInstalled chainAux code :=
-          compileExps_codeInstalled maxApp extra chainAux finalAux extraTargets code extraRun outputInstalled
-        simpa [auxEq] using chainInstalled
+    cases whole : compileExpsHOL maxApp
+        ((chainExps start real).map (fun (_, _, exp) => exp) ++
+          auxiliary.map (fun (_, _, exp) => exp)) [] with
+    | mk targets finalAux =>
+      have included := compileExps_twice_isSublist expressions real
+        (auxiliary.map (fun (_, _, exp) => exp)) start maxApp targets compiled finalAux originalAux
+        ⟨extract, whole, originalRun⟩
+      have installed' : codeInstalled
+          ((((chainExps start real ++ auxiliary).zip targets).map
+            (fun ((loc, args, _), exp) => (loc + numStubs maxApp, args, exp))) ++ finalAux) code := by
+        simpa [compileInc, extractNameSource_eq_extractName, extract, compileProgExpsHOL,
+          List.map_append, whole] using installed
+      intro entry member
+      exact installed' entry (List.mem_append_right _ (included.sublist.subset member))
 
-/-- After target installation, the auxiliary code generated by compiling the
-source oracle's original nonempty main program is installed as well. -/
+/-- After target installation, the original main program's auxiliary code is installed. -/
 theorem install_original_aux_installed {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State C F)
     (config : C) (expressions : List ClosLang.Exp) (auxiliary : List (Nat × Nat × ClosLang.Exp))
     (compiled : List Bvl.Exp) (originalAux : List (Nat × Nat × Bvl.Exp))
-    (sourceHead : s.compileOracle 0 = (config, expressions, auxiliary)) (nonempty : expressions ≠ [])
+    (sourceHead : s.compileOracle 0 = (config, expressions, auxiliary))
     (originalRun : compileExpsHOL s.maxApp expressions [] = (compiled, originalAux))
     (oracle : compileOracleInv s.maxApp s.code s.compile s.compileOracle t.code t.compile t.compileOracle) :
     codeInstalled originalAux (sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))) := by
@@ -663,6 +680,6 @@ theorem install_original_aux_installed {C F : Type} (s : ClosSem.State C F) (t :
   have targetFresh : ∀ entry ∈ compileInc s.maxApp (expressions, auxiliary), sptLookup entry.1 t.code = none := by
     simpa [targetHead] using fresh
   have installed := install_codeInstalled t.code (compileInc s.maxApp (expressions, auxiliary)) distinct targetFresh
-  exact compileInc_original_aux_installed s.maxApp expressions auxiliary compiled originalAux _ nonempty originalRun installed
+  exact compileInc_original_aux_installed s.maxApp expressions auxiliary compiled originalAux _ originalRun installed
 
 end Flapjack.Compiler.Backend.ClosToBvl

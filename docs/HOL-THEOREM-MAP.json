@@ -145,6 +145,24 @@
   "reviewer": "Independent typed HOL comparison confirms the original compilation equality, full length and suffix conclusions, binder order, and faithful closure and BVL carriers."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "compileExps_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: the universally quantified maximum, two source lists and accumulator, complete pair-let compilation, appended target expressions and final auxiliary accumulator match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_same_aux",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "compileExps_same_aux",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: both empty-accumulator compilation equations, name-extraction equation and resulting original/chain auxiliary equality match, including the empty-program case."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_twice_IS_SUBLIST",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "compileExps_twice_isSublist",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source and IS_SUBLIST definition: all three premises and fixed expression and auxiliary carriers match. HOL IS_SUBLIST aux x7 says x7 is a contiguous infix of aux, represented by Lean originalAux <:+: aux."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "code_installed_cons",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode.lean", "lean_name": "codeInstalled_cons",
   "statement_status": "reviewed_exact",
