@@ -945,34 +945,32 @@ theorem evaluateApp_singletonRec_exact_all {C F : Type}
     exact targetTimeout
 
 
-/-- A related singleton recursive closure records its actual captured source
-environment in the closure relation. -/
-theorem clRel_singletonRec_sourceEnv {maxApp ptr arity : Nat} {fs : Nat → Prop}
+/-- A recursive closure relation uses the closure's captured environment. -/
+theorem clRel_recclosure_env {maxApp : Nat} {fs : Nat → Prop}
     {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {sourceEnv env : List ClosSem.Value} {fields : List BvlSem.Value} {body : ClosLang.Exp} {target : BvlSem.Value}
-    (related : clRel maxApp fs refs code (env, fields)
-      (.recclosure (some ptr) [] sourceEnv [(arity, body)] 0) target) : env = sourceEnv := by
-  cases related with
-  | singletonRec => rfl
-  | mutualRec _ _ _ _ _ _ impossible _ _ _ _ => simp at impossible
+    {env captured : List ClosSem.Value} {fields : List BvlSem.Value} {ptr index : Nat}
+    {functions : List (Nat × ClosLang.Exp)} {target : BvlSem.Value}
+    (related : clRel maxApp fs refs code (env, fields) (.recclosure (some ptr) [] captured functions index) target) :
+    env = captured := by
+  cases related <;> rfl
 
-/-- Singleton recursive closure simulation step. -/
-theorem vRel_singletonRec_closure {maxApp ptr arity : Nat} {f : HolFiniteMapExact Nat Nat}
+/-- A recursive closure with no saved arguments is represented directly,
+with its captured environment related to the target environment. -/
+theorem vRel_recclosure_original {maxApp ptr index : Nat} {f : HolFiniteMapExact Nat Nat}
     {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {sourceEnv : List ClosSem.Value} {body : ClosLang.Exp} {target : BvlSem.Value}
-    (related : vRel maxApp f refs code (.recclosure (some ptr) [] sourceEnv [(arity, body)] 0) target) :
-    ∃ fields, List.Forall₂ (vRel maxApp f refs code) sourceEnv fields ∧
-      clRel maxApp (fun p => ∃ r, f.lookup r = some p) refs code (sourceEnv, fields)
-        (.recclosure (some ptr) [] sourceEnv [(arity, body)] 0) target := by
+    {captured : List ClosSem.Value} {functions : List (Nat × ClosLang.Exp)} {target : BvlSem.Value}
+    (related : vRel maxApp f refs code (.recclosure (some ptr) [] captured functions index) target) :
+    ∃ fields, List.Forall₂ (vRel maxApp f refs code) captured fields ∧
+      clRel maxApp (fun p => ∃ r, f.lookup r = some p) refs code (captured, fields)
+        (.recclosure (some ptr) [] captured functions index) target := by
   cases related with
-  | closure envRel closure =>
-    have eq := clRel_singletonRec_sourceEnv closure
-    cases eq
-    exact ⟨_, envRel, closure⟩
+  | @closure env fvs cl p n ys envRel closure =>
+    have envEq : env = captured := clRel_recclosure_env closure
+    subst env
+    exact ⟨fvs, envRel, closure⟩
   | @partialClosure env fvs argEnv ys numArgs cl clApp clTarget envRel argsRel nonempty bound lookup added getArgs closure =>
     cases cl <;> simp [addArgs] at added
     all_goals simp_all
-
 
 /-- Singleton recursive closure simulation step. -/
 theorem evaluateApp_singletonRec_exact_vRel {C F : Type}
@@ -990,7 +988,7 @@ theorem evaluateApp_singletonRec_exact_vRel {C F : Type}
     (bodyIH : expressionSimulation (C := C) (F := F) [sourceBody]) :
     evaluatePost s sFinal t (targetArgs ++ [targetClosure] ++ rest) f result
       [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)] := by
-  obtain ⟨fields, envRelated, closure⟩ := vRel_singletonRec_closure functionRel
+  obtain ⟨fields, envRelated, closure⟩ := vRel_recclosure_original functionRel
   exact evaluateApp_singletonRec_exact_all s sFinal t f ptr arity sourceEnv sourceArgs fields targetArgs rest
     sourceBody targetClosure states annotations closure envRelated argsRelated arityMatch result appRun noType bodyIH
 
@@ -2971,7 +2969,7 @@ theorem evaluateApp_singletonRec_partial_exact_related {C F : Type}
       [mkClCall (.var newTargets.length) ((List.range newTargets.length).map Bvl.Exp.var)] := by
   obtain ⟨oldTargets, original, targetEq, originalRel, oldRel⟩ :=
     vRel_singletonRec_partial_existing s t f ptr arity captured oldArgs body target oldNonempty related
-  obtain ⟨fields, envRel', closure⟩ := vRel_singletonRec_closure originalRel
+  obtain ⟨fields, envRel', closure⟩ := vRel_recclosure_original originalRel
   have newLength : newTargets.length = newArgs.length := newRel.length_eq.symm
   have newPositive : 0 < newArgs.length := List.length_pos_iff.mpr nonempty
   have remaining : arity - 1 - oldArgs.length = newTargets.length - 1 := by omega
@@ -3187,33 +3185,6 @@ theorem evaluateApp_recclosure_partial_again_related {C F : Type}
     vRel_recclosure_partial_existing s t f ptr arity index captured oldArgs functions body target found oldNonempty related
   exact evaluateApp_recclosure_partial_again_simulation s t f ptr arity index captured oldArgs newArgs functions
     fields oldTargets newTargets rest body original states annotations envRel closure found oldRel newRel oldNonempty nonempty partialBound
-
-/-- A recursive closure relation uses the closure's captured environment. -/
-theorem clRel_recclosure_env {maxApp : Nat} {fs : Nat → Prop}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {env captured : List ClosSem.Value} {fields : List BvlSem.Value} {ptr index : Nat}
-    {functions : List (Nat × ClosLang.Exp)} {target : BvlSem.Value}
-    (related : clRel maxApp fs refs code (env, fields) (.recclosure (some ptr) [] captured functions index) target) :
-    env = captured := by
-  cases related <;> rfl
-
-/-- A recursive closure with no saved arguments is represented directly,
-with its captured environment related to the target environment. -/
-theorem vRel_recclosure_original {maxApp ptr index : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {captured : List ClosSem.Value} {functions : List (Nat × ClosLang.Exp)} {target : BvlSem.Value}
-    (related : vRel maxApp f refs code (.recclosure (some ptr) [] captured functions index) target) :
-    ∃ fields, List.Forall₂ (vRel maxApp f refs code) captured fields ∧
-      clRel maxApp (fun p => ∃ r, f.lookup r = some p) refs code (captured, fields)
-        (.recclosure (some ptr) [] captured functions index) target := by
-  cases related with
-  | @closure env fvs cl p n ys envRel closure =>
-    have envEq : env = captured := clRel_recclosure_env closure
-    subst env
-    exact ⟨fvs, envRel, closure⟩
-  | @partialClosure env fvs argEnv ys numArgs cl clApp clTarget envRel argsRel nonempty bound lookup added getArgs closure =>
-    cases cl <;> simp [addArgs] at added
-    all_goals simp_all
 
 /-- Partially applying a recursive closure in any group preserves the value
 relation and installs the correct partial-application stub. -/
@@ -5233,18 +5204,6 @@ theorem evaluateApp_ordinary_over_simulation {C F : Type}
     cases appRun
     exact targetTimeout
 
-/-- A related overapplied ordinary closure consumes at least one argument,
-so its continuation is on a strictly shorter list. -/
-theorem ordinary_over_remaining_length {maxApp ptr arity : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    (captured args : List ClosSem.Value) (body : ClosLang.Exp) (target : BvlSem.Value)
-    (functionRel : vRel maxApp f refs code (.closure (some ptr) [] captured arity body) target)
-    (over : arity < args.length) : (args.take (args.length - arity)).length < args.length := by
-  obtain ⟨fields, capturedRel, closure⟩ := vRel_ordinary_closure functionRel
-  have positive : arity ≠ 0 := by cases closure with | closure _ positive _ _ _ _ _ => exact positive
-  simp only [List.length_take]
-  omega
-
 /-- Peel a saturated direct closure call from an evaluation postcondition.
 When the source has enough clock, the postcondition applies to the installed
 target entry at the corresponding decremented source clock. -/
@@ -5680,19 +5639,6 @@ theorem evaluateApp_recclosure_over_simulation {C F : Type}
     cases appRun
     exact targetTimeout
 
-/-- The selected recursive closure consumes a positive number of arguments,
-so the remaining application is on a strictly shorter list. -/
-theorem recclosure_over_remaining_length {maxApp ptr index arity : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    (captured args : List ClosSem.Value) (functions : List (Nat × ClosLang.Exp)) (body : ClosLang.Exp) (target : BvlSem.Value)
-    (functionRel : vRel maxApp f refs code (.recclosure (some ptr) [] captured functions index) target)
-    (found : functions[index]? = some (arity, body)) (over : arity < args.length) :
-    (args.take (args.length - arity)).length < args.length := by
-  obtain ⟨fields, envRel', closure⟩ := vRel_recclosure_original functionRel
-  have ⟨_, positive⟩ := clRel_recclosure_arity closure found
-  simp only [List.length_take]
-  omega
-
 /-- The saturated suffix of an overapplied recursive partial closure runs the
 installed partial-closure entry with the saved arguments and original closure. -/
 theorem evaluatePost_recclosure_partial_over_body {C F : Type}
@@ -5951,7 +5897,9 @@ theorem evaluateApp_ordinary_induction_case {C F : Type}
       · exact evaluateApp_ordinary_exact_vRel s sFinal t f ptr arity captured args targetArgs rest body target
           states annotations functionRel argsRel exactArity result appRun noType bodyIH
       · have over : arity < args.length := by omega
-        have shorter := ordinary_over_remaining_length captured args body target functionRel over
+        have shorter := ordinary_partial_over_remaining_length arity [] args
+          (by simpa using savedBound) (by simpa using over)
+        simp only [List.length_nil, Nat.sub_zero] at shorter
         exact evaluateApp_ordinary_over_simulation s sFinal t f ptr arity captured args targetArgs rest body target
           result states annotations functionRel argsRel bound over appRun noType bodyIH
           (smallerIH (args.take (args.length - arity)) shorter)
@@ -6031,7 +5979,9 @@ theorem evaluateApp_recclosure_induction_case {C F : Type}
       cases saved with
       | nil =>
         have over' : arity < args.length := by simpa using over
-        have shorter := recclosure_over_remaining_length captured args functions body target functionRel found over'
+        have shorter := ordinary_partial_over_remaining_length arity [] args
+          (by simpa using savedBound) (by simpa using over')
+        simp only [List.length_nil, Nat.sub_zero] at shorter
         exact evaluateApp_recclosure_over_simulation s sFinal t f ptr index arity captured args targetArgs rest
           functions body target result states annotations functionRel argsRel found bound over' appRun noType bodyIH
           (smallerIH (args.take (args.length - arity)) shorter)
@@ -6928,7 +6878,9 @@ theorem evaluateApp_ordinary_induction_case_below {C F : Type}
       · exact evaluateApp_ordinary_exact_vRel_below s sFinal t f ptr arity clockBound captured args targetArgs rest body target
           states annotations functionRel argsRel exactArity clockBounded result appRun noType bodyIH
       · have over : arity < args.length := by omega
-        have shorter := ordinary_over_remaining_length captured args body target functionRel over
+        have shorter := ordinary_partial_over_remaining_length arity [] args
+          (by simpa using savedBound) (by simpa using over)
+        simp only [List.length_nil, Nat.sub_zero] at shorter
         exact evaluateApp_ordinary_over_simulation_below s sFinal t f ptr arity clockBound captured args targetArgs rest body target
           result states annotations functionRel argsRel bound over clockBounded appRun noType bodyIH
           (smallerIH (args.take (args.length - arity)) shorter)
@@ -7351,7 +7303,7 @@ theorem evaluateApp_singletonRec_exact_vRel_below {C F : Type}
     (bodyIH : expressionSimulationBelow (C := C) (F := F) clockBound [sourceBody]) :
     evaluatePost s sFinal t (targetArgs ++ [targetClosure] ++ rest) f result
       [mkClCall (.var targetArgs.length) ((List.range targetArgs.length).map Bvl.Exp.var)] := by
-  obtain ⟨fields, envRelated, closure⟩ := vRel_singletonRec_closure functionRel
+  obtain ⟨fields, envRelated, closure⟩ := vRel_recclosure_original functionRel
   exact evaluateApp_singletonRec_exact_all_below s sFinal t f ptr arity clockBound sourceEnv sourceArgs fields targetArgs rest
     sourceBody targetClosure states annotations closure envRelated argsRelated arityMatch result appRun noType clockBounded bodyIH
 
@@ -7409,7 +7361,7 @@ theorem evaluateApp_singletonRec_partial_exact_related_below {C F : Type}
       [mkClCall (.var newTargets.length) ((List.range newTargets.length).map Bvl.Exp.var)] := by
   obtain ⟨oldTargets, original, targetEq, originalRel, oldRel⟩ :=
     vRel_singletonRec_partial_existing s t f ptr arity captured oldArgs body target oldNonempty related
-  obtain ⟨fields, envRel', closure⟩ := vRel_singletonRec_closure originalRel
+  obtain ⟨fields, envRel', closure⟩ := vRel_recclosure_original originalRel
   have newLength : newTargets.length = newArgs.length := newRel.length_eq.symm
   have newPositive : 0 < newArgs.length := List.length_pos_iff.mpr nonempty
   have remaining : arity - 1 - oldArgs.length = newTargets.length - 1 := by omega
@@ -8019,7 +7971,9 @@ theorem evaluateApp_recclosure_induction_case_below {C F : Type}
       cases saved with
       | nil =>
         have over' : arity < args.length := by simpa using over
-        have shorter := recclosure_over_remaining_length captured args functions body target functionRel found over'
+        have shorter := ordinary_partial_over_remaining_length arity [] args
+          (by simpa using savedBound) (by simpa using over')
+        simp only [List.length_nil, Nat.sub_zero] at shorter
         exact evaluateApp_recclosure_over_simulation_below s sFinal t f ptr index arity clockBound captured args targetArgs rest
           functions body target result states annotations functionRel argsRel found bound over' clockBounded appRun noType bodyIH
           (smallerIH (args.take (args.length - arity)) shorter)
