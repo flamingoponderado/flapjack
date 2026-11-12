@@ -1785,6 +1785,7 @@
     {"bytes": 738, "out": "stack_to_lab_no_ret_review_probe.out", "rows": 8, "sha256": "3374eb8913a91eafd5d0bd9437c46ee955da07791a12994768b5799c2d8b60be"},
     {"bytes": 10281, "out": "stack_to_lab_no_shmemop_probe.out", "rows": 66, "sha256": "3bcaafdec4c2e3687b45e4abf3d581dce698d73d9ed413d32468467545d3f6a7"},
     {"bytes": 241, "out": "stack_to_lab_nonrecursive_validity_probe.out", "rows": 3, "sha256": "74fe1adcec42b08218314055e1e5d94f154cb49d188c6aac6af6fa6bbee12e88"},
+    {"bytes": 59099, "out": "stack_to_lab_proof_typed_probe.out", "rows": 153, "sha256": "8b605a81d15f43fb58b5cb3e14366812605406bd79b07f2052625a45faceb912"},
     {"bytes": 2845, "out": "stack_to_lab_state_rel_probe.out", "rows": 12, "sha256": "d9ff6dd1721e4c1a55be1e619e4a15a44f37b37eb25da18bdff3131e23aa7092"},
     {"bytes": 2313, "out": "stacklang_inst_builders_probe.out", "rows": 62, "sha256": "7d4f91ed410d30cf268c9e7eafc1c1a5af7a7ca5c796aec689131a61caea22cf"},
     {"bytes": 5223, "out": "stackprops_allocation_constants_probe.out", "rows": 51, "sha256": "a5eddb50a5af9cf3264f64b6d1e37bf83172dbce2a12175db04d0089236b9b23"},
