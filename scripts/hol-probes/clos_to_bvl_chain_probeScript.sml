@@ -112,6 +112,44 @@ val v_rel_union_replay = Q.prove (
             clos_to_bvlProof$v_rel max_app f2 refs (sptree$union code c2) x y`,
   metis_tac [clos_to_bvlProofTheory.v_rel_subspt, sptreeTheory.subspt_union]);
 val _ = show_thm "v_rel_union_replay=" v_rel_union_replay;
+(* Replay the original local call-environment lemma and its local list prerequisite. *)
+local
+  open preamble clos_to_bvlTheory bvlSemTheory bvlPropsTheory
+  val el_take_append = Q.prove (
+    `!n l x l2. n <= LENGTH l ==> EL n (TAKE n l ++ [x] ++ l2) = x`,
+    Induct_on `l` >> srw_tac[][] >> ONCE_REWRITE_TAC [GSYM APPEND_ASSOC] >>
+    fs[EL_APPEND2,LENGTH_TAKE]);
+  val bEval_def = bvlSemTheory.evaluate_def;
+  val bEvalOp_def = bvlSemTheory.do_app_def;
+  val bEval_APPEND = bvlPropsTheory.evaluate_APPEND;
+in
+val mk_call_simp2_replay = Q.prove(
+  `!n args stuff stuff' v t.
+    n ≤ LENGTH args ∧ LENGTH stuff' ≠ 0
+    ⇒
+    evaluate ([mk_cl_call (Var n) (GENLIST Var n)], (TAKE n args) ++ [v] ++ stuff, t)
+    =
+    evaluate ([mk_cl_call (Var 0) (GENLIST (\n. Var (n+1)) n)], v::(args++stuff'), t)`,
+  strip_tac >>
+  simp [mk_cl_call_def, bEval_def, bEvalOp_def, do_int_app_def, el_take_append] >>
+  Cases_on `v` >>
+  simp [] >>
+  srw_tac[][] >>
+  TRY (rename [`FLOOKUP t.refs rrr`] \\ Cases_on `FLOOKUP t.refs rrr` \\ fs []
+       \\ Cases_on `x`\\ fs [] \\ IF_CASES_TAC \\ fs []) >>
+  srw_tac[][] >>
+  Cases_on`EL 1 l`>>simp[do_eq_def]>>
+  simp[bEval_APPEND] >>
+  rename [`TAKE n args ++ [xxx] ++ stuff`] >>
+  qspecl_then [`0`, `TAKE n args ++ [xxx] ++ stuff`, `n`]mp_tac evaluate_genlist_vars >>
+  qspecl_then [`1`, `xxx::(args ++ stuff')`, `n`]mp_tac evaluate_genlist_vars >>
+  srw_tac [ARITH_ss] [ETA_THM, bEval_def, bEvalOp_def, do_int_app_def,el_take_append] >>
+  srw_tac[][] >>
+  `n+1 ≤ SUC (LENGTH args + LENGTH stuff')` by decide_tac >>
+  srw_tac [ARITH_ss] [TAKE_APPEND1, TAKE_TAKE, EL_CONS])
+  |> INST_TYPE[alpha|->``:'c``,beta|->``:'ffi``];
+val _ = show_thm "mk_call_simp2_replay=" mk_call_simp2_replay;
+end;
 val _ = show_thm "num_remaining_args_def_typed=" clos_to_bvlProofTheory.num_remaining_args_def;
 (* Replay the original local no-partial-arguments theorem. *)
 local
