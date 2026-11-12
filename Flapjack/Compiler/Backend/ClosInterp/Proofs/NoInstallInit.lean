@@ -33,27 +33,4 @@ theorem attachInterpreter_noInstall (expressions : List ClosLang.Exp)
   simp [attachInterpreter, safe, compileInit, interpreterCons_eq, interpreterVar_eq,
     ClosLang.hasInstallList, ClosLang.hasInstall]
 
-/-- Initial closure states with empty code satisfy the evaluator invariant. -/
-theorem initialState_evalNoInstall {C F : Type} (ffi : HolFfiState F) (maxApp clock : Nat)
-    (oracle : ClosSem.CompileOracle C) (compiler : ClosSem.Compiler C) :
-    evalStateNoInstall (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty oracle compiler clock) := by
-  refine ⟨?_, ?_, ?_⟩
-  · simp [ClosSem.initialState, globalsNoInstall]
-  · simp [ClosSem.initialState, refsNoInstall, HolFiniteMapExact.empty]
-  · simpa [ClosSem.initialState] using emptyCode_noInstall
-
-/-- Evaluating an attached program with no installation from an initial state
-preserves safe returned values, globals, references, and code bodies. -/
-theorem attachInterpreter_initial_noInstall {C F : Type} (expressions : List ClosLang.Exp)
-    (ffi : HolFfiState F) (maxApp clock : Nat) (oracle : ClosSem.CompileOracle C)
-    (compiler : ClosSem.Compiler C) (final : ClosSem.State C F)
-    (result : Result (List ClosSem.Value) ClosSem.Value)
-    (safe : ClosLang.hasInstallList expressions = false)
-    (run : ClosSem.evaluate (attachInterpreter expressions) []
-      (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty oracle compiler clock) = (result, final)) :
-    resultNoInstall result ∧ evalStateNoInstall final := by
-  exact evaluate_noInstall.1 (attachInterpreter expressions) [] _ final result
-    (attachInterpreter_noInstall expressions safe) (by simp [valuesNoInstall])
-    (initialState_evalNoInstall ffi maxApp clock oracle compiler) run
-
 end Flapjack.Compiler.Backend.ClosInterp

@@ -16,8 +16,9 @@ def letOpTransform (splitSeq : Bool) (limit arity : Nat) (body : Bvl.Exp) : Bvl.
   BvlHandle.compileAny splitSeq limit arity (letOpSing body)
 
 /-- Compiler callback induced by the combined transformation. -/
-def letOpCompiler {C D : Type} (splitSeq : Bool) (limit : Nat)
-    (compiler : C → List (Nat × Nat × Bvl.Exp) → D) : C → List (Nat × Nat × Bvl.Exp) → D :=
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "let_op_cc_def"]
+def letOpCompiler {Name C D : Type} (splitSeq : Bool) (limit : Nat)
+    (compiler : C → List (Name × Nat × Bvl.Exp) → D) : C → List (Name × Nat × Bvl.Exp) → D :=
   fun config program => compiler config (program.map fun (name, arity, body) =>
     (name, arity, letOpTransform splitSeq limit arity body))
 

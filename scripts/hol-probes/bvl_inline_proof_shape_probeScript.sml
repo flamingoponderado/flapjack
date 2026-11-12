@@ -22,3 +22,4 @@ val _ = show "map_fromAList_typed" bvl_inlineProofTheory.map_fromAList;
 val _ = show "state_cc_compile_inc_eq_typed" bvl_inlineProofTheory.state_cc_compile_inc_eq;
 val _ = show "state_co_compile_inc_eq_typed" bvl_inlineProofTheory.state_co_compile_inc_eq;
 val _ = show "compile_prog_semantics_typed" bvl_inlineProofTheory.compile_prog_semantics;
+val _ = show "let_op_cc_def_typed" bvl_inlineProofTheory.let_op_cc_def;

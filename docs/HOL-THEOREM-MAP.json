@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "let_op_cc_def",
+  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/LetOpState.lean", "lean_name": "letOpCompiler",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original definition: split flag and cutoff wrap an arbitrary callback with independent configuration, program-name and result types; the complete entry list maps source let_opt over the arity and expression while preserving each name."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml", "hol_name": "map_fromAList",
   "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/WholeProgram.lean", "lean_name": "map_fromAList",
   "statement_status": "reviewed_exact",
