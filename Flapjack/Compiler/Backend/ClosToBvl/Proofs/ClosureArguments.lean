@@ -149,6 +149,68 @@ theorem destClosureFullApp {α β γ : Type} (locOpt : Option Nat) (func : ClosS
               exact ⟨by omega, by simpa [Nat.add_comm] using check⟩
       · simp at found
 
+/-- A partial application is indirect and saves a still-unsaturated argument list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "dest_closure_part_app"]
+theorem destClosurePartApp {α β : Type} (locOpt : Option Nat) (func : ClosSem.Value)
+    (args : List ClosSem.Value) (result : ClosSem.Value) (_f1 : α) (_t1 : β) (maxApp : Nat)
+    (premises : args.length ≠ 0 ∧ ClosSem.destClosure maxApp locOpt func args = some (.partialApp result)) :
+    locOpt = none ∧ some result = addArgs func args ∧
+      ∃ n, numRemainingArgs func = some n ∧ args.length < n ∧ args.length ≤ maxApp := by
+  rcases premises with ⟨nonempty, found⟩
+  cases func <;> simp only [ClosSem.destClosure] at found <;> try contradiction
+  case closure location supplied captured arity body =>
+    split at found
+    · rename_i valid
+      split at found
+      · rename_i undersaturated
+        simp only [Option.some.injEq, ClosSem.AppKind.partialApp.injEq] at found
+        subst result
+        have check : ClosSem.checkLoc maxApp locOpt location arity args.length supplied.length = true := by
+          simp only [Bool.and_eq_true, decide_eq_true_eq] at valid
+          exact valid.1
+        cases locOpt with
+        | none =>
+          simp [ClosSem.checkLoc] at check
+          refine ⟨rfl, ?_, arity - supplied.length, ?_, ?_, check⟩
+          · simp [addArgs]
+          · simp [numRemainingArgs]
+          · omega
+        | some address =>
+          simp [ClosSem.checkLoc] at check
+          omega
+      · simp at found
+    · simp at found
+  case recclosure location supplied captured functions index =>
+    split at found
+    · simp at found
+    · rename_i arity body selected
+      split at found
+      · rename_i valid
+        split at found
+        · rename_i undersaturated
+          simp only [Option.some.injEq, ClosSem.AppKind.partialApp.injEq] at found
+          subst result
+          have check : ClosSem.checkLoc maxApp locOpt (location.map (fun loc => 2 * index + loc))
+              arity args.length supplied.length = true := by
+            simp only [Bool.and_eq_true, decide_eq_true_eq] at valid
+            exact valid.1
+          have indexBound : index < functions.length := (List.getElem?_eq_some_iff.mp selected).1
+          have entry : Flapjack.holEl index functions = (arity, body) := by
+            rw [Flapjack.holEl_eq_getElem _ _ indexBound]
+            exact (List.getElem?_eq_some_iff.mp selected).2
+          cases locOpt with
+          | none =>
+            simp [ClosSem.checkLoc] at check
+            refine ⟨rfl, ?_, arity - supplied.length, ?_, ?_, check⟩
+            · simp [addArgs]
+            · simp [numRemainingArgs, entry]
+            · omega
+          | some address =>
+            simp [ClosSem.checkLoc] at check
+            omega
+        · simp at found
+      · simp at found
+
 /-- Direct-call location check without the maximum-application bound. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "check_loc'_def"]
 noncomputable def checkLocPrime {α β : Type} (requested location : Option α)

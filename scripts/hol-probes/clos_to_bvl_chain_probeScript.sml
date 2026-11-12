@@ -944,6 +944,25 @@ in
   simp [] >>
   decide_tac);
   val _ = show_thm "dest_closure_full_app_replay=" dest_closure_full_app_replay;
+  val dest_closure_part_app_replay = Q.prove (
+    `  !loc_opt func args c f1 t1.
+    LENGTH args ≠ 0 ∧
+    dest_closure max_app loc_opt func args = SOME (Partial_app c)
+    ⇒
+    loc_opt = NONE ∧
+    SOME c = add_args func args ∧
+    ?n. num_remaining_args func = SOME n ∧ LENGTH args < n ∧ LENGTH args ≤ max_app`,
+  srw_tac[][dest_closure_def] >>
+  BasicProvers.EVERY_CASE_TAC >>
+  full_simp_tac(srw_ss())[add_args_def, LET_THM, num_remaining_args_def] >>
+  TRY (Cases_on `EL n l1`) >>
+  full_simp_tac(srw_ss())[] >>
+  BasicProvers.EVERY_CASE_TAC >>
+  full_simp_tac(srw_ss())[] >>
+  Cases_on `loc_opt` >>
+  full_simp_tac(srw_ss())[check_loc_def] >>
+  decide_tac);
+  val _ = show_thm "dest_closure_part_app_replay=" dest_closure_part_app_replay;
 end;
 val _ = show_thm "get_old_args_def_typed=" clos_to_bvlProofTheory.get_old_args_def;
 (* Replay the original local closure relation shape theorem. *)
