@@ -10450,3 +10450,11 @@ run_probe word_simp_typed_probeScript.sml word_simp_typed_probe.out \
   try_if_hoist2_def_typed \
   "$cake_dir/compiler/backend/word_simpScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe stack_remove_typed_probeScript.sml stack_remove_typed_probe.out \
+  halt_inst_def_typed max_stack_alloc_def_typed stack_err_lab_def_typed store_length_def_typed store_list_def_typed word_offset_def_typed comp_def_typed compile_def_typed \
+  copy_each_def_typed copy_loop_def_typed init_code_def_typed init_memory_def_typed init_stubs_def_typed prog_comp_def_typed downshift_def_typed stack_load_def_typed \
+  stack_store_def_typed upshift_def_typed single_stack_alloc_def_typed stack_alloc_def_typed single_stack_free_def_typed stack_free_def_typed store_offset_def_typed store_pos_def_typed \
+  store_init_def_typed store_list_code_def_typed check_init_stubs_length_typed stub_names_def_typed \
+  "$cake_dir/compiler/backend/stack_removeScript.sml" \
+  "$cake_dir/compiler/backend"

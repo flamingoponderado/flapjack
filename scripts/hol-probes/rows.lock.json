@@ -1783,6 +1783,7 @@
     {"bytes": 1027, "out": "stack_remove_store_heap_write_probe.out", "rows": 3, "sha256": "9f564c734d08a248f472daafbbff9b3ea9ba0114fe7a32dcc9deecfa0432dda3"},
     {"bytes": 630, "out": "stack_remove_store_list_code_probe.out", "rows": 3, "sha256": "73d1db09de4d35444454126a7299c429c9a08c679ed320c1d805e51991f06195"},
     {"bytes": 817, "out": "stack_remove_stub_names_probe.out", "rows": 10, "sha256": "cf236e429f5b19071e16dc855889eab67d501ceed4f47dd1b714a78ddb503a69"},
+    {"bytes": 13473, "out": "stack_remove_typed_probe.out", "rows": 28, "sha256": "de2f2b83786cd725b1392c13e4b914d5204323edbbbce1c4299fd56a41088f09"},
     {"bytes": 349, "out": "stack_remove_word_address_probe.out", "rows": 6, "sha256": "d852fa4e04e5e4dfa24030f79c95d6a9f6ca1a36deb7d5dfc2e004b66513d320"},
     {"bytes": 174, "out": "stack_remove_word_list_exists_add_probe.out", "rows": 2, "sha256": "7a938ba2f01f71324606f89bef07c87f098567a7d4c918fc776b6a9a91345a8b"},
     {"bytes": 178, "out": "stack_remove_word_list_exists_probe.out", "rows": 2, "sha256": "43ab8eeef6cfaca3f26abd2c8117b0345fe1b3b87160f4ccc7a0dd27ebc7fb6b"},
