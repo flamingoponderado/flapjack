@@ -99,25 +99,6 @@ theorem simulationFor_assign_memory_of_aux {C F : Type} (dest : Nat) (op : ClosL
       exact simulationFor_removed_memory dest op args live parts.2 (Option.isNone_iff_eq_none.mp parts.1)
   | some names => exact simulationFor_annotated_of_appRel dest (.memOp op) args names live primitiveRel
 
-/-- Reference and array allocation assignments satisfy liveness simulation. -/
-theorem simulationFor_assign_ref_all {C F : Type} (dest : Nat) (args : List Nat) (names : Option NumSet) (live : NumSet) :
-    simulationFor (C := C) (F := F) (.assign dest (.memOp .ref) args names) live := by
-  apply simulationFor_assign_memory_of_aux dest .ref args names live
-  intro source target values related
-  exact stateRel_doAppAux_ref source target _ values related
-
-theorem simulationFor_assign_refArray_all {C F : Type} (dest : Nat) (args : List Nat) (names : Option NumSet) (live : NumSet) :
-    simulationFor (C := C) (F := F) (.assign dest (.memOp .refArray) args names) live := by
-  apply simulationFor_assign_memory_of_aux dest .refArray args names live
-  intro source target values related
-  exact stateRel_doAppAux_refArray source target _ values related
-
-theorem simulationFor_assign_refByte_all {C F : Type} (dest : Nat) (flag : Bool) (args : List Nat) (names : Option NumSet) (live : NumSet) :
-    simulationFor (C := C) (F := F) (.assign dest (.memOp (.refByte flag)) args names) live := by
-  apply simulationFor_assign_memory_of_aux dest (.refByte flag) args names live
-  intro source target values related
-  exact stateRel_doAppAux_refByte source target _ flag values related
-
 /-- Related states allocate the same mutable constructor. -/
 theorem stateRel_doAppAux_mutCons {C F : Type} (source target : State C F) (live : NumSet)
     (tag index : Nat) (args : List DataSem.Value) (related : stateRel source target live) :
@@ -129,14 +110,6 @@ theorem stateRel_doAppAux_mutCons {C F : Type} (source target : State C F) (live
   | some child =>
     simpa [doAppAux, applyNonFfi, appRel, found, ← refs] using stateRel_setRefs source target live
       (sptInsert (leastUnusedRef source.refs) (.mutBlock tag false (args.take index) child (args.drop (index + 1))) source.refs) related
-
-/-- Mutable constructor allocation satisfies the liveness simulation. -/
-theorem simulationFor_assign_mutCons_all {C F : Type} (dest tag index : Nat) (args : List Nat)
-    (names : Option NumSet) (live : NumSet) :
-    simulationFor (C := C) (F := F) (.assign dest (.memOp (.mutCons tag index)) args names) live := by
-  apply simulationFor_assign_memory_of_aux dest (.mutCons tag index) args names live
-  intro source target values related
-  exact stateRel_doAppAux_mutCons source target _ tag index values related
 
 /-- Setting the same reference store and timestamp preserves the relation. -/
 theorem stateRel_setRefsStamps {C F : Type} (source target : State C F) (live : NumSet)
@@ -164,13 +137,5 @@ theorem stateRel_doAppAux_finaliseCons {C F : Type} (source target : State C F) 
         obtain ⟨value, nextRefs, nextStamps⟩ := triple
         simpa [doAppAux, applyNonFfi, appRel, ← refs, ← stamps, finalised] using
           stateRel_setRefsStamps source target live nextRefs nextStamps related
-
-/-- Constructor finalisation assignments satisfy the liveness simulation. -/
-theorem simulationFor_assign_finaliseCons_all {C F : Type} (dest : Nat) (args : List Nat)
-    (names : Option NumSet) (live : NumSet) :
-    simulationFor (C := C) (F := F) (.assign dest (.memOp .finaliseCons) args names) live := by
-  apply simulationFor_assign_memory_of_aux dest .finaliseCons args names live
-  intro source target values related
-  exact stateRel_doAppAux_finaliseCons source target _ values related
 
 end Flapjack.Compiler.Backend.DataLive

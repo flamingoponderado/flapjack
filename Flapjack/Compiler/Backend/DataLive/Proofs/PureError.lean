@@ -16,12 +16,6 @@ theorem isPure_ne_ffi (op : ClosLang.Op) (pure : isPure op = true)
   subst op
   simp [isPure] at pure
 
-/-- A pure operation cannot install code. -/
-theorem isPure_ne_install (op : ClosLang.Op) (pure : isPure op = true) : op ≠ .install := by
-  intro equal
-  subst op
-  simp [isPure] at pure
-
 /-- A pure primitive application can fail only with a type error. This
 statement is untagged until the source evaluator and carriers are reviewed. -/
 theorem pure_doApp_error {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)

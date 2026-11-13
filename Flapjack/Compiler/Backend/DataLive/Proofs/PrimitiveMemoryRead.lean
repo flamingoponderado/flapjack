@@ -156,13 +156,4 @@ theorem stateRel_doAppAux_pureMemory {C F : Type} (source target : State C F) (l
   case boundsCheckArray => exact stateRel_doAppAux_memoryBounds source target live _ args rfl related
   case boundsCheckByte loose => exact stateRel_doAppAux_memoryBounds source target live _ args rfl related
 
-/-- Pure memory assignments satisfy the liveness simulation with or without
-a live-name annotation. -/
-theorem simulationFor_assign_pureMemory_all {C F : Type} (dest : Nat) (op : ClosLang.MemOp)
-    (args : List Nat) (names : Option NumSet) (live : NumSet) (pure : isPure (.memOp op) = true) :
-    simulationFor (C := C) (F := F) (.assign dest (.memOp op) args names) live := by
-  apply simulationFor_assign_memory_of_aux dest op args names live
-  intro source target values related
-  exact stateRel_doAppAux_pureMemory source target _ op values pure related
-
 end Flapjack.Compiler.Backend.DataLive
