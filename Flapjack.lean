@@ -1616,6 +1616,7 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.Simulation
 import Flapjack.Compiler.Backend.BviToData.Proofs.CompileExp
 import Flapjack.Compiler.Backend.BviToData.Proofs.CompilePart
 import Flapjack.Compiler.Backend.BviToData.Proofs.ProgramEvaluate
+import Flapjack.Compiler.Backend.BviToData.Proofs.ProgramSemantics
 import Flapjack.Compiler.Backend.BviToData.Proofs.Jump
 import Flapjack.Compiler.Backend.BviToData.Proofs.FindCode
 import Flapjack.Compiler.Backend.BviToData.Proofs.Thunk

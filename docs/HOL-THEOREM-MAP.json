@@ -138669,6 +138669,15 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "compile_prog_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/ProgramSemantics.lean",
+    "lean_name": "compileProgSemantics",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: independent compiler and FFI carriers, original source and compiled target code, oracle and compiler transformations, arbitrary limits and frame sizes, the sole source non-failure premise, and complete target-to-source behavior equality including divergence. The signature exposes no finite-map state carrier; BVI's canonical finite-support references occur within the separately reviewed semantics and evaluator. The proof derives the per-clock correspondence, target non-failure, equal terminating observations and equal finite-clock trace sets without additional premises. Inherits the reals_as_rational_cuts assumption through evaluator primitives (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "state_rel_peak_safe",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/State.lean",
     "lean_name": "stateRel_peakSafe",

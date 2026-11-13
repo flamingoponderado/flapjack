@@ -5,8 +5,7 @@ public import Flapjack.Compiler.Backend.BviToData.Proofs.Install
 
 @[expose] public section
 
-/-! Entry-call consequences of the BVI-to-data simulation. The evaluator and
-state carriers remain pending correspondence review. -/
+/-! Initial-state and program-label facts for BVI-to-data correctness. -/
 namespace Flapjack.Compiler.Backend.BviToData
 open Flapjack Flapjack.SemanticPrimitivesHOL
 
