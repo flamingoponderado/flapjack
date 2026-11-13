@@ -33,3 +33,7 @@ in_cc_def_typed=∀(cc :α -> (num # num # bvi$exp) list -> (β # γ # δ) optio
 in_co_def_typed=∀(co :α -> ((num # bvi$exp) sptree$num_map # β) # (num # num # bvi$exp) list). in_co co = (λ(n :α). (let (((cs :(num # bvi$exp) sptree$num_map),(cfg :β)),(prog :(num # num # bvi$exp) list)) = co n; ((cs1 :(num # bvi$exp) sptree$num_map),(prog1 :(num # num # bvi$exp) list)) = inline_all cs prog in (cfg,prog1)))
 in_cc_eq_state_cc_replay_typed=in_cc (cc :α -> (num # num # bvi$exp) list -> (β # γ # δ) option) = state_cc inline_all cc
 in_co_eq_state_co_replay_typed=in_co (co :α -> ((num # bvi$exp) sptree$num_map # β) # (num # num # bvi$exp) list) = state_co inline_all co
+state_cc_compile_inc_eq_typed=state_cc compile_inc (cc :α -> (num # num # bvi$exp) list -> (β # γ # δ) option) = state_cc inline_all (remove_ticks_cc cc)
+state_co_compile_inc_eq_typed=state_co compile_inc (co :α -> ((num # bvi$exp) sptree$num_map # β) # (num # num # bvi$exp) list) = (remove_ticks_co :β # (num # num # bvi$exp) list -> β # (num # num # bvi$exp) list) ∘ state_co inline_all co
+state_cc_compile_inc_eq_replay_typed=state_cc compile_inc (cc :α -> (num # num # bvi$exp) list -> (β # γ # δ) option) = state_cc inline_all (remove_ticks_cc cc)
+state_co_compile_inc_eq_replay_typed=state_co compile_inc (co :α -> ((num # bvi$exp) sptree$num_map # β) # (num # num # bvi$exp) list) = (remove_ticks_co :β # (num # num # bvi$exp) list -> β # (num # num # bvi$exp) list) ∘ state_co inline_all co

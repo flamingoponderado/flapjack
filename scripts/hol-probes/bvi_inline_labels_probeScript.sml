@@ -192,3 +192,17 @@ val in_co_eq_state_co_replay = Q.prove
    rw [in_co_def, state_co_def, FUN_EQ_THM]
   >> rpt (pairarg_tac >> fs []));
 val _ = show "in_co_eq_state_co_replay_typed" in_co_eq_state_co_replay;
+
+(* The original incremental compiler/oracle factorization and proofs. *)
+val _ = show "state_cc_compile_inc_eq_typed" bvi_inlineProofTheory.state_cc_compile_inc_eq;
+val _ = show "state_co_compile_inc_eq_typed" bvi_inlineProofTheory.state_co_compile_inc_eq;
+val state_cc_compile_inc_eq_replay = Q.prove
+  (`state_cc compile_inc cc = state_cc inline_all (remove_ticks_cc cc)`,
+   rw [state_cc_def, compile_inc_def, remove_ticks_cc_def, FUN_EQ_THM]
+  >> rpt (pairarg_tac >> gvs [clean_prog_def]));
+val _ = show "state_cc_compile_inc_eq_replay_typed" state_cc_compile_inc_eq_replay;
+val state_co_compile_inc_eq_replay = Q.prove
+  (`state_co compile_inc co = remove_ticks_co ∘ state_co inline_all co`,
+   rw [state_co_def, compile_inc_def, remove_ticks_co_def, FUN_EQ_THM]
+  >> rpt (pairarg_tac >> gvs [clean_prog_def]));
+val _ = show "state_co_compile_inc_eq_replay_typed" state_co_compile_inc_eq_replay;

@@ -16,23 +16,26 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   BviSem.holFmapAsFiniteSupportWitness
 end InitialStateCarrier
 
-/-- Flapjack infrastructure: the incremental compiler callback factors into
-inlining followed by tick cleanup. -/
-theorem stateCc_compileIncSource {C : Type} (compiler : BviSem.Compiler C) :
-    BackendProps.stateCc compileIncSource compiler = inCc (removeTicksCc compiler) := by
+/-- The incremental compiler callback factors through inlining and tick cleanup. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "state_cc_compile_inc_eq"]
+theorem stateCc_compileIncSource {C CNext Code Data : Type}
+    (compiler : C → List (Nat × Nat × Bvi.Exp) → Option (Code × Data × CNext)) :
+    BackendProps.stateCc compileIncSource compiler =
+      BackendProps.stateCc inlineAllSource (removeTicksCc compiler) := by
   funext config program
   obtain ⟨cache, downstream⟩ := config
   cases inlineRun : inlineAllSource cache program with
   | mk next output =>
-    simp [inCc, removeTicksCc, BackendProps.stateCc, compileIncSource, cleanProg, inlineRun]
+    simp [removeTicksCc, BackendProps.stateCc, compileIncSource, cleanProg, inlineRun]
 
-/-- Flapjack infrastructure: the incremental oracle factors through the
-inlining oracle followed by tick cleanup. -/
-theorem stateCo_compileIncSource {C : Type}
-    (oracle : BviSem.CompileOracle (Spt (Nat × Bvi.Exp) × C)) :
-    BackendProps.stateCo compileIncSource oracle = (removeTicksCo ∘ inCo oracle) := by
+/-- The incremental oracle factors through inlining and tick cleanup. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "state_co_compile_inc_eq"]
+theorem stateCo_compileIncSource {Index C : Type}
+    (oracle : Index → (Spt (Nat × Bvi.Exp) × C) × List (Nat × Nat × Bvi.Exp)) :
+    BackendProps.stateCo compileIncSource oracle =
+      (removeTicksCo ∘ BackendProps.stateCo inlineAllSource oracle) := by
   funext index
-  simp [BackendProps.stateCo, compileIncSource, removeTicksCo, inCo, cleanProg]
+  simp [BackendProps.stateCo, compileIncSource, removeTicksCo, cleanProg]
 
 /-- An initial call through tick-cleaned code is reproduced by the original
 code with extra clock and the same final FFI. The evaluator inherits the
@@ -95,11 +98,11 @@ theorem evaluateCompileProg {C F : Type}
     have safe' : ∀ j, (evaluate [.call 0 (some start) [] none] []
         (initialState ffi (sptFromAList program) oracle (inCc (removeTicksCc compiler)) j)).1 ≠
           .err (.abort .typeError) := by
-      simpa [evaluateTuple, stateCc_compileIncSource] using safe
+      simpa [evaluateTuple, stateCc_compileIncSource, inCc] using safe
     have run' : evaluate [.call 0 (some start) [] none] []
         (initialState ffi (sptFromAList (cleanProg intermediate)) ((removeTicksCo ∘ inCo oracle)) compiler clock) =
           (result, targetNext) := by
-      simpa [evaluateTuple, stateCo_compileIncSource] using run
+      simpa [evaluateTuple, stateCo_compileIncSource, inCo] using run
     obtain ⟨extra, intermediateNext, intermediateRun, intermediateFfi⟩ :=
       evaluate_removeTicks_compile intermediate (inCo oracle) ffi compiler clock start result targetNext run'
     simp only [evaluateTuple] at intermediateRun
@@ -122,7 +125,7 @@ theorem evaluateCompileProg {C F : Type}
       obtain ⟨resultEq, stateEq⟩ := equal
       subst sourceResult
       subst targetState
-      exact ⟨extra, sourceNext, by simpa [evaluateTuple, stateCc_compileIncSource] using sourceRun,
+      exact ⟨extra, sourceNext, by simpa [evaluateTuple, stateCc_compileIncSource, inCc, source] using sourceRun,
         finalRel.2.2.2.1.symm.trans intermediateFfi⟩
 
 end Flapjack.Compiler.Backend.BviInline

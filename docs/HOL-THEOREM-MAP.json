@@ -467,6 +467,22 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "state_cc_compile_inc_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/WholeProgramSimulation.lean",
+    "lean_name": "stateCc_compileIncSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL statement comparison and literal original proof replay: The full callback input configuration, output code, output data and next configuration are independent; the exact compiler callback factorization retains both success and failure behavior. The cache is a sparse tree and programs are lists; callback code and data are opaque when present."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "state_co_compile_inc_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/WholeProgramSimulation.lean",
+    "lean_name": "stateCo_compileIncSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL statement comparison and literal original proof replay: The oracle index and downstream configuration remain independent; the exact oracle equation composes the pair-level tick removal with the inlining oracle. The cache is a sparse tree and programs are lists; callback code and data are opaque when present."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "in_cc_eq_state_cc",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/StateRelation.lean",
     "lean_name": "inCcEqStateCc",
