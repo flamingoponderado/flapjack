@@ -547,3 +547,19 @@ val compile_list_imp_replay = prove (``
   full_simp_tac(srw_ss())[IS_SUBLIST_APPEND] >>
   metis_tac [APPEND,APPEND_ASSOC]);
 val _ = show "compile_list_imp_replay=" compile_list_imp_replay;
+
+(* Replay the two local namespace lemmas following compile_list_imp. *)
+val nss_lemma_replay = prove (``
+    n * nss <> k * nss + 1``,
+  strip_tac
+  \\ `(n * nss) MOD nss = (k * nss + 1) MOD nss` by metis_tac [EVAL ``nss``]
+  \\ sg `F` \\ fs [] \\ pop_assum mp_tac
+  \\ simp_tac std_ss [MOD_MULT,EVAL ``1 < nss``,MOD_EQ_0,EVAL ``0 < nss``]);
+val _ = show "nss_lemma_replay=" nss_lemma_replay;
+val in_ns_0_simp_replay = prove (``
+    in_ns 0 (nss * p_1 + num_stubs)``,
+  fs [in_ns_def] \\ EVAL_TAC
+  \\ `0 < nss` by EVAL_TAC \\ fs [EVAL ``nss``]);
+val _ = show "in_ns_0_simp_replay=" in_ns_0_simp_replay;
+
+val _ = show "compile_inc_lemma_typed=" bvl_to_bviProofTheory.compile_inc_lemma;

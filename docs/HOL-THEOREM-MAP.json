@@ -1,6 +1,30 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_inc_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileIncLemma.lean",
+    "lean_name": "compileInc_lemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed HOL theorem and compiler carriers: the original compiler equality implies all four conjuncts, including distinctness preservation, counter monotonicity, reverse membership and the conditional namespace and bounds characterization. Existing proved invariants discharge the result with no extra assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "nss_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Namespace.lean",
+    "lean_name": "namespaceMultiple_ne",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Typed HOL local proof replay confirms natural-number variables, orientation, fixed namespace count and conclusion; no extra assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "in_ns_0_simp",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Namespace.lean",
+    "lean_name": "translatedLabel_inNs_zero",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Typed HOL local proof replay confirms the unconditional namespace-zero result, natural-number input and original namespace and stub constants."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_list_imp",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/InstallEntries.lean",
     "lean_name": "compileList_imp",

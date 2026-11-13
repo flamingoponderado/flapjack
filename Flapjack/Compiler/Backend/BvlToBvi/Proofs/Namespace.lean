@@ -41,4 +41,17 @@ theorem inNs_zero_addOne (x : Nat) : inNs 0 x → inNs 1 (x + 1) := by
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "in_ns_add_num_stubs"]
 theorem inNs_addStubCount (k x : Nat) : inNs k (bvlNumStubs + x) ↔ inNs k x := by
   simp only [inNs, Nat.add_mod, bvlNumStubMod, Nat.zero_add, Nat.mod_mod]
+/-- Namespace-zero multiples differ from namespace-one multiples. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "nss_lemma"]
+theorem namespaceMultiple_ne (n k : Nat) :
+    n * bvlToBviNamespaces ≠ k * bvlToBviNamespaces + 1 := by
+  simp only [bvlToBviNamespaces]
+  omega
+
+/-- A translated function label belongs to namespace zero. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "in_ns_0_simp"]
+theorem translatedLabel_inNs_zero (p : Nat) :
+    inNs 0 (bvlToBviNamespaces * p + bvlNumStubs) := by
+  simp [inNs, Nat.add_mod, bvlNumStubMod]
+
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs
