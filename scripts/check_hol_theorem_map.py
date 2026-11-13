@@ -164,22 +164,6 @@ WITHDRAWN_HOL_DECLARATIONS = {
         "the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 "
         "is admitted.  The HOL tag was withdrawn pending a faithful width-restricted restatement."
     ),
-    ("Flapjack/Pancake/WordLang.lean", "everyVarImm"): (
-        "cakeml/compiler/backend/wordLangScript.sml",
-        "every_var_imm_def",
-        "Coordinator source review (bead flapjack-pxn.18.5.15.1.4): Lean's "
-        "unrestricted width : Nat admits BitVec 0; HOL word dimensions are "
-        "positive. Keep the executable helper untagged until its width binder "
-        "and callers match the original declaration."
-    ),
-    ("Flapjack/Pancake/WordLang.lean", "everyVarInst"): (
-        "cakeml/compiler/backend/wordLangScript.sml",
-        "every_var_inst_def",
-        "Coordinator source review (bead flapjack-pxn.18.5.15.1.4): Lean's "
-        "unrestricted width : Nat admits BitVec 0; HOL word dimensions are "
-        "positive. Keep the executable helper untagged until its width binder "
-        "and callers match the original declaration."
-    ),
     ("Flapjack/Pancake/PanToCrep.lean", "expHdlHOL"): (
         "cakeml/pancake/pan_to_crepScript.sml",
         "exp_hdl_def",
