@@ -101,3 +101,42 @@ val _ = show "compile_prog_semantics_typed=" bvi_to_dataProofTheory.compile_prog
 val _ = show "get_code_labels_iAssign_typed=" bvi_to_dataProofTheory.get_code_labels_iAssign;
 val _ = show "get_code_labels_compile_typed=" bvi_to_dataProofTheory.get_code_labels_compile;
 val _ = show "compile_prog_good_code_labels_typed=" bvi_to_dataProofTheory.compile_prog_good_code_labels;
+(* This original FFI-error theorem is local; capture its literal typed statement. *)
+val _ = (print "state_rel_do_app_FFI_err_statement_typed="; print_term
+  ``∀i z r t x.
+      bvi_to_dataProof$state_rel r t ∧
+      bviSem$do_app (closLang$FFI i) (MAP bvi_to_dataProof$data_to_bvi_v z) r =
+        Rerr (Rabort (Rffi_error x)) ⇒
+      dataSem$do_app (closLang$FFI i) z t = Rerr (Rabort (Rffi_error x))``;
+  print "\n");
+
+(* Replay the original local FFI-error proof with its inferred types. *)
+load "preamble";
+open preamble bvi_to_dataProofTheory;
+val state_rel_do_app_ffi_err_replay = Q.prove
+ (`∀i z r t x.
+    bvi_to_dataProof$state_rel r t ∧
+    bviSem$do_app (closLang$FFI i) (MAP bvi_to_dataProof$data_to_bvi_v z) r =
+      Rerr (Rabort (Rffi_error x)) ⇒
+    dataSem$do_app (closLang$FFI i) z t = Rerr (Rabort (Rffi_error x))`,
+  rpt strip_tac
+  \\ qpat_x_assum `bviSem$do_app (FFI i) _ r = _` mp_tac
+  \\ simp[bviSemTheory.do_app_def,bviSemTheory.do_app_aux_def,
+          bvlSemTheory.do_app_def,bviSemTheory.bvi_to_bvl_def,AllCaseEqs(),PULL_EXISTS]
+  \\ rw[]
+  \\ rename1 `MAP data_to_bvi_v z = [RefPtr b1 p1; RefPtr b2 p2]`
+  \\ `z = [RefPtr b1 p1; RefPtr b2 p2]` by
+       (Cases_on `z` \\ gvs[] \\ Cases_on `t'` \\ gvs[] \\ Cases_on `t''` \\ gvs[]
+        \\ Cases_on `h` \\ gvs[] \\ Cases_on `h'` \\ gvs[])
+  \\ `lookup p1 t.refs = SOME (ByteArray T cws) ∧
+      lookup p2 t.refs = SOME (ByteArray F ws) ∧ t.ffi = r.ffi` by
+       (fs[state_rel_def]
+        \\ first_assum (qspec_then `p1` mp_tac)
+        \\ first_x_assum (qspec_then `p2` mp_tac)
+        \\ simp[sptreeTheory.lookup_map]
+        \\ Cases_on `lookup p1 t.refs` \\ Cases_on `lookup p2 t.refs` \\ gvs[]
+        \\ rpt (rename1 `data_to_bvi_ref rr = _` \\ Cases_on `rr` \\ gvs[]))
+  \\ gvs[dataSemTheory.do_app_def,dataSemTheory.do_app_aux_def,dataSemTheory.do_space_def,
+         dataLangTheory.op_space_reset_def,data_spaceTheory.op_space_req_def,
+         dataSemTheory.do_stack_def]);
+val _ = show "state_rel_do_app_FFI_err_replay_typed=" state_rel_do_app_ffi_err_replay;

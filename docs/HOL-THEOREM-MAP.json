@@ -138734,6 +138734,18 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "state_rel_do_app_FFI_err",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/ApplyFfi.lean",
+    "lean_name": "doApp_ffi_error",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "BviState.refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: the original local proof is replayed in HOL with inferred types and no assumptions. Arbitrary native ML-string name, DATA values, related states with independent shared compiler and FFI carriers, and final event preserve the original state-relation and source FFI-error premises and exact full DATA dispatcher error. BVI refs use the canonical finite-support carrier with a same-module unconditional roundtrip witness. Inherits the reals_as_rational_cuts assumption through dispatcher dependencies (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "state_rel_peak_safe",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/State.lean",
     "lean_name": "stateRel_peakSafe",
