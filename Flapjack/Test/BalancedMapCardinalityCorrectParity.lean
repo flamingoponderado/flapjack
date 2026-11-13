@@ -54,7 +54,8 @@ private theorem equivalentGood : Flapjack.FiniteMap.Comparison.goodCmp equivalen
 example : (toFmap equivalentCmp singleton).card = 1 := by
   have h : invariant equivalentCmp singleton := by
     simp [singleton, invariant, structureSize, keyOrdered, balanced, size, delta]
-  simpa [structureSize, singleton] using structureSizeToFmap equivalentCmp singleton ⟨equivalentGood, h⟩
+  simpa [structureSize, singleton] using
+    structureSizeToFmap equivalentCmp singleton ⟨equivalentGood, h⟩
 example : size singleton = (toFmap equivalentCmp singleton).card := by
   exact sizeThm equivalentCmp singleton ⟨equivalentGood, by
     simp [singleton, invariant, structureSize, keyOrdered, balanced, size, delta]⟩
