@@ -8036,15 +8036,6 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
-  "hol_name": "initial_state'_def",
-  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StateRelation.lean",
-  "lean_name": "initialStateProofSide",
-  "statement_status": "reviewed_fmap_as_finite_support_relation",
-  "fmap_as_finite_support_relation": ["State.refs", "State.code", "code"],
-  "reviewer": "Source comparison: Compared proof_initial_state_typed in flat_to_clos_relation_probe.out: arbitrary interpreter flag, FFI, maximum application, code, oracle, compiler and clock produce the same record fields, empty references and singleton interpreter-or-unit globals. Compiler and FFI carriers are independent. The code input and closure-state code and refs use canonical finite-support maps with the local state roundtrip witness."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "state_rel_initial_state",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StateRelation.lean",
   "lean_name": "initialStates_related",
@@ -18549,19 +18540,6 @@
     "reviewer": "Compared compile_semantics_typed: compiler and FFI carriers are independent, the original positivity, no-Mat and unprimed installation relation conjunction and flat non-Fail premise are unchanged, and compiled closure behavior equals flat behavior. The imported reviewed holEmpty represents the original FEMPTY code argument. The proof composes the primed source theorem with the source-shaped interpreter attachment theorem using the kernel-checked production callback and oracle factorizations. Evaluator floating-point dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
   },
   {
-  "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
-  "hol_name": "initial_state_def",
-  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/State.lean",
-  "lean_name": "initialState",
-  "statement_status": "reviewed_fmap_as_finite_support_relation",
-  "fmap_as_finite_support_relation": [
-    "State.refs",
-    "State.code",
-    "code"
-  ],
-  "reviewer": "Source comparison: Compared initial_state_typed: FFI and compiler configuration carriers are independent, supplied max_app, code, oracle, compiler and clock are retained, and globals and refs begin empty. The code argument and State refs/code fields use canonical finite-support maps; the local State roundtrip witnesses the field representation."
-},
-  {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",
     "hol_name": "semantics_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosSem/Semantics.lean",
@@ -18569,7 +18547,7 @@
     "statement_status": "reviewed_fmap_as_finite_support_parameters",
     "fmap_as_finite_support_parameters": ["code"],
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "Compared clos_semantics_typed: for independent FFI and compiler carriers, every clock starts with the supplied initial state, any type error gives Fail priority, guarded choice selects exactly the source terminating outcome and events, and otherwise the divergence trace is the prefix lub over all clocked event lists. The standalone code input is the canonical finite-support map with a local codec roundtrip; the reviewed initialState and evaluator cover their own state fields. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8. This is source review, not a cross-language equivalence proof."
+    "reviewer": "Compared clos_semantics_typed: for independent FFI and compiler carriers, every clock starts with the supplied initial state, any type error gives Fail priority, guarded choice selects exactly the source terminating outcome and events, and otherwise the divergence trace is the prefix lub over all clocked event lists. The standalone code input is the canonical finite-support map with a local codec roundtrip; the source-compared initial state construction and reviewed evaluator cover their own state fields. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8. This is source review, not a cross-language equivalence proof."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/closSemScript.sml",

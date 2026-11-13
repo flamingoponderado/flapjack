@@ -189,9 +189,9 @@ theorem holFmapAsFiniteSupportRelationWitness_State {C F : Type} :
       (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
   ClosSem.holFmapAsFiniteSupportRelationWitness_State
 
-/-- Initial closure state used in the original flat-to-closure proof. -/
-@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "initial_state'_def"
-  (fmap_as_finite_support_relation := [State.refs, State.code, code])]
+/-- Initial closure state used in the flat-to-closure proof. It remains
+untagged because the state-valued function uses both finite-support state fields
+and a standalone finite-support code input, which no current qualifier covers. -/
 def initialStateProofSide {C F : Type} (interpreter : Bool) (ffi : HolFfiState F)
     (maxApp : Nat) (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp))
     (oracle : ClosSem.CompileOracle C) (compiler : ClosSem.Compiler C) (clock : Nat) : ClosSem.State C F :=
