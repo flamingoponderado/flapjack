@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviInline.Proofs.CompileSimulation
+public import Flapjack.Compiler.Backend.BviInline.Proofs.CodeLabels
 
 @[expose] public section
 
@@ -12,15 +13,6 @@ open BviSem BvlSem
 @[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "clean_prog_def"]
 def cleanProg {Label Arity : Type} (program : List (Label × Arity × Bvi.Exp)) : List (Label × Arity × Bvi.Exp) :=
   program.map fun (name, arity, body) => (name, arity, removeTicksSource body)
-
-/-- Flapjack infrastructure: tick cleanup preserves program labels. -/
-theorem cleanProg_names (program : List (Nat × Nat × Bvi.Exp)) :
-    (cleanProg program).map Prod.fst = program.map Prod.fst := by
-  induction program with
-  | nil => rfl
-  | cons entry rest ih =>
-    obtain ⟨name, arity, body⟩ := entry
-    simp [cleanProg, ← ih]
 
 /-- Flapjack infrastructure: tree conversion and association-list conversion
 commute with tick cleanup, including malformed sparse-tree shapes. -/
@@ -148,7 +140,7 @@ theorem removeStateRel_doInstall_success {C F : Type} (source sourceNext target 
     intro entry member
     have memberNames : entry.1 ∈ code.map Prod.fst := by
       have h : entry.1 ∈ cleaned.map Prod.fst := List.mem_map_of_mem member
-      simpa [cleaned, cleanProg_names] using h
+      simpa [cleaned, cleanProg, List.map_map, Function.comp_def] using h
     obtain ⟨original, originalMem, same⟩ := List.mem_map.mp memberNames
     have no := absent original (by simpa [code] using originalMem)
     cases found : sptLookup entry.1 target.code with
@@ -158,7 +150,7 @@ theorem removeStateRel_doInstall_success {C F : Type} (source sourceNext target 
       rw [← domains] at present
       have absentSource : sptLookup entry.1 source.code = none := by simpa [same] using no
       simp [sptDomain, absentSource] at present
-  have targetUnique : (cleaned.map Prod.fst).Nodup := by simpa [cleaned, cleanProg_names, code] using unique
+  have targetUnique : (cleaned.map Prod.fst).Nodup := by simpa [cleaned, cleanProg, List.map_map, Function.comp_def, code] using unique
   have targetOracle0 : target.compileOracle 0 = (config, cleaned) := by
     rw [states.2.2.2.2.2.1]
     simp [removeTicksCo, oracle0, cleaned, code]
@@ -220,7 +212,9 @@ theorem removeStateRel_doInstall_success_reverse {C F : Type} (source target tar
       have keyEq : sourceKey = key := congrArg Prod.fst heads
       subst sourceKey
       have sourceUnique : (((key, sourceArity, sourceBody) :: tail).map Prod.fst).Nodup := by
-        have names := cleanProg_names ((key, sourceArity, sourceBody) :: tail)
+        have names : (cleanProg ((key, sourceArity, sourceBody) :: tail)).map Prod.fst =
+            ((key, sourceArity, sourceBody) :: tail).map Prod.fst :=
+          Proofs.removeTicksProg_mapFst ((key, sourceArity, sourceBody) :: tail)
         rw [codeEq] at names
         rw [heads, tails] at names
         rw [← names]
@@ -231,7 +225,9 @@ theorem removeStateRel_doInstall_success_reverse {C F : Type} (source target tar
         intro entry member
         have memberNames : entry.1 ∈ ((key, arity, body) :: rest).map Prod.fst := by
           have h : entry.1 ∈ (((key, sourceArity, sourceBody) :: tail).map Prod.fst) := List.mem_map_of_mem member
-          rw [← cleanProg_names ((key, sourceArity, sourceBody) :: tail), codeEq, heads, tails] at h
+          rw [← (show (cleanProg ((key, sourceArity, sourceBody) :: tail)).map Prod.fst =
+            ((key, sourceArity, sourceBody) :: tail).map Prod.fst from
+            Proofs.removeTicksProg_mapFst ((key, sourceArity, sourceBody) :: tail)), codeEq, heads, tails] at h
           exact h
         obtain ⟨other, otherMem, same⟩ := List.mem_map.mp memberNames
         have no := absent other otherMem
