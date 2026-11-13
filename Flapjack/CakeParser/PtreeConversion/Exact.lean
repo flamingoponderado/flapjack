@@ -1,6 +1,8 @@
 module
 
 public import Flapjack.CakeParser.PtreeConversion
+public import Flapjack.CakeParser.PegActions
+public import Flapjack.CakeParser.CfgLocation
 public import Flapjack.CakeParser.Grammar
 public import Flapjack.Misc.Grammar
 public import Flapjack.Misc.List
@@ -273,5 +275,109 @@ def ptreeStructNameHOL {loc : Type} : TokenTree Nonterminal loc → Option MlStr
         | [] => none
         | [pt] => (Misc.Grammar.destLf pt >>= Misc.Grammar.destTokSym) >>= CakeParser.destAlphaT
         | _ :: _ :: _ => none
+
+/-! ## Bridges to the executed specialization
+
+The executed frontend keeps its specialized `CakeParser.ParseTree`
+implementation. These theorems connect the exact generic twins above to it
+through `ParseTree.toGrammarTree`/`toGrammarTrees`; they are Flapjack
+infrastructure and have no HOL original. -/
+
+/-- Merging the locations of converted trees is the executable child-location
+calculation. -/
+theorem treeListLoc_map_toGrammarTree (trees : List CakeParser.ParseTree) :
+    Misc.Grammar.treeListLoc (trees.map ParseTree.toGrammarTree) =
+      ParseTree.listLocation trees := by
+  simpa [CfgValidation.toGrammarTrees_eq_map] using CfgLocation.grammarTreeListLoc trees
+
+/-- The generic `mkNd_fo` twin is the conversion of the executable `mkNode`. -/
+theorem mkNdHOL_toGrammarTree (target : Rule) (children : List CakeParser.ParseTree) :
+    PegActions.mkNdHOL target (ParseTree.toGrammarTrees children) =
+      ParseTree.toGrammarTree (ParseTree.mkNode target children) := by
+  simp [PegActions.mkNdHOL, ParseTree.mkNode, ParseTree.toGrammarTree,
+    CfgValidation.toGrammarTrees_eq_map, treeListLoc_map_toGrammarTree]
+
+/-- `mkNd_fo` on three converted children is the conversion of `mkNode` on the
+three executable children. -/
+theorem mkNdHOL_toGrammarTree3 (target : Rule) (first second third : CakeParser.ParseTree) :
+    PegActions.mkNdHOL target
+        [ParseTree.toGrammarTree first, ParseTree.toGrammarTree second,
+          ParseTree.toGrammarTree third] =
+      ParseTree.toGrammarTree (ParseTree.mkNode target [first, second, third]) := by
+  simp [PegActions.mkNdHOL, ParseTree.mkNode, ParseTree.toGrammarTree,
+    CfgValidation.toGrammarTrees_eq_map, ParseTree.listLocation, Misc.Grammar.treeListLoc,
+    Misc.Location.mergeListLocs, Misc.Location.mergeLocs, ParseTree.toGrammarTree_location]
+
+/-- The exact generic `eval_unary` twin agrees with the executable
+`evalUnary` under the tree conversion. -/
+theorem evalUnaryHOL_toGrammarTrees (action : PegActions.Unary)
+    (v : List CakeParser.ParseTree) :
+    PegActions.evalUnaryHOL action (ParseTree.toGrammarTrees v) =
+      ParseTree.toGrammarTrees (PegActions.evalUnary action v) := by
+  cases action with
+  | id => simp [PegActions.evalUnaryHOL, PegActions.evalUnary]
+  | bindNT nt =>
+    simp [PegActions.evalUnaryHOL, PegActions.evalUnary, ParseTree.mkNode,
+      ParseTree.toGrammarTree, CfgValidation.toGrammarTrees_eq_map,
+      treeListLoc_map_toGrammarTree]
+
+/-- The exact generic `mk_linfix_fo` twin agrees with the executable
+`mkLinfix` under the tree conversion. -/
+theorem mkLinfixHOL_toGrammarTree (target : Rule) (acc : CakeParser.ParseTree)
+    (v : List CakeParser.ParseTree) :
+    PegActions.mkLinfixHOL target (ParseTree.toGrammarTree acc) (ParseTree.toGrammarTrees v) =
+      ParseTree.toGrammarTree (PegActions.mkLinfix target acc v) := by
+  have main : ∀ (n : Nat) (v : List CakeParser.ParseTree), v.length = n → ∀ acc,
+      PegActions.mkLinfixHOL target (ParseTree.toGrammarTree acc) (ParseTree.toGrammarTrees v) =
+        ParseTree.toGrammarTree (PegActions.mkLinfix target acc v) := by
+    intro n
+    induction n using Nat.strongRecOn with
+    | ind n ih =>
+      intro v hv acc
+      match v with
+      | [] =>
+        simp [ParseTree.toGrammarTrees, PegActions.mkLinfixHOL, PegActions.mkLinfix]
+      | [_] =>
+        simp [ParseTree.toGrammarTrees, PegActions.mkLinfixHOL, PegActions.mkLinfix]
+      | x :: y :: ys =>
+        have hlen : ys.length < n := by
+          simp at hv
+          omega
+        rw [PegActions.mkLinfixHOL.eq_def, PegActions.mkLinfix.eq_def]
+        simp only [ParseTree.toGrammarTrees]
+        rw [mkNdHOL_toGrammarTree3]
+        exact ih ys.length hlen ys rfl (ParseTree.mkNode target [acc, x, y])
+  exact main v.length v rfl acc
+
+/-- Deciding equality of token options is their `BEq` comparison. -/
+theorem decide_eq_beq_token (a b : CakeParser.Token) :
+    decide (a = b) = (a == b) := rfl
+
+theorem decide_eq_beq_option (a b : Option CakeParser.Token) :
+    decide (a = b) = (a == b) := by
+  cases a with
+  | none => cases b <;> rfl
+  | some x => cases b with
+    | none => rfl
+    | some y => simp [decide_eq_beq_token]
+
+/-- The exact generic `tokcheck` twin agrees with the executable `tokcheck`
+under the tree conversion. -/
+theorem tokcheckHOL_toGrammarTree (pt : CakeParser.ParseTree) (tok : CakeParser.Token) :
+    tokcheckHOL (ParseTree.toGrammarTree pt) tok = PtreeConversion.tokcheck pt tok := by
+  cases pt with
+  | leaf symbol loc =>
+    cases symbol with
+    | inl rule =>
+      simp [tokcheckHOL, PtreeConversion.tokcheck, ParseTree.toGrammarTree,
+        ParseTree.toGrammarSymbol, ParseTree.token, Misc.Grammar.destLf,
+        Misc.Grammar.destTokSym]
+    | inr token =>
+      simp [tokcheckHOL, PtreeConversion.tokcheck, ParseTree.toGrammarTree,
+        ParseTree.toGrammarSymbol, ParseTree.token, Misc.Grammar.destLf,
+        Misc.Grammar.destTokSym, decide_eq_beq_token]
+  | node rule loc children =>
+    simp [tokcheckHOL, PtreeConversion.tokcheck, ParseTree.toGrammarTree,
+      ParseTree.token, Misc.Grammar.destLf]
 
 end Flapjack.CakeParser.PtreeConversion.Exact
