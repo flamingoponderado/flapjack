@@ -467,6 +467,16 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "evaluate_remove_ticks",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksInduction.lean",
+    "lean_name": "evaluate_removeTicks",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent comparison with the original theorem and its typed HOL capture: all seven binders, complete state relation, target clock equality and target evaluation premises imply an existential extra clock and source final state with the same complete result and full final-state relation. All errors are covered. Source and target share independent compiler and FFI types. The seven state relation components, including code mapping and callback/oracle adaptation, match HOL. BVI refs use the canonical finite-support representation with a same-module roundtrip; code remains a sparse tree. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8). The probe captures the original theorem; it does not replay its local mutual proof."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "state_cc_compile_inc_eq",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/WholeProgramSimulation.lean",
     "lean_name": "stateCc_compileIncSource",

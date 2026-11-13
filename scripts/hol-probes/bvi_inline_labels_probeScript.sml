@@ -206,3 +206,6 @@ val state_co_compile_inc_eq_replay = Q.prove
    rw [state_co_def, compile_inc_def, remove_ticks_co_def, FUN_EQ_THM]
   >> rpt (pairarg_tac >> gvs [clean_prog_def]));
 val _ = show "state_co_compile_inc_eq_replay_typed" state_co_compile_inc_eq_replay;
+
+(* The full tick-removal evaluation theorem, including its inferred types. *)
+val _ = show "evaluate_remove_ticks_typed" bvi_inlineProofTheory.evaluate_remove_ticks;

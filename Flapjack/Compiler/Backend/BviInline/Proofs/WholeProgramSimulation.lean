@@ -59,10 +59,10 @@ theorem evaluate_removeTicks_compile {C F : Type} (program : List (Nat × Nat ×
       (initialState ffi (sptFromAList (cleanProg program)) ((removeTicksCo ∘ oracle)) compiler clock) =
         (result, targetNext) := by simpa [evaluateTuple, removeTicksListSource, removeTicksSource] using run
   obtain ⟨extra, sourceNext, sourceRun, finalRel⟩ :=
-    RemoveTicksCases.evaluate_removeTicks [.call 0 (some start) [] none] []
+    RemoveTicksCases.evaluate_removeTicks clock [.call 0 (some start) [] none] []
       (initialState ffi (sptFromAList (cleanProg program)) ((removeTicksCo ∘ oracle)) compiler clock)
       (initialState ffi (sptFromAList program) oracle (removeTicksCc compiler) clock)
-      result targetNext related cleanedRun
+      result targetNext ⟨related, rfl, cleanedRun⟩
   exact ⟨extra, sourceNext, by simpa [evaluateTuple, initialState] using sourceRun, finalRel.2.2.2.1.symm⟩
 
 /-- The complete initial-call simulation for source-shaped whole-program
