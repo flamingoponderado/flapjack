@@ -138634,6 +138634,17 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "state_rel_dec_clock",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/State.lean",
+    "lean_name": "stateRel_decClock",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "BviState.refs"
+    ],
+    "reviewer": "Independent typed HOL source review 2026-11-13: the local source theorem's original proof is replayed with inferred types in the HOL probe. Both statements preserve the state relation after decrementing the BVI clock by one and the DATA clock once, with arbitrary shared compiler and FFI carriers and no extra premise. BVI refs use the canonical finite-support carrier and same-module unconditional roundtrip witness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "state_rel_peak_safe",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/State.lean",
     "lean_name": "stateRel_peakSafe",

@@ -46,10 +46,9 @@ theorem stateRel_peakSafe {C F : Type} (source : BviSem.BviState C F) (target : 
       stateRel source { target with localsSize := localsSize, safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax } := by
   rfl
 
-/-- Decrementing both related clocks preserves the state relation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "state_rel_dec_clock" (fmap_as_finite_support_relation := [BviState.refs])] -/
+/-- Decrementing both related clocks preserves the state relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "state_rel_dec_clock"
+  (fmap_as_finite_support_relation := [BviState.refs])]
 theorem stateRel_decClock {C F : Type} (source : BviSem.BviState C F) (target : DataSem.State C F)
     (related : stateRel source target) : stateRel (BviSem.decClock 1 source) (DataSem.decClock target) := by
   rcases related with ⟨clocks, rest⟩

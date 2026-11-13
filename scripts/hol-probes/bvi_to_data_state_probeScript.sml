@@ -88,3 +88,10 @@ val _ = show "MAP_FST_compile_prog_typed=" bvi_to_dataProofTheory.MAP_FST_compil
 val _ = show "state_rel_peak_safe_typed=" bvi_to_dataProofTheory.state_rel_peak_safe;
 val _ = show "bvi_evaluate_ind_typed=" bviSemTheory.evaluate_ind;
 val _ = show "compile_exp_correct_typed=" bvi_to_dataProofTheory.compile_exp_correct;
+(* This theorem is local to the source script; replay its original proof. *)
+val state_rel_dec_clock_replay = Q.prove
+  (`bvi_to_dataProof$state_rel s1 t1 ⇒
+    bvi_to_dataProof$state_rel (bviSem$dec_clock 1 s1) (dataSem$dec_clock t1)`,
+   srw_tac[][bvi_to_dataProofTheory.state_rel_def,
+     bviSemTheory.dec_clock_def, dataSemTheory.dec_clock_def]);
+val _ = show "state_rel_dec_clock_replay_typed=" state_rel_dec_clock_replay;
