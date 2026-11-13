@@ -37,7 +37,10 @@ def longShort : Path → MlString → Ident MlString MlString
   | .end, s => .short s
   | .mod x xs, s => .long x (longShort xs s)
 
-private def tyvar (pt : ParseTree) : Option MlString :=
+/-- The type-variable payload of a leaf `TyvarT` token; the shared helper of
+    the type conversion. It is public so the exact generic twins can be
+    bridged to the executed conversions. -/
+def tyvar (pt : ParseTree) : Option MlString :=
   match pt.token with
   | some (.tyvarT s) => some s
   | _ => none
@@ -259,12 +262,16 @@ def ptreeConstructorName (pt : ParseTree) : Option (Ident MlString MlString) := 
     | some (.longidT path s) => some (longShort path s)
     | _ => none
 
-private def uppercase (s : MlString) : Bool :=
+/-- Whether the first character of the name is an uppercase ASCII letter;
+    the executable half of the constructor-name test. -/
+def uppercase (s : MlString) : Bool :=
   match s.explode with
   | c :: _ => 65 ≤ c.toNat && c.toNat ≤ 90
   | [] => false
 
-private def constructorName (s : MlString) : Bool :=
+/-- The executable constructor test: `"::"` or an uppercase initial
+    character. -/
+def constructorName (s : MlString) : Bool :=
   s == ofString "::" || uppercase s
 
 /-- Tag withdrawn (task 147): HOL `ptree_OpID_def` takes `(token, MMLnonT, α) parsetree` with the
@@ -408,7 +415,10 @@ def ptreePattern (n : Nonterminal) (pt : ParseTree) : Option Pat :=
   patternWorker (treeSize pt + 1) n pt
 
 
-private def symOp (p : List HolChar → Bool) (xs : List ParseTree) : Option (Ident MlString MlString) := do
+/-- The single symbol-token operator of a one-element tree list, filtered by
+    the operator-class predicate. It is public so the exact generic twins can
+    be bridged to the executed conversion. -/
+def symOp (p : List HolChar → Bool) (xs : List ParseTree) : Option (Ident MlString MlString) := do
   let [leaf] := xs | none
   let some (.symbolT s) := leaf.token | none
   if p s.explode then some (.short s) else none
