@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml", "hol_name": "list_to_v_adjust",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileListAppend.lean", "lean_name": "listToValue_adjust",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: encoding the elementwise relocated list equals relocating the encoding, for every BVL value list and arbitrary reference relocation. The original equality orientation and fixed value carriers are retained."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml", "hol_name": "list_to_v_adjust_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileListAppend.lean", "lean_name": "listToValue_adjust_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: both identical source premises about xs are retained, and their implication concludes the relocated encoding equality for xs ++ ys, with arbitrary value lists and reference relocation."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml", "hol_name": "do_eq_adjust_lemma",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/EqualityRel.lean", "lean_name": "doEqAdjustLemma",
   "statement_status": "reviewed_fmap_as_finite_support_relation", "fmap_as_finite_support_relation": ["State.refs", "BviState.refs", "refs"],

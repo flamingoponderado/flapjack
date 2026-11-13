@@ -413,3 +413,6 @@ val do_eq_adjust_replay = prove (``  do_eq r.refs x1 x2 = Eq_val b /\ state_rel 
    do_eq t2.refs (adjust_bv b2 x1) (adjust_bv b2 x2) = Eq_val b``,
   metis_tac [do_eq_adjust_lemma]);
 val _ = show "do_eq_adjust_replay=" do_eq_adjust_replay;
+
+val _ = show "list_to_v_adjust_typed=" bvl_to_bviProofTheory.list_to_v_adjust;
+val _ = show "list_to_v_adjust_APPEND_typed=" bvl_to_bviProofTheory.list_to_v_adjust_APPEND;

@@ -30,12 +30,22 @@ theorem valueToList_adjust (relocate : Nat → Nat) (value : Value) :
   | _ => simp [adjustBv, BvlSem.valueToList]
 termination_by sizeOf value
 
-/-- Relocating an encoded list is the encoding of its relocated elements. -/
+/-- Encoding relocated values is relocation of their encoded list. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "list_to_v_adjust"]
 theorem listToValue_adjust (relocate : Nat → Nat) (values : List Value) :
-    adjustBv relocate (BvlSem.listToValue values) = BvlSem.listToValue (values.map (adjustBv relocate)) := by
+    BvlSem.listToValue (values.map (adjustBv relocate)) = adjustBv relocate (BvlSem.listToValue values) := by
   induction values with
   | nil => simp [BvlSem.listToValue, adjustBv_block]
   | cons value rest ih => simp [BvlSem.listToValue, adjustBv_block, ih]
+
+/-- The source append corollary retains its repeated premise. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "list_to_v_adjust_APPEND"]
+theorem listToValue_adjust_append (relocate : Nat → Nat) (xs ys : List Value)
+    (_premises : BvlSem.listToValue (xs.map (adjustBv relocate)) = adjustBv relocate (BvlSem.listToValue xs) ∧
+      BvlSem.listToValue (xs.map (adjustBv relocate)) = adjustBv relocate (BvlSem.listToValue xs)) :
+    BvlSem.listToValue ((xs ++ ys).map (adjustBv relocate)) =
+      adjustBv relocate (BvlSem.listToValue (xs ++ ys)) := by
+  exact listToValue_adjust relocate (xs ++ ys)
 
 /-- List append commutes with value relocation. Untagged pending BVI
  dispatcher correspondence review. -/
@@ -47,8 +57,8 @@ theorem doListAppend_target {C F : Type} (left right : Value) (xs ys : List Valu
   have leftTarget := valueToList_adjust relocate left
   have rightTarget := valueToList_adjust relocate right
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
-    BvlSem.applyBlock, BviSem.fromBvl_toBvl, leftTarget, rightTarget, leftDecode, rightDecode,
-    listToValue_adjust]
+    BvlSem.applyBlock, BviSem.fromBvl_toBvl, leftTarget, rightTarget, leftDecode, rightDecode]
+  simpa only [List.map_append] using listToValue_adjust relocate (xs ++ ys)
 
 /-- List append satisfies pass simulation given operand simulation. Untagged
 pending BVI evaluator and dispatcher correspondence review. -/

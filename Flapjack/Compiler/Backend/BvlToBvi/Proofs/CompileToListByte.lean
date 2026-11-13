@@ -137,6 +137,6 @@ theorem simulation_toListByte {C F : Type} (arguments : List Bvl.Exp)
         refine ⟨targetNext, midRelocate, extra + clock, ?_, relatedNext, envEq, refsEq⟩
         rw [BviSem.evaluate, BviSem.fixClock_evaluate, shifted]
         simp only [valuesEq, List.map_cons, List.map_nil, List.cons_append, List.nil_append, mapSimulationResult, adjustBv]
-        simpa [listToValue_adjust, List.map_map, Function.comp_def, adjustBv] using bodyRun
+        simpa [← listToValue_adjust, List.map_map, Function.comp_def, adjustBv] using bodyRun
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs
