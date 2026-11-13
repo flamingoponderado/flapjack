@@ -43,26 +43,11 @@ def simulation {C F : Type} (xs : List Bvl.Exp) (env : List Value)
       env.map (adjustBv relocate) = env.map (adjustBv newRelocate) ∧
       ∀ key, source.refs.lookup key ≠ none → relocate key = newRelocate key
 
-/-- Empty-list case of the source evaluator simulation. It retains the
-source theorem's hypotheses and existential result, but is untagged until the
-underlying BVI evaluator and the full induction theorem are source-reviewed. -/
-theorem compileExpsCorrect_nil {C F : Type} (env : List Value)
-    (source next : BvlSem.State (Nat × C) F) (n n2 : Nat)
-    (res : Result (List Value) Value) (target : BviSem.BviState C F)
-    (ys : List Bvi.Exp) (aux : AppList (Nat × Nat × Bvi.Exp)) (relocate : Nat → Nat)
-    (run : BvlSem.evaluate [] env source = (res, next))
-    (_notTypeError : res ≠ .err (.abort .typeError))
-    (compiled : compileListSource n [] = (ys, aux, n2))
-    (related : stateRel relocate source target)
-    (_sourceOk : stateOk source) (_envOk : bvOkList source.refs env)
-    (_installed : auxCodeInstalled (appListAppend aux) target.code)
-    (_handlers : BvlHandle.Proofs.handleOk []) (_global : target.global.isSome = true) :
-    ∃ targetNext newRelocate clock,
-      BviSem.evaluate ys (env.map (adjustBv newRelocate)) (BviProps.incClock clock target) =
-        (mapSimulationResult newRelocate res, targetNext) ∧
-      stateRel newRelocate next targetNext ∧
-      env.map (adjustBv relocate) = env.map (adjustBv newRelocate) ∧
-      ∀ key, source.refs.lookup key ≠ none → relocate key = newRelocate key := by
+/-- The empty-list case of the source evaluator simulation, untagged until
+the BVI evaluator and full induction theorem are source-reviewed. -/
+theorem simulation_nil {C F : Type} (env : List Value) (source : BvlSem.State (Nat × C) F) :
+    simulation [] env source := by
+  intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
   simp [BvlSem.evaluate] at run
   rcases run with ⟨rfl, rfl⟩
   simp [compileListSource] at compiled
@@ -72,26 +57,12 @@ theorem compileExpsCorrect_nil {C F : Type} (env : List Value)
   · intro key member
     rfl
 
-/-- Variable case of the source evaluator simulation. An out-of-range
-variable is excluded by the original no-type-error premise. This remains
-untagged while BVI evaluation and the full induction theorem are reviewed. -/
-theorem compileExpsCorrect_var {C F : Type} (index : Nat) (env : List Value)
-    (source next : BvlSem.State (Nat × C) F) (n n2 : Nat)
-    (res : Result (List Value) Value) (target : BviSem.BviState C F)
-    (ys : List Bvi.Exp) (aux : AppList (Nat × Nat × Bvi.Exp)) (relocate : Nat → Nat)
-    (run : BvlSem.evaluate [.var index] env source = (res, next))
-    (notTypeError : res ≠ .err (.abort .typeError))
-    (compiled : compileListSource n [.var index] = (ys, aux, n2))
-    (related : stateRel relocate source target)
-    (_sourceOk : stateOk source) (_envOk : bvOkList source.refs env)
-    (_installed : auxCodeInstalled (appListAppend aux) target.code)
-    (_handlers : BvlHandle.Proofs.handleOk [.var index]) (_global : target.global.isSome = true) :
-    ∃ targetNext newRelocate clock,
-      BviSem.evaluate ys (env.map (adjustBv newRelocate)) (BviProps.incClock clock target) =
-        (mapSimulationResult newRelocate res, targetNext) ∧
-      stateRel newRelocate next targetNext ∧
-      env.map (adjustBv relocate) = env.map (adjustBv newRelocate) ∧
-      ∀ key, source.refs.lookup key ≠ none → relocate key = newRelocate key := by
+/-- The variable case of the source evaluator simulation. The original
+no-type-error premise excludes out-of-range variables. Untagged pending BVI
+evaluator and full induction review. -/
+theorem simulation_var {C F : Type} (index : Nat) (env : List Value)
+    (source : BvlSem.State (Nat × C) F) : simulation [.var index] env source := by
+  intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
   cases lookup : env[index]? with
   | none =>
     simp [BvlSem.evaluate, lookup] at run
@@ -107,27 +78,12 @@ theorem compileExpsCorrect_var {C F : Type} (index : Nat) (env : List Value)
     · intro key member
       rfl
 
-/-- Tick case of the source simulation, using its induction hypothesis for
-the body at the decremented source state. This remains untagged pending BVI
-evaluator qualification and the full induction theorem. -/
-theorem compileExpsCorrect_tick {C F : Type} (body : Bvl.Exp) (env : List Value)
-    (source next : BvlSem.State (Nat × C) F) (n n2 : Nat)
-    (res : Result (List Value) Value) (target : BviSem.BviState C F)
-    (ys : List Bvi.Exp) (aux : AppList (Nat × Nat × Bvi.Exp)) (relocate : Nat → Nat)
-    (ih : simulation [body] env (BvlSem.decClock 1 source))
-    (run : BvlSem.evaluate [.tick body] env source = (res, next))
-    (notTypeError : res ≠ .err (.abort .typeError))
-    (compiled : compileListSource n [.tick body] = (ys, aux, n2))
-    (related : stateRel relocate source target)
-    (sourceOk : stateOk source) (envOk : bvOkList source.refs env)
-    (installed : auxCodeInstalled (appListAppend aux) target.code)
-    (handlers : BvlHandle.Proofs.handleOk [.tick body]) (global : target.global.isSome = true) :
-    ∃ targetNext newRelocate clock,
-      BviSem.evaluate ys (env.map (adjustBv newRelocate)) (BviProps.incClock clock target) =
-        (mapSimulationResult newRelocate res, targetNext) ∧
-      stateRel newRelocate next targetNext ∧
-      env.map (adjustBv relocate) = env.map (adjustBv newRelocate) ∧
-      ∀ key, source.refs.lookup key ≠ none → relocate key = newRelocate key := by
+/-- The tick case follows from the body at one less clock. Untagged pending
+BVI evaluator qualification and full induction review. -/
+theorem simulation_tick {C F : Type} (body : Bvl.Exp) (env : List Value)
+    (source : BvlSem.State (Nat × C) F) (ih : simulation [body] env (BvlSem.decClock 1 source)) :
+    simulation [.tick body] env source := by
+  intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
   rcases hbody : compileSingSource n body with ⟨converted, code, finalName⟩
   have nilRight : smartAppend code .nil = code := by cases code <;> rfl
   have bodyCompiled : compileListSource n [body] = ([converted], code, finalName) := by
@@ -165,27 +121,12 @@ theorem compileExpsCorrect_tick {C F : Type} (body : Bvl.Exp) (env : List Value)
     rw [BviProps.decClock_incClock_one target clock targetNonzero]
     exact targetRun
 
-/-- Raise case of the source simulation, using its body induction
-hypothesis. This remains untagged pending BVI evaluator qualification and the
-full induction theorem. -/
-theorem compileExpsCorrect_raise {C F : Type} (body : Bvl.Exp) (env : List Value)
-    (source next : BvlSem.State (Nat × C) F) (n n2 : Nat)
-    (res : Result (List Value) Value) (target : BviSem.BviState C F)
-    (ys : List Bvi.Exp) (aux : AppList (Nat × Nat × Bvi.Exp)) (relocate : Nat → Nat)
-    (ih : simulation [body] env source)
-    (run : BvlSem.evaluate [.raise body] env source = (res, next))
-    (notTypeError : res ≠ .err (.abort .typeError))
-    (compiled : compileListSource n [.raise body] = (ys, aux, n2))
-    (related : stateRel relocate source target)
-    (sourceOk : stateOk source) (envOk : bvOkList source.refs env)
-    (installed : auxCodeInstalled (appListAppend aux) target.code)
-    (handlers : BvlHandle.Proofs.handleOk [.raise body]) (global : target.global.isSome = true) :
-    ∃ targetNext newRelocate clock,
-      BviSem.evaluate ys (env.map (adjustBv newRelocate)) (BviProps.incClock clock target) =
-        (mapSimulationResult newRelocate res, targetNext) ∧
-      stateRel newRelocate next targetNext ∧
-      env.map (adjustBv relocate) = env.map (adjustBv newRelocate) ∧
-      ∀ key, source.refs.lookup key ≠ none → relocate key = newRelocate key := by
+/-- The raise case follows from the body simulation. Untagged pending BVI
+evaluator qualification and full induction review. -/
+theorem simulation_raise {C F : Type} (body : Bvl.Exp) (env : List Value)
+    (source : BvlSem.State (Nat × C) F) (ih : simulation [body] env source) :
+    simulation [.raise body] env source := by
+  intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
   rcases hbody : compileSingSource n body with ⟨converted, code, finalName⟩
   have nilRight : smartAppend code .nil = code := by cases code <;> rfl
   have bodyCompiled : compileListSource n [body] = ([converted], code, finalName) := by
@@ -219,36 +160,6 @@ theorem compileExpsCorrect_raise {C F : Type} (body : Bvl.Exp) (env : List Value
       refine ⟨targetNext, newRelocate, clock, ?_, relatedNext, envEq, refsEq⟩
       rw [BviSem.evaluate, targetRun]
       cases error <;> rfl
-
-/-- The empty-list induction proposition holds. -/
-theorem simulation_nil {C F : Type} (env : List Value) (source : BvlSem.State (Nat × C) F) :
-    simulation [] env source := by
-  intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
-  exact compileExpsCorrect_nil env source next n n2 res target ys aux relocate run notTypeError
-    compiled related sourceOk envOk installed handlers global
-
-/-- The variable induction proposition holds. -/
-theorem simulation_var {C F : Type} (index : Nat) (env : List Value)
-    (source : BvlSem.State (Nat × C) F) : simulation [.var index] env source := by
-  intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
-  exact compileExpsCorrect_var index env source next n n2 res target ys aux relocate run notTypeError
-    compiled related sourceOk envOk installed handlers global
-
-/-- The tick induction proposition follows from the body at one less clock. -/
-theorem simulation_tick {C F : Type} (body : Bvl.Exp) (env : List Value)
-    (source : BvlSem.State (Nat × C) F) (ih : simulation [body] env (BvlSem.decClock 1 source)) :
-    simulation [.tick body] env source := by
-  intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
-  exact compileExpsCorrect_tick body env source next n n2 res target ys aux relocate ih run notTypeError
-    compiled related sourceOk envOk installed handlers global
-
-/-- The raise induction proposition follows from the body's simulation. -/
-theorem simulation_raise {C F : Type} (body : Bvl.Exp) (env : List Value)
-    (source : BvlSem.State (Nat × C) F) (ih : simulation [body] env source) :
-    simulation [.raise body] env source := by
-  intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
-  exact compileExpsCorrect_raise body env source next n n2 res target ys aux relocate ih run notTypeError
-    compiled related sourceOk envOk installed handlers global
 
 /-- Relocation leaves Boolean decoding unchanged. This Flapjack helper is
 used to compare conditional branches in the simulation. -/
