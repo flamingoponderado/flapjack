@@ -138654,5 +138654,17 @@
     ],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Independent typed HOL source review 2026-11-13: complete Force case of compile_correct, not the assembled theorem; preserves all original source premises and result obligations, both tail modes, all thunk and clock cases, and every non-type-error outcome. The sole induction hypothesis is the original evaluate_ind guarded recursive callee at decremented clock. BVI refs use the canonical finite-support carrier and same-module unconditional roundtrip witness; DATA refs remain native sparse trees. Inherits the reals_as_rational_cuts assumption through evaluator primitives (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/CallCorrect.lean",
+    "lean_name": "simulationFor_call",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "BviState.refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: complete Call case of compile_correct, not the assembled theorem; preserves all original source premises and result obligations, both tail modes, direct and indirect calls, handler behavior, clock cases, and every non-type-error outcome. The argument, callee, and handler induction hypotheses are exactly the guarded recursive hypotheses from evaluate_ind. BVI refs use the canonical finite-support carrier and same-module unconditional roundtrip witness; DATA refs remain native sparse trees. Inherits the reals_as_rational_cuts assumption through evaluator primitives (SOUNDNESS item 8)."
   }
 ]

@@ -811,7 +811,9 @@ theorem evaluateIf_projection {C F : Type} (state : DataSem.State C F) (name : N
   obtain ⟨yesTest, noTest⟩ := destBool_tests value condition dataDecoded
   cases condition <;> simp [DataSem.evaluate, read, yesTest, noTest]
 
-private theorem correctOutcome_weaken_start {C F : Type} (res : BviSem.BviResult)
+/-- Flapjack infrastructure: lower the initial fresh-variable bound in the
+continuing result invariant. -/
+theorem correctOutcome_weaken_start {C F : Type} (res : BviSem.BviResult)
     (t1 t2 : DataSem.State C F) (n n' next : Nat) (corr live names : List Nat)
     (env : List BvlSem.Value) (tail : Bool)
     (pres : Option (Result (List DataSem.Value) DataSem.Value)) (ls : Option Nat)
