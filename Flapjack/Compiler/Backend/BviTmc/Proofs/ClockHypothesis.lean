@@ -89,33 +89,6 @@ theorem worker_body_from_smaller_clock {C F : Type} (loc dest : Nat) (source : B
   have work := (post.2 dest code).2 rfl ptr initial hole notFinal ptrAt
   simpa [rewrite] using work
 
-/-- Flapjack infrastructure: all call-block simulation conclusions follow from
-the singleton simulation at smaller clocks. Same-clock structural induction
-and the full expression simulation are still separate obligations. -/
-theorem evaluate_cb_from_smaller_clock {C F : Type} (loc : Nat) (cb : CallBlock)
-    (source : BviState (Nat × C) F) (target : BviState C F) (env1 env2 : List Value)
-    (opt : Bool) (f : HolFiniteMapExact Nat Nat) (result : BviResult) (final : BviState (Nat × C) F)
-    (run : evaluate [callBlockToBvi loc cb] env1 source = (result, final))
-    (notTypeError : result ≠ .err (.abort .typeError)) (environments : envRel opt f env1 env2)
-    (states : stateRel f source target) (wf : wfBlock env1.length cb)
-    (ih : SmallerClockIH (C := C) (F := F) source.clock) :
-    Core [callBlockToBvi loc cb] env2 f target result final ∧
-    ∀ dest, optimisedCode loc dest source.code target.code →
-      (∀ tag left child right, cb = .callBlock tag left child right →
-        Core [wrapperBlockSource tag left child right dest] env2 f target result final) ∧
-      (∀ refs extras slot idx ptr, stateRefRel f source.refs refs →
-        (∃ c, CallBlockEnvironment.allocHoleHasVal f refs extras slot idx c) →
-        target.refs.domain ⊆ refs.domain → holEl slot extras = .refPtr false ptr →
-        CallBlockAuxFrame.AuxCore cb dest env2 { target with refs := refs } f target.refs extras slot idx ptr result final) ∧
-      (opt = true → ∀ ptr,
-        (∃ c, holeHasVal f env1 env2 target.refs c) → holeNotFinalised target.refs ptr →
-        holEl env1.length env2 = .refPtr false ptr →
-        IfWorker.WorkerCore (workerBlockSource cb dest env1.length (env1.length + 1))
-          env1 env2 f target ptr result final) := by
-  exact evaluate_cb_simulation loc cb source target env1 env2 opt f result final run notTypeError environments
-    states wf (ordinary_body_from_smaller_clock loc source target env1 env2 f states ih)
-    (fun dest => worker_body_from_smaller_clock loc dest source env1 env2 f ih)
-
 /-- Flapjack infrastructure: ordinary simulation of an extracted expression
 from the binding-list induction and the smaller-clock singleton induction. -/
 theorem evaluate_extracted_ordinary_from_smaller_clock {C F : Type} (loc : Nat) (cb : CallBlock)
