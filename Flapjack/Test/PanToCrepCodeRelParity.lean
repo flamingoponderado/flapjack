@@ -344,13 +344,13 @@ def makeFuncsGuard : Bool :=
 
 /-- Two exception declarations used to exercise the exact HOL
     `get_eids_imp_excp_rel` port (`excp_rel` domain plus code injectivity). -/
-def eidsDecls : List (Decl (BitVec 8)) :=
-  [Decl.exnDecl "E" Shape.one, Decl.exnDecl "F" Shape.one]
+def eidsDecls : List (DeclHOL 8) :=
+  [.exnDecl (ml "E") .one, .exnDecl (ml "F") .one]
 
 def getEidsGuard : Bool :=
-  (FLOOKUP (panToCrepGetEidsFromDeclsHOL eidsDecls) "E" ==
+  ((getEidsFromDeclsHOL eidsDecls).lookup (ml "E") ==
     some (0 : BitVec 8)) &&
-  (FLOOKUP (panToCrepGetEidsFromDeclsHOL eidsDecls) "F" ==
+  ((getEidsFromDeclsHOL eidsDecls).lookup (ml "F") ==
     some (1 : BitVec 8))
 
 #guard getEidsGuard

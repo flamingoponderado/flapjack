@@ -76611,14 +76611,6 @@
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
-    "hol_name": "mk_ctxt_def",
-    "lean_path": "Flapjack/Pancake/PanToCrep.lean",
-    "lean_name": "panToCrepMkCtxtHOL",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-4ac.2.11): FLAPJACK-SPECIFIC / not an exact HOL port, @[hol] tag withdrawn. HOL mk_ctxt_def (pan_to_crepScript.sml:310-316) is `mk_ctxt vmap fs m (es:eid |-> 'a word) = <|vars := vmap; funcs := fs; eids := es; vmax := m|>` over context fields vars : varname |-> shape # num list, funcs : funname |-> ((varname # shape) list # shape), eids : eid |-> 'a word, vmax : num, where varname/funname/eid are mlstring (panLangScript.sml:24-28) and shape.named is mlstring (panLangScript.sml:36-38). Lean panToCrepMkCtxtHOL instead takes production VarName/FunName/ExceptionId = String keys, the production Shape (named : String) in the vars/funcs values, a generic α for the eids value instead of HOL's word-length-indexed 'a word, and the extensional FiniteMap α β := α → Option β encoding of fmap rather than the literal HOL carrier. The names_as_string qualifier cannot authorize the Shape value carrier or the changed α/'a word eids type, and no NameRanged byte witness applies because this constructor produces a context, not a name. The exact MlString/ShapeHOL/BitVec context carrier replacement is now landed as PanToCrepContextExact (bead flapjack-4ac.2.1.1) and its exact constructor mkCtxtExactHOL is tagged (bead flapjack-4ac.2.11); the exact compile_def consumer remains tracked by flapjack-pxn.18.3.5.8.13 (under flapjack-pxn.18.3.5.8, parent flapjack-pxn.18.3.5.7.2). The executable routing of the production context construction remains that Flapjack-specific definition."
-  },
-  {
-    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
     "hol_name": "ret_hdl_def",
     "lean_path": "Flapjack/Pancake/PanToCrep.lean",
     "lean_name": "retHdlHOL",
@@ -76656,14 +76648,6 @@
     "lean_name": "loadMemOpHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds6 (source comparison, bead flapjack-4ac.1.40): HOL load_op (cakeml/pancake/panLangScript.sml:300-305) maps Op8->Load8, Op16->Load16, OpW->Load, Op32->Load32. loadMemOpHOL matches clause-for-clause; OpSize is the tagged exact opsize port (constructors op8/op16/opW/op32) and the codomain is WordMemOp, the tagged asm$memop carrier (HolMemop) [flapjack-pxgp.20, 2026-09-29: the duplicate CrepMemOp datatype is removed; every Crep/Loop/Word memop now uses the single tagged asm$memop carrier WordMemOp (HolMemop), moved to Flapjack/MemOp.lean], the representation already accepted for shMem in the reviewed HolLoopProg entry. The executable compileProg calls loadMemOpHOL directly, so the production path is routed, not merely bridged. Direct HOL-EVAL rows load_op8/16/w/32 in scripts/hol-probes/pan_lang_load_store_op_probe.out are replayed in Flapjack/Test/PanLangLoadStoreOpParity.lean. store_op is the analogous tagged port storeMemOpHOL (flapjack-4ac.1.41)."
-  },
-  {
-    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
-    "hol_name": "make_funcs_def",
-    "lean_path": "Flapjack/Pancake/PanToCrep/Compile.lean",
-    "lean_name": "makeFuncsHOL",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-4ac.2.17): FLAPJACK-SPECIFIC / not an exact HOL port, @[hol] tag withdrawn. HOL make_funcs_def (pan_to_crepScript.sml:366-373) is `make_funcs prog = alist_to_fmap (MAP3 (λx y z. (x,y,z)) (MAP FST prog) (MAP (FST o SND) prog) (MAP (SND o SND o SND) prog))` keyed by funname = mlstring and valued by (varname # shape) list # shape, with alist_to_fmap a right fold of FUPDATE (first duplicate name wins). Lean makeFuncsHOL keys by FunName = String and stores production VarName = String and Shape (named : StructName = String), not HOL's mlstring carriers; its input also mentions the production Prog α body carrier even though make_funcs ignores bodies; and its result is a FiniteMap function (raw α → Option β, admitting infinite support) rather than HOL's fmap, built by FUPDATE_LIST FEMPTY over the reversed association list. The names_as_string qualifier cannot authorize the Shape and Prog carriers or the FiniteMap-vs-fmap representation, and no NameRanged byte witness applies because the output is a finite map of function signatures, not a name. The theorem-map make_funcs_def -> crepToLoopMakeFuncsHOL entry is the exact port of the different crep_to_loopScript.sml declaration, not this one. Direct HOL-EVAL rows make_funcs_empty_params/make_funcs_param_entry/make_funcs_absent/make_funcs_duplicate_first_wins are in scripts/hol-probes/crep_make_funcs_probe.out and exercised by makeFuncsGuard (Flapjack/Test/PanToCrepCodeRelParity.lean) and makeFuncsOracle (Flapjack/Test/CompileToCrepeParity.lean). The faithful exact-carrier port is tracked by flapjack-pxn.18.3.5.8 (parent flapjack-pxn.18.3.5.7.2)."
   },
   {
     "hol_path": "cakeml/pancake/panLangScript.sml",
@@ -93630,14 +93614,6 @@
     "lean_name": "FUPDATE_LIST_HOL_reverse_apply_eq_lookup",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific finite-map support: applying the HOL-equality FUPDATE_LIST_HOL fold over a reversed association list equals List.lookup on the original list (first occurrence wins), matching HOL alist_to_fmap/ALOOKUP. Not a standalone HOL declaration."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
-    "lean_name": "makeFuncsHOL_lookup_of_lookup",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific lookup link for HOL make_funcs: a source function entry is visible in the make_funcs finite map with its parameter list and return shape. HOL discharges this inside mk_ctxt_code_imp_code_rel; not a standalone HOL declaration."
   },
   {
     "hol_path": null,

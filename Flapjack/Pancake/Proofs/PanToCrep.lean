@@ -1121,25 +1121,6 @@ theorem lookup_map_preserveFst [BEq α] [LawfulBEq α] (functions : List (α × 
       · simp [h]
       · simp [h, ih]
 
-/-- Flapjack-specific lookup link for HOL `make_funcs`: a source function entry
-    (name, params, body, return) is visible in the `make_funcs` finite map with
-    the parameter list and return shape (the body is dropped). -/
-theorem makeFuncsHOL_lookup_of_lookup
-    (functions : List (FunName × List (VarName × Shape) × Prog α × Shape))
-    (start : FunName) (vshs : List (VarName × Shape)) (prog : Prog α) (rshape : Shape)
-    (h : List.lookup start functions = some (vshs, (prog, rshape))) :
-    FLOOKUP (makeFuncsHOL functions) start = some (vshs, rshape) := by
-  have hrewrite : FLOOKUP (makeFuncsHOL functions) start =
-      List.lookup start
-        (functions.map (fun entry => (entry.1, (entry.2.1, entry.2.2.2)))) := by
-    rw [makeFuncsHOL]
-    exact FLOOKUP_FUPDATE_LIST_reverse_eq_lookup _ _
-  rw [hrewrite, lookup_map_preserveFst
-    (project := fun value : List (VarName × Shape) × Prog α × Shape =>
-      (value.1, value.2.2))]
-  rw [h]
-  rfl
-
 /-- `state_rel` records that source and target ffi states coincide; installing the
     same `call_FFI` result on both therefore preserves the whole relation (the
     other components are untouched, so they reduce definitionally). -/

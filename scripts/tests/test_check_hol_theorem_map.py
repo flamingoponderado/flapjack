@@ -838,6 +838,30 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             inventory,
         )
 
+    def test_make_funcs_and_mk_ctxt_mismatches_are_retired(self):
+        # The String/Shape production makeFuncsHOL and panToCrepMkCtxtHOL
+        # mirrors are gone; HOL make_funcs_def and mk_ctxt_def stay mapped by
+        # the tagged exact-carrier makeFuncsExactHOL and mkCtxtExactHOL.
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        self.assertNotIn(
+            ("Flapjack/Pancake/PanToCrep/Compile.lean", "makeFuncsHOL"), inventory
+        )
+        self.assertNotIn(
+            ("Flapjack/Pancake/PanToCrep.lean", "panToCrepMkCtxtHOL"), inventory
+        )
+        tagged = MAP["tagged_declarations"]()
+        self.assertIn(
+            ("Flapjack/Pancake/PanToCrep/ContextExact.lean", "makeFuncsExactHOL"),
+            tagged,
+        )
+        self.assertIn(
+            ("Flapjack/Pancake/PanToCrep/ContextExact.lean", "mkCtxtExactHOL"),
+            tagged,
+        )
+
     def test_removed_vmax_analogues_are_not_in_inventory(self):
         inventory = MAP["build_inventory"]()
         self.assertFalse(any(

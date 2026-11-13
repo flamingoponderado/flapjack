@@ -41,32 +41,6 @@ structure PanToCrepHOLContext (α : Type) where
   eids : FiniteMap ExceptionId α
   vmax : Nat
 
-/-! FLAPJACK-SPECIFIC (not an exact HOL port). Source-reviewed decision
-    (`flapjack-dlc.26`): the `@[hol "cakeml/pancake/pan_to_crepScript.sml"
-    "mk_ctxt_def"]` tag stays withdrawn as a documented carrier mismatch.
-    HOL `mk_ctxt_def` (`cakeml/pancake/pan_to_crepScript.sml:310-316`) stores
-    `vars : varname |-> shape # num list`,
-    `funcs : funname |-> ((varname # shape) list # shape)`,
-    `eids : eid |-> 'a word`, `vmax : num`. There `varname`/`funname`/`eid`
-    are `mlstring` (`panLangScript.sml:24-28`) and `shape` carries `stcname =
-    mlstring` names (`panLangScript.sml:36-38`). This constructor instead takes
-    production `VarName`/`FunName`/`ExceptionId` = `String` keys, the
-    production `Shape` (whose `named` field is `String`) in the `vars`/`funcs`
-    values, a generic `α` for the `eids` value rather than HOL's
-    word-length-indexed `'a word`, and the extensional
-    `FiniteMap α β := α → Option β` encoding of HOL's `fmap` (not the literal
-    HOL carrier). The `names_as_string` qualifier cannot authorize the `Shape`
-    value carrier or the changed `α`/`'a word` quantified eids type, and no
-    `NameRanged` byte witness applies because this constructor produces a
-    context, not a name. The exact MlString/`ShapeHOL`/`BitVec width` context
-    carrier replacement is tracked by `flapjack-4ac.2.1.1`; the exact
-    `compile_def` consumer is separately tracked by
-    `flapjack-pxn.18.3.5.8.13`. -/
-def panToCrepMkCtxtHOL (vars : FiniteMap VarName (Shape × List Nat))
-    (funcs : FiniteMap FunName (List (VarName × Shape) × Shape))
-    (vmax : Nat) (eids : FiniteMap ExceptionId α) : PanToCrepHOLContext α :=
-  { vars, funcs, eids, vmax }
-
 /-- HOL infers `cexp_heads_def` as `α list list -> α list option` because its
     body only inspects list structure; no `crepLang$exp` constructors constrain
     the element type. The production compiler uses this polymorphic definition
