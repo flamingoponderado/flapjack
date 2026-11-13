@@ -24,7 +24,7 @@ private theorem wordValues_projection (values : List DataSem.Value) :
 @[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "v_to_bytes_eq"]
 theorem valueToBytes_projection (value : DataSem.Value) :
     BvlSem.valueToBytes (dataToBviValue value) = DataSem.valueToBytes value := by
-  simp only [BvlSem.valueToBytes, DataSem.valueToBytes, ← dataToBviValue_valueToList]
+  simp only [BvlSem.valueToBytes, DataSem.valueToBytes, dataToBviValue_valueToList]
   cases DataSem.valueToList value with
   | none => rfl
   | some values => simpa using byteNumbers_projection values
@@ -33,7 +33,7 @@ theorem valueToBytes_projection (value : DataSem.Value) :
 @[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "v_to_words_eq"]
 theorem valueToWords_projection (value : DataSem.Value) :
     BvlSem.valueToWords (dataToBviValue value) = DataSem.valueToWords value := by
-  simp only [BvlSem.valueToWords, DataSem.valueToWords, ← dataToBviValue_valueToList]
+  simp only [BvlSem.valueToWords, DataSem.valueToWords, dataToBviValue_valueToList]
   cases DataSem.valueToList value with
   | none => rfl
   | some values => simpa using wordValues_projection values

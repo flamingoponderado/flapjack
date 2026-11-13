@@ -32,8 +32,8 @@ theorem doApp_listAppend {C F : Type} (args : List DataSem.Value)
       cases rest with
       | cons c rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
       | nil =>
-        have pa := (dataToBviValue_valueToList a).symm
-        have pb := (dataToBviValue_valueToList b).symm
+        have pa := dataToBviValue_valueToList a
+        have pb := dataToBviValue_valueToList b
         cases ha : DataSem.valueToList a with
         | none =>
           simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock, pa, ha] at run
@@ -79,7 +79,7 @@ theorem doApp_fromList {C F : Type} (tag : Nat) (args : List DataSem.Value)
       cases rest with
       | cons a rest => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
       | nil =>
-        have projected := (dataToBviValue_valueToList list).symm
+        have projected := dataToBviValue_valueToList list
         cases decoded : DataSem.valueToList list with
         | none =>
           cases length <;> simp [dataToBviValue, BviSem.doApp, BviSem.doAppFallback,

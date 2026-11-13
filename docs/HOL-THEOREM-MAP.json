@@ -423,6 +423,22 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "v_to_list_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Value.lean",
+    "lean_name": "dataToBviValue_valueToList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary DATA value, both malformed and successful list decoding, exact BVL-to-DATA Option.map equality direction and timestamp-erasing value projection match."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "isBool_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/ApplyBool.lean",
+    "lean_name": "isBool_projection",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary DATA value and Boolean, DATA Boolean test iff equality of the BVL Boolean value and projected DATA value, including nonempty and malformed cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "data_to_bvi_word_eq",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/ValueProjection.lean",
     "lean_name": "dataToBviWordMap",

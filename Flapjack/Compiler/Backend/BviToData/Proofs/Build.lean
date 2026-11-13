@@ -64,7 +64,7 @@ theorem dataToBviValue_listToValue_append (front suffix : List DataSem.Value)
     dataToBviValue (DataSem.listToValue timestamp tail front) =
       dataToBviValue (DataSem.listToValue timestamp (.block 0 nilTag []) (front ++ suffix)) := by
   have projectedDecode : BvlSem.valueToList (dataToBviValue tail) = some (suffix.map dataToBviValue) := by
-    rw [← dataToBviValue_valueToList, decoded]
+    rw [dataToBviValue_valueToList, decoded]
     rfl
   have tailEq := (bvlList_reconstruct (dataToBviValue tail) (suffix.map dataToBviValue) projectedDecode).symm
   induction front generalizing timestamp with

@@ -37,10 +37,12 @@ def dataToBviRef : BvlSem.Ref DataSem.Value → BvlSem.Ref BvlSem.Value
   | .mutBlock tag finished left current right =>
       .mutBlock tag finished (left.map dataToBviValue) (dataToBviValue current) (right.map dataToBviValue)
 
-/-- Decoding a data-language list and then erasing timestamps agrees with
-decoding its BVI projection. This is Flapjack proof infrastructure. -/
+/-- Decoding a BVI projection agrees with decoding the DATA value and then
+erasing timestamps. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "v_to_list_eq"]
 theorem dataToBviValue_valueToList (value : DataSem.Value) :
-    (DataSem.valueToList value).map (List.map dataToBviValue) = BvlSem.valueToList (dataToBviValue value) := by
+    BvlSem.valueToList (dataToBviValue value) = (DataSem.valueToList value).map (List.map dataToBviValue) := by
+  symm
   cases value with
   | number n => simp [DataSem.valueToList, BvlSem.valueToList, dataToBviValue]
   | word64 w => simp [DataSem.valueToList, BvlSem.valueToList, dataToBviValue]
@@ -55,7 +57,7 @@ theorem dataToBviValue_valueToList (value : DataSem.Value) :
       | cons tail rest =>
         cases rest with
         | nil =>
-          have ih := dataToBviValue_valueToList tail
+          have ih := (dataToBviValue_valueToList tail).symm
           by_cases isCons : tag = BackendCommon.consTag
           · simp only [DataSem.valueToList, BvlSem.valueToList, dataToBviValue,
               List.map_cons, List.map_nil, isCons, ↓reduceIte]
