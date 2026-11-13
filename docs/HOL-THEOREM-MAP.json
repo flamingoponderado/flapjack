@@ -298,6 +298,38 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
+    "hol_name": "compile_each_good_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean",
+    "lean_name": "compileEach_goodCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the original conjunction of source compilation, complete input-body labels within an arbitrary set, and the entire strict fresh-label interval within that set implies complete output-body closure. All carriers and both compiler branches agree."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
+    "hol_name": "compile_prog_good_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean",
+    "lean_name": "compileProg_goodCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the original conjunction of source program compilation, complete input-body labels within an arbitrary set, and the entire strict fresh-label interval within that set implies complete output-body closure for either enabled setting."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
+    "hol_name": "get_code_labels_rewrite",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean",
+    "lean_name": "rewrite_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: all original binders and sole rewrite equation retain the full subset of rewritten-expression labels in worker INSERT source-expression labels. Recursive condition/let/tick cases, fallback and successful candidate dispatch were compared."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
+    "hol_name": "get_code_labels_compile_exp",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean",
+    "lean_name": "compileExp_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the sole successful source compilation equation retains the complete wrapper-label union worker-label subset of worker INSERT source-expression labels, for arbitrary location, counter, arity and expression."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
     "hol_name": "get_code_labels_let_wrap",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean",
     "lean_name": "letWrap_getCodeLabels",

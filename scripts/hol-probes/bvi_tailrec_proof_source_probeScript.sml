@@ -27,3 +27,7 @@ val _ = show "compile_each_labels_typed" bvi_tailrecProofTheory.compile_each_lab
 val _ = show "compile_each_keeps_names_typed" bvi_tailrecProofTheory.compile_each_keeps_names;
 val _ = show "compile_prog_keeps_names_typed" bvi_tailrecProofTheory.compile_prog_keeps_names;
 val _ = show "get_code_labels_let_wrap_typed" bvi_tailrecProofTheory.get_code_labels_let_wrap;
+val _ = show "get_code_labels_rewrite_typed" bvi_tailrecProofTheory.get_code_labels_rewrite;
+val _ = show "get_code_labels_compile_exp_typed" bvi_tailrecProofTheory.get_code_labels_compile_exp;
+val _ = show "compile_each_good_code_labels_typed" bvi_tailrecProofTheory.compile_each_good_code_labels;
+val _ = show "compile_prog_good_code_labels_typed" bvi_tailrecProofTheory.compile_prog_good_code_labels;
