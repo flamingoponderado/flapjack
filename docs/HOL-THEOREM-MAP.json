@@ -161,6 +161,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_list_code_labels_domain",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AuxNameRange.lean",
+    "lean_name": "compileList_codeLabelsDomain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the freshly captured typed HOL theorem: the input program and auxiliary app_list carriers, compilation equality premise, counter bound and full label-set equality are unchanged. Both IMAGE and the bounded generated-label set are rendered as equivalent existential set comprehensions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "aux_code_installed_sublist",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AuxCode.lean",
     "lean_name": "auxCodeInstalled_sublist",

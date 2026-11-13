@@ -261,6 +261,86 @@ theorem compileProgramsSource_nameRange (start : Nat) (programs : List (Nat × N
       · right
         exact ⟨index, by omega, upper, equal⟩
 
+/-- Input-label inclusion, factored out of the original HOL list induction. -/
+private theorem compileProgramsSource_inputCoverage (start : Nat) (programs : List (Nat × Nat × Bvl.Exp)) :
+    ∀ input ∈ programs.map Prod.fst,
+      bvlNumStubs + bvlToBviNamespaces * input ∈
+        (appListAppend (compileProgramsSource start programs).1).map Prod.fst := by
+  induction programs generalizing start with
+  | nil => simp
+  | cons entry rest ih =>
+    rcases entry with ⟨key, arity, body⟩
+    rcases first : compileSingSource start body with ⟨converted, aux, next⟩
+    rcases remaining : compileProgramsSource next rest with ⟨other, finish⟩
+    have tail := ih next
+    simp only [remaining] at tail
+    intro input membership
+    simp only [List.map_cons, List.mem_cons] at membership
+    simp only [compileProgramsSource, compileSingleSource, first, remaining,
+      appListAppend_smartAppend, List.map_append, List.mem_append]
+    rcases membership with rfl | membership
+    · left
+      simp [appListAppend, appendAux]
+    · right
+      exact tail input membership
+
+/-- Fresh-label inclusion, factored out of the original HOL list induction. -/
+private theorem compileProgramsSource_freshCoverage (start : Nat) (programs : List (Nat × Nat × Bvl.Exp)) :
+    ∀ k, start ≤ k → k < (compileProgramsSource start programs).2 →
+      bvlNumStubs + bvlToBviNamespaces * k + 1 ∈
+        (appListAppend (compileProgramsSource start programs).1).map Prod.fst := by
+  induction programs generalizing start with
+  | nil => simp [compileProgramsSource, appListAppend, appendAux]
+  | cons entry rest ih =>
+    rcases entry with ⟨key, arity, body⟩
+    rcases first : compileSingSource start body with ⟨converted, aux, next⟩
+    rcases remaining : compileProgramsSource next rest with ⟨other, finish⟩
+    have tail := ih next
+    simp only [remaining] at tail
+    intro k lower upper
+    simp only [compileProgramsSource, compileSingleSource, first, remaining] at upper ⊢
+    simp only [appListAppend_smartAppend, List.map_append, List.mem_append]
+    by_cases before : k < next
+    · left
+      right
+      have compiledBody : compileListSource start [body] = ([converted], aux, next) := by
+        simp only [compileListSource, first]
+        cases aux <;> rfl
+      have present := compileExps_auxContains start [body] [converted] aux next compiledBody
+      simpa [Nat.mul_comm, Nat.add_assoc] using (present ⟨k, rfl, lower, before⟩)
+    · right
+      exact tail k (by omega) upper
+
+/-- Compiling a list of functions preserves the original exact description
+of its generated label set and the fresh-counter bound. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_list_code_labels_domain"]
+theorem compileList_codeLabelsDomain (n : Nat) (p : List (Nat × Nat × Bvl.Exp))
+    (code : AppList (Nat × Nat × Bvi.Exp)) (m : Nat)
+    (compiled : compileProgramsSource n p = (code, m)) :
+    n ≤ m ∧
+      {x : Nat | x ∈ (appListAppend code).map Prod.fst} =
+        {x : Nat | ∃ k, k ∈ p.map Prod.fst ∧ x = bvlNumStubs + k * bvlToBviNamespaces} ∪
+        {x : Nat | ∃ k, x = bvlNumStubs + k * bvlToBviNamespaces + 1 ∧ n ≤ k ∧ k < m} := by
+  have upper := compileProgramsSource_nameRange n p
+  have inputs := compileProgramsSource_inputCoverage n p
+  have fresh := compileProgramsSource_freshCoverage n p
+  rw [compiled] at upper inputs fresh
+  simp only at upper inputs fresh
+  refine ⟨upper.1, ?_⟩
+  ext x
+  constructor
+  · intro member
+    rcases upper.2 x member with ⟨k, present, equal⟩ | ⟨k, lower, bound, equal⟩
+    · left
+      exact ⟨k, present, by simpa [Nat.mul_comm] using equal⟩
+    · right
+      exact ⟨k, by simpa [Nat.mul_comm] using equal, lower, bound⟩
+  · rintro (⟨k, present, equal⟩ | ⟨k, equal, lower, bound⟩)
+    · subst x
+      simpa [Nat.mul_comm] using inputs k present
+    · subst x
+      simpa [Nat.mul_comm] using fresh k lower bound
+
 /-- Incremental compilation does not decrease its fresh-name counter. -/
 theorem compileIncSource_counter_mono (start : Nat) (programs : List (Nat × Nat × Bvl.Exp)) :
     start ≤ (compileIncSource start programs).1 := by
