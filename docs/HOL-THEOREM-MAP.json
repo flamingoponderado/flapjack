@@ -338,6 +338,30 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+    "hol_name": "rewrite_wrapper_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeLabels.lean",
+    "lean_name": "rewriteWrapper_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL proof replay and source review: arbitrary successful source wrapper rewriting retains the full output-label subset of original labels union the worker singleton, with the sole original equation and unchanged conditional, let, tick and extraction cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+    "hol_name": "rewrite_worker_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeLabels.lean",
+    "lean_name": "rewriteWorker_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL proof replay and source review: the unconditional bound retains arbitrary worker parameters and all input expressions, including both successful extraction branches and all fill-hole fallbacks."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+    "hol_name": "compile_exp_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeLabels.lean",
+    "lean_name": "compileExp_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL proof replay and source review: the sole original successful compilation equation implies both ordered wrapper and worker label bounds, with the original worker pointer and index settings."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
     "hol_name": "bvi_to_cb_aux_code_labels_lemma",
     "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeLabels.lean",
     "lean_name": "extraction_getCodeLabels",

@@ -139,4 +139,64 @@ theorem toBlock_getCodeLabels (n loc : Nat) (e : Bvi.Exp) (bs : List Bvi.Exp) (c
 
 
 
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "rewrite_wrapper_code_labels"]
+theorem rewriteWrapper_getCodeLabels (loc next n : Nat) (e y : Bvi.Exp)
+    (h : rewriteWrapperSource loc next n e = some y) :
+    getCodeLabels y ⊆ getCodeLabels e ∪ {next} := by
+  fun_induction rewriteWrapperSource loc next n e generalizing y <;>
+    simp_all [getCodeLabels, Set.subset_def]
+  case case5 =>
+    rename_i n op xs bs tag left child right run
+    have bound := toBlock_getCodeLabels n loc (.op op xs) bs (.callBlock tag left child right) run
+    simp only [← getCodeLabelsList_eq] at bound
+    subst y
+    simp_all [getCodeLabels, wrapper_getCodeLabels, Set.subset_def]
+  case case3 =>
+    obtain ⟨w, run, rfl⟩ := h
+    simp_all [getCodeLabels]
+    all_goals grind
+  case case4 =>
+    obtain ⟨w, run, rfl⟩ := h
+    simp_all [getCodeLabels]
+  case case2 =>
+    rename_i n cond yes no yopt zopt decision ihyes ihno
+    subst y
+    cases hy : rewriteWrapperSource loc next n yes <;>
+      cases hz : rewriteWrapperSource loc next n no <;>
+      simp_all [getCodeLabels]
+    all_goals grind
+
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "rewrite_worker_code_labels"]
+theorem rewriteWorker_getCodeLabels (loc next ptr idx n : Nat) (e : Bvi.Exp) :
+    getCodeLabels (rewriteWorkerSource loc next ptr idx n e) ⊆ getCodeLabels e ∪ {next} := by
+  fun_induction rewriteWorkerSource loc next ptr idx n e <;>
+    simp_all [getCodeLabels, getCodeLabelsList, fillHoleSource, updateConsSource,
+      ClosLang.assignGetCodeLabel, Set.subset_def]
+  case case5 =>
+    rename_i ptr idx n op xs bs cb run
+    have bound := toBlock_getCodeLabels n loc (.op op xs) bs cb run
+    simp only [← getCodeLabelsList_eq] at bound
+    simp_all [worker_getCodeLabels, getCodeLabels, ClosLang.assignGetCodeLabel, Set.subset_def]
+    all_goals grind
+  case case7 =>
+    rename_i ptr idx n ticks dest args handler bs cb run
+    have bound := toBlock_getCodeLabels n loc (.call ticks dest args handler) bs cb run
+    simp only [← getCodeLabelsList_eq] at bound
+    simp_all [worker_getCodeLabels, Set.subset_def]
+    all_goals grind
+  all_goals grind
+
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "compile_exp_code_labels"]
+theorem compileExp_getCodeLabels (loc next arity : Nat) (e wrapper worker : Bvi.Exp)
+    (run : compileExpSource loc next arity e = some (wrapper, worker)) :
+    getCodeLabels wrapper ⊆ getCodeLabels e ∪ {next} ∧
+    getCodeLabels worker ⊆ getCodeLabels e ∪ {next} := by
+  cases hw : rewriteWrapperSource loc next arity e with
+  | none => simp [compileExpSource, hw] at run
+  | some w =>
+    simp [compileExpSource, hw] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact ⟨rewriteWrapper_getCodeLabels loc next arity e w hw,
+      rewriteWorker_getCodeLabels loc next arity (arity + 1) arity e⟩
+
 end Flapjack.Compiler.Backend.BviTmc.Proofs
