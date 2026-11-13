@@ -123,28 +123,4 @@ theorem evaluateVar_nonTail {C F : Type} (index n : Nat) (names live : List Nat)
       · simp [compileSing, nameAt]
       · simp [DataSem.evaluate]
 
-/-- The successful tail variable case returns the corresponding data value,
-preserving the state relation, stack, and handler after local-state flushing.
-This factored case is untagged pending assembly with the full source invariant. -/
-theorem evaluateVar_tail {C F : Type} (index n : Nat) (names live : List Nat)
-    (env : List BvlSem.Value) (source : BviSem.BviState C F) (target : DataSem.State C F)
-    (value : BvlSem.Value) (related : stateRel source target)
-    (varRel : DataProps.varCorr env names (sptMap dataToBviValue target.locals))
-    (run : BviSem.evaluate [.var index] env source = (.val [value], source)) :
-    ∃ name dataValue,
-      compileSing n names true live (.var index) = (.return [name], n, n + 1) ∧
-      DataSem.evaluate (.return [name]) target =
-        (some (.val [dataValue]), DataSem.flushState false target) ∧
-      dataToBviValue dataValue = value ∧ stateRel source (DataSem.flushState false target) ∧
-      (DataSem.flushState false target).stack = target.stack ∧
-      (DataSem.flushState false target).handler = target.handler := by
-  obtain ⟨name, dataValue, nameAt, read, projected, _, _, _⟩ :=
-    evaluateVar_nonTail index n names live env source target value related varRel run
-  refine ⟨name, dataValue, ?_, ?_, projected, ?_, ?_, ?_⟩
-  · simp [compileSing, nameAt]
-  · simp [DataSem.evaluate, DataSem.getVars, read]
-  · simpa [stateRel, DataSem.flushState] using related
-  · simp [DataSem.flushState]
-  · simp [DataSem.flushState]
-
 end Flapjack.Compiler.Backend.BviToData
