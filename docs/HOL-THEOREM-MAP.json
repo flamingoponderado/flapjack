@@ -134706,5 +134706,60 @@
     "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "singleSymPHOL",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "singleSymP_def",
     "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out singleSymP_def_typed: HOL singleSymP_def (cmlPtreeConversionScript.sml:478) gives singleSymP P [pt] = OPTION_BIND (OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destSymbolT) (λs. OPTION_IGNORE_BIND (OPTION_GUARD (P s)) (SOME (Short s))) and singleSymP _ _ = NONE, with P :mlstring -> bool, the terminal type fixed to token, the nonterminal type β and location type γ generic, and result ((α, mlstring) id) option. Lean's singleSymPHOL keeps the bind chain, the P guard (rendered as if P s then some (Short s) else none, i.e. OPTION_GUARD followed by return) and the wildcard NONE. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "ptreeUQTyopHOL",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "ptree_UQTyop_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cml_ptree_conversion_source_probe.out ptree_UQTyop_def_typed: HOL ptree_UQTyop (Lf _) = NONE and, for Nd (nt, args) with nt :(MMLnonT + num) # α, if FST nt ≠ mkNT nUQTyOp then NONE else case args of [] => NONE | [pt] => OPTION_BIND (destLf pt) (λlf. OPTION_BIND (destTOK lf) (λtk. OPTION_CHOICE (destSymbolT tk) (destAlphaT tk))) | pt::v6::v7 => NONE, result mlstring option. The terminal type is token, the nonterminal type MMLnonT and the location type α is generic. Lean's ptreeUQTyopHOL keeps the leaf NONE, the rule guard, all three list clauses and the two binds with OPTION_CHOICE (rendered by <|>); destTOK is the reviewed tokenUtils symbol destructor destTokSym and destLf the reviewed generic destructor. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "ptreeTyvarNHOL",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "ptree_TyvarN_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cml_ptree_conversion_source_probe.out ptree_TyvarN_def_typed: HOL ptree_TyvarN (Lf _) = NONE and, for Nd (nt, args), if FST nt ≠ mkNT nTyvarN then NONE else case args of [] => NONE | [tyv] => destTyvarPT tyv | tyv::v6::v7 => NONE, result mlstring option, generic in the location type α. Lean's ptreeTyvarNHOL keeps every clause and calls the reviewed destTyvarPT. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "ptreeTyopHOL",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "ptree_Tyop_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cml_ptree_conversion_source_probe.out ptree_Tyop_def_typed: HOL ptree_Tyop (Lf _) = NONE and, for Nd (nt, args), if FST nt ≠ mkNT nTyOp then NONE else case args of [] => NONE | [pt] => OPTION_CHOICE (OPTION_BIND (OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destLongidT) (λ(xs,s). SOME (Long_Short xs s))) (OPTION_BIND (ptree_UQTyop pt) (λnm. SOME (Short nm))) | pt::v6::v7 => NONE, result (mlstring, mlstring) id option, generic in the location type α. Lean's ptreeTyopHOL keeps the guard, the three clauses, the LongidT branch before the UQTyop branch, and the reviewed longShort/ptreeUQTyopHOL. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "ptreeVHOL",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "ptree_V_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cml_ptree_conversion_source_probe.out ptree_V_def_typed: HOL ptree_V (Lf _) = NONE and, for Nd (nt, subs), OPTION_IGNORE_BIND (OPTION_GUARD (FST nt = mkNT nV)) (case subs of [] => NONE | [pt] => OPTION_BIND (OPTION_BIND (destLf pt) destTOK) (λt. OPTION_CHOICE (destAlphaT t) (destSymbolT t)) | pt::v6::v7 => NONE), result mlstring option, generic in the location type α. Lean's ptreeVHOL renders the OPTION_GUARD as the if rule = mkNT nV test and keeps the three clauses, the bind chain and the OPTION_CHOICE. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "ptreeFQVHOL",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "ptree_FQV_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cml_ptree_conversion_source_probe.out ptree_FQV_def_typed: HOL ptree_FQV (Lf _) = NONE and, for Nd (nt, args), if FST nt ≠ mkNT nFQV then NONE else case args of [] => NONE | [pt] => OPTION_CHOICE (OPTION_MAP Short (ptree_V pt)) (OPTION_BIND (OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destLongidT) (λ(xs,s). SOME (Long_Short xs s))) | pt::v6::v7 => NONE, result (mlstring, mlstring) id option, generic in the location type α. Lean's ptreeFQVHOL keeps the guard, the clauses, OPTION_MAP Short (rendered as map .short) and the LongidT branch. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "ptreeUQConstructorNameHOL",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "ptree_UQConstructorName_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cml_ptree_conversion_source_probe.out ptree_UQConstructorName_def_typed: HOL ptree_UQConstructorName (Lf _) = NONE and, for Nd (nm, args), if FST nm ≠ mkNT nUQConstructorName then NONE else case args of [] => NONE | [pt] => OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destAlphaT | pt::v6::v7 => NONE, result mlstring option, generic in the location type α. Lean's ptreeUQConstructorNameHOL keeps every clause and the two binds with destAlphaT. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "ptreeConstructorNameHOL",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "ptree_ConstructorName_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cml_ptree_conversion_source_probe.out ptree_ConstructorName_def_typed: HOL ptree_ConstructorName ast = case ast of Lf v => NONE | Nd nt args => if FST nt ≠ mkNT nConstructorName then NONE else case args of [] => NONE | [pt] => OPTION_CHOICE (OPTION_BIND (ptree_UQConstructorName pt) (λs. SOME (Short s))) (OPTION_BIND (OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destLongidT) (λ(xs,s). SOME (Long_Short xs s))) | pt::v6::v7 => NONE, result (mlstring, mlstring) id option, generic in the location type α. Lean's ptreeConstructorNameHOL keeps the leaf NONE, the guard, the clauses and both name branches. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "ptreeOpIDHOL",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "ptree_OpID_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cml_ptree_conversion_source_probe.out ptree_OpID_def_typed: HOL ptree_OpID (Lf _) = NONE and, for Nd (nt, subs), if FST nt ≠ mkNT nOpID then NONE else case subs of [] => NONE | [Lf (TK tk, _)] => OPTION_CHOICE (OPTION_CHOICE (OPTION_CHOICE (OPTION_BIND (destAlphaT tk) (λs. ifM (isConstructor (explode s)) (SOME (Con (SOME (Short s)) [])) (SOME (Var (Short s))))) (OPTION_BIND (destSymbolT tk) (λs. ifM (isSymbolicConstructor (explode s)) (SOME (Con (SOME (Short s)) [])) (SOME (Var (Short s)))))) (OPTION_BIND (destLongidT tk) (λ(path,s). ifM (isConstructor (explode s)) (SOME (Con (SOME (Long_Short path s)) [])) (SOME (Var (Long_Short path s)))))) (if tk = StarT then ifM (isSymbolicConstructor \"*\") (SOME (Con (SOME (Short «*»)) [])) (SOME (Var (Short «*»))) else if tk = EqualsT then SOME (Var (Short «=»)) else NONE) | [Lf ((NT v21), v17)] => NONE | Lf v7::v12::v13 => NONE | Nd v8 v9::v3 => NONE, result exp option, generic in the location type α. Lean's ptreeOpIDHOL keeps the guard, the empty and single-token-leaf clauses, the three ifM branches with the reviewed isConstructor/isSymbolicConstructor/explode and the StarT/EqualsT tail; HOL's three explicit wildcard clauses (single NT leaf, and any list of length at least two) are the single Lean `_ => none` clause, which covers exactly the same inputs. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "ptreeEliteralHOL",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "ptree_Eliteral_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cml_ptree_conversion_source_probe.out ptree_Eliteral_def_typed: HOL ptree_Eliteral (Lf _) = NONE and, for Nd (nt, subs), OPTION_IGNORE_BIND (OPTION_GUARD (LENGTH subs = 1 ∧ FST nt = mkNT nEliteral)) (OPTION_BIND (destLf (HD subs)) (λlf. OPTION_BIND (destTOK lf) (λt. OPTION_CHOICE (OPTION_CHOICE (OPTION_CHOICE (OPTION_CHOICE (OPTION_BIND (destIntT t) (λi. SOME (Lit (IntLit i)))) (OPTION_BIND (destCharT t) (λc. SOME (Lit (Char c))))) (OPTION_BIND (destStringT t) (λs. SOME (Lit (StrLit s))))) (OPTION_BIND (destWordT t) (λn. SOME (Lit (Word64 (n2w n)))))) (OPTION_BIND (destFFIT t) (λs. SOME (App (FFI s) [])))))), result exp option, generic in the location type α. Lean's ptreeEliteralHOL renders the guard as the if test and, since the guard forces a one-element list, matches `[pt]` in place of HD; it keeps the bind chain, the four nested OPTION_CHOICE branches in HOL's order and the FFI branch, with n2w rendered by BitVec.ofNat 64. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "ptreeOpHOL",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "ptree_Op_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cml_ptree_conversion_source_probe.out ptree_Op_def_typed: HOL ptree_Op (Lf _) = NONE and, for Nd (nt, subs), the nMultOps branch (tokcheckl subs [StarT] -> Short «*», [AlphaT «mod»] -> Short «mod», [AlphaT «div»] -> Short «div», else singleSymP (validMultSym ∘ explode) subs), the nAddOps/nListOps branches on validAddSym/validListSym, the nRelOps branch OPTION_CHOICE (singleSymP (validRelSym ∘ explode) subs) (OPTION_IGNORE_BIND (OPTION_GUARD (tokcheckl subs [EqualsT])) (SOME (Short «=»))), the nCompOps branch ([SymbolT «:=»] -> Short «:=», [AlphaT «o»] -> Short «o», else NONE) and NONE otherwise, result (α, mlstring) id option with the identifier's module type α and the location type β generic. Lean's ptreeOpHOL keeps every branch in HOL's order, the tokcheckl tests on the same singleton token lists, the singleSymP calls with validMultSym/validAddSym/validListSym/validRelSym composed with explode, and the OPTION_GUARD around the EqualsT branch rendered as the if test. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "ptreeStructNameHOL",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "ptree_StructName_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cml_ptree_conversion_source_probe.out ptree_StructName_def_typed: HOL ptree_StructName (Lf _) = NONE and, for Nd (nm, args), if FST nm ≠ mkNT nStructName then NONE else case args of [] => NONE | [pt] => OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destAlphaT | pt::v6::v7 => NONE, result mlstring option, generic in the location type α. Lean's ptreeStructNameHOL keeps every clause. No premise added."
   }
 ]

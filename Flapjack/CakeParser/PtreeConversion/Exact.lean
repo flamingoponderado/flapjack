@@ -68,12 +68,210 @@ def tokchecklHOL {α β γ : Type} [DecidableEq α] :
     type `γ`, with the terminal type fixed to CakeML's `token`. HOL's
     `assert (P s)` guard is the `if P s` test around `return (Short s)`. -/
 @[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "singleSymP_def"]
-def singleSymPHOL {α β γ : Type} (P : Basis.Pure.MlString.MlString → Bool) :
-    List (Misc.Grammar.ParseTree CakeParser.Token β γ) →
-      Option (Ident α Basis.Pure.MlString.MlString)
+def singleSymPHOL {α β γ : Type} (P : MlString → Bool) :
+    List (Misc.Grammar.ParseTree CakeParser.Token β γ) → Option (Ident α MlString)
   | [pt] =>
       (Misc.Grammar.destLf pt >>= Misc.Grammar.destTokSym >>= CakeParser.destSymbolT) >>= fun s =>
         if P s then some (.short s) else none
   | _ => none
+
+/-- The generic grammar tree at HOL's `token` terminal type, as used by the
+    parse-tree conversion helpers. -/
+abbrev TokenTree (β γ : Type) := Misc.Grammar.ParseTree CakeParser.Token β γ
+
+/-- Exact port of HOL `ptree_UQTyop_def`: the `SymbolT`/`AlphaT` payload of the
+    single leaf of an `nUQTyOp` node. Generic in the location type `α`. -/
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_UQTyop_def"]
+def ptreeUQTyopHOL {loc : Type} : TokenTree Nonterminal loc → Option MlString
+  | .leaf _ => none
+  | .node (rule, _) args =>
+      if rule ≠ .inl .nUQTyOp then none
+      else match args with
+        | [] => none
+        | [pt] =>
+            (Misc.Grammar.destLf pt >>= Misc.Grammar.destTokSym) >>= fun tk =>
+              CakeParser.destSymbolT tk <|> CakeParser.destAlphaT tk
+        | _ :: _ :: _ => none
+
+/-- Exact port of HOL `ptree_TyvarN_def`: the type variable of the single leaf
+    of an `nTyvarN` node. Generic in the location type `α`. -/
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_TyvarN_def"]
+def ptreeTyvarNHOL {loc : Type} : TokenTree Nonterminal loc → Option MlString
+  | .leaf _ => none
+  | .node (rule, _) args =>
+      if rule ≠ .inl .nTyvarN then none
+      else match args with
+        | [] => none
+        | [tyv] => Misc.Grammar.destTyvarPT tyv
+        | _ :: _ :: _ => none
+
+/-- Exact port of HOL `ptree_Tyop_def`: the type operator of an `nTyOp` node,
+    preferring a qualified `LongidT` name over the single-leaf `UQTyop` form.
+    Generic in the location type `α`. -/
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_Tyop_def"]
+def ptreeTyopHOL {loc : Type} : TokenTree Nonterminal loc → Option (Ident MlString MlString)
+  | .leaf _ => none
+  | .node (rule, _) args =>
+      if rule ≠ .inl .nTyOp then none
+      else match args with
+        | [] => none
+        | [pt] =>
+            ((Misc.Grammar.destLf pt >>= Misc.Grammar.destTokSym >>= CakeParser.destLongidT)
+              >>= fun (xs, s) => some (longShort xs s)) <|>
+              (ptreeUQTyopHOL pt).map (fun nm => .short nm)
+        | _ :: _ :: _ => none
+
+/-- Exact port of HOL `ptree_V_def`: the `AlphaT`/`SymbolT` payload of the
+    single leaf of an `nV` node. HOL's `OPTION_GUARD (FST nt = mkNT nV)` around
+    the case analysis is rendered as the `if rule = ...` test. Generic in the
+    location type `α`. -/
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_V_def"]
+def ptreeVHOL {loc : Type} : TokenTree Nonterminal loc → Option MlString
+  | .leaf _ => none
+  | .node (rule, _) subs =>
+      if rule = .inl .nV then
+        match subs with
+        | [] => none
+        | [pt] =>
+            (Misc.Grammar.destLf pt >>= Misc.Grammar.destTokSym) >>= fun t =>
+              CakeParser.destAlphaT t <|> CakeParser.destSymbolT t
+        | _ :: _ :: _ => none
+      else none
+
+/-- Exact port of HOL `ptree_FQV_def`: a short `nV` name or a qualified
+    `LongidT` name of the single leaf of an `nFQV` node. Generic in the
+    location type `α`. -/
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_FQV_def"]
+def ptreeFQVHOL {loc : Type} : TokenTree Nonterminal loc → Option (Ident MlString MlString)
+  | .leaf _ => none
+  | .node (rule, _) args =>
+      if rule ≠ .inl .nFQV then none
+      else match args with
+        | [] => none
+        | [pt] =>
+            (ptreeVHOL pt).map (fun s => .short s) <|>
+              ((Misc.Grammar.destLf pt >>= Misc.Grammar.destTokSym >>= CakeParser.destLongidT)
+                >>= fun (xs, s) => some (longShort xs s))
+        | _ :: _ :: _ => none
+
+/-- Exact port of HOL `ptree_UQConstructorName_def`: the `AlphaT` payload of the
+    single leaf of an `nUQConstructorName` node. Generic in the location type
+    `α`. -/
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_UQConstructorName_def"]
+def ptreeUQConstructorNameHOL {loc : Type} : TokenTree Nonterminal loc → Option MlString
+  | .leaf _ => none
+  | .node (rule, _) args =>
+      if rule ≠ .inl .nUQConstructorName then none
+      else match args with
+        | [] => none
+        | [pt] => (Misc.Grammar.destLf pt >>= Misc.Grammar.destTokSym) >>= CakeParser.destAlphaT
+        | _ :: _ :: _ => none
+
+/-- Exact port of HOL `ptree_ConstructorName_def`: a short constructor name from
+    `ptree_UQConstructorName` or a qualified `LongidT` name. Generic in the
+    location type `α`. -/
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_ConstructorName_def"]
+def ptreeConstructorNameHOL {loc : Type} :
+    TokenTree Nonterminal loc → Option (Ident MlString MlString)
+  | .leaf _ => none
+  | .node (rule, _) args =>
+      if rule ≠ .inl .nConstructorName then none
+      else match args with
+        | [] => none
+        | [pt] =>
+            (ptreeUQConstructorNameHOL pt).map (fun s => .short s) <|>
+              ((Misc.Grammar.destLf pt >>= Misc.Grammar.destTokSym >>= CakeParser.destLongidT)
+                >>= fun (xs, s) => some (longShort xs s))
+        | _ :: _ :: _ => none
+
+/-- Exact port of HOL `ptree_OpID_def`: the constructor/variable expression of
+    an `nOpID` node. Generic in the location type `α`; the identifier's module
+    type is fixed to `mlstring`. -/
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_OpID_def"]
+def ptreeOpIDHOL {loc : Type} : TokenTree Nonterminal loc → Option AstHOL.Exp
+  | .leaf _ => none
+  | .node (rule, _) subs =>
+      if rule ≠ .inl .nOpID then none
+      else match subs with
+        | [] => none
+        | [.leaf (.tok tk, _)] =>
+            (CakeParser.destAlphaT tk >>= fun s =>
+              ifMHOL (isConstructorHOL s.explode)
+                (some (.con (some (.short s)) []))
+                (some (.var (.short s)))) <|>
+            (CakeParser.destSymbolT tk >>= fun s =>
+              ifMHOL (isSymbolicConstructorHOL s.explode)
+                (some (.con (some (.short s)) []))
+                (some (.var (.short s)))) <|>
+            (CakeParser.destLongidT tk >>= fun (path, s) =>
+              ifMHOL (isConstructorHOL s.explode)
+                (some (.con (some (longShort path s)) []))
+                (some (.var (longShort path s)))) <|>
+            (if tk = .starT then
+              ifMHOL (isSymbolicConstructorHOL (ofString "*").explode)
+                (some (.con (some (.short (ofString "*"))) []))
+                (some (.var (.short (ofString "*"))))
+             else if tk = .equalsT then some (.var (.short (ofString "=")))
+             else none)
+        | _ => none
+
+/-- Exact port of HOL `ptree_Eliteral_def`: the literal or `FFI` expression of
+    an `nEliteral` node. HOL guards with `LENGTH subs = 1 ∧ FST nt = mkNT
+    nEliteral` and then takes `HD subs`; Lean renders the guard as the `if` and
+    the `HD` by matching the single-element list, which the guard forces.
+    Generic in the location type `α`. -/
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_Eliteral_def"]
+def ptreeEliteralHOL {loc : Type} : TokenTree Nonterminal loc → Option AstHOL.Exp
+  | .leaf _ => none
+  | .node (rule, _) subs =>
+      if subs.length = 1 ∧ rule = .inl .nEliteral then
+        match subs with
+        | [pt] =>
+            (Misc.Grammar.destLf pt >>= Misc.Grammar.destTokSym) >>= fun t =>
+              (CakeParser.destIntT t >>= fun i => some (.lit (.intLit i))) <|>
+              (CakeParser.destCharT t >>= fun c => some (.lit (.char c))) <|>
+              (CakeParser.destStringT t >>= fun s => some (.lit (.strLit s))) <|>
+              (CakeParser.destWordT t >>= fun n =>
+                some (.lit (.word64 (BitVec.ofNat 64 n)))) <|>
+              (CakeParser.destFFIT t >>= fun s => some (.app (.ffi s) []))
+        | _ => none
+      else none
+
+/-- Exact port of HOL `ptree_Op_def`: the operator identifier of an
+    `nMultOps`/`nAddOps`/`nListOps`/`nRelOps`/`nCompOps` node. Generic in the
+    identifier's module type `α` and in the location type `β`. -/
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_Op_def"]
+def ptreeOpHOL {α β : Type} : TokenTree Nonterminal β → Option (Ident α MlString)
+  | .leaf _ => none
+  | .node (rule, _) subs =>
+      if rule = .inl .nMultOps then
+        if tokchecklHOL subs [.starT] then some (.short (ofString "*"))
+        else if tokchecklHOL subs [.alphaT (ofString "mod")] then some (.short (ofString "mod"))
+        else if tokchecklHOL subs [.alphaT (ofString "div")] then some (.short (ofString "div"))
+        else singleSymPHOL (fun s => Grammar.validMultSym s.explode) subs
+      else if rule = .inl .nAddOps then
+        singleSymPHOL (fun s => Grammar.validAddSym s.explode) subs
+      else if rule = .inl .nListOps then
+        singleSymPHOL (fun s => Grammar.validListSym s.explode) subs
+      else if rule = .inl .nRelOps then
+        singleSymPHOL (fun s => Grammar.validRelSym s.explode) subs <|>
+          (if tokchecklHOL subs [.equalsT] then some (.short (ofString "=")) else none)
+      else if rule = .inl .nCompOps then
+        if tokchecklHOL subs [.symbolT (ofString ":=")] then some (.short (ofString ":="))
+        else if tokchecklHOL subs [.alphaT (ofString "o")] then some (.short (ofString "o"))
+        else none
+      else none
+
+/-- Exact port of HOL `ptree_StructName_def`: the `AlphaT` payload of the
+    single leaf of an `nStructName` node. Generic in the location type `α`. -/
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_StructName_def"]
+def ptreeStructNameHOL {loc : Type} : TokenTree Nonterminal loc → Option MlString
+  | .leaf _ => none
+  | .node (rule, _) args =>
+      if rule ≠ .inl .nStructName then none
+      else match args with
+        | [] => none
+        | [pt] => (Misc.Grammar.destLf pt >>= Misc.Grammar.destTokSym) >>= CakeParser.destAlphaT
+        | _ :: _ :: _ => none
 
 end Flapjack.CakeParser.PtreeConversion.Exact
