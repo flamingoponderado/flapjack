@@ -1,6 +1,30 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "not_in_ns_1",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Namespace.lean",
+    "lean_name": "translatedName_notInNsOne",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Original local proof replay confirms the translated source-name expression is not in namespace one, with an unrestricted natural-number name."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "names_nss_DIV_nss",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Namespace.lean",
+    "lean_name": "nameMultiple_div",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Original local proof replay confirms natural division of the namespace multiple recovers the unrestricted natural-number name."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "call_SOME_handler_result",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CallHandler.lean",
+    "lean_name": "callSome_handlerResult",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Original local proof replay confirms four independent polymorphic types, concrete BVI exception-or-return and value carriers, all four case arms, and the unconditional pair equality."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_inc_next",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileIncLemma.lean",
     "lean_name": "compileInc_next",

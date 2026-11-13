@@ -54,4 +54,16 @@ theorem translatedLabel_inNs_zero (p : Nat) :
     inNs 0 (bvlToBviNamespaces * p + bvlNumStubs) := by
   simp [inNs, Nat.add_mod, bvlNumStubMod]
 
+/-- A translated source name is not in namespace one. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "not_in_ns_1"]
+theorem translatedName_notInNsOne (name : Nat) :
+    ¬ inNs 1 (bvlNumStubs + name * bvlToBviNamespaces) := by
+  simp [inNs, Nat.add_mod, bvlNumStubMod]
+
+/-- Dividing a translated name's namespace multiple recovers the name. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "names_nss_DIV_nss"]
+theorem nameMultiple_div (name : Nat) :
+    (name * bvlToBviNamespaces) / bvlToBviNamespaces = name := by
+  simp [bvlToBviNamespaces]
+
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

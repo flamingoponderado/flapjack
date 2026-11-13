@@ -1489,6 +1489,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileAllocGlobal
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileInstallArgs
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxNameRange
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileIncLemma
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CallHandler
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileInstall
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCorrect
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitGlobalsStub

@@ -566,3 +566,23 @@ val _ = show "compile_inc_lemma_typed=" bvl_to_bviProofTheory.compile_inc_lemma;
 val _ = show "compile_inc_next_typed=" bvl_to_bviProofTheory.compile_inc_next;
 val _ = show "compile_inc_DISTINCT_typed=" bvl_to_bviProofTheory.compile_inc_DISTINCT;
 val _ = show "compile_inc_next_range_typed=" bvl_to_bviProofTheory.compile_inc_next_range;
+
+open bviSemTheory;
+val call_SOME_handler_result_replay = prove (``∀f g r t.
+    (case map_result f (λv. Exn (g v)) r of
+       Rval v6 => (Rval v6,t)
+     | Rerr (Rraise (Exn v14)) => (Rerr (Rraise (Exn v14)),t)
+     | Rerr (Rraise (Ret v15)) => (Rerr (Rabort Rtype_error),t)
+     | Rerr (Rabort v11) => (Rerr (Rabort v11),t)) =
+    (map_result f (λv. Exn (g v)) r,t)``,
+rpt gen_tac \\ Cases_on ‘r’ \\ gvs[]
+  \\ rename1 ‘map_error_result _ ee’ \\ Cases_on ‘ee’ \\ gvs[]);
+val _ = show "call_SOME_handler_result_replay=" call_SOME_handler_result_replay;
+
+val _ = temp_overload_on ("in_ns_1", ``λn. n MOD bvl_to_bvi_namespaces = 1``);
+val not_in_ns_1_replay = prove (``~(in_ns_1 (num_stubs + name * nss))``,
+fs [EVAL ``nss``] \\ EVAL_TAC);
+val _ = show "not_in_ns_1_replay=" not_in_ns_1_replay;
+val names_nss_DIV_nss_replay = prove (``(name * nss) DIV nss = name``,
+fs [EVAL ``nss``,MULT_DIV]);
+val _ = show "names_nss_DIV_nss_replay=" names_nss_DIV_nss_replay;
