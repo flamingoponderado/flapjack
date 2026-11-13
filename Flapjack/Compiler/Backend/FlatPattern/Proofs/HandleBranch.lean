@@ -186,16 +186,6 @@ theorem stateRel_fixClock {C F : Type} (cfg : Config)
   rcases nexts with ⟨nextClock, refs, ffi, globals, install⟩
   exact ⟨by simp [startClock, nextClock], refs, ffi, globals, install⟩
 
-/-- Related results agree on whether an exception was raised. -/
-theorem flatResultRel_notRaised (sourceResult targetResult : Result (List FlatSem.Value) FlatSem.Value)
-    (related : SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel sourceResult targetResult)
-    (notRaised : ∀ value, sourceResult ≠ .err (.raise value)) :
-    ∀ value, targetResult ≠ .err (.raise value) := by
-  cases sourceResult <;> cases targetResult <;>
-    simp_all [SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
-  all_goals rename_i left right
-  all_goals cases left <;> cases right <;> simp_all
-
 /-- Normal results and aborts pass through compiled handlers with their
 state and result relations preserved. -/
 theorem compile_handle_passthrough {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
@@ -218,7 +208,10 @@ theorem compile_handle_passthrough {C F : Type} (cfg stateCfg : Config) (trace :
   rw [compileExp_handle_body]
   apply evaluate_handle_passthrough
   · exact targetProtected
-  · exact flatResultRel_notRaised sourceResult targetResult related notRaised
+  · cases sourceResult <;> cases targetResult <;>
+      simp_all [SemanticPrimitivesProps.resultRel, SemanticPrimitivesProps.excRel]
+    all_goals rename_i left right
+    all_goals cases left <;> cases right <;> simp_all
 
 /-- A handler whose row match type-fails returns a type error. -/
 theorem evaluate_handle_rowTypeError {C F : Type} (trace : BackendCommon.Tra)
