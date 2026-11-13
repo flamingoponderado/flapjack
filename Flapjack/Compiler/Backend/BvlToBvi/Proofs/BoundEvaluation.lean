@@ -10,11 +10,20 @@ namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem
 open Flapjack.Compiler.Backend.BvlProps (bVarBound)
 
+namespace BoundEvaluationCarrier
+/-- Canonical BVL reference-map state roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end BoundEvaluationCarrier
+
 /-- An expression whose variables are bounded by the initial environment
-cannot observe an appended environment. This is untagged pending source and
-evaluator correspondence review. -/
-theorem evaluate_bVarBound {C F : Type} (xs : List Bvl.Exp) (env extra : List Value)
-    (state : State C F) (bound : bVarBound env.length xs) :
+cannot observe an appended environment. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "bEval_bVarBound"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_bVarBound {C F : Type} (xs : List Bvl.Exp) (env : List Value)
+    (state : Flapjack.Compiler.Backend.BvlSem.State C F) (extra : List Value) (bound : bVarBound env.length xs) :
     evaluate xs (env ++ extra) state = evaluate xs env state := by
   cases xs with
   | nil => simp [evaluate]
@@ -23,14 +32,14 @@ theorem evaluate_bVarBound {C F : Type} (xs : List Bvl.Exp) (env extra : List Va
     | cons second tail =>
       simp only [bVarBound] at bound
       rw [evaluate, evaluate, fixClock_evaluate, fixClock_evaluate]
-      rw [evaluate_bVarBound [first] env extra state bound.1]
+      rw [evaluate_bVarBound [first] env state extra bound.1]
       cases headRun : evaluate [first] env state with
       | mk headResult next =>
         cases headResult with
         | err error => rfl
         | val values =>
           dsimp only
-          rw [evaluate_bVarBound (second :: tail) env extra next bound.2]
+          rw [evaluate_bVarBound (second :: tail) env next extra bound.2]
     | nil =>
       cases first with
       | var index =>
@@ -45,34 +54,34 @@ theorem evaluate_bVarBound {C F : Type} (xs : List Bvl.Exp) (env extra : List Va
         by_cases zero : state.clock = 0
         · simp [zero]
         · simp only [zero, ↓reduceIte]
-          exact evaluate_bVarBound [body] env extra (decClock 1 state) bound
+          exact evaluate_bVarBound [body] env (decClock 1 state) extra bound
       | raise body =>
         simp only [bVarBound] at bound
-        rw [evaluate, evaluate, evaluate_bVarBound [body] env extra state bound]
+        rw [evaluate, evaluate, evaluate_bVarBound [body] env state extra bound]
       | op op args =>
         simp only [bVarBound] at bound
         rw [evaluate, evaluate, fixClock_evaluate, fixClock_evaluate,
-          evaluate_bVarBound args env extra state bound]
+          evaluate_bVarBound args env state extra bound]
       | call ticks dest args =>
         simp only [bVarBound] at bound
         rw [evaluate, evaluate, fixClock_evaluate, fixClock_evaluate,
-          evaluate_bVarBound args env extra state bound]
+          evaluate_bVarBound args env state extra bound]
       | ifThenElse condition yes no =>
         simp only [bVarBound] at bound
         rw [evaluate, evaluate, fixClock_evaluate, fixClock_evaluate,
-          evaluate_bVarBound [condition] env extra state bound.1]
+          evaluate_bVarBound [condition] env state extra bound.1]
         cases conditionRun : evaluate [condition] env state with
         | mk conditionResult next =>
           cases conditionResult with
           | err error => rfl
           | val values =>
             dsimp only
-            rw [evaluate_bVarBound [yes] env extra next bound.2.1,
-              evaluate_bVarBound [no] env extra next bound.2.2]
+            rw [evaluate_bVarBound [yes] env next extra bound.2.1,
+              evaluate_bVarBound [no] env next extra bound.2.2]
       | «let» bindings body =>
         simp only [bVarBound] at bound
         rw [evaluate, evaluate, fixClock_evaluate, fixClock_evaluate,
-          evaluate_bVarBound bindings env extra state bound.1]
+          evaluate_bVarBound bindings env state extra bound.1]
         cases bindingsRun : evaluate bindings env state with
         | mk bindingsResult next =>
           cases bindingsResult with
@@ -83,11 +92,11 @@ theorem evaluate_bVarBound {C F : Type} (xs : List Bvl.Exp) (env extra : List Va
             have bodyBound : bVarBound (values ++ env).length [body] := by
               simpa [List.length_append, length, Nat.add_comm] using bound.2
             rw [← List.append_assoc]
-            exact evaluate_bVarBound [body] (values ++ env) extra next bodyBound
+            exact evaluate_bVarBound [body] (values ++ env) next extra bodyBound
       | handle body handler =>
         simp only [bVarBound] at bound
         rw [evaluate, evaluate, fixClock_evaluate, fixClock_evaluate,
-          evaluate_bVarBound [body] env extra state bound.1]
+          evaluate_bVarBound [body] env state extra bound.1]
         cases bodyRun : evaluate [body] env state with
         | mk bodyResult next =>
           cases bodyResult with
@@ -99,7 +108,7 @@ theorem evaluate_bVarBound {C F : Type} (xs : List Bvl.Exp) (env extra : List Va
               dsimp only
               have handlerBound : bVarBound (value :: env).length [handler] := by
                 simpa [Nat.add_comm] using bound.2
-              exact evaluate_bVarBound [handler] (value :: env) extra next handlerBound
+              exact evaluate_bVarBound [handler] (value :: env) next extra handlerBound
 termination_by expsWeight xs
 decreasing_by
   all_goals subst_vars

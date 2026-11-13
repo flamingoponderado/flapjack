@@ -72,7 +72,7 @@ theorem simulation_let_empty {C F : Type} (bindings : List Bvl.Exp) (body : Bvl.
         simpa only [bindingsRun] using innerRun
       have bodyBound : BvlProps.bVarBound values.length [body] := by simpa [valuesLength] using shape.2.1
       have bodyRun : BvlSem.evaluate [body] values source = (res, next) := by
-        rw [← evaluate_bVarBound [body] values env source bodyBound]
+        rw [← evaluate_bVarBound [body] values source env bodyBound]
         exact bodyRunExtended
       obtain ⟨targetMid, midRelocate, bindingsClock, targetBindings, relatedMid, envMidEq, refsMidEq⟩ :=
         bindingsIH n (.val values) source target n1 bindingsCode bindingsAux relocate bindingsRun (by simp)

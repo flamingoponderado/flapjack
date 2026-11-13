@@ -130479,6 +130479,18 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/BoundEvaluation.lean",
+  "hol_name": "bEval_bVarBound",
+  "lean_name": "evaluate_bVarBound",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed source local proof replay in bvl_to_bvi_value_rel_probe.out: expression list, prefix environment, independent compiler and FFI state, appended environment, variable-bound premise and full evaluation equality remain in source order. The canonical BVL state roundtrip covers refs. The evaluator inherits the reals_as_rational_cuts assumption through its dependencies."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/EvaluateAllOk.lean",
   "hol_name": "evaluate_ok",
   "lean_name": "evaluateOk",

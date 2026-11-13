@@ -73,7 +73,7 @@ theorem simulation_handle {C F : Type} (bindings : List Bvl.Exp) (body handler :
       have bodyBound : BvlProps.bVarBound values.length [body] := by simpa [valuesLength] using shape.2.1
       rw [bindingsRun] at run
       dsimp only at run
-      rw [evaluate_bVarBound [body] values env source bodyBound] at run
+      rw [evaluate_bVarBound [body] values source env bodyBound] at run
       cases bodyRun : BvlSem.evaluate [body] values source with
       | mk bodyResult bodyMid =>
         have bodyNotType : bodyResult ≠ .err (.abort .typeError) := by
