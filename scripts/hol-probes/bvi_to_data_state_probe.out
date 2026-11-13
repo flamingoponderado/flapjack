@@ -83,3 +83,5 @@ data_to_bvi_v_eq_flip_typed=(∀(v :v) (n :α) (i :int). (Number i :bvlSem$v) = 
 isBool_simps_typed=(∀(b :α) (z :v). isBool T z ⇒ ¬isBool F z) ∧ ∀(b :β) (z :v). isBool F z ⇒ ¬isBool T z
 MAP_data_to_bvi_Word64_typed=∀(xs :word64 list) (ws :v list). MAP data_to_bvi_v (MAP Word64 xs) = MAP data_to_bvi_v ws ⇔ MAP Word64 xs = ws
 MAP_data_to_bvi_Number_typed=∀(xs :int list) (ws :v list). MAP data_to_bvi_v (MAP Number xs) = MAP data_to_bvi_v ws ⇔ MAP Number xs = ws
+data_to_bvi_word_eq_typed=∀(ns :word64 list). MAP data_to_bvi_v (MAP Word64 ns) = MAP Word64 ns
+data_to_bvi_number_eq_typed=∀(ns :α word list). MAP data_to_bvi_v (MAP (Number ∘ $& ∘ (w2n :α word -> num)) ns) = MAP (Number ∘ $& ∘ (w2n :α word -> num)) ns

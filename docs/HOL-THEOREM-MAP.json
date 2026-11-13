@@ -423,6 +423,23 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "data_to_bvi_word_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/ValueProjection.lean",
+    "lean_name": "dataToBviWordMap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary fixed 64-bit word lists and both DATA-to-BVL mapped constructor lists match the original equality."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "data_to_bvi_number_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/ValueProjection.lean",
+    "lean_name": "dataToBviNumberMap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary HOL type-indexed words are represented by positive-width BitVec; unsigned w2n and integer coercion correspond to BitVec.toNat and Int.ofNat, and the complete mapped-list equality matches."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "MAP_data_to_bvi_Word64",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/ValueProjection.lean",
     "lean_name": "mapDataToBviWord64",

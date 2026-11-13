@@ -76,4 +76,23 @@ theorem mapDataToBviNumber (xs : List Int) (ws : List DataSem.Value) :
       cases w <;> simp only [List.map_cons, dataToBviValue, List.cons.injEq,
         BvlSem.Value.number.injEq, DataSem.Value.number.injEq, ih] <;> simp
 
+/-- Projecting a list of 64-bit word values preserves each word. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "data_to_bvi_word_eq"]
+theorem dataToBviWordMap (words : List (BitVec 64)) :
+    (words.map DataSem.Value.word64).map dataToBviValue = words.map BvlSem.Value.word64 := by
+  induction words with
+  | nil => rfl
+  | cons word words ih => simp only [List.map_cons, dataToBviValue, ih]
+
+/-- Projecting unsigned word values represented as integers preserves each
+value for every positive word width. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "data_to_bvi_number_eq"
+  (words_as_type_indexed_bitvec)]
+theorem dataToBviNumberMap {width : Nat} [NeZero width] (words : List (BitVec width)) :
+    (words.map (fun word => DataSem.Value.number (Int.ofNat word.toNat))).map dataToBviValue =
+      words.map (fun word => BvlSem.Value.number (Int.ofNat word.toNat)) := by
+  induction words with
+  | nil => rfl
+  | cons word words ih => simp only [List.map_cons, dataToBviValue, ih]
+
 end Flapjack.Compiler.Backend.BviToData
