@@ -118,9 +118,22 @@ theorem initial_code_correspondence (start n counter : Nat) (programs : List (Na
   intro name arity body lookup
   rw [sptLookup_sptFromAList] at lookup
   have member : (name, arity, body) ∈ programs := sptAListLookup_mem name programs (arity, body) lookup
-  obtain ⟨initialName, converted, aux, next, conversion, translated, auxSubset⟩ :=
-    compileProgramsSource_entry counter programs name arity body member
   rcases compilation : compileProgramsSource counter programs with ⟨tree, finish⟩
+  obtain ⟨initialName, converted, aux, next, singletonRun, translatedLookup, segment⟩ :=
+    compileList_imp counter programs tree finish name arity body
+      ⟨compilation, holALookup_of_distinct_member programs name (arity, body) ⟨distinct, member⟩⟩
+  have conversion : compileSingSource initialName body = (converted, aux, next) := by
+    rcases h : compileSingSource initialName body with ⟨converted', aux', next'⟩
+    have nilRight : smartAppend aux' .nil = aux' := by cases aux' <;> rfl
+    simp only [compileListSource, h, nilRight, Prod.mk.injEq, List.cons.injEq] at singletonRun
+    rcases singletonRun with ⟨⟨rfl, _⟩, rfl, rfl⟩
+    rfl
+  have translated : (bvlNumStubs + bvlToBviNamespaces * name, arity, BviLet.compileSing [] 0 converted) ∈ appListAppend tree := by
+    apply holALookup_member
+    simpa [Nat.add_comm] using translatedLookup
+  have auxSubset : ∀ entry ∈ appListAppend aux, entry ∈ appListAppend tree := by
+    intro entry member
+    exact segment.mem member
   have translated' : (bvlNumStubs + bvlToBviNamespaces * name, arity, BviLet.compileSing [] 0 converted) ∈ compiled := by
     simpa [compiled, compileIncSource, compilation] using translated
   have auxSubset' : ∀ entry ∈ appListAppend aux, entry ∈ compiled := by

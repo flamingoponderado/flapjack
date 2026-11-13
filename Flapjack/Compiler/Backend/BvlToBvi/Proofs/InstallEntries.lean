@@ -7,36 +7,81 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InstallNames
 /-! Correspondence of installed source functions and generated BVI code. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 
-/-- Every source function contributes its translated entry and all of its
-auxiliary code to the incremental compiler's output. -/
-theorem compileProgramsSource_entry (start : Nat) (programs : List (Nat × Nat × Bvl.Exp))
-    (name arity : Nat) (body : Bvl.Exp) (member : (name, arity, body) ∈ programs) :
-    ∃ counter converted aux next,
-      compileSingSource counter body = (converted, aux, next) ∧
-      (bvlNumStubs + bvlToBviNamespaces * name, arity, BviLet.compileSing [] 0 converted) ∈
-        appListAppend (compileProgramsSource start programs).1 ∧
-      ∀ entry ∈ appListAppend aux, entry ∈ appListAppend (compileProgramsSource start programs).1 := by
-  induction programs generalizing start with
-  | nil => simp at member
+/-- The first matching source function has a corresponding first matching
+compiled entry and its complete auxiliary code occurs as a contiguous segment. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_list_imp"]
+theorem compileList_imp (n : Nat) (prog : List (Nat × Nat × Bvl.Exp))
+    (code : AppList (Nat × Nat × Bvi.Exp)) (n' name arity : Nat) (exp : Bvl.Exp)
+    (premises : compileProgramsSource n prog = (code, n') ∧ holALookup prog name = some (arity, exp)) :
+    ∃ n0 c aux n1,
+      compileListSource n0 [exp] = ([c], aux, n1) ∧
+      holALookup (appListAppend code) (bvlToBviNamespaces * name + bvlNumStubs) =
+        some (arity, BviLet.compileSing [] 0 c) ∧
+      (appListAppend aux) <:+: (appListAppend code) := by
+  induction prog generalizing n code n' with
+  | nil => simp [holALookup] at premises
   | cons entry rest ih =>
-    rcases entry with ⟨key, nargs, exp⟩
-    rcases first : compileSingSource start exp with ⟨converted, aux, next⟩
-    rcases remaining : compileProgramsSource next rest with ⟨other, finish⟩
-    simp only [List.mem_cons] at member
-    simp only [compileProgramsSource, compileSingleSource, first, remaining, appListAppend_smartAppend]
-    rcases member with equal | tail
-    · cases equal
-      refine ⟨start, converted, aux, next, first, ?_, ?_⟩
-      · simp [appListAppend, appendAux]
-      · intro entry inAux
-        simp only [List.mem_append]
-        exact Or.inl (Or.inr inAux)
-    · obtain ⟨counter, converted', aux', final, conversion, inOutput, auxSubset⟩ := ih next tail
-      rw [remaining] at inOutput auxSubset
-      refine ⟨counter, converted', aux', final, conversion, ?_, ?_⟩
-      · exact List.mem_append.mpr (Or.inr inOutput)
-      · intro entry inAux
-        exact List.mem_append.mpr (Or.inr (auxSubset entry inAux))
+    obtain ⟨key, args, body⟩ := entry
+    rcases premises with ⟨compiled, lookup⟩
+    cases hfirst : compileSingSource n body with
+    | mk converted product =>
+      cases product with
+      | mk aux next =>
+        cases hrest : compileProgramsSource next rest with
+        | mk tree finish =>
+          simp only [compileProgramsSource, compileSingleSource, hfirst, hrest] at compiled
+          cases compiled
+          by_cases equal : name = key
+          · subst key
+            simp [holALookup] at lookup
+            rcases lookup with ⟨rfl, rfl⟩
+            refine ⟨n, converted, aux, next, ?_, ?_, ?_⟩
+            · have nilRight : smartAppend aux .nil = aux := by cases aux <;> rfl
+              simp [compileListSource, hfirst, nilRight]
+            · simp only [appListAppend_smartAppend]
+              simp [appListAppend, appendAux, holALookup, Nat.mul_comm, Nat.add_comm]
+            · simp only [appListAppend_smartAppend]
+              change appListAppend aux <:+:
+                (([(bvlNumStubs + bvlToBviNamespaces * name, args,
+                    BviLet.compileSing [] 0 converted)] ++ appListAppend aux) ++ appListAppend tree)
+              exact ⟨[(bvlNumStubs + bvlToBviNamespaces * name, args,
+                BviLet.compileSing [] 0 converted)], appListAppend tree, by simp⟩
+          · have tailLookup : holALookup rest name = some (arity, exp) := by
+              simpa [holALookup, equal] using lookup
+            obtain ⟨n0, c, foundAux, n1, compilation, found, segment⟩ := ih next tree n' ⟨hrest, tailLookup⟩
+            have range := compileSingSource_auxNameRange n body
+            rw [hfirst] at range
+            dsimp only at range
+            have noAux : holALookup (appListAppend aux) (bvlToBviNamespaces * name + bvlNumStubs) = none := by
+              cases h : holALookup (appListAppend aux) (bvlToBviNamespaces * name + bvlNumStubs) with
+              | none => rfl
+              | some value =>
+                have member := holALookup_member _ _ value h
+                have keyMember : bvlToBviNamespaces * name + bvlNumStubs ∈ (appListAppend aux).map Prod.fst :=
+                  List.mem_map.mpr ⟨_, member, rfl⟩
+                obtain ⟨k, _, _, keyEq⟩ := auxNameRange_member range _ keyMember
+                simp only [bvlToBviNamespaces] at keyEq
+                omega
+            refine ⟨n0, c, foundAux, n1, compilation, ?_, ?_⟩
+            · have neHead : bvlToBviNamespaces * name + bvlNumStubs ≠
+                  bvlNumStubs + bvlToBviNamespaces * key := by
+                simp only [bvlToBviNamespaces]
+                omega
+              simp only [appListAppend_smartAppend]
+              change holALookup (([(bvlNumStubs + bvlToBviNamespaces * key, args,
+                  BviLet.compileSing [] 0 converted)] ++ appListAppend aux) ++ appListAppend tree)
+                (bvlToBviNamespaces * name + bvlNumStubs) = _
+              rw [holALookup_append, holALookup_append]
+              simp [holALookup, neHead, noAux, found]
+            · rcases segment with ⟨pre, post, segEq⟩
+              simp only [appListAppend_smartAppend]
+              change appListAppend foundAux <:+:
+                (([(bvlNumStubs + bvlToBviNamespaces * key, args,
+                    BviLet.compileSing [] 0 converted)] ++ appListAppend aux) ++ appListAppend tree)
+              refine ⟨([(bvlNumStubs + bvlToBviNamespaces * key, args,
+                BviLet.compileSing [] 0 converted)] ++ appListAppend aux) ++ pre, post, ?_⟩
+              rw [← segEq]
+              simp [List.append_assoc]
 
 /-- Existing auxiliary code remains available in a left-biased code union. -/
 theorem auxCodeInstalled_union_left {α β : Type} (aux : List (Nat × α × β)) (old fresh : Spt (α × β))
@@ -106,9 +151,22 @@ theorem installed_code_correspondence {C F : Type} (relocate : Nat → Nat)
     simp only [old] at lookup
     rw [sptLookup_sptFromAList] at lookup
     have member : (name, arity, body) ∈ programs := sptAListLookup_mem name programs (arity, body) lookup
-    obtain ⟨counter, converted, aux, next, conversion, translated, auxSubset⟩ :=
-      compileProgramsSource_entry (source.compileOracle 0).1.1 programs name arity body member
     rcases compilation : compileProgramsSource (source.compileOracle 0).1.1 programs with ⟨tree, finish⟩
+    obtain ⟨counter, converted, aux, next, singletonRun, translatedLookup, segment⟩ :=
+      compileList_imp (source.compileOracle 0).1.1 programs tree finish name arity body
+        ⟨compilation, holALookup_of_distinct_member programs name (arity, body) ⟨sourceDistinct, member⟩⟩
+    have conversion : compileSingSource counter body = (converted, aux, next) := by
+      rcases h : compileSingSource counter body with ⟨converted', aux', next'⟩
+      have nilRight : smartAppend aux' .nil = aux' := by cases aux' <;> rfl
+      simp only [compileListSource, h, nilRight, Prod.mk.injEq, List.cons.injEq] at singletonRun
+      rcases singletonRun with ⟨⟨rfl, _⟩, rfl, rfl⟩
+      rfl
+    have translated : (bvlNumStubs + bvlToBviNamespaces * name, arity, BviLet.compileSing [] 0 converted) ∈ appListAppend tree := by
+      apply holALookup_member
+      simpa [Nat.add_comm] using translatedLookup
+    have auxSubset : ∀ entry ∈ appListAppend aux, entry ∈ appListAppend tree := by
+      intro entry member
+      exact segment.mem member
     have translated' : (bvlNumStubs + bvlToBviNamespaces * name, arity, BviLet.compileSing [] 0 converted) ∈ compiled := by
       simpa [compiled, compileIncSource, compilation] using translated
     have auxSubset' : ∀ entry ∈ appListAppend aux, entry ∈ compiled := by

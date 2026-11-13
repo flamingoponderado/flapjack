@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_list_imp",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/InstallEntries.lean",
+    "lean_name": "compileList_imp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original local HOL source and proof replay: the full compile_list and first-match ALOOKUP premises imply the original existential singleton compilation, first-match translated code lookup and contiguous auxiliary segment, without distinct-name assumptions. The singleton compiler and let compiler forms are justified by the source agreement theorems."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "in_ns_def",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Namespace.lean",
     "lean_name": "inNs",

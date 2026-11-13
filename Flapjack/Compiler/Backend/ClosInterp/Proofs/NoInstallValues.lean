@@ -235,13 +235,6 @@ decreasing_by
   simp_wf
   omega
 
-/-- A list has no installation exactly when each of its expressions does not. -/
-theorem hasInstallList_eq_false_iff (expressions : List ClosLang.Exp) :
-    ClosLang.hasInstallList expressions = false ↔ ∀ expression ∈ expressions, ClosLang.hasInstall expression = false := by
-  induction expressions with
-  | nil => simp [ClosLang.hasInstallList]
-  | cons expression rest ih => simp [ClosLang.hasInstallList, ih]
-
 /-- Updating a reference with a safe payload preserves the reference invariant. -/
 theorem refsNoInstall_update (refs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value))
     (index : Nat) (entry : ClosSem.Ref ClosSem.Value)

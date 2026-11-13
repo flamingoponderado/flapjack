@@ -501,3 +501,49 @@ val _ = show "mult_nss_in_ns_1_typed=" bvl_to_bviProofTheory.mult_nss_in_ns_1;
 val _ = show "mult_nss_in_ns_2_typed=" bvl_to_bviProofTheory.mult_nss_in_ns_2;
 val _ = show "in_ns_1_add_1_typed=" bvl_to_bviProofTheory.in_ns_1_add_1;
 val _ = show "in_ns_add_num_stubs_typed=" bvl_to_bviProofTheory.in_ns_add_num_stubs;
+
+(* Replay the complete local compile-list lookup proof. *)
+Overload nss = ``bvl_to_bvi_namespaces``;
+Overload num_stubs = ``bvl_num_stubs``;
+val compile_list_imp_replay = prove (``
+  ∀n prog code n' name arity exp.
+     compile_list n prog = (code,n') ∧
+     ALOOKUP prog name = SOME (arity,exp) ⇒
+     ∃n0 c aux n1.
+     compile_exps n0 [exp] = ([c],aux,n1) ∧
+     ALOOKUP (append code) (nss * name + num_stubs) = SOME (arity,bvi_let$compile_exp c) ∧
+     IS_SUBLIST (append code) (append aux)``,
+  Induct_on`prog` >> simp[] >>
+  qx_gen_tac`p`>>PairCases_on`p`>>
+  simp[compile_list_def] >>
+  rpt gen_tac >> strip_tac >>
+  pairarg_tac >> full_simp_tac(srw_ss())[] >>
+  pairarg_tac >> full_simp_tac(srw_ss())[] >>
+  rpt var_eq_tac >>
+  full_simp_tac(srw_ss())[compile_single_def,LET_THM] >>
+  pairarg_tac >> full_simp_tac(srw_ss())[] >>
+  rpt var_eq_tac >>
+  BasicProvers.FULL_CASE_TAC >- (
+    full_simp_tac(srw_ss())[] >> rpt var_eq_tac >>
+    imp_res_tac compile_exps_SING >> var_eq_tac >>
+    asm_exists_tac >> simp[] >>
+    fs [IS_SUBLIST_APPEND] >>
+    metis_tac [APPEND]) >>
+  first_x_assum old_drule >>
+  disch_then old_drule >> strip_tac >>
+  asm_exists_tac >> simp[] >>
+  conj_tac >- (
+    simp[ALOOKUP_APPEND]
+    \\ IF_CASES_TAC >- (pop_assum mp_tac \\ EVAL_TAC)
+    \\ fs [case_eq_thms]
+    \\ Cases_on `ALOOKUP (append aux) (num_stubs + name * nss)` \\ fs []
+    \\ imp_res_tac ALOOKUP_MEM
+    \\ imp_res_tac compile_exps_aux_sorted
+    \\ fs[EVERY_MEM,EVERY_MAP] \\ res_tac \\ fs[]
+    \\ qmatch_assum_rename_tac`a * nss = b * nss + 1` >>
+    `in_ns 0 (a * nss)` by simp[] \\
+    `in_ns 0 (b * nss + 1)` by METIS_TAC[] \\
+    fs[]) >>
+  full_simp_tac(srw_ss())[IS_SUBLIST_APPEND] >>
+  metis_tac [APPEND,APPEND_ASSOC]);
+val _ = show "compile_list_imp_replay=" compile_list_imp_replay;

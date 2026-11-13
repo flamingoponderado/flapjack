@@ -94,3 +94,4 @@ mult_nss_in_ns_1_typed=in_ns (k :num) ((m :num) * bvl_to_bvi_namespaces + (1 :nu
 mult_nss_in_ns_2_typed=in_ns (k :num) ((m :num) * bvl_to_bvi_namespaces + (2 :num)) ⇔ k = (2 :num)
 in_ns_1_add_1_typed=in_ns (0 :num) (x :num) ⇒ in_ns (1 :num) (x + (1 :num))
 in_ns_add_num_stubs_typed=in_ns (k :num) (bvl_num_stubs + (x :num)) ⇔ in_ns k x
+compile_list_imp_replay=∀(n :num) (prog :(num # num # bvl$exp) list) (code :(num # num # bvi$exp) app_list) (n' :num) (name :num) (arity :num) (exp :bvl$exp). (compile_list n prog :(num # num # bvi$exp) app_list # num) = (code,n') ∧ ALOOKUP prog name = SOME (arity,exp) ⇒ ∃(n0 :num) (c :bvi$exp) (aux :(num # num # bvi$exp) app_list) (n1 :num). (compile_exps n0 [exp] :bvi$exp list # (num # num # bvi$exp) app_list # num) = ([c],aux,n1) ∧ ALOOKUP (append code) (nss * name + num_stubs) = SOME (arity,(compile_exp c :bvi$exp)) ∧ IS_SUBLIST (append code) (append aux)
