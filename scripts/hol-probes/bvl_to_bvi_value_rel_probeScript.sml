@@ -177,3 +177,6 @@ val compile_exps_LENGTH_lemma_replay = prove (``!n (xs :bvl$exp list). (LENGTH (
   \\ SIMP_TAC std_ss [compile_exps_def] \\ SRW_TAC [] []
   \\ FULL_SIMP_TAC (srw_ss()) [] \\ SRW_TAC [] [] \\ DECIDE_TAC);
 val _ = show "compile_exps_LENGTH_lemma_replay=" compile_exps_LENGTH_lemma_replay;
+
+val _ = show "compile_exps_LENGTH_typed=" bvl_to_bviTheory.compile_exps_LENGTH;
+val _ = show "compile_exps_SING_typed=" bvl_to_bviTheory.compile_exps_SING;

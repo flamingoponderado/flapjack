@@ -109,4 +109,25 @@ theorem compileListSource_length (n : Nat) (xs : List Bvl.Exp) :
             simp only [ht] at length
             simpa [compileListSource, hx, ht] using congrArg Nat.succ length
 
+/-- A compilation result has the same number of input and output expressions. -/
+@[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "compile_exps_LENGTH"]
+theorem compileListSource_length_result (n : Nat) (xs : List Bvl.Exp) (ys : List Bvi.Exp)
+    (aux : AppList (Nat × Nat × Bvi.Exp)) (n1 : Nat)
+    (compiled : compileListSource n xs = (ys, aux, n1)) : ys.length = xs.length := by
+  have length := compileListSource_length n xs
+  simpa [compiled] using length
+
+/-- Compiling one expression produces exactly one BVI expression. -/
+@[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "compile_exps_SING"]
+theorem compileListSource_singleton_result (n : Nat) (x : Bvl.Exp) (c : List Bvi.Exp)
+    (aux : AppList (Nat × Nat × Bvi.Exp)) (n1 : Nat)
+    (compiled : compileListSource n [x] = (c, aux, n1)) : ∃ y, c = [y] := by
+  have length := compileListSource_length_result n [x] c aux n1 compiled
+  cases c with
+  | nil => simp at length
+  | cons first rest =>
+    cases rest with
+    | nil => exact ⟨first, rfl⟩
+    | cons second rest => simp at length
+
 end Flapjack.Compiler.Backend.BvlToBvi

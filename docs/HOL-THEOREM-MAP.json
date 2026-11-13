@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml", "hol_name": "compile_exps_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/SourceSing.lean", "lean_name": "compileListSource_length_result",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: a complete compiler result triple implies that output and input expression lists have equal length, for arbitrary counter and auxiliary app_list. HOL compile_exps_sing equates the source list compiler with compile_exps."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml", "hol_name": "compile_exps_SING",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/SourceSing.lean", "lean_name": "compileListSource_singleton_result",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: a complete compiler result triple for one BVL expression implies the output list contains exactly one BVI expression, with arbitrary counter and auxiliary app_list. HOL compile_exps_sing equates the source list compiler with compile_exps."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml", "hol_name": "compile_exps_LENGTH_lemma",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/SourceSing.lean", "lean_name": "compileListSource_length",
   "statement_status": "reviewed_exact",
