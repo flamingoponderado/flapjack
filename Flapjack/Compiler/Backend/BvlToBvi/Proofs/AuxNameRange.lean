@@ -2,6 +2,8 @@ module
 
 public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileInstallArgs
 public import Mathlib.Data.List.Nodup
+public import Flapjack.Misc.Sorting
+import Mathlib.Data.List.Sort
 
 @[expose] public section
 
@@ -153,6 +155,48 @@ theorem auxNameRange_nodup {start finish : Nat} {aux : AppList (Nat × Nat × Bv
   intro x y equal
   simp only [bvlToBviNamespaces] at equal
   omega
+
+private theorem auxSortedOfPairwise {α : Type} (R : α → α → Prop) :
+    ∀ xs : List α, xs.Pairwise R → holSorted R xs
+  | [], _ => trivial
+  | [_], _ => trivial
+  | x :: y :: rest, pairwise =>
+    ⟨(List.pairwise_cons.mp pairwise).1 y (by simp),
+      auxSortedOfPairwise R (y :: rest) (List.pairwise_cons.mp pairwise).2⟩
+
+
+/-- Auxiliary names are sorted, belong to their namespace and lie within
+its counter interval, and compilation does not decrease the counter. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_exps_aux_sorted"]
+theorem compileExps_auxSorted (n : Nat) (es : List Bvl.Exp) (c : List Bvi.Exp)
+    (aux : AppList (Nat × Nat × Bvi.Exp)) (n1 : Nat)
+    (compiled : compileListSource n es = (c, aux, n1)) :
+    holSorted (· < ·) ((appListAppend aux).map Prod.fst) ∧
+      ((appListAppend aux).map Prod.fst).Forall (fun x => ∃ k, x = bvlNumStubs + bvlToBviNamespaces * k + 1) ∧
+      ((appListAppend aux).map Prod.fst).Forall (fun x =>
+        bvlNumStubs + bvlToBviNamespaces * n ≤ x ∧ x < bvlNumStubs + bvlToBviNamespaces * n1) ∧
+      n ≤ n1 := by
+  have range := compileListSource_auxNameRange n es
+  rw [compiled] at range
+  dsimp only at range
+  refine ⟨?_, ?_, ?_, auxNameRange_mono range⟩
+  · obtain ⟨count, _, names⟩ := range
+    rw [names]
+    apply auxSortedOfPairwise
+    unfold auxNameSequence
+    apply List.pairwise_map.mpr
+    apply List.Pairwise.imp (fun {a b} h => ?_) (List.pairwise_lt_range' 1 (by omega))
+    simp only [bvlToBviNamespaces]
+    omega
+  · rw [List.forall_iff_forall_mem]
+    intro x member
+    obtain ⟨k, _, _, equal⟩ := auxNameRange_member range x member
+    exact ⟨k, equal⟩
+  · rw [List.forall_iff_forall_mem]
+    intro x member
+    obtain ⟨k, lower, upper, equal⟩ := auxNameRange_member range x member
+    simp only [bvlToBviNamespaces] at equal ⊢
+    omega
 
 /-- The incrementally compiled program's counter is monotone, and every
 emitted name is either the translation of an input function label or a

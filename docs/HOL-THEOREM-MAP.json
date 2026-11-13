@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_exps_aux_sorted",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AuxNameRange.lean",
+    "lean_name": "compileExps_auxSorted",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the exported typed HOL source: the compilation equation implies the original adjacent SORTED condition, namespace membership, between bounds, and nondecreasing counter. The between predicate is unfolded to its original lower-inclusive and upper-exclusive inequalities; holSorted is the original SORTED definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "aux_code_installed_sublist",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AuxCode.lean",
     "lean_name": "auxCodeInstalled_sublist",
