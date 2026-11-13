@@ -61,23 +61,34 @@ open Flapjack.Compiler.Encoders.Asm
 
 namespace PanToWordProofWitnesses
 
-/-- Canonical roundtrip of the Crep state carrier, re-exported for the
-`fmap_as_finite_support_relation` qualifier of `crep_state_def`. -/
-theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
+namespace CrepInitializerCarrier
+/-- Canonical Crep-state roundtrip for the initializer's finite-map fields. -/
+theorem holFmapAsFiniteSupportWitness
     {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) :
     CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state :=
   CrepSemBroadState.ofBroad_toBroad state
+end CrepInitializerCarrier
 
-/-- Canonical roundtrip of the Loop state carrier, re-exported for the
-`fmap_as_finite_support_relation` qualifier of `loop_state_def`. -/
-theorem holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact
+namespace LoopInitializerCarrier
+/-- Canonical Loop-state roundtrip for the initializer's global map. -/
+theorem holFmapAsFiniteSupportWitness
     {width : Nat} [NeZero width] {F : Type} :
     (∀ (state : LoopSemStateBroad width F) (h : state.FiniteSupport),
         (LoopSemStateBroad.ofBroad state h).toBroad = state) ∧
     (∀ state : LoopSemStateFiniteExact width F,
         LoopSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
   Flapjack.LoopSemStateFiniteExact.holFmapAsFiniteSupportWitness
+end LoopInitializerCarrier
+
+/-- The same Loop roundtrip also witnesses the loop-state simulation relation. -/
+theorem holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact
+    {width : Nat} [NeZero width] {F : Type} :
+    (∀ (state : LoopSemStateBroad width F) (h : state.FiniteSupport),
+        (LoopSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : LoopSemStateFiniteExact width F,
+        LoopSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  LoopInitializerCarrier.holFmapAsFiniteSupportWitness
 
 /-- Canonical roundtrip of the Pan state carrier, re-exported for the
 `fmap_as_finite_support` qualifier of `globals_allocatable_def`. -/
@@ -108,12 +119,11 @@ the canonical update of the empty map with the reversed association list (the
 accepted pan_to_crep convention), and `pan_to_crep$compile_prog` is the
 reviewed `compileProgDeclsHOLW`. -/
 @[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "crep_state_def"
-  (fmap_as_finite_support_relation := [CrepSemHOLState.locals, CrepSemHOLState.globals,
-    CrepSemHOLState.code])
+  (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
 def crepStateHOL {width : Nat} {σ : Type} [NeZero width]
     (s : PanSemStateFiniteExact width σ) (pan_code : List (DeclHOL width))
-    (mem : BitVec width → HolWordLab width) : CrepSemHOLState width σ where
+    (mem : BitVec width → HolWordLab width) : Flapjack.CrepSemHOLState width σ where
   locals := HolFiniteMapExact.empty
   globals := HolFiniteMapExact.empty
   code := HolFiniteMapExact.empty.updateList (compileProgDeclsHOLW pan_code).reverse
@@ -154,12 +164,12 @@ carrier renders its `'a word set` domains as Boolean predicates; the Crep
 domains are Lean propositions, so membership is decided classically, which
 denotes the same set. -/
 @[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "loop_state_def"
-  (fmap_as_finite_support_relation := [LoopSemStateFiniteExact.globals])
+  (fmap_as_finite_support := [globals])
   (words_as_type_indexed_bitvec)]
 noncomputable def loopStateHOL {width : Nat} {σ : Type} [NeZero width]
     (s : CrepSemHOLState width σ) (c : AsmArchitecture)
     (crep_code : List (MlString × List Nat × CrepProgHOL width)) (ck : Nat)
-    (mem : BitVec width → WordLocW width) : LoopSemStateFiniteExact width σ :=
+    (mem : BitVec width → WordLocW width) : Flapjack.LoopSemStateFiniteExact width σ :=
   open Classical in
   { locals := .ln
     globals := HolFiniteMapExact.empty
