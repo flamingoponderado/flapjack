@@ -8,17 +8,6 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileFfi
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value Ref)
 
-/-- Relocated pointers preserve equality on the allocated source domain. -/
-theorem refsRel_addressEq (relocate : Nat → Nat)
-    (source target : HolFiniteMapExact Nat (Ref Value)) (left right : Nat)
-    (related : refsRel relocate source target) (leftPresent : source.lookup left ≠ none)
-    (rightPresent : source.lookup right ≠ none) :
-    relocate left = relocate right ↔ left = right := by
-  constructor
-  · exact related.2.1 left right leftPresent rightPresent
-  · intro equal
-    rw [equal]
-
 mutual
 /-- Equality of well-formed BVL values is invariant under reference relocation.
 This is infrastructure for the pass simulation. -/
@@ -43,7 +32,8 @@ theorem doEq_relocate (relocate : Nat → Nat)
         | some rightCell =>
           have leftTarget := related.2.2 left leftCell leftLookup
           have rightTarget := related.2.2 right rightCell rightLookup
-          have addressEq := refsRel_addressEq relocate source target left right related leftPresent rightPresent
+          have addressEq : relocate left = relocate right ↔ left = right :=
+            ⟨related.2.1 left right leftPresent rightPresent, congrArg relocate⟩
           cases flag <;> cases flag2 <;> cases leftCell <;> cases rightCell <;>
             simp [adjustBv, BvlSem.doEq, adjustRef, leftLookup, rightLookup, leftTarget, rightTarget, addressEq]
           all_goals split <;> simp_all
