@@ -1,4 +1,4 @@
-`data_space_code_labels_probe.out` captures the typed original reservation-pass label theorem and the whole-pass label theorem.
+`data_space_code_labels_probe.out` captures the typed original reservation-pass label theorem, the whole-pass label theorem, and variable-read and stack-field lemmas.
 
 `bvl_to_bvi_proof_source_probe.out` also captures the typed exported whole-pass `compile_get_code_labels`, `compile_distinct_names`, full-oracle distinctness, whole-lowering and full-pipeline semantics, and whole-lowering no-mutcons, namespace-avoidance, and distinct-location theorems (including the typed half-open `between` definition), plus the full oracle and callback definitions and a typed proof replay of the local namespace/free-names lemma.
 

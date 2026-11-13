@@ -1,3 +1,6 @@
 get_code_labels_compile=⊢ ∀x. get_code_labels (compile x) = get_code_labels x
 compile_type=:dataLang$prog -> dataLang$prog
 get_code_labels_space_typed=∀(x :dataLang$prog) (y :dataLang$prog) (y0 :num) (y1 :sptree$num_set) (y2 :dataLang$prog). (space x = (INL y :dataLang$prog + num # sptree$num_set # dataLang$prog) ⇒ get_code_labels y = get_code_labels x) ∧ (space x = (INR (y0,y1,y2) :dataLang$prog + num # sptree$num_set # dataLang$prog) ⇒ get_code_labels y2 = get_code_labels x)
+get_vars_IMP_LENGTH_typed=∀(xs :num list) (s :α sptree$num_map) (l :α list). get_vars xs s = SOME l ⇒ LENGTH l = LENGTH xs
+do_stack_with_space_typed=∀(op :closLang$op) (vs :v list) (s :(α, β) dataSem$state) (z :num). do_stack op vs (s with space := z) = do_stack op vs s with space := z
+do_stack_with_locals_typed=∀(op :closLang$op) (vs :v list) (s :(α, β) dataSem$state) (l :v sptree$num_map). do_stack op vs (s with locals := l) = do_stack op vs s with locals := l

@@ -11,8 +11,8 @@ public import Flapjack.Misc.Sptree.Wf
 namespace Flapjack.Compiler.Backend.DataSpace
 open Flapjack Flapjack.Compiler.Backend.DataSem
 
-/-- A successful variable read returns one value per requested name. This
-is untagged until its source and carrier correspondence are reviewed. -/
+/-- A successful variable read returns one value per requested name. -/
+@[hol "cakeml/compiler/backend/proofs/data_spaceProofScript.sml" "get_vars_IMP_LENGTH"]
 theorem getVars_length {α : Type} (names : List Nat) (env : Spt α) (values : List α)
     (read : DataSem.getVars names env = some values) : values.length = names.length := by
   induction names generalizing values with
@@ -29,12 +29,14 @@ theorem getVars_length {α : Type} (names : List Nat) (env : Spt α) (values : L
         simp [ih tail rest]
 
 /-- Stack accounting commutes with changing the available space field. -/
+@[hol "cakeml/compiler/backend/proofs/data_spaceProofScript.sml" "do_stack_with_space"]
 theorem doStack_with_space {C F : Type} (op : ClosLang.Op) (values : List Value)
     (state : State C F) (space : Nat) :
     doStack op values { state with space := space } = { doStack op values state with space := space } := by
   rfl
 
 /-- Stack accounting commutes with changing the local environment. -/
+@[hol "cakeml/compiler/backend/proofs/data_spaceProofScript.sml" "do_stack_with_locals"]
 theorem doStack_with_locals {C F : Type} (op : ClosLang.Op) (values : List Value)
     (state : State C F) (locals : Spt Value) :
     doStack op values { state with locals := locals } = { doStack op values state with locals := locals } := by

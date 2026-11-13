@@ -180,24 +180,6 @@ theorem getVars_cut_exact {α : Type} (kept : List Nat) (env : Spt α)
         have restRead := ih tail rest (fun key member => included key (by simp [member]))
         simp [restRead]
 
-/-- A successful variable-list read produces one value for each name. -/
-theorem getVars_length {α : Type} (names : List Nat) (env : Spt α) (values : List α)
-    (read : DataSem.getVars names env = some values) : values.length = names.length := by
-  induction names generalizing values with
-  | nil => simpa [DataSem.getVars] using read.symm
-  | cons name names ih =>
-    simp only [DataSem.getVars] at read
-    cases found : DataSem.getVar name env with
-    | none => simp [found] at read
-    | some value =>
-      simp only [found] at read
-      cases rest : DataSem.getVars names env with
-      | none => simp [rest] at read
-      | some tail =>
-        simp [rest] at read
-        subst values
-        simp [ih tail rest]
-
 /-- Every name in a successful variable-list read is present in the tree. -/
 theorem getVars_present {α : Type} (names : List Nat) (env : Spt α) (values : List α)
     (read : DataSem.getVars names env = some values) :

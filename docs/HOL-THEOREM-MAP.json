@@ -433,6 +433,30 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/data_spaceProofScript.sml",
+    "hol_name": "get_vars_IMP_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/DataSpace/Proofs/State.lean",
+    "lean_name": "getVars_length",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary element type, sparse environment, requested names and returned values retain the sole successful-read premise and exact length conclusion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_spaceProofScript.sml",
+    "hol_name": "do_stack_with_space",
+    "lean_path": "Flapjack/Compiler/Backend/DataSpace/Proofs/State.lean",
+    "lean_name": "doStack_with_space",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary operation, values, data state and space value retain the complete record equality; compiler and FFI carriers remain independent and fixed callback widths match."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_spaceProofScript.sml",
+    "hol_name": "do_stack_with_locals",
+    "lean_path": "Flapjack/Compiler/Backend/DataSpace/Proofs/State.lean",
+    "lean_name": "doStack_with_locals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary operation, values, data state and sparse locals retain the complete record equality; compiler and FFI carriers remain independent and fixed callback widths match."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_spaceProofScript.sml",
     "hol_name": "get_code_labels_space",
     "lean_path": "Flapjack/Compiler/Backend/DataSpace/Proofs/CodeLabels.lean",
     "lean_name": "getCodeLabels_space",
