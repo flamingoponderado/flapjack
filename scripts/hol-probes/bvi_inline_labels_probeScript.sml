@@ -116,3 +116,19 @@ val evaluate_compile_prog_statement =
     s2.ffi = s.ffi``;
 val _ = (print "evaluate_compile_prog_statement_typed=";
          print_term evaluate_compile_prog_statement; print "\n");
+
+(* The local theorem is not exported; capture the source statement and
+   its inferred types without claiming a proof replay. *)
+open bvi_inlineProofTheory;
+val evaluate_remove_ticks_compile_statement =
+  ``∀prog co ffi cc k start r s.
+  evaluate ([Call 0 (SOME start) [] NONE],[],
+    initial_state ffi (fromAList (clean_prog prog))
+      (remove_ticks_co ∘ co) cc k) = (r,s) ⇒
+  ∃ck s2.
+    evaluate ([Call 0 (SOME start) [] NONE],[],
+      initial_state ffi (fromAList prog) co (remove_ticks_cc cc) (k + ck)) =
+        (r,s2) ∧
+    s2.ffi = s.ffi``;
+val _ = (print "evaluate_remove_ticks_compile_statement_typed=";
+         print_term evaluate_remove_ticks_compile_statement; print "\n");

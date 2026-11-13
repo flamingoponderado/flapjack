@@ -34,27 +34,30 @@ theorem stateCo_compileIncSource {C : Type}
   funext index
   simp [BackendProps.stateCo, compileIncSource, removeTicksCo, inCo, cleanProg]
 
-/-- Flapjack infrastructure: an initial call through tick-cleaned code is
-reproduced by the original code with extra clock and the same final FFI. -/
+/-- An initial call through tick-cleaned code is reproduced by the original
+code with extra clock and the same final FFI. The evaluator inherits the
+real-model assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "evaluate_remove_ticks_compile"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_removeTicks_compile {C F : Type} (program : List (Nat × Nat × Bvi.Exp))
-    (oracle : BviSem.CompileOracle C) (compiler : BviSem.Compiler C)
-    (ffi : HolFfiState F) (clock start : Nat) (result : BviResult) (targetNext : BviState C F)
-    (run : evaluate [.call 0 (some start) [] none] []
-      (initialState ffi (sptFromAList (cleanProg program)) (removeTicksCo oracle) compiler clock) =
+    (oracle : BviSem.CompileOracle C) (ffi : HolFfiState F) (compiler : BviSem.Compiler C)
+    (clock start : Nat) (result : BviResult) (targetNext : BviState C F)
+    (run : evaluateTuple ([.call 0 (some start) [] none], [],
+      initialState ffi (sptFromAList (cleanProg program)) (removeTicksCo oracle) compiler clock) =
         (result, targetNext)) :
-    ∃ extra sourceNext, evaluate [.call 0 (some start) [] none] []
-      (initialState ffi (sptFromAList program) oracle (removeTicksCc compiler) (clock + extra)) =
+    ∃ extra sourceNext, evaluateTuple ([.call 0 (some start) [] none], [],
+      initialState ffi (sptFromAList program) oracle (removeTicksCc compiler) (clock + extra)) =
         (result, sourceNext) ∧ sourceNext.ffi = targetNext.ffi := by
   have related := removeStateRel_initial program oracle compiler ffi clock
   have cleanedRun : evaluate (removeTicksListSource [.call 0 (some start) [] none]) []
       (initialState ffi (sptFromAList (cleanProg program)) (removeTicksCo oracle) compiler clock) =
-        (result, targetNext) := by simpa [removeTicksListSource, removeTicksSource] using run
+        (result, targetNext) := by simpa [evaluateTuple, removeTicksListSource, removeTicksSource] using run
   obtain ⟨extra, sourceNext, sourceRun, finalRel⟩ :=
     RemoveTicksCases.evaluate_removeTicks [.call 0 (some start) [] none] []
       (initialState ffi (sptFromAList (cleanProg program)) (removeTicksCo oracle) compiler clock)
       (initialState ffi (sptFromAList program) oracle (removeTicksCc compiler) clock)
       result targetNext related cleanedRun
-  exact ⟨extra, sourceNext, by simpa [initialState] using sourceRun, finalRel.2.2.2.1.symm⟩
+  exact ⟨extra, sourceNext, by simpa [evaluateTuple, initialState] using sourceRun, finalRel.2.2.2.1.symm⟩
 
 /-- The complete initial-call simulation for source-shaped whole-program
 inlining, with the original all-clock type-error exclusion. The evaluator
@@ -95,7 +98,8 @@ theorem evaluateCompileProg {C F : Type}
           (result, targetNext) := by
       simpa [evaluateTuple, stateCo_compileIncSource] using run
     obtain ⟨extra, intermediateNext, intermediateRun, intermediateFfi⟩ :=
-      evaluate_removeTicks_compile intermediate (inCo oracle) compiler ffi clock start result targetNext run'
+      evaluate_removeTicks_compile intermediate (inCo oracle) ffi compiler clock start result targetNext run'
+    simp only [evaluateTuple] at intermediateRun
     let source := initialState ffi (sptFromAList program) oracle (inCc (removeTicksCc compiler)) (clock + extra)
     cases sourceRun : evaluate [.call 0 (some start) [] none] [] source with
     | mk sourceResult sourceNext =>

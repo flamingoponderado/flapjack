@@ -427,6 +427,16 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "evaluate_remove_ticks_compile",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/WholeProgramSimulation.lean",
+    "lean_name": "evaluate_removeTicks_compile",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent comparison with the original local statement and its typed HOL capture: all eight binders, the sole cleaned-code initial evaluation premise, the existential extra clock and source state, equal result, and full final FFI-state equality agree. Compiler and FFI carriers are independent and callback word widths match. The specialized Lean oracle helper is extensionally the original pair operation composed with the oracle at this theorem's types. BVI refs use the canonical finite-support representation with a same-module roundtrip; code remains a sparse tree. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8). The capture records the typed statement, not an original proof replay."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "evaluate_compile_prog",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/WholeProgramSimulation.lean",
     "lean_name": "evaluateCompileProg",
