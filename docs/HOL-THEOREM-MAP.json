@@ -386,6 +386,24 @@
     "reviewer": "Independent typed HOL source review 2026-11-13: the full equation copies refs, clock and ffi, maps the original code tree to one arbitrary BVL code payload, and retains all other fields from one arbitrary BVL state; the seed only witnesses inhabitation. Shared compiler and FFI carriers and fixed callback widths match. Both refs fields use the canonical finite-support map translation, with separate checked carrier roundtrips."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
+    "hol_name": "compile_prog_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteSimulation.lean",
+    "lean_name": "compileProgSource_semantics",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: the original input and oracle conditions, strict compiled-worker bound, second-projection compilation equation, and source non-Fail premise imply the full source-to-target behavior equality for both pass modes. Independent compiler and FFI carriers and fixed callback widths are preserved. Evaluator and state representations are reviewed separately. Inherits reals_as_rational_cuts through semantic primitives, as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "hol_name": "compile_prog_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/WholeProgram.lean",
+    "lean_name": "compileProg_semantics",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: the full compilation equation, initial oracle cache equality, distinct source names and source non-Fail condition imply the complete target-to-source behavior equality. Independent compiler and FFI carriers and fixed callback word widths match. The reviewed evaluator and semantic state record their finite-map translation separately. Inherits reals_as_rational_cuts through semantic primitives, as documented in SOUNDNESS item 8."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_prog_semantics",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Divergence.lean",

@@ -57,13 +57,9 @@ theorem stateCo_compileInc {I C : Type} (limit : Nat) (splitSeq : Bool) (cutSize
     List.map_map, Function.comp_def]
 
 
-/-- Source-shaped whole-program correctness for the Flapjack BVL semantics.
-The corresponding HOL theorem is not tagged: `BvlSem.semantics` internally uses
-a canonical finite-map reference state whose owner is absent from this theorem's
-signature, and the current finite-map qualifier cannot express that dependency.
-Its dependency closure also inherits the rational-cut real representation. The
-evaluator and whole-program semantics require source-level representation review
-before this declaration can be claimed as the HOL port. -/
+/-- Whole-program inlining preserves the source behavior. Its semantics inherit
+the real-model assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "compile_prog_semantics"]
 theorem compileProg_semantics {C F : Type} (limit : Nat) (splitSeq : Bool) (cutSize : Nat)
     (program : List (Nat × Nat × Bvl.Exp)) (cache : Spt (Nat × Bvl.Exp))
     (output : List (Nat × Nat × Bvl.Exp))
@@ -82,8 +78,6 @@ theorem compileProg_semantics {C F : Type} (limit : Nat) (splitSeq : Bool) (cutS
   rw [stateCo_compileInc]
   have compiled : compileProgFuel 0 limit cutSize splitSeq program = some (cache, output) := by
     rw [compileProgFuel_eq_compileProg, run]
-  have result := compileProgFuel_semantics 0 limit cutSize start splitSeq ffi program
-    oracle compiler cache output compiled cacheEq distinct nonFail
   have oracleEq : letOpOracle splitSeq cutSize (removeTicksCo ∘ inCo limit oracle) =
       (fun entry : C × List (Nat × Nat × Bvl.Exp) =>
         (entry.1, entry.2.map fun (name, arity, body) =>
@@ -92,6 +86,29 @@ theorem compileProg_semantics {C F : Type} (limit : Nat) (splitSeq : Bool) (cutS
     funext index
     rfl
   rw [← oracleEq]
-  exact result
+  let inlined := (tickCompileProg limit .ln program).2
+  let unticked := inlined.map fun (name, arity, body) => (name, arity, removeTicksSing body)
+  have exactRun := compileProgFuel_eq 0 limit cutSize splitSeq program
+  rw [compiled] at exactRun
+  have pairEq := Option.some.inj exactRun
+  have cacheRun : cache = (tickCompileProg limit .ln program).1 := congrArg Prod.fst pairEq
+  have outputRun : output = unticked.map (fun (name, arity, body) =>
+      (name, arity, letOpTransform splitSeq cutSize arity body)) := congrArg Prod.snd pairEq
+  have inlinedSame := inline_semantics ffi program oracle (removeTicksCc (letOpCompiler splitSeq cutSize compiler))
+    start limit (cacheEq.trans cacheRun) distinct nonFail
+  have untickedSame := removeTicks_semantics ffi (sptFromAList inlined) (inCo limit oracle)
+    (letOpCompiler splitSeq cutSize compiler) start
+  have middleSame : BvlSem.semantics ffi (sptFromAList unticked) (removeTicksCo ∘ inCo limit oracle)
+      (letOpCompiler splitSeq cutSize compiler) start =
+      BvlSem.semantics ffi (sptFromAList program) oracle
+        (inCc limit (removeTicksCc (letOpCompiler splitSeq cutSize compiler))) start := by
+    simpa [unticked, inlined, sptMap_sptFromAList] using untickedSame.trans inlinedSame
+  have middleNonFail : BvlSem.semantics ffi (sptFromAList unticked) (removeTicksCo ∘ inCo limit oracle)
+      (letOpCompiler splitSeq cutSize compiler) start ≠ .fail := by
+    rw [middleSame]
+    exact nonFail
+  have finalSame := letOp_semantics splitSeq cutSize start ffi (sptFromAList unticked)
+    (removeTicksCo ∘ inCo limit oracle) compiler middleNonFail
+  simpa [outputRun, sptMap_sptFromAList, bvlInlineCc, bvlInlineCo] using finalSame.trans middleSame
 
 end Flapjack.Compiler.Backend.BvlInline.Proofs

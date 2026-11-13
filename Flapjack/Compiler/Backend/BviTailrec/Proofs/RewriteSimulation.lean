@@ -4246,8 +4246,9 @@ theorem semantics_identity_adapter {C D F : Type} (ffi : HolFfiState F)
     simp [adjusted, BviProps.adjustOracle]
 
 /-- The tail-recursion program pass preserves BVI behavior in both modes,
-with its incremental compiler and oracle adapters. The evaluator and state
-carriers remain under HOL review. -/
+with its incremental compiler and oracle adapters. The semantics inherit the
+real-model assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_prog_semantics"]
 theorem compileProgSource_semantics {C F : Type}
     (next : Nat) (program : List (Nat × Nat × Bvi.Exp))
     (oracle : BviSem.CompileOracle (Nat × C)) (compiled : List (Nat × Nat × Bvi.Exp))
