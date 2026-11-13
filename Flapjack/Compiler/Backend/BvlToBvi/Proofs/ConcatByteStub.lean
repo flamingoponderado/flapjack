@@ -7,6 +7,14 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.SumListLengthStub
 /-! The byte-array concatenation runtime stub. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value)
+
+namespace ConcatByteCarrier
+/-- Canonical BVI reference-map state roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end ConcatByteCarrier
 open Flapjack.SemanticPrimitivesHOL (copyArray)
 
 /-- Concatenating an empty list returns the destination. Untagged pending
@@ -196,19 +204,24 @@ theorem evaluate_concatByte {C F : Type} (ptrs : List Nat) (chunks : List (List 
       simpa [start] using step
 
 /-- Source-shaped form of the concatenation stub for an encoded list. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "evaluate_ConcatByte_code"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_concatByte_decoded {C F : Type} (value : Value) (ptrs : List Nat)
-    (chunks : List (List (BitVec 8))) (before suffix : List (BitVec 8))
-    (dst : Nat) (flag : Bool) (state : BviSem.BviState C F)
-    (decode : BvlSem.valueToList value = some (ptrs.map (Value.refPtr true)))
-    (distinct : dst ∉ ptrs)
-    (lookups : ptrs.map state.refs.lookup = chunks.map (fun bytes => some (.byteArray true bytes)))
-    (dstLookup : state.refs.lookup dst = some (.byteArray true (before ++ suffix)))
-    (size : chunks.flatten.length = suffix.length)
-    (code : sptLookup concatByteLocation state.code = some concatByteCode) :
+    (chunks : List (List (BitVec 8))) (state : Flapjack.Compiler.Backend.BviSem.BviState C F)
+    (before suffix : List (BitVec 8)) (index dst : Nat) (flag : Bool)
+    (premises : sptLookup sumListLengthLocation state.code = some (2, sumListLengthCode.2) ∧
+      sptLookup concatByteLocation state.code = some (3, concatByteCode.2) ∧
+      BvlSem.valueToList value = some (ptrs.map (Value.refPtr true)) ∧ dst ∉ ptrs ∧
+      ptrs.map state.refs.lookup = chunks.map (fun bytes => some (.byteArray true bytes)) ∧
+      state.refs.lookup dst = some (.byteArray true (before ++ suffix)) ∧
+      index = before.length ∧ chunks.flatten.length = suffix.length) :
     ∃ clock, BviSem.evaluate [concatByteCode.2]
-      [value, .number before.length, .refPtr flag dst] (BviProps.incClock clock state) =
+      [value, .number index, .refPtr flag dst] (BviProps.incClock clock state) =
       (.val [.refPtr flag dst],
         { state with refs := state.refs.updateEq (dst, .byteArray true (before ++ chunks.flatten)) }) := by
+  obtain ⟨_sumCode, code, decode, distinct, lookups, dstLookup, indexEq, size⟩ := premises
+  change sptLookup concatByteLocation state.code = some concatByteCode at code
+  subst index
   rw [← valueToList_inverse value _ decode]
   exact evaluate_concatByte ptrs chunks before suffix dst flag state distinct lookups dstLookup size code
 

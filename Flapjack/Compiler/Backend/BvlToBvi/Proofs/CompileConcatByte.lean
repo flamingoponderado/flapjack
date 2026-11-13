@@ -46,8 +46,10 @@ theorem evaluate_concatByteBody {C F : Type} (value : Value) (ptrs : List Nat)
   have arrayLookup : allocated.refs.lookup ptr = some (.byteArray true ([] ++ zeros)) := by
     simp [allocated, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
   have arrayCode : sptLookup concatByteLocation allocated.code = some concatByteCode := by simpa [allocated] using concatCode
-  obtain ⟨writerClock, writerRun⟩ := evaluate_concatByte_decoded value ptrs chunks [] zeros ptr true allocated
-    decode ptrDistinct allocatedLookups arrayLookup (by simp [zeros]) arrayCode
+  have lengthCode' : sptLookup sumListLengthLocation allocated.code = some sumListLengthCode := by
+    simpa [allocated] using lengthCode
+  obtain ⟨writerClock, writerRun⟩ := evaluate_concatByte_decoded value ptrs chunks allocated [] zeros 0 ptr true
+    ⟨lengthCode', arrayCode, decode, ptrDistinct, allocatedLookups, arrayLookup, by simp, by simp [zeros]⟩
   have writerResult : BviSem.evaluate [concatByteCode.2] [value, .number 0, .refPtr true ptr]
       (BviProps.incClock writerClock allocated) =
       (.val [.refPtr true ptr], { state with refs := state.refs.updateEq (ptr, .byteArray true chunks.flatten) }) := by

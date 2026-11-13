@@ -130527,6 +130527,18 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ConcatByteStub.lean",
+  "hol_name": "evaluate_ConcatByte_code",
+  "lean_name": "evaluate_concatByte_decoded",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed source theorem in bvl_to_bvi_value_rel_probe.out: both code lookups, decoded pointers, destination exclusion, mapped lookups, destination array, index and length equalities, existential clock, full result and reference update are retained in source order. Fixed word8 chunks use BitVec 8 lists. The canonical BVI state roundtrip covers refs; the evaluator inherits reals_as_rational_cuts."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CopyGlobalsStub.lean",
   "hol_name": "evaluate_CopyGlobals_code",
   "hol_line": 734,
