@@ -138530,5 +138530,14 @@
     "lean_name": "localsOk_refl",
     "statement_status": "reviewed_exact",
     "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary sparse map and payload type, no premises, and the same reflexive locals_ok conclusion using the reviewed pointwise lookup characterization."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+    "hol_name": "evaluate_locals",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/EvaluateLocals.lean",
+    "lean_name": "evaluate_locals",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: preserves arbitrary program, independently typed compiler, FFI and unused vars carriers, exact non-type-error, source-evaluation and local-extension premises, both continuing and stopped result forms, all three permitted resource fields and final local inclusion. Reuses complete constructor cases, arbitrary sequential composition and resource transport. Inherits the reals_as_rational_cuts assumption through the evaluator (SOUNDNESS item 8)."
   }
 ]
