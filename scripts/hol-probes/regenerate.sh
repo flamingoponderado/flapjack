@@ -10911,3 +10911,20 @@ run_probe riscv_typed_probeScript.sml riscv_typed_probe.out \
   sip_typed sstatus_typed \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
   "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe word_convs_defs_typed_probeScript.sml word_convs_defs_typed_probe.out \
+  call_arg_convention_def_typed distinct_tar_reg_def_typed every_inst_def_typed \
+  extract_labels_def_typed flat_exp_conventions_def_typed good_handlers_def_typed \
+  inst_arg_convention_def_typed inst_ok_less_def_typed labels_rel_def_typed \
+  labels_rel_APPEND_typed labels_rel_CONS_typed PERM_IMP_labels_rel_typed labels_rel_refl_typed \
+  labels_rel_TRANS_typed post_alloc_conventions_def_typed pre_alloc_conventions_def_typed \
+  two_reg_inst_def_typed get_code_labels_def_typed every_var_inst_mono_typed \
+  every_var_exp_mono_typed full_inst_ok_less_def_typed good_code_labels_def_typed \
+  max_var_exp_IMP_typed max_var_intro_typed every_name_mono_typed no_install_def_typed \
+  no_alloc_subprogs_def_typed no_install_subprogs_def_typed no_mt_subprogs_def_typed \
+  no_share_inst_subprogs_def_typed not_created_subprogs_def_typed no_alloc_def_typed \
+  no_mt_def_typed no_share_inst_def_typed every_var_mono_typed every_name_conj_typed \
+  every_stack_var_conj_typed every_stack_var_mono_typed every_var_imp_every_stack_var_typed \
+  wf_cutsets_def_typed wf_names_def_typed \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
