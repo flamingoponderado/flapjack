@@ -17,7 +17,7 @@ set_option backward.privateInPublic.warn false
 namespace Flapjack.Test.CompileToCrepeParity
 
 open Flapjack
-open Flapjack.Pancake.PanLang (DeclHOL FunDeclHOL MlS ShapeHOL ExpHOL ProgHOL)
+open Flapjack.Pancake.PanLang (DeclHOL FunDeclHOL MlS ShapeHOL ExpHOL ProgHOL functionsHOL)
 
 private abbrev holMl (name : String) : MlS := Flapjack.Basis.Pure.MlString.ofString name
 
@@ -70,64 +70,64 @@ private def exactRaiseConstOracle : Bool :=
 /-! Direct `raise_const` result from `compile_to_crep_probe.out`, now checked
 at the exact HOL declaration-only boundary over a 64-bit word. The exception
 declaration determines code zero internally; no compiler context is supplied. -/
-def holDeclarationOnlyProbe : List (Decl (BitVec 64)) :=
-  [.exnDecl "E" .one,
+def exactDeclarationOnlyProbe : List (DeclHOL 64) :=
+  [.exnDecl (holMl "E") .one,
    .function
-     { name := "f", inline := false, exported := false,
-       params := [("x", .one)],
-       body := .raise "E" (.const 7), returnShape := .one }]
+     { name := holMl "f", inline := false, exported := false,
+       params := [(holMl "x", .one)],
+       body := .raise (holMl "E") (.const 7), returnShape := .one }]
 
-def holDeclarationOnlyOracle : Bool :=
-  match compileToCrepHOL holDeclarationOnlyProbe with
-  | [("f", [0],
+def exactDeclarationOnlyOracle : Bool :=
+  match compileToCrepExactHOLW exactDeclarationOnlyProbe with
+  | [(name, [0],
       .seq (.dec 1 (.const seven)
         (.seq (.storeGlob address (.var 1)) .skip))
         (.raise code))] =>
-      seven == (7 : BitVec 64) && address == (0 : BitVec 5) &&
-        code == (0 : BitVec 64)
+      name == holMl "f" && seven == (7 : BitVec 64) &&
+        address == (0 : BitVec 5) && code == (0 : BitVec 64)
   | _ => false
 
-#guard holDeclarationOnlyOracle
+#guard exactDeclarationOnlyOracle
 
 /-! These declaration-only fixtures replay the `raise_pair` and
 `handled_pair` rows from the direct HOL `compile_to_crep_probe.out` at its
-concrete 8-bit word instantiation. They exercise the exact finite-map
-`compileToCrepHOL` path, rather than the older caller-context compatibility
-helper below. -/
-def holPairRaiseProbe : List (Decl (BitVec 8)) :=
-  [.exnDecl "E" (.comb [.one, .one]),
+concrete 8-bit word instantiation. They exercise the tagged exact
+`compileToCrepExactHOLW` path; the retired production-carrier mirror was
+`compileToCrepHOL`. -/
+def exactPairRaiseProbe : List (DeclHOL 8) :=
+  [.exnDecl (holMl "E") (.comb [.one, .one]),
    .function
-     { name := "f", inline := false, exported := false, params := [],
-       body := .raise "E" (.rStruct [.const 7, .const 9]),
+     { name := holMl "f", inline := false, exported := false, params := [],
+       body := .raise (holMl "E") (.rstruct [.const 7, .const 9]),
        returnShape := .one }]
 
-def holPairRaiseProductionOracle : Bool :=
-  match compileToCrepHOL holPairRaiseProbe with
-  | [("f", [], .seq
+def exactPairRaiseOracle : Bool :=
+  match compileToCrepExactHOLW exactPairRaiseProbe with
+  | [(name, [], .seq
       (.dec 1 (.const seven)
         (.dec 2 (.const nine)
           (.seq (.storeGlob first (.var 1))
             (.seq (.storeGlob second (.var 2)) .skip))))
       (.raise code))] =>
-      seven == (7 : BitVec 8) && nine == (9 : BitVec 8) &&
+      name == holMl "f" && seven == (7 : BitVec 8) && nine == (9 : BitVec 8) &&
         first == (0 : BitVec 5) && second == (1 : BitVec 5) &&
         code == (0 : BitVec 8)
   | _ => false
 
-#guard holPairRaiseProductionOracle
+#guard exactPairRaiseOracle
 
-def holLaterPairRaiseProbe : List (Decl (BitVec 8)) :=
-  [.exnDecl "E" (.comb [.one, .one]),
+def exactLaterPairRaiseProbe : List (DeclHOL 8) :=
+  [.exnDecl (holMl "E") (.comb [.one, .one]),
    .function
-     { name := "f", inline := false, exported := false, params := [],
-       body := .dec "a" .one (.const 3)
-         (.dec "b" .one (.const 5)
-           (.raise "E" (.rStruct [.const 7, .const 9]))),
+     { name := holMl "f", inline := false, exported := false, params := [],
+       body := .dec (holMl "a") .one (.const 3)
+         (.dec (holMl "b") .one (.const 5)
+           (.raise (holMl "E") (.rstruct [.const 7, .const 9]))),
        returnShape := .one }]
 
-def holLaterPairRaiseProductionOracle : Bool :=
-  match compileToCrepHOL holLaterPairRaiseProbe with
-  | [("f", [],
+def exactLaterPairRaiseOracle : Bool :=
+  match compileToCrepExactHOLW exactLaterPairRaiseProbe with
+  | [(name, [],
       .dec 1 (.const three)
         (.dec 2 (.const five)
           (.seq
@@ -137,100 +137,104 @@ def holLaterPairRaiseProductionOracle : Bool :=
                   (.storeGlob first (.var 3))
                   (.seq (.storeGlob second (.var 4)) .skip))))
             (.raise code))))] =>
-      three == (3 : BitVec 8) && five == (5 : BitVec 8) &&
+      name == holMl "f" && three == (3 : BitVec 8) && five == (5 : BitVec 8) &&
         seven == (7 : BitVec 8) && nine == (9 : BitVec 8) &&
         first == (0 : BitVec 5) && second == (1 : BitVec 5) &&
         code == (0 : BitVec 8)
   | _ => false
 
-#guard holLaterPairRaiseProductionOracle
+#guard exactLaterPairRaiseOracle
 
-def holHandledPairProbe : List (Decl (BitVec 8)) :=
-  [.exnDecl "E" (.comb [.one, .one]),
+def exactHandledPairProbe : List (DeclHOL 8) :=
+  [.exnDecl (holMl "E") (.comb [.one, .one]),
    .function
-     { name := "f", inline := false, exported := false, params := [],
-       body := .raise "E" (.rStruct [.const 7, .const 9]),
+     { name := holMl "f", inline := false, exported := false, params := [],
+       body := .raise (holMl "E") (.rstruct [.const 7, .const 9]),
        returnShape := .comb [.one, .one] },
    .function
-     { name := "g", inline := false, exported := false,
-       params := [("pair", .comb [.one, .one])],
+     { name := holMl "g", inline := false, exported := false,
+       params := [(holMl "pair", .comb [.one, .one])],
        body := .call
-         (some (some (.local, "pair"), some ("E", "pair", .skip))) "f" [],
+         (some (some (.local, holMl "pair"),
+           some (holMl "E", holMl "pair", .skip))) (holMl "f") [],
        returnShape := .one }]
 
-def holHandledPairProductionOracle : Bool :=
-  match compileToCrepHOL holHandledPairProbe with
-  | [("f", [], .seq
+def exactHandledPairOracle : Bool :=
+  match compileToCrepExactHOLW exactHandledPairProbe with
+  | [(fname, [], .seq
         (.dec 1 (.const seven)
           (.dec 2 (.const nine)
             (.seq (.storeGlob first (.var 1))
               (.seq (.storeGlob second (.var 2)) .skip))))
         (.raise raiseCode)),
-     ("g", [0, 1], .call
+     (gname, [0, 1], .call
         (some ([0, 1], some (handlerCode,
           .seq
             (.seq (.assign 0 (.loadGlob loadFirst))
               (.seq (.assign 1 (.loadGlob loadSecond)) .skip))
-            .skip))) "f" [])] =>
-      seven == (7 : BitVec 8) && nine == (9 : BitVec 8) &&
+            .skip))) callee [])] =>
+      fname == holMl "f" && gname == holMl "g" && callee == holMl "f" &&
+        seven == (7 : BitVec 8) && nine == (9 : BitVec 8) &&
         first == (0 : BitVec 5) && second == (1 : BitVec 5) &&
         raiseCode == (0 : BitVec 8) && handlerCode == (0 : BitVec 8) &&
         loadFirst == (0 : BitVec 5) && loadSecond == (1 : BitVec 5)
   | _ => false
 
-#guard holHandledPairProductionOracle
+#guard exactHandledPairOracle
 
 /-! HOL `alist_to_fmap` is a right fold: the first repeated name wins even
 though `compile_to_crep` still emits both function declarations in order. -/
 def holDuplicateMapOracle : Bool :=
-  let declarations : List (Decl (BitVec 64)) :=
-    [.exnDecl "E" .one, .exnDecl "E" .one,
+  let declarations : List (DeclHOL 64) :=
+    [.exnDecl (holMl "E") .one, .exnDecl (holMl "E") .one,
      .function
-       { name := "f", inline := false, exported := false,
+       { name := holMl "f", inline := false, exported := false,
          params := [], body := .skip, returnShape := .one },
      .function
-       { name := "f", inline := false, exported := false,
-         params := [("x", .one)], body := .skip,
+       { name := holMl "f", inline := false, exported := false,
+         params := [(holMl "x", .one)], body := .skip,
          returnShape := .comb [.one, .one] }]
-  FLOOKUP (panToCrepGetEidsFromDeclsHOL declarations) "E" ==
+  (getEidsFromDeclsHOL declarations).lookup (holMl "E") ==
       some (0 : BitVec 64) &&
-    (match FLOOKUP (functionInfosHOL declarations) "f" with
+    (match (makeFuncsExactHOL (functionsHOL declarations)).lookup (holMl "f") with
      | some ([], .one) => true
      | _ => false) &&
-    (compileToCrepHOL declarations).length == 2
+    (compileToCrepExactHOLW declarations).length == 2
 
 #guard holDuplicateMapOracle
 
 /-! Exact `duplicate_exceptions` row from the direct HOL
 `compile_to_crep_probe.out`: the first repeated `E` keeps code zero, `F`
 keeps code one, and both compiled Raise bodies use those codes. -/
-def holDuplicateExceptionDecls : List (Decl (BitVec 8)) :=
-  [.exnDecl "E" .one, .exnDecl "F" .one, .exnDecl "E" .one,
+def exactDuplicateExceptionDecls : List (DeclHOL 8) :=
+  [.exnDecl (holMl "E") .one, .exnDecl (holMl "F") .one,
+   .exnDecl (holMl "E") .one,
    .function
-     { name := "f", inline := false, exported := false, params := [],
-       body := .raise "E" (.const 7), returnShape := .one },
+     { name := holMl "f", inline := false, exported := false, params := [],
+       body := .raise (holMl "E") (.const 7), returnShape := .one },
    .function
-     { name := "g", inline := false, exported := false, params := [],
-       body := .raise "F" (.const 9), returnShape := .one }]
+     { name := holMl "g", inline := false, exported := false, params := [],
+       body := .raise (holMl "F") (.const 9), returnShape := .one }]
 
-def holDuplicateExceptionProductionOracle : Bool :=
-  FLOOKUP (panToCrepGetEidsFromDeclsHOL holDuplicateExceptionDecls) "E" ==
+def exactDuplicateExceptionOracle : Bool :=
+  (getEidsFromDeclsHOL exactDuplicateExceptionDecls).lookup (holMl "E") ==
       some (0 : BitVec 8) &&
-    FLOOKUP (panToCrepGetEidsFromDeclsHOL holDuplicateExceptionDecls) "F" ==
+    (getEidsFromDeclsHOL exactDuplicateExceptionDecls).lookup (holMl "F") ==
       some (1 : BitVec 8) &&
-    (match compileToCrepHOL holDuplicateExceptionDecls with
-     | [("f", [], .seq
+    (match compileToCrepExactHOLW exactDuplicateExceptionDecls with
+     | [(fname, [], .seq
           (.dec 1 (.const seven)
             (.seq (.storeGlob first (.var 1)) .skip)) (.raise ecode)),
-        ("g", [], .seq
+        (gname, [], .seq
           (.dec 1 (.const nine)
             (.seq (.storeGlob second (.var 1)) .skip)) (.raise fcode))] =>
-          seven == (7 : BitVec 8) && nine == (9 : BitVec 8) &&
+          fname == holMl "f" && gname == holMl "g" &&
+            seven == (7 : BitVec 8) && nine == (9 : BitVec 8) &&
             first == (0 : BitVec 5) && second == (0 : BitVec 5) &&
             ecode == (0 : BitVec 8) && fcode == (1 : BitVec 8)
      | _ => false)
 
-#guard holDuplicateExceptionProductionOracle
+#guard exactDuplicateExceptionOracle
 
 def compileToCrepeProbeContext : CompileContext Nat :=
   { vars := [], functions := [], exceptions := [("E", 0)],
@@ -265,17 +269,17 @@ def crepVarsOracle : Bool :=
 /-! Direct HOL `mk_ctxt_fields` oracle in `compile_to_crep_probe.out`:
     the constructor preserves all four fields in HOL's argument order. -/
 def mkCtxtOracle : Bool :=
-  let vars : FiniteMap VarName (Shape × List Nat) :=
-    FUPDATE FEMPTY ("x", (.one, [0]))
-  let funcs : FiniteMap FunName (List (VarName × Shape) × Shape) :=
-    FUPDATE FEMPTY ("f", ([("x", .one)], .one))
-  let eids : FiniteMap ExceptionId (BitVec 8) :=
-    FUPDATE FEMPTY ("E", 2)
-  let context := panToCrepMkCtxtHOL vars funcs 3 eids
+  let vars : HolFiniteMapExact MlS (ShapeHOL × List Nat) :=
+    HolFiniteMapExact.empty.updateEq (holMl "x", (.one, [0]))
+  let funcs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL) :=
+    HolFiniteMapExact.empty.updateEq (holMl "f", ([(holMl "x", .one)], .one))
+  let eids : HolFiniteMapExact MlS (BitVec 8) :=
+    HolFiniteMapExact.empty.updateEq (holMl "E", 2)
+  let context := mkCtxtExactHOL vars funcs 3 eids
   context.vmax == 3 &&
-    (FLOOKUP context.vars "x").isSome &&
-    (FLOOKUP context.funcs "f").isSome &&
-    FLOOKUP context.eids "E" == some 2
+    (context.vars.lookup (holMl "x")).isSome &&
+    (context.funcs.lookup (holMl "f")).isSome &&
+    context.eids.lookup (holMl "E") == some 2
 
 #guard mkCtxtOracle
 
@@ -423,21 +427,21 @@ def laterPairOracle : Bool :=
 one-word Crep global indices from `raise_pair_later` survive as Stack Temp 0
 and Temp 1. The original pass rules are `loop_to_wordScript.sml:93` and
 `compiler/backend/word_to_stackScript.sml:491`. -/
-def holLaterPairRaiseProbe64 : List (Decl (BitVec 64)) :=
-  [.exnDecl "E" (.comb [.one, .one]),
+def exactLaterPairRaiseProbe64 : List (DeclHOL 64) :=
+  [.exnDecl (holMl "E") (.comb [.one, .one]),
    .function
-     { name := "f", inline := false, exported := false, params := [],
-       body := .dec "a" .one (.const 3)
-         (.dec "b" .one (.const 5)
-           (.raise "E" (.rStruct [.const 7, .const 9]))),
+     { name := holMl "f", inline := false, exported := false, params := [],
+       body := .dec (holMl "a") .one (.const 3)
+         (.dec (holMl "b") .one (.const 5)
+           (.raise (holMl "E") (.rstruct [.const 7, .const 9]))),
        returnShape := .one }]
 
 /-! Exact `raise_pair_later_64` row from the direct HOL probe: the ordinary
 declarations use slots 1 and 2, the later two-word payload uses slots 3 and 4,
 and its global return area uses the unscaled Temp-region indices 0 and 1. -/
-def holLaterPairRaiseProductionOracle64 : Bool :=
-  match compileToCrepHOL holLaterPairRaiseProbe64 with
-  | [("f", [],
+def exactLaterPairRaiseOracle64 : Bool :=
+  match compileToCrepExactHOLW exactLaterPairRaiseProbe64 with
+  | [(name, [],
       .dec 1 (.const three)
         (.dec 2 (.const five)
           (.seq
@@ -446,13 +450,13 @@ def holLaterPairRaiseProductionOracle64 : Bool :=
                 (.seq (.storeGlob first (.var 3))
                   (.seq (.storeGlob second (.var 4)) .skip))))
             (.raise code))))] =>
-      three == (3 : BitVec 64) && five == (5 : BitVec 64) &&
+      name == holMl "f" && three == (3 : BitVec 64) && five == (5 : BitVec 64) &&
         seven == (7 : BitVec 64) && nine == (9 : BitVec 64) &&
         first == (0 : BitVec 5) && second == (1 : BitVec 5) &&
         code == (0 : BitVec 64)
   | _ => false
 
-#guard holLaterPairRaiseProductionOracle64
+#guard exactLaterPairRaiseOracle64
 
 def handledPairDecls : List (Decl Nat) :=
   [.exnDecl "E" (.comb [.one, .one]),

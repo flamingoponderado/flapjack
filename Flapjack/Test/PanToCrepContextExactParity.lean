@@ -16,7 +16,7 @@ namespace Flapjack.Test.PanToCrepContextExactParity
 
 open Flapjack
 open Flapjack.Pancake.PanLang (MlS ShapeHOL NameRanged ShapeByteRanged shapeOfHOL
-  withShapeHOL sizeOfShapeHOL)
+  withShapeHOL sizeOfShapeHOL DeclHOL FunDeclHOL ProgHOL functionsHOL)
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Pancake.PanLang (DeclByteRanged FunDeclByteRanged ParamByteRanged
   ListParamByteRanged ProgByteRanged ExpByteRanged)
@@ -185,40 +185,34 @@ example : (panToCrepContextExactOfProduction productionSample productionEvidence
 `make_vmap`, `make_funcs`, and `get_eids_from_decls` admit the restricted
 bridge when the source declaration byte-range invariant holds. -/
 
-private def compilerParams : List (VarName × Shape) := [("p", .one)]
+private def compilerParams : List (MlS × ShapeHOL) := [(p, .one)]
 
-private def compilerFunction : Flapjack.FunDecl (BitVec 8) :=
-  ⟨"f", false, false, compilerParams, .skip, .one⟩
+private def compilerFunction : FunDeclHOL 8 :=
+  ⟨f, false, false, compilerParams, .skip, .one⟩
 
-private def compilerDeclarations : List (Decl (BitVec 8)) :=
-  [Decl.function compilerFunction, Decl.exnDecl "E" .one]
-
-private theorem compilerDeclarationsByteRanged :
-    ∀ d ∈ compilerDeclarations, DeclByteRanged d := by
-  intro d hd
-  have hmem : d = Decl.function compilerFunction ∨
-      d = Decl.exnDecl "E" Shape.one := by
-    simpa [compilerDeclarations] using hd
-  rcases hmem with hfun | hexn
-  · rw [hfun]
-    simp [DeclByteRanged, FunDeclByteRanged, ListParamByteRanged,
-      ParamByteRanged, ProgByteRanged, NameRanged,
-      ShapeByteRanged, compilerFunction, compilerParams]
-  · rw [hexn]
-    simp [DeclByteRanged, NameRanged, ShapeByteRanged]
+private def compilerDeclarations : List (DeclHOL 8) :=
+  [.function compilerFunction, .exnDecl e .one]
 
 private def compilerEntry :
-    FunName × List (VarName × Shape) × Prog (BitVec 8) × Shape :=
-  ("f", compilerParams, (Prog.skip : Prog (BitVec 8)), .one)
+    MlS × List (MlS × ShapeHOL) × ProgHOL 8 × ShapeHOL :=
+  (f, compilerParams, (ProgHOL.skip : ProgHOL 8), .one)
 
-private theorem compilerEntryMem : compilerEntry ∈ functionEntries compilerDeclarations := by
+private theorem compilerEntryMem :
+    compilerEntry ∈ functionsHOL compilerDeclarations := by
   simp [compilerEntry, compilerDeclarations, compilerFunction, compilerParams,
-    functionEntries]
+    functionsHOL]
 
-private def compilerContext : PanToCrepHOLContext (BitVec 8) :=
-  panToCrepMkCtxtHOL (panToCrepMakeVmapHOL compilerParams)
-    (functionInfosHOL compilerDeclarations) 0
-    (panToCrepGetEidsFromDeclsHOL compilerDeclarations)
+private def compilerContext : PanToCrepContextExact 8 :=
+  mkCtxtExactHOL (panToCrepMakeVmapHOLExact compilerParams)
+    (makeFuncsExactHOL (functionsHOL compilerDeclarations)) 0
+    (getEidsFromDeclsHOL compilerDeclarations)
+
+private theorem compilerContextFuncs :
+    compilerContext.funcs.lookup f = some (compilerParams, ShapeHOL.one) := by
+  simp [compilerContext, mkCtxtExactHOL, makeFuncsExactHOL, functionsHOL,
+    compilerDeclarations, compilerFunction, compilerParams,
+    HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL, FUPDATE_HOL, f]
+
 
 /-! Exact HOL `ctxt_fc_def` rows: replay the direct HOL-EVAL probe
 `scripts/hol-probes/ctxt_fc_probe.out`. The rows `shaped_slots`,
