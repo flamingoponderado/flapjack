@@ -815,40 +815,6 @@ theorem correctOutcome_move {C F : Type} (value : BvlSem.Value)
         · simp [DataSem.getVar, sptLookup_sptMap, sptLookup_sptInsert_same, projection]
         · constructor
 
-/-- A selected non-tail conditional branch either stops unchanged or copies
-its single result into the fresh merge local. Its result and state satisfy the
-same simulation invariant at the merge point. -/
-theorem simulation_branch_move {C F : Type} (branch : Bvi.Exp) (env : List BvlSem.Value)
-    (source nextSource : BviSem.BviState C F) (t1 t2 : DataSem.State C F)
-    (res : BviSem.BviResult) (n next dest name : Nat) (corr live : List Nat)
-    (prog : DataLang.Prog) (pres : Option (Result (List DataSem.Value) DataSem.Value)) (ls : Option Nat)
-    (sourceRun : BviSem.evaluate [branch] env source = (res, nextSource))
-    (targetRun : DataSem.evaluate prog t1 = (pres, t2))
-    (initialRel : stateRel source t1) (finalRel : stateRel nextSource t2)
-    (outcome : correctOutcome res t1 t2 n next corr live [name] env false pres ls)
-    (destBound : next ≤ dest) :
-    ∃ t3 presFinal,
-      DataSem.evaluate (.seq prog (.move dest name)) t1 = (presFinal, t3) ∧
-      stateRel nextSource t3 ∧
-      correctOutcome res t1 t3 n (dest + 1) corr live [dest] env false presFinal ls := by
-  have sourceBound := BviSem.evaluate_clock_le [branch] env source
-  rw [sourceRun] at sourceBound
-  have targetBound : t2.clock ≤ t1.clock := by
-    simpa [← initialRel.1, ← finalRel.1] using sourceBound
-  cases pres with
-  | some result =>
-    refine ⟨t2, some result, evaluateSeq_stop prog (.move dest name) t1 t2 result targetRun targetBound, finalRel, ?_⟩
-    exact outcome
-  | none =>
-    cases res with
-    | err error => simp [correctOutcome] at outcome
-    | val values =>
-      obtain ⟨value, rfl⟩ := BviSem.evaluate_singleton branch env source nextSource values sourceRun
-      obtain ⟨dataValue, moveRun, movedRel, movedOutcome⟩ :=
-        correctOutcome_move value nextSource t1 t2 n next dest name corr live env ls finalRel outcome destBound
-      refine ⟨DataSem.setVar dest dataValue t2, none, ?_, movedRel, movedOutcome⟩
-      exact evaluateSeq_continue prog (.move dest name) t1 t2 _ targetRun targetBound moveRun
-
 private theorem destBool_tests (value : DataSem.Value) (result : Bool)
     (decoded : DataSem.destBool value = some result) :
     DataSem.isBool true value = result ∧ DataSem.isBool false value = !result := by
@@ -881,30 +847,6 @@ theorem evaluateIf_projection {C F : Type} (state : DataSem.State C F) (name : N
     exact decoded
   obtain ⟨yesTest, noTest⟩ := destBool_tests value condition dataDecoded
   cases condition <;> simp [DataSem.evaluate, read, yesTest, noTest]
-
-/-- A selected branch provides the conditional's result invariant in both
-tail position and non-tail position, where its result is moved to the common
-fresh local. -/
-theorem simulation_branch {C F : Type} (branch : Bvi.Exp) (env : List BvlSem.Value)
-    (source nextSource : BviSem.BviState C F) (t1 t2 : DataSem.State C F)
-    (res : BviSem.BviResult) (n next dest name : Nat) (corr live : List Nat) (tail : Bool)
-    (prog : DataLang.Prog) (pres : Option (Result (List DataSem.Value) DataSem.Value)) (ls : Option Nat)
-    (sourceRun : BviSem.evaluate [branch] env source = (res, nextSource))
-    (targetRun : DataSem.evaluate prog t1 = (pres, t2))
-    (initialRel : stateRel source t1) (finalRel : stateRel nextSource t2)
-    (outcome : correctOutcome res t1 t2 n next corr live [name] env tail pres ls)
-    (destBound : next ≤ dest) :
-    ∃ t3 presFinal,
-      DataSem.evaluate (if tail then prog else .seq prog (.move dest name)) t1 = (presFinal, t3) ∧
-      stateRel nextSource t3 ∧
-      correctOutcome res t1 t3 n (dest + 1) corr live [dest] env tail presFinal ls := by
-  cases tail with
-  | false =>
-    simpa using simulation_branch_move branch env source nextSource t1 t2 res n next dest name corr live prog pres ls sourceRun targetRun initialRel finalRel outcome destBound
-  | true =>
-    cases pres with
-    | none => simp [correctOutcome] at outcome
-    | some result => exact ⟨t2, some result, targetRun, finalRel, outcome⟩
 
 private theorem correctOutcome_weaken_start {C F : Type} (res : BviSem.BviResult)
     (t1 t2 : DataSem.State C F) (n n' next : Nat) (corr live names : List Nat)
@@ -1036,8 +978,39 @@ theorem simulationFor_if {C F : Type} (condition yes no : Bvi.Exp)
           rw [selectedCompiled] at branchCompiled
           simp only [Prod.mk.injEq] at branchCompiled
           obtain ⟨rfl, rfl, rfl⟩ := branchCompiled
-          obtain ⟨t2, finalPres, selectedTarget, finalRel, selectedOutcome⟩ :=
-            simulation_branch (if choice then yes else no) env smid s2 tmid tbranch res branchStart branchNext n3 branchName corr live tail branchCode branchPres ls2 branchRun branchTarget middleRel branchRel branchOutcome destBound
+          have selected : ∃ t2 finalPres,
+              DataSem.evaluate (if tail then branchCode else .seq branchCode (.move n3 branchName)) tmid =
+                (finalPres, t2) ∧ stateRel s2 t2 ∧
+              correctOutcome res tmid t2 branchStart (n3 + 1) corr live [n3] env tail finalPres ls2 := by
+            cases tail with
+            | true =>
+              cases branchPres with
+              | none => simp [correctOutcome] at branchOutcome
+              | some result => exact ⟨tbranch, some result, branchTarget, branchRel, branchOutcome⟩
+            | false =>
+              have sourceBound := BviSem.evaluate_clock_le [if choice then yes else no] env smid
+              rw [branchRun] at sourceBound
+              have targetBound : tbranch.clock ≤ tmid.clock := by
+                simpa [← middleRel.1, ← branchRel.1] using sourceBound
+              cases branchPres with
+              | some result =>
+                refine ⟨tbranch, some result,
+                  evaluateSeq_stop branchCode (.move n3 branchName) tmid tbranch result branchTarget targetBound,
+                  branchRel, ?_⟩
+                exact branchOutcome
+              | none =>
+                cases res with
+                | err error => simp [correctOutcome] at branchOutcome
+                | val values =>
+                  obtain ⟨resultValue, rfl⟩ := BviSem.evaluate_singleton
+                    (if choice then yes else no) env smid s2 values branchRun
+                  obtain ⟨dataResult, moveRun, movedRel, movedOutcome⟩ :=
+                    correctOutcome_move resultValue s2 tmid tbranch branchStart branchNext n3 branchName
+                      corr live env ls2 branchRel branchOutcome destBound
+                  refine ⟨DataSem.setVar n3 dataResult tbranch, none, ?_, movedRel, movedOutcome⟩
+                  exact evaluateSeq_continue branchCode (.move n3 branchName) tmid tbranch _
+                    branchTarget targetBound moveRun
+          obtain ⟨t2, finalPres, selectedTarget, finalRel, selectedOutcome⟩ := selected
           have ifRun : DataSem.evaluate (.ifThenElse condName yesTarget noTarget) tmid = (finalPres, t2) := by
             rw [evaluateIf_projection tmid condName dataValue choice yesTarget noTarget (by simpa [DataSem.getVar] using localFound) dataDecoded]
             cases choice <;> simpa [yesTarget, noTarget, branchCode, branchName] using selectedTarget
