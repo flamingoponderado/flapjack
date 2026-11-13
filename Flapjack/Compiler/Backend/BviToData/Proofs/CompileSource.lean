@@ -82,17 +82,4 @@ theorem compileSing_source_eq :
       | nil => simpa [compileList] using agrees
       | cons y ys => simpa using agrees
 
-/-- The executable compiler's total traversal yields the original
-list-shaped definition of the optimized expression compiler. -/
-theorem compileExp_source (argc : Nat) (exp : Bvi.Exp) :
-    compileExp argc exp = optimise (compileSource argc (List.range argc) true [] [exp]).1 := by
-  rfl
-
-/-- At any initial fuel, the executable bounded compiler returns the
-original optimized list-shaped compilation. -/
-theorem compileExpBounded_source (fuel argc : Nat) (exp : Bvi.Exp) :
-    compileExpBounded fuel argc exp =
-      some (optimise (compileSource argc (List.range argc) true [] [exp]).1) := by
-  rw [compileExpBounded_agrees_all fuel argc exp, compileExp_source]
-
 end Flapjack.Compiler.Backend.BviToData

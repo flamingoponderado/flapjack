@@ -116,22 +116,6 @@ theorem evaluate_makeSpace_names_locals {C F : Type} (amount : Nat) (roots : Lis
       rfl
     · simp at cut
 
-/-- A projected variable correspondence survives a cut that keeps all of
-its names. The projection can have an independent result type. -/
-theorem varCorr_cut_namesOfList {α β : Type} (f : α → β) (kept : List Nat) (env : Spt α)
-    (names : List Nat) (values : List β)
-    (related : DataProps.varCorr values names (sptMap f env))
-    (included : ∀ key ∈ names, key ∈ kept) :
-    DataProps.varCorr values names (sptMap f (sptMkWf (sptInter env (namesOfList kept)))) := by
-  induction related with
-  | nil => constructor
-  | @cons name value names values lookup rest ih =>
-    constructor
-    · simp only [DataSem.getVar, sptLookup_sptMap, lookup_cut_namesOfList]
-      rw [if_pos (included name (by simp))]
-      simpa [DataSem.getVar, sptLookup_sptMap] using lookup
-    · exact ih (fun key member => included key (by simp [member]))
-
 /-- A projected correspondence is preserved when each of its named lookups
 is unchanged. -/
 theorem varCorr_of_lookup_eq {α β : Type} (f : α → β) (before after : Spt α)

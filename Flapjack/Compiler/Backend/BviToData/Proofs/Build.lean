@@ -20,17 +20,6 @@ theorem dataToBviValue_listToValue_nil (values : List DataSem.Value) (timestamp 
   | nil => simp [DataSem.listToValue, BvlSem.listToValue, dataToBviValue]
   | cons first rest ih => simp [DataSem.listToValue, BvlSem.listToValue, dataToBviValue, ih]
 
-/-- Changing the timestamps assigned to new list blocks leaves their BVI
-projection unchanged. This is Flapjack proof infrastructure. -/
-theorem dataToBviValue_listToValue_timestamp (values : List DataSem.Value) (tail : DataSem.Value)
-    (left right : Nat) :
-    dataToBviValue (DataSem.listToValue left tail values) = dataToBviValue (DataSem.listToValue right tail values) := by
-  induction values generalizing left right with
-  | nil => rfl
-  | cons first rest ih =>
-    simp only [DataSem.listToValue, dataToBviValue, List.map_cons, List.map_nil]
-    rw [ih (left + 1) (right + 1)]
-
 private theorem bvlList_reconstruct (value : BvlSem.Value) (values : List BvlSem.Value)
     (decode : BvlSem.valueToList value = some values) : BvlSem.listToValue values = value := by
   cases value with
