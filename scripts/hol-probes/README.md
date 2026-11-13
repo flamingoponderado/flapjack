@@ -10008,3 +10008,15 @@ correspondence.
 `HOL_PROBE_ONLY=hol_finitemap_alist_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean
 correspondence.
+
+`hol_byte_typed_probe.out` captures the typed statements of the HOL `byte`
+theory declarations ported in `Flapjack/Byte*.lean` from the built HOL4 core
+theory (no rebuild): `byte_index_def`, `get_byte_def`, `word_to_bytes_def`,
+`word_to_bytes_aux_def`, `get_byte_set_byte` (with its `8 ≤ dimindex` premise),
+`set_byte_def`, `word_of_bytes_def`, `word_slice_alt_def`, `bytes_to_word_def`
+and `bytes_in_word_def`. The capture shows the arbitrary word dimension `α`,
+the `word8` byte payload and the `dimindex (:α) DIV 8` byte count retained by
+the Lean renderings. Regenerate with
+`HOL_PROBE_ONLY=hol_byte_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.

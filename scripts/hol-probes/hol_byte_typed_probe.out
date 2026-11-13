@@ -1,0 +1,10 @@
+byte_index_def_typed=∀(a :α word) (is_bigendian :bool). byte_index a is_bigendian = (let (d :num) = dimindex (:α) DIV (8 :num) in if is_bigendian then (8 :num) * (d − (1 :num) − w2n a MOD d) else (8 :num) * (w2n a MOD d))
+get_byte_def_typed=∀(a :α word) (w :α word) (is_bigendian :bool). get_byte a w is_bigendian = (w2w (w ⋙ byte_index a is_bigendian) :word8)
+word_to_bytes_def_typed=∀(w :α word) (be :bool). word_to_bytes w be = word_to_bytes_aux (dimindex (:α) DIV (8 :num)) w be
+word_to_bytes_aux_def_typed=(∀(w :α word) (be :bool). word_to_bytes_aux (0 :num) w be = ([] :word8 list)) ∧ ∀(n :num) (w :α word) (be :bool). word_to_bytes_aux (SUC n) w be = word_to_bytes_aux n w be ⧺ [get_byte (n2w n :α word) w be]
+get_byte_set_byte_typed=(8 :num) ≤ dimindex (:α) ⇒ get_byte (a :α word) (set_byte a (b :word8) (w :α word) (be :bool)) be = b
+set_byte_def_typed=∀(a :α word) (b :word8) (w :α word) (is_bigendian :bool). set_byte a b w is_bigendian = (let (i :num) = byte_index a is_bigendian in word_slice_alt (dimindex (:α)) (i + (8 :num)) w ‖ (w2w b :α word) ≪ i ‖ word_slice_alt i (0 :num) w)
+word_of_bytes_def_typed=(∀(be :bool) (a :α word). word_of_bytes be a ([] :word8 list) = (0w :α word)) ∧ ∀(be :bool) (a :α word) (b :word8) (bs :word8 list). word_of_bytes be a (b::bs) = set_byte a b (word_of_bytes be (a + (1w :α word)) bs) be
+word_slice_alt_def_typed=∀(h :num) (l :num) (w :α word). word_slice_alt h l w = (FCP(i :num). l ≤ i ∧ i < h ∧ w ' i)
+bytes_to_word_def_typed=∀(w :α word) (k :num) (bs :word8 list) (be :bool) (a :α word). bytes_to_word k a bs w be = if k = (0 :num) then w else case bs of ([] :word8 list) => w | b::bs' => set_byte a b (bytes_to_word (k − (1 :num)) (a + (1w :α word)) bs' w be) be
+bytes_in_word_def_typed=(bytes_in_word :α word) = (n2w (dimindex (:α) DIV (8 :num)) :α word)
