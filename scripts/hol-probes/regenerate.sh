@@ -10928,3 +10928,9 @@ run_probe word_convs_defs_typed_probeScript.sml word_convs_defs_typed_probe.out 
   wf_cutsets_def_typed wf_names_def_typed \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
+
+run_probe word_convs_changed_rows_typed_probeScript.sml word_convs_changed_rows_typed_probe.out \
+  three_to_two_reg_prog_two_reg_inst_typed word_alloc_two_reg_inst_typed \
+  word_alloc_two_reg_inst_lem_typed compile_to_word_conventions_typed \
+  "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
