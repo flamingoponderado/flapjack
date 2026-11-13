@@ -28,3 +28,4 @@ val _ = show "exp_size_APPEND" bvi_letProofTheory.exp_size_APPEND;
 val _ = show "IMP_COMM" bvi_letProofTheory.IMP_COMM;
 val _ = show "compile_APPEND" bvi_letProofTheory.compile_APPEND;
 val _ = show "compile_CONS" bvi_letProofTheory.compile_CONS;
+val _ = show "evaluate_SNOC_Rval" bvi_letProofTheory.evaluate_SNOC_Rval;

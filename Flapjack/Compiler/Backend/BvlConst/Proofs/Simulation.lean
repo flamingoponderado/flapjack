@@ -143,16 +143,4 @@ theorem evaluate_compileSing {C F : Type} (expression : Bvl.Exp) (env : List Val
   simpa [BvlConst.compile, compileList, BvlConst.compileExp_eq] using
     evaluate_compileList [expression] state env result final premises
 
-/-- The production traversal returns a transformed expression that preserves
-all non-type-error evaluations, for any initial fuel. -/
-theorem evaluate_compileBounded {C F : Type} (fuel : Nat) (expression : Bvl.Exp) (env : List Value)
-    (state final : State C F) (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
-    (run : evaluateTuple ([expression], env, state) = (result, final))
-    (notTypeError : result ≠ .err (.abort .typeError)) :
-    ∃ output, compileBounded fuel [] expression = some output ∧
-      evaluateTuple ([output], env, state) = (result, final) :=
-  ⟨compileSing [] expression, compileBounded_eq fuel [] expression,
-    by simpa [BvlConst.compileExp_eq] using
-      evaluate_compileSing expression env state final result ⟨run, notTypeError⟩⟩
-
 end Flapjack.Compiler.Backend.BvlConst.Proofs

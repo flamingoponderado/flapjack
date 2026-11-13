@@ -447,6 +447,18 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "evaluate_SNOC_Rval",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/EvaluateList.lean",
+    "lean_name": "evaluateSnocRval",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: the single successful evaluation premise, original three ordered witnesses, SNOC orientation, prefix length and both evaluation equations match. The BVI reference finite map uses the canonical finite-support state with a same-module roundtrip witness. Inherits reals_as_rational_cuts through semantic primitives, as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
     "hol_name": "IMP_COMM",
     "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/ListCompiler.lean",
     "lean_name": "impComm",
@@ -23253,7 +23265,7 @@
     "hol_path": "cakeml/compiler/backend/bvl_constScript.sml", "hol_name": "compile_exp_def",
     "lean_path": "Flapjack/Compiler/Backend/BvlConst/SourceCompile.lean", "lean_name": "compileExp",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared compile_exp_def_typed in bvl_const_frontend_probe.out, including the empty-list Var 0 fallback. compileBounded_eq at the empty environment and compileExp_eq connect the executed pass to this definition; evaluate_compileBounded uses that route."
+    "reviewer": "Compared compile_exp_def_typed in bvl_const_frontend_probe.out, including the empty-list Var 0 fallback. evaluate_compileSing uses compileExp_eq; compileBounded_eq preserves executed-pass agreement."
   },
   {
     "hol_path": "cakeml/compiler/backend/bvl_constScript.sml", "hol_name": "compile_exp_eq",
