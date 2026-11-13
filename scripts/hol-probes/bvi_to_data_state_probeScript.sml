@@ -72,3 +72,4 @@ val evaluate_return_range_replay = Q.prove
        bviPropsTheory.evaluate_genlist_vars
    \\ simp [ETA_AX, rich_listTheory.TAKE_LENGTH_APPEND]);
 val _ = show "evaluate_Return_GENLIST_Var_replay_typed=" evaluate_return_range_replay;
+val _ = show "optimise_correct_typed=" bvi_to_dataProofTheory.optimise_correct;

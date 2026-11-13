@@ -138539,5 +138539,32 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Independent typed HOL source review 2026-11-13: preserves arbitrary program, independently typed compiler, FFI and unused vars carriers, exact non-type-error, source-evaluation and local-extension premises, both continuing and stopped result forms, all three permitted resource fields and final local inclusion. Reuses complete constructor cases, arbitrary sequential composition and resource transport. Inherits the reals_as_rational_cuts assumption through the evaluator (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_spaceProofScript.sml",
+    "hol_name": "evaluate_compile",
+    "lean_path": "Flapjack/Compiler/Backend/DataSpace/Proofs/Seq.lean",
+    "lean_name": "evaluate_compile",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: full local theorem with independent compiler, FFI and unused vars carriers; original non-type-error, source-evaluation and local-inclusion premises, both continuing and stopped state shapes, all three resource fields and final locals inclusion. All Seq branches cover arbitrary continuations. Inherits the reals_as_rational_cuts assumption through evaluator primitives (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_spaceProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Compiler/Backend/DataSpace/Proofs/Seq.lean",
+    "lean_name": "compile_correct",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary program and state, original stopped and non-type-error premises, identical result and full state except safe_for_space, peak_heap_length and stack_max. Inherits the reals_as_rational_cuts assumption through evaluator primitives (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "optimise_correct",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Optimise.lean",
+    "lean_name": "optimise_correct",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: original non-type-error and stopped premises, arbitrary program and independent compiler/FFI state carriers, original existential safe/peak/stackMax/localsSize order and exact unchanged result plus four state updates. Composes the actual liveness, simplification and reservation passes in source order. Inherits the reals_as_rational_cuts assumption through evaluator primitives (SOUNDNESS item 8)."
   }
 ]
