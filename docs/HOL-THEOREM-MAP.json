@@ -138590,5 +138590,16 @@
     "lean_name": "jumpExc_localsSize",
     "statement_status": "reviewed_exact",
     "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary independent compiler and FFI state carriers and incoming localsSize; the sole successful-jump premise implies exactly the same entire result state after replacing incoming localsSize."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "find_code_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/FindCode.lean",
+    "lean_name": "findCode_projection",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "BviState.refs"
+    ],
+    "reviewer": "Independent typed HOL source review 2026-11-13: complete direct and indirect lookup statement, arbitrary BVI/DATA states, projected argument lists, compiled body and optional frame size, with exactly the original state relation and successful source lookup premises. BVI refs use the reviewed canonical finite-support carrier with same-module unconditional roundtrip witness; DATA refs remain native sparse trees."
   }
 ]

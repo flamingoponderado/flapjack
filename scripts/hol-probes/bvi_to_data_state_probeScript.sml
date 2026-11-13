@@ -76,3 +76,10 @@ val _ = show "optimise_correct_typed=" bvi_to_dataProofTheory.optimise_correct;
 val _ = show "jump_exc_peak_safe_typed=" bvi_to_dataProofTheory.jump_exc_peak_safe;
 val _ = show "jump_exc_sfs_lss_peak_safe_typed=" bvi_to_dataProofTheory.jump_exc_sfs_lss_peak_safe;
 val _ = show "jump_exc_lss_typed=" bvi_to_dataProofTheory.jump_exc_lss;
+(* The lookup lemma is local to the original script; print its source statement with inferred types. *)
+val _ = (print "find_code_lemma_statement_typed="; print_term
+  ``bvi_to_dataProof$state_rel r t2 /\
+    bvlSem$find_code dest (MAP bvi_to_dataProof$data_to_bvi_v a) r.code = SOME (args,exp)
+    ==> ?args' ss. args = MAP bvi_to_dataProof$data_to_bvi_v args' /\
+      dataSem$find_code dest a t2.code t2.stack_frame_sizes =
+        SOME (args',bvi_to_data$compile_exp (LENGTH args') exp,ss)``; print "\n");
