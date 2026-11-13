@@ -698,13 +698,13 @@ theorem crepRuntimeLoad32_riscv64_eq_panMemLoad32HOL {σ : Type}
     local with `FOLDL res_var` over `ZIP (ns, MAP (FLOOKUP t.locals) ns)`.
     `nestedDecsHOL` ports only the syntax. This expression evaluator is over
     production `CrepExp` and `CrepHolState`, while the theorem quantifies over
-    the full Crep program and finite-map state; `evalCrepClockProg` likewise
-    covers only restricted production `CrepClockProg`/`CrepHolState`. There is
-    no full evaluator over `CrepProgHOL`/`CrepExpHOL` and
-    `CrepSemHOLState`, so the equation cannot be stated with these evaluators
-    and no tag is claimed. The faithful replacement is
-    `flapjack-4ac.5.19.1`, dependent on `flapjack-4ac.5.82` and exact Crep
-    carriers `flapjack-pxn.18.3.5.8.8`. -/
+    the full Crep program and finite-map state. The faithful statement is the
+    tagged `evalNestedDecsSeqResVarEqHOL`
+    (`Proofs/PanToCrep/EvaluateNestedDecs.lean`) over
+    `CrepProgHOL`/`CrepExpHOL` and `CrepSemHOLState` with the exact
+    `evalCrepSemHOLProgExact` evaluator; the restricted production evaluator
+    `evalCrepClockProg` has been retired. This production-carrier declaration
+    remains Flapjack-specific infrastructure. -/
 def evalCrepHolExp [NeZero width]
     (state : CrepHolState (RiscV.Word width) σ) :
     CrepExp (RiscV.Word width) → Option (RiscV.Word width)

@@ -862,6 +862,28 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             tagged,
         )
 
+    def test_eval_crep_clock_prog_mismatch_is_retired(self):
+        # The restricted production Crep evaluator is gone; HOL
+        # evaluate_nested_decs_load_globals stays mapped by the tagged exact
+        # evaluateNestedDecsLoadGlobalsCrepHOL over evalCrepSemHOLProgExact.
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        self.assertNotIn(
+            ("Flapjack/Pancake/Semantics/CrepSem/TotalEval.lean", "evalCrepClockProg"),
+            inventory,
+        )
+        exact = inventory[("Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+                           "evaluateNestedDecsLoadGlobalsCrepHOL")]
+        self.assertEqual(exact["hol_name"], "evaluate_nested_decs_load_globals")
+        self.assertNotEqual(exact["statement_status"], "documented_mismatch")
+        self.assertIn(
+            ("Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+             "evaluateNestedDecsLoadGlobalsCrepHOL"),
+            MAP["tagged_declarations"](),
+        )
+
     def test_removed_vmax_analogues_are_not_in_inventory(self):
         inventory = MAP["build_inventory"]()
         self.assertFalse(any(

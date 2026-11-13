@@ -99,18 +99,15 @@ establish the exact HOL state relation. -/
     with evaluation of `p` after the globals are installed, followed by the
     exact `FOLDL res_var` restoration from the original locals. Lean has the
     exact syntax helpers `loadGlobalsHOL` and `nestedDecsHOL` and positive-width
-    `ValueHOL`/`CrepSemHOLState` carriers, but no full `evaluate` over
-    `CrepProgHOL` and `CrepSemHOLState`, nor an exact `globals_lookup` bridge.
-    The available `evalCrepClockProg` is a restricted evaluator over
-    `CrepClockProg`/`CrepExp`/`CrepHolState`; this `globalsLookup` is the
-    production String-backed projection described above. Neither can state the
-    HOL equation or its exact premises, so no theorem tag is claimed. The exact
+    `ValueHOL`/`CrepSemHOLState` carriers. This `globalsLookup` is the
+    production String-backed projection described above, so it cannot state the
+    HOL equation or its exact premises and no theorem tag is claimed. The exact
     `globals_lookup_def` port over the faithful carriers is the tagged
-    `globalsLookupHOL` (`Proofs/PanToCrep/EvaluateNestedDecs.lean`); this
-    production-carrier declaration is Flapjack-specific infrastructure and
-    carries no manifest row. The faithful theorem replacement remains tracked by
-    `flapjack-4ac.5.60.1`, gated on `flapjack-4ac.5.82` and
-    `flapjack-pxn.18.3.5.8.8`. -/
+    `globalsLookupHOL` (`Proofs/PanToCrep/EvaluateNestedDecs.lean`), and the
+    tagged `evaluateNestedDecsLoadGlobalsCrepHOL` in the same module states the
+    HOL equation over `evalCrepSemHOLProgExact`; this production-carrier
+    declaration is Flapjack-specific infrastructure and carries no manifest
+    row. -/
 def globalsLookup (state : CrepRuntimeState α σ) (value : PanValue α) :
     Option (List (PanWordLab α)) :=
   (List.range (Shape.shapeSize (panSemShapeOf value))).mapM
