@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitialStateRel
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteSimulation
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Namespace
 
 @[expose] public section
 
@@ -142,6 +143,55 @@ theorem compileProgFuel_production_tailrec_inputCondition
   compileProgFuel_tailrec_inputCondition fuel optFuel start counter (bvlNumStubs + 2)
     targetStart targetCounter program compiled distinct production_tailrec_start_valid.1
     production_tailrec_start_valid.2 run
+
+open Classical in
+/-- Whole-program lowering preserves distinct names and the exact auxiliary namespace bounds. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_prog_distinct_locs"]
+theorem compileProg_distinctLocs (start n loc final : Nat) (prog : List (Nat × Nat × Bvl.Exp)) (code : List (Nat × Nat × Bvi.Exp))
+    (h : compileProgSource start n prog = (loc, code, final) ∧ (prog.map Prod.fst).Nodup) :
+    (code.map Prod.fst).Nodup ∧
+      (∀ x ∈ (code.map Prod.fst).filter (fun x => decide (inNs 1 (x - bvlNumStubs))),
+        bvlToBviNamespaces * n + bvlNumStubs ≤ x ∧ x < bvlToBviNamespaces * final + bvlNumStubs) ∧
+      (∀ x ∈ code.map Prod.fst, ¬inNs 2 (x - bvlNumStubs) ∧ ¬inNs 3 (x - bvlNumStubs)) := by
+  obtain ⟨run, distinct⟩ := h
+  have codeEq : stubs (bvlNumStubs + bvlToBviNamespaces * start)
+      (allocGlobCount (prog.map (fun (_, _, body) => body))) ++ (compileIncSource n prog).2 = code := by
+    simpa only [compileProgSource, compileIncSource] using congrArg (fun q => q.2.1) run
+  have nodup : (code.map Prod.fst).Nodup := by
+    rw [← codeEq]
+    exact stubs_append_compileIncSource_names_nodup _ _ _ prog distinct
+  have domain := compileProg_codeLabelsDomain start n prog loc code final 0 0 run
+  have classify (x : Nat) (member : x ∈ code.map Prod.fst) :
+      (∃ k, k ∈ prog.map Prod.fst ∧ x = bvlNumStubs + k * bvlToBviNamespaces) ∨
+      (∃ k, x = bvlNumStubs + k * bvlToBviNamespaces + 1 ∧ n ≤ k ∧ k < final) ∨
+      x ∈ (stubs 0 0).map Prod.fst := by
+    have m : x ∈ {a | a ∈ code.map Prod.fst} := member
+    rw [domain] at m
+    simpa only [Set.mem_union, Set.mem_ofPred_eq, or_assoc] using m
+  refine ⟨nodup, ?_, ?_⟩
+  · intro x member
+    obtain ⟨member, ns⟩ := List.mem_filter.mp member
+    have nsProp : inNs 1 (x - bvlNumStubs) := of_decide_eq_true ns
+    have nsValue : (x - bvlNumStubs) % 4 = 1 := by simpa [inNs, bvlToBviNamespaces] using nsProp
+    rcases classify x member with ⟨k, _, eq⟩ | ⟨k, eq, lo, hi⟩ | stub
+    · simp only [bvlToBviNamespaces] at eq
+      omega
+    · simp only [bvlToBviNamespaces] at eq ⊢
+      omega
+    · obtain ⟨entry, present, equal⟩ := List.mem_map.mp stub
+      have below := stubs_below_namespace 0 0 entry present
+      have sub : x - bvlNumStubs = 0 := by omega
+      simp [sub] at nsValue
+  · intro x member
+    rcases classify x member with ⟨k, _, eq⟩ | ⟨k, eq, lo, hi⟩ | stub
+    · simp only [inNs, bvlToBviNamespaces] at *
+      omega
+    · simp only [inNs, bvlToBviNamespaces] at *
+      omega
+    · obtain ⟨entry, present, equal⟩ := List.mem_map.mp stub
+      have below := stubs_below_namespace 0 0 entry present
+      have sub : x - bvlNumStubs = 0 := by omega
+      simp [inNs, sub]
 
 /-- Lowering avoids tail-recursion worker locations above the stub boundary. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_prog_avoids_nss_2"]

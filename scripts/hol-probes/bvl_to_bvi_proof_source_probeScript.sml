@@ -119,3 +119,6 @@ val _ = show "EVERY_free_names_not_in_ns_2_replay_typed" every_free_names;
 
 val _ = show "compile_prog_avoids_nss_2_typed" bvl_to_bviProofTheory.compile_prog_avoids_nss_2;
 val _ = show "compile_prog_avoids_nss_3_typed" bvl_to_bviProofTheory.compile_prog_avoids_nss_3;
+
+val _ = show "compile_prog_distinct_locs_typed" bvl_to_bviProofTheory.compile_prog_distinct_locs;
+val _ = show "between_def_typed" miscTheory.between_def;

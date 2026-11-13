@@ -338,6 +338,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_prog_distinct_locs",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/TailrecNames.lean",
+    "lean_name": "compileProg_distinctLocs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent source review 2026-11-13: typed original compile_prog_distinct_locs and between_def match the complete source compiler equation, input distinctness, output distinctness, filtered namespace-one half-open bounds, and namespace-two and namespace-three exclusions. Arbitrary inputs and truncated natural subtraction are preserved; Classical supplies only the filter decision procedure."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_prog_avoids_nss_2",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/TailrecNames.lean",
     "lean_name": "compileProgSource_avoidsNss2",
