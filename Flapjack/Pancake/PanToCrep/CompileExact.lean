@@ -8,6 +8,8 @@ public import Flapjack.Pancake.PanToCrep.ExpHdlExact
 public import Flapjack.Pancake.Semantics.CrepSem.HOLState
 public import Flapjack.Pancake.PanCommon
 
+public import Flapjack.FiniteMap.BroadCodec
+
 @[expose] public section
 
 /-!
@@ -756,6 +758,22 @@ decreasing_by
     simp_wf
     omega
 
+namespace compFuncExactHOLWMap
+/-- Canonical lookup and support roundtrip for `fs`. -/
+theorem holFmapAsFiniteSupportParamWitness_compFuncExactHOLW_fs
+    (fs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL)) (key : MlS) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad fs)).lookup key = fs.lookup key ∧
+      (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad fs)).finiteSupport = fs.finiteSupport ∧
+      FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad fs) = fs := ⟨rfl, rfl, rfl⟩
+
+/-- Canonical lookup and support roundtrip for `eids`. -/
+theorem holFmapAsFiniteSupportParamWitness_compFuncExactHOLW_eids {width : Nat} [NeZero width]
+    (eids : HolFiniteMapExact MlS (BitVec width)) (key : MlS) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad eids)).lookup key = eids.lookup key ∧
+      (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad eids)).finiteSupport = eids.finiteSupport ∧
+      FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad eids) = eids := ⟨rfl, rfl, rfl⟩
+end compFuncExactHOLWMap
+
 /-!
 Exact HOL `comp_func_def` (`pan_to_crepScript.sml:337-343`). The four
 curried arguments, the `make_vmap` result, the parameter-shape maximum,
@@ -766,7 +784,7 @@ the usual positive type-indexed HOL word translation. Names and syntax
 stay on the exact `MlS`/`ShapeHOL`/`ProgHOL`/`CrepProgHOL` carriers.
 -/
 @[hol "cakeml/pancake/pan_to_crepScript.sml" "comp_func_def"
-  (fmap_as_finite_support_relation := [fs, eids])
+  (fmap_as_finite_support_parameters := [fs, eids])
   (words_as_type_indexed_bitvec)]
 def compFuncExactHOLW {width : Nat} [NeZero width]
     (fs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))

@@ -10050,12 +10050,12 @@
   "hol_name": "do_partial_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/DoPartial.lean",
   "lean_name": "doPartial",
-  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-  "fmap_as_finite_support_relation": [
-    "store"
-  ],
+  "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Source comparison: Compared lines 3875-3880 and do_partial_typed: only the generational case evaluates wordGenGcCanDoPartial and the other cases return false. The HOL finite-map store uses the canonical finite-support carrier and word values retain their positive dimension."
+  "reviewer": "Source comparison: Compared lines 3875-3880 and do_partial_typed: only the generational case evaluates wordGenGcCanDoPartial and the other cases return false. The HOL finite-map store uses the canonical finite-support carrier and word values retain their positive dimension. The standalone finite-map parameters use same-module canonical lookup/support roundtrip witnesses.",
+  "fmap_as_finite_support_parameters": [
+    "store"
+  ]
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
@@ -37103,12 +37103,12 @@
     "hol_name": "has_space_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Allocation.lean",
     "lean_name": "hasSpace",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "store"
-    ],
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-y19g.7) against stackSemScript.sml:376-381. HOL type probe confirms independently quantified request/store word dimensions; Lean retains both NeZero dimensions. Canonical standalone store map. Exactly Word/SOME Word/SOME Word pattern then unsigned w2n request <= w2n modular difference; all other patterns NONE. Direct original true/false/wrap/nonword/missing/mixed-width rows kernel replay."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-y19g.7) against stackSemScript.sml:376-381. HOL type probe confirms independently quantified request/store word dimensions; Lean retains both NeZero dimensions. Canonical standalone store map. Exactly Word/SOME Word/SOME Word pattern then unsigned w2n request <= w2n modular difference; all other patterns NONE. Direct original true/false/wrap/nonword/missing/mixed-width rows kernel replay. The standalone finite-map parameters use same-module canonical lookup/support roundtrip witnesses.",
+    "fmap_as_finite_support_parameters": [
+      "store"
+    ]
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Bitmap.lean",
@@ -79334,13 +79334,13 @@
     "hol_name": "comp_func_def",
     "lean_path": "Flapjack/Pancake/PanToCrep/CompileExact.lean",
     "lean_name": "compFuncExactHOLW",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27, bead flapjack-4ac.2.14.1; pan_to_crepScript.sml:337-343): the HOL definition has four curried binders fs, eids, params, body and no premises; it defines vmap = make_vmap params, shapes = MAP SND params, vmax = size_of_shape (Comb shapes) - 1, then returns compile (mk_ctxt vmap fs vmax eids) body. compFuncExactHOLW has the same binders/order and body, using tagged panToCrepMakeVmapHOLExact, sizeOfShapeHOL, mkCtxtExactHOL, and compileProgExactHOLW. The input fs/eids finite maps are the only finite-support translations, listed as standalone exact HolFiniteMapExact parameters; MlS/ShapeHOL/ProgHOL/CrepProgHOL are the reviewed exact syntax/name/program carriers. HOL's type-indexed word is represented by BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. No premise, success condition, or output case is added. Direct original HOL EVAL rows are in scripts/hol-probes/pan_to_crep_comp_func_probe.out and checked by Flapjack.Test.PanToCrepCompFuncExactParity. The existing String-backed compFuncHOL stays untagged; production routing remains tracked by flapjack-pxn.18.3.5.8. The standalone finite-map parameters use same-module canonical lookup/support roundtrip witnesses.",
+    "fmap_as_finite_support_parameters": [
       "fs",
       "eids"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison (2026-09-27, bead flapjack-4ac.2.14.1; pan_to_crepScript.sml:337-343): the HOL definition has four curried binders fs, eids, params, body and no premises; it defines vmap = make_vmap params, shapes = MAP SND params, vmax = size_of_shape (Comb shapes) - 1, then returns compile (mk_ctxt vmap fs vmax eids) body. compFuncExactHOLW has the same binders/order and body, using tagged panToCrepMakeVmapHOLExact, sizeOfShapeHOL, mkCtxtExactHOL, and compileProgExactHOLW. The input fs/eids finite maps are the only finite-support translations, listed as standalone exact HolFiniteMapExact parameters; MlS/ShapeHOL/ProgHOL/CrepProgHOL are the reviewed exact syntax/name/program carriers. HOL's type-indexed word is represented by BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. No premise, success condition, or output case is added. Direct original HOL EVAL rows are in scripts/hol-probes/pan_to_crep_comp_func_probe.out and checked by Flapjack.Test.PanToCrepCompFuncExactParity. The existing String-backed compFuncHOL stays untagged; production routing remains tracked by flapjack-pxn.18.3.5.8."
+    ]
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",

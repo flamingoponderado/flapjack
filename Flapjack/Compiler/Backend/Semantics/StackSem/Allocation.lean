@@ -3,6 +3,8 @@ module
 public import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
 public import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
 
+public import Flapjack.FiniteMap.BroadCodec
+
 @[expose] public section
 
 namespace Flapjack.StackSemAllocation
@@ -38,12 +40,21 @@ def gc {width : Nat} [NeZero width] {C F : Type}
           | some stack' =>
               some { s with stack := unused ++ stack', store := store, regs := HolFiniteMapExact.empty, memory := memory }
 
+namespace hasSpaceMap
+/-- Canonical lookup and support roundtrip for `store`. -/
+theorem holFmapAsFiniteSupportParamWitness_hasSpace_store {storeWidth : Nat} [NeZero storeWidth]
+    (store : HolFiniteMapExact WordStoreHOL (WordLocW storeWidth)) (key : WordStoreHOL) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad store)).lookup key = store.lookup key ∧
+      (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad store)).finiteSupport = store.finiteSupport ∧
+      FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad store) = store := ⟨rfl, rfl, rfl⟩
+end hasSpaceMap
+
 /-- Exact unsigned modular-space test; missing entries and location-valued
 operands return NONE. HOL independently quantifies the request and store word
 dimensions; allocation instantiates both at its state width. The store
 argument is the canonical finite map. -/
 @[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "has_space_def"
-  (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support_parameters := [store]) (words_as_type_indexed_bitvec)]
 def hasSpace {requestWidth : Nat} {storeWidth : Nat} [NeZero requestWidth] [NeZero storeWidth]
     (wl : WordLocW requestWidth) (store : HolFiniteMapExact WordStoreHOL (WordLocW storeWidth)) : Option Bool :=
   match wl,store.lookup .nextFree,store.lookup .triggerGC with
