@@ -21,19 +21,6 @@ def mappedStateRel {C F : Type} (transform : Nat → Bvl.Exp → Bvl.Exp) (s t :
   s.compile = fun config program =>
     t.compile config (program.map fun (name, arity, body) => (name, arity, transform arity body))
 
-/-- Mapped states have equal code domains. -/
-theorem mappedStateRel_codeDomain {C F : Type} (transform : Nat → Bvl.Exp → Bvl.Exp)
-    (s t : State C F) (related : mappedStateRel transform s t) : sptDomain t.code = sptDomain s.code := by
-  have code := congrArg (fun state : State C F => state.code) related.1
-  rw [code, sptDomain_sptMap]
-
-/-- Mapping bodies preserves program labels. -/
-theorem mappedProgram_labels (transform : Nat → Bvl.Exp → Bvl.Exp)
-    (program : List (Nat × Nat × Bvl.Exp)) :
-    (program.map (fun (name, arity, body) => (name, arity, transform arity body))).map Prod.fst =
-      program.map Prod.fst := by
-  simp [List.map_map, Function.comp_def]
-
 /-- Program freshness is invariant under the matching code and program maps. -/
 theorem mappedProgram_disjoint (transform : Nat → Bvl.Exp → Bvl.Exp)
     (code : Spt (Nat × Bvl.Exp)) (program : List (Nat × Nat × Bvl.Exp)) :
@@ -47,14 +34,6 @@ theorem mappedProgram_disjoint (transform : Nat → Bvl.Exp → Bvl.Exp)
   · intro h entry ⟨original, mem, equal⟩
     subst entry
     exact h original mem
-
-/-- Mapping installed entries commutes with the code-tree union. -/
-theorem mappedProgram_codeUnion (transform : Nat → Bvl.Exp → Bvl.Exp)
-    (code : Spt (Nat × Bvl.Exp)) (program : List (Nat × Nat × Bvl.Exp)) :
-    sptUnion (sptMap (fun (arity, body) => (arity, transform arity body)) code)
-      (sptFromAList (program.map fun (name, arity, body) => (name, arity, transform arity body))) =
-    sptMap (fun (arity, body) => (arity, transform arity body)) (sptUnion code (sptFromAList program)) := by
-  rw [sptMap_sptUnion, sptMap_sptFromAList]
 
 /-- Mapped code lookup preserves selected arguments and transforms the body
 at the arity checked by the original lookup. -/

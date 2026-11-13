@@ -40,7 +40,7 @@ theorem mappedDoInstall {C F : Type} (transform : Nat → Bvl.Exp → Bvl.Exp)
             rw [fields]
             clear fields related
             simp only [doInstall, bytesEq, wordsEq, compilerEq, mappedProgram_disjoint,
-              mappedProgram_labels]
+              List.map_map, Function.comp_def]
             clear compilerEq
             cases programs : (s.compileOracle 0).2 with
             | nil =>
@@ -65,7 +65,7 @@ theorem mappedDoInstall {C F : Type} (transform : Nat → Bvl.Exp → Bvl.Exp)
                   by_cases same : bytes = bs ∧ words = ws ∧ (s.compileOracle 1).1 = cfg
                   · simp_all
                     rw [if_pos tailFree, if_pos tailFree]
-                    simp [mappedStateRel, ← mappedProgram_codeUnion]
+                    simp [mappedStateRel, sptMap_sptUnion, sptMap_sptFromAList]
                   · simp_all
                     rw [if_pos tailFree, if_pos tailFree]
                     have notSame : ¬(bytes = bs ∧ words = ws ∧ (s.compileOracle 1).1 = cfg) := by aesop
@@ -91,7 +91,9 @@ theorem mappedDoApp {C F : Type} (transform : Nat → Bvl.Exp → Bvl.Exp)
       cases s
       cases t
       simp_all [runtimeFrame]
-    have domains := mappedStateRel_codeDomain transform s t related
+    have domains : sptDomain t.code = sptDomain s.code := by
+      have code := congrArg (fun state : State C F => state.code) related.1
+      rw [code, sptDomain_sptMap]
     cases run : doApp op args s with
     | err error =>
       have swapped := doAppRerrSwap op args s error t
