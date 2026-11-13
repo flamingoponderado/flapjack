@@ -209,6 +209,22 @@
     "reviewer": "Independent typed HOL source review: all integer inputs and both original compileInt branches have the unconditional empty BVI label set; no integer bounds premise."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "dest_var_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/CodeLabels.lean",
+    "lean_name": "deleteVar_codeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: for every BVI expression, deleting a top-level variable preserves the complete code-label set exactly. The original variable-to-zero clause, unchanged other constructors, BVI carrier and label traversal agree; the original theorem was captured with inferred types."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_op_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CodeLabels.lean",
+    "lean_name": "compileOp_codeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: arbitrary operation, BVI operand list and independent stub arguments; original left-associated subset union of operand labels, translated operation labels and all stub keys is retained. All compileOp cases, BVI traversal, stub labels and carriers compared; typed original theorem captured."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_exps_aux_contains",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AuxNameRange.lean",

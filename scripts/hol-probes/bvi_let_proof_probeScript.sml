@@ -13,3 +13,4 @@ val _ = show "env_rel_MAP" env_rel_MAP;
 val _ = show "evaluate_env_rel" evaluate_env_rel;
 val _ = show "compile_thm" compile_thm;
 val _ = show "evaluate_compile_exp" evaluate_compile_exp;
+val _ = show "dest_var_code_labels" dest_var_code_labels;
