@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationAppPrefix
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationApplyPartial
 
 @[expose] public section
 
@@ -158,6 +159,7 @@ theorem nonInlineApplicationSimulation {C F : Type} (trace : BackendCommon.Tra)
             cases fnRel with
             | cons fnRelated relatedTail =>
               cases relatedTail
+              rename_i targetFn
               have sound := fnSound [fn] rfl
               cases sound with
               | cons fnSound _ =>
@@ -167,12 +169,16 @@ theorem nonInlineApplicationSimulation {C F : Type} (trace : BackendCommon.Tra)
                 | mk appResult last =>
                   simp [evaluate, argsRun, fixArgs, fnRun, fixFn, appRun] at run
                   rcases run with ⟨rfl, rfl⟩
+                  have locRel : loptRel targetFn values.length loc targetLoc := by
+                    rcases choice with equal | ⟨address, rfl, decision⟩
+                    · exact Or.inl equal
+                    · simpa [lengthEq] using ApplyPartial.annotatedApplicationLocation c (nextG next)
+                        fnApprox fn targetFn loc (first :: rest).length address decision fnSound fnRelated
                   obtain ⟨targetResult, targetFinal, targetAppRun, resultRel, finalState, finalGlobals, finalOracle, finalDisjoint⟩ :=
-                    AppPrefix.applicationContinuation c loc targetLoc fn _ values targetValues next targetNext
-                      fnApprox (first :: rest).length (appIH middle values next fn argsRun fnRun)
-                      ⟨argsRel, fnRelated, fnSound, nextSafe, fnValueSafe, valuesSafe, nextOracleSafe,
-                        nextCoSyntax, nextUnique, nextDisjoint, nextMono, nextState, nextGlobals,
-                        nextStateOracle, nextOracle⟩ lengthEq.symm choice appResult last appRun noType
+                    (appIH middle values next fn argsRun fnRun) appResult last targetLoc targetFn targetValues targetNext c none
+                      ⟨appRun, by simpa [valueRelAppNone] using fnRelated, nextOracle, nextDisjoint,
+                        nextSafe, fnValueSafe, valuesSafe, nextOracleSafe, nextCoSyntax, nextUnique,
+                        nextStateOracle, argsRel, nextState, nextGlobals, nextMono, locRel, by simp, noType⟩
                   refine ⟨targetResult, targetFinal, ?_, resultRel, finalState, finalGlobals, finalOracle, finalDisjoint⟩
                   have targetArgsFix := fixClock_evaluate (argsEas.map Prod.fst) (env2 ++ xenv2) t0
                   rw [targetArgsRun] at targetArgsFix

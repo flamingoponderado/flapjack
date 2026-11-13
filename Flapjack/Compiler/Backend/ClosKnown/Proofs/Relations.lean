@@ -72,6 +72,29 @@ def loptRel (fv : ClosSem.Value) (numargs : Nat) (lopt1 lopt2 : Option Nat) : Pr
         numargs = (@Flapjack.holEl (Nat × ClosLang.Exp) ⟨(0, .var .none 0)⟩ i fns).1 ∧ args = []
     | _, _ => False
 
+/-- A present source annotation can only remain unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "loptrel_arg1_SOME"]
+theorem loptRelSome (fv : Value) (numargs loc1 : Nat) (lopt2 : Option Nat) :
+    loptRel fv numargs (some loc1) lopt2 ↔ lopt2 = some loc1 := by
+  simp [loptRel]
+
+/-- An absent source annotation may be filled in only from a matching closure. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "loptrel_arg1_NONE"]
+theorem loptRelNone (fv : Value) (numargs : Nat) (lopt2 : Option Nat) :
+    loptRel fv numargs none lopt2 ↔
+      lopt2 = none ∨ ∃ loc2, lopt2 = some loc2 ∧
+        ((∃ env body, fv = .closure (some loc2) [] env numargs body) ∨
+          ∃ location args env fns i, fv = .recclosure location args env fns i ∧
+            ∃ loc1, location = some loc1 ∧ i < fns.length ∧
+              loc2 = loc1 + 2 * i ∧
+              numargs = (@Flapjack.holEl (Nat × ClosLang.Exp) ⟨(0, .var .none 0)⟩ i fns).1 ∧ args = []) := by
+  cases fv with
+  | closure location args env arity body =>
+    cases location <;> cases lopt2 <;> simp [loptRel, and_assoc, and_left_comm, and_comm, eq_comm]
+  | recclosure location args env fns i =>
+    cases location <;> cases lopt2 <;> simp [loptRel, and_assoc, and_left_comm, and_comm, eq_comm]
+  | _ => cases lopt2 <;> simp [loptRel]
+
 /-- The current approximation tree is the compiler-oracle state at index zero. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "next_g_def"
   (fmap_as_finite_support := [refs, code])]

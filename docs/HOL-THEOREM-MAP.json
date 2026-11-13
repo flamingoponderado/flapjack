@@ -9276,14 +9276,6 @@
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_every_Fn_SOME",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLocations.lean",
-  "lean_name": "knownLocationsIf",
-  "statement_status": "reviewed_exact",
-  "reviewer": "Compared known_locations_typed and the source If traversal case. The source input invariants imply the three output invariants; the result equation and recursive induction hypotheses expose the corresponding traversal case. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_every_Fn_SOME",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLocations.lean",
   "lean_name": "knownLocationsLet",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared known_locations_typed and the source Let traversal case. The source input invariants imply the three output invariants; the result equation and recursive induction hypotheses expose the corresponding traversal case. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
@@ -9455,14 +9447,6 @@
   "lean_name": "knownVarsOp",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared known_vars_none_typed and the source primitive-operation traversal case. The original input expression, approximation environment and global tree invariants imply the three output invariants; the result equation and any recursive induction hypotheses expose the actual source traversal cases. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_every_Fn_vs_NONE",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalSyntax.lean",
-  "lean_name": "knownVarsIf",
-  "statement_status": "reviewed_exact",
-  "reviewer": "Compared known_vars_none_typed and the source conditional traversal case. The original input expression, approximation environment and global tree invariants imply the three output invariants; the result equation and any recursive induction hypotheses expose the actual source traversal cases. This is a case, not the assembled theorem. Source review and kernel checking do not establish cross-language equivalence."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml", "hol_name": "val_approx_every_Fn_vs_NONE_def",
@@ -10488,45 +10472,6 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationLetrec.lean",
-  "lean_name": "knownCorrect0Letrec",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out. The recursive-closure evaluator case retains the original body induction hypothesis, including the arity checks, closure generator, optional capture lookup and environment extension. KnownSimulationAt unfolds to the original expression conjunct. Source and target states have independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationHandle.lean",
-  "lean_name": "knownCorrect0Handle",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed (typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. KnownSimulationAt unfolds to the complete source expression conjunct with its original premises and existential target conclusion. The source body induction hypothesis and raised-exception handler induction hypothesis are retained, including their exact evaluation and error-result conditions. Normal return, abort, and raised-exception paths establish the target run and final relations. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationIf.lean",
-  "lean_name": "knownCorrect0If",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed (typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. KnownSimulationAt unfolds to the complete source expression conjunct with its original premises and existential target conclusion. The source condition, true-branch and false-branch induction hypotheses are retained, including the exact HOL HD Boolean tests. Both branches, condition errors and invalid condition values are covered. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "v_rel_Block",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationBool.lean",
   "lean_name": "valueRelBlockTarget",
@@ -10561,45 +10506,6 @@
   ],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared known_correct0_statement_typed (the source-local theorem replay) against both conjuncts after unfolding KnownSimulationAt and KnownAppSimulationAt. All source quantifiers, premises, existential target evaluations, final value/state relations and oracle conclusions are retained. The proof assembles the evaluator cases by well-founded induction over clock and expression weight. The source and target compiler carriers and shared FFI carrier remain independently quantified; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationApp.lean",
-  "lean_name": "knownCorrect0App",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out. KnownSimulationAt unfolds to the original expression conjunct, and the argument, function-expression and application induction hypotheses retain the source result and nonempty-argument conditions, including the HOL head of the function result. The proof covers empty arguments, unchanged and annotated calls, and both pure and impure inlining, including errors and timeouts. Compiler and FFI carriers remain independent; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationLet.lean",
-  "lean_name": "knownCorrect0Let",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed (typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. KnownSimulationAt unfolds to the complete expression conjunct; the original binding induction hypothesis and result-dependent successful-binding body induction hypothesis are retained without additional assumptions. The proof relates the bound values using known_correct_approx, retains the original free-variable and oracle conditions, and establishes the existential target run and final relations. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationCons.lean",
-  "lean_name": "knownCorrect0Cons",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed (typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. KnownSimulationAt unfolds to the complete expression conjunct; the original head induction hypothesis and result-dependent successful-head tail induction hypothesis are retained with no additional premises. Both early errors and successful sequential execution preserve the source existential target run and final relations. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
@@ -10655,279 +10561,6 @@
   ],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared known_correct0_statement_typed (a typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. The empty-argument application induction case has no induction hypothesis. KnownAppSimulationAt unfolds to the complete application conjunct, including the source argument-specialization side condition and existential target result. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationInstallDispatch.lean",
-  "lean_name": "knownCorrect0OpInstall",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out with the Install operation branch of the original proof. KnownSimulationAt unfolds to the full expression conjunct; the argument hypothesis and successful-installation program hypothesis retain the source evaluation and installation premises. Specializing the operation to Install makes the force induction hypothesis impossible. The proof covers argument errors, non-type-error installation timeout with its advanced oracle, installed-program errors, and the related last returned values of nonempty successful programs. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpOrdinary.lean",
-  "lean_name": "knownCorrect0OpLabel",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out and the original operation branch. This constructor case retains the argument induction hypothesis; the installation and force-body hypotheses are inapplicable. KnownSimulationAt unfolds to the original expression conjunct, and the operation does not write global slots or select global-read replacement. The proof derives the intermediate tree inclusions, simulates the smart operation, and preserves state and oracle conditions using the original primitive global frame. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support and the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpOrdinary.lean",
-  "lean_name": "knownCorrect0OpFfi",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out and the original operation branch. This constructor case retains the argument induction hypothesis; the installation and force-body hypotheses are inapplicable. KnownSimulationAt unfolds to the original expression conjunct, and the operation does not write global slots or select global-read replacement. The proof derives the intermediate tree inclusions, simulates the smart operation, and preserves state and oracle conditions using the original primitive global frame. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support and the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpOrdinary.lean",
-  "lean_name": "knownCorrect0OpInt",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out and the original operation branch. This constructor case retains the argument induction hypothesis; the installation and force-body hypotheses are inapplicable. KnownSimulationAt unfolds to the original expression conjunct, and the operation does not write global slots or select global-read replacement. The proof derives the intermediate tree inclusions, simulates the smart operation, and preserves state and oracle conditions using the original primitive global frame. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support and the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpOrdinary.lean",
-  "lean_name": "knownCorrect0OpWord",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out and the original operation branch. This constructor case retains the argument induction hypothesis; the installation and force-body hypotheses are inapplicable. KnownSimulationAt unfolds to the original expression conjunct, and the operation does not write global slots or select global-read replacement. The proof derives the intermediate tree inclusions, simulates the smart operation, and preserves state and oracle conditions using the original primitive global frame. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support and the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpOrdinary.lean",
-  "lean_name": "knownCorrect0OpBlock",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out and the original operation branch. This constructor case retains the argument induction hypothesis; the installation and force-body hypotheses are inapplicable. KnownSimulationAt unfolds to the original expression conjunct, and the operation does not write global slots or select global-read replacement. The proof derives the intermediate tree inclusions, simulates the smart operation, and preserves state and oracle conditions using the original primitive global frame. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support and the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpOrdinary.lean",
-  "lean_name": "knownCorrect0OpMemory",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out and the original operation branch. This constructor case retains the argument induction hypothesis; the installation and force-body hypotheses are inapplicable. KnownSimulationAt unfolds to the original expression conjunct, and the operation does not write global slots or select global-read replacement. The proof derives the intermediate tree inclusions, simulates the smart operation, and preserves state and oracle conditions using the original primitive global frame. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support and the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpOrdinary.lean",
-  "lean_name": "knownCorrect0OpAllocThunk",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out and the original operation branch. This constructor case retains the argument induction hypothesis; the installation and force-body hypotheses are inapplicable. KnownSimulationAt unfolds to the original expression conjunct, and the operation does not write global slots or select global-read replacement. The proof derives the intermediate tree inclusions, simulates the smart operation, and preserves state and oracle conditions using the original primitive global frame. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support and the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpOrdinary.lean",
-  "lean_name": "knownCorrect0OpUpdateThunk",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out and the original operation branch. This constructor case retains the argument induction hypothesis; the installation and force-body hypotheses are inapplicable. KnownSimulationAt unfolds to the original expression conjunct, and the operation does not write global slots or select global-read replacement. The proof derives the intermediate tree inclusions, simulates the smart operation, and preserves state and oracle conditions using the original primitive global frame. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support and the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpOrdinary.lean",
-  "lean_name": "knownCorrect0OpAllocGlobal",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out and the original operation branch. This constructor case retains the argument induction hypothesis; the installation and force-body hypotheses are inapplicable. KnownSimulationAt unfolds to the original expression conjunct, and the operation does not write global slots or select global-read replacement. The proof derives the intermediate tree inclusions, simulates the smart operation, and preserves state and oracle conditions using the original primitive global frame. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support and the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpOrdinary.lean",
-  "lean_name": "knownCorrect0OpGlobalsPtr",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out and the original operation branch. This constructor case retains the argument induction hypothesis; the installation and force-body hypotheses are inapplicable. KnownSimulationAt unfolds to the original expression conjunct, and the operation does not write global slots or select global-read replacement. The proof derives the intermediate tree inclusions, simulates the smart operation, and preserves state and oracle conditions using the original primitive global frame. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support and the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpOrdinary.lean",
-  "lean_name": "knownCorrect0OpSetGlobalsPtr",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out and the original operation branch. This constructor case retains the argument induction hypothesis; the installation and force-body hypotheses are inapplicable. KnownSimulationAt unfolds to the original expression conjunct, and the operation does not write global slots or select global-read replacement. The proof derives the intermediate tree inclusions, simulates the smart operation, and preserves state and oracle conditions using the original primitive global frame. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support and the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpSetGlobal.lean",
-  "lean_name": "knownCorrect0OpSetGlobal",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out with the original SetGlobal branch. KnownSimulationAt unfolds to the full expression conjunct, retaining the argument induction hypothesis; the install and force-body hypotheses are inapplicable. The proof derives disjoint writes from uniqueness, obtains the argument approximation from known_correct_approx, and uses the inserted approximation's lookup and tree inclusion to justify the written runtime value in the larger oracle tree. It preserves the original primitive state and result relations and oracle invariants. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOp.lean",
-  "lean_name": "knownCorrect0Op",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out with the source Op induction case. The theorem keeps the full argument, installation, and force induction hypotheses, including the original intermediate result equations, operation discriminants, and thunk mode, and concludes KnownSimulationAt for the original Op. It assembles the constructor-specific cases including global read replacement and global writes. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationApplyFullBody.lean",
-  "lean_name": "knownCorrect0AppCons",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out against the original evaluate_app CONS proof. The theorem retains the source nonempty arguments and the full body and recursive-application induction hypotheses, including closure result, clock bound, body result and singleton decomposition. KnownAppSimulationAt unfolds to the original application conjunct. The proof covers rejected, partial and full closures, timeout, body errors, returned singleton and further application; it preserves the special exact-argument relation and handles changed direct annotations only when no arguments remain. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpGlobal.lean",
-  "lean_name": "knownCorrect0OpGlobal",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out with the original global-read operation branch. KnownSimulationAt unfolds to the full expression conjunct and retains the argument induction hypothesis; the installation and force hypotheses are inapplicable. The proof covers unreplaced reads and integer and empty-constructor replacements, using the source argument approximation and runtime global invariant to recover the exact value; global read errors are type errors excluded by the source theorem. The primitive state frame and oracle conditions are retained. Source and target compiler carriers are distinct and the FFI carrier shared; refs and code use canonical finite support with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationOpForce.lean",
-  "lean_name": "knownCorrect0OpForce",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed and evaluate_ind_typed in clos_known_syntax_probe.out with the force-operation branch of the source proof. KnownSimulationAt unfolds to the original expression conjunct. The operation is specialized to ForceThunk, making the install induction hypothesis impossible; the argument hypothesis and the forced-body hypothesis retain the source argument-evaluation and unevaluated-thunk conditions. Argument errors, invalid and evaluated thunks, body exceptions, and successful updates follow the original evaluator, with type errors excluded by the source theorem. Source and target compiler carriers remain separate and the FFI carrier shared; refs and code use canonical finite support with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationTick.lean",
-  "lean_name": "knownCorrect0Tick",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed (a typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. The Tick case keeps the source evaluator induction hypothesis conditional on a nonzero source clock. KnownSimulationAt unfolds to the complete expression conjunct; both timeout and recursive execution are covered. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationRaise.lean",
-  "lean_name": "knownCorrect0Raise",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed (a typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. The Raise case retains the source body induction hypothesis, and handles successful values, raised exceptions, and aborts with the original result relation. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationCall.lean",
-  "lean_name": "knownCorrect0Call",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed (a typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. The Call case retains the original argument and successful-callee evaluator induction hypotheses. The source state relation provides empty code after argument evaluation, as in the HOL proof. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
-  "hol_name": "known_correct0",
-  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationFn.lean",
-  "lean_name": "knownCorrect0Fn",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs",
-    "code"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared known_correct0_statement_typed (a typed replay of the source-local theorem) and evaluate_ind_typed in clos_known_syntax_probe.out. The Fn evaluator induction case has no induction hypothesis. The source capture annotation and environment split, free-variable bound, value relation and optimized-body expression relation are retained. The source and target states use independent compiler and shared FFI carriers; refs and code use canonical finite-support maps with the local roundtrip witness. The evaluator inherits rational-cut reals. Source review and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
@@ -11070,6 +10703,71 @@
     "refs",
     "code"
   ]
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "v_rel_IMP_v_to_bytes_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationDecode.lean",
+  "lean_name": "valueRelBytesList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_bytes_list_replay_typed, replaying the original source-local proof: related full values agree on decoding the arbitrary fixed-width list, with the same hypotheses and iff conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "v_rel_IMP_v_to_words_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationDecode.lean",
+  "lean_name": "valueRelWordsList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_words_list_replay_typed, replaying the original source-local proof: related full values agree on decoding the arbitrary fixed-width list, with the same hypotheses and iff conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "elist_globals_FLAT_APPEND_FOLDR",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SyntaxOracle.lean",
+  "lean_name": "elistGlobalsFlatAppendFoldr",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_elist_flat_append_foldr_typed: closure expression lists, bag union and empty bag, and full flattened-fold equation agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "elist_globals_FLAT_FOLDR",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SyntaxOracle.lean",
+  "lean_name": "elistGlobalsFlatFoldr",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_elist_flat_foldr_typed: closure expression lists, bag union and empty bag, and full flattened-fold equation agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "pure_co_oracle_props",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SyntaxOracle.lean",
+  "lean_name": "pureCoOracleProps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_pure_co_oracle_props_typed: both oracle properties and the independent configuration, input and output carriers agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "v1_size_append",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/GeneratedSize.lean",
+  "lean_name": "valueListSizeAppend",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_v1_size_append_typed and known_v_size_def_typed: generated value-list size and concatenation retain the original equations and statement."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "ref_rel_simps",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ValueRelation.lean",
+  "lean_name": "refRelSimps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_ref_rel_simps_typed: all three reference constructors and the full value-array, byte-array and thunk conclusions agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "state_rel_opt_rel_refs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/StateRelation.lean",
+  "lean_name": "stateRelOptRelRefs",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "reviewer": "Compared known_state_rel_opt_rel_refs_statement_typed, replayed from the source-local theorem and its original proof: both lookup directions, option relation and original state types agree. The refs and code fields use canonical finite maps, with the state codec witness in this module."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
@@ -11222,6 +10920,112 @@
   "lean_name": "decideInlineLetInlineFvMax",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared decide_inline_imp_clos_fv_max_typed in clos_known_syntax_probe.out and the source theorem. The location payload remains polymorphic, and the decision, existential closure approximation and original free-variable bound match. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "not_less_zero_imp",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OpEvaluateGlobals.lean",
+  "lean_name": "notLessZeroImp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_not_less_zero_replay_typed, replaying the source-local proof: integer nonnegativity implies the original natural-number existential."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "fv_alt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVarsAgreement.lean",
+  "lean_name": "fvAlt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_fv_alt_typed: original closure free-variable predicate and computed de Bruijn-set membership agree with the full HOL statement."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "fv1_alt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVarsAgreement.lean",
+  "lean_name": "fv1Alt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_fv1_alt_typed: original closure free-variable predicate and computed de Bruijn-set membership agree with the full HOL statement."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "subspt_better_definedg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SubsptComposition.lean",
+  "lean_name": "subsptBetterDefinedG",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subspt_better_definedg_typed: both better-defined relations and the endpoint subtree premise imply the original intermediate subtree conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_op_changed_globals_alt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/OpGlobals.lean",
+  "lean_name": "knownOpChangedGlobalsAlt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_op_changed_alt_typed: original compiler result premise and full domain characteristic-bag subbag bound agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_changed_globals_alt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/KnownGlobals.lean",
+  "lean_name": "knownListTotalChangedGlobalsAlt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_changed_alt_typed: original compiler result premise and full domain characteristic-bag subbag bound agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "set_globals_empty_unique_set_globals",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/UniqueGlobals.lean",
+  "lean_name": "setGlobalsEmptyUniqueSetGlobals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_empty_unique_globals_typed: original write-free premise, polymorphic oracle and full uniqueness equivalence agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "letrec_case_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
+  "lean_name": "letrecCaseEq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_letrec_case_eq_replay_typed, replaying the source-local proof: the independent unused limit type and function payload, both location cases and all generated indices agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "clos_gen_noinline_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
+  "lean_name": "closGenNoInlineEq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_clos_gen_noinline_eq_typed: arbitrary payload type, generated length, index calculation and in-range input element agree. List.ofFn uses exactly the indices produced by GENLIST, so each EL is in bounds."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "every_var_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
+  "lean_name": "everyVar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_every_var_typed: arbitrary variable predicate, all de Bruijn set constructors and the original shift or smart-union equation agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "every_var_mk_Union",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/FreeVars.lean",
+  "lean_name": "everyVarMkUnion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_every_var_union_typed: arbitrary variable predicate, all de Bruijn set constructors and the original shift or smart-union equation agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "mk_Ticks_esgc_free",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/PreserveSafety.lean",
+  "lean_name": "ticksEsgcFree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_ticks_esgc_free_typed: arbitrary trace, index, count and complete expression retain the original global-write safety iff."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "evaluate_mk_Ticks_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TicksEvaluate.lean",
+  "lean_name": "evaluateTicksImp",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "reviewer": "Compared known_evaluate_ticks_imp_typed: the original evaluation premise and full timeout-or-body-evaluation disjunction agree. State refs and code use canonical finite maps with the local codec witness. Inherits the reals_as_rational_cuts assumption through its dependencies.",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
@@ -14412,6 +14216,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_val_simps",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxValue.lean",
+  "lean_name": "valApproxValSimps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_val_approx_simps_typed: all six constructor equivalences, including ordinary and recursive closures and the in-bounds lookup, agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "val_approx_val",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxValue.lean",
   "lean_name": "ValApproxVal",
@@ -14433,6 +14245,86 @@
   "lean_name": "valApproxValMerge",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared val_approx_merge_typed: either source approximation related to the same value suffices for the merged approximation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "better_definedg_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "betterDefinedG",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_better_definedg_typed: both source sparse-tree domains, THE lookups and full approximation ordering agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "merge_idem",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "mergeIdem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_merge_idem_typed: the original full approximation or sparse-tree carrier and reflexive conclusion agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_refl",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxRefl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_refl_typed: the original full approximation or sparse-tree carrier and reflexive conclusion agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "better_definedg_refl",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "betterDefinedGRefl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_better_definedg_refl_typed: the original full approximation or sparse-tree carrier and reflexive conclusion agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "merge_Other",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "mergeOther",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_merge_other_typed: full approximation carrier and original merge or ordering equation agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "merge_Impossible",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "mergeImpossible",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_merge_impossible_typed: full approximation carrier and original merge or ordering equation agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_Other",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxOther",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_other_typed: full approximation carrier and original merge or ordering equation agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_Impossible",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxImpossible",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_impossible_typed: full approximation carrier and original merge or ordering equation agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapprox",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_def_typed: full approximation carrier and source merge-order equation or antisymmetry implication agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_antisym",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxAntisym",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_antisym_typed: full approximation carrier and source merge-order equation or antisymmetry implication agree."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
@@ -129267,6 +129159,126 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "every_Fn_vs_NONE_mk_Ticks",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TicksSyntax.lean",
+  "lean_name": "ticks_varsNone",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared ticks_vars_none_typed: arbitrary trace, counters and expression retain the original singleton annotation premise and forward tick-insertion conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "every_Fn_SOME_mk_Ticks",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TicksSyntax.lean",
+  "lean_name": "ticks_locations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_ticks_locations_typed: arbitrary trace, counters and expression retain the original singleton location premise and forward tick-insertion conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+  "hol_name": "pure_co_progs_def",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleCombinators.lean",
+  "lean_name": "pureCoProgs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pure_co_progs_typed: independent input/output program types, natural-number oracle index and function composition agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+  "hol_name": "state_co_add_state_co",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleCombinators.lean",
+  "lean_name": "stateCoAddStateCo",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared state_co_add_state_co_typed: independent state, input/output program and configuration types, threaded state and complete oracle function equality agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+  "hol_name": "pure_co_syntax_to_full_oracle",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProps/OracleCombinators.lean",
+  "lean_name": "pureCoSyntaxToFullOracle",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared pure_co_syntax_to_full_oracle_typed: independent program and configuration types, pure pass, oracle maker and complete function equality agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "loptrel_arg1_SOME",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/Relations.lean",
+  "lean_name": "loptRelSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_loptrel_some_typed: complete value carrier, annotation options and closure-field alternatives agree with the source theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "loptrel_arg1_NONE",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/Relations.lean",
+  "lean_name": "loptRelNone",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_loptrel_none_typed: complete value carrier, annotation options and closure-field alternatives agree with the source theorem."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "dest_closure_SOME_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ClosureGlobals.lean",
+  "lean_name": "destClosureSomeShape",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_dest_closure_shape_typed: arbitrary maximum, optional location, value, arguments and successful result retain the full ordinary-or-recursive closure shape conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "decide_inline_inlD_LetInline_sgc_free",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxGlobalSafety.lean",
+  "lean_name": "decideInlineSgcFree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared decide_inline_sgc_free_typed: arbitrary config, approximation, independently polymorphic optional location, arity and body; both decision and safety premises and empty global-write bag conclusion agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "val_approx_no_Labels_simp",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/ApproxLabels.lean",
+  "lean_name": "valApproxNoLabelsSimp",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared val_approx_no_labels_simp_replay_typed: the locally filtered HOL simplification bundle contains precisely the two quantified non-body constructors and the Other and Impossible cases."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_co_eq_pure_state",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileSemantics.lean",
+  "lean_name": "knownCoEqPureState",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_co_eq_pure_state_typed: arbitrary optional config and polymorphic compiler oracle, pure and stateful adapters, optional branches and full function equality agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_mk_co_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileSemantics.lean",
+  "lean_name": "knownMkCo",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_mk_co_typed: optional pass configurations, polymorphic oracle maker, source stages and composition order agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_co_progs_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileSemantics.lean",
+  "lean_name": "knownCoProgs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_co_progs_typed: optional configurations, initial sparse-tree state and complete pure/stateful program-oracle composition agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_co_known_mk_co",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileSemantics.lean",
+  "lean_name": "knownCoKnownMkCo",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_co_known_mk_co_typed: arbitrary optional configurations, polymorphic oracle maker and program oracle retain the complete function equality."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "fvs_compile_uncurry",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/CompileSemantics.lean",
+  "lean_name": "fvsCompileUncurry",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared fvs_compile_uncurry_typed: the arbitrary expression-list/input-payload pair, independent output-list element type, bound-zero source removal and empty auxiliary output agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "known_no_Labels",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalLabels.lean",
   "lean_name": "knownNoLabels",
@@ -132820,6 +132832,14 @@
   "lean_name": "bagAllDistinct",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the source and typed bag_all_distinct capture: for an arbitrary element type, every bag multiplicity is at most one."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "BAG_OF_SET",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "bagOfSet",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared bag_of_set_typed: an arbitrary predicate determines the characteristic multiplicity at each element."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",

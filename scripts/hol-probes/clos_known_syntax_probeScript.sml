@@ -47,6 +47,11 @@ val _ = show "clos_gen_noinline_obeys_max_app_typed=" clos_knownProofTheory.clos
 val _ = show "known_obeys_max_app_typed=" clos_knownProofTheory.known_obeys_max_app;
 val _ = show "compile_obeys_max_app_typed=" clos_knownProofTheory.compile_obeys_max_app;
 val _ = show "val_approx_no_labels_typed=" clos_knownProofTheory.val_approx_no_Labels_def;
+fun no_labels_trivial th =
+  aconv (snd (dest_eq (snd (strip_forall (concl th))))) T;
+val no_labels_simps_replay =
+  LIST_CONJ (List.filter no_labels_trivial (CONJUNCTS clos_knownProofTheory.val_approx_no_Labels_def));
+val _ = show "val_approx_no_labels_simp_replay_typed=" no_labels_simps_replay;
 val _ = show "globals_approx_no_labels_typed=" clos_knownProofTheory.globals_approx_no_Labels_def;
 val _ = show "val_approx_no_labels_merge_typed=" clos_knownProofTheory.val_approx_no_Labels_merge;
 val _ = show "known_op_no_labels_typed=" clos_knownProofTheory.known_op_no_Labels;
@@ -54,6 +59,38 @@ val _ = show "decide_inline_no_labels_typed=" clos_knownProofTheory.decide_inlin
 val _ = show "clos_gen_noinline_no_labels_typed=" clos_knownProofTheory.clos_gen_no_inline_no_Labels;
 val _ = show "known_no_labels_typed=" clos_knownProofTheory.known_no_Labels;
 val _ = show "compile_no_labels_typed=" clos_knownProofTheory.compile_no_Labels;
+val _ = show "ticks_vars_none_typed=" clos_knownProofTheory.every_Fn_vs_NONE_mk_Ticks;
+val _ = show "known_ticks_locations_typed=" clos_knownProofTheory.every_Fn_SOME_mk_Ticks;
+val _ = show "fvs_compile_uncurry_typed=" clos_knownProofTheory.fvs_compile_uncurry;
+val _ = show "known_co_eq_pure_state_typed=" clos_knownProofTheory.known_co_eq_pure_state;
+val _ = show "known_mk_co_typed=" clos_knownProofTheory.known_mk_co_def;
+val _ = show "known_co_progs_typed=" clos_knownProofTheory.known_co_progs_def;
+val _ = show "known_co_known_mk_co_typed=" clos_knownProofTheory.known_co_known_mk_co;
+val _ = show "pure_co_progs_typed=" backendPropsTheory.pure_co_progs_def;
+val _ = show "state_co_add_state_co_typed=" backendPropsTheory.state_co_add_state_co;
+val _ = show "pure_co_syntax_to_full_oracle_typed=" backendPropsTheory.pure_co_syntax_to_full_oracle;
+val _ = show "decide_inline_sgc_free_typed=" clos_knownProofTheory.decide_inline_inlD_LetInline_sgc_free;
+val _ = show "known_dest_closure_shape_typed=" clos_knownProofTheory.dest_closure_SOME_IMP;
+val _ = show "known_ref_rel_simps_typed=" clos_knownProofTheory.ref_rel_simps;
+val _ = show "bag_of_set_typed=" bagTheory.BAG_OF_SET;
+val _ = show "known_op_changed_alt_typed=" clos_knownProofTheory.known_op_changed_globals_alt;
+val _ = show "known_changed_alt_typed=" clos_knownProofTheory.known_changed_globals_alt;
+val _ = show "known_empty_unique_globals_typed=" clos_knownProofTheory.set_globals_empty_unique_set_globals;
+val _ = show "known_val_approx_simps_typed=" clos_knownProofTheory.val_approx_val_simps;
+val _ = show "known_fv_alt_typed=" clos_knownProofTheory.fv_alt;
+val _ = show "known_fv1_alt_typed=" clos_knownProofTheory.fv1_alt;
+val _ = show "known_clos_gen_noinline_eq_typed=" clos_knownProofTheory.clos_gen_noinline_eq;
+val _ = show "known_every_var_typed=" clos_knownProofTheory.every_var_def;
+val _ = show "known_every_var_union_typed=" clos_knownProofTheory.every_var_mk_Union;
+val _ = show "known_ticks_esgc_free_typed=" clos_knownProofTheory.mk_Ticks_esgc_free;
+val _ = show "known_evaluate_ticks_imp_typed=" clos_knownProofTheory.evaluate_mk_Ticks_IMP;
+val _ = show "known_elist_flat_append_foldr_typed=" clos_knownProofTheory.elist_globals_FLAT_APPEND_FOLDR;
+val _ = show "known_elist_flat_foldr_typed=" clos_knownProofTheory.elist_globals_FLAT_FOLDR;
+val _ = show "known_pure_co_oracle_props_typed=" clos_knownProofTheory.pure_co_oracle_props;
+val _ = show "known_v1_size_append_typed=" clos_knownProofTheory.v1_size_append;
+val _ = show "known_v_size_def_typed=" closSemTheory.v_size_def;
+val _ = show "known_loptrel_some_typed=" clos_knownProofTheory.loptrel_arg1_SOME;
+val _ = show "known_loptrel_none_typed=" clos_knownProofTheory.loptrel_arg1_NONE;
 val _ = show "contains_closures_code_locs_typed=" clos_knownProofTheory.contains_closures_code_locs;
 val _ = show "inline_code_locs_typed=" clos_knownProofTheory.code_locs_decide_inline;
 val _ = show "known_code_bag_typed=" clos_knownProofTheory.known_code_locs_bag;
@@ -188,6 +225,17 @@ val _ = show "val_approx_val_rules_typed=" clos_knownProofTheory.val_approx_val_
 val _ = show "val_approx_merge_left_typed=" clos_knownProofTheory.val_approx_val_merge_I_lemma;
 val _ = show "val_approx_merge_typed=" clos_knownProofTheory.val_approx_val_merge_I;
 val _ = show "known_merge_comm_typed=" clos_knownPropsTheory.merge_comm;
+val _ = show "known_merge_other_typed=" clos_knownPropsTheory.merge_Other;
+val _ = show "known_merge_impossible_typed=" clos_knownPropsTheory.merge_Impossible;
+val _ = show "known_subapprox_other_typed=" clos_knownPropsTheory.subapprox_Other;
+val _ = show "known_subapprox_impossible_typed=" clos_knownPropsTheory.subapprox_Impossible;
+val _ = show "known_merge_idem_typed=" clos_knownPropsTheory.merge_idem;
+val _ = show "known_subapprox_refl_typed=" clos_knownPropsTheory.subapprox_refl;
+val _ = show "known_better_definedg_refl_typed=" clos_knownPropsTheory.better_definedg_refl;
+val _ = show "known_subapprox_def_typed=" clos_knownPropsTheory.subapprox_def;
+val _ = show "known_better_definedg_typed=" clos_knownPropsTheory.better_definedg_def;
+val _ = show "known_subspt_better_definedg_typed=" clos_knownProofTheory.subspt_better_definedg;
+val _ = show "known_subapprox_antisym_typed=" clos_knownPropsTheory.subapprox_antisym;
 val _ = show "state_globals_approx_typed=" clos_knownProofTheory.state_globals_approx_def;
 val _ = show "state_globals_clock_typed=" clos_knownProofTheory.state_globals_approx_clock_fupd;
 val _ = show "state_globals_dec_clock_typed=" clos_knownProofTheory.state_globals_approx_dec_clock;
@@ -345,6 +393,53 @@ val _ = show "ssgc_free_clock_typed=" closPropsTheory.ssgc_free_clockupd;
 val _ = show "ssgc_free_dec_clock_typed=" closPropsTheory.ssgc_free_dec_clock;
 
 (* Local theorem: replay its statement with inferred source and target types. *)
+(* Replay the original source-local decoder lemmas with their shared proof. *)
+local open closSemTheory clos_knownProofTheory in
+fun known_decode_list_tac goal =
+  (ho_match_mp_tac closSemTheory.v_to_list_ind >> rw [] >>
+   fs [closSemTheory.v_to_list_def] >>
+   Cases_on `tag = backend_common$cons_tag` >> fs [] >> res_tac >>
+   fs [case_eq_thms] >> Cases_on `ns` >> fs [] >> eq_tac >> rw [] >> fs [] >>
+   Cases_on `h` >> fs []) goal;
+end;
+val known_bytes_list_replay = prove(
+  ``!x y c g. clos_knownProof$v_rel c g x y ==> !ns.
+    (closSem$v_to_list x = SOME (MAP (closSem$Number o $& o (w2n:word8->num)) ns)) <=>
+    (closSem$v_to_list y = SOME (MAP (closSem$Number o $& o (w2n:word8->num)) ns))``,
+  known_decode_list_tac);
+val _ = show "known_bytes_list_replay_typed=" known_bytes_list_replay;
+val known_words_list_replay = prove(
+  ``!x y c g. clos_knownProof$v_rel c g x y ==> !ns.
+    (closSem$v_to_list x = SOME (MAP closSem$Word64 ns)) <=>
+    (closSem$v_to_list y = SOME (MAP closSem$Word64 ns))``,
+  known_decode_list_tac);
+val _ = show "known_words_list_replay_typed=" known_words_list_replay;
+
+(* Replay the source-local letrec case equation with its original proof. *)
+val known_letrec_case_eq_replay = prove(
+  ``!limit loc fns.
+    (case loc of NONE => REPLICATE (LENGTH fns) clos_known$Other |
+      SOME n => clos_known$clos_gen_noinline n 0 fns) =
+    GENLIST (case loc of NONE => K clos_known$Other |
+      SOME n => λi. clos_known$ClosNoInline (n + 2 * i) (FST (EL i fns))) (LENGTH fns)``,
+  Cases_on `loc` >> fs [clos_knownProofTheory.clos_gen_noinline_eq, rich_listTheory.REPLICATE_GENLIST]);
+val _ = show "known_letrec_case_eq_replay_typed=" known_letrec_case_eq_replay;
+
+(* Replay the original source-local nonnegative-integer lemma. *)
+val known_not_less_zero_replay = prove(
+  ``~(i < 0:int) ⇒ ∃k. i = &k``, Cases_on `i` >> fs []);
+val _ = show "known_not_less_zero_replay_typed=" known_not_less_zero_replay;
+
+(* Replay the original source-local theorem with its original proof tactic. *)
+val known_state_rel_opt_rel_refs_replay = prove(
+  ``(clos_knownProof$state_rel c g s1 s2 ∧ FLOOKUP s1.refs n = r1 ⇒
+      ∃r2. FLOOKUP s2.refs n = r2 ∧ OPTREL (clos_knownProof$ref_rel c g) r1 r2) ∧
+    (clos_knownProof$state_rel c g s1 s2 ∧ FLOOKUP s2.refs n = r2 ⇒
+      ∃r1. FLOOKUP s1.refs n = r1 ∧ OPTREL (clos_knownProof$ref_rel c g) r1 r2)``,
+  rw [] >> gvs [clos_knownProofTheory.state_rel_def, finite_mapTheory.fmap_rel_def,
+                finite_mapTheory.FLOOKUP_DEF] >> rw []);
+val _ = show "known_state_rel_opt_rel_refs_statement_typed=" known_state_rel_opt_rel_refs_replay;
+
 val _ = (print "rel_update_thunk_statement_typed="; print_term
   ``clos_knownProof$state_rel c g s1 s2 ∧
     LIST_REL (clos_knownProof$v_rel c g) vs ys ⇒

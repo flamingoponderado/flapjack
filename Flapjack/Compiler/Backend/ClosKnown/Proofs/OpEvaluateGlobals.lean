@@ -12,6 +12,11 @@ namespace Flapjack.Compiler.Backend.ClosKnown.OpEvaluateGlobals
 open ClosSem ClosProps ClosProps.StateGlobalSafety UniqueGlobalsPort
 open Flapjack.SemanticPrimitivesHOL
 
+/-- A nonnegative integer has a natural-number representation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "not_less_zero_imp"]
+theorem notLessZeroImp (i : Int) (nonnegative : ¬ i < 0) : ∃ k : Nat, i = Int.ofNat k := by
+  exact ⟨i.toNat, (Int.toNat_of_nonneg (by omega)).symm⟩
+
 /-- The closure state uses canonical finite-map fields. -/
 theorem holFmapAsFiniteSupportWitness {C F : Type} :
     (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
