@@ -115,46 +115,6 @@ theorem envRel_live_lookup (live : DbVarSet) (source target extra : List Value)
   have targetBound : index < target.length := by rw [← related.1]; exact inBounds
   simpa [List.getElem?_append, targetBound] using (related.2 index inBounds present).symm
 
-/-- The handler compiler's variable case preserves non-type-error
-evaluation under its live-variable environment relation. -/
-theorem evaluate_compileSing_var {C F : Type} (limit index : Nat)
-    (source target extra : List Value) (state : State C F)
-    (related : envRel (compileSing limit source.length (.var index)).2.1 source target)
-    (notType : (evaluate [.var index] source state).1 ≠ .err (.abort .typeError)) :
-    evaluate [(compileSing limit source.length (.var index)).1] (target ++ extra) state =
-      evaluate [.var index] source state := by
-  by_cases inBounds : index < source.length
-  · have live : hasVar index (compileSing limit source.length (.var index)).2.1 = true := by
-      simp [compileSing, inBounds, hasVar]
-    have lookup := envRel_live_lookup _ source target extra related index inBounds live
-    simp only [compileSing, inBounds, ↓reduceIte, evaluate]
-    rw [lookup]
-  · cases found : source[index]? with
-    | none => simp [evaluate, found] at notType
-    | some value =>
-      have bound := List.getElem?_eq_some_iff.mp found |>.1
-      exact False.elim (inBounds bound)
-
-/-- The force case uses the same live lookup; the thunk's recursive body
-runs in its own argument environment. -/
-theorem evaluate_compileSing_force {C F : Type} (limit location index : Nat)
-    (source target extra : List Value) (state : State C F)
-    (related : envRel (compileSing limit source.length (.force location index)).2.1 source target)
-    (notType : (evaluate [.force location index] source state).1 ≠ .err (.abort .typeError)) :
-    evaluate [(compileSing limit source.length (.force location index)).1] (target ++ extra) state =
-      evaluate [.force location index] source state := by
-  by_cases inBounds : index < source.length
-  · have live : hasVar index (compileSing limit source.length (.force location index)).2.1 = true := by
-      simp [compileSing, inBounds, hasVar]
-    have lookup := envRel_live_lookup _ source target extra related index inBounds live
-    simp only [compileSing, inBounds, ↓reduceIte, evaluate]
-    rw [lookup]
-  · cases found : source[index]? with
-    | none => simp [evaluate, found] at notType
-    | some value =>
-      have bound := List.getElem?_eq_some_iff.mp found |>.1
-      exact False.elim (inBounds bound)
-
 /-- Extending both environments by identical values preserves agreement
 under a corresponding de Bruijn shift. -/
 theorem envRel_prepend_shift (live : DbVarSet) (source target before : List Value)

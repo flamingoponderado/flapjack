@@ -40,22 +40,44 @@ theorem compileListCorrect_nil (limit : Nat) : compileListCorrect limit [] := by
 /-- Variable compilation preserves evaluation and never raises. -/
 theorem compileSingCorrect_var (limit index : Nat) : compileSingCorrect limit (.var index) := by
   intro C F source target extra state related notType
-  refine ⟨evaluate_compileSing_var limit index source target extra state related notType, ?_⟩
-  intro _ value
-  simp only [evaluate]
-  cases source[index]? <;> simp
+  constructor
+  · by_cases inBounds : index < source.length
+    · have live : hasVar index (compileSing limit source.length (.var index)).2.1 = true := by
+        simp [compileSing, inBounds, hasVar]
+      have lookup := envRel_live_lookup _ source target extra related index inBounds live
+      simp only [compileSing, inBounds, ↓reduceIte, evaluate]
+      rw [lookup]
+    · cases found : source[index]? with
+      | none => simp [evaluate, found] at notType
+      | some value =>
+        have bound := List.getElem?_eq_some_iff.mp found |>.1
+        exact False.elim (inBounds bound)
+  · intro _ value
+    simp only [evaluate]
+    cases source[index]? <;> simp
 
 /-- Force compilation preserves evaluation; its no-raise flag can only be
 true for the out-of-range case, which is excluded by the source premise. -/
 theorem compileSingCorrect_force (limit location index : Nat) :
     compileSingCorrect limit (.force location index) := by
   intro C F source target extra state related notType
-  refine ⟨evaluate_compileSing_force limit location index source target extra state related notType, ?_⟩
-  intro noRaise value
-  by_cases bound : index < source.length
-  · simp [compileSing, bound] at noRaise
-  · have missing : source[index]? = none := List.getElem?_eq_none_iff.mpr (by omega)
-    simp [evaluate, missing] at notType
+  constructor
+  · by_cases inBounds : index < source.length
+    · have live : hasVar index (compileSing limit source.length (.force location index)).2.1 = true := by
+        simp [compileSing, inBounds, hasVar]
+      have lookup := envRel_live_lookup _ source target extra related index inBounds live
+      simp only [compileSing, inBounds, ↓reduceIte, evaluate]
+      rw [lookup]
+    · cases found : source[index]? with
+      | none => simp [evaluate, found] at notType
+      | some value =>
+        have bound := List.getElem?_eq_some_iff.mp found |>.1
+        exact False.elim (inBounds bound)
+  · intro noRaise value
+    by_cases bound : index < source.length
+    · simp [compileSing, bound] at noRaise
+    · have missing : source[index]? = none := List.getElem?_eq_none_iff.mpr (by omega)
+      simp [evaluate, missing] at notType
 
 /-- A tick either times out without raising or inherits both guarantees
 from its body at the decremented clock. -/
