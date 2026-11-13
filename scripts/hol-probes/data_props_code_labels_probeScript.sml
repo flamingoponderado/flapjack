@@ -7,3 +7,7 @@ val _ = if null (hyp dataPropsTheory.get_code_labels_mk_ticks) then
   (print "get_code_labels_mk_ticks_typed=";
    print_term (concl dataPropsTheory.get_code_labels_mk_ticks); print "\n")
   else raise Fail "get_code_labels_mk_ticks has hypotheses";
+val _ = if null (hyp dataPropsTheory.good_code_labels_def) then
+  (print "good_code_labels_def_typed=";
+   print_term (concl dataPropsTheory.good_code_labels_def); print "\n")
+  else raise Fail "good_code_labels_def has hypotheses";

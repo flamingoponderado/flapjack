@@ -138693,6 +138693,38 @@
     "reviewer": "Independent typed HOL source review 2026-11-13: all five original universally quantified arguments and unconditional equality of the emitted and source operation label sets. The operation carrier retains native MlString names, fixed 64-bit word fields and the original operation constructors. All assignment, comparison rewrite, name-root and space-allocation branches are covered without added premises."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "compile_prog_good_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/GoodCodeLabels.lean",
+    "lean_name": "compileProg_goodCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: every BVI program and external label set, with the sole original good-code-labels premise and the same property for the actual compiled DATA program. The proof composes the complete BVI compiler label inclusion with the DATA liveness, simplifier and space-pass results; it adds no label uniqueness or validity condition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_simpProofScript.sml",
+    "hol_name": "get_code_labels_simp",
+    "lean_path": "Flapjack/Compiler/Backend/DataSimp/Proofs/CodeLabels.lean",
+    "lean_name": "getCodeLabels_simp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary DATA program and continuation, with the original unconditional inclusion in the union of both label sets; the operation and program carriers retain native names and fixed-width words."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_liveProofScript.sml",
+    "hol_name": "get_code_labels_compile",
+    "lean_path": "Flapjack/Compiler/Backend/DataLive/Proofs/CodeLabels.lean",
+    "lean_name": "getCodeLabels_compile",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary DATA program and native sparse-tree live-name set, with the original unconditional inclusion for the first compiler result. All constructors and live-name cases are covered without additional premises."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+    "hol_name": "good_code_labels_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/CodeLabels/Good.lean",
+    "lean_name": "goodCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary program list with independent polymorphic middle field and external label set, the mapped union of third-field DATA labels, and the union of first-field labels with the external set. Native lists, sets, operation names and fixed-width words retain their original carriers."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
     "hol_name": "get_code_labels_mk_ticks",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/CodeLabels.lean",

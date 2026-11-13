@@ -11,3 +11,5 @@ fun show label th = if null (hyp th) then
 
 val _ = show "pSeq_def_typed" data_simpTheory.pSeq_def;
 val _ = show "simp_def_typed" data_simpTheory.simp_def;
+load "data_simpProofTheory";
+val _ = show "get_code_labels_simp_typed" data_simpProofTheory.get_code_labels_simp;

@@ -14,3 +14,4 @@ get_code_labels_def=⊢ (∀r h d a.
   (∀v23. get_code_labels (Raise v23) = ∅) ∧
   (∀v24. get_code_labels (Return v24) = ∅) ∧ get_code_labels Tick = ∅
 get_code_labels_mk_ticks_typed=∀(n :num) (m :dataLang$prog). get_code_labels (mk_ticks n m) ⊆ get_code_labels m
+good_code_labels_def_typed=∀(p :(num # α # dataLang$prog) list) (elabs :num -> bool). good_code_labels p elabs ⇔ BIGUNION (set (MAP (λ((n :num),(m :α),(pp :dataLang$prog)). get_code_labels pp) p)) ⊆ set (MAP (FST :num # α # dataLang$prog -> num) p) ∪ elabs
