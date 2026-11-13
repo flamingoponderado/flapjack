@@ -10767,3 +10767,26 @@ run_probe balanced_map_typed_probeScript.sml balanced_map_typed_probe.out \
   balanceR_def_typed key_set_def_typed to_fmap_def_typed structure_size_thm_typed \
   "$hol_dir/examples/data-structures/balanced_bst/balanced_mapScript.sml" \
   "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe riscv_step_typed_probeScript.sml riscv_step_typed_probe.out \
+  avoid_signalAddressException_typed v2w_0_rwts_typed word_bit_0_lemmas_typed word_bit_1_0_typed \
+  word_bit_add_lsl_simp_typed BEQ_typed BGE_typed BGEU_typed BLT_typed BLTU_typed BNE_typed DecodeAny_def_typed \
+  DecodeRVC_IMP_DecodeAny_typed Decode_IMP_DecodeAny_typed NextRISCV_typed NextRISCV_branch_typed \
+  NextRISCV_cond_branch_typed Fetch_def_typed Fetch16_typed Fetch32_typed ADDI_typed ADDI_NOP_typed \
+  ANDI_typed ANDI_NOP_typed ORI_typed ORI_NOP_typed XORI_typed XORI_NOP_typed SLTI_typed SLTIU_typed \
+  SLLI_typed SLLI_NOP_typed SRAI_typed SRAI_NOP_typed SRLI_typed SRLI_NOP_typed JAL_typed JAL_NOP_typed \
+  JALR_typed JALR_NOP_typed LB_typed LB_NOP_typed LBU_typed LBU_NOP_typed LD_typed LD_NOP_typed \
+  LH_typed LH_NOP_typed LHU_typed LHU_NOP_typed LW_typed LW_NOP_typed LWU_typed LWU_NOP_typed \
+  DIV_typed MUL_typed REM_typed REMU_typed MULH_typed MULH_NOP_typed MULHSU_typed MULHSU_NOP_typed \
+  MULHU_typed MULHU_NOP_typed NextRISCV_def_typed ADD_typed ADD_NOP_typed AND_typed AND_NOP_typed \
+  OR_typed OR_NOP_typed SUB_typed SUB_NOP_typed XOR_typed XOR_NOP_typed SLT_typed SLT_NOP_typed \
+  SLTU_typed SLTU_NOP_typed SLL_typed SLL_NOP_typed SRA_typed SRA_NOP_typed SRL_typed SRL_NOP_typed \
+  SB_typed SD_typed SH_typed SW_typed update_pc_typed update_pc_def_typed AUIPC_typed AUIPC_NOP_typed \
+  LUI_typed LUI_NOP_typed DIVUW_typed DIVUW_NOP_typed DIVW_typed DIVW_NOP_typed MULW_typed MULW_NOP_typed \
+  REMUW_typed REMUW_NOP_typed REMW_typed REMW_NOP_typed SLLIW_typed SLLIW_NOP_typed SLLW_typed \
+  SLLW_NOP_typed SRAIW_typed SRAIW_NOP_typed SRAW_typed SRAW_NOP_typed SRLIW_typed SRLIW_NOP_typed \
+  SRLW_typed SRLW_NOP_typed ADDIW_typed ADDIW_NOP_typed ADDW_typed ADDW_NOP_typed SUBW_typed SUBW_NOP_typed \
+  Skip_typed DIVU_typed DIVU_NOP_typed MUL_NOP_typed DIV_NOP_typed REM_NOP_typed REMU_NOP_typed \
+  SLTI_NOP_typed SLTIU_NOP_typed \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \
+  "$hol_dir/examples/l3-machine-code/riscv/step"

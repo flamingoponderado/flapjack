@@ -1,0 +1,369 @@
+avoid_signalAddressException_typed=∀*(s :riscv_state) (u :riscv_state) (t :ExceptionType # word64) (b :bool) . ¬(b :bool) ⇒ (if b then signalAddressException (t :ExceptionType # word64) (u :riscv_state) else (s :riscv_state)) = s
+v2w_0_rwts_typed=∀*(b0 :bool) (b1 :bool) (b2 :bool) (b3 :bool) . (v2w [F; F; F; F; T] :word5) = (1w :word5) ∧ (v2w [F; F; F; F; F] :word5) = (0w :word5) ∧ ((v2w [T; (b3 :bool); (b2 :bool); (b1 :bool); (b0 :bool)] :word5) = (0w :word5) ⇔ F) ∧ ((v2w [b3; T; b2; b1; b0] :word5) = (0w :word5) ⇔ F) ∧ ((v2w [b3; b2; T; b1; b0] :word5) = (0w :word5) ⇔ F) ∧ ((v2w [b3; b2; b1; T; b0] :word5) = (0w :word5) ⇔ F) ∧ ((v2w [b3; b2; b1; b0; T] :word5) = (0w :word5) ⇔ F)
+word_bit_0_lemmas_typed=∀*(v :word64) . ∀(w :word64). ¬word_bit (0 :num) ((0xFFFFFFFFFFFFFFFEw :word64) && w) ∧ word_bit (0 :num) (((0xFFFFFFFFFFFFFFFEw :word64) && w) + (v :word64)) ⇔ word_bit (0 :num) v
+word_bit_1_0_typed=∀*(x7 :bool) (x6 :bool) (x5 :bool) (x4 :bool) (x3 :bool) (x2 :bool) (x1 :bool) (x0 :bool) . (word_bit (1 :num) (v2w [(x0 :bool); (x1 :bool); (x2 :bool); (x3 :bool); (x4 :bool); (x5 :bool); (x6 :bool); (x7 :bool)] :word8) ⇔ x6) ∧ (word_bit (0 :num) (v2w [x0; x1; x2; x3; x4; x5; x6; x7] :word8) ⇔ x7)
+word_bit_add_lsl_simp_typed=∀*(w :word64) (x :word64) . word_bit (0 :num) ((x :word64) + (w :word64) ≪ (1 :num)) ⇔ word_bit (0 :num) x
+BEQ_typed=∀*(s :riscv_state) (offs :word12) (rs2 :word5) (rs1 :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> dfn'BEQ ((rs1 :word5),(rs2 :word5),(offs :word12)) (s :riscv_state) = s with c_NextFetch := s.c_NextFetch⦇s.procID ↦ (if if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then if rs1 = (0w :word5) then if rs2 = (0w :word5) then T else (0w :word64) = (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) else if rs2 = (0w :word5) then (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) = (0w :word64) else (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) = (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) else if rs2 = (0w :word5) then if rs1 = (0w :word5) then T else (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) = (0w :word64) else if rs1 = (0w :word5) then (0w :word64) = s.c_gpr s.procID rs2 else (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) = s.c_gpr s.procID rs2 else if rs1 = (0w :word5) then if rs2 = (0w :word5) then T else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (0w :word64) = (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) else (0w :word64) = s.c_gpr s.procID rs2 else if rs2 = (0w :word5) then s.c_gpr s.procID rs1 = (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then s.c_gpr s.procID rs1 = (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) else s.c_gpr s.procID rs1 = s.c_gpr s.procID rs2 then SOME (BranchTo (s.c_PC s.procID + (sw2sw offs :word64) ≪ (1 :num))) else s.c_NextFetch s.procID)⦈
+BGE_typed=∀*(s :riscv_state) (offs :word12) (rs2 :word5) (rs1 :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> dfn'BGE ((rs1 :word5),(rs2 :word5),(offs :word12)) (s :riscv_state) = s with c_NextFetch := s.c_NextFetch⦇s.procID ↦ (if (if rs1 = (0w :word5) then (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) else s.c_gpr s.procID rs1) ≥ if rs2 = (0w :word5) then (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) else s.c_gpr s.procID rs2 then SOME (BranchTo (s.c_PC s.procID + (sw2sw offs :word64) ≪ (1 :num))) else s.c_NextFetch s.procID)⦈
+BGEU_typed=∀*(s :riscv_state) (offs :word12) (rs2 :word5) (rs1 :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> dfn'BGEU ((rs1 :word5),(rs2 :word5),(offs :word12)) (s :riscv_state) = s with c_NextFetch := s.c_NextFetch⦇s.procID ↦ (if (if rs1 = (0w :word5) then (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) else s.c_gpr s.procID rs1) ≥₊ if rs2 = (0w :word5) then (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) else s.c_gpr s.procID rs2 then SOME (BranchTo (s.c_PC s.procID + (sw2sw offs :word64) ≪ (1 :num))) else s.c_NextFetch s.procID)⦈
+BLT_typed=∀*(s :riscv_state) (offs :word12) (rs2 :word5) (rs1 :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> dfn'BLT ((rs1 :word5),(rs2 :word5),(offs :word12)) (s :riscv_state) = s with c_NextFetch := s.c_NextFetch⦇s.procID ↦ (if (if rs1 = (0w :word5) then (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) else s.c_gpr s.procID rs1) < if rs2 = (0w :word5) then (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) else s.c_gpr s.procID rs2 then SOME (BranchTo (s.c_PC s.procID + (sw2sw offs :word64) ≪ (1 :num))) else s.c_NextFetch s.procID)⦈
+BLTU_typed=∀*(s :riscv_state) (offs :word12) (rs2 :word5) (rs1 :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> dfn'BLTU ((rs1 :word5),(rs2 :word5),(offs :word12)) (s :riscv_state) = s with c_NextFetch := s.c_NextFetch⦇s.procID ↦ (if (if rs1 = (0w :word5) then (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) else s.c_gpr s.procID rs1) <₊ if rs2 = (0w :word5) then (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) else s.c_gpr s.procID rs2 then SOME (BranchTo (s.c_PC s.procID + (sw2sw offs :word64) ≪ (1 :num))) else s.c_NextFetch s.procID)⦈
+BNE_typed=∀*(s :riscv_state) (offs :word12) (rs2 :word5) (rs1 :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> dfn'BNE ((rs1 :word5),(rs2 :word5),(offs :word12)) (s :riscv_state) = s with c_NextFetch := s.c_NextFetch⦇s.procID ↦ (if ¬if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then if rs1 = (0w :word5) then if rs2 = (0w :word5) then T else (0w :word64) = (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) else if rs2 = (0w :word5) then (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) = (0w :word64) else (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) = (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) else if rs2 = (0w :word5) then if rs1 = (0w :word5) then T else (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) = (0w :word64) else if rs1 = (0w :word5) then (0w :word64) = s.c_gpr s.procID rs2 else (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) = s.c_gpr s.procID rs2 else if rs1 = (0w :word5) then if rs2 = (0w :word5) then T else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (0w :word64) = (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) else (0w :word64) = s.c_gpr s.procID rs2 else if rs2 = (0w :word5) then s.c_gpr s.procID rs1 = (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then s.c_gpr s.procID rs1 = (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) else s.c_gpr s.procID rs1 = s.c_gpr s.procID rs2 then SOME (BranchTo (s.c_PC s.procID + (sw2sw offs :word64) ≪ (1 :num))) else s.c_NextFetch s.procID)⦈
+DecodeAny_def_typed=∀(f :rawInstType). DecodeAny f = case f of Half h => DecodeRVC h | Word w => Decode w
+DecodeRVC_IMP_DecodeAny_typed=∀*(i :instruction) (h :word16) . DecodeRVC (h :word16) = (i :instruction) ⇒ DecodeAny (Half h) = i
+Decode_IMP_DecodeAny_typed=∀*(i :instruction) (w :word32) . Decode (w :word32) = (i :instruction) ⇒ DecodeAny (Word w) = i
+NextRISCV_typed=∀*(nxt :riscv_state) (i :instruction) (s' :riscv_state) (w :rawInstType) (s :riscv_state) . (Fetch (s :riscv_state) :rawInstType # riscv_state) = ((w :rawInstType),(s' :riscv_state)) ∧ DecodeAny w = (i :instruction) ∧ Run i s' = (nxt :riscv_state) ∧ nxt.exception = NoException ∧ nxt.c_NextFetch nxt.procID = (NONE :TransferControl option) ⇒ NextRISCV s = update_pc (nxt.c_PC nxt.procID + Skip nxt) nxt
+NextRISCV_branch_typed=∀*(a :word64) (nxt :riscv_state) (i :instruction) (s' :riscv_state) (w :rawInstType) (s :riscv_state) . (Fetch (s :riscv_state) :rawInstType # riscv_state) = ((w :rawInstType),(s' :riscv_state)) ∧ DecodeAny w = (i :instruction) ∧ Run i s' = (nxt :riscv_state) ∧ nxt.exception = NoException ∧ nxt.c_NextFetch nxt.procID = SOME (BranchTo (a :word64)) ⇒ NextRISCV s = update_pc a (nxt with c_NextFetch := nxt.c_NextFetch⦇nxt.procID ↦ (NONE :TransferControl option)⦈)
+NextRISCV_cond_branch_typed=∀*(a :word64) (b :bool) (nxt :riscv_state) (i :instruction) (s' :riscv_state) (w :rawInstType) (s :riscv_state) . (Fetch (s :riscv_state) :rawInstType # riscv_state) = ((w :rawInstType),(s' :riscv_state)) ∧ DecodeAny w = (i :instruction) ∧ Run i s' = (nxt :riscv_state) ∧ nxt.exception = NoException ∧ nxt.c_NextFetch nxt.procID = (if (b :bool) then SOME (BranchTo (a :word64)) else (NONE :TransferControl option)) ⇒ NextRISCV s = update_pc (if b then a else (nxt.c_PC nxt.procID + Skip nxt)) (nxt with c_NextFetch := nxt.c_NextFetch⦇nxt.procID ↦ (NONE :TransferControl option)⦈)
+Fetch_def_typed=∀(s :riscv_state). (Fetch s :rawInstType # riscv_state) = (let ((w :word64 option),(s :riscv_state)) = translateAddr (PC s,Instruction,Read) s in rawReadInst (THE w) s)
+Fetch16_typed=∀*(s :riscv_state) . ∀(xs :bool list) (x0 :bool) (x1 :bool) (x2 :bool) (x3 :bool) (x4 :bool) (x5 :bool) (x6 :bool) (x7 :bool) (x8 :bool) (x9 :bool) (xA :bool) (xB :bool) (xC :bool) (xD :bool) (xE :bool) (xF :bool). xs = [x0; x1; x2; x3; x4; x5; x6; x7; x8; x9; xA; xB; xC; xD; xE; xF] ∧ ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5) ∧ s.MEM8 (s.c_PC s.procID + (1w :word64)) = (v2w [x0; x1; x2; x3; x4; x5; x6; x7] :word8) ∧ s.MEM8 (s.c_PC s.procID) = (v2w [x8; x9; xA; xB; xC; xD; xE; xF] :word8) ∧ ¬(xE ∧ xF) ⇒ (Fetch s :rawInstType # riscv_state) = (Half (v2w xs :word16),s with c_Skip := s.c_Skip⦇s.procID ↦ (2w :word64)⦈)
+Fetch32_typed=∀*(s :riscv_state) . ∀(xs :bool list) (x0 :bool) (x1 :bool) (x2 :bool) (x3 :bool) (x4 :bool) (x5 :bool) (x6 :bool) (x7 :bool) (x8 :bool) (x9 :bool) (xA :bool) (xB :bool) (xC :bool) (xD :bool) (xE :bool) (xF :bool) (y0 :bool) (y1 :bool) (y2 :bool) (y3 :bool) (y4 :bool) (y5 :bool) (y6 :bool) (y7 :bool) (y8 :bool) (y9 :bool) (yA :bool) (yB :bool) (yC :bool) (yD :bool) (yE :bool) (yF :bool). xs = [y0; y1; y2; y3; y4; y5; y6; y7; y8; y9; yA; yB; yC; yD; yE; yF; x0; x1; x2; x3; x4; x5; x6; x7; x8; x9; xA; xB; xC; xD; xE; xF] ∧ ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5) ∧ s.MEM8 (s.c_PC s.procID + (3w :word64)) = (v2w [y0; y1; y2; y3; y4; y5; y6; y7] :word8) ∧ s.MEM8 (s.c_PC s.procID + (2w :word64)) = (v2w [y8; y9; yA; yB; yC; yD; yE; yF] :word8) ∧ s.MEM8 (s.c_PC s.procID + (1w :word64)) = (v2w [x0; x1; x2; x3; x4; x5; x6; x7] :word8) ∧ s.MEM8 (s.c_PC s.procID) = (v2w [x8; x9; xA; xB; xC; xD; xE; xF] :word8) ∧ xE ∧ xF ⇒ (Fetch s :rawInstType # riscv_state) = (Word (v2w xs :word32),s with c_Skip := s.c_Skip⦇s.procID ↦ (4w :word64)⦈)
+ADDI_typed=∀*(s :riscv_state) (imm :word12) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> dfn'ADDI ((rd :word5),(rs1 :word5),(imm :word12)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if rs1 = (0w :word5) then (sw2sw imm :word64) else s.c_gpr s.procID rs1 + (sw2sw imm :word64))⦈⦈
+ADDI_NOP_typed=∀*(s :riscv_state) (imm :word12) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> dfn'ADDI ((rd :word5),(rs1 :word5),(imm :word12)) (s :riscv_state) = s
+ANDI_typed=∀*(s :riscv_state) (imm :word12) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> dfn'ANDI ((rd :word5),(rs1 :word5),(imm :word12)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if rs1 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs1 && (sw2sw imm :word64))⦈⦈
+ANDI_NOP_typed=∀*(s :riscv_state) (imm :word12) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> dfn'ANDI ((rd :word5),(rs1 :word5),(imm :word12)) (s :riscv_state) = s
+ORI_typed=∀*(s :riscv_state) (imm :word12) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> dfn'ORI ((rd :word5),(rs1 :word5),(imm :word12)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if rs1 = (0w :word5) then (sw2sw imm :word64) else s.c_gpr s.procID rs1 ‖ (sw2sw imm :word64))⦈⦈
+ORI_NOP_typed=∀*(s :riscv_state) (imm :word12) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> dfn'ORI ((rd :word5),(rs1 :word5),(imm :word12)) (s :riscv_state) = s
+XORI_typed=∀*(s :riscv_state) (imm :word12) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> dfn'XORI ((rd :word5),(rs1 :word5),(imm :word12)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if rs1 = (0w :word5) then (sw2sw imm :word64) else s.c_gpr s.procID rs1 ⊕ (sw2sw imm :word64))⦈⦈
+XORI_NOP_typed=∀*(s :riscv_state) (imm :word12) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> dfn'XORI ((rd :word5),(rs1 :word5),(imm :word12)) (s :riscv_state) = s
+SLTI_typed=∀*(s :riscv_state) (imm :word12) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'SLTI ((rd :word5),(rs1 :word5),(imm :word12)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (v2w [(if rs1 = (0w :word5) then (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) else s.c_gpr s.procID rs1) < (sw2sw imm :word64)] :word64)⦈⦈
+SLTIU_typed=∀*(s :riscv_state) (imm :word12) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'SLTIU ((rd :word5),(rs1 :word5),(imm :word12)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (v2w [(if rs1 = (0w :word5) then (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) else s.c_gpr s.procID rs1) <₊ (sw2sw imm :word64)] :word64)⦈⦈
+SLLI_typed=∀*(s :riscv_state) (imm :word6) (rs1 :word5) (rd :word5) . ¬(((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) ∧ word_bit (5 :num) (imm :word6))
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'SLLI ((rd :word5),(rs1 :word5),(imm :word6)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if rs1 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs1 ≪ w2n imm)⦈⦈
+SLLI_NOP_typed=∀*(s :riscv_state) (imm :word6) (rs1 :word5) (rd :word5) . ¬(((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) ∧ word_bit (5 :num) (imm :word6))
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'SLLI ((rd :word5),(rs1 :word5),(imm :word6)) (s :riscv_state) = s
+SRAI_typed=∀*(s :riscv_state) (imm :word6) (rs1 :word5) (rd :word5) . ¬(((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) ∧ word_bit (5 :num) (imm :word6))
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'SRAI ((rd :word5),(rs1 :word5),(imm :word6)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if rs1 = (0w :word5) then (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) else s.c_gpr s.procID rs1) ≫ w2n imm⦈⦈
+SRAI_NOP_typed=∀*(s :riscv_state) (imm :word6) (rs1 :word5) (rd :word5) . ¬(((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) ∧ word_bit (5 :num) (imm :word6))
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'SRAI ((rd :word5),(rs1 :word5),(imm :word6)) (s :riscv_state) = s
+SRLI_typed=∀*(s :riscv_state) (imm :word6) (rs1 :word5) (rd :word5) . ¬(((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) ∧ word_bit (5 :num) (imm :word6))
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'SRLI ((rd :word5),(rs1 :word5),(imm :word6)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if rs1 = (0w :word5) then (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (w2w (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) ⋙ w2n imm else s.c_gpr s.procID rs1 ⋙ w2n imm)⦈⦈
+SRLI_NOP_typed=∀*(s :riscv_state) (imm :word6) (rs1 :word5) (rd :word5) . ¬(((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) ∧ word_bit (5 :num) (imm :word6))
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'SRLI ((rd :word5),(rs1 :word5),(imm :word6)) (s :riscv_state) = s
+JAL_typed=∀*(s :riscv_state) (imm :word20) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> dfn'JAL ((rd :word5),(imm :word20)) (s :riscv_state) = (if word_bit (0 :num) (s.c_PC s.procID + (sw2sw imm :word64) ≪ (1 :num)) then signalAddressException (Fetch_Misaligned,s.c_PC s.procID + (sw2sw imm :word64) ≪ (1 :num)) s else s) with <|c_NextFetch := if word_bit (0 :num) (s.c_PC s.procID + (sw2sw imm :word64) ≪ (1 :num)) then (signalAddressException (Fetch_Misaligned,s.c_PC s.procID + (sw2sw imm :word64) ≪ (1 :num)) s).c_NextFetch else s.c_NextFetch⦇s.procID ↦ SOME (BranchTo (s.c_PC s.procID + (sw2sw imm :word64) ≪ (1 :num)))⦈; c_gpr := if word_bit (0 :num) (s.c_PC s.procID + (sw2sw imm :word64) ≪ (1 :num)) then (signalAddressException (Fetch_Misaligned,s.c_PC s.procID + (sw2sw imm :word64) ≪ (1 :num)) s).c_gpr else s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ s.c_PC s.procID + Skip s⦈⦈|>
+JAL_NOP_typed=∀*(s :riscv_state) (imm :word20) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> dfn'JAL ((rd :word5),(imm :word20)) (s :riscv_state) = (if word_bit (0 :num) (s.c_PC s.procID + (sw2sw imm :word64) ≪ (1 :num)) then signalAddressException (Fetch_Misaligned,s.c_PC s.procID + (sw2sw imm :word64) ≪ (1 :num)) s else s) with c_NextFetch := if word_bit (0 :num) (s.c_PC s.procID + (sw2sw imm :word64) ≪ (1 :num)) then (signalAddressException (Fetch_Misaligned,s.c_PC s.procID + (sw2sw imm :word64) ≪ (1 :num)) s).c_NextFetch else s.c_NextFetch⦇s.procID ↦ SOME (BranchTo (s.c_PC s.procID + (sw2sw imm :word64) ≪ (1 :num)))⦈
+JALR_typed=∀*(s :riscv_state) (imm :word12) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> dfn'JALR ((rd :word5),(rs1 :word5),(imm :word12)) (s :riscv_state) = (if word_bit (0 :num) (if rs1 = (0w :word5) then (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64) else s.c_gpr s.procID rs1 + (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64)) then signalAddressException (Fetch_Misaligned,if rs1 = (0w :word5) then (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64) else s.c_gpr s.procID rs1 + (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64)) s else s) with <|c_NextFetch := if word_bit (0 :num) (if rs1 = (0w :word5) then (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64) else s.c_gpr s.procID rs1 + (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64)) then (signalAddressException (Fetch_Misaligned,if rs1 = (0w :word5) then (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64) else s.c_gpr s.procID rs1 + (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64)) s).c_NextFetch else s.c_NextFetch⦇s.procID ↦ SOME (BranchTo (if rs1 = (0w :word5) then (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64) else s.c_gpr s.procID rs1 + (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64)))⦈; c_gpr := if word_bit (0 :num) (if rs1 = (0w :word5) then (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64) else s.c_gpr s.procID rs1 + (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64)) then (signalAddressException (Fetch_Misaligned,if rs1 = (0w :word5) then (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64) else s.c_gpr s.procID rs1 + (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64)) s).c_gpr else s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ s.c_PC s.procID + Skip s⦈⦈|>
+JALR_NOP_typed=∀*(s :riscv_state) (imm :word12) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> dfn'JALR ((rd :word5),(rs1 :word5),(imm :word12)) (s :riscv_state) = (if word_bit (0 :num) (if rs1 = (0w :word5) then (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64) else s.c_gpr s.procID rs1 + (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64)) then signalAddressException (Fetch_Misaligned,if rs1 = (0w :word5) then (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64) else s.c_gpr s.procID rs1 + (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64)) s else s) with c_NextFetch := if word_bit (0 :num) (if rs1 = (0w :word5) then (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64) else s.c_gpr s.procID rs1 + (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64)) then (signalAddressException (Fetch_Misaligned,if rs1 = (0w :word5) then (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64) else s.c_gpr s.procID rs1 + (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64)) s).c_NextFetch else s.c_NextFetch⦇s.procID ↦ SOME (BranchTo (if rs1 = (0w :word5) then (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64) else s.c_gpr s.procID rs1 + (sw2sw imm :word64) && (0xFFFFFFFFFFFFFFFEw :word64)))⦈
+LB_typed=∀*(s :riscv_state) (offs :word12) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5)
+ ==> dfn'LB ((rd :word5),(rs1 :word5),(offs :word12)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (sw2sw (s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64))) :word64)⦈⦈
+LB_NOP_typed=∀*(s :riscv_state) (offs :word12) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5)
+ ==> dfn'LB ((rd :word5),(rs1 :word5),(offs :word12)) (s :riscv_state) = s
+LBU_typed=∀*(s :riscv_state) (offs :word12) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5)
+ ==> dfn'LBU ((rd :word5),(rs1 :word5),(offs :word12)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (w2w (s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64))) :word64)⦈⦈
+LBU_NOP_typed=∀*(s :riscv_state) (offs :word12) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5)
+ ==> dfn'LBU ((rd :word5),(rs1 :word5),(offs :word12)) (s :riscv_state) = s
+LD_typed=∀*(s :riscv_state) (offs :word12) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5)
+ ==> aligned (3 :num) (if (rs1 :word5) = (0w :word5) then (sw2sw (offs :word12) :word64) else (s :riscv_state).c_gpr s.procID rs1 + (sw2sw offs :word64))
+ ==> dfn'LD ((rd :word5),(rs1 :word5),(offs :word12)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ ((s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) + (7w :word64) else (s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (7w :word64))) @@ ((s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) + (6w :word64) else (s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (6w :word64))) @@ ((s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) + (5w :word64) else (s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (5w :word64))) @@ ((s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) + (4w :word64) else (s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (4w :word64))) @@ ((s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) + (3w :word64) else (s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (3w :word64))) @@ ((s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) + (2w :word64) else (s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (2w :word64))) @@ ((s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) + (1w :word64) else (s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (1w :word64))) @@ s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64))) :word16)) :word24)) :word32)) :40 word)) :word48)) :word56)) :word64)⦈⦈
+LD_NOP_typed=∀*(s :riscv_state) (offs :word12) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5)
+ ==> aligned (3 :num) (if (rs1 :word5) = (0w :word5) then (sw2sw (offs :word12) :word64) else (s :riscv_state).c_gpr s.procID rs1 + (sw2sw offs :word64))
+ ==> dfn'LD ((rd :word5),(rs1 :word5),(offs :word12)) (s :riscv_state) = s
+LH_typed=∀*(s :riscv_state) (offs :word12) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5)
+ ==> aligned (1 :num) (if (rs1 :word5) = (0w :word5) then (sw2sw (offs :word12) :word64) else (s :riscv_state).c_gpr s.procID rs1 + (sw2sw offs :word64))
+ ==> dfn'LH ((rd :word5),(rs1 :word5),(offs :word12)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (sw2sw ((s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) + (1w :word64) else (s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (1w :word64))) @@ s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64))) :word16) :word64)⦈⦈
+LH_NOP_typed=∀*(s :riscv_state) (offs :word12) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5)
+ ==> dfn'LH ((rd :word5),(rs1 :word5),(offs :word12)) (s :riscv_state) = s
+LHU_typed=∀*(s :riscv_state) (offs :word12) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5)
+ ==> aligned (1 :num) (if (rs1 :word5) = (0w :word5) then (sw2sw (offs :word12) :word64) else (s :riscv_state).c_gpr s.procID rs1 + (sw2sw offs :word64))
+ ==> dfn'LHU ((rd :word5),(rs1 :word5),(offs :word12)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (w2w ((s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) + (1w :word64) else (s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (1w :word64))) @@ s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64))) :word16) :word64)⦈⦈
+LHU_NOP_typed=∀*(s :riscv_state) (offs :word12) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5)
+ ==> dfn'LHU ((rd :word5),(rs1 :word5),(offs :word12)) (s :riscv_state) = s
+LW_typed=∀*(s :riscv_state) (offs :word12) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5)
+ ==> aligned (2 :num) (if (rs1 :word5) = (0w :word5) then (sw2sw (offs :word12) :word64) else (s :riscv_state).c_gpr s.procID rs1 + (sw2sw offs :word64))
+ ==> dfn'LW ((rd :word5),(rs1 :word5),(offs :word12)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (sw2sw ((s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) + (3w :word64) else (s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (3w :word64))) @@ ((s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) + (2w :word64) else (s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (2w :word64))) @@ ((s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) + (1w :word64) else (s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (1w :word64))) @@ s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64))) :word16)) :word24)) :word32) :word64)⦈⦈
+LW_NOP_typed=∀*(s :riscv_state) (offs :word12) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5)
+ ==> dfn'LW ((rd :word5),(rs1 :word5),(offs :word12)) (s :riscv_state) = s
+LWU_typed=∀*(s :riscv_state) (offs :word12) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5)
+ ==> aligned (2 :num) (if (rs1 :word5) = (0w :word5) then (sw2sw (offs :word12) :word64) else (s :riscv_state).c_gpr s.procID rs1 + (sw2sw offs :word64))
+ ==> dfn'LWU ((rd :word5),(rs1 :word5),(offs :word12)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (w2w ((s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) + (3w :word64) else (s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (3w :word64))) @@ ((s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) + (2w :word64) else (s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (2w :word64))) @@ ((s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) + (1w :word64) else (s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (1w :word64))) @@ s.MEM8 (if rs1 = (0w :word5) then (sw2sw offs :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64))) :word16)) :word24)) :word32) :word64)⦈⦈
+LWU_NOP_typed=∀*(s :riscv_state) (offs :word12) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5)
+ ==> dfn'LWU ((rd :word5),(rs1 :word5),(offs :word12)) (s :riscv_state) = s
+DIV_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> dfn'DIV ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if if rs2 = (0w :word5) then T else s.c_gpr s.procID rs2 = (0w :word64) then (0xFFFFFFFFFFFFFFFFw :word64) else (if rs1 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs1) / (if rs2 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs2))⦈⦈
+MUL_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> dfn'MUL ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if rs1 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs1) * (if rs2 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs2)⦈⦈
+REM_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> dfn'REM ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if if rs2 = (0w :word5) then T else s.c_gpr s.procID rs2 = (0w :word64) then if rs1 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs1 else word_rem (if rs1 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs1) (if rs2 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs2))⦈⦈
+REMU_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> dfn'REMU ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if if rs2 = (0w :word5) then T else s.c_gpr s.procID rs2 = (0w :word64) then if rs1 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs1 else word_mod (if rs1 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs1) (if rs2 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs2))⦈⦈
+MULH_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'MULH ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (((63 :num) >< (32 :num)) ((if rs1 = (0w :word5) then (0w :word128) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) :word128) else (sw2sw (s.c_gpr s.procID rs1) :word128)) * if rs2 = (0w :word5) then (0w :word128) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) :word128) else (sw2sw (s.c_gpr s.procID rs2) :word128)) :word32) :word64) else (sw2sw (((127 :num) >< (64 :num)) ((if rs1 = (0w :word5) then (0w :word128) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) :word128) else (sw2sw (s.c_gpr s.procID rs1) :word128)) * if rs2 = (0w :word5) then (0w :word128) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) :word128) else (sw2sw (s.c_gpr s.procID rs2) :word128)) :word64) :word64))⦈⦈
+MULH_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'MULH ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+MULHSU_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'MULHSU ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (((63 :num) >< (32 :num)) ((if rs1 = (0w :word5) then (0w :word128) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word128) else (sw2sw (s.c_gpr s.procID rs1) :word128)) * if rs2 = (0w :word5) then (0w :word128) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (w2w (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word128) else (w2w (s.c_gpr s.procID rs2) :word128)) :word32) :word64) else (((127 :num) >< (64 :num)) ((if rs1 = (0w :word5) then (0w :word128) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word128) else (sw2sw (s.c_gpr s.procID rs1) :word128)) * if rs2 = (0w :word5) then (0w :word128) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (w2w (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word128) else (w2w (s.c_gpr s.procID rs2) :word128)) :word64))⦈⦈
+MULHSU_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'MULHSU ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+MULHU_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'MULHU ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (w2w (((63 :num) >< (32 :num)) ((if rs1 = (0w :word5) then (0w :word128) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (w2w (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word128) else (w2w (s.c_gpr s.procID rs1) :word128)) * if rs2 = (0w :word5) then (0w :word128) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (w2w (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word128) else (w2w (s.c_gpr s.procID rs2) :word128)) :word32) :word64) else (((127 :num) >< (64 :num)) ((if rs1 = (0w :word5) then (0w :word128) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (w2w (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word128) else (w2w (s.c_gpr s.procID rs1) :word128)) * if rs2 = (0w :word5) then (0w :word128) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (w2w (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word128) else (w2w (s.c_gpr s.procID rs2) :word128)) :word64))⦈⦈
+MULHU_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'MULHU ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+NextRISCV_def_typed=∀(s :riscv_state). NextRISCV s = (let ((f :rawInstType),(s :riscv_state)) = (Fetch s :rawInstType # riscv_state); (s :riscv_state) = Run (DecodeAny f) s in if s.exception ≠ NoException then (NONE :riscv_state option) else (let (pc :word64) = PC s in case NextFetch s of (NONE :TransferControl option) => update_pc (pc + Skip s) s | SOME (BranchTo a) => update_pc a (write'NextFetch (NONE :TransferControl option) s) | SOME Ereturn => (NONE :riscv_state option) | SOME Mrts => (NONE :riscv_state option) | SOME (Trap v5) => (NONE :riscv_state option)))
+ADD_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> dfn'ADD ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if rs1 = (0w :word5) then if rs2 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs2 else if rs2 = (0w :word5) then s.c_gpr s.procID rs1 else s.c_gpr s.procID rs1 + s.c_gpr s.procID rs2)⦈⦈
+ADD_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> dfn'ADD ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+AND_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> dfn'AND ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if rs1 = (0w :word5) then (0w :word64) else if rs2 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs1 && s.c_gpr s.procID rs2)⦈⦈
+AND_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> dfn'AND ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+OR_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> dfn'OR ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if rs1 = (0w :word5) then if rs2 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs2 else if rs2 = (0w :word5) then s.c_gpr s.procID rs1 else s.c_gpr s.procID rs1 ‖ s.c_gpr s.procID rs2)⦈⦈
+OR_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> dfn'OR ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+SUB_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> dfn'SUB ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if rs1 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs1) − (if rs2 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs2)⦈⦈
+SUB_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> dfn'SUB ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+XOR_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> dfn'XOR ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if rs1 = (0w :word5) then if rs2 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs2 else if rs2 = (0w :word5) then s.c_gpr s.procID rs1 else s.c_gpr s.procID rs1 ⊕ s.c_gpr s.procID rs2)⦈⦈
+XOR_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> dfn'XOR ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+SLT_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'SLT ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (v2w [(if rs1 = (0w :word5) then (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) else s.c_gpr s.procID rs1) < if rs2 = (0w :word5) then (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) else s.c_gpr s.procID rs2] :word64)⦈⦈
+SLT_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'SLT ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+SLTU_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'SLTU ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (v2w [(if rs1 = (0w :word5) then (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (w2w (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) else s.c_gpr s.procID rs1) <₊ if rs2 = (0w :word5) then (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (w2w (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) else s.c_gpr s.procID rs2] :word64)⦈⦈
+SLTU_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'SLTU ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+SLL_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'SLL ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (if rs1 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs1) <<~ if rs2 = (0w :word5) then (0w :word64) else (w2w (((4 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word5) :word64) else (if rs1 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs1) <<~ (if rs2 = (0w :word5) then (0w :word64) else (w2w (((5 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word6) :word64)))⦈⦈
+SLL_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'SLL ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+SRA_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'SRA ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (sw2sw ((if rs1 = (0w :word5) then (0w :word32) else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32)) >>~ if rs2 = (0w :word5) then (0w :word32) else (w2w (((4 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word5) :word32)) :word64) else (if rs1 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs1) >>~ (if rs2 = (0w :word5) then (0w :word64) else (w2w (((5 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word6) :word64)))⦈⦈
+SRA_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'SRA ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+SRL_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'SRL ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (w2w ((if rs1 = (0w :word5) then (0w :word32) else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32)) >>>~ if rs2 = (0w :word5) then (0w :word32) else (w2w (((4 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word5) :word32)) :word64) else (if rs1 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs1) >>>~ (if rs2 = (0w :word5) then (0w :word64) else (w2w (((5 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word6) :word64)))⦈⦈
+SRL_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'SRL ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+SB_typed=∀*(s :riscv_state) (offs :word12) (rs2 :word5) (rs1 :word5) . ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5)
+ ==> dfn'SB ((rs1 :word5),(rs2 :word5),(offs :word12)) (s :riscv_state) = s with MEM8 := s.MEM8⦇(if rs1 = (0w :word5) then (sw2sw offs :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64)) ↦ (if rs2 = (0w :word5) then (0w :word8) else (((7 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word8))⦈
+SD_typed=∀*(s :riscv_state) (offs :word12) (rs2 :word5) (rs1 :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5)
+ ==> aligned (3 :num) (if (rs1 :word5) = (0w :word5) then (sw2sw (offs :word12) :word64) else (s :riscv_state).c_gpr s.procID rs1 + (sw2sw offs :word64))
+ ==> dfn'SD ((rs1 :word5),(rs2 :word5),(offs :word12)) (s :riscv_state) = s with MEM8 := s.MEM8⦇(if rs1 = (0w :word5) then (sw2sw offs :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64)) ↦ (if rs2 = (0w :word5) then (0w :word8) else (((7 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word8)); (if rs1 = (0w :word5) then (sw2sw offs :word64) + (1w :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (1w :word64)) ↦ (if rs2 = (0w :word5) then (0w :word8) else (((15 :num) >< (8 :num)) (s.c_gpr s.procID rs2) :word8)); (if rs1 = (0w :word5) then (sw2sw offs :word64) + (2w :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (2w :word64)) ↦ (if rs2 = (0w :word5) then (0w :word8) else (((23 :num) >< (16 :num)) (s.c_gpr s.procID rs2) :word8)); (if rs1 = (0w :word5) then (sw2sw offs :word64) + (3w :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (3w :word64)) ↦ (if rs2 = (0w :word5) then (0w :word8) else (((31 :num) >< (24 :num)) (s.c_gpr s.procID rs2) :word8)); (if rs1 = (0w :word5) then (sw2sw offs :word64) + (4w :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (4w :word64)) ↦ (if rs2 = (0w :word5) then (0w :word8) else (((39 :num) >< (32 :num)) (s.c_gpr s.procID rs2) :word8)); (if rs1 = (0w :word5) then (sw2sw offs :word64) + (5w :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (5w :word64)) ↦ (if rs2 = (0w :word5) then (0w :word8) else (((47 :num) >< (40 :num)) (s.c_gpr s.procID rs2) :word8)); (if rs1 = (0w :word5) then (sw2sw offs :word64) + (6w :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (6w :word64)) ↦ (if rs2 = (0w :word5) then (0w :word8) else (((55 :num) >< (48 :num)) (s.c_gpr s.procID rs2) :word8)); (if rs1 = (0w :word5) then (sw2sw offs :word64) + (7w :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (7w :word64)) ↦ (if rs2 = (0w :word5) then (0w :word8) else (((63 :num) >< (56 :num)) (s.c_gpr s.procID rs2) :word8))⦈
+SH_typed=∀*(s :riscv_state) (offs :word12) (rs2 :word5) (rs1 :word5) . ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5)
+ ==> aligned (1 :num) (if (rs1 :word5) = (0w :word5) then (sw2sw (offs :word12) :word64) else (s :riscv_state).c_gpr s.procID rs1 + (sw2sw offs :word64))
+ ==> dfn'SH ((rs1 :word5),(rs2 :word5),(offs :word12)) (s :riscv_state) = s with MEM8 := s.MEM8⦇(if rs1 = (0w :word5) then (sw2sw offs :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64)) ↦ (if rs2 = (0w :word5) then (0w :word8) else (((7 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word8)); (if rs1 = (0w :word5) then (sw2sw offs :word64) + (1w :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (1w :word64)) ↦ (if rs2 = (0w :word5) then (0w :word8) else (((15 :num) >< (8 :num)) (s.c_gpr s.procID rs2) :word8))⦈
+SW_typed=∀*(s :riscv_state) (offs :word12) (rs2 :word5) (rs1 :word5) . ((s :riscv_state).c_MCSR s.procID).mstatus.VM = (0w :word5)
+ ==> aligned (2 :num) (if (rs1 :word5) = (0w :word5) then (sw2sw (offs :word12) :word64) else (s :riscv_state).c_gpr s.procID rs1 + (sw2sw offs :word64))
+ ==> dfn'SW ((rs1 :word5),(rs2 :word5),(offs :word12)) (s :riscv_state) = s with MEM8 := s.MEM8⦇(if rs1 = (0w :word5) then (sw2sw offs :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64)) ↦ (if rs2 = (0w :word5) then (0w :word8) else (((7 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word8)); (if rs1 = (0w :word5) then (sw2sw offs :word64) + (1w :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (1w :word64)) ↦ (if rs2 = (0w :word5) then (0w :word8) else (((15 :num) >< (8 :num)) (s.c_gpr s.procID rs2) :word8)); (if rs1 = (0w :word5) then (sw2sw offs :word64) + (2w :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (2w :word64)) ↦ (if rs2 = (0w :word5) then (0w :word8) else (((23 :num) >< (16 :num)) (s.c_gpr s.procID rs2) :word8)); (if rs1 = (0w :word5) then (sw2sw offs :word64) + (3w :word64) else s.c_gpr s.procID rs1 + (sw2sw offs :word64) + (3w :word64)) ↦ (if rs2 = (0w :word5) then (0w :word8) else (((31 :num) >< (24 :num)) (s.c_gpr s.procID rs2) :word8))⦈
+update_pc_typed=∀*(s :riscv_state) (v :word64) . update_pc (v :word64) (s :riscv_state) = SOME (s with c_PC := s.c_PC⦇s.procID ↦ v⦈)
+update_pc_def_typed=∀(v :word64) (s :riscv_state). update_pc v s = SOME (write'PC v s)
+AUIPC_typed=∀*(s :riscv_state) (imm :word20) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> dfn'AUIPC ((rd :word5),(imm :word20)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ s.c_PC s.procID + (sw2sw ((imm @@ (0w :word12)) :word32) :word64)⦈⦈
+AUIPC_NOP_typed=∀*(s :riscv_state) (imm :word20) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> dfn'AUIPC ((rd :word5),(imm :word20)) (s :riscv_state) = s
+LUI_typed=∀*(s :riscv_state) (imm :word20) (rd :word5) . (rd :word5) ≠ (0w :word5)
+ ==> dfn'LUI ((rd :word5),(imm :word20)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (sw2sw ((imm @@ (0w :word12)) :word32) :word64)⦈⦈
+LUI_NOP_typed=∀*(s :riscv_state) (imm :word20) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> dfn'LUI ((rd :word5),(imm :word20)) (s :riscv_state) = s
+DIVUW_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'DIVUW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if if rs2 = (0w :word5) then T else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) = (0w :word32) then (0xFFFFFFFFFFFFFFFFw :word64) else (sw2sw ((if rs1 = (0w :word5) then (0w :word32) else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32)) // if rs2 = (0w :word5) then (0w :word32) else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32)) :word64))⦈⦈
+DIVUW_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'DIVUW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+DIVW_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'DIVW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if if rs2 = (0w :word5) then T else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) = (0w :word32) then (0xFFFFFFFFFFFFFFFFw :word64) else (sw2sw ((if rs1 = (0w :word5) then (0w :word32) else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32)) / if rs2 = (0w :word5) then (0w :word32) else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32)) :word64))⦈⦈
+DIVW_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'DIVW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+MULW_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'MULW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (sw2sw (((31 :num) >< (0 :num)) (sw2sw ((if rs1 = (0w :word5) then (0w :word32) else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32)) * if rs2 = (0w :word5) then (0w :word32) else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32)) :word64) :word32) :word64)⦈⦈
+MULW_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'MULW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+REMUW_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'REMUW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if if rs2 = (0w :word5) then T else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) = (0w :word32) then if rs1 = (0w :word5) then (0w :word64) else (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) else (sw2sw (word_mod (if rs1 = (0w :word5) then (0w :word32) else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32)) (if rs2 = (0w :word5) then (0w :word32) else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32))) :word64))⦈⦈
+REMUW_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'REMUW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+REMW_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'REMW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if if rs2 = (0w :word5) then T else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) = (0w :word32) then if rs1 = (0w :word5) then (0w :word64) else (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) else (sw2sw (word_rem (if rs1 = (0w :word5) then (0w :word32) else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32)) (if rs2 = (0w :word5) then (0w :word32) else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32))) :word64))⦈⦈
+REMW_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'REMW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+SLLIW_typed=∀*(s :riscv_state) (imm :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'SLLIW ((rd :word5),(rs1 :word5),(imm :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if rs1 = (0w :word5) then (0w :word64) else (sw2sw ((((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) ≪ w2n imm) :word64))⦈⦈
+SLLIW_NOP_typed=∀*(s :riscv_state) (imm :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'SLLIW ((rd :word5),(rs1 :word5),(imm :word5)) (s :riscv_state) = s
+SLLW_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'SLLW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (sw2sw ((if rs1 = (0w :word5) then (0w :word32) else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32)) <<~ if rs2 = (0w :word5) then (0w :word32) else (w2w (((4 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word5) :word32)) :word64)⦈⦈
+SLLW_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'SLLW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+SRAIW_typed=∀*(s :riscv_state) (imm :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'SRAIW ((rd :word5),(rs1 :word5),(imm :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (sw2sw ((if rs1 = (0w :word5) then (0w :word32) else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32)) ≫ w2n imm) :word64)⦈⦈
+SRAIW_NOP_typed=∀*(s :riscv_state) (imm :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'SRAIW ((rd :word5),(rs1 :word5),(imm :word5)) (s :riscv_state) = s
+SRAW_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'SRAW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (sw2sw ((if rs1 = (0w :word5) then (0w :word32) else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32)) >>~ if rs2 = (0w :word5) then (0w :word32) else (w2w (((4 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word5) :word32)) :word64)⦈⦈
+SRAW_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'SRAW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+SRLIW_typed=∀*(s :riscv_state) (imm :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'SRLIW ((rd :word5),(rs1 :word5),(imm :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if rs1 = (0w :word5) then (0w :word64) else (sw2sw ((((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) ⋙ w2n imm) :word64))⦈⦈
+SRLIW_NOP_typed=∀*(s :riscv_state) (imm :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'SRLIW ((rd :word5),(rs1 :word5),(imm :word5)) (s :riscv_state) = s
+SRLW_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'SRLW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (sw2sw ((if rs1 = (0w :word5) then (0w :word32) else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32)) >>>~ if rs2 = (0w :word5) then (0w :word32) else (w2w (((4 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word5) :word32)) :word64)⦈⦈
+SRLW_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'SRLW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+ADDIW_typed=∀*(s :riscv_state) (imm :word12) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'ADDIW ((rd :word5),(rs1 :word5),(imm :word12)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if rs1 = (0w :word5) then (sw2sw (((31 :num) >< (0 :num)) (sw2sw imm :word64) :word32) :word64) else (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1 + (sw2sw imm :word64)) :word32) :word64))⦈⦈
+ADDIW_NOP_typed=∀*(s :riscv_state) (imm :word12) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'ADDIW ((rd :word5),(rs1 :word5),(imm :word12)) (s :riscv_state) = s
+ADDW_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'ADDW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if rs1 = (0w :word5) then if rs2 = (0w :word5) then (0w :word64) else (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) else if rs2 = (0w :word5) then (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) else (sw2sw (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1 + s.c_gpr s.procID rs2) :word32) :word64))⦈⦈
+ADDW_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'ADDW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+SUBW_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'SUBW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (sw2sw ((if rs1 = (0w :word5) then (0w :word32) else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32)) − if rs2 = (0w :word5) then (0w :word32) else (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32)) :word64)⦈⦈
+SUBW_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+ ==> ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'SUBW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+Skip_typed=∀*(s :riscv_state) . Skip (s :riscv_state) = s.c_Skip s.procID
+DIVU_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) ≠ (0w :word5)
+ ==> dfn'DIVU ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s with c_gpr := s.c_gpr⦇s.procID ↦ (s.c_gpr s.procID)⦇rd ↦ (if if rs2 = (0w :word5) then T else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (w2w (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) = (0w :word64) else s.c_gpr s.procID rs2 = (0w :word64) then (0xFFFFFFFFFFFFFFFFw :word64) else (if rs1 = (0w :word5) then (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (w2w (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs1) :word32) :word64) else s.c_gpr s.procID rs1) // (if rs2 = (0w :word5) then (0w :word64) else if (s.c_MCSR s.procID).mcpuid.ArchBase = (0w :word2) then (w2w (((31 :num) >< (0 :num)) (s.c_gpr s.procID rs2) :word32) :word64) else s.c_gpr s.procID rs2))⦈⦈
+DIVU_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'DIVU ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+MUL_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> dfn'MUL ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+DIV_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> dfn'DIV ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+REM_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> dfn'REM ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+REMU_NOP_typed=∀*(s :riscv_state) (rs2 :word5) (rs1 :word5) (rd :word5) . (rd :word5) = (0w :word5)
+ ==> dfn'REMU ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+SLTI_NOP_typed=∀*(s :riscv_state) (imm :word12) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'SLTI ((rd :word5),(rs1 :word5),(imm :word12)) (s :riscv_state) = s
+SLTIU_NOP_typed=∀*(s :riscv_state) (imm :word12) (rs1 :word5) (rd :word5) . ((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+ ==> (rd :word5) = (0w :word5)
+ ==> dfn'SLTIU ((rd :word5),(rs1 :word5),(imm :word12)) (s :riscv_state) = s
