@@ -138459,6 +138459,18 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "data_to_bvi_do_app",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/ApplyCorrect.lean",
+    "lean_name": "dataToBvi_doApp",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "BviState.refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary original operation, related states and source result; all seven source operation restrictions, successful source application, two existential outputs and full target auxiliary result, value projection and final state relation. The original CopyByte exclusion is retained; the separately used stronger Flapjack helper also supports CopyByte. BVI refs use the canonical finite-support carrier and same-module unconditional roundtrip witness. Inherits the reals_as_rational_cuts assumption through primitive dispatch (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "state_rel_peak_safe",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/State.lean",
     "lean_name": "stateRel_peakSafe",
