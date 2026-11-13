@@ -26,74 +26,6 @@ theorem compile_sameResult {C F : Type} (program : DataLang.Prog) (live : NumSet
   exact simulationFor_all program live source source result sourceNext run
     (stateRel_refl source _) notType (exceptionRel_refl source)
 
-/-- The final-state data liveness correctness statement for every stopped,
-non-type-error execution. It remains untagged until the data evaluator and
-state carrier have been reviewed against HOL. -/
-theorem compile_correct_stopped {C F : Type} (program : DataLang.Prog) (source sourceNext : State C F)
-    (result : Result (List DataSem.Value) DataSem.Value)
-    (run : DataSem.evaluate program source = (some result, sourceNext))
-    (notType : result ≠ .err (.abort .typeError)) :
-    ∃ localsSize stackMax safe peak,
-      DataSem.evaluate (compile program .ln).1 source =
-        (some result, { sourceNext with localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak }) := by
-  cases result with
-  | val values =>
-    obtain ⟨targetNext, targetRun, related⟩ :=
-      compile_sameResult program .ln source sourceNext (some (.val values)) run (by simp)
-    have sourceControl := evaluate_stackResult program source sourceNext (some (.val values)) run
-    have targetControl := evaluate_stackResult (compile program .ln).1 source targetNext (some (.val values)) targetRun
-    have stackEq : sourceNext.stack = targetNext.stack := sourceControl.1.trans targetControl.1.symm
-    have handlerEq : sourceNext.handler = targetNext.handler := sourceControl.2.trans targetControl.2.symm
-    have localsEq : sourceNext.locals = targetNext.locals :=
-      (evaluate_value_locals program source sourceNext values run).trans
-        (evaluate_value_locals (compile program .ln).1 source targetNext values targetRun).symm
-    have stateEq : targetNext = { sourceNext with localsSize := targetNext.localsSize, stackMax := targetNext.stackMax, safeForSpace := targetNext.safeForSpace, peakHeapLength := targetNext.peakHeapLength } := by
-      rcases related with ⟨code, clock, space, ffi, refs, global, _, _, compiler, oracle, stamps, limits, frames, _⟩
-      cases sourceNext
-      cases targetNext
-      simp_all
-    refine ⟨targetNext.localsSize, targetNext.stackMax, targetNext.safeForSpace, targetNext.peakHeapLength, ?_⟩
-    rw [← stateEq]
-    exact targetRun
-  | err error =>
-    cases error with
-    | raise value =>
-      obtain ⟨targetNext, targetRun, related⟩ :=
-        compile_sameResult program .ln source sourceNext (some (.err (.raise value))) run (by simp)
-      have sourceControl := evaluate_stackResult program source sourceNext (some (.err (.raise value))) run
-      have targetControl := evaluate_stackResult (compile program .ln).1 source targetNext (some (.err (.raise value))) targetRun
-      obtain ⟨sourceJump, sourceJumpRun, sourceStack, sourceHandler, sourceLocals⟩ := sourceControl
-      obtain ⟨targetJump, targetJumpRun, targetStack, targetHandler, targetLocals⟩ := targetControl
-      have jumpEq : sourceJump = targetJump := Option.some.inj (sourceJumpRun.symm.trans targetJumpRun)
-      subst targetJump
-      have stackEq : sourceNext.stack = targetNext.stack := sourceStack.trans targetStack.symm
-      have handlerEq : sourceNext.handler = targetNext.handler := sourceHandler.trans targetHandler.symm
-      have localsEq : sourceNext.locals = targetNext.locals := sourceLocals.trans targetLocals.symm
-      have stateEq : targetNext = { sourceNext with localsSize := targetNext.localsSize, stackMax := targetNext.stackMax, safeForSpace := targetNext.safeForSpace, peakHeapLength := targetNext.peakHeapLength } := by
-        rcases related with ⟨code, clock, space, ffi, refs, global, _, _, compiler, oracle, stamps, limits, frames, _⟩
-        cases sourceNext
-        cases targetNext
-        simp_all
-      refine ⟨targetNext.localsSize, targetNext.stackMax, targetNext.safeForSpace, targetNext.peakHeapLength, ?_⟩
-      rw [← stateEq]
-      exact targetRun
-    | abort reason =>
-      have notType : reason ≠ .typeError := by simpa using notType
-      obtain ⟨targetNext, targetRun, related⟩ :=
-        compile_sameResult program .ln source sourceNext (some (.err (.abort reason))) run (by simpa using notType)
-      have sourceControl := evaluate_abort_control program source sourceNext reason notType run
-      have targetControl := evaluate_abort_control (compile program .ln).1 source targetNext reason notType targetRun
-      have localsEq : sourceNext.locals = targetNext.locals := sourceControl.1.trans targetControl.1.symm
-      have stackEq : sourceNext.stack = targetNext.stack := sourceControl.2.trans targetControl.2.symm
-      have stateEq : targetNext = { sourceNext with localsSize := targetNext.localsSize, stackMax := targetNext.stackMax, safeForSpace := targetNext.safeForSpace, peakHeapLength := targetNext.peakHeapLength } := by
-        rcases related with ⟨code, clock, space, ffi, refs, global, handler, _, compiler, oracle, stamps, limits, frames, _⟩
-        cases sourceNext
-        cases targetNext
-        simp_all
-      refine ⟨targetNext.localsSize, targetNext.stackMax, targetNext.safeForSpace, targetNext.peakHeapLength, ?_⟩
-      rw [← stateEq]
-      exact targetRun
-
 /-- The data liveness correctness statement in the source theorem's
 evaluation-pair form. Its stopped/non-type-error premises, result, and four
 updated state fields match the source statement. The data state has the same
@@ -114,7 +46,68 @@ theorem compile_correct {C F : Type} (program : DataLang.Prog) (source : State C
     | none => simp [run] at stopped
     | some result =>
       have noType : result ≠ .err (.abort .typeError) := by simpa [run] using notType
-      obtain ⟨localsSize, stackMax, safe, peak, correct⟩ := compile_correct_stopped program source sourceNext result run noType
+      have correct : ∃ localsSize stackMax safe peak,
+          DataSem.evaluate (compile program .ln).1 source =
+            (some result, { sourceNext with localsSize := localsSize, stackMax := stackMax, safeForSpace := safe, peakHeapLength := peak }) := by
+        have notType := noType
+        cases result with
+        | val values =>
+          obtain ⟨targetNext, targetRun, related⟩ :=
+            compile_sameResult program .ln source sourceNext (some (.val values)) run (by simp)
+          have sourceControl := evaluate_stackResult program source sourceNext (some (.val values)) run
+          have targetControl := evaluate_stackResult (compile program .ln).1 source targetNext (some (.val values)) targetRun
+          have stackEq : sourceNext.stack = targetNext.stack := sourceControl.1.trans targetControl.1.symm
+          have handlerEq : sourceNext.handler = targetNext.handler := sourceControl.2.trans targetControl.2.symm
+          have localsEq : sourceNext.locals = targetNext.locals :=
+            (evaluate_value_locals program source sourceNext values run).trans
+              (evaluate_value_locals (compile program .ln).1 source targetNext values targetRun).symm
+          have stateEq : targetNext = { sourceNext with localsSize := targetNext.localsSize, stackMax := targetNext.stackMax, safeForSpace := targetNext.safeForSpace, peakHeapLength := targetNext.peakHeapLength } := by
+            rcases related with ⟨code, clock, space, ffi, refs, global, _, _, compiler, oracle, stamps, limits, frames, _⟩
+            cases sourceNext
+            cases targetNext
+            simp_all
+          refine ⟨targetNext.localsSize, targetNext.stackMax, targetNext.safeForSpace, targetNext.peakHeapLength, ?_⟩
+          rw [← stateEq]
+          exact targetRun
+        | err error =>
+          cases error with
+          | raise value =>
+            obtain ⟨targetNext, targetRun, related⟩ :=
+              compile_sameResult program .ln source sourceNext (some (.err (.raise value))) run (by simp)
+            have sourceControl := evaluate_stackResult program source sourceNext (some (.err (.raise value))) run
+            have targetControl := evaluate_stackResult (compile program .ln).1 source targetNext (some (.err (.raise value))) targetRun
+            obtain ⟨sourceJump, sourceJumpRun, sourceStack, sourceHandler, sourceLocals⟩ := sourceControl
+            obtain ⟨targetJump, targetJumpRun, targetStack, targetHandler, targetLocals⟩ := targetControl
+            have jumpEq : sourceJump = targetJump := Option.some.inj (sourceJumpRun.symm.trans targetJumpRun)
+            subst targetJump
+            have stackEq : sourceNext.stack = targetNext.stack := sourceStack.trans targetStack.symm
+            have handlerEq : sourceNext.handler = targetNext.handler := sourceHandler.trans targetHandler.symm
+            have localsEq : sourceNext.locals = targetNext.locals := sourceLocals.trans targetLocals.symm
+            have stateEq : targetNext = { sourceNext with localsSize := targetNext.localsSize, stackMax := targetNext.stackMax, safeForSpace := targetNext.safeForSpace, peakHeapLength := targetNext.peakHeapLength } := by
+              rcases related with ⟨code, clock, space, ffi, refs, global, _, _, compiler, oracle, stamps, limits, frames, _⟩
+              cases sourceNext
+              cases targetNext
+              simp_all
+            refine ⟨targetNext.localsSize, targetNext.stackMax, targetNext.safeForSpace, targetNext.peakHeapLength, ?_⟩
+            rw [← stateEq]
+            exact targetRun
+          | abort reason =>
+            have notType : reason ≠ .typeError := by simpa using notType
+            obtain ⟨targetNext, targetRun, related⟩ :=
+              compile_sameResult program .ln source sourceNext (some (.err (.abort reason))) run (by simpa using notType)
+            have sourceControl := evaluate_abort_control program source sourceNext reason notType run
+            have targetControl := evaluate_abort_control (compile program .ln).1 source targetNext reason notType targetRun
+            have localsEq : sourceNext.locals = targetNext.locals := sourceControl.1.trans targetControl.1.symm
+            have stackEq : sourceNext.stack = targetNext.stack := sourceControl.2.trans targetControl.2.symm
+            have stateEq : targetNext = { sourceNext with localsSize := targetNext.localsSize, stackMax := targetNext.stackMax, safeForSpace := targetNext.safeForSpace, peakHeapLength := targetNext.peakHeapLength } := by
+              rcases related with ⟨code, clock, space, ffi, refs, global, handler, _, compiler, oracle, stamps, limits, frames, _⟩
+              cases sourceNext
+              cases targetNext
+              simp_all
+            refine ⟨targetNext.localsSize, targetNext.stackMax, targetNext.safeForSpace, targetNext.peakHeapLength, ?_⟩
+            rw [← stateEq]
+            exact targetRun
+      obtain ⟨localsSize, stackMax, safe, peak, correct⟩ := correct
       exact ⟨localsSize, stackMax, safe, peak, by simpa only [run] using correct⟩
 
 end Flapjack.Compiler.Backend.DataLive
