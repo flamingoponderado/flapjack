@@ -73217,6 +73217,17 @@
   },
   {
     "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "rt_vars_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/RtVarsExact.lean",
+    "lean_name": "rtVarsHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "reviewer": "task-159 source comparison against the typed HOL capture scripts/hol-probes/crep_to_loop_rt_vars_typed_probe.out: HOL rt_vars_def (crep_to_loopScript.sml:113-118) is `!fm vs mx. rt_vars fm vs mx = case OPT_MMAP (FLOOKUP fm) vs of NONE => [mx+1] | SOME m => m` with the inferred types (fm : 'a |-> num) (vs : 'a list) (mx : num). The Lean definition keeps the same binder order and the same polymorphic key type, Nat values and Nat-list result, with the same two branches; the HOL finite map 'a |-> num is the reviewed HolFiniteMapExact translation, FLOOKUP is `.lookup`, and OPT_MMAP is List.mapM (the tagged optMmapEqSome records that correspondence). No quantifier, hypothesis, or side condition is added. The same-module parameter witness holFmapAsFiniteSupportParamWitness_rtVarsHOL_fm states the canonical toBroad/ofBroad lookup/finiteSupport roundtrip. This records the representation only; it does not prove HOL-to-Lean equivalence.",
+    "fmap_as_finite_support_parameters": [
+      "fm"
+    ]
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
     "hol_name": "context",
     "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
     "lean_name": "CrepToLoopContextExact",
