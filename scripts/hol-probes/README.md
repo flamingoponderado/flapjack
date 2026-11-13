@@ -10042,3 +10042,12 @@ used for the source comparison. Regenerate with
 `HOL_PROBE_ONLY=hol_sorting_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean
 correspondence.
+
+`hol_list_typed_probe.out` captures the typed statements of the seven reviewed
+`HOL/src/list/src/listScript.sml` rows from the built HOL4 core theory (no
+rebuild): `HD`, `LAST_DEF`, `LAST_CONS`, `EL_def`, `EVERY2_LUPDATE_same` (with
+independent input and output element types), `list_size_thm` and `oHD_def`.
+Regenerate with
+`HOL_PROBE_ONLY=hol_list_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
