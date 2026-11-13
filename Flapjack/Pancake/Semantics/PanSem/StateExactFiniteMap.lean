@@ -285,13 +285,20 @@ def lookupKvarHOLFinite {width : Nat} {σ : Type} [NeZero width]
     over the finite-map state carrier. It performs the selected `FLOOKUP` and
     compares the two `shape_of` results; absent variables are invalid. The
     finite-map qualifier records the carrier translation used by
-    `PanSemStateFiniteExact`. -/
+    `PanSemStateFiniteExact`.
+
+    HOL infers `is_valid_value : (α, β) state -> varkind -> mlstring ->
+    γ v -> bool`: the candidate value's word width `γ` is independent of the
+    state's `α` (typed capture `scripts/hol-probes/pan_upd_locals_probe.out`,
+    `kvar_defs_typed`, fourth conjunct). The `valueWidth` binder keeps that
+    independence; `shapeOfHOLExact` is width-polymorphic, so the comparison is
+    still HOL's `shape_of value = shape_of w`. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "is_valid_value_def"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 def isValidValueHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (kind : VarKind) (name : MlS)
-    (value : ValueHOL width) : Bool :=
+    {valueWidth : Nat} [NeZero valueWidth] (value : ValueHOL valueWidth) : Bool :=
   match lookupKvarHOLFinite kind name state with
   | some existing => shapeEqHOL (shapeOfHOLExact value) (shapeOfHOLExact existing)
   | none => false
@@ -362,7 +369,8 @@ condition is added. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "kvar_defs"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
-theorem kvarDefsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+theorem kvarDefsHOLFinite {width : Nat} {σ : Type} {σ4 : Type} {valueWidth : Nat}
+    [NeZero width] [NeZero valueWidth] :
     (∀ (name : MlS) (value : ValueHOL width) (state : PanSemStateFiniteExact width σ),
         setVarHOLFinite name value state =
           { state with locals := state.locals.update (name, value) }) ∧
@@ -375,8 +383,8 @@ theorem kvarDefsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
           match kind with
           | .local => setVarHOLFinite name value state
           | .global => setGlobalHOLFinite name value state) ∧
-    (∀ (state : PanSemStateFiniteExact width σ) (kind : VarKind) (name : MlS)
-        (value : ValueHOL width),
+    (∀ (state : PanSemStateFiniteExact width σ4) (kind : VarKind) (name : MlS)
+        (value : ValueHOL valueWidth),
         isValidValueHOLFinite state kind name value =
           match lookupKvarHOLFinite kind name state with
           | some existing =>
