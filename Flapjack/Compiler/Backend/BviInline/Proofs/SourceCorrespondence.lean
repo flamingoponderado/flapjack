@@ -301,14 +301,27 @@ theorem compileProgFuel_tick_cleanup (fuel : Nat) (program intermediate : List (
   rw [removeTicksProgram_eq_source]
   rfl
 
+/-- Flapjack infrastructure: for every initial fuel and retained cache, the
+executed incremental inliner agrees with the total source-shaped compiler. -/
+theorem compileIncFuel_eq_source (fuel : Nat) (cache : Spt (Nat × Exp))
+    (program : List (Nat × Nat × Exp)) :
+    compileIncFuel fuel cache program = some (compileIncSource cache program) := by
+  have inlineRun := inlineAllFuel_eq_source fuel cache program
+  cases h : inlineAllSource cache program with
+  | mk cs out =>
+    have run : inlineAllFuel fuel cache program = some (cs, out) := by simpa [h] using inlineRun
+    unfold compileIncFuel
+    rw [run]
+    change (out.mapM (fun (entry : Nat × Nat × Exp) => do
+      pure (entry.1, entry.2.1, ← removeTicksBounded fuel entry.2.2))).bind
+      (fun output => some (cs, output)) = _
+    rw [removeTicksProgram_eq_source]
+    simp [compileIncSource, h]
+
 /-- Flapjack infrastructure: the executed whole-program inliner and tick
 cleanup return the total source-shaped incremental result. -/
 theorem compileProgFuel_eq_source (fuel : Nat) (program : List (Nat × Nat × Exp)) :
     compileProgFuel fuel program = some (compileIncSource .ln program) := by
-  have inlineRun := inlineAllFuel_eq_source fuel .ln program
-  cases result : inlineAllSource .ln program with
-  | mk cache intermediate =>
-    have run : inlineAllFuel fuel .ln program = some (cache, intermediate) := by simpa [result] using inlineRun
-    simpa [compileIncSource, result] using compileProgFuel_tick_cleanup fuel program intermediate cache run
+  simpa [compileProgFuel, compileIncFuel] using compileIncFuel_eq_source fuel .ln program
 
 end Flapjack.Compiler.Backend.BviInline

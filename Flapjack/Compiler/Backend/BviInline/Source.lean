@@ -9,8 +9,8 @@ namespace Flapjack.Compiler.Backend.BviInline
 open Bvi
 
 mutual
-/-- Flapjack infrastructure: total source-shaped inlining with a fixed sparse
-cache. HOL statement and carrier review remains pending. -/
+/-- Inline eligible calls in an expression using a fixed sparse cache. -/
+@[hol "cakeml/compiler/backend/bvi_inlineScript.sml" "inline_exp_def"]
 def inlineExpSource (cache : Spt (Nat × Exp)) : Exp → Exp
   | .var n => .var n
   | .ifThenElse x y z => .ifThenElse (inlineExpSource cache x) (inlineExpSource cache y) (inlineExpSource cache z)
@@ -37,7 +37,8 @@ def inlineExpSource (cache : Spt (Nat × Exp)) : Exp → Exp
   | .return args => .return (inlineExpsSource cache args)
 termination_by e => sizeOf e
 
-/-- Flapjack infrastructure: source-shaped list traversal for inlining. -/
+/-- Inline eligible calls in each expression of a list. -/
+@[hol "cakeml/compiler/backend/bvi_inlineScript.sml" "inline_exp_def"]
 def inlineExpsSource (cache : Spt (Nat × Exp)) : List Exp → List Exp
   | [] => []
   | e :: rest => inlineExpSource cache e :: inlineExpsSource cache rest
@@ -45,9 +46,8 @@ termination_by es => sizeOf es
 end
 
 mutual
-/-- Flapjack infrastructure: total tick removal following the source
-constructor clauses. This remains untagged until the HOL carriers and the
-executed traversal have been reviewed against this definition. -/
+/-- Remove ticks from an expression, preserving its remaining structure. -/
+@[hol "cakeml/compiler/backend/bvi_inlineScript.sml" "remove_ticks_exp_def"]
 def removeTicksSource : Exp → Exp
   | .var n => .var n
   | .ifThenElse x y z => .ifThenElse (removeTicksSource x) (removeTicksSource y) (removeTicksSource z)
@@ -63,15 +63,16 @@ def removeTicksSource : Exp → Exp
   | .return args => .return (removeTicksListSource args)
 termination_by e => sizeOf e
 
-/-- Flapjack infrastructure: source-shaped list traversal for tick removal. -/
+/-- Remove ticks from each expression in a list. -/
+@[hol "cakeml/compiler/backend/bvi_inlineScript.sml" "remove_ticks_exp_def"]
 def removeTicksListSource : List Exp → List Exp
   | [] => []
   | e :: rest => removeTicksSource e :: removeTicksListSource rest
 termination_by es => sizeOf es
 end
 
-/-- Flapjack infrastructure: source-shaped inlining threads the sparse
-wrapper cache in program order. -/
+/-- Inline program bodies while threading the sparse wrapper cache. -/
+@[hol "cakeml/compiler/backend/bvi_inlineScript.sml" "inline_all_def"]
 def inlineAllSource : Spt (Nat × Exp) → List (Nat × Nat × Exp) → Spt (Nat × Exp) × List (Nat × Nat × Exp)
   | cache, [] => (cache, [])
   | cache, (name, arity, body) :: rest =>
@@ -80,7 +81,8 @@ def inlineAllSource : Spt (Nat × Exp) → List (Nat × Nat × Exp) → Spt (Nat
     let (cache, rest) := inlineAllSource cache rest
     (cache, (name, arity, body) :: rest)
 
-/-- Flapjack infrastructure: total incremental inlining and tick cleanup. -/
+/-- Incrementally inline and then remove ticks from program bodies. -/
+@[hol "cakeml/compiler/backend/bvi_inlineScript.sml" "compile_inc_def"]
 def compileIncSource (cache : Spt (Nat × Exp)) (program : List (Nat × Nat × Exp)) :
     Spt (Nat × Exp) × List (Nat × Nat × Exp) :=
   let (cache, inlined) := inlineAllSource cache program

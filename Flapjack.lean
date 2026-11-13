@@ -1454,6 +1454,7 @@ import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateRefs
 import Flapjack.Compiler.Backend.Semantics.BviProps.CodeLabels
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileLabels
+import Flapjack.Compiler.Backend.BviInline.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.BviLet.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.BuildOk

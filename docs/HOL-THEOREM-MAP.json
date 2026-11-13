@@ -233,6 +233,102 @@
     "reviewer": "Independent typed HOL source review: for every BVI expression, deleting a top-level variable preserves the complete code-label set exactly. The original variable-to-zero clause, unchanged other constructors, BVI carrier and label traversal agree; the original theorem was captured with inferred types."
   },
   {
+    "hol_path": "cakeml/compiler/backend/bvi_inlineScript.sml",
+    "hol_name": "remove_ticks_exp_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Source.lean",
+    "lean_name": "removeTicksSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent source and carrier review of all ten HOL expression clauses: the BVI constructors, optional call handler, reset tick counts and recursive results agree. The unconditional executed retry correspondence and original typed mutual definition were checked."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvi_inlineScript.sml",
+    "hol_name": "remove_ticks_exp_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Source.lean",
+    "lean_name": "removeTicksListSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent source and carrier review of the original nil and cons clauses: the complete ordered list traversal agrees, and the unconditional executed retry correspondence and original typed mutual definition were checked."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvi_inlineScript.sml",
+    "hol_name": "inline_exp_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Source.lean",
+    "lean_name": "inlineExpSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review of all ten BVI expression clauses and exact sparse-tree cache: handler and destination cases, cache hits, arity tests, inserted ticks and all payloads agree. The original mutual definition and unconditional executed traversal agreement were checked."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvi_inlineScript.sml",
+    "hol_name": "inline_exp_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Source.lean",
+    "lean_name": "inlineExpsSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review of the original nil and cons list clauses with exact sparse-tree cache and BVI expression carrier. The original mutual definition and unconditional executed traversal agreement were checked."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvi_inlineScript.sml",
+    "hol_name": "inline_all_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Source.lean",
+    "lean_name": "inlineAllSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the exact sparse-tree cache carrier, empty and cons clauses, transformed-body wrapper check, insertion and cache threading, and ordered program fields agree. The original definition and unconditional executed-traversal agreement were checked."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvi_inlineScript.sml",
+    "hol_name": "compile_inc_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Source.lean",
+    "lean_name": "compileIncSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the exact sparse-tree cache and program carriers, inline-all result, and body-only tick-removal map agree. The original definition and unconditional executed-traversal agreement were checked."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "compile_inc_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "compileInc_codeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the sole source compilation equation implies equality of complete output-body labels and labels of the inlined intermediate program, with original sparse-tree cache and program carriers. The original typed theorem was captured."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "inline_all_MAP_FST",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "inlineAll_mapFst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: for every original sparse-tree cache and program, inlining preserves the full ordered key list, without additional premises. The original typed theorem was captured."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "compile_inc_MAP_FST",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "compileInc_mapFst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the sole source compilation equation implies equality of the complete ordered output and input key lists, with original sparse-tree cache and program carriers. The original typed theorem was captured."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "remove_ticks_prog_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "removeTicksProg_codeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: for arbitrary independent name and arity types, tick removal preserves the complete combined program-body label set exactly. The original polymorphic theorem was captured with inferred types."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "MAP_FST_remove_ticks_prog",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "removeTicksProg_mapFst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: for arbitrary independent name and arity types, tick removal preserves the ordered program-key list exactly. The original polymorphic theorem was captured with inferred types."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "remove_ticks_get_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "removeTicks_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: both unconditional conjuncts are retained, for every BVI expression and every BVI expression list, with exact equality of complete label sets. All constructors and both optional-handler cases were compared; the original theorem was captured."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_prog_get_code_labels",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileLabels.lean",

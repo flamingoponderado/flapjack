@@ -9585,6 +9585,11 @@ run_probe bvi_inline_probeScript.sml bvi_inline_probe.out \
   "$cake_dir/compiler/backend/bvi_inlineScript.sml" \
   "$cake_dir/compiler/backend"
 
+run_probe bvi_inline_labels_probeScript.sml bvi_inline_labels_probe.out \
+  remove_ticks_exp_def_typed remove_ticks_get_code_labels_typed remove_ticks_prog_code_labels_typed MAP_FST_remove_ticks_prog_typed inline_all_def_typed compile_inc_def_typed compile_inc_code_labels_typed inline_all_MAP_FST_typed compile_inc_MAP_FST_typed inline_exp_def_typed \
+  "$cake_dir/compiler/backend/proofs/bvi_inlineProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe dtw_assign_size_seen_probeScript.sml dtw_assign_size_seen_probe.out \
   size_of_cons_seen_Block size_of_type \
   "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" "$cake_dir/compiler/backend/proofs"
