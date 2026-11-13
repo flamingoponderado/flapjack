@@ -1,0 +1,1 @@
+for_def_typed=∀(j :num) (i :num) (a :num -> 'state -> unit # 'state). FOR (i,j,a) = if i = j then a i else do (u :unit) <- a i; FOR (if i < j then i + (1 :num) else i − (1 :num),j,a) od

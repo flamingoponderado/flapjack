@@ -10091,3 +10091,12 @@ theories (no rebuild): `HEX`, `n2s_def`, `num_to_dec_string_def`, `isLower_def`,
 `HOL_PROBE_ONLY=hol_string_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean
 correspondence.
+
+`hol_while_typed_probe.out`, `hol_richlist_typed_probe.out` and
+`hol_statetransformer_typed_probe.out` capture the typed statements of the
+reviewed `While`, `rich_list` and `state_transformer` rows from the built HOL4
+core theories (no rebuild): `OLEAST_def`, `OLEAST_INTRO`, `list_rel_lastn`,
+`LIST_REL_REPLICATE_same` and `FOR_def`. Regenerate with
+`HOL_PROBE_ONLY=hol_<theory>_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.

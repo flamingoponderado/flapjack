@@ -1,0 +1,2 @@
+list_rel_lastn_typed=∀(f :α -> β -> bool) (l1 :α list) (l2 :β list) (n :num). n ≤ LENGTH l1 ∧ LIST_REL f l1 l2 ⇒ LIST_REL f (LASTN n l1) (LASTN n l2)
+list_rel_replicate_same_typed=LIST_REL (P :α -> β -> bool) (REPLICATE (n :num) (x :α)) (REPLICATE n (y :β)) ⇔ (0 :num) < n ⇒ P x y

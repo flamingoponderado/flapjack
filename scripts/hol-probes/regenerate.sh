@@ -4731,6 +4731,17 @@ run_probe hol_asciinumbers_typed_probeScript.sml hol_asciinumbers_typed_probe.ou
 run_probe hol_string_typed_probeScript.sml hol_string_typed_probe.out \
   islower_def_typed isupper_def_typed isalpha_def_typed char_size_def_typed \
   "$repo_dir/HOL/src/string/stringScript.sml" "$cake_dir/pancake"
+run_probe hol_while_typed_probeScript.sml hol_while_typed_probe.out \
+  oleast_def_typed oleast_intro_typed \
+  "$repo_dir/HOL/src/num/theories/WhileScript.sml" "$cake_dir/pancake"
+
+run_probe hol_richlist_typed_probeScript.sml hol_richlist_typed_probe.out \
+  list_rel_lastn_typed list_rel_replicate_same_typed \
+  "$repo_dir/HOL/src/list/src/rich_listScript.sml" "$cake_dir/pancake"
+
+run_probe hol_statetransformer_typed_probeScript.sml hol_statetransformer_typed_probe.out \
+  for_def_typed \
+  "$repo_dir/HOL/src/monad/more_monads/state_transformerScript.sml" "$cake_dir/pancake"
 
 run_probe hol_alignment_words_typed_probeScript.sml hol_alignment_words_typed_probe.out \
   align_def_typed aligned_def_typed byte_align_def_typed byte_aligned_def_typed aligned_add_sub_typed word_slice_def_typed w2s_def_typed word_to_hex_string_def_typed word_replicate_def_typed \

@@ -21210,7 +21210,7 @@
     "lean_path": "Flapjack/Misc/OptionLeast.lean",
     "lean_name": "holOLeast",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared oleast_definition and least_exists_imp in source_eval_oracle_adjust_probe.out: both return none when the natural predicate is empty, otherwise the least satisfying natural. HOL's LEAST is rendered by Nat.find under the existence guard; LEAST_EXISTS_IMP and Nat.find_spec/find_min establish that the two choices are the same unique least witness."
+    "reviewer": "Compared oleast_definition and least_exists_imp in source_eval_oracle_adjust_probe.out: both return none when the natural predicate is empty, otherwise the least satisfying natural. HOL's LEAST is rendered by Nat.find under the existence guard; LEAST_EXISTS_IMP and Nat.find_spec/find_min establish that the two choices are the same unique least witness. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_while_typed_probe.out `oleast_def_typed` re-confirms `∀ P : num -> bool`, the existential guard and `LEAST n. P n` rendered by `Nat.find`, matching holOLeast."
   },
   {
     "hol_path": "HOL/src/num/theories/WhileScript.sml",
@@ -21218,7 +21218,7 @@
     "lean_path": "Flapjack/Misc/OptionLeast.lean",
     "lean_name": "holOLeast_intro",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared oleast_intro in source_eval_oracle_adjust_probe.out: the none case and the universally quantified least-witness case form the same conjunctive premise and imply Q of the optional least value."
+    "reviewer": "Compared oleast_intro in source_eval_oracle_adjust_probe.out: the none case and the universally quantified least-witness case form the same conjunctive premise and imply Q of the optional least value. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_while_typed_probe.out `oleast_intro_typed` re-confirms the `P Q` binder order, the two conjunctive premises and the `Q (OLEAST P)` conclusion, matching holOLeast_intro."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -38531,7 +38531,7 @@
     "hol_path": "HOL/src/list/src/rich_listScript.sml",
     "hol_name": "list_rel_lastn",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.36: HOL library rich_list 4449-4456 !f l1 l2 n. n <= LENGTH l1 /\\ LIST_REL f l1 l2 ==> LIST_REL f (LASTN n l1) (LASTN n l2), arbitrary element types and relation. Fresh probe statement capture. HOL PERM is tagged holPerm, ALL_DISTINCT is List.Nodup, LIST_REL is List.Forall2, ALOOKUP is sptAListLookup, LASTN is wordSemLastN, PERM_STACK (an Overload, no declaration) is untagged permStack clause for clause."
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.36: HOL library rich_list 4449-4456 !f l1 l2 n. n <= LENGTH l1 /\\ LIST_REL f l1 l2 ==> LIST_REL f (LASTN n l1) (LASTN n l2), arbitrary element types and relation. Fresh probe statement capture. HOL PERM is tagged holPerm, ALL_DISTINCT is List.Nodup, LIST_REL is List.Forall2, ALOOKUP is sptAListLookup, LASTN is wordSemLastN, PERM_STACK (an Overload, no declaration) is untagged permStack clause for clause. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_richlist_typed_probe.out `list_rel_lastn_typed` re-confirms the independent `α` and `β`, the `f l1 l2 n` binder order, the `n ≤ LENGTH l1` premise group and `LASTN` on both sides, matching listRelLastN."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/PermuteSwapStack.lean",
@@ -73143,7 +73143,7 @@
     "hol_path": "HOL/src/monad/more_monads/state_transformerScript.sml",
     "hol_name": "FOR_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol-c source comparison: pinned HOL source48-54 defines inclusive total FOR on Nat endpoints and unit-valued state actions. Lean preserves equal endpoint action, ascending increment, descending truncated decrement, BIND state threading discarding Unit, and distance termination with no extra premise. Original state_transformer_for probe covers both directions, equal zero and descending through zero with initial state; Lean kernel replays all four."
+    "reviewer": "flapjack-sol-c source comparison: pinned HOL source48-54 defines inclusive total FOR on Nat endpoints and unit-valued state actions. Lean preserves equal endpoint action, ascending increment, descending truncated decrement, BIND state threading discarding Unit, and distance termination with no extra premise. Original state_transformer_for probe covers both directions, equal zero and descending through zero with initial state; Lean kernel replays all four. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_statetransformer_typed_probe.out `for_def_typed` re-confirms the `num # num # (num -> 'state -> unit # 'state)` argument and the state monad, with HOL's `do`-bind unfolded in holFor."
   },
   {
     "lean_path": "Flapjack/Misc/TakeFlatReplicate.lean",
@@ -132736,7 +132736,7 @@
   "lean_path": "Flapjack/Misc/RichList.lean",
   "lean_name": "forall₂_replicate_iff",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the HOL source and typed list_relation_replicate capture: the two element types remain independent, LIST_REL and REPLICATE use List.Forall₂ and List.replicate, and the original equivalence and positive-length implication are retained."
+  "reviewer": "Compared the HOL source and typed list_relation_replicate capture: the two element types remain independent, LIST_REL and REPLICATE use List.Forall₂ and List.replicate, and the original equivalence and positive-length implication are retained. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_richlist_typed_probe.out `list_rel_replicate_same_typed` re-confirms the independent `α` and `β`, the free-variable order `P n x y` and the `0 < n ⇒ P x y` right side, matching forall₂_replicate_iff."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
