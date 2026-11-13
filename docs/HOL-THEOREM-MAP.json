@@ -447,6 +447,30 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "IMP_COMM",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/ListCompiler.lean",
+    "lean_name": "impComm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: the three arbitrary propositions and both implication orders match the original. The original proof was independently replayed without hypotheses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "compile_APPEND",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/ListCompiler.lean",
+    "lean_name": "compileAppend",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: the original compiler, arbitrary expression lists, offsets and depth, and complete append equality match the original. The original proof was independently replayed without hypotheses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "compile_CONS",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/ListCompiler.lean",
+    "lean_name": "compileCons",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: the original compiler and complete singleton-append equality match the original. The original proof was independently replayed without hypotheses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
     "hol_name": "exp_size_APPEND",
     "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/GeneratedSize.lean",
     "lean_name": "expSize_append",

@@ -25,3 +25,6 @@ val env_rel_REPLICATE_0_replay = Q.prove
 val _ = show "env_rel_REPLICATE_0_replay" env_rel_REPLICATE_0_replay;
 val _ = show "bvi_exp_size_def" bviTheory.exp_size_def;
 val _ = show "exp_size_APPEND" bvi_letProofTheory.exp_size_APPEND;
+val _ = show "IMP_COMM" bvi_letProofTheory.IMP_COMM;
+val _ = show "compile_APPEND" bvi_letProofTheory.compile_APPEND;
+val _ = show "compile_CONS" bvi_letProofTheory.compile_CONS;
