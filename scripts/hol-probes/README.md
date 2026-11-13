@@ -1,4 +1,4 @@
-`bvl_to_bvi_proof_source_probe.out` also captures the typed exported whole-pass `compile_get_code_labels` theorem.
+`bvl_to_bvi_proof_source_probe.out` also captures the typed exported whole-pass `compile_get_code_labels` and `compile_distinct_names` theorems.
 
 `bvl_to_bvi_source_probe.out` captures the typed original whole-pass compilation definition, including the eight-result tuple and name-tree carrier.
 

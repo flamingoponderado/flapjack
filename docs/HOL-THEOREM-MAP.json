@@ -338,6 +338,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_distinct_names",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/WholeNames.lean",
+    "lean_name": "compile_distinctNames",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the complete original compilation equation retains the final counter/name-tree pair, input distinctness and nextName2 premise. Both conclusions hold for all final keys: the original data-stub lower bound and ordered-list distinctness. Namespace and worker-allocation conditions are derived internally for arbitrary optimization flags."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_get_code_labels",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/WholeCodeLabels.lean",
     "lean_name": "compile_getCodeLabels",
