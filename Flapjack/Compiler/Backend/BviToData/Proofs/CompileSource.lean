@@ -10,6 +10,14 @@ public import Mathlib.Tactic
 namespace Flapjack.Compiler.Backend.BviToData
 open Classical
 
+/-- Compiling a labeled function preserves its label and arity. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "compile_part_thm"]
+theorem compilePart_fn :
+    compilePart = (fun (x, y) => (x, (fun (a, b) => (a, compileExp a b)) y)) := by
+  funext part
+  rcases part with ⟨x, a, b⟩
+  rfl
+
 /-- The source compiler assigns one result name per input expression. This
 is the equality form used to establish the original `compile_LENGTH` result. -/
 theorem compileSource_length (n : Nat) (env : List Nat) (tail : Bool) (live : List Nat) (xs : List Bvi.Exp) :

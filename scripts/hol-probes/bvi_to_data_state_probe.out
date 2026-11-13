@@ -87,3 +87,4 @@ data_to_bvi_word_eq_typed=∀(ns :word64 list). MAP data_to_bvi_v (MAP Word64 ns
 data_to_bvi_number_eq_typed=∀(ns :α word list). MAP data_to_bvi_v (MAP (Number ∘ $& ∘ (w2n :α word -> num)) ns) = MAP (Number ∘ $& ∘ (w2n :α word -> num)) ns
 v_to_list_eq_typed=∀(x :v). v_to_list (data_to_bvi_v x) = OPTION_MAP (MAP data_to_bvi_v) (v_to_list x)
 isBool_eq_typed=∀(z :v) (b :bool). isBool b z ⇔ (Boolv b :bvlSem$v) = data_to_bvi_v z
+compile_part_thm_replay_typed=compile_part = (λ((x :num),(y :num # bvi$exp)). (x,(λ((a :num),(b :bvi$exp)). (a,(compile_exp a b :dataLang$prog))) y))

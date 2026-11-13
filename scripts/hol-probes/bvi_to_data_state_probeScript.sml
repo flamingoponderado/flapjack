@@ -200,3 +200,8 @@ val _ = show "data_to_bvi_word_eq_typed=" bvi_to_dataProofTheory.data_to_bvi_wor
 val _ = show "data_to_bvi_number_eq_typed=" bvi_to_dataProofTheory.data_to_bvi_number_eq;
 val _ = show "v_to_list_eq_typed=" bvi_to_dataProofTheory.v_to_list_eq;
 val _ = show "isBool_eq_typed=" bvi_to_dataProofTheory.isBool_eq;
+(* Replay the local compile_part_thm with its original proof. *)
+val compile_part_thm_replay = Q.prove
+  (`bvi_to_data$compile_part = λ(x,y). (x, (λ(a,b). (a, bvi_to_data$compile_exp a b)) y)`,
+   simp [FUN_EQ_THM, FORALL_PROD, bvi_to_dataTheory.compile_part_def]);
+val _ = show "compile_part_thm_replay_typed=" compile_part_thm_replay;

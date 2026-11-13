@@ -423,6 +423,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "compile_part_thm",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/CompileSource.lean",
+    "lean_name": "compilePart_fn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: exact function equality, nested label and arity pairs, DATA program codomain, and compileExp applied to the original arity and body. The local original proof is replayed with inferred types."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "v_to_list_eq",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Value.lean",
     "lean_name": "dataToBviValue_valueToList",
