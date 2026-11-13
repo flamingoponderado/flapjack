@@ -29,6 +29,7 @@ state_ok_def=∀(s :(γ, 'ffi) bvlSem$state). state_ok s ⇔ EVERY (λ(x :v opti
 evaluate_ok_lemma_replay=(state_ok (dec_clock (n :num) (s :(α, β) bvlSem$state)) ⇔ state_ok s) ∧ (dec_clock n s).refs = s.refs
 v_to_list_ok_replay=∀(v :v) (x :v list). v_to_list v = SOME x ∧ bv_ok (refs :num |-> v ref) v ⇒ EVERY (bv_ok refs) x
 do_app_ok_lemma_derived=state_ok (r :(α, β) bvlSem$state) ∧ EVERY (bv_ok r.refs) (a :v list) ∧ (do_app (op :closLang$op) a r :(v # (α, β) bvlSem$state, v) result) = (Rval ((q :v),(t :(α, β) bvlSem$state)) :(v # (α, β) bvlSem$state, v) result) ⇒ state_ok t ∧ bv_ok t.refs q
+dec_clock_inc_clock_replay=(c :num) ≠ (0 :num) ⇒ dec_clock (1 :num) (inc_clock c (t :(γ, 'ffi) state)) = inc_clock (c − (1 :num)) t
 bvi_inc_clock_def=∀(n :num) (s :(γ, 'ffi) state). inc_clock n s = s with clock := s.clock + n
 bvi_inc_clock_ZERO=∀(s :(α, β) state). inc_clock (0 :num) s = s
 bvi_dec_clock_inv_clock1=(t1 :(α, β) state).clock ≠ (0 :num) ⇒ dec_clock (1 :num) (inc_clock (c :num) t1) = inc_clock c (dec_clock (1 :num) t1)

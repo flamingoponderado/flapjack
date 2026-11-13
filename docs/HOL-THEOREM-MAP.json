@@ -130468,6 +130468,17 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ListLengthStub.lean",
+  "hol_name": "dec_clock_inc_clock",
+  "lean_name": "decClock_incClock_allowance",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "reviewer": "Compared the typed source local proof replay in bvl_to_bvi_value_rel_probe.out: the positive allowance premise, one-step decrement, natural subtraction, and independent compiler and FFI state types are retained. The refs field uses the canonical BVI finite-map state roundtrip."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/EvaluateAllOk.lean",
   "hol_name": "evaluate_ok",
   "lean_name": "evaluateOk",

@@ -8,6 +8,25 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileConsExtend
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value)
 
+namespace ListLengthClockCarrier
+/-- Canonical BVI reference-map state roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end ListLengthClockCarrier
+
+/-- One decrement consumes one unit of a positive clock allowance. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "dec_clock_inc_clock"
+  (fmap_as_finite_support := [refs])]
+theorem decClock_incClock_allowance {C F : Type} (c : Nat)
+    (t : Flapjack.Compiler.Backend.BviSem.BviState C F) (nonzero : c ≠ 0) :
+    BviSem.decClock 1 (BviProps.incClock c t) = BviProps.incClock (c - 1) t := by
+  cases t
+  simp only [BviSem.decClock, BviProps.incClock] at *
+  congr 1
+  omega
+
 /-- Successful list decoding identifies the original encoded list. -/
 theorem valueToList_inverse (value : Value) (values : List Value)
     (decode : BvlSem.valueToList value = some values) : BvlSem.listToValue values = value := by
@@ -141,7 +160,7 @@ theorem evaluate_listLength {C F : Type} (values : List Value) (n : Nat)
     have nonzero : (BviProps.incClock (clock + 1) state).clock ≠ 0 := by
       simp [BviProps.incClock]
     have clocks : BviSem.decClock 1 (BviProps.incClock (clock + 1) state) = BviProps.incClock clock state := by
-      simp [BviSem.decClock, BviProps.incClock]
+      simpa using decClock_incClock_allowance (clock + 1) state (by omega)
     have step := evaluate_listLength_cons head tail (BviProps.incClock (clock + 1) state) state n
       (.number (Int.ofNat (n + 1 + tail.length))) code nonzero (by simpa [clocks] using recursive)
     simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using step

@@ -73,6 +73,11 @@ val do_app_ok_lemma_derived = prove(
     (bvlSem$do_app op a r = Rval (q,t)) ⇒ state_ok t ∧ bv_ok t.refs q``,
   metis_tac [do_app_ok]);
 val _ = show "do_app_ok_lemma_derived=" do_app_ok_lemma_derived;
+val dec_clock_inc_clock_replay = prove(
+  ``c ≠ 0 ⇒ bviSem$dec_clock 1 (bviProps$inc_clock c t) =
+    bviProps$inc_clock (c - 1) (t:('c,'ffi) bviSem$state)``,
+  EVAL_TAC THEN fs [bviSemTheory.state_component_equality]);
+val _ = show "dec_clock_inc_clock_replay=" dec_clock_inc_clock_replay;
 val _ = show "bvi_inc_clock_def=" bviPropsTheory.inc_clock_def;
 val _ = show "bvi_inc_clock_ZERO=" bviPropsTheory.inc_clock_ZERO;
 val _ = show "bvi_dec_clock_inv_clock1=" bviPropsTheory.dec_clock_inv_clock1;
