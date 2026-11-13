@@ -26,8 +26,13 @@ private theorem evaluationSimulation_all {C F : Type} (expressions : List FlatLa
       h => smaller₀ [e] s h env'
   intro env
   cases expressions with
-  | nil => exact fun next result reachable target => evaluate_keep_flatStateRel_empty env state next
-             target result reachable
+  | nil =>
+    intro next result reachable target run _lookups related _envClosed _envSafe _exprSafe _notTypeError
+    simp [FlatSem.evaluate] at run
+    rcases run with ⟨rfl, rfl⟩
+    refine ⟨target, by simp [FlatSem.evaluate], related, ?_, ?_⟩
+    · simp [findPrimitiveResultGlobals, findValuesGlobals, globalsWithin, sptMem, sptDomain]
+    · simp [Flapjack.Compiler.Backend.FlatProps.resultValues, valuesNoEval]
   | cons first rest =>
     cases rest with
     | cons second tail =>
@@ -41,8 +46,13 @@ private theorem evaluationSimulation_all {C F : Type} (expressions : List FlatLa
         omega
     | nil =>
       cases first with
-      | lit tra lit => exact fun next result reachable target => evaluate_keep_flatStateRel_lit env
-                         state next target result reachable tra lit
+      | lit tra lit =>
+        intro next result reachable target run _lookups related _envClosed _envSafe _exprSafe _notTypeError
+        simp [FlatSem.evaluate] at run
+        rcases run with ⟨rfl, rfl⟩
+        have resultSafe := primitiveResult_value_invariants reachable (.litv lit)
+          (by simp [findValueGlobals, globalsWithin, sptMem, sptDomain]) (by simp [valueHasEval])
+        exact ⟨target, by simp [FlatSem.evaluate], related, resultSafe.1, resultSafe.2⟩
       | varLocal tra name =>
         exact fun next result reachable target =>
           evaluate_keep_flatStateRel_var env state next target result reachable tra name
