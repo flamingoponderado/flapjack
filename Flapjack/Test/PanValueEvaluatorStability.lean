@@ -1,9 +1,11 @@
 module
 
 public import Flapjack.PanValueEvaluatorStability
+public import Flapjack.Pancake.Proofs.PanToCrep.EvalDistinctLists
 
 -- Checks below run compiled code from these modules.
 public meta import Flapjack.PanValueEvaluatorStability
+public meta import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
 @[expose] public section
 
 namespace Flapjack.Test.PanValueEvaluatorStability
@@ -103,5 +105,77 @@ def resultGuard : Bool := match evalPanValueExp ([] : StructContext)
 
 #eval resultGuard
 #guard resultGuard
+
+/-! ## Exact-carrier fresh-binding fixtures
+
+The production-carrier helpers retired above are replaced by the tagged exact
+twins `evalDistinctListsNotAffectHOL` and `optMmapEvalDistinctListsNotAffectHOL`
+in `Flapjack/Pancake/Proofs/PanToCrep/EvalDistinctLists.lean`. The fixtures
+below are kernel checks over the reviewed exact `CrepSemHOLState` carrier:
+installing fresh locals through `locals.updateListEq (vs.zip nvals)` leaves a
+constant expression's value unchanged. -/
+
+def word8 (n : Nat) : BitVec 8 := BitVec.ofNat 8 n
+
+def fixtureFfi : HolFfiState Unit where
+  oracle := fun _ state _ _ => .ret state []
+  ffiState := ()
+  ioEvents := []
+
+/-- Width-8 exact-carrier state with empty locals/globals/code maps and empty
+    memory domains, so each fixture is independent of the environment. -/
+def exactState : CrepSemHOLState 8 Unit where
+  locals := HolFiniteMapExact.empty
+  globals := HolFiniteMapExact.empty
+  code := HolFiniteMapExact.empty
+  memory := fun _ => HolWordLab.word 0
+  memaddrs := fun _ => False
+  shMemaddrs := fun _ => False
+  clock := 0
+  be := false
+  ffi := fixtureFfi
+  baseAddr := word8 0
+  topAddr := word8 100
+
+local instance : DecidablePred exactState.memaddrs :=
+  fun _ => isFalse (by simp [exactState])
+
+/-- Fresh local numbers installed by the fixtures. -/
+def freshVars : List Nat := [3]
+
+/-- Fresh local values installed by the fixtures. -/
+def freshVals : List (HolWordLab 8) := [HolWordLab.word (word8 99)]
+
+/-- The constant expression whose value the fixtures observe. -/
+def exactExpression : CrepExpHOL 8 := .const (word8 5)
+
+/-- Two constant expressions for the `OPT_MMAP` fixture. -/
+def exactExpressions : List (CrepExpHOL 8) :=
+  [.const (word8 5), .const (word8 6)]
+
+/-- Kernel check on the tagged exact `eval_distinct_lists_not_affect` twin:
+    the fresh-binding installation does not change the constant's value. -/
+example :
+    evalCrepSemHOLExp
+        { exactState with
+          locals := exactState.locals.updateListEq (freshVars.zip freshVals) }
+        exactExpression = some (HolWordLab.word (word8 5)) := by
+  classical
+  rw [evalDistinctListsNotAffectHOL freshVars exactState exactExpression
+    (HolWordLab.word 0) freshVals ⟨rfl, by decide⟩]
+  simp [evalCrepSemHOLExp, exactExpression]
+
+/-- Kernel check on the tagged exact `opt_mmap_eval_distinct_lists_not_affect`
+    twin: the `OPT_MMAP` of the two constants keeps its expected values. -/
+example :
+    exactExpressions.mapM
+        (evalCrepSemHOLExp
+          { exactState with
+            locals := exactState.locals.updateListEq (freshVars.zip freshVals) }) =
+      some [HolWordLab.word (word8 5), HolWordLab.word (word8 6)] := by
+  classical
+  rw [optMmapEvalDistinctListsNotAffectHOL exactExpressions exactState
+    [HolWordLab.word (word8 5), HolWordLab.word (word8 6)] freshVars freshVals
+    ⟨by simp [evalCrepSemHOLExp, exactExpressions], rfl, by decide⟩]
 
 end Flapjack.Test.PanValueEvaluatorStability
