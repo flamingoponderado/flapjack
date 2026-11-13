@@ -73,3 +73,6 @@ val evaluate_return_range_replay = Q.prove
    \\ simp [ETA_AX, rich_listTheory.TAKE_LENGTH_APPEND]);
 val _ = show "evaluate_Return_GENLIST_Var_replay_typed=" evaluate_return_range_replay;
 val _ = show "optimise_correct_typed=" bvi_to_dataProofTheory.optimise_correct;
+val _ = show "jump_exc_peak_safe_typed=" bvi_to_dataProofTheory.jump_exc_peak_safe;
+val _ = show "jump_exc_sfs_lss_peak_safe_typed=" bvi_to_dataProofTheory.jump_exc_sfs_lss_peak_safe;
+val _ = show "jump_exc_lss_typed=" bvi_to_dataProofTheory.jump_exc_lss;

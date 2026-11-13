@@ -138566,5 +138566,29 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Independent typed HOL source review 2026-11-13: original non-type-error and stopped premises, arbitrary program and independent compiler/FFI state carriers, original existential safe/peak/stackMax/localsSize order and exact unchanged result plus four state updates. Composes the actual liveness, simplification and reservation passes in source order. Inherits the reals_as_rational_cuts assumption through evaluator primitives (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "jump_exc_peak_safe",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Jump.lean",
+    "lean_name": "jumpExc_peakSafe",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary independent compiler and FFI carriers; successful jump is the sole premise. Input safe, peak, localsSize and stackMax updates yield the identical successful jump with only safe, peak and stackMax updated; the saved localsSize is retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "jump_exc_sfs_lss_peak_safe",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Jump.lean",
+    "lean_name": "jumpExc_peakSafeFrames",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary independent compiler and FFI carriers and frame-size tree; successful jump is the sole premise. The original safe, peak, localsSize, frame-size and stackMax input updates produce the original output updates except localsSize, which is restored from the frame."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "jump_exc_lss",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Jump.lean",
+    "lean_name": "jumpExc_localsSize",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary independent compiler and FFI state carriers and incoming localsSize; the sole successful-jump premise implies exactly the same entire result state after replacing incoming localsSize."
   }
 ]
