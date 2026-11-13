@@ -86,6 +86,7 @@ IMP_v_to_bytes_typed=∀(v1 :v) (ns :word8 list). v_to_list v1 = SOME (MAP (Numb
 IMP_v_to_words_typed=v_to_list (v2 :v) = SOME (MAP Word64 (ns' :word64 list)) ⇒ v_to_words (adjust_bv (b2 :num -> num) v2) = SOME ns'
 aux_code_installed_sublist_typed=∀(aux :(num # α # β) list) (ls :(num # α # β) list). IS_SUBLIST ls aux ∧ ALL_DISTINCT (MAP (FST :num # α # β -> num) ls) ⇒ aux_code_installed aux (fromAList ls)
 compile_exps_aux_sorted_typed=∀(n :num) (es :bvl$exp list) (c :bvi$exp list) (aux :(num # num # bvi$exp) app_list) (n1 :num). (compile_exps n es :bvi$exp list # (num # num # bvi$exp) app_list # num) = (c,aux,n1) ⇒ SORTED $< (MAP (FST :num # num # bvi$exp -> num) (append aux)) ∧ EVERY (λ(x :num). ∃(n :num). x = bvl_num_stubs + bvl_to_bvi_namespaces * n + (1 :num)) (MAP (FST :num # num # bvi$exp -> num) (append aux)) ∧ EVERY (between (bvl_num_stubs + bvl_to_bvi_namespaces * n) (bvl_num_stubs + bvl_to_bvi_namespaces * n1)) (MAP (FST :num # num # bvi$exp -> num) (append aux)) ∧ n ≤ n1
+compile_exps_aux_contains_typed=∀(n :num) (es :bvl$exp list) (c :bvi$exp list) (aux :(num # num # bvi$exp) app_list) (n1 :num). (compile_exps n es :bvi$exp list # (num # num # bvi$exp) app_list # num) = (c,aux,n1) ⇒ {bvl_num_stubs + (k * bvl_to_bvi_namespaces + (1 :num)) | n ≤ k ∧ k < n1} ⊆ set (MAP (FST :num # num # bvi$exp -> num) (append aux))
 between_typed=∀(x :num) (y :num) (z :num). between x y z ⇔ x ≤ z ∧ z < y
 in_ns_def_typed=∀(k :num) (n :num). in_ns k n ⇔ n MOD bvl_to_bvi_namespaces = k
 nss_in_ns_typed=in_ns (k :num) bvl_to_bvi_namespaces ⇔ k = (0 :num)

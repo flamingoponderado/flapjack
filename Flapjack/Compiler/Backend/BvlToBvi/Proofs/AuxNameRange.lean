@@ -198,6 +198,27 @@ theorem compileExps_auxSorted (n : Nat) (es : List Bvl.Exp) (c : List Bvi.Exp)
     simp only [bvlToBviNamespaces] at equal ⊢
     omega
 
+/-- Every auxiliary name in the interval consumed by expression compilation
+occurs in the generated auxiliary code. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_exps_aux_contains"]
+theorem compileExps_auxContains (n : Nat) (es : List Bvl.Exp) (c : List Bvi.Exp)
+    (aux : AppList (Nat × Nat × Bvi.Exp)) (n1 : Nat)
+    (compiled : compileListSource n es = (c, aux, n1)) :
+    {x : Nat | ∃ k, x = bvlNumStubs + (k * bvlToBviNamespaces + 1) ∧ n ≤ k ∧ k < n1} ⊆
+      {x : Nat | x ∈ (appListAppend aux).map Prod.fst} := by
+  have range := compileListSource_auxNameRange n es
+  rw [compiled] at range
+  simp only at range
+  obtain ⟨count, finish, names⟩ := range
+  intro x ⟨k, equal, lower, upper⟩
+  subst x
+  rw [names]
+  simp only [auxNameSequence, List.mem_map]
+  refine ⟨k, ?_, ?_⟩
+  · apply List.mem_range'.mpr
+    refine ⟨k - n, ?_, ?_⟩ <;> omega
+  · simp [Nat.mul_comm, Nat.add_assoc]
+
 /-- The incrementally compiled program's counter is monotone, and every
 emitted name is either the translation of an input function label or a
 fresh auxiliary label in the allocated interval. -/

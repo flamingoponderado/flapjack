@@ -153,6 +153,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_exps_aux_contains",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AuxNameRange.lean",
+    "lean_name": "compileExps_auxContains",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the freshly captured typed HOL theorem: the natural-number and expression-list binders, auxiliary app_list tuple carrier, compilation equality premise, interval bounds and subset of first keys are unchanged. The image comprehension is rendered as an existential with the same label expression; compileListSource implements the source expression-list compiler."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "aux_code_installed_sublist",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AuxCode.lean",
     "lean_name": "auxCodeInstalled_sublist",

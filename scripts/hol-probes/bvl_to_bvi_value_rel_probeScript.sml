@@ -491,6 +491,7 @@ val _ = show "IMP_v_to_words_typed=" bvl_to_bviProofTheory.IMP_v_to_words;
 val _ = show "aux_code_installed_sublist_typed=" bvl_to_bviProofTheory.aux_code_installed_sublist;
 
 val _ = show "compile_exps_aux_sorted_typed=" bvl_to_bviProofTheory.compile_exps_aux_sorted;
+val _ = show "compile_exps_aux_contains_typed=" bvl_to_bviProofTheory.compile_exps_aux_contains;
 val _ = show "between_typed=" miscTheory.between_def;
 
 (* Original namespace definition and the six following source theorems. *)
