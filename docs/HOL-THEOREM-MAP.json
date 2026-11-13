@@ -138678,5 +138678,17 @@
     ],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Independent typed HOL source review 2026-11-13: complete LetCall case of compile_correct, not the assembled theorem; preserves all original source premises and result obligations, both tail modes, the direct return optimization, arbitrary return counts, all clock cases, and every non-type-error outcome. The argument, callee, and continuation induction hypotheses are exactly the guarded recursive hypotheses from evaluate_ind. BVI refs use the canonical finite-support carrier and same-module unconditional roundtrip witness; DATA refs remain native sparse trees. Inherits the reals_as_rational_cuts assumption through evaluator primitives (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Simulation.lean",
+    "lean_name": "compileCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "BviState.refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: full assembled compile_correct for arbitrary expression lists, source results, target states, and compiler parameters; all eight premises, six existential outputs, and complete SOME/NONE result obligations match. A lexicographic clock and expression-weight induction discharges the genuine recursive cases without an assumed simulation. BVI refs use the canonical finite-support carrier and same-module unconditional roundtrip witness; DATA refs, locals, and code remain native sparse trees. The assembly relies on separately reviewed source-shaped evaluators and does not itself establish cross-language evaluator correspondence. Inherits the reals_as_rational_cuts assumption through evaluator primitives (SOUNDNESS item 8)."
   }
 ]
