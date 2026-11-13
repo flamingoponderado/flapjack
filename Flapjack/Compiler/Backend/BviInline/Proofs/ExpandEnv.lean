@@ -15,33 +15,6 @@ def Property {C F : Type} (xs : List Bvi.Exp) (env : List Value) (state : BviSta
   ∀ extra, (evaluate xs env state).1 ≠ .err (.abort .typeError) →
     evaluate xs (env ++ extra) state = evaluate xs env state
 
-/-- Flapjack infrastructure: the empty expression-list case. -/
-theorem nil {C F : Type} (env : List Value) (state : BviState C F) : Property [] env state := by
-  intro extra _
-  simp [evaluate]
-
-/-- Flapjack infrastructure: the variable case uses the original successful
-environment lookup. -/
-theorem var {C F : Type} (index : Nat) (env : List Value) (state : BviState C F) :
-    Property [.var index] env state := by
-  intro extra notType
-  cases found : env[index]? with
-  | none => simp [evaluate, found] at notType
-  | some value =>
-    have bound : index < env.length := (List.getElem?_eq_some_iff.mp found).1
-    simp [evaluate, List.getElem?_append, bound]
-
-/-- Flapjack infrastructure: a force uses the same existing environment
-entry, and any thunk call runs in the thunk's own environment. -/
-theorem force {C F : Type} (location index : Nat) (env : List Value) (state : BviState C F) :
-    Property [.force location index] env state := by
-  intro extra notType
-  cases found : env[index]? with
-  | none => simp [evaluate, found] at notType
-  | some value =>
-    have bound : index < env.length := (List.getElem?_eq_some_iff.mp found).1
-    simp [evaluate, List.getElem?_append, bound]
-
 /-- Flapjack infrastructure: a tick reduces to its body at a smaller clock. -/
 theorem tick {C F : Type} (body : Bvi.Exp) (env : List Value) (state : BviState C F)
     (bodyIH : state.clock ≠ 0 → Property [body] env (BviSem.decClock 1 state)) :
