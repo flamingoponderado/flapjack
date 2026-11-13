@@ -1,6 +1,42 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "state_rel_add_bytearray",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AllocationRel.lean",
+    "lean_name": "stateRel_addByteArray",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "State.refs",
+      "BviState.refs"
+    ],
+    "reviewer": "Compared the exported typed HOL source theorem, including all original premises and fresh byte arrays on both sides and function update at the original source and target keys. Both source and target reference fields use canonical finite maps."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "state_rel_add_thunk",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AllocationRel.lean",
+    "lean_name": "stateRel_addThunk",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "State.refs",
+      "BviState.refs"
+    ],
+    "reviewer": "Compared the exported typed HOL source theorem, including all original premises and fresh thunk cells and relocation of the target value using the updated function. Both source and target reference fields use canonical finite maps."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "state_rel_update_thunk",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AllocationRel.lean",
+    "lean_name": "stateRel_updateThunk",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "State.refs",
+      "BviState.refs"
+    ],
+    "reviewer": "Compared the exported typed HOL source theorem, including all original premises and existing source-key membership and the same relocation of the updated thunk value. Both source and target reference fields use canonical finite maps."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "do_app_Ref",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileRef.lean",
     "lean_name": "doRef_target",

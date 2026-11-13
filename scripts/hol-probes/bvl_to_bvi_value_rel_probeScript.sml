@@ -458,3 +458,8 @@ val do_app_Ref_replay = prove (``
   fs [iEvalOp_def,do_app_aux_def,bEvalOp_def,LET_THM]
   \\ every_case_tac \\ fs []);
 val _ = show "do_app_Ref_replay=" do_app_Ref_replay;
+
+(* Exported state-relation preservation theorems, with inferred carriers. *)
+val _ = show "state_rel_add_bytearray_typed=" bvl_to_bviProofTheory.state_rel_add_bytearray;
+val _ = show "state_rel_add_thunk_typed=" bvl_to_bviProofTheory.state_rel_add_thunk;
+val _ = show "state_rel_update_thunk_typed=" bvl_to_bviProofTheory.state_rel_update_thunk;
