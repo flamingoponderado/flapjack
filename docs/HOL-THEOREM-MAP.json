@@ -23029,7 +23029,7 @@
     "hol_path": "cakeml/compiler/backend/bvl_constScript.sml", "hol_name": "compile_exp_def",
     "lean_path": "Flapjack/Compiler/Backend/BvlConst/SourceCompile.lean", "lean_name": "compileExp",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared compile_exp_def_typed in bvl_const_frontend_probe.out, including the empty-list Var 0 fallback. compileBounded_eq_compileExp connects the executed pass to this definition."
+    "reviewer": "Compared compile_exp_def_typed in bvl_const_frontend_probe.out, including the empty-list Var 0 fallback. compileBounded_eq at the empty environment and compileExp_eq connect the executed pass to this definition; evaluate_compileBounded uses that route."
   },
   {
     "hol_path": "cakeml/compiler/backend/bvl_constScript.sml", "hol_name": "compile_exp_eq",

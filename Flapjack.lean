@@ -1274,7 +1274,6 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberOracle
 import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLabels
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InitialCodeDomain
 import Flapjack.Compiler.Backend.BvlConst.SourceCompile
-import Flapjack.Compiler.Backend.BvlConst.Proofs.SourceCompile
 import Flapjack.Compiler.Backend.BvlHandle.SourceCompile
 import Flapjack.Compiler.Backend.BvlInline.SourceCompile
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRejected
