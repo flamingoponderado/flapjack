@@ -4701,6 +4701,29 @@ run_probe hol_relation_typed_probeScript.sml hol_relation_typed_probe.out \
 run_probe hol_pair_typed_probeScript.sml hol_pair_typed_probe.out \
   rprod_def_typed lex_def_typed \
   "$repo_dir/HOL/src/coretypes/pairScript.sml" "$cake_dir/pancake"
+run_probe hol_comparison_typed_probeScript.sml hol_comparison_typed_probe.out \
+  good_cmp_def_typed totorder_imp_good_cmp_typed cmp_thms_typed \
+  "$repo_dir/HOL/src/finite_maps/comparisonScript.sml" "$cake_dir/pancake"
+
+run_probe hol_toto_typed_probeScript.sml hol_toto_typed_probe.out \
+  totord_typed \
+  "$repo_dir/HOL/src/finite_maps/totoScript.sml" "$cake_dir/pancake"
+
+run_probe hol_integer_typed_probeScript.sml hol_integer_typed_probe.out \
+  int_div_type int_mod_type \
+  "$repo_dir/HOL/src/integer/integerScript.sml" "$cake_dir/pancake"
+
+run_probe hol_bit_typed_probeScript.sml hol_bit_typed_probe.out \
+  log2_def_typed \
+  "$repo_dir/HOL/src/num/extra_theories/bitScript.sml" "$cake_dir/pancake"
+
+run_probe hol_numposrep_typed_probeScript.sml hol_numposrep_typed_probe.out \
+  n2l_def_typed \
+  "$repo_dir/HOL/src/list/src/numposrepScript.sml" "$cake_dir/pancake"
+
+run_probe hol_indexedlists_typed_probeScript.sml hol_indexedlists_typed_probe.out \
+  findi_def_typed \
+  "$repo_dir/HOL/src/list/src/indexedListsScript.sml" "$cake_dir/pancake"
 
 run_probe hol_alignment_words_typed_probeScript.sml hol_alignment_words_typed_probe.out \
   align_def_typed aligned_def_typed byte_align_def_typed byte_aligned_def_typed aligned_add_sub_typed word_slice_def_typed w2s_def_typed word_to_hex_string_def_typed word_replicate_def_typed \

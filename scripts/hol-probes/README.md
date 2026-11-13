@@ -10070,3 +10070,15 @@ the built HOL4 core theories (no rebuild): `some_def`, `THE_DEF`, `OPTREL_def`,
 `HOL_PROBE_ONLY=hol_<theory>_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean
 correspondence.
+
+`hol_comparison_typed_probe.out`, `hol_toto_typed_probe.out`,
+`hol_integer_typed_probe.out`, `hol_bit_typed_probe.out`,
+`hol_numposrep_typed_probe.out` and `hol_indexedlists_typed_probe.out` capture
+the typed statements of the reviewed finite-map comparison, `TotOrd`, integer
+division/remainder, `LOG2`, `n2l` and `findi` rows from the built HOL4 core
+theories (no rebuild): `good_cmp_def`, `TotOrder_imp_good_cmp`, `cmp_thms`, the
+`TotOrd` definition, the `int_div`/`int_mod` constant types, `LOG2_def`,
+`n2l_def` and `findi_def`. Regenerate with
+`HOL_PROBE_ONLY=hol_<theory>_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.

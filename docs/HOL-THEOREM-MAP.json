@@ -20926,7 +20926,7 @@
     "lean_path": "Flapjack/Misc/IndexedLists.lean",
     "lean_name": "holFindi",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the polymorphic findi_typed capture from flat_to_clos_relation_probe: the empty list gives zero and a cons gives zero on equality or one plus the recursive result. HOL equality is represented with classical Lean equality; no equality instance is added to the declaration's type."
+    "reviewer": "Compared the polymorphic findi_typed capture from flat_to_clos_relation_probe: the empty list gives zero and a cons gives zero on equality or one plus the recursive result. HOL equality is represented with classical Lean equality; no equality instance is added to the declaration's type. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_indexedlists_typed_probe.out `findi_def_typed` re-confirms both clauses over a single `α`, matching holFindi's equations."
   },
   {
     "hol_path": "cakeml/misc/miscScript.sml",
@@ -69901,7 +69901,7 @@
     "hol_path": "HOL/src/finite_maps/comparisonScript.sml",
     "hol_name": "good_cmp_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol-b author source acceptance2026-10-02 HOL17-26: all seven universally quantified conjuncts preserved in order: Equal reflexivity, Equal symmetry, Greater iff reversed Less, Equal/Less and Less/Equal interactions, Equal transitivity and Less transitivity. Arbitrary key type and comparator; constructor-for-constructor Ordering translation only, no order/equality typeclass, no extra premise or antisymmetry identifying equivalent keys. Five original finite Bool outcomes plus full source predicate preserved; kernel fixture acceptance of all-Equal comparator demonstrates distinct keys may be equivalent. No lookup/insertion or production correctness claim."
+    "reviewer": "flapjack-sol-b author source acceptance2026-10-02 HOL17-26: all seven universally quantified conjuncts preserved in order: Equal reflexivity, Equal symmetry, Greater iff reversed Less, Equal/Less and Less/Equal interactions, Equal transitivity and Less transitivity. Arbitrary key type and comparator; constructor-for-constructor Ordering translation only, no order/equality typeclass, no extra premise or antisymmetry identifying equivalent keys. Five original finite Bool outcomes plus full source predicate preserved; kernel fixture acceptance of all-Equal comparator demonstrates distinct keys may be equivalent. No lookup/insertion or production correctness claim. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_comparison_typed_probe.out `good_cmp_def_typed` re-confirms `∀ cmp : α -> α -> ordering`, the seven conjuncts in source order and the Equal/Less/Greater overloads of the `ordering` datatype rendered as `Ordering`."
   },
   {
     "lean_path": "Flapjack/FiniteMap/Comparison.lean",
@@ -69909,7 +69909,7 @@
     "hol_path": "HOL/src/finite_maps/comparisonScript.sml",
     "hol_name": "TotOrder_imp_good_cmp",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol-a source comparison 2026-10-03: comparisonScript79-83 arbitrary cmp, sole TotOrd premise, original full good_cmp conclusion. Imported exact Toto.totOrd retains all3 original clauses; existing exact goodCmp retains all7 original comparison clauses. Key types and comparison constructors are identity translations; proof derives reflexivity, symmetry, reversal, equality substitutions and both transitivity cases with no extra assumptions."
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: comparisonScript79-83 arbitrary cmp, sole TotOrd premise, original full good_cmp conclusion. Imported exact Toto.totOrd retains all3 original clauses; existing exact goodCmp retains all7 original comparison clauses. Key types and comparison constructors are identity translations; proof derives reflexivity, symmetry, reversal, equality substitutions and both transitivity cases with no extra assumptions. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_comparison_typed_probe.out `totorder_imp_good_cmp_typed` re-confirms `∀ cmp : α -> α -> ordering. TotOrd cmp ⇒ good_cmp cmp`, matching totOrderImpGoodCmp."
   },
   {
     "lean_path": "Flapjack/FiniteMap/Comparison/Properties.lean",
@@ -69917,7 +69917,7 @@
     "hol_path": "HOL/src/finite_maps/comparisonScript.sml",
     "hol_name": "cmp_thms",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol-b author source comparison2026-10-02 comparisonScript41 LIST_CONJ: full constructor-distinct triple; three universal case equations with arbitrary result carrier identical to comparator key carrier, as verified by full typed LIST_CONJ capture; universal Less/Equal/Greater exhaustion; universal iff unfolding all seven good_cmp laws in original order/direction. Literal Ordering constructor translation, generic Type carriers, no word/map/FFI difference or qualifier. No comparator law assumed in premises; entire bundled conclusion kernel-proved. Original full typed/untyped theorem capture has no open hypotheses. This is a prerequisite for original balanced_map invariant_eq proof, not completion of that theorem or production CSE."
+    "reviewer": "flapjack-sol-b author source comparison2026-10-02 comparisonScript41 LIST_CONJ: full constructor-distinct triple; three universal case equations with arbitrary result carrier identical to comparator key carrier, as verified by full typed LIST_CONJ capture; universal Less/Equal/Greater exhaustion; universal iff unfolding all seven good_cmp laws in original order/direction. Literal Ordering constructor translation, generic Type carriers, no word/map/FFI difference or qualifier. No comparator law assumed in premises; entire bundled conclusion kernel-proved. Original full typed/untyped theorem capture has no open hypotheses. This is a prerequisite for original balanced_map invariant_eq proof, not completion of that theorem or production CSE. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_comparison_typed_probe.out `cmp_thms_typed` re-confirms the LIST_CONJ of comparison_distinct, comparison_case_def, comparison_nchotomy and good_cmp_def over the single `α`, matching cmpThms' four conjuncts."
   },
   {
     "lean_path": "Flapjack/FiniteMap/Toto.lean",
@@ -69925,7 +69925,7 @@
     "hol_path": "HOL/src/finite_maps/totoScript.sml",
     "hol_name": "TotOrd",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol-a source comparison 2026-10-03: totoScript60-64 original arbitrary key/comparison types, three conjuncts equality iff key equality, Greater iff reversed Less, and transitivity from conjunction of two Less comparisons. Lean Ordering is literal payload-free three-constructor translation; all quantifiers/hypotheses/conclusions and conjunct order retained, no representation qualifier or ordered-input assumption."
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: totoScript60-64 original arbitrary key/comparison types, three conjuncts equality iff key equality, Greater iff reversed Less, and transitivity from conjunction of two Less comparisons. Lean Ordering is literal payload-free three-constructor translation; all quantifiers/hypotheses/conclusions and conjunct order retained, no representation qualifier or ordered-input assumption. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_toto_typed_probe.out `totord_typed` re-confirms the single `α` and the three conjuncts over `α -> α -> ordering` with the EQUAL/GREATER/LESS overloads rendered as `Ordering`."
   },
   {
     "hol_path": "cakeml/semantics/fpSemScript.sml",
@@ -71275,7 +71275,7 @@
     "lean_path": "Flapjack/Misc/Bit.lean",
     "lean_name": "holLOG2",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.3): bitScript.sml:54-55 LOG2_def[nocompute]: LOG2 = LOG 2, literal over the tagged holLOG. The untagged holLOG2_eq_log2 identifies it with Nat.log2 exactly on positive arguments via LOG_UNIQUE; LOG2 0 stays unconstrained. Kernel statements captured by scripts/hol-probes/logroot_log_spec_probe and replayed in Flapjack/Test/LogrootParity.lean."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.3): bitScript.sml:54-55 LOG2_def[nocompute]: LOG2 = LOG 2, literal over the tagged holLOG. The untagged holLOG2_eq_log2 identifies it with Nat.log2 exactly on positive arguments via LOG_UNIQUE; LOG2 0 stays unconstrained. Kernel statements captured by scripts/hol-probes/logroot_log_spec_probe and replayed in Flapjack/Test/LogrootParity.lean. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_bit_typed_probe.out `log2_def_typed` re-confirms `LOG2 = LOG 2`, matching holLOG2."
   },
   {
     "lean_path": "Flapjack/Misc/BytesInMem.lean",
@@ -72437,7 +72437,7 @@
     "hol_path": "HOL/src/list/src/numposrepScript.sml",
     "hol_name": "n2l_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol-c source comparison: Source21: Nat base/numeral, n<b OR b<2 single n MOD b digit, otherwise prepend n MOD b and recurse on n DIV b. Termination follows n DIV b<n only in the recursive branch; no base positivity premise. Bases0/1 retained. Original numeric_formatting probe and70matching kernel fixtures cover all six stages."
+    "reviewer": "flapjack-sol-c source comparison: Source21: Nat base/numeral, n<b OR b<2 single n MOD b digit, otherwise prepend n MOD b and recurse on n DIV b. Termination follows n DIV b<n only in the recursive branch; no base positivity premise. Bases0/1 retained. Original numeric_formatting probe and70matching kernel fixtures cover all six stages. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_numposrep_typed_probe.out `n2l_def_typed` re-confirms the single if equation over `n b` with `MOD`/`DIV`, matching holN2l's argument order `b n`."
   },
   {
     "hol_path": "cakeml/misc/miscScript.sml",
@@ -132576,7 +132576,7 @@
   "lean_path": "Flapjack/Misc/Integer.lean",
   "lean_name": "holIntDiv",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared int_div in integer_division_probe.out: the new_specification port chooses a function satisfying the captured nonzero-divisor clauses; divisor-zero values remain unconstrained."
+  "reviewer": "Compared int_div in integer_division_probe.out: the new_specification port chooses a function satisfying the captured nonzero-divisor clauses; divisor-zero values remain unconstrained. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_integer_typed_probe.out `int_div_type` re-confirms the `new_specification` constant's type `int -> int -> int`, matching holIntDiv."
 },
 {
   "hol_path": "HOL/src/integer/integerScript.sml",
@@ -132584,7 +132584,7 @@
   "lean_path": "Flapjack/Misc/Integer.lean",
   "lean_name": "holIntMod",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared int_mod in integer_division_probe.out: the new_specification port chooses a function satisfying the captured nonzero-divisor remainder equation; divisor-zero values remain independently unconstrained."
+  "reviewer": "Compared int_mod in integer_division_probe.out: the new_specification port chooses a function satisfying the captured nonzero-divisor remainder equation; divisor-zero values remain independently unconstrained. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_integer_typed_probe.out `int_mod_type` re-confirms the `new_specification` constant's type `int -> int -> int`, matching holIntMod."
 },
 {
   "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
