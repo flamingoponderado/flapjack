@@ -492,3 +492,12 @@ val _ = show "aux_code_installed_sublist_typed=" bvl_to_bviProofTheory.aux_code_
 
 val _ = show "compile_exps_aux_sorted_typed=" bvl_to_bviProofTheory.compile_exps_aux_sorted;
 val _ = show "between_typed=" miscTheory.between_def;
+
+(* Original namespace definition and the six following source theorems. *)
+val _ = show "in_ns_def_typed=" bvl_to_bviProofTheory.in_ns_def;
+val _ = show "nss_in_ns_typed=" bvl_to_bviProofTheory.nss_in_ns;
+val _ = show "mult_nss_in_ns_typed=" bvl_to_bviProofTheory.mult_nss_in_ns;
+val _ = show "mult_nss_in_ns_1_typed=" bvl_to_bviProofTheory.mult_nss_in_ns_1;
+val _ = show "mult_nss_in_ns_2_typed=" bvl_to_bviProofTheory.mult_nss_in_ns_2;
+val _ = show "in_ns_1_add_1_typed=" bvl_to_bviProofTheory.in_ns_1_add_1;
+val _ = show "in_ns_add_num_stubs_typed=" bvl_to_bviProofTheory.in_ns_add_num_stubs;

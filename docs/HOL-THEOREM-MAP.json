@@ -1,6 +1,62 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "in_ns_def",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Namespace.lean",
+    "lean_name": "inNs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original typed HOL source and namespace constants: the natural-number binders, modulo condition, implication or iff, and stated residue are unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "nss_in_ns",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Namespace.lean",
+    "lean_name": "namespaceCount_inNs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original typed HOL source and namespace constants: the natural-number binders, modulo condition, implication or iff, and stated residue are unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "mult_nss_in_ns",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Namespace.lean",
+    "lean_name": "namespaceMultiple_inNs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original typed HOL source and namespace constants: the natural-number binders, modulo condition, implication or iff, and stated residue are unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "mult_nss_in_ns_1",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Namespace.lean",
+    "lean_name": "namespaceMultipleOne_inNs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original typed HOL source and namespace constants: the natural-number binders, modulo condition, implication or iff, and stated residue are unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "mult_nss_in_ns_2",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Namespace.lean",
+    "lean_name": "namespaceMultipleTwo_inNs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original typed HOL source and namespace constants: the natural-number binders, modulo condition, implication or iff, and stated residue are unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "in_ns_1_add_1",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Namespace.lean",
+    "lean_name": "inNs_zero_addOne",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original typed HOL source and namespace constants: the natural-number binders, modulo condition, implication or iff, and stated residue are unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "in_ns_add_num_stubs",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Namespace.lean",
+    "lean_name": "inNs_addStubCount",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original typed HOL source and namespace constants: the natural-number binders, modulo condition, implication or iff, and stated residue are unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_exps_aux_sorted",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AuxNameRange.lean",
     "lean_name": "compileExps_auxSorted",
