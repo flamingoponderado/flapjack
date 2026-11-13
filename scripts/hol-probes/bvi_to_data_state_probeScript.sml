@@ -98,3 +98,4 @@ val _ = show "state_rel_dec_clock_replay_typed=" state_rel_dec_clock_replay;
 val _ = show "compile_part_evaluate_typed=" bvi_to_dataProofTheory.compile_part_evaluate;
 val _ = show "compile_prog_evaluate_typed=" bvi_to_dataProofTheory.compile_prog_evaluate;
 val _ = show "compile_prog_semantics_typed=" bvi_to_dataProofTheory.compile_prog_semantics;
+val _ = show "get_code_labels_iAssign_typed=" bvi_to_dataProofTheory.get_code_labels_iAssign;
