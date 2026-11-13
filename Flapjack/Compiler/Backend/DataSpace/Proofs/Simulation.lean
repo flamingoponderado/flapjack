@@ -10,7 +10,7 @@ public import Flapjack.Compiler.Backend.DataLive.Proofs.CompileCorrect
 
 /-! Basic cases of data-space reservation simulation. -/
 namespace Flapjack.Compiler.Backend.DataSpace
-open Flapjack Flapjack.Compiler.Backend.DataSem Flapjack.SemanticPrimitivesHOL
+open Flapjack Flapjack.Compiler.Backend.DataSem Flapjack.Compiler.Backend.DataProps Flapjack.SemanticPrimitivesHOL
 
 /-- Auxiliary simulation using sparse-tree inclusion for the target locals.
 The source evaluator and carrier correspondence remain to be reviewed. -/

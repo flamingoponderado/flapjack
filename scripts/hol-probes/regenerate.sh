@@ -9631,7 +9631,7 @@ run_probe clos_lang_code_label_probeScript.sml clos_lang_code_label_probe.out \
   "$cake_dir/compiler/backend/closLangScript.sml" "$cake_dir/compiler/backend"
 
 run_probe data_space_code_labels_probeScript.sml data_space_code_labels_probe.out \
-  get_code_labels_compile compile_type get_code_labels_space_typed get_vars_IMP_LENGTH_typed do_stack_with_space_typed do_stack_with_locals_typed \
+  get_code_labels_compile compile_type get_code_labels_space_typed get_vars_IMP_LENGTH_typed do_stack_with_space_typed do_stack_with_locals_typed locals_ok_def_typed locals_ok_get_vars_typed locals_ok_cut_env_typed \
   "$cake_dir/compiler/backend/proofs/data_spaceProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe data_props_code_labels_probeScript.sml data_props_code_labels_probe.out \

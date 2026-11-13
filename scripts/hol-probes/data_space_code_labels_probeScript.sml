@@ -8,3 +8,6 @@ val _ = (print "get_code_labels_space_typed="; print_term (concl data_spaceProof
 val _ = (print "get_vars_IMP_LENGTH_typed="; print_term (concl data_spaceProofTheory.get_vars_IMP_LENGTH); print "\n");
 val _ = (print "do_stack_with_space_typed="; print_term (concl data_spaceProofTheory.do_stack_with_space); print "\n");
 val _ = (print "do_stack_with_locals_typed="; print_term (concl data_spaceProofTheory.do_stack_with_locals); print "\n");
+val _ = (print "locals_ok_def_typed="; print_term (concl dataPropsTheory.locals_ok_def); print "\n");
+val _ = (print "locals_ok_get_vars_typed="; print_term (concl dataPropsTheory.locals_ok_get_vars); print "\n");
+val _ = (print "locals_ok_cut_env_typed="; print_term (concl dataPropsTheory.locals_ok_cut_env); print "\n");
