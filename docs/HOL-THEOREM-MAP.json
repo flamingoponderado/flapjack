@@ -138483,6 +138483,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "data_to_bvi_v_Boolv_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/ApplyBool.lean",
+    "lean_name": "dataToBvi_boolImp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary DATA value and boolean, with the original projected-BVI-boolean equality premise and DATA boolean-decoder conclusion. The original local HOL proof is replayed with inferred types and no assumptions; the Lean proof uses the complete decoder projection."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "state_rel_peak_safe",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/State.lean",
     "lean_name": "stateRel_peakSafe",

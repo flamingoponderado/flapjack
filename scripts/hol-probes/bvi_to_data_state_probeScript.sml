@@ -169,3 +169,9 @@ val _ = show "domain_list_to_num_set2_replay_typed=" domain_list_to_num_set2;
 val _ = show "list_insert_list_to_num_set_replay_typed=" list_insert_list_to_num_set_replay;
 val _ = show "data_to_bvi_do_app_typed=" bvi_to_dataProofTheory.data_to_bvi_do_app;
 val _ = show "data_to_bvi_finalise_cons_typed=" bvi_to_dataProofTheory.data_to_bvi_finalise_cons;
+(* Replay the local boolean-projection implication from the original proof. *)
+val data_to_bvi_v_Boolv_IMP_replay = Q.prove
+  (`bvi_to_dataProof$data_to_bvi_v x0 = bvlSem$Boolv b ⇒ dataSem$dest_Boolv x0 = SOME b`,
+   rw [bvlSemTheory.Boolv_def,dataSemTheory.dest_Boolv_def]
+   \\ Cases_on `b` \\ simp [] \\ EVAL_TAC);
+val _ = show "data_to_bvi_v_Boolv_IMP_replay_typed=" data_to_bvi_v_Boolv_IMP_replay;

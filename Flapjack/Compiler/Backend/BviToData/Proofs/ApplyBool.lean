@@ -29,6 +29,13 @@ theorem destBool_projection (value : DataSem.Value) :
       | zero => simp [dataToBviValue, BvlSem.asBool, DataSem.destBool]
       | succ n => cases n <;> simp [dataToBviValue, BvlSem.asBool, DataSem.destBool]
 
+/-- A value projecting to a BVI boolean decodes to that boolean in DATA. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "data_to_bvi_v_Boolv_IMP"]
+theorem dataToBvi_boolImp (value : DataSem.Value) (b : Bool)
+    (h : dataToBviValue value = BvlSem.boolValue b) : DataSem.destBool value = some b := by
+  rw [← destBool_projection, h]
+  cases b <;> rfl
+
 /-- Boolean negation preserves successful results and related states. This
 factored case is untagged pending review of the complete primitive theorem. -/
 theorem doApp_boolNot {C F : Type} (args : List DataSem.Value)
