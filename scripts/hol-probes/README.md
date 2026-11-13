@@ -1,4 +1,4 @@
-`bvl_to_bvi_proof_source_probe.out` also captures the typed exported whole-pass `compile_get_code_labels`, `compile_distinct_names`, and full-oracle distinctness theorems, plus the full oracle and callback definitions.
+`bvl_to_bvi_proof_source_probe.out` also captures the typed exported whole-pass `compile_get_code_labels`, `compile_distinct_names`, full-oracle distinctness, and whole-lowering no-mutcons theorems, plus the full oracle and callback definitions and a typed proof replay of the local namespace/free-names lemma.
 
 `bvl_to_bvi_source_probe.out` captures the typed original whole-pass compilation definition, including the eight-result tuple and name-tree carrier.
 

@@ -338,6 +338,22 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "EVERY_free_names_not_in_ns_2",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
+    "lean_name": "everyFreeNames_notInNamespaceTwo",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL proof replay and source review: an arbitrary polymorphic pair list retains the original natural-subtraction inNs premise and full tailrec freeNames conclusion, including below-stub names and all future worker indices."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_prog_no_mutcons",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
+    "lean_name": "compileProgSource_noMutcons",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the sole original complete source compilation equation implies no_mutcons for every output body, including stubs and auxiliary functions; full BVL/BVI carriers and original recursive predicate are retained. The sole fuel-dependent variant is replaced by this source theorem."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "full_co_def",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/FullOracle.lean",
     "lean_name": "fullCo",

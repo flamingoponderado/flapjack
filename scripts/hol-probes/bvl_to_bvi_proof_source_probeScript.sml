@@ -103,3 +103,16 @@ val _ = show "compile_distinct_names_typed" bvl_to_bviProofTheory.compile_distin
 val _ = show "full_co_def_typed" bvl_to_bviProofTheory.full_co_def;
 val _ = show "full_cc_def_typed" bvl_to_bviProofTheory.full_cc_def;
 val _ = show "ALL_DISTINCT_MAP_FST_SND_full_co_typed" bvl_to_bviProofTheory.ALL_DISTINCT_MAP_FST_SND_full_co;
+val _ = show "compile_prog_no_mutcons_typed" bvl_to_bviProofTheory.compile_prog_no_mutcons;
+
+(* Replay the local namespace-to-free-names lemma. *)
+val every_free_names = Q.prove
+  (`EVERY (λn. ¬in_ns 2 (n − backend_common$bvl_num_stubs)) (MAP FST xs) ⇒
+    EVERY (bvi_tailrecProof$free_names (backend_common$bvl_num_stubs + 2) o FST) xs`,
+   rw [EVERY_MEM, EVERY_MAP, in_ns_def, bvi_tailrecProofTheory.free_names_def]
+   \\ res_tac \\ CCONTR_TAC \\ gvs []
+   \\ first_x_assum drule
+   \\ qpat_x_assum `_ = FST e` (assume_tac o GSYM) \\ gvs []
+   \\ assume_tac (EVAL ``backend_common$bvl_to_bvi_namespaces``)
+   \\ simp [arithmeticTheory.MOD_TIMES]);
+val _ = show "EVERY_free_names_not_in_ns_2_replay_typed" every_free_names;
