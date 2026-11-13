@@ -79,6 +79,7 @@ val dec_clock_inc_clock_replay = prove(
   EVAL_TAC THEN fs [bviSemTheory.state_component_equality]);
 val _ = show "dec_clock_inc_clock_replay=" dec_clock_inc_clock_replay;
 val _ = show "evaluate_ListLength_code_typed=" bvl_to_bviProofTheory.evaluate_ListLength_code;
+val _ = show "evaluate_FromListByte_code_typed=" bvl_to_bviProofTheory.evaluate_FromListByte_code;
 val _ = show "bvi_inc_clock_def=" bviPropsTheory.inc_clock_def;
 val _ = show "bvi_inc_clock_ZERO=" bviPropsTheory.inc_clock_ZERO;
 val _ = show "bvi_dec_clock_inv_clock1=" bviPropsTheory.dec_clock_inv_clock1;

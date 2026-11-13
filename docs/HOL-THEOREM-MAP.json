@@ -130491,6 +130491,18 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/FromListByteStub.lean",
+  "hol_name": "evaluate_FromListByte_code",
+  "lean_name": "evaluate_fromListByte_decoded",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed source theorem in bvl_to_bvi_value_rel_probe.out: the arbitrary natural list, range and length bounds, decoding, code and reference lookups, offset equality, existential clock, complete evaluation and updated byte-array contents are retained. Fixed word8 bytes use BitVec 8; the proof derives the byte conversion from the original less-than-256 premise. The canonical BVI state roundtrip covers refs; the evaluator inherits reals_as_rational_cuts."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CopyGlobalsStub.lean",
   "hol_name": "evaluate_CopyGlobals_code",
   "hol_line": 734,

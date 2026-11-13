@@ -8,6 +8,14 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CopyByteAllocate
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value)
 
+namespace FromListByteCarrier
+/-- Canonical BVI reference-map state roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end FromListByteCarrier
+
 /-- The byte-list writer returns its destination pointer when the input list
 is empty. Untagged pending BVI evaluator and dispatcher review. -/
 theorem evaluate_fromListByte_nil {C F : Type} (ptr : Nat) (flag : Bool) (index : Nat)
@@ -202,17 +210,36 @@ theorem evaluate_fromListByte {C F : Type} (newBytes before suffix : List (BitVe
         startLookup (by simp) startCode nonzero recursive
       simpa [start] using step
 
-/-- Source-shaped byte-list writer result: the initial destination before the
-write position is preserved and the decoded bytes fill its remaining suffix. -/
-theorem evaluate_fromListByte_decoded {C F : Type} (value : Value) (newBytes bytes : List (BitVec 8))
-    (ptr : Nat) (flag mutableRef : Bool) (state : BviSem.BviState C F)
-    (decode : BvlSem.valueToList value = some (newBytes.map (fun byte => .number byte.toNat)))
-    (bound : newBytes.length ≤ bytes.length)
-    (lookup : state.refs.lookup ptr = some (.byteArray mutableRef bytes))
-    (code : sptLookup fromListByteLocation state.code = some fromListByteCode) :
+/-- The byte-list writer preserves the destination prefix and writes each
+bounded natural as a byte. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "evaluate_FromListByte_code"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_fromListByte_decoded {C F : Type} (value : Value) (numbers : List Nat)
+    (index : Nat) (bytes : List (BitVec 8))
+    (state : Flapjack.Compiler.Backend.BviSem.BviState C F) (ptr : Nat) (flag mutableRef : Bool)
+    (premises : BvlSem.valueToList value = some (numbers.map (fun n => .number (Int.ofNat n))) ∧
+      numbers.length ≤ bytes.length ∧
+      sptLookup fromListByteLocation state.code = some (3, fromListByteCode.2) ∧
+      (∀ n ∈ numbers, n < 256) ∧
+      state.refs.lookup ptr = some (.byteArray mutableRef bytes) ∧
+      index = bytes.length - numbers.length) :
     ∃ clock, BviSem.evaluate [fromListByteCode.2]
-      [value, .number (Int.ofNat (bytes.length - newBytes.length)), .refPtr flag ptr] (BviProps.incClock clock state) =
-      (.val [.refPtr flag ptr], { state with refs := state.refs.updateEq (ptr, .byteArray mutableRef (bytes.take (bytes.length - newBytes.length) ++ newBytes)) }) := by
+      [value, .number (Int.ofNat index), .refPtr flag ptr] (BviProps.incClock clock state) =
+      (.val [.refPtr flag ptr], { state with refs := state.refs.updateEq (ptr, .byteArray mutableRef (bytes.take index ++ numbers.map (BitVec.ofNat 8))) }) := by
+  obtain ⟨decode, bound, code, bounded, lookup, indexEq⟩ := premises
+  change sptLookup fromListByteLocation state.code = some fromListByteCode at code
+  subst index
+  let newBytes := numbers.map (BitVec.ofNat 8)
+  have decode' : BvlSem.valueToList value = some (newBytes.map (fun byte => .number byte.toNat)) := by
+    have valuesEq : newBytes.map (fun byte => Value.number byte.toNat) =
+        numbers.map (fun n => Value.number (Int.ofNat n)) := by
+      simp only [newBytes, List.map_map]
+      apply List.map_congr_left
+      intro n member
+      simp [Nat.mod_eq_of_lt (bounded n member)]
+    simpa only [valuesEq] using decode
+  have lengthEq : newBytes.length = numbers.length := by simp [newBytes]
+  have bound' : newBytes.length ≤ bytes.length := by simpa [lengthEq] using bound
   let offset := bytes.length - newBytes.length
   have offsetBound : offset ≤ bytes.length := by simp [offset]
   have splitBytes : bytes.take offset ++ bytes.drop offset = bytes := List.take_append_drop offset bytes
@@ -228,7 +255,9 @@ theorem evaluate_fromListByte_decoded {C F : Type} (value : Value) (newBytes byt
   have noTail : (bytes.drop offset).drop newBytes.length = [] := by
     apply List.drop_eq_nil_of_le
     omega
-  rw [← valueToList_inverse value _ decode]
-  simpa [offset, offsetBound, noTail] using run
+  have noTail' : bytes.drop (bytes.length - numbers.length + numbers.length) = [] := by
+    simpa [offset, lengthEq, List.drop_drop] using noTail
+  rw [← valueToList_inverse value _ decode']
+  simpa [offset, offsetBound, noTail, noTail', newBytes, lengthEq] using run
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs
