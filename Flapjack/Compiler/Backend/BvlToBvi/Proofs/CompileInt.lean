@@ -29,22 +29,6 @@ theorem evaluate_compileInt {C F : Type} (value : Int) (env : List Value)
       BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,
       BvlSem.doBuildConst, BvlSem.doBuild, BvlSem.doPart, BviSem.fromBvl, BviSem.toBvl]
 
-/-- A nullary integer constant satisfies the BVL-to-BVI simulation.
-Untagged until BVI evaluator correspondence is reviewed. -/
-theorem simulation_const_empty {C F : Type} (value : Int) (env : List Value)
-    (source : BvlSem.State (Nat × C) F) :
-    simulation [.op (.intOp (.const value)) []] env source := by
-  intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
-  simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyNumeric, BvlSem.doIntApp] at run
-  rcases run with ⟨rfl, rfl⟩
-  simp [compileListSource, compileSingSource, compileOp, smartAppend] at compiled
-  rcases compiled with ⟨rfl, rfl, rfl⟩
-  refine ⟨target, relocate, 0, ?_, related, rfl, ?_⟩
-  · simpa [BviProps.incClock, mapSimulationResult, adjustBv] using
-      evaluate_compileInt value (env.map (adjustBv relocate)) target
-  · intro key present
-    rfl
-
 /-- Integer-constant lowering preserves evaluation for any operand list;
 nonempty successful operand lists are source type errors. Untagged until
 BVI evaluator correspondence is reviewed. -/
@@ -59,7 +43,17 @@ theorem simulation_const {C F : Type} (value : Int) (arguments : List Bvl.Exp)
     | val values =>
       have length := BvlSem.evaluate_length arguments env source middle values argsRun
       cases arguments with
-      | nil => exact simulation_const_empty value env source
+      | nil =>
+        intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
+        simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyNumeric, BvlSem.doIntApp] at run
+        rcases run with ⟨rfl, rfl⟩
+        simp [compileListSource, compileSingSource, compileOp, smartAppend] at compiled
+        rcases compiled with ⟨rfl, rfl, rfl⟩
+        refine ⟨target, relocate, 0, ?_, related, rfl, ?_⟩
+        · simpa [BviProps.incClock, mapSimulationResult, adjustBv] using
+            evaluate_compileInt value (env.map (adjustBv relocate)) target
+        · intro key present
+          rfl
       | cons first rest =>
         intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
         have nonempty : values ≠ [] := by intro eq; simp [eq] at length

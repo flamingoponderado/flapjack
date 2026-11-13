@@ -87,32 +87,6 @@ theorem doBuild_simulation {C F : Type} (parts : List ClosLang.ConstPart)
     · simpa [BvlSem.doBuild, sourcePart, targetPart, mapEq, nextMap] using valueResult
     · simpa [BvlSem.doBuild, sourcePart, targetPart, mapEq, nextMap] using relatedResult
 
-/-- A nullary constant build satisfies pass simulation, including all string
-allocations. Untagged pending BVI evaluator and dispatcher review. -/
-theorem simulation_build_empty {C F : Type} (parts : List ClosLang.ConstPart) (env : List Value)
-    (source : BvlSem.State (Nat × C) F) :
-    simulation [.op (.blockOp (.build parts)) []] env source := by
-  intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
-  rcases sourceBuild : BvlSem.doBuildConst parts source.refs with ⟨sourceValue, sourceRefs⟩
-  rcases targetBuild : BvlSem.doBuildConst parts target.refs with ⟨targetValue, targetRefs⟩
-  have zerosOk : ∀ key, bvOk source.refs ((fun _ : Nat => Value.number 0) key) := by simp [bvOk]
-  obtain ⟨extended, valueEq, relatedBuild, agree⟩ :=
-    doBuild_simulation parts (fun _ => .number 0) 0 relocate source target related sourceOk zerosOk
-  simp only [adjustBv] at valueEq relatedBuild
-  change (BvlSem.doBuildConst parts target.refs).1 = adjustBv extended (BvlSem.doBuildConst parts source.refs).1 at valueEq
-  change stateRel extended { source with refs := (BvlSem.doBuildConst parts source.refs).2 }
-    { target with refs := (BvlSem.doBuildConst parts target.refs).2 } at relatedBuild
-  simp only [sourceBuild, targetBuild] at valueEq relatedBuild
-  simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyBlock, sourceBuild] at run
-  rcases run with ⟨rfl, rfl⟩
-  simp [compileListSource, compileSingSource, compileOp, smartAppend] at compiled
-  rcases compiled with ⟨rfl, rfl, rfl⟩
-  have envEq := adjustMap_eq_of_ok relocate extended env source.refs envOk agree
-  refine ⟨{ target with refs := targetRefs }, extended, 0, ?_, relatedBuild, envEq, agree⟩
-  simp [BviSem.evaluate, BviSem.fixClock, BviProps.incClock, BviSem.doApp, BviSem.doAppFallback,
-    BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock, BviSem.toBvl, BviSem.fromBvl,
-    targetBuild, mapSimulationResult, valueEq]
-
 /-- Constant build satisfies pass simulation given operand simulation. Any
 nonempty successful operand list is a source type error. -/
 theorem simulation_build {C F : Type} (parts : List ClosLang.ConstPart) (arguments : List Bvl.Exp)
@@ -126,7 +100,27 @@ theorem simulation_build {C F : Type} (parts : List ClosLang.ConstPart) (argumen
     | val values =>
       have length := BvlSem.evaluate_length arguments env source middle values argsRun
       cases arguments with
-      | nil => exact simulation_build_empty parts env source
+      | nil =>
+        intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
+        rcases sourceBuild : BvlSem.doBuildConst parts source.refs with ⟨sourceValue, sourceRefs⟩
+        rcases targetBuild : BvlSem.doBuildConst parts target.refs with ⟨targetValue, targetRefs⟩
+        have zerosOk : ∀ key, bvOk source.refs ((fun _ : Nat => Value.number 0) key) := by simp [bvOk]
+        obtain ⟨extended, valueEq, relatedBuild, agree⟩ :=
+          doBuild_simulation parts (fun _ => .number 0) 0 relocate source target related sourceOk zerosOk
+        simp only [adjustBv] at valueEq relatedBuild
+        change (BvlSem.doBuildConst parts target.refs).1 = adjustBv extended (BvlSem.doBuildConst parts source.refs).1 at valueEq
+        change stateRel extended { source with refs := (BvlSem.doBuildConst parts source.refs).2 }
+          { target with refs := (BvlSem.doBuildConst parts target.refs).2 } at relatedBuild
+        simp only [sourceBuild, targetBuild] at valueEq relatedBuild
+        simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyBlock, sourceBuild] at run
+        rcases run with ⟨rfl, rfl⟩
+        simp [compileListSource, compileSingSource, compileOp, smartAppend] at compiled
+        rcases compiled with ⟨rfl, rfl, rfl⟩
+        have envEq := adjustMap_eq_of_ok relocate extended env source.refs envOk agree
+        refine ⟨{ target with refs := targetRefs }, extended, 0, ?_, relatedBuild, envEq, agree⟩
+        simp [BviSem.evaluate, BviSem.fixClock, BviProps.incClock, BviSem.doApp, BviSem.doAppFallback,
+          BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock, BviSem.toBvl, BviSem.fromBvl,
+          targetBuild, mapSimulationResult, valueEq]
       | cons first rest =>
         intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
         have nonempty : values ≠ [] := by intro eq; simp [eq] at length
