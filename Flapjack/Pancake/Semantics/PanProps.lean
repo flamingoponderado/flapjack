@@ -1965,9 +1965,8 @@ exact Lean counterparts are `functionsHOL` (tagged `functions_def`),
 `is_function_def`), all over the reviewed `List (DeclHOL width)` carrier, so
 these statements transfer clause for clause with no extra hypotheses.  HOL's
 `functions_eq_FILTER` (`panPropsScript.sml:1487`, bead `flapjack-4ac.4.80`) is
-deliberately excluded: its `MAP` carries an `ARB` fallback whose rendering is
-not yet reviewed (see `functions_eq_filterMap` in `Flapjack/Pancake/PanSimp.lean`
-and the note in `Flapjack/Pancake/Proofs/PanGlobals.lean`). -/
+ported exactly as `functionsHOL_eq_FILTER` below; the production-carrier
+`List.filterMap` duplicate `functions_eq_filterMap` was retired in task 156. -/
 
 /-- Exact port of HOL `panProps$functions_append`
     (`panPropsScript.sml:1496`): the function table of a concatenation is the
@@ -2050,8 +2049,9 @@ theorem decsStcnamesHOLExact_of_functions {width : Nat} [NeZero width]
     `ARB` is an unspecified element and the branch is provably unreachable
     because the list is filtered by `is_function`/`isFunctionHOL`, so the entry
     map agrees with HOL on every element it is actually applied to.  The
-    production `functions_eq_filterMap` instead uses `List.filterMap`, which
-    drops elements rather than mapping them, so it is not the HOL shape. -/
+    retired production-carrier `functions_eq_filterMap` instead used
+    `List.filterMap`, which drops elements rather than mapping them, so it was
+    not the HOL shape. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "functions_eq_FILTER"]
 theorem functionsHOL_eq_FILTER {width : Nat} [NeZero width]
     (prog : List (DeclHOL width)) :

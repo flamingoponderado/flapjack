@@ -76425,14 +76425,6 @@
     "reviewer": "flapjack-ds8 (source comparison, 2026-09-26; bead flapjack-4ac.1.52). HOL panLangScript.sml:216-220 defines with_shape [] _ = [] and with_shape (sh::shs) e = TAKE (size_of_shape sh) e :: with_shape shs (DROP (size_of_shape sh) e), polymorphic in the element type of the list being split. Lean withShapeHOL is the same polymorphic function over the exact ShapeHOL carrier: [] => [], shape::shapes, values => values.take (sizeOfShapeHOL shape) :: withShapeHOL shapes (values.drop (sizeOfShapeHOL shape)). HOL TAKE/DROP are Lean List.take/List.drop and size_of_shape is the tagged sizeOfShapeHOL; no extra hypotheses or side conditions. The production Shape.withShape (consumed by the untagged PanProps flatten/with_shape lemmas) remains untagged because its carrier is the String-based Shape."
   },
   {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "functions_eq_FILTER",
-    "lean_path": "Flapjack/Pancake/PanSimp.lean",
-    "lean_name": "functions_eq_filterMap",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.4.80; FLAPJACK-SPECIFIC, documented_mismatch): HOL functions_eq_FILTER (panPropsScript.sml:1487) states functions prog = MAP (fun x => case x of Function fi => (fi.name,fi.params,fi.body,fi.return) | _ => ARB) (FILTER is_function prog) over the word-indexed 'a decl carrier with mlstring names. The Lean analogue functions_eq_filterMap (Flapjack/Pancake/PanSimp.lean:110) is generic over the production Decl alpha (FunName = String, arbitrary word element type) and states the same content with List.filterMap/none instead of MAP-with-ARB, so both the declaration carrier and the ARB fallback differ and names_as_string cannot bridge it. The exact port over List (DeclHOL width) is functionsHOL_eq_FILTER (Flapjack/Pancake/Semantics/PanProps.lean, reviewed_exact, bead flapjack-4ac.4.109); the sibling functionsHOL_filter_isDecl entry records the same deliberate exclusion."
-  },
-  {
     "hol_path": "cakeml/pancake/pan_simpScript.sml",
     "hol_name": "compile_def",
     "lean_path": "Flapjack/Pancake/PanSimp.lean",

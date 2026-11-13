@@ -425,22 +425,26 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertIn(key, MAP["data_declarations"]())
         self.assertNotIn(key, MAP["tagged_declarations"]())
 
-    def test_pan_simp_functions_eq_filter_map_arb_mismatch_is_documented(self):
+    def test_pan_simp_functions_eq_filter_map_arb_mismatch_is_retired(self):
+        # The List.filterMap production form is gone; HOL functions_eq_FILTER is
+        # mapped by the tagged exact-carrier functionsHOL_eq_FILTER.
         key = ("Flapjack/Pancake/PanSimp.lean", "functions_eq_filterMap")
         inventory = {
             (record["lean_path"], record["lean_name"]): record
             for record in MAP["build_inventory"]()
         }
-        record = inventory[key]
+        self.assertNotIn(key, inventory)
+        exact = inventory[("Flapjack/Pancake/Semantics/PanProps.lean",
+                           "functionsHOL_eq_FILTER")]
         self.assertEqual(
-            (record["hol_path"], record["hol_name"]),
+            (exact["hol_path"], exact["hol_name"]),
             ("cakeml/pancake/semantics/panPropsScript.sml", "functions_eq_FILTER"),
         )
-        self.assertEqual(record["statement_status"], "documented_mismatch")
-        self.assertIn("ARB", record["reviewer"])
-        self.assertIn("flapjack-4ac.4.109", record["reviewer"])
-        self.assertTrue(MAP["lean_definition_exists"](MAP["ROOT"], *key))
-        self.assertNotIn(key, MAP["tagged_declarations"]())
+        self.assertNotEqual(exact["statement_status"], "documented_mismatch")
+        self.assertIn(
+            ("Flapjack/Pancake/Semantics/PanProps.lean", "functionsHOL_eq_FILTER"),
+            MAP["tagged_declarations"](),
+        )
 
     def test_pan_observational_semantics_hook_mismatch_is_documented(self):
         key = ("Flapjack/PanObservationalSemantics.lean", "panSemantics")
