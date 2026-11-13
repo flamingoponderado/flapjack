@@ -467,6 +467,12 @@ complete statements of `compile_exps_aux_contains` and
 `compile_list_code_labels_domain`, and `compile_prog_code_labels_domain` for
 source review.
 
+It also captures the rebound BVI code-label equations, the polymorphic
+`good_code_labels` definition, and the original `destLet_code_labels` and
+`compile_int_code_labels` statements with inferred types. The BVI source
+definition is referenced at its original declaration line; the later theorem
+rebind is the captured HOL export.
+
 `bvl_sem_values_probe.out` captures the typed original BVL value and reference constructors, integer, word, list and reference-aware equality operations, state field types, code lookup, thunk inspection, closure argument helpers, signed-division examples, constant-building/allocation cases, installation decoders and installation type, array copy, byte XOR and string comparison definitions, selected primitive operations, generated-variable evaluation and reverse-variable evaluation theorems and evaluation cases. The existing `CakeSourceArrayParity`, `CakeSourceThunkParity` and `CakeSourceCompareParity` checks replay the corresponding copy, XOR and comparison observations. HOL leaves the installation decoder examples as symbolic choices; the Lean tests check their encoded results, and the conversion module proves the general successful-result predicates. These observations do not establish the full BVL semantics or pass correctness.
 
 `bvl_handle_frontend_probe.out` captures the typed handler helpers, simplifier, environment-packing and optional-cut definitions, singleton/list compiler equations and equivalence, as well as representative compilation results. The typed `LetLet` capture confirms its sparse tree payload is polymorphic. Both the total source singleton compiler and the executed traversal replay selected original observations; Lean also proves their general correspondence. Regenerate with `HOL_PROBE_ONLY=bvl_handle_frontend_probeScript.sml scripts/hol-probes/regenerate.sh`. These captures support review and do not prove cross-language equivalence.

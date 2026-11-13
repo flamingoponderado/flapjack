@@ -491,6 +491,10 @@ val _ = show "IMP_v_to_words_typed=" bvl_to_bviProofTheory.IMP_v_to_words;
 val _ = show "aux_code_installed_sublist_typed=" bvl_to_bviProofTheory.aux_code_installed_sublist;
 
 val _ = show "compile_exps_aux_sorted_typed=" bvl_to_bviProofTheory.compile_exps_aux_sorted;
+val _ = show "bvi_get_code_labels_rebound_typed=" bviPropsTheory.get_code_labels_def;
+val _ = show "bvi_good_code_labels_def_typed=" bviPropsTheory.good_code_labels_def;
+val _ = show "destLet_code_labels_typed=" bvl_to_bviProofTheory.destLet_code_labels;
+val _ = show "compile_int_code_labels_typed=" bvl_to_bviProofTheory.compile_int_code_labels;
 val _ = show "compile_exps_aux_contains_typed=" bvl_to_bviProofTheory.compile_exps_aux_contains;
 val _ = show "compile_list_code_labels_domain_typed=" bvl_to_bviProofTheory.compile_list_code_labels_domain;
 val _ = show "compile_prog_code_labels_domain_typed=" bvl_to_bviProofTheory.compile_prog_code_labels_domain;

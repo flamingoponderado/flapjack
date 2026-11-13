@@ -176,6 +176,39 @@
     "reviewer": "Compared the freshly captured typed HOL definition: input and result tuple carriers, allocation-count and list-compilation bindings, entry location, start-based stub address, stub order, flattened code and returned counter agree. The executed whole-program wrapper calls this definition directly."
   },
   {
+    "hol_path": "cakeml/compiler/backend/semantics/bviPropsScript.sml",
+    "hol_name": "get_code_labels_def",
+    "hol_line": 696,
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BviProps/CodeLabels.lean",
+    "lean_name": "getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent HOL source and inferred-type review: all BVI constructors, optional destination and handler, and source union association match; the structural list helper equals the mapped BIGUNION for every list. The tag identifies the original definition at line 696, distinct from the later rebound theorem. Original clauses reconstructed in HOL; typed rebound captured."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bviPropsScript.sml",
+    "hol_name": "good_code_labels_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BviProps/CodeLabels.lean",
+    "lean_name": "goodCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: arbitrary polymorphic middle payload, all expression labels, program first keys and arbitrary external labels are preserved, with the original subset direction and no added assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "destLet_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CodeLabels.lean",
+    "lean_name": "destLet_codeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: original BVL expression and list binders, sole destLet equation, mapped union and subset conclusion match, including the non-Let fallback."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_int_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CodeLabels.lean",
+    "lean_name": "compileInt_codeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: all integer inputs and both original compileInt branches have the unconditional empty BVI label set; no integer bounds premise."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_exps_aux_contains",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AuxNameRange.lean",
