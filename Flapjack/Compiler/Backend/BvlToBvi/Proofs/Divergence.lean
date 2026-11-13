@@ -89,50 +89,58 @@ theorem compileProgFuel_traceLub_eq {C F : Type}
     rw [targetRun]
     exact congrArg (·.ioEvents) related.2.1
 
-/-- The executed BVL-to-BVI compiler preserves the entire whole-program
-behavior of any non-failing source program. This remains untagged pending
-source review of the BVI evaluator and dispatcher. -/
-theorem compileProgFuel_semantics {C F : Type}
-    (fuel optFuel start counter : Nat) (ffi : HolFfiState F)
-    (programs : List (Nat × Nat × Bvl.Exp))
-    (oracle : BvlSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C)
-    (targetStart targetNextName : Nat) (targetProgram : List (Nat × Nat × Bvi.Exp))
-    (compiled : compileProgFuel fuel optFuel start counter programs = some (targetStart, targetProgram, targetNextName))
-    (distinct : (programs.map Prod.fst).Nodup)
-    (handlers : BvlHandle.Proofs.handleOk (programs.map (fun (_, _, body) => body)))
-    (oracleHandlers : ∀ index, BvlHandle.Proofs.handleOk ((oracle index).2.map (fun (_, _, body) => body)))
-    (counterBound : targetNextName ≤ (oracle 0).1.1)
-    (nonfail : BvlSem.semantics ffi (sptFromAList programs) oracle
-      (BackendProps.stateCc compileIncSource compiler) start ≠ .fail) :
+/-- Whole-program lowering preserves non-failing source behavior under the
+original handler and oracle conditions. The HOL reference remains pending
+review of the BVI evaluator, dispatcher, and arbitrary-state conversions.
+The semantics inherit the real-model assumption documented in SOUNDNESS item 8. -/
+theorem compileProgSource_semantics {C F : Type} (start n targetStart targetNext : Nat)
+    (programs : List (Nat × Nat × Bvl.Exp)) (targetProgram : List (Nat × Nat × Bvi.Exp))
+    (oracle : BvlSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C) (ffi : HolFfiState F)
+    (h : compileProgSource start n programs = (targetStart, targetProgram, targetNext) ∧
+      (programs.map Prod.fst).Nodup ∧
+      BvlHandle.Proofs.handleOk (programs.map (fun (_, _, body) => body)) ∧
+      (∀ i, ∀ entry ∈ (oracle i).2, BvlHandle.Proofs.handleOk [entry.2.2]) ∧
+      targetNext ≤ (oracle 0).1.1 ∧
+      BvlSem.semantics ffi (sptFromAList programs) oracle
+        (BackendProps.stateCc compileIncSource compiler) start ≠ .fail) :
     BviSem.semantics ffi (sptFromAList targetProgram)
       (BackendProps.stateCo compileIncSource oracle) compiler targetStart =
     BvlSem.semantics ffi (sptFromAList programs) oracle
       (BackendProps.stateCc compileIncSource compiler) start := by
+  obtain ⟨compiled, distinct, handlers, oracleHandlers, counterBound, nonfail⟩ := h
+  have compiled : compileProgFuel 0 0 start n programs = some
+      (targetStart, targetProgram, targetNext) := by
+    simp [compileProgFuel, compiled]
+  have oracleHandlers : ∀ i, BvlHandle.Proofs.handleOk
+      ((oracle i).2.map (fun (_, _, body) => body)) := by
+    intro i
+    rw [BvlHandle.Proofs.handleOk_every, List.forall_iff_forall_mem]
+    simpa only [List.forall_mem_map] using oracleHandlers i
   classical
   cases sourceBehavior : BvlSem.semantics ffi (sptFromAList programs) oracle
       (BackendProps.stateCc compileIncSource compiler) start with
   | fail => exact False.elim (nonfail sourceBehavior)
   | terminate outcome events =>
-    simpa [sourceBehavior] using compileProgFuel_semantics_of_terminates fuel optFuel start counter ffi programs oracle compiler
-      targetStart targetNextName targetProgram compiled distinct handlers oracleHandlers counterBound outcome events sourceBehavior
+    simpa [sourceBehavior] using compileProgFuel_semantics_of_terminates 0 0 start n ffi programs oracle compiler
+      targetStart targetNext targetProgram compiled distinct handlers oracleHandlers counterBound outcome events sourceBehavior
   | diverge trace =>
     obtain ⟨noTypeError, sourceNoObservation, sourceTrace⟩ :=
       (BvlSem.semantics_eq_diverge_iff ffi (sptFromAList programs) oracle
         (BackendProps.stateCc compileIncSource compiler) start trace).1 sourceBehavior
-    have noFatal := compileProgFuel_noFatalError fuel optFuel start counter ffi programs oracle compiler
-      targetStart targetNextName targetProgram compiled distinct handlers oracleHandlers counterBound noTypeError
+    have noFatal := compileProgFuel_noFatalError 0 0 start n ffi programs oracle compiler
+      targetStart targetNext targetProgram compiled distinct handlers oracleHandlers counterBound noTypeError
     have targetNoObservation : ∀ behavior, ¬ BviSem.terminatingObservation ffi (sptFromAList targetProgram)
         (BackendProps.stateCo compileIncSource oracle) compiler targetStart behavior := by
       intro behavior observed
-      exact sourceNoObservation behavior (compileProgFuel_reflect_terminatingObservation fuel optFuel start counter
-        ffi programs oracle compiler targetStart targetNextName targetProgram compiled distinct handlers
+      exact sourceNoObservation behavior (compileProgFuel_reflect_terminatingObservation 0 0 start n
+        ffi programs oracle compiler targetStart targetNext targetProgram compiled distinct handlers
         oracleHandlers counterBound noTypeError behavior observed)
     have targetNone : holOptionSome (BviSem.terminatingObservation ffi (sptFromAList targetProgram)
         (BackendProps.stateCo compileIncSource oracle) compiler targetStart) = none := by
       unfold holOptionSome
       simp [not_exists.mpr targetNoObservation]
-    have traceEqual := compileProgFuel_traceLub_eq fuel optFuel start counter ffi programs oracle compiler
-      targetStart targetNextName targetProgram compiled distinct handlers oracleHandlers counterBound noTypeError
+    have traceEqual := compileProgFuel_traceLub_eq 0 0 start n ffi programs oracle compiler
+      targetStart targetNext targetProgram compiled distinct handlers oracleHandlers counterBound noTypeError
     simp only [BviSem.semantics, BviSem.evaluateTuple, noFatal, if_false, targetNone]
     exact (congrArg HolBehaviour.diverge traceEqual.symm).trans
       (congrArg HolBehaviour.diverge sourceTrace).symm

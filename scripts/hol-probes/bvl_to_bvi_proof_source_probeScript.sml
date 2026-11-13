@@ -122,3 +122,5 @@ val _ = show "compile_prog_avoids_nss_3_typed" bvl_to_bviProofTheory.compile_pro
 
 val _ = show "compile_prog_distinct_locs_typed" bvl_to_bviProofTheory.compile_prog_distinct_locs;
 val _ = show "between_def_typed" miscTheory.between_def;
+
+val _ = show "compile_prog_semantics_typed" bvl_to_bviProofTheory.compile_prog_semantics;
