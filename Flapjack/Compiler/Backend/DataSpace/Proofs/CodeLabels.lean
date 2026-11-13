@@ -20,23 +20,35 @@ theorem getCodeLabels_pMakeSpace (result : Sum DataLang.Prog (Nat × NumSet × D
   | inr payload => obtain ⟨amount, names, body⟩ := payload; simp [pMakeSpace, getCodeLabels]
 
 /-- Both forms of the reservation pass retain the original code labels. -/
-theorem getCodeLabels_space (program : DataLang.Prog) :
-    match space program with
-    | .inl result => getCodeLabels result = getCodeLabels program
-    | .inr (_, _, result) => getCodeLabels result = getCodeLabels program := by
-  fun_induction space program <;>
-    simp_all (config := { zetaDelta := true }) [space, getCodeLabels, getCodeLabels_pMakeSpace]
-  all_goals repeat' (split at * <;> simp_all)
+@[hol "cakeml/compiler/backend/proofs/data_spaceProofScript.sml" "get_code_labels_space"]
+theorem getCodeLabels_space (program result : DataLang.Prog) (amount : Nat)
+    (names : NumSet) (body : DataLang.Prog) :
+    (space program = .inl result → getCodeLabels result = getCodeLabels program) ∧
+      (space program = .inr (amount, names, body) → getCodeLabels body = getCodeLabels program) := by
+  have labels (p : DataLang.Prog) :
+      match space p with
+      | .inl result => getCodeLabels result = getCodeLabels p
+      | .inr (_, _, result) => getCodeLabels result = getCodeLabels p := by
+    fun_induction space p <;>
+      simp_all (config := { zetaDelta := true }) [space, getCodeLabels, getCodeLabels_pMakeSpace]
+    all_goals repeat' (split at * <;> simp_all)
+  constructor
+  · intro h
+    simpa [h] using labels program
+  · intro h
+    simpa [h] using labels program
 
 /-- Restoring a deferred reservation leaves its referenced code labels intact. -/
 @[hol "cakeml/compiler/backend/proofs/data_spaceProofScript.sml" "get_code_labels_compile"]
 theorem getCodeLabels_compile (program : DataLang.Prog) :
     getCodeLabels (compile program) = getCodeLabels program := by
-  have labels := getCodeLabels_space program
   cases found : space program with
-  | inl result => simpa [compile, pMakeSpace, found] using labels
+  | inl result =>
+    simpa [compile, pMakeSpace, found] using
+      (getCodeLabels_space program result 0 .ln .skip).1 found
   | inr payload =>
     obtain ⟨amount, names, result⟩ := payload
-    simpa [compile, pMakeSpace, getCodeLabels, found] using labels
+    simpa [compile, pMakeSpace, getCodeLabels, found] using
+      (getCodeLabels_space program .skip amount names result).2 found
 
 end Flapjack.Compiler.Backend.DataSpace

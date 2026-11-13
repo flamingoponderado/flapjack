@@ -432,6 +432,14 @@
     "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary return count, values, environment and BVI state retain the sole original length premise and exact return exception and unchanged state. The reviewed tuple evaluator and canonical finite-support refs carrier preserve the source types; the original local HOL proof is replayed. Inherits reals_as_rational_cuts through evaluation, as documented in SOUNDNESS item 8."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/data_spaceProofScript.sml",
+    "hol_name": "get_code_labels_space",
+    "lean_path": "Flapjack/Compiler/Backend/DataSpace/Proofs/CodeLabels.lean",
+    "lean_name": "getCodeLabels_space",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary input and first result programs, natural reservation amount, sparse-tree name set and second result program retain both separate source implications and their complete code-label equalities. The existing compile-label theorem is derived from the corresponding branch."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "FST_compile_part",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Program.lean",

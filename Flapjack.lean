@@ -1605,12 +1605,6 @@ import Flapjack.Compiler.Backend.Semantics.DataProps.StackResult
 import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultPrimitive
 import Flapjack.Compiler.Backend.Semantics.DataProps.JumpPush
 import Flapjack.Compiler.Backend.DataSpace.Proofs.State
-import Flapjack.Compiler.Backend.DataSpace.Proofs.Cuts
-import Flapjack.Compiler.Backend.DataSpace.Proofs.Accounting
-import Flapjack.Compiler.Backend.DataSpace.Proofs.PrimitiveSpace
-import Flapjack.Compiler.Backend.DataSpace.Proofs.PrimitiveMemorySpace
-import Flapjack.Compiler.Backend.DataSpace.Proofs.PrimitiveBlockSpace
-import Flapjack.Compiler.Backend.DataSpace.Proofs.ReservationAssign
 import Flapjack.Compiler.Backend.Semantics.DataProps.FrameSize
 import Flapjack.Compiler.Backend.DataSpace.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.DataSpace.Proofs.Simulation
@@ -1623,7 +1617,6 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.Conversions
 import Flapjack.Compiler.Backend.BviToData.CompileTotal
 import Flapjack.Compiler.Backend.BviToData.Proofs.State
 import Flapjack.Compiler.Backend.BviToData.Proofs.CompileAgreement
-import Flapjack.Compiler.Backend.BviToData.Proofs.Optimise
 import Flapjack.Compiler.Backend.BviToData.Proofs.Finalise
 import Flapjack.Compiler.Backend.DataSimp
 import Flapjack.Compiler.Backend.DataLive

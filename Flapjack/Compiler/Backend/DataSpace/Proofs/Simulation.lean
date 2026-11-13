@@ -5,7 +5,6 @@ public import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
 public import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
 public import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveAll
 public import Flapjack.Compiler.Backend.DataLive.Proofs.CompileCorrect
-public import Flapjack.Compiler.Backend.DataSpace.Proofs.Cuts
 
 @[expose] public section
 
@@ -411,102 +410,5 @@ theorem simulationFor_if {C F : Type} (name : Nat) (yes no : DataLang.Prog)
         obtain ⟨rfl, rfl⟩ := run
         exact False.elim (notType rfl)
 
-/-- Removing a leading skip commutes with the reservation transformation. -/
-theorem simulationFor_seq_skip_left {C F : Type} (second : DataLang.Prog)
-    (secondIH : simulationFor (C := C) (F := F) second) :
-    simulationFor (C := C) (F := F) (.seq .skip second) := by
-  intro source sourceNext result locals notType run included
-  have sourceRun : DataSem.evaluate second source = (result, sourceNext) := by
-    simpa [DataSem.evaluate, fixClock] using run
-  obtain ⟨out, safe, peak, stackMax, targetRun, final⟩ :=
-    secondIH source sourceNext result locals notType sourceRun included
-  refine ⟨out, safe, peak, stackMax, ?_, final⟩
-  cases found : space second with
-  | inl program => simpa [compile, space, found] using targetRun
-  | inr reservation =>
-    obtain ⟨amount, names, program⟩ := reservation
-    simpa [compile, space, found] using targetRun
-
-/-- Removing a trailing skip commutes with the reservation transformation. -/
-theorem simulationFor_seq_skip_right {C F : Type} (first : DataLang.Prog)
-    (firstIH : simulationFor (C := C) (F := F) first) :
-    simulationFor (C := C) (F := F) (.seq first .skip) := by
-  intro source sourceNext result locals notType run included
-  have sourceRun : DataSem.evaluate first source = (result, sourceNext) := by
-    simpa [DataSem.evaluate_seq_skip] using run
-  obtain ⟨out, safe, peak, stackMax, targetRun, final⟩ :=
-    firstIH source sourceNext result locals notType sourceRun included
-  refine ⟨out, safe, peak, stackMax, ?_, final⟩
-  cases first <;> simpa [compile, space, pMakeSpace, DataSem.evaluate_seq_skip] using targetRun
-
-/-- Two adjacent reservations can be combined by cutting to the
-intersection and keeping the later reservation amount. -/
-theorem simulationFor_seq_makeSpace {C F : Type} (firstAmount secondAmount : Nat)
-    (firstNames secondNames : NumSet) :
-    simulationFor (C := C) (F := F) (.seq (.makeSpace firstAmount firstNames) (.makeSpace secondAmount secondNames)) := by
-  intro source sourceNext result locals notType run included
-  cases firstCut : cutEnv firstNames source.locals with
-  | none =>
-    simp [DataSem.evaluate, firstCut] at run
-    obtain ⟨rfl, rfl⟩ := run
-    exact False.elim (notType rfl)
-  | some middle =>
-    let middleState := addSpace { source with locals := middle } firstAmount
-    have firstRun : DataSem.evaluate (.makeSpace firstAmount firstNames) source = (none, middleState) := by
-      simp [DataSem.evaluate, firstCut, middleState]
-    rw [DataSem.evaluate, fixClock_evaluate, firstRun] at run
-    cases secondCut : cutEnv secondNames middle with
-    | none =>
-      simp [DataSem.evaluate, middleState, addSpace, secondCut] at run
-      obtain ⟨rfl, rfl⟩ := run
-      exact False.elim (notType rfl)
-    | some out =>
-      have combined := cutEnv_twice firstNames secondNames source.locals middle out firstCut secondCut
-      have targetCut := cutEnv_of_subspt (sptInter firstNames secondNames) source.locals locals out included combined
-      simp [DataSem.evaluate, middleState, addSpace, secondCut] at run
-      obtain ⟨rfl, rfl⟩ := run
-      let targetNext := addSpace { source with locals := out } secondAmount
-      refine ⟨out, targetNext.safeForSpace, targetNext.peakHeapLength, targetNext.stackMax, ?_, ?_⟩
-      · change DataSem.evaluate (.seq (.makeSpace secondAmount (sptInter firstNames secondNames)) .skip) { source with locals := locals } = _
-        rw [DataSem.evaluate_seq_skip]
-        simp [DataSem.evaluate, targetCut, targetNext, addSpace]
-      · intro key member
-        exact ⟨member, rfl⟩
-
-/-- A reservation can move before a variable move using the adjusted live
-set, while preserving the simulation's local-extension relation. -/
-theorem simulationFor_seq_move_makeSpace {C F : Type} (dest src amount : Nat) (names : NumSet) :
-    simulationFor (C := C) (F := F) (.seq (.move dest src) (.makeSpace amount names)) := by
-  intro source sourceNext result locals notType run included
-  cases read : DataSem.getVar src source.locals with
-  | none =>
-    simp [DataSem.evaluate, read] at run
-    obtain ⟨rfl, rfl⟩ := run
-    exact False.elim (notType rfl)
-  | some value =>
-    let moved := setVar dest value source
-    have moveRun : DataSem.evaluate (.move dest src) source = (none, moved) := by
-      simp [DataSem.evaluate, read, moved]
-    rw [DataSem.evaluate, fixClock_evaluate, moveRun] at run
-    cases cut : cutEnv names moved.locals with
-    | none =>
-      simp [DataSem.evaluate, cut] at run
-      obtain ⟨rfl, rfl⟩ := run
-      exact False.elim (notType rfl)
-    | some resultEnv =>
-      have sourceCut : cutEnv names (sptInsert dest value source.locals) = some resultEnv := by simpa [moved, setVar] using cut
-      obtain ⟨before, beforeCut, beforeRead, afterIncluded⟩ :=
-        cutEnv_before_move source.locals locals names dest src value resultEnv included read sourceCut
-      simp [DataSem.evaluate, cut] at run
-      obtain ⟨rfl, rfl⟩ := run
-      let targetMid := addSpace { source with locals := before } amount
-      let targetNext := setVar dest value targetMid
-      refine ⟨sptInsert dest value before, targetNext.safeForSpace, targetNext.peakHeapLength, targetNext.stackMax, ?_, ?_⟩
-      · change DataSem.evaluate (.seq (.makeSpace amount (sptInsert src () (sptDelete dest names))) (.seq (.move dest src) .skip)) { source with locals := locals } = _
-        have reserveRun : DataSem.evaluate (.makeSpace amount (sptInsert src () (sptDelete dest names))) { source with locals := locals } = (none, targetMid) := by
-          simp [DataSem.evaluate, beforeCut, targetMid]
-        rw [DataSem.evaluate, fixClock_evaluate, reserveRun, DataSem.evaluate_seq_skip]
-        simp [DataSem.evaluate, DataSem.getVar, targetMid, targetNext, addSpace, setVar, beforeRead, moved]
-      · simpa [addSpace] using afterIncluded
 
 end Flapjack.Compiler.Backend.DataSpace
