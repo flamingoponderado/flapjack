@@ -23,3 +23,7 @@ val _ = showTerm "ty_rel_APPEND_typed"
   (Term `∀(env :v list) (ts :v_ty list) (ws :v_ty list) (vs :v list).
      ty_rel env ts ∧ ty_rel vs ws ⇒ ty_rel (vs ++ env) (ws ++ ts)`);
 val _ = show "ty_rel_decide_ty_typed" bvi_tailrecProofTheory.ty_rel_decide_ty;
+val _ = show "compile_each_labels_typed" bvi_tailrecProofTheory.compile_each_labels;
+val _ = show "compile_each_keeps_names_typed" bvi_tailrecProofTheory.compile_each_keeps_names;
+val _ = show "compile_prog_keeps_names_typed" bvi_tailrecProofTheory.compile_prog_keeps_names;
+val _ = show "get_code_labels_let_wrap_typed" bvi_tailrecProofTheory.get_code_labels_let_wrap;

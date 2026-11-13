@@ -297,6 +297,38 @@
     "reviewer": "Independent typed HOL source review: for arbitrary cache and program, all output-body labels are bounded by the union of all input-body labels and the initial cache labels, with the original operand order and no extra premises."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
+    "hol_name": "get_code_labels_let_wrap",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean",
+    "lean_name": "letWrap_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: arbitrary arity, identity and body retain the unconditional equality of wrapper labels with identity labels union body labels, in the original order. Generated variable bindings introduce no labels."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
+    "hol_name": "compile_each_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean",
+    "lean_name": "compileEach_labels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the sole compilation equation implies both the full equality of original plus allocated worker names with output names and counter monotonicity. The entire strict fresh interval, source carriers, and both compiler branches agree."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
+    "hol_name": "compile_each_keeps_names",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean",
+    "lean_name": "compileEach_keepsNames",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the original conjunction of source compilation equation and arbitrary original-name membership implies output-name membership, with no added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
+    "hol_name": "compile_prog_keeps_names",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean",
+    "lean_name": "compileProg_keepsNames",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: for either enabled setting, the original conjunction of program compilation equation and arbitrary original-name membership implies output-name membership."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "compile_prog_code_labels",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",

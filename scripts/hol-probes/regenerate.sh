@@ -9500,7 +9500,7 @@ run_probe semantic_primitives_source_probeScript.sml semantic_primitives_source_
   "$cake_dir/semantics"
 
 run_probe bvi_tailrec_proof_source_probeScript.sml bvi_tailrec_proof_source_probe.out \
-  free_names_def_typed namespace_rel_def_typed from_op_to_op_typed list_to_v_simp_typed list_to_v_imp_typed op_id_val_def_typed ty_rel_def_typed ty_rel_APPEND_typed ty_rel_decide_ty_typed \
+  free_names_def_typed namespace_rel_def_typed from_op_to_op_typed list_to_v_simp_typed list_to_v_imp_typed op_id_val_def_typed ty_rel_def_typed ty_rel_APPEND_typed ty_rel_decide_ty_typed compile_each_labels_typed compile_each_keeps_names_typed compile_prog_keeps_names_typed get_code_labels_let_wrap_typed \
   "$cake_dir/compiler/backend/proofs/bvi_tailrecProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 

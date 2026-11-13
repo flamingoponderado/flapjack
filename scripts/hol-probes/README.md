@@ -741,6 +741,9 @@ exported global-invariant equation and replay its original simplifier derivation
 
 `bvl_const_rel_probe.out` captures the typed constant-propagation value and environment relations, unary and general operation correctness and the complete semantic simulation statement, and replays the original local environment lookup, recognizer, binary operand-flip, complete binary rewrite and variable-deletion proofs. Lean checks the complete binary and general operation rewrite theorems; the full constant-propagation simulation is proved for the total traversal, with a singleton consequence for the executed bounded traversal. The simulation and the relations remain untagged because their finite-map state is hidden in a quantifier, while the evaluator theorems carry the canonical state-field qualification. Regenerate with `HOL_PROBE_ONLY=bvl_const_rel_probeScript.sml scripts/hol-probes/regenerate.sh`; the capture is review evidence, not a cross-language equivalence proof.
 
+`bvi_tailrec_proof_source_probe.out` also captures the typed original
+function-list label accounting and name-preservation statements.
+
 `bvi_tailrec_frontend_probe.out` captures the original tail-recursion candidate decisions for every BVI function of that example, focused recursion-detector and type-analysis cases, positive accumulator rewrites, worker labels, tail-modulo-constructor decisions, and typed scan, rewrite and compilation equations.
 
 `bvi_tmc_frontend_probe.out` captures full TMC wrapper and worker examples, including nested constructors, multiple calls, effectful arguments, and program-level worker allocation. These checks are regression evidence, not a correctness theorem.
