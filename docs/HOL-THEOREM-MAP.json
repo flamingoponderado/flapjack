@@ -423,6 +423,15 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/WholeSemantics.lean",
+    "lean_name": "compile_semantics",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: the full eight-result compilation equation, five initial oracle-state equalities, all-index distinctness and namespace bounds, input distinctness, and separate source non-Fail premise imply the complete target-to-source behavior equality. All stage conditions and worker bounds are derived internally. Independent compiler and FFI carriers, fixed callback widths, and MlString sparse-tree names are retained. Semantic state representations are reviewed separately. Inherits reals_as_rational_cuts through semantic primitives, as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_prog_semantics",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Divergence.lean",
     "lean_name": "compileProgSource_semantics",

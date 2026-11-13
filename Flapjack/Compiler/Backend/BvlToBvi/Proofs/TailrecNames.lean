@@ -227,14 +227,13 @@ theorem lowered_oracle_tailrec_inputCondition {C : Type}
 
 /-- Every worker-namespace label in a tail-recursion output is below the
 returned worker counter, whether the pass is enabled or disabled. -/
-theorem tailrec_output_worker_below_counter (fuel : Nat) (enabled : Bool) (next last : Nat)
+theorem tailrec_output_worker_below_counter (enabled : Bool) (next last : Nat)
     (program compiled : List (Nat × Nat × Bvi.Exp)) (condition : inputCondition next program)
-    (run : BviTailrec.compileProgFuel fuel enabled next program = some (last, compiled)) :
+    (run : BviTailrec.compileProgSource enabled next program = (last, compiled)) :
     ∀ name ∈ compiled.map Prod.fst, inWorkerNamespace name → name < last := by
   cases enabled with
   | false =>
-    simp only [BviTailrec.compileProgFuel, Bool.false_eq_true, ↓reduceIte, Option.some.injEq,
-      Prod.mk.injEq] at run
+    simp only [BviTailrec.compileProgSource, Bool.false_eq_true, ↓reduceIte, Prod.mk.injEq] at run
     obtain ⟨rfl, rfl⟩ := run
     intro name member worker
     obtain ⟨entry, entryMember, nameEq⟩ := List.mem_map.mp member
@@ -243,8 +242,8 @@ theorem tailrec_output_worker_below_counter (fuel : Nat) (enabled : Bool) (next 
     · have notWorker := condition.2.2.1 entry (List.mem_filter.mpr ⟨entryMember, by simpa [nameEq] using (show bvlNumStubs ≤ name by omega)⟩)
       exact (notWorker (by simpa [nameEq] using worker)).elim
   | true =>
-    have equal := (compileEachFuel_eq_source fuel next program).symm.trans (by simpa [BviTailrec.compileProgFuel] using run)
-    have pairEq := Option.some.inj equal
+    have pairEq : compileEachSource next program = (last, compiled) := by
+      simpa [BviTailrec.compileProgSource] using run
     have codeEq : (compileEachSource next program).2 = compiled := congrArg Prod.snd pairEq
     have lastEq : (compileEachSource next program).1 = last := congrArg Prod.fst pairEq
     intro name member worker

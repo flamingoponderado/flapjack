@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BvlInline.Proofs.ProgramProperties
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CodeRelation
 public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.NoMutcons
 
 @[expose] public section
@@ -8,6 +9,25 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.NoMutcons
 /-! Conditions for future programs in the BVL-to-BVI pass chain. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend
+
+/-- Every TMC worker label in the output is below the returned counter. This
+is Flapjack infrastructure for the worker bound in the whole-pipeline proof,
+which HOL derives from the pass's membership and counter theorems inline. -/
+theorem tmc_output_worker_below_counter (enabled : Bool) (next last : Nat)
+    (program compiled : List (Nat × Nat × Bvi.Exp)) (condition : BviTmc.inputCondition next program)
+    (run : BviTmc.compileProgSource enabled next program = (last, compiled)) :
+    ∀ name ∈ compiled.map Prod.fst, BviTmc.inWorkerNamespace name → name < last := by
+  intro name member worker
+  rcases BviTmc.compileProgSource_mem enabled next last name program compiled run member with original | generated
+  · obtain ⟨entry, present, equal⟩ := List.mem_map.mp original
+    by_cases small : name < bvlNumStubs
+    · obtain ⟨k, lastEq⟩ := BviTmc.compileProgSource_next_mono enabled next last program compiled run
+      have bound := condition.2.2.2.2.1
+      omega
+    · have notWorker := condition.2.2.2.1 entry
+        (List.mem_filter.mpr ⟨present, by simpa [equal] using (show bvlNumStubs ≤ name by omega)⟩)
+      exact (notWorker (by simpa [equal] using worker)).elim
+  · exact generated.2.1
 
 private theorem inlineInc_names (limit : Nat) (split : Bool) (cut : Nat)
     (cache : Spt (Nat × Bvl.Exp)) (prog : List (Nat × Nat × Bvl.Exp)) :
@@ -19,6 +39,29 @@ private theorem inlineInc_names (limit : Nat) (split : Bool) (cut : Nat)
     simp only [BvlInline.compileInc, h]
     rw [BvlInline.Proofs.mapFstMapOptimise]
     simpa only [h, Prod.snd] using names
+
+/-- Inlining preserves each oracle program's ordered names. This is Flapjack
+infrastructure for the distinctness obligations in the whole-pipeline proof. -/
+theorem inlineOracle_names {C : Type} (limit : Nat) (split : Bool) (cut : Nat)
+    (oracle : Nat → (Spt (Nat × Bvl.Exp) × C) × List (Nat × Nat × Bvl.Exp)) :
+    ∀ i, ((BackendProps.stateCo (BvlInline.compileInc limit split cut) oracle i).2.map Prod.fst) =
+      (oracle i).2.map Prod.fst := by
+  intro i
+  exact inlineInc_names limit split cut (oracle i).1.1 (oracle i).2
+
+/-- Every inlined oracle body satisfies the handler invariant. This is
+Flapjack infrastructure for the lowering pass's oracle condition; the HOL
+whole-pipeline proof derives it from the optimizer inline. -/
+theorem inlineOracle_handleOk {C : Type} (limit : Nat) (split : Bool) (cut : Nat)
+    (oracle : Nat → (Spt (Nat × Bvl.Exp) × C) × List (Nat × Nat × Bvl.Exp)) :
+    ∀ i, ∀ entry ∈ (BackendProps.stateCo (BvlInline.compileInc limit split cut) oracle i).2,
+      BvlHandle.Proofs.handleOk [entry.2.2] := by
+  intro i
+  cases h : BvlInline.tickCompileProg limit (oracle i).1.1 (oracle i).2 with
+  | mk finalCache output =>
+    have hs := BvlInline.Proofs.handleOk_optimise split cut output
+    rw [BvlHandle.Proofs.handleOk_every, List.forall_iff_forall_mem] at hs
+    simpa only [List.forall_mem_map, BackendProps.stateCo, BvlInline.compileInc, h] using hs
 
 private theorem incTail_tmc_condition (counter next2 next3 : Nat) (enabled : Bool)
     (prog : List (Nat × Nat × Bvl.Exp)) (distinct : (prog.map Prod.fst).Nodup)
@@ -77,7 +120,8 @@ theorem fullOracle_tmcCondition {C : Type} (limit : Nat) (split : Bool) (cut : N
   apply loweredTailrecOracle_tmcCondition enabled
     (BackendProps.stateCo (BvlInline.compileInc limit split cut) oracle)
   · intro i
-    simpa [BackendProps.stateCo, inlineInc_names] using distinct i
+    rw [inlineOracle_names]
+    exact distinct i
   · simpa [BackendProps.stateCo] using bounds2
   · simpa [BackendProps.stateCo] using worker2
   · simpa [BackendProps.stateCo] using bounds3

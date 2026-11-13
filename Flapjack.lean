@@ -1511,6 +1511,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TailrecNames
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TmcNames
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.NoMutcons
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.OracleConditions
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.WholeSemantics
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Observations
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Divergence
 import Flapjack.Compiler.Backend.DataLang.Syntax

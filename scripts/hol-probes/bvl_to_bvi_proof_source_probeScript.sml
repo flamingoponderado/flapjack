@@ -124,3 +124,4 @@ val _ = show "compile_prog_distinct_locs_typed" bvl_to_bviProofTheory.compile_pr
 val _ = show "between_def_typed" miscTheory.between_def;
 
 val _ = show "compile_prog_semantics_typed" bvl_to_bviProofTheory.compile_prog_semantics;
+val _ = show "compile_semantics_typed" bvl_to_bviProofTheory.compile_semantics;
