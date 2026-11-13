@@ -10750,3 +10750,20 @@ run_probe sptree_typed_probeScript.sml sptree_typed_probe.out \
   wf_inter_typed wf_union_typed inter_def_typed mk_wf_def_typed toList_def_typed toListA_def_typed \
   "$hol_dir/src/finite_maps/sptreeScript.sml" \
   "$hol_dir/src/finite_maps"
+
+run_probe balanced_map_typed_probeScript.sml balanced_map_typed_probe.out \
+  almost_balancedL_thm_typed almost_balancedR_thm_typed almost_balancedL_def_typed almost_balancedR_def_typed \
+  balanced_lem1_typed balanced_lem2_typed balanced_lem3_typed balanced_lem4_typed balanced_lem5_typed \
+  balanced_lem6_typed balanced_lem7_typed size_thm_typed structure_size_to_fmap_typed balanced_map_typed \
+  bin_def_typed delta_def_typed empty_def_typed lookup_def_typed member_def_typed null_def_typed \
+  ratio_def_typed singleton_def_typed size_def_typed to_fmap_key_set_typed insert_def_typed insert_thm_typed \
+  inv_props_typed invariant_eq_typed balanced_def_typed invariant_def_typed key_ordered_def_typed \
+  structure_size_def_typed key_ordered_to_fmap_typed key_set_cmp_def_typed key_set_cmp2_def_typed \
+  key_set_cmp_thm_typed key_set_eq_typed key_set_equiv_typed key_set_nonempty_typed key_set_partition_typed \
+  lookup_thm_typed member_eq_lookup_typed null_thm_typed bal_def_typed balL_def_typed balR_def_typed \
+  doubleL_def_typed doubleR_def_typed rotateL_def_typed rotateR_def_typed singleL_def_typed singleR_def_typed \
+  balanceL_balL_typed balanceL_thm_typed balanceR_balR_typed balanceR_thm_typed doubleL_thm_typed \
+  doubleR_thm_typed rotateL_thm_typed rotateR_thm_typed singleL_thm_typed singleR_thm_typed balanceL_def_typed \
+  balanceR_def_typed key_set_def_typed to_fmap_def_typed structure_size_thm_typed \
+  "$hol_dir/examples/data-structures/balanced_bst/balanced_mapScript.sml" \
+  "$hol_dir/examples/data-structures/balanced_bst"
