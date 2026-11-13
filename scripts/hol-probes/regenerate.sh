@@ -9526,7 +9526,7 @@ run_probe cml_ptree_conversion_source_probeScript.sml cml_ptree_conversion_sourc
   "$cake_dir/semantics"
 
 run_probe pegexec_cml_fo_source_probeScript.sml pegexec_cml_fo_source_probe.out \
-  sem_u_typed sem_b_typed token_alpha_check_typed token_symbol_check_typed token_longid_check_typed token_check_typed tok_map_typed pegsym_fo_typed eval_unary_def_typed mk_linfix_fo_def_typed eval_binary_def_typed eval_token_alpha_check_def_typed eval_token_symbol_check_def_typed eval_token_longid_check_alt_def_typed eval_token_check_def_typed eval_tok_map_def_typed nt_rule_fo_def_typed \
+  sem_u_typed sem_b_typed token_alpha_check_typed token_symbol_check_typed token_longid_check_typed token_check_typed tok_map_typed pegsym_fo_typed eval_unary_def_typed mk_linfix_fo_def_typed mkNd_fo_def_typed eval_binary_def_typed eval_token_alpha_check_def_typed eval_token_symbol_check_def_typed eval_token_longid_check_alt_def_typed eval_token_check_def_typed eval_tok_map_def_typed nt_rule_fo_def_typed \
   "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" \
   "$cake_dir/compiler/parsing"
 
@@ -10943,4 +10943,11 @@ run_probe grammar_parsetree_typed_probeScript.sml grammar_parsetree_typed_probe.
   "$hol_dir/examples/formal-languages/context-free"
 run_probe token_utils_destlf_typed_probeScript.sml token_utils_destlf_typed_probe.out \
   destLf_def_typed \
+  "$cake_dir/semantics/tokenUtilsScript.sml" "$cake_dir/semantics"
+run_probe cake_ptree_helpers_typed_probeScript.sml cake_ptree_helpers_typed_probe.out \
+  destTOK_def_typed destLongidT_def_typed destTyvarPT_def_typed destAlphaT_def_typed \
+  destSymbolT_def_typed destIntT_def_typed destCharT_def_typed destStringT_def_typed \
+  destWordT_def_typed destFFIT_def_typed isLower_def_typed isUpper_def_typed \
+  isAlpha_def_typed oHD_def_typed ifM_def_typed tokcheckl_def_typed \
+  singleSymP_def_typed isSymbolicConstructor_def_typed isConstructor_def_typed \
   "$cake_dir/semantics/tokenUtilsScript.sml" "$cake_dir/semantics"

@@ -120394,7 +120394,22 @@
   {
     "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "mkLinfix",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "mk_linfix_fo_def",
-    "statement_status": "documented_mismatch", "reviewer": "Tag withdrawn (task 147): HOL `mk_linfix_fo_def` is generic in the terminal type `α` and the rule-index type `β` of `(α, β, locs) parsetree` and `β + num`, while Lean's `ParseTree`/`Rule` fix them to `Token` and `Sum Nonterminal Nat`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in both type parameters."
+    "statement_status": "documented_mismatch", "reviewer": "Tag withdrawn (task 147): HOL `mk_linfix_fo_def` is generic in the terminal type `α` and the rule-index type `β` of `(α, β, locs) parsetree` and `β + num`, while Lean's `ParseTree`/`Rule` fix them to `Token` and `Sum Nonterminal Nat`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in both type parameters. The exact generic port is `mkLinfixHOL`."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "mkNdHOL",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "mkNd_fo_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against the typed capture scripts/hol-probes/pegexec_cml_fo_source_probe.out mkNd_fo_def_typed: HOL mkNd_fo_def (pegexec_cml_foScript.sml:45-47) is mkNd_fo nt l = Nd (nt, ptree_list_loc l) l with inferred types (nt :β + num) and (l :(α, β, locs) parsetree list), generic in the terminal type α and the rule-index type β; ptree_list_loc fixes the location type to locs. Lean's mkNdHOL keeps the same equation over the reviewed generic carrier Misc.Grammar.ParseTree α β Locs, using the reviewed treeListLoc (ptree_list_loc_def) for the merged location, and adds no premise."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "evalUnaryHOL",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_unary_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against the typed capture scripts/hol-probes/pegexec_cml_fo_source_probe.out eval_unary_def_typed: HOL eval_unary_def (pegexec_cml_foScript.sml:26-30) has two clauses, eval_unary SemU_id v = v and eval_unary (SemU_bindNT nt) v = [Nd (nt, ptree_list_loc v) v], with v :(α, MMLnonT, locs) parsetree list generic in the terminal type α and nt :MMLnonT + num. Lean's evalUnaryHOL keeps both clauses over Misc.Grammar.ParseTree α Nonterminal Locs, uses the reviewed treeListLoc for ptree_list_loc, reuses the reviewed Unary/sem_u action datatype, and adds no premise."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "mkLinfixHOL",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "mk_linfix_fo_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against the typed capture scripts/hol-probes/pegexec_cml_fo_source_probe.out mk_linfix_fo_def_typed: HOL mk_linfix_fo_def (pegexec_cml_foScript.sml:72-77) has three clauses, mk_linfix_fo tgt acc [] = acc, mk_linfix_fo tgt acc [t] = acc (the single-tree clause ignores its tree, as in HOL), and mk_linfix_fo tgt acc (opt::t::rest) = mk_linfix_fo tgt (mkNd_fo tgt [acc; opt; t]) rest, generic in the terminal type α and the rule-index type β with tgt :β + num. Lean's mkLinfixHOL keeps all three clauses, the same argument order, and the reviewed mkNdHOL for mkNd_fo; no premise added."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "evalBinary",
