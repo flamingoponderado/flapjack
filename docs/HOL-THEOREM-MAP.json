@@ -423,6 +423,17 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "refs_rel_LEAST_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/LeastRef.lean",
+    "lean_name": "refsRel_leastEq",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "bviRefs"
+    ],
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary BVI finite map and DATA sparse reference tree in source order, the original mapped-tree lookup premise, and equality of the least unused indices. The original local HOL proof is replayed with inferred types and no assumptions. The named BVI map uses the canonical finite-support carrier with a same-module codec witness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "do_build_thm",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/BuildCorrect.lean",
     "lean_name": "doBuild_correct",
