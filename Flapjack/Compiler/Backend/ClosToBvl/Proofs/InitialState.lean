@@ -12,47 +12,67 @@ set_option backward.privateInPublic.warn false
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps
 
-/-- Once the target's reserved global table has been installed, empty source
-and target stores satisfy the candidate state relation. The hypotheses are
-the installed application stubs, compiler-oracle relation, and compiled source
-code required by that relation. -/
-theorem initial_stateRel {C F : Type} (ffi : HolFfiState F) (maxApp clock : Nat)
-    (sourceCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (sourceOracle : ClosSem.CompileOracle C)
-    (sourceCompiler : ClosSem.Compiler C) (targetCode : Spt (Nat × Bvl.Exp))
-    (targetOracle : BvlSem.CompileOracle C) (targetCompiler : BvlSem.Compiler C)
-    (generic : ∀ n, n < maxApp → sptLookup (genericAppFnLocation n) targetCode =
-      some (n + 2, generateGenericApp maxApp n))
-    (partialStubs : ∀ total n, total < maxApp ∧ n < total →
-      sptLookup (partialAppFnLocation maxApp total n) targetCode =
-        some (total - n + 1, generatePartialAppClosureFn total n))
-    (force : sptLookup (numStubs maxApp - 2) targetCode = some (2, forceThunkCode))
-    (oracle : compileOracleInv maxApp sourceCode sourceCompiler sourceOracle targetCode targetCompiler targetOracle)
-    (compiledCode : ∀ name arity body, sourceCode.lookup name = some (arity, body) →
-      ∃ aux targetBody finalAux, compileExpsHOL maxApp [body] aux = ([targetBody], finalAux) ∧
-        sptLookup (name + numStubs maxApp) targetCode = some (arity, targetBody) ∧
-        codeInstalled finalAux targetCode) :
-    stateRel HolFiniteMapExact.empty
-      (ClosSem.initialState ffi maxApp sourceCode sourceOracle sourceCompiler clock)
-      { BvlSem.initialState ffi targetCode targetOracle targetCompiler clock with globals := [some (globalTable maxApp)] } := by
-  simp [stateRel, ClosSem.initialState, BvlSem.initialState, numAddedGlobals, ClosSem.getGlobal,
-    HolFiniteMapExact.empty, force, oracle]
-  exact ⟨generic, fun total n h1 h2 => partialStubs total n ⟨h1, h2⟩, compiledCode⟩
+/-- Replicating a value once produces a singleton list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "REPLICATE_1"]
+theorem replicateOne {α : Type} (x : α) : List.replicate 1 x = [x] := rfl
 
-/-- A list of installed code labels evaluates to its corresponding code
-pointers without changing the target state. -/
-theorem evaluate_installed_labels {C F : Type} (labels : List Nat) (env : List BvlSem.Value)
-    (state : BvlSem.State C F)
-    (installed : ∀ label ∈ labels, ∃ entry, sptLookup label state.code = some entry) :
-    BvlSem.evaluate (labels.map mkLabel) env state = (.val (labels.map BvlSem.Value.codePtr), state) := by
-  induction labels with
-  | nil => simp [BvlSem.evaluate]
-  | cons label rest ih =>
-    obtain ⟨entry, lookup⟩ := installed label (by simp)
-    have headRun : BvlSem.evaluate [mkLabel label] env state = (.val [.codePtr label], state) := by
+namespace InitDomain
+
+/-- The BVL reference store roundtrips through its finite-support view. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+
+/-- Each installed partial-application label evaluates to its code pointer. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_init1"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_init1 {C F : Type} (mapp2 mapp1 total : Nat)
+    (state : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (installed : ∀ n, n < mapp2 → sptMem (partialAppFnLocation mapp1 total n) state.code) :
+    BvlSem.evaluate ((List.range mapp2).map (fun n => mkLabel (partialAppFnLocation mapp1 total n))).reverse
+      [BvlSem.unitValue] state =
+    (.val ((List.range mapp2).map (fun n => BvlSem.Value.codePtr (partialAppFnLocation mapp1 total n))).reverse, state) := by
+  induction mapp2 with
+  | zero => simp [BvlSem.evaluate]
+  | succ n ih =>
+    obtain ⟨entry, lookup⟩ := (sptMem_iff_lookup _ _).mp (installed n (by omega))
+    have headRun : BvlSem.evaluate [mkLabel (partialAppFnLocation mapp1 total n)]
+        [BvlSem.unitValue] state = (.val [.codePtr (partialAppFnLocation mapp1 total n)], state) := by
       simp [mkLabel, BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, lookup]
-    have tailRun := ih (fun name member => installed name (by simp [member]))
-    have combined := BvlProps.evaluateAppend [mkLabel label] env state (rest.map mkLabel)
-    simpa [BvlSem.evaluateTuple, headRun, tailRun] using combined
+    have tailRun := ih (fun k bound => installed k (by omega))
+    have combined := BvlProps.evaluateAppend [mkLabel (partialAppFnLocation mapp1 total n)]
+      [BvlSem.unitValue] state
+      (((List.range n).map (fun k => mkLabel (partialAppFnLocation mapp1 total k))).reverse)
+    simpa [List.range_succ, List.map_append, BvlSem.evaluateTuple, headRun, tailRun] using combined
+
+/-- The generated partial-application labels evaluate to code pointers when
+all of their locations occur in the target code domain. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_init"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_init {C F : Type} (mapp2 mapp1 : Nat)
+    (state : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (installed : ∀ m n, m < mapp2 ∧ n < m →
+      sptMem (partialAppFnLocation mapp1 m n) state.code) :
+    BvlSem.evaluate (((List.range mapp2).map fun total =>
+      (List.range total).map fun previous => mkLabel (partialAppFnLocation mapp1 total previous)).flatten.reverse)
+      [BvlSem.unitValue] state =
+    (.val (((List.range mapp2).map fun total =>
+      (List.range total).map fun previous => BvlSem.Value.codePtr
+        (partialAppFnLocation mapp1 total previous)).flatten.reverse), state) := by
+  induction mapp2 with
+  | zero => simp [BvlSem.evaluate]
+  | succ n ih =>
+    have headRun := evaluate_init1 n mapp1 n state (fun k bound => installed n k ⟨by omega, bound⟩)
+    have tailRun := ih (fun m k bounds => installed m k ⟨by omega, bounds.2⟩)
+    have combined := BvlProps.evaluateAppend
+      (((List.range n).map fun k => mkLabel (partialAppFnLocation mapp1 n k)).reverse)
+      [BvlSem.unitValue] state
+      (((List.range n).map fun total =>
+        (List.range total).map fun k => mkLabel (partialAppFnLocation mapp1 total k)).flatten.reverse)
+    simpa [List.range_succ, List.map_append, BvlSem.evaluateTuple, headRun, tailRun] using combined
+
+end InitDomain
 
 /-- The initialization wrapper creates the reserved partial-application
 table before entering the compiled source entry. -/
@@ -65,15 +85,9 @@ theorem evaluate_initGlobals {C F : Type} (maxApp start : Nat) (state : BvlSem.S
   let labels := ((List.range maxApp).map fun total =>
     (List.range total).map fun previous => partialAppFnLocation maxApp total previous).flatten
   let allocated := { state with globals := [none] }
-  have labelInstalled : ∀ label ∈ labels.reverse, ∃ entry, sptLookup label allocated.code = some entry := by
-    intro label member
-    simp only [List.mem_reverse, labels, List.mem_flatten, List.mem_map, List.mem_range] at member
-    obtain ⟨inner, ⟨total, totalBound, innerEq⟩, labelMember⟩ := member
-    subst inner
-    obtain ⟨previous, previousBound, labelEq⟩ := List.mem_map.mp labelMember
-    subst label
-    exact installed total previous totalBound (List.mem_range.mp previousBound)
-  have labelRun := evaluate_installed_labels labels.reverse [BvlSem.unitValue] allocated labelInstalled
+  have labelRun := InitDomain.evaluate_init maxApp maxApp allocated (by
+    intro total previous bounds
+    exact (sptMem_iff_lookup _ _).2 (installed total previous bounds.1 bounds.2))
   have allocRun : BvlSem.evaluate [.op (.globOp .allocGlobal) [.op (.intOp (.const 1)) []]] [] state =
       (.val [BvlSem.unitValue], allocated) := by
     simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyGlobal,
@@ -82,7 +96,7 @@ theorem evaluate_initGlobals {C F : Type} (maxApp start : Nat) (state : BvlSem.S
       (((List.range maxApp).map fun total =>
         (List.range total).map fun previous => mkLabel (partialAppFnLocation maxApp total previous)).flatten.reverse)
       [BvlSem.unitValue] allocated = (.val (labels.reverse.map BvlSem.Value.codePtr), allocated) := by
-    simpa [labels, List.map_flatten, List.map_map, Function.comp_def] using labelRun
+    simpa [labels, List.map_reverse, List.map_flatten, List.map_map, Function.comp_def] using labelRun
   have blockRun : BvlSem.evaluate
       [.op (.blockOp (.cons 0)) (((List.range maxApp).map fun total =>
         (List.range total).map fun previous => mkLabel (partialAppFnLocation maxApp total previous)).flatten.reverse)]
@@ -156,18 +170,18 @@ theorem initialEvaluationSimulation_of_entry {C F : Type} (ffi : HolFfiState F) 
   let source := ClosSem.initialState ffi maxApp sourceCode sourceOracle sourceCompiler clock
   let target := { BvlSem.initialState ffi targetCode targetOracle targetCompiler clock with
     globals := [some (globalTable maxApp)] }
-  have states : stateRel HolFiniteMapExact.empty source target :=
-    initial_stateRel ffi maxApp clock sourceCode sourceOracle sourceCompiler targetCode targetOracle targetCompiler
-      generic partialStubs force oracle compiledCode
-  have codeAnnotations' : codeAnnotations source := by
-    simpa [source, codeAnnotations, ClosSem.initialState] using annotations
+  have states : stateRel HolFiniteMapExact.empty source target := by
+    simp [source, target, stateRel, ClosSem.initialState, BvlSem.initialState,
+      numAddedGlobals, ClosSem.getGlobal, HolFiniteMapExact.empty, force, oracle]
+    exact ⟨generic, fun total n h1 h2 => partialStubs total n ⟨h1, h2⟩, compiledCode⟩
+  have codeAnnotations' : codeAnnotations source := annotations
   have compilation : compileExpsHOL maxApp [.call .none 0 sourceStart []] [] =
       ([.call 0 (some (sourceStart + numStubs maxApp)) []], []) := by
     rw [compileExps_eq_list]
     simp [compileExpListHOL, compileExpHOL]
   have post := expressionSimulation_all (C := C) (F := F) [.call .none 0 sourceStart []]
     source final target [] [] HolFiniteMapExact.empty [] [] [.call 0 (some (sourceStart + numStubs maxApp)) []]
-    result run noType (by simpa [source, ClosSem.initialState] using compilation)
+    result run noType compilation
     (by simp [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp]) codeAnnotations'
     (by simp [ClosProps.everyFnVarsSome, ClosProps.fnVarsSomeExp]) (by simp [codeInstalled])
     (by simp [envRel]) states
@@ -178,33 +192,6 @@ theorem initialEvaluationSimulation_of_entry {C F : Type} (ffi : HolFfiState F) 
     (fun total previous h1 h2 => ⟨_, partialStubs total previous ⟨h1, h2⟩⟩)
   rw [show clock + (extra + 1) = (clock + extra) + 1 by omega, entryRun]
   simpa [source, target, ClosSem.initialState, BvlSem.initialState] using targetRun
-
-/-- The installed entry code preserves the proof-side whole-program behavior
-of a non-failing source entry call. This candidate remains untagged pending
-review of the evaluator and state carriers against HOL. -/
-theorem entry_semantics_eq {C F : Type} (ffi : HolFfiState F) (maxApp sourceStart targetStart : Nat)
-    (sourceCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (sourceOracle : ClosSem.CompileOracle C)
-    (sourceCompiler : ClosSem.Compiler C) (targetCode : Spt (Nat × Bvl.Exp))
-    (targetOracle : BvlSem.CompileOracle C) (targetCompiler : BvlSem.Compiler C)
-    (nonfail : ClosSem.semantics ffi maxApp sourceCode sourceOracle sourceCompiler [.call .none 0 sourceStart []] ≠ .fail)
-    (generic : ∀ n, n < maxApp → sptLookup (genericAppFnLocation n) targetCode =
-      some (n + 2, generateGenericApp maxApp n))
-    (partialStubs : ∀ total n, total < maxApp ∧ n < total →
-      sptLookup (partialAppFnLocation maxApp total n) targetCode =
-        some (total - n + 1, generatePartialAppClosureFn total n))
-    (force : sptLookup (numStubs maxApp - 2) targetCode = some (2, forceThunkCode))
-    (oracle : compileOracleInv maxApp sourceCode sourceCompiler sourceOracle targetCode targetCompiler targetOracle)
-    (compiledCode : ∀ name arity body, sourceCode.lookup name = some (arity, body) →
-      ∃ aux targetBody finalAux, compileExpsHOL maxApp [body] aux = ([targetBody], finalAux) ∧
-        sptLookup (name + numStubs maxApp) targetCode = some (arity, targetBody) ∧ codeInstalled finalAux targetCode)
-    (annotations : codeAnnotations (ClosSem.initialState ffi maxApp sourceCode sourceOracle sourceCompiler 0))
-    (entry : sptLookup targetStart targetCode = some (0, initGlobals maxApp (sourceStart + numStubs maxApp))) :
-    BvlSem.semantics ffi targetCode targetOracle targetCompiler targetStart =
-      ClosSem.semantics ffi maxApp sourceCode sourceOracle sourceCompiler [.call .none 0 sourceStart []] := by
-  apply semantics_eq_of_initialSimulation ffi maxApp sourceCode sourceOracle sourceCompiler _
-    targetCode targetOracle targetCompiler targetStart nonfail
-  exact initialEvaluationSimulation_of_entry ffi maxApp sourceStart targetStart sourceCode sourceOracle sourceCompiler
-    targetCode targetOracle targetCompiler generic partialStubs force oracle compiledCode annotations entry
 
 private def toBroad (code : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) := code.lookup
 private def ofBroad (lookup : Nat → Option (Nat × ClosLang.Exp))
@@ -265,12 +252,14 @@ theorem compileProgSemantics_source {C F : Type} (ffi : HolFfiState F) (maxApp :
     BvlSem.semantics ffi code2 co2 cc2 nsm1 =
       ClosSem.semantics ffi maxApp code1 co1 cc1 [.call .none 0 start []] := by
   rcases hypotheses with ⟨nonfail, compiled, _, ⟨generic, partialStubs, _⟩, locations, vars, entry, force, oracle, _⟩
-  apply entry_semantics_eq ffi maxApp start nsm1 code1 co1 cc1 code2 co2 cc2 nonfail generic
-    ?_ force oracle compiled ?_ ?_
+  apply semantics_eq_of_initialSimulation ffi maxApp code1 co1 cc1 _
+    code2 co2 cc2 nsm1 nonfail
+  apply initialEvaluationSimulation_of_entry ffi maxApp start nsm1 code1 co1 cc1 code2 co2 cc2
+    generic ?_ force oracle compiled ?_ ?_
   · intro total previous bounds
     have arithmetic : total + 1 - previous = total - previous + 1 := by omega
     simpa [arithmetic] using partialStubs total previous bounds
-  · simpa [codeAnnotations, ClosSem.initialState] using And.intro locations vars
+  · exact ⟨locations, vars⟩
   · simpa [Nat.add_comm] using entry
 
 end Flapjack.Compiler.Backend.ClosToBvl

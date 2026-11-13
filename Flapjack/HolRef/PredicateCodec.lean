@@ -63,7 +63,7 @@ def resolvePredicateCodecInModule (env : Environment) (owner namespaceName : Nam
   let witness := Name.str namespaceName "simulationPredicateRoundtrips"
   unless predicateCodecDefiningModule env witness == owner do
     throw s!"{witness} has the wrong defining module"
-  match env.find? witness with
+  match env.checked.get.find? witness with
   | some (.thmInfo info) =>
     unless info.levelParams.isEmpty do
       throw s!"{witness} must be monomorphic"

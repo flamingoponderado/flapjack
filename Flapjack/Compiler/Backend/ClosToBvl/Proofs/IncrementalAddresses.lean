@@ -14,6 +14,10 @@ public import Flapjack.HolRef
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open ClosLang ClosProps
 
+/-- Pointwise membership preservation implies set inclusion. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "show_SUBSET"]
+theorem showSubset {α : Type} (s t : Set α) (h : ∀ x, x ∈ s → x ∈ t) : s ⊆ t := h
+
 /-- The list arithmetic used when reserving at least one entry address. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "trivia_1"]
 theorem incrementalAddress_trivia {α : Type} (x : Nat) (xs : List α) (v : α) :
@@ -100,13 +104,6 @@ theorem extractName_codeLocations (exps : List ClosLang.Exp) (n : Nat) (realExps
     all_goals rcases h with ⟨_, rfl⟩
     all_goals simp [codeLocations, codeLocationsExp]
 
-private theorem groupPerm (a b c d : List Nat) :
-    ((a ++ c) ++ (b ++ d).reverse).Perm (((a ++ b) ++ c) ++ d) := by
-  apply List.Perm.trans ((List.reverse_perm (b ++ d)).append_left (a ++ c))
-  have h := (List.perm_append_comm (l₁ := c) (l₂ := b)).append_right d
-  have h := h.append_left a
-  simpa [List.append_assoc] using h
-
 private theorem incAddressPerm (maxApp : Nat) (program : List ClosLang.Exp × List (Nat × Nat × ClosLang.Exp)) :
     ((compileInc maxApp program).map Prod.fst).Perm
       ((reqCompileIncAddrs [] program).map (numStubs maxApp + ·)) := by
@@ -121,12 +118,12 @@ private theorem incAddressPerm (maxApp : Nat) (program : List ClosLang.Exp × Li
     rw [compiled]
     simp only [List.map_append, codeLocations_append, chain, locations]
     simp only [reqCompileIncAddrs, List.map_nil, List.flatten_nil, List.append_nil]
-    have perm := (groupPerm ((chainExps start realExps).map Prod.fst)
-      (codeLocations exps) (code.map Prod.fst)
-      (codeLocations (code.map fun t => t.2.2))).map (numStubs maxApp + ·)
-    have firstMapped := congrArg (List.map (numStubs maxApp + ·)) extracted
-    simp only [List.map_map, Function.comp_def] at firstMapped
-    simpa [List.map_append, List.map_map, Function.comp_def, firstMapped, extracted] using perm
+    rw [← extracted]
+    simp only [List.map_append, List.map_reverse, List.map_map, Function.comp_def]
+    apply List.perm_iff_count.mpr
+    intro label
+    simp only [List.count_append, List.count_reverse]
+    ac_rfl
 /-- Incremental compilation preserves required-address distinctness and
 emits only shifted required addresses. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_inc_req_addrs"]

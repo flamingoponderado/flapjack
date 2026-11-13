@@ -19,6 +19,12 @@ namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack ClosLang ClosProps BackendProps ClosSem
 local instance : Nonempty ClosKnown.Config := ⟨ClosKnown.defaultConfig 0⟩
 
+/-- Adding a natural number on the left leaves a number unchanged exactly
+when the added number is zero. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "obvious_arith_comm"]
+theorem obviousArithComm (a b : Nat) : (a = b + a) ↔ b = 0 := by
+  omega
+
 /-- Common closure preprocessing preserves whole-program behavior. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_common_semantics"
   (fmap_as_finite_support_result_observations :=
@@ -208,13 +214,10 @@ theorem compileCommon_semantics {C F : Type} (ffi : HolFfiState F) (c c' : Confi
           · have first := (known enabled).2.2.2.1
             rw [postEq] at first
             exact first.symm
-          · have setEq (b : Bag Nat) : setOfBag b = {i | b i ≠ 0} := by
-              funext i
-              apply propext
-              change 1 ≤ b i ↔ b i ≠ 0
-              omega
-            simp_rw [← setEq]
-            exact knownMonotonic enabled
+          · have monotone := knownMonotonic enabled
+            change oracleMonotonic (fun entry => {i | 1 ≤ elistGlobals entry.2.1 i}) (· < ·)
+              {i | 1 ≤ elistGlobals numbered i} nco at monotone
+            simpa only [Nat.one_le_iff_ne_zero] using monotone
         let ccc := stateCc (ClosCall.condCallCompileInc c.doCall)
           (pureCc ClosAnnotate.compileIncSource cc)
         let kco := ClosKnown.knownCo c.knownConf nco
@@ -298,11 +301,8 @@ theorem compileCommon_semantics {C F : Type} (ffi : HolFfiState F) (c c' : Confi
             key ∈ aux.map Prod.fst := by
           change (HolFiniteMapExact.alistToFmap aux).lookup key ≠ none at member
           rw [ClosCall.alistToFmapLookup] at member
-          cases found : holALookup aux key with
-          | none => exact (member found).elim
-          | some value =>
-            have present := holALookup_member aux key value found
-            exact List.mem_map.mpr ⟨(key, value), present, rfl⟩
+          obtain ⟨value, found⟩ := Option.ne_none_iff_exists'.mp member
+          exact List.mem_map.mpr ⟨(key, value), holALookup_member aux key value found, rfl⟩
         have numberingBounds := ClosNumber.renumberList_codeLocations_distinct aligned source
         rw [hr] at numberingBounds
         have numberingEven := ClosNumber.renumberCodeLocs_even.1 aligned source (even_makeEven _)

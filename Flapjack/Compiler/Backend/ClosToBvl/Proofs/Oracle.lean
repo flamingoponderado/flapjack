@@ -5,7 +5,6 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.FnAnnotations
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.State
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.State
 public import Flapjack.Compiler.Backend.BackendProps.Pure
-public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ExpsEquivalence
 public import Flapjack.Misc.ShiftSeq
 
 @[expose] public section

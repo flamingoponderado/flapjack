@@ -151,6 +151,12 @@
   "reviewer": "Independent typed HOL comparison confirms the original xs, n, aux and extra binder order and the complete pair-lambda equality, including the unchanged natural-number first component."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "show_SUBSET",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "showSubset",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original local statement and typed proof replay: both sets have the same arbitrary element type, and pointwise membership implication yields set inclusion without extra premises. Lean Set.Subset is the same membership implication."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "trivia_1",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "incrementalAddress_trivia",
   "statement_status": "reviewed_exact",
@@ -1378,6 +1384,12 @@
   "reviewer": "Compared imp_perm_code_merge_typed and independent review: polymorphic payload, binder order, premise and permutation orientation match."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "set_MAP_code_sort",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SortPermutation.lean", "lean_name": "set_map_codeSort",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared set_MAP_code_sort_typed: the natural-keyed code payload and the mapped result have independent arbitrary types, the function is unrestricted, and the complete sets of mapped entries agree."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "PERM_code_sort",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/SortPermutation.lean", "lean_name": "codeSort_perm",
   "statement_status": "reviewed_exact",
@@ -1999,6 +2011,12 @@
   "reviewer": "Compared can_extract_def_typed: existential order, expression constructors and int_of_num as Int.ofNat agree."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "MAP_FST_chain_exps",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainLocations.lean", "lean_name": "mapFst_chainExps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared MAP_FST_chain_exps_typed: an arbitrary start and nonempty closure-expression list yield the complete mapped COUNT_LIST/LENGTH entry-label sequence. The nonempty premise and addition order are unchanged."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "MAP_FST_chain_exps_any",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainLocations.lean", "lean_name": "mapFst_chainExps_any",
   "statement_status": "reviewed_exact",
@@ -2153,6 +2171,22 @@
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Common.lean", "lean_name": "compileCommon",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared compile_common_def_typed: configuration and expression carriers and all eight ordered steps agree, including post-mti length for fresh-location reservation, even alignment, the original next_loc for chain_exps, and source annotation. Numbering, known-function and direct-call results and all four updated configuration fields agree. compileCallMtiFuel_eq_source proves whole-result agreement with the executed compiler using the pass equations directly."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "eval_sim_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvalSim.lean", "lean_name": "evalSim",
+  "statement_status": "reviewed_fmap_as_finite_support_parameter_predicate_domain",
+  "fmap_as_finite_support_parameter_predicate_domain": ["code1", "rel"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared eval_sim_def_typed and the original HOL source: code1 and the first map domain of rel use the canonical finite-support carrier. Independent source and target compiler types, shared FFI type, source evaluation and safety guard, complete relation application, existential target run, result relation and whole FFI equality agree. The evaluator inherits the reals_as_rational_cuts assumption in docs/SOUNDNESS.md item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "IMP_semantics_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvalSim.lean", "lean_name": "impSemanticsEq",
+  "statement_status": "reviewed_fmap_as_finite_support_parameter_predicate_domain",
+  "fmap_as_finite_support_parameter_predicate_domain": ["code1", "rel"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared IMP_semantics_eq_typed and the original HOL source: code1 and the first map domain of rel use the canonical finite-support carrier. The independent compiler types, shared FFI type, grouped simulation and nonfailure premise, relation premise and target-to-source semantics equality agree. The evaluator inherits the reals_as_rational_cuts assumption in docs/SOUNDNESS.md item 8."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "hol_name": "shift_correct",
@@ -2860,6 +2894,14 @@
   "lean_name": "sptLookupFromList",
   "statement_status": "reviewed_exact",
   "reviewer": "Independent comparison with the HOL source and lookup_fromList_typed confirms arbitrary element type, list and index, with the original guarded lookup equation. Dependent indexing equals HOL EL in the in-bounds branch; the out-of-bounds branch returns none without assuming a nonempty carrier. The optional-index helper also replaces an identical private proof in BviToData."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "obvious_arith_comm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CommonSemantics.lean",
+  "lean_name": "obviousArithComm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original local statement and typed proof replay: a and b are independent naturals, and a equals b plus a exactly when b is zero, with no extra premises."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
@@ -16208,6 +16250,78 @@
     "statement_status": "reviewed_fmap_as_finite_support_parameters",
     "fmap_as_finite_support_parameters": ["code1"],
     "reviewer": "Compared init_code_rel_typed: generic and partial stub lookup requirements retain their bounds and original arithmetic, and every source code entry has existential compiled body and installed auxiliary code. The source code parameter uses canonical finite support, with a same-module lookup/support roundtrip; target code remains the HOL sparse tree."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "REPLICATE_1",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialState.lean",
+    "lean_name": "replicateOne",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local original and typed proof replay: a singleton replication returns the same element in a one-element list, for an arbitrary element type and without extra premises."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "FST_EQ_LEMMA",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Semantics.lean",
+    "lean_name": "fstEqLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original local proof and typed replay: the pair's two component types are independent, the given value has the first type, and first-projection equality is equivalent to the existence of a matching second component."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "clos_init_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Semantics.lean",
+    "lean_name": "closInit",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared clos_init_def_typed: independent compiler and FFI carriers, empty globals, empty reference and code maps, and equality of maxApp all match the original. The two state maps use canonical finite support, witnessed by the local state roundtrip."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "clos_init_with_clock",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Semantics.lean",
+    "lean_name": "closInit_withClock",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared clos_init_with_clock_typed: replacing only the clock in an arbitrary closure state preserves and reflects the complete closInit condition. The two state maps use canonical finite support, witnessed by the local state roundtrip."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "initial_state_with_clock",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Semantics.lean",
+    "lean_name": "closInitialState_withClock",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code", "code"],
+    "reviewer": "Compared the original local proof and typed replay: compiler and FFI carriers remain independent, the source code map and callbacks are unchanged, and updating the initial clock gives the full initial state at k + ck. The code parameter and closure state's refs and code fields use canonical finite-support maps, with a same-module state roundtrip witness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "initial_state_with_clock_bvl",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Semantics.lean",
+    "lean_name": "initialState_withClock",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Compared the original local proof and typed replay: compiler and FFI carriers remain independent; target code is a sparse tree; both the direct clock update and incClock return the entire initial state at k + ck. The BVL state's refs field uses the canonical finite-support map, with its same-module roundtrip witness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "evaluate_init1",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialState.lean",
+    "lean_name": "evaluate_init1",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the original local evaluate_init1 proof and typed replay: arbitrary mapp2, mapp1, total and BVL state, the bound and sparse-tree domain premise, reversed generated label expressions and corresponding code pointers, Unit environment and unchanged result state agree. The BVL state's refs field uses the canonical finite-support map and its local roundtrip witness; code is a sparse tree. The evaluator inherits reals_as_rational_cuts. HOL replay and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+    "hol_name": "evaluate_init",
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialState.lean",
+    "lean_name": "evaluate_init",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the original local evaluate_init proof and typed replay: the independent mapp2 and mapp1 bounds, arbitrary BVL state, sparse-tree domain premise, reversed flattened label expressions and code-pointer results, Unit environment, and unchanged result state agree. The BVL state's refs field uses the canonical finite-support map and its local roundtrip witness; code uses the sparse tree. The evaluator inherits reals_as_rational_cuts. HOL replay and Lean checking do not establish cross-language equivalence."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
