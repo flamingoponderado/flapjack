@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BvlInline.Proofs.LetOpSemantics
-public import Flapjack.Compiler.Backend.BvlInline.Proofs.ProductionSemantics
+public import Flapjack.Compiler.Backend.BvlInline.Proofs.InlineSemantics
 public import Flapjack.Compiler.Backend.BvlInline.SourceCompile
 
 @[expose] public section

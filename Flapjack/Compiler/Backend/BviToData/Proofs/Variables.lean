@@ -93,34 +93,4 @@ theorem getVars_lift (names : List Nat) (values : List BvlSem.Value)
       · simp [DataSem.getVars, DataSem.getVar, found, read]
       · simp [← lookup, projected]
 
-/-- The successful non-tail variable case reads the corresponding data local
-and compiles to `skip`. This factored case is untagged: the full source case
-also covers tail position and the complete compiler invariant. -/
-theorem evaluateVar_nonTail {C F : Type} (index n : Nat) (names live : List Nat)
-    (env : List BvlSem.Value) (source : BviSem.BviState C F) (target : DataSem.State C F)
-    (value : BvlSem.Value) (related : stateRel source target)
-    (varRel : DataProps.varCorr env names (sptMap dataToBviValue target.locals))
-    (run : BviSem.evaluate [.var index] env source = (.val [value], source)) :
-    ∃ name dataValue,
-      names[index]? = some name ∧ DataSem.getVar name target.locals = some dataValue ∧
-      dataToBviValue dataValue = value ∧
-      compileSing n names false live (.var index) = (.skip, name, max n (name + 1)) ∧
-      DataSem.evaluate .skip target = (none, target) ∧ stateRel source target := by
-  cases found : env[index]? with
-  | none => simp [BviSem.evaluate, found] at run
-  | some foundValue =>
-    simp [BviSem.evaluate, found] at run
-    subst value
-    obtain ⟨name, nameAt, valueAt⟩ := DataProps.varCorr_lookup env names
-      (sptMap dataToBviValue target.locals) varRel index foundValue found
-    simp only [DataSem.getVar, sptLookup_sptMap] at valueAt
-    cases localFound : sptLookup name target.locals with
-    | none => simp [localFound] at valueAt
-    | some dataValue =>
-      simp only [localFound, Option.map_some, Option.some.injEq] at valueAt
-      refine ⟨name, dataValue, nameAt, ?_, valueAt, ?_, ?_, related⟩
-      · simpa [DataSem.getVar] using localFound
-      · simp [compileSing, nameAt]
-      · simp [DataSem.evaluate]
-
 end Flapjack.Compiler.Backend.BviToData

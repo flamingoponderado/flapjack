@@ -527,35 +527,41 @@ theorem compileCorrect_var {C F : Type} (index : Nat) (env : List BvlSem.Value)
   | some value =>
     simp [BviSem.evaluate, valueAt] at run
     rcases run with ⟨rfl, rfl⟩
-    obtain ⟨name, dataValue, nameAt, read, projected, _, _, _⟩ :=
-      evaluateVar_nonTail index n corr live env s1 t1 value related vars (by simp [BviSem.evaluate, valueAt])
-    cases tail with
-    | false =>
-      refine ⟨t1, .skip, none, [name], max n (name + 1), none, ?_, ?_, related, ?_⟩
-      · simp [compileSource, nameAt]
-      · simp [DataSem.evaluate]
-      · simp only [correctOutcome, true_and, List.mem_singleton, forall_eq, vars]
-        refine ⟨Nat.le_max_left _ _, ?_, ?_, ?_, ?_, ?_, ?_⟩
-        · omega
-        · intro k hk
-          exact fresh k (Nat.le_trans (Nat.le_max_left _ _) hk)
-        · intro k x lookup
-          by_contra bound
-          have absent := fresh k (Nat.le_trans (Nat.le_max_left _ _) (Nat.le_of_not_gt bound))
-          rw [lookup] at absent
-          contradiction
-        · intro k x lookup _
-          exact lookup
-        · exact fun h => h
-        · constructor
-          · simpa [DataSem.getVar, sptLookup_sptMap, read, projected] using congrArg (Option.map dataToBviValue) read
+    obtain ⟨name, nameAt, mappedRead⟩ := DataProps.varCorr_lookup env corr
+      (sptMap dataToBviValue t1.locals) vars index value valueAt
+    simp only [DataSem.getVar, sptLookup_sptMap] at mappedRead
+    cases localFound : sptLookup name t1.locals with
+    | none => simp [localFound] at mappedRead
+    | some dataValue =>
+      have projected : dataToBviValue dataValue = value := by simpa [localFound] using mappedRead
+      have read : DataSem.getVar name t1.locals = some dataValue := by simpa [DataSem.getVar] using localFound
+      cases tail with
+      | false =>
+        refine ⟨t1, .skip, none, [name], max n (name + 1), none, ?_, ?_, related, ?_⟩
+        · simp [compileSource, nameAt]
+        · simp [DataSem.evaluate]
+        · simp only [correctOutcome, true_and, List.mem_singleton, forall_eq, vars]
+          refine ⟨Nat.le_max_left _ _, ?_, ?_, ?_, ?_, ?_, ?_⟩
+          · omega
+          · intro k hk
+            exact fresh k (Nat.le_trans (Nat.le_max_left _ _) hk)
+          · intro k x lookup
+            by_contra bound
+            have absent := fresh k (Nat.le_trans (Nat.le_max_left _ _) (Nat.le_of_not_gt bound))
+            rw [lookup] at absent
+            contradiction
+          · intro k x lookup _
+            exact lookup
+          · exact fun h => h
           · constructor
-    | true =>
-      refine ⟨DataSem.flushState false t1, .return [name], some (.val [dataValue]), [n], n + 1, none, ?_, ?_, ?_, ?_⟩
-      · simp [compileSource, nameAt]
-      · simp [DataSem.evaluate, DataSem.getVars, read]
-      · simpa [stateRel, DataSem.flushState] using related
-      · simp [correctOutcome, isReturn, isResult, isException, dataToBviResult, projected, DataSem.flushState]
+            · simpa [DataSem.getVar, sptLookup_sptMap, read, projected] using congrArg (Option.map dataToBviValue) read
+            · constructor
+      | true =>
+        refine ⟨DataSem.flushState false t1, .return [name], some (.val [dataValue]), [n], n + 1, none, ?_, ?_, ?_, ?_⟩
+        · simp [compileSource, nameAt]
+        · simp [DataSem.evaluate, DataSem.getVars, read]
+        · simpa [stateRel, DataSem.flushState] using related
+        · simp [correctOutcome, isReturn, isResult, isException, dataToBviResult, projected, DataSem.flushState]
 
 /-- The empty list satisfies the reusable evaluator induction invariant. -/
 theorem simulationFor_nil {C F : Type} (env : List BvlSem.Value) (s1 : BviSem.BviState C F) :
