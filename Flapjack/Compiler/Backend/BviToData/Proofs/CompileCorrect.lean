@@ -61,7 +61,9 @@ private theorem varCorr_member {α : Type} {values : List α} {names : List Nat}
     · exact ⟨value, lookup⟩
     · exact ih key member
 
-private theorem varCorr_append {α : Type} {values1 values2 : List α} {names1 names2 : List Nat}
+/-- Flapjack infrastructure: append two variable correspondences over the
+same target locals. -/
+theorem varCorr_append {α : Type} {values1 values2 : List α} {names1 names2 : List Nat}
     {env : Spt α} (first : DataProps.varCorr values1 names1 env)
     (second : DataProps.varCorr values2 names2 env) :
     DataProps.varCorr (values1 ++ values2) (names1 ++ names2) env := by
