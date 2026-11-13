@@ -178,13 +178,6 @@ WITHDRAWN_HOL_DECLARATIONS = {
         "the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 "
         "is admitted.  The HOL tag was withdrawn pending a faithful width-restricted restatement."
     ),
-    ("Flapjack/Pancake/WordConvs.lean", "instOkLess"): (
-        "cakeml/compiler/backend/semantics/wordConvsScript.sml",
-        "inst_ok_less_def",
-        "flapjack-ds8 (bead flapjack-4ac.6): HOL inst_ok_less_def uses a positive-dimensional word type; "
-        "the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 "
-        "is admitted.  The HOL tag was withdrawn pending a faithful width-restricted restatement."
-    ),
     ("Flapjack/Pancake/WordLang.lean", "everyVarImm"): (
         "cakeml/compiler/backend/wordLangScript.sml",
         "every_var_imm_def",

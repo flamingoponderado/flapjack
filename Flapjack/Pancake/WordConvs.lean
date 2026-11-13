@@ -160,85 +160,6 @@ def flatExpConventions {width : Nat} : WordLangProgHOL (BitVec width) → Bool
           | some (_, handlerProg, _, _) => flatExpConventions handlerProg)
   | _ => true
 
-/-- Exact source counterpart of CakeML `wordConvs$inst_ok_less_def`
-(`cakeml/compiler/backend/semantics/wordConvsScript.sml:208-249`).  This is the
-weaker per-instruction well-formedness predicate used by
-`compile_to_word_conventions2`: unlike `asm$inst_ok` it omits the operand
-register checks and only constrains the configuration-dependent immediate and
-offset conditions.  The `Mem` branch lists `Load`/`Store`/`Load16`/`Store16`/
-`Load32`/`Store32` in its first case, so the `hw_offset_ok` case is only
-reachable for the remaining memops in the HOL definition.
-    Not an exact HOL port: this Lean declaration quantifies `width : Nat`
-    without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
-    dimensions are positive.  The manifest records this mismatch (bead
-    flapjack-4ac.6); restore the HOL tag only after correcting the width
-    binder and reviewing callers.
-    -/
-def instOkLess {width : Nat} (config : AsmConfig width) :
-    WordLangInst (BitVec width) → Bool
-  | .arith (.binop operator _ _ (.imm value)) => config.validImm (.inl operator) value
-  | .arith (.shift operator _ _ (.imm value)) =>
-      (!(value == 0) || operator == .lsl) && value.toNat < width
-  | .arith (.div ..) =>
-      config.isa == .armv8 || config.isa == .mips || config.isa == .riscv
-  | .arith (.longMul destinationLeft destinationRight sourceLeft sourceRight) =>
-      (!(config.isa == .armv7) || !(destinationLeft == destinationRight)) &&
-        (!(config.isa == .armv8 || config.isa == .riscv || config.isa == .ag32) ||
-          (!(destinationLeft == sourceLeft) && !(destinationLeft == sourceRight)))
-  | .arith (.longDiv ..) => config.isa == .x86_64
-  | .arith (.addCarry destination _ sourceLeft sourceRight) =>
-      (!(config.isa == .mips || config.isa == .riscv) ||
-        (!(destination == sourceLeft) && !(destination == sourceRight)))
-  | .arith (.addOverflow destination _ sourceLeft _) =>
-      (!(config.isa == .mips || config.isa == .riscv) || !(destination == sourceLeft))
-  | .arith (.subOverflow destination _ sourceLeft _) =>
-      (!(config.isa == .mips || config.isa == .riscv) || !(destination == sourceLeft))
-  | .mem operator _ (.addr _ offset) =>
-      (if operator == .load || operator == .store || operator == .load16 ||
-          operator == .store16 || operator == .load32 || operator == .store32 then
-        asmAddrOffsetOk config offset
-       else if operator == .load16 || operator == .store16 then
-        asmHwOffsetOk config offset
-       else
-        asmByteOffsetOk config offset)
-  | .fp (.fpLess _ left right) => asmFpRegOk config left && asmFpRegOk config right
-  | .fp (.fpLessEqual _ left right) => asmFpRegOk config left && asmFpRegOk config right
-  | .fp (.fpEqual _ left right) => asmFpRegOk config left && asmFpRegOk config right
-  | .fp (.fpAbs destination source) =>
-      (!config.twoRegArith || !(destination == source)) &&
-        asmFpRegOk config destination && asmFpRegOk config source
-  | .fp (.fpNeg destination source) =>
-      (!config.twoRegArith || !(destination == source)) &&
-        asmFpRegOk config destination && asmFpRegOk config source
-  | .fp (.fpSqrt destination source) =>
-      asmFpRegOk config destination && asmFpRegOk config source
-  | .fp (.fpAdd destination left right) =>
-      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
-        asmFpRegOk config left && asmFpRegOk config right
-  | .fp (.fpSub destination left right) =>
-      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
-        asmFpRegOk config left && asmFpRegOk config right
-  | .fp (.fpMul destination left right) =>
-      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
-        asmFpRegOk config left && asmFpRegOk config right
-  | .fp (.fpDiv destination left right) =>
-      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
-        asmFpRegOk config left && asmFpRegOk config right
-  | .fp (.fpFma destination left right) =>
-      (config.isa == .armv7) && 2 < config.fpRegCount && asmFpRegOk config destination &&
-        asmFpRegOk config left && asmFpRegOk config right
-  | .fp (.fpMov destination source) =>
-      asmFpRegOk config destination && asmFpRegOk config source
-  | .fp (.fpMovToReg destinationInteger second fpRegister) =>
-      (!(width == 32) || !(destinationInteger == second)) && asmFpRegOk config fpRegister
-  | .fp (.fpMovFromReg fpRegister destinationInteger second) =>
-      (!(width == 32) || !(destinationInteger == second)) && asmFpRegOk config fpRegister
-  | .fp (.fpToInt destination source) =>
-      asmFpRegOk config destination && asmFpRegOk config source
-  | .fp (.fpFromInt destination source) =>
-      asmFpRegOk config destination && asmFpRegOk config source
-  | _ => true
-
 /-- Flapjack-only shared program traversal for the broad executed validity
 predicate and its exact-carrier counterpart. HOL has a fixed configuration
 argument, not these policy parameters; this infrastructure has no HOL original.
@@ -267,27 +188,6 @@ def fullInstOkLessWith {width : Nat}
       | some (.addr _ offset) => addressOk operator offset
       | none => false
   | _ => true
-
-/-- Broad program-validity compatibility wrapper. It retains the original
-width-general behavior, including width zero, and uses AsmConfig whose encoder
-consumes AsmData and produces UInt8 lists. Those carriers differ from HOL's
-positive-width asm_config with HolAsm/word8 encoder, so this wrapper is untagged.
-The faithful full_inst_ok_less port is fullInstOkLessExact in the counterpart
-submodule; the shared recursive traversal avoids a duplicate program semantics.
-Source-call audit: this guard is a proof-side HOL correctness predicate, not
-an invoked CLI compiler validation pass. The native naming/convention proofs
-and executed regression runner use the exact predicate. This older wrapper
-is retained only for explicitly untagged compatibility checks; its encoder
-carrier difference is not discharged by the matching bounded test results. -/
-def fullInstOkLess {width : Nat} (config : AsmConfig width)
-    (program : WordLangProgHOL (BitVec width)) : Bool :=
-  fullInstOkLessWith (instOkLess config) (fun operator offset =>
-    if operator == .load || operator == .store ||
-        operator == .load32 || operator == .store32 then
-      asmAddrOffsetOk config offset
-    else if operator == .load16 || operator == .store16 then
-      asmHwOffsetOk config offset
-    else asmByteOffsetOk config offset) program
 
 /-- Exact HOL port of the positive-dimensional word-type declaration
 HOL `distinct_tar_reg_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`),
@@ -549,9 +449,9 @@ per-instruction well-formedness predicate used by
 `AsmConfigExact`/`HolInst` carriers (HOL's `'a asm_config`/`'a inst`) with an
 explicit `[NeZero width]` binder.  The HOL `Mem` branch lists
 `Load`/`Store`/`Load16`/`Store16`/`Load32`/`Store32` in its first case, so the
-`hw_offset_ok` case is only reachable for the remaining memops.  The
-width-general executed form above remains untagged; this declaration is the
-faithful positive-width counterpart tracked by bead flapjack-4ac.6.1.2. -/
+`hw_offset_ok` case is only reachable for the remaining memops.  This is the
+only spelling of the predicate; callers reach it from the production carrier
+through `AsmConfig.toExact` and `HolInst.ofWordLangInst`. -/
 @[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "inst_ok_less_def"]
 def instOkLessExact {width : Nat} [NeZero width] (config : AsmConfigExact width) :
     HolInst width → Bool

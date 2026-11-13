@@ -393,6 +393,30 @@ structure AsmConfigExact (width : Nat) [NeZero width] where
   cjumpOffset : BitVec width × BitVec width
   locOffset : BitVec width × BitVec width
 
+/-- Flapjack-only carrier conversion (no HOL original): view a production
+`AsmConfig` as the exact `AsmConfigExact`.  The two records agree field by field
+except `encode`, whose argument type differs; the `wordConvs` validity predicates
+read only the configuration fields, never `encode`, so the conversion fixes an
+arbitrary encoder. -/
+def AsmConfig.toExact {width : Nat} [NeZero width] (config : AsmConfig width) :
+    AsmConfigExact width where
+  isa := config.isa
+  encode := fun _ => []
+  bigEndian := config.bigEndian
+  codeAlignment := config.codeAlignment
+  linkReg := config.linkReg
+  avoidRegs := config.avoidRegs
+  regCount := config.regCount
+  fpRegCount := config.fpRegCount
+  twoRegArith := config.twoRegArith
+  validImm := config.validImm
+  addrOffset := config.addrOffset
+  hwOffset := config.hwOffset
+  byteOffset := config.byteOffset
+  jumpOffset := config.jumpOffset
+  cjumpOffset := config.cjumpOffset
+  locOffset := config.locOffset
+
 /-- HOL `asmScript.sml:174-176`:
 `reg_ok r c <=> r < c.reg_count /\ ~MEM r c.avoid_regs`.
 Exact port over the exact `AsmConfigExact` carrier (`encode : HolAsm width → word8 list`)
