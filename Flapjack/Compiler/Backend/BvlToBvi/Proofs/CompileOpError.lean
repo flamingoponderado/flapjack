@@ -21,22 +21,6 @@ private theorem let_error {C F : Type} (args : List Bvi.Exp) (body : Bvi.Exp)
     BviSem.evaluate [.let args body] env state = (.err error, next) := by
   rw [BviSem.evaluate, BviSem.fixClock_evaluate, run]
 
-private theorem call_error {C F : Type} (location : Nat) (args : List Bvi.Exp)
-    (env : List Value) (state next : BviSem.BviState C F) (error : ErrorResult BviSem.ExnOrRet)
-    (run : BviSem.evaluate args env state = (.err error, next)) :
-    BviSem.evaluate [.call 0 (some location) args none] env state = (.err error, next) := by
-  rw [BviSem.evaluate, BviSem.fixClock_evaluate, run]
-  simp
-
-private theorem append_error {C F : Type} (args suffix : List Bvi.Exp)
-    (env : List Value) (state next : BviSem.BviState C F) (error : ErrorResult BviSem.ExnOrRet)
-    (run : BviSem.evaluate args env state = (.err error, next)) :
-    BviSem.evaluate (args ++ suffix) env state = (.err error, next) := by
-  change BviSem.evaluateTuple (args ++ suffix, env, state) = _
-  rw [BviSem.evaluateAppend]
-  change BviSem.evaluateTuple (args, env, state) = _ at run
-  rw [run]
-
 /-- Lowered operations preserve an operand evaluation failure. This is
 Flapjack infrastructure for the operation simulation; it is untagged while
 the BVI evaluator is under review. -/
@@ -69,7 +53,10 @@ theorem evaluate_compileOp_error {C F : Type} (op : ClosLang.Op) (args : List Bv
     | globOp op =>
       cases op with
       | global index => simpa [compileOp] using let_error (first :: rest) _ env state next error run
-      | allocGlobal => simpa [compileOp] using call_error allocGlobalLocation (first :: rest) env state next error run
+      | allocGlobal =>
+        simp only [compileOp]
+        rw [BviSem.evaluate, BviSem.fixClock_evaluate, run]
+        simp
       | _ => simpa [compileOp] using op_error _ _ env state next error run
     | memOp op =>
       cases op with
@@ -85,8 +72,13 @@ theorem evaluate_compileOp_error {C F : Type} (op : ClosLang.Op) (args : List Bv
         | true =>
           simp only [compileOp]
           split
-          · have padded := append_error (first :: rest) (List.replicate 3 (.op (.intOp (.const 0)) []))
-              env state next error run
+          · have padded : BviSem.evaluate
+                ((first :: rest) ++ List.replicate 3 (.op (.intOp (.const 0)) [])) env state =
+                (.err error, next) := by
+              change BviSem.evaluateTuple (_ ++ _, env, state) = _
+              rw [BviSem.evaluateAppend]
+              change BviSem.evaluateTuple (first :: rest, env, state) = _ at run
+              rw [run]
             exact let_error _ _ env state next error padded
           · exact let_error (first :: rest) _ env state next error run
       | _ => simpa [compileOp] using op_error _ _ env state next error run
