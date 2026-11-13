@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.BviTmc.Proofs.RewriteCorrespondence
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CodeRelation
 public import Flapjack.Compiler.Backend.Semantics.BviProps.CodeLabels
 
 @[expose] public section
@@ -198,5 +198,76 @@ theorem compileExp_getCodeLabels (loc next arity : Nat) (e wrapper worker : Bvi.
     obtain ⟨rfl, rfl⟩ := run
     exact ⟨rewriteWrapper_getCodeLabels loc next arity e w hw,
       rewriteWorker_getCodeLabels loc next arity (arity + 1) arity e⟩
+
+private def progLabels (p : List (Nat × Nat × Bvi.Exp)) : Set Nat :=
+  ⋃₀ (getCodeLabels '' {e | e ∈ p.map (fun q => q.2.2)})
+private def freshLabels (start finish : Nat) : Set Nat :=
+  {label | ∃ k, label = start + k * bvlToBviNamespaces ∧ start + k * bvlToBviNamespaces < finish}
+private theorem progLabels_cons (name arity : Nat) (body : Bvi.Exp) (tail : List (Nat × Nat × Bvi.Exp)) :
+    progLabels ((name, arity, body) :: tail) = getCodeLabels body ∪ progLabels tail := by
+  ext label; simp [progLabels]
+private theorem freshLabels_step (start finish : Nat) :
+    freshLabels (start + bvlToBviNamespaces) finish ⊆ freshLabels start finish := by
+  intro label ⟨k, eq, bound⟩
+  refine ⟨k + 1, ?_, ?_⟩ <;> simp only [Nat.add_mul, Nat.one_mul] <;> omega
+
+/-- Function-list compilation preserves closure under an allowed label set. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "compile_each_good_code_labels"]
+theorem compileEach_goodCodeLabels (n : Nat) (c : List (Nat × Nat × Bvi.Exp)) (n2 : Nat)
+    (c2 : List (Nat × Nat × Bvi.Exp)) (all : Set Nat)
+    (assumptions : compileEachSource n c = (n2, c2) ∧
+      (⋃₀ (getCodeLabels '' {e | e ∈ c.map (fun q => q.2.2)})) ⊆ all ∧
+      {label | ∃ k, label = n + k * bvlToBviNamespaces ∧ n + k * bvlToBviNamespaces < n2} ⊆ all) :
+    (⋃₀ (getCodeLabels '' {e | e ∈ c2.map (fun q => q.2.2)})) ⊆ all := by
+  change compileEachSource n c = (n2, c2) ∧ progLabels c ⊆ all ∧ freshLabels n n2 ⊆ all at assumptions
+  change progLabels c2 ⊆ all
+  induction c generalizing n n2 c2 with
+  | nil =>
+    simp [compileEachSource, Prod.mk.injEq] at assumptions
+    obtain ⟨⟨rfl, rfl⟩, _, _⟩ := assumptions
+    simp [progLabels]
+  | cons entry rest ih =>
+    rcases entry with ⟨loc, arity, body⟩
+    cases decision : compileExpSource loc n arity body with
+    | none =>
+      rcases tail : compileEachSource n rest with ⟨last, out⟩
+      simp only [compileEachSource, decision, tail, Prod.mk.injEq] at assumptions
+      rcases assumptions with ⟨⟨rfl, rfl⟩, old, fresh⟩
+      simp only [progLabels_cons, Set.union_subset_iff] at old ⊢
+      exact ⟨old.1, ih n last out ⟨tail, old.2, fresh⟩⟩
+    | some pair =>
+      obtain ⟨wrapper, worker⟩ := pair
+      rcases tail : compileEachSource (n + bvlToBviNamespaces) rest with ⟨last, out⟩
+      simp only [compileEachSource, decision, tail, Prod.mk.injEq] at assumptions
+      rcases assumptions with ⟨⟨rfl, rfl⟩, old, fresh⟩
+      obtain ⟨k, hk⟩ := compileEachSource_next_mono (n + bvlToBviNamespaces) last rest out tail
+      have pos : 0 < bvlToBviNamespaces := by decide
+      have freshNow : n ∈ all := by
+        apply fresh
+        exact ⟨0, by simp, by omega⟩
+      have tailFresh : freshLabels (n + bvlToBviNamespaces) last ⊆ all :=
+        Set.Subset.trans (freshLabels_step n last) fresh
+      have bodyBound := compileExp_getCodeLabels loc n arity body wrapper worker decision
+      simp only [progLabels_cons, Set.union_subset_iff] at old ⊢
+      have allowed : getCodeLabels body ∪ {n} ⊆ all :=
+        Set.union_subset old.1 (Set.singleton_subset_iff.mpr freshNow)
+      exact ⟨bodyBound.1.trans allowed, bodyBound.2.trans allowed,
+        ih (n + bvlToBviNamespaces) last out ⟨tail, old.2, tailFresh⟩⟩
+
+/-- The whole-program pass preserves closure under an allowed label set. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "compile_prog_good_code_labels"]
+theorem compileProg_goodCodeLabels (b : Bool) (n : Nat) (c : List (Nat × Nat × Bvi.Exp)) (n2 : Nat)
+    (c2 : List (Nat × Nat × Bvi.Exp)) (all : Set Nat)
+    (assumptions : compileProgSource b n c = (n2, c2) ∧
+      (⋃₀ (getCodeLabels '' {e | e ∈ c.map (fun q => q.2.2)})) ⊆ all ∧
+      {label | ∃ k, label = n + k * bvlToBviNamespaces ∧ n + k * bvlToBviNamespaces < n2} ⊆ all) :
+    (⋃₀ (getCodeLabels '' {e | e ∈ c2.map (fun q => q.2.2)})) ⊆ all := by
+  cases b with
+  | false =>
+    simp only [compileProgSource, Bool.false_eq_true, ↓reduceIte, Prod.mk.injEq] at assumptions
+    simpa only [← assumptions.1.2] using assumptions.2.1
+  | true =>
+    simp only [compileProgSource, ↓reduceIte] at assumptions
+    exact compileEach_goodCodeLabels n c n2 c2 all assumptions
 
 end Flapjack.Compiler.Backend.BviTmc.Proofs

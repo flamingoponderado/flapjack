@@ -147,3 +147,6 @@ val compile_exp_labels = Q.prove
    \\ imp_res_tac rewrite_wrapper_labels
    \\ gvs [rewrite_worker_labels]);
 val _ = show "compile_exp_code_labels_replay_typed" compile_exp_labels;
+
+val _ = show "compile_each_good_code_labels_typed" bvi_tmcProofTheory.compile_each_good_code_labels;
+val _ = show "compile_prog_good_code_labels_typed" bvi_tmcProofTheory.compile_prog_good_code_labels;

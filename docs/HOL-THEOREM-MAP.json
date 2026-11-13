@@ -338,6 +338,22 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+    "hol_name": "compile_each_good_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeLabels.lean",
+    "lean_name": "compileEach_goodCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the exact compilation equation, full input-body label bound, and entire strict fresh interval imply the full output-body label bound for an arbitrary allowed set; both success and failure branches match the source."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+    "hol_name": "compile_prog_good_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeLabels.lean",
+    "lean_name": "compileProg_goodCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: both enabled settings retain the original complete compilation equation, input-label and fresh-interval premises, and full output-label conclusion for an arbitrary allowed set."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
     "hol_name": "rewrite_wrapper_code_labels",
     "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeLabels.lean",
     "lean_name": "rewriteWrapper_getCodeLabels",
