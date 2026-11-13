@@ -105164,6 +105164,21 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "kvar_defs",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "kvarDefsHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "task-159 source comparison against panSemScript.sml:502-503 (Theorem kvar_defs = LIST_CONJ [set_var_def,set_global_def,set_kvar_def,is_valid_value_def,lookup_kvar_def]) and the typed captures of those five definitions: HOL's conjunction order is preserved, and each Lean conjunct is the body equation of the already tagged exact definitions setVarHOLFinite/setGlobalHOLFinite/setKvarHOLFinite/isValidValueHOLFinite/lookupKvarHOLFinite over PanSemStateFiniteExact. The finite-map fields locals/globals/code/eshapes use the reviewed HolFiniteMapExact translation (canonical witness holFmapAsFiniteSupportWitness in this module); 'a word/ffi use BitVec width/sigma : Type with [NeZero width]. Binder order per conjunct follows HOL (state first for is_valid_value, kind first for lookup_kvar). No quantifier, hypothesis, or side condition is added; the representation qualifiers are records only and do not prove HOL-to-Lean equivalence."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "sh_mem_load_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "shMemLoadHOLFiniteExact",
