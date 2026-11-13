@@ -4683,6 +4683,9 @@ run_probe hol_sorting_typed_probeScript.sml hol_sorting_typed_probe.out \
 run_probe hol_list_typed_probeScript.sml hol_list_typed_probe.out \
   hd_typed last_def_typed last_cons_typed el_def_typed every2_lupdate_same_typed list_size_thm_typed ohd_def_typed \
   "$repo_dir/HOL/src/list/src/listScript.sml" "$cake_dir/pancake"
+run_probe hol_logroot_typed_probeScript.sml hol_logroot_typed_probe.out \
+  log_exists_typed log_type log_spec_typed log_unique_typed \
+  "$repo_dir/HOL/src/num/extra_theories/logrootScript.sml" "$cake_dir/pancake"
 
 run_probe hol_alignment_words_typed_probeScript.sml hol_alignment_words_typed_probe.out \
   align_def_typed aligned_def_typed byte_align_def_typed byte_aligned_def_typed aligned_add_sub_typed word_slice_def_typed w2s_def_typed word_to_hex_string_def_typed word_replicate_def_typed \

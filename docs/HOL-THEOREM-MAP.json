@@ -71723,7 +71723,7 @@
     "lean_path": "Flapjack/Misc/Logroot.lean",
     "lean_name": "holLOG",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.3): logrootScript.sml:289 new_specification(\"LOG\", [\"LOG\"], LOG_exists) introduces the constant LOG : num -> num -> num about which only the specification theorem holds. Lean renders the constant as Classical.choose of the LOG_exists rendering, the same Hilbert-choice translation already used for float_some_qnan (holFloatSomeQnan). The specification does not constrain its value outside 1 < a ∧ 0 < n, in particular LOG 2 0 / LOG2 0, as in HOL; this renders the HOL constant and is not a cross-language equivalence proof. No extra axiom (Classical.choice is already in the base), premise or width restriction. Kernel statements captured by scripts/hol-probes/logroot_log_spec_probe and replayed in Flapjack/Test/LogrootParity.lean."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.3): logrootScript.sml:289 new_specification(\"LOG\", [\"LOG\"], LOG_exists) introduces the constant LOG : num -> num -> num about which only the specification theorem holds. Lean renders the constant as Classical.choose of the LOG_exists rendering, the same Hilbert-choice translation already used for float_some_qnan (holFloatSomeQnan). The specification does not constrain its value outside 1 < a ∧ 0 < n, in particular LOG 2 0 / LOG2 0, as in HOL; this renders the HOL constant and is not a cross-language equivalence proof. No extra axiom (Classical.choice is already in the base), premise or width restriction. Kernel statements captured by scripts/hol-probes/logroot_log_spec_probe and replayed in Flapjack/Test/LogrootParity.lean. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_logroot_typed_probe.out `log_type` re-confirms the constant's type `num -> num -> num`, matching holLOG."
   },
   {
     "hol_path": "HOL/src/num/extra_theories/logrootScript.sml",
@@ -71731,7 +71731,7 @@
     "lean_path": "Flapjack/Misc/Logroot.lean",
     "lean_name": "holLOGExists",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.3): logrootScript.sml:286-287, kernel form ∃f. ∀a n. 1 < a ∧ 0 < n ⇒ a ** f a n ≤ n ∧ n < a ** SUC (f a n); same existential over num -> num -> num, same premise and conclusion with ** as ^ and SUC x as x + 1. The Lean witness is the untagged repeated-division holLogWitness. Kernel statements captured by scripts/hol-probes/logroot_log_spec_probe and replayed in Flapjack/Test/LogrootParity.lean."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.3): logrootScript.sml:286-287, kernel form ∃f. ∀a n. 1 < a ∧ 0 < n ⇒ a ** f a n ≤ n ∧ n < a ** SUC (f a n); same existential over num -> num -> num, same premise and conclusion with ** as ^ and SUC x as x + 1. The Lean witness is the untagged repeated-division holLogWitness. Kernel statements captured by scripts/hol-probes/logroot_log_spec_probe and replayed in Flapjack/Test/LogrootParity.lean. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_logroot_typed_probe.out `log_exists_typed` re-confirms the existential over `num -> num -> num` with the `1 < a` and `0 < n` premise group and `SUC` as `+ 1`, matching holLOGExists."
   },
   {
     "hol_path": "HOL/src/num/extra_theories/logrootScript.sml",
@@ -71739,7 +71739,7 @@
     "lean_path": "Flapjack/Misc/Logroot.lean",
     "lean_name": "holLOG_UNIQUE",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.3): logrootScript.sml:291-306, ∀a n p. a ** p ≤ n ∧ n < a ** SUC p ⇒ LOG a n = p, same binders and no 1 < a / 0 < n premise (as in HOL, they follow from the hypothesis); proved from the specification only. Kernel statements captured by scripts/hol-probes/logroot_log_spec_probe and replayed in Flapjack/Test/LogrootParity.lean."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.3): logrootScript.sml:291-306, ∀a n p. a ** p ≤ n ∧ n < a ** SUC p ⇒ LOG a n = p, same binders and no 1 < a / 0 < n premise (as in HOL, they follow from the hypothesis); proved from the specification only. Kernel statements captured by scripts/hol-probes/logroot_log_spec_probe and replayed in Flapjack/Test/LogrootParity.lean. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_logroot_typed_probe.out `log_unique_typed` re-confirms the `a n p` binder order, the two-sided exponent bound premise and `LOG a n = p`, matching holLOG_UNIQUE."
   },
   {
     "hol_path": "HOL/src/num/extra_theories/logrootScript.sml",
@@ -71747,7 +71747,7 @@
     "lean_path": "Flapjack/Misc/Logroot.lean",
     "lean_name": "holLOG_spec",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.3): logrootScript.sml:289, the theorem returned by new_specification: ∀a n. 1 < a ∧ 0 < n ⇒ a ** LOG a n ≤ n ∧ n < a ** SUC (LOG a n) (kernel form), same binders, premise and conclusion; proved by Classical.choose_spec. Kernel statements captured by scripts/hol-probes/logroot_log_spec_probe and replayed in Flapjack/Test/LogrootParity.lean."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.3): logrootScript.sml:289, the theorem returned by new_specification: ∀a n. 1 < a ∧ 0 < n ⇒ a ** LOG a n ≤ n ∧ n < a ** SUC (LOG a n) (kernel form), same binders, premise and conclusion; proved by Classical.choose_spec. Kernel statements captured by scripts/hol-probes/logroot_log_spec_probe and replayed in Flapjack/Test/LogrootParity.lean. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_logroot_typed_probe.out `log_spec_typed` re-confirms the new_specification theorem over `num` with the `1 < a` and `0 < n` premise group, matching holLOG_spec."
   },
   {
     "hol_path": "cakeml/misc/miscScript.sml",

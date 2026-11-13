@@ -10051,3 +10051,12 @@ Regenerate with
 `HOL_PROBE_ONLY=hol_list_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean
 correspondence.
+
+`hol_logroot_typed_probe.out` captures the typed HOL `logroot` statements of
+the four reviewed `HOL/src/num/extra_theories/logrootScript.sml` rows from the
+built HOL4 core theory (no rebuild): `LOG_exists`, the `num -> num -> num` type
+of the `new_specification` constant `LOG`, the specification theorem `LOG` and
+`LOG_UNIQUE`. Regenerate with
+`HOL_PROBE_ONLY=hol_logroot_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
