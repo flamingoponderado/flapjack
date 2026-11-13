@@ -23,24 +23,6 @@ def letOpSimulation {C F : Type} (splitSeq : Bool) (limit : Nat)
     ∃ targetFinal, evaluate (letOp expressions) env target = (result, targetFinal) ∧
       mappedStateRel (letOpTransform splitSeq limit) final targetFinal
 
-/-- The empty-list case of the let-operation evaluator simulation. -/
-theorem letOpSimulation_nil {C F : Type} (splitSeq : Bool) (limit : Nat)
-    (env : List Value) (source : State C F) :
-    letOpSimulation splitSeq limit [] env source := by
-  intro result final target related run _
-  simp [evaluate] at run
-  rcases run with ⟨rfl, rfl⟩
-  exact ⟨target, by simp [letOp, letOpList, evaluate], related⟩
-
-/-- Variable lookup is unchanged by the let-operation traversal. -/
-theorem letOpSimulation_var {C F : Type} (splitSeq : Bool) (limit index : Nat)
-    (env : List Value) (source : State C F) :
-    letOpSimulation splitSeq limit [.var index] env source := by
-  intro result final target related run _
-  cases found : env[index]? <;> simp [evaluate, found] at run
-  all_goals rcases run with ⟨rfl, rfl⟩
-  all_goals exact ⟨target, by simp [letOp, letOpList, letOpOne, evaluate, found], related⟩
-
 /-- The tick case follows from its body's induction hypothesis at the
 decremented clock. -/
 theorem letOpSimulation_tick {C F : Type} (splitSeq : Bool) (limit : Nat)

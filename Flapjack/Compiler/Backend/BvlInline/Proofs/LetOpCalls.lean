@@ -189,7 +189,11 @@ theorem letOpSimulation_all {C F : Type} (splitSeq : Bool) (limit : Nat)
       h => smaller₀ es' s' h environment'
   intro environment
   cases es with
-  | nil => exact letOpSimulation_nil splitSeq limit environment s
+  | nil =>
+    intro result final target related run _
+    simp [evaluate] at run
+    rcases run with ⟨rfl, rfl⟩
+    exact ⟨target, by simp [letOp, letOpList, evaluate], related⟩
   | cons first rest =>
     cases rest with
     | cons second tail =>
@@ -205,7 +209,11 @@ theorem letOpSimulation_all {C F : Type} (splitSeq : Bool) (limit : Nat)
         omega
     | nil =>
       cases first with
-      | var index => exact letOpSimulation_var splitSeq limit index environment s
+      | var index =>
+        intro result final target related run _
+        cases found : environment[index]? <;> simp [evaluate, found] at run
+        all_goals rcases run with ⟨rfl, rfl⟩
+        all_goals exact ⟨target, by simp [letOp, letOpList, letOpOne, evaluate, found], related⟩
       | force location index =>
         apply letOpSimulation_force splitSeq limit location index environment s
         intro body values next smaller
