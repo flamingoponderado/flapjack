@@ -76619,14 +76619,6 @@
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
-    "hol_name": "exp_hdl_def",
-    "lean_path": "Flapjack/Pancake/PanToCrep.lean",
-    "lean_name": "expHdlHOL",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds3 (source review, bead flapjack-2s5): HOL exp_hdl_def (pan_to_crepScript.sml:106-112) quantifies over a finite map varname |-> (shape # num list), but expHdlHOL takes a raw MlString -> Option (ShapeHOL × List Nat) function admitting infinite support. The tag is withdrawn; the field-based fmap_as_finite_support qualifier cannot cover a bare parameter. The raw-map helper and its production bridge remain untagged. Faithful finite-map replacement is tracked by flapjack-pxn.18.3.5.8.13.2; direct HOL rows remain in scripts/hol-probes/exp_hdl_probe.out and Flapjack/Test/ExpHdlHOLParity.lean."
-  },
-  {
-    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
     "hol_name": "mk_ctxt_def",
     "lean_path": "Flapjack/Pancake/PanToCrep.lean",
     "lean_name": "panToCrepMkCtxtHOL",

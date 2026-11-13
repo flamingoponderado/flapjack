@@ -164,19 +164,6 @@ WITHDRAWN_HOL_DECLARATIONS = {
         "the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 "
         "is admitted.  The HOL tag was withdrawn pending a faithful width-restricted restatement."
     ),
-    ("Flapjack/Pancake/PanToCrep.lean", "expHdlHOL"): (
-        "cakeml/pancake/pan_to_crepScript.sml",
-        "exp_hdl_def",
-        "flapjack-ds3 (bead flapjack-2s5/flapjack-2s5.1): HOL exp_hdl_def "
-        "quantifies over a finite map varname |-> (shape # num list), while "
-        "expHdlHOL takes a raw MlString -> Option (ShapeHOL × List Nat) "
-        "function and admits infinite support. The finite-support qualifier "
-        "requires a same-module owning structure field, not a bare parameter; "
-        "no input-only exception is justified. The raw-map helper and its "
-        "production bridge remain untagged; faithful finite-map port is "
-        "tracked by flapjack-pxn.18.3.5.8.13.2. Direct HOL rows remain in "
-        "Flapjack/Test/ExpHdlHOLParity.lean."
-    ),
     ("Flapjack/Pancake/PanToCrep.lean", "panToCrepMkCtxtHOL"): (
         "cakeml/pancake/pan_to_crepScript.sml",
         "mk_ctxt_def",
@@ -230,25 +217,6 @@ WITHDRAWN_HOL_DECLARATIONS = {
         "makeFuncsOracle (Flapjack/Test/CompileToCrepeParity.lean). The faithful "
         "exact-carrier port is tracked by flapjack-pxn.18.3.5.8 (parent "
         "flapjack-pxn.18.3.5.7.2)."
-    ),
-    ("Flapjack/Pancake/PanToCrep.lean", "expHdlHOL"): (
-        "cakeml/pancake/pan_to_crepScript.sml",
-        "exp_hdl_def",
-        "flapjack-ds3 (bead flapjack-2s5/flapjack-2s5.1): HOL exp_hdl_def "
-        "(106-112) quantifies over a finite map varname |-> (shape # num list). "
-        "expHdlHOL instead takes FiniteMap MlS (ShapeHOL × List Nat), i.e. the "
-        "production raw function MlString -> Option (ShapeHOL × List Nat), which "
-        "admits infinite support, so the quantified domain is strictly broader "
-        "than HOL's. The fmap_as_finite_support qualifier cannot authorize this: "
-        "every qualified name must be a field of one same-module owning carrier "
-        "structure with a HolFiniteMapExact-typed field and a canonical roundtrip "
-        "witness, while expHdlHOL's map is a bare declaration parameter; no "
-        "input-only exception is justified. The def and the kernel bridge "
-        "crepProgToHOL_expHdlFiniteMap remain as untagged infrastructure; the "
-        "faithful finite-map port is tracked by flapjack-pxn.18.3.5.8.13.2. HOL "
-        "rows missing/known/three_words/dup_update/dup_list from "
-        "scripts/hol-probes/exp_hdl_probe.out are replayed in "
-        "Flapjack/Test/ExpHdlHOLParity.lean."
     ),
     ("Flapjack/Pancake/Semantics/PanSem.lean", "panEmptyLocals"): (
         "cakeml/pancake/semantics/panSemScript.sml",

@@ -181,37 +181,6 @@ theorem lookupInfo_eq_flookup_infoMapToFiniteMap [BEq String] [LawfulBEq String]
     FLOOKUP (infoMapToFiniteMap entries) name = lookupInfo name entries :=
   (lookupInfo_eq_flookup_infoMapToFiniteMap name entries).symm
 
-/-! `pan_to_crep$exp_hdl` over the `MlString`-keyed / `ShapeHOL` / `CrepProgHOL`
-    (`cakeml/pancake/pan_to_crepScript.sml:106-112`).
-
-    HOL's equations are
-    `exp_hdl fm v = case FLOOKUP fm v of
-      | NONE => Skip
-      | SOME (vshp, ns) => nested_seq (MAP2 Assign ns (load_globals 0w (LENGTH ns)))`.
-    The `@[hol "cakeml/pancake/pan_to_crepScript.sml" "exp_hdl_def"]` tag is
-    WITHDRAWN (bead `flapjack-2s5`). HOL quantifies over a finite map
-    `varname |-> (shape # num list)`; this declaration instead takes
-    `FiniteMap MlS (ShapeHOL × List Nat)`, the production raw function
-    `MlString → Option (ShapeHOL × List Nat)`, which admits infinite support.
-    Its quantified domain is therefore strictly broader than HOL's.
-
-    The `fmap_as_finite_support` qualifier covers fields of a same-module
-    carrier structure, not a bare map parameter. A faithful finite-map port
-    is tracked by `flapjack-pxn.18.3.5.8.13.2`. This raw-map helper remains
-    untagged infrastructure. The executed production `expHdlFiniteMap` is
-    also untagged (its key is `VarName = String`); the checked bridge
-    `crepProgToHOL_expHdlFiniteMap` relates the two under byte-ranged codecs. -/
-def expHdlHOL {width : Nat} [NeZero width]
-    (fm : FiniteMap Flapjack.Pancake.PanLang.MlS
-      (Flapjack.Pancake.PanLang.ShapeHOL × List Nat))
-    (v : Flapjack.Pancake.PanLang.MlS) : CrepProgHOL width :=
-  match FLOOKUP fm v with
-  | none => .skip
-  | some (_, names) =>
-      crepNestedSeqHOL
-        (panMap2 (fun destination source => .assign destination source)
-          names (loadGlobalsHOL (0 : BitVec 5) names.length))
-
 /-- Codec from the production `String`-keyed finite map to the exact
     `MlString`-keyed HOL finite map. Names are encoded by the total
     `MlString.ofString`, and each stored shape by `shapeToHOL`; the flattened
@@ -243,27 +212,6 @@ theorem panMap2_assign_map {width : Nat} [NeZero width]
       | nil => simp [panMap2]
       | cons value values => simp [panMap2, crepProgToHOL, ih]
 
-/-- Narrow kernel bridge: on every byte-ranged variable name, encoding the
-    production finite map and running the exact `expHdlHOL` agrees with the
-    `crepProgToHOL` image of the executed `expHdlFiniteMap`. The production
-    helper remains the executed one; routing the executed handler setup through
-    the exact carrier is tracked by `flapjack-pxn.18.3.5.8.13`. -/
-theorem crepProgToHOL_expHdlFiniteMap {width : Nat} [NeZero width]
-    (fm : FiniteMap String (Shape × List Nat)) (v : String)
-    (hv : ∀ c ∈ v.toList, c.toNat < 256) :
-    crepProgToHOL (expHdlFiniteMap (α := BitVec width) fm v)
-      = expHdlHOL (finiteMapToHOL fm)
-          (Flapjack.Basis.Pure.MlString.ofString v) := by
-  unfold expHdlFiniteMap expHdlHOL finiteMapToHOL
-  simp only [FLOOKUP]
-  rw [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes v hv]
-  cases h : fm v with
-  | none => simp [crepProgToHOL]
-  | some pair =>
-      obtain ⟨shape, names⟩ := pair
-      simp only [Option.map_some]
-      rw [crepProgToHOL_crepNestedSeqHOL, panMap2_assign_map,
-        crepExpMapToHOL_loadGlobals]
 
 /-! Flapjack-specific analogue of `pan_to_crep$ret_var`
     (`cakeml/pancake/pan_to_crepScript.sml:114-119`).
