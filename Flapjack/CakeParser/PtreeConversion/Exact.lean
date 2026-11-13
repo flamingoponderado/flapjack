@@ -856,4 +856,119 @@ theorem ptreeConstructorNameHOL_toGrammarTree (pt : CakeParser.ParseTree) :
         PtreeConversion.ptreeUQConstructorName, hn]
 
 
+/-- `(isAlphaChar c && isUpperChar c)` is `isUpperChar c`. -/
+theorem isAlphaChar_and_isUpperChar (c : HolChar) :
+    (isAlphaChar c && isUpperChar c) = isUpperChar c := by
+  by_cases h : isUpperChar c <;> simp [isAlphaChar, h]
+
+/-- The `decide` form of `isAlphaChar c && isUpperChar c`. -/
+theorem isAlphaChar_and_upper (c : HolChar) :
+    (isAlphaChar c && isUpperChar c) = (65 ≤ c.toNat && c.toNat ≤ 90) := by
+  rw [isAlphaChar_and_isUpperChar]
+  rfl
+
+/-- `"*"` is not the symbolic constructor name `"::"`. -/
+theorem star_ne_cons : (ofString "*").explode ≠ [58, 58] := by
+  decide
+
+/-- A boolean `if` over two `Exp` options is a `some` of the `if`. -/
+theorem ite_some_exp (b : Bool) (x y : AstHOL.Exp) :
+    (if b = true then some x else some y) = some (if b then x else y) := by
+  cases b <;> rfl
+
+/-- A boolean `if` returning `true`/`c` is the `||` of the two. -/
+theorem ite_some_bool (b c : Bool) :
+    (if b then (some true : Option Bool) else some c) = some (b || c) := by
+  cases b <;> rfl
+
+/-- Deciding equality against the two-byte list `[58, 58]` splits into bytes. -/
+theorem decide_cons_cons (c : HolChar) (rest : List HolChar) :
+    decide (c :: rest = [58, 58]) = (decide (c = 58) && decide (rest = [58])) := by
+  cases rest with
+  | nil => simp [List.cons.injEq]
+  | cons c' rest' => simp [List.cons.injEq]
+
+/-- Structural equality of two `implode`s is equality of the byte lists. -/
+theorem implode_beq (d e : List HolChar) :
+    (MlString.implode d == MlString.implode e) = decide (d = e) := by
+  rw [show (MlString.implode d == MlString.implode e) =
+      decide (MlString.implode d = MlString.implode e) from rfl]
+  simp
+
+/-- `==` against `"::"` is deciding the exploded bytes against `[58, 58]`. -/
+theorem beq_ofString_cons_cons (s : MlString) :
+    (s == ofString "::") = decide (s.explode = [58, 58]) := by
+  cases s with
+  | implode d =>
+    simp [implode_beq, ofString, MlString.explode] <;> rfl
+
+/-- `isConstructorHOL` on an exploded name is the executed `constructorName`. -/
+theorem isConstructorHOL_eq_constructorName (s : MlString) :
+    isConstructorHOL s.explode = some (PtreeConversion.constructorName s) := by
+  cases s with
+  | implode d =>
+    cases d with
+    | nil =>
+      simp [isConstructorHOL, isSymbolicConstructorHOL, ifMHOL, implode_beq,
+        PtreeConversion.constructorName, PtreeConversion.uppercase, ofString, MlString.explode,
+        Flapjack.oHD]
+    | cons c rest =>
+      simp [isConstructorHOL, isSymbolicConstructorHOL, ifMHOL, isAlphaChar_and_upper,
+        ite_some_bool, implode_beq, PtreeConversion.constructorName, PtreeConversion.uppercase,
+        ofString, MlString.explode, Flapjack.oHD]
+
+/-- `isSymbolicConstructorHOL` on an exploded name is the executed `== "::"`. -/
+theorem isSymbolicConstructorHOL_eq_beq (s : MlString) :
+    isSymbolicConstructorHOL s.explode = some (s == ofString "::") := by
+  cases s with
+  | implode d =>
+    simp [isSymbolicConstructorHOL, implode_beq, ofString, MlString.explode] <;> rfl
+
+
+/-- The exact generic `ptree_OpID` twin agrees with the executable conversion. -/
+theorem ptreeOpIDHOL_toGrammarTree (pt : CakeParser.ParseTree) :
+    ptreeOpIDHOL (ParseTree.toGrammarTree pt) = PtreeConversion.ptreeOpID pt := by
+  cases pt with
+  | leaf _ =>
+    simp [ptreeOpIDHOL, PtreeConversion.ptreeOpID, PtreeConversion.children,
+      ParseTree.toGrammarTree]
+  | node r l cs =>
+    cases r with
+    | inl rule =>
+      cases rule with
+      | nOpID =>
+        cases cs with
+        | nil =>
+          simp [ptreeOpIDHOL, PtreeConversion.ptreeOpID, PtreeConversion.children,
+            ParseTree.toGrammarTree, ParseTree.toGrammarTrees]
+        | cons c rest =>
+          cases rest with
+          | nil =>
+            cases c with
+            | leaf sym l' =>
+              cases sym with
+              | inl rule' =>
+                simp [ptreeOpIDHOL, PtreeConversion.ptreeOpID, PtreeConversion.children,
+                  ParseTree.toGrammarTree, ParseTree.toGrammarTrees, ParseTree.toGrammarSymbol,
+                  ParseTree.token]
+              | inr tk =>
+                cases tk <;>
+                  simp [ptreeOpIDHOL, PtreeConversion.ptreeOpID, PtreeConversion.children,
+                    ParseTree.toGrammarTree, ParseTree.toGrammarTrees, ParseTree.toGrammarSymbol,
+                    ParseTree.token, CakeParser.destAlphaT, CakeParser.destSymbolT,
+                    CakeParser.destLongidT, ifMHOL, isConstructorHOL_eq_constructorName,
+                    isSymbolicConstructorHOL, ite_some_exp, beq_ofString_cons_cons]
+            | node r' l' cs' =>
+              simp [ptreeOpIDHOL, PtreeConversion.ptreeOpID, PtreeConversion.children,
+                ParseTree.toGrammarTree, ParseTree.toGrammarTrees, ParseTree.token]
+          | cons c2 rest2 =>
+            simp [ptreeOpIDHOL, PtreeConversion.ptreeOpID, PtreeConversion.children,
+              ParseTree.toGrammarTree, ParseTree.toGrammarTrees]
+      | _ =>
+        simp [ptreeOpIDHOL, PtreeConversion.ptreeOpID, PtreeConversion.children,
+          ParseTree.toGrammarTree]
+    | inr n =>
+      simp [ptreeOpIDHOL, PtreeConversion.ptreeOpID, PtreeConversion.children,
+        ParseTree.toGrammarTree]
+
 end Flapjack.CakeParser.PtreeConversion.Exact
