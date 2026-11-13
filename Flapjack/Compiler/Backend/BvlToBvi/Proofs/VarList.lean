@@ -8,7 +8,7 @@ public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 /-! Evaluation of variable-only argument lists for auxiliary calls. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value State evaluate evaluateTuple)
-open Flapjack.Compiler.Backend.BvlProps (isVar evaluateCons)
+open Flapjack.Compiler.Backend.BvlProps (isVar bVarBound evaluateCons)
 
 /-- Compiling a variable-only list preserves its variables and emits no
 auxiliary code. -/
@@ -29,6 +29,58 @@ theorem compileExps_varList (expressions : List Bvl.Exp) (n : Nat)
       refine ⟨aux, ?_, empty⟩
       simp [compileListSource, compileSingSource, compiled, BvlProps.destVar, smartAppend]
     | _ => simp [isVar] at onlyVars
+
+
+namespace VarMapCarrier
+/-- Canonical BVI reference-map state roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end VarMapCarrier
+
+/-- Bounded variables evaluate identically with or without a trailing environment. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "evaluate_MAP_Var2"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_varMapBound {C F : Type} (args : List Bvl.Exp) (vs env : List Value)
+    (state : BviSem.BviState C F)
+    (premises : bVarBound vs.length args ∧ args.all isVar = true) :
+    ∃ ts, BviSem.evaluate (args.map (fun e => Bvi.Exp.var (BvlProps.destVar e))) (vs ++ env) state = (.val ts, state) ∧
+      BviSem.evaluate (args.map (fun e => Bvi.Exp.var (BvlProps.destVar e))) vs state = (.val ts, state) := by
+  induction args with
+  | nil => exact ⟨[], by simp [BviSem.evaluate]⟩
+  | cons head tail ih =>
+    simp only [List.all_cons, Bool.and_eq_true] at premises
+    cases head with
+    | var index =>
+      have headBound : index < vs.length := by
+        cases tail with
+        | nil => simpa [bVarBound] using premises.1
+        | cons a as =>
+          have h : index < vs.length ∧ bVarBound vs.length (a :: as) := by
+            simpa only [bVarBound] using premises.1
+          exact h.1
+      have tailBound : bVarBound vs.length tail := by
+        cases tail with
+        | nil => simp [bVarBound]
+        | cons a as =>
+          have h : index < vs.length ∧ bVarBound vs.length (a :: as) := by
+            simpa only [bVarBound] using premises.1
+          exact h.2
+      obtain ⟨ts, left, right⟩ := ih ⟨tailBound, premises.2.2⟩
+      have lookup : vs[index]? = some vs[index] := by simp [headBound]
+      have lookupAppend : (vs ++ env)[index]? = some vs[index] := by
+        simp [List.getElem?_append_left headBound, lookup]
+      refine ⟨vs[index] :: ts, ?_, ?_⟩
+      · simp only [List.map_cons, BvlProps.destVar_var]
+        change BviSem.evaluateTuple (_ :: _, _, _) = _
+        rw [BviSem.evaluateCons]
+        simp [BviSem.evaluateTuple, BviSem.evaluate, lookupAppend, left, Flapjack.holHd]
+      · simp only [List.map_cons, BvlProps.destVar_var]
+        change BviSem.evaluateTuple (_ :: _, _, _) = _
+        rw [BviSem.evaluateCons]
+        simp [BviSem.evaluateTuple, BviSem.evaluate, lookup, right, Flapjack.holHd]
+    | _ => simp [isVar] at premises
 
 /-- Successful variable-only evaluation leaves the state unchanged and
 returns only values already in the environment. Untagged pending source

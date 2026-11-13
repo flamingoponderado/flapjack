@@ -180,3 +180,18 @@ val _ = show "compile_exps_LENGTH_lemma_replay=" compile_exps_LENGTH_lemma_repla
 
 val _ = show "compile_exps_LENGTH_typed=" bvl_to_bviTheory.compile_exps_LENGTH;
 val _ = show "compile_exps_SING_typed=" bvl_to_bviTheory.compile_exps_SING;
+
+val evaluate_MAP_Var2 = Q.prove(
+  `!args.
+      bVarBound (LENGTH vs) args /\ EVERY isVar args ==>
+      ?ts.
+        bviSem$evaluate (MAP (Var o destVar) args,vs ++ env,s) = (Rval ts,s) /\
+        evaluate (MAP (Var o destVar) args,vs,s) = (Rval ts,s)`,
+  Induct \\ full_simp_tac(srw_ss())[MAP,bviSemTheory.evaluate_def] \\ Cases \\ full_simp_tac(srw_ss())[isVar_def]
+  \\ Cases_on `args` \\ full_simp_tac(srw_ss())[MAP,bviSemTheory.evaluate_def,destVar_def,bVarBound_def]
+  \\ REPEAT STRIP_TAC
+  \\ `n < LENGTH vs + LENGTH env` by DECIDE_TAC \\ full_simp_tac(srw_ss())[]
+  \\ full_simp_tac(srw_ss())[rich_listTheory.EL_APPEND1]) |> SPEC_ALL
+  |> INST_TYPE[beta|->``:'ffi``,alpha|->``:'c``];
+
+val _ = show "evaluate_MAP_Var2_typed=" evaluate_MAP_Var2;

@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml", "hol_name": "evaluate_MAP_Var2",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/VarList.lean", "lean_name": "evaluate_varMapBound",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed original local proof replay: bounded variable-only BVL expressions map to BVI variables whose evaluations in both the original environment and that environment with an arbitrary suffix return the same existential value list and unchanged BVI state. The BVI state witness accounts for refs; evaluation inherits the reals_as_rational_cuts assumption."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml", "hol_name": "compile_exps_LENGTH",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/SourceSing.lean", "lean_name": "compileListSource_length_result",
   "statement_status": "reviewed_exact",
