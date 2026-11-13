@@ -323,21 +323,6 @@ theorem term_prefix_simulation_through {C F : Type} (e : Bvi.Exp) (ctx : List Va
   exact ⟨value, typed, sourceRun source, targetRun target⟩
 
 
-/-- The unrestricted term hypothesis supplies the bounded simulation. -/
-theorem term_prefix_simulation {C F : Type} (e : Bvi.Exp) (ctx : List ValueType) (termTy : ValueType)
-    (env1 env2 : List Value) (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (loc : Nat) (termIH : rewriteTailProperty (C := C) (F := F) [e])
-    (accepted : term ctx termTy e = true) (types : tyRel env1 ctx)
-    (prefixRel : env1 <+: env2) (related : stateRel source target) :
-    ∃ value, (match termTy with
-      | .int => ∃ integer, value = .number integer
-      | .list => ∃ ys, valueToList value = some ys
-      | .any => True) ∧
-      BviSem.evaluate [e] env1 source = (.val [value], source) ∧
-      BviSem.evaluate [e] env2 target = (.val [value], target) := by
-  exact term_prefix_simulation_through e ctx termTy env1 env2 source target loc (rewriteTailProperty_through termIH _)
-    accepted types prefixRel related
-
 /-- A scanned term has one common value in prefix-related environments and
 leaves every source and target state unchanged. -/
 theorem term_prefix_simulation_all_through {C F : Type} (e : Bvi.Exp) (ctx : List ValueType) (termTy : ValueType)
@@ -486,32 +471,6 @@ theorem evaluate_applyOp_var {C F : Type} (op : AssocOp) (acc : Nat)
   apply evaluate_applyOp_pureLeft op (.var acc) body env state value
   simp [BviSem.evaluate, lookup]
 
-/-- Evaluating a checked pure operand and the current accumulator yields the
-same updated, well-typed accumulator used by the worker call. -/
-theorem evaluate_accumulator_update {C F : Type} (op : AssocOp) (pure : Bvi.Exp)
-    (ctx : List ValueType) (loc acc : Nat) (env1 env2 : List Value)
-    (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (termIH : rewriteTailProperty (C := C) (F := F) [pure])
-    (notNoop : op ≠ .noop) (accepted : term ctx (opType op) pure = true)
-    (types : tyRel env1 ctx) (envRelated : envRel (opType op) true acc env1 env2)
-    (related : stateRel source target) :
-    ∃ pureValue oldValue newValue,
-      BviSem.evaluate [pure] env1 source = (.val [pureValue], source) ∧
-      BviSem.evaluate [pure] env2 target = (.val [pureValue], target) ∧
-      env2[acc]? = some oldValue ∧
-      accumulatorApply op [pureValue, oldValue] = some newValue ∧
-      valueMatchesType newValue (opType op) ∧
-      BviSem.evaluate [applyOp op (.var acc) pure] env2 target = (.val [newValue], target) := by
-  obtain ⟨pureValue, pureTyped, sourceRun, targetRun⟩ :=
-    term_prefix_simulation pure ctx (opType op) env1 env2 source target loc termIH accepted types envRelated.1 related
-  obtain ⟨oldValue, lookup, oldTyped⟩ := envRel_accumulator (opType op) acc env1 env2 envRelated
-  have pureTyped' : valueMatchesType pureValue (opType op) := by
-    cases op <;> simp_all [opType, valueMatchesType]
-  obtain ⟨newValue, applied, newTyped⟩ := accumulator_typed op pureValue oldValue notNoop pureTyped' oldTyped
-  refine ⟨pureValue, oldValue, newValue, sourceRun, targetRun, lookup, applied, newTyped, ?_⟩
-  rw [evaluate_applyOp_var op acc pure env2 target oldValue lookup, targetRun]
-  simp [doApp_toOp_pure, applied]
-
 /-- Adding the accumulator identity to a well-typed body result preserves its
 result and final state, including propagated errors. -/
 theorem evaluate_applyOp_identity {C F : Type} (op : AssocOp) (acc : Nat)
@@ -558,21 +517,6 @@ theorem evaluate_applyOp_swap_pure {C F : Type} (op : AssocOp) (pure other : Bvi
       simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
       rw [doApp_toOp_pure, doApp_toOp_pure]
       rw [accumulator_commutative_all op value otherValue notNoop notAppend]
-
-/-- The source candidate check preserves evaluation: its only possible
-change swaps a pure operand with a recursive call for a commutative operator. -/
-theorem checkOp_evaluate {C F : Type} (ctx : List ValueType) (op : AssocOp) (loc : Nat)
-    (e checked : Bvi.Exp) (env : List Value) (state : BviSem.BviState C F)
-    (types : tyRel env ctx) (check : checkOp ctx op loc e = some checked) :
-    BviSem.evaluate [e] env state = BviSem.evaluate [checked] env state := by
-  obtain ⟨recursive, pure, _, termOk, checkedShape, notNoop, original⟩ :=
-    checkOp_candidate ctx op loc e checked check
-  obtain ⟨value, _, pureRun⟩ := term_total (C := C) (F := F) ctx (opType op) pure env termOk types
-  rw [checkedShape]
-  rcases original with direct | ⟨notAppend, swapped⟩
-  · rw [direct]
-  · rw [swapped]
-    exact (evaluate_applyOp_swap_pure op pure recursive env state value notNoop notAppend pureRun).symm
 
 /-- Reassociate a typed pure operand into the current accumulator before
 evaluating the recursive operand. Errors and state changes of that operand
