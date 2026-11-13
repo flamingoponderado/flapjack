@@ -44,7 +44,7 @@ theorem evaluate_fromListByteBody {C F : Type} (value : Value) (bytes : List (Bi
       (BviProps.incClock writerClock allocated) =
       (.val [.refPtr true ptr], { state with refs := state.refs.updateEq (ptr, .byteArray true bytes) }) := by
     simpa [allocated, zeros, updateEq_overwrite] using writerRun
-  have valueEq := valueToList_inverse value _ decode
+  have valueEq := Flapjack.Compiler.Backend.BvlSem.listToValue_valueToList value _ decode
   rw [valueEq] at writerResult
   obtain ⟨lengthClock, lengthRun⟩ := evaluate_listLength_call value (bytes.map (fun b => .number b.toNat)) env state lengthCode decode
   let extra := writerClock + 1

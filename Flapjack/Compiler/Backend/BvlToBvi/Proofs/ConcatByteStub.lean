@@ -222,7 +222,7 @@ theorem evaluate_concatByte_decoded {C F : Type} (value : Value) (ptrs : List Na
   obtain ⟨_sumCode, code, decode, distinct, lookups, dstLookup, indexEq, size⟩ := premises
   change sptLookup concatByteLocation state.code = some concatByteCode at code
   subst index
-  rw [← valueToList_inverse value _ decode]
+  rw [← Flapjack.Compiler.Backend.BvlSem.listToValue_valueToList value _ decode]
   exact evaluate_concatByte ptrs chunks before suffix dst flag state distinct lookups dstLookup size code
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

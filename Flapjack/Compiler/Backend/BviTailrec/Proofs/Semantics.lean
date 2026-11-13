@@ -47,7 +47,7 @@ theorem listToValue_decode (xs : List Value) : valueToList (listToValue xs) = so
 @[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "list_to_v_imp"]
 theorem listToValue_of_decode (x : Value) (xs : List Value)
     (h : valueToList x = some xs) : listToValue xs = x :=
-  BvlToBvi.Proofs.valueToList_inverse x xs h
+  Flapjack.Compiler.Backend.BvlSem.listToValue_valueToList x xs h
 
 /-- A sound type context has exactly one entry per environment value. -/
 theorem tyRel_length {env : List Value} {types : List ValueType} (h : tyRel env types) :

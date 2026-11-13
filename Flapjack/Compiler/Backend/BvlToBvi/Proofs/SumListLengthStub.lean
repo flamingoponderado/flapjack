@@ -138,7 +138,7 @@ theorem evaluate_sumListLength_decoded {C F : Type} (value : Value) (ptrs : List
       (.val [.number (Int.ofNat (n + chunks.flatten.length))], state) := by
   obtain ⟨code, decode, lookups⟩ := premises
   change sptLookup sumListLengthLocation state.code = some sumListLengthCode at code
-  rw [← valueToList_inverse value _ decode]
+  rw [← Flapjack.Compiler.Backend.BvlSem.listToValue_valueToList value _ decode]
   exact evaluate_sumListLength ptrs chunks n state lookups code
 
 /-- The call emitted by concatenation computes the required allocation size. -/

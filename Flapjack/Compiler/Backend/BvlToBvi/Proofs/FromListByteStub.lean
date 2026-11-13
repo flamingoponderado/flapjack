@@ -257,7 +257,7 @@ theorem evaluate_fromListByte_decoded {C F : Type} (value : Value) (numbers : Li
     omega
   have noTail' : bytes.drop (bytes.length - numbers.length + numbers.length) = [] := by
     simpa [offset, lengthEq, List.drop_drop] using noTail
-  rw [← valueToList_inverse value _ decode']
+  rw [← Flapjack.Compiler.Backend.BvlSem.listToValue_valueToList value _ decode']
   simpa [offset, offsetBound, noTail, noTail', newBytes, lengthEq] using run
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

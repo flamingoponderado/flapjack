@@ -27,43 +27,6 @@ theorem decClock_incClock_allowance {C F : Type} (c : Nat)
   congr 1
   omega
 
-/-- Successful list decoding identifies the original encoded list. -/
-theorem valueToList_inverse (value : Value) (values : List Value)
-    (decode : BvlSem.valueToList value = some values) : BvlSem.listToValue values = value := by
-  cases value with
-  | block tag fields =>
-    cases fields with
-    | nil =>
-      simp only [BvlSem.valueToList] at decode
-      split at decode
-      · rename_i equal
-        simp only [Option.some.injEq] at decode
-        subst values
-        subst tag
-        rfl
-      · contradiction
-    | cons head tail =>
-      cases tail with
-      | nil => simp [BvlSem.valueToList] at decode
-      | cons next rest =>
-        cases rest with
-        | cons other rest => simp [BvlSem.valueToList] at decode
-        | nil =>
-          simp only [BvlSem.valueToList] at decode
-          split at decode
-          · rename_i equal
-            cases nextDecode : BvlSem.valueToList next with
-            | none => simp [nextDecode] at decode
-            | some vs =>
-              simp [nextDecode] at decode
-              subst values
-              have ih := valueToList_inverse next vs nextDecode
-              subst tag
-              simp [BvlSem.listToValue, ih]
-          · contradiction
-  | _ => simp [BvlSem.valueToList] at decode
-termination_by sizeOf value
-
 /-- The list-length stub returns the accumulator on an empty list. Untagged
 pending BVI evaluator and dispatcher correspondence review. -/
 theorem evaluate_listLength_nil {C F : Type} (state : BviSem.BviState C F) (n : Nat) :
@@ -180,7 +143,7 @@ theorem evaluate_listLength_decoded {C F P : Type} [Nonempty P]
   change sptLookup listLengthLocation state.code = some listLengthCode at lookup
   obtain ⟨witness⟩ := ‹Nonempty P›
   refine ⟨witness, ?_⟩
-  rw [← valueToList_inverse value values decode]
+  rw [← Flapjack.Compiler.Backend.BvlSem.listToValue_valueToList value values decode]
   exact evaluate_listLength values n state lookup
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs
