@@ -1,5 +1,6 @@
 module
 
+public import Flapjack.CakeParser.Tokens
 public import Flapjack.Misc.Location.Merge
 public import Flapjack.Pancake.Semantics.CrepSem.HOLState
 
@@ -58,6 +59,14 @@ def destTok {α β loc : Type} : Symbol α β × loc → Option α
   | (.tok tok, _) => some tok
   | (.nt _, _) => none
 
+/-- Exact port of HOL `destTOK` (`tokenUtilsScript.sml:81`), the token
+    destructor used by the CakeML parse-tree conversion: it takes a bare
+    `symbol` rather than grammarScript's `symbol # locs` pair. -/
+@[hol "cakeml/semantics/tokenUtilsScript.sml" "destTOK_def"]
+def destTokSym {α β : Type} : Symbol α β → Option α
+  | .tok tok => some tok
+  | .nt _ => none
+
 @[hol "HOL/examples/formal-languages/context-free/grammarScript.sml" "parsetree"]
 inductive ParseTree (α β loc : Type) where
   | leaf : Symbol α β × loc → ParseTree α β loc
@@ -70,6 +79,15 @@ terminal, nonterminal and location types. -/
 def destLf {α β loc : Type} : ParseTree α β loc → Option (Symbol α β)
   | .leaf (symbol, _) => some symbol
   | .node _ _ => none
+
+/-- Exact port of HOL `destTyvarPT` (`tokenUtilsScript.sml:74`): the type
+    variable carried by a leaf `TyvarT` token; generic in the nonterminal and
+    location types, with the terminal type fixed to CakeML's `token`. -/
+@[hol "cakeml/semantics/tokenUtilsScript.sml" "destTyvarPT_def"]
+def destTyvarPT {α β : Type} :
+    ParseTree Flapjack.CakeParser.Token α β → Option Flapjack.Basis.Pure.MlString.MlString
+  | .leaf (.tok (CakeParser.Token.tyvarT s), _) => some s
+  | _ => none
 
 
 @[hol "HOL/examples/formal-languages/context-free/grammarScript.sml" "ptree_loc_def"]

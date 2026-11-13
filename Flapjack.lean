@@ -3657,6 +3657,7 @@ import Flapjack.CakeParser.PegChecks
 import Flapjack.CakeParser.PegActions
 import Flapjack.CakeParser.PegEval
 import Flapjack.CakeParser.PtreeConversion
+import Flapjack.CakeParser.PtreeConversion.Exact
 import Flapjack.CakeParser.Frontend
 import Flapjack.CakeParser.Sexp
 import Flapjack.CakeParser.SexpPrint

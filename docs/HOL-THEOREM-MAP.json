@@ -134606,5 +134606,105 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.3.43; panSemScript.sml:529-547: typed capture sh_mem_store_def_typed in pan_upd_locals_probe.out gives \u2200(w :\u03b3 word) (addr :\u03b1 word) (nb :num) (s :(\u03b1,'ffi) state). sh_mem_store w addr nb s :\u03b2 result option # (\u03b1,'ffi) state = if nb = 0 then if addr \u2208 s.sh_memaddrs then case call_FFI s.ffi (SharedMem MappedWrite) [(n2w nb :word8)] (word_to_bytes w F ++ word_to_bytes addr F) of FFI_return new_ffi _ => (NONE, s with ffi := new_ffi) | FFI_final outcome => (SOME (FinalFFI outcome), s) else (SOME Error, s) else if byte_align addr \u2208 s.sh_memaddrs then (same call with TAKE nb (word_to_bytes w F) ++ word_to_bytes addr F) else (SOME Error, s), 0 hypotheses). Lean keeps every branch, the two FFI outcomes and the ffi-only update; the stored word, the address and the result keep HOL's three independent word dimensions (word : RiscV.Word w, address : RiscV.Word width, result : PanSemResultExact \u03b2), and the argument order is HOL's word, address, nb, state. byte_align is panByteAlignHOL, word_to_bytes is panWordToBytesHOL, TAKE is List.take, call_FFI is callFFIHOL. The map fields locals/globals/code/eshapes are the canonical HolFiniteMapExact translation (witness holFmapAsFiniteSupportWitness). The production single-width, state-first shMemStoreHOLExact stays untagged with its documented_mismatch row. Qualifier is representation-only."
+  },
+  {
+    "lean_path": "Flapjack/Basis/Pure/MlString.lean", "lean_name": "isLowerChar",
+    "hol_path": "HOL/src/string/stringScript.sml", "hol_name": "isLower_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against the typed capture scripts/hol-probes/cake_ptree_helpers_typed_probe.out isLower_def_typed: HOL isLower_def (stringScript.sml:78) gives ∀(c :char). isLower c ⇔ (97 :num) ≤ ORD c ∧ ORD c ≤ (122 :num). Lean's isLowerChar c = 97 ≤ c.toNat ∧ c.toNat ≤ 122 over HolChar = BitVec 8, the reviewed canonical 256-element char carrier, with ORD rendered as toNat and HOL's iff-valued Bool definition rendered as a Bool conjunction. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/Basis/Pure/MlString.lean", "lean_name": "isUpperChar",
+    "hol_path": "HOL/src/string/stringScript.sml", "hol_name": "isUpper_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out isUpper_def_typed: HOL isUpper_def (stringScript.sml:82) gives ∀(c :char). isUpper c ⇔ (65 :num) ≤ ORD c ∧ ORD c ≤ (90 :num). Lean's isUpperChar c = 65 ≤ c.toNat ∧ c.toNat ≤ 90 over HolChar = BitVec 8 with ORD rendered as toNat. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/Basis/Pure/MlString.lean", "lean_name": "isAlphaChar",
+    "hol_path": "HOL/src/string/stringScript.sml", "hol_name": "isAlpha_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out isAlpha_def_typed: HOL isAlpha_def (stringScript.sml:86) is ∀(c :char). isAlpha c ⇔ isLower c ∨ isUpper c. Lean's isAlphaChar c = isLowerChar c || isUpperChar c keeps the same disjunction over HolChar. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/Misc/List.lean", "lean_name": "oHD",
+    "hol_path": "HOL/src/list/src/listScript.sml", "hol_name": "oHD_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out oHD_def_typed: HOL oHD_def (listScript.sml:5474) gives ∀(l :α list). oHD l = case l of [] => NONE | h::_ => SOME h. Lean's oHD keeps both clauses, the same generic element type and the Option result. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Tokens.lean", "lean_name": "destLongidT",
+    "hol_path": "cakeml/semantics/tokenUtilsScript.sml", "hol_name": "destLongidT_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out destLongidT_def_typed: HOL destLongidT_def (tokenUtilsScript.sml:63) is destLongidT (LongidT str s) = SOME (str,s) with str :path and s :mlstring, plus destLongidT _ = NONE. Lean's destLongidT keeps the positive clause and the wildcard NONE over the reviewed Token carrier, returning Option (Path × MlString). No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Tokens.lean", "lean_name": "destAlphaT",
+    "hol_path": "cakeml/semantics/tokenUtilsScript.sml", "hol_name": "destAlphaT_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out destAlphaT_def_typed: HOL destAlphaT_def (tokenUtilsScript.sml:87) is destAlphaT (AlphaT s) = SOME s with s :mlstring, plus destAlphaT _ = NONE. Lean's destAlphaT keeps both clauses over Token. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Tokens.lean", "lean_name": "destSymbolT",
+    "hol_path": "cakeml/semantics/tokenUtilsScript.sml", "hol_name": "destSymbolT_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out destSymbolT_def_typed: HOL destSymbolT_def (tokenUtilsScript.sml:97) is destSymbolT (SymbolT s) = SOME s with s :mlstring, plus destSymbolT _ = NONE. Lean's destSymbolT keeps both clauses over Token. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Tokens.lean", "lean_name": "destIntT",
+    "hol_path": "cakeml/semantics/tokenUtilsScript.sml", "hol_name": "destIntT_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out destIntT_def_typed: HOL destIntT_def (tokenUtilsScript.sml:108) is destIntT (IntT i) = SOME i with i :int, plus destIntT _ = NONE. Lean's destIntT keeps both clauses over Token, with HOL int rendered by Lean Int. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Tokens.lean", "lean_name": "destCharT",
+    "hol_path": "cakeml/semantics/tokenUtilsScript.sml", "hol_name": "destCharT_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out destCharT_def_typed: HOL destCharT_def (tokenUtilsScript.sml:113) is destCharT (CharT c) = SOME c with c :char, plus destCharT _ = NONE. Lean's destCharT keeps both clauses over Token, with the reviewed HolChar = BitVec 8 rendering of HOL char. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Tokens.lean", "lean_name": "destStringT",
+    "hol_path": "cakeml/semantics/tokenUtilsScript.sml", "hol_name": "destStringT_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out destStringT_def_typed: HOL destStringT_def (tokenUtilsScript.sml:118) is destStringT (StringT s) = SOME s with s :mlstring, plus destStringT _ = NONE. Lean's destStringT keeps both clauses over Token. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Tokens.lean", "lean_name": "destWordT",
+    "hol_path": "cakeml/semantics/tokenUtilsScript.sml", "hol_name": "destWordT_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out destWordT_def_typed: HOL destWordT_def (tokenUtilsScript.sml:123) is destWordT (WordT w) = SOME w with w :num, plus destWordT _ = NONE. Lean's destWordT keeps both clauses over Token, with HOL num rendered by Nat. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Tokens.lean", "lean_name": "destFFIT",
+    "hol_path": "cakeml/semantics/tokenUtilsScript.sml", "hol_name": "destFFIT_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out destFFIT_def_typed: HOL destFFIT_def (tokenUtilsScript.sml:128) is destFFIT (FFIT s) = SOME s with s :mlstring, plus destFFIT _ = NONE. Lean's destFFIT keeps both clauses over Token. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Grammar.lean", "lean_name": "destTokSym",
+    "hol_path": "cakeml/semantics/tokenUtilsScript.sml", "hol_name": "destTOK_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out destTOK_def_typed: tokenUtils' destTOK_def (tokenUtilsScript.sml:81) is (destTOK (TOK t) = SOME t) ∧ (destTOK (NT n) = NONE), with the symbol's terminal type α and nonterminal type β generic. Lean's destTokSym keeps both clauses over Misc.Grammar.Symbol α β; it is distinct from grammarScript's pair-taking destTOK (the reviewed destTok), which is a different HOL declaration in a different theory. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Grammar.lean", "lean_name": "destTyvarPT",
+    "hol_path": "cakeml/semantics/tokenUtilsScript.sml", "hol_name": "destTyvarPT_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out destTyvarPT_def_typed: HOL destTyvarPT_def (tokenUtilsScript.sml:74) is destTyvarPT (Lf (TOK (TyvarT s),_)) = SOME s ∧ destTyvarPT _ = NONE, with s :mlstring, the nonterminal type α and location type β generic and the terminal type fixed to token. Lean's destTyvarPT keeps both clauses over Misc.Grammar.ParseTree CakeParser.Token α β. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "ifMHOL",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "ifM_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out ifM_def_typed: HOL ifM_def (cmlPtreeConversionScript.sml:96) is ∀(bM :bool option) (tM :α option) (eM :α option). ifM bM tM eM = OPTION_BIND bM (λb. if b then tM else eM). Lean's ifMHOL keeps the same bind and conditional over Option. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "isSymbolicConstructorHOL",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "isSymbolicConstructor_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out isSymbolicConstructor_def_typed: HOL isSymbolicConstructor_def (cmlPtreeConversionScript.sml:533) is ∀(s :string). isSymbolicConstructor s = SOME (s = \"::\"). Lean's isSymbolicConstructorHOL returns some (s = [58, 58]) on the char list, with #\":\" = CHR 58, so the character-list equality is HOL's string equality. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "isConstructorHOL",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "isConstructor_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out isConstructor_def_typed: HOL isConstructor_def (cmlPtreeConversionScript.sml:538) is ∀(s :string). isConstructor s = ifM (isSymbolicConstructor s) (SOME T) (SOME (case oHD s of NONE => F | SOME c => isAlpha c ∧ isUpper c)). Lean's isConstructorHOL keeps the ifM, both SOME branches, oHD and the conjunction of the reviewed isAlphaChar/isUpperChar; isUpper implies isAlpha in HOL, and && renders HOL's ∧ on Bools. No premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "tokcheckHOL",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "tokcheck_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cml_ptree_conversion_source_probe.out tokcheck_def_typed: HOL tokcheck_def is ∀(pt :(α, β, γ) parsetree) (tok :α). tokcheck pt tok ⇔ OPTION_BIND (destLf pt) (destTOK :(α, β) symbol -> α option) = SOME tok, generic in the terminal, nonterminal and location types. Lean's tokcheckHOL keeps the bind chain through the reviewed destLf and tokenUtils destTOK (destTokSym) and the equality to SOME tok, rendering HOL equality on the generic terminal type with [DecidableEq α] (the established rendering of HOL equality on a generic key type) and HOL's iff-valued Bool result with decide. No other premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "tokchecklHOL",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "tokcheckl_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out tokcheckl_def_typed: HOL tokcheckl_def (cmlPtreeConversionScript.sml:164) has three clauses, tokcheckl [] [] ⇔ T, tokcheckl (pt::prest) (tok::tokrest) ⇔ tokcheck pt tok ∧ tokcheckl prest tokrest, and tokcheckl _ _ ⇔ F, generic in α, β and γ. Lean's tokchecklHOL keeps the same clause order and conjunction, with the same [DecidableEq α] terminal rendering as tokcheckHOL. No other premise added."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "singleSymPHOL",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "singleSymP_def",
+    "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cake_ptree_helpers_typed_probe.out singleSymP_def_typed: HOL singleSymP_def (cmlPtreeConversionScript.sml:478) gives singleSymP P [pt] = OPTION_BIND (OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destSymbolT) (λs. OPTION_IGNORE_BIND (OPTION_GUARD (P s)) (SOME (Short s))) and singleSymP _ _ = NONE, with P :mlstring -> bool, the terminal type fixed to token, the nonterminal type β and location type γ generic, and result ((α, mlstring) id) option. Lean's singleSymPHOL keeps the bind chain, the P guard (rendered as if P s then some (Short s) else none, i.e. OPTION_GUARD followed by return) and the wildcard NONE. No premise added."
   }
 ]
