@@ -1536,6 +1536,8 @@ import Flapjack.Compiler.Backend.BviToData.Assign
 import Flapjack.Compiler.Backend.BviToData.Compile
 import Flapjack.Compiler.Backend.BviToData.Proofs.Total
 import Flapjack.Compiler.Backend.BviToData.Proofs.Value
+import Flapjack.Compiler.Backend.BviToData.Proofs.RefProjection
+import Flapjack.Compiler.Backend.BviToData.Proofs.ValueProjection
 import Flapjack.Compiler.Backend.BviToData.Proofs.Result
 import Flapjack.Compiler.Backend.BviToData.Proofs.CompileSource
 import Flapjack.Compiler.Backend.BviToData.Proofs.CompileCorrect

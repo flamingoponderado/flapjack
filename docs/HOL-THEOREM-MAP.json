@@ -423,6 +423,38 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "data_to_bvi_v_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/ValueProjection.lean",
+    "lean_name": "dataToBviValue_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: all five constructor cases and their conjunction order match, including four independently typed unused binders, with Nonempty reflecting HOL type inhabitation; the block case preserves both existential witnesses. The reversed version changes exactly the original equality sides."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "data_to_bvi_v_eq'",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/ValueProjection.lean",
+    "lean_name": "dataToBviValue_eq_flip",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: all five constructor cases and their conjunction order match, including four independently typed unused binders, with Nonempty reflecting HOL type inhabitation; the block case preserves both existential witnesses. The reversed version changes exactly the original equality sides."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "data_to_bvi_ref_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/RefProjection.lean",
+    "lean_name": "dataToBviRef_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: all four reference constructors, their bound variables, projection witnesses, and conjunction order match the original; the reversed version changes exactly the original equality sides. The native reference datatype requires no representation qualifier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "data_to_bvi_ref_eq'",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/RefProjection.lean",
+    "lean_name": "dataToBviRef_eq_flip",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: all four reference constructors, their bound variables, projection witnesses, and conjunction order match the original; the reversed version changes exactly the original equality sides. The native reference datatype requires no representation qualifier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "data_to_bvi_do_eq",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Equality.lean",
     "lean_name": "dataToBviDoEq",

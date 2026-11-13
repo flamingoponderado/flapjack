@@ -189,3 +189,7 @@ val refs_rel_LEAST_eq_replay = Q.prove
   \\ rw []);
 val _ = show "refs_rel_LEAST_eq_replay_typed=" refs_rel_LEAST_eq_replay;
 val _ = show "data_to_bvi_do_eq_typed=" bvi_to_dataProofTheory.data_to_bvi_do_eq;
+val _ = show "data_to_bvi_ref_eq_typed=" bvi_to_dataProofTheory.data_to_bvi_ref_eq;
+val _ = show "data_to_bvi_ref_eq_flip_typed=" bvi_to_dataProofTheory.data_to_bvi_ref_eq';
+val _ = show "data_to_bvi_v_eq_typed=" bvi_to_dataProofTheory.data_to_bvi_v_eq;
+val _ = show "data_to_bvi_v_eq_flip_typed=" bvi_to_dataProofTheory.data_to_bvi_v_eq';
