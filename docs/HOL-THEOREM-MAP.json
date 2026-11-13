@@ -122711,6 +122711,14 @@
     "reviewer": "Independently compared the typed context_free_tree_probe capture of destTOK_def (`destTOK ((TOK tk),_) = SOME tk ∧ destTOK ((NT n),_) = NONE`) with destTok : Symbol α β × loc → Option α, whose two clauses return some tok and none; the pair argument and the wildcard second clause match."
   },
   {
+    "hol_path": "cakeml/semantics/tokenUtilsScript.sml",
+    "hol_name": "destLf_def",
+    "lean_path": "Flapjack/Misc/Grammar.lean",
+    "lean_name": "destLf",
+    "statement_status": "reviewed_exact",
+    "reviewer": "task-160 source comparison against the typed capture scripts/hol-probes/token_utils_destlf_typed_probe.out: HOL destLf_def (tokenUtilsScript.sml:79) is destLf (Lf (x,l)) = SOME x ∧ destLf (Nd _ _) = NONE, with inferred types (x :(alpha,beta) symbol) (l :gamma) and result (alpha,beta) symbol option. The Lean definition keeps both clauses, the same constructor arity and payloads, the same polymorphic terminal, nonterminal and location types, and adds no premise. This is the leaf destructor used by the exact CakeParser parsetree ports; the representation is the reviewed Misc.Grammar generic carrier."
+  },
+  {
     "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
     "hol_name": "parsetree",
     "lean_path": "Flapjack/Misc/Grammar.lean",

@@ -63,6 +63,15 @@ inductive ParseTree (α β loc : Type) where
   | leaf : Symbol α β × loc → ParseTree α β loc
   | node : Sum β Nat × loc → List (ParseTree α β loc) → ParseTree α β loc
 
+/-- Exact port of HOL `destLf` (`cakeml/semantics/tokenUtilsScript.sml:79`):
+`destLf (Lf (x,l)) = SOME x` and `destLf (Nd _ _) = NONE`, generic in the
+terminal, nonterminal and location types. -/
+@[hol "cakeml/semantics/tokenUtilsScript.sml" "destLf_def"]
+def destLf {α β loc : Type} : ParseTree α β loc → Option (Symbol α β)
+  | .leaf (symbol, _) => some symbol
+  | .node _ _ => none
+
+
 @[hol "HOL/examples/formal-languages/context-free/grammarScript.sml" "ptree_loc_def"]
 def treeLoc {α β loc : Type} : ParseTree α β loc → loc
   | .leaf (_, l) => l

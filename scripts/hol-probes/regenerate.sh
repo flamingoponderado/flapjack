@@ -10936,3 +10936,11 @@ run_probe word_convs_changed_rows_typed_probeScript.sml word_convs_changed_rows_
   word_alloc_two_reg_inst_lem_typed compile_to_word_conventions_typed \
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe grammar_parsetree_typed_probeScript.sml grammar_parsetree_typed_probe.out \
+  symbol_typed parsetree_typed ptree_loc_def_typed ptree_list_loc_def_typed \
+  ptree_head_def_typed isTOK_def_typed destTOK_def_typed \
+  "$hol_dir/examples/formal-languages/context-free/grammarScript.sml" \
+  "$hol_dir/examples/formal-languages/context-free"
+run_probe token_utils_destlf_typed_probeScript.sml token_utils_destlf_typed_probe.out \
+  destLf_def_typed \
+  "$cake_dir/semantics/tokenUtilsScript.sml" "$cake_dir/semantics"
