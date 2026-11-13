@@ -269,74 +269,6 @@ theorem simulationFor_op_ffiError {C F : Type} (name : Basis.Pure.MlString.MlStr
     · cases tail <;> simp [compileSource, compiled, assignment, inner, whole]
     · simp [correctOutcome, dataToBviResult, isResult, isReturn, isException]
 
-/-- A successful integer primitive expression satisfies the compiler
-simulation invariant in tail and non-tail position. This source case remains
-untagged pending evaluator review and assembly of the complete operation proof. -/
-theorem simulationFor_op_int_success {C F : Type} (op : ClosLang.IntOp) (args : List Bvi.Exp)
-    (env : List BvlSem.Value) (s1 smid s2 : BviSem.BviState C F)
-    (values : List BvlSem.Value) (result : BvlSem.Value)
-    (ih : simulationFor args env s1) (argsRun : BviSem.evaluate args env s1 = (.val values, smid))
-    (opRun : BviSem.doApp (.intOp op) values.reverse smid = .val (result, s2))
-    (t1 : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
-    (vars : DataProps.varCorr env corr (sptMap dataToBviValue t1.locals))
-    (fresh : ∀ k, n ≤ k → sptLookup k t1.locals = none)
-    (related : stateRel s1 t1) (livePresent : ∀ v ∈ live, sptLookup v t1.locals ≠ none) :
-    BviSem.evaluate [.op (.intOp op) args] env s1 = (.val [result], s2) ∧
-    ∃ t2 prog pres names next ls,
-      compileSource n corr tail live [.op (.intOp op) args] = (prog, names, next) ∧
-      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel s2 t2 ∧
-      correctOutcome (.val [result]) t1 t2 n next corr live names env tail pres ls := by
-  have wholeRun : BviSem.evaluate [.op (.intOp op) args] env s1 = (.val [result], s2) := by
-    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
-    simp [opRun]
-  obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
-    ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
-      (by simp [isException])
-  cases pres with
-  | some result => simp [correctOutcome, isResult] at outcome
-  | none =>
-    have firstOutcome := outcome
-    have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
-    have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
-      intro v member
-      exact liveMidAll v (List.mem_append_right argNames member)
-    rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
-    obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
-    have projectedRun : BviSem.doApp (.intOp op) (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
-      simpa [List.map_reverse, ← projected] using opRun
-    obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
-      evaluate_iAssign_int_outcome op tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
-        middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
-    let assignment := iAssign n1 (.intOp op) argNames.reverse live corr
-    let inner := DataLang.Prog.seq argsProg assignment
-    have sourceBound := BviSem.evaluate_clock_le args env s1
-    rw [argsRun] at sourceBound
-    have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
-    have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
-      evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
-    have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
-      argNames [n1] env false none ls none firstOutcome assignmentOutcome
-    cases tail with
-    | false =>
-      refine ⟨wholeRun, tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
-      simp [compileSource, compiled, assignment, inner]
-    | true =>
-      have fullBound := BviSem.evaluate_clock_le [.op (.intOp op) args] env s1
-      rw [wholeRun] at fullBound
-      have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
-      have returnRun : DataSem.evaluate (.return [n1]) tassign =
-          (some (.val [dataValue]), DataSem.flushState false tassign) := by
-        simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
-      refine ⟨wholeRun, DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
-        [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
-      · simp [compileSource, compiled, assignment, inner]
-      · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
-      · simpa [stateRel, DataSem.flushState] using finalRel
-      · have stack := innerOutcome.2.2.2.2.2.2.2.1
-        have handler := innerOutcome.2.2.2.2.2.2.2.2.1
-        simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
-          DataSem.flushState, ← resultProjection, stack, handler]
-
 /-- Complete integer-operation expression case of the BVI-to-data simulation.
 The recursive hypothesis covers its argument list; non-type errors propagate
 from arguments, and successful integer application handles both tail modes.
@@ -373,348 +305,53 @@ theorem simulationFor_op_int {C F : Type} (op : ClosLang.IntOp) (args : List Bvi
         simp [opRun]
       rw [whole] at run
       cases run
-      exact (simulationFor_op_int_success op args env s1 smid s2 values result ih argsRun opRun
-        t1 n corr tail live vars fresh related livePresent).2
-
-/-- A successful word primitive expression satisfies the compiler
-simulation invariant in tail and non-tail position. This source case remains
-untagged pending evaluator review and assembly of the complete operation proof. -/
-theorem simulationFor_op_word_success {C F : Type} (op : ClosLang.WordOp) (args : List Bvi.Exp)
-    (env : List BvlSem.Value) (s1 smid s2 : BviSem.BviState C F)
-    (values : List BvlSem.Value) (result : BvlSem.Value)
-    (ih : simulationFor args env s1) (argsRun : BviSem.evaluate args env s1 = (.val values, smid))
-    (opRun : BviSem.doApp (.wordOp op) values.reverse smid = .val (result, s2))
-    (t1 : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
-    (vars : DataProps.varCorr env corr (sptMap dataToBviValue t1.locals))
-    (fresh : ∀ k, n ≤ k → sptLookup k t1.locals = none)
-    (related : stateRel s1 t1) (livePresent : ∀ v ∈ live, sptLookup v t1.locals ≠ none) :
-    BviSem.evaluate [.op (.wordOp op) args] env s1 = (.val [result], s2) ∧
-    ∃ t2 prog pres names next ls,
-      compileSource n corr tail live [.op (.wordOp op) args] = (prog, names, next) ∧
-      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel s2 t2 ∧
-      correctOutcome (.val [result]) t1 t2 n next corr live names env tail pres ls := by
-  have wholeRun : BviSem.evaluate [.op (.wordOp op) args] env s1 = (.val [result], s2) := by
-    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
-    simp [opRun]
-  obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
-    ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
-      (by simp [isException])
-  cases pres with
-  | some result => simp [correctOutcome, isResult] at outcome
-  | none =>
-    have firstOutcome := outcome
-    have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
-    have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
-      intro v member
-      exact liveMidAll v (List.mem_append_right argNames member)
-    rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
-    obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
-    have projectedRun : BviSem.doApp (.wordOp op) (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
-      simpa [List.map_reverse, ← projected] using opRun
-    obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
-      evaluate_iAssign_word_outcome op tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
-        middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
-    let assignment := iAssign n1 (.wordOp op) argNames.reverse live corr
-    let inner := DataLang.Prog.seq argsProg assignment
-    have sourceBound := BviSem.evaluate_clock_le args env s1
-    rw [argsRun] at sourceBound
-    have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
-    have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
-      evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
-    have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
-      argNames [n1] env false none ls none firstOutcome assignmentOutcome
-    cases tail with
-    | false =>
-      refine ⟨wholeRun, tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
-      simp [compileSource, compiled, assignment, inner]
-    | true =>
-      have fullBound := BviSem.evaluate_clock_le [.op (.wordOp op) args] env s1
-      rw [wholeRun] at fullBound
-      have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
-      have returnRun : DataSem.evaluate (.return [n1]) tassign =
-          (some (.val [dataValue]), DataSem.flushState false tassign) := by
-        simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
-      refine ⟨wholeRun, DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
-        [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
-      · simp [compileSource, compiled, assignment, inner]
-      · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
-      · simpa [stateRel, DataSem.flushState] using finalRel
-      · have stack := innerOutcome.2.2.2.2.2.2.2.1
-        have handler := innerOutcome.2.2.2.2.2.2.2.2.1
-        simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
-          DataSem.flushState, ← resultProjection, stack, handler]
-
-/-- A successful block op primitive expression satisfies the compiler
-simulation invariant in tail and non-tail position. This source case remains
-untagged pending evaluator review and assembly of the complete operation proof. -/
-theorem simulationFor_op_block_success {C F : Type} (op : ClosLang.BlockOp) (args : List Bvi.Exp)
-    (env : List BvlSem.Value) (s1 smid s2 : BviSem.BviState C F)
-    (values : List BvlSem.Value) (result : BvlSem.Value)
-    (ih : simulationFor args env s1) (argsRun : BviSem.evaluate args env s1 = (.val values, smid))
-    (opRun : BviSem.doApp (.blockOp op) values.reverse smid = .val (result, s2))
-    (t1 : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
-    (vars : DataProps.varCorr env corr (sptMap dataToBviValue t1.locals))
-    (fresh : ∀ k, n ≤ k → sptLookup k t1.locals = none)
-    (related : stateRel s1 t1) (livePresent : ∀ v ∈ live, sptLookup v t1.locals ≠ none) :
-    BviSem.evaluate [.op (.blockOp op) args] env s1 = (.val [result], s2) ∧
-    ∃ t2 prog pres names next ls,
-      compileSource n corr tail live [.op (.blockOp op) args] = (prog, names, next) ∧
-      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel s2 t2 ∧
-      correctOutcome (.val [result]) t1 t2 n next corr live names env tail pres ls := by
-  have wholeRun : BviSem.evaluate [.op (.blockOp op) args] env s1 = (.val [result], s2) := by
-    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
-    simp [opRun]
-  obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
-    ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
-      (by simp [isException])
-  cases pres with
-  | some result => simp [correctOutcome, isResult] at outcome
-  | none =>
-    have firstOutcome := outcome
-    have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
-    have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
-      intro v member
-      exact liveMidAll v (List.mem_append_right argNames member)
-    rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
-    obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
-    have projectedRun : BviSem.doApp (.blockOp op) (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
-      simpa [List.map_reverse, ← projected] using opRun
-    obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
-      evaluate_iAssign_block_outcome op tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
-        middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
-    let assignment := iAssign n1 (.blockOp op) argNames.reverse live corr
-    let inner := DataLang.Prog.seq argsProg assignment
-    have sourceBound := BviSem.evaluate_clock_le args env s1
-    rw [argsRun] at sourceBound
-    have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
-    have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
-      evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
-    have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
-      argNames [n1] env false none ls none firstOutcome assignmentOutcome
-    cases tail with
-    | false =>
-      refine ⟨wholeRun, tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
-      simp [compileSource, compiled, assignment, inner]
-    | true =>
-      have fullBound := BviSem.evaluate_clock_le [.op (.blockOp op) args] env s1
-      rw [wholeRun] at fullBound
-      have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
-      have returnRun : DataSem.evaluate (.return [n1]) tassign =
-          (some (.val [dataValue]), DataSem.flushState false tassign) := by
-        simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
-      refine ⟨wholeRun, DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
-        [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
-      · simp [compileSource, compiled, assignment, inner]
-      · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
-      · simpa [stateRel, DataSem.flushState] using finalRel
-      · have stack := innerOutcome.2.2.2.2.2.2.2.1
-        have handler := innerOutcome.2.2.2.2.2.2.2.2.1
-        simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
-          DataSem.flushState, ← resultProjection, stack, handler]
-
-/-- A successful installation expression satisfies the compiler
-simulation invariant in tail and non-tail position. This source case remains
-untagged pending evaluator review and assembly of the complete operation proof. -/
-theorem simulationFor_op_install_success {C F : Type} (args : List Bvi.Exp)
-    (env : List BvlSem.Value) (s1 smid s2 : BviSem.BviState C F)
-    (values : List BvlSem.Value) (result : BvlSem.Value)
-    (ih : simulationFor args env s1) (argsRun : BviSem.evaluate args env s1 = (.val values, smid))
-    (opRun : BviSem.doApp .install values.reverse smid = .val (result, s2))
-    (t1 : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
-    (vars : DataProps.varCorr env corr (sptMap dataToBviValue t1.locals))
-    (fresh : ∀ k, n ≤ k → sptLookup k t1.locals = none)
-    (related : stateRel s1 t1) (livePresent : ∀ v ∈ live, sptLookup v t1.locals ≠ none) :
-    BviSem.evaluate [.op .install args] env s1 = (.val [result], s2) ∧
-    ∃ t2 prog pres names next ls,
-      compileSource n corr tail live [.op .install args] = (prog, names, next) ∧
-      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel s2 t2 ∧
-      correctOutcome (.val [result]) t1 t2 n next corr live names env tail pres ls := by
-  have wholeRun : BviSem.evaluate [.op .install args] env s1 = (.val [result], s2) := by
-    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
-    simp [opRun]
-  obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
-    ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
-      (by simp [isException])
-  cases pres with
-  | some result => simp [correctOutcome, isResult] at outcome
-  | none =>
-    have firstOutcome := outcome
-    have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
-    have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
-      intro v member
-      exact liveMidAll v (List.mem_append_right argNames member)
-    rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
-    obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
-    have projectedRun : BviSem.doApp .install (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
-      simpa [List.map_reverse, ← projected] using opRun
-    obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
-      evaluate_iAssign_install_outcome tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
-        middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
-    let assignment := iAssign n1 .install argNames.reverse live corr
-    let inner := DataLang.Prog.seq argsProg assignment
-    have sourceBound := BviSem.evaluate_clock_le args env s1
-    rw [argsRun] at sourceBound
-    have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
-    have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
-      evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
-    have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
-      argNames [n1] env false none ls none firstOutcome assignmentOutcome
-    cases tail with
-    | false =>
-      refine ⟨wholeRun, tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
-      simp [compileSource, compiled, assignment, inner]
-    | true =>
-      have fullBound := BviSem.evaluate_clock_le [.op .install args] env s1
-      rw [wholeRun] at fullBound
-      have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
-      have returnRun : DataSem.evaluate (.return [n1]) tassign =
-          (some (.val [dataValue]), DataSem.flushState false tassign) := by
-        simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
-      refine ⟨wholeRun, DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
-        [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
-      · simp [compileSource, compiled, assignment, inner]
-      · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
-      · simpa [stateRel, DataSem.flushState] using finalRel
-      · have stack := innerOutcome.2.2.2.2.2.2.2.1
-        have handler := innerOutcome.2.2.2.2.2.2.2.2.1
-        simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
-          DataSem.flushState, ← resultProjection, stack, handler]
-
-/-- A successful memory expression satisfies the simulation invariant. This is untagged pending evaluator
-correspondence review. -/
-theorem simulationFor_op_mem_success {C F : Type} (op : ClosLang.MemOp) (args : List Bvi.Exp)
-    (env : List BvlSem.Value) (s1 smid s2 : BviSem.BviState C F)
-    (values : List BvlSem.Value) (result : BvlSem.Value)
-    (ih : simulationFor args env s1) (argsRun : BviSem.evaluate args env s1 = (.val values, smid))
-    (opRun : BviSem.doApp (.memOp op) values.reverse smid = .val (result, s2))
-    (t1 : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
-    (vars : DataProps.varCorr env corr (sptMap dataToBviValue t1.locals))
-    (fresh : ∀ k, n ≤ k → sptLookup k t1.locals = none)
-    (related : stateRel s1 t1) (livePresent : ∀ v ∈ live, sptLookup v t1.locals ≠ none) :
-    BviSem.evaluate [.op (.memOp op) args] env s1 = (.val [result], s2) ∧
-    ∃ t2 prog pres names next ls,
-      compileSource n corr tail live [.op (.memOp op) args] = (prog, names, next) ∧
-      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel s2 t2 ∧
-      correctOutcome (.val [result]) t1 t2 n next corr live names env tail pres ls := by
-  have wholeRun : BviSem.evaluate [.op (.memOp op) args] env s1 = (.val [result], s2) := by
-    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
-    simp [opRun]
-  obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
-    ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
-      (by simp [isException])
-  cases pres with
-  | some result => simp [correctOutcome, isResult] at outcome
-  | none =>
-    have firstOutcome := outcome
-    have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
-    have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
-      intro v member
-      exact liveMidAll v (List.mem_append_right argNames member)
-    rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
-    obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
-    have projectedRun : BviSem.doApp (.memOp op) (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
-      simpa [List.map_reverse, ← projected] using opRun
-    obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
-      evaluate_iAssign_mem_outcome op tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
-        middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
-    let assignment := iAssign n1 (.memOp op) argNames.reverse live corr
-    let inner := DataLang.Prog.seq argsProg assignment
-    have sourceBound := BviSem.evaluate_clock_le args env s1
-    rw [argsRun] at sourceBound
-    have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
-    have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
-      evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
-    have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
-      argNames [n1] env false none ls none firstOutcome assignmentOutcome
-    cases tail with
-    | false =>
-      refine ⟨wholeRun, tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
-      simp [compileSource, compiled, assignment, inner]
-    | true =>
-      have fullBound := BviSem.evaluate_clock_le [.op (.memOp op) args] env s1
-      rw [wholeRun] at fullBound
-      have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
-      have returnRun : DataSem.evaluate (.return [n1]) tassign =
-          (some (.val [dataValue]), DataSem.flushState false tassign) := by
-        simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
-      refine ⟨wholeRun, DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
-        [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
-      · simp [compileSource, compiled, assignment, inner]
-      · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
-      · simpa [stateRel, DataSem.flushState] using finalRel
-      · have stack := innerOutcome.2.2.2.2.2.2.2.1
-        have handler := innerOutcome.2.2.2.2.2.2.2.2.1
-        simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
-          DataSem.flushState, ← resultProjection, stack, handler]
-
-/-- A successful thunk operation primitive expression satisfies the compiler
-simulation invariant in tail and non-tail position. This source case remains
-untagged pending evaluator review and assembly of the complete operation proof. -/
-theorem simulationFor_op_thunk_success {C F : Type} (op : AstHOL.ThunkOp) (args : List Bvi.Exp)
-    (env : List BvlSem.Value) (s1 smid s2 : BviSem.BviState C F)
-    (values : List BvlSem.Value) (result : BvlSem.Value)
-    (notForce : op ≠ .forceThunk)
-    (ih : simulationFor args env s1) (argsRun : BviSem.evaluate args env s1 = (.val values, smid))
-    (opRun : BviSem.doApp (.thunkOp op) values.reverse smid = .val (result, s2))
-    (t1 : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
-    (vars : DataProps.varCorr env corr (sptMap dataToBviValue t1.locals))
-    (fresh : ∀ k, n ≤ k → sptLookup k t1.locals = none)
-    (related : stateRel s1 t1) (livePresent : ∀ v ∈ live, sptLookup v t1.locals ≠ none) :
-    BviSem.evaluate [.op (.thunkOp op) args] env s1 = (.val [result], s2) ∧
-    ∃ t2 prog pres names next ls,
-      compileSource n corr tail live [.op (.thunkOp op) args] = (prog, names, next) ∧
-      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel s2 t2 ∧
-      correctOutcome (.val [result]) t1 t2 n next corr live names env tail pres ls := by
-  have wholeRun : BviSem.evaluate [.op (.thunkOp op) args] env s1 = (.val [result], s2) := by
-    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
-    simp [opRun]
-  obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
-    ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
-      (by simp [isException])
-  cases pres with
-  | some result => simp [correctOutcome, isResult] at outcome
-  | none =>
-    have firstOutcome := outcome
-    have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
-    have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
-      intro v member
-      exact liveMidAll v (List.mem_append_right argNames member)
-    rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
-    obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
-    have projectedRun : BviSem.doApp (.thunkOp op) (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
-      simpa [List.map_reverse, ← projected] using opRun
-    obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
-      evaluate_iAssign_thunk_outcome op tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
-        notForce middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
-    let assignment := iAssign n1 (.thunkOp op) argNames.reverse live corr
-    let inner := DataLang.Prog.seq argsProg assignment
-    have sourceBound := BviSem.evaluate_clock_le args env s1
-    rw [argsRun] at sourceBound
-    have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
-    have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
-      evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
-    have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
-      argNames [n1] env false none ls none firstOutcome assignmentOutcome
-    cases tail with
-    | false =>
-      refine ⟨wholeRun, tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
-      simp [compileSource, compiled, assignment, inner]
-    | true =>
-      have fullBound := BviSem.evaluate_clock_le [.op (.thunkOp op) args] env s1
-      rw [wholeRun] at fullBound
-      have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
-      have returnRun : DataSem.evaluate (.return [n1]) tassign =
-          (some (.val [dataValue]), DataSem.flushState false tassign) := by
-        simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
-      refine ⟨wholeRun, DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
-        [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
-      · simp [compileSource, compiled, assignment, inner]
-      · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
-      · simpa [stateRel, DataSem.flushState] using finalRel
-      · have stack := innerOutcome.2.2.2.2.2.2.2.1
-        have handler := innerOutcome.2.2.2.2.2.2.2.2.1
-        simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
-          DataSem.flushState, ← resultProjection, stack, handler]
+      obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
+        ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
+          (by simp [isException])
+      cases pres with
+      | some result => simp [correctOutcome, isResult] at outcome
+      | none =>
+        have firstOutcome := outcome
+        have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
+        have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
+          intro v member
+          exact liveMidAll v (List.mem_append_right argNames member)
+        rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
+        obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
+        have projectedRun : BviSem.doApp (.intOp op) (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
+          simpa [List.map_reverse, ← projected] using opRun
+        obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
+          evaluate_iAssign_int_outcome op tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
+            middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
+        let assignment := iAssign n1 (.intOp op) argNames.reverse live corr
+        let inner := DataLang.Prog.seq argsProg assignment
+        have sourceBound := BviSem.evaluate_clock_le args env s1
+        rw [argsRun] at sourceBound
+        have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
+        have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
+          evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
+        have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
+          argNames [n1] env false none ls none firstOutcome assignmentOutcome
+        cases tail with
+        | false =>
+          refine ⟨tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
+          simp [compileSource, compiled, assignment, inner]
+        | true =>
+          have fullBound := BviSem.evaluate_clock_le [.op (.intOp op) args] env s1
+          rw [whole] at fullBound
+          have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
+          have returnRun : DataSem.evaluate (.return [n1]) tassign =
+              (some (.val [dataValue]), DataSem.flushState false tassign) := by
+            simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
+          refine ⟨DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
+            [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
+          · simp [compileSource, compiled, assignment, inner]
+          · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
+          · simpa [stateRel, DataSem.flushState] using finalRel
+          · have stack := innerOutcome.2.2.2.2.2.2.2.1
+            have handler := innerOutcome.2.2.2.2.2.2.2.2.1
+            simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
+              DataSem.flushState, ← resultProjection, stack, handler]
 
 /-- Complete word-operation expression case of the BVI-to-data simulation.
 The recursive hypothesis covers its argument list; non-type errors propagate
@@ -752,8 +389,53 @@ theorem simulationFor_op_word {C F : Type} (op : ClosLang.WordOp) (args : List B
         simp [opRun]
       rw [whole] at run
       cases run
-      exact (simulationFor_op_word_success op args env s1 smid s2 values result ih argsRun opRun
-        t1 n corr tail live vars fresh related livePresent).2
+      obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
+        ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
+          (by simp [isException])
+      cases pres with
+      | some result => simp [correctOutcome, isResult] at outcome
+      | none =>
+        have firstOutcome := outcome
+        have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
+        have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
+          intro v member
+          exact liveMidAll v (List.mem_append_right argNames member)
+        rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
+        obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
+        have projectedRun : BviSem.doApp (.wordOp op) (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
+          simpa [List.map_reverse, ← projected] using opRun
+        obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
+          evaluate_iAssign_word_outcome op tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
+            middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
+        let assignment := iAssign n1 (.wordOp op) argNames.reverse live corr
+        let inner := DataLang.Prog.seq argsProg assignment
+        have sourceBound := BviSem.evaluate_clock_le args env s1
+        rw [argsRun] at sourceBound
+        have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
+        have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
+          evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
+        have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
+          argNames [n1] env false none ls none firstOutcome assignmentOutcome
+        cases tail with
+        | false =>
+          refine ⟨tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
+          simp [compileSource, compiled, assignment, inner]
+        | true =>
+          have fullBound := BviSem.evaluate_clock_le [.op (.wordOp op) args] env s1
+          rw [whole] at fullBound
+          have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
+          have returnRun : DataSem.evaluate (.return [n1]) tassign =
+              (some (.val [dataValue]), DataSem.flushState false tassign) := by
+            simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
+          refine ⟨DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
+            [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
+          · simp [compileSource, compiled, assignment, inner]
+          · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
+          · simpa [stateRel, DataSem.flushState] using finalRel
+          · have stack := innerOutcome.2.2.2.2.2.2.2.1
+            have handler := innerOutcome.2.2.2.2.2.2.2.2.1
+            simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
+              DataSem.flushState, ← resultProjection, stack, handler]
 
 /-- Complete block op expression case of the BVI-to-data simulation.
 The recursive hypothesis covers its argument list; non-type errors propagate
@@ -791,8 +473,53 @@ theorem simulationFor_op_block {C F : Type} (op : ClosLang.BlockOp) (args : List
         simp [opRun]
       rw [whole] at run
       cases run
-      exact (simulationFor_op_block_success op args env s1 smid s2 values result ih argsRun opRun
-        t1 n corr tail live vars fresh related livePresent).2
+      obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
+        ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
+          (by simp [isException])
+      cases pres with
+      | some result => simp [correctOutcome, isResult] at outcome
+      | none =>
+        have firstOutcome := outcome
+        have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
+        have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
+          intro v member
+          exact liveMidAll v (List.mem_append_right argNames member)
+        rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
+        obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
+        have projectedRun : BviSem.doApp (.blockOp op) (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
+          simpa [List.map_reverse, ← projected] using opRun
+        obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
+          evaluate_iAssign_block_outcome op tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
+            middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
+        let assignment := iAssign n1 (.blockOp op) argNames.reverse live corr
+        let inner := DataLang.Prog.seq argsProg assignment
+        have sourceBound := BviSem.evaluate_clock_le args env s1
+        rw [argsRun] at sourceBound
+        have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
+        have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
+          evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
+        have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
+          argNames [n1] env false none ls none firstOutcome assignmentOutcome
+        cases tail with
+        | false =>
+          refine ⟨tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
+          simp [compileSource, compiled, assignment, inner]
+        | true =>
+          have fullBound := BviSem.evaluate_clock_le [.op (.blockOp op) args] env s1
+          rw [whole] at fullBound
+          have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
+          have returnRun : DataSem.evaluate (.return [n1]) tassign =
+              (some (.val [dataValue]), DataSem.flushState false tassign) := by
+            simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
+          refine ⟨DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
+            [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
+          · simp [compileSource, compiled, assignment, inner]
+          · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
+          · simpa [stateRel, DataSem.flushState] using finalRel
+          · have stack := innerOutcome.2.2.2.2.2.2.2.1
+            have handler := innerOutcome.2.2.2.2.2.2.2.2.1
+            simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
+              DataSem.flushState, ← resultProjection, stack, handler]
 
 /-- Complete installation expression case of the BVI-to-data simulation.
 The recursive hypothesis covers its argument list; non-type errors propagate
@@ -830,8 +557,53 @@ theorem simulationFor_op_install {C F : Type} (args : List Bvi.Exp)
         simp [opRun]
       rw [whole] at run
       cases run
-      exact (simulationFor_op_install_success args env s1 smid s2 values result ih argsRun opRun
-        t1 n corr tail live vars fresh related livePresent).2
+      obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
+        ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
+          (by simp [isException])
+      cases pres with
+      | some result => simp [correctOutcome, isResult] at outcome
+      | none =>
+        have firstOutcome := outcome
+        have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
+        have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
+          intro v member
+          exact liveMidAll v (List.mem_append_right argNames member)
+        rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
+        obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
+        have projectedRun : BviSem.doApp .install (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
+          simpa [List.map_reverse, ← projected] using opRun
+        obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
+          evaluate_iAssign_install_outcome tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
+            middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
+        let assignment := iAssign n1 .install argNames.reverse live corr
+        let inner := DataLang.Prog.seq argsProg assignment
+        have sourceBound := BviSem.evaluate_clock_le args env s1
+        rw [argsRun] at sourceBound
+        have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
+        have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
+          evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
+        have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
+          argNames [n1] env false none ls none firstOutcome assignmentOutcome
+        cases tail with
+        | false =>
+          refine ⟨tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
+          simp [compileSource, compiled, assignment, inner]
+        | true =>
+          have fullBound := BviSem.evaluate_clock_le [.op .install args] env s1
+          rw [whole] at fullBound
+          have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
+          have returnRun : DataSem.evaluate (.return [n1]) tassign =
+              (some (.val [dataValue]), DataSem.flushState false tassign) := by
+            simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
+          refine ⟨DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
+            [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
+          · simp [compileSource, compiled, assignment, inner]
+          · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
+          · simpa [stateRel, DataSem.flushState] using finalRel
+          · have stack := innerOutcome.2.2.2.2.2.2.2.1
+            have handler := innerOutcome.2.2.2.2.2.2.2.2.1
+            simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
+              DataSem.flushState, ← resultProjection, stack, handler]
 
 /-- Memory expression simulation for the source operation.
 This remains untagged pending evaluator correspondence review. -/
@@ -868,8 +640,53 @@ theorem simulationFor_op_mem {C F : Type} (op : ClosLang.MemOp) (args : List Bvi
         simp [opRun]
       rw [whole] at run
       cases run
-      exact (simulationFor_op_mem_success op args env s1 smid s2 values result ih argsRun opRun
-        t1 n corr tail live vars fresh related livePresent).2
+      obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
+        ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
+          (by simp [isException])
+      cases pres with
+      | some result => simp [correctOutcome, isResult] at outcome
+      | none =>
+        have firstOutcome := outcome
+        have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
+        have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
+          intro v member
+          exact liveMidAll v (List.mem_append_right argNames member)
+        rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
+        obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
+        have projectedRun : BviSem.doApp (.memOp op) (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
+          simpa [List.map_reverse, ← projected] using opRun
+        obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
+          evaluate_iAssign_mem_outcome op tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
+            middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
+        let assignment := iAssign n1 (.memOp op) argNames.reverse live corr
+        let inner := DataLang.Prog.seq argsProg assignment
+        have sourceBound := BviSem.evaluate_clock_le args env s1
+        rw [argsRun] at sourceBound
+        have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
+        have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
+          evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
+        have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
+          argNames [n1] env false none ls none firstOutcome assignmentOutcome
+        cases tail with
+        | false =>
+          refine ⟨tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
+          simp [compileSource, compiled, assignment, inner]
+        | true =>
+          have fullBound := BviSem.evaluate_clock_le [.op (.memOp op) args] env s1
+          rw [whole] at fullBound
+          have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
+          have returnRun : DataSem.evaluate (.return [n1]) tassign =
+              (some (.val [dataValue]), DataSem.flushState false tassign) := by
+            simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
+          refine ⟨DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
+            [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
+          · simp [compileSource, compiled, assignment, inner]
+          · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
+          · simpa [stateRel, DataSem.flushState] using finalRel
+          · have stack := innerOutcome.2.2.2.2.2.2.2.1
+            have handler := innerOutcome.2.2.2.2.2.2.2.2.1
+            simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
+              DataSem.flushState, ← resultProjection, stack, handler]
 
 /-- Complete thunk operation expression case of the BVI-to-data simulation.
 The recursive hypothesis covers its argument list; non-type errors propagate
@@ -908,80 +725,57 @@ theorem simulationFor_op_thunk {C F : Type} (op : AstHOL.ThunkOp) (args : List B
       rw [whole] at run
       cases run
       by_cases notForce : op ≠ .forceThunk
-      · exact (simulationFor_op_thunk_success op args env s1 smid s2 values result notForce ih argsRun opRun
-          t1 n corr tail live vars fresh related livePresent).2
+      · obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
+          ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
+            (by simp [isException])
+        cases pres with
+        | some result => simp [correctOutcome, isResult] at outcome
+        | none =>
+          have firstOutcome := outcome
+          have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
+          have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
+            intro v member
+            exact liveMidAll v (List.mem_append_right argNames member)
+          rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
+          obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
+          have projectedRun : BviSem.doApp (.thunkOp op) (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
+            simpa [List.map_reverse, ← projected] using opRun
+          obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
+            evaluate_iAssign_thunk_outcome op tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
+              notForce middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
+          let assignment := iAssign n1 (.thunkOp op) argNames.reverse live corr
+          let inner := DataLang.Prog.seq argsProg assignment
+          have sourceBound := BviSem.evaluate_clock_le args env s1
+          rw [argsRun] at sourceBound
+          have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
+          have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
+            evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
+          have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
+            argNames [n1] env false none ls none firstOutcome assignmentOutcome
+          cases tail with
+          | false =>
+            refine ⟨tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
+            simp [compileSource, compiled, assignment, inner]
+          | true =>
+            have fullBound := BviSem.evaluate_clock_le [.op (.thunkOp op) args] env s1
+            rw [whole] at fullBound
+            have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
+            have returnRun : DataSem.evaluate (.return [n1]) tassign =
+                (some (.val [dataValue]), DataSem.flushState false tassign) := by
+              simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
+            refine ⟨DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
+              [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
+            · simp [compileSource, compiled, assignment, inner]
+            · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
+            · simpa [stateRel, DataSem.flushState] using finalRel
+            · have stack := innerOutcome.2.2.2.2.2.2.2.1
+              have handler := innerOutcome.2.2.2.2.2.2.2.2.1
+              simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
+                DataSem.flushState, ← resultProjection, stack, handler]
       · have force : op = .forceThunk := by simpa using notForce
         subst op
         cases values.reverse <;>
           simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at opRun
-
-/-- A successful returning FFI primitive expression satisfies the compiler
-simulation invariant in tail and non-tail position. This source case remains
-untagged pending evaluator review and assembly of the complete operation proof. -/
-theorem simulationFor_op_ffi_success {C F : Type} (name : Basis.Pure.MlString.MlString) (args : List Bvi.Exp)
-    (env : List BvlSem.Value) (s1 smid s2 : BviSem.BviState C F)
-    (values : List BvlSem.Value) (result : BvlSem.Value)
-    (ih : simulationFor args env s1) (argsRun : BviSem.evaluate args env s1 = (.val values, smid))
-    (opRun : BviSem.doApp (.ffi name) values.reverse smid = .val (result, s2))
-    (t1 : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
-    (vars : DataProps.varCorr env corr (sptMap dataToBviValue t1.locals))
-    (fresh : ∀ k, n ≤ k → sptLookup k t1.locals = none)
-    (related : stateRel s1 t1) (livePresent : ∀ v ∈ live, sptLookup v t1.locals ≠ none) :
-    BviSem.evaluate [.op (.ffi name) args] env s1 = (.val [result], s2) ∧
-    ∃ t2 prog pres names next ls,
-      compileSource n corr tail live [.op (.ffi name) args] = (prog, names, next) ∧
-      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel s2 t2 ∧
-      correctOutcome (.val [result]) t1 t2 n next corr live names env tail pres ls := by
-  have wholeRun : BviSem.evaluate [.op (.ffi name) args] env s1 = (.val [result], s2) := by
-    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
-    simp [opRun]
-  obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
-    ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
-      (by simp [isException])
-  cases pres with
-  | some result => simp [correctOutcome, isResult] at outcome
-  | none =>
-    have firstOutcome := outcome
-    have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
-    have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
-      intro v member
-      exact liveMidAll v (List.mem_append_right argNames member)
-    rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
-    obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
-    have projectedRun : BviSem.doApp (.ffi name) (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
-      simpa [List.map_reverse, ← projected] using opRun
-    obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
-      evaluate_iAssign_ffi_outcome name tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
-        middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
-    let assignment := iAssign n1 (.ffi name) argNames.reverse live corr
-    let inner := DataLang.Prog.seq argsProg assignment
-    have sourceBound := BviSem.evaluate_clock_le args env s1
-    rw [argsRun] at sourceBound
-    have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
-    have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
-      evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
-    have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
-      argNames [n1] env false none ls none firstOutcome assignmentOutcome
-    cases tail with
-    | false =>
-      refine ⟨wholeRun, tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
-      simp [compileSource, compiled, assignment, inner]
-    | true =>
-      have fullBound := BviSem.evaluate_clock_le [.op (.ffi name) args] env s1
-      rw [wholeRun] at fullBound
-      have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
-      have returnRun : DataSem.evaluate (.return [n1]) tassign =
-          (some (.val [dataValue]), DataSem.flushState false tassign) := by
-        simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
-      refine ⟨wholeRun, DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
-        [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
-      · simp [compileSource, compiled, assignment, inner]
-      · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
-      · simpa [stateRel, DataSem.flushState] using finalRel
-      · have stack := innerOutcome.2.2.2.2.2.2.2.1
-        have handler := innerOutcome.2.2.2.2.2.2.2.2.1
-        simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
-          DataSem.flushState, ← resultProjection, stack, handler]
 
 /-- Complete FFI-operation expression case of the BVI-to-data simulation,
 including returning calls, terminal events and argument errors. This remains
@@ -1022,76 +816,53 @@ theorem simulationFor_op_ffi {C F : Type} (name : Basis.Pure.MlString.MlString) 
         simp [opRun]
       rw [whole] at run
       cases run
-      exact (simulationFor_op_ffi_success name args env s1 smid s2 values result ih argsRun opRun
-        t1 n corr tail live vars fresh related livePresent).2
-
-/-- A successful global primitive expression satisfies the compiler
-simulation invariant in tail and non-tail position. This source case remains
-untagged pending evaluator review and assembly of the complete operation proof. -/
-theorem simulationFor_op_global_success {C F : Type} (op : ClosLang.GlobOp) (args : List Bvi.Exp)
-    (env : List BvlSem.Value) (s1 smid s2 : BviSem.BviState C F)
-    (values : List BvlSem.Value) (result : BvlSem.Value)
-    (ih : simulationFor args env s1) (argsRun : BviSem.evaluate args env s1 = (.val values, smid))
-    (opRun : BviSem.doApp (.globOp op) values.reverse smid = .val (result, s2))
-    (t1 : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
-    (vars : DataProps.varCorr env corr (sptMap dataToBviValue t1.locals))
-    (fresh : ∀ k, n ≤ k → sptLookup k t1.locals = none)
-    (related : stateRel s1 t1) (livePresent : ∀ v ∈ live, sptLookup v t1.locals ≠ none) :
-    BviSem.evaluate [.op (.globOp op) args] env s1 = (.val [result], s2) ∧
-    ∃ t2 prog pres names next ls,
-      compileSource n corr tail live [.op (.globOp op) args] = (prog, names, next) ∧
-      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel s2 t2 ∧
-      correctOutcome (.val [result]) t1 t2 n next corr live names env tail pres ls := by
-  have wholeRun : BviSem.evaluate [.op (.globOp op) args] env s1 = (.val [result], s2) := by
-    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
-    simp [opRun]
-  obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
-    ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
-      (by simp [isException])
-  cases pres with
-  | some result => simp [correctOutcome, isResult] at outcome
-  | none =>
-    have firstOutcome := outcome
-    have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
-    have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
-      intro v member
-      exact liveMidAll v (List.mem_append_right argNames member)
-    rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
-    obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
-    have projectedRun : BviSem.doApp (.globOp op) (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
-      simpa [List.map_reverse, ← projected] using opRun
-    obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
-      evaluate_iAssign_global_outcome op tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
-        middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
-    let assignment := iAssign n1 (.globOp op) argNames.reverse live corr
-    let inner := DataLang.Prog.seq argsProg assignment
-    have sourceBound := BviSem.evaluate_clock_le args env s1
-    rw [argsRun] at sourceBound
-    have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
-    have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
-      evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
-    have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
-      argNames [n1] env false none ls none firstOutcome assignmentOutcome
-    cases tail with
-    | false =>
-      refine ⟨wholeRun, tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
-      simp [compileSource, compiled, assignment, inner]
-    | true =>
-      have fullBound := BviSem.evaluate_clock_le [.op (.globOp op) args] env s1
-      rw [wholeRun] at fullBound
-      have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
-      have returnRun : DataSem.evaluate (.return [n1]) tassign =
-          (some (.val [dataValue]), DataSem.flushState false tassign) := by
-        simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
-      refine ⟨wholeRun, DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
-        [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
-      · simp [compileSource, compiled, assignment, inner]
-      · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
-      · simpa [stateRel, DataSem.flushState] using finalRel
-      · have stack := innerOutcome.2.2.2.2.2.2.2.1
-        have handler := innerOutcome.2.2.2.2.2.2.2.2.1
-        simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
-          DataSem.flushState, ← resultProjection, stack, handler]
+      obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
+        ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
+          (by simp [isException])
+      cases pres with
+      | some result => simp [correctOutcome, isResult] at outcome
+      | none =>
+        have firstOutcome := outcome
+        have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
+        have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
+          intro v member
+          exact liveMidAll v (List.mem_append_right argNames member)
+        rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
+        obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
+        have projectedRun : BviSem.doApp (.ffi name) (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
+          simpa [List.map_reverse, ← projected] using opRun
+        obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
+          evaluate_iAssign_ffi_outcome name tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
+            middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
+        let assignment := iAssign n1 (.ffi name) argNames.reverse live corr
+        let inner := DataLang.Prog.seq argsProg assignment
+        have sourceBound := BviSem.evaluate_clock_le args env s1
+        rw [argsRun] at sourceBound
+        have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
+        have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
+          evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
+        have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
+          argNames [n1] env false none ls none firstOutcome assignmentOutcome
+        cases tail with
+        | false =>
+          refine ⟨tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
+          simp [compileSource, compiled, assignment, inner]
+        | true =>
+          have fullBound := BviSem.evaluate_clock_le [.op (.ffi name) args] env s1
+          rw [whole] at fullBound
+          have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
+          have returnRun : DataSem.evaluate (.return [n1]) tassign =
+              (some (.val [dataValue]), DataSem.flushState false tassign) := by
+            simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
+          refine ⟨DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
+            [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
+          · simp [compileSource, compiled, assignment, inner]
+          · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
+          · simpa [stateRel, DataSem.flushState] using finalRel
+          · have stack := innerOutcome.2.2.2.2.2.2.2.1
+            have handler := innerOutcome.2.2.2.2.2.2.2.2.1
+            simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
+              DataSem.flushState, ← resultProjection, stack, handler]
 
 /-- Complete global-operation expression case of the BVI-to-data simulation.
 The recursive hypothesis covers its argument list; non-type errors propagate
@@ -1129,76 +900,53 @@ theorem simulationFor_op_global {C F : Type} (op : ClosLang.GlobOp) (args : List
         simp [opRun]
       rw [whole] at run
       cases run
-      exact (simulationFor_op_global_success op args env s1 smid s2 values result ih argsRun opRun
-        t1 n corr tail live vars fresh related livePresent).2
-
-/-- A successful label primitive expression satisfies the compiler
-simulation invariant in tail and non-tail position. This source case remains
-untagged pending evaluator review and assembly of the complete operation proof. -/
-theorem simulationFor_op_label_success {C F : Type} (label : Nat) (args : List Bvi.Exp)
-    (env : List BvlSem.Value) (s1 smid s2 : BviSem.BviState C F)
-    (values : List BvlSem.Value) (result : BvlSem.Value)
-    (ih : simulationFor args env s1) (argsRun : BviSem.evaluate args env s1 = (.val values, smid))
-    (opRun : BviSem.doApp (.label label) values.reverse smid = .val (result, s2))
-    (t1 : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
-    (vars : DataProps.varCorr env corr (sptMap dataToBviValue t1.locals))
-    (fresh : ∀ k, n ≤ k → sptLookup k t1.locals = none)
-    (related : stateRel s1 t1) (livePresent : ∀ v ∈ live, sptLookup v t1.locals ≠ none) :
-    BviSem.evaluate [.op (.label label) args] env s1 = (.val [result], s2) ∧
-    ∃ t2 prog pres names next ls,
-      compileSource n corr tail live [.op (.label label) args] = (prog, names, next) ∧
-      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel s2 t2 ∧
-      correctOutcome (.val [result]) t1 t2 n next corr live names env tail pres ls := by
-  have wholeRun : BviSem.evaluate [.op (.label label) args] env s1 = (.val [result], s2) := by
-    rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
-    simp [opRun]
-  obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
-    ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
-      (by simp [isException])
-  cases pres with
-  | some result => simp [correctOutcome, isResult] at outcome
-  | none =>
-    have firstOutcome := outcome
-    have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
-    have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
-      intro v member
-      exact liveMidAll v (List.mem_append_right argNames member)
-    rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
-    obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
-    have projectedRun : BviSem.doApp (.label label) (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
-      simpa [List.map_reverse, ← projected] using opRun
-    obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
-      evaluate_iAssign_label_outcome label tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
-        middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
-    let assignment := iAssign n1 (.label label) argNames.reverse live corr
-    let inner := DataLang.Prog.seq argsProg assignment
-    have sourceBound := BviSem.evaluate_clock_le args env s1
-    rw [argsRun] at sourceBound
-    have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
-    have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
-      evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
-    have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
-      argNames [n1] env false none ls none firstOutcome assignmentOutcome
-    cases tail with
-    | false =>
-      refine ⟨wholeRun, tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
-      simp [compileSource, compiled, assignment, inner]
-    | true =>
-      have fullBound := BviSem.evaluate_clock_le [.op (.label label) args] env s1
-      rw [wholeRun] at fullBound
-      have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
-      have returnRun : DataSem.evaluate (.return [n1]) tassign =
-          (some (.val [dataValue]), DataSem.flushState false tassign) := by
-        simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
-      refine ⟨wholeRun, DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
-        [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
-      · simp [compileSource, compiled, assignment, inner]
-      · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
-      · simpa [stateRel, DataSem.flushState] using finalRel
-      · have stack := innerOutcome.2.2.2.2.2.2.2.1
-        have handler := innerOutcome.2.2.2.2.2.2.2.2.1
-        simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
-          DataSem.flushState, ← resultProjection, stack, handler]
+      obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
+        ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
+          (by simp [isException])
+      cases pres with
+      | some result => simp [correctOutcome, isResult] at outcome
+      | none =>
+        have firstOutcome := outcome
+        have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
+        have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
+          intro v member
+          exact liveMidAll v (List.mem_append_right argNames member)
+        rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
+        obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
+        have projectedRun : BviSem.doApp (.globOp op) (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
+          simpa [List.map_reverse, ← projected] using opRun
+        obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
+          evaluate_iAssign_global_outcome op tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
+            middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
+        let assignment := iAssign n1 (.globOp op) argNames.reverse live corr
+        let inner := DataLang.Prog.seq argsProg assignment
+        have sourceBound := BviSem.evaluate_clock_le args env s1
+        rw [argsRun] at sourceBound
+        have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
+        have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
+          evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
+        have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
+          argNames [n1] env false none ls none firstOutcome assignmentOutcome
+        cases tail with
+        | false =>
+          refine ⟨tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
+          simp [compileSource, compiled, assignment, inner]
+        | true =>
+          have fullBound := BviSem.evaluate_clock_le [.op (.globOp op) args] env s1
+          rw [whole] at fullBound
+          have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
+          have returnRun : DataSem.evaluate (.return [n1]) tassign =
+              (some (.val [dataValue]), DataSem.flushState false tassign) := by
+            simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
+          refine ⟨DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
+            [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
+          · simp [compileSource, compiled, assignment, inner]
+          · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
+          · simpa [stateRel, DataSem.flushState] using finalRel
+          · have stack := innerOutcome.2.2.2.2.2.2.2.1
+            have handler := innerOutcome.2.2.2.2.2.2.2.2.1
+            simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
+              DataSem.flushState, ← resultProjection, stack, handler]
 
 /-- Complete label-operation expression case of the BVI-to-data simulation.
 The recursive hypothesis covers its argument list; non-type errors propagate
@@ -1236,8 +984,53 @@ theorem simulationFor_op_label {C F : Type} (label : Nat) (args : List Bvi.Exp)
         simp [opRun]
       rw [whole] at run
       cases run
-      exact (simulationFor_op_label_success label args env s1 smid s2 values result ih argsRun opRun
-        t1 n corr tail live vars fresh related livePresent).2
+      obtain ⟨tmid, argsProg, pres, argNames, n1, ls, compiled, target, middleRel, outcome⟩ :=
+        ih (.val values) smid t1 n corr false live argsRun (by simp) vars (by simp) fresh related livePresent
+          (by simp [isException])
+      cases pres with
+      | some result => simp [correctOutcome, isResult] at outcome
+      | none =>
+        have firstOutcome := outcome
+        have liveMidAll := correctOutcome_live values t1 tmid n n1 corr live argNames env ls outcome livePresent
+        have liveMid : ∀ v ∈ live, sptLookup v tmid.locals ≠ none := by
+          intro v member
+          exact liveMidAll v (List.mem_append_right argNames member)
+        rcases outcome with ⟨_, _, _, freshMid, varsMid, _, _, _, _, _, resultVars⟩
+        obtain ⟨dataValues, read, projected⟩ := getVars_lift argNames values tmid.locals resultVars
+        have projectedRun : BviSem.doApp (.label label) (dataValues.reverse.map dataToBviValue) smid = .val (result, s2) := by
+          simpa [List.map_reverse, ← projected] using opRun
+        obtain ⟨tassign, dataValue, assignmentRun, resultProjection, finalRel, destRead, assignmentOutcome⟩ :=
+          evaluate_iAssign_label_outcome label tmid smid s2 argNames.reverse live corr env dataValues.reverse n1 result
+            middleRel varsMid liveMid freshMid (DataProps.getVars_reverse argNames tmid.locals dataValues read) projectedRun
+        let assignment := iAssign n1 (.label label) argNames.reverse live corr
+        let inner := DataLang.Prog.seq argsProg assignment
+        have sourceBound := BviSem.evaluate_clock_le args env s1
+        rw [argsRun] at sourceBound
+        have middleBound : tmid.clock ≤ t1.clock := by simpa [← related.1, ← middleRel.1] using sourceBound
+        have innerRun : DataSem.evaluate inner t1 = (none, tassign) :=
+          evaluateSeq_continue argsProg assignment t1 tmid _ target middleBound assignmentRun
+        have innerOutcome := correctOutcome_seq values (.val [result]) t1 tmid tassign n n1 (n1 + 1) corr live
+          argNames [n1] env false none ls none firstOutcome assignmentOutcome
+        cases tail with
+        | false =>
+          refine ⟨tassign, inner, none, [n1], n1 + 1, none, ?_, innerRun, finalRel, innerOutcome⟩
+          simp [compileSource, compiled, assignment, inner]
+        | true =>
+          have fullBound := BviSem.evaluate_clock_le [.op (.label label) args] env s1
+          rw [whole] at fullBound
+          have targetBound : tassign.clock ≤ t1.clock := by simpa [← related.1, ← finalRel.1] using fullBound
+          have returnRun : DataSem.evaluate (.return [n1]) tassign =
+              (some (.val [dataValue]), DataSem.flushState false tassign) := by
+            simp [DataSem.evaluate, DataSem.getVars, DataSem.getVar, destRead]
+          refine ⟨DataSem.flushState false tassign, .seq inner (.return [n1]), some (.val [dataValue]),
+            [n1], n1 + 1, none, ?_, ?_, ?_, ?_⟩
+          · simp [compileSource, compiled, assignment, inner]
+          · exact evaluateSeq_continue inner (.return [n1]) t1 tassign _ innerRun targetBound returnRun
+          · simpa [stateRel, DataSem.flushState] using finalRel
+          · have stack := innerOutcome.2.2.2.2.2.2.2.1
+            have handler := innerOutcome.2.2.2.2.2.2.2.2.1
+            simp [correctOutcome, dataToBviResult, isResult, isReturn, isException,
+              DataSem.flushState, ← resultProjection, stack, handler]
 
 /-- Every BVI operation satisfies the expression simulation, assuming the
 argument-list induction hypothesis. This assembled result remains untagged
