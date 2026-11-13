@@ -46,11 +46,4 @@ theorem removeBounded_eq_source (fuel : Nat) (expression : Exp) :
     have equal := removeFuel_eq_source _ expression result retry
     simpa [first, equal] using retry
 
-/-- The production list traversal returns the source-shaped list traversal. -/
-theorem removeBounded_list_eq_source (fuel : Nat) (expressions : List Exp) :
-    expressions.mapM (removeBounded fuel) = some (removeList expressions) := by
-  induction expressions with
-  | nil => rfl
-  | cons first rest ih => simp [removeList, removeBounded_eq_source, ih]
-
 end Flapjack.Compiler.Backend.ClosTicks
