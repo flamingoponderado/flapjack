@@ -96,3 +96,4 @@ val state_rel_dec_clock_replay = Q.prove
      bviSemTheory.dec_clock_def, dataSemTheory.dec_clock_def]);
 val _ = show "state_rel_dec_clock_replay_typed=" state_rel_dec_clock_replay;
 val _ = show "compile_part_evaluate_typed=" bvi_to_dataProofTheory.compile_part_evaluate;
+val _ = show "compile_prog_evaluate_typed=" bvi_to_dataProofTheory.compile_prog_evaluate;
