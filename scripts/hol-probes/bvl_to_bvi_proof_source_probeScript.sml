@@ -97,3 +97,5 @@ val _ = replay "bvi_tailrec_compile_each_no_mutcons_typed"
       bvi_tailrec$compile_each next prog = (next1,prog1) /\
       EVERY (no_mutcons o SND o SND) prog ==>
       EVERY (no_mutcons o SND o SND) prog1``;
+
+val _ = show "compile_get_code_labels_typed" bvl_to_bviProofTheory.compile_get_code_labels;

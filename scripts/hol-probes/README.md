@@ -1,3 +1,5 @@
+`bvl_to_bvi_proof_source_probe.out` also captures the typed exported whole-pass `compile_get_code_labels` theorem.
+
 `bvl_to_bvi_source_probe.out` captures the typed original whole-pass compilation definition, including the eight-result tuple and name-tree carrier.
 
 `bvi_tmc_proof_source_probe.out` captures the typed original function-list and program name-preservation theorems and replays the local variable-list, worker, wrapper, mutual extraction, top-level extraction, rewrite, and expression-compilation label proofs with inferred types. It also captures the exported TMC function-list and whole-program label-closure theorems with inferred types.

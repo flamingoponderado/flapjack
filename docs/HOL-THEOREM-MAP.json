@@ -337,6 +337,14 @@
     "reviewer": "Independent typed HOL source review: arbitrary arity, identity and body retain the unconditional equality of wrapper labels with identity labels union body labels, in the original order. Generated variable bindings introduce no labels."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_get_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/WholeCodeLabels.lean",
+    "lean_name": "compile_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the sole complete eight-result source compilation equation implies the full final-body label bound by the entry, final code keys, translated original input labels, and both independently quantified strict tailrec and TMC fresh intervals. All twelve original binders and complete Spt/MlString carriers are retained; the source compiler is executed in the configured CakeML route."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
     "hol_name": "compile_def",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/SourcePipeline.lean",
