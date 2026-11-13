@@ -52,20 +52,18 @@ theorem codeSort_perm {α : Type} (xs : List (Nat × α)) : (codeSort xs).Perm x
       (codeSplit rest [x] [y]).2 (Prod.eta _).symm
     simpa using split
 
+/-- Sorting code preserves the set of mapped entries. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "set_MAP_code_sort"]
+theorem set_map_codeSort {α β : Type} (f : Nat × α → β) (xs : List (Nat × α)) :
+    {x | x ∈ (codeSort xs).map f} = {x | x ∈ xs.map f} := by
+  exact Set.ext fun _ => ((codeSort_perm xs).map f).mem_iff
+
 /-- Sorting preserves distinctness of code labels. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "ALL_DISTINCT_code_sort"]
 theorem codeSort_allDistinct {α : Type} (xs : List (Nat × α)) :
     ((codeSort xs).map Prod.fst).Nodup ↔ (xs.map Prod.fst).Nodup := by
   exact ((codeSort_perm xs).map Prod.fst).nodup_iff
 
-
-private theorem lookup_of_member {α : Type} (ls : List (Nat × α))
-    (distinct : (ls.map Prod.fst).Nodup) (k : Nat) (v : α) (member : (k, v) ∈ ls) :
-    sptAListLookup k ls = some v := by
-  apply sptAListLookup_eq_of_mem_unique k v ls member
-  intro other otherMem
-  have eq : (k, other) = (k, v) := List.inj_on_of_nodup_map distinct otherMem member rfl
-  exact congrArg Prod.snd eq
 
 /-- A permutation with distinct keys builds the same sparse code tree. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "PERM_IMP_fromAList_EQ_fromAList"]
@@ -83,12 +81,14 @@ theorem perm_fromAList {α : Type} (xs ys : List (Nat × α))
     | some v =>
       have memY := sptAListLookup_mem k ys v hy
       have memX : (k, v) ∈ xs := perm.mem_iff.mpr memY
-      have eq := lookup_of_member xs distinct k v memX
+      have eq := sptAListLookup_eq_of_mem_unique k v xs memX
+        (fun _ hm => congrArg Prod.snd (List.inj_on_of_nodup_map distinct hm memX rfl))
       simp [hx] at eq
   | some v =>
     have memX := sptAListLookup_mem k xs v hx
     have memY : (k, v) ∈ ys := perm.mem_iff.mp memX
-    exact (lookup_of_member ys distinctY k v memY).symm
+    exact (sptAListLookup_eq_of_mem_unique k v ys memY
+      (fun _ hm => congrArg Prod.snd (List.inj_on_of_nodup_map distinctY hm memY rfl))).symm
 
 /-- Sorting distinct-key code leaves the resulting sparse tree unchanged. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "fromAList_code_sort"]

@@ -1,6 +1,8 @@
 module
 
 public meta import Lean
+public meta import Flapjack.HolRef.PredicateCodec
+public meta import Flapjack.HolRef.SimulationBody
 
 public meta section
 
@@ -60,6 +62,11 @@ same-module checked `holFmapAsFiniteSupportParamWitness_<declaration>_<binder>`
 roundtrip through lookup and finite-support evidence. This is distinct from
 both field-owned carriers and the result-map qualifier; source review must
 still preserve HOL binder order, hypotheses, and conclusions.
+The narrow `fmap_as_finite_support_parameter_predicate_domain` qualifier
+records the closure simulation's direct `code1` finite map and the first map
+domain of its higher-order `rel` input. It is restricted to the two reviewed
+closure-to-BVL simulation declarations and requires the dedicated source,
+codec, body and elaborated signature audits. It records no other difference.
 The `fmap_as_finite_support_existentials` qualifier records named existential
 finite-map binders represented as `HolFiniteMapExact`. Each listed binder
 must be an explicit existential at that carrier and have a same-module
@@ -204,6 +211,10 @@ structure HolRef where
       for consumed map inputs whose declaration result is not a map; it is
       distinct from the map-valued result qualifier. -/
   fmapAsFiniteSupportParameters : Array String := #[]
+  /-- The reviewed closure simulation's direct `code1` map parameter and the
+      first map domain of its higher-order `rel` parameter. This narrow
+      qualifier requires the dedicated source and elaborated audits. -/
+  fmapAsFiniteSupportParameterPredicateDomain : Array String := #[]
   /-- Explicit imported map-result producers observed by this declaration's type.
       Every producer must already carry `fmap_as_finite_support_result`, return
       `HolFiniteMapExact`, have its checked same-module result witness, and have
@@ -311,6 +322,7 @@ syntax "(" "fmap_as_finite_support_tuple" ":=" "[" ident,+ "]" ")" : holQualifie
 syntax "(" "fmap_as_finite_support_heterogeneous_function" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_result" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_parameters" ":=" "[" ident,+ "]" ")" : holQualifier
+syntax "(" "fmap_as_finite_support_parameter_predicate_domain" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_result_observations" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_parameter_observations" ":="
   "(" "map_parameters" ":=" "[" ident,+ "]" ")"
@@ -343,7 +355,8 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     (wordDimensionsAsWidths : Array String := #[])
     (fmapAsFiniteSupportTuple : Array String := #[])
     (nestedListRelAsMutual : Array String := #[])
-    (fmapAsFiniteSupportParameterObservations : Bool := false) : CoreM HolRef := do
+    (fmapAsFiniteSupportParameterObservations : Bool := false)
+    (fmapAsFiniteSupportParameterPredicateDomain : Array String := #[]) : CoreM HolRef := do
   unless (path.startsWith "cakeml/" && path.endsWith ".sml" ||
       -- Pinned upstream HOL submodule; `scripts/check-hol-refs.py` verifies the
       -- gitlink, checkout commit and blob of every cited `HOL/...` file.
@@ -378,6 +391,21 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     throwError "@[hol]: fmap_as_finite_support_existentials binders must be distinct"
   if fmapAsFiniteSupportRelation.toList.eraseDups.length != fmapAsFiniteSupportRelation.size then
     throwError "@[hol]: fmap_as_finite_support_relation entries must be distinct"
+  if !fmapAsFiniteSupportParameterPredicateDomain.isEmpty then
+    unless fmapAsFiniteSupportParameterPredicateDomain == #["code1", "rel"] &&
+        path == "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" &&
+        (name == "eval_sim_def" || name == "IMP_semantics_eq") do
+      throwError "@[hol]: predicate-domain maps are restricted to the reviewed simulation references and binders"
+    if !listAsArray.isEmpty || !namesAsString.isEmpty || !namesAsStringBoundary.isEmpty ||
+        !fmapAsFiniteSupport.isEmpty || fmapAsFiniteSupportResult ||
+        !fmapAsFiniteSupportFunction.isEmpty || !fmapAsFiniteSupportTuple.isEmpty ||
+        !fmapAsFiniteSupportHeterogeneousFunction.isEmpty || !fmapAsFiniteSupportParameters.isEmpty ||
+        !fmapAsFiniteSupportExistentials.isEmpty || !fmapAsFiniteSupportRelation.isEmpty ||
+        fmapAsFiniteSupportEqualities || fmapAsFiniteSupportEquality ||
+        !fmapAsFiniteSupportResultObservations.isEmpty || fmapAsFiniteSupportParameterObservations ||
+        wordsAsTypeIndexedBitvec || wordDimensionAsWidth.isSome || !wordDimensionsAsWidths.isEmpty ||
+        realsAsRationalCuts || !nestedListRelAsMutual.isEmpty then
+      throwError "@[hol]: predicate-domain maps cannot combine with other representation qualifiers"
   if !fmapAsFiniteSupportTuple.isEmpty then
     unless fmapAsFiniteSupportTuple == #["component_2", "component_3"] do
       throwError "@[hol]: fmap_as_finite_support_tuple requires component_2 and component_3"
@@ -457,7 +485,7 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
         !fmapAsFiniteSupportResultObservations.isEmpty || wordsAsTypeIndexedBitvec ||
         wordDimensionAsWidth.isSome || !wordDimensionsAsWidths.isEmpty || realsAsRationalCuts then
       throwError "@[hol]: nested_list_rel_as_mutual cannot combine with other qualifiers"
-  pure { nestedListRelAsMutual, fmapAsFiniteSupportTuple, fmapAsFiniteSupportResultObservations, fmapAsFiniteSupportParameterObservations, path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportFunction, fmapAsFiniteSupportHeterogeneousFunction, fmapAsFiniteSupportParameters, fmapAsFiniteSupportExistentials, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities, fmapAsFiniteSupportEquality, wordsAsTypeIndexedBitvec, wordDimensionAsWidth, wordDimensionsAsWidths, realsAsRationalCuts }
+  pure { nestedListRelAsMutual, fmapAsFiniteSupportTuple, fmapAsFiniteSupportResultObservations, fmapAsFiniteSupportParameterObservations, fmapAsFiniteSupportParameterPredicateDomain, path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportFunction, fmapAsFiniteSupportHeterogeneousFunction, fmapAsFiniteSupportParameters, fmapAsFiniteSupportExistentials, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities, fmapAsFiniteSupportEquality, wordsAsTypeIndexedBitvec, wordDimensionAsWidth, wordDimensionsAsWidths, realsAsRationalCuts }
 
 private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × Bool × Array (String × String)) := do
   match stx with
@@ -479,6 +507,9 @@ private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × 
       pure ("fmap_as_finite_support_result", #[], true, #[])
   | `(holQualifier| (fmap_as_finite_support_parameters := [$parameters:ident,*])) =>
       pure ("fmap_as_finite_support_parameters", parameters.getElems.map
+        (fun parameter => parameter.getId.eraseMacroScopes.toString), false, #[])
+  | `(holQualifier| (fmap_as_finite_support_parameter_predicate_domain := [$parameters:ident,*])) =>
+      pure ("fmap_as_finite_support_parameter_predicate_domain", parameters.getElems.map
         (fun parameter => parameter.getId.eraseMacroScopes.toString), false, #[])
   | `(holQualifier| (fmap_as_finite_support_result_observations := [$producers:ident,*])) =>
       pure ("fmap_as_finite_support_result_observations", producers.getElems.map
@@ -529,6 +560,8 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
     let mut fmapAsFiniteSupportHeterogeneousFunction : Array String := #[]
     let mut fmapAsFiniteSupportResult : Bool := false
     let mut fmapAsFiniteSupportParameters : Array String := #[]
+    let mut predicateDomain : Array String := #[]
+    let mut seenPredicateDomain := false
     let mut fmapAsFiniteSupportExistentials : Array String := #[]
     let mut fmapAsFiniteSupportRelation : Array (String × String) := #[]
     let mut fmapAsFiniteSupportEqualities : Bool := false
@@ -554,6 +587,11 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
         if parameterObservations then
           throwError "@[hol]: parameter observations cannot combine with map parameters"
         fmapAsFiniteSupportParameters := fmapAsFiniteSupportParameters ++ fields
+      else if kind == "fmap_as_finite_support_parameter_predicate_domain" then
+        if seenPredicateDomain then
+          throwError "@[hol]: predicate-domain qualifier may appear only once"
+        seenPredicateDomain := true
+        predicateDomain := fields
       else if kind == "fmap_as_finite_support_result_observations" then
         if parameterObservations then
           throwError "@[hol]: parameter observations cannot combine with map observations"
@@ -591,7 +629,7 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
       else if kind == "nested_list_rel_as_mutual" then
         nestedListRelAsMutual := nestedListRelAsMutual ++ fields
       else fmapAsFiniteSupport := fmapAsFiniteSupport ++ fields
-    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportFunction fmapAsFiniteSupportHeterogeneousFunction fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities fmapAsFiniteSupportEquality wordsAsTypeIndexedBitvec wordDimensionAsWidth realsAsRationalCuts fmapAsFiniteSupportResultObservations wordDimensionsAsWidths fmapAsFiniteSupportTuple nestedListRelAsMutual parameterObservations
+    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportFunction fmapAsFiniteSupportHeterogeneousFunction fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities fmapAsFiniteSupportEquality wordsAsTypeIndexedBitvec wordDimensionAsWidth realsAsRationalCuts fmapAsFiniteSupportResultObservations wordDimensionsAsWidths fmapAsFiniteSupportTuple nestedListRelAsMutual parameterObservations predicateDomain
   match stx with
   | `(attr| hol $path:str $name:str $line:num $qualifiers:holQualifier*) =>
       parse path.getString name.getString (some line.getNat) qualifiers
@@ -851,6 +889,53 @@ def predicateDomainSignatureProblems (type : Expr) (isTheorem : Bool) :
         problems := problems.push "simulation result is not Prop"
     return problems
 
+/-- Permit only Lean's standard foundational axioms in checked simulation
+declarations. Codec witnesses have a separate, stricter axiom-free check. -/
+def predicateDomainAxiomProblems (names : Array Name) : CoreM (Array String) := do
+  let mut problems := #[]
+  for name in names do
+    for axiomName in (← collectAxioms name) do
+      unless #[`propext, `Classical.choice, `Quot.sound].contains axiomName do
+        problems := problems.push s!"{name} depends on unapproved axiom {axiomName}"
+  return problems
+
+/-- Recheck the complete elaborated closure-simulation representation at the
+fixed declarations. This establishes Lean-side shape only; HOL correspondence
+still requires the source and typed-oracle review. -/
+def predicateDomainDeclarationProblems (decl : Name) (isTheorem : Bool) : MetaM (Array String) := do
+  let owner := `Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvalSim
+  let definition := `Flapjack.Compiler.Backend.ClosToBvl.evalSim
+  let theoremName := `Flapjack.Compiler.Backend.ClosToBvl.impSemanticsEq
+  unless decl == (if isTheorem then theoremName else definition) do
+    return #["predicate-domain qualifier is restricted to the two reviewed declarations"]
+  let env ← getEnv
+  unless predicateCodecDefiningModule env decl == owner do
+    return #["simulation declaration has the wrong defining module"]
+  let target ← match env.checked.get.find? decl, isTheorem with
+    | some (.defnInfo info), false =>
+      if info.safety != .safe || !info.levelParams.isEmpty then
+        return #["simulation definition must be safe and monomorphic"]
+      pure info.type
+    | some (.thmInfo info), true =>
+      if !info.levelParams.isEmpty then return #["simulation theorem must be monomorphic"]
+      pure info.type
+    | _, _ => return #["simulation declaration has the wrong checked kind or is unavailable"]
+  let signature ← predicateDomainSignatureProblems target isTheorem
+  unless signature.isEmpty do return signature
+  unless predicateCodecDefiningModule env definition == owner do
+    return #["simulation definition has the wrong defining module"]
+  let some (.defnInfo simulation) := env.checked.get.find? definition
+    | return #["simulation definition is not a checked definition"]
+  unless simulation.safety == .safe && simulation.levelParams.isEmpty do
+    return #["simulation definition must be safe and monomorphic"]
+  let definitionSignature ← predicateDomainSignatureProblems simulation.type false
+  unless definitionSignature.isEmpty do return definitionSignature
+  let body ← predicateDomainSimulationBodyProblems simulation.type simulation.value
+  unless body.isEmpty do return body
+  let axioms ← predicateDomainAxiomProblems #[definition, decl]
+  unless axioms.isEmpty do return axioms
+  predicateCodecElaboratedProblems
+
 /-- Inspect the public closure-relation dependency without descending through
 its reviewed mutual implementation. Definition bodies, but not theorem proofs,
 participate in the closure. -/
@@ -913,6 +998,15 @@ initialize holRefAttribute : ParametricAttribute HolRef ←
     descr := "original HOL4 declaration (file path and declaration name) ported by this Lean declaration"
     getParam := fun _ stx => parseHolRefAttribute stx
     afterSet := fun decl ref => do
+      if !ref.fmapAsFiniteSupportParameterPredicateDomain.isEmpty then
+        let expectedRef := if ref.name == "eval_sim_def" then
+          decl == `Flapjack.Compiler.Backend.ClosToBvl.evalSim
+        else decl == `Flapjack.Compiler.Backend.ClosToBvl.impSemanticsEq
+        unless expectedRef do
+          logError m!"{decl}: predicate-domain qualifier has the wrong declaration"
+        let problems ← (predicateDomainDeclarationProblems decl (ref.name == "IMP_semantics_eq")).run'
+        for problem in problems do
+          logError m!"{decl}: (fmap_as_finite_support_parameter_predicate_domain) {problem}"
       let isRelation := ref.path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" &&
         ref.name == "v_rel" &&
         (decl == `Flapjack.Compiler.Backend.ClosAnnotate.ValueRel ||
@@ -982,6 +1076,8 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     s!" (fmap_as_finite_support_heterogeneous_function := [{String.intercalate ", " ref.fmapAsFiniteSupportHeterogeneousFunction.toList}])"
   let fmapAsFiniteSupportParameters := if ref.fmapAsFiniteSupportParameters.isEmpty || ref.fmapAsFiniteSupportParameterObservations then "" else
     s!" (fmap_as_finite_support_parameters := [{String.intercalate ", " ref.fmapAsFiniteSupportParameters.toList}])"
+  let predicateDomain := if ref.fmapAsFiniteSupportParameterPredicateDomain.isEmpty then "" else
+    s!" (fmap_as_finite_support_parameter_predicate_domain := [{String.intercalate ", " ref.fmapAsFiniteSupportParameterPredicateDomain.toList}])"
   let fmapAsFiniteSupportExistentials := if ref.fmapAsFiniteSupportExistentials.isEmpty then "" else
     s!" (fmap_as_finite_support_existentials := [{String.intercalate ", " ref.fmapAsFiniteSupportExistentials.toList}])"
   let fmapAsFiniteSupportRelation := if ref.fmapAsFiniteSupportRelation.isEmpty then "" else
@@ -1004,12 +1100,34 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     s!" (fmap_as_finite_support_result_observations := [{String.intercalate ", " ref.fmapAsFiniteSupportResultObservations.toList}])"
   let nested := if ref.nestedListRelAsMutual.isEmpty then "" else
     s!" (nested_list_rel_as_mutual := [{String.intercalate ", " ref.nestedListRelAsMutual.toList}])"
-  observations ++ listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++ fmapAsFiniteSupportTuple ++ fmapAsFiniteSupportHeterogeneousFunction ++ fmapAsFiniteSupportParameters ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ fmapAsFiniteSupportEquality ++ wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth ++ wordDimensionsAsWidths ++ realsAsRationalCuts ++ nested
+  observations ++ listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++ fmapAsFiniteSupportTuple ++ fmapAsFiniteSupportHeterogeneousFunction ++ fmapAsFiniteSupportParameters ++ predicateDomain ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ fmapAsFiniteSupportEquality ++ wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth ++ wordDimensionsAsWidths ++ realsAsRationalCuts ++ nested
 
 /-! Parser regressions for the original syntax, each qualifier alone, and both
 qualifiers together. These elaborate temporary syntax values only; they do not
 add test declarations to the HOL-reference inventory. -/
 run_cmd do
+  let predicateSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "eval_sim_def"
+    (fmap_as_finite_support_parameter_predicate_domain := [code1, rel]))
+  let predicateRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute predicateSyntax)
+  unless predicateRef.fmapAsFiniteSupportParameterPredicateDomain == #["code1", "rel"] &&
+      predicateRef.qualifierSuffix == " (fmap_as_finite_support_parameter_predicate_domain := [code1, rel])" do
+    throwError "@[hol] predicate-domain syntax regression"
+  let wrongPredicateSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "eval_sim_def"
+    (fmap_as_finite_support_parameter_predicate_domain := [rel, code1]))
+  let duplicatePredicateSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "eval_sim_def"
+    (fmap_as_finite_support_parameter_predicate_domain := [code1, rel])
+    (fmap_as_finite_support_parameter_predicate_domain := [code1, rel]))
+  let conflictPredicateSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "eval_sim_def"
+    (fmap_as_finite_support_parameter_predicate_domain := [code1, rel]) (fmap_as_finite_support_parameters := [code1]))
+  let wrongPredicatePath ← `(attr| hol "cakeml/compiler/backend/proofs/clos_callProofScript.sml" "eval_sim_def"
+    (fmap_as_finite_support_parameter_predicate_domain := [code1, rel]))
+  for testSyntax in #[wrongPredicateSyntax, duplicatePredicateSyntax, conflictPredicateSyntax, wrongPredicatePath] do
+    let rejected ← Lean.Elab.Command.liftCoreM do
+      try
+        let _ ← parseHolRefAttribute testSyntax
+        pure false
+      catch _ => pure true
+    unless rejected do throwError "@[hol] predicate-domain qualifier accepted an invalid form"
   let nestedSyntax ← `(attr| hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_rel"
     (nested_list_rel_as_mutual := [FunctionsRel]))
   let nestedRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute nestedSyntax)

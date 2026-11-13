@@ -1,11 +1,9 @@
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.ChainSyntactic
 import Flapjack.Misc.Sptree.FromAList.Lookup
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InitialCodeDomain
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CommonSemantics
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InitialState
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.OracleInvariant
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WholeDistinct
-import Flapjack.Compiler.Backend.ClosToBvl.Proofs.SortPermutation
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CommonLookup
 
 /-! Whole-program closure-to-BVL compilation preserves semantics. -/

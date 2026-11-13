@@ -116,6 +116,17 @@ run_cmd do
     | .ok names => pure names
     | .error message => throwError "current codec did not resolve: {message}"
   unless names.size == 8 do throwError "unexpected codec declaration count"
+  let exportedEnv := env.setExporting true
+  let .ok exportedNames := resolvePredicateCodec exportedEnv
+    | throwError "codec resolver rejected the exported view"
+  unless exportedNames == names do
+    throwError "exported view resolved different codec declarations"
+  let some (.thmInfo _) := exportedEnv.checked.get.find? names[7]!
+    | throwError "roundtrip witness is not a checked theorem in exported view"
+  let exportedAxioms ← liftTermElabM <| withEnv exportedEnv do
+    predicateCodecAxiomProblems exportedNames
+  unless exportedAxioms.isEmpty do
+    throwError "exported codec view changed its axiom closure: {exportedAxioms}"
   let competing := env.constants.toList.filter fun (name, _) =>
     privateToUserName? name == some `Flapjack.Compiler.Backend.ClosToBvl.toBroad &&
       predicateCodecDefiningModule env name != `Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvalSim
