@@ -8,6 +8,7 @@
     {"bytes": 472, "out": "apply_colour_probe.out", "rows": 9, "sha256": "ab8776ab329fb206a0cec270aef4dc224b347d2c73730bf25758a84e699fcce5"},
     {"bytes": 75, "out": "arith_vars_probe.out", "rows": 3, "sha256": "6039a92875434374d668473ed65cc52591a7d30d8e94c6b63a481cf60eb92e7d"},
     {"bytes": 13936, "out": "arm8_target_typed_probe.out", "rows": 16, "sha256": "eeaba7d58dbcd94abacbabfe12c34676bfb877b4cd762b6ed52e194b34dfb46e"},
+    {"bytes": 123388, "out": "arm8_typed_probe.out", "rows": 142, "sha256": "dda77064aec03a8281641181131e9001934aed604fdf8b3919113d0e4c19299a"},
     {"bytes": 671, "out": "asm_config_checks_probe.out", "rows": 46, "sha256": "dc6ea82d857a94d23fb468eb30c36618ef7f1c089e539752f07a96420fc7c76e"},
     {"bytes": 251, "out": "asm_inst_fragment_probe.out", "rows": 20, "sha256": "fb00053f44698704d47ad72155116e228341abdc8a31fca36f84735d31fe6183"},
     {"bytes": 126, "out": "asm_memory_shift_probe.out", "rows": 8, "sha256": "4127bc37122a7ca758123fa08ca515b75dff3b9cbd6b4fcced2fe7800703b78c"},
