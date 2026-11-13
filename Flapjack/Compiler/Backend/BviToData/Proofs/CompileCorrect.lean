@@ -393,24 +393,11 @@ theorem compileCorrect_cons {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
               · simp [compileSource, compiled, restCompiled, Flapjack.holHd]
               · exact correctOutcome_stop_after_continue head (.err error) t1 tmid t2 n nmid next name corr live names env result ls1 ls2 firstOutcome restOutcome
 
-/-- Empty-expression case of the full source simulation invariant. This case
-is not tagged as a HOL port while the source-shaped BVI evaluator awaits its
-own correspondence review. -/
-theorem compileCorrect_nil {C F : Type} (env : List BvlSem.Value)
-    (s1 s2 : BviSem.BviState C F) (res : BviSem.BviResult)
-    (t1 : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
-    (run : BviSem.evaluate [] env s1 = (res, s2))
-    (notTypeError : res ≠ .err (.abort .typeError))
-    (vars : DataProps.varCorr env corr (sptMap dataToBviValue t1.locals))
-    (tailShape : ([] : List Bvi.Exp).length ≠ 1 → tail = false)
-    (fresh : ∀ k, n ≤ k → sptLookup k t1.locals = none)
-    (related : stateRel s1 t1)
-    (_livePresent : ∀ v ∈ live, sptLookup v t1.locals ≠ none)
-    (exceptionJump : isException res → DataSem.jumpExc t1 ≠ none) :
-    ∃ t2 prog pres vs next ls,
-      compileSource n corr tail live [] = (prog, vs, next) ∧
-      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel s2 t2 ∧
-      correctOutcome res t1 t2 n next corr live vs env tail pres ls := by
+/-- The empty list satisfies the reusable evaluator induction invariant.
+The evaluator correspondence remains pending source review. -/
+theorem simulationFor_nil {C F : Type} (env : List BvlSem.Value) (s1 : BviSem.BviState C F) :
+    simulationFor [] env s1 := by
+  intro res s2 t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
   simp only [BviSem.evaluate, Prod.mk.injEq] at run
   obtain ⟨rfl, rfl⟩ := run
   have notTail : tail = false := tailShape (by simp)
@@ -429,23 +416,11 @@ theorem compileCorrect_nil {C F : Type} (env : List BvlSem.Value)
       exact lookup
     · exact ⟨fun h => h, List.Forall₂.nil⟩
 
-/-- Variable case of the source simulation invariant, including both tail
-and non-tail compilation. The evaluator still awaits correspondence review. -/
-theorem compileCorrect_var {C F : Type} (index : Nat) (env : List BvlSem.Value)
-    (s1 s2 : BviSem.BviState C F) (res : BviSem.BviResult)
-    (t1 : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
-    (run : BviSem.evaluate [.var index] env s1 = (res, s2))
-    (notTypeError : res ≠ .err (.abort .typeError))
-    (vars : DataProps.varCorr env corr (sptMap dataToBviValue t1.locals))
-    (_tailShape : ([.var index] : List Bvi.Exp).length ≠ 1 → tail = false)
-    (fresh : ∀ k, n ≤ k → sptLookup k t1.locals = none)
-    (related : stateRel s1 t1)
-    (_livePresent : ∀ v ∈ live, sptLookup v t1.locals ≠ none)
-    (_exceptionJump : isException res → DataSem.jumpExc t1 ≠ none) :
-    ∃ t2 prog pres vs next ls,
-      compileSource n corr tail live [.var index] = (prog, vs, next) ∧
-      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel s2 t2 ∧
-      correctOutcome res t1 t2 n next corr live vs env tail pres ls := by
+/-- A variable expression satisfies the reusable evaluator induction invariant.
+The evaluator correspondence remains pending source review. -/
+theorem simulationFor_var {C F : Type} (index : Nat) (env : List BvlSem.Value) (s1 : BviSem.BviState C F) :
+    simulationFor [.var index] env s1 := by
+  intro res s2 t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
   cases valueAt : env[index]? with
   | none =>
     simp [BviSem.evaluate, valueAt] at run
@@ -489,18 +464,6 @@ theorem compileCorrect_var {C F : Type} (index : Nat) (env : List BvlSem.Value)
         · simp [DataSem.evaluate, DataSem.getVars, read]
         · simpa [stateRel, DataSem.flushState] using related
         · simp [correctOutcome, isReturn, isResult, isException, dataToBviResult, projected, DataSem.flushState]
-
-/-- The empty list satisfies the reusable evaluator induction invariant. -/
-theorem simulationFor_nil {C F : Type} (env : List BvlSem.Value) (s1 : BviSem.BviState C F) :
-    simulationFor [] env s1 := by
-  intro res s2 t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
-  exact compileCorrect_nil env s1 s2 res t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
-
-/-- A variable expression satisfies the reusable evaluator induction invariant. -/
-theorem simulationFor_var {C F : Type} (index : Nat) (env : List BvlSem.Value) (s1 : BviSem.BviState C F) :
-    simulationFor [.var index] env s1 := by
-  intro res s2 t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
-  exact compileCorrect_var index env s1 s2 res t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
 
 private theorem jumpExc_decClock {C F : Type} (state : DataSem.State C F) :
     DataSem.jumpExc (DataSem.decClock state) = (DataSem.jumpExc state).map DataSem.decClock := by
