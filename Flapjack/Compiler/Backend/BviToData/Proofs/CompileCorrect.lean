@@ -268,94 +268,6 @@ theorem evaluateSeq_stop {C F : Type} (first rest : DataLang.Prog)
     DataSem.evaluate (.seq first rest) t1 = (some result, t2) := by
   simp [DataSem.evaluate, firstRun, DataSem.fixClock, Nat.min_eq_right clockBound]
 
-/-- Successful non-tail list composition: the two recursive simulations
-combine with the real BVI clock bound into one source and target execution.
-The assembled simulation is proved separately in `Proofs.Simulation`; HOL correspondence review remains open. -/
-theorem compileCorrect_cons_success {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
-    (env : List BvlSem.Value) (head : BvlSem.Value) (values : List BvlSem.Value)
-    (s1 smid s2 : BviSem.BviState C F) (t1 tmid t2 : DataSem.State C F)
-    (n nmid next name : Nat) (corr live names : List Nat) (first rest : DataLang.Prog)
-    (ls1 ls2 : Option Nat)
-    (sourceFirst : BviSem.evaluate [x] env s1 = (.val [head], smid))
-    (sourceRest : BviSem.evaluate (y :: xs) env smid = (.val values, s2))
-    (compileFirst : compileSource n corr false live [x] = (first, [name], nmid))
-    (compileRest : compileSource nmid corr false (name :: live) (y :: xs) = (rest, names, next))
-    (targetFirst : DataSem.evaluate first t1 = (none, tmid))
-    (targetRest : DataSem.evaluate rest tmid = (none, t2))
-    (initialRel : stateRel s1 t1) (middleRel : stateRel smid tmid) (finalRel : stateRel s2 t2)
-    (firstOutcome : correctOutcome (.val [head]) t1 tmid n nmid corr live [name] env false none ls1)
-    (restOutcome : correctOutcome (.val values) tmid t2 nmid next corr (name :: live) names env false none ls2) :
-    BviSem.evaluate (x :: y :: xs) env s1 = (.val (head :: values), s2) ∧
-    compileSource n corr false live (x :: y :: xs) = (.seq first rest, name :: names, next) ∧
-    DataSem.evaluate (.seq first rest) t1 = (none, t2) ∧ stateRel s2 t2 ∧
-    correctOutcome (.val (head :: values)) t1 t2 n next corr live (name :: names) env false none ls2 := by
-  have sourceBound := BviSem.evaluate_clock_le [x] env s1
-  rw [sourceFirst] at sourceBound
-  have targetBound : tmid.clock ≤ t1.clock := by
-    simpa [← initialRel.1, ← middleRel.1] using sourceBound
-  refine ⟨?_, ?_, evaluateSeq_continue first rest t1 tmid _ targetFirst targetBound targetRest, finalRel, ?_⟩
-  · rw [BviSem.evaluate, BviSem.fixClock_evaluate, sourceFirst, sourceRest]
-    rfl
-  · simp [compileSource, compileFirst, compileRest, Flapjack.holHd]
-  · exact correctOutcome_cons head values t1 tmid t2 n nmid next corr live names name env ls1 ls2 firstOutcome restOutcome
-
-/-- An error from the first expression stops the entire compiled list. This
-composes the first recursive simulation without evaluating the remaining
-source expressions or target code. -/
-theorem compileCorrect_cons_firstStop {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
-    (env : List BvlSem.Value) (error : ErrorResult BviSem.ExnOrRet)
-    (s1 s2 : BviSem.BviState C F) (t1 t2 : DataSem.State C F)
-    (n nmid next name : Nat) (corr live names : List Nat) (first rest : DataLang.Prog)
-    (result : Result (List DataSem.Value) DataSem.Value) (ls : Option Nat)
-    (sourceFirst : BviSem.evaluate [x] env s1 = (.err error, s2))
-    (compileFirst : compileSource n corr false live [x] = (first, [name], nmid))
-    (compileRest : compileSource nmid corr false (name :: live) (y :: xs) = (rest, names, next))
-    (targetFirst : DataSem.evaluate first t1 = (some result, t2))
-    (initialRel : stateRel s1 t1) (finalRel : stateRel s2 t2)
-    (outcome : correctOutcome (.err error) t1 t2 n nmid corr live [name] env false (some result) ls) :
-    BviSem.evaluate (x :: y :: xs) env s1 = (.err error, s2) ∧
-    compileSource n corr false live (x :: y :: xs) = (.seq first rest, name :: names, next) ∧
-    DataSem.evaluate (.seq first rest) t1 = (some result, t2) ∧ stateRel s2 t2 ∧
-    correctOutcome (.err error) t1 t2 n next corr live (name :: names) env false (some result) ls := by
-  have sourceBound := BviSem.evaluate_clock_le [x] env s1
-  rw [sourceFirst] at sourceBound
-  have targetBound : t2.clock ≤ t1.clock := by
-    simpa [← initialRel.1, ← finalRel.1] using sourceBound
-  refine ⟨?_, ?_, evaluateSeq_stop first rest t1 t2 result targetFirst targetBound, finalRel, ?_⟩
-  · rw [BviSem.evaluate, BviSem.fixClock_evaluate, sourceFirst]
-  · simp [compileSource, compileFirst, compileRest, Flapjack.holHd]
-  · exact outcome
-
-/-- The first expression continues and the remaining expression list stops.
-The source and target both return that stop, with the source theorem's full
-result obligations transferred through the first compilation. -/
-theorem compileCorrect_cons_restStop {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
-    (env : List BvlSem.Value) (head : BvlSem.Value) (error : ErrorResult BviSem.ExnOrRet)
-    (s1 smid s2 : BviSem.BviState C F) (t1 tmid t2 : DataSem.State C F)
-    (n nmid next name : Nat) (corr live names : List Nat) (first rest : DataLang.Prog)
-    (result : Result (List DataSem.Value) DataSem.Value) (ls1 ls2 : Option Nat)
-    (sourceFirst : BviSem.evaluate [x] env s1 = (.val [head], smid))
-    (sourceRest : BviSem.evaluate (y :: xs) env smid = (.err error, s2))
-    (compileFirst : compileSource n corr false live [x] = (first, [name], nmid))
-    (compileRest : compileSource nmid corr false (name :: live) (y :: xs) = (rest, names, next))
-    (targetFirst : DataSem.evaluate first t1 = (none, tmid))
-    (targetRest : DataSem.evaluate rest tmid = (some result, t2))
-    (initialRel : stateRel s1 t1) (middleRel : stateRel smid tmid) (finalRel : stateRel s2 t2)
-    (firstOutcome : correctOutcome (.val [head]) t1 tmid n nmid corr live [name] env false none ls1)
-    (restOutcome : correctOutcome (.err error) tmid t2 nmid next corr (name :: live) names env false (some result) ls2) :
-    BviSem.evaluate (x :: y :: xs) env s1 = (.err error, s2) ∧
-    compileSource n corr false live (x :: y :: xs) = (.seq first rest, name :: names, next) ∧
-    DataSem.evaluate (.seq first rest) t1 = (some result, t2) ∧ stateRel s2 t2 ∧
-    correctOutcome (.err error) t1 t2 n next corr live (name :: names) env false (some result) ls2 := by
-  have sourceBound := BviSem.evaluate_clock_le [x] env s1
-  rw [sourceFirst] at sourceBound
-  have targetBound : tmid.clock ≤ t1.clock := by
-    simpa [← initialRel.1, ← middleRel.1] using sourceBound
-  refine ⟨?_, ?_, evaluateSeq_continue first rest t1 tmid _ targetFirst targetBound targetRest, finalRel, ?_⟩
-  · rw [BviSem.evaluate, BviSem.fixClock_evaluate, sourceFirst, sourceRest]
-  · simp [compileSource, compileFirst, compileRest, Flapjack.holHd]
-  · exact correctOutcome_stop_after_continue head (.err error) t1 tmid t2 n nmid next name corr live names env result ls1 ls2 firstOutcome restOutcome
-
 /-- The compiler invariant for a fixed source expression list and initial
 state, with arbitrary target state and compiler parameters. This is proof
 infrastructure for assembling the source evaluator induction. -/
@@ -411,9 +323,14 @@ theorem compileCorrect_cons {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
         | some result =>
           generalize restCompiled : compileSource nmid corr false (name :: live) (y :: xs) = restTriple
           obtain ⟨rest, names, next⟩ := restTriple
-          obtain ⟨_, compiledAll, targetAll, stateAll, outcomeAll⟩ :=
-            compileCorrect_cons_firstStop x y xs env error s1 s2 t1 t2 n nmid next name corr live names first rest result ls firstRun compiled restCompiled target related state outcome
-          exact ⟨t2, .seq first rest, some result, name :: names, next, ls, compiledAll, targetAll, stateAll, outcomeAll⟩
+          have sourceBound := BviSem.evaluate_clock_le [x] env s1
+          rw [firstRun] at sourceBound
+          have targetBound : t2.clock ≤ t1.clock := by
+            simpa [← related.1, ← state.1] using sourceBound
+          refine ⟨t2, .seq first rest, some result, name :: names, next, ls, ?_,
+            evaluateSeq_stop first rest t1 t2 result target targetBound, state, ?_⟩
+          · simp [compileSource, compiled, restCompiled, Flapjack.holHd]
+          · exact outcome
   | val values =>
     obtain ⟨head, rfl⟩ := BviSem.evaluate_singleton x env s1 smid values firstRun
     obtain ⟨tmid, first, pres, firstNames, nmid, ls1, compiled, target, middleRel, outcome⟩ :=
@@ -448,9 +365,14 @@ theorem compileCorrect_cons {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
             cases pres with
             | some result => simp [correctOutcome, isResult] at restOutcome
             | none =>
-              obtain ⟨_, compiledAll, targetAll, stateAll, outcomeAll⟩ :=
-                compileCorrect_cons_success x y xs env head tailValues s1 smid s2 t1 tmid t2 n nmid next name corr live names first rest ls1 ls2 firstRun restRun compiled restCompiled target targetRest related middleRel finalRel firstOutcome restOutcome
-              exact ⟨t2, .seq first rest, none, name :: names, next, ls2, compiledAll, targetAll, stateAll, outcomeAll⟩
+              have sourceBound := BviSem.evaluate_clock_le [x] env s1
+              rw [firstRun] at sourceBound
+              have targetBound : tmid.clock ≤ t1.clock := by
+                simpa [← related.1, ← middleRel.1] using sourceBound
+              refine ⟨t2, .seq first rest, none, name :: names, next, ls2, ?_,
+                evaluateSeq_continue first rest t1 tmid _ target targetBound targetRest, finalRel, ?_⟩
+              · simp [compileSource, compiled, restCompiled, Flapjack.holHd]
+              · exact correctOutcome_cons head tailValues t1 tmid t2 n nmid next corr live names name env ls1 ls2 firstOutcome restOutcome
           | err error =>
             have whole : BviSem.evaluate (x :: y :: xs) env s1 = (.err error, slast) := by
               rw [BviSem.evaluate, BviSem.fixClock_evaluate, firstRun, restRun]
@@ -462,9 +384,14 @@ theorem compileCorrect_cons {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
             cases pres with
             | none => simp [correctOutcome] at restOutcome
             | some result =>
-              obtain ⟨_, compiledAll, targetAll, stateAll, outcomeAll⟩ :=
-                compileCorrect_cons_restStop x y xs env head error s1 smid s2 t1 tmid t2 n nmid next name corr live names first rest result ls1 ls2 firstRun restRun compiled restCompiled target targetRest related middleRel finalRel firstOutcome restOutcome
-              exact ⟨t2, .seq first rest, some result, name :: names, next, ls2, compiledAll, targetAll, stateAll, outcomeAll⟩
+              have sourceBound := BviSem.evaluate_clock_le [x] env s1
+              rw [firstRun] at sourceBound
+              have targetBound : tmid.clock ≤ t1.clock := by
+                simpa [← related.1, ← middleRel.1] using sourceBound
+              refine ⟨t2, .seq first rest, some result, name :: names, next, ls2, ?_,
+                evaluateSeq_continue first rest t1 tmid _ target targetBound targetRest, finalRel, ?_⟩
+              · simp [compileSource, compiled, restCompiled, Flapjack.holHd]
+              · exact correctOutcome_stop_after_continue head (.err error) t1 tmid t2 n nmid next name corr live names env result ls1 ls2 firstOutcome restOutcome
 
 /-- Empty-expression case of the full source simulation invariant. This case
 is not tagged as a HOL port while the source-shaped BVI evaluator awaits its
