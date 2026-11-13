@@ -53,93 +53,6 @@ theorem evaluateDlet_pattern_flat_error {C F : Type}
   simp only [compileDecs, notAlias]
   simp [FlatSem.evaluateDecs, FlatSem.evaluate, expressionRun, FlatSem.fixClock, Nat.min_eq_right bound]
 
-/-- A successful non-alias declaration preserves the full factored invariant
-after all pattern bindings are initialized. Reserved slots are derived from
-the pre-initialization invariant and the index-block bound. -/
-theorem evaluateDlet_pattern_factored {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
-    (source sourceMiddle : SemanticPrimitivesHOL.State F) (flat flatMiddle : FlatSem.State C F)
-    (sourceEnv : SemEnv Value) (trace : List VarN) (n : Nat) (compMap compMap2 : Environment)
-    (gen : EnvironmentGenerationStore) (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
-    (value : Value) (flatValue : FlatSem.Value) (bindings : List (VarN × Value))
-    (notAlias : simpleDlet pattern expr = none) (distinct : (AstHOL.patBindings pattern).Nodup)
-    (wellformed : AstHOL.everyExp (oneConCheck sourceEnv.c) expr = true)
-    (sourceRun : EvaluateHOL.evaluate source sourceEnv [expr] = (sourceMiddle, .val [value]))
-    (flatRun : FlatSem.evaluate ⟨[]⟩ flat
-      [compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr] = (flatMiddle, .val [flatValue]))
-    (matched : pmatch sourceEnv.c sourceMiddle.refs pattern value [] = .match bindings)
-    (shadowers : VarN → Prop) (envInv : GlobalEnvInv genv compMap2 shadowers sourceEnv)
-    (mapsEq : compMap2.c = compMap.c) (valueRel : ValueRel genv value flatValue)
-    (invariant : factoredInvariant interp transform gen genv (start, finish, other) sourceMiddle flatMiddle)
-    (fits : start.vidx + (AstHOL.patBindings pattern).length ≤ finish.vidx) :
-    ∃ (finalGenv : GlobalEnv) (finalFlat : FlatSem.State C F),
-      let finalNext := { start with vidx := start.vidx + (AstHOL.patBindings pattern).length }
-      EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] =
-        (sourceMiddle, .val ⟨alistToNs bindings, nsEmpty⟩) ∧
-      compileDecs trace n start compMap gen [.dlet location pattern expr] =
-        (n + 4 + (AstHOL.patBindings pattern).length, finalNext,
-          { emptyEnv with v := alistToNs (allocDefs (n + 4) start.vidx (AstHOL.patBindings pattern).reverse) }, gen,
-          [.mat .none (compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr)
-            [(compilePat compMap pattern, makeVarls 0 .none start.vidx (AstHOL.patBindings pattern).reverse)]]) ∧
-      FlatSem.evaluateDecs flat (compileDecs trace n start compMap gen [.dlet location pattern expr]).2.2.2.2 =
-        (finalFlat, none) ∧
-      GlobalGrowth genv finalGenv ∧ StateRel finalGenv sourceMiddle finalFlat ∧
-      EnvDomainEq
-        { emptyEnv with v := alistToNs (allocDefs (n + 4) start.vidx (AstHOL.patBindings pattern).reverse) }
-        ⟨alistToNs bindings, nsEmpty⟩ ∧
-      GlobalEnvInv finalGenv
-        { emptyEnv with v := alistToNs (allocDefs (n + 4) start.vidx (AstHOL.patBindings pattern).reverse) }
-        (fun _ => False) ⟨alistToNs bindings, nsEmpty⟩ ∧
-      factoredInvariant interp transform gen finalGenv (finalNext, finish, other) sourceMiddle finalFlat := by
-  have invariantCopy := invariant
-  obtain ⟨ok, typesOk, states, _, _, _, _, _, _, _⟩ := invariantCopy
-  obtain ⟨flatBindings, flatMatch, related, names⟩ :=
-    pmatch_success_sourceBindings genv compMap compMap2 sourceEnv sourceMiddle flatMiddle shadowers envInv
-      mapsEq ok typesOk states pattern value flatValue valueRel bindings matched
-  have flatDistinct : (flatBindings.map Prod.fst).Nodup := by simpa [names] using distinct
-  obtain ⟨finalGenv, finalFlat, initRun, finalInv, constructors, types, slots, envResult⟩ :=
-    invariantMakeVarls interp transform gen genv start finish other sourceMiddle flatMiddle start.vidx
-      (flatBindings.map Prod.fst).reverse ⟨flatBindings⟩ 0 .none
-      ⟨invariant, rfl, by simpa [names] using fits, rfl, flatDistinct⟩
-  have growth : GlobalGrowth genv finalGenv := by
-    apply GlobalGrowth.ofSubglobals genv finalGenv slots
-    · rw [constructors]; exact fun _ _ h => h
-    · rw [types]; exact fun _ _ h => h
-  have related' := envRel_growth genv finalGenv growth _ _ related
-  have finalEnv := envResult bindings (n + 4) related'
-  have domain : EnvDomainEq
-      { emptyEnv with v := alistToNs (allocDefs (n + 4) start.vidx (AstHOL.patBindings pattern).reverse) }
-      ⟨alistToNs bindings, nsEmpty⟩ := by
-    obtain ⟨entries, entriesEq, entriesNames⟩ := envRel_dom genv (alistToNs bindings) flatBindings related
-    simp only [alistToNs, Namespace.bind.injEq, and_true] at entriesEq
-    subst entries
-    obtain ⟨values, valueModules⟩ := alistToNs_domains_eq (M := ModN)
-      (allocDefs (n + 4) start.vidx (AstHOL.patBindings pattern).reverse) bindings (by
-        intro key
-        simp [fst_allocDefs, entriesNames, names])
-    exact ⟨values, valueModules, envDomainEq_empty.2.2⟩
-  refine ⟨finalGenv, finalFlat, ?_, ?_, ?_, growth, finalInv.2.2.1, domain, ?_, ?_⟩
-  · simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun, matched,
-      EvaluateHOL.headValue, Flapjack.holHd]
-  · simp [compileDecs, notAlias, emptyEnv]
-  · have initializerRun : FlatSem.evaluate ⟨flatBindings⟩ flatMiddle
-        [makeVarls 0 .none start.vidx (AstHOL.patBindings pattern).reverse] =
-        (finalFlat, .val [FlatSem.unitValue]) := by simpa [names] using initRun
-    simp only [compileDecs, notAlias, FlatSem.evaluateDecs_cons, FlatSem.evaluateDec]
-    rw [FlatSem.evaluate, (FlatSem.fixClock_evaluations _ _ _
-      (compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr) []).1, flatRun]
-    simp (config := { zeta := false })
-    have selection : FlatSem.selectRow flatMiddle
-        [(compilePat compMap pattern, makeVarls 0 .none start.vidx (AstHOL.patBindings pattern).reverse)]
-        flatValue FlatSem.bindExnV =
-        .ok (flatBindings, makeVarls 0 .none start.vidx (AstHOL.patBindings pattern).reverse) := by
-      simp [FlatSem.selectRow, FlatSem.pmatchRows, flatMatch, compilePat_bindings, distinct]
-    rw [selection]
-    simp [initializerRun, FlatSem.evaluateDecs, FlatSem.unitValue]
-  · simpa [emptyEnv, names] using finalEnv
-  · simpa [names] using finalInv
-
 /-- Compiling one value declaration leaves the environment-generation store
 unchanged, including its identifier counter and stored maps. -/
 theorem compileDlet_generationStore (trace : List VarN) (n : Nat) (start : NextIndices)
@@ -294,16 +207,64 @@ theorem evaluateDlet_pattern_growing {C F : Type} [Nonempty C]
                 exact ⟨flatMiddle, middleGenv, some (.raise FlatSem.bindExnV), flatDec, states,
                   _, rfl, .raise errorRel, growth, current, generation, forward⟩
               | «match» bindings =>
-                obtain ⟨finalGenv, finalFlat, sourceDec, compiled, flatDec, allocationGrowth, finalStates,
-                  domain, finalEnv, finalInvariant⟩ :=
-                  evaluateDlet_pattern_factored interp transform middleGenv start finish other source sourceMiddle flat
-                    flatMiddle sourceEnv trace n compMap compMap gen location pattern expr value flatValue bindings
-                    notAlias distinct wellformed sourceRun flatRun matched (fun _ => False) envInv' rfl valueRel current fits
+                obtain ⟨flatBindings, flatMatch, related, names⟩ :=
+                  pmatch_success_sourceBindings middleGenv compMap compMap sourceEnv sourceMiddle flatMiddle (fun _ => False) envInv'
+                    rfl current.1 current.2.1 states pattern value flatValue valueRel bindings matched
+                have flatDistinct : (flatBindings.map Prod.fst).Nodup := by simpa [names] using distinct
+                obtain ⟨finalGenv, finalFlat, initRun, finalInv, constructors, types, slots, envResult⟩ :=
+                  invariantMakeVarls interp transform gen middleGenv start finish other sourceMiddle flatMiddle start.vidx
+                    (flatBindings.map Prod.fst).reverse ⟨flatBindings⟩ 0 .none
+                    ⟨current, rfl, by simpa [names] using fits, rfl, flatDistinct⟩
+                have allocationGrowth : GlobalGrowth middleGenv finalGenv := by
+                  apply GlobalGrowth.ofSubglobals middleGenv finalGenv slots
+                  · rw [constructors]; exact fun _ _ h => h
+                  · rw [types]; exact fun _ _ h => h
+                have related' := envRel_growth middleGenv finalGenv allocationGrowth _ _ related
+                have finalEnv := envResult bindings (n + 4) related'
+                have domain : EnvDomainEq
+                    { emptyEnv with v := alistToNs (allocDefs (n + 4) start.vidx (AstHOL.patBindings pattern).reverse) }
+                    ⟨alistToNs bindings, nsEmpty⟩ := by
+                  obtain ⟨entries, entriesEq, entriesNames⟩ := envRel_dom middleGenv (alistToNs bindings) flatBindings related
+                  simp only [alistToNs, Namespace.bind.injEq, and_true] at entriesEq
+                  subst entries
+                  obtain ⟨values, valueModules⟩ := alistToNs_domains_eq (M := ModN)
+                    (allocDefs (n + 4) start.vidx (AstHOL.patBindings pattern).reverse) bindings (by
+                      intro key
+                      simp [fst_allocDefs, entriesNames, names])
+                  exact ⟨values, valueModules, envDomainEq_empty.2.2⟩
+                have sourceDec : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] =
+                    (sourceMiddle, .val ⟨alistToNs bindings, nsEmpty⟩) := by
+                  simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun, matched,
+                    EvaluateHOL.headValue, Flapjack.holHd]
+                have compiled : compileDecs trace n start compMap gen [.dlet location pattern expr] =
+                    (n + 4 + (AstHOL.patBindings pattern).length,
+                      { start with vidx := start.vidx + (AstHOL.patBindings pattern).length },
+                      { emptyEnv with v := alistToNs (allocDefs (n + 4) start.vidx (AstHOL.patBindings pattern).reverse) }, gen,
+                      [.mat .none (compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr)
+                        [(compilePat compMap pattern, makeVarls 0 .none start.vidx (AstHOL.patBindings pattern).reverse)]]) := by
+                  simp [compileDecs, notAlias, emptyEnv]
+                have flatDec : FlatSem.evaluateDecs flat
+                    (compileDecs trace n start compMap gen [.dlet location pattern expr]).2.2.2.2 = (finalFlat, none) := by
+                  have initializerRun : FlatSem.evaluate ⟨flatBindings⟩ flatMiddle
+                      [makeVarls 0 .none start.vidx (AstHOL.patBindings pattern).reverse] =
+                      (finalFlat, .val [FlatSem.unitValue]) := by simpa [names] using initRun
+                  simp only [compileDecs, notAlias, FlatSem.evaluateDecs_cons, FlatSem.evaluateDec]
+                  rw [FlatSem.evaluate, (FlatSem.fixClock_evaluations _ _ _
+                    (compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr) []).1, flatRun]
+                  simp (config := { zeta := false })
+                  have selection : FlatSem.selectRow flatMiddle
+                      [(compilePat compMap pattern, makeVarls 0 .none start.vidx (AstHOL.patBindings pattern).reverse)]
+                      flatValue FlatSem.bindExnV =
+                      .ok (flatBindings, makeVarls 0 .none start.vidx (AstHOL.patBindings pattern).reverse) := by
+                    simp [FlatSem.selectRow, FlatSem.pmatchRows, flatMatch, compilePat_bindings, distinct]
+                  rw [selection]
+                  simp [initializerRun, FlatSem.evaluateDecs, FlatSem.unitValue]
                 rw [compiled] at flatDec
                 unfold DletOutcomeGrowing
                 rw [sourceDec, compiled]
-                exact ⟨_, _, none, flatDec, finalStates, rfl, domain, finalEnv,
-                  growth.trans allocationGrowth, finalInvariant, generation, forward⟩
+                refine ⟨_, _, none, flatDec, finalInv.2.2.1, rfl, domain, ?_, growth.trans allocationGrowth, ?_, generation, forward⟩
+                · simpa [emptyEnv, names] using finalEnv
+                · simpa [names] using finalInv
 
 /-- The optimized alias case preserves its original generation and oracle
 relations because evaluating the source variable leaves the state unchanged. -/

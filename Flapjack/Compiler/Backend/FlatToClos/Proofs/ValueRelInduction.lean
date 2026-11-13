@@ -246,4 +246,47 @@ theorem valueRel_hol_cases (source : FlatSem.Value) (target : ClosSem.Value) :
     · simpa only [Flapjack.holEl_eq_getElem _ _ bound, ← compileFuns_eq_source] using
         ValueRel.recclosure bound related distinct ((noMatFuns_eq_source funs).mpr safe)
 
+/-- Inversion equations for each source value constructor. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "v_rel_def"]
+theorem valueRel_def (flag : Bool) (index : Nat) (i : Int) (s : MlString) (c : HolChar)
+    (byte : BitVec 8) (word : BitVec 64) (values : List FlatSem.Value)
+    (tag : Option (Nat × Option Nat)) (env : FlatSem.Environment FlatSem.Value)
+    (name : MlString) (body : FlatLang.Exp)
+    (funs : List (MlString × MlString × FlatLang.Exp)) (recName : MlString)
+    (target : ClosSem.Value) :
+    (ValueRel (.loc flag index) target ↔ target = .refPtr flag index) ∧
+    (ValueRel (.litv (.intLit i)) target ↔ target = .number i) ∧
+    (ValueRel (.litv (.strLit s)) target ↔ target = .byteVector s.explode) ∧
+    (ValueRel (.litv (.char c)) target ↔ target = .number c.toNat) ∧
+    (ValueRel (.litv (.word8 byte)) target ↔ target = .number byte.toNat) ∧
+    (ValueRel (.litv (.word64 word)) target ↔ target = .word64 word) ∧
+    (ValueRel (.litv (.float64 word)) target ↔ target = .word64 word) ∧
+    (ValueRel (.vectorv values) target ↔
+      ∃ ws, target = .block 0 ws ∧ List.Forall₂ ValueRel values ws) ∧
+    (ValueRel (.conv tag values) target ↔
+      (∃ ws, tag = none ∧ target = .block 0 ws ∧ List.Forall₂ ValueRel values ws) ∨
+      (∃ ws t r, tag = some (t, r) ∧ target = .block t ws ∧ List.Forall₂ ValueRel values ws)) ∧
+    (ValueRel (.closure env name body) target ↔
+      ∃ names db, target = .closure none [] db 1
+        (@Flapjack.holHd ClosLang.Exp ⟨.var .none 0⟩ (compile (some name :: names) [body])) ∧
+        EnvRel env names db ∧ FlatProps.noMat body = true) ∧
+    (ValueRel (.recclosure env funs recName) target ↔
+      ∃ n names db, recName = (@Flapjack.holEl (MlString × MlString × FlatLang.Exp)
+        ⟨(ofString "", ofString "", .lit .none (.intLit 0))⟩ n funs).1 ∧
+        target = .recclosure none [] db (funs.map (fun (_, arg, exp) =>
+          (1, @Flapjack.holHd ClosLang.Exp ⟨.var .none 0⟩
+            (compile (some arg :: (funs.map (fun f => some f.1) ++ names)) [exp])))) n ∧
+        n < funs.length ∧ EnvRel env names db ∧ (funs.map Prod.fst).Nodup ∧
+        (∀ f ∈ funs, FlatProps.noMat f.2.2 = true)) := by
+  simp only [valueRel_hol_cases]
+  cases flag <;> simp [and_assoc, exists_and_left, exists_and_right]
+  all_goals
+    constructor
+    · rintro (h | ⟨xs, ys, t, h, rfl, equal, related⟩)
+      · exact Or.inl h
+      · exact Or.inr ⟨ys, t, h, equal, related⟩
+    · rintro (h | ⟨ys, t, h, equal, related⟩)
+      · exact Or.inl h
+      · exact Or.inr ⟨values, ys, t, h, rfl, equal, related⟩
+
 end Flapjack.Compiler.Backend.FlatToClos

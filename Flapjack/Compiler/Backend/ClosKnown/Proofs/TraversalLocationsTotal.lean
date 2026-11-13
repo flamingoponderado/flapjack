@@ -20,18 +20,29 @@ theorem knownLocationsAll (c : Config) (xs : List ClosLang.Exp) (env : List ValA
     exact knownLocationsVar c t v env g eas next h
   case case2 =>
     rename_i c env g t x y z xe xa g1 hx ye ya g2 hy ze za g3 hz ix iy iz
-    intro eas next h
-    apply knownLocationsIf c t x y z env g ?_ ?_ ix eas next h
-    · intro ea1 next1 ea2 next2 ⟨eq1, eq2⟩
-      simp [knownListTotal_single, hx] at eq1
-      rcases eq1 with ⟨rfl, rfl⟩
-      simp [knownListTotal_single, hy] at eq2
-      rcases eq2 with ⟨rfl, rfl⟩
-      exact iz
-    · intro ea1 next1 eq1
-      simp [knownListTotal_single, hx] at eq1
-      rcases eq1 with ⟨rfl, rfl⟩
-      exact iy
+    intro eas next ⟨run, annotations, safe, globalSafe⟩
+    have parts : ClosProps.everyFnLocationSome [x] ∧ ClosProps.everyFnLocationSome [y] ∧ ClosProps.everyFnLocationSome [z] := by
+      simpa [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] using annotations
+    have h1 : knownListTotal c [x] env g = ([(xe, xa)], g1) := by
+      simp [knownListTotal_single, hx]
+    have h2 : knownListTotal c [y] env g1 = ([(ye, ya)], g2) := by
+      simp [knownListTotal_single, hy]
+    have h3 : knownListTotal c [z] env g2 = ([(ze, za)], g3) := by
+      simp [knownListTotal_single, hz]
+    have r1 := ix _ _ ⟨h1, parts.1, safe, globalSafe⟩
+    have r2 := iy _ _ ⟨h2, parts.2.1, safe, r1.2.2⟩
+    have r3 := iz _ _ ⟨h3, parts.2.2, safe, r2.2.2⟩
+    rw [knownListTotal_if, h1] at run
+    dsimp only at run
+    rw [h2] at run
+    dsimp only at run
+    rw [h3] at run
+    simp [knownSourceHead] at run
+    rcases run with ⟨rfl, rfl⟩
+    have merged : valApproxLocations (mergeHOL ya za) := valApproxLocationsMerge ya za
+      ⟨by simpa using r2.2.1, by simpa using r3.2.1⟩
+    simp [ClosProps.everyFnLocationSome, ClosProps.fnLocationSomeExp] at r1 r2 r3 ⊢
+    exact ⟨⟨r1.1, r2.1, r3.1⟩, merged, r3.2.2⟩
   case case3 =>
     rename_i c env g t xs body ea g1 h1 e a g2 h2 ib indBody
     intro eas next h

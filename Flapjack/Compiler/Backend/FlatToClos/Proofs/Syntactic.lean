@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.FlatToClos.Proofs.NoMti
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
+public import Flapjack.Misc.ListEl
 
 @[expose] public section
 
@@ -9,6 +10,52 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Compiler.Backend.ClosProps
+
+/-- A singleton variable-pattern handler can be extracted. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "dest_pat_from_case"]
+theorem destPatFromCase {α : Type} (pes : List (FlatLang.Pat × α))
+    (h : match pes with | [(.pvar _, _)] => True | _ => False) :
+    ∃ nm rhs, destPat pes = some (nm, rhs) := by
+  cases pes with
+  | nil => contradiction
+  | cons row rest =>
+    rcases row with ⟨pat, rhs⟩
+    cases rest with
+    | cons row rest => cases pat <;> simp_all
+    | nil => cases pat <;> simp_all [destPat]
+
+/-- The components of a pair equal its projections. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "IMP_PAIR"]
+theorem impPair {α β : Type} (z : α × β) (x : α) (y : β)
+    (h : z = (x, y)) : x = z.1 ∧ y = z.2 := by
+  cases h
+  exact ⟨rfl, rfl⟩
+
+/-- A predicate holding for a nonempty list also holds for its head.
+The nonempty-list premise supplies the element witness required by `holHd`. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "EVERY_IMP_HD"]
+theorem everyImpHd {α : Type} (P : α → Prop) (xs : List α)
+    (h : (∀ x ∈ xs, P x) ∧ xs ≠ []) :
+    P (@Flapjack.holHd α ⟨xs.head h.2⟩ xs) := by
+  cases xs with
+  | nil => exact False.elim (h.2 rfl)
+  | cons x xs => exact h.1 x (by simp)
+
+/-- Pair projections agree with their pattern-matching definitions. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "FST_SND_EQ_CASE"]
+theorem fstSndEqCase {α β γ δ : Type} :
+    (@Prod.fst α β = fun (p : α × β) => match p with | (a, _) => a) ∧
+      (@Prod.snd γ δ = fun (p : γ × δ) => match p with | (_, b) => b) := by
+  exact ⟨rfl, rfl⟩
+
+/-- An application occurs in an append exactly when it occurs in either list. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "contains_App_SOME_APPEND"]
+theorem containsAppSomeAppend (maxApp : Nat) (xs ys : List ClosLang.Exp) :
+    containsAppSome maxApp (xs ++ ys) ↔
+      containsAppSome maxApp xs ∨ containsAppSome maxApp ys := by
+  induction xs with
+  | nil => simp [containsAppSome]
+  | cons x xs ih => simp [containsAppSome, ih, or_assoc]
 
 private theorem destConstant_noApp (maxApp : Nat) (e : ClosLang.Exp) (c : ClosLang.Const)
     (decoded : destConstant e = some c) : ¬ containsAppSomeExp maxApp e := by
@@ -84,17 +131,6 @@ theorem containsAppSome_compileInit (maxApp : Nat) (b : Bool) :
   have absent := (noMtiList_syntactic maxApp positive _ safe).2
   exact ⟨fun present => (absent present).elim, False.elim⟩
 
-private theorem compile_noMti (m : List (Option MlString)) (xs : List FlatLang.Exp) :
-    ∀ e ∈ compile m xs, noMti e := by
-  induction xs with
-  | nil => simp [compile, compileExps]
-  | cons x xs ih =>
-    simp only [compile, compileExps] at ih ⊢
-    intro e member
-    rcases List.mem_cons.mp member with rfl | member
-    · exact compileExp_noMti m x
-    · exact ih e member
-
 /-- Compiled expressions have the three original closure syntax properties. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "compile_syntactic_props"]
 theorem compile_syntacticProps (maxApp : Nat) (positive : 0 < maxApp)
@@ -110,7 +146,7 @@ theorem compile_syntacticProps (maxApp : Nat) (positive : 0 < maxApp)
 theorem compileDecs_syntacticProps (maxApp : Nat) (ds : List FlatLang.Exp) :
     (∀ e ∈ compileDecs ds, noMti e) ∧ everyFnVarsNone (compileDecs ds) ∧
       (0 < maxApp → ¬ containsAppSome maxApp (compileDecs ds)) := by
-  have safe := compileDecs_noMti ds
+  have safe := compile_noMti [] ds
   have properties := noMtiList_syntactic 1 (by decide) (compileDecs ds) safe
   exact ⟨safe, properties.1, fun positive => (noMtiList_syntactic maxApp positive _ safe).2⟩
 
@@ -120,7 +156,7 @@ theorem compileProg_syntacticProps (maxApp : Nat) (ds : List FlatLang.Exp) :
     (∀ e ∈ compileProg ds, noMti e) ∧ everyFnVarsNone (compileProg ds) ∧
       (0 < maxApp → ¬ containsAppSome maxApp (compileProg ds)) := by
   have safe : ∀ e ∈ compileProg ds, noMti e := by
-    have compiled := compileDecs_noMti ds
+    have compiled := (compileDecs_syntacticProps maxApp ds).1
     simpa [compileProg, ClosInterp.attachInterpreter, compileInit_noMti] using compiled
   have properties := noMtiList_syntactic 1 (by decide) (compileProg ds) safe
   exact ⟨safe, properties.1, fun positive => (noMtiList_syntactic maxApp positive _ safe).2⟩
@@ -136,8 +172,8 @@ theorem incCompileDecs_syntacticProps {α β γ : Type} (maxApp : Nat) (ds : Lis
     apply ClosInterp.insertInterp_noMti e _ member
     intro x sourceMember
     rcases List.mem_append.mp sourceMember with original | unit
-    · exact compileDecs_noMti ds x original
-    · exact compileDecs_noMti [.con .none none []] x unit
+    · exact (compileDecs_syntacticProps maxApp ds).1 x original
+    · exact (compileDecs_syntacticProps maxApp [.con .none none []]).1 x unit
   have safe := safeAll (X := α)
   have safeBeta := safeAll (X := β)
   have safeGamma := safeAll (X := γ)

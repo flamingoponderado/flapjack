@@ -97,6 +97,31 @@ theorem valueRel_eqns_nonGlobal :
     · intro impossible; exact impossible.elim
 
 
+/-- The original local value-relation case equations. HOL separately names
+this conjunction and its later non-global replay; their typed captures agree. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel_eqns" 336
+  (fmap_as_finite_support := [c, tys])]
+theorem valueRel_eqns_local :
+    (∀ (v : FlatSem.Value) (l : Lit) (genv : GlobalEnv),
+      ValueRel genv (.litv l) v ↔ v = .litv l) ∧
+    (∀ (vs : List Value) (v : FlatSem.Value) (genv : GlobalEnv) (cn : Option Stamp),
+      ValueRel genv (.conv cn vs) v ↔
+        (∃ cn' cn'' vs'', cn = some cn' ∧ v = .conv (some cn'') vs'' ∧
+          List.Forall₂ (ValueRel genv) vs vs'' ∧ genv.c.lookup (cn'', vs.length) = some cn') ∨
+        ∃ vs'', cn = none ∧ v = .conv none vs'' ∧ List.Forall₂ (ValueRel genv) vs vs'') ∧
+    (∀ (v : FlatSem.Value) (l : Nat) (genv : GlobalEnv) (b : Bool),
+      ValueRel genv (.loc b l) v ↔ v = .loc b (l + 1)) ∧
+    (∀ (vs : List Value) (v : FlatSem.Value) (genv : GlobalEnv),
+      ValueRel genv (.vectorv vs) v ↔ ∃ vs'', v = .vectorv vs'' ∧ List.Forall₂ (ValueRel genv) vs vs'') ∧
+    (∀ (genv : GlobalEnv) (env' : List (VarN × FlatSem.Value)),
+      EnvRel genv nsEmpty env' ↔ env' = []) ∧
+    (∀ (x : VarN) (v : Value) (genv : GlobalEnv) (env' : List (VarN × FlatSem.Value))
+      (env : Namespace ModN VarN Value), EnvRel genv (nsBind x v env) env' ↔
+        ∃ tail v', env' = (x, v') :: tail ∧ EnvRel genv env tail ∧ ValueRel genv v v') ∧
+    (∀ (v : FlatSem.Value) (id : Nat × Nat) (genv : GlobalEnv) (e : SemEnv Value),
+      ValueRel genv (.env e id) v ↔ False) := valueRel_eqns_nonGlobal
+
+
 /-- The original value-relation equations, including closure and recursive
 closure cases. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel_more_eqns"

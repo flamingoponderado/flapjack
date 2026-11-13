@@ -487,46 +487,5 @@ theorem relatedFullApplication (c : Config) (g : Spt ValApprox) (maxApp : Nat)
   cases restRel
   exact ⟨rfl, rfl⟩
 
-/-- A full closure application that times out before entering its body
-satisfies the complete application simulation predicate. This is Flapjack
-induction infrastructure for the full-application branch. -/
-theorem fullApplicationTimeoutCase {C F : Type} (loc1 : Option Nat) (sourceFn : Value)
-    (first : Value) (rest : List Value) (s0 : State (Spt ValApprox × C) F)
-    (body : ClosLang.Exp) (env remaining : List Value)
-    (found : destClosure s0.maxApp loc1 sourceFn (first :: rest) = some (.fullApp body env remaining))
-    (timeout : s0.clock < (first :: rest).length - remaining.length) :
-    KnownAppSimulationAt loc1 sourceFn (first :: rest) s0 := by
-  intro res1 s loc2 targetFn targetArgs t0 c argsopt h
-  obtain ⟨run, fnRel, oracleDisjoint, _, _, _, _, _, _, _, oracle, argsRel, states, globals,
-    _, locRel, constraint, _⟩ := h
-  obtain ⟨targetBody, sourcePrefix, sourceExtra, targetPrefix, targetExtra, targetRemaining, approxEnv,
-    sourceEnv, targetFound, prefixRel, remainingRel, approxRel, bodyRel, fv, safe, annotation⟩ :=
-    relatedFullApplication c (nextG s0) s0.maxApp loc1 loc2 sourceFn targetFn (first :: rest) targetArgs
-      argsopt body env remaining fnRel argsRel locRel constraint found
-  have maxEq : s0.maxApp = t0.maxApp := states.2.2.2.2.2.2.1
-  have clockEq : s0.clock = t0.clock := states.2.2.2.2.1
-  have argsLen := argsRel.length_eq
-  have remainingLen := remainingRel.length_eq
-  have targetNonempty : targetArgs ≠ [] := by
-    intro eq
-    subst targetArgs
-    cases argsRel
-  cases targetArgs with
-  | nil => contradiction
-  | cons targetFirst targetRest =>
-    have targetTimeout : t0.clock < (targetFirst :: targetRest).length - targetRemaining.length := by omega
-    rw [evaluateApp, found] at run
-    simp only [timeout, ↓reduceIte] at run
-    cases run
-    refine ⟨.err (.abort .timeoutError), { t0 with clock := 0 }, ?_, ?_, ?_, ?_, ?_, ?_⟩
-    · rw [evaluateApp, ← maxEq, targetFound]
-      simp only [List.length_cons] at targetTimeout
-      simp [targetTimeout, maxEq]
-    · simp [resultRel, excRel]
-    · rcases states with ⟨aux, free, codeS, codeT, clock, ffi, maxApp, globs, refs, compiler, co⟩
-      exact ⟨aux, free, codeS, codeT, rfl, ffi, maxApp, globs, refs, compiler, co⟩
-    · simpa [stateGlobalsApprox, nextG] using globals
-    · exact oracle
-    · simpa [nextG] using oracleDisjoint
 
 end Flapjack.Compiler.Backend.ClosKnown.Simulation.ApplyFull

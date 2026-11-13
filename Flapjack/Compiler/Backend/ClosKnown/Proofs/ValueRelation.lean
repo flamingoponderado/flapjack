@@ -314,6 +314,28 @@ inductive RefRel (c : Config) (g : Spt ValApprox) : Ref ClosSem.Value → Ref Cl
   | thunk (mode : Flapjack.AstHOL.ThunkMode) (v w : ClosSem.Value) :
       ValueRel c g v w → RefRel c g (.thunk mode v) (.thunk mode w)
 
+/-- The reference relation is characterized by its three source constructors. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "ref_rel_simps"]
+theorem refRelSimps (c : Config) (g : Spt ValApprox) (vs : List ClosSem.Value)
+    (x : Ref ClosSem.Value) (bs : List (BitVec 8)) (m : Flapjack.AstHOL.ThunkMode)
+    (v : ClosSem.Value) :
+    (RefRel c g (.valueArray vs) x ↔ ∃ ys, x = .valueArray ys ∧ List.Forall₂ (ValueRel c g) vs ys) ∧
+    (RefRel c g (.byteArray bs) x ↔ x = .byteArray bs) ∧
+    (RefRel c g (.thunk m v) x ↔ ∃ w, x = .thunk m w ∧ ValueRel c g v w) := by
+  constructor
+  · constructor
+    · intro rel; cases rel with
+      | valueArray xs ys related => exact ⟨ys, rfl, related⟩
+    · rintro ⟨ys, rfl, rel⟩; exact .valueArray _ _ rel
+  constructor
+  · constructor
+    · intro rel; cases rel; rfl
+    · intro eq; cases eq; exact .byteArray _
+  · constructor
+    · intro rel; cases rel with
+      | thunk mode v w related => exact ⟨w, rfl, related⟩
+    · rintro ⟨w, rfl, rel⟩; exact .thunk _ _ _ rel
+
 /-- Reference relation is independent of the current inline factor. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "ref_rel_upd_inline_factor"]
 theorem refRelUpdateInlineFactor (c : Config) (k : Nat) :

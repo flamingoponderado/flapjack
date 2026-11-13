@@ -9,6 +9,49 @@ public import Flapjack.Compiler.Backend.ClosKnown.Fuel
 namespace Flapjack.Compiler.Backend.ClosKnown
 open ClosLang ClosProps
 
+/-- Recursive-closure approximations enumerate the input arities in order. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "clos_gen_noinline_eq"]
+theorem closGenNoInlineEq {α : Type} (n c : Nat) (fns : List (Nat × α)) :
+    closGenNoInline n c fns =
+      List.ofFn (fun i : Fin fns.length =>
+        ValApprox.closNoInline (2 * (i.val + c) + n) (fns[i.val]'i.isLt).1) := by
+  induction fns generalizing c with
+  | nil => simp [closGenNoInline]
+  | cons head tail ih =>
+    cases head with
+    | mk arity body =>
+      simp [closGenNoInline, List.ofFn_succ, ih, Nat.add_comm, Nat.add_left_comm, Nat.mul_add]
+
+/-- Closure approximations enumerate either unknown values or indexed closures. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "letrec_case_eq"]
+theorem letrecCaseEq {L α : Type} (_limit : L) (loc : Option Nat) (fns : List (Nat × α)) :
+    (match loc with
+      | none => List.replicate fns.length ValApprox.other
+      | some n => closGenNoInline n 0 fns) =
+    List.ofFn (fun i : Fin fns.length => match loc with
+      | none => ValApprox.other
+      | some n => ValApprox.closNoInline (n + 2 * i.val) (fns[i.val]'i.isLt).1) := by
+  cases loc with
+  | none =>
+    induction fns with
+    | nil => rfl
+    | cons x xs ih => simp [List.ofFn_succ, List.replicate_succ, ih]
+  | some n => simpa [Nat.add_comm] using closGenNoInlineEq n 0 fns
+
+/-- Check a predicate on every variable represented by a shifted set. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "every_var_def"]
+def everyVar (P : Nat → Prop) : DbVars.DbVarSet → Prop
+  | .empty => True
+  | .var v => P v
+  | .shift k d => everyVar (fun v => k ≤ v → P (v - k)) d
+  | .union d1 d2 => everyVar P d1 ∧ everyVar P d2
+
+/-- The smart union retains exactly the predicates of both inputs. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "every_var_mk_Union"]
+theorem everyVarMkUnion (P : Nat → Prop) (d1 d2 : DbVars.DbVarSet) :
+    everyVar P (DbVars.mkUnion d1 d2) ↔ everyVar P d1 ∧ everyVar P d2 := by
+  cases d1 <;> cases d2 <;> simp [DbVars.mkUnion, everyVar]
+
 /-- Every free de Bruijn index is below the given bound. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "fv_max_def"]
 def fvMax (n : Nat) (xs : List ClosLang.Exp) : Prop :=

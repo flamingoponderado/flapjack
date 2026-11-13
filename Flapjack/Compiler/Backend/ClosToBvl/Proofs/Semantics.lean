@@ -20,11 +20,11 @@ def observableResultRel (source : Result (List ClosSem.Value) ClosSem.Value)
 
 /-- The source-shaped forward simulation of an initial closure program by a
 BVL entry point. This is Flapjack infrastructure, not a reviewed HOL port. -/
-def initialEvaluationSimulation {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
-    (sourceCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (sourceOracle : ClosSem.CompileOracle C)
-    (sourceCompiler : ClosSem.Compiler C) (program : List ClosLang.Exp)
-    (targetCode : Spt (Nat × Bvl.Exp)) (targetOracle : BvlSem.CompileOracle C)
-    (targetCompiler : BvlSem.Compiler C) (start : Nat) : Prop :=
+def initialEvaluationSimulation {C₁ C₂ F : Type} (ffi : HolFfiState F) (maxApp : Nat)
+    (sourceCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (sourceOracle : ClosSem.CompileOracle C₁)
+    (sourceCompiler : ClosSem.Compiler C₁) (program : List ClosLang.Exp)
+    (targetCode : Spt (Nat × Bvl.Exp)) (targetOracle : BvlSem.CompileOracle C₂)
+    (targetCompiler : BvlSem.Compiler C₂) (start : Nat) : Prop :=
   ∀ clock result final,
     ClosSem.evaluate program [] (ClosSem.initialState ffi maxApp sourceCode sourceOracle sourceCompiler clock) = (result, final) →
     result ≠ .err (.abort .typeError) →
@@ -48,11 +48,11 @@ theorem observableResultRel_target_typeError {source : Result (List ClosSem.Valu
 
 /-- Source safety and forward clock extension rule out target type errors at
 every initial clock, including clocks below the chosen simulation clock. -/
-theorem initialSimulation_targetSafe {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
-    (sourceCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (sourceOracle : ClosSem.CompileOracle C)
-    (sourceCompiler : ClosSem.Compiler C) (program : List ClosLang.Exp)
-    (targetCode : Spt (Nat × Bvl.Exp)) (targetOracle : BvlSem.CompileOracle C)
-    (targetCompiler : BvlSem.Compiler C) (start : Nat)
+theorem initialSimulation_targetSafe {C₁ C₂ F : Type} (ffi : HolFfiState F) (maxApp : Nat)
+    (sourceCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (sourceOracle : ClosSem.CompileOracle C₁)
+    (sourceCompiler : ClosSem.Compiler C₁) (program : List ClosLang.Exp)
+    (targetCode : Spt (Nat × Bvl.Exp)) (targetOracle : BvlSem.CompileOracle C₂)
+    (targetCompiler : BvlSem.Compiler C₂) (start : Nat)
     (sourceSafe : ∀ clock, (ClosSem.evaluate program []
       (ClosSem.initialState ffi maxApp sourceCode sourceOracle sourceCompiler clock)).1 ≠ .err (.abort .typeError))
     (simulation : initialEvaluationSimulation ffi maxApp sourceCode sourceOracle sourceCompiler program
@@ -126,11 +126,11 @@ theorem resultObservesOutcome_notTimeout {α β : Type} (result : Result α β) 
 
 /-- Forward simulation and source safety determine the same terminating
 observations even though the two languages return different value types. -/
-theorem initialSimulation_terminatingObservation_eq {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
-    (sourceCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (sourceOracle : ClosSem.CompileOracle C)
-    (sourceCompiler : ClosSem.Compiler C) (program : List ClosLang.Exp)
-    (targetCode : Spt (Nat × Bvl.Exp)) (targetOracle : BvlSem.CompileOracle C)
-    (targetCompiler : BvlSem.Compiler C) (start : Nat)
+theorem initialSimulation_terminatingObservation_eq {C₁ C₂ F : Type} (ffi : HolFfiState F) (maxApp : Nat)
+    (sourceCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (sourceOracle : ClosSem.CompileOracle C₁)
+    (sourceCompiler : ClosSem.Compiler C₁) (program : List ClosLang.Exp)
+    (targetCode : Spt (Nat × Bvl.Exp)) (targetOracle : BvlSem.CompileOracle C₂)
+    (targetCompiler : BvlSem.Compiler C₂) (start : Nat)
     (sourceSafe : ∀ clock, (ClosSem.evaluate program []
       (ClosSem.initialState ffi maxApp sourceCode sourceOracle sourceCompiler clock)).1 ≠ .err (.abort .typeError))
     (simulation : initialEvaluationSimulation ffi maxApp sourceCode sourceOracle sourceCompiler program
@@ -196,11 +196,11 @@ theorem initialSimulation_terminatingObservation_eq {C F : Type} (ffi : HolFfiSt
 the same proof-side whole-program behavior, including divergence traces. The
 simulation is an explicit prerequisite until the initial code and oracle
 relations are connected to the expression proof. -/
-theorem semantics_eq_of_initialSimulation {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
-    (sourceCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (sourceOracle : ClosSem.CompileOracle C)
-    (sourceCompiler : ClosSem.Compiler C) (program : List ClosLang.Exp)
-    (targetCode : Spt (Nat × Bvl.Exp)) (targetOracle : BvlSem.CompileOracle C)
-    (targetCompiler : BvlSem.Compiler C) (start : Nat)
+theorem semantics_eq_of_initialSimulation {C₁ C₂ F : Type} (ffi : HolFfiState F) (maxApp : Nat)
+    (sourceCode : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (sourceOracle : ClosSem.CompileOracle C₁)
+    (sourceCompiler : ClosSem.Compiler C₁) (program : List ClosLang.Exp)
+    (targetCode : Spt (Nat × Bvl.Exp)) (targetOracle : BvlSem.CompileOracle C₂)
+    (targetCompiler : BvlSem.Compiler C₂) (start : Nat)
     (nonfail : ClosSem.semantics ffi maxApp sourceCode sourceOracle sourceCompiler program ≠ .fail)
     (simulation : initialEvaluationSimulation ffi maxApp sourceCode sourceOracle sourceCompiler program
       targetCode targetOracle targetCompiler start) :

@@ -416,6 +416,8 @@ def main():
                         help="decimal string escapes to compare, from byte 0 (maximum 256)")
     parser.add_argument("--structured-cases", type=int, default=100,
                         help="nested expression, pattern, type and declaration cases")
+    parser.add_argument("--nesting-depth", type=int, default=0,
+                        help="compare deeply nested parentheses and local bindings at this depth")
     parser.add_argument("--lex-cases", type=int, default=100,
                         help="comment, literal, identifier and malformed-token cases")
     parser.add_argument("--token-cases", type=int, default=100,
@@ -432,7 +434,7 @@ def main():
             args.declaration_cases < 0 or args.handler_cases < 0 or not 0 <= args.annotation_cases <= 320 or
             args.cross_context_cases < 0 or
             args.config_cases < 0 or args.config_error_cases < 0 or
-            args.structured_cases < 0 or args.lex_cases < 0 or args.token_cases < 0 or args.raw_byte_cases < 0 or
+            args.structured_cases < 0 or args.nesting_depth < 0 or args.lex_cases < 0 or args.token_cases < 0 or args.raw_byte_cases < 0 or
             not 0 <= args.byte_cases <= 256 or args.timeout <= 0):
         parser.error("case counts must be nonnegative, integration-cases at most "
                      f"{len(INTEGRATION_PROGRAMS)}, annotation-cases at most 320, "
@@ -459,6 +461,13 @@ def main():
         mode = edge_rng.choice(["--types", "--print_sexp"])
         compare(args.reference, args.cake, [mode, "--exclude_prelude=true"], source, args.timeout, False)
     print(f"{args.structured_cases} nested frontend cases match pinned CakeML", flush=True)
+    if args.nesting_depth:
+        depth = args.nesting_depth
+        for expression in ("(" * depth + "1" + ")" * depth,
+                           "let val x = 1 in " * depth + "1" + " end" * depth):
+            compare(args.reference, args.cake, ["--types", "--exclude_prelude=true"],
+                    f"val x = {expression};", args.timeout, True, output_channel="stderr")
+        print(f"parentheses and local bindings at depth {depth} match pinned CakeML", flush=True)
     for _ in range(args.lex_cases):
         source = lexical_program(edge_rng)
         mode = edge_rng.choice(["--types", "--print_sexp"])

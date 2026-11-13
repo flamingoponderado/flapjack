@@ -39,4 +39,18 @@ theorem doApp_simulation {C F : Type} (op : FlatLang.Op) (cfg : Config)
     ⟨simpleValueRel_valueRel, simpleStateRel_stateRel cfg⟩
     source values sourceFinal result target values' run premises
 
+/-- Primitive application preserves related reversed argument lists. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "do_app_thm_REVERSE"]
+theorem doApp_simulation_reverse {C F : Type} (source : FlatSem.State C F) (op : FlatLang.Op)
+    (values : List FlatSem.Value) (sourceFinal : FlatSem.State C F)
+    (result : Result FlatSem.Value FlatSem.Value) (cfg : Config)
+    (target : FlatSem.State C F) (values' : List FlatSem.Value)
+    (premises : FlatSem.doApp source op values.reverse = some (sourceFinal, result) ∧
+      StateRel cfg source target ∧ List.Forall₂ ValueRel values values') :
+    ∃ targetFinal result', SemanticPrimitivesProps.resultRel ValueRel ValueRel result result' ∧
+      StateRel cfg sourceFinal targetFinal ∧
+      FlatSem.doApp target op values'.reverse = some (targetFinal, result') := by
+  exact doApp_simulation op cfg source values.reverse sourceFinal result target values'.reverse
+    premises.1 ⟨premises.2.1, List.forall₂_reverse_iff.mpr premises.2.2⟩
+
 end Flapjack.Compiler.Backend.FlatPattern

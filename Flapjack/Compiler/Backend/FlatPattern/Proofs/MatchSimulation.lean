@@ -19,15 +19,6 @@ theorem evaluate_mat_error {C F : Type} (trace : BackendCommon.Tra)
       ({ next with clock := min state.clock next.clock }, .err error) := by
   simp [FlatSem.evaluate, run, FlatSem.fixClock]
 
-/-- An error in the generated let initializer propagates without dispatch. -/
-theorem evaluate_let_error {C F : Type} (trace : BackendCommon.Tra) (name : VarN)
-    (first body : FlatLang.Exp) (env : FlatSem.Environment FlatSem.Value)
-    (state next : FlatSem.State C F) (error : SemanticPrimitivesHOL.ErrorResult FlatSem.Value)
-    (run : FlatSem.evaluate env state [first] = (next, .err error)) :
-    FlatSem.evaluate env state [.let_ trace (some name) first body] =
-      ({ next with clock := min state.clock next.clock }, .err error) := by
-  simp [FlatSem.evaluate, run, FlatSem.fixClock]
-
 /-- A type-failing source row makes the match expression type-fail. -/
 theorem evaluate_mat_rowTypeError {C F : Type} (trace : BackendCommon.Tra)
     (scrutinee : FlatLang.Exp) (rows : List (FlatLang.Pat × FlatLang.Exp))

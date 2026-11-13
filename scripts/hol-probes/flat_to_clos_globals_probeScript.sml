@@ -11,6 +11,28 @@ val _ = show "elist_globals_empty=" flat_to_closProofTheory.elist_globals_empty;
 val _ = show "smartcons_globals=" flat_to_closProofTheory.set_globals_SmartCons;
 val _ = show "smartcons_esgc=" flat_to_closProofTheory.esgc_free_SmartCons;
 val _ = show "bag_image_definition=" bagTheory.BAG_IMAGE_DEF;
+val _ = show "bag_insert_typed=" bagTheory.BAG_INSERT;
+val _ = show "finite_bag_typed=" bagTheory.FINITE_BAG;
+val _ = show "finite_empty_bag_typed=" bagTheory.FINITE_EMPTY_BAG;
+val _ = show "finite_bag_insert_typed=" bagTheory.FINITE_BAG_INSERT;
+val finite_bag_union_1_replay = Q.prove (
+  `!b1:'a -> num. FINITE_BAG b1 ==> !b2. FINITE_BAG b2 ==> FINITE_BAG (BAG_UNION b1 b2)`,
+  simp [bagTheory.FINITE_BAG_UNION]);
+val _ = show "finite_bag_union_1_replay_typed=" finite_bag_union_1_replay;
+val _ = show "flat_finite_bag_globals_typed=" flat_to_closProofTheory.flat_FINITE_BAG_set_globals;
+val _ = show "clos_finite_bag_globals_typed=" flat_to_closProofTheory.clos_FINITE_BAG_set_globals;
+val bag_image_suc_finite = Q.prove (
+  `!b:num -> num. FINITE_BAG b ==> BAG_IMAGE SUC b = (\x. if x = 0 then 0 else b (x - 1))`,
+  ho_match_mp_tac bagTheory.STRONG_FINITE_BAG_INDUCT >>
+  simp [bagTheory.BAG_IMAGE_FINITE_INSERT, bagTheory.BAG_INSERT, bagTheory.EMPTY_BAG, FUN_EQ_THM] >>
+  rw [] >> simp []);
+val _ = show "bag_image_suc_finite_typed=" bag_image_suc_finite;
+val bag_image_foldr_replay = Q.prove (
+  `!xs. BAG_IMAGE SUC (FOLDR $⊎ {||} (MAP flatProps$set_globals xs)) =
+        FOLDR $⊎ {||} (MAP (BAG_IMAGE SUC o flatProps$set_globals) xs) /\
+        FINITE_BAG (FOLDR $⊎ {||} (MAP flatProps$set_globals xs))`,
+  Induct >> fs []);
+val _ = show "bag_image_foldr_replay_typed=" bag_image_foldr_replay;
 val _ = show "compile_globals=" flat_to_closProofTheory.compile_set_globals;
 val _ = show "compile_decs_globals=" flat_to_closProofTheory.compile_decs_set_globals;
 val _ = show "compile_eq_globals=" flat_to_closProofTheory.compile_eq_set_globals;
@@ -26,6 +48,14 @@ val _ = show "no_mti_def=" closPropsTheory.no_mti_def;
 val _ = show "no_mti_smartcons=" flat_to_closProofTheory.no_mti_SmartCons;
 val _ = show "insert_interp_no_mti=" clos_interpProofTheory.insert_interp_no_mti;
 val _ = show "contains_app_def=" closPropsTheory.contains_App_SOME_def;
+val _ = show "contains_app_append_typed=" flat_to_closProofTheory.contains_App_SOME_APPEND;
+val _ = show "fst_snd_eq_case_typed=" flat_to_closProofTheory.FST_SND_EQ_CASE;
+val _ = show "every_imp_hd_typed=" flat_to_closProofTheory.EVERY_IMP_HD;
+val _ = show "dest_pat_from_case_typed=" flat_to_closProofTheory.dest_pat_from_case;
+val imp_pair_replay = Q.prove (
+  `z = (x,y) ==> x = FST z /\ y = SND z`,
+  Cases_on `z` >> fs []);
+val _ = show "imp_pair_replay_typed=" imp_pair_replay;
 val _ = show "every_fn_vars_def=" closPropsTheory.every_Fn_vs_NONE_def;
 val _ = show "compile_syntactic=" flat_to_closProofTheory.compile_syntactic_props;
 val _ = show "compile_decs_syntactic=" flat_to_closProofTheory.compile_decs_syntactic_props;

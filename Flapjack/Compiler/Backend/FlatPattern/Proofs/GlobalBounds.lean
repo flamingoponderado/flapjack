@@ -10,6 +10,23 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack.Compiler.Backend.BackendCommon FlatLang PatternCommon PatternSemantics
 open Flapjack.Compiler.Backend.FlatProps
 
+/-- Pair projections agree with their pattern-matching definitions. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "FST_SND_EQ_CASE"]
+theorem fstSndEqCase {α β γ δ : Type} :
+    (@Prod.fst α β = fun (p : α × β) => match p with | (a, _) => a) ∧
+      (@Prod.snd γ δ = fun (p : γ × δ) => match p with | (_, b) => b) := by
+  exact ⟨rfl, rfl⟩
+
+/-- Bag union preserves the sub-bag relation in both arguments. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "SUB_BAG_2"]
+theorem subBag_union {α : Type} (x y x' y' : Flapjack.Bag α)
+    (h : Flapjack.subBag x y ∧ Flapjack.subBag x' y') :
+    Flapjack.subBag (Flapjack.bagUnion x x') (Flapjack.bagUnion y y') := by
+  intro item count present
+  have left := h.1 item (x item) (Nat.le_refl _)
+  have right := h.2 item (x' item) (Nat.le_refl _)
+  exact Nat.le_trans present (Nat.add_le_add left right)
+
 private theorem compiledRows_empty (cfg : Config) (ps : List (FlatLang.Pat × FlatLang.Exp))
     (j : Nat) (sgp : Bool) (ps2 : List (FlatLang.Pat × FlatLang.Exp))
     (eqp : compileMatch cfg ps = (j, sgp, ps2))

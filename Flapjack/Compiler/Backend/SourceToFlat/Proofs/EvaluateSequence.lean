@@ -52,13 +52,8 @@ theorem factoredDecBoundedIH_dtabbrev {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
     (location : Flapjack.Misc.Location.Locs) (typeVars : List TvarN) (name : TypeN) (typ : AstT) :
     FactoredDecBoundedIH (F := F) interp transform limit [.dtabbrev location typeVars name typ] := by
-  intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
-    flatDecs result _ sourceRun invariant compiled _ _ generation _ _
-  simp only [EvaluateHOL.evaluateDecs, Prod.mk.injEq] at sourceRun
-  simp only [compileDecs, Prod.mk.injEq] at compiled
-  obtain ⟨rfl, rfl⟩ := sourceRun
-  obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := compiled
-  exact evaluateDecs_noop_factored interp transform genv source flat start finish other gen invariant generation
+  simpa only [FactoredDecBoundedIH, EvaluateHOL.evaluateDecs, compileDecs] using
+    factoredDecBoundedIH_empty (F := F) interp transform limit
 
 /-- Recursive declarations satisfy the factored induction hypothesis. -/
 theorem factoredDecBoundedIH_dletrec {C F : Type} [Nonempty C]
@@ -122,78 +117,6 @@ theorem factoredDecBoundedIH_denv {C F : Type} [Nonempty C]
   · intro error impossible
     cases impossible
 
-/-- Compose a successful first declaration with a tail induction hypothesis.
-The tail hypothesis has the same invariant, environment, generation and
-future premises as the declaration compiler theorem; it does not assume a
-target execution or any postconditions. The factored relations still need
-HOL correspondence review. -/
-theorem factoredDecCase_append_success {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (genv : GlobalEnv) (baseMap firstMap tailMap : Environment)
-    (baseEnv firstEnv : SemEnv Value) (source middle last : State F) (flat : FlatSem.State C F)
-    (finish firstNext lastNext : NextIndices) (other : Set (Nat × IndexKind))
-    (firstGen lastGen : EnvironmentGenerationStore) (firstCode tailCode : List FlatLang.Exp)
-    (tailResult : Result (SemEnv Value) Value)
-    (baseInv : GlobalEnvInv genv baseMap (fun _ => False) baseEnv)
-    (future : envGenFutureRel interp lastGen source.evalState)
-    (firstCase : FactoredDecCase interp transform genv source middle flat finish firstNext other firstGen
-      firstMap firstCode (.val firstEnv))
-    (tailIH : ∀ midGenv midFlat,
-      factoredInvariant interp transform firstGen midGenv (firstNext, finish, other) middle midFlat →
-      GlobalEnvInv midGenv (extendEnv firstMap baseMap) (fun _ => False) (extendDecEnv firstEnv baseEnv) →
-      envGenRel firstGen middle.evalState → envGenFutureRel interp lastGen middle.evalState →
-      FactoredDecCase interp transform midGenv middle last midFlat finish lastNext other lastGen tailMap
-        tailCode tailResult) :
-    FactoredDecCase interp transform genv source last flat finish lastNext other lastGen
-      (extendEnv tailMap firstMap) (firstCode ++ tailCode) (combineDecResult firstEnv tailResult) := by
-  obtain ⟨midFlat, midGenv, firstError, firstRun, _, firstPost, firstSuccess, _⟩ := firstCase
-  obtain ⟨firstInvariant, firstForward, firstGrowth⟩ := firstPost trivial
-  obtain ⟨firstNone, firstDomain, firstGeneration, firstEnvInv⟩ := firstSuccess firstEnv rfl
-  subst firstError
-  have baseMid := globalEnvInv_growth genv midGenv firstGrowth baseMap (fun _ => False) baseEnv baseInv
-  have combinedInv := globalEnvInv_append_factored midGenv firstMap baseMap firstEnv baseEnv
-    ⟨firstDomain, firstEnvInv, baseMid⟩
-  have futureMid := envGenFutureRel_forward interp lastGen source.evalState middle.evalState ⟨future, firstForward⟩
-  obtain ⟨lastFlat, lastGenv, tailError, tailRun, lastStates, tailPost, tailSuccess, tailErrors⟩ :=
-    tailIH midGenv midFlat firstInvariant combinedInv firstGeneration futureMid
-  have flatRun : FlatSem.evaluateDecs flat (firstCode ++ tailCode) = (lastFlat, tailError) := by
-    rw [FlatSem.evaluateDecs_append, firstRun]
-    exact tailRun
-  refine ⟨lastFlat, lastGenv, tailError, flatRun, lastStates, ?_⟩
-  cases tailResult with
-  | val tailEnv =>
-    obtain ⟨finalInvariant, tailForward, tailGrowth⟩ := tailPost trivial
-    obtain ⟨noError, tailDomain, tailGeneration, tailEnvInv⟩ := tailSuccess tailEnv rfl
-    have firstFinal := globalEnvInv_growth midGenv lastGenv tailGrowth firstMap (fun _ => False) firstEnv firstEnvInv
-    refine ⟨?_, ?_, ?_⟩
-    · intro _
-      exact ⟨finalInvariant, oracForwardRel_trans interp _ _ _ ⟨firstForward, tailForward⟩,
-        firstGrowth.trans tailGrowth⟩
-    · intro resultEnv same
-      simp only [combineDecResult, Result.val.injEq] at same
-      subst resultEnv
-      exact ⟨noError, envDomainEq_append tailMap firstMap tailEnv firstEnv ⟨tailDomain, firstDomain⟩,
-        tailGeneration, globalEnvInv_append_factored lastGenv tailMap firstMap tailEnv firstEnv
-          ⟨tailDomain, tailEnvInv, firstFinal⟩⟩
-    · intro error impossible
-      cases impossible
-  | err error =>
-    obtain ⟨flatErr, isError, related⟩ := tailErrors error rfl
-    refine ⟨?_, ?_, ?_⟩
-    · intro notAbort
-      cases error with
-      | abort kind => exact False.elim notAbort
-      | raise value =>
-        obtain ⟨finalInvariant, tailForward, tailGrowth⟩ := tailPost trivial
-        exact ⟨finalInvariant, oracForwardRel_trans interp _ _ _ ⟨firstForward, tailForward⟩,
-          firstGrowth.trans tailGrowth⟩
-    · intro resultEnv impossible
-      cases impossible
-    · intro error' same
-      simp only [combineDecResult, Result.err.injEq] at same
-      subst error'
-      exact ⟨flatErr, isError, related⟩
-
 /-- A first-declaration error stops the flat sequence. For a raised error,
 the reserved range and generation are advanced to the complete compiler
 output using the compiler's index and generation-validity facts. -/
@@ -229,7 +152,8 @@ theorem factoredDecCase_append_error {C F : Type} [Nonempty C]
     cases same
     exact ⟨flatErr, rfl, related⟩
 
-/-- Clock-bounded declaration simulations compose in source order. -/
+/-- Clock-bounded declaration simulations compose in source order.
+The factored relations still need HOL correspondence review. -/
 theorem factoredDecBoundedIH_cons {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (limit : Nat) (first second : Dec) (rest : List Dec)
@@ -297,13 +221,56 @@ theorem factoredDecBoundedIH_cons {C F : Type} [Nonempty C]
       cases tailResult with
       | val resultEnv => simp
       | err error => simpa [combineDecResult] using notTypeError
-    apply factoredDecCase_append_success interp transform genv env env1 env2 sourceEnv firstEnv source middle last flat
-      finish next1 next2 other gen1 gen2 code1 code2 tailResult envInv future firstCase
-    intro midGenv midFlat midInvariant midInv midGeneration midFuture
-    exact tailIH midGenv (extendEnv env1 env) env2 (extendDecEnv firstEnv sourceEnv) trace middle last midFlat
-      next1 finish next2 other n1 n2 gen1 gen2 code2 tailResult
-      (Nat.le_trans (EvaluateHOL.evaluateDecsClockFull source middle sourceEnv [first] _ firstRun) clockBound) tailRun midInvariant tailCompiled midInv tailSafe
-      midGeneration midFuture bounded
+    obtain ⟨midFlat, midGenv, firstError, firstFlatRun, _, firstPost, firstSuccess, _⟩ := firstCase
+    obtain ⟨firstInvariant, firstForward, firstGrowth⟩ := firstPost trivial
+    obtain ⟨firstNone, firstDomain, firstGeneration, firstEnvInv⟩ := firstSuccess firstEnv rfl
+    subst firstError
+    have baseMid := globalEnvInv_growth genv midGenv firstGrowth env (fun _ => False) sourceEnv envInv
+    have combinedInv := globalEnvInv_append_factored midGenv env1 env firstEnv sourceEnv
+      ⟨firstDomain, firstEnvInv, baseMid⟩
+    have futureMid := envGenFutureRel_forward interp gen2 source.evalState middle.evalState ⟨future, firstForward⟩
+    obtain ⟨lastFlat, lastGenv, tailError, tailFlatRun, lastStates, tailPost, tailSuccess, tailErrors⟩ :=
+      tailIH midGenv (extendEnv env1 env) env2 (extendDecEnv firstEnv sourceEnv) trace middle last midFlat
+        next1 finish next2 other n1 n2 gen1 gen2 code2 tailResult
+        (Nat.le_trans (EvaluateHOL.evaluateDecsClockFull source middle sourceEnv [first] _ firstRun) clockBound)
+        tailRun firstInvariant tailCompiled combinedInv tailSafe firstGeneration futureMid bounded
+    have flatRun : FlatSem.evaluateDecs flat (code1 ++ code2) = (lastFlat, tailError) := by
+      rw [FlatSem.evaluateDecs_append, firstFlatRun]
+      exact tailFlatRun
+    refine ⟨lastFlat, lastGenv, tailError, flatRun, lastStates, ?_⟩
+    cases tailResult with
+    | val tailEnv =>
+      obtain ⟨finalInvariant, tailForward, tailGrowth⟩ := tailPost trivial
+      obtain ⟨noError, tailDomain, tailGeneration, tailEnvInv⟩ := tailSuccess tailEnv rfl
+      have firstFinal := globalEnvInv_growth midGenv lastGenv tailGrowth env1 (fun _ => False) firstEnv firstEnvInv
+      refine ⟨?_, ?_, ?_⟩
+      · intro _
+        exact ⟨finalInvariant, oracForwardRel_trans interp _ _ _ ⟨firstForward, tailForward⟩,
+          firstGrowth.trans tailGrowth⟩
+      · intro resultEnv same
+        simp only [combineDecResult, Result.val.injEq] at same
+        subst resultEnv
+        exact ⟨noError, envDomainEq_append env2 env1 tailEnv firstEnv ⟨tailDomain, firstDomain⟩,
+          tailGeneration, globalEnvInv_append_factored lastGenv env2 env1 tailEnv firstEnv
+            ⟨tailDomain, tailEnvInv, firstFinal⟩⟩
+      · intro error impossible
+        cases impossible
+    | err error =>
+      obtain ⟨flatErr, isError, related⟩ := tailErrors error rfl
+      refine ⟨?_, ?_, ?_⟩
+      · intro notAbort
+        cases error with
+        | abort kind => exact False.elim notAbort
+        | raise value =>
+          obtain ⟨finalInvariant, tailForward, tailGrowth⟩ := tailPost trivial
+          exact ⟨finalInvariant, oracForwardRel_trans interp _ _ _ ⟨firstForward, tailForward⟩,
+            firstGrowth.trans tailGrowth⟩
+      · intro resultEnv impossible
+        cases impossible
+      · intro error' same
+        simp only [combineDecResult, Result.err.injEq] at same
+        subst error'
+        exact ⟨flatErr, isError, related⟩
 
 /-- A declaration list has a bounded simulation when each singleton does. -/
 theorem factoredDecBoundedIH_list {C F : Type} [Nonempty C]

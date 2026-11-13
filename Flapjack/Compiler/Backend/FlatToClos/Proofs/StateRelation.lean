@@ -167,6 +167,13 @@ theorem lookup_thunk {C F : Type} {source : FlatSem.State C F} {target : ClosSem
   change source.refs[index]? = some (.thunk mode value) at found
   simpa [found] using store
 
+/-- Related states have equal clocks. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "state_rel_IMP_clock"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRel_impClock {C F : Type} {source : FlatSem.State C F} {target : ClosSem.State C F}
+    (related : StateRel source target) : source.clock = target.clock :=
+  related.2.2.1
+
 /-- Decrementing both clocks preserves the state relation. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "state_rel_dec_clock"
   (fmap_as_finite_support := [refs, code])]
@@ -190,6 +197,18 @@ def initialStateProofSide {C F : Type} (interpreter : Bool) (ffi : HolFfiState F
     (oracle : ClosSem.CompileOracle C) (compiler : ClosSem.Compiler C) (clock : Nat) : ClosSem.State C F :=
   { ClosSem.initialState ffi maxApp code oracle compiler clock with
     globals := [some (if interpreter then .closure none [] [] 1 ClosInterp.closInterpreter else ClosSem.unitValue)] }
+
+/-- Updating the initial proof-side state's clock changes exactly that clock. -/
+@[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "initate_state'_clock"
+  (fmap_as_finite_support := [refs, code])]
+theorem initialStateProofSide_clock {C F : Type} (interpreter : Bool) (ffi : HolFfiState F)
+    (maxApp : Nat) (oracle : ClosSem.CompileOracle C) (compiler : ClosSem.Compiler C)
+    (oldClock clock : Nat) :
+    ({ initialStateProofSide interpreter ffi maxApp HolFiniteMapExact.empty oracle compiler oldClock with
+      clock := clock } : ClosSem.State C F) =
+        initialStateProofSide interpreter ffi maxApp HolFiniteMapExact.empty oracle compiler clock ∧
+      (initialStateProofSide interpreter ffi maxApp HolFiniteMapExact.empty oracle compiler clock).clock = clock := by
+  exact ⟨rfl, rfl⟩
 
 /-- Initial states satisfy the proof-side relation when the installation
 configurations agree and at least unary calls are supported. -/

@@ -8,16 +8,27 @@ public import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
 namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
-/-- The shift clause delegates every word size and literal to `doShift`. -/
+/-- The shift clause accepts one literal and rejects every other argument list. -/
 @[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_app_def"]
 theorem doApp_shift_source {C F : Type} (s : State C F) (width : WordSize)
-    (shift : Shift) (n : Nat) (lit : Lit) :
-    doApp s (.src (.shift width shift n)) [.litv lit] =
-      match Flapjack.SemanticPrimitivesProps.doShift shift n width lit with
-      | none => none
-      | some result => some (s, .val (.litv result)) := by
-  cases h : Flapjack.SemanticPrimitivesProps.doShift shift n width lit <;>
-    simp [doApp, doAppNumeric, h]
+    (shift : Shift) (n : Nat) (vs : List Value) :
+    doApp s (.src (.shift width shift n)) vs =
+      match vs with
+      | [.litv lit] =>
+        match Flapjack.SemanticPrimitivesProps.doShift shift n width lit with
+        | none => none
+        | some result => some (s, .val (.litv result))
+      | _ => none := by
+  cases vs with
+  | nil => rfl
+  | cons value rest =>
+    cases rest with
+    | nil =>
+      cases value <;> simp [doApp, doAppNumeric]
+      case litv lit =>
+        cases h : Flapjack.SemanticPrimitivesProps.doShift shift n width lit <;>
+          simp
+    | cons _ _ => cases value <;> simp [doApp, doAppNumeric]
 
 /-- Equality accepts exactly two values and propagates comparison type errors. -/
 @[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_app_def"]

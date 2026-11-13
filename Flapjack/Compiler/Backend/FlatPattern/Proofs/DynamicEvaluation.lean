@@ -10,6 +10,13 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)
 
+/-- A predicate holds for an optional value exactly when it holds for every
+value contained in that option. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "OPTION_ALL_FORALL"]
+theorem optionAll_forall {α : Type} (P : α → Prop) (x : Option α) :
+    (match x with | none => True | some y => P y) ↔ ∀ y, x = some y → P y := by
+  cases x <;> simp
+
 /-- Related installation configurations expose corresponding oracle entries. -/
 theorem installConfRel_oracle {C : Type} (cfg : Config) (source target : FlatSem.InstallConfig C)
     (related : installConfRel cfg source target) (index : Nat) :

@@ -16,12 +16,28 @@ open Flapjack.Compiler.Backend.BackendCommon
 open Flapjack.SemanticPrimitivesHOL (storeLookup)
 open Flapjack.SemanticPrimitivesProps (litSameType_refl litSameType_sym)
 
+/-- Boolean values and tags are the corresponding source constructors. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "fold_Boolv"]
+theorem fold_boolValue :
+    (∀ b : Bool, FlatSem.Value.conv (some (boolToTag b, some FlatLang.boolId)) [] =
+      FlatSem.boolValue b) ∧
+    (∀ b : Bool, (if b then trueTag else falseTag) = boolToTag b) :=
+  ⟨fun _ => rfl, fun _ => rfl⟩
+
+/-- Equality of encoded Boolean values returns Boolean equality. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "do_eq_Boolv"]
+theorem doEq_boolValue (x y : Bool) :
+    FlatSem.doEq (FlatSem.boolValue x) (FlatSem.boolValue y) = .val (decide (x = y)) := by
+  cases x <;> cases y <;>
+    simp [FlatSem.doEq, FlatSem.doEqList, FlatSem.boolValue, FlatSem.ctorSameType,
+      boolToTag, trueTag, falseTag, FlatLang.boolId]
+
 /-- Evaluating the flat Boolean expression yields the corresponding value. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "evaluate_Bool"]
 theorem evaluate_bool {C F : Type}
     (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (trace : Tra) (b : Bool) :
     FlatSem.evaluate env state [FlatLang.mkBool trace b] = (state, .val [FlatSem.boolValue b]) := by
-  cases b <;> simp [FlatSem.evaluate, FlatLang.mkBool, FlatSem.boolValue]
+  simp [FlatSem.evaluate, FlatLang.mkBool, fold_boolValue.1]
 
 /-- The Boolean result of a successful pattern test; a type error has no
 Boolean result. -/
@@ -71,45 +87,6 @@ private theorem pmatchList_as_decision {C F : Type} (state : FlatSem.State C F) 
     cases left : FlatSem.pmatchList state rest values bindings <;>
       cases right : FlatSem.pmatchList state rest values ((name, value) :: bindings) <;>
       simp_all [FlatSem.pmatchList, FlatSem.pmatch, matchDecision]
-
-/-- The empty work-list guard evaluates to true. -/
-private theorem naiveList_nil {C F : Type} (trace : Tra) : @NaiveListCorrect C F trace [] := by
-  intro env state values bindings answer pure decision
-  cases values with
-  | nil =>
-    simp [FlatSem.pmatchList, matchDecision] at decision
-    subst answer
-    simpa [naivePatternMatch] using evaluate_bool env state trace true
-  | cons _ _ => simp [FlatSem.pmatchList, matchDecision] at decision
-
-/-- Wildcards pass the work-list match and guard directly to the tail. -/
-private theorem naiveList_any {C F : Type} (trace : Tra) (expression : FlatLang.Exp)
-    (rest : List (FlatLang.Pat × FlatLang.Exp)) (ih : @NaiveListCorrect C F trace rest) :
-    @NaiveListCorrect C F trace ((.pany, expression) :: rest) := by
-  intro env state values bindings answer pure decision
-  cases values with
-  | nil => simp [FlatSem.pmatchList, matchDecision] at decision
-  | cons value values =>
-    cases pure with
-    | cons _ tail =>
-      have tailDecision : matchDecision (FlatSem.pmatchList state (rest.map Prod.fst) values bindings) = some answer := by
-        simpa [FlatSem.pmatchList, FlatSem.pmatch] using decision
-      simpa [naivePatternMatch] using ih env state values bindings answer tail tailDecision
-
-/-- Variable patterns pass the work-list decision to the tail with an
-additional binding, while emitting no guard code. -/
-private theorem naiveList_var {C F : Type} (trace : Tra) (name : VarN) (expression : FlatLang.Exp)
-    (rest : List (FlatLang.Pat × FlatLang.Exp)) (ih : @NaiveListCorrect C F trace rest) :
-    @NaiveListCorrect C F trace ((.pvar name, expression) :: rest) := by
-  intro env state values bindings answer pure decision
-  cases values with
-  | nil => simp [FlatSem.pmatchList, matchDecision] at decision
-  | cons value values =>
-    cases pure with
-    | cons _ tail =>
-      have tailDecision : matchDecision (FlatSem.pmatchList state (rest.map Prod.fst) values ((name, value) :: bindings)) = some answer := by
-        simpa [FlatSem.pmatchList, FlatSem.pmatch] using decision
-      simpa [naivePatternMatch] using ih env state values ((name, value) :: bindings) answer tail tailDecision
 
 /-- The alias case reuses the nested work-list simulation. -/
 private theorem naiveList_as {C F : Type} (trace : Tra) (pattern : FlatLang.Pat) (name : VarN)
@@ -212,42 +189,46 @@ private theorem pmatchList_con_failed_decision {C F : Type} (state : FlatSem.Sta
   cases tail : FlatSem.pmatchList state rest values bindings <;>
     simp [FlatSem.pmatchList, head, tail, matchDecision, combineMatchDecisions]
 
+open Classical in
+/-- Smart conditionals select literal Boolean branches and retain other tests. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "SmartIf_thm"]
+theorem smartIf_thm (trace : Tra) (expression yes no : FlatLang.Exp) :
+    FlatLang.smartIf trace expression yes no =
+      if ∃ t, expression = FlatLang.mkBool t true then yes else
+      if ∃ t, expression = FlatLang.mkBool t false then no else
+        .if_ trace expression yes no := by
+  cases expression <;> simp [FlatLang.smartIf, FlatLang.mkBool]
+  case con t stamp args =>
+    cases args with
+    | cons first rest => cases stamp <;> simp
+    | nil =>
+      cases stamp with
+      | none => simp
+      | some pair =>
+        obtain ⟨tag, typeId⟩ := pair
+        cases typeId with
+        | none => simp
+        | some id =>
+          by_cases hid : id = FlatLang.boolId <;>
+          by_cases ht : tag = trueTag <;>
+          by_cases hf : tag = falseTag <;>
+          simp [boolToTag, hid, ht, hf]
+
 /-- Smart conditionals agree with ordinary conditionals in flat evaluation. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "evaluate_SmartIf"]
 theorem evaluate_smartIf {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (state : FlatSem.State C F) (trace : Tra) (guard yes no : FlatLang.Exp) :
     FlatSem.evaluate env state [FlatLang.smartIf trace guard yes no] =
       FlatSem.evaluate env state [.if_ trace guard yes no] := by
-  cases guard <;> try rfl
-  case con guardTrace stamp values =>
-    cases values with
-    | cons _ _ => cases stamp <;> simp [FlatLang.smartIf]
-    | nil =>
-      cases stamp with
-      | none => rfl
-      | some tagged =>
-        obtain ⟨tag, typeId⟩ := tagged
-        cases typeId with
-        | none => rfl
-        | some typeId =>
-          simp only [FlatLang.smartIf]
-          split
-          · split
-            · rename_i tagEq typeEq
-              subst typeId
-              subst tag
-              simpa [FlatLang.mkBool, boolToTag] using
-                (evaluate_if_pure_bool trace (.con guardTrace (some (trueTag, some FlatLang.boolId)) []) yes no true
-                  env state (by simpa [FlatLang.mkBool, boolToTag] using evaluate_bool env state guardTrace true)).symm
-            · split
-              · rename_i tagEq tagNe typeEq
-                subst typeId
-                subst tag
-                simpa [FlatLang.mkBool, boolToTag] using
-                  (evaluate_if_pure_bool trace (.con guardTrace (some (falseTag, some FlatLang.boolId)) []) yes no false
-                    env state (by simpa [FlatLang.mkBool, boolToTag] using evaluate_bool env state guardTrace false)).symm
-              · rfl
-          · rfl
+  rw [smartIf_thm]
+  split_ifs with yesBool noBool
+  · obtain ⟨t, rfl⟩ := yesBool
+    simpa using (evaluate_if_pure_bool trace (FlatLang.mkBool t true) yes no true
+      env state (evaluate_bool env state t true)).symm
+  · obtain ⟨t, rfl⟩ := noBool
+    simpa using (evaluate_if_pure_bool trace (FlatLang.mkBool t false) yes no false
+      env state (evaluate_bool env state t false)).symm
+  · rfl
 
 /-- Constructor work items use their recursive field guard when the source
 constructor and pattern have the same tag and arity. -/
@@ -456,9 +437,34 @@ theorem naivePatternMatch_correct {C F : Type} (state : FlatSem.State C F)
   intro trace todo values bindings expression result ⟨pure, matched, safe, rfl⟩
   have workAll (t : Tra) (xs : List (FlatLang.Pat × FlatLang.Exp)) : @NaiveListCorrect C F t xs := by
     induction xs using naivePatternMatch.induct t with
-    | case1 => exact naiveList_nil t
-    | case2 expression rest ih => exact naiveList_any t expression rest ih
-    | case3 expression rest name ih => exact naiveList_var t name expression rest ih
+    | case1 =>
+      intro env state values bindings answer pure decision
+      cases values with
+      | nil =>
+        simp [FlatSem.pmatchList, matchDecision] at decision
+        subst answer
+        simpa [naivePatternMatch] using evaluate_bool env state t true
+      | cons _ _ => simp [FlatSem.pmatchList, matchDecision] at decision
+    | case2 expression rest ih =>
+      intro env state values bindings answer pure decision
+      cases values with
+      | nil => simp [FlatSem.pmatchList, matchDecision] at decision
+      | cons value values =>
+        cases pure with
+        | cons _ tail =>
+          have tailDecision : matchDecision (FlatSem.pmatchList state (rest.map Prod.fst) values bindings) = some answer := by
+            simpa [FlatSem.pmatchList, FlatSem.pmatch] using decision
+          simpa [naivePatternMatch] using ih env state values bindings answer tail tailDecision
+    | case3 expression rest name ih =>
+      intro env state values bindings answer pure decision
+      cases values with
+      | nil => simp [FlatSem.pmatchList, matchDecision] at decision
+      | cons value values =>
+        cases pure with
+        | cons _ tail =>
+          have tailDecision : matchDecision (FlatSem.pmatchList state (rest.map Prod.fst) values ((name, value) :: bindings)) = some answer := by
+            simpa [FlatSem.pmatchList, FlatSem.pmatch] using decision
+          simpa [naivePatternMatch] using ih env state values ((name, value) :: bindings) answer tail tailDecision
     | case4 expression rest lit ih => exact naiveList_literal t lit expression rest ih
     | case5 expression rest patterns ih => exact naiveList_con t none patterns expression rest ih
     | case6 expression rest patterns tag group ih => exact naiveList_con t (some (tag, group)) patterns expression rest ih
@@ -470,28 +476,35 @@ theorem naivePatternMatch_correct {C F : Type} (state : FlatSem.State C F)
     cases result <;> simp_all [matchDecision]
   exact workAll trace todo env state values bindings _ pure decision
 
+open Classical in
+/-- The naive guard agrees with a singleton pattern match. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "naive_pattern_match_correct_inst"]
+theorem naivePatternMatch_correct_inst {C F : Type} (expression : FlatLang.Exp) (value : FlatSem.Value)
+    (trace : Tra) (state : FlatSem.State C F) (pattern : FlatLang.Pat)
+    (env : FlatSem.Environment FlatSem.Value)
+    (premises : pureEvalTo state env expression value ∧
+      FlatSem.pmatchList state [pattern] [value] [] ≠ .typeError) :
+    FlatSem.evaluate env state [naivePatternMatch trace [(pattern, expression)]] =
+      (state, .val [FlatSem.boolValue (decide (FlatSem.pmatchList state [pattern] [value] [] ≠ .noMatch))]) := by
+  have pure : List.Forall₂ (pureEvalTo state env) [expression] [value] := .cons premises.1 .nil
+  have result := naivePatternMatch_correct state env trace [(pattern, expression)] [value] []
+    (naivePatternMatch trace [(pattern, expression)]) (FlatSem.pmatchList state [pattern] [value] [])
+    ⟨by simpa using pure, rfl, premises.2, rfl⟩
+  exact result
+
+
 /-- A pure scrutinee supplies the single-pattern guards for every row. -/
 private theorem naiveGuardCorrect_of_pure {C F : Type} (trace : Tra) (expression : FlatLang.Exp)
     (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (value : FlatSem.Value)
     (pure : FlatSem.evaluate env state [expression] = (state, .val [value])) :
     NaiveGuardCorrect trace expression env state value := by
   intro pattern
-  have workPure : List.Forall₂ (pureEvalTo state env)
-      ([(pattern, expression)].map Prod.snd) [value] := .cons pure .nil
-  cases result : FlatSem.pmatch state pattern value [] with
-  | typeError => simp
-  | noMatch =>
-    have matched : FlatSem.pmatchList state ([(pattern, expression)].map Prod.fst) [value] [] = .noMatch := by
-      simp [FlatSem.pmatchList, result]
-    have work := naivePatternMatch_correct state env trace [(pattern, expression)] [value] []
-      (naivePatternMatch trace [(pattern, expression)]) .noMatch ⟨workPure, matched, by simp, rfl⟩
-    simpa [pureEvalTo, result] using work
-  | «match» bindings =>
-    have matched : FlatSem.pmatchList state ([(pattern, expression)].map Prod.fst) [value] [] = .match bindings := by
-      simp [FlatSem.pmatchList, result]
-    have work := naivePatternMatch_correct state env trace [(pattern, expression)] [value] []
-      (naivePatternMatch trace [(pattern, expression)]) (.match bindings) ⟨workPure, matched, by simp, rfl⟩
-    simpa [pureEvalTo, result] using work
+  cases result : FlatSem.pmatch state pattern value []
+  case typeError => trivial
+  all_goals
+    have guard := naivePatternMatch_correct_inst expression value trace state pattern env
+      ⟨pure, by simp [FlatSem.pmatchList, result]⟩
+    simpa [FlatSem.pmatchList, result] using guard
 
 /-- The ordered naive dispatcher evaluates the first matching body or the
 default, provided each compiled guard correctly represents its pattern. -/
@@ -611,5 +624,6 @@ theorem evaluate_compilePats_naive {C F : Type} (cfg : Config) (trace : Tra) (n 
       simp [mapped, selectedRow]
     rw [selectedMapped] at target
     simpa [compilePats, compiledRows, mapped, f, original, target] using dispatch
+
 
 end Flapjack.Compiler.Backend.FlatPattern

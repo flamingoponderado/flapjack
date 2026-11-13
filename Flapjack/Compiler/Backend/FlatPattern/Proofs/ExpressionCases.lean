@@ -26,11 +26,11 @@ theorem evaluate_raise_error {C F : Type} (trace : BackendCommon.Tra) (body : Fl
     FlatSem.evaluate env state [.raise trace body] = (next, .err error) := by
   simp [FlatSem.evaluate, run]
 
-/-- Related values select the same conditional branch whenever the source
-value is a valid Boolean. -/
-theorem doIf_related {α : Type} (value value' : FlatSem.Value) (yes no branch : α)
+/-- Flapjack infrastructure: a related value is unchanged when it can select
+an ordinary conditional branch; this shares HOL's constructor-case reasoning. -/
+private theorem valueRel_eq_of_doIf {α : Type} (value value' : FlatSem.Value) (yes no branch : α)
     (related : ValueRel value value') (selected : FlatSem.doIf value yes no = some branch) :
-    FlatSem.doIf value' yes no = some branch := by
+    value' = value := by
   cases value with
   | conv stamp fields =>
     cases stamp with
@@ -45,8 +45,26 @@ theorem doIf_related {α : Type} (value value' : FlatSem.Value) (yes no branch :
         | nil =>
           obtain ⟨fields', rfl, relatedFields⟩ := (valueRel_conv (some (tag, some typeId)) [] value').1 related
           cases relatedFields
-          exact selected
+          rfl
   | litv _ | closure _ _ _ | recclosure _ _ _ | loc _ _ | vectorv _ => simp [FlatSem.doIf] at selected
+
+/-- A related valid Boolean has the same true and false identities. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "do_if_helper"]
+theorem doIf_helper {α : Type} (value value' : FlatSem.Value) (yes no branch : α)
+    (premises : FlatSem.doIf value yes no = some branch ∧ ValueRel value value') :
+    (value' = FlatSem.boolValue true ↔ value = FlatSem.boolValue true) ∧
+      (value' = FlatSem.boolValue false ↔ value = FlatSem.boolValue false) := by
+  obtain ⟨selected, related⟩ := premises
+  cases valueRel_eq_of_doIf value value' yes no branch related selected
+  exact ⟨Iff.rfl, Iff.rfl⟩
+
+/-- Related values select the same conditional branch whenever the source
+value is a valid Boolean. -/
+theorem doIf_related {α : Type} (value value' : FlatSem.Value) (yes no branch : α)
+    (related : ValueRel value value') (selected : FlatSem.doIf value yes no = some branch) :
+    FlatSem.doIf value' yes no = some branch := by
+  rw [valueRel_eq_of_doIf value value' yes no branch related selected]
+  exact selected
 
 /-- Mapping both branches maps the conditional's selected branch. -/
 theorem doIf_map {α β : Type} (f : α → β) (value : FlatSem.Value) (yes no : α) :

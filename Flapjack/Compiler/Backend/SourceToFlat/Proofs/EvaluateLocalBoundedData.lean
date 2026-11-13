@@ -12,25 +12,6 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
-/-- The environment-ID operation leaves any related, well-formed operand
-unchanged; source environment values themselves have no related flat value in
-the factored value relation. -/
-private theorem envId_related_identity {F : Type} (genv : GlobalEnv) (source : State F)
-    (value : Value) (flatValue : FlatSem.Value) (related : ValueRel genv value flatValue)
-    (successful : doApp (source.refs, source.ffi) .envId [value] ≠ none) :
-    doApp (source.refs, source.ffi) .envId [value] = some ((source.refs, source.ffi), .val value) := by
-  cases related <;> simp [doApp, doAppNumericCore, doAppBasic] at successful ⊢
-  case tuple sources flats h =>
-    cases sources with
-    | nil => simp at successful
-    | cons first tail =>
-      cases tail with
-      | nil => simp at successful
-      | cons second rest =>
-        cases rest with
-        | nil => rfl
-        | cons third rest => simp at successful
-
 /-- Environment-ID applications compose operand simulations in a local environment. -/
 theorem localEnvBounded_envId {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
@@ -99,7 +80,20 @@ theorem localEnvBounded_envId {C F : Type} [Nonempty C]
           simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
           rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
           simp [getOpClass, failed, EvaluateHOL.typeError]
-        have sourceApp := envId_related_identity nextGenv nextSource value flatValue valueRel successful
+        -- Related environment IDs retain the original two-field tuple.
+        have sourceApp : doApp (nextSource.refs, nextSource.ffi) .envId [value] =
+            some ((nextSource.refs, nextSource.ffi), .val value) := by
+          cases valueRel <;> simp [doApp, doAppNumericCore, doAppBasic] at successful ⊢
+          case tuple sources flats h =>
+            cases sources with
+            | nil => simp at successful
+            | cons first tail =>
+              cases tail with
+              | nil => simp at successful
+              | cons second rest =>
+                cases rest with
+                | nil => rfl
+                | cons third rest => simp at successful
         refine ⟨nextGenv, ?_, ?_⟩
         · unfold ExprSim
           rw [EvaluateHOL.evaluate]
