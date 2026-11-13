@@ -16,7 +16,11 @@ It remains untagged until its bound and full correspondence are proved. -/
 namespace Flapjack.CakeParser.PtreeConversion
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL
 
-private def children (n : Nonterminal) : ParseTree → Option (List ParseTree)
+/-- The children of an `n` node, or `none` for a leaf or a node with a
+    different nonterminal. This is the shared child-list helper of the
+    conversion functions; it is public so the exact generic twins can be
+    bridged to the executed conversions. -/
+def children (n : Nonterminal) : ParseTree → Option (List ParseTree)
   | .node (.inl actual) _ xs => if actual == n then some xs else none
   | _ => none
 
