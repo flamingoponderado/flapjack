@@ -24,24 +24,24 @@ theorem compileIncSource_outside_tmc_namespace (counter : Nat)
     simp only [bvlToBviNamespaces] at stubMod ⊢
     omega
 
-/-- The executable initial BVL-to-BVI output has no non-stub labels in
-TMC's worker namespace. -/
-theorem compileProgFuel_outside_tmc_namespace (fuel optFuel start counter targetStart targetCounter : Nat)
-    (program : List (Nat × Nat × Bvl.Exp)) (compiled : List (Nat × Nat × Bvi.Exp))
-    (run : BvlToBvi.compileProgFuel fuel optFuel start counter program = some (targetStart, compiled, targetCounter)) :
-    ∀ name ∈ compiled.map Prod.fst, bvlNumStubs ≤ name → ¬BviTmc.inWorkerNamespace name := by
-  have equal := (compileProgFuel_eq_source fuel optFuel start counter program).symm.trans run
-  have codeEq :
-      stubs (bvlNumStubs + bvlToBviNamespaces * start)
-        (globalCountList (program.map (fun (_, _, body) => body))) ++ (compileIncSource counter program).2 =
-        compiled := congrArg (fun p => p.2.1) (Option.some.inj equal)
-  intro name member above
+/-- Lowering avoids TMC worker locations above the stub boundary. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_prog_avoids_nss_3"]
+theorem compileProgSource_avoidsNss3 (start counter loc final name : Nat) (prog : List (Nat × Nat × Bvl.Exp))
+    (code : List (Nat × Nat × Bvi.Exp))
+    (h : compileProgSource start counter prog = (loc, code, final) ∧
+      (prog.map Prod.fst).Nodup ∧ name % bvlToBviNamespaces = 3 ∧ name ∈ code.map Prod.fst) :
+    name ≤ bvlNumStubs := by
+  obtain ⟨run, _, ns, member⟩ := h
+  have codeEq : stubs (bvlNumStubs + bvlToBviNamespaces * start)
+      (allocGlobCount (prog.map (fun (_, _, body) => body))) ++ (compileIncSource counter prog).2 = code := by
+    simpa only [compileProgSource, compileIncSource] using congrArg (fun q => q.2.1) run
   rw [← codeEq, List.map_append, List.mem_append] at member
   rcases member with stub | lowered
-  · obtain ⟨entry, present, same⟩ := List.mem_map.mp stub
-    have below := stubs_below_namespace _ _ entry present
+  · obtain ⟨entry, present, equal⟩ := List.mem_map.mp stub
+    have bound := stubs_below_namespace _ _ entry present
     omega
-  · exact compileIncSource_outside_tmc_namespace counter program name lowered
+  · have outside := compileIncSource_outside_tmc_namespace counter prog name lowered
+    exact False.elim (outside ns)
 
 /-- The production TMC counter starts in worker namespace three. -/
 theorem production_tmc_start_valid :

@@ -732,8 +732,16 @@ theorem lowered_tailrec_tmc_inputCondition_complete
     BviTmc.inputCondition (bvlNumStubs + 3) output := by
   have condition := compileProgFuel_production_tailrec_inputCondition fuel optFuel start counter
     targetStart targetCounter program lowered distinct lowerRun
-  have outside := compileProgFuel_outside_tmc_namespace fuel optFuel start counter
-    targetStart targetCounter program lowered lowerRun
+  have outside : ∀ name ∈ lowered.map Prod.fst, bvlNumStubs ≤ name → ¬BviTmc.inWorkerNamespace name := by
+    intro name member above worker
+    have sourceRun : compileProgSource start counter program = (targetStart, lowered, targetCounter) := by
+      simpa [compileProgFuel] using lowerRun
+    have bound := compileProgSource_avoidsNss3 start counter targetStart targetCounter name program lowered
+      ⟨sourceRun, distinct, worker, member⟩
+    have stubMod := bvlNumStubMod
+    unfold BviTmc.inWorkerNamespace at worker
+    simp only [bvlToBviNamespaces] at stubMod worker
+    omega
   have safe := tailrec_compileProgFuel_noMutcons fuel enabled _ last lowered output tailRun
     (compileProgSource_noMutcons start counter targetStart targetCounter program lowered
       (by simpa [compileProgFuel] using lowerRun))

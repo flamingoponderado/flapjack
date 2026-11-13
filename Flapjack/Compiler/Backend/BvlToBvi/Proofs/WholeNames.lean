@@ -40,8 +40,12 @@ theorem compile_distinctNames (start : Nat) (c : BvlToBvi.Config) (names : Spt M
     apply tailrec_output_names_nodup 0 c.doTailrec (bvlNumStubs + 2) b p pt pCondition
     simp [BviTailrec.compileProgFuel_eq_source, ht]
   have pOutside : ∀ x ∈ p.map Prod.fst, bvlNumStubs ≤ x → ¬BviTmc.inWorkerNamespace x := by
-    apply compileProgFuel_outside_tmc_namespace 0 0 start 0 l a pi p
-    simp [compileProgFuel, hl]
+    intro name member above worker
+    have bound := compileProgSource_avoidsNss3 start 0 l a name pi p ⟨hl, piDistinct, worker, member⟩
+    have stubMod := bvlNumStubMod
+    unfold BviTmc.inWorkerNamespace at worker
+    simp only [bvlToBviNamespaces] at stubMod worker
+    omega
   have ptOutside : ∀ x ∈ pt.map Prod.fst, bvlNumStubs ≤ x → ¬BviTmc.inWorkerNamespace x := by
     apply tailrec_output_outside_tmc_namespace 0 c.doTailrec (bvlNumStubs + 2) b p pt
       production_tailrec_start_valid.2 pOutside

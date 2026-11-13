@@ -116,3 +116,6 @@ val every_free_names = Q.prove
    \\ assume_tac (EVAL ``backend_common$bvl_to_bvi_namespaces``)
    \\ simp [arithmeticTheory.MOD_TIMES]);
 val _ = show "EVERY_free_names_not_in_ns_2_replay_typed" every_free_names;
+
+val _ = show "compile_prog_avoids_nss_2_typed" bvl_to_bviProofTheory.compile_prog_avoids_nss_2;
+val _ = show "compile_prog_avoids_nss_3_typed" bvl_to_bviProofTheory.compile_prog_avoids_nss_3;

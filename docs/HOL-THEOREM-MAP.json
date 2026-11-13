@@ -338,6 +338,22 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_prog_avoids_nss_2",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/TailrecNames.lean",
+    "lean_name": "compileProgSource_avoidsNss2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the complete source-lowering equation, input-name distinctness, namespace-two congruence and output-key membership imply the original inclusive stub bound. All runtime stubs and auxiliary functions are covered."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_prog_avoids_nss_3",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/TmcNames.lean",
+    "lean_name": "compileProgSource_avoidsNss3",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the complete source-lowering equation, input-name distinctness, namespace-three congruence and output-key membership imply the original inclusive stub bound. The former fuel helper was removed after both consumers derived their needed conditions from this theorem."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "EVERY_free_names_not_in_ns_2",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
     "lean_name": "everyFreeNames_notInNamespaceTwo",

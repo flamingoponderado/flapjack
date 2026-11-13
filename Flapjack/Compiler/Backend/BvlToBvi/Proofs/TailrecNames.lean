@@ -143,6 +143,25 @@ theorem compileProgFuel_production_tailrec_inputCondition
     targetStart targetCounter program compiled distinct production_tailrec_start_valid.1
     production_tailrec_start_valid.2 run
 
+/-- Lowering avoids tail-recursion worker locations above the stub boundary. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_prog_avoids_nss_2"]
+theorem compileProgSource_avoidsNss2 (start counter loc final name : Nat) (prog : List (Nat × Nat × Bvl.Exp))
+    (code : List (Nat × Nat × Bvi.Exp))
+    (h : compileProgSource start counter prog = (loc, code, final) ∧
+      (prog.map Prod.fst).Nodup ∧ name % bvlToBviNamespaces = 2 ∧ name ∈ code.map Prod.fst) :
+    name ≤ bvlNumStubs := by
+  obtain ⟨run, _, ns, member⟩ := h
+  have codeEq : stubs (bvlNumStubs + bvlToBviNamespaces * start)
+      (allocGlobCount (prog.map (fun (_, _, body) => body))) ++ (compileIncSource counter prog).2 = code := by
+    simpa only [compileProgSource, compileIncSource] using congrArg (fun q => q.2.1) run
+  rw [← codeEq, List.map_append, List.mem_append] at member
+  rcases member with stub | lowered
+  · obtain ⟨entry, present, equal⟩ := List.mem_map.mp stub
+    have bound := stubs_below_namespace _ _ entry present
+    omega
+  · have outside := compileIncSource_outside_tailrec_namespace counter prog name lowered
+    exact False.elim (outside ns)
+
 /-- Every future BVL oracle program lowers to a tail-recursion input when
 its labels are distinct and its worker counter is valid. -/
 theorem lowered_oracle_tailrec_inputCondition {C : Type}
