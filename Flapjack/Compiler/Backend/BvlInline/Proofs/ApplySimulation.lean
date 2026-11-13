@@ -18,20 +18,6 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   BvlSem.holFmapAsFiniteSupportWitness
 end SimulationCarrier
 
-/-- Related states have identical code domains. -/
-theorem stateRel_codeDomain {C F : Type} (s t : State C F) (related : stateRel s t) :
-    sptDomain t.code = sptDomain s.code := by
-  have code := congrArg (fun state : State C F => state.code) related.1
-  rw [code, sptDomain_sptMap]
-
-/-- Replace a transformed state's code fields to recover its source state. -/
-theorem stateRel_unframe {C F : Type} (s t : State C F) (related : stateRel s t) :
-    { t with code := s.code, compile := s.compile, compileOracle := s.compileOracle } = s := by
-  have fields := stateRel_fields s t related
-  cases s
-  cases t
-  simp_all
-
 /-- A state that retains transformed code fields can be paired with its
 source-framed counterpart. -/
 theorem stateRel_reframe {C F : Type} (s t next : State C F) (related : stateRel s t)
@@ -54,8 +40,14 @@ theorem doAppSimulation_nonInstall {C F : Type} (s t : State C F)
     | .err error => doApp op args s = .err error
     | .val (value, next) => ∃ sourceNext, stateRel sourceNext next ∧
         doApp op args s = .val (value, sourceNext) := by
-  have domains := stateRel_codeDomain s t related
-  have unframe := stateRel_unframe s t related
+  have domains : sptDomain t.code = sptDomain s.code := by
+    have code := congrArg (fun state : State C F => state.code) related.1
+    rw [code, sptDomain_sptMap]
+  have unframe : { t with code := s.code, compile := s.compile, compileOracle := s.compileOracle } = s := by
+    have fields := stateRel_fields s t related
+    cases s
+    cases t
+    simp_all
   cases run : doApp op args t with
   | err error =>
     have errorRun := doApp_withCodeErr op args t error s.code s.compile s.compileOracle
