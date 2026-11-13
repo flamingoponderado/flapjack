@@ -884,6 +884,26 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             MAP["tagged_declarations"](),
         )
 
+    def test_stack_size_eq2_mismatch_is_retired(self):
+        # The unused width-specialized stack_size_eq2 analogue is gone; HOL
+        # stack_size_eq2 has no exact Lean port (independent frame types), and
+        # the reviewed stack_size_eq instance stackSizeEq remains mapped.
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        self.assertNotIn(
+            ("Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateLaws.lean",
+             "stackSizeEq2"),
+            inventory,
+        )
+        reviewed = inventory[
+            ("Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateLaws.lean",
+             "stackSizeEq")
+        ]
+        self.assertEqual(reviewed["hol_name"], "stack_size_eq")
+        self.assertNotEqual(reviewed["statement_status"], "documented_mismatch")
+
     def test_removed_vmax_analogues_are_not_in_inventory(self):
         inventory = MAP["build_inventory"]()
         self.assertFalse(any(

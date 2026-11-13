@@ -39429,14 +39429,6 @@
     "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead 4.4 wordProps: original 1776-1783 three conjuncts; HOL wildcards _0.._3 are distinct binders l0 l l0' l' per conjunct as the probe shows; OPTION_MAP2 $+ is wordSemOptionAdd and OPTION_MAP ($+ 3) is Option.map (3 + _). Positive width only (words_as_type_indexed_bitvec). Fresh literal original proof replay (wordsem_state_laws probe), statement aconv, closed, 0 hypotheses."
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateLaws.lean",
-    "lean_name": "stackSizeEq2",
-    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
-    "hol_name": "stack_size_eq2",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Tag withdrawn (task 148): HOL `stack_size_eq2` (wordPropsScript.sml:1785-1791) conjoins two instances of the polymorphic `stack_size`: the typed capture `stack_size_eq2_typed` in scripts/hol-probes/word_props_typed_probe.out types the cons conjunct at `(sfrm :α stack_frame)` and `(stack :α stack_frame list)`, and the empty-list conjunct at an independent `([] :β stack_frame list)`. The Lean statement fixes both at `width`-indexed frames, so it is the `β = width` instance of HOL's universal empty-list equation. The cons conjunct remains the reviewed word-translated instance; a faithful port needs a stack-size function generic in the frame type."
-  },
-  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Semantics.lean",
     "lean_name": "semantics",
     "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
