@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Misc.Sptree
+public import Flapjack.Misc.Sptree.FromAList.Lookup
 
 @[expose] public section
 
@@ -39,5 +40,26 @@ theorem auxCodeInstalled_subspt {α β : Type} (xs : List (Nat × α × β)) (fi
     have member : sptMem name first := (sptMem_iff_lookup name first).2 ⟨_, lookup⟩
     have same := (extension name member).2
     exact ⟨same.trans lookup, ih tail⟩
+
+/-- A contiguous block of an association list with distinct keys is installed
+by the sparse tree built from the whole list. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "aux_code_installed_sublist"]
+theorem auxCodeInstalled_sublist {α β : Type} (aux ls : List (Nat × α × β))
+    (premises : aux <:+: ls ∧ (ls.map Prod.fst).Nodup) :
+    auxCodeInstalled aux (sptFromAList ls) := by
+  rcases premises with ⟨sub, distinct⟩
+  suffices ∀ aux' : List (Nat × α × β), (∀ entry, entry ∈ aux' → entry ∈ ls) →
+      auxCodeInstalled aux' (sptFromAList ls) from this aux (fun _ member => sub.mem member)
+  intro aux'
+  induction aux' with
+  | nil => intro _; trivial
+  | cons entry rest ih =>
+    intro contained
+    rcases entry with ⟨name, arity, body⟩
+    refine ⟨?_, ih ?_⟩
+    · rw [sptLookupFromAList]
+      exact holALookup_of_distinct_member ls name (arity, body) ⟨distinct, contained _ (by simp)⟩
+    · intro entry member
+      exact contained entry (by simp [member])
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

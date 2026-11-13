@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "aux_code_installed_sublist",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AuxCode.lean",
+    "lean_name": "auxCodeInstalled_sublist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the exported typed HOL source: IS_SUBLIST ls aux means aux is a contiguous segment of ls, with distinct first keys of ls, and all entries of aux installed in fromAList ls. Both payload types remain independent and generic."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "iEval_bVarBound_extra",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/IEvalBound.lean",
     "lean_name": "iEvalBound_extra",

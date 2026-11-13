@@ -127,7 +127,8 @@ theorem initial_code_correspondence (start n counter : Nat) (programs : List (Na
     intro entry inAux
     simpa [compiled, compileIncSource, compilation] using auxSubset entry inAux
   have stubNone := available _ translated'
-  have compiledLookup := sptLookup_fromAList_of_distinct compiled _ _ compiledDistinct translated'
+  have compiledLookup := (sptLookupFromAList compiled _).trans
+    (holALookup_of_distinct_member compiled _ _ ⟨compiledDistinct, translated'⟩)
   have auxInstalled := auxCodeInstalled_union_right (appListAppend aux) compiled stubTree compiledDistinct available auxSubset'
   refine ⟨initialName, ?_⟩
   rw [conversion]

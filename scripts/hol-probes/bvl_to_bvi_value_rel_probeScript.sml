@@ -487,3 +487,5 @@ val _ = show "MAP_Word_11_replay=" MAP_Word_11_replay;
 
 val _ = show "IMP_v_to_bytes_typed=" bvl_to_bviProofTheory.IMP_v_to_bytes;
 val _ = show "IMP_v_to_words_typed=" bvl_to_bviProofTheory.IMP_v_to_words;
+
+val _ = show "aux_code_installed_sublist_typed=" bvl_to_bviProofTheory.aux_code_installed_sublist;

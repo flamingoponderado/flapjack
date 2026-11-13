@@ -38,17 +38,6 @@ theorem compileProgramsSource_entry (start : Nat) (programs : List (Nat × Nat �
       · intro entry inAux
         exact List.mem_append.mpr (Or.inr (auxSubset entry inAux))
 
-/-- An association-list entry with a distinct key is found by sparse-tree
-lookup. -/
-theorem sptLookup_fromAList_of_distinct {α : Type} (entries : List (Nat × α))
-    (key : Nat) (value : α) (distinct : (entries.map Prod.fst).Nodup)
-    (member : (key, value) ∈ entries) : sptLookup key (sptFromAList entries) = some value := by
-  rw [sptLookup_sptFromAList]
-  apply sptAListLookup_eq_of_mem_unique key value entries member
-  intro other otherMem
-  have same := List.inj_on_of_nodup_map distinct member otherMem (by rfl)
-  exact (Prod.mk.inj same).2.symm
-
 /-- Existing auxiliary code remains available in a left-biased code union. -/
 theorem auxCodeInstalled_union_left {α β : Type} (aux : List (Nat × α × β)) (old fresh : Spt (α × β))
     (installed : auxCodeInstalled aux old) : auxCodeInstalled aux (sptUnion old fresh) := by
@@ -72,7 +61,8 @@ theorem auxCodeInstalled_union_right {α β : Type} (aux entries : List (Nat × 
     rcases entry with ⟨key, arity, body⟩
     have inEntries := subset (key, arity, body) (by simp)
     have oldNone := available (key, arity, body) inEntries
-    have fresh := sptLookup_fromAList_of_distinct entries key (arity, body) distinct inEntries
+    have fresh := (sptLookupFromAList entries key).trans
+      (holALookup_of_distinct_member entries key (arity, body) ⟨distinct, inEntries⟩)
     refine ⟨?_, ?_⟩
     · rw [sptLookup_sptUnion, oldNone, fresh]
     · apply ih
@@ -125,7 +115,8 @@ theorem installed_code_correspondence {C F : Type} (relocate : Nat → Nat)
       intro entry inAux
       simpa [compiled, compileIncSource, compilation] using auxSubset entry inAux
     have oldNone := available _ translated'
-    have freshLookup := sptLookup_fromAList_of_distinct compiled _ _ distinct translated'
+    have freshLookup := (sptLookupFromAList compiled _).trans
+      (holALookup_of_distinct_member compiled _ _ ⟨distinct, translated'⟩)
     refine ⟨counter, ?_⟩
     rw [conversion]
     refine ⟨?_, auxCodeInstalled_union_right _ compiled target.code distinct available auxSubset', ?_⟩
