@@ -114,7 +114,8 @@ theorem wordToStackRegBoundInst {width : Nat} [NeZero width]
   cases i with
   | arith a =>
       cases a <;> try (rename_i op d src ri; cases ri)
-      all_goals simp_all only [HolInst.ofWordLangInst, HolArith.ofWordLangArith, HolRegImm.ofWordRegImm, instArgConventionExact]
+      all_goals simp_all only [HolInst.ofWordLangInst, HolArith.ofWordLangArith,
+        HolRegImm.ofWordRegImm, instArgConventionExact]
   | mem op d addr => cases addr; trivial
   | fp f => cases f <;> trivial
   | skip => trivial
