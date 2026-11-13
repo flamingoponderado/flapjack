@@ -137,36 +137,6 @@ theorem aallocFixed_related {C F : Type} (genv : GlobalEnv)
   rw [offset]
   exact .location genv _ true
 
-/-- Byte-array length returns the same literal from related states. This is
-Flapjack infrastructure over the partial primitive dispatchers. -/
-theorem aw8length_related {C F : Type} (genv : GlobalEnv)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (statesRel : StateRel genv sourceState flatState) (flag : Bool) (n : Nat)
-    (bytes : List (BitVec 8)) (lookup : storeLookup n sourceState.refs = some (.w8array bytes)) :
-    doAppBasic (sourceState.refs, sourceState.ffi) .aw8length [.loc flag n] =
-      some (some ((sourceState.refs, sourceState.ffi), .val (.litv (.intLit bytes.length)))) ∧
-    FlatSem.doAppMemory flatState .aw8length [.loc flag (n + 1)] =
-      some (some (flatState, .val (.litv (.intLit bytes.length)))) ∧
-    ValueRel genv (.litv (.intLit bytes.length)) (.litv (.intLit bytes.length)) := by
-  have flatLookup := stateRel_byteArray_lookup genv sourceState flatState statesRel n bytes lookup
-  exact ⟨by simp [doAppBasic, lookup], by simp [FlatSem.doAppMemory, flatLookup],
-    .literal genv _⟩
-
-/-- Array length agrees between related source and flat stores. -/
-theorem alength_related {C F : Type} (genv : GlobalEnv)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (statesRel : StateRel genv sourceState flatState) (flag : Bool) (n : Nat)
-    (values : List SemanticPrimitivesHOL.Value) (lookup : storeLookup n sourceState.refs = some (.varray values)) :
-    doAppBasic (sourceState.refs, sourceState.ffi) .alength [.loc flag n] =
-      some (some ((sourceState.refs, sourceState.ffi), .val (.litv (.intLit values.length)))) ∧
-    FlatSem.doAppMemory flatState .alength [.loc flag (n + 1)] =
-      some (some (flatState, .val (.litv (.intLit values.length)))) ∧
-    ValueRel genv (.litv (.intLit values.length)) (.litv (.intLit values.length)) := by
-  obtain ⟨flatValues, flatLookup, valuesRel⟩ := stateRel_array_lookup genv sourceState flatState statesRel n values lookup
-  have length := List.Forall₂.length_eq valuesRel
-  exact ⟨by simp [doAppBasic, lookup], by simp [FlatSem.doAppMemory, flatLookup, ← length],
-    .literal genv _⟩
-
 /-- Array reads preserve related values in the factored source and flat stores. -/
 theorem asub_related {C F : Type} (genv : GlobalEnv)
     (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)

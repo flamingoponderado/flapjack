@@ -307,10 +307,10 @@ theorem doApp_Aw8length {C F : Type} (genv : GlobalEnv)
               cases locationRel
               let source : SemanticPrimitivesHOL.State F := ⟨flat.clock, s1.1, s1.2, 0, 0, none⟩
               have states : StateRel genv source flat := .intro source flat nonempty stores rfl ffi
-              have ⟨_, flatApply, related⟩ := aw8length_related genv source flat states flag address bytes lookup
+              have flatLookup := stateRel_byteArray_lookup genv source flat states address bytes lookup
               refine ⟨.val (.litv (.intLit bytes.length)), flat, stores, nonempty, ffi, rfl, rfl,
-                .value related, ?_⟩
-              simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatApply]
+                .value (.literal genv _), ?_⟩
+              simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, flatLookup]
 
 /-- The Aw8update case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
@@ -1305,10 +1305,11 @@ theorem doApp_Alength {C F : Type} (genv : GlobalEnv)
               cases locationRel
               let source : SemanticPrimitivesHOL.State F := ⟨flat.clock, s1.1, s1.2, 0, 0, none⟩
               have states : StateRel genv source flat := .intro source flat nonempty stores rfl ffi
-              have ⟨_, flatApply, related⟩ := alength_related genv source flat states flag address items lookup
+              obtain ⟨flatItems, flatLookup, itemsRel⟩ := stateRel_array_lookup genv source flat states address items lookup
+              have length := List.Forall₂.length_eq itemsRel
               refine ⟨.val (.litv (.intLit items.length)), flat, stores, nonempty, ffi, rfl, rfl,
-                .value related, ?_⟩
-              simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, flatApply]
+                .value (.literal genv _), ?_⟩
+              simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, flatLookup, ← length]
 
 /-- The Aupdate case of `do_app`; the full theorem is `doApp_correct`. The
 dispatcher inherits `reals_as_rational_cuts` (SOUNDNESS item 8). -/
