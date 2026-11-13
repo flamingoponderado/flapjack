@@ -443,3 +443,18 @@ val _ = show "bvl_size_force=" (EVAL ``bvl$exp_size (bvl$Force 3 5)``);
 val _ = show "bvl_size_call=" (EVAL ``bvl$exp_size (bvl$Call 4 (SOME 8) [bvl$Var 2])``);
 val _ = show "bvl_size_op=" (EVAL ``bvl$exp_size (bvl$Op (closLang$Label 9) [bvl$Var 3])``);
 val _ = show "bvl_size_let=" (EVAL ``bvl$exp_size (bvl$Let [bvl$Var 4] (bvl$Tick (bvl$Var 2)))``);
+
+(* Replay the complete local source theorem and its proof. *)
+val bEvalOp_def = bvlSemTheory.do_app_def;
+val iEvalOp_def = bviSemTheory.do_app_def;
+val do_app_Ref_replay = prove (``
+  do_app (MemOp Ref) vs s =
+     Rval
+      (RefPtr T (LEAST ptr. ptr ∉ FDOM s.refs),
+       bvl_to_bvi
+        (bvi_to_bvl s with
+         refs :=
+           s.refs |+ ((LEAST ptr. ptr ∉ FDOM s.refs),ValueArray vs)) s)``,
+  fs [iEvalOp_def,do_app_aux_def,bEvalOp_def,LET_THM]
+  \\ every_case_tac \\ fs []);
+val _ = show "do_app_Ref_replay=" do_app_Ref_replay;

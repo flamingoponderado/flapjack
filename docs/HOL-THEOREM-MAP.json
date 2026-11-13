@@ -1,6 +1,19 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "do_app_Ref",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileRef.lean",
+    "lean_name": "doRef_target",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "State.refs",
+      "BviState.refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the original local HOL source and proof replay with the full unconditional reference allocation equation, including the least unused address, unchanged value list, intermediate BVL state update and conversion back to BVI. Both BVL and BVI refs fields use canonical finite maps; the evaluator dependency closure inherits the reviewed reals_as_rational_cuts representation of HOL reals."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "EVERY_isVar_evaluate_Rval_MEM",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/VarList.lean",
     "lean_name": "evaluate_varList_members",
