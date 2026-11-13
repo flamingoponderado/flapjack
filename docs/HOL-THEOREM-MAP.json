@@ -138690,5 +138690,17 @@
     ],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Independent typed HOL source review 2026-11-13: full assembled compile_correct for arbitrary expression lists, source results, target states, and compiler parameters; all eight premises, six existential outputs, and complete SOME/NONE result obligations match. A lexicographic clock and expression-weight induction discharges the genuine recursive cases without an assumed simulation. BVI refs use the canonical finite-support carrier and same-module unconditional roundtrip witness; DATA refs, locals, and code remain native sparse trees. The assembly relies on separately reviewed source-shaped evaluators and does not itself establish cross-language evaluator correspondence. Inherits the reals_as_rational_cuts assumption through evaluator primitives (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/CompileExp.lean",
+    "lean_name": "compileExpCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "BviState.refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: full compile_exp_correct with the original singleton source run, non-type-error and non-return conditions, variable correspondence, freshness, state relation, exception-jump premise, optimized target evaluation, final state relation, and result projection. The unused existential carriers P, V, and N independently model HOL's inhabited type variables γ, δ, and ε; none is identified with another or fixed to a program, list, or natural number. BVI refs use the canonical finite-support carrier and same-module unconditional roundtrip witness; DATA maps remain native sparse trees. Inherits the reals_as_rational_cuts assumption through evaluator primitives (SOUNDNESS item 8)."
   }
 ]

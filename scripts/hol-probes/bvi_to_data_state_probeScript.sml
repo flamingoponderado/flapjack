@@ -87,3 +87,4 @@ val _ = show "state_rel_dest_thunk_typed=" bvi_to_dataProofTheory.state_rel_dest
 val _ = show "MAP_FST_compile_prog_typed=" bvi_to_dataProofTheory.MAP_FST_compile_prog;
 val _ = show "state_rel_peak_safe_typed=" bvi_to_dataProofTheory.state_rel_peak_safe;
 val _ = show "bvi_evaluate_ind_typed=" bviSemTheory.evaluate_ind;
+val _ = show "compile_exp_correct_typed=" bvi_to_dataProofTheory.compile_exp_correct;
