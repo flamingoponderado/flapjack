@@ -23,3 +23,5 @@ val env_rel_REPLICATE_0_replay = Q.prove
       env_rel (REPLICATE (LENGTH vs) 0 ++ ax) d (vs ++ env1) (vs ++ env2)`,
    Induct \\ fs [REPLICATE, env_rel_def, v_rel_def, LLOOKUP_def]);
 val _ = show "env_rel_REPLICATE_0_replay" env_rel_REPLICATE_0_replay;
+val _ = show "bvi_exp_size_def" bviTheory.exp_size_def;
+val _ = show "exp_size_APPEND" bvi_letProofTheory.exp_size_APPEND;

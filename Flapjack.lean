@@ -1406,6 +1406,7 @@ import Flapjack.Compiler.Backend.BviLet.Compile
 import Flapjack.Compiler.Backend.BviLet.Proofs.Total
 import Flapjack.Compiler.Backend.BviLet.Proofs.SourceAgreement
 import Flapjack.Compiler.Backend.BviLet.Proofs.Environment
+import Flapjack.Compiler.Backend.BviLet.Proofs.GeneratedSize
 import Flapjack.Compiler.Backend.BviLet.Proofs.DeleteVar
 import Flapjack.Compiler.Backend.BviLet.Proofs.Let
 import Flapjack.Compiler.Backend.BviLet.Proofs.LetLast
