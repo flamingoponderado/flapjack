@@ -8,6 +8,14 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileToListByte
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value)
 
+namespace SumListLengthCarrier
+/-- Canonical BVI reference-map state roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end SumListLengthCarrier
+
 /-- The sum stub returns its accumulator on the empty list. Untagged pending
 BVI evaluator and dispatcher correspondence review. -/
 theorem evaluate_sumListLength_nil {C F : Type} (n : Nat) (state : BviSem.BviState C F) :
@@ -118,13 +126,18 @@ theorem evaluate_sumListLength {C F : Type} (ptrs : List Nat) (chunks : List (Li
       simpa [start, List.flatten, Nat.add_assoc] using step
 
 /-- Source-shaped form for a successfully decoded list of array pointers. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "evaluate_SumListLength_code"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_sumListLength_decoded {C F : Type} (value : Value) (ptrs : List Nat)
-    (chunks : List (List (BitVec 8))) (n : Nat) (state : BviSem.BviState C F)
-    (decode : BvlSem.valueToList value = some (ptrs.map (Value.refPtr true)))
-    (lookups : ptrs.map state.refs.lookup = chunks.map (fun bytes => some (.byteArray true bytes)))
-    (code : sptLookup sumListLengthLocation state.code = some sumListLengthCode) :
+    (chunks : List (List (BitVec 8))) (n : Nat)
+    (state : Flapjack.Compiler.Backend.BviSem.BviState C F)
+    (premises : sptLookup sumListLengthLocation state.code = some (2, sumListLengthCode.2) ∧
+      BvlSem.valueToList value = some (ptrs.map (Value.refPtr true)) ∧
+      ptrs.map state.refs.lookup = chunks.map (fun bytes => some (.byteArray true bytes))) :
     ∃ clock, BviSem.evaluate [sumListLengthCode.2] [value, .number n] (BviProps.incClock clock state) =
       (.val [.number (Int.ofNat (n + chunks.flatten.length))], state) := by
+  obtain ⟨code, decode, lookups⟩ := premises
+  change sptLookup sumListLengthLocation state.code = some sumListLengthCode at code
   rw [← valueToList_inverse value _ decode]
   exact evaluate_sumListLength ptrs chunks n state lookups code
 
@@ -137,7 +150,7 @@ theorem evaluate_sumListLength_call {C F : Type} (value : Value) (ptrs : List Na
     ∃ clock, BviSem.evaluate [.call 0 (some sumListLengthLocation)
       [.var 0, .op (.intOp (.const 0)) []] none] (value :: env) (BviProps.incClock clock state) =
       (.val [.number (Int.ofNat chunks.flatten.length)], state) := by
-  obtain ⟨clock, stub⟩ := evaluate_sumListLength_decoded value ptrs chunks 0 state decode lookups lookup
+  obtain ⟨clock, stub⟩ := evaluate_sumListLength_decoded value ptrs chunks 0 state ⟨lookup, decode, lookups⟩
   refine ⟨clock + 1, ?_⟩
   let start := BviProps.incClock (clock + 1) state
   have varRun : BviSem.evaluate [.var 0] (value :: env) start = (.val [value], start) := by simp [BviSem.evaluate]
