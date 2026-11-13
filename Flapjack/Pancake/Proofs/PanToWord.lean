@@ -233,7 +233,7 @@ theorem loopStateSimpsHOL {width : Nat} {σ : Type} [NeZero width] :
     ∀ (s : CrepSemHOLState width σ) (c : AsmArchitecture)
       (crep_code : List (MlString × List Nat × CrepProgHOL width)) (ck : Nat)
       (mem : BitVec width → WordLocW width),
-      (loopStateHOL s c crep_code ck mem).memory = mem ∧
+      (loopStateHOL s c crep_code ck mem : LoopSemStateFiniteExact width σ).memory = mem ∧
       (fun a => (loopStateHOL s c crep_code ck mem).mdomain a = true) = s.memaddrs ∧
       (fun a => (loopStateHOL s c crep_code ck mem).shMdomain a = true) = s.shMemaddrs ∧
       (loopStateHOL s c crep_code ck mem).clock = ck ∧

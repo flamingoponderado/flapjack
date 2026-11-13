@@ -1894,7 +1894,7 @@ set_option maxHeartbeats 4000000 in
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_eq_evaluate_def {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateFiniteExact width σ) (program : ProgHOL width) :
+    (state : Flapjack.PanSemStateFiniteExact width σ) (program : ProgHOL width) :
     evaluateHOLFiniteState state program =
       match program with
     | .skip => (none, state)

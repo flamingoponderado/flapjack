@@ -44,7 +44,12 @@ theorem filterSub {α : Type} (p : α → Bool) (l : List α) : ∀ x, x ∈ l.f
   (words_as_type_indexed_bitvec)]
 theorem evaluateRemoveDead_Get {width : Nat} [NeZero width] {C F : Type} (v : Nat)
     (name : WordStoreHOL) :
-    removeDeadGoal C F (.get v name : WordLangProgHOL (BitVec width)) := by
+    ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+      (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+      (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+      (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+      removeDeadBody (.get v name : WordLangProgHOL (BitVec width)) live nlive lt prog' livein nlivein st t tstore res rst := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, herr⟩
   rw [evaluate] at hev
   cases hg : getStore name st with
@@ -75,7 +80,12 @@ theorem evaluateRemoveDead_Get {width : Nat} [NeZero width] {C F : Type} (v : Na
   (words_as_type_indexed_bitvec)]
 theorem evaluateRemoveDead_OpCurrHeap {width : Nat} [NeZero width] {C F : Type} (b : BinOp)
     (dst src : Nat) :
-    removeDeadGoal C F (.opCurrHeap b dst src : WordLangProgHOL (BitVec width)) := by
+    ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+      (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+      (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+      (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+      removeDeadBody (.opCurrHeap b dst src : WordLangProgHOL (BitVec width)) live nlive lt prog' livein nlivein st t tstore res rst := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, herr⟩
   rw [evaluate] at hev
   cases hw : wordExp st (.op b [.var src, .lookup .currHeap]) with
@@ -122,7 +132,12 @@ restricts the expression to a register. -/
   (words_as_type_indexed_bitvec)]
 theorem evaluateRemoveDead_Set {width : Nat} [NeZero width] {C F : Type} (v : WordStoreHOL)
     (exp : WordLangExpHOL (BitVec width)) :
-    removeDeadGoal C F (.set v exp : WordLangProgHOL (BitVec width)) := by
+    ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+      (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+      (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+      (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+      removeDeadBody (.set v exp : WordLangProgHOL (BitVec width)) live nlive lt prog' livein nlivein st t tstore res rst := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, hflat, hrd, herr⟩
   cases exp with
   | var r =>

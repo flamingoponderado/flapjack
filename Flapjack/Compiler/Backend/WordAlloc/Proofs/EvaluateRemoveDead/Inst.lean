@@ -633,7 +633,12 @@ theorem instRemovedFrame {width : Nat} [NeZero width] {C F : Type}
   (words_as_type_indexed_bitvec)]
 theorem evaluateRemoveDead_Inst {width : Nat} [NeZero width] {C F : Type}
     (i : WordLangInst (BitVec width)) :
-    removeDeadGoal C F (.inst i : WordLangProgHOL (BitVec width)) := by
+    ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+      (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+      (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+      (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+      removeDeadBody (.inst i : WordLangProgHOL (BitVec width)) live nlive lt prog' livein nlivein st t tstore res rst := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, herr⟩
   rw [evaluate] at hev
   cases hi : inst i st with

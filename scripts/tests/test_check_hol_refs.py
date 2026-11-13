@@ -1060,6 +1060,243 @@ End
         )
         self.assertEqual(errors, [])
 
+    def test_fmap_relation_rejects_state_valued_conversion(self):
+        lines = [
+            "structure Source where",
+            "  refs : HolFiniteMapExact Nat Nat",
+            "structure Target where",
+            "  refs : HolFiniteMapExact Nat Nat",
+            "theorem holFmapAsFiniteSupportRelationWitness_Source :",
+            "  Source.toBroad (Source.ofBroad s) = s := rfl",
+            "theorem holFmapAsFiniteSupportRelationWitness_Target :",
+            "  Target.toBroad (Target.ofBroad t) = t := rfl",
+        ]
+        entries = (("Source", "refs"), ("Target", "refs"))
+        for declaration in (
+            "def convert (s : Source) : Target := make s",
+            "noncomputable def convert (s : Source) : Option Target := some (make s)",
+            "abbrev convert (s : Source) : Target := make s",
+            "opaque convert (s : Source) : Target := make s",
+            "def convert (s : Source) : (Nat → Prop) → Target := fun _ => make s",
+            "def convert (s : Source) : if True then Nat else Nat → Prop := 0",
+            "def convert (s : Source) := make s",
+        ):
+            errors = CHECKER["fmap_as_finite_support_relation_errors"](
+                lines, entries, "Example.lean", declaration)
+            self.assertTrue(any("visibly Prop-valued" in error for error in errors), errors)
+        for declaration in (
+            "def «convert» (s : Source) : Target := make s",
+            "def μετατροπή (s : Source) : Target := make s",
+            "def «convert» (s : Source) : Target where\n  theorem scopeDecoy : True := trivial",
+            '@[hol "cakeml/exampleScript.sml" "convert"] def convert (s : Source) : Target := make s',
+        ):
+            errors = CHECKER["fmap_as_finite_support_relation_errors"](
+                lines, entries, "Example.lean", declaration)
+            self.assertTrue(any("recognizable relation declaration" in error for error in errors), errors)
+        relation = "def stateRel (s : Source) (t : Target) : Prop := True"
+        self.assertEqual(CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, entries, "Example.lean", relation), [])
+        function_relation = "def stateRel (s : Source) (t : Target) : Nat → Prop := fun _ => True"
+        self.assertEqual(CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, entries, "Example.lean", function_relation), [])
+        higher_relation = "def stateRel (s : Source) (t : Target) : ((Nat × Nat) → Prop) → Prop := fun _ => True"
+        self.assertEqual(CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, entries, "Example.lean", higher_relation), [])
+        conditional = "def stateRel (s : Source) (t : Target) : if True then Nat else (Nat → Prop) → Prop := 0"
+        self.assertTrue(any("visibly Prop-valued" in error for error in
+            CHECKER["fmap_as_finite_support_relation_errors"](lines, entries, "Example.lean", conditional)))
+        theorem = "theorem stateRel (s : Source) (t : Target) : True := trivial"
+        self.assertEqual(CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, entries, "Example.lean", theorem), [])
+
+    def test_fmap_relation_extraction_rejects_opaque_before_theorem_decoy(self):
+        lines = [
+            "structure Source where",
+            "  refs : HolFiniteMapExact Nat Nat",
+            "structure Target where",
+            "  refs : HolFiniteMapExact Nat Nat",
+            "theorem holFmapAsFiniteSupportRelationWitness_Source :",
+            "  Source.toBroad (Source.ofBroad s) = s := rfl",
+            "theorem holFmapAsFiniteSupportRelationWitness_Target :",
+            "  Target.toBroad (Target.ofBroad t) = t := rfl",
+            '@[hol "cakeml/exampleScript.sml" "convert"',
+            "  (fmap_as_finite_support_relation := [Source.refs, Target.refs])]",
+            "opaque «convert» (s : Source) : Target := make s",
+            "theorem scopeDecoy : True := trivial",
+        ]
+        declaration = CHECKER["tagged_declaration_text"](lines, 9)
+        self.assertNotIn("scopeDecoy", declaration)
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("Source", "refs"), ("Target", "refs")), "Example.lean", declaration)
+        self.assertTrue(any("recognizable relation declaration" in error for error in errors), errors)
+        split_lines = lines[:10] + ["opaque", "  «convert» (s : Source) : Target := make s", lines[-1]]
+        split_declaration = CHECKER["tagged_declaration_text"](split_lines, 9)
+        self.assertNotIn("scopeDecoy", split_declaration)
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            split_lines, (("Source", "refs"), ("Target", "refs")), "Example.lean", split_declaration)
+        self.assertTrue(any("recognizable relation declaration" in error for error in errors), errors)
+
+    def test_fmap_relation_extraction_ignores_attribute_string_decoy(self):
+        lines = [
+            "structure Source where",
+            "  refs : HolFiniteMapExact Nat Nat",
+            "structure Target where",
+            "  refs : HolFiniteMapExact Nat Nat",
+            "theorem holFmapAsFiniteSupportRelationWitness_Source :",
+            "  Source.toBroad (Source.ofBroad s) = s := rfl",
+            "theorem holFmapAsFiniteSupportRelationWitness_Target :",
+            "  Target.toBroad (Target.ofBroad t) = t := rfl",
+            '@[hol "cakeml/exampleScript.sml" "convert"',
+            '  (fmap_as_finite_support_relation := [Source.refs, Target.refs]), deprecated "',
+            "theorem decoy (s : Source) (t : Target) : True := trivial",
+            '" (since := "2026-01-01")]',
+            "def convert (t : Target) : Target := t",
+        ]
+        declaration = CHECKER["tagged_declaration_text"](lines, 9)
+        self.assertIn("def convert", declaration)
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("Source", "refs"), ("Target", "refs")), "Example.lean", declaration)
+        self.assertTrue(any("visibly Prop-valued" in error for error in errors), errors)
+        self.assertTrue(any("carrier `Source` is not named" in error for error in errors), errors)
+        parameter_lines = [
+            '@[hol "cakeml/exampleScript.sml" "rel"',
+            '  (fmap_as_finite_support_relation := [regs]), deprecated "',
+            "theorem decoy (regs : HolFiniteMapExact Nat Nat) : True := trivial",
+            '" (since := "2026-01-01")]',
+            "def rel : Prop := True",
+        ]
+        parameter_decl = CHECKER["tagged_declaration_text"](parameter_lines, 1)
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            parameter_lines, (("regs", ""),), "Example.lean", parameter_decl)
+        self.assertTrue(any("parameter of the tagged declaration" in error for error in errors), errors)
+        quoted_lines = [
+            '@[hol "cakeml/exampleScript.sml" "rel"',
+            "  (fmap_as_finite_support_relation := [«",
+            "theorem decoy (regs : HolFiniteMapExact Nat Nat) : True := trivial",
+            "»])]",
+            "def rel : Prop := True",
+        ]
+        quoted_decl = CHECKER["tagged_declaration_text"](quoted_lines, 1)
+        self.assertIn("def rel", quoted_decl)
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            quoted_lines, (("regs", ""),), "Example.lean", quoted_decl)
+        self.assertTrue(any("parameter of the tagged declaration" in error for error in errors), errors)
+
+    def test_fmap_relation_extraction_preserves_named_arguments_in_header(self):
+        lines = [
+            "structure Source where",
+            "  refs : HolFiniteMapExact Nat Nat",
+            "structure Target where",
+            "  refs : HolFiniteMapExact Nat Nat",
+            "theorem holFmapAsFiniteSupportRelationWitness_Source :",
+            "  Source.toBroad (Source.ofBroad s) = s := rfl",
+            "theorem holFmapAsFiniteSupportRelationWitness_Target :",
+            "  Target.toBroad (Target.ofBroad t) = t := rfl",
+            '@[hol "cakeml/exampleScript.sml" "related"',
+            "  (fmap_as_finite_support_relation := [Source.refs, Target.refs])]",
+            "theorem related (s : Source)",
+            "    (ih : evaluate (h := s) = result) :",
+            "    ∀ (target : Target), True := by trivial",
+            "theorem next : True := trivial",
+        ]
+        declaration = CHECKER["tagged_declaration_text"](lines, 9)
+        self.assertIn("target : Target", declaration)
+        self.assertNotIn("theorem next", declaration)
+        self.assertEqual(CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("Source", "refs"), ("Target", "refs")), "Example.lean", declaration), [])
+
+    def test_fmap_relation_ignores_carrier_in_proof(self):
+        lines = [
+            "structure Source where",
+            "  refs : HolFiniteMapExact Nat Nat",
+            "theorem holFmapAsFiniteSupportRelationWitness_Source :",
+            "  Source.toBroad (Source.ofBroad s) = s := rfl",
+            '@[hol "cakeml/exampleScript.sml" "related"',
+            "  (fmap_as_finite_support_relation := [Source.refs])]",
+            "theorem related : True := by have _ : Source → True := fun _ => trivial; trivial",
+        ]
+        declaration = CHECKER["tagged_declaration_text"](lines, 5)
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("Source", "refs"),), "Example.lean", declaration)
+        self.assertTrue(any("carrier `Source` is not named" in error for error in errors), errors)
+
+    def test_fmap_relation_masks_character_literals_in_header(self):
+        source = "theorem related (c : Char := '(') (s : Source) : True := by trivial"
+        code = CHECKER["lean_code_without_strings"](source)
+        assignment = CHECKER["top_level_assignment_offset"](code)
+        self.assertEqual(source[assignment:], ":= by trivial")
+        self.assertIn("s : Source", code[:assignment])
+
+    def test_fmap_relation_rejects_unparenthesized_let_result_decoy(self):
+        lines = [
+            '@[hol "cakeml/exampleScript.sml" "rel"',
+            '  (fmap_as_finite_support_relation := [regs])]',
+            'def rel (regs : HolFiniteMapExact Nat Nat) : let P : Prop := True; Nat := 0',
+        ]
+        for keyword in ("let", "have", "letI", "haveI"):
+            fixture = lines[:-1] + [lines[-1].replace("let P", keyword + " P")]
+            declaration = CHECKER["tagged_declaration_text"](fixture, 1)
+            errors = CHECKER["fmap_as_finite_support_relation_errors"](
+                fixture, (("regs", ""),), "Example.lean", declaration)
+            self.assertTrue(any("does not support let/have" in error for error in errors), errors)
+
+    def test_fmap_relation_ignores_owners_inside_theorem_let(self):
+        lines = [
+            "structure Source where",
+            "  refs : HolFiniteMapExact Nat Nat",
+            "theorem holFmapAsFiniteSupportRelationWitness_Source :",
+            "  Source.toBroad (Source.ofBroad s) = s := rfl",
+            '@[hol "cakeml/exampleScript.sml" "related"',
+            "  (fmap_as_finite_support_relation := [Source.refs])]",
+            "theorem related : let x : Source := arbitrary Source; True := by trivial",
+        ]
+        for keyword in ("let", "have", "letI", "haveI"):
+            fixture = lines[:-1] + [lines[-1].replace("let x", keyword + " x")]
+            declaration = CHECKER["tagged_declaration_text"](fixture, 5)
+            errors = CHECKER["fmap_as_finite_support_relation_errors"](
+                fixture, (("Source", "refs"),), "Example.lean", declaration)
+            self.assertTrue(any("carrier `Source` is not named" in error for error in errors), errors)
+
+    def test_extraction_ignores_comment_tokens_in_earlier_strings(self):
+        lines = [
+            'def example : String := "/-"',
+            '@[hol "cakeml/exampleScript.sml" "related"]',
+            'theorem related (s : Source) : True := trivial',
+        ]
+        declaration = CHECKER["tagged_declaration_text"](lines, 2)
+        self.assertIn("s : Source", declaration)
+
+    def test_fmap_relation_rejects_raw_attribute_string_decoy(self):
+        lines = [
+            '@[hol "cakeml/exampleScript.sml" "convert"',
+            '  (fmap_as_finite_support_relation := [regs]), deprecated r#"',
+            '"',
+            "theorem decoy (regs : HolFiniteMapExact Nat Nat) : True := trivial",
+            '"# (since := "2026-01-01")]',
+            "def convert (regs : HolFiniteMapExact Nat Nat) : Option Nat := none",
+        ]
+        declaration = CHECKER["tagged_declaration_text"](lines, 1)
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("regs", ""),), "Example.lean", declaration)
+        self.assertTrue(any("does not support raw strings" in error for error in errors), errors)
+        zero_hash = [
+            '@[hol "cakeml/exampleScript.sml" "convert"',
+            '  (fmap_as_finite_support_relation := [regs]), deprecated r"\\',
+            '" (since := "',
+            "theorem decoy (regs : HolFiniteMapExact Nat Nat) : True := trivial",
+            '")] ',
+            "def convert (regs : HolFiniteMapExact Nat Nat) : Option Nat := none",
+        ]
+        declaration = CHECKER["tagged_declaration_text"](zero_hash, 1)
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            zero_hash, (("regs", ""),), "Example.lean", declaration)
+        self.assertTrue(any("does not support raw strings" in error for error in errors), errors)
+        double_hash = [line.replace('r#"', 'r##"').replace('"# (since', '"## (since') for line in lines]
+        declaration = CHECKER["tagged_declaration_text"](double_hash, 1)
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            double_hash, (("regs", ""),), "Example.lean", declaration)
+        self.assertTrue(any("does not support raw strings" in error for error in errors), errors)
+
     def test_fmap_as_finite_support_relation_rejects_raw_option_map(self):
         lines = [
             "structure Source where",
@@ -1704,6 +1941,33 @@ End
         self.assertTrue(
             any("one owning carrier structure" in error for error in errors)
         )
+
+    def test_fmap_owner_resolves_qualified_local_among_distinct_imports(self):
+        check = CHECKER["fmap_as_finite_support_errors"]
+        lines = [
+            "structure State where",
+            "  locals : HolFiniteMapExact Nat Nat",
+            "theorem holFmapAsFiniteSupportWitness :",
+            "  (∀ s : State, ofBroad (toBroad s) = s) := by rfl",
+        ]
+        imports = {"Other": [("Other.lean", {"locals"}, {"locals": "Nat → Option Nat"})]}
+        names = lambda module, name, root: {"Fixture." + name}
+        with patch.dict(check.__globals__, {
+            "imported_structure_field_types": lambda module, root: imports,
+            "_qualified_word_owner_names": names,
+        }):
+            self.assertEqual(check(lines, ("locals",), "Fixture.lean",
+                "theorem foo (s : Fixture.State) (x : Other) : True"), [])
+            ambiguous = check(lines, ("locals",), "Fixture.lean",
+                "theorem foo (s : Fixture.State) (x : Fixture.Other) : True")
+            self.assertTrue(any("one owning carrier structure" in error for error in ambiguous))
+            shadow = {"State": [("Other.lean", {"locals"}, {"locals": "HolFiniteMapExact Nat Nat"})]}
+            with patch.dict(check.__globals__, {
+                "imported_structure_field_types": lambda module, root: shadow,
+            }):
+                errors = check(lines, ("locals",), "Fixture.lean",
+                    "theorem foo (s : Fixture.State) : True")
+                self.assertTrue(any("one owning carrier structure" in error for error in errors))
 
     def test_fmap_as_finite_support_rejects_carrier_naming_neither_owner(self):
         lines = [

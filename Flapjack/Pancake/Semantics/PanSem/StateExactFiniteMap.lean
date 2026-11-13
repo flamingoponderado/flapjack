@@ -2767,7 +2767,7 @@ theorem evaluateHOLFiniteState_shMemLoad_source {width : Nat} {σ : Type}
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_extCall_source {width : Nat} {σ : Type}
-    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    [NeZero width] (state : Flapjack.PanSemStateFiniteExact width σ)
     (function : MlS) (configuration configurationLength array arrayLength : ExpHOL width) :
     evaluateHOLFiniteState state
         (.extCall function configuration configurationLength array arrayLength : ProgHOL width) =

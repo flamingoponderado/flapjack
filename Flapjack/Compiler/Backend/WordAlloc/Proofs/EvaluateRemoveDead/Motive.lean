@@ -43,15 +43,15 @@ def removeDeadPost {width : Nat} [NeZero width] {C F : Type} (live : NumSet)
         | none => True
   | some _ => rst.locals = t' ∧ rst.store = tstore'
 
-/-- HOL `evaluate_remove_dead`'s statement for one program, in HOL's quantifier
-order after `prog`. -/
-def removeDeadGoal {width : Nat} [NeZero width] (C F : Type)
-    (prog : WordLangProgHOL (BitVec width)) : Prop :=
-  ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+/-- The body of the HOL induction motive after its quantified variables. This
+factoring is local proof infrastructure, not a separate HOL declaration. -/
+def removeDeadBody {width : Nat} [NeZero width] {C F : Type}
+    (prog : WordLangProgHOL (BitVec width))
+    (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
     (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
     (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
     (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
-    (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+    (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F) : Prop :=
     strongLocalsRel id (sptDomain livein) st.locals t ∧
       liveStoreRel nlivein st.store tstore ∧
       evaluate prog st = (res, rst) ∧
@@ -62,6 +62,17 @@ def removeDeadGoal {width : Nat} [NeZero width] (C F : Type)
       evaluate prog' { st with locals := t, store := tstore } =
         (res, { rst with locals := t', store := tstore' }) ∧
       removeDeadPost live nlive lt res rst t' tstore'
+
+/-- HOL `evaluate_remove_dead`'s statement for one program, in HOL's quantifier
+order after `prog`. -/
+def removeDeadGoal {width : Nat} [NeZero width] (C F : Type)
+    (prog : WordLangProgHOL (BitVec width)) : Prop :=
+  ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+    (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+    (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+    (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+    (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+    removeDeadBody prog live nlive lt prog' livein nlivein st t tstore res rst
 
 /-- `strong_locals_rel I` is reflexive (Flapjack infrastructure). -/
 theorem strongLocalsRelIdRefl {α : Type} (live : Nat → Prop) (m : Spt α) :

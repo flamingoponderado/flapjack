@@ -574,7 +574,15 @@ statement that contributes no translated finite-map field needs no witness). Thi
 qualifier is mutually exclusive with `fmap_as_finite_support` and
 `fmap_as_finite_support_result`, cannot use `reviewed_exact`, and requires
 manifest status `reviewed_fmap_as_finite_support_relation` with a
-source-comparison note after the reviewer compares each HOL conjunct.
+source-comparison note after the reviewer compares each HOL conjunct. The
+source checker conservatively requires `Prop` or an arrow chain of identifier
+or fully parenthesized domains ending in `Prop` for a relation-valued
+definition; it does not
+infer a result through an alias. It
+rejects raw-string header syntax, let/have expressions in definition headers,
+and unrecognized declaration names rather than inferring their shape. For a
+theorem, it ignores owner evidence after the first let/have expression. A
+state-valued conversion cannot use this qualifier.
 
 **Qualify existential finite maps.** Use
 `(fmap_as_finite_support_existentials := [binder, ...])` for explicit HOL

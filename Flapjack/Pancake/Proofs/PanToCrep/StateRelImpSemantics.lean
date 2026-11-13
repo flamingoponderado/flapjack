@@ -126,7 +126,7 @@ theorem mkCtxtImpLocalsRelExact {width : Nat} [NeZero width] :
       (lcl : HolFiniteMapExact Nat (HolWordLab width))
       (es : HolFiniteMapExact MlS (BitVec width)),
       panToCrepLocalsRelFiniteExact
-        (mkCtxtExactHOL HolFiniteMapExact.empty (makeFuncsExactHOL pc) 0 es)
+        (mkCtxtExactHOL HolFiniteMapExact.empty (makeFuncsExactHOL pc) 0 es : PanToCrepContextExact width)
         HolFiniteMapExact.empty lcl := by
   intro pc lcl es
   refine ⟨⟨?_, ?_⟩, ⟨Nat.zero_le _, ?_⟩, ?_⟩ <;>

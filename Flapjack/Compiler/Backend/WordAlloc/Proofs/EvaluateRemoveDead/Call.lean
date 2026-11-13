@@ -50,7 +50,22 @@ theorem removeDeadPostRefl {width : Nat} [NeZero width] {C F : Type} (live : Num
 theorem evaluateRemoveDead_CallNone {width : Nat} [NeZero width] {C F : Type}
     (dest : Option Nat) (args : List Nat)
     (h : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)) :
-    removeDeadGoal C F (.call none dest args h : WordLangProgHOL (BitVec width)) := by
+    ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+      (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+      (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+      (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+      strongLocalsRel id (sptDomain livein) st.locals t ∧
+        liveStoreRel nlivein st.store tstore ∧
+        evaluate (.call none dest args h : WordLangProgHOL (BitVec width)) st = (res, rst) ∧
+        flatExpConventions (.call none dest args h : WordLangProgHOL (BitVec width)) = true ∧
+        removeDead (.call none dest args h : WordLangProgHOL (BitVec width)) live nlive lt =
+          (prog', livein, nlivein) ∧
+        res ≠ some .error →
+      ∃ (t' : Spt (WordLocW width)) (tstore' : HolFiniteMapExact WordStoreHOL (WordLocW width)),
+        evaluate prog' { st with locals := t, store := tstore } =
+          (res, { rst with locals := t', store := tstore' }) ∧
+        removeDeadPost live nlive lt res rst t' tstore' := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, herr⟩
   rw [removeDead] at hrd
   simp only [getLive, Prod.mk.injEq] at hrd
@@ -135,8 +150,12 @@ theorem evaluateRemoveDead_CallSome {width : Nat} [NeZero width] {C F : Type}
     (h : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
     (ihRet : removeDeadGoal C F retH)
     (ihH : ∀ hn hp a b, h = some (hn, hp, a, b) → removeDeadGoal C F hp) :
-    removeDeadGoal C F (.call (some (n, names, retH, l1, l2)) dest args h :
-      WordLangProgHOL (BitVec width)) := by
+    ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+      (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+      (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+      (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+      removeDeadBody (.call (some (n, names, retH, l1, l2)) dest args h : WordLangProgHOL (BitVec width)) live nlive lt prog' livein nlivein st t tstore res rst := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, hflat, hrd, herr⟩
   rw [removeDead.eq_def] at hrd
   simp only [Prod.mk.injEq] at hrd

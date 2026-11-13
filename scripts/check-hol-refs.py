@@ -772,6 +772,41 @@ def strip_lean_comments(text: str) -> str:
     return "".join(result)
 
 
+@lru_cache(maxsize=16)
+def lean_code_without_strings(text: str) -> str:
+    """Mask comments and literals, preserving offsets and lines."""
+    token = re.compile(
+        r'/\-|--|"(?:\\[\s\S]|[^"\\])*(?:"|$)|«[^»]*(?:»|$)|'
+        r'(?<![A-Za-z0-9_\'])\'(?:\\[^\n]|[^\'\\\n])\''
+    )
+    result = []
+    pos = 0
+    while match := token.search(text, pos):
+        start, end = match.span()
+        result.append(text[pos:start])
+        if match.group() == "--":
+            newline = text.find("\n", end)
+            end = len(text) if newline < 0 else newline
+        elif match.group() == "/-":
+            depth = 1
+            while depth:
+                inner = _BLOCK_COMMENT_TOKEN_RE.search(text, end)
+                if inner is None:
+                    end = len(text)
+                    break
+                depth += 1 if inner.group() == "/-" else -1
+                end = inner.end()
+        result.append(_NOT_NEWLINE_RE.sub(" ", text[start:end]))
+        pos = end
+    result.append(text[pos:])
+    return "".join(result)
+
+
+@lru_cache(maxsize=8)
+def lean_code_lines(text: str) -> tuple[str, ...]:
+    return tuple(lean_code_without_strings(text).split("\n"))
+
+
 def structure_fields(lines: list[str]) -> set[str]:
     """Collect field names declared by structures in one Lean module."""
     fields: set[str] = set()
@@ -1148,8 +1183,57 @@ def owning_structure_for_fields(
 
 TOP_DECL_RE = re.compile(
     r"^(?:@\[|(?:private |protected |noncomputable |partial |unsafe )*"
-    r"(?:def |theorem |lemma |abbrev |instance |structure |inductive ))"
+    r"(?:def|theorem|lemma|abbrev|instance|structure|inductive|opaque|class|axiom|constant)\b)"
 )
+
+
+def top_level_assignment_offset(text: str) -> int | None:
+    """Find a declaration's `:=`, ignoring binders and named arguments."""
+    depth = 0
+    for index, char in enumerate(text):
+        if char in "([{":
+            depth += 1
+        elif char in ")]}" and depth:
+            depth -= 1
+        elif depth == 0 and text.startswith(":=", index):
+            return index
+    return None
+
+
+def plainly_prop_valued_result(text: str) -> bool:
+    """Accept only `Prop` or a syntactically clear arrow chain to `Prop`."""
+    pieces: list[str] = []
+    depth = 0
+    start = 0
+    for index, char in enumerate(text):
+        if char == "(":
+            depth += 1
+        elif char == ")":
+            depth -= 1
+            if depth < 0:
+                return False
+        elif char == "→" and depth == 0:
+            pieces.append(text[start:index].strip())
+            start = index + 1
+    if depth:
+        return False
+    pieces.append(text[start:].strip())
+    if pieces[-1] != "Prop":
+        return False
+    for domain in pieces[:-1]:
+        if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_'.]*", domain):
+            continue
+        if not domain.startswith("(") or not domain.endswith(")"):
+            return False
+        # Its first opening parenthesis must enclose the entire domain.
+        depth = 0
+        for index, char in enumerate(domain):
+            depth += (char == "(") - (char == ")")
+            if depth == 0 and index != len(domain) - 1:
+                return False
+        if depth:
+            return False
+    return True
 
 
 def tagged_declaration_text(lines: list[str], attribute_start: int) -> str:
@@ -1161,34 +1245,41 @@ def tagged_declaration_text(lines: list[str], attribute_start: int) -> str:
     """
     region: list[str] = []
     seen_declaration = False
-    for line in lines[attribute_start - 1:]:
-        stripped = line.lstrip()
+    header_code: list[str] = []
+    code_lines = lean_code_lines("\n".join(lines))
+    declaration_re = re.compile(
+        r"(?:(?:private|protected|noncomputable|partial|unsafe)\s+)*"
+        r"(?:def|theorem|lemma|abbrev|instance|structure|inductive|opaque|class|axiom|constant)\b"
+    )
+    for line, code in zip(lines[attribute_start - 1:], code_lines[attribute_start - 1:]):
+        stripped = code.lstrip()
         if stripped.startswith("@["):
             if seen_declaration:
                 break
             region.append(line)
-            if re.search(
-                r"(?:^|\s)(?:(?:private|protected|noncomputable|partial|unsafe)\s+)*"
-                r"(?:def|theorem|lemma|abbrev|instance|structure) ",
-                stripped,
-            ):
+            match = declaration_re.search(stripped)
+            if match:
                 seen_declaration = True
-                if ":=" in stripped:
+                header_code.append(stripped[match.start():])
+                if top_level_assignment_offset("\n".join(header_code)) is not None:
                     break
             continue
-        if not line.strip():
+        if not code.strip():
             region.append(line)
+            if seen_declaration:
+                header_code.append(code)
             continue
-        if seen_declaration and TOP_DECL_RE.match(line):
+        if seen_declaration and TOP_DECL_RE.match(code):
             break
-        if re.match(
-            r"(?:(?:private|protected|noncomputable|partial|unsafe)\s+)*"
-            r"(?:def|theorem|lemma|abbrev|instance|structure) ",
-            stripped,
-        ):
-            seen_declaration = True
+        if not seen_declaration:
+            match = declaration_re.match(stripped)
+            if match:
+                seen_declaration = True
+                header_code.append(stripped[match.start():])
+        else:
+            header_code.append(code)
         region.append(line)
-        if seen_declaration and ":=" in line:
+        if seen_declaration and top_level_assignment_offset("\n".join(header_code)) is not None:
             break
     return "\n".join(region)
 
@@ -1326,6 +1417,18 @@ def fmap_as_finite_support_errors(
                 # Resolve only an explicit full source namespace; do not guess
                 # from module paths or accept a locally shadowing carrier.
                 qualified = []
+                for name in named_local:
+                    if any(item[0] == name for item in imported_candidates):
+                        continue
+                    owner_names = _qualified_word_owner_names(module, name, str(ROOT))
+                    if len(owner_names) != 1:
+                        continue
+                    full = next(iter(owner_names))
+                    if "." in full and re.search(
+                        rf"(?<![A-Za-z0-9_'.]){re.escape(full)}(?![A-Za-z0-9_'.])",
+                        declaration_text,
+                    ):
+                        qualified.append((name, local_types.get(name, {}), module, full))
                 for name, source, _names, types in named_imported:
                     if name in local_candidates:
                         continue
@@ -1514,6 +1617,63 @@ def fmap_as_finite_support_relation_errors(
     `fmap_as_finite_support` gate and does not relax it.
     """
     errors: list[str] = []
+    # The multi-owner qualifier is for relations, not state-valued conversions.
+    # Theorems and lemmas are proposition-valued by Lean construction. For a
+    # definition or abbreviation, require a visibly Prop-valued result; this
+    # conservative check intentionally does not unfold aliases or infer types.
+    if declaration_text:
+        # Raw strings can contain unescaped quotes, so the ordinary masking
+        # pass cannot safely delimit them. Reject their syntax in this narrow
+        # qualifier until a raw-string-aware Lean lexer is available.
+        if re.search(r'(?<![A-Za-z0-9_])r#*"', declaration_text):
+            errors.append("fmap_as_finite_support_relation does not support raw strings in declaration headers")
+        declaration = lean_code_without_strings(declaration_text)
+        match = re.search(
+            r"^\s*(?:(?:private|protected|noncomputable|partial|unsafe)\s+)*"
+            r"(def|abbrev|theorem|lemma|opaque|instance|structure|inductive|class|axiom|constant)\b",
+            declaration, re.M,
+        )
+        # Commit to the first declaration keyword. An unsupported name must
+        # not let a later local theorem masquerade as the tagged declaration.
+        name = (re.match(r"\s+[A-Za-z_][A-Za-z0-9_'.]*\b", declaration[match.end():])
+                if match else None)
+        if not match or not name:
+            errors.append("fmap_as_finite_support_relation requires a recognizable relation declaration")
+            declaration_text = ""
+        else:
+            # Attribute arguments and string literals are not the declaration.
+            declaration_text = declaration[match.start():]
+            assignment = top_level_assignment_offset(declaration_text)
+            if assignment is not None:
+                declaration_text = declaration_text[:assignment]
+            # A `:=` in an unparenthesized let/have expression belongs to the
+            # expression, not necessarily the declaration. Without a Lean
+            # parser its extent and resulting type cannot be determined here.
+            local_expression = re.search(r"\b(?:letI?|haveI?)\b", declaration_text)
+            if local_expression:
+                if match.group(1) in ("theorem", "lemma"):
+                    # Lean guarantees their result is Prop. Ignore everything
+                    # after the local expression for ownership evidence.
+                    declaration_text = declaration_text[:local_expression.start()]
+                else:
+                    errors.append(
+                        "fmap_as_finite_support_relation does not support let/have "
+                        "expressions in definition headers"
+                    )
+        if match and name and match.group(1) not in ("theorem", "lemma"):
+            header = declaration[match.end() + name.end():]
+            assignment = top_level_assignment_offset(header)
+            if assignment is not None:
+                header = header[:assignment]
+            colon = _last_top_level_colon(header)
+            result = header[colon + 1:].strip() if colon >= 0 else ""
+            # A suffix alone is insufficient: a conditional can select a
+            # data type in another branch. Check each top-level arrow domain.
+            if not plainly_prop_valued_result(result):
+                errors.append(
+                    "fmap_as_finite_support_relation requires a visibly Prop-valued "
+                    "definition; state-valued conversions need their own qualifier"
+                )
     if len(set(entries)) != len(entries):
         errors.append("fmap_as_finite_support_relation entries must be distinct")
     local_types = structure_field_types(lines)

@@ -34,7 +34,12 @@ end EvaluateRemoveDeadLeavesWitnesses
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
 theorem evaluateRemoveDead_Skip {width : Nat} [NeZero width] {C F : Type} :
-    removeDeadGoal C F (.skip : WordLangProgHOL (BitVec width)) := by
+    ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+      (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+      (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+      (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+      removeDeadBody .skip live nlive lt prog' livein nlivein st t tstore res rst := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, -⟩
   simp only [removeDead, getLive, Prod.mk.injEq] at hrd
   obtain ⟨rfl, rfl, rfl⟩ := hrd
@@ -48,7 +53,12 @@ theorem evaluateRemoveDead_Skip {width : Nat} [NeZero width] {C F : Type} :
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
 theorem evaluateRemoveDead_Tick {width : Nat} [NeZero width] {C F : Type} :
-    removeDeadGoal C F (.tick : WordLangProgHOL (BitVec width)) := by
+    ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+      (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+      (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+      (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+      removeDeadBody (.tick : WordLangProgHOL (BitVec width)) live nlive lt prog' livein nlivein st t tstore res rst := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, -⟩
   simp only [removeDead, getLive, Prod.mk.injEq] at hrd
   obtain ⟨rfl, rfl, rfl⟩ := hrd
@@ -71,7 +81,12 @@ theorem evaluateRemoveDead_Tick {width : Nat} [NeZero width] {C F : Type} :
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
 theorem evaluateRemoveDead_Break {width : Nat} [NeZero width] {C F : Type} (k : Nat) :
-    removeDeadGoal C F (.break k : WordLangProgHOL (BitVec width)) := by
+    ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+      (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+      (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+      (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+      removeDeadBody (.break k : WordLangProgHOL (BitVec width)) live nlive lt prog' livein nlivein st t tstore res rst := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, -⟩
   rw [removeDead] at hrd
   simp only [Prod.mk.injEq] at hrd
@@ -93,7 +108,12 @@ theorem evaluateRemoveDead_Break {width : Nat} [NeZero width] {C F : Type} (k : 
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
 theorem evaluateRemoveDead_Continue {width : Nat} [NeZero width] {C F : Type} (k : Nat) :
-    removeDeadGoal C F (.continue k : WordLangProgHOL (BitVec width)) := by
+    ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+      (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+      (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+      (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+      removeDeadBody (.continue k : WordLangProgHOL (BitVec width)) live nlive lt prog' livein nlivein st t tstore res rst := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, -⟩
   rw [removeDead] at hrd
   simp only [Prod.mk.injEq] at hrd
@@ -115,7 +135,12 @@ theorem evaluateRemoveDead_Continue {width : Nat} [NeZero width] {C F : Type} (k
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
 theorem evaluateRemoveDead_Raise {width : Nat} [NeZero width] {C F : Type} (n : Nat) :
-    removeDeadGoal C F (.raise n : WordLangProgHOL (BitVec width)) := by
+    ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+      (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+      (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+      (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+      removeDeadBody (.raise n : WordLangProgHOL (BitVec width)) live nlive lt prog' livein nlivein st t tstore res rst := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, herr⟩
   rw [removeDead] at hrd
   simp only [Prod.mk.injEq] at hrd
@@ -150,7 +175,12 @@ theorem evaluateRemoveDead_Raise {width : Nat} [NeZero width] {C F : Type} (n : 
   (words_as_type_indexed_bitvec)]
 theorem evaluateRemoveDead_Return {width : Nat} [NeZero width] {C F : Type} (n : Nat)
     (ms : List Nat) :
-    removeDeadGoal C F (.return n ms : WordLangProgHOL (BitVec width)) := by
+    ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+      (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+      (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+      (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+      removeDeadBody (.return n ms : WordLangProgHOL (BitVec width)) live nlive lt prog' livein nlivein st t tstore res rst := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, herr⟩
   rw [removeDead] at hrd
   simp only [Prod.mk.injEq] at hrd
@@ -192,7 +222,12 @@ removed (its write is outside the live set), a live one keeps the instruction. -
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
 theorem evaluateRemoveDead_LocValue {width : Nat} [NeZero width] {C F : Type} (r l1 : Nat) :
-    removeDeadGoal C F (.locValue r l1 : WordLangProgHOL (BitVec width)) := by
+    ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+      (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+      (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+      (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+      removeDeadBody (.locValue r l1 : WordLangProgHOL (BitVec width)) live nlive lt prog' livein nlivein st t tstore res rst := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, herr⟩
   rw [evaluate] at hev
   by_cases hm : sptMem l1 st.code

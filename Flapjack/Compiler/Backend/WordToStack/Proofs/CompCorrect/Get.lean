@@ -41,7 +41,14 @@ Evaluator closure inherits reals_as_rational_cuts; no numerical FP claim. -/
 theorem compCorrectGet {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (register : Nat) (name : WordStoreHOL)
     (source : WordSemStateFiniteExact width (Nat × C) F) :
-    Seq.Simulation ac (.get register name) source := by
+    ∀ (simK simF simFrame : Nat)
+      (simSourcePost : WordSemStateFiniteExact width (Nat × C) F)
+      (simTarget : StackSemStateFiniteExact width C F)
+      (simResult : Option (WordSemResult width))
+      (simBs simBsPost : AppList (BitVec width)) (simN simNPost : Nat)
+      (simCompiled : HolProg width) (simLens : List Nat),
+      Seq.SimulationBody ac (.get register name) source simK simF simFrame simSourcePost simTarget simResult
+        simBs simBsPost simN simNPost simCompiled simLens := by
   intro k f frame sourcePost target result bs bsPost n nPost compiled lens premises
   rcases premises with ⟨execution,notError,related,conventions,flat,compilation,
     lengthBound,bitmapBound,bitmapPrefix,labels,maxBound⟩

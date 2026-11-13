@@ -55,7 +55,14 @@ inherit reals_as_rational_cuts (SOUNDNESS item 8). -/
 theorem compCorrectInst {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (i : WordLangInst (BitVec width))
     (source : WordSemStateFiniteExact width (Nat × C) F) :
-    Seq.Simulation ac (.inst i) source := by
+    ∀ (simK simF simFrame : Nat)
+      (simSourcePost : WordSemStateFiniteExact width (Nat × C) F)
+      (simTarget : StackSemStateFiniteExact width C F)
+      (simResult : Option (WordSemResult width))
+      (simBs simBsPost : AppList (BitVec width)) (simN simNPost : Nat)
+      (simCompiled : HolProg width) (simLens : List Nat),
+      Seq.SimulationBody ac (.inst i) source simK simF simFrame simSourcePost simTarget simResult
+        simBs simBsPost simN simNPost simCompiled simLens := by
   intro k f frame sourcePost target result bs bsPost n nPost compiled lens premises
   rcases premises with ⟨execution, notError, related, conventions, _flat,
     compilation, _lengthBound, _bitmapBound, _bitmapPrefix, _labels, maxBound⟩

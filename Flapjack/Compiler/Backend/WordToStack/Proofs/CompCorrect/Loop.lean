@@ -483,7 +483,14 @@ theorem compCorrectLoop {width : Nat} [NeZero width] {C F : Type}
     (body : WordLangProgHOL (BitVec width))
     (source : WordSemStateFiniteExact width (Nat × C) F)
     (ih : InductionHypotheses ac names exitNames body source) :
-    Seq.Simulation ac (.loop names body exitNames) source := by
+    ∀ (simK simF simFrame : Nat)
+      (simSourcePost : WordSemStateFiniteExact width (Nat × C) F)
+      (simTarget : StackSemStateFiniteExact width C F)
+      (simResult : Option (WordSemResult width))
+      (simBs simBsPost : AppList (BitVec width)) (simN simNPost : Nat)
+      (simCompiled : Compiler.Backend.StackLang.HolProg width) (simLens : List Nat),
+      Seq.SimulationBody ac (.loop names body exitNames) source simK simF simFrame simSourcePost simTarget simResult
+        simBs simBsPost simN simNPost simCompiled simLens := by
   classical
   intro k f frame finalSource target finalResult bs bsPost n nPost compiled lens premises
   rcases premises with ⟨sourceLoop,notError,related,conventions,flat,compilation,

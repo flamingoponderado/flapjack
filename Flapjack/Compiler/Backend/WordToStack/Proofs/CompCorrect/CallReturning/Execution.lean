@@ -627,7 +627,15 @@ theorem compCorrectCallReturningNone {width : Nat} [NeZero width] {C F : Type}
     (dest : Option Nat) (args : List Nat)
     (source : WordSemStateFiniteExact width (Nat × C) F)
     (ih : InductionHypotheses ac values names retCode l1 l2 dest args source) :
-    Seq.Simulation ac (.call (some (values, names, retCode, l1, l2)) dest args none) source := by
+    ∀ (simK simF simFrame : Nat)
+      (simSourcePost : WordSemStateFiniteExact width (Nat × C) F)
+      (simTarget : StackSemStateFiniteExact width C F)
+      (simResult : Option (WordSemResult width))
+      (simBs simBsPost : AppList (BitVec width)) (simN simNPost : Nat)
+      (simCompiled : HolProg width) (simLens : List Nat),
+      Seq.SimulationBody ac (.call (some (values, names, retCode, l1, l2)) dest args none)
+        source simK simF simFrame simSourcePost simTarget simResult simBs simBsPost
+        simN simNPost simCompiled simLens := by
   intro k f frame sourcePost target result bs finalBitmaps n finalIndex compiled lens premises
   obtain ⟨execution, notError, related, conventions, flat, compilation, bitmapLength,
     bitmapBound, bitmapPrefix, labels, maximum⟩ := premises

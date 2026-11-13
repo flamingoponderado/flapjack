@@ -6996,7 +6996,7 @@ set_option maxHeartbeats 4000000 in
   (words_as_type_indexed_bitvec)]
 theorem evaluateClockSubDecCaseHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (name : MlS) (shape : ShapeHOL) (initializer : ExpHOL width) (body : ProgHOL width) :
-    ∀ (state : PanPropsEvalStateFiniteExact width σ)
+    ∀ (state : Flapjack.PanPropsEvalStateFiniteExact width σ)
       (result : Option (PanSemResultExact width))
       (st : PanPropsEvalStateFiniteExact width σ) (ck : Nat),
       PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state

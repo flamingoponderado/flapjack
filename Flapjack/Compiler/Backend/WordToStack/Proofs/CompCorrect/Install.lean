@@ -294,7 +294,14 @@ inherits reals_as_rational_cuts; no numerical FP assertion. -/
 theorem compCorrectInstall {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (ptr len dptr dlen : Nat) (names : WordLangCutsetsHOL)
     (source : WordSemStateFiniteExact width (Nat × C) F) :
-    Seq.Simulation ac (.install ptr len dptr dlen names) source := by
+    ∀ (simK simF simFrame : Nat)
+      (simSourcePost : WordSemStateFiniteExact width (Nat × C) F)
+      (simTarget : StackSemStateFiniteExact width C F)
+      (simResult : Option (WordSemResult width))
+      (simBs simBsPost : AppList (BitVec width)) (simN simNPost : Nat)
+      (simCompiled : HolProg width) (simLens : List Nat),
+      Seq.SimulationBody ac (.install ptr len dptr dlen names) source simK simF simFrame simSourcePost simTarget simResult
+        simBs simBsPost simN simNPost simCompiled simLens := by
   intro k f frame sourcePost target result bs bsPost n nPost compiled lens premises
   obtain ⟨execution, notError, related, conventions, -, compilation, -, -, -, -, -⟩ := premises
   obtain ⟨rfl, rfl, hd3, hd4, hc1, hc2⟩ :=

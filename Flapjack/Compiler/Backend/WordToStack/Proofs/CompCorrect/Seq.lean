@@ -18,19 +18,17 @@ namespace Flapjack.WordToStackProofs.CompCorrect.Seq
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Backend.WordToStack.Native
 
-/-- Flapjack-only factoring of the entire original comp_correct induction motive
-(5719–5751), at a fixed source program and state. All original quantified
-parameters, premises and the full result/resource conclusion are retained.
-There is no separate HOL declaration for this factoring. -/
-def Simulation {width : Nat} [NeZero width] {C F : Type}
+/-- Body of the original comp_correct induction motive after its quantified
+variables. This is proof infrastructure without a separate HOL declaration. -/
+def SimulationBody {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (program : WordLangProgHOL (BitVec width))
-    (source : WordSemStateFiniteExact width (Nat × C) F) : Prop :=
-  ∀ (k f frame : Nat)
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (k f frame : Nat)
     (sourcePost : WordSemStateFiniteExact width (Nat × C) F)
     (target : StackSemStateFiniteExact width C F)
     (result : Option (WordSemResult width))
     (bs bsPost : AppList (BitVec width)) (n nPost : Nat)
-    (compiled : HolProg width) (lens : List Nat),
+    (compiled : HolProg width) (lens : List Nat) : Prop :=
     (WordSemStateFiniteExact.evaluate program source = (result, sourcePost) ∧
       result ≠ some .error ∧ stateRel ac k f frame source target lens 0 ∧
       postAllocConventionsHOL k program = true ∧ flatExpConventions program = true ∧
@@ -45,6 +43,21 @@ def Simulation {width : Nat} [NeZero width] {C F : Type}
       StackSemEvaluate.evaluate (compiled, {target with clock := target.clock + extraClock}) =
         (targetResult, targetPost) ∧
       compCorrectResult ac k f frame source sourcePost targetPost result targetResult lens
+
+/-- Flapjack-only factoring of the entire original comp_correct induction motive
+(5719–5751), at a fixed source program and state. All original quantified
+parameters, premises and the full result/resource conclusion are retained.
+There is no separate HOL declaration for this factoring. -/
+def Simulation {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (program : WordLangProgHOL (BitVec width))
+    (source : WordSemStateFiniteExact width (Nat × C) F) : Prop :=
+  ∀ (k f frame : Nat)
+    (sourcePost : WordSemStateFiniteExact width (Nat × C) F)
+    (target : StackSemStateFiniteExact width C F)
+    (result : Option (WordSemResult width))
+    (bs bsPost : AppList (BitVec width)) (n nPost : Nat)
+    (compiled : HolProg width) (lens : List Nat),
+    SimulationBody ac program source k f frame sourcePost target result bs bsPost n nPost compiled lens
 
 /-- Genuine canonical source codec re-export for the relation qualifier. -/
 theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
@@ -82,7 +95,12 @@ theorem compCorrectSeqFirstNonNone {width : Nat} [NeZero width] {C F : Type}
       (result, middle) = WordSemStateFiniteExact.evaluate first source ∧ result = none →
         Simulation ac second middle) ∧ Simulation ac first source)
     (firstNonNone : (WordSemStateFiniteExact.evaluate first source).1 ≠ none) :
-    Simulation ac (.seq first second) source := by
+    ∀ (k f frame : Nat) (sourcePost : WordSemStateFiniteExact width (Nat × C) F)
+      (target : StackSemStateFiniteExact width C F) (result : Option (WordSemResult width))
+      (bs bsPost : AppList (BitVec width)) (n nPost : Nat) (compiled : HolProg width)
+      (lens : List Nat),
+      SimulationBody ac (.seq first second) source k f frame sourcePost target result
+        bs bsPost n nPost compiled lens := by
   intro k f frame sourcePost target result bs bsPost n nPost compiled lens premises
   rcases premises with ⟨execution, notError, related, conventions, flat,
     compilation, lengthBound, bitmapBound, bitmapPrefix, labels, maxBound⟩
@@ -151,7 +169,14 @@ theorem compCorrectSeqFirstNone {width : Nat} [NeZero width] {C F : Type}
       (result, middle) = WordSemStateFiniteExact.evaluate first source ∧ result = none →
         Simulation ac second middle) ∧ Simulation ac first source)
     (firstNone : (WordSemStateFiniteExact.evaluate first source).1 = none) :
-    Simulation ac (.seq first second) source := by
+    ∀ (simK simF simFrame : Nat)
+      (simSourcePost : WordSemStateFiniteExact width (Nat × C) F)
+      (simTarget : StackSemStateFiniteExact width C F)
+      (simResult : Option (WordSemResult width))
+      (simBs simBsPost : AppList (BitVec width)) (simN simNPost : Nat)
+      (simCompiled : HolProg width) (simLens : List Nat),
+      SimulationBody ac (.seq first second) source simK simF simFrame simSourcePost simTarget simResult
+        simBs simBsPost simN simNPost simCompiled simLens := by
   classical
   intro k f frame sourcePost target result bs bsPost n nPost compiled lens premises
   rcases premises with ⟨execution, notError, related, conventions, flat,
@@ -297,7 +322,14 @@ theorem compCorrectSeq {width : Nat} [NeZero width] {C F : Type}
     (ih : (∀ result middle,
       (result, middle) = WordSemStateFiniteExact.evaluate first source ∧ result = none →
         Simulation ac second middle) ∧ Simulation ac first source) :
-    Simulation ac (.seq first second) source := by
+    ∀ (simK simF simFrame : Nat)
+      (simSourcePost : WordSemStateFiniteExact width (Nat × C) F)
+      (simTarget : StackSemStateFiniteExact width C F)
+      (simResult : Option (WordSemResult width))
+      (simBs simBsPost : AppList (BitVec width)) (simN simNPost : Nat)
+      (simCompiled : HolProg width) (simLens : List Nat),
+      SimulationBody ac (.seq first second) source simK simF simFrame simSourcePost simTarget simResult
+        simBs simBsPost simN simNPost simCompiled simLens := by
   by_cases guard : (WordSemStateFiniteExact.evaluate first source).1 = none
   · exact compCorrectSeqFirstNone ac first second source ih guard
   · exact compCorrectSeqFirstNonNone ac first second source ih guard

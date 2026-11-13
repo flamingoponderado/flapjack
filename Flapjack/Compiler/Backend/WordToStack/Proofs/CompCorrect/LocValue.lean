@@ -39,7 +39,14 @@ premise is added. Evaluator closure inherits reals_as_rational_cuts. -/
 theorem compCorrectLocValue {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (register location : Nat)
     (source : WordSemStateFiniteExact width (Nat × C) F) :
-    Seq.Simulation ac (.locValue register location) source := by
+    ∀ (simK simF simFrame : Nat)
+      (simSourcePost : WordSemStateFiniteExact width (Nat × C) F)
+      (simTarget : StackSemStateFiniteExact width C F)
+      (simResult : Option (WordSemResult width))
+      (simBs simBsPost : AppList (BitVec width)) (simN simNPost : Nat)
+      (simCompiled : HolProg width) (simLens : List Nat),
+      Seq.SimulationBody ac (.locValue register location) source simK simF simFrame simSourcePost simTarget simResult
+        simBs simBsPost simN simNPost simCompiled simLens := by
   intro k f frame sourcePost target result bs bsPost n nPost compiled lens premises
   rcases premises with ⟨execution,notError,related,conventions,flat,compilation,
     lengthBound,bitmapBound,bitmapPrefix,labels,maxBound⟩
