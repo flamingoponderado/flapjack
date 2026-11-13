@@ -154,3 +154,15 @@ val evaluate_inline_compile_statement =
     in_state_rel s s2``;
 val _ = (print "evaluate_inline_compile_statement_typed=";
          print_term evaluate_inline_compile_statement; print "\n");
+
+(* The local initial-state relation lemma's original typed statement. *)
+val inline_initial_state_rel_statement =
+  ``∀prog cs1 prog1 co ffi cc clk.
+  inline_all LN prog = (cs1,prog1) ∧
+  FST (FST (co 0)) = cs1 ∧
+  ALL_DISTINCT (MAP FST prog) ⇒
+  in_state_rel
+    (initial_state ffi (fromAList prog) co (state_cc inline_all cc) clk)
+    (initial_state ffi (fromAList prog1) (state_co inline_all co) cc clk)``;
+val _ = (print "inline_initial_state_rel_statement_typed=";
+         print_term inline_initial_state_rel_statement; print "\n");

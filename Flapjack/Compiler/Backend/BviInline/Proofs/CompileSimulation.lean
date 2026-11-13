@@ -16,16 +16,21 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   BviSem.holFmapAsFiniteSupportWitness
 end InlineCompilerCarrier
 
-/-- Flapjack infrastructure: starting with an empty inlining cache produces
-related initial states when the oracle begins with the resulting cache and
-program labels are distinct. HOL carrier review remains pending. -/
-theorem inline_initial_state_rel {C F : Type} (program output : List (Nat × Nat × Bvi.Exp))
-    (cache : Spt (Nat × Bvi.Exp)) (oracle : BviSem.CompileOracle (Spt (Nat × Bvi.Exp) × C))
+/-- Inlining from an empty cache yields related initial states when the
+oracle starts with the resulting cache and program labels are distinct. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "inline_initial_state_rel"
+  (fmap_as_finite_support := [refs])]
+theorem inline_initial_state_rel {C F : Type} (program : List (Nat × Nat × Bvi.Exp))
+    (cache : Spt (Nat × Bvi.Exp)) (output : List (Nat × Nat × Bvi.Exp))
+    (oracle : BviSem.CompileOracle (Spt (Nat × Bvi.Exp) × C))
     (ffi : HolFfiState F) (compiler : BviSem.Compiler C) (clock : Nat)
-    (run : inlineAllSource .ln program = (cache, output))
-    (oracleCache : (oracle 0).1.1 = cache) (distinct : (program.map Prod.fst).Nodup) :
-    InStateRel (initialState ffi (sptFromAList program) oracle (inCc compiler) clock)
-      (initialState ffi (sptFromAList output) (inCo oracle) compiler clock) := by
+    (premises : inlineAllSource .ln program = (cache, output) ∧
+      (oracle 0).1.1 = cache ∧ (program.map Prod.fst).Nodup) :
+    InStateRel
+      (initialState ffi (sptFromAList program) oracle (stateCc inlineAllSource compiler) clock :
+        BviState (Spt (Nat × Bvi.Exp) × C) F)
+      (initialState ffi (sptFromAList output) (stateCo inlineAllSource oracle) compiler clock) := by
+  obtain ⟨run, oracleCache, distinct⟩ := premises
   have emptySubset : sptSubspt (.ln : Spt (Nat × Bvi.Exp)) .ln := by
     rw [sptSubsptLookup]
     simp [sptLookup]
@@ -72,7 +77,7 @@ theorem evaluate_inline_compile {C F : Type} (program : List (Nat × Nat × Bvi.
         (result, targetNext) ∧ InStateRel sourceNext targetNext := by
   obtain ⟨run, oracleCache, distinct, evaluation, notType⟩ := premises
   apply EvaluateCases.evaluate_inline_result _ _ _ _ sourceNext _ result
-    (inline_initial_state_rel program output cache oracle ffi compiler clock run oracleCache distinct)
+    (inline_initial_state_rel program cache output oracle ffi compiler clock ⟨run, oracleCache, distinct⟩)
     _ evaluation notType
   exact .cons (expRel_refl _ _) .nil
 

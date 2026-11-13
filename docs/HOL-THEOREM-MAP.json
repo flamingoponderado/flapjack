@@ -451,6 +451,15 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "inline_initial_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CompileSimulation.lean",
+    "lean_name": "inline_initial_state_rel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Independent comparison with the original local statement and typed HOL capture: all seven binders, empty-cache inlining equation, initial oracle-cache equality and distinctness premise imply the full initial-state relation. The source compiler carrier is cache paired with C, the target carrier is C, F is independent, and callback word widths match. InStateRel and ExpRel were compared against all original components and rules. Both BVI reference fields use the canonical finite-support representation with a same-module roundtrip; code and cache remain sparse trees. The capture records the typed statement, not an original proof replay."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "evaluate_inline_compile",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CompileSimulation.lean",
     "lean_name": "evaluate_inline_compile",
