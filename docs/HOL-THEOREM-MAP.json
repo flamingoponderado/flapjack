@@ -1,6 +1,30 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_inc_next",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileIncLemma.lean",
+    "lean_name": "compileInc_next",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Typed HOL source has the same compiled-pair equality premise and counter inequality conclusion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_inc_DISTINCT",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileIncLemma.lean",
+    "lean_name": "compileInc_distinct",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Typed HOL source has the same conjunction premise, source and target list carriers, and distinctness conclusion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_inc_next_range",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileIncLemma.lean",
+    "lean_name": "compileInc_nextRange",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Typed HOL source has the same compilation and membership premise, namespace-one conditional, bounds, namespace-zero alternative and source membership using truncated subtraction and natural division."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_inc_lemma",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileIncLemma.lean",
     "lean_name": "compileInc_lemma",

@@ -563,3 +563,6 @@ val in_ns_0_simp_replay = prove (``
 val _ = show "in_ns_0_simp_replay=" in_ns_0_simp_replay;
 
 val _ = show "compile_inc_lemma_typed=" bvl_to_bviProofTheory.compile_inc_lemma;
+val _ = show "compile_inc_next_typed=" bvl_to_bviProofTheory.compile_inc_next;
+val _ = show "compile_inc_DISTINCT_typed=" bvl_to_bviProofTheory.compile_inc_DISTINCT;
+val _ = show "compile_inc_next_range_typed=" bvl_to_bviProofTheory.compile_inc_next_range;
