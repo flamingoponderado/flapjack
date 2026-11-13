@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem
-import Flapjack.Compiler.Backend.FlatLang.GeneratedSize
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem
+public import Flapjack.Compiler.Backend.FlatLang.GeneratedSize
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.FlatSem
 

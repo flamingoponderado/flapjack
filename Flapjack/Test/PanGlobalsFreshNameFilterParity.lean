@@ -9,30 +9,31 @@ public meta import Flapjack.Pancake.Proofs.PanGlobals
 namespace Flapjack.Test.PanGlobalsFreshNameFilterParity
 
 open Flapjack
+open Flapjack.Basis.Pure.MlString (ofString)
+open Flapjack.Pancake.PanLang
 
 /-! Executable observations corresponding to the HOL lemmas `fresh_name_correct`
     (`pan_globalsProofScript.sml:993`), `fresh_name_correct'`
     (`pan_globalsProofScript.sml:1003`), and `FILTER_decs_fperm_decs`
-    (`pan_globalsProofScript.sml:2832`). -/
+    (`pan_globalsProofScript.sml:2832`).  The `FILTER_decs_fperm_decs`
+    observation runs on the tagged exact `fpermDecsHOL`/`exceptionsHOL` twins. -/
 
-def functionDeclaration : Decl Nat :=
+def functionDeclaration : DeclHOL 64 :=
   .function
-    { name := "f", inline := false, exported := false, params := [],
+    { name := ofString "f", inline := false, exported := false, params := [],
       body := .skip, returnShape := .one }
 
-def declarations : List (Decl Nat) :=
+def declarations : List (DeclHOL 64) :=
   [functionDeclaration,
-   .decl (.comb [.one, .named "S"]) "g" (.const 7),
-   .name "S" [], .exnDecl "E" (.named "T"),
-   .decl .one "h" (.const 9)]
+   .decl (.comb [.one, .named (ofString "S")]) (ofString "g") (.const 7),
+   .name (ofString "S") [], .exnDecl (ofString "E") (.named (ofString "T")),
+   .decl .one (ofString "h") (.const 9)]
 
 def freshNameFilterGuard : Bool :=
   (!(["x", "x'", "y"].contains (globalFreshName "x" ["x", "x'", "y"]))) &&
-    ((exceptionEntries (globalDeclsFilter
-        (fun declaration => !globalDeclIsFunction declaration)
-        (globalRenameDecls "f" "b" declarations))).length ==
-      (exceptionEntries (globalDeclsFilter
-        (fun declaration => !globalDeclIsFunction declaration)
+    ((exceptionsHOL (List.filter (fun declaration => !isFunctionHOL declaration)
+        (fpermDecsHOL (width := 64) (ofString "f") (ofString "b") declarations))).length ==
+      (exceptionsHOL (List.filter (fun declaration => !isFunctionHOL declaration)
         declarations)).length)
 
 #guard freshNameFilterGuard

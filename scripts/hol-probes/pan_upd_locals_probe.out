@@ -1,3 +1,53 @@
 pan_upd_locals_hit=SOME 7
-
 pan_upd_locals_empty=NONE
+upd_locals_def_typed=∀(varargs :(mlstring # α v) list) (s :(α, 'ffi) state).
+  upd_locals varargs s =
+  s with locals := (FEMPTY :mlstring |-> α v) |++ varargs
+upd_locals_def_hypotheses=0
+kvar_defs_typed=(∀(v :mlstring) (value :α v) (s :(α, 'ffi) state).
+   set_var v value s = s with locals := s.locals⟨v ↦ value⟩) ∧
+(∀(v :mlstring) (value :α v) (s :(α, 'ffi) state).
+   set_global v value s = s with globals := s.globals⟨v ↦ value⟩) ∧
+(∀(vk :varkind) (v :mlstring) (value :α v) (s :(α, 'ffi) state).
+   set_kvar vk v value s =
+   case vk of Local => set_var v value s | Global => set_global v value s) ∧
+(∀(s :(α, β) state) (vk :varkind) (v :mlstring) (value :γ v).
+   is_valid_value s vk v value ⇔
+   case lookup_kvar vk v s of
+     (NONE :α v option) => F
+   | SOME w => shape_of value = shape_of w) ∧
+∀(vk :varkind) (v :mlstring) (s :(α, 'ffi) state).
+  lookup_kvar vk v s =
+  case vk of Local => FLOOKUP s.locals v | Global => FLOOKUP s.globals v
+kvar_defs_hypotheses=0
+fix_clock_IMP_LESS_EQ_typed=∀(x :β # (γ, δ) state).
+  fix_clock (s :(α, 'ffi) state) x = ((res :β),(s1 :(γ, δ) state)) ⇒
+  s1.clock ≤ s.clock
+fix_clock_IMP_LESS_EQ_hypotheses=0
+res_var_def_typed=res_var (lc :α |-> β) ((n :α),(NONE :β option)) = lc \\ n ∧
+res_var lc (n,SOME (v :β)) = lc⟨n ↦ v⟩
+res_var_def_hypotheses=0
+sh_mem_store_def_typed=∀(w :γ word) (addr :α word) (nb :num) (s :(α, 'ffi) state).
+  (sh_mem_store w addr nb s :β result option # (α, 'ffi) state) =
+  if nb = (0 :num) then
+    if addr ∈ s.sh_memaddrs then
+      case
+        call_FFI s.ffi (SharedMem MappedWrite) [(n2w nb :word8)]
+          (word_to_bytes w F ++ word_to_bytes addr F)
+      of
+        FFI_return new_ffi new_bytes =>
+          ((NONE :β result option),s with ffi := new_ffi)
+      | (FFI_final outcome :'ffi ffi_result) =>
+        (SOME (FinalFFI outcome :β result),s)
+    else (SOME (Error :β result),s)
+  else if byte_align addr ∈ s.sh_memaddrs then
+    case
+      call_FFI s.ffi (SharedMem MappedWrite) [(n2w nb :word8)]
+        (TAKE nb (word_to_bytes w F) ++ word_to_bytes addr F)
+    of
+      FFI_return new_ffi new_bytes =>
+        ((NONE :β result option),s with ffi := new_ffi)
+    | (FFI_final outcome :'ffi ffi_result) =>
+      (SOME (FinalFFI outcome :β result),s)
+  else (SOME (Error :β result),s)
+sh_mem_store_def_hypotheses=0

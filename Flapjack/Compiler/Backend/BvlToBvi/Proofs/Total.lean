@@ -15,8 +15,8 @@ private theorem destLet_budget (exp : Bvl.Exp) :
 
 private theorem compileAuxFuel_succeeds (fuel n args : Nat) (body : Bvi.Exp) :
     ∃ result, compileAuxFuel fuel n args body = some result := by
-  obtain ⟨body', h⟩ := BviLet.compileBounded_succeeds fuel [] 0 body
-  exact ⟨_, by simp [compileAuxFuel, h]; rfl⟩
+  refine ⟨[(bvlNumStubs + bvlToBviNamespaces * n + 1, args, BviLet.compileExp body)], ?_⟩
+  simp [compileAuxFuel]
 
 mutual
 /-- The BVL expression converter succeeds with a structural traversal bound,

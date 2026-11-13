@@ -1,9 +1,11 @@
 module
 
 public import Flapjack.Pancake.Semantics.PanSem
-public import Flapjack.Pancake.Proofs.PanGlobals.ShapeInfrastructure
+public import Flapjack.Pancake.Proofs.PanGlobals.CompileTopShapeWf
 
 @[expose] public section
+
+open Flapjack.Pancake.PanLang
 
 /-!
 # `panSem$evaluate_decls` parity
@@ -15,6 +17,8 @@ each declaration constructor, sequential state updates, and the source failure
 cases. -/
 
 namespace Flapjack.Test.PanEvaluateDeclsParity
+
+open Flapjack.PanGlobalsCompileTopShapeWf
 
 open Flapjack
 
@@ -179,20 +183,21 @@ example :
     evaluateDecls initialState [.exnDecl "E" (.named "Missing")] = none := by
   simp [evaluateDecls, initialState, initialRuntime, isWfShape, lookupInfo]
 
-/-! Non-vacuity witness for the tagged HOL
-    `evaluate_decls_functions_wf` port (`evaluateDeclsFunctionsWf`): the
-    installed sample function's parameter and return shapes are well formed in
-    the source struct context. -/
-example : (sampleFunction).params.all
-      (fun parameter => isWfShape initialRuntime.structs parameter.2) = true ∧
-    isWfShape initialRuntime.structs (sampleFunction).returnShape = true := by
-  cases h : evaluateDecls initialState [.function (sampleFunction)] with
-  | none => simp [evaluateDecls, sampleFunction, initialState, initialRuntime,
-      isWfShape] at h
-  | some state' =>
-      exact evaluateDeclsFunctionsWf initialState [.function (sampleFunction)]
-        state' h (by simp)
-        (by decide)
+/-! Kernel application of the tagged HOL `evaluate_decls_functions_wf` exact
+    port (`evaluate_decls_functions_wfHOL`) on the exact `DeclHOL`/finite-state
+    carriers; the former production-carrier witness lived in the retired
+    `ShapeInfrastructure` module. -/
+example {σ : Type} [NeZero 64] (s' : PanSemStateFiniteExact 64 σ)
+    (fi : FunDeclHOL 64) (s : PanSemStateFiniteExact 64 σ)
+    (decs : List (DeclHOL 64)) :
+    @PanSemStateFiniteExact.evaluateDeclsHOLFinite 64 σ _
+        s (fun a => Classical.propDecidable (s.memaddrs a)) decs = some s' ∧
+      (.function fi : DeclHOL 64) ∈ decs ∧
+      (∀ d ∈ decs,
+        isFunctionHOL d = true ∨ isDeclHOL d = true ∨ isExnDeclHOL d = true) →
+    (∀ p ∈ fi.params, isWfShapeExactHOL s.structs p.2 = true) ∧
+      isWfShapeExactHOL s.structs fi.returnShape = true :=
+  evaluate_decls_functions_wfHOL s' fi s decs
 
 /-! Finite-map bridge for the declaration updates: `panSemDeclUpdateGlobal` is
     the repo `FUPDATE` and `panSemDeclUpdateInfo` agrees with `FUPDATE` on the

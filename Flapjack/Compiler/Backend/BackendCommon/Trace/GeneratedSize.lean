@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.BackendCommon.Trace
+module
+
+public import Flapjack.Compiler.Backend.BackendCommon.Trace
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.BackendCommon
 

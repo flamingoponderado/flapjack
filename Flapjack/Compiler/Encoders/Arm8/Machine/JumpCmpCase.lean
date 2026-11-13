@@ -559,23 +559,6 @@ theorem validImmediate_notTest {cmp : Cmp} (hNT : isTest cmp = false) {w : BitVe
   case notLess => simpa only [validImmediate, Bool.or_eq_true, decide_eq_true_eq] using h
   case notTest => simp [isTest] at hNT
 
-/-- A word killed by the shifted mask is a multiple of `4096` below `2 ^ 24`, so
-it is `m <<< 12` for the twelve-bit value `m` the shifted encoding needs. -/
-theorem jumpCmp_ofNat_shifted (w : BitVec 64) (hmod : w.toNat % 4096 = 0)
-    (hlt : w.toNat < 2 ^ 24) :
-    BitVec.ofNat 64 (((w >>> 12).toNat % 4096) <<< 12) = w := by
-  have hshift : (w >>> 12).toNat = w.toNat / 4096 := by
-    rw [show (w >>> 12).toNat = w.toNat >>> 12 from BitVec.toNat_ushiftRight w 12,
-      Nat.shiftRight_eq_div_pow]
-  have hquo : w.toNat / 4096 % 4096 = w.toNat / 4096 := by
-    apply Nat.mod_eq_of_lt
-    omega
-  apply BitVec.eq_of_toNat_eq
-  rw [BitVec.toNat_ofNat, hshift, hquo, Nat.shiftLeft_eq]
-  have hdvd : 4096 ∣ w.toNat := Nat.dvd_of_mod_eq_zero hmod
-  rw [show (2 : Nat) ^ 12 = 4096 from rfl, Nat.div_mul_cancel hdvd]
-  exact Nat.mod_eq_of_lt w.isLt
-
 /-! ## The two `CaseGoal` theorems -/
 
 /-- The `jumpCmp` case with a register operand: the `JumpCmp`/`INR (INL ...)`
@@ -758,7 +741,7 @@ theorem case_jumpCmp_imm (cmp : Cmp) (r : Nat) (w : BitVec 64) (a : BitVec 64)
       have hmod : w.toNat % 4096 = 0 := and_not_fff000_eq_zero_toNat_mod hhigh
       have hlt24 : w.toNat < 2 ^ 24 := and_not_fff000_eq_zero_toNat_lt hhigh
       have hweq : BitVec.ofNat 64 (((w >>> 12).toNat % 4096) <<< 12) = w :=
-        jumpCmp_ofNat_shifted w hmod hlt24
+        arm8ShiftedMask_eq w hmod hlt24
       have hm : ((w >>> 12).toNat % 4096) < 4096 := Nat.mod_lt _ (by decide)
       have hm0 : ((w >>> 12).toNat % 4096) ≠ 0 := by
         intro h0

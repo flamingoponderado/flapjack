@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
 public import Flapjack.Compiler.Backend.BvlToBvi.Stubs
 public import Flapjack.Compiler.Backend.BviLet.Compile
+public import Flapjack.Compiler.Backend.BviLet.SourceList
 public import Flapjack.Compiler.Backend.BvlToBvi.Budget
 
 @[expose] public section
@@ -16,8 +17,8 @@ namespace Flapjack.Compiler.Backend.BvlToBvi
 
 private abbrev Aux := List (Nat × Nat × Bvi.Exp)
 
-def compileAuxFuel (fuel k args : Nat) (body : Bvi.Exp) : Option Aux := do
-  let body ← BviLet.compileBounded fuel [] 0 body
+def compileAuxFuel (_fuel k args : Nat) (body : Bvi.Exp) : Option Aux := do
+  let body := BviLet.compileExp body
   pure [(bvlNumStubs + bvlToBviNamespaces * k + 1, args, body)]
 
 mutual
@@ -86,13 +87,14 @@ def compileBounded (fuel optFuel n : Nat) (exp : Bvl.Exp) : Option (Bvi.Exp × A
   | some result => some result
   | none => compileFuel (max fuel (expBudget exp + 1)) optFuel n exp
 
-/-- Compile one labeled function and its auxiliary functions. The BVI let
-optimization and expression conversion share the explicit checked bounds. -/
+/-- Compile one labeled function and its auxiliary functions. Expression
+conversion keeps its explicit checked bound; the BVI let optimization runs
+the total reviewed definition. -/
 def compileSingleFuel (fuel optFuel n : Nat) (p : Nat × Nat × Bvl.Exp) :
     Option (List (Nat × Nat × Bvi.Exp) × Nat) := do
   let (name, args, exp) := p
   let (exp, aux, n) ← compileBounded fuel optFuel n exp
-  let exp ← BviLet.compileBounded optFuel [] 0 exp
+  let exp := BviLet.compileExp exp
   pure ((bvlNumStubs + bvlToBviNamespaces * name, args, exp) :: aux, n)
 
 /-- Compile a sequence of labeled functions, preserving source code order. -/

@@ -12,3 +12,10 @@ shape_of_def_typed=(∀(v0 :α word). shape_of (ValWord v0) = One) ∧
    shape_of (RStruct vs) = Comb (MAP (λ(a :α v). shape_of a) vs)) ∧
 ∀(v1 :(mlstring # α v) list) (nm :mlstring).
   shape_of (NStruct nm v1) = Named nm
+flookup_res_var_some_eq_lookup_typed=FLOOKUP (res_var (lc :β |-> α) ((v :β),FLOOKUP (lc' :β |-> α) v)) v =
+SOME (value :α) ⇒
+FLOOKUP lc' v = SOME value
+flookup_res_var_some_eq_lookup_hypotheses=0
+flookup_res_var_diff_eq_org_typed=(n :α) ≠ (m :α) ⇒
+FLOOKUP (res_var (lc :α |-> β) (n,(v :β option))) m = FLOOKUP lc m
+flookup_res_var_diff_eq_org_hypotheses=0

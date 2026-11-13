@@ -1391,6 +1391,20 @@ def sptAListLookup {α : Type} (key : Nat) : List (Nat × α) → Option α
   | (other, value) :: entries =>
       if key = other then some value else sptAListLookup key entries
 
+/-- Both natural-key association-list lookups read the first equal key, including
+duplicate keys. -/
+theorem sptAListLookup_eq_lookup {α : Type} (key : Nat) (entries : List (Nat × α)) :
+    sptAListLookup key entries = entries.lookup key := by
+  induction entries with
+  | nil => rfl
+  | cons entry entries ih =>
+    rcases entry with ⟨k, value⟩
+    by_cases h : key = k
+    · simp [sptAListLookup, List.lookup, h]
+    · cases hb : (key == k) with
+      | false => simp [sptAListLookup, List.lookup, h, hb, ih]
+      | true => exact False.elim (h (by simpa only [beq_iff_eq] using hb))
+
 /-- Lookup in external HOL `fromAList` is first-match association-list lookup,
 with no distinct-key or well-formedness premise. -/
 theorem sptLookup_sptFromAList {α : Type} (key : Nat)

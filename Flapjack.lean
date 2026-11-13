@@ -3173,6 +3173,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectExact
 import Flapjack.Pancake.Semantics.PanProps.SemanticsWrapper
 import Flapjack.Pancake.Semantics.PanProps.SemanticsWrapperEquality
 import Flapjack.Pancake.Semantics.PanProps.PanSemIsWrapper
+import Flapjack.Pancake.Semantics.PanCommonProps.FiniteMapExact
 import Flapjack.Pancake.Proofs.PanStructs.SemanticsEq
 import Flapjack.Pancake.Proofs.PanStructs.CompileTopSemanticsDeclsExact
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
@@ -3471,6 +3472,7 @@ import Flapjack.Pancake.Semantics.PanProps.LocalisedExpSimps
 import Flapjack.Pancake.Semantics.PanProps.NamelessExpSimps
 import Flapjack.Pancake.Semantics.PanProps.ListRelFlatten
 import Flapjack.Pancake.Semantics.PanProps.ResVar
+import Flapjack.Pancake.Semantics.PanProps.WithShape
 import Flapjack.Pancake.Semantics.ByteAlignBridge
 import Flapjack.Pancake.Semantics.ShMemBytesBridge
 import Flapjack.Pancake.Semantics.LoopProps
@@ -3546,7 +3548,6 @@ import Flapjack.PanSimpLocalised
 import Flapjack.Pancake.PanStructs
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
 import Flapjack.Pancake.PanGlobals
-import Flapjack.Pancake.PanGlobalsByteRanged
 import Flapjack.Pancake.Proofs.PanGlobals
 import Flapjack.Pancake.Proofs.PanGlobals.MemStoresAppend
 import Flapjack.Pancake.Proofs.PanGlobals.FpermCode
@@ -4037,7 +4038,6 @@ import Flapjack.Compiler.Backend.LabToTarget.Positions
 import Flapjack.Compiler.Backend.LabToTarget.Labels
 import Flapjack.Compiler.Backend.StackNames
 import Flapjack.Compiler.Backend.StackNames.NamesOk
-import Flapjack.Compiler.Backend.StackNames.Labels
 import Flapjack.FiniteMap.MapKeys
 import Flapjack.Compiler.Backend.StackNames.Proofs.RenameState
 import Flapjack.Compiler.Backend.StackNames.Proofs.CompCorrect

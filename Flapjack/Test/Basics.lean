@@ -5,7 +5,7 @@ public import Flapjack.Pancake.PanSimp
 public import Flapjack.Pancake.PanStructs
 public import Flapjack.Pancake.PanGlobals
 public import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
-public import Flapjack.Pancake.PanGlobalsByteRanged
+public import Flapjack.Pancake.PanGlobals
 public import Flapjack.Pancake.PanStructs.CompileExpCorrespondence
 public import Flapjack.Pancake.PanStructs.CompileDeclsExact
 public import Flapjack.Pancake.PanToCrep.Compile

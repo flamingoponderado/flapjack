@@ -14,19 +14,6 @@ open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProp
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm Flapjack.Misc
 open Flapjack.Compiler.Backend.Semantics.TargetProps
 instance interferenceCasesInst1 : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
--- Flapjack infrastructure: both Nat-key list lookups retain first-match
--- behavior, including duplicate keys; this is not a new HOL declaration.
-private theorem initializer_alookup_eq_lookup {α : Type} (key : Nat) (entries : List (Nat × α)) :
-    sptAListLookup key entries = entries.lookup key := by
-  induction entries with
-  | nil => rfl
-  | cons entry entries ih =>
-    rcases entry with ⟨k,value⟩
-    by_cases h : key = k
-    · simp [sptAListLookup,List.lookup,h]
-    · cases hb : (key == k) with
-      | false => simp [sptAListLookup,List.lookup,h,hb,ih]
-      | true => exact False.elim (h (by simpa only [beq_iff_eq] using hb))
 
 /-- Four genuine full initializer cases: ISR2 normal FFI, ISR3 cache clear,
 ISR8 external-name/search layout, and ISR15 shared-memory interference. All
@@ -148,7 +135,7 @@ theorem makeInit_stateRel_interferenceCases {width : Nat} [NeZero width] {S Q : 
       obtain ⟨info,hinfo,hread,hwrite⟩ := (hffi ms2 k index newBytes stAsm [] [] i ⟨hhi,hboundary,hd⟩).2 ⟨hlo,hr⟩
       have hi : info = (nb,HolAddr.addr ad offs,re,pc') := by
         have hlookup : sptAListLookup index mc.mmioInfo = some (nb,HolAddr.addr ad offs,re,pc') := by
-          simpa only [initializer_alookup_eq_lookup] using hm
+          simpa only [sptAListLookup_eq_lookup] using hm
         exact Option.some.inj (hinfo.symm.trans hlookup)
       subst info
       refine ⟨op,hname,?_⟩

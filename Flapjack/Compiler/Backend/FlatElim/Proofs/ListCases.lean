@@ -1,4 +1,8 @@
-import Flapjack.Misc.ListEl
+module
+
+public import Flapjack.Misc.ListEl
+
+@[expose] public section
 
 /-! List-index equation used by the flat elimination proof. -/
 namespace Flapjack.Compiler.Backend.FlatElim

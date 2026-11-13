@@ -180,11 +180,17 @@ still NOT exact HOL ports, because they quantify Lean's raw function carrier
 `FiniteMap α β := α → Option β` (`Flapjack/FiniteMap/Basic.lean:19`), which
 admits infinite-support inhabitants, whereas HOL `α |-> β` is finite-support.
 `DecidableEq` alone does not repair that: the statements still range over
-functions HOL cannot represent.  A faithful port must quantify
-`HolFiniteMapExact α β` (`Flapjack/Pancake/Semantics/CrepSem/HOLState.lean`),
-which now provides `update`/`updateList`/`erase`/`resVar` and their lookup
-lemmas; that port is tracked by bead `flapjack-pxn.18.3.7.1.3.1.1.3.1`.  The
-`_hol` declarations are kept as untagged infrastructure only. -/
+functions HOL cannot represent.  The faithful ports over
+`HolFiniteMapExact α β` (`Flapjack/Pancake/Semantics/CrepSem/HOLState.lean`)
+exist as the tagged `res_var_commutes_strong_exact`,
+`res_var_foldl_commutes_strong_exact`,
+`flookup_res_var_is_mem_zip_eq_exact` and
+`foldl_res_var_zip_lookup_var_exact` below.  The `_hol` declarations are the
+raw-carrier counterparts: `flookup_res_var_is_mem_zip_eq_exact` and
+`foldl_res_var_zip_lookup_var_exact` delegate to the matching `_hol` lemma at
+the raw lookup level, while the other two exact twins are proved directly over
+the carrier.  The `_hol` declarations stay untagged and keep their
+documented_mismatch rows because Proofs theorems require manifest coverage. -/
 
 
 theorem res_var_commutes_strong_hol {α : Type} {β : Type} [DecidableEq α]

@@ -5,7 +5,7 @@ public import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
 @[expose] public section
 
 /-! Flapjack-specific congruence of executable inline tables with their
-reviewed source-clause tables, and of the two config carriers' check fields.
+reviewed source-clause tables, and the native config's check-field projections.
 These are derived relations between Lean implementations, with no separately
 named HOL theorem, so they are untagged. Source comparison:
 `riscv_targetScript.sml:117-137` gives priority to Sub and explicitly splits
@@ -48,33 +48,36 @@ theorem riscvAst_shift_reg_helper (sh : Flapjack.Shift) (r1 r2 r : Nat) :
         [.Shift (riscvShv sh (BitVec.ofNat 5 r1, BitVec.ofNat 5 r2, BitVec.ofNat 5 r))] := by
   cases sh <;> rfl
 
-/-- Entire operator/word64 domain, including the strict lower bound for Sub. -/
-theorem riscvConfig_validImm_checks :
-    riscvConfigForChecks.validImm = riscvConfig.validImm := by
-  funext operator i
+/-- The native config's `valid_imm` clause table: `Sub` uses the strict lower
+bound and every other operator the non-strict one, both signed word
+comparisons, with the shared upper bound. -/
+theorem riscvConfig_validImm_checks (operator : Sum BinOp Cmp) (i : BitVec 64) :
+    riscvConfig.validImm operator i =
+      ((match operator with
+        | .inl .sub => (-2048 : BitVec 64).slt i
+        | _ => (-2048 : BitVec 64).sle i) && i.sle 2047) := by
   cases operator with
   | inl b => cases b <;> rfl
   | inr c => cases c <;> rfl
 
-/-- Every non-encode field of the diagnostic record agrees with the full
-native config. This does not equate the records or their distinct encoders. -/
+/-- Every check field of the native config, as pinned by the direct HOL oracle
+`scripts/hol-probes/riscv_config_probe.out`. `encode` is excluded: it is the
+real native encoder and has no HOL probe row. -/
 theorem riscvConfig_checks_projections :
-    riscvConfigForChecks.isa = riscvConfig.isa ∧
-    riscvConfigForChecks.regCount = riscvConfig.regCount ∧
-    riscvConfigForChecks.avoidRegs = riscvConfig.avoidRegs ∧
-    riscvConfigForChecks.fpRegCount = riscvConfig.fpRegCount ∧
-    riscvConfigForChecks.linkReg = riscvConfig.linkReg ∧
-    riscvConfigForChecks.twoRegArith = riscvConfig.twoRegArith ∧
-    riscvConfigForChecks.bigEndian = riscvConfig.bigEndian ∧
-    riscvConfigForChecks.validImm = riscvConfig.validImm ∧
-    riscvConfigForChecks.addrOffset = riscvConfig.addrOffset ∧
-    riscvConfigForChecks.hwOffset = riscvConfig.hwOffset ∧
-    riscvConfigForChecks.byteOffset = riscvConfig.byteOffset ∧
-    riscvConfigForChecks.jumpOffset = riscvConfig.jumpOffset ∧
-    riscvConfigForChecks.cjumpOffset = riscvConfig.cjumpOffset ∧
-    riscvConfigForChecks.locOffset = riscvConfig.locOffset ∧
-    riscvConfigForChecks.codeAlignment = riscvConfig.codeAlignment := by
-  exact ⟨rfl,rfl,rfl,rfl,rfl,rfl,rfl,riscvConfig_validImm_checks,
-    rfl,rfl,rfl,rfl,rfl,rfl,rfl⟩
+    riscvConfig.isa = .riscv ∧
+    riscvConfig.regCount = 32 ∧
+    riscvConfig.avoidRegs = [0, 2, 3, 4, 31] ∧
+    riscvConfig.fpRegCount = 0 ∧
+    riscvConfig.linkReg = some 1 ∧
+    riscvConfig.twoRegArith = false ∧
+    riscvConfig.bigEndian = false ∧
+    riscvConfig.addrOffset = (-2048, 2047) ∧
+    riscvConfig.hwOffset = (-2048, 2047) ∧
+    riscvConfig.byteOffset = (-2048, 2047) ∧
+    riscvConfig.jumpOffset = (-2147483648, 0x7FFFF7FF) ∧
+    riscvConfig.cjumpOffset = (-1048576 + 8, 1048575 + 4) ∧
+    riscvConfig.locOffset = (-2147483648, 0x7FFFF7FF) ∧
+    riscvConfig.codeAlignment = 2 := by
+  decide
 
 end Flapjack.Compiler.Encoders.RiscV.Target

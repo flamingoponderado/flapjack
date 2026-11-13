@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Pair equations used in the HOL primitive-application case conversion. -/
 namespace Flapjack.Compiler.Backend.FlatElim

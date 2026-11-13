@@ -118,114 +118,11 @@ def parityGuard : Bool :=
 #eval parityGuard
 #guard parityGuard
 
-/-- The production `CakeContext` induced by the exact probe context through the
-    checked `cakeContextOfExact` adapter. -/
-def productionProbeContext : CakeContext 8 :=
-  PanGlobalsContextExact.cakeContextOfExact exactProbeContext
-
-/-- The five `pan_globals_compile_exp_probe.out` rows replayed through the
-    executed String-backed `compileExpCake`, as a single Bool fixture. -/
-def productionGuard : Bool :=
-  (match compileExpCake productionProbeContext (.var .local "x") with
-   | .var .local name => name == "x"
-   | _ => false) &&
-  (match compileExpCake productionProbeContext (.var .global "g") with
-   | .load .one (.op .sub [.topAddr, .const address]) =>
-       address == (8 : BitVec 8)
-   | _ => false) &&
-  (match compileExpCake productionProbeContext (.var .global "missing") with
-   | .const value => value == (0 : BitVec 8)
-   | _ => false) &&
-  (match compileExpCake productionProbeContext (.topAddr : Exp (BitVec 8)) with
-   | .op .sub [.topAddr, .const address] => address == (16 : BitVec 8)
-   | _ => false) &&
-  (match compileExpCake productionProbeContext
-      (.op .add [.var .global "g", .topAddr]) with
-   | .op .add [.load .one (.op .sub [.topAddr, .const first]),
-               .op .sub [.topAddr, .const second]] =>
-       first == (8 : BitVec 8) && second == (16 : BitVec 8)
-   | _ => false)
-
-#eval productionGuard
-#guard productionGuard
-
-/-! ### Routing the executed `cakeContextOfPass` path through `compileExpExactHOL` -/
-
-/-- The probe's production `GlobalPassContext`: the association-list analogue of
-    `exactProbeContext` with `globals = «g» ↦ (One, 8w)`, `globals_size = 1w`,
-    `max_globals_size = 16w`, and the canonical word operations. -/
-def productionPassContext : GlobalPassContext (BitVec 8) where
-  globals := [("g", (Shape.one, 8))]
-  globalsSize := 1
-  maxGlobalsSize := 16
-  bytesInWord := 1
-  fromNat := fun value => BitVec.ofNat 8 value
-
-/-- The probe context's stored shapes are byte-ranged, as the routing equality
-    `compileExpCake_ofPass_eq` requires. -/
-theorem productionPassContext_shapes :
-    ∀ entry ∈ productionPassContext.globals, ShapeByteRanged entry.2.1 := by
-  intro entry hmem
-  simp only [productionPassContext, List.mem_singleton] at hmem
-  subst hmem
-  simp only [ShapeByteRanged]
-
-/-- The five `pan_globals_compile_exp_probe.out` rows replayed through the
-    executed `cakeContextOfPass` production context (the finite-support
-    association-list view), as a single Bool fixture. -/
-def routedProductionGuard : Bool :=
-  (match compileExpCake (cakeContextOfPass productionPassContext)
-      (.var .local "x") with
-   | .var .local name => name == "x"
-   | _ => false) &&
-  (match compileExpCake (cakeContextOfPass productionPassContext)
-      (.var .global "g") with
-   | .load .one (.op .sub [.topAddr, .const address]) => address == (8 : BitVec 8)
-   | _ => false) &&
-  (match compileExpCake (cakeContextOfPass productionPassContext)
-      (.var .global "missing") with
-   | .const value => value == (0 : BitVec 8)
-   | _ => false) &&
-  (match compileExpCake (cakeContextOfPass productionPassContext)
-      (.topAddr : Exp (BitVec 8)) with
-   | .op .sub [.topAddr, .const address] => address == (16 : BitVec 8)
-   | _ => false) &&
-  (match compileExpCake (cakeContextOfPass productionPassContext)
-      (.op .add [.var .global "g", .topAddr]) with
-   | .op .add [.load .one (.op .sub [.topAddr, .const first]),
-               .op .sub [.topAddr, .const second]] =>
-       first == (8 : BitVec 8) && second == (16 : BitVec 8)
-   | _ => false)
-
-#eval routedProductionGuard
-#guard routedProductionGuard
-
-/-! ### Routing the executed decl/prog compiler through `compileExpExactHOL`
-
-The `nestedSeqCake`-routed entry point executes the routed siblings
-`compileDecsCakeOfExact`/`compileProgCakeOfExact`, whose expression call sites
-textually invoke the reviewed `compileExpExactHOL` through `compileExpRouteCake`.
-The rows below replay the five direct HOL probe expressions through the routed
-program compiler and the routed declaration compiler, and the equality theorems
-record that the routed decl/prog compiler computes the production output. -/
-
-/-- Canonical-word hypothesis of the probe production context. -/
-theorem productionPassContext_canonical :
-    productionPassContext.IsCakeCanonical := ⟨rfl, fun _ => rfl⟩
-
 def runChecks : IO Bool := do
   let exactResult := parityGuard
-  let productionResult := productionGuard
-  let routedResult := routedProductionGuard
   IO.println (if exactResult then
     "PASS pan_globals compile_exp_def exact-carrier parity (5 HOL rows)"
     else "FAIL pan_globals compile_exp_def exact-carrier parity (5 HOL rows)")
-  IO.println (if productionResult then
-    "PASS pan_globals compileExpCake/cakeContextOfExact bridge parity (5 HOL rows)"
-    else "FAIL pan_globals compileExpCake/cakeContextOfExact bridge parity (5 HOL rows)")
-  IO.println (if routedResult then
-    "PASS pan_globals compileExpCake/ofPass routed parity (5 HOL rows)"
-    else "FAIL pan_globals compileExpCake/ofPass routed parity (5 HOL rows)")
-  pure (exactResult && productionResult && routedResult)
+  pure exactResult
 
 end Flapjack.Test.PanGlobalsCompileExpExactParity

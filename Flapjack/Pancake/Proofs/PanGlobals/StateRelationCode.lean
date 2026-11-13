@@ -25,6 +25,32 @@ theorem holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact
 
 open Flapjack.Pancake.PanLang
 
+/-- Flapjack-only inverse of `lookupCodeHOLFinite_eq_some`: a raw
+    `lookupCodeHOLExact` result carrying the canonical callee map rebuilds the
+    finite lookup. HOL's `lookup_code_def` rewrites the same equation. -/
+private theorem lookupCodeHOLFinite_of_exact {width : Nat} [NeZero width]
+    (code : MlS → Option (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
+    (fname : MlS) (values : List (ValueHOL width)) (body : ProgHOL width)
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape : ShapeHOL)
+    (h : lookupCodeHOLExact code fname values =
+      some (body, callee.lookup, returnShape)) :
+    PanSemStateFiniteExact.lookupCodeHOLFinite code fname values =
+      some (body, callee, returnShape) := by
+  unfold PanSemStateFiniteExact.lookupCodeHOLFinite
+  split
+  · rename_i hn
+    rw [h] at hn
+    contradiction
+  · rename_i b locals r hsome
+    have heq := Option.some.inj (hsome.symm.trans h)
+    rcases Prod.mk.inj heq with ⟨hb, htail⟩
+    rcases Prod.mk.inj htail with ⟨hl, hr⟩
+    subst b
+    subst locals
+    subst r
+    cases callee
+    rfl
+
 /-- HOL934: original successful code lookup is preserved under state_rel,
     with compiled body and identical canonical callee locals and return shape. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "state_rel_lookup_code"
@@ -59,20 +85,8 @@ theorem stateRelLookupCodeHOL {width : Nat} {σ : Type} [NeZero width]
       have htRaw : lookupCodeHOLExact target.code.lookup name arguments =
           some (compileProgExactHOL context program, callee.lookup, resultShape) := by
         simp [lookupCodeHOLExact, ht, hvalid, hl]
-      unfold PanSemStateFiniteExact.lookupCodeHOLFinite
-      split
-      · rename_i hn
-        rw [htRaw] at hn
-        contradiction
-      · rename_i b locals r hsome
-        have heq := Option.some.inj (hsome.symm.trans htRaw)
-        rcases Prod.mk.inj heq with ⟨hb, htail⟩
-        rcases Prod.mk.inj htail with ⟨hl, hr⟩
-        subst b
-        subst locals
-        subst r
-        cases callee
-        rfl
+      exact lookupCodeHOLFinite_of_exact target.code.lookup name arguments
+        (compileProgExactHOL context program) callee resultShape htRaw
     · simp at hraw
 
 end Flapjack.PanGlobalsStateRelationCode

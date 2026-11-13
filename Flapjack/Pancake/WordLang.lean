@@ -436,14 +436,16 @@ def everyName (P : Nat -> Bool) (t : WordLangCutsets) : Prop :=
 
 /-- HOL `wordLang$every_var` (`wordLangScript.sml:133-176`) over the faithful
 backend `prog`. Prop-valued because `everyName` is; the `num_set` sub-terms use
-the documented `everyNumSetKey` model. Not `@[hol]`-tagged for that reason. -/
-def everyVar {width : Nat} (P : Nat -> Bool) :
+the documented `everyNumSetKey` model. Not `@[hol]`-tagged for that reason.
+`[NeZero width]` lets the `inst`/`ite` cases call the reviewed `everyVarInstHOL`
+and `everyVarImmHOL` instead of their untagged legacy twins. -/
+def everyVar {width : Nat} [NeZero width] (P : Nat -> Bool) :
     WordLangProg (BitVec width) -> Prop
   | .skip => True
   | .move _ moves =>
       moves.all (fun pair => P pair.1) = true /\
         moves.all (fun pair => P pair.2) = true
-  | .inst instruction => everyVarInst P instruction = true
+  | .inst instruction => everyVarInstHOL P instruction = true
   | .assign name value => P name = true /\ everyVarExp P value = true
   | .get destination _ => P destination = true
   | .set _ value => everyVarExp P value = true
@@ -470,7 +472,7 @@ def everyVar {width : Nat} (P : Nat -> Bool) :
                 | some (v, prog, _, _) => P v = true /\ everyVar P prog))
   | .seq s1 s2 => everyVar P s1 /\ everyVar P s2
   | .ite _ r1 right e2 e3 =>
-      P r1 = true /\ everyVarImm P right = true /\ everyVar P e2 /\
+      P r1 = true /\ everyVarImmHOL P right = true /\ everyVar P e2 /\
         everyVar P e3
   | .alloc num numset => P num = true /\ everyName P numset
   | .storeConsts a b c d _ =>

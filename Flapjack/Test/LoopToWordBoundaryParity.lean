@@ -4,7 +4,7 @@ public import Flapjack.Parser
 public import Flapjack.Parser.ParseTopDecsByteRanged
 public import Flapjack.Pancake.PanToCrep.Compile
 public import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
-public import Flapjack.Pancake.PanGlobalsByteRanged
+public import Flapjack.Pancake.PanGlobals
 public import Flapjack.Pancake.PanStructs.CompileExpCorrespondence
 public import Flapjack.Pancake.PanStructs.CompileDeclsExact
 public import Flapjack.CompileFunctionDistinct
@@ -29,7 +29,7 @@ public meta import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
 public meta import Flapjack.Pancake.LoopToWord
 public meta import Flapjack.Pancake.LoopToWord.CompFuncExact
 public meta import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
-public meta import Flapjack.Pancake.PanGlobalsByteRanged
+public meta import Flapjack.Pancake.PanGlobals
 public meta import Flapjack.Pancake.PanStructs.CompileDeclsExact
 public meta import Flapjack.Pancake.PanStructs.CompileExpCorrespondence
 public meta import Flapjack.Pancake.PanToCrep.Compile

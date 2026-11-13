@@ -1,4 +1,11 @@
-import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
+module
+
+public import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
+import all Init.Data.List.Sort.Basic
+import all Init.Data.Array.Basic
+
+@[expose] public section
+
 
 namespace Flapjack.Test.RegAllocProductionColourLookup
 open RiscV RiscV.CakeRegAlloc

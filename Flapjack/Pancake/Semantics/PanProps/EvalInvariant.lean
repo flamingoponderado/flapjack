@@ -1890,33 +1890,19 @@ theorem evaluateDeclsSwapLocalsHOLFinite {width : Nat} {σ : Type}
   intro state hstate program result locals hEval
   letI : DecidablePred state.toPanSemFinite.memaddrs := by
     simpa [PanPropsEvalStateFiniteExact.toPanSemFinite] using hstate
-  have hcanonical :
-      PanSemStateFiniteExact.evaluateDeclsHOLFinite state.toPanSemFinite program =
-        some result.toPanSemFinite := by
-    have hinj : Function.Injective
-        (PanPropsEvalStateFiniteExact.ofPanSemFinite (width := width) (σ := σ)) := by
-      intro left right hEq
-      have hEq' := congrArg PanPropsEvalStateFiniteExact.toPanSemFinite hEq
-      simpa using hEq'
-    have hmap : Option.map
-        (PanPropsEvalStateFiniteExact.ofPanSemFinite (width := width) (σ := σ))
-        (PanSemStateFiniteExact.evaluateDeclsHOLFinite state.toPanSemFinite program) =
-        some result := by
-      simpa [evaluateDeclsPanPropsCanonical] using hEval
-    have hmap' : Option.map
-        (PanPropsEvalStateFiniteExact.ofPanSemFinite (width := width) (σ := σ))
-        (PanSemStateFiniteExact.evaluateDeclsHOLFinite state.toPanSemFinite program) =
-        Option.map (PanPropsEvalStateFiniteExact.ofPanSemFinite (width := width) (σ := σ))
-          (some result.toPanSemFinite) := by
-      rw [hmap]
-      simp
-    have hcanonical' := Option.map_injective hinj hmap'
-    simpa using hcanonical'
-  have hcanonicalChanged := evaluateDeclsHOLFiniteSwapLocals state.toPanSemFinite
+  have hcanonical : PanSemStateFiniteExact.evaluateDeclsHOLFinite state.toPanSemFinite program =
+      some result.toPanSemFinite := by
+    rw [evaluateDeclsPanPropsCanonical] at hEval
+    obtain ⟨a, ha, hfa⟩ := Option.map_eq_some_iff.mp hEval
+    have h1 : a = PanPropsEvalStateFiniteExact.toPanSemFinite result := by
+      rw [← PanPropsEvalStateFiniteExact.toPanSemFinite_ofPanSemFinite (width := width) (σ := σ) a,
+        hfa]
+    rw [ha, h1]
+  have hchanged := evaluateDeclsHOLFiniteSwapLocals state.toPanSemFinite
     locals program result.toPanSemFinite hcanonical
   have hmap := congrArg
     (Option.map (PanPropsEvalStateFiniteExact.ofPanSemFinite (width := width) (σ := σ)))
-    hcanonicalChanged
+    hchanged
   change Option.map
       (PanPropsEvalStateFiniteExact.ofPanSemFinite (width := width) (σ := σ))
       (PanSemStateFiniteExact.evaluateDeclsHOLFinite

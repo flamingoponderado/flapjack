@@ -85,14 +85,12 @@ theorem localsRelHOLGetVars {width : Nat} [NeZero width] {C F : Type}
   intro argvars
   induction argvars with
   | nil =>
-      intro argvals hpremises
-      rcases hpremises with ⟨_, hsource⟩
+      rintro argvals ⟨_, hsource⟩
       simp [LoopSemStateFiniteExact.getVars] at hsource
       subst argvals
       simp [WordSemStateFiniteExact.getVars]
   | cons name names ih =>
-      intro argvals hpremises
-      rcases hpremises with ⟨hrel, hsource⟩
+      rintro argvals ⟨hrel, hsource⟩
       cases hfirst : sptLookup name source.locals with
       | none =>
           simp [LoopSemStateFiniteExact.getVars, hfirst] at hsource
@@ -107,16 +105,8 @@ theorem localsRelHOLGetVars {width : Nat} [NeZero width] {C F : Type}
                 ⟨hrel, hfirst⟩
               have hrest := ih values ⟨hrel, htail⟩
               constructor
-              · change (match WordSemStateFiniteExact.getVar
-                    (findVarHOL context name) target with
-                  | none => none
-                  | some head =>
-                    match WordSemStateFiniteExact.getVars
-                        (names.map (findVarHOL context)) target with
-                    | none => none
-                    | some tail => some (head :: tail)) =
-                  some (value :: values)
-                rw [hhead, hrest.1]
+              · simp only [List.map_cons, WordSemStateFiniteExact.getVars,
+                  hhead, hrest.1]
               · simp [hrest.2]
 
 end Flapjack.LoopToWord

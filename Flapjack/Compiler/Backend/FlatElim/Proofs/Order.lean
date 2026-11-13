@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Natural-order fact used by the flat elimination application proof. -/
 namespace Flapjack.Compiler.Backend.FlatElim

@@ -1,0 +1,69 @@
+length_with_shape_eq_shape_typed=∀(sh :shape list) (ns :α list).
+  LENGTH ns = size_of_shape (Comb sh) ⇒ LENGTH sh = LENGTH (with_shape sh ns)
+length_with_shape_eq_shape_hypotheses=0
+all_distinct_with_shape_typed=∀(sh :shape list) (ns :α list) (n :num).
+  ALL_DISTINCT ns ∧ n < LENGTH sh ∧ LENGTH ns = size_of_shape (Comb sh) ⇒
+  ALL_DISTINCT (with_shape sh ns)❲n❳
+all_distinct_with_shape_hypotheses=0
+el_mem_with_shape_typed=∀(sh :shape list) (ns :α list) (n :num) (x :α).
+  n < LENGTH (with_shape sh ns) ∧ LENGTH ns = size_of_shape (Comb sh) ∧
+  MEM x (with_shape sh ns)❲n❳ ⇒
+  MEM x ns
+el_mem_with_shape_hypotheses=0
+mem_with_shape_length_typed=∀(sh :shape list) (ns :α list) (n :num).
+  LENGTH ns = size_of_shape (Comb sh) ∧ n < LENGTH sh ⇒
+  MEM (with_shape sh ns)❲n❳ (with_shape sh ns)
+mem_with_shape_length_hypotheses=0
+with_shape_el_take_drop_eq_typed=∀(sh :shape list) (ns :α list) (n :num).
+  LENGTH ns = size_of_shape (Comb sh) ∧ n < LENGTH sh ⇒
+  (with_shape sh ns)❲n❳ =
+  TAKE (size_of_shape sh❲n❳) (DROP (size_of_shape (Comb (TAKE n sh))) ns)
+with_shape_el_take_drop_eq_hypotheses=0
+all_distinct_with_shape_distinct_typed=∀(sh :shape list) (ns :α list) (x :α list) (y :α list).
+  ALL_DISTINCT ns ∧ LENGTH ns = size_of_shape (Comb sh) ∧
+  MEM x (with_shape sh ns) ∧ MEM y (with_shape sh ns) ∧ x ≠ y ∧
+  x ≠ ([] :α list) ∧ y ≠ ([] :α list) ⇒
+  DISJOINT (set x) (set y)
+all_distinct_with_shape_distinct_hypotheses=0
+all_distinct_disjoint_with_shape_typed=∀(sh :shape list) (ns :α list) (n :num) (n' :num).
+  ALL_DISTINCT ns ∧ n < LENGTH sh ∧ n' < LENGTH sh ∧ n ≠ n' ∧
+  LENGTH ns = size_of_shape (Comb sh) ⇒
+  DISJOINT (set (with_shape sh ns)❲n❳) (set (with_shape sh ns)❲n'❳)
+all_distinct_disjoint_with_shape_hypotheses=0
+all_distinct_mem_zip_disjoint_with_shape_typed=LENGTH (l :α list) = LENGTH (sh :shape list) ∧
+LENGTH sh = LENGTH (with_shape sh (ns :β list)) ∧ ALL_DISTINCT ns ∧
+LENGTH ns = size_of_shape (Comb sh) ∧
+MEM ((x :α),(a :shape),(xs :β list)) (ZIP (l,ZIP (sh,with_shape sh ns))) ∧
+MEM ((y :α),(b :shape),(ys :β list)) (ZIP (l,ZIP (sh,with_shape sh ns))) ∧
+x ≠ y ⇒
+DISJOINT (set xs) (set ys)
+all_distinct_mem_zip_disjoint_with_shape_hypotheses=0
+el_el_with_shape_typed=LENGTH (xs :α list) = size_of_shape (Comb (shs :shape list)) ∧
+(n :num) < LENGTH shs ∧ (n' :num) < size_of_shape shs❲n❳ ∧
+EVERY is_wf_shape_nil shs ⇒
+(with_shape shs xs)❲n❳❲n'❳ = xs❲n' + size_of_shape (Comb (TAKE n shs))❳
+el_el_with_shape_hypotheses=0
+list_rel_flatten_with_shape_length_typed=∀(sh :shape list) (ns :α list) (args :β v list) (v :β v) (n :num).
+  LENGTH ns = LENGTH (FLAT (MAP (flatten :β v -> β word_lab list) args)) ∧
+  size_of_shape (Comb sh) =
+  LENGTH (FLAT (MAP (flatten :β v -> β word_lab list) args)) ∧ args❲n❳ = v ∧
+  n < LENGTH args ∧ LENGTH args = LENGTH sh ∧
+  LIST_REL (λ(sh :shape) (arg :β v). sh = shape_of arg) sh args ∧
+  EVERY is_wf_shape_v_nil args ⇒
+  LENGTH (with_shape sh ns)❲n❳ = LENGTH (flatten v)
+list_rel_flatten_with_shape_length_hypotheses=0
+list_rel_flatten_with_shape_flookup_typed=∀(sh :shape list) (ns :α list) (args :β v list) (v :β v) (n :num) (n' :num).
+  ALL_DISTINCT ns ∧
+  LENGTH ns = LENGTH (FLAT (MAP (flatten :β v -> β word_lab list) args)) ∧
+  size_of_shape (Comb sh) =
+  LENGTH (FLAT (MAP (flatten :β v -> β word_lab list) args)) ∧ args❲n❳ = v ∧
+  n < LENGTH args ∧ LENGTH args = LENGTH sh ∧
+  LIST_REL (λ(sh :shape) (arg :β v). sh = shape_of arg) sh args ∧
+  EVERY is_wf_shape_v_nil args ∧
+  LENGTH (with_shape sh ns)❲n❳ = LENGTH (flatten v) ∧
+  n' < LENGTH (with_shape sh ns)❲n❳ ⇒
+  FLOOKUP
+    ((FEMPTY :α |-> β word_lab) |++
+     ZIP (ns,FLAT (MAP (flatten :β v -> β word_lab list) args)))
+    (with_shape sh ns)❲n❳❲n'❳ = SOME (flatten v)❲n'❳
+list_rel_flatten_with_shape_flookup_hypotheses=0

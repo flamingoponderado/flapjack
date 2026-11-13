@@ -1,9 +1,11 @@
 module
 
 public import Flapjack.Pancake.Semantics.PanProps
+public import Flapjack.Pancake.Semantics.PanProps.ResVar
 
 -- Checks below run compiled code from these modules.
 public meta import Flapjack.Pancake.Semantics.PanProps
+public meta import Flapjack.Pancake.Semantics.PanProps.ResVar
 @[expose] public section
 
 /-!
@@ -30,9 +32,9 @@ open Flapjack.Pancake.PanLang
 abbrev ml (s : String) : Flapjack.Pancake.PanLang.MlS :=
   Flapjack.Basis.Pure.MlString.ofString s
 
-/-- Concrete exact locals: `x = 3`. -/
-def locals : Flapjack.Pancake.PanLang.MlS → Option (ValueHOL 64) :=
-  fun name => if name = ml "x" then some (.val (.word 3)) else none
+/-- Concrete exact locals on the canonical finite-map carrier: `x = 3`. -/
+def localsMap : HolFiniteMapExact Flapjack.Pancake.PanLang.MlS (ValueHOL 64) :=
+  HolFiniteMapExact.updateEq HolFiniteMapExact.empty (ml "x", .val (.word 3))
 
 /-- A `ValueHOL` result projected to a natural, for guard comparison. -/
 def wordOf (result : Option (ValueHOL 64)) : Option Nat :=
@@ -52,23 +54,24 @@ def shapeVal : Bool :=
 
 -- HOL `rv_hit = SOME (ValWord 7w)`.
 def resVarHit : Bool :=
-  wordOf (resVarHOLExact (width := 64) locals (ml "x", some (.val (.word 7))) (ml "x"))
-    == some 7
+  wordOf ((HolFiniteMapExact.resVarEq localsMap (ml "x", some (.val (.word 7)))).lookup
+      (ml "x")) == some 7
 
 -- HOL `rv_miss = SOME (ValWord 3w)`.
 def resVarMiss : Bool :=
-  wordOf (resVarHOLExact (width := 64) locals (ml "y", some (.val (.word 7))) (ml "x"))
-    == some 3
+  wordOf ((HolFiniteMapExact.resVarEq localsMap (ml "y", some (.val (.word 7)))).lookup
+      (ml "x")) == some 3
 
 -- HOL `rv_diff = T`.
 def resVarDiff : Bool :=
-  wordOf (resVarHOLExact (width := 64) locals (ml "y", none) (ml "x"))
-    == wordOf (locals (ml "x"))
+  wordOf ((HolFiniteMapExact.resVarEq localsMap (ml "y", none)).lookup (ml "x")) ==
+    wordOf (localsMap.lookup (ml "x"))
 
 -- HOL `rv_some = T`.
 def resVarSome : Bool :=
-  wordOf (resVarHOLExact (width := 64) locals (ml "x", locals (ml "x")) (ml "x"))
-    == wordOf (locals (ml "x"))
+  wordOf ((HolFiniteMapExact.resVarEq localsMap
+      (ml "x", localsMap.lookup (ml "x"))).lookup (ml "x")) ==
+    wordOf (localsMap.lookup (ml "x"))
 
 /-- Combined parity check: all five direct HOL rows above. -/
 def shapeResVarGuard : Bool :=
@@ -85,22 +88,23 @@ theorem shapeVal_fixture :
 /-- Fixture: HOL `FLOOKUP_pan_res_var_thm`. -/
 theorem resVar_flookup_fixture (m n : Flapjack.Pancake.PanLang.MlS)
     (v : Option (ValueHOL 64)) :
-    resVarHOLExact (width := 64) locals (m, v) n = if n = m then v else locals n :=
-  resVarHOLExact_flookup locals m n v
+    (HolFiniteMapExact.resVarEq localsMap (m, v)).lookup n =
+      if n = m then v else localsMap.lookup n :=
+  flookupPanResVarThmHOL localsMap m v n
 
 /-- Fixture: HOL `flookup_res_var_diff_eq_org`. -/
 theorem resVar_flookup_of_ne_fixture (n m : Flapjack.Pancake.PanLang.MlS)
     (v : Option (ValueHOL 64)) (h : n ≠ m) :
-    resVarHOLExact (width := 64) locals (n, v) m = locals m :=
-  resVarHOLExact_flookup_of_ne locals n m v h
+    (HolFiniteMapExact.resVarEq localsMap (n, v)).lookup m = localsMap.lookup m :=
+  flookupResVarDiffEqOrgHOL localsMap n m v h
 
 /-- Fixture: HOL `flookup_res_var_some_eq_lookup`. -/
 theorem resVar_flookup_some_eq_lookup_fixture
-    (lc lc' : Flapjack.Pancake.PanLang.MlS → Option (ValueHOL 64))
+    (lc lc' : HolFiniteMapExact Flapjack.Pancake.PanLang.MlS (ValueHOL 64))
     (v : Flapjack.Pancake.PanLang.MlS) (value : ValueHOL 64)
-    (h : resVarHOLExact (width := 64) lc (v, lc' v) v = some value) :
-    lc' v = some value :=
-  resVarHOLExact_flookup_some_eq_lookup lc lc' v value h
+    (h : (HolFiniteMapExact.resVarEq lc (v, lc'.lookup v)).lookup v = some value) :
+    lc'.lookup v = some value :=
+  flookupResVarSomeEqLookupHOL lc lc' v value h
 
 -- HOL `ssc_one = 1`.
 def sizeWithCtxtOne : Nat :=

@@ -82,24 +82,17 @@ theorem namespaceRel_union {α : Type} (x y t s : Spt α)
     rw [sptMem_sptUnion] at member ⊢
     by_cases worker : n % Flapjack.bvlToBviNamespaces = 3
     · simp only [worker, ↓reduceIte, not_or]
-      exact ⟨fun source => leftSource n ⟨source, above⟩ worker,
-        fun source => rightSource n ⟨source, above⟩ worker⟩
+      exact ⟨fun h => leftSource n ⟨h, above⟩ worker, fun h => rightSource n ⟨h, above⟩ worker⟩
     · simp only [worker, ↓reduceIte]
-      rcases member with member | member
-      · left
-        simpa [worker] using leftTarget n ⟨member, above⟩
-      · right
-        simpa [worker] using rightTarget n ⟨member, above⟩
+      exact member.elim (fun h => Or.inl (by simpa [worker] using leftTarget n ⟨h, above⟩))
+        (fun h => Or.inr (by simpa [worker] using rightTarget n ⟨h, above⟩))
   · intro n ⟨member, above⟩
-    rw [sptMem_sptUnion] at member
-    rcases member with member | member
-    · exact leftSource n ⟨member, above⟩
-    · exact rightSource n ⟨member, above⟩
+    simp only [sptMem_sptUnion] at member
+    exact member.elim (fun m => leftSource n ⟨m, above⟩) (fun m => rightSource n ⟨m, above⟩)
   · intro n ⟨member, below⟩
-    rw [sptMem_sptUnion] at member ⊢
-    rcases member with member | member
-    · exact Or.inl (leftStub n ⟨member, below⟩)
-    · exact Or.inr (rightStub n ⟨member, below⟩)
+    simp only [sptMem_sptUnion] at member ⊢
+    exact member.elim (fun m => Or.inl (leftStub n ⟨m, below⟩))
+      (fun m => Or.inr (rightStub n ⟨m, below⟩))
 
 /-- The decision not to rewrite a wrapper is independent of its worker
 address. -/

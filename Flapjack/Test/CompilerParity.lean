@@ -804,14 +804,10 @@ import Flapjack.Test.PanGlobalsResortDeclsParity
 import Flapjack.Test.PanGlobalsFpermNameParity
 import Flapjack.Test.PanGlobalsFpermParity
 import Flapjack.Test.PanGlobalsFpermDecsParity
-import Flapjack.Test.PanGlobalsNewMainNameParity
 import Flapjack.Test.PanGlobalsNewMainNameExactParity
 import Flapjack.Test.PanGlobalsTransformsExactParity
-import Flapjack.Test.PanGlobalsNameByteRangedParity
-import Flapjack.Test.PanGlobalsDecShapesParity
+import Flapjack.Test.PanGlobalsRetiredCoverageParity
 import Flapjack.Test.PanGlobalsExpIdsParity
-import Flapjack.Test.PanGlobalsCompileTopForStartParity
-import Flapjack.Test.PanGlobalsCompileTopShapeWfParity
 import Flapjack.Test.PanGlobalsExceptionsAppendParity
 import Flapjack.Test.PanGlobalsExceptionsFilterIsFunctionParity
 import Flapjack.Test.PanGlobalsDeclPredicateParity
@@ -819,9 +815,7 @@ import Flapjack.Test.PanGlobalsFunctionsFilterNilParity
 import Flapjack.Test.PanGlobalsMemFunctionsHOLParity
 import Flapjack.Test.PanGlobalsResortDeclsEvaluateParity
 import Flapjack.Test.PanGlobalsFpermClusterParity
-import Flapjack.Test.PanGlobalsDecShapesClusterParity
 import Flapjack.Test.PanGlobalsFunctionPreservationParity
-import Flapjack.Test.PanGlobalsNameCorrectnessParity
 import Flapjack.Test.PanGlobalsFreshNameFilterParity
 import Flapjack.Test.PanGlobalsCompileDecsStructuralParity
 import Flapjack.Test.PanGlobalsCompileDecsThreadingParity
@@ -1398,15 +1392,13 @@ def main : IO Unit := do
     Flapjack.Test.PanGlobalsResortDeclsParity.runChecks,
     Flapjack.Test.PanGlobalsNewMainNameExactParity.runChecks,
     Flapjack.Test.PanGlobalsTransformsExactParity.runChecks,
+    Flapjack.Test.PanGlobalsRetiredCoverageParity.runChecks,
     Flapjack.Test.PanGlobalsCompileExpExactParity.runChecks,
     Flapjack.Test.PanGlobalsCompileDecsExactParity.runChecks,
     Flapjack.Test.PanGlobalsCompileTopExactParity.runChecks,
     Flapjack.Test.PanGlobalsCompileCorrectShMemParity.runChecks,
-    Flapjack.Test.PanGlobalsDecShapesParity.runChecks,
     Flapjack.Test.PanGlobalsFpermClusterParity.runChecks,
-    Flapjack.Test.PanGlobalsDecShapesClusterParity.runChecks,
     Flapjack.Test.PanGlobalsFunctionPreservationParity.runChecks,
-    Flapjack.Test.PanGlobalsNameCorrectnessParity.runChecks,
     Flapjack.Test.PanGlobalsFreshNameFilterParity.runChecks,
     Flapjack.Test.PanGlobalsCompileDecsStructuralParity.runChecks,
     Flapjack.Test.PanGlobalsCompileDecsThreadingParity.runChecks,

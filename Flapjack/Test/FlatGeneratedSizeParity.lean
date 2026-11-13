@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.Semantics.FlatSem.GeneratedSize
+module
+
+public import Flapjack.Compiler.Backend.Semantics.FlatSem.GeneratedSize
+
+@[expose] public section
 
 /-! Ground results from the original HOL evaluations recorded in
 `scripts/hol-probes/flat_elim_value_globals_probe.out`. -/

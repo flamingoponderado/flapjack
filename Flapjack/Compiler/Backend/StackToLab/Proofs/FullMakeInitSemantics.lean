@@ -590,6 +590,6 @@ theorem fullMakeInitSemantics' {width : Nat} [NeZero width] {C F : Type}
       (StackSemEvaluate.semantics BvlToBvi.initGlobalsLocation s ≠ .fail →
         Flapjack.Compiler.Backend.LabSem.semantics t =
           StackSemEvaluate.semantics BvlToBvi.initGlobalsLocation s) :=
-  fun ⟨hfm, hA⟩ => assemble hfm hA
+  fullMakeInitSemantics
 
 end Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInitSemantics
