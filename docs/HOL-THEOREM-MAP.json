@@ -178,13 +178,13 @@
   "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "FINITE_SUB_BAG",
   "lean_path": "Flapjack/Misc/Bag/SubBag.lean", "lean_name": "finiteSubBag",
   "statement_status": "reviewed_exact",
-  "reviewer": "Independent typed HOL review confirms arbitrary bag carriers and the original implication from finiteness of the larger bag and sub-bag inclusion. The proof derives the smaller bag finiteness by insertion induction."
+  "reviewer": "Independent typed HOL review confirms arbitrary bag carriers and the original implication from finiteness of the larger bag and sub-bag inclusion. The proof derives the smaller bag finiteness by insertion induction. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `FINITE_SUB_BAG_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
  },
  {
   "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "SUB_BAG_CARD",
   "lean_path": "Flapjack/Misc/Bag/CardOrder.lean", "lean_name": "subBag_card",
   "statement_status": "reviewed_exact",
-  "reviewer": "Independent typed HOL review confirms the full original premises, requiring finiteness only of the larger bag, and cardinality inequality. Smaller-bag finiteness is derived from FINITE_SUB_BAG."
+  "reviewer": "Independent typed HOL review confirms the full original premises, requiring finiteness only of the larger bag, and cardinality inequality. Smaller-bag finiteness is derived from FINITE_SUB_BAG. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `SUB_BAG_CARD_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "BAG_IMAGE_SUB_BAG",
@@ -196,37 +196,37 @@
   "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_IMAGE_DEF",
   "lean_path": "Flapjack/Misc/Bag/Image.lean", "lean_name": "bagImage",
   "statement_status": "reviewed_exact",
-  "reviewer": "Independent typed HOL comparison confirms independent input and output carriers, the actual filtered fiber and its cardinality, and the original value one for an infinite fiber. No finiteness premise is imposed on the input bag."
+  "reviewer": "Independent typed HOL comparison confirms independent input and output carriers, the actual filtered fiber and its cardinality, and the original value one for an infinite fiber. No finiteness premise is imposed on the input bag. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `BAG_IMAGE_DEF_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
  },
  {
   "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_CARD",
   "lean_path": "Flapjack/Misc/Bag/Card.lean", "lean_name": "holBagCard",
   "statement_status": "reviewed_exact",
-  "reviewer": "Independent comparison with BAG_CARD_typed and HOL new_specification confirms the total function and its finite-bag relation specification over arbitrary bag carriers. The global choice imposes no constraint on cardinality for infinite bags."
+  "reviewer": "Independent comparison with BAG_CARD_typed and HOL new_specification confirms the total function and its finite-bag relation specification over arbitrary bag carriers. The global choice imposes no constraint on cardinality for infinite bags. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `BAG_CARD_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
  },
  {
   "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_CARD",
   "lean_path": "Flapjack/Misc/Bag/Card.lean", "lean_name": "holBagCard_spec",
   "statement_status": "reviewed_exact",
-  "reviewer": "Independent comparison with BAG_CARD_typed and HOL new_specification confirms the total function and its finite-bag relation specification over arbitrary bag carriers. The global choice imposes no constraint on cardinality for infinite bags."
+  "reviewer": "Independent comparison with BAG_CARD_typed and HOL new_specification confirms the total function and its finite-bag relation specification over arbitrary bag carriers. The global choice imposes no constraint on cardinality for infinite bags. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `BAG_CARD_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
  },
  {
   "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_FILTER_DEF",
   "lean_path": "Flapjack/Misc/Bag/Filter.lean", "lean_name": "bagFilter",
   "statement_status": "reviewed_exact",
-  "reviewer": "Independent typed HOL comparison confirms arbitrary element type, unrestricted bag and predicate, and original pointwise multiplicities including infinite bags."
+  "reviewer": "Independent typed HOL comparison confirms arbitrary element type, unrestricted bag and predicate, and original pointwise multiplicities including infinite bags. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `BAG_FILTER_DEF_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
  },
  {
   "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "FINITE_BAG_FILTER",
   "lean_path": "Flapjack/Misc/Bag/Filter.lean", "lean_name": "finiteBag_filter",
   "statement_status": "reviewed_exact",
-  "reviewer": "Independent typed HOL comparison confirms the original finite-bag premise and full conclusion for arbitrary predicates and bags. The proof follows finite-bag induction."
+  "reviewer": "Independent typed HOL comparison confirms the original finite-bag premise and full conclusion for arbitrary predicates and bags. The proof follows finite-bag induction. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `FINITE_BAG_FILTER_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
  },
  {
   "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_CARD_RELn",
   "lean_path": "Flapjack/Misc/Bag/Card.lean", "lean_name": "bagCardRel",
   "statement_status": "reviewed_exact",
-  "reviewer": "Independent typed HOL comparison confirms the entire impredicative relation, including all quantifiers, base and insertion closure, without finiteness or cardinality hypotheses."
+  "reviewer": "Independent typed HOL comparison confirms the entire impredicative relation, including all quantifiers, base and insertion closure, without finiteness or cardinality hypotheses. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `BAG_CARD_RELn_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "BAG_UNION_MONO",
@@ -1612,7 +1612,7 @@
   "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "SET_OF_BAG",
   "lean_path": "Flapjack/Misc/Bag.lean", "lean_name": "setOfBag",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared set_of_bag_typed and independent review: arbitrary count-valued bag and predicate result are BAG_IN pointwise, as in HOL."
+  "reviewer": "Compared set_of_bag_typed and independent review: arbitrary count-valued bag and predicate result are BAG_IN pointwise, as in HOL. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `SET_OF_BAG_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "syntax_oracle_ok_def",
@@ -132960,7 +132960,7 @@
   "lean_path": "Flapjack/Misc/Bag.lean",
   "lean_name": "bagAllDistinct_subBag",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the source and typed bag_all_distinct_sub_bag capture: arbitrary same-carrier bags satisfy the original conjunction of sub-bag and distinct-super-bag premises, yielding distinctness of the sub-bag."
+  "reviewer": "Compared the source and typed bag_all_distinct_sub_bag capture: arbitrary same-carrier bags satisfy the original conjunction of sub-bag and distinct-super-bag premises, yielding distinctness of the sub-bag. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `BAG_ALL_DISTINCT_SUB_BAG_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",
@@ -132968,7 +132968,7 @@
   "lean_path": "Flapjack/Misc/Bag.lean",
   "lean_name": "bagAllDistinct",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the source and typed bag_all_distinct capture: for an arbitrary element type, every bag multiplicity is at most one."
+  "reviewer": "Compared the source and typed bag_all_distinct capture: for an arbitrary element type, every bag multiplicity is at most one. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `BAG_ALL_DISTINCT_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",
@@ -132976,7 +132976,7 @@
   "lean_path": "Flapjack/Misc/Bag.lean",
   "lean_name": "bagOfSet",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared bag_of_set_typed: an arbitrary predicate determines the characteristic multiplicity at each element."
+  "reviewer": "Compared bag_of_set_typed: an arbitrary predicate determines the characteristic multiplicity at each element. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `BAG_OF_SET_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",
@@ -132984,7 +132984,7 @@
   "lean_path": "Flapjack/Misc/Bag.lean",
   "lean_name": "bagInn",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the source and typed bag_inn capture: an element has multiplicity at least n exactly when n is at most the bag's natural-number count, with an arbitrary element type."
+  "reviewer": "Compared the source and typed bag_inn capture: an element has multiplicity at least n exactly when n is at most the bag's natural-number count, with an arbitrary element type. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `BAG_INN_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",
@@ -132992,7 +132992,7 @@
   "lean_path": "Flapjack/Misc/Bag.lean",
   "lean_name": "subBag",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the source and typed sub_bag capture: for arbitrary element and natural multiplicity, membership with that multiplicity in the first bag implies membership in the second."
+  "reviewer": "Compared the source and typed sub_bag capture: for arbitrary element and natural multiplicity, membership with that multiplicity in the first bag implies membership in the second. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `SUB_BAG_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",
@@ -133000,7 +133000,7 @@
   "lean_path": "Flapjack/Misc/Bag.lean",
   "lean_name": "bagIn",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the source and typed bag_in capture: membership is BAG_INN at multiplicity one for the same arbitrary element and bag."
+  "reviewer": "Compared the source and typed bag_in capture: membership is BAG_INN at multiplicity one for the same arbitrary element and bag. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `BAG_IN_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -133016,7 +133016,7 @@
   "lean_path": "Flapjack/Misc/Bag.lean",
   "lean_name": "emptyBag",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the source and typed bag_empty_def capture: HOL bags are polymorphic functions to num and K 0 is the constant-zero function."
+  "reviewer": "Compared the source and typed bag_empty_def capture: HOL bags are polymorphic functions to num and K 0 is the constant-zero function. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `EMPTY_BAG_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",
@@ -133024,7 +133024,7 @@
   "lean_path": "Flapjack/Misc/Bag.lean",
   "lean_name": "bagUnion",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the source and typed bag_union_def capture: both operands have the same arbitrary element type and union adds natural multiplicities pointwise."
+  "reviewer": "Compared the source and typed bag_union_def capture: both operands have the same arbitrary element type and union adds natural multiplicities pointwise. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `BAG_UNION_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",
@@ -133032,7 +133032,7 @@
   "lean_path": "Flapjack/Misc/Bag.lean",
   "lean_name": "bagInsert",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared bag_insert_typed: insertion increments the chosen element and preserves every other multiplicity, for an arbitrary element type."
+  "reviewer": "Compared bag_insert_typed: insertion increments the chosen element and preserves every other multiplicity, for an arbitrary element type. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `BAG_INSERT_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",
@@ -133040,7 +133040,7 @@
   "lean_path": "Flapjack/Misc/Bag.lean",
   "lean_name": "finiteBag",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared finite_bag_typed: the original induction principle quantifies over all predicates on bags and requires empty and insertion closure."
+  "reviewer": "Compared finite_bag_typed: the original induction principle quantifies over all predicates on bags and requires empty and insertion closure. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `FINITE_BAG_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",
@@ -133048,7 +133048,7 @@
   "lean_path": "Flapjack/Misc/Bag.lean",
   "lean_name": "finiteEmptyBag",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared finite_empty_bag_typed: the empty bag is finite for arbitrary element type."
+  "reviewer": "Compared finite_empty_bag_typed: the empty bag is finite for arbitrary element type. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `FINITE_EMPTY_BAG_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",
@@ -133057,7 +133057,7 @@
   "lean_path": "Flapjack/Misc/Bag.lean",
   "lean_name": "finiteBagInsert",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared finite_bag_insert_typed: for any finite bag, insertion of every element yields a finite bag."
+  "reviewer": "Compared finite_bag_insert_typed: for any finite bag, insertion of every element yields a finite bag. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `FINITE_BAG_INSERT_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",
@@ -133065,7 +133065,7 @@
   "lean_path": "Flapjack/Misc/Bag.lean",
   "lean_name": "finiteBagUnion",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the source local theorem and finite_bag_union_1_replay_typed: two arbitrary finite bags over one element type have a finite union."
+  "reviewer": "Compared the source local theorem and finite_bag_union_1_replay_typed: two arbitrary finite bags over one element type have a finite union. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `FINITE_BAG_UNION_1_typed` re-confirms the HOL declaration is `[local]` and is not exported by bagTheory, so the probe records its typed statement parse (`!b1. FINITE_BAG b1 ==> !b2. FINITE_BAG b2 ==> FINITE_BAG (BAG_UNION b1 b2)`); this is a parse, not a proof replay."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
@@ -133137,7 +133137,7 @@
   "lean_path": "Flapjack/Misc/Bag.lean",
   "lean_name": "bagUnion_empty",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared all three source conjuncts and typed bag_union_empty capture: right and left identities and the empty-union equivalence are retained, with independent element types alpha, beta and gamma across conjuncts."
+  "reviewer": "Compared all three source conjuncts and typed bag_union_empty capture: right and left identities and the empty-union equivalence are retained, with independent element types alpha, beta and gamma across conjuncts. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `BAG_UNION_EMPTY_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",
@@ -133145,7 +133145,7 @@
   "lean_path": "Flapjack/Misc/Bag.lean",
   "lean_name": "Bag",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared HOL Type bag = 'a -> num with the Lean abbreviation alpha -> Nat; the typed bag operation captures confirm the same polymorphic function carrier."
+  "reviewer": "Compared HOL Type bag = 'a -> num with the Lean abbreviation alpha -> Nat; the typed bag operation captures confirm the same polymorphic function carrier. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/bag_typed_probe.out `bag_type` (HOL `Type bag = 'a -> num`) re-confirms the carrier is HOL's function type, rendered as the Lean abbrev `Bag α := α → Nat`."
 },
 {
   "hol_path": "HOL/src/finite_maps/alistScript.sml",

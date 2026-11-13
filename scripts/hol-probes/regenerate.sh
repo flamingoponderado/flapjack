@@ -4677,6 +4677,10 @@ run_probe hol_mergesort_probeScript.sml hol_mergesort_probe.out \
   sort2_type sort3_type merge_type mergesortN_type sort2_lt sort2_eq_le sort3_all sort3_dup_le merge_basic merge_unsorted merge_left_empty merge_nontotal msn_full msn_prefix msn_over msn_three_short msn_nontotal msn_zero \
   "$repo_dir/HOL/src/sort/mergesortScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe bag_typed_probeScript.sml bag_typed_probe.out \
+  bag_type EMPTY_BAG_typed BAG_INN_typed BAG_IN_typed BAG_UNION_typed BAG_INSERT_typed SUB_BAG_typed BAG_ALL_DISTINCT_typed BAG_OF_SET_typed SET_OF_BAG_typed FINITE_BAG_typed FINITE_EMPTY_BAG_typed FINITE_BAG_INSERT_typed FINITE_BAG_UNION_1_typed BAG_UNION_EMPTY_typed BAG_ALL_DISTINCT_SUB_BAG_typed BAG_IMAGE_DEF_typed BAG_FILTER_DEF_typed BAG_CARD_typed BAG_CARD_RELn_typed SUB_BAG_CARD_typed FINITE_SUB_BAG_typed FINITE_BAG_FILTER_typed \
+  "$repo_dir/HOL/src/bag/bagScript.sml" "$cake_dir/pancake"
+
 run_probe hol_list_el_probeScript.sml hol_list_el_probe.out \
   hd_type el_type hd_cons hd_bool el_zero el_last el_nested el_large \
   "$repo_dir/HOL/src/list/src/listScript.sml" "$cake_dir/compiler/backend/reg_alloc"

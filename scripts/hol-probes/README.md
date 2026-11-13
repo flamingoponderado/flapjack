@@ -9939,3 +9939,17 @@ original local value-size lemma proof, and concrete closure, word and nested
 constant sizes. Regenerate with
 `HOL_PROBE_ONLY=clossem_generated_size_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source review; it is not a cross-language proof.
+
+`bag_typed_probe.out` captures the typed statements of the HOL `bag` theory
+declarations ported in `Flapjack/Misc/Bag*.lean` from the built HOL4 core theory
+(no rebuild): the `bag` type abbreviation (`'a -> num`), `EMPTY_BAG`, `BAG_INN`,
+`BAG_IN`, `BAG_UNION`, `BAG_INSERT`, `SUB_BAG`, `BAG_ALL_DISTINCT`, `BAG_OF_SET`,
+`SET_OF_BAG`, `FINITE_BAG`, `FINITE_EMPTY_BAG`, `FINITE_BAG_INSERT`,
+`FINITE_BAG_UNION_1` (a `[local]` theorem, captured as a typed statement parse),
+`BAG_UNION_EMPTY` (three independently quantified conjuncts),
+`BAG_ALL_DISTINCT_SUB_BAG`, `BAG_IMAGE_DEF`, `BAG_FILTER_DEF`, `BAG_CARD`,
+`BAG_CARD_RELn`, `SUB_BAG_CARD`, `FINITE_SUB_BAG`, and `FINITE_BAG_FILTER`.
+Regenerate with
+`HOL_PROBE_ONLY=bag_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.

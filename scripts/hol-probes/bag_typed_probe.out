@@ -1,0 +1,23 @@
+bag_type=:α -> num
+EMPTY_BAG_typed=({||} :α -> num) = (K (0 :num) :α -> num)
+BAG_INN_typed=∀(e :α) (n :num) (b :α -> num). BAG_INN e n b ⇔ b e ≥ n
+BAG_IN_typed=∀(e :α) (b :α -> num). e ⋲ b ⇔ BAG_INN e (1 :num) b
+BAG_UNION_typed=∀(b :α -> num) (c :α -> num). b ⊎ c = (λ(x :α). b x + c x)
+BAG_INSERT_typed=∀(e :α) (b :α -> num). BAG_INSERT e b = (λ(x :α). if x = e then b e + (1 :num) else b x)
+SUB_BAG_typed=∀(b1 :α -> num) (b2 :α -> num). b1 ≤ b2 ⇔ ∀(x :α) (n :num). BAG_INN x n b1 ⇒ BAG_INN x n b2
+BAG_ALL_DISTINCT_typed=∀(b :α -> num). BAG_ALL_DISTINCT b ⇔ ∀(e :α). b e ≤ (1 :num)
+BAG_OF_SET_typed=∀(P :α -> bool). BAG_OF_SET P = (λ(x :α). if x ∈ P then (1 :num) else (0 :num))
+SET_OF_BAG_typed=∀(b :α -> num). SET_OF_BAG b = (λ(x :α). x ⋲ b)
+FINITE_BAG_typed=∀(b :α -> num). FINITE_BAG b ⇔ ∀(P :(α -> num) -> bool). P ({||} :α -> num) ∧ (∀(b :α -> num). P b ⇒ ∀(e :α). P (BAG_INSERT e b)) ⇒ P b
+FINITE_EMPTY_BAG_typed=FINITE_BAG ({||} :α -> num)
+FINITE_BAG_INSERT_typed=∀(b :α -> num). FINITE_BAG b ⇒ ∀(e :α). FINITE_BAG (BAG_INSERT e b)
+FINITE_BAG_UNION_1_typed=∀(b1 :α -> num). FINITE_BAG b1 ⇒ ∀(b2 :α -> num). FINITE_BAG b2 ⇒ FINITE_BAG (b1 ⊎ b2)
+BAG_UNION_EMPTY_typed=(∀(b :α -> num). b ⊎ ({||} :α -> num) = b) ∧ (∀(b :β -> num). ({||} :β -> num) ⊎ b = b) ∧ ∀(b1 :γ -> num) (b2 :γ -> num). b1 ⊎ b2 = ({||} :γ -> num) ⇔ b1 = ({||} :γ -> num) ∧ b2 = ({||} :γ -> num)
+BAG_ALL_DISTINCT_SUB_BAG_typed=∀(s :α -> num) (t :α -> num). s ≤ t ∧ BAG_ALL_DISTINCT t ⇒ BAG_ALL_DISTINCT s
+BAG_IMAGE_DEF_typed=∀(f :β -> α) (b :β -> num). BAG_IMAGE f b = (λ(e :α). (let (sb :β -> num) = BAG_FILTER (λ(e0 :β). f e0 = e) b in if FINITE_BAG sb then BAG_CARD sb else (1 :num)))
+BAG_FILTER_DEF_typed=∀(P :α -> bool) (b :α -> num). BAG_FILTER P b = (λ(e :α). if P e then b e else (0 :num))
+BAG_CARD_typed=∀(b :α -> num). FINITE_BAG b ⇒ BAG_CARD_RELn b (BAG_CARD b)
+BAG_CARD_RELn_typed=∀(b :α -> num) (n :num). BAG_CARD_RELn b n ⇔ ∀(P :(α -> num) -> num -> bool). P ({||} :α -> num) (0 :num) ∧ (∀(b :α -> num) (n :num). P b n ⇒ ∀(e :α). P (BAG_INSERT e b) (SUC n)) ⇒ P b n
+SUB_BAG_CARD_typed=∀(b1 :α -> num) (b2 :α -> num). FINITE_BAG b2 ∧ b1 ≤ b2 ⇒ BAG_CARD b1 ≤ BAG_CARD b2
+FINITE_SUB_BAG_typed=∀(b1 :α -> num). FINITE_BAG b1 ⇒ ∀(b2 :α -> num). b2 ≤ b1 ⇒ FINITE_BAG b2
+FINITE_BAG_FILTER_typed=∀(b :α -> num). FINITE_BAG b ⇒ FINITE_BAG (BAG_FILTER (P :α -> bool) b)
