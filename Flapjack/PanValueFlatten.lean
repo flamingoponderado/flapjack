@@ -107,23 +107,6 @@ theorem panValueFlatten_length_eq_shapeSize (value : PanValue α)
     simp only [panValueFlattenValues, List.length_append, List.map_cons, List.sum_cons]
     rw [ihValue hwf.1, ihValues hwf.2]
 
-/-- Counterpart of Cake's `list_rel_length_shape_of_flatten`
-    (`cakeml/pancake/semantics/panPropsScript.sml:256`): for a well-formed list
-    of values, the size of the combined shape of their shapes equals the length
-    of their concatenated flattenings. -/
-theorem shapeSize_comb_map_panValueShape_eq_flatten_length (values : List (PanValue α))
-    (hwf : ∀ value, value ∈ values →
-      isWfShape ([] : StructContext) (panValueShape ([] : StructContext) value) = true) :
-    Shape.shapeSize (.comb (values.map (panValueShape ([] : StructContext)))) =
-      (values.map panValueFlatten).flatten.length := by
-  induction values with
-  | nil => simp [Shape.shapeSize]
-  | cons value values ih =>
-    simp only [List.map_cons, List.flatten_cons, List.length_append]
-    rw [shapeSize_comb_cons,
-      panValueFlatten_length_eq_shapeSize value (hwf value (by simp)),
-      ih (fun other hmem => hwf other (by simp [hmem]))]
-
 /-- Flapjack-specific helper using the older context-parameter shape function.
     The exact HOL `flatten_nil_no_size` port uses the source-semantics
     `shape_of` counterpart and lives in `Proofs/PanToCrep.lean`. -/
@@ -157,9 +140,9 @@ theorem shapeSize_eq_zero_or_flatten_length (value : PanValue α) (values : List
 
 /-- Counterpart of Cake's `list_rel_length_shape_of_flatten_better`
     (`cakeml/pancake/semantics/panPropsScript.sml:244`): the pointwise
-    shape-relation form of `shapeSize_comb_map_panValueShape_eq_flatten_length`,
-    where the shape list is related to the value list entrywise rather than
-    being its image. -/
+    shape-relation form of HOL `list_rel_length_shape_of_flatten`, where the
+    shape list is related to the value list entrywise rather than being its
+    image. -/
 theorem shapeSize_comb_eq_flatten_length_of_getElem (vshs : List Shape)
     (args : List (PanValue α)) (hlen : vshs.length = args.length)
     (hrel : ∀ i, i < args.length →

@@ -72862,14 +72862,6 @@
     "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.4.22; FLAPJACK-SPECIFIC, documented_mismatch). HOL panProps$list_rel_length_shape_of_flatten_better (panPropsScript.sml:244-254) states LIST_REL (fun vsh arg => vsh = shape_of arg) vshs args and EVERY is_wf_shape_v_nil args imply size_of_shape (Comb vshs) = LENGTH (FLAT (MAP flatten args)). The Lean analogue shapeSize_comb_eq_flatten_length_of_getElem (PanValueFlatten.lean:159) renders the LIST_REL antecedent by an indexed getElem equality vshs[i]? = (args[i]?).map (panValueShape []) and uses the production PanValue carrier with panValueShape/panValueFlatten/isWfShape instead of HOL's mlstring-named shape and shape_of/flatten/is_wf_shape_v_nil, so the tag is withheld; exact ShapeHOL route tracked by flapjack-pxn.18.3.5.8."
   },
   {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "list_rel_length_shape_of_flatten",
-    "lean_path": "Flapjack/PanValueFlatten.lean",
-    "lean_name": "shapeSize_comb_map_panValueShape_eq_flatten_length",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.4.23; FLAPJACK-SPECIFIC, documented_mismatch). HOL panProps$list_rel_length_shape_of_flatten (panPropsScript.sml:256-261) states LIST_REL (fun vsh arg => SND vsh = shape_of arg) vshs args and EVERY is_wf_shape_v_nil args imply size_of_shape (Comb (MAP SND vshs)) = LENGTH (FLAT (MAP flatten args)). The Lean analogue shapeSize_comb_map_panValueShape_eq_flatten_length (PanValueFlatten.lean:111) is the MAP-image form over the production PanValue carrier: it quantifies a per-element isWfShape (panValueShape []) hypothesis and uses panValueShape/panValueFlatten/Shape.shapeSize instead of HOL's mlstring-named shape and shape_of/flatten/is_wf_shape_v_nil, so the tag is withheld; exact ShapeHOL route tracked by flapjack-pxn.18.3.5.8."
-  },
-  {
     "hol_path": "cakeml/pancake/crep_arithScript.sml",
     "hol_name": "dest_2exp_def",
     "lean_name": "crepDest2ExpHOL",

@@ -835,17 +835,6 @@ DOCUMENTED_MISMATCHES = {
         "panValueShape []/panValueFlatten/isWfShape. Exact ShapeHOL route tracked by "
         "flapjack-pxn.18.3.5.8. "
     ),
-    ("Flapjack/PanValueFlatten.lean", "shapeSize_comb_map_panValueShape_eq_flatten_length"): (
-        "cakeml/pancake/semantics/panPropsScript.sml",
-        "list_rel_length_shape_of_flatten",
-        "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.4.23; "
-        "FLAPJACK-SPECIFIC, documented_mismatch). HOL list_rel_length_shape_of_flatten "
-        "(panPropsScript.sml:256-261) uses LIST_REL (fun vsh arg => SND vsh = shape_of arg) "
-        "and EVERY is_wf_shape_v_nil args over the mlstring-named shape. "
-        "shapeSize_comb_map_panValueShape_eq_flatten_length (PanValueFlatten.lean:111) is the "
-        "MAP-image form with a per-element isWfShape (panValueShape []) hypothesis over the "
-        "production PanValue carrier. Exact ShapeHOL route tracked by flapjack-pxn.18.3.5.8. "
-    ),
     ("Flapjack/Pancake/Semantics/PanProps.lean", "listRelFlattenWithShapeLength"): (
         "cakeml/pancake/semantics/panPropsScript.sml",
         "list_rel_flatten_with_shape_length",

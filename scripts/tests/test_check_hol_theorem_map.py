@@ -565,9 +565,6 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             ("Flapjack/PanValueFlatten.lean",
              "shapeSize_comb_eq_flatten_length_of_getElem"):
                 "list_rel_length_shape_of_flatten_better",
-            ("Flapjack/PanValueFlatten.lean",
-             "shapeSize_comb_map_panValueShape_eq_flatten_length"):
-                "list_rel_length_shape_of_flatten",
             ("Flapjack/Pancake/Semantics/PanProps.lean",
              "listRelFlattenWithShapeLength"):
                 "list_rel_flatten_with_shape_length",
@@ -585,6 +582,27 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             self.assertIn("flapjack-pxn.18.3.5.8", record["reviewer"])
             self.assertTrue(MAP["lean_definition_exists"](MAP["ROOT"], *key))
             self.assertNotIn(key, MAP["tagged_declarations"]())
+
+    def test_pan_value_flatten_map_image_mismatch_is_retired(self):
+        # The MAP-image PanValue form is gone; HOL list_rel_length_shape_of_flatten
+        # is mapped by the tagged exact-carrier listRelLengthShapeOfFlattenHOL.
+        key = ("Flapjack/PanValueFlatten.lean",
+               "shapeSize_comb_map_panValueShape_eq_flatten_length")
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        self.assertNotIn(key, inventory)
+        exact_key = ("Flapjack/Pancake/Semantics/PanProps/ListRelFlatten.lean",
+                     "listRelLengthShapeOfFlattenHOL")
+        exact = inventory[exact_key]
+        self.assertEqual(
+            (exact["hol_path"], exact["hol_name"]),
+            ("cakeml/pancake/semantics/panPropsScript.sml",
+             "list_rel_length_shape_of_flatten"),
+        )
+        self.assertNotEqual(exact["statement_status"], "documented_mismatch")
+        self.assertIn(exact_key, MAP["tagged_declarations"]())
 
     def test_pansem_state_defs_function_backed_mismatches_are_documented(self):
         inventory = {
