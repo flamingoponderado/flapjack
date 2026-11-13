@@ -9,6 +9,14 @@ public import Flapjack.Compiler.Backend.BviInline.Proofs.CodeLabels
 namespace Flapjack.Compiler.Backend.BviInline
 open BviSem BvlSem
 
+namespace TickPrimitiveCarrier
+/-- The BVI reference-map representation has a canonical roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end TickPrimitiveCarrier
+
 /-- Remove ticks from each body while preserving arbitrary labels and arities. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "clean_prog_def"]
 def cleanProg {Label Arity : Type} (program : List (Label × Arity × Bvi.Exp)) : List (Label × Arity × Bvi.Exp) :=
@@ -273,10 +281,13 @@ theorem removeStateRel_doInstall_error {C F : Type} (source target : BviState C 
     rw [run] at sourceRun
     contradiction
 
-/-- Flapjack infrastructure: every primitive operation transfers through the
-tick-cleanup relation, preserving both successful results and errors. -/
-theorem removeStateRel_doApp {C F : Type} (source target : BviState C F)
-    (states : RemoveStateRel source target) (op : ClosLang.Op) (args : List Value) :
+/-- Every primitive operation transfers through the tick-cleanup relation,
+preserving both successful results and errors. The dispatcher inherits the
+real-model assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "remove_state_rel_do_app"
+  (fmap_as_finite_support := [refs])]
+theorem removeStateRel_doApp {C F : Type} (op : ClosLang.Op) (args : List Value)
+    (source target : BviState C F) (states : RemoveStateRel source target) :
     match BviSem.doApp op args source with
     | .err error => BviSem.doApp op args target = .err error
     | .val (value, next) => ∃ targetNext, BviSem.doApp op args target = .val (value, targetNext) ∧
@@ -301,7 +312,7 @@ theorem removeStateRel_doApp_reverse {C F : Type} (source target : BviState C F)
     | .err error => BviSem.doApp op args source = .err error
     | .val (value, next) => ∃ sourceNext, BviSem.doApp op args source = .val (value, sourceNext) ∧
         RemoveStateRel sourceNext next := by
-  have forward := removeStateRel_doApp source target states op args
+  have forward := removeStateRel_doApp op args source target states
   cases sourceRun : BviSem.doApp op args source with
   | err error =>
     rw [sourceRun] at forward

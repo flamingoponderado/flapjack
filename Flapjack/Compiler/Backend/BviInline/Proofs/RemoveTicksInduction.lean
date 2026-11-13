@@ -188,4 +188,30 @@ theorem evaluate_removeTicks {C F : Type} (clock : Nat) (xs : List Bvi.Exp) (env
   exact all target.clock (expsWeight xs) xs env target (Nat.le_refl _) (Nat.le_refl _)
     source result targetNext states run
 
+/-- Clock-bounded singleton and list simulations for tick removal. The
+evaluator inherits the real-model assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "evaluate_remove_ticks_mutual"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateRemoveTicksMutual {C F : Type} (clock : Nat) :
+    (∀ (expression : Bvi.Exp) (env : List Value) (target source : BviState C F)
+        (result : BviResult) (targetNext : BviState C F),
+      RemoveStateRel source target ∧ target.clock ≤ clock ∧
+        evaluateTuple ([removeTicksSource expression], env, target) = (result, targetNext) →
+      ∃ extra sourceNext,
+        evaluateTuple ([expression], env, { source with clock := source.clock + extra }) =
+          (result, sourceNext) ∧ RemoveStateRel sourceNext targetNext) ∧
+    (∀ (expressions : List Bvi.Exp) (env : List Value) (target source : BviState C F)
+        (result : BviResult) (targetNext : BviState C F),
+      RemoveStateRel source target ∧ target.clock ≤ clock ∧
+        evaluateTuple (removeTicksListSource expressions, env, target) = (result, targetNext) →
+      ∃ extra sourceNext,
+        evaluateTuple (expressions, env, { source with clock := source.clock + extra }) =
+          (result, sourceNext) ∧ RemoveStateRel sourceNext targetNext) := by
+  constructor
+  · intro expression env target source result targetNext ⟨states, _, run⟩
+    apply evaluate_removeTicks target.clock [expression] env target source result targetNext
+    exact ⟨states, rfl, by simpa [removeTicksListSource] using run⟩
+  · intro expressions env target source result targetNext ⟨states, _, run⟩
+    exact evaluate_removeTicks target.clock expressions env target source result targetNext ⟨states, rfl, run⟩
+
 end Flapjack.Compiler.Backend.BviInline.RemoveTicksCases

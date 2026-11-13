@@ -209,3 +209,32 @@ val _ = show "state_co_compile_inc_eq_replay_typed" state_co_compile_inc_eq_repl
 
 (* The full tick-removal evaluation theorem, including its inferred types. *)
 val _ = show "evaluate_remove_ticks_typed" bvi_inlineProofTheory.evaluate_remove_ticks;
+
+(* The local mutual theorem is not exported; capture its original typed statement. *)
+val evaluate_remove_ticks_mutual_statement =
+  ``∀k.
+    (∀e env (t:('c,'ffi) bviSem$state) s res t1.
+       remove_state_rel s t ∧ t.clock ≤ k ∧
+       evaluate ([remove_ticks_exp e],env,t) = (res,t1) ⇒
+       ∃extra s1.
+         evaluate ([e],env,s with clock := s.clock + extra) =
+           (res,s1) ∧ remove_state_rel s1 t1) ∧
+    (∀es env (t:('c,'ffi) bviSem$state) s res t1.
+       remove_state_rel s t ∧ t.clock ≤ k ∧
+       evaluate (remove_ticks_exps es,env,t) = (res,t1) ⇒
+       ∃extra s1.
+         evaluate (es,env,s with clock := s.clock + extra) =
+           (res,s1) ∧ remove_state_rel s1 t1)``;
+val _ = (print "evaluate_remove_ticks_mutual_statement_typed=";
+         print_term evaluate_remove_ticks_mutual_statement; print "\n");
+
+(* Original local primitive-operation relation statement, with inferred types. *)
+val remove_state_rel_do_app_statement =
+  ``∀op args (s:('c,'ffi) bviSem$state) t.
+    remove_state_rel s t ⇒
+      case do_app op args s of
+      | Rval (value,s1) =>
+          ∃t1. do_app op args t = Rval (value,t1) ∧ remove_state_rel s1 t1
+      | Rerr err => do_app op args t = Rerr err``;
+val _ = (print "remove_state_rel_do_app_statement_typed=";
+         print_term remove_state_rel_do_app_statement; print "\n");

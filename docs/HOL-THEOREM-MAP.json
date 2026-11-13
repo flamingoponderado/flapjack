@@ -467,6 +467,26 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "remove_state_rel_do_app",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksRelation.lean",
+    "lean_name": "removeStateRel_doApp",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent comparison with the original local statement and typed HOL capture: all four binders and the sole state-relation premise are retained. Every primitive operation transfers the complete source result: success yields the same value and a related target state, and error yields the identical error. The shared compiler and FFI state types are independent; the result error type is the original ExnOrRet. BVI refs use the canonical finite-support map with a same-module roundtrip; code remains a sparse tree. The dispatcher inherits reals_as_rational_cuts (SOUNDNESS item 8). The probe captures the local typed statement, not its original proof."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "evaluate_remove_ticks_mutual",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksInduction.lean",
+    "lean_name": "evaluateRemoveTicksMutual",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent comparison with the original local statement and its typed HOL capture: both singleton and list conjuncts retain their separate quantifiers, relation, clock bound and target evaluation premises, plus the full existential source result and final relation for all errors. The two conjuncts share compiler and FFI state types, which are independent of each other. The existing full tick-removal theorem proves both without extra premises. BVI refs use the canonical finite-support map with a same-module roundtrip; code remains a sparse tree. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8). The probe captures the local typed statement, not its mutual-induction proof."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "evaluate_remove_ticks",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksInduction.lean",
     "lean_name": "evaluate_removeTicks",
