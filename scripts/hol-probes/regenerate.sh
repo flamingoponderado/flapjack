@@ -10714,3 +10714,22 @@ run_probe pan_to_crep_local_typed_probeScript.sml pan_to_crep_local_typed_probe.
   state_rel_structs_typed state_rel_globals_typed pair_map_I_typed decs_stcnames_lemma_typed evaluate_shape_invariant_ret_inst_typed evaluate_shape_invariant_ret_inst2_typed \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
   "$cake_dir/pancake/proofs"
+
+run_probe binary_ieee_typed_probeScript.sml binary_ieee_typed_probe.out \
+  float_typed float_compare_typed float_abs_def_typed float_compare_def_typed float_equal_def_typed \
+  float_greater_equal_def_typed float_greater_than_def_typed float_is_finite_def_typed float_is_infinite_def_typed \
+  float_is_nan_def_typed float_is_normal_def_typed float_is_signalling_def_typed float_is_subnormal_def_typed \
+  float_is_zero_def_typed float_less_equal_def_typed float_less_than_def_typed float_negate_def_typed \
+  float_to_real_def_typed float_value_def_typed float_add_def_typed float_div_def_typed float_mul_def_typed \
+  float_mul_add_def_typed float_sub_def_typed float_to_int_def_typed flags_typed fp_op_typed rounding_typed \
+  check_for_signalling_def_typed clear_flags_def_typed dividezero_flags_def_typed float_bottom_def_typed \
+  float_minus_infinity_def_typed float_minus_min_def_typed float_minus_zero_def_typed float_plus_infinity_def_typed \
+  float_plus_min_def_typed float_plus_zero_def_typed float_some_qnan_def_typed float_top_def_typed \
+  invalidop_flags_def_typed float_value_typed closest_def_typed closest_such_def_typed largest_def_typed \
+  float_round_def_typed float_round_with_flags_def_typed float_sqrt_def_typed threshold_def_typed \
+  is_closest_def_typed real_to_float_def_typed real_to_float_with_flags_def_typed round_def_typed \
+  is_integral_def_typed float_is_integral_def_typed ULP_def_typed ulp_def_typed integral_round_def_typed \
+  float_round_to_integral_def_typed float_mul_sub_def_typed float_unordered_def_typed exponent_boundary_def_typed \
+  float_ulp_def_typed next_hi_def_typed next_lo_def_typed \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$hol_dir/src/floating-point"
