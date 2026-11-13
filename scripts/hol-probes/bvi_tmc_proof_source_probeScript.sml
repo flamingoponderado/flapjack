@@ -59,3 +59,30 @@ val _ = print "\n";
 
 val _ = show "compile_each_keeps_names_typed" bvi_tmcProofTheory.compile_each_keeps_names;
 val _ = show "compile_prog_keeps_names_typed" bvi_tmcProofTheory.compile_prog_keeps_names;
+
+(* These local results are replayed with their original source proofs. *)
+val vars_labels = Q.prove
+  (`BIGUNION (set (MAP bviProps$get_code_labels (MAP (λn. bvi$Var n) vs))) = ∅`,
+   Induct_on `vs` \\ gvs []);
+val _ = show "get_code_labels_MAP_Var_replay_typed" vars_labels;
+val worker_aux_labels = Q.prove
+  (`∀cb loc_opt ptr idx.
+     bviProps$get_code_labels (bvi_tmc$cb_to_bvi_worker_aux cb loc_opt ptr idx) = {loc_opt}`,
+   recInduct bvi_tmcTheory.cb_to_bvi_worker_aux_ind
+   \\ simp [bvi_tmcTheory.cb_to_bvi_worker_aux_def, bvi_tmcTheory.optimise_call_def,
+            bvi_tmcTheory.mut_cons_def, bvi_tmcTheory.update_cons_def,
+            closLangTheory.assign_get_code_label_def, vars_labels]);
+val _ = show "cb_to_bvi_worker_aux_code_labels_replay_typed" worker_aux_labels;
+val worker_labels = Q.prove
+  (`bviProps$get_code_labels (bvi_tmc$cb_to_bvi_worker cb loc_opt ptr idx) = {loc_opt}`,
+   Cases_on `cb`
+   \\ simp [bvi_tmcTheory.cb_to_bvi_worker_def, bvi_tmcTheory.optimise_call_def,
+            bvi_tmcTheory.mut_cons_def, bvi_tmcTheory.update_cons_def,
+            closLangTheory.assign_get_code_label_def, worker_aux_labels, vars_labels]);
+val _ = show "cb_to_bvi_worker_code_labels_replay_typed" worker_labels;
+val wrapper_labels = Q.prove
+  (`bviProps$get_code_labels (bvi_tmc$cb_to_bvi_wrapper tag left child right loc_opt) = {loc_opt}`,
+   simp [bvi_tmcTheory.cb_to_bvi_wrapper_def, bvi_tmcTheory.mut_cons_def,
+         bvi_tmcTheory.finalise_cons_def, closLangTheory.assign_get_code_label_def,
+         worker_aux_labels, vars_labels]);
+val _ = show "cb_to_bvi_wrapper_code_labels_replay_typed" wrapper_labels;

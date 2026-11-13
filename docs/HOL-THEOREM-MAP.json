@@ -338,6 +338,38 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+    "hol_name": "get_code_labels_MAP_Var",
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeLabels.lean",
+    "lean_name": "vars_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL proof replay and source review: the complete mapped union over every variable in an arbitrary natural-number list is empty, with the original BVI expression carrier and no premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+    "hol_name": "cb_to_bvi_worker_aux_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeLabels.lean",
+    "lean_name": "workerAux_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL proof replay and source review: every full call block, destination, pointer and index retains the unconditional exact singleton equality. The source worker uses the original constant-index base case and shifted recursive call."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+    "hol_name": "cb_to_bvi_worker_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeLabels.lean",
+    "lean_name": "worker_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL proof replay and source review: the complete source worker, with arbitrary block and natural-number parameters, has exactly the destination singleton as its labels. The variable-index base and nested cases match HOL."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+    "hol_name": "cb_to_bvi_wrapper_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeLabels.lean",
+    "lean_name": "wrapper_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL proof replay and source review: arbitrary constructor tag, left and right variable lists, child block and destination retain the unconditional singleton equality for the full source wrapper."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
     "hol_name": "compile_each_keeps_names",
     "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeLabels.lean",
     "lean_name": "compileEach_keepsNames",

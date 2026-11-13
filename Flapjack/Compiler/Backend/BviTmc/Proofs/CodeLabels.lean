@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.RewriteCorrespondence
+public import Flapjack.Compiler.Backend.Semantics.BviProps.CodeLabels
 
 @[expose] public section
 
@@ -45,5 +46,52 @@ theorem compileProg_keepsNames (enabled : Bool) (next : Nat) (xs : List (Nat × 
   | true =>
     simp only [compileProgSource, ↓reduceIte] at assumptions
     exact compileEach_keepsNames next xs next' ys x assumptions
+
+open Flapjack.Compiler.Backend.BviProps
+
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "get_code_labels_MAP_Var"]
+theorem vars_getCodeLabels (vs : List Nat) :
+    ⋃₀ (getCodeLabels '' {e | e ∈ vs.map Bvi.Exp.var}) = ∅ := by
+  ext label
+  simp [getCodeLabels]
+
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "cb_to_bvi_worker_aux_code_labels"]
+theorem workerAux_getCodeLabels (cb : CallBlock) (dest ptr idx : Nat) :
+    getCodeLabels (workerAuxSource cb dest ptr idx) = {dest} := by
+  fun_induction workerAuxSource cb dest ptr idx with
+  | case1 ticks args dest ptr idx =>
+    ext label
+    simp [optimiseCallSource, getCodeLabels, getCodeLabelsList_eq]
+    rintro x (⟨a, _, rfl⟩ | rfl | rfl) h <;> simp [getCodeLabels, getCodeLabelsList, ClosLang.assignGetCodeLabel] at h
+  | case2 tag left child right dest ptr idx ih =>
+    ext label
+    simp [mutConsSource, updateConsSource, getCodeLabels,
+      getCodeLabelsList_eq, ClosLang.assignGetCodeLabel, ih]
+    rintro x (⟨a, _, rfl⟩ | rfl | ⟨a, _, rfl⟩) h <;> simp [getCodeLabels, getCodeLabelsList, ClosLang.assignGetCodeLabel] at h
+
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "cb_to_bvi_worker_code_labels"]
+theorem worker_getCodeLabels (cb : CallBlock) (dest ptr idx : Nat) :
+    getCodeLabels (workerBlockSource cb dest ptr idx) = {dest} := by
+  cases cb with
+  | rCall ticks args =>
+    ext label
+    simp [workerBlockSource, optimiseCallSource, getCodeLabels, getCodeLabelsList_eq]
+    rintro x (⟨a, _, rfl⟩ | rfl | rfl) h <;>
+      simp [getCodeLabels] at h
+  | callBlock tag left child right =>
+    ext label
+    simp [workerBlockSource, mutConsSource, updateConsSource, getCodeLabels,
+      getCodeLabelsList_eq, ClosLang.assignGetCodeLabel, workerAux_getCodeLabels]
+    rintro x (⟨a, _, rfl⟩ | rfl | ⟨a, _, rfl⟩) h <;>
+      simp [getCodeLabels, getCodeLabelsList, ClosLang.assignGetCodeLabel] at h
+
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "cb_to_bvi_wrapper_code_labels"]
+theorem wrapper_getCodeLabels (tag : Nat) (left : List Nat) (child : CallBlock) (right : List Nat) (dest : Nat) :
+    getCodeLabels (wrapperBlockSource tag left child right dest) = {dest} := by
+  ext label
+  simp [wrapperBlockSource, mutConsSource, getCodeLabels,
+    getCodeLabelsList_eq, ClosLang.assignGetCodeLabel, workerAux_getCodeLabels]
+  rintro x (⟨a, _, rfl⟩ | rfl | ⟨a, _, rfl⟩) h <;>
+    simp [getCodeLabels, getCodeLabelsList, ClosLang.assignGetCodeLabel] at h
 
 end Flapjack.Compiler.Backend.BviTmc.Proofs
