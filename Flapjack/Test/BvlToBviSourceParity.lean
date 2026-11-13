@@ -22,6 +22,18 @@ public meta import Flapjack.Compiler.Backend.BvlToBvi.SourceSing
 /-! Replays the typed HOL auxiliary-tree observations. -/
 open Flapjack Flapjack.Compiler.Backend.BvlToBvi
 
+-- Replays the original allocation counts, including nested allocation inside
+-- a non-allocation primitive and multiple top-level expressions.
+private def allocationCountExample : List Flapjack.Compiler.Backend.Bvl.Exp :=
+  [.let [.op (.globOp .allocGlobal) [], .raise (.op (.globOp .allocGlobal) [])]
+      (.ifThenElse (.var 0) (.tick (.op (.globOp .allocGlobal) []))
+        (.handle (.force 1 2) (.call 0 (some 0) [.op (.globOp .allocGlobal) []]))),
+   .op (.globOp (.setGlobal 0)) [.op (.globOp .allocGlobal) []]]
+
+#guard allocGlobCount [] == 0
+#guard allocGlobCount allocationCountExample == 5
+#guard globalCountList allocationCountExample == 5
+
 -- Replays the original two-call incremental pipeline, observing both
 -- retained caches, the fresh-name counters, and each resulting program.
 private def incrementalConfig : Config :=

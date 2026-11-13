@@ -19,6 +19,12 @@ At Flapjack commit `3027f7f3a2`, a rebuilt `cake` matched the pinned CakeML
 compiler on all 143 fixed corpus cases, including output, diagnostics and exit
 status.
 
+After switching the BVL-to-BVI whole-program compiler to the original
+allocation-count recursion, a rebuilt `cake` again matched all 143 fixed corpus
+cases. The kernel-checked count equivalence and existing whole-program output
+agreement also establish that this switch preserves the previous result for
+every input.
+
 At `e38869acea`, all 38 structured templates matched with seed `20261111`, as
 did 40 structured programs with varied backend options and seed `20261112`.
 Both runs used a 90-second timeout per case.

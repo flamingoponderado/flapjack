@@ -117,7 +117,8 @@ theorem compileProgFuel_eq_source (fuel optFuel start counter : Nat) (programs :
   rcases sourceRun : compileProgramsSource counter programs with ⟨tree, next⟩
   have fuelRun := compileProgramsFuel_eq_flattened fuel optFuel counter programs
   simp only [sourceRun] at fuelRun
-  simp [compileProgFuel, compileIncSource, sourceRun, fuelRun]
+  simp [compileProgFuel, compileIncSource, sourceRun, fuelRun,
+    ← allocGlobCount_eq_globalCountList.2]
 
 /-- The executed whole-program BVL-to-BVI compiler preserves evaluation from
 initial states, including the initialization wrapper and top-level exception

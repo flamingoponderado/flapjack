@@ -152,6 +152,22 @@
     "reviewer": "Compared the exported typed HOL source: the compilation equation implies the original adjacent SORTED condition, namespace membership, between bounds, and nondecreasing counter. The between predicate is unfolded to its original lower-inclusive and upper-exclusive inequalities; holSorted is the original SORTED definition."
   },
   {
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "alloc_glob_count_def",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Analysis.lean",
+    "lean_name": "allocGlobCount",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original typed equations and complete BVL datatype: empty and multi-element lists, every singleton constructor, recursive argument order and allocation-op discrimination agree. The source's impossible singleton fallback is absent from the exported HOL equations."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "alloc_glob_count_eq_global_count_list",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Analysis.lean",
+    "lean_name": "allocGlobCount_eq_globalCountList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed HOL theorem: both universally quantified expression and expression-list conjuncts, equality direction, and absence of premises are unchanged."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_exps_aux_contains",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AuxNameRange.lean",

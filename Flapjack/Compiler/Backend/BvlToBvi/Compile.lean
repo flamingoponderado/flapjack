@@ -115,7 +115,7 @@ global-allocation count. Fuel and the flattened auxiliary carrier retain the
 limitations of `compileFuel`. -/
 def compileProgFuel (fuel optFuel start n : Nat) (prog : List (Nat × Nat × Bvl.Exp)) :
     Option (Nat × List (Nat × Nat × Bvi.Exp) × Nat) := do
-  let count := globalCountList (prog.map (fun (_, _, exp) => exp))
+  let count := allocGlobCount (prog.map (fun (_, _, exp) => exp))
   let (code, n) ← compileProgramsFuel fuel optFuel n prog
   pure (initGlobalsLocation, stubs (bvlNumStubs + bvlToBviNamespaces * start) count ++ code, n)
 
