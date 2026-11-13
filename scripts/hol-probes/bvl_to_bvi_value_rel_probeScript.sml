@@ -61,6 +61,12 @@ val evaluate_ok_lemma_replay = prove(
     ((bvlSem$dec_clock n s).refs = s.refs)``,
   full_simp_tac (srw_ss()) [state_ok_def, bvlSemTheory.dec_clock_def]);
 val _ = show "evaluate_ok_lemma_replay=" evaluate_ok_lemma_replay;
+val v_to_list_ok_replay = prove(
+  ``∀v x. v_to_list v = SOME x ∧ bv_ok refs v ⇒ EVERY (bv_ok refs) x``,
+  ho_match_mp_tac v_to_list_ind >>
+  simp [v_to_list_def, bv_ok_def] >> srw_tac [] [] >>
+  every_case_tac >> full_simp_tac (srw_ss()) [] >> srw_tac [] []);
+val _ = show "v_to_list_ok_replay=" v_to_list_ok_replay;
 val _ = show "bvi_inc_clock_def=" bviPropsTheory.inc_clock_def;
 val _ = show "bvi_inc_clock_ZERO=" bviPropsTheory.inc_clock_ZERO;
 val _ = show "bvi_dec_clock_inv_clock1=" bviPropsTheory.dec_clock_inv_clock1;

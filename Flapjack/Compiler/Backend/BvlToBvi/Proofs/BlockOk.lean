@@ -4,6 +4,9 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ApplyOk
 
 @[expose] public section
 
+set_option backward.privateInPublic true
+set_option backward.privateInPublic.warn false
+
 /-! Block-operation cases of BVL well-formedness preservation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value Ref State doApp)
@@ -16,11 +19,29 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   BvlSem.holFmapAsFiniteSupportWitness
 end BlockCarrier
 
-/-- Flapjack helper: decoding a well-formed list value yields well-formed
-elements, used for the original block-operation cases. -/
+private def toBroad (refs : HolFiniteMapExact Nat (Ref Value)) : Nat → Option (Ref Value) := refs.lookup
+private def ofBroad (lookup : Nat → Option (Ref Value))
+    (support : ∃ keys : List Nat, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact Nat (Ref Value) := ⟨lookup, support⟩
+
+/-- Canonical reference-map roundtrip for list decoding. -/
+theorem holFmapAsFiniteSupportParamWitness_valueToList_ok_refs
+    (refs : HolFiniteMapExact Nat (Ref Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs := by
+  cases refs
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Decoding a well-formed list value yields well-formed elements. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "v_to_list_ok"
+  (fmap_as_finite_support_parameters := [refs])]
 theorem valueToList_ok (refs : HolFiniteMapExact Nat (Ref Value))
-    (value : Value) (values : List Value) (ok : bvOk refs value)
-    (decode : BvlSem.valueToList value = some values) : bvOkList refs values := by
+    (value : Value) (values : List Value)
+    (premises : BvlSem.valueToList value = some values ∧ bvOk refs value) :
+    ∀ item ∈ values, bvOk refs item := by
+  obtain ⟨decode, ok⟩ := premises
+  apply (bvOkList_iff refs values).1
   cases value with
   | block tag fields =>
     cases fields with
@@ -45,7 +66,7 @@ theorem valueToList_ok (refs : HolFiniteMapExact Nat (Ref Value))
               subst values
               simp only [bvOk, bvOkList] at ok
               simp only [bvOkList]
-              exact ⟨ok.1, valueToList_ok refs tail rest ok.2.1 h⟩
+              exact ⟨ok.1, (bvOkList_iff refs rest).2 (valueToList_ok refs tail rest ⟨h, ok.2.1⟩)⟩
           · contradiction
   | _ => simp [BvlSem.valueToList] at decode
 termination_by sizeOf value
@@ -112,14 +133,14 @@ theorem doApp_ok_listAppend {C F : Type}
       all_goals simp_all [bvOkList]
       simp only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq] at h
       obtain ⟨xs, hxs, ys, hys, rfl, rfl⟩ := h
-      have xok := valueToList_ok s.refs _ xs argsOk.1 hxs
-      have yok := valueToList_ok s.refs _ ys argsOk.2 hys
+      have xok := valueToList_ok s.refs _ xs ⟨hxs, argsOk.1⟩
+      have yok := valueToList_ok s.refs _ ys ⟨hys, argsOk.2⟩
       refine ⟨ok, ?_, id⟩
       apply listToValue_ok
       intro item member
       rcases List.mem_append.mp member with inX | inY
-      · exact (bvOkList_iff _ _).1 xok item inX
-      · exact (bvOkList_iff _ _).1 yok item inY
+      · exact xok item inX
+      · exact yok item inY
 
 /-- Conversion from a list value to a block preserves well-formedness. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "do_app_ok"
@@ -142,7 +163,8 @@ theorem doApp_ok_fromList {C F : Type} (tag : Nat)
       all_goals simp_all [bvOkList]
       simp only [Option.bind_eq_some_iff, Option.some.injEq, Prod.mk.injEq] at h
       obtain ⟨values, decode, rfl, rfl⟩ := h
-      exact ⟨ok, by simpa [bvOk] using valueToList_ok s.refs _ values argsOk decode, id⟩
+      exact ⟨ok, by simpa [bvOk] using
+        (bvOkList_iff s.refs values).2 (valueToList_ok s.refs _ values ⟨decode, argsOk⟩), id⟩
 
 /-- Block and reference-array element selection preserves well-formedness. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "do_app_ok"

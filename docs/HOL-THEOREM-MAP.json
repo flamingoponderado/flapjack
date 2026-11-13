@@ -130078,6 +130078,17 @@
   "reviewer": "Compared the typed replay of the source local proof in bvl_to_bvi_value_rel_probe.out: arbitrary natural decrement and independently typed compiler and FFI state are retained, as are both the state_ok equivalence and unchanged refs conjunct. HOL Boolean equality is expressed as an iff. The refs field uses the canonical finite-map state roundtrip."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/BlockOk.lean",
+  "hol_name": "v_to_list_ok",
+  "lean_name": "valueToList_ok",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": [
+    "refs"
+  ],
+  "reviewer": "Compared the typed replay of the source local proof in bvl_to_bvi_value_rel_probe.out: fixed BVL value and reference-cell carriers, the successful decoding and bv_ok conjunction, and the EVERY conclusion are retained. Membership quantification expresses EVERY, with bvOkList_iff relating the recursive proof to that statement. The refs parameter uses the canonical finite-map roundtrip."
+},
+{
   "hol_path": "cakeml/compiler/backend/semantics/bviPropsScript.sml",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/BviProps/Clock.lean",
   "hol_name": "inc_clock_def",
