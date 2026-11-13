@@ -168,3 +168,4 @@ val _ = show "domain_list_insert2_replay_typed=" domain_list_insert2;
 val _ = show "domain_list_to_num_set2_replay_typed=" domain_list_to_num_set2;
 val _ = show "list_insert_list_to_num_set_replay_typed=" list_insert_list_to_num_set_replay;
 val _ = show "data_to_bvi_do_app_typed=" bvi_to_dataProofTheory.data_to_bvi_do_app;
+val _ = show "data_to_bvi_finalise_cons_typed=" bvi_to_dataProofTheory.data_to_bvi_finalise_cons;

@@ -138471,6 +138471,18 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "data_to_bvi_finalise_cons",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Finalise.lean",
+    "lean_name": "finaliseCons_projection",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "bviRefs",
+      "bviNext"
+    ],
+    "reviewer": "Independent typed HOL source review 2026-11-13: all six original binders including the optional timestamp and both input finite maps, the original lookup and successful-finalization premises, and all three existential outputs and conclusions. Both named BVI maps use canonical finite-support carriers with same-module lookup and finite-support codec witnesses; DATA references remain native sparse trees."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "state_rel_peak_safe",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/State.lean",
     "lean_name": "stateRel_peakSafe",
