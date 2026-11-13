@@ -130479,6 +130479,18 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ListLengthStub.lean",
+  "hol_name": "evaluate_ListLength_code",
+  "lean_name": "evaluate_listLength_decoded",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed source theorem in bvl_to_bvi_value_rel_probe.out: the code lookup and successful list decoding premises, full evaluation equality, independent compiler and FFI state types, and both existentials are retained. The unused first witness has an independent inhabited type P, modeling HOL type inhabitation. The canonical BVI state roundtrip covers refs; the evaluator inherits reals_as_rational_cuts."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CopyGlobalsStub.lean",
   "hol_name": "evaluate_CopyGlobals_code",
   "hol_line": 734,

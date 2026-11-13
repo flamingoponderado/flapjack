@@ -165,12 +165,21 @@ theorem evaluate_listLength {C F : Type} (values : List Value) (n : Nat)
       (.number (Int.ofNat (n + 1 + tail.length))) code nonzero (by simpa [clocks] using recursive)
     simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using step
 
-/-- The stub computes the length of any successfully decoded BVL list. -/
-theorem evaluate_listLength_decoded {C F : Type} (value : Value) (values : List Value) (n : Nat)
-    (state : BviSem.BviState C F) (lookup : sptLookup listLengthLocation state.code = some listLengthCode)
-    (decode : BvlSem.valueToList value = some values) :
-    ∃ clock, BviSem.evaluate [listLengthCode.2] [value, .number n] (BviProps.incClock clock state) =
+/-- The stub computes the length of any successfully decoded BVL list. The
+unused existential has an independent inhabited type, as in HOL. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "evaluate_ListLength_code"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_listLength_decoded {C F P : Type} [Nonempty P]
+    (value : Value) (values : List Value) (n : Nat)
+    (state : Flapjack.Compiler.Backend.BviSem.BviState C F)
+    (premises : sptLookup listLengthLocation state.code = some (2, listLengthCode.2) ∧
+      BvlSem.valueToList value = some values) :
+    ∃ (_ : P), ∃ clock, BviSem.evaluate [listLengthCode.2] [value, .number n] (BviProps.incClock clock state) =
       (.val [.number (Int.ofNat (n + values.length))], state) := by
+  obtain ⟨lookup, decode⟩ := premises
+  change sptLookup listLengthLocation state.code = some listLengthCode at lookup
+  obtain ⟨witness⟩ := ‹Nonempty P›
+  refine ⟨witness, ?_⟩
   rw [← valueToList_inverse value values decode]
   exact evaluate_listLength values n state lookup
 

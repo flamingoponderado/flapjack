@@ -27,7 +27,7 @@ theorem evaluate_listLength_call {C F : Type} (value : Value) (values : List Val
     ∃ clock, BviSem.evaluate [.call 0 (some listLengthLocation)
       [.var 0, .op (.intOp (.const 0)) []] none] (value :: env) (BviProps.incClock clock state) =
       (.val [.number (Int.ofNat values.length)], state) := by
-  obtain ⟨clock, stub⟩ := evaluate_listLength_decoded value values 0 state lookup decode
+  obtain ⟨_, clock, stub⟩ := evaluate_listLength_decoded (P := Unit) value values 0 state ⟨lookup, decode⟩
   refine ⟨clock + 1, ?_⟩
   let start := BviProps.incClock (clock + 1) state
   have varRun : BviSem.evaluate [.var 0] (value :: env) start = (.val [value], start) := by simp [BviSem.evaluate]
