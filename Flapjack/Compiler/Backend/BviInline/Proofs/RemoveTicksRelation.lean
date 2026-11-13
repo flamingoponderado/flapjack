@@ -98,15 +98,6 @@ theorem findCode_removeStateRel {C F : Type} (source target : BviState C F)
           split <;> rfl
       | _ => rfl
 
-/-- Flapjack infrastructure: cleaned programs start in tick-related states
-when their oracle and compiler callbacks are adapted in the same way. -/
-theorem removeStateRel_initial {C F : Type} (program : List (Nat × Nat × Bvi.Exp))
-    (oracle : BviSem.CompileOracle C) (compiler : BviSem.Compiler C)
-    (ffi : HolFfiState F) (clock : Nat) :
-    RemoveStateRel (initialState ffi (sptFromAList program) oracle (removeTicksCc compiler) clock)
-      (initialState ffi (sptFromAList (cleanProg program)) ((removeTicksCo ∘ oracle)) compiler clock) := by
-  exact ⟨rfl, rfl, rfl, rfl, (cleanProg_fromAList program).symm, rfl, rfl⟩
-
 /-- Flapjack infrastructure: a non-install primitive preserves the tick
 cleanup relation and transfers its result, including errors. -/
 theorem removeStateRel_doApp_nonInstall {C F : Type} (source target : BviState C F)

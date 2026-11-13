@@ -48,7 +48,10 @@ theorem evaluate_removeTicks_compile {C F : Type} (program : List (Nat × Nat ×
     ∃ extra sourceNext, evaluateTuple ([.call 0 (some start) [] none], [],
       initialState ffi (sptFromAList program) oracle (removeTicksCc compiler) (clock + extra)) =
         (result, sourceNext) ∧ sourceNext.ffi = targetNext.ffi := by
-  have related := removeStateRel_initial program oracle compiler ffi clock
+  have related : RemoveStateRel
+      (initialState ffi (sptFromAList program) oracle (removeTicksCc compiler) clock)
+      (initialState ffi (sptFromAList (cleanProg program)) (removeTicksCo ∘ oracle) compiler clock) :=
+    ⟨rfl, rfl, rfl, rfl, (cleanProg_fromAList program).symm, rfl, rfl⟩
   have cleanedRun : evaluate (removeTicksListSource [.call 0 (some start) [] none]) []
       (initialState ffi (sptFromAList (cleanProg program)) ((removeTicksCo ∘ oracle)) compiler clock) =
         (result, targetNext) := by simpa [evaluateTuple, removeTicksListSource, removeTicksSource] using run
@@ -107,8 +110,13 @@ theorem evaluateCompileProg {C F : Type}
         have h := safe' (clock + extra)
         simpa [source, sourceRun] using h
       obtain ⟨targetState, targetRun, finalRel⟩ :=
-        evaluate_inline_compile program intermediate cache oracle ffi (removeTicksCc compiler)
-          (clock + extra) start sourceResult sourceNext inlineSource oracleCache distinct sourceRun sourceNotType
+        evaluate_inline_compile program cache intermediate oracle ffi (removeTicksCc compiler)
+          (clock + extra) start sourceResult sourceNext
+          ⟨inlineSource, oracleCache, distinct, sourceRun, sourceNotType⟩
+      simp only [evaluateTuple] at targetRun
+      change evaluate [.call 0 (some start) [] none] []
+        (initialState ffi (sptFromAList intermediate) (inCo oracle) (removeTicksCc compiler) (clock + extra)) =
+          (sourceResult, targetState) at targetRun
       rw [intermediateRun] at targetRun
       have equal := Prod.mk.inj targetRun.symm
       obtain ⟨resultEq, stateEq⟩ := equal

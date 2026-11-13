@@ -451,6 +451,16 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "evaluate_inline_compile",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CompileSimulation.lean",
+    "lean_name": "evaluate_inline_compile",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent comparison with the original local statement and its typed HOL capture: all ten binders, compilation, initial cache, distinctness, source evaluation and non-type-error premises, and existential target evaluation with the full final-state relation agree. The source compiler carries cache and C while the target carries C; F is independent and callback word widths match. InStateRel and ExpRel were compared against all original relation components and rules, including list and optional-handler cases. Both states use the canonical refs finite-support translation, with a same-module roundtrip; code and cache remain sparse trees. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8). The capture records the typed statement, not an original proof replay."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "evaluate_remove_ticks_compile",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/WholeProgramSimulation.lean",
     "lean_name": "evaluate_removeTicks_compile",

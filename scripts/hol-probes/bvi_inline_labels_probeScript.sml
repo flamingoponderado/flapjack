@@ -136,3 +136,21 @@ val _ = (print "evaluate_remove_ticks_compile_statement_typed=";
 val _ = show "clean_prog_def_typed" bvi_inlineProofTheory.clean_prog_def;
 val _ = show "remove_ticks_cc_def_typed" bvi_inlineProofTheory.remove_ticks_cc_def;
 val _ = show "remove_ticks_co_def_typed" bvi_inlineProofTheory.remove_ticks_co_def;
+
+(* The local inlining lemma's original statement, with inferred types. *)
+val evaluate_inline_compile_statement =
+  ``∀prog cs1 prog1 co ffi cc k start r s.
+  inline_all LN prog = (cs1,prog1) ∧
+  FST (FST (co 0)) = cs1 ∧
+  ALL_DISTINCT (MAP FST prog) ∧
+  evaluate ([Call 0 (SOME start) [] NONE],[],
+    initial_state ffi (fromAList prog) co (state_cc inline_all cc) k) =
+      (r,s) ∧
+  r ≠ Rerr (Rabort Rtype_error) ⇒
+  ∃s2.
+    evaluate ([Call 0 (SOME start) [] NONE],[],
+      initial_state ffi (fromAList prog1) (state_co inline_all co) cc k) =
+        (r,s2) ∧
+    in_state_rel s s2``;
+val _ = (print "evaluate_inline_compile_statement_typed=";
+         print_term evaluate_inline_compile_statement; print "\n");
