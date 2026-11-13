@@ -1465,6 +1465,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileListCase
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileIfCase
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileLetCase
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.BoundEvaluation
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.DoAppAdjust
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.IEvalBound
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileEmptyLet
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileHandle

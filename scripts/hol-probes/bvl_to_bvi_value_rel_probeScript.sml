@@ -416,3 +416,20 @@ val _ = show "do_eq_adjust_replay=" do_eq_adjust_replay;
 
 val _ = show "list_to_v_adjust_typed=" bvl_to_bviProofTheory.list_to_v_adjust;
 val _ = show "list_to_v_adjust_APPEND_typed=" bvl_to_bviProofTheory.list_to_v_adjust_APPEND;
+
+(* This local HOL declaration is parsed with its original inferred types. *)
+open bvl_to_bviProofTheory bvlSemTheory bviSemTheory;
+val doAppAdjustTerm = ``  state_rel b2 s5 t2 /\
+  (!i. op ≠ IntOp (Const i)) /\ (op ≠ MemOp Ref) /\
+  (∀flag. op ≠ MemOp (RefByte flag)) ∧ (op ≠ MemOp RefArray) ∧
+  (∀n. op ≠ GlobOp (Global n)) ∧ (∀n. op ≠ GlobOp (SetGlobal n)) ∧ (op ≠ GlobOp AllocGlobal) ∧
+  op ≠ Install /\
+  (∀t. op ≠ ThunkOp t) ∧
+  (∀n. op ≠ BlockOp (FromList n)) ∧ (op ≠ MemOp FromListByte) ∧
+  (op ≠ MemOp ToListByte) ∧ (∀c. op ≠ BlockOp (Build c)) ∧ op ≠ MemOp XorByte ∧
+  (∀b. op ≠ MemOp (CopyByte b)) ∧ (op ≠ MemOp ConcatByteVec) ∧ (∀n. op ≠ Label n) ∧
+  (do_app op (REVERSE a) s5 = Rval (q,r)) /\ EVERY (bv_ok s5.refs) (REVERSE a) ==>
+  ?t3. (do_app op (MAP (adjust_bv b2) (REVERSE a)) t2 =
+        Rval (adjust_bv b2 q,t3)) /\
+      state_rel b2 r t3``;
+val _ = (print "do_app_adjust_term_typed="; print_term doAppAdjustTerm; print "\n");

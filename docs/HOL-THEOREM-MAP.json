@@ -1,4 +1,17 @@
 [
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "do_app_adjust",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/DoAppAdjust.lean",
+    "lean_name": "doAppAdjust",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "State.refs",
+      "BviState.refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete HOL statement with inferred types: every original excluded operation, source success and operand well-formedness premise is retained, as is the target success and related final state. Both state reference fields use canonical finite maps. The evaluator dependency closure inherits the reviewed reals_as_rational_cuts representation of HOL reals. The captured local HOL term provides typed statement evidence; the original HOL proof replay did not succeed and is not claimed as replayed."
+  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml", "hol_name": "list_to_v_adjust",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileListAppend.lean", "lean_name": "listToValue_adjust",
