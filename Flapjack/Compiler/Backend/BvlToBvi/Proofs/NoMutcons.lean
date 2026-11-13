@@ -676,15 +676,6 @@ theorem tailrec_compileProgFuel_noMutcons (fuel : Nat) (enabled : Bool) (next ne
   rw [BviTailrec.compileProgFuel_eq_source] at compiled
   exact tailrec_compileProg_noMutcons enabled next next' program result (Option.some.inj compiled) safe
 
-private theorem noMutcons_binary (op : ClosLang.Op) (x y : Bvi.Exp)
-    (safe : noMutconsOp op) (hx : noMutcons x) (hy : noMutcons y) :
-    noMutcons (.op op [x, y]) := by
-  simp [noMutcons, Subtype.forall, safe, hx, hy]
-
-private theorem noMutcons_nullary (op : ClosLang.Op) (safe : noMutconsOp op) :
-    noMutcons (.op op []) := by
-  simp [noMutcons, Subtype.forall, safe]
-
 /-- Every runtime stub is free of mutable-block allocation. This is the
 initial-code portion of the source no-mutcons argument. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "stubs_no_mutcons"]
@@ -698,9 +689,7 @@ theorem stubs_noMutcons (start count : Nat) :
       noMutcons, noMutconsOp, Subtype.forall]
   all_goals repeat' first
     | constructor
-    | apply noMutcons_binary
-    | apply noMutcons_nullary
-    | simp [noMutcons, noMutconsOp, Subtype.forall]
+    | (change noMutcons (.op _ _); simp [noMutcons, noMutconsOp, Subtype.forall])
 
 /-- The production whole-program lowering emits safe stubs and functions. -/
 theorem compileProgFuel_noMutcons (fuel optFuel start counter targetStart targetCounter : Nat)
