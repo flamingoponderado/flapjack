@@ -8,9 +8,17 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileOpError
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value)
 
-/-- Both the small-integer and constructed-constant paths evaluate to the
-same integer without changing the BVI state. Untagged until BVI evaluator
-and dispatcher correspondence review. -/
+namespace CompileIntCarrier
+/-- Canonical BVI reference-map state roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end CompileIntCarrier
+
+/-- Compiling an integer evaluates to that integer without changing the BVI state. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_int_thm"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_compileInt {C F : Type} (value : Int) (env : List Value)
     (state : BviSem.BviState C F) :
     BviSem.evaluate [compileInt value] env state = (.val [.number value], state) := by

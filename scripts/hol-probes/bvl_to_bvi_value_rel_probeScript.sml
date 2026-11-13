@@ -126,3 +126,8 @@ val compile_exps_Var_list_replay = prove (``!l n. EVERY isVar l ==> (∃aux. com
   \\ qmatch_goalsub_rename_tac`compile_exps a`
   \\ first_x_assum(qspec_then`a`strip_assume_tac) \\ fs[]);
 val _ = show "compile_exps_Var_list_replay=" compile_exps_Var_list_replay;
+
+val compile_int_thm_replay = prove (``∀i env s. bviSem$evaluate ([compile_int i],env,s) = (Rval [Number i],s)``,
+  Cases \\ rw [compile_int_def]
+  \\ rw [] \\ EVAL_TAC \\ fs [bviSemTheory.state_component_equality]);
+val _ = show "compile_int_thm_replay=" compile_int_thm_replay;

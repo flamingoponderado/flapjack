@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml", "hol_name": "compile_int_thm",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileInt.lean", "lean_name": "evaluate_compileInt",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed original local proof replay: for every integer, environment and BVI state, evaluating the compiled integer returns that number and the unchanged state. The canonical BVI state witness accounts for refs; evaluation inherits the reals_as_rational_cuts assumption."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "destVar_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/VarBound.lean", "lean_name": "destVar_var",
   "statement_status": "reviewed_exact",
