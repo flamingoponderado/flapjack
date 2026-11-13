@@ -138645,6 +138645,18 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "compile_part_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/CompilePart.lean",
+    "lean_name": "compilePartEvaluate",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "BviState.refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary start label, source and target states and results, all five original premises including structural isEmpty and the jump condition for every exception or return marker, and the same two existential outputs and three conclusions. The internal return exclusion is proved from entry-call evaluation, not assumed. BVI refs use the canonical finite-support carrier and same-module unconditional roundtrip witness; DATA refs remain native sparse trees. Inherits the reals_as_rational_cuts assumption through evaluator primitives (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "state_rel_peak_safe",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/State.lean",
     "lean_name": "stateRel_peakSafe",
