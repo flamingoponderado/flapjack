@@ -194,3 +194,5 @@ val _ = show "data_to_bvi_ref_eq_flip_typed=" bvi_to_dataProofTheory.data_to_bvi
 val _ = show "data_to_bvi_v_eq_typed=" bvi_to_dataProofTheory.data_to_bvi_v_eq;
 val _ = show "data_to_bvi_v_eq_flip_typed=" bvi_to_dataProofTheory.data_to_bvi_v_eq';
 val _ = show "isBool_simps_typed=" bvi_to_dataProofTheory.isBool_simps;
+val _ = show "MAP_data_to_bvi_Word64_typed=" bvi_to_dataProofTheory.MAP_data_to_bvi_Word64;
+val _ = show "MAP_data_to_bvi_Number_typed=" bvi_to_dataProofTheory.MAP_data_to_bvi_Number;

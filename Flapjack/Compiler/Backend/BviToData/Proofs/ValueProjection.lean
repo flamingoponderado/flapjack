@@ -46,4 +46,34 @@ theorem dataToBviValue_eq_flip {A B C D : Type} [Nonempty A] [Nonempty B] [Nonem
           values = dataValues.map dataToBviValue) := by
   simpa only [eq_comm] using (dataToBviValue_eq (A := A) (B := B) (C := C) (D := D))
 
+/-- A projected list of 64-bit words has exactly the corresponding DATA
+word-list preimage. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "MAP_data_to_bvi_Word64"]
+theorem mapDataToBviWord64 (xs : List (BitVec 64)) (ws : List DataSem.Value) :
+    (xs.map DataSem.Value.word64).map dataToBviValue = ws.map dataToBviValue ↔
+      xs.map DataSem.Value.word64 = ws := by
+  induction xs generalizing ws with
+  | nil => cases ws <;> simp
+  | cons x xs ih =>
+    cases ws with
+    | nil => simp
+    | cons w ws =>
+      cases w <;> simp only [List.map_cons, dataToBviValue, List.cons.injEq,
+        BvlSem.Value.word64.injEq, DataSem.Value.word64.injEq, ih] <;> simp
+
+/-- A projected list of integers has exactly the corresponding DATA
+number-list preimage. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "MAP_data_to_bvi_Number"]
+theorem mapDataToBviNumber (xs : List Int) (ws : List DataSem.Value) :
+    (xs.map DataSem.Value.number).map dataToBviValue = ws.map dataToBviValue ↔
+      xs.map DataSem.Value.number = ws := by
+  induction xs generalizing ws with
+  | nil => cases ws <;> simp
+  | cons x xs ih =>
+    cases ws with
+    | nil => simp
+    | cons w ws =>
+      cases w <;> simp only [List.map_cons, dataToBviValue, List.cons.injEq,
+        BvlSem.Value.number.injEq, DataSem.Value.number.injEq, ih] <;> simp
+
 end Flapjack.Compiler.Backend.BviToData

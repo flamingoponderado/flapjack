@@ -423,6 +423,22 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "MAP_data_to_bvi_Word64",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/ValueProjection.lean",
+    "lean_name": "mapDataToBviWord64",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary DATA value list and arbitrary source list, the two projected-list equality and original constructor-list equality in both iff directions match; source words are fixed 64-bit and numbers are integers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "MAP_data_to_bvi_Number",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/ValueProjection.lean",
+    "lean_name": "mapDataToBviNumber",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary DATA value list and arbitrary source list, the two projected-list equality and original constructor-list equality in both iff directions match; source words are fixed 64-bit and numbers are integers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "isBool_simps",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/ApplyBool.lean",
     "lean_name": "isBool_simps",
