@@ -447,6 +447,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "env_rel_MAP",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/Environment.lean",
+    "lean_name": "envRel_shift",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: original offset, source, target, depth, prefix binder order, single relation premise, left-add of prefix length to offsets, depth increase and target-only prefix match."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
     "hol_name": "env_rel_def",
     "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/Environment.lean",
     "lean_name": "envRel",

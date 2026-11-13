@@ -80,8 +80,9 @@ theorem envRel_shiftOne {α : Type} (offsets : List Nat) (d : Nat)
         · exact ih source target related.2 y
 
 /-- A target-only prefix shifts every displacement by its length. -/
-theorem envRel_shift {α : Type} (added : List α) (offsets : List Nat) (d : Nat)
-    (source target : List α) (related : envRel offsets d source target) :
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "env_rel_MAP"]
+theorem envRel_shift {α : Type} (offsets : List Nat) (source target : List α)
+    (d : Nat) (added : List α) (related : envRel offsets d source target) :
     envRel (offsets.map (added.length + ·)) (d + added.length) source
       (added ++ target) := by
   induction added with

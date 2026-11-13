@@ -61,7 +61,7 @@ theorem evaluate_compile_let_last {C F : Type} (front : List Bvi.Exp) (last : Bv
             intro bad
             apply notTypeError
             exact (congrArg Prod.fst run).symm.trans bad
-          have shifted := envRel_shift values offsets d source target related
+          have shifted := envRel_shift offsets source target d values related
           rw [← length] at shifted
           exact lastIH _ _ _ _ middle next (.err error) lastRun shifted ok |>.trans run
         | val lastValues =>
@@ -70,7 +70,7 @@ theorem evaluate_compile_let_last {C F : Type} (front : List Bvi.Exp) (last : Bv
             rw [length, List.append_assoc, List.getElem?_append_right (by omega)]
             simp
           simp only [lastRun, evaluate, lookup] at run
-          have shifted := envRel_shift values offsets d source target related
+          have shifted := envRel_shift offsets source target d values related
           rw [← length] at shifted
           exact lastIH _ _ _ _ middle next (.val [value]) lastRun shifted (by simp) |>.trans run
 
