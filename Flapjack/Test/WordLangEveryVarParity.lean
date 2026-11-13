@@ -68,11 +68,30 @@ example : everyVarExp even eLookup = true := by decide
 binder required by HOL's `dimindex (:α) ≥ 1`, and the 64-bit FP-move fixture
 exercises HOL's `dimindex (:α) = 64` branch.  The untagged production
 duplicates and their per-fixture examples were retired in task 156; these
-fixtures replay the same 20 HOL rows. -/
+fixtures replay the same 20 HOL rows, and the 20 rows also carry kernel
+`example ... := by decide` checks (3 `everyVarImmHOL`, 17 `everyVarInstHOL`). -/
 
 example : everyVarImmHOL (width := 8) even iRegOk = true := by decide
 example : everyVarImmHOL (width := 8) even iRegBad = false := by decide
 example : everyVarImmHOL (width := 8) even iImm = true := by decide
+
+example : everyVarInstHOL (width := 8) even vConstOk = true := by decide
+example : everyVarInstHOL (width := 8) even vBinopOk = true := by decide
+example : everyVarInstHOL (width := 8) even vBinopBad = false := by decide
+example : everyVarInstHOL (width := 8) even vShiftOk = true := by decide
+example : everyVarInstHOL (width := 8) even vDivOk = true := by decide
+example : everyVarInstHOL (width := 8) even vAddCarryBad = false := by decide
+example : everyVarInstHOL (width := 8) even vLongDivOk = true := by decide
+example : everyVarInstHOL (width := 8) even vMemLoadOk = true := by decide
+example : everyVarInstHOL (width := 8) even vMemLoadBad = false := by decide
+example : everyVarInstHOL (width := 8) even vMemLoad8Ok = true := by decide
+example : everyVarInstHOL (width := 8) even vMemLoad16 = true := by decide
+example : everyVarInstHOL (width := 8) even vFpLessOk = true := by decide
+example : everyVarInstHOL (width := 8) even vFpLessBad = false := by decide
+example : everyVarInstHOL (width := 8) even vMove8Ok = true := by decide
+example : everyVarInstHOL (width := 8) even vMove8Bad = false := by decide
+example : everyVarInstHOL (width := 64) even vMove64Ok = true := by decide
+example : everyVarInstHOL (width := 8) even vSkip = true := by decide
 
 private def guardsHOL : List Bool :=
   [ everyVarImmHOL (width := 8) even iRegOk, everyVarImmHOL (width := 8) even iRegBad,

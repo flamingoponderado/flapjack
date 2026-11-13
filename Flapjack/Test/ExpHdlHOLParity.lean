@@ -97,6 +97,15 @@ def parityGuard : Bool :=
 #eval parityGuard
 #guard parityGuard
 
+/-- The tagged exact carrier reproduces the HOL `known` row in the kernel
+    (the deleted raw-carrier example's observation, restated on the twin). -/
+example :
+    expHdlExact (width := 64) knownExact keyX =
+      .seq (.assign 3 (.loadGlob (BitVec.ofNat 5 0)))
+        (.seq (.assign 4 (.loadGlob (BitVec.ofNat 5 1))) .skip) := by
+  simp [expHdlExact, knownExact, knownFM, keyX, nm, crepNestedSeqHOL,
+    panMap2, loadGlobalsHOL]
+
 private def dupProductionFM : FiniteMap String (Shape × List Nat) :=
   FUPDATE_LIST FEMPTY [("x", (Shape.one, [3, 4])), ("x", (Shape.one, [7]))]
 
