@@ -8,34 +8,6 @@ public import Flapjack.Compiler.Backend.DataLive.Proofs.CallNonTail
 namespace Flapjack.Compiler.Backend.DataLive
 open Flapjack Flapjack.Compiler.Backend.DataSem Flapjack.SemanticPrimitivesHOL
 
-/-- Once matching callees raise to their fresh handler frames, the handler
-simulation applies using the restored live locals and exception context.
-This is auxiliary infrastructure, not the complete HOL call case. -/
-theorem handlerSimulation_afterRaise {C F : Type}
-    (source target sourceLast targetLast sourceNext : State C F)
-    (args : List DataSem.Value) (size : Option Nat) (sourceEnv targetEnv : Spt DataSem.Value)
-    (body handler : DataLang.Prog) (name : Nat) (value : DataSem.Value) (live : NumSet)
-    (result : Option (Result (List DataSem.Value) DataSem.Value))
-    (savedRel : stateRel { source with locals := sourceEnv } { target with locals := targetEnv }
-      (sptDelete name (compile handler live).2))
-    (lastRel : stateRel sourceLast targetLast .ln) (exception : exceptionRel source target)
-    (sourceRun : DataSem.evaluate body (DataSem.callEnv args size (pushEnv sourceEnv true (decClock source))) =
-      (some (.err (.raise value)), sourceLast))
-    (targetRun : DataSem.evaluate body (DataSem.callEnv args size (pushEnv targetEnv true (decClock target))) =
-      (some (.err (.raise value)), targetLast))
-    (handlerRun : DataSem.evaluate handler (setVar name value sourceLast) = (result, sourceNext))
-    (notType : result ≠ some (.err (.abort .typeError)))
-    (handlerIH : simulationFor (C := C) (F := F) handler live) :
-    ∃ targetNext, DataSem.evaluate (compile handler live).1 (setVar name value targetLast) = (result, targetNext) ∧
-      stateRel sourceNext targetNext (postLive result live) := by
-  obtain ⟨restored, restoredException⟩ :=
-    handlerEntry_afterRaise source target sourceLast targetLast args size sourceEnv targetEnv
-      (sptDelete name (compile handler live).2) body value savedRel lastRel exception sourceRun targetRun
-  have handlerRel := stateRel_setVar sourceLast targetLast (compile handler live).2 name value restored
-  have handlerException : exceptionRel (setVar name value sourceLast) (setVar name value targetLast) := by
-    apply exceptionRel_after sourceLast targetLast _ _ _ handlerRel restoredException <;> rfl
-  exact handlerIH _ _ result sourceNext handlerRun handlerRel notType handlerException
-
 /-- A non-tail call with a handler is simulated given the handler's liveness
 simulation and the smaller-clock same-program evaluator simulation. The
 latter remains an open prerequisite of the full pass correctness proof. -/
@@ -135,9 +107,14 @@ theorem call_nonTail_handler_correct {C F : Type} (returns : List Nat) (names : 
                       simpa [DataSem.evaluate, read, found, unique, cut, zero, sourceClamped] using run
                     obtain ⟨targetLast, targetRun, lastRel, _⟩ :=
                       bodyIH body sourceEntry targetEntry last (some (.err (.raise value))) smaller entryRel.1 entryRel.2 entryException (by simp) called
+                    obtain ⟨restored, restoredException⟩ :=
+                      handlerEntry_afterRaise source target last targetLast args size sourceEnv targetEnv
+                        (sptDelete name (compile handler live).2) body value handlerRel lastRel exception called targetRun
+                    have restoredVars := stateRel_setVar last targetLast (compile handler live).2 name value restored
+                    have handlerException : exceptionRel (setVar name value last) (setVar name value targetLast) := by
+                      apply exceptionRel_after last targetLast _ _ _ restoredVars restoredException <;> rfl
                     obtain ⟨targetNext, targetHandlerRun, finalRel⟩ :=
-                      handlerSimulation_afterRaise source target last targetLast sourceNext args size sourceEnv targetEnv body handler name value live result
-                        handlerRel lastRel exception called targetRun handlerRun notType handlerIH
+                      handlerIH _ _ result sourceNext handlerRun restoredVars notType handlerException
                     have targetClamped := targetRun
                     rw [← fixClock_evaluate body targetEntry] at targetClamped
                     simp only [targetEntry] at targetClamped
