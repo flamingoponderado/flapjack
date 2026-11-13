@@ -210,6 +210,22 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "compile_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/CodeLabels.lean",
+    "lean_name": "compile_codeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: arbitrary natural-number environment and offset and arbitrary BVI expression list, in the original order, retain the complete equality of mapped label unions. The source-shaped list compiler and its unconditional agreement with the executed traversal were compared; the original statement was captured with inferred types."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "compile_exp_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/CodeLabels.lean",
+    "lean_name": "compileExp_codeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: every BVI expression retains exactly the same label set after the original single-expression compiler, with no additional assumptions. The source singleton definition and its agreement with the executed traversal were compared; the original statement was captured with inferred types."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
     "hol_name": "dest_var_code_labels",
     "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/CodeLabels.lean",
     "lean_name": "deleteVar_codeLabels",
