@@ -1,0 +1,3 @@
+inj_def_typed=∀(f :α -> β) (s :α -> bool) (t :β -> bool). INJ f s t ⇔ (∀(x :α). x ∈ s ⇒ f x ∈ t) ∧ ∀(x :α) (y :α). x ∈ s ∧ y ∈ s ⇒ f x = f y ⇒ x = y
+linv_lo_typed=∀(f :α -> β) (s :α -> bool) (y :β). LINV f s y = THE (LINV_OPT f s y)
+linv_opt_def_typed=∀(f :α -> β) (s :α -> bool) (y :β). LINV_OPT f s y = if y ∈ IMAGE f s then SOME (@(x :α). x ∈ s ∧ f x = y) else (NONE :α option)

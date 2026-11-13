@@ -1,0 +1,2 @@
+rprod_def_typed=∀(R1 :α -> β -> bool) (R2 :γ -> δ -> bool). R1 ### R2 = (λ((s :α),(t :γ)) ((u :β),(v :δ)). R1 s u ∧ R2 t v)
+lex_def_typed=∀(R1 :α -> α -> bool) (R2 :β -> β -> bool). R1 LEX R2 = (λ((s :α),(t :β)) ((u :α),(v :β)). R1 s u ∨ s = u ∧ R2 t v)

@@ -4686,6 +4686,21 @@ run_probe hol_list_typed_probeScript.sml hol_list_typed_probe.out \
 run_probe hol_logroot_typed_probeScript.sml hol_logroot_typed_probe.out \
   log_exists_typed log_type log_spec_typed log_unique_typed \
   "$repo_dir/HOL/src/num/extra_theories/logrootScript.sml" "$cake_dir/pancake"
+run_probe hol_option_typed_probeScript.sml hol_option_typed_probe.out \
+  some_def_typed the_def_typed optrel_def_typed \
+  "$repo_dir/hol4/src/coretypes/optionScript.sml" "$cake_dir/pancake"
+
+run_probe hol_predset_typed_probeScript.sml hol_predset_typed_probe.out \
+  inj_def_typed linv_lo_typed linv_opt_def_typed \
+  "$repo_dir/HOL/src/pred_set/src/pred_setScript.sml" "$cake_dir/pancake"
+
+run_probe hol_relation_typed_probeScript.sml hol_relation_typed_probe.out \
+  transitive_def_typed total_def_typed \
+  "$repo_dir/HOL/src/relation/relationScript.sml" "$cake_dir/pancake"
+
+run_probe hol_pair_typed_probeScript.sml hol_pair_typed_probe.out \
+  rprod_def_typed lex_def_typed \
+  "$repo_dir/HOL/src/coretypes/pairScript.sml" "$cake_dir/pancake"
 
 run_probe hol_alignment_words_typed_probeScript.sml hol_alignment_words_typed_probe.out \
   align_def_typed aligned_def_typed byte_align_def_typed byte_aligned_def_typed aligned_add_sub_typed word_slice_def_typed w2s_def_typed word_to_hex_string_def_typed word_replicate_def_typed \

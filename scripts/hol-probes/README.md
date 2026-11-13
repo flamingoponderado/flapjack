@@ -10060,3 +10060,13 @@ of the `new_specification` constant `LOG`, the specification theorem `LOG` and
 `HOL_PROBE_ONLY=hol_logroot_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean
 correspondence.
+
+`hol_option_typed_probe.out`, `hol_predset_typed_probe.out`,
+`hol_relation_typed_probe.out` and `hol_pair_typed_probe.out` capture the typed
+statements of the reviewed `option`, `pred_set`, `relation` and `pair` rows from
+the built HOL4 core theories (no rebuild): `some_def`, `THE_DEF`, `OPTREL_def`,
+`INJ_DEF`, `LINV_LO`, `LINV_OPT_def`, `transitive_def`, `total_def`,
+`RPROD_DEF` (four independent type variables) and `LEX_DEF`. Regenerate with
+`HOL_PROBE_ONLY=hol_<theory>_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
