@@ -156,11 +156,14 @@ theorem compileExpsCorrect {C F : Type} (xs : List Bvl.Exp) (env : List Value)
     (handlers : BvlHandle.Proofs.handleOk xs) (global : target.global.isSome = true) :
     ∃ targetNext newRelocate clock,
       BviSem.evaluate ys (env.map (adjustBv newRelocate)) (BviProps.incClock clock target) =
-        (mapSimulationResult newRelocate res, targetNext) ∧
+        (Flapjack.SemanticPrimitivesProps.mapResult (List.map (adjustBv newRelocate))
+          (fun value => BviSem.ExnOrRet.exn (adjustBv newRelocate value)) res, targetNext) ∧
       stateRel newRelocate next targetNext ∧
       env.map (adjustBv relocate) = env.map (adjustBv newRelocate) ∧
       ∀ key, source.refs.lookup key ≠ none → relocate key = newRelocate key :=
-  simulation_all xs env source n res next target n2 ys aux relocate run notTypeError compiled related
-    sourceOk envOk installed handlers global
+  by
+    simpa only [mapSimulationResult_eq_mapResult] using
+      simulation_all xs env source n res next target n2 ys aux relocate run notTypeError compiled related
+        sourceOk envOk installed handlers global
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

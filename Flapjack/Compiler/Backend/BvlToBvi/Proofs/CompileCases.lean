@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.StateOk
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateList
 public import Flapjack.Compiler.Backend.Semantics.BviProps.Clock
+public import Flapjack.SemanticPrimitivesProps.ResultMap
 
 -- Proofs below unfold private helpers of these modules.
 import all Flapjack.Compiler.Backend.BvlToBvi.SourceSing
@@ -21,6 +22,16 @@ def mapSimulationResult (relocate : Nat → Nat) : Result (List Value) Value →
   | .val values => .val (values.map (adjustBv relocate))
   | .err (.abort reason) => .err (.abort reason)
   | .err (.raise value) => .err (.raise (.exn (adjustBv relocate value)))
+
+/-- The simulation helper is the original result map specialized to BVI
+exceptions. This definitional bridge is Flapjack proof infrastructure. -/
+theorem mapSimulationResult_eq_mapResult (relocate : Nat → Nat) (result : Result (List Value) Value) :
+    mapSimulationResult relocate result =
+      Flapjack.SemanticPrimitivesProps.mapResult (List.map (adjustBv relocate))
+        (fun value => BviSem.ExnOrRet.exn (adjustBv relocate value)) result := by
+  cases result with
+  | val values => rfl
+  | err error => cases error <;> rfl
 
 /-- The source-shaped simulation proposition used for induction hypotheses.
 This is Flapjack infrastructure until the source evaluator qualification and

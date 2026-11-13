@@ -29,6 +29,6 @@ theorem compileSingleEvaluate {C F : Type} (start : Nat)
       [.call 0 (some (bvlNumStubs + bvlToBviNamespaces * start)) [] none] .nil relocate run notTypeError
       compiled related sourceOk (by simp [bvOkList]) (by simp [appListAppend, appendAux, auxCodeInstalled])
       (by simp [BvlHandle.Proofs.handleOk]) global
-  exact ⟨clock, newRelocate, targetNext, by simpa using targetRun, finalRel⟩
+  exact ⟨clock, newRelocate, targetNext, by simpa only [mapSimulationResult_eq_mapResult, List.map_nil] using targetRun, finalRel⟩
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

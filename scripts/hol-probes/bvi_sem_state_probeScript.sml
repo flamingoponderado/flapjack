@@ -62,3 +62,98 @@ val _ = show "eval_let_call_return=" (EVAL ``bviSem$evaluate ([bvi$LetCall 0 0 0
 val _ = show "bvi_to_bvl_globals=" (EVAL ``(bviSem$bvi_to_bvl (s:('c,'ffi) bviSem$state)).globals``);
 val _ = show "bvi_to_bvl_compile=" (EVAL ``(bviSem$bvi_to_bvl (s:('c,'ffi) bviSem$state)).compile``);
 val _ = show "bvi_to_bvl_oracle=" (EVAL ``(bviSem$bvi_to_bvl (s:('c,'ffi) bviSem$state)).compile_oracle``);
+
+(* Recover the original clamped equations from the later unclamped theorem.
+   Each equation has its own binders, as in the generated definition theorem. *)
+open bviSemTheory;
+val evaluate_clamped_replay = prove (``(∀env s. (evaluate ([],env,s) = (Rval [] : bvi_result,s))) /\
+(∀x y xs env s. (evaluate (x::y::xs,env,s) =
+     case fix_clock s (evaluate ([x],env,s)) of
+     | (Rval v1,s1) =>
+         (case evaluate (y::xs,env,s1) of
+          | (Rval vs,s2) => (Rval (HD v1::vs),s2)
+          | res => res)
+     | res => res)) /\
+(∀n env s. (evaluate ([Var n],env,s) =
+     if n < LENGTH env then (Rval [EL n env],s) else (Rerr(Rabort Rtype_error),s))) /\
+(∀x1 x2 x3 env s. (evaluate ([If x1 x2 x3],env,s) =
+     case fix_clock s (evaluate ([x1],env,s)) of
+     | (Rval vs,s1) =>
+          if Boolv T = HD vs then evaluate([x2],env,s1) else
+          if Boolv F = HD vs then evaluate([x3],env,s1) else
+            (Rerr(Rabort Rtype_error),s1)
+     | res => res)) /\
+(∀xs x2 env s. (evaluate ([Let xs x2],env,s) =
+     case fix_clock s (evaluate (xs,env,s)) of
+     | (Rval vs,s1) => evaluate ([x2],vs++env,s1)
+     | res => res)) /\
+(∀x1 env s. (evaluate ([Raise x1],env,s) =
+     case evaluate ([x1],env,s) of
+     | (Rval vs,s) => (Rerr(Rraise (Exn (HD vs))),s)
+     | res => res)) /\
+(∀xs env s. (evaluate ([Return xs],env,s) =
+     case evaluate (xs,env,s) of
+     | (Rval vs,s) => (Rerr(Rraise (Ret vs)),s)
+     | res => res)) /\
+(∀op xs env s. (evaluate ([Op op xs],env,s) =
+     case fix_clock s (evaluate (xs,env,s)) of
+     | (Rval vs,s) =>
+         (case do_app op (REVERSE vs) s of
+          | Rerr e => (Rerr e,s)
+          | Rval (v,s) => (Rval [v],s))
+     | res => res)) /\
+(∀x env s. (evaluate ([Tick x],env,s) =
+     if s.clock = 0 then (Rerr(Rabort Rtimeout_error),s) else
+       evaluate ([x],env,dec_clock 1 s))) /\
+(∀force_loc n env s. (evaluate ([Force force_loc n],env,s) =
+     if ~(n < LENGTH env) then (Rerr(Rabort Rtype_error),s) else
+       let thunk_v = EL n env in
+         case dest_thunk thunk_v s.refs of
+         | BadRef => (Rerr (Rabort Rtype_error),s)
+         | NotThunk => (Rerr (Rabort Rtype_error),s)
+         | IsThunk Evaluated v => (Rval [v],s)
+         | IsThunk NotEvaluated f =>
+             (case find_code (SOME force_loc) [thunk_v; f] s.code of
+              | NONE => (Rerr(Rabort Rtype_error),s)
+              | SOME (args,exp) =>
+                  if s.clock = 0 then
+                    (Rerr(Rabort Rtimeout_error),s with clock := 0)
+                  else
+                    (case evaluate ([exp],args,dec_clock 1 s) of
+                     | (Rerr(Rraise (Ret _)),s1) => (Rerr(Rabort Rtype_error),s1)
+                     | res => res)))) /\
+(∀ticks dest xs handler env s1. (evaluate ([Call ticks dest xs handler],env,s1) =
+     if IS_NONE dest /\ IS_SOME handler then (Rerr(Rabort Rtype_error),s1) else
+     case fix_clock s1 (evaluate (xs,env,s1)) of
+     | (Rval vs,s) =>
+         (case find_code dest vs s.code of
+          | NONE => (Rerr(Rabort Rtype_error),s)
+          | SOME (args,exp) =>
+              if (s.clock < ticks + 1) then (Rerr(Rabort Rtimeout_error),s with clock := 0) else
+                case fix_clock (dec_clock (ticks+1) s) (evaluate ([exp],args,dec_clock (ticks+1) s)) of
+                | (Rerr(Rraise (Exn v)),s) =>
+                     (case handler of
+                      | SOME x =>
+                          (case evaluate ([x],v::env,s) of
+                           | (Rerr(Rraise (Ret _)),s1) => (Rerr(Rabort Rtype_error),s1)
+                           | res => res)
+                      | NONE => (Rerr(Rraise (Exn v)),s))
+                | (Rerr(Rraise _),s) => (Rerr(Rabort Rtype_error),s)
+                | res => res)
+     | res => res)) /\
+(∀rets ticks dest xs y env s1. (evaluate ([LetCall rets ticks dest xs y],env,s1) =
+     case fix_clock s1 (evaluate (xs,env,s1)) of
+     | (Rval vs,s) =>
+         (case find_code (SOME dest) vs s.code of
+          | NONE => (Rerr(Rabort Rtype_error),s)
+          | SOME (args,exp) =>
+              if (s.clock < ticks + 1) then (Rerr(Rabort Rtimeout_error),s with clock := 0) else
+                case fix_clock (dec_clock (ticks+1) s) (evaluate ([exp],args,dec_clock (ticks+1) s)) of
+                | (Rval _,s) => (Rerr(Rabort Rtype_error),s)
+                | (Rerr(Rraise (Ret ret_vs)),s) =>
+                    if LENGTH ret_vs = rets then evaluate ([y],ret_vs ++ env,s)
+                    else (Rerr(Rabort Rtype_error),s)
+                | res => res)
+     | res => res))``,
+  simp [bviSemTheory.evaluate_def, bviSemTheory.fix_clock_evaluate]);
+val _ = show "evaluate_clamped_replay=" evaluate_clamped_replay;
