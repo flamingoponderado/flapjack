@@ -13,3 +13,4 @@ get_code_labels_def=⊢ (∀r h d a.
   (∀v22 v21. get_code_labels (MakeSpace v21 v22) = ∅) ∧
   (∀v23. get_code_labels (Raise v23) = ∅) ∧
   (∀v24. get_code_labels (Return v24) = ∅) ∧ get_code_labels Tick = ∅
+get_code_labels_mk_ticks_typed=∀(n :num) (m :dataLang$prog). get_code_labels (mk_ticks n m) ⊆ get_code_labels m

@@ -99,3 +99,4 @@ val _ = show "compile_part_evaluate_typed=" bvi_to_dataProofTheory.compile_part_
 val _ = show "compile_prog_evaluate_typed=" bvi_to_dataProofTheory.compile_prog_evaluate;
 val _ = show "compile_prog_semantics_typed=" bvi_to_dataProofTheory.compile_prog_semantics;
 val _ = show "get_code_labels_iAssign_typed=" bvi_to_dataProofTheory.get_code_labels_iAssign;
+val _ = show "get_code_labels_compile_typed=" bvi_to_dataProofTheory.get_code_labels_compile;

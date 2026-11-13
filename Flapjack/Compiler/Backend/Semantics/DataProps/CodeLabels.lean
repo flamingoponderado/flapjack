@@ -19,4 +19,12 @@ def getCodeLabels : DataLang.Prog → Set Nat
   | .assign _ op _ _ => ClosLang.assignGetCodeLabel op
   | _ => ∅
 
+/-- Adding ticks cannot introduce a code label. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "get_code_labels_mk_ticks"]
+theorem getCodeLabels_mkTicks (n : Nat) (program : DataLang.Prog) :
+    getCodeLabels (DataLang.mkTicks n program) ⊆ getCodeLabels program := by
+  induction n with
+  | zero => simp [DataLang.mkTicks]
+  | succ n ih => simpa [DataLang.mkTicks, getCodeLabels] using ih
+
 end Flapjack.Compiler.Backend.DataSem

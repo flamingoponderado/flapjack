@@ -138500,6 +138500,14 @@
     "reviewer": "codewhale source comparison 2026-11-09 (issue #949), pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae, llistScript:1596-1600 Theorem every_coind: !P Q. (!h t. Q (h:::t) ==> P h /\\ Q t) ==> !ll. Q ll ==> every P ll. The Lean statement is the same two-step implication with P : alpha -> Prop and Q : HolLList alpha -> Prop (HOL bool predicates read as Prop as throughout this file), the same forall h t premise with the same conjunction order P h /\\ Q t, and the same forall ll conclusion with every P ll the tagged llistEvery of every_def (llistScript:1591, ported in the previous batch). The proof is the source's exists_ind coinduction translated to the rep-index induction used by llistExists_iff/llistEvery_iff, with the same lcons hd (ltail ll) case step; no hypothesis or finiteness premise is added."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "get_code_labels_compile",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/CodeLabels.lean",
+    "lean_name": "getCodeLabels_compile",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: all five original arbitrary compiler arguments and unconditional inclusion in the mapped union of source expression labels. The list helper's checked equality establishes the original BIGUNION of the mapped label sets. The complete compiler induction covers every expression, call and handler case without added premises; native operation, name and fixed-width word carriers match."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
     "hol_name": "locals_ok_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/Locals.lean",
@@ -138683,6 +138691,14 @@
     "lean_name": "getCodeLabels_iAssign",
     "statement_status": "reviewed_exact",
     "reviewer": "Independent typed HOL source review 2026-11-13: all five original universally quantified arguments and unconditional equality of the emitted and source operation label sets. The operation carrier retains native MlString names, fixed 64-bit word fields and the original operation constructors. All assignment, comparison rewrite, name-root and space-allocation branches are covered without added premises."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+    "hol_name": "get_code_labels_mk_ticks",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/CodeLabels.lean",
+    "lean_name": "getCodeLabels_mkTicks",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary tick count and DATA program, with the original unconditional subset conclusion. The tick construction matches the source iteration, and all native operation, string and fixed-word carriers remain unchanged."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
