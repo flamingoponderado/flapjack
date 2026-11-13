@@ -421,6 +421,7 @@ theorem everyStackVar_copyOut (P : Nat → Bool) {I : CopyState → Prop}
   | loop _ _ _ _ _ ih => simp only [everyStackVarHOL] at hp ⊢; exact ih hp
   | _ => simp [everyStackVarHOL]
 
+set_option linter.unusedSimpArgs false in
 theorem callArg_copyPropInst (i : WordLangInst (BitVec width)) {cs : CopyState} (hI : NotAllocInv cs)
     (hp : callArgConventionHOL (.inst i : WordLangProgHOL (BitVec width)) = true) :
     callArgConventionHOL (copyPropInst i cs).1 = true := by
@@ -430,31 +431,44 @@ theorem callArg_copyPropInst (i : WordLangInst (BitVec width)) {cs : CopyState} 
   simp only [callArgConventionHOL] at hp
   rcases i with _ | _ | a | ⟨op, r, ad⟩ | f
   · simp [copyPropInst, callArgConventionHOL]
-  · simp [copyPropInst, callArgConventionHOL, instArgConvention]
+  · simp [copyPropInst, callArgConventionHOL, instArgConventionExact,
+      HolInst.ofWordLangInst, HolArith.ofWordLangArith, HolRegImm.ofWordRegImm]
   · cases a with
     | shift sh r1 r2 ri =>
       cases ri with
       | reg r =>
-        simp only [instArgConvention, beq_iff_eq] at hp
+        simp only [instArgConventionExact, HolInst.ofWordLangInst,
+          HolArith.ofWordLangArith, HolRegImm.ofWordRegImm, beq_iff_eq] at hp
         subst hp
         simp only [copyPropInst, lookupEqImm, l8]
-        split_ifs <;> simp [callArgConventionHOL, instArgConvention]
+        split_ifs <;> simp [callArgConventionHOL, instArgConventionExact,
+          HolInst.ofWordLangInst, HolArith.ofWordLangArith, HolRegImm.ofWordRegImm]
       | imm w =>
         simp only [copyPropInst, lookupEqImm]
-        split_ifs <;> simp [callArgConventionHOL, instArgConvention]
+        split_ifs <;> simp [callArgConventionHOL, instArgConventionExact,
+          HolInst.ofWordLangInst, HolArith.ofWordLangArith, HolRegImm.ofWordRegImm]
     | longDiv r1 r2 r3 r4 r5 =>
-      simp only [instArgConvention, Bool.and_eq_true, beq_iff_eq] at hp
+      simp only [instArgConventionExact, HolInst.ofWordLangInst,
+        HolArith.ofWordLangArith, HolRegImm.ofWordRegImm, Bool.and_eq_true,
+        beq_iff_eq] at hp
       obtain ⟨⟨⟨rfl, rfl⟩, rfl⟩, rfl⟩ := hp
-      simp [copyPropInst, callArgConventionHOL, instArgConvention, l6, l0]
+      simp [copyPropInst, callArgConventionHOL, instArgConventionExact,
+        HolInst.ofWordLangInst, HolArith.ofWordLangArith, HolRegImm.ofWordRegImm,
+        l6, l0]
     | binop bop r1 r2 ri =>
       simp only [copyPropInst]
-      split_ifs <;> simp [callArgConventionHOL, instArgConvention]
+      split_ifs <;> simp [callArgConventionHOL, instArgConventionExact,
+        HolInst.ofWordLangInst, HolArith.ofWordLangArith, HolRegImm.ofWordRegImm]
     | _ =>
       simp only [copyPropInst]
-      (try split_ifs) <;> simp_all [callArgConventionHOL, instArgConvention]
-  · cases op <;> cases ad <;> simp [copyPropInst, callArgConventionHOL, instArgConvention]
+      (try split_ifs) <;> simp_all [callArgConventionHOL, instArgConventionExact,
+        HolInst.ofWordLangInst, HolArith.ofWordLangArith, HolRegImm.ofWordRegImm]
+  · cases op <;> cases ad <;> simp [copyPropInst, callArgConventionHOL,
+      instArgConventionExact, HolInst.ofWordLangInst, HolArith.ofWordLangArith,
+      HolRegImm.ofWordRegImm]
   · cases f <;> simp only [copyPropInst] <;> (try split) <;>
-      simp [callArgConventionHOL, instArgConvention]
+      simp [callArgConventionHOL, instArgConventionExact, HolInst.ofWordLangInst,
+        HolArith.ofWordLangArith, HolRegImm.ofWordRegImm]
 
 theorem callArg_copyOut {p q : WordLangProgHOL (BitVec width)} (h : CopyOut NotAllocInv p q)
     (hp : callArgConventionHOL p = true) : callArgConventionHOL q = true := by

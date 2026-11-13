@@ -178,31 +178,10 @@ WITHDRAWN_HOL_DECLARATIONS = {
         "the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 "
         "is admitted.  The HOL tag was withdrawn pending a faithful width-restricted restatement."
     ),
-    ("Flapjack/Pancake/WordConvs.lean", "distinctTarReg"): (
-        "cakeml/compiler/backend/semantics/wordConvsScript.sml",
-        "distinct_tar_reg_def",
-        "flapjack-ds8 (bead flapjack-4ac.6): HOL distinct_tar_reg_def uses a positive-dimensional word type; "
-        "the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 "
-        "is admitted.  The HOL tag was withdrawn pending a faithful width-restricted restatement."
-    ),
-    ("Flapjack/Pancake/WordConvs.lean", "twoRegInst"): (
-        "cakeml/compiler/backend/semantics/wordConvsScript.sml",
-        "two_reg_inst_def",
-        "flapjack-ds8 (bead flapjack-4ac.6): HOL two_reg_inst_def uses a positive-dimensional word type; "
-        "the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 "
-        "is admitted.  The HOL tag was withdrawn pending a faithful width-restricted restatement."
-    ),
     ("Flapjack/Pancake/WordConvs.lean", "instOkLess"): (
         "cakeml/compiler/backend/semantics/wordConvsScript.sml",
         "inst_ok_less_def",
         "flapjack-ds8 (bead flapjack-4ac.6): HOL inst_ok_less_def uses a positive-dimensional word type; "
-        "the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 "
-        "is admitted.  The HOL tag was withdrawn pending a faithful width-restricted restatement."
-    ),
-    ("Flapjack/Pancake/WordConvs.lean", "instArgConvention"): (
-        "cakeml/compiler/backend/semantics/wordConvsScript.sml",
-        "inst_arg_convention_def",
-        "flapjack-ds8 (bead flapjack-4ac.6): HOL inst_arg_convention_def uses a positive-dimensional word type; "
         "the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 "
         "is admitted.  The HOL tag was withdrawn pending a faithful width-restricted restatement."
     ),

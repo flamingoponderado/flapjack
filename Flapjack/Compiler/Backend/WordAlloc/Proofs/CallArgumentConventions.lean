@@ -8,7 +8,7 @@ public import Flapjack.Pancake.WordConvs
 /-! Original call argument convention preservation under occurrence-local
 fixation of physical registers. -/
 namespace Flapjack.WordAlloc
-open Flapjack
+open Flapjack Flapjack.Compiler.Encoders.Asm
 
 /-- Flapjack Boolean rendering of the original physical-register implication. -/
 private def fixesPhysical (f : Nat → Nat) (x : Nat) : Bool :=
@@ -19,31 +19,38 @@ registers occurring in the instruction, as in the original premise. -/
 private theorem instConvention_colour {width : Nat} [NeZero width]
     (f : Nat → Nat) (i : WordLangInst (BitVec width))
     (occurs : everyVarInstHOL (fixesPhysical f) i = true)
-    (valid : instArgConvention i = true) :
-    instArgConvention (applyColourInst f i) = true := by
+    (valid : instArgConventionExact (HolInst.ofWordLangInst i) = true) :
+    instArgConventionExact (HolInst.ofWordLangInst (applyColourInst f i)) = true := by
   cases i with
   | skip | const _ _ =>
-      simp [instArgConvention, applyColourInst, applyColourInstCore]
+      simp [instArgConventionExact, HolInst.ofWordLangInst, applyColourInst,
+        applyColourInstCore]
   | mem op r addr =>
       cases op <;> cases addr <;>
-        simp [instArgConvention, applyColourInst, applyColourInstCore]
+        simp [instArgConventionExact, HolInst.ofWordLangInst, applyColourInst,
+          applyColourInstCore]
   | fp op =>
-      cases op <;> simp [instArgConvention, applyColourInst, applyColourInstCore]
+      cases op <;> simp [instArgConventionExact, HolInst.ofWordLangInst, applyColourInst,
+        applyColourInstCore]
   | arith a =>
       cases a with
       | binop op r1 r2 ri =>
-          cases ri <;> simp [instArgConvention, applyColourInst, applyColourInstCore,
-            applyColourImmCore]
+          cases ri <;> simp [instArgConventionExact, HolInst.ofWordLangInst,
+            HolArith.ofWordLangArith, HolRegImm.ofWordRegImm, applyColourInst,
+            applyColourInstCore, applyColourImmCore]
       | div _ _ _ =>
-          simp [instArgConvention, applyColourInst, applyColourInstCore]
+          simp [instArgConventionExact, HolInst.ofWordLangInst, HolArith.ofWordLangArith,
+            applyColourInst, applyColourInstCore]
       | shift op r1 r2 ri =>
           cases ri <;> simp_all [everyVarInstHOL, everyVarImmHOL,
-            instArgConvention, applyColourInst, applyColourInstCore,
+            instArgConventionExact, HolInst.ofWordLangInst, HolArith.ofWordLangArith,
+            HolRegImm.ofWordRegImm, applyColourInst, applyColourInstCore,
             applyColourImmCore, fixesPhysical, isPhyVar]
       | longMul _ _ _ _ | longDiv _ _ _ _ _ | addCarry _ _ _ _
       | addOverflow _ _ _ _ | subOverflow _ _ _ _ =>
-          simp_all [everyVarInstHOL, instArgConvention, applyColourInst,
-            applyColourInstCore, fixesPhysical, isPhyVar]
+          simp_all [everyVarInstHOL, instArgConventionExact, HolInst.ofWordLangInst,
+            HolArith.ofWordLangArith, applyColourInst, applyColourInstCore,
+            fixesPhysical, isPhyVar]
 
 /-- Flapjack canonical argument-list infrastructure. The original occurrence
 premise fixes every element of the physical-register sequence. -/

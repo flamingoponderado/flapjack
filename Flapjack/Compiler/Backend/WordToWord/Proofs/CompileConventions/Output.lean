@@ -83,12 +83,15 @@ private theorem singleTwo {width : Nat} [NeZero width] (two : Bool)
     (k alg : Nat) (c : AsmConfigExact width)
     (entry : (Nat × Nat × WordLangProgHOL (BitVec width)) × Option (Spt Nat))
     (enabled : two = true) :
-    everyInst twoRegInst (fullCompileSingle two k alg c entry).2.2 = true := by
+    everyInst (fun i => twoRegInstExact (HolInst.ofWordLangInst i))
+      (fullCompileSingle two k alg c entry).2.2 = true := by
   rcases entry with ⟨⟨name, args, program⟩, col⟩
   simp only [fullCompileSingle, compileSingle]
-  apply (removeMustTerminateConventions twoRegInst _ c k).2.2.2.1
+  apply (removeMustTerminateConventions
+    (fun i => twoRegInstExact (HolInst.ofWordLangInst i)) _ c k).2.2.2.1
   apply wordAlloc_twoRegInst
-  apply (removeDeadProgConventions twoRegInst _ c).2.2.2.1
+  apply (removeDeadProgConventions
+    (fun i => twoRegInstExact (HolInst.ofWordLangInst i)) _ c).2.2.2.1
   apply everyInst_removeUnreach
   exact threeToTwoRegProg_twoRegInst _ _ enabled
 
@@ -103,10 +106,12 @@ theorem compileOutputConventions {width : Nat} [NeZero width] (wc : Config)
     ∀ p ∈ (compile wc ac programs).2,
       flatExpConventions p.2.2 = true ∧
       postAllocConventionsHOL (ac.regCount - (5 + ac.avoidRegs.length)) p.2.2 = true ∧
-      ((∀ q ∈ programs, everyInst (fun i => instOkLessExact ac (HolInst.ofWordLangInst i)) q.2.2 = true) ∧
+      ((∀ q ∈ programs,
+          everyInst (fun i => instOkLessExact ac (HolInst.ofWordLangInst i)) q.2.2 = true) ∧
         addrOffsetOk ac 0 = true ∧ hwOffsetOk ac 0 = true ∧ byteOffsetOk ac 0 = true →
         fullInstOkLessExact ac p.2.2 = true) ∧
-      (ac.twoRegArith = true → everyInst twoRegInst p.2.2 = true) ∧
+      (ac.twoRegArith = true →
+        everyInst (fun i => twoRegInstExact (HolInst.ofWordLangInst i)) p.2.2 = true) ∧
       (noShareInstSubprogsHOL p.2.2 = true ∨ ac.isa ≠ .ag32) := by
   intro p member
   change p ∈ ((programs.zip (nextNOracle programs.length wc.colOracle).1).map
@@ -137,10 +142,12 @@ theorem compileToWordConventions {width : Nat} [NeZero width] (wc : Config)
     (∀ p ∈ (compile wc ac programs).2,
       flatExpConventions p.2.2 = true ∧
       postAllocConventionsHOL (ac.regCount - (5 + ac.avoidRegs.length)) p.2.2 = true ∧
-      ((∀ q ∈ programs, everyInst (fun i => instOkLessExact ac (HolInst.ofWordLangInst i)) q.2.2 = true) ∧
+      ((∀ q ∈ programs,
+          everyInst (fun i => instOkLessExact ac (HolInst.ofWordLangInst i)) q.2.2 = true) ∧
         addrOffsetOk ac 0 = true ∧ hwOffsetOk ac 0 = true ∧ byteOffsetOk ac 0 = true →
         fullInstOkLessExact ac p.2.2 = true) ∧
-      (ac.twoRegArith = true → everyInst twoRegInst p.2.2 = true) ∧
+      (ac.twoRegArith = true →
+        everyInst (fun i => twoRegInstExact (HolInst.ofWordLangInst i)) p.2.2 = true) ∧
       (noShareInstSubprogsHOL p.2.2 = true ∨ ac.isa ≠ .ag32)) := by
   obtain ⟨names, labels⟩ := compileNamesLabels wc ac programs guard
   exact ⟨names, labels, compileOutputConventions wc ac programs guard⟩

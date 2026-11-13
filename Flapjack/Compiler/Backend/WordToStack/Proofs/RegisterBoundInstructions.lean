@@ -109,11 +109,12 @@ theorem wordToStackRegBoundInst {width : Nat} [NeZero width]
   simp only [compNative]
   apply instBound _ _ room
   simp only [postAllocConventionsHOL, Bool.and_eq_true] at conventions
-  have convention : instArgConvention i = true := conventions.2.2
+  have convention : instArgConventionExact (HolInst.ofWordLangInst i) = true :=
+    conventions.2.2
   cases i with
   | arith a =>
       cases a <;> try (rename_i op d src ri; cases ri)
-      all_goals simp_all only [HolInst.ofWordLangInst, HolArith.ofWordLangArith, HolRegImm.ofWordRegImm, instArgConvention, instArgConventionExact]
+      all_goals simp_all only [HolInst.ofWordLangInst, HolArith.ofWordLangArith, HolRegImm.ofWordRegImm, instArgConventionExact]
   | mem op d addr => cases addr; trivial
   | fp f => cases f <;> trivial
   | skip => trivial

@@ -63,26 +63,6 @@ section Helpers
 
 variable {width : Nat} [NeZero width] {C F : Type}
 
-/-- The width-general executed `distinctTarReg` agrees with the reviewed
-    `distinct_tar_reg` read through `HolInst.ofWordLangInst` (Flapjack
-    infrastructure). -/
-theorem distinctTarReg_ofWordLangInst (i : WordLangInst (BitVec width)) :
-    distinctTarRegExact (HolInst.ofWordLangInst i) = distinctTarReg i := by
-  rcases i with _ | _ | a | _ | _
-  all_goals try rfl
-  cases a with
-  | binop _ _ _ ri => cases ri <;> rfl
-  | shift _ _ _ ri => cases ri <;> rfl
-  | _ => rfl
-
-theorem everyInst_distinctTarReg_exact (p : WordLangProgHOL (BitVec width))
-    (h : everyInst (fun i => distinctTarRegExact (HolInst.ofWordLangInst i)) p = true) :
-    everyInst distinctTarReg p = true := by
-  have : (fun i => distinctTarRegExact (HolInst.ofWordLangInst i)) =
-      (distinctTarReg : WordLangInst (BitVec width) → Bool) :=
-    funext distinctTarReg_ofWordLangInst
-  rwa [this] at h
-
 theorem wordStateEqRel_trans {s t u : WordSemStateFiniteExact width C F}
     (h1 : WordAlloc.wordStateEqRel s t) (h2 : WordAlloc.wordStateEqRel t u) :
     WordAlloc.wordStateEqRel s u := by
@@ -180,12 +160,12 @@ theorem compile_single_lem {width : Nat} [NeZero width] {C F : Type} (t : Bool) 
             (WordConvs.wf_cutsets_word_common_subexp_elim _
               ((WordConvs.removeDeadProgConventions (fun _ => true) p2 c).2.2.2.2.1
                 (WordAlloc.fullSsaCcTrans_wfCutsets n p1))))))
-  have dist4 : everyInst distinctTarReg p4 = true :=
-    everyInst_distinctTarReg_exact _
-      (WordConvs.every_inst_distinct_tar_reg_copy_prop _
-        (WordCse.every_inst_distinct_tar_reg_word_common_subexp_elim _
-          ((WordConvs.removeDeadProgConventions _ p2 c).2.2.2.1
-            (WordAlloc.fullSsaCcTrans_distinctTarReg n p1))))
+  have dist4 : everyInst (fun i => distinctTarRegExact (HolInst.ofWordLangInst i))
+      p4 = true :=
+    WordConvs.every_inst_distinct_tar_reg_copy_prop _
+      (WordCse.every_inst_distinct_tar_reg_word_common_subexp_elim _
+        ((WordConvs.removeDeadProgConventions _ p2 c).2.2.2.1
+          (WordAlloc.fullSsaCcTrans_distinctTarReg n p1)))
   -- word_alloc
   obtain ⟨perm1, hA⟩ := WordAlloc.wordAllocCorrect name c a p7 k col st
     ⟨evenStartingLocals_of_domain _ _ hdom, wf7⟩
