@@ -175,3 +175,16 @@ val data_to_bvi_v_Boolv_IMP_replay = Q.prove
    rw [bvlSemTheory.Boolv_def,dataSemTheory.dest_Boolv_def]
    \\ Cases_on `b` \\ simp [] \\ EVAL_TAC);
 val _ = show "data_to_bvi_v_Boolv_IMP_replay_typed=" data_to_bvi_v_Boolv_IMP_replay;
+val _ = show "do_build_thm_typed=" bvi_to_dataProofTheory.do_build_thm;
+
+(* Replay the original local least-unused-reference proof. *)
+open finite_mapTheory;
+val refs_rel_LEAST_eq_replay = Q.prove
+ (`∀s1 s2.
+    (∀n. FLOOKUP s1 n = lookup n (sptree$map data_to_bvi_ref s2)) ⇒
+    (LEAST ptr. ptr ∉ FDOM s1) = LEAST ptr. ptr ∉ domain s2`,
+  rw []
+  \\ `∀x. (x ∈ FDOM s1) = (x ∈ domain s2)`
+     by (rw [] \\ EQ_TAC \\ rw [FDOM_FLOOKUP,domain_lookup,lookup_map])
+  \\ rw []);
+val _ = show "refs_rel_LEAST_eq_replay_typed=" refs_rel_LEAST_eq_replay;
