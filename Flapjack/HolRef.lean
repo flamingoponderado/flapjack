@@ -761,6 +761,96 @@ private def parameterObservationProblems (type : Expr) (parameters : Array Strin
       return #[]
     return #[s!"elaborated map binders {seen} do not match named parameters {parameters}"]
 
+/-- Check the elaborated signature of the two closure-to-BVL simulation
+declarations. This is a prospective qualifier guard: it does not check the
+declaration body, witness, module ownership, or correspondence with HOL, and
+is not yet connected to the attribute or export paths. -/
+def predicateDomainSignatureProblems (type : Expr) (isTheorem : Bool) :
+    MetaM (Array String) := do
+  forallTelescope type fun args result => do
+    let expectedCount := if isTheorem then 16 else 14
+    if args.size != expectedCount then
+      return #[s!"expected {expectedCount} binders, got {args.size}"]
+    let names := #["C₁", "C₂", "F", "ffi", "maxApp", "code1", "co1", "cc1",
+      "es1", "code2", "co2", "cc2", "start", "rel", "h", "relation"]
+    let mut problems : Array String := #[]
+    let mut types : Array Expr := #[]
+    for i in [:args.size] do
+      let d ← args[i]!.fvarId!.getDecl
+      types := types.push d.type
+      if d.userName.toString != names[i]! then
+        problems := problems.push s!"binder {i} has unexpected name {d.userName}"
+      let expectedInfo := if i < 3 then BinderInfo.implicit else BinderInfo.default
+      if d.binderInfo != expectedInfo then
+        problems := problems.push s!"binder {i} has unexpected binder information"
+    let c₁ := args[0]!
+    let c₂ := args[1]!
+    let f := args[2]!
+    let nat := mkConst `Nat
+    let toName (s : String) := (s.splitOn ".").foldl Name.str Name.anonymous
+    let constName (s : String) := mkConst (toName s)
+    let closExp := constName "Flapjack.Compiler.Backend.ClosLang.Exp"
+    let bvlExp := constName "Flapjack.Compiler.Backend.Bvl.Exp"
+    let pair (a b : Expr) := mkApp2 (mkConst `Prod [Level.zero, Level.zero]) a b
+    let sourceCode := mkApp2 (constName "Flapjack.HolFiniteMapExact") nat (pair nat closExp)
+    let sourceOracle := mkApp (constName "Flapjack.Compiler.Backend.ClosSem.CompileOracle") c₁
+    let sourceCompiler := mkApp (constName "Flapjack.Compiler.Backend.ClosSem.Compiler") c₁
+    let expressions := mkApp (mkConst `List [Level.zero]) closExp
+    let targetCode := mkApp (constName "Flapjack.Spt") (pair nat bvlExp)
+    let targetOracle := mkApp (constName "Flapjack.Compiler.Backend.BvlSem.CompileOracle") c₂
+    let targetCompiler := mkApp (constName "Flapjack.Compiler.Backend.BvlSem.Compiler") c₂
+    let relDomains := #[sourceCode, sourceOracle, sourceCompiler, expressions, targetCode,
+      targetOracle, targetCompiler, nat]
+    let relType := relDomains.foldr
+      (fun domain tail => mkForall Name.anonymous BinderInfo.default domain tail) (mkSort Level.zero)
+    let expectedTypes := #[mkSort (Level.succ Level.zero), mkSort (Level.succ Level.zero),
+      mkSort (Level.succ Level.zero), mkApp (mkConst (toName "Flapjack.HolFfiState") [Level.zero]) f,
+      nat, sourceCode, sourceOracle, sourceCompiler, expressions, targetCode, targetOracle,
+      targetCompiler, nat, relType]
+    for i in [:expectedTypes.size] do
+      unless ← isDefEq types[i]! expectedTypes[i]! do
+        problems := problems.push s!"binder {names[i]!} has the wrong elaborated type"
+    let relationProblems ← forallTelescope types[13]! fun domains conclusion => do
+      if domains.size != relDomains.size then
+        return #[s!"relation has {domains.size} domains instead of {relDomains.size}"]
+      let mut errors : Array String := #[]
+      for i in [:domains.size] do
+        let d ← domains[i]!.fvarId!.getDecl
+        if d.binderInfo != BinderInfo.default then
+          errors := errors.push s!"relation domain {i} is not explicit"
+        unless ← isDefEq d.type relDomains[i]! do
+          errors := errors.push s!"relation domain {i} has the wrong elaborated type"
+      unless ← isDefEq conclusion (mkSort Level.zero) do
+        errors := errors.push "relation result is not Prop"
+      return errors
+    problems := problems ++ relationProblems
+    if isTheorem then
+      let ffi := args[3]!
+      let sourceSem := mkAppN (constName "Flapjack.Compiler.Backend.ClosSem.semantics")
+        #[c₁, f, ffi, args[4]!, args[5]!, args[6]!, args[7]!, args[8]!]
+      let targetSem := mkAppN (constName "Flapjack.Compiler.Backend.BvlSem.semantics")
+        #[c₂, f, ffi, args[9]!, args[10]!, args[11]!, args[12]!]
+      let behavior := constName "Flapjack.HolBehaviour"
+      let nonfailure := mkApp3 (mkConst `Ne [Level.succ Level.zero]) behavior sourceSem
+        (constName "Flapjack.HolBehaviour.fail")
+      let sim := mkAppN (constName "Flapjack.Compiler.Backend.ClosToBvl.evalSim") (args.extract 0 14)
+      let expectedPremise := mkApp2 (mkConst `And) sim nonfailure
+      let expectedRelation := mkAppN args[13]!
+        #[args[5]!, args[6]!, args[7]!, args[8]!, args[9]!, args[10]!, args[11]!, args[12]!]
+      let expectedResult := mkApp3 (mkConst `Eq [Level.succ Level.zero]) behavior targetSem sourceSem
+      -- Compare application spines without delta reduction: unfolding a
+      -- weakened simulation or semantics definition could erase its inputs.
+      if types[14]! != expectedPremise then
+        problems := problems.push "simulation/nonfailure premise has the wrong elaborated type"
+      if types[15]! != expectedRelation then
+        problems := problems.push "relation premise has the wrong elaborated type"
+      if result != expectedResult then
+        problems := problems.push "semantics conclusion has the wrong elaborated type"
+    else
+      unless ← isDefEq result (mkSort Level.zero) do
+        problems := problems.push "simulation result is not Prop"
+    return problems
+
 /-- Inspect the public closure-relation dependency without descending through
 its reviewed mutual implementation. Definition bodies, but not theorem proofs,
 participate in the closure. -/
