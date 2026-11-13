@@ -50,15 +50,6 @@ theorem simulation_globalPointerUnsupported {C F : Type} (op : ClosLang.GlobOp) 
   intro args state
   rcases unsupported with h | h <;> subst op <;> simp [BvlSem.doApp, BvlSem.applyGlobal]
 
-/-- The source constant-constructor operation always fails at BVL level. -/
-theorem simulation_constantUnsupported {C F : Type} (constant : ClosLang.Const) (arguments : List Bvl.Exp)
-    (env : List Value) (source : BvlSem.State (Nat × C) F)
-    (argsIH : simulation arguments env source) :
-    simulation [.op (.blockOp (.constant constant)) arguments] env source := by
-  apply simulation_alwaysTypeError _ arguments env source argsIH
-  intro args state
-  simp [BvlSem.doApp, BvlSem.applyBlock]
-
 /-- Successful GC configuration has two integer operands and changes no state. -/
 theorem configGC_shape {C F : Type} (args : List Value) (source next : BvlSem.State C F) (value : Value)
     (run : BvlSem.applyMemory .configGC args source = some (value, next)) :
@@ -129,7 +120,10 @@ theorem simulation_blockOp {C F : Type} (op : ClosLang.BlockOp) (arguments : Lis
   | consExtend tag => exact simulation_consExtend tag arguments env source argsIH
   | fromList tag => exact simulation_fromList tag arguments env source argsIH
   | listAppend => exact simulation_listAppend arguments env source argsIH
-  | constant constant => exact simulation_constantUnsupported constant arguments env source argsIH
+  | constant constant =>
+    apply simulation_alwaysTypeError _ arguments env source argsIH
+    intro args state
+    simp [BvlSem.doApp, BvlSem.applyBlock]
   | equal => exact simulation_equal arguments env source argsIH
   | equalConst part => exact simulation_equalConst part arguments env source argsIH
   | build parts => exact simulation_build parts arguments env source argsIH
