@@ -29,13 +29,6 @@ namespace Flapjack.Pancake.Proofs.PanToTarget
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.BackendProof Flapjack.Pancake.PanLang
 
-/-- The two spellings of `wordConvs$two_reg_inst` agree (Flapjack infrastructure:
-`twoRegInst` is over `wordLang` instructions, `twoRegInstExact` over the exact
-`asm` instruction carrier). -/
-theorem twoRegInst_eq_exact {width : Nat} [NeZero width] (i : WordLangInst (BitVec width)) :
-    twoRegInst i = twoRegInstExact (HolInst.ofWordLangInst i) := by
-  rcases i with _ | _ | ⟨_ | _ | _ | _ | _ | _ | _ | _ | _⟩ | _ | _ <;> rfl
-
 /-- Stage A2 of the HOL proof (lines 1376-1428): the lab program that
 `compile_prog_max` hands to `lab_to_target$compile` satisfies
 `good_code mc.target.config LN`.  `col`/`wprog`/`wconf`/`p` are the
@@ -71,10 +64,7 @@ theorem panToTargetGoodCode {width : Nat} [NeZero width] {S Q β : Type}
     (fun row hr => by
       obtain ⟨-, hpost, hfull, htwo, hns⟩ := hrows row hr
       refine ⟨hfull ⟨hinst, hao, hho, hbyte⟩, fun h => ?_, hns, ?_⟩
-      · rw [← htwo h]
-        congr 1
-        funext i
-        exact (twoRegInst_eq_exact i).symm
+      · exact htwo h
       · rwa [Nat.add_comm mc.target.config.avoidRegs.length 5])
     (by omega)
   rw [hwts] at hconvs

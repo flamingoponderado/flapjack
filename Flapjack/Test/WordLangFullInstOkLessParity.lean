@@ -140,25 +140,27 @@ example : fullInstOkLessExact cfg shareConstProg = false := by decide
 example : fullInstOkLessExact cfg assignProg = true := by decide
 example : fullInstOkLessExact cfg allocProg = true := by decide
 
--- Untagged broad-carrier compatibility rows, independently retaining old behavior.
-example : fullInstOkLess cfgBroad goodInstProg = true := by decide
-example : fullInstOkLess cfgBroad immOkProg = true := by decide
-example : fullInstOkLess cfgBroad badProg = false := by decide
-example : fullInstOkLess cfgBroad seqBadProg = false := by decide
-example : fullInstOkLess cfgBroad loopProg = true := by decide
-example : fullInstOkLess cfgBroad ifProg = true := by decide
-example : fullInstOkLess cfgBroad mustTerminateProg = true := by decide
-example : fullInstOkLess cfgBroad callRetBadProg = false := by decide
-example : fullInstOkLess cfgBroad callHandlerBadProg = false := by decide
-example : fullInstOkLess cfgBroad callNoneHandlerBadProg = true := by decide
-example : fullInstOkLess cfgBroad callOkProg = true := by decide
-example : fullInstOkLess cfgBroad shareLoadProg = true := by decide
-example : fullInstOkLess cfgBroad shareLoadBigProg = false := by decide
-example : fullInstOkLess cfgBroad shareLoad16Prog = true := by decide
-example : fullInstOkLess cfgBroad shareStore8Prog = true := by decide
-example : fullInstOkLess cfgBroad shareConstProg = false := by decide
-example : fullInstOkLess cfgBroad assignProg = true := by decide
-example : fullInstOkLess cfgBroad allocProg = true := by decide
+-- Compatibility rows through `AsmConfig.toExact`: the production broad
+-- configuration converted to the exact carrier reproduces the exact rows above
+-- (same values).
+example : fullInstOkLessExact cfgBroad.toExact goodInstProg = true := by decide
+example : fullInstOkLessExact cfgBroad.toExact immOkProg = true := by decide
+example : fullInstOkLessExact cfgBroad.toExact badProg = false := by decide
+example : fullInstOkLessExact cfgBroad.toExact seqBadProg = false := by decide
+example : fullInstOkLessExact cfgBroad.toExact loopProg = true := by decide
+example : fullInstOkLessExact cfgBroad.toExact ifProg = true := by decide
+example : fullInstOkLessExact cfgBroad.toExact mustTerminateProg = true := by decide
+example : fullInstOkLessExact cfgBroad.toExact callRetBadProg = false := by decide
+example : fullInstOkLessExact cfgBroad.toExact callHandlerBadProg = false := by decide
+example : fullInstOkLessExact cfgBroad.toExact callNoneHandlerBadProg = true := by decide
+example : fullInstOkLessExact cfgBroad.toExact callOkProg = true := by decide
+example : fullInstOkLessExact cfgBroad.toExact shareLoadProg = true := by decide
+example : fullInstOkLessExact cfgBroad.toExact shareLoadBigProg = false := by decide
+example : fullInstOkLessExact cfgBroad.toExact shareLoad16Prog = true := by decide
+example : fullInstOkLessExact cfgBroad.toExact shareStore8Prog = true := by decide
+example : fullInstOkLessExact cfgBroad.toExact shareConstProg = false := by decide
+example : fullInstOkLessExact cfgBroad.toExact assignProg = true := by decide
+example : fullInstOkLessExact cfgBroad.toExact allocProg = true := by decide
 
 private def guards : List Bool :=
   [ fullInstOkLessExact cfg goodInstProg

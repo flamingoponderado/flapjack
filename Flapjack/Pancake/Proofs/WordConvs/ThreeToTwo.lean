@@ -53,6 +53,7 @@ theorem threeToTwoRegProg_flatExpConventions {width : Nat} [NeZero width]
         | split
         | constructor
 
+set_option linter.unusedSimpArgs false in
 /-- Original two-register instruction guarantee, with the original enabled
 flag premise and no source instruction or target validity assumption. -/
 @[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
@@ -60,12 +61,15 @@ flag premise and no source instruction or target validity assumption. -/
 theorem threeToTwoRegProg_twoRegInst {width : Nat} [NeZero width]
     (enabled : Bool) (program : WordLangProgHOL (BitVec width))
     (runPass : enabled = true) :
-    everyInst twoRegInst (threeToTwoRegProg enabled program) = true := by
+    everyInst (fun i => twoRegInstExact (HolInst.ofWordLangInst i))
+      (threeToTwoRegProg enabled program) = true := by
   cases enabled <;> simp_all [threeToTwoRegProg]
   induction program using
       (measure (fun p : WordLangProgHOL (BitVec width) => sizeOf p)).wf.induction with
   | h program ih =>
-    fun_cases threeToTwoReg program <;> simp_all +zetaDelta [everyInst, twoRegInst]
+    fun_cases threeToTwoReg program <;>
+      simp_all +zetaDelta [everyInst, twoRegInstExact, HolInst.ofWordLangInst,
+        HolArith.ofWordLangArith, HolRegImm.ofWordRegImm]
     all_goals
       repeat' first
         | (apply ih; change sizeOf _ < sizeOf _; simp <;> omega)
@@ -74,7 +78,21 @@ theorem threeToTwoRegProg_twoRegInst {width : Nat} [NeZero width]
         | constructor
     all_goals
       clear ih
-      cases program <;> simp_all [everyInst, twoRegInst]
+      cases program <;> simp_all [everyInst, twoRegInstExact, HolInst.ofWordLangInst,
+        HolArith.ofWordLangArith, HolRegImm.ofWordRegImm]
+    all_goals
+      first
+      | rename_i instruction h1 h2 h3 h4 h5
+        cases instruction <;> simp_all [everyInst, twoRegInstExact,
+          HolInst.ofWordLangInst, HolArith.ofWordLangArith, HolRegImm.ofWordRegImm]
+        all_goals
+          rename_i operation
+          cases operation <;> simp_all [everyInst, twoRegInstExact,
+            HolInst.ofWordLangInst, HolArith.ofWordLangArith, HolRegImm.ofWordRegImm]
+        all_goals
+          exfalso
+          solve_by_elim
+      | skip
     case ite =>
       rename_i cmp register operand left right notIf
       exact False.elim (notIf cmp register operand left right rfl rfl rfl rfl rfl)
@@ -140,7 +158,8 @@ theorem threeToTwoRegProg_preAllocConventions {width : Nat} [NeZero width]
   | h program ih =>
     fun_cases threeToTwoReg program <;>
       simp_all +zetaDelta [preAllocConventionsHOL, everyStackVarHOL,
-        callArgConventionHOL, instArgConvention]
+        callArgConventionHOL, instArgConventionExact, HolInst.ofWordLangInst,
+        HolArith.ofWordLangArith, HolRegImm.ofWordRegImm]
     case case2 =>
       clear ih
       rename_i operator target originalSource operand

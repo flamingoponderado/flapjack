@@ -1,0 +1,1 @@
+destLf_def_typed=destLf (Lf ((x :(α, β) symbol),(v0 :γ))) = SOME x ∧ destLf (Nd (v2 :(β + num) # γ) (v3 :(α, β, γ) parsetree list)) = (NONE :(α, β) symbol option)

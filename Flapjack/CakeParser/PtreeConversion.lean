@@ -16,7 +16,11 @@ It remains untagged until its bound and full correspondence are proved. -/
 namespace Flapjack.CakeParser.PtreeConversion
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL
 
-private def children (n : Nonterminal) : ParseTree → Option (List ParseTree)
+/-- The children of an `n` node, or `none` for a leaf or a node with a
+    different nonterminal. This is the shared child-list helper of the
+    conversion functions; it is public so the exact generic twins can be
+    bridged to the executed conversions. -/
+def children (n : Nonterminal) : ParseTree → Option (List ParseTree)
   | .node (.inl actual) _ xs => if actual == n then some xs else none
   | _ => none
 
@@ -24,7 +28,8 @@ private def children (n : Nonterminal) : ParseTree → Option (List ParseTree)
     in the terminal type `α`, the nonterminal type `β` and the location type `γ`; Lean fixes them to
     `Token`, `Nonterminal` and `Locs`. `pt.token == some tok` implements HOL's `OPTION_BIND (destLf
     pt) destTOK = SOME tok`, but a specialised instance is not an exact port; a faithful port needs
-    a generic parsetree and terminal carrier. -/
+    a generic parsetree and terminal carrier. The exact generic port is
+    `Exact.tokcheckHOL` in `Flapjack.CakeParser.PtreeConversion.Exact`. -/
 def tokcheck (pt : ParseTree) (tok : Token) : Bool := pt.token == some tok
 
 @[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "Long_Short_def"]
@@ -32,7 +37,10 @@ def longShort : Path → MlString → Ident MlString MlString
   | .end, s => .short s
   | .mod x xs, s => .long x (longShort xs s)
 
-private def tyvar (pt : ParseTree) : Option MlString :=
+/-- The type-variable payload of a leaf `TyvarT` token; the shared helper of
+    the type conversion. It is public so the exact generic twins can be
+    bridged to the executed conversions. -/
+def tyvar (pt : ParseTree) : Option MlString :=
   match pt.token with
   | some (.tyvarT s) => some s
   | _ => none
@@ -40,7 +48,8 @@ private def tyvar (pt : ParseTree) : Option MlString :=
 /-- Tag withdrawn (task 147): HOL `ptree_UQTyop_def` takes `(token, MMLnonT, α) parsetree` with the
     location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's
     `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port
-    needs a parsetree carrier generic in the location type. -/
+    needs a parsetree carrier generic in the location type. The exact generic port is
+    `Exact.ptreeUQTyopHOL` in `Flapjack.CakeParser.PtreeConversion.Exact`. -/
 def ptreeUQTyop (pt : ParseTree) : Option MlString := do
   let [leaf] ← children .nUQTyOp pt | none
   match leaf.token with
@@ -50,7 +59,8 @@ def ptreeUQTyop (pt : ParseTree) : Option MlString := do
 /-- Tag withdrawn (task 147): HOL `ptree_TyvarN_def` takes `(token, MMLnonT, α) parsetree` with the
     location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's
     `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port
-    needs a parsetree carrier generic in the location type. -/
+    needs a parsetree carrier generic in the location type. The exact generic port is
+    `Exact.ptreeTyvarNHOL` in `Flapjack.CakeParser.PtreeConversion.Exact`. -/
 def ptreeTyvarN (pt : ParseTree) : Option MlString := do
   let [leaf] ← children .nTyvarN pt | none
   tyvar leaf
@@ -58,7 +68,8 @@ def ptreeTyvarN (pt : ParseTree) : Option MlString := do
 /-- Tag withdrawn (task 147): HOL `ptree_Tyop_def` takes `(token, MMLnonT, α) parsetree` with the
     location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's
     `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port
-    needs a parsetree carrier generic in the location type. -/
+    needs a parsetree carrier generic in the location type. The exact generic port is
+    `Exact.ptreeTyopHOL` in `Flapjack.CakeParser.PtreeConversion.Exact`. -/
 def ptreeTyop (pt : ParseTree) : Option (Ident MlString MlString) := do
   let [child] ← children .nTyOp pt | none
   match child.token with
@@ -68,7 +79,8 @@ def ptreeTyop (pt : ParseTree) : Option (Ident MlString MlString) := do
 /-- Tag withdrawn (task 147): HOL `ptree_V_def` takes `(token, MMLnonT, α) parsetree` with the
     location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's
     `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port
-    needs a parsetree carrier generic in the location type. -/
+    needs a parsetree carrier generic in the location type. The exact generic port is
+    `Exact.ptreeVHOL` in `Flapjack.CakeParser.PtreeConversion.Exact`. -/
 def ptreeV (pt : ParseTree) : Option MlString := do
   let [leaf] ← children .nV pt | none
   match leaf.token with
@@ -78,7 +90,8 @@ def ptreeV (pt : ParseTree) : Option MlString := do
 /-- Tag withdrawn (task 147): HOL `ptree_FQV_def` takes `(token, MMLnonT, α) parsetree` with the
     location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's
     `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port
-    needs a parsetree carrier generic in the location type. -/
+    needs a parsetree carrier generic in the location type. The exact generic port is
+    `Exact.ptreeFQVHOL` in `Flapjack.CakeParser.PtreeConversion.Exact`. -/
 def ptreeFQV (pt : ParseTree) : Option (Ident MlString MlString) := do
   let [child] ← children .nFQV pt | none
   match ptreeV child with
@@ -227,7 +240,9 @@ def ptreeTypeAbbrevDec (pt : ParseTree) : Option Dec := do
 /-- Tag withdrawn (task 147): HOL `ptree_UQConstructorName_def` takes `(token, MMLnonT, α)
     parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location
     payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact
-    port; a faithful port needs a parsetree carrier generic in the location type. -/
+    port; a faithful port needs a parsetree carrier generic in the location type. The exact
+    generic port is
+    `Exact.ptreeUQConstructorNameHOL` in `Flapjack.CakeParser.PtreeConversion.Exact`. -/
 def ptreeUQConstructorName (pt : ParseTree) : Option MlString := do
   let [leaf] ← children .nUQConstructorName pt | none
   match leaf.token with
@@ -237,7 +252,8 @@ def ptreeUQConstructorName (pt : ParseTree) : Option MlString := do
 /-- Tag withdrawn (task 147): HOL `ptree_ConstructorName_def` takes `(token, MMLnonT, α) parsetree`
     with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to
     CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a
-    faithful port needs a parsetree carrier generic in the location type. -/
+    faithful port needs a parsetree carrier generic in the location type. The exact generic port is
+    `Exact.ptreeConstructorNameHOL` in `Flapjack.CakeParser.PtreeConversion.Exact`. -/
 def ptreeConstructorName (pt : ParseTree) : Option (Ident MlString MlString) := do
   let [child] ← children .nConstructorName pt | none
   match ptreeUQConstructorName child with
@@ -246,18 +262,23 @@ def ptreeConstructorName (pt : ParseTree) : Option (Ident MlString MlString) := 
     | some (.longidT path s) => some (longShort path s)
     | _ => none
 
-private def uppercase (s : MlString) : Bool :=
+/-- Whether the first character of the name is an uppercase ASCII letter;
+    the executable half of the constructor-name test. -/
+def uppercase (s : MlString) : Bool :=
   match s.explode with
   | c :: _ => 65 ≤ c.toNat && c.toNat ≤ 90
   | [] => false
 
-private def constructorName (s : MlString) : Bool :=
+/-- The executable constructor test: `"::"` or an uppercase initial
+    character. -/
+def constructorName (s : MlString) : Bool :=
   s == ofString "::" || uppercase s
 
 /-- Tag withdrawn (task 147): HOL `ptree_OpID_def` takes `(token, MMLnonT, α) parsetree` with the
     location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's
     `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port
-    needs a parsetree carrier generic in the location type. -/
+    needs a parsetree carrier generic in the location type. The exact generic port is
+    `Exact.ptreeOpIDHOL` in `Flapjack.CakeParser.PtreeConversion.Exact`. -/
 def ptreeOpID (pt : ParseTree) : Option Exp := do
   let [leaf] ← children .nOpID pt | none
   match leaf.token with
@@ -293,7 +314,8 @@ def maybeHandleRef : Pat → Pat
 /-- Tag withdrawn (task 147): HOL `ptree_Eliteral_def` takes `(token, MMLnonT, α) parsetree` with
     the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's
     `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port
-    needs a parsetree carrier generic in the location type. -/
+    needs a parsetree carrier generic in the location type. The exact generic port is
+    `Exact.ptreeEliteralHOL` in `Flapjack.CakeParser.PtreeConversion.Exact`. -/
 def ptreeEliteral (pt : ParseTree) : Option Exp := do
   let [leaf] ← children .nEliteral pt | none
   match leaf.token with
@@ -393,7 +415,10 @@ def ptreePattern (n : Nonterminal) (pt : ParseTree) : Option Pat :=
   patternWorker (treeSize pt + 1) n pt
 
 
-private def symOp (p : List HolChar → Bool) (xs : List ParseTree) : Option (Ident MlString MlString) := do
+/-- The single symbol-token operator of a one-element tree list, filtered by
+    the operator-class predicate. It is public so the exact generic twins can
+    be bridged to the executed conversion. -/
+def symOp (p : List HolChar → Bool) (xs : List ParseTree) : Option (Ident MlString MlString) := do
   let [leaf] := xs | none
   let some (.symbolT s) := leaf.token | none
   if p s.explode then some (.short s) else none
@@ -401,7 +426,8 @@ private def symOp (p : List HolChar → Bool) (xs : List ParseTree) : Option (Id
 /-- Tag withdrawn (task 147): HOL `ptree_Op_def` is generic in the identifier name type `α` (its
     result is `(α, mlstring) id option`) and the location type `β`, while Lean fixes them to
     `MlString` and `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a
-    faithful port needs generic name and location carriers. -/
+    faithful port needs generic name and location carriers. The exact generic port is
+    `Exact.ptreeOpHOL` in `Flapjack.CakeParser.PtreeConversion.Exact`. -/
 def ptreeOp (pt : ParseTree) : Option (Ident MlString MlString) := do
   let .node (.inl n) _ xs := pt | none
   match n with
@@ -806,7 +832,8 @@ private def typeDec (pt : ParseTree) : Option TypeDef := do
 /-- Tag withdrawn (task 147): HOL `ptree_StructName_def` takes `(token, MMLnonT, α) parsetree` with
     the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's
     `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port
-    needs a parsetree carrier generic in the location type. -/
+    needs a parsetree carrier generic in the location type. The exact generic port is
+    `Exact.ptreeStructNameHOL` in `Flapjack.CakeParser.PtreeConversion.Exact`. -/
 def ptreeStructName (pt : ParseTree) : Option MlString := do
   let [leaf] ← children .nStructName pt | none
   match leaf.token with

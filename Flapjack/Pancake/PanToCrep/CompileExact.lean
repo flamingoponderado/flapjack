@@ -792,8 +792,8 @@ here; their individual definition tags record their own result translations.
 The only outer type translation is HOL's positive type-indexed word to
 `BitVec width`. This declaration is the executed pan-to-crep declaration
 stage: `panToWordCompileProgHOL` calls `compileProgDeclsHOLW`, which calls it
-directly. The String-backed `compileToCrepHOL` remains legacy compatibility
-infrastructure; the exact `compile_prog` boundary is `compileProgDeclsHOLW`. -/
+directly. The String-backed declaration-only adapter is retired; the exact
+`compile_prog` boundary is `compileProgDeclsHOLW`. -/
 @[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_to_crep_def"
   (words_as_type_indexed_bitvec)]
 def compileToCrepExactHOLW {width : Nat} [NeZero width]

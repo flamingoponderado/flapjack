@@ -23,6 +23,7 @@ val _ = show_cons "tok_map_typed" [``pegexec_cml_fo$TokenMap_mktokLf``, ``pegexe
 val _ = show_cons "pegsym_fo_typed" [``pegexec_cml_fo$Empty_fo``, ``pegexec_cml_fo$Any_fo``, ``pegexec_cml_fo$Tok_fo``, ``pegexec_cml_fo$Nt_fo``, ``pegexec_cml_fo$Seq_fo``, ``pegexec_cml_fo$Choice_fo``, ``pegexec_cml_fo$Rpt_fo``, ``pegexec_cml_fo$Not_fo``, ``pegexec_cml_fo$Error_fo``];
 val _ = show "eval_unary_def_typed" pegexec_cml_foTheory.eval_unary_def;
 val _ = show "mk_linfix_fo_def_typed" pegexec_cml_foTheory.mk_linfix_fo_def;
+val _ = show "mkNd_fo_def_typed" pegexec_cml_foTheory.mkNd_fo_def;
 val _ = show "eval_binary_def_typed" pegexec_cml_foTheory.eval_binary_def;
 val _ = show "eval_token_alpha_check_def_typed" pegexec_cml_foTheory.eval_token_alpha_check_def;
 val _ = show "eval_token_symbol_check_def_typed" pegexec_cml_foTheory.eval_token_symbol_check_def;

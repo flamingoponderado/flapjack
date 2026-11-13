@@ -217,37 +217,6 @@ abbrev functions :
     List (Decl α) → List (FunName × List (VarName × Shape) × Prog α × Shape) :=
   functionEntries
 
-/-- Counterpart of Cake's `functions_eq_FILTER`
-    (`cakeml/pancake/semantics/panPropsScript.sml:1487`): the function table is
-    exactly the projection of the function declarations, with every other
-    declaration contributing nothing.  Cake writes the projection as a `MAP`
-    over `FILTER is_function` with an `ARB` default branch; `List.filterMap`
-    states the same content without needing a default value.
-
-    FLAPJACK-SPECIFIC (not an exact HOL port, so no `@[hol]` tag): beyond the
-    identifier carrier (production `Decl α`/`Prog α` are generic in the word
-    element type and use `FunName = String`, while HOL `decl` is word-indexed
-    with `funname`/`varname`/`eid`/`stcname` = `mlstring`), the statement is
-    not HOL's: HOL maps the tuple projection over `FILTER is_function` with an
-    unspecified `ARB` fallback on non-function declarations, whereas
-    `List.filterMap` drops those declarations via `none` instead of producing
-    an `ARB` tuple.  Rendering `ARB` faithfully (and an exact `functions`
-    over `List (DeclHOL width)`) is tracked by `flapjack-4ac.4.109`, itself
-    gated on the exact MlString/width-indexed carriers of
-    `flapjack-pxn.18.3.5.8`. -/
-theorem functions_eq_filterMap (declarations : List (Decl α)) :
-    functions declarations =
-      declarations.filterMap (fun declaration =>
-        match declaration with
-        | .function function =>
-            some (function.name, function.params, function.body,
-              function.returnShape)
-        | _ => none) := by
-  induction declarations with
-  | nil => rfl
-  | cons declaration declarations ih =>
-      cases declaration <;> simp [functions, functionEntries, ih]
-
 /-! Source-shaped counterpart of Cake's `compile_prog_pmatch`: `compile_prog`
     maps `compile` over function declarations and leaves other declarations
     unchanged. -/
@@ -257,7 +226,6 @@ theorem panSimpDecls_eq_map (declarations : List (Decl α)) :
   | nil => simp [panSimpDecls]
   | cons declaration declarations ih =>
       cases declaration <;> simp [panSimpDecls, panSimpDecl, ih]
-
 
 /-! Cake's `MEM_functions` (`pan_globalsProofScript.sml:2380`): every entry of
     the `functions` projection comes from a function declaration of the source
@@ -270,11 +238,29 @@ theorem mem_functions {declarations : List (Decl α)}
       (.function declaration : Decl α) ∈ declarations ∧
         entry = (declaration.name, declaration.params, declaration.body,
           declaration.returnShape) := by
-  rw [functions_eq_filterMap] at hmem
-  obtain ⟨declaration, hdecl, hentry⟩ := List.mem_filterMap.mp hmem
-  cases declaration with
-  | function declaration => exact ⟨declaration, hdecl, (Option.some.inj hentry).symm⟩
-  | _ => contradiction
+  induction declarations with
+  | nil => simp [functions, functionEntries] at hmem
+  | cons head tail ih =>
+      cases head with
+      | function declaration =>
+          simp only [functions, functionEntries, List.mem_cons] at hmem
+          rcases hmem with rfl | hmem
+          · exact ⟨declaration, by simp, rfl⟩
+          · obtain ⟨other, hmem', hentry⟩ := ih hmem
+            exact ⟨other, by simp [hmem'], hentry⟩
+      | decl shape name value =>
+          simp only [functions, functionEntries] at hmem
+          obtain ⟨other, hmem', hentry⟩ := ih hmem
+          exact ⟨other, by simp [hmem'], hentry⟩
+      | exnDecl exception shape =>
+          simp only [functions, functionEntries] at hmem
+          obtain ⟨other, hmem', hentry⟩ := ih hmem
+          exact ⟨other, by simp [hmem'], hentry⟩
+      | name struct fields =>
+          simp only [functions, functionEntries] at hmem
+          obtain ⟨other, hmem', hentry⟩ := ih hmem
+          exact ⟨other, by simp [hmem'], hentry⟩
+
 
 
 /-- Counterpart of the original `ALOOKUP` on the function table

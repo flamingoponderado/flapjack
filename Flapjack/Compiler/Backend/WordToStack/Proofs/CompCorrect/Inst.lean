@@ -27,17 +27,6 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
       StackSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
   StackSemStateSupport.holFmapAsFiniteSupportWitness
 
-/-- The source-side argument convention of an instruction is the exact
-convention of its native carrier (Flapjack codec transport, no HOL original). -/
-private theorem instArgConvention_ofWordLangInst {width : Nat} [NeZero width]
-    (i : WordLangInst (BitVec width)) :
-    instArgConvention i = instArgConventionExact (HolInst.ofWordLangInst i) := by
-  rcases i with _ | ⟨_, _⟩ | ⟨a⟩ | ⟨_, _, _⟩ | ⟨_⟩
-  all_goals try rfl
-  rcases a with ⟨_, _, _, ri⟩ | ⟨_, _, _, ri⟩ | _ | _ | _ | _ | _ | _
-  all_goals try rfl
-  all_goals (cases ri <;> rfl)
-
 /-- Full original comp_correct Inst case (6315-6326) of comp_correct5756 /
 motive5719-5751: the entire Seq.Simulation motive with all original
 hypotheses and the full existential target-run/resource/result conclusion.
@@ -77,7 +66,7 @@ theorem compCorrectInst {width : Nat} [NeZero width] {C F : Type}
         target lens (by simpa only [HolInst.to_of] using instRun)
         (by simpa only [HolInst.to_of] using physical)
         (by simpa only [HolInst.to_of, maxVarHOL] using maxBound)
-        (by rw [← instArgConvention_ofWordLangInst]; exact convention) related
+        convention related
     refine ⟨0, post', none, by simpa using run, ?_⟩
     simp only [compCorrectResult, Option.map_none, ne_eq, not_true_eq_false, if_false]
     exact postRel

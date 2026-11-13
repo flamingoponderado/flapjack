@@ -1,0 +1,1 @@
+rt_vars_def_typed=∀(fm :α |-> num) (vs :α list) (mx :num). rt_vars fm vs mx = case OPT_MMAP (FLOOKUP fm) vs of (NONE :num list option) => [mx + (1 :num)] | SOME m => m

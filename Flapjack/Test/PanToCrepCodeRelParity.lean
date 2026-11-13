@@ -287,65 +287,70 @@ theorem emptyLocalsPreservesProbeCodeRel
     declaration with empty parameters is looked up in `compile_to_crep` by the
     same name and yields the `crep_vars [] = []` slot list together with the
     compiled body. -/
-def alookupDecls : List (Decl (BitVec 64)) :=
-  [Decl.function ⟨"f", false, false, [], Prog.skip, Shape.one⟩,
-   Decl.function ⟨"g", false, false, [("x", Shape.one)], Prog.skip, Shape.one⟩]
+def alookupDecls : List (DeclHOL 64) :=
+  [.function ⟨ml "f", false, false, [], .skip, .one⟩,
+   .function ⟨ml "g", false, false, [(ml "x", .one)], .skip, .one⟩]
 
 def alookupGuard : Bool :=
-  match List.lookup "f" (compileToCrepHOL alookupDecls) with
+  match List.lookup (ml "f") (compileToCrepExactHOLW alookupDecls) with
   | some ([], _) => true
   | _ => false
 
 #guard alookupGuard
 
 def elCompileGuard : Bool :=
-  match (functionEntries alookupDecls)[0]? with
-  | some ("f", [], Prog.skip, Shape.one) => true
+  match List.lookup (ml "f") (functionsHOL alookupDecls) with
+  | some ([], body, returnShape) =>
+      (match body with | .skip => true | _ => false) &&
+        (match returnShape with | .one => true | _ => false)
   | _ => false
 
 #guard elCompileGuard
 
 /-- Two-function declaration list used to exercise the exact HOL `make_funcs`
     port: `f` has no parameters, `g` has one. -/
-def makeFuncsDecls : List (Decl (BitVec 64)) :=
-  [Decl.function ⟨"f", false, false, [], Prog.skip, Shape.one⟩,
-   Decl.function ⟨"g", false, false, [("x", Shape.one)], Prog.skip, Shape.one⟩]
+def makeFuncsDecls : List (DeclHOL 64) :=
+  [.function ⟨ml "f", false, false, [], .skip, .one⟩,
+   .function ⟨ml "g", false, false, [(ml "x", .one)], .skip, .one⟩]
 
 example :
-    FLOOKUP (makeFuncsHOL (functionEntries makeFuncsDecls)) "f" =
-      some ([], Shape.one) := by
-  simp [makeFuncsHOL, makeFuncsDecls, functionEntries, FUPDATE_LIST,
-    FLOOKUP_update]
+    (makeFuncsExactHOL (functionsHOL makeFuncsDecls)).lookup (ml "f") =
+      some ([], ShapeHOL.one) := by
+  simp [makeFuncsExactHOL, functionsHOL, makeFuncsDecls,
+    HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL, FUPDATE_HOL, ml,
+    Flapjack.Basis.Pure.MlString.ofString]
 
 example :
-    FLOOKUP (makeFuncsHOL (functionEntries makeFuncsDecls)) "g" =
-      some ([("x", Shape.one)], Shape.one) := by
-  simp [makeFuncsHOL, makeFuncsDecls, functionEntries, FUPDATE_LIST,
-    FLOOKUP_update]
+    (makeFuncsExactHOL (functionsHOL makeFuncsDecls)).lookup (ml "g") =
+      some ([(ml "x", ShapeHOL.one)], ShapeHOL.one) := by
+  simp [makeFuncsExactHOL, functionsHOL, makeFuncsDecls,
+    HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL, FUPDATE_HOL, ml,
+    Flapjack.Basis.Pure.MlString.ofString]
 
 example :
-    FLOOKUP (makeFuncsHOL (functionEntries makeFuncsDecls)) "h" = none := by
-  simp [makeFuncsHOL, makeFuncsDecls, functionEntries, FUPDATE_LIST,
-    FLOOKUP_update]
+    (makeFuncsExactHOL (functionsHOL makeFuncsDecls)).lookup (ml "h") = none := by
+  simp [makeFuncsExactHOL, functionsHOL, makeFuncsDecls,
+    HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL, FUPDATE_HOL, ml,
+    Flapjack.Basis.Pure.MlString.ofString]
 
-example : functionInfosHOL makeFuncsDecls =
-    makeFuncsHOL (functionEntries makeFuncsDecls) :=
-  functionInfosHOL_eq_makeFuncsHOL makeFuncsDecls
+example : makeFuncsUsedHOL (functionsHOL makeFuncsDecls) =
+    makeFuncsExactHOL (functionsHOL makeFuncsDecls) :=
+  rfl
 
 def makeFuncsGuard : Bool :=
-  (FLOOKUP (makeFuncsHOL (functionEntries makeFuncsDecls)) "f").isSome
+  ((makeFuncsExactHOL (functionsHOL makeFuncsDecls)).lookup (ml "f")).isSome
 
 #guard makeFuncsGuard
 
 /-- Two exception declarations used to exercise the exact HOL
     `get_eids_imp_excp_rel` port (`excp_rel` domain plus code injectivity). -/
-def eidsDecls : List (Decl (BitVec 8)) :=
-  [Decl.exnDecl "E" Shape.one, Decl.exnDecl "F" Shape.one]
+def eidsDecls : List (DeclHOL 8) :=
+  [.exnDecl (ml "E") .one, .exnDecl (ml "F") .one]
 
 def getEidsGuard : Bool :=
-  (FLOOKUP (panToCrepGetEidsFromDeclsHOL eidsDecls) "E" ==
+  ((getEidsFromDeclsHOL eidsDecls).lookup (ml "E") ==
     some (0 : BitVec 8)) &&
-  (FLOOKUP (panToCrepGetEidsFromDeclsHOL eidsDecls) "F" ==
+  ((getEidsFromDeclsHOL eidsDecls).lookup (ml "F") ==
     some (1 : BitVec 8))
 
 #guard getEidsGuard
@@ -463,25 +468,25 @@ def vmapCtxtFCGuard : Bool :=
 
 #eval vmapCtxtFCGuard
 
-/-- makeFuncsHOL lookup link: the `g` entry of the function table is visible
-    with its parameter list and return shape. -/
+/-- Exact `make_funcs_def` lookup link: the `g` entry of the function table is
+    visible with its parameter list and return shape. -/
 example :
-    FLOOKUP (makeFuncsHOL (functionEntries makeFuncsDecls)) "g" =
-      some ([("x", Shape.one)], Shape.one) :=
-  makeFuncsHOL_lookup_of_lookup (functionEntries makeFuncsDecls) "g"
-    [("x", Shape.one)] Prog.skip Shape.one
-    (by simp [makeFuncsDecls, functionEntries, List.lookup_cons])
+    (makeFuncsExactHOL (functionsHOL makeFuncsDecls)).lookup (ml "g") =
+      some ([(ml "x", ShapeHOL.one)], ShapeHOL.one) := by
+  simp [makeFuncsExactHOL, functionsHOL, makeFuncsDecls,
+    HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL, FUPDATE_HOL, ml,
+    Flapjack.Basis.Pure.MlString.ofString]
 
 def generalAlookupGuard : Bool :=
-  match List.lookup "g" (compileToCrepHOL alookupDecls) with
+  match List.lookup (ml "g") (compileToCrepExactHOLW alookupDecls) with
   | some ([0], _) => true
   | _ => false
 
 #guard generalAlookupGuard
 
 def mkCtxtCodeRelGuard : Bool :=
-  match FLOOKUP (FUPDATE_LIST FEMPTY (compileToCrepHOL alookupDecls).reverse)
-      "g" with
+  match (HolFiniteMapExact.empty.updateListEq
+      (compileToCrepExactHOLW alookupDecls).reverse).lookup (ml "g") with
   | some ([0], _) => true
   | _ => false
 
@@ -564,7 +569,7 @@ def runChecks : IO Bool := do
     ("HOL make_funcs_def parameter table", makeFuncsGuard),
     ("HOL get_eids_imp_excp_rel exception codes", getEidsGuard),
     ("HOL excp_rel_def exact MlString finite maps", excpRelExactGuard),
-    ("HOL mk_ctxt_code_imp_code_rel makeFuncsHOL/alookup link", generalAlookupGuard),
+    ("HOL mk_ctxt_code_imp_code_rel makeFuncsExactHOL/alookup link", generalAlookupGuard),
     ("HOL mk_ctxt_code_imp_code_rel make_vmap/ctxt_fc bridge", vmapCtxtFCGuard),
     ("HOL mk_ctxt_code_imp_code_rel compiled code_rel", mkCtxtCodeRelGuard),
     ("HOL-context compiler temporary freshness bounds", freshnessGuard),

@@ -2446,6 +2446,8 @@ run_probe crep_get_eids_probeScript.sml crep_get_eids_probe.out \
   eids_present eids_codes_distinct "$cake_dir/pancake/pan_to_crepScript.sml"
 run_probe crep_vmap_ctxtfc_probeScript.sml crep_vmap_ctxtfc_probe.out \
   vmap_x vmap_eq_ctxt "$cake_dir/pancake/pan_to_crepScript.sml"
+run_probe crep_to_loop_rt_vars_typed_probeScript.sml crep_to_loop_rt_vars_typed_probe.out \
+  rt_vars_def_typed "$cake_dir/pancake/crep_to_loopScript.sml" "$cake_dir/pancake"
 run_probe dup_exn_eids_probeScript.sml dup_exn_eids_probe.out \
   dup_eids_lookup mixed_eids_lookup_a mixed_eids_lookup_e dup_compile done \
   "$cake_dir/pancake/pan_to_crepScript.sml"
@@ -9524,7 +9526,7 @@ run_probe cml_ptree_conversion_source_probeScript.sml cml_ptree_conversion_sourc
   "$cake_dir/semantics"
 
 run_probe pegexec_cml_fo_source_probeScript.sml pegexec_cml_fo_source_probe.out \
-  sem_u_typed sem_b_typed token_alpha_check_typed token_symbol_check_typed token_longid_check_typed token_check_typed tok_map_typed pegsym_fo_typed eval_unary_def_typed mk_linfix_fo_def_typed eval_binary_def_typed eval_token_alpha_check_def_typed eval_token_symbol_check_def_typed eval_token_longid_check_alt_def_typed eval_token_check_def_typed eval_tok_map_def_typed nt_rule_fo_def_typed \
+  sem_u_typed sem_b_typed token_alpha_check_typed token_symbol_check_typed token_longid_check_typed token_check_typed tok_map_typed pegsym_fo_typed eval_unary_def_typed mk_linfix_fo_def_typed mkNd_fo_def_typed eval_binary_def_typed eval_token_alpha_check_def_typed eval_token_symbol_check_def_typed eval_token_longid_check_alt_def_typed eval_token_check_def_typed eval_tok_map_def_typed nt_rule_fo_def_typed \
   "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" \
   "$cake_dir/compiler/parsing"
 
@@ -10714,3 +10716,238 @@ run_probe pan_to_crep_local_typed_probeScript.sml pan_to_crep_local_typed_probe.
   state_rel_structs_typed state_rel_globals_typed pair_map_I_typed decs_stcnames_lemma_typed evaluate_shape_invariant_ret_inst_typed evaluate_shape_invariant_ret_inst2_typed \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
   "$cake_dir/pancake/proofs"
+
+run_probe binary_ieee_typed_probeScript.sml binary_ieee_typed_probe.out \
+  float_typed float_compare_typed float_abs_def_typed float_compare_def_typed float_equal_def_typed \
+  float_greater_equal_def_typed float_greater_than_def_typed float_is_finite_def_typed float_is_infinite_def_typed \
+  float_is_nan_def_typed float_is_normal_def_typed float_is_signalling_def_typed float_is_subnormal_def_typed \
+  float_is_zero_def_typed float_less_equal_def_typed float_less_than_def_typed float_negate_def_typed \
+  float_to_real_def_typed float_value_def_typed float_add_def_typed float_div_def_typed float_mul_def_typed \
+  float_mul_add_def_typed float_sub_def_typed float_to_int_def_typed flags_typed fp_op_typed rounding_typed \
+  check_for_signalling_def_typed clear_flags_def_typed dividezero_flags_def_typed float_bottom_def_typed \
+  float_minus_infinity_def_typed float_minus_min_def_typed float_minus_zero_def_typed float_plus_infinity_def_typed \
+  float_plus_min_def_typed float_plus_zero_def_typed float_some_qnan_def_typed float_top_def_typed \
+  invalidop_flags_def_typed float_value_typed closest_def_typed closest_such_def_typed largest_def_typed \
+  float_round_def_typed float_round_with_flags_def_typed float_sqrt_def_typed threshold_def_typed \
+  is_closest_def_typed real_to_float_def_typed real_to_float_with_flags_def_typed round_def_typed \
+  is_integral_def_typed float_is_integral_def_typed ULP_def_typed ulp_def_typed integral_round_def_typed \
+  float_round_to_integral_def_typed float_mul_sub_def_typed float_unordered_def_typed exponent_boundary_def_typed \
+  float_ulp_def_typed next_hi_def_typed next_lo_def_typed \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$hol_dir/src/floating-point"
+
+run_probe sptree_typed_probeScript.sml sptree_typed_probe.out \
+  domain_def_typed domain_fromList_typed MEM_toListA_typed MEM_toList_typed domain_lookup_typed \
+  spt_typed lookup_def_typed insert_def_typed mk_BN_def_typed mk_BS_def_typed union_def_typed \
+  fromAList_def_typed size_def_typed delete_def_typed fromList_def_typed lookup_mk_wf_typed domain_inter_typed \
+  domain_union_typed lookup_inter_typed lookup_union_typed wf_def_typed filter_v_def_typed lookup_filter_v_typed \
+  lrnext_def_typed toAList_def_typed foldi_def_typed foldi_FOLDR_toAList_typed insert_unchanged_typed \
+  inter_eq_def_typed lookup_inter_eq_typed domain_map_typed lookup_map_typed map_def_typed map_fromAList_typed \
+  map_insert_typed map_union_typed wf_map_typed mapi_def_typed mapi0_def_typed lookup_mapi_typed \
+  lookup_mapi0_typed wf_mapi_typed wf_mk_BN_typed wf_mk_BS_typed subspt_def_typed subspt_FOLDL_union_typed \
+  subspt_lookup_typed subspt_trans_typed subspt_union_typed ALL_DISTINCT_MAP_FST_toAList_typed \
+  domain_difference_typed domain_fromAList_typed domain_insert_typed MEM_toAList_typed insert_union_typed \
+  union_assoc_typed union_insert_LN_typed union_num_set_sym_typed spt_eq_thm_typed insert_notEmpty_typed \
+  lookup_difference_typed wf_delete_typed wf_difference_typed wf_fromAList_typed wf_insert_typed \
+  wf_inter_typed wf_union_typed inter_def_typed mk_wf_def_typed toList_def_typed toListA_def_typed \
+  "$hol_dir/src/finite_maps/sptreeScript.sml" \
+  "$hol_dir/src/finite_maps"
+
+run_probe balanced_map_typed_probeScript.sml balanced_map_typed_probe.out \
+  almost_balancedL_thm_typed almost_balancedR_thm_typed almost_balancedL_def_typed almost_balancedR_def_typed \
+  balanced_lem1_typed balanced_lem2_typed balanced_lem3_typed balanced_lem4_typed balanced_lem5_typed \
+  balanced_lem6_typed balanced_lem7_typed size_thm_typed structure_size_to_fmap_typed balanced_map_typed \
+  bin_def_typed delta_def_typed empty_def_typed lookup_def_typed member_def_typed null_def_typed \
+  ratio_def_typed singleton_def_typed size_def_typed to_fmap_key_set_typed insert_def_typed insert_thm_typed \
+  inv_props_typed invariant_eq_typed balanced_def_typed invariant_def_typed key_ordered_def_typed \
+  structure_size_def_typed key_ordered_to_fmap_typed key_set_cmp_def_typed key_set_cmp2_def_typed \
+  key_set_cmp_thm_typed key_set_eq_typed key_set_equiv_typed key_set_nonempty_typed key_set_partition_typed \
+  lookup_thm_typed member_eq_lookup_typed null_thm_typed bal_def_typed balL_def_typed balR_def_typed \
+  doubleL_def_typed doubleR_def_typed rotateL_def_typed rotateR_def_typed singleL_def_typed singleR_def_typed \
+  balanceL_balL_typed balanceL_thm_typed balanceR_balR_typed balanceR_thm_typed doubleL_thm_typed \
+  doubleR_thm_typed rotateL_thm_typed rotateR_thm_typed singleL_thm_typed singleR_thm_typed balanceL_def_typed \
+  balanceR_def_typed key_set_def_typed to_fmap_def_typed structure_size_thm_typed \
+  "$hol_dir/examples/data-structures/balanced_bst/balanced_mapScript.sml" \
+  "$hol_dir/examples/data-structures/balanced_bst"
+
+run_probe riscv_step_typed_probeScript.sml riscv_step_typed_probe.out \
+  avoid_signalAddressException_typed v2w_0_rwts_typed word_bit_0_lemmas_typed word_bit_1_0_typed \
+  word_bit_add_lsl_simp_typed BEQ_typed BGE_typed BGEU_typed BLT_typed BLTU_typed BNE_typed DecodeAny_def_typed \
+  DecodeRVC_IMP_DecodeAny_typed Decode_IMP_DecodeAny_typed NextRISCV_typed NextRISCV_branch_typed \
+  NextRISCV_cond_branch_typed Fetch_def_typed Fetch16_typed Fetch32_typed ADDI_typed ADDI_NOP_typed \
+  ANDI_typed ANDI_NOP_typed ORI_typed ORI_NOP_typed XORI_typed XORI_NOP_typed SLTI_typed SLTIU_typed \
+  SLLI_typed SLLI_NOP_typed SRAI_typed SRAI_NOP_typed SRLI_typed SRLI_NOP_typed JAL_typed JAL_NOP_typed \
+  JALR_typed JALR_NOP_typed LB_typed LB_NOP_typed LBU_typed LBU_NOP_typed LD_typed LD_NOP_typed \
+  LH_typed LH_NOP_typed LHU_typed LHU_NOP_typed LW_typed LW_NOP_typed LWU_typed LWU_NOP_typed \
+  DIV_typed MUL_typed REM_typed REMU_typed MULH_typed MULH_NOP_typed MULHSU_typed MULHSU_NOP_typed \
+  MULHU_typed MULHU_NOP_typed NextRISCV_def_typed ADD_typed ADD_NOP_typed AND_typed AND_NOP_typed \
+  OR_typed OR_NOP_typed SUB_typed SUB_NOP_typed XOR_typed XOR_NOP_typed SLT_typed SLT_NOP_typed \
+  SLTU_typed SLTU_NOP_typed SLL_typed SLL_NOP_typed SRA_typed SRA_NOP_typed SRL_typed SRL_NOP_typed \
+  SB_typed SD_typed SH_typed SW_typed update_pc_typed update_pc_def_typed AUIPC_typed AUIPC_NOP_typed \
+  LUI_typed LUI_NOP_typed DIVUW_typed DIVUW_NOP_typed DIVW_typed DIVW_NOP_typed MULW_typed MULW_NOP_typed \
+  REMUW_typed REMUW_NOP_typed REMW_typed REMW_NOP_typed SLLIW_typed SLLIW_NOP_typed SLLW_typed \
+  SLLW_NOP_typed SRAIW_typed SRAIW_NOP_typed SRAW_typed SRAW_NOP_typed SRLIW_typed SRLIW_NOP_typed \
+  SRLW_typed SRLW_NOP_typed ADDIW_typed ADDIW_NOP_typed ADDW_typed ADDW_NOP_typed SUBW_typed SUBW_NOP_typed \
+  Skip_typed DIVU_typed DIVU_NOP_typed MUL_NOP_typed DIV_NOP_typed REM_NOP_typed REMU_NOP_typed \
+  SLTI_NOP_typed SLTIU_NOP_typed \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \
+  "$hol_dir/examples/l3-machine-code/riscv/step"
+
+run_probe arm8_typed_probeScript.sml arm8_typed_probe.out \
+  ShiftType_typed MoveWideOp_typed ProcState_typed TCR_EL1_typed TCR_EL2_EL3_typed SCTLRType_typed \
+  BranchType_typed exception_typed arm8_state_typed AccType_typed ExtendType_typed LogicalOp_typed \
+  MemOp_typed MemBarrierOp_typed RevOp_typed SystemHintOp_typed PSTATEField_typed System_typed \
+  Debug_typed LoadStore_typed Branch_typed CRCExt_typed Data_typed instruction_typed MachineCode_typed \
+  raise_primeexception_def_typed TranslationRegime_def_typed SCTLR_def_typed Align_def_typed Aligned_def_typed \
+  CheckAlignment_def_typed ByteList_def_typed BigEndianReverse_def_typed BigEndian_def_typed Mem_def_typed \
+  Fetch_def_typed NoOperation_def_typed LoadStoreAcquireN_def_typed LoadStoreAcquire_def_typed \
+  LoadStorePairN_def_typed LoadStorePair_def_typed DecodeRegExtend_def_typed LoadStoreRegister_def_typed \
+  LoadStoreImmediateN_def_typed LoadStoreImmediate_def_typed HighestSetBit_def_typed Ones_def_typed \
+  Replicate_def_typed DecodeBitMasks_def_typed DecodeShift_def_typed DecodeLogicalOp_def_typed \
+  Decode_def_typed dfn_primeUnallocated_def_typed dfn_primeSystemInstruction_def_typed dfn_primeSupervisorCall_def_typed \
+  dfn_primeSecureMonitorCall_def_typed dfn_primeMoveSystemRegister_def_typed dfn_primeMoveImmediateProcState_def_typed \
+  dfn_primeHypervisorCall_def_typed dfn_primeExceptionReturn_def_typed dfn_primeReserved_def_typed \
+  dfn_primeMemoryBarrier_def_typed X_def_typed Extend_def_typed ExtendValue_def_typed ExtendReg_def_typed \
+  SP_def_typed CheckSPAlignment_def_typed write_primeMem_def_typed ExtendWord_def_typed write_primeX_def_typed \
+  write_primeSP_def_typed LoadStoreSingle_def_typed dfn_primeLoadStoreRegister_def_typed dfn_primeLoadStorePair_def_typed \
+  dfn_primeLoadStoreImmediate_def_typed ExclusiveMonitorStatus_def_typed ExclusiveMonitorPass_def_typed \
+  dfn_primeLoadStoreAcquirePair_def_typed dfn_primeLoadStoreAcquire_def_typed dfn_primeLoadLiteral_def_typed \
+  dfn_primeHint_def_typed dfn_primeHalt_def_typed dfn_primeDebugSwitch_def_typed dfn_primeDebugRestore_def_typed \
+  dfn_primeBreakpoint_def_typed ShiftValue_def_typed ShiftReg_def_typed dfn_primeShift_def_typed \
+  dfn_primeReverse_def_typed dfn_primeMultiplyHigh_def_typed dfn_primeMultiplyAddSubLong_def_typed \
+  dfn_primeMultiplyAddSub_def_typed dfn_primeMoveWide_def_typed SetTheFlags_def_typed dfn_primeLogicalShiftedRegister_def_typed \
+  dfn_primeLogicalImmediate_def_typed dfn_primeExtractRegister_def_typed dfn_primeDivision_def_typed \
+  CountLeadingZeroBits_def_typed CountLeadingSignBits_def_typed dfn_primeCountLeading_def_typed \
+  ConditionTest_def_typed ConditionHolds_def_typed dfn_primeConditionalSelect_def_typed AddWithCarry_def_typed \
+  dfn_primeConditionalCompareRegister_def_typed dfn_primeConditionalCompareImmediate_def_typed \
+  dfn_primeBitfieldMove_def_typed dfn_primeAddSubShiftedRegister_def_typed dfn_primeAddSubImmediate_def_typed \
+  dfn_primeAddSubExtendRegister_def_typed dfn_primeAddSubCarry_def_typed dfn_primeClearExclusive_def_typed \
+  Zeros_def_typed Poly32Mod2_loop_def_typed Poly32Mod2_def_typed dfn_primeCRC_def_typed Hint_Branch_def_typed \
+  BranchTo_def_typed dfn_primeTestBitAndBranch_def_typed dfn_primeCompareAndBranch_def_typed dfn_primeBranchRegister_def_typed \
+  dfn_primeBranchImmediate_def_typed dfn_primeBranchConditional_def_typed dfn_primeAddress_def_typed \
+  Run_def_typed Next_def_typed e_system_def_typed e_LoadStoreRegister_def_typed e_LoadStoreImmediate_def_typed \
+  e_load_store_def_typed e_debug_def_typed e_sf_def_typed EncodeLogicalOp_def_typed CountTrailing_def_typed \
+  EncodeBitMaskAux_def_typed EncodeBitMask_def_typed e_data_def_typed e_crc_def_typed e_branch_def_typed \
+  Encode_def_typed \
+  "$hol_dir/examples/l3-machine-code/arm8/model/arm8Script.sml" \
+  "$hol_dir/examples/l3-machine-code/arm8/model"
+
+run_probe riscv_typed_probeScript.sml riscv_typed_probe.out \
+  Delta_def_typed FP32_IsSignalingNan_def_typed FP32_Sign_def_typed FP64_IsSignalingNan_def_typed \
+  FP64_Sign_def_typed FPRD_def_typed FPRS_def_typed GPR_def_typed MCSR_def_typed NextFetch_def_typed \
+  RV32_CanonicalNan_def_typed RV64_CanonicalNan_def_typed ext_status_def_typed fcsr_def_typed \
+  fpr_def_typed gpr_def_typed l3round_def_typed rnd_mode_dynamic_def_typed rnd_mode_static_def_typed \
+  round_def_typed setFP_Invalid_def_typed setTrap_def_typed signalException_def_typed writeFPRD_def_typed \
+  writeFPRS_def_typed dfn_primeFADD_D_def_typed dfn_primeFADD_S_def_typed dfn_primeFCLASS_D_def_typed \
+  dfn_primeFCLASS_S_def_typed dfn_primeFCVT_D_LU_def_typed dfn_primeFCVT_D_L_def_typed dfn_primeFCVT_D_S_def_typed \
+  dfn_primeFCVT_D_WU_def_typed dfn_primeFCVT_D_W_def_typed dfn_primeFCVT_LU_D_def_typed dfn_primeFCVT_LU_S_def_typed \
+  dfn_primeFCVT_L_D_def_typed dfn_primeFCVT_L_S_def_typed dfn_primeFCVT_S_D_def_typed dfn_primeFCVT_S_LU_def_typed \
+  dfn_primeFCVT_S_L_def_typed dfn_primeFCVT_S_WU_def_typed dfn_primeFCVT_S_W_def_typed dfn_primeFCVT_WU_D_def_typed \
+  dfn_primeFCVT_WU_S_def_typed dfn_primeFCVT_W_D_def_typed dfn_primeFCVT_W_S_def_typed dfn_primeFDIV_D_def_typed \
+  dfn_primeFDIV_S_def_typed dfn_primeFEQ_D_def_typed dfn_primeFEQ_S_def_typed dfn_primeFLE_D_def_typed \
+  dfn_primeFLE_S_def_typed dfn_primeFLT_D_def_typed dfn_primeFLT_S_def_typed dfn_primeFMADD_D_def_typed \
+  dfn_primeFMADD_S_def_typed dfn_primeFMAX_D_def_typed dfn_primeFMAX_S_def_typed dfn_primeFMIN_D_def_typed \
+  dfn_primeFMIN_S_def_typed dfn_primeFMSUB_D_def_typed dfn_primeFMSUB_S_def_typed dfn_primeFMUL_D_def_typed \
+  dfn_primeFMUL_S_def_typed dfn_primeFNMADD_D_def_typed dfn_primeFNMADD_S_def_typed dfn_primeFNMSUB_D_def_typed \
+  dfn_primeFNMSUB_S_def_typed dfn_primeFSQRT_D_def_typed dfn_primeFSQRT_S_def_typed dfn_primeFSUB_D_def_typed \
+  dfn_primeFSUB_S_def_typed write_primeDelta_def_typed write_primeFPRD_def_typed write_primeFPRS_def_typed \
+  write_primeGPR_def_typed write_primeMCSR_def_typed write_primeNextFetch_def_typed write_primefcsr_def_typed \
+  write_primefpr_def_typed write_primegpr_def_typed dfn_primeAMOADD_D_def_typed dfn_primeAMOADD_W_def_typed \
+  dfn_primeAMOAND_D_def_typed dfn_primeAMOAND_W_def_typed dfn_primeAMOOR_D_def_typed dfn_primeAMOOR_W_def_typed \
+  dfn_primeAMOXOR_D_def_typed dfn_primeAMOXOR_W_def_typed dfn_primeAMOMAXU_D_def_typed dfn_primeAMOMAXU_W_def_typed \
+  dfn_primeAMOMAX_D_def_typed dfn_primeAMOMAX_W_def_typed dfn_primeAMOMINU_D_def_typed dfn_primeAMOMINU_W_def_typed \
+  dfn_primeAMOMIN_D_def_typed dfn_primeAMOMIN_W_def_typed dfn_primeAMOSWAP_D_def_typed dfn_primeAMOSWAP_W_def_typed \
+  signalAddressException_def_typed checkCSROp_def_typed check_CSR_access_def_typed csrPR_def_typed \
+  csrRW_def_typed curPrivilege_def_typed is_CSR_defined_def_typed privLevel_def_typed CSR_def_typed \
+  CSRMap_def_typed sendIPI_def_typed writeCSR_def_typed rec_primeFPCSR_def_typed reg_primeFPCSR_def_typed \
+  write_primeCSRMap_def_typed write_primeCSR_def_typed write_primerec_primeFPCSR_def_typed write_primereg_primeFPCSR_def_typed \
+  dfn_primeCSRRCI_def_typed dfn_primeCSRRC_def_typed dfn_primeCSRRSI_def_typed dfn_primeCSRRS_def_typed \
+  dfn_primeCSRRWI_def_typed dfn_primeCSRRW_def_typed dfn_primeBEQ_def_typed dfn_primeBGEU_def_typed \
+  dfn_primeBGE_def_typed dfn_primeBLTU_def_typed dfn_primeBLT_def_typed dfn_primeBNE_def_typed \
+  dfn_primeFETCH_FAULT_def_typed dfn_primeFETCH_MISALIGNED_def_typed dfn_primeMRTS_def_typed write_primeSCSR_def_typed \
+  Decode_def_typed DecodeRVC_def_typed boolify16_def_typed boolify32_def_typed boolify8_def_typed \
+  asImm12_def_typed asImm20_def_typed asSImm12_def_typed dfn_primeDIVUW_def_typed dfn_primeDIVU_def_typed \
+  dfn_primeDIVW_def_typed dfn_primeDIV_def_typed dfn_primeREMUW_def_typed dfn_primeREMU_def_typed \
+  dfn_primeREMW_def_typed dfn_primeREM_def_typed Encode_def_typed Itype_def_typed R4type_def_typed \
+  Rtype_def_typed SBtype_def_typed Stype_def_typed UJtype_def_typed Utype_def_typed amofunc_def_typed \
+  opc_def_typed dfn_primeFMV_D_X_def_typed dfn_primeFMV_S_X_def_typed dfn_primeFMV_X_D_def_typed \
+  dfn_primeFMV_X_S_def_typed dfn_primeFSGNJN_D_def_typed dfn_primeFSGNJN_S_def_typed dfn_primeFSGNJX_D_def_typed \
+  dfn_primeFSGNJX_S_def_typed dfn_primeFSGNJ_D_def_typed dfn_primeFSGNJ_S_def_typed dfn_primeFLD_def_typed \
+  dfn_primeFLW_def_typed dfn_primeFSD_def_typed dfn_primeFSW_def_typed Fetch_def_typed dfn_primeADDI_def_typed \
+  dfn_primeANDI_def_typed dfn_primeORI_def_typed dfn_primeXORI_def_typed dfn_primeSLLIW_def_typed \
+  dfn_primeSLLI_def_typed dfn_primeSRAIW_def_typed dfn_primeSRAI_def_typed dfn_primeSRLIW_def_typed \
+  dfn_primeSRLI_def_typed dfn_primeLBU_def_typed dfn_primeLB_def_typed dfn_primeLD_def_typed dfn_primeLHU_def_typed \
+  dfn_primeLH_def_typed dfn_primeLWU_def_typed dfn_primeLW_def_typed architecture_def_typed curArch_def_typed \
+  in32BitMode_def_typed dfn_primeSB_def_typed dfn_primeSD_def_typed dfn_primeSH_def_typed dfn_primeSW_def_typed \
+  dfn_primeLR_D_def_typed dfn_primeLR_W_def_typed dfn_primeSC_D_def_typed dfn_primeSC_W_def_typed \
+  checkMemPermission_def_typed curASID_def_typed rawReadData_def_typed rawWriteData_def_typed \
+  vmType_def_typed raise_primeexception_def_typed flushTLB_def_typed dfn_primeSFENCE_VM_def_typed \
+  addToTLB_def_typed ASID_SIZE_def_typed LEVEL_BITS_def_typed MEM_def_typed PAGESIZE_BITS_def_typed \
+  SCSR_def_typed TLB_def_typed TLBEntries_def_typed isGlobal_def_typed privilege_def_typed rec_primeSV_PTE_def_typed \
+  rec_primeSV_Vaddr_def_typed reg_primeSV_PTE_def_typed write_primeMEM_def_typed write_primeTLB_def_typed \
+  lookupTLB_def_typed mkTLBEntry_def_typed translate64_def_typed translateAddr_def_typed walk64_def_typed \
+  rec_primemcause_def_typed rec_primemcpuid_def_typed rec_primemie_def_typed rec_primemimpid_def_typed \
+  rec_primemip_def_typed rec_primemstatus_def_typed rec_primemtdeleg_def_typed reg_primemcause_def_typed \
+  reg_primemcpuid_def_typed reg_primemie_def_typed reg_primemimpid_def_typed reg_primemip_def_typed \
+  reg_primemstatus_def_typed reg_primemtdeleg_def_typed dfn_primeMULHSU_def_typed dfn_primeMULHU_def_typed \
+  dfn_primeMULH_def_typed dfn_primeMULW_def_typed dfn_primeMUL_def_typed PC_def_typed rawReadInst_def_typed \
+  write_primeSkip_def_typed dfn_primeADD_def_typed dfn_primeAND_def_typed dfn_primeOR_def_typed \
+  dfn_primeSUB_def_typed dfn_primeXOR_def_typed dfn_primeSLLW_def_typed dfn_primeSLL_def_typed \
+  dfn_primeSRAW_def_typed dfn_primeSRA_def_typed dfn_primeSRLW_def_typed dfn_primeSRL_def_typed \
+  ReserveLoad_def_typed matchLoadReservation_def_typed write_primeReserveLoad_def_typed Run_def_typed \
+  dfn_primeSLTIU_def_typed dfn_primeSLTI_def_typed dfn_primeSLTU_def_typed dfn_primeSLT_def_typed \
+  extStatus_def_typed isValidVM_def_typed lift_mie_sie_def_typed lift_mip_sip_def_typed lift_mstatus_sstatus_def_typed \
+  lower_sie_mie_def_typed lower_sip_mip_def_typed lower_sstatus_mstatus_def_typed update_mstatus_def_typed \
+  rec_primesie_def_typed rec_primesip_def_typed rec_primesstatus_def_typed reg_primesie_def_typed \
+  reg_primesip_def_typed reg_primesstatus_def_typed signalEnvCall_def_typed dfn_primeEBREAK_def_typed \
+  dfn_primeECALL_def_typed dfn_primeERET_def_typed dfn_primeUnknownInstruction_def_typed Skip_def_typed \
+  branchTo_def_typed dfn_primeAUIPC_def_typed dfn_primeJALR_def_typed dfn_primeJAL_def_typed dfn_primeLUI_def_typed \
+  dfn_primeADDIW_def_typed dfn_primeADDW_def_typed dfn_primeSUBW_def_typed write_primePC_def_typed \
+  AMO_typed Architecture_typed ArithI_typed ArithR_typed Branch_typed ExceptionType_typed ExtStatus_typed \
+  FArith_typed FConv_typed FPCSR_typed FPLoad_typed FPStore_typed FetchResult_typed HypervisorCSR_typed \
+  Internal_typed Interrupt_typed Load_typed MachineCSR_typed MulDiv_typed Privilege_typed Rounding_typed \
+  SV_PTE_typed SV_Vaddr_typed Shift_typed StateDelta_typed Store_typed SupervisorCSR_typed SynchronousTrap_typed \
+  System_typed TLBEntry_typed TransferControl_typed UserCSR_typed VM_Mode_typed accessType_typed \
+  exception_typed fetchType_typed instruction_typed mcause_typed mcpuid_typed mie_typed mimpid_typed \
+  mip_typed mstatus_typed mtdeleg_typed rawInstType_typed riscv_state_typed rvc_typed sie_typed \
+  sip_typed sstatus_typed \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
+  "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe word_convs_defs_typed_probeScript.sml word_convs_defs_typed_probe.out \
+  call_arg_convention_def_typed distinct_tar_reg_def_typed every_inst_def_typed \
+  extract_labels_def_typed flat_exp_conventions_def_typed good_handlers_def_typed \
+  inst_arg_convention_def_typed inst_ok_less_def_typed labels_rel_def_typed \
+  labels_rel_APPEND_typed labels_rel_CONS_typed PERM_IMP_labels_rel_typed labels_rel_refl_typed \
+  labels_rel_TRANS_typed post_alloc_conventions_def_typed pre_alloc_conventions_def_typed \
+  two_reg_inst_def_typed get_code_labels_def_typed every_var_inst_mono_typed \
+  every_var_exp_mono_typed full_inst_ok_less_def_typed good_code_labels_def_typed \
+  max_var_exp_IMP_typed max_var_intro_typed every_name_mono_typed no_install_def_typed \
+  no_alloc_subprogs_def_typed no_install_subprogs_def_typed no_mt_subprogs_def_typed \
+  no_share_inst_subprogs_def_typed not_created_subprogs_def_typed no_alloc_def_typed \
+  no_mt_def_typed no_share_inst_def_typed every_var_mono_typed every_name_conj_typed \
+  every_stack_var_conj_typed every_stack_var_mono_typed every_var_imp_every_stack_var_typed \
+  wf_cutsets_def_typed wf_names_def_typed \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+run_probe word_convs_changed_rows_typed_probeScript.sml word_convs_changed_rows_typed_probe.out \
+  three_to_two_reg_prog_two_reg_inst_typed word_alloc_two_reg_inst_typed \
+  word_alloc_two_reg_inst_lem_typed compile_to_word_conventions_typed \
+  "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+run_probe grammar_parsetree_typed_probeScript.sml grammar_parsetree_typed_probe.out \
+  symbol_typed parsetree_typed ptree_loc_def_typed ptree_list_loc_def_typed \
+  ptree_head_def_typed isTOK_def_typed destTOK_def_typed \
+  "$hol_dir/examples/formal-languages/context-free/grammarScript.sml" \
+  "$hol_dir/examples/formal-languages/context-free"
+run_probe token_utils_destlf_typed_probeScript.sml token_utils_destlf_typed_probe.out \
+  destLf_def_typed \
+  "$cake_dir/semantics/tokenUtilsScript.sml" "$cake_dir/semantics"
+run_probe cake_ptree_helpers_typed_probeScript.sml cake_ptree_helpers_typed_probe.out \
+  destTOK_def_typed destLongidT_def_typed destTyvarPT_def_typed destAlphaT_def_typed \
+  destSymbolT_def_typed destIntT_def_typed destCharT_def_typed destStringT_def_typed \
+  destWordT_def_typed destFFIT_def_typed isLower_def_typed isUpper_def_typed \
+  isAlpha_def_typed oHD_def_typed ifM_def_typed tokcheckl_def_typed \
+  singleSymP_def_typed isSymbolicConstructor_def_typed isConstructor_def_typed \
+  "$cake_dir/semantics/tokenUtilsScript.sml" "$cake_dir/semantics"

@@ -343,52 +343,11 @@ def everyVarExpsHOL {width : Nat} [NeZero width] (P : Nat → Bool) :
       everyVarExpHOL P expression && everyVarExpsHOL P expressions
 end
 
-/-- HOL `wordLang$every_var_imm` (`wordLangScript.sml:93-96`).
-
-    Not an exact HOL port: this Lean declaration quantifies `width : Nat`
-    without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
-    dimensions are positive. The manifest records this mismatch; restore the
-    HOL tag only after correcting the width binder and reviewing callers. -/
-def everyVarImm {width : Nat} (P : Nat -> Bool) :
-    WordRegImm (BitVec width) -> Bool
-  | .reg num => P num
-  | _ => true
-
-/-- HOL `wordLang$every_var_inst` (`wordLangScript.sml:98-133`).
-
-    Not an exact HOL port: this Lean declaration quantifies `width : Nat`
-    without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
-    dimensions are positive. The manifest records this mismatch; restore the
-    HOL tag only after correcting the width binder and reviewing callers. -/
-def everyVarInst {width : Nat} (P : Nat -> Bool) :
-    WordLangInst (BitVec width) -> Bool
-  | .const reg _ => P reg
-  | .arith (.binop _ r1 r2 right) => P r1 && P r2 && everyVarImm P right
-  | .arith (.shift _ r1 r2 right) => P r1 && P r2 && everyVarImm P right
-  | .arith (.div r1 r2 r3) => P r1 && P r2 && P r3
-  | .arith (.addCarry r1 r2 r3 r4) => P r1 && P r2 && P r3 && P r4
-  | .arith (.addOverflow r1 r2 r3 r4) => P r1 && P r2 && P r3 && P r4
-  | .arith (.subOverflow r1 r2 r3 r4) => P r1 && P r2 && P r3 && P r4
-  | .arith (.longMul r1 r2 r3 r4) => P r1 && P r2 && P r3 && P r4
-  | .arith (.longDiv r1 r2 r3 r4 r5) => P r1 && P r2 && P r3 && P r4 && P r5
-  | .mem .load reg (.addr base _) => P reg && P base
-  | .mem .store reg (.addr base _) => P reg && P base
-  | .mem .load32 reg (.addr base _) => P reg && P base
-  | .mem .store32 reg (.addr base _) => P reg && P base
-  | .mem .load8 reg (.addr base _) => P reg && P base
-  | .mem .store8 reg (.addr base _) => P reg && P base
-  | .fp (.fpLess reg _ _) => P reg
-  | .fp (.fpLessEqual reg _ _) => P reg
-  | .fp (.fpEqual reg _ _) => P reg
-  | .fp (.fpMovToReg r1 r2 _) => if width = 64 then P r1 else (P r1 && P r2)
-  | .fp (.fpMovFromReg _ r1 r2) => if width = 64 then P r1 else (P r1 && P r2)
-  | _ => true
-
 /-- Exact HOL `wordLang$every_var_imm` (`wordLangScript.sml:93-96`): the only
 `Reg r` clause is `P r` and every other immediate is `T`.  `[NeZero width]`
-models HOL's positive word dimension (`dimindex (:α) ≥ 1`); unlike the
-production `everyVarImm`, no `BitVec 0` instance is admitted, so the statement
-matches the HOL carrier and the declaration is tagged. -/
+models HOL's positive word dimension (`dimindex (:α) ≥ 1`), so no `BitVec 0`
+instance is admitted and the statement matches the HOL carrier. The untagged
+production duplicate was retired in task 156. -/
 @[hol "cakeml/compiler/backend/wordLangScript.sml" "every_var_imm_def"
   (words_as_type_indexed_bitvec)]
 def everyVarImmHOL {width : Nat} [NeZero width] (P : Nat → Bool) :
@@ -399,8 +358,7 @@ def everyVarImmHOL {width : Nat} [NeZero width] (P : Nat → Bool) :
 /-- Exact HOL `wordLang$every_var_inst` (`wordLangScript.sml:98-133`) over the
 exact instruction carrier, with the two HOL FP-move `dimindex (:α) = 64` tests
 rendered as `width = 64`.  `[NeZero width]` models HOL's positive word
-dimension; the production `everyVarInst` omits that binder and stays
-`documented_mismatch`. -/
+dimension. The untagged production duplicate was retired in task 156. -/
 @[hol "cakeml/compiler/backend/wordLangScript.sml" "every_var_inst_def"
   (words_as_type_indexed_bitvec)]
 def everyVarInstHOL {width : Nat} [NeZero width] (P : Nat → Bool) :

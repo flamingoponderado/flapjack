@@ -583,37 +583,6 @@ def panToCrepMakeFuncs : List (Decl α) → InfoMap (List (VarName × Shape) × 
 def functionInfos : List (Decl α) → InfoMap (List (VarName × Shape) × Shape) :=
   panToCrepMakeFuncs
 
-/-! HOL `make_funcs_def` (`cakeml/pancake/pan_to_crepScript.sml:366-373`) over
-    the extracted function table:
-    `make_funcs prog = alist_to_fmap (MAP3 (λx y z. (x,y,z)) (MAP FST prog)
-    (MAP (FST o SND) prog) (MAP (SND o SND o SND) prog))`, keyed by
-    `funname = mlstring` and valued by `(varname # shape) list # shape`;
-    `alist_to_fmap` is a right fold of `FUPDATE`, so the first duplicate name
-    wins. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): `makeFuncsHOL` keys the table by
--- `FunName` = `String` and stores values in the production `VarName` = `String`
--- and `Shape` (`named : StructName` = `String`) carriers, not HOL's
--- `funname`/`varname` = `mlstring` and `shape` (`named : mlstring`); its input
--- also mentions the production `Prog α` body carrier even though `make_funcs`
--- ignores bodies; and the result is a `FiniteMap` function rather than HOL's
--- `fmap` (rendered by `FUPDATE_LIST FEMPTY` over the reversed association list,
--- a left fold).  The `names_as_string` qualifier cannot authorize the `Shape`
--- and `Prog` carriers, and no `NameRanged` byte witness applies because the
--- output is a finite map of function signatures, not a name.  (The theorem
--- map's `make_funcs_def` -> `crepToLoopMakeFuncsHOL` entry is the exact port of
--- the *different* `crep_to_loopScript.sml` declaration, not this one.)  Direct
--- HOL-EVAL rows `make_funcs_empty_params`/`make_funcs_param_entry`/
--- `make_funcs_absent`/`make_funcs_duplicate_first_wins` are recorded in
--- `scripts/hol-probes/crep_make_funcs_probe.out` and exercised by
--- `makeFuncsGuard` (`Flapjack/Test/PanToCrepCodeRelParity.lean`) and
--- `makeFuncsOracle` (`Flapjack/Test/CompileToCrepeParity.lean`).  The faithful
--- exact-carrier port is tracked by `flapjack-pxn.18.3.5.8` (parent
--- `flapjack-pxn.18.3.5.7.2`); this analogue remains deliberately untagged.
-def makeFuncsHOL
-    (functions : List (FunName × List (VarName × Shape) × Prog α × Shape)) :
-    FiniteMap FunName (List (VarName × Shape) × Shape) :=
-  FUPDATE_LIST FEMPTY
-    ((functions.map fun entry => (entry.1, (entry.2.1, entry.2.2.2))).reverse)
 
 /-- `panToCrepMakeFuncs` maps exactly the extracted function entries through the
     HOL `make_funcs` projection. -/
@@ -925,60 +894,6 @@ def panToCrepMakeVmapHOL (params : List (VarName × Shape)) :
     FiniteMap VarName (Shape × List Nat) :=
   FUPDATE_LIST FEMPTY (compileParamVars params 0).1
 
-def functionInfosHOL (declarations : List (Decl α)) :
-    FiniteMap FunName (List (VarName × Shape) × Shape) :=
-  /- HOL `alist_to_fmap` is `FOLDR FUPDATE FEMPTY`, so the first duplicate
-     function name wins. `FUPDATE_LIST` is a left fold and needs reversal. -/
-  FUPDATE_LIST FEMPTY (panToCrepMakeFuncs declarations).reverse
-
-/-- `functionInfosHOL` (the declaration-list adapter) builds exactly the exact
-    HOL `make_funcs` finite map of the extracted function entries. -/
-theorem functionInfosHOL_eq_makeFuncsHOL (declarations : List (Decl α)) :
-    functionInfosHOL declarations = makeFuncsHOL (functionEntries declarations) := by
-  rw [functionInfosHOL, makeFuncsHOL, panToCrepMakeFuncs_eq_map]
-
-def panToCrepCompFuncRiscV (context : PanToCrepHOLContext (BitVec width))
-    (params : List (VarName × Shape)) (body : Prog (BitVec width)) :
-    CrepProg (BitVec width) :=
-  let shapes := params.map Prod.snd
-  let vmax := Shape.shapeSize (.comb shapes) - 1
-  compileProgRiscV
-    (panToCrepMkCtxtHOL (panToCrepMakeVmapHOL params)
-      context.funcs vmax context.eids) body
-
-/-- HOL `comp_func_def` (`cakeml/pancake/pan_to_crepScript.sml:337-343`):
-    `comp_func fs eids params body = let vmap = make_vmap params;
-    shapes = MAP SND params; vmax = size_of_shape (Comb shapes) - 1 in
-    compile (mk_ctxt vmap fs vmax eids) body`.  This Flapjack mirror follows
-    the same clause order, but is NOT an exact HOL port. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): source-reviewed documented
--- carrier mismatch.  HOL `comp_func` is over `mlstring`-keyed maps
--- (`funname`/`eid`), `mlstring` parameter names (`varname`), HOL `shape` with
--- `size_of_shape`, and word-indexed `'a panLang$prog` with `compile`
--- returning `crepLang$prog`; this mirror instead uses `FunName`/`ExceptionId`/
--- `VarName` = `String`, production `Shape` with untagged `Shape.shapeSize`,
--- the untagged `panToCrepMakeVmapHOL`/`panToCrepMkCtxtHOL`, and
--- `compileProgRiscV` over `Prog`/`CrepProg (BitVec width)` (the exact
--- `make_vmap`, `mk_ctxt`, and `compile` carriers are not yet ported).  The
--- `names_as_string` qualifier cannot authorize the Shape/Prog/CrepProg
--- carriers, and no `NameRanged` byte witness exists because the output is a
--- compiled program, not a name.  HOL-EVAL coverage: `make_funcs_def` (the `fs`
--- argument) is probed in `scripts/hol-probes/crep_make_funcs_probe.out`; the
--- `comp_func`/`compile_to_crep` path is exercised by
--- `Flapjack/Test/PanToCrepCodeRelParity.lean`.  Exact replacement is tracked
--- by `flapjack-pxn.18.3.5.8` (parent `flapjack-pxn.18.3.5.7.2`; exact
--- `compile` by `flapjack-pxn.18.3.5.8.13`).  Tag withdrawn.
-def compFuncHOL
-    (compilerFunctions : FiniteMap FunName (List (VarName × Shape) × Shape))
-    (exceptionCodes : FiniteMap ExceptionId (BitVec width))
-    (params : List (VarName × Shape)) (body : Prog (BitVec width)) :
-    CrepProg (BitVec width) :=
-  let vmap := panToCrepMakeVmapHOL params
-  let shapes := params.map Prod.snd
-  let vmax := Shape.shapeSize (.comb shapes) - 1
-  compileProgRiscV
-    (panToCrepMkCtxtHOL vmap compilerFunctions vmax exceptionCodes) body
-
 /-! HOL `get_eids_from_decls_def` (`cakeml/pancake/pan_to_crepScript.sml:356-364`):
 
 ```
@@ -1024,72 +939,5 @@ def panToCrepGetEidsFromDeclsHOL
   let names := (exceptionEntries declarations).map Prod.fst
   FUPDATE_LIST FEMPTY
     (names.zip ((List.range names.length).map (BitVec.ofNat width))).reverse
-
-private theorem declOfHOL_map_declToHOL_eq {width : Nat} [NeZero width]
-    (declarations : List (Decl (BitVec width)))
-    (hdecls : ∀ declaration ∈ declarations,
-      Flapjack.Pancake.PanLang.DeclByteRanged declaration) :
-    (declarations.map Flapjack.Pancake.PanLang.declToHOL).map
-      Flapjack.Pancake.PanLang.declOfHOL = declarations := by
-  induction declarations with
-  | nil => rfl
-  | cons declaration declarations ih =>
-      have hhead : Flapjack.Pancake.PanLang.DeclByteRanged declaration :=
-        hdecls declaration (by simp)
-      have htail : ∀ d ∈ declarations, Flapjack.Pancake.PanLang.DeclByteRanged d := by
-        intro d hd
-        exact hdecls d (by simp [hd])
-      simp [Flapjack.Pancake.PanLang.declOfHOL_declToHOL declaration hhead, ih htail]
-
-/-! HOL `compile_to_crep_def` (`cakeml/pancake/pan_to_crepScript.sml:383-391`):
-
-```
-compile_to_crep decls =
-  let prog = functions decls;
-      comp = comp_func (make_funcs prog) (get_eids_from_decls decls) in
-    MAP (λ(name, params, body, return).
-          (name, crep_vars params, comp params body)) prog
-```
-
-The Lean port below mirrors that let-structure and operand order clause-for-
-clause. It also preserves the triple-shaped output boundary rather than
-Flapjack's downstream `CompiledFunction` record (which additionally stores
-source return-shape metadata); metadata is attached only in the untagged
-adapter below.
-
-FLAPJACK-SPECIFIC (not an exact HOL port): the carriers differ from HOL.
-(i) `functions`/`FunName`/`VarName`/`ExceptionId` are `String`-keyed
-(PanLang.lean), while HOL `funname`/`varname`/`eid` are `mlstring`.
-(ii) The input is the production `List (Decl (BitVec width))`, whose shapes are
-the production `Shape`, not HOL's word-indexed `'a decl` carrying `mlstring`
-names and `shape`.
-(iii) The result is `List (FunName × List Nat × CrepProg (BitVec width))`,
-whose `CrepProg` call/exception funnames are `String`, rather than HOL's
-`(mlstring # num list # 'a crepLang$prog) list`.
-(iv) It delegates to the untagged production helpers `makeFuncsHOL`,
-`panToCrepGetEidsFromDeclsHOL`, `compFuncHOL`, and `panToCrepVars`, which are
-themselves string/shape-shaped. The `names_as_string` qualifier cannot
-authorize the `Decl`/`Shape`/`CrepProg` carriers, and no `NameRanged` byte
-witness exists because the output is a list of triples, not a name.
-
-Direct HOL-EVAL rows are recorded in
-`scripts/hol-probes/compile_to_crep_probe.out` (`empty`/`raise_const`/
-`raise_pair`/`raise_pair_later`/`handled_pair`/`duplicate_exceptions`) and
-reproduced against this definition by `holDeclarationOnlyOracle`,
-`holPairRaiseProductionOracle`, `holHandledPairProductionOracle`, and
-`holDuplicateExceptionProductionOracle` in
-`Flapjack/Test/CompileToCrepeParity.lean`.
-
-The exact MlString-keyed carrier replacement is tracked by
-`flapjack-pxn.18.3.5.8` (parent `flapjack-pxn.18.3.5.7.2`). -/
-def compileToCrepHOL
-    (declarations : List (Decl (BitVec width))) :
-    List (FunName × List Nat × CrepProg (BitVec width)) :=
-  let functions := functionEntries declarations
-  let functionMap := makeFuncsHOL functions
-  let exceptionMap := panToCrepGetEidsFromDeclsHOL declarations
-  functions.map fun (name, parameters, body, _returnShape) =>
-    (name, panToCrepVars parameters,
-      compFuncHOL functionMap exceptionMap parameters body)
 
 end Flapjack

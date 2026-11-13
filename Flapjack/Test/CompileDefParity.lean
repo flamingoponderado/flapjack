@@ -24,6 +24,7 @@ namespace Flapjack.Test.CompileDefParity
 
 open Flapjack
 open Flapjack.Basis.Pure.MlString
+open Flapjack.Pancake.PanLang (MlS ShapeHOL ProgHOL ExpHOL)
 
 def context : CompileContext Nat :=
   { vars := [], functions := [], exceptions := [], maxVar := 0, bytesInWord := 1 }
@@ -87,55 +88,60 @@ def missingNamesHOLContext : PanToCrepHOLContext Nat :=
 def pairLoad : Prog Nat :=
   .return (.load (.comb [.one, .one]) (.var .local "p"))
 
-def riscv64PairContext : PanToCrepHOLContext (BitVec 64) :=
-  { vars := FUPDATE_LIST FEMPTY
-      [("p", (.one, [0])), ("x", (.one, [1])), ("y", (.one, [2]))]
-    funcs := FEMPTY
-    eids := FEMPTY
-    vmax := 2 }
+def riscv64PairExactContext : PanToCrepContextExact 64 where
+  vars := HolFiniteMapExact.empty.updateListEq
+    [(ofString "p", (.one, [0])), (ofString "x", (.one, [1])),
+      (ofString "y", (.one, [2]))]
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 2
 
-def riscv64PairLoad : Prog (BitVec 64) :=
-  .return (.load (.comb [.one, .one]) (.var .local "p"))
+def riscv64PairLoad : ProgHOL 64 :=
+  .return (.load (.comb [.one, .one]) (.var .local (ofString "p")))
 
-def riscv64PairStore : Prog (BitVec 64) :=
-  .store (.var .local "p") (.rStruct [.var .local "x", .var .local "y"])
+def riscv64PairStore : ProgHOL 64 :=
+  .store (.var .local (ofString "p"))
+    (.rstruct [.var .local (ofString "x"), .var .local (ofString "y")])
 
-def riscv64EmptyStructReturn : Prog (BitVec 64) :=
-  .return (.rStruct [])
+def riscv64EmptyStructReturn : ProgHOL 64 := .return (.rstruct [])
 
-def riscv64EmptyHOLContext : PanToCrepHOLContext (BitVec 64) :=
-  { vars := FEMPTY, funcs := FEMPTY, eids := FEMPTY, vmax := 0 }
+def riscv64EmptyExactContext : PanToCrepContextExact 64 where
+  vars := HolFiniteMapExact.empty
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 0
 
-def riscv64ShadowContext : PanToCrepHOLContext (BitVec 64) :=
-  { vars := FUPDATE (FUPDATE FEMPTY ("p", (.one, [3]))) ("p", (.one, [5]))
-    funcs := FEMPTY
-    eids := FEMPTY
-    vmax := 5 }
+def riscv64ShadowExactContext : PanToCrepContextExact 64 where
+  vars := (HolFiniteMapExact.empty.updateEq (ofString "p", (.one, [3]))).updateEq
+    (ofString "p", (.one, [5]))
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 5
 
-def riscv64ShadowReturn : Prog (BitVec 64) :=
-  .return (.var .local "p")
+def riscv64ShadowReturn : ProgHOL 64 := .return (.var .local (ofString "p"))
 
-def isEmptyRiscv64Return : CrepProg (BitVec 64) → Bool
+def isEmptyRiscv64Return : CrepProgHOL 64 → Bool
   | .return [] => true
   | _ => false
 
-def isRiscv64ShadowReturn : CrepProg (BitVec 64) → Bool
+def isRiscv64ShadowReturn : CrepProgHOL 64 → Bool
   | .return [.var 5] => true
   | _ => false
 
 #guard isEmptyRiscv64Return
-  (compileProgRiscV riscv64EmptyHOLContext riscv64EmptyStructReturn)
+  (compileProgExactHOLW riscv64EmptyExactContext riscv64EmptyStructReturn)
 #guard isRiscv64ShadowReturn
-  (compileProgRiscV riscv64ShadowContext riscv64ShadowReturn)
+  (compileProgExactHOLW riscv64ShadowExactContext riscv64ShadowReturn)
 
-def isRiscv64PairLoad : CrepProg (BitVec 64) → Bool
+def isRiscv64PairLoad : CrepProgHOL 64 → Bool
   | .return [.load (.var 0), .load (.op .add [.var 0, .const stride])] =>
       stride == (8 : BitVec 64)
   | _ => false
 
-#guard isRiscv64PairLoad (compileProgRiscV riscv64PairContext riscv64PairLoad)
+#guard isRiscv64PairLoad
+  (compileProgExactHOLW riscv64PairExactContext riscv64PairLoad)
 
-def isRiscv64PairStore : CrepProg (BitVec 64) → Bool
+def isRiscv64PairStore : CrepProgHOL 64 → Bool
   | .dec 3 (.var 0) (.dec 4 (.var 1) (.dec 5 (.var 2)
       (.seq (.store (.var 3) (.var 4))
         (.seq (.store (.op .add [.var 3, .const stride]) (.var 5)) .skip)))) =>
@@ -143,7 +149,7 @@ def isRiscv64PairStore : CrepProg (BitVec 64) → Bool
   | _ => false
 
 #guard isRiscv64PairStore
-  (compileProgRiscV riscv64PairContext riscv64PairStore)
+  (compileProgExactHOLW riscv64PairExactContext riscv64PairStore)
 
 def pairStore : Prog Nat :=
   .store (.var .local "p") (.rStruct [.var .local "x", .var .local "y"])

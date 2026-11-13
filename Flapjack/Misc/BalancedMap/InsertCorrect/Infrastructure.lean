@@ -19,8 +19,8 @@ theorem insertSizeGrowth {κ ν : Type} (cmp : κ → κ → Ordering)
     size (insert cmp key value tree) = size tree ∨
       size (insert cmp key value tree) = size tree + 1 := by
   classical
-  rw [sizeThm cmp _ hgood ih.1, ih.2, HolFiniteMapExact.card_updateEq,
-    ← sizeThm cmp tree hgood hinv]
+  rw [sizeThm cmp _ ⟨hgood, ih.1⟩, ih.2, HolFiniteMapExact.card_updateEq,
+    ← sizeThm cmp tree ⟨hgood, hinv⟩]
   split_ifs <;> omega
 
 /-- Domain-order transport through the recursive semantic update. Local proof

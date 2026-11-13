@@ -210,24 +210,6 @@ theorem stackSizeEq {width : Nat} [NeZero width] (n : Option Nat)
       wordSemStackSize ([] : List (WordSemStackFrame width)) = some 1 :=
   ⟨rfl, rfl, rfl⟩
 
-/-- Tag withdrawn (task 148): HOL `stack_size_eq2` (`wordPropsScript.sml:1785-1791`)
-    is a conjunction of two instances of the polymorphic `stack_size`: the typed
-    capture (`stack_size_eq2_typed` in
-    `scripts/hol-probes/word_props_typed_probe.out`) types the cons conjunct at
-    `(sfrm :α stack_frame) (stack :α stack_frame list)` and the empty-list
-    conjunct at an independent `([] :β stack_frame list)`. The Lean statement
-    fixes both at `width`-indexed frames, so the empty-list conjunct is only the
-    `β = width` instance of HOL's universal statement. Generalising needs a
-    stack-size function generic in the frame type, which the width-indexed
-    `WordSemStackFrame` carrier does not provide. The cons conjunct remains the
-    reviewed word-translated instance. -/
-theorem stackSizeEq2 {width : Nat} [NeZero width] (sfrm : WordSemStackFrame width)
-    (stack : List (WordSemStackFrame width)) :
-    wordSemStackSize (sfrm :: stack) =
-        wordSemOptionAdd (wordSemStackSizeFrame sfrm) (wordSemStackSize stack) ∧
-      wordSemStackSize ([] : List (WordSemStackFrame width)) = some 1 :=
-  ⟨rfl, rfl⟩
-
 /-- Exact HOL `s_key_eq_def2` (`wordPropsScript.sml:1841-1846`). -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "s_key_eq_def2"
   (words_as_type_indexed_bitvec)]

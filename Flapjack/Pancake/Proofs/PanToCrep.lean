@@ -99,18 +99,15 @@ establish the exact HOL state relation. -/
     with evaluation of `p` after the globals are installed, followed by the
     exact `FOLDL res_var` restoration from the original locals. Lean has the
     exact syntax helpers `loadGlobalsHOL` and `nestedDecsHOL` and positive-width
-    `ValueHOL`/`CrepSemHOLState` carriers, but no full `evaluate` over
-    `CrepProgHOL` and `CrepSemHOLState`, nor an exact `globals_lookup` bridge.
-    The available `evalCrepClockProg` is a restricted evaluator over
-    `CrepClockProg`/`CrepExp`/`CrepHolState`; this `globalsLookup` is the
-    production String-backed projection described above. Neither can state the
-    HOL equation or its exact premises, so no theorem tag is claimed. The exact
+    `ValueHOL`/`CrepSemHOLState` carriers. This `globalsLookup` is the
+    production String-backed projection described above, so it cannot state the
+    HOL equation or its exact premises and no theorem tag is claimed. The exact
     `globals_lookup_def` port over the faithful carriers is the tagged
-    `globalsLookupHOL` (`Proofs/PanToCrep/EvaluateNestedDecs.lean`); this
-    production-carrier declaration is Flapjack-specific infrastructure and
-    carries no manifest row. The faithful theorem replacement remains tracked by
-    `flapjack-4ac.5.60.1`, gated on `flapjack-4ac.5.82` and
-    `flapjack-pxn.18.3.5.8.8`. -/
+    `globalsLookupHOL` (`Proofs/PanToCrep/EvaluateNestedDecs.lean`), and the
+    tagged `evaluateNestedDecsLoadGlobalsCrepHOL` in the same module states the
+    HOL equation over `evalCrepSemHOLProgExact`; this production-carrier
+    declaration is Flapjack-specific infrastructure and carries no manifest
+    row. -/
 def globalsLookup (state : CrepRuntimeState α σ) (value : PanValue α) :
     Option (List (PanWordLab α)) :=
   (List.range (Shape.shapeSize (panSemShapeOf value))).mapM
@@ -1120,25 +1117,6 @@ theorem lookup_map_preserveFst [BEq α] [LawfulBEq α] (functions : List (α × 
       by_cases h : (key == entryKey) = true
       · simp [h]
       · simp [h, ih]
-
-/-- Flapjack-specific lookup link for HOL `make_funcs`: a source function entry
-    (name, params, body, return) is visible in the `make_funcs` finite map with
-    the parameter list and return shape (the body is dropped). -/
-theorem makeFuncsHOL_lookup_of_lookup
-    (functions : List (FunName × List (VarName × Shape) × Prog α × Shape))
-    (start : FunName) (vshs : List (VarName × Shape)) (prog : Prog α) (rshape : Shape)
-    (h : List.lookup start functions = some (vshs, (prog, rshape))) :
-    FLOOKUP (makeFuncsHOL functions) start = some (vshs, rshape) := by
-  have hrewrite : FLOOKUP (makeFuncsHOL functions) start =
-      List.lookup start
-        (functions.map (fun entry => (entry.1, (entry.2.1, entry.2.2.2)))) := by
-    rw [makeFuncsHOL]
-    exact FLOOKUP_FUPDATE_LIST_reverse_eq_lookup _ _
-  rw [hrewrite, lookup_map_preserveFst
-    (project := fun value : List (VarName × Shape) × Prog α × Shape =>
-      (value.1, value.2.2))]
-  rw [h]
-  rfl
 
 /-- `state_rel` records that source and target ffi states coincide; installing the
     same `call_FFI` result on both therefore preserves the whole relation (the
