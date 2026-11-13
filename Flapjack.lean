@@ -1620,6 +1620,7 @@ import Flapjack.Compiler.Backend.BviToData.Proofs.ProgramSemantics
 import Flapjack.Compiler.Backend.BviToData.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.BviToData.Proofs.GoodCodeLabels
 import Flapjack.Compiler.Backend.BviToData.Proofs.ListInsert
+import Flapjack.Compiler.Backend.BviToData.Proofs.DomainNames
 import Flapjack.Compiler.Backend.Semantics.DataProps.CodeLabels.Good
 import Flapjack.Compiler.Backend.DataSimp.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.DataLive.Proofs.CodeLabels

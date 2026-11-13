@@ -138443,6 +138443,22 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "domain_list_insert2",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/DomainNames.lean",
+    "lean_name": "domain_listInsert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary natural-number list and native sparse set, with exact equality between the domain after list insertion and the union of the list's member set with the original domain. The original local HOL proof is replayed with inferred types and no assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "domain_list_to_num_set2",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/DomainNames.lean",
+    "lean_name": "domain_namesOfList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary natural-number list and exact equality between the native sparse-set domain and the set of list members, with no added premise. The original local HOL proof is replayed with inferred types; the Lean proof reuses the full membership characterization."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "state_rel_peak_safe",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/State.lean",
     "lean_name": "stateRel_peakSafe",
