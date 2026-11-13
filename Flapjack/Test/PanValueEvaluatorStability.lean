@@ -91,25 +91,9 @@ theorem fresh_bindings_stability_fixture :
         (updatePanValueMapList baseLocals freshBindings) (fun _ => none)
         (fun _ => none) 0 0 8 expressions none =
       some [.word 3, .word 12] := by
-  calc
-    evalPanValueExps ([] : StructContext)
-        (updatePanValueMapList baseLocals freshBindings) (fun _ => none)
-        (fun _ => none) 0 0 8 expressions none =
-        evalPanValueExps ([] : StructContext) baseLocals (fun _ => none)
-          (fun _ => none) 0 0 8 expressions none := by
-            exact evalPanValueExps_update_locals_not_mem ([] : StructContext)
-              baseLocals (fun _ => none) (fun _ => none) 0 0 8 expressions none
-              freshBindings (by
-                intro binding hbinding expression' hexpression'
-                simp [freshBindings] at hbinding
-                simp [expressions] at hexpression'
-                rcases hbinding with rfl | rfl <;>
-                  rcases hexpression' with rfl | rfl <;>
-                    simp [expLocalVars, expLocalVars.expLocalVarsList])
-    _ = some [.word 3, .word 12] := by
-      simp [expressions, evalPanValueExps,
-        evalPanValueExp.evalPanValueExps, evalPanValueExp, evalPanBinOp,
-        evalPanOp]
+  simp [freshBindings, updatePanValueMapList, updatePanValueMap,
+    expressions, evalPanValueExps, evalPanValueExp.evalPanValueExps,
+    evalPanValueExp, evalPanBinOp, evalPanOp]
 
 def resultGuard : Bool := match evalPanValueExp ([] : StructContext)
     (updatePanValueMap baseLocals "fresh" (.word 99)) (fun _ => none)

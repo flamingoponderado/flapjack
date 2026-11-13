@@ -72854,22 +72854,6 @@
     "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.3.52; FLAPJACK-SPECIFIC, documented_mismatch): HOL semantics_def (panSemScript.sml:785-812) is the concrete top-level semantics semantics s start: with prog = Call NONE start [], it is Fail when some clock k has FST (evaluate (prog, s with clock := k)) neither TimeOut nor FinalFFI nor Return, else Terminate outcome (io_events of the first clock whose evaluate returns FinalFFI/Return, outcome via FFI_outcome/Success), else Diverge the build_lprefix_lub of the per-clock io_events. The Lean analogue panSemantics (Flapjack/PanObservationalSemantics.lean:104, via panSemanticsWithLub) has the same fail/success/diverge structure and the same existential-clock shape (panHasForbiddenRun / panHasSuccessfulRun), but it is abstracted over a PanSemanticsHooks record exposing evaluate : Nat -> Option (PanValueFfiClockResult alpha sigma) instead of fixing the concrete Call NONE start []/evaluate, and its result/state carriers are PanValueFfiClockResult/FfiState rather than HOL's result x panSem$state. Hook parameterization and the result carrier are differences beyond names_as_string, so no @[hol] tag. The concrete faithful semantics port depends on the exact panSem evaluate and is tracked by flapjack-pxn.18.4.4 / flapjack-pxn.18.4.3 (exact pc_compile_correct) and the exact-evaluator epic flapjack-pxn.18.3.6.9."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "eval_distinct_lists_not_affect",
-    "lean_path": "Flapjack/PanValueEvaluatorStability.lean",
-    "lean_name": "evalPanValueExp_update_locals_not_mem",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.5.58): HOL `eval_distinct_lists_not_affect` (`pan_to_crepProofScript.sml:4111-4123`) states `eval (s with locals |++ ZIP (vs,nvals)) e = eval s e` when `LENGTH vs = LENGTH nvals` and the bound names are distinct from `var_cexp e`; Lean `evalPanValueExp_update_locals_not_mem` matches that shape (single expression, `updatePanValueMapList`, freshness premise). Carrier differs: Lean is generic over the word payload `α` with `Exp α`/`PanValue α` and `VarName = String` functional maps, while HOL is word-indexed with `varname` = `mlstring`. Beyond name representation; tag stays withheld pending exact-carrier work flapjack-pxn.18.3.5.8."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "opt_mmap_eval_distinct_lists_not_affect",
-    "lean_path": "Flapjack/PanValueEvaluatorStability.lean",
-    "lean_name": "evalPanValueExps_update_locals_not_mem",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.5.50): HOL `opt_mmap_eval_distinct_lists_not_affect` (`pan_to_crepProofScript.sml:3077-3089`) preserves `OPT_MMAP (eval ·) es` under a list binding `|++ ZIP (vs,nvals)` when the bound names are distinct from `FLAT (MAP var_cexp es)`; Lean `evalPanValueExps_update_locals_not_mem` matches that shape (list of expressions, `updatePanValueMapList`, per-binding freshness premise). Carrier differs: Lean is generic over the word payload `α` with `Exp α`/`PanValue α` and `VarName = String` functional maps, while HOL is word-indexed with `varname` = `mlstring`. Beyond name representation; tag stays withheld pending exact-carrier work flapjack-pxn.18.3.5.8."
-  },
-  {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
     "hol_name": "list_rel_length_shape_of_flatten_better",
     "lean_path": "Flapjack/PanValueFlatten.lean",
@@ -104481,14 +104465,6 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-03: complete original generated panSemTheory.eval_ind from terminating eval_def, closed kernel capture with types and proved T. All17 constructor obligations, same-state recursive hypotheses, full NStruct UNZIP pairs, first-binding faithful MlS lookup, info-field UNZIP/name equality and expression membership guards, Load is_wf_shape guard, two-operand conjuncts, whole universally quantified state/expression conclusion. Curried premises express original conjunction/implication. Imported canonical PanSemStateFiniteExact owns four finite maps with complete local roundtrip; actual ExpHOL uses positive width and Type0 FFI. Only canonical-map and positive-word translations. Proof uses actual datatype nested recursor with list/pair motives, supplying guarded source IHs from structural child proofs; no target evaluation or compatibility condition."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "evaluate_clock",
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
-    "lean_name": "evalPanSemRecursiveCallFiniteContext_clock_le",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-27; bead flapjack-4ac.3.48; FLAPJACK-SPECIFIC, documented_mismatch): HOL evaluate_clock (panSemScript.sml:755-766) states !prog s r s'. evaluate (prog,s) = (r,s') ==> s'.clock <= s.clock over the faithful panSem$state (mlstring-keyed finite maps plus word-labelled values). The Lean analogue evalPanSemRecursiveCallFiniteContext_clock_le (Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean, untagged) proves the same bound over the exact finite-support clause-for-clause evaluator evalPanSemRecursiveCallFiniteContext, which takes a FiniteEvalContext (the state plus threaded DecidablePred memaddrs/shMemaddrs fields) rather than a bare state, and whose carrier PanSemStateFiniteExact uses canonical HolFiniteMapExact maps rather than HOL's finite maps. The extra decider context argument and the finite-map carrier representation are differences beyond names_as_string, so no @[hol] tag. Sibling exact statements: evalPanSemNonrecursiveHOLExact_clock_le, evalPanSemNonrecursiveHOLFinite_clock_le, fixClockHOLFinite_evaluate. The faithful HOL evaluate/evaluate_clock port over the exact context is tracked by flapjack-qj5."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",

@@ -459,7 +459,9 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertTrue(MAP["lean_definition_exists"](MAP["ROOT"], *key))
         self.assertNotIn(key, MAP["tagged_declarations"]())
 
-    def test_pansem_evaluate_clock_carrier_mismatch_is_documented(self):
+    def test_pansem_evaluate_clock_carrier_mismatch_is_retired(self):
+        # The untagged FiniteEvalContext analogue is gone; HOL evaluate_clock is
+        # mapped by the tagged exact-carrier evaluateHOLFiniteState_clock_le_result.
         key = (
             "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
             "evalPanSemRecursiveCallFiniteContext_clock_le",
@@ -468,16 +470,21 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             (record["lean_path"], record["lean_name"]): record
             for record in MAP["build_inventory"]()
         }
-        record = inventory[key]
+        self.assertNotIn(key, inventory)
+        exact = inventory[(
+            "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
+            "evaluateHOLFiniteState_clock_le_result",
+        )]
         self.assertEqual(
-            (record["hol_path"], record["hol_name"]),
+            (exact["hol_path"], exact["hol_name"]),
             ("cakeml/pancake/semantics/panSemScript.sml", "evaluate_clock"),
         )
-        self.assertEqual(record["statement_status"], "documented_mismatch")
-        self.assertIn("FiniteEvalContext", record["reviewer"])
-        self.assertIn("flapjack-qj5", record["reviewer"])
-        self.assertTrue(MAP["lean_definition_exists"](MAP["ROOT"], *key))
-        self.assertNotIn(key, MAP["tagged_declarations"]())
+        self.assertNotEqual(exact["statement_status"], "documented_mismatch")
+        self.assertIn(
+            ("Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
+             "evaluateHOLFiniteState_clock_le_result"),
+            MAP["tagged_declarations"](),
+        )
 
     def test_pan_props_res_var_flookup_mismatches_are_documented(self):
         inventory = {
@@ -1157,18 +1164,34 @@ class ValidateInventoryTest(unittest.TestCase):
             self.assertEqual(got_hol_name, hol_name)
             self.assertIn("flapjack-pxn.18.3.5.8", reviewer)
 
-    def test_pan_value_evaluator_stability_mismatches_are_documented(self):
+    def test_pan_value_evaluator_stability_mismatches_are_retired(self):
+        # The Pan-carrier analogues are gone; HOL eval_distinct_lists_not_affect
+        # and opt_mmap_eval_distinct_lists_not_affect are mapped by the tagged
+        # exact-carrier twins in PanToCrep/EvalDistinctLists.
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        for lean_name in (
+            "evalPanValueExps_update_locals_not_mem",
+            "evalPanValueExp_update_locals_not_mem",
+        ):
+            self.assertNotIn(
+                ("Flapjack/PanValueEvaluatorStability.lean", lean_name), inventory
+            )
         expected = {
-            "evalPanValueExps_update_locals_not_mem": "opt_mmap_eval_distinct_lists_not_affect",
-            "evalPanValueExp_update_locals_not_mem": "eval_distinct_lists_not_affect",
+            "optMmapEvalDistinctListsNotAffectHOL": "opt_mmap_eval_distinct_lists_not_affect",
+            "evalDistinctListsNotAffectHOL": "eval_distinct_lists_not_affect",
         }
         for lean_name, hol_name in expected.items():
-            key = ("Flapjack/PanValueEvaluatorStability.lean", lean_name)
-            self.assertIn(key, MAP["DOCUMENTED_MISMATCHES"])
-            hol_path, got_hol_name, reviewer = MAP["DOCUMENTED_MISMATCHES"][key]
-            self.assertEqual(hol_path, "cakeml/pancake/proofs/pan_to_crepProofScript.sml")
-            self.assertEqual(got_hol_name, hol_name)
-            self.assertIn("flapjack-pxn.18.3.5.8", reviewer)
+            key = ("Flapjack/Pancake/Proofs/PanToCrep/EvalDistinctLists.lean", lean_name)
+            record = inventory[key]
+            self.assertEqual(
+                (record["hol_path"], record["hol_name"]),
+                ("cakeml/pancake/proofs/pan_to_crepProofScript.sml", hol_name),
+            )
+            self.assertNotEqual(record["statement_status"], "documented_mismatch")
+            self.assertIn(key, MAP["tagged_declarations"]())
 
 
     def test_pansem_word_lab_carrier_records_word_translation(self):

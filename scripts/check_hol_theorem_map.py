@@ -611,21 +611,6 @@ DOCUMENTED_MISMATCHES = {
         "port depends on the exact panSem evaluate and is tracked by "
         "flapjack-pxn.18.4.4 / flapjack-pxn.18.4.3 and flapjack-pxn.18.3.6.9. "
     ),
-    ("Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean", "evalPanSemRecursiveCallFiniteContext_clock_le"): (
-        "cakeml/pancake/semantics/panSemScript.sml",
-        "evaluate_clock",
-        "flapjack-ds5 (source comparison, 2026-09-27; bead flapjack-4ac.3.48; "
-        "FLAPJACK-SPECIFIC, documented_mismatch). HOL evaluate_clock "
-        "(panSemScript.sml:755-766) bounds s'.clock <= s.clock over the faithful "
-        "panSem$state. The untagged Lean analogue "
-        "evalPanSemRecursiveCallFiniteContext_clock_le proves the same bound over "
-        "the exact finite-support clause-for-clause evaluator, which takes a "
-        "FiniteEvalContext (state plus threaded DecidablePred memaddrs/shMemaddrs) "
-        "rather than a bare state, and uses canonical HolFiniteMapExact maps "
-        "rather than HOL's mlstring-keyed finite maps. The extra decider context "
-        "argument and finite-map carrier are differences beyond names_as_string. "
-        "The faithful port is tracked by flapjack-qj5. "
-    ),
     ("Flapjack/Pancake/Semantics/PanSem/ClockExact.lean", "fixClockHOLExact_IMP_LESS_EQ"): (
         "cakeml/pancake/semantics/panSemScript.sml",
         "fix_clock_IMP_LESS_EQ",
@@ -955,29 +940,6 @@ DOCUMENTED_MISMATCHES = {
         "(PanWordLab α) target locals, while HOL keys by varname/eid = mlstring "
         "and uses word_lab. Beyond name representation; keep @[hol] withheld "
         "pending exact-carrier work flapjack-pxn.18.3.5.8.)"
-    ),
-    ("Flapjack/PanValueEvaluatorStability.lean", "evalPanValueExps_update_locals_not_mem"): (
-        "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-        "opt_mmap_eval_distinct_lists_not_affect",
-        "flapjack-ds5 (source comparison with pan_to_crepProofScript.sml:3077-3089: "
-        "list binding |++ ZIP (vs,nvals) preserves OPT_MMAP (eval) es under a "
-        "distinct-names premise; Lean evalPanValueExps_update_locals_not_mem "
-        "matches the shape, but is generic over the word payload α with Exp α/"
-        "PanValue α and VarName = String functional maps, while HOL is "
-        "word-indexed with varname = mlstring. Beyond name representation; keep "
-        "@[hol] withheld pending exact-carrier work flapjack-pxn.18.3.5.8.)"
-    ),
-    ("Flapjack/PanValueEvaluatorStability.lean", "evalPanValueExp_update_locals_not_mem"): (
-        "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-        "eval_distinct_lists_not_affect",
-        "flapjack-ds5 (source comparison with pan_to_crepProofScript.sml:4111-4123: "
-        "list binding |++ ZIP (vs,nvals) preserves eval of one expression when "
-        "the bound names are distinct from var_cexp e; Lean "
-        "evalPanValueExp_update_locals_not_mem matches the shape, but is generic "
-        "over the word payload α with Exp α/PanValue α and VarName = String "
-        "functional maps, while HOL is word-indexed with varname = mlstring. "
-        "Beyond name representation; keep @[hol] withheld pending exact-carrier "
-        "work flapjack-pxn.18.3.5.8.)"
     ),
     ("Flapjack/Pancake/Semantics/CrepSem.lean", "setCrepHolGlobalsW"): (
         "cakeml/pancake/semantics/crepSemScript.sml",
