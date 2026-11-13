@@ -809,16 +809,26 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             with self.subTest(key=key):
                 self.assertNotIn(key, inventory)
 
-    def test_compile_prog_distinctness_carrier_mismatches_are_documented(self):
+    def test_compile_prog_top_mismatch_is_retired(self):
+        # The production compileProgTopHOL adapter is gone; HOL compile_prog_def
+        # is mapped by the tagged exact-carrier compileProgDeclsHOLW.
         inventory = {
             (record["lean_path"], record["lean_name"]): record
             for record in MAP["build_inventory"]()
         }
-        compile_prog = inventory[
-            ("Flapjack/Pancake/PanToCrep/CompileProg.lean", "compileProgTopHOL")
+        self.assertNotIn(
+            ("Flapjack/Pancake/PanToCrep/CompileProg.lean", "compileProgTopHOL"),
+            inventory,
+        )
+        exact = inventory[
+            ("Flapjack/Pancake/PanToCrep/CompileExact.lean", "compileProgDeclsHOLW")
         ]
-        self.assertEqual(compile_prog["hol_name"], "compile_prog_def")
-        self.assertEqual(compile_prog["statement_status"], "documented_mismatch")
+        self.assertEqual(exact["hol_name"], "compile_prog_def")
+        self.assertNotEqual(exact["statement_status"], "documented_mismatch")
+        self.assertIn(
+            ("Flapjack/Pancake/PanToCrep/CompileExact.lean", "compileProgDeclsHOLW"),
+            MAP["tagged_declarations"](),
+        )
         for theorem_name in ("firstCompileProgAllDistinct", "firstCompileToCrepAllDistinct"):
             self.assertNotIn(
                 ("Flapjack/Pancake/Proofs/PanToCrep.lean", theorem_name), inventory

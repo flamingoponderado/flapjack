@@ -73,26 +73,23 @@ theorem parseTopDecs_declByteRanged {width : Nat} (ofInt : Int → BitVec width)
 /-! ### Routing the executed parser boundary through the exact carrier
 
 `parseTopDecs` returns byte-ranged declarations (`parseTopDecs_declByteRanged`),
-so the exact MLString-keyed `compile_prog` boundary
-(`compileProgTopHOLOfExact`) applied to their `declToHOL` image equals the
-production String-keyed `compileProgTopHOL`. This equality is NOT definitional:
-it is kernel-proved by `compileProgTopHOLOfExact_declToHOL` using the
-`DeclByteRanged` premise, i.e. propositional (not definitional) equality.
-This is the kernel-checked bridge from the parser output to the exact carrier.
-This codec agreement does not establish pass simulation
-or the end-to-end compiler correctness theorem. Direct
-original-Pancake parity evidence for the executed boundary is
+so mapping them through `declToHOL` and decoding back through `declOfHOL` is the
+identity: the parser's declaration list is exactly the image of the exact
+`DeclHOL` carrier the executed compiler consumes. This equality is NOT
+definitional: it is kernel-proved by `map_declOfHOL_declToHOL` using the
+`DeclByteRanged` premise, i.e. propositional (not definitional) equality. This
+is the kernel-checked boundary from the parser output to the exact carrier; the
+executed route then runs the tagged `compileProgDeclsHOLW`. This codec agreement
+does not establish pass simulation or the end-to-end compiler correctness
+theorem. Direct original-Pancake parity evidence for the executed boundary is
 `python3 scripts/check-parity-goldens.py` (wide_constants.pnk, parity
 goldens=1, failures=0). -/
 theorem parseTopDecs_routes_exactBoundary {width : Nat} [NeZero width]
-    [BEq FunName] [LawfulBEq FunName] [LawfulHashable FunName]
-    [OfNat (BitVec width) 0] [OfNat (BitVec width) 1]
     (ofInt : Int → BitVec width) (source : String) (locations : Bool)
     (declarations : List (Decl (BitVec width)))
     (h : parseTopDecs ofInt source locations = .ok declarations) :
-    compileProgTopHOLOfExact (declarations.map declToHOL) =
-      compileProgTopHOL declarations :=
-  compileProgTopHOLOfExact_declToHOL declarations
+    (declarations.map declToHOL).map declOfHOL = declarations :=
+  map_declOfHOL_declToHOL declarations
     (parseTopDecs_declByteRanged ofInt source locations declarations h)
 
 end Flapjack.Parser

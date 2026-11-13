@@ -76734,14 +76734,6 @@
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
-    "hol_name": "compile_prog_def",
-    "lean_path": "Flapjack/Pancake/PanToCrep/CompileProg.lean",
-    "lean_name": "compileProgTopHOL",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source review of HOL Definition compile_prog_def at pan_to_crepScript.sml:393-397): HOL's equation is compile_inl_top (MAP FST (functions (FILTER inlinable prog))) (compile_to_crep prog), with input 'a prog and result (mlstring # num list # 'a crepLang$prog) list, and no hypotheses or side conditions. Lean compileProgTopHOL remains an untagged production-carrier analogue: it takes production Decl (BitVec width), String FunName and production Shape/CrepProg carriers, and has extra typeclass binders. Neither names_as_string nor a byte-range bridge makes that declaration an exact port. Separately, the parser-backed production adapter now calls compileProgExactHOLW and the reviewed compileInlTopHOLExact on MlString names and CrepProgHOL bodies, decoding only at its production metadata boundary. It does not claim output equality with the generic compatibility route. Exact direct HOL compile_prog rows and original Pancake parity guard the parser-backed route; the complete compile_prog carrier theorem and end-to-end bridge remain open."
-  },
-  {
-    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
     "hol_name": "context",
     "lean_path": "Flapjack/Pancake/PanToCrep/ContextExact.lean",
     "lean_name": "PanToCrepContextExact",
