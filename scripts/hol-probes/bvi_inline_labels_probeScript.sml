@@ -166,3 +166,15 @@ val inline_initial_state_rel_statement =
     (initial_state ffi (fromAList prog1) (state_co inline_all co) cc clk)``;
 val _ = (print "inline_initial_state_rel_statement_typed=";
          print_term inline_initial_state_rel_statement; print "\n");
+
+(* Replay the original local clock/I/O-event monotonicity proof. *)
+val evaluate_add_clock_io_events_mono_replay = Q.prove
+  (`∀exps env (s:('c,'ffi) bviSem$state) k extra.
+    (SND (evaluate (exps,env,s with clock := k))).ffi.io_events ≼
+    (SND (evaluate (exps,env,s with clock := k + extra))).ffi.io_events`,
+   rpt strip_tac
+  >> qspecl_then [`exps`,`env`,`s with clock := k`,`extra`] mp_tac
+       evaluate_add_to_clock_io_events_mono
+  >> simp [inc_clock_def]);
+val _ = show "evaluate_add_clock_io_events_mono_replay_typed"
+  evaluate_add_clock_io_events_mono_replay;

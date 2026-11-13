@@ -11,6 +11,25 @@ public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteSimulation
 namespace Flapjack.Compiler.Backend.BviInline.Observation
 open BviSem
 
+namespace ClockEventCarrier
+/-- The canonical BVI reference-map representation has a roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end ClockEventCarrier
+
+/-- Increasing an arbitrary initial clock extends the evaluation's I/O events.
+The evaluator inherits the real-model assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "evaluate_add_clock_io_events_mono"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateAddClockIoEventsMono {C F : Type} (expressions : List Bvi.Exp)
+    (env : List BvlSem.Value) (state : BviState C F) (clock extra : Nat) :
+    (evaluateTuple (expressions, env, { state with clock := clock })).2.ffi.ioEvents <+:
+      (evaluateTuple (expressions, env, { state with clock := clock + extra })).2.ffi.ioEvents := by
+  simpa [evaluateTuple] using
+    BviProps.evaluate_addClock_ioEvents_prefix expressions env { state with clock := clock } extra
+
 /-- Flapjack infrastructure: if each target trace is a source trace at an
 equal or later clock, and both families grow by prefix as clocks increase,
 their divergent least-upper-bound traces are equal. -/
@@ -156,11 +175,11 @@ theorem semantics_eq_of_cofinal {C D F : Type} (ffi : HolFfiState F)
       HolLList.buildLprefixLub (fun trace => ∃ clock, trace = HolLList.fromList (tgt clock).2.ffi.ioEvents) := by
     apply cofinal_trace_lub (fun clock => (src clock).2.ffi.ioEvents) (fun clock => (tgt clock).2.ffi.ioEvents)
     · intro clock extra
-      simpa [src, initialState] using BviProps.evaluate_addClock_ioEvents_prefix
-        [.call 0 (some start) [] none] [] (initialState ffi sourceCode sourceOracle sourceCompiler clock) extra
+      simpa [src, initialState, evaluateTuple] using evaluateAddClockIoEventsMono
+        [.call 0 (some start) [] none] [] (initialState ffi sourceCode sourceOracle sourceCompiler clock) clock extra
     · intro clock extra
-      simpa [tgt, initialState] using BviProps.evaluate_addClock_ioEvents_prefix
-        [.call 0 (some start) [] none] [] (initialState ffi targetCode targetOracle targetCompiler clock) extra
+      simpa [tgt, initialState, evaluateTuple] using evaluateAddClockIoEventsMono
+        [.call 0 (some start) [] none] [] (initialState ffi targetCode targetOracle targetCompiler clock) clock extra
     · intro clock
       obtain ⟨extra, _, ffiEq⟩ := cofinal clock
       exact ⟨extra, congrArg HolFfiState.ioEvents ffiEq.symm⟩

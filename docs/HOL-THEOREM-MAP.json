@@ -451,6 +451,16 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "evaluate_add_clock_io_events_mono",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/Observation.lean",
+    "lean_name": "evaluateAddClockIoEventsMono",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent comparison with the original local statement and literal HOL proof replay: arbitrary expressions, environment, state, overwritten clock and extra clock retain the complete I/O event prefix conclusion with no hypotheses. Compiler and FFI carriers remain independent. BVI refs use the canonical finite-support map with a same-module roundtrip; code remains a sparse tree. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "inline_initial_state_rel",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CompileSimulation.lean",
     "lean_name": "inline_initial_state_rel",
