@@ -386,6 +386,15 @@
     "reviewer": "Independent typed HOL source review 2026-11-13: the full equation copies refs, clock and ffi, maps the original code tree to one arbitrary BVL code payload, and retains all other fields from one arbitrary BVL state; the seed only witnesses inhabitation. Shared compiler and FFI carriers and fixed callback widths match. Both refs fields use the canonical finite-support map translation, with separate checked carrier roundtrips."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+    "hol_name": "compile_prog_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/Observation.lean",
+    "lean_name": "compileProgSource_semantics",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: the full input and oracle conditions, strict compiled-worker bound, second-projection compilation equation and source non-Fail premise imply complete source-to-target behavior equality in both modes. Independent compiler and FFI carriers and fixed callback widths are retained; semantic refs representations are reviewed separately. Inherits reals_as_rational_cuts through semantic primitives, as documented in SOUNDNESS item 8."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
     "hol_name": "compile_prog_semantics",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteSimulation.lean",

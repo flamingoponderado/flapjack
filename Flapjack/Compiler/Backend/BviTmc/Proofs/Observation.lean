@@ -137,53 +137,42 @@ theorem compileEach_semantics_assembled {C F : Type} (next start : Nat)
     simp only [targetRun]
     exact ⟨observations.1, observations.2, (congrArg HolFfiState.ioEvents ffiEqual).symm⟩
 
-/-- Flapjack infrastructure: the executed fuel-based TMC program traversal
-preserves BVI behavior when enabled. The oracle still uses the source-shaped
-pass, whose correspondence with the executable traversal is proved separately. -/
-theorem compileProgFuel_enabled_semantics {C F : Type} (fuel next start : Nat)
-    (program compiled : List (Nat × Nat × Bvi.Exp)) (last : Nat) (ffi : HolFfiState F)
-    (oracle : BviSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C)
-    (condition : inputCondition next program)
-    (oracleConditions : ∀ n, inputCondition (oracle n).1.1 (oracle n).2)
-    (workerBound : ∀ n, n ∈ (compiled.map Prod.fst) → inWorkerNamespace n → n < (oracle 0).1.1)
-    (compiledEq : compileProgFuel fuel true next program = some (last, compiled))
-    (notFail : BviSem.semantics ffi (sptFromAList program) oracle (stateCc compileEachSource compiler) start ≠ .fail) :
-    BviSem.semantics ffi (sptFromAList program) oracle (stateCc compileEachSource compiler) start =
-      BviSem.semantics ffi (sptFromAList compiled) (stateCo compileEachSource oracle) compiler start := by
-  have eq := (Option.some.inj ((compileProgFuel_eq_source fuel true next program).symm.trans compiledEq))
-  have outputEq : (compileEachSource next program).2 = compiled := congrArg Prod.snd eq
-  have bound : ∀ n, n ∈ ((compileEachSource next program).2.map Prod.fst) →
-      inWorkerNamespace n → n < (oracle 0).1.1 := by
-    rw [outputEq]
-    exact workerBound
-  simpa only [outputEq] using
-    compileEach_semantics_assembled next start program ffi oracle compiler condition oracleConditions bound notFail
-
-/-- Flapjack infrastructure: the executed TMC program pass preserves BVI
-behavior in both enabled and disabled modes, including its stateful adapters. -/
-theorem compileProgFuel_semantics {C F : Type} (fuel : Nat) (enabled : Bool) (next start : Nat)
-    (program compiled : List (Nat × Nat × Bvi.Exp)) (last : Nat) (ffi : HolFfiState F)
-    (oracle : BviSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C)
-    (condition : inputCondition next program)
-    (oracleConditions : ∀ n, inputCondition (oracle n).1.1 (oracle n).2)
-    (workerBound : ∀ n, n ∈ (compiled.map Prod.fst) → inWorkerNamespace n → n < (oracle 0).1.1)
-    (compiledEq : compileProgFuel fuel enabled next program = some (last, compiled))
-    (notFail : BviSem.semantics ffi (sptFromAList program) oracle (stateCc (compileProgSource enabled) compiler) start ≠ .fail) :
-    BviSem.semantics ffi (sptFromAList program) oracle (stateCc (compileProgSource enabled) compiler) start =
-      BviSem.semantics ffi (sptFromAList compiled) (stateCo (compileProgSource enabled) oracle) compiler start := by
+/-- Whole-program TMC preserves BVI behavior under the original oracle and
+worker conditions. The semantics inherit the real-model assumption documented
+in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "compile_prog_semantics"]
+theorem compileProgSource_semantics {C F : Type} (next : Nat)
+    (program : List (Nat × Nat × Bvi.Exp)) (oracle : BviSem.CompileOracle (Nat × C))
+    (compiled : List (Nat × Nat × Bvi.Exp)) (enabled : Bool) (ffi : HolFfiState F)
+    (compiler : BviSem.Compiler C) (start : Nat)
+    (premises : inputCondition next program ∧
+      (∀ k n cfg prog, oracle k = ((n, cfg), prog) → inputCondition n prog) ∧
+      (∀ n, n ∈ compiled.map Prod.fst ∧ inWorkerNamespace n → n < (oracle 0).1.1) ∧
+      (compileProgSource enabled next program).2 = compiled ∧
+      BviSem.semantics ffi (sptFromAList program) oracle
+        (stateCc (compileProgSource enabled) compiler) start ≠ .fail) :
+    BviSem.semantics ffi (sptFromAList program) oracle
+        (stateCc (compileProgSource enabled) compiler) start =
+      BviSem.semantics ffi (sptFromAList compiled)
+        (stateCo (compileProgSource enabled) oracle) compiler start := by
+  obtain ⟨condition, oracleCondition, workerBound, compiledEq, notFail⟩ := premises
   cases enabled with
   | false =>
     have passEq : compileProgSource false = (fun c p => (c, p)) := by funext c p; rfl
     rw [passEq] at notFail ⊢
-    have same : program = compiled := by
-      have pairEq : (next, program) = (last, compiled) := by simpa [compileProgFuel] using compiledEq
-      exact congrArg Prod.snd pairEq
+    have same : program = compiled := by simpa [compileProgSource] using compiledEq
     subst compiled
     exact BviTailrec.semantics_identity_adapter ffi (sptFromAList program) oracle compiler start notFail
   | true =>
     have passEq : compileProgSource true = compileEachSource := by funext c p; rfl
     rw [passEq] at notFail ⊢
-    exact compileProgFuel_enabled_semantics fuel next start program compiled last ffi oracle compiler
-      condition oracleConditions workerBound compiledEq notFail
+    have outputEq : (compileEachSource next program).2 = compiled := by
+      simpa [compileProgSource] using compiledEq
+    have bound : ∀ n, n ∈ ((compileEachSource next program).2.map Prod.fst) →
+        inWorkerNamespace n → n < (oracle 0).1.1 := by
+      rw [outputEq]
+      exact fun n member worker => workerBound n ⟨member, worker⟩
+    simpa only [outputEq] using compileEach_semantics_assembled next start program ffi oracle compiler
+      condition (fun k => oracleCondition k _ _ _ rfl) bound notFail
 
 end Flapjack.Compiler.Backend.BviTmc.Observation

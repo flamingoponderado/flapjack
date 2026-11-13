@@ -38,9 +38,11 @@ theorem tmc_inline_semantics {C F : Type} (fuel : Nat) (enabled : Bool) (next st
   have distinct : (intermediate.map Prod.fst).Nodup :=
     (BviTmc.compileProgSource_distinct_and_free enabled next last program intermediate sourceRun
       condition.2.2.1 condition.1).1
-  have tmcSemantics := BviTmc.Observation.compileProgFuel_semantics fuel enabled next start
-    program intermediate last ffi oracle (stateCc compileIncSource compiler)
-    condition oracleConditions workerBound tmcRun notFail
+  have tmcSemantics := BviTmc.Observation.compileProgSource_semantics next program oracle intermediate
+    enabled ffi (stateCc compileIncSource compiler) start ⟨condition,
+      (fun k n cfg prog eq => by simpa only [eq] using oracleConditions k),
+      (fun n ⟨member, worker⟩ => workerBound n member worker),
+      congrArg Prod.snd sourceRun, notFail⟩
   have middleNotFail : BviSem.semantics ffi (sptFromAList intermediate)
       (stateCo (BviTmc.compileProgSource enabled) oracle) (stateCc compileIncSource compiler) start ≠ .fail := by
     rw [← tmcSemantics]

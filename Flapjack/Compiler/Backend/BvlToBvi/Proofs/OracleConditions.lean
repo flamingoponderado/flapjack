@@ -1,7 +1,6 @@
 module
 
 public import Flapjack.Compiler.Backend.BvlInline.Proofs.ProgramProperties
-public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.FullOracle
 public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.NoMutcons
 
 @[expose] public section
@@ -20,13 +19,6 @@ private theorem inlineInc_names (limit : Nat) (split : Bool) (cut : Nat)
     simp only [BvlInline.compileInc, h]
     rw [BvlInline.Proofs.mapFstMapOptimise]
     simpa only [h, Prod.snd] using names
-
-private theorem inlineOracle_names {C : Type} (limit : Nat) (split : Bool) (cut : Nat)
-    (oracle : Nat → (Spt (Nat × Bvl.Exp) × C) × List (Nat × Nat × Bvl.Exp))
-    (distinct : ∀ i, ((oracle i).2.map Prod.fst).Nodup) :
-    ∀ i, (((BackendProps.stateCo (BvlInline.compileInc limit split cut) oracle i).2).map Prod.fst).Nodup := by
-  intro i
-  simpa [BackendProps.stateCo, inlineInc_names] using distinct i
 
 private theorem incTail_tmc_condition (counter next2 next3 : Nat) (enabled : Bool)
     (prog : List (Nat × Nat × Bvl.Exp)) (distinct : (prog.map Prod.fst).Nodup)
@@ -84,7 +76,8 @@ theorem fullOracle_tmcCondition {C : Type} (limit : Nat) (split : Bool) (cut : N
           (BackendProps.stateCo (BvlInline.compileInc limit split cut) oracle)) i).2) := by
   apply loweredTailrecOracle_tmcCondition enabled
     (BackendProps.stateCo (BvlInline.compileInc limit split cut) oracle)
-  · exact inlineOracle_names limit split cut oracle distinct
+  · intro i
+    simpa [BackendProps.stateCo, inlineInc_names] using distinct i
   · simpa [BackendProps.stateCo] using bounds2
   · simpa [BackendProps.stateCo] using worker2
   · simpa [BackendProps.stateCo] using bounds3

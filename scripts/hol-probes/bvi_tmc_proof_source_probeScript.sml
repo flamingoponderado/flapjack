@@ -150,3 +150,5 @@ val _ = show "compile_exp_code_labels_replay_typed" compile_exp_labels;
 
 val _ = show "compile_each_good_code_labels_typed" bvi_tmcProofTheory.compile_each_good_code_labels;
 val _ = show "compile_prog_good_code_labels_typed" bvi_tmcProofTheory.compile_prog_good_code_labels;
+val _ = show "compile_prog_semantics_typed" bvi_tmcProofTheory.compile_prog_semantics;
+val _ = show "compile_each_semantics_typed" bvi_tmcProofTheory.compile_each_semantics;
