@@ -21,37 +21,18 @@ theorem finiteSubBag {α : Type} (b : Bag α) (hb : finiteBag b) :
   · intro b ih e a sub
     have pointwise (x : α) : a x ≤ bagInsert e b x := sub x (a x) (Nat.le_refl _)
     by_cases he : a e = 0
-    · apply ih a
+    · refine ih a ?_
       intro x n hn
-      change n ≤ a x at hn
-      change n ≤ b x
-      by_cases hx : x = e
-      · subst x; omega
-      · have bound := pointwise x
-        simp only [bagInsert, hx, ↓reduceIte] at bound
-        omega
+      have bound := pointwise x
+      by_cases hx : x = e <;> simp [bagInn, bagInsert, hx] at bound hn ⊢ <;> omega
     · let smaller : Bag α := fun x => if x = e then a x - 1 else a x
       have smallerSub : subBag smaller b := by
         intro x n hn
-        change n ≤ smaller x at hn
-        change n ≤ b x
         have bound := pointwise x
-        by_cases hx : x = e
-        · subst x
-          simp [bagInsert] at bound
-          simp [smaller] at hn
-          omega
-        · simp [bagInsert, hx] at bound
-          simp [smaller, hx] at hn
-          omega
+        by_cases hx : x = e <;> simp [bagInn, smaller, bagInsert, hx] at bound hn ⊢ <;> omega
       have eq : bagInsert e smaller = a := by
         funext x
-        by_cases hx : x = e
-        · subst x
-          simp [bagInsert, smaller]
-          omega
-        · simp [bagInsert, smaller, hx]
+        by_cases hx : x = e <;> simp [bagInsert, smaller, hx] <;> omega
       rw [← eq]
       exact finiteBagInsert smaller (ih smaller smallerSub) e
-
 end Flapjack
