@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml", "hol_name": "compile_string_thm",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileString.lean", "lean_name": "compileStringThm",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed original local proof after its source specialization: a BVI byte-array lookup and equal string/array lengths imply that the full MAPi sequence returns the replicated Unit results and updates precisely that array with the characters' word8 encodings. The pointer flag and state carriers remain arbitrary. The BVI state witness accounts for refs; evaluation inherits the reals_as_rational_cuts assumption."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml", "hol_name": "compile_int_thm",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileInt.lean", "lean_name": "evaluate_compileInt",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],

@@ -131,3 +131,41 @@ val compile_int_thm_replay = prove (``∀i env s. bviSem$evaluate ([compile_int 
   Cases \\ rw [compile_int_def]
   \\ rw [] \\ EVAL_TAC \\ fs [bviSemTheory.state_component_equality]);
 val _ = show "compile_int_thm_replay=" compile_int_thm_replay;
+
+open bviSemTheory bviPropsTheory;
+val _ = Parse.hide "str";
+val compile_int_thm = compile_int_thm_replay;
+val compile_string_thm = Q.prove(
+  `∀str s ls vs.
+   FLOOKUP s.refs ptr = SOME (ByteArray T ls) ∧ LENGTH vs + LENGTH str = LENGTH ls ⇒
+   evaluate (MAPi (λn c. Op (MemOp UpdateByte) [Op (IntOp (Const (&ORD c))) []; compile_int (&(n + LENGTH vs)); Var 0]) str,
+    RefPtr b ptr::env, s) = (Rval (REPLICATE (LENGTH str) Unit),
+      s with refs := s.refs |+ (ptr, ByteArray T (TAKE (LENGTH vs) ls ++ (MAP (n2w o ORD) str))))`,
+  Induct \\ rw[evaluate_def,REPLICATE]
+  >- (rw[state_component_equality]
+      \\ match_mp_tac (GSYM FUPDATE_ELIM) \\ fs[FLOOKUP_DEF])
+  \\ rw[Once evaluate_CONS]
+  \\ reverse(rw[evaluate_def,do_app_def,do_app_aux_def,backend_commonTheory.small_enough_int_def])
+  >- ( qspec_then`h`strip_assume_tac ORD_BOUND \\ fs[] )
+  \\ reverse(rw[bvlSemTheory.do_app_def,compile_int_thm,EL_LENGTH_APPEND])
+  >- (
+    fs[] \\ first_x_assum(qspec_then`n2w (ORD h)`mp_tac)
+    \\ simp[w2n_n2w,ORD_BOUND] )
+  \\ simp[o_DEF,ADD1]
+  \\ simp[bvl_to_bvi_with_refs,bvl_to_bvi_id]
+  \\ qpat_abbrev_tac`ss = s with refs := _`
+  \\ first_x_assum(qspec_then`ss`mp_tac)
+  \\ simp[Abbr`ss`,FLOOKUP_UPDATE]
+  \\ disch_then(qspec_then`ARB::vs`mp_tac)
+  \\ rw[ADD1,state_component_equality]
+  \\ rw[fmap_eq_flookup,FLOOKUP_UPDATE] \\ rw[]
+  \\ rw[LIST_EQ_REWRITE]
+  \\ Cases_on`x = LENGTH vs` \\ simp[EL_APPEND1,EL_LUPDATE,EL_APPEND2,EL_TAKE]
+  \\ Cases_on`x < LENGTH vs` \\ simp[EL_APPEND1,EL_TAKE,EL_LUPDATE]
+  \\ simp[EL_TAKE,EL_APPEND2,o_DEF])
+  |> Q.SPECL[`str`,`s`,`ls`,`[]`]
+  |> SIMP_RULE(srw_ss())[]
+  |> Q.GENL[`str`,`ls`,`ptr`,`s`,`env`]
+  |> INST_TYPE[alpha|->``:'c``,beta|->``:'ffi``];
+
+val _ = show "compile_string_thm_typed=" compile_string_thm;
