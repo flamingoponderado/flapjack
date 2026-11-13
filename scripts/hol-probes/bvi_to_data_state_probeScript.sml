@@ -60,3 +60,15 @@ val _ = show "missing_var=" (EVAL ``bvi_to_data$compile_sing 4 [] F [] (bvi$Var 
 val _ = show "tail_var=" (EVAL ``bvi_to_data$compile_sing 4 [7] T [] (bvi$Var 0)``);
 val _ = show "tail_letcall=" (EVAL ``bvi_to_data$compile_sing 2 [] F []
   (bvi$LetCall 1 0 3 [] (bvi$Return [bvi$Var 0]))``);
+val _ = show "FST_compile_part_typed=" bvi_to_dataProofTheory.FST_compile_part;
+(* This theorem is local to the source script; replay its original proof. *)
+val evaluate_return_range_replay = Q.prove
+  (`∀rets ret_vs env s'.
+      LENGTH ret_vs = rets ⇒
+      bviSem$evaluate ([bvi$Return (GENLIST bvi$Var rets)], ret_vs ++ env, s') =
+        (Rerr (Rraise (bviSem$Ret ret_vs)), s')`,
+   rw [bviSemTheory.evaluate_def]
+   \\ qspecl_then [`0`, `ret_vs ++ env`, `LENGTH ret_vs`, `s'`] mp_tac
+       bviPropsTheory.evaluate_genlist_vars
+   \\ simp [ETA_AX, rich_listTheory.TAKE_LENGTH_APPEND]);
+val _ = show "evaluate_Return_GENLIST_Var_replay_typed=" evaluate_return_range_replay;

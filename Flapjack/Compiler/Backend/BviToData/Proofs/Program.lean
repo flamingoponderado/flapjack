@@ -10,6 +10,12 @@ state carriers remain pending correspondence review. -/
 namespace Flapjack.Compiler.Backend.BviToData
 open Flapjack Flapjack.SemanticPrimitivesHOL
 
+/-- Compiling a program part preserves its function name. -/
+@[simp, hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "FST_compile_part"]
+theorem fst_compilePart (part : Nat × Nat × Bvi.Exp) :
+    (compilePart part).1 = part.1 := by
+  rfl
+
 /-- An initial direct call never returns the BVI internal return marker. -/
 theorem entryCall_notReturn {C F : Type} (start : Nat) (source next : BviSem.BviState C F)
     (res : BviSem.BviResult)

@@ -377,6 +377,8 @@ The capture supports source review; it is not a cross-language proof.
 
 `bvi_to_data_state_probe.out` captures the typed original primitive and equality simulations, list-append and result projections, variable correspondence and lookup lemmas, original and rewritten expression compilers and their structural theorems,
 code relation, and state relation, plus variable and tail-call observations.
+It captures the typed whole-program part-name preservation theorem and replays
+the local return-range theorem with inferred types.
 It also captures the complete typed compiler simulation statement and typed
 parses of the two local result-name range statements;
 those statements are not re-proved by the probe.

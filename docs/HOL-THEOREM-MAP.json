@@ -422,6 +422,24 @@
     "reviewer": "Independent typed HOL source review 2026-11-13: the full compilation equation, initial oracle cache equality, distinct source names and source non-Fail condition imply the complete target-to-source behavior equality. Independent compiler and FFI carriers and fixed callback word widths match. The reviewed evaluator and semantic state record their finite-map translation separately. Inherits reals_as_rational_cuts through semantic primitives, as documented in SOUNDNESS item 8."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "evaluate_Return_GENLIST_Var",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Call.lean",
+    "lean_name": "evaluate_return_range",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary return count, values, environment and BVI state retain the sole original length premise and exact return exception and unchanged state. The reviewed tuple evaluator and canonical finite-support refs carrier preserve the source types; the original local HOL proof is replayed. Inherits reals_as_rational_cuts through evaluation, as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "FST_compile_part",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Program.lean",
+    "lean_name": "fst_compilePart",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: the input is the complete Nat × Nat × BVI expression triple, and the first component of the complete compiled part equals the original first component without hypotheses. The source and Lean tuple and syntax carriers match."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_semantics",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/WholeSemantics.lean",
