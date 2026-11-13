@@ -122,7 +122,9 @@ private theorem evaluationSimulation_all {C F : Type} (expressions : List FlatLa
           exact smallerExpr newEnv next body (by omega)
         · by_cases eval : op = .src .eval
           · subst op
-            exact evaluate_keep_flatStateRel_appEval tra args env state
+            intro next result reachable target run lookupsClosed related envClosed envSafe expressionsSafe notTypeError
+            have impossible := expressionsSafe (.app tra (.src .eval) args) (by simp)
+            simp [hasEval] at impossible
           · by_cases force : op = .src (.thunkOp .forceThunk)
             · subst op
               apply evaluate_force_simulation_step env state tra args argsIH

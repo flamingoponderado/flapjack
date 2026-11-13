@@ -247,11 +247,4 @@ theorem doOpApp_invariants (values : List FlatSem.Value) (env : FlatSem.Environm
               exact recclosureApplication_invariants captured funs name arg expression value reachable found functionClosed functionSafe valueClosed valueSafe
           · simp [distinct] at selected
 
-/-- Dynamic evaluation is excluded by the simulation's Eval-free premise. This is a Flapjack proof helper with no separate HOL theorem. -/
-theorem evaluate_keep_flatStateRel_appEval {C F : Type} (tra : BackendCommon.Tra)
-    (args : List FlatLang.Exp) : evaluationSimulation (C := C) (F := F) [.app tra (.src .eval) args] := by
-  intro env source next result reachable target run lookupsClosed related envClosed envSafe expressionsSafe notTypeError
-  have impossible := expressionsSafe (.app tra (.src .eval) args) (by simp)
-  simp [hasEval] at impossible
-
 end Flapjack.Compiler.Backend.FlatElim
