@@ -1,13 +1,21 @@
 module
 
 public import Flapjack.Compiler.Backend.BviLet.SourceSing
-public import Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateList
 public import Flapjack.Misc.ListEl
 
 @[expose] public section
 
 /-! Environment invariants for the BVI let-propagation simulation. -/
 namespace Flapjack.Compiler.Backend.BviLet.Proofs
+
+namespace DeleteVarCarrier
+/-- The BVI reference state and its finite-support representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end DeleteVarCarrier
 
 /-- The original variable relation retains its two independently typed,
 unused arguments. -/
@@ -176,14 +184,19 @@ theorem evaluate_compile_var {C F : Type} (offsets : List Nat) (d index : Nat)
     rcases run with ⟨rfl, rfl⟩
     simp [compileSing, BviSem.evaluate, targetLookup]
 
-/-- Removing a variable expression preserves a non-type-error singleton
-failure. Untagged until BVI evaluation is reviewed. -/
+/-- Removing a variable expression preserves a non-type-error singleton failure. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "evaluate_delete_var_Rerr_SING"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_deleteVar_error {C F : Type} (expression : Bvi.Exp)
-    (env : List BvlSem.Value) (state next : BviSem.BviState C F)
+    (state next : BviSem.BviState C F)
     (error : Flapjack.SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
-    (run : BviSem.evaluate [expression] env state = (.err error, next))
-    (notTypeError : error ≠ .abort .typeError) :
-    BviSem.evaluate [deleteVar expression] env state = (.err error, next) := by
+    (env : List BvlSem.Value)
+    (premises : BviSem.evaluateTuple ([expression], env, state) = (.err error, next) ∧
+      error ≠ .abort .typeError) :
+    BviSem.evaluateTuple ([deleteVar expression], env, state) = (.err error, next) := by
+  obtain ⟨run, notTypeError⟩ := premises
+  change BviSem.evaluate [expression] env state = (.err error, next) at run
+  change BviSem.evaluate [deleteVar expression] env state = (.err error, next)
   cases expression with
   | var index =>
     cases lookup : env[index]? with

@@ -447,6 +447,42 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "evaluate_delete_var_Rerr_SING",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/Environment.lean",
+    "lean_name": "evaluate_deleteVar_error",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: the original singleton evaluation, full error and final state match, with all original quantified variables and premises. The original HOL proof was independently replayed without hypotheses. BVI refs uses the canonical finite-support state and same-module roundtrip witness. Inherits reals_as_rational_cuts through semantic primitives, as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "evaluate_delete_var_Rerr",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/DeleteVar.lean",
+    "lean_name": "evaluate_deleteVar_list_error",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: the original list evaluation, full error and final state match, with all original quantified variables and premises. The local original HOL proof was independently replayed without hypotheses. BVI refs uses the canonical finite-support state and same-module roundtrip witness. Inherits reals_as_rational_cuts through semantic primitives, as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "evaluate_delete_var_Rval",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/DeleteVar.lean",
+    "lean_name": "evaluate_deleteVar_list_success",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: the original success result, final state, existential output and extended environment relation match, with all original quantified variables and premises. The local original HOL proof was independently replayed without hypotheses. BVI refs uses the canonical finite-support state and same-module roundtrip witness. Inherits reals_as_rational_cuts through semantic primitives, as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
     "hol_name": "evaluate_SNOC_Rval",
     "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/EvaluateList.lean",
     "lean_name": "evaluateSnocRval",
