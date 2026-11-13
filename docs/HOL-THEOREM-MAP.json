@@ -338,6 +338,30 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "full_co_def",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/FullOracle.lean",
+    "lean_name": "fullCo",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the polymorphic oracle index and trailing configuration remain independent; all five original stateCo stages preserve their nested Spt/counter carriers and original composition order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "full_cc_def",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/FullOracle.lean",
+    "lean_name": "fullCc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: independent callback configuration, code, data and next-configuration types retain the full nested five-pass state and Option result, with original stage order and failure behavior."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "ALL_DISTINCT_MAP_FST_SND_full_co",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/FullOracleDistinct.lean",
+    "lean_name": "fullCo_distinctNames",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the original input-key distinctness and two exact namespace congruences imply full transformed-oracle key distinctness for arbitrary index, configuration and counters, including counters below the stub boundary."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_distinct_names",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/WholeNames.lean",
     "lean_name": "compile_distinctNames",

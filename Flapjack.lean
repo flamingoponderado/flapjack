@@ -1457,6 +1457,8 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileLabels
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.WholeCodeLabels
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.WholeNames
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.FullOracle
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.FullOracleDistinct
 import Flapjack.Compiler.Backend.BviInline.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.BviLet.Proofs.CodeLabels

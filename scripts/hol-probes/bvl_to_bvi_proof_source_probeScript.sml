@@ -100,3 +100,6 @@ val _ = replay "bvi_tailrec_compile_each_no_mutcons_typed"
 
 val _ = show "compile_get_code_labels_typed" bvl_to_bviProofTheory.compile_get_code_labels;
 val _ = show "compile_distinct_names_typed" bvl_to_bviProofTheory.compile_distinct_names;
+val _ = show "full_co_def_typed" bvl_to_bviProofTheory.full_co_def;
+val _ = show "full_cc_def_typed" bvl_to_bviProofTheory.full_cc_def;
+val _ = show "ALL_DISTINCT_MAP_FST_SND_full_co_typed" bvl_to_bviProofTheory.ALL_DISTINCT_MAP_FST_SND_full_co;
