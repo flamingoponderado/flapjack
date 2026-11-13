@@ -153,8 +153,8 @@ theorem evaluate_allocGlobal_grow {C F : Type} (ptr used count : Nat) (fields : 
   have movedCode : sptLookup copyGlobalsLocation moved.code = some copyGlobalsCode := by
     simpa [moved, allocated, updated] using code
   have dstBound : fields.length < zeros.length := by simp [zeros, size]; omega
-  obtain ⟨copyClock, copyRun⟩ := evaluate_copyGlobals fields.length ptr newPtr true true oldFields zeros moved
-    different movedSrc movedDst (by simp [oldFields]) dstBound movedCode
+  obtain ⟨copyClock, copyRun⟩ := evaluate_copyGlobals ptr newPtr true true oldFields fields.length zeros moved
+    ⟨movedCode, movedSrc, movedDst, different, by simp [oldFields], dstBound⟩
   have finalCopy : BviSem.evaluate [copyGlobalsCode.2] [.refPtr true newPtr, .refPtr true ptr, .number fields.length]
       (BviProps.incClock copyClock moved) =
       (.val [BvlSem.unitValue],

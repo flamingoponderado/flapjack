@@ -9469,6 +9469,11 @@ run_probe bvl_to_bvi_source_probeScript.sml bvl_to_bvi_source_probe.out \
   "$cake_dir/compiler/backend/bvl_to_bviScript.sml" \
   "$cake_dir/compiler/backend"
 
+run_probe bvl_to_bvi_copy_globals_probeScript.sml bvl_to_bvi_copy_globals_probe.out \
+  copy_globals_replay copy_globals_generalized \
+  "$cake_dir/compiler/backend/proofs/bvl_to_bviProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe bvl_to_bvi_proof_source_probeScript.sml bvl_to_bvi_proof_source_probe.out \
   compile_inc_no_mutcons_typed bvi_tailrec_compile_prog_no_mutcons_typed bvi_let_delete_var_no_mutcons_typed bvi_let_compile_no_mutcons_typed bvi_let_compile_exp_no_mutcons_typed compile_int_no_mutcons_typed compile_op_no_mutcons_typed compile_exps_sing_no_mutcons_typed compile_single_no_mutcons_typed compile_list_no_mutcons_typed stubs_no_mutcons_typed to_op_no_mutcons_typed apply_op_no_mutcons_typed id_from_op_no_mutcons_typed let_wrap_no_mutcons_typed get_bin_args_no_mutcons_typed opbinargs_no_mutcons_typed try_swap_no_mutcons_typed check_op_no_mutcons_typed args_from_no_mutcons_typed push_call_no_mutcons_typed rewrite_catchall_no_mutcons_typed rewrite_no_mutcons_typed tailrec_compile_exp_no_mutcons_typed bvi_tailrec_compile_each_no_mutcons_typed \
   "$cake_dir/compiler/backend/proofs/bvl_to_bviProofScript.sml" \

@@ -130479,6 +130479,19 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CopyGlobalsStub.lean",
+  "hol_name": "evaluate_CopyGlobals_code",
+  "hol_line": 734,
+  "lean_name": "evaluate_copyGlobals",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed source local proof replay and its subsequent source-list generalization in bvl_to_bvi_copy_globals_probe.out: the code lookup, distinct source and destination references, both array lookups and bounds, existential clock, complete evaluation result, and prefix-copy reference update are retained with independent compiler and FFI state types. The canonical BVI state roundtrip covers refs; the evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/BoundEvaluation.lean",
   "hol_name": "bEval_bVarBound",
   "lean_name": "evaluate_bVarBound",
