@@ -433,23 +433,4 @@ theorem ffi_return_related {C F : Type} (genv : GlobalEnv)
   · simp [doAppBasic, lookup, returned, assigned]
   · simp [FlatSem.doAppData, flatLookup, ← ffiEq, returned, flatAssigned]
 
-/-- A terminal external call produces the same final event without changing
-stored data. This relies only on the factored state relation. -/
-theorem ffi_final_related {C F : Type} (genv : GlobalEnv)
-    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
-    (statesRel : StateRel genv source flat) (name : Basis.Pure.MlString.MlString)
-    (configuration : Basis.Pure.MlString.MlString) (flag : Bool) (address : Nat)
-    (bytes : List (BitVec 8)) (event : HolFinalEvent)
-    (lookup : storeLookup address source.refs = some (.w8array bytes))
-    (finished : callFFIHOL source.ffi (.extCall name) configuration.explode bytes = .final event) :
-    doAppBasic (source.refs, source.ffi) (.ffi name) [.litv (.strLit configuration), .loc flag address] =
-      some (some ((source.refs, source.ffi), .err (.abort (.ffiError event)))) ∧
-    FlatSem.doAppData flat (.ffi name) [.litv (.strLit configuration), .loc flag (address + 1)] =
-      some (some (flat, .err (.abort (.ffiError event)))) := by
-  have flatLookup := stateRel_byteArray_lookup genv source flat statesRel address bytes lookup
-  have ffiEq := (stateRel_iff genv source flat).mp statesRel |>.2.2.2
-  constructor
-  · simp [doAppBasic, lookup, finished]
-  · simp [FlatSem.doAppData, flatLookup, ← ffiEq, finished]
-
 end Flapjack.Compiler.Backend.SourceToFlat

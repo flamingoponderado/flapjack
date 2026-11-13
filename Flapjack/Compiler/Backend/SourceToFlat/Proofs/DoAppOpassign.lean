@@ -1806,13 +1806,17 @@ theorem doApp_FFI {C F : Type} (genv : GlobalEnv) (name : Basis.Pure.MlString.Ml
                 .value (.tuple genv [] [] (.nil genv)), ?_⟩
               simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, flatRun]
             | final event =>
-              obtain ⟨sourceRun, flatRun⟩ :=
-                ffi_final_related genv source flat states name text flag address bytes event lookup call
+              have flatLookup := stateRel_byteArray_lookup genv source flat states address bytes lookup
+              have sourceRun : doAppBasic (source.refs, source.ffi) (.ffi name)
+                  [.litv (.strLit text), .loc flag address] =
+                  some (some ((source.refs, source.ffi), .err (.abort (.ffiError event)))) := by
+                simp [doAppBasic, lookup, call]
               simp only [source, doApp, doAppNumericCore, sourceRun] at run
               obtain ⟨rfl, rfl⟩ := run
               refine ⟨.err (.abort (.ffiError event)), flat, stores, nonempty, ffi,
                 rfl, rfl, ?_, ?_⟩
               · exact .abort (.ffiError event)
-              · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, flatRun]
+              · simp [astOpToFlatOp, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                  FlatSem.doAppData, flatLookup, ← ffi, call, source]
 
 end Flapjack.Compiler.Backend.SourceToFlat
