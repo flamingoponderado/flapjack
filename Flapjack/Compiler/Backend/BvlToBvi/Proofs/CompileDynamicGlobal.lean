@@ -65,7 +65,31 @@ theorem simulation_global {C F : Type} (name : Nat) (arguments : List Bvl.Exp)
     (argsIH : simulation arguments env source) :
     simulation [.op (.globOp (.global name)) arguments] env source := by
   cases arguments with
-  | nil => exact simulation_global_empty name env source
+  | nil =>
+    intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
+    simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyGlobal] at run
+    cases slot : source.globals[name]? with
+    | none =>
+      simp [slot] at run
+      exact (notTypeError run.1.symm).elim
+    | some item =>
+      cases item with
+      | none =>
+        simp [slot] at run
+        exact (notTypeError run.1.symm).elim
+      | some value =>
+        simp [slot] at run
+        rcases run with ⟨rfl, rfl⟩
+        simp [compileListSource, compileSingSource, compileOp, smartAppend] at compiled
+        rcases compiled with ⟨rfl, rfl, rfl⟩
+        cases globalPtr : target.global with
+        | none => simp [globalPtr] at global
+        | some ptr =>
+          refine ⟨target, relocate, 0, ?_, related, rfl, ?_⟩
+          · simp [BviSem.evaluate, BviSem.fixClock, BviProps.incClock, mapSimulationResult,
+              doGlobal_target relocate source target ptr name value related globalPtr slot]
+          · intro key present
+            rfl
   | cons first rest =>
     cases argsRun : BvlSem.evaluate (first :: rest) env source with
     | mk argsResult middle =>
