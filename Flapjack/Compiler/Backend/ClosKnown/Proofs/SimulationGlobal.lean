@@ -1,6 +1,5 @@
 module
 
-public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationPrimitive
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownOpCorrect
 
 @[expose] public section
@@ -8,7 +7,7 @@ public import Flapjack.Compiler.Backend.ClosKnown.Proofs.KnownOpCorrect
 
 /-! Known-global replacement in the optimizer operation simulation. -/
 namespace Flapjack.Compiler.Backend.ClosKnown.Simulation.Global
-open ClosSem ClosProps Relations Relations.StateRelation
+open ClosSem ClosProps
 
 /-- A nontrivial known global read has no arguments, leaves the state and
 approximation tree unchanged, and returns a value described by the computed
@@ -68,34 +67,5 @@ theorem knownGlobalEmptyTupleShape {C F : Type} (index : Nat) (approxs : List Va
   cases rel with
   | tuple _ _ values rel => cases rel; exact ⟨a, b, c, d, rfl⟩
 
-/-- The emitted integer operation returns the original global value in the
-related target state. This is Flapjack proof infrastructure. -/
-theorem knownGlobalIntReplacement {C D F : Type} (c : Config) (tree : Spt ValApprox)
-    (index : Nat) (approxs : List ValApprox) (g0 g : Spt ValApprox) (i : Int)
-    (vs ws : List Value) (s0 s : State C F) (t : State D F) (v : Value)
-    (known : knownOpHOL (.globOp (.global index)) approxs g0 = (.int i, g))
-    (approxRel : List.Forall₂ ValApproxVal approxs vs)
-    (valuesRel : List.Forall₂ (ValueRel c tree) vs ws) (globals : stateGlobalsApprox s0 g0)
-    (run : doApp (.globOp (.global index)) vs s0 = .val (v, s)) :
-    s = s0 ∧ g = g0 ∧ doApp (.intOp (.const i)) ws t = .val (v, t) := by
-  obtain ⟨_, rfl, treeEq, stateEq, rfl⟩ :=
-    knownGlobalIntShape index approxs g0 g i vs s0 s v known approxRel globals run
-  cases valuesRel
-  exact ⟨stateEq, treeEq, by simp [doApp, applyNumeric, doIntApp]⟩
-
-/-- The emitted empty constructor returns the original global block in the
-related target state. This is Flapjack proof infrastructure. -/
-theorem knownGlobalEmptyTupleReplacement {C D F : Type} (c : Config) (tree : Spt ValApprox)
-    (index : Nat) (approxs : List ValApprox) (g0 g : Spt ValApprox) (tag : Nat)
-    (vs ws : List Value) (s0 s : State C F) (t : State D F) (v : Value)
-    (known : knownOpHOL (.globOp (.global index)) approxs g0 = (.tuple tag [], g))
-    (approxRel : List.Forall₂ ValApproxVal approxs vs)
-    (valuesRel : List.Forall₂ (ValueRel c tree) vs ws) (globals : stateGlobalsApprox s0 g0)
-    (run : doApp (.globOp (.global index)) vs s0 = .val (v, s)) :
-    s = s0 ∧ g = g0 ∧ doApp (.blockOp (.cons tag)) ws t = .val (v, t) := by
-  obtain ⟨_, rfl, treeEq, stateEq, rfl⟩ :=
-    knownGlobalEmptyTupleShape index approxs g0 g tag vs s0 s v known approxRel globals run
-  cases valuesRel
-  exact ⟨stateEq, treeEq, by simp [doApp, applyBlock]⟩
 
 end Flapjack.Compiler.Backend.ClosKnown.Simulation.Global

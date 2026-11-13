@@ -96,11 +96,6 @@ theorem compileOp_noMti (t : Tra) (op : FlatLang.Op) (xs : List ClosLang.Exp)
     | nil => simp [compileOp, arg1, noMti, noMtiList]
     | cons x xs => cases xs <;> simp [compileOp, arg1, noMti, noMtiList] at safe ⊢ <;> tauto
 
-private theorem reverse_noMti (xs : List ClosLang.Exp) (safe : noMtiList xs) :
-    noMtiList xs.reverse := by
-  rw [noMtiList_iff] at safe ⊢
-  simpa using safe
-
 /-- Flapjack helper: each compiled expression has pre-MTI syntax. -/
 theorem compileExp_noMti (m : List (Option MlString)) (exp : FlatLang.Exp) :
     noMti (compileExp m exp) := by
@@ -123,7 +118,7 @@ theorem compileExp_noMti (m : List (Option MlString)) (exp : FlatLang.Exp) :
     rw [compileExp.eq_def]
     dsimp only
     rw [found]
-    exact compileOp_noMti t op _ (reverse_noMti _ ih)
+    exact compileOp_noMti t op _ (by simpa only [noMtiList_iff, List.mem_reverse] using ih)
   | case7 m t v e ih => simpa [compileExp, noMti] using ih
   | case8 m t a b c iha ihb ihc => simp [compileExp, noMti, iha, ihb, ihc]
   | case9 m t vo a b iha ihb => simp [compileExp, noMti, noMtiList, iha, ihb]
@@ -151,18 +146,17 @@ theorem compileExp_noMti (m : List (Option MlString)) (exp : FlatLang.Exp) :
   | case16 m => simp [compileExps, noMtiList]
   | case17 m e es ihe ihes => simp [compileExps, noMtiList, ihe, ihes]
 
-/-- Flapjack helper: compilation of any flat declaration list has pre-MTI
-syntax. The HOL theorem additionally states two other syntax properties. -/
-theorem compileDecs_noMti (ds : List FlatLang.Exp) :
-    ∀ e ∈ compileDecs ds, noMti e := by
-  induction ds with
-  | nil => simp [compileDecs, compile, compileExps]
-  | cons e ds ih =>
-    simp only [compileDecs, compile, compileExps] at ih ⊢
-    intro x member
+/-- Flapjack helper: compilation in any local environment preserves pre-MTI syntax. -/
+theorem compile_noMti (m : List (Option MlString)) (xs : List FlatLang.Exp) :
+    ∀ e ∈ compile m xs, noMti e := by
+  induction xs with
+  | nil => simp [compile, compileExps]
+  | cons x xs ih =>
+    simp only [compile, compileExps] at ih ⊢
+    intro e member
     rcases List.mem_cons.mp member with rfl | member
-    · exact compileExp_noMti [] e
-    · exact ih x member
+    · exact compileExp_noMti m x
+    · exact ih e member
 
 private theorem interpreter_noMti : noMti ClosInterp.closInterpreter := by
   simp [ClosInterp.closInterpreter, ClosInterp.closInterpreterBody,

@@ -4019,7 +4019,207 @@ class FmapResultObservationTest(unittest.TestCase):
         self.assertEqual(("BalancedMap.toFmap",), next(SITES(source, include_result_observations=True))[-1])
 
 
+class FmapParameterPredicateDomainSignatureTest(unittest.TestCase):
+    hol = "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml"
+    lean = "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvalSim.lean"
+    header = """{C₁ C₂ F : Type} (ffi : HolFfiState F) (maxApp : Nat)
+      (code1 : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (co1 : ClosSem.CompileOracle C₁)
+      (cc1 : ClosSem.Compiler C₁) (es1 : List ClosLang.Exp) (code2 : Spt (Nat × Bvl.Exp))
+      (co2 : BvlSem.CompileOracle C₂) (cc2 : BvlSem.Compiler C₂) (start : Nat)
+      (rel : HolFiniteMapExact Nat (Nat × ClosLang.Exp) → ClosSem.CompileOracle C₁ →
+        ClosSem.Compiler C₁ → List ClosLang.Exp → Spt (Nat × Bvl.Exp) →
+        BvlSem.CompileOracle C₂ → BvlSem.Compiler C₂ → Nat → Prop)"""
+
+    def errors(self, name, source, hol=None, lean=None, hol_name=None):
+        return CHECKER["fmap_parameter_predicate_domain_signature_errors"](
+            hol or self.hol, hol_name or ("eval_sim_def" if name == "evalSim" else "IMP_semantics_eq"),
+            lean or self.lean, name, source)
+
+    def test_both_original_signatures(self):
+        definition = f"def evalSim {self.header} : Prop := True"
+        theorem = (f"theorem impSemanticsEq {self.header} "
+                   "(h : evalSim ffi maxApp code1 co1 cc1 es1 code2 co2 cc2 start rel ∧ "
+                   "ClosSem.semantics ffi maxApp code1 co1 cc1 es1 ≠ .fail) "
+                   "(relation : rel code1 co1 cc1 es1 code2 co2 cc2 start) : "
+                   "BvlSem.semantics ffi code2 co2 cc2 start = "
+                   "ClosSem.semantics ffi maxApp code1 co1 cc1 es1 := by trivial")
+        self.assertEqual([], self.errors("evalSim", definition))
+        self.assertEqual([], self.errors("impSemanticsEq", theorem))
+        self.assertTrue(self.errors("impSemanticsEq", theorem.replace(
+            "(relation : rel code1 co1 cc1 es1 code2 co2 cc2 start)", "")))
+        self.assertTrue(self.errors("impSemanticsEq", theorem.replace(
+            "ClosSem.semantics ffi maxApp code1 co1 cc1 es1 ≠ .fail", "True")))
+        self.assertTrue(self.errors("impSemanticsEq", theorem.replace(
+            "BvlSem.semantics ffi code2 co2 cc2 start =", "BvlSem.semantics ffi code2 co2 cc2 start ≠")))
+
+    def test_rejects_changed_carriers_predicate_and_premises(self):
+        source = f"def evalSim {self.header} : Prop := True"
+        changes = [
+            ("C₁ C₂ F : Type", "C₁ F : Type"),
+            ("BvlSem.Compiler C₂", "BvlSem.Compiler C₁"),
+            ("code1 : HolFiniteMapExact Nat (Nat × ClosLang.Exp)", "code1 : Nat → Option Nat"),
+            ("rel : HolFiniteMapExact", "rel : List (HolFiniteMapExact"),
+            ("Nat → Prop)", "Nat → Bool)"),
+            ("(start : Nat)", "(extra : HolFiniteMapExact Nat Nat) (start : Nat)"),
+            (" : Prop :=", " : Nat :="),
+        ]
+        for before, after in changes:
+            with self.subTest(before=before):
+                self.assertNotEqual(source, source.replace(before, after))
+                self.assertTrue(self.errors("evalSim", source.replace(before, after)))
+        self.assertTrue(self.errors("evalSim", "variable (bad : Prop)\n" + source))
+        self.assertTrue(self.errors("evalSim", "namespace Test variable (bad : Prop)\n" + source))
+        self.assertTrue(self.errors("evalSim", source.replace("def evalSim", "theorem evalSim")))
+        self.assertTrue(self.errors("evalSim", source + "\n" + source))
+
+    def test_scope_is_exact(self):
+        source = f"def evalSim {self.header} : Prop := True"
+        self.assertTrue(self.errors("evalSim", source, hol=self.hol + ".other"))
+        self.assertTrue(self.errors("evalSim", source, lean=self.lean + ".other"))
+        self.assertTrue(self.errors("evalSim", source, hol_name="IMP_semantics_eq"))
+        self.assertTrue(self.errors("different", source, hol_name="eval_sim_def"))
+
+    def test_rejects_prefixed_and_qualified_decoy_declarations(self):
+        theorem_tail = ("(h : evalSim ffi maxApp code1 co1 cc1 es1 code2 co2 cc2 start rel ∧ "
+                        "ClosSem.semantics ffi maxApp code1 co1 cc1 es1 ≠ .fail) "
+                        "(relation : rel code1 co1 cc1 es1 code2 co2 cc2 start) : "
+                        "BvlSem.semantics ffi code2 co2 cc2 start = "
+                        "ClosSem.semantics ffi maxApp code1 co1 cc1 es1 := by trivial")
+        for name, kind, tail in [("evalSim", "def", ": Prop := True"),
+                                 ("impSemanticsEq", "theorem", theorem_tail)]:
+            for modifier in ["private ", "protected ", ""]:
+                with self.subTest(name=name, modifier=modifier):
+                    decoy = f"namespace Decoy\n{modifier}{kind} {name} {self.header} {tail}\nend Decoy\n"
+                    actual = f"{kind} {name} (bogus : False) : True := by trivial"
+                    self.assertTrue(self.errors(name, decoy + actual))
+            qualified = f"{kind} Decoy.{name} {self.header} {tail}\n"
+            self.assertTrue(self.errors(name, qualified + actual))
+
+    def test_string_cannot_impersonate_a_declaration(self):
+        source = f"def evalSim {self.header} : Prop := True"
+        self.assertEqual([], self.errors("evalSim", '@[hol "cakeml/x.sml" "x"]\n' + source))
+        self.assertTrue(self.errors("evalSim", 'def decoy : String := "\n' + source + '\n"'))
+        self.assertTrue(self.errors("evalSim", 'def decoy : String := r#"\n' + source + '\n"#'))
+        self.assertTrue(self.errors("evalSim", 'def decoy : String := "escaped \\\" quote\n' + source + '\n"'))
+        quote = "def quote : Char := " + chr(39) + chr(34) + chr(39) + "\n"
+        self.assertTrue(self.errors("evalSim", quote + 'def decoy : String := "\n' + source + '\n"'))
+        self.assertEqual("def x' := 3", CHECKER["_predicate_domain_code_only"]("def x' := 3"))
+
+
+class FmapParameterPredicateDomainDefinitionBodyTest(unittest.TestCase):
+    body = """∀ (k : Nat) (res1 : Result (List ClosSem.Value) ClosSem.Value) (s2 : ClosSem.State C₁ F),
+      ClosSem.evaluate es1 [] (ClosSem.initialState ffi maxApp code1 co1 cc1 k) = (res1, s2) ∧
+      res1 ≠ .err (.abort .typeError) ∧ rel code1 co1 cc1 es1 code2 co2 cc2 start →
+      ∃ (ck : Nat) (res2 : Result (List BvlSem.Value) BvlSem.Value) (t2 : BvlSem.State C₂ F),
+        BvlSem.evaluate [.call 0 (some start) []] []
+          (BvlSem.initialState ffi code2 co2 cc2 (k + ck)) = (res2, t2) ∧
+        resultRel (fun _ _ => True) (fun _ _ => True) res1 res2 ∧ s2.ffi = t2.ffi"""
+
+    def errors(self, body, prefix="def evalSim : Prop :=\n", suffix="\nend Example"):
+        return CHECKER["fmap_parameter_predicate_domain_definition_body_errors"](prefix + body + suffix)
+
+    def test_complete_body_and_following_attribute(self):
+        self.assertEqual([], self.errors(self.body))
+        self.assertEqual([], self.errors(self.body, suffix='\n@[hol "cakeml/x.sml" "x"]\ntheorem next : True := by trivial'))
+
+    def test_rejects_weakened_or_changed_simulation(self):
+        changes = [
+            ("res1 ≠ .err (.abort .typeError)", "True"),
+            ("rel code1 co1 cc1 es1 code2 co2 cc2 start", "True"),
+            ("∃ (ck : Nat)", "∀ (ck : Nat)"),
+            ("(k + ck)", "k"),
+            ("ClosSem.State C₁ F", "ClosSem.State C₂ F"),
+            ("BvlSem.State C₂ F", "BvlSem.State C₁ F"),
+            (".call 0 (some start) []", ".call 0 none []"),
+            ("(fun _ _ => True) res1 res2", "(fun _ _ => False) res1 res2"),
+            ("s2.ffi = t2.ffi", "True"),
+            ("= (res2, t2)", "= (res1, s2)"),
+        ]
+        for before, after in changes:
+            with self.subTest(before=before):
+                changed = self.body.replace(before, after, 1)
+                self.assertNotEqual(self.body, changed)
+                self.assertTrue(self.errors(changed))
+        self.assertTrue(self.errors(self.body + " ∧ True"))
+
+    def test_rejects_missing_duplicate_and_quoted_definitions(self):
+        self.assertTrue(self.errors(self.body, prefix="theorem other : Prop :=\n"))
+        for name in ("evalSim'", "evalSim.ghost", "evalSim?", "evalSim!"):
+            with self.subTest(name=name):
+                self.assertTrue(self.errors(self.body, prefix=f"def {name} : Prop :=\n"))
+        self.assertTrue(self.errors(self.body, suffix="\ndef evalSim : Prop := True"))
+        self.assertTrue(self.errors(self.body, prefix='def decoy : String := "\ndef evalSim : Prop :=\n', suffix='\n"'))
+        self.assertTrue(self.errors(self.body, prefix="namespace X variable (bad : Prop)\ndef evalSim : Prop :=\n"))
+
+
+class FmapParameterPredicateDomainWitnessTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.source = (Path(__file__).resolve().parents[2] /
+                      "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvalSim.lean").read_text()
+        cls.validate = staticmethod(CHECKER["fmap_parameter_predicate_domain_witness_errors"])
+
+    def test_current_two_sided_witness(self):
+        self.assertEqual([], self.validate(self.source))
+
+    def test_rejects_altered_codecs_and_vacuous_roundtrips(self):
+        changes = [
+            ("code.lookup", "fun _ => none"),
+            ("⟨lookup, support⟩", "HolFiniteMapExact.empty"),
+            ("rel (ofBroad lookup support)", "fun _ _ _ _ _ _ _ => True"),
+            ("rel (toBroad code) code.finiteSupport", "fun _ _ _ _ _ _ _ => True"),
+            ("= rel code) ∧", "= rel code) ∨"),
+            ("= rel lookup support) := by", "= True) := by"),
+            ("{C₁ C₂ : Type} :\n    (∀", "{C₁ C₂ : Type} (extra : Prop) :\n    (∀"),
+        ]
+        for before, after in changes:
+            with self.subTest(before=before):
+                changed = self.source.replace(before, after)
+                self.assertNotEqual(self.source, changed)
+                self.assertTrue(self.validate(changed))
+
+    def test_rejects_missing_or_duplicated_witness_and_helpers(self):
+        self.assertTrue(self.validate(self.source.replace("theorem simulationPredicateRoundtrips",
+                                                          "axiom simulationPredicateRoundtrips")))
+        self.assertTrue(self.validate(self.source.replace("private def toBroad ", "def toBroad ")))
+        self.assertTrue(self.validate(self.source + "\nprivate def toBroad := 0\n"))
+        self.assertTrue(self.validate(self.source + "\naxiom simulationPredicateRoundtrips : True\n"))
+        self.assertTrue(self.validate(self.source + "\naxiom ReviewGhost.simulationPredicateRoundtrips : True\n"))
+        self.assertTrue(self.validate(self.source + "\naxiom Ω.simulationPredicateRoundtrips : True\n"))
+        self.assertTrue(self.validate(self.source + "\naxiom «ReviewGhost».simulationPredicateRoundtrips : True\n"))
+        self.assertTrue(self.validate(self.source + "\naxiom ReviewGhost.«simulationPredicateRoundtrips» : True\n"))
+        self.assertTrue(self.validate("namespace Test variable (bad : Prop)\n" + self.source))
+        self.assertTrue(self.validate(self.source.replace("private def ofBroad", "set_option pp.universes true\nprivate def ofBroad")))
+
+    def test_string_cannot_impersonate_the_witness_block(self):
+        clean = CHECKER["strip_lean_comments"](self.source)
+        block = clean[clean.index("private abbrev SimulationTail"):
+                      clean.rindex("end Flapjack.Compiler.Backend.ClosToBvl")].strip()
+        self.assertTrue(self.validate('module\n\ndef decoy : String := "\n' + block + '\n"\n'))
+        self.assertTrue(self.validate('module\n\ndef decoy : String := r#"\n' + block + '\n"#\n'))
+        quote = "def quote : Char := " + chr(39) + chr(34) + chr(39) + "\n"
+        self.assertTrue(self.validate('module\n' + quote + 'def decoy : String := "\n' + block + '\n"\n'))
+
+
 class FmapParameterObservationTest(unittest.TestCase):
+    def test_conditional_call_scope_and_required_producers(self):
+        allowed = CHECKER["fmap_parameter_observations_site_allowed"]
+        errors = CHECKER["fmap_parameter_observations_site_errors"]
+        hol = "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml"
+        path = "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallSemantics.lean"
+        args = (hol, "semantics_cond_call_compile_inc", path, "semanticsCondCallCompileInc")
+        producers = ("Flapjack.HolFiniteMapExact.holEmpty", "Flapjack.HolFiniteMapExact.alistToFmap")
+        self.assertTrue(allowed(*args))
+        for index in range(4):
+            changed = list(args)
+            changed[index] += "Other"
+            self.assertFalse(allowed(*changed))
+        self.assertEqual([], errors(*args, ("code",), producers))
+        for parameters, observed in [((), producers), (("code", "other"), producers),
+                                     (("code",), producers[:-1]), (("code",), producers[::-1]),
+                                     (("code",), producers + ("Flapjack.Other.map",))]:
+            self.assertTrue(errors(*args, parameters, observed))
+
     def test_scope_allows_only_reviewed_union_site(self):
         allowed = CHECKER["fmap_parameter_observations_site_allowed"]
         hol = "cakeml/compiler/backend/proofs/clos_callProofScript.sml"

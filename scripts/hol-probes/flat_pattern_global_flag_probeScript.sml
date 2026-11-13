@@ -26,6 +26,17 @@ val singleton_global_bag = prove (
 val _ = show_thm "singleton_global_bag=" singleton_global_bag;
 val _ = show_thm "expression_global_flag=" flat_patternProofTheory.compile_exp_set_globals_FST_SND;
 val _ = show_thm "tuple_global_flag=" flat_patternProofTheory.compile_exp_set_globals_tup;
+val _ = show_thm "fst_snd_eq_case_typed=" flat_patternProofTheory.FST_SND_EQ_CASE;
+val _ = show_thm "sub_bag_2_typed=" flat_patternProofTheory.SUB_BAG_2;
+val _ = show_thm "inv_on_foldr_typed=" flat_patternProofTheory.inv_on_FOLDR;
+val _ = show_thm "evaluate_decs_sing_typed=" flat_patternProofTheory.evaluate_decs_sing;
+val _ = show_thm "option_all_forall_typed=" flat_patternProofTheory.OPTION_ALL_FORALL;
+val _ = show_thm "smart_if_thm_typed=" flat_patternProofTheory.SmartIf_thm;
+val _ = show_thm "do_eq_boolv_typed=" flat_patternProofTheory.do_eq_Boolv;
+val _ = show_thm "fold_boolv_typed=" flat_patternProofTheory.fold_Boolv;
+val _ = show_thm "max_list_less_every_typed=" flat_patternProofTheory.MAX_LIST_LESS_EVERY;
+val _ = show_thm "do_if_helper_typed=" flat_patternProofTheory.do_if_helper;
+val _ = show_thm "do_app_thm_reverse_typed=" flat_patternProofTheory.do_app_thm_REVERSE;
 val _ = show_thm "global_bag_list_empty=" flatPropsTheory.elist_globals_eq_empty;
 val _ = show_thm "sum_string_ords=" flat_patternProofTheory.sum_string_ords_eq;
 val _ = show_thm "sum_string_ords_def=" flat_patternTheory.sum_string_ords_def;

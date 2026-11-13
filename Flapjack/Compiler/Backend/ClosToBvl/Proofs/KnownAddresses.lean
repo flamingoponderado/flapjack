@@ -11,6 +11,13 @@ import Mathlib.Data.List.Perm.Subperm
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open ClosLang ClosProps ClosKnown BackendProps
 
+/-- Known-function incremental compilation preserves the auxiliary payload. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "SND_SND_known_compile_inc"]
+theorem knownCompileInc_snd_snd {α : Type} (conf : ClosKnown.Config)
+    (app : Spt ClosKnown.ValApprox) (es : List ClosLang.Exp × α) :
+    (ClosKnown.compileInc conf app es).2.2 = es.2 := by
+  simp [ClosKnown.compileInc]
+
 /-- The incremental known-function pass exposes the original traversal result. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "kcompile_inc_uncurry"]
 theorem kcompileInc_uncurry {α : Type} (c : ClosKnown.Config) (g : Spt ValApprox)

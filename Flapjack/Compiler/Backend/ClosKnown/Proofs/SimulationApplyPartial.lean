@@ -74,85 +74,6 @@ theorem relatedPartialClosure (c : Config) (g : Spt ValApprox) (maxApp : Nat)
       · simp at found
     · simp at found
 
-/-- The ordinary-closure partial-application branch preserves the simulation
-result, clock, state and oracle invariants. This is Flapjack induction
-infrastructure for the nonempty application case. -/
-theorem partialClosureSimulation {C F : Type} (c : Config)
-    (source : State (Spt ValApprox × C) F) (target : State C F)
-    (loc1 loc2 closureLoc : Option Nat) (supplied captured : List Value)
-    (arity : Nat) (body : ClosLang.Exp) (targetFn : Value)
-    (first : Value) (rest targetArgs : List Value) (argsopt : Option (List Value))
-    (partialValue : Value)
-    (states : StateRel c (nextG source) source target)
-    (fnRelated : valueRelApp c (nextG source) (.closure closureLoc supplied captured arity body) targetFn argsopt)
-    (argsRelated : List.Forall₂ (ValueRel c (nextG source)) (first :: rest) targetArgs)
-    (locRelated : loptRel targetFn (first :: rest).length loc1 loc2)
-    (constraint : argsopt.isSome → argsopt = some (first :: rest) ∧ (first :: rest) ≠ [] ∧ ∃ exp env,
-      destClosure source.maxApp loc1 (.closure closureLoc supplied captured arity body) (first :: rest) =
-        some (.fullApp exp env []))
-    (found : destClosure source.maxApp loc1 (.closure closureLoc supplied captured arity body) (first :: rest) =
-      some (.partialApp partialValue))
-    (globals : stateGlobalsApprox source (nextG source))
-    (oracle : isStateOracle (compileInc c) source.compileOracle)
-    (oracleDisjoint : oracleGapproxDisjoint (nextG source) source.compileOracle) :
-    ∃ sourceResult sourceFinal targetResult targetFinal,
-      evaluateApp loc1 (.closure closureLoc supplied captured arity body) (first :: rest) source =
-        (sourceResult, sourceFinal) ∧
-      evaluateApp loc2 targetFn targetArgs target = (targetResult, targetFinal) ∧
-      resultRel (List.Forall₂ (ValueRel c (nextG sourceFinal))) (ValueRel c (nextG sourceFinal))
-        sourceResult targetResult ∧ StateRel c (nextG sourceFinal) sourceFinal targetFinal ∧
-      stateGlobalsApprox sourceFinal (nextG sourceFinal) ∧
-      isStateOracle (compileInc c) sourceFinal.compileOracle ∧
-      oracleGapproxDisjoint (nextG sourceFinal) sourceFinal.compileOracle := by
-  obtain ⟨_, locEq, fnRel⟩ := partialApplicationInputs c (nextG source) source.maxApp loc1
-    (.closure closureLoc supplied captured arity body) targetFn (first :: rest) argsopt partialValue
-    fnRelated constraint found
-  subst loc1
-  have maxEq : source.maxApp = target.maxApp := states.2.2.2.2.2.2.1
-  have clockEq : source.clock = target.clock := states.2.2.2.2.1
-  obtain ⟨targetValue, targetFound, valueRel⟩ := relatedPartialClosure c (nextG source) source.maxApp
-    closureLoc loc2 supplied captured (first :: rest) targetArgs arity body targetFn partialValue
-    fnRel argsRelated locRelated found
-  have targetNonempty : targetArgs ≠ [] := by
-    intro eq
-    subst targetArgs
-    cases argsRelated
-  cases targetArgs with
-  | nil => contradiction
-  | cons targetFirst targetRest =>
-    have len := argsRelated.length_eq
-    rw [evaluateApp, found]
-    rw [evaluateApp, ← maxEq, targetFound]
-    by_cases timeout : source.clock < (first :: rest).length
-    · have targetTimeout : target.clock < (targetFirst :: targetRest).length := by omega
-      refine ⟨.err (.abort .timeoutError), { source with clock := 0 },
-        .err (.abort .timeoutError), { target with clock := 0 }, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-      · simp only [List.length_cons] at timeout
-        simp [timeout]
-      · simp only [List.length_cons] at targetTimeout
-        simp [targetTimeout, maxEq]
-      · simp [resultRel, excRel]
-      · rcases states with ⟨aux, free, codeS, codeT, clock, ffi, maxApp, globs, refs, compiler, co⟩
-        exact ⟨aux, free, codeS, codeT, rfl, ffi, maxApp, globs, refs, compiler, co⟩
-      · simpa [stateGlobalsApprox, nextG] using globals
-      · exact oracle
-      · simpa [nextG] using oracleDisjoint
-    · have targetTimeout : ¬ target.clock < (targetFirst :: targetRest).length := by omega
-      refine ⟨.val [partialValue], decClock (first :: rest).length source,
-        .val [targetValue], decClock (targetFirst :: targetRest).length target,
-        ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-      · simp only [List.length_cons] at timeout
-        simp [timeout]
-      · simp only [List.length_cons] at targetTimeout
-        simp [targetTimeout]
-      · simpa [resultRel, nextG, decClock] using valueRel
-      · rcases states with ⟨aux, free, codeS, codeT, clock, ffi, maxApp, globs, refs, compiler, co⟩
-        refine ⟨aux, free, codeS, codeT, ?_, ffi, maxApp, globs, refs, compiler, co⟩
-        simp [decClock, clock, len]
-      · simpa [stateGlobalsApprox, nextG, decClock] using globals
-      · simpa [decClock] using oracle
-      · simpa [nextG, decClock] using oracleDisjoint
-
 /-- Related lists have related elements at the same successful index. This
 is Flapjack proof infrastructure for recursive closure selection. -/
 theorem relatedLookup {α β : Type} {r : α → β → Prop} {xs : List α} {ys : List β}
@@ -230,29 +151,26 @@ theorem relatedPartialRecClosure (c : Config) (g : Spt ValApprox) (maxApp : Nat)
           env1a env1b env2a env2b functions functions2 index aenv safe fv
           (List.rel_append argsRelated suppliedRelated) envRelated approx functionsRelated
 
-/-- Recursive-closure partial applications preserve the simulation invariants.
-This is Flapjack induction infrastructure. -/
-theorem partialRecClosureSimulation {C F : Type} (c : Config)
+/-- Every partial-application outcome is simulated, for ordinary and
+recursive closures, with timeout and success retaining the original state
+invariants. This is Flapjack induction infrastructure. -/
+theorem partialApplicationSimulation {C F : Type} (c : Config)
     (source : State (Spt ValApprox × C) F) (target : State C F)
-    (loc1 loc2 closureLoc : Option Nat) (supplied captured : List Value)
-    (functions : List (Nat × ClosLang.Exp)) (index : Nat) (targetFn : Value)
+    (loc1 loc2 : Option Nat) (sourceFn targetFn : Value)
     (first : Value) (rest targetArgs : List Value) (argsopt : Option (List Value))
     (partialValue : Value)
     (states : StateRel c (nextG source) source target)
-    (fnRelated : valueRelApp c (nextG source) (.recclosure closureLoc supplied captured functions index) targetFn argsopt)
+    (fnRelated : valueRelApp c (nextG source) sourceFn targetFn argsopt)
     (argsRelated : List.Forall₂ (ValueRel c (nextG source)) (first :: rest) targetArgs)
     (locRelated : loptRel targetFn (first :: rest).length loc1 loc2)
     (constraint : argsopt.isSome → argsopt = some (first :: rest) ∧ (first :: rest) ≠ [] ∧ ∃ exp env,
-      destClosure source.maxApp loc1 (.recclosure closureLoc supplied captured functions index) (first :: rest) =
-        some (.fullApp exp env []))
-    (found : destClosure source.maxApp loc1 (.recclosure closureLoc supplied captured functions index) (first :: rest) =
-      some (.partialApp partialValue))
+      destClosure source.maxApp loc1 sourceFn (first :: rest) = some (.fullApp exp env []))
+    (found : destClosure source.maxApp loc1 sourceFn (first :: rest) = some (.partialApp partialValue))
     (globals : stateGlobalsApprox source (nextG source))
     (oracle : isStateOracle (compileInc c) source.compileOracle)
     (oracleDisjoint : oracleGapproxDisjoint (nextG source) source.compileOracle) :
     ∃ sourceResult sourceFinal targetResult targetFinal,
-      evaluateApp loc1 (.recclosure closureLoc supplied captured functions index) (first :: rest) source =
-        (sourceResult, sourceFinal) ∧
+      evaluateApp loc1 sourceFn (first :: rest) source = (sourceResult, sourceFinal) ∧
       evaluateApp loc2 targetFn targetArgs target = (targetResult, targetFinal) ∧
       resultRel (List.Forall₂ (ValueRel c (nextG sourceFinal))) (ValueRel c (nextG sourceFinal))
         sourceResult targetResult ∧ StateRel c (nextG sourceFinal) sourceFinal targetFinal ∧
@@ -260,14 +178,21 @@ theorem partialRecClosureSimulation {C F : Type} (c : Config)
       isStateOracle (compileInc c) sourceFinal.compileOracle ∧
       oracleGapproxDisjoint (nextG sourceFinal) sourceFinal.compileOracle := by
   obtain ⟨_, locEq, fnRel⟩ := partialApplicationInputs c (nextG source) source.maxApp loc1
-    (.recclosure closureLoc supplied captured functions index) targetFn (first :: rest) argsopt partialValue
-    fnRelated constraint found
+    sourceFn targetFn (first :: rest) argsopt partialValue fnRelated constraint found
   subst loc1
   have maxEq : source.maxApp = target.maxApp := states.2.2.2.2.2.2.1
   have clockEq : source.clock = target.clock := states.2.2.2.2.1
-  obtain ⟨targetValue, targetFound, valueRel⟩ := relatedPartialRecClosure c (nextG source) source.maxApp
-    closureLoc loc2 supplied captured (first :: rest) targetArgs functions index targetFn partialValue
-    fnRel argsRelated locRelated found
+  obtain ⟨targetValue, targetFound, valueRel⟩ :
+      ∃ targetValue, destClosure source.maxApp loc2 targetFn targetArgs = some (.partialApp targetValue) ∧
+        ValueRel c (nextG source) partialValue targetValue := by
+    cases sourceFn with
+    | closure closureLoc supplied captured arity body =>
+      exact relatedPartialClosure c (nextG source) source.maxApp closureLoc loc2 supplied captured
+        (first :: rest) targetArgs arity body targetFn partialValue fnRel argsRelated locRelated found
+    | recclosure closureLoc supplied captured functions index =>
+      exact relatedPartialRecClosure c (nextG source) source.maxApp closureLoc loc2 supplied captured
+        (first :: rest) targetArgs functions index targetFn partialValue fnRel argsRelated locRelated found
+    | number _ | word64 _ | byteVector _ | refPtr _ _ | block _ _ => simp [destClosure] at found
   have targetNonempty : targetArgs ≠ [] := by
     intro eq
     subst targetArgs
@@ -307,61 +232,6 @@ theorem partialRecClosureSimulation {C F : Type} (c : Config)
       · simpa [stateGlobalsApprox, nextG, decClock] using globals
       · simpa [decClock] using oracle
       · simpa [nextG, decClock] using oracleDisjoint
-
-/-- Every partial-application outcome is simulated, for ordinary and
-recursive closures, with timeout and success retaining the original state
-invariants. This is Flapjack induction infrastructure. -/
-theorem partialApplicationSimulation {C F : Type} (c : Config)
-    (source : State (Spt ValApprox × C) F) (target : State C F)
-    (loc1 loc2 : Option Nat) (sourceFn targetFn : Value)
-    (first : Value) (rest targetArgs : List Value) (argsopt : Option (List Value))
-    (partialValue : Value)
-    (states : StateRel c (nextG source) source target)
-    (fnRelated : valueRelApp c (nextG source) sourceFn targetFn argsopt)
-    (argsRelated : List.Forall₂ (ValueRel c (nextG source)) (first :: rest) targetArgs)
-    (locRelated : loptRel targetFn (first :: rest).length loc1 loc2)
-    (constraint : argsopt.isSome → argsopt = some (first :: rest) ∧ (first :: rest) ≠ [] ∧ ∃ exp env,
-      destClosure source.maxApp loc1 sourceFn (first :: rest) = some (.fullApp exp env []))
-    (found : destClosure source.maxApp loc1 sourceFn (first :: rest) = some (.partialApp partialValue))
-    (globals : stateGlobalsApprox source (nextG source))
-    (oracle : isStateOracle (compileInc c) source.compileOracle)
-    (oracleDisjoint : oracleGapproxDisjoint (nextG source) source.compileOracle) :
-    ∃ sourceResult sourceFinal targetResult targetFinal,
-      evaluateApp loc1 sourceFn (first :: rest) source = (sourceResult, sourceFinal) ∧
-      evaluateApp loc2 targetFn targetArgs target = (targetResult, targetFinal) ∧
-      resultRel (List.Forall₂ (ValueRel c (nextG sourceFinal))) (ValueRel c (nextG sourceFinal))
-        sourceResult targetResult ∧ StateRel c (nextG sourceFinal) sourceFinal targetFinal ∧
-      stateGlobalsApprox sourceFinal (nextG sourceFinal) ∧
-      isStateOracle (compileInc c) sourceFinal.compileOracle ∧
-      oracleGapproxDisjoint (nextG sourceFinal) sourceFinal.compileOracle := by
-  cases sourceFn with
-  | closure closureLoc supplied captured arity body =>
-    exact partialClosureSimulation c source target loc1 loc2 closureLoc supplied captured arity body
-      targetFn first rest targetArgs argsopt partialValue states fnRelated argsRelated locRelated
-      constraint found globals oracle oracleDisjoint
-  | recclosure closureLoc supplied captured functions index =>
-    exact partialRecClosureSimulation c source target loc1 loc2 closureLoc supplied captured functions index
-      targetFn first rest targetArgs argsopt partialValue states fnRelated argsRelated locRelated
-      constraint found globals oracle oracleDisjoint
-  | number _ | word64 _ | byteVector _ | refPtr _ _ | block _ _ => simp [destClosure] at found
-
-/-- A source partial-application outcome satisfies the optimizer's complete
-application simulation predicate. This is Flapjack induction infrastructure
-for the partial branch of the nonempty application case. -/
-theorem knownAppPartialCase {C F : Type} (loc1 : Option Nat) (sourceFn : Value)
-    (first : Value) (rest : List Value) (s0 : State (Spt ValApprox × C) F) (partialValue : Value)
-    (found : destClosure s0.maxApp loc1 sourceFn (first :: rest) = some (.partialApp partialValue)) :
-    KnownAppSimulationAt loc1 sourceFn (first :: rest) s0 := by
-  intro res1 s loc2 targetFn targetArgs t0 c argsopt h
-  obtain ⟨run, fnRel, oracleDisjoint, _, _, _, _, _, _, _, oracle, argsRel, states, globals,
-    _, locRel, constraint, _⟩ := h
-  obtain ⟨sourceResult, sourceFinal, targetResult, targetFinal, sourceRun, targetRun,
-    resultRel, finalState, finalGlobals, finalOracle, finalDisjoint⟩ :=
-    partialApplicationSimulation c s0 t0 loc1 loc2 sourceFn targetFn first rest targetArgs
-      argsopt partialValue states fnRel argsRel locRel constraint found globals oracle oracleDisjoint
-  rw [run] at sourceRun
-  cases sourceRun
-  exact ⟨targetResult, targetFinal, targetRun, resultRel, finalState, finalGlobals, finalOracle, finalDisjoint⟩
 
 /-- An annotation selected from a sound function approximation is valid for
 the related runtime closure. This is Flapjack infrastructure for the

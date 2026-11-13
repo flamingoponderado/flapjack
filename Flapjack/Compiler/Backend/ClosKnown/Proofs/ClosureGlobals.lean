@@ -13,6 +13,15 @@ namespace Flapjack.Compiler.Backend.ClosKnown
 open ClosSem ClosProps
 open FlatProps (emptyGlobalBag)
 
+/-- Successful closure inspection accepts only closures and recursive closures. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "dest_closure_SOME_IMP"]
+theorem destClosureSomeShape (maxApp : Nat) (location : Option Nat) (function : ClosSem.Value)
+    (args : List ClosSem.Value) (result : AppKind)
+    (run : destClosure maxApp location function args = some result) :
+    (∃ loc supplied env arity body, function = .closure loc supplied env arity body) ∨
+      (∃ loc supplied env functions index, function = .recclosure loc supplied env functions index) := by
+  cases function <;> simp_all [destClosure]
+
 /-- Fully applying a safe closure to safe arguments produces a safe body,
 environment, and remaining arguments. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "dest_closure_Full_sgc_free"]

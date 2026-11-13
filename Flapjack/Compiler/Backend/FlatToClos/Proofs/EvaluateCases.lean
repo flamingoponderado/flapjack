@@ -65,12 +65,7 @@ def EvalSim {C F : Type} (env : FlatSem.Environment FlatSem.Value)
 /-- Compilation preserves the evaluation order of reversed argument lists. -/
 theorem compileExps_reverse (names : List (Option MlString)) (expressions : List FlatLang.Exp) :
     compileExps names expressions.reverse = (compileExps names expressions).reverse := by
-  have mapEq : ∀ xs : List FlatLang.Exp, compileExps names xs = xs.map (compileExp names) := by
-    intro xs
-    induction xs with
-    | nil => simp [compileExps]
-    | cons head tail ih => simp [compileExps, ih]
-  simp [mapEq]
+  simp [compileExps_eq_map]
 
 /-- The empty expression list preserves the related state and returns empty
 related lists. -/

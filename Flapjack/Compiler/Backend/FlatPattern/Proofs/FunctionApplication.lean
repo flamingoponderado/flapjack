@@ -10,14 +10,6 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (Result)
 
-/-- Application compilation keeps the operator and compiles its arguments. -/
-theorem compileExp_app (cfg : Config) (trace : BackendCommon.Tra) (op : FlatLang.Op)
-    (args : List FlatLang.Exp) :
-    (compileExp cfg (.app trace op args)).1 = (compileExps cfg args).1 ∧
-    (compileExp cfg (.app trace op args)).2.2 = .app trace op (compileExps cfg args).2.2 := by
-  cases compiled : compileExps cfg args with
-  | mk bound rest => cases rest with | mk flag output => simp [compileExp, compiled]
-
 /-- An argument-evaluation error propagates through an application. -/
 theorem evaluate_app_args_error {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (state next : FlatSem.State C F) (trace : BackendCommon.Tra) (op : FlatLang.Op)

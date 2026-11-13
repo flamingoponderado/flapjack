@@ -23,6 +23,15 @@ decreasing_by
     simp_wf
     omega
 
+/-- The source simplification bundle for approximations without bodies. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "val_approx_no_Labels_simp"]
+theorem valApproxNoLabelsSimp :
+    (∀ n m, valApproxNoLabels (.closNoInline m n) ↔ True) ∧
+    (∀ i, valApproxNoLabels (.int i) ↔ True) ∧
+    (valApproxNoLabels .other ↔ True) ∧
+    (valApproxNoLabels .impossible ↔ True) := by
+  simp [valApproxNoLabels]
+
 /-- Every stored global approximation is label-free. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "globals_approx_no_Labels_def"]
 def globalsApproxNoLabels (g : Spt ValApprox) : Prop :=

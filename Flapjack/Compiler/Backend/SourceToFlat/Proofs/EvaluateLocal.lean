@@ -17,61 +17,6 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
-/-- A successful local block supplies its bindings to the body, while only
-the body's environment escapes. The body premise is the declaration
-induction hypothesis, including its ordinary invariant and oracle premises. -/
-private theorem factoredDecCase_local_success {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (genv : GlobalEnv) (baseMap localMap bodyMap : Environment)
-    (baseEnv localEnv : SemEnv Value) (source middle last : State F) (flat : FlatSem.State C F)
-    (finish localNext bodyNext : NextIndices) (other : Set (Nat × IndexKind))
-    (localGen bodyGen : EnvironmentGenerationStore) (localCode bodyCode : List FlatLang.Exp)
-    (bodyResult : Result (SemEnv Value) Value)
-    (baseInv : GlobalEnvInv genv baseMap (fun _ => False) baseEnv)
-    (future : envGenFutureRel interp bodyGen source.evalState)
-    (localCase : FactoredDecCase interp transform genv source middle flat finish localNext other localGen
-      localMap localCode (.val localEnv))
-    (bodyIH : ∀ midGenv midFlat,
-      factoredInvariant interp transform localGen midGenv (localNext, finish, other) middle midFlat →
-      GlobalEnvInv midGenv (extendEnv localMap baseMap) (fun _ => False) (extendDecEnv localEnv baseEnv) →
-      envGenRel localGen middle.evalState → envGenFutureRel interp bodyGen middle.evalState →
-      FactoredDecCase interp transform midGenv middle last midFlat finish bodyNext other bodyGen bodyMap
-        bodyCode bodyResult) :
-    FactoredDecCase interp transform genv source last flat finish bodyNext other bodyGen bodyMap
-      (localCode ++ bodyCode) bodyResult := by
-  obtain ⟨midFlat, midGenv, localError, localRun, _, localPost, localSuccess, _⟩ := localCase
-  obtain ⟨localInvariant, localForward, localGrowth⟩ := localPost trivial
-  obtain ⟨localNone, localDomain, localGeneration, localEnvInv⟩ := localSuccess localEnv rfl
-  subst localError
-  have baseMid := globalEnvInv_growth genv midGenv localGrowth baseMap (fun _ => False) baseEnv baseInv
-  have combinedInv := globalEnvInv_append_factored midGenv localMap baseMap localEnv baseEnv
-    ⟨localDomain, localEnvInv, baseMid⟩
-  have futureMid := envGenFutureRel_forward interp bodyGen source.evalState middle.evalState ⟨future, localForward⟩
-  obtain ⟨lastFlat, lastGenv, bodyError, bodyRun, lastStates, bodyPost, bodySuccess, bodyErrors⟩ :=
-    bodyIH midGenv midFlat localInvariant combinedInv localGeneration futureMid
-  have flatRun : FlatSem.evaluateDecs flat (localCode ++ bodyCode) = (lastFlat, bodyError) := by
-    rw [FlatSem.evaluateDecs_append, localRun]
-    exact bodyRun
-  refine ⟨lastFlat, lastGenv, bodyError, flatRun, lastStates, ?_, bodySuccess, bodyErrors⟩
-  intro notAbort
-  obtain ⟨finalInvariant, bodyForward, bodyGrowth⟩ := bodyPost notAbort
-  exact ⟨finalInvariant, oracForwardRel_trans interp _ _ _ ⟨localForward, bodyForward⟩,
-    localGrowth.trans bodyGrowth⟩
-
-/-- Changing the returned compiler environment is irrelevant when the source
-declaration ended in an error. -/
-private theorem factoredDecCase_error_changeEnv {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (genv : GlobalEnv) (source last : State F) (flat : FlatSem.State C F)
-    (finish next : NextIndices) (other : Set (Nat × IndexKind)) (gen : EnvironmentGenerationStore)
-    (oldMap newMap : Environment) (code : List FlatLang.Exp) (error : ErrorResult Value)
-    (old : FactoredDecCase interp transform genv source last flat finish next other gen oldMap code (.err error)) :
-    FactoredDecCase interp transform genv source last flat finish next other gen newMap code (.err error) := by
-  obtain ⟨finalFlat, finalGenv, flatError, run, states, post, _, errors⟩ := old
-  refine ⟨finalFlat, finalGenv, flatError, run, states, post, ?_, errors⟩
-  intro resultEnv impossible
-  cases impossible
-
 /- Bounded versions retain the source clock bound across nested declarations. -/
 private theorem factoredDecBoundedIH_dmod {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
@@ -112,8 +57,10 @@ private theorem factoredDecBoundedIH_dmod {C F : Type} [Nonempty C]
     generation future bounded
   cases innerResult with
   | err error =>
-    exact factoredDecCase_error_changeEnv interp transform genv source innerLast flat finish innerNext other
-      innerGen innerEnv (liftEnv moduleName innerEnv) innerCode error inner
+    obtain ⟨finalFlat, finalGenv, flatError, run, states, post, _, errors⟩ := inner
+    refine ⟨finalFlat, finalGenv, flatError, run, states, post, ?_, errors⟩
+    intro resultEnv impossible
+    cases impossible
   | val returnedEnv =>
     obtain ⟨finalState, finalGenv, flatError, flatRun, states, post, success, _⟩ := inner
     refine ⟨finalState, finalGenv, flatError, flatRun, states, post, ?_, ?_⟩
@@ -178,21 +125,37 @@ private theorem factoredDecBoundedIH_dlocal {C F : Type} [Nonempty C]
       gen gen1 code1 (.err error) clockBound localRun invariant localCompiled envInv notTypeError generation firstFuture firstBound
     have combined := factoredDecCase_append_error interp transform genv env1 env2 source middle flat finish next1 next2
       other gen1 gen2 code1 code2 error localCase previous bounded validFinal
-    exact factoredDecCase_error_changeEnv interp transform genv source middle flat finish next2 other gen2
-      (extendEnv env2 env1) env2 (code1 ++ code2) error combined
+    obtain ⟨finalFlat, finalGenv, flatError, run, states, post, _, errors⟩ := combined
+    refine ⟨finalFlat, finalGenv, flatError, run, states, post, ?_, errors⟩
+    intro resultEnv impossible
+    cases impossible
   | val localEnv =>
     have bodyRun : EvaluateHOL.evaluateDecs middle (extendDecEnv localEnv sourceEnv) body = (sourceLast, result) := by
       have h := sourceRun
       simpa only [EvaluateHOL.evaluateDecs, localRun, clockFix] using h
     have localCase := localIH genv env env1 sourceEnv trace source middle flat start finish next1 other n n1
       gen gen1 code1 (.val localEnv) clockBound localRun invariant localCompiled envInv (by simp) generation firstFuture firstBound
-    apply factoredDecCase_local_success interp transform genv env env1 env2 sourceEnv localEnv source middle
-      sourceLast flat finish next1 next2 other gen1 gen2 code1 code2 result envInv future localCase
-    intro midGenv midFlat midInvariant midInv midGeneration midFuture
-    exact bodyIH midGenv (extendEnv env1 env) env2 (extendDecEnv localEnv sourceEnv) trace middle sourceLast midFlat
-      next1 finish next2 other n1 n2 gen1 gen2 code2 result
-      (Nat.le_trans (EvaluateHOL.evaluateDecsClockFull source middle sourceEnv locals _ localRun) clockBound) bodyRun midInvariant bodyCompiled midInv notTypeError
-      midGeneration midFuture bounded
+    obtain ⟨midFlat, midGenv, localError, localFlatRun, _, localPost, localSuccess, _⟩ := localCase
+    obtain ⟨localInvariant, localForward, localGrowth⟩ := localPost trivial
+    obtain ⟨localNone, localDomain, localGeneration, localEnvInv⟩ := localSuccess localEnv rfl
+    subst localError
+    have baseMid := globalEnvInv_growth genv midGenv localGrowth env (fun _ => False) sourceEnv envInv
+    have combinedInv := globalEnvInv_append_factored midGenv env1 env localEnv sourceEnv
+      ⟨localDomain, localEnvInv, baseMid⟩
+    have futureMid := envGenFutureRel_forward interp gen2 source.evalState middle.evalState ⟨future, localForward⟩
+    obtain ⟨lastFlat, lastGenv, bodyError, bodyFlatRun, lastStates, bodyPost, bodySuccess, bodyErrors⟩ :=
+      bodyIH midGenv (extendEnv env1 env) env2 (extendDecEnv localEnv sourceEnv) trace middle sourceLast midFlat
+        next1 finish next2 other n1 n2 gen1 gen2 code2 result
+        (Nat.le_trans (EvaluateHOL.evaluateDecsClockFull source middle sourceEnv locals _ localRun) clockBound)
+        bodyRun localInvariant bodyCompiled combinedInv notTypeError localGeneration futureMid bounded
+    have flatRun : FlatSem.evaluateDecs flat (code1 ++ code2) = (lastFlat, bodyError) := by
+      rw [FlatSem.evaluateDecs_append, localFlatRun]
+      exact bodyFlatRun
+    refine ⟨lastFlat, lastGenv, bodyError, flatRun, lastStates, ?_, bodySuccess, bodyErrors⟩
+    intro notAbort
+    obtain ⟨finalInvariant, bodyForward, bodyGrowth⟩ := bodyPost notAbort
+    exact ⟨finalInvariant, oracForwardRel_trans interp _ _ _ ⟨localForward, bodyForward⟩,
+      localGrowth.trans bodyGrowth⟩
 
 /-- Every singleton declaration has a bounded simulation, by structural
 induction on the source declaration and its nested declaration lists. -/

@@ -27,40 +27,6 @@ def BindingSimulation {C F : Type} (trace : BackendCommon.Tra) (upper : Nat)
     ∃ env2, FlatSem.evaluate env2 state [body] = (final, result) ∧
       aLookupRel (fun name => decNameToNum name < lower) Eq env2.v (bindings ++ base)
 
-/-- Empty work lists already evaluate the continuation in the original
-environment. -/
-theorem bindingSimulation_nil {C F : Type} (trace : BackendCommon.Tra) (upper : Nat) (body : FlatLang.Exp) :
-    @BindingSimulation C F trace upper [] body := by
-  intro lower state values pre bindings env final result base matched evaluated inputs preBound bound related itemBounds
-  cases values with
-  | nil =>
-    simp [FlatSem.pmatchList] at matched
-    subst bindings
-    exact ⟨env, by simpa [compilePatBindings] using evaluated, related⟩
-  | cons _ _ => simp [FlatSem.pmatchList] at matched
-
-/-- Wildcard case of the binding simulation; no environment entry is added. -/
-theorem bindingSimulation_any {C F : Type} (trace : BackendCommon.Tra) (upper key : Nat)
-    (expression body : FlatLang.Exp) (rest : List (FlatLang.Pat × Nat × FlatLang.Exp))
-    (ih : @BindingSimulation C F trace upper rest body) :
-    @BindingSimulation C F trace upper ((.pany, key, expression) :: rest) body := by
-  intro lower state values pre bindings env final result base matched evaluated inputs preBound bound related itemBounds
-  cases values with
-  | nil => simp [FlatSem.pmatchList] at matched
-  | cons value values =>
-    have tailMatch : FlatSem.pmatchList state (rest.map Prod.fst) values pre = .match bindings := by
-      simpa [FlatSem.pmatchList, FlatSem.pmatch] using matched
-    have tailEval : FlatSem.evaluate env state [(compilePatBindings trace upper rest body).2] = (final, result) := by
-      simpa [compilePatBindings] using evaluated
-    have tailInputs : BindingInputs lower upper (compilePatBindings trace upper rest body).1 env state rest values := by
-      simp only [compilePatBindings] at inputs
-      cases inputs with | cons _ tail => exact tail
-    have tailBounds : ∀ item ∈ rest, (∀ n ∈ FlatLang.patBindings item.1, decNameToNum n < lower) ∧
-        lower < item.2.1 ∧ item.2.1 < upper := by
-      intro item member
-      exact itemBounds item (by simp [member])
-    exact ih lower state values pre bindings env final result base tailMatch tailEval tailInputs preBound bound related tailBounds
-
 /-- A successful literal match leaves its incoming bindings unchanged. -/
 theorem pmatch_literal_bindings {C F : Type} (state : FlatSem.State C F) (lit : Lit)
     (value : FlatSem.Value) (pre next : List (VarN × FlatSem.Value))
@@ -467,8 +433,31 @@ theorem compilePatBindings_simulation {C F V : Type} (lower : Nat) (base : List 
   have simulation : @BindingSimulation C F trace upper todo body := by
     clear premises
     induction upper, todo using compilePatBindings.induct trace body with
-    | case1 i => exact bindingSimulation_nil trace i body
-    | case2 i key expression rest ih => exact bindingSimulation_any trace i key expression body rest ih
+    | case1 i =>
+      intro lower state values pre bindings env final result base matched evaluated inputs preBound bound related itemBounds
+      cases values with
+      | nil =>
+        simp [FlatSem.pmatchList] at matched
+        subst bindings
+        exact ⟨env, by simpa [compilePatBindings] using evaluated, related⟩
+      | cons _ _ => simp [FlatSem.pmatchList] at matched
+    | case2 i key expression rest ih =>
+      intro lower state values pre bindings env final result base matched evaluated inputs preBound bound related itemBounds
+      cases values with
+      | nil => simp [FlatSem.pmatchList] at matched
+      | cons value values =>
+        have tailMatch : FlatSem.pmatchList state (rest.map Prod.fst) values pre = .match bindings := by
+          simpa [FlatSem.pmatchList, FlatSem.pmatch] using matched
+        have tailEval : FlatSem.evaluate env state [(compilePatBindings trace i rest body).2] = (final, result) := by
+          simpa [compilePatBindings] using evaluated
+        have tailInputs : BindingInputs lower i (compilePatBindings trace i rest body).1 env state rest values := by
+          simp only [compilePatBindings] at inputs
+          cases inputs with | cons _ tail => exact tail
+        have tailBounds : ∀ item ∈ rest, (∀ n ∈ FlatLang.patBindings item.1, decNameToNum n < lower) ∧
+            lower < item.2.1 ∧ item.2.1 < i := by
+          intro item member
+          exact itemBounds item (by simp [member])
+        exact ih lower state values pre bindings env final result base tailMatch tailEval tailInputs preBound bound related tailBounds
     | case3 i key expression rest lit ih => exact bindingSimulation_lit trace i key lit expression body rest ih
     | case4 i key expression rest name used continuation compiled ih =>
       exact bindingSimulation_var trace i key name expression body rest ih

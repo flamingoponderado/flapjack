@@ -25,6 +25,14 @@ def uniqueSetGlobals {α β : Type} (es : List ClosLang.Exp)
     (co : Nat → α × List ClosLang.Exp × β) : Prop :=
   ∀ n k, elistGlobals (es ++ (firstNExps co n).flatten) k ≤ 1
 
+/-- A write-free expression has the same uniqueness condition as an empty prefix. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "set_globals_empty_unique_set_globals"]
+theorem setGlobalsEmptyUniqueSetGlobals {α β : Type} (e : ClosLang.Exp)
+    (co : Nat → α × List ClosLang.Exp × β) (empty : setGlobals e = emptyGlobalBag) :
+    uniqueSetGlobals [e] co ↔ uniqueSetGlobals [] co := by
+  simp [uniqueSetGlobals, elistGlobals, empty, FlatProps.unionGlobalBag,
+    FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag]
+
 /-- Shifting an oracle preserves uniqueness of program and oracle writes. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "unique_set_globals_shift_seq"]
 theorem uniqueSetGlobalsShift {α β : Type} (es : List ClosLang.Exp)

@@ -83,4 +83,24 @@ theorem stateRelGetGlobal {C F : Type} (c : Config) (g : Spt ValApprox)
   | none => simp [optionRel] at related
   | some v2 => exact ⟨v2, found, related⟩
 
+/-- Corresponding reference stores relate the result of either lookup. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "state_rel_opt_rel_refs"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRelOptRelRefs {C F : Type} (c : Config) (g : Spt ValApprox)
+    (s : State (Spt ValApprox × C) F) (t : State C F) (n : Nat)
+    (r1 r2 : Option (Ref Value)) :
+    (StateRel c g s t ∧ s.refs.lookup n = r1 →
+      ∃ r2, t.refs.lookup n = r2 ∧ optionRel (RefRel c g) r1 r2) ∧
+    (StateRel c g s t ∧ t.refs.lookup n = r2 →
+      ∃ r1, s.refs.lookup n = r1 ∧ optionRel (RefRel c g) r1 r2) := by
+  constructor
+  · rintro ⟨states, found⟩
+    exact ⟨t.refs.lookup n, rfl, by
+      rw [← found]
+      exact ClosMti.fmapRel_lookup states.2.2.2.2.2.2.2.2.1 n⟩
+  · rintro ⟨states, found⟩
+    exact ⟨s.refs.lookup n, rfl, by
+      rw [← found]
+      exact ClosMti.fmapRel_lookup states.2.2.2.2.2.2.2.2.1 n⟩
+
 end Flapjack.Compiler.Backend.ClosKnown.Relations.StateRelation

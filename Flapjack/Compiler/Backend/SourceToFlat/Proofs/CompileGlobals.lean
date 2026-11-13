@@ -21,17 +21,6 @@ theorem opGlobalBag_astOpToFlatOp (op : AstHOL.Op) :
 /-- Safety of one compiled expression with respect to global writes. -/
 def CompiledGlobalSafe (e : FlatLang.Exp) : Prop := esgcFree e ∧ setGlobals e = emptyGlobalBag
 
-private theorem reverse_safe (xs : List FlatLang.Exp) (hfree : esgcFreeList xs)
-    (hbag : elistGlobals xs = emptyGlobalBag) :
-    esgcFreeList xs.reverse ∧ elistGlobals xs.reverse = emptyGlobalBag := by
-  constructor
-  · apply (FlatProps.esgcFreeList_iff _).mpr
-    intro x hx
-    exact (FlatProps.esgcFreeList_iff xs).mp hfree x (List.mem_reverse.mp hx)
-  · apply (elistGlobals_eq_empty _).mpr
-    intro x hx
-    exact (elistGlobals_eq_empty xs).mp hbag x (List.mem_reverse.mp hx)
-
 private theorem foldLets_safe (xs : List FlatLang.Exp) (body : FlatLang.Exp)
     (hfree : esgcFreeList xs) (hbag : elistGlobals xs = emptyGlobalBag)
     (hbody : CompiledGlobalSafe body) :
@@ -75,8 +64,9 @@ theorem compileExp_globalSafe (t : List MlString) (env : Environment) :
       by_cases empty : op = .aallocEmpty
       · subst op
         simp only [compileExp, ↓reduceIte]
-        have rev := reverse_safe (compileExps t env es) hs.1 hs.2
-        apply foldLets_safe _ _ rev.1 rev.2
+        apply foldLets_safe
+        · simpa only [FlatProps.esgcFreeList_iff, List.mem_reverse] using hs.1
+        · simpa only [elistGlobals_reverse] using hs.2
         simp [CompiledGlobalSafe, esgcFree, esgcFreeList, setGlobals, elistGlobals, opGlobalBag, Flapjack.bagUnion_empty_right]
       · by_cases eval : op = .eval
         · subst op

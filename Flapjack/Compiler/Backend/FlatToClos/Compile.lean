@@ -67,6 +67,14 @@ def compileFuns (m : List (Option MlString)) (functions : List (MlString × MlSt
 termination_by sizeOf functions
 end
 
+/-- The list traversal is the map of the single-expression compiler. This
+Flapjack lemma supports the source-order correspondence proof. -/
+theorem compileExps_eq_map (names : List (Option MlString)) (expressions : List FlatLang.Exp) :
+    compileExps names expressions = expressions.map (compileExp names) := by
+  induction expressions with
+  | nil => simp [compileExps]
+  | cons head tail ih => simp [compileExps, ih]
+
 /-- List-valued flat-to-closure translation; interpreter attachment is a
 separate source definition and is not included here. -/
 @[hol "cakeml/compiler/backend/flat_to_closScript.sml" "compile_def"]

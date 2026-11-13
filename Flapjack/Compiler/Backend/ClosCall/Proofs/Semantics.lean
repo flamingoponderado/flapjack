@@ -17,7 +17,7 @@ namespace Flapjack.Compiler.Backend.ClosCall
 open Flapjack ClosSem ClosLang ClosProps SemanticPrimitivesHOL SemanticPrimitivesProps
 
 /-- HOL uses distinct-key updates to identify the two code-map constructions; this local codec fact packages that calculation. -/
-private theorem alistToFmapDistinct {K V : Type} [DecidableEq K] (xs : List (K × V))
+theorem alistToFmapDistinct {K V : Type} [DecidableEq K] (xs : List (K × V))
     (distinct : (xs.map Prod.fst).Nodup) :
     HolFiniteMapExact.alistToFmap xs = HolFiniteMapExact.empty.updateListEq xs := by
   have decEq : (inferInstance : DecidableEq K) = Classical.typeDecidableEq K := Subsingleton.elim _ _
@@ -61,7 +61,7 @@ private theorem initialCodeIncludes (aux : List (Nat × Nat × ClosLang.Exp))
   rw [alistToFmapLookup]
   exact found
 /-- Flapjack codec infrastructure equating the two canonical update operations at numeric keys. -/
-private theorem updateListCodec {V : Type} (xs : List (Nat × V)) :
+theorem updateListCodec {V : Type} (xs : List (Nat × V)) :
     HolFiniteMapExact.holUpdateList HolFiniteMapExact.holEmpty xs = HolFiniteMapExact.empty.updateListEq xs := by
   change @HolFiniteMapExact.updateListEq Nat V (Classical.typeDecidableEq Nat) HolFiniteMapExact.empty xs =
     @HolFiniteMapExact.updateListEq Nat V instDecidableEqNat HolFiniteMapExact.empty xs

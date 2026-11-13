@@ -15,6 +15,14 @@ with `python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-p
 This compares complete compiler output, diagnostics, and exit status; it is
 not a general equivalence proof.
 
+At Flapjack commit `3027f7f3a2`, a rebuilt `cake` matched the pinned CakeML
+compiler on all 143 fixed corpus cases, including output, diagnostics and exit
+status.
+
+At `e38869acea`, all 38 structured templates matched with seed `20261111`, as
+did 40 structured programs with varied backend options and seed `20261112`.
+Both runs used a 90-second timeout per case.
+
 At Flapjack commit `05992bd4b9`, all 143 fixed corpus cases matched the
 compiler built from the pinned CakeML submodule revision `857f0d98da8f`.
 
@@ -1203,6 +1211,44 @@ python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake 
   --config-error-cases 0 --sexp-cases 0 --byte-cases 0 --structured-cases 0 \
   --lex-cases 0 --token-cases 0 --raw-byte-cases 0 --edge-seed 992414 --timeout 20
 ```
+
+On 2026-11-11, seed `20261113` also matched complete RISC-V output for 25
+composed programs and 25 composed programs with varied backend options:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 0 --compile-cases 0 --compile-config-cases 0 --rich-cases 0 \
+  --extended-cases 0 --composed-cases 25 --composed-config-cases 25 \
+  --integration-cases 0 --declaration-cases 0 --handler-cases 0 --annotation-cases 0 \
+  --config-cases 0 --config-error-cases 0 --sexp-cases 0 --byte-cases 0 \
+  --structured-cases 0 --lex-cases 0 --token-cases 0 --raw-byte-cases 0 \
+  --compile-seed 20261113 --timeout 45
+```
+
+A further seed matched complete RISC-V output for 50 extended and 50 composed
+programs, 30 composed programs with varied backend options, and type-mode output
+for 200 cross-context cases:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --type-cases 0 --compile-cases 0 --compile-config-cases 0 --rich-cases 0 \
+  --extended-cases 50 --composed-cases 50 --composed-config-cases 30 \
+  --integration-cases 0 --declaration-cases 0 --handler-cases 0 --annotation-cases 0 \
+  --cross-context-cases 200 --config-cases 0 --config-error-cases 0 --sexp-cases 0 \
+  --byte-cases 0 --structured-cases 0 --lex-cases 0 --token-cases 0 --raw-byte-cases 0 \
+  --compile-seed 20261114 --edge-seed 20261114 --timeout 45
+```
+
+The Flapjack executable revisions for the `20261113` and `20261114` runs
+were not recorded. The results were recorded in commits `f325ff36b8` and
+`85ad63bcfd`, respectively; those commits do not establish which executable
+revision was tested.
+
+The same harness also compared type reports for parentheses and local bindings
+nested 40,000 levels deep using `--nesting-depth 40000` with the case counts
+above set to zero. This checks finite inputs; it does not prove that the
+bounded parser has sufficient fuel for all inputs. The Flapjack executable
+revision was not recorded; the result was recorded in `5e8be42bd8`.
 
 `python3 scripts/check-cake-benchmark-parity.py` compares the complete RISC-V
 output for 28 benchmark programs, three bootstrap hello programs, and the

@@ -173,11 +173,12 @@ private theorem simpleShift {C D F : Type} (vr : Value → Value → Prop)
     ∃ targetFinal result', resultRel vr vr result result' ∧ sr sourceFinal targetFinal ∧
       doApp target (.src (.shift width shift amount)) values' = some (targetFinal, result') := by
   have run' : applyNumericProjection source (.shift width shift amount) values divExnV = some (sourceFinal, result) := by
-    simpa [doApp_shift_projection] using run
+    simpa [doApp, doAppNumeric, shift_projection_eq] using run
   obtain ⟨targetFinal, result', targetRun, finalStates, resultRel⟩ :=
     simpleNumericProjection vr sr simple simpleState source target sourceFinal (.shift width shift amount) values values' divExnV result
       states related (basicRelConvNil vr simple _) run'
-  exact ⟨targetFinal, result', resultRel, finalStates, by simpa [doApp_shift_projection] using targetRun⟩
+  exact ⟨targetFinal, result', resultRel, finalStates, by
+    simpa [doApp, doAppNumeric, shift_projection_eq] using targetRun⟩
 
 private theorem simpleEquality {C D F : Type} (vr : Value → Value → Prop)
     (sr : State C F → State D F → Prop) (simple : simpleValueRel vr)

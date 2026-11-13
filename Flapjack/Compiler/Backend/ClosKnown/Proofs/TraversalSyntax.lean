@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxSyntax
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SourceEquations
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Syntax
 public import Flapjack.Compiler.Backend.ClosOp.Proofs.SmartAnnotations
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.TicksSyntax
 
 @[expose] public section
 
@@ -158,46 +159,6 @@ theorem knownVarsOp (c : Config) (trace : BackendCommon.Tra) (op : ClosLang.Op)
       cases run
       simpa using And.intro outSafe opSafe
 
-/-- Conditional case of the source optimizer annotation invariant. -/
-@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_every_Fn_vs_NONE"]
-theorem knownVarsIf (c : Config) (trace : BackendCommon.Tra) (x y z : ClosLang.Exp)
-    (env : List ValApprox) (globals : Spt ValApprox)
-    (thirdIH : ∀ ea1 g1 ea2 g2, (ea1, g1) = knownListTotal c [x] env globals ∧
-      (ea2, g2) = knownListTotal c [y] env g1 → KnownVarsInvariant c [z] env g2)
-    (secondIH : ∀ ea1 g1, (ea1, g1) = knownListTotal c [x] env globals → KnownVarsInvariant c [y] env g1)
-    (firstIH : KnownVarsInvariant c [x] env globals) :
-    KnownVarsInvariant c [.ifThenElse trace x y z] env globals := by
-  intro eas next ⟨run, annotations, safe, globalSafe⟩
-  have parts : everyFnVarsNone [x] ∧ everyFnVarsNone [y] ∧ everyFnVarsNone [z] := by
-    simpa [everyFnVarsNone, fnVarsNoneExp] using annotations
-  cases h1 : knownListTotal c [x] env globals with
-  | mk ea1 g1 =>
-    obtain ⟨x', a1, eq1⟩ := knownListTotal_single_result c x env globals g1 ea1 h1
-    subst ea1
-    have r1 := firstIH [(x', a1)] g1 ⟨h1, parts.1, safe, globalSafe⟩
-    cases h2 : knownListTotal c [y] env g1 with
-    | mk ea2 g2 =>
-      obtain ⟨y', a2, eq2⟩ := knownListTotal_single_result c y env g1 g2 ea2 h2
-      subst ea2
-      have r2 := secondIH [(x', a1)] g1 h1.symm [(y', a2)] g2 ⟨h2, parts.2.1, safe, r1.2.2⟩
-      cases h3 : knownListTotal c [z] env g2 with
-      | mk ea3 g3 =>
-        obtain ⟨z', a3, eq3⟩ := knownListTotal_single_result c z env g2 g3 ea3 h3
-        subst ea3
-        have r3 := thirdIH [(x', a1)] g1 [(y', a2)] g2 ⟨h1.symm, h2.symm⟩ [(z', a3)] g3
-          ⟨h3, parts.2.2, safe, r2.2.2⟩
-        rw [knownListTotal_if, h1] at run
-        dsimp only at run
-        rw [h2] at run
-        dsimp only at run
-        rw [h3] at run
-        simp [knownSourceHead] at run
-        rcases run with ⟨rfl, rfl⟩
-        have merged : valApproxVarsNone (mergeHOL a2 a3) := valApproxVarsNoneMerge a2 a3
-          ⟨by simpa using r2.2.1, by simpa using r3.2.1⟩
-        simp [everyFnVarsNone, fnVarsNoneExp] at r1 r2 r3 ⊢
-        exact ⟨⟨r1.1, r2.1, r3.1⟩, merged, r3.2.2⟩
-
 /-- Let-binding case of the source optimizer annotation invariant. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_every_Fn_vs_NONE"]
 theorem knownVarsLet (c : Config) (trace : BackendCommon.Tra) (xs : List ClosLang.Exp)
@@ -303,15 +264,6 @@ theorem knownVarsFn (c : Config) (name : Basis.Pure.MlString.MlString)
       unfold closApproxHOL
       split <;> simp [valApproxVarsNone, parts.2]
 
-/-- Tick insertion preserves the closure annotation predicate. -/
-private theorem ticksVarsNone (trace : BackendCommon.Tra) (index n : Nat) (e : ClosLang.Exp) :
-    everyFnVarsNone [ticks trace index n e] ↔ everyFnVarsNone [e] := by
-  induction n generalizing index e with
-  | zero => rfl
-  | succ n ih =>
-    simpa [ticks, everyFnVarsNone, fnVarsNoneExp] using
-      (ih (index + 1) (.tick (BackendCommon.mkCons trace index) e))
-
 /-- Application case of the source optimizer annotation invariant, including
 the recursive inlining branch. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_every_Fn_vs_NONE"]
@@ -363,7 +315,7 @@ theorem knownVarsApp (c : Config) (trace : BackendCommon.Tra) (loc : Option Nat)
           subst inlineEa
           have rBody := bodyInvariant [(inlineExpr, inlineApprox)] inlineG ⟨hb, bodySafe, rArgs.2.1, rFun.2.2⟩
           have inlineSafe : everyFnVarsNone [inlineExpr] := by simpa using rBody.1
-          have tickSafe := (ticksVarsNone trace 1 xs.length inlineExpr).mpr inlineSafe
+          have tickSafe := ticks_varsNone trace 1 xs.length inlineExpr inlineSafe
           simp only [decision] at run
           rw [hb] at run
           simp at run

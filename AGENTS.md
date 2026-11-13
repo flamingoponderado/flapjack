@@ -501,10 +501,10 @@ its witness, and occurrence in the elaborated type. Use manifest status
 parameter and producer lists. The source-review note names every listed input
 and producer and compares the entire HOL declaration, including all computed
 maps. Syntactic and elaborated checks do not establish HOL correspondence.
-The checker supports `chain_exps_semantics` and `chain_exps_semantics_call` in
-their closure-to-BVL counterpart module, and `FUNION_FEMPTY_FUPDATE_LIST` in
-its closure-call counterpart. Expand that scope only after adding checks and
-source review for the new carrier shape.
+The checker supports `chain_exps_semantics`, `chain_exps_semantics_call`, and
+`semantics_cond_call_compile_inc` in their closure-to-BVL counterpart modules,
+and `FUNION_FEMPTY_FUPDATE_LIST` in its closure-call counterpart. Expand that
+scope only after adding checks and source review for the new carrier shape.
 The elaborated binder guard examines top-level map binders after reduction; it
 does not inspect maps nested inside binder types or within propositions.
 

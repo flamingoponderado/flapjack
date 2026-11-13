@@ -1,6 +1,7 @@
 module
 
-public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpSetGlobal
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationOpOrdinary
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationGlobal
 
 @[expose] public section
 
@@ -107,12 +108,12 @@ theorem globalSelectedSimulation {C F : Type} (c : Config) (tree : Spt ValApprox
       argsRun targetArgsRun states argsRelated ?_ run noType
     intro vs ws next value eq rel app
     have approx := List.rel_reverse (argsApprox vs eq)
-    obtain ⟨_, _, _, stateEq, valueEq⟩ := knownGlobalIntShape index (argEas.map Prod.snd).reverse
+    obtain ⟨_, empty, _, stateEq, valueEq⟩ := knownGlobalIntShape index (argEas.map Prod.snd).reverse
       g0 g i vs.reverse middle next value known approx globals app
-    have targetApp := (knownGlobalIntReplacement c tree index (argEas.map Prod.snd).reverse
-      g0 g i vs.reverse ws middle next target value known approx rel globals app).2.2
+    rw [empty] at rel
+    cases rel
     subst value
-    exact ⟨stateEq, targetApp, .number i⟩
+    exact ⟨stateEq, by simp [doApp, applyNumeric, doIntApp], .number i⟩
   | tuple tag elements =>
     cases elements with
     | nil =>
@@ -121,104 +122,13 @@ theorem globalSelectedSimulation {C F : Type} (c : Config) (tree : Spt ValApprox
         argsRun targetArgsRun states argsRelated ?_ run noType
       intro vs ws next value eq rel app
       have approx := List.rel_reverse (argsApprox vs eq)
-      obtain ⟨_, _, _, stateEq, valueEq⟩ := knownGlobalEmptyTupleShape index (argEas.map Prod.snd).reverse
+      obtain ⟨_, empty, _, stateEq, valueEq⟩ := knownGlobalEmptyTupleShape index (argEas.map Prod.snd).reverse
         g0 g tag vs.reverse middle next value known approx globals app
-      have targetApp := (knownGlobalEmptyTupleReplacement c tree index (argEas.map Prod.snd).reverse
-        g0 g tag vs.reverse ws middle next target value known approx rel globals app).2.2
+      rw [empty] at rel
+      cases rel
       subst value
-      exact ⟨stateEq, targetApp, .block tag [] [] .nil⟩
+      exact ⟨stateEq, by simp [doApp, applyBlock], .block tag [] [] .nil⟩
     | cons first rest => simpa [Ordinary.selectedOutput] using fallback
   | _ => simpa [Ordinary.selectedOutput] using fallback
-
-/-- The closure state uses canonical finite-map fields. -/
-theorem holFmapAsFiniteSupportWitness {C F : Type} :
-    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
-      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
-  ClosSem.holFmapAsFiniteSupportWitness
-
-/-- Global-read case of the optimizer simulation. -/
-@[hol "cakeml/compiler/backend/proofs/clos_knownProofScript.sml" "known_correct0"
-  (fmap_as_finite_support := [refs, code])]
-theorem knownCorrect0OpGlobal {C F : Type} (trace : BackendCommon.Tra) (index : Nat)
-    (xs : List ClosLang.Exp) (env1full : List Value) (s0 : ClosSem.State (Spt ValApprox × C) F)
-    (argsIH : KnownSimulationAt xs env1full s0) : KnownSimulationAt [.op trace (.globOp (.global index)) xs] env1full s0 := by
-  intro res1 s env1 xenv1 env2 xenv2 t0 c g0 g aenv eas h
-  obtain ⟨run, known, state, inputSyntax, coSyntax, disjoint, oracle, stateOracleDisjoint,
-    exprSafe, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
-    sub0, sub1, mono, free, envRel, unique, stateOracle, envEq, noType⟩ := h
-  have argsUnique : uniqueSetGlobals xs s0.compileOracle := by
-    simpa [uniqueSetGlobals, elistGlobals_append, elistGlobals, setGlobals, opGlobalBag,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using unique
-  have argsDisjoint : mglobalsDisjoint s0.globals xs := by
-    simpa [mglobalsDisjoint, elistGlobals, setGlobals, opGlobalBag,
-      FlatProps.unionGlobalBag, FlatProps.emptyGlobalBag, Flapjack.bagUnion, Flapjack.emptyBag] using disjoint
-  have argsSafe : ∀ e ∈ xs, esgcFree e := by
-    have safeOp := exprSafe (.op trace (.globOp (.global index)) xs) (by simp)
-    simpa [esgcFree, esgcFreeList_iff] using safeOp
-  have argsSyntax : everyFnVarsNone xs := by
-    simpa [everyFnVarsNone, fnVarsNoneExp] using inputSyntax
-  have argsFree : fvMax env1.length xs := by
-    simpa [fvMax, freeVars, freeVarExp] using free
-  cases hk : knownListTotal c xs aenv g0 with
-  | mk argEas g1 =>
-    cases ho : knownOpHOL (.globOp (.global index)) (argEas.map Prod.snd).reverse g1 with
-    | mk a g2 =>
-      rw [knownListTotal_op, hk] at known
-      dsimp only at known
-      rw [ho] at known
-      dsimp only at known
-      change ([(Ordinary.selectedOutput trace (.globOp (.global index)) a (argEas.map Prod.fst), a)], g2) = (eas, g) at known
-      simp only [Prod.mk.injEq] at known
-      rcases known with ⟨rfl, rfl⟩
-      have ⟨subArgs, subOp⟩ := subsptKnownOpElistGlobals c xs aenv g0 argEas g1
-        (.globOp (.global index)) (argEas.map Prod.snd).reverse g2 a ⟨hk, ho, sub0, by simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag]⟩
-      have subArgsNext : sptSubspt g1 (nextG s0) := by
-        intro key member
-        obtain ⟨mid, eq1⟩ := subOp key member
-        obtain ⟨last, eq2⟩ := sub1 key mid
-        exact ⟨last, eq2.trans eq1⟩
-      cases hr : evaluate xs env1full s0 with
-      | mk argResult middle =>
-        have argsNoType : argResult ≠ .err (.abort .typeError) := by
-          intro eq
-          subst argResult
-          rw [evaluate_ordinaryOp_eq trace (.globOp (.global index)) xs env1full s0 (by simp) (by simp), hr] at run
-          simp at run
-          rcases run with ⟨rfl, rfl⟩
-          exact noType rfl
-        obtain ⟨targetArgResult, targetMiddle, targetArgs, argsRelated, midState, midGlobals,
-            midOracleState, midOracle⟩ := argsIH argResult middle env1 xenv1 env2 xenv2 t0 c g0 g1
-          aenv argEas ⟨hr, hk, state, argsSyntax, coSyntax, argsDisjoint, oracle, stateOracleDisjoint,
-            argsSafe, safe, envSafe, approxRel, oracleSafe, globalSafe, approxSafe, globals,
-            subArgs, subArgsNext, mono, argsFree, envRel, argsUnique, stateOracle, envEq, argsNoType⟩
-        have startSub : sptSubspt g0 (nextG s0) := by
-          intro key member
-          obtain ⟨mid, eq1⟩ := sub0 key member
-          obtain ⟨last, eq2⟩ := sub1 key mid
-          exact ⟨last, eq2.trans eq1⟩
-        have startGlobals := stateGlobalsApproxSubspt g0 (nextG s0) s0 ⟨startSub, globals⟩
-        have startOracle := oracleGapproxDisjointSubspt g0 (nextG s0) s0.compileOracle ⟨startSub, oracle⟩
-        have argApprox := CorrectApprox.Total.knownCorrectApprox c xs aenv g0 argEas g1 env1 xenv1 s0
-          argResult middle ⟨hk, by simpa [envEq] using hr, argsUnique, approxRel, startGlobals,
-            argsDisjoint, startOracle, safe, by simpa [← envEq] using envSafe, argsSafe, approxSafe, globalSafe⟩
-        have nextTree := nextGEvaluateSubspt xs env1full s0 argResult middle ⟨mono, hr⟩
-        have subMiddle : sptSubspt g1 (nextG middle) := by
-          intro key member
-          obtain ⟨mid, eq1⟩ := subArgsNext key member
-          obtain ⟨last, eq2⟩ := nextTree key mid
-          exact ⟨last, eq2.trans eq1⟩
-        have middleApprox := stateGlobalsApproxSubspt g1 (nextG middle) middle ⟨subMiddle, midGlobals⟩
-        obtain ⟨targetResult, targetFinal, targetRun, resultRelated, finalState⟩ :=
-          globalSelectedSimulation c (nextG middle) trace index a g1 g2 argEas xs env1full (env2 ++ xenv2)
-            s0 middle t0 targetMiddle argResult targetArgResult res1 s ho hr targetArgs midState
-            argsRelated argApprox.2 middleApprox run noType
-        have ⟨nextEq, finalGlobals, finalOracle, finalDisjoint⟩ :=
-          Ordinary.ordinaryOpStateInvariants trace (.globOp (.global index)) xs env1full s0 middle s
-            argResult res1 (by simp) (by simp) (by simp [opGlobalBag, FlatProps.emptyGlobalBag, Flapjack.emptyBag])
-            hr run midGlobals midOracleState midOracle
-        exact ⟨targetResult, targetFinal, by simpa using targetRun,
-          by simpa [nextEq] using resultRelated, by simpa [nextEq] using finalState,
-          finalGlobals, finalOracle, finalDisjoint⟩
-
 
 end Flapjack.Compiler.Backend.ClosKnown.Simulation.Global
