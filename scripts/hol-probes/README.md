@@ -9953,3 +9953,16 @@ Regenerate with
 `HOL_PROBE_ONLY=bag_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean
 correspondence.
+
+`hol_mergesort_typed_probe.out` captures the typed statements of the HOL
+`mergesort` theory declarations ported in `Flapjack/Misc/Mergesort.lean` from
+the built HOL4 core theory (no rebuild): `merge_def`, `merge_empty` (with its
+vacuous independently typed `acc` binder), `merge_sorted`, the two
+`merge_tail_correct` theorems, `mergesortN_def`, `mergesortN_correct`,
+`mergesortN_sorted`, `sort2_def`, `sort2_sorted`, `sort2_tail_correct`,
+`sort3_def`, `sort3_sorted`, `sort3_tail_correct`, and typed statement parses of
+the `[local]` theorems `mem_sorted_append`, `merge_last_lem1` and
+`merge_last_lem2` (parses, not proof replays). Regenerate with
+`HOL_PROBE_ONLY=hol_mergesort_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.

@@ -4677,6 +4677,10 @@ run_probe hol_mergesort_probeScript.sml hol_mergesort_probe.out \
   sort2_type sort3_type merge_type mergesortN_type sort2_lt sort2_eq_le sort3_all sort3_dup_le merge_basic merge_unsorted merge_left_empty merge_nontotal msn_full msn_prefix msn_over msn_three_short msn_nontotal msn_zero \
   "$repo_dir/HOL/src/sort/mergesortScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe hol_mergesort_typed_probeScript.sml hol_mergesort_typed_probe.out \
+  mem_sorted_append_typed merge_def_typed merge_empty_typed merge_last_lem1_typed merge_last_lem2_typed merge_sorted_typed merge_tail_correct1_typed merge_tail_correct2_typed mergesortN_def_typed mergesortN_correct_typed mergesortN_sorted_typed sort2_def_typed sort2_sorted_typed sort2_tail_correct_typed sort3_def_typed sort3_sorted_typed sort3_tail_correct_typed \
+  "$repo_dir/HOL/src/sort/mergesortScript.sml" "$cake_dir/pancake"
+
 run_probe bag_typed_probeScript.sml bag_typed_probe.out \
   bag_type EMPTY_BAG_typed BAG_INN_typed BAG_IN_typed BAG_UNION_typed BAG_INSERT_typed SUB_BAG_typed BAG_ALL_DISTINCT_typed BAG_OF_SET_typed SET_OF_BAG_typed FINITE_BAG_typed FINITE_EMPTY_BAG_typed FINITE_BAG_INSERT_typed FINITE_BAG_UNION_1_typed BAG_UNION_EMPTY_typed BAG_ALL_DISTINCT_SUB_BAG_typed BAG_IMAGE_DEF_typed BAG_FILTER_DEF_typed BAG_CARD_typed BAG_CARD_RELn_typed SUB_BAG_CARD_typed FINITE_SUB_BAG_typed FINITE_BAG_FILTER_typed \
   "$repo_dir/HOL/src/bag/bagScript.sml" "$cake_dir/pancake"
