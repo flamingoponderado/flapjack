@@ -10082,3 +10082,12 @@ theories (no rebuild): `good_cmp_def`, `TotOrder_imp_good_cmp`, `cmp_thms`, the
 `HOL_PROBE_ONLY=hol_<theory>_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean
 correspondence.
+
+`hol_asciinumbers_typed_probe.out` and `hol_string_typed_probe.out` capture the
+typed statements of the reviewed `HOL/src/string` rows from the built HOL4 core
+theories (no rebuild): `HEX`, `n2s_def`, `num_to_dec_string_def`, `isLower_def`,
+`isUpper_def`, `isAlpha_def` and `char_size_def`. Regenerate with
+`HOL_PROBE_ONLY=hol_asciinumbers_typed_probeScript.sml` or
+`HOL_PROBE_ONLY=hol_string_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.

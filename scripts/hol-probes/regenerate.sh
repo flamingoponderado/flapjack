@@ -4724,6 +4724,13 @@ run_probe hol_numposrep_typed_probeScript.sml hol_numposrep_typed_probe.out \
 run_probe hol_indexedlists_typed_probeScript.sml hol_indexedlists_typed_probe.out \
   findi_def_typed \
   "$repo_dir/HOL/src/list/src/indexedListsScript.sml" "$cake_dir/pancake"
+run_probe hol_asciinumbers_typed_probeScript.sml hol_asciinumbers_typed_probe.out \
+  hex_typed n2s_def_typed num_to_dec_string_def_typed \
+  "$repo_dir/HOL/src/string/ASCIInumbersScript.sml" "$cake_dir/pancake"
+
+run_probe hol_string_typed_probeScript.sml hol_string_typed_probe.out \
+  islower_def_typed isupper_def_typed isalpha_def_typed char_size_def_typed \
+  "$repo_dir/HOL/src/string/stringScript.sml" "$cake_dir/pancake"
 
 run_probe hol_alignment_words_typed_probeScript.sml hol_alignment_words_typed_probe.out \
   align_def_typed aligned_def_typed byte_align_def_typed byte_aligned_def_typed aligned_add_sub_typed word_slice_def_typed w2s_def_typed word_to_hex_string_def_typed word_replicate_def_typed \
