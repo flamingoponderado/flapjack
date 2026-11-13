@@ -95,38 +95,6 @@ private theorem singleTwo {width : Nat} [NeZero width] (two : Bool)
   apply everyInst_removeUnreach
   exact threeToTwoRegProg_twoRegInst _ _ enabled
 
-/-- Original1014–1065 full EVERY output-convention section: all five conditions,
-including global input instruction and three zero-offset guards, retained.
-No target conventions, pass success or evaluation are assumed. This untagged
-supporting lemma proves only the output section; the full theorem follows below. -/
-theorem compileOutputConventions {width : Nat} [NeZero width] (wc : Config)
-    (ac : AsmConfigExact width)
-    (programs : List (Nat × Nat × WordLangProgHOL (BitVec width)))
-    (guard : ∀ p ∈ programs, noShareInstSubprogsHOL p.2.2 = true ∨ ac.isa ≠ .ag32) :
-    ∀ p ∈ (compile wc ac programs).2,
-      flatExpConventions p.2.2 = true ∧
-      postAllocConventionsHOL (ac.regCount - (5 + ac.avoidRegs.length)) p.2.2 = true ∧
-      ((∀ q ∈ programs,
-          everyInst (fun i => instOkLessExact ac (HolInst.ofWordLangInst i)) q.2.2 = true) ∧
-        addrOffsetOk ac 0 = true ∧ hwOffsetOk ac 0 = true ∧ byteOffsetOk ac 0 = true →
-        fullInstOkLessExact ac p.2.2 = true) ∧
-      (ac.twoRegArith = true →
-        everyInst (fun i => twoRegInstExact (HolInst.ofWordLangInst i)) p.2.2 = true) ∧
-      (noShareInstSubprogsHOL p.2.2 = true ∨ ac.isa ≠ .ag32) := by
-  intro p member
-  change p ∈ ((programs.zip (nextNOracle programs.length wc.colOracle).1).map
-    (fullCompileSingle ac.twoRegArith (ac.regCount - (5 + ac.avoidRegs.length)) wc.regAlg ac)) at member
-  obtain ⟨entry, inZip, rfl⟩ := List.mem_map.mp member
-  have inputMember := (List.of_mem_zip inZip).1
-  refine ⟨singleFlat _ _ _ _ entry, singlePost _ _ _ _ entry, ?_, ?_, ?_⟩
-  · intro valid
-    exact singleValid _ _ _ _ entry valid.2.1 valid.2.2.1 valid.2.2.2
-      (valid.1 entry.1 inputMember)
-  · exact singleTwo _ _ _ _ entry
-  · rcases guard entry.1 inputMember with source | otherIsa
-    · exact Or.inl (full_compile_single_no_share_inst entry _ _ _ _ source)
-    · exact Or.inr otherIsa
-
 /-- Whole original958–1065 theorem, all original conjuncts. Original
 input guard and conditional output guards retained. Actual native compiler
 pipeline determines every result; no target-run or output relation premise. -/
@@ -149,7 +117,33 @@ theorem compileToWordConventions {width : Nat} [NeZero width] (wc : Config)
       (ac.twoRegArith = true →
         everyInst (fun i => twoRegInstExact (HolInst.ofWordLangInst i)) p.2.2 = true) ∧
       (noShareInstSubprogsHOL p.2.2 = true ∨ ac.isa ≠ .ag32)) := by
-  obtain ⟨names, labels⟩ := compileNamesLabels wc ac programs guard
-  exact ⟨names, labels, compileOutputConventions wc ac programs guard⟩
+  obtain ⟨names, labels⟩ := zipSections ac.twoRegArith
+    (ac.regCount - (5 + ac.avoidRegs.length)) wc.regAlg ac programs
+    (nextNOracle programs.length wc.colOracle).1 (compile_zip_length wc programs)
+  have output : ∀ p ∈ (compile wc ac programs).2,
+      flatExpConventions p.2.2 = true ∧
+      postAllocConventionsHOL (ac.regCount - (5 + ac.avoidRegs.length)) p.2.2 = true ∧
+      ((∀ q ∈ programs,
+          everyInst (fun i => instOkLessExact ac (HolInst.ofWordLangInst i)) q.2.2 = true) ∧
+        addrOffsetOk ac 0 = true ∧ hwOffsetOk ac 0 = true ∧ byteOffsetOk ac 0 = true →
+        fullInstOkLessExact ac p.2.2 = true) ∧
+      (ac.twoRegArith = true →
+        everyInst (fun i => twoRegInstExact (HolInst.ofWordLangInst i)) p.2.2 = true) ∧
+      (noShareInstSubprogsHOL p.2.2 = true ∨ ac.isa ≠ .ag32) := by
+    intro p member
+    change p ∈ ((programs.zip (nextNOracle programs.length wc.colOracle).1).map
+      (fullCompileSingle ac.twoRegArith (ac.regCount - (5 + ac.avoidRegs.length))
+        wc.regAlg ac)) at member
+    obtain ⟨entry, inZip, rfl⟩ := List.mem_map.mp member
+    have inputMember := (List.of_mem_zip inZip).1
+    refine ⟨singleFlat _ _ _ _ entry, singlePost _ _ _ _ entry, ?_, ?_, ?_⟩
+    · intro valid
+      exact singleValid _ _ _ _ entry valid.2.1 valid.2.2.1 valid.2.2.2
+        (valid.1 entry.1 inputMember)
+    · exact singleTwo _ _ _ _ entry
+    · rcases guard entry.1 inputMember with source | otherIsa
+      · exact Or.inl (full_compile_single_no_share_inst entry _ _ _ _ source)
+      · exact Or.inr otherIsa
+  exact ⟨names, labels, output⟩
 
 end Flapjack.Compiler.Backend.WordToWord.CompileConventions

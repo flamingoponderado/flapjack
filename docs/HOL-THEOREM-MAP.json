@@ -67696,22 +67696,6 @@
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.48): HOL rm_perm (159-163): s with permute := s.permute = s over WordSemStateFiniteExact width C F; structure update; rfl. HOL [local]: not exported, compared against the script text. Positive HOL word dimension is the sole carrier translation. Typed original evidence (flapjack-sol2 2026-10-04): word_to_word_locals_typed_probe.out rm_perm_statement and rm_perm_hypotheses=0. The guarded literal original local statement AND original proof are kernel-replayed for the first five helpers; the two no_alloc/no_install instances replay the original Q.GEN/Q.SPEC/REWRITE_RULE derivations from exported code_rel_not_created_subprogs. This is original HOL proof replay, not statement-only parsing or HOL-to-Lean equivalence. Full inferred carriers reviewed against the Lean signature; argument words and stack-size payload remain independent of code words where HOL does so."
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Labels.lean",
-    "lean_name": "compileNamesLabels",
-    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
-    "hol_name": "compile_to_word_conventions",
-    "statement_status": "documented_mismatch",
-    "reviewer": "PR1213 review repair: untagged supporting conjunct only, not the complete cited HOL theorem. Full conjunction is separately tagged in the counterpart module."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Output.lean",
-    "lean_name": "compileOutputConventions",
-    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
-    "hol_name": "compile_to_word_conventions",
-    "statement_status": "documented_mismatch",
-    "reviewer": "PR1213 review repair: untagged supporting conjunct only, not the complete cited HOL theorem. Full conjunction is separately tagged in the counterpart module."
-  },
-  {
     "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Output.lean",
     "lean_name": "compileToWordConventions",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",

@@ -904,6 +904,36 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertEqual(reviewed["hol_name"], "stack_size_eq")
         self.assertNotEqual(reviewed["statement_status"], "documented_mismatch")
 
+    def test_compile_to_word_convention_sublemmas_are_retired(self):
+        # The two untagged supporting lemmas are folded into the reviewed
+        # compileToWordConventions proof; HOL compile_to_word_conventions stays
+        # mapped by that tagged theorem.
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        self.assertNotIn(
+            ("Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Labels.lean",
+             "compileNamesLabels"),
+            inventory,
+        )
+        self.assertNotIn(
+            ("Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Output.lean",
+             "compileOutputConventions"),
+            inventory,
+        )
+        exact = inventory[
+            ("Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Output.lean",
+             "compileToWordConventions")
+        ]
+        self.assertEqual(exact["hol_name"], "compile_to_word_conventions")
+        self.assertNotEqual(exact["statement_status"], "documented_mismatch")
+        self.assertIn(
+            ("Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Output.lean",
+             "compileToWordConventions"),
+            MAP["tagged_declarations"](),
+        )
+
     def test_removed_vmax_analogues_are_not_in_inventory(self):
         inventory = MAP["build_inventory"]()
         self.assertFalse(any(
