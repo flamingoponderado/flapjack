@@ -9,14 +9,32 @@ public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 namespace Flapjack.Compiler.Backend.BviInline
 open BviSem BvlSem BackendProps
 
-/-- Flapjack infrastructure: the inliner's source-shaped compiler adapter. -/
-def inCc {C : Type} (compiler : BviSem.Compiler C) : BviSem.Compiler (Spt (Nat × Bvi.Exp) × C) :=
+/-- Thread the inlining cache through a downstream compiler callback. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "in_cc_def"]
+def inCc {C CNext Code Data : Type}
+    (compiler : C → List (Nat × Nat × Bvi.Exp) → Option (Code × Data × CNext)) :
+    Spt (Nat × Bvi.Exp) × C → List (Nat × Nat × Bvi.Exp) →
+      Option (Code × Data × Spt (Nat × Bvi.Exp) × CNext) :=
   stateCc inlineAllSource compiler
 
-/-- Flapjack infrastructure: transform each future code segment with its
-cached wrappers. -/
-def inCo {C : Type} (oracle : BviSem.CompileOracle (Spt (Nat × Bvi.Exp) × C)) : BviSem.CompileOracle C :=
+/-- Transform each future code segment using its stored wrapper cache. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "in_co_def"]
+def inCo {Index C : Type}
+    (oracle : Index → (Spt (Nat × Bvi.Exp) × C) × List (Nat × Nat × Bvi.Exp)) :
+    Index → C × List (Nat × Nat × Bvi.Exp) :=
   stateCo inlineAllSource oracle
+
+/-- The inlining compiler adapter is the generic state compiler adapter. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "in_cc_eq_state_cc"]
+theorem inCcEqStateCc {C CNext Code Data : Type}
+    (compiler : C → List (Nat × Nat × Bvi.Exp) → Option (Code × Data × CNext)) :
+    inCc compiler = stateCc inlineAllSource compiler := rfl
+
+/-- The inlining oracle adapter is the generic state oracle adapter. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "in_co_eq_state_co"]
+theorem inCoEqStateCo {Index C : Type}
+    (oracle : Index → (Spt (Nat × Bvi.Exp) × C) × List (Nat × Nat × Bvi.Exp)) :
+    inCo oracle = stateCo inlineAllSource oracle := rfl
 
 /-- Flapjack infrastructure: source and target states for BVI inlining. This
 source-shaped relation remains untagged pending HOL carrier review. -/

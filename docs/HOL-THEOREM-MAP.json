@@ -451,6 +451,38 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "in_cc_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/StateRelation.lean",
+    "lean_name": "inCc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL definition comparison: Independent callback input configuration, output code, output data and next configuration are retained. The state compiler adapter has the original cache-threading behavior for both NONE and SOME. The cache uses the native sparse tree; programs are lists; callback code and data payloads remain opaque independent types."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "in_co_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/StateRelation.lean",
+    "lean_name": "inCo",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL definition comparison: The oracle index and downstream configuration are independent. The state oracle adapter preserves configuration and returns the inlined program. The cache uses the native sparse tree; programs are lists."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "in_cc_eq_state_cc",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/StateRelation.lean",
+    "lean_name": "inCcEqStateCc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source comparison and literal local proof replay: The unconditional equality retains all four independent callback type variables and the original inlining pass. The cache uses the native sparse tree; programs are lists; callback code and data payloads remain opaque independent types."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "in_co_eq_state_co",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/StateRelation.lean",
+    "lean_name": "inCoEqStateCo",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source comparison and literal local proof replay: The unconditional equality retains independent oracle index and configuration types and the original inlining pass. The cache uses the native sparse tree; programs are lists."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "evaluate_add_clock_io_events_mono",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/Observation.lean",
     "lean_name": "evaluateAddClockIoEventsMono",

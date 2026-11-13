@@ -178,3 +178,17 @@ val evaluate_add_clock_io_events_mono_replay = Q.prove
   >> simp [inc_clock_def]);
 val _ = show "evaluate_add_clock_io_events_mono_replay_typed"
   evaluate_add_clock_io_events_mono_replay;
+
+(* Original adapter definitions and their local equalities. *)
+val _ = show "in_cc_def_typed" bvi_inlineProofTheory.in_cc_def;
+val _ = show "in_co_def_typed" bvi_inlineProofTheory.in_co_def;
+val in_cc_eq_state_cc_replay = Q.prove
+  (`in_cc cc = state_cc inline_all cc`,
+   rw [in_cc_def, state_cc_def, FUN_EQ_THM, FORALL_PROD]
+  >> rpt (pairarg_tac >> fs []));
+val _ = show "in_cc_eq_state_cc_replay_typed" in_cc_eq_state_cc_replay;
+val in_co_eq_state_co_replay = Q.prove
+  (`in_co co = state_co inline_all co`,
+   rw [in_co_def, state_co_def, FUN_EQ_THM]
+  >> rpt (pairarg_tac >> fs []));
+val _ = show "in_co_eq_state_co_replay_typed" in_co_eq_state_co_replay;
