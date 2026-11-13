@@ -337,6 +337,34 @@
     "reviewer": "Independent typed HOL source review: arbitrary arity, identity and body retain the unconditional equality of wrapper labels with identity labels union body labels, in the original order. Generated variable bindings introduce no labels."
   },
   {
+    "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
+    "hol_name": "do_app_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/Apply.lean",
+    "lean_name": "doApp",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: exact Install interception, BVI auxiliary outcomes and BVL fallback, including unchanged aborts, Exn-wrapped raises, state conversion, code domains and arbitrary-field independence. The actual BVI state refs uses the canonical finite-support translation and local roundtrip witness. Compiler and FFI carriers are independent; callbacks retain fixed word8 and word64. Inherits reals_as_rational_cuts through delegated primitives, as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
+    "hol_name": "bvl_to_bvi_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/Apply.lean",
+    "lean_name": "fromBvl_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": ["BvlSem.State.refs", "BviState.refs"],
+    "reviewer": "Independent typed HOL source review 2026-11-13: the full equation copies source refs, clock and ffi into the target and preserves all other target fields; arbitrary shared compiler and FFI carriers and fixed callback widths match. Both refs fields use the canonical finite-support map translation, with separate checked carrier roundtrips."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
+    "hol_name": "bvi_to_bvl_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/Apply.lean",
+    "lean_name": "toBvl_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": ["BviState.refs", "BvlSem.State.refs"],
+    "reviewer": "Independent typed HOL source review 2026-11-13: the full equation copies refs, clock and ffi, maps the original code tree to one arbitrary BVL code payload, and retains all other fields from one arbitrary BVL state; the seed only witnesses inhabitation. Shared compiler and FFI carriers and fixed callback widths match. Both refs fields use the canonical finite-support map translation, with separate checked carrier roundtrips."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_prog_distinct_locs",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/TailrecNames.lean",

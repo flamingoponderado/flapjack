@@ -91,7 +91,7 @@ theorem compileProgFuel_traceLub_eq {C F : Type}
 
 /-- Whole-program lowering preserves non-failing source behavior under the
 original handler and oracle conditions. The HOL reference remains pending
-review of the BVI evaluator, dispatcher, and arbitrary-state conversions.
+review of the BVI evaluator and its clock and termination clauses.
 The semantics inherit the real-model assumption documented in SOUNDNESS item 8. -/
 theorem compileProgSource_semantics {C F : Type} (start n targetStart targetNext : Nat)
     (programs : List (Nat × Nat × Bvl.Exp)) (targetProgram : List (Nat × Nat × Bvi.Exp))
