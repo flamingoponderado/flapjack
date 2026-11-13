@@ -139,6 +139,7 @@ theorem envRel_shift {α : Type} (offsets : List Nat) (source target : List α)
       using shifted
 
 /-- Related source environments are no longer than their targets. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "env_rel_length"]
 theorem envRel_length {α : Type} (offsets : List Nat) (d : Nat)
     (source target : List α) (related : envRel offsets d source target) :
     source.length ≤ target.length := by

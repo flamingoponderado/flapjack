@@ -491,6 +491,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "env_rel_length",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/Environment.lean",
+    "lean_name": "envRel_length",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: the original universally quantified offsets and two environments, sole relation premise and length inequality match. HOL has a free independent depth d, made explicit between offsets and environment binders in Lean. The literal original proof was independently replayed without hypotheses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
     "hol_name": "env_rel_LLOOKUP_NONE",
     "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/Environment.lean",
     "lean_name": "envRel_lookupNone",
