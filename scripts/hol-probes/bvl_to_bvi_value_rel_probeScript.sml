@@ -463,3 +463,27 @@ val _ = show "do_app_Ref_replay=" do_app_Ref_replay;
 val _ = show "state_rel_add_bytearray_typed=" bvl_to_bviProofTheory.state_rel_add_bytearray;
 val _ = show "state_rel_add_thunk_typed=" bvl_to_bviProofTheory.state_rel_add_thunk;
 val _ = show "state_rel_update_thunk_typed=" bvl_to_bviProofTheory.state_rel_update_thunk;
+
+(* Replay the local consequence with both original counter binders. *)
+val iEval_bVarBound = iEval_bVarBound_replay;
+val iEval_bVarBound_extra_replay = prove (``
+    ∀n xs n vs s env d.
+     bVarBound (LENGTH vs) xs ∧ handle_ok xs /\ d = FST (compile_exps n xs) ⇒
+     evaluate (d,vs ⧺ env,s)  =
+     evaluate (d,vs,s)``,
+  simp [iEval_bVarBound]);
+val _ = show "iEval_bVarBound_extra_replay=" iEval_bVarBound_extra_replay;
+
+(* Replay the original local byte and word encoding injectivity proofs. *)
+val MAP_Num_11_replay = prove (``
+    !ns:word8 list ns'.
+      MAP (λx. Number (&w2n x)) ns = MAP (λx. Number (&w2n x)) ns' <=> ns' = ns``,
+  Induct \\ Cases_on `ns'` \\ fs [] \\ rw [] \\ eq_tac \\ rw []);
+val _ = show "MAP_Num_11_replay=" MAP_Num_11_replay;
+val MAP_Word_11_replay = prove (``
+    !ns ns'. MAP Word64 ns = MAP Word64 ns' <=> ns' = ns``,
+  Induct \\ Cases_on `ns'` \\ fs [] \\ rw [] \\ eq_tac \\ rw []);
+val _ = show "MAP_Word_11_replay=" MAP_Word_11_replay;
+
+val _ = show "IMP_v_to_bytes_typed=" bvl_to_bviProofTheory.IMP_v_to_bytes;
+val _ = show "IMP_v_to_words_typed=" bvl_to_bviProofTheory.IMP_v_to_words;

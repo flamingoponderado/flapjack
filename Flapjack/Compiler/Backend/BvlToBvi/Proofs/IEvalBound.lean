@@ -501,4 +501,15 @@ decreasing_by
   all_goals simp only [expsWeight, expWeight]
   all_goals try (have := expWeight_pos second)
   all_goals omega
+/-- Naming the compiled list preserves environment independence. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "iEval_bVarBound_extra"
+  (fmap_as_finite_support := [refs])]
+theorem iEvalBound_extra {Outer C F : Type} (_outer : Outer) (xs : List Bvl.Exp) (n : Nat)
+    (vs : List Value) (state : BviSem.BviState C F) (env : List Value) (d : List Bvi.Exp)
+    (premises : bVarBound vs.length xs ∧ BvlHandle.Proofs.handleOk xs ∧
+      d = (compileListSource n xs).1) :
+    BviSem.evaluate d (vs ++ env) state = BviSem.evaluate d vs state := by
+  rcases premises with ⟨bounded, handlers, rfl⟩
+  exact iEvalBound 0 xs n vs state env ⟨bounded, handlers⟩
+
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

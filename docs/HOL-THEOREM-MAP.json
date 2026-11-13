@@ -1,6 +1,50 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "iEval_bVarBound_extra",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/IEvalBound.lean",
+    "lean_name": "iEvalBound_extra",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed replay of the original local source proof, retaining both counter binders: the first is vacuous and independently polymorphic, while the second is numeric. The complete premises and named compiled expression list are preserved. The BVI refs field is a canonical finite map and the evaluator dependency closure inherits the reviewed reals_as_rational_cuts representation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "MAP_Num_11",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileInstallArgs.lean",
+    "lean_name": "mapNumberByte_injective",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original HOL source: fixed word8 list numeric encoding and reversed list-equality conclusion, for arbitrary values and relocation where applicable. The local injectivity theorem captures are full proof replays; the decoding implication captures are exported original theorems."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "MAP_Word_11",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileInstallArgs.lean",
+    "lean_name": "mapWord_injective",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original HOL source: fixed word64 list encoding and reversed list-equality conclusion, for arbitrary values and relocation where applicable. The local injectivity theorem captures are full proof replays; the decoding implication captures are exported original theorems."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "IMP_v_to_bytes",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileInstallArgs.lean",
+    "lean_name": "valueToBytes_adjust_some",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original HOL source: original byte-encoded valueToList premise and unchanged decoded byte result, for arbitrary values and relocation where applicable. The local injectivity theorem captures are full proof replays; the decoding implication captures are exported original theorems."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "IMP_v_to_words",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileInstallArgs.lean",
+    "lean_name": "valueToWords_adjust_some",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original HOL source: original word-encoded valueToList premise and unchanged decoded word result, for arbitrary values and relocation where applicable. The local injectivity theorem captures are full proof replays; the decoding implication captures are exported original theorems."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "state_rel_add_bytearray",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AllocationRel.lean",
     "lean_name": "stateRel_addByteArray",

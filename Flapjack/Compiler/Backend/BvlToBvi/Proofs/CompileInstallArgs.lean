@@ -51,23 +51,53 @@ theorem install_success_shape {C F R : Type} (byteValue wordValue : Value)
   all_goals simp_all
   all_goals aesop
 
-/-- Successfully decoded installation buffers remain unchanged by reference
-relocation. -/
-theorem valueToBytes_adjust_some (relocate : Nat → Nat) (value : Value) (bytes : List (BitVec 8))
-    (decoded : BvlSem.valueToBytes value = some bytes) :
-    BvlSem.valueToBytes (adjustBv relocate value) = some bytes := by
-  have original := (BvlSem.valueToBytes_eq_some value bytes).1 decoded
-  apply (BvlSem.valueToBytes_eq_some _ _).2
-  simpa [original, List.map_map, Function.comp_def, adjustBv] using valueToList_adjust relocate value
+/-- Encoding byte lists as numeric values is injective. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "MAP_Num_11"]
+theorem mapNumberByte_injective (ns ns' : List (BitVec 8)) :
+    ns.map (fun byte => Value.number byte.toNat) = ns'.map (fun byte => Value.number byte.toNat) ↔ ns' = ns := by
+  constructor
+  · intro equal
+    have left : BvlSem.byteNumbers (ns.map (fun byte => Value.number byte.toNat)) = some ns :=
+      (BvlSem.byteNumbers_eq_some _ _).2 rfl
+    have right : BvlSem.byteNumbers (ns'.map (fun byte => Value.number byte.toNat)) = some ns' :=
+      (BvlSem.byteNumbers_eq_some _ _).2 rfl
+    rw [equal] at left
+    exact Option.some.inj (right.symm.trans left)
+  · intro equal
+    subst ns'
+    rfl
 
-/-- Successfully decoded installation words remain unchanged by reference
-relocation. -/
+/-- Encoding word lists as word values is injective. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "MAP_Word_11"]
+theorem mapWord_injective (ns ns' : List (BitVec 64)) :
+    ns.map Value.word64 = ns'.map Value.word64 ↔ ns' = ns := by
+  constructor
+  · intro equal
+    have left : BvlSem.wordValues (ns.map Value.word64) = some ns :=
+      (BvlSem.wordValues_eq_some _ _).2 rfl
+    have right : BvlSem.wordValues (ns'.map Value.word64) = some ns' :=
+      (BvlSem.wordValues_eq_some _ _).2 rfl
+    rw [equal] at left
+    exact Option.some.inj (right.symm.trans left)
+  · intro equal
+    subst ns'
+    rfl
+
+/-- A source list encoding byte values decodes to the same bytes after relocation. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "IMP_v_to_bytes"]
+theorem valueToBytes_adjust_some (relocate : Nat → Nat) (value : Value) (bytes : List (BitVec 8))
+    (decoded : BvlSem.valueToList value = some (bytes.map (fun byte => Value.number byte.toNat))) :
+    BvlSem.valueToBytes (adjustBv relocate value) = some bytes := by
+  apply (BvlSem.valueToBytes_eq_some _ _).2
+  simpa [decoded, List.map_map, Function.comp_def, adjustBv] using valueToList_adjust relocate value
+
+/-- A source list encoding words decodes to the same words after relocation. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "IMP_v_to_words"]
 theorem valueToWords_adjust_some (relocate : Nat → Nat) (value : Value) (words : List (BitVec 64))
-    (decoded : BvlSem.valueToWords value = some words) :
+    (decoded : BvlSem.valueToList value = some (words.map Value.word64)) :
     BvlSem.valueToWords (adjustBv relocate value) = some words := by
-  have original := (BvlSem.valueToWords_eq_some value words).1 decoded
   apply (BvlSem.valueToWords_eq_some _ _).2
-  simpa [original, List.map_map, Function.comp_def, adjustBv] using valueToList_adjust relocate value
+  simpa [decoded, List.map_map, Function.comp_def, adjustBv] using valueToList_adjust relocate value
 
 /-- The generated length call works at any environment position. -/
 theorem evaluate_listLength_at {C F : Type} (value : Value) (values : List Value) (index : Nat)
@@ -258,8 +288,8 @@ theorem install_target_transfer {C F : Type} (relocate : Nat → Nat)
     simpa [oracle, compiledEq] using distinct
   have targetRun := doInstall_target (adjustBv relocate byteValue) (adjustBv relocate wordValue) bytes words target
     config nextConfig (bvlNumStubs + bvlToBviNamespaces * key) arity targetBody targetRest
-    (valueToBytes_adjust_some relocate byteValue bytes bytesDecode)
-    (valueToWords_adjust_some relocate wordValue words wordsDecode)
+    (valueToBytes_adjust_some relocate byteValue bytes ((BvlSem.valueToBytes_eq_some _ _).1 bytesDecode))
+    (valueToWords_adjust_some relocate wordValue words ((BvlSem.valueToWords_eq_some _ _).1 wordsDecode))
     targetOracle targetAvailable targetDistinct targetCallback targetNextOracle
   refine ⟨bytes, words, { target with
     code := sptUnion target.code (sptFromAList ((bvlNumStubs + bvlToBviNamespaces * key, arity, targetBody) :: targetRest))
