@@ -338,6 +338,22 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+    "hol_name": "bvi_to_cb_aux_code_labels_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeLabels.lean",
+    "lean_name": "extraction_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL proof replay and source review: both original conjuncts independently quantify all inputs and all successful sum results; the complete binding-label unions are bounded by the original single-expression or input-list labels with no additional premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+    "hol_name": "bvi_to_cb_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeLabels.lean",
+    "lean_name": "toBlock_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL proof replay and source review: arbitrary successful top-level call-block extraction preserves the full binding-label subset of the original expression, covering the original direct-call and constructor branches."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
     "hol_name": "get_code_labels_MAP_Var",
     "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeLabels.lean",
     "lean_name": "vars_getCodeLabels",

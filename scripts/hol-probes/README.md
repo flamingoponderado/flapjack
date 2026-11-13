@@ -1,4 +1,4 @@
-`bvi_tmc_proof_source_probe.out` captures the typed original function-list and program name-preservation theorems and replays the local variable-list, worker, and wrapper label proofs with inferred types.
+`bvi_tmc_proof_source_probe.out` captures the typed original function-list and program name-preservation theorems and replays the local variable-list, worker, wrapper, mutual extraction, and top-level extraction label proofs with inferred types.
 
 `flat_do_app_preservation_probe.out` also captures the typed original flat
 primitive simulation and its semantic-primitives store-relation and arithmetic

@@ -94,4 +94,49 @@ theorem wrapper_getCodeLabels (tag : Nat) (left : List Nat) (child : CallBlock) 
   rintro x (⟨a, _, rfl⟩ | rfl | ⟨a, _, rfl⟩) h <;>
     simp [getCodeLabels, getCodeLabelsList, ClosLang.assignGetCodeLabel] at h
 
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "bvi_to_cb_aux_code_labels_lemma"]
+theorem extraction_getCodeLabels :
+    (∀ n loc tag e bs r, extractOneSource n loc tag e = some (bs, r) →
+      ⋃₀ (getCodeLabels '' {e | e ∈ bs}) ⊆ getCodeLabels e) ∧
+    (∀ n loc tag es bs r, extractListSource n loc tag es = some (bs, r) →
+      ⋃₀ (getCodeLabels '' {e | e ∈ bs}) ⊆ ⋃₀ (getCodeLabels '' {e | e ∈ es})) := by
+  simp_rw [← getCodeLabelsList_eq]
+  rw [← forall_and]
+  intro n
+  rw [← forall_and]
+  intro loc
+  apply extractOneSource.mutual_induct n loc
+  all_goals intros
+  all_goals simp_all [extractOneSource, extractListSource, callToBlockSource,
+    getCodeLabels, getCodeLabelsList, ClosLang.assignGetCodeLabel, Set.subset_def]
+  all_goals simp_all [getCodeLabelsList_eq]
+  case case3 =>
+    obtain ⟨rfl, rfl⟩ := ‹_ ∧ _›
+    simp [getCodeLabels, ClosLang.assignGetCodeLabel, getCodeLabelsList_eq]
+  all_goals aesop
+
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "bvi_to_cb_code_labels"]
+theorem toBlock_getCodeLabels (n loc : Nat) (e : Bvi.Exp) (bs : List Bvi.Exp) (cb : CallBlock)
+    (run : toBlockSource n loc e = some (bs, cb)) :
+    ⋃₀ (getCodeLabels '' {e | e ∈ bs}) ⊆ getCodeLabels e := by
+  rw [← getCodeLabelsList_eq]
+  cases e <;> simp_all [toBlockSource, callToBlockSource, getCodeLabels, ClosLang.assignGetCodeLabel]
+  case op op args =>
+    cases op <;> simp_all
+    case blockOp bop =>
+      cases bop <;> simp_all
+      case cons tag =>
+        cases h : extractListSource n loc tag args with
+        | none => simp [h] at run
+        | some pair =>
+          obtain ⟨es, r⟩ := pair
+          cases r with
+          | inl values => simp [h] at run
+          | inr block =>
+            simp [h] at run
+            obtain ⟨rfl, rfl⟩ := run
+            simpa only [← getCodeLabelsList_eq] using extraction_getCodeLabels.2 n loc tag args es (.inr block) h
+
+
+
 end Flapjack.Compiler.Backend.BviTmc.Proofs

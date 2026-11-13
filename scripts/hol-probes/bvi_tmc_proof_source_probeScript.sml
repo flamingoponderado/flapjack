@@ -86,3 +86,31 @@ val wrapper_labels = Q.prove
          bvi_tmcTheory.finalise_cons_def, closLangTheory.assign_get_code_label_def,
          worker_aux_labels, vars_labels]);
 val _ = show "cb_to_bvi_wrapper_code_labels_replay_typed" wrapper_labels;
+
+(* Replay the original mutual extraction-label theorem. *)
+val extraction_labels = Q.prove
+  (`(∀n loc tag exp bs r.
+       bvi_tmc$bvi_to_cb_aux_sing n loc tag exp = SOME (bs,r) ⇒
+       BIGUNION (set (MAP bviProps$get_code_labels bs)) ⊆ bviProps$get_code_labels exp) ∧
+     (∀n loc tag args bs r.
+       bvi_tmc$bvi_to_cb_aux n loc tag args = SOME (bs,r) ⇒
+       BIGUNION (set (MAP bviProps$get_code_labels bs)) ⊆
+       BIGUNION (set (MAP bviProps$get_code_labels args)))`,
+   ho_match_mp_tac bvi_tmcTheory.bvi_to_cb_aux_ind
+   \\ rw []
+   \\ gvs [bvi_tmcTheory.bvi_to_cb_aux_def, bvi_tmcTheory.call_to_cb_def,
+           CaseEq "call_block", CaseEq "prod", CaseEq "option", CaseEq "sum", CaseEq "list"]
+   \\ gvs [SUBSET_DEF] \\ rw [] \\ res_tac \\ gvs []);
+val _ = show "bvi_to_cb_aux_code_labels_lemma_replay_typed" extraction_labels;
+
+val to_block_labels = Q.prove
+  (`∀n loc exp bs cb.
+      bvi_tmc$bvi_to_cb n loc exp = SOME (bs,cb) ⇒
+      BIGUNION (set (MAP bviProps$get_code_labels bs)) ⊆ bviProps$get_code_labels exp`,
+   Cases_on `exp`
+   \\ gvs [bvi_tmcTheory.bvi_to_cb_def, bvi_tmcTheory.call_to_cb_def, CaseEq "prod", CaseEq "option", CaseEq "sum"]
+   \\ rw []
+   >- gvs [SUBSET_DEF]
+   \\ drule (cj 2 extraction_labels)
+   \\ gvs [SUBSET_DEF]);
+val _ = show "bvi_to_cb_code_labels_replay_typed" to_block_labels;
