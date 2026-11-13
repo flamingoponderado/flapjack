@@ -976,6 +976,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.PureCorrespondence
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractCorrespondence
 import Flapjack.Compiler.Backend.BviTmc.Proofs.RewriteCorrespondence
 import Flapjack.Compiler.Backend.BviTmc.Proofs.CodeRelation
+import Flapjack.Compiler.Backend.BviTmc.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.HeapRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation

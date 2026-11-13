@@ -337,6 +337,22 @@
     "reviewer": "Independent typed HOL source review: arbitrary arity, identity and body retain the unconditional equality of wrapper labels with identity labels union body labels, in the original order. Generated variable bindings introduce no labels."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+    "hol_name": "compile_each_keeps_names",
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeLabels.lean",
+    "lean_name": "compileEach_keepsNames",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review confirms the complete compilation equation and arbitrary input-name membership imply output-name membership, with the original BVI carriers and no additional premises. Source and executable compilation agree unconditionally."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+    "hol_name": "compile_prog_keeps_names",
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeLabels.lean",
+    "lean_name": "compileProg_keepsNames",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review confirms the complete compilation equation and arbitrary input-name membership imply output-name membership, with the original BVI carriers and no additional premises. Source and executable compilation agree unconditionally."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml",
     "hol_name": "compile_each_labels",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean",

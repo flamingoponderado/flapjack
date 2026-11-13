@@ -56,3 +56,6 @@ val _ = print_term
       compile_exp loc next args exp = SOME w ⇒
       ∀next2. ∃w'. compile_exp loc next2 args exp = SOME w'``;
 val _ = print "\n";
+
+val _ = show "compile_each_keeps_names_typed" bvi_tmcProofTheory.compile_each_keeps_names;
+val _ = show "compile_prog_keeps_names_typed" bvi_tmcProofTheory.compile_prog_keeps_names;
