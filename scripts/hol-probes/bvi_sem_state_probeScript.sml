@@ -157,3 +157,5 @@ val evaluate_clamped_replay = prove (``(∀env s. (evaluate ([],env,s) = (Rval [
      | res => res))``,
   simp [bviSemTheory.evaluate_def, bviSemTheory.fix_clock_evaluate]);
 val _ = show "evaluate_clamped_replay=" evaluate_clamped_replay;
+val _ = show "evaluate_ind_typed=" bviSemTheory.evaluate_ind;
+val _ = show "semantics_def_typed=" bviSemTheory.semantics_def;

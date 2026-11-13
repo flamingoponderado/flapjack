@@ -338,6 +338,27 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
+    "hol_name": "semantics_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/Semantics.lean",
+    "lean_name": "semantics_def",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: the full initial-call semantics retains the fatal-error exclusion of timeout and FFI errors, choice of success or FFI termination with its trace, and all-clock divergent trace limit. The source-shaped tuple evaluator and existential BVI state retain the reviewed canonical finite-support refs translation and independent compiler and FFI carriers. Inherits reals_as_rational_cuts through evaluation, as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 249,
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/EvaluateList.lean",
+    "lean_name": "evaluateTuple",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: the tuple input and result, independent compiler and FFI carriers, all twelve original clamped evaluation equations, their recursive guards, errors, and clock transitions match. The evaluator uses the reviewed dispatcher and canonical finite-support refs carrier; its source-shaped interface delegates to the curried recursive implementation. The fresh HOL probe replays the full clamped equations and captures the typed induction theorem. Inherits reals_as_rational_cuts through primitive dispatch, as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
     "hol_name": "do_app_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/Apply.lean",
     "lean_name": "doApp",
@@ -363,6 +384,15 @@
     "statement_status": "reviewed_fmap_as_finite_support_relation",
     "fmap_as_finite_support_relation": ["BviState.refs", "BvlSem.State.refs"],
     "reviewer": "Independent typed HOL source review 2026-11-13: the full equation copies refs, clock and ffi, maps the original code tree to one arbitrary BVL code payload, and retains all other fields from one arbitrary BVL state; the seed only witnesses inhabitation. Shared compiler and FFI carriers and fixed callback widths match. Both refs fields use the canonical finite-support map translation, with separate checked carrier roundtrips."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_prog_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Divergence.lean",
+    "lean_name": "compileProgSource_semantics",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: the complete compilation equation, distinct input names, original program and per-entry oracle handler conditions, returned-counter bound and source non-Fail premise imply the unchanged target-to-source behavior equality. Compiler and FFI carriers are independent and callback words are fixed width. Source and target evaluators, dispatcher and state conversions were separately source-reviewed; their finite-map representation is recorded on their own declarations. Inherits reals_as_rational_cuts through semantic primitives, as documented in SOUNDNESS item 8."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",

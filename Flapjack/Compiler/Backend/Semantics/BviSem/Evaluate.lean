@@ -31,9 +31,8 @@ def timeoutError {C F : Type} (state : BviState C F) : EvalResult C F :=
 @[simp] theorem timeoutError_eq {C F : Type} (state : BviState C F) :
     timeoutError state = (.err (.abort .timeoutError), state) := rfl
 
-/-- Clocked, source-shaped BVI evaluation. This remains untagged until its
-clauses, termination, and clock behavior are reviewed against the original
-induction theorem. -/
+/-- Curried implementation of clocked BVI evaluation. The source-shaped tuple
+interface is declared in `EvaluateList`. -/
 noncomputable def evaluate {C F : Type} (expressions : List Bvi.Exp)
     (env : List Value) (state : BviState C F) : EvalResult C F :=
   match expressions with

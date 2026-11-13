@@ -24,9 +24,8 @@ def terminatingObservation {C F : Type} (ffi : HolFfiState F)
      | _ => False) ∧
     behavior = HolBehaviour.terminate outcome state.ffi.ioEvents
 
-/-- Observable behavior of an initial BVI program. This remains untagged
-until the evaluator and its internally used finite-map state representation
-have been reviewed against the source semantics. -/
+/-- Observable behavior of an initial BVI program. Its full source equation
+below records the finite-map representation of the existential state. -/
 noncomputable def semantics {C F : Type} (ffi : HolFfiState F)
     (code : Spt (Nat × Bvi.Exp)) (oracle : CompileOracle C)
     (compiler : Compiler C) (start : Nat) : HolBehaviour :=
@@ -39,6 +38,58 @@ noncomputable def semantics {C F : Type} (ffi : HolFfiState F)
   | some behavior => behavior
   | none => .diverge (HolLList.buildLprefixLub (fun trace => ∃ clock,
       trace = HolLList.fromList (run clock).2.ffi.ioEvents))
+
+namespace SemanticsCarrier
+/-- The BVI reference carrier and its finite-support view roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviStateBroad C F, (BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end SemanticsCarrier
+
+open Classical in
+/-- The complete source semantics equation, including terminating and divergent observations. -/
+@[hol "cakeml/compiler/backend/semantics/bviSemScript.sml" "semantics_def"
+  (fmap_as_finite_support := [refs])]
+theorem semantics_def {C F : Type} (ffi : HolFfiState F)
+    (code : Spt (Nat × Bvi.Exp)) (oracle : CompileOracle C)
+    (compiler : Compiler C) (start : Nat) :
+    semantics ffi code oracle compiler start =
+      if ∃ clock error, (evaluateTuple ([.call 0 (some start) [] none], [],
+          initialState ffi code oracle compiler clock)).1 = .err error ∧
+          error ≠ .abort .timeoutError ∧ ∀ event, error ≠ .abort (.ffiError event) then .fail
+      else match holOptionSome (fun behavior =>
+        ∃ clock, ∃ state : BviState C F, ∃ result outcome,
+          evaluateTuple ([.call 0 (some start) [] none], [], initialState ffi code oracle compiler clock) =
+            (result, state) ∧
+          (match result with
+           | .err (.abort (.ffiError event)) => outcome = HolOutcome.ffiOutcome event
+           | .val _ => outcome = HolOutcome.success
+           | _ => False) ∧
+          behavior = HolBehaviour.terminate outcome state.ffi.ioEvents) with
+      | some behavior => behavior
+      | none => .diverge (HolLList.buildLprefixLub (fun trace => ∃ clock,
+          trace = HolLList.fromList (evaluateTuple ([.call 0 (some start) [] none], [],
+            initialState ffi code oracle compiler clock)).2.ffi.ioEvents)) := by
+  have terminating : terminatingObservation ffi code oracle compiler start =
+      (fun behavior => ∃ clock, ∃ state : BviState C F, ∃ result outcome,
+        evaluateTuple ([.call 0 (some start) [] none], [], initialState ffi code oracle compiler clock) =
+          (result, state) ∧
+        (match result with
+         | .err (.abort (.ffiError event)) => outcome = HolOutcome.ffiOutcome event
+         | .val _ => outcome = HolOutcome.success
+         | _ => False) ∧
+        behavior = HolBehaviour.terminate outcome state.ffi.ioEvents) := by
+    funext behavior
+    apply propext
+    constructor
+    · rintro ⟨clock, result, state, outcome, run, ending, rfl⟩
+      exact ⟨clock, state, result, outcome, run, ending, rfl⟩
+    · rintro ⟨clock, state, result, outcome, run, ending, rfl⟩
+      exact ⟨clock, result, state, outcome, run, ending, rfl⟩
+  unfold semantics
+  rw [terminating]
+  rfl
 
 /-- Two terminating observations of the same initial program have the same
 outcome and trace. A non-timeout run is stable when its clock is extended. -/

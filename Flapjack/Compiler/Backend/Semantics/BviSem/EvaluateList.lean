@@ -8,8 +8,17 @@ public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateLength
 namespace Flapjack.Compiler.Backend.BviSem
 open Flapjack.Compiler.Backend.BvlSem (Value unitValue)
 
-/-- The source-shaped tuple interface for BVI evaluation. This remains
-untagged until the evaluator and its primitive dispatcher are reviewed. -/
+namespace EvaluatorCarrier
+/-- The BVI reference carrier and its finite-support view roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviStateBroad C F, (BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end EvaluatorCarrier
+
+/-- The source-shaped tuple interface for BVI evaluation. -/
+@[hol "cakeml/compiler/backend/semantics/bviSemScript.sml" "evaluate_def" 249
+  (fmap_as_finite_support := [refs])]
 noncomputable def evaluateTuple {C F : Type}
     (input : List Bvi.Exp × List Value × BviState C F) : EvalResult C F :=
   evaluate input.1 input.2.1 input.2.2

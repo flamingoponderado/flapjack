@@ -90,9 +90,9 @@ theorem compileProgFuel_traceLub_eq {C F : Type}
     exact congrArg (·.ioEvents) related.2.1
 
 /-- Whole-program lowering preserves non-failing source behavior under the
-original handler and oracle conditions. The HOL reference remains pending
-review of the BVI evaluator and its clock and termination clauses.
-The semantics inherit the real-model assumption documented in SOUNDNESS item 8. -/
+original handler and oracle conditions. The semantics inherit the real-model
+assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_prog_semantics"]
 theorem compileProgSource_semantics {C F : Type} (start n targetStart targetNext : Nat)
     (programs : List (Nat × Nat × Bvl.Exp)) (targetProgram : List (Nat × Nat × Bvi.Exp))
     (oracle : BvlSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C) (ffi : HolFfiState F)
