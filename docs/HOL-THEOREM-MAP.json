@@ -234,6 +234,38 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_prog_get_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileLabels.lean",
+    "lean_name": "compileProg_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source and term-shape review: ordered start/counter/program and result binders retain the sole compiler equation. The complete output-body labels are bounded by entry INSERT over the union of emitted keys and translated input-body labels, with the original association. All eight stub bodies and source compiler were compared; the typed original theorem was captured."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_list_get_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileLabels.lean",
+    "lean_name": "compileList_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the original compiler equation implies both counter monotonicity and the complete output-body label subset. The left-associated union retains emitted code keys first, translated input-body labels second and arbitrary stub keys third, with no extra premise; the original typed theorem was captured."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_single_get_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileLabels.lean",
+    "lean_name": "compileSingle_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the original single-function compiler equation, arbitrary program/code/counter and independent stub arguments are retained. All flattened output-body labels are bounded by the left-associated union of translated source-body labels, emitted code keys and arbitrary stub keys; the original typed theorem was captured."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_exps_get_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileLabels.lean",
+    "lean_name": "compileExps_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: original compilation equation and BVL/BVI list, auxiliary-tree and counter carriers are retained. The conclusion includes both output-expression and auxiliary-body labels, bounded by the left-associated union of translated source labels, the exact fresh interval and arbitrary stub keys. All compiler cases and source-shaped traversal were compared; typed original captured."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_op_code_labels",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CodeLabels.lean",
     "lean_name": "compileOp_codeLabels",

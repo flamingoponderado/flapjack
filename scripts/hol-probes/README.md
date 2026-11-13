@@ -469,7 +469,10 @@ source review.
 
 It also captures the rebound BVI code-label equations, the polymorphic
 `good_code_labels` definition, and the original `destLet_code_labels` and
-`compile_int_code_labels`, and `compile_op_code_labels` statements with inferred
+`compile_int_code_labels`, `compile_op_code_labels`, and
+`compile_exps_get_code_labels`, `compile_single_get_code_labels`, and
+`compile_list_get_code_labels`, and `compile_prog_get_code_labels` statements
+with inferred
 types. The BVI source
 definition is referenced at its original declaration line; the later theorem
 rebind is the captured HOL export.
