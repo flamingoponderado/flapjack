@@ -188,3 +188,4 @@ val refs_rel_LEAST_eq_replay = Q.prove
      by (rw [] \\ EQ_TAC \\ rw [FDOM_FLOOKUP,domain_lookup,lookup_map])
   \\ rw []);
 val _ = show "refs_rel_LEAST_eq_replay_typed=" refs_rel_LEAST_eq_replay;
+val _ = show "data_to_bvi_do_eq_typed=" bvi_to_dataProofTheory.data_to_bvi_do_eq;

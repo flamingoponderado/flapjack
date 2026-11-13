@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.BviToData.Proofs.Value
 public import Flapjack.Compiler.Backend.Semantics.DataSem.Equality
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.Equality
 public import Flapjack.Misc.Sptree.Map
+public import Flapjack.FiniteMap.CardinalityExact
 public import Mathlib.Tactic.CasesM
 
 @[expose] public section
@@ -15,9 +16,8 @@ open Classical
 noncomputable section
 
 mutual
-/-- Equality agrees under timestamp erasure when the reference lookups agree.
-This factored lemma is untagged; the HOL conjunction and its finite-map
-representation still require a port review. -/
+/-- Flapjack proof infrastructure: equality agrees under timestamp erasure
+when the reference lookups agree. -/
 theorem doEqProjection (dataRefs : Spt (BvlSem.Ref DataSem.Value))
     (bviRefs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
     (related : ∀ n, bviRefs.lookup n = sptLookup n (sptMap dataToBviRef dataRefs))
@@ -76,8 +76,8 @@ theorem doEqProjection (dataRefs : Spt (BvlSem.Ref DataSem.Value))
         · rfl
 termination_by sizeOf first
 
-/-- The corresponding left-to-right list comparisons also agree. This is
-factored proof infrastructure for the same unreviewed HOL conjunction. -/
+/-- Flapjack proof infrastructure: corresponding left-to-right list
+comparisons also agree. -/
 theorem doEqListProjection (dataRefs : Spt (BvlSem.Ref DataSem.Value))
     (bviRefs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
     (related : ∀ n, bviRefs.lookup n = sptLookup n (sptMap dataToBviRef dataRefs))
@@ -101,18 +101,37 @@ theorem doEqListProjection (dataRefs : Spt (BvlSem.Ref DataSem.Value))
 termination_by sizeOf first
 end
 
+/-- The first universally quantified reference map survives its codec. -/
+theorem holFmapAsFiniteSupportParamWitness_dataToBviDoEq_r1
+    (r1 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (HolFiniteMapExact.ofBroadCardinality (HolFiniteMapExact.toBroadlookupCardinality r1) r1.finiteSupport).lookup key = r1.lookup key ∧
+    (HolFiniteMapExact.ofBroadCardinality (HolFiniteMapExact.toBroadlookupCardinality r1) r1.finiteSupport).finiteSupport = r1.finiteSupport ∧
+    HolFiniteMapExact.ofBroadCardinality (HolFiniteMapExact.toBroadlookupCardinality r1) r1.finiteSupport = r1 := by
+  cases r1
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- The second universally quantified reference map survives its codec. -/
+theorem holFmapAsFiniteSupportParamWitness_dataToBviDoEq_r2
+    (r2 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (HolFiniteMapExact.ofBroadCardinality (HolFiniteMapExact.toBroadlookupCardinality r2) r2.finiteSupport).lookup key = r2.lookup key ∧
+    (HolFiniteMapExact.ofBroadCardinality (HolFiniteMapExact.toBroadlookupCardinality r2) r2.finiteSupport).finiteSupport = r2.finiteSupport ∧
+    HolFiniteMapExact.ofBroadCardinality (HolFiniteMapExact.toBroadlookupCardinality r2) r2.finiteSupport = r2 := by
+  cases r2
+  exact ⟨rfl, rfl, rfl⟩
+
 /-- The two equality simulations, assembled in the quantifier order of the
-HOL result. This remains untagged pending review of its finite-map carrier and
-the complete source statement. -/
+HOL result. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "data_to_bvi_do_eq"
+  (fmap_as_finite_support_parameters := [r1, r2])]
 theorem dataToBviDoEq :
     (∀ (t : Spt (BvlSem.Ref DataSem.Value)) v₁ v₂
-      (r : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)),
-      (∀ n, r.lookup n = sptLookup n (sptMap dataToBviRef t)) →
-      BvlSem.doEq r (dataToBviValue v₁) (dataToBviValue v₂) = DataSem.doEq t v₁ v₂) ∧
+      (r1 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)),
+      (∀ n, r1.lookup n = sptLookup n (sptMap dataToBviRef t)) →
+      BvlSem.doEq r1 (dataToBviValue v₁) (dataToBviValue v₂) = DataSem.doEq t v₁ v₂) ∧
     (∀ (t : Spt (BvlSem.Ref DataSem.Value)) l₁ l₂
-      (r : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)),
-      (∀ n, r.lookup n = sptLookup n (sptMap dataToBviRef t)) →
-      BvlSem.doEqList r (l₁.map dataToBviValue) (l₂.map dataToBviValue) =
+      (r2 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)),
+      (∀ n, r2.lookup n = sptLookup n (sptMap dataToBviRef t)) →
+      BvlSem.doEqList r2 (l₁.map dataToBviValue) (l₂.map dataToBviValue) =
         DataSem.doEqList t l₁ l₂) :=
   ⟨fun t v₁ v₂ r h => doEqProjection t r h v₁ v₂,
    fun t l₁ l₂ r h => doEqListProjection t r h l₁ l₂⟩

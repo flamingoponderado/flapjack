@@ -423,6 +423,18 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "data_to_bvi_do_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Equality.lean",
+    "lean_name": "dataToBviDoEq",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "r1",
+      "r2"
+    ],
+    "reviewer": "Independent typed HOL source review 2026-11-13: both original conjuncts, each with its own independently quantified DATA tree, values or value lists, and BVI finite map; both retain the original mapped-tree lookup premise and complete equality-result conclusion. The two distinct named maps use the canonical finite-support carrier with separate same-module codec witnesses; source review checks both conjunct-local binders independently."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "refs_rel_LEAST_eq",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/LeastRef.lean",
     "lean_name": "refsRel_leastEq",
