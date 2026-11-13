@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxCall
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.GeneratedShape
 
 @[expose] public section
 
@@ -8,14 +9,6 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxCall
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value)
 open Flapjack.SemanticPrimitivesHOL (Result)
-
-private theorem handleOk_varList (xs : List Bvl.Exp) (onlyVars : xs.all BvlProps.isVar = true) :
-    BvlHandle.Proofs.handleOk xs := by
-  rw [BvlHandle.Proofs.handleOk_every]
-  rw [List.forall_iff_forall_mem]
-  intro expression member
-  have isVariable := (List.all_eq_true.mp onlyVars) expression member
-  cases expression <;> simp_all [BvlProps.isVar, BvlHandle.Proofs.handleOk]
 
 /-- Empty let simulation for the source's variable-only, bounded inner let.
 Untagged pending BVI evaluator and dispatcher correspondence review. -/
@@ -49,6 +42,12 @@ theorem simulation_let_empty {C F : Type} (bindings : List Bvl.Exp) (body : Bvl.
   have shape : bindings.all BvlProps.isVar = true ∧
       BvlProps.bVarBound bindings.length [body] ∧ BvlHandle.Proofs.handleOk [body] := by
     simpa [BvlHandle.Proofs.handleOk, BvlHandle.Proofs.letOk, and_assoc] using handlers
+  have bindingsHandle : BvlHandle.Proofs.handleOk bindings :=
+    BvlHandle.Proofs.handleOk_varConstList bindings (by
+      rw [List.forall_iff_forall_mem]
+      intro expression member
+      have isVarCase := (List.all_eq_true.mp shape.1) expression member
+      cases expression <;> simp_all [BvlProps.isVar])
   have innerRun : BvlSem.evaluate [.let bindings body] env source = (res, next) := by
     simpa [BvlSem.evaluate, BvlSem.fixClock] using run
   rw [BvlSem.evaluate, BvlSem.fixClock_evaluate] at innerRun
@@ -60,7 +59,7 @@ theorem simulation_let_empty {C F : Type} (bindings : List Bvl.Exp) (body : Bvl.
       rcases innerRun with ⟨rfl, rfl⟩
       obtain ⟨targetNext, newRelocate, clock, targetRun, relatedNext, envEq, refsEq⟩ :=
         bindingsIH n (.err error) next target n1 bindingsCode bindingsAux relocate bindingsRun notTypeError
-          bindingsCompile related sourceOk envOk pieces.1 (handleOk_varList bindings shape.1) global
+          bindingsCompile related sourceOk envOk pieces.1 bindingsHandle global
       refine ⟨targetNext, newRelocate, clock, ?_, relatedNext, envEq, refsEq⟩
       rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetRun]
       cases error <;> rfl
@@ -76,7 +75,7 @@ theorem simulation_let_empty {C F : Type} (bindings : List Bvl.Exp) (body : Bvl.
         exact bodyRunExtended
       obtain ⟨targetMid, midRelocate, bindingsClock, targetBindings, relatedMid, envMidEq, refsMidEq⟩ :=
         bindingsIH n (.val values) source target n1 bindingsCode bindingsAux relocate bindingsRun (by simp)
-          bindingsCompile related sourceOk envOk pieces.1 (handleOk_varList bindings shape.1) global
+          bindingsCompile related sourceOk envOk pieces.1 bindingsHandle global
       have targetCodeGrowth := BviProps.evaluate_code_mono bindingsCode (env.map (adjustBv midRelocate))
         (BviProps.incClock bindingsClock target) targetMid (.val (values.map (adjustBv midRelocate))) (by
           simpa [mapSimulationResult] using targetBindings)

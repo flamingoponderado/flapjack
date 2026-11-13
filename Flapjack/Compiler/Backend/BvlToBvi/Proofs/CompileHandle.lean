@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxHandle
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.GeneratedShape
 
 @[expose] public section
 
@@ -8,14 +9,6 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxHandle
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value)
 open Flapjack.SemanticPrimitivesHOL (Result)
-
-private theorem handleOk_varList (xs : List Bvl.Exp) (onlyVars : xs.all BvlProps.isVar = true) :
-    BvlHandle.Proofs.handleOk xs := by
-  rw [BvlHandle.Proofs.handleOk_every]
-  rw [List.forall_iff_forall_mem]
-  intro expression member
-  have isVariable := (List.all_eq_true.mp onlyVars) expression member
-  cases expression <;> simp_all [BvlProps.isVar, BvlHandle.Proofs.handleOk]
 
 /-- Handler simulation for a variable-only, bounded protected let.
 Untagged pending BVI evaluator and dispatcher correspondence review. -/
@@ -57,6 +50,12 @@ theorem simulation_handle {C F : Type} (bindings : List Bvl.Exp) (body handler :
   have shape : bindings.all BvlProps.isVar = true ∧ BvlProps.bVarBound bindings.length [body] ∧
       BvlHandle.Proofs.handleOk [body] ∧ BvlHandle.Proofs.handleOk [handler] := by
     simpa [BvlHandle.Proofs.handleOk, and_assoc] using handlers
+  have bindingsHandle : BvlHandle.Proofs.handleOk bindings :=
+    BvlHandle.Proofs.handleOk_varConstList bindings (by
+      rw [List.forall_iff_forall_mem]
+      intro expression member
+      have isVarCase := (List.all_eq_true.mp shape.1) expression member
+      cases expression <;> simp_all [BvlProps.isVar])
   rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, BvlSem.evaluate, BvlSem.fixClock_evaluate] at run
   cases bindingsRun : BvlSem.evaluate bindings env source with
   | mk bindingsResult mid =>
@@ -88,7 +87,7 @@ theorem simulation_handle {C F : Type} (bindings : List Bvl.Exp) (body handler :
           exact (bvOkList_iff _ _).1 envOk value (members value member)
         obtain ⟨targetMid, midRelocate, bindingsClock, targetBindings, relatedMid, envMidEq, refsMidEq⟩ :=
           bindingsIH n (.val values) source target n1 bindingsCode bindingsAux relocate bindingsRun (by simp)
-            bindingsCompile related sourceOk envOk pieces.1 (handleOk_varList bindings shape.1) global
+            bindingsCompile related sourceOk envOk pieces.1 bindingsHandle global
         have targetCodeGrowth := BviProps.evaluate_code_mono bindingsCode (env.map (adjustBv midRelocate))
           (BviProps.incClock bindingsClock target) targetMid (.val (values.map (adjustBv midRelocate))) (by
             simpa [mapSimulationResult] using targetBindings)
