@@ -1,5 +1,12 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml", "hol_name": "iEval_bVarBound",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/IEvalBound.lean", "lean_name": "iEvalBound",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete typed original local proof replay: bounded and handler-safe BVL expressions compile to BVI expressions whose evaluation is unchanged when an arbitrary environment suffix is appended, for arbitrary counters and BVI state. The first of the two HOL counter binders is vacuous and retained explicitly. HOL compile_exps_sing equates compile_exps_list, represented by compileListSource, with compile_exps. The canonical BVI state witness accounts for refs; evaluation inherits the reals_as_rational_cuts assumption."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml", "hol_name": "evaluate_MAP_Var2",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/VarList.lean", "lean_name": "evaluate_varMapBound",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
