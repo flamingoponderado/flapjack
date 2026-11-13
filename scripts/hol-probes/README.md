@@ -9983,3 +9983,16 @@ Regenerate with
 `HOL_PROBE_ONLY=hol_llist_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean
 correspondence.
+
+`machine_ieee_typed_probe.out` captures the typed statements of the HOL
+`machine_ieee` definitions ported in `Flapjack/Misc/MachineIeee*.lean` from the
+built HOL4 core theory (no rebuild): the `fp64`/`fp32` codecs and field
+extracts, the comparison and classification predicates, the arithmetic
+definitions (`fp64_add`/`sub`/`mul`/`div`/`mul_add`), the fp32/fp64 and
+int/real conversions, the generic `convert`, and `fp64_sqrt`. The capture shows
+the fixed `word64`/`word32` carriers, the `(52,11)`/`(23,8)` float carriers, the
+independent type variables of `convert`, and the `real` inputs rendered by the
+reviewed rational-cut model. Regenerate with
+`HOL_PROBE_ONLY=machine_ieee_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.

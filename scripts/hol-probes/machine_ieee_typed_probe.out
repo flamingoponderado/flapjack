@@ -1,0 +1,29 @@
+float_to_fp64_def_typed=∀(x :(52, 11) float). float_to_fp64 x = ((x.Sign @@ ((x.Exponent @@ x.Significand) :63 word)) :word64)
+fp64_abs_def_typed=fp64_abs = float_to_fp64 ∘ (float_abs :(52, 11) float -> (52, 11) float) ∘ fp64_to_float
+fp64_equal_def_typed=∀(a :word64) (b :word64). fp64_equal a b ⇔ float_equal (fp64_to_float a) (fp64_to_float b)
+fp64_greaterEqual_def_typed=∀(a :word64) (b :word64). fp64_greaterEqual a b ⇔ float_greater_equal (fp64_to_float a) (fp64_to_float b)
+fp64_greaterThan_def_typed=∀(a :word64) (b :word64). fp64_greaterThan a b ⇔ float_greater_than (fp64_to_float a) (fp64_to_float b)
+fp64_isNan_def_typed=fp64_isNan = (float_is_nan :(52, 11) float -> bool) ∘ fp64_to_float
+fp64_isSignallingNan_def_typed=fp64_isSignallingNan = (float_is_signalling :(52, 11) float -> bool) ∘ fp64_to_float
+fp64_lessEqual_def_typed=∀(a :word64) (b :word64). fp64_lessEqual a b ⇔ float_less_equal (fp64_to_float a) (fp64_to_float b)
+fp64_lessThan_def_typed=∀(a :word64) (b :word64). fp64_lessThan a b ⇔ float_less_than (fp64_to_float a) (fp64_to_float b)
+fp64_negate_def_typed=fp64_negate = float_to_fp64 ∘ (float_negate :(52, 11) float -> (52, 11) float) ∘ fp64_to_float
+fp64_to_float_def_typed=∀(w :word64). fp64_to_float w = <|Sign := (((63 :num) >< (63 :num)) w :word1); Exponent := (((62 :num) >< (52 :num)) w :word11); Significand := (((51 :num) >< (0 :num)) w :52 word)|>
+fp64_add_def_typed=∀(mode :rounding) (a :word64) (b :word64). fp64_add mode a b = float_to_fp64 (SND (float_add mode (fp64_to_float a) (fp64_to_float b)))
+fp64_div_def_typed=∀(mode :rounding) (a :word64) (b :word64). fp64_div mode a b = float_to_fp64 (SND (float_div mode (fp64_to_float a) (fp64_to_float b)))
+fp64_mul_def_typed=∀(mode :rounding) (a :word64) (b :word64). fp64_mul mode a b = float_to_fp64 (SND (float_mul mode (fp64_to_float a) (fp64_to_float b)))
+fp64_mul_add_def_typed=∀(mode :rounding) (a :word64) (b :word64) (c :word64). fp64_mul_add mode a b c = float_to_fp64 (SND (float_mul_add mode (fp64_to_float a) (fp64_to_float b) (fp64_to_float c)))
+fp64_sub_def_typed=∀(mode :rounding) (a :word64) (b :word64). fp64_sub mode a b = float_to_fp64 (SND (float_sub mode (fp64_to_float a) (fp64_to_float b)))
+float_to_fp32_def_typed=∀(x :(23, 8) float). float_to_fp32 x = ((x.Sign @@ ((x.Exponent @@ x.Significand) :31 word)) :word32)
+fp32_to_float_def_typed=∀(w :word32). fp32_to_float w = <|Sign := (((31 :num) >< (31 :num)) w :word1); Exponent := (((30 :num) >< (23 :num)) w :word8); Significand := (((22 :num) >< (0 :num)) w :23 word)|>
+fp32_to_fp64_def_typed=fp32_to_fp64 = (SND :flags # word64 -> word64) ∘ fp32_to_fp64_with_flags
+fp32_to_fp64_with_flags_def_typed=fp32_to_fp64_with_flags = convert fp32_to_float float_to_fp64 real_to_fp64_with_flags roundTiesToEven
+fp64_to_fp32_def_typed=∀(m :rounding). fp64_to_fp32 m = (SND :flags # word32 -> word32) ∘ fp64_to_fp32_with_flags m
+fp64_to_fp32_with_flags_def_typed=fp64_to_fp32_with_flags = convert fp64_to_float float_to_fp32 real_to_fp32_with_flags
+fp64_to_int_def_typed=∀(mode :rounding). fp64_to_int mode = (float_to_int mode :(52, 11) float -> int option) ∘ fp64_to_float
+int_to_fp64_def_typed=∀(mode :rounding) (a :int). int_to_fp64 mode a = real_to_fp64 mode (real_of_int a)
+convert_def_typed=∀(to_float :α word -> (β, γ) float) (from_float :(δ, ε) float -> ζ word) (from_real_with_flags :rounding -> real -> flags # ζ word) (m :rounding) (w :α word). convert to_float from_float from_real_with_flags m w = (let (f :(β, γ) float) = to_float w in case float_value f of Float r => from_real_with_flags m r | Infinity => (clear_flags,from_float (if f.Sign = (0w :word1) then float_plus_infinity (:δ # ε) else float_minus_infinity (:δ # ε))) | NaN => (check_for_signalling [f],from_float (@(fp :(δ, ε) float). float_is_nan fp)))
+real_to_fp32_with_flags_def_typed=∀(mode :rounding). real_to_fp32_with_flags mode = ((I :flags -> flags) ## float_to_fp32) ∘ (real_to_float_with_flags mode :real -> flags # (23, 8) float)
+real_to_fp64_def_typed=∀(mode :rounding). real_to_fp64 mode = float_to_fp64 ∘ (real_to_float mode :real -> (52, 11) float)
+real_to_fp64_with_flags_def_typed=∀(mode :rounding). real_to_fp64_with_flags mode = ((I :flags -> flags) ## float_to_fp64) ∘ (real_to_float_with_flags mode :real -> flags # (52, 11) float)
+fp64_sqrt_def_typed=∀(mode :rounding). fp64_sqrt mode = float_to_fp64 ∘ (SND :flags # (52, 11) float -> (52, 11) float) ∘ (float_sqrt mode :(52, 11) float -> flags # (52, 11) float) ∘ fp64_to_float
