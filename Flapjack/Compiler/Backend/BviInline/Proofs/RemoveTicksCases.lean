@@ -43,14 +43,8 @@ theorem raiseExp {C F : Type} (body : Bvi.Exp) (env : List Value) (target : BviS
     obtain ⟨extra, sourceNext, sourceRun, finalRel⟩ := bodyIH source bodyResult bodyNext states bodyRun
     have bodyRun' : evaluate [removeTicksSource body] env target = (bodyResult, bodyNext) := by
       simpa [removeTicksListSource] using bodyRun
-    cases bodyResult with
-    | err error =>
-      simp [removeTicksListSource, removeTicksSource, evaluate, bodyRun'] at run
-      obtain ⟨rfl, rfl⟩ := run.symm
-      exact ⟨extra, sourceNext, by simp [evaluate, sourceRun], finalRel⟩
-    | val values =>
-      simp [removeTicksListSource, removeTicksSource, evaluate, bodyRun'] at run
-      obtain ⟨rfl, rfl⟩ := run.symm
+    cases bodyResult <;> simp [removeTicksListSource, removeTicksSource, evaluate, bodyRun'] at run <;>
+      obtain ⟨rfl, rfl⟩ := run.symm <;>
       exact ⟨extra, sourceNext, by simp [evaluate, sourceRun], finalRel⟩
 
 /-- Flapjack infrastructure: returned values and errors transfer from a
@@ -61,14 +55,8 @@ theorem returnExp {C F : Type} (args : List Bvi.Exp) (env : List Value) (target 
   cases argsRun : evaluate (removeTicksListSource args) env target with
   | mk argsResult argsNext =>
     obtain ⟨extra, sourceNext, sourceRun, finalRel⟩ := argsIH source argsResult argsNext states argsRun
-    cases argsResult with
-    | err error =>
-      simp [removeTicksListSource, removeTicksSource, evaluate, argsRun] at run
-      obtain ⟨rfl, rfl⟩ := run.symm
-      exact ⟨extra, sourceNext, by simp [evaluate, sourceRun], finalRel⟩
-    | val values =>
-      simp [removeTicksListSource, removeTicksSource, evaluate, argsRun] at run
-      obtain ⟨rfl, rfl⟩ := run.symm
+    cases argsResult <;> simp [removeTicksListSource, removeTicksSource, evaluate, argsRun] at run <;>
+      obtain ⟨rfl, rfl⟩ := run.symm <;>
       exact ⟨extra, sourceNext, by simp [evaluate, sourceRun], finalRel⟩
 
 /-- Flapjack infrastructure: primitive operations preserve the result and
