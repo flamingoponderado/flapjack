@@ -28,8 +28,9 @@ theorem evaluate_aux_call_handle_noRaise {C F : Type} (arguments : List Bvi.Exp)
     cases result with
     | val values => simp [mapSimulationResult]
     | err error => cases error <;> simp_all [mapSimulationResult]
-  have optimized := BviLet.Proofs.evaluate_compileList [body] values
-    (BviProps.incClock extra middle) final (mapSimulationResult relocate result) bodyRun mappedOk
+  have optimized := BviLet.Proofs.compileThmOriginal [body] final
+    (BviProps.incClock extra middle) (mapSimulationResult relocate result) values ⟨bodyRun, mappedOk⟩
+  rw [BviLet.compile_eq_compileList] at optimized
   have optimizedRun : BviSem.evaluate [BviLet.compileSing [] 0 body] values
       (BviProps.incClock extra middle) = (mapSimulationResult relocate result, final) := by
     simpa [BviLet.compileList, BviSem.evaluateTuple] using optimized
@@ -76,8 +77,9 @@ theorem evaluate_aux_call_handle_raise {C F : Type} (arguments : List Bvi.Exp)
       (mapSimulationResult relocate result, final)) :
     BviSem.evaluate [.call 0 (some location) arguments (some handler)] env
       (BviProps.incClock (handlerClock + bodyClock + 1) state) = (mapSimulationResult relocate result, final) := by
-  have optimized := BviLet.Proofs.evaluate_compileList [body] values
-    (BviProps.incClock bodyClock middle) bodyState (.err (.raise (.exn exception))) bodyRun (by simp)
+  have optimized := BviLet.Proofs.compileThmOriginal [body] bodyState
+    (BviProps.incClock bodyClock middle) (.err (.raise (.exn exception))) values ⟨bodyRun, by simp⟩
+  rw [BviLet.compile_eq_compileList] at optimized
   have optimizedRun : BviSem.evaluate [BviLet.compileSing [] 0 body] values
       (BviProps.incClock bodyClock middle) = (.err (.raise (.exn exception)), bodyState) := by
     simpa [BviLet.compileList, BviSem.evaluateTuple] using optimized

@@ -423,6 +423,30 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "compile_thm",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/Simulation.lean",
+    "lean_name": "compileThmOriginal",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: original empty-displacement source compiler and quantified xs, s2, s1, result and environment match, with both original premises and the complete result/final-state equality. The original BVI reference finite map uses the canonical finite-support state and same-module roundtrip witness. Inherits reals_as_rational_cuts through semantic primitives, as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "evaluate_compile_exp",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/Simulation.lean",
+    "lean_name": "evalExpOriginal",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: original singleton source compiler and evaluation result match, with both original premises and the complete result/final-state equality. The original BVI reference finite map uses the canonical finite-support state and same-module roundtrip witness. Inherits reals_as_rational_cuts through semantic primitives, as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
     "hol_name": "env_rel_def",
     "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/Environment.lean",
     "lean_name": "envRel",

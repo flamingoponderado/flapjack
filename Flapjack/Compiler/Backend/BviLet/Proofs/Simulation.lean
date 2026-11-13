@@ -187,12 +187,23 @@ theorem evaluateOriginal {C F Y : Type} [Nonempty Y]
   rw [BviLet.compile_eq_compileList]
   exact evaluate_envRel xs ax d env1 env2 s1 s2 res h.1 h.2.1 h.2.2
 
-/-- Empty-displacement specialization of the optimizer simulation. -/
-theorem evaluate_compileList {C F : Type} (xs : List Bvi.Exp) (env : List Value)
-    (state final : BviState C F) (result : BviResult)
-    (run : evaluateTuple (xs, env, state) = (result, final))
-    (notTypeError : result ≠ .err (.abort .typeError)) :
-    evaluateTuple (compileList [] 0 xs, env, state) = (result, final) :=
-  evaluate_envRel xs [] 0 env env state final result run (by simp [envRel]) notTypeError
+/-- The original empty-displacement compiler preserves evaluation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "compile_thm"
+  (fmap_as_finite_support := [refs])]
+theorem compileThmOriginal {C F : Type} (xs : List Bvi.Exp) (s2 s1 : BviState C F)
+    (res : BviResult) (env : List Value)
+    (h : evaluateTuple (xs, env, s1) = (res, s2) ∧ res ≠ .err (.abort .typeError)) :
+    evaluateTuple (BviLet.compile [] 0 xs, env, s1) = (res, s2) :=
+  evaluateOriginal xs env s1 [] env res s2 () 0 ⟨h.1, by simp [envRel], h.2⟩
+
+/-- The original single-expression compiler preserves evaluation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "evaluate_compile_exp"
+  (fmap_as_finite_support := [refs])]
+theorem evalExpOriginal {C F : Type} (d : Bvi.Exp) (env : List Value)
+    (s t : BviState C F) (r : BviResult)
+    (h : evaluateTuple ([d], env, s) = (r, t) ∧ r ≠ .err (.abort .typeError)) :
+    evaluateTuple ([BviLet.compileExp d], env, s) = (r, t) := by
+  simpa [BviLet.compile_eq_compileList, BviLet.compileExp_eq, BviLet.compileList] using
+    compileThmOriginal [d] t s r env h
 
 end Flapjack.Compiler.Backend.BviLet.Proofs

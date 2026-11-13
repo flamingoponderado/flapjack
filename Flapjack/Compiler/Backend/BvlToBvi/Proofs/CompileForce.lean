@@ -126,9 +126,10 @@ theorem simulation_force_unevaluated {C F : Type} (location index : Nat) (env : 
           [adjustBv finalRelocate thunk, adjustBv finalRelocate function] target.code =
             some (args.map (adjustBv finalRelocate), BviLet.compileSing [] 0 converted) := by
         simpa [← thunkEq, ← functionEq, ← argsEq] using targetFind'
-      have optimized := BviLet.Proofs.evaluate_compileList [converted] (args.map (adjustBv finalRelocate))
-        (BviProps.incClock clock (BviSem.decClock 1 target)) targetNext (mapSimulationResult finalRelocate res)
-        targetRun (by cases res with | val values => simp [mapSimulationResult] | err error => cases error <;> simp_all [mapSimulationResult])
+      have optimized := BviLet.Proofs.compileThmOriginal [converted] targetNext
+        (BviProps.incClock clock (BviSem.decClock 1 target)) (mapSimulationResult finalRelocate res)
+        (args.map (adjustBv finalRelocate)) ⟨targetRun, by cases res with | val values => simp [mapSimulationResult] | err error => cases error <;> simp_all [mapSimulationResult]⟩
+      rw [BviLet.compile_eq_compileList] at optimized
       have optimizedRun : BviSem.evaluate [BviLet.compileSing [] 0 converted] (args.map (adjustBv finalRelocate))
           (BviProps.incClock clock (BviSem.decClock 1 target)) = (mapSimulationResult finalRelocate res, targetNext) := by
         simpa [BviLet.compileList, BviSem.evaluateTuple] using optimized

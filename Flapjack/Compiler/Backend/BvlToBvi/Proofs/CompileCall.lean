@@ -100,9 +100,10 @@ theorem simulation_call {C F : Type} (ticks : Nat) (dest : Option Nat) (argument
             cases res with
             | val values => simp [mapSimulationResult]
             | err error => cases error <;> simp_all [mapSimulationResult]
-          have optimized := BviLet.Proofs.evaluate_compileList [converted] (callArgs.map (adjustBv finalRelocate))
-            (BviProps.incClock bodyClock (BviSem.decClock (ticks + 1) targetMid)) targetFinal
-            (mapSimulationResult finalRelocate res) targetBody mappedOk
+          have optimized := BviLet.Proofs.compileThmOriginal [converted] targetFinal
+            (BviProps.incClock bodyClock (BviSem.decClock (ticks + 1) targetMid))
+            (mapSimulationResult finalRelocate res) (callArgs.map (adjustBv finalRelocate)) ⟨targetBody, mappedOk⟩
+          rw [BviLet.compile_eq_compileList] at optimized
           have optimizedRun : BviSem.evaluate [BviLet.compileSing [] 0 converted]
               (callArgs.map (adjustBv finalRelocate)) (BviProps.incClock bodyClock (BviSem.decClock (ticks + 1) targetMid)) =
                 (mapSimulationResult finalRelocate res, targetFinal) := by
