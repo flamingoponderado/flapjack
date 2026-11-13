@@ -1,5 +1,12 @@
 # Pancake parity-testing workflow
 
+The source-shaped whole BVL-to-BVI pipeline now runs in the configured CakeML
+compiler. After rebuilding `cake`, all 143 fixed source corpus cases matched
+the pinned CakeML executable in output, diagnostics, and exit status:
+`python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --corpus --timeout 90`.
+The same executable also matched 25 rich generated cases (seed 26110921) and
+40 structured-option cases (seed 116834111).
+
 For a pinned CakeML oracle, build from a clean checkout of the `cakeml`
 submodule revision in `/var/tmp/flapjack-cakeml-oracle`, using a built HOL
 checkout at the `HOL` submodule revision. Run

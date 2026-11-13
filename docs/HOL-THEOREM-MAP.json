@@ -337,6 +337,14 @@
     "reviewer": "Independent typed HOL source review: arbitrary arity, identity and body retain the unconditional equality of wrapper labels with identity labels union body labels, in the original order. Generated variable bindings introduce no labels."
   },
   {
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "compile_def",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/SourcePipeline.lean",
+    "lean_name": "compileSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: all five source stages retain their original order, configuration fields, fixed fresh counters and final-name computation; the complete eight-field result retains distinct BVL and BVI caches and byte-string name trees. The configured executed route uses this definition, and its former fuel composition is proved equal for all inputs."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
     "hol_name": "compile_each_good_code_labels",
     "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeLabels.lean",

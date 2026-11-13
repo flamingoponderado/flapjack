@@ -1501,6 +1501,8 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileInstall
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCorrect
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitGlobalsStub
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitialStateRel
+import Flapjack.Compiler.Backend.BvlToBvi.SourcePipeline
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.PipelineCorrespondence
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TailrecNames
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TmcNames
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.NoMutcons
