@@ -64,7 +64,7 @@ theorem simulation_let_empty {C F : Type} (bindings : List Bvl.Exp) (body : Bvl.
       rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetRun]
       cases error <;> rfl
     | val values =>
-      have unchanged := (evaluate_varList_members bindings env source mid values shape.1 bindingsRun).2
+      have unchanged := (evaluate_varList_members bindings env source mid values ⟨shape.1, bindingsRun⟩).2
       subst mid
       have valuesLength := BvlSem.evaluate_length bindings env source source values bindingsRun
       have bodyRunExtended : BvlSem.evaluate [body] (values ++ env) source = (res, next) := by
@@ -91,10 +91,10 @@ theorem simulation_let_empty {C F : Type} (bindings : List Bvl.Exp) (body : Bvl.
           (sptMem_iff_lookup _ _).2 ⟨_, pieces.2.2⟩
         exact (targetCodeGrowth _ member).2.trans pieces.2.2
       have valuesOk : bvOkList source.refs values := by
-        have members := (evaluate_varList_members bindings env source source values shape.1 bindingsRun).1
+        have members := (evaluate_varList_members bindings env source source values ⟨shape.1, bindingsRun⟩).1
         apply (bvOkList_iff _ _).2
         intro value member
-        exact (bvOkList_iff _ _).1 envOk value (members value member)
+        exact (bvOkList_iff _ _).1 envOk value (List.forall_iff_forall_mem.mp members value member)
       obtain ⟨targetFinal, finalRelocate, bodyClock, targetBody, relatedFinal, valuesEq, refsFinalEq⟩ :=
         bodyIH values n1 res next targetMid finalName [bodyCode] bodyAux midRelocate bodyRun notTypeError
           bodyCompiled relatedMid sourceOk valuesOk bodyInstalled shape.2.2 targetGlobal

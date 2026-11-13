@@ -1,6 +1,18 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "EVERY_isVar_evaluate_Rval_MEM",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/VarList.lean",
+    "lean_name": "evaluate_varList_members",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the exported typed original: EVERY variable input and successful BVL evaluation imply EVERY result is an environment member and the original and final states are equal. The BVL state refs field uses the canonical finite map, and the evaluator dependency closure inherits the reviewed reals_as_rational_cuts translation. The existing Lean theorem and its consumers were retained with the original conjunction and EVERY conclusion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "eval_ind_alt",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/EvalIndAlt.lean",
     "lean_name": "evalIndAlt",

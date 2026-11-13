@@ -66,7 +66,7 @@ theorem simulation_handle {C F : Type} (bindings : List Bvl.Exp) (body handler :
       simp [bindingsRun] at run
       exact (notTypeError run.1.symm).elim
     | val values =>
-      have unchanged := (evaluate_varList_members bindings env source mid values shape.1 bindingsRun).2
+      have unchanged := (evaluate_varList_members bindings env source mid values ⟨shape.1, bindingsRun⟩).2
       subst mid
       have valuesLength := BvlSem.evaluate_length bindings env source source values bindingsRun
       have bodyBound : BvlProps.bVarBound values.length [body] := by simpa [valuesLength] using shape.2.1
@@ -81,10 +81,10 @@ theorem simulation_handle {C F : Type} (bindings : List Bvl.Exp) (body handler :
           simp [bodyRun] at run
           exact notTypeError run.1.symm
         have valuesOk : bvOkList source.refs values := by
-          have members := (evaluate_varList_members bindings env source source values shape.1 bindingsRun).1
+          have members := (evaluate_varList_members bindings env source source values ⟨shape.1, bindingsRun⟩).1
           apply (bvOkList_iff _ _).2
           intro value member
-          exact (bvOkList_iff _ _).1 envOk value (members value member)
+          exact (bvOkList_iff _ _).1 envOk value (List.forall_iff_forall_mem.mp members value member)
         obtain ⟨targetMid, midRelocate, bindingsClock, targetBindings, relatedMid, envMidEq, refsMidEq⟩ :=
           bindingsIH n (.val values) source target n1 bindingsCode bindingsAux relocate bindingsRun (by simp)
             bindingsCompile related sourceOk envOk pieces.1 bindingsHandle global

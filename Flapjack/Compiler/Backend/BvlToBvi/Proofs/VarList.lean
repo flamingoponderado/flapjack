@@ -82,14 +82,23 @@ theorem evaluate_varMapBound {C F : Type} (args : List Bvl.Exp) (vs env : List V
         simp [BviSem.evaluateTuple, BviSem.evaluate, lookup, right, Flapjack.holHd]
     | _ => simp [isVar] at premises
 
-/-- Successful variable-only evaluation leaves the state unchanged and
-returns only values already in the environment. Untagged pending source
-statement and carrier review. -/
+namespace VarListCarrier
+/-- Canonical BVL reference-map state roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end VarListCarrier
+
+/-- Successful variable-only evaluation returns environment values and leaves the state unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "EVERY_isVar_evaluate_Rval_MEM"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_varList_members {C F : Type} (expressions : List Bvl.Exp)
-    (env : List Value) (state final : State C F) (values : List Value)
-    (onlyVars : expressions.all isVar = true)
-    (run : evaluateTuple (expressions, env, state) = (.val values, final)) :
-    (∀ value ∈ values, value ∈ env) ∧ state = final := by
+    (env : List Value) (state final : Flapjack.Compiler.Backend.BvlSem.State C F) (values : List Value)
+    (premises : expressions.all isVar = true ∧
+      evaluateTuple (expressions, env, state) = (.val values, final)) :
+    values.Forall (fun value => value ∈ env) ∧ state = final := by
+  rcases premises with ⟨onlyVars, run⟩
   induction expressions generalizing state values with
   | nil =>
     simp [evaluateTuple, evaluate] at run
@@ -113,11 +122,12 @@ theorem evaluate_varList_members {C F : Type} (expressions : List Bvl.Exp)
             rcases run with ⟨rfl, rfl⟩
             obtain ⟨members, unchanged⟩ := ih state tailValues onlyVars.2 tailRun
             constructor
-            · intro v member
+            · rw [List.forall_iff_forall_mem]
+              intro v member
               simp only [List.mem_cons] at member
               rcases member with rfl | member
               · exact List.mem_of_getElem? lookup
-              · exact members v member
+              · exact List.forall_iff_forall_mem.mp members v member
             · exact unchanged
     | _ => simp [isVar] at onlyVars
 
