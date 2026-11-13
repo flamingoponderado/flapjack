@@ -115,24 +115,10 @@ WITHDRAWN_HOL_DECLARATIONS = {
         "the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 "
         "is admitted.  The HOL tag was withdrawn pending a faithful width-restricted restatement."
     ),
-    ("Flapjack/Compiler/Encoders/Asm.lean", "asmFpRegOk"): (
-        "cakeml/compiler/encoders/asm/asmScript.sml",
-        "fp_reg_ok_def",
-        "flapjack-ds8 (bead flapjack-4ac.6): HOL fp_reg_ok_def uses a positive-dimensional word type; "
-        "the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 "
-        "is admitted.  The HOL tag was withdrawn pending a faithful width-restricted restatement."
-    ),
     ("Flapjack/Compiler/Encoders/Asm.lean", "asmRegImmOk"): (
         "cakeml/compiler/encoders/asm/asmScript.sml",
         "reg_imm_ok_def",
         "flapjack-ds8 (bead flapjack-4ac.6): HOL reg_imm_ok_def uses a positive-dimensional word type; "
-        "the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 "
-        "is admitted.  The HOL tag was withdrawn pending a faithful width-restricted restatement."
-    ),
-    ("Flapjack/Compiler/Encoders/Asm.lean", "asmOffsetOk"): (
-        "cakeml/compiler/encoders/asm/asmScript.sml",
-        "offset_ok_def",
-        "flapjack-ds8 (bead flapjack-4ac.6): HOL offset_ok_def uses a positive-dimensional word type; "
         "the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 "
         "is admitted.  The HOL tag was withdrawn pending a faithful width-restricted restatement."
     ),
