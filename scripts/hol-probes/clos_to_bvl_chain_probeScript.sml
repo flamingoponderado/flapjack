@@ -1,4 +1,5 @@
 load "clos_to_bvlProofTheory";
+load "preamble";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
@@ -42,8 +43,21 @@ val _ = show_thm "FINITE_SUB_BAG_typed=" bagTheory.FINITE_SUB_BAG;
 val _ = show_thm "SUB_BAG_CARD_typed=" bagTheory.SUB_BAG_CARD;
 val _ = show_thm "BAG_IMAGE_SUB_BAG_typed=" clos_to_bvlProofTheory.BAG_IMAGE_SUB_BAG;
 val _ = show_thm "trivia_1_typed=" clos_to_bvlProofTheory.trivia_1;
+(* The source declaration is local; replay its original proof with inferred types. *)
+val show_SUBSET_replay = Q.prove (
+  `(!x. x IN s ==> x IN t) ==> s SUBSET t`,
+  fs [pred_setTheory.SUBSET_DEF]);
+val _ = show_thm "show_SUBSET_replay=" show_SUBSET_replay;
+val REPLICATE_1_replay = Q.prove (`REPLICATE 1 x = [x]`, EVAL_TAC);
+val _ = show_thm "REPLICATE_1_replay=" REPLICATE_1_replay;
+val obvious_arith_comm_replay = Q.prove (
+  `((a : num) = b + a) = (b = 0)`,
+  Cases_on `b` >> fs []);
+val _ = show_thm "obvious_arith_comm_replay=" obvious_arith_comm_replay;
 val _ = show_thm "EXISTS_CONS_NOT_NULL_typed=" clos_to_bvlProofTheory.EXISTS_CONS_NOT_NULL;
 val _ = show_thm "code_locs_Op_cons_typed=" clos_to_bvlProofTheory.code_locs_Op_cons;
+val _ = show_thm "MAP_FST_chain_exps_typed=" clos_to_bvlProofTheory.MAP_FST_chain_exps;
+val _ = show_thm "set_MAP_code_sort_typed=" clos_to_bvlProofTheory.set_MAP_code_sort;
 val _ = show_thm "compile_exps_IMP_acc_typed=" clos_to_bvlProofTheory.compile_exps_IMP_acc;
 val _ = show_thm "build_aux_append_aux_typed=" clos_to_bvlProofTheory.build_aux_append_aux;
 val _ = show_thm "compile_exps_append_aux_typed=" clos_to_bvlProofTheory.compile_exps_append_aux;
@@ -65,8 +79,59 @@ val _ = show_thm "set_globals_SND_renumber_code_locs_typed=" clos_to_bvlProofThe
 val _ = show_thm "elist_globals_FLAT_typed=" clos_to_bvlProofTheory.elist_globals_FLAT;
 val _ = show_thm "eval_sim_def_typed=" clos_to_bvlProofTheory.eval_sim_def;
 val _ = show_thm "IMP_semantics_eq_typed=" clos_to_bvlProofTheory.IMP_semantics_eq;
+(* Capture the complete closure initial-state predicate and clock invariance. *)
 val _ = show_thm "clos_init_def_typed=" clos_to_bvlProofTheory.clos_init_def;
 val _ = show_thm "clos_init_with_clock_typed=" clos_to_bvlProofTheory.clos_init_with_clock;
+val FST_EQ_LEMMA_replay = Q.prove (
+  `FST x = y <=> ?y1. x = (y,y1)`,
+  Cases_on `x` >> fs []);
+val _ = show_thm "FST_EQ_LEMMA_replay=" FST_EQ_LEMMA_replay;
+(* This closure initial-clock theorem is local in the original script. *)
+val initial_state_with_clock_replay = Q.prove (
+  `(closSem$initial_state ffi ma code co cc k with clock :=
+      (closSem$initial_state ffi ma code co cc k).clock + ck) =
+      closSem$initial_state ffi ma code co cc (k + ck)`,
+  fs [closSemTheory.initial_state_def]);
+val _ = show_thm "initial_state_with_clock_replay=" initial_state_with_clock_replay;
+(* The BVL clock theorem is local; replay the original proof and inferred types. *)
+val initial_state_with_clock_bvl_replay = Q.prove (
+  `(bvlSem$initial_state ffi code co cc k with clock :=
+      (bvlSem$initial_state ffi code co cc k).clock + ck) =
+      bvlSem$initial_state ffi code co cc (k + ck) /\
+   (bvlProps$inc_clock ck (bvlSem$initial_state ffi code co cc k) =
+      bvlSem$initial_state ffi code co cc (k + ck))`,
+  fs [bvlSemTheory.initial_state_def, bvlPropsTheory.inc_clock_def]);
+val _ = show_thm "initial_state_with_clock_bvl_replay=" initial_state_with_clock_bvl_replay;
+(* These local declarations are replayed with the proofs from the original script. *)
+local
+  open preamble clos_to_bvlTheory bvlSemTheory
+  val evaluate_init1_replay = Q.prove (
+    `∀mapp2 mapp1 tot st.
+      (∀n. n < mapp2 ⇒ partial_app_fn_location mapp1 tot n ∈ domain st.code) ⇒
+      bvlSem$evaluate (REVERSE
+        (GENLIST (λprev. Op (Label (partial_app_fn_location mapp1 tot prev))[]) mapp2), [Unit], st) =
+      (Rval (REVERSE (GENLIST (λprev. CodePtr (partial_app_fn_location mapp1 tot prev)) mapp2)), st)`,
+    Induct >> fs[bvlSemTheory.evaluate_def] >>
+    rw[] >> simp[GENLIST,REVERSE_SNOC] >>
+    ONCE_REWRITE_TAC[CONS_APPEND] >>
+    simp[bvlPropsTheory.evaluate_APPEND,bvlSemTheory.evaluate_def,do_app_def]);
+  val evaluate_init_replay = Q.prove (
+    `∀mapp2 mapp1 st.
+      (∀m n. m < mapp2 ∧ n < m ⇒ partial_app_fn_location mapp1 m n ∈ domain st.code) ⇒
+      bvlSem$evaluate (REVERSE (FLAT (GENLIST (λtot. GENLIST
+        (λprev. Op (Label (partial_app_fn_location mapp1 tot prev))[]) tot) mapp2)), [Unit], st) =
+      (Rval (REVERSE (FLAT (GENLIST (λtot. GENLIST
+        (λprev. CodePtr (partial_app_fn_location mapp1 tot prev)) tot) mapp2))), st)`,
+    Induct >> fs[bvlSemTheory.evaluate_def] >>
+    simp[GENLIST,FLAT_SNOC] >>
+    simp[REVERSE_APPEND,bvlPropsTheory.evaluate_APPEND] >>
+    rw[] >>
+    `∀n. n < mapp2 ⇒ partial_app_fn_location mapp1 mapp2 n ∈ domain st.code` by fs[] >>
+    old_drule evaluate_init1_replay >> simp[]);
+in
+  val _ = show_thm "evaluate_init1_replay=" evaluate_init1_replay;
+  val _ = show_thm "evaluate_init_replay=" evaluate_init_replay;
+end;
 val _ = show_thm "renumber_code_locs_fv1_typed=" clos_to_bvlProofTheory.renumber_code_locs_fv1;
 val _ = show_thm "renumber_code_locs_list_fv_typed=" clos_to_bvlProofTheory.renumber_code_locs_list_fv;
 val _ = show_thm "collect_apps_fv1_typed=" clos_to_bvlProofTheory.collect_apps_fv1;

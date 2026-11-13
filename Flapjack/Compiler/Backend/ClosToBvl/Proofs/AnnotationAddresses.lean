@@ -115,6 +115,6 @@ theorem annotateCompileInc_req (program : List ClosLang.Exp × List (Nat × Nat 
     · obtain ⟨tr, n, rest, rfl⟩ := extractable
       exact ⟨tr, n, ClosAnnotate.annotateSource 0 rest, by
         simp [ClosAnnotate.compileIncSource, annotate_opConst]⟩
-    · exact fun _ mem => reqSub.subset mem
+    · exact showSubset _ _ (fun _ mem => reqSub.subset mem)
 
 end Flapjack.Compiler.Backend.ClosToBvl

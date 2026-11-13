@@ -1128,6 +1128,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_result_observations",
     "reviewed_fmap_as_finite_support_parameter_observations",
+    "reviewed_fmap_as_finite_support_parameter_predicate_domain",
     "reviewed_fmap_as_finite_support_parameters",
     "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_existentials",
@@ -1302,7 +1303,8 @@ def tagged_declarations(
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions,
              fmap_heterogeneous_function_positions, reals_cuts,
-             fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel) in HOL_ATTRIBUTE_SITES(
+             fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
+             predicate_domain) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
@@ -1313,6 +1315,7 @@ def tagged_declarations(
                  include_word_dimensions_widths=True,
                  include_fmap_tuple=True,
                  include_nested_list_rel=True,
+                 include_predicate_domain=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -1323,7 +1326,7 @@ def tagged_declarations(
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
                      fmap_equalities, words_bitvec, fmap_parameters,
                      fmap_existentials, dimension_width, fmap_function_positions,
-                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel)
+                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel, predicate_domain)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1339,7 +1342,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
         fmap_existentials, dimension_width,
         fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
-        fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
+        fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel, predicate_domain,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1373,6 +1376,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["fmap_as_finite_support_result_observations"] = list(result_observations)
         if fmap_parameters:
             entry["fmap_as_finite_support_parameters"] = list(fmap_parameters)
+        if predicate_domain:
+            entry["fmap_as_finite_support_parameter_predicate_domain"] = list(predicate_domain)
         if fmap_existentials:
             entry["fmap_as_finite_support_existentials"] = list(fmap_existentials)
         if fmap_relation:
@@ -1693,6 +1698,28 @@ def validate_inventory(
         dimension_widths = tag[18] if tag is not None and len(tag) > 18 else ()
         fmap_tuple = tag[19] if tag is not None and len(tag) > 19 else ()
         nested_list_rel = tag[20] if tag is not None and len(tag) > 20 else ()
+        predicate_domain = tag[21] if tag is not None and len(tag) > 21 else ()
+        predicate_status = "reviewed_fmap_as_finite_support_parameter_predicate_domain"
+        if tuple(record.get("fmap_as_finite_support_parameter_predicate_domain", ())) != predicate_domain:
+            errors.append(f"{key[0]}:{key[1]}: predicate-domain binders do not match @[hol] tag")
+        if bool(predicate_domain) != (status == predicate_status):
+            errors.append(f"{key[0]}:{key[1]}: predicate-domain qualifier requires its reviewed status")
+        if predicate_domain:
+            if predicate_domain != ("code1", "rel"):
+                errors.append(f"{key[0]}:{key[1]}: predicate-domain qualifier requires [code1, rel]")
+            allowed_predicate_sites = {
+                ("cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "eval_sim_def",
+                 "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvalSim.lean", "evalSim"),
+                ("cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "IMP_semantics_eq",
+                 "Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvalSim.lean", "impSemanticsEq"),
+            }
+            if (hol_path, hol_name, key[0], key[1]) not in allowed_predicate_sites:
+                errors.append(f"{key[0]}:{key[1]}: predicate-domain qualifier is restricted to the reviewed simulation declarations")
+            if any(tag[2:21]):
+                errors.append(f"{key[0]}:{key[1]}: predicate-domain qualifier cannot combine with other representation qualifiers")
+            if (not isinstance(reviewer, str) or "source" not in reviewer.lower() or
+                    any(name not in reviewer for name in predicate_domain)):
+                errors.append(f"{key[0]}:{key[1]}: predicate-domain review must name the source and both binders")
         if tuple(record.get("nested_list_rel_as_mutual", ())) != nested_list_rel:
             errors.append(f"{key[0]}:{key[1]}: nested-list relation qualifier does not match @[hol] tag")
         nested_combined_status = "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual"

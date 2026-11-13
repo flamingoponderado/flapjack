@@ -44,6 +44,16 @@ theorem mapFst_chainExps_any (start : Nat) (exps : List ClosLang.Exp) :
       congr 1
       simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using step
 
+/-- A nonempty expression chain has exactly the consecutive entry labels. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "MAP_FST_chain_exps"]
+theorem mapFst_chainExps (start : Nat) (exps : List ClosLang.Exp) :
+    exps ≠ [] → (chainExps start exps).map Prod.fst =
+      (List.range exps.length).map (start + ·) := by
+  intro nonempty
+  cases exps with
+  | nil => exact (nonempty rfl).elim
+  | cons first rest => simpa using mapFst_chainExps_any start (first :: rest)
+
 /-- Every generated entry label is at least the starting label. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_exps_LE"]
 theorem chainExps_le (start : Nat) (expressions : List ClosLang.Exp) :
@@ -59,28 +69,17 @@ theorem chainExps_gt (start : Nat) (expressions : List ClosLang.Exp) :
     expressions ≠ [] →
     ∀ label ∈ (chainExps start expressions).map Prod.fst, label < start + expressions.length := by
   intro nonempty label member
-  rw [mapFst_chainExps_any] at member
+  rw [mapFst_chainExps start expressions nonempty] at member
   obtain ⟨i, hi, rfl⟩ := List.mem_map.mp member
   have bound := List.mem_range.mp hi
-  cases expressions with
-  | nil => exact (nonempty rfl).elim
-  | cons first rest => simp only [List.length_cons] at bound ⊢; omega
+  omega
 
 /-- Chained top-level expressions have pairwise distinct entry labels. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_exps_ALL_DISTINCT"]
 theorem chainExps_labels_nodup (start : Nat) (expressions : List ClosLang.Exp) :
     ((chainExps start expressions).map Prod.fst).Nodup := by
-  induction expressions generalizing start with
-  | nil => simp [chainExps]
-  | cons first rest ih =>
-    cases rest with
-    | nil => simp [chainExps]
-    | cons second tail =>
-      simp only [chainExps, List.map_cons, List.nodup_cons]
-      constructor
-      · intro member
-        have bounds := chainExps_le (start + 1) (second :: tail) start member
-        omega
-      · exact ih (start + 1)
+  rw [mapFst_chainExps_any]
+  exact List.Pairwise.map (start + ·)
+    (fun _ _ different equal => different (Nat.add_left_cancel equal)) List.nodup_range
 
 end Flapjack.Compiler.Backend.ClosToBvl

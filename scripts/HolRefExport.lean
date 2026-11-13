@@ -282,6 +282,15 @@ elab "#emit_hol_ref_export" : command => do
     match env.find? name with
     | none => throwError "missing declaration {name}"
     | some info =>
+        if !ref.fmapAsFiniteSupportParameterPredicateDomain.isEmpty then
+          unless ref.path == "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" &&
+              (ref.name == "eval_sim_def" || ref.name == "IMP_semantics_eq") &&
+              ref.fmapAsFiniteSupportParameterPredicateDomain == #["code1", "rel"] do
+            throwError "invalid predicate-domain reference or binders on {name}"
+          let problems ← liftTermElabM
+            (predicateDomainDeclarationProblems name (ref.name == "IMP_semantics_eq"))
+          unless problems.isEmpty do
+            throwError "invalid predicate-domain declaration {name}: {problems}"
         let isRelation := ref.path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" &&
           ref.name == "v_rel" &&
           (name == `Flapjack.Compiler.Backend.ClosAnnotate.ValueRel ||
@@ -319,6 +328,9 @@ elab "#emit_hol_ref_export" : command => do
           qualifiers := qualifiers ++ [("fmap_as_finite_support_equality", toJson true)]
         if ref.fmapAsFiniteSupportParameterObservations then
           qualifiers := qualifiers ++ [("fmap_as_finite_support_parameter_observations", toJson true)]
+        if !ref.fmapAsFiniteSupportParameterPredicateDomain.isEmpty then
+          qualifiers := qualifiers ++ [("fmap_as_finite_support_parameter_predicate_domain",
+            toJson ref.fmapAsFiniteSupportParameterPredicateDomain)]
         if !ref.fmapAsFiniteSupportHeterogeneousFunction.isEmpty then
           qualifiers := qualifiers ++ [
             ("fmap_as_finite_support_heterogeneous_function",

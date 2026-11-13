@@ -463,6 +463,22 @@ Record the named parameters in the reviewed manifest, with the matching
 `reviewed_fmap_as_finite_support_parameters` status (or its supported combined
 status).
 
+**Qualify the closure simulation's predicate map domain.** The narrow
+`(fmap_as_finite_support_parameter_predicate_domain := [code1, rel])`
+qualifier covers both the direct HOL `|->` input `code1` and the first map
+domain of the higher-order predicate `rel`. It is restricted to `eval_sim_def`
+and `IMP_semantics_eq` in the closure-to-BVL proof counterpart `EvalSim.lean`;
+it cannot combine with another representation qualifier. Record the exact
+ordered binder list and status
+`reviewed_fmap_as_finite_support_parameter_predicate_domain` after comparing
+the full HOL declarations and inferred types. The source checker requires the
+direct-map witness, both predicate codec roundtrips and the complete simulation
+definition; the attribute and export audit the fixed checked declarations,
+codec bodies, witness type, axiom closure and elaborated simulation shapes.
+These gates do not replace source review or authorize any other carrier,
+premise, result, evaluator, or semantic difference. Record the inherited
+real-model assumption separately when it applies.
+
 **Qualify observations of computed finite-map results.** Use
 `(fmap_as_finite_support_result_observations := [Producer, ...])` only
 for explicitly named imported map producers used in the tagged observer's
