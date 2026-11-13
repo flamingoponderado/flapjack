@@ -49,3 +49,17 @@ val _ = (print "value_constructors_typed=";
 val _ = (print "shape_of_def_typed=";
   Lib.with_flag (Globals.show_types, true) print_term (concl panSemTheory.shape_of_def);
   print "\n");
+
+(* Typed statements of the two res_var lookup lemmas. *)
+val _ = (print "flookup_res_var_some_eq_lookup_typed=";
+  Lib.with_flag (Globals.show_types, true)
+    print_term (concl panPropsTheory.flookup_res_var_some_eq_lookup);
+  print "\n");
+val _ = print ("flookup_res_var_some_eq_lookup_hypotheses=" ^
+  Int.toString (length (hyp panPropsTheory.flookup_res_var_some_eq_lookup)) ^ "\n");
+val _ = (print "flookup_res_var_diff_eq_org_typed=";
+  Lib.with_flag (Globals.show_types, true)
+    print_term (concl panPropsTheory.flookup_res_var_diff_eq_org);
+  print "\n");
+val _ = print ("flookup_res_var_diff_eq_org_hypotheses=" ^
+  Int.toString (length (hyp panPropsTheory.flookup_res_var_diff_eq_org)) ^ "\n");

@@ -1429,6 +1429,38 @@ theorem lflattenRep_lcons_lnil (t : HolLList (HolLList α)) (n : Nat) :
             rw [ldropHOL_succ_lcons]
           simp only [lflattenRep, hf, ht, hrep, hrep', hX]
 
+/-- The head of a flattening of a nonempty inner list. -/
+theorem lflattenRep_lcons_lcons_zero (h : α) (t : HolLList α) (tl : HolLList (HolLList α)) :
+    lflattenRep (lcons (lcons h t) tl) 0 = some h := by
+  have hf : firstNonempty (lcons (lcons h t) tl) = some 0 := by
+    rw [firstNonempty_lcons]
+    simp [lcons]
+  simp only [lflattenRep, hf]
+  simp [lcons]
+
+/-- The tail of a flattening of a nonempty inner list. -/
+theorem lflattenRep_lcons_lcons_succ (h : α) (t : HolLList α) (tl : HolLList (HolLList α))
+    (n : Nat) : lflattenRep (lcons (lcons h t) tl) (n + 1) = lflattenRep (lcons t tl) n := by
+  have hf : firstNonempty (lcons (lcons h t) tl) = some 0 := by
+    rw [firstNonempty_lcons]
+    simp [lcons]
+  have hdrop : ldropHOL (0 + 1) (lcons (lcons h t) tl) = some tl :=
+    ldropHOL_one_lcons (lcons h t) tl
+  have htl : (lcons h t).ltl.getD (lnil : HolLList α) = t := by
+    rw [ltl_lcons]
+    rfl
+  have hX : lcons ((lcons h t).ltl.getD lnil)
+      ((ldropHOL (0 + 1) (lcons (lcons h t) tl)).getD lnil) = lcons t tl := by
+    rw [hdrop, htl]
+    rfl
+  simp only [lflattenRep, hf]
+  have hrep : (lcons (lcons h t) tl).rep 0 = some (lcons h t) := by
+    simp [lcons]
+  rw [hrep]
+  show lflattenRep (lcons ((lcons h t).ltl.getD lnil)
+      ((ldropHOL (0 + 1) (lcons (lcons h t) tl)).getD lnil)) n = lflattenRep (lcons t tl) n
+  rw [hX]
+
 /-- HOL `LFLATTEN_THM` (`llistScript.sml:1967-1971`): the three flattening
 equations. -/
 @[hol "hol4/src/coalgebras/llistScript.sml" "LFLATTEN_THM"]
@@ -1441,53 +1473,20 @@ theorem lflattenHOL_THM :
   refine ⟨?_, ?_, ?_⟩
   · apply eq_lnil_of_rep_none
     intro n
-    cases n with
-    | zero => simp [lflatten, lflattenRep, firstNonempty_lnil]
-    | succ n => simp [lflatten, lflattenRep, firstNonempty_lnil]
+    cases n <;> simp [lflatten, lflattenRep, firstNonempty_lnil]
   · intro t
     apply ext_of_rep
     intro n
-    simp only [lflatten]
     exact lflattenRep_lcons_lnil t n
   · intro h t tl
     apply ext_of_rep
     intro n
-    have hf : firstNonempty (lcons (lcons h t) tl) = some 0 := by
-      rw [firstNonempty_lcons]
-      simp [lcons]
     cases n with
     | zero =>
-        have h0 : lflattenRep (lcons (lcons h t) tl) 0 = some h := by
-          simp only [lflattenRep, hf]
-          simp [lcons]
-        simp only [lflatten]
-        rw [h0]
+        show lflattenRep (lcons (lcons h t) tl) 0 = (lcons h (lflatten (lcons t tl))).rep 0
+        rw [lflattenRep_lcons_lcons_zero h t tl]
         simp [lcons]
-    | succ n =>
-        have hdrop : ldropHOL (0 + 1) (lcons (lcons h t) tl) = some tl :=
-          ldropHOL_one_lcons (lcons h t) tl
-        have htl : (lcons h t).ltl.getD (lnil : HolLList α) = t := by
-          rw [ltl_lcons]
-          rfl
-        have hX : lcons ((lcons h t).ltl.getD lnil)
-            ((ldropHOL (0 + 1) (lcons (lcons h t) tl)).getD lnil) =
-            lcons t tl := by
-          rw [hdrop, htl]
-          rfl
-        have hstep : lflattenRep (lcons (lcons h t) tl) (n + 1) =
-            lflattenRep (lcons t tl) n := by
-          simp only [lflattenRep, hf]
-          have hrep : (lcons (lcons h t) tl).rep 0 = some (lcons h t) := by
-            simp [lcons]
-          rw [hrep]
-          show lflattenRep (lcons ((lcons h t).ltl.getD lnil)
-              ((ldropHOL (0 + 1) (lcons (lcons h t) tl)).getD lnil)) n =
-            lflattenRep (lcons t tl) n
-          rw [hX]
-        simp only [lflatten]
-        rw [hstep]
-        simp [lcons]
-
+    | succ n => exact lflattenRep_lcons_lcons_succ h t tl n
 /-! ## Append algebra
 
 HOL's `LAPPEND_ASSOC` (`llistScript.sml:843`) and the finite facts about append
@@ -1680,6 +1679,12 @@ theorem lfinite_lappendHOL_imp_lnil (ll : HolLList α) (hfin : LFinite ll) :
         rw [h] at hlhs
         exact absurd (hlhs.symm.trans hk') hrep0
 
+/-- Once the left operand stops at `m`, appending copies the right operand from `m`. -/
+theorem lappendRep_rep_add {l1 l2 : HolLList α} {m : Nat} (h : firstNone l1 = some m) (n : Nat) :
+    (lappendHOL l1 l2).rep (m + n) = l2.rep n := by
+  simp only [lappendRep_rep, lappendRep_of_firstNone_some h]
+  rw [if_neg (by omega), Nat.add_sub_cancel_left]
+
 /-- HOL `LAPPEND11_FINITE1` (`llistScript.sml:4023-4025`): appending on the left
     of a finite list is injective. -/
 @[hol "hol4/src/coalgebras/llistScript.sml" "LAPPEND11_FINITE1"]
@@ -1690,22 +1695,14 @@ theorem lappendHOL_left_cancel {l1 l2 l3 : HolLList α} (hfin : LFinite l1) :
     obtain ⟨k, hk⟩ := exists_LLengthRel_of_LFinite hfin
     have hkrep : l1.rep k = none := rep_none_of_LLengthRel hk k (Nat.le_refl k)
     cases hf : firstNone l1 with
-    | none =>
-        exact absurd (firstNone_none hf k) (by rw [hkrep]; simp)
+    | none => exact absurd (firstNone_none hf k) (by
+                                                   rw [hkrep]
+                                                   simp)
     | some m =>
-        apply ext_of_rep
-        intro n
-        have hl : (lappendHOL l1 l2).rep (m + n) = l2.rep n := by
-          simp only [lappendRep_rep, lappendRep_of_firstNone_some hf]
-          rw [if_neg (by omega)]
-          rw [show m + n - m = n from by omega]
-        have hr : (lappendHOL l1 l3).rep (m + n) = l3.rep n := by
-          simp only [lappendRep_rep, lappendRep_of_firstNone_some hf]
-          rw [if_neg (by omega)]
-          rw [show m + n - m = n from by omega]
-        have := congrArg (fun ll => ll.rep (m + n)) h
-        rw [hl, hr] at this
-        exact this
+      apply ext_of_rep
+      intro n
+      have := congrArg (fun ll => ll.rep (m + n)) h
+      simpa [lappendRep_rep_add hf n] using this
   · intro h
     rw [h]
 

@@ -11,8 +11,8 @@ namespace PureExtraction
 
 /-- A `smallEnoughInt` bound on a natural cast gives the corresponding
 natural upper bound. -/
-private theorem smallEnoughInt_nat_le {n : Nat} (bound : BackendCommon.smallEnoughInt (Int.ofNat n))
-    :
+private theorem smallEnoughInt_nat_le {n : Nat}
+    (bound : BackendCommon.smallEnoughInt (Int.ofNat n)) :
     n ≤ 268435457 := Int.ofNat_le.mp bound.2
 
 private theorem extractOne_inl_shape (n loc tag : Nat) (e : Bvi.Exp)

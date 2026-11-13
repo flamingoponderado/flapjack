@@ -1,7 +1,17 @@
 module
 
 public import Flapjack.Compiler.Backend.LabProps
+public import Flapjack.Compiler.Backend.LabProps.Native
+public import Flapjack.Compiler.Backend.LabToTarget.Native
+public import Flapjack.Compiler.Backend.LabSem.State
+public import Flapjack.Compiler.Backend.StackToLab.Native
+public import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
+public import Flapjack.Compiler.Backend.StackProps.ProgramValidity
 
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Compiler.Backend.LabProps.Native
+public meta import Flapjack.Compiler.Backend.LabToTarget.Native
+public meta import Flapjack.Compiler.Backend.StackToLab.Native
 @[expose] public section
 
 -- Public declarations below use private helpers.
@@ -9,27 +19,34 @@ set_option backward.privateInPublic true
 set_option backward.privateInPublic.warn false
 
 /-!
-# Cake labProps `line_ok_pre` over a concrete `AsmConfig`
+# Cake labProps `line_ok_pre` over a concrete `AsmConfigExact`
 
 Regression for the concrete configuration instantiation in
-`Flapjack/Compiler/Backend/LabProps.lean` (`asmConfigChecks`,
-`lineOkPreConfig`, `secOkPreConfig`, `allEncOkPreConfig`). The fourteen guards
-below mirror the direct HOL `EVAL` rows in
-`scripts/hol-probes/lab_props_line_ok_pre_probe.out` at an 8-bit
-configuration identical to the probe fixture. -/
+`Flapjack/Compiler/Backend/LabProps/Native.lean` (`lineOkPreHOL`,
+`secOkPreHOL`, `allEncOkPreHOL`) together with the tagged
+`flattenLineOkPreHOL`/`compileAllEncOkPreHOL` ports. The fourteen guards below
+mirror the direct HOL `EVAL` rows in
+`scripts/hol-probes/lab_props_line_ok_pre_probe.out` at an 8-bit configuration
+identical to the probe fixture. -/
 
 namespace Flapjack.Test.LabPropsLineOkPreParity
 
 open Flapjack
 open Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Backend.LabProps
+open Flapjack.Compiler.Backend.LabToTarget
+open Flapjack.Compiler.Backend.LabSem
+open Flapjack.Compiler.Backend.StackLang
+open Flapjack.Compiler.Backend.StackToLab
+open Flapjack.Compiler.Backend.StackToLab.Proofs
+open Flapjack.Compiler.Backend.StackProps
 open Flapjack.Compiler.Encoders.Asm
 
 private abbrev W := BitVec 8
 
 private def w8 (n : Nat) : W := BitVec.ofNat 8 n
 
-private def cfg8 : AsmConfig 8 where
+private def cfg8 : AsmConfigExact 8 where
   isa := .riscv
   encode := fun _ => []
   bigEndian := false
@@ -47,160 +64,200 @@ private def cfg8 : AsmConfig 8 where
   cjumpOffset := (w8 0, w8 100)
   locOffset := (w8 0, w8 100)
 
-private abbrev L := Line (AsmOrCbw (AsmData 8) WordMemOp (WordLangAddr W))
-  (AsmWithLab Cmp Nat String) W
+private abbrev L := LabLineHOL 8
+private abbrev S := LabSectionHOL 8
 
-private def asmSkipLine : L := .asm (.asmi (.inst .skip)) [] 0
+/-- Kernel-checkable Bool view of the reviewed `lineOkPreHOL` Prop: the same
+clause `lineOkPreHOL` states, read at this fixture's exact carriers. -/
+private def lineOkB (line : L) : Bool :=
+  match line with
+  | .asm instruction _ _ => asmOkExact (width := 8) (cbwToAsmHOL (width := 8) instruction) cfg8
+  | _ => true
+
+private def secOkB (sec : S) : Bool := sec.lines.all lineOkB
+
+private def allEncOkB (sections : List S) : Bool := sections.all secOkB
+
+/-- The Bool harness states exactly the reviewed `lineOkPreHOL` clause. -/
+private theorem lineOkB_iff (line : L) : lineOkB line = true ↔ lineOkPreHOL cfg8 line := by
+  cases line with
+  | label => simp [lineOkB, lineOkPreHOL]
+  | asm => simp [lineOkB, lineOkPreHOL]
+  | labAsm => simp [lineOkB, lineOkPreHOL]
+
+/-- The section harness agrees with the reviewed `secOkPreHOL`. -/
+private theorem secOkB_iff (sec : S) : secOkB sec = true ↔ secOkPreHOL cfg8 sec := by
+  simp [secOkB, secOkPreHOL, List.all_eq_true, lineOkB_iff]
+
+/-- The program harness agrees with the reviewed `allEncOkPreHOL`. -/
+private theorem allEncOkB_iff (sections : List S) :
+    allEncOkB sections = true ↔ allEncOkPreHOL cfg8 sections := by
+  simp [allEncOkB, allEncOkPreHOL, List.all_eq_true, secOkB_iff]
+
+private def asmSkipLine : L := .asm (.asmi (.inst (.skip : HolInst 8))) [] 0
 private def asmCbwLine : L := .asm (.cbw 1 2) [] 0
 private def labelLine : L := .label 0 1 0
 private def labAsmHaltLine : L := .labAsm .halt (w8 0) [] 0
 private def asmBadRegLine : L := .asm (.asmi (.inst (.const 9 (w8 0)))) [] 0
 
-private def secOk : Section L := { sectionId := 0, lines := [asmSkipLine] }
-private def secBad : Section L := { sectionId := 0, lines := [asmBadRegLine] }
-private def secEmpty : Section L := { sectionId := 0, lines := [] }
-private def secLabel : Section L := { sectionId := 0, lines := [labelLine] }
-private def secOk2 : Section L := { sectionId := 1, lines := [asmSkipLine] }
+private def secOk : S := { sectionId := 0, lines := [asmSkipLine] }
+private def secBad : S := { sectionId := 0, lines := [asmBadRegLine] }
+private def secEmpty : S := { sectionId := 0, lines := [] }
+private def secLabel : S := { sectionId := 0, lines := [labelLine] }
+private def secOk2 : S := { sectionId := 1, lines := [asmSkipLine] }
 
-example : lineOkPreConfig cfg8 asmSkipLine = true := by decide
-example : lineOkPreConfig cfg8 asmCbwLine = true := by decide
-example : lineOkPreConfig cfg8 labelLine = true := by decide
-example : lineOkPreConfig cfg8 labAsmHaltLine = true := by decide
-example : lineOkPreConfig cfg8 asmBadRegLine = false := by decide
-example : allEncOkPreConfig cfg8 [secOk] = true := by decide
-example : allEncOkPreConfig cfg8 [secBad] = false := by decide
-example : secOkPreConfig cfg8 secOk = true := by decide
-example : secOkPreConfig cfg8 secBad = false := by decide
-example : secOkPreConfig cfg8 secEmpty = true := by decide
-example : allEncOkPreConfig cfg8 [secLabel, secOk2] = true := by decide
-example : allEncOkPreConfig cfg8 ([] : List (Section L)) = true := by decide
-example : cbwToAsm (asmConfigChecks cfg8) (.cbw 1 2) =
-    (.inst (.mem .store8 2 (.addr 1 0)) : AsmData 8) := rfl
-example : cbwToAsm (asmConfigChecks cfg8) (.shareMem .load 4 (.addr 5 0)) =
-    (.inst (.mem .load 4 (.addr 5 0)) : AsmData 8) := rfl
+example : lineOkPreHOL cfg8 asmSkipLine := by
+  rw [← lineOkB_iff]
+  decide
+example : lineOkPreHOL cfg8 asmCbwLine := by
+  rw [← lineOkB_iff]
+  decide
+example : lineOkPreHOL cfg8 labelLine := by
+  rw [← lineOkB_iff]
+  decide
+example : lineOkPreHOL cfg8 labAsmHaltLine := by
+  rw [← lineOkB_iff]
+  decide
+example : ¬ lineOkPreHOL cfg8 asmBadRegLine := by
+  rw [← lineOkB_iff]
+  decide
+example : allEncOkPreHOL cfg8 [secOk] := by
+  rw [← allEncOkB_iff]
+  decide
+example : ¬ allEncOkPreHOL cfg8 [secBad] := by
+  rw [← allEncOkB_iff]
+  decide
+example : secOkPreHOL cfg8 secOk := by
+  rw [← secOkB_iff]
+  decide
+example : ¬ secOkPreHOL cfg8 secBad := by
+  rw [← secOkB_iff]
+  decide
+example : secOkPreHOL cfg8 secEmpty := by
+  rw [← secOkB_iff]
+  decide
+example : allEncOkPreHOL cfg8 [secLabel, secOk2] := by
+  rw [← allEncOkB_iff]
+  decide
+example : allEncOkPreHOL cfg8 ([] : List S) := by
+  rw [← allEncOkB_iff]
+  decide
+example : (match cbwToAsmHOL (.cbw 1 2) with
+  | .inst (.mem .store8 2 (.addr 1 (0 : BitVec 8))) => true
+  | _ => false) := rfl
+example : (match cbwToAsmHOL (.shareMem .load 4 (.addr 5 (0 : BitVec 8))) with
+  | .inst (.mem .load 4 (.addr 5 (0 : BitVec 8))) => true
+  | _ => false) := rfl
 
-private def cbwRowOk (instruction : AsmOrCbw (AsmData 8) WordMemOp (WordLangAddr W)) : Bool :=
-  match cbwToAsm (asmConfigChecks cfg8) instruction with
-  | .inst (.mem .store8 2 (.addr 1 0)) => true
-  | .inst (.mem .load 4 (.addr 5 0)) => true
+private def cbwRowOk (instruction : AsmOrCbw (HolAsm 8) HolMemop (HolAddr 8)) : Bool :=
+  match cbwToAsmHOL instruction with
+  | .inst (.mem .store8 2 (.addr 1 (0 : BitVec 8))) => true
+  | .inst (.mem .load 4 (.addr 5 (0 : BitVec 8))) => true
   | _ => false
 
 /-- The emitted base-line reductions of `line_ok_pre` at the concrete config,
 mirroring the direct HOL oracle rows. -/
-example : lineOkPreConfig cfg8 (.asm (.asmi (.inst .skip)) [] 0 : L) = true := by
-  simp [lineOkPreConfig_asm_asmi, Flapjack.Compiler.Encoders.Asm.asmOk,
-    Flapjack.Compiler.Encoders.Asm.asmInstOk]
+example : lineOkPreHOL cfg8 (.asm (.asmi (.inst (.skip : HolInst 8))) [] 0 : L) := by
+  rw [← lineOkB_iff]
+  decide
 
-example : lineOkPreConfig cfg8 (.asm (.asmi (.inst (.const 9 0))) [] 0 : L) = false := by
-  simp [lineOkPreConfig_asm_asmi, Flapjack.Compiler.Encoders.Asm.asmOk,
-    Flapjack.Compiler.Encoders.Asm.asmInstOk, Flapjack.Compiler.Encoders.Asm.asmRegOk, cfg8]
+example : ¬ lineOkPreHOL cfg8 (.asm (.asmi (.inst (.const 9 (w8 0)))) [] 0 : L) := by
+  rw [← lineOkB_iff]
+  decide
 
-example : lineOkPreConfig cfg8 (.label 0 1 0 : L) = true := by
-  simp [lineOkPreConfig_label]
+example : lineOkPreHOL cfg8 (.label 0 1 0 : L) := by
+  rw [← lineOkB_iff]
+  decide
 
-example : lineOkPreConfig cfg8 ((.asm (.asmi flattenOps.skip) [] 0) :
-    Line (AsmOrCbw (AsmData 8) WordMemOp (WordLangAddr W)) (AsmWithLab Cmp Nat String) W) = true :=
-  lineOkPreConfig_flattenOps_skip cfg8 [] 0
+/-- The `flattenHOL` clause for `inst` embeds the instruction unchanged. -/
+example : ∀ line ∈ appListAppend
+    (flattenHOL true (.inst (.skip : HolInst 8)) 0 0 [] []).1,
+    lineOkPreHOL cfg8 line :=
+  flattenLineOkPreHOL true (.inst (.skip : HolInst 8)) 0 0 [] [] _ _ _ cfg8
+    (by decide) (by simp [stackAsmOkExact, asmInstOkExact, asmRegOkExact, cfg8]) rfl
 
-example : lineOkPreConfig cfg8 ((.asm (.asmi (flattenOps.embedInst (.skip : WordLangInst W))) [] 0) :
-    Line (AsmOrCbw (AsmData 8) WordMemOp (WordLangAddr W)) (AsmWithLab Cmp Nat String) W) = true := by
-  rw [lineOkPreConfig_flattenOps_embedInst]
-  simp [Flapjack.Compiler.Encoders.Asm.asmInstOk]
+/-- The `flattenHOL` clause for `raise` emits the `JumpReg` line, whose
+validity is exactly `asmRegOkExact`. -/
+example : ∀ line ∈ appListAppend
+    (flattenHOL true (.raise 2) 0 0 [] []).1,
+    lineOkPreHOL cfg8 line :=
+  flattenLineOkPreHOL true (.raise 2) 0 0 [] [] _ _ _ cfg8
+    (by decide) (by simp [stackAsmOkExact, cfg8]) rfl
 
-example : lineOkPreConfig cfg8 ((.asm (.asmi (flattenOps.jumpReg 3)) [] 0) :
-    Line (AsmOrCbw (AsmData 8) WordMemOp (WordLangAddr W)) (AsmWithLab Cmp Nat String) W) =
-      Flapjack.Compiler.Encoders.Asm.asmRegOk cfg8 3 :=
-  lineOkPreConfig_flattenOps_jumpReg cfg8 3 [] 0
+/-- The emitted `JumpReg` line's `line_ok_pre` is exactly `asmRegOkExact`,
+as in the legacy `lineOkPreConfig_flattenOps_jumpReg` row. -/
+example : lineOkPreHOL cfg8 (.asm (.asmi (.jumpReg 3)) [] 0 : L) ↔
+    asmRegOkExact 3 cfg8 = true := by
+  rw [← lineOkB_iff]
+  decide
 
+example : asmInstOkExact (.skip : HolInst 8) cfg8 = true := by decide
 
-private abbrev P := Flapjack.Compiler.Backend.StackLang.Prog
-  (WordLangInst W) Flapjack.Cmp (WordRegImm W) Flapjack.BinOp WordMemOp (WordLangAddr W) String
+example (h : stackAsmOkExact cfg8 (.raise 2 : HolProg 8)) :
+    (2 < cfg8.regCount ∧ 2 ∉ cfg8.avoidRegs) := by
+  simpa [stackAsmOkExact] using h
 
-/-- The bridge lets `stack_asm_ok` discharge a per-line `instOk` obligation. -/
-example : Flapjack.Compiler.Encoders.Asm.asmInstOk cfg8 (WordLangInst.skip : WordLangInst W) = true :=
-  stackAsmOk_asmChecksOfConfig_inst cfg8 WordLangInst.skip (by
-    simp [Flapjack.Compiler.Backend.StackProps.stackAsmOk,
-      Flapjack.Compiler.Backend.StackProps.asmChecksOfConfig, asmInstOk])
+example : (stackAsmOkExact cfg8 (.seq (.tick : HolProg 8) (.skip : HolProg 8))) ↔
+    (stackAsmOkExact cfg8 (.tick : HolProg 8) ∧ stackAsmOkExact cfg8 (.skip : HolProg 8)) := by
+  simp [stackAsmOkExact]
 
-/-- The bridge exposes the `stack_asm_ok` register bound for `Raise`. -/
-example (h : Flapjack.Compiler.Backend.StackProps.stackAsmOk
-      (Flapjack.Compiler.Backend.StackProps.asmChecksOfConfig cfg8)
-      (.raise 2 : P) = true) :
-    (2 < cfg8.regCount && !cfg8.avoidRegs.contains 2) = true :=
-  stackAsmOk_asmChecksOfConfig_raise cfg8 2 h
+example : (stackAsmOkExact cfg8 (.loop (.skip : HolProg 8))) ↔
+    stackAsmOkExact cfg8 (.skip : HolProg 8) := by
+  simp [stackAsmOkExact]
 
-/-- The decomposition lemmas split a recursive `stack_asm_ok` obligation. -/
-example : (Flapjack.Compiler.Backend.StackProps.stackAsmOk
-      (Flapjack.Compiler.Backend.StackProps.asmChecksOfConfig cfg8)
-      (.seq (.tick : P) (.skip : P) : P) = true) ↔
-    (Flapjack.Compiler.Backend.StackProps.stackAsmOk
-        (Flapjack.Compiler.Backend.StackProps.asmChecksOfConfig cfg8) (.tick : P) = true ∧
-      Flapjack.Compiler.Backend.StackProps.stackAsmOk
-        (Flapjack.Compiler.Backend.StackProps.asmChecksOfConfig cfg8) (.skip : P) = true) :=
-  stackAsmOk_asmChecksOfConfig_seq cfg8 _ _
-
-example : (Flapjack.Compiler.Backend.StackProps.stackAsmOk
-      (Flapjack.Compiler.Backend.StackProps.asmChecksOfConfig cfg8) (.loop (.skip : P) : P) = true) ↔
-    Flapjack.Compiler.Backend.StackProps.stackAsmOk
-      (Flapjack.Compiler.Backend.StackProps.asmChecksOfConfig cfg8) (.skip : P) = true :=
-  stackAsmOk_asmChecksOfConfig_loop cfg8 _
-
-example : (Flapjack.Compiler.Backend.StackProps.stackAsmOk
-      (Flapjack.Compiler.Backend.StackProps.asmChecksOfConfig cfg8)
-      (.call (some ((.skip : P), 7, 1, 0)) (.inl 2) (some ((.tick : P), 3, 4)) : P) = true) ↔
-    (Flapjack.Compiler.Backend.StackProps.stackAsmOk
-        (Flapjack.Compiler.Backend.StackProps.asmChecksOfConfig cfg8) (.skip : P) = true ∧
-      Flapjack.Compiler.Backend.StackProps.stackAsmOk
-        (Flapjack.Compiler.Backend.StackProps.asmChecksOfConfig cfg8) (.tick : P) = true) :=
-  stackAsmOk_asmChecksOfConfig_call_some_inl_some cfg8 _ 7 1 0 2 _ 3 4
+example : (stackAsmOkExact cfg8
+      (.call (some ((.skip : HolProg 8), 7, 1, 0)) (.inl 2)
+        (some ((.tick : HolProg 8), 3, 4)) : HolProg 8)) ↔
+    (stackAsmOkExact cfg8 (.skip : HolProg 8) ∧
+      stackAsmOkExact cfg8 (.tick : HolProg 8)) := by
+  simp [stackAsmOkExact]
 
 /-- The top-level flat `flatten_line_ok_pre` fires on a concrete program. -/
-example : ((Flapjack.Compiler.Backend.StackToLab.flatten (flattenOps (width := 8)) (0 : W) false
-      (.tick : P) 0 0 [] []).1.all (lineOkPreConfig cfg8)) = true :=
-  flatten_line_ok_pre cfg8 (.tick : P) false 0 0 [] []
-    (by decide)
-    (by simp [Flapjack.Compiler.Backend.StackProps.stackAsmOk,
-      Flapjack.Compiler.Backend.StackProps.asmChecksOfConfig])
+example : ∀ line ∈ appListAppend
+    (flattenHOL true (.tick : HolProg 8) 0 0 [] []).1,
+    lineOkPreHOL cfg8 line :=
+  flattenLineOkPreHOL true (.tick : HolProg 8) 0 0 [] [] _ _ _ cfg8
+    (by decide) (by simp [stackAsmOkExact]) rfl
 
 /-- The HOL-exact `append`-form `flatten_line_ok_pre` over `flattenApp` fires. -/
-example : (appListAppend (.list ([.labAsm .halt (0 : W) [] 0] : List (Flapjack.Compiler.Backend.StackToLab.FlatLine WordMemOp (WordLangAddr W) Flapjack.Cmp (WordRegImm W) String (AsmData 8) W)))).all (lineOkPreConfig cfg8) = true :=
-  flattenApp_line_ok_pre cfg8 (.halt 0 : P) true 0 0 [] []
-    (.list [.labAsm .halt (0 : W) [] 0]) true 0
-    (by decide)
-    (by simp [Flapjack.Compiler.Backend.StackProps.stackAsmOk,
-      Flapjack.Compiler.Backend.StackProps.asmChecksOfConfig])
-    (by simp [Flapjack.Compiler.Backend.StackToLab.flattenApp])
+example : ∀ line ∈ appListAppend
+    (flattenHOL true (.halt 0 : HolProg 8) 0 0 [] []).1,
+    lineOkPreHOL cfg8 line :=
+  flattenLineOkPreHOL true (.halt 0 : HolProg 8) 0 0 [] [] _ _ _ cfg8
+    (by decide) (by simp [stackAsmOkExact]) rfl
 
-/-- The HOL-exact `append`-form `compile_all_enc_ok_pre` over `progToSectionApp` fires. -/
-example : (([(0, (.tick : P))].map (fun entry =>
-      Flapjack.Compiler.Backend.StackToLab.progToSectionApp (flattenOps (width := 8))
-        (0 : W) entry.1 entry.2)).all (secOkPreConfig cfg8)) = true :=
-  compile_all_enc_ok_pre_app cfg8 [(0, (.tick : P))] (by decide)
-    (by simp [Flapjack.Compiler.Backend.StackProps.stackAsmOk,
-      Flapjack.Compiler.Backend.StackProps.asmChecksOfConfig])
+/-- The HOL-exact `compile_all_enc_ok_pre` over `progToSectionHOL` fires. -/
+example : allEncOkPreHOL cfg8
+    ([(0, (.tick : HolProg 8))].map progToSectionHOL) :=
+  compileAllEncOkPreHOL cfg8 [(0, (.tick : HolProg 8))] (by decide)
+    (by
+      intro entry member
+      simp at member
+      subst member
+      simp [stackAsmOkExact])
 
 def runChecks : IO Bool := do
   let guards : List Bool :=
-    [ decide (lineOkPreConfig cfg8 asmSkipLine = true)
-    , decide (lineOkPreConfig cfg8 asmCbwLine = true)
-    , decide (lineOkPreConfig cfg8 labelLine = true)
-    , decide (lineOkPreConfig cfg8 labAsmHaltLine = true)
-    , decide (lineOkPreConfig cfg8 asmBadRegLine = false)
-    , decide (allEncOkPreConfig cfg8 [secOk] = true)
-    , decide (allEncOkPreConfig cfg8 [secBad] = false)
-    , decide (secOkPreConfig cfg8 secOk = true)
-    , decide (secOkPreConfig cfg8 secBad = false)
-    , decide (secOkPreConfig cfg8 secEmpty = true)
-    , decide (allEncOkPreConfig cfg8 [secLabel, secOk2] = true)
-    , decide (allEncOkPreConfig cfg8 ([] : List (Section L)) = true)
+    [ decide (lineOkB asmSkipLine = true)
+    , decide (lineOkB asmCbwLine = true)
+    , decide (lineOkB labelLine = true)
+    , decide (lineOkB labAsmHaltLine = true)
+    , decide (lineOkB asmBadRegLine = false)
+    , decide (allEncOkB [secOk] = true)
+    , decide (allEncOkB [secBad] = false)
+    , decide (secOkB secOk = true)
+    , decide (secOkB secBad = false)
+    , decide (secOkB secEmpty = true)
+    , decide (allEncOkB [secLabel, secOk2] = true)
+    , decide (allEncOkB ([] : List S) = true)
     , cbwRowOk (.cbw 1 2)
     , cbwRowOk (.shareMem .load 4 (.addr 5 0))
     ]
   let ok := guards.all id
   if ok then
-    IO.println "PASS labProps line_ok_pre/all_enc_ok_pre over concrete AsmConfig match all 14 oracle rows"
+    IO.println "PASS labProps line_ok_pre/all_enc_ok_pre over AsmConfigExact: 14 rows"
   else
-    IO.println "FAIL labProps line_ok_pre/all_enc_ok_pre over concrete AsmConfig"
+    IO.println "FAIL labProps line_ok_pre/all_enc_ok_pre over concrete AsmConfigExact"
   pure ok
 
 end Flapjack.Test.LabPropsLineOkPreParity

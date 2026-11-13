@@ -17,32 +17,32 @@ namespace Flapjack.Test.PanGlobalsFpermNameParity
     that already carry apostrophes. -/
 
 def parityGuard : Bool :=
-  globalRenameFunctionName "foo" "bar" "foo" == "bar" &&
-  globalRenameFunctionName "foo" "bar" "bar" == "foo" &&
-  globalRenameFunctionName "foo" "bar" "worker" == "worker" &&
-  globalRenameFunctionName "foo" "foo" "foo" == "foo" &&
-  globalRenameFunctionName "foo'" "bar'" "foo'" == "bar'" &&
-  globalRenameFunctionName "foo'" "bar'" "bar'" == "foo'" &&
-  globalRenameFunctionName "a'" "b'" "c'" == "c'"
+  fpermName "foo" "bar" "foo" == "bar" &&
+  fpermName "foo" "bar" "bar" == "foo" &&
+  fpermName "foo" "bar" "worker" == "worker" &&
+  fpermName "foo" "foo" "foo" == "foo" &&
+  fpermName "foo'" "bar'" "foo'" == "bar'" &&
+  fpermName "foo'" "bar'" "bar'" == "foo'" &&
+  fpermName "a'" "b'" "c'" == "c'"
 
 #eval parityGuard
 #guard parityGuard
 
 -- Kernel-checked rows corresponding to the committed HOL oracle rows.
 theorem source_collision :
-    globalRenameFunctionName "foo" "bar" "foo" = "bar" := rfl
+    fpermName "foo" "bar" "foo" = "bar" := rfl
 theorem target_collision :
-    globalRenameFunctionName "foo" "bar" "bar" = "foo" := rfl
+    fpermName "foo" "bar" "bar" = "foo" := rfl
 theorem unchanged :
-    globalRenameFunctionName "foo" "bar" "worker" = "worker" := rfl
+    fpermName "foo" "bar" "worker" = "worker" := rfl
 theorem same_names :
-    globalRenameFunctionName "foo" "foo" "foo" = "foo" := rfl
+    fpermName "foo" "foo" "foo" = "foo" := rfl
 theorem quoted_source :
-    globalRenameFunctionName "foo'" "bar'" "foo'" = "bar'" := rfl
+    fpermName "foo'" "bar'" "foo'" = "bar'" := rfl
 theorem quoted_target :
-    globalRenameFunctionName "foo'" "bar'" "bar'" = "foo'" := rfl
+    fpermName "foo'" "bar'" "bar'" = "foo'" := rfl
 theorem quoted_unchanged :
-    globalRenameFunctionName "a'" "b'" "c'" = "c'" := rfl
+    fpermName "a'" "b'" "c'" = "c'" := rfl
 
 -- The reviewed exact HOL port `fpermName` is polymorphic (`'a -> 'a -> 'a -> 'a`
 -- in HOL); replay the same fixture rows at `Nat` to show the port is not

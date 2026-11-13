@@ -11,17 +11,9 @@ namespace Flapjack.Compiler.Backend.BvlSem
 open Flapjack.Basis.Pure.MlString
 
 /-- A finite-support BVL reference map has an unallocated natural index. -/
-theorem unusedRef_exists (refs : HolFiniteMapExact Nat (Ref Value)) : ∃ index, refs.lookup index = none := by
-  classical
-  obtain ⟨keys, support⟩ := refs.finiteSupport
-  obtain ⟨bound, bounded⟩ := natList_bounded keys
-  refine ⟨bound, ?_⟩
-  cases h : refs.lookup bound with
-  | none => rfl
-  | some value =>
-    have member := support bound (by simp [h])
-    have impossible := bounded bound member
-    omega
+theorem unusedRef_exists (refs : HolFiniteMapExact Nat (Ref Value)) :
+    ∃ index, refs.lookup index = none :=
+  holFiniteMapExact_exists_unused refs
 
 /-- Least unallocated reference, matching HOL's LEAST over the map domain. -/
 noncomputable def leastUnusedRef (refs : HolFiniteMapExact Nat (Ref Value)) : Nat := by

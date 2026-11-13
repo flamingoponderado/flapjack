@@ -179,42 +179,32 @@ theorem evaluateDeclsOnlyFunctionsSOMEHOLFinite {width : Nat} {σ : Type}
       some { state with code := state.code.updateList (functionsHOL panCode) } := by
   classical
   induction panCode generalizing state with
-  | nil =>
-      cases state
-      rfl
+  | nil => rfl
   | cons declaration declarations ih =>
       cases declaration with
       | name name fields =>
-          have hbad := hfunctions (.name name fields) (by simp)
-          simp [isFunctionHOL] at hbad
+          exact absurd (hfunctions (.name name fields) (by simp)) (by simp [isFunctionHOL])
       | decl shape name expression =>
-          have hbad := hfunctions (.decl shape name expression) (by simp)
-          simp [isFunctionHOL] at hbad
+          exact absurd (hfunctions (.decl shape name expression) (by simp))
+            (by simp [isFunctionHOL])
       | exnDecl exceptionName shape =>
-          have hbad := hfunctions (.exnDecl exceptionName shape) (by simp)
-          simp [isFunctionHOL] at hbad
+          exact absurd (hfunctions (.exnDecl exceptionName shape) (by simp))
+            (by simp [isFunctionHOL])
       | function function =>
-          have hshape := hshapes (.function function) (by simp) function rfl
-          have hparam : function.params.all
-              (fun parameter => isWfShapeExactHOL state.structs parameter.2) = true :=
-            hshape.1
-          have hreturn : isWfShapeExactHOL state.structs function.returnShape = true :=
-            hshape.2
+          obtain ⟨hparam, hreturn⟩ := hshapes (.function function) (by simp) function rfl
           let updated : PanSemStateFiniteExact width σ :=
             { state with code := state.code.update (function.name,
                 (function.params, function.body, function.returnShape)) }
           have hrestFunctions : ∀ declaration ∈ declarations,
-              isFunctionHOL declaration = true := by
-            intro declaration hmem
-            exact hfunctions declaration (by simp [hmem])
+              isFunctionHOL declaration = true :=
+            fun declaration hmem => hfunctions declaration (by simp [hmem])
           have hrestShapes : ∀ declaration ∈ declarations, ∀ function',
               declaration = .function function' →
                 function'.params.all (fun parameter =>
                   isWfShapeExactHOL updated.structs parameter.2) = true ∧
-                  isWfShapeExactHOL updated.structs function'.returnShape = true := by
-            intro declaration hmem function' heq
-            have h := hshapes declaration (by simp [hmem]) function' heq
-            simpa [updated] using h
+                  isWfShapeExactHOL updated.structs function'.returnShape = true :=
+            fun declaration hmem function' heq =>
+              by simpa [updated] using hshapes declaration (by simp [hmem]) function' heq
           have hrec := ih updated hrestFunctions hrestShapes
           simpa [PanSemStateFiniteExact.evaluateDeclsHOLFinite, hparam, hreturn,
             updated, functionsHOL, PanSemStateFiniteExact.updateList_cons]

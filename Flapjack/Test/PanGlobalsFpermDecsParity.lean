@@ -1,47 +1,61 @@
 module
 
-public import Flapjack.Pancake.Proofs.PanGlobals
-public meta import Flapjack.Pancake.PanGlobals
+public import Flapjack.Pancake.PanGlobals
 
+-- Checks below run compiled code from these modules.
+public meta import Flapjack.Pancake.PanGlobals
 @[expose] public section
 
 namespace Flapjack.Test.PanGlobalsFpermDecsParity
 
 /-! Direct parity for `pan_globals$fperm_decs_def`
-    (`pan_globalsScript.sml:216`). -/
-def sourceFunction : FunDecl Nat :=
-  { name := "foo"
+    (`pan_globalsScript.sml:216`) over the tagged exact `fpermDecsHOL` twin and
+    its `DeclHOL`/`MlS` carriers.  The three direct-HOL rows of
+    `scripts/hol-probes/pan_globals_fperm_decs_probe.out` are replayed with the
+    same values. -/
+
+open Flapjack
+open Flapjack.Basis.Pure.MlString (ofString toStringOfBytes)
+open Flapjack.Pancake.PanLang
+
+def nameIs (name : MlS) (expected : String) : Bool :=
+  toStringOfBytes name == expected
+
+def sourceFunction : FunDeclHOL 64 :=
+  { name := ofString "foo"
     inline := false
     exported := true
     params := []
-    body := .call none "foo" []
+    body := .call none (ofString "foo") []
     returnShape := .one }
 
-def targetFunction : FunDecl Nat :=
-  { name := "bar"
+def targetFunction : FunDeclHOL 64 :=
+  { name := ofString "bar"
     inline := true
     exported := false
     params := []
-    body := .decCall "x" .one "foo" [] .skip
+    body := .decCall (ofString "x") .one (ofString "foo") [] .skip
     returnShape := .one }
 
-def singletonNonFunctionDecls : List (Decl Nat) :=
-  [.decl .one "g" (.const 7)]
+def singletonNonFunctionDecls : List (DeclHOL 64) :=
+  [.decl .one (ofString "g") (.const 7)]
 
 def parityGuard : Bool :=
   let renamed :=
-    globalRenameDecls "foo" "bar"
-      ([.decl .one "g" (.const 7), .function sourceFunction,
-        .function targetFunction] : List (Decl Nat))
+    fpermDecsHOL (width := 64) (ofString "foo") (ofString "bar")
+      ([.decl .one (ofString "g") (.const 7), .function sourceFunction,
+        .function targetFunction] : List (DeclHOL 64))
   match renamed with
-  | [.decl .one "g" (.const 7), .function first, .function second] =>
-      first.name == "bar" &&
+  | [.decl .one globalName (.const globalValue), .function first, .function second] =>
+      nameIs globalName "g" && globalValue == (7 : BitVec 64) &&
+      nameIs first.name "bar" &&
       (match first.body with
-      | .call none "bar" [] => true
+      | .call none name [] => nameIs name "bar"
       | _ => false) &&
-      second.name == "foo" &&
+      nameIs second.name "foo" &&
       (match second.body with
-      | .decCall "x" .one "bar" [] .skip => true
+      | .decCall name .one function [] .skip =>
+          nameIs name "x" && nameIs function "bar"
       | _ => false) &&
       first.inline == false && first.exported == true &&
       second.inline == true && second.exported == false
@@ -51,13 +65,15 @@ def parityGuard : Bool :=
 #guard parityGuard
 
 def emptyGuard : Bool :=
-  (globalRenameDecls "foo" "bar" ([] : List (Decl Nat))).isEmpty
+  (fpermDecsHOL (width := 64) (ofString "foo") (ofString "bar")
+    ([] : List (DeclHOL 64))).isEmpty
 
 #guard emptyGuard
 
 def singletonGuard : Bool :=
-  match globalRenameDecls "foo" "bar" singletonNonFunctionDecls with
-  | [.decl .one "g" (.const 7)] => true
+  match fpermDecsHOL (width := 64) (ofString "foo") (ofString "bar")
+      singletonNonFunctionDecls with
+  | [.decl .one name (.const value)] => nameIs name "g" && value == (7 : BitVec 64)
   | _ => false
 
 #guard singletonGuard

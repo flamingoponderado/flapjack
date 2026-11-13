@@ -160,6 +160,29 @@ theorem decodeList_listsexp {α : Type} (f : Sexp → Option α) (g : α → Sex
     simp only [listsexp] at hi
     simp [listsexp, decodeList, hx, hi]
 
+/-- Flapjack infrastructure: decoding a proper encoded list is the pointwise
+`mapM`, mirroring the `sexplist`/`OPT_MMAP` unfolding in the HOL proof. -/
+private theorem decodeList_listsexp_mapM {α : Type} (f : Sexp → Option α) (ys : List Sexp) :
+    decodeList f (listsexp ys) = ys.mapM f := by
+  induction ys with
+  | nil => rfl
+  | cons y ys ih =>
+    simp only [listsexp] at ih ⊢
+    simp [decodeList, ih]
+
+/-- Flapjack infrastructure: a pointwise `MAP` agreement is a successful
+`OPT_MMAP`, the `MAP_EQ_CONS` step of the HOL proof. -/
+private theorem mapM_eq_some_of_map_eq {α β : Type} (f : α → Option β) {ys : List α}
+    {xs : List β} (h : ys.map f = xs.map some) : ys.mapM f = some xs := by
+  induction ys generalizing xs with
+  | nil => cases xs <;> simp_all
+  | cons y ys ih =>
+    cases xs with
+    | nil => simp at h
+    | cons x xs =>
+      simp only [List.map_cons, List.cons.injEq] at h
+      simp [List.mapM_cons, h.1, ih h.2]
+
 /-- Successful list decoding identifies a proper encoded list and its elements. -/
 @[hol "cakeml/compiler/parsing/fromSexpScript.sml" "sexplist_SOME"]
 theorem decodeList_some {α : Type} (f : Sexp → Option α) (s : Sexp) (xs : List α) :
@@ -189,23 +212,10 @@ theorem decodeList_some {α : Type} (f : Sexp → Option α) (s : Sexp) (xs : Li
           simp [decodeList, hh, ht] at h
           subst xs
           obtain ⟨ys, rfl, maps⟩ := ih rest ht
-          refine ⟨head :: ys, ?_, ?_⟩
-          · simp [listsexp]
-          · simp [hh, maps]
+          exact ⟨head :: ys, by simp [listsexp], by simp [hh, maps]⟩
   · rintro ⟨ys, rfl, maps⟩
-    induction ys generalizing xs with
-    | nil =>
-      cases xs with
-      | nil => rfl
-      | cons _ _ => simp at maps
-    | cons y ys ih =>
-      cases xs with
-      | nil => simp at maps
-      | cons x xs =>
-        simp only [List.map_cons, List.cons.injEq] at maps
-        have tail := ih xs maps.2
-        simp only [listsexp] at tail
-        simp [listsexp, decodeList, maps.1, tail]
+    rw [decodeList_listsexp_mapM]
+    exact mapM_eq_some_of_map_eq f maps
 
 /-- A list decoder inherits canonicality from its element decoder. This is
 Flapjack infrastructure assembled from the source list inverse theorem. -/

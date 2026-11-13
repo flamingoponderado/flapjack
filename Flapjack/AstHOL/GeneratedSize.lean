@@ -1,5 +1,9 @@
-import Flapjack.AstHOL.LitOp
-import Flapjack.Basis.Pure.MlString.Size
+module
+
+public import Flapjack.AstHOL.LitOp
+public import Flapjack.Basis.Pure.MlString.Size
+
+@[expose] public section
 
 namespace Flapjack.AstHOL
 

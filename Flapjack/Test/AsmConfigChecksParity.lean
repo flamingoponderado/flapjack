@@ -17,7 +17,7 @@ Kernel-checked parity guards for the assembler configuration validity
 predicates against the direct HOL oracle
 `scripts/hol-probes/asm_config_checks_probe.out`.
 
-The fixture `asmConfig8` mirrors the HOL probe configuration exactly
+The fixture `asmConfigExact8` mirrors the HOL probe configuration exactly
 (8-bit words, `RISC_V`, `code_alignment = 2`, `avoid_regs = [3]`,
 `reg_count = 8`, `fp_reg_count = 4`, `two_reg_arith = T`, offsets
 `addr/hw/byte = (0, 100)` and `jump/cjump/loc = (0, 200)`, `valid_imm`
@@ -40,7 +40,7 @@ abbrev W := BitVec 8
 
 def w8 (n : Nat) : BitVec 8 := BitVec.ofNat 8 n
 
-def asmConfig8 : AsmConfig 8 :=
+def asmConfigExact8 : AsmConfigExact 8 :=
   { isa := .riscv
     encode := fun _ => []
     bigEndian := false
@@ -61,63 +61,64 @@ def asmConfig8 : AsmConfig 8 :=
 def aligned0 : Bool := asmAligned 0 (w8 8)
 def aligned2 : Bool := asmAligned 2 (w8 8)
 def unaligned2 : Bool := asmAligned 2 (w8 10)
-def regOk2 : Bool := asmRegOk asmConfig8 2
-def regOk3 : Bool := asmRegOk asmConfig8 3
-def regOk8 : Bool := asmRegOk asmConfig8 8
-def fpRegOk3 : Bool := asmFpRegOk asmConfig8 3
-def fpRegOk4 : Bool := asmFpRegOk asmConfig8 4
+def regOk2 : Bool := asmRegOkExact 2 asmConfigExact8
+def regOk3 : Bool := asmRegOkExact 3 asmConfigExact8
+def regOk8 : Bool := asmRegOkExact 8 asmConfigExact8
+def fpRegOk3 : Bool := asmFpRegOkExact 3 asmConfigExact8
+def fpRegOk4 : Bool := asmFpRegOkExact 4 asmConfigExact8
 def regImmReg : Bool :=
-  asmRegImmOk asmConfig8 (.inl .add) (.reg 2)
+  asmRegImmOkExact (.inl .add) (.reg 2) asmConfigExact8
 def regImmXorMinus1 : Bool :=
-  asmRegImmOk asmConfig8 (.inl .xor) (.imm (w8 255))
+  asmRegImmOkExact (.inl .xor) (.imm (w8 255)) asmConfigExact8
 def regImmXorOther : Bool :=
-  asmRegImmOk asmConfig8 (.inl .xor) (.imm (w8 5))
+  asmRegImmOkExact (.inl .xor) (.imm (w8 5)) asmConfigExact8
 def arithBinopOk : Bool :=
-  asmArithOk asmConfig8 (.binop .add 2 2 (.imm (w8 1)))
+  asmArithOkExact (.binop .add 2 2 (.imm (w8 1))) asmConfigExact8
 def arithBinopTwoRegBad : Bool :=
-  asmArithOk asmConfig8 (.binop .add 2 1 (.imm (w8 1)))
+  asmArithOkExact (.binop .add 2 1 (.imm (w8 1))) asmConfigExact8
 def arithShiftOk : Bool :=
-  asmArithOk asmConfig8 (.shift .lsl 2 2 (.imm (w8 3)))
+  asmArithOkExact (.shift .lsl 2 2 (.imm (w8 3))) asmConfigExact8
 def arithShiftWidth : Bool :=
-  asmArithOk asmConfig8 (.shift .lsl 2 2 (.imm (w8 8)))
-def arithDivOk : Bool := asmArithOk asmConfig8 (.div 1 2 3)
+  asmArithOkExact (.shift .lsl 2 2 (.imm (w8 8))) asmConfigExact8
+def arithDivOk : Bool := asmArithOkExact (.div 1 2 3) asmConfigExact8
 def arithAddCarryOk : Bool :=
-  asmArithOk asmConfig8 (.addCarry 1 2 3 4)
+  asmArithOkExact (.addCarry 1 2 3 4) asmConfigExact8
 def arithAddCarryBad : Bool :=
-  asmArithOk asmConfig8 (.addCarry 1 2 1 4)
+  asmArithOkExact (.addCarry 1 2 1 4) asmConfigExact8
 def arithLongDivBad : Bool :=
-  asmArithOk asmConfig8 (.longDiv 0 2 2 0 3)
-def fpLessOk : Bool := asmFpOk asmConfig8 (.fpLess 1 2 3)
-def fpFmaBad : Bool := asmFpOk asmConfig8 (.fpFma 1 2 3)
-def fpAbsTwoReg : Bool := asmFpOk asmConfig8 (.fpAbs 2 2)
-def cmpOk : Bool := asmCmpOk asmConfig8 .equal 2 (.imm (w8 1))
-def addrOffsetOk : Bool := asmAddrOffsetOk asmConfig8 (w8 8)
-def hwOffsetOk : Bool := asmHwOffsetOk asmConfig8 (w8 8)
-def byteOffsetOk : Bool := asmByteOffsetOk asmConfig8 (w8 101)
-def jumpOffsetOk : Bool := asmJumpOffsetOk asmConfig8 (w8 200)
-def jumpOffsetUnaligned : Bool := asmJumpOffsetOk asmConfig8 (w8 3)
-def instConstOk : Bool := asmInstOk asmConfig8 (.const 2 (w8 0))
-def instArithOk : Bool := asmInstOk asmConfig8 (.arith (.div 1 2 3))
-def instFpOk : Bool := asmInstOk asmConfig8 (.fp (.fpLess 1 2 3))
+  asmArithOkExact (.longDiv 0 2 2 0 3) asmConfigExact8
+def fpLessOk : Bool := asmFpOkExact (.fpLess 1 2 3) asmConfigExact8
+def fpFmaBad : Bool := asmFpOkExact (.fpFma 1 2 3) asmConfigExact8
+def fpAbsTwoReg : Bool := asmFpOkExact (.fpAbs 2 2) asmConfigExact8
+def cmpOk : Bool := asmCmpOkExact .equal 2 (.imm (w8 1)) asmConfigExact8
+def addrOffsetOk : Bool := asmAddrOffsetOkExact asmConfigExact8 (w8 8)
+def hwOffsetOk : Bool := asmHwOffsetOkExact asmConfigExact8 (w8 8)
+def byteOffsetOk : Bool := asmByteOffsetOkExact asmConfigExact8 (w8 101)
+def jumpOffsetOk : Bool := asmJumpOffsetOkExact asmConfigExact8 (w8 200)
+def jumpOffsetUnaligned : Bool := asmJumpOffsetOkExact asmConfigExact8 (w8 3)
+def instConstOk : Bool := asmInstOkExact (.const 2 (w8 0)) asmConfigExact8
+def instArithOk : Bool := asmInstOkExact (.arith (.div 1 2 3)) asmConfigExact8
+def instFpOk : Bool := asmInstOkExact (.fp (.fpLess 1 2 3)) asmConfigExact8
 def instMemLoadOk : Bool :=
-  asmInstOk asmConfig8 (.mem .load 2 (.addr 2 (w8 8)))
+  asmInstOkExact (.mem .load 2 (.addr 2 (w8 8))) asmConfigExact8
 def instMemHwOk : Bool :=
-  asmInstOk asmConfig8 (.mem .load16 2 (.addr 2 (w8 8)))
+  asmInstOkExact (.mem .load16 2 (.addr 2 (w8 8))) asmConfigExact8
 def instMemByteOk : Bool :=
-  asmInstOk asmConfig8 (.mem .load8 2 (.addr 2 (w8 8)))
-def stackAddrLoad : Bool := asmAddrOk asmConfig8 .load (.addr 2 (w8 8))
-def stackAddrHw : Bool := asmAddrOk asmConfig8 .load16 (.addr 2 (w8 8))
-def stackAddrByte : Bool := asmAddrOk asmConfig8 .store8 (.addr 2 (w8 8))
+  asmInstOkExact (.mem .load8 2 (.addr 2 (w8 8))) asmConfigExact8
+def stackAddrLoad : Bool := asmAddrOkExact .load (.addr 2 (w8 8)) asmConfigExact8
+def stackAddrHw : Bool := asmAddrOkExact .load16 (.addr 2 (w8 8)) asmConfigExact8
+def stackAddrByte : Bool := asmAddrOkExact .store8 (.addr 2 (w8 8)) asmConfigExact8
 def signedHighLeZero : Bool := decide ((w8 128).toInt ≤ (w8 0).toInt)
 def unsignedHighLeZero : Bool := decide ((w8 128) < (w8 0))
-def signedOffsetBounds : Bool := asmOffsetOk 0 (w8 0, w8 255) (w8 200)
+def signedOffsetBounds : Bool := asmOffsetOkExact 0 (w8 0, w8 255) (w8 200)
 
-def asmOkInstConst : Bool := asmOk asmConfig8 (.inst (.const 2 (w8 0)))
-def asmOkJump : Bool := asmOk asmConfig8 (.jump (w8 100))
-def asmOkJumpCmp : Bool := asmOk asmConfig8 (.jumpCmp .equal 1 (.reg 2) (w8 100))
-def asmOkCallNone : Bool := asmOk asmConfig8 (.call (w8 100))
-def asmOkJumpReg : Bool := asmOk asmConfig8 (.jumpReg 3)
-def asmOkLoc : Bool := asmOk asmConfig8 (.loc 1 (w8 100))
+def asmOkInstConst : Bool := asmOkExact (.inst (.const 2 (w8 0))) asmConfigExact8
+def asmOkJump : Bool := asmOkExact (.jump (w8 100)) asmConfigExact8
+def asmOkJumpCmp : Bool :=
+  asmOkExact (.jumpCmp .equal 1 (.reg 2) (w8 100)) asmConfigExact8
+def asmOkCallNone : Bool := asmOkExact (.call (w8 100)) asmConfigExact8
+def asmOkJumpReg : Bool := asmOkExact (.jumpReg 3) asmConfigExact8
+def asmOkLoc : Bool := asmOkExact (.loc 1 (w8 100)) asmConfigExact8
 
 def asmConfigGuard : Bool :=
   aligned0 == true && aligned2 == true && unaligned2 == false &&
@@ -142,8 +143,8 @@ def asmConfigGuard : Bool :=
 
 #guard asmConfigGuard
 
-example : asmRegImmOk asmConfig8 (.inl .xor) (.imm (w8 255)) = true := rfl
-example : asmOffsetOk 2 (w8 0, w8 200) (w8 200) = false := rfl
+example : asmRegImmOkExact (.inl .xor) (.imm (w8 255)) asmConfigExact8 = true := rfl
+example : asmOffsetOkExact 2 (w8 0, w8 200) (w8 200) = false := rfl
 example : asmAligned 2 (w8 200) = true := rfl
 
 def runChecks : IO Bool := do

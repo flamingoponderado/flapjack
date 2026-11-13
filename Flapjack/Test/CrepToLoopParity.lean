@@ -4,6 +4,7 @@ public import Flapjack.Pancake.CrepToLoop
 public import Flapjack.Pancake.CrepToLoop.StateRel
 public import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
 public import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
+public import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
 public import Flapjack.Misc.Sptree
 
 -- Checks below run compiled code from these modules.
@@ -512,23 +513,23 @@ example (s : CrepHolState (BitVec 64) Unit) (t : LoopMachineState (BitVec 64) Un
     both datatypes use the single `word` constructor. -/
 example : wlabWloc (PanWordLab.word (7 : BitVec 64)) = LoopValue.word (7 : BitVec 64) := rfl
 
-/-- HOL `globals_rel_intro` (`crep_to_loopProofScript.sml:203-209`) is an
+/-- HOL `globals_rel_intro` (`crep_to_loopProofScript.sml:211-214`) is an
     implication: from the relation, conclude the universally quantified lookup
-    agreement. -/
-example (sglobals : BitVec 5 → Option (PanWordLab (BitVec 64)))
-    (tglobals : BitVec 5 → Option (LoopValue (BitVec 64)))
-    (h : crepToLoopGlobalsRel sglobals tglobals) :
-    ∀ address value, sglobals address = some value →
-        tglobals address = some (wlabWloc value) :=
-  crepToLoopGlobalsRel_intro sglobals tglobals h
+    agreement, over the exact `HolFiniteMapExact` globals. -/
+example (sglobals : HolFiniteMapExact (BitVec 5) (HolWordLab 64))
+    (tglobals : HolFiniteMapExact (BitVec 5) (WordLocW 64))
+    (h : crepToLoopGlobalsRelHOLExact sglobals tglobals) :
+    ∀ address value, sglobals.lookup address = some value →
+        tglobals.lookup address = some (wlabWlocExact value) :=
+  crepToLoopGlobalsRelHOLExact_intro sglobals tglobals h
 
-/-- Untagged iff form used for rewriting the relation to its unfolding. -/
-example (sglobals : BitVec 5 → Option (PanWordLab (BitVec 64)))
-    (tglobals : BitVec 5 → Option (LoopValue (BitVec 64))) :
-    crepToLoopGlobalsRel sglobals tglobals ↔
-      ∀ address value, sglobals address = some value →
-        tglobals address = some (wlabWloc value) :=
-  crepToLoopGlobalsRel_iff sglobals tglobals
+/-- The exact relation is its own unfolding. -/
+example (sglobals : HolFiniteMapExact (BitVec 5) (HolWordLab 64))
+    (tglobals : HolFiniteMapExact (BitVec 5) (WordLocW 64)) :
+    crepToLoopGlobalsRelHOLExact sglobals tglobals ↔
+      ∀ address value, sglobals.lookup address = some value →
+        tglobals.lookup address = some (wlabWlocExact value) :=
+  Iff.rfl
 
 /-- Concrete target global map for the `globals_rel` oracle row
     `globals_lookup_match=T` in `scripts/hol-probes/crep_to_loop_globals_rel_probe.out`. -/
@@ -552,21 +553,21 @@ example (s : CrepHolState (BitVec 64) Unit) (t : LoopMachineState (BitVec 64) Un
     ∃ ck, crepToLoopStateRel s { t with clock := ck + t.clock } :=
   crepToLoopStateRel_clock_add_zero s t h
 
-/-- HOL `mem_rel_intro` (`crep_to_loopProofScript.sml:203-209`) is an
+/-- HOL `mem_rel_intro` (`crep_to_loopProofScript.sml:203-205`) is an
     implication: from the total-memory relation, conclude the pointwise
-    equation. -/
-example (smem : BitVec 64 → PanWordLab (BitVec 64))
-    (tmem : BitVec 64 → LoopValue (BitVec 64)) (dom : BitVec 64 → Bool)
-    (h : crepToLoopMemRel smem tmem dom) :
-    ∀ ad, dom ad = true → wlabWloc (smem ad) = tmem ad :=
-  crepToLoopMemRel_intro smem tmem dom h
+    equation, with HOL's set domain rendered as a `Prop` predicate. -/
+example (smem : BitVec 64 → HolWordLab 64)
+    (tmem : BitVec 64 → WordLocW 64) (dom : BitVec 64 → Prop)
+    (h : crepToLoopMemRelHOLExact smem tmem dom) :
+    ∀ ad, dom ad → wlabWlocExact (smem ad) = tmem ad :=
+  crepToLoopMemRelHOLExact_intro smem tmem dom h
 
-/-- Untagged iff form of `crepToLoopMemRel`. -/
-example (smem : BitVec 64 → PanWordLab (BitVec 64))
-    (tmem : BitVec 64 → LoopValue (BitVec 64)) (dom : BitVec 64 → Bool) :
-    crepToLoopMemRel smem tmem dom ↔
-      ∀ ad, dom ad = true → wlabWloc (smem ad) = tmem ad :=
-  crepToLoopMemRel_iff smem tmem dom
+/-- The exact relation is its own unfolding. -/
+example (smem : BitVec 64 → HolWordLab 64)
+    (tmem : BitVec 64 → WordLocW 64) (dom : BitVec 64 → Prop) :
+    crepToLoopMemRelHOLExact smem tmem dom ↔
+      ∀ ad, dom ad → wlabWlocExact (smem ad) = tmem ad :=
+  Iff.rfl
 
 /-- Total-view bridge: the total HOL memory agrees with the Option-valued
     `LoopMachineState.memory` at a defined address. -/
@@ -925,25 +926,25 @@ example :
 
 /-! The following proofs exercise the *relation itself* on the same 8-bit
     cases as the checked-in HOL oracle, rather than only its total-memory view. -/
-example : crepToLoopMemRel
+example : crepToLoopMemRelHOLExact
     (fun _ : BitVec 8 => .word 7)
     (fun _ : BitVec 8 => .word 7)
-    (fun ad => ad == 4) := by
+    (fun ad => ad = 4) := by
   intro ad _
   rfl
 
-example : ¬ crepToLoopMemRel
+example : ¬ crepToLoopMemRelHOLExact
     (fun _ : BitVec 8 => .word 7)
     (fun _ : BitVec 8 => .word 9)
-    (fun ad => ad == 4) := by
+    (fun ad => ad = 4) := by
   intro h
-  have h4 := h 4 (by decide)
-  simp [wlabWloc] at h4
+  have h4 := h 4 rfl
+  simp [wlabWlocExact] at h4
 
-example : crepToLoopMemRel
+example : crepToLoopMemRelHOLExact
     (fun _ : BitVec 8 => .word 7)
     (fun _ : BitVec 8 => .word 9)
-    (fun _ => false) := by
+    (fun _ => False) := by
   intro _ h
   cases h
 

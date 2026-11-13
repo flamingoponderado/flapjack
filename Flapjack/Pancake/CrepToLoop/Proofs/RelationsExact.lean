@@ -12,10 +12,11 @@ Exact ports of `cakeml/pancake/proofs/crep_to_loopProofScript.sml`'s
 `mem_rel_intro` (203) and `globals_rel_intro` (211) over the exact Crep/Loop
 carriers `HolWordLab`/`WordLocW`, `CrepSemHOLState`/`LoopSemStateFiniteExact`
 memories and `HolFiniteMapExact` globals (bead `flapjack-pxn.18.5.6.31.3`).  The
-production-carrier renderings in `StateRel.lean` (`wlabWloc`,
-`crepToLoopMemRel`, `crepToLoopGlobalsRel`) are over `PanWordLab`/`LoopValue`
-and remain for the production bridge.  HOL's `'a word set` domain is the
-predicate `BitVec width → Prop` used by the exact `crepSem$state.memaddrs`.
+production-carrier relations `crepToLoopMemRel`/`crepToLoopGlobalsRel` and
+their intro/iff helpers were retired once their only users (the parity tests)
+moved onto these exact twins; `wlabWloc` in `StateRel.lean` remains as the
+production bridge.  HOL's `'a word set` domain is the predicate
+`BitVec width → Prop` used by the exact `crepSem$state.memaddrs`.
 -/
 
 namespace Flapjack

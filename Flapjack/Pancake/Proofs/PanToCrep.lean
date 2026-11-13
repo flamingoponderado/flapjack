@@ -104,9 +104,13 @@ establish the exact HOL state relation. -/
     The available `evalCrepClockProg` is a restricted evaluator over
     `CrepClockProg`/`CrepExp`/`CrepHolState`; this `globalsLookup` is the
     production String-backed projection described above. Neither can state the
-    HOL equation or its exact premises, so no theorem tag is claimed. The
-    faithful theorem replacement is tracked by `flapjack-4ac.5.60.1`, gated on
-    `flapjack-4ac.5.82` and `flapjack-pxn.18.3.5.8.8`. -/
+    HOL equation or its exact premises, so no theorem tag is claimed. The exact
+    `globals_lookup_def` port over the faithful carriers is the tagged
+    `globalsLookupHOL` (`Proofs/PanToCrep/EvaluateNestedDecs.lean`); this
+    production-carrier declaration is Flapjack-specific infrastructure and
+    carries no manifest row. The faithful theorem replacement remains tracked by
+    `flapjack-4ac.5.60.1`, gated on `flapjack-4ac.5.82` and
+    `flapjack-pxn.18.3.5.8.8`. -/
 def globalsLookup (state : CrepRuntimeState α σ) (value : PanValue α) :
     Option (List (PanWordLab α)) :=
   (List.range (Shape.shapeSize (panSemShapeOf value))).mapM
@@ -511,8 +515,11 @@ theorem panToCrepGetEidsFromDeclsHOL_lookup_mem
 -- production identifiers `FunName`/`VarName`/`ExceptionId` = `String` (or embeds a
 -- `PanToCrepProofContext`/`PanToCrepHOLContext` whose finite maps are `String`-keyed),
 -- while HOL `pan_to_crepProofScript.sml` keys names by `funname`/`varname`/`eid` =
--- `mlstring`. The exact MlString identifier carrier is tracked by
--- `flapjack-pxn.18.3.5.8` (parent `flapjack-pxn.18.3.5.7.2`).
+-- `mlstring`. The exact port over the faithful carriers is the tagged
+-- `ctxtFcExactHOL` in this module; this production-carrier declaration is
+-- Flapjack-specific infrastructure and carries no manifest row. The MlString
+-- identifier carrier work remains tracked by `flapjack-pxn.18.3.5.8`
+-- (parent `flapjack-pxn.18.3.5.7.2`).
 def ctxtFc
     (compilerFunctions : FiniteMap String (List (String × Shape) × Shape))
     (exceptionCodes : FiniteMap String α) (variables : List String)
@@ -659,8 +666,11 @@ def tlcWordLab (slots : List Nat) (arguments : List (PanValue α)) :
 -- production identifiers `FunName`/`VarName`/`ExceptionId` = `String` (or embeds a
 -- `PanToCrepProofContext`/`PanToCrepHOLContext` whose finite maps are `String`-keyed),
 -- while HOL `pan_to_crepProofScript.sml` keys names by `funname`/`varname`/`eid` =
--- `mlstring`. The exact MlString identifier carrier is tracked by
--- `flapjack-pxn.18.3.5.8` (parent `flapjack-pxn.18.3.5.7.2`).
+-- `mlstring`. The exact port over the faithful carriers is the tagged
+-- `panToCrepStateRelFiniteExact` (`Proofs/PanToCrep/StateRelFiniteSupport.lean`);
+-- this production-carrier declaration is Flapjack-specific infrastructure and
+-- carries no manifest row. The MlString identifier carrier work remains tracked
+-- by `flapjack-pxn.18.3.5.8` (parent `flapjack-pxn.18.3.5.7.2`).
 def stateRel (s : PanSemState α (FfiState σ)) (t : CrepRuntimeState α σ) : Prop :=
   s.memory = (fun address => some (PanValue.word (panTheWord (t.memory address)))) ∧
     s.memaddrs = t.memaddrs ∧
@@ -784,7 +794,10 @@ theorem panToCrepSourceLoad32HOLCase
     source memory to a total `word_lab` target memory and the value type is
     `PanValue α` vs `'a v` (see `stateRel_structs` above and the `state_rel_def` note),
     so the `(names_as_string := ...)` qualifier does not apply. The exact projection
-    is tracked by `flapjack-pxn.18.3.7.1.3.1` (carrier work `flapjack-pxn.18.3.5.8`). -/
+    is the tagged `panToCrepStateRelFiniteExact_globals`
+    (`Proofs/PanToCrep/StateRelFiniteSupport.lean`); this production-carrier
+    declaration is Flapjack-specific infrastructure and carries no manifest row.
+    Carrier work remains tracked by `flapjack-pxn.18.3.5.8`. -/
 theorem stateRel_globals (s : PanSemState α (FfiState σ)) (t : CrepRuntimeState α σ)
     (hrel : stateRel s t) : s.globals = (FEMPTY : FiniteMap VarName (PanValue α)) := by
   rcases hrel with ⟨_, _, _, _, hglobals, _, _, _, _, _⟩
@@ -883,8 +896,11 @@ theorem crepMemoryRel_store [BEq α] {state : CrepRuntimeState α σ}
 -- production identifiers `FunName`/`VarName`/`ExceptionId` = `String` (or embeds a
 -- `PanToCrepProofContext`/`PanToCrepHOLContext` whose finite maps are `String`-keyed),
 -- while HOL `pan_to_crepProofScript.sml` keys names by `funname`/`varname`/`eid` =
--- `mlstring`. The exact MlString identifier carrier is tracked by
--- `flapjack-pxn.18.3.5.8` (parent `flapjack-pxn.18.3.5.7.2`).
+-- `mlstring`. The exact port over the faithful carriers is the tagged
+-- `panToCrepLocalsRelFiniteExact` (`Proofs/PanToCrep/StateRelFiniteSupport.lean`);
+-- this production-carrier declaration is Flapjack-specific infrastructure and
+-- carries no manifest row. The MlString identifier carrier work remains tracked
+-- by `flapjack-pxn.18.3.5.8` (parent `flapjack-pxn.18.3.5.7.2`).
 def localsRel (context : PanToCrepProofContext α)
     (sLocals : FiniteMap String (PanValue α))
     (tLocals : FiniteMap Nat (PanWordLab α)) : Prop :=
@@ -972,7 +988,10 @@ def compileCodeRelProg [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
     context with `ctxt_fc`.
 
     This production relation is untagged: it uses generic word values,
-    String identifiers, and production syntax rather than the HOL carriers. -/
+    String identifiers, and production syntax rather than the HOL carriers.  The
+    exact port over the faithful carriers is the tagged `codeRelExactHOLW`
+    (`Proofs/PanToCrep/CodeRelExact.lean`); this production-carrier declaration
+    is Flapjack-specific infrastructure and carries no manifest row. -/
 
 def codeRel [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
     [CrepBytesInWord α]

@@ -1,4 +1,10 @@
-import Flapjack.RiscV.L3.Defs.MMU.Flush
+module
+
+public import Flapjack.RiscV.L3.Defs.MMU.Flush
+import all Init.Data.Nat.Bitwise.Basic
+
+@[expose] public section
+
 set_option maxRecDepth 200000
 namespace Flapjack.Test.L3TLBFlushParity
 open Flapjack.RiscV.L3

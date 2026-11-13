@@ -1,0 +1,5 @@
+make_vmap_def_typed=∀(params :α list).
+  make_vmap params =
+  (FEMPTY :α |-> num) |++
+  ZIP (params,GENLIST (I :num -> num) (LENGTH params))
+make_vmap_def_hypotheses=0

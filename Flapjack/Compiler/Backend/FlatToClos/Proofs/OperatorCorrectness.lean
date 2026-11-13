@@ -431,58 +431,6 @@ theorem opBlocks {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
   intro opCase premises
   obtain ⟨applied, states, evaluated, related, length, _, _⟩ := premises
   rcases opCase with ⟨tag, n, rfl⟩ | ⟨n, rfl⟩ | rfl
-  case inl =>
-    cases vs with
-    | nil => simp [FlatSem.doApp, FlatSem.doAppFlat] at applied
-    | cons v rest =>
-      cases rest with
-      | cons z zs => simp [FlatSem.doApp, FlatSem.doAppFlat] at applied
-      | nil =>
-        have wsLen : ws.length = 1 := by simpa using related.length_eq.symm
-        cases ws with
-        | nil => simp at wsLen
-        | cons w rest =>
-          cases rest with
-          | cons z zs => simp at wsLen
-          | nil =>
-            simp only [List.reverse_singleton] at related
-            cases related with
-            | cons valRel tail =>
-              cases valRel <;> simp [FlatSem.doApp, FlatSem.doAppFlat] at applied
-              all_goals obtain ⟨rfl, rfl⟩ := applied
-              all_goals rename_i rel
-              all_goals have sameLength := rel.length_eq
-              all_goals simp only [compileOp]
-              all_goals rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-              all_goals simp [ClosSem.doApp, ClosSem.applyBlock, ← sameLength,
-                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
-              all_goals exact ⟨states, (vRel_bool _ _).mpr rfl⟩
-  case inr.inl =>
-    cases vs with
-    | nil => simp [FlatSem.doApp, FlatSem.doAppFlat] at applied
-    | cons v rest =>
-      cases rest with
-      | cons z zs => simp [FlatSem.doApp, FlatSem.doAppFlat] at applied
-      | nil =>
-        have wsLen : ws.length = 1 := by simpa using related.length_eq.symm
-        cases ws with
-        | nil => simp at wsLen
-        | cons w rest =>
-          cases rest with
-          | cons z zs => simp at wsLen
-          | nil =>
-            simp only [List.reverse_singleton] at related
-            cases related with
-            | cons valRel tail =>
-              cases valRel <;> simp [FlatSem.doApp, FlatSem.doAppFlat] at applied
-              all_goals obtain ⟨rfl, rfl⟩ := applied
-              all_goals rename_i rel
-              all_goals have sameLength := rel.length_eq
-              all_goals simp only [compileOp]
-              all_goals rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
-              all_goals simp [ClosSem.doApp, ClosSem.applyBlock, ← sameLength,
-                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
-              all_goals exact ⟨states, (vRel_bool _ _).mpr rfl⟩
   case inr.inr =>
     cases vs with
     | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at applied
@@ -529,6 +477,32 @@ theorem opBlocks {C F : Type} (op : FlatLang.Op) (source : FlatSem.State C F)
                         simp [ClosSem.doApp, ClosSem.applyBlock, targetLeftDecoded, targetRightDecoded,
                           Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
                         exact ⟨states, resultRel⟩
+  all_goals
+    cases vs with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppFlat] at applied
+    | cons v rest =>
+      cases rest with
+      | cons z zs => simp [FlatSem.doApp, FlatSem.doAppFlat] at applied
+      | nil =>
+        have wsLen : ws.length = 1 := by simpa using related.length_eq.symm
+        cases ws with
+        | nil => simp at wsLen
+        | cons w rest =>
+          cases rest with
+          | cons z zs => simp at wsLen
+          | nil =>
+            simp only [List.reverse_singleton] at related
+            cases related with
+            | cons valRel tail =>
+              cases valRel <;> simp [FlatSem.doApp, FlatSem.doAppFlat] at applied
+              all_goals obtain ⟨rfl, rfl⟩ := applied
+              all_goals rename_i rel
+              all_goals have sameLength := rel.length_eq
+              all_goals simp only [compileOp]
+              all_goals rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, evaluated]
+              all_goals simp [ClosSem.doApp, ClosSem.applyBlock, ← sameLength,
+                Flapjack.EvaluateHOL.listResult, SemanticPrimitivesProps.resultRel]
+              all_goals exact ⟨states, (vRel_bool _ _).mpr rfl⟩
 
 /-- Reference allocation, field reads and assignment satisfy the original operator goal. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "op_refs"

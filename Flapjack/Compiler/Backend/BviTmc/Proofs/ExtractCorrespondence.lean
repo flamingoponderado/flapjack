@@ -174,12 +174,13 @@ theorem extractListFuel_success_eq (fuel n loc tag : Nat) (xs : List Exp) (resul
                   obtain ⟨bs1, kind⟩ := item
                   cases kind with
                   | inl vs1 =>
-                    change (if BackendCommon.smallEnoughInt (Int.ofNat (vs1.length + vs2.length))
-                        then
+                    change (if BackendCommon.smallEnoughInt
+                        (Int.ofNat (vs1.length + vs2.length)) then
                       some (some (bs1 ++ bs2, Sum.inl (vs1 ++ vs2.map (· + bs1.length))))
                       else some none) = some result at run
-                    split at run <;> simp_all [shiftVarsSource, BackendCommon.smallEnoughInt] <;>
-                        omega
+                    split at run <;>
+                      simp_all [shiftVarsSource, BackendCommon.smallEnoughInt] <;>
+                      omega
                   | inr cb =>
                     cases cb with
                     | rCall ticks args => simp_all

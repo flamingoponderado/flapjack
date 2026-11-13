@@ -2,11 +2,16 @@ module
 
 public import Flapjack.Pancake.Proofs.PanSimp
 public import Flapjack.Pancake.Proofs.PanStructs
+public import Flapjack.Pancake.Proofs.PanGlobals
+public import Flapjack.Pancake.PanLang.Decl
+public import Flapjack.Pancake.PanLang.Prog
 
 -- Checks below run compiled code from these modules.
 public meta import Flapjack.Pancake.Proofs.PanSimp
 public meta import Flapjack.Pancake.Proofs.PanStructs
 @[expose] public section
+
+open Flapjack.Pancake.PanLang
 
 namespace Flapjack.Test.PanProgramSimpParity
 
@@ -815,24 +820,20 @@ def resortDeclH : Decl Nat :=
 def resortDecls : List (Decl Nat) :=
   [resortDeclF, .decl .one "g" (.const 7), .exnDecl "E" .one, resortDeclH]
 
-def resortDeclsGuard : Bool :=
-  (evalPanValueDeclarationsWithStructs ([] : StructContext) evalRelState
-      (globalResortDecls resortDecls) none).isSome ==
-    (evalPanValueDeclarationsWithStructs ([] : StructContext) evalRelState
-      resortDecls none).isSome
-
-#eval resortDeclsGuard
-#guard resortDeclsGuard
-
-example : True := by
-  have hall : resortDecls.all (fun declaration =>
-      isDecl declaration || isExnDecl declaration ||
-        globalDeclIsFunction declaration) = true := by
-    simp [resortDecls, resortDeclF, resortDeclH, isDecl, isExnDecl,
-      globalDeclIsFunction]
-  have _h := evalPanValueDeclarationsWithStructs_resortDecls
-    ([] : StructContext) evalRelState resortDecls none hall
-  trivial
+/-! Kernel application of the tagged exact `resort_decls_evaluate` port
+    (`resortDeclsEvaluate`) on the exact `DeclHOL`/finite-state carriers; the
+    production-carrier `globalResortDecls` witness was retired with that
+    generic form. -/
+example {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (decs : List (DeclHOL width)) :
+    decs.all (fun d => isFunctionHOL d || isDeclHOL d || isExnDeclHOL d) = true →
+      PanSemStateFiniteExact.evaluateDeclsHOLFinite
+          (h := (fun a => Classical.propDecidable (state.memaddrs a)))
+          state (resortDeclsHOL decs) =
+        PanSemStateFiniteExact.evaluateDeclsHOLFinite
+          (h := (fun a => Classical.propDecidable (state.memaddrs a)))
+          state decs :=
+  resortDeclsEvaluate state decs
 
 /-- `evaluate_decls_only_functions_SOME`
     (`pan_globalsProofScript.sml:2390`): a function-only declaration list with

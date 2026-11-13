@@ -2161,6 +2161,11 @@ run_probe pan_fix_clock_probeScript.sml pan_fix_clock_probe.out \
   "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_upd_locals_probeScript.sml pan_upd_locals_probe.out \
   pan_upd_locals_hit pan_upd_locals_empty \
+  upd_locals_def_typed upd_locals_def_hypotheses \
+  kvar_defs_typed kvar_defs_hypotheses \
+  fix_clock_IMP_LESS_EQ_typed fix_clock_IMP_LESS_EQ_hypotheses \
+  res_var_def_typed res_var_def_hypotheses \
+  sh_mem_store_def_typed sh_mem_store_def_hypotheses \
   "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_sem_lookup_code_probeScript.sml pan_sem_lookup_code_probe.out \
   lookup_code_nonempty_success lookup_code_wf_shape_invariant_step_success \
@@ -3524,8 +3529,34 @@ run_probe pan_sem_decs_stcnames_probeScript.sml pan_sem_decs_stcnames_probe.out 
 # shape_of on the Val (word_lab) constructor and the res_var finite-map
 # update/delete semantics (panPropsScript.sml:14, :220, :228, :236).
 run_probe pan_props_shape_res_var_probeScript.sml pan_props_shape_res_var_probe.out \
-  spv_one rv_some shape_of_val_typed shape_of_val_hypotheses word_constructor_typed value_constructors_typed shape_of_def_typed \
+  spv_one rv_some shape_of_val_typed shape_of_val_hypotheses word_constructor_typed value_constructors_typed shape_of_def_typed flookup_res_var_some_eq_lookup_typed flookup_res_var_some_eq_lookup_hypotheses flookup_res_var_diff_eq_org_typed flookup_res_var_diff_eq_org_hypotheses \
   "$cake_dir/pancake/semantics/panPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
+
+# The panProps with_shape probe captures the typed statements and hypothesis
+# counts of the nine with_shape lemmas (panPropsScript.sml:265-583).
+run_probe pan_props_with_shape_probeScript.sml pan_props_with_shape_probe.out \
+  length_with_shape_eq_shape_typed length_with_shape_eq_shape_hypotheses   all_distinct_with_shape_typed all_distinct_with_shape_hypotheses   el_mem_with_shape_typed el_mem_with_shape_hypotheses   mem_with_shape_length_typed mem_with_shape_length_hypotheses   with_shape_el_take_drop_eq_typed with_shape_el_take_drop_eq_hypotheses   all_distinct_with_shape_distinct_typed all_distinct_with_shape_distinct_hypotheses   all_distinct_disjoint_with_shape_typed all_distinct_disjoint_with_shape_hypotheses   all_distinct_mem_zip_disjoint_with_shape_typed all_distinct_mem_zip_disjoint_with_shape_hypotheses   el_el_with_shape_typed el_el_with_shape_hypotheses \
+  list_rel_flatten_with_shape_length_typed list_rel_flatten_with_shape_length_hypotheses \
+  list_rel_flatten_with_shape_flookup_typed list_rel_flatten_with_shape_flookup_hypotheses \
+  "$cake_dir/pancake/semantics/panPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
+
+# The crep_to_loop make_vmap probe captures the typed statement of
+# make_vmap_def (crep_to_loopScript.sml:230-233).
+run_probe crep_to_loop_make_vmap_probeScript.sml crep_to_loop_make_vmap_probe.out \
+  make_vmap_def_typed make_vmap_def_hypotheses \
+  "$cake_dir/pancake/crep_to_loopScript.sml" \
+  "$cake_dir/pancake"
+
+# The panSem state-accessor simplification probe captures the typed statements
+# of kvar_simps / is_valid_value_simps / is_valid_value_simps2
+# (panSemScript.sml:422-429, :476-487, :489-500).
+run_probe pan_sem_state_simp_probeScript.sml pan_sem_state_simp_probe.out \
+  kvar_simps_typed kvar_simps_hypotheses \
+  is_valid_value_simps_typed is_valid_value_simps_hypotheses \
+  is_valid_value_simps2_typed is_valid_value_simps2_hypotheses \
+  "$cake_dir/pancake/semantics/panSemScript.sml" \
   "$cake_dir/pancake/semantics"
 
 # The pan_commonProps zip/fupdate and disjoint take/drop probe observes the
@@ -3533,6 +3564,11 @@ run_probe pan_props_shape_res_var_probeScript.sml pan_props_shape_res_var_probe.
 # (pan_commonPropsScript.sml:289, :399, :413).
 run_probe pan_common_props_zip_disjoint_probeScript.sml pan_common_props_zip_disjoint_probe.out \
   fzn_notmem ddt_disjoint \
+  "$cake_dir/pancake/semantics/pan_commonPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
+
+run_probe pan_common_props_finite_map_probeScript.sml pan_common_props_finite_map_probe.out \
+  ctxt_max_def_typed ctxt_max_def_hypotheses no_overlap_def_typed no_overlap_def_hypotheses update_eq_zip_flookup_typed update_eq_zip_flookup_hypotheses \
   "$cake_dir/pancake/semantics/pan_commonPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 

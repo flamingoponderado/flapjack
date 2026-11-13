@@ -1,4 +1,8 @@
-import Flapjack.AstHOL.GeneratedSize
+module
+
+public import Flapjack.AstHOL.GeneratedSize
+
+@[expose] public section
 
 /-! These values were evaluated by the original HOL `ast$lit_size`; see
 `scripts/hol-probes/flat_elim_value_globals_probe.out`. -/

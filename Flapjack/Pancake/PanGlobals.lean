@@ -379,9 +379,8 @@ termination_by program => sizeOf program
     (`Flapjack/Pancake/PanStructs.lean:20-21`) and `distinct_lists_def`
     (`Flapjack/Pancake/PanCommon.lean:24-25`).  The clauses, branch order, the
     comparison `=` and the result names match HOL exactly with no side
-    condition.  The production `String`-specialized form is
-    `globalRenameFunctionName` below; it is only a specialization of this
-    polymorphic original, so it is deliberately left untagged.  Direct
+    condition.  Call sites use this definition directly at `α := String`
+    (`FunName`), so no `String`-specialized wrapper remains.  Direct
     HOL/Lean edge-case fixtures: `scripts/hol-probes/pan_globals_fperm_name_probe.out`
     and `Flapjack/Test/PanGlobalsFpermNameParity.lean`. -/
 @[hol "cakeml/pancake/pan_globalsScript.sml" "fperm_name_def"]
@@ -398,10 +397,9 @@ open Flapjack.Pancake.PanLang (MlS ProgHOL DeclHOL)
     `:216-221`) recurse only on program/declaration structure, so they transfer
     constructor-for-constructor to `ProgHOL width` / `List (DeclHOL width)`; the
     name rename is the already-reviewed exact polymorphic `fpermName` above.
-    The production `globalRenameProg`/`globalRenameDecls` below are the
-    `Prog α`/`Decl α` analogues; routing the executed path through these exact
-    definitions needs the byte-range `progToHOL`/`progOfHOL` detour and is
-    tracked by `flapjack-6nn.3.1`. -/
+    The former generic-carrier `globalRenameProg`/`globalRenameDecls`
+    production analogues were retired; these exact twins are the reviewed
+    ports of the same HOL definitions. -/
 
 /-- Exact port of HOL `fperm_def` (`cakeml/pancake/pan_globalsScript.sml:191-214`)
     over the reviewed word-indexed `ProgHOL width` carrier.
@@ -468,141 +466,15 @@ decreasing_by
 
 end FpermExact
 
-/-- Production `String`-specialized form of Cake's polymorphic `fperm_name`
-    (`fpermName` above): renaming swaps the `source` and `target` function
-    names and leaves every other name unchanged.  Its body is exactly the
-    reviewed `@[hol]` port `fpermName source target name`, so the executed
-    compiler path runs the HOL-shaped definition. -/
--- FLAPJACK-SPECIFIC (`@[hol]` tag WITHDRAWN, documented mismatch, audit beads
--- `flapjack-dlc.52`/`flapjack-dlc.53`): HOL's `fperm_name_def`
--- (`pan_globalsScript.sml:184`) has no type annotation and HOL generalizes it
--- to the polymorphic `'a -> 'a -> 'a -> 'a`.  This declaration instantiates
--- `α := String` (`FunName`), so it is a specialization of the HOL constant
--- rather than the constant itself; the `names_as_string` qualifier does not
--- authorize specializing a polymorphic HOL name to `String`.  The exact
--- polymorphic port is `fpermName` above, which this declaration calls, so the
--- executed path uses the reviewed definition and only the type instantiation
--- remains Flapjack-specific.  Direct HOL/Lean edge-case fixtures:
--- `scripts/hol-probes/pan_globals_fperm_name_probe.out` and
--- `Flapjack/Test/PanGlobalsFpermNameParity.lean`.
-def globalRenameFunctionName
-    (source target name : FunName) : FunName :=
-  fpermName source target name
+/-! Cake's polymorphic `fperm_name` (`pan_globalsScript.sml:184`) is the
+    reviewed exact port `fpermName` above; its `cancel`/`cong` lemmas are the
+    tagged `fpermName_cancel`/`fpermName_cong` in the HOL proof counterpart
+    `Flapjack/Pancake/Proofs/PanGlobals.lean`.  Call sites use `fpermName`
+    directly at `α := String`, so no `String`-specialized wrapper remains.
+    Direct HOL/Lean edge-case fixtures:
+    `scripts/hol-probes/pan_globals_fperm_name_probe.out` and
+    `Flapjack/Test/PanGlobalsFpermNameParity.lean`. -/
 
-/-- Checked bridge for the name component of the executed rename path: the
-    production `String` helper is definitionally the reviewed exact polymorphic
-    HOL `fperm_name` port applied at `α := String`, so the executed compiler
-    path already runs the exact definition. -/
-@[simp] theorem globalRenameFunctionName_eq_fpermName (source target name : FunName) :
-    globalRenameFunctionName source target name = fpermName source target name := rfl
-
-/-! Counterparts of Cake's `fperm_name_cancel` and `fperm_name_cong`
-    (`pan_globalsProofScript.sml:1622,1629`): the source/target renaming is an
-    involutive bijection of function names. -/
-theorem globalRenameFunctionName_cancel [BEq String] [LawfulBEq String]
-    (source target name : FunName) :
-    globalRenameFunctionName source target
-        (globalRenameFunctionName source target name) = name := by
-  unfold globalRenameFunctionName fpermName
-  repeat' split <;> simp_all
-
-theorem globalRenameFunctionName_cong [BEq String] [LawfulBEq String]
-    (source target left right : FunName) :
-    globalRenameFunctionName source target left =
-        globalRenameFunctionName source target right ↔
-      left = right := by
-  constructor
-  · intro h
-    have := congrArg (globalRenameFunctionName source target) h
-    rw [globalRenameFunctionName_cancel, globalRenameFunctionName_cancel] at this
-    exact this
-  · intro h
-    rw [h]
-
-/-! Flapjack-specific structural renaming corresponding clause-for-clause to
-    Cake's `fperm_def` (`pan_globalsScript.sml:191-214`). The direct HOL/Lean
-    fixture is `pan_globals_fperm_probe.out` /
-    `Flapjack/Test/PanGlobalsFpermParity.lean`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port; @[hol] tag WITHDRAWN, documented
--- mismatch, audit bead `flapjack-dlc.14`): the seven equations (`Dec`, `Seq`,
--- `If`, `While`, `Call` with its optional `rtyp`/handler, `DecCall`, default)
--- match `fperm_def` (`pan_globalsScript.sml:191-214`) clause-for-clause.
--- `fperm` recurses only on program structure and leaves every expression
--- payload untouched, so the body is a faithful transcription of HOL's
--- control flow. The mismatch is the imported program/expression carrier:
--- HOL `fperm` maps `'a prog`, whose `Const` is `'a word`, while `Prog α`
--- embeds the generic `Exp α` with `Const : α`, `Shape`'s `Named` is backed by
--- `String`, and StructName/FieldName/VarName/FunName/ExceptionId are `String`
--- rather than HOL `mlstring` (see the `Exp`/`prog` audit at
--- `Flapjack/Pancake/PanLang.lean:226-269`). The exact port `fpermHOL` above is
--- now built over the reviewed width-indexed `ProgHOL` carrier (bead
--- `flapjack-pxn.18.3.5.8.20`), but routing this generic `Prog α` production
--- path through it needs the byte-range `progToHOL`/`progOfHOL` detour, which is
--- unavailable for arbitrary `α`/`String`; that executable-path replacement is
--- tracked by `flapjack-6nn.3.1`. `names_as_string` could only classify the
--- `call`/`decCall` `FunName` arguments (equality/map-key-only); it cannot
--- authorize the whole program carrier. Direct HOL rows recursive_control /
--- handler / deccall / unchanged / fperm_done are in
--- `scripts/hol-probes/pan_globals_fperm_probe.out` and sampled by
--- `Flapjack/Test/PanGlobalsFpermParity.lean`.
-def globalRenameProg
-    (source target : FunName) : Prog α → Prog α
-  | .dec name shape value body =>
-      .dec name shape value (globalRenameProg source target body)
-  | .seq first second =>
-      .seq (globalRenameProg source target first) (globalRenameProg source target second)
-  | .ite condition thenBranch elseBranch =>
-      .ite condition (globalRenameProg source target thenBranch)
-        (globalRenameProg source target elseBranch)
-  | .while condition body =>
-      .while condition (globalRenameProg source target body)
-  | .call info function arguments =>
-      let renamedInfo := match info with
-        | none => none
-        | some (returns, none) => some (returns, none)
-        | some (returns, some (exception, handlerVar, handler)) =>
-            some (returns, some (exception, handlerVar,
-              globalRenameProg source target handler))
-      .call renamedInfo (globalRenameFunctionName source target function) arguments
-  | .decCall name shape function arguments body =>
-      .decCall name shape (globalRenameFunctionName source target function) arguments
-        (globalRenameProg source target body)
-  | program => program
-termination_by program => sizeOf program
-
-/-! Flapjack-specific structural declaration renaming corresponding
-    clause-for-clause to Cake's `fperm_decs_def` (`pan_globalsScript.sml:216`).
-    The direct HOL/Lean fixture is `pan_globals_fperm_decs_probe.out` /
-    `Flapjack/Test/PanGlobalsFpermDecsParity.lean`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port; @[hol] tag WITHDRAWN, documented
--- mismatch, audit bead `flapjack-dlc.13`): the three equations (`[]`,
--- `Function fi::decs` renaming `fi.name` via `fperm_name` and `fi.body` via
--- `fperm`, other `d::decs` left in place) match `fperm_decs_def`
--- (`pan_globalsScript.sml:216-221`) clause-for-clause. The mismatch is the
--- imported declaration carrier: production `Decl α` contains `Prog α`/`Exp α`
--- (`Const : α`, String identifiers) and `Shape` (`Named : String`), whereas HOL
--- `decl` carries word-valued expressions with `mlstring` identifiers and
--- `shape`. The exact port `fpermDecsHOL` above is now built over the reviewed
--- width-indexed `DeclHOL`/`FunDeclHOL` carriers (bead
--- `flapjack-pxn.18.3.5.8.20`), but routing this generic `Decl α` production
--- path through it needs the byte-range `progToHOL`/`progOfHOL` detour, which is
--- unavailable for arbitrary `α`/`String`; that executable-path replacement is
--- tracked by `flapjack-6nn.3.1`. The `names_as_string` qualifier cannot repair
--- the expression/Shape carrier difference. Direct HOL rows mixed / empty /
--- singleton_nonfunction are in
--- `scripts/hol-probes/pan_globals_fperm_decs_probe.out` and sampled by
--- `Flapjack/Test/PanGlobalsFpermDecsParity.lean`.
-def globalRenameDecls
-    (source target : FunName) : List (Decl α) → List (Decl α)
-  | [] => []
-  | .function declaration :: declarations =>
-      .function { declaration with
-        name := globalRenameFunctionName source target declaration.name
-        body := globalRenameProg source target declaration.body } ::
-        globalRenameDecls source target declarations
-  | declaration :: declarations =>
-      declaration :: globalRenameDecls source target declarations
-termination_by declarations => sizeOf declarations
 
 section FpermBridge
 
@@ -619,75 +491,10 @@ theorem toStringOfBytes_injective : Function.Injective toStringOfBytes := by
 
 end FpermBridge
 
-/-! Counterpart of Cake's `fperm_decs_append`
-    (`pan_globalsProofScript.sml:1663`): renaming distributes over
-    declaration-list concatenation. -/
-theorem globalRenameDecls_append [BEq String] (source target : FunName)
-    (declarations rest : List (Decl α)) :
-    globalRenameDecls source target (declarations ++ rest) =
-      globalRenameDecls source target declarations ++
-        globalRenameDecls source target rest := by
-  induction declarations with
-  | nil => simp [globalRenameDecls]
-  | cons declaration declarations ih =>
-      cases declaration <;> simp [globalRenameDecls, ih]
 
-/-! Counterpart of Cake's `functions_fperm_decs`
-    (`pan_globalsProofScript.sml:1701`): the function table of a renamed
-    declaration list is the renamed function table. -/
-theorem functions_globalRenameDecls [BEq String] (source target : FunName)
-    (declarations : List (Decl α)) :
-    functions (globalRenameDecls source target declarations) =
-      (functions declarations).map (fun entry =>
-        (globalRenameFunctionName source target entry.1, entry.2.1,
-          globalRenameProg source target entry.2.2.1, entry.2.2.2)) := by
-  induction declarations with
-  | nil => simp [globalRenameDecls, functions, functionEntries]
-  | cons declaration declarations ih =>
-      cases declaration <;> simp [globalRenameDecls, functions, functionEntries, ih]
 
-theorem nodup_globalRenameFunctionName_map [BEq String] [LawfulBEq String]
-    (source target : FunName) (names : List FunName) (hnodup : names.Nodup) :
-    (names.map (globalRenameFunctionName source target)).Nodup := by
-  induction names with
-  | nil => simp
-  | cons head tail ih =>
-      simp only [List.map_cons, List.nodup_cons] at hnodup ⊢
-      obtain ⟨hhead, htail⟩ := hnodup
-      refine ⟨?_, ih htail⟩
-      intro hmem
-      obtain ⟨name, hname, heq⟩ := List.mem_map.mp hmem
-      have hnamehead : name = head :=
-        (globalRenameFunctionName_cong source target name head).mp heq
-      rw [hnamehead] at hname
-      exact hhead hname
 
-theorem globalRenameDecls_names_nodup [BEq String] [LawfulBEq String]
-    (source target : FunName) (declarations : List (Decl α))
-    (hnodup : ((functions declarations).map (fun entry => entry.1)).Nodup) :
-    ((functions (globalRenameDecls source target declarations)).map
-        (fun entry => entry.1)).Nodup := by
-  rw [functions_globalRenameDecls, List.map_map]
-  have hcomp :
-      ((fun entry : FunName × List (VarName × Shape) × Prog α × Shape =>
-          entry.1) ∘
-        (fun entry : FunName × List (VarName × Shape) × Prog α × Shape =>
-          (globalRenameFunctionName source target entry.1, entry.2.1,
-            globalRenameProg source target entry.2.2.1, entry.2.2.2))) =
-      (globalRenameFunctionName source target) ∘
-        (fun entry : FunName × List (VarName × Shape) × Prog α × Shape =>
-          entry.1) := by
-    funext entry
-    rfl
-  rw [hcomp, ← List.map_map]
-  exact nodup_globalRenameFunctionName_map source target _ hnodup
 
-def globalFunctionNames : List (Decl α) → List FunName
-  | [] => []
-  | .function declaration :: declarations =>
-      declaration.name :: globalFunctionNames declarations
-  | _ :: declarations => globalFunctionNames declarations
-termination_by declarations => sizeOf declarations
 
 /-! Counterpart of Cake's `exceptions_append`
     (`pan_globalsProofScript.sml:2507`): the exception table distributes over
@@ -727,6 +534,27 @@ theorem globalDeclsFilter_all (predicate : Decl α → Bool)
       · rw [if_pos hpred]; simp [hpred, ih]
       · rw [if_neg hpred]; exact ih
 
+/-- Flapjack-specific filter support: membership in a filtered list reports the
+    predicate. This generic fact has no separate HOL theorem declaration. -/
+theorem mem_globalDeclsFilter {predicate : Decl α → Bool} {declaration : Decl α}
+    {declarations : List (Decl α)}
+    (hmem : declaration ∈ globalDeclsFilter predicate declarations) :
+    predicate declaration = true := by
+  induction declarations with
+  | nil =>
+    rw [globalDeclsFilter.eq_def] at hmem
+    simp at hmem
+  | cons head tail ih =>
+      simp only [globalDeclsFilter] at hmem
+      by_cases hpred : predicate head = true
+      · simp [hpred] at hmem
+        rcases hmem with heq | htail
+        · subst heq
+          exact hpred
+        · exact ih htail
+      · simp [hpred] at hmem
+        exact ih hmem
+
 def globalDeclIsName : Decl α → Bool
   | .name _ _ => true
   | _ => false
@@ -743,66 +571,6 @@ def globalDeclIsFunction : Decl α → Bool
   | .function _ => true
   | _ => false
 
-/-! Counterpart of Cake's `EVERY_fperm_decs`
-    (`pan_globalsProofScript.sml:2436`): if a predicate holds on every
-    non-function declaration and on every renamed function declaration, then
-    it holds on every declaration produced by the renaming pass. -/
-theorem globalRenameDecls_all_of_predicate [BEq String]
-    (source target : FunName) (predicate : Decl α → Bool)
-    (declarations : List (Decl α))
-    (hother : declarations.all
-      (fun declaration => globalDeclIsFunction declaration || predicate declaration) = true)
-    (hfunction : declarations.all
-      (fun declaration => match declaration with
-        | .function function =>
-            predicate (.function { function with
-              name := globalRenameFunctionName source target function.name
-              body := globalRenameProg source target function.body })
-        | _ => true) = true) :
-    (globalRenameDecls source target declarations).all predicate = true := by
-  induction declarations with
-  | nil => simp [globalRenameDecls]
-  | cons declaration declarations ih =>
-      have hotherTail : declarations.all
-          (fun declaration =>
-            globalDeclIsFunction declaration || predicate declaration) = true := by
-        simp only [List.all_cons, Bool.and_eq_true] at hother
-        exact hother.2
-      have hfunctionTail : declarations.all
-          (fun declaration => match declaration with
-            | .function function =>
-                predicate (.function { function with
-                  name := globalRenameFunctionName source target function.name
-                  body := globalRenameProg source target function.body })
-            | _ => true) = true := by
-        simp only [List.all_cons, Bool.and_eq_true] at hfunction
-        exact hfunction.2
-      have ih' := ih hotherTail hfunctionTail
-      have hotherHead := by
-        simp only [List.all_cons, Bool.and_eq_true] at hother
-        exact hother.1
-      have hfunctionHead := by
-        simp only [List.all_cons, Bool.and_eq_true] at hfunction
-        exact hfunction.1
-      cases declaration with
-      | function function =>
-          simp only [globalRenameDecls, List.all_cons, Bool.and_eq_true]
-          exact ⟨hfunctionHead, ih'⟩
-      | decl shape name value =>
-          simp only [globalRenameDecls, List.all_cons, Bool.and_eq_true]
-          refine ⟨?_, ih'⟩
-          simp [globalDeclIsFunction] at hotherHead
-          exact hotherHead
-      | exnDecl exception shape =>
-          simp only [globalRenameDecls, List.all_cons, Bool.and_eq_true]
-          refine ⟨?_, ih'⟩
-          simp [globalDeclIsFunction] at hotherHead
-          exact hotherHead
-      | name struct fields =>
-          simp only [globalRenameDecls, List.all_cons, Bool.and_eq_true]
-          refine ⟨?_, ih'⟩
-          simp [globalDeclIsFunction] at hotherHead
-          exact hotherHead
 
 /-! Direct source-shaped counterparts of the declaration predicates from
     `panLangScript.sml:234-249`.  The global-pass predicates above are kept
@@ -899,12 +667,10 @@ the reviewed word-indexed `List (DeclHOL width)` carrier and reuse the
 already tagged sibling ports
 `isNameHOL`/`isExnDeclHOL`/`isDeclHOL`/`isFunctionHOL`
 (`panLangScript.sml:234-249`, `:314-317`), `freshNameHOL`
-(`fresh_name_def`), and `functionsHOL` (`functions_def`). Generic `Decl α`
-callers still use
-`globalResortDecls`/`globalNewMainName`/`globalDeclShapes`; inputs without
-the parser byte-range proof remain on that compatibility path. The exact
-route and its output equality are in `PanGlobalsByteRanged.lean`
-(`flapjack-6nn.3.1`).
+(`fresh_name_def`), and `functionsHOL` (`functions_def`).  The former
+generic-carrier `globalResortDecls`/`globalNewMainName`/`globalDeclShapes`
+production forms were retired; these exact twins are the reviewed ports of the
+same HOL definitions, and the byte-range witnesses live beside them.
 -/
 
 /-- Exact port of HOL `resort_decls_def`
@@ -1019,66 +785,6 @@ def decShapesHOL {width : Nat} [NeZero width] :
 
 end ResortShapeExact
 
-/-! Flapjack-specific source-shaped counterpart (NOT an exact HOL port) of Cake's `resort_decls_def` (`pan_globalsScript.sml:179`):
-    declarations are regrouped as names, exceptions, value declarations, and
-    functions, in that order.  `globalDeclIsName`/`globalDeclIsException`/
-    `globalDeclIsGlobal`/`globalDeclIsFunction` are the HOL `is_name`/
-    `is_exn_decl`/`is_decl`/`is_function` predicates. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port; @[hol] tag WITHDRAWN, documented
--- mismatch, audit bead `flapjack-dlc.16`): the constructor filtering and
--- output order (`FILTER is_name ++ FILTER is_exn_decl ++ FILTER is_decl ++
--- FILTER is_function`) match `resort_decls_def` (`pan_globalsScript.sml:179`)
--- exactly, and `globalDeclIsName`/`globalDeclIsException`/`globalDeclIsGlobal`/
--- `globalDeclIsFunction` are the HOL `is_name`/`is_exn_decl`/`is_decl`/
--- `is_function` predicates. The mismatch is the executed `Decl α` carrier: it
--- is not HOL's `DeclHOL width`. Production `Exp α` stores `α` directly in
--- `Const`, HOL `ExpHOL width` stores `BitVec width` (`'a word`); names and
--- `Shape` also use production `String` instead of HOL `mlstring`. The
--- `(names_as_string := ...)` qualifier only accounts for the last difference,
--- so it cannot justify this tag. Exact carriers (`DeclHOL`/`ProgHOL`/`ExpHOL`/
--- `ShapeHOL`) exist under `Flapjack/Pancake/PanLang/` but this transformation
--- runs on the production carrier. Keep untagged until an exact-carrier
--- definition is connected to the executed path; tracked by bead
--- `flapjack-6nn.3.1` (MlString carrier `flapjack-pxn.18.3.5.8`). Clause/order
--- evidence: `scripts/hol-probes/pan_globals_resort_decls_probe.out` and
--- `Flapjack/Test/PanGlobalsResortDeclsParity.lean`.
-def globalResortDecls (declarations : List (Decl α)) : List (Decl α) :=
-  globalDeclsFilter globalDeclIsName declarations ++
-    globalDeclsFilter globalDeclIsException declarations ++
-    globalDeclsFilter globalDeclIsGlobal declarations ++
-    globalDeclsFilter globalDeclIsFunction declarations
-
-/-! Flapjack-specific production counterpart of Cake's `new_main_name_def`
-    (`pan_globalsScript.sml:224`): it calls `freshNameHOL "main"` on the
-    function names projected from the declaration list. The direct behavior
-    fixture is `scripts/hol-probes/pan_globals_new_main_name_probe.out`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port; @[hol] tag WITHDRAWN, documented
--- mismatch, audit bead `flapjack-dlc.15`): the body `freshNameHOL "main"
--- (globalFunctionNames declarations)` matches HOL `new_main_name decls =
--- fresh_name «main» (MAP FST (functions decls))` (`pan_globalsScript.sml:224`)
--- once the production projections `globalFunctionNames`/`freshNameHOL` stand
--- for HOL `functions`/`fresh_name`. The mismatch is the input carrier: this
--- consumes generic production `List (Decl α)`, whose expressions carry `Const
--- : α` and whose identifiers and `Shape` are `String`; HOL `new_main_name`
--- consumes word-valued declarations with `Const : 'a word` and `mlstring`
--- identifiers. `names_as_string` and the generated-name boundary witness only
--- address the String/mlstring name difference, not this input-carrier
--- mismatch, so the tag stays withdrawn pending the exact-carrier replacement
--- (bead `flapjack-6nn.3.1`; MlString carrier `flapjack-pxn.18.3.5.8`). Direct
--- HOL rows empty / two_collisions / mixed / absent are in
--- `scripts/hol-probes/pan_globals_new_main_name_probe.out` and sampled by
--- `Flapjack/Test/PanGlobalsNewMainNameParity.lean`.
-def globalNewMainName (declarations : List (Decl α)) : FunName :=
-  freshNameHOL "main" (globalFunctionNames declarations)
-
-/-! Flapjack-specific freshness property for the synthesized `main` entry-point
-    name. The proof-level statement is over generic production `Decl α`, while
-    HOL `new_main_name_correct` ranges over word-valued declarations; see the
-    exact-carrier replacement bead `flapjack-6nn.3.1`. -/
-theorem globalNewMainName_not_mem
-    (declarations : List (Decl α)) :
-    globalNewMainName declarations ∉ globalFunctionNames declarations :=
-  freshNameHOL_not_mem "main" (globalFunctionNames declarations)
 
 /-! ## `holMlStringWitness_*`: same-module byte-boundary witnesses
 
@@ -1156,136 +862,6 @@ theorem holMlStringWitness_globalFreshName [BEq String] (name : String)
     (h : Flapjack.Pancake.PanLang.NameRanged name) (names : List String) :
     Flapjack.Pancake.PanLang.NameRanged (globalFreshName name names) :=
   holMlStringWitness_globalFreshNameAux name h names 0 names.length
-
-/-! Flapjack-specific source-shaped counterpart (NOT an exact HOL port) of Cake's `dec_shapes_def` (`pan_globalsScript.sml:228`): the
-    shape projection skips function, name, and exception declarations and
-    keeps the shape of each value declaration, in order. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): source review for bead
--- `flapjack-dlc.12`. HOL `dec_shapes_def` (`pan_globalsScript.sml:228-234`) is
--- the five-clause projection `Function _::ds |-> dec_shapes ds`,
--- `Decl sh _ _::ds |-> sh::dec_shapes ds`, `Name _ _::ds |-> dec_shapes ds`,
--- `ExnDecl _ _::ds |-> dec_shapes ds`, `[] |-> []`; the Lean clauses match that
--- order and shape selection clause-for-clause. The mismatch is the imported
--- declaration carrier: the executed function consumes production `Decl α`
--- (whose `Exp α.Const` payload is a generic word `α`, not HOL's
--- `ExpHOL width.Const : 'a word` fixed width, and whose identifiers/`Shape`
--- are `String`, not HOL `mlstring`), so the statement ranges over inputs HOL
--- cannot represent. `(names_as_string := ...)` cannot authorize a whole
--- declaration carrier; no byte witness applies. Keep untagged until an
--- exact-carrier definition is connected to the executed path; tracked by
--- `flapjack-6nn.3.1` with `flapjack-pxn.18.3.5.8`. Clause/order evidence:
--- `scripts/hol-probes/pan_globals_dec_shapes_probe.out` rows `empty=[]`,
--- `mixed=[Comb [One; Named «S»]; One]`, `functions_only=[]`, sampled by
--- `Flapjack/Test/PanGlobalsDecShapesParity.lean`.
-def globalDeclShapes : List (Decl α) → List Shape
-  | [] => []
-  | .function _ :: declarations => globalDeclShapes declarations
-  | .decl shape _ _ :: declarations => shape :: globalDeclShapes declarations
-  | .name _ _ :: declarations => globalDeclShapes declarations
-  | .exnDecl _ _ :: declarations => globalDeclShapes declarations
-termination_by declarations => sizeOf declarations
-
-/-! Shape-projection counterparts of Cake's `dec_shapes` lemmas from
-    `pan_globalsProofScript.sml:2328-2361`.  The global pass reassociates and
-    filters declarations, and these lemmas record that the shape projection is
-    unchanged by that reorganisation. -/
-
-theorem globalDeclShapes_nil : globalDeclShapes ([] : List (Decl α)) = [] := by
-  rw [globalDeclShapes.eq_def]
-
-theorem globalDeclShapes_cons (declaration : Decl α) (declarations : List (Decl α)) :
-    globalDeclShapes (declaration :: declarations) =
-      (match declaration with
-       | .decl shape _ _ => shape :: globalDeclShapes declarations
-       | _ => globalDeclShapes declarations) := by
-  cases declaration <;> rw [globalDeclShapes.eq_def]
-
-theorem globalDeclShapes_append (declarations rest : List (Decl α)) :
-    globalDeclShapes (declarations ++ rest) =
-      globalDeclShapes declarations ++ globalDeclShapes rest := by
-  induction declarations with
-  | nil => rw [List.nil_append, globalDeclShapes_nil, List.nil_append]
-  | cons declaration declarations ih =>
-      cases declaration <;> simp [globalDeclShapes_cons, ih]
-
-theorem globalDeclShapes_of_functions (declarations : List (Decl α))
-    (hfunctions : ∀ declaration ∈ declarations, globalDeclIsFunction declaration = true) :
-    globalDeclShapes declarations = [] := by
-  induction declarations with
-  | nil => rw [globalDeclShapes.eq_def]
-  | cons declaration declarations ih =>
-      have hdecl : globalDeclIsFunction declaration = true :=
-        hfunctions declaration (by simp)
-      have hrest : ∀ d ∈ declarations, globalDeclIsFunction d = true :=
-        fun d hd => hfunctions d (by simp [hd])
-      cases declaration <;> simp_all [globalDeclIsFunction, globalDeclShapes_cons]
-
-theorem mem_globalDeclsFilter {predicate : Decl α → Bool} {declaration : Decl α}
-    {declarations : List (Decl α)}
-    (hmem : declaration ∈ globalDeclsFilter predicate declarations) :
-    predicate declaration = true := by
-  induction declarations with
-  | nil => rw [globalDeclsFilter.eq_def] at hmem; simp at hmem
-  | cons head tail ih =>
-      simp only [globalDeclsFilter] at hmem
-      by_cases hpred : predicate head = true
-      · simp [hpred] at hmem
-        rcases hmem with heq | htail
-        · subst heq; exact hpred
-        · exact ih htail
-      · simp [hpred] at hmem
-        exact ih hmem
-
-theorem globalDeclShapes_globalDeclsFilter_not_function (declarations : List (Decl α)) :
-    globalDeclShapes
-        (globalDeclsFilter (fun declaration => !globalDeclIsFunction declaration)
-          declarations) =
-      globalDeclShapes declarations := by
-  induction declarations with
-  | nil => rw [globalDeclsFilter.eq_def, globalDeclShapes.eq_def]
-  | cons declaration declarations ih =>
-      simp only [globalDeclsFilter]
-      cases declaration <;> simp only [globalDeclIsFunction] at ih ⊢ <;> simp [globalDeclShapes_cons, ih]
-
-theorem globalDeclShapes_globalDeclsFilter_function (declarations : List (Decl α)) :
-    globalDeclShapes (globalDeclsFilter globalDeclIsFunction declarations) = [] :=
-  globalDeclShapes_of_functions _
-    (fun _ hmem => mem_globalDeclsFilter (predicate := globalDeclIsFunction) hmem)
-
-theorem globalDeclShapes_globalDeclsFilter_name (declarations : List (Decl α)) :
-    globalDeclShapes (globalDeclsFilter globalDeclIsName declarations) = [] := by
-  induction declarations with
-  | nil => rw [globalDeclsFilter.eq_def, globalDeclShapes.eq_def]
-  | cons declaration declarations ih =>
-      simp only [globalDeclsFilter]
-      cases declaration <;> simp only [globalDeclIsName] at ih ⊢ <;> simp [globalDeclShapes_cons, ih]
-
-theorem globalDeclShapes_globalDeclsFilter_exception (declarations : List (Decl α)) :
-    globalDeclShapes (globalDeclsFilter globalDeclIsException declarations) = [] := by
-  induction declarations with
-  | nil => rw [globalDeclsFilter.eq_def, globalDeclShapes.eq_def]
-  | cons declaration declarations ih =>
-      simp only [globalDeclsFilter]
-      cases declaration <;> simp only [globalDeclIsException] at ih ⊢ <;> simp [globalDeclShapes_cons, ih]
-
-theorem globalDeclShapes_globalDeclsFilter_global (declarations : List (Decl α)) :
-    globalDeclShapes (globalDeclsFilter globalDeclIsGlobal declarations) =
-      globalDeclShapes declarations := by
-  induction declarations with
-  | nil => rw [globalDeclsFilter.eq_def, globalDeclShapes.eq_def]
-  | cons declaration declarations ih =>
-      simp only [globalDeclsFilter]
-      cases declaration <;> simp only [globalDeclIsGlobal] at ih ⊢ <;> simp [globalDeclShapes_cons, ih]
-
-theorem globalDeclShapes_globalResortDecls (declarations : List (Decl α)) :
-    globalDeclShapes (globalResortDecls declarations) =
-      globalDeclShapes declarations := by
-  rw [globalResortDecls, globalDeclShapes_append, globalDeclShapes_append,
-    globalDeclShapes_append, globalDeclShapes_globalDeclsFilter_name,
-    globalDeclShapes_globalDeclsFilter_exception,
-    globalDeclShapes_globalDeclsFilter_global,
-    globalDeclShapes_globalDeclsFilter_function]
-  simp
 
 /-! Counterpart of Cake's `exceptions_FILTER_is_function`
     (`pan_globalsProofScript.sml:2515`). -/
@@ -1444,122 +1020,9 @@ theorem functions_append (declarations rest : List (Decl α)) :
   | cons declaration declarations ih =>
       cases declaration <;> simp [functions, functionEntries, ih]
 
-/-! Counterpart of Cake's `resort_decls_preserve_functions`
-    (`pan_globalsProofScript.sml:2055`): resorting declarations leaves the
-    function table unchanged. -/
-theorem functions_globalResortDecls (declarations : List (Decl α)) :
-    functions (globalResortDecls declarations) = functions declarations := by
-  rw [globalResortDecls, functions_append, functions_append, functions_append,
-    functions_globalDeclsFilter_globalName,
-    functions_globalDeclsFilter_globalException,
-    functions_globalDeclsFilter_isGlobal, List.nil_append, List.nil_append,
-    List.nil_append, functions_globalDeclsFilter_isFunction]
 
-/-! Counterpart of Cake's `fperm_decs_decls`
-    (`pan_globalsProofScript.sml:2023`): renaming leaves a declaration list
-    with no function declarations unchanged. -/
-theorem globalRenameDecls_eq_self_of_no_functions [BEq String]
-    (source target : FunName) (declarations : List (Decl α))
-    (hnone : declarations.all
-      (fun declaration => !globalDeclIsFunction declaration) = true) :
-    globalRenameDecls source target declarations = declarations := by
-  induction declarations with
-  | nil => simp [globalRenameDecls]
-  | cons declaration declarations ih =>
-      simp only [List.all_cons, Bool.and_eq_true] at hnone
-      obtain ⟨hhead, htail⟩ := hnone
-      have hnotfun : globalDeclIsFunction declaration = false := by
-        simpa using hhead
-      cases declaration with
-      | function declaration =>
-          simp [globalDeclIsFunction] at hnotfun
-      | decl shape name value =>
-          simp [globalRenameDecls, ih htail]
-      | exnDecl exception shape =>
-          simp [globalRenameDecls, ih htail]
-      | name struct fields =>
-          simp [globalRenameDecls, ih htail]
 
-/-! Counterpart of Cake's `fperm_decs_FILTER_is_function`
-    (`pan_globalsProofScript.sml:2032`): renaming commutes with filtering to
-    the function declarations. -/
-theorem globalRenameDecls_filter_function [BEq String]
-    (source target : FunName) (declarations : List (Decl α)) :
-    globalRenameDecls source target
-        (globalDeclsFilter globalDeclIsFunction declarations) =
-      globalDeclsFilter globalDeclIsFunction
-        (globalRenameDecls source target declarations) := by
-  induction declarations with
-  | nil => simp [globalDeclsFilter, globalRenameDecls]
-  | cons declaration declarations ih =>
-      simp only [globalDeclsFilter]
-      by_cases hpred : globalDeclIsFunction declaration = true
-      · rw [if_pos hpred]
-        cases declaration with
-        | function declaration =>
-            simp [globalRenameDecls, globalDeclsFilter, globalDeclIsFunction, ih]
-        | decl shape name value => simp [globalDeclIsFunction] at hpred
-        | exnDecl exception shape => simp [globalDeclIsFunction] at hpred
-        | name struct fields => simp [globalDeclIsFunction] at hpred
-      · rw [if_neg hpred]
-        cases declaration <;>
-          simp_all [globalRenameDecls, globalDeclsFilter, globalDeclIsFunction]
 
-/-! Counterpart of Cake's `FILTER_decs_fperm_decs`
-    (`pan_globalsProofScript.sml:2832`): renaming commutes with filtering to
-    the non-function declarations. -/
-theorem globalDeclsFilter_cons_true (predicate : Decl α → Bool)
-    (declaration : Decl α) (declarations : List (Decl α))
-    (hkeep : predicate declaration = true) :
-    globalDeclsFilter predicate (declaration :: declarations) =
-      declaration :: globalDeclsFilter predicate declarations := by
-  simp [globalDeclsFilter, hkeep]
-
-theorem globalDeclsFilter_cons_false (predicate : Decl α → Bool)
-    (declaration : Decl α) (declarations : List (Decl α))
-    (hdrop : predicate declaration = false) :
-    globalDeclsFilter predicate (declaration :: declarations) =
-      globalDeclsFilter predicate declarations := by
-  simp [globalDeclsFilter, hdrop]
-
-theorem globalRenameDecls_filter_not_function [BEq String]
-    (source target : FunName) (declarations : List (Decl α)) :
-    globalDeclsFilter (fun declaration => !globalDeclIsFunction declaration)
-        (globalRenameDecls source target declarations) =
-      globalDeclsFilter (fun declaration => !globalDeclIsFunction declaration)
-        declarations := by
-  induction declarations with
-  | nil => simp [globalDeclsFilter, globalRenameDecls]
-  | cons declaration declarations ih =>
-      cases declaration with
-      | function function =>
-          simp only [globalRenameDecls]
-          rw [globalDeclsFilter_cons_false _ _ _
-              (by simp [globalDeclIsFunction]),
-            globalDeclsFilter_cons_false _ _ _
-              (by simp [globalDeclIsFunction])]
-          exact ih
-      | decl shape name value =>
-          simp only [globalRenameDecls]
-          rw [globalDeclsFilter_cons_true _ _ _
-              (by simp [globalDeclIsFunction]),
-            globalDeclsFilter_cons_true _ _ _
-              (by simp [globalDeclIsFunction])]
-          rw [ih]
-      | exnDecl exception shape =>
-          simp only [globalRenameDecls]
-          rw [globalDeclsFilter_cons_true _ _ _
-              (by simp [globalDeclIsFunction]),
-            globalDeclsFilter_cons_true _ _ _
-              (by simp [globalDeclIsFunction])]
-          rw [ih]
-      | name struct fields =>
-          simp only [globalRenameDecls]
-          rw [globalDeclsFilter_cons_true _ _ _
-              (by simp [globalDeclIsFunction]),
-            globalDeclsFilter_cons_true _ _ _
-              (by simp [globalDeclIsFunction])]
-          rw [ih]
 
 def globalFindFunction [BEq String] (name : FunName) :
     List (Decl α) → Option (FunDecl α)
@@ -1961,485 +1424,12 @@ theorem globalShapeVal_cakeShapeVal [BEq String] {width : Nat} [NeZero width]
       congr 1
       exact List.map_congr_left ih
 
-/-- Source-reviewed Flapjack mirror (NOT an exact HOL port; `@[hol]` tag WITHDRAWN, documented
-    carrier mismatch, audit bead `flapjack-dlc.11`) of HOL `pan_globals$compile_exp_def`
-    (`cakeml/pancake/pan_globalsScript.sml:18-46`).  The fifteen HOL clauses map
-    one-for-one onto the Lean clauses in the same order:
-    `Var Local` is the identity; `Var Global` looks the name up in
-    `CakeContext.globals` (HOL `FLOOKUP ctxt.globals`) and yields
-    `Load sh (Op Sub [TopAddr; Const addr])` on a hit, `Const 0w` on a miss;
-    `RStruct`/`RField` recurse; `NStruct`/`NField` yield `Const 0w`;
-    `Load`/`LoadByte`/`Load32` recurse into the address; `Op`/`Panop` map over
-    the arguments; `Cmp`/`Shift` recurse into both operands; `TopAddr` becomes
-    `Op Sub [TopAddr; Const max_globals_size]`; and the HOL catch-all clause
-    `compile_exp ctxt e = e` (`Const`, `BaseAddr`, `BytesInWord`) is the Lean fallthrough
-    `expression => expression`.
-
-    The definition cannot carry an exact tag because the carriers differ: HOL
-    works over `'a pan_globals$context` and `'a panLang$exp` with
-    `globals : varname |-> shape # 'a word` (mlstring keys), the HOL `shape`
-    datatype, and a positive-width `'a word`, while this mirror uses the
-    production `CakeContext width` (String-keyed globals), production
-    `Exp (BitVec width)` and production `Shape`, plus an executable-only
-    `[NeZero width]`.  These are structural carriers, not identifiers, so the
-    `names_as_string` qualifier does not authorise them; and no same-module
-    `NameRanged` witness applies because the result is an expression, not a
-    name.
-
-    Direct HOL oracle: `scripts/hol-probes/pan_globals_compile_exp_probe.out`
-    (rows `local`, `global_hit`, `global_miss`, `top_addr`, `nested`), replayed
-    by `Flapjack/Test/PanGlobalsCompileExpParity.lean`.  Exact-carrier
-    replacement is tracked by `flapjack-pxn.18.3.5.8` (parent
-    `flapjack-pxn.18.3.5.7.2`). -/
-def compileExpCake {width : Nat} [NeZero width] (context : CakeContext width) :
-    Exp (BitVec width) → Exp (BitVec width)
-  | .var .local name => .var .local name
-  | .var .global name =>
-      match FLOOKUP context.globals name with
-      | some (shape, address) => .load shape (.op .sub [.topAddr, .const address])
-      | none => .const (BitVec.ofNat width 0)
-  | .rStruct expressions => .rStruct (compileExpCakeList context expressions)
-  | .rField index expression => .rField index (compileExpCake context expression)
-  | .nStruct _ _ => .const (BitVec.ofNat width 0)
-  | .nField _ _ => .const (BitVec.ofNat width 0)
-  | .load shape address => .load shape (compileExpCake context address)
-  | .load32 address => .load32 (compileExpCake context address)
-  | .loadByte address => .loadByte (compileExpCake context address)
-  | .op operator expressions => .op operator (compileExpCakeList context expressions)
-  | .panOp operator expressions => .panOp operator (compileExpCakeList context expressions)
-  | .cmp operator left right =>
-      .cmp operator (compileExpCake context left) (compileExpCake context right)
-  | .shift operator left right =>
-      .shift operator (compileExpCake context left) (compileExpCake context right)
-  | .topAddr => .op .sub [.topAddr, .const context.maxGlobalsSize]
-  | expression => expression
-termination_by expression => sizeOf expression
-where
-  compileExpCakeList {width : Nat} [NeZero width] (context : CakeContext width) :
-      List (Exp (BitVec width)) → List (Exp (BitVec width))
-    | [] => []
-    | expression :: expressions =>
-        compileExpCake context expression :: compileExpCakeList context expressions
-  termination_by expressions => sizeOf expressions
-  decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial
-
-/-- List counterpart of `compileExpCake` for external callers; mirrors HOL's
-    `MAP (compile_exp ctxt)`. -/
-def compileExpCakeArgs {width : Nat} [NeZero width] (context : CakeContext width) :
-    List (Exp (BitVec width)) → List (Exp (BitVec width))
-  | [] => []
-  | expression :: expressions =>
-      compileExpCake context expression :: compileExpCakeArgs context expressions
-termination_by expressions => sizeOf expressions
-decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial
-
-/- Adapter for the expression compiler: on the `cakeContextOfPass` view of a
-    canonical production context, the `compileExpCake` helper (currently untagged) agrees
-    with the production `globalCompileExp`.  Only the two fallback spots
-    (`fromNat 0` vs `n2w 0`) need the canonical-word hypothesis; the global
-    lookup is `lookupInfo` on both sides. -/
-mutual
-  theorem compileExpCake_cakeContextOfPass [BEq String] {width : Nat} [NeZero width]
-      (context : GlobalPassContext (BitVec width)) (hcanonical : context.IsCakeCanonical) :
-      (expression : Exp (BitVec width)) →
-        compileExpCake (cakeContextOfPass context) expression = globalCompileExp context expression
-    | .var .local _ => by simp only [compileExpCake, globalCompileExp]
-    | .var .global name => by
-        simp only [compileExpCake, globalCompileExp, cakeContextOfPass, FLOOKUP,
-          hcanonical.2 0]
-        cases lookupInfo name context.globals <;> rfl
-    | .rStruct expressions => by
-        simp only [compileExpCake, globalCompileExp,
-          compileExpCakeList_cakeContextOfPass context hcanonical expressions]
-    | .rField _ expression => by
-        simp only [compileExpCake, globalCompileExp,
-          compileExpCake_cakeContextOfPass context hcanonical expression]
-    | .nStruct _ _ => by
-        simp only [compileExpCake, globalCompileExp, hcanonical.2 0]
-    | .nField _ _ => by
-        simp only [compileExpCake, globalCompileExp, hcanonical.2 0]
-    | .load _ address => by
-        simp only [compileExpCake, globalCompileExp,
-          compileExpCake_cakeContextOfPass context hcanonical address]
-    | .load32 address => by
-        simp only [compileExpCake, globalCompileExp,
-          compileExpCake_cakeContextOfPass context hcanonical address]
-    | .loadByte address => by
-        simp only [compileExpCake, globalCompileExp,
-          compileExpCake_cakeContextOfPass context hcanonical address]
-    | .op _ expressions => by
-        simp only [compileExpCake, globalCompileExp,
-          compileExpCakeList_cakeContextOfPass context hcanonical expressions]
-    | .panOp _ expressions => by
-        simp only [compileExpCake, globalCompileExp,
-          compileExpCakeList_cakeContextOfPass context hcanonical expressions]
-    | .cmp _ left right => by
-        simp only [compileExpCake, globalCompileExp,
-          compileExpCake_cakeContextOfPass context hcanonical left,
-          compileExpCake_cakeContextOfPass context hcanonical right]
-    | .shift _ left right => by
-        simp only [compileExpCake, globalCompileExp,
-          compileExpCake_cakeContextOfPass context hcanonical left,
-          compileExpCake_cakeContextOfPass context hcanonical right]
-    | .const _ => by simp only [compileExpCake, globalCompileExp]
-    | .baseAddr => by simp only [compileExpCake, globalCompileExp]
-    | .topAddr => by simp only [compileExpCake, globalCompileExp, cakeContextOfPass]
-    | .bytesInWord => by simp only [compileExpCake, globalCompileExp]
-  theorem compileExpCakeList_cakeContextOfPass [BEq String] {width : Nat} [NeZero width]
-      (context : GlobalPassContext (BitVec width)) (hcanonical : context.IsCakeCanonical) :
-      (expressions : List (Exp (BitVec width))) →
-        compileExpCake.compileExpCakeList (cakeContextOfPass context) expressions =
-          globalCompileExp.globalCompileExps context expressions
-    | [] => by
-        simp only [compileExpCake.compileExpCakeList, globalCompileExp.globalCompileExps]
-    | expression :: expressions => by
-        simp only [compileExpCake.compileExpCakeList, globalCompileExp.globalCompileExps,
-          compileExpCake_cakeContextOfPass context hcanonical expression,
-          compileExpCakeList_cakeContextOfPass context hcanonical expressions]
-end
-
-/-- Adapter for the argument-list compiler used by `compileProgCake`: on the
-    `cakeContextOfPass` view of a canonical production context, the canonical
-    `compileExpCakeArgs` agrees with the production `globalCompileExpList`. -/
-theorem compileExpCakeArgs_cakeContextOfPass [BEq String] {width : Nat} [NeZero width]
-    (context : GlobalPassContext (BitVec width)) (hcanonical : context.IsCakeCanonical) :
-    (expressions : List (Exp (BitVec width))) →
-      compileExpCakeArgs (cakeContextOfPass context) expressions =
-        globalCompileExpList context expressions
-  | [] => by
-      simp only [compileExpCakeArgs, globalCompileExpList]
-  | expression :: expressions => by
-      simp only [compileExpCakeArgs, globalCompileExpList,
-        compileExpCake_cakeContextOfPass context hcanonical expression,
-        compileExpCakeArgs_cakeContextOfPass context hcanonical expressions]
-
-/-- Flapjack analogue of HOL `pan_globals$compile_def`
-    (`pan_globalsScript.sml:69-149`) over the canonical word context
-    `CakeContext`. Constructor equations were compared branch-by-branch with
-    HOL; the global-return-handler branch uses `freshNameHOL`, `freeVarIds`,
-    and `expLocalVars` as their matching HOL definitions require.
-
-    This remains untagged because the carriers differ: `CakeContext.globals`
-    is `FiniteMap String (Shape × BitVec width)`, and this definition consumes
-    and returns production `Prog (BitVec width)` with String identifiers. HOL
-    `context.globals` is `mlstring |-> shape # word`, and `compile` consumes
-    and returns exact `ProgHOL width` with `MlString` identifiers. The implicit
-    `[LawfulBEq String]` supports the production map lookup/update operations;
-    it does not bridge these carriers. There is no byte-range premise on the
-    arbitrary program/context inputs, so `names_as_string` cannot qualify this
-    definition. Exact-carrier work is tracked by `flapjack-pxn.18.3.5.8`.
-    Direct HOL rows in `pan_globals_compile_probe.out` pin local/global/missing
-    assignments, sequencing, global loads, and a handled global destination. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): keep the exact-carrier gap above
--- explicit until `compile` is defined over `ProgHOL` and an MlString-keyed
--- context.
-def compileProgCake [LawfulBEq String] {width : Nat} [NeZero width] (context : CakeContext width) :
-    Prog (BitVec width) → Prog (BitVec width)
-  | .dec name shape value body =>
-      .dec name shape (compileExpCake context value) (compileProgCake context body)
-  | .assign .global name value =>
-      match FLOOKUP context.globals name with
-      | some (_, address) =>
-          .store (.op .sub [.topAddr, .const address]) (compileExpCake context value)
-      | none => .skip
-  | .assign .local name value => .assign .local name (compileExpCake context value)
-  | .primitive name operator arguments =>
-      .primitive name operator (compileExpCakeArgs context arguments)
-  | .store address value =>
-      .store (compileExpCake context address) (compileExpCake context value)
-  | .store32 address value =>
-      .store32 (compileExpCake context address) (compileExpCake context value)
-  | .storeByte address value =>
-      .storeByte (compileExpCake context address) (compileExpCake context value)
-  | .seq first second =>
-      .seq (compileProgCake context first) (compileProgCake context second)
-  | .ite condition thenBranch elseBranch =>
-      .ite (compileExpCake context condition)
-        (compileProgCake context thenBranch) (compileProgCake context elseBranch)
-  | .while condition body =>
-      .while (compileExpCake context condition) (compileProgCake context body)
-  | .call info function arguments =>
-      let compiledArguments := compileExpCakeArgs context arguments
-      match info with
-        | none => .call none function compiledArguments
-        | some (none, none) =>
-            .call (some (none, none)) function compiledArguments
-        | some (none, some (exception, handlerVar, handler)) =>
-            .call (some (none, some (exception, handlerVar,
-              compileProgCake context handler))) function compiledArguments
-        | some (some (.local, name), none) =>
-            .call (some (some (.local, name), none)) function compiledArguments
-        | some (some (.local, name), some (exception, handlerVar, handler)) =>
-            .call (some (some (.local, name), some (exception, handlerVar,
-              compileProgCake context handler))) function compiledArguments
-        | some (some (.global, name), none) =>
-            match FLOOKUP context.globals name with
-            | some (shape, address) =>
-                .decCall "" shape function compiledArguments
-                  (.store (.op .sub [.topAddr, .const address])
-                    (.var .local ""))
-            | none =>
-                .call (some (none, none)) function compiledArguments
-        | some (some (.global, name), some (exception, handlerVar, handler)) =>
-            match FLOOKUP context.globals name with
-            | some (shape, address) =>
-                let compiledHandlerProgram := compileProgCake context handler
-                let names := handlerVar :: freeVarIds compiledHandlerProgram ++
-                  compiledArguments.flatMap expLocalVars
-                let resultName := freshNameHOL "" names
-                /- Cake's `compile_def` uses the fixed seed `"vn'"` for its
-                   handler flag, independently of the fresh result name. -/
-                let flagName := freshNameHOL "vn'" (resultName :: names)
-                let handlerBody :=
-                  .seq compiledHandlerProgram
-                    (.assign .local flagName (.const (BitVec.ofNat width 1)))
-                let callInfo := some (some (.local, resultName),
-                  some (exception, handlerVar, handlerBody))
-                let callProgram : Prog (BitVec width) :=
-                  .call callInfo function compiledArguments
-                let storeAddress : Exp (BitVec width) :=
-                  .op .sub [.topAddr, .const address]
-                .dec resultName shape (cakeShapeVal context shape)
-                  (.dec flagName .one (.const (BitVec.ofNat width 0))
-                    (.seq callProgram
-                      (.ite (.var .local flagName) .skip
-                        (.store storeAddress
-                          (.var .local resultName)))))
-            | none =>
-                .call (some (none, some (exception, handlerVar,
-                  compileProgCake context handler))) function compiledArguments
-  | .decCall name shape function arguments body =>
-      .decCall name shape function (compileExpCakeArgs context arguments)
-        (compileProgCake context body)
-  | .extCall function configuration configurationLength array arrayLength =>
-      .extCall function (compileExpCake context configuration)
-        (compileExpCake context configurationLength) (compileExpCake context array)
-        (compileExpCake context arrayLength)
-  | .raise exception value => .raise exception (compileExpCake context value)
-  | .return value => .return (compileExpCake context value)
-  | .shMemLoad size kind name address =>
-      match kind, FLOOKUP context.globals name with
-      | .local, _ =>
-          .shMemLoad size .local name (compileExpCake context address)
-      | .global, some (.one, globalAddress) =>
-          let localName := name ++ globalApostrophes 1
-          .dec name .one (compileExpCake context address)
-            (.dec localName .one (.const (BitVec.ofNat width 0))
-              (.seq
-                (.shMemLoad size .local localName (.var .local name))
-                (.store (.op .sub [.topAddr, .const globalAddress])
-                  (.var .local localName))))
-      | .global, _ => .skip
-  | .shMemStore size address value =>
-      .shMemStore size (compileExpCake context address) (compileExpCake context value)
-  | program => program
-termination_by program => sizeOf program
-
-@[simp] theorem FLOOKUP_cakeContextOfPass_globals [BEq String] {width : Nat}
-    (context : GlobalPassContext (BitVec width)) (key : String) :
-    (cakeContextOfPass context).globals key = lookupInfo key context.globals := rfl
-
-/-- The `shMemLoad` clause of the production/canonical agreement, isolated so
-    the `FLOOKUP`/match on the global table reduces on both sides. -/
-theorem compileProgCake_shMemLoad_eq [BEq String] {width : Nat} [NeZero width]
-    (context : GlobalPassContext (BitVec width)) (hcanonical : context.IsCakeCanonical)
-    (size : OpSize) (kind : VarKind) (name : VarName) (address : Exp (BitVec width)) :
-    compileProgCake (cakeContextOfPass context) (.shMemLoad size kind name address)
-      = globalCompileProg context (.shMemLoad size kind name address) := by
-  unfold compileProgCake globalCompileProg
-  simp only [FLOOKUP, FLOOKUP_cakeContextOfPass_globals]
-  cases h : lookupInfo name context.globals with
-  | none => cases kind <;> simp_all [compileExpCake_cakeContextOfPass context hcanonical]
-  | some pair =>
-      obtain ⟨shape, globalAddress⟩ := pair
-      cases shape <;> cases kind <;>
-        simp_all [compileExpCake_cakeContextOfPass context hcanonical, hcanonical.2]
-
-/-- Production `globalCompileProg` agrees with the
-    `compileProgCake` under the canonical word-context view. This is the
-    program half of the executed-path adapter for
-    `flapjack-pxn.18.5.2.20.2`. -/
-theorem globalCompileProg_cakeContextOfPass [BEq String] {width : Nat} [NeZero width]
-    (context : GlobalPassContext (BitVec width)) (hcanonical : context.IsCakeCanonical) :
-    (program : Prog (BitVec width)) →
-      compileProgCake (cakeContextOfPass context) program = globalCompileProg context program := by
-  apply globalCompileProg.induct context
-    (motive := fun program =>
-      compileProgCake (cakeContextOfPass context) program = globalCompileProg context program)
-  all_goals
-    intros
-    simp_all [compileProgCake, globalCompileProg, FLOOKUP,
-      FLOOKUP_cakeContextOfPass_globals,
-      compileProgCake_shMemLoad_eq context hcanonical,
-      compileExpCake_cakeContextOfPass context hcanonical,
-      compileExpCakeArgs_cakeContextOfPass context hcanonical,
-      globalShapeVal_cakeShapeVal context hcanonical, hcanonical.2]
-
 /-- HOL-shaped output of `compile_decs`. -/
 structure CakeCompileDecsResult (width : Nat) where
   initializers : List (Prog (BitVec width))
   functions : List (Decl (BitVec width))
   exceptions : List (Decl (BitVec width))
   context : CakeContext width
-
-/-- Source-shaped port (Flapjack-specific; NOT an exact HOL port) of HOL `pan_globals$compile_decs_def`
-    (`pan_globalsScript.sml:160-176`) over the canonical word context
-    `CakeContext`: a function body is compiled (`compileProgCake`) under the
-    context as of its own position, and a `Decl` computes
-    `globals_size + bytes_in_word * n2w (size_of_shape sh)`, extends `globals`
-    by `FUPDATE` and updates `globals_size` for the declarations that follow.
-    Every clause matches HOL directly; `ExnDecl` conses the exception, `Name`
-    is skipped, and the empty list returns the context unchanged.
-
-    `CakeContext.globals` renders HOL's extensional finite map by the
-    repository's `FiniteMap` (`α → Option β`), which also admits lookups with
-    infinite support.  As recorded for `compileExpCake`, the HOL `compile_decs`
-    clauses consult `globals` only through `FLOOKUP`/`FUPDATE`, and every HOL
-    finite map embeds as one such lookup function, so on HOL-representable
-    contexts the Lean clauses agree clause-for-clause; the extra
-    infinite-support lookups do not alter the port.  No cross-system finite-map
-    equivalence is claimed beyond that local use.  `width` is restricted by
-    `[NeZero width]`, as HOL `dimindex` is positive, and the name equality is
-    `[LawfulBEq String]` so the `==` used by `FUPDATE`/`FLOOKUP` reflects HOL's
-    `=`. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): `CakeContext.globals` is keyed by
--- production `String` and `Exp`/`Prog`/`Decl` names are `String`, while HOL
--- `pan_globalsScript.sml` keys `ctxt.globals` by `mlstring`. The exact MlString
--- identifier carrier is tracked by `flapjack-pxn.18.3.5.8` (parent
--- `flapjack-pxn.18.3.5.7.2`).
-def compileDecsCake [LawfulBEq String] {width : Nat} [NeZero width] (context : CakeContext width) :
-    List (Decl (BitVec width)) → CakeCompileDecsResult width
-  | [] => { initializers := [], functions := [], exceptions := [], context := context }
-  | .function declaration :: declarations =>
-      let rest := compileDecsCake context declarations
-      { initializers := rest.initializers
-        functions := .function { declaration with
-            body := compileProgCake context declaration.body } :: rest.functions
-        exceptions := rest.exceptions
-        context := rest.context }
-  | .exnDecl exception shape :: declarations =>
-      let rest := compileDecsCake context declarations
-      { rest with exceptions := .exnDecl exception shape :: rest.exceptions }
-  | .name _ _ :: declarations => compileDecsCake context declarations
-  | .decl shape name value :: declarations =>
-      let address := cakeAddress context shape
-      let nextContext := { context with
-        globals := FUPDATE context.globals (name, (shape, address))
-        globalsSize := address }
-      let rest := compileDecsCake nextContext declarations
-      { initializers :=
-          .store (.op .sub [.topAddr, .const address])
-            (compileExpCake context value) :: rest.initializers
-        functions := rest.functions
-        exceptions := rest.exceptions
-        context := rest.context }
-
-/-- Full-record adapter: the canonical `compileDecsCake` over the extracted
-    `CakeContext` agrees, field by field, with the production
-    `globalCompileDecsThreaded` whenever the production context is
-    canonical-word (`IsCakeCanonical`).  All four fields (initializers,
-    functions, exceptions, context) are covered; the `context` field is stated
-    through `cakeContextOfPass` because the finite-map representation cannot be
-    turned back into a lossless association list. -/
-theorem compileDecsCake_cakeContextOfPass [LawfulBEq String] {width : Nat} [NeZero width]
-    (context : GlobalPassContext (BitVec width)) (hcanonical : context.IsCakeCanonical)
-    (declarations : List (Decl (BitVec width))) :
-    compileDecsCake (cakeContextOfPass context) declarations =
-      { initializers := (globalCompileDecsThreaded context declarations).initializers
-        functions := (globalCompileDecsThreaded context declarations).functions
-        exceptions := (globalCompileDecsThreaded context declarations).exceptions
-        context :=
-          cakeContextOfPass (globalCompileDecsThreaded context declarations).context } := by
-  induction declarations generalizing context with
-  | nil => simp only [compileDecsCake, globalCompileDecsThreaded]
-  | cons declaration declarations ih =>
-      cases declaration with
-      | function function =>
-          simp only [compileDecsCake, globalCompileDecsThreaded]
-          rw [ih context hcanonical]
-          simp only [globalCompileProg_cakeContextOfPass context hcanonical]
-      | exnDecl exception shape =>
-          simp only [compileDecsCake, globalCompileDecsThreaded]
-          rw [ih context hcanonical]
-      | name struct fields => exact ih context hcanonical
-      | decl shape name value =>
-          simp only [compileDecsCake, globalCompileDecsThreaded]
-          simp only [cakeAddress_ofPass context hcanonical shape]
-          erw [← cakeContextOfPass_update_fields context name shape (globalAddress context shape)]
-          rw [ih { context with
-              globals := (name, (shape, globalAddress context shape)) :: context.globals
-              globalsSize := globalAddress context shape } hcanonical]
-          simp only [compileExpCake_cakeContextOfPass context hcanonical value]
-
-theorem compileDecsCake_functions_all_isFunction [LawfulBEq String] {width : Nat} [NeZero width]
-    (context : CakeContext width) (declarations : List (Decl (BitVec width))) :
-    (compileDecsCake context declarations).functions.all globalDeclIsFunction = true := by
-  induction declarations generalizing context with
-  | nil => rfl
-  | cons declaration declarations ih =>
-      cases declaration with
-      | function function =>
-          simp only [compileDecsCake, List.all_cons, globalDeclIsFunction, Bool.true_and]
-          exact ih context
-      | decl shape name value =>
-          simp only [compileDecsCake]
-          exact ih _
-      | exnDecl exception shape =>
-          simp only [compileDecsCake]
-          exact ih context
-      | name struct fields =>
-          simp only [compileDecsCake]
-          exact ih context
-
-theorem compileDecsCake_functions_eq_nil_of_no_functions [LawfulBEq String] {width : Nat} [NeZero width]
-    (declarations : List (Decl (BitVec width))) :
-    ∀ context, declarations.all (fun declaration => !globalDeclIsFunction declaration) = true →
-      (compileDecsCake context declarations).functions = [] := by
-  induction declarations with
-  | nil => intro context _; rfl
-  | cons declaration declarations ih =>
-      intro context hnone
-      cases declaration with
-      | function function =>
-          simp [List.all_cons, globalDeclIsFunction] at hnone
-      | decl shape name value =>
-          simp only [List.all_cons, Bool.and_eq_true] at hnone
-          simp only [compileDecsCake]
-          exact ih _ hnone.2
-      | exnDecl exception shape =>
-          simp only [List.all_cons, Bool.and_eq_true] at hnone
-          simp only [compileDecsCake]
-          exact ih _ hnone.2
-      | name struct fields =>
-          simp only [List.all_cons, Bool.and_eq_true] at hnone
-          simp only [compileDecsCake]
-          exact ih _ hnone.2
-
-theorem compileDecsCake_append [LawfulBEq String] {width : Nat} [NeZero width] (context : CakeContext width)
-    (decs rest : List (Decl (BitVec width))) :
-    compileDecsCake context (decs ++ rest) =
-      let first := compileDecsCake context decs
-      let second := compileDecsCake first.context rest
-      { initializers := first.initializers ++ second.initializers
-        functions := first.functions ++ second.functions
-        exceptions := first.exceptions ++ second.exceptions
-        context := second.context } := by
-  induction decs generalizing context with
-  | nil => simp [compileDecsCake]
-  | cons declaration declarations ih =>
-      cases declaration with
-      | function function =>
-          simp only [List.cons_append, compileDecsCake]
-          rw [ih context]
-      | decl shape name value =>
-          simp only [List.cons_append, compileDecsCake]
-          rw [ih _]
-      | exnDecl exception shape =>
-          simp only [List.cons_append, compileDecsCake]
-          rw [ih _]
-      | name struct fields =>
-          simp only [List.cons_append, compileDecsCake]
-          rw [ih context]
 
 theorem globalCompileDecs_preserve_functions [BEq String] [Add α] [Mul α]
     (context : GlobalPassContext α) (code : List (Decl α)) :
@@ -2503,34 +1493,6 @@ theorem globalCompileDecs_exceptions_eq_filter [BEq String] [Add α] [Mul α]
   simp only [globalCompileDecs]
   exact globalDeclsFilter_isException_globalCompileDecls
     (globalCollect context code) code
-
-/-! Fieldwise link between the executed polymorphic `globalCompileDecs` and the
-    `compileDecsCake` helper (currently untagged). The three declaration-list fields agree
-    under the canonical context view; the contexts themselves are deliberately
-    not compared as data because `CakeContext.globals` is a finite map while the
-    production context keeps an association list. -/
-theorem globalCompileDecs_fields_cakeContextOfPass [LawfulBEq String] {width : Nat}
-    [NeZero width] (context : GlobalPassContext (BitVec width))
-    (hcanonical : context.IsCakeCanonical)
-    (declarations : List (Decl (BitVec width))) :
-    (compileDecsCake (cakeContextOfPass context) declarations).initializers =
-        (globalCompileDecs context declarations).initializers ∧
-      (compileDecsCake (cakeContextOfPass context) declarations).functions =
-        (globalCompileDecs context declarations).functions ∧
-      (compileDecsCake (cakeContextOfPass context) declarations).exceptions =
-        (globalCompileDecs context declarations).exceptions := by
-  rw [compileDecsCake_cakeContextOfPass context hcanonical declarations]
-  refine ⟨?_, ?_, ?_⟩
-  · show (globalCompileDecsThreaded context declarations).initializers =
-      (globalCompileDecs context declarations).initializers
-    exact globalCompileDecsThreaded_initializers context declarations
-  · show (globalCompileDecsThreaded context declarations).functions =
-      (globalCompileDecs context declarations).functions
-    rfl
-  · show (globalCompileDecsThreaded context declarations).exceptions =
-      (globalCompileDecs context declarations).exceptions
-    exact (globalCompileDecsThreaded_exceptions_eq_filter context declarations).trans
-      (globalCompileDecs_exceptions_eq_filter context declarations).symm
 
 /-! Counterpart of Cake's `compile_decs_FILTER_decs`
     (`pan_globalsProofScript.sml:2822`): filtering the source program down to its
@@ -2627,134 +1589,6 @@ theorem globalCompileDecs_filter_isDecl [BEq String] [Add α] [Mul α]
     simp [globalDeclsFilter]
   · exact globalCollect_filter_isDecl context code
 
-/-! Successful-start helper for Flapjack's top-level global compiler. This
-    Option-valued helper is used by invariants that require a named start
-    function to exist. HOL's public `compile_top` is total and returns `[]`
-    when the start function is absent; `globalCompileTopForStart` below
-    implements that behavior. -/
-def globalCompileTopForStartSome [BEq String] [Add α] [Mul α]
-    (bytesInWord : α) (fromNat : Nat → α) (declarations : List (Decl α))
-    (start : FunName) : Option (List (Decl α)) :=
-  match globalFindFunction start declarations with
-  | none => none
-  | some entry =>
-      let resorted := globalResortDecls declarations
-      let renamedStart := globalNewMainName declarations
-      let renamed := globalRenameDecls start renamedStart resorted
-      let maxGlobalsSize :=
-        bytesInWord * fromNat
-          ((globalDeclShapes renamed).map Shape.shapeSize |>.foldl (· + ·) 0)
-      let initial : GlobalPassContext α :=
-        { globals := []
-          globalsSize := fromNat 0
-          maxGlobalsSize := maxGlobalsSize
-          bytesInWord := bytesInWord
-          fromNat := fromNat }
-      let compiled := globalCompileDecs initial renamed
-      let parameters := entry.params.map (fun (name, _) => Exp.var .local name)
-      let newMain : Decl α :=
-        .function
-          { name := start
-            inline := false
-            exported := false
-            params := entry.params
-            body := .seq (nestedSeq compiled.initializers)
-              (.call none renamedStart parameters)
-            returnShape := entry.returnShape }
-      some (compiled.exceptions ++ [newMain] ++ compiled.functions)
-
-/-! Generalized total compiler analogue. Its word size and natural-number
-    conversion are explicit so Flapjack callers can use different targets; it
-    is not itself the exact HOL `compile_top` interface. The fixed-word
-    `globalCompileTopCake` wrapper below is the source-shaped interface. -/
-def globalCompileTopForStart [BEq String] [Add α] [Mul α]
-    (bytesInWord : α) (fromNat : Nat → α) (declarations : List (Decl α))
-    (start : FunName) : List (Decl α) :=
-  (globalCompileTopForStartSome bytesInWord fromNat declarations start).getD []
-
-/-! Canonical fixed-word top-level compiler. Its global pass runs through the
-    `compileDecsCake` over a `CakeContext` (currently untagged); the polymorphic
-    `globalCompileTopForStartSome` above remains available for arbitrary word
-    types. `globalCompileTopForStartSomeCake_eq` proves the two compute the same
-    output list, so the executed fixed-word path below can use the canonical
-    definition without changing observable behavior. -/
-def globalCompileTopForStartSomeCake [LawfulBEq String] {width : Nat} [NeZero width]
-    (declarations : List (Decl (BitVec width))) (start : FunName) :
-    Option (List (Decl (BitVec width))) :=
-  match globalFindFunction start declarations with
-  | none => none
-  | some entry =>
-      let resorted := globalResortDecls declarations
-      let renamedStart := globalNewMainName declarations
-      let renamed := globalRenameDecls start renamedStart resorted
-      let maxGlobalsSize :=
-        cakeBytesInWord width * BitVec.ofNat width
-          ((globalDeclShapes renamed).map Shape.shapeSize |>.foldl (· + ·) 0)
-      let initial : GlobalPassContext (BitVec width) :=
-        { globals := []
-          globalsSize := BitVec.ofNat width 0
-          maxGlobalsSize := maxGlobalsSize
-          bytesInWord := cakeBytesInWord width
-          fromNat := BitVec.ofNat width }
-      let compiled := compileDecsCake (cakeContextOfPass initial) renamed
-      let parameters := entry.params.map (fun (name, _) => Exp.var .local name)
-      let newMain : Decl (BitVec width) :=
-        .function
-          { name := start
-            inline := false
-            exported := false
-            params := entry.params
-            body := .seq (nestedSeq compiled.initializers)
-              (.call none renamedStart parameters)
-            returnShape := entry.returnShape }
-      some (compiled.exceptions ++ [newMain] ++ compiled.functions)
-
-theorem globalCompileTopForStartSomeCake_eq [LawfulBEq String] {width : Nat} [NeZero width]
-    (declarations : List (Decl (BitVec width))) (start : FunName) :
-    globalCompileTopForStartSomeCake declarations start =
-      globalCompileTopForStartSome (cakeBytesInWord width) (BitVec.ofNat width)
-        declarations start := by
-  unfold globalCompileTopForStartSomeCake globalCompileTopForStartSome
-  cases globalFindFunction start declarations with
-  | none => rfl
-  | some entry =>
-      simp only
-      congr 1
-      generalize hrenamed : globalRenameDecls start (globalNewMainName declarations)
-        (globalResortDecls declarations) = renamed
-      have hfields := globalCompileDecs_fields_cakeContextOfPass
-        (context := { globals := []
-                      globalsSize := BitVec.ofNat width 0
-                      maxGlobalsSize := cakeBytesInWord width * BitVec.ofNat width
-                        ((globalDeclShapes renamed).map Shape.shapeSize |>.foldl (· + ·) 0)
-                      bytesInWord := cakeBytesInWord width
-                      fromNat := BitVec.ofNat width })
-        (by refine ⟨rfl, fun value => rfl⟩) renamed
-      simp only [hfields.1, hfields.2.1, hfields.2.2]
-
-/-! HOL's `compile_top` fixes its compiler context to
-    `bytes_in_word` and `n2w`. For a word of `width` bits, those are represented
-    by `width / 8` and `BitVec.ofNat width` respectively. This wrapper keeps
-    those choices out of the caller interface while remaining polymorphic in
-    the HOL word width. -/
--- FLAPJACK-SPECIFIC (not an exact HOL port): the statement is keyed by the
--- production identifiers `FunName`/`VarName` = `String`, while HOL
--- `pan_globalsScript.sml` keys names by `funname`/`varname` = `mlstring`.
--- The exact MlString identifier carrier is tracked by `flapjack-pxn.18.3.5.8`
--- (parent `flapjack-pxn.18.3.5.7.2`).
-def globalCompileTopCake [LawfulBEq String] {width : Nat} [NeZero width]
-    (declarations : List (Decl (BitVec width))) (start : FunName) :
-    List (Decl (BitVec width)) :=
-  (globalCompileTopForStartSomeCake declarations start).getD []
-
-theorem globalCompileTopCake_eq [LawfulBEq String] {width : Nat} [NeZero width]
-    (declarations : List (Decl (BitVec width))) (start : FunName) :
-    globalCompileTopCake declarations start =
-      globalCompileTopForStart (cakeBytesInWord width) (BitVec.ofNat width)
-        declarations start := by
-  simp only [globalCompileTopCake, globalCompileTopForStart,
-    globalCompileTopForStartSomeCake_eq declarations start]
-
 theorem globalDecls_all_or_of_all_left (predicate other : Decl α → Bool)
     (declarations : List (Decl α))
     (hall : declarations.all other = true) :
@@ -2800,24 +1634,13 @@ theorem globalCompileDecs_result_all_function_or_exception [BEq String] [Add α]
       globalDeclIsException _
       (globalCompileDecsThreaded_functions_all_isFunction context declarations)
 
-theorem globalFunctionNames_eq_functions_map (declarations : List (Decl α)) :
-    globalFunctionNames declarations =
-      (functions declarations).map (fun entry => entry.1) := by
-  induction declarations with
-  | nil => rw [globalFunctionNames.eq_def]; rfl
-  | cons declaration declarations ih =>
-      cases declaration <;> rw [globalFunctionNames.eq_def] <;>
-        simp [functions, functionEntries, ih]
 
 /-! ### Checked exact-carrier bridges for the `pan_globals` declaration-list ports
 
-These `@[simp]` lemmas connect the reviewed exact ports `resortDeclsHOL`,
-`newMainNameHOL`, and `decShapesHOL` over `List (DeclHOL width)` to the
-production `globalResortDecls`/`globalNewMainName`/`globalDeclShapes` over
+These `@[simp]` lemmas connect the reviewed exact declaration ports over
+`List (DeclHOL width)` to the production predicate/function helpers over
 `Decl (BitVec width)` on the exact `declOfHOL` image.  They are source-helper
-bridges, not a route for the executed generic-`Decl α` path; replacing that
-path with the exact ports remains the exact-carrier production task
-`flapjack-6nn.3.1`. -/
+bridges for the tagged exact twins. -/
 
 section ResortShapeExactBridge
 

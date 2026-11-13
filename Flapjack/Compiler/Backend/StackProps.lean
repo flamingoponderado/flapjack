@@ -67,28 +67,6 @@ def stackAsmOk {Inst Cmp RegImm Binop Memop Addr MlString : Type}
 termination_by program => sizeOf program
 decreasing_by all_goals decreasing_trivial
 
-/-- HOL `stackProps$addr_ok_def` (`stackPropsScript.sml:801-810`), over the
-faithful `asm` address carrier.  `Load`/`Store`/`Load32`/`Store32` use the
-word address offset; `Load16`/`Store16` use the halfword offset and are
-unavailable on `Ag32`; every other memory operation uses the byte offset.
-    Not an exact HOL port: this Lean declaration quantifies `width : Nat`
-    without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
-    dimensions are positive.  The manifest records this mismatch (bead
-    flapjack-4ac.6); restore the HOL tag only after correcting the width
-    binder and reviewing callers.
-    -/
-def asmAddrOk {width : Nat} (config : AsmConfig width) :
-    WordMemOp → WordLangAddr (BitVec width) → Bool
-  | operator, .addr base offset =>
-      asmRegOk config base &&
-        (if operator == .load || operator == .store || operator == .load32 ||
-            operator == .store32 then
-          asmAddrOffsetOk config offset
-         else if operator == .load16 || operator == .store16 then
-          asmHwOffsetOk config offset && !(config.isa == .ag32)
-         else
-          asmByteOffsetOk config offset)
-
 /-- Exact HOL `stackProps$addr_ok_def` (`stackPropsScript.sml:801-810`) over the
 exact asm carriers `HolMemop`/`HolAddr` and the exact `AsmConfigExact`:
 `Load`/`Store`/`Load32`/`Store32` use the word address offset; `Load16`/`Store16`
@@ -108,15 +86,16 @@ def asmAddrOkExact {width : Nat} [NeZero width] (operator : HolMemop)
          else
           asmByteOffsetOkExact config offset)
 
-/-- The HOL `stack_asm_ok` callback record instantiated with the real
-`asm_config` validity predicates instead of opaque callbacks. -/
-def asmChecksOfConfig {width : Nat} (config : AsmConfig width) :
-    AsmChecks (WordLangInst (BitVec width)) WordMemOp (WordLangAddr (BitVec width)) :=
+/-- The HOL `stack_asm_ok` callback record instantiated with the reviewed
+exact validity predicates `asmInstOkExact`/`asmRegOkExact`/`asmAddrOkExact`
+over the exact `HolAsm`/`HolInst`/`HolMemop`/`HolAddr` carriers. -/
+def asmChecksOfConfigExact {width : Nat} [NeZero width] (config : AsmConfigExact width) :
+    AsmChecks (HolInst width) HolMemop (HolAddr width) :=
   { regCount := config.regCount
     avoidRegs := config.avoidRegs
-    instOk := asmInstOk config
-    regOk := asmRegOk config
-    addrOk := asmAddrOk config }
+    instOk := fun instruction => asmInstOkExact instruction config
+    regOk := fun register => asmRegOkExact register config
+    addrOk := fun operator address => asmAddrOkExact operator address config }
 
 
 end Flapjack.Compiler.Backend.StackProps

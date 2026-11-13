@@ -3,7 +3,6 @@ module
 public import Flapjack.HolRef
 public import Flapjack.Pancake.PanGlobals
 public import Flapjack.Pancake.PanLang.Decl
-public import Flapjack.Pancake.Proofs.PanGlobals.ShapeInfrastructure
 public import Flapjack.Pancake.Semantics.PanSem
 public import Flapjack.Pancake.Semantics.PanSem.DecExact
 public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap

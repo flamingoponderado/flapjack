@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.SourceToFlat.ToData
+public import Flapjack.Compiler.Backend.BviToData.CompileSource
 public import Flapjack.Compiler.Backend.DataToWord.Total
 public import Flapjack.Compiler.Backend.DataToWord.Stubs
 public import Flapjack.Compiler.Backend.WordBignum.Generated64
@@ -92,10 +93,10 @@ def compileCakeToWord64ConfiguredFuel (fuel : Nat) (source : Config) (closure : 
     Option (Config × ClosToBvl.Config × BvlToBvi.Config × List (Nat × Nat × WordLangProgHOL (BitVec 64)) ×
       Spt Basis.Pure.MlString.MlString) := do
   let (source, closure, bvlConfig, code, names) ← compileCakeToBviConfiguredFuel fuel source closure bvlConfig decls
-  let code ← code.mapM fun (name, args, body) => do
-    let body ← BviToData.compileExpBounded fuel args body
-    let body := DataToWord.compileControl (width := 64) word name 2 body
-    pure (name, args + 1, body.1)
+  let code := code.map fun (name, args, body) =>
+    let body := DataToWord.compileControl (width := 64) word name 2
+      (BviToData.compileExp args body)
+    (name, args + 1, body.1)
   let fixed ← DataToWord.fixedStubs? word
   let bignum ← WordBignum.generateStubs 64 DataToWord.bignumLocation
   pure (source, closure, bvlConfig, fixed ++ bignum ++ code, names)

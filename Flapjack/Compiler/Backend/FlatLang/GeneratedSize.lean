@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.FlatLang
-import Flapjack.AstHOL.GeneratedSize
-import Flapjack.Compiler.Backend.BackendCommon.Trace.GeneratedSize
-import Flapjack.Misc.GeneratedSize
+module
+
+public import Flapjack.Compiler.Backend.FlatLang
+public import Flapjack.AstHOL.GeneratedSize
+public import Flapjack.Compiler.Backend.BackendCommon.Trace.GeneratedSize
+public import Flapjack.Misc.GeneratedSize
+
+@[expose] public section
 
 namespace Flapjack.Compiler.Backend.FlatLang
 

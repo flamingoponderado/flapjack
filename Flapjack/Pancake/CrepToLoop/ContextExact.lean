@@ -443,14 +443,29 @@ decreasing_by
 
 /-! ## Exact `comp_func_def` over the exact context carrier -/
 
-/-- HOL `make_vmap` (`crep_to_loopScript.sml:230-233`) on the canonical
-finite-support carrier: `FEMPTY |++ ZIP (params, GENLIST I (LENGTH params))`, so
-a later duplicate parameter shadows an earlier one. Untagged helper for the
-exact `comp_func_def` port; the production lookup rendering `makeVmapHOL` is
-function-backed and untagged. -/
-def makeVmapExact (params : List Nat) : HolFiniteMapExact Nat Nat :=
+/-- Exact port of HOL `crep_to_loop$make_vmap_def`
+    (`crep_to_loopScript.sml:230-233`): `make_vmap params =
+    FEMPTY |++ ZIP (params, GENLIST I (LENGTH params))` on the canonical
+    finite-support carrier, so a later duplicate parameter shadows an earlier
+    one.  HOL's generic key type is kept (`α` with `DecidableEq` for HOL
+    equality); the value type is `num`.  The production lookup rendering
+    `makeVmapHOL` is function-backed and untagged. -/
+@[hol "cakeml/pancake/crep_to_loopScript.sml" "make_vmap_def"
+  (fmap_as_finite_support_result)]
+def makeVmapExact {α : Type} [DecidableEq α] (params : List α) :
+    HolFiniteMapExact α Nat :=
   HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
     (params.zip (List.range params.length))
+
+/-- Kernel-checked lookup witness for the standalone finite-map-result
+    qualifier on `makeVmapExact`: the finite-support result's lookup is the
+    HOL-shaped `|++` raw-map operation over the zipped parameter list.
+    Flapjack-only infrastructure; it has no separate HOL original. -/
+theorem holFmapAsFiniteSupportResultWitness_makeVmapExact {α : Type} [DecidableEq α]
+    (params : List α) (key : α) :
+    (makeVmapExact params).lookup key =
+      FUPDATE_LIST_HOL (fun _ => none) (params.zip (List.range params.length)) key := by
+  rfl
 
 /-- Checked finite-map parameter translation for `comp_func_def.fs`. -/
 theorem holFmapAsFiniteSupportParamWitness_compFuncHOLExact_fs

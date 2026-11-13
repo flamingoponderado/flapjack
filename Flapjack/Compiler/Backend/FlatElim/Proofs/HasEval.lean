@@ -1,4 +1,8 @@
-import Flapjack.Compiler.Backend.FlatElim.Proofs.ValueGlobals
+module
+
+public import Flapjack.Compiler.Backend.FlatElim.Proofs.ValueGlobals
+
+@[expose] public section
 
 /-! Constructor equations for the flat elimination dynamic-Eval analysis. -/
 namespace Flapjack.Compiler.Backend.FlatElim

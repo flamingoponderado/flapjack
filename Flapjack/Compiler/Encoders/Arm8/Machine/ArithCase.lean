@@ -691,7 +691,7 @@ theorem case_binop_imm (bop : BinOp) (r t : Nat) (w : BitVec 64) (s1 s2 : AsmSta
       have hmod : w.toNat % 4096 = 0 := and_not_fff000_eq_zero_toNat_mod hhigh
       have hlt24 : w.toNat < 2 ^ 24 := and_not_fff000_eq_zero_toNat_lt hhigh
       have hweq : BitVec.ofNat 64 (((w >>> 12).toNat % 4096) <<< 12) = w :=
-        jumpCmp_ofNat_shifted w hmod hlt24
+        arm8ShiftedMask_eq w hmod hlt24
       have hm : ((w >>> 12).toNat % 4096) < 4096 := Nat.mod_lt _ (by decide)
       have hm0 : ((w >>> 12).toNat % 4096) ≠ 0 := by
         intro h0
@@ -772,7 +772,7 @@ theorem case_binop_imm (bop : BinOp) (r t : Nat) (w : BitVec 64) (s1 s2 : AsmSta
       have hmod : w.toNat % 4096 = 0 := and_not_fff000_eq_zero_toNat_mod hhigh
       have hlt24 : w.toNat < 2 ^ 24 := and_not_fff000_eq_zero_toNat_lt hhigh
       have hweq : BitVec.ofNat 64 (((w >>> 12).toNat % 4096) <<< 12) = w :=
-        jumpCmp_ofNat_shifted w hmod hlt24
+        arm8ShiftedMask_eq w hmod hlt24
       have hm : ((w >>> 12).toNat % 4096) < 4096 := Nat.mod_lt _ (by decide)
       have hm0 : ((w >>> 12).toNat % 4096) ≠ 0 := by
         intro h0

@@ -882,26 +882,18 @@ theorem isWfShapeValueHOLExact_nil_step1 {width : Nat} [NeZero width]
           ([] : Flapjack.Pancake.PanLang.StructContextExact) values = true) with
   | case1 value => simp only [isWfShapeValueHOLExact.eq_1]
   | case2 values ih =>
-      have hshape' : Flapjack.Pancake.PanLang.isWfShapesExactHOL
-          ([] : Flapjack.Pancake.PanLang.StructContextExact)
-          (values.map shapeOfHOLExact) = true := by
-        simpa [shapeOfHOLExact, Flapjack.Pancake.PanLang.isWfShapeExactHOL] using hshape
-      simpa only [isWfShapeValueHOLExact.eq_2] using ih hshape'
+      simpa [shapeOfHOLExact, Flapjack.Pancake.PanLang.isWfShapeExactHOL,
+        isWfShapeValueHOLExact.eq_2] using
+        ih (by simpa [shapeOfHOLExact, Flapjack.Pancake.PanLang.isWfShapeExactHOL] using hshape)
   | case3 name fields _ =>
       simp [shapeOfHOLExact] at hshape
   | case4 => simp only [isWfShapeValuesHOLExact.eq_1]
   | case5 value values ihValue ihValues =>
       rename_i hshape'
-      have hp : Flapjack.Pancake.PanLang.isWfShapeExactHOL
-            ([] : Flapjack.Pancake.PanLang.StructContextExact)
-            (shapeOfHOLExact value) = true ∧
-          Flapjack.Pancake.PanLang.isWfShapesExactHOL
-            ([] : Flapjack.Pancake.PanLang.StructContextExact)
-            (values.map shapeOfHOLExact) = true := by
-        simpa [List.map_cons, Flapjack.Pancake.PanLang.isWfShapesExactHOL.eq_2,
-          Bool.and_eq_true] using hshape'
+      simp only [List.map_cons, Flapjack.Pancake.PanLang.isWfShapesExactHOL.eq_2,
+        Bool.and_eq_true] at hshape'
       rw [isWfShapeValuesHOLExact.eq_2, Bool.and_eq_true]
-      exact ⟨ihValue hp.1, ihValues hp.2⟩
+      exact ⟨ihValue hshape'.1, ihValues hshape'.2⟩
 
 /-- Exact port of HOL `panProps$is_wf_shape_v_nil`
     (`cakeml/pancake/semantics/panPropsScript.sml:56-61`): with the context
@@ -1820,7 +1812,10 @@ theorem OPT_MMAP_MEM_IMP {α : Type} {β : Type} (f : α → Option β) (xs : Li
     `List.Forall₂`); `EL n args = v` is the indexed `arguments[n]'hn = value`;
     `flat`/`with_shape`/`size_of_shape`/`shape_of`/`is_wf_shape_v_nil` are
     `panValueFlatten`/`withShape`/`Shape.shapeSize`/`panValueShape`/
-    `panValueIsWf []` respectively. -/
+    `panValueIsWf []` respectively.  The exact port over `ShapeHOL`/`ValueHOL`/
+    `HolFiniteMapExact` is the tagged `listRelFlattenWithShapeLengthHOL`
+    (`PanProps/ListRelFlatten.lean`); this production-carrier version is
+    Flapjack-specific infrastructure and carries no manifest row. -/
 theorem listRelFlattenWithShapeLength (shapes : List Shape) (names : List Nat)
     (arguments : List (PanValue α)) (value : PanValue α) (n : Nat)
     (hnames : names.length = (arguments.map panValueFlatten).flatten.length)
@@ -1880,7 +1875,11 @@ theorem getElem?_flatten_take_sum {α : Type} {l : List (List α)} {n n' : Nat}
     HOL tag): HOL `LIST_REL`/`shape_of`/`is_wf_shape_v_nil`/`EL` are rendered
     here as the indexed `get` equality, `panValueShape []`, `panValueIsWf []`
     and `getElem`; HOL `FEMPTY |++ ZIP (ns, FLAT (MAP flatten args))` is
-    `FUPDATE_LIST FEMPTY (names.zip ((arguments.map panValueFlatten).flatten))`. -/
+    `FUPDATE_LIST FEMPTY (names.zip ((arguments.map panValueFlatten).flatten))`.
+    The exact port over `ShapeHOL`/`ValueHOL`/`HolFiniteMapExact` is the tagged
+    `listRelFlattenWithShapeFlookupHOL` (`PanProps/ListRelFlatten.lean`); this
+    production-carrier version is Flapjack-specific infrastructure and carries
+    no manifest row. -/
 theorem listRelFlattenWithShapeFlookup (shapes : List Shape) (names : List Nat)
     (arguments : List (PanValue α)) (value : PanValue α) (n n' : Nat)
     (hdistinct : names.Nodup)
@@ -1993,45 +1992,6 @@ def v2wordSpecifiedHOL {width : Nat} [NeZero width] :
   | .rStruct _ => none
   | .nStruct _ _ => none
 
-/-- Function-backed rendering of HOL `panProps$FLOOKUP_pan_res_var_thm`
-    (`panPropsScript.sml:236`). Untagged because HOL's `lc` is a finite map,
-    while this Lean statement quantifies over every `MlS → Option _` function.
-    The exact finite-map route is `HolFiniteMapExact.resVarEq` with
-    `lookup_resVarEq_none`/`lookup_resVarEq_some`, whose canonical qualification
-    (the bare-map carrier has no owning structure field) is tracked by
-    `flapjack-pxn.18.3.7.1.3.1.1.2.4`; tracked here as bead `flapjack-4ac.4.21`. -/
-theorem resVarHOLExact_flookup {width : Nat} [NeZero width]
-    (locals : MlS → Option (ValueHOL width))
-    (m n : MlS) (v : Option (ValueHOL width)) :
-    resVarHOLExact locals (m, v) n = if n = m then v else locals n := by
-  rcases v with _ | value <;> simp [resVarHOLExact]
-
-/-- Function-backed rendering of HOL `panProps$flookup_res_var_diff_eq_org`
-    (`panPropsScript.sml:228`); untagged because its lookup-function input
-    ranges beyond HOL finite maps. Exact finite-map route
-    `HolFiniteMapExact.resVarEq`, tracked by
-    `flapjack-pxn.18.3.7.1.3.1.1.2.4`; tracked here as bead `flapjack-4ac.4.20`. -/
-theorem resVarHOLExact_flookup_of_ne {width : Nat} [NeZero width]
-    (locals : MlS → Option (ValueHOL width))
-    (n m : MlS) (v : Option (ValueHOL width)) (h : n ≠ m) :
-    resVarHOLExact locals (n, v) m = locals m := by
-  have h' : m ≠ n := fun hm => h hm.symm
-  rcases v with _ | value <;> simp [resVarHOLExact, h']
-
-/-- Function-backed rendering of HOL `panProps$flookup_res_var_some_eq_lookup`
-    (`panPropsScript.sml:220`); untagged because the two lookup-function
-    arguments range beyond HOL finite maps. Exact finite-map route
-    `HolFiniteMapExact.resVarEq`, tracked by
-    `flapjack-pxn.18.3.7.1.3.1.1.2.4`; tracked here as bead `flapjack-4ac.4.19`. -/
-theorem resVarHOLExact_flookup_some_eq_lookup {width : Nat} [NeZero width]
-    (lc lc' : MlS → Option (ValueHOL width))
-    (v : MlS) (value : ValueHOL width)
-    (h : resVarHOLExact lc (v, lc' v) v = some value) : lc' v = some value := by
-  cases hv : lc' v with
-  | none => simp [resVarHOLExact, hv] at h
-  | some w =>
-      have hw : some w = some value := by simpa [resVarHOLExact, hv] using h
-      exact hw
 
 /-! ## Exact `size_of_sh_with_ctxt_eq` over the exact carriers
 

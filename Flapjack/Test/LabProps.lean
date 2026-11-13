@@ -1,65 +1,113 @@
 module
 
 public import Flapjack.Compiler.Backend.LabProps
+public import Flapjack.Compiler.Backend.LabProps.Native
+public import Flapjack.Compiler.Backend.LabToTarget.Native
+public import Flapjack.Compiler.Backend.LabSem.State
 
 -- Checks below run compiled code from these modules.
 public meta import Flapjack.Compiler.Backend.LabLang
-public meta import Flapjack.Compiler.Backend.LabProps
+public meta import Flapjack.Compiler.Backend.LabProps.Native
+public meta import Flapjack.Compiler.Backend.LabToTarget.Native
 @[expose] public section
 
 namespace Flapjack.Test.LabProps
 
 open Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Backend.LabProps
+open Flapjack.Compiler.Backend.LabToTarget
+open Flapjack.Compiler.Encoders.Asm
 
-inductive ProbeAsm where
-  | skip
-  | mem (operator register : Nat) (address : Nat × Nat)
-  deriving Repr, BEq, DecidableEq
+private abbrev W := BitVec 8
 
-abbrev ProbeAsmWithLab := AsmWithLab Nat Nat String
-abbrev ProbeAsmOrCbw := AsmOrCbw ProbeAsm Nat (Nat × Nat)
-abbrev ProbeLine := Line ProbeAsmOrCbw ProbeAsmWithLab Nat
-abbrev ProbeSection := Section ProbeLine
+private def w8 (n : Nat) : W := BitVec.ofNat 8 n
 
-def checks : AsmChecks ProbeAsm Nat (Nat × Nat) Nat :=
-  { zeroWord := 0
-    addr := fun register offset => (register, offset)
-    store8 := 8
-    instMem := ProbeAsm.mem
-    asmOk
-      | .skip => true
-      | .mem 8 2 (1, 0) => true
-      | .mem 4 3 (5, 0) => true
-      | _ => false }
+/-- Concrete assembler configuration mirroring the probe fixture: eight
+registers, no avoided register, and unit-width offset bounds. -/
+private def cfg : AsmConfigExact 8 where
+  isa := .riscv
+  encode := fun _ => []
+  bigEndian := false
+  codeAlignment := 2
+  linkReg := none
+  avoidRegs := []
+  regCount := 8
+  fpRegCount := 4
+  twoRegArith := true
+  validImm := fun _ _ => true
+  addrOffset := (w8 0, w8 100)
+  hwOffset := (w8 0, w8 100)
+  byteOffset := (w8 0, w8 100)
+  jumpOffset := (w8 0, w8 100)
+  cjumpOffset := (w8 0, w8 100)
+  locOffset := (w8 0, w8 100)
 
-def asmLine (instruction : ProbeAsmOrCbw) : ProbeLine :=
-  .asm instruction [1, 2] 99
+private abbrev L := Flapjack.Compiler.Backend.LabSem.LabLineHOL 8
+private abbrev S := Flapjack.Compiler.Backend.LabSem.LabSectionHOL 8
 
-def labOnlySection : ProbeSection :=
+private def asmLine (instruction : AsmOrCbw (HolAsm 8) HolMemop (HolAddr 8)) : L :=
+  .asm instruction [] 99
+
+private def labOnlySection : S :=
   { sectionId := 3
-    lines := [.label 3 1 0, .labAsm .halt 0 [7] 19] }
+    lines := [.label 3 1 0, .labAsm .halt 0 [] 0] }
 
-def cbwSection : ProbeSection :=
+private def cbwSection : S :=
   { sectionId := 4
     lines := [asmLine (.cbw 1 2), .label 4 1 0] }
 
-#guard cbwToAsm checks (.asmi .skip) == .skip
-#guard cbwToAsm checks (.cbw 1 2) == .mem 8 2 (1, 0)
-#guard cbwToAsm checks (.shareMem 4 3 (5, 0)) == .mem 4 3 (5, 0)
+private def badRegLine : L :=
+  .asm (.asmi (.inst (.mem .load 9 (.addr 2 (w8 0))))) [] 99
 
-#guard lineOkPre checks (asmLine (.asmi .skip))
-#guard lineOkPre checks (asmLine (.cbw 1 2))
-#guard lineOkPre checks (asmLine (.shareMem 4 3 (5, 0)))
-#guard !(lineOkPre checks (asmLine (.asmi (.mem 9 2 (1, 0)))))
-#guard lineOkPre checks (.label 1 2 3 : ProbeLine)
-#guard lineOkPre checks (.labAsm .halt 0 [] 0 : ProbeLine)
+/-- Kernel-checkable Bool view of the reviewed `lineOkPreHOL` Prop: the same
+clause `lineOkPreHOL` states, read at this fixture's exact carriers. -/
+private def lineOkB (line : L) : Bool :=
+  match line with
+  | .asm instruction _ _ => asmOkExact (width := 8) (cbwToAsmHOL (width := 8) instruction) cfg
+  | _ => true
 
-#guard secOkPre checks labOnlySection
-#guard secOkPre checks cbwSection
-#guard allEncOkPre checks [labOnlySection, cbwSection]
-#guard allEncOkPre checks ([] : List ProbeSection)
-#guard !(allEncOkPre checks [cbwSection,
-  { sectionId := 5, lines := [asmLine (.asmi (.mem 9 2 (1, 0)))] }])
+private def secOkB (sec : S) : Bool := sec.lines.all lineOkB
+
+private def allEncOkB (sections : List S) : Bool := sections.all secOkB
+
+/-- The Bool harness states exactly the reviewed `lineOkPreHOL` clause. -/
+private theorem lineOkB_iff (line : L) : lineOkB line = true ↔ lineOkPreHOL cfg line := by
+  cases line with
+  | label => simp [lineOkB, lineOkPreHOL]
+  | asm => simp [lineOkB, lineOkPreHOL]
+  | labAsm => simp [lineOkB, lineOkPreHOL]
+
+/-- The section harness agrees with the reviewed `secOkPreHOL`. -/
+private theorem secOkB_iff (sec : S) : secOkB sec = true ↔ secOkPreHOL cfg sec := by
+  simp [secOkB, secOkPreHOL, List.all_eq_true, lineOkB_iff]
+
+/-- The program harness agrees with the reviewed `allEncOkPreHOL`. -/
+private theorem allEncOkB_iff (sections : List S) :
+    allEncOkB sections = true ↔ allEncOkPreHOL cfg sections := by
+  simp [allEncOkB, allEncOkPreHOL, List.all_eq_true, secOkB_iff]
+
+#guard (match cbwToAsmHOL (.asmi (.inst (.skip : HolInst 8))) with
+  | .inst .skip => true
+  | _ => false)
+#guard (match cbwToAsmHOL (.cbw 1 2) with
+  | .inst (.mem .store8 2 (.addr 1 (0 : BitVec 8))) => true
+  | _ => false)
+#guard (match cbwToAsmHOL (.shareMem .load 4 (.addr 5 (0 : BitVec 8))) with
+  | .inst (.mem .load 4 (.addr 5 (0 : BitVec 8))) => true
+  | _ => false)
+
+#guard lineOkB (asmLine (.asmi (.inst .skip)))
+#guard lineOkB (asmLine (.cbw 1 2))
+#guard lineOkB (asmLine (.shareMem .load 4 (.addr 5 0)))
+#guard !lineOkB badRegLine
+#guard lineOkB (.label 1 2 3 : L)
+#guard lineOkB (.labAsm .halt 0 [] 0 : L)
+
+#guard secOkB labOnlySection
+#guard secOkB cbwSection
+#guard allEncOkB [labOnlySection, cbwSection]
+#guard allEncOkB ([] : List S)
+#guard !allEncOkB [cbwSection,
+  { sectionId := 5, lines := [badRegLine] }]
 
 end Flapjack.Test.LabProps

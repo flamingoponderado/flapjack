@@ -1,4 +1,10 @@
-import Flapjack.RiscV.RuntimeSymbolPreservation
+module
+
+public import Flapjack.RiscV.RuntimeSymbolPreservation
+import all Init.Data.Nat.ToString
+
+@[expose] public section
+
 namespace Flapjack.Test.RuntimeSymbolWiringParity
 open Flapjack.RiscV
 example : initializedRuntimeStubName 0 = some "_Init" := by decide
