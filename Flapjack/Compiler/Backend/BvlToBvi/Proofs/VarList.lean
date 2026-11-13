@@ -10,6 +10,26 @@ namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value State evaluate evaluateTuple)
 open Flapjack.Compiler.Backend.BvlProps (isVar evaluateCons)
 
+/-- Compiling a variable-only list preserves its variables and emits no
+auxiliary code. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_exps_Var_list"]
+theorem compileExps_varList (expressions : List Bvl.Exp) (n : Nat)
+    (onlyVars : expressions.all isVar = true) :
+    ∃ aux : AppList (Nat × Nat × Bvi.Exp),
+      compileListSource n expressions =
+        (expressions.map (fun exp => Bvi.Exp.var (BvlProps.destVar exp)), aux, n) ∧
+      appListAppend aux = [] := by
+  induction expressions generalizing n with
+  | nil => exact ⟨.nil, by simp [compileListSource, appListAppend, appendAux]⟩
+  | cons head tail ih =>
+    simp only [List.all_cons, Bool.and_eq_true] at onlyVars
+    cases head with
+    | var index =>
+      obtain ⟨aux, compiled, empty⟩ := ih n onlyVars.2
+      refine ⟨aux, ?_, empty⟩
+      simp [compileListSource, compileSingSource, compiled, BvlProps.destVar, smartAppend]
+    | _ => simp [isVar] at onlyVars
+
 /-- Successful variable-only evaluation leaves the state unchanged and
 returns only values already in the environment. Untagged pending source
 statement and carrier review. -/

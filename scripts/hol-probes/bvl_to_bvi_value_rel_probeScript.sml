@@ -115,3 +115,14 @@ val bv_ok_IMP_adjust_bv_eq_replay = prove (``!b2 a1 b3.
   \\ REPEAT STRIP_TAC \\ full_simp_tac(srw_ss())[adjust_bv_def,bv_ok_def]
   \\ full_simp_tac(srw_ss())[MAP_EQ_f,EVERY_MEM]);
 val _ = show "bv_ok_IMP_adjust_bv_eq_replay=" bv_ok_IMP_adjust_bv_eq_replay;
+
+open bvl_to_bviTheory bvlPropsTheory;
+val _ = show "destVar_def_typed=" bvlPropsTheory.destVar_def;
+val _ = show "destVar_tick_unconstrained=" (EVAL ``destVar (bvl$Tick (bvl$Var 0))``);
+val _ = show "compile_exps_sing_typed=" bvl_to_bviTheory.compile_exps_sing;
+val compile_exps_Var_list_replay = prove (``!l n. EVERY isVar l ==> (∃aux. compile_exps n l = (MAP (Var o destVar) l ,aux,n) ∧ append aux = [])``,
+  Induct \\ fs[compile_exps_def] \\ Cases \\ rw[isVar_def] \\ fs[]
+  \\ Cases_on`l` \\ fs[compile_exps_def,destVar_def]
+  \\ qmatch_goalsub_rename_tac`compile_exps a`
+  \\ first_x_assum(qspec_then`a`strip_assume_tac) \\ fs[]);
+val _ = show "compile_exps_Var_list_replay=" compile_exps_Var_list_replay;

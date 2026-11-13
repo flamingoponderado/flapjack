@@ -14,6 +14,17 @@ def isVar : Bvl.Exp → Bool
   | .var _ => true
   | _ => false
 
+/-- A totalization of the variable projection for Flapjack proofs. HOL
+specifies only the variable case; the fallback is a Flapjack choice and must
+not be used to infer HOL behavior on other expressions. -/
+def destVar : Bvl.Exp → Nat
+  | .var n => n
+  | _ => 0
+
+/-- Projecting a variable yields its index. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "destVar_def"]
+theorem destVar_var (n : Nat) : destVar (.var n) = n := rfl
+
 /-- All variables in the expressions are in scope at the given depth. -/
 @[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "bVarBound_def"]
 def bVarBound (n : Nat) : List Bvl.Exp → Prop

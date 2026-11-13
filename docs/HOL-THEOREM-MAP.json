@@ -1,5 +1,17 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml", "hol_name": "destVar_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/VarBound.lean", "lean_name": "destVar_var",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original equation: destVar of a BVL Var returns its natural-number index. The untagged Lean totalization chooses a fallback on non-variable expressions and makes no HOL claim for that case."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml", "hol_name": "compile_exps_Var_list",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/VarList.lean", "lean_name": "compileExps_varList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original local proof replay: every input is a variable, and the existential auxiliary app_list yields the complete mapped BVI variable list, unchanged counter, and empty appended code. HOL compile_exps_sing equates compile_exps_list, represented by compileListSource, with compile_exps. The variable premise restricts destVar to its source equation."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "semantics_def",
   "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Semantics.lean", "lean_name": "semantics_def",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
