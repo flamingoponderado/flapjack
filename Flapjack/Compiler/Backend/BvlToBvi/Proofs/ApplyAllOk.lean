@@ -38,4 +38,16 @@ theorem doApp_ok {C F : Type} (op : ClosLang.Op)
   | install => exact doApp_ok_install args env s t value ok argsOk run
   | thunkOp op => exact doApp_ok_thunk op args env s t value ok argsOk run
 
+/-- A successful primitive application preserves state and result validity. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "do_app_ok_lemma"
+  (fmap_as_finite_support := [refs])]
+theorem doApp_ok_lemma {C F : Type} (r t : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (args : List Value) (op : ClosLang.Op) (value : Value)
+    (premises : stateOk r ∧ (∀ arg ∈ args, bvOk r.refs arg) ∧
+      doApp op args r = .val (value, t)) :
+    stateOk t ∧ bvOk t.refs value := by
+  obtain ⟨ok, argsOk, run⟩ := premises
+  have result := doApp_ok op args [] r t value ok ((bvOkList_iff r.refs args).2 argsOk) run
+  exact ⟨result.1, result.2.1⟩
+
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

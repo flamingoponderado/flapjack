@@ -130456,6 +130456,18 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ApplyAllOk.lean",
+  "hol_name": "do_app_ok_lemma",
+  "lean_name": "doApp_ok_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the source local statement with the typed HOL derivation from do_app_ok in bvl_to_bvi_value_rel_probe.out. The independent compiler and FFI types, state and argument validity, successful primitive application and both conclusions are retained. Membership quantification expresses EVERY and bvOkList_iff connects it to the stronger theorem. The canonical state roundtrip covers refs. The doApp dependency inherits the reals_as_rational_cuts assumption. The HOL capture derives the local statement from the exported strengthening; it does not replay the local source proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/EvaluateAllOk.lean",
   "hol_name": "evaluate_ok",
   "lean_name": "evaluateOk",

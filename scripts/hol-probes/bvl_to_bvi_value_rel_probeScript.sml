@@ -67,6 +67,12 @@ val v_to_list_ok_replay = prove(
   simp [v_to_list_def, bv_ok_def] >> srw_tac [] [] >>
   every_case_tac >> full_simp_tac (srw_ss()) [] >> srw_tac [] []);
 val _ = show "v_to_list_ok_replay=" v_to_list_ok_replay;
+(* The local source theorem follows from its exported strengthening. *)
+val do_app_ok_lemma_derived = prove(
+  ``state_ok r ∧ EVERY (bv_ok r.refs) a ∧
+    (bvlSem$do_app op a r = Rval (q,t)) ⇒ state_ok t ∧ bv_ok t.refs q``,
+  metis_tac [do_app_ok]);
+val _ = show "do_app_ok_lemma_derived=" do_app_ok_lemma_derived;
 val _ = show "bvi_inc_clock_def=" bviPropsTheory.inc_clock_def;
 val _ = show "bvi_inc_clock_ZERO=" bviPropsTheory.inc_clock_ZERO;
 val _ = show "bvi_dec_clock_inv_clock1=" bviPropsTheory.dec_clock_inv_clock1;
