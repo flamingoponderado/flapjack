@@ -12,6 +12,17 @@ open Flapjack Flapjack.SemanticPrimitivesHOL
 open Classical
 noncomputable section
 
+/-- The two Boolean tags are mutually exclusive. The independent inhabited
+types preserve the unused polymorphic binders in the source conjunction. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "isBool_simps"]
+theorem isBool_simps {A B : Type} [Nonempty A] [Nonempty B] :
+    (∀ (_ : A) (z : DataSem.Value), DataSem.isBool true z → ¬ DataSem.isBool false z) ∧
+    (∀ (_ : B) (z : DataSem.Value), DataSem.isBool false z → ¬ DataSem.isBool true z) := by
+  constructor <;> intro _ z <;> cases z <;>
+    try (simp [DataSem.isBool]) <;>
+    rename_i ts tag fields <;> cases fields <;>
+    simp [BackendCommon.boolToTag, BackendCommon.trueTag, BackendCommon.falseTag] <;> omega
+
 /-- Boolean decoding is invariant under timestamp erasure. This is Flapjack
 infrastructure for primitive-application simulation. -/
 theorem destBool_projection (value : DataSem.Value) :

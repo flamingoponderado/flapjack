@@ -423,6 +423,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "isBool_simps",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/ApplyBool.lean",
+    "lean_name": "isBool_simps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: the full two-conjunct Boolean tag exclusion and both independent unused binders match; Nonempty reflects HOL type inhabitation. The DATA isBool definition and both Boolean tags were compared with the source."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "data_to_bvi_v_eq",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/ValueProjection.lean",
     "lean_name": "dataToBviValue_eq",

@@ -193,3 +193,4 @@ val _ = show "data_to_bvi_ref_eq_typed=" bvi_to_dataProofTheory.data_to_bvi_ref_
 val _ = show "data_to_bvi_ref_eq_flip_typed=" bvi_to_dataProofTheory.data_to_bvi_ref_eq';
 val _ = show "data_to_bvi_v_eq_typed=" bvi_to_dataProofTheory.data_to_bvi_v_eq;
 val _ = show "data_to_bvi_v_eq_flip_typed=" bvi_to_dataProofTheory.data_to_bvi_v_eq';
+val _ = show "isBool_simps_typed=" bvi_to_dataProofTheory.isBool_simps;
