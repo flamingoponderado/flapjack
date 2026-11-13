@@ -8,6 +8,14 @@ public import Flapjack.Compiler.Backend.BviInline.Proofs.RemoveTicksInduction
 namespace Flapjack.Compiler.Backend.BviInline
 open BviSem
 
+namespace InitialStateCarrier
+/-- The canonical BVI reference-map representation has a roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end InitialStateCarrier
+
 /-- Flapjack infrastructure: the incremental compiler callback factors into
 inlining followed by tick cleanup. -/
 theorem stateCc_compileIncSource {C : Type} (compiler : BviSem.Compiler C) :
@@ -48,75 +56,61 @@ theorem evaluate_removeTicks_compile {C F : Type} (program : List (Nat × Nat ×
       result targetNext related cleanedRun
   exact ⟨extra, sourceNext, by simpa [initialState] using sourceRun, finalRel.2.2.2.1.symm⟩
 
-/-- Flapjack infrastructure: the whole executed inlining and tick-cleanup
-pipeline reproduces the optimized initial call with extra clock when the
-source does not type-error at any clock. The safety premise is the original
-whole-program theorem's premise; HOL carrier review remains pending. -/
-theorem evaluate_compileProgFuel {C F : Type} (fuel : Nat)
-    (program intermediate : List (Nat × Nat × Bvi.Exp)) (cache : Spt (Nat × Bvi.Exp))
+/-- The complete initial-call simulation for source-shaped whole-program
+inlining, with the original all-clock type-error exclusion. The evaluator
+inherits the real-model assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "evaluate_compile_prog"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateCompileProg {C F : Type}
+    (program : List (Nat × Nat × Bvi.Exp)) (cache : Spt (Nat × Bvi.Exp))
+    (output : List (Nat × Nat × Bvi.Exp))
     (oracle : BviSem.CompileOracle (Spt (Nat × Bvi.Exp) × C))
-    (compiler : BviSem.Compiler C) (ffi : HolFfiState F) (clock start : Nat)
+    (ffi : HolFfiState F) (compiler : BviSem.Compiler C) (clock start : Nat)
     (result : BviResult) (targetNext : BviState C F)
-    (inlined : inlineAllFuel fuel .ln program = some (cache, intermediate))
-    (oracleCache : (oracle 0).1.1 = cache) (distinct : (program.map Prod.fst).Nodup)
-    (safe : ∀ clock', (evaluate [.call 0 (some start) [] none] []
-      (initialState ffi (sptFromAList program) oracle (inCc (removeTicksCc compiler)) clock')).1 ≠
-        .err (.abort .typeError))
-    (run : evaluate [.call 0 (some start) [] none] []
-      (initialState ffi (sptFromAList (cleanProg intermediate)) (removeTicksCo (inCo oracle)) compiler clock) =
-        (result, targetNext)) :
-    ∃ extra sourceNext, evaluate [.call 0 (some start) [] none] []
-      (initialState ffi (sptFromAList program) oracle (inCc (removeTicksCc compiler)) (clock + extra)) =
-        (result, sourceNext) ∧ sourceNext.ffi = targetNext.ffi := by
-  obtain ⟨extra, intermediateNext, intermediateRun, intermediateFfi⟩ :=
-    evaluate_removeTicks_compile intermediate (inCo oracle) compiler ffi clock start result targetNext run
-  let source := initialState ffi (sptFromAList program) oracle (inCc (removeTicksCc compiler)) (clock + extra)
-  cases sourceRun : evaluate [.call 0 (some start) [] none] [] source with
-  | mk sourceResult sourceNext =>
-    have sourceNotType : sourceResult ≠ .err (.abort .typeError) := by
-      have h := safe (clock + extra)
-      simpa [source, sourceRun] using h
-    obtain ⟨targetState, targetRun, finalRel⟩ :=
-      evaluate_inlineFuel_compile fuel program intermediate cache oracle ffi (removeTicksCc compiler)
-        (clock + extra) start sourceResult sourceNext inlined oracleCache distinct sourceRun sourceNotType
-    rw [intermediateRun] at targetRun
-    have equal := Prod.mk.inj targetRun.symm
-    obtain ⟨resultEq, stateEq⟩ := equal
-    subst sourceResult
-    subst targetState
-    exact ⟨extra, sourceNext, sourceRun, finalRel.2.2.2.1.symm.trans intermediateFfi⟩
-
-/-- Flapjack infrastructure: the production whole-program compiler result
-has the initial-call simulation with the incremental callback and oracle.
-This remains untagged pending source review of the evaluator and carriers. -/
-theorem evaluate_compileProgFuel_result {C F : Type} (fuel : Nat)
-    (program output : List (Nat × Nat × Bvi.Exp)) (cache : Spt (Nat × Bvi.Exp))
-    (oracle : BviSem.CompileOracle (Spt (Nat × Bvi.Exp) × C))
-    (compiler : BviSem.Compiler C) (ffi : HolFfiState F) (clock start : Nat)
-    (result : BviResult) (targetNext : BviState C F)
-    (compiled : compileProgFuel fuel program = some (cache, output))
-    (oracleCache : (oracle 0).1.1 = cache) (distinct : (program.map Prod.fst).Nodup)
-    (safe : ∀ clock', (evaluate [.call 0 (some start) [] none] []
-      (initialState ffi (sptFromAList program) oracle (BackendProps.stateCc compileIncSource compiler) clock')).1 ≠
-        .err (.abort .typeError))
-    (run : evaluate [.call 0 (some start) [] none] []
-      (initialState ffi (sptFromAList output) (BackendProps.stateCo compileIncSource oracle) compiler clock) =
-        (result, targetNext)) :
-    ∃ extra sourceNext, evaluate [.call 0 (some start) [] none] []
-      (initialState ffi (sptFromAList program) oracle (BackendProps.stateCc compileIncSource compiler) (clock + extra)) =
-        (result, sourceNext) ∧ sourceNext.ffi = targetNext.ffi := by
+    (premises : compileProgSource program = (cache, output) ∧
+      (oracle 0).1.1 = cache ∧ (program.map Prod.fst).Nodup ∧
+      (∀ j, (evaluateTuple ([.call 0 (some start) [] none], [],
+        initialState ffi (sptFromAList program) oracle
+          (BackendProps.stateCc compileIncSource compiler) j)).1 ≠ .err (.abort .typeError)) ∧
+      evaluateTuple ([.call 0 (some start) [] none], [],
+        initialState ffi (sptFromAList output) (BackendProps.stateCo compileIncSource oracle)
+          compiler clock) = (result, targetNext)) :
+    ∃ extra sourceNext,
+      evaluateTuple ([.call 0 (some start) [] none], [],
+        initialState ffi (sptFromAList program) oracle
+          (BackendProps.stateCc compileIncSource compiler) (clock + extra)) = (result, sourceNext) ∧
+      sourceNext.ffi = targetNext.ffi := by
+  obtain ⟨compiled, oracleCache, distinct, safe, run⟩ := premises
   cases inlineSource : inlineAllSource .ln program with
   | mk finalCache intermediate =>
-    have inlined : inlineAllFuel fuel .ln program = some (finalCache, intermediate) := by
-      simpa [inlineSource] using inlineAllFuel_eq_source fuel .ln program
     have resultEq : (finalCache, cleanProg intermediate) = (cache, output) := by
-      have actual := compileProgFuel_tick_cleanup fuel program intermediate finalCache inlined
-      rw [compiled] at actual
-      exact (Option.some.inj actual).symm
+      simpa [compileProgSource, compileIncSource, inlineSource, cleanProg] using compiled
     obtain ⟨rfl, rfl⟩ := resultEq
-    apply evaluate_compileProgFuel fuel program intermediate cache oracle compiler ffi clock start result targetNext
-      inlined oracleCache distinct
-    · simpa [stateCc_compileIncSource] using safe
-    · simpa [stateCo_compileIncSource] using run
+    have safe' : ∀ j, (evaluate [.call 0 (some start) [] none] []
+        (initialState ffi (sptFromAList program) oracle (inCc (removeTicksCc compiler)) j)).1 ≠
+          .err (.abort .typeError) := by
+      simpa [evaluateTuple, stateCc_compileIncSource] using safe
+    have run' : evaluate [.call 0 (some start) [] none] []
+        (initialState ffi (sptFromAList (cleanProg intermediate)) (removeTicksCo (inCo oracle)) compiler clock) =
+          (result, targetNext) := by
+      simpa [evaluateTuple, stateCo_compileIncSource] using run
+    obtain ⟨extra, intermediateNext, intermediateRun, intermediateFfi⟩ :=
+      evaluate_removeTicks_compile intermediate (inCo oracle) compiler ffi clock start result targetNext run'
+    let source := initialState ffi (sptFromAList program) oracle (inCc (removeTicksCc compiler)) (clock + extra)
+    cases sourceRun : evaluate [.call 0 (some start) [] none] [] source with
+    | mk sourceResult sourceNext =>
+      have sourceNotType : sourceResult ≠ .err (.abort .typeError) := by
+        have h := safe' (clock + extra)
+        simpa [source, sourceRun] using h
+      obtain ⟨targetState, targetRun, finalRel⟩ :=
+        evaluate_inline_compile program intermediate cache oracle ffi (removeTicksCc compiler)
+          (clock + extra) start sourceResult sourceNext inlineSource oracleCache distinct sourceRun sourceNotType
+      rw [intermediateRun] at targetRun
+      have equal := Prod.mk.inj targetRun.symm
+      obtain ⟨resultEq, stateEq⟩ := equal
+      subst sourceResult
+      subst targetState
+      exact ⟨extra, sourceNext, by simpa [evaluateTuple, stateCc_compileIncSource] using sourceRun,
+        finalRel.2.2.2.1.symm.trans intermediateFfi⟩
 
 end Flapjack.Compiler.Backend.BviInline

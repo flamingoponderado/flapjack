@@ -64,27 +64,5 @@ theorem evaluate_inline_compile {C F : Type} (program output : List (Nat × Nat 
     _ evaluation notType
   exact .cons (expRel_refl _ _) .nil
 
-/-- Flapjack infrastructure: the production fuelled inlining stage has the
-same initial-call simulation, for any supplied fuel. The later tick cleanup
-still requires its separate semantics proof. -/
-theorem evaluate_inlineFuel_compile {C F : Type} (fuel : Nat)
-    (program output : List (Nat × Nat × Bvi.Exp)) (cache : Spt (Nat × Bvi.Exp))
-    (oracle : BviSem.CompileOracle (Spt (Nat × Bvi.Exp) × C))
-    (ffi : HolFfiState F) (compiler : BviSem.Compiler C) (clock start : Nat)
-    (result : BviResult) (sourceNext : BviState (Spt (Nat × Bvi.Exp) × C) F)
-    (run : inlineAllFuel fuel .ln program = some (cache, output))
-    (oracleCache : (oracle 0).1.1 = cache) (distinct : (program.map Prod.fst).Nodup)
-    (evaluation : evaluate [.call 0 (some start) [] none] []
-      (initialState ffi (sptFromAList program) oracle (inCc compiler) clock) = (result, sourceNext))
-    (notType : result ≠ .err (.abort .typeError)) :
-    ∃ targetNext, evaluate [.call 0 (some start) [] none] []
-      (initialState ffi (sptFromAList output) (inCo oracle) compiler clock) = (result, targetNext) ∧
-      InStateRel sourceNext targetNext := by
-  have sourceRun : inlineAllSource .ln program = (cache, output) := by
-    have equality := inlineAllFuel_eq_source fuel .ln program
-    rw [run] at equality
-    exact (Option.some.inj equality).symm
-  exact evaluate_inline_compile program output cache oracle ffi compiler clock start result sourceNext
-    sourceRun oracleCache distinct evaluation notType
 
 end Flapjack.Compiler.Backend.BviInline

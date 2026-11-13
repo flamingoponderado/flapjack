@@ -427,6 +427,16 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "evaluate_compile_prog",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/WholeProgramSimulation.lean",
+    "lean_name": "evaluateCompileProg",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent comparison with the original local statement and its typed HOL capture: all ten binders, compilation, initial cache, distinctness, all-clock type-error exclusion, and target evaluation premises are retained. The complete existential source evaluation has the same result and full final FFI state. Independent compiler and FFI carriers and fixed callback widths match. Both BVI states use the canonical refs finite-support translation, witnessed by the same-module roundtrip; code and cache remain sparse trees. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8). The capture records the typed statement, not a replay of its original proof."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "compile_prog_semantics",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/Observation.lean",
     "lean_name": "compileProgSource_semantics",

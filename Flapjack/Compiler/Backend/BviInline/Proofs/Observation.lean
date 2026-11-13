@@ -184,9 +184,6 @@ theorem compileProgSource_semantics {C F : Type}
     BviSem.semantics ffi (sptFromAList output) (BackendProps.stateCo compileIncSource oracle) compiler start =
       BviSem.semantics ffi (sptFromAList program) oracle (BackendProps.stateCc compileIncSource compiler) start := by
   obtain ⟨sourceRun, oracleCache, distinct⟩ := premises
-  have compiled : compileProgFuel 0 program = some (cache, output) := by
-    rw [compileProgFuel_eq_source]
-    exact congrArg some sourceRun
   apply semantics_eq_of_cofinal ffi (sptFromAList program) (sptFromAList output) oracle
     (BackendProps.stateCo compileIncSource oracle) (BackendProps.stateCc compileIncSource compiler) compiler start notFail
   intro clock
@@ -196,8 +193,9 @@ theorem compileProgSource_semantics {C F : Type}
     have safe := BviInline.Proofs.semanticsNoTypeError ffi (sptFromAList program) oracle
       (BackendProps.stateCc compileIncSource compiler) start notFail
     obtain ⟨extra, sourceNext, sourceRun, ffiEq⟩ :=
-      evaluate_compileProgFuel_result 0 program output cache oracle compiler ffi clock start result targetNext
-        compiled oracleCache distinct safe targetRun
+      evaluateCompileProg program cache output oracle ffi compiler clock start result targetNext
+        ⟨sourceRun, oracleCache, distinct, safe, targetRun⟩
+    simp only [evaluateTuple] at sourceRun
     refine ⟨extra, ?_, ?_⟩
     · rw [sourceRun]
     · rw [sourceRun]

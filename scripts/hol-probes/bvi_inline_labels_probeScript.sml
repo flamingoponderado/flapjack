@@ -93,3 +93,26 @@ val semantics_error_cases_replay = Q.prove
   >> first_x_assum (qspecl_then [`j`,`e`] mp_tac)
   >> gvs []);
 val _ = show "semantics_error_cases_replay_typed" semantics_error_cases_replay;
+
+(* The local theorem is not exported; capture its original statement with
+   inferred types. This is a typed term, not a replay of its proof. *)
+load "backendPropsTheory";
+open bvi_inlineTheory backendPropsTheory;
+val evaluate_compile_prog_statement =
+  ``∀prog cs1 prog1 co ffi cc k start r s.
+  compile_prog prog = (cs1,prog1) ∧
+  FST (FST (co 0)) = cs1 ∧
+  ALL_DISTINCT (MAP FST prog) ∧
+  (∀j. FST (evaluate ([Call 0 (SOME start) [] NONE],[],
+         initial_state ffi (fromAList prog) co
+           (state_cc compile_inc cc) j)) ≠ Rerr (Rabort Rtype_error)) ∧
+  evaluate ([Call 0 (SOME start) [] NONE],[],
+    initial_state ffi (fromAList prog1) (state_co compile_inc co) cc k) =
+      (r,s) ⇒
+  ∃ck s2.
+    evaluate ([Call 0 (SOME start) [] NONE],[],
+      initial_state ffi (fromAList prog) co
+        (state_cc compile_inc cc) (k + ck)) = (r,s2) ∧
+    s2.ffi = s.ffi``;
+val _ = (print "evaluate_compile_prog_statement_typed=";
+         print_term evaluate_compile_prog_statement; print "\n");
