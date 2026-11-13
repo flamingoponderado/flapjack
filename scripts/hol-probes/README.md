@@ -10031,3 +10031,14 @@ and output widths). Regenerate with
 `HOL_PROBE_ONLY=hol_alignment_words_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean
 correspondence.
+
+`hol_sorting_typed_probe.out` captures the typed statements of the seven
+reviewed `HOL/src/sort/sortingScript.sml` rows from the built HOL4 core theory
+(no rebuild): `PERM_DEF`, `SORTED_DEF` (three conjuncts, each independently
+quantified over the element type), `SORTED_EQ`, `SORTED_TL`, `PART_DEF`,
+`PARTs_HAVE_PROP` and `PARTITION_DEF`. The older `hol_sorting_probe.out` keeps
+the type rows and EVAL examples; this capture adds the `show_types` statements
+used for the source comparison. Regenerate with
+`HOL_PROBE_ONLY=hol_sorting_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.

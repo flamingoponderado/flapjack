@@ -4677,6 +4677,10 @@ run_probe hol_mergesort_probeScript.sml hol_mergesort_probe.out \
   sort2_type sort3_type merge_type mergesortN_type sort2_lt sort2_eq_le sort3_all sort3_dup_le merge_basic merge_unsorted merge_left_empty merge_nontotal msn_full msn_prefix msn_over msn_three_short msn_nontotal msn_zero \
   "$repo_dir/HOL/src/sort/mergesortScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe hol_sorting_typed_probeScript.sml hol_sorting_typed_probe.out \
+  perm_def_typed sorted_def_typed sorted_eq_typed sorted_tl_typed part_def_typed parts_have_prop_typed partition_def_typed \
+  "$repo_dir/HOL/src/sort/sortingScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 run_probe hol_alignment_words_typed_probeScript.sml hol_alignment_words_typed_probe.out \
   align_def_typed aligned_def_typed byte_align_def_typed byte_aligned_def_typed aligned_add_sub_typed word_slice_def_typed w2s_def_typed word_to_hex_string_def_typed word_replicate_def_typed \
   "$repo_dir/HOL/src/n-bit/alignmentScript.sml" "$cake_dir/pancake"

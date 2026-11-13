@@ -72629,7 +72629,7 @@
     "lean_path": "Flapjack/Misc/Sorting.lean",
     "lean_name": "holPart",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-rkkf), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:643-648 PART P [] l1 l2 = (l1,l2), PART P (h::rst) l1 l2 = if P h then PART P rst (h::l1) l2 else PART P rst l1 (h::l2); type ('a -> bool) -> 'a list -> 'a list -> 'a list -> 'a list # 'a list, predicate as α → Bool. Same clauses. Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/hol_sorting_probe.out) kernel-replayed in Flapjack.Test.HolSortingParity. No extra premise."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-rkkf), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:643-648 PART P [] l1 l2 = (l1,l2), PART P (h::rst) l1 l2 = if P h then PART P rst (h::l1) l2 else PART P rst l1 (h::l2); type ('a -> bool) -> 'a list -> 'a list -> 'a list -> 'a list # 'a list, predicate as α → Bool. Same clauses. Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/hol_sorting_probe.out) kernel-replayed in Flapjack.Test.HolSortingParity. No extra premise. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_sorting_typed_probe.out `part_def_typed` re-confirms both clauses over `P : α -> bool` with HOL's `P h` rendered as a Boolean branch, matching holPart's equations and argument order."
   },
   {
     "hol_path": "HOL/src/sort/sortingScript.sml",
@@ -72637,7 +72637,7 @@
     "lean_path": "Flapjack/Misc/Sorting.lean",
     "lean_name": "holPartition",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-rkkf), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:740-741 PARTITION P l = PART P l [] []; type ('a -> bool) -> 'a list -> 'a list # 'a list. Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/hol_sorting_probe.out) kernel-replayed in Flapjack.Test.HolSortingParity. No extra premise."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-rkkf), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:740-741 PARTITION P l = PART P l [] []; type ('a -> bool) -> 'a list -> 'a list # 'a list. Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/hol_sorting_probe.out) kernel-replayed in Flapjack.Test.HolSortingParity. No extra premise. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_sorting_typed_probe.out `partition_def_typed` re-confirms `∀ P l. PARTITION P l = PART P l [] []`, matching holPartition."
   },
   {
     "hol_path": "HOL/src/sort/sortingScript.sml",
@@ -72645,7 +72645,7 @@
     "lean_path": "Flapjack/Misc/Sorting.lean",
     "lean_name": "holPerm",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:17-18 PERM L1 L2 = !x. FILTER ($= x) L1 = FILTER ($= x) L2, type 'a list -> 'a list -> bool; Lean ∀ x, L1.filter (fun y => decide (x = y)) = L2.filter (...), the HOL boolean equality test decided classically (no DecidableEq premise). Same single clause; holPerm_iff (untagged infrastructure) relates it to List.Perm."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:17-18 PERM L1 L2 = !x. FILTER ($= x) L1 = FILTER ($= x) L2, type 'a list -> 'a list -> bool; Lean ∀ x, L1.filter (fun y => decide (x = y)) = L2.filter (...), the HOL boolean equality test decided classically (no DecidableEq premise). Same single clause; holPerm_iff (untagged infrastructure) relates it to List.Perm. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_sorting_typed_probe.out `perm_def_typed` re-confirms the captured statement, single `α` and the equality over FILTER rendered by the classical decision of `x = y`, matching holPerm with no added premise."
   },
   {
     "hol_path": "HOL/src/sort/sortingScript.sml",
@@ -72653,7 +72653,7 @@
     "lean_path": "Flapjack/Misc/Sorting.lean",
     "lean_name": "holSorted",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-rkkf), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:564-568 SORTED R [] = T, SORTED R [x] = T, SORTED R (x::y::rst) <=> R x y /\\ SORTED R (y::rst); type ('a -> 'a -> bool) -> 'a list -> bool, the relation rendered as α → α → Prop. Same three clauses; no transitivity assumed. Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/hol_sorting_probe.out) kernel-replayed in Flapjack.Test.HolSortingParity. No extra premise."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-rkkf), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:564-568 SORTED R [] = T, SORTED R [x] = T, SORTED R (x::y::rst) <=> R x y /\\ SORTED R (y::rst); type ('a -> 'a -> bool) -> 'a list -> bool, the relation rendered as α → α → Prop. Same three clauses; no transitivity assumed. Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/hol_sorting_probe.out) kernel-replayed in Flapjack.Test.HolSortingParity. No extra premise. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_sorting_typed_probe.out `sorted_def_typed` re-confirms the three conjuncts, each independently quantified over the element type `α`, with the clause binder order `x` then `R` (singleton) and `y x rst R` (cons-cons) matching holSorted's equations."
   },
   {
     "hol_path": "HOL/src/sort/sortingScript.sml",
@@ -72661,7 +72661,7 @@
     "lean_path": "Flapjack/Misc/Sorting.lean",
     "lean_name": "holSortedEq",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:588-596 !R L x. transitive R ==> (SORTED R (x::L) <=> SORTED R L /\\ !y. MEM y L ==> R x y), over the exact holSorted/holTransitive; same quantifiers, hypothesis and iff. Kernel-checked; no extra premise."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:588-596 !R L x. transitive R ==> (SORTED R (x::L) <=> SORTED R L /\\ !y. MEM y L ==> R x y), over the exact holSorted/holTransitive; same quantifiers, hypothesis and iff. Kernel-checked; no extra premise. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_sorting_typed_probe.out `sorted_eq_typed` re-confirms `∀ R L x` with `transitive R` as the single premise before the iff, matching holSortedEq."
   },
   {
     "hol_path": "HOL/src/sort/sortingScript.sml",
@@ -72669,7 +72669,7 @@
     "lean_path": "Flapjack/Misc/Sorting.lean",
     "lean_name": "holSortedTl",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:1117-1121 SORTED R (x :: xs) ==> SORTED R xs with R x xs free; Lean binds them explicitly. Kernel-checked; no extra premise."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:1117-1121 SORTED R (x :: xs) ==> SORTED R xs with R x xs free; Lean binds them explicitly. Kernel-checked; no extra premise. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_sorting_typed_probe.out `sorted_tl_typed` re-confirms the free-variable statement quantified in HOL's `R x xs` order with no premise beyond `SORTED R (x::xs)`, matching holSortedTl."
   },
   {
     "lean_path": "Flapjack/Misc/Sorting/PartsHaveProp.lean",
@@ -72677,7 +72677,7 @@
     "hol_path": "HOL/src/sort/sortingScript.sml",
     "hol_name": "PARTs_HAVE_PROP",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 684-697): Source comparison: HOL sortingScript PARTs_HAVE_PROP (:684-697): ∀P L A B l1 l2. ((A,B) = PART P L l1 l2) ∧ (∀x. MEM x l1 ⇒ P x) ∧ (∀x. MEM x l2 ⇒ ¬P x) ⇒ (∀z. MEM z A ⇒ P z) ∧ (∀z. MEM z B ⇒ ¬P z). Lean holPartsHaveProp: ∀ (P : α → Bool) (L A B l1 l2 : List α), (A, B) = holPart P L l1 l2 ∧ (∀ x, x ∈ l1 → P x = true) ∧ (∀ x, x ∈ l2 → ¬ P x = true) → (∀ z, z ∈ A → P z = true) ∧ (∀ z, z ∈ B → ¬ P z = true); same binder order, the same three-conjunct premise and two-conjunct conclusion, MEM as list membership, over the tagged holPart (PART_DEF). No word or state carrier: unqualified, reviewed_exact. Kernel-checked; no extra hypothesis."
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 684-697): Source comparison: HOL sortingScript PARTs_HAVE_PROP (:684-697): ∀P L A B l1 l2. ((A,B) = PART P L l1 l2) ∧ (∀x. MEM x l1 ⇒ P x) ∧ (∀x. MEM x l2 ⇒ ¬P x) ⇒ (∀z. MEM z A ⇒ P z) ∧ (∀z. MEM z B ⇒ ¬P z). Lean holPartsHaveProp: ∀ (P : α → Bool) (L A B l1 l2 : List α), (A, B) = holPart P L l1 l2 ∧ (∀ x, x ∈ l1 → P x = true) ∧ (∀ x, x ∈ l2 → ¬ P x = true) → (∀ z, z ∈ A → P z = true) ∧ (∀ z, z ∈ B → ¬ P z = true); same binder order, the same three-conjunct premise and two-conjunct conclusion, MEM as list membership, over the tagged holPart (PART_DEF). No word or state carrier: unqualified, reviewed_exact. Kernel-checked; no extra hypothesis. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_sorting_typed_probe.out `parts_have_prop_typed` re-confirms the single conjunctive premise over `P L A B l1 l2` and the conjunctive conclusion, with the Boolean `P x` premises rendered as `P x = true`, matching holPartsHaveProp."
   },
   {
     "hol_path": "cakeml/misc/miscScript.sml",
