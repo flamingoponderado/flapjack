@@ -10733,3 +10733,20 @@ run_probe binary_ieee_typed_probeScript.sml binary_ieee_typed_probe.out \
   float_ulp_def_typed next_hi_def_typed next_lo_def_typed \
   "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
   "$hol_dir/src/floating-point"
+
+run_probe sptree_typed_probeScript.sml sptree_typed_probe.out \
+  domain_def_typed domain_fromList_typed MEM_toListA_typed MEM_toList_typed domain_lookup_typed \
+  spt_typed lookup_def_typed insert_def_typed mk_BN_def_typed mk_BS_def_typed union_def_typed \
+  fromAList_def_typed size_def_typed delete_def_typed fromList_def_typed lookup_mk_wf_typed domain_inter_typed \
+  domain_union_typed lookup_inter_typed lookup_union_typed wf_def_typed filter_v_def_typed lookup_filter_v_typed \
+  lrnext_def_typed toAList_def_typed foldi_def_typed foldi_FOLDR_toAList_typed insert_unchanged_typed \
+  inter_eq_def_typed lookup_inter_eq_typed domain_map_typed lookup_map_typed map_def_typed map_fromAList_typed \
+  map_insert_typed map_union_typed wf_map_typed mapi_def_typed mapi0_def_typed lookup_mapi_typed \
+  lookup_mapi0_typed wf_mapi_typed wf_mk_BN_typed wf_mk_BS_typed subspt_def_typed subspt_FOLDL_union_typed \
+  subspt_lookup_typed subspt_trans_typed subspt_union_typed ALL_DISTINCT_MAP_FST_toAList_typed \
+  domain_difference_typed domain_fromAList_typed domain_insert_typed MEM_toAList_typed insert_union_typed \
+  union_assoc_typed union_insert_LN_typed union_num_set_sym_typed spt_eq_thm_typed insert_notEmpty_typed \
+  lookup_difference_typed wf_delete_typed wf_difference_typed wf_fromAList_typed wf_insert_typed \
+  wf_inter_typed wf_union_typed inter_def_typed mk_wf_def_typed toList_def_typed toListA_def_typed \
+  "$hol_dir/src/finite_maps/sptreeScript.sml" \
+  "$hol_dir/src/finite_maps"
