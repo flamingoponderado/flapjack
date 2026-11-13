@@ -16,6 +16,12 @@ theorem fst_compilePart (part : Nat × Nat × Bvi.Exp) :
     (compilePart part).1 = part.1 := by
   rfl
 
+/-- Compiling a program preserves the sequence of function names. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "MAP_FST_compile_prog"]
+theorem map_fst_compileProg (program : List (Nat × Nat × Bvi.Exp)) :
+    (compileProg program).map Prod.fst = program.map Prod.fst := by
+  simp [compileProg, List.map_map, Function.comp_def, fst_compilePart]
+
 /-- An initial direct call never returns the BVI internal return marker. -/
 theorem entryCall_notReturn {C F : Type} (start : Nat) (source next : BviSem.BviState C F)
     (res : BviSem.BviResult)

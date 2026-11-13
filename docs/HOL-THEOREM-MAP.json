@@ -138612,5 +138612,35 @@
       "BviState.refs"
     ],
     "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary related BVI/DATA states, DATA input value, thunk mode and BVL value; the original state relation and successful projected source thunk lookup imply the same mode and a target DATA value projecting to the source value. BVI refs use the reviewed canonical finite-support carrier and same-module unconditional roundtrip witness; DATA refs remain native sparse trees."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "MAP_FST_compile_prog",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/Program.lean",
+    "lean_name": "map_fst_compileProg",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary BVI program triple list, exact ordered list of labels under the actual compiled DATA program; no premise or set-only weakening."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/State.lean",
+    "lean_name": "stateRel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "BviState.refs"
+    ],
+    "reviewer": "Independent typed HOL source review 2026-11-13: all seven original clock, code, oracle, compiler, projected reference lookup, FFI and global conjuncts in source order; compiler and FFI carriers are independent of each other and shared between the source and target states. BVI refs use the reviewed canonical finite-support carrier with same-module unconditional roundtrip witness; DATA maps remain native sparse trees."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "state_rel_peak_safe",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/State.lean",
+    "lean_name": "stateRel_peakSafe",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "BviState.refs"
+    ],
+    "reviewer": "Independent typed HOL source review 2026-11-13: unconditional iff for arbitrary compiler and FFI carriers shared between source and target, and arbitrary localsSize, safeForSpace, peakHeapLength and stackMax updates; no extra premise or weakened direction. BVI refs use the reviewed canonical finite-support carrier and same-module unconditional roundtrip witness."
   }
 ]

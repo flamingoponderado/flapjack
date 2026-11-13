@@ -84,3 +84,5 @@ val _ = (print "find_code_lemma_statement_typed="; print_term
       dataSem$find_code dest a t2.code t2.stack_frame_sizes =
         SOME (args',bvi_to_data$compile_exp (LENGTH args') exp,ss)``; print "\n");
 val _ = show "state_rel_dest_thunk_typed=" bvi_to_dataProofTheory.state_rel_dest_thunk;
+val _ = show "MAP_FST_compile_prog_typed=" bvi_to_dataProofTheory.MAP_FST_compile_prog;
+val _ = show "state_rel_peak_safe_typed=" bvi_to_dataProofTheory.state_rel_peak_safe;
