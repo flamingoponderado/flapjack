@@ -971,4 +971,246 @@ theorem ptreeOpIDHOL_toGrammarTree (pt : CakeParser.ParseTree) :
       simp [ptreeOpIDHOL, PtreeConversion.ptreeOpID, PtreeConversion.children,
         ParseTree.toGrammarTree]
 
+/-- Token `BEq` is deciding equality. -/
+theorem token_beq_eq (a b : CakeParser.Token) : (a == b) = decide (a = b) := rfl
+
+/-- Option `BEq` on tokens is deciding equality. -/
+theorem option_token_beq_eq (a b : Option CakeParser.Token) :
+    (a == b) = decide (a = b) := by
+  cases a <;> cases b <;> simp [token_beq_eq]
+
+/-- The exact `tokcheck` agrees with the executed `tokcheck` through
+    `toGrammarTree`. -/
+theorem tokcheckHOL_eq_tokcheck (pt : CakeParser.ParseTree) (tok : CakeParser.Token) :
+    tokcheckHOL (ParseTree.toGrammarTree pt) tok = PtreeConversion.tokcheck pt tok := by
+  cases pt with
+  | leaf sym l =>
+    cases sym with
+    | inl rule =>
+      simp [tokcheckHOL, PtreeConversion.tokcheck, ParseTree.toGrammarTree,
+        ParseTree.toGrammarSymbol, ParseTree.token, Misc.Grammar.destLf,
+        Misc.Grammar.destTokSym]
+    | inr tk =>
+      cases tk <;>
+        simp [tokcheckHOL, PtreeConversion.tokcheck, ParseTree.toGrammarTree,
+          ParseTree.toGrammarSymbol, ParseTree.token, Misc.Grammar.destLf,
+          Misc.Grammar.destTokSym, token_beq_eq]
+  | node r l cs =>
+    simp [tokcheckHOL, PtreeConversion.tokcheck, ParseTree.toGrammarTree,
+      ParseTree.token, Misc.Grammar.destLf]
+
+/-- The exact `singleSymP` agrees with the executed `symOp` for every tree list. -/
+theorem singleSymPHOL_toGrammarTrees (p : List HolChar → Bool)
+    (xs : List CakeParser.ParseTree) :
+    singleSymPHOL (fun s => p s.explode) (ParseTree.toGrammarTrees xs) =
+      PtreeConversion.symOp p xs := by
+  cases xs with
+  | nil => simp [singleSymPHOL, PtreeConversion.symOp, ParseTree.toGrammarTrees]
+  | cons x rest =>
+    cases rest with
+    | nil =>
+      cases x with
+      | leaf sym l =>
+        cases sym with
+        | inl rule =>
+          simp [singleSymPHOL, PtreeConversion.symOp, ParseTree.toGrammarTree,
+            ParseTree.toGrammarTrees, ParseTree.toGrammarSymbol, ParseTree.token,
+            Misc.Grammar.destLf, Misc.Grammar.destTokSym]
+        | inr tk =>
+          cases tk <;>
+            simp [singleSymPHOL, PtreeConversion.symOp, ParseTree.toGrammarTree,
+              ParseTree.toGrammarTrees, ParseTree.toGrammarSymbol, ParseTree.token,
+              Misc.Grammar.destLf, Misc.Grammar.destTokSym, CakeParser.destSymbolT]
+      | node r l cs =>
+        simp [singleSymPHOL, PtreeConversion.symOp, ParseTree.toGrammarTree,
+          ParseTree.toGrammarTrees, ParseTree.token, Misc.Grammar.destLf]
+    | cons y rest2 =>
+      simp [singleSymPHOL, PtreeConversion.symOp, ParseTree.toGrammarTrees]
+
+/-- `singleSymP` is `none` on the empty tree list. -/
+theorem singleSymPHOL_nil (p : List HolChar → Bool) :
+    singleSymPHOL (α := MlString) (β := Nonterminal) (γ := Misc.Location.Locs)
+      (fun s => p s.explode) [] = none := by
+  simp [singleSymPHOL]
+
+/-- `singleSymP` on a singleton agrees with `symOp`. -/
+theorem singleSymPHOL_singleton (p : List HolChar → Bool) (x : CakeParser.ParseTree) :
+    singleSymPHOL (fun s => p s.explode) [ParseTree.toGrammarTree x] =
+      PtreeConversion.symOp p [x] := by
+  simpa [ParseTree.toGrammarTrees] using singleSymPHOL_toGrammarTrees p [x]
+
+/-- `singleSymP` is `none` on a tree list of at least two elements. -/
+theorem singleSymPHOL_cons_cons_none (p : List HolChar → Bool)
+    (a b : Misc.Grammar.ParseTree CakeParser.Token Nonterminal Misc.Location.Locs)
+    (rest : List (Misc.Grammar.ParseTree CakeParser.Token Nonterminal
+      Misc.Location.Locs)) :
+    singleSymPHOL (α := MlString) (β := Nonterminal) (γ := Misc.Location.Locs)
+      (fun s => p s.explode) (a :: b :: rest) = none := by
+  simp [singleSymPHOL]
+
+/-- The `mod`/`div` alpha-token rendering agrees with the executed `||` test. -/
+theorem alphaT_mod_div (s : MlString) :
+    (if s = ofString "mod" then
+        (some (Ident.short (ofString "mod")) : Option (Ident MlString MlString))
+     else if s = ofString "div" then some (Ident.short (ofString "div")) else none) =
+      (if s = ofString "mod" ∨ s = ofString "div" then some (Ident.short s) else none) := by
+  by_cases h : s = ofString "mod"
+  · simp [h]
+  · by_cases h2 : s = ofString "div"
+    · simp [h2]
+      intro hh
+      exact hh.symm
+    · simp [h, h2]
+
+/-- The `mod`/`div` disjunction matches the executed `==` disjunction. -/
+theorem mod_div_beq (s : MlString) :
+    ((s == ofString "mod" || s == ofString "div") = true) =
+      (s = ofString "mod" ∨ s = ofString "div") := by
+  by_cases h : s = ofString "mod" <;> by_cases h2 : s = ofString "div" <;>
+    simp [h, h2]
+
+/-- Matching an option against itself is the left-biased alternative. -/
+theorem symOp_match_id (o fallback : Option (Ident MlString MlString)) :
+    (match o with
+      | some x => some x
+      | none => fallback) = (o <|> fallback) := by
+  cases o <;> rfl
+
+/-- A literal name rendering agrees with the executed equality test. -/
+theorem lit_short (s t : MlString) (fallback : Option (Ident MlString MlString)) :
+    (if s = t then (some (Ident.short t) : Option (Ident MlString MlString))
+     else fallback) =
+      (if s = t then some (Ident.short s) else fallback) := by
+  by_cases h : s = t <;> simp [h]
+
+/-- Matching an optional identifier against itself is the identity. -/
+theorem option_id_match {α β : Type} (o : Option (Ident α β)) :
+    (match o with
+      | some x => some x
+      | none => none) = o := by
+  cases o <;> rfl
+
+/-- The exact generic `ptree_Op` twin agrees with the executable conversion. -/
+theorem ptreeOpHOL_toGrammarTree (pt : CakeParser.ParseTree) :
+    ptreeOpHOL (ParseTree.toGrammarTree pt) = PtreeConversion.ptreeOp pt := by
+  cases pt with
+  | leaf _ =>
+    simp [ptreeOpHOL, PtreeConversion.ptreeOp, ParseTree.toGrammarTree]
+  | node r l cs =>
+    cases r with
+    | inl rule =>
+      cases rule with
+      | nMultOps =>
+        cases cs with
+        | nil =>
+          simp [ptreeOpHOL, PtreeConversion.ptreeOp, ParseTree.toGrammarTree,
+            ParseTree.toGrammarTrees, tokchecklHOL, singleSymPHOL_nil]
+        | cons c rest =>
+          cases rest with
+          | nil =>
+            cases c with
+            | leaf sym l' =>
+              cases sym with
+              | inl rule' =>
+                simp [ptreeOpHOL, PtreeConversion.ptreeOp, PtreeConversion.tokcheck,
+                  PtreeConversion.symOp, ParseTree.toGrammarTree, ParseTree.toGrammarTrees,
+                  ParseTree.toGrammarSymbol, ParseTree.token,
+                  Misc.Grammar.destLf, Misc.Grammar.destTokSym, tokchecklHOL, tokcheckHOL,
+                  singleSymPHOL]
+              | inr tk =>
+                cases tk <;>
+                  simp [ptreeOpHOL, PtreeConversion.ptreeOp, PtreeConversion.tokcheck,
+                    PtreeConversion.symOp, ParseTree.toGrammarTree, ParseTree.toGrammarTrees,
+                    ParseTree.toGrammarSymbol, ParseTree.token,
+                    Misc.Grammar.destLf, Misc.Grammar.destTokSym, tokchecklHOL, tokcheckHOL,
+                    token_beq_eq, singleSymPHOL,
+                    CakeParser.destSymbolT,
+                    alphaT_mod_div]
+            | node r' l' cs' =>
+              simp [ptreeOpHOL, PtreeConversion.ptreeOp, PtreeConversion.tokcheck,
+                PtreeConversion.symOp, ParseTree.toGrammarTree, ParseTree.toGrammarTrees,
+                ParseTree.token, Misc.Grammar.destLf,
+                tokchecklHOL, tokcheckHOL, singleSymPHOL]
+          | cons c2 rest2 =>
+            simp [ptreeOpHOL, PtreeConversion.ptreeOp,
+              ParseTree.toGrammarTree, ParseTree.toGrammarTrees, tokchecklHOL,
+              singleSymPHOL_cons_cons_none]
+      | nAddOps =>
+        simp [ptreeOpHOL, PtreeConversion.ptreeOp, ParseTree.toGrammarTree,
+          singleSymPHOL_toGrammarTrees]
+      | nListOps =>
+        simp [ptreeOpHOL, PtreeConversion.ptreeOp, ParseTree.toGrammarTree,
+          singleSymPHOL_toGrammarTrees]
+      | nRelOps =>
+        cases cs with
+        | nil =>
+          simp [ptreeOpHOL, PtreeConversion.ptreeOp, PtreeConversion.symOp,
+            ParseTree.toGrammarTree, ParseTree.toGrammarTrees, tokchecklHOL,
+            singleSymPHOL_nil]
+        | cons c rest =>
+          cases rest with
+          | nil =>
+            cases c with
+            | leaf sym l' =>
+              cases sym with
+              | inl rule' =>
+                simp [ptreeOpHOL, PtreeConversion.ptreeOp, PtreeConversion.tokcheck,
+                  PtreeConversion.symOp, ParseTree.toGrammarTree, ParseTree.toGrammarTrees,
+                  ParseTree.toGrammarSymbol, ParseTree.token,
+                  Misc.Grammar.destLf, Misc.Grammar.destTokSym, tokchecklHOL, tokcheckHOL,
+                  singleSymPHOL]
+              | inr tk =>
+                cases tk <;>
+                  simp [ptreeOpHOL, PtreeConversion.ptreeOp, PtreeConversion.tokcheck,
+                    PtreeConversion.symOp, ParseTree.toGrammarTree, ParseTree.toGrammarTrees,
+                    ParseTree.toGrammarSymbol, ParseTree.token,
+                    Misc.Grammar.destLf, Misc.Grammar.destTokSym, tokchecklHOL, tokcheckHOL,
+                    token_beq_eq, singleSymPHOL,
+                    CakeParser.destSymbolT] <;>
+                  (try (split <;> rfl))
+            | node r' l' cs' =>
+              simp [ptreeOpHOL, PtreeConversion.ptreeOp, PtreeConversion.tokcheck,
+                PtreeConversion.symOp, ParseTree.toGrammarTree, ParseTree.toGrammarTrees,
+                ParseTree.token, Misc.Grammar.destLf,
+                tokchecklHOL, tokcheckHOL, singleSymPHOL]
+          | cons c2 rest2 =>
+            simp [ptreeOpHOL, PtreeConversion.ptreeOp, PtreeConversion.symOp,
+              ParseTree.toGrammarTree, ParseTree.toGrammarTrees, tokchecklHOL,
+              singleSymPHOL_cons_cons_none]
+      | nCompOps =>
+        cases cs with
+        | nil =>
+          simp [ptreeOpHOL, PtreeConversion.ptreeOp, ParseTree.toGrammarTree,
+            ParseTree.toGrammarTrees, tokchecklHOL]
+        | cons c rest =>
+          cases rest with
+          | nil =>
+            cases c with
+            | leaf sym l' =>
+              cases sym with
+              | inl rule' =>
+                simp [ptreeOpHOL, PtreeConversion.ptreeOp,
+                  ParseTree.toGrammarTree, ParseTree.toGrammarTrees,
+                  ParseTree.toGrammarSymbol, ParseTree.token,
+                  Misc.Grammar.destLf, Misc.Grammar.destTokSym, tokchecklHOL, tokcheckHOL]
+              | inr tk =>
+                cases tk <;>
+                  simp [ptreeOpHOL, PtreeConversion.ptreeOp,
+                    ParseTree.toGrammarTree, ParseTree.toGrammarTrees,
+                    ParseTree.toGrammarSymbol, ParseTree.token,
+                    Misc.Grammar.destLf, Misc.Grammar.destTokSym, tokchecklHOL, tokcheckHOL,
+                    lit_short,
+                    beq_iff_eq]
+            | node r' l' cs' =>
+              simp [ptreeOpHOL, PtreeConversion.ptreeOp,
+                ParseTree.toGrammarTree, ParseTree.toGrammarTrees, ParseTree.token,
+                Misc.Grammar.destLf, tokchecklHOL, tokcheckHOL]
+          | cons c2 rest2 =>
+            simp [ptreeOpHOL, PtreeConversion.ptreeOp, ParseTree.toGrammarTree,
+              ParseTree.toGrammarTrees, tokchecklHOL]
+      | _ =>
+        simp [ptreeOpHOL, PtreeConversion.ptreeOp, ParseTree.toGrammarTree]
+    | inr n =>
+      simp [ptreeOpHOL, PtreeConversion.ptreeOp, ParseTree.toGrammarTree]
+
 end Flapjack.CakeParser.PtreeConversion.Exact
