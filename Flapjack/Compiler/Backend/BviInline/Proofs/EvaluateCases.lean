@@ -19,25 +19,6 @@ def Property {C F : Type} (xs : List Bvi.Exp) (env : List Value)
     ∃ targetNext, evaluate ys env target = ((evaluate xs env source).1, targetNext) ∧
       InStateRel (evaluate xs env source).2 targetNext
 
-/-- Flapjack infrastructure: the empty list does not change either state. -/
-theorem nil {C F : Type} (env : List Value) (source : BviState (Spt (Nat × Bvi.Exp) × C) F) :
-    Property [] env source := by
-  intro target ys states expressions _
-  cases expressions
-  exact ⟨target, by simp [evaluate], by simpa [evaluate] using states⟩
-
-/-- Flapjack infrastructure: related variables perform the same lookup. -/
-theorem var {C F : Type} (index : Nat) (env : List Value)
-    (source : BviState (Spt (Nat × Bvi.Exp) × C) F) : Property [.var index] env source := by
-  intro target ys states expressions notType
-  cases expressions with
-  | cons expression rest =>
-    cases rest
-    cases expression
-    cases found : env[index]? with
-    | none => simp [evaluate, found] at notType
-    | some value => exact ⟨target, by simp [evaluate, found], by simpa [evaluate, found] using states⟩
-
 /-- Flapjack infrastructure: raising a related expression preserves its
 result and state, provided the expression induction case holds. -/
 theorem raiseExp {C F : Type} (body : Bvi.Exp) (env : List Value)

@@ -26,7 +26,10 @@ theorem step {C F : Type} (xs : List Bvi.Exp) (env : List Value)
     (weightIH : SmallerWeight (C := C) (F := F) state.clock (expsWeight xs))
     (clockIH : SmallerClock (C := C) (F := F) state.clock) : Property xs env state := by
   cases xs with
-  | nil => exact nil env state
+  | nil =>
+    intro target ys states expressions _
+    cases expressions
+    exact ⟨target, by simp [evaluate], by simpa [evaluate] using states⟩
   | cons e rest =>
     cases rest with
     | cons second rest =>
@@ -44,7 +47,15 @@ theorem step {C F : Type} (xs : List Bvi.Exp) (env : List Value)
       exact weightIH (second :: rest) env next clock tailWeight
     | nil =>
       cases e with
-      | var index => exact var index env state
+      | var index =>
+        intro target ys states expressions notType
+        cases expressions with
+        | cons expression rest =>
+          cases rest
+          cases expression
+          cases found : env[index]? with
+          | none => simp [evaluate, found] at notType
+          | some value => exact ⟨target, by simp [evaluate, found], by simpa [evaluate, found] using states⟩
       | force location index =>
         apply force location index env state
         intro args body nonzero
