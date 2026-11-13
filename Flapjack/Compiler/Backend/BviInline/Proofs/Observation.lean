@@ -193,7 +193,7 @@ theorem compileProgSource_semantics {C F : Type}
   cases targetRun : evaluate [.call 0 (some start) [] none] []
       (initialState ffi (sptFromAList output) (BackendProps.stateCo compileIncSource oracle) compiler clock) with
   | mk result targetNext =>
-    have safe := BviTailrec.semantics_ne_fail_no_type_error ffi (sptFromAList program) oracle
+    have safe := BviInline.Proofs.semanticsNoTypeError ffi (sptFromAList program) oracle
       (BackendProps.stateCc compileIncSource compiler) start notFail
     obtain ⟨extra, sourceNext, sourceRun, ffiEq⟩ :=
       evaluate_compileProgFuel_result 0 program output cache oracle compiler ffi clock start result targetNext

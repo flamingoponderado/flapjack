@@ -123,12 +123,12 @@ theorem compileEach_semantics_assembled {C F : Type} (next start : Nat)
   apply semantics_eq_of_observations ffi _ _ oracle (stateCo compileEachSource oracle)
     (stateCc compileEachSource compiler) compiler start
   intro clock
-  have noType := BviTailrec.semantics_ne_fail_no_type_error ffi (sptFromAList program) oracle
+  have noType := BviInline.Proofs.semanticsNoTypeError ffi (sptFromAList program) oracle
     (stateCc compileEachSource compiler) start notFail clock
   cases run : evaluate [.call 0 (some start) [] none] []
       (initialState ffi (sptFromAList program) oracle (stateCc compileEachSource compiler) clock) with
   | mk result final =>
-    have notType : result ≠ .err (.abort .typeError) := by simpa [run] using noType
+    have notType : result ≠ .err (.abort .typeError) := by simpa [BviSem.evaluateTuple, run] using noType
     obtain ⟨f, targetFinal, targetResult, targetRun, related, states⟩ :=
       CompileSemantics.evaluate_compile_each_assembled next start clock program ffi oracle compiler result final
         condition oracleConditions workerBound run notType

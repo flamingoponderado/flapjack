@@ -26,3 +26,70 @@ val _ = show "compile_prog_def_typed" bvi_inlineTheory.compile_prog_def;
 val _ = show "inline_all_code_labels_typed" bvi_inlineProofTheory.inline_all_code_labels;
 val _ = show "compile_prog_code_labels_typed" bvi_inlineProofTheory.compile_prog_code_labels;
 val _ = show "compile_prog_semantics_typed" bvi_inlineProofTheory.compile_prog_semantics;
+
+(* Replay the original local semantics safety proofs. *)
+load "preamble";
+open preamble bviSemTheory;
+val semantics_not_Fail_cond_replay = Q.prove
+  (`∀ffi code co cc start.
+    semantics ffi code co cc start ≠ Fail ⇒
+    ¬∃j e. FST (evaluate ([Call 0 (SOME start) [] NONE],[],
+      initial_state ffi code co cc j)) = Rerr e ∧
+      e ≠ Rabort Rtimeout_error ∧ ∀f. e ≠ Rabort (Rffi_error f)`,
+   rpt strip_tac
+  >> qpat_x_assum `semantics _ _ _ _ _ ≠ Fail` mp_tac
+  >> simp [semantics_def]
+  >> IF_CASES_TAC
+  >- simp []
+  >> fs []
+  >> qpat_x_assum `∀a b. _` (qspecl_then [`j`,`e`] mp_tac)
+  >> fs []);
+val _ = show "semantics_not_Fail_cond_replay_typed" semantics_not_Fail_cond_replay;
+val semantics_no_type_error_replay = Q.prove
+  (`∀ffi code co cc start.
+    semantics ffi code co cc start ≠ Fail ⇒
+    ∀j. FST (evaluate ([Call 0 (SOME start) [] NONE],[],
+      initial_state ffi code co cc j)) ≠ Rerr (Rabort Rtype_error)`,
+   rpt strip_tac
+  >> drule semantics_not_Fail_cond_replay
+  >> simp []
+  >> qexistsl [`j`,`Rabort Rtype_error`]
+  >> gvs []);
+val _ = show "semantics_no_type_error_replay_typed" semantics_no_type_error_replay;
+
+(* Replay the remaining original local semantics observations. *)
+load "bviPropsTheory";
+open bviPropsTheory;
+val semantics_terminate_unique_replay = Q.prove
+  (`∀ffi code co cc start k1 r1 t1 k2 r2 t2.
+    evaluate ([Call 0 (SOME start) [] NONE],[],
+      initial_state ffi code co cc k1) = (r1,t1) ∧
+    evaluate ([Call 0 (SOME start) [] NONE],[],
+      initial_state ffi code co cc k2) = (r2,t2) ∧
+    r1 ≠ Rerr (Rabort Rtimeout_error) ∧
+    r2 ≠ Rerr (Rabort Rtimeout_error) ⇒
+    r1 = r2 ∧ t1.ffi = t2.ffi`,
+   rpt gen_tac
+  >> strip_tac
+  >> qpat_assum `evaluate (_,_,initial_state _ _ _ _ k1) = _` assume_tac
+  >> drule evaluate_add_clock
+  >> fs [inc_clock_def]
+  >> disch_then (qspec_then `k2` assume_tac)
+  >> qpat_assum `evaluate (_,_,initial_state _ _ _ _ k2) = _` assume_tac
+  >> drule evaluate_add_clock
+  >> fs [inc_clock_def]
+  >> disch_then (qspec_then `k1` assume_tac)
+  >> fs [state_component_equality]);
+val _ = show "semantics_terminate_unique_replay_typed" semantics_terminate_unique_replay;
+val semantics_error_cases_replay = Q.prove
+  (`∀ffi code co cc start.
+    semantics ffi code co cc start ≠ Fail ⇒
+    ∀j e t. evaluate ([Call 0 (SOME start) [] NONE],[],
+      initial_state ffi code co cc j) = (Rerr e,t) ⇒
+      e = Rabort Rtimeout_error ∨ ∃f. e = Rabort (Rffi_error f)`,
+   rpt strip_tac
+  >> drule semantics_not_Fail_cond_replay
+  >> rw []
+  >> first_x_assum (qspecl_then [`j`,`e`] mp_tac)
+  >> gvs []);
+val _ = show "semantics_error_cases_replay_typed" semantics_error_cases_replay;

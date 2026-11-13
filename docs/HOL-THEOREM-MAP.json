@@ -387,6 +387,46 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "semantics_not_Fail_cond",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/SemanticsSafety.lean",
+    "lean_name": "notFailCondition",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review and literal original proof replay: The complete fatal-result exclusion retains all clocks, the timeout exception, and every FFI-error exception. Independent compiler and FFI carriers and fixed callback word widths are preserved. BVI refs use the canonical finite-support representation with a same-module roundtrip witness; code remains a sparse tree. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "semantics_no_type_error",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/SemanticsSafety.lean",
+    "lean_name": "semanticsNoTypeError",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review and literal original proof replay: The sole non-Fail premise implies the original all-clock type-error exclusion. Independent compiler and FFI carriers and fixed callback word widths are preserved. BVI refs use the canonical finite-support representation with a same-module roundtrip witness; code remains a sparse tree. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "semantics_error_cases",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/SemanticsSafety.lean",
+    "lean_name": "errorCases",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review and literal original proof replay: The sole non-Fail premise and an arbitrary initial error evaluation imply the original timeout-or-FFI-error disjunction. Independent compiler and FFI carriers and fixed callback word widths are preserved. BVI refs use the canonical finite-support representation with a same-module roundtrip witness; code remains a sparse tree. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "semantics_terminate_unique",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/SemanticsSafety.lean",
+    "lean_name": "terminateUnique",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review and literal original proof replay: Two arbitrary initial non-timeout evaluations imply equality of both results and the entire final FFI states, with both original timeout exclusions. Independent compiler and FFI carriers and fixed callback word widths are preserved. BVI refs use the canonical finite-support representation with a same-module roundtrip witness; code remains a sparse tree. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "compile_prog_semantics",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/Observation.lean",
     "lean_name": "compileProgSource_semantics",

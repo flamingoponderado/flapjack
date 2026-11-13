@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteScan
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermExtension
 public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
 public import Flapjack.Compiler.Backend.Semantics.BviSem.Semantics
+public import Flapjack.Compiler.Backend.BviInline.Proofs.SemanticsSafety
 public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 public import Flapjack.Compiler.Backend.Semantics.BviProps.AdjustOracleEval
 
@@ -4042,23 +4043,6 @@ theorem evaluateCompileEach {C F : Type}
   obtain ⟨targetNext, targetRun, targetRelated, _⟩ := simulation
   exact ⟨targetNext, targetRun, targetRelated⟩
 
-/-- A non-failing source semantics excludes a type error at every clock.
-This observation helper is specific to Flapjack's BVI semantics. -/
-theorem semantics_ne_fail_no_type_error {C F : Type} (ffi : HolFfiState F)
-    (code : Spt (Nat × Bvi.Exp)) (oracle : BviSem.CompileOracle C)
-    (compiler : BviSem.Compiler C) (start : Nat)
-    (notFail : BviSem.semantics ffi code oracle compiler start ≠ .fail) :
-    ∀ clock, (BviSem.evaluate [.call 0 (some start) [] none] []
-      (BviSem.initialState ffi code oracle compiler clock)).1 ≠ .err (.abort .typeError) := by
-  intro clock bad
-  apply notFail
-  unfold BviSem.semantics
-  have fatal : ∃ clock error, (BviSem.evaluateTuple ([.call 0 (some start) [] none], [],
-      BviSem.initialState ffi code oracle compiler clock)).1 = .err error ∧
-      error ≠ .abort .timeoutError ∧ ∀ event, error ≠ .abort (.ffiError event) := by
-    exact ⟨clock, .abort .typeError, bad, by simp, by simp⟩
-  simp [fatal]
-
 /-- At each clock, compiling the initial program preserves the result and
 FFI trace whenever the source whole-program semantics does not fail. -/
 theorem compileEach_initial_observations {C F : Type}
@@ -4077,12 +4061,12 @@ theorem compileEach_initial_observations {C F : Type}
           (transformOracle oracle) compiler clock)
       source.1 = target.1 ∧ source.2.ffi.ioEvents = target.2.ffi.ioEvents := by
   intro clock
-  have noType := semantics_ne_fail_no_type_error ffi (sptFromAList program) oracle
+  have noType := BviInline.Proofs.semanticsNoTypeError ffi (sptFromAList program) oracle
     (transformCompiler compiler) start notFail clock
   cases run : BviSem.evaluate [.call 0 (some start) [] none] []
       (BviSem.initialState ffi (sptFromAList program) oracle (transformCompiler compiler) clock) with
   | mk result sourceNext =>
-    have notType : result ≠ .err (.abort .typeError) := by simpa [run] using noType
+    have notType : result ≠ .err (.abort .typeError) := by simpa [BviSem.evaluateTuple, run] using noType
     obtain ⟨targetNext, targetRun, related⟩ := evaluateCompileEach next program ffi oracle compiler clock start
       result sourceNext condition oracleCondition workerBound run notType
     have ffiEqual := (stateRel_const sourceNext targetNext related).2.2.2
@@ -4233,13 +4217,13 @@ theorem semantics_identity_adapter {C D F : Type} (ffi : HolFfiState F)
       BviSem.semantics ffi code (BackendProps.stateCo (fun c p => (c, p)) oracle) compiler start := by
   apply semantics_eq_of_initial_projections
   intro clock
-  have noType := semantics_ne_fail_no_type_error ffi code oracle
+  have noType := BviInline.Proofs.semanticsNoTypeError ffi code oracle
     (BackendProps.stateCc (fun c p => (c, p)) compiler) start notFail clock
   have initialOk := BviProps.adjustOracleOk_identity_initial ffi code oracle compiler clock
   cases run : BviSem.evaluate [.call 0 (some start) [] none] []
       (BviSem.initialState ffi code oracle (BackendProps.stateCc (fun c p => (c, p)) compiler) clock) with
   | mk result next =>
-    have notType : result ≠ .err (.abort .typeError) := by simpa [run] using noType
+    have notType : result ≠ .err (.abort .typeError) := by simpa [BviSem.evaluateTuple, run] using noType
     obtain ⟨adjusted, _⟩ := BviProps.evaluate_adjustOracle compiler Prod.snd
       [.call 0 (some start) [] none] [] _ next result run notType initialOk
     rw [BviProps.adjustOracle_identity_initial] at adjusted
