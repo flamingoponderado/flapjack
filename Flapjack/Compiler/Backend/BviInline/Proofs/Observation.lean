@@ -169,19 +169,24 @@ theorem semantics_eq_of_cofinal {C D F : Type} (ffi : HolFfiState F)
   dsimp only [src, tgt] at sourceNoFatal targetNoFatal traces
   simp [BviSem.evaluateTuple, targetNoFatal, sourceNoFatal, ← observations, ← traces]
 
-/-- Flapjack infrastructure: the executed BVI inliner and tick remover
-preserve whole-program observations when the source does not fail. This
-source-shaped result remains untagged pending evaluator and carrier review. -/
-theorem compileProgFuel_semantics {C F : Type} (fuel : Nat)
-    (program output : List (Nat × Nat × Bvi.Exp)) (cache : Spt (Nat × Bvi.Exp))
-    (oracle : BviSem.CompileOracle (Spt (Nat × Bvi.Exp) × C))
-    (compiler : BviSem.Compiler C) (ffi : HolFfiState F) (start : Nat)
-    (compiled : compileProgFuel fuel program = some (cache, output))
-    (oracleCache : (oracle 0).1.1 = cache) (distinct : (program.map Prod.fst).Nodup)
+/-- Whole-program BVI inlining preserves the source behavior. The semantics
+inherit the real-model assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "compile_prog_semantics"]
+theorem compileProgSource_semantics {C F : Type}
+    (program : List (Nat × Nat × Bvi.Exp)) (cache : Spt (Nat × Bvi.Exp))
+    (output : List (Nat × Nat × Bvi.Exp))
+    (oracle : BviSem.CompileOracle (Spt (Nat × Bvi.Exp) × C)) (ffi : HolFfiState F)
+    (compiler : BviSem.Compiler C) (start : Nat)
+    (premises : compileProgSource program = (cache, output) ∧
+      (oracle 0).1.1 = cache ∧ (program.map Prod.fst).Nodup)
     (notFail : BviSem.semantics ffi (sptFromAList program) oracle
       (BackendProps.stateCc compileIncSource compiler) start ≠ .fail) :
     BviSem.semantics ffi (sptFromAList output) (BackendProps.stateCo compileIncSource oracle) compiler start =
       BviSem.semantics ffi (sptFromAList program) oracle (BackendProps.stateCc compileIncSource compiler) start := by
+  obtain ⟨sourceRun, oracleCache, distinct⟩ := premises
+  have compiled : compileProgFuel 0 program = some (cache, output) := by
+    rw [compileProgFuel_eq_source]
+    exact congrArg some sourceRun
   apply semantics_eq_of_cofinal ffi (sptFromAList program) (sptFromAList output) oracle
     (BackendProps.stateCo compileIncSource oracle) (BackendProps.stateCc compileIncSource compiler) compiler start notFail
   intro clock
@@ -191,7 +196,7 @@ theorem compileProgFuel_semantics {C F : Type} (fuel : Nat)
     have safe := BviTailrec.semantics_ne_fail_no_type_error ffi (sptFromAList program) oracle
       (BackendProps.stateCc compileIncSource compiler) start notFail
     obtain ⟨extra, sourceNext, sourceRun, ffiEq⟩ :=
-      evaluate_compileProgFuel_result fuel program output cache oracle compiler ffi clock start result targetNext
+      evaluate_compileProgFuel_result 0 program output cache oracle compiler ffi clock start result targetNext
         compiled oracleCache distinct safe targetRun
     refine ⟨extra, ?_, ?_⟩
     · rw [sourceRun]

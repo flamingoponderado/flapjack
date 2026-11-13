@@ -25,3 +25,4 @@ val _ = show "inline_exp_code_labels_typed" bvi_inlineProofTheory.inline_exp_cod
 val _ = show "compile_prog_def_typed" bvi_inlineTheory.compile_prog_def;
 val _ = show "inline_all_code_labels_typed" bvi_inlineProofTheory.inline_all_code_labels;
 val _ = show "compile_prog_code_labels_typed" bvi_inlineProofTheory.compile_prog_code_labels;
+val _ = show "compile_prog_semantics_typed" bvi_inlineProofTheory.compile_prog_semantics;

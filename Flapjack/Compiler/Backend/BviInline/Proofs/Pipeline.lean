@@ -47,9 +47,13 @@ theorem tmc_inline_semantics {C F : Type} (fuel : Nat) (enabled : Bool) (next st
       (stateCo (BviTmc.compileProgSource enabled) oracle) (stateCc compileIncSource compiler) start ≠ .fail := by
     rw [← tmcSemantics]
     exact notFail
-  have inlineSemantics := Observation.compileProgFuel_semantics fuel intermediate output cache
-    (stateCo (BviTmc.compileProgSource enabled) oracle) compiler ffi start inlineRun
-    inlineOracleCache distinct middleNotFail
+  have inlineSourceRun : compileProgSource intermediate = (cache, output) := by
+    have correspondence := compileProgFuel_eq_source fuel intermediate
+    rw [inlineRun] at correspondence
+    simpa [compileProgSource] using (Option.some.inj correspondence).symm
+  have inlineSemantics := Observation.compileProgSource_semantics intermediate cache output
+    (stateCo (BviTmc.compileProgSource enabled) oracle) ffi compiler start
+    ⟨inlineSourceRun, inlineOracleCache, distinct⟩ middleNotFail
   exact inlineSemantics.trans tmcSemantics.symm
 
 /-- Flapjack infrastructure: the configured BVI tail-recursion, TMC, and
