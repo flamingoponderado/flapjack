@@ -171,3 +171,9 @@ val compile_string_thm = Q.prove(
 val _ = show "compile_string_thm_typed=" compile_string_thm;
 
 val _ = show "HD_APPEND3_typed=" bvl_to_bviProofTheory.HD_APPEND3;
+
+val compile_exps_LENGTH_lemma_replay = prove (``!n (xs :bvl$exp list). (LENGTH (FST (compile_exps n xs)) = LENGTH xs)``,
+  HO_MATCH_MP_TAC compile_exps_ind \\ REPEAT STRIP_TAC
+  \\ SIMP_TAC std_ss [compile_exps_def] \\ SRW_TAC [] []
+  \\ FULL_SIMP_TAC (srw_ss()) [] \\ SRW_TAC [] [] \\ DECIDE_TAC);
+val _ = show "compile_exps_LENGTH_lemma_replay=" compile_exps_LENGTH_lemma_replay;

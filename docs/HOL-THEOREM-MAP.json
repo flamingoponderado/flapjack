@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml", "hol_name": "compile_exps_LENGTH_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/SourceSing.lean", "lean_name": "compileListSource_length",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original local proof replay: for arbitrary counter and BVL expression list, the output BVI expression list has the same length. The HOL compile_exps_sing theorem equates compile_exps_list, represented by compileListSource, with compile_exps; no hypotheses or auxiliary-result restrictions are added."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml", "hol_name": "HD_APPEND3",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileString.lean", "lean_name": "holHd_append_three",
   "statement_status": "reviewed_exact",

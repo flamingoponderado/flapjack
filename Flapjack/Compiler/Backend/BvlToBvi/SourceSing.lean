@@ -90,9 +90,8 @@ termination_by xs => listBudget xs
 decreasing_by all_goals simp only [listBudget] <;> omega
 end
 
-/-- List conversion produces one BVI expression per BVL expression. This
-Flapjack consequence is needed to relate the auxiliary-code arity to the
-executed compiler. -/
+/-- List compilation produces one BVI expression per BVL expression. -/
+@[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "compile_exps_LENGTH_lemma"]
 theorem compileListSource_length (n : Nat) (xs : List Bvl.Exp) :
     (compileListSource n xs).1.length = xs.length := by
   induction xs generalizing n with
