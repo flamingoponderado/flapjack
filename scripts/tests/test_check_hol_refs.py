@@ -4020,6 +4020,24 @@ class FmapResultObservationTest(unittest.TestCase):
 
 
 class FmapParameterObservationTest(unittest.TestCase):
+    def test_conditional_call_scope_and_required_producers(self):
+        allowed = CHECKER["fmap_parameter_observations_site_allowed"]
+        errors = CHECKER["fmap_parameter_observations_site_errors"]
+        hol = "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml"
+        path = "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallSemantics.lean"
+        args = (hol, "semantics_cond_call_compile_inc", path, "semanticsCondCallCompileInc")
+        producers = ("Flapjack.HolFiniteMapExact.holEmpty", "Flapjack.HolFiniteMapExact.alistToFmap")
+        self.assertTrue(allowed(*args))
+        for index in range(4):
+            changed = list(args)
+            changed[index] += "Other"
+            self.assertFalse(allowed(*changed))
+        self.assertEqual([], errors(*args, ("code",), producers))
+        for parameters, observed in [((), producers), (("code", "other"), producers),
+                                     (("code",), producers[:-1]), (("code",), producers[::-1]),
+                                     (("code",), producers + ("Flapjack.Other.map",))]:
+            self.assertTrue(errors(*args, parameters, observed))
+
     def test_scope_allows_only_reviewed_union_site(self):
         allowed = CHECKER["fmap_parameter_observations_site_allowed"]
         hol = "cakeml/compiler/backend/proofs/clos_callProofScript.sml"

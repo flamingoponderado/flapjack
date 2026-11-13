@@ -14,6 +14,30 @@ public import Flapjack.HolRef
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open ClosLang ClosProps
 
+/-- The list arithmetic used when reserving at least one entry address. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "trivia_1"]
+theorem incrementalAddress_trivia {α : Type} (x : Nat) (xs : List α) (v : α) :
+    List.range 1 = [0] ∧ max 1 (x + 1) = x + 1 ∧
+      (if xs = [] then [v] else xs).length = max 1 xs.length := by
+  constructor
+  · rfl
+  constructor
+  · omega
+  · cases xs <;> simp
+
+/-- A list has a head and tail exactly when it is nonempty. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "EXISTS_CONS_NOT_NULL"]
+theorem existsCons_notNull {α : Type} (ys : List α) :
+    (∃ x xs, ys = x :: xs) ↔ ¬ ys.isEmpty := by
+  cases ys <;> simp
+
+/-- An operation contributes the locations in its arguments followed by the tail. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "code_locs_Op_cons"]
+theorem codeLocations_op_cons (c : List ClosLang.Exp) (b : ClosLang.Op)
+    (a : BackendCommon.Tra) (xs : List ClosLang.Exp) :
+    codeLocations (.op a b c :: xs) = codeLocations c ++ codeLocations xs := by
+  rfl
+
 /-- Addresses assigned to the extracted entry-point expression chain. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "extracted_addrs_def"]
 noncomputable def extractedAddrs (exps : List ClosLang.Exp) : List Nat :=

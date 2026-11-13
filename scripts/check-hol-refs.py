@@ -2146,7 +2146,13 @@ def fmap_parameter_observations_site_allowed(
              hol_name == "FUNION_FEMPTY_FUPDATE_LIST" and
              lean_path == "Flapjack/Compiler/Backend/ClosCall/Proofs/FiniteMap.lean" and
              lean_name == "unionEmptyUpdateList")
-    return chain or union
+    conditional_call = (
+        hol_path == "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" and
+        hol_name == "semantics_cond_call_compile_inc" and
+        lean_path == "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallSemantics.lean" and
+        lean_name == "semanticsCondCallCompileInc"
+    )
+    return chain or union or conditional_call
 
 
 def fmap_parameter_observations_site_errors(
@@ -2160,6 +2166,10 @@ def fmap_parameter_observations_site_errors(
                     "Flapjack.HolFiniteMapExact.holUpdateList")
         if parameters != ("code",) or producers != expected:
             return ["the reviewed union theorem requires its code parameter and all three map producers"]
+    if hol_name == "semantics_cond_call_compile_inc":
+        expected = ("Flapjack.HolFiniteMapExact.holEmpty", "Flapjack.HolFiniteMapExact.alistToFmap")
+        if parameters != ("code",) or producers != expected:
+            return ["the reviewed conditional call theorem requires code and both map producers"]
     return []
 
 

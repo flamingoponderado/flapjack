@@ -72,4 +72,33 @@ theorem sptDomainFromList {α : Type} (values : List α) :
     simp only [List.length_append, List.length_singleton]
     omega
 
+/-- Lookup in a sequential sparse tree follows the list's optional indexing.
+This Flapjack helper packages the same lookup used by HOL's guarded EL theorem. -/
+theorem sptLookupFromList_getElem? {α : Type} (values : List α) (key : Nat) :
+    sptLookup key (sptFromList values) = values[key]? := by
+  induction values using List.reverseRecOn with
+  | nil => simp [sptFromList]
+  | append_singleton values value ih =>
+    have inserted : sptFromList (values ++ [value]) =
+        sptInsert values.length value (sptFromList values) := by
+      simp only [sptFromList, List.foldl_append, List.foldl_cons, List.foldl_nil,
+        fromListFoldIndex, Nat.zero_add]
+    rw [inserted]
+    by_cases equal : key = values.length
+    · subst key
+      simp [sptLookup_sptInsert_same]
+    · rw [sptLookup_sptInsert_ne values.length key value (sptFromList values) equal, ih]
+      by_cases bound : key < values.length
+      · simp [List.getElem?_append, bound]
+      · have beyond : values.length < key := by omega
+        simp [List.getElem?_append, bound, List.getElem?_eq_none, show 1 ≤ key - values.length by omega]
+
+/-- A sequential sparse-tree lookup returns the corresponding list element in bounds. -/
+@[hol "HOL/src/finite_maps/sptreeScript.sml" "lookup_fromList"]
+theorem sptLookupFromList {α : Type} (key : Nat) (values : List α) :
+    sptLookup key (sptFromList values) =
+      if bound : key < values.length then some values[key] else none := by
+  rw [sptLookupFromList_getElem?]
+  split <;> simp_all
+
 end Flapjack

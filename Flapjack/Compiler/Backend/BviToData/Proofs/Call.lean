@@ -9,6 +9,7 @@ public import Flapjack.Compiler.Backend.Semantics.DataProps.Ticks
 public import Flapjack.Compiler.Backend.Semantics.DataProps.JumpPush
 public import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateForce
 public import Flapjack.Misc.Sptree.UnionAlgebra
+public import Flapjack.Misc.Sptree.FromList.Domain
 public import Mathlib.Data.List.Induction
 
 @[expose] public section
@@ -251,15 +252,6 @@ theorem simulationFor_caught_handler {C F : Type} (handler : Bvi.Exp)
       exact correctOutcome_let [value] res target start targetNext n (n + 1) (next + 1) corr live [n] [next]
         env false presFinal none ls base (by simpa using movedOutcome)
 
-private theorem fromListFoldIndex {α : Type} (values : List α) (start : Nat) (tree : Spt α) :
-    (values.foldl (fun (acc : Nat × Spt α) value => (acc.1 + 1, sptInsert acc.1 value acc.2))
-      (start, tree)).1 = start + values.length := by
-  induction values generalizing start tree with
-  | nil => simp
-  | cons value values ih =>
-    simp only [List.foldl_cons, ih, List.length_cons]
-    omega
-
 private theorem evaluate_vars_of_relation {C F : Type} (indices : List Nat) (values env : List BvlSem.Value)
     (state : BviSem.BviState C F)
     (lookups : List.Forall₂ (fun index value => env[index]? = some value) indices values) :
@@ -293,25 +285,6 @@ theorem evaluate_return_range {C F : Type} (rets : Nat) (values env : List BvlSe
       simp [List.getElem?_append, bound]
   have evaluated := evaluate_vars_of_relation (List.range rets) values (values ++ env) state lookups
   simp [BviSem.evaluate, evaluated]
-
-private theorem lookupFromList {α : Type} (values : List α) (key : Nat) :
-    sptLookup key (sptFromList values) = values[key]? := by
-  induction values using List.reverseRecOn with
-  | nil => simp [sptFromList]
-  | append_singleton values value ih =>
-    have inserted : sptFromList (values ++ [value]) =
-        sptInsert values.length value (sptFromList values) := by
-      simp only [sptFromList, List.foldl_append, List.foldl_cons, List.foldl_nil,
-        fromListFoldIndex, Nat.zero_add]
-    rw [inserted]
-    by_cases equal : key = values.length
-    · subst key
-      simp [sptLookup_sptInsert_same]
-    · rw [sptLookup_sptInsert_ne values.length key value (sptFromList values) equal, ih]
-      by_cases bound : key < values.length
-      · simp [List.getElem?_append, bound]
-      · have beyond : values.length < key := by omega
-        simp [List.getElem?_append, bound, List.getElem?_eq_none, show 1 ≤ key - values.length by omega]
 
 /-- The contiguous return-name association list looks up exactly the value
 at the corresponding offset. -/
@@ -495,9 +468,9 @@ theorem callEnv_argument_locals {C F : Type} (args : List DataSem.Value)
     · intro index leftBound rightBound
       have bound : index < args.length := by simpa using leftBound
       simp [DataSem.getVar, DataSem.callEnv, sptLookup_sptMap,
-        lookupFromList, List.getElem?_eq_getElem bound]
+        sptLookupFromList_getElem?, List.getElem?_eq_getElem bound]
   · intro key bound
-    simp [DataSem.callEnv, lookupFromList, List.getElem?_eq_none bound]
+    simp [DataSem.callEnv, sptLookupFromList_getElem?, List.getElem?_eq_none bound]
 
 /-- Entering a call does not change any field observed by the BVI/data state
 relation. -/

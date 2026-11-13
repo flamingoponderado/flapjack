@@ -8,6 +8,11 @@ public import Flapjack.Compiler.Backend.ClosMti.Proofs.Syntactic
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open ClosLang ClosProps
 
+/-- Incremental multi-argument introduction drops the input auxiliary payload. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "mcompile_inc_uncurry"]
+theorem mcompileInc_uncurry {Input Output : Type} (maxApp : Nat) (p : List Exp × Input) :
+    ClosMti.compileInc (Output := Output) maxApp p = (ClosMti.introList maxApp p.1, []) := rfl
+
 /-- The optional multi-argument pass clears auxiliary code only when enabled. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "SND_cond_mti_compile_inc"]
 theorem snd_condMtiCompileInc {α : Type} (enabled : Bool) (maxApp : Nat)

@@ -1091,6 +1091,7 @@ import Flapjack.Compiler.Backend.ClosLetop.Proofs.Arity
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Labels
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownLabelOracle
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownAddresses
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AlistMap
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Arity
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Labels
@@ -1152,6 +1153,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveAllocation
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.RecursiveSteps
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateLetrecMutual
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Accumulator
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AccumulatorAppend
 import Flapjack.Compiler.Backend.ClosToBvl.Layout.Auxiliary
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Integer
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
@@ -1217,6 +1219,18 @@ import Flapjack.Compiler.Backend.ClosToBvl.FullIncremental
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FullIncremental
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Common
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CommonCompiler
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CallSemantics
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownSyntax
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IncrementalEquations
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CommonSemantics
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WholeSemantics
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.Bag
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BagImage
+import Flapjack.Misc.Bag.Filter
+import Flapjack.Misc.Bag.Card
+import Flapjack.Misc.Bag.Image
+import Flapjack.Misc.Bag.SubBag
+import Flapjack.Misc.Bag.CardOrder
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WholeProgram
 import Flapjack.Compiler.Backend.ClosKnown.Inline.SizeShortCircuit
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CodeLabels
@@ -1226,6 +1240,13 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IncrementalOracle
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AnnotationAddresses
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.CallAddresses
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberAddresses
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IncrementalInvariants
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MtiLocations
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MtiIntroLocations
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.GlobalFacts
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MtiFreeVars
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MtiIntroFreeVars
+import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberFreeVars
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.NumberOracle
 import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLabels
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InitialCodeDomain
@@ -2256,6 +2277,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
 import Flapjack.FiniteMap.Comparison
 import Flapjack.FiniteMap.Comparison.Properties
 import Flapjack.FiniteMap.AlistExact
+import Flapjack.FiniteMap.AlistExact.Append
 import Flapjack.Misc.BalancedMap.Core
 import Flapjack.Misc.BalancedMap.Insert
 import Flapjack.Misc.BalancedMap.Invariants
@@ -3948,6 +3970,8 @@ import Flapjack.Misc.Anub
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
 import Flapjack.Compiler.Backend.LinearScan.Proofs
 import Flapjack.Misc.Sptree.ToAList
+import Flapjack.Misc.Sptree.FromAList.Lookup
+import Flapjack.Misc.Sptree.FromAList.Append
 import Flapjack.Translator.Monadic.MonadBase.Arrays
 import Flapjack.Misc.AppList
 import Flapjack.Misc.Sptree

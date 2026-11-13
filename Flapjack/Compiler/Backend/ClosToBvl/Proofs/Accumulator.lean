@@ -191,6 +191,26 @@ theorem compileExps_acc (maxApp : Nat) (expressions : List ClosLang.Exp) (aux : 
       obtain ⟨added, equal⟩ := suffix
       exact ⟨length, added, equal.symm⟩
 
+/-- A successful compilation preserves the source length and the input suffix. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_exps_IMP_acc"]
+theorem compileExps_imp_acc (maxApp : Nat) (xs : List ClosLang.Exp) (aux : Aux)
+    (compiled : List Bvl.Exp) (finalAux : Aux)
+    (run : compileExpsHOL maxApp xs aux = (compiled, finalAux)) :
+    compiled.length = xs.length ∧ ∃ added, finalAux = added ++ aux := by
+  have result := compileExps_acc maxApp xs aux
+  simpa [run] using result
+
+/-- Extending the initial accumulator extends the recursive-layout result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "build_aux_append_aux"]
+theorem buildAux_append_aux (xs : List (Nat × Bvl.Exp)) (n : Nat)
+    (aux extra : Aux) :
+    buildAux n xs (aux ++ extra) =
+      let (next, result) := buildAux n xs aux
+      (next, result ++ extra) := by
+  have result := buildAux_append n xs aux extra
+  cases h : buildAux n xs aux
+  simpa [h] using result
+
 /-- The expression-count component of the accumulator theorem. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "compile_exps_LENGTH"]
 theorem compileExps_length (maxApp : Nat) (expressions : List ClosLang.Exp) (aux : Aux)

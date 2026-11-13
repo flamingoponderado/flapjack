@@ -1,5 +1,242 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "renumber_code_locs_fv1",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberFreeVars.lean", "lean_name": "renumberCodeLocs_freeVar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the complete conjunction, including the vacuous independently polymorphic binder in the first conjunct and the separate universal natural index inside each ordered list-relation pair. The original singleton iff is retained."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "renumber_code_locs_list_fv",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberFreeVars.lean", "lean_name": "renumberList_freeVars",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all original binders, the returned-pair equality premise and the complete free-variable iff for the output list."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "intro_multi_fv1",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiIntroFreeVars.lean", "lean_name": "introMulti_freeVar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the complete ordered LIST_REL with an independent universal free-variable index in each pair, for all bounds and input lists. The total traversal is connected to execution by proved fuel success and stability; the proof retains all function and recursive-group binder shifts."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/semantics/closPropsScript.sml", "hol_name": "fv_append",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/ClosProps/FreeVars/Append.lean", "lean_name": "freeVars_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the generalized free list binder, variable and first-list order, and the complete append iff. The old private duplicate was removed from the direct-call proof."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "collect_apps_fv1",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiFreeVars.lean", "lean_name": "collectApps_freeVars",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all four binders and unconditional full iff over the collector output pair and input components."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "collect_args_fv1",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiFreeVars.lean", "lean_name": "collectArgs_freeVar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all six binders, the sole collector equality premise, and full free-variable iff with original adjusted binder indices."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "elist_globals_sing",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/GlobalFacts.lean", "lean_name": "elistGlobals_singleton",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms singleton equality of the full multiplicity bags, without additional assumptions."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "set_globals_HD_intro_multi",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/GlobalFacts.lean", "lean_name": "setGlobals_head_introMulti",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the complete singleton-HD bag equality; the total traversal produces a singleton so the unspecified empty HD case is unobserved."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "set_globals_SND_renumber_code_locs",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/GlobalFacts.lean", "lean_name": "setGlobals_renumber",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the original natural-number and expression binders and full bag equality on the returned expression."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "elist_globals_FLAT",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/GlobalFacts.lean", "lean_name": "elistGlobals_flatten",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the complete flatten, mapped bags and right-fold union over the original zero bag, preserving multiplicities."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "every_Fn_SOME_intro_multi",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiIntroLocations.lean", "lean_name": "introMulti_everyFnLocationSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the unconditional two-way location-annotation equivalence for all bounds and source lists. The total introList is connected to the executed traversal by proved fuel success and stability; all collector and function cases are covered."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "every_Fn_SOME_collect_apps",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiLocations.lean", "lean_name": "collectApps_everyFnLocationSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all five binders, the collector equality and the complete bidirectional annotation equivalence over both returned components."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "HD_FST_calls",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallAddresses.lean", "lean_name": "head_calls_singleton",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the source expression and full sparse-tree/code state carriers and the unconditional singleton head equality. The compiler output is singleton, so empty-list head choice is unobserved."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "set_code_locs_collect_apps",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiLocations.lean", "lean_name": "collectApps_codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the five original binders, collector equality and complete set-union conclusion. The source singleton code_locs form agrees with the typed code_loc prime rendering; all collector branches are covered."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "code_locs_FST_ticks_compile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalInvariants.lean", "lean_name": "ticksCompileInc_codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all original quantified carriers, assumptions and complete conclusion. Tick and letop output and input payload types remain independent; numbering includes the original entry sentinel even for empty input."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "code_locs_FST_letop_compile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalInvariants.lean", "lean_name": "letopCompileInc_codeLocations",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all original quantified carriers, assumptions and complete conclusion. Tick and letop output and input payload types remain independent; numbering includes the original entry sentinel even for empty input."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "ncompile_inc_code_locs_distinct",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalInvariants.lean", "lean_name": "numberCompileInc_codeLocations_distinct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all original quantified carriers, assumptions and complete conclusion. Tick and letop output and input payload types remain independent; numbering includes the original entry sentinel even for empty input."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "every_Fn_vs_NONE_ncompile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalInvariants.lean", "lean_name": "numberCompileInc_everyFnVarsNone",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all original quantified carriers, assumptions and complete conclusion. Tick and letop output and input payload types remain independent; numbering includes the original entry sentinel even for empty input."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "every_Fn_SOME_ncompile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalInvariants.lean", "lean_name": "numberCompileInc_everyFnLocationSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all original quantified carriers, assumptions and complete conclusion. Tick and letop output and input payload types remain independent; numbering includes the original entry sentinel even for empty input."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "alist_to_fmap_FEMPTY",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/AlistMap.lean", "lean_name": "alistToFmap_fempty",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.alistToFmap", "Flapjack.HolFiniteMapExact.holUpdateList", "Flapjack.HolFiniteMapExact.holEmpty"],
+  "reviewer": "Independent typed HOL comparison confirms independent key and value carriers, the original distinct-key premise and equality of the full finite maps. The reviewed alistToFmap, holUpdateList and holEmpty producers preserve first-binding and left-to-right update semantics; distinct keys make the results agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "SND_SND_known_compile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownAddresses.lean", "lean_name": "knownCompileInc_snd_snd",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the arbitrary auxiliary payload type, original config and sparse-map arguments, and exact second projection of the incremental compiler result without extra assumptions."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_append_aux",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/AccumulatorAppend.lean", "lean_name": "compileExps_append_aux",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the generalized extra, maxApp, source list and accumulator binder order, full pair-lambda equality and unrestricted source and BVL carriers. The proof covers all expression and recursive-function cases."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_eq_append",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/AccumulatorAppend.lean", "lean_name": "compileExps_eq_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the original three binders, empty initial accumulator on the right, full compiled-expression component and generated suffix order."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_IMP_acc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Accumulator.lean", "lean_name": "compileExps_imp_acc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the original compilation equality, full length and suffix conclusions, binder order, and faithful closure and BVL carriers."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "build_aux_append_aux",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Accumulator.lean", "lean_name": "buildAux_append_aux",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the original xs, n, aux and extra binder order and the complete pair-lambda equality, including the unchanged natural-number first component."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "trivia_1",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "incrementalAddress_trivia",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all three conjuncts and their order, COUNT_LIST as List.range, arbitrary list element carrier, and no decidable-equality instance."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "EXISTS_CONS_NOT_NULL",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "existsCons_notNull",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms arbitrary list element carrier, both existential binders, and equivalence with negated NULL as List.isEmpty."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "code_locs_Op_cons",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalAddresses.lean", "lean_name": "codeLocations_op_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms all four binder types and order, faithful trace and operation carriers, and the full ordered list equality."
+ },
+ {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "FINITE_SUB_BAG",
+  "lean_path": "Flapjack/Misc/Bag/SubBag.lean", "lean_name": "finiteSubBag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL review confirms arbitrary bag carriers and the original implication from finiteness of the larger bag and sub-bag inclusion. The proof derives the smaller bag finiteness by insertion induction."
+ },
+ {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "SUB_BAG_CARD",
+  "lean_path": "Flapjack/Misc/Bag/CardOrder.lean", "lean_name": "subBag_card",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL review confirms the full original premises, requiring finiteness only of the larger bag, and cardinality inequality. Smaller-bag finiteness is derived from FINITE_SUB_BAG."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "BAG_IMAGE_SUB_BAG",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/BagImage.lean", "lean_name": "bagImage_subBag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL review confirms independent input and output types, both original finiteness premises, sub-bag premise and full image inclusion. The proof uses the full SUB_BAG_CARD on each filtered fiber."
+ },
+ {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_IMAGE_DEF",
+  "lean_path": "Flapjack/Misc/Bag/Image.lean", "lean_name": "bagImage",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms independent input and output carriers, the actual filtered fiber and its cardinality, and the original value one for an infinite fiber. No finiteness premise is imposed on the input bag."
+ },
+ {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_CARD",
+  "lean_path": "Flapjack/Misc/Bag/Card.lean", "lean_name": "holBagCard",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with BAG_CARD_typed and HOL new_specification confirms the total function and its finite-bag relation specification over arbitrary bag carriers. The global choice imposes no constraint on cardinality for infinite bags."
+ },
+ {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_CARD",
+  "lean_path": "Flapjack/Misc/Bag/Card.lean", "lean_name": "holBagCard_spec",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with BAG_CARD_typed and HOL new_specification confirms the total function and its finite-bag relation specification over arbitrary bag carriers. The global choice imposes no constraint on cardinality for infinite bags."
+ },
+ {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_FILTER_DEF",
+  "lean_path": "Flapjack/Misc/Bag/Filter.lean", "lean_name": "bagFilter",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms arbitrary element type, unrestricted bag and predicate, and original pointwise multiplicities including infinite bags."
+ },
+ {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "FINITE_BAG_FILTER",
+  "lean_path": "Flapjack/Misc/Bag/Filter.lean", "lean_name": "finiteBag_filter",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the original finite-bag premise and full conclusion for arbitrary predicates and bags. The proof follows finite-bag induction."
+ },
+ {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_CARD_RELn",
+  "lean_path": "Flapjack/Misc/Bag/Card.lean", "lean_name": "bagCardRel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed HOL comparison confirms the entire impredicative relation, including all quantifiers, base and insertion closure, without finiteness or cardinality hypotheses."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "BAG_UNION_MONO",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Bag.lean", "lean_name": "bagUnion_mono",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with BAG_UNION_MONO_typed and the HOL source confirms arbitrary bag element type, four unrestricted multiplicity-function bags, both original sub-bag premises and the complete union conclusion. The identical flat_pattern SUB_BAG_2 is a separate original declaration in its own counterpart."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_semantics",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/WholeSemantics.lean", "lean_name": "compile_semantics",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Independent comparison against compile_semantics_typed and the HOL source confirms the three original premises, independent FFI and compiler carriers, fixed callback word widths, faithful MlString names, and complete target-to-source behavior equality with the original oracle composition. The reviewed Flapjack.HolFiniteMapExact.holEmpty producer represents FEMPTY. The proof derives all intermediate annotation, installation, stub and oracle facts from those premises. Both semantics inherit reals_as_rational_cuts and the real-agreement assumption in SOUNDNESS item 8."
+ },
+ {
   "hol_path": "cakeml/misc/miscScript.sml", "hol_name": "subspt_domain_SUBSET",
   "lean_path": "Flapjack/Misc/Sptree/Subspt/DomainSubset.lean", "lean_name": "sptSubspt_domainSubset",
   "statement_status": "reviewed_exact",
@@ -2591,6 +2828,140 @@
   "lean_name": "compile_everyFnSome",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared compile_every_Fn_SOME_typed with the HOL source: the program label type is independently polymorphic, both body projections and the function-location predicate match, and compileSource is the reviewed source annotation definition. The proof applies the reviewed every_Fn_SOME_ann, whose generalised statement is the same HOL result."
+},
+{
+  "hol_path": "HOL/src/finite_maps/sptreeScript.sml",
+  "hol_name": "fromAList_append",
+  "lean_path": "Flapjack/Misc/Sptree/FromAList/Append.lean",
+  "lean_name": "sptFromAList_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL source and fromAList_append_typed confirms arbitrary association lists and payload type, unconditional structural sparse-tree equality, and left-biased union preserving first-match behavior for duplicate keys. No well-formedness or distinctness premise is required."
+},
+{
+  "hol_path": "HOL/src/finite_maps/sptreeScript.sml",
+  "hol_name": "lookup_fromAList",
+  "lean_path": "Flapjack/Misc/Sptree/FromAList/Lookup.lean",
+  "lean_name": "sptLookupFromAList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL source and lookup_fromAList_typed confirms arbitrary payload type, natural key and association list, with unconditional equality to HOL ALOOKUP. Both sides retain first-match behavior for duplicate keys, and the sparse-tree carrier is the reviewed Spt."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "init_code_ok",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InitialCodeDomain.lean",
+  "lean_name": "initCode_ok",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL source and init_code_ok_typed confirms the original positive maximum-arity guard and both complete lookup conjuncts, including strict index guards, natural subtraction, arities and generated BVL bodies. The proof indexes the original generic prefix and triangular partial-application table and retains the reviewed Spt carrier."
+},
+{
+  "hol_path": "HOL/src/finite_maps/sptreeScript.sml",
+  "hol_name": "lookup_fromList",
+  "lean_path": "Flapjack/Misc/Sptree/FromList/Domain.lean",
+  "lean_name": "sptLookupFromList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL source and lookup_fromList_typed confirms arbitrary element type, list and index, with the original guarded lookup equation. Dependent indexing equals HOL EL in the in-bounds branch; the out-of-bounds branch returns none without assuming a nonempty carrier. The optional-index helper also replaces an identical private proof in BviToData."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "compile_common_semantics",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CommonSemantics.lean",
+  "lean_name": "compileCommon_semantics",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty", "Flapjack.HolFiniteMapExact.alistToFmap"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Independent comparison with the HOL source and compile_common_semantics_typed confirms all twelve outer premises, every guarded oracle and syntax condition, independent FFI and compiler-state types, fixed callback word widths, and the complete target-to-source behavior equality. The observed maps are Flapjack.HolFiniteMapExact.holEmpty and Flapjack.HolFiniteMapExact.alistToFmap. The proof derives intermediate safety, strict chain-label freshness, and annotation conditions from the original premises. Both uses of holThe are guarded by knownConf.isSome, and the known compiler preserves option shape. Inherits reals_as_rational_cuts and the SOUNDNESS item 8 assumption through ClosSem.semantics."
+},
+{
+  "hol_path": "HOL/src/finite_maps/alistScript.sml",
+  "hol_name": "alist_to_fmap_APPEND",
+  "lean_path": "Flapjack/FiniteMap/AlistExact/Append.lean",
+  "lean_name": "alistToFmap_append",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.alistToFmap", "Flapjack.HolFiniteMapExact.union"],
+  "reviewer": "Independent comparison with the HOL source and typed alist_to_fmap_APPEND capture confirms both arbitrary association lists, independent key and value types, and unconditional equality of the canonical maps produced by Flapjack.HolFiniteMapExact.alistToFmap and Flapjack.HolFiniteMapExact.union. Both conversions choose the first binding and union is left-biased, including duplicate and overlapping keys."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "acompile_inc_uncurry",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalEquations.lean",
+  "lean_name": "acompileInc_uncurry",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and typed capture confirms arbitrary label type, zero-arity annotation and the complete auxiliary-code result with no additional premises."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "ccompile_inc_uncurry",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalEquations.lean",
+  "lean_name": "ccompileInc_uncurry",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and typed capture confirms arbitrary input payload and known tree, the original empty initial auxiliary list, and all three result projections in order."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "compile_inc_uncurry",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalEquations.lean",
+  "lean_name": "compileInc_uncurry",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and typed capture confirms arbitrary maximum arity, full source name extraction, chaining and subsequent auxiliary append, and the original labeled BVL program compiler."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "fcompile_inc_uncurry",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/IncrementalEquations.lean",
+  "lean_name": "fcompileInc_uncurry",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and typed capture confirms arbitrary input payload and independently typed output list, original free-variable compilation, and unconditional empty auxiliary output."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "compile_elist_globals",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean",
+  "lean_name": "mtiCompile_elistGlobals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL source and typed capture confirms arbitrary Boolean flag, maximum arity, and expression list, with unconditional equality of the full natural-multiplicity global-write bags. Both enabled and disabled compiler cases are retained."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "mcompile_inc_uncurry",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/MtiInvariants.lean",
+  "lean_name": "mcompileInc_uncurry",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL source and typed capture confirms the complete incremental compiler equation, arbitrary input payload and independently typed output list, with no additional premises. The reviewed total introduction traversal implements the original intro_multi."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "elist_globals_SND_renumber_code_locs_list",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean",
+  "lean_name": "elistGlobals_renumberList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL source and typed capture confirms arbitrary natural start and expression list, unconditional equality, and the num-to-num global-write bag with multiplicities. The proof specializes the reviewed numbering theorem to its actual result pair."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "elist_globals_SND_ncompile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/OracleDomains.lean",
+  "lean_name": "numberCompileInc_globals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL source and typed capture confirms arbitrary start and expression list, the complete incremental compiler including its prepended constant, and unconditional equality of num-to-num global-write bags with multiplicities."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "kcompile_csyntax_ok",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/KnownSyntax.lean",
+  "lean_name": "kcompile_csyntaxOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL source and kcompile_csyntax_ok_typed confirms both optional configuration carriers, expression lists, the two ordered hypotheses and the complete syntaxOk conclusion. The proof derives all three syntax conditions from the original premises, including code-location distinctness through the original bag containment argument; no representation qualifiers are needed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "semantics_cond_call_compile_inc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CallSemantics.lean",
+  "lean_name": "semanticsCondCallCompileInc",
+  "statement_status": "reviewed_fmap_as_finite_support_parameter_observations",
+  "fmap_as_finite_support_parameters": ["code"],
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty", "Flapjack.HolFiniteMapExact.alistToFmap"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Independent comparison with the HOL source and semantics_cond_call_compile_inc_typed confirms the code input and Flapjack.HolFiniteMapExact.holEmpty and Flapjack.HolFiniteMapExact.alistToFmap observations, separate FFI and compiler-state types, fixed word widths, all original enabled-case premises, and the complete semantics equality. The proof derives distinct auxiliary keys and the initial invariant from those premises. Inherits reals_as_rational_cuts and the SOUNDNESS item 8 assumption through ClosSem.semantics."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
