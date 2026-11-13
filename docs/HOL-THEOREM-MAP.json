@@ -422,6 +422,34 @@
     "reviewer": "Independent typed HOL source review 2026-11-13: the full compilation equation, initial oracle cache equality, distinct source names and source non-Fail condition imply the complete target-to-source behavior equality. Independent compiler and FFI carriers and fixed callback word widths match. The reviewed evaluator and semantic state record their finite-map translation separately. Inherits reals_as_rational_cuts through semantic primitives, as documented in SOUNDNESS item 8."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "env_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/Environment.lean",
+    "lean_name": "envRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: shared arbitrary environment payload type, empty-offset DROP, cons lookup and recursive relation, and both short-list cases match. The local v_rel application is normalized to its defining lookup."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "env_rel_REPLICATE_0",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/Environment.lean",
+    "lean_name": "envRel_replicate",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: full arbitrary-value prefix, replicated zero offsets and original relation premise match. Original local HOL proof replayed with inferred types."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "evaluate_env_rel",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/Simulation.lean",
+    "lean_name": "evaluateOriginal",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL source review 2026-11-13: original source compiler, all nine binders including independent inhabited unused ys type, three premises and full evaluation result/final-state equality match. The original BVI refs finite map uses the canonical finite-support state with a same-module roundtrip witness. Inherits reals_as_rational_cuts through semantic primitives, as documented in SOUNDNESS item 8."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "compile_part_thm",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/CompileSource.lean",

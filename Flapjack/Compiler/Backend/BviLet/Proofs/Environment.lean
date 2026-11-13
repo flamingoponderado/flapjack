@@ -10,8 +10,8 @@ namespace Flapjack.Compiler.Backend.BviLet.Proofs
 
 /-- The displacement at each source position selects the same value in the
 corresponding suffix of the optimized environment. After the displacements
-end, the source is a suffix of the optimized environment. This infrastructure
-is untagged pending comparison of the inferred HOL polymorphic types. -/
+end, the source is a suffix of the optimized environment. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "env_rel_def"]
 def envRel {α : Type} : List Nat → Nat → List α → List α → Prop
   | [], d, source, target => source = target.drop d
   | a :: rest, d, x :: source, y :: target =>
@@ -48,6 +48,7 @@ theorem envRel_lookup {α : Type} (offsets : List Nat) (d : Nat)
           exact ih source target related.2 index lookup
 
 /-- Prefixing matching values gives zero displacements for the new entries. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "env_rel_REPLICATE_0"]
 theorem envRel_replicate {α : Type} (values : List α) (offsets : List Nat)
     (d : Nat) (source target : List α) (related : envRel offsets d source target) :
     envRel (List.replicate values.length 0 ++ offsets) d (values ++ source)

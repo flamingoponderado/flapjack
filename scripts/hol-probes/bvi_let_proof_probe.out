@@ -8,3 +8,4 @@ evaluate_compile_exp=(evaluate ([(d :bvi$exp)],(env :v list),(s :(α, β) state)
 dest_var_code_labels=∀(x :bvi$exp). get_code_labels (delete_var x) = get_code_labels x
 compile_code_labels=∀(x :num list) (y :num) (z :bvi$exp list). BIGUNION (set (MAP get_code_labels (compile x y z :bvi$exp list))) = BIGUNION (set (MAP get_code_labels z))
 compile_exp_code_labels=∀(x :bvi$exp). get_code_labels (compile_exp x) = get_code_labels x
+env_rel_REPLICATE_0_replay=∀(vs :α list) (ax :num list) (d :num) (env1 :α list) (env2 :α list). env_rel ax d env1 env2 ⇒ env_rel (REPLICATE (LENGTH vs) (0 :num) ++ ax) d (vs ++ env1) (vs ++ env2)

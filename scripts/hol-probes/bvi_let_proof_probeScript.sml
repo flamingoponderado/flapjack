@@ -16,3 +16,10 @@ val _ = show "evaluate_compile_exp" evaluate_compile_exp;
 val _ = show "dest_var_code_labels" dest_var_code_labels;
 val _ = show "compile_code_labels" compile_code_labels;
 val _ = show "compile_exp_code_labels" compile_exp_code_labels;
+(* Replay the original local prefix relation proof. *)
+val env_rel_REPLICATE_0_replay = Q.prove
+  (`!vs ax d env1 env2.
+      env_rel ax d env1 env2 ==>
+      env_rel (REPLICATE (LENGTH vs) 0 ++ ax) d (vs ++ env1) (vs ++ env2)`,
+   Induct \\ fs [REPLICATE, env_rel_def, v_rel_def, LLOOKUP_def]);
+val _ = show "env_rel_REPLICATE_0_replay" env_rel_REPLICATE_0_replay;

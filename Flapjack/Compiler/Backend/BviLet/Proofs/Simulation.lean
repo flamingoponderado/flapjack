@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.BviLet.Proofs.Calls
 public import Flapjack.Compiler.Backend.BviLet.Proofs.SourceAgreement
+public import Flapjack.Compiler.Backend.BviLet.SourceList
 
 @[expose] public section
 
@@ -9,6 +10,14 @@ public import Flapjack.Compiler.Backend.BviLet.Proofs.SourceAgreement
 namespace Flapjack.Compiler.Backend.BviLet.Proofs
 open Flapjack.Compiler.Backend.BviSem
 open Flapjack.Compiler.Backend.BvlSem (Value)
+
+namespace OriginalEvalCarrier
+/-- The BVI reference state and its finite-support representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviStateBroad C F, (BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end OriginalEvalCarrier
 
 private theorem dropLastSize (xs : List Bvi.Exp) : sizeOf xs.dropLast ≤ sizeOf xs := by
   induction xs with
@@ -32,10 +41,8 @@ private theorem lastSize (xs : List Bvi.Exp) (nonempty : xs ≠ []) :
       simp only [List.getLast, List.cons.sizeOf_spec] at *
       omega
 
-/-- Evaluation is preserved by let propagation for non-type-error results.
-The captured HOL statement quantifies an unused, independently typed `ys`;
-this statement omits it and uses the source-shaped `compileList`. It remains
-untagged until the BVI evaluator and dispatcher have been reviewed. -/
+/-- Induction over the rewritten list compiler, used to establish the
+source-shaped simulation. -/
 theorem evaluate_envRel {C F : Type} (xs : List Bvi.Exp) (offsets : List Nat) (d : Nat)
     (source target : List Value) (state final : BviState C F) (result : BviResult)
     (run : evaluateTuple (xs, source, state) = (result, final))
@@ -165,6 +172,21 @@ decreasing_by
   all_goals try (have bound := dropLastSize (first :: rest); simp only [List.cons.sizeOf_spec] at bound; omega)
   all_goals try (have bound := lastSize (first :: rest) (by simp); simp only [List.cons.sizeOf_spec] at bound; omega)
 
+/-- The source compiler preserves a non-type-error evaluation under the
+original environment relation. The independent inhabited type preserves
+HOL's unused quantified argument. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "evaluate_env_rel"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateOriginal {C F Y : Type} [Nonempty Y]
+    (xs : List Bvi.Exp) (env1 : List Value) (s1 : BviState C F)
+    (ax : List Nat) (env2 : List Value) (res : BviResult) (s2 : BviState C F)
+    (_ys : Y) (d : Nat)
+    (h : evaluateTuple (xs, env1, s1) = (res, s2) ∧ envRel ax d env1 env2 ∧
+      res ≠ .err (.abort .typeError)) :
+    evaluateTuple (BviLet.compile ax d xs, env2, s1) = (res, s2) := by
+  rw [BviLet.compile_eq_compileList]
+  exact evaluate_envRel xs ax d env1 env2 s1 s2 res h.1 h.2.1 h.2.2
+
 /-- Empty-displacement specialization of the optimizer simulation. -/
 theorem evaluate_compileList {C F : Type} (xs : List Bvi.Exp) (env : List Value)
     (state final : BviState C F) (result : BviResult)
@@ -172,16 +194,5 @@ theorem evaluate_compileList {C F : Type} (xs : List Bvi.Exp) (env : List Value)
     (notTypeError : result ≠ .err (.abort .typeError)) :
     evaluateTuple (compileList [] 0 xs, env, state) = (result, final) :=
   evaluate_envRel xs [] 0 env env state final result run (by simp [envRel]) notTypeError
-
-/-- The executed bounded optimizer preserves every non-type-error evaluation.
-Untagged until the BVI evaluator and dispatcher have been reviewed. -/
-theorem evaluate_compileBounded {C F : Type} (fuel : Nat) (expression : Bvi.Exp)
-    (env : List Value) (state final : BviState C F) (result : BviResult)
-    (run : evaluateTuple ([expression], env, state) = (result, final))
-    (notTypeError : result ≠ .err (.abort .typeError)) :
-    ∃ output, compileBounded fuel [] 0 expression = some output ∧
-      evaluateTuple ([output], env, state) = (result, final) := by
-  refine ⟨compileSing [] 0 expression, compileBounded_eq_compileSing fuel [] 0 expression, ?_⟩
-  simpa [compileList] using evaluate_compileList [expression] env state final result run notTypeError
 
 end Flapjack.Compiler.Backend.BviLet.Proofs
