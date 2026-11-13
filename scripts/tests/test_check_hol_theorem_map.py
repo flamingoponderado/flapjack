@@ -562,15 +562,6 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                 "all_distinct_mem_zip_disjoint_with_shape",
             ("Flapjack/Pancake/PanLang.lean", "withShape_getElem_getElem"):
                 "el_el_with_shape",
-            ("Flapjack/PanValueFlatten.lean",
-             "shapeSize_comb_eq_flatten_length_of_getElem"):
-                "list_rel_length_shape_of_flatten_better",
-            ("Flapjack/Pancake/Semantics/PanProps.lean",
-             "listRelFlattenWithShapeLength"):
-                "list_rel_flatten_with_shape_length",
-            ("Flapjack/Pancake/Semantics/PanProps.lean",
-             "listRelFlattenWithShapeFlookup"):
-                "list_rel_flatten_with_shape_flookup",
         }
         for key, hol_name in cases.items():
             record = inventory[key]
@@ -582,6 +573,41 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             self.assertIn("flapjack-pxn.18.3.5.8", record["reviewer"])
             self.assertTrue(MAP["lean_definition_exists"](MAP["ROOT"], *key))
             self.assertNotIn(key, MAP["tagged_declarations"]())
+
+    def test_pan_props_flatten_carrier_mismatches_are_retired(self):
+        # The production-carrier flatten trio is gone; HOL
+        # list_rel_length_shape_of_flatten_better,
+        # list_rel_flatten_with_shape_length and
+        # list_rel_flatten_with_shape_flookup are mapped by the tagged
+        # ShapeHOL/ValueHOL twins in PanProps/ListRelFlatten.
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        for key in (
+            ("Flapjack/PanValueFlatten.lean",
+             "shapeSize_comb_eq_flatten_length_of_getElem"),
+            ("Flapjack/Pancake/Semantics/PanProps.lean",
+             "listRelFlattenWithShapeLength"),
+            ("Flapjack/Pancake/Semantics/PanProps.lean",
+             "listRelFlattenWithShapeFlookup"),
+        ):
+            self.assertNotIn(key, inventory)
+        twins = {
+            "listRelLengthShapeOfFlattenBetterHOL":
+                "list_rel_length_shape_of_flatten_better",
+            "listRelFlattenWithShapeLengthHOL": "list_rel_flatten_with_shape_length",
+            "listRelFlattenWithShapeFlookupHOL": "list_rel_flatten_with_shape_flookup",
+        }
+        for lean_name, hol_name in twins.items():
+            key = ("Flapjack/Pancake/Semantics/PanProps/ListRelFlatten.lean", lean_name)
+            record = inventory[key]
+            self.assertEqual(
+                (record["hol_path"], record["hol_name"]),
+                ("cakeml/pancake/semantics/panPropsScript.sml", hol_name),
+            )
+            self.assertNotEqual(record["statement_status"], "documented_mismatch")
+            self.assertIn(key, MAP["tagged_declarations"]())
 
     def test_pan_value_flatten_map_image_mismatch_is_retired(self):
         # The MAP-image PanValue form is gone; HOL list_rel_length_shape_of_flatten

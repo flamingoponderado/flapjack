@@ -80,23 +80,17 @@ theorem shapeSize_eq_zero_or_flatten_length_fixture :
 #check @panValueFlatten_eq_nil_iff_shapeSize_eq_zero
 #check @listRelLengthShapeOfFlattenHOL
 #check @shapeSize_eq_zero_or_flatten_length
-#check @shapeSize_comb_eq_flatten_length_of_getElem
+#check @listRelLengthShapeOfFlattenBetterHOL
 
-theorem shapeSize_comb_eq_flatten_length_of_getElem_fixture :
-    Shape.shapeSize (.comb [panValueShape ([] : StructContext) nestedValue,
-        panValueShape ([] : StructContext) wordValue]) =
-      ([nestedValue, wordValue].map panValueFlatten).flatten.length := by
-  apply shapeSize_comb_eq_flatten_length_of_getElem
-  · simp
-  · intro i hi
-    have hi' : i = 0 ∨ i = 1 := by
-      simp only [List.length_cons, List.length_nil] at hi
-      omega
-    rcases hi' with rfl | rfl <;> simp
-  · intro arg hmem
-    simp only [List.mem_cons, List.not_mem_nil, or_false] at hmem
-    rcases hmem with rfl | rfl
-    · exact nestedValue_wf
-    · simp [wordValue, panValueShape, isWfShape]
+theorem listRelLengthShapeOfFlattenBetterHOL_fixture :
+    sizeOfShapeHOL (.comb [shapeOfHOLExact nestedValueHOL, shapeOfHOLExact wordValueHOL]) =
+      ([nestedValueHOL, wordValueHOL].map flattenHOL).flatten.length := by
+  apply listRelLengthShapeOfFlattenBetterHOL (width := 8)
+  refine ⟨.cons rfl (.cons rfl .nil), ?_⟩
+  intro arg hmem
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hmem
+  rcases hmem with rfl | rfl
+  · simp [nestedValueHOL, isWfShapeValueHOLExact, isWfShapeValuesHOLExact]
+  · simp [wordValueHOL, isWfShapeValueHOLExact]
 
 end Flapjack.Test.PanValueFlattenParity
