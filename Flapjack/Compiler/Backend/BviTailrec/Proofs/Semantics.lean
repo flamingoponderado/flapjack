@@ -112,15 +112,6 @@ theorem tyRel_update {env : List Value} {types : List ValueType} (related : tyRe
     · exact related
   | _ => exact related
 
-/-- Refining both operands preserves the environment relation when their
-variable values satisfy the inferred type. -/
-theorem tyRel_updateContext {env : List Value} {types : List ValueType} (related : tyRel env types)
-    (ty : ValueType) (x y : Bvi.Exp)
-    (soundX : ∀ n, x = .var n → ∃ value, env[n]? = some value ∧ valueMatchesType value ty)
-    (soundY : ∀ n, y = .var n → ∃ value, env[n]? = some value ∧ valueMatchesType value ty) :
-    tyRel env (updateContext ty types x y) := by
-  exact tyRel_update (tyRel_update related ty x soundX) ty y soundY
-
 /-- If an operand evaluates to a value of the inferred type, refining its
 variable entry preserves the type relation. -/
 theorem tyRel_update_of_evaluation {C F : Type} {env : List Value} {types : List ValueType}

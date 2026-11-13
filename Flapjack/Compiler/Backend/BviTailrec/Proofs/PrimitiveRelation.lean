@@ -40,24 +40,6 @@ theorem accumulator_identity_right (op : AssocOp) (value : Value)
     simp [accumulatorApply, opIdValue, valueToList, BackendCommon.nilTag, decode, encode]
   | noop => contradiction
 
-/-- A well-typed accumulator value is unchanged by the source identity on
-the left. -/
-theorem accumulator_identity_left (op : AssocOp) (value : Value)
-    (notNoop : op ≠ .noop) (typed : valueMatchesType value (opType op)) :
-    accumulatorApply op [opIdValue op, value] = some value := by
-  cases op with
-  | plus =>
-    obtain ⟨n, rfl⟩ := typed.1 rfl
-    simp [accumulatorApply, opIdValue, BvlSem.doIntApp]
-  | times =>
-    obtain ⟨n, rfl⟩ := typed.1 rfl
-    simp [accumulatorApply, opIdValue, BvlSem.doIntApp]
-  | append =>
-    obtain ⟨xs, decode⟩ := typed.2 rfl
-    have encode := listToValue_of_decode value xs decode
-    simp [accumulatorApply, opIdValue, valueToList, BackendCommon.nilTag, decode, encode]
-  | noop => contradiction
-
 /-- Combining two well-typed accumulator values succeeds and retains the
 operator's required type. -/
 theorem accumulator_typed (op : AssocOp) (x y : Value) (notNoop : op ≠ .noop)
@@ -77,38 +59,6 @@ theorem accumulator_typed (op : AssocOp) (x y : Value) (notNoop : op ≠ .noop)
     obtain ⟨ys, hy⟩ := ty.2 rfl
     exact ⟨listToValue (xs ++ ys), by simp [accumulatorApply, hx, hy],
       by simp [valueMatchesType, opType, valueToList_listToValue]⟩
-  | noop => contradiction
-
-/-- The accumulator operations associate on values of their required type.
-This supplies the algebraic step for moving an accumulator across a recursive
-call. -/
-theorem accumulator_associative (op : AssocOp) (x y z : Value)
-    (notNoop : op ≠ .noop) (tx : valueMatchesType x (opType op))
-    (ty : valueMatchesType y (opType op)) (tz : valueMatchesType z (opType op)) :
-    ∃ xy yz result, accumulatorApply op [x, y] = some xy ∧
-      accumulatorApply op [y, z] = some yz ∧
-      accumulatorApply op [xy, z] = some result ∧
-      accumulatorApply op [x, yz] = some result := by
-  cases op with
-  | plus =>
-    obtain ⟨a, rfl⟩ := tx.1 rfl
-    obtain ⟨b, rfl⟩ := ty.1 rfl
-    obtain ⟨c, rfl⟩ := tz.1 rfl
-    refine ⟨.number (a + b), .number (b + c), .number ((a + b) + c), ?_, ?_, ?_, ?_⟩
-    all_goals simp [accumulatorApply, BvlSem.doIntApp, Int.add_assoc]
-  | times =>
-    obtain ⟨a, rfl⟩ := tx.1 rfl
-    obtain ⟨b, rfl⟩ := ty.1 rfl
-    obtain ⟨c, rfl⟩ := tz.1 rfl
-    refine ⟨.number (a * b), .number (b * c), .number ((a * b) * c), ?_, ?_, ?_, ?_⟩
-    all_goals simp [accumulatorApply, BvlSem.doIntApp, Int.mul_assoc]
-  | append =>
-    obtain ⟨xs, hx⟩ := tx.2 rfl
-    obtain ⟨ys, hy⟩ := ty.2 rfl
-    obtain ⟨zs, hz⟩ := tz.2 rfl
-    refine ⟨listToValue (xs ++ ys), listToValue (ys ++ zs), listToValue ((xs ++ ys) ++ zs),
-      ?_, ?_, ?_, ?_⟩
-    all_goals simp [accumulatorApply, hx, hy, hz, valueToList_listToValue, List.append_assoc]
   | noop => contradiction
 
 /-- Reassociation also preserves failure when the recursive result is not
@@ -137,24 +87,6 @@ theorem accumulator_associative_partial (op : AssocOp) (x y z : Value)
     cases hx : valueToList x with
     | none => simp [accumulatorApply, hx]
     | some xs => simp [accumulatorApply, hx, hy, hz, valueToList_listToValue, List.append_assoc]
-  | noop => contradiction
-
-/-- The integer accumulator operations are commutative, as required when
-the source rewrite swaps a recursive left operand. List append is excluded. -/
-theorem accumulator_commutative (op : AssocOp) (x y : Value)
-    (notNoop : op ≠ .noop) (notAppend : op ≠ .append)
-    (tx : valueMatchesType x (opType op)) (ty : valueMatchesType y (opType op)) :
-    accumulatorApply op [x, y] = accumulatorApply op [y, x] := by
-  cases op with
-  | plus =>
-    obtain ⟨a, rfl⟩ := tx.1 rfl
-    obtain ⟨b, rfl⟩ := ty.1 rfl
-    simp [accumulatorApply, BvlSem.doIntApp, Int.add_comm]
-  | times =>
-    obtain ⟨a, rfl⟩ := tx.1 rfl
-    obtain ⟨b, rfl⟩ := ty.1 rfl
-    simp [accumulatorApply, BvlSem.doIntApp, Int.mul_comm]
-  | append => contradiction
   | noop => contradiction
 
 /-- The integer accumulator operations are commutative even on malformed
