@@ -70044,7 +70044,7 @@
     "lean_name": "holAlign",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.4): alignmentScript.sml:18 align p w = (dimindex (:'a) - 1 '' p) w, literal over holWordSlice with dimindex as width. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; w ' i is getLsbD i. Original HOL probe alignment_align_probe kernel-replayed in Flapjack/Test/AlignmentParity.lean."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.4): alignmentScript.sml:18 align p w = (dimindex (:'a) - 1 '' p) w, literal over holWordSlice with dimindex as width. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; w ' i is getLsbD i. Original HOL probe alignment_align_probe kernel-replayed in Flapjack/Test/AlignmentParity.lean. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_alignment_words_typed_probe.out `align_def_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
   },
   {
     "hol_path": "HOL/src/n-bit/alignmentScript.sml",
@@ -70053,7 +70053,7 @@
     "lean_name": "holAligned",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.4): alignmentScript.sml:20 aligned p w = (align p w = w), the HOL bool rendered as Bool by decide of the word equality. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; w ' i is getLsbD i. Original HOL probe alignment_align_probe kernel-replayed in Flapjack/Test/AlignmentParity.lean."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.4): alignmentScript.sml:20 aligned p w = (align p w = w), the HOL bool rendered as Bool by decide of the word equality. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; w ' i is getLsbD i. Original HOL probe alignment_align_probe kernel-replayed in Flapjack/Test/AlignmentParity.lean. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_alignment_words_typed_probe.out `aligned_def_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
   },
   {
     "hol_path": "HOL/src/n-bit/alignmentScript.sml",
@@ -70062,7 +70062,7 @@
     "lean_name": "holByteAlign",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.4): alignmentScript.sml:23-25 byte_align w = align (LOG2 (dimindex (:'a) DIV 8)) w, literal over the specified holLOG2 (LOG2 0 at widths below 8 stays unconstrained, as in HOL). Untagged bridges in Flapjack/Misc/Alignment/Production.lean: equal to the Log2ZeroParametric model at log2Zero := holLOG2 0 for every width, and to production panByteAlignHOL at width >= 8. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; w ' i is getLsbD i. Original HOL probe alignment_align_probe kernel-replayed in Flapjack/Test/AlignmentParity.lean."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.4): alignmentScript.sml:23-25 byte_align w = align (LOG2 (dimindex (:'a) DIV 8)) w, literal over the specified holLOG2 (LOG2 0 at widths below 8 stays unconstrained, as in HOL). Untagged bridges in Flapjack/Misc/Alignment/Production.lean: equal to the Log2ZeroParametric model at log2Zero := holLOG2 0 for every width, and to production panByteAlignHOL at width >= 8. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; w ' i is getLsbD i. Original HOL probe alignment_align_probe kernel-replayed in Flapjack/Test/AlignmentParity.lean. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_alignment_words_typed_probe.out `byte_align_def_typed` re-confirms the capture confirms `LOG2 (dimindex (:α) DIV 8)`; the Lean rendering uses the specified `holLOG2` on `width / 8`, so sub-byte widths keep HOL's unconstrained `LOG2 0`."
   },
   {
     "hol_path": "HOL/src/n-bit/alignmentScript.sml",
@@ -70071,7 +70071,7 @@
     "lean_name": "holByteAligned",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.4): alignmentScript.sml:27-29 byte_aligned w = aligned (LOG2 (dimindex (:'a) DIV 8)) w, literal over holAligned and holLOG2. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; w ' i is getLsbD i. Original HOL probe alignment_align_probe kernel-replayed in Flapjack/Test/AlignmentParity.lean."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.4): alignmentScript.sml:27-29 byte_aligned w = aligned (LOG2 (dimindex (:'a) DIV 8)) w, literal over holAligned and holLOG2. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; w ' i is getLsbD i. Original HOL probe alignment_align_probe kernel-replayed in Flapjack/Test/AlignmentParity.lean. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_alignment_words_typed_probe.out `byte_aligned_def_typed` re-confirms the capture confirms `LOG2 (dimindex (:α) DIV 8)`; the Lean rendering uses the specified `holLOG2` on `width / 8`."
   },
   {
     "hol_path": "HOL/src/n-bit/wordsScript.sml",
@@ -70080,7 +70080,7 @@
     "lean_name": "holWordSlice",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.4): wordsScript.sml:238-241 word_slice h l = λw. FCP i. l ≤ i ∧ i ≤ MIN h ^HB ∧ w ' i, literal: ^HB is width - 1, MIN is min, and FCP over the word carrier is the untagged holFcpWord whose bit i < width is the predicate (getLsbD_holFcpWord). Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; w ' i is getLsbD i. Original HOL probe alignment_align_probe kernel-replayed in Flapjack/Test/AlignmentParity.lean."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.10.25.4): wordsScript.sml:238-241 word_slice h l = λw. FCP i. l ≤ i ∧ i ≤ MIN h ^HB ∧ w ' i, literal: ^HB is width - 1, MIN is min, and FCP over the word carrier is the untagged holFcpWord whose bit i < width is the predicate (getLsbD_holFcpWord). Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word to BitVec width with [NeZero width] discharging dimindex(:'a) >= 1; w ' i is getLsbD i. Original HOL probe alignment_align_probe kernel-replayed in Flapjack/Test/AlignmentParity.lean. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_alignment_words_typed_probe.out `word_slice_def_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
   },
   {
     "hol_path": "cakeml/misc/miscScript.sml",
@@ -73185,7 +73185,7 @@
     "hol_path": "HOL/src/n-bit/wordsScript.sml",
     "hol_name": "w2s_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-sol-c source comparison: Source76: arbitrary base/converter and unsigned word projection then n2s. words_as_type_indexed_bitvec translates positive HOL dimension to width/NeZero; no bounds premise. Reviewed canonical HolChar result. Original numeric_formatting probe and70matching kernel fixtures cover all six stages.",
+    "reviewer": "flapjack-sol-c source comparison: Source76: arbitrary base/converter and unsigned word projection then n2s. words_as_type_indexed_bitvec translates positive HOL dimension to width/NeZero; no bounds premise. Reviewed canonical HolChar result. Original numeric_formatting probe and70matching kernel fixtures cover all six stages. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_alignment_words_typed_probe.out `w2s_def_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise.",
     "words_as_type_indexed_bitvec": true
   },
   {
@@ -73194,7 +73194,7 @@
     "hol_path": "HOL/src/n-bit/wordsScript.sml",
     "hol_name": "word_to_hex_string_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-sol-c source comparison: Source114: exact partial application w2s16HEX at arbitrary positive word dimension. words_as_type_indexed_bitvec records width/NeZero. Original character-list result and leading-zero behavior retained. Original numeric_formatting probe and70matching kernel fixtures cover all six stages.",
+    "reviewer": "flapjack-sol-c source comparison: Source114: exact partial application w2s16HEX at arbitrary positive word dimension. words_as_type_indexed_bitvec records width/NeZero. Original character-list result and leading-zero behavior retained. Original numeric_formatting probe and70matching kernel fixtures cover all six stages. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_alignment_words_typed_probe.out `word_to_hex_string_def_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise.",
     "words_as_type_indexed_bitvec": true
   },
   {
@@ -73204,7 +73204,7 @@
     "hol_name": "word_replicate_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol-c source comparison: pinned HOL wordsScript587-590 FCP i. i<n*dimindex(:a) AND w raw-index(i MOD dimindex(:a)). Lean uses the reviewed holFcpWord and same guard/modulo/index; positive input width implies modulo index in range so getLsbD matches raw FCP access. Independent HOL input/output word dimensions translate to inputWidth/outputWidth with separate NeZero obligations under words_as_type_indexed_bitvec. No count/bound premise or fixed-width restriction; output truncation and bits beyond requested repeats match. Sixteen fresh original full word numeric observations and kernel fixtures cover distinct widths, zero/large counts, truncation and zero filling."
+    "reviewer": "flapjack-sol-c source comparison: pinned HOL wordsScript587-590 FCP i. i<n*dimindex(:a) AND w raw-index(i MOD dimindex(:a)). Lean uses the reviewed holFcpWord and same guard/modulo/index; positive input width implies modulo index in range so getLsbD matches raw FCP access. Independent HOL input/output word dimensions translate to inputWidth/outputWidth with separate NeZero obligations under words_as_type_indexed_bitvec. No count/bound premise or fixed-width restriction; output truncation and bits beyond requested repeats match. Sixteen fresh original full word numeric observations and kernel fixtures cover distinct widths, zero/large counts, truncation and zero filling. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_alignment_words_typed_probe.out `word_replicate_def_typed` re-confirms the capture confirms independent input and output widths; the Lean `holWordReplicate` keeps both width parameters and the `n * dimindex`/`MOD` clause."
   },
   {
     "lean_path": "Flapjack/NamespaceHOL.lean",
@@ -111088,7 +111088,7 @@
     "hol_name": "aligned_add_sub",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original alignmentScript 182-196: ∀p a b. aligned p b ⇒ (aligned p (a + b) ⇔ aligned p a) ∧ (aligned p (a − b) ⇔ aligned p a), for every p including p ≥ dimindex; Bool aligned with ⇔ as Bool equality. Typed capture pan_to_target_library_lemmas probe (show_types, no hypotheses). No added premise."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original alignmentScript 182-196: ∀p a b. aligned p b ⇒ (aligned p (a + b) ⇔ aligned p a) ∧ (aligned p (a − b) ⇔ aligned p a), for every p including p ≥ dimindex; Bool aligned with ⇔ as Bool equality. Typed capture pan_to_target_library_lemmas probe (show_types, no hypotheses). No added premise. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_alignment_words_typed_probe.out `aligned_add_sub_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BackendProof/CompileLab.lean",

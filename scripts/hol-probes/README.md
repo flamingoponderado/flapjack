@@ -10020,3 +10020,14 @@ the Lean renderings. Regenerate with
 `HOL_PROBE_ONLY=hol_byte_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean
 correspondence.
+
+`hol_alignment_words_typed_probe.out` captures the typed statements of the HOL
+`alignment` declarations and `words` declarations ported in
+`Flapjack/Misc/Alignment.lean` and `Flapjack/Misc/Words/*.lean` from the built
+HOL4 core theories (no rebuild): `align_def`, `aligned_def`, `byte_align_def`,
+`byte_aligned_def`, `aligned_add_sub`, `word_slice_def`, `w2s_def`,
+`word_to_hex_string_def` and `word_replicate_def` (with its independent input
+and output widths). Regenerate with
+`HOL_PROBE_ONLY=hol_alignment_words_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
