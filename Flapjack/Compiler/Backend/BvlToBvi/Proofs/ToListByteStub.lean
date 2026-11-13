@@ -8,6 +8,14 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileFromListByte
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value)
 
+namespace ToListByteCarrier
+/-- Canonical BVI reference-map state roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end ToListByteCarrier
+
 /-- The byte-array reader returns the accumulator when its index is zero.
 Untagged pending BVI evaluator and dispatcher review. -/
 theorem evaluate_toListByte_zero {C F : Type} (acc : Value) (ptr : Nat) (flag : Bool)
@@ -100,15 +108,24 @@ theorem evaluate_toListByte_step {C F : Type} (byte : BitVec 8) (index ptr : Nat
   simp [recRun]
 
 /-- Reading the array backwards constructs the encoded list in its original
-order. Untagged pending BVI evaluator and dispatcher review. -/
+order. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "evaluate_ToListByte_code"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_toListByte {C F : Type} (front rest : List (BitVec 8))
-    (ptr : Nat) (flag mutableRef : Bool) (state : BviSem.BviState C F)
-    (lookup : state.refs.lookup ptr = some (.byteArray mutableRef (front ++ rest)))
-    (code : sptLookup toListByteLocation state.code = some toListByteCode) :
+    (ptr : Nat) (state : Flapjack.Compiler.Backend.BviSem.BviState C F)
+    (flag mutableRef : Bool)
+    (premises : sptLookup toListByteLocation state.code = some (3, toListByteCode.2) ∧
+      state.refs.lookup ptr = some (.byteArray mutableRef (front ++ rest))) :
     ∃ clock, BviSem.evaluate [toListByteCode.2]
       [BvlSem.listToValue (rest.map (fun byte => .number byte.toNat)),
         .number front.length, .refPtr flag ptr] (BviProps.incClock clock state) =
-      (.val [BvlSem.listToValue ((front ++ rest).map (fun byte => .number byte.toNat))], state) := by
+      (.val [BvlSem.listToValue (front.map (fun byte => .number byte.toNat) ++
+        rest.map (fun byte => .number byte.toNat))],
+        { state with refs := state.refs.updateEq (ptr, .byteArray mutableRef (front ++ rest)) }) := by
+  obtain ⟨code, lookup⟩ := premises
+  change sptLookup toListByteLocation state.code = some toListByteCode at code
+  rw [updateEq_existing state.refs ptr (.byteArray mutableRef (front ++ rest)) lookup]
+  simp only [← List.map_append]
   induction front using List.reverseRecOn generalizing rest with
   | nil =>
     refine ⟨0, ?_⟩

@@ -18,7 +18,12 @@ theorem evaluate_toListByteBody {C F : Type} (bytes : List (BitVec 8))
       [.op (.blockOp (.cons 0)) [], .op (.memOp .lengthByte) [.var 0], .var 0] none]
       (.refPtr flag ptr :: env) (BviProps.incClock clock state) =
       (.val [BvlSem.listToValue (bytes.map (fun b => .number b.toNat))], state) := by
-  obtain ⟨clock, stubRun⟩ := evaluate_toListByte bytes [] ptr flag mutableRef state (by simpa using lookup) code
+  obtain ⟨clock, sourceRun⟩ := evaluate_toListByte bytes [] ptr state flag mutableRef ⟨code, by simpa using lookup⟩
+  have stubRun : BviSem.evaluate [toListByteCode.2]
+      [BvlSem.listToValue ([] : List Value), .number bytes.length, .refPtr flag ptr]
+      (BviProps.incClock clock state) =
+        (.val [BvlSem.listToValue (bytes.map (fun b => .number b.toNat))], state) := by
+    simpa [updateEq_existing state.refs ptr (.byteArray mutableRef bytes) lookup] using sourceRun
   refine ⟨clock + 1, ?_⟩
   let start := BviProps.incClock (clock + 1) state
   let input : List Value := .refPtr flag ptr :: env
