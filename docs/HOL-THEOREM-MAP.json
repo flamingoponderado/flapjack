@@ -130492,6 +130492,18 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AllocGlobalStub.lean",
+  "hol_name": "evaluate_AllocGlobal_code",
+  "lean_name": "evaluate_allocGlobal",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": [
+    "refs"
+  ],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed source local proof replay in bvl_to_bvi_copy_globals_probe.out: the original lookup, bound, global and code premises, existential pointer, clock and extra capacity, conditional freshness, capacity bound and complete evaluation state update are retained with independent compiler and FFI types. Lookup absence expresses nonmembership in the canonical refs domain. The BVI state roundtrip covers refs; the evaluator inherits the reals_as_rational_cuts assumption."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/BoundEvaluation.lean",
   "hol_name": "bEval_bVarBound",
   "lean_name": "evaluate_bVarBound",

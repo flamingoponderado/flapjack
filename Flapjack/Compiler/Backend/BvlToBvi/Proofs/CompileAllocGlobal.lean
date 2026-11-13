@@ -63,7 +63,8 @@ theorem simulation_allocGlobal {C F : Type} (arguments : List Bvl.Exp)
                 have bound : middle.globals.length ≤ fields.length := by simp [fields]
                 have copyCode : sptLookup copyGlobalsLocation targetNext.code = some copyGlobalsCode := relatedNext.2.2.2.2.2.2.2.1
                 obtain ⟨newPtr, stubClock, extra, fresh, capacity, stubRun⟩ :=
-                  evaluate_allocGlobal ptr middle.globals.length count fields targetNext globalPtr lookup bound copyCode
+                  evaluate_allocGlobal ptr middle.globals.length count fields targetNext
+                    ⟨lookup, bound, globalPtr, copyCode⟩
                 have relFinal := stateRel_allocGlobal newRelocate middle targetNext ptr newPtr count extra fields relatedNext globalPtr lookup fresh capacity
                 let added := stubClock + 1
                 have shifted := BviProps.evaluate_inv_clock argsCode (env.map (adjustBv newRelocate))

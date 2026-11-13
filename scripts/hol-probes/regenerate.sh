@@ -9470,7 +9470,7 @@ run_probe bvl_to_bvi_source_probeScript.sml bvl_to_bvi_source_probe.out \
   "$cake_dir/compiler/backend"
 
 run_probe bvl_to_bvi_copy_globals_probeScript.sml bvl_to_bvi_copy_globals_probe.out \
-  copy_globals_replay copy_globals_generalized \
+  copy_globals_replay copy_globals_generalized alloc_global_replay \
   "$cake_dir/compiler/backend/proofs/bvl_to_bviProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 

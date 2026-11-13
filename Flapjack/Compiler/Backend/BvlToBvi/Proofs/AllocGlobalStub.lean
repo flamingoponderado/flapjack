@@ -8,6 +8,14 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CopyGlobalsStub
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value)
 
+namespace AllocGlobalCarrier
+/-- Canonical BVI reference-map state roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end AllocGlobalCarrier
+
 /-- The global allocator reads the current size and increments it in the
 existing array before deciding whether to grow that array. The continuation
 is the allocator's actual conditional. Untagged pending evaluator and
@@ -256,13 +264,14 @@ theorem evaluate_allocGlobal_grow {C F : Type} (ptr used count : Nat) (fields : 
   simp [clocks, finalCopy, oldFields, size]
 
 /-- The allocating-globals stub either reuses the existing array or replaces
-it with a fresh larger one, preserving all old entries. Untagged pending BVI
-evaluator and dispatcher correspondence review. -/
+it with a fresh larger one, preserving all old entries. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "evaluate_AllocGlobal_code"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_allocGlobal {C F : Type} (ptr n count : Nat) (fields : List Value)
-    (state : BviSem.BviState C F) (global : state.global = some ptr)
-    (lookup : state.refs.lookup ptr = some (.valueArray (.number (Int.ofNat (n + 1)) :: fields)))
-    (_bound : n ≤ fields.length)
-    (code : sptLookup copyGlobalsLocation state.code = some copyGlobalsCode) :
+    (state : Flapjack.Compiler.Backend.BviSem.BviState C F)
+    (premises : state.refs.lookup ptr = some (.valueArray (.number (Int.ofNat (n + 1)) :: fields)) ∧
+      n ≤ fields.length ∧ state.global = some ptr ∧
+      sptLookup copyGlobalsLocation state.code = some (3, copyGlobalsCode.2)) :
     ∃ newPtr clock extra, (newPtr ≠ ptr → state.refs.lookup newPtr = none) ∧
       n + count + 1 ≤ fields.length + extra ∧
       BviSem.evaluate [allocGlobalCode.2] [.number count] (BviProps.incClock clock state) =
@@ -272,6 +281,8 @@ theorem evaluate_allocGlobal {C F : Type} (ptr n count : Nat) (fields : List Val
           refs := (state.refs.updateEq (ptr, .valueArray (.number (Int.ofNat (n + count + 1)) :: fields))).updateEq
             (newPtr, .valueArray (.number (Int.ofNat (n + count + 1)) :: fields ++
               List.replicate extra (.number 0))) }) := by
+  obtain ⟨lookup, _bound, global, code⟩ := premises
+  change sptLookup copyGlobalsLocation state.code = some copyGlobalsCode at code
   by_cases fits : (n + 1) + count < fields.length + 1
   · refine ⟨ptr, 0, 0, ?_, ?_, ?_⟩
     · simp
