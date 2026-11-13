@@ -41,3 +41,16 @@ val env_rel_LOOKUP_SOME_replay = Q.prove
    \\ first_x_assum match_mp_tac
    \\ Cases_on `h'` \\ fs [env_rel_def]);
 val _ = show "env_rel_LOOKUP_SOME_replay" env_rel_LOOKUP_SOME_replay;
+(* Replay the original local unmapped-index proof. *)
+val env_rel_LLOOKUP_NONE_replay = Q.prove
+  (`!ax env env2 n d.
+      env_rel ax d env env2 /\
+      LLOOKUP ax n = NONE /\
+      n < LENGTH env ==>
+      n+d < LENGTH env2 /\
+      EL (n+d) env2 = EL n env`,
+   Induct THEN1 (fs [env_rel_def,LLOOKUP_def,EL_DROP])
+   \\ Cases_on `env` \\ Cases_on `env2` \\ fs [env_rel_def]
+   \\ rw [] \\ Cases_on `n` \\ fs []
+   \\ res_tac \\ fs [LLOOKUP_def] \\ rfs [] \\ fs [ADD_CLAUSES]);
+val _ = show "env_rel_LLOOKUP_NONE_replay" env_rel_LLOOKUP_NONE_replay;

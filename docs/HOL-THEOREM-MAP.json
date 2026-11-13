@@ -491,6 +491,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "env_rel_LLOOKUP_NONE",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/Environment.lean",
+    "lean_name": "envRel_lookupNone",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: all five binders, the original environment relation, absent offset and source-bound premises, and both target-bound and HOL EL equality conclusions match. Nonempty reflects HOL type inhabitation. The original local proof is replayed with inferred types."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
     "hol_name": "v_rel_def",
     "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/Environment.lean",
     "lean_name": "vRel",

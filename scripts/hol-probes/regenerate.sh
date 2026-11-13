@@ -740,7 +740,7 @@ run_probe bvi_let_compile_probeScript.sml bvi_let_compile_probe.out \
   "$cake_dir/compiler/backend/bvi_letScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvi_let_proof_probeScript.sml bvi_let_proof_probe.out \
-  v_rel env_rel env_rel_length env_rel_MAP evaluate_env_rel compile_thm evaluate_compile_exp dest_var_code_labels compile_code_labels compile_exp_code_labels env_rel_REPLICATE_0_replay bvi_exp_size_def exp_size_APPEND IMP_COMM compile_APPEND compile_CONS evaluate_SNOC_Rval env_rel_LOOKUP_SOME_replay \
+  v_rel env_rel env_rel_length env_rel_MAP evaluate_env_rel compile_thm evaluate_compile_exp dest_var_code_labels compile_code_labels compile_exp_code_labels env_rel_REPLICATE_0_replay bvi_exp_size_def exp_size_APPEND IMP_COMM compile_APPEND compile_CONS evaluate_SNOC_Rval env_rel_LOOKUP_SOME_replay env_rel_LLOOKUP_NONE_replay \
   "$cake_dir/compiler/backend/proofs/bvi_letProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe bvl_to_bvi_value_rel_probeScript.sml bvl_to_bvi_value_rel_probe.out \

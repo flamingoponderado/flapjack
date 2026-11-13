@@ -79,6 +79,19 @@ theorem envRel_lookupSome {α : Type} [Nonempty α] (env env2 : List α) (ax : L
           simp only [List.getElem?_cons_succ] at h
           simpa [vRel, Flapjack.holEl] using ih env env2 n ⟨h.1.2, h.2⟩
 
+/-- An unmapped in-bounds index is found at the source index plus the
+environment displacement. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "env_rel_LLOOKUP_NONE"]
+theorem envRel_lookupNone {α : Type} [Nonempty α] (ax : List Nat) (env env2 : List α) (n d : Nat)
+    (h : envRel ax d env env2 ∧ ax[n]? = none ∧ n < env.length) :
+    n + d < env2.length ∧ Flapjack.holEl (n + d) env2 = Flapjack.holEl n env := by
+  have sourceLookup : env[n]? = some (Flapjack.holEl n env) := by
+    rw [List.getElem?_eq_getElem h.2.2, Flapjack.holEl_eq_getElem n env h.2.2]
+  have targetLookup := envRel_lookup ax d env env2 h.1 n (Flapjack.holEl n env) sourceLookup
+  simp only [h.2.1, Option.getD_none] at targetLookup
+  obtain ⟨bound, valueEq⟩ := List.getElem?_eq_some_iff.mp targetLookup
+  exact ⟨bound, (Flapjack.holEl_eq_getElem (n + d) env2 bound).trans valueEq⟩
+
 /-- Prefixing matching values gives zero displacements for the new entries. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "env_rel_REPLICATE_0"]
 theorem envRel_replicate {α : Type} (values : List α) (offsets : List Nat)
