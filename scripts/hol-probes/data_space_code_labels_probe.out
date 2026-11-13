@@ -7,3 +7,4 @@ do_stack_with_locals_typed=∀(op :closLang$op) (vs :v list) (s :(α, β) dataSe
 locals_ok_def_typed=∀(l1 :α sptree$num_map) (l2 :α sptree$num_map). locals_ok l1 l2 ⇔ ∀(v :num) (x :α). (lookup v l1 :α option) = SOME x ⇒ (lookup v l2 :α option) = SOME x
 locals_ok_get_vars_typed=∀(x :num list) (w :α list). locals_ok (s :α sptree$num_map) (l :α sptree$num_map) ∧ get_vars x s = SOME w ⇒ get_vars x l = SOME w
 locals_ok_cut_env_typed=locals_ok (l1 :α sptree$num_map) (l2 :α sptree$num_map) ∧ cut_env (names :sptree$num_set) l1 = SOME (x :α sptree$num_map) ⇒ cut_env names l2 = SOME x
+locals_ok_refl_typed=∀(l :α sptree$num_map). locals_ok l l

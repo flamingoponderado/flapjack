@@ -138522,5 +138522,13 @@
     "lean_name": "cutEnv_of_subspt",
     "statement_status": "reviewed_exact",
     "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary payload, names, source and target maps, and result tree; original locals_ok and successful source cut premises imply the identical target tree, with no wellformedness or extra domain premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
+    "hol_name": "locals_ok_refl",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/Locals.lean",
+    "lean_name": "localsOk_refl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary sparse map and payload type, no premises, and the same reflexive locals_ok conclusion using the reviewed pointwise lookup characterization."
   }
 ]

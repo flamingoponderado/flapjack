@@ -11,3 +11,4 @@ val _ = (print "do_stack_with_locals_typed="; print_term (concl data_spaceProofT
 val _ = (print "locals_ok_def_typed="; print_term (concl dataPropsTheory.locals_ok_def); print "\n");
 val _ = (print "locals_ok_get_vars_typed="; print_term (concl dataPropsTheory.locals_ok_get_vars); print "\n");
 val _ = (print "locals_ok_cut_env_typed="; print_term (concl dataPropsTheory.locals_ok_cut_env); print "\n");
+val _ = (print "locals_ok_refl_typed="; print_term (concl dataPropsTheory.locals_ok_refl); print "\n");

@@ -37,8 +37,7 @@ theorem simulationWitness_of_equal {C F : Type} (program : DataLang.Prog)
       sptSubspt sourceNext.locals out := by
   refine ⟨sourceNext.locals, sourceNext.safeForSpace, sourceNext.peakHeapLength, sourceNext.stackMax, ?_, ?_⟩
   · simpa using run
-  · intro key member
-    exact ⟨member, rfl⟩
+  · exact localsOk_refl _
 
 /-- Callee entry overwrites the caller locals. -/
 theorem callEnv_changeLocals {C F : Type} (source : State C F) (locals : Spt DataSem.Value)
@@ -106,8 +105,7 @@ theorem simulationFor_annotatedAssign {C F : Type} (dest : Nat) (op : ClosLang.O
           simp [DataSem.evaluate, invalid, read, targetRead, cutStateOpt, cutState, cut, targetCut]
         refine ⟨sourceNext.locals, sourceNext.safeForSpace, sourceNext.peakHeapLength, sourceNext.stackMax, ?_, ?_⟩
         · simpa [compile, space, pMakeSpace] using same.trans run
-        · intro key member
-          exact ⟨member, rfl⟩
+        · exact localsOk_refl _
 
 /-- An unannotated assignment preserves the simulation when the target has
 additional locals; primitive accounting may change the three resource fields. -/
@@ -200,8 +198,7 @@ theorem simulationFor_makeSpace {C F : Type} (amount : Nat) (names : NumSet) :
     · change DataSem.evaluate (.seq (.makeSpace amount names) .skip) { source with locals := locals } = _
       rw [DataSem.evaluate_seq_skip]
       simp [DataSem.evaluate, targetCut, addSpace]
-    · intro key member
-      exact ⟨member, rfl⟩
+    · exact localsOk_refl _
 
 /-- A value return reads the same values and flushes both environments. -/
 theorem simulationFor_return {C F : Type} (names : List Nat) :
@@ -246,8 +243,7 @@ theorem simulationFor_raise {C F : Type} (name : Nat) :
       obtain ⟨rfl, rfl⟩ := run
       refine ⟨jumped.locals, jumped.safeForSpace, jumped.peakHeapLength, jumped.stackMax, ?_, ?_⟩
       · simp [compile, space, pMakeSpace, DataSem.evaluate, targetRead, targetJump]
-      · intro key member
-        exact ⟨member, rfl⟩
+      · exact localsOk_refl _
 
 /-- Calls use identical callee states after reading their arguments and,
 for non-tail calls, cutting the explicit saved environment. -/

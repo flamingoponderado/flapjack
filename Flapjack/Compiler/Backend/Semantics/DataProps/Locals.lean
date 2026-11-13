@@ -20,6 +20,11 @@ theorem localsOk_def {α : Type} (source target : Spt α) :
       ∀ key value, sptLookup key source = some value → sptLookup key target = some value :=
   sptSubsptLookup source target
 
+/-- Every local environment extends itself. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "locals_ok_refl"]
+theorem localsOk_refl {α : Type} (locals : Spt α) : localsOk locals locals := by
+  exact (localsOk_def locals locals).2 (fun _ _ found => found)
+
 /-- Extending locals preserves every successful variable-list read. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "locals_ok_get_vars"]
 theorem getVars_of_subspt {α : Type} (names : List Nat) (source target : Spt α)
