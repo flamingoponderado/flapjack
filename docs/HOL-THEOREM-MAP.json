@@ -14312,6 +14312,102 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_Int",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxInt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_int_typed: full approximation carrier and both original ordering equivalences agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_ClosNoInline",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxClosNoInline",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_clos_noinline_typed: full approximation carrier and both original ordering equivalences agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_Clos",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxClos",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_clos_typed: full approximation carrier and both original ordering equivalences agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_Tuple",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxTuple",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_tuple_typed: full approximation carrier, tuple tags and elementwise list relation agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "mk_Ticks_alt",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Ticks.lean",
+  "lean_name": "mkTicksAlt",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_mk_ticks_alt_typed: independently quantified zero and successor equations use the full trace and expression carriers."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "merge_assoc",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "mergeAssoc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_merge_assoc_typed: associativity ranges over all three full approximation values."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_trans",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxTrans",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_trans_typed: the original pair of ordering premises implies the full transitive conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "subapprox_merge",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "subapproxMerge",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_subapprox_merge_typed: both argument-order conclusions hold for arbitrary approximations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "better_definedg_trans",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
+  "lean_name": "betterDefinedGTrans",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_better_definedg_trans_typed: the original pair of global ordering premises implies the transitive conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "known_op_better_definedg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/KnownOp.lean",
+  "lean_name": "knownOpBetterDefinedG",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_op_better_definedg_typed: arbitrary operation and approximation arguments, exact result equation, and full global ordering conclusion agree."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
+  "hol_name": "known_better_definedg",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/KnownOp.lean",
+  "lean_name": "knownBetterDefinedG",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_better_definedg_full_typed: arbitrary configuration, full expression list, approximation environment and exact result equation imply the full global ordering."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
+  "hol_name": "known_preserves_fv_max",
+  "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/TraversalFreeVars.lean",
+  "lean_name": "knownPreservesFvMax",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared known_preserves_fv_max_typed: arbitrary optimizer inputs, result equation and source free-variable bound imply the bound on the full transformed expression list."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml",
   "hol_name": "subapprox_def",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnownProps/Merge.lean",
   "lean_name": "subapprox",
@@ -132888,6 +132984,103 @@
   "lean_name": "bagUnion",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the source and typed bag_union_def capture: both operands have the same arbitrary element type and union adds natural multiplicities pointwise."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "BAG_INSERT",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "bagInsert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared bag_insert_typed: insertion increments the chosen element and preserves every other multiplicity, for an arbitrary element type."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "FINITE_BAG",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "finiteBag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared finite_bag_typed: the original induction principle quantifies over all predicates on bags and requires empty and insertion closure."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "FINITE_EMPTY_BAG",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "finiteEmptyBag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared finite_empty_bag_typed: the empty bag is finite for arbitrary element type."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "FINITE_BAG_INSERT",
+  "hol_line": 1262,
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "finiteBagInsert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared finite_bag_insert_typed: for any finite bag, insertion of every element yields a finite bag."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml",
+  "hol_name": "FINITE_BAG_UNION_1",
+  "lean_path": "Flapjack/Misc/Bag.lean",
+  "lean_name": "finiteBagUnion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the source local theorem and finite_bag_union_1_replay_typed: two arbitrary finite bags over one element type have a finite union."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "flat_FINITE_BAG_set_globals",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/FiniteGlobals.lean",
+  "lean_name": "flatFiniteBagSetGlobals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared flat_finite_bag_globals_typed: both all-expression and all-expression-list finite bag conclusions hold over the full flat syntax."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "clos_FINITE_BAG_set_globals",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/FiniteGlobals.lean",
+  "lean_name": "closFiniteBagSetGlobals",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared clos_finite_bag_globals_typed: both all-expression and all-expression-list finite bag conclusions hold over the full closure syntax."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "BAG_IMAGE_FOLDR_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/FiniteGlobals.lean",
+  "lean_name": "bagImageFoldrLemma",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local source theorem and bag_image_foldr_replay_typed; bag_image_suc_finite_typed proves the source BAG_IMAGE SUC agrees with shiftGlobalBag for the finite fold and its finite elements."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "contains_App_SOME_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
+  "lean_name": "containsAppSomeAppend",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared contains_app_append_typed: the full closure application predicate over appended lists is equivalent to the original disjunction."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "FST_SND_EQ_CASE",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
+  "lean_name": "fstSndEqCase",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared fst_snd_eq_case_typed: both projection equalities retain independently quantified input component types."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "EVERY_IMP_HD",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
+  "lean_name": "everyImpHd",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every_imp_hd_typed: the original EVERY and nonempty-list premises imply the head predicate; the latter premise supplies holHd's element witness without an extra typeclass premise."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "IMP_PAIR",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
+  "lean_name": "impPair",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local source theorem and imp_pair_replay_typed: arbitrary pair equality implies both original projection equalities."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml",

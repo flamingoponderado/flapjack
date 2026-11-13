@@ -113,20 +113,14 @@ theorem localEnvBounded_let_named {C F : Type} [Nonempty C]
           exact bodySim
         · rw [sourceOuter, flatOuter]
           cases result : (EvaluateHOL.evaluate middleSource
-              { sourceEnv with v := nsBind name value sourceEnv.v } [body]).2 with
-          | err error =>
-            cases error with
-            | abort error => simp
-            | raise value =>
-              rw [result] at bodyPost
+              { sourceEnv with v := nsBind name value sourceEnv.v } [body]).2
+          case' err error => cases error
+          all_goals first
+            | trivial
+            | rw [result] at bodyPost
               obtain ⟨growth, finalInvariant, finalGeneration, bodyForward⟩ := bodyPost
               exact ⟨firstGrowth.trans growth, finalInvariant, finalGeneration,
                 oracForwardRel_trans interp _ _ _ ⟨firstForward, bodyForward⟩⟩
-          | val values =>
-            rw [result] at bodyPost
-            obtain ⟨growth, finalInvariant, finalGeneration, bodyForward⟩ := bodyPost
-            exact ⟨firstGrowth.trans growth, finalInvariant, finalGeneration,
-              oracForwardRel_trans interp _ _ _ ⟨firstForward, bodyForward⟩⟩
 
 
 /-- Compose localEnvBounded_if in any related local environment. -/
@@ -217,20 +211,14 @@ theorem localEnvBounded_if {C F : Type} [Nonempty C]
             rw [sourceOuter, flatOuter]
             exact branchSim
           · rw [sourceOuter, flatOuter]
-            cases result : (EvaluateHOL.evaluate middleSource sourceEnv [if b then yes else no]).2 with
-            | err error =>
-              cases error with
-              | abort error => simp
-              | raise value =>
-                rw [result] at branchPost
+            cases result : (EvaluateHOL.evaluate middleSource sourceEnv [if b then yes else no]).2
+            case' err error => cases error
+            all_goals first
+              | trivial
+              | rw [result] at branchPost
                 obtain ⟨growth, finalInvariant, finalGeneration, branchForward⟩ := branchPost
                 exact ⟨condGrowth.trans growth, finalInvariant, finalGeneration,
                   oracForwardRel_trans interp _ _ _ ⟨condForward, branchForward⟩⟩
-            | val values =>
-              rw [result] at branchPost
-              obtain ⟨growth, finalInvariant, finalGeneration, branchForward⟩ := branchPost
-              exact ⟨condGrowth.trans growth, finalInvariant, finalGeneration,
-                oracForwardRel_trans interp _ _ _ ⟨condForward, branchForward⟩⟩
 
 
 
@@ -326,20 +314,14 @@ theorem localEnvBounded_log {C F : Type} [Nonempty C]
               rw [sourceOuter, flatOuter, if_pos takeRight, if_pos takeRight]
               exact rightSim
             · rw [sourceOuter, flatOuter, if_pos takeRight, if_pos takeRight]
-              cases result : (EvaluateHOL.evaluate middleSource sourceEnv [right]).2 with
-              | err error =>
-                cases error with
-                | abort error => simp
-                | raise value =>
-                  rw [result] at rightPost
+              cases result : (EvaluateHOL.evaluate middleSource sourceEnv [right]).2
+              case' err error => cases error
+              all_goals first
+                | trivial
+                | rw [result] at rightPost
                   obtain ⟨growth, finalInvariant, finalGeneration, rightForward⟩ := rightPost
                   exact ⟨leftGrowth.trans growth, finalInvariant, finalGeneration,
                     oracForwardRel_trans interp _ _ _ ⟨leftForward, rightForward⟩⟩
-              | val values =>
-                rw [result] at rightPost
-                obtain ⟨growth, finalInvariant, finalGeneration, rightForward⟩ := rightPost
-                exact ⟨leftGrowth.trans growth, finalInvariant, finalGeneration,
-                  oracForwardRel_trans interp _ _ _ ⟨leftForward, rightForward⟩⟩
           · refine ⟨middleGenv, ?_, ?_⟩
             · unfold ExprSim
               rw [sourceOuter, flatOuter, if_neg takeRight, if_neg takeRight]
@@ -424,20 +406,14 @@ theorem localEnvBounded_let_anonymous {C F : Type} [Nonempty C]
           rw [sourceOuter, flatOuter]
           exact bodySim
         · rw [sourceOuter, flatOuter]
-          cases result : (EvaluateHOL.evaluate middleSource sourceEnv [body]).2 with
-          | err error =>
-            cases error with
-            | abort error => simp
-            | raise value =>
-              rw [result] at bodyPost
+          cases result : (EvaluateHOL.evaluate middleSource sourceEnv [body]).2
+          case' err error => cases error
+          all_goals first
+            | trivial
+            | rw [result] at bodyPost
               obtain ⟨growth, finalInvariant, finalGeneration, bodyForward⟩ := bodyPost
               exact ⟨firstGrowth.trans growth, finalInvariant, finalGeneration,
                 oracForwardRel_trans interp _ _ _ ⟨firstForward, bodyForward⟩⟩
-          | val values =>
-            rw [result] at bodyPost
-            obtain ⟨growth, finalInvariant, finalGeneration, bodyForward⟩ := bodyPost
-            exact ⟨firstGrowth.trans growth, finalInvariant, finalGeneration,
-              oracForwardRel_trans interp _ _ _ ⟨firstForward, bodyForward⟩⟩
 
 
 
@@ -476,35 +452,15 @@ theorem localEnvBounded_raise {C F : Type} [Nonempty C]
 theorem localEnvBounded_tannot {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (limit : Nat) (expr : AstHOL.Exp) (typ : AstT) (ih : LocalEnvBoundedIH (F := F) interp transform limit expr) : LocalEnvBoundedIH (F := F) interp transform limit (.tannot expr typ) := by
-  intro genv start finish other source flat env sourceLocal flatEnv traces trace map gen clockBound localRel envInv tracesLen invariant generation safe
-  have exprSafe : ∀ last, EvaluateHOL.evaluate source { env with v := nsAppend sourceLocal env.v } [expr] ≠
-      (last, .err (.abort .typeError)) := by
-    intro last bad
-    apply safe last
-    simpa [EvaluateHOL.evaluate] using bad
-  obtain ⟨next, sim, post⟩ := ih genv start finish other source flat env sourceLocal flatEnv traces trace map gen clockBound localRel envInv tracesLen
-    invariant generation exprSafe
-  refine ⟨next, by simpa only [ExprSim, EvaluateHOL.evaluate, compileExp] using sim, ?_⟩
-  simpa only [EvaluateHOL.evaluate, compileExp] using post
+  simpa only [LocalEnvBoundedIH, LocalExpressionStep, ExprSim, EvaluateHOL.evaluate, compileExp] using ih
 
 
 /-- Compose localEnvBounded_lannot in any related local environment. -/
 theorem localEnvBounded_lannot {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (limit : Nat) (expr : AstHOL.Exp) (loc : Flapjack.Misc.Location.Locs) (ih : LocalEnvBoundedIH (F := F) interp transform limit expr) : LocalEnvBoundedIH (F := F) interp transform limit (.lannot expr loc) := by
-  intro genv start finish other source flat env sourceLocal flatEnv traces trace map gen clockBound localRel envInv tracesLen invariant generation safe
-  have exprSafe : ∀ last, EvaluateHOL.evaluate source { env with v := nsAppend sourceLocal env.v } [expr] ≠
-      (last, .err (.abort .typeError)) := by
-    intro last bad
-    apply safe last
-    cases loc
-    simpa [EvaluateHOL.evaluate] using bad
-  obtain ⟨next, sim, post⟩ := ih genv start finish other source flat env sourceLocal flatEnv traces trace map gen clockBound localRel envInv tracesLen
-    invariant generation exprSafe
-  refine ⟨next, by cases loc; simpa only [ExprSim, EvaluateHOL.evaluate, compileExp] using sim, ?_⟩
   cases loc
-  simpa only [EvaluateHOL.evaluate, compileExp] using post
-
+  simpa only [LocalEnvBoundedIH, LocalExpressionStep, ExprSim, EvaluateHOL.evaluate, compileExp] using ih
 
 
 /-- Local mutually recursive bindings preserve the arbitrary-environment

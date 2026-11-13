@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.ClosKnown.Merge
 public import Flapjack.Misc.Option
 public import Flapjack.Misc.Sptree
+public import Batteries.Data.List.Basic
 
 @[expose] public section
 
@@ -74,6 +75,47 @@ theorem mergeComm (a b : ValApprox) : mergeHOL a b = mergeHOL b a := by
         · rfl
   exact all (sizeOf a + 1) a b (by omega)
 
+private theorem mergeListLength (xs ys : List ValApprox) :
+    (mergeListHOL xs ys).length = min xs.length ys.length := by
+  simp [mergeListHOL_eq_zip]
+
+private theorem mergeListAssoc (xs ys zs : List ValApprox)
+    (hxy : xs.length = ys.length) (hyz : ys.length = zs.length)
+    (step : ∀ x ∈ xs, ∀ y z, mergeHOL x (mergeHOL y z) = mergeHOL (mergeHOL x y) z) :
+    mergeListHOL xs (mergeListHOL ys zs) = mergeListHOL (mergeListHOL xs ys) zs := by
+  induction xs generalizing ys zs with
+  | nil => cases ys <;> cases zs <;> simp_all [mergeListHOL]
+  | cons x xs ih =>
+    cases ys with
+    | nil => simp at hxy
+    | cons y ys =>
+      cases zs with
+      | nil => simp at hyz
+      | cons z zs =>
+        simp only [List.length_cons, Nat.succ.injEq] at hxy hyz
+        simp only [mergeListHOL]
+        rw [step x (by simp) y z, ih ys zs hxy hyz (fun v hv => step v (by simp [hv]))]
+
+/-- Approximation merge is associative, including nested tuples. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "merge_assoc"]
+theorem mergeAssoc (a b c : ValApprox) :
+    mergeHOL a (mergeHOL b c) = mergeHOL (mergeHOL a b) c := by
+  have all : ∀ n (a b c : ValApprox), sizeOf a < n →
+      mergeHOL a (mergeHOL b c) = mergeHOL (mergeHOL a b) c := by
+    intro n
+    induction n using Nat.strongRecOn with
+    | ind n ih =>
+      intro a b c bound
+      cases a <;> cases b <;> cases c <;> simp [mergeHOL] at * <;>
+        repeat' first | split | simp_all [mergeHOL, beq_iff_eq, mergeListLength] | omega
+      apply mergeListAssoc
+      · omega
+      · omega
+      · intro x member y z
+        have small := List.sizeOf_lt_of_mem member
+        exact ih (sizeOf x + 1) (by omega) x y z (by omega)
+  exact all (sizeOf a + 1) a b c (by omega)
+
 private theorem mergeListIdem (xs : List ValApprox)
     (step : ∀ x ∈ xs, mergeHOL x x = x) : mergeListHOL xs xs = xs := by
   induction xs with
@@ -110,6 +152,26 @@ def subapprox (a1 a2 : ValApprox) : Prop := mergeHOL a1 a2 = a2
 @[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_refl"]
 theorem subapproxRefl (a : ValApprox) : subapprox a a := mergeIdem a
 
+/-- Approximation ordering is transitive. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_trans"]
+theorem subapproxTrans (a1 a2 a3 : ValApprox)
+    (h : subapprox a1 a2 ∧ subapprox a2 a3) : subapprox a1 a3 := by
+  obtain ⟨h1, h2⟩ := h
+  unfold subapprox at *
+  calc
+    mergeHOL a1 a3 = mergeHOL a1 (mergeHOL a2 a3) := by rw [h2]
+    _ = mergeHOL (mergeHOL a1 a2) a3 := mergeAssoc _ _ _
+    _ = a3 := by rw [h1, h2]
+
+/-- Each operand is below the merge in either argument order. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_merge"]
+theorem subapproxMerge (a b : ValApprox) :
+    subapprox a (mergeHOL a b) ∧ subapprox a (mergeHOL b a) := by
+  have first : subapprox a (mergeHOL a b) := by
+    unfold subapprox
+    rw [mergeAssoc, mergeIdem]
+  exact ⟨first, by simpa [mergeComm b a] using first⟩
+
 /-- Unknown is the greatest approximation in the source ordering. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_Other"]
 theorem subapproxOther (a : ValApprox) :
@@ -121,6 +183,60 @@ theorem subapproxOther (a : ValApprox) :
 theorem subapproxImpossible (a : ValApprox) :
     (subapprox a .impossible ↔ a = .impossible) ∧ subapprox .impossible a := by
   simp [subapprox, mergeImpossible, mergeHOL]
+
+/-- Integer approximations have the original lower and upper bounds. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_Int"]
+theorem subapproxInt (a : ValApprox) (i : Int) :
+    (subapprox a (.int i) ↔ a = .int i ∨ a = .impossible) ∧
+      (subapprox (.int i) a ↔ a = .int i ∨ a = .other) := by
+  cases a <;> simp [subapprox, mergeHOL, beq_iff_eq]
+  case int j =>
+    by_cases h : j = i
+    · subst j; simp
+    · have reverse : i ≠ j := Ne.symm h
+      simp [h, reverse]
+
+/-- Non-inlineable closures have the original lower and upper bounds. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_ClosNoInline"]
+theorem subapproxClosNoInline (a : ValApprox) (m n : Nat) :
+    (subapprox a (.closNoInline m n) ↔ a = .closNoInline m n ∨ a = .impossible) ∧
+      (subapprox (.closNoInline m n) a ↔ a = .closNoInline m n ∨ a = .other) := by
+  cases a <;> simp [subapprox, mergeHOL, beq_iff_eq]
+  case closNoInline x y =>
+    by_cases hm : x = m <;> by_cases hn : y = n <;> simp [hm, hn, Ne.symm]
+
+/-- Inlineable closures have the original lower and upper bounds. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_Clos"]
+theorem subapproxClos (a : ValApprox) (m n : Nat) (e : ClosLang.Exp) (size : Nat) :
+    (subapprox a (.clos m n e size) ↔ a = .clos m n e size ∨ a = .impossible) ∧
+      (subapprox (.clos m n e size) a ↔ a = .clos m n e size ∨ a = .other) := by
+  cases a <;> simp [subapprox, mergeHOL, beq_iff_eq]
+  case clos x y body count =>
+    by_cases hm : x = m <;> by_cases hn : y = n <;> by_cases he : body = e <;>
+      by_cases hs : count = size <;> simp [hm, hn, he, hs, Ne.symm]
+
+private theorem mergeList_eq_right_iff (xs ys : List ValApprox) :
+    (xs.length = ys.length ∧ mergeListHOL xs ys = ys) ↔
+      List.Forall₂ subapprox xs ys := by
+  induction xs generalizing ys with
+  | nil =>
+    cases ys with
+    | nil => simp [mergeListHOL]
+    | cons y ys => simp only [List.length_nil, List.length_cons, Nat.zero_ne_add_one, false_and, false_iff]; intro h; cases h
+  | cons x xs ih =>
+    cases ys with
+    | nil => simp only [List.length_cons, List.length_nil, Nat.add_one_ne_zero, false_and, false_iff]; intro h; cases h
+    | cons y ys => simp [mergeListHOL, List.forall₂_cons, subapprox, ← ih, and_left_comm]
+
+/-- Tuple approximations are ordered elementwise when their tags agree. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_Tuple"]
+theorem subapproxTuple (tag1 : Nat) (xs : List ValApprox) (tag2 : Nat) (ys : List ValApprox) :
+    subapprox (.tuple tag1 xs) (.tuple tag2 ys) ↔
+      tag1 = tag2 ∧ List.Forall₂ subapprox xs ys := by
+  have listEq := mergeList_eq_right_iff xs ys
+  by_cases len : xs.length = ys.length <;> by_cases tag : tag1 = tag2 <;>
+    simp [subapprox, mergeHOL, len, tag, beq_iff_eq] at *
+  all_goals assumption
 
 /-- Approximation ordering is antisymmetric. -/
 @[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "subapprox_antisym"]
@@ -143,5 +259,14 @@ noncomputable def betterDefinedG (g1 g2 : Spt ValApprox) : Prop :=
 theorem betterDefinedGRefl (g : Spt ValApprox) : betterDefinedG g g := by
   intro key member
   exact ⟨member, subapproxRefl _⟩
+
+/-- Better-defined global approximations compose. -/
+@[hol "cakeml/compiler/backend/proofs/clos_knownPropsScript.sml" "better_definedg_trans"]
+theorem betterDefinedGTrans (g1 g2 g3 : Spt ValApprox)
+    (h : betterDefinedG g1 g2 ∧ betterDefinedG g2 g3) : betterDefinedG g1 g3 := by
+  intro k member
+  obtain ⟨middle, first⟩ := h.1 k member
+  obtain ⟨last, second⟩ := h.2 k middle
+  exact ⟨last, subapproxTrans _ _ _ ⟨first, second⟩⟩
 
 end Flapjack.Compiler.Backend.ClosKnownProps

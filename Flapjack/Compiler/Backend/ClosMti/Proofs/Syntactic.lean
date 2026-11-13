@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Misc.Option.MapM
+public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Syntactic
 public import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMtiSyntactic
@@ -121,14 +122,6 @@ theorem everyFnVarsNone_collectApps (maxApp : Nat) (args : List Exp) (expression
   rw [run] at invariant
   simpa [everyFnVarsNone] using invariant.symm
 
-/-- The application-safety predicate distributes over appended lists. -/
-theorem containsAppSome_append (maxApp : Nat) (left right : List Exp) :
-    containsAppSome maxApp (left ++ right) ↔
-      containsAppSome maxApp left ∨ containsAppSome maxApp right := by
-  induction left with
-  | nil => simp [containsAppSome]
-  | cons head tail ih => simp [containsAppSome, ih, or_assoc]
-
 /-- Flapjack projection form of `contains_App_SOME_collect_args`, used by the
 recursive traversal proof. -/
 theorem collectArgs_containsAppSome (maxApp count : Nat) (expression : Exp) :
@@ -165,7 +158,7 @@ theorem collectApps_containsAppSome (maxApp : Nat) (args : List Exp) (expression
       by_cases fits : args.length + more.length ≤ maxApp
       · simp only [fits, if_true]
         have ih := collectApps_containsAppSome maxApp (args ++ more) head
-        simp only [List.length_append, containsAppSome_append] at ih
+        simp only [List.length_append, Flapjack.Compiler.Backend.FlatToClos.containsAppSomeAppend] at ih
         simp only [containsAppSomeExp, Option.isSome_none, Bool.false_eq_true, false_or]
         have argsSmall : ¬ maxApp < args.length := by omega
         have moreSmall : ¬ maxApp < more.length := by omega

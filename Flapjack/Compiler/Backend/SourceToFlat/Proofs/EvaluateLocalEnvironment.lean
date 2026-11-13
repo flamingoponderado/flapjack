@@ -73,28 +73,6 @@ def LocalEnvBoundedIH {C F : Type} [Nonempty C]
       { baseEnv with v := nsAppend sourceLocal baseEnv.v } flatEnv trace
       { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v } gen expr
 
-/-- Literals preserve arbitrary related local environments and both states. -/
-theorem localEnvBounded_literal {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat) (lit : Lit) :
-    LocalEnvBoundedIH (F := F) interp transform limit (.lit lit) := by
-  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen _ _ _ _ invariant generation _
-  refine ⟨genv, exprSim_literal genv _ trace _ flatEnv source flat invariant.2.2.1 lit, ?_⟩
-  simpa only [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate] using
-    And.intro (GlobalGrowth.refl genv) (And.intro invariant
-      (And.intro generation (oracForwardRel_refl interp source.evalState)))
-
-/-- Functions capture any related local environment. -/
-theorem localEnvBounded_function {C F : Type} [Nonempty C]
-    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (limit : Nat) (name : VarN) (body : AstHOL.Exp) : LocalEnvBoundedIH (F := F) interp transform limit (.fn name body) := by
-  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen _ localRel envInv length
-    invariant generation _
-  refine ⟨genv, exprSim_function genv baseMap baseEnv sourceLocal flatEnv localRel envInv traces length
-    source flat invariant.2.2.1 trace name body, ?_⟩
-  simpa only [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate] using
-    And.intro (GlobalGrowth.refl genv) (And.intro invariant
-      (And.intro generation (oracForwardRel_refl interp source.evalState)))
-
 /-- Constructing a local recursive environment preserves the factored
 source-to-flat value relation for every mutually recursive closure. -/
 theorem localRecEnv_related (genv : GlobalEnv) (baseMap : Environment)

@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.Simulation
-public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationGlobal
+public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SimulationPrimitive
 public import Flapjack.Compiler.Backend.ClosKnown.Proofs.SubsptComposition
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyCode
 

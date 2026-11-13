@@ -484,6 +484,10 @@ import Flapjack.Compiler.Backend.ClosKnown.Proofs.CodeLocations
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.CompileLength
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.InlineCodeLocations
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.TicksSyntax
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.FiniteGlobals
+import Flapjack.Compiler.Backend.ClosKnown.Proofs.TraversalFreeVars
+import Flapjack.Compiler.Backend.ClosKnownProps.Ticks
+import Flapjack.Compiler.Backend.ClosKnownProps.KnownOp
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxArity
 import Flapjack.Compiler.Backend.ClosKnown.Proofs.ApproxLabels
 import Flapjack.Compiler.Backend.BackendProps.OracleCombinators
