@@ -22,7 +22,6 @@ example : compileSing 2 [] false [] (.letCall 1 0 3 [] (.return [.var 0])) =
 
 example (argc : Nat) (exp : Bvi.Exp) :
     compileExpBounded (Bvi.expBudget exp + 1) argc exp = some (BviToData.compileExp argc exp) := by
-  apply compileExpBounded_agrees
-  omega
+  exact compileExpBounded_agrees_all _ _ _
 
 end Flapjack.Test.BviToDataTotal
