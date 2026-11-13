@@ -141,22 +141,15 @@ theorem exprSim_tuple {C F : Type} (genv : GlobalEnv) (compMap : Environment) (t
     | mk flatNext flatResult =>
       rw [flatRun] at argsSim
       obtain ⟨related, nextRel⟩ := argsSim
-      cases related with
-      | value valuesRel =>
+      cases related
+      all_goals
         unfold ExprSim
         rw [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate, sourceRun, flatRun]
         simp only [doConCheck, ↓reduceIte, buildConv]
+      case value valuesRel =>
         exact ⟨.value (.cons (valueRel_tuple genv _ _ (List.rel_reverse valuesRel)) .nil), nextRel⟩
-      | raise valueRel =>
-        unfold ExprSim
-        rw [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate, sourceRun, flatRun]
-        simp only [doConCheck, ↓reduceIte]
-        exact ⟨.raise valueRel, nextRel⟩
-      | abort error =>
-        unfold ExprSim
-        rw [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate, sourceRun, flatRun]
-        simp only [doConCheck, ↓reduceIte]
-        exact ⟨.abort error, nextRel⟩
+      case raise valueRel => exact ⟨.raise valueRel, nextRel⟩
+      case abort error => exact ⟨.abort error, nextRel⟩
 
 /-- A conditional propagates a related condition error on both sides. -/
 theorem exprSim_if_error {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
@@ -218,32 +211,19 @@ theorem exprSim_raise {C F : Type} (genv : GlobalEnv) (compMap : Environment) (t
     | mk flatNext flatResult =>
       rw [flatRun] at bodySim
       obtain ⟨related, nextRel⟩ := bodySim
-      cases sourceResult with
-      | err error =>
-        cases error with
-        | raise value =>
-          cases related with
-          | raise valueRel =>
-            unfold ExprSim
-            rw [EvaluateHOL.evaluate, sourceRun, compileExp, FlatSem.evaluate, flatRun]
+      cases related
+      all_goals
+        unfold ExprSim
+        rw [EvaluateHOL.evaluate, sourceRun, compileExp, FlatSem.evaluate, flatRun]
+      case raise valueRel => exact ⟨.raise valueRel, nextRel⟩
+      case abort error => exact ⟨.abort error, nextRel⟩
+      case value valuesRel =>
+        obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceEnv body sourceNext _ sourceRun
+        cases valuesRel with
+        | cons valueRel tail =>
+          cases tail with
+          | nil =>
+            simp only [EvaluateHOL.headValue, Flapjack.holHd]
             exact ⟨.raise valueRel, nextRel⟩
-        | abort error =>
-          cases related with
-          | abort =>
-            unfold ExprSim
-            rw [EvaluateHOL.evaluate, sourceRun, compileExp, FlatSem.evaluate, flatRun]
-            exact ⟨.abort error, nextRel⟩
-      | val values =>
-        obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceEnv body sourceNext values sourceRun
-        cases related with
-        | value valuesRel =>
-          cases valuesRel with
-          | cons valueRel tail =>
-            cases tail with
-            | nil =>
-              unfold ExprSim
-              rw [EvaluateHOL.evaluate, sourceRun, compileExp, FlatSem.evaluate, flatRun]
-              simp only [EvaluateHOL.headValue, Flapjack.holHd]
-              exact ⟨.raise valueRel, nextRel⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat

@@ -47,24 +47,6 @@ theorem stateRel_lookup_ref {C F : Type} (cfg : Config) (source target : FlatSem
   cases entry <;> simp [storeValueRel] at relation
   case refv value' => exact ⟨value', lookup, relation⟩
 
-/-- A variable pattern extends related bindings by related values. -/
-theorem pmatch_var_related {C F : Type} (n : Nat) (source target : FlatSem.State C F)
-    (name : VarN) (value value' : Value) (bindings bindings' : List (VarN × Value))
-    (values : ValueRel value value')
-    (envs : aLookupRel (fun key => decNameToNum key < n) ValueRel bindings bindings') :
-    MatchRel n (FlatSem.pmatch source (.pvar name) value bindings)
-      (FlatSem.pmatch target (.pvar name) value' bindings') := by
-  simp only [FlatSem.pmatch, MatchRel]
-  exact aLookupRel_cons _ _ _ _ _ _ _ ⟨fun _ => values, envs⟩
-
-/-- Wildcard patterns leave related bindings unchanged. -/
-theorem pmatch_any_related {C F : Type} (n : Nat) (source target : FlatSem.State C F)
-    (value value' : Value) (bindings bindings' : List (VarN × Value))
-    (envs : aLookupRel (fun key => decNameToNum key < n) ValueRel bindings bindings') :
-    MatchRel n (FlatSem.pmatch source .pany value bindings)
-      (FlatSem.pmatch target .pany value' bindings') := by
-  simpa [FlatSem.pmatch, MatchRel] using envs
-
 /-- Literal patterns agree on related values whenever the source match does
 not raise a type error. -/
 theorem pmatch_lit_related {C F : Type} (n : Nat) (source target : FlatSem.State C F)
@@ -211,8 +193,10 @@ theorem pmatch_related {C F : Type} (cfg : Config) (n : Nat) (source target : Fl
     MatchRel n (FlatSem.pmatch source pattern value bindings)
       (FlatSem.pmatch target pattern value' bindings') := by
   cases pattern with
-  | pvar name => exact pmatch_var_related n source target name value value' bindings bindings' values envs
-  | pany => exact pmatch_any_related n source target value value' bindings bindings' envs
+  | pvar name =>
+    simp only [FlatSem.pmatch, MatchRel]
+    exact aLookupRel_cons _ _ _ _ _ _ _ ⟨fun _ => values, envs⟩
+  | pany => simpa [FlatSem.pmatch, MatchRel] using envs
   | plit lit => exact pmatch_lit_related n source target lit value value' bindings bindings' values envs safe
   | pas pattern name =>
     apply pmatch_as_related n source target pattern name value value' bindings bindings'

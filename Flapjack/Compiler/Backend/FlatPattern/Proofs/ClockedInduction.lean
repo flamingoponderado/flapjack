@@ -35,11 +35,26 @@ theorem expressionSimulationUpTo_all {C F : Type} (clock : Nat) :
         intro cfg stateCfg expression weightEq
         cases expression with
         | lit trace literal =>
-          exact compile_lit_simulation cfg stateCfg clock trace literal
+          intro sourceEnv targetEnv source target sourceFinal sourceResult n _ sourceEval envs states bound safe
+          simp [FlatSem.evaluate] at sourceEval
+          rcases sourceEval with ⟨rfl, rfl⟩
+          refine ⟨target, .val [.litv literal], ?_, states, ?_⟩
+          · simp [compileExp, FlatSem.evaluate]
+          · exact .cons ((valueRel_lit literal _).2 rfl) .nil
         | varLocal trace name =>
           exact compile_var_simulation cfg stateCfg clock trace name
         | fn trace name body =>
-          exact compile_fn_simulation cfg stateCfg clock trace name body
+          intro sourceEnv targetEnv source target sourceFinal sourceResult n _ sourceEval envs states bound safe
+          have bodyBound : (compileExp cfg body).1 < n := by
+            cases h : compileExp cfg body with
+            | mk i rest => cases rest with | mk flag compiled => simpa [compileExp, h] using bound
+          simp [FlatSem.evaluate] at sourceEval
+          rcases sourceEval with ⟨rfl, rfl⟩
+          have closureRel : ValueRel (.closure sourceEnv name body) (.closure targetEnv name (compileDec cfg body)) :=
+            .closure envs bodyBound
+          refine ⟨target, .val [.closure targetEnv name (compileDec cfg body)], ?_, states, (.cons closureRel .nil)⟩
+          cases h : compileExp cfg body with
+          | mk i rest => cases rest with | mk flag compiled => simp [compileExp, compileDec, FlatSem.evaluate, h]
         | raise trace body =>
           apply compile_raise_simulation_upTo cfg stateCfg clock trace body
           apply weightIH (FlatSem.expWeight body) (by simp [FlatSem.expWeight] at weightEq; omega) cfg stateCfg body rfl

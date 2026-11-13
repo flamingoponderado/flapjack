@@ -181,14 +181,6 @@ theorem doApp_some_flatStateRel_fixedArray {C F G : Type} (reachable : NumSet)
   · simp [Flapjack.Compiler.Backend.FlatProps.resultValues, Flapjack.EvaluateHOL.listResult,
       valuesNoEval, valueHasEval]
 
-/-- Repeated copies of a reachable value are reachable. -/
-theorem replicateValues_within (n : Nat) (value : FlatSem.Value) (reachable : NumSet)
-    (safe : globalsWithin (findValueGlobals value) reachable) :
-    globalsWithin (findValuesGlobals (List.replicate n value)) reachable := by
-  induction n with
-  | zero => simp [findValuesGlobals, globalsWithin, sptMem, sptDomain]
-  | succ n ih => simp [List.replicate, findValuesGlobals, globalsWithin_union, safe, ih]
-
 /-- The variable-size array allocation case of the primitive simulation.
 This operation-specific proof helper has no separate HOL theorem. -/
 theorem doApp_some_flatStateRel_array {C F G : Type} (reachable : NumSet)
@@ -242,7 +234,7 @@ theorem doApp_some_flatStateRel_array {C F G : Type} (reachable : NumSet)
               refine ⟨{ target with refs := target.refs ++ [.varray (List.replicate size.toNat value)] },
                 ?_, ?_, ?_, ?_⟩
               · apply flatStateRel_appendRef reachable source target (.varray (List.replicate size.toNat value)) related
-                · exact replicateValues_within size.toNat value reachable valueReachable
+                · exact fun key member => valueReachable key (findValuesGlobals_replicate size.toNat value () key member)
                 · simp [storeHasNoEval, FlatProps.storeValueValues, valueSafe]
               · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, negative, storeAlloc, refsEq]
               · simp [findPrimitiveResultGlobals, Flapjack.EvaluateHOL.listResult,

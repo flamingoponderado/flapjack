@@ -104,23 +104,6 @@ def pureEvaluationSimulationAt {C F : Type} (env : FlatSem.Environment FlatSem.V
     flatStateRel reachable source target → result ≠ .err (.abort .typeError) →
     ∃ values, flatStateRel reachable next target ∧ result = .val values ∧ valuesNoEval values
 
-/-- Empty expression lists satisfy the pure-evaluation induction step. -/
-theorem pureEvaluation_empty {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (source : FlatSem.State C F) : pureEvaluationSimulationAt env source [] := by
-  intro next result reachable target run _ _ _ _ related _
-  simp [FlatSem.evaluate] at run
-  rcases run with ⟨rfl, rfl⟩
-  exact ⟨[], related, rfl, by simp [valuesNoEval]⟩
-
-/-- Literals satisfy the pure-evaluation induction step. -/
-theorem pureEvaluation_lit {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (source : FlatSem.State C F) (tra : BackendCommon.Tra) (literal : Flapjack.AstHOL.Lit) :
-    pureEvaluationSimulationAt env source [.lit tra literal] := by
-  intro next result reachable target run _ _ _ _ related _
-  simp [FlatSem.evaluate] at run
-  rcases run with ⟨rfl, rfl⟩
-  exact ⟨[.litv literal], related, rfl, by simp [valuesNoEval, valueHasEval]⟩
-
 /-- Local-variable lookup satisfies the pure-evaluation induction step. -/
 theorem pureEvaluation_var {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (source : FlatSem.State C F) (tra : BackendCommon.Tra) (name : Flapjack.AstHOL.VarN) :

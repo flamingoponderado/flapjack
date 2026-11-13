@@ -112,7 +112,6 @@ import Flapjack.Compiler.Backend.FlatProps.NoMat
 import Flapjack.Compiler.Backend.FlatProps.InstallConfig
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternRowsSame
-import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationRules
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationInduction
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.StateRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationCases
@@ -710,6 +709,7 @@ import Flapjack.Compiler.Backend.FlatElim.Proofs.GlobalLists
 import Flapjack.Compiler.Backend.FlatElim.Proofs.StateRelation
 import Flapjack.Compiler.Backend.FlatElim.Proofs.HasEval
 import Flapjack.Compiler.Backend.FlatElim.Proofs.PairCases
+import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyCases
 import Flapjack.Compiler.Backend.FlatElim.Proofs.ListCases
 import Flapjack.Compiler.Backend.FlatElim.Proofs.Order
 import Flapjack.Compiler.Backend.FlatElim.Proofs.RecclosureGlobals

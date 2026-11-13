@@ -1,2 +1,3 @@
 mapi_map_typed=!(f :num -> 'a -> 'b) (g :'c -> 'a) (l :'c list). MAPi f (MAP g l) = MAPi (\(i :num) (x :'c). f i (g x)) l
 filter_mapi_typed=!(ls :'a list) (f :num -> 'a -> 'b). FILTER (P :'b -> bool) (MAPi f ls) = MAPi f ls <=> !(n :num). n < LENGTH ls ==> P (f n (fEL ls n))
+fst_lem_typed=(\((p1 :'a),(p1' :'b),(p2 :'c)). p1) = (FST :'a # 'b # 'c -> 'a)

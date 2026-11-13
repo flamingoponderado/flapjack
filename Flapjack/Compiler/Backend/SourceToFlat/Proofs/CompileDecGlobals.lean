@@ -22,12 +22,6 @@ theorem makeVarls_esgcFree (n : Nat) (t : Tra) (idx : Nat) (xs : List VarN) :
     | nil => simp [makeVarls, esgcFree, esgcFreeList]
     | cons y ys => simp [makeVarls, esgcFree, esgcFreeList, ih]
 
-private theorem esgcFreeList_append (xs ys : List FlatLang.Exp) :
-    esgcFreeList (xs ++ ys) ↔ esgcFreeList xs ∧ esgcFreeList ys := by
-  induction xs with
-  | nil => simp [esgcFreeList]
-  | cons x xs ih => simp [esgcFreeList, ih, and_assoc]
-
 /-- Proof engine for the declaration global-write invariants. -/
 private theorem compileDecs_esgcList (t : List MlString) (n : Nat) (next : NextIndices)
     (env : Environment) (envs : EnvironmentGenerationStore) :
@@ -71,7 +65,7 @@ private theorem compileDecs_esgcList (t : List MlString) (n : Nat) (next : NextI
       generalize hb : compileDecs t n' next' (extendEnv env' env) envs' body = second
       obtain ⟨n'', next'', env'', envs'', bodyCode⟩ := second
       simp only [hb] at hbody
-      simpa [compileDecs, hc, hb, esgcFreeList_append] using And.intro hlocal hbody
+      simpa [compileDecs, hc, hb, FlatProps.esgcFreeList_iff, or_imp, forall_and] using And.intro hlocal hbody
   | d :: d2 :: ds => by
     have hfirst := compileDecs_esgcList t n next env envs [d]
     generalize hc : compileDecs t n next env envs [d] = first
@@ -81,7 +75,7 @@ private theorem compileDecs_esgcList (t : List MlString) (n : Nat) (next : NextI
     generalize hr : compileDecs t n' next' (extendEnv env' env) envs' (d2 :: ds) = rest
     obtain ⟨n'', next'', env'', envs'', restCode⟩ := rest
     simp only [hr] at hrest
-    simpa [compileDecs, hc, hr, esgcFreeList_append] using And.intro hfirst hrest
+    simpa [compileDecs, hc, hr, FlatProps.esgcFreeList_iff, or_imp, forall_and] using And.intro hfirst hrest
 termination_by ds => sizeOf ds
 decreasing_by
   all_goals simp_wf
@@ -103,8 +97,13 @@ theorem compileDecs_esgcFree (t : List MlString) (n : Nat) (next : NextIndices)
   rw [compiled] at h
   exact (FlatProps.esgcFreeList_iff code).mp h
 
-private theorem compileProg_esgcList (c : Config) (p : List Dec) :
-    esgcFreeList (compileProg c p).2 := by
+/-- Whole-program initialization preserves the declaration invariant. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_prog_esgc_free"]
+theorem compileProg_esgcFree (c : Config) (p : List Dec) (c1 : Config)
+    (p1 : List FlatLang.Exp) (compiled : compileProg c p = (c1, p1)) :
+    ∀ e ∈ p1, esgcFree e := by
+  apply (FlatProps.esgcFreeList_iff p1).mp
+  rw [show p1 = (compileProg c p).2 from (congrArg Prod.snd compiled).symm]
   let next := { c.next with vidx := c.next.vidx + 1 }
   let envs : EnvironmentGenerationStore := { next := 0, generation := c.envs.next, envs := .ln }
   have h := compileDecs_esgcList [] 1 next c.modEnv envs p
@@ -112,15 +111,6 @@ private theorem compileProg_esgcList (c : Config) (p : List Dec) :
   obtain ⟨n', next', env', envs', code⟩ := result
   simp only [hc] at h
   simpa [compileProg, next, envs, hc, esgcFreeList, esgcFree, globAlloc, allocEnvRef] using h
-
-/-- Whole-program initialization preserves the declaration invariant. -/
-@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_prog_esgc_free"]
-theorem compileProg_esgcFree (c : Config) (p : List Dec) (c1 : Config)
-    (p1 : List FlatLang.Exp) (compiled : compileProg c p = (c1, p1)) :
-    ∀ e ∈ p1, esgcFree e := by
-  have h := compileProg_esgcList c p
-  rw [compiled] at h
-  exact (FlatProps.esgcFreeList_iff p1).mp h
 
 /-- Incremental compilation also keeps global initialization outside functions. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "inc_compile_prog_esgc_free"]
@@ -133,7 +123,7 @@ theorem incCompileProg_esgcFree (envId : Nat × Nat) (c : Config) (p : List Dec)
   obtain ⟨n', next', env', envs', code⟩ := result
   simp only [hc] at h
   apply (FlatProps.esgcFreeList_iff _).mp
-  simpa [incCompileProg, env, envs, hc, esgcFreeList, esgcFreeList_append,
+  simpa [incCompileProg, env, envs, hc, esgcFreeList, FlatProps.esgcFreeList_iff, or_imp, forall_and,
     esgcFree, globAlloc, storeEnvId, envIdTuple] using h
 
 end Flapjack.Compiler.Backend.SourceToFlat

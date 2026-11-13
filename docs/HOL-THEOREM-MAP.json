@@ -16779,7 +16779,7 @@
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
   "lean_name": "doApp_conversion_source",
-  "reviewer": "Compared the literal clause in typed do_app_typed in cake_flat_sem_apply_probe.out, including projection, guard and flat result and exception behavior. Inherits reals_as_rational_cuts through doApp. Independently source-reviewed."
+  "reviewer": "Compared the HOL conversion clause and fallback with do_app_conversion_all_typed: arbitrary argument lists, projection, type guard, flat result, exception and wrong-arity behavior agree. Compiler and FFI types remain independent; doApp inherits reals_as_rational_cuts."
 },
 
   {
@@ -17553,7 +17553,7 @@
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "v_rel",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared all four typed source mutual rules and complete captured induction/case principles against the reviewed flat value, environment and syntax carriers. Basic contents use List.Forall₂; closure and recursive-closure bodies and bounds match the source. The kernel-checked source-shaped rules, induction and cases establish the same least relation with the positivity-friendly environment rule."
+    "reviewer": "Compared all four typed source mutual rules and complete captured induction/case principles against the reviewed flat value, environment and syntax carriers. Basic contents use List.Forall₂; closure and recursive-closure bodies and bounds match the source. The constructors, envRel_iff_lookup, and source-shaped induction and cases establish the same least relation with the positivity-friendly environment rule."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelation.lean",
@@ -17562,38 +17562,6 @@
     "hol_name": "v_rel",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the typed source environment rule over natural bounds and flat value environments. The explicit domain and paired-lookup premises are equivalent to the source bounded ALOOKUP_rel by envRel_iff_lookup; the source-shaped mutual induction and cases establish that this positivity rendering preserves the least relation."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationRules.lean",
-    "lean_name": "valueRel_basic_source",
-    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
-    "hol_name": "v_rel",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed basic-value source rule: the same shape relation and pointwise contained-value relation are the only premises. This is one original rule; complete inductive correspondence remains a separate obligation."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationRules.lean",
-    "lean_name": "valueRel_closure_source",
-    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
-    "hol_name": "v_rel",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed closure source rule: the same environment relation and compiled-name bound imply related closures, with the same name and compiled expression projection. This is one original rule; complete inductive correspondence remains a separate obligation."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationRules.lean",
-    "lean_name": "valueRel_recclosure_source",
-    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
-    "hol_name": "v_rel",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed recursive-closure rule: every original function body has the same compiled-name bound; the output maps the compiled expression projection over the original function triples. This is one original rule; complete inductive correspondence remains a separate obligation."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ValueRelationRules.lean",
-    "lean_name": "envRel_source",
-    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
-    "hol_name": "v_rel",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed environment rule: bounded ALOOKUP_rel on the value fields is the sole premise. The proof uses the checked equivalence between source-shaped lookup relation and the positivity-friendly environment constructor. This is one original rule; complete inductive correspondence remains a separate obligation."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileSemantics.lean",
@@ -17612,22 +17580,6 @@
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared the complete typed source_compile_semantics capture: independent compiler and FFI carriers, the original existential precondition, absence of source Fail, and the source behavior of the flat semantics of SND (compile cfg prog) are retained without extra simulation or target-execution assumptions. Nonempty C supplies HOL type inhabitation used by the reviewed precondition. The checked proof composes the source-to-flat program, flat elimination and pattern semantics. Its Lean axioms are propext, Classical.choice and Quot.sound; floating-point evaluation inherits the rational-cut assumption in SOUNDNESS item 8. The source comparison and HOL probe are not a cross-language equivalence proof. Inherits the reals_as_rational_cuts assumption through its dependencies."
 },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
-    "lean_name": "ctorsOf_siblings_source",
-    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
-    "hol_name": "ctors_of_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed source known-sibling constructor clause: preserve the natural tag, child-list length and sibling list and apply the polymorphic source duplicate elimination. The proof rewrites the executed Ctor specialization to its source-shaped operation without additional premises."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
-    "lean_name": "colCtors_cons_source",
-    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
-    "hol_name": "col_ctors_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed source nonempty-row clause: combine the head pattern's constructor information and the recursive tail using polymorphic source intersection. The proof rewrites the executed Ctor specialization to its source-shaped operation without additional premises."
-  },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
     "lean_name": "ctorNubHOL",
@@ -17662,27 +17614,11 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileOrder.lean",
-    "lean_name": "compileExp_letrec_source",
+    "lean_name": "compileExp_source_equations",
     "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
     "hol_name": "compile_exp_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared the captured typed Letrec conjunct: arbitrary config, mlstring trace, recursive function triples and body; map compilation over bodies, take MAX_LIST of generated-name maxima and EXISTS of flags, rebuild the same function triples, and combine metadata with the separately compiled body. The helper equivalence proves the executed recursive fold has this source shape."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileOrder.lean",
-    "lean_name": "compileExp_con_source",
-    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
-    "hol_name": "compile_exp_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the captured typed constructor conjunct: arbitrary flat-pattern config, trace, optional constructor/type identifier and expression list; the same compile_exps over the reversed list, returned metadata, and reversed output. The proof establishes equivalence to the executed direct-order traversal."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileOrder.lean",
-    "lean_name": "compileExp_app_source",
-    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
-    "hol_name": "compile_exp_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the captured typed application conjunct: arbitrary flat-pattern config, trace, operator and expression list; the same reverse/traverse/reverse order and disjunction with op_sets_globals. The proof establishes equivalence to the executed direct-order traversal."
+    "reviewer": "Compared all 15 conjuncts of freshly replayed typed compile_exp_all in source order, including each binder and carrier, both mutual list traversals, generated-name bounds and branches, reverse/traverse/reverse Con and App, mapped MAX_LIST and EXISTS Letrec aggregation, and source bind_tag. The unconditional checked conjunction establishes the complete source equations for the executed total compiler without additional hypotheses. Independently source-reviewed."
   },
   {
     "lean_path": "Flapjack/Misc/Sptree/FromList.lean",
@@ -132765,6 +132701,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "dest_pat_from_case",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
+  "lean_name": "destPatFromCase",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared dest_pat_from_case_typed: the singleton variable-pattern premise, polymorphic handler body and existential extracted name and body match the original."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
   "hol_name": "IMP_PAIR",
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Syntactic.lean",
   "lean_name": "impPair",
@@ -132987,6 +132931,176 @@
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["refs", "code"],
   "reviewer": "Compared local HOL source and state_rel_dec_clock_typed replay in flat_to_clos_relation_probe.out: shared compiler and FFI state carriers, state relation premise, original clock equality and decremented-state relation all match. Closure-state refs and code use the reviewed canonical finite-support carrier and witness."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "state_rel_IMP_clock",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StateRelation.lean",
+  "lean_name": "stateRel_impClock",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "reviewer": "Compared the local source and state_rel_imp_clock_typed replay: both states share the same independent compiler and FFI types, and the state relation premise implies the original clock equality. Closure-state refs and code use the reviewed canonical finite-support carrier and witness."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "initate_state'_clock",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/StateRelation.lean",
+  "lean_name": "initialStateProofSide_clock",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "reviewer": "Compared the local source and initial_state_clock_typed replay: the original empty code map, independent compiler and FFI carriers, clock update equation and clock projection are preserved. Closure-state refs and code use the reviewed canonical finite-support carrier and witness."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
+  "hol_name": "v_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ValueRelInduction.lean",
+  "lean_name": "valueRel_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared v_rel_def_typed: all eleven original value-constructor equivalences, shared free variables, nested existential and disjunct ordering, closure compilation and bounded recursive-closure selection are retained. The original HOL HD and EL use the existing holHd and holEl translations."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "FST_SND_EQ_CASE",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalBounds.lean",
+  "lean_name": "fstSndEqCase",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared fst_snd_eq_case_typed: both projection equalities retain the four independently inferred component types."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "SUB_BAG_2",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalBounds.lean",
+  "lean_name": "subBag_union",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared sub_bag_2_typed: both sub-bag premises and the union conclusion retain the polymorphic bag element carrier and original multiplicity semantics."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "inv_on_FOLDR",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalInvariants.lean",
+  "lean_name": "invOnFoldr",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared inv_on_foldr_typed: the element, accumulator and result types remain independent, and the original universal invariant on list members and all accumulators implies the unchanged right-fold result."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "evaluate_decs_sing",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ClockedDeclaration.lean",
+  "lean_name": "evaluate_decs_sing",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_decs_sing_typed: singleton declaration-list evaluation equals single-declaration evaluation for independent compiler and FFI state types. Both evaluated definitions inherit reals_as_rational_cuts."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "OPTION_ALL_FORALL",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DynamicEvaluation.lean",
+  "lean_name": "optionAll_forall",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared option_all_forall_typed: the polymorphic predicate and option are unrestricted; the none/some match is the HOL OPTION_ALL definition and the original universally quantified implication is unchanged."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "comp_thm",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/CompiledMatch.lean",
+  "lean_name": "compThm",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["refs"],
+  "reviewer": "Compared the HOL source and comp_thm_local_typed, obtained by the original HOL rewrite: every match result is quantified after the original references, rows and value; a SOME result implies the same decision-tree result. The refs finite map uses the canonical finite-support carrier and same-module roundtrip witness."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "naive_pattern_match_correct_inst",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NaiveMatch.lean",
+  "lean_name": "naivePatternMatch_correct_inst",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared naive_match_inst_typed obtained by the original HOL specialization and rewrites: the singleton pattern, expression and value, empty bindings, pure evaluation and non-type-error premises, and original Boolean-valued evaluator result match. The evaluator inherits reals_as_rational_cuts."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "pmatch_rows_encode",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding.lean",
+  "lean_name": "pmatchRows_encode",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["encodeRefs"],
+  "reviewer": "Compared the HOL source and pmatch_rows_encode typed capture: independent state and row-body types, the non-type-error premise and all NONE, MatchSuccess and MatchFailure conclusions are retained, including the selected index, binding and matching row. A dependent bound supplies the original in-bounds EL. The imported reviewed encodeRefs producer models the computed finite map."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "SmartIf_thm",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NaiveMatch.lean",
+  "lean_name": "smartIf_thm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared smart_if_thm_typed: both existential Boolean-expression trace tests, the selected true and false branches, and the original conditional fallback are retained."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "do_eq_Boolv",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NaiveMatch.lean",
+  "lean_name": "doEq_boolValue",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared do_eq_boolv_typed: the original Boolean operands and full equality-result constructor are preserved, with decidable Boolean equality representing HOL Boolean equivalence."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "fold_Boolv",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/NaiveMatch.lean",
+  "lean_name": "fold_boolValue",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared fold_boolv_typed: both separately quantified equations, their direction, Boolean constructor and tag choices match the HOL conjunction."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "app_pos_Term_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/DecisionEncoding.lean",
+  "lean_name": "appPos_term_imp",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["refs"],
+  "reviewer": "Compared the HOL source and app_pos_term_imp_typed: successful traversal into a term retains the original index bound and recursive traversal on the HOL EL field. The reference map uses the canonical finite-support carrier and same-module roundtrip witness."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "MAX_LIST_LESS_EVERY",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/BranchEvaluation.lean",
+  "lean_name": "maxList_less_every",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared max_list_less_every_typed: the original MAX_LIST strict bound is equivalent to a positive bound and the EVERY element bound, including the empty-list case. The existing maxList implements the HOL MAX_LIST recursion."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "do_if_helper",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/ExpressionCases.lean",
+  "lean_name": "doIf_helper",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared do_if_helper_typed: the branch carrier remains polymorphic, the successful do_if and value-relation premises are grouped as in HOL, and both true and false Boolean identity equivalences are retained."
+}
+,
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+  "hol_name": "do_app_thm_REVERSE",
+  "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/SourceApplication.lean",
+  "lean_name": "doApp_simulation_reverse",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared do_app_thm_reverse_typed: the original grouped primitive execution, state relation and unreversed list relation premises imply the existential result relation, final state relation and target execution on reversed arguments. Compiler and FFI types remain independent; primitive evaluation inherits reals_as_rational_cuts."
 }
 ,
 {
@@ -133491,6 +133605,50 @@
   "lean_name": "pmatchRows_sameFst",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared pmatch_rows_same_FST_typed in flat_pattern_rows_same_probe.out. The two row payload types are independent, as are the state parameters; HOL's inhabited types are represented by Nonempty where EL requires them. The pattern-projection premise and all three cases are unchanged, including the existential index, target-list bound, original EL equality and target result using EL."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "fst_lem",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/CompileExp.lean",
+  "lean_name": "fst_triple",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original local proof and freshly replayed fst_lem_typed: three independent component types, right-associated triple carrier and equality of the whole destructuring function with first projection. No premises or representation qualifiers are added. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
+  "hol_name": "clos_state_cc_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/CommonCompiler.lean",
+  "lean_name": "closStateCc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source and typed HOL review confirms the state types remain independent, the program and fixed-width output carriers match, and the definition is exactly state_cc inc cc; no additional assumptions or representation qualifiers are required."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "funion_submap",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/FiniteMapGrowth.lean",
+  "lean_name": "funionSubmap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["x", "y", "z"],
+  "reviewer": "Compared the freshly replayed typed local theorem and its GEN_ALL closure: independent generic key and value types, z/y/x over the same finite-map carriers, and the original conjunction of left-biased union submap and disjoint domains implying the right map is a submap. Disjointness is essential. Parameters x, y and z use HolFiniteMapExact with same-module codec roundtrip witnesses. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "flookup_funion_submap",
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/FiniteMapGrowth.lean",
+  "lean_name": "flookupFUnionSubmap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["x", "y", "z"],
+  "reviewer": "Compared the freshly replayed local theorem and its typed GEN_ALL closure: independent generic key and value types, three maps over the same types, arbitrary value and key, and the original conjunctive submap and union-lookup premise. The canonical union is left-biased and the proof applies binding preservation directly. Parameters x, y and z use HolFiniteMapExact with same-module codec roundtrip witnesses. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+  "hol_name": "v_rel_eqns",
+  "hol_line": 336,
+  "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/ValueRelCases.lean",
+  "lean_name": "valueRel_eqns_local",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["c", "tys"],
+  "reviewer": "Compared the original local v_rel_eqns construction and freshly replayed typed v_rel_eqns_local capture, which is identical to v_rel_eqns_non_global_replay. All seven conjuncts, binders, witnesses, constructor branches and the false Env case are preserved. The kernel-checked alias reuses the reviewed complete proof with the same elaborated type; GlobalEnv c and tys use the canonical carrier and existing local roundtrip witness. Independently source-reviewed."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
@@ -134169,7 +134327,7 @@
   "lean_name": "doApp_shift_source",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared the complete original shift clause and typed flat do_app_def, including every word size, shift, literal and independent state payload. It delegates directly to doShift, as in HOL. Independently source-reviewed; inherits the reals_as_rational_cuts assumption through doApp."
+  "reviewer": "Compared the original shift clause and fallback with do_app_shift_all_typed, replayed for every argument list: every word size, shift, literal and independent state payload is retained, and malformed lists return NONE. It delegates directly to doShift, as in HOL, and inherits reals_as_rational_cuts through doApp."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
@@ -134227,6 +134385,15 @@
   "lean_name": "valueToFlat_invariants",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared local fvg_v_to_flat with typed replay fvg_v_to_flat_typed: reachable has arbitrary HOL num_map payload and is retained as Spt α; domain inclusion is the lookup-based sptMem predicate per the Sptree.lean convention, and boolean negation is equality to false. Independently source-reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+  "hol_name": "do_app_cases",
+  "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyCases.lean",
+  "lean_name": "doAppCases",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the complete freshly replayed flat_do_app_cases_typed: independent state carriers and result types, unconditional iff, all eight alternatives and every residual guard and witness. An independently reviewed exhaustive source dispatcher abbreviates the expanded AST op_CASE; the flat alternatives retain the original HOL EL, HD and THE values and bounds. The full theorem is kernel-checked and independently source-reviewed. Numeric dependencies inherit reals_as_rational_cuts (SOUNDNESS item 8); the probe and review are not a HOL-to-Lean equivalence proof."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",

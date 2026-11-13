@@ -19,10 +19,6 @@ theorem pairCase_eq {α β γ : Type} (x : α × β) (f : α → β → γ) (v :
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "pair_lam_lem"]
 theorem pairLet_eq {α β γ : Type} (f : α → β → γ) (v : γ) (z : α × β) :
     (let (x, y) := z; f x y) = v ↔ ∃ x1 x2, z = (x1, x2) ∧ f x1 x2 = v := by
-  cases z with
-  | mk a b =>
-    constructor
-    · intro h; exact ⟨a, b, rfl, h⟩
-    · rintro ⟨_, _, h, hf⟩; cases h; exact hf
+  exact pairCase_eq z f v
 
 end Flapjack.Compiler.Backend.FlatElim

@@ -10,11 +10,6 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL Flapjack.Basis.Pure.MlString
 
-/-- The inserted zero index is evaluated without changing state. -/
-theorem evaluate_zero_index {C F : Type} (env : List ClosSem.Value) (state : ClosSem.State C F) :
-    ClosSem.evaluate [.op .none (.intOp (.const 0)) []] env state = (.val [.number 0], state) := by
-  simp [ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp]
-
 /-- After the assignment value is evaluated, the inserted zero index
 precedes the reference expression and does not alter its result or state. -/
 theorem evaluate_assignment_args {C F : Type} (valueExpr refExpr : ClosLang.Exp)
@@ -25,7 +20,9 @@ theorem evaluate_assignment_args {C F : Type} (valueExpr refExpr : ClosLang.Exp)
       | (.err error, last) => (.err error, last)
       | (.val values, last) => (.val (value :: .number 0 :: values), last) := by
   rw [ClosProps.evaluate_cons_value _ _ _ _ _ _ run]
-  rw [ClosProps.evaluate_cons_value _ _ _ _ _ _ (evaluate_zero_index env next)]
+  rw [ClosProps.evaluate_cons_value _ _ _ _ _ _ (by
+    simpa only [ClosSem.makeConst] using
+      (destConstant_evaluate (.op .none (.intOp (.const 0)) []) (.constInt 0) env next rfl))]
   cases result : ClosSem.evaluate [refExpr] env next with
   | mk outcome last => cases outcome <;> rfl
 

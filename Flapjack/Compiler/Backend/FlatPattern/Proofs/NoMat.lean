@@ -21,13 +21,8 @@ theorem noMat_smartIf (trace : Tra) (condition yes no : FlatLang.Exp)
     (conditionSafe : FlatProps.noMat condition = true)
     (yesSafe : FlatProps.noMat yes = true) (noSafe : FlatProps.noMat no = true) :
     FlatProps.noMat (smartIf trace condition yes no) = true := by
-  cases condition <;> simp_all [smartIf, FlatProps.noMat]
-  case con t tag args =>
-    cases tag <;> cases args <;> try simp_all [FlatProps.noMat]
-    case some.nil pair =>
-      obtain ⟨tag, typ⟩ := pair
-      cases typ <;> try simp_all [FlatProps.noMat]
-      all_goals split_ifs <;> simp_all [FlatProps.noMat]
+  rw [smartIf_thm]
+  split_ifs <;> simp_all [FlatProps.noMat]
 
 /-- Following a pattern position preserves a match-free value expression. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "decode_pos_no_Mat"]

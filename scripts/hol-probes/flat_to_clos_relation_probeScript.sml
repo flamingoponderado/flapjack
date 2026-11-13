@@ -31,9 +31,26 @@ val _ = (print "copy_aw8_typed="; Lib.with_flag (Globals.show_types,true) print_
 val _ = (print "rules_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_rules); print "\n");
 val _ = (print "induction_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_ind); print "\n");
 val _ = (print "cases_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_cases); print "\n");
+val _ = (print "v_rel_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_def); print "\n");
 val _ = (print "env_rel_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl env_rel_def); print "\n");
 val _ = (print "proof_initial_state_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl initial_state'_def); print "\n");
 val _ = (print "state_rel_initial_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl state_rel_initial_state); print "\n");
+(* Replay the local state-relation clock lemma with the source proof. *)
+val state_rel_imp_clock_replay = Q.prove (
+  `state_rel s t ==> s.clock = t.clock`,
+  fs [state_rel_def]);
+val _ = if null (hyp state_rel_imp_clock_replay) then () else raise Fail "local theorem has hypotheses";
+val _ = (print "state_rel_imp_clock_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl state_rel_imp_clock_replay); print "\n");
+(* Replay the local initial-state clock theorem with the source proof. *)
+val initial_state_clock_replay = Q.prove (
+  `(initial_state' b ffi max_app FEMPTY co cc k' with clock := k) =
+     initial_state' b ffi max_app FEMPTY co cc k /\
+   (initial_state' b ffi max_app FEMPTY co cc k).clock = k`,
+  fs [initial_state'_def]);
+val _ = if null (hyp initial_state_clock_replay) then () else raise Fail "local theorem has hypotheses";
+val _ = (print "initial_state_clock_typed="; Lib.with_flag (Globals.show_types,true)
+  print_term (concl initial_state_clock_replay); print "\n");
 val _ = (print "v_rel_bool_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_Boolv); print "\n");
 val _ = (print "v_rel_unit_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_Unitv); print "\n");
 val _ = (print "v_rel_to_list_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl v_rel_to_list); print "\n");
