@@ -9966,3 +9966,20 @@ the `[local]` theorems `mem_sorted_append`, `merge_last_lem1` and
 `HOL_PROBE_ONLY=hol_mergesort_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean
 correspondence.
+
+`hol_llist_typed_probe.out` captures the typed statements of the HOL `llist`
+theory declarations ported in `Flapjack/Misc/LList.lean` from the built HOL4
+core theory (no rebuild): `fromList_11`, `LAPPEND_ASSOC`, `LAPPEND_EQ_LNIL`,
+`LAPPEND_fromList`, `LAPPEND11_FINITE1`, `LAPPEND_NIL_2ND`, the `LAPPEND` spec
+equation, `LDROP`, `LFINITE_fromList`, `LFINITE_APPEND`,
+`LFINITE_LAPPEND_IMP_NIL`, `NOT_LFINITE_APPEND`, the `LFLATTEN` specification
+equation, `LFLATTEN_EQ_NIL`, `LFLATTEN_THM` (four independently quantified
+conjuncts), `every_def`, `every_thm`, `exists_LNTH`, `LPREFIX_APPEND`,
+`to_fromList`, `LPREFIX_NTH`, `LPREFIX_ANTISYM`, `LPREFIX_TRANS`,
+`prefixes_lprefix_total`, `from_toList`, `LUNFOLD_def`, `LUNFOLD`,
+`LUNFOLD_UNIQUE`, `LUNFOLD_BISIMULATION` (independent state types), and the
+`LLIST_BISIMULATION0`, `LLIST_STRONG_BISIMULATION` and `every_coind` theorems.
+Regenerate with
+`HOL_PROBE_ONLY=hol_llist_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.

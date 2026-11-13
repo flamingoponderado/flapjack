@@ -4677,6 +4677,10 @@ run_probe hol_mergesort_probeScript.sml hol_mergesort_probe.out \
   sort2_type sort3_type merge_type mergesortN_type sort2_lt sort2_eq_le sort3_all sort3_dup_le merge_basic merge_unsorted merge_left_empty merge_nontotal msn_full msn_prefix msn_over msn_three_short msn_nontotal msn_zero \
   "$repo_dir/HOL/src/sort/mergesortScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe hol_llist_typed_probeScript.sml hol_llist_typed_probe.out \
+  fromList_11_typed LAPPEND_ASSOC_typed LAPPEND_EQ_LNIL_typed LAPPEND_fromList_typed LAPPEND11_FINITE1_typed LAPPEND_NIL_2ND_typed LAPPEND_typed LDROP_typed LFINITE_fromList_typed LFINITE_APPEND_typed LFINITE_LAPPEND_IMP_NIL_typed NOT_LFINITE_APPEND_typed LFLATTEN_typed LFLATTEN_EQ_NIL_typed LFLATTEN_THM_typed every_def_typed every_thm_typed exists_LNTH_typed LPREFIX_APPEND_typed to_fromList_typed LPREFIX_NTH_typed LPREFIX_ANTISYM_typed LPREFIX_TRANS_typed prefixes_lprefix_total_typed from_toList_typed LUNFOLD_def_typed LUNFOLD_typed LUNFOLD_UNIQUE_typed LUNFOLD_BISIMULATION_typed LLIST_BISIMULATION0_typed LLIST_STRONG_BISIMULATION_typed every_coind_typed \
+  "$repo_dir/HOL/src/coalgebras/llistScript.sml" "$cake_dir/pancake"
+
 run_probe hol_mergesort_typed_probeScript.sml hol_mergesort_typed_probe.out \
   mem_sorted_append_typed merge_def_typed merge_empty_typed merge_last_lem1_typed merge_last_lem2_typed merge_sorted_typed merge_tail_correct1_typed merge_tail_correct2_typed mergesortN_def_typed mergesortN_correct_typed mergesortN_sorted_typed sort2_def_typed sort2_sorted_typed sort2_tail_correct_typed sort3_def_typed sort3_sorted_typed sort3_tail_correct_typed \
   "$repo_dir/HOL/src/sort/mergesortScript.sml" "$cake_dir/pancake"
