@@ -2,6 +2,8 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.BviProps.CodeLabels
 public import Flapjack.Compiler.Backend.BviInline.Source
+import Flapjack.Compiler.Backend.BviInline.Proofs.SourceCorrespondence
+public import Flapjack.Misc.Sptree.ToList
 
 @[expose] public section
 
@@ -102,5 +104,184 @@ theorem compileInc_mapFst (cs cs1 : Spt (Nat × Bvi.Exp)) (prog prog1 : List (Na
   simp only [compileIncSource, h, Prod.mk.injEq] at compiled
   rcases compiled with ⟨rfl, rfl⟩
   rw [removeTicksProg_mapFst, names]
+
+/-- Labels present in cached inliner bodies. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "cache_code_labels_def"]
+def cacheCodeLabels (cs : Spt (Nat × Bvi.Exp)) : Set Nat :=
+  ⋃₀ ((fun entry => getCodeLabels entry.2) '' {entry | entry ∈ sptToList cs})
+
+/-- A cached body's labels belong to the cache-label set. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "lookup_cache_code_labels"]
+theorem lookup_cacheCodeLabels (n arity : Nat) (body : Bvi.Exp) (cs : Spt (Nat × Bvi.Exp))
+    (found : sptLookup n cs = some (arity, body)) : getCodeLabels body ⊆ cacheCodeLabels cs := by
+  intro label h
+  apply Set.mem_sUnion.mpr
+  exact ⟨getCodeLabels body, ⟨(arity, body), (sptMemToList _ _).2 ⟨n, found⟩, rfl⟩, h⟩
+
+/-- Inserting a cached body adds only its labels. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "cache_code_labels_insert"]
+theorem cacheCodeLabels_insert (name arity : Nat) (body : Bvi.Exp) (cs : Spt (Nat × Bvi.Exp)) :
+    cacheCodeLabels (sptInsert name (arity, body) cs) ⊆ getCodeLabels body ∪ cacheCodeLabels cs := by
+  intro label h
+  obtain ⟨_, ⟨value, member, rfl⟩, h⟩ := Set.mem_sUnion.mp h
+  obtain ⟨key, found⟩ := (sptMemToList _ _).1 member
+  by_cases same : key = name
+  · subst key
+    rw [sptLookup_sptInsert_same] at found
+    cases found
+    exact Or.inl h
+  · rw [sptLookup_sptInsert_ne name key (arity, body) cs same] at found
+    exact Or.inr (lookup_cacheCodeLabels key value.1 value.2 cs found h)
+
+/-- Adding ticks does not change code labels. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "bvi_mk_tick_get_code_labels"]
+theorem mkTick_getCodeLabels (n : Nat) (e : Bvi.Exp) : getCodeLabels (mkTick n e) = getCodeLabels e := by
+  induction n with
+  | zero => rfl
+  | succ n ih => simpa [mkTick, getCodeLabels] using ih
+
+mutual
+private theorem inlineSing_labels (cs : Spt (Nat × Bvi.Exp)) (e : Bvi.Exp) :
+    getCodeLabels (inlineExpSource cs e) ⊆ getCodeLabels e ∪ cacheCodeLabels cs := by
+  cases e with
+  | var n => simp [inlineExpSource.eq_1, getCodeLabels]
+  | force loc n => simp [inlineExpSource.eq_9, getCodeLabels]
+  | ifThenElse x y z =>
+    have hx := inlineSing_labels cs x
+    have hy := inlineSing_labels cs y
+    have hz := inlineSing_labels cs z
+    simp only [inlineExpSource.eq_2, getCodeLabels, Set.subset_def, Set.mem_union] at *
+    intro label; specialize hx label; specialize hy label; specialize hz label; aesop
+  | «let» xs body =>
+    have hx := inlineList_labels cs xs
+    have hy := inlineSing_labels cs body
+    simp only [inlineExpSource.eq_3, getCodeLabels, Set.subset_def, Set.mem_union] at *
+    intro label; specialize hx label; specialize hy label; aesop
+  | raise x => simpa [inlineExpSource.eq_4, getCodeLabels] using inlineSing_labels cs x
+  | tick x => simpa [inlineExpSource.eq_5, getCodeLabels] using inlineSing_labels cs x
+  | op op xs =>
+    have hx := inlineList_labels cs xs
+    simp only [inlineExpSource.eq_10, getCodeLabels, Set.subset_def, Set.mem_union] at *
+    intro label; specialize hx label; aesop
+  | «return» xs => simpa [inlineExpSource.eq_12, getCodeLabels] using inlineList_labels cs xs
+  | letCall rets ticks dest xs body =>
+    have hx := inlineList_labels cs xs
+    have hy := inlineSing_labels cs body
+    simp only [inlineExpSource.eq_11, getCodeLabels, Set.subset_def, Set.mem_union] at *
+    intro label; specialize hx label; specialize hy label; aesop
+  | call ticks dest xs handler =>
+    have hx := inlineList_labels cs xs
+    cases handler with
+    | some body =>
+      have hy := inlineSing_labels cs body
+      simp only [inlineExpSource.eq_6, getCodeLabels, Set.subset_def, Set.mem_union] at *
+      intro label; specialize hx label; specialize hy label; aesop
+    | none =>
+      cases dest with
+      | none =>
+        simp only [inlineExpSource.eq_7, getCodeLabels, Set.subset_def, Set.mem_union,
+          Set.mem_empty_iff_false, false_or] at *
+        intro label; specialize hx label; aesop
+      | some name =>
+        cases found : sptLookup name cs with
+        | none =>
+          simp only [inlineExpSource.eq_8, found, getCodeLabels, Set.subset_def, Set.mem_union,
+            Set.mem_empty_iff_false, or_false] at *
+          intro label; specialize hx label; aesop
+        | some pair =>
+          obtain ⟨arity, body⟩ := pair
+          have hb := lookup_cacheCodeLabels name arity body cs found
+          simp only [inlineExpSource.eq_8, found]
+          split
+          · simp only [getCodeLabels, mkTick_getCodeLabels, Set.subset_def, Set.mem_union] at *
+            intro label; specialize hx label; specialize hb label; aesop
+          · simp only [getCodeLabels, Set.subset_def, Set.mem_union,
+              Set.mem_empty_iff_false, or_false] at *
+            intro label; specialize hx label; aesop
+termination_by sizeOf e
+
+private theorem inlineList_labels (cs : Spt (Nat × Bvi.Exp)) (xs : List Bvi.Exp) :
+    getCodeLabelsList (inlineExpsSource cs xs) ⊆ getCodeLabelsList xs ∪ cacheCodeLabels cs := by
+  cases xs with
+  | nil => simp [inlineExpsSource.eq_1, getCodeLabelsList]
+  | cons x xs =>
+    have hx := inlineSing_labels cs x
+    have hy := inlineList_labels cs xs
+    simp only [inlineExpsSource.eq_2, getCodeLabelsList, Set.subset_def, Set.mem_union] at *
+    intro label; specialize hx label; specialize hy label; aesop
+termination_by sizeOf xs
+end
+
+/-- Inlining introduces only labels already in the expression or cache. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "inline_exp_code_labels"]
+theorem inlineExp_codeLabels :
+    (∀ cs e, getCodeLabels (inlineExpSource cs e) ⊆ getCodeLabels e ∪ cacheCodeLabels cs) ∧
+    (∀ cs es, (⋃₀ (getCodeLabels '' {e | e ∈ inlineExpsSource cs es})) ⊆
+      (⋃₀ (getCodeLabels '' {e | e ∈ es})) ∪ cacheCodeLabels cs) := by
+  constructor
+  · exact inlineSing_labels
+  · intro cs es
+    rw [← getCodeLabelsList_eq, ← getCodeLabelsList_eq]
+    exact inlineList_labels cs es
+
+private def progLabels (p : List (Nat × Nat × Bvi.Exp)) : Set Nat :=
+  ⋃₀ (getCodeLabels '' {e | e ∈ p.map (fun q => q.2.2)})
+
+private theorem progLabels_cons (entry : Nat × Nat × Bvi.Exp) (p : List (Nat × Nat × Bvi.Exp)) :
+    progLabels (entry :: p) = getCodeLabels entry.2.2 ∪ progLabels p := by
+  ext label
+  simp [progLabels]
+
+/-- Inlining a program introduces only labels already in the program or cache. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "inline_all_code_labels"]
+theorem inlineAll_codeLabels : ∀ cs prog,
+    (⋃₀ (getCodeLabels '' {e | e ∈ (inlineAllSource cs prog).2.map (fun q => q.2.2)})) ⊆
+      (⋃₀ (getCodeLabels '' {e | e ∈ prog.map (fun q => q.2.2)})) ∪ cacheCodeLabels cs := by
+  intro cs prog
+  change progLabels (inlineAllSource cs prog).2 ⊆ progLabels prog ∪ cacheCodeLabels cs
+  induction prog generalizing cs with
+  | nil => simp [inlineAllSource, progLabels]
+  | cons entry rest ih =>
+    rcases entry with ⟨name, arity, body⟩
+    let converted := inlineExpSource cs body
+    let updated := if canonicalWrapper name arity converted then sptInsert name (arity, converted) cs else cs
+    have bodyBound := inlineExp_codeLabels.1 cs body
+    have cacheBound : cacheCodeLabels updated ⊆ getCodeLabels body ∪ cacheCodeLabels cs := by
+      dsimp [updated]
+      split
+      · exact Set.Subset.trans (cacheCodeLabels_insert name arity converted cs)
+          (by
+            intro label h
+            rcases h with h | h
+            · exact bodyBound h
+            · exact Or.inr h)
+      · exact Set.subset_union_right
+    have restBound := ih updated
+    simp only [inlineAllSource]
+    change progLabels ((name, arity, converted) :: (inlineAllSource updated rest).2) ⊆
+      progLabels ((name, arity, body) :: rest) ∪ cacheCodeLabels cs
+    simp only [progLabels_cons, Set.subset_def, Set.mem_union] at *
+    intro label member
+    rcases member with inBody | inRest
+    · rcases bodyBound label inBody with src | cached
+      · exact Or.inl (Or.inl src)
+      · exact Or.inr cached
+    · rcases restBound label inRest with src | cached
+      · exact Or.inl (Or.inr src)
+      · rcases cacheBound label cached with src | cached
+        · exact Or.inl (Or.inl src)
+        · exact Or.inr cached
+
+
+/-- Whole-program inlining introduces no new code labels. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "compile_prog_code_labels"]
+theorem compileProg_codeLabels (prog prog1 : List (Nat × Nat × Bvi.Exp)) (cs1 : Spt (Nat × Bvi.Exp))
+    (compiled : compileProgSource prog = (cs1, prog1)) :
+    (⋃₀ (getCodeLabels '' {e | e ∈ prog1.map (fun q => q.2.2)})) ⊆
+      (⋃₀ (getCodeLabels '' {e | e ∈ prog.map (fun q => q.2.2)})) := by
+  have h := compileInc_codeLabels .ln cs1 prog prog1 compiled
+  have bound := inlineAll_codeLabels .ln prog
+  rw [h]
+  simpa [cacheCodeLabels, sptToList, sptToListA] using bound
 
 end Flapjack.Compiler.Backend.BviInline.Proofs

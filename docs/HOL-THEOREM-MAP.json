@@ -281,6 +281,70 @@
     "reviewer": "Independent typed HOL source review: the exact sparse-tree cache and program carriers, inline-all result, and body-only tick-removal map agree. The original definition and unconditional executed-traversal agreement were checked."
   },
   {
+    "hol_path": "cakeml/compiler/backend/bvi_inlineScript.sml",
+    "hol_name": "compile_prog_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Source.lean",
+    "lean_name": "compileProgSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the original full program and sparse-tree cache carriers and definition compileIncSource LN agree. The executed fuel-based whole-program inliner has unconditional agreement with this source definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "inline_all_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "inlineAll_codeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: for arbitrary cache and program, all output-body labels are bounded by the union of all input-body labels and the initial cache labels, with the original operand order and no extra premises."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "compile_prog_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "compileProg_codeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the sole original whole-program compiler equation implies the full output-body label union is a subset of the input-body label union. The empty initial cache is derived from the original definition, not assumed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "inline_exp_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "inlineExp_codeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: both independently quantified expression and list conjuncts retain their complete subset conclusions, with original sparse-tree cache and BVI carriers and no extra premises. All call, handler, lookup and arity branches were compared; typed original captured."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "cache_code_labels_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "cacheCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the exact Nat-arity/BVI-expression sparse tree and labels of every value in toList are retained; the original tree traversal and typed definition were compared."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "lookup_cache_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "lookup_cacheCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: the sole lookup equation and complete body-label subset match for arbitrary natural keys and arities and the original sparse tree, without well-formedness assumptions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "cache_code_labels_insert",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "cacheCodeLabels_insert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: arbitrary name, arity, body and sparse tree retain the full unconditional subset of inserted-body labels union old-cache labels, in the original order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "bvi_mk_tick_get_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "mkTick_getCodeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review: every natural tick count and BVI expression retains exactly the same label set, with no additional assumptions."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "compile_inc_code_labels",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",

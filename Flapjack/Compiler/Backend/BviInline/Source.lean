@@ -88,4 +88,10 @@ def compileIncSource (cache : Spt (Nat × Exp)) (program : List (Nat × Nat × E
   let (cache, inlined) := inlineAllSource cache program
   (cache, inlined.map (fun (name, arity, body) => (name, arity, removeTicksSource body)))
 
+/-- Inline a whole program starting with an empty wrapper cache. The executed
+whole-program traversal agrees by `compileProgFuel_eq_source`. -/
+@[hol "cakeml/compiler/backend/bvi_inlineScript.sml" "compile_prog_def"]
+def compileProgSource (program : List (Nat × Nat × Exp)) :
+    Spt (Nat × Exp) × List (Nat × Nat × Exp) := compileIncSource .ln program
+
 end Flapjack.Compiler.Backend.BviInline

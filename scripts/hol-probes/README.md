@@ -461,7 +461,7 @@ Regenerate with `HOL_PROBE_ONLY=data_sem_stack_probeScript.sml scripts/hol-probe
 `bvi_inline_labels_probe.out` captures the original typed mutual tick-removal
 definition, complete expression-and-list label-preservation theorem, and
 program label/key preservation statements, and the typed incremental inliner
-definitions and label/key theorems.
+definitions, cache-label facts, and label/key theorems.
 Regenerate with `HOL_PROBE_ONLY=bvi_inline_labels_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `bvi_let_proof_probe.out` captures the typed variable-deletion and compilation code-label theorems and optimizer environment relation and preservation statements, including the independently typed, unused `ys` quantified by `evaluate_env_rel`. Lean proves a corresponding recursive simulation and an executable traversal corollary; these remain untagged pending BVI evaluator and dispatcher review. Regenerate with `HOL_PROBE_ONLY=bvi_let_proof_probeScript.sml scripts/hol-probes/regenerate.sh`.
