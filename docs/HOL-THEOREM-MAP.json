@@ -491,6 +491,22 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "v_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/Environment.lean",
+    "lean_name": "vRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: variable offset and value, independently typed unused arguments, target list and optional lookup equality match."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
+    "hol_name": "env_rel_LOOKUP_SOME",
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/Environment.lean",
+    "lean_name": "envRel_lookupSome",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: original six binders, conjunction of environment relation and offset lookup, and variable relation applied to original HOL EL and DROP expressions match. Nonempty reflects HOL type inhabitation. The original local proof is replayed with inferred types."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_letProofScript.sml",
     "hol_name": "env_rel_MAP",
     "lean_path": "Flapjack/Compiler/Backend/BviLet/Proofs/Environment.lean",
     "lean_name": "envRel_shift",

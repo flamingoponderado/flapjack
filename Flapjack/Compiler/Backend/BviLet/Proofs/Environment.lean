@@ -2,11 +2,18 @@ module
 
 public import Flapjack.Compiler.Backend.BviLet.SourceSing
 public import Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+public import Flapjack.Misc.ListEl
 
 @[expose] public section
 
 /-! Environment invariants for the BVI let-propagation simulation. -/
 namespace Flapjack.Compiler.Backend.BviLet.Proofs
+
+/-- The original variable relation retains its two independently typed,
+unused arguments. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "v_rel_def"]
+def vRel {α β γ : Type} (a : Nat) (x : α) (_y : β) (_xs : γ) (ys : List α) : Prop :=
+  ys[a]? = some x
 
 /-- The displacement at each source position selects the same value in the
 corresponding suffix of the optimized environment. After the displacements
@@ -46,6 +53,31 @@ theorem envRel_lookup {α : Type} (offsets : List Nat) (d : Nat)
           change (y :: target)[Nat.succ index + (rest[index]?.getD d)]? = some value
           rw [Nat.succ_add, List.getElem?_cons_succ]
           exact ih source target related.2 index lookup
+
+/-- An explicitly mapped environment index satisfies the original variable
+relation on the corresponding suffixes. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "env_rel_LOOKUP_SOME"]
+theorem envRel_lookupSome {α : Type} [Nonempty α] (env env2 : List α) (ax : List Nat)
+    (x n d : Nat) (h : envRel ax d env env2 ∧ ax[n]? = some x) :
+    vRel x (Flapjack.holEl n env) (Flapjack.holEl n env2) (env.drop n) (env2.drop n) := by
+  induction ax generalizing env env2 n with
+  | nil => simp at h
+  | cons a rest ih =>
+    cases env with
+    | nil => simp [envRel] at h
+    | cons v env =>
+      cases env2 with
+      | nil => simp [envRel] at h
+      | cons w env2 =>
+        simp only [envRel] at h
+        cases n with
+        | zero =>
+          simp only [List.getElem?_cons_zero, Option.some.injEq] at h
+          rcases h with ⟨⟨look, _⟩, rfl⟩
+          simpa [vRel, Flapjack.holEl, Flapjack.holHd] using look
+        | succ n =>
+          simp only [List.getElem?_cons_succ] at h
+          simpa [vRel, Flapjack.holEl] using ih env env2 n ⟨h.1.2, h.2⟩
 
 /-- Prefixing matching values gives zero displacements for the new entries. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "env_rel_REPLICATE_0"]

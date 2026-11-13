@@ -29,3 +29,15 @@ val _ = show "IMP_COMM" bvi_letProofTheory.IMP_COMM;
 val _ = show "compile_APPEND" bvi_letProofTheory.compile_APPEND;
 val _ = show "compile_CONS" bvi_letProofTheory.compile_CONS;
 val _ = show "evaluate_SNOC_Rval" bvi_letProofTheory.evaluate_SNOC_Rval;
+(* Replay the original local relation/lookup proof. *)
+val env_rel_LOOKUP_SOME_replay = Q.prove
+  (`!env env2 ax x n d.
+      env_rel ax d env env2 /\
+      LLOOKUP ax n = SOME x ==>
+      v_rel x (EL n env) (EL n env2) (DROP n env) (DROP n env2)`,
+   Induct \\ Cases_on `env2` \\ Cases_on `ax` \\ fs [env_rel_def,LLOOKUP_def]
+   \\ rw [] \\ fs [env_rel_def] \\ res_tac \\ fs []
+   \\ Cases_on `n` \\ fs [env_rel_def]
+   \\ first_x_assum match_mp_tac
+   \\ Cases_on `h'` \\ fs [env_rel_def]);
+val _ = show "env_rel_LOOKUP_SOME_replay" env_rel_LOOKUP_SOME_replay;
