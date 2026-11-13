@@ -24,8 +24,8 @@ namespace Flapjack.CakeParser.PtreeConversion.Exact
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL
 
 /-- Exact port of HOL `ifM_def` (`cmlPtreeConversionScript.sml:96`): the
-    option-monadic conditional, selecting the first branch on `SOME T` and the
-    second on every other boolean option. -/
+    option-monadic conditional. It selects the first branch on `SOME T`, the
+    second branch on `SOME F`, and returns `NONE` on a `NONE` condition. -/
 @[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ifM_def"]
 def ifMHOL {α : Type} (bM : Option Bool) (tM eM : Option α) : Option α :=
   bM >>= fun b => if b then tM else eM
