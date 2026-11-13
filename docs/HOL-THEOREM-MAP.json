@@ -168,6 +168,14 @@
     "reviewer": "Compared the typed HOL theorem: both universally quantified expression and expression-list conjuncts, equality direction, and absence of premises are unchanged."
   },
   {
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "compile_prog_def",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/SourceProgram.lean",
+    "lean_name": "compileProgSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the freshly captured typed HOL definition: input and result tuple carriers, allocation-count and list-compilation bindings, entry location, start-based stub address, stub order, flattened code and returned counter agree. The executed whole-program wrapper calls this definition directly."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_exps_aux_contains",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AuxNameRange.lean",
@@ -182,6 +190,14 @@
     "lean_name": "compileList_codeLabelsDomain",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the freshly captured typed HOL theorem: the input program and auxiliary app_list carriers, compilation equality premise, counter bound and full label-set equality are unchanged. Both IMAGE and the bounded generated-label set are rendered as equivalent existential set comprehensions."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_prog_code_labels_domain",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/AuxNameRange.lean",
+    "lean_name": "compileProg_codeLabelsDomain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the freshly captured typed HOL theorem and its free variables: the input, result and counter binders, compilation equality premise, full left-associated label-set equality and independent arbitrary stub arguments are unchanged. IMAGE and the bounded fresh-label set are rendered as equivalent existential set comprehensions."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",

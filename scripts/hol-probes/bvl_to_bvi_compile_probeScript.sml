@@ -18,6 +18,7 @@ val _ = show "compile_single_def=" compile_single_def;
 val _ = show "compile_single_eq=" compile_single_eq;
 val _ = show "compile_list_def=" compile_list_def;
 val _ = show "compile_inc_def=" compile_inc_def;
+val _ = show "compile_prog_def_typed=" compile_prog_def;
 val _ = show "alloc_glob_count_def_typed=" alloc_glob_count_def;
 val _ = show "alloc_glob_count_eq_global_count_list_typed=" alloc_glob_count_eq_global_count_list;
 val _ = show "alloc_glob_count_empty=" (EVAL ``alloc_glob_count []``);

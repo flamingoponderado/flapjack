@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BvlToBvi.SourceSing
+public import Flapjack.Compiler.Backend.BvlToBvi.Stubs
 
 @[expose] public section
 
@@ -34,5 +35,15 @@ def compileIncSource (n : Nat) (programs : List (Nat × Nat × Bvl.Exp)) :
     Nat × List (Nat × Nat × Bvi.Exp) :=
   let (code, next) := compileProgramsSource n programs
   (next, appListAppend code)
+
+/-- Compile a whole program with the original entry point, stub order,
+allocation count, and fresh-name counter. -/
+@[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "compile_prog_def"]
+def compileProgSource (start n : Nat) (programs : List (Nat × Nat × Bvl.Exp)) :
+    Nat × List (Nat × Nat × Bvi.Exp) × Nat :=
+  let count := allocGlobCount (programs.map (fun (_, _, body) => body))
+  let (code, next) := compileProgramsSource n programs
+  (initGlobalsLocation,
+    stubs (bvlNumStubs + bvlToBviNamespaces * start) count ++ appListAppend code, next)
 
 end Flapjack.Compiler.Backend.BvlToBvi

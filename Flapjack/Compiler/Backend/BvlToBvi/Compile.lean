@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
 public import Flapjack.Compiler.Backend.BvlToBvi.Stubs
 public import Flapjack.Compiler.Backend.BviLet.Compile
 public import Flapjack.Compiler.Backend.BvlToBvi.Budget
+public import Flapjack.Compiler.Backend.BvlToBvi.SourceProgram
 
 @[expose] public section
 
@@ -110,13 +111,10 @@ def compileIncFuel (fuel optFuel n : Nat) (prog : List (Nat × Nat × Bvl.Exp)) 
   let (code, n) ← compileProgramsFuel fuel optFuel n prog
   pure (n, code)
 
-/-- Checked whole-program lowering, including the original stub order and
-global-allocation count. Fuel and the flattened auxiliary carrier retain the
-limitations of `compileFuel`. -/
-def compileProgFuel (fuel optFuel start n : Nat) (prog : List (Nat × Nat × Bvl.Exp)) :
-    Option (Nat × List (Nat × Nat × Bvi.Exp) × Nat) := do
-  let count := allocGlobCount (prog.map (fun (_, _, exp) => exp))
-  let (code, n) ← compileProgramsFuel fuel optFuel n prog
-  pure (initGlobalsLocation, stubs (bvlNumStubs + bvlToBviNamespaces * start) count ++ code, n)
+/-- Execute the original total whole-program conversion. The fuel arguments
+remain for callers of the older bounded interface. -/
+def compileProgFuel (_fuel _optFuel start n : Nat) (prog : List (Nat × Nat × Bvl.Exp)) :
+    Option (Nat × List (Nat × Nat × Bvi.Exp) × Nat) :=
+  some (compileProgSource start n prog)
 
 end Flapjack.Compiler.Backend.BvlToBvi

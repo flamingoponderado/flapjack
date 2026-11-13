@@ -464,7 +464,8 @@ Regenerate with `HOL_PROBE_ONLY=data_sem_stack_probeScript.sml scripts/hol-probe
 
 `bvl_to_bvi_value_rel_probe.out` also captures the original inferred types and
 complete statements of `compile_exps_aux_contains` and
-`compile_list_code_labels_domain` for source review.
+`compile_list_code_labels_domain`, and `compile_prog_code_labels_domain` for
+source review.
 
 `bvl_sem_values_probe.out` captures the typed original BVL value and reference constructors, integer, word, list and reference-aware equality operations, state field types, code lookup, thunk inspection, closure argument helpers, signed-division examples, constant-building/allocation cases, installation decoders and installation type, array copy, byte XOR and string comparison definitions, selected primitive operations, generated-variable evaluation and reverse-variable evaluation theorems and evaluation cases. The existing `CakeSourceArrayParity`, `CakeSourceThunkParity` and `CakeSourceCompareParity` checks replay the corresponding copy, XOR and comparison observations. HOL leaves the installation decoder examples as symbolic choices; the Lean tests check their encoded results, and the conversion module proves the general successful-result predicates. These observations do not establish the full BVL semantics or pass correctness.
 
@@ -9757,8 +9758,9 @@ carrier and dependency review.
 
 `bvl_to_bvi_compile_probe.out` captures the typed SmartAppend and source conversion equations, a polymorphic auxiliary-code example, a three-branch example that observes left-associated auxiliary tree shape, and incremental compiler examples. The latter include two consecutive calls that exercise the retained inline cache and a default-configuration observation. `Flapjack/Test/BvlToBviSourceParity.lean` replays the examples. Regenerate with `HOL_PROBE_ONLY=bvl_to_bvi_compile_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-The same capture records the typed original allocation-count equations and
-agreement theorem, plus empty and nested allocation-count examples.
+The same capture records the typed original whole-program compiler definition,
+allocation-count equations and agreement theorem, plus empty and nested
+allocation-count examples.
 
 `source_to_bvi_incremental_probe.out` captures complete BVI code and selected
 configuration fields for an empty batch, a literal binding, and two batches

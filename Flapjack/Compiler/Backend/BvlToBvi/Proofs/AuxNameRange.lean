@@ -341,6 +341,31 @@ theorem compileList_codeLabelsDomain (n : Nat) (p : List (Nat × Nat × Bvl.Exp)
     · subst x
       simpa [Nat.mul_comm] using fresh k lower bound
 
+/-- The complete whole-program label set is the union of translated input
+labels, fresh auxiliary labels, and the original stub labels. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_prog_code_labels_domain"]
+theorem compileProg_codeLabelsDomain (s n : Nat) (p : List (Nat × Nat × Bvl.Exp))
+    (t : Nat) (q : List (Nat × Nat × Bvi.Exp)) (m x y : Nat)
+    (compiled : compileProgSource s n p = (t, q, m)) :
+    {a : Nat | a ∈ q.map Prod.fst} =
+      {a : Nat | ∃ k, k ∈ p.map Prod.fst ∧ a = bvlNumStubs + k * bvlToBviNamespaces} ∪
+      {a : Nat | ∃ k, a = bvlNumStubs + k * bvlToBviNamespaces + 1 ∧ n ≤ k ∧ k < m} ∪
+      {a : Nat | a ∈ (stubs x y).map Prod.fst} := by
+  rcases run : compileProgramsSource n p with ⟨code, next⟩
+  simp only [compileProgSource, run, Prod.mk.injEq] at compiled
+  obtain ⟨rfl, rfl, rfl⟩ := compiled
+  have domains := (compileList_codeLabelsDomain n p code next run).2
+  ext a
+  simp only [Set.mem_ofPred_eq, List.map_append, List.mem_append, Set.mem_union] at *
+  have stubKeys : (stubs (bvlNumStubs + bvlToBviNamespaces * s)
+      (allocGlobCount (p.map fun (_, _, body) => body))).map Prod.fst =
+      (stubs x y).map Prod.fst := by
+    simp [stubs]
+  have domain := Set.ext_iff.mp domains a
+  simp only [Set.mem_ofPred_eq, Set.mem_union] at domain
+  rw [stubKeys]
+  rw [domain, or_comm]
+
 /-- Incremental compilation does not decrease its fresh-name counter. -/
 theorem compileIncSource_counter_mono (start : Nat) (programs : List (Nat × Nat × Bvl.Exp)) :
     start ≤ (compileIncSource start programs).1 := by

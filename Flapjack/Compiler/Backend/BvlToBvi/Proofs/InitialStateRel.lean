@@ -115,9 +115,7 @@ theorem compileProgFuel_eq_source (fuel optFuel start counter : Nat) (programs :
           (globalCountList (programs.map (fun (_, _, body) => body))) ++ (compileIncSource counter programs).2,
         (compileIncSource counter programs).1) := by
   rcases sourceRun : compileProgramsSource counter programs with ⟨tree, next⟩
-  have fuelRun := compileProgramsFuel_eq_flattened fuel optFuel counter programs
-  simp only [sourceRun] at fuelRun
-  simp [compileProgFuel, compileIncSource, sourceRun, fuelRun,
+  simp [compileProgFuel, compileProgSource, compileIncSource, sourceRun,
     ← allocGlobCount_eq_globalCountList.2]
 
 /-- The executed whole-program BVL-to-BVI compiler preserves evaluation from

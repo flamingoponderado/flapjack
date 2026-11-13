@@ -25,6 +25,11 @@ cases. The kernel-checked count equivalence and existing whole-program output
 agreement also establish that this switch preserves the previous result for
 every input.
 
+After routing whole-program BVL-to-BVI compilation through the original
+source-shaped definition, a rebuilt `cake` again matched all 143 fixed corpus
+cases, including complete output, diagnostics, and exit status. The existing
+whole-program agreement theorem retains its previous statement for all inputs.
+
 At `e38869acea`, all 38 structured templates matched with seed `20261111`, as
 did 40 structured programs with varied backend options and seed `20261112`.
 Both runs used a 90-second timeout per case.
