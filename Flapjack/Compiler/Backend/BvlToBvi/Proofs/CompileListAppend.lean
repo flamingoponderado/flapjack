@@ -9,6 +9,7 @@ namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value)
 
 /-- Relocation commutes with decoding a BVL list, including decoding failure. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "v_to_list_adjust"]
 theorem valueToList_adjust (relocate : Nat → Nat) (value : Value) :
     BvlSem.valueToList (adjustBv relocate value) =
       (BvlSem.valueToList value).map (List.map (adjustBv relocate)) := by

@@ -1,5 +1,23 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml", "hol_name": "do_eq_adjust_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/EqualityRel.lean", "lean_name": "doEqAdjustLemma",
+  "statement_status": "reviewed_fmap_as_finite_support_relation", "fmap_as_finite_support_relation": ["State.refs", "BviState.refs", "refs"],
+  "reviewer": "Compared both typed original local proof conjuncts: arbitrary standalone refs equals the source state map, the successful value or list equality and state relation plus both well-formedness premises imply the same target equality result after relocation. State.refs, BviState.refs and each quantified refs use canonical finite maps."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml", "hol_name": "do_eq_adjust",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/EqualityRel.lean", "lean_name": "doEqAdjust",
+  "statement_status": "reviewed_fmap_as_finite_support_relation", "fmap_as_finite_support_relation": ["State.refs", "BviState.refs"],
+  "reviewer": "Compared the typed original local proof: successful source value equality, state relation and well-formedness of both values imply the same Boolean result after relocation in the target state. Both state refs fields use canonical finite maps."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml", "hol_name": "v_to_list_adjust",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileListAppend.lean", "lean_name": "valueToList_adjust",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original local proof replay: for arbitrary BVL value and reference relocation, decoding after relocation equals option-mapping the elementwise relocation over the original decoding, including malformed-list failure. The BVL value, decoder and relocation carriers match."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml", "hol_name": "iEval_bVarBound",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/IEvalBound.lean", "lean_name": "iEvalBound",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],

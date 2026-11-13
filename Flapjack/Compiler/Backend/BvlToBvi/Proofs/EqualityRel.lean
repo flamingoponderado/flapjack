@@ -75,4 +75,54 @@ theorem doEqList_relocate (relocate : Nat → Nat)
 termination_by sizeOf first
 end
 
+
+namespace DoEqAdjustCarrier
+/-- Canonical BVL reference-map state roundtrip. -/
+theorem holFmapAsFiniteSupportRelationWitness_State {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+
+/-- Canonical BVI reference-map state roundtrip. -/
+theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end DoEqAdjustCarrier
+
+/-- Successful equality and list equality are preserved by related states. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "do_eq_adjust_lemma"
+  (fmap_as_finite_support_relation := [State.refs, BviState.refs, refs])]
+theorem doEqAdjustLemma {C F : Type} (r : BvlSem.State (Nat × C) F) (t2 : BviSem.BviState C F)
+    (b2 : Nat → Nat) :
+    (∀ (refs : HolFiniteMapExact Nat (Ref Value)) (x1 x2 : Value) (b : Bool),
+      refs = r.refs ∧ BvlSem.doEq refs x1 x2 = .val b ∧ stateRel b2 r t2 ∧
+        bvOk r.refs x1 ∧ bvOk r.refs x2 →
+      BvlSem.doEq t2.refs (adjustBv b2 x1) (adjustBv b2 x2) = .val b) ∧
+    (∀ (refs : HolFiniteMapExact Nat (Ref Value)) (x1 x2 : List Value) (b : Bool),
+      refs = r.refs ∧ BvlSem.doEqList refs x1 x2 = .val b ∧ stateRel b2 r t2 ∧
+        x1.Forall (bvOk r.refs) ∧ x2.Forall (bvOk r.refs) →
+      BvlSem.doEqList t2.refs (x1.map (adjustBv b2)) (x2.map (adjustBv b2)) = .val b) := by
+  constructor
+  · intro refs x1 x2 b ⟨refsEq, equal, related, first, second⟩
+    subst refs
+    rw [doEq_relocate b2 r.refs t2.refs x1 x2 related.1 first second]
+    exact equal
+  · intro refs x1 x2 b ⟨refsEq, equal, related, first, second⟩
+    subst refs
+    have firstOk : bvOkList r.refs x1 := (bvOkList_iff _ _).2 (by simpa [List.forall_iff_forall_mem] using first)
+    have secondOk : bvOkList r.refs x2 := (bvOkList_iff _ _).2 (by simpa [List.forall_iff_forall_mem] using second)
+    rw [doEqList_relocate b2 r.refs t2.refs x1 x2 related.1 firstOk secondOk]
+    exact equal
+
+/-- Successful value equality is preserved by related states. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "do_eq_adjust"
+  (fmap_as_finite_support_relation := [State.refs, BviState.refs])]
+theorem doEqAdjust {C F : Type} (r : BvlSem.State (Nat × C) F) (t2 : BviSem.BviState C F)
+    (b2 : Nat → Nat) (x1 x2 : Value) (b : Bool)
+    (premises : BvlSem.doEq r.refs x1 x2 = .val b ∧ stateRel b2 r t2 ∧
+      bvOk r.refs x1 ∧ bvOk r.refs x2) :
+    BvlSem.doEq t2.refs (adjustBv b2 x1) (adjustBv b2 x2) = .val b := by
+  exact (doEqAdjustLemma r t2 b2).1 r.refs x1 x2 b ⟨rfl, premises⟩
+
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

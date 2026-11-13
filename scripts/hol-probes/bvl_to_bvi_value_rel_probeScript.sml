@@ -371,3 +371,45 @@ val iEval_bVarBound_replay = prove (``  ∀(n:num) xs n vs (s:('c,'ffi) bviSem$s
        (fn th => gvs [th, ADD1]));
 
 val _ = show "iEval_bVarBound_replay=" iEval_bVarBound_replay;
+
+open bvlSemTheory;
+val v_to_list_adjust_replay = prove (``∀x. v_to_list (adjust_bv f x) = OPTION_MAP (MAP (adjust_bv f)) (v_to_list x)``,
+  ho_match_mp_tac v_to_list_ind >>
+  simp[v_to_list_def,adjust_bv_def] >> srw_tac[][] >>
+  Cases_on`v_to_list x`>>full_simp_tac(srw_ss())[]);
+val _ = show "v_to_list_adjust_replay=" v_to_list_adjust_replay;
+
+val do_eq_adjust_lemma_replay = prove (``  (!refs x1 x2 b.
+              refs = r.refs /\
+              do_eq refs x1 x2 = Eq_val b /\ state_rel b2 r t2 /\
+              bv_ok r.refs x1 /\ bv_ok r.refs x2 ==>
+              do_eq t2.refs (adjust_bv b2 x1) (adjust_bv b2 x2) = Eq_val b) /\
+   (!refs x1 x2 b.
+              refs = r.refs /\
+              do_eq_list refs x1 x2 = Eq_val b /\ state_rel b2 r t2 /\
+              EVERY (bv_ok r.refs) x1 /\ EVERY (bv_ok r.refs) x2 ==>
+              do_eq_list t2.refs (MAP (adjust_bv b2) x1) (MAP (adjust_bv b2) x2) = Eq_val b)``,
+  ho_match_mp_tac do_eq_ind \\ rw [] \\ fs [adjust_bv_def]
+  THEN1 (
+    fs[bv_ok_def]
+    \\ Cases_on`FLOOKUP r.refs n2` >- fs[FLOOKUP_DEF]
+    \\ Cases_on`FLOOKUP r.refs n1` >- fs[FLOOKUP_DEF] \\ fs[]
+    \\ fs[state_rel_def]
+    \\ last_assum(qspec_then`n2`mp_tac)
+    \\ last_x_assum(qspec_then`n1`mp_tac)
+    \\ simp[]
+    \\ every_case_tac \\ fs[]
+    \\ fs[INJ_DEF]
+    \\ metis_tac[])
+  \\ fs [isClos_def] \\ rfs []
+  \\ fs [bv_ok_def] \\ rfs []
+  \\ rpt (pop_assum mp_tac)
+  \\ CONV_TAC (DEPTH_CONV ETA_CONV)
+  \\ rw [] \\ every_case_tac \\ fs []);
+val _ = show "do_eq_adjust_lemma_replay=" do_eq_adjust_lemma_replay;
+val do_eq_adjust_lemma = do_eq_adjust_lemma_replay;
+val do_eq_adjust_replay = prove (``  do_eq r.refs x1 x2 = Eq_val b /\ state_rel b2 r t2 /\
+   bv_ok r.refs x1 /\ bv_ok r.refs x2 ==>
+   do_eq t2.refs (adjust_bv b2 x1) (adjust_bv b2 x2) = Eq_val b``,
+  metis_tac [do_eq_adjust_lemma]);
+val _ = show "do_eq_adjust_replay=" do_eq_adjust_replay;
