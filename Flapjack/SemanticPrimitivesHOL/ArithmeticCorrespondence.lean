@@ -41,7 +41,7 @@ private theorem intCase {σ : Type} (state : Store Value × HolFfiState σ)
             simp [doArith, doAppNumericCore, checkType, theLitvInt, h]
   · have unchecked : values.all (checkType .intT) = false := by
       cases h : values.all (checkType .intT) <;> simp_all
-    simp only [unchecked, Bool.false_eq_true, if_false]
+    simp only [unchecked, Bool.false_eq_true, ite_false]
     cases action <;> simp only [doAppNumericCore]
     all_goals repeat' first | (split <;> simp_all [checkType]) | contradiction
 
@@ -77,7 +77,7 @@ private theorem word8Case {σ : Type} (state : Store Value × HolFfiState σ)
           cases rest <;> simp [doArith, doAppNumericCore, checkType, theLitvWord8, wordArith]
   · have unchecked : values.all (checkType (.wordT .w8)) = false := by
       cases h : values.all (checkType (.wordT .w8)) <;> simp_all
-    simp only [unchecked, Bool.false_eq_true, if_false]
+    simp only [unchecked, Bool.false_eq_true, ite_false]
     cases action <;> simp only [doAppNumericCore]
     all_goals repeat' first | (split <;> simp_all [checkType]) | contradiction
 
@@ -112,7 +112,7 @@ private theorem word64Case {σ : Type} (state : Store Value × HolFfiState σ)
           cases rest <;> simp [doArith, doAppNumericCore, checkType, theLitvWord64, wordArith]
   · have unchecked : values.all (checkType (.wordT .w64)) = false := by
       cases h : values.all (checkType (.wordT .w64)) <;> simp_all
-    simp only [unchecked, Bool.false_eq_true, if_false]
+    simp only [unchecked, Bool.false_eq_true, ite_false]
     cases action <;> simp only [doAppNumericCore]
     all_goals repeat' first | (split <;> simp_all [checkType]) | contradiction
 

@@ -142,7 +142,7 @@ theorem correctOutcome_catch_entry {C F : Type} (target caught : DataSem.State C
     exact lookup_cut_namesOfList roots target.locals key
   have keeps : ∀ key ∈ roots, key ≠ n → sptLookup key next.locals = sptLookup key target.locals := by
     intro key member different
-    rw [lookupOther key different, if_pos member]
+    rw [lookupOther key different, ite_eq_left member]
   have varsNew : DataProps.varCorr env corr (sptMap dataToBviValue next.locals) := by
     apply varCorr_of_lookup_eq dataToBviValue target.locals next.locals corr env vars
     intro key member
@@ -299,7 +299,7 @@ theorem lookup_return_bindings {α : Type} (values : List α) (start key : Nat) 
     by_cases equal : key = start
     · subst key
       simp
-    · rw [if_neg equal]
+    · rw [ite_eq_right equal]
       rw [ih]
       by_cases before : key < start
       · simp [show ¬ start ≤ key by omega, show ¬ start + 1 ≤ key by omega]
@@ -361,7 +361,7 @@ theorem correctOutcome_returns_entry {C F : Type} (target restored : DataSem.Sta
     have below : key < n := by
       by_contra bound
       exact rootsPresent key root (fresh key (by omega))
-    rw [oldRead key below, if_pos root]
+    rw [oldRead key below, ite_eq_left root]
   have valueVars : DataProps.varCorr values ((List.range dataValues.length).map (n + ·))
       (sptMap dataToBviValue next.locals) := by
     subst values
@@ -394,7 +394,7 @@ theorem correctOutcome_returns_entry {C F : Type} (target restored : DataSem.Sta
       by_cases member : key ∈ live
       · simp [roots, member]
       · simp [roots, needed member]
-    rw [oldRead key below, if_pos root]
+    rw [oldRead key below, ite_eq_left root]
     exact lookup
   · simp [next, DataSem.setVars, stack]
   · simp [next, DataSem.setVars, handler]
@@ -607,7 +607,7 @@ theorem simulationFor_call_entryTimeout {C F : Type} (ticks : Nat) (dest : Optio
         simp [call, DataSem.evaluate, afterRead, afterCode, afterClock, last]
       have ticksRun : DataSem.evaluate (DataLang.mkTicks ticks call) tmid = (some (.err (.abort .timeoutError)), last) := by
         rw [DataSem.evaluate_mkTicks]
-        rw [if_neg (by omega : ¬ tmid.clock < ticks)]
+        rw [ite_eq_right (by omega : ¬ tmid.clock < ticks)]
         exact callRun
       have targetRun := evaluateSeq_continue argsProg (DataLang.mkTicks ticks call) t1 tmid _ target targetBound ticksRun
       have finalRel : stateRel { smid with clock := 0 } last := by
@@ -631,7 +631,7 @@ theorem simulationFor_call_entryTimeout {C F : Type} (ticks : Nat) (dest : Optio
         simp [call, DataSem.evaluate, afterRead, afterCode, afterClock, cutEnv, callState, last]
       have ticksRun : DataSem.evaluate (DataLang.mkTicks ticks call) tmid = (some (.err (.abort .timeoutError)), last) := by
         rw [DataSem.evaluate_mkTicks]
-        rw [if_neg (by omega : ¬ tmid.clock < ticks)]
+        rw [ite_eq_right (by omega : ¬ tmid.clock < ticks)]
         exact callRun
       have targetRun := evaluateSeq_continue argsProg (DataLang.mkTicks ticks call) t1 tmid _ target targetBound ticksRun
       have finalRel : stateRel { smid with clock := 0 } last := by
@@ -745,7 +745,7 @@ theorem simulationFor_call_handler_timeout {C F : Type} (ticks dest : Nat) (args
         evaluateSeq_stop call after afterTicks last _ callRun lastClock
       have restRun : DataSem.evaluate rest tmid = (some (.err (.abort .timeoutError)), last) := by
         dsimp only [rest]
-        rw [DataSem.evaluate_mkTicks, if_neg before]
+        rw [DataSem.evaluate_mkTicks, ite_eq_right before]
         exact seqRun
       have targetRun := evaluateSeq_continue argsProg rest t1 tmid _ target targetBound restRun
       have finalRel : stateRel { smid with clock := 0 } last := by
@@ -991,7 +991,7 @@ theorem simulationFor_letCall_entryTimeout {C F : Type} (rets ticks dest : Nat) 
       let rest := DataLang.mkTicks ticks call
       have restRun : DataSem.evaluate rest tmid = (some (.err (.abort .timeoutError)), last) := by
         dsimp only [rest]
-        rw [DataSem.evaluate_mkTicks, if_neg (by omega : ¬ tmid.clock < ticks)]
+        rw [DataSem.evaluate_mkTicks, ite_eq_right (by omega : ¬ tmid.clock < ticks)]
         exact callRun
       have sourceBound := BviSem.evaluate_clock_le args env s1
       rw [argsRun] at sourceBound

@@ -68,9 +68,9 @@ theorem destClosure_full_closure (maxApp : Nat) (requested location : Option Nat
   by_cases valid : checkLoc maxApp requested location arity (arg :: args).length supplied.length = true ∧
       supplied.length < arity
   · by_cases partialCase : (arg :: args).length + supplied.length < arity
-    · rw [destClosure_closure_source, if_pos valid, if_neg (not_not.mpr partialCase)] at run
+    · rw [destClosure_closure_source, ite_eq_left valid, ite_eq_right (not_not.mpr partialCase)] at run
       cases run
-    · rw [destClosure_closure_source, if_pos valid, if_pos partialCase] at run
+    · rw [destClosure_closure_source, ite_eq_left valid, ite_eq_left partialCase] at run
       simp only [Option.some.injEq, AppKind.fullApp.injEq] at run
       obtain ⟨rfl, rfl, rfl⟩ := run
       let needed := arity - supplied.length
@@ -97,9 +97,9 @@ theorem destClosure_full_closure (maxApp : Nat) (requested location : Option Nat
             nextSupplied.length < arity := by simpa [← allArgs.length_eq, ← suppliedRel.length_eq] using valid
         have targetFull : ¬ ((nextArg :: nextArgs).length + nextSupplied.length < arity) := by
           simpa [← allArgs.length_eq, ← suppliedRel.length_eq] using partialCase
-        rw [destClosure_closure_source, if_pos targetValid, if_pos targetFull]
+        rw [destClosure_closure_source, ite_eq_left targetValid, ite_eq_left targetFull]
         simp [needed, ← suppliedRel.length_eq]
-  · rw [destClosure_closure_source, if_neg valid] at run
+  · rw [destClosure_closure_source, ite_eq_right valid] at run
     contradiction
 
 /-- The recursive-closure case of full application selects corresponding
@@ -140,9 +140,9 @@ theorem destClosure_full_recclosure (maxApp : Nat) (requested location : Option 
             arity (arg :: args).length supplied.length && decide (supplied.length < arity)) = true := by
           simpa using valid
         by_cases partialCase : (arg :: args).length + supplied.length < arity
-        · rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ found, if_pos condition, if_pos partialCase] at run
+        · rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ found, ite_eq_left condition, ite_eq_left partialCase] at run
           cases run
-        · rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ found, if_pos condition, if_neg partialCase] at run
+        · rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ found, ite_eq_left condition, ite_eq_right partialCase] at run
           simp only [Option.some.injEq, AppKind.fullApp.injEq] at run
           obtain ⟨rfl, rfl, rfl⟩ := run
           let needed := arity - supplied.length
@@ -176,12 +176,12 @@ theorem destClosure_full_recclosure (maxApp : Nat) (requested location : Option 
               simpa [← allArgs.length_eq, ← suppliedRel.length_eq] using condition
             have targetFull : ¬ ((nextArg :: nextArgs).length + nextSupplied.length < arity) := by
               simpa [← allArgs.length_eq, ← suppliedRel.length_eq] using partialCase
-            rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ targetFound, if_pos targetCondition, if_neg targetFull]
+            rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ targetFound, ite_eq_left targetCondition, ite_eq_right targetFull]
             simp [needed, ← suppliedRel.length_eq, targetRecursive]
       · have condition : ¬ ((checkLoc maxApp requested (location.map (fun loc => 2 * index + loc))
             arity (arg :: args).length supplied.length && decide (supplied.length < arity)) = true) := by
           simpa using valid
-        rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ found, if_neg condition] at run
+        rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ found, ite_eq_right condition] at run
         contradiction
 
 /-- Full application of related closures selects related bodies,
@@ -221,11 +221,11 @@ theorem destClosure_none_related (maxApp : Nat) (requested : Option Nat)
   | closure location supplied nextSupplied env nextEnv arity body nextBody envRel suppliedRel bodyRel =>
     by_cases valid : checkLoc maxApp requested location arity args.length supplied.length = true ∧
         supplied.length < arity
-    · rw [destClosure_closure_source, if_pos valid] at rejected
+    · rw [destClosure_closure_source, ite_eq_left valid] at rejected
       split at rejected <;> cases rejected
     · have targetInvalid : ¬ (checkLoc maxApp requested location arity nextArgs.length nextSupplied.length = true ∧
           nextSupplied.length < arity) := by simpa [← argsRel.length_eq, ← suppliedRel.length_eq] using valid
-      rw [destClosure_closure_source, if_neg targetInvalid]
+      rw [destClosure_closure_source, ite_eq_right targetInvalid]
   | recclosure location supplied nextSupplied env nextEnv functions nextFunctions index envRel suppliedRel functionsRel =>
     have lookup := list_lookup_related functionsRel index
     cases found : functions[index]? with
@@ -245,12 +245,12 @@ theorem destClosure_none_related (maxApp : Nat) (requested : Option Nat)
         subst nextArity
         by_cases valid : (checkLoc maxApp requested (location.map (fun loc => 2 * index + loc))
             arity args.length supplied.length && decide (supplied.length < arity)) = true
-        · rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ found, if_pos valid] at rejected
+        · rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ found, ite_eq_left valid] at rejected
           split at rejected <;> cases rejected
         · have targetInvalid : ¬ ((checkLoc maxApp requested (location.map (fun loc => 2 * index + loc))
               arity nextArgs.length nextSupplied.length && decide (nextSupplied.length < arity)) = true) := by
             simpa [← argsRel.length_eq, ← suppliedRel.length_eq] using valid
-          rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ targetFound, if_neg targetInvalid]
+          rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ targetFound, ite_eq_right targetInvalid]
 
 /-- Related closure values preserve partial application and its accumulated
 argument list. -/
@@ -266,19 +266,19 @@ theorem destClosure_partial_related (maxApp : Nat) (requested : Option Nat)
     by_cases valid : checkLoc maxApp requested location arity args.length supplied.length = true ∧
         supplied.length < arity
     · by_cases partialCase : args.length + supplied.length < arity
-      · rw [destClosure_closure_source, if_pos valid, if_neg (not_not.mpr partialCase)] at run
+      · rw [destClosure_closure_source, ite_eq_left valid, ite_eq_right (not_not.mpr partialCase)] at run
         cases run
         refine ⟨.closure location (nextArgs ++ nextSupplied) nextEnv arity nextBody, ?_, ?_⟩
         · have targetValid : checkLoc maxApp requested location arity nextArgs.length nextSupplied.length = true ∧
               nextSupplied.length < arity := by simpa [← argsRel.length_eq, ← suppliedRel.length_eq] using valid
           have targetPartial : nextArgs.length + nextSupplied.length < arity := by
             simpa [← argsRel.length_eq, ← suppliedRel.length_eq] using partialCase
-          rw [destClosure_closure_source, if_pos targetValid, if_neg (not_not.mpr targetPartial)]
+          rw [destClosure_closure_source, ite_eq_left targetValid, ite_eq_right (not_not.mpr targetPartial)]
         · exact .closure location (args ++ supplied) (nextArgs ++ nextSupplied) env nextEnv arity body nextBody
             envRel (List.rel_append argsRel suppliedRel) bodyRel
-      · rw [destClosure_closure_source, if_pos valid, if_pos partialCase] at run
+      · rw [destClosure_closure_source, ite_eq_left valid, ite_eq_left partialCase] at run
         cases run
-    · rw [destClosure_closure_source, if_neg valid] at run
+    · rw [destClosure_closure_source, ite_eq_right valid] at run
       contradiction
   | recclosure location supplied nextSupplied env nextEnv functions nextFunctions index envRel suppliedRel functionsRel =>
     have lookup := list_lookup_related functionsRel index
@@ -297,7 +297,7 @@ theorem destClosure_partial_related (maxApp : Nat) (requested : Option Nat)
         by_cases valid : (checkLoc maxApp requested (location.map (fun loc => 2 * index + loc))
             arity args.length supplied.length && decide (supplied.length < arity)) = true
         · by_cases partialCase : args.length + supplied.length < arity
-          · rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ found, if_pos valid, if_pos partialCase] at run
+          · rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ found, ite_eq_left valid, ite_eq_left partialCase] at run
             cases run
             refine ⟨.recclosure location (nextArgs ++ nextSupplied) nextEnv nextFunctions index, ?_, ?_⟩
             · have targetValid : (checkLoc maxApp requested (location.map (fun loc => 2 * index + loc))
@@ -305,12 +305,12 @@ theorem destClosure_partial_related (maxApp : Nat) (requested : Option Nat)
                 simpa [← argsRel.length_eq, ← suppliedRel.length_eq] using valid
               have targetPartial : nextArgs.length + nextSupplied.length < arity := by
                 simpa [← argsRel.length_eq, ← suppliedRel.length_eq] using partialCase
-              rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ targetFound, if_pos targetValid, if_pos targetPartial]
+              rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ targetFound, ite_eq_left targetValid, ite_eq_left targetPartial]
             · exact .recclosure location (args ++ supplied) (nextArgs ++ nextSupplied) env nextEnv functions nextFunctions
                 index envRel (List.rel_append argsRel suppliedRel) functionsRel
-          · rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ found, if_pos valid, if_neg partialCase] at run
+          · rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ found, ite_eq_left valid, ite_eq_right partialCase] at run
             cases run
-        · rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ found, if_neg valid] at run
+        · rw [destClosure_rec_found _ _ _ _ _ _ _ _ _ _ found, ite_eq_right valid] at run
           contradiction
 
 namespace AppPort
@@ -409,25 +409,25 @@ theorem evaluate_remove_fvs_app_cons {C F : Type} (location : Option Nat) (funct
             simpa [clockEq, ← allArgs.length_eq] using short
           rw [evaluateApp, closureRun] at run
           dsimp only at run
-          rw [if_pos short] at run
+          rw [ite_eq_left short] at run
           cases run
           refine ⟨.err (.abort .timeoutError), { target with clock := 0 }, ?_, rfl,
             stateRel_clock source target 0 states⟩
           rw [evaluateApp, targetFound]
           dsimp only
-          rw [if_pos targetShort]
+          rw [ite_eq_left targetShort]
           rfl
         · have targetEnough : ¬ target.clock < (targetArg :: targetTail).length := by
             simpa [clockEq, ← allArgs.length_eq] using short
           rw [evaluateApp, closureRun] at run
           dsimp only at run
-          rw [if_neg short] at run
+          rw [ite_eq_right short] at run
           cases run
           refine ⟨.val [targetValue], decClock (arg :: args).length target, ?_, .cons valuesRel .nil,
             stateRel_dec source target (arg :: args).length states⟩
           rw [evaluateApp, targetFound]
           dsimp only
-          rw [if_neg targetEnough, ← allArgs.length_eq]
+          rw [ite_eq_right targetEnough, ← allArgs.length_eq]
       | fullApp body env rest =>
         obtain ⟨targetBody, targetEnv, targetRest, codeRel, envRel, restRel, targetClosure⟩ :=
           destClosure_full_related source.maxApp location function targetFunction arg targetArg args targetTail
@@ -443,13 +443,13 @@ theorem evaluate_remove_fvs_app_cons {C F : Type} (location : Option Nat) (funct
             exact short
           rw [evaluateApp, closureRun] at run
           dsimp only at run
-          rw [if_pos short] at run
+          rw [ite_eq_left short] at run
           cases run
           refine ⟨.err (.abort .timeoutError), { target with clock := 0 }, ?_, rfl,
             stateRel_clock source target 0 states⟩
           rw [evaluateApp, targetFound]
           dsimp only
-          rw [if_pos targetShort]
+          rw [ite_eq_left targetShort]
           rfl
         · have startRel := stateRel_dec source target cost states
           have targetEnough : ¬ target.clock < (targetArg :: targetTail).length - targetRest.length := by
@@ -457,7 +457,7 @@ theorem evaluate_remove_fvs_app_cons {C F : Type} (location : Option Nat) (funct
             exact short
           rw [evaluateApp, closureRun] at run
           dsimp only at run
-          rw [if_neg short, fixClock_evaluate] at run
+          rw [ite_eq_right short, fixClock_evaluate] at run
           cases bodyRun : evaluate [body] env (decClock cost source) with
           | mk bodyResult middle =>
             obtain ⟨targetBodyResult, targetMiddle, targetBodyRun, bodyRel, middleRel⟩ :=
@@ -473,7 +473,7 @@ theorem evaluate_remove_fvs_app_cons {C F : Type} (location : Option Nat) (funct
                 refine ⟨.err targetError, targetMiddle, ?_, bodyRel, middleRel⟩
                 rw [evaluateApp, targetFound]
                 dsimp only
-                rw [if_neg targetEnough, targetCost, fixClock_evaluate, targetBodyRun]
+                rw [ite_eq_right targetEnough, targetCost, fixClock_evaluate, targetBodyRun]
             | val values =>
               obtain ⟨value, rfl⟩ := evaluate_singleton_value body env (decClock cost source) middle values bodyRun
               cases targetBodyResult with
@@ -492,7 +492,7 @@ theorem evaluate_remove_fvs_app_cons {C F : Type} (location : Option Nat) (funct
                   refine ⟨targetResult, targetNext, ?_, resultRel, nextRel⟩
                   rw [evaluateApp, targetFound]
                   dsimp only
-                  rw [if_neg targetEnough, targetCost, fixClock_evaluate, targetBodyRun]
+                  rw [ite_eq_right targetEnough, targetCost, fixClock_evaluate, targetBodyRun]
                   exact targetRun
 end AppPort
 

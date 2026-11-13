@@ -354,7 +354,7 @@ theorem evaluate_letrec_noInstall_relation_step {C F : Type} (names : List Flapj
     | none =>
       rw [ClosSem.evaluate.eq_def] at run
       dsimp only at run
-      rw [if_pos good] at run
+      rw [ite_eq_left good] at run
       have bodyEnvOk : valuesNoInstall
           ((List.range functions.length).map (fun i => ClosSem.Value.recclosure location [] env functions i) ++ env) = true :=
         (valuesNoInstall_append _ _).2 ⟨recursiveClosure_bundle_noInstall location env functions envOk functionsOk, envOk⟩
@@ -362,25 +362,25 @@ theorem evaluate_letrec_noInstall_relation_step {C F : Type} (names : List Flapj
       refine ⟨targetFinal, ?_, finalRel, resultOk⟩
       rw [ClosSem.evaluate.eq_def]
       dsimp only
-      rw [if_pos (by simpa [maxEq] using good)]
+      rw [ite_eq_left (by simpa [maxEq] using good)]
       exact targetBody
     | some selected =>
       cases captured : ClosSem.lookupVars selected env with
       | none =>
         rw [ClosSem.evaluate.eq_def] at run
         dsimp only at run
-        rw [if_pos good, captured] at run
+        rw [ite_eq_left good, captured] at run
         simp at run
         rcases run with ⟨rfl, rfl⟩
         refine ⟨target, ?_, related, trivial⟩
         rw [ClosSem.evaluate.eq_def]
         dsimp only
-        rw [if_pos (by simpa [maxEq] using good), captured]
+        rw [ite_eq_left (by simpa [maxEq] using good), captured]
         simp
       | some values =>
         rw [ClosSem.evaluate.eq_def] at run
         dsimp only at run
-        rw [if_pos good, captured] at run
+        rw [ite_eq_left good, captured] at run
         dsimp only at run
         have capturedOk := lookupVars_noInstall selected env values envOk captured
         have bodyEnvOk : valuesNoInstall
@@ -390,17 +390,17 @@ theorem evaluate_letrec_noInstall_relation_step {C F : Type} (names : List Flapj
         refine ⟨targetFinal, ?_, finalRel, resultOk⟩
         rw [ClosSem.evaluate.eq_def]
         dsimp only
-        rw [if_pos (by simpa [maxEq] using good), captured]
+        rw [ite_eq_left (by simpa [maxEq] using good), captured]
         exact targetBody
   · rw [ClosSem.evaluate.eq_def] at run
     dsimp only at run
-    rw [if_neg good] at run
+    rw [ite_eq_right good] at run
     simp at run
     rcases run with ⟨rfl, rfl⟩
     refine ⟨target, ?_, related, trivial⟩
     rw [ClosSem.evaluate.eq_def]
     dsimp only
-    rw [if_neg (by simpa [maxEq] using good)]
+    rw [ite_eq_right (by simpa [maxEq] using good)]
     simp
 
 /-- Direct calls agree because the related code stores are both empty. -/

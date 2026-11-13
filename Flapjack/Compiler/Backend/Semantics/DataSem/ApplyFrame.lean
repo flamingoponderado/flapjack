@@ -34,7 +34,7 @@ theorem SameControl.jumpExc_ne_none {C F : Type} {before after : State C F}
     (control : SameControl before after) (available : jumpExc before ≠ none) : jumpExc after ≠ none := by
   rcases control with ⟨stack, handler, _, _, _⟩
   by_cases h : before.handler < before.stack.length
-  · simp only [jumpExc, stack, handler, if_pos h] at available ⊢
+  · simp only [jumpExc, stack, handler, ite_eq_left h] at available ⊢
     cases frame : before.stack.drop (before.stack.length - (before.handler + 1)) with
     | nil => simp [frame] at available
     | cons head rest => cases head <;> simp_all

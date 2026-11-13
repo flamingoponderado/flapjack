@@ -110,7 +110,7 @@ theorem case_jump (a : W) (s1 s2 : AsmState 32) (ms : State)
       have f5 : tmp ≠ tmp2 := by decide
       have f6 : ra ≠ tmp2 := by decide
       simp only [List.foldl_cons, List.foldl_nil, exec, setReg_pc, setReg_nextPc, reg_setReg,
-        reg_mk_gpr, alu_or, alu_add, if_true, if_false, f1, f2, f3, f5, f6, f4.symm, f5.symm,
+        reg_mk_gpr, alu_or, alu_add, ite_true, ite_false, f1, f2, f3, f5, f6, f4.symm, f5.symm,
         boff, st.nextPc, show (ra = 31) ↔ True from iff_true_intro rfl]
       erw [e]; rw [st.pc]
       bv_omega
@@ -121,7 +121,7 @@ theorem case_jump (a : W) (s1 s2 : AsmState 32) (ms : State)
       have n1 : regOf r ≠ 1 := hr.ne_tmp
       have n30 : regOf r ≠ 30 := hr.ne_tmp2
       simp only [List.foldl_cons, List.foldl_nil, exec, reg_setReg, reg_mk_gpr, alu_or, alu_add,
-        tmp, tmp2, ra, hr.regOf_ne_zero, n1, if_false]
+        tmp, tmp2, ra, hr.regOf_ne_zero, n1, ite_false]
       by_cases e31 : regOf r = 31
       · have : r = 31 := (regOf_inj hr.lt (by decide)).1 e31
         subst this
@@ -167,7 +167,7 @@ theorem case_call (a : W) (s1 s2 : AsmState 32) (ms : State)
     · intro x hx; rw [List.foldl_nil, exec_nop]; simp [exec, setReg_mem]; exact st.mem x hx
     · intro r hr
       rw [List.foldl_nil, exec_nop, reg_mk_gpr]
-      simp only [exec, reg_setReg, hr.regOf_ne_zero, if_false, hlen]
+      simp only [exec, reg_setReg, hr.regOf_ne_zero, ite_false, hlen]
       by_cases e31 : r = 31
       · subst e31; simp [regOf, st.pc]
       · have : regOf r ≠ 31 := fun h => e31 ((regOf_inj hr.lt (by decide)).1 h)
@@ -210,7 +210,7 @@ theorem case_call (a : W) (s1 s2 : AsmState 32) (ms : State)
       have n1 : regOf r ≠ 1 := hr.ne_tmp
       rw [exec_nop, reg_mk_gpr]
       simp only [List.foldl_cons, List.foldl_nil, exec, reg_setReg, reg_mk_gpr, alu_or, alu_add,
-        tmp, ra, hr.regOf_ne_zero, n1, if_false, hlen, setReg_pc, setReg_nextPc]
+        tmp, ra, hr.regOf_ne_zero, n1, ite_false, hlen, setReg_pc, setReg_nextPc]
       by_cases e31 : r = 31
       · subst e31; simp [regOf, st.pc, st.nextPc, show boff 1#16 = 4#32 by decide]
         bv_omega
@@ -276,20 +276,20 @@ theorem cmpCase (c : Cmp) (r1 : Nat) (ri : HolRegImm 32) (a : W) (s1 s2 : AsmSta
   have ht' := fun k (hk : k < pre.length) =>
     touched_nil _ (hpre _ (List.getElem_mem hk)).2.2.2 ((pre.take k).foldl exec ms)
   by_cases hc : wordCmpHOL c (s1.regs r1) (regImm ri s1) = true
-  · simp only [hc, if_true] at hs2
+  · simp only [hc, ite_true] at hs2
     subst hs2
     apply branchCase _ _ _ _ st pre br nop hsplit rfl hp' ht' hbrd hbrPc seq_nop rfl
       decode_nop
-    · rw [exec_nop, hbr]; simp only [hcond, hc, if_true]; rw [f1, htarget]
+    · rw [exec_nop, hbr]; simp only [hcond, hc, ite_true]; rw [f1, htarget]
     · exact hal
     · intro x hx; rw [exec_nop, hbr]; dsimp only; rw [f4]; exact st.mem x hx
     · intro r hr; rw [exec_nop, reg_mk_gpr, hbr, reg_mk_gpr, hregpre r hr]
       exact st.reg _ hr.lt hr.avoid
-  · simp only [hc, if_false, Bool.false_eq_true] at hs2
+  · simp only [hc, ite_false, Bool.false_eq_true] at hs2
     subst hs2
     apply branchCase _ _ _ _ st pre br nop hsplit rfl hp' ht' hbrd hbrPc seq_nop rfl
       decode_nop
-    · rw [exec_nop, hbr]; simp only [hcond, hc, if_false, Bool.false_eq_true]
+    · rw [exec_nop, hbr]; simp only [hcond, hc, ite_false, Bool.false_eq_true]
       rw [f2, f1, st.pc, hlen]
       apply BitVec.eq_of_toNat_eq; simp; omega
     · rw [hlen, ← st.pc]; exact aligned_add_four _ _ st.aligned
@@ -551,7 +551,7 @@ theorem case_loc (r : Nat) (i : W) (s1 s2 : AsmState 32) (ms : State)
         show (31 : Fin 32) ≠ 1 by decide]
       by_cases e31 : r' = 31
       · subst e31
-        simp only [show regOf 31 = 31 by rfl, if_true]
+        simp only [show regOf 31 = 31 by rfl, ite_true]
         erw [e]; rw [st.pc]; bv_omega
       · have : regOf r' ≠ 31 := fun h => e31 ((regOf_inj hr.lt (by decide)).1 h)
         simp [this, e31, hr']
@@ -581,7 +581,7 @@ theorem case_loc (r : Nat) (i : W) (s1 s2 : AsmState 32) (ms : State)
         simp [show regOf 31 = 31 by rfl, hra', Ne.symm h31, zext16]
       by_cases er : r' = r
       · subst er
-        simp only [nr, if_true, if_false]
+        simp only [nr, ite_true, ite_false]
         simp []
         erw [e]; rw [st.nextPc, st.pc]; bv_omega
       · have : regOf r' ≠ 31 := fun h => e31 ((regOf_inj hr.lt (by decide)).1 h)

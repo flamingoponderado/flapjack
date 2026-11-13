@@ -46,9 +46,13 @@ instance {α β γ : Type} [DecidableEq α] [DecidableEq β] [DecidableEq γ]
     (p : Option (α × Option (β × List (α × γ))))
     (v : Option (α × Option β)) (np nv : γ) :
     Decidable (PmatchStampsOk p v np nv) := by
+  -- Case-split with `rcases` rather than `split`: on Lean v4.35.0 the splitter
+  -- that `split` realizes here refers to a private auxiliary `_sparseCasesOn`
+  -- declaration, so importing modules whose kernel checks reduce this instance
+  -- fail with an unknown-constant error.
   have : Decidable (pmatchStampsOk p v np nv) := by
-    unfold pmatchStampsOk
-    split <;> infer_instance
+    rcases p with _ | ⟨cn, _ | ⟨ty, cs⟩⟩ <;> rcases v with _ | ⟨cn', _ | ty'⟩ <;>
+      simp only [pmatchStampsOk] <;> infer_instance
   exact decidable_of_iff (pmatchStampsOk p v np nv) (pmatchStampsOk_iff p v np nv)
 
 mutual

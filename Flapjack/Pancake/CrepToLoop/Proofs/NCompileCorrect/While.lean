@@ -129,7 +129,7 @@ private theorem locals_rel_insert_of (ctxt : CrepToLoopContextExact) (l nl : Num
     subst hnn
     have hle := h1l.2.1 vn n' hn1'
     refine ⟨n', hn1', hn2, ?_⟩
-    rw [sptLookup_sptInsert, if_neg (by omega)]
+    rw [sptLookup_sptInsert, ite_eq_right (by omega)]
     exact hn3'
 
 private theorem seq_continue_none {cC : HolLoopProg width}
@@ -163,14 +163,14 @@ private theorem while_body_eval (np : List (HolLoopProg width)) (le : HolLoopExp
   rw [LoopSemStateFiniteExact.evaluate_nested_seq_append_none np _ _ _ h1]
   simp only [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate_seq]
   simp only [LoopSemStateFiniteExact.evaluate, h1v]
-  simp only [LoopSemStateFiniteExact.setVar, sptLookup_sptInsert, if_true,
+  simp only [LoopSemStateFiniteExact.setVar, sptLookup_sptInsert, ite_true,
     LoopSemStateFiniteExact.getVarImm, Compiler.Encoders.Asm.wordCmpHOL]
   by_cases hw : w = 0
   · subst hw
-    simp only [beq_self_eq_true, Bool.not_true, Bool.false_eq_true, if_false, if_true]
+    simp only [beq_self_eq_true, Bool.not_true, Bool.false_eq_true, ite_false, ite_true]
     rfl
   · have hb : (w == 0) = false := by simpa using hw
-    simp only [hb, Bool.not_false, if_true, hw, if_false]
+    simp only [hb, Bool.not_false, ite_true, hw, ite_false]
     split <;> rename_i h <;> exact h.symm
 
 private theorem resultToLoop_exitLoop (r : CrepResultHOLExact width)
@@ -265,7 +265,7 @@ theorem crepToLoop_ncompile_correct_while {width : Nat} [NeZero width] {σ : Typ
   by_cases hw : w = 0
   · -- False case
     subst hw
-    simp only [ne_eq, not_true_eq_false, if_false, Prod.mk.injEq] at he
+    simp only [ne_eq, not_true_eq_false, ite_false, Prod.mk.injEq] at he
     obtain ⟨rfl, rfl⟩ := he
     obtain ⟨ck, st, h1, h1v, h1s, h1m, h1g, h1c, h1l⟩ :=
       crepToLoop_comp_exp_preserves_eval v1 e (.word 0) { t with locals := sptInter t.locals l }
@@ -277,7 +277,7 @@ theorem crepToLoop_ncompile_correct_while {width : Nat} [NeZero width] {σ : Typ
       rw [LoopSemStateFiniteExact.cutRes]
       simp only
       rw [LoopSemStateFiniteExact.cutState_of_subset l { t with clock := t.clock + (ck + 2) } hsub]
-      simp only [LoopSemStateFiniteExact.decClock, show ¬ t.clock + (ck + 2) = 0 by omega, if_false]
+      simp only [LoopSemStateFiniteExact.decClock, show ¬ t.clock + (ck + 2) = 0 by omega, ite_false]
       simp only [Prod.mk.injEq, true_and]
       congr 1
     have h1' : LoopSemStateFiniteExact.evaluate (loopNestedSeqHOL np)
@@ -287,7 +287,7 @@ theorem crepToLoop_ncompile_correct_while {width : Nat} [NeZero width] {σ : Typ
       simpa [Nat.add_assoc] using this
     have hbody := while_body_eval np le tmp l (compileHOLExact ctxt l c) _ _ 0 h1'
       (by rw [LoopSemStateFiniteExact.eval_upd_clock_eq]; simpa [wlabWlocExact] using h1v)
-    rw [if_pos rfl] at hbody
+    rw [ite_eq_left rfl] at hbody
     have hloop := loop_step_break (L' := l) hentry hbody
     have hS : LoopSemStateFiniteExact.sptSubsetLive l
         (LoopSemStateFiniteExact.setVar tmp (.word 0) { st with clock := st.clock + 1 }).locals :=
@@ -302,10 +302,10 @@ theorem crepToLoop_ncompile_correct_while {width : Nat} [NeZero width] {σ : Typ
     refine ⟨ck + 2, none, _, hloop.trans hexit, h1s, h1m, h1g, h1c, rfl, ?_⟩
     exact locals_rel_inter ctxt l v1.locals _
       (locals_rel_insert_of ctxt l nl v1.locals _ st.locals hl h1l hlnl tmp htmp _)
-  · simp only [ne_eq, hw, not_false_eq_true, if_true] at he
+  · simp only [ne_eq, hw, not_false_eq_true, ite_true] at he
     by_cases hz : v1.clock = 0
     · -- Timeout case
-      simp only [hz, if_true, Prod.mk.injEq] at he
+      simp only [hz, ite_true, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
       have ht0 : t.clock = 0 := hs.2.2.1 ▸ hz
       have hcut : LoopSemStateFiniteExact.cutRes l (none, { t with clock := t.clock + 0 }) =
@@ -315,7 +315,7 @@ theorem crepToLoop_ncompile_correct_while {width : Nat} [NeZero width] {σ : Typ
         rw [LoopSemStateFiniteExact.cutState_of_subset l { t with clock := t.clock + 0 } hsub]
         simp [ht0]
       exact ⟨0, some .timeOut, _, loop_step_cut_some hcut, hs, hm, hg, hc, rfl, trivial⟩
-    · simp only [hz, if_false] at he
+    · simp only [hz, ite_false] at he
       rcases hbodyS : evalCrepSemHOLProgExact (decClockCrepSemHOL v1) c with ⟨res', s1'⟩
       simp only [hbodyS] at he
       obtain ⟨hs1, hs2, hs3, hs4, hs5, hs6, hs7⟩ := hs
@@ -346,7 +346,7 @@ theorem crepToLoop_ncompile_correct_while {width : Nat} [NeZero width] {σ : Typ
         rw [LoopSemStateFiniteExact.cutRes]
         simp only
         rw [LoopSemStateFiniteExact.cutState_of_subset l { t with clock := t.clock + (ck + k) } hsub]
-        simp only [LoopSemStateFiniteExact.decClock, show ¬ t.clock + (ck + k) = 0 by omega, if_false]
+        simp only [LoopSemStateFiniteExact.decClock, show ¬ t.clock + (ck + k) = 0 by omega, ite_false]
         simp only [Prod.mk.injEq, true_and]
         congr 1
         omega
@@ -363,7 +363,7 @@ theorem crepToLoop_ncompile_correct_while {width : Nat} [NeZero width] {σ : Typ
           simpa [Nat.add_assoc] using this
         have := while_body_eval np le tmp l (compileHOLExact ctxt l c) _ _ w h1k
           (by rw [LoopSemStateFiniteExact.eval_upd_clock_eq]; simpa [wlabWlocExact] using h1v)
-        rw [if_neg hw] at this
+        rw [ite_eq_right hw] at this
         exact this
       have h2' : LoopSemStateFiniteExact.evaluate (compileHOLExact ctxt l c)
           { LoopSemStateFiniteExact.setVar tmp (.word w) st with clock := st.clock + ck' } =

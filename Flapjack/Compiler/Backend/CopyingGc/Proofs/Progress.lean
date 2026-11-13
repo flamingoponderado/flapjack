@@ -98,7 +98,7 @@ theorem gcMoveLoop_ok {α β : Type} (scanned pending heap resultHeap : List (He
     | case1 scanned a n heap ok limit => simp [gcMoveLoop]
     | case2 scanned h pending a n heap ok limit overflow => cases h <;> simp [gcMoveLoop, overflow]
     | case3 scanned pending a n heap ok limit xs len payload roots copied a1 n1 heap1 ok1 bound move ok2 ih =>
-      simp only [gcMoveLoop, if_neg bound, move]
+      simp only [gcMoveLoop, ite_eq_right bound, move]
       intro successful
       have copiedEq : (gcMoveList (xs, .dataElement xs len payload :: pending, a, n, heap, ok, limit)).2.1 = copied := by
         rw [move]

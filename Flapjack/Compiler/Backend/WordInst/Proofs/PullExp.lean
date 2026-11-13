@@ -523,9 +523,9 @@ theorem word_exp_reduce_const {width : Nat} [NeZero width] {C : Type} {F : Type}
   unfold reduceConst
   by_cases hw : w = 0
   · subst hw
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     by_cases hop : op = .add ∨ op = .or ∨ op = .xor
-    · rw [if_pos hop]
+    · rw [ite_eq_left hop]
       have hns : op ≠ .sub := by rcases hop with rfl | rfl | rfl <;> decide
       have hu : opUnit op = (0 : BitVec width) := by rcases hop with rfl | rfl | rfl <;> rfl
       rw [wordExp_op_const_zero s hns hu] at h
@@ -537,9 +537,9 @@ theorem word_exp_reduce_const {width : Nat} [NeZero width] {C : Type} {F : Type}
           · simpa [hy, theWords, opFold_unit_right] using h
           · simp [hy, theWords] at h
       | y :: z :: rest', h => simpa [wordExp_op_fold s hns] using h
-    · rw [if_neg hop]
+    · rw [ite_eq_right hop]
       by_cases hand : op = .and
-      · rw [if_pos hand]
+      · rw [ite_eq_left hand]
         subst hand
         have hfold : ∀ ws : List (BitVec width),
             (0 :: ws).foldr (opFold .and) (opUnit .and) = (0 : BitVec width) := by
@@ -555,9 +555,9 @@ theorem word_exp_reduce_const {width : Nat} [NeZero width] {C : Type} {F : Type}
             simp only [Option.map_some, Function.comp, hfold ws] at h
             simp only [wordExp]
             exact h
-      · rw [if_neg hand]
+      · rw [ite_eq_right hand]
         exact h
-  · rw [if_neg hw]
+  · rw [ite_eq_right hw]
     exact h
 
 /-- Exact HOL local `optimize_consts_ok` (`word_instProofScript.sml:243-270`); HOL's

@@ -327,23 +327,23 @@ theorem encMovImm_eq (i : BitVec 64) :
   unfold encMovImm arm8EncMovImm
   rw [hm1, hm2, hm3, hm4]
   by_cases h1 : i &&& (0xFFFFFFFFFFFF0000 : BitVec 64) = 0
-  · simp only [if_pos h1, Option.map_some]
+  · simp only [ite_eq_left h1, Option.map_some]
     simp
     rw [h16]
     rfl
   · by_cases h2 : i &&& (0xFFFFFFFF0000FFFF : BitVec 64) = 0
-    · simp only [if_neg h1, if_pos h2, Option.map_some]
+    · simp only [ite_eq_right h1, ite_eq_left h2, Option.map_some]
       simp
       rw [h16]
     · by_cases h3 : i &&& (0xFFFF0000FFFFFFFF : BitVec 64) = 0
-      · simp only [if_neg h1, if_neg h2, if_pos h3, Option.map_some]
+      · simp only [ite_eq_right h1, ite_eq_right h2, ite_eq_left h3, Option.map_some]
         simp
         rw [h16]
       · by_cases h4 : i &&& (0x0000FFFFFFFFFFFF : BitVec 64) = 0
-        · simp only [if_neg h1, if_neg h2, if_neg h3, if_pos h4, Option.map_some]
+        · simp only [ite_eq_right h1, ite_eq_right h2, ite_eq_right h3, ite_eq_left h4, Option.map_some]
           simp
           rw [h16]
-        · simp only [if_neg h1, if_neg h2, if_neg h3, if_neg h4]
+        · simp only [ite_eq_right h1, ite_eq_right h2, ite_eq_right h3, ite_eq_right h4]
           rfl
 
 end Flapjack.Compiler.Encoders.Arm8.L3

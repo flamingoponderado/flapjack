@@ -58,7 +58,7 @@ theorem EncodeBitMask_spec (imm : BitVec 64) (N : BitVec 1) (imms immr : BitVec 
   rw [haux] at h
   simp only at h
   by_cases he : (e == 64) = true
-  · rw [if_pos he] at h
+  · rw [ite_eq_left he] at h
     cases hd : DecodeBitMasks (TM := 64)
         (1#1, (BitVec.ofNat 6 (S - 1), (BitVec.ofNat 6 R, true))) with
     | none => simp [hd] at h
@@ -66,15 +66,15 @@ theorem EncodeBitMask_spec (imm : BitVec 64) (N : BitVec 1) (imms immr : BitVec 
       obtain ⟨imm2, tmask⟩ := p
       simp only [hd] at h
       by_cases hi : imm == imm2
-      · rw [if_pos hi] at h
+      · rw [ite_eq_left hi] at h
         simp only [Option.some.injEq, Prod.mk.injEq] at h
         obtain ⟨hN, himms, himmr⟩ := h
         refine ⟨tmask, ?_⟩
         rw [← hN, ← himms, ← himmr, beq_iff_eq.mp hi]
         exact hd
-      · rw [if_neg hi] at h
+      · rw [ite_eq_right hi] at h
         simp at h
-  · rw [if_neg he] at h
+  · rw [ite_eq_right he] at h
     cases hd : DecodeBitMasks (TM := 64)
         (0#1, (~~~(BitVec.ofNat 6 (e * 2 - 1)) ||| BitVec.ofNat 6 (S - 1),
           (BitVec.ofNat 6 R, true))) with
@@ -83,13 +83,13 @@ theorem EncodeBitMask_spec (imm : BitVec 64) (N : BitVec 1) (imms immr : BitVec 
       obtain ⟨imm2, tmask⟩ := p
       simp only [hd] at h
       by_cases hi : imm == imm2
-      · rw [if_pos hi] at h
+      · rw [ite_eq_left hi] at h
         simp only [Option.some.injEq, Prod.mk.injEq] at h
         obtain ⟨hN, himms, himmr⟩ := h
         refine ⟨tmask, ?_⟩
         rw [← hN, ← himms, ← himmr, beq_iff_eq.mp hi]
         exact hd
-      · rw [if_neg hi] at h
+      · rw [ite_eq_right hi] at h
         simp at h
 
 /-- `DecodeLogicalOp` inverts `EncodeLogicalOp`. -/

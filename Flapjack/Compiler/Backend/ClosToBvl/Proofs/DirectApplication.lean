@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
+public import Mathlib.Tactic.Conv
 
 @[expose] public section
 

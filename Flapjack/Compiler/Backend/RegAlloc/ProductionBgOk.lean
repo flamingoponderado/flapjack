@@ -140,8 +140,8 @@ theorem bgOk_production (limit x y : Nat) {native : State} {production : CakeRaS
       partitionReversed_production]
     rfl
   rw [actual]
-  simp only [bgOk, Translator.Monadic.MonadBase.bind, adjLsSubEqn, if_pos xRowBound,
-    if_pos yRowBound, holEl_eq_getElem x native.adj_ls xRowBound, holEl_eq_getElem y native.adj_ls yRowBound]
+  simp only [bgOk, Translator.Monadic.MonadBase.bind, adjLsSubEqn, ite_eq_left xRowBound,
+    ite_eq_left yRowBound, holEl_eq_getElem x native.adj_ls xRowBound, holEl_eq_getElem y native.adj_ls yRowBound]
   simp only [firstFilter, secondFilter, secondMap, mapped_count]
   split
   · rfl

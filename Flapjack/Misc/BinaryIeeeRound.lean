@@ -65,7 +65,7 @@ theorem holRatAbs_mul_pos (y D : Rat) (hD : 0 < D) : holRatAbs y * D = holRatAbs
   · have : y * D < 0 := by
       have := Rat.mul_lt_mul_of_pos_right hy hD
       all_goals simpa using this
-    rw [if_pos hy, if_pos this]
+    rw [ite_eq_left hy, ite_eq_left this]
     all_goals grind
   · have : ¬ y * D < 0 := by
       intro h
@@ -73,7 +73,7 @@ theorem holRatAbs_mul_pos (y D : Rat) (hD : 0 < D) : holRatAbs y * D = holRatAbs
       have := Rat.mul_le_mul_of_nonneg_right h0 (Rat.le_of_lt hD)
       simp at this
       all_goals grind
-    rw [if_neg hy, if_neg this]
+    rw [ite_eq_right hy, ite_eq_right this]
 
 /-- HOL `UINT_MAX (:'w) = 2 ^ dimindex (:'w) - 1`. -/
 def holUintMax (w : Nat) : Nat := 2 ^ w - 1

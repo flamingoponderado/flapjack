@@ -258,7 +258,7 @@ theorem listRelFlattenWithShapeFlookupHOL {α : Type} [DecidableEq α]
     have hin : i < n := Nat.lt_of_lt_of_le hi (List.length_take_le n args)
     have hish : i < shapes.length := by omega
     have hians : i < args.length := by omega
-    rw [List.getElem?_take, if_pos hin, List.getElem?_take, if_pos hin,
+    rw [List.getElem?_take, ite_eq_left hin, List.getElem?_take, ite_eq_left hin,
       List.getElem?_eq_some_iff.mpr ⟨hish, rfl⟩,
       List.getElem?_eq_some_iff.mpr ⟨hians, rfl⟩]
     simp only [Option.map_some]

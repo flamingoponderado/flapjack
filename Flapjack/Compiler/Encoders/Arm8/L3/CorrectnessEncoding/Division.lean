@@ -122,7 +122,7 @@ theorem arm8_encoder_correct_div (destination dividend divisor : Nat)
       rw [arm8X_of_valid _ hn31 hnlt]
       exact hreg dividend ⟨hnlt, hnav⟩
     simp only [hXm, hXn, holUpdate]
-    rw [if_neg (by intro h0; exact hne (by simpa using h0))]
+    rw [ite_eq_right (by intro h0; exact hne (by simpa using h0))]
     simp [v]
   · intro hreg p
     refine ⟨?_, fun x => ?_, ?_, fun k => ?_⟩

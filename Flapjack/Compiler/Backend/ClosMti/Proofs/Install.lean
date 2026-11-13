@@ -176,11 +176,11 @@ theorem doInstall_related {C F : Type} (source target : State C F)
       doInstall_nonType_related source target sourceValues targetValues result final
         states values run typeError
     by_cases zero : source.clock = 0
-    · simp only [zero, if_pos] at resultEq targetRun
+    · simp only [zero, ite_eq_left] at resultEq targetRun
       clear run typeError
       subst result
       exact ⟨targetFinal, targetRun, maxEq, related⟩
-    · simp only [zero, if_false] at resultEq targetRun
+    · simp only [zero, ite_false] at resultEq targetRun
       clear run typeError
       subst result
       exact ⟨introList source.maxApp expressions, targetFinal,

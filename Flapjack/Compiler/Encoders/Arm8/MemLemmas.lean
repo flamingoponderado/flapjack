@@ -116,7 +116,7 @@ theorem writeMemWord_mem_two (s : AsmState 64) (m : BitVec 64 → BitVec 8) (a v
     (hbe : s.be = false) (hm : s.mem x = m x) :
     (writeMemWord (valueWidth := 64) a 2 v s).mem x = writeMemBytes m 2 a v x := by
   simp only [writeMemWord, writeMemBytes, updMem_mem, assertState_mem]
-  simp only [hbe, Bool.false_eq_true, if_false]
+  simp only [hbe, Bool.false_eq_true, ite_false]
   simp [hm]
 
 /-- A four-byte source store is the memory-map four-byte write. -/
@@ -124,7 +124,7 @@ theorem writeMemWord_mem_four (s : AsmState 64) (m : BitVec 64 → BitVec 8) (a 
     (hbe : s.be = false) (hm : s.mem x = m x) :
     (writeMemWord (valueWidth := 64) a 4 v s).mem x = writeMemBytes m 4 a v x := by
   simp only [writeMemWord, writeMemBytes, updMem_mem, assertState_mem]
-  simp only [hbe, Bool.false_eq_true, if_false]
+  simp only [hbe, Bool.false_eq_true, ite_false]
   rw [show a + 1 + 1 + 1 = a + 3 by bv_omega, show a + 1 + 1 = a + 2 by bv_omega]
   rw [byteShift v 1, byteShift v 0]
   simp [hm]
@@ -134,7 +134,7 @@ theorem writeMemWord_mem_eight (s : AsmState 64) (m : BitVec 64 → BitVec 8) (a
     (hbe : s.be = false) (hm : s.mem x = m x) :
     (writeMemWord (valueWidth := 64) a 8 v s).mem x = writeMemBytes m 8 a v x := by
   simp only [writeMemWord, writeMemBytes, updMem_mem, assertState_mem]
-  simp only [hbe, Bool.false_eq_true, if_false]
+  simp only [hbe, Bool.false_eq_true, ite_false]
   rw [show a + 1 + 1 + 1 + 1 + 1 + 1 + 1 = a + 7 by bv_omega,
     show a + 1 + 1 + 1 + 1 + 1 + 1 = a + 6 by bv_omega,
     show a + 1 + 1 + 1 + 1 + 1 = a + 5 by bv_omega,
@@ -168,7 +168,7 @@ theorem memLoadDomain (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2 : 
   have hfail : s2.failed = false := boolOfNotTrue hok
   rw [← hupd] at hfail
   simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, ite_false] at hfail
   obtain ⟨-, hf⟩ := (Bool.or_eq_false_iff).1 hfail
   exact readMemWord_domain (s1.regs base + off) (2 ^ size) s1 hbe hf
 

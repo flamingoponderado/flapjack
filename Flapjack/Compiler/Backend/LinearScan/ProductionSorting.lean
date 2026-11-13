@@ -44,17 +44,17 @@ theorem partitionRegs_correct (l rpiv : Nat) (begrpiv : Int) (r : Nat) :
     Simulates (partitionRegs l rpiv begrpiv r) (LinearScan.partitionRegs l rpiv begrpiv r) := by
   rw [partitionRegs, LinearScan.partitionRegs]
   by_cases h : r ≤ l
-  · simp only [dif_pos h]
+  · simp only [dite_eq_left h]
     exact simulates_ret l
-  · simp only [dif_neg h]
+  · simp only [dite_eq_right h]
     apply simulates_bind _ _ _ _ (sortedRegsSub_correct l)
     intro reg
     apply simulates_bind _ _ _ _ (intBegSub_correct reg)
     intro begreg
     by_cases hc : begreg < begrpiv ∨ (begreg = begrpiv ∧ reg ≤ rpiv)
-    · simp only [if_pos hc]
+    · simp only [ite_eq_left hc]
       exact partitionRegs_correct (l + 1) rpiv begrpiv r
-    · simp only [if_neg hc]
+    · simp only [ite_eq_right hc]
       exact simulates_ignoreBind _ _ _ _ (swapRegs_correct l (r - 1))
         (partitionRegs_correct l rpiv begrpiv (r - 1))
 termination_by r - l
@@ -76,9 +76,9 @@ theorem sortRegs_correct (l r : Nat) :
     Simulates (sortRegs l r) (LinearScan.sortRegs l r) := by
   rw [sortRegs, LinearScan.sortRegs]
   by_cases h : r ≤ l + 1
-  · simp only [dif_pos h]
+  · simp only [dite_eq_left h]
     exact simulates_ret ()
-  · simp only [dif_neg h]
+  · simp only [dite_eq_right h]
     apply simulates_bind _ _ _ _ (sortedRegsSub_correct l)
     intro rpiv
     apply simulates_bind _ _ _ _ (intBegSub_correct rpiv)
@@ -87,9 +87,9 @@ theorem sortRegs_correct (l r : Nat) :
     intro m
     apply simulates_ignoreBind _ _ _ _ (swapRegs_correct l (m - 1))
     by_cases hm : m ≤ l ∨ r < m
-    · simp only [dif_pos hm]
+    · simp only [dite_eq_left hm]
       exact simulates_ret ()
-    · simp only [dif_neg hm]
+    · simp only [dite_eq_right hm]
       exact simulates_ignoreBind _ _ _ _ (sortRegs_correct l (m - 1)) (sortRegs_correct m r)
 termination_by r - l
 decreasing_by all_goals omega
@@ -122,15 +122,15 @@ theorem partitionMoves_correct (l ppiv r : Nat) :
     Simulates (partitionMoves l ppiv r) (LinearScan.partitionMoves l ppiv r) := by
   rw [partitionMoves, LinearScan.partitionMoves]
   by_cases h : r ≤ l
-  · simp only [dif_pos h]
+  · simp only [dite_eq_left h]
     exact simulates_ret l
-  · simp only [dif_neg h]
+  · simp only [dite_eq_right h]
     apply simulates_bind _ _ _ _ (sortedMovesSub_correct l)
     intro move
     by_cases hc : move.1 < ppiv
-    · simp only [if_pos hc]
+    · simp only [ite_eq_left hc]
       exact partitionMoves_correct (l + 1) ppiv r
-    · simp only [if_neg hc]
+    · simp only [ite_eq_right hc]
       exact simulates_ignoreBind _ _ _ _ (swapMoves_correct l (r - 1))
         (partitionMoves_correct l ppiv (r - 1))
 termination_by r - l
@@ -151,18 +151,18 @@ theorem sortMoves_correct (l r : Nat) :
     Simulates (sortMoves l r) (LinearScan.sortMoves l r) := by
   rw [sortMoves, LinearScan.sortMoves]
   by_cases h : r ≤ l + 1
-  · simp only [dif_pos h]
+  · simp only [dite_eq_left h]
     exact simulates_ret ()
-  · simp only [dif_neg h]
+  · simp only [dite_eq_right h]
     apply simulates_bind _ _ _ _ (sortedMovesSub_correct l)
     intro piv
     apply simulates_bind _ _ _ _ (partitionMoves_correct (l + 1) piv.1 r)
     intro m
     apply simulates_ignoreBind _ _ _ _ (swapMoves_correct l (m - 1))
     by_cases hm : m ≤ l ∨ r < m
-    · simp only [dif_pos hm]
+    · simp only [dite_eq_left hm]
       exact simulates_ret ()
-    · simp only [dif_neg hm]
+    · simp only [dite_eq_right hm]
       exact simulates_ignoreBind _ _ _ _ (sortMoves_correct l (m - 1)) (sortMoves_correct m r)
 termination_by r - l
 decreasing_by all_goals omega
@@ -191,9 +191,9 @@ theorem sortedRegsToList_correct (n last : Nat) :
     Simulates (sortedRegsToList n last) (LinearScan.sortedRegsToList n last) := by
   rw [sortedRegsToList, LinearScan.sortedRegsToList]
   by_cases h : last ≤ n
-  · simp only [dif_pos h]
+  · simp only [dite_eq_left h]
     exact simulates_ret []
-  · simp only [dif_neg h]
+  · simp only [dite_eq_right h]
     apply simulates_bind _ _ _ _ (sortedRegsSub_correct n)
     intro r
     apply simulates_bind _ _ _ _ (sortedRegsToList_correct (n + 1) last)
@@ -226,9 +226,9 @@ theorem sortedMovesToList_correct (n len : Nat) :
     Simulates (sortedMovesToList n len) (LinearScan.sortedMovesToList n len) := by
   rw [sortedMovesToList, LinearScan.sortedMovesToList]
   by_cases h : len ≤ n
-  · simp only [dif_pos h]
+  · simp only [dite_eq_left h]
     exact simulates_ret []
-  · simp only [dif_neg h]
+  · simp only [dite_eq_right h]
     apply simulates_bind _ _ _ _ (sortedMovesSub_correct n)
     intro r
     apply simulates_bind _ _ _ _ (sortedMovesToList_correct (n + 1) len)
@@ -306,17 +306,17 @@ theorem edgesToAdjlist_correct (edges : List (Nat × Nat)) (acc : Spt (List Nat)
     rcases edge with ⟨a, b⟩
     simp only [edgesToAdjlist, LinearScan.edgesToAdjlist]
     by_cases h : a = b
-    · simp only [if_pos h]
+    · simp only [ite_eq_left h]
       exact ih acc
-    · simp only [if_neg h]
+    · simp only [ite_eq_right h]
       apply simulates_bind _ _ _ _ (intBegSub_correct a)
       intro bega
       apply simulates_bind _ _ _ _ (intBegSub_correct b)
       intro begb
       by_cases hc : bega < begb ∨ (bega = begb ∧ a ≤ b)
-      · simp only [if_pos hc]
+      · simp only [ite_eq_left hc]
         exact ih _
-      · simp only [if_neg hc]
+      · simp only [ite_eq_right hc]
         exact ih _
 
 theorem stExFoldl_correct {value elem : Type}

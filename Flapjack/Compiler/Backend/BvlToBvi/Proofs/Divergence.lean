@@ -144,9 +144,9 @@ theorem compileProgFuel_semantics {C F : Type}
             (sptFromAList programs) oracle (BackendProps.stateCc compileIncSource compiler) clock)).2.ffi.ioEvents)) := by
       have h := sourceBehavior.symm
       simp only [BvlSem.semantics] at h
-      rw [if_neg (not_exists.mpr noTypeError)] at h
+      rw [ite_eq_right (not_exists.mpr noTypeError)] at h
       simpa only [sourceNone, BvlSem.evaluateTuple] using h
-    simp only [BviSem.semantics, BviSem.evaluateTuple, noFatal, if_false, targetNone]
+    simp only [BviSem.semantics, BviSem.evaluateTuple, noFatal, ite_false, targetNone]
     exact (congrArg HolBehaviour.diverge traceEqual.symm).trans sourceTrace.symm
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

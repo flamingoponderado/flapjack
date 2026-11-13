@@ -78,7 +78,7 @@ theorem valueToList_related (genv : GlobalEnv) (ok : genvCOk genv.c)
     exact ⟨[], by simp [FlatSem.valueToList], .nil⟩
   | case2 stamp ne => simp [SemanticPrimitivesHOL.valueToList, ne] at decoded
   | case3 head tail ih =>
-    simp only [SemanticPrimitivesHOL.valueToList, if_true] at decoded
+    simp only [SemanticPrimitivesHOL.valueToList, ite_true] at decoded
     have shape := ((valueRel_eqns_nonGlobal).2.1 _ flat genv _).mp rel
     simp only [Option.some.injEq, reduceCtorEq, false_and, exists_false, or_false] at shape
     obtain ⟨_, flatCtor, flats, rfl, rfl, hfields, lookup⟩ := shape
@@ -123,7 +123,7 @@ theorem valueToCharList_related (genv : GlobalEnv) (ok : genvCOk genv.c)
     simp [FlatSem.valueToCharList]
   | case2 stamp ne => simp [SemanticPrimitivesHOL.valueToCharList, ne] at decoded
   | case3 head tail ih =>
-    simp only [SemanticPrimitivesHOL.valueToCharList, if_true] at decoded
+    simp only [SemanticPrimitivesHOL.valueToCharList, ite_true] at decoded
     have shape := ((valueRel_eqns_nonGlobal).2.1 _ flat genv _).mp rel
     simp only [Option.some.injEq, reduceCtorEq, false_and, exists_false, or_false] at shape
     obtain ⟨_, flatCtor, flats, rfl, rfl, hfields, lookup⟩ := shape

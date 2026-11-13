@@ -298,7 +298,7 @@ theorem semantics_eq_of_initialSimulation {C₁ C₂ F : Type} (ffi : HolFfiStat
         fun ⟨clock, error⟩ => sourceSafe clock error,
     show ¬ ∃ clock, (BvlSem.evaluateTuple ([.call 0 (some start) []], [],
       BvlSem.initialState ffi targetCode targetOracle targetCompiler clock)).1 = .err (.abort .typeError) from
-        fun ⟨clock, error⟩ => targetSafe clock error, if_false]
+        fun ⟨clock, error⟩ => targetSafe clock error, ite_false]
   rw [terminatingEq, traceEq]
   rfl
 

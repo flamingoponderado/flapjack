@@ -66,13 +66,13 @@ theorem factoredDecBoundedIH_dletrec {C F : Type} [Nonempty C]
       (decide (funs.map (fun (name, _, _) => name)).Nodup &&
         funs.all (fun (_, _, expr) => everyExp (oneConCheck sourceEnv.c) expr)) = true := by
     by_contra failed
-    simp only [EvaluateHOL.evaluateDecs, if_neg failed, EvaluateHOL.typeError] at sourceRun
+    simp only [EvaluateHOL.evaluateDecs, ite_eq_right failed, EvaluateHOL.typeError] at sourceRun
     exact notTypeError (congrArg Prod.snd sourceRun).symm
   have distinct : (funs.map Prod.fst).Nodup := by
     have guards := checked
     simp only [Bool.and_eq_true, decide_eq_true_eq] at guards
     exact guards.1
-  simp only [EvaluateHOL.evaluateDecs, if_pos checked, Prod.mk.injEq] at sourceRun
+  simp only [EvaluateHOL.evaluateDecs, ite_eq_left checked, Prod.mk.injEq] at sourceRun
   obtain ⟨rfl, rfl⟩ := sourceRun
   have bound : idxPrev (compileDecs trace n start env gen [.dletrec location funs]).2.1 finish := by
     simpa only [compiled] using bounded

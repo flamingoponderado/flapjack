@@ -142,7 +142,7 @@ theorem lcons_ne_lnil (h : α) (t : HolLList α) : lcons h t ≠ lnil := by
 theorem lcons_inj {h h' : α} {t t' : HolLList α} (heq : lcons h t = lcons h' t') :
     h = h' ∧ t = t' := by
   have h0 := congrArg (fun l : HolLList α => l.rep 0) heq
-  simp only [lcons, if_pos] at h0
+  simp only [lcons, ite_eq_left] at h0
   refine ⟨Option.some.inj h0, ?_⟩
   cases t; cases t'
   simp only [mk.injEq]
@@ -190,14 +190,14 @@ theorem llengthRel_unique {ll : HolLList α} {n m : Nat} (hn : LLengthRel ll n) 
 theorem llength_fromList (l : List α) : llength (fromList l) = some l.length := by
   have hr := llengthRel_fromList l
   unfold llength
-  rw [if_pos (lfinite_fromList l)]
+  rw [ite_eq_left (lfinite_fromList l)]
   congr 1
   exact llengthRel_unique (Classical.epsilon_spec ⟨_, hr⟩) hr
 
 theorem ltake_fromList : ∀ l : List α, ltake l.length (fromList l) = some l
   | [] => rfl
   | h :: t => by
-      simp only [List.length_cons, fromList, ltake, lhd, lcons, ltl, if_pos]
+      simp only [List.length_cons, fromList, ltake, lhd, lcons, ltl, ite_eq_left]
       have := ltake_fromList t
       have ht : (⟨fun n => (lcons h (fromList t)).rep (n + 1),
           fun n hn => (lcons h (fromList t)).ok (n + 1) hn⟩ : HolLList α) = fromList t := by
@@ -208,7 +208,7 @@ theorem ltake_fromList : ∀ l : List α, ltake l.length (fromList l) = some l
 @[hol "hol4/src/coalgebras/llistScript.sml" "from_toList"]
 theorem toList_fromList (l : List α) : toList (fromList l) = some l := by
   unfold toList
-  rw [if_pos (lfinite_fromList l), llength_fromList]
+  rw [ite_eq_left (lfinite_fromList l), llength_fromList]
   exact ltake_fromList l
 
 /-- On finite lists, HOL `LPREFIX (fromList xs) (fromList ys) = isPREFIX xs ys`. -/
@@ -229,7 +229,7 @@ theorem fromList_rep (l : List α) (n : Nat) : (fromList l).rep n = l[n]? := by
       | zero => rfl
       | succ k =>
           show (if k + 1 = 0 then some h else (fromList t).rep (k + 1 - 1)) = (h :: t)[k + 1]?
-          rw [if_neg (Nat.succ_ne_zero k), Nat.add_sub_cancel, ih k]
+          rw [ite_eq_right (Nat.succ_ne_zero k), Nat.add_sub_cancel, ih k]
           rfl
 
 /-- A present read of `fromList l` is within the list. -/
@@ -432,7 +432,7 @@ theorem llength_spec {ll : HolLList α} (h : LFinite ll) :
   have hex : ∃ n, LLengthRel ll n := exists_LLengthRel_of_LFinite h
   refine ⟨Classical.epsilon (fun n => LLengthRel ll n), ?_, Classical.epsilon_spec hex⟩
   unfold llength
-  rw [if_pos h]
+  rw [ite_eq_left h]
 
 
 /-- Beyond a length relation bound the representation is `none`. -/
@@ -463,8 +463,8 @@ theorem toList_eq_some_rep {ll : HolLList α} {xs : List α} (h : toList ll = so
     obtain ⟨hlen, hrep⟩ := ltake_spec n ll xs h
     intro i
     by_cases hi : i < xs.length
-    · rw [dif_pos hi]; simpa using hrep i hi
-    · rw [dif_neg hi]
+    · rw [dite_eq_left hi]; simpa using hrep i hi
+    · rw [dite_eq_right hi]
       have hnrel' : LLengthRel ll xs.length := by rw [hlen]; exact hnrel
       exact rep_none_of_LLengthRel hnrel' i (Nat.le_of_not_lt hi)
   · simp at h
@@ -501,7 +501,7 @@ theorem toList_of_LFinite {ll : HolLList α} (h : LFinite ll) :
   obtain ⟨xs, hxs⟩ := ltake_of_LLengthRel hnrel
   refine ⟨xs, ?_⟩
   unfold toList
-  rw [if_pos h, hnlen]
+  rw [ite_eq_left h, hnlen]
   simp only [Option.getD_some]
   exact hxs
 
@@ -538,7 +538,7 @@ theorem LFinite_of_llength_eq_some {ll : HolLList α} {n : Nat} (h : llength ll 
   by_cases hfin : LFinite ll
   · exact hfin
   · unfold llength at h
-    rw [if_neg hfin] at h
+    rw [ite_eq_right hfin] at h
     exact (Option.some_ne_none n h.symm).elim
 
 /-- A `some` length is exactly the (unique) `LLengthRel` witness. -/
@@ -553,7 +553,7 @@ theorem not_LFinite_of_llength_eq_none {ll : HolLList α} (h : llength ll = none
     ¬ LFinite ll := by
   intro hfin
   unfold llength at h
-  rw [if_pos hfin] at h
+  rw [ite_eq_left hfin] at h
   exact Option.some_ne_none _ h
 
 /-- A `LLengthRel` bound makes the representation defined at every earlier
@@ -595,7 +595,7 @@ theorem LTAKE_LLENGTH_SOME {ll : HolLList α} {n : Nat} (h : llength ll = some n
   obtain ⟨l, hl⟩ := ltake_of_LLengthRel (LLengthRel_of_llength_eq_some h)
   refine ⟨l, hl, ?_⟩
   unfold toList
-  rw [if_pos hfin, h]
+  rw [ite_eq_left hfin, h]
   simpa using hl
 
 /-- HOL `LTAKE_LNTH_EL` (`llistScript.sml:1067-1075`); HOL's total `EL m l` is
@@ -634,7 +634,7 @@ theorem lprefix_rep {a b : HolLList α} (h : lprefix a b) {n : Nat} {x : α}
       have hra := toList_eq_some_rep hta n
       rw [hra] at ha
       by_cases hn : n < xs.length
-      · rw [dif_pos hn] at ha
+      · rw [dite_eq_left hn] at ha
         injection ha with hx
         cases htb : toList b with
         | none =>
@@ -646,10 +646,10 @@ theorem lprefix_rep {a b : HolLList α} (h : lprefix a b) {n : Nat} {x : α}
             have hrb := toList_eq_some_rep htb n
             rw [hrb]
             have hnys : n < ys.length := Nat.lt_of_lt_of_le hn h.length_le
-            rw [dif_pos hnys]
+            rw [dite_eq_left hnys]
             obtain ⟨zs, rfl⟩ := h
             rw [List.getElem_append_left hn, hx]
-      · rw [dif_neg hn] at ha
+      · rw [dite_eq_right hn] at ha
         exact absurd ha (by simp)
 
 /-- `lprefix` is reflexive. -/
@@ -705,16 +705,16 @@ theorem lprefix_of_rep_agree {a b : HolLList α}
           apply ltake_of_rep
           intro i hi
           have hai : a.rep i = some xs[i] := by
-            rw [toList_eq_some_rep ha i, dif_pos hi]
+            rw [toList_eq_some_rep ha i, dite_eq_left hi]
           exact h i xs[i] hai
       | some ys =>
           dsimp only
           have hlt : xs.length ≤ ys.length := Nat.le_of_not_lt fun hys => by
             have hai : a.rep ys.length = some xs[ys.length] := by
-              rw [toList_eq_some_rep ha ys.length, dif_pos hys]
+              rw [toList_eq_some_rep ha ys.length, dite_eq_left hys]
             have hbi : b.rep ys.length = some xs[ys.length] := h _ _ hai
             have hby : b.rep ys.length = none := by
-              rw [toList_eq_some_rep hb ys.length, dif_neg (Nat.lt_irrefl ys.length)]
+              rw [toList_eq_some_rep hb ys.length, dite_eq_right (Nat.lt_irrefl ys.length)]
             rw [hby] at hbi
             cases hbi
           rw [List.prefix_iff_eq_take]
@@ -723,10 +723,10 @@ theorem lprefix_of_rep_agree {a b : HolLList α}
           · intro j hj1 hj2
             rw [List.getElem_take]
             have haj : a.rep j = some xs[j] := by
-              rw [toList_eq_some_rep ha j, dif_pos hj1]
+              rw [toList_eq_some_rep ha j, dite_eq_left hj1]
             have hbj : b.rep j = some xs[j] := h j _ haj
             have hby : b.rep j = some ys[j] := by
-              rw [toList_eq_some_rep hb j, dif_pos (Nat.lt_of_lt_of_le hj1 hlt)]
+              rw [toList_eq_some_rep hb j, dite_eq_left (Nat.lt_of_lt_of_le hj1 hlt)]
             rw [hby] at hbj
             exact (Option.some.inj hbj).symm
 
@@ -859,13 +859,13 @@ theorem leastUpTo_succ_none_true {p : Nat → Prop} {n : Nat}
     (h : leastUpTo p n = none) (hp : p (n + 1)) :
     leastUpTo p (n + 1) = some (n + 1) := by
   unfold leastUpTo
-  rw [h, if_pos hp]
+  rw [h, ite_eq_left hp]
 
 theorem leastUpTo_succ_none_false {p : Nat → Prop} {n : Nat}
     (h : leastUpTo p n = none) (hp : ¬ p (n + 1)) :
     leastUpTo p (n + 1) = none := by
   unfold leastUpTo
-  rw [h, if_neg hp]
+  rw [h, ite_eq_right hp]
 
 theorem leastUpTo_none {p : Nat → Prop} {n : Nat} (h : leastUpTo p n = none) :
     ∀ m, m ≤ n → ¬ p m := by
@@ -873,9 +873,9 @@ theorem leastUpTo_none {p : Nat → Prop} {n : Nat} (h : leastUpTo p n = none) :
   | zero =>
       unfold leastUpTo at h
       by_cases hp : p 0
-      · rw [if_pos hp] at h
+      · rw [ite_eq_left hp] at h
         exact absurd h (by simp)
-      · rw [if_neg hp] at h
+      · rw [ite_eq_right hp] at h
         intro m hm
         have hm0 : m = 0 := by omega
         subst hm0
@@ -903,11 +903,11 @@ theorem leastUpTo_some {p : Nat → Prop} {n k : Nat} (h : leastUpTo p n = some 
   | zero =>
       unfold leastUpTo at h
       by_cases hp : p 0
-      · rw [if_pos hp] at h
+      · rw [ite_eq_left hp] at h
         injection h with hk
         subst hk
         exact ⟨Nat.le_refl 0, hp, fun m hm => absurd hm (Nat.not_lt_zero m)⟩
-      · rw [if_neg hp] at h
+      · rw [ite_eq_right hp] at h
         exact absurd h (by simp)
   | succ n ih =>
       cases hn : leastUpTo p n with
@@ -936,7 +936,7 @@ theorem leastUpTo_eq_some_of {p : Nat → Prop} {n k : Nat}
       have hk0 : k = 0 := by omega
       subst hk0
       unfold leastUpTo
-      rw [if_pos hk]
+      rw [ite_eq_left hk]
   | succ n ih =>
       by_cases hkn' : k ≤ n
       · rw [leastUpTo_succ_some (ih hkn')]
@@ -962,17 +962,17 @@ theorem firstNone_spec {ll : HolLList α} {k : Nat} (h : firstNone ll = some k) 
     ll.rep k = none ∧ ∀ m, m < k → ll.rep m ≠ none := by
   unfold firstNone at h
   by_cases hex : ∃ k, ll.rep k = none
-  · rw [dif_pos hex] at h
+  · rw [dite_eq_left hex] at h
     obtain ⟨-, hk, hmin⟩ := leastUpTo_some h
     exact ⟨hk, hmin⟩
-  · rw [dif_neg hex] at h
+  · rw [dite_eq_right hex] at h
     exact absurd h (by simp)
 
 theorem firstNone_none {ll : HolLList α} (h : firstNone ll = none) :
     ∀ k, ll.rep k ≠ none := by
   unfold firstNone at h
   by_cases hex : ∃ k, ll.rep k = none
-  · rw [dif_pos hex] at h
+  · rw [dite_eq_left hex] at h
     exact absurd (Classical.choose_spec hex) (leastUpTo_none h _ (Nat.le_refl _))
   · exact fun k hk => hex ⟨k, hk⟩
 
@@ -985,13 +985,13 @@ theorem firstNone_eq_some_of_rep {ll : HolLList α} {k : Nat}
     · exact absurd (Classical.choose_spec hex) (hmin (Classical.choose hex) hlt)
     · omega
   unfold firstNone
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact leastUpTo_eq_some_of hk hmin hk_le
 
 theorem firstNone_eq_none_of_rep {ll : HolLList α} (h : ∀ k, ll.rep k ≠ none) :
     firstNone ll = none := by
   unfold firstNone
-  rw [dif_neg]
+  rw [dite_eq_right]
   · intro hex
     obtain ⟨k, hk⟩ := hex
     exact h k hk
@@ -1057,16 +1057,16 @@ theorem lappendRep_ok (l1 l2 : HolLList α) : HolLrepOk (lappendRep l1 l2) := by
       rw [h2] at hn
       rw [h1]
       by_cases hlt : n + 1 < k
-      · rw [if_pos hlt] at hn
-        rw [if_pos (by omega)]
+      · rw [ite_eq_left hlt] at hn
+        rw [ite_eq_left (by omega)]
         exact l1.ok n hn
-      · rw [if_neg hlt] at hn
+      · rw [ite_eq_right hlt] at hn
         by_cases hnk : n < k
-        · rw [if_pos hnk]
+        · rw [ite_eq_left hnk]
           have hk1 : n = k - 1 := by omega
           rw [hk1]
           exact Option.isSome_iff_ne_none.mpr (hmin (k - 1) (by omega))
-        · rw [if_neg hnk]
+        · rw [ite_eq_right hnk]
           have heq : n - k + 1 = n + 1 - k := by omega
           rw [← heq] at hn
           exact l2.ok (n - k) hn
@@ -1115,9 +1115,9 @@ theorem lappendRep_lcons_succ (h : α) (t x : HolLList α) (n : Nat) :
         simp [lappendRep, ht]
       rw [h2, h1]
       by_cases hn : n < k
-      · rw [if_pos (by omega), if_pos hn]
+      · rw [ite_eq_left (by omega), ite_eq_left hn]
         simp [lcons]
-      · rw [if_neg (by omega), if_neg hn]
+      · rw [ite_eq_right (by omega), ite_eq_right hn]
         congr 1
         omega
 
@@ -1170,8 +1170,8 @@ theorem lappendHOL_nil_2nd : ∀ ll : HolLList α, lappendHOL ll lnil = ll := by
       simp only [lappendHOL]
       rw [h]
       by_cases hn : n < k
-      · rw [if_pos hn]
-      · rw [if_neg hn]
+      · rw [ite_eq_left hn]
+      · rw [ite_eq_right hn]
         have hnone : ll.rep n = none := rep_none_of_le ll hk (by omega)
         simp [lnil, hnone]
 
@@ -1246,10 +1246,10 @@ theorem firstNonempty_spec {ll : HolLList (HolLList α)} {k : Nat}
       ∀ m, m < k → ¬ ∃ inner : HolLList α, ll.rep m = some inner ∧ inner.rep 0 ≠ none := by
   unfold firstNonempty at h
   by_cases hex : ∃ k, ∃ inner : HolLList α, ll.rep k = some inner ∧ inner.rep 0 ≠ none
-  · rw [dif_pos hex] at h
+  · rw [dite_eq_left hex] at h
     obtain ⟨-, hk, hmin⟩ := leastUpTo_some h
     exact ⟨hk, hmin⟩
-  · rw [dif_neg hex] at h
+  · rw [dite_eq_right hex] at h
     exact absurd h (by simp)
 
 theorem firstNonempty_none {ll : HolLList (HolLList α)} (h : firstNonempty ll = none) :
@@ -1260,7 +1260,7 @@ theorem firstNonempty_none {ll : HolLList (HolLList α)} (h : firstNonempty ll =
   · have hex : ∃ j, ∃ inner : HolLList α, ll.rep j = some inner ∧ inner.rep 0 ≠ none :=
       ⟨k, inner, hk, hne⟩
     unfold firstNonempty at h
-    rw [dif_pos hex] at h
+    rw [dite_eq_left hex] at h
     exact absurd (Classical.choose_spec hex) (leastUpTo_none h _ (Nat.le_refl _))
 
 theorem firstNonempty_eq_some_of_rep {ll : HolLList (HolLList α)} {k : Nat}
@@ -1274,14 +1274,14 @@ theorem firstNonempty_eq_some_of_rep {ll : HolLList (HolLList α)} {k : Nat}
     · exact absurd (Classical.choose_spec hex) (hmin (Classical.choose hex) hlt)
     · omega
   unfold firstNonempty
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact leastUpTo_eq_some_of hk hmin hk_le
 
 theorem firstNonempty_eq_none_of {ll : HolLList (HolLList α)}
     (h : ∀ (k : Nat) (inner : HolLList α), ll.rep k = some inner → inner.rep 0 = none) :
     firstNonempty ll = none := by
   unfold firstNonempty
-  rw [dif_neg]
+  rw [dite_eq_right]
   · intro hex
     obtain ⟨k, inner, hk, hne⟩ := hex
     exact hne (h k inner hk)
@@ -1300,9 +1300,9 @@ theorem firstNonempty_lcons (inner : HolLList α) (rest : HolLList (HolLList α)
           (lcons inner rest).rep m = some i ∧ i.rep 0 ≠ none := by
         intro m hm
         omega
-      rw [firstNonempty_eq_some_of_rep hsome hmin, if_neg (by simp)]
+      rw [firstNonempty_eq_some_of_rep hsome hmin, ite_eq_right (by simp)]
   | none =>
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       cases hr : firstNonempty rest with
       | none =>
           apply firstNonempty_eq_none_of
@@ -1519,24 +1519,24 @@ theorem firstNone_lappend (l1 l2 : HolLList α) :
           intro n
           simp only [lappendHOL, lappendRep, h1]
           by_cases hn : n < k
-          · rw [if_pos hn]
+          · rw [ite_eq_left hn]
             exact hmin n hn
-          · rw [if_neg hn]
+          · rw [ite_eq_right hn]
             exact hno (n - k)
       | some j =>
           obtain ⟨hj, hmin2⟩ := firstNone_spec h2
           have hrep_none : (lappendHOL l1 l2).rep (k + j) = none := by
             simp only [lappendHOL, lappendRep, h1]
-            rw [if_neg (by omega)]
+            rw [ite_eq_right (by omega)]
             rw [show k + j - k = j from by omega]
             exact hj
           have hrep_min : ∀ m, m < k + j → (lappendHOL l1 l2).rep m ≠ none := by
             intro m hm
             simp only [lappendHOL, lappendRep, h1]
             by_cases hmk : m < k
-            · rw [if_pos hmk]
+            · rw [ite_eq_left hmk]
               exact hmin m hmk
-            · rw [if_neg hmk]
+            · rw [ite_eq_right hmk]
               exact hmin2 (m - k) (by omega)
           rw [firstNone_eq_some_of_rep hrep_none hrep_min]
 
@@ -1577,8 +1577,8 @@ theorem lappendHOL_assoc (ll1 ll2 ll3 : HolLList α) :
           rw [lappendRep_of_firstNone_none h12, lappendRep_of_firstNone_some h1,
             lappendRep_rep, lappendRep_of_firstNone_some h1]
           by_cases hn : n < k
-          · rw [if_pos hn, if_pos hn]
-          · rw [if_neg hn, if_neg hn]
+          · rw [ite_eq_left hn, ite_eq_left hn]
+          · rw [ite_eq_right hn, ite_eq_right hn]
             rw [lappendRep_rep, lappendRep_of_firstNone_none h2]
       | some j =>
           have h12 : firstNone (lappendHOL ll1 ll2) = some (k + j) := by
@@ -1587,11 +1587,11 @@ theorem lappendHOL_assoc (ll1 ll2 ll3 : HolLList α) :
             lappendRep_rep, lappendRep_of_firstNone_some h1,
             lappendRep_rep, lappendRep_of_firstNone_some h2]
           by_cases hn : n < k
-          · rw [if_pos hn, if_pos hn, if_pos (by omega)]
-          · rw [if_neg hn, if_neg hn]
+          · rw [ite_eq_left hn, ite_eq_left hn, ite_eq_left (by omega)]
+          · rw [ite_eq_right hn, ite_eq_right hn]
             by_cases hnj : n - k < j
-            · simp only [if_pos (by omega : n < k + j), if_pos hnj]
-            · simp only [if_neg (by omega : ¬ n < k + j), if_neg hnj]
+            · simp only [ite_eq_left (by omega : n < k + j), ite_eq_left hnj]
+            · simp only [ite_eq_right (by omega : ¬ n < k + j), ite_eq_right hnj]
               congr 1
               omega
 
@@ -1631,10 +1631,10 @@ theorem lfinite_lappendHOL (ll1 ll2 : HolLList α) :
             by_cases hnk : n < k
             · have hn1 : ll1.rep n ≠ none := (firstNone_spec h1).2 n hnk
               simp only [lappendHOL, lappendRep, h1] at hnone
-              rw [if_pos hnk] at hnone
+              rw [ite_eq_left hnk] at hnone
               exact absurd hnone hn1
             · simp only [lappendHOL, lappendRep, h1] at hnone
-              rw [if_neg hnk] at hnone
+              rw [ite_eq_right hnk] at hnone
               exact absurd hnone hn2
         | some j =>
             exact LFinite_of_rep_none (firstNone_spec h2).1
@@ -1674,7 +1674,7 @@ theorem lfinite_lappendHOL_imp_lnil (ll : HolLList α) (hfin : LFinite ll) :
         have hk' : ll.rep k' = none := (firstNone_spec hf).1
         have hlhs : (lappendHOL ll l2).rep k' = l2.rep 0 := by
           simp only [lappendRep_rep, lappendRep_of_firstNone_some hf]
-          rw [if_neg (by omega)]
+          rw [ite_eq_right (by omega)]
           rw [show k' - k' = 0 from by omega]
         rw [h] at hlhs
         exact absurd (hlhs.symm.trans hk') hrep0
@@ -1683,7 +1683,7 @@ theorem lfinite_lappendHOL_imp_lnil (ll : HolLList α) (hfin : LFinite ll) :
 theorem lappendRep_rep_add {l1 l2 : HolLList α} {m : Nat} (h : firstNone l1 = some m) (n : Nat) :
     (lappendHOL l1 l2).rep (m + n) = l2.rep n := by
   simp only [lappendRep_rep, lappendRep_of_firstNone_some h]
-  rw [if_neg (by omega), Nat.add_sub_cancel_left]
+  rw [ite_eq_right (by omega), Nat.add_sub_cancel_left]
 
 /-- HOL `LAPPEND11_FINITE1` (`llistScript.sml:4023-4025`): appending on the left
     of a finite list is injective. -/
@@ -1903,12 +1903,12 @@ theorem lprefix_append_iff (l1 l2 : HolLList α) :
         intro n
         simp only [lappendRep_rep, lappendRep_of_firstNone_some hf]
         by_cases hn : n < k
-        · rw [if_pos hn]
+        · rw [ite_eq_left hn]
           have hne : l1.rep n ≠ none := hmin n hn
           obtain ⟨x, hx⟩ := Option.ne_none_iff_exists'.mp hne
           rw [hx]
           exact lprefix_rep hp hx
-        · rw [if_neg hn]
+        · rw [ite_eq_right hn]
           rw [show k + (n - k) = n from by omega]
   · rintro ⟨ll, rfl⟩
     apply lprefix_of_rep_agree
@@ -1928,7 +1928,7 @@ theorem lprefix_append_iff (l1 l2 : HolLList α) :
               rep_none_of_le l1 (firstNone_spec hf).1 (by omega)
             rw [hnone] at hx
             exact absurd hx (by simp)
-        rw [if_pos hn]
+        rw [ite_eq_left hn]
         exact hx
 
 
@@ -2038,7 +2038,7 @@ theorem lflatten_spec (ll : HolLList (HolLList α)) :
       have hfl : lflatten ll = lflatten (lcons inner (ltail ll)) := congrArg lflatten hll
       rw [hfl]
       have hfe : firstNonempty (lcons inner (ltail ll)) = some 0 := by
-        rw [firstNonempty_lcons, if_neg (rep_zero_ne_none_of_ne_lnil h2')]
+        rw [firstNonempty_lcons, ite_eq_right (rep_zero_ne_none_of_ne_lnil h2')]
       apply ext_of_rep
       intro n
       cases n with
@@ -2109,8 +2109,8 @@ theorem fromList_toList {ll : HolLList α} (h : LFinite ll) :
   intro i
   rw [fromList_rep, toList_eq_some_rep hxs i]
   by_cases hi : i < xs.length
-  · rw [dif_pos hi, List.getElem?_eq_getElem hi]
-  · rw [dif_neg hi, List.getElem?_eq_none_iff.mpr (by omega)]
+  · rw [dite_eq_left hi, List.getElem?_eq_getElem hi]
+  · rw [dite_eq_right hi, List.getElem?_eq_none_iff.mpr (by omega)]
 
 
 /-! ## Corecursion and coinduction

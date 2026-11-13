@@ -51,9 +51,9 @@ theorem tmask_lsr_getLsbD (n i : Nat) (hn : n < 64) (hi : i < 64) :
     rw [hn64]
     rw [List.getD_eq_getElem?_getD, List.getElem?_append, List.length_replicate]
     by_cases h : 63 - i < n
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       simp [h]
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       have h2 : 63 - i - n < 64 - n := by omega
       rw [List.getElem?_replicate]
       simp [h2]
@@ -158,10 +158,10 @@ theorem arm8LslMask_getLsbD (n i : Nat) (hn : n < 64) (hi : i < 64) :
     decide_true, Bool.true_and]
   rw [List.getD_eq_getElem?_getD, List.getElem?_append, List.length_replicate]
   by_cases h : 63 - i < 64 - n
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     simp [h]
     omega
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     have h2 : 63 - i - (64 - n) < n := by omega
     rw [List.getElem?_replicate]
     simp [h2]

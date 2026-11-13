@@ -67,7 +67,7 @@ theorem toInt_ofNat_small {m : Nat} (hm : m < 2 ^ 63) :
   have h1 : (BitVec.ofNat 64 m).toNat = m := by rw [BitVec.toNat_ofNat]; omega
   rw [h1]
   have h2 : 2 * m < 2 ^ 64 := by omega
-  rw [if_pos h2]
+  rw [ite_eq_left h2]
 
 /-- `backend_config_ok` at `x64_config` and `x64_backend_config`. -/
 theorem x64BackendConfigOkRaw :

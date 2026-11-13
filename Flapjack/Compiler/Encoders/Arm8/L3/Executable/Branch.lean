@@ -78,7 +78,7 @@ theorem arm8EncodeBytes_branchImmediate_gen (call : Bool) (imm : BitVec 64)
       decide
     have hb1 : (BranchType.BranchType_CALL == BranchType.BranchType_CALL) = true := rfl
     simp only [arm8Encode, Encode, e_branch, hc, hb, Bool.true_and, hb1,
-      holV2w_one_true, arm8BranchWordGen, if_true]
+      holV2w_one_true, arm8BranchWordGen, ite_true]
 
 /-- A `BranchImmediate` encodes to the same four bytes on both sides. -/
 theorem encodeBytes_branchImmediate_of_guard (imm : BitVec 64) (call : Bool)
@@ -91,7 +91,7 @@ theorem encodeBytes_branchImmediate_of_guard (imm : BitVec 64) (call : Bool)
   have hw : encodeInsn32 (.branchImmediate imm call) =
       some (fields [(1, bit call), (5, 5), (26, (imm >>> 2).toNat % 2 ^ 26)]) := by
     simp only [encodeInsn32]
-    simp only [hguard, if_true]
+    simp only [hguard, ite_true]
   rw [encodeBytes_eq_of_encodeInsn32 _ _ hw, fields_branchImmediate, ofNat26_shift_eq]
   exact (arm8EncodeBytes_branchImmediate_gen call imm hl3).symm
 
@@ -129,7 +129,7 @@ theorem encodeBytes_branchConditional_of_guard (imm : BitVec 64) (cond : Nat)
   have hw : encodeInsn32 (.branchConditional imm cond) =
       some (fields [(8, 84), (19, (imm >>> 2).toNat % 2 ^ 19), (1, 0), (4, cond)]) := by
     simp only [encodeInsn32]
-    simp only [hguard, if_true]
+    simp only [hguard, ite_true]
   rw [encodeBytes_eq_of_encodeInsn32 _ _ hw, fields_branchConditional, ofNat19_shift_eq]
   rw [arm8Encode, arm8Encode_branchConditional imm (BitVec.ofNat 4 cond) hl3]
 
@@ -215,7 +215,7 @@ theorem arm8EncodeBytes_branchImmediate_bad (call : Bool) (imm : BitVec 64)
     intro h
     exact hl3 h.symm
   cases call <;>
-    simp only [arm8Encode, Encode, e_branch, hc, Bool.false_and, Bool.false_eq_true, if_false]
+    simp only [arm8Encode, Encode, e_branch, hc, Bool.false_and, Bool.false_eq_true, ite_false]
 
 /-- When the L3 conditional-branch guard fails, `arm8Encode` is four zero bytes. -/
 theorem arm8EncodeBytes_branchConditional_bad (imm : BitVec 64) (cd : BitVec 4)
@@ -227,7 +227,7 @@ theorem arm8EncodeBytes_branchConditional_bad (imm : BitVec 64) (cd : BitVec 4)
     rw [beq_eq_false_iff_ne]
     intro h
     exact hl3 h.symm
-  simp only [arm8Encode, Encode, e_branch, hc, Bool.false_eq_true, if_false]
+  simp only [arm8Encode, Encode, e_branch, hc, Bool.false_eq_true, ite_false]
 
 /-- A `BranchImmediate` encodes to the same four bytes on both sides, at every
 offset (both encoders fall back to zero bytes outside the range). -/

@@ -1514,14 +1514,14 @@ theorem panValueGlobalsShapeStable_update_of_match
   by_cases hsame : other = name
   · subst hsame
     simp only [updatePanValueMap]
-    rw [if_pos (by simp), hold]
+    rw [ite_eq_left (by simp), hold]
     simp [hshape]
   · simp only [updatePanValueMap]
     have hbeq : (other == name) = false := by
       by_cases hb : (other == name) = true
       · exact absurd (by simpa using hb) hsame
       · simpa using hb
-    rw [if_neg (by simp [hbeq])]
+    rw [ite_eq_right (by simp [hbeq])]
 
 /-- A valid `Global` assignment keeps the global map shape-stable. -/
 theorem panValueGlobalsShapeStable_update_of_valid
@@ -2569,7 +2569,7 @@ theorem evalPanValueFfiClockCode_globals_stable
                                       by_cases hvalid :
                                           panShapeMatches (panValueShape structs value)
                                             returnShape = true
-                                      · rw [if_pos hvalid]
+                                      · rw [ite_eq_left hvalid]
                                         cases info with
                                         | none => globals_stable_hb hb
                                         | some info' =>
@@ -2590,7 +2590,7 @@ theorem evalPanValueFfiClockCode_globals_stable
                                                   (assignPanValueCallResult_globals_stable structs
                                                     locals calleeGlobals' destination [value]
                                                     callerLocals' callerGlobals' hassign)
-                                      · rw [if_neg hvalid]
+                                      · rw [ite_eq_right hvalid]
                                         globals_stable_hb hb
                                   | cons value' rest' => globals_stable_hb hb
                           | raised calleeLocals' calleeGlobals' calleeMemory' calleeFfi'
@@ -2607,7 +2607,7 @@ theorem evalPanValueFfiClockCode_globals_stable
                                         exceptionInfo'
                                       simp only []
                                       by_cases hcaught : (caught == exception) = true
-                                      · rw [if_pos hcaught]
+                                      · rw [ite_eq_left hcaught]
                                         cases hexs : exceptions exception with
                                         | none => globals_stable_hb hb
                                         | some shape =>
@@ -2618,7 +2618,7 @@ theorem evalPanValueFfiClockCode_globals_stable
                                                   panValueAssignmentValid structs locals
                                                     (fun _ => none) .local handlerVariable
                                                     value) = true
-                                            · rw [if_pos hcond]
+                                            · rw [ite_eq_left hcond]
                                               cases hhandler :
                                                       evalPanValueFfiClockCodeProg context primitive
                                                         handler structs code exceptions base top
@@ -2650,9 +2650,9 @@ theorem evalPanValueFfiClockCode_globals_stable
                                                               calleeMemory' calleeFfi'
                                                               exception value), callClock)))
                                                         hb hb2
-                                            · rw [if_neg hcond]
+                                            · rw [ite_eq_right hcond]
                                               globals_stable_hb hb
-                                      · rw [if_neg hcaught]
+                                      · rw [ite_eq_right hcaught]
                                         globals_stable_hb hb
                           | finalFfi calleeLocals' calleeGlobals' calleeMemory' calleeFfi' event =>
                               simp only [Option.pure_def]
@@ -2685,7 +2685,7 @@ theorem evalPanValueFfiClockCode_globals_stable
                             simp only []
                             by_cases hvalid :
                                 panShapeMatches (panValueShape structs value) shape = true
-                            · rw [if_pos hvalid]
+                            · rw [ite_eq_left hvalid]
                               cases hcont : evalPanValueFfiClockCodeProg context primitive
                                     handler structs code exceptions base top bytes fuel
                                     (updatePanValueMap locals name value) nextGlobals nextMemory
@@ -2701,7 +2701,7 @@ theorem evalPanValueFfiClockCode_globals_stable
                                       globals name (locals name) bodyOutcome bodyClock
                                       (panValueGlobalsShapeStable_trans hb
                                         (hb2 (bodyOutcome, bodyClock) rfl))
-                            · rw [if_neg hvalid]
+                            · rw [ite_eq_right hvalid]
                               globals_stable_hb hb
                         | cons value' rest' =>
                             exact panValueFfiClockGlobalsStable_none structs globals
@@ -2895,9 +2895,9 @@ theorem evalPanValueFfiClockCode_globals_stable
                     by_cases hcond :
                         (panShapeMatches (panValueShape structs value) shape &&
                           panValuePayloadWithinLimit structs value) = true
-                    · rw [if_pos hcond]
+                    · rw [ite_eq_left hcond]
                       globals_stable_refl
-                    · rw [if_neg hcond]
+                    · rw [ite_eq_right hcond]
                       globals_stable_refl
         | «while» conditionExp body =>
             simp only [evalPanValueFfiClockCodeProg]

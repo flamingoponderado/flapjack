@@ -142,7 +142,7 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
                       refine ⟨.err targetError, targetMiddle, ?_, related, finalState, finalGlobals, finalOracle, finalDisjoint⟩
                       rw [evaluateApp, targetFound]
                       dsimp only
-                      rw [if_neg targetEnough, fixClock_evaluate, targetBodyRun]
+                      rw [ite_eq_right targetEnough, fixClock_evaluate, targetBodyRun]
                   | val values =>
                     have singleton := evaluate_singleton_value body env
                       (decClock ((first :: rest).length - remaining.length) state) middle values bodyRun
@@ -183,7 +183,7 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
                           refine ⟨targetResult, targetLast, ?_, resultRelated, finalState, finalGlobals, finalOracle, finalDisjoint⟩
                           rw [evaluateApp, targetFound]
                           dsimp only
-                          rw [if_neg targetEnough, fixClock_evaluate, targetBodyRun]
+                          rw [ite_eq_right targetEnough, fixClock_evaluate, targetBodyRun]
                           exact continuation
                         · obtain ⟨sourceEmpty, targetEmpty⟩ := annotation same
                           subst remaining
@@ -193,7 +193,7 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
                           refine ⟨.val [targetValue], targetMiddle, ?_, .cons valueRel .nil, midState, midGlobals, midOracle, midDisjoint⟩
                           rw [evaluateApp, targetFound]
                           dsimp only
-                          rw [if_neg targetEnough, fixClock_evaluate, targetBodyRun]
+                          rw [ite_eq_right targetEnough, fixClock_evaluate, targetBodyRun]
                           simp [evaluateApp]
     constructor
     · exact appAll
@@ -1097,7 +1097,7 @@ private theorem simulationAll {C F : Type} : ∀ clock : Nat,
                   have maxEq : state.maxApp = t0.maxApp := initialRel.2.2.2.2.2.2.1
                   have targetValid : (newFns.all (fun (arity, _) => arity ≤ t0.maxApp && arity != 0)) = true := by
                     simpa [newFns, List.all_map, ← maxEq] using valid
-                  simp only [List.map_cons, List.map_nil, evaluate, targetValid, if_true]
+                  simp only [List.map_cons, List.map_nil, evaluate, targetValid, ite_true]
                   simpa [recs2, newFns, List.append_assoc] using targetRun
                 · simp [evaluate, valid] at run
                   rcases run with ⟨rfl, rfl⟩

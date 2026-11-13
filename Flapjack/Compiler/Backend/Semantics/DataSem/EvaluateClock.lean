@@ -170,7 +170,6 @@ theorem evaluate_force_clock_step {C F : Type} (ret : Option (Nat × NumSet)) (l
               · let entered := callEnv args size (pushEnv env false (decClock state))
                 have bound : (fixClock entered (evaluate body entered)).2.clock ≤ state.clock := by
                   simp [fixClock, entered, callEnv, pushEnv, decClock]
-                  omega
                 cases called : fixClock entered (evaluate body entered) with
                 | mk result last =>
                   simp only [called] at bound

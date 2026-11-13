@@ -213,7 +213,7 @@ example (c : AsmConfigExact 1) : ¬ (false = false ∧ postAllocConventionsHOL 5
 
 -- ani_1_load8_target=F
 example (c : AsmConfigExact 1) : ¬ (stackAsmName ({ c with isa := .riscv, regCount := 10, avoidRegs := [1180591620717411303424,1180591620717411303424], fpRegCount := 4, twoRegArith := false, validImm := fun _ v => v == 1, addrOffset := (0,100), hwOffset := (0,2), byteOffset := (0,3) }) (compNative ({ c with isa := .riscv, regCount := 10, avoidRegs := [1180591620717411303424,1180591620717411303424], fpRegCount := 4, twoRegArith := false, validImm := fun _ v => v == 1, addrOffset := (0,100), hwOffset := (0,2), byteOffset := (0,3) }) false (.inst (.mem .load8 1180591620717411303424 (.addr 2 0)) : WordLangProgHOL (BitVec 1)) (.append (.list [8]) (.list [2]),99) (5,1180591620717411303424,9)).1) := by
-  cbv; simp
+  cbv <;> simp
 
 -- ani_1_store8_valid=F
 example (c : AsmConfigExact 1) : fullInstOkLessExact ({ c with isa := .riscv, regCount := 10, avoidRegs := [1180591620717411303424,1180591620717411303424], fpRegCount := 4, twoRegArith := true, validImm := fun _ v => v == 1, addrOffset := (0,100), hwOffset := (0,2), byteOffset := (0,3) }) (.inst (.mem .store8 1180591620717411303424 (.addr 2 0)) : WordLangProgHOL (BitVec 1)) = false := by
@@ -225,7 +225,7 @@ example (c : AsmConfigExact 1) : ¬ (false = false ∧ postAllocConventionsHOL 5
 
 -- ani_1_store8_target=F
 example (c : AsmConfigExact 1) : ¬ (stackAsmName ({ c with isa := .riscv, regCount := 10, avoidRegs := [1180591620717411303424,1180591620717411303424], fpRegCount := 4, twoRegArith := true, validImm := fun _ v => v == 1, addrOffset := (0,100), hwOffset := (0,2), byteOffset := (0,3) }) (compNative ({ c with isa := .riscv, regCount := 10, avoidRegs := [1180591620717411303424,1180591620717411303424], fpRegCount := 4, twoRegArith := true, validImm := fun _ v => v == 1, addrOffset := (0,100), hwOffset := (0,2), byteOffset := (0,3) }) false (.inst (.mem .store8 1180591620717411303424 (.addr 2 0)) : WordLangProgHOL (BitVec 1)) (.append (.list [8]) (.list [2]),99) (5,1180591620717411303424,9)).1) := by
-  cbv; simp
+  cbv <;> simp
 
 -- ani_1_load16_valid=T
 example (c : AsmConfigExact 1) : fullInstOkLessExact ({ c with isa := .riscv, regCount := 10, avoidRegs := [1180591620717411303424,1180591620717411303424], fpRegCount := 4, twoRegArith := false, validImm := fun _ v => v == 1, addrOffset := (0,100), hwOffset := (0,2), byteOffset := (0,3) }) (.inst (.mem .load16 1180591620717411303424 (.addr 2 0)) : WordLangProgHOL (BitVec 1)) = true := by
@@ -813,7 +813,7 @@ example (c : AsmConfigExact 2) : ¬ (false = false ∧ postAllocConventionsHOL 5
 
 -- ani_2_load8_target=F
 example (c : AsmConfigExact 2) : ¬ (stackAsmName ({ c with isa := .riscv, regCount := 10, avoidRegs := [1180591620717411303424,1180591620717411303424], fpRegCount := 4, twoRegArith := true, validImm := fun _ v => v == 1, addrOffset := (0,100), hwOffset := (0,2), byteOffset := (0,3) }) (compNative ({ c with isa := .riscv, regCount := 10, avoidRegs := [1180591620717411303424,1180591620717411303424], fpRegCount := 4, twoRegArith := true, validImm := fun _ v => v == 1, addrOffset := (0,100), hwOffset := (0,2), byteOffset := (0,3) }) false (.inst (.mem .load8 1180591620717411303424 (.addr 2 0)) : WordLangProgHOL (BitVec 2)) (.append (.list [8]) (.list [2]),99) (5,1180591620717411303424,9)).1) := by
-  cbv; simp
+  cbv <;> simp
 
 -- ani_2_store8_valid=F
 example (c : AsmConfigExact 2) : fullInstOkLessExact ({ c with isa := .riscv, regCount := 10, avoidRegs := [1180591620717411303424,1180591620717411303424], fpRegCount := 4, twoRegArith := false, validImm := fun _ v => v == 1, addrOffset := (0,100), hwOffset := (0,2), byteOffset := (0,3) }) (.inst (.mem .store8 1180591620717411303424 (.addr 2 0)) : WordLangProgHOL (BitVec 2)) = false := by
@@ -825,7 +825,7 @@ example (c : AsmConfigExact 2) : ¬ (false = false ∧ postAllocConventionsHOL 5
 
 -- ani_2_store8_target=F
 example (c : AsmConfigExact 2) : ¬ (stackAsmName ({ c with isa := .riscv, regCount := 10, avoidRegs := [1180591620717411303424,1180591620717411303424], fpRegCount := 4, twoRegArith := false, validImm := fun _ v => v == 1, addrOffset := (0,100), hwOffset := (0,2), byteOffset := (0,3) }) (compNative ({ c with isa := .riscv, regCount := 10, avoidRegs := [1180591620717411303424,1180591620717411303424], fpRegCount := 4, twoRegArith := false, validImm := fun _ v => v == 1, addrOffset := (0,100), hwOffset := (0,2), byteOffset := (0,3) }) false (.inst (.mem .store8 1180591620717411303424 (.addr 2 0)) : WordLangProgHOL (BitVec 2)) (.append (.list [8]) (.list [2]),99) (5,1180591620717411303424,9)).1) := by
-  cbv; simp
+  cbv <;> simp
 
 -- ani_2_load16_valid=T
 example (c : AsmConfigExact 2) : fullInstOkLessExact ({ c with isa := .riscv, regCount := 10, avoidRegs := [1180591620717411303424,1180591620717411303424], fpRegCount := 4, twoRegArith := true, validImm := fun _ v => v == 1, addrOffset := (0,100), hwOffset := (0,2), byteOffset := (0,3) }) (.inst (.mem .load16 1180591620717411303424 (.addr 2 0)) : WordLangProgHOL (BitVec 2)) = true := by

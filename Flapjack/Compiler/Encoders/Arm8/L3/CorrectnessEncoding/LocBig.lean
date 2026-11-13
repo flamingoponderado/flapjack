@@ -54,7 +54,7 @@ theorem arm8Ast_loc_big (register : Nat) (offset : BitVec 64)
        arm8LocBigMovInsn 3 offset,
        arm8LocBigAddInsn register] := by
   simp only [arm8Ast]
-  rw [if_neg (by rw [h]; decide)]
+  rw [ite_eq_right (by rw [h]; decide)]
   simp [arm8LocBigAddrInsn, arm8LocBigMovInsn, arm8LocBigAddInsn]
 
 /-- The encoded bytes of the out-of-range `Loc` lowering. -/
@@ -501,7 +501,7 @@ theorem arm8LocBigT1_reg_ne (ms : arm8_state) (register j : Nat)
   show Flapjack.RiscV.L3.holUpdate (BitVec.ofNat 5 register) _ ms.REG
     (BitVec.ofNat 5 j) = _
   simp only [Flapjack.RiscV.L3.holUpdate]
-  exact if_neg h
+  exact ite_eq_right h
 
 /-- The first `MoveWide .k` step inserts bits `15:0` into register 26. -/
 theorem arm8LocBigT2_reg_step (ms : arm8_state) (offset : BitVec 64) (register : Nat) :
@@ -514,7 +514,7 @@ theorem arm8LocBigT2_reg_step (ms : arm8_state) (offset : BitVec 64) (register :
         (X (26 : BitVec 5) (arm8LocBigT1 ms register)))
       (arm8LocBigT1 ms register).REG (26 : BitVec 5) = _
   rw [holUpdate_self]
-  simp only [X, hbeq, Bool.false_eq_true, if_false]
+  simp only [X, hbeq, Bool.false_eq_true, ite_false]
 
 theorem arm8LocBigT3_reg_step (ms : arm8_state) (offset : BitVec 64) (register : Nat) :
     (arm8LocBigT3 ms offset register).REG (26 : BitVec 5) =
@@ -526,7 +526,7 @@ theorem arm8LocBigT3_reg_step (ms : arm8_state) (offset : BitVec 64) (register :
         (X (26 : BitVec 5) (arm8LocBigT2 ms offset register)))
       (arm8LocBigT2 ms offset register).REG (26 : BitVec 5) = _
   rw [holUpdate_self]
-  simp only [X, hbeq, Bool.false_eq_true, if_false]
+  simp only [X, hbeq, Bool.false_eq_true, ite_false]
 
 theorem arm8LocBigT4_reg_step (ms : arm8_state) (offset : BitVec 64) (register : Nat) :
     (arm8LocBigT4 ms offset register).REG (26 : BitVec 5) =
@@ -538,7 +538,7 @@ theorem arm8LocBigT4_reg_step (ms : arm8_state) (offset : BitVec 64) (register :
         (X (26 : BitVec 5) (arm8LocBigT3 ms offset register)))
       (arm8LocBigT3 ms offset register).REG (26 : BitVec 5) = _
   rw [holUpdate_self]
-  simp only [X, hbeq, Bool.false_eq_true, if_false]
+  simp only [X, hbeq, Bool.false_eq_true, ite_false]
 
 theorem arm8LocBigT5_reg_step (ms : arm8_state) (offset : BitVec 64) (register : Nat) :
     (arm8LocBigT5 ms offset register).REG (26 : BitVec 5) =
@@ -550,7 +550,7 @@ theorem arm8LocBigT5_reg_step (ms : arm8_state) (offset : BitVec 64) (register :
         (X (26 : BitVec 5) (arm8LocBigT4 ms offset register)))
       (arm8LocBigT4 ms offset register).REG (26 : BitVec 5) = _
   rw [holUpdate_self]
-  simp only [X, hbeq, Bool.false_eq_true, if_false]
+  simp only [X, hbeq, Bool.false_eq_true, ite_false]
 
 theorem arm8LocBigT2_reg_ne (ms : arm8_state) (offset : BitVec 64) (register j : Nat)
     (h : (26 : BitVec 5) ≠ (BitVec.ofNat 5 j)) :
@@ -559,7 +559,7 @@ theorem arm8LocBigT2_reg_ne (ms : arm8_state) (offset : BitVec 64) (register j :
   show Flapjack.RiscV.L3.holUpdate (26 : BitVec 5) _ (arm8LocBigT1 ms register).REG
     (BitVec.ofNat 5 j) = _
   simp only [Flapjack.RiscV.L3.holUpdate]
-  exact if_neg h
+  exact ite_eq_right h
 
 theorem arm8LocBigT3_reg_ne (ms : arm8_state) (offset : BitVec 64) (register j : Nat)
     (h : (26 : BitVec 5) ≠ (BitVec.ofNat 5 j)) :
@@ -568,7 +568,7 @@ theorem arm8LocBigT3_reg_ne (ms : arm8_state) (offset : BitVec 64) (register j :
   show Flapjack.RiscV.L3.holUpdate (26 : BitVec 5) _ (arm8LocBigT2 ms offset register).REG
     (BitVec.ofNat 5 j) = _
   simp only [Flapjack.RiscV.L3.holUpdate]
-  exact if_neg h
+  exact ite_eq_right h
 
 theorem arm8LocBigT4_reg_ne (ms : arm8_state) (offset : BitVec 64) (register j : Nat)
     (h : (26 : BitVec 5) ≠ (BitVec.ofNat 5 j)) :
@@ -577,7 +577,7 @@ theorem arm8LocBigT4_reg_ne (ms : arm8_state) (offset : BitVec 64) (register j :
   show Flapjack.RiscV.L3.holUpdate (26 : BitVec 5) _ (arm8LocBigT3 ms offset register).REG
     (BitVec.ofNat 5 j) = _
   simp only [Flapjack.RiscV.L3.holUpdate]
-  exact if_neg h
+  exact ite_eq_right h
 
 theorem arm8LocBigT5_reg_ne (ms : arm8_state) (offset : BitVec 64) (register j : Nat)
     (h : (26 : BitVec 5) ≠ (BitVec.ofNat 5 j)) :
@@ -586,7 +586,7 @@ theorem arm8LocBigT5_reg_ne (ms : arm8_state) (offset : BitVec 64) (register j :
   show Flapjack.RiscV.L3.holUpdate (26 : BitVec 5) _ (arm8LocBigT4 ms offset register).REG
     (BitVec.ofNat 5 j) = _
   simp only [Flapjack.RiscV.L3.holUpdate]
-  exact if_neg h
+  exact ite_eq_right h
 
 /-- A register other than 26 is unchanged by the four insertions. -/
 theorem arm8LocBigT5_reg (ms : arm8_state) (offset : BitVec 64) (register j : Nat)
@@ -638,10 +638,10 @@ theorem arm8LocBigT6_reg (ms : arm8_state) (offset : BitVec 64) (register : Nat)
     rw [arm8LocBigT5_reg ms offset register register h26ne]
     rw [arm8LocBigT1_reg]
   have hXr : X (BitVec.ofNat 5 register) (arm8LocBigT5 ms offset register) = ms.PC := by
-    simp only [X, hbeq, Bool.false_eq_true, if_false, BitVec.setWidth_eq, hT5]
+    simp only [X, hbeq, Bool.false_eq_true, ite_false, BitVec.setWidth_eq, hT5]
   have hbeq26 : ((26 : BitVec 5) == BitVec.ofNat 5 31) = false := by decide
   have hX26 : X (26 : BitVec 5) (arm8LocBigT5 ms offset register) = offset := by
-    simp only [X, hbeq26, Bool.false_eq_true, if_false, BitVec.setWidth_eq]
+    simp only [X, hbeq26, Bool.false_eq_true, ite_false, BitVec.setWidth_eq]
     exact arm8LocBigT5_reg26 ms offset register hr26 hrlt
   rw [arm8LocBigT6_reg_step, hXr, hX26]
 
@@ -652,7 +652,7 @@ theorem arm8LocBigT6_reg_ne (ms : arm8_state) (offset : BitVec 64) (register j :
   show Flapjack.RiscV.L3.holUpdate (BitVec.ofNat 5 register) _ (arm8LocBigT5 ms offset register).REG
     (BitVec.ofNat 5 j) = _
   simp only [Flapjack.RiscV.L3.holUpdate]
-  exact if_neg h
+  exact ite_eq_right h
 
 
 /-- Applying `arm8Next` to two states that agree on `d` and carry the final add
@@ -1003,7 +1003,7 @@ theorem arm8_encoder_correct_loc_big (register : Nat) (offset : BitVec 64)
         simp [arm8ConfigL3] at hc
       rw [hs2regs k]
       by_cases hkr : k = register
-      · rw [hkr, if_pos rfl]
+      · rw [hkr, ite_eq_left rfl]
         rw [arm8LocBigT6_reg ms offset register hr26 hr_lt hr_31]
         rw [← hpc]
       · have hne : (BitVec.ofNat 5 register) ≠ (BitVec.ofNat 5 k) := by
@@ -1012,7 +1012,7 @@ theorem arm8_encoder_correct_loc_big (register : Nat) (offset : BitVec 64)
         have hne26 : (26 : BitVec 5) ≠ (BitVec.ofNat 5 k) := by
           intro hh
           exact hk26 (ofNat5_eq_ofNat5 26 k (by decide) hk32 hh).symm
-        rw [if_neg hkr]
+        rw [ite_eq_right hkr]
         rw [arm8LocBigT6_reg_ne ms offset register k hne]
         rw [arm8LocBigT5_reg ms offset register k hne26]
         rw [arm8LocBigT1_reg_ne ms register k hne]

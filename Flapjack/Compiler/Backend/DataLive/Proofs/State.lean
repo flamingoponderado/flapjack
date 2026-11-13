@@ -86,7 +86,7 @@ theorem cutEnv_inter_related {C F : Type} (source target : State C F) (names liv
     simpa [sptMem, sptDomain, ← lookupEq] using existsSource
   let targetCut := sptMkWf (sptInter target.locals (sptInter names live))
   have targetRun : DataSem.cutEnv (sptInter names live) target.locals = some targetCut := by
-    simp only [DataSem.cutEnv, if_pos targetPresent]
+    simp only [DataSem.cutEnv, ite_eq_left targetPresent]
     rfl
   refine ⟨targetCut, targetRun, ?_⟩
   intro key member

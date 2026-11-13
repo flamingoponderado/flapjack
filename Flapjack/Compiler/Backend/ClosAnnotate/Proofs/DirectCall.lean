@@ -76,7 +76,7 @@ theorem evaluate_call_step {C F : Type} (trace : BackendCommon.Tra) (ticks locat
               dsimp only at run
               by_cases timeout : middle.clock < ticks + 1
               · have targetTimeout : targetMiddle.clock < ticks + 1 := by simpa [← middleRel.1] using timeout
-                rw [if_pos timeout] at run
+                rw [ite_eq_left timeout] at run
                 cases run
                 refine ⟨.err (.abort .timeoutError), { targetMiddle with clock := 0 }, ?_, rfl,
                   stateRel_withClock middleRel 0⟩
@@ -86,7 +86,7 @@ theorem evaluate_call_step {C F : Type} (trace : BackendCommon.Tra) (ticks locat
                 dsimp only
                 rw [targetFind]
                 dsimp only
-                rw [if_pos targetTimeout]
+                rw [ite_eq_left targetTimeout]
                 rfl
               · have targetEnough : ¬ targetMiddle.clock < ticks + 1 := by simpa [← middleRel.1] using timeout
                 have startRel : StateRel (decClock (ticks + 1) middle) (decClock (ticks + 1) targetMiddle) := by
@@ -100,7 +100,7 @@ theorem evaluate_call_step {C F : Type} (trace : BackendCommon.Tra) (ticks locat
                     intro n present bound
                     exact .outside 0 0 .ln [] [] (n - arity) (by omega))
                   simpa using h
-                rw [if_neg timeout] at run
+                rw [ite_eq_right timeout] at run
                 obtain ⟨targetBodyResult, targetLast, targetBodyRun, bodyRel, lastRel⟩ :=
                   bodyIH body (decClock (ticks + 1) middle) smaller values nextValues
                     (decClock (ticks + 1) targetMiddle) result sourceNext 0 arity .ln run noType (by simpa using arityEq)
@@ -113,7 +113,7 @@ theorem evaluate_call_step {C F : Type} (trace : BackendCommon.Tra) (ticks locat
                 dsimp only
                 rw [targetFind]
                 dsimp only
-                rw [if_neg targetEnough]
+                rw [ite_eq_right targetEnough]
                 simpa [annotateSing, altFree_singleton, shiftList] using targetBodyRun
             · rw [evaluate, fixClock_evaluate, argsRun] at run
               simp [findCode, found, arityEq] at run

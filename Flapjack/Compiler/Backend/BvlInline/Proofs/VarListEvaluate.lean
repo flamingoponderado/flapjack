@@ -83,10 +83,10 @@ theorem varListHOL_length {α : Type} (n : Nat) (expressions : List Bvl.Exp) (xs
 /-- The local reduction underlying the let-operation pass preserves BVL
 evaluation for all results, including type errors. This is a proof helper,
 not a standalone HOL declaration. -/
-theorem evaluateLetOpReduction {C F : Type} (bindings variables : List Bvl.Exp) (op : ClosLang.Op)
+theorem evaluateLetOpReduction {C F : Type} (bindings variableExps : List Bvl.Exp) (op : ClosLang.Op)
     (env : List BvlSem.Value) (state : State C F)
-    (valid : varListHOL 0 variables bindings = true) :
-    evaluateTuple ([.let bindings (.op op variables)], env, state) =
+    (valid : varListHOL 0 variableExps bindings = true) :
+    evaluateTuple ([.let bindings (.op op variableExps)], env, state) =
       evaluateTuple ([.op op bindings], env, state) := by
   cases bindingsRun : evaluate bindings env state with
   | mk result middle =>
@@ -97,8 +97,8 @@ theorem evaluateLetOpReduction {C F : Type} (bindings variables : List Bvl.Exp) 
     | err error => simp [evaluateTuple, evaluate, bindingsRun, fixClock]
     | val values =>
       have resultLength := evaluateImpLength bindings env state values middle bindingsRun
-      have varsRun := varListEvaluate_zero variables bindings values env middle ⟨valid, resultLength⟩
-      change evaluate variables (values ++ env) middle = _ at varsRun
+      have varsRun := varListEvaluate_zero variableExps bindings values env middle ⟨valid, resultLength⟩
+      change evaluate variableExps (values ++ env) middle = _ at varsRun
       simp [evaluateTuple, evaluate, bindingsRun, fixClock, Nat.min_eq_right bound, varsRun]
 
 end Flapjack.Compiler.Backend.BvlInline.Proofs

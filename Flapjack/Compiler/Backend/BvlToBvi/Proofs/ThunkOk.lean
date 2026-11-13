@@ -34,7 +34,7 @@ theorem stateOk_updateThunk {C F : Type} (s : State C F) (key : Nat)
     | some value => exact bvOk_domain_mono s.refs value refs original subset
   · intro k
     by_cases eq : k = key
-    · simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, eq, if_true]
+    · simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, eq, ite_true]
       exact bvOk_domain_mono s.refs value refs valueOk subset
     · have prior := ok.2 k
       have lookup : refs.lookup k = s.refs.lookup k := by

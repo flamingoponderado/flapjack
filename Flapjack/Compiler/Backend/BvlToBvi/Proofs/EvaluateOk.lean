@@ -72,7 +72,7 @@ theorem evaluateOk_tick {C F : Type} (clock : Nat) (body : Bvl.Exp) (ih : @evalO
   · simp [evaluate, zero] at run
     rcases run with ⟨rfl, rfl⟩
     exact ⟨ok, trivial, envOk⟩
-  · simp only [evaluate, zero, if_false] at run
+  · simp only [evaluate, zero, ite_false] at run
     exact ih env (BvlSem.decClock 1 s) t result (by simp only [BvlSem.decClock]; omega) run
       ((stateOk_decClock 1 s).2 ok) envOk
 

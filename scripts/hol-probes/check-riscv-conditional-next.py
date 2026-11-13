@@ -3,7 +3,7 @@
 from pathlib import Path
 import hashlib
 ROOT=Path(__file__).resolve().parents[2]
-CHECKS={'Flapjack/RiscV/CorrectnessEncoding/JumpCmp/Native.lean': 'f0d0069e648960455472d5c3a74fa0abb8409ccf20c97ef85c559eb30957e93a', 'Flapjack/RiscV/CorrectnessEncoding/Skip.lean': '44117f00633d330a389c61b27b356e5c06bee258bfef6ee09ac52a71c11ebea8', 'scripts/hol-probes/riscv_conditional_next_probeScript.sml': '0ad98483ca9e9521a8bd94ce92e809340ef99ed61fb5154e56bcf7aa1f3445a1'}
+CHECKS={'Flapjack/RiscV/CorrectnessEncoding/JumpCmp/Native.lean': '62d66c4bd1eb122b065a5c784face3d28395fe4a17d17b4370a9ce65be160991', 'Flapjack/RiscV/CorrectnessEncoding/Skip.lean': '44117f00633d330a389c61b27b356e5c06bee258bfef6ee09ac52a71c11ebea8', 'scripts/hol-probes/riscv_conditional_next_probeScript.sml': '0ad98483ca9e9521a8bd94ce92e809340ef99ed61fb5154e56bcf7aa1f3445a1'}
 CHECKS['scripts/hol-probes/riscv_conditional_next_probe.out']='21d65648e3422dd77b3c36cbada1bbce4e141e2f67f35e80f16788bab4775bd5'
 OPS=('beq','bne','blt','bltu','bge','bgeu')
 SUFFIXES=('zero','alias_sign','odd_taken','odd_reverse','signed_boundary')

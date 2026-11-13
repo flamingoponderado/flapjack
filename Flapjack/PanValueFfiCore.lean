@@ -95,7 +95,7 @@ theorem panValueFfiSharedLoad_loaded_inv
   simp only [panValueFfiSharedLoad] at h
   by_cases hdom : context.sharedDomain (panValueFfiSharedAddress context size address) = true
   · rw [hdom] at h
-    simp only [Bool.not_true, Bool.false_eq_true, if_false] at h
+    simp only [Bool.not_true, Bool.false_eq_true, ite_false] at h
     cases hcall : callFfi ffi (.sharedMem .mappedRead) [UInt8.ofNat (panValueFfiWidth size)]
         (context.wordToBytes address false) with
     | returned returnedFfi bytes =>
@@ -124,7 +124,7 @@ theorem panValueFfiSharedLoad_final_inv
   simp only [panValueFfiSharedLoad] at h
   by_cases hdom : context.sharedDomain (panValueFfiSharedAddress context size address) = true
   · rw [hdom] at h
-    simp only [Bool.not_true, Bool.false_eq_true, if_false] at h
+    simp only [Bool.not_true, Bool.false_eq_true, ite_false] at h
     cases hcall : callFfi ffi (.sharedMem .mappedRead) [UInt8.ofNat (panValueFfiWidth size)]
         (context.wordToBytes address false) with
     | returned returnedFfi bytes =>
@@ -158,7 +158,7 @@ theorem panValueFfiSharedStore_stored_inv
   simp only [panValueFfiSharedStore] at h
   by_cases hdom : context.sharedDomain (panValueFfiSharedAddress context size address) = true
   · rw [hdom] at h
-    simp only [Bool.not_true, Bool.false_eq_true, if_false] at h
+    simp only [Bool.not_true, Bool.false_eq_true, ite_false] at h
     cases hcall : callFfi ffi (.sharedMem .mappedWrite) [UInt8.ofNat (panValueFfiWidth size)]
         (if panValueFfiWidth size = 0 then
             context.wordToBytes value false ++ context.wordToBytes address false
@@ -195,7 +195,7 @@ theorem panValueFfiSharedStore_final_inv
   simp only [panValueFfiSharedStore] at h
   by_cases hdom : context.sharedDomain (panValueFfiSharedAddress context size address) = true
   · rw [hdom] at h
-    simp only [Bool.not_true, Bool.false_eq_true, if_false] at h
+    simp only [Bool.not_true, Bool.false_eq_true, ite_false] at h
     cases hcall : callFfi ffi (.sharedMem .mappedWrite) [UInt8.ofNat (panValueFfiWidth size)]
         (if panValueFfiWidth size = 0 then
             context.wordToBytes value false ++ context.wordToBytes address false

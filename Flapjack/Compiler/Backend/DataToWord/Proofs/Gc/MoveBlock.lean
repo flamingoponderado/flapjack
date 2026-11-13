@@ -177,7 +177,7 @@ theorem wordGcMove_dataElement {width : Nat} [NeZero width] (conf : Config)
   rw [splitXs, StackRemove.StackHeap.wordListAppend, exposeCopy] at cell
   have takeLen : (xs.take (len + 1)).length = (WordLocW.word header :: words).length := by
     simp [List.length_take, Nat.min_eq_left copySize, wordLen]
-  simp only [wordAddr, wordGcMove, if_neg low, address, read.1, read.2, wordSemTheWord,
+  simp only [wordAddr, wordGcMove, ite_eq_right low, address, read.1, read.2, wordSemTheWord,
     wordSemIsWordLoc, notForward, Bool.false_eq_true, ↓reduceIte, Bool.true_and,
     decoded] at wordRun
   have countEq : BitVec.ofNat width words.length + 1 =

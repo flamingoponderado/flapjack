@@ -189,7 +189,7 @@ theorem callFfi_extCall_return_lengthFailure {σ : Type} (state : FfiState σ) (
       injection hc with hns hnb
       subst hns
       subst hnb
-      rw [if_neg (by simpa using hlen)]
+      rw [ite_eq_right (by simpa using hlen)]
     · rename_i holOutcome hres
       have hc : FfiOracleResult.final holOutcome = FfiOracleResult.returned nextState nextBytes :=
         hres.symm.trans ho
@@ -218,7 +218,7 @@ theorem callFfi_extCall_success {σ : Type} (state : FfiState σ) (name : String
       injection hc with hns hnb
       subst hns
       subst hnb
-      rw [if_pos (by simpa using hlen)]
+      rw [ite_eq_left (by simpa using hlen)]
     · rename_i holOutcome hres
       have hc : FfiOracleResult.final holOutcome = FfiOracleResult.returned nextState nextBytes :=
         hres.symm.trans ho
@@ -286,7 +286,7 @@ theorem callFfi_extCall_lengthFailure_bridge {σ : Type} (state : FfiState σ)
         exact hlen (by rw [← hlenEq, hEq]; simp)
       rw [callFFIHOL_ret holState (.extCall (Flapjack.Basis.Pure.MlString.ofString name))
         (configuration.map byteToBits) (bytes.map byteToBits) holState' holBytes' hneH hy]
-      rw [if_neg hlenH]
+      rw [ite_eq_right hlenH]
       exact ⟨rfl, bytesRel_map_byteToBits configuration, bytesRel_map_byteToBits bytes,
         Or.inl ⟨rfl, rfl⟩⟩
 
@@ -361,7 +361,7 @@ theorem callFfi_extCall_success_bridge {σ : Type} (state : FfiState σ)
         simp
       rw [callFFIHOL_ret holState (.extCall (Flapjack.Basis.Pure.MlString.ofString name))
         (configuration.map byteToBits) (bytes.map byteToBits) holState' holBytes' hneH hy]
-      rw [if_pos hlenH]
+      rw [ite_eq_left hlenH]
       refine ⟨⟨hstate.symm, ?_, hrel.2.2⟩, hbytes⟩
       exact ffiEventListRel_append hrel.2.1
         ⟨⟨rfl, bytesRel_map_byteToBits configuration,
@@ -411,7 +411,7 @@ theorem callFfi_nonextCall_return_lengthFailure {σ : Type} (state : FfiState σ
       injection hc with hns hnb
       subst hns
       subst hnb
-      rw [if_neg (by simpa using hlen)]
+      rw [ite_eq_right (by simpa using hlen)]
     · rename_i holOutcome hres
       have hc : FfiOracleResult.final holOutcome = FfiOracleResult.returned nextState nextBytes :=
         hres.symm.trans ho
@@ -440,7 +440,7 @@ theorem callFfi_nonextCall_success {σ : Type} (state : FfiState σ) (name : Ffi
       injection hc with hns hnb
       subst hns
       subst hnb
-      rw [if_pos (by simpa using hlen)]
+      rw [ite_eq_left (by simpa using hlen)]
     · rename_i holOutcome hres
       have hc : FfiOracleResult.final holOutcome = FfiOracleResult.returned nextState nextBytes :=
         hres.symm.trans ho
@@ -513,7 +513,7 @@ theorem callFfi_sharedMem_lengthFailure_bridge {σ : Type} (state : FfiState σ)
         exact hlen (by rw [← hlenEq, hEq]; simp)
       rw [callFFIHOL_ret holState (.sharedMem holOperator)
         (configuration.map byteToBits) (bytes.map byteToBits) holState' holBytes' hneH hy]
-      rw [if_neg hlenH]
+      rw [ite_eq_right hlenH]
       exact ⟨hop, bytesRel_map_byteToBits configuration, bytesRel_map_byteToBits bytes,
         Or.inl ⟨rfl, rfl⟩⟩
 
@@ -553,7 +553,7 @@ theorem callFfi_sharedMem_success_bridge {σ : Type} (state : FfiState σ)
         simp
       rw [callFFIHOL_ret holState (.sharedMem holOperator)
         (configuration.map byteToBits) (bytes.map byteToBits) holState' holBytes' hneH hy]
-      rw [if_pos hlenH]
+      rw [ite_eq_left hlenH]
       refine ⟨⟨hstate.symm, ?_, hrel.2.2⟩, hbytes⟩
       exact ffiEventListRel_append hrel.2.1
         ⟨⟨hop, bytesRel_map_byteToBits configuration,

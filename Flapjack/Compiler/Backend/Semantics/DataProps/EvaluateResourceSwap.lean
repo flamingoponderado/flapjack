@@ -427,7 +427,7 @@ private theorem resourceSwap_returningForce {C F : Type} (dest : Nat) (live : Nu
                   have changedRun : evaluate body changed =
                       (outcome, { last with safeForSpace := safe1, peakHeapLength := peak1 }) := by
                     simpa [changed, called, DataSem.callEnv, pushEnv, decClock] using swapped
-                  simp only [evaluate, read, th, found, cut, zero, if_false] at run ⊢
+                  simp only [evaluate, read, th, found, cut, zero, ite_false] at run ⊢
                   simp only [fixClock_evaluate] at run ⊢
                   simp only [called] at bodyRun
                   rw [bodyRun] at run
@@ -460,7 +460,7 @@ private theorem resourceSwap_returningForce {C F : Type} (dest : Nat) (live : Nu
                   have changedRun : evaluate body changed =
                       (outcome, { last with stackMax := mx1, safeForSpace := safe1, peakHeapLength := peak1 }) := by
                     simpa [changed, called, DataSem.callEnv, pushEnv, decClock] using swapped
-                  simp only [evaluate, read, th, found, cut, zero, if_false] at run ⊢
+                  simp only [evaluate, read, th, found, cut, zero, ite_false] at run ⊢
                   simp only [fixClock_evaluate] at run ⊢
                   simp only [called] at bodyRun
                   rw [bodyRun] at run
@@ -538,7 +538,7 @@ private theorem resourceSwap_returningCall {C F : Type} (returns : List Nat) (li
                 have changedRun : evaluate body changed =
                     (outcome, { last with safeForSpace := safe1, peakHeapLength := peak1 }) := by
                   simpa [changed, called, DataSem.callEnv, pushEnv, decClock] using swapped
-                simp only [evaluate, read, found, distinct, cut, zero, if_false] at run ⊢
+                simp only [evaluate, read, found, distinct, cut, zero, ite_false] at run ⊢
                 simp only [fixClock_evaluate] at run ⊢
                 simp only [called] at bodyRun
                 rw [bodyRun] at run
@@ -591,7 +591,7 @@ private theorem resourceSwap_returningCall {C F : Type} (returns : List Nat) (li
                 have changedRun : evaluate body changed =
                     (outcome, { last with stackMax := mx1, safeForSpace := safe1, peakHeapLength := peak1 }) := by
                   simpa [changed, called, DataSem.callEnv, pushEnv, decClock] using swapped
-                simp only [evaluate, read, found, distinct, cut, zero, if_false] at run ⊢
+                simp only [evaluate, read, found, distinct, cut, zero, ite_false] at run ⊢
                 simp only [fixClock_evaluate] at run ⊢
                 simp only [called] at bodyRun
                 rw [bodyRun] at run
@@ -651,11 +651,11 @@ private theorem resourceSwap_if {C F : Type} (name : Nat) (yes no : DataLang.Pro
     cases flag <;> simp [evaluate, read]
   | some value =>
     by_cases yesValue : isBool true value
-    · simp only [evaluate, read, yesValue, if_true] at run
-      simpa only [evaluate, read, yesValue, if_true] using yesIH result next flag mx safe peak run
+    · simp only [evaluate, read, yesValue, ite_true] at run
+      simpa only [evaluate, read, yesValue, ite_true] using yesIH result next flag mx safe peak run
     · by_cases noValue : isBool false value
-      · simp only [evaluate, read, yesValue, noValue, if_true] at run
-        simpa only [evaluate, read, yesValue, noValue, Bool.false_eq_true, if_true, if_false] using
+      · simp only [evaluate, read, yesValue, noValue, ite_true] at run
+        simpa only [evaluate, read, yesValue, noValue, Bool.false_eq_true, ite_true, ite_false] using
           noIH result next flag mx safe peak run
       · simp [evaluate, read, yesValue, noValue] at run
         obtain ⟨rfl, rfl⟩ := run
@@ -735,7 +735,7 @@ theorem evaluate_stackSafePeakSwapAux {C F : Type} (mx : Option Nat) (safe : Boo
     let s0 := { state with stackMax := mx, safeForSpace := safe, peakHeapLength := peak }
     ∃ mx' safe' peak', evaluate program s0 =
       (result, { next with stackMax := mx', safeForSpace := safe', peakHeapLength := peak' }) := by
-  simpa only [if_true] using evaluate_flagStackSafePeakSwap program state result next true mx safe peak run
+  simpa only [ite_true] using evaluate_flagStackSafePeakSwap program state result next true mx safe peak run
 
 /-- Evaluation commutes with arbitrary stack, safety, and peak updates. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_smx_safe_peak_swap"]
@@ -754,7 +754,7 @@ theorem evaluate_safePeakSwapAux {C F : Type} (safe : Bool) (next state : State 
     let s0 := { state with stackMax := state.stackMax, safeForSpace := safe, peakHeapLength := peak }
     ∃ safe' peak', evaluate program s0 =
       (result, { next with stackMax := next.stackMax, safeForSpace := safe', peakHeapLength := peak' }) := by
-  simpa only [Bool.false_eq_true, if_false] using
+  simpa only [Bool.false_eq_true, ite_false] using
     evaluate_flagStackSafePeakSwap program state result next false state.stackMax safe peak run
 
 /-- Safety and peak updates preserve the evaluation result and stack maximum. -/

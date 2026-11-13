@@ -163,7 +163,7 @@ theorem compileCorrectCall {width : Nat} {σ : Type} [NeZero width]
               rcases handler with ⟨hid,hvar,hprogram⟩
               simp only [compileProgExact,Option.map_some]
       by_cases hc : source.clock = 0
-      · rw [if_pos hc] at heval
+      · rw [ite_eq_left hc] at heval
         rcases Prod.mk.inj heval with ⟨hr,hp⟩
         subst res
         subst post
@@ -174,13 +174,13 @@ theorem compileCorrectCall {width : Nat} {σ : Type} [NeZero width]
           rw [htlookup]
           dsimp only
           have htclock : (convertStateExact context source).clock = 0 := hc
-          rw [if_pos htclock]
+          rw [ite_eq_left htclock]
           rfl
         · simp [PanSemStateFiniteExact.emptyLocalsHOLFinite,feveryHOL]
         · simp [isContResHOL]
         · simp [resVsHOL]
         · simp [resVsHOL]
-      · rw [if_neg hc] at heval
+      · rw [ite_eq_right hc] at heval
         let entry := PanSemStateFiniteExact.callEntryStateHOLFinite source callee
         cases hb : PanSemStateFiniteExact.evaluateHOLFiniteState entry body with
         | mk bodyRes middle =>
@@ -247,7 +247,7 @@ theorem compileCorrectCall {width : Nat} {σ : Type} [NeZero width]
                     rw [htlookup]
                     dsimp only
                     have htclock : (convertStateExact context source).clock ≠ 0 := hc
-                    rw [if_neg htclock,hbodyRun]
+                    rw [ite_eq_right htclock,hbodyRun]
                     simp only [convertResHOL]
                     rw [htr]
                     rfl
@@ -267,7 +267,7 @@ theorem compileCorrectCall {width : Nat} {σ : Type} [NeZero width]
                       rw [htlookup]
                       dsimp only
                       have htclock : (convertStateExact context source).clock ≠ 0 := hc
-                      rw [if_neg htclock,hbodyRun]
+                      rw [ite_eq_right htclock,hbodyRun]
                       simp only [convertResHOL]
                       rw [htr]
                       rfl
@@ -318,7 +318,7 @@ theorem compileCorrectCall {width : Nat} {σ : Type} [NeZero width]
                             rw [htlookup]
                             dsimp only
                             have htclock : (convertStateExact context source).clock ≠ 0 := hc
-                            rw [if_neg htclock,hbodyRun]
+                            rw [ite_eq_right htclock,hbodyRun]
                             simp only [convertResHOL]
                             rw [htr]
                             simp only [ite_true,Option.map_some]
@@ -376,7 +376,7 @@ theorem compileCorrectCall {width : Nat} {σ : Type} [NeZero width]
                             rw [htlookup]
                             dsimp only
                             have htclock : (convertStateExact context source).clock ≠ 0 := hc
-                            rw [if_neg htclock,hbodyRun]
+                            rw [ite_eq_right htclock,hbodyRun]
                             simp only [convertResHOL]
                             rw [htr]
                             simp only [ite_true,Option.map_some]
@@ -411,7 +411,7 @@ theorem compileCorrectCall {width : Nat} {σ : Type} [NeZero width]
                 rw [htlookup]
                 dsimp only
                 have htclock : (convertStateExact context source).clock ≠ 0 := hc
-                rw [if_neg htclock,hbodyRun]
+                rw [ite_eq_right htclock,hbodyRun]
                 rfl
               · simp [PanSemStateFiniteExact.emptyLocalsHOLFinite,feveryHOL]
               · simp [isContResHOL]
@@ -431,7 +431,7 @@ theorem compileCorrectCall {width : Nat} {σ : Type} [NeZero width]
                   rw [htlookup]
                   dsimp only
                   have htclock : (convertStateExact context source).clock ≠ 0 := hc
-                  rw [if_neg htclock,hbodyRun]
+                  rw [ite_eq_right htclock,hbodyRun]
                   simp only [convertResHOL,Option.map_none]
                   rfl
                 · simp [PanSemStateFiniteExact.emptyLocalsHOLFinite,feveryHOL]
@@ -450,7 +450,7 @@ theorem compileCorrectCall {width : Nat} {σ : Type} [NeZero width]
                     rw [htlookup]
                     dsimp only
                     have htclock : (convertStateExact context source).clock ≠ 0 := hc
-                    rw [if_neg htclock,hbodyRun]
+                    rw [ite_eq_right htclock,hbodyRun]
                     simp only [convertResHOL,Option.map_none,Option.map_some]
                     rfl
                   · simp [PanSemStateFiniteExact.emptyLocalsHOLFinite,feveryHOL]
@@ -459,7 +459,7 @@ theorem compileCorrectCall {width : Nat} {σ : Type} [NeZero width]
                   rcases handler with ⟨handlerId,handlerVar,handlerProgram⟩
                   dsimp only at heval
                   by_cases hid : eid = handlerId
-                  · rw [if_pos hid] at heval
+                  · rw [ite_eq_left hid] at heval
                     cases hesh : source.eshapes.lookup eid with
                     | none =>
                       simp only [hesh,Prod.mk.injEq] at heval
@@ -561,9 +561,9 @@ theorem compileCorrectCall {width : Nat} {σ : Type} [NeZero width]
                           rw [htlookup]
                           dsimp only
                           have htclock : (convertStateExact context source).clock ≠ 0 := hc
-                          rw [if_neg htclock,hbodyRun]
+                          rw [ite_eq_right htclock,hbodyRun]
                           simp only [convertResHOL,Option.map_some]
-                          rw [if_pos hid,htesh]
+                          rw [ite_eq_left hid,htesh]
                           dsimp only
                           rw [htshape,htvalid]
                           simp only [Bool.true_and,ite_true]
@@ -576,7 +576,7 @@ theorem compileCorrectCall {width : Nat} {σ : Type} [NeZero width]
                           rw [hstate]
                           exact hhandler.1
                       next => exact False.elim (herror (Prod.mk.inj heval).1.symm)
-                  · rw [if_neg hid] at heval
+                  · rw [ite_eq_right hid] at heval
                     rcases Prod.mk.inj heval with ⟨hr,hp⟩
                     subst res
                     subst post
@@ -587,9 +587,9 @@ theorem compileCorrectCall {width : Nat} {σ : Type} [NeZero width]
                       rw [htlookup]
                       dsimp only
                       have htclock : (convertStateExact context source).clock ≠ 0 := hc
-                      rw [if_neg htclock,hbodyRun]
+                      rw [ite_eq_right htclock,hbodyRun]
                       simp only [convertResHOL,Option.map_some]
-                      rw [if_neg hid]
+                      rw [ite_eq_right hid]
                       rfl
                     · simp [PanSemStateFiniteExact.emptyLocalsHOLFinite,feveryHOL]
                     · simp [isContResHOL]
@@ -605,7 +605,7 @@ theorem compileCorrectCall {width : Nat} {σ : Type} [NeZero width]
                 rw [htlookup]
                 dsimp only
                 have htclock : (convertStateExact context source).clock ≠ 0 := hc
-                rw [if_neg htclock,hbodyRun]
+                rw [ite_eq_right htclock,hbodyRun]
                 rfl
               · simp [PanSemStateFiniteExact.emptyLocalsHOLFinite,feveryHOL]
               · simp [isContResHOL]

@@ -50,7 +50,7 @@ end
 
 local macro "copyPropImmCong" gvi:term:max cong:term:max : tactic =>
   `(tactic| (
-      simp only [copyPropInst, lookupEqImm, reduceCtorEq, if_false]
+      simp only [copyPropInst, lookupEqImm, reduceCtorEq, ite_false]
       apply instCong
       simp only [WordSemStateFiniteExact.inst, WordSemStateFiniteExact.assign]
       first
@@ -61,7 +61,7 @@ local macro "copyPropRegCong" cs:term:max r1:term:max r3:term:max gvi:term:max
     cong:term:max : tactic =>
   `(tactic| (
       by_cases hc : lookupEq $cs $r3 = $r1 <;>
-        simp only [copyPropInst, lookupEqImm, WordRegImm.reg.injEq, hc, if_true, if_false] <;>
+        simp only [copyPropInst, lookupEqImm, WordRegImm.reg.injEq, hc, ite_true, ite_false] <;>
         apply instCong <;> simp only [WordSemStateFiniteExact.inst, WordSemStateFiniteExact.assign] <;>
         first
         | (rw [$cong ?_ ?_] <;> simp only [$gvi:term])

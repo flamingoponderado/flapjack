@@ -50,7 +50,7 @@ private theorem triangleLookup {α : Type} (f : Nat → Nat → α) (limit total
       have idxBound : previous + total * (total - 1) / 2 <
           (((List.range limit).map fun n => (List.range n).map (f n)).flatten).length :=
         List.getElem?_eq_some_iff.mp prior |>.choose
-      rw [if_pos idxBound]
+      rw [ite_eq_left idxBound]
       exact prior
 
 /-- Initial code contains every generic and partial-application stub. -/

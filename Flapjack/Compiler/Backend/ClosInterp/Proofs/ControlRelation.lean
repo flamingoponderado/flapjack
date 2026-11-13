@@ -353,7 +353,7 @@ theorem evaluate_tick_simulation_step {C F : Type} (trace : BackendCommon.Tra)
       omega
     refine ⟨extra, targetFinal, ?_, finalRel⟩
     rw [ClosSem.evaluate]
-    rw [if_neg (show ¬ ({ target with clock := extra + target.clock } : ClosSem.State C F).clock = 0 by simp only; omega)]
+    rw [ite_eq_right (show ¬ ({ target with clock := extra + target.clock } : ClosSem.State C F).clock = 0 by simp only; omega)]
     rw [clocks]
     exact targetBody
 
@@ -430,37 +430,37 @@ theorem evaluate_letrec_simulation_step {C F : Type} (names : List Flapjack.AstH
     | none =>
       rw [ClosSem.evaluate.eq_def] at run
       dsimp only at run
-      rw [if_pos good] at run
+      rw [ite_eq_left good] at run
       let recursive := (List.range functions.length).map (fun i => ClosSem.Value.recclosure location [] env functions i)
       obtain ⟨extra, targetFinal, targetBody, finalRel⟩ := bodyIH (recursive ++ env) target sourceFinal result run related notTypeError
       refine ⟨extra, targetFinal, ?_, finalRel⟩
       rw [ClosSem.evaluate.eq_def]
       dsimp only
-      rw [if_pos (by simpa [maxEq] using good)]
+      rw [ite_eq_left (by simpa [maxEq] using good)]
       exact targetBody
     | some selected =>
       cases captured : ClosSem.lookupVars selected env with
       | none =>
         rw [ClosSem.evaluate.eq_def] at run
         dsimp only at run
-        rw [if_pos good, captured] at run
+        rw [ite_eq_left good, captured] at run
         simp at run
         exact (notTypeError run.1.symm).elim
       | some values =>
         rw [ClosSem.evaluate.eq_def] at run
         dsimp only at run
-        rw [if_pos good, captured] at run
+        rw [ite_eq_left good, captured] at run
         dsimp only at run
         let recursive := (List.range functions.length).map (fun i => ClosSem.Value.recclosure location [] values functions i)
         obtain ⟨extra, targetFinal, targetBody, finalRel⟩ := bodyIH (recursive ++ env) target sourceFinal result run related notTypeError
         refine ⟨extra, targetFinal, ?_, finalRel⟩
         rw [ClosSem.evaluate.eq_def]
         dsimp only
-        rw [if_pos (by simpa [maxEq] using good), captured]
+        rw [ite_eq_left (by simpa [maxEq] using good), captured]
         exact targetBody
   · rw [ClosSem.evaluate.eq_def] at run
     dsimp only at run
-    rw [if_neg good] at run
+    rw [ite_eq_right good] at run
     simp at run
     exact (notTypeError run.1.symm).elim
 

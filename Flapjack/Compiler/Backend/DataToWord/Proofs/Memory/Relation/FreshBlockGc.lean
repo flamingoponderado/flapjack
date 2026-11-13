@@ -245,7 +245,7 @@ theorem absMlInv_allocateBlock {width : Nat} [NeZero width] (conf : Config)
   have positive : sp + sp1 ≠ 0 := by omega
   have oldShape : (heapExpand (sp + sp1) : ValueHeap width) = [.unused (sp + sp1 - 1)] := by
     unfold heapExpand
-    rw [if_neg positive]
+    rw [ite_eq_right positive]
   have size : heapLength (blockRep (β := WordLocW width) tag addresses :: heapExpand ((sp + sp1) - (addresses.length + 1))) =
       (sp + sp1 - 1) + 1 := by
     change heapLength ([blockRep tag addresses] ++ heapExpand ((sp + sp1) - (addresses.length + 1))) = _

@@ -63,9 +63,9 @@ theorem pmatchList_con_split {C F : Type} (state : FlatSem.State C F)
     · have notBad : ¬ ¬ FlatSem.PmatchStampsOk stamp actual patterns.length fields.length := fun h => h stamps
       by_cases same : stamp.map Prod.fst = actual.map Prod.fst ∧ patterns.length = fields.length
       · have inner : FlatSem.pmatchList state patterns fields pre = .match intermediate := by
-          simpa only [FlatSem.pmatch, if_neg notBad, if_pos same] using head
+          simpa only [FlatSem.pmatch, ite_eq_right notBad, ite_eq_left same] using head
         exact ⟨same.2, intermediate, inner, tail⟩
-      · simp only [FlatSem.pmatch, if_neg notBad, if_neg same] at head
+      · simp only [FlatSem.pmatch, ite_eq_right notBad, ite_eq_right same] at head
         contradiction
     · simp [FlatSem.pmatch, stamps] at head
 

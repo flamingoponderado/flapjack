@@ -6,6 +6,7 @@ public import Flapjack.Compiler.Backend.Semantics.WordSem.State
 public import Flapjack.Compiler.Backend.DataToWord.Variables
 public import Flapjack.Misc.Option
 public import Mathlib.Data.List.Induction
+public import Mathlib.Data.List.Forall2
 
 @[expose] public section
 

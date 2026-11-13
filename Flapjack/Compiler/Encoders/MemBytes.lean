@@ -38,7 +38,7 @@ theorem readMemWord_fst (a : BitVec 64) (n : Nat) (s : AsmState 64) (hbe : s.be 
   | zero => simp [readMemWord, readBytes]
   | succ n ih =>
       rw [readMemWord_succ, hbe]
-      simp only [Bool.false_eq_true, if_false]
+      simp only [Bool.false_eq_true, ite_false]
       generalize hr : readMemWord (resultWidth := 64) (a + 1) n s = r
       obtain ⟨w, s1⟩ := r
       have hmem := readMemWord_mem_eq_direct (resultWidth := 64) (a + 1) n s
@@ -90,7 +90,7 @@ theorem readMemWord_domain (a : BitVec 64) (n : Nat) (s : AsmState 64) (hbe : s.
       intro k hk
       classical
       rw [readMemWord_succ] at h
-      simp only [hbe, Bool.false_eq_true, if_false] at h
+      simp only [hbe, Bool.false_eq_true, ite_false] at h
       set s1 : AsmState 64 := (readMemWord (resultWidth := 64) (a + 1) n s).2 with hs1
       simp only [assertState, Bool.or_eq_false_iff] at h
       obtain ⟨hdom, hf⟩ := h
@@ -123,7 +123,7 @@ theorem writeMemWord_domain (a : BitVec 64) (n : Nat) (v : BitVec 64) (s : AsmSt
       rw [writeMemWord_succ] at h
       have hif : (if s.be then a - 1 else a + 1) = a + 1 := by
         rw [hbe]
-        rw [if_neg (by decide : ¬((false : Bool) = true))]
+        rw [ite_eq_right (by decide : ¬((false : Bool) = true))]
       rw [hif] at h
       set s1 : AsmState 64 :=
         writeMemWord (valueWidth := 64) (a + 1) n (v >>> (8 : Nat)) s with hs1

@@ -74,7 +74,7 @@ theorem constantBuild_related {C F : Type} (parts : List ClosLang.ConstPart)
       intro key
       by_cases equal : key = index
       · simp [sourceNext, targetNext, equal, valueRel]
-      · simp only [sourceNext, targetNext, if_neg equal]
+      · simp only [sourceNext, targetNext, ite_eq_right equal]
         exact vRel_grow_refs (memoryRel key) submap frame
     obtain ⟨result, finalRefs, restRun, resultRel, finalStates, finalFrame⟩ :=
       ih sourceNext targetNext (index + 1) { t with refs := refs } nextStates nextMemoryRel

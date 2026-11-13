@@ -88,8 +88,8 @@ theorem writtenBytes_le_eight (size : Nat) : writtenBytes size ≤ 8 := by
   by_cases h0 : size = 0
   · subst h0; decide
   · by_cases h4 : size ≤ 4
-    · simp only [writtenBytes, if_neg h0, if_pos h4]; omega
-    · simp only [writtenBytes, if_neg h0, if_neg h4]
+    · simp only [writtenBytes, ite_eq_right h0, ite_eq_left h4]; omega
+    · simp only [writtenBytes, ite_eq_right h0, ite_eq_right h4]
       omega
 
 /-- The emitted operand sizes store exactly as many bytes as they access. -/
@@ -124,7 +124,7 @@ theorem byteChain_of_ne {x : BitVec 8} {l : List (BitVec 64 × BitVec 8)} {a : B
       obtain ⟨e, b⟩ := p
       have hne : a ≠ e := h e b (by simp)
       have ht : ∀ e' b', (e', b') ∈ t → a ≠ e' := fun e' b' hm => h e' b' (by simp [hm])
-      simp only [byteChain, if_neg hne]
+      simp only [byteChain, ite_eq_right hne]
       exact ih ht
 
 /-- The `(address, byte)` pairs `writeMemN` stores, in write order.  The `i = 0`
@@ -158,8 +158,8 @@ theorem ne_chainAddr {address a : BitVec 64} {i : Nat} (h0 : a ≠ address)
     (hi : a ≠ address + BitVec.ofNat 64 i) :
     a ≠ (if i = 0 then address else address + BitVec.ofNat 64 i) := by
   by_cases hz : i = 0
-  · simpa only [hz, if_true] using h0
-  · simpa only [hz, if_false] using hi
+  · simpa only [hz, ite_true] using h0
+  · simpa only [hz, ite_false] using hi
 
 /-- The memory after `writeMemN` is the byte chain of the stored pairs. -/
 theorem writeMemN_mem (s : X64State) (size : Nat) (address v : BitVec 64) (a : BitVec 64) :
@@ -175,7 +175,7 @@ theorem writeMemN_mem (s : X64State) (size : Nat) (address v : BitVec 64) (a : B
         · by_cases h4 : size = 4
           · subst h4; rfl
           · rw [writeMemN.eq_6 s size address v h0 h1 h2 h3 h4]
-            simp only [writeChain, writtenBytes, if_neg h0, if_neg (by omega : ¬ size ≤ 4)]
+            simp only [writeChain, writtenBytes, ite_eq_right h0, ite_eq_right (by omega : ¬ size ≤ 4)]
             rfl
 
 /-! ## Congruence for the byte-wise memory accessors -/
@@ -212,7 +212,7 @@ theorem readMemN_congr {s t : X64State} {d : BitVec 64 → Prop}
             have e3 : s.mem (address + 3) = t.mem (address + 3) := hb 3 (by decide)
             simp only [readMemN, e0, e1, e2, e3]
           · have hw : writtenBytes size = 8 := by
-              simp only [writtenBytes, if_neg h0, if_neg (by omega : ¬ size ≤ 4)]
+              simp only [writtenBytes, ite_eq_right h0, ite_eq_right (by omega : ¬ size ≤ 4)]
             have e0 : s.mem address = t.mem address := by simpa using hb 0 (by omega)
             have e1 : s.mem (address + 1) = t.mem (address + 1) := hb 1 (by omega)
             have e2 : s.mem (address + 2) = t.mem (address + 2) := hb 2 (by omega)
@@ -247,13 +247,14 @@ theorem readXmm_writeXmm_self (s : X64State) (r : Nat) (v : BitVec 64) :
     readXmm (writeXmm s r v) r = v := by
   simp only [readXmm, writeXmm]
   bv_normalize
+  simp_all
 
 /-- Writing one XMM register leaves a different register's low word alone. -/
 theorem readXmm_writeXmm_other (s : X64State) (r x : Nat) (v : BitVec 64)
     (h : x % 8 ≠ r % 8) :
     readXmm (writeXmm s r v) x = readXmm s x := by
   simp only [readXmm, writeXmm]
-  rw [if_neg (by omega : ¬ x % 8 = r % 8)]
+  rw [ite_eq_right (by omega : ¬ x % 8 = r % 8)]
 
 @[simp] theorem writeReg_mem (s : X64State) (r : Nat) (v : BitVec 64) :
     (writeReg s r v).mem = s.mem := rfl
@@ -423,11 +424,11 @@ theorem execSSE_movDQ_zm_agree {d : BitVec 64 → Prop} {s t : X64State} (h : X6
         cases quad <;> decide
       cases toXmm with
       | false =>
-          simp only [Bool.false_eq_true, if_false, readXmm]
+          simp only [Bool.false_eq_true, ite_false, readXmm]
           rw [h.xmm (xmm % 8)]
           exact writeMemN_agree h (if quad then 8 else 4) addr _
       | true =>
-          simp only [if_true, readXmm]
+          simp only [ite_true, readXmm]
           rw [readMemN_congr h.mem (if quad then 8 else 4) addr
             (fun j hj => hd j (by rwa [hwb] at hj))]
           exact writeXmm_agree h xmm _
@@ -471,11 +472,11 @@ theorem execSSE_agree {d : BitVec 64 → Prop} {s t : X64State} (h : X64Agree d 
       | zr reg =>
           cases toXmm with
           | false =>
-              simp only [execSSE, Bool.false_eq_true, if_false, readXmm, readReg]
+              simp only [execSSE, Bool.false_eq_true, ite_false, readXmm, readReg]
               rw [h.xmm (xmm % 8)]
               exact writeRegSized_agree h _ _ _
           | true =>
-              simp only [execSSE, if_true, readReg]
+              simp only [execSSE, ite_true, readReg]
               rw [h.regs (num2Zreg reg)]
               exact writeXmm_agree h xmm _
       | zm index base disp =>
@@ -630,10 +631,10 @@ theorem byteChain_writeChain_of_ne {x : BitVec 8} {size : Nat} {address v a : Bi
   rw [hej]
   by_cases hj0 : j = 0
   · subst hj0
-    simp only [if_true]
+    simp only [ite_true]
     have h := ha 0 hj
     simpa using h
-  · simp only [hj0, if_false]
+  · simp only [hj0, ite_false]
     exact ha j hj
 
 /-- Every byte outside `x64Touched` is unchanged by an SSE instruction. -/
@@ -647,7 +648,7 @@ theorem execSSE_frame (s : X64State) (op : X64SSE) (a : BitVec 64)
           cases toXmm with
           | true => rfl
           | false =>
-              simp only [Bool.false_eq_true, if_false]
+              simp only [Bool.false_eq_true, ite_false]
               cases quad <;> rfl
       | zm index base disp =>
           simp only [execSSE]
@@ -657,7 +658,7 @@ theorem execSSE_frame (s : X64State) (op : X64SSE) (a : BitVec 64)
               cases toXmm with
               | true => rfl
               | false =>
-                  simp only [Bool.false_eq_true, if_false]
+                  simp only [Bool.false_eq_true, ite_false]
                   rw [writeMemN_mem]
                   apply byteChain_writeChain_of_ne
                   · cases quad <;> decide

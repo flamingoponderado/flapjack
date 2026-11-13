@@ -7,6 +7,7 @@ public import Flapjack.Compiler.Backend.DataToWord.Proofs.Memory.Relation.Depth.
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
 public import Flapjack.Misc.Sorting
 public import Flapjack.Misc.ListEl
+public import Mathlib.Data.List.Basic
 
 @[expose] public section
 

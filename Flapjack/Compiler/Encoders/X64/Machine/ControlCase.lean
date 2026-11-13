@@ -63,7 +63,7 @@ theorem x64Next_jump (ms : X64State) (d : BitVec 64 → Prop) (target : BitVec 6
       some (.jcc .zAlways (target - 5), 5) :=
     decode_bytesInMemory _ ms.pc ms.mem d _ 5 hbm
       (decode_jcc_always (target - 5) hr.1 hr.2) (by omega)
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn, evalCond, reduceIte]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn, evalCond, reduceIte]
 
 /-! ## The `jump` case -/
 

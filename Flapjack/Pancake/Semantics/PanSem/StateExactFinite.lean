@@ -78,7 +78,7 @@ theorem PanSemStateExact.finiteSupport_setVar {width : Nat} [NeZero width]
   by_cases hname : key = name
   · subst hname
     exact List.mem_cons_self
-  · simp only [if_neg hname] at hk
+  · simp only [ite_eq_right hname] at hk
     exact List.mem_cons_of_mem name (hl key hk)
 
 /-- A single global update (HOL `set_global`) keeps finite support. -/
@@ -93,7 +93,7 @@ theorem PanSemStateExact.finiteSupport_setGlobal {width : Nat} [NeZero width]
   by_cases hname : key = name
   · subst hname
     exact List.mem_cons_self
-  · simp only [if_neg hname] at hk
+  · simp only [ite_eq_right hname] at hk
     exact List.mem_cons_of_mem name (hg key hk)
 
 /-- The kind-dependent update (HOL `set_kvar`) keeps finite support in both

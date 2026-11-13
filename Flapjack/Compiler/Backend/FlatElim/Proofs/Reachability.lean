@@ -369,11 +369,11 @@ theorem closureFuel_eq_closure (tree : Spt NumSet) (fuel : Nat) (reachable resul
     by_cases done : sptSubspt (foldUnion .ln (sptInter tree reachable)) reachable
     · simp [done] at computed
       rw [closure]
-      simp only [done, if_true]
+      simp only [done, ite_true]
       exact computed
     · simp [done] at computed
       rw [closure]
-      simp only [done, if_false]
+      simp only [done, ite_false]
       exact ih _ computed
 
 /-- The executable fuel choice computes the total lookup-based closure. -/

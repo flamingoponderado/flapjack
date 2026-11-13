@@ -136,7 +136,7 @@ theorem arm8Next_moveWide_z_zero (ms : arm8_state) (rd : BitVec 5)
     { ms with branch_hint := none }
   refine arm8Next_eq ms _ _ _ hdec ?_ rfl hexc0 h0 h1 h2 h3 hal he0 hel
   dsimp only [i]
-  rw [hrun, if_neg hrd]
+  rw [hrun, ite_eq_right hrd]
   rfl
 
 /-! ## Projections through `SetTheFlags` and `write'X` -/
@@ -177,7 +177,7 @@ theorem arm8Run_conditionalCompare_zero (rn : BitVec 5) (st : arm8_state) :
           ((0 : BitVec 64), false))).2) st
       else SetTheFlags (true, (false, (false, (true, false)))) st := by
   rw [arm8Run_conditionalCompare]
-  simp only [Bool.false_eq_true, if_false]
+  simp only [Bool.false_eq_true, ite_false]
 
 /-- One `arm8Next` step on the `ConditionalCompareImmediate@64` that follows the
 zero compare in the `addCarry` lowering: compare `rn` with zero under `EQ`, or
@@ -222,7 +222,7 @@ theorem arm8Next_conditionalCompare_zero (ms : arm8_state) (rn : BitVec 5)
         ((false, (false, (true, false))), rn))))))) =
       MachineCode.ARM8 (arm8ConditionalCompareWord false (0 : BitVec 5)
         (0 : BitVec 4) false false true false rn) := by
-    rw [arm8Encode_conditionalCompare, if_pos himm]
+    rw [arm8Encode_conditionalCompare, ite_eq_left himm]
     simp
   have hdec : Decode (arm8ConditionalCompareWord false (0 : BitVec 5)
       (0 : BitVec 4) false false true false rn) = i := by
@@ -247,9 +247,9 @@ theorem arm8Run_addSubCarry_eq (s : Bool) (rm rn rd : BitVec 5) (st : arm8_state
         { st with REG := holUpdate rd (AddWithCarry (TN := 64) (X (TN := 64) rn st,
           (X (TN := 64) rm st, st.PSTATE.C))).1 st.REG }) := by
   rw [arm8Run_addSubCarry]
-  simp only [«write'X», Bool.false_eq_true, if_false]
+  simp only [«write'X», Bool.false_eq_true, ite_false]
   have hbeq : (rd == BitVec.ofNat 5 31) = false := beq_eq_false_iff_ne.mpr hrd
-  simp only [hbeq, Bool.not_false, if_true]
+  simp only [hbeq, Bool.not_false, ite_true]
   simp only [setTheFlags_eq]
   split <;> simp
 
@@ -423,7 +423,7 @@ theorem arm8EncodeBytes_conditionalCompare (rn : BitVec 5) :
   have himm : ((0 : BitVec 64) == BitVec.setWidth 64 (BitVec.setWidth 5
       (0 : BitVec 64))) = true := by
     rw [beq_iff_eq]; simp
-  rw [arm8Encode, arm8Encode_conditionalCompare, if_pos himm]
+  rw [arm8Encode, arm8Encode_conditionalCompare, ite_eq_left himm]
   simp
 
 /-- The four encoded bytes of an `AddSubCarry@64` word. -/
@@ -517,7 +517,7 @@ theorem conditionHolds_eq (s : arm8_state) :
 theorem arm8X_reg (s : arm8_state) (n : BitVec 5) (hn : n ≠ (31 : BitVec 5)) :
     X (TN := 64) n s = s.REG n := by
   have hbeq : (n == BitVec.ofNat 5 31) = false := beq_eq_false_iff_ne.mpr hn
-  simp only [X, hbeq, Bool.false_eq_true, if_false, BitVec.setWidth_eq]
+  simp only [X, hbeq, Bool.false_eq_true, ite_false, BitVec.setWidth_eq]
 
 /-- The value half of the rendered `AddWithCarry`. -/
 theorem arm8AddWithCarry_value (x y : BitVec 64) (c : Bool) :
@@ -1391,20 +1391,20 @@ theorem arm8_encoder_correct_addCarry (d rc sl sr : Nat)
       rw [hT5, hs2regs k]
       by_cases hks : k = sr
       · have h1 : (BitVec.ofNat 5 sr) = (BitVec.ofNat 5 k) := by rw [hks]
-        rw [if_pos h1, if_pos hks]
+        rw [ite_eq_left h1, ite_eq_left hks]
       · have h1 : ¬ ((BitVec.ofNat 5 sr) = (BitVec.ofNat 5 k)) := by
           intro hh
           have hk' : sr = k := (arm8Reg_eq hsr_lt hk32).mp hh
           exact hks hk'.symm
-        rw [if_neg h1, if_neg hks]
+        rw [ite_eq_right h1, ite_eq_right hks]
         by_cases hkd : k = d
         · have h2 : (BitVec.ofNat 5 d) = (BitVec.ofNat 5 k) := by rw [hkd]
-          rw [if_pos h2, if_pos hkd]
+          rw [ite_eq_left h2, ite_eq_left hkd]
         · have h2 : ¬ ((BitVec.ofNat 5 d) = (BitVec.ofNat 5 k)) := by
             intro hh
             have hk' : d = k := (arm8Reg_eq hd_lt hk32).mp hh
             exact hkd hk'.symm
-          rw [if_neg h2, if_neg hkd]
+          rw [ite_eq_right h2, ite_eq_right hkd]
           exact hreg k hk
     · intro k hk
       simp [arm8ConfigL3] at hk

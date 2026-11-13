@@ -156,7 +156,7 @@ theorem collectApps_containsAppSome (maxApp : Nat) (args : List Exp) (expression
     | none =>
       simp only [collectApps]
       by_cases fits : args.length + more.length ≤ maxApp
-      · simp only [fits, if_true]
+      · simp only [fits, ite_true]
         have ih := collectApps_containsAppSome maxApp (args ++ more) head
         simp only [List.length_append, Flapjack.Compiler.Backend.FlatToClos.containsAppSomeAppend] at ih
         simp only [containsAppSomeExp, Option.isSome_none, Bool.false_eq_true, false_or]

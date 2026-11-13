@@ -2,7 +2,11 @@ module
 
 public import Flapjack.Misc.BalancedMap.Semantics
 public import Flapjack.FiniteMap.Comparison
-public import Mathlib.Data.Set.Lattice
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Mathlib.Data.Set.Lattice.Disjoint
+public import Mathlib.Data.Set.Lattice.Image
+public import Mathlib.Data.Set.Lattice.Indexed
+public import Mathlib.Data.Set.Lattice.Order
 
 @[expose] public section
 

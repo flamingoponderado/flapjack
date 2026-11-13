@@ -93,16 +93,16 @@ theorem envRel_drop {A B : Type} (R : A → B → Prop) (x : Nat) (l1 : List A) 
   obtain ⟨tailRel, prefixRel, b1, b2⟩ := h
   unfold envRel at tailRel ⊢
   by_cases eq : l1.length = l2.length
-  · rw [if_pos eq]
+  · rw [ite_eq_left eq]
     have tailsEq : (l1.drop x).length = (l2.drop x).length := by simp [eq]
-    rw [if_pos tailsEq] at tailRel
+    rw [ite_eq_left tailsEq] at tailRel
     have joined := List.rel_append prefixRel tailRel
     simpa using joined
-  · rw [if_neg eq]
+  · rw [ite_eq_right eq]
     have tailsNe : (l1.drop x).length ≠ (l2.drop x).length := by
       simp only [List.length_drop]
       omega
-    rw [if_neg tailsNe] at tailRel
+    rw [ite_eq_right tailsNe] at tailRel
     intro i used
     by_cases prior : i < x
     · have i1 : i < (l1.take x).length := by simp; omega

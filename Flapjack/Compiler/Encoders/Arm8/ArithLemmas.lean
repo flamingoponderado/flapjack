@@ -55,7 +55,7 @@ theorem arith_ofNat64_add_toNat (x y : BitVec 64) :
 theorem arith_addWithCarry_false (x y : BitVec 64) :
     (addWithCarry x y false).1 = x + y := by
   unfold addWithCarry
-  simp only [Bool.false_eq_true, if_false, Nat.add_zero]
+  simp only [Bool.false_eq_true, ite_false, Nat.add_zero]
   exact arith_ofNat64_add_toNat x y
 
 /-- `ofNat` of a sum with one extra low bit is the word sum with one. -/
@@ -69,7 +69,7 @@ theorem arith_ofNat64_add_one (x y : BitVec 64) :
 theorem arith_addWithCarry_true (x y : BitVec 64) :
     (addWithCarry x y true).1 = x + y + 1 := by
   unfold addWithCarry
-  simp only [if_true]
+  simp only [ite_true]
   exact arith_ofNat64_add_one x y
 
 /-- The value `x + ~~~y + 1` is the difference `x - y`. -/
@@ -116,7 +116,7 @@ theorem jumpCmp_flags_c (x y : BitVec 64) :
   rw [hc]
   show decide ((addWithCarry x (~~~y) true).1.toNat ≠
     x.toNat + (~~~y).toNat + (if true = true then 1 else 0)) = _
-  simp only [if_true]
+  simp only [ite_true]
   rw [decide_eq_decide]
   rw [show (addWithCarry x (~~~y) true).1.toNat =
     (x.toNat + (~~~y).toNat + 1) % 2 ^ 64 from rfl]
@@ -226,7 +226,7 @@ theorem jumpCmp_flags_slt (x y : BitVec 64) :
     show decide ((addWithCarry x (~~~y) true).1.toInt ≠
       x.toInt + (~~~y).toInt + (if true = true then 1 else 0)) = _
     rw [jumpCmp_toInt_not, hr]
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     rw [show x.toInt + (-1 - y.toInt) + 1 = x.toInt - y.toInt from by omega]
   rw [hn, hv, BitVec.slt_eq_decide, hB]
   have hx1 := BitVec.toInt_lt (x := x)

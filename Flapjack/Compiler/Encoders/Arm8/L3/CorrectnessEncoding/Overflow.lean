@@ -38,8 +38,8 @@ theorem arm8Run_addSubShiftedRegister_setflags (op : Bool) (rm : BitVec 5) (amou
       let r := AddWithCarry (X rn st, p.1, p.2)
       write'X (r.1, rd) (SetTheFlags (true, r.2) st) := by
   cases op <;>
-    simp only [Run, «dfn'AddSubShiftedRegister», SetTheFlags, Bool.false_eq_true, if_true,
-      if_false]
+    simp only [Run, «dfn'AddSubShiftedRegister», SetTheFlags, Bool.false_eq_true, ite_true,
+      ite_false]
 
 /-- `Run` of the `ConditionalSelect@64` that `arm8_ast` emits after the
 flag-setting add: write `0` when `VC` holds and `1` otherwise. -/
@@ -107,7 +107,7 @@ from the mathematical sum. -/
 theorem arm8AddWithCarry_overflow_add (x y : BitVec 64) :
     (AddWithCarry (TN := 64) (x, (y, false))).2.2.2.2 =
       !((x + y).toInt == x.toInt + y.toInt) := by
-  simp only [AddWithCarry, Bool.false_eq_true, if_false, Nat.add_zero]
+  simp only [AddWithCarry, Bool.false_eq_true, ite_false, Nat.add_zero]
   rw [(BitVec.add_def x y).symm]
   simp
 
@@ -139,7 +139,7 @@ difference differs from the mathematical difference. -/
 theorem arm8AddWithCarry_overflow_sub (x y : BitVec 64) :
     (AddWithCarry (TN := 64) (x, (~~~y, true))).2.2.2.2 =
       !((x - y).toInt == x.toInt - y.toInt) := by
-  simp only [AddWithCarry, if_true]
+  simp only [AddWithCarry, ite_true]
   have hres : BitVec.ofNat 64 (x.toNat + (~~~y).toNat + 1) = x - y := by
     rw [BitVec.ofNat_add, BitVec.ofNat_add, BitVec.ofNat_toNat, BitVec.ofNat_toNat,
       BitVec.setWidth_eq, BitVec.setWidth_eq, BitVec.add_assoc, BitVec.sub_eq_add_neg,
@@ -227,20 +227,20 @@ theorem arm8OverflowCase (op : Bool) (inst : HolInst 64)
     unfold T2 T1
     simp only [Flapjack.RiscV.L3.holUpdate]
     by_cases h1 : k = sourceRight
-    · rw [if_pos (by rw [h1]), if_pos h1]
-    · rw [if_neg h1]
+    · rw [ite_eq_left (by rw [h1]), ite_eq_left h1]
+    · rw [ite_eq_right h1]
       by_cases h2 : k = destination
       · have hne : (BitVec.ofNat 5 sourceRight) ≠ (BitVec.ofNat 5 k) := by
           intro hh
           exact h1 ((arm8Reg_eq hk32 hsr_lt).1 hh.symm)
-        rw [if_neg hne, if_pos (by rw [h2]), if_pos h2]
+        rw [ite_eq_right hne, ite_eq_left (by rw [h2]), ite_eq_left h2]
       · have hne1 : (BitVec.ofNat 5 sourceRight) ≠ (BitVec.ofNat 5 k) := by
           intro hh
           exact h1 ((arm8Reg_eq hk32 hsr_lt).1 hh.symm)
         have hne2 : (BitVec.ofNat 5 destination) ≠ (BitVec.ofNat 5 k) := by
           intro hh
           exact h2 ((arm8Reg_eq hk32 hdl_lt).1 hh.symm)
-        rw [if_neg hne1, if_neg hne2, if_neg h2]
+        rw [ite_eq_right hne1, ite_eq_right hne2, ite_eq_right h2]
         exact hreg k ⟨hk32, hav⟩
 
 /-- The `addOverflow` constructor of `encoder_correct arm8TargetL3`: the

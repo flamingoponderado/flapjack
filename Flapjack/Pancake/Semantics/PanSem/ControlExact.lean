@@ -26,7 +26,7 @@ The clause steps take explicit `evaluate` callbacks (and `recurseWhile` for the
 `evaluate_def` conjunction, once assembled, would be the exact HOL statement. The
 direct original-HOL rows are recorded in
 `scripts/hol-probes/pan_sem_e2e_probe.out` (rows `seq_two_assigns`,
-`seq_first_errors`, `if_true`, `if_false`, `if_error`, `while_cond_zero`,
+`seq_first_errors`, `ite_true`, `ite_false`, `if_error`, `while_cond_zero`,
 `while_timeout`, `while_break`, `while_continue_then_zero`,
 `while_error_condition`, `break_clause`, `continue_clause`, `annot_clause`) and
 replayed by `Flapjack/Test/PanSemControlExactParity.lean`.

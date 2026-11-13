@@ -46,7 +46,7 @@ theorem const_ok (r : Nat) (i : BitVec 64)
 theorem const_mov32_range (i : BitVec 64) (h : i.toNat < 2 ^ 31) :
     -(2 ^ 31 : Int) ≤ i.toInt ∧ i.toInt < 2 ^ 31 := by
   have hcond : 2 * i.toNat < 2 ^ 64 := by omega
-  rw [BitVec.toInt_eq_toNat_cond, if_pos hcond]
+  rw [BitVec.toInt_eq_toNat_cond, ite_eq_left hcond]
   constructor <;> omega
 
 /-- A 32-bit immediate move is five or six bytes. -/
@@ -113,7 +113,7 @@ theorem x64Next_const_mov32 (ms : X64State) (d : BitVec 64 → Prop) (r : Nat) (
     decode_bytesInMemory _ ms.pc ms.mem d _ _ hbm (decode_movRI_z32 r hr i hlo hhi)
       (by rw [hlen])
   rw [hlen]
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn, writeRegSized,
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn, writeRegSized,
     writeReg, setWidth32_eq_of_toNat_lt i h1]
 
 /-- One `x64Next` step over a 64-bit immediate move writes the immediate. -/
@@ -129,7 +129,7 @@ theorem x64Next_const_mov64 (ms : X64State) (d : BitVec 64 → Prop) (r : Nat) (
     decode_bytesInMemory _ ms.pc ms.mem d _ _ hbm (decode_movRI_z64 r hr i)
       (by rw [hlen])
   rw [hlen]
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn, writeRegSized,
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn, writeRegSized,
     writeReg]
 
 /-- One `x64Next` step over the zeroing `xor` clears the register. -/
@@ -143,7 +143,7 @@ theorem x64Next_const_zero (ms : X64State) (d : BitVec 64 → Prop) (r : Nat) (h
       some (.binopRR .zxor .z32 r r, (encodeInsn (.binopRR .zxor .z32 r r)).length) :=
     decode_bytesInMemory _ ms.pc ms.mem d _ _ hbm
       (decode_binopRR_z32 .zxor r r hr hr (by decide)) (by omega)
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn, binopValue,
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn, binopValue,
     BitVec.xor_self, writeRegSized, writeReg]
   rw [setWidth64_setWidth32_zero]
 
@@ -158,26 +158,26 @@ theorem x64Enc_const (r : Nat) (hr : r < 16) (i : BitVec 64) :
       encodeInsn (x64ConstInsn r i) := by
     simp only [x64Ast, x64Inst, x64ConstInsn, hdst]
     by_cases h1 : i.toNat / 2 ^ 31 = 0
-    · simp only [if_pos h1]
+    · simp only [ite_eq_left h1]
       by_cases h2 : i = 0
-      · simp only [if_pos h2]; simp
-      · simp only [if_neg h2]; simp
-    · simp only [if_neg h1]
+      · simp only [ite_eq_left h2]; simp
+      · simp only [ite_eq_right h2]; simp
+    · simp only [ite_eq_right h1]
       by_cases h2 : i = 0
-      · simp only [if_pos h2]; simp
-      · simp only [if_neg h2]; simp
+      · simp only [ite_eq_left h2]; simp
+      · simp only [ite_eq_right h2]; simp
   have hne : encodeInsn (x64ConstInsn r i) ≠ [] := by
     by_cases h1 : i.toNat / 2 ^ 31 = 0
     · by_cases h2 : i = 0
-      · simp only [x64ConstInsn, if_pos h1, if_pos h2]
+      · simp only [x64ConstInsn, ite_eq_left h1, ite_eq_left h2]
         exact binopRR_z32_xor_ne r hr
       · obtain ⟨hlo, hhi⟩ := const_mov32_range i (hdiv.mp h1)
-        simp only [x64ConstInsn, if_pos h1, if_neg h2]
+        simp only [x64ConstInsn, ite_eq_left h1, ite_eq_right h2]
         exact movRI_z32_ne r hr i hlo hhi
     · by_cases h2 : i = 0
-      · simp only [x64ConstInsn, if_neg h1, if_pos h2]
+      · simp only [x64ConstInsn, ite_eq_right h1, ite_eq_left h2]
         exact binopRR_z32_xor_ne r hr
-      · simp only [x64ConstInsn, if_neg h1, if_neg h2]
+      · simp only [x64ConstInsn, ite_eq_right h1, ite_eq_right h2]
         exact movRI_z64_ne r hr i
   exact x64Enc_of_flatMap (.inst (.const r i)) _ hflat hne
 
@@ -278,7 +278,7 @@ theorem case_const (r : Nat) (i : BitVec 64) (s1 s2 : AsmState 64) (ms : X64Stat
         rw [readReg_writeReg ms r 0 x hr hx.1, hs2regs x]
         by_cases hxr : x = r
         · subst hxr; simp [h2]
-        · simp only [hxr, if_false]
+        · simp only [hxr, ite_false]
           exact st.reg x hx
       · intro x hx
         show readXmm ms x = s2.fpRegs x
@@ -326,7 +326,7 @@ theorem case_const (r : Nat) (i : BitVec 64) (s1 s2 : AsmState 64) (ms : X64Stat
           rw [readReg_writeReg ms r i x hr hx.1, hs2regs x]
           by_cases hxr : x = r
           · subst hxr; simp
-          · simp only [hxr, if_false]
+          · simp only [hxr, ite_false]
             exact st.reg x hx
         · intro x hx
           show readXmm ms x = s2.fpRegs x
@@ -371,7 +371,7 @@ theorem case_const (r : Nat) (i : BitVec 64) (s1 s2 : AsmState 64) (ms : X64Stat
           rw [readReg_writeReg ms r i x hr hx.1, hs2regs x]
           by_cases hxr : x = r
           · subst hxr; simp
-          · simp only [hxr, if_false]
+          · simp only [hxr, ite_false]
             exact st.reg x hx
         · intro x hx
           show readXmm ms x = s2.fpRegs x

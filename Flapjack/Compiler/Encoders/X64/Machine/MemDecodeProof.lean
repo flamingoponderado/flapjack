@@ -206,7 +206,7 @@ theorem parseRM_rmBase_z64 (b0 b1 : BitVec 8) (reg base : Nat) (hr : reg < 8) (h
       rcases hbase with h | h <;> subst h <;> decide
     by_cases hz : disp = 0
     · have hcond : disp = 0 ∧ base % 8 ≠ 5 := ⟨hz, by omega⟩
-      simp only [if_pos hcond, if_pos hsib]
+      simp only [ite_eq_left hcond, ite_eq_left hsib]
       simp only [hsib]
       simp only [Nat.zero_add, List.append_nil]
       change parseRM (byteListReader [b0,
@@ -225,7 +225,7 @@ theorem parseRM_rmBase_z64 (b0 b1 : BitVec 8) (reg base : Nat) (hr : reg < 8) (h
       rw [hs, hz]
     · by_cases h8 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127
       · have hcond : ¬ (disp = 0 ∧ base % 8 ≠ 5) := by intro hc; exact hz hc.1
-        simp only [if_neg hcond, if_pos h8, if_pos hsib]
+        simp only [ite_eq_right hcond, ite_eq_left h8, ite_eq_left hsib]
         simp only [hsib]
         change parseRM (byteListReader [b0,
             b1, byte (64 + 8 * (reg) + 4), byte 0x24, byte disp.toNat]) 2 (decide (8 ≤ base)) =
@@ -249,7 +249,7 @@ theorem parseRM_rmBase_z64 (b0 b1 : BitVec 8) (reg base : Nat) (hr : reg < 8) (h
         rw [hb4] at hs
         rw [hs, hd4]
       · have hcond : ¬ (disp = 0 ∧ base % 8 ≠ 5) := by intro hc; exact hz hc.1
-        simp only [if_neg hcond, if_neg h8, if_pos hsib]
+        simp only [ite_eq_right hcond, ite_eq_right h8, ite_eq_left hsib]
         simp only [hsib]
         change parseRM (byteListReader [b0,
             b1, byte (128 + 8 * (reg) + 4), byte 0x24,
@@ -284,7 +284,7 @@ theorem parseRM_rmBase_z64 (b0 b1 : BitVec 8) (reg base : Nat) (hr : reg < 8) (h
       have : base = base % 8 + 8 * (base / 8) := by omega
       by_cases h : 8 ≤ base <;> simp [h] <;> omega
     by_cases h0 : disp = 0 ∧ base % 8 ≠ 5
-    · simp only [if_pos h0, if_neg hsib]
+    · simp only [ite_eq_left h0, ite_eq_right hsib]
       simp only [Nat.zero_add, List.append_nil]
       change parseRM (byteListReader [b0,
           b1, byte (8 * (reg) + base % 8)]) 2 (decide (8 ≤ base)) =
@@ -298,7 +298,7 @@ theorem parseRM_rmBase_z64 (b0 b1 : BitVec 8) (reg base : Nat) (hr : reg < 8) (h
       rw [hb4] at hs
       rw [hs, h0.1]
     · by_cases h8 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127
-      · simp only [if_neg h0, if_pos h8, if_neg hsib]
+      · simp only [ite_eq_right h0, ite_eq_left h8, ite_eq_right hsib]
         change parseRM (byteListReader [b0,
             b1, byte (64 + 8 * (reg) + base % 8), byte disp.toNat]) 2 (decide (8 ≤ base)) =
           some { modBits := 1, regBits := reg, rm := .zm none (.regBase base) disp, len := 2 }
@@ -317,7 +317,7 @@ theorem parseRM_rmBase_z64 (b0 b1 : BitVec 8) (reg base : Nat) (hr : reg < 8) (h
             (if 8 ≤ base then 8 else 0) (decide (8 ≤ base)) hm hr hb8 (by omega) hhi'
         rw [hb4] at hs
         rw [hs, hd3]
-      · simp only [if_neg h0, if_neg h8, if_neg hsib]
+      · simp only [ite_eq_right h0, ite_eq_right h8, ite_eq_right hsib]
         change parseRM (byteListReader [b0,
             b1, byte (128 + 8 * (reg) + base % 8),
             byte disp.toNat, byte (disp.toNat / 256), byte (disp.toNat / 65536), byte (disp.toNat / 16777216)]) 2 (decide (8 ≤ base)) =
@@ -382,7 +382,7 @@ theorem decode_movRM_z64 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
   all_goals
     simp only [decode, decodeNoRex]
     rw [hb0]
-    simp only [hd8, hb8, if_true, if_false] at hpm ⊢
+    simp only [hd8, hb8, ite_true, ite_false] at hpm ⊢
     simp only [decodeRex, hb1]
     simp only [Nat.reduceAdd, Nat.reduceMod, decide_eq_true_eq, Nat.reduceLeDiff]
     simp
@@ -393,13 +393,13 @@ theorem decode_movRM_z64 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
         else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 1 else 2) ≠ 3 := by
       intro h
       by_cases h1 : disp = 0 ∧ base % 8 ≠ 5
-      · rw [if_pos h1] at h; omega
-      · rw [if_neg h1] at h
+      · rw [ite_eq_left h1] at h; omega
+      · rw [ite_eq_right h1] at h
         by_cases h2 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127
-        · rw [if_pos h2] at h; omega
-        · rw [if_neg h2] at h; omega
-    rw [if_neg hmod]
-    try simp only [if_true]
+        · rw [ite_eq_left h2] at h; omega
+        · rw [ite_eq_right h2] at h; omega
+    rw [ite_eq_right hmod]
+    try simp only [ite_true]
     simp only [Option.some.injEq, Prod.mk.injEq]
     constructor
     · simp only [X64Insn.movRM.injEq, true_and, and_true]
@@ -480,7 +480,7 @@ theorem decode_movMR_z64 (src base : Nat) (hs : src < 16) (hb : base < 16)
   all_goals
     simp only [decode, decodeNoRex]
     rw [hb0]
-    simp only [hs8, hb8, if_true, if_false] at hpm ⊢
+    simp only [hs8, hb8, ite_true, ite_false] at hpm ⊢
     simp only [decodeRex, hb1]
     simp only [Nat.reduceAdd, Nat.reduceMod, decide_eq_true_eq, Nat.reduceLeDiff]
     simp
@@ -491,13 +491,13 @@ theorem decode_movMR_z64 (src base : Nat) (hs : src < 16) (hb : base < 16)
         else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 1 else 2) ≠ 3 := by
       intro h
       by_cases h1 : disp = 0 ∧ base % 8 ≠ 5
-      · rw [if_pos h1] at h; omega
-      · rw [if_neg h1] at h
+      · rw [ite_eq_left h1] at h; omega
+      · rw [ite_eq_right h1] at h
         by_cases h2 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127
-        · rw [if_pos h2] at h; omega
-        · rw [if_neg h2] at h; omega
-    rw [if_neg hmod]
-    try simp only [if_true]
+        · rw [ite_eq_left h2] at h; omega
+        · rw [ite_eq_right h2] at h; omega
+    rw [ite_eq_right hmod]
+    try simp only [ite_true]
     simp only [Option.some.injEq, Prod.mk.injEq]
     constructor
     · simp only [X64Insn.movMR.injEq, true_and, and_true]
@@ -521,11 +521,11 @@ theorem decode_movRM_z32 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
       else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 1 else 2) ≠ 3 := by
     intro h
     by_cases h1 : disp = 0 ∧ base % 8 ≠ 5
-    · rw [if_pos h1] at h; omega
-    · rw [if_neg h1] at h
+    · rw [ite_eq_left h1] at h; omega
+    · rw [ite_eq_right h1] at h
       by_cases h2 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127
-      · rw [if_pos h2] at h; omega
-      · rw [if_neg h2] at h; omega
+      · rw [ite_eq_left h2] at h; omega
+      · rw [ite_eq_right h2] at h; omega
   by_cases hd8 : 8 ≤ dst <;> by_cases hb8 : 8 ≤ base
   · -- dst >= 8, base >= 8: REX 0x45, rexR true, rexB true
     have hb0 : (byteListReader (movRMZ32Bytes dst base disp) 0).toNat = 69 := by
@@ -537,22 +537,22 @@ theorem decode_movRM_z32 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
     rw [hdt] at hpm
     have hpre : (if 8 ≤ dst ∨ 8 ≤ base then
         [byte (64 + (if 8 ≤ dst then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [byte 69] := by
-      rw [if_pos (Or.inl hd8), if_pos hd8, if_pos hb8]
+      rw [ite_eq_left (Or.inl hd8), ite_eq_left hd8, ite_eq_left hb8]
     simp only [decode, decodeNoRex]
     rw [hb0]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
-    try simp only [if_true]
+    try simp only [ite_true]
     simp only [decodeRex, hb1]
     simp only [movRMZ32Bytes, hpre]
     simp only [List.singleton_append, decide_true]
     rw [hpm]
     simp only [baseOfRM]
-    rw [if_neg hmod3]
+    rw [ite_eq_right hmod3]
     try simp only [decide_true]
-    rw [if_pos (by rfl : (true && true) = true)]
+    rw [ite_eq_left (by rfl : (true && true) = true)]
     rw [show decide (5 ≥ 8) = false from by decide, show decide (5 ≥ 4) = true from by decide]
-    simp only [if_neg (by decide : ¬ false = true)]
-    try simp only [if_true]
+    simp only [ite_eq_right (by decide : ¬ false = true)]
+    try simp only [ite_true]
     simp only [Option.some.injEq, Prod.mk.injEq]
     constructor
     · simp only [X64Insn.movRM.injEq, true_and, and_true]
@@ -570,23 +570,23 @@ theorem decode_movRM_z32 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
     rw [hdt] at hpm
     have hpre : (if 8 ≤ dst ∨ 8 ≤ base then
         [byte (64 + (if 8 ≤ dst then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [byte 68] := by
-      rw [if_pos (Or.inl hd8), if_pos hd8, if_neg hb8]
+      rw [ite_eq_left (Or.inl hd8), ite_eq_left hd8, ite_eq_right hb8]
     simp only [decode, decodeNoRex]
     rw [hb0]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
-    try simp only [if_true]
+    try simp only [ite_true]
     simp only [decodeRex, hb1]
     simp only [movRMZ32Bytes, hpre]
     simp only [List.singleton_append]
     rw [show decide (0 = 1) = false from by decide]
     rw [hpm]
     simp only [baseOfRM]
-    rw [if_neg hmod3]
+    rw [ite_eq_right hmod3]
     try simp only [decide_true]
-    rw [if_pos (by rfl : (true && true) = true)]
+    rw [ite_eq_left (by rfl : (true && true) = true)]
     rw [show decide (4 ≥ 8) = false from by decide, show decide (4 ≥ 4) = true from by decide]
-    simp only [if_neg (by decide : ¬ false = true)]
-    try simp only [if_true]
+    simp only [ite_eq_right (by decide : ¬ false = true)]
+    try simp only [ite_true]
     simp only [Option.some.injEq, Prod.mk.injEq]
     constructor
     · simp only [X64Insn.movRM.injEq, true_and, and_true]
@@ -604,22 +604,22 @@ theorem decode_movRM_z32 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
     rw [hdt] at hpm
     have hpre : (if 8 ≤ dst ∨ 8 ≤ base then
         [byte (64 + (if 8 ≤ dst then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [byte 65] := by
-      rw [if_pos (Or.inr hb8), if_neg hd8, if_pos hb8]
+      rw [ite_eq_left (Or.inr hb8), ite_eq_right hd8, ite_eq_left hb8]
     simp only [decode, decodeNoRex]
     rw [hb0]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
-    try simp only [if_true]
+    try simp only [ite_true]
     simp only [decodeRex, hb1]
     simp only [movRMZ32Bytes, hpre]
     simp only [List.singleton_append, decide_true]
     rw [hpm]
     simp only [baseOfRM]
-    rw [if_neg hmod3]
+    rw [ite_eq_right hmod3]
     try simp only [decide_true]
-    rw [if_pos (by rfl : (true && true) = true)]
+    rw [ite_eq_left (by rfl : (true && true) = true)]
     rw [show decide (1 ≥ 8) = false from by decide, show decide (1 ≥ 4) = false from by decide]
-    simp only [if_neg (by decide : ¬ false = true)]
-    try simp only [if_true]
+    simp only [ite_eq_right (by decide : ¬ false = true)]
+    try simp only [ite_true]
     simp only [Option.some.injEq, Prod.mk.injEq]
     constructor
     · simp only [X64Insn.movRM.injEq, true_and, and_true]
@@ -633,14 +633,14 @@ theorem decode_movRM_z32 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
     have hpm := parseRM_rmBase_noRex (byte 0x8B) (dst % 8) base (by omega) (by omega) disp hlo hhi
     have hpre : (if 8 ≤ dst ∨ 8 ≤ base then
         [byte (64 + (if 8 ≤ dst then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [] := by
-      rw [if_neg (by omega : ¬ (8 ≤ dst ∨ 8 ≤ base))]
+      rw [ite_eq_right (by omega : ¬ (8 ≤ dst ∨ 8 ≤ base))]
     simp only [decode, decodeNoRex]
     rw [hb0]
     simp only [movRMZ32Bytes, hpre, List.nil_append]
     rw [hpm]
     simp only [baseOfRM]
-    rw [if_neg hmod3]
-    try simp only [if_true]
+    rw [ite_eq_right hmod3]
+    try simp only [ite_true]
     simp only [Option.some.injEq, Prod.mk.injEq]
     constructor
     · simp only [X64Insn.movRM.injEq, true_and, and_true]
@@ -695,12 +695,12 @@ theorem parseRM_movMR_z32 (src base : Nat) (hs : src < 16) (hb : base < 16)
                      else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 2 else 5) } := by
   rw [encodeInsn_movMR_z32 src base hs hb disp hlo hhi]
   by_cases hpre : 8 ≤ src ∨ 8 ≤ base
-  · simp only [movMRZ32Bytes, hpre, if_true]
+  · simp only [movMRZ32Bytes, hpre, ite_true]
     have h := parseRM_rmBase_z64
       (byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0)))
       (byte 0x89) (src % 8) base (by omega) hb disp hlo hhi
     simpa using h
-  · simp only [movMRZ32Bytes, hpre, if_false, List.nil_append]
+  · simp only [movMRZ32Bytes, hpre, ite_false, List.nil_append]
     have hb8 : base < 8 := by omega
     have h8 : decide (8 ≤ base) = false := by simp; omega
     rw [h8]
@@ -719,11 +719,11 @@ theorem decode_movMR_z32 (src base : Nat) (hs : src < 16) (hb : base < 16)
       else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 1 else 2) ≠ 3 := by
     intro h
     by_cases h1 : disp = 0 ∧ base % 8 ≠ 5
-    · rw [if_pos h1] at h; omega
-    · rw [if_neg h1] at h
+    · rw [ite_eq_left h1] at h; omega
+    · rw [ite_eq_right h1] at h
       by_cases h2 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127
-      · rw [if_pos h2] at h; omega
-      · rw [if_neg h2] at h; omega
+      · rw [ite_eq_left h2] at h; omega
+      · rw [ite_eq_right h2] at h; omega
   by_cases hs8 : 8 ≤ src <;> by_cases hb8 : 8 ≤ base
   · have hb0 : (byteListReader (movMRZ32Bytes src base disp) 0).toNat = 69 := by
       simp [movMRZ32Bytes, byteListReader, byte, hs8, hb8]
@@ -734,22 +734,22 @@ theorem decode_movMR_z32 (src base : Nat) (hs : src < 16) (hb : base < 16)
     rw [hdt] at hpm
     have hpre : (if 8 ≤ src ∨ 8 ≤ base then
         [byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [byte 69] := by
-      rw [if_pos (Or.inl hs8), if_pos hs8, if_pos hb8]
+      rw [ite_eq_left (Or.inl hs8), ite_eq_left hs8, ite_eq_left hb8]
     simp only [decode, decodeNoRex]
     rw [hb0]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
-    try simp only [if_true]
+    try simp only [ite_true]
     simp only [decodeRex, hb1]
     simp only [movMRZ32Bytes, hpre]
     simp only [List.singleton_append, decide_true]
     rw [hpm]
     simp only [baseOfRM]
-    rw [if_neg hmod3]
+    rw [ite_eq_right hmod3]
     try simp only [decide_true]
-    rw [if_pos (by rfl : (true && true) = true)]
+    rw [ite_eq_left (by rfl : (true && true) = true)]
     rw [show decide (5 ≥ 8) = false from by decide, show decide (5 ≥ 4) = true from by decide]
-    simp only [if_neg (by decide : ¬ false = true)]
-    try simp only [if_true]
+    simp only [ite_eq_right (by decide : ¬ false = true)]
+    try simp only [ite_true]
     simp only [Option.some.injEq, Prod.mk.injEq]
     constructor
     · simp only [X64Insn.movMR.injEq, true_and, and_true]
@@ -766,23 +766,23 @@ theorem decode_movMR_z32 (src base : Nat) (hs : src < 16) (hb : base < 16)
     rw [hdt] at hpm
     have hpre : (if 8 ≤ src ∨ 8 ≤ base then
         [byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [byte 68] := by
-      rw [if_pos (Or.inl hs8), if_pos hs8, if_neg hb8]
+      rw [ite_eq_left (Or.inl hs8), ite_eq_left hs8, ite_eq_right hb8]
     simp only [decode, decodeNoRex]
     rw [hb0]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
-    try simp only [if_true]
+    try simp only [ite_true]
     simp only [decodeRex, hb1]
     simp only [movMRZ32Bytes, hpre]
     simp only [List.singleton_append]
     rw [show decide (0 = 1) = false from by decide]
     rw [hpm]
     simp only [baseOfRM]
-    rw [if_neg hmod3]
+    rw [ite_eq_right hmod3]
     try simp only [decide_true]
-    rw [if_pos (by rfl : (true && true) = true)]
+    rw [ite_eq_left (by rfl : (true && true) = true)]
     rw [show decide (4 ≥ 8) = false from by decide, show decide (4 ≥ 4) = true from by decide]
-    simp only [if_neg (by decide : ¬ false = true)]
-    try simp only [if_true]
+    simp only [ite_eq_right (by decide : ¬ false = true)]
+    try simp only [ite_true]
     simp only [Option.some.injEq, Prod.mk.injEq]
     constructor
     · simp only [X64Insn.movMR.injEq, true_and, and_true]
@@ -799,22 +799,22 @@ theorem decode_movMR_z32 (src base : Nat) (hs : src < 16) (hb : base < 16)
     rw [hdt] at hpm
     have hpre : (if 8 ≤ src ∨ 8 ≤ base then
         [byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [byte 65] := by
-      rw [if_pos (Or.inr hb8), if_neg hs8, if_pos hb8]
+      rw [ite_eq_left (Or.inr hb8), ite_eq_right hs8, ite_eq_left hb8]
     simp only [decode, decodeNoRex]
     rw [hb0]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
-    try simp only [if_true]
+    try simp only [ite_true]
     simp only [decodeRex, hb1]
     simp only [movMRZ32Bytes, hpre]
     simp only [List.singleton_append, decide_true]
     rw [hpm]
     simp only [baseOfRM]
-    rw [if_neg hmod3]
+    rw [ite_eq_right hmod3]
     try simp only [decide_true]
-    rw [if_pos (by rfl : (true && true) = true)]
+    rw [ite_eq_left (by rfl : (true && true) = true)]
     rw [show decide (1 ≥ 8) = false from by decide, show decide (1 ≥ 4) = false from by decide]
-    simp only [if_neg (by decide : ¬ false = true)]
-    try simp only [if_true]
+    simp only [ite_eq_right (by decide : ¬ false = true)]
+    try simp only [ite_true]
     simp only [Option.some.injEq, Prod.mk.injEq]
     constructor
     · simp only [X64Insn.movMR.injEq, true_and, and_true]
@@ -827,14 +827,14 @@ theorem decode_movMR_z32 (src base : Nat) (hs : src < 16) (hb : base < 16)
     have hpm := parseRM_rmBase_noRex (byte 0x89) (src % 8) base (by omega) (by omega) disp hlo hhi
     have hpre : (if 8 ≤ src ∨ 8 ≤ base then
         [byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [] := by
-      rw [if_neg (by omega : ¬ (8 ≤ src ∨ 8 ≤ base))]
+      rw [ite_eq_right (by omega : ¬ (8 ≤ src ∨ 8 ≤ base))]
     simp only [decode, decodeNoRex]
     rw [hb0]
     simp only [movMRZ32Bytes, hpre, List.nil_append]
     rw [hpm]
     simp only [baseOfRM]
-    rw [if_neg hmod3]
-    try simp only [if_true]
+    rw [ite_eq_right hmod3]
+    try simp only [ite_true]
     simp only [Option.some.injEq, Prod.mk.injEq]
     constructor
     · simp only [X64Insn.movMR.injEq, true_and, and_true]
@@ -976,11 +976,11 @@ theorem decode_movMR_z16 (src base : Nat) (hs : src < 16) (hb : base < 16)
       else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 1 else 2) ≠ 3 := by
     intro h
     by_cases h1 : disp = 0 ∧ base % 8 ≠ 5
-    · rw [if_pos h1] at h; omega
-    · rw [if_neg h1] at h
+    · rw [ite_eq_left h1] at h; omega
+    · rw [ite_eq_right h1] at h
       by_cases h2 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127
-      · rw [if_pos h2] at h; omega
-      · rw [if_neg h2] at h; omega
+      · rw [ite_eq_left h2] at h; omega
+      · rw [ite_eq_right h2] at h; omega
   have hsib : (if base % 8 = 4 then [byte 0x24] else []) = (if base % 8 = 4 then [byte 0x24] else []) := rfl
   by_cases hs8 : 8 ≤ src <;> by_cases hb8 : 8 ≤ base
   · have hb0 : (byteListReader (movMRZ16Bytes src base disp) 0).toNat = 0x66 := by
@@ -1008,16 +1008,16 @@ theorem decode_movMR_z16 (src base : Nat) (hs : src < 16) (hb : base < 16)
     rw [hb1]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
     rw [hb2]
-    simp only [decide_true, Bool.true_and, if_true, if_false, Nat.reduceEqDiff]
+    simp only [decide_true, Bool.true_and, ite_true, ite_false, Nat.reduceEqDiff]
     have hpre : (if 8 ≤ src ∨ 8 ≤ base then
         [byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [byte 69] := by
-      rw [if_pos (Or.inl hs8), if_pos hs8, if_pos hb8]
+      rw [ite_eq_left (Or.inl hs8), ite_eq_left hs8, ite_eq_left hb8]
     simp only [movMRZ16Bytes, hpre, List.cons_append, List.nil_append]
     rw [parseRM_shift]
     rw [hpm']
-    simp only [hmod3, if_false, baseOfRM]
+    simp only [hmod3, ite_false, baseOfRM]
     have hsrc : (if (5:ℕ) ≥ 4 then 8 else 0) + src % 8 = src := by
-      rw [if_pos (by decide : (5:ℕ) ≥ 4), Nat.mod_eq_sub_mod hs8, Nat.mod_eq_of_lt (by omega)]
+      rw [ite_eq_left (by decide : (5:ℕ) ≥ 4), Nat.mod_eq_sub_mod hs8, Nat.mod_eq_of_lt (by omega)]
       omega
     have hlen : 3 + ((if base % 8 = 4 then 1 else 0) +
         (if disp = 0 ∧ base % 8 ≠ 5 then 1
@@ -1056,16 +1056,16 @@ theorem decode_movMR_z16 (src base : Nat) (hs : src < 16) (hb : base < 16)
     rw [hb1]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
     rw [hb2]
-    simp only [decide_true, decide_false, Bool.true_and, if_true, if_false, Nat.reduceEqDiff]
+    simp only [decide_true, decide_false, Bool.true_and, ite_true, ite_false, Nat.reduceEqDiff]
     have hpre : (if 8 ≤ src ∨ 8 ≤ base then
         [byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [byte 68] := by
-      rw [if_pos (Or.inl hs8), if_pos hs8, if_neg hb8]
+      rw [ite_eq_left (Or.inl hs8), ite_eq_left hs8, ite_eq_right hb8]
     simp only [movMRZ16Bytes, hpre, List.cons_append, List.nil_append]
     rw [parseRM_shift]
     rw [hpm']
-    simp only [hmod3, if_false, baseOfRM]
+    simp only [hmod3, ite_false, baseOfRM]
     have hsrc : (if (4:ℕ) ≥ 4 then 8 else 0) + src % 8 = src := by
-      rw [if_pos (by decide : (4:ℕ) ≥ 4), Nat.mod_eq_sub_mod hs8, Nat.mod_eq_of_lt (by omega)]
+      rw [ite_eq_left (by decide : (4:ℕ) ≥ 4), Nat.mod_eq_sub_mod hs8, Nat.mod_eq_of_lt (by omega)]
       omega
     have hlen : 3 + ((if base % 8 = 4 then 1 else 0) +
         (if disp = 0 ∧ base % 8 ≠ 5 then 1
@@ -1104,16 +1104,16 @@ theorem decode_movMR_z16 (src base : Nat) (hs : src < 16) (hb : base < 16)
     rw [hb1]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
     rw [hb2]
-    simp only [decide_true, Bool.true_and, if_true, if_false, Nat.reduceEqDiff]
+    simp only [decide_true, Bool.true_and, ite_true, ite_false, Nat.reduceEqDiff]
     have hpre : (if 8 ≤ src ∨ 8 ≤ base then
         [byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [byte 65] := by
-      rw [if_pos (Or.inr hb8), if_neg hs8, if_pos hb8]
+      rw [ite_eq_left (Or.inr hb8), ite_eq_right hs8, ite_eq_left hb8]
     simp only [movMRZ16Bytes, hpre, List.cons_append, List.nil_append]
     rw [parseRM_shift]
     rw [hpm']
-    simp only [hmod3, if_false, baseOfRM]
+    simp only [hmod3, ite_false, baseOfRM]
     have hsrc : (if (1:ℕ) ≥ 4 then 8 else 0) + src % 8 = src := by
-      rw [if_neg (by decide : ¬ ((1:ℕ) ≥ 4)), Nat.mod_eq_of_lt (by omega)]
+      rw [ite_eq_right (by decide : ¬ ((1:ℕ) ≥ 4)), Nat.mod_eq_of_lt (by omega)]
       omega
     have hlen : 3 + ((if base % 8 = 4 then 1 else 0) +
         (if disp = 0 ∧ base % 8 ≠ 5 then 1
@@ -1149,13 +1149,13 @@ theorem decode_movMR_z16 (src base : Nat) (hs : src < 16) (hb : base < 16)
     rw [hb0]
     rw [hb1]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
-    simp only [decide_true, decide_false, Bool.true_and, Bool.false_eq_true, if_true, if_false, Nat.reduceEqDiff]
+    simp only [decide_true, decide_false, Bool.true_and, Bool.false_eq_true, ite_true, ite_false, Nat.reduceEqDiff]
     have hpre : (if 8 ≤ src ∨ 8 ≤ base then
         [byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [] := by
-      rw [if_neg (by omega : ¬ (8 ≤ src ∨ 8 ≤ base))]
+      rw [ite_eq_right (by omega : ¬ (8 ≤ src ∨ 8 ≤ base))]
     simp only [movMRZ16Bytes, hpre, List.cons_append, List.nil_append]
     rw [hpm']
-    simp only [hmod3, if_false, baseOfRM]
+    simp only [hmod3, ite_false, baseOfRM]
     have hsrc : src % 8 = src := Nat.mod_eq_of_lt (by omega)
     have hlen : 2 + ((if base % 8 = 4 then 1 else 0) +
         (if disp = 0 ∧ base % 8 ≠ 5 then 1
@@ -1163,7 +1163,7 @@ theorem decode_movMR_z16 (src base : Nat) (hs : src < 16) (hb : base < 16)
         (2 + (if 8 ≤ src ∨ 8 ≤ base then 1 else 0)) + ((if base % 8 = 4 then 1 else 0) +
         (if disp = 0 ∧ base % 8 ≠ 5 then 1
          else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 2 else 5)) := by
-      rw [if_neg (by omega : ¬ (8 ≤ src ∨ 8 ≤ base))]
+      rw [ite_eq_right (by omega : ¬ (8 ≤ src ∨ 8 ≤ base))]
     rw [hsrc]
     simp only [Option.some.injEq, Prod.mk.injEq, true_and]
     exact hlen
@@ -1204,11 +1204,11 @@ theorem decode_movRM_z16 (src base : Nat) (hs : src < 16) (hb : base < 16)
       else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 1 else 2) ≠ 3 := by
     intro h
     by_cases h1 : disp = 0 ∧ base % 8 ≠ 5
-    · rw [if_pos h1] at h; omega
-    · rw [if_neg h1] at h
+    · rw [ite_eq_left h1] at h; omega
+    · rw [ite_eq_right h1] at h
       by_cases h2 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127
-      · rw [if_pos h2] at h; omega
-      · rw [if_neg h2] at h; omega
+      · rw [ite_eq_left h2] at h; omega
+      · rw [ite_eq_right h2] at h; omega
   have hsib : (if base % 8 = 4 then [byte 0x24] else []) = (if base % 8 = 4 then [byte 0x24] else []) := rfl
   by_cases hs8 : 8 ≤ src <;> by_cases hb8 : 8 ≤ base
   · have hb0 : (byteListReader (movRMZ16Bytes src base disp) 0).toNat = 0x66 := by
@@ -1236,16 +1236,16 @@ theorem decode_movRM_z16 (src base : Nat) (hs : src < 16) (hb : base < 16)
     rw [hb1]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
     rw [hb2]
-    simp only [decide_true, Bool.true_and, if_true, if_false, Nat.reduceEqDiff]
+    simp only [decide_true, Bool.true_and, ite_true, ite_false, Nat.reduceEqDiff]
     have hpre : (if 8 ≤ src ∨ 8 ≤ base then
         [byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [byte 69] := by
-      rw [if_pos (Or.inl hs8), if_pos hs8, if_pos hb8]
+      rw [ite_eq_left (Or.inl hs8), ite_eq_left hs8, ite_eq_left hb8]
     simp only [movRMZ16Bytes, hpre, List.cons_append, List.nil_append]
     rw [parseRM_shift]
     rw [hpm']
-    simp only [hmod3, if_false, baseOfRM]
+    simp only [hmod3, ite_false, baseOfRM]
     have hsrc : (if (5:ℕ) ≥ 4 then 8 else 0) + src % 8 = src := by
-      rw [if_pos (by decide : (5:ℕ) ≥ 4), Nat.mod_eq_sub_mod hs8, Nat.mod_eq_of_lt (by omega)]
+      rw [ite_eq_left (by decide : (5:ℕ) ≥ 4), Nat.mod_eq_sub_mod hs8, Nat.mod_eq_of_lt (by omega)]
       omega
     have hlen : 3 + ((if base % 8 = 4 then 1 else 0) +
         (if disp = 0 ∧ base % 8 ≠ 5 then 1
@@ -1284,16 +1284,16 @@ theorem decode_movRM_z16 (src base : Nat) (hs : src < 16) (hb : base < 16)
     rw [hb1]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
     rw [hb2]
-    simp only [decide_true, decide_false, Bool.true_and, if_true, if_false, Nat.reduceEqDiff]
+    simp only [decide_true, decide_false, Bool.true_and, ite_true, ite_false, Nat.reduceEqDiff]
     have hpre : (if 8 ≤ src ∨ 8 ≤ base then
         [byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [byte 68] := by
-      rw [if_pos (Or.inl hs8), if_pos hs8, if_neg hb8]
+      rw [ite_eq_left (Or.inl hs8), ite_eq_left hs8, ite_eq_right hb8]
     simp only [movRMZ16Bytes, hpre, List.cons_append, List.nil_append]
     rw [parseRM_shift]
     rw [hpm']
-    simp only [hmod3, if_false, baseOfRM]
+    simp only [hmod3, ite_false, baseOfRM]
     have hsrc : (if (4:ℕ) ≥ 4 then 8 else 0) + src % 8 = src := by
-      rw [if_pos (by decide : (4:ℕ) ≥ 4), Nat.mod_eq_sub_mod hs8, Nat.mod_eq_of_lt (by omega)]
+      rw [ite_eq_left (by decide : (4:ℕ) ≥ 4), Nat.mod_eq_sub_mod hs8, Nat.mod_eq_of_lt (by omega)]
       omega
     have hlen : 3 + ((if base % 8 = 4 then 1 else 0) +
         (if disp = 0 ∧ base % 8 ≠ 5 then 1
@@ -1332,16 +1332,16 @@ theorem decode_movRM_z16 (src base : Nat) (hs : src < 16) (hb : base < 16)
     rw [hb1]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
     rw [hb2]
-    simp only [decide_true, Bool.true_and, if_true, if_false, Nat.reduceEqDiff]
+    simp only [decide_true, Bool.true_and, ite_true, ite_false, Nat.reduceEqDiff]
     have hpre : (if 8 ≤ src ∨ 8 ≤ base then
         [byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [byte 65] := by
-      rw [if_pos (Or.inr hb8), if_neg hs8, if_pos hb8]
+      rw [ite_eq_left (Or.inr hb8), ite_eq_right hs8, ite_eq_left hb8]
     simp only [movRMZ16Bytes, hpre, List.cons_append, List.nil_append]
     rw [parseRM_shift]
     rw [hpm']
-    simp only [hmod3, if_false, baseOfRM]
+    simp only [hmod3, ite_false, baseOfRM]
     have hsrc : (if (1:ℕ) ≥ 4 then 8 else 0) + src % 8 = src := by
-      rw [if_neg (by decide : ¬ ((1:ℕ) ≥ 4)), Nat.mod_eq_of_lt (by omega)]
+      rw [ite_eq_right (by decide : ¬ ((1:ℕ) ≥ 4)), Nat.mod_eq_of_lt (by omega)]
       omega
     have hlen : 3 + ((if base % 8 = 4 then 1 else 0) +
         (if disp = 0 ∧ base % 8 ≠ 5 then 1
@@ -1377,13 +1377,13 @@ theorem decode_movRM_z16 (src base : Nat) (hs : src < 16) (hb : base < 16)
     rw [hb0]
     rw [hb1]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
-    simp only [decide_true, decide_false, Bool.true_and, Bool.false_eq_true, if_true, if_false, Nat.reduceEqDiff]
+    simp only [decide_true, decide_false, Bool.true_and, Bool.false_eq_true, ite_true, ite_false, Nat.reduceEqDiff]
     have hpre : (if 8 ≤ src ∨ 8 ≤ base then
         [byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0))] else []) = [] := by
-      rw [if_neg (by omega : ¬ (8 ≤ src ∨ 8 ≤ base))]
+      rw [ite_eq_right (by omega : ¬ (8 ≤ src ∨ 8 ≤ base))]
     simp only [movRMZ16Bytes, hpre, List.cons_append, List.nil_append]
     rw [hpm']
-    simp only [hmod3, if_false, baseOfRM]
+    simp only [hmod3, ite_false, baseOfRM]
     have hsrc : src % 8 = src := Nat.mod_eq_of_lt (by omega)
     have hlen : 2 + ((if base % 8 = 4 then 1 else 0) +
         (if disp = 0 ∧ base % 8 ≠ 5 then 1
@@ -1391,7 +1391,7 @@ theorem decode_movRM_z16 (src base : Nat) (hs : src < 16) (hb : base < 16)
         (2 + (if 8 ≤ src ∨ 8 ≤ base then 1 else 0)) + ((if base % 8 = 4 then 1 else 0) +
         (if disp = 0 ∧ base % 8 ≠ 5 then 1
          else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 2 else 5)) := by
-      rw [if_neg (by omega : ¬ (8 ≤ src ∨ 8 ≤ base))]
+      rw [ite_eq_right (by omega : ¬ (8 ≤ src ∨ 8 ≤ base))]
     rw [hsrc]
     simp only [Option.some.injEq, Prod.mk.injEq, true_and]
     exact hlen
@@ -1431,11 +1431,11 @@ theorem decode_movMR_z8 (h : Bool) (src base : Nat) (hs : src < 16) (hb : base <
       else if -128 ≤ disp.toInt ∧ disp.toInt ≤ 127 then 1 else 2) ≠ 3 := by
     intro hh
     by_cases h1 : disp = 0 ∧ base % 8 ≠ 5
-    · rw [if_pos h1] at hh; omega
-    · rw [if_neg h1] at hh
+    · rw [ite_eq_left h1] at hh; omega
+    · rw [ite_eq_right h1] at hh
       by_cases h2 : -128 ≤ disp.toInt ∧ disp.toInt ≤ 127
-      · rw [if_pos h2] at hh; omega
-      · rw [if_neg h2] at hh; omega
+      · rw [ite_eq_left h2] at hh; omega
+      · rw [ite_eq_right h2] at hh; omega
   by_cases hpre : 8 ≤ src ∨ 8 ≤ base
   · by_cases hs8 : 8 ≤ src <;> by_cases hb8 : 8 ≤ base
     · -- rex 69
@@ -1460,26 +1460,26 @@ theorem decode_movMR_z8 (h : Bool) (src base : Nat) (hs : src < 16) (hb : base <
       simp only [decode, decodeNoRex]
       rw [hb0]
       simp only [Nat.reduceMod, Nat.reduceLeDiff]
-      simp only [decide_true, Bool.true_and, if_true]
+      simp only [decide_true, Bool.true_and, ite_true]
       rw [show decide (5 ≥ 8) = false from by decide,
           show decide (5 ≥ 4) = true from by decide]
       simp only [decodeRex, hb1]
       have hpfx : (if 8 ≤ src ∨ 8 ≤ base then
           [byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0))]
          else if h = true then [byte 0x40] else []) = [byte 69] := by
-        rw [if_pos (Or.inl hs8), if_pos hs8, if_pos hb8]
-      simp only [movMRZ8Bytes, hpfx, if_true, List.cons_append, List.nil_append]
+        rw [ite_eq_left (Or.inl hs8), ite_eq_left hs8, ite_eq_left hb8]
+      simp only [movMRZ8Bytes, hpfx, ite_true, List.cons_append, List.nil_append]
       rw [hpm']
-      simp only [hmod3, if_false, baseOfRM]
+      simp only [hmod3, ite_false, baseOfRM]
       have hsrc : 8 + src % 8 = src := by
         rw [Nat.mod_eq_sub_mod hs8, Nat.mod_eq_of_lt (by omega)]
         omega
       rw [hsrc]
       have hflag : (if 8 ≤ src ∨ 8 ≤ base then true else h) = true := by
-        rw [if_pos hpre]
+        rw [ite_eq_left hpre]
       rw [hflag]
       have hlen : (1 + (if 8 ≤ src ∨ 8 ≤ base then 1 else if h = true then 1 else 0)) = 2 := by
-        rw [if_pos hpre]
+        rw [ite_eq_left hpre]
       rw [hlen]
     · -- rex 68
       have hb0 : (byteListReader (movMRZ8Bytes h src base disp) 0).toNat = 68 := by
@@ -1503,7 +1503,7 @@ theorem decode_movMR_z8 (h : Bool) (src base : Nat) (hs : src < 16) (hb : base <
       simp only [decode, decodeNoRex]
       rw [hb0]
       simp only [Nat.reduceMod, Nat.reduceLeDiff]
-      simp only [decide_true, Bool.true_and, if_true]
+      simp only [decide_true, Bool.true_and, ite_true]
       rw [show decide (4 ≥ 8) = false from by decide,
           show decide (4 ≥ 4) = true from by decide,
           show decide (0 = 1) = false from by decide]
@@ -1511,19 +1511,19 @@ theorem decode_movMR_z8 (h : Bool) (src base : Nat) (hs : src < 16) (hb : base <
       have hpfx : (if 8 ≤ src ∨ 8 ≤ base then
           [byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0))]
          else if h = true then [byte 0x40] else []) = [byte 68] := by
-        rw [if_pos (Or.inl hs8), if_pos hs8, if_neg hb8]
-      simp only [movMRZ8Bytes, hpfx, if_true, List.cons_append, List.nil_append]
+        rw [ite_eq_left (Or.inl hs8), ite_eq_left hs8, ite_eq_right hb8]
+      simp only [movMRZ8Bytes, hpfx, ite_true, List.cons_append, List.nil_append]
       rw [hpm']
-      simp only [hmod3, if_false, baseOfRM]
+      simp only [hmod3, ite_false, baseOfRM]
       have hsrc : 8 + src % 8 = src := by
         rw [Nat.mod_eq_sub_mod hs8, Nat.mod_eq_of_lt (by omega)]
         omega
       rw [hsrc]
       have hflag : (if 8 ≤ src ∨ 8 ≤ base then true else h) = true := by
-        rw [if_pos hpre]
+        rw [ite_eq_left hpre]
       rw [hflag]
       have hlen : (1 + (if 8 ≤ src ∨ 8 ≤ base then 1 else if h = true then 1 else 0)) = 2 := by
-        rw [if_pos hpre]
+        rw [ite_eq_left hpre]
       rw [hlen]
     · -- rex 65
       have hb0 : (byteListReader (movMRZ8Bytes h src base disp) 0).toNat = 65 := by
@@ -1547,26 +1547,26 @@ theorem decode_movMR_z8 (h : Bool) (src base : Nat) (hs : src < 16) (hb : base <
       simp only [decode, decodeNoRex]
       rw [hb0]
       simp only [Nat.reduceMod, Nat.reduceLeDiff]
-      simp only [decide_true, Bool.true_and, if_true]
+      simp only [decide_true, Bool.true_and, ite_true]
       rw [show decide (1 ≥ 8) = false from by decide,
           show decide (1 ≥ 4) = false from by decide]
       simp only [decodeRex, hb1]
       have hpfx : (if 8 ≤ src ∨ 8 ≤ base then
           [byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0))]
          else if h = true then [byte 0x40] else []) = [byte 65] := by
-        rw [if_pos (Or.inr hb8), if_neg hs8, if_pos hb8]
+        rw [ite_eq_left (Or.inr hb8), ite_eq_right hs8, ite_eq_left hb8]
       simp only [movMRZ8Bytes, hpfx, List.cons_append, List.nil_append]
       rw [hpm']
-      simp only [hmod3, if_false, Bool.false_eq_true, baseOfRM]
+      simp only [hmod3, ite_false, Bool.false_eq_true, baseOfRM]
       have hsrc : 0 + src % 8 = src := by
         rw [Nat.mod_eq_of_lt (by omega)]
         omega
       rw [hsrc]
       have hflag : (if 8 ≤ src ∨ 8 ≤ base then true else h) = true := by
-        rw [if_pos hpre]
+        rw [ite_eq_left hpre]
       rw [hflag]
       have hlen : (1 + (if 8 ≤ src ∨ 8 ≤ base then 1 else if h = true then 1 else 0)) = 2 := by
-        rw [if_pos hpre]
+        rw [ite_eq_left hpre]
       rw [hlen]
     · exact absurd hpre (by omega)
   · have hs8 : ¬ 8 ≤ src := by omega
@@ -1592,17 +1592,17 @@ theorem decode_movMR_z8 (h : Bool) (src base : Nat) (hs : src < 16) (hb : base <
       have hpfx : (if 8 ≤ src ∨ 8 ≤ base then
           [byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0))]
          else if false = true then [byte 0x40] else []) = [] := by
-        rw [if_neg hpre, if_neg (by decide : ¬ ((false = true)))]
+        rw [ite_eq_right hpre, ite_eq_right (by decide : ¬ ((false = true)))]
       simp only [movMRZ8Bytes, hpfx, List.nil_append, List.cons_append]
       rw [hpm']
-      simp only [hmod3, if_false, baseOfRM]
+      simp only [hmod3, ite_false, baseOfRM]
       have hsrc : src % 8 = src := Nat.mod_eq_of_lt (by omega)
       rw [hsrc]
       have hflag : (if 8 ≤ src ∨ 8 ≤ base then true else false) = false := by
-        rw [if_neg hpre]
+        rw [ite_eq_right hpre]
       rw [hflag]
       have hlen : (1 + (if 8 ≤ src ∨ 8 ≤ base then 1 else if false = true then 1 else 0)) = 1 := by
-        rw [if_neg hpre, if_neg (by decide : ¬ ((false = true)))]
+        rw [ite_eq_right hpre, ite_eq_right (by decide : ¬ ((false = true)))]
       rw [hlen]
     · -- h = true: REX 0x40
       have hb0 : (byteListReader (movMRZ8Bytes true src base disp) 0).toNat = 0x40 := by
@@ -1626,7 +1626,7 @@ theorem decode_movMR_z8 (h : Bool) (src base : Nat) (hs : src < 16) (hb : base <
       simp only [decode, decodeNoRex]
       rw [hb0]
       simp only [Nat.reduceMod, Nat.reduceLeDiff]
-      simp only [decide_true, Bool.true_and, if_true]
+      simp only [decide_true, Bool.true_and, ite_true]
       rw [show decide (0 ≥ 8) = false from by decide,
           show decide (0 ≥ 4) = false from by decide,
           show decide (0 = 1) = false from by decide]
@@ -1634,19 +1634,19 @@ theorem decode_movMR_z8 (h : Bool) (src base : Nat) (hs : src < 16) (hb : base <
       have hpfx : (if 8 ≤ src ∨ 8 ≤ base then
           [byte (64 + (if 8 ≤ src then 4 else 0) + (if 8 ≤ base then 1 else 0))]
          else [byte 0x40]) = [byte 0x40] := by
-        rw [if_neg hpre]
-      simp only [movMRZ8Bytes, hpfx, if_true, List.cons_append, List.nil_append]
+        rw [ite_eq_right hpre]
+      simp only [movMRZ8Bytes, hpfx, ite_true, List.cons_append, List.nil_append]
       rw [hpm']
-      simp only [hmod3, if_false, Bool.false_eq_true, baseOfRM]
+      simp only [hmod3, ite_false, Bool.false_eq_true, baseOfRM]
       have hsrc : 0 + src % 8 = src := by
         rw [Nat.mod_eq_of_lt (by omega)]
         omega
       rw [hsrc]
       have hflag : (if 8 ≤ src ∨ 8 ≤ base then true else true) = true := by
-        rw [if_neg hpre]
+        rw [ite_eq_right hpre]
       rw [hflag]
       have hlen : (1 + (if 8 ≤ src ∨ 8 ≤ base then 1 else 1)) = 2 := by
-        rw [if_neg hpre]
+        rw [ite_eq_right hpre]
       rw [hlen]
 
 /-- The encoded byte list of `movzxRM sz1 .z64` (the emitted zero-extending loads). -/
@@ -1666,7 +1666,7 @@ theorem encodeInsn_movzxRM_z16 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
     (disp : BitVec 64) (hlo : -(2^31 : Int) ≤ disp.toInt) (hhi : disp.toInt < 2^31) :
     encodeInsn (.movzxRM .z16 .z64 dst base disp) = movzxBytes (byte 0xB7) dst base disp := by
   simp only [encodeInsn]
-  simp only [if_true]
+  simp only [ite_true]
   rw [eGenRmReg_regBase .z64 dst base hd hb disp hlo hhi [byte 0x0F] (byte 0xB6) (some 1)]
   simp [movzxBytes]
   decide
@@ -1675,7 +1675,7 @@ theorem encodeInsn_movzxRM_z8 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
     (disp : BitVec 64) (hlo : -(2^31 : Int) ≤ disp.toInt) (hhi : disp.toInt < 2^31) :
     encodeInsn (.movzxRM (.z8 true) .z64 dst base disp) = movzxBytes (byte 0xB6) dst base disp := by
   simp only [encodeInsn]
-  rw [if_neg (by decide : ¬ (ZSize.z8 true = ZSize.z16))]
+  rw [ite_eq_right (by decide : ¬ (ZSize.z8 true = ZSize.z16))]
   rw [eGenRmReg_regBase .z64 dst base hd hb disp hlo hhi [byte 0x0F] (byte 0xB6) (some 0)]
   simp [movzxBytes]
 
@@ -1712,13 +1712,13 @@ theorem decode_movzxRM_z16 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
     simp only [decode, decodeNoRex]
     rw [hb0]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
-    simp only [decide_true, Bool.true_and, if_true]
+    simp only [decide_true, Bool.true_and, ite_true]
     rw [show decide (5 ≥ 4) = true from by decide]
     simp only [decodeRex, hb1]
     rw [hb2]
     simp only [Nat.reduceLeDiff, Nat.reduceEqDiff, decide_true, decide_false,
-      Bool.true_and, Bool.false_eq_true, if_false]
-    simp only [movzxBytes, if_true, List.cons_append, List.nil_append]
+      Bool.true_and, Bool.false_eq_true, ite_false]
+    simp only [movzxBytes, ite_true, List.cons_append, List.nil_append]
     rw [parseRM_shift]
     rw [hpm']
     simp only [baseOfRM]
@@ -1749,14 +1749,14 @@ theorem decode_movzxRM_z16 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
     simp only [decode, decodeNoRex]
     rw [hb0]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
-    simp only [decide_true, Bool.true_and, if_true]
+    simp only [decide_true, Bool.true_and, ite_true]
     rw [show decide (4 ≥ 4) = true from by decide,
         show decide (0 = 1) = false from by decide]
     simp only [decodeRex, hb1]
     rw [hb2]
     simp only [Nat.reduceLeDiff, Nat.reduceEqDiff, decide_true, decide_false,
-      Bool.true_and, Bool.false_eq_true, if_false]
-    simp only [movzxBytes, if_true, List.cons_append, List.nil_append]
+      Bool.true_and, Bool.false_eq_true, ite_false]
+    simp only [movzxBytes, ite_true, List.cons_append, List.nil_append]
     rw [parseRM_shift]
     rw [hpm']
     simp only [baseOfRM]
@@ -1787,13 +1787,13 @@ theorem decode_movzxRM_z16 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
     simp only [decode, decodeNoRex]
     rw [hb0]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
-    simp only [decide_true, Bool.true_and, if_true]
+    simp only [decide_true, Bool.true_and, ite_true]
     rw [show decide (1 ≥ 4) = false from by decide]
     simp only [decodeRex, hb1]
     rw [hb2]
     simp only [Nat.reduceLeDiff, Nat.reduceEqDiff, decide_true, decide_false,
-      Bool.true_and, Bool.false_eq_true, if_false]
-    simp only [movzxBytes, if_true, List.cons_append, List.nil_append]
+      Bool.true_and, Bool.false_eq_true, ite_false]
+    simp only [movzxBytes, ite_true, List.cons_append, List.nil_append]
     rw [parseRM_shift]
     rw [hpm']
     simp only [baseOfRM]
@@ -1824,14 +1824,14 @@ theorem decode_movzxRM_z16 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
     simp only [decode, decodeNoRex]
     rw [hb0]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
-    simp only [decide_true, Bool.true_and, if_true]
+    simp only [decide_true, Bool.true_and, ite_true]
     rw [show decide (0 ≥ 4) = false from by decide,
         show decide (0 = 1) = false from by decide]
     simp only [decodeRex, hb1]
     rw [hb2]
     simp only [Nat.reduceLeDiff, Nat.reduceEqDiff, decide_true, decide_false,
-      Bool.true_and, Bool.false_eq_true, if_false]
-    simp only [movzxBytes, if_true, List.cons_append, List.nil_append]
+      Bool.true_and, Bool.false_eq_true, ite_false]
+    simp only [movzxBytes, ite_true, List.cons_append, List.nil_append]
     rw [parseRM_shift]
     rw [hpm']
     simp only [baseOfRM]
@@ -1873,13 +1873,13 @@ theorem decode_movzxRM_z8 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
     simp only [decode, decodeNoRex]
     rw [hb0]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
-    simp only [decide_true, Bool.true_and, if_true]
+    simp only [decide_true, Bool.true_and, ite_true]
     rw [show decide (5 ≥ 4) = true from by decide]
     simp only [decodeRex, hb1]
     rw [hb2]
     simp only [Nat.reduceLeDiff, Nat.reduceEqDiff, decide_true, decide_false,
-      Bool.true_and, Bool.false_eq_true, if_false]
-    simp only [movzxBytes, if_true, List.cons_append, List.nil_append]
+      Bool.true_and, Bool.false_eq_true, ite_false]
+    simp only [movzxBytes, ite_true, List.cons_append, List.nil_append]
     rw [parseRM_shift]
     rw [hpm']
     simp only [baseOfRM]
@@ -1910,14 +1910,14 @@ theorem decode_movzxRM_z8 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
     simp only [decode, decodeNoRex]
     rw [hb0]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
-    simp only [decide_true, Bool.true_and, if_true]
+    simp only [decide_true, Bool.true_and, ite_true]
     rw [show decide (4 ≥ 4) = true from by decide,
         show decide (0 = 1) = false from by decide]
     simp only [decodeRex, hb1]
     rw [hb2]
     simp only [Nat.reduceLeDiff, Nat.reduceEqDiff, decide_true, decide_false,
-      Bool.true_and, Bool.false_eq_true, if_false]
-    simp only [movzxBytes, if_true, List.cons_append, List.nil_append]
+      Bool.true_and, Bool.false_eq_true, ite_false]
+    simp only [movzxBytes, ite_true, List.cons_append, List.nil_append]
     rw [parseRM_shift]
     rw [hpm']
     simp only [baseOfRM]
@@ -1948,13 +1948,13 @@ theorem decode_movzxRM_z8 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
     simp only [decode, decodeNoRex]
     rw [hb0]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
-    simp only [decide_true, Bool.true_and, if_true]
+    simp only [decide_true, Bool.true_and, ite_true]
     rw [show decide (1 ≥ 4) = false from by decide]
     simp only [decodeRex, hb1]
     rw [hb2]
     simp only [Nat.reduceLeDiff, Nat.reduceEqDiff, decide_true, decide_false,
-      Bool.true_and, Bool.false_eq_true, if_false]
-    simp only [movzxBytes, if_true, List.cons_append, List.nil_append]
+      Bool.true_and, Bool.false_eq_true, ite_false]
+    simp only [movzxBytes, ite_true, List.cons_append, List.nil_append]
     rw [parseRM_shift]
     rw [hpm']
     simp only [baseOfRM]
@@ -1985,14 +1985,14 @@ theorem decode_movzxRM_z8 (dst base : Nat) (hd : dst < 16) (hb : base < 16)
     simp only [decode, decodeNoRex]
     rw [hb0]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
-    simp only [decide_true, Bool.true_and, if_true]
+    simp only [decide_true, Bool.true_and, ite_true]
     rw [show decide (0 ≥ 4) = false from by decide,
         show decide (0 = 1) = false from by decide]
     simp only [decodeRex, hb1]
     rw [hb2]
     simp only [Nat.reduceLeDiff, Nat.reduceEqDiff, decide_true, decide_false,
-      Bool.true_and, Bool.false_eq_true, if_false]
-    simp only [movzxBytes, if_true, List.cons_append, List.nil_append]
+      Bool.true_and, Bool.false_eq_true, ite_false]
+    simp only [movzxBytes, ite_true, List.cons_append, List.nil_append]
     rw [parseRM_shift]
     rw [hpm']
     simp only [baseOfRM]
@@ -2017,7 +2017,7 @@ theorem encodeInsn_lea (dst : Nat) (hd : dst < 16) (disp : BitVec 64)
     (hlo : -(2^31 : Int) ≤ disp.toInt) (hhi : disp.toInt < 2^31) :
     encodeInsn (.lea .z64 dst disp) = leaBytes dst disp := by
   simp only [encodeInsn, eGenRmReg, eModRM, eImm32, eOpsize, rexPrefix, mkRex]
-  rw [if_pos ⟨hlo, by omega⟩]
+  rw [ite_eq_left ⟨hlo, by omega⟩]
   by_cases hd8 : 8 ≤ dst
   · have hd8' : dst / 8 = 1 := by omega
     simp [leaBytes, hd8, hd8', byte, Nat.mod_eq_of_lt (by omega)]
@@ -2052,11 +2052,11 @@ theorem decode_lea (dst : Nat) (hd : dst < 16) (disp : BitVec 64)
     simp only [decode, decodeNoRex]
     rw [hb0]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
-    simp only [decide_true, Bool.true_and, if_true]
+    simp only [decide_true, Bool.true_and, ite_true]
     rw [show decide (4 ≥ 4) = true from by decide,
         show decide (0 = 1) = false from by decide]
     simp only [decodeRex, hb1]
-    simp only [leaBytes, if_true]
+    simp only [leaBytes, ite_true]
     rw [hpm]
     simp only [Option.some.injEq, Prod.mk.injEq, X64Insn.lea.injEq, true_and, and_true]
     have hsrc : 8 + dst % 8 = dst := by
@@ -2078,7 +2078,7 @@ theorem decode_lea (dst : Nat) (hd : dst < 16) (disp : BitVec 64)
     simp only [decode, decodeNoRex]
     rw [hb0]
     simp only [Nat.reduceMod, Nat.reduceLeDiff]
-    simp only [decide_true, Bool.true_and, if_true]
+    simp only [decide_true, Bool.true_and, ite_true]
     rw [show decide (0 ≥ 4) = false from by decide,
         show decide (0 = 1) = false from by decide]
     simp only [decodeRex, hb1]
@@ -2095,7 +2095,7 @@ theorem eImm32_eq (imm : BitVec 64)
     eImm32 imm = some [byte imm.toNat, byte (imm.toNat / 256), byte (imm.toNat / 65536),
       byte (imm.toNat / 16777216)] := by
   simp only [eImm32]
-  rw [if_pos ⟨hlo, by omega⟩]
+  rw [ite_eq_left ⟨hlo, by omega⟩]
 
 theorem decode_jcc_always (imm : BitVec 64)
     (hlo : -(2^31 : Int) ≤ imm.toInt) (hhi : imm.toInt < 2^31) :
@@ -2103,7 +2103,7 @@ theorem decode_jcc_always (imm : BitVec 64)
       some (.jcc .zAlways imm, 5) := by
   simp only [encodeInsn]
   rw [eImm32_eq imm hlo hhi]
-  simp only [if_true]
+  simp only [ite_true]
   have hr : ∀ j, j < 4 → byteListReader [byte 0xE9, byte imm.toNat, byte (imm.toNat / 256),
       byte (imm.toNat / 65536), byte (imm.toNat / 16777216)] (1 + j) =
       byte (imm.toNat / 2^(8*j)) := by
@@ -2125,7 +2125,7 @@ theorem eImm8_32_eq_four (imm : BitVec 64)
     eImm8_32 imm = some (4, [byte imm.toNat, byte (imm.toNat / 256), byte (imm.toNat / 65536),
       byte (imm.toNat / 16777216)]) := by
   unfold eImm8_32
-  rw [show eImm8 imm = none from by unfold eImm8; rw [if_neg hnos]]
+  rw [show eImm8 imm = none from by unfold eImm8; rw [ite_eq_right hnos]]
   rw [eImm32_eq imm hlo hhi]
 
 theorem condOfCode_code (cond : ZCond) (h : cond ≠ .zAlways) : condOfCode cond.code = some cond := by
@@ -2137,7 +2137,7 @@ theorem decode_jcc_long_other (cond : ZCond) (hne : cond ≠ .zAlways) (hneP : c
     decode (byteListReader (encodeInsn (.jcc cond imm))) =
       some (.jcc cond imm, 6) := by
   simp only [encodeInsn]
-  rw [if_neg hne, if_neg hneP, eImm32_eq imm hlo hhi]
+  rw [ite_eq_right hne, ite_eq_right hneP, eImm32_eq imm hlo hhi]
   simp only [List.cons_append, List.nil_append]
   have hcode : cond.code < 16 := by
     cases cond <;> first | decide | (exact absurd rfl hne)
@@ -2174,7 +2174,7 @@ theorem decode_jcc_long_other (cond : ZCond) (hne : cond ≠ .zAlways) (hneP : c
   have h2 : 128 + cond.code ≤ 143 := by omega
   rw [show decide (128 ≤ 128 + cond.code) = true from by simp [h1],
       show decide (128 + cond.code ≤ 143) = true from by simp [h2]]
-  simp only [Bool.true_and, if_true]
+  simp only [Bool.true_and, ite_true]
   rw [show 128 + cond.code - 128 = cond.code from by omega]
   simp only [condOfCode_code cond hne]
   rw [himm]
@@ -2186,7 +2186,7 @@ theorem decode_jcc_zP_short (imm : BitVec 64)
       some (.jcc .zP imm, 2) := by
   have h8 : eImm8_32 imm = some (1, [byte imm.toNat]) := by
     unfold eImm8_32
-    rw [show eImm8 imm = some [byte imm.toNat] from by unfold eImm8; rw [if_pos hs]]
+    rw [show eImm8 imm = some [byte imm.toNat] from by unfold eImm8; rw [ite_eq_left hs]]
   have henc : encodeInsn (.jcc .zP imm) = [byte 0x7A, byte imm.toNat] := by
     simp only [encodeInsn, h8]
     rfl
@@ -2247,7 +2247,7 @@ theorem decode_jcc_zP_long (imm : BitVec 64)
   have h2 : 128 + ZCond.zP.code ≤ 143 := by omega
   rw [show decide (128 ≤ 128 + ZCond.zP.code) = true from by simp [h1],
       show decide (128 + ZCond.zP.code ≤ 143) = true from by simp [h2]]
-  simp only [Bool.true_and, if_true]
+  simp only [Bool.true_and, ite_true]
   rw [show 128 + ZCond.zP.code - 128 = ZCond.zP.code from by omega]
   simp only [condOfCode_code ZCond.zP (by decide)]
   rw [himm]
@@ -2266,9 +2266,9 @@ theorem encodeInsn_binopRI_83 (op : ZBinopName) (dst : Nat) (hd : dst < 16) (imm
   have hop : op = .zadd ∨ op = .zor ∨ op = .zadc ∨ op = .zsbb ∨ op = .zand ∨
       op = .zsub ∨ op = .zxor ∨ op = .zcmp := by
     cases op <;> simp_all [ZBinopName.code]
-  have h8 : eImm8 imm = some [byte imm.toNat] := by unfold eImm8; rw [if_pos hs]
+  have h8 : eImm8 imm = some [byte imm.toNat] := by unfold eImm8; rw [ite_eq_left hs]
   rcases hop with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;> interval_cases dst <;>
-    simp only [encodeInsn, h8, Option.isSome_some, Bool.true_and, if_true,
+    simp only [encodeInsn, h8, Option.isSome_some, Bool.true_and, ite_true,
       ZBinopName.code, notByte, isRax, eRmImm8, eModRM, eOpsize, rexPrefix, mkRex, byte,
       binopRI83Bytes] <;>
     rfl
@@ -2356,9 +2356,9 @@ theorem encodeInsn_binopRI_C1 (op : ZBinopName) (dst : Nat) (hd : dst < 16) (imm
     (hop : op = .zror ∨ op = .zshl ∨ op = .zshr ∨ op = .zsar) (hne : imm ≠ 1)
     (hs : -128 ≤ imm.toInt ∧ imm.toInt ≤ 127) :
     encodeInsn (.binopRI op .z64 dst imm) = binopRIC1Bytes op.code dst imm := by
-  have h8 : eImm8 imm = some [byte imm.toNat] := by unfold eImm8; rw [if_pos hs]
+  have h8 : eImm8 imm = some [byte imm.toNat] := by unfold eImm8; rw [ite_eq_left hs]
   rcases hop with rfl|rfl|rfl|rfl <;> interval_cases dst <;>
-    simp only [encodeInsn, h8, if_neg hne, ZBinopName.code, notByte,
+    simp only [encodeInsn, h8, ite_eq_right hne, ZBinopName.code, notByte,
       eRmImm8, eModRM, eOpsize, rexPrefix, mkRex, byte, binopRIC1Bytes] <;>
     rfl
 
@@ -2418,15 +2418,15 @@ theorem encodeInsn_binopRI_81 (op : ZBinopName) (dst : Nat) (hd : dst < 16) (imm
     (hns : ¬ (-128 ≤ imm.toInt ∧ imm.toInt ≤ 127)) (hne : dst ≠ 0)
     (hlo : -(2^31 : Int) ≤ imm.toInt) (hhi : imm.toInt < 2^31) :
     encodeInsn (.binopRI op .z64 dst imm) = binopRI81Bytes op.code dst imm := by
-  have h8 : eImm8 imm = none := by unfold eImm8; rw [if_neg hns]
+  have h8 : eImm8 imm = none := by unfold eImm8; rw [ite_eq_right hns]
   have h32 := eImm32_eq imm hlo hhi
   have his : (eImm8 imm).isSome = false := by rw [h8]; rfl
   have hnt := binopOp_ne_test op hop
   have hnsh := binopOp_ne_shift op hop
   simp only [encodeInsn]
-  rw [if_neg hnt, if_neg hnsh]
+  rw [ite_eq_right hnt, ite_eq_right hnsh]
   rw [his]
-  simp only [Bool.and_false, Bool.false_eq_true, if_false]
+  simp only [Bool.and_false, Bool.false_eq_true, ite_false]
   rcases hop with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;> interval_cases dst
   all_goals
     first
@@ -2440,15 +2440,15 @@ theorem encodeInsn_binopRI_rax (op : ZBinopName) (imm : BitVec 64)
     (hns : ¬ (-128 ≤ imm.toInt ∧ imm.toInt ≤ 127))
     (hlo : -(2^31 : Int) ≤ imm.toInt) (hhi : imm.toInt < 2^31) :
     encodeInsn (.binopRI op .z64 0 imm) = binopRIRaxBytes op.code imm := by
-  have h8 : eImm8 imm = none := by unfold eImm8; rw [if_neg hns]
+  have h8 : eImm8 imm = none := by unfold eImm8; rw [ite_eq_right hns]
   have h32 := eImm32_eq imm hlo hhi
   have his : (eImm8 imm).isSome = false := by rw [h8]; rfl
   have hnt := binopOp_ne_test op hop
   have hnsh := binopOp_ne_shift op hop
   simp only [encodeInsn]
-  rw [if_neg hnt, if_neg hnsh]
+  rw [ite_eq_right hnt, ite_eq_right hnsh]
   rw [his]
-  simp only [Bool.and_false, Bool.false_eq_true, if_false]
+  simp only [Bool.and_false, Bool.false_eq_true, ite_false]
   rcases hop with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
     simp [h32, eRaxImm, eOpsizeImm, eOpsize, rexPrefix, byte,
       binopRIRaxBytes, isRax, ZBinopName.code]
@@ -2786,19 +2786,19 @@ theorem encodeInsn_movDQ (toXmm quad : Bool) (xmm gpr : Nat) (hx : xmm < 16) (hg
     cases toXmm
     case false =>
       simp only [encodeInsn, encodeSSE, movDQBytes, sseRex, modrmB,
-        Bool.false_eq_true, if_false]
+        Bool.false_eq_true, ite_false]
       rw [eGenRmReg_xmm xmm gpr hx hg [byte 0x0F] (byte 0x7E) (some 0)]
       interval_cases xmm <;> interval_cases gpr <;> rfl
     case true =>
       simp only [encodeInsn, encodeSSE, movDQBytes, sseRex, modrmB, reduceIte,
-        Bool.false_eq_true, if_false]
+        Bool.false_eq_true, ite_false]
       rw [eGenRmReg_xmm xmm gpr hx hg [byte 0x0F] (byte 0x6E) (some 0)]
       interval_cases xmm <;> interval_cases gpr <;> rfl
   case true =>
     cases toXmm
     case false =>
       simp only [encodeInsn, encodeSSE, movDQBytes, sseRex, modrmB, reduceIte,
-        Bool.false_eq_true, if_false]
+        Bool.false_eq_true, ite_false]
       rw [eGenRmReg_xmm64 xmm gpr hx hg [byte 0x0F] (byte 0x7E) (some 0)]
       interval_cases xmm <;> interval_cases gpr <;> rfl
     case true =>

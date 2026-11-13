@@ -131,14 +131,14 @@ theorem globalsRel_set_init (reachable : NumSet) (source target : List (Option F
     by_cases eq : n = index
     · subst n
       simpa [Flapjack.holEl_set, sourceBound, targetBound] using found
-    · simp only [Flapjack.holEl_set _ _ _ _ targetBound, if_neg (Ne.symm eq)] at found
+    · simp only [Flapjack.holEl_set _ _ _ _ targetBound, ite_eq_right (Ne.symm eq)] at found
       simpa [Flapjack.holEl_set, sourceBound, Ne.symm eq] using present n v ⟨bound, found⟩
   · intro n ⟨bound, isEmpty⟩
     simp only [List.length_set] at bound
     by_cases eq : n = index
     · subst n
       simp [Flapjack.holEl_set, sourceBound] at isEmpty
-    · simp only [Flapjack.holEl_set _ _ _ _ sourceBound, if_neg (Ne.symm eq)] at isEmpty
+    · simp only [Flapjack.holEl_set _ _ _ _ sourceBound, ite_eq_right (Ne.symm eq)] at isEmpty
       simpa [Flapjack.holEl_set, targetBound, Ne.symm eq] using empty n ⟨bound, isEmpty⟩
   · intro n v ⟨reachableN, bound, found⟩
     simp only [List.length_set] at bound
@@ -147,7 +147,7 @@ theorem globalsRel_set_init (reachable : NumSet) (source target : List (Option F
       simp [Flapjack.holEl_set, targetBound] at found
       subst v
       exact ⟨safe, closed⟩
-    · simp only [Flapjack.holEl_set _ _ _ _ targetBound, if_neg (Ne.symm eq)] at found
+    · simp only [Flapjack.holEl_set _ _ _ _ targetBound, ite_eq_right (Ne.symm eq)] at found
       exact contents n v ⟨reachableN, bound, found⟩
 
 /-- In-bounds HOL list selection agrees with the evaluator's optional lookup.

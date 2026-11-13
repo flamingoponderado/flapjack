@@ -99,7 +99,7 @@ theorem arm8Run_logicalShiftedRegister (opc : LogicalOp) (rm rn rd : BitVec 5)
         | .LogicalOp_ORR => X (TN := 64) rn st ||| X (TN := 64) rm st
         | .LogicalOp_EOR => X (TN := 64) rn st ^^^ X (TN := 64) rm st), rd) st := by
   simp only [Run, «dfn'LogicalShiftedRegister», SetTheFlags, ShiftReg, ShiftValue,
-    BitVec.shiftLeft_zero, Bool.false_eq_true, if_false]
+    BitVec.shiftLeft_zero, Bool.false_eq_true, ite_false]
   rfl
 
 
@@ -201,7 +201,7 @@ theorem arm8Run_logicalShiftedRegister_inv (opc : LogicalOp) (rm rn rd : BitVec 
         | .LogicalOp_ORR => X (TN := 64) rn st ||| ~~~X (TN := 64) rm st
         | .LogicalOp_EOR => X (TN := 64) rn st ^^^ ~~~X (TN := 64) rm st), rd) st := by
   simp only [Run, «dfn'LogicalShiftedRegister», SetTheFlags, ShiftReg, ShiftValue,
-    BitVec.shiftLeft_zero, Bool.false_eq_true, if_true, if_false]
+    BitVec.shiftLeft_zero, Bool.false_eq_true, ite_true, ite_false]
   rfl
 
 /-- `Encode` of the inverted-`ORR`-against-zero-register lowering is the
@@ -268,8 +268,8 @@ theorem arm8_encoder_correct_binop_xor_neg (destination source : Nat) (value : B
         Flapjack.Compiler.Encoders.AsmSem.readReg, Flapjack.Compiler.Encoders.AsmSem.regImm,
         hreg source ⟨hslt, hsav⟩]
       by_cases hk : k = destination
-      · rw [if_pos hk, if_pos hk]
+      · rw [ite_eq_left hk, ite_eq_left hk]
         exact BitVec.xor_allOnes
-      · rw [if_neg hk, if_neg hk]
+      · rw [ite_eq_right hk, ite_eq_right hk]
 
 end Flapjack.Compiler.Encoders.Arm8.L3

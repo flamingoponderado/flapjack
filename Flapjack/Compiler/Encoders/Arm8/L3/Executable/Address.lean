@@ -69,7 +69,7 @@ theorem arm8EncodeBytes_address_bad (imm : BitVec 64) (rd : BitVec 5)
     rw [beq_eq_false_iff_ne]
     intro h
     exact hl3 h
-  simp only [arm8Encode, Encode, Bool.false_eq_true, if_false, hc]
+  simp only [arm8Encode, Encode, Bool.false_eq_true, ite_false, hc]
 
 /-- An `Address` encodes to the same four bytes on both sides, at every offset. -/
 theorem encodeBytes_address (imm : BitVec 64) (rd : Nat) :
@@ -79,7 +79,7 @@ theorem encodeBytes_address (imm : BitVec 64) (rd : Nat) :
   · have hw : encodeInsn32 (.address false imm rd) =
         some (fields [(1, 0), (2, imm.toNat % 4), (5, 16),
           (19, (imm >>> 2).toNat % 2 ^ 19), (5, rd)]) := by
-      simp only [encodeInsn32, Bool.false_eq_true, if_false, hf, if_true]
+      simp only [encodeInsn32, Bool.false_eq_true, ite_false, hf, ite_true]
     rw [encodeBytes_eq_of_encodeInsn32 _ _ hw, fields_address]
     exact (arm8EncodeBytes_address imm (BitVec.ofNat 5 rd)
       ((addressGuard_iff imm).mp hf)).symm

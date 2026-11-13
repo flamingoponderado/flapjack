@@ -89,14 +89,14 @@ theorem evaluateApp_addClock_ioEvents_step {C F : Type} (location : Option Nat) 
             let cost := (first :: rest).length - remaining.length
             have positive : 0 < cost := Nat.sub_pos_of_lt remainingLt
             by_cases short : state.clock < cost
-            · rw [if_pos short] at sourceRun
+            · rw [ite_eq_left short] at sourceRun
               simp at sourceRun
               rcases sourceRun with ⟨_, rfl⟩
               cases targetRun : evaluateApp location function (first :: rest) { state with clock := state.clock + extra } with
               | mk targetResult targetFinal =>
                 simpa using evaluate_ioEvents_prefix.2 location function (first :: rest)
                   { state with clock := state.clock + extra } targetFinal targetResult targetRun
-            · rw [if_neg short, fixClock_evaluate] at sourceRun
+            · rw [ite_eq_right short, fixClock_evaluate] at sourceRun
               have smaller : (decClock cost state).clock < state.clock := by simp [decClock]; omega
               have shifted : decClock cost { state with clock := state.clock + extra } =
                   { decClock cost state with clock := (decClock cost state).clock + extra } := by

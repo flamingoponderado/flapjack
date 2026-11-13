@@ -130,7 +130,7 @@ theorem wordGcMove_forward {width : Nat} [NeZero width] (conf : Config)
       ptrToAddr_getAddr conf curr ptr value bound
   simp only [CopyingGc.gcMove, found, Prod.mk.injEq] at abstractRun
   obtain ⟨rfl, rfl, rfl, rfl, rfl, _⟩ := abstractRun
-  simp only [wordAddr, wordGcMove, if_neg low, addr, read.1, read.2,
+  simp only [wordAddr, wordGcMove, ite_eq_right low, addr, read.1, read.2,
     shiftedForward_isForward, ↓reduceIte, wordSemTheWord, Prod.mk.injEq] at wordRun
   obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := wordRun
   refine ⟨xs, ?_, ?_, rfl, rfl, rfl, length.symm, ?_⟩

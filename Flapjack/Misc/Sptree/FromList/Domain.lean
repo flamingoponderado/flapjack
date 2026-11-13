@@ -3,7 +3,11 @@ module
 public import Flapjack.Misc.Sptree.FromList
 public import Mathlib.Data.List.Induction
 public import Lean.Elab.Tactic.Omega
-public import Mathlib.Data.Set.Lattice
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Mathlib.Data.Set.Lattice.Disjoint
+public import Mathlib.Data.Set.Lattice.Image
+public import Mathlib.Data.Set.Lattice.Indexed
+public import Mathlib.Data.Set.Lattice.Order
 
 @[expose] public section
 

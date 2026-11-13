@@ -90,7 +90,7 @@ theorem arm8Run_logicalShiftedRegister_ands_eq (rm rn : BitVec 5) (st : arm8_sta
             C := false,
             V := false } } := by
   simp only [Run, «dfn'LogicalShiftedRegister», SetTheFlags, ShiftReg, ShiftValue,
-    BitVec.shiftLeft_zero, «write'X», if_true, Bool.false_eq_true]
+    BitVec.shiftLeft_zero, «write'X», ite_true, Bool.false_eq_true]
   rfl
 
 /-- One `arm8Next` step on the `ANDS` compare word: the flags come from the
@@ -156,7 +156,7 @@ theorem arm8Run_addSubShiftedRegister_setflags_xzr_eq (rm rn : BitVec 5) (st : a
   dsimp only
   rw [arm8WriteX_xzr]
   have hz : BitVec.toNat (0 : BitVec 6) = 0 := by decide
-  simp only [SetTheFlags, ShiftReg, ShiftValue, if_true, hz, BitVec.shiftLeft_zero]
+  simp only [SetTheFlags, ShiftReg, ShiftValue, ite_true, hz, BitVec.shiftLeft_zero]
 
 /-- One `arm8Next` step on the `SUBS` compare word: the flags come from
 `Rn - Rm`, the destination is `XZR`, and `PC` advances by four. -/
@@ -443,7 +443,7 @@ theorem arm8Enc_jumpCmp_reg_test (cmp : Cmp) (r t : Nat) (a : BitVec 64)
        BitVec.ofNat 8 ((arm8BranchCondWord (holWordExtract 19 20 2 (a - 4))
           (arm8CmpCond cmp) >>> 24).toNat)] := by
   rw [arm8Enc_jumpCmp_reg]
-  rw [if_pos hT]
+  rw [ite_eq_left hT]
   rw [arm8EncodeBytes_logicalShiftedRegister_ands,
     arm8EncodeBytes_branchConditional _ _ hround]
   rfl
@@ -472,7 +472,7 @@ theorem arm8Enc_jumpCmp_reg_ord (cmp : Cmp) (r t : Nat) (a : BitVec 64)
        BitVec.ofNat 8 ((arm8BranchCondWord (holWordExtract 19 20 2 (a - 4))
           (arm8CmpCond cmp) >>> 24).toNat)] := by
   rw [arm8Enc_jumpCmp_reg]
-  rw [if_neg (by simp [hNT])]
+  rw [ite_eq_right (by simp [hNT])]
   rw [arm8EncodeBytes_addSubShiftedRegister,
     arm8EncodeBytes_branchConditional _ _ hround]
   rfl
@@ -551,12 +551,12 @@ theorem arm8Next_branchConditional_agree (d : BitVec 64 → Prop)
   by_cases hc : ConditionHolds cd s = true
   · have hct : ConditionHolds cd t = true := by
       rw [← arm8ConditionHolds_congr cd h.pstate]; exact hc
-    rw [if_pos hc, if_pos hct]
+    rw [ite_eq_left hc, ite_eq_left hct]
     exact ⟨by rw [h.pc], h.reg, h.pstate, h.sctlr, h.tcr, h.exc, fun a ha => h.mem a ha⟩
   · have hcs : ConditionHolds cd s = false := Bool.eq_false_iff.mpr hc
     have hct : ConditionHolds cd t = false := by
       rw [← arm8ConditionHolds_congr cd h.pstate]; exact hcs
-    rw [if_neg hc, if_neg (by rw [hct]; simp)]
+    rw [ite_eq_right hc, ite_eq_right (by rw [hct]; simp)]
     exact ⟨by rw [h.pc], h.reg, h.pstate, h.sctlr, h.tcr, h.exc, fun a ha => h.mem a ha⟩
 
 /-- The conditional-branch step leaves memory unchanged. -/
@@ -672,7 +672,7 @@ theorem arm8_encoder_correct_jumpCmp_reg (cmp : Cmp) (r t : Nat) (a : BitVec 64)
     · rw [hT1pc]; exact h4
   have hn1 : arm8Next ms = T1 := by
     by_cases htest : isTest cmp = true
-    · dsimp only [T1]; rw [if_pos htest]
+    · dsimp only [T1]; rw [ite_eq_left htest]
       rw [arm8Enc_jumpCmp_reg_test cmp r t a htest hround] at hbyte
       have hb0 : ms.MEM ms.PC = BitVec.ofNat 8
           ((arm8LogicalShiftedRegisterWord (3 : BitVec 2) false ShiftType.lsl 0
@@ -693,7 +693,7 @@ theorem arm8_encoder_correct_jumpCmp_reg (cmp : Cmp) (r t : Nat) (a : BitVec 64)
       exact arm8Next_logicalShiftedRegister_ands ms (BitVec.ofNat 5 t) (BitVec.ofNat 5 r)
         hexc0 hb0 hb1 hb2 hb3 hal he0 hel
     · have hNT : isTest cmp = false := Bool.eq_false_iff.mpr htest
-      dsimp only [T1]; rw [if_neg htest]
+      dsimp only [T1]; rw [ite_eq_right htest]
       rw [arm8Enc_jumpCmp_reg_ord cmp r t a hNT hround] at hbyte
       have hb0 : ms.MEM ms.PC = BitVec.ofNat 8
           ((arm8AddSubShiftedRegisterWord true true ShiftType.lsl
@@ -716,12 +716,12 @@ theorem arm8_encoder_correct_jumpCmp_reg (cmp : Cmp) (r t : Nat) (a : BitVec 64)
   have hcond : ConditionHolds (arm8CmpCond cmp) T1 =
       wordCmpHOL cmp (ms.REG (BitVec.ofNat 5 r)) (ms.REG (BitVec.ofNat 5 t)) := by
     by_cases htest : isTest cmp = true
-    · dsimp only [T1]; rw [if_pos htest]
+    · dsimp only [T1]; rw [ite_eq_left htest]
       unfold ConditionHolds
       rw [arm8X_of_valid ms hsrc31 hsrc, arm8X_of_valid ms hrt31 hrt]
       exact arm8AndCmp_semantics cmp _ _ htest
     · have hNT : isTest cmp = false := Bool.eq_false_iff.mpr htest
-      dsimp only [T1]; rw [if_neg htest]
+      dsimp only [T1]; rw [ite_eq_right htest]
       unfold ConditionHolds
       rw [arm8X_of_valid ms hsrc31 hsrc, arm8X_of_valid ms hrt31 hrt]
       exact arm8SubCmp_semantics cmp _ _ hNT
@@ -808,25 +808,25 @@ theorem arm8_encoder_correct_jumpCmp_reg (cmp : Cmp) (r t : Nat) (a : BitVec 64)
     by_cases hc : ConditionHolds (arm8CmpCond cmp) T1 = true
     · have hwt : wordCmpHOL cmp (Flapjack.Compiler.Encoders.AsmSem.readReg r s1)
           (Flapjack.Compiler.Encoders.AsmSem.regImm (.reg t) s1) = true := by rw [hw, hc]
-      rw [hs2, if_pos hwt]; simp [jumpToOffset, updPc]
+      rw [hs2, ite_eq_left hwt]; simp [jumpToOffset, updPc]
     · have hcs : ConditionHolds (arm8CmpCond cmp) T1 = false := Bool.eq_false_iff.mpr hc
       have hwf : wordCmpHOL cmp (Flapjack.Compiler.Encoders.AsmSem.readReg r s1)
           (Flapjack.Compiler.Encoders.AsmSem.regImm (.reg t) s1) = false := by rw [hw, hcs]
-      rw [hs2, if_neg (by rw [hwf]; simp)]; simp [updPc]
+      rw [hs2, ite_eq_right (by rw [hwf]; simp)]; simp [updPc]
   have hq : targetStateRel arm8TargetL3 s2 T2 := by
     by_cases hc : ConditionHolds (arm8CmpCond cmp) T1 = true
     · have hwt : wordCmpHOL cmp (Flapjack.Compiler.Encoders.AsmSem.readReg r s1)
           (Flapjack.Compiler.Encoders.AsmSem.regImm (.reg t) s1) = true := by rw [hw, hc]
       have hs2pc : s2.pc = s1.pc + a := by
-        rw [hs2, if_pos hwt]; simp [jumpToOffset, updPc]
+        rw [hs2, ite_eq_left hwt]; simp [jumpToOffset, updPc]
       have hs2mem : ∀ x, s2.mem x = s1.mem x := by
-        rw [hs2, if_pos hwt]; intro x; simp [jumpToOffset, updPc]
+        rw [hs2, ite_eq_left hwt]; intro x; simp [jumpToOffset, updPc]
       have hs2dom : s2.memDomain = s1.memDomain := by
-        rw [hs2, if_pos hwt]; simp [jumpToOffset, updPc]
+        rw [hs2, ite_eq_left hwt]; simp [jumpToOffset, updPc]
       have hs2regs : ∀ k, s2.regs k = s1.regs k := by
-        rw [hs2, if_pos hwt]; intro k; simp [jumpToOffset, updPc]
+        rw [hs2, ite_eq_left hwt]; intro k; simp [jumpToOffset, updPc]
       have hT2pc : T2.PC = ms.PC + a := by
-        unfold T2; rw [if_pos hc]
+        unfold T2; rw [ite_eq_left hc]
         show T1.PC + (a - 4) = ms.PC + a
         rw [hT1pc]; bv_omega
       have haAl : holAligned 2 a = true := by
@@ -836,17 +836,17 @@ theorem arm8_encoder_correct_jumpCmp_reg (cmp : Cmp) (r t : Nat) (a : BitVec 64)
       have hT2ok : arm8Ok T2 = true := by
         rw [arm8Ok_iff]
         refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-        · unfold T2; rw [if_pos hc]; show T1.PSTATE.EL = (0 : BitVec 2)
+        · unfold T2; rw [ite_eq_left hc]; show T1.PSTATE.EL = (0 : BitVec 2)
           rw [hT1el]; exact hel
-        · unfold T2; rw [if_pos hc]; show T1.SCTLR_EL1.E0E = false
+        · unfold T2; rw [ite_eq_left hc]; show T1.SCTLR_EL1.E0E = false
           rw [hT1sctlr]; exact he0
-        · unfold T2; rw [if_pos hc]; show T1.SCTLR_EL1.SA0 = false
+        · unfold T2; rw [ite_eq_left hc]; show T1.SCTLR_EL1.SA0 = false
           rw [hT1sctlr]; exact hsa0
-        · unfold T2; rw [if_pos hc]; show T1.TCR_EL1.TBI1 = false
+        · unfold T2; rw [ite_eq_left hc]; show T1.TCR_EL1.TBI1 = false
           rw [hT1tcr]; exact htbi1
-        · unfold T2; rw [if_pos hc]; show T1.TCR_EL1.TBI0 = false
+        · unfold T2; rw [ite_eq_left hc]; show T1.TCR_EL1.TBI0 = false
           rw [hT1tcr]; exact htbi0
-        · unfold T2; rw [if_pos hc]; show T1.exception = exception.NoException
+        · unfold T2; rw [ite_eq_left hc]; show T1.exception = exception.NoException
           exact hT1exc
         · rw [hT2pc]; exact hal2
       refine ⟨hT2ok, ?_, ?_, ?_, ?_⟩
@@ -866,15 +866,15 @@ theorem arm8_encoder_correct_jumpCmp_reg (cmp : Cmp) (r t : Nat) (a : BitVec 64)
       have hwf : wordCmpHOL cmp (Flapjack.Compiler.Encoders.AsmSem.readReg r s1)
           (Flapjack.Compiler.Encoders.AsmSem.regImm (.reg t) s1) = false := by rw [hw, hcs]
       have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64 8 := by
-        rw [hs2, if_neg (by rw [hwf]; simp)]; simp [updPc]
+        rw [hs2, ite_eq_right (by rw [hwf]; simp)]; simp [updPc]
       have hs2mem : ∀ x, s2.mem x = s1.mem x := by
-        rw [hs2, if_neg (by rw [hwf]; simp)]; intro x; simp [updPc]
+        rw [hs2, ite_eq_right (by rw [hwf]; simp)]; intro x; simp [updPc]
       have hs2dom : s2.memDomain = s1.memDomain := by
-        rw [hs2, if_neg (by rw [hwf]; simp)]; simp [updPc]
+        rw [hs2, ite_eq_right (by rw [hwf]; simp)]; simp [updPc]
       have hs2regs : ∀ k, s2.regs k = s1.regs k := by
-        rw [hs2, if_neg (by rw [hwf]; simp)]; intro k; simp [updPc]
+        rw [hs2, ite_eq_right (by rw [hwf]; simp)]; intro k; simp [updPc]
       have hT2pc : T2.PC = ms.PC + 8 := by
-        unfold T2; rw [if_neg hc]
+        unfold T2; rw [ite_eq_right hc]
         show T1.PC + 4 = ms.PC + 8
         rw [hT1pc]; rw [BitVec.add_assoc]; rfl
       have h8 : holAligned 2 (ms.PC + 8) = true := by
@@ -882,17 +882,17 @@ theorem arm8_encoder_correct_jumpCmp_reg (cmp : Cmp) (r t : Nat) (a : BitVec 64)
       have hT2ok : arm8Ok T2 = true := by
         rw [arm8Ok_iff]
         refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-        · unfold T2; rw [if_neg hc]; show T1.PSTATE.EL = (0 : BitVec 2)
+        · unfold T2; rw [ite_eq_right hc]; show T1.PSTATE.EL = (0 : BitVec 2)
           rw [hT1el]; exact hel
-        · unfold T2; rw [if_neg hc]; show T1.SCTLR_EL1.E0E = false
+        · unfold T2; rw [ite_eq_right hc]; show T1.SCTLR_EL1.E0E = false
           rw [hT1sctlr]; exact he0
-        · unfold T2; rw [if_neg hc]; show T1.SCTLR_EL1.SA0 = false
+        · unfold T2; rw [ite_eq_right hc]; show T1.SCTLR_EL1.SA0 = false
           rw [hT1sctlr]; exact hsa0
-        · unfold T2; rw [if_neg hc]; show T1.TCR_EL1.TBI1 = false
+        · unfold T2; rw [ite_eq_right hc]; show T1.TCR_EL1.TBI1 = false
           rw [hT1tcr]; exact htbi1
-        · unfold T2; rw [if_neg hc]; show T1.TCR_EL1.TBI0 = false
+        · unfold T2; rw [ite_eq_right hc]; show T1.TCR_EL1.TBI0 = false
           rw [hT1tcr]; exact htbi0
-        · unfold T2; rw [if_neg hc]; show T1.exception = exception.NoException
+        · unfold T2; rw [ite_eq_right hc]; show T1.exception = exception.NoException
           exact hT1exc
         · rw [hT2pc]; exact h8
       refine ⟨hT2ok, ?_, ?_, ?_, ?_⟩
@@ -1041,7 +1041,7 @@ theorem arm8Run_addSubImmediate_setflags_xzr_eq (imm : BitVec 64) (rn : BitVec 5
   have hb : (rn == BitVec.ofNat 5 31) = false := by
     rw [beq_eq_false_iff_ne]
     exact hrn
-  simp only [Run, «dfn'AddSubImmediate», SetTheFlags, «write'X», hb, Bool.false_eq_true, if_false]
+  simp only [Run, «dfn'AddSubImmediate», SetTheFlags, «write'X», hb, Bool.false_eq_true, ite_false]
   simp
 
 /-- One `arm8Next` step on the set-flags low-immediate compare word: the flags
@@ -1168,7 +1168,7 @@ theorem arm8Enc_jumpCmp_imm_test (cmp : Cmp) (r : Nat) (v a : BitVec 64)
        BitVec.ofNat 8 ((arm8BranchCondWord (holWordExtract 19 20 2 (a - 4))
           (arm8CmpCond cmp) >>> 24).toNat)] := by
   rw [arm8Enc_jumpCmp_imm]
-  rw [if_pos hT]
+  rw [ite_eq_left hT]
   have hcast : (↑r : BitVec 5) = BitVec.ofNat 5 r := rfl
   rw [hcast]
   rw [arm8EncodeBytes_logicalImmediate_ands v (BitVec.ofNat 5 r) 31 N imms immr opc2 hbm hop,
@@ -1200,7 +1200,7 @@ theorem arm8Enc_jumpCmp_imm_low (cmp : Cmp) (r : Nat) (v a : BitVec 64)
        BitVec.ofNat 8 ((arm8BranchCondWord (holWordExtract 19 20 2 (a - 4))
           (arm8CmpCond cmp) >>> 24).toNat)] := by
   rw [arm8Enc_jumpCmp_imm]
-  rw [if_neg (by simp [hNT])]
+  rw [ite_eq_right (by simp [hNT])]
   have hcast : (↑r : BitVec 5) = BitVec.ofNat 5 r := rfl
   rw [hcast]
   rw [arm8EncodeBytes_addSubImmediateS_low true v (BitVec.ofNat 5 r) 31 hlow,
@@ -1232,7 +1232,7 @@ theorem arm8Enc_jumpCmp_imm_high (cmp : Cmp) (r : Nat) (v a : BitVec 64)
        BitVec.ofNat 8 ((arm8BranchCondWord (holWordExtract 19 20 2 (a - 4))
           (arm8CmpCond cmp) >>> 24).toNat)] := by
   rw [arm8Enc_jumpCmp_imm]
-  rw [if_neg (by simp [hNT])]
+  rw [ite_eq_right (by simp [hNT])]
   have hcast : (↑r : BitVec 5) = BitVec.ofNat 5 r := rfl
   rw [hcast]
   rw [arm8EncodeBytes_addSubImmediateS_high true v (BitVec.ofNat 5 r) 31 hne hhigh,
@@ -1400,7 +1400,7 @@ theorem arm8_encoder_correct_jumpCmp_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64)
     · rw [hT1pc]; exact h4
   have hn1 : arm8Next ms = T1 := by
     by_cases htest : isTest cmp = true
-    · dsimp only [T1]; rw [if_pos htest]
+    · dsimp only [T1]; rw [ite_eq_left htest]
       have hsome : (EncodeBitMask v).isSome = true := by
         rw [← arm8ValidImmediate_test cmp v htest]; exact hvalid
       cases hbm : EncodeBitMask v with
@@ -1430,7 +1430,7 @@ theorem arm8_encoder_correct_jumpCmp_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64)
         exact arm8Next_logicalImmediate_ands ms v (BitVec.ofNat 5 r) N imms immr
           (BitVec.ofNat 2 3) hbm hop hexc0 hb0 hb1 hb2 hb3 hal he0 hel
     · have hNT : isTest cmp = false := Bool.eq_false_iff.mpr htest
-      dsimp only [T1]; rw [if_neg htest]
+      dsimp only [T1]; rw [ite_eq_right htest]
       have hwin := arm8ValidImmediate_ord cmp v hNT hvalid
       by_cases hlow : v &&& ~~~(4095 : BitVec 64) = (0 : BitVec 64)
       · have henc := arm8Enc_jumpCmp_imm_low cmp r v a hNT hlow hround
@@ -1485,12 +1485,12 @@ theorem arm8_encoder_correct_jumpCmp_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64)
   have hcond : ConditionHolds (arm8CmpCond cmp) T1 =
       wordCmpHOL cmp (ms.REG (BitVec.ofNat 5 r)) v := by
     by_cases htest : isTest cmp = true
-    · dsimp only [T1]; rw [if_pos htest]
+    · dsimp only [T1]; rw [ite_eq_left htest]
       unfold ConditionHolds
       rw [arm8X_of_valid ms hsrc31 hsrc]
       exact arm8AndCmp_semantics cmp _ _ htest
     · have hNT : isTest cmp = false := Bool.eq_false_iff.mpr htest
-      dsimp only [T1]; rw [if_neg htest]
+      dsimp only [T1]; rw [ite_eq_right htest]
       unfold ConditionHolds
       rw [arm8X_of_valid ms hsrc31 hsrc]
       exact arm8SubCmp_semantics cmp _ _ hNT
@@ -1501,8 +1501,8 @@ theorem arm8_encoder_correct_jumpCmp_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64)
         (arm8Encode (.Branch (.BranchConditional (a - 4, arm8CmpCond cmp)))).getD 0 0 := by
       rw [arm8Enc_jumpCmp_imm]
       by_cases htest : isTest cmp = true
-      · rw [if_pos htest]; simp [arm8Encode_length]
-      · rw [if_neg (by simp [htest])]; simp [arm8Encode_length]
+      · rw [ite_eq_left htest]; simp [arm8Encode_length]
+      · rw [ite_eq_right (by simp [htest])]; simp [arm8Encode_length]
     rw [htail, arm8EncodeBytes_branchConditional _ _ hround]
     simp
   have hbr1 : (arm8Enc (.jumpCmp cmp r (.imm v) a)).getD 5 0 =
@@ -1512,8 +1512,8 @@ theorem arm8_encoder_correct_jumpCmp_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64)
         (arm8Encode (.Branch (.BranchConditional (a - 4, arm8CmpCond cmp)))).getD 1 0 := by
       rw [arm8Enc_jumpCmp_imm]
       by_cases htest : isTest cmp = true
-      · rw [if_pos htest]; simp [arm8Encode_length]
-      · rw [if_neg (by simp [htest])]; simp [arm8Encode_length]
+      · rw [ite_eq_left htest]; simp [arm8Encode_length]
+      · rw [ite_eq_right (by simp [htest])]; simp [arm8Encode_length]
     rw [htail, arm8EncodeBytes_branchConditional _ _ hround]
     simp
   have hbr2 : (arm8Enc (.jumpCmp cmp r (.imm v) a)).getD 6 0 =
@@ -1523,8 +1523,8 @@ theorem arm8_encoder_correct_jumpCmp_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64)
         (arm8Encode (.Branch (.BranchConditional (a - 4, arm8CmpCond cmp)))).getD 2 0 := by
       rw [arm8Enc_jumpCmp_imm]
       by_cases htest : isTest cmp = true
-      · rw [if_pos htest]; simp [arm8Encode_length]
-      · rw [if_neg (by simp [htest])]; simp [arm8Encode_length]
+      · rw [ite_eq_left htest]; simp [arm8Encode_length]
+      · rw [ite_eq_right (by simp [htest])]; simp [arm8Encode_length]
     rw [htail, arm8EncodeBytes_branchConditional _ _ hround]
     simp
   have hbr3 : (arm8Enc (.jumpCmp cmp r (.imm v) a)).getD 7 0 =
@@ -1534,8 +1534,8 @@ theorem arm8_encoder_correct_jumpCmp_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64)
         (arm8Encode (.Branch (.BranchConditional (a - 4, arm8CmpCond cmp)))).getD 3 0 := by
       rw [arm8Enc_jumpCmp_imm]
       by_cases htest : isTest cmp = true
-      · rw [if_pos htest]; simp [arm8Encode_length]
-      · rw [if_neg (by simp [htest])]; simp [arm8Encode_length]
+      · rw [ite_eq_left htest]; simp [arm8Encode_length]
+      · rw [ite_eq_right (by simp [htest])]; simp [arm8Encode_length]
     rw [htail, arm8EncodeBytes_branchConditional _ _ hround]
     simp
   have hbB0 : T1.MEM T1.PC = BitVec.ofNat 8 ((arm8BranchCondWord
@@ -1597,25 +1597,25 @@ theorem arm8_encoder_correct_jumpCmp_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64)
     by_cases hc : ConditionHolds (arm8CmpCond cmp) T1 = true
     · have hwt : wordCmpHOL cmp (Flapjack.Compiler.Encoders.AsmSem.readReg r s1)
           (Flapjack.Compiler.Encoders.AsmSem.regImm (.imm v) s1) = true := by rw [hw, hc]
-      rw [hs2, if_pos hwt]; simp [jumpToOffset, updPc]
+      rw [hs2, ite_eq_left hwt]; simp [jumpToOffset, updPc]
     · have hcs : ConditionHolds (arm8CmpCond cmp) T1 = false := Bool.eq_false_iff.mpr hc
       have hwf : wordCmpHOL cmp (Flapjack.Compiler.Encoders.AsmSem.readReg r s1)
           (Flapjack.Compiler.Encoders.AsmSem.regImm (.imm v) s1) = false := by rw [hw, hcs]
-      rw [hs2, if_neg (by rw [hwf]; simp)]; simp [updPc]
+      rw [hs2, ite_eq_right (by rw [hwf]; simp)]; simp [updPc]
   have hq : targetStateRel arm8TargetL3 s2 T2 := by
     by_cases hc : ConditionHolds (arm8CmpCond cmp) T1 = true
     · have hwt : wordCmpHOL cmp (Flapjack.Compiler.Encoders.AsmSem.readReg r s1)
           (Flapjack.Compiler.Encoders.AsmSem.regImm (.imm v) s1) = true := by rw [hw, hc]
       have hs2pc : s2.pc = s1.pc + a := by
-        rw [hs2, if_pos hwt]; simp [jumpToOffset, updPc]
+        rw [hs2, ite_eq_left hwt]; simp [jumpToOffset, updPc]
       have hs2mem : ∀ x, s2.mem x = s1.mem x := by
-        rw [hs2, if_pos hwt]; intro x; simp [jumpToOffset, updPc]
+        rw [hs2, ite_eq_left hwt]; intro x; simp [jumpToOffset, updPc]
       have hs2dom : s2.memDomain = s1.memDomain := by
-        rw [hs2, if_pos hwt]; simp [jumpToOffset, updPc]
+        rw [hs2, ite_eq_left hwt]; simp [jumpToOffset, updPc]
       have hs2regs : ∀ k, s2.regs k = s1.regs k := by
-        rw [hs2, if_pos hwt]; intro k; simp [jumpToOffset, updPc]
+        rw [hs2, ite_eq_left hwt]; intro k; simp [jumpToOffset, updPc]
       have hT2pc : T2.PC = ms.PC + a := by
-        unfold T2; rw [if_pos hc]
+        unfold T2; rw [ite_eq_left hc]
         show T1.PC + (a - 4) = ms.PC + a
         rw [hT1pc]; bv_omega
       have haAl : holAligned 2 a = true := by
@@ -1625,17 +1625,17 @@ theorem arm8_encoder_correct_jumpCmp_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64)
       have hT2ok : arm8Ok T2 = true := by
         rw [arm8Ok_iff]
         refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-        · unfold T2; rw [if_pos hc]; show T1.PSTATE.EL = (0 : BitVec 2)
+        · unfold T2; rw [ite_eq_left hc]; show T1.PSTATE.EL = (0 : BitVec 2)
           rw [hT1el]; exact hel
-        · unfold T2; rw [if_pos hc]; show T1.SCTLR_EL1.E0E = false
+        · unfold T2; rw [ite_eq_left hc]; show T1.SCTLR_EL1.E0E = false
           rw [hT1sctlr]; exact he0
-        · unfold T2; rw [if_pos hc]; show T1.SCTLR_EL1.SA0 = false
+        · unfold T2; rw [ite_eq_left hc]; show T1.SCTLR_EL1.SA0 = false
           rw [hT1sctlr]; exact hsa0
-        · unfold T2; rw [if_pos hc]; show T1.TCR_EL1.TBI1 = false
+        · unfold T2; rw [ite_eq_left hc]; show T1.TCR_EL1.TBI1 = false
           rw [hT1tcr]; exact htbi1
-        · unfold T2; rw [if_pos hc]; show T1.TCR_EL1.TBI0 = false
+        · unfold T2; rw [ite_eq_left hc]; show T1.TCR_EL1.TBI0 = false
           rw [hT1tcr]; exact htbi0
-        · unfold T2; rw [if_pos hc]; show T1.exception = exception.NoException
+        · unfold T2; rw [ite_eq_left hc]; show T1.exception = exception.NoException
           exact hT1exc
         · rw [hT2pc]; exact hal2
       refine ⟨hT2ok, ?_, ?_, ?_, ?_⟩
@@ -1655,15 +1655,15 @@ theorem arm8_encoder_correct_jumpCmp_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64)
       have hwf : wordCmpHOL cmp (Flapjack.Compiler.Encoders.AsmSem.readReg r s1)
           (Flapjack.Compiler.Encoders.AsmSem.regImm (.imm v) s1) = false := by rw [hw, hcs]
       have hs2pc : s2.pc = s1.pc + BitVec.ofNat 64 8 := by
-        rw [hs2, if_neg (by rw [hwf]; simp)]; simp [updPc]
+        rw [hs2, ite_eq_right (by rw [hwf]; simp)]; simp [updPc]
       have hs2mem : ∀ x, s2.mem x = s1.mem x := by
-        rw [hs2, if_neg (by rw [hwf]; simp)]; intro x; simp [updPc]
+        rw [hs2, ite_eq_right (by rw [hwf]; simp)]; intro x; simp [updPc]
       have hs2dom : s2.memDomain = s1.memDomain := by
-        rw [hs2, if_neg (by rw [hwf]; simp)]; simp [updPc]
+        rw [hs2, ite_eq_right (by rw [hwf]; simp)]; simp [updPc]
       have hs2regs : ∀ k, s2.regs k = s1.regs k := by
-        rw [hs2, if_neg (by rw [hwf]; simp)]; intro k; simp [updPc]
+        rw [hs2, ite_eq_right (by rw [hwf]; simp)]; intro k; simp [updPc]
       have hT2pc : T2.PC = ms.PC + 8 := by
-        unfold T2; rw [if_neg hc]
+        unfold T2; rw [ite_eq_right hc]
         show T1.PC + 4 = ms.PC + 8
         rw [hT1pc]; rw [BitVec.add_assoc]; rfl
       have h8 : holAligned 2 (ms.PC + 8) = true := by
@@ -1671,17 +1671,17 @@ theorem arm8_encoder_correct_jumpCmp_imm (cmp : Cmp) (r : Nat) (v a : BitVec 64)
       have hT2ok : arm8Ok T2 = true := by
         rw [arm8Ok_iff]
         refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-        · unfold T2; rw [if_neg hc]; show T1.PSTATE.EL = (0 : BitVec 2)
+        · unfold T2; rw [ite_eq_right hc]; show T1.PSTATE.EL = (0 : BitVec 2)
           rw [hT1el]; exact hel
-        · unfold T2; rw [if_neg hc]; show T1.SCTLR_EL1.E0E = false
+        · unfold T2; rw [ite_eq_right hc]; show T1.SCTLR_EL1.E0E = false
           rw [hT1sctlr]; exact he0
-        · unfold T2; rw [if_neg hc]; show T1.SCTLR_EL1.SA0 = false
+        · unfold T2; rw [ite_eq_right hc]; show T1.SCTLR_EL1.SA0 = false
           rw [hT1sctlr]; exact hsa0
-        · unfold T2; rw [if_neg hc]; show T1.TCR_EL1.TBI1 = false
+        · unfold T2; rw [ite_eq_right hc]; show T1.TCR_EL1.TBI1 = false
           rw [hT1tcr]; exact htbi1
-        · unfold T2; rw [if_neg hc]; show T1.TCR_EL1.TBI0 = false
+        · unfold T2; rw [ite_eq_right hc]; show T1.TCR_EL1.TBI0 = false
           rw [hT1tcr]; exact htbi0
-        · unfold T2; rw [if_neg hc]; show T1.exception = exception.NoException
+        · unfold T2; rw [ite_eq_right hc]; show T1.exception = exception.NoException
           exact hT1exc
         · rw [hT2pc]; exact h8
       refine ⟨hT2ok, ?_, ?_, ?_, ?_⟩

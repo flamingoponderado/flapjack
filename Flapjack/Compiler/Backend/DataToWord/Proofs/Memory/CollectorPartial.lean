@@ -285,8 +285,8 @@ theorem genStartOk_heapExpand_suffix {α β : Type}
   have upper : ptr - heapLength before < free := by omega
   have notData : ¬ isSomeDataElement (heapLookup (ptr - heapLength before) (heapExpand free : List (HeapElement α β))) :=
     GenGcPartial.heapLookup_heapExpand_notData _ _
-  rw [GenGc.heapLookup_append, if_neg (Nat.not_lt.mpr lower), GenGc.heapLookup_append,
-    heapLength_heapExpand, if_pos upper] at found
+  rw [GenGc.heapLookup_append, ite_eq_right (Nat.not_lt.mpr lower), GenGc.heapLookup_append,
+    heapLength_heapExpand, ite_eq_left upper] at found
   exact notData found
 
 /-- Flapjack infrastructure: successful partial collection preserves the

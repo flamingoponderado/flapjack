@@ -109,9 +109,9 @@ theorem callCore {width : Nat} {σ : Type} [NeZero width]
       rw [hlk] at hHigh
       simp only at hHigh ⊢
       by_cases hc0 : u.clock = 0
-      · rw [if_pos hc0] at hHigh
+      · rw [ite_eq_left hc0] at hHigh
         exact absurd (Prod.mk.inj hHigh).1.symm hnt
-      rw [if_neg hc0] at hHigh
+      rw [ite_eq_right hc0] at hHigh
       rcases hb : evaluateHOLFiniteState (callEntryStateHOLFinite u nl) prog with ⟨r0, st0⟩
       rw [hb] at hHigh
       have hc0le := evaluateHOLFiniteState_clock_le_result _ _ _ _ hb
@@ -133,7 +133,7 @@ theorem callCore {width : Nat} {σ : Type} [NeZero width]
           have := congrArg PanSemStateFiniteExact.clock hst
           simp only [emptyLocalsHOLFinite, setKvar_clock] at this
           omega
-        rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
+        rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
         simp only
         exact hres
       · simp only at hHigh
@@ -142,7 +142,7 @@ theorem callCore {width : Nat} {σ : Type} [NeZero width]
           have := congrArg PanSemStateFiniteExact.clock hst
           simp only [emptyLocalsHOLFinite, setKvar_clock] at this
           omega
-        rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
+        rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
         simp only
         exact hres
       · simp only at hHigh
@@ -153,7 +153,7 @@ theorem callCore {width : Nat} {σ : Type} [NeZero width]
           have := congrArg PanSemStateFiniteExact.clock hst
           simp only [emptyLocalsHOLFinite, setKvar_clock] at this
           omega
-        rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
+        rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
         simp only
         exact hres
       · simp only at hHigh
@@ -162,56 +162,56 @@ theorem callCore {width : Nat} {σ : Type} [NeZero width]
           have := congrArg PanSemStateFiniteExact.clock hst
           simp only [emptyLocalsHOLFinite, setKvar_clock] at this
           omega
-        rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
+        rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
         simp only
         exact hres
       · by_cases hsh : shapeEqHOL (shapeOfHOLExact v) rsh = true
         · rcases info with _ | ⟨_ | ⟨k, n⟩, x⟩
-          · simp only [hsh, if_true] at hHigh
+          · simp only [hsh, ite_true] at hHigh
             obtain ⟨hres, hst⟩ := Prod.mk.inj hHigh
             have hck : ck ≤ st0.clock := by
               have := congrArg PanSemStateFiniteExact.clock hst
               simp only [emptyLocalsHOLFinite, setKvar_clock] at this
               omega
-            rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
-            simp only [hsh, if_true]
+            rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
+            simp only [hsh, ite_true]
             exact hres
-          · simp only [hsh, if_true] at hHigh
+          · simp only [hsh, ite_true] at hHigh
             obtain ⟨hres, hst⟩ := Prod.mk.inj hHigh
             have hck : ck ≤ st0.clock := by
               have := congrArg PanSemStateFiniteExact.clock hst
               simp only [emptyLocalsHOLFinite, setKvar_clock] at this
               omega
-            rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
-            simp only [hsh, if_true]
+            rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
+            simp only [hsh, ite_true]
             exact hres
           · by_cases hv : isValidValueHOLExact u.toExact k n v = true
-            · simp only [hsh, hv, if_true] at hHigh
+            · simp only [hsh, hv, ite_true] at hHigh
               obtain ⟨hres, hst⟩ := Prod.mk.inj hHigh
               have hck : ck ≤ st0.clock := by
                 have := congrArg PanSemStateFiniteExact.clock hst
                 simp only [emptyLocalsHOLFinite, setKvar_clock] at this
                 omega
-              rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
-              simp only [hsh, hv, if_true]
+              rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
+              simp only [hsh, hv, ite_true]
               exact hres
-            · simp only [hsh, hv, if_true, if_false, Bool.false_eq_true] at hHigh
+            · simp only [hsh, hv, ite_true, ite_false, Bool.false_eq_true] at hHigh
               obtain ⟨hres, hst⟩ := Prod.mk.inj hHigh
               have hck : ck ≤ st0.clock := by
                 have := congrArg PanSemStateFiniteExact.clock hst
                 simp only [emptyLocalsHOLFinite, setKvar_clock] at this
                 omega
-              rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
-              simp only [hsh, hv, if_true, if_false, Bool.false_eq_true]
+              rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
+              simp only [hsh, hv, ite_true, ite_false, Bool.false_eq_true]
               exact hres
-        · simp only [hsh, if_false, Bool.false_eq_true] at hHigh
+        · simp only [hsh, ite_false, Bool.false_eq_true] at hHigh
           obtain ⟨hres, hst⟩ := Prod.mk.inj hHigh
           have hck : ck ≤ st0.clock := by
             have := congrArg PanSemStateFiniteExact.clock hst
             simp only [emptyLocalsHOLFinite, setKvar_clock] at this
             omega
-          rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
-          simp only [hsh, if_false, Bool.false_eq_true]
+          rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
+          simp only [hsh, ite_false, Bool.false_eq_true]
           exact hres
       · rcases info with _ | ⟨x1, _ | ⟨hid, hv, hp⟩⟩
         · simp only at hHigh
@@ -220,7 +220,7 @@ theorem callCore {width : Nat} {σ : Type} [NeZero width]
             have := congrArg PanSemStateFiniteExact.clock hst
             simp only [emptyLocalsHOLFinite, setKvar_clock] at this
             omega
-          rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
+          rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
           simp only []
           exact hres
         · simp only at hHigh
@@ -229,31 +229,31 @@ theorem callCore {width : Nat} {σ : Type} [NeZero width]
             have := congrArg PanSemStateFiniteExact.clock hst
             simp only [emptyLocalsHOLFinite, setKvar_clock] at this
             omega
-          rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
+          rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
           simp only []
           exact hres
         · by_cases hid' : e = hid
           · subst hid'
             cases hsh : u.eshapes.lookup e with
             | none =>
-                simp only [if_true, hsh] at hHigh
+                simp only [ite_true, hsh] at hHigh
                 obtain ⟨hres, hst⟩ := Prod.mk.inj hHigh
                 have hck : ck ≤ st0.clock := by
                   have := congrArg PanSemStateFiniteExact.clock hst
                   simp only [emptyLocalsHOLFinite, setKvar_clock] at this
                   omega
-                rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
-                simp only [if_true, hsh]
+                rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
+                simp only [ite_true, hsh]
                 exact hres
             | some sh =>
                 by_cases hcond : (shapeEqHOL (shapeOfHOLExact v) sh &&
                     isValidValueHOLExact u.toExact VarKind.local hv v) = true
-                · simp only [if_true, hsh, hcond] at hHigh
+                · simp only [ite_true, hsh, hcond] at hHigh
                   have hbound := evaluateHOLFiniteState_clock_le_result _ _ _ _ hHigh
                   simp only [setVarHOLFinite] at hbound
                   have hck : ck ≤ st0.clock := by omega
-                  rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
-                  simp only [if_true, hsh, hcond]
+                  rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
+                  simp only [ite_true, hsh, hcond]
                   obtain ⟨hs1, hs2⟩ := Bool.and_eq_true_iff.mp hcond
                   have hmc := ihH values prog nl rsh st0 e v x1 e hv hp sh hargs hlk hc0 hb rfl rfl
                     hsh ((shapeEqHOL_eq_true _ _).mp hs1) hs2 res st ck hHigh hnt
@@ -263,23 +263,23 @@ theorem callCore {width : Nat} {σ : Type} [NeZero width]
                       { setVarHOLFinite hv v { st0 with locals := u.locals } with
                         clock := (setVarHOLFinite hv v { st0 with locals := u.locals }).clock - ck } := rfl
                   rw [hstate, hmc]
-                · simp only [if_true, hsh, hcond, if_false, Bool.false_eq_true] at hHigh
+                · simp only [ite_true, hsh, hcond, ite_false, Bool.false_eq_true] at hHigh
                   obtain ⟨hres, hst⟩ := Prod.mk.inj hHigh
                   have hck : ck ≤ st0.clock := by
                     have := congrArg PanSemStateFiniteExact.clock hst
                     simp only [emptyLocalsHOLFinite, setKvar_clock] at this
                     omega
-                  rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
-                  simp only [if_true, hsh, hcond, if_false, Bool.false_eq_true]
+                  rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
+                  simp only [ite_true, hsh, hcond, ite_false, Bool.false_eq_true]
                   exact hres
-          · simp only [hid', if_false] at hHigh
+          · simp only [hid', ite_false] at hHigh
             obtain ⟨hres, hst⟩ := Prod.mk.inj hHigh
             have hck : ck ≤ st0.clock := by
               have := congrArg PanSemStateFiniteExact.clock hst
               simp only [emptyLocalsHOLFinite, setKvar_clock] at this
               omega
-            rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
-            simp only [hid', if_false]
+            rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
+            simp only [hid', ite_false]
             exact hres
       · simp only at hHigh
         obtain ⟨hres, hst⟩ := Prod.mk.inj hHigh
@@ -287,7 +287,7 @@ theorem callCore {width : Nat} {σ : Type} [NeZero width]
           have := congrArg PanSemStateFiniteExact.clock hst
           simp only [emptyLocalsHOLFinite, setKvar_clock] at this
           omega
-        rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
+        rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
         simp only
         exact hres
 

@@ -76,7 +76,7 @@ theorem fakeMovesFrame3 {width : Nat} [NeZero width] (prio : Option (Unit ⊕ Un
           rw [inter_iff, dom_iff] at hd
           obtain ⟨⟨v, hv⟩, _⟩ := hd
           rw [hl0, hv] at hnone; cases hnone
-        simp only [lookup_ins, hne, if_false]; exact ⟨hl, hr⟩
+        simp only [lookup_ins, hne, ite_false]; exact ⟨hl, hr⟩
       · rename_i lx hsome hnone
         have hne : x ≠ y := by
           intro he
@@ -84,7 +84,7 @@ theorem fakeMovesFrame3 {width : Nat} [NeZero width] (prio : Option (Unit ⊕ Un
           rw [inter_iff, dom_iff, dom_iff] at hd
           obtain ⟨_, ⟨v, hv⟩⟩ := hd
           rw [hr0, hv] at hnone; cases hnone
-        simp only [lookup_ins, hne, if_false]; exact ⟨hl, hr⟩
+        simp only [lookup_ins, hne, ite_false]; exact ⟨hl, hr⟩
       · exact ⟨hl, hr⟩
 
 /-- HOL `fake_moves_frame` (`word_allocProofScript.sml:4917-4946`). -/
@@ -149,7 +149,7 @@ private theorem fakeMovesAgreeInsert (y v : Nat) (ys : List Nat) (l' r' ssaL ssa
   rintro x ⟨hm, hni⟩
   by_cases hxy : x = y
   · subst hxy; simp [lookup_ins]
-  · simp only [lookup_ins, hxy, if_false]
+  · simp only [lookup_ins, hxy, ite_false]
     exact agree x ⟨(List.mem_cons.mp hm).resolve_left hxy, hni⟩
 
 /-- HOL `fake_moves_frame2` (`word_allocProofScript.sml:4948-4966`). -/

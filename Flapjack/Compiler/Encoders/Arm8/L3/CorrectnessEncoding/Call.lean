@@ -187,7 +187,7 @@ theorem arm8Decode_branchImmediate_call (imm26 : BitVec 26) :
     arm8CallWord_bit29, arm8CallWord_bit28, arm8CallWord_bit27,
     arm8CallWord_bit26, holV2w_one_true,
     Bool.not_true, Bool.not_false, Bool.true_and, Bool.false_and, Bool.and_true,
-    Bool.and_false, Bool.false_eq_true, if_true, if_false]
+    Bool.and_false, Bool.false_eq_true, ite_true, ite_false]
   rw [arm8CallWord_imm26 imm26]
   simp
 
@@ -416,10 +416,10 @@ theorem arm8_encoder_correct_call (target : BitVec 64) (s1 s2 : AsmState 64)
         have h1 : holUpdate (30 : BitVec 5) (ms.PC + 4) ms.REG
             (BitVec.ofNat 5 k) = ms.REG (BitVec.ofNat 5 k) := by
           simp only [holUpdate, Flapjack.RiscV.L3.holUpdate]
-          rw [if_neg hne]
+          rw [ite_eq_right hne]
         have h2 : (updReg 30 (s1.pc + BitVec.ofNat 64 4) s1).regs k = s1.regs k := by
           simp only [updReg]
-          rw [if_neg hk30]
+          rw [ite_eq_right hk30]
         rw [h1, h2]
         exact hreg k hk
     · intro k hk

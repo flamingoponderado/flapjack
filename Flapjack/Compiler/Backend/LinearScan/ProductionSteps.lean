@@ -34,11 +34,11 @@ theorem removeInactiveIntervals_correct (beg : Int) (st : LinearScanState) :
   | cons head tail =>
     rcases head with ⟨e, r⟩
     by_cases h : e < beg
-    · simp only [if_pos h]
+    · simp only [ite_eq_left h]
       apply simulates_bind _ _ _ _ (colorsSub_correct r)
       intro col
       exact removeInactiveIntervals_correct beg { st with active := tail, colorpool := col :: st.colorpool }
-    · simp only [if_neg h]
+    · simp only [ite_eq_right h]
       exact simulates_ret st
 termination_by st.active.length
 decreasing_by simp [heq]
@@ -117,13 +117,13 @@ theorem findSpill_correct (st : LinearScanState) (forbidden : NumSet)
   | some data =>
     rcases data with ⟨⟨stealend, stealreg⟩, newactive⟩
     by_cases h : force ∨ rend < stealend
-    · simp only [if_pos h]
+    · simp only [ite_eq_left h]
       apply simulates_bind _ _ _ _ (colorsSub_correct stealreg)
       intro color
       apply simulates_bind _ _ _ _ (spillRegister_correct { st with active := newactive } stealreg)
       intro next
       exact colorRegister_correct next reg color rend
-    · simpa only [if_neg h] using spillRegister_correct st reg
+    · simpa only [ite_eq_right h] using spillRegister_correct st reg
 
 def linearRegAllocStepAux (st : LinearScanState) (forbidden : NumSet) (preferred : List Nat)
     (reg : Nat) (rend : Int) (force : Bool) : FastM LinearScanState :=
@@ -196,18 +196,18 @@ theorem linearRegAllocStepPass1_correct (forced moves : Spt (List Nat))
   apply simulates_bind _ _ _ _ (removeInactiveIntervals_correct rbeg st)
   intro next
   by_cases hs : isStackVar reg
-  · simp only [if_pos hs]
+  · simp only [ite_eq_left hs]
     exact spillRegister_correct next reg
-  · simp only [if_neg hs]
+  · simp only [ite_eq_right hs]
     apply simulates_bind _ _ _ _ (stExMap_correct _ _ colorsSub_correct _)
     intro forbiddenList
     by_cases hp : isPhyVar reg
-    · simp only [if_pos hp]
+    · simp only [ite_eq_left hp]
       by_cases hc : reg < 2 * next.colormax
-      · simp only [if_pos hc]
+      · simp only [ite_eq_left hc]
         exact linearRegAllocStepAux_correct next _ [] reg rend true
-      · simpa only [if_neg hc] using spillRegister_correct next reg
-    · simp only [if_neg hp]
+      · simpa only [ite_eq_right hc] using spillRegister_correct next reg
+    · simp only [ite_eq_right hp]
       apply simulates_bind _ _ _ _ (stExMap_correct _ _ colorsSub_correct _)
       intro preferred
       exact linearRegAllocStepAux_correct next _ preferred reg rend false
@@ -243,9 +243,9 @@ theorem linearRegAllocStepPass2_correct (forced moves : Spt (List Nat))
   apply simulates_bind _ _ _ _ (stExMap_correct _ _ colorsSub_correct _)
   intro preferred
   by_cases hp : isPhyVar reg
-  · simp only [if_pos hp]
+  · simp only [ite_eq_left hp]
     exact linearRegAllocStepAux_correct next _ [] reg rend false
-  · simp only [if_neg hp]
+  · simp only [ite_eq_right hp]
     exact linearRegAllocStepAux_correct next _ preferred reg rend false
 
 end Flapjack.LinearScan.Production

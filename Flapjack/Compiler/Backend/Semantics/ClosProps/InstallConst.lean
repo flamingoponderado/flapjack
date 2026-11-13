@@ -521,7 +521,7 @@ theorem evaluate_const {C F : Type} :
                 · apply exprIH [condition] env state (by omega)
                   simp only [expsWeight, expWeight] at measure ⊢; omega
                 · intro choice start bound
-                  cases choice <;> simp only [Bool.false_eq_true, if_false, if_true] <;> apply exprIH _ env start (by omega) <;>
+                  cases choice <;> simp only [Bool.false_eq_true, ite_false, ite_true] <;> apply exprIH _ env start (by omega) <;>
                     simp only [expsWeight, expWeight] at measure ⊢ <;> omega
               | app trace location function args =>
                 apply evaluate_app_const_step

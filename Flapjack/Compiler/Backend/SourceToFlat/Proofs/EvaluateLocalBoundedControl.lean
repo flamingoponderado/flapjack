@@ -301,7 +301,7 @@ theorem localEnvBounded_log {C F : Type} [Nonempty C]
                 (last, .err (.abort .typeError)) := by
               intro last bad
               apply safe last
-              rw [sourceOuter, if_pos takeRight]
+              rw [sourceOuter, ite_eq_left takeRight]
               exact bad
             have middleLocal := envRel_growth genv middleGenv leftGrowth sourceLocal flatEnv.v localRel
             have middleEnv := globalEnvInv_growth genv middleGenv leftGrowth baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv envInv
@@ -311,9 +311,9 @@ theorem localEnvBounded_log {C F : Type} [Nonempty C]
               middleLocal middleEnv tracesLen middleInvariant middleGeneration rightSafe
             refine ⟨finalGenv, ?_, ?_⟩
             · unfold ExprSim at rightSim ⊢
-              rw [sourceOuter, flatOuter, if_pos takeRight, if_pos takeRight]
+              rw [sourceOuter, flatOuter, ite_eq_left takeRight, ite_eq_left takeRight]
               exact rightSim
-            · rw [sourceOuter, flatOuter, if_pos takeRight, if_pos takeRight]
+            · rw [sourceOuter, flatOuter, ite_eq_left takeRight, ite_eq_left takeRight]
               cases result : (EvaluateHOL.evaluate middleSource sourceEnv [right]).2
               case' err error => cases error
               all_goals first
@@ -324,9 +324,9 @@ theorem localEnvBounded_log {C F : Type} [Nonempty C]
                     oracForwardRel_trans interp _ _ _ ⟨leftForward, rightForward⟩⟩
           · refine ⟨middleGenv, ?_, ?_⟩
             · unfold ExprSim
-              rw [sourceOuter, flatOuter, if_neg takeRight, if_neg takeRight]
+              rw [sourceOuter, flatOuter, ite_eq_right takeRight, ite_eq_right takeRight]
               exact ⟨.value (.cons ((boolValueRel_iff middleGenv b _ middleInvariant.1).mpr rfl) .nil), leftStates⟩
-            · rw [sourceOuter, flatOuter, if_neg takeRight, if_neg takeRight]
+            · rw [sourceOuter, flatOuter, ite_eq_right takeRight, ite_eq_right takeRight]
               exact ⟨leftGrowth, middleInvariant, middleGeneration, leftForward⟩
 
 

@@ -25,10 +25,10 @@ theorem n2mw_length_mono {width : Nat} [NeZero width] (m n : Nat) :
         simp only [eqZero, List.length_nil, Nat.zero_le]
       · have eqM : n2mw (width := width) m =
             BitVec.ofNat width (m % 2 ^ width) :: n2mw (m / 2 ^ width) := by
-          rw [n2mw, if_neg zeroM]
+          rw [n2mw, ite_eq_right zeroM]
         have eqN : n2mw (width := width) n =
             BitVec.ofNat width (n % 2 ^ width) :: n2mw (n / 2 ^ width) := by
-          rw [n2mw, if_neg zeroN]
+          rw [n2mw, ite_eq_right zeroN]
         rw [eqM, eqN]
         simp only [List.length_cons, Nat.succ_le_succ_iff]
         apply ih (n / 2 ^ width)

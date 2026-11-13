@@ -173,8 +173,8 @@ theorem x64Next_binopCmp (ms : X64State) (d : BitVec 64 → Prop) (zop : ZBinopN
     rw [hlen] at hd'
     exact decode_bytesInMemory _ _ ms.mem d _ _ hbm hd' (by omega)
   rcases hz with rfl | rfl
-  · simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn, binopFlags]
-  · simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn, binopFlags]
+  · simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn, binopFlags]
+  · simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn, binopFlags]
 
 theorem x64Next_jcc_long (ms : X64State) (d : BitVec 64 → Prop) (cond : ZCond) (imm : BitVec 64)
     (hne : cond ≠ .zAlways) (hneP : cond ≠ .zP)
@@ -188,7 +188,7 @@ theorem x64Next_jcc_long (ms : X64State) (d : BitVec 64 → Prop) (cond : ZCond)
     encodeInsn_jcc_long cond imm hneP hne hlo hhi
   have hdec := decode_bytesInMemory _ ms.pc ms.mem d _ _ hbm
     (decode_jcc_long_other cond hne hneP imm hlo hhi) (by rw [hlen])
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn]
 
 
 /-! ## The register form -/
@@ -227,7 +227,7 @@ theorem case_jumpCmp_reg (operator : Cmp) (source right : Nat) (target : BitVec 
     apply encodeInsn_binopRR_length
     intro hne hc
     by_cases ht : isTest operator = true
-    · simp only [ht, if_true] at hne
+    · simp only [ht, ite_true] at hne
       exact absurd rfl hne
     · simp only [Bool.not_eq_true] at ht
       simp [ht] at hc
@@ -313,7 +313,7 @@ theorem case_jumpCmp_reg (operator : Cmp) (source right : Nat) (target : BitVec 
     simp only [Flapjack.Compiler.Encoders.AsmSem.regImm,
       Flapjack.Compiler.Encoders.AsmSem.readReg]
     by_cases ht : isTest operator = true
-    · simp only [ht, if_true]
+    · simp only [ht, ite_true]
       exact evalCond_x64Cmp_test operator ht (s1.regs source) (s1.regs right)
     · have htf : isTest operator = false := by simpa using ht
       simp only [htf]
@@ -359,9 +359,9 @@ theorem case_jumpCmp_reg (operator : Cmp) (source right : Nat) (target : BitVec 
         rw [← hcond_eq]; exact hc
       have hs2 : s2 = jumpToOffset target s1 := by
         rw [← hupd]
-        simp only [asmUpd, hwl, if_true]
+        simp only [asmUpd, hwl, ite_true]
       have hms2 : ms2 = { ms1 with pc := ms1.pc + BitVec.ofNat 64 6 + (target - 9) } := by
-        simp only [hms2, hc, if_true]
+        simp only [hms2, hc, ite_true]
       rw [hms2]
       refine ⟨?_, ?_, ?_, ?_, ?_⟩
       · show x64StateOk _ = true
@@ -393,9 +393,9 @@ theorem case_jumpCmp_reg (operator : Cmp) (source right : Nat) (target : BitVec 
         cases h : evalCond (x64Cmp operator) ms1.flags <;> simp_all
       have hs2 : s2 = updPc (s1.pc + BitVec.ofNat 64 9) s1 := by
         rw [← hupd]
-        simp only [asmUpd, hwl, Bool.false_eq_true, if_false]
+        simp only [asmUpd, hwl, Bool.false_eq_true, ite_false]
       have hms2 : ms2 = { ms1 with pc := ms1.pc + BitVec.ofNat 64 6 } := by
-        simp only [hms2, hc, Bool.false_eq_true, if_false]
+        simp only [hms2, hc, Bool.false_eq_true, ite_false]
       rw [hms2]
       refine ⟨?_, ?_, ?_, ?_, ?_⟩
       · show x64StateOk _ = true
@@ -504,9 +504,9 @@ theorem jumpCmpImmAux (operator : Cmp) (source : Nat) (value target : BitVec 64)
       exact hb0
     have hdec := decode_bytesInMemory _ ms.pc ms.mem s1.memDomain _ _ hbm0 hdec0 (by omega)
     rcases hzop with rfl | rfl
-    · simp only [x64Next, st.failed, Bool.false_eq_true, if_false, hdec, execInsn, hms1,
+    · simp only [x64Next, st.failed, Bool.false_eq_true, ite_false, hdec, execInsn, hms1,
         binopFlags]
-    · simp only [x64Next, st.failed, Bool.false_eq_true, if_false, hdec, execInsn, hms1,
+    · simp only [x64Next, st.failed, Bool.false_eq_true, ite_false, hdec, execInsn, hms1,
         binopFlags]
   set ms2 : X64State := if evalCond (x64Cmp operator) ms1.flags then
       { ms1 with pc := ms1.pc + BitVec.ofNat 64 6 + (target - BitVec.ofNat 64 w) }
@@ -566,10 +566,10 @@ theorem jumpCmpImmAux (operator : Cmp) (source : Nat) (value target : BitVec 64)
         rw [← hcond_eq]; exact hc
       have hs2 : s2 = jumpToOffset target s1 := by
         rw [← hupd]
-        simp only [asmUpd, hwl, if_true]
+        simp only [asmUpd, hwl, ite_true]
       have hms2' : ms2 = { ms1 with
           pc := ms1.pc + BitVec.ofNat 64 6 + (target - BitVec.ofNat 64 w) } := by
-        simp only [hms2, hc, if_true]
+        simp only [hms2, hc, ite_true]
       rw [hms2']
       refine ⟨?_, ?_, ?_, ?_, ?_⟩
       · show x64StateOk _ = true
@@ -601,9 +601,9 @@ theorem jumpCmpImmAux (operator : Cmp) (source : Nat) (value target : BitVec 64)
         cases h : evalCond (x64Cmp operator) ms1.flags <;> simp_all
       have hs2 : s2 = updPc (s1.pc + BitVec.ofNat 64 w) s1 := by
         rw [← hupd]
-        simp only [asmUpd, hwl, Bool.false_eq_true, if_false]
+        simp only [asmUpd, hwl, Bool.false_eq_true, ite_false]
       have hms2' : ms2 = { ms1 with pc := ms1.pc + BitVec.ofNat 64 6 } := by
-        simp only [hms2, hc, Bool.false_eq_true, if_false]
+        simp only [hms2, hc, Bool.false_eq_true, ite_false]
       rw [hms2']
       refine ⟨?_, ?_, ?_, ?_, ?_⟩
       · show x64StateOk _ = true

@@ -77,12 +77,12 @@ theorem knownOpChangedGlobalsAlt (op : ClosLang.Op) (args : List ValApprox)
   by_cases current : sptDomain g key
   · have alternatives := included current
     by_cases prior : sptDomain g0 key
-    · simp only [current, prior, if_true] at bounded ⊢
+    · simp only [current, prior, ite_true] at bounded ⊢
       omega
     · have written := alternatives.resolve_left prior
-      simp only [current, prior, if_true, if_false, Nat.zero_add] at bounded ⊢
+      simp only [current, prior, ite_true, ite_false, Nat.zero_add] at bounded ⊢
       omega
-  · simp only [current, if_false] at bounded
+  · simp only [current, ite_false] at bounded
     omega
 
 end Flapjack.Compiler.Backend.ClosKnown

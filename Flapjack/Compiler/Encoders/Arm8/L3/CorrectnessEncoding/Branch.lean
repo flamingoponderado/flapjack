@@ -43,9 +43,9 @@ theorem arm8BranchWord_getLsbD (imm26 : BitVec 26) (i : Nat) :
     have h32 : i < 32 := by omega
     simp [h, h31, h32]
   · by_cases h2 : i = 26 ∨ i = 28
-    · rw [if_neg h, if_pos h2]
+    · rw [ite_eq_right h, ite_eq_left h2]
       rcases h2 with rfl | rfl <;> (simp; try decide)
-    · rw [if_neg h, if_neg h2]
+    · rw [ite_eq_right h, ite_eq_right h2]
       by_cases h3 : i < 32
       · have hb : i = 27 ∨ i = 29 ∨ i = 30 ∨ i = 31 := by omega
         rcases hb with rfl | rfl | rfl | rfl <;> (simp; try decide)
@@ -180,7 +180,7 @@ theorem arm8Decode_branchImmediate (imm26 : BitVec 26) :
     arm8BranchWord_bit29, arm8BranchWord_bit28, arm8BranchWord_bit27,
     arm8BranchWord_bit26, holV2w_one_false,
     Bool.not_true, Bool.not_false, Bool.true_and, Bool.false_and, Bool.and_true,
-    Bool.and_false, Bool.false_eq_true, if_true, if_false]
+    Bool.and_false, Bool.false_eq_true, ite_true, ite_false]
   rw [arm8BranchWord_imm26 imm26]
   simp
 

@@ -34,8 +34,8 @@ theorem arm8Run_logicalImmediate (opc : LogicalOp) (imm : BitVec 64) (rn rd : Bi
         | .LogicalOp_AND => X (TN := 64) rn st &&& imm
         | .LogicalOp_ORR => X (TN := 64) rn st ||| imm
         | .LogicalOp_EOR => X (TN := 64) rn st ^^^ imm), rd) st := by
-  simp only [Run, «dfn'LogicalImmediate», SetTheFlags, Bool.false_eq_true, if_false]
-  rw [if_neg]
+  simp only [Run, «dfn'LogicalImmediate», SetTheFlags, Bool.false_eq_true, ite_false]
+  rw [ite_eq_right]
   · rfl
   · simpa using hrd
 
@@ -175,7 +175,7 @@ theorem arm8_encoder_correct_binop_xor_imm (destination source : Nat) (value : B
       [.Data (.«LogicalImmediate@64»
         (1, .LogicalOp_EOR, false, value, BitVec.ofNat 5 source, BitVec.ofNat 5 destination))] := by
     simp only [arm8Ast]
-    rw [if_neg hne]
+    rw [ite_eq_right hne]
     rfl
   have henc : arm8Enc (.inst (.arith (.binop .xor destination source (.imm value)))) =
       arm8Encode (.Data (.«LogicalImmediate@64»

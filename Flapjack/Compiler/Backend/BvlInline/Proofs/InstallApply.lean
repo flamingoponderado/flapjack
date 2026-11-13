@@ -108,7 +108,7 @@ theorem inDoInstall_success {C F : Type} (limit : Nat)
       refine ⟨_, stateRel, ?_⟩
       have valid := And.intro targetFree targetDistinct
       simp only [doInstall, bytesEq, wordsEq, targetOracle]
-      rw [if_pos valid]
+      rw [ite_eq_left valid]
       simp [targetCompile, bytesCode, wordsData, targetNextConfig]
 
 /-- Installation can only fail with the BVL type error. This helper has no

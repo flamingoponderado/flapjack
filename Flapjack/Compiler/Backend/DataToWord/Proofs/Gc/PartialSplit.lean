@@ -38,11 +38,11 @@ theorem gcForwardPtr_append {α β : Type} (first : List (HeapElement α β)) (o
             offset - elLength head < (tail.map elLength).sum := by omega
         by_cases below : offset - elLength head < (tail.map elLength).sum
         · have under : offset < elLength head + (tail.map elLength).sum := relation.mpr below
-          simp only [gcForwardPtr, zero, if_false, inside, under, if_true, ih, heapLength, below]
+          simp only [gcForwardPtr, zero, ite_false, inside, under, ite_true, ih, heapLength, below]
           cases gcForwardPtr (offset - elLength head) tail address value ok <;> rfl
         · have under : ¬offset < elLength head + (tail.map elLength).sum := by
             intro h; exact below (relation.mp h)
-          simp only [gcForwardPtr, zero, if_false, inside, under, ih, heapLength, below, Nat.sub_sub]
+          simp only [gcForwardPtr, zero, ite_false, inside, under, ih, heapLength, below, Nat.sub_sub]
 
 /-- Splitting at the length of a heap prefix recovers both sides. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "heap_split_APPEND"]
@@ -54,7 +54,7 @@ theorem heapSplit_append {α β : Type} (first second : List (HeapElement α β)
     simp only [List.cons_append, heapLength, List.map_cons, List.sum_cons] at ih ⊢
     have positive : 0 < elLength head := by cases head <;> simp [elLength]
     rw [heapSplit]
-    simp only [Nat.ne_of_gt (by omega : 0 < elLength head + (tail.map elLength).sum), if_false,
+    simp only [Nat.ne_of_gt (by omega : 0 < elLength head + (tail.map elLength).sum), ite_false,
       Nat.not_lt.mpr (by omega : elLength head ≤ elLength head + (tail.map elLength).sum),
       Nat.add_sub_cancel_left, ih, Option.map_some]
 
@@ -95,9 +95,9 @@ theorem gcForwardPtr_heapSplit {α β : Type} (first middle : List (HeapElement 
     rw [heapLength_append] at upper
     omega
   rw [List.append_assoc, gcForwardPtr_append] at run
-  simp only [Nat.not_lt.mpr lower, if_false] at run
+  simp only [Nat.not_lt.mpr lower, ite_false] at run
   rw [gcForwardPtr_append] at run
-  simp only [within, if_true] at run
+  simp only [within, ite_true] at run
   cases forwarded : gcForwardPtr (offset - heapLength first) middle address value ok with
   | mk middle1 status =>
     simp only [forwarded, Prod.mk.injEq] at run

@@ -168,7 +168,7 @@ private theorem pmatchList_con_expanded_decision {C F : Type} (state : FlatSem.S
   have notBad : ¬ ¬ FlatSem.PmatchStampsOk stamp actual patterns.length fields.length := fun h => h compatible
   have head : FlatSem.pmatch state (.pcon stamp patterns) (.conv actual fields) bindings =
       FlatSem.pmatchList state patterns fields bindings := by
-    simp only [FlatSem.pmatch, if_neg notBad, if_pos same]
+    simp only [FlatSem.pmatch, ite_eq_right notBad, ite_eq_left same]
   rw [FlatProps.pmatchListAppend patterns fields rest values state bindings same.2]
   simp only [FlatSem.pmatchList, head]
   cases FlatSem.pmatchList state patterns fields bindings <;> rfl
@@ -185,7 +185,7 @@ private theorem pmatchList_con_failed_decision {C F : Type} (state : FlatSem.Sta
       combineMatchDecisions (some false) (matchDecision (FlatSem.pmatchList state rest values bindings)) := by
   have notBad : ¬ ¬ FlatSem.PmatchStampsOk stamp actual patterns.length fields.length := fun h => h compatible
   have head : FlatSem.pmatch state (.pcon stamp patterns) (.conv actual fields) bindings = .noMatch := by
-    simp only [FlatSem.pmatch, if_neg notBad, if_neg different]
+    simp only [FlatSem.pmatch, ite_eq_right notBad, ite_eq_right different]
   cases tail : FlatSem.pmatchList state rest values bindings <;>
     simp [FlatSem.pmatchList, head, tail, matchDecision, combineMatchDecisions]
 

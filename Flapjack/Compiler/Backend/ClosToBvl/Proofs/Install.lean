@@ -189,7 +189,7 @@ theorem install_source_inv {C F : Type} (s next : ClosSem.State C F)
                 · cases compileRun : s.compile config (expressions, auxiliary) with
                   | none =>
                     simp only [ClosSem.doInstall, bytesRun, wordsRun, oracleRun] at run
-                    rw [if_pos valid, compileRun] at run
+                    rw [ite_eq_left valid, compileRun] at run
                     simp only [Prod.mk.injEq] at run
                     exact False.elim (noType run.1.symm)
                   | some output =>
@@ -198,36 +198,36 @@ theorem install_source_inv {C F : Type} (s next : ClosSem.State C F)
                         (Flapjack.holShiftSeq 1 s.compileOracle 0).1 = nextConfig ∧ expressions ≠ []
                     · have step := run
                       simp only [ClosSem.doInstall, bytesRun, wordsRun, oracleRun] at step
-                      rw [if_pos valid, compileRun] at step
+                      rw [ite_eq_left valid, compileRun] at step
                       dsimp only at step
-                      rw [if_pos agrees] at step
+                      rw [ite_eq_left agrees] at step
                       have nextEq : next = { s with
                           code := s.code.updateListEq auxiliary
                           compileOracle := Flapjack.holShiftSeq 1 s.compileOracle
                           clock := s.clock - 1 } := by
                         by_cases clock : s.clock = 0
-                        · rw [if_pos clock] at step
+                        · rw [ite_eq_left clock] at step
                           exact (congrArg Prod.snd step).symm
-                        · rw [if_neg clock] at step
+                        · rw [ite_eq_right clock] at step
                           exact (congrArg Prod.snd step).symm
                       have resultEq : result = if s.clock = 0 then .err (.abort .timeoutError) else .val expressions := by
                         by_cases clock : s.clock = 0
-                        · rw [if_pos clock] at step ⊢
+                        · rw [ite_eq_left clock] at step ⊢
                           exact (congrArg Prod.fst step).symm
-                        · rw [if_neg clock] at step ⊢
+                        · rw [ite_eq_right clock] at step ⊢
                           exact (congrArg Prod.fst step).symm
                       refine ⟨sourceBytes, sourceWords, bytes, words, config, expressions, auxiliary, nextConfig,
                         rfl, bytesRun, wordsRun, rfl, ?_, ?_, agrees.2.2.2, valid.1, valid.2, nextEq, resultEq⟩
                       · simpa [agrees.1, agrees.2.1] using compileRun
                       · simpa [Flapjack.holShiftSeq] using agrees.2.2.1
                     · simp only [ClosSem.doInstall, bytesRun, wordsRun, oracleRun] at run
-                      rw [if_pos valid, compileRun] at run
+                      rw [ite_eq_left valid, compileRun] at run
                       dsimp only at run
-                      rw [if_neg agrees] at run
+                      rw [ite_eq_right agrees] at run
                       simp only [Prod.mk.injEq] at run
                       exact False.elim (noType run.1.symm)
                 · simp only [ClosSem.doInstall, bytesRun, wordsRun, oracleRun] at run
-                  rw [if_neg valid] at run
+                  rw [ite_eq_right valid] at run
                   simp only [Prod.mk.injEq] at run
                   exact False.elim (noType run.1.symm)
 

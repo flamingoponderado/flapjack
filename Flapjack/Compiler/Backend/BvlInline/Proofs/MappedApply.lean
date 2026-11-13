@@ -87,14 +87,14 @@ theorem mappedDoInstall {C F : Type} (transform : Nat → Bvl.Exp → Bvl.Exp)
                   rcases output with ⟨bs, ws, cfg⟩
                   by_cases same : bytes = bs ∧ words = ws ∧ (s.compileOracle 1).1 = cfg
                   · simp_all
-                    rw [if_pos tailFree, if_pos tailFree]
+                    rw [ite_eq_left tailFree, ite_eq_left tailFree]
                     simp [mappedStateRel, ← mappedProgram_codeUnion]
                   · simp_all
-                    rw [if_pos tailFree, if_pos tailFree]
+                    rw [ite_eq_left tailFree, ite_eq_left tailFree]
                     have notSame : ¬(bytes = bs ∧ words = ws ∧ (s.compileOracle 1).1 = cfg) := by aesop
-                    rw [if_neg notSame, if_neg notSame]
+                    rw [ite_eq_right notSame, ite_eq_right notSame]
               · simp only [List.map_cons] at valid
-                simp only [valid, if_false]
+                simp only [valid, ite_false]
 
 /-- Every primitive application is simulated from the source to the mapped
 state, including dynamic installation and all error outcomes. This is generic

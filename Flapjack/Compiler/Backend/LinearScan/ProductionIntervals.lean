@@ -44,12 +44,12 @@ theorem numsetListAddIfLt_correct (rs : List Nat) (v : Int) :
     apply simulates_bind _ _ _ _ (intBegSub_correct r)
     intro begr
     by_cases h : 0 < begr
-    · simp only [if_pos h]
+    · simp only [ite_eq_left h]
       exact simulates_ignoreBind _ _ _ _ (updateIntBeg_correct r v) ih
     · by_cases h' : v ≤ begr
-      · simp only [if_neg h, if_pos h']
+      · simp only [ite_eq_right h, ite_eq_left h']
         exact simulates_ignoreBind _ _ _ _ (updateIntBeg_correct r v) ih
-      · simpa only [if_neg h, if_neg h'] using ih
+      · simpa only [ite_eq_right h, ite_eq_right h'] using ih
 
 theorem numsetListAddIfGt_correct (rs : List Nat) (v : Int) :
     Simulates (numsetListAddIfGt rs v) (numsetListAddIfGtMonad rs v) := by
@@ -60,12 +60,12 @@ theorem numsetListAddIfGt_correct (rs : List Nat) (v : Int) :
     apply simulates_bind _ _ _ _ (intEndSub_correct r)
     intro begr
     by_cases h : 0 < begr
-    · simp only [if_pos h]
+    · simp only [ite_eq_left h]
       exact simulates_ignoreBind _ _ _ _ (updateIntEnd_correct r v) ih
     · by_cases h' : begr ≤ v
-      · simp only [if_neg h, if_pos h']
+      · simp only [ite_eq_right h, ite_eq_left h']
         exact simulates_ignoreBind _ _ _ _ (updateIntEnd_correct r v) ih
-      · simpa only [if_neg h, if_neg h'] using ih
+      · simpa only [ite_eq_right h, ite_eq_right h'] using ih
 
 def getIntervalsAux : ClashTree → Int → NumSet → FastM (Int × NumSet)
   | .delta wr rd, n, live =>

@@ -177,7 +177,7 @@ theorem imp_semanticsEq {C₁ C₂ F : Type} (ffi : HolFfiState F)
     intro k bad
     apply notFail
     unfold semantics
-    simp only [show ∃ clock, (evaluateDecs (initialState ffi clock ec) source).2 = some (.abort .typeError) from ⟨k, bad⟩, if_true]
+    simp only [show ∃ clock, (evaluateDecs (initialState ffi clock ec) source).2 = some (.abort .typeError) from ⟨k, bad⟩, ite_true]
   have targetSafe := simulation_target_safe ffi source target ec ec2 rel sim related sourceSafe
   have observations : terminatingObservation ec ffi source = terminatingObservation ec2 ffi target := by
     funext behavior
@@ -190,7 +190,7 @@ theorem imp_semanticsEq {C₁ C₂ F : Type} (ffi : HolFfiState F)
   simp only [show ¬ ∃ k, (evaluateDecs (initialState ffi k ec) source).2 = some (.abort .typeError) from
       fun ⟨k, bad⟩ => sourceSafe k bad,
     show ¬ ∃ k, (evaluateDecs (initialState ffi k ec2) target).2 = some (.abort .typeError) from
-      fun ⟨k, bad⟩ => targetSafe k bad, if_false]
+      fun ⟨k, bad⟩ => targetSafe k bad, ite_false]
   rw [observations]
   cases holOptionSome (terminatingObservation ec2 ffi target) with
   | some behavior => rfl

@@ -69,7 +69,7 @@ theorem execInsn_addSubShiftedRegister_sub_lsl0 (s : Arm8State) (rm rn rd : Nat)
     execInsn s (.addSubShiftedRegister true false .lsl rm 0 rn rd) =
       writeReg s rd (readReg s rn - readReg s rm) := by
   simp only [execInsn, shiftValue, Nat.zero_mod, BitVec.shiftLeft_zero,
-    Bool.false_eq_true, if_false, if_true]
+    Bool.false_eq_true, ite_false, ite_true]
   rw [arith_addWithCarry_true, arith_add_not_add_one]
 
 /-- Executing the flag-preserving `logicalShiftedRegister` with no shift and no
@@ -135,12 +135,12 @@ theorem execWriteFields {ms t : Arm8State} {r : Nat} {v : BitVec 64} (hne31 : r 
       (∀ j, j ≠ r → t.regs j = ms.regs j) ∧ t.failed = ms.failed ∧ t.regs r = v := by
   subst h
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · simp only [writeReg, if_neg hne31]
-  · intro x; simp only [writeReg, if_neg hne31]
-  · intro j hj; simp only [writeReg, if_neg hne31, if_neg hj]
-  · simp only [writeReg, if_neg hne31]
-  · simp only [writeReg, if_neg hne31]
-    exact if_pos trivial
+  · simp only [writeReg, ite_eq_right hne31]
+  · intro x; simp only [writeReg, ite_eq_right hne31]
+  · intro j hj; simp only [writeReg, ite_eq_right hne31, ite_eq_right hj]
+  · simp only [writeReg, ite_eq_right hne31]
+  · simp only [writeReg, ite_eq_right hne31]
+    exact ite_eq_left trivial
 
 /-! ## Reading registers out of the start relation -/
 
@@ -148,14 +148,14 @@ theorem execWriteFields {ms t : Arm8State} {r : Nat} {v : BitVec 64} (hne31 : r 
 theorem msReadReg (st : Arm8Start i s1 s2 ms) {r : Nat}
     (hlt : r < arm8Config.regCount) (hav : arm8Config.avoidRegs.contains r = false)
     (hne : r ≠ 31) : readReg ms r = s1.regs r := by
-  simp only [readReg, hne, if_false]
+  simp only [readReg, hne, ite_false]
   exact st.reg r (by rw [arm8Target_config]; exact ⟨hlt, hav⟩)
 
 /-- The same, in the PC-advanced state `execInsn` runs on. -/
 theorem msReadReg_pc (st : Arm8Start i s1 s2 ms) {r : Nat}
     (hlt : r < arm8Config.regCount) (hav : arm8Config.avoidRegs.contains r = false)
     (hne : r ≠ 31) : readReg { ms with pc := ms.pc + 4 } r = s1.regs r := by
-  simpa only [readReg, hne, if_false] using msReadReg st hlt hav hne
+  simpa only [readReg, hne, ite_false] using msReadReg st hlt hav hne
 
 /-! ## The side conditions of an `arith` instruction -/
 
@@ -368,8 +368,8 @@ theorem arithOneCase (i : HolAsm 64) (r : Nat) (v : BitVec 64) (t : Arm8State)
       arm8Target.config.avoidRegs.contains j = false → t.regs j = s2.regs j := by
     intro j hj
     by_cases hjr : j = r
-    · rw [hjr, htval, hs2regs r, if_pos rfl]
-    · rw [htreg j hjr, hs2regs j, if_neg hjr]
+    · rw [hjr, htval, hs2regs r, ite_eq_left rfl]
+    · rw [htreg j hjr, hs2regs j, ite_eq_right hjr]
       exact st.reg j hj
   have hq5 : ∀ j, j < arm8Target.config.fpRegCount →
       arm8Target.getFpReg t j = s2.fpRegs j := by
@@ -897,7 +897,7 @@ theorem case_binop_imm (bop : BinOp) (r t : Nat) (w : BitVec 64) (s1 s2 : AsmSta
     by_cases hneg : w = -1
     · have hast : arm8Ast (.inst (.arith (.binop .xor r t (.imm w)))) =
           [.logicalShiftedRegister .orr true false .lsl 0 t 31 r] := by
-        simp only [arm8Ast, arm8Inst, if_pos hneg]
+        simp only [arm8Ast, arm8Inst, ite_eq_left hneg]
       have hb : bytesInMemoryHOL ms.pc
           (encodeBytes (.logicalShiftedRegister .orr true false .lsl 0 t 31 r)) ms.mem
           s1.memDomain := by
@@ -936,7 +936,7 @@ theorem case_binop_imm (bop : BinOp) (r t : Nat) (w : BitVec 64) (s1 s2 : AsmSta
       obtain ⟨⟨n, imms, immr⟩, hbm⟩ := Option.isSome_iff_exists.mp hisSome
       have hast : arm8Ast (.inst (.arith (.binop .xor r t (.imm w)))) =
           [.logicalImmediate .eor false w t r] := by
-        simp only [arm8Ast, arm8Inst, if_neg hneg]
+        simp only [arm8Ast, arm8Inst, ite_eq_right hneg]
       have hb : bytesInMemoryHOL ms.pc
           (encodeBytes (.logicalImmediate .eor false w t r)) ms.mem s1.memDomain := by
         have hb' := st.bytes

@@ -8,7 +8,11 @@ public import Flapjack.Compiler.Backend.Semantics.TargetSem.InterferenceContract
 public import Flapjack.Misc.BytesInMem
 public import Flapjack.Byte
 public import Flapjack.Compiler.Encoders.AsmProps.Interference
-public import Mathlib.Data.Set.Lattice
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Mathlib.Data.Set.Lattice.Disjoint
+public import Mathlib.Data.Set.Lattice.Image
+public import Mathlib.Data.Set.Lattice.Indexed
+public import Mathlib.Data.Set.Lattice.Order
 
 @[expose] public section
 

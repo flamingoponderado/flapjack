@@ -39,7 +39,7 @@ theorem globalsRel_set_unreachable (reachable : NumSet) (source target : List (O
     by_cases eq : n = index
     · subst n
       simp [Flapjack.holEl_set, sourceBound] at isEmpty
-    · simp only [Flapjack.holEl_set _ _ _ _ sourceBound, if_neg (Ne.symm eq)] at isEmpty
+    · simp only [Flapjack.holEl_set _ _ _ _ sourceBound, ite_eq_right (Ne.symm eq)] at isEmpty
       exact empty n ⟨bound, isEmpty⟩
 
 /-- Updating only an unreachable source global preserves the full flat state

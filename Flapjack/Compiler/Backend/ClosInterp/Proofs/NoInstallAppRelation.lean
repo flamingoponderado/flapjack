@@ -60,22 +60,22 @@ theorem evaluateApp_noInstall_relation_step {C F : Type} (location : Option Nat)
         rw [ClosSem.evaluateApp, found] at run
         dsimp only at run
         by_cases timeout : source.clock < (first :: rest).length
-        · rw [if_pos timeout] at run
+        · rw [ite_eq_left timeout] at run
           simp at run
           rcases run with ⟨rfl, rfl⟩
           refine ⟨{ target with clock := 0 }, ?_, stateRelNoInstall_withClock related 0, trivial⟩
           rw [ClosSem.evaluateApp, foundTarget]
           dsimp only
-          rw [if_pos (by simpa [clockEq] using timeout)]
+          rw [ite_eq_left (by simpa [clockEq] using timeout)]
           rfl
-        · rw [if_neg timeout] at run
+        · rw [ite_eq_right timeout] at run
           simp at run
           rcases run with ⟨rfl, rfl⟩
           refine ⟨ClosSem.decClock (first :: rest).length target, ?_,
             stateRelNoInstall_decClock source target related _, by simp [resultNoInstall, valuesNoInstall, kindOk]⟩
           rw [ClosSem.evaluateApp, foundTarget]
           dsimp only
-          rw [if_neg (by simpa [clockEq] using timeout)]
+          rw [ite_eq_right (by simpa [clockEq] using timeout)]
       | fullApp body bodyEnv remaining =>
         dsimp only at kindOk
         obtain ⟨bodyOk, envOk, remainingOk⟩ := kindOk
@@ -86,13 +86,13 @@ theorem evaluateApp_noInstall_relation_step {C F : Type} (location : Option Nat)
         by_cases timeout : source.clock < cost
         · rw [ClosSem.evaluateApp, found] at run
           dsimp only at run
-          rw [if_pos timeout] at run
+          rw [ite_eq_left timeout] at run
           simp at run
           rcases run with ⟨rfl, rfl⟩
           refine ⟨{ target with clock := 0 }, ?_, stateRelNoInstall_withClock related 0, trivial⟩
           rw [ClosSem.evaluateApp, foundTarget]
           dsimp only
-          rw [if_pos (by simpa [clockEq, cost] using timeout)]
+          rw [ite_eq_left (by simpa [clockEq, cost] using timeout)]
           rfl
         · have enough : cost ≤ source.clock := by omega
           have smaller : (ClosSem.decClock cost source).clock < source.clock := by simp [ClosSem.decClock]; omega

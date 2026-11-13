@@ -232,7 +232,7 @@ theorem memory_raw_read_low_byte (p : BitVec 64) (s : riscv_state) :
         ((RiscV.L3.holWordExtract 3 2 0 p).toNat * 8 + j) =
       (MEM (RiscV.L3.holWordExtract 61 63 3 p) s).getLsbD
         ((RiscV.L3.holWordExtract 3 2 0 p).toNat * 8 + j)
-    rw [BitVec.getLsbD_append, if_pos sumBound]
+    rw [BitVec.getLsbD_append, ite_eq_left sumBound]
 
 
 /-- Partial raw read within one native word. The arithmetic region condition
@@ -259,7 +259,7 @@ theorem memory_raw_read_within_word (p : BitVec 64) (s : riscv_state)
         ((RiscV.L3.holWordExtract 3 2 0 p).toNat * 8 + j) =
       (MEM (RiscV.L3.holWordExtract 61 63 3 p) s).getLsbD
         ((RiscV.L3.holWordExtract 3 2 0 p).toNat * 8 + j)
-    rw [BitVec.getLsbD_append, if_pos sumBound]
+    rw [BitVec.getLsbD_append, ite_eq_left sumBound]
 
 /-- Original byte/half/word/double alignment supplies the within-word bound.
 No independent range assumption is imposed on a source memory instruction. -/
@@ -347,7 +347,7 @@ theorem memory_store_word_byte (old v : BitVec 64) (offset n : Nat) (i : Fin 8) 
         v.extractLsb' ((i.val - offset) * 8) 8
       else old.extractLsb' (i.val * 8) 8 := by
   by_cases selected : offset ≤ i.val ∧ i.val < offset + n
-  · rw [if_pos selected]
+  · rw [ite_eq_left selected]
     apply BitVec.eq_of_getLsbD_eq
     intro j hj
     have bound : i.val * 8 + j < 64 := by omega
@@ -355,15 +355,15 @@ theorem memory_store_word_byte (old v : BitVec 64) (offset n : Nat) (i : Fin 8) 
     have difference : i.val * 8 + j - offset * 8 = (i.val - offset) * 8 + j := by omega
     simp only [BitVec.getLsbD_extractLsb']
     rw [memory_store_word_bit old v (n * 8) (offset * 8) (i.val * 8 + j) bound,
-      if_pos region, difference]
-  · rw [if_neg selected]
+      ite_eq_left region, difference]
+  · rw [ite_eq_right selected]
     apply BitVec.eq_of_getLsbD_eq
     intro j hj
     have bound : i.val * 8 + j < 64 := by omega
     have region : ¬(offset * 8 ≤ i.val * 8 + j ∧ i.val * 8 + j < offset * 8 + n * 8) := by omega
     simp only [BitVec.getLsbD_extractLsb']
     rw [memory_store_word_bit old v (n * 8) (offset * 8) (i.val * 8 + j) bound,
-      if_neg region]
+      ite_eq_right region]
 
 /-- Actual raw partial-store byte effect at every byte in the native word.
 Untouched bytes retain MEM8, rather than being discarded with the word update. -/
@@ -382,8 +382,8 @@ theorem memory_raw_write_within_byte (p v : BitVec 64) (s : riscv_state)
   rw [memory_write_word_byte, memory_extract_offset8, memory_store_word_byte]
   by_cases selected : (RiscV.L3.holWordExtract 3 2 0 p).toNat ≤ i.val ∧
       i.val < (RiscV.L3.holWordExtract 3 2 0 p).toNat + n
-  · simp only [if_pos selected]
-  · rw [if_neg selected, if_neg selected, ← memory_extract_offset8,
+  · simp only [ite_eq_left selected]
+  · rw [ite_eq_right selected, ite_eq_right selected, ← memory_extract_offset8,
       memory_read_word_byte]
 
 /-- Actual partial raw store preserves all bytes outside its native word. -/
@@ -425,7 +425,7 @@ theorem memory_raw_write_region_frame (p v : BitVec 64) (s : riscv_state)
         congr 2
         omega
       exact outside (i - (RiscV.L3.holWordExtract 3 2 0 p).toNat) (by omega) address
-    simp only [index, if_neg unselected] at byte
+    simp only [index, ite_eq_right unselected] at byte
     rw [← hx] at byte
     exact byte
   · apply memory_raw_write_within_frame p v s n within x
@@ -449,7 +449,7 @@ theorem memory_raw_write_selected_byte (p v : BitVec 64) (s : riscv_state)
   rw [low, BitVec.add_assoc, ← BitVec.ofNat_add] at address
   have region : (RiscV.L3.holWordExtract 3 2 0 p).toNat ≤ i.val ∧
       i.val < (RiscV.L3.holWordExtract 3 2 0 p).toNat + n := by dsimp [i]; omega
-  rw [if_pos region] at byte
+  rw [ite_eq_left region] at byte
   dsimp only [i] at byte
   rw [address] at byte
   simpa using byte
@@ -496,7 +496,7 @@ theorem memory_raw_read_selected_byte (p : BitVec 64) (s : riscv_state)
         ((RiscV.L3.holWordExtract 3 2 0 p).toNat * 8 + (j * 8 + b)) =
       (MEM (RiscV.L3.holWordExtract 61 63 3 p) s).getLsbD
         (((RiscV.L3.holWordExtract 3 2 0 p).toNat + j) * 8 + b)
-    rw [BitVec.getLsbD_append, if_pos indexBound]
+    rw [BitVec.getLsbD_append, ite_eq_left indexBound]
     congr 1
     omega
 
@@ -585,7 +585,7 @@ theorem raw_write_expanded1 (p v : BitVec 64) (s : riscv_state)
     have frame := memory_raw_write_aligned_frame p v s ⟨0, by decide⟩ aligned x outside
     simp only [Nat.reducePow] at frame
     rw [frame]
-    simp only [holUpdate, if_neg (Ne.symm h0)]
+    simp only [holUpdate, ite_eq_right (Ne.symm h0)]
 
 /-- Full original byte-update record of an aligned native store. -/
 theorem raw_write_expanded2 (p v : BitVec 64) (s : riscv_state)
@@ -603,7 +603,7 @@ theorem raw_write_expanded2 (p v : BitVec 64) (s : riscv_state)
     have byte := memory_raw_write_aligned_byte p v s ⟨1, by decide⟩ aligned 0 (by decide)
     simp only [Nat.reducePow, Nat.reduceMul] at byte
     rw [byte]
-    simp only [holUpdate, ite_true, if_neg d1]
+    simp only [holUpdate, ite_true, ite_eq_right d1]
   · by_cases h1 : x = p + 1#64
     · rw [h1]
       have byte := memory_raw_write_aligned_byte p v s ⟨1, by decide⟩ aligned 1 (by decide)
@@ -618,7 +618,7 @@ theorem raw_write_expanded2 (p v : BitVec 64) (s : riscv_state)
       have frame := memory_raw_write_aligned_frame p v s ⟨1, by decide⟩ aligned x outside
       simp only [Nat.reducePow] at frame
       rw [frame]
-      simp only [holUpdate, if_neg (Ne.symm h0), if_neg (Ne.symm h1)]
+      simp only [holUpdate, ite_eq_right (Ne.symm h0), ite_eq_right (Ne.symm h1)]
 
 /-- Full original byte-update record of an aligned native store. -/
 theorem raw_write_expanded4 (p v : BitVec 64) (s : riscv_state)
@@ -644,7 +644,7 @@ theorem raw_write_expanded4 (p v : BitVec 64) (s : riscv_state)
     have byte := memory_raw_write_aligned_byte p v s ⟨2, by decide⟩ aligned 0 (by decide)
     simp only [Nat.reducePow, Nat.reduceMul] at byte
     rw [byte]
-    simp only [holUpdate, ite_true, if_neg d1, if_neg d2, if_neg d3]
+    simp only [holUpdate, ite_true, ite_eq_right d1, ite_eq_right d2, ite_eq_right d3]
   · by_cases h1 : x = p + 1#64
     · rw [h1]
       have d2 : p + 2#64 ≠ p + 1#64 := by
@@ -658,7 +658,7 @@ theorem raw_write_expanded4 (p v : BitVec 64) (s : riscv_state)
       have byte := memory_raw_write_aligned_byte p v s ⟨2, by decide⟩ aligned 1 (by decide)
       simp only [Nat.reducePow, Nat.reduceMul] at byte
       rw [byte]
-      simp only [holUpdate, ite_true, if_neg d2, if_neg d3]
+      simp only [holUpdate, ite_true, ite_eq_right d2, ite_eq_right d3]
     · by_cases h2 : x = p + 2#64
       · rw [h2]
         have d3 : p + 3#64 ≠ p + 2#64 := by
@@ -668,7 +668,7 @@ theorem raw_write_expanded4 (p v : BitVec 64) (s : riscv_state)
         have byte := memory_raw_write_aligned_byte p v s ⟨2, by decide⟩ aligned 2 (by decide)
         simp only [Nat.reducePow, Nat.reduceMul] at byte
         rw [byte]
-        simp only [holUpdate, ite_true, if_neg d3]
+        simp only [holUpdate, ite_true, ite_eq_right d3]
       · by_cases h3 : x = p + 3#64
         · rw [h3]
           have byte := memory_raw_write_aligned_byte p v s ⟨2, by decide⟩ aligned 3 (by decide)
@@ -683,7 +683,7 @@ theorem raw_write_expanded4 (p v : BitVec 64) (s : riscv_state)
           have frame := memory_raw_write_aligned_frame p v s ⟨2, by decide⟩ aligned x outside
           simp only [Nat.reducePow] at frame
           rw [frame]
-          simp only [holUpdate, if_neg (Ne.symm h0), if_neg (Ne.symm h1), if_neg (Ne.symm h2), if_neg (Ne.symm h3)]
+          simp only [holUpdate, ite_eq_right (Ne.symm h0), ite_eq_right (Ne.symm h1), ite_eq_right (Ne.symm h2), ite_eq_right (Ne.symm h3)]
 
 /-- Full original byte-update record of an aligned native store. -/
 theorem raw_write_expanded8 (p v : BitVec 64) (s : riscv_state)
@@ -725,7 +725,7 @@ theorem raw_write_expanded8 (p v : BitVec 64) (s : riscv_state)
     have byte := memory_raw_write_aligned_byte p v s ⟨3, by decide⟩ aligned 0 (by decide)
     simp only [Nat.reducePow, Nat.reduceMul] at byte
     rw [byte]
-    simp only [holUpdate, ite_true, if_neg d1, if_neg d2, if_neg d3, if_neg d4, if_neg d5, if_neg d6, if_neg d7]
+    simp only [holUpdate, ite_true, ite_eq_right d1, ite_eq_right d2, ite_eq_right d3, ite_eq_right d4, ite_eq_right d5, ite_eq_right d6, ite_eq_right d7]
   · by_cases h1 : x = p + 1#64
     · rw [h1]
       have d2 : p + 2#64 ≠ p + 1#64 := by
@@ -755,7 +755,7 @@ theorem raw_write_expanded8 (p v : BitVec 64) (s : riscv_state)
       have byte := memory_raw_write_aligned_byte p v s ⟨3, by decide⟩ aligned 1 (by decide)
       simp only [Nat.reducePow, Nat.reduceMul] at byte
       rw [byte]
-      simp only [holUpdate, ite_true, if_neg d2, if_neg d3, if_neg d4, if_neg d5, if_neg d6, if_neg d7]
+      simp only [holUpdate, ite_true, ite_eq_right d2, ite_eq_right d3, ite_eq_right d4, ite_eq_right d5, ite_eq_right d6, ite_eq_right d7]
     · by_cases h2 : x = p + 2#64
       · rw [h2]
         have d3 : p + 3#64 ≠ p + 2#64 := by
@@ -781,7 +781,7 @@ theorem raw_write_expanded8 (p v : BitVec 64) (s : riscv_state)
         have byte := memory_raw_write_aligned_byte p v s ⟨3, by decide⟩ aligned 2 (by decide)
         simp only [Nat.reducePow, Nat.reduceMul] at byte
         rw [byte]
-        simp only [holUpdate, ite_true, if_neg d3, if_neg d4, if_neg d5, if_neg d6, if_neg d7]
+        simp only [holUpdate, ite_true, ite_eq_right d3, ite_eq_right d4, ite_eq_right d5, ite_eq_right d6, ite_eq_right d7]
       · by_cases h3 : x = p + 3#64
         · rw [h3]
           have d4 : p + 4#64 ≠ p + 3#64 := by
@@ -803,7 +803,7 @@ theorem raw_write_expanded8 (p v : BitVec 64) (s : riscv_state)
           have byte := memory_raw_write_aligned_byte p v s ⟨3, by decide⟩ aligned 3 (by decide)
           simp only [Nat.reducePow, Nat.reduceMul] at byte
           rw [byte]
-          simp only [holUpdate, ite_true, if_neg d4, if_neg d5, if_neg d6, if_neg d7]
+          simp only [holUpdate, ite_true, ite_eq_right d4, ite_eq_right d5, ite_eq_right d6, ite_eq_right d7]
         · by_cases h4 : x = p + 4#64
           · rw [h4]
             have d5 : p + 5#64 ≠ p + 4#64 := by
@@ -821,7 +821,7 @@ theorem raw_write_expanded8 (p v : BitVec 64) (s : riscv_state)
             have byte := memory_raw_write_aligned_byte p v s ⟨3, by decide⟩ aligned 4 (by decide)
             simp only [Nat.reducePow, Nat.reduceMul] at byte
             rw [byte]
-            simp only [holUpdate, ite_true, if_neg d5, if_neg d6, if_neg d7]
+            simp only [holUpdate, ite_true, ite_eq_right d5, ite_eq_right d6, ite_eq_right d7]
           · by_cases h5 : x = p + 5#64
             · rw [h5]
               have d6 : p + 6#64 ≠ p + 5#64 := by
@@ -835,7 +835,7 @@ theorem raw_write_expanded8 (p v : BitVec 64) (s : riscv_state)
               have byte := memory_raw_write_aligned_byte p v s ⟨3, by decide⟩ aligned 5 (by decide)
               simp only [Nat.reducePow, Nat.reduceMul] at byte
               rw [byte]
-              simp only [holUpdate, ite_true, if_neg d6, if_neg d7]
+              simp only [holUpdate, ite_true, ite_eq_right d6, ite_eq_right d7]
             · by_cases h6 : x = p + 6#64
               · rw [h6]
                 have d7 : p + 7#64 ≠ p + 6#64 := by
@@ -845,7 +845,7 @@ theorem raw_write_expanded8 (p v : BitVec 64) (s : riscv_state)
                 have byte := memory_raw_write_aligned_byte p v s ⟨3, by decide⟩ aligned 6 (by decide)
                 simp only [Nat.reducePow, Nat.reduceMul] at byte
                 rw [byte]
-                simp only [holUpdate, ite_true, if_neg d7]
+                simp only [holUpdate, ite_true, ite_eq_right d7]
               · by_cases h7 : x = p + 7#64
                 · rw [h7]
                   have byte := memory_raw_write_aligned_byte p v s ⟨3, by decide⟩ aligned 7 (by decide)
@@ -860,6 +860,6 @@ theorem raw_write_expanded8 (p v : BitVec 64) (s : riscv_state)
                   have frame := memory_raw_write_aligned_frame p v s ⟨3, by decide⟩ aligned x outside
                   simp only [Nat.reducePow] at frame
                   rw [frame]
-                  simp only [holUpdate, if_neg (Ne.symm h0), if_neg (Ne.symm h1), if_neg (Ne.symm h2), if_neg (Ne.symm h3), if_neg (Ne.symm h4), if_neg (Ne.symm h5), if_neg (Ne.symm h6), if_neg (Ne.symm h7)]
+                  simp only [holUpdate, ite_eq_right (Ne.symm h0), ite_eq_right (Ne.symm h1), ite_eq_right (Ne.symm h2), ite_eq_right (Ne.symm h3), ite_eq_right (Ne.symm h4), ite_eq_right (Ne.symm h5), ite_eq_right (Ne.symm h6), ite_eq_right (Ne.symm h7)]
 
 end Flapjack.RiscV.L3.Step.ByteMemory

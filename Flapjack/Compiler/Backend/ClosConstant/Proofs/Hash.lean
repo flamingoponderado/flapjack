@@ -71,11 +71,11 @@ theorem goodHashTable_insert (tree : Spt (List (ConstPart × Nat))) (aux : List 
     by_cases hashEq : partHash (updateTag key) = partHash (updateTag part)
     · have old := goodHashTable_lookup good key
       rw [hashEq] at old
-      simp only [lookupPart, if_neg same]
+      simp only [lookupPart, ite_eq_right same]
       rw [hashEq, sptLookup_sptInsert_same]
       cases bucket : sptLookup (partHash (updateTag part)) tree <;>
         simp_all [ClosToBvl.lookupPart]
-    · simp only [lookupPart, if_neg same]
+    · simp only [lookupPart, ite_eq_right same]
       rw [sptLookup_sptInsert_ne _ _ _ _ hashEq]
       exact goodHashTable_lookup good key
 

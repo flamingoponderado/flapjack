@@ -31,8 +31,8 @@ def cpStateInv (cs : CopyState) : Prop :=
 theorem sptLookupInsert {α : Type} (k k' : Nat) (v : α) (t : Spt α) :
     sptLookup k (sptInsert k' v t) = if k = k' then some v else sptLookup k t := by
   by_cases h : k = k'
-  · subst h; rw [if_pos rfl, sptLookup_sptInsert_same]
-  · rw [if_neg h, sptLookup_sptInsert_ne _ _ _ _ h]
+  · subst h; rw [ite_eq_left rfl, sptLookup_sptInsert_same]
+  · rw [ite_eq_right h, sptLookup_sptInsert_ne _ _ _ _ h]
 
 /-- The class of `y` with a representative, as scrutinised by `set_eq`/`set_store_eq`
 (Flapjack infrastructure). -/
@@ -48,11 +48,11 @@ theorem liveClass_some {cs : CopyState} {y c : Nat} :
   | none => simp
   | some c' =>
       by_cases h' : sptLookup c' cs.fromEq = none
-      · simp only [h', if_true]
+      · simp only [h', ite_true]
         constructor
         · intro h; cases h
         · rintro ⟨h1, h2⟩; cases h1; exact absurd h' h2
-      · simp only [h', if_false]
+      · simp only [h', ite_false]
         constructor
         · intro h1; cases h1; exact ⟨rfl, h'⟩
         · rintro ⟨h1, _⟩; cases h1; rfl
@@ -235,7 +235,7 @@ theorem setStoreEqInv {cs : CopyState} {name : WordStoreHOL} {e : Nat} :
           by_cases hve : v = e
           · subst hve
             exact absurd (liveClass_some.mpr ⟨hv, by rw [hc]; simp⟩) (by rw [hcl]; simp)
-          · rw [if_neg hve]; exact hv
+          · rw [ite_eq_right hve]; exact hv
   | some c0 =>
       unfold cpStateInv; dsimp only
       obtain ⟨hs, _⟩ := liveClass_some.mp hcl
@@ -335,7 +335,7 @@ theorem lookupEqSetEqNotAllocVar {t s : Nat} {cs : CopyState} {v : Nat} :
     ¬ bothAllocVars (t, s) → lookupEq (setEq cs t s) v = lookupEq cs v := by
   intro h
   have h' : ¬(isAllocVar t = true ∧ isAllocVar s = true) := h
-  rw [setEq_eq, if_neg h']
+  rw [setEq_eq, ite_eq_right h']
 
 /-- `set_eq` on two alloc vars, by the class of `s` (Flapjack infrastructure). -/
 theorem setEq_both {cs : CopyState} {t s : Nat} (h : bothAllocVars (t, s)) :
@@ -351,7 +351,7 @@ theorem setEq_both {cs : CopyState} {t s : Nat} (h : bothAllocVars (t, s)) :
           fromEq := sptInsert c t cs.fromEq
           storeToEq := cs.storeToEq
           next := cs.next } := by
-  rw [setEq_eq, if_pos (show isAllocVar t = true ∧ isAllocVar s = true from h)]
+  rw [setEq_eq, ite_eq_left (show isAllocVar t = true ∧ isAllocVar s = true from h)]
 
 /-- Exact HOL `lookup_eq_set_eq_is_alloc_var1` (`word_copyProofScript.sml:168-186`). -/
 @[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "lookup_eq_set_eq_is_alloc_var1"]
@@ -388,18 +388,18 @@ theorem lookupEqSetEqIsAllocVar2 {cs : CopyState} {t s v : Nat} :
       have hvs : v ≠ s := by rintro rfl; exact hne rfl
       unfold lookupEq
       dsimp only
-      rw [sptLookupInsert, if_neg hvt, sptLookupInsert, if_neg hvs]
+      rw [sptLookupInsert, ite_eq_right hvt, sptLookupInsert, ite_eq_right hvs]
       cases hl : sptLookup v cs.toEq with
       | none => rfl
       | some c =>
           have := h1 v c hl
           dsimp only
-          rw [sptLookupInsert, if_neg (by omega)]
+          rw [sptLookupInsert, ite_eq_right (by omega)]
   | some c0 =>
       obtain ⟨hs, hfrom⟩ := liveClass_some.mp hcl
       unfold lookupEq
       dsimp only
-      rw [sptLookupInsert, if_neg hvt]
+      rw [sptLookupInsert, ite_eq_right hvt]
       cases hl : sptLookup v cs.toEq with
       | none => rfl
       | some c =>
@@ -413,7 +413,7 @@ theorem lookupEqSetEqIsAllocVar2 {cs : CopyState} {t s v : Nat} :
             | some r =>
                 rw [lookupEqI cs r s (Or.inr ⟨c, hs, hr⟩),
                   lookupEqI cs r v (Or.inr ⟨c, hl, hr⟩)]
-          · rw [if_neg hcc]
+          · rw [ite_eq_right hcc]
 
 /-- Exact HOL `lookup_eq_set_eq_t` (`word_copyProofScript.sml:216-223`). -/
 @[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "lookup_eq_set_eq_t"]
@@ -514,7 +514,7 @@ theorem lookupStoreEqSetEqD {cs : CopyState} {t s : Nat} {v : WordStoreHOL} {r :
     cases hcl : liveClass cs s with
     | none =>
         rw [hcl] at h
-        simp only [sptLookupInsert, if_neg (show c ≠ cs.next by omega)] at h
+        simp only [sptLookupInsert, ite_eq_right (show c ≠ cs.next by omega)] at h
         cases hf : sptLookup c cs.fromEq with
         | none => rw [hf] at h; cases h
         | some r' =>
@@ -526,19 +526,19 @@ theorem lookupStoreEqSetEqD {cs : CopyState} {t s : Nat} {v : WordStoreHOL} {r :
         simp only [sptLookupInsert] at h
         by_cases hcc : c = c0
         · subst hcc
-          simp only [if_true] at h
+          simp only [ite_true] at h
           cases h
           refine ⟨fun _ => ?_, fun hr => absurd rfl hr⟩
           cases hr : sptLookup c cs.fromEq with
           | none => exact absurd hr hfrom
           | some r' => simp only; rw [lookupEqI cs r' s (Or.inr ⟨c, hsc, hr⟩)]
-        · simp only [if_neg hcc] at h
+        · simp only [ite_eq_right hcc] at h
           cases hf : sptLookup c cs.fromEq with
           | none => rw [hf] at h; cases h
           | some r' =>
               rw [hf] at h; cases h
               exact ⟨fun hr => absurd (hr ▸ hf) (hrep c), fun _ => rfl⟩
-  · rw [setEq_eq, if_neg (show ¬(isAllocVar t = true ∧ isAllocVar s = true) from hb)] at h
+  · rw [setEq_eq, ite_eq_right (show ¬(isAllocVar t = true ∧ isAllocVar s = true) from hb)] at h
     cases hf : sptLookup c cs.fromEq with
     | none => rw [hf] at h; cases h
     | some r' =>

@@ -23,7 +23,7 @@ private theorem dataRun (k : Nat) (hk : k ≠ 0) :
   have hd : decodeLength conf (4 : BitVec 64) = 0 := by rfl
   have ha : (100 : BitVec 64) + (0 + 1) * wordSemBytesInWord = 108 := by rfl
   rw [wordGenGcMoveData]
-  simp only [h, if_false, hk, wordSemTheWord, wordSemIsWordLoc, hb, if_true, hd, ha]
+  simp only [h, ite_false, hk, wordSemTheWord, wordSemIsWordLoc, hb, ite_true, hd, ha]
   rw [wordGenGcMoveData]
   simp
 private theorem genListZero (a i pa ib pb old : BitVec 64)
@@ -40,7 +40,7 @@ private theorem refsRun (k : Nat) (hk : k ≠ 0) :
   have hd : decodeLength conf (0 : BitVec 64) = 0 := by rfl
   have ha : (100 : BitVec 64) + wordSemBytesInWord = 108 := by rfl
   rw [wordGenGcMoveRefs]
-  simp only [h, if_false, hk, wordSemTheWord, wordSemIsWordLoc, hd, ha]
+  simp only [h, ite_false, hk, wordSemTheWord, wordSemIsWordLoc, hd, ha]
   rw [genListZero]
   rw [wordGenGcMoveRefs]
   simp
@@ -61,7 +61,7 @@ example :
      (i,pa,ib,pb,m 100,m 108,c)) =
       (7,108,50,3000,.word 4,.word 4,false) := by
   rw [wordGenGcMoveLoop]
-  simp only [if_true, show (100 : BitVec 64) ≠ 108 by decide, if_false]
+  simp only [ite_true, show (100 : BitVec 64) ≠ 108 by decide, ite_false]
   rw [dataRun (2 ^ 64) (by decide)]
 
 -- Original gen_loop_data_one.
@@ -71,9 +71,9 @@ example :
      (i,pa,ib,pb,m 100,m 108,c)) =
       (7,108,50,3000,.word 4,.word 4,true) := by
   rw [wordGenGcMoveLoop]
-  simp only [if_true, show (100 : BitVec 64) ≠ 108 by decide, if_false]
+  simp only [ite_true, show (100 : BitVec 64) ≠ 108 by decide, ite_false]
   rw [dataRun (2 ^ 64) (by decide)]
-  simp only [Nat.one_ne_zero, if_false]
+  simp only [Nat.one_ne_zero, ite_false]
   rw [wordGenGcMoveLoop]
   simp
 
@@ -84,7 +84,7 @@ example :
      (i,pa,ib,pb,m 100,m 108,c)) =
       (7,2000,50,100,.word 0,.word 0,false) := by
   rw [wordGenGcMoveLoop]
-  simp only [show (108 : BitVec 64) ≠ 100 by decide, if_false]
+  simp only [show (108 : BitVec 64) ≠ 100 by decide, ite_false]
   rw [refsRun (2 ^ 64) (by decide)]
   simp
 
@@ -95,9 +95,9 @@ example :
      (i,pa,ib,pb,m 100,m 108,c)) =
       (7,2000,50,100,.word 0,.word 0,true) := by
   rw [wordGenGcMoveLoop]
-  simp only [show (108 : BitVec 64) ≠ 100 by decide, if_false]
+  simp only [show (108 : BitVec 64) ≠ 100 by decide, ite_false]
   rw [refsRun (2 ^ 64) (by decide)]
-  simp only [Nat.one_ne_zero, if_false]
+  simp only [Nat.one_ne_zero, ite_false]
   rw [wordGenGcMoveLoop]
   simp
 

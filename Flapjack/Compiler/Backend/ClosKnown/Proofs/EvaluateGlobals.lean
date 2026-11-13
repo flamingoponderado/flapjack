@@ -813,22 +813,22 @@ theorem evaluateAppChangedGlobalsCons {C F : Type} (location : Option Nat)
       dsimp only at run
       have valueSafe := destClosurePartialSafe _ _ _ _ _ fnSafe argsSafe closureRun
       by_cases timeout : s0.clock < (first :: args).length
-      · rw [if_pos timeout] at run
+      · rw [ite_eq_left timeout] at run
         rcases run with ⟨rfl, rfl⟩
         exact ⟨(ssgcFreeClock s0 (fun _ => 0)).2 safe,
           by simp [rsgcFree], 0, shiftSeqZero _, mglobalsExtendRefl _ _⟩
-      · rw [if_neg timeout] at run
+      · rw [ite_eq_right timeout] at run
         rcases run with ⟨rfl, rfl⟩
         exact ⟨(ssgcFreeDecClock (first :: args).length s0).2 safe,
           by simpa [rsgcFree] using valueSafe, 0, shiftSeqZero _, mglobalsExtendRefl _ _⟩
     | fullApp body env rest =>
       dsimp only at run
       by_cases timeout : s0.clock < (first :: args).length - rest.length
-      · rw [if_pos timeout] at run
+      · rw [ite_eq_left timeout] at run
         rcases run with ⟨rfl, rfl⟩
         exact ⟨(ssgcFreeClock s0 (fun _ => 0)).2 safe,
           by simp [rsgcFree], 0, shiftSeqZero _, mglobalsExtendRefl _ _⟩
-      · rw [if_neg timeout, fixClock_evaluate] at run
+      · rw [ite_eq_right timeout, fixClock_evaluate] at run
         have ⟨noWrites, envSafe, restSafe⟩ :=
           destClosureFullSgcFree _ _ _ _ _ _ _ _ ⟨closureRun, fnSafe, argsSafe first (by simp),
             by intro v member; exact argsSafe v (by simp [member])⟩

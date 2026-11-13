@@ -131,10 +131,10 @@ theorem pmatch_con_related {C F : Type} (n : Nat) (source target : FlatSem.State
     · have notBad : ¬ ¬ PmatchStampsOk stamp actual patterns.length fields.length := fun h => h stamps
       by_cases same : stamp.map Prod.fst = actual.map Prod.fst ∧ patterns.length = fields.length
       · have innerSafe : FlatSem.pmatchList source patterns fields bindings ≠ .typeError := by
-          simpa only [FlatSem.pmatch, if_neg notBad, if_pos same] using safe
-        simpa only [FlatSem.pmatch, ← lengths, if_neg notBad, if_pos same] using
+          simpa only [FlatSem.pmatch, ite_eq_right notBad, ite_eq_left same] using safe
+        simpa only [FlatSem.pmatch, ← lengths, ite_eq_right notBad, ite_eq_left same] using
           nested fields fields' fieldsRel innerSafe
-      · simp only [FlatSem.pmatch, ← lengths, if_neg notBad, if_neg same, MatchRel]
+      · simp only [FlatSem.pmatch, ← lengths, ite_eq_right notBad, ite_eq_right same, MatchRel]
     · simp [FlatSem.pmatch, stamps] at safe
   | litv _ | closure _ _ _ | recclosure _ _ _ | loc _ _ | vectorv _ =>
     simp [FlatSem.pmatch] at safe

@@ -1016,193 +1016,193 @@ example : (absStack ([0, 255] : List (BitVec 80)) ([.stackFrame (some 999) [(7,.
   simp +decide [absStack]; decide +kernel
 
 -- fo_relation_0_0
-example : (decide (List.Forall₂ absFrameEq ([] : List (Option Nat × Nat × List Nat)) ([] : List (Option Nat × Nat × List Bool))), handlerVal ([] : List (Option Nat × Nat × List Nat)), handlerVal ([] : List (Option Nat × Nat × List Bool))) = (true, 1, 1) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([] : List (Option Nat × Nat × List Nat)) ([] : List (Option Nat × Nat × List Bool))), handlerVal ([] : List (Option Nat × Nat × List Nat)), handlerVal ([] : List (Option Nat × Nat × List Bool))) = (true, 1, 1) := by simp +decide
 
 -- fo_relation_0_1
-example : (decide (List.Forall₂ absFrameEq ([] : List (Option Nat × Nat × List Nat)) ([(none,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 1, 2) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([] : List (Option Nat × Nat × List Nat)) ([(none,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 1, 2) := by simp +decide
 
 -- fo_relation_0_2
-example : (decide (List.Forall₂ absFrameEq ([] : List (Option Nat × Nat × List Nat)) ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 1, 4) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([] : List (Option Nat × Nat × List Nat)) ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 1, 4) := by simp +decide
 
 -- fo_relation_0_3
-example : (decide (List.Forall₂ absFrameEq ([] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 1, 5) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 1, 5) := by simp +decide
 
 -- fo_relation_0_4
-example : (decide (List.Forall₂ absFrameEq ([] : List (Option Nat × Nat × List Nat)) ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 1, 7) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([] : List (Option Nat × Nat × List Nat)) ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 1, 7) := by simp +decide
 
 -- fo_relation_0_5
-example : (decide (List.Forall₂ absFrameEq ([] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 1, 9) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 1, 9) := by simp +decide
 
 -- fo_relation_0_6
-example : (decide (List.Forall₂ absFrameEq ([] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 1, 9) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 1, 9) := by simp +decide
 
 -- fo_relation_0_7
-example : (decide (List.Forall₂ absFrameEq ([] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 1, 10) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 1, 10) := by simp +decide
 
 -- fo_relation_1_0
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[])] : List (Option Nat × Nat × List Nat)) ([] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([] : List (Option Nat × Nat × List Bool))) = (false, 2, 1) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[])] : List (Option Nat × Nat × List Nat)) ([] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([] : List (Option Nat × Nat × List Bool))) = (false, 2, 1) := by simp +decide
 
 -- fo_relation_1_1
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Bool))) = (true, 2, 2) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Bool))) = (true, 2, 2) := by simp +decide
 
 -- fo_relation_1_2
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 2, 4) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 2, 4) := by simp +decide
 
 -- fo_relation_1_3
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 2, 5) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 2, 5) := by simp +decide
 
 -- fo_relation_1_4
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[])] : List (Option Nat × Nat × List Nat)) ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 2, 7) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[])] : List (Option Nat × Nat × List Nat)) ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 2, 7) := by simp +decide
 
 -- fo_relation_1_5
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 2, 9) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 2, 9) := by simp +decide
 
 -- fo_relation_1_6
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 2, 9) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 2, 9) := by simp +decide
 
 -- fo_relation_1_7
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 2, 10) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 2, 10) := by simp +decide
 
 -- fo_relation_2_0
-example : (decide (List.Forall₂ absFrameEq ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([] : List (Option Nat × Nat × List Bool))) = (false, 4, 1) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([] : List (Option Nat × Nat × List Bool))) = (false, 4, 1) := by simp +decide
 
 -- fo_relation_2_1
-example : (decide (List.Forall₂ absFrameEq ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 4, 2) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 4, 2) := by simp +decide
 
 -- fo_relation_2_2
-example : (decide (List.Forall₂ absFrameEq ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (true, 4, 4) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (true, 4, 4) := by simp +decide
 
 -- fo_relation_2_3
-example : (decide (List.Forall₂ absFrameEq ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 4, 5) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 4, 5) := by simp +decide
 
 -- fo_relation_2_4
-example : (decide (List.Forall₂ absFrameEq ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 4, 7) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 4, 7) := by simp +decide
 
 -- fo_relation_2_5
-example : (decide (List.Forall₂ absFrameEq ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 4, 9) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 4, 9) := by simp +decide
 
 -- fo_relation_2_6
-example : (decide (List.Forall₂ absFrameEq ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 4, 9) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 4, 9) := by simp +decide
 
 -- fo_relation_2_7
-example : (decide (List.Forall₂ absFrameEq ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 4, 10) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 4, 10) := by simp +decide
 
 -- fo_relation_3_0
-example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([] : List (Option Nat × Nat × List Bool))) = (false, 5, 1) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([] : List (Option Nat × Nat × List Bool))) = (false, 5, 1) := by simp +decide
 
 -- fo_relation_3_1
-example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 5, 2) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 5, 2) := by simp +decide
 
 -- fo_relation_3_2
-example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 5, 4) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 5, 4) := by simp +decide
 
 -- fo_relation_3_3
-example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (true, 5, 5) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (true, 5, 5) := by simp +decide
 
 -- fo_relation_3_4
-example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 5, 7) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 5, 7) := by simp +decide
 
 -- fo_relation_3_5
-example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 5, 9) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 5, 9) := by simp +decide
 
 -- fo_relation_3_6
-example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 5, 9) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 5, 9) := by simp +decide
 
 -- fo_relation_3_7
-example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 5, 10) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 5, 10) := by simp +decide
 
 -- fo_relation_4_0
-example : (decide (List.Forall₂ absFrameEq ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([] : List (Option Nat × Nat × List Bool))) = (false, 7, 1) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([] : List (Option Nat × Nat × List Bool))) = (false, 7, 1) := by simp +decide
 
 -- fo_relation_4_1
-example : (decide (List.Forall₂ absFrameEq ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 7, 2) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 7, 2) := by simp +decide
 
 -- fo_relation_4_2
-example : (decide (List.Forall₂ absFrameEq ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 7, 4) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 7, 4) := by simp +decide
 
 -- fo_relation_4_3
-example : (decide (List.Forall₂ absFrameEq ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 7, 5) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 7, 5) := by simp +decide
 
 -- fo_relation_4_4
-example : (decide (List.Forall₂ absFrameEq ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (true, 7, 7) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (true, 7, 7) := by simp +decide
 
 -- fo_relation_4_5
-example : (decide (List.Forall₂ absFrameEq ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 7, 9) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 7, 9) := by simp +decide
 
 -- fo_relation_4_6
-example : (decide (List.Forall₂ absFrameEq ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 7, 9) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 7, 9) := by simp +decide
 
 -- fo_relation_4_7
-example : (decide (List.Forall₂ absFrameEq ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 7, 10) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 7, 10) := by simp +decide
 
 -- fo_relation_5_0
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([] : List (Option Nat × Nat × List Bool))) = (false, 9, 1) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([] : List (Option Nat × Nat × List Bool))) = (false, 9, 1) := by simp +decide
 
 -- fo_relation_5_1
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 9, 2) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 9, 2) := by simp +decide
 
 -- fo_relation_5_2
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 9, 4) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 9, 4) := by simp +decide
 
 -- fo_relation_5_3
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 9, 5) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 9, 5) := by simp +decide
 
 -- fo_relation_5_4
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 9, 7) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 9, 7) := by simp +decide
 
 -- fo_relation_5_5
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (true, 9, 9) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (true, 9, 9) := by simp +decide
 
 -- fo_relation_5_6
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 9, 9) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 9, 9) := by simp +decide
 
 -- fo_relation_5_7
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 9, 10) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (some 7,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 9, 10) := by simp +decide
 
 -- fo_relation_6_0
-example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([] : List (Option Nat × Nat × List Bool))) = (false, 9, 1) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([] : List (Option Nat × Nat × List Bool))) = (false, 9, 1) := by simp +decide
 
 -- fo_relation_6_1
-example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 9, 2) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 9, 2) := by simp +decide
 
 -- fo_relation_6_2
-example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 9, 4) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 9, 4) := by simp +decide
 
 -- fo_relation_6_3
-example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 9, 5) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 9, 5) := by simp +decide
 
 -- fo_relation_6_4
-example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 9, 7) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 9, 7) := by simp +decide
 
 -- fo_relation_6_5
-example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 9, 9) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 9, 9) := by simp +decide
 
 -- fo_relation_6_6
-example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (true, 9, 9) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (true, 9, 9) := by simp +decide
 
 -- fo_relation_6_7
-example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 9, 10) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(some 7,0,[11]), (none,1,[11, 12])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 9, 10) := by simp +decide
 
 -- fo_relation_7_0
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([] : List (Option Nat × Nat × List Bool))) = (false, 10, 1) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([] : List (Option Nat × Nat × List Bool))) = (false, 10, 1) := by simp +decide
 
 -- fo_relation_7_1
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 10, 2) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 10, 2) := by simp +decide
 
 -- fo_relation_7_2
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 10, 4) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 10, 4) := by simp +decide
 
 -- fo_relation_7_3
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 10, 5) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (false, 10, 5) := by simp +decide
 
 -- fo_relation_7_4
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 10, 7) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 10, 7) := by simp +decide
 
 -- fo_relation_7_5
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 10, 9) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (some 7,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 10, 9) := by simp +decide
 
 -- fo_relation_7_6
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 10, 9) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(some 7,0,[false]), (none,1,[false, true])] : List (Option Nat × Nat × List Bool))) = (false, 10, 9) := by simp +decide
 
 -- fo_relation_7_7
-example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (true, 10, 10) := by decide +kernel
+example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (true, 10, 10) := by simp +decide

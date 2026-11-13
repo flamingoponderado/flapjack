@@ -128,7 +128,7 @@ theorem wordGenGcMove_ref {width : Nat} [NeZero width] (conf : Config)
           (SetSep.star (Misc.wordList pa (xs.take remainingCount)) frame) := by ac_rfl
     rw [← rearrange]
     simpa [destination, wordSemBytesInWord, StackRemove.bytesInWord] using separated
-  simp only [wordAddr, wordGenGcMove, if_neg low', address, read.1, read.2, wordSemTheWord,
+  simp only [wordAddr, wordGenGcMove, ite_eq_right low', address, read.1, read.2, wordSemTheWord,
     wordSemIsWordLoc, notForward, Bool.false_eq_true, ↓reduceIte, Bool.true_and,
     headerRef, decoded, indexEq, destEq] at wordRun
   generalize copyRun : memcpy (BitVec.ofNat width words.length + 1) src destination memory domain = copyResult at wordRun
@@ -140,7 +140,7 @@ theorem wordGenGcMove_ref {width : Nat} [NeZero width] (conf : Config)
       (.word (updateAddr conf (BitVec.ofNat width targetIndex) (getAddr conf ptr value)),
         BitVec.ofNat width targetIndex + BitVec.ofNat width words.length + 1,
         copyEnd, gcUpdate src (.word (BitVec.ofNat width targetIndex <<< (2 : Nat))) copyMemory, copyOk) := by
-    simp only [wordAddr, wordGcMove, if_neg low, address, read.1, read.2, notForward,
+    simp only [wordAddr, wordGcMove, ite_eq_right low, address, read.1, read.2, notForward,
       Bool.false_eq_true, ↓reduceIte, wordSemTheWord, wordSemIsWordLoc, Bool.true_and, decoded, copyRun]
   have copyAbstract : CopyingGc.gcMove (.pointer ptr value, [], targetIndex, len + 1, state.heap, true,
       targetIndex + (len + 1)) =

@@ -7,6 +7,7 @@ public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListInjective
 public import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListReverse
 public import Flapjack.Misc.GoodDimindex
 public import Flapjack.Misc.ListEl
+public import Mathlib.Tactic.Set
 
 @[expose] public section
 

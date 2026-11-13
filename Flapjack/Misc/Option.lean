@@ -25,7 +25,7 @@ theorem holOptionSome_eq_some_iff {α : Type} (P : α → Prop)
   classical
   unfold holOptionSome
   by_cases existsValue : ∃ x, P x
-  · simp only [existsValue, dif_pos, Option.some.injEq]
+  · simp only [existsValue, dite_eq_left, Option.some.injEq]
     constructor
     · intro same
       rw [← same]

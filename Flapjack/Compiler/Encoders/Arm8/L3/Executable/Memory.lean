@@ -219,7 +219,7 @@ theorem encodeBytes_loadStore64_load (unsignedOffset : Bool) (offset : BitVec 64
         · rfl
       rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
       simp only [arm8Encode, Encode, e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm,
-        hpref, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+        hpref, Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true,
         Bool.and_eq_true_iff, beq_iff_eq, hg, h9']
 
 /-- A 64-bit store encodes to the same four bytes on both sides. -/
@@ -310,7 +310,7 @@ theorem encodeBytes_loadStore64_store (unsignedOffset : Bool) (offset : BitVec 6
         · rfl
       rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
       simp only [arm8Encode, Encode, e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm,
-        hpref, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+        hpref, Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true,
         Bool.and_eq_true_iff, beq_iff_eq, hg, h9']
 
 /-- A 32-bit load encodes to the same four bytes on both sides. -/
@@ -401,7 +401,7 @@ theorem encodeBytes_loadStore32_load (unsignedOffset : Bool) (offset : BitVec 64
         · rfl
       rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
       simp only [arm8Encode, Encode, e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm,
-        hpref, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+        hpref, Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true,
         Bool.and_eq_true_iff, beq_iff_eq, hg, h9']
 
 /-- A 32-bit store encodes to the same four bytes on both sides. -/
@@ -492,7 +492,7 @@ theorem encodeBytes_loadStore32_store (unsignedOffset : Bool) (offset : BitVec 6
         · rfl
       rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
       simp only [arm8Encode, Encode, e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm,
-        hpref, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+        hpref, Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true,
         Bool.and_eq_true_iff, beq_iff_eq, hg, h9']
 
 /-- A 16-bit load encodes to the same four bytes on both sides. -/
@@ -583,7 +583,7 @@ theorem encodeBytes_loadStore16_load (unsignedOffset : Bool) (offset : BitVec 64
         · rfl
       rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
       simp only [arm8Encode, Encode, e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm,
-        hpref, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+        hpref, Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true,
         Bool.and_eq_true_iff, beq_iff_eq, hg, h9']
 
 /-- A 16-bit store encodes to the same four bytes on both sides. -/
@@ -674,7 +674,7 @@ theorem encodeBytes_loadStore16_store (unsignedOffset : Bool) (offset : BitVec 6
         · rfl
       rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
       simp only [arm8Encode, Encode, e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm,
-        hpref, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+        hpref, Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true,
         Bool.and_eq_true_iff, beq_iff_eq, hg, h9']
 
 /-- A 8-bit load encodes to the same four bytes on both sides. -/
@@ -765,7 +765,7 @@ theorem encodeBytes_loadStore8_load (unsignedOffset : Bool) (offset : BitVec 64)
         · rfl
       rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
       simp only [arm8Encode, Encode, e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm,
-        hpref, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+        hpref, Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true,
         Bool.and_eq_true_iff, beq_iff_eq, hg, h9']
 
 /-- A 8-bit store encodes to the same four bytes on both sides. -/
@@ -856,7 +856,7 @@ theorem encodeBytes_loadStore8_store (unsignedOffset : Bool) (offset : BitVec 64
         · rfl
       rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
       simp only [arm8Encode, Encode, e_load_store, e_LoadStoreImmediate, hs, h3, hload, hnrm,
-        hpref, Bool.false_eq_true, if_false, hnf, if_true, Bool.and_true,
+        hpref, Bool.false_eq_true, ite_false, hnf, ite_true, Bool.and_true,
         Bool.and_eq_true_iff, beq_iff_eq, hg, h9']
 
 end Flapjack.Compiler.Encoders.Arm8.L3

@@ -1166,10 +1166,10 @@ private theorem envRel_takeTarget {A B : Type} (R : A → B → Prop) (n : Nat)
   unfold envRel at whole ⊢
   have targetLen : (target.take n).length = n := by simp [enough]
   by_cases targetSame : source.length = (target.take n).length
-  · rw [if_pos targetSame]
+  · rw [ite_eq_left targetSame]
     have sourceShort : source.length ≤ n := by omega
     simpa [List.take_of_length_le sourceShort] using prefixRel
-  · rw [if_neg targetSame]
+  · rw [ite_eq_right targetSame]
     intro i used
     obtain ⟨fn, mem, free⟩ := used
     simp only [List.mem_singleton] at mem
@@ -1179,12 +1179,12 @@ private theorem envRel_takeTarget {A B : Type} (R : A → B → Prop) (n : Nat)
     have targetBound : i < target.length := by omega
     have takeBound : i < (target.take n).length := by omega
     by_cases same : source.length = target.length
-    · rw [if_pos same] at whole
+    · rw [ite_eq_left same] at whole
       have sourceBound : i < source.length := by omega
       have value := whole.get sourceBound targetBound
       refine ⟨sourceBound, takeBound, ?_⟩
       simpa using value
-    · rw [if_neg same] at whole
+    · rw [ite_eq_right same] at whole
       obtain ⟨sourceBound, _, value⟩ := whole i ⟨(0, body), by simp, by simpa using free⟩
       refine ⟨sourceBound, takeBound, ?_⟩
       simpa using value
@@ -1966,12 +1966,12 @@ private theorem tickCase {C F : Type} (trace : BackendCommon.Tra) (body : ClosLa
     have clockEq := stateRel_clock g1 l1 s0 t0 states
     by_cases zero : s0.clock = 0
     · have targetZero : t0.clock = 0 := by omega
-      simp only [ClosSem.evaluate, zero, if_true] at sourceRun
+      simp only [ClosSem.evaluate, zero, ite_true] at sourceRun
       obtain ⟨rfl, rfl⟩ := sourceRun
       refine ⟨0, .err (.abort .timeoutError), t0, g1, l1, invariant, wellState,
         stateExtends_refl g1 well.2, well, Set.Subset.rfl, disjoint, ?_, ?_, states, ?_⟩
       · simp [everyResult, everyErrorResult]
-      · simp only [Nat.add_zero, ClosSem.evaluate, targetZero, if_true, ClosSem.timeoutError]
+      · simp only [Nat.add_zero, ClosSem.evaluate, targetZero, ite_true, ClosSem.timeoutError]
         congr 1
         cases t0
         simp_all
@@ -2001,7 +2001,7 @@ private theorem tickCase {C F : Type} (trace : BackendCommon.Tra) (body : ClosLa
         resultWell, ?_, states2, related2⟩
       have targetNonzero : t0.clock ≠ 0 := by omega
       simp only [ClosSem.evaluate]
-      simp only [show t0.clock + ck ≠ 0 by omega, if_false]
+      simp only [show t0.clock + ck ≠ 0 by omega, ite_false]
       have shift := decClock_add t0 1 ck (by omega)
       simpa only [shift] using targetRun
 private theorem handleBodyEnvRel {A B : Type} (R : A → B → Prop) (env1 : List A) (env2 : List B)
@@ -2854,7 +2854,7 @@ private theorem fnCase {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlStrin
             exact Prod.ext eq.1 eq.2
           by_cases isClosed : closed (.fn name (some loc) none arity fastOut) = true
           · simp only [calls, callsSingList, callsSing, Option.getD_some, fastSing, isClosed,
-              if_true, Prod.mk.injEq] at compileRun
+              ite_true, Prod.mk.injEq] at compileRun
             obtain ⟨rfl, rfl⟩ := compileRun
             have bound : Set.Subset (Set.diff {n | n ∈ codeLocations [.fn name (some loc) none arity body]}
                 (sptDomain fastState.1)) l1 := by
@@ -3660,7 +3660,7 @@ private theorem installCase {C F : Type} (trace : BackendCommon.Tra)
               installRelated g2 l2 middle t values.reverse targetValues.reverse installResult installed
                 inv2 states2 disjoint2 stateWell2 (List.rel_reverse argsRelated) installRun installSafe
             by_cases zero : middle.clock = 0
-            · simp only [zero, if_true] at resultEq targetInstallRun
+            · simp only [zero, ite_true] at resultEq targetInstallRun
               subst installResult
               rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, argsRun] at sourceRun
               simp only at sourceRun
@@ -3673,7 +3673,7 @@ private theorem installCase {C F : Type} (trace : BackendCommon.Tra)
               rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, targetRun]
               simp only
               rw [targetInstallRun]
-            · simp only [zero, if_false] at resultEq targetInstallRun
+            · simp only [zero, ite_false] at resultEq targetInstallRun
               subst installResult
               have clockFacts := ClosSem.doInstall_success_clock values.reverse middle installed exps installRun
               have middleClock := ClosSem.evaluate_clock_source.1 args env1 s0 (.val values) middle argsRun
@@ -4299,7 +4299,7 @@ private theorem letrecCase {C F : Type} (names : List Flapjack.Basis.Pure.MlStri
                 exact Prod.ext eq.1 eq.2
               dsimp only [groupState] at bodySing
               simp only [calls, callsSingList, callsSing, Option.getD_some, fastSing] at compileRun
-              simp only [← len, beq_self_eq_true, guard, Bool.and_self, if_true, bodySing, Prod.mk.injEq] at compileRun
+              simp only [← len, beq_self_eq_true, guard, Bool.and_self, ite_true, bodySing, Prod.mk.injEq] at compileRun
               obtain ⟨rfl, rfl⟩ := compileRun
               have initial := letrecInitialFacts names loc fns body g0 annotations varsNone distinct fresh initialWell
               have groupWell : wellFormed groupState := by

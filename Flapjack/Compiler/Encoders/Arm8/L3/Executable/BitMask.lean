@@ -45,11 +45,11 @@ private lemma guard_iff (b : Bool) (v : Nat) (h : v < 2^64) :
     (((v % 2 == 1) = b) ∨ (if b then v = 0 else v = 2^64 - 1)) := by
   rw [getLsbD_zero_ofNat]
   cases b
-  · simp only [Bool.false_eq_true, if_false, BitVec.toNat_eq, BitVec.toNat_ofNat]
+  · simp only [Bool.false_eq_true, ite_false, BitVec.toNat_eq, BitVec.toNat_ofNat]
     rw [Nat.mod_eq_of_lt h]
     have hneg : (-1 : BitVec 64).toNat = 2^64 - 1 := by decide
     rw [hneg]
-  · simp only [if_true, BitVec.toNat_eq, BitVec.toNat_ofNat]
+  · simp only [ite_true, BitVec.toNat_eq, BitVec.toNat_ofNat]
     rw [Nat.mod_eq_of_lt h]
     simp
 
@@ -59,9 +59,9 @@ private lemma guardBool_iff (b : Bool) (v : Nat) (h : v < 2^64) :
     (((v % 2 == 1) = b) ∨ (if b then v = 0 else v = 2^64 - 1)) := by
   rw [Bool.or_eq_true]
   cases b
-  · simp only [Bool.false_eq_true, if_false, beq_iff_eq]
+  · simp only [Bool.false_eq_true, ite_false, beq_iff_eq]
     exact guard_iff false v h
-  · simp only [if_true, beq_iff_eq]
+  · simp only [ite_true, beq_iff_eq]
     simpa using guard_iff true v h
 
 private lemma CountTrailing_eq_of_guard (b : Bool) (w : BitVec 64)
@@ -70,12 +70,12 @@ private lemma CountTrailing_eq_of_guard (b : Bool) (w : BitVec 64)
   rw [CountTrailing.eq_def]
   dsimp only
   cases b
-  · simp only [Bool.false_eq_true, if_false]
+  · simp only [Bool.false_eq_true, ite_false]
     split
     · rfl
     · rename_i hneg
       exact absurd h hneg
-  · simp only [if_true]
+  · simp only [ite_true]
     split
     · rfl
     · rename_i hneg
@@ -88,12 +88,12 @@ private lemma CountTrailing_eq_of_not_guard (b : Bool) (w : BitVec 64)
   rw [CountTrailing.eq_def]
   dsimp only
   cases b
-  · simp only [Bool.false_eq_true, if_false]
+  · simp only [Bool.false_eq_true, ite_false]
     split
     · rename_i hpos
       exact absurd hpos h
     · rfl
-  · simp only [if_true]
+  · simp only [ite_true]
     split
     · rename_i hpos
       exact absurd hpos h
@@ -122,11 +122,11 @@ private lemma go_eq_CountTrailing (b : Bool) :
     · have hG : ((((BitVec.ofNat 64 v).getLsbD 0 == b) ||
           (if b then BitVec.ofNat 64 v == 0 else BitVec.ofNat 64 v == -1)) = true) :=
         (guardBool_iff b v hv64).mpr hP
-      rw [if_pos hP, CountTrailing_eq_of_guard b (BitVec.ofNat 64 v) hG]
+      rw [ite_eq_left hP, CountTrailing_eq_of_guard b (BitVec.ofNat 64 v) hG]
     · have hG : ¬ ((((BitVec.ofNat 64 v).getLsbD 0 == b) ||
           (if b then BitVec.ofNat 64 v == 0 else BitVec.ofNat 64 v == -1)) = true) :=
         fun hh => hP ((guardBool_iff b v hv64).mp hh)
-      rw [if_neg hP, CountTrailing_eq_of_not_guard b (BitVec.ofNat 64 v) hG]
+      rw [ite_eq_right hP, CountTrailing_eq_of_not_guard b (BitVec.ofNat 64 v) hG]
       have hb : v >>> 1 < 2 ^ f := by
         rw [Nat.shiftRight_eq_div_pow]
         have hp : v < 2 * 2 ^ f := by
@@ -180,7 +180,7 @@ theorem highestSetBit_eq (w : BitVec 7) :
       apply h
       rw [hh]; rfl
     have hlt : Nat.log2 w.toNat < 7 := (Nat.log2_lt h).mpr w.isLt
-    simp only [h, hw, Bool.false_eq_true, if_false]
+    simp only [h, hw, Bool.false_eq_true, ite_false]
     have htoNat : (BitVec.ofNat 7 (Nat.log2 w.toNat)).toNat = Nat.log2 w.toNat := by
       rw [BitVec.toNat_ofNat]
       exact Nat.mod_eq_of_lt (by omega)
@@ -236,14 +236,14 @@ theorem ones_pad_eq (m k : Nat) (hk : k ≤ m) (hm : m ≤ 64) :
     by_cases h : i < k
     · have hge : ¬ m - 1 - i < (List.replicate (m - k) false).length := by
         simp only [List.length_replicate]; omega
-      rw [List.getElem?_append, if_neg hge]
+      rw [List.getElem?_append, ite_eq_right hge]
       simp only [List.length_replicate]
       rw [List.getElem?_eq_getElem (by
         rw [List.length_replicate]; omega)]
       simp [hi, h, Nat.testBit_two_pow_sub_one]
     · have hlt : m - 1 - i < (List.replicate (m - k) false).length := by
         simp only [List.length_replicate]; omega
-      rw [List.getElem?_append, if_pos hlt]
+      rw [List.getElem?_append, ite_eq_left hlt]
       rw [List.getElem?_eq_getElem (by
         rw [List.length_replicate]; omega)]
       simp [hi, h, Nat.testBit_two_pow_sub_one]
@@ -287,7 +287,7 @@ theorem holRotate_eq_drop_take (v : List Bool) (r : Nat) (hlen : 1 ≤ v.length)
     have hy1 : v.length - 1 + 1 - x = v.length - x := by omega
     have hle : ¬ v.length < x := by omega
     have hmin : min (v.length - x) v.length = v.length - x := Nat.min_eq_left (by omega)
-    simp only [hv0, false_or, h0, Nat.sub_zero, if_false, hx1, hy1, hle,
+    simp only [hv0, false_or, h0, Nat.sub_zero, ite_false, hx1, hy1, hle,
       List.take_length, List.length_take, hmin, Nat.lt_irrefl, Nat.sub_self, List.drop_zero]
 
 /-- The fold step of `holV2n`. -/
@@ -352,7 +352,7 @@ theorem holV2n_testBit (v : List Bool) (i : Nat) :
         = 2 ^ t.length * (if x then 1 else 0) + holV2n t by rw [Nat.mul_comm]]
     rw [Nat.testBit_two_pow_mul_add _ (holV2n_lt t) i]
     by_cases hi : i < t.length
-    · rw [if_pos hi, ih]
+    · rw [ite_eq_left hi, ih]
       have h1 : i < t.length + 1 := by omega
       simp only [List.length_cons, hi, h1, decide_true]
       rw [show t.length + 1 - 1 - i = t.length - i by omega]
@@ -360,7 +360,7 @@ theorem holV2n_testBit (v : List Bool) (i : Nat) :
       rw [← List.getD_cons_succ]
       congr 1
       omega
-    · rw [if_neg hi]
+    · rw [ite_eq_right hi]
       by_cases heq : i = t.length
       · subst heq
         have h1 : t.length < t.length + 1 := by omega
@@ -418,7 +418,7 @@ lemma holV2n_replicate_false (k : Nat) : holV2n (List.replicate k false) = 0 := 
   | zero => simp [holV2n]
   | succ k ih =>
     rw [List.replicate_succ, holV2n_cons]
-    simp only [Bool.false_eq_true, if_false, Nat.zero_mul, Nat.zero_add]
+    simp only [Bool.false_eq_true, ite_false, Nat.zero_mul, Nat.zero_add]
     exact ih
 
 /-- Truncation and left-padding with `false` do not change the value modulo
@@ -427,13 +427,13 @@ theorem holV2n_fixwidth (n : Nat) (v : List Bool) :
     holV2n (holFixwidth n v) = holV2n v % 2 ^ n := by
   unfold holFixwidth
   by_cases h : v.length < n
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     unfold holPadLeft
     rw [holV2n_append, holV2n_replicate_false]
     simp only [Nat.zero_mul, Nat.zero_add]
     exact (Nat.mod_eq_of_lt (lt_of_lt_of_le (holV2n_lt v)
       (Nat.pow_le_pow_right (by decide) (Nat.le_of_lt h)))).symm
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     have hle : n ≤ v.length := Nat.le_of_not_lt h
     have hlen : (v.drop (v.length - n)).length = n := by
       rw [List.length_drop]; omega
@@ -576,11 +576,11 @@ theorem rotateRightWidth_eq_add (width v x : Nat) (hv : v < 2 ^ width) (hx : x <
     rw [Nat.add_comm (v >>> x)]
     rw [Nat.testBit_two_pow_mul_add _ ha i]
     by_cases hj : i < width - x
-    · rw [if_pos hj]
+    · rw [ite_eq_left hj]
       have hge : ¬ (width - x ≤ i) := by omega
       simp only [hge, decide_false, Bool.false_and, Bool.or_false]
       rw [Nat.testBit_shiftRight]
-    · rw [if_neg hj]
+    · rw [ite_eq_right hj]
       have hge : width - x ≤ i := by omega
       simp only [hge, decide_true, Bool.true_and]
       have hxw : width ≤ x + i := by omega
@@ -697,9 +697,9 @@ lemma HighestSetBit_pos_eq (w : BitVec 7) (h : 1 ≤ HighestSetBit (TN := 7) w) 
   by_cases hw : w.toNat = 0
   · have hz : highestSetBit w.toNat = -1 := by
       unfold highestSetBit
-      rw [if_pos hw]
+      rw [ite_eq_left hw]
     omega
-  · rw [if_neg hw]
+  · rw [ite_eq_right hw]
     have h7 : Nat.log2 w.toNat < 7 := (Nat.log2_lt hw).mpr w.isLt
     omega
 
@@ -732,9 +732,9 @@ theorem len_eq_l3 (immN : BitVec 1) (imms : BitVec 6) :
 lemma holFixwidth_length (n : Nat) (v : List Bool) : (holFixwidth n v).length = n := by
   unfold holFixwidth
   by_cases h : v.length < n
-  · simp only [h, if_true, holPadLeft, List.length_append, List.length_replicate]
+  · simp only [h, ite_true, holPadLeft, List.length_append, List.length_replicate]
     omega
-  · simp only [h, if_false, List.length_drop]
+  · simp only [h, ite_false, List.length_drop]
     omega
 
 /-- `holRotate` preserves the length. -/
@@ -893,7 +893,7 @@ theorem encodeBitMask_eq (imm : BitVec 64) :
   rcases aux with ⟨e, S, R⟩
   by_cases he : e = 64
   · have hb : (e == 64) = true := by rw [beq_iff_eq]; exact he
-    simp only [if_pos he, if_pos hb]
+    simp only [ite_eq_left he, ite_eq_left hb]
     rw [decodeBitMasks_mod]
     rw [show (1 : Nat) % 2 = (BitVec.ofNat 1 1).toNat from rfl,
         show ((S - 1) % 64) = (BitVec.ofNat 6 (S - 1)).toNat from rfl,
@@ -910,11 +910,11 @@ theorem encodeBitMask_eq (imm : BitVec 64) :
         exact propext eq_comm
       simp only [hcond]
       by_cases hc : imm2.toNat = imm.toNat
-      · simp only [if_pos hc, Option.map_some]
+      · simp only [ite_eq_left hc, Option.map_some]
         congr 1
-      · simp only [if_neg hc, Option.map_none]
+      · simp only [ite_eq_right hc, Option.map_none]
   · have hb : ¬ ((e == 64) = true) := by rw [beq_iff_eq]; exact he
-    simp only [if_neg he, if_neg hb]
+    simp only [ite_eq_right he, ite_eq_right hb]
     have hbnd : ((63 - (e * 2 - 1) % 64) ||| ((S - 1) % 64)) < 64 := by
       have h1 : 63 - (e * 2 - 1) % 64 < 2 ^ 6 := by
         have := Nat.mod_lt (e * 2 - 1) (by decide : 0 < 64)
@@ -944,9 +944,9 @@ theorem encodeBitMask_eq (imm : BitVec 64) :
         exact propext eq_comm
       simp only [hcond]
       by_cases hc : imm2.toNat = imm.toNat
-      · simp only [if_pos hc, Option.map_some]
+      · simp only [ite_eq_left hc, Option.map_some]
         simp only [BitVec.toNat_ofNat, Nat.reducePow, imms_toNat, Nat.mod_eq_of_lt hbnd]
-      · simp only [if_neg hc, Option.map_none]
+      · simp only [ite_eq_right hc, Option.map_none]
 
 /-- The L3 `EncodeBitMask` is the computable `encodeBitMask` mapped onto the
 `BitVec` carrier, including the failure case.  This is the direction the

@@ -251,7 +251,7 @@ theorem evaluate_allocGlobal_grow {C F : Type} (ptr used count : Nat) (fields : 
   have clocks : BviSem.decClock 1 movedStart = BviProps.incClock copyClock moved := by
     simp [movedStart, BviProps.incClock, BviSem.decClock]
   simp only [BvlSem.findCode, startCode, copyGlobalsCode, List.length_cons, List.length_nil, ite_true,
-    Nat.zero_add, Nat.lt_one_iff, nonzero, if_false, BviSem.fixClock_evaluate]
+    Nat.zero_add, Nat.lt_one_iff, nonzero, ite_false, BviSem.fixClock_evaluate]
   simp [copyGlobalsCode] at finalCopy
   simp [clocks, finalCopy, oldFields, size]
 

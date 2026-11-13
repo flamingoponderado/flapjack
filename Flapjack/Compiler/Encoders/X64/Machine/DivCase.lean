@@ -71,7 +71,7 @@ theorem x64Next_div (ms : X64State) (d : BitVec 64 → Prop) (src : Nat) (hs : s
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) =
       some (.div .z64 src, (encodeInsn (.div .z64 src)).length) :=
     decode_bytesInMemory _ ms.pc ms.mem d _ _ hbm (decode_div_z64 src hs) (by omega)
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec]
 
 /-- The `longDiv` constructor of `encoder_correct x64Target`: one `x64Next`
 step divides `rdx:rax` by the divisor and writes the quotient to `rax` and the
@@ -154,8 +154,8 @@ theorem case_longDiv (r1 r2 r3 r4 r5 : Nat) (s1 s2 : AsmState 64) (ms : X64State
       writeReg (writeReg ms 0 (BitVec.ofNat 64 (n / d))) 2 (BitVec.ofNat 64 (n % d)) := by
     rw [execInsn_div]
     dsimp only
-    rw [if_neg hdms]
-    rw [if_neg hqms]
+    rw [ite_eq_right hdms]
+    rw [ite_eq_right hqms]
     rw [hread2, hread0, hread5, ← hn, ← hd]
   have hq : targetStateRel x64Target s2 (x64Next^[0 + 1] ms) := by
     show targetStateRel x64Target s2 (x64Next ms)
@@ -181,7 +181,7 @@ theorem case_longDiv (r1 r2 r3 r4 r5 : Nat) (s1 s2 : AsmState 64) (ms : X64State
       · by_cases hx2 : x = 2
         · subst hx2
           simp [hx0]
-        · simp only [hx0, hx2, if_false]
+        · simp only [hx0, hx2, ite_false]
           exact st.reg x hx
     · intro x hx
       show readXmm ms x = s2.fpRegs x

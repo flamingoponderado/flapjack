@@ -3,7 +3,11 @@ module
 public import Flapjack.Compiler.Backend.LabToTarget.SectionLabelExtraction
 public import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
 public import Flapjack.Misc.Sptree.ToAList
-public import Mathlib.Data.Set.Lattice
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Mathlib.Data.Set.Lattice.Disjoint
+public import Mathlib.Data.Set.Lattice.Image
+public import Mathlib.Data.Set.Lattice.Indexed
+public import Mathlib.Data.Set.Lattice.Order
 
 @[expose] public section
 namespace Flapjack.Compiler.Backend.LabToTarget

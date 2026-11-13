@@ -93,13 +93,13 @@ theorem name_from_recover (executed : String) (native : Basis.Pure.MlString.MlSt
     (decoded : nameFromExecuted? executed = some native) :
     nameToExecuted native = executed := by
   by_cases ranged : executed.toList.all (fun c => decide (c.toNat < 256)) = true
-  · simp only [nameFromExecuted?, if_pos ranged, Option.some.injEq] at decoded
+  · simp only [nameFromExecuted?, ite_eq_left ranged, Option.some.injEq] at decoded
     subst native
     have bytes : ∀ c ∈ executed.toList, c.toNat < 256 := by
       intro character member
       simpa only [decide_eq_true_eq] using (List.all_eq_true.mp ranged character member)
     exact Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes executed bytes
-  · simp only [nameFromExecuted?, if_neg ranged] at decoded
+  · simp only [nameFromExecuted?, ite_eq_right ranged] at decoded
     cases decoded
 
 /-- Flapjack-specific exact codec recovery or boundary fact; no HOL original. -/

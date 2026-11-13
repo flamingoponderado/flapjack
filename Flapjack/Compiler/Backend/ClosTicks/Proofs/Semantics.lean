@@ -108,7 +108,7 @@ theorem semantics_remove_ticks_core {C F : Type} (ffi : HolFfiState F) (maxApp :
       fun ⟨clock, error⟩ => sourceSafe clock error,
     show ¬ ∃ clock, (evaluate (removeList program) [] (initialState ffi maxApp HolFiniteMapExact.empty
       (pureCo compileInc ∘ oracle) compiler clock)).1 = .err (.abort .typeError) from
-      fun ⟨clock, error⟩ => targetSafe clock error, if_false]
+      fun ⟨clock, error⟩ => targetSafe clock error, ite_false]
   rw [terminatingEq, ← tracesEq]
 
 /-- Tick removal preserves the original whole-program observations. -/

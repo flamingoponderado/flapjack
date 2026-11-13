@@ -195,7 +195,7 @@ theorem partialDataScan_wordStep {width : Nat} [NeZero width] (conf : Config)
     simpa [wordSemBytesInWord, StackRemove.bytesInWord] using present
   refine ⟨header, words, encoded, wordLen, bound, info, ?_⟩
   dsimp only
-  rw [wordGenGcPartialMoveData, if_neg different, if_neg (Nat.ne_of_gt positive)]
+  rw [wordGenGcPartialMoveData, ite_eq_right different, ite_eq_right (Nat.ne_of_gt positive)]
   simp only [present', read', wordSemIsWordLoc, wordSemTheWord,
     Bool.true_and, decoded]
 

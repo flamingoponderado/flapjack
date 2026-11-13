@@ -29,7 +29,7 @@ private theorem setToListAux_step (s : Finset Nat) (h : s.Nonempty) :
     setToListAux s = Classical.epsilon (fun n => n ∈ s) ::
       setToListAux (s.erase (Classical.epsilon (fun n => n ∈ s))) := by
   rw [setToListAux]
-  simp only [dif_pos h]
+  simp only [dite_eq_left h]
 
 private theorem setToListAux_empty : setToListAux ∅ = [] := by
   rw [setToListAux]

@@ -56,7 +56,7 @@ end
 def isSmallAux (n : Nat) (xs : List Exp) : Nat := isSmallList n xs
 
 private theorem isSmallSing_zero (e : Exp) : isSmallSing 0 e = 0 := by
-  cases e <;> simp only [isSmallSing, Nat.zero_sub, if_true]
+  cases e <;> simp only [isSmallSing, Nat.zero_sub, ite_true]
   case tick e => exact isSmallSing_zero e
 termination_by sizeOf e
 decreasing_by all_goals simp_wf

@@ -28,7 +28,7 @@ theorem heapLookup_expand_eq_some {α β : Type} (a : Nat) (heap : List (HeapEle
   · have noLookup : heapLookup a heap ≠ some (.dataElement ys len data) := by
       intro found
       exact below (heapLookup_less heap a _ found)
-    simp only [below, if_false, noLookup, iff_false]
+    simp only [below, ite_false, noLookup, iff_false]
     cases n <;> simp [heapExpand, heapLookup]
 
 /-- Data-element presence is unchanged by appending unused space. -/
@@ -192,7 +192,7 @@ theorem lookupLen_cons_shift {α β : Type} (head : HeapElement α β) (tail : L
   have positive : 0 < elLength head := by cases head <;> simp [elLength]
   have notZero : n + elLength head ≠ 0 := by omega
   have notInside : ¬ n + elLength head < elLength head := by omega
-  simp only [lookupLen, heapLookup, notZero, notInside, if_false, Nat.add_sub_cancel]
+  simp only [lookupLen, heapLookup, notZero, notInside, ite_false, Nat.add_sub_cancel]
 
 /-- Data length is additive across the head of a heap. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "data_length_CONS"]

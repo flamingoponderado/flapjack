@@ -75,7 +75,7 @@ theorem evaluate_sumListLength_cons {C F : Type} (ptr : Nat) (bytes : List (BitV
   change BviSem.evaluate [.call 0 (some sumListLengthLocation) [readTail, add] none] env state = _
   rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
   simp only [BvlSem.findCode, code, sumListLengthCode, List.length_cons, List.length_nil, ite_true,
-    Nat.zero_add, Nat.lt_one_iff, clock, if_false, BviSem.fixClock_evaluate]
+    Nat.zero_add, Nat.lt_one_iff, clock, ite_false, BviSem.fixClock_evaluate]
   have recRun := recursive
   simp [sumListLengthCode] at recRun
   simp [recRun]
@@ -153,7 +153,7 @@ theorem evaluate_sumListLength_call {C F : Type} (value : Value) (ptrs : List Na
   have clocks : BviSem.decClock 1 start = BviProps.incClock clock state := by
     simp [start, BviSem.decClock, BviProps.incClock]
   simp only [BvlSem.findCode, code, sumListLengthCode, List.length_cons, List.length_nil, ite_true,
-    Nat.zero_add, Nat.lt_one_iff, nonzero, if_false, BviSem.fixClock_evaluate]
+    Nat.zero_add, Nat.lt_one_iff, nonzero, ite_false, BviSem.fixClock_evaluate]
   simp [sumListLengthCode] at stub
   simp [clocks, stub]
 

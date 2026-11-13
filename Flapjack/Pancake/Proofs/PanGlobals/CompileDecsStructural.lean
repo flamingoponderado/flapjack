@@ -323,7 +323,7 @@ theorem compile_decs_FILTER_declsHOL {width : Nat} [NeZero width] :
     rename_i xh ih
     intro decls funs exns ctxt' h1
     have hih := ih _ _ _ _ xh
-    simp only [List.filter_cons, isDeclHOL.eq_1, if_true, compileDecsExactHOL]
+    simp only [List.filter_cons, isDeclHOL.eq_1, ite_true, compileDecsExactHOL]
     rw [hih]
     simp only [Prod.mk.injEq] at h1 ⊢
     exact ⟨h1.1, trivial, trivial, h1.2.2.2⟩

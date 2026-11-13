@@ -143,12 +143,12 @@ theorem lookupCodeHOL_calleeLocals_finiteSupport {width : Nat} [NeZero width]
   · exact absurd h (by simp)
   · rename_i parameters body' hcode
     by_cases hcond : parameters.length = args.length ∧ parameters.Nodup
-    · rw [if_pos hcond] at h
+    · rw [ite_eq_left hcond] at h
       simp only [Option.some.injEq, Prod.mk.injEq] at h
       obtain ⟨_, hlocals⟩ := h
       subst hlocals
       exact fupdateList_fempty_finiteSupport (parameters.zip args)
-    · rw [if_neg hcond] at h
+    · rw [ite_eq_right hcond] at h
       exact absurd h (by simp)
 
 /-- Internal canonical finite-support wrapper around the reviewed exact
@@ -422,9 +422,9 @@ theorem evalCrepSemHOLProgExact_induct {width : Nat} [NeZero width] {σ : Type}
       refine hite condition thenBranch elseBranch state ?_
       intro v1 w _ _
       by_cases hw : w ≠ 0
-      · rw [if_pos hw]
+      · rw [ite_eq_left hw]
         exact ih thenBranch state (hlexSize (by decreasing_trivial))
-      · rw [if_neg hw]
+      · rw [ite_eq_right hw]
         exact ih elseBranch state (hlexSize (by decreasing_trivial))
   | «break» label => exact hbreak label state
   | «continue» label => exact hcontinue label state

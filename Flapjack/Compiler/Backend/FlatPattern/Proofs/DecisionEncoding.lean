@@ -57,7 +57,7 @@ theorem encodePmatch_con {C F : Type} (state : FlatSem.State C F)
         have lengths : patterns.length = fields.length := by cases compatible with | tuple _ _ h => exact h
         have flatHead : FlatSem.pmatch state (.pcon none patterns) (.conv none fields) bindings =
             FlatSem.pmatchList state patterns fields bindings := by
-          simp only [FlatSem.pmatch, if_neg notBad, Option.map_none, true_and, if_pos lengths]
+          simp only [FlatSem.pmatch, ite_eq_right notBad, Option.map_none, true_and, ite_eq_left lengths]
         have innerSafe : FlatSem.pmatchList state patterns fields bindings ≠ .typeError := by
           simpa only [flatHead] using safe
         have abstractHead : PatternSemantics.pmatch (encodeRefs state) (encodePat (.pcon none patterns))
@@ -79,25 +79,25 @@ theorem encodePmatch_con {C F : Type} (state : FlatSem.State C F)
               patterns.length = fields.length := by simpa using same
           have flatHead : FlatSem.pmatch state (.pcon (some (tag, group)) patterns)
               (.conv (some (actual, typeId)) fields) bindings = FlatSem.pmatchList state patterns fields bindings := by
-            simp only [FlatSem.pmatch, if_neg notBad, if_pos sameFlat]
+            simp only [FlatSem.pmatch, ite_eq_right notBad, ite_eq_left sameFlat]
           have innerSafe : FlatSem.pmatchList state patterns fields bindings ≠ .typeError := by
             simpa only [flatHead] using safe
           have abstractHead : PatternSemantics.pmatch (encodeRefs state) (encodePat (.pcon (some (tag, group)) patterns))
               (encodeValue (.conv (some (actual, typeId)) fields)) =
               PatternSemantics.pmatchList (encodeRefs state) (patterns.map encodePat) (fields.map encodeValue) := by
             simp only [encodePat, encodePats_eq_map, encodeValue, encodeValues_eq_map, Option.map_some,
-              PatternSemantics.pmatch, List.length_map, if_pos same]
+              PatternSemantics.pmatch, List.length_map, ite_eq_left same]
           rw [abstractHead, flatHead]
           exact nested innerSafe
         · have sameFlat : ¬ ((some (tag, group)).map Prod.fst = (some (actual, typeId)).map Prod.fst ∧
               patterns.length = fields.length) := by simpa using same
           have flatHead : FlatSem.pmatch state (.pcon (some (tag, group)) patterns)
               (.conv (some (actual, typeId)) fields) bindings = .noMatch := by
-            simp only [FlatSem.pmatch, if_neg notBad, if_neg sameFlat]
+            simp only [FlatSem.pmatch, ite_eq_right notBad, ite_eq_right sameFlat]
           have abstractHead : PatternSemantics.pmatch (encodeRefs state) (encodePat (.pcon (some (tag, group)) patterns))
               (encodeValue (.conv (some (actual, typeId)) fields)) = .failure := by
             simp only [encodePat, encodePats_eq_map, encodeValue, encodeValues_eq_map, Option.map_some,
-              PatternSemantics.pmatch, List.length_map, if_neg same, sibling, if_true]
+              PatternSemantics.pmatch, List.length_map, ite_eq_right same, sibling, ite_true]
           simp [flatHead, abstractHead, encodeMatchResult]
   · simp [FlatSem.pmatch, compatible] at safe
 

@@ -66,7 +66,7 @@ theorem parseRM_reg (r : Nat → BitVec 8) (off a b : Nat) (rexB : Bool)
   have h1 : (192 + 8 * a + b) / 64 = 3 := by omega
   have h2 : ((192 + 8 * a + b) / 8) % 8 = a := by omega
   have h3 : (192 + 8 * a + b) % 8 = b := by omega
-  simp only [hm, h1, h2, h3, if_true]
+  simp only [hm, h1, h2, h3, ite_true]
 
 /-! ## `parseRM` on base-register memory operands -/
 
@@ -180,7 +180,7 @@ theorem setWidth32_toInt (imm : BitVec 64)
         rw [BitVec.toInt_eq_toNat_of_lt hc]; exact Int.natCast_nonneg _
       omega
     have hcond := BitVec.toInt_eq_toNat_cond imm
-    simp only [hge, if_false] at hcond
+    simp only [hge, ite_false] at hcond
     have heq : (imm.toNat : Int) = imm.toInt + 2^64 := by
       have h : (↑(2^64) : Int) = 18446744073709551616 := by norm_num
       omega
@@ -206,7 +206,7 @@ theorem setWidth16_toInt (imm : BitVec 64)
         rw [BitVec.toInt_eq_toNat_of_lt hc]; exact Int.natCast_nonneg _
       omega
     have hcond := BitVec.toInt_eq_toNat_cond imm
-    simp only [hge, if_false] at hcond
+    simp only [hge, ite_false] at hcond
     have heq : (imm.toNat : Int) = imm.toInt + 2^64 := by
       have h : (↑(2^64) : Int) = 18446744073709551616 := by norm_num
       omega
@@ -232,7 +232,7 @@ theorem setWidth8_toInt (imm : BitVec 64)
         rw [BitVec.toInt_eq_toNat_of_lt hc]; exact Int.natCast_nonneg _
       omega
     have hcond := BitVec.toInt_eq_toNat_cond imm
-    simp only [hge, if_false] at hcond
+    simp only [hge, ite_false] at hcond
     have heq : (imm.toNat : Int) = imm.toInt + 2^64 := by
       have h : (↑(2^64) : Int) = 18446744073709551616 := by norm_num
       omega

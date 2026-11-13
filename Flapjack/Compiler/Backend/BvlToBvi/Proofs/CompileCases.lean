@@ -161,7 +161,7 @@ theorem compileExpsCorrect_tick {C F : Type} (body : Bvl.Exp) (env : List Value)
       simp only [BviProps.incClock]
       omega
     rw [BviSem.evaluate]
-    simp only [if_neg targetClock]
+    simp only [ite_eq_right targetClock]
     rw [BviProps.decClock_incClock_one target clock targetNonzero]
     exact targetRun
 

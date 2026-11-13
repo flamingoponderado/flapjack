@@ -7,7 +7,11 @@ public import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
 public import Flapjack.Compiler.Backend.ClosNumber.Proofs.GlobalInvariants
 public import Flapjack.Misc.Bag
 import Flapjack.Misc.Sptree.ToAList
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
+import Mathlib.Data.Set.Lattice.Disjoint
+import Mathlib.Data.Set.Lattice.Image
+import Mathlib.Data.Set.Lattice.Indexed
+import Mathlib.Data.Set.Lattice.Order
 
 @[expose] public section
 

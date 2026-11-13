@@ -78,7 +78,7 @@ theorem valueRel_exists (g : State) (allowed : Nat → Prop)
         intro x hx; exact valueRel_exists g allowed code x (envSafe x hx))
       have envRelated : envRel (valueRel g allowed code) env env' 0 [(n, body')] := by
         unfold envRel
-        rw [if_pos envRel'.length_eq]
+        rw [ite_eq_left envRel'.length_eq]
         exact envRel'
       exact ⟨.closure (some loc) vs' env' n body',
         (valueRel_sourceEquations g allowed code).2.1 _ _ _ _ _ _ |>.mpr
@@ -95,7 +95,7 @@ theorem valueRel_exists (g : State) (allowed : Nat → Prop)
         intro x hx; exact valueRel_exists g allowed code x (envSafe x hx))
       have envRelated : envRel (valueRel g allowed code) env env' fns'.length fns' := by
         unfold envRel
-        rw [if_pos envRel'.length_eq]
+        rw [ite_eq_left envRel'.length_eq]
         exact envRel'
       exact ⟨.recclosure (some loc) vs' env' fns' i,
         (valueRel_sourceEquations g allowed code).2.2 _ _ _ _ _ _ |>.mpr
@@ -126,7 +126,7 @@ theorem envRel_exists (g : State) (allowed : Nat → Prop)
     exact valueRel_exists g allowed code v (safe v member))
   refine ⟨env5, ?_, related.length_eq.symm⟩
   unfold envRel
-  rw [if_pos related.length_eq]
+  rw [ite_eq_left related.length_eq]
   exact related
 
 end Flapjack.Compiler.Backend.ClosCall

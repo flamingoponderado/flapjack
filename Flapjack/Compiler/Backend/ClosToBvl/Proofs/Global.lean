@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.IntegerRelation
+public import Mathlib.Data.List.Basic
 
 @[expose] public section
 
@@ -98,7 +99,7 @@ theorem global_read_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
           subst_vars
           by_cases negative : number < 0
           · simp [negative] at run
-          · simp only [if_neg negative] at run
+          · simp only [ite_eq_right negative] at run
             cases found : ClosSem.getGlobal number.toNat s.globals with
             | none => simp [found] at run
             | some entry =>

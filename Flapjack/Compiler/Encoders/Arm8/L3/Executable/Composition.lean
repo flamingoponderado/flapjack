@@ -73,7 +73,7 @@ theorem arm8Enc_loc_eq (register : Nat) (offset : BitVec 64) :
   by_cases hf : fitsSigned 20 offset = true
   · have hl3 : arm8LocInRange offset = true :=
       (fitsSigned20_iff_arm8LocInRange offset).mp hf
-    simp only [hf, hl3, if_true, List.flatMap_cons, List.flatMap_nil, List.append_nil,
+    simp only [hf, hl3, ite_true, List.flatMap_cons, List.flatMap_nil, List.append_nil,
       encodeBytes_address]
     rfl
   · have hf' : fitsSigned 20 offset = false := by
@@ -84,7 +84,7 @@ theorem arm8Enc_loc_eq (register : Nat) (offset : BitVec 64) :
       cases h : arm8LocInRange offset
       · rfl
       · exact absurd ((fitsSigned20_iff_arm8LocInRange offset).mpr h) hf
-    simp only [hf, Bool.false_eq_true, if_false, hl3, List.flatMap_cons,
+    simp only [hf, Bool.false_eq_true, ite_false, hl3, List.flatMap_cons,
       List.flatMap_nil, List.append_nil, encodeBytes_address,
       encodeBytes_moveWide, encodeBytes_addSubShiftedRegister, ofNat16_mod]
     simp
@@ -95,12 +95,12 @@ theorem arm8Enc_jumpCmp_reg_eq (operator : Cmp) (source right : Nat) (target : B
       arm8Enc (.jumpCmp operator source (.reg right) target) := by
   simp only [Arm8.arm8Enc, Arm8.arm8Ast, arm8Enc, arm8Ast]
   by_cases ht : isTest operator = true
-  · simp only [if_pos ht, List.flatMap_cons, List.flatMap_nil, List.append_nil,
+  · simp only [ite_eq_left ht, List.flatMap_cons, List.flatMap_nil, List.append_nil,
       encodeBytes_logicalShiftedRegister .and .LogicalOp_AND false true .lsl 0 right source 31 3
         rfl (by decide) (by decide), encodeBytes_branchConditional]
     rw [← arm8CmpCond_eq operator]
     simp
-  · simp only [if_neg ht, List.flatMap_cons, List.flatMap_nil, List.append_nil,
+  · simp only [ite_eq_right ht, List.flatMap_cons, List.flatMap_nil, List.append_nil,
       encodeBytes_addSubShiftedRegister, encodeBytes_branchConditional]
     rw [← arm8CmpCond_eq operator]
     simp
@@ -113,12 +113,12 @@ theorem arm8Enc_jumpCmp_imm_eq (operator : Cmp) (source : Nat) (value : BitVec 6
       arm8Enc (.jumpCmp operator source (.imm value) target) := by
   simp only [Arm8.arm8Enc, Arm8.arm8Ast, arm8Enc, arm8Ast]
   by_cases ht : isTest operator = true
-  · simp only [if_pos ht, List.flatMap_cons, List.flatMap_nil, List.append_nil,
+  · simp only [ite_eq_left ht, List.flatMap_cons, List.flatMap_nil, List.append_nil,
       encodeBytes_logicalImmediate .and .LogicalOp_AND true value source 31
         (by rw [EncodeLogicalOp_AND true]), encodeBytes_branchConditional]
     rw [← arm8CmpCond_eq operator]
     simp
-  · simp only [if_neg ht, List.flatMap_cons, List.flatMap_nil, List.append_nil,
+  · simp only [ite_eq_right ht, List.flatMap_cons, List.flatMap_nil, List.append_nil,
       encodeBytes_addSubImmediate, encodeBytes_branchConditional]
     rw [← arm8CmpCond_eq operator]
     simp
@@ -279,14 +279,14 @@ theorem arm8Enc_inst_const_eq (destination : Nat) (value : BitVec 64) :
       · have hb' : (EncodeBitMask (TN := 64) value).isSome = false := by
           rw [← encodeBitMask_isSome_eq]
           exact hb
-        simp only [h1', h2', hb', Bool.false_eq_true, if_false,
+        simp only [h1', h2', hb', Bool.false_eq_true, ite_false,
           List.flatMap_cons, List.flatMap_nil, List.append_nil,
           encodeBytes_moveWide, ofNat16_mod]
         simp
       · have hb' : (EncodeBitMask (TN := 64) value).isSome = true := by
           rw [← encodeBitMask_isSome_eq]
           exact hb
-        simp only [h1', h2', hb', if_true,
+        simp only [h1', h2', hb', ite_true,
           List.flatMap_cons, List.flatMap_nil, List.append_nil,
           encodeBytes_logicalImmediate .orr .LogicalOp_ORR false value 31 destination
             (EncodeLogicalOp_ORR false)]
@@ -344,11 +344,11 @@ theorem arm8Enc_inst_binop_imm_eq (bop : BinOp) (destination source : Nat)
     simp
   case xor =>
     by_cases hv : value = -1
-    · simp only [hv, if_true, List.flatMap_cons, List.flatMap_nil, List.append_nil,
+    · simp only [hv, ite_true, List.flatMap_cons, List.flatMap_nil, List.append_nil,
         encodeBytes_logicalShiftedRegister .orr .LogicalOp_ORR true false .lsl 0 source 31 destination 1
           rfl (by decide) (by decide)]
       simp
-    · simp only [hv, if_false, List.flatMap_cons, List.flatMap_nil, List.append_nil,
+    · simp only [hv, ite_false, List.flatMap_cons, List.flatMap_nil, List.append_nil,
         encodeBytes_logicalImmediate .eor .LogicalOp_EOR false value source destination
           (EncodeLogicalOp_EOR false)]
       simp

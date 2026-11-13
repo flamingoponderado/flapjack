@@ -230,7 +230,7 @@ theorem flookup_res_var_is_mem_zip_eq_hol {α : Type} {β : Type} [DecidableEq �
       · by_cases hxea : x = a
         · subst hxea
           simp
-        · rw [if_neg hxea]
+        · rw [ite_eq_right hxea]
           exact ih hxas
 
 theorem foldl_res_var_zip_lookup_var_hol {α : Type} {β : Type} [DecidableEq α]
@@ -267,9 +267,9 @@ theorem submap_imp_fupdate_submap_exact {κ : Type} {β : Type} [DecidableEq κ]
   rw [HolFiniteMapExact.lookup_updateEq] at hn ⊢
   simp only [FUPDATE_HOL] at hn ⊢
   by_cases hxn : n = x
-  · rw [if_pos hxn] at hn ⊢
+  · rw [ite_eq_left hxn] at hn ⊢
     exact hn
-  · rw [if_neg hxn] at hn ⊢
+  · rw [ite_eq_right hxn] at hn ⊢
     exact h n v hn
 
 /-- Finite-map `SUBMAP_IMP_DOMSUB_SUBMAP`
@@ -283,9 +283,9 @@ theorem submap_imp_domsub_submap_exact {κ : Type} {β : Type} [DecidableEq κ]
   rw [HolFiniteMapExact.lookup_eraseEq] at hn ⊢
   simp only [FDOMSUB_HOL] at hn ⊢
   by_cases hnx : n = x
-  · rw [if_pos hnx] at hn ⊢
+  · rw [ite_eq_left hnx] at hn ⊢
     exact hn
-  · rw [if_neg hnx] at hn ⊢
+  · rw [ite_eq_right hnx] at hn ⊢
     exact h n v hn
 
 /-- Finite-map `SUBMAP_IMP_DOMSUB_FUPDATE`
@@ -300,9 +300,9 @@ theorem submap_imp_domsub_fupdate_exact {κ : Type} {β : Type} [DecidableEq κ]
   rw [HolFiniteMapExact.lookup_updateEq]
   simp only [FDOMSUB_HOL, FUPDATE_HOL] at hn ⊢
   by_cases hnx : n = x
-  · rw [if_pos hnx] at hn ⊢
+  · rw [ite_eq_left hnx] at hn ⊢
     exact absurd hn (by simp)
-  · rw [if_neg hnx] at hn ⊢
+  · rw [ite_eq_right hnx] at hn ⊢
     exact h n v hn
 
 /-! ## Exact finite-support (`HolFiniteMapExact`) forms of the `res_var` cluster
@@ -1269,8 +1269,8 @@ theorem inlineProgCorrectIfCaseExact {width : Nat} [NeZero width] {σ : Type}
                   CrepInlineCanonical.inlineProgHOLExact inlBag thenBranch
                 else CrepInlineCanonical.inlineProgHOLExact inlBag elseBranch := by
             by_cases hnz : word ≠ 0
-            · simp only [if_pos hnz]
-            · simp only [if_neg hnz]
+            · simp only [ite_eq_left hnz]
+            · simp only [ite_eq_right hnz]
           refine ⟨t', ?_, hstatePost, hcodePost, ?_⟩
           · calc
               evalCrepSemHOLProgExact t
@@ -2236,7 +2236,7 @@ theorem inlineProgCorrectTickCaseExact {width : Nat} [NeZero width] {σ : Type}
   classical
   rw [evalCrepSemHOLProgExact_tick] at hsource
   by_cases hc : s.clock = 0
-  · simp only [hc, if_true] at hsource
+  · simp only [hc, ite_true] at hsource
     obtain ⟨hr, hs'⟩ := Prod.ext_iff.mp hsource
     have hr' : r = some .timeOut := hr.symm
     have hs'' : s' = CrepSemHOLState.emptyLocals s := hs'.symm
@@ -2248,13 +2248,13 @@ theorem inlineProgCorrectTickCaseExact {width : Nat} [NeZero width] {σ : Type}
       exact hc
     have hgoal : evalCrepSemHOLProgExact t (.tick : CrepProgHOL width) =
         (some .timeOut, CrepSemHOLState.emptyLocals t) := by
-      rw [evalCrepSemHOLProgExact_tick, if_pos hct]
+      rw [evalCrepSemHOLProgExact_tick, ite_eq_left hct]
     refine ⟨CrepSemHOLState.emptyLocals t, ?_, ?_, hcode, ?_⟩
     · rw [inline_tick]
       exact hgoal
     · exact srel_empty s t hstate
     · trivial
-  · simp only [hc, if_false] at hsource
+  · simp only [hc, ite_false] at hsource
     obtain ⟨hr, hs'⟩ := Prod.ext_iff.mp hsource
     have hr' : r = none := hr.symm
     have hs'' : s' = decClockCrepSemHOL s := hs'.symm
@@ -2266,7 +2266,7 @@ theorem inlineProgCorrectTickCaseExact {width : Nat} [NeZero width] {σ : Type}
       exact hc
     have hgoal : evalCrepSemHOLProgExact t (.tick : CrepProgHOL width) =
         (none, decClockCrepSemHOL t) := by
-      rw [evalCrepSemHOLProgExact_tick, if_neg hct]
+      rw [evalCrepSemHOLProgExact_tick, ite_eq_right hct]
     refine ⟨decClockCrepSemHOL t, ?_, ?_, hcode, ?_⟩
     · rw [inline_tick]
       exact hgoal
@@ -2324,7 +2324,7 @@ theorem inlineProgCorrectPrimitiveCaseExact {width : Nat} [NeZero width] {σ : T
           simp only [hop] at hsource
           by_cases hg : names.length = results.length ∧
               (∀ v ∈ names, (s.locals.lookup v).isSome) ∧ names.Nodup
-          · rw [if_pos hg] at hsource
+          · rw [ite_eq_left hg] at hsource
             obtain ⟨hr, hs'⟩ := Prod.ext_iff.mp hsource
             have hr' : r = none := hr.symm
             have hs'' : s' = { s with locals := s.locals.updateListEq (names.zip results) } :=
@@ -2344,14 +2344,14 @@ theorem inlineProgCorrectPrimitiveCaseExact {width : Nat} [NeZero width] {σ : T
                 (.primitive names operator args : CrepProgHOL width) =
                 (none, { t with locals := t.locals.updateListEq (names.zip results) }) := by
               rw [evalCrepSemHOLProgExact_primitive_holShape]
-              simp only [hargs_t, hop, if_pos hg_t]
+              simp only [hargs_t, hop, ite_eq_left hg_t]
             refine ⟨{ t with locals := t.locals.updateListEq (names.zip results) },
               ?_, hstate, hcode, ?_⟩
             · rw [inline_primitive]
               exact hgoal
             · simp only [crepInlineLocalsStrongRelExact]
               rw [hlocals]
-          · rw [if_neg hg] at hsource
+          · rw [ite_eq_right hg] at hsource
             exact absurd (congrArg Prod.fst hsource).symm hnotError
 
 /-- HOL `inline_prog_correct` ExtCall case
@@ -2583,23 +2583,23 @@ theorem crepShMemLoadExactHOL_same {width : Nat} [NeZero width] {σ : Type}
       t.shMemaddrs (panByteAlignHOL addr) := congrFun hsh _
   simp only [crepShMemLoadExactHOL]
   by_cases h0 : nb = 0
-  · rw [if_pos h0, if_pos h0]
+  · rw [ite_eq_left h0, ite_eq_left h0]
     by_cases hc : s.shMemaddrs addr
-    · rw [if_pos hc, if_pos (hA ▸ hc), hffi]
+    · rw [ite_eq_left hc, ite_eq_left (hA ▸ hc), hffi]
       cases callFFIHOL t.ffi (HolFfiName.sharedMem HolShmemOp.mappedRead)
           [BitVec.ofNat 8 nb] ((crepClockWordToBytes addr).map UInt8.toBitVec) with
       | final e => exact ⟨rfl, same_emptyLocals s t hbase⟩
       | ret nf _ => exact ⟨rfl, same_setFfi nf _ _ (same_setVar name _ s t hbase)⟩
-    · rw [if_neg hc, if_neg (fun ht => hc (hA ▸ ht))]
+    · rw [ite_eq_right hc, ite_eq_right (fun ht => hc (hA ▸ ht))]
       exact ⟨rfl, hbase⟩
-  · rw [if_neg h0, if_neg h0]
+  · rw [ite_eq_right h0, ite_eq_right h0]
     by_cases hc : s.shMemaddrs (panByteAlignHOL addr)
-    · rw [if_pos hc, if_pos (hB ▸ hc), hffi]
+    · rw [ite_eq_left hc, ite_eq_left (hB ▸ hc), hffi]
       cases callFFIHOL t.ffi (HolFfiName.sharedMem HolShmemOp.mappedRead)
           [BitVec.ofNat 8 nb] ((crepClockWordToBytes addr).map UInt8.toBitVec) with
       | final e => exact ⟨rfl, same_emptyLocals s t hbase⟩
       | ret nf _ => exact ⟨rfl, same_setFfi nf _ _ (same_setVar name _ s t hbase)⟩
-    · rw [if_neg hc, if_neg (fun ht => hc (hB ▸ ht))]
+    · rw [ite_eq_right hc, ite_eq_right (fun ht => hc (hB ▸ ht))]
       exact ⟨rfl, hbase⟩
 
 /-- Cross-state congruence for `crepShMemStoreExactHOL`: on `SameExceptCode` states
@@ -2633,9 +2633,9 @@ theorem crepShMemStoreExactHOL_same {width : Nat} [NeZero width] {σ : Type}
       | word value =>
           dsimp only
           by_cases h0 : nb = 0
-          · rw [if_pos h0, if_pos h0]
+          · rw [ite_eq_left h0, ite_eq_left h0]
             by_cases hc : s.shMemaddrs addr
-            · rw [if_pos hc, if_pos (hA ▸ hc), hffi]
+            · rw [ite_eq_left hc, ite_eq_left (hA ▸ hc), hffi]
               cases callFFIHOL t.ffi (HolFfiName.sharedMem HolShmemOp.mappedWrite)
                   [BitVec.ofNat 8 nb]
                   ((crepClockWordToBytes value ++ crepClockWordToBytes addr).map
@@ -2643,11 +2643,11 @@ theorem crepShMemStoreExactHOL_same {width : Nat} [NeZero width] {σ : Type}
               | final e => exact ⟨rfl, hbase⟩
               | ret nf _ =>
                   exact ⟨rfl, ⟨⟨hg, hmem, hma, hsh, hcl, hbe, rfl, hba, hta⟩, rfl⟩⟩
-            · rw [if_neg hc, if_neg (fun ht => hc (hA ▸ ht))]
+            · rw [ite_eq_right hc, ite_eq_right (fun ht => hc (hA ▸ ht))]
               exact ⟨rfl, hbase⟩
-          · rw [if_neg h0, if_neg h0]
+          · rw [ite_eq_right h0, ite_eq_right h0]
             by_cases hc : s.shMemaddrs (panByteAlignHOL addr)
-            · rw [if_pos hc, if_pos (hB ▸ hc), hffi]
+            · rw [ite_eq_left hc, ite_eq_left (hB ▸ hc), hffi]
               cases callFFIHOL t.ffi (HolFfiName.sharedMem HolShmemOp.mappedWrite)
                   [BitVec.ofNat 8 nb]
                   (((crepClockWordToBytes value).take nb ++
@@ -2655,7 +2655,7 @@ theorem crepShMemStoreExactHOL_same {width : Nat} [NeZero width] {σ : Type}
               | final e => exact ⟨rfl, hbase⟩
               | ret nf _ =>
                   exact ⟨rfl, ⟨⟨hg, hmem, hma, hsh, hcl, hbe, rfl, hba, hta⟩, rfl⟩⟩
-            · rw [if_neg hc, if_neg (fun ht => hc (hB ▸ ht))]
+            · rw [ite_eq_right hc, ite_eq_right (fun ht => hc (hB ▸ ht))]
               exact ⟨rfl, hbase⟩
 
 /-- Cross-state congruence for `crepShMemOpExactHOL` over all eight operators,
@@ -2817,9 +2817,9 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
             exact ⟨hcond, hstate, hlocals, hcode⟩
           simp only [hcond] at hsource
           by_cases hw : w ≠ 0
-          · rw [if_pos hw] at hsource
+          · rw [ite_eq_left hw] at hsource
             by_cases hc : s.clock = 0
-            · rw [if_pos hc] at hsource
+            · rw [ite_eq_left hc] at hsource
               obtain ⟨hr, hs'⟩ := Prod.ext_iff.mp hsource
               have hr' : r = some .timeOut := hr.symm
               have hs'' : s' = CrepSemHOLState.emptyLocals s := hs'.symm
@@ -2832,10 +2832,10 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
               refine ⟨CrepSemHOLState.emptyLocals t, ?_, ?_, hcode, ?_⟩
               · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
                 dsimp only
-                rw [if_pos hw, if_pos hct]
+                rw [ite_eq_left hw, ite_eq_left hct]
               · exact srel_empty s t hstate
               · trivial
-            · rw [if_neg hc] at hsource
+            · rw [ite_eq_right hc] at hsource
               have htargetClock' : ¬ t.clock = 0 := by
                 intro h
                 obtain ⟨_, _, _, _, hcl, _, _, _, _⟩ := hstate
@@ -2867,7 +2867,7 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
                       refine ⟨targetFinal, ?_, hstateFinal, hcodeFinal, ?_⟩
                       · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
                         dsimp only
-                        rw [if_pos hw, if_neg htargetClock', htargetBody]
+                        rw [ite_eq_left hw, ite_eq_right htargetClock', htargetBody]
                         simp only [Prod.fst, Prod.snd]
                         rw [← hinline]
                         exact htargetFinal
@@ -2886,7 +2886,7 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
                             refine ⟨targetFinal, ?_, hstateFinal, hcodeFinal, ?_⟩
                             · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
                               dsimp only
-                              rw [if_pos hw, if_neg htargetClock', htargetBody]
+                              rw [ite_eq_left hw, ite_eq_right htargetClock', htargetBody]
                               simp only [Prod.fst, Prod.snd]
                               rw [← hinline]
                               exact htargetFinal
@@ -2903,7 +2903,7 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
                             refine ⟨targetLoop, ?_, ?_, ?_, ?_⟩
                             · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
                               dsimp only
-                              rw [if_pos hw, if_neg htargetClock', htargetBody]
+                              rw [ite_eq_left hw, ite_eq_right htargetClock', htargetBody]
                               simp only [Prod.fst, Prod.snd, exitLoopCrepResult, Nat.add_sub_cancel]
                             · exact hstateLoop
                             · exact hcodeLoop
@@ -2920,7 +2920,7 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
                             refine ⟨targetLoop, ?_, ?_, ?_, ?_⟩
                             · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
                               dsimp only
-                              rw [if_pos hw, if_neg htargetClock', htargetBody]
+                              rw [ite_eq_left hw, ite_eq_right htargetClock', htargetBody]
                               simp only [Prod.fst, Prod.snd, exitLoopCrepResult, Nat.add_sub_cancel]
                             · exact hstateLoop
                             · exact hcodeLoop
@@ -2935,7 +2935,7 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
                             refine ⟨targetLoop, ?_, ?_, ?_, ?_⟩
                             · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
                               dsimp only
-                              rw [if_pos hw, if_neg htargetClock', htargetBody]
+                              rw [ite_eq_left hw, ite_eq_right htargetClock', htargetBody]
                               simp only [Prod.fst, Prod.snd, exitLoopCrepResult, Nat.add_sub_cancel]
                             · exact hstateLoop
                             · exact hcodeLoop
@@ -2951,7 +2951,7 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
                         refine ⟨targetLoop, ?_, ?_, ?_, ?_⟩
                         · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
                           dsimp only
-                          rw [if_pos hw, if_neg htargetClock', htargetBody]
+                          rw [ite_eq_left hw, ite_eq_right htargetClock', htargetBody]
                           simp only [Prod.fst, Prod.snd, exitLoopCrepResult, Nat.add_sub_cancel]
                         · exact hstateLoop
                         · exact hcodeLoop
@@ -2966,7 +2966,7 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
                         refine ⟨targetLoop, ?_, ?_, ?_, ?_⟩
                         · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
                           dsimp only
-                          rw [if_pos hw, if_neg htargetClock', htargetBody]
+                          rw [ite_eq_left hw, ite_eq_right htargetClock', htargetBody]
                           simp only [Prod.fst, Prod.snd, exitLoopCrepResult, Nat.add_sub_cancel]
                         · exact hstateLoop
                         · exact hcodeLoop
@@ -2981,7 +2981,7 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
                         refine ⟨targetLoop, ?_, ?_, ?_, ?_⟩
                         · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
                           dsimp only
-                          rw [if_pos hw, if_neg htargetClock', htargetBody]
+                          rw [ite_eq_left hw, ite_eq_right htargetClock', htargetBody]
                           simp only [Prod.fst, Prod.snd, exitLoopCrepResult, Nat.add_sub_cancel]
                         · exact hstateLoop
                         · exact hcodeLoop
@@ -2996,12 +2996,12 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
                         refine ⟨targetLoop, ?_, ?_, ?_, ?_⟩
                         · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
                           dsimp only
-                          rw [if_pos hw, if_neg htargetClock', htargetBody]
+                          rw [ite_eq_left hw, ite_eq_right htargetClock', htargetBody]
                           simp only [Prod.fst, Prod.snd, exitLoopCrepResult, Nat.add_sub_cancel]
                         · exact hstateLoop
                         · exact hcodeLoop
                         · first | (simp only [crepInlineLocalsStrongRelExact]; exact hlocalsLoop) | trivial
-          · rw [if_neg hw] at hsource
+          · rw [ite_eq_right hw] at hsource
             obtain ⟨hr, hs'⟩ := Prod.ext_iff.mp hsource
             have hr' : r = none := hr.symm
             have hs'' : s' = s := hs'.symm
@@ -3010,7 +3010,7 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
             refine ⟨t, ?_, ?_, ?_, ?_⟩
             · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
               dsimp only
-              rw [if_neg hw]
+              rw [ite_eq_right hw]
             · exact hstate
             · exact hcode
             · first | (simp only [crepInlineLocalsStrongRelExact]; exact hlocals) | trivial
@@ -3052,10 +3052,10 @@ theorem evaluateLocalsSameFdomTrivialAtomsExact {width : Nat} [NeZero width] {σ
   · subst hp
     rw [evalCrepSemHOLProgExact_tick] at hsource
     by_cases hc : s.clock = 0
-    · rw [if_pos hc] at hsource
+    · rw [ite_eq_left hc] at hsource
       cases hsource
       exact absurd hcond (by simp)
-    · rw [if_neg hc] at hsource
+    · rw [ite_eq_right hc] at hsource
       cases hsource
       rfl
 
@@ -3178,9 +3178,9 @@ theorem fdomUpdateEqOfLookupSome {width : Nat} [NeZero width]
   unfold FUPDATE_HOL
   by_cases hk : k = name
   · subst hk
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     exact propext ⟨fun _ => h, fun _ => Option.some_ne_none w⟩
-  · rw [if_neg hk]
+  · rw [ite_eq_right hk]
 
 /-- Exact case slice of HOL `evaluate_locals_same_fdom`
     (`crep_inlineProofScript.sml:181-191`) for `Assign`: the guarded assignment

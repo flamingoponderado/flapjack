@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.ClosLetop.Source
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+public import Mathlib.Tactic.Conv
 
 @[expose] public section
 
@@ -81,11 +82,11 @@ theorem varListEvaluate_zero {C F : Type} (expressions xs : List ClosLang.Exp)
 
 /-- The local let-operation rewrite preserves the full closure evaluation,
 including errors and effects. This helper has no standalone HOL declaration. -/
-theorem evaluateLetOpReduction {C F : Type} (bindings variables : List ClosLang.Exp)
+theorem evaluateLetOpReduction {C F : Type} (bindings variableExps : List ClosLang.Exp)
     (letTrace opTrace : BackendCommon.Tra) (op : ClosLang.Op)
     (env : List Value) (state : State C F)
-    (valid : varList 0 variables bindings = true) :
-    evaluate [.let letTrace bindings (.op opTrace op variables)] env state =
+    (valid : varList 0 variableExps bindings = true) :
+    evaluate [.let letTrace bindings (.op opTrace op variableExps)] env state =
       evaluate [.op letTrace op bindings] env state := by
   cases bindingsRun : evaluate bindings env state with
   | mk result middle =>
@@ -95,7 +96,7 @@ theorem evaluateLetOpReduction {C F : Type} (bindings variables : List ClosLang.
     | err error => rfl
     | val values =>
       have length := (evaluate_length (C := C) (F := F)).1 bindings env state middle values bindingsRun
-      have varsRun := varListEvaluate_zero variables bindings values env middle ⟨valid, length.symm⟩
+      have varsRun := varListEvaluate_zero variableExps bindings values env middle ⟨valid, length.symm⟩
       dsimp only
       conv_lhs => rw [evaluate, fixClock_evaluate, varsRun]
 

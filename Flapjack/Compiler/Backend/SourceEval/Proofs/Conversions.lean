@@ -61,7 +61,7 @@ theorem valueToList_related (es : EvalOracleState) :
   intro x y xs ⟨decoded, related⟩
   induction x using valueToList.induct generalizing y xs with
   | case1 =>
-    simp only [valueToList, if_true, Option.some.injEq] at decoded
+    simp only [valueToList, ite_true, Option.some.injEq] at decoded
     subst xs
     cases related with
     | con fields =>
@@ -69,7 +69,7 @@ theorem valueToList_related (es : EvalOracleState) :
       exact ⟨[], by simp [valueToList], .nil⟩
   | case2 stamp ne => simp [valueToList, ne] at decoded
   | case3 head tail ih =>
-    simp only [valueToList, if_true] at decoded
+    simp only [valueToList, ite_true] at decoded
     cases related with
     | con fields =>
       cases fields with
@@ -102,7 +102,7 @@ theorem valueToCharList_related (es : EvalOracleState) :
       simp [valueToCharList]
   | case2 stamp ne => simp [valueToCharList, ne] at decoded
   | case3 head tail ih =>
-    simp only [valueToCharList, if_true] at decoded
+    simp only [valueToCharList, ite_true] at decoded
     cases related with
     | con fields =>
       cases fields with

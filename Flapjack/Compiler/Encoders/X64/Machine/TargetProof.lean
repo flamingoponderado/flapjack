@@ -52,18 +52,18 @@ theorem eOpsizeImm_z64 (rex : BitVec 4) (imm : BitVec 64)
         [byte imm.toNat, byte (imm.toNat / 2 ^ 8), byte (imm.toNat / 2 ^ 16),
           byte (imm.toNat / 2 ^ 24)]) := by
   simp only [eOpsizeImm, eOpsize_z64]
-  simp only [decide_true, Bool.true_and, if_true]
+  simp only [decide_true, Bool.true_and, ite_true]
   have he : eImm32 imm = some [byte imm.toNat, byte (imm.toNat / 2 ^ 8),
       byte (imm.toNat / 2 ^ 16), byte (imm.toNat / 2 ^ 24)] := by
     simp only [eImm32]
-    rw [if_pos ⟨h1, h2⟩]
+    rw [ite_eq_left ⟨h1, h2⟩]
   simp only [he]
 
 /-- `e_imm8` is defined exactly on the signed eight-bit range. -/
 theorem eImm8_some {imm : BitVec 64} (h : -128 ≤ imm.toInt ∧ imm.toInt ≤ 127) :
     eImm8 imm = some [byte imm.toNat] := by
   simp only [eImm8]
-  rw [if_pos h]
+  rw [ite_eq_left h]
 
 /-- A successful `e_imm8` has one byte. -/
 theorem eImm8_length {imm : BitVec 64} {l : List (BitVec 8)} (h : eImm8 imm = some l) :
@@ -83,16 +83,16 @@ theorem encodeInsn_binopRR_length (op : ZBinopName) (dst src : Nat)
     (encodeInsn (.binopRR op .z64 dst src)).length = 3 := by
   simp only [encodeInsn]
   by_cases ht : op = .ztest
-  · simp only [ht, if_true]
+  · simp only [ht, ite_true]
     simp only [eGenRmReg, eModRM_zr]
     simp [eOpsize_z64, rexPrefix_or_eight_length]
-  · simp only [ht, if_false]
+  · simp only [ht, ite_false]
     by_cases hs : op.code / 8 = 1
     · have h1 : src % 16 = 1 := hshift ht hs
-      simp only [hs, h1, if_true]
+      simp only [hs, h1, ite_true]
       simp only [eGenRmReg, eModRM_zr]
       simp [eOpsize_z64, rexPrefix_or_eight_length]
-    · simp only [hs, if_false]
+    · simp only [hs, ite_false]
       simp only [eGenRmReg, eModRM_zr]
       simp [eOpsize_z64, rexPrefix_or_eight_length]
 
@@ -109,33 +109,33 @@ theorem encodeInsn_binopRI_length (op : ZBinopName) (dst : Nat) (imm : BitVec 64
       else 7 := by
   simp only [encodeInsn]
   by_cases ht : op = .ztest
-  · simp only [ht, if_true]
+  · simp only [ht, ite_true]
     by_cases hrax : dst % 16 = 0
-    · simp only [isRax, hrax, if_true]
+    · simp only [isRax, hrax, ite_true]
       simp only [eRaxImm, eOpsizeImm_z64 _ imm himm.1 himm.2]
       simp [rexPrefix, BitVec.toNat_ofNat]
-    · simp only [isRax, hrax, if_false]
+    · simp only [isRax, hrax, ite_false]
       simp only [eRmImm, eModRM_zr, eOpsizeImm_z64 _ imm himm.1 himm.2]
       simp [rexPrefix_or_eight_length]
-  · simp only [ht, if_false]
+  · simp only [ht, ite_false]
     by_cases hsh : op.code / 8 = 1
     · by_cases h1 : imm = 1
-      · simp only [hsh, h1, if_true]
+      · simp only [hsh, h1, ite_true]
         simp only [eGenRmReg, eModRM_zr]
         simp [eOpsize_z64, rexPrefix_or_eight_length]
       · have h8 : (eImm8 imm).isSome = true := hshift ht hsh
-        simp only [hsh, h1, if_false]
+        simp only [hsh, h1, ite_false]
         simp only [eRmImm8, eModRM_zr]
         cases he : eImm8 imm
         · simp [he] at h8
         · rename_i l
           have hl : l.length = 1 := eImm8_length he
           simp [hl, eOpsize_z64, rexPrefix_or_eight_length]
-    · simp only [hsh, if_false]
+    · simp only [hsh, ite_false]
       have hnb : notByte .z64 = true := rfl
       simp only [hnb]
       by_cases h8 : (eImm8 imm).isSome
-      · simp only [h8, if_true]
+      · simp only [h8, ite_true]
         simp only [eRmImm8, eModRM_zr]
         cases he : eImm8 imm
         · simp [he] at h8
@@ -144,10 +144,10 @@ theorem encodeInsn_binopRI_length (op : ZBinopName) (dst : Nat) (imm : BitVec 64
           simp [hl, eOpsize_z64, rexPrefix_or_eight_length]
       · simp only [h8]
         by_cases hrax : dst % 16 = 0
-        · simp only [isRax, hrax, if_true]
+        · simp only [isRax, hrax, ite_true]
           simp only [eRaxImm, eOpsizeImm_z64 _ imm himm.1 himm.2]
           simp [rexPrefix, BitVec.toNat_ofNat]
-        · simp only [isRax, hrax, if_false]
+        · simp only [isRax, hrax, ite_false]
           simp only [eRmImm, eModRM_zr, eOpsizeImm_z64 _ imm himm.1 himm.2]
           simp [rexPrefix_or_eight_length]
 
@@ -253,7 +253,7 @@ theorem x64Enc_of_flatMap (i : HolAsm 64) (l : List (BitVec 8))
 /-- `total_num2Zreg` is the identity on valid register numbers. -/
 theorem totalNum2Zreg_eq (n : Nat) (h : n < 16) : totalNum2Zreg n = n := by
   simp only [totalNum2Zreg, num2Zreg]
-  rw [if_pos h, Nat.mod_eq_of_lt h]
+  rw [ite_eq_left h, Nat.mod_eq_of_lt h]
 
 /-- A `binopRI` comparison plus its six-byte branch is the width the lowering
 subtracts. -/
@@ -269,13 +269,13 @@ theorem binopRI_jumpCmp_length (operator : Cmp) (source : Nat) (value : BitVec 6
   rw [encodeInsn_binopRI_length _ _ _ himm (by
     intro hne hc
     by_cases ht : isTest operator = true
-    · simp only [ht, if_true] at hne
+    · simp only [ht, ite_true] at hne
       exact absurd rfl hne
     · simp only [ht] at hc
       simp [ZBinopName.code] at hc)]
   rw [htn]
   by_cases ht : isTest operator = true
-  · simp only [ht, if_true, Bool.not_true, Bool.false_and]
+  · simp only [ht, ite_true, Bool.not_true, Bool.false_and]
     by_cases hs : source % 16 = 0 <;> simp [hs]
   · simp only [ht, Bool.not_false, Bool.true_and]
     simp only [ZBinopName.code]
@@ -309,7 +309,7 @@ theorem x64Enc_jumpCmp_reg_length (operator : Cmp) (source right : Nat) (target 
     apply encodeInsn_binopRR_length
     intro hne hc
     by_cases ht : isTest operator = true
-    · simp only [ht, if_true] at hne
+    · simp only [ht, ite_true] at hne
       exact absurd rfl hne
     · simp only [ht] at hc
       simp [ZBinopName.code] at hc

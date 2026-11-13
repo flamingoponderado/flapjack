@@ -80,7 +80,7 @@ theorem arm8Encode_logicalShiftedRegister (opL3 : LogicalOp) (invert setFlags : 
     have hpow : (2 : Nat) ^ 6 = 64 := by norm_num
     rw [BitVec.toNat_ofNat, hpow, Nat.mod_eq_of_lt himm]
     exact beq_self_eq_true imm
-  simp only [arm8Encode, Encode, e_data, hopc, himm', if_true, e_sf_64,
+  simp only [arm8Encode, Encode, e_data, hopc, himm', ite_true, e_sf_64,
     arm8LogicalShiftedRegisterWord]
   rfl
 
@@ -98,7 +98,7 @@ theorem encodeBytes_logicalShiftedRegister (op : Arm8.LogicalOp) (opL3 : Logical
       some (fields [(1, 1), (2, n), (5, 0b01010), (2, shiftTypeBits sh), (1, bit invert),
         (5, rm), (6, imm), (5, rn), (5, rd)]) := by
     simp only [encodeInsn32]
-    simp only [hlog, himm, if_true]
+    simp only [hlog, himm, ite_true]
   rw [encodeBytes_eq_of_encodeInsn32 _ _ hw]
   rw [fields_logicalShiftedRegister]
   exact (arm8Encode_logicalShiftedRegister opL3 invert setFlags sh imm

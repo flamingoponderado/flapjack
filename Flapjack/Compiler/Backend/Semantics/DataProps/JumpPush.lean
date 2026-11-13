@@ -20,7 +20,7 @@ theorem jumpExc_pushEnv_noHandler {C F : Type} (state : State C F) (env : Spt Va
         (state.stack.length - (state.handler + 1)) + 1 := by simp; omega
     simp only [jumpExc, pushEnv, List.length_cons, Bool.false_eq_true, ↓reduceIte, inside]
     simp only [List.length_cons] at shifted offset
-    rw [if_pos shifted, offset]
+    rw [ite_eq_left shifted, offset]
     simp only [List.drop_succ_cons]
     split <;> rfl
   · by_cases shifted : state.handler < state.stack.length + 1

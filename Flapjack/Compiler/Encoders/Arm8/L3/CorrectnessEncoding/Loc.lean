@@ -60,12 +60,12 @@ theorem arm8AddressBits (imm : BitVec 64) :
     BitVec.getLsbD_setWidth, BitVec.getLsbD_ofNat]
   norm_num
   by_cases h2 : i < 2
-  · rw [if_pos h2, arm8TestBit_mod_four _ _ h2]
+  · rw [ite_eq_left h2, arm8TestBit_mod_four _ _ h2]
     simp [BitVec.getLsbD, h2, hi]
     omega
   · have h19 : i - 2 < 19 := by omega
     have h64 : i - 2 < 64 := by omega
-    rw [if_neg h2, arm8TestBit_shift_mod _ _ (by omega) (by omega)]
+    rw [ite_eq_right h2, arm8TestBit_shift_mod _ _ (by omega) (by omega)]
     simp [BitVec.getLsbD, h19, h64, hi]
 
 /-- The signed value of the low 21 bits of an offset in the signed 20-bit
@@ -105,7 +105,7 @@ theorem arm8Encode_address (imm : BitVec 64) (rd : BitVec 5)
     (h : BitVec.signExtend 64 (BitVec.setWidth 21
       (holWordExtract 19 20 2 imm ++ holWordExtract 2 1 0 imm)) = imm) :
     Encode (.Address (false, (imm, rd))) = MachineCode.ARM8 (arm8AddressWord imm rd) := by
-  simp only [Encode, arm8AddressWord, Bool.false_eq_true, if_false]
+  simp only [Encode, arm8AddressWord, Bool.false_eq_true, ite_false]
   rw [h]
   simp
 
@@ -122,7 +122,7 @@ theorem arm8Decode_address (imm : BitVec 64) (rd : BitVec 5)
 /-- `Run` of `Address` with page `false` writes `PC + imm` to `Rd`. -/
 theorem arm8Run_address (imm : BitVec 64) (rd : BitVec 5) (st : arm8_state) :
     Run (.Address (false, (imm, rd))) st = «write'X» ((st.PC + imm), rd) st := by
-  simp only [Run, «dfn'Address», Bool.false_eq_true, if_false]
+  simp only [Run, «dfn'Address», Bool.false_eq_true, ite_false]
 
 /-- The offset reassembles from the address word's 21-bit immediate. -/
 theorem arm8AddressRoundtripBits (imm : BitVec 64) :
@@ -179,7 +179,7 @@ theorem arm8Ast_loc_small (register : Nat) (offset : BitVec 64)
     (h : arm8LocInRange offset = true) :
     arm8Ast (.loc register offset) = [.Address (false, offset, register)] := by
   simp only [arm8Ast]
-  rw [if_pos h]
+  rw [ite_eq_left h]
 
 /-- The encoded bytes of the in-range `Loc` lowering. -/
 theorem arm8Enc_loc_small (register : Nat) (offset : BitVec 64)
@@ -305,11 +305,11 @@ theorem arm8_encoder_correct_loc_small (register : Nat) (offset : BitVec 64)
       unfold T1
       simp only [Flapjack.RiscV.L3.holUpdate]
       by_cases h1 : k = register
-      · rw [if_pos (by rw [h1]), if_pos h1, hpc]
+      · rw [ite_eq_left (by rw [h1]), ite_eq_left h1, hpc]
       · have hne : (BitVec.ofNat 5 register) ≠ (BitVec.ofNat 5 k) := by
           intro hh
           exact h1 ((arm8Reg_eq hr_lt hk32).1 hh).symm
-        rw [if_neg hne, if_neg h1]
+        rw [ite_eq_right hne, ite_eq_right h1]
         exact hreg k hk
     · intro k hk
       simp [arm8ConfigL3] at hk

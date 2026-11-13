@@ -41,7 +41,7 @@ theorem evaluateMkTick {C F : Type} (expression : Bvl.Exp) (env : List BvlSem.Va
         omega
       have exhausted : { decClock 1 state with clock := 0 } = { state with clock := 0 } := by
         simp [decClock]
-      simp only [Bvl.mkTick, evaluateTuple, evaluate, zero, if_false]
+      simp only [Bvl.mkTick, evaluateTuple, evaluate, zero, ite_false]
       change evaluateTuple ([Bvl.mkTick n expression], env, decClock 1 state) = _
       rw [ih]
       simp only [less', dec, exhausted, evaluateTuple]

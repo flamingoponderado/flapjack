@@ -189,7 +189,7 @@ theorem genLoop_wordDataStep {width : Nat} [NeZero width] (conf : Config)
       wordGenGcMoveLoop conf (k - 1) (pa', i', pa', ib', pb', pb, old, m', dm) =
         (i1, pa1, ib1, pb1, m1, cr) ∧ c1 = (cd && cr) := by
   rw [wordGenGcMoveLoop] at run
-  simp only [if_true, different, if_false, Nat.ne_of_gt positive] at run
+  simp only [ite_true, different, ite_false, Nat.ne_of_gt positive] at run
   generalize scan : wordGenGcMoveData conf (2 ^ width) (pax, i, pa, ib, pb, old, m, dm) = result at run
   obtain ⟨i', pa', ib', pb', m', cd⟩ := result
   simp only at run
@@ -214,7 +214,7 @@ theorem genLoop_wordRefsStep {width : Nat} [NeZero width] (conf : Config)
       wordGenGcMoveLoop conf (k - 1) (pax, i', pa', ib', pb', pb, old, m', dm) =
         (i1, pa1, ib1, pb1, m1, cr) ∧ c1 = (cd && cr) := by
   rw [wordGenGcMoveLoop] at run
-  simp only [different, if_false, Nat.ne_of_gt positive] at run
+  simp only [different, ite_false, Nat.ne_of_gt positive] at run
   generalize scan : wordGenGcMoveRefs conf (2 ^ width) (pb, pbx, i, pa, ib, pb, old, m, dm) = result at run
   obtain ⟨end', i', pa', ib', pb', m', cd⟩ := result
   simp only at run

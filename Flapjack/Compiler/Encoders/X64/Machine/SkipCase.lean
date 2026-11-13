@@ -98,7 +98,7 @@ theorem x64Next_skip (ms : X64State) (d : BitVec 64 → Prop)
     decode_nop_one
   have hdec : decode (fun k => ms.mem (ms.pc + BitVec.ofNat 64 k)) = some (.nop 1, 1) :=
     decode_bytesInMemory (encodeInsn (.nop 1)) ms.pc ms.mem d (.nop 1) 1 hbm hd (by rw [hlen])
-  simp only [x64Next, hfailed, Bool.false_eq_true, if_false, hdec, execInsn]
+  simp only [x64Next, hfailed, Bool.false_eq_true, ite_false, hdec, execInsn]
 
 /-! ## The `skip` case -/
 

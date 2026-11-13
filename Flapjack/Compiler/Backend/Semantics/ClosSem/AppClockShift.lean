@@ -48,15 +48,15 @@ theorem evaluateApp_addClock_step {C F : Type} (location : Option Nat) (function
       | partialApp value =>
         dsimp only at run ⊢
         by_cases timeout : state.clock < (first :: rest).length
-        · rw [if_pos timeout] at run
+        · rw [ite_eq_left timeout] at run
           simp at run
           exact (notTimeout run.1.symm).elim
         · have enough : (first :: rest).length ≤ state.clock := by omega
           have shiftedEnough : ¬ state.clock + extra < (first :: rest).length := by omega
-          rw [if_neg timeout] at run
+          rw [ite_eq_right timeout] at run
           simp at run
           rcases run with ⟨rfl, rfl⟩
-          rw [if_neg shiftedEnough]
+          rw [ite_eq_right shiftedEnough]
           simp only [decClock]
           simp only [List.length_cons] at enough ⊢
           congr 1
@@ -69,7 +69,7 @@ theorem evaluateApp_addClock_step {C F : Type} (location : Option Nat) (function
         let cost := (first :: rest).length - remaining.length
         have positive : 0 < cost := Nat.sub_pos_of_lt smallerArgs
         by_cases timeout : state.clock < cost
-        · rw [if_pos timeout] at run
+        · rw [ite_eq_left timeout] at run
           simp at run
           exact (notTimeout run.1.symm).elim
         · have enough : cost ≤ state.clock := by omega
@@ -80,8 +80,8 @@ theorem evaluateApp_addClock_step {C F : Type} (location : Option Nat) (function
             simp only [decClock]
             congr 1
             omega
-          rw [if_neg timeout] at run
-          rw [if_neg shiftedEnough]
+          rw [ite_eq_right timeout] at run
+          rw [ite_eq_right shiftedEnough]
           rw [clocks, fixClock_evaluate]
           rw [fixClock_evaluate] at run
           cases bodyRun : evaluate [body] bodyEnv (decClock cost state) with

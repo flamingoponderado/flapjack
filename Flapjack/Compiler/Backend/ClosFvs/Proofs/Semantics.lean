@@ -100,7 +100,7 @@ theorem semantics_compile_core {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
         fun ⟨clock, error⟩ => sourceSafe clock error,
     show ¬ ∃ clock, (evaluate (compile program) [] (initialState ffi maxApp HolFiniteMapExact.empty
       (pureCo compileInc ∘ oracle) compiler clock)).1 = .err (.abort .typeError) from
-        fun ⟨clock, error⟩ => targetSafe clock error, if_false]
+        fun ⟨clock, error⟩ => targetSafe clock error, ite_false]
   rw [← terminatingEq, ← tracesEq]
 
 /-- Free-variable removal preserves the original whole-program semantics. -/

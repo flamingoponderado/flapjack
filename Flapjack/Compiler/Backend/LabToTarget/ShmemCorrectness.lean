@@ -1,6 +1,10 @@
 module
 
-public import Mathlib.Data.Set.Lattice
+public import Mathlib.Data.Set.Lattice.Bounded
+public import Mathlib.Data.Set.Lattice.Disjoint
+public import Mathlib.Data.Set.Lattice.Image
+public import Mathlib.Data.Set.Lattice.Indexed
+public import Mathlib.Data.Set.Lattice.Order
 public import Flapjack.Compiler.Backend.LabToTarget.ShmemMembership
 public import Flapjack.Compiler.Backend.LabToTarget.ByteIntervalDistinct
 public import Flapjack.Compiler.Backend.LabToTarget.MmioShmem

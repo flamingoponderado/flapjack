@@ -52,10 +52,10 @@ theorem extractOracle_isSome_succ {F : Type} (s : State F) (env : SemEnv Value)
         evaluateDecs { s with clock := k } env decs = (next, res) ∧
           i < ((oracleState next.evalState).oracle 0).1.1 :=
       ⟨k, next, res, run, by omega⟩
-    simp only [extractOracle, Flapjack.holOLeast, dif_pos earlier]
+    simp only [extractOracle, Flapjack.holOLeast, dite_eq_left earlier]
     cases evaluateDecs { s with clock := Nat.find earlier } env decs
     rfl
-  · simp only [extractOracle, Flapjack.holOLeast, dif_neg later] at success
+  · simp only [extractOracle, Flapjack.holOLeast, dite_eq_right later] at success
     contradiction
 
 /-- Extract events from evaluation with the original initial recording state. -/

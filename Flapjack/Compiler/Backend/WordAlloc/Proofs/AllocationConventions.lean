@@ -49,7 +49,7 @@ theorem prePostConventions_wordAlloc {width : Nat} [NeZero width]
         have notPhysical : isPhyVar x = false := by
           simp [isPhyVar, isStackVar] at hx ⊢
           omega
-        simp only [notPhysical, Bool.false_eq_true, if_false, hx.2, if_true] at bound
+        simp only [notPhysical, Bool.false_eq_true, ite_false, hx.2, ite_true] at bound
         rw [totalColourAlt]
         simp only [Function.comp_apply]
         omega
@@ -59,7 +59,7 @@ theorem prePostConventions_wordAlloc {width : Nat} [NeZero width]
         simp only [decide_eq_true_eq] at hx
         by_cases physical : isPhyVar x = true
         · have fixed := (conventions x hx).2
-          simp only [physical, if_true] at fixed
+          simp only [physical, ite_true] at fixed
           simp only [physical, Bool.not_true, Bool.false_or, beq_iff_eq]
           rw [totalColourAlt]
           simp only [Function.comp_apply, fixed]

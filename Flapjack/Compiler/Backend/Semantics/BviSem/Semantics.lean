@@ -90,7 +90,7 @@ theorem semantics_eq_of_terminatingObservation {C F : Type} (ffi : HolFfiState F
     semantics ffi code oracle compiler start = behavior := by
   classical
   unfold semantics
-  simp only [noFatal, if_false]
+  simp only [noFatal, ite_false]
   rw [HolLList.holOptionSome_eq_some observed
     (fun other otherObserved => terminatingObservation_unique ffi code oracle compiler start
       other behavior otherObserved observed)]

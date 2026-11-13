@@ -44,18 +44,18 @@ theorem aw8sub_complete_related {C F : Type} (genv : GlobalEnv)
   by_cases negative : index < 0
   · have ⟨src, dst, exceptionRel⟩ := aw8sub_outOfBounds genv sourceState flatState statesRel ok flag n bytes lookup
       index (Or.inl negative) unsafeOp
-    cases unsafeOp <;> simp only [Bool.false_eq_true, if_false, if_true] at src dst ⊢ <;>
+    cases unsafeOp <;> simp only [Bool.false_eq_true, ite_false, ite_true] at src dst ⊢ <;>
       simp [doApp, doAppNumericCore, src, dst, ResultRel.raise exceptionRel]
   · cases element : bytes[index.toNat]? with
     | none =>
       have ⟨src, dst, exceptionRel⟩ := aw8sub_outOfBounds genv sourceState flatState statesRel ok flag n bytes lookup
         index (Or.inr element) unsafeOp
-      cases unsafeOp <;> simp only [Bool.false_eq_true, if_false, if_true] at src dst ⊢ <;>
+      cases unsafeOp <;> simp only [Bool.false_eq_true, ite_false, ite_true] at src dst ⊢ <;>
         simp [doApp, doAppNumericCore, src, dst, ResultRel.raise exceptionRel]
     | some byte =>
       have ⟨src, dst, valueRel⟩ := aw8sub_related genv sourceState flatState statesRel flag n bytes lookup index
         (Int.le_of_not_gt negative) byte element unsafeOp
-      cases unsafeOp <;> simp only [Bool.false_eq_true, if_false, if_true] at src dst ⊢ <;>
+      cases unsafeOp <;> simp only [Bool.false_eq_true, ite_false, ite_true] at src dst ⊢ <;>
         simp [doApp, doAppNumericCore, src, dst, ResultRel.value valueRel]
 
 /-- An array subscript without a type error has a location, integer
@@ -92,18 +92,18 @@ theorem asub_complete_related {C F : Type} (genv : GlobalEnv)
   by_cases negative : index < 0
   · have ⟨src, dst, exceptionRel⟩ := asub_outOfBounds genv sourceState flatState statesRel ok flag n values lookup
       index (Or.inl negative) unsafeOp
-    cases unsafeOp <;> simp only [Bool.false_eq_true, if_false, if_true] at src dst ⊢ <;>
+    cases unsafeOp <;> simp only [Bool.false_eq_true, ite_false, ite_true] at src dst ⊢ <;>
       simp [doApp, doAppNumericCore, src, dst, ResultRel.raise exceptionRel]
   · cases element : values[index.toNat]? with
     | none =>
       have ⟨src, dst, exceptionRel⟩ := asub_outOfBounds genv sourceState flatState statesRel ok flag n values lookup
         index (Or.inr element) unsafeOp
-      cases unsafeOp <;> simp only [Bool.false_eq_true, if_false, if_true] at src dst ⊢ <;>
+      cases unsafeOp <;> simp only [Bool.false_eq_true, ite_false, ite_true] at src dst ⊢ <;>
         simp [doApp, doAppNumericCore, src, dst, ResultRel.raise exceptionRel]
     | some value =>
       obtain ⟨flatValue, src, dst, valueRel⟩ := asub_related genv sourceState flatState statesRel flag n values lookup index
         (Int.le_of_not_gt negative) value element unsafeOp
-      cases unsafeOp <;> simp only [Bool.false_eq_true, if_false, if_true] at src dst ⊢ <;>
+      cases unsafeOp <;> simp only [Bool.false_eq_true, ite_false, ite_true] at src dst ⊢ <;>
         simp [doApp, doAppNumericCore, src, dst, ResultRel.value valueRel]
 
 /-- A byte-array update without a type error has a byte-array location,
@@ -143,16 +143,16 @@ theorem aw8update_complete_related {C F : Type} (genv : GlobalEnv)
   by_cases negative : index < 0
   · have ⟨src, dst, exceptionRel⟩ := aw8update_outOfBounds genv sourceState flatState statesRel ok flag n bytes lookup
       index (Or.inl negative) byte unsafeOp
-    cases unsafeOp <;> simp only [Bool.false_eq_true, if_false, if_true] at src dst ⊢ <;>
+    cases unsafeOp <;> simp only [Bool.false_eq_true, ite_false, ite_true] at src dst ⊢ <;>
       simp [doApp, doAppNumericCore, src, dst, statesRel, ResultRel.raise exceptionRel]
   · by_cases inBounds : index.toNat < bytes.length
     · obtain ⟨flatRefs, src, dst, valueRel, nextRel, reserved⟩ := aw8update_related genv sourceState flatState
         statesRel flag n bytes lookup index (Int.le_of_not_gt negative) inBounds byte unsafeOp
-      cases unsafeOp <;> simp only [Bool.false_eq_true, if_false, if_true] at src dst ⊢ <;>
+      cases unsafeOp <;> simp only [Bool.false_eq_true, ite_false, ite_true] at src dst ⊢ <;>
         simp [doApp, doAppNumericCore, src, dst, nextRel, reserved, ResultRel.value valueRel]
     · have ⟨src, dst, exceptionRel⟩ := aw8update_outOfBounds genv sourceState flatState statesRel ok flag n bytes lookup
         index (Or.inr (Nat.le_of_not_gt inBounds)) byte unsafeOp
-      cases unsafeOp <;> simp only [Bool.false_eq_true, if_false, if_true] at src dst ⊢ <;>
+      cases unsafeOp <;> simp only [Bool.false_eq_true, ite_false, ite_true] at src dst ⊢ <;>
         simp [doApp, doAppNumericCore, src, dst, statesRel, ResultRel.raise exceptionRel]
 
 /-- A value-array update without a type error has an array location and integer index. -/
@@ -192,16 +192,16 @@ theorem aupdate_complete_related {C F : Type} (genv : GlobalEnv)
   by_cases negative : index < 0
   · have ⟨src, dst, exceptionRel⟩ := aupdate_outOfBounds genv sourceState flatState statesRel ok flag n values lookup
       index (Or.inl negative) value flatValue unsafeOp
-    cases unsafeOp <;> simp only [Bool.false_eq_true, if_false, if_true] at src dst ⊢ <;>
+    cases unsafeOp <;> simp only [Bool.false_eq_true, ite_false, ite_true] at src dst ⊢ <;>
       simp [doApp, doAppNumericCore, src, dst, statesRel, ResultRel.raise exceptionRel]
   · by_cases inBounds : index.toNat < values.length
     · obtain ⟨flatRefs, src, dst, resultRel, nextRel, reserved⟩ := aupdate_related genv sourceState flatState
         statesRel flag n values lookup index (Int.le_of_not_gt negative) inBounds value flatValue valueRel unsafeOp
-      cases unsafeOp <;> simp only [Bool.false_eq_true, if_false, if_true] at src dst ⊢ <;>
+      cases unsafeOp <;> simp only [Bool.false_eq_true, ite_false, ite_true] at src dst ⊢ <;>
         simp [doApp, doAppNumericCore, src, dst, nextRel, reserved, ResultRel.value resultRel]
     · have ⟨src, dst, exceptionRel⟩ := aupdate_outOfBounds genv sourceState flatState statesRel ok flag n values lookup
         index (Or.inr (Nat.le_of_not_gt inBounds)) value flatValue unsafeOp
-      cases unsafeOp <;> simp only [Bool.false_eq_true, if_false, if_true] at src dst ⊢ <;>
+      cases unsafeOp <;> simp only [Bool.false_eq_true, ite_false, ite_true] at src dst ⊢ <;>
         simp [doApp, doAppNumericCore, src, dst, statesRel, ResultRel.raise exceptionRel]
 
 end Flapjack.Compiler.Backend.SourceToFlat

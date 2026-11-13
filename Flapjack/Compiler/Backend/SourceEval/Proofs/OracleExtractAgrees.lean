@@ -46,7 +46,7 @@ theorem extract_oracle_agrees {Config F : Type} (t : State F) (k : Nat) (env : S
     apply recordedOracleWellFormed_defined (mkCompilerFunFromCi ci) final.oracle (j + 1)
     exact ⟨by simpa [oracleState] using finalWf, by omega, by omega⟩
   have extracted : extractOracle t env decs j = some ((oracleState next.evalState).oracle (j + 1)) := by
-    simp only [extractOracle, Flapjack.holOLeast, dif_pos existsClock]
+    simp only [extractOracle, Flapjack.holOLeast, dite_eq_left existsClock]
     rw [nextRun]
   have sameEvent' : final.oracle (j + 1) = (oracleState next.evalState).oracle (j + 1) := by
     simpa [finalEq, oracleState] using sameEvent

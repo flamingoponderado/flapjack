@@ -55,8 +55,8 @@ private theorem doEqRel (es : EvalOracleState) (x x' : Value) (related : ValueRe
       have len2 := List.Forall₂.length_eq others
       by_cases h : xs.length = ys.length
       · have h' : xs'.length = ys'.length := by omega
-        simp only [doEq, if_pos h] at run
-        simp only [doEq, if_pos h']
+        simp only [doEq, ite_eq_left h] at run
+        simp only [doEq, ite_eq_left h']
         exact ih ys ys' b ⟨run, others⟩
       · have h' : xs'.length ≠ ys'.length := by omega
         simpa [doEq, h, h'] using run
@@ -68,13 +68,13 @@ private theorem doEqRel (es : EvalOracleState) (x x' : Value) (related : ValueRe
       have len2 := List.Forall₂.length_eq others
       by_cases h : stamp = stamp' ∧ xs.length = ys.length
       · have h' : stamp = stamp' ∧ xs'.length = ys'.length := ⟨h.1, by omega⟩
-        simp only [doEq, if_pos h] at run
-        simp only [doEq, if_pos h']
+        simp only [doEq, ite_eq_left h] at run
+        simp only [doEq, ite_eq_left h']
         exact ih ys ys' b ⟨run, others⟩
       · have h' : ¬ (stamp = stamp' ∧ xs'.length = ys'.length) := by
           rintro ⟨same, length⟩
           exact h ⟨same, by omega⟩
-        simpa only [doEq, if_neg h, if_neg h'] using run
+        simpa only [doEq, ite_eq_right h, ite_eq_right h'] using run
     | _ => simp [doEq] at run
   · intro env env' name body related _ y y' b ⟨run, right⟩
     cases right <;> simp_all [doEq]

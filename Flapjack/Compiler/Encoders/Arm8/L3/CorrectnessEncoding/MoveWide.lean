@@ -121,7 +121,7 @@ theorem arm8Run_moveWide_z (hw : BitVec 2) (imm16 : BitVec 16) (rd : BitVec 5)
   simp only [Run, «dfn'MoveWide», «write'X»]
   simp only [show (MoveWideOp.z == MoveWideOp.n) = false from by decide,
     show (MoveWideOp.z == MoveWideOp.k) = false from by decide]
-  simp only [Bool.false_eq_true, if_false]
+  simp only [Bool.false_eq_true, ite_false]
   have hpos : (BitVec.setWidth 6 (hw ++ (BitVec.ofNat 4 0))).toNat = hw.toNat * 16 := by
     rw [BitVec.setWidth_eq, BitVec.toNat_append]
     simp [BitVec.toNat_ofNat, Nat.shiftLeft_eq]
@@ -141,7 +141,7 @@ theorem arm8Run_moveWide_n (hw : BitVec 2) (imm16 : BitVec 16) (rd : BitVec 5)
   simp only [Run, «dfn'MoveWide», «write'X»]
   simp only [show (MoveWideOp.n == MoveWideOp.n) = true from by decide,
     show (MoveWideOp.n == MoveWideOp.k) = false from by decide]
-  simp only [Bool.false_eq_true, if_false, if_true]
+  simp only [Bool.false_eq_true, ite_false, ite_true]
   have hpos : (BitVec.setWidth 6 (hw ++ (BitVec.ofNat 4 0))).toNat = hw.toNat * 16 := by
     rw [BitVec.setWidth_eq, BitVec.toNat_append]
     simp [BitVec.toNat_ofNat, Nat.shiftLeft_eq]
@@ -161,7 +161,7 @@ theorem arm8Run_moveWide_k (hw : BitVec 2) (imm16 : BitVec 16) (rd : BitVec 5)
   simp only [Run, «dfn'MoveWide», «write'X»]
   simp only [show (MoveWideOp.k == MoveWideOp.n) = false from by decide,
     show (MoveWideOp.k == MoveWideOp.k) = true from by decide]
-  simp only [Bool.false_eq_true, if_false, if_true]
+  simp only [Bool.false_eq_true, ite_false, ite_true]
   have hpos : (BitVec.setWidth 6 (hw ++ (BitVec.ofNat 4 0))).toNat = hw.toNat * 16 := by
     rw [BitVec.setWidth_eq, BitVec.toNat_append]
     simp [BitVec.toNat_ofNat, Nat.shiftLeft_eq]

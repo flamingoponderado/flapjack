@@ -25,7 +25,7 @@ example {C F : Type} (ffi : HolFfiState F) (oracle : CompileOracle C)
     semantics ffi .ln oracle compiler limits sizes start = .fail := by
   classical
   unfold semantics
-  apply if_pos
+  apply ite_eq_left
   refine ⟨0, ?_⟩
   simp [evaluate, initialState, getVars, findCode, sptLookup]
 

@@ -305,10 +305,10 @@ theorem primitiveSimulation_block_consExtend {C F : Type} (tag : Nat) :
                   by_cases invalid : lower < 0 ∨ len < 0 ∨ Int.ofNat fields.length < lower + len ∨
                       total = 0 ∨ total ≠ Int.ofNat initial.length + len
                   · simp only [doApp, applyBlock, ← fieldsLength, ← initialLength]
-                    rw [if_pos invalid, if_pos invalid]
+                    rw [ite_eq_left invalid, ite_eq_left invalid]
                     exact ⟨_, rfl, rfl⟩
                   · simp only [doApp, applyBlock, ← fieldsLength, ← initialLength]
-                    rw [if_neg invalid, if_neg invalid]
+                    rw [ite_eq_right invalid, ite_eq_right invalid]
                     exact ⟨_, _, resultRel, states, rfl⟩
                 | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ | closure | recclosure | partialRecclosure =>
                   simp [doApp, applyBlock, excRel]

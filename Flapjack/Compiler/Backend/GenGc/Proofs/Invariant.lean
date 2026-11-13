@@ -380,7 +380,7 @@ theorem heapLookup_fillEnd_preserves_data {α β : Type}
         [.dataElement newRoots len newData]) := by rw [← equalLength]; exact below
     have restored := heapLookup_append index (before ++ heapExpand (free - (len + 1)) ++
       [.dataElement newRoots len newData]) after
-    simp only [nextBelow, if_false] at restored
+    simp only [nextBelow, ite_false] at restored
     rw [← equalLength, afterStart] at restored
     simpa [List.append_assoc] using restored
 
@@ -416,7 +416,7 @@ theorem heapLookup_fillStart_preserves_data {α β : Type}
         heapExpand (free - (len + 1))) := by rw [← equalLength]; exact below
     have restored := heapLookup_append index (before ++ [.dataElement newRoots len newData] ++
       heapExpand (free - (len + 1))) after
-    simp only [nextBelow, if_false] at restored
+    simp only [nextBelow, ite_false] at restored
     rw [← equalLength, afterStart] at restored
     simpa [List.append_assoc] using restored
 

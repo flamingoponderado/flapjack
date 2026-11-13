@@ -180,7 +180,7 @@ theorem allDisjoint_move {α : Type} :
   clear separate old subset
   by_cases ip : i = p <;> by_cases iq : i = q <;>
     by_cases jp : j = p <;> by_cases jq : j = q <;>
-    simp only [ip, iq, jp, jq, if_true, if_false, Set.mem_inter_iff,
+    simp only [ip, iq, jp, jq, ite_true, ite_false, Set.mem_inter_iff,
       Set.mem_sdiff, Set.mem_union] at member
   all_goals aesop (config := { maxRuleApplications := 50 })
 

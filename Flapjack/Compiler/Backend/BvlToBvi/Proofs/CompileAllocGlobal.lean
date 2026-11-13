@@ -83,7 +83,7 @@ theorem simulation_allocGlobal {C F : Type} (arguments : List Bvl.Exp)
                 have clocks : BviSem.decClock 1 (BviProps.incClock added targetNext) = BviProps.incClock stubClock targetNext := by
                   simp [BviSem.decClock, BviProps.incClock, added]
                 simp only [BvlSem.findCode, startCode, allocGlobalCode, List.length_cons, List.length_nil, ite_true,
-                  Nat.zero_add, Nat.lt_one_iff, nonzero, if_false, BviSem.fixClock_evaluate]
+                  Nat.zero_add, Nat.lt_one_iff, nonzero, ite_false, BviSem.fixClock_evaluate]
                 simp [allocGlobalCode] at stubRun
                 simp [clocks, stubRun, adjustBv, adjustValues, BvlSem.unitValue]
           | _ =>

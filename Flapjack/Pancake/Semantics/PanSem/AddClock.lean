@@ -473,22 +473,22 @@ theorem shMemLoadHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
   simp only [stateAddClock]
   by_cases hnb : nb = 0
   · subst hnb
-    simp only [if_true]
+    simp only [ite_true]
     by_cases hdom : state.shMemaddrs address
-    · simp only [hdom, if_true]
+    · simp only [hdom, ite_true]
       cases hf : callFFIHOL state.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 0]
           (panWordToBytesHOL address false) with
       | final ev => simp only [emptyLocalsHOLExact_stateAddClock]
       | ret nf nb' => simp only [setKvarHOLExact_stateAddClock]
-    · simp only [hdom, if_false]
-  · simp only [hnb, if_false]
+    · simp only [hdom, ite_false]
+  · simp only [hnb, ite_false]
     by_cases hdom : state.shMemaddrs (panByteAlignHOL address)
-    · simp only [hdom, if_true]
+    · simp only [hdom, ite_true]
       cases hf : callFFIHOL state.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
           (panWordToBytesHOL address false) with
       | final ev => simp only [emptyLocalsHOLExact_stateAddClock]
       | ret nf nb' => simp only [setKvarHOLExact_stateAddClock]
-    · simp only [hdom, if_false]
+    · simp only [hdom, ite_false]
 
 theorem shMemStoreHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
@@ -500,22 +500,22 @@ theorem shMemStoreHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width
   simp only [stateAddClock]
   by_cases hnb : nb = 0
   · subst hnb
-    simp only [if_true]
+    simp only [ite_true]
     by_cases hdom : state.shMemaddrs address
-    · simp only [hdom, if_true]
+    · simp only [hdom, ite_true]
       cases hf : callFFIHOL state.ffi (.sharedMem .mappedWrite) [BitVec.ofNat 8 0]
           (panWordToBytesHOL word false ++ panWordToBytesHOL address false) with
       | final ev => simp only []
       | ret nf nb' => simp only []
-    · simp only [hdom, if_false]
-  · simp only [hnb, if_false]
+    · simp only [hdom, ite_false]
+  · simp only [hnb, ite_false]
     by_cases hdom : state.shMemaddrs (panByteAlignHOL address)
-    · simp only [hdom, if_true]
+    · simp only [hdom, ite_true]
       cases hf : callFFIHOL state.ffi (.sharedMem .mappedWrite) [BitVec.ofNat 8 nb]
           ((panWordToBytesHOL word false).take nb ++ panWordToBytesHOL address false) with
       | final ev => simp only []
       | ret nf nb' => simp only []
-    · simp only [hdom, if_false]
+    · simp only [hdom, ite_false]
 
 theorem extCallStepHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
@@ -756,7 +756,7 @@ theorem eval_add_clock_mono_aux
     dsimp only at hHigh
     simp only [evalHOLExact_stateAddClock] at hHigh
     rw [show evalHOLExact context.state initializer = some value from hval] at hHigh
-    simp only [hshape, if_true] at hHigh
+    simp only [hshape, ite_true] at hHigh
     split at hHigh
     · simp at hHigh
     · rename_i rH cH hbodyH
@@ -838,7 +838,7 @@ theorem eval_add_clock_mono_aux
     simp only [evalHOLExact_stateAddClock] at hHigh
     rw [show evalHOLExact context.state condition = some (ValueHOL.val (HolWordLab.word value)) from hcond]
       at hHigh
-    simp only [hw, if_true] at hHigh
+    simp only [hw, ite_true] at hHigh
     exact ih1 extra resultLow resultHigh hLow hHigh
   case case9 =>
     rename_i inst context state condition thenBranch elseBranch value hcond hw ih1
@@ -868,8 +868,8 @@ theorem eval_add_clock_mono_aux
     rw [show evalHOLExact context.state condition = some (ValueHOL.val (HolWordLab.word value)) from hcond]
       at hHigh
     dsimp only at hHigh
-    rw [if_pos hw] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_left hw] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     split at hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
@@ -905,8 +905,8 @@ theorem eval_add_clock_mono_aux
     rw [show evalHOLExact context.state condition = some (ValueHOL.val (HolWordLab.word value)) from hcond]
       at hHigh
     dsimp only at hHigh
-    rw [if_pos hw] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_left hw] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     split at hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
@@ -944,8 +944,8 @@ theorem eval_add_clock_mono_aux
     rw [show evalHOLExact context.state condition = some (ValueHOL.val (HolWordLab.word value)) from hcond]
       at hHigh
     dsimp only at hHigh
-    rw [if_pos hw] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_left hw] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     split at hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
@@ -984,8 +984,8 @@ theorem eval_add_clock_mono_aux
     rw [show evalHOLExact context.state condition = some (ValueHOL.val (HolWordLab.word value)) from hcond]
       at hHigh
     dsimp only at hHigh
-    rw [if_pos hw] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_left hw] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     split at hHigh
     · simp at hHigh
     · rename_i rB cB hbodyH
@@ -1067,7 +1067,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1099,7 +1099,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1131,7 +1131,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1163,7 +1163,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1179,7 +1179,7 @@ theorem eval_add_clock_mono_aux
       cases hrB
       cases hcB
       try simp only [] at hHigh
-      rw [if_pos hshape] at hHigh
+      rw [ite_eq_left hshape] at hHigh
       try simp only [] at hHigh
       simp only [Option.some.injEq] at hHigh
       rw [← hHigh]
@@ -1209,7 +1209,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1225,7 +1225,7 @@ theorem eval_add_clock_mono_aux
       cases hrB
       cases hcB
       dsimp only at hHigh
-      rw [if_pos hshape] at hHigh
+      rw [ite_eq_left hshape] at hHigh
       simp only [Option.some.injEq] at hHigh
       rw [← hHigh]
       constructor
@@ -1252,7 +1252,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1268,8 +1268,8 @@ theorem eval_add_clock_mono_aux
       cases hrB
       cases hcB
       dsimp only at hHigh
-      rw [if_pos hshape] at hHigh
-      rw [if_pos (by simpa only [isValidValueHOLExact_stateAddClock] using hvalid)] at hHigh
+      rw [ite_eq_left hshape] at hHigh
+      rw [ite_eq_left (by simpa only [isValidValueHOLExact_stateAddClock] using hvalid)] at hHigh
       simp only [Option.some.injEq] at hHigh
       rw [← hHigh]
       constructor
@@ -1296,7 +1296,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1312,9 +1312,9 @@ theorem eval_add_clock_mono_aux
       cases hrB
       cases hcB
       try simp only [] at hHigh
-      rw [if_pos hshape] at hHigh
+      rw [ite_eq_left hshape] at hHigh
       try simp only [] at hHigh
-      rw [if_neg (by simpa only [isValidValueHOLExact_stateAddClock] using hvalid)] at hHigh
+      rw [ite_eq_right (by simpa only [isValidValueHOLExact_stateAddClock] using hvalid)] at hHigh
       try simp only [] at hHigh
       rw [callFixedContextHOLExact_callEntry_stateAddClock context.state calleeLocals
         (some (.returned value)) postContext extra hclock] at hHigh
@@ -1333,7 +1333,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1349,7 +1349,7 @@ theorem eval_add_clock_mono_aux
       cases hrB
       cases hcB
       try simp only [] at hHigh
-      rw [if_neg hshape] at hHigh
+      rw [ite_eq_right hshape] at hHigh
       try simp only [] at hHigh
       rw [callFixedContextHOLExact_callEntry_stateAddClock context.state calleeLocals
         (some (.returned value)) postContext extra hclock] at hHigh
@@ -1368,7 +1368,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1412,7 +1412,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1456,7 +1456,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1472,10 +1472,10 @@ theorem eval_add_clock_mono_aux
       cases hrB
       cases hcB
       dsimp only at hHigh
-      rw [if_pos rfl] at hHigh
+      rw [ite_eq_left rfl] at hHigh
       rw [show (stateAddClock context.state extra).eshapes handlerId = some shape from by rw [stateAddClock_eshapes]; exact hend] at hHigh
       try simp only [] at hHigh
-      rw [if_pos (by simpa only [isValidValueHOLExact_stateAddClock] using hshape)] at hHigh
+      rw [ite_eq_left (by simpa only [isValidValueHOLExact_stateAddClock] using hshape)] at hHigh
       have hhandlerH : evalPanSemRecursiveCallContextHOLExact handlerProgram
           (ctxAddClock handlerContext extra) = some resultHigh := by
         rw [← eval_context_state handlerProgram _ (ctxAddClock handlerContext extra)]
@@ -1497,7 +1497,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1513,10 +1513,10 @@ theorem eval_add_clock_mono_aux
       cases hrB
       cases hcB
       dsimp only at hHigh
-      rw [if_pos rfl] at hHigh
+      rw [ite_eq_left rfl] at hHigh
       rw [show (stateAddClock context.state extra).eshapes handlerId = some shape from by rw [stateAddClock_eshapes]; exact hend] at hHigh
       try simp only [] at hHigh
-      rw [if_neg (by simpa only [isValidValueHOLExact_stateAddClock] using hinv)] at hHigh
+      rw [ite_eq_right (by simpa only [isValidValueHOLExact_stateAddClock] using hinv)] at hHigh
       rw [callFixedContextHOLExact_callEntry_stateAddClock context.state calleeLocals
         (some (.exception handlerId value)) postContext extra hclock] at hHigh
       simp only [Option.some.injEq] at hHigh
@@ -1535,7 +1535,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1551,7 +1551,7 @@ theorem eval_add_clock_mono_aux
       cases hrB
       cases hcB
       dsimp only at hHigh
-      rw [if_pos rfl] at hHigh
+      rw [ite_eq_left rfl] at hHigh
       rw [show (stateAddClock context.state extra).eshapes handlerId = none from by rw [stateAddClock_eshapes]; exact hnone] at hHigh
       try dsimp only at hHigh
       rw [callFixedContextHOLExact_callEntry_stateAddClock context.state calleeLocals
@@ -1571,7 +1571,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1587,7 +1587,7 @@ theorem eval_add_clock_mono_aux
       cases hrB
       cases hcB
       try simp only [] at hHigh
-      rw [if_neg hne] at hHigh
+      rw [ite_eq_right hne] at hHigh
       try simp only [] at hHigh
       simp only [Option.some.injEq] at hHigh
       rw [← hHigh]
@@ -1617,7 +1617,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1754,7 +1754,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1787,7 +1787,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1820,7 +1820,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1854,7 +1854,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1870,7 +1870,7 @@ theorem eval_add_clock_mono_aux
       cases hrB
       cases hcB
       dsimp only at hHigh
-      rw [if_pos hshape] at hHigh
+      rw [ite_eq_left hshape] at hHigh
       split at hHigh
       · simp at hHigh
       · rename_i rC cC hcontH
@@ -1913,7 +1913,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -1929,7 +1929,7 @@ theorem eval_add_clock_mono_aux
       cases hrB
       cases hcB
       dsimp only at hHigh
-      rw [if_neg hshape] at hHigh
+      rw [ite_eq_right hshape] at hHigh
       rw [callFixedContextHOLExact_callEntry_stateAddClock context.state calleeLocals
         (some (.returned value)) postContext extra hclock] at hHigh
       simp only [Option.some.injEq] at hHigh
@@ -1948,7 +1948,7 @@ theorem eval_add_clock_mono_aux
     try simp only [] at hHigh
     rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
     try simp only [] at hHigh
-    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    rw [ite_eq_right (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
     try simp only [] at hHigh
     split at hHigh
     · simp at hHigh
@@ -2207,7 +2207,7 @@ theorem eval_add_clock_mono_aux
     rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
     dsimp only at hHigh
     simp_all (config := { zetaDelta := true })
-    rw [if_neg (by omega)] at hHigh
+    rw [ite_eq_right (by omega)] at hHigh
     simp only [Option.some.injEq] at hHigh
     subst resultHigh
     constructor
@@ -2240,7 +2240,7 @@ theorem eval_add_clock_mono_aux
     rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
     dsimp only at hHigh
     simp_all (config := { zetaDelta := true })
-    rw [if_neg (by omega)] at hHigh
+    rw [ite_eq_right (by omega)] at hHigh
     simp only [Option.some.injEq] at hHigh
     subst resultHigh
     constructor

@@ -67,7 +67,7 @@ theorem evaluate_mk_Ticks {C F : Type} (traces : List BackendCommon.Tra)
     · cases state
       simp_all [mkTicks, evaluate]
     · rw [mkTicks, evaluate]
-      simp only [zero, if_false]
+      simp only [zero, ite_false]
       rw [ih]
       simp only [List.length_cons, decClock]
       by_cases short : state.clock < rest.length + 1

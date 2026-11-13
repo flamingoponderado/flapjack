@@ -112,7 +112,7 @@ theorem encodeBytes_addSubImmediate (sub setFlags : Bool) (imm : BitVec 64) (rn 
         some (fields [(1, 1), (1, bit sub), (1, bit setFlags), (7, 68),
           (12, imm.toNat % 4096), (5, rn), (5, rd)]) := by
       simp only [encodeInsn32]
-      rw [if_pos hlow]
+      rw [ite_eq_left hlow]
     cases setFlags
     · rw [encodeBytes_eq_of_encodeInsn32 _ _ hw]
       simp only [arm8Encode, arm8Encode_addSubImmediate_low sub imm (BitVec.ofNat 5 rn)
@@ -125,7 +125,7 @@ theorem encodeBytes_addSubImmediate (sub setFlags : Bool) (imm : BitVec 64) (rn 
           some (fields [(1, 1), (1, bit sub), (1, bit setFlags), (7, 69),
             (12, (imm >>> (12 : Nat)).toNat % 4096), (5, rn), (5, rd)]) := by
         simp only [encodeInsn32]
-        rw [if_neg hlow, if_pos hhigh]
+        rw [ite_eq_right hlow, ite_eq_left hhigh]
         simp
       cases setFlags
       · rw [encodeBytes_eq_of_encodeInsn32 _ _ hw]
@@ -138,7 +138,7 @@ theorem encodeBytes_addSubImmediate (sub setFlags : Bool) (imm : BitVec 64) (rn 
           imm12Word_shift_eq, bit_true]
     · have hw : encodeInsn32 (.addSubImmediate sub setFlags imm rn rd) = none := by
         simp only [encodeInsn32]
-        rw [if_neg hlow, if_neg hhigh]
+        rw [ite_eq_right hlow, ite_eq_right hhigh]
       have hlow' : ¬ ((imm &&& ~~~(4095 : BitVec 64)) == (0 : BitVec 64)) = true := by
         intro h
         exact absurd (beq_iff_eq.mp h) hlow
@@ -148,9 +148,9 @@ theorem encodeBytes_addSubImmediate (sub setFlags : Bool) (imm : BitVec 64) (rn 
       rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
       cases setFlags
       · simp only [arm8Encode, Encode, arm8EData_addSubImmediate, hlow', hhigh',
-          Bool.false_eq_true, if_false]
+          Bool.false_eq_true, ite_false]
       · simp only [arm8Encode, Encode, arm8EData_addSubImmediateS, hlow', hhigh',
-          Bool.false_eq_true, if_false]
+          Bool.false_eq_true, ite_false]
 
 /-- A 64-bit immediate fits the five-bit `ConditionalCompareImmediate` field
 exactly when it is the truncation of its own low five bits. -/
@@ -206,9 +206,9 @@ theorem encodeBytes_conditionalCompareImmediate (opc : Bool) (imm : BitVec 64) (
           (5, rn), (1, 0), (4, bit n * 8 + bit z * 4 + bit c * 2 +
             bit v)]) := by
       simp only [encodeInsn32]
-      rw [if_pos h]
+      rw [ite_eq_left h]
     rw [encodeBytes_eq_of_encodeInsn32 _ _ hw]
-    simp only [arm8Encode, arm8Encode_conditionalCompare, hfit, if_true,
+    simp only [arm8Encode, arm8Encode_conditionalCompare, hfit, ite_true,
       fields_conditionalCompare]
     rfl
   · have hfit : (imm == BitVec.setWidth 64 (BitVec.ofNat 5 imm.toNat)) = false := by
@@ -218,9 +218,9 @@ theorem encodeBytes_conditionalCompareImmediate (opc : Bool) (imm : BitVec 64) (
       exact h ((fits5_iff imm).mpr he)
     have hw : encodeInsn32 (.conditionalCompareImmediate opc imm cd (n, z, c, v) rn) = none := by
       simp only [encodeInsn32]
-      rw [if_neg h]
+      rw [ite_eq_right h]
     rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
     simp only [arm8Encode, arm8Encode_conditionalCompare, hfit, setWidth64_eq_ofNat,
-      Bool.false_eq_true, if_false]
+      Bool.false_eq_true, ite_false]
 
 end Flapjack.Compiler.Encoders.Arm8.L3

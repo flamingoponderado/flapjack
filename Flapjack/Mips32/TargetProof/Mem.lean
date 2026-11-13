@@ -88,12 +88,12 @@ theorem case_load (r1 r2 : Nat) (off : W) (s1 s2 : AsmState 32) (ms : State)
   have hbe := st.be
   have hfail := st.ok
   simp only [asmUpd, instUpd, memOp, memLoad, addrHOL, readReg, readMemWord_succ, readMemWord,
-    updPc, updReg, assertState, hbe, Bool.false_eq_true, if_false, readMem] at hs2
+    updPc, updReg, assertState, hbe, Bool.false_eq_true, ite_false, readMem] at hs2
   subst hs2
   classical
   simp only [Bool.not_eq_eq_eq_not,
     Bool.not_true, Bool.or_eq_true, not_or, Bool.not_eq_true] at hfail
-  simp only [hbe, Bool.false_eq_true, if_false, add11, add21, decide_eq_false_iff_not,
+  simp only [hbe, Bool.false_eq_true, ite_false, add11, add21, decide_eq_false_iff_not,
     not_not] at hfail
   obtain ⟨-, d0, d1, d2, d3, -⟩ := hfail
   try replace d0 := of_not_decide_false d0
@@ -113,7 +113,7 @@ theorem case_load (r1 r2 : Nat) (off : W) (s1 s2 : AsmState 32) (ms : State)
   · intro r hr
     have hr' := st.reg _ hr.lt hr.avoid
     simp only [mips32Ast, List.foldl_cons, List.foldl_nil, exec, reg_setReg, reg_mk_gpr,
-      hr.regOf_ne_zero, regOf_inj hr.lt o1.lt, hr', if_false, hx]
+      hr.regOf_ne_zero, regOf_inj hr.lt o1.lt, hr', ite_false, hx]
     simp only [add11, add21, bytes4, readWord_eq, st.mem _ d0, st.mem _ d1, st.mem _ d2,
       st.mem _ d3]
 
@@ -131,12 +131,12 @@ theorem case_load32 (r1 r2 : Nat) (off : W) (s1 s2 : AsmState 32) (ms : State)
   have hbe := st.be
   have hfail := st.ok
   simp only [asmUpd, instUpd, memOp, memLoad, addrHOL, readReg, readMemWord_succ, readMemWord,
-    updPc, updReg, assertState, hbe, Bool.false_eq_true, if_false, readMem] at hs2
+    updPc, updReg, assertState, hbe, Bool.false_eq_true, ite_false, readMem] at hs2
   subst hs2
   classical
   simp only [Bool.not_eq_eq_eq_not,
     Bool.not_true, Bool.or_eq_true, not_or, Bool.not_eq_true] at hfail
-  simp only [hbe, Bool.false_eq_true, if_false, add11, add21, decide_eq_false_iff_not,
+  simp only [hbe, Bool.false_eq_true, ite_false, add11, add21, decide_eq_false_iff_not,
     not_not] at hfail
   obtain ⟨-, d0, d1, d2, d3, -⟩ := hfail
   try replace d0 := of_not_decide_false d0
@@ -156,7 +156,7 @@ theorem case_load32 (r1 r2 : Nat) (off : W) (s1 s2 : AsmState 32) (ms : State)
   · intro r hr
     have hr' := st.reg _ hr.lt hr.avoid
     simp only [mips32Ast, List.foldl_cons, List.foldl_nil, exec, reg_setReg, reg_mk_gpr,
-      hr.regOf_ne_zero, regOf_inj hr.lt o1.lt, hr', if_false, hx]
+      hr.regOf_ne_zero, regOf_inj hr.lt o1.lt, hr', ite_false, hx]
     simp only [add11, add21, bytes4, readWord_eq, st.mem _ d0, st.mem _ d1, st.mem _ d2,
       st.mem _ d3]
 
@@ -192,7 +192,7 @@ theorem store_word_bytes (m : Mem) (f : W → BitVec 8) (x v a : W) (hma : m.rea
   · subst e2; simp []
   by_cases e3 : a = x + 3
   · subst e3; simp []
-  simp only [if_neg e0, if_neg e1, if_neg e2, if_neg e3, hma]
+  simp only [ite_eq_right e0, ite_eq_right e1, ite_eq_right e2, ite_eq_right e3, hma]
 
 theorem case_store (r1 r2 : Nat) (off : W) (s1 s2 : AsmState 32) (ms : State)
     (h : asmStep mips32Target.config s1 (.inst (.mem .store r1 (.addr r2 off))) s2 ∧
@@ -208,12 +208,12 @@ theorem case_store (r1 r2 : Nat) (off : W) (s1 s2 : AsmState 32) (ms : State)
   have hbe := st.be
   have hfail := st.ok
   simp only [asmUpd, instUpd, memOp, memStore, addrHOL, readReg, writeMemWord_succ, writeMemWord,
-    updPc, updMem, assertState, hbe, Bool.false_eq_true, if_false] at hs2
+    updPc, updMem, assertState, hbe, Bool.false_eq_true, ite_false] at hs2
   subst hs2
   classical
   simp only [Bool.not_eq_eq_eq_not,
     Bool.not_true, Bool.or_eq_true, not_or, Bool.not_eq_true] at hfail
-  simp only [hbe, Bool.false_eq_true, if_false, add11, add21, decide_eq_false_iff_not,
+  simp only [hbe, Bool.false_eq_true, ite_false, add11, add21, decide_eq_false_iff_not,
     not_not] at hfail
   obtain ⟨-, d0, d1, d2, d3, -⟩ := hfail
   try replace d0 := of_not_decide_false d0
@@ -251,12 +251,12 @@ theorem case_store32 (r1 r2 : Nat) (off : W) (s1 s2 : AsmState 32) (ms : State)
   have hbe := st.be
   have hfail := st.ok
   simp only [asmUpd, instUpd, memOp, memStore, addrHOL, readReg, writeMemWord_succ, writeMemWord,
-    updPc, updMem, assertState, hbe, Bool.false_eq_true, if_false] at hs2
+    updPc, updMem, assertState, hbe, Bool.false_eq_true, ite_false] at hs2
   subst hs2
   classical
   simp only [Bool.not_eq_eq_eq_not,
     Bool.not_true, Bool.or_eq_true, not_or, Bool.not_eq_true] at hfail
-  simp only [hbe, Bool.false_eq_true, if_false, add11, add21, decide_eq_false_iff_not,
+  simp only [hbe, Bool.false_eq_true, ite_false, add11, add21, decide_eq_false_iff_not,
     not_not] at hfail
   obtain ⟨-, d0, d1, d2, d3, -⟩ := hfail
   try replace d0 := of_not_decide_false d0
@@ -304,12 +304,12 @@ theorem case_load16 (r1 r2 : Nat) (off : W) (s1 s2 : AsmState 32) (ms : State)
   have hbe := st.be
   have hfail := st.ok
   simp only [asmUpd, instUpd, memOp, memLoad, addrHOL, readReg, readMemWord_succ, readMemWord,
-    updPc, updReg, assertState, hbe, Bool.false_eq_true, if_false, readMem] at hs2
+    updPc, updReg, assertState, hbe, Bool.false_eq_true, ite_false, readMem] at hs2
   subst hs2
   classical
   simp only [Bool.not_eq_eq_eq_not,
     Bool.not_true, Bool.or_eq_true, not_or, Bool.not_eq_true] at hfail
-  simp only [hbe, Bool.false_eq_true, if_false, decide_eq_false_iff_not, not_not] at hfail
+  simp only [hbe, Bool.false_eq_true, ite_false, decide_eq_false_iff_not, not_not] at hfail
   obtain ⟨-, d0, d1, -⟩ := hfail
   try replace d0 := of_not_decide_false d0
   try replace d1 := of_not_decide_false d1
@@ -326,7 +326,7 @@ theorem case_load16 (r1 r2 : Nat) (off : W) (s1 s2 : AsmState 32) (ms : State)
   · intro r hr
     have hr' := st.reg _ hr.lt hr.avoid
     simp only [mips32Ast, List.foldl_cons, List.foldl_nil, exec, reg_setReg, reg_mk_gpr,
-      hr.regOf_ne_zero, regOf_inj hr.lt o1.lt, hr', if_false, hx]
+      hr.regOf_ne_zero, regOf_inj hr.lt o1.lt, hr', ite_false, hx]
     simp only [bytes2, readHalf_eq, st.mem _ d0, st.mem _ d1]
 
 theorem case_load8 (r1 r2 : Nat) (off : W) (s1 s2 : AsmState 32) (ms : State)
@@ -343,12 +343,12 @@ theorem case_load8 (r1 r2 : Nat) (off : W) (s1 s2 : AsmState 32) (ms : State)
   have hbe := st.be
   have hfail := st.ok
   simp only [asmUpd, instUpd, memOp, memLoad, addrHOL, readReg, readMemWord,
-    updPc, updReg, assertState, hbe, Bool.false_eq_true, if_false, readMem] at hs2
+    updPc, updReg, assertState, hbe, Bool.false_eq_true, ite_false, readMem] at hs2
   subst hs2
   classical
   simp only [Bool.not_eq_eq_eq_not,
     Bool.not_true, Bool.or_eq_true, not_or, Bool.not_eq_true] at hfail
-  simp only [hbe, Bool.false_eq_true, if_false, decide_eq_false_iff_not, not_not] at hfail
+  simp only [hbe, Bool.false_eq_true, ite_false, decide_eq_false_iff_not, not_not] at hfail
   obtain ⟨-, d0, -⟩ := hfail
   try replace d0 := of_not_decide_false d0
   have hx := addr_eq' ms (regOf r2) off _ (st.reg _ o2.lt o2.avoid) hoff.1 hoff.2
@@ -364,7 +364,7 @@ theorem case_load8 (r1 r2 : Nat) (off : W) (s1 s2 : AsmState 32) (ms : State)
   · intro r hr
     have hr' := st.reg _ hr.lt hr.avoid
     simp only [mips32Ast, List.foldl_cons, List.foldl_nil, exec, reg_setReg, reg_mk_gpr,
-      hr.regOf_ne_zero, regOf_inj hr.lt o1.lt, hr', if_false, hx]
+      hr.regOf_ne_zero, regOf_inj hr.lt o1.lt, hr', ite_false, hx]
     simp only [bytes1, st.mem _ d0]
 
 theorem store_half_bytes (m : Mem) (f : W → BitVec 8) (x v a : W) (hma : m.readByte a = f a) :
@@ -381,14 +381,14 @@ theorem store_half_bytes (m : Mem) (f : W → BitVec 8) (x v a : W) (hma : m.rea
   · subst h0; simp []
   by_cases h1 : a = x + 1
   · subst h1; simp []
-  simp only [if_neg h0, if_neg h1, hma]
+  simp only [ite_eq_right h0, ite_eq_right h1, hma]
 
 theorem store_byte_bytes (m : Mem) (f : W → BitVec 8) (x v a : W) (hma : m.readByte a = f a) :
     (m.writeByte x (v.extractLsb' 0 8)).readByte a = (if a = x then v.setWidth 8 else f a) := by
   rw [readByte_writeByte, byte_lo]
   by_cases h0 : a = x
   · simp [h0]
-  · simp only [if_neg h0, hma]
+  · simp only [ite_eq_right h0, hma]
 
 theorem case_store16 (r1 r2 : Nat) (off : W) (s1 s2 : AsmState 32) (ms : State)
     (h : asmStep mips32Target.config s1 (.inst (.mem .store16 r1 (.addr r2 off))) s2 ∧
@@ -406,12 +406,12 @@ theorem case_store16 (r1 r2 : Nat) (off : W) (s1 s2 : AsmState 32) (ms : State)
   have hbe := st.be
   have hfail := st.ok
   simp only [asmUpd, instUpd, memOp, memStore, addrHOL, readReg, writeMemWord_succ, writeMemWord,
-    updPc, updMem, assertState, hbe, Bool.false_eq_true, if_false] at hs2
+    updPc, updMem, assertState, hbe, Bool.false_eq_true, ite_false] at hs2
   subst hs2
   classical
   simp only [Bool.not_eq_eq_eq_not,
     Bool.not_true, Bool.or_eq_true, not_or, Bool.not_eq_true] at hfail
-  simp only [hbe, Bool.false_eq_true, if_false, decide_eq_false_iff_not,
+  simp only [hbe, Bool.false_eq_true, ite_false, decide_eq_false_iff_not,
     not_not] at hfail
   obtain ⟨-, d0, d1, -⟩ := hfail
   try replace d0 := of_not_decide_false d0
@@ -448,12 +448,12 @@ theorem case_store8 (r1 r2 : Nat) (off : W) (s1 s2 : AsmState 32) (ms : State)
   have hbe := st.be
   have hfail := st.ok
   simp only [asmUpd, instUpd, memOp, memStore, addrHOL, readReg, writeMemWord,
-    updPc, updMem, assertState, hbe, Bool.false_eq_true, if_false] at hs2
+    updPc, updMem, assertState, hbe, Bool.false_eq_true, ite_false] at hs2
   subst hs2
   classical
   simp only [Bool.not_eq_eq_eq_not,
     Bool.not_true, Bool.or_eq_true, not_or, Bool.not_eq_true] at hfail
-  simp only [hbe, Bool.false_eq_true, if_false, decide_eq_false_iff_not,
+  simp only [hbe, Bool.false_eq_true, ite_false, decide_eq_false_iff_not,
     not_not] at hfail
   obtain ⟨-, d0, -⟩ := hfail
   try replace d0 := of_not_decide_false d0

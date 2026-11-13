@@ -40,7 +40,7 @@ theorem stExFilter_pure {α : Type} (predicate : α → M State Bool StateExcept
   | cons node rest ih =>
     simp only [stExFilter, Translator.Monadic.MonadBase.bind, reads node List.mem_cons_self]
     cases selected : pure node <;>
-      simp only [Bool.false_eq_true, if_false, if_true, List.filter_cons, selected,
+      simp only [Bool.false_eq_true, ite_false, ite_true, List.filter_cons, selected,
         List.reverse_cons, List.append_assoc, List.singleton_append]
     all_goals exact ih _ (fun next member => reads next (List.mem_cons_of_mem node member))
 

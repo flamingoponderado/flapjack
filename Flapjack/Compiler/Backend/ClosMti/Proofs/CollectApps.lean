@@ -55,7 +55,7 @@ theorem collectAppsPrepend (e : Exp) (maxApp : Nat) (before acc : List Exp) :
       by_cases fits : acc.length + more.length ≤ maxApp
       · have fits' : (before ++ acc).length + more.length ≤ maxApp + before.length := by
           simp only [List.length_append]; omega
-        simp only [collectApps, fits, fits', if_true]
+        simp only [collectApps, fits, fits', ite_true]
         simpa [List.append_assoc] using collectAppsPrepend body maxApp before (acc ++ more)
       · have fails' : ¬ before.length + acc.length + more.length ≤ maxApp + before.length := by
           omega

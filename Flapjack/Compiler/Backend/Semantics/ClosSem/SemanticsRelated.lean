@@ -189,7 +189,7 @@ theorem semantics_eq_of_related_clocked_simulation {C D F : Type} (ffi : HolFfiS
   simp only [show ¬ ∃ clock, (evaluate sourceProgram [] (initialState ffi maxApp sourceCode sourceOracle sourceCompiler clock)).1 = .err (.abort .typeError) from
     fun ⟨clock, error⟩ => sourceSafe clock error,
     show ¬ ∃ clock, (evaluate targetProgram [] (initialState ffi maxApp targetCode targetOracle targetCompiler clock)).1 = .err (.abort .typeError) from
-    fun ⟨clock, error⟩ => targetSafe clock error, if_false]
+    fun ⟨clock, error⟩ => targetSafe clock error, ite_false]
   rw [terminatingEq, tracesEq]
 
 end Flapjack.Compiler.Backend.ClosSem

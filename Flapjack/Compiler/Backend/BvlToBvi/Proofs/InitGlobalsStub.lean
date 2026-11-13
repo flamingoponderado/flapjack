@@ -115,7 +115,7 @@ theorem evaluate_initGlobals_handler {C F : Type} (start : Nat) (env : List Valu
       simp only [List.length_nil, ite_true, Nat.zero_add, Nat.lt_one_iff]
       by_cases clockZero : state.clock = 0
       · simp [clockZero]
-      · simp only [clockZero, if_false]
+      · simp only [clockZero, ite_false]
         cases evaluated : BviSem.evaluate [body] [] (BviSem.decClock 1 state) with
         | mk result last =>
           cases result with
@@ -160,7 +160,7 @@ theorem evaluate_entry_noReturn {C F : Type} (start : Nat) (state next : BviSem.
       simp only [found, List.length_nil, ite_true, Nat.zero_add, Nat.lt_one_iff] at run
       by_cases clockZero : state.clock = 0
       · simp [clockZero] at run
-      · simp only [clockZero, if_false, BviSem.fixClock_evaluate] at run
+      · simp only [clockZero, ite_false, BviSem.fixClock_evaluate] at run
         cases evaluation : BviSem.evaluate [body] [] (BviSem.decClock 1 state) with
         | mk result last =>
           cases result with
@@ -200,7 +200,7 @@ theorem evaluate_initGlobals_call {C F : Type} (start n : Nat) (state : BviSem.B
   rw [BviSem.evaluate, BviSem.fixClock_evaluate]
   conv_lhs =>
     simp only [BviSem.evaluate, BvlSem.findCode, code', List.length_nil, ite_true,
-      Nat.zero_add, Nat.lt_one_iff, clock, if_false, BviSem.fixClock_evaluate]
+      Nat.zero_add, Nat.lt_one_iff, clock, ite_false, BviSem.fixClock_evaluate]
   rw [evaluate_initGlobals]
   cases callRun : BviSem.evaluate [.call 0 (some start) [] none] [] ready with
   | mk result last =>

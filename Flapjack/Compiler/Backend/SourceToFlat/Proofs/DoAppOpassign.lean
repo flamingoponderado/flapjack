@@ -253,7 +253,7 @@ theorem doApp_Aw8sub {C F : Type} (genv : GlobalEnv)
             cases locationRel
             cases indexRel
             have sim := aw8sub_complete_related genv source flat states ok flag address sourceValues lookup index false
-            simp only [Bool.false_eq_true, if_false, source, run] at sim
+            simp only [Bool.false_eq_true, ite_false, source, run] at sim
             cases flatRun : FlatSem.doAppMemory flat .aw8sub [.loc flag (address + 1), .litv (.intLit index)] with
             | none => simp [flatRun] at sim
             | some result =>
@@ -359,7 +359,7 @@ theorem doApp_Aw8update {C F : Type} (genv : GlobalEnv)
                 cases valueRel
                 have sim := aw8update_complete_related genv source flat states ok flag address sourceValues lookup
                   index byte false
-                simp only [Bool.false_eq_true, if_false, source, run] at sim
+                simp only [Bool.false_eq_true, ite_false, source, run] at sim
                 cases flatRun : FlatSem.doAppMemory flat .aw8update
                     [.loc flag (address + 1), .litv (.intLit index), .litv (.word8 byte)] with
                 | none => simp [flatRun] at sim
@@ -1008,7 +1008,7 @@ theorem doApp_Vsub {C F : Type} (genv : GlobalEnv)
             obtain ⟨flatValues, rfl, related⟩ := ((valueRel_eqns_nonGlobal).2.2.2.1 sourceValues _ genv).mp vectorRel
             cases indexRel
             have sim := vsub_complete_related genv source flat ok sourceValues flatValues related index false
-            simp only [Bool.false_eq_true, if_false, source, run] at sim
+            simp only [Bool.false_eq_true, ite_false, source, run] at sim
             cases flatRun : FlatSem.doAppData flat .vsub [.vectorv flatValues, .litv (.intLit index)] with
             | none => simp [flatRun] at sim
             | some result =>
@@ -1063,7 +1063,7 @@ theorem doApp_VsubUnsafe {C F : Type} (genv : GlobalEnv)
             obtain ⟨flatValues, rfl, related⟩ := ((valueRel_eqns_nonGlobal).2.2.2.1 sourceValues _ genv).mp vectorRel
             cases indexRel
             have sim := vsub_complete_related genv source flat ok sourceValues flatValues related index true
-            simp only [if_true, source, run] at sim
+            simp only [ite_true, source, run] at sim
             cases flatRun : FlatSem.doAppData flat .vsubUnsafe [.vectorv flatValues, .litv (.intLit index)] with
             | none => simp [flatRun] at sim
             | some result =>
@@ -1251,7 +1251,7 @@ theorem doApp_Asub {C F : Type} (genv : GlobalEnv)
             cases locationRel
             cases indexRel
             have sim := asub_complete_related genv source flat states ok flag address sourceValues lookup index false
-            simp only [Bool.false_eq_true, if_false, source, run] at sim
+            simp only [Bool.false_eq_true, ite_false, source, run] at sim
             cases flatRun : FlatSem.doAppMemory flat .asub [.loc flag (address + 1), .litv (.intLit index)] with
             | none => simp [flatRun] at sim
             | some result =>
@@ -1357,7 +1357,7 @@ theorem doApp_Aupdate {C F : Type} (genv : GlobalEnv)
                 rename_i flatValue
                 have sim := aupdate_complete_related genv source flat states ok flag address sourceValues lookup
                   index value flatValue valueRel false
-                simp only [Bool.false_eq_true, if_false, source, run] at sim
+                simp only [Bool.false_eq_true, ite_false, source, run] at sim
                 cases flatRun : FlatSem.doAppMemory flat .aupdate
                     [.loc flag (address + 1), .litv (.intLit index), flatValue] with
                 | none => simp [flatRun] at sim
@@ -1416,7 +1416,7 @@ theorem doApp_AsubUnsafe {C F : Type} (genv : GlobalEnv)
             cases locationRel
             cases indexRel
             have sim := asub_complete_related genv source flat states ok flag address sourceValues lookup index true
-            simp only [if_true, source, run] at sim
+            simp only [ite_true, source, run] at sim
             cases flatRun : FlatSem.doAppMemory flat .asubUnsafe [.loc flag (address + 1), .litv (.intLit index)] with
             | none => simp [flatRun] at sim
             | some result =>
@@ -1480,7 +1480,7 @@ theorem doApp_AupdateUnsafe {C F : Type} (genv : GlobalEnv)
                 rename_i flatValue
                 have sim := aupdate_complete_related genv source flat states ok flag address sourceValues lookup
                   index value flatValue valueRel true
-                simp only [if_true, source, run] at sim
+                simp only [ite_true, source, run] at sim
                 cases flatRun : FlatSem.doAppMemory flat .aupdateUnsafe
                     [.loc flag (address + 1), .litv (.intLit index), flatValue] with
                 | none => simp [flatRun] at sim
@@ -1539,7 +1539,7 @@ theorem doApp_Aw8subUnsafe {C F : Type} (genv : GlobalEnv)
             cases locationRel
             cases indexRel
             have sim := aw8sub_complete_related genv source flat states ok flag address sourceValues lookup index true
-            simp only [if_true, source, run] at sim
+            simp only [ite_true, source, run] at sim
             cases flatRun : FlatSem.doAppMemory flat .aw8subUnsafe [.loc flag (address + 1), .litv (.intLit index)] with
             | none => simp [flatRun] at sim
             | some result =>
@@ -1603,7 +1603,7 @@ theorem doApp_Aw8updateUnsafe {C F : Type} (genv : GlobalEnv)
                 cases valueRel
                 have sim := aw8update_complete_related genv source flat states ok flag address sourceValues lookup
                   index byte true
-                simp only [if_true, source, run] at sim
+                simp only [ite_true, source, run] at sim
                 cases flatRun : FlatSem.doAppMemory flat .aw8updateUnsafe
                     [.loc flag (address + 1), .litv (.intLit index), .litv (.word8 byte)] with
                 | none => simp [flatRun] at sim

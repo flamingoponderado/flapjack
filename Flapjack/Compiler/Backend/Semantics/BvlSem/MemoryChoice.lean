@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
 public import Aesop
+public import Mathlib.Tactic.Conv
 
 @[expose] public section
 

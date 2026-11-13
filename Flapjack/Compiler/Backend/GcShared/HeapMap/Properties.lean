@@ -45,13 +45,13 @@ private theorem heapLookup_flookup_aux {α β : Type} (heap : List (HeapElement 
   | cons head tail ih =>
     by_cases zero : n = 0
     · subst n
-      simp only [heapLookup, if_true, Option.some.injEq] at found
+      simp only [heapLookup, ite_true, Option.some.injEq] at found
       subst head
       simp [heapMapLookup, FUPDATE]
     · by_cases inside : n < elLength head
       · simp [heapLookup, zero, inside] at found
       · have tailFound : heapLookup (n - elLength head) tail = some (.forwardPointer ptr value len) := by
-          simpa only [heapLookup, zero, inside, if_false] using found
+          simpa only [heapLookup, zero, inside, ite_false] using found
         have next := ih (n - elLength head) (base + elLength head) tailFound
         have sumEq : n - elLength head + (base + elLength head) = n + base := by omega
         rw [sumEq] at next

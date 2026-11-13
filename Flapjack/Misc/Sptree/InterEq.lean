@@ -67,9 +67,9 @@ theorem sptLookupInterEq {α : Type} [DecidableEq α] :
       | bs l' b r' =>
           simp only [sptInterEq]
           by_cases hab : b = a
-          · rw [if_pos hab, sptLookupMkBS]; by_cases hk : k = 0 <;>
+          · rw [ite_eq_left hab, sptLookupMkBS]; by_cases hk : k = 0 <;>
               simp [sptLookup, hk, hab] <;> split <;> first | exact ihl _ _ | exact ihr _ _
-          · rw [if_neg hab, sptLookupMkBN]; by_cases hk : k = 0 <;>
+          · rw [ite_eq_right hab, sptLookupMkBN]; by_cases hk : k = 0 <;>
               simp [sptLookup, hk, hab] <;> split <;> first | exact ihl _ _ | exact ihr _ _
 
 end Flapjack

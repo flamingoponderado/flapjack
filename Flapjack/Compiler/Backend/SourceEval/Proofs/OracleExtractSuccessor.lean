@@ -67,6 +67,6 @@ theorem extract_oracle_SUC_st {Config F : Type} (t : State F) (env : SemEnv Valu
           refine ⟨r, r', result, rfl, rfl, ?_, ?_⟩
           · simpa [earlierEvent] using compiled
           · simpa [laterEvent] using next
-      · simp only [extractOracle, Flapjack.holOLeast, dif_neg existsClock] at later
+      · simp only [extractOracle, Flapjack.holOLeast, dite_eq_right existsClock] at later
         contradiction
 end Flapjack.Compiler.Backend.SourceEval.Proofs

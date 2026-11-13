@@ -48,9 +48,9 @@ theorem extract_oracle_0_st {Config F : Type} (t : State F) (env : SemEnv Value)
       have positiveCount : 0 < (oracle.oracle 0).1.1 := by
         simpa [targetEq, oracleState] using targetBound
       have initial := positive positiveCount
-      simp only [extractOracle, Flapjack.holOLeast, dif_pos existsClock, targetRun] at extracted
+      simp only [extractOracle, Flapjack.holOLeast, dite_eq_left existsClock, targetRun] at extracted
       cases extracted
       simpa [targetEq, oracleState] using initial
-  · simp only [extractOracle, Flapjack.holOLeast, dif_neg existsClock] at extracted
+  · simp only [extractOracle, Flapjack.holOLeast, dite_eq_right existsClock] at extracted
     contradiction
 end Flapjack.Compiler.Backend.SourceEval.Proofs

@@ -61,7 +61,7 @@ theorem terminatingObservation_of_semantics_eq_terminate {C F : Type} (ffi : Hol
   by_cases bad : ∃ clock, (evaluateTuple ([.call 0 (some start) []], [],
       initialState ffi code oracle compiler clock)).1 = .err (.abort .typeError)
   · simp [bad] at terminates
-  · simp only [bad, if_false] at terminates
+  · simp only [bad, ite_false] at terminates
     cases selected : holOptionSome (terminatingObservation ffi code oracle compiler start) with
     | none => simp [selected] at terminates
     | some behavior =>
@@ -80,7 +80,7 @@ theorem no_terminatingObservation_of_semantics_eq_diverge {C F : Type} (ffi : Ho
   by_cases bad : ∃ clock, (evaluateTuple ([.call 0 (some start) []], [],
       initialState ffi code oracle compiler clock)).1 = .err (.abort .typeError)
   · simp [bad] at diverges
-  · simp only [bad, if_false] at diverges
+  · simp only [bad, ite_false] at diverges
     cases selected : holOptionSome (terminatingObservation ffi code oracle compiler start) with
     | none => exact holOptionSome_none selected
     | some behavior =>

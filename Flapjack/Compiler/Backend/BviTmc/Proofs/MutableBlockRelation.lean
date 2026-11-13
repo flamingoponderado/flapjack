@@ -100,7 +100,7 @@ private theorem mutableBlockRel_absent (f : HolFiniteMapExact Nat Nat) (old refs
     rw [mutableBlockRel.eq_def] at related
     by_cases rejected : b = true ∨ ptr ∈ mapRange f ∨ ptr ∈ old.domain
     · simp [rejected] at related
-    · simp only [rejected, if_false] at related
+    · simp only [rejected, ite_false] at related
       rw [missing] at related
       exact related
   | refPtr sourceBool sourcePtr =>
@@ -143,7 +143,7 @@ theorem mutableBlockRel_delete (f : HolFiniteMapExact Nat Nat) (old : HolFiniteM
       · rw [mutableBlockRel.eq_def] at related
         simp [invalid] at related
       · rw [mutableBlockRel.eq_def] at related ⊢
-        simp only [invalid, if_false] at related ⊢
+        simp only [invalid, ite_false] at related ⊢
         by_cases same : q = ptr
         · subst q
           rw [found] at related

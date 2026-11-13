@@ -86,7 +86,7 @@ theorem evaluateApp_simulation_step {C F : Type} (location : Option Nat) (functi
         rw [ClosSem.evaluateApp, found] at run
         dsimp only at run
         by_cases timeout : source.clock < (first :: rest).length
-        · rw [if_pos timeout] at run
+        · rw [ite_eq_left timeout] at run
           simp at run
           rcases run with ⟨rfl, rfl⟩
           refine ⟨0, { target with clock := 0 }, ?_, ?_⟩
@@ -94,10 +94,10 @@ theorem evaluateApp_simulation_step {C F : Type} (location : Option Nat) (functi
             change ClosSem.evaluateApp location function (first :: rest) target = _
             rw [ClosSem.evaluateApp, foundTarget]
             dsimp only
-            rw [if_pos (by simpa [clockEq] using timeout)]
+            rw [ite_eq_left (by simpa [clockEq] using timeout)]
             rfl
           · exact stateRel_withClock related 0
-        · rw [if_neg timeout] at run
+        · rw [ite_eq_right timeout] at run
           simp at run
           rcases run with ⟨rfl, rfl⟩
           refine ⟨0, ClosSem.decClock (first :: rest).length target, ?_, stateRel_decClock source target related _⟩
@@ -105,7 +105,7 @@ theorem evaluateApp_simulation_step {C F : Type} (location : Option Nat) (functi
           change ClosSem.evaluateApp location function (first :: rest) target = _
           rw [ClosSem.evaluateApp, foundTarget]
           dsimp only
-          rw [if_neg (by simpa [clockEq] using timeout)]
+          rw [ite_eq_right (by simpa [clockEq] using timeout)]
       | fullApp body bodyEnv remaining =>
         have remainingLt := ClosSem.destClosure_full_remaining_lt source.maxApp location function (first :: rest)
           bodyEnv remaining body found
@@ -114,7 +114,7 @@ theorem evaluateApp_simulation_step {C F : Type} (location : Option Nat) (functi
         by_cases timeout : source.clock < cost
         · rw [ClosSem.evaluateApp, found] at run
           dsimp only at run
-          rw [if_pos timeout] at run
+          rw [ite_eq_left timeout] at run
           simp at run
           rcases run with ⟨rfl, rfl⟩
           refine ⟨0, { target with clock := 0 }, ?_, ?_⟩
@@ -122,7 +122,7 @@ theorem evaluateApp_simulation_step {C F : Type} (location : Option Nat) (functi
             change ClosSem.evaluateApp location function (first :: rest) target = _
             rw [ClosSem.evaluateApp, foundTarget]
             dsimp only
-            rw [if_pos (by simpa [clockEq, cost] using timeout)]
+            rw [ite_eq_left (by simpa [clockEq, cost] using timeout)]
             rfl
           · exact stateRel_withClock related 0
         · have enough : cost ≤ source.clock := by omega

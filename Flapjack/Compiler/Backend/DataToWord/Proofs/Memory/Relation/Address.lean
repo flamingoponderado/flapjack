@@ -247,7 +247,7 @@ theorem getRealAddr_getAddr {width : Nat} [NeZero width] {α β : Type}
         Nat.mul_lt_mul_of_pos_right below (Nat.two_pow_pos _)
       _ ≤ 2 ^ width := Nat.div_mul_le_self _ _
   by_cases fast : wordShiftAmount width = shiftLength conf ∧ conf.lenBits = 0 ∧ conf.tagBits = 0
-  · simp only [getRealAddr, stored, if_pos fast, getAddr,
+  · simp only [getRealAddr, stored, ite_eq_left fast, getAddr,
       getLowerBits_marker conf v fast.2.1 fast.2.2]
     rw [← fast.1, pointerMarker_cancel good, shiftWordBytes good]
   · by_cases short : wordShiftAmount width ≤ conf.padBits + 1

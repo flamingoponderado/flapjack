@@ -181,7 +181,7 @@ theorem wordEqThm0_listCons {width : Nat} [NeZero width] {β γ : Type}
       refine ⟨result, remaining, clock, ?_, ?_, ?_⟩
       · simp only [List.length_cons]
         rw [wordEqList_unclamped]
-        rw [if_neg countNonzero]
+        rw [ite_eq_right countNonzero]
         simp [ass1.1, ass2.1, show limit ≠ 0 by omega,
           show clock ≠ 0 by omega, mx, my, eval']
         intro h
@@ -234,7 +234,7 @@ theorem wordEqThm0_listCons {width : Nat} [NeZero width] {β γ : Type}
         refine ⟨result, remaining, remainingClock + (clock - min (valuesDepth xs) (valuesDepth ys)), ?_, tailCorrect, ?_⟩
         · simp only [List.length_cons]
           rw [wordEqList_unclamped]
-          rw [if_neg countNonzero]
+          rw [ite_eq_right countNonzero]
           simp [ass1.1, ass2.1, show limit ≠ 0 by omega,
             show clock ≠ 0 by omega, mx, my, headEval', headIsOne,
             show middle ≠ 0 by omega]

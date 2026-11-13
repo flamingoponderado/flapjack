@@ -107,7 +107,7 @@ theorem evaluateDletrec_factored {C F : Type} [Nonempty C]
   · have beforeClock := ((stateRel_iff genv sourceState flatState).mp invariant.2.2.1).2.2.1
     have afterClock := ((stateRel_iff finalGenv sourceState finalState).mp stateResult).2.2.1
     have clock : finalState.clock = flatState.clock := afterClock.symm.trans beforeClock
-    simp only [compileDecs, FlatSem.evaluateDecs, FlatSem.evaluate, compileFuns_names, distinct, if_true]
+    simp only [compileDecs, FlatSem.evaluateDecs, FlatSem.evaluate, compileFuns_names, distinct, ite_true]
     rw [bodyRun]
     simp [FlatSem.fixClock, ← clock, FlatSem.unitValue]
   · simp only [compileDecs, Flapjack.SemanticPrimitivesProps.buildRecEnv_merge funs (),

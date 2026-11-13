@@ -28,11 +28,11 @@ theorem doEqSym :
           have sub := (ih (sizeOf xs + 1) smaller).2 xs ys (by omega)
           by_cases h : tag = tag' ∧ xs.length = ys.length
           · have hr : tag' = tag ∧ ys.length = xs.length := ⟨h.1.symm, h.2.symm⟩
-            rw [if_pos h, if_pos hr, sub]
+            rw [ite_eq_left h, ite_eq_left hr, sub]
           · have hr : ¬(tag' = tag ∧ ys.length = xs.length) := by
               intro rev
               exact h ⟨rev.1.symm, rev.2.symm⟩
-            rw [if_neg h, if_neg hr]
+            rw [ite_eq_right h, ite_eq_right hr]
         all_goals first | (congr 2 <;> exact propext eq_comm) | (simp only [Bool.and_comm, eq_comm])
       · intro xs ys bound
         cases xs with

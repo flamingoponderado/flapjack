@@ -70,7 +70,7 @@ theorem encodeBytes_bitfieldMove (inzero extend : Bool) (immr imms rn rd : Nat)
       some (fields [(1, 1), (2, n), (6, 38), (1, 1), (6, immr), (6, imms),
         (5, rn), (5, rd)]) := by
     simp only [encodeInsn32]
-    simp only [hopc, hguard, if_true]
+    simp only [hopc, hguard, ite_true]
   rw [encodeBytes_eq_of_encodeInsn32 _ _ hw]
   simp only [arm8Encode, arm8Encode_bitfieldMove inzero extend (BitVec.ofNat 2 n)
     wmask tmask immr imms (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rd) hopc' himmr himms hmasks,
@@ -99,7 +99,7 @@ theorem arm8Encode_bitfieldMove_bad (inzero extend : Bool) (wmask tmask : BitVec
     | rfl
     | (rcases h1 with h | h <;>
         simp only [BitVec.toNat_ofNat, h, Bool.false_and, Bool.and_false,
-          Bool.false_eq_true, if_false, reduceIte])
+          Bool.false_eq_true, ite_false, reduceIte])
 
 /-- The same instruction on the computable side, when a field does not fit six
 bits.  This is the companion of `encodeBytes_bitfieldMove` for shift amounts of
@@ -120,7 +120,7 @@ theorem encodeBytes_bitfieldMove_bad (inzero extend : Bool) (immr imms rn rd : N
     simp only [encodeInsn32]
     cases hb : bitfieldOpBits inzero extend with
     | none => rfl
-    | some m => simp only [hguard, Bool.false_eq_true, if_false]
+    | some m => simp only [hguard, Bool.false_eq_true, ite_false]
   rw [encodeBytes_eq_of_encodeInsn32_none _ hw]
   exact (arm8Encode_bitfieldMove_bad inzero extend wmask tmask immr imms
     (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rd) hbad).symm

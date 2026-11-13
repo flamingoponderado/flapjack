@@ -3,7 +3,7 @@
 from pathlib import Path
 import hashlib
 ROOT=Path(__file__).resolve().parents[2]
-CHECKS={'Flapjack/RiscV/CorrectnessEncoding/MemoryStore.lean': '93e2bbb3b435f926c18d69f409a4b97bd6d0243dd2fcab576d52c46aaa16a3d4', 'scripts/hol-probes/riscv_memory_store_value_probeScript.sml': '90663ca243ab349bb04652a5f96e044470d3bf43827951810e44a8fb7b087648', 'scripts/hol-probes/riscv_memory_store_value_probe.out': '79f56b2db455bb701533b20a770f91f85f536105a12daf7fc241b20e74fcf99a'}
+CHECKS={'Flapjack/RiscV/CorrectnessEncoding/MemoryStore.lean': 'd9d7d0634b38af9d2d39bd0f699d95bd43f4ee0b48669d83e956caa514e6b063', 'scripts/hol-probes/riscv_memory_store_value_probeScript.sml': '90663ca243ab349bb04652a5f96e044470d3bf43827951810e44a8fb7b087648', 'scripts/hol-probes/riscv_memory_store_value_probe.out': '79f56b2db455bb701533b20a770f91f85f536105a12daf7fc241b20e74fcf99a'}
 LABELS=tuple(f'store{n}_{edge}' for n in (1,2,4,8) for edge in ('zero','wrap'))+('source_failure_writes','source_narrow_value')+tuple(f'{side}_{field}' for side in ('source','native') for field in ('clause','hypotheses','types'))
 def check(root=ROOT):
  for name,digest in CHECKS.items():

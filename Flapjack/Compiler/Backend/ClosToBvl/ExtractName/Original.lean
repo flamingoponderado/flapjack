@@ -43,7 +43,7 @@ theorem extractNameSource_eq_extractName (xs : List Exp) :
     · have absent : Flapjack.holOptionSome (fun n : Nat =>
           ∃ t, x = .op t (.intOp (.const (.ofNat n))) []) = none := by
         unfold Flapjack.holOptionSome
-        rw [dif_neg h]
+        rw [dite_eq_right h]
       simp only [extractNameSource, absent]
       cases x <;> simp_all [extractName]
       case op t op args =>

@@ -22,16 +22,16 @@ theorem storeFacts_filter_lookup (native : List (WordStoreHOL × Nat))
     by_cases removed : key = store
     · have predicate : decide (key ≠ store) = false := by simp [removed]
       rw [predicate]
-      simp only [Bool.false_eq_true, if_false]
+      simp only [Bool.false_eq_true, ite_false]
       subst key
       by_cases same : observed = store
-      · rw [if_pos same] at ih ⊢
+      · rw [ite_eq_left same] at ih ⊢
         exact ih
-      · rw [if_neg same] at ih ⊢
+      · rw [ite_eq_right same] at ih ⊢
         simpa only [List.lookup, Bool.beq_eq_decide_eq, same, decide_false] using ih
     · have predicate : decide (key ≠ store) = true := by simp [removed]
       rw [predicate]
-      simp only [if_true, List.lookup, Bool.beq_eq_decide_eq]
+      simp only [ite_true, List.lookup, Bool.beq_eq_decide_eq]
       by_cases head : observed = key
       · simp [head, removed]
       · simp only [head, decide_false]

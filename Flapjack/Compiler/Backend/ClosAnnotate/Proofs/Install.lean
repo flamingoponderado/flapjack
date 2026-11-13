@@ -213,7 +213,7 @@ private theorem targetNonType_sourceNonType {C F : Type} (source target : State 
           have valid : (∀ index ∈ auxiliary.map Prod.fst, source.code.lookup index = none) ∧
               (auxiliary.map Prod.fst).Nodup := ⟨sourceFresh, sourceNodup⟩
           simp only [doInstall, bytesRun, wordsRun, oracleRun]
-          rw [if_pos valid, sourceCompile]
+          rw [ite_eq_left valid, sourceCompile]
           by_cases zero : source.clock = 0 <;>
             simp [sourceConfigNext, sourceNonempty, zero]
 
@@ -374,7 +374,7 @@ theorem runInstalled_related {C F : Type} (source target : State C F) (values ne
         subst left
         unfold outcome
         by_cases zero : clock = 0
-        · simp only [zero, if_true] at related ⊢
+        · simp only [zero, ite_true] at related ⊢
           cases right with
           | val val => simp [Flapjack.SemanticPrimitivesProps.resultRel] at related
           | err error =>
@@ -382,7 +382,7 @@ theorem runInstalled_related {C F : Type} (source target : State C F) (values ne
             | raise value => simp [Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel] at related
             | abort abort =>
               cases abort <;> simp_all [Flapjack.SemanticPrimitivesProps.resultRel, Flapjack.SemanticPrimitivesProps.excRel]
-        · simp only [zero, if_false] at related ⊢
+        · simp only [zero, ite_false] at related ⊢
           cases right <;> simp_all [Flapjack.SemanticPrimitivesProps.resultRel]
       exact shapeFn installResult targetInstallResult source.clock expressions resultEq resultRel
     have installedSafe := doInstall_preserves_safe_all values source installed installResult installRun code oracle

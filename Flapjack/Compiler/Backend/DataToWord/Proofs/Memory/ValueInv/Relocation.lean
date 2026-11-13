@@ -66,7 +66,7 @@ theorem valueInv_number_gcRelated {width : Nat} [NeZero width] (conf : Config) (
   · simp [small] at source ⊢
     subst x
     rfl
-  · simp only [small, if_false] at source ⊢
+  · simp only [small, ite_false] at source ⊢
     obtain ⟨ptr, rfl, found⟩ := source
     have defined := domain ptr (.word 0) rfl
     cases parts : Misc.Multiword.i2mw (width := width) i with

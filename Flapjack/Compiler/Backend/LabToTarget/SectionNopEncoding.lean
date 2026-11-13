@@ -68,7 +68,7 @@ theorem linesEncWithNop_padSection1 {width : Nat} [NeZero width]
       · have ha' : linesEncWithNop enc labs ffis pos (.label k1 k2 0 :: aux).reverse := by
           simp only [List.reverse_cons,linesEncWithNop_append]
           exact ⟨ha,by simp [linesEncWithNop,lineEncWithNop]⟩
-        simp only [padSection,if_pos hz]
+        simp only [padSection,ite_eq_left hz]
         apply ih (.label k1 k2 0 :: aux)
         refine ⟨hnop,hone,?_,ha',?_,ht⟩
         · simpa [lineLen,hz] using hr
@@ -79,7 +79,7 @@ theorem linesEncWithNop_padSection1 {width : Nat} [NeZero width]
           simp only [List.reverse_cons,linesEncWithNop_append]
           exact ⟨by simpa [hnop] using linesEncWithNop_addNop enc labs ffis pos aux ⟨by simpa [← hnop] using hone,ha⟩,
             by simp [linesEncWithNop,lineEncWithNop]⟩
-        simp only [padSection,if_neg hz]
+        simp only [padSection,ite_eq_right hz]
         apply ih (.label k1 k2 0 :: addNop nop aux)
         refine ⟨hnop,hone,?_,ha',?_,ht⟩
         · simpa [lineLen,hs,hn1,Nat.add_assoc] using hr
@@ -141,7 +141,7 @@ theorem linesEncWithNop_padSection {width : Nat} [NeZero width]
       have ha' : linesEncWithNop enc labs ffis pos (.label k1 k2 0 :: aux).reverse := by
         simp only [List.reverse_cons,linesEncWithNop_append]
         exact ⟨ha,by simp [linesEncWithNop,lineEncWithNop]⟩
-      simp only [padSection,if_pos hz]
+      simp only [padSection,ite_eq_left hz]
       apply ih (.label k1 k2 0 :: aux)
       refine ⟨hnop,hone,?_,ha',?_,ht,hh.2⟩
       · simpa [lineLen,hz] using hr
@@ -219,7 +219,7 @@ theorem linesEncWithNop_padSection01 {width : Nat} [NeZero width]
       have ha' : linesEncWithNop enc labs ffis pos (.label k1 k2 0 :: aux).reverse := by
         simp only [List.reverse_cons,linesEncWithNop_append]
         exact ⟨ha,by simp [linesEncWithNop,lineEncWithNop]⟩
-      simp only [padSection,if_pos hz]
+      simp only [padSection,ite_eq_left hz]
       apply ih (.label k1 k2 0 :: aux)
       refine ⟨hnop,hpos,hat,?_,ha',?_,ht⟩
       · simpa [lineLen,hz] using hr
@@ -280,7 +280,7 @@ theorem linesEncWithNop_padSection0 {width : Nat} [NeZero width]
       have ha' : linesEncWithNop enc labs ffis pos (.label k1 k2 0 :: aux).reverse := by
         simp only [List.reverse_cons,linesEncWithNop_append]
         exact ⟨ha,by simp [linesEncWithNop,lineEncWithNop]⟩
-      simp only [padSection,if_pos hz]
+      simp only [padSection,ite_eq_left hz]
       apply ih (.label k1 k2 0 :: aux)
       refine ⟨hnop,hpos,hat,?_,ha',?_,ht⟩
       · simpa [lineLen,hz] using hr

@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
 public import Flapjack.Misc.Option.Characterization
 public import Aesop
+public import Mathlib.Tactic.Conv
 
 @[expose] public section
 

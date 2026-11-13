@@ -97,7 +97,7 @@ theorem depthPost_call_ret_none {width : Nat} [NeZero width] {C F : Type}
   rcases hg : WordSemStateFiniteExact.getVars args s with _ | xs
   · intro herr; exact absurd rfl herr
   have hbad : ¬ wordSemBadDestArgs (some d) args = true := by simp [wordSemBadDestArgs]
-  simp only [hbad, Bool.false_eq_true, if_false]
+  simp only [hbad, Bool.false_eq_true, ite_false]
   rcases hf : wordSemFindCode (some d) (wordSemAddRetLoc (some (rn, names, retH, l1, l2)) xs)
       s.code s.stackSize with _ | ⟨args1, prog, ss⟩
   · intro herr; exact absurd rfl herr
@@ -107,8 +107,8 @@ theorem depthPost_call_ret_none {width : Nat} [NeZero width] {C F : Type}
   subst hss
   dsimp only
   by_cases hnames : sptDomainEmpty names.1 ∨ ¬ rn.Nodup
-  · simp only [hnames, if_true]; intro herr; exact absurd rfl herr
-  simp only [hnames, if_false]
+  · simp only [hnames, ite_true]; intro herr; exact absurd rfl herr
+  simp only [hnames, ite_false]
   rcases he : wordSemCutEnvs names s.locals with _ | envs
   · intro herr; exact absurd rfl herr
   dsimp only
@@ -192,13 +192,13 @@ theorem depthPost_call_ret_none {width : Nat} [NeZero width] {C F : Type}
   · -- normal return: pop the frame and continue with the return program
     dsimp only at herr ⊢
     by_cases hvalid : x ≠ WordLocW.loc l1 l2 ∨ ys.length ≠ rn.length
-    · simp only [hvalid, if_true] at herr; exact absurd rfl herr
-    simp only [hvalid, if_false] at herr ⊢
+    · simp only [hvalid, ite_true] at herr; exact absurd rfl herr
+    simp only [hvalid, ite_false] at herr ⊢
     rcases hp : popEnv t with _ | p
     · simp only [hp] at herr; exact absurd rfl herr
     simp only [hp] at herr ⊢
     by_cases hdu : sptDomainEqUnion p.locals envs.1 envs.2
-    · simp only [hdu, if_true] at herr ⊢
+    · simp only [hdu, ite_true] at herr ⊢
       have hsw := evaluateStackSwap body (WordSemStateFiniteExact.callEnv args1
         (sptLookup d s.stackSize) (pushEnv envs none (decClock s)))
       unfold stackSwapPost at hsw
@@ -237,7 +237,7 @@ theorem depthPost_call_ret_none {width : Nat} [NeZero width] {C F : Type}
       have hR : maxDepth s.stackSize (callGraph funs n ns (sptSize funs2) retH) ≠ none := by
         intro h0; apply hne.2; rw [h0, optionMap2_none_right, optionMap2_none_right]
       exact IH1.2 ⟨hne.1, hR⟩
-    · simp only [hdu, if_false] at herr; exact absurd rfl herr
+    · simp only [hdu, ite_false] at herr; exact absurd rfl herr
   · dsimp only
     exact ⟨hcb, fun _ => ⟨htSS, fun h => by simp at h⟩⟩
   · simp at herr
@@ -304,7 +304,7 @@ theorem depthPost_call_ret_some {width : Nat} [NeZero width] {C F : Type}
   rcases hg : WordSemStateFiniteExact.getVars args s with _ | xs
   · intro herr; exact absurd rfl herr
   have hbad : ¬ wordSemBadDestArgs (some d) args = true := by simp [wordSemBadDestArgs]
-  simp only [hbad, Bool.false_eq_true, if_false]
+  simp only [hbad, Bool.false_eq_true, ite_false]
   rcases hf : wordSemFindCode (some d) (wordSemAddRetLoc (some (rn, names, retH, l1, l2)) xs)
       s.code s.stackSize with _ | ⟨args1, prog, ss⟩
   · intro herr; exact absurd rfl herr
@@ -314,8 +314,8 @@ theorem depthPost_call_ret_some {width : Nat} [NeZero width] {C F : Type}
   subst hss
   dsimp only
   by_cases hnames : sptDomainEmpty names.1 ∨ ¬ rn.Nodup
-  · simp only [hnames, if_true]; intro herr; exact absurd rfl herr
-  simp only [hnames, if_false]
+  · simp only [hnames, ite_true]; intro herr; exact absurd rfl herr
+  simp only [hnames, ite_false]
   rcases he : wordSemCutEnvs names s.locals with _ | envs
   · intro herr; exact absurd rfl herr
   dsimp only
@@ -411,13 +411,13 @@ theorem depthPost_call_ret_some {width : Nat} [NeZero width] {C F : Type}
   · -- normal return: pop the frame and continue with the return program
     dsimp only at herr ⊢
     by_cases hvalid : x ≠ WordLocW.loc l1 l2 ∨ ys.length ≠ rn.length
-    · simp only [hvalid, if_true] at herr; exact absurd rfl herr
-    simp only [hvalid, if_false] at herr ⊢
+    · simp only [hvalid, ite_true] at herr; exact absurd rfl herr
+    simp only [hvalid, ite_false] at herr ⊢
     rcases hp : popEnv t with _ | p
     · simp only [hp] at herr; exact absurd rfl herr
     simp only [hp] at herr ⊢
     by_cases hdu : sptDomainEqUnion p.locals envs.1 envs.2
-    · simp only [hdu, if_true] at herr ⊢
+    · simp only [hdu, ite_true] at herr ⊢
       have hsw := evaluateStackSwap body (WordSemStateFiniteExact.callEnv args1
         (sptLookup d s.stackSize) (pushEnv envs (some (hn, hprog, hl1, hl2)) (decClock s)))
       unfold stackSwapPost at hsw
@@ -455,14 +455,14 @@ theorem depthPost_call_ret_some {width : Nat} [NeZero width] {C F : Type}
         intro h0; apply hne.2
         rw [h0, optionMap2_none_right, optionMap2_none_right, optionMap2_none_right]
       exact IH1.2 ⟨hne.1, hR⟩
-    · simp only [hdu, if_false] at herr; exact absurd rfl herr
+    · simp only [hdu, ite_false] at herr; exact absurd rfl herr
   · -- exception caught by the handler
     dsimp only at herr ⊢
     by_cases hxl : x ≠ WordLocW.loc hl1 hl2
-    · rw [if_pos hxl] at herr; exact absurd rfl herr
-    rw [if_neg hxl] at herr ⊢
+    · rw [ite_eq_left hxl] at herr; exact absurd rfl herr
+    rw [ite_eq_right hxl] at herr ⊢
     by_cases hdu : sptDomainEqUnion t.locals envs.1 envs.2
-    · simp only [hdu, if_true] at herr ⊢
+    · simp only [hdu, ite_true] at herr ⊢
       have hsw := evaluateStackSwap body (WordSemStateFiniteExact.callEnv args1
         (sptLookup d s.stackSize) (pushEnv envs (some (hn, hprog, hl1, hl2)) (decClock s)))
       unfold stackSwapPost at hsw
@@ -502,7 +502,7 @@ theorem depthPost_call_ret_some {width : Nat} [NeZero width] {C F : Type}
         rcases maxDepth s.stackSize (callGraph funs n ns (sptSize funs2) retH) <;>
           simp [optionMap₂]
       exact IH2.2 ⟨hne.1, hH⟩
-    · simp only [hdu, if_false] at herr; exact absurd rfl herr
+    · simp only [hdu, ite_false] at herr; exact absurd rfl herr
   · simp at herr
   · simp at herr
   · dsimp only

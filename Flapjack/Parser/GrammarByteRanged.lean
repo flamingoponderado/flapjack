@@ -220,12 +220,12 @@ theorem PStateToksSafe.expect (expected : Token) (described : String) :
       | mk token locs =>
         simp only [P.expect, hst, PState.pop] at hs
         by_cases hc : token == expected
-        · rw [if_pos hc] at hs
+        · rw [ite_eq_left hc] at hs
           simp only [Prod.mk.injEq] at hs
           rw [← hs.2]
           rw [hst] at h
           exact ToksByteRanged.tail h
-        · rw [if_neg hc] at hs
+        · rw [ite_eq_right hc] at hs
           simp only [P.fail, Prod.mk.injEq] at hs
           exact absurd hs.1 (by simp)
   · intro s s' hs h
@@ -239,9 +239,9 @@ theorem PStateToksSafe.expect (expected : Token) (described : String) :
       | mk token locs =>
         simp only [P.expect, hst, PState.pop] at hs
         by_cases hc : token == expected
-        · rw [if_pos hc] at hs
+        · rw [ite_eq_left hc] at hs
           exact absurd (congrArg Prod.fst hs) (by simp)
-        · rw [if_neg hc] at hs
+        · rw [ite_eq_right hc] at hs
           simp only [P.fail, Prod.mk.injEq] at hs
           rw [← hs.2]; exact h
 
@@ -395,12 +395,12 @@ theorem keepTok_treesSafe (accept : Token → Bool) (described : String) :
       simp only [hst] at hs
       rw [hst] at h
       by_cases hacc : accept entry.1
-      · rw [if_pos hacc] at hs
+      · rw [ite_eq_left hacc] at hs
         simp only [Prod.mk.injEq, Option.some.injEq] at hs
         obtain ⟨h1, h2⟩ := hs
         rw [← h1, ← h2]
         exact ⟨mkLeaf_byteRanged (ToksByteRanged.head h), ToksByteRanged.tail h⟩
-      · rw [if_neg hacc] at hs
+      · rw [ite_eq_right hacc] at hs
         simp only [P.fail, Prod.mk.injEq] at hs
         exact absurd hs.1 (by simp)
   · intro s s' hs h
@@ -413,9 +413,9 @@ theorem keepTok_treesSafe (accept : Token → Bool) (described : String) :
     | cons entry rest =>
       simp only [hst] at hs
       by_cases hacc : accept entry.1
-      · rw [if_pos hacc] at hs
+      · rw [ite_eq_left hacc] at hs
         exact absurd (congrArg Prod.fst hs) (by simp)
-      · rw [if_neg hacc] at hs
+      · rw [ite_eq_right hacc] at hs
         simp only [P.fail, Prod.mk.injEq] at hs
         rw [← hs.2]; exact h
 

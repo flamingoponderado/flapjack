@@ -51,7 +51,7 @@ theorem arm8Mem_word (ms : arm8_state) (w : BitVec 32)
   constructor
   · rw [CheckAlignment_aligned ms ms.PC 4 AccType.AccType_IFETCH false hal]
     rw [BigEndian_false ms hel he0]
-    simp only [Bool.false_eq_true, if_false, BitVec.ofNat_eq_ofNat] at *
+    simp only [Bool.false_eq_true, ite_false, BitVec.ofNat_eq_ofNat] at *
     rw [h0, h1, h2, h3]
     simpa using holV2w_word_bytes w
   · exact CheckAlignment_aligned ms ms.PC 4 AccType.AccType_IFETCH false hal
@@ -88,7 +88,7 @@ theorem arm8Next_word (ms : arm8_state) (w : BitVec 32) (i : instruction)
   rw [hfetch]
   simp only [hdec]
   rw [hbr]
-  simp only [Option.isSome_none, Bool.not_false, if_true]
+  simp only [Option.isSome_none, Bool.not_false, ite_true]
   rw [hexc]
   simp
 

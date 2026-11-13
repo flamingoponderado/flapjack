@@ -250,7 +250,7 @@ private theorem iAssign_noSpace_shape (op : ClosLang.Op) (dest : Nat) (operands 
     (notWordGt : op ≠ .wordOp (.wordTest .w8 (.compare .gt)))
     (notWordGeq : op ≠ .wordOp (.wordTest .w8 (.compare .geq))) :
     iAssign dest op operands live corr = .assign dest op operands none := by
-  simp only [iAssign, noLiveNames, Bool.false_eq_true, if_false, noSpace, if_true]
+  simp only [iAssign, noLiveNames, Bool.false_eq_true, ite_false, noSpace, ite_true]
 
 /-- The direct `iAssign` branch simulates a successful supported primitive
 when it needs neither a live-name cut nor a space reservation. -/
@@ -321,7 +321,7 @@ private theorem iAssign_live_shape (op : ClosLang.Op) (dest : Nat) (operands liv
     (requires : DataLang.opRequiresNames op = true)
     (notGreater : op ≠ .intOp .greater) (notGreaterEq : op ≠ .intOp .greaterEq) :
     iAssign dest op operands live corr = .assign dest op operands (some (namesOfList (operands ++ live ++ corr))) := by
-  simp only [iAssign, requires, if_true]
+  simp only [iAssign, requires, ite_true]
 
 /-- The live-name `iAssign` branch simulates a successful supported
 primitive after cutting the target environment to the compiler's roots. -/

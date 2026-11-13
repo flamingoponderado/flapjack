@@ -29,7 +29,7 @@ theorem exprSim_constructor_abort {C F : Type} (genv : GlobalEnv) (compMap : Env
   | abort =>
     unfold ExprSim
     rw [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate]
-    simp only [check, if_true, sourceRun, flatRun]
+    simp only [check, ite_true, sourceRun, flatRun]
     exact ⟨.abort error, states⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat

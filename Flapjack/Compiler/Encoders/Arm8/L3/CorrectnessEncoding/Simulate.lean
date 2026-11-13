@@ -205,8 +205,8 @@ theorem asmCaseOne (inst : HolInst 64) (r : Nat) (v : BitVec 64)
         t.REG (BitVec.ofNat 5 k) = s2.regs k
       intro k hk
       by_cases hkr : k = r
-      · rw [hkr, htval, hs2regs r, if_pos rfl]
-      · rw [htreg k hk.1 hkr, hs2regs k, if_neg hkr]
+      · rw [hkr, htval, hs2regs r, ite_eq_left rfl]
+      · rw [htreg k hk.1 hkr, hs2regs k, ite_eq_right hkr]
         exact hreg k hk
     · intro k hk
       simp [arm8ConfigL3] at hk
@@ -264,8 +264,8 @@ theorem asmCaseOneMem (inst : HolInst 64) (r : Nat) (v : BitVec 64)
         t.REG (BitVec.ofNat 5 k) = s2.regs k
       intro k hk
       by_cases hkr : k = r
-      · rw [hkr, htval, hs2regs r, if_pos rfl]
-      · rw [htreg k hk.1 hkr, hs2regs k, if_neg hkr]
+      · rw [hkr, htval, hs2regs r, ite_eq_left rfl]
+      · rw [htreg k hk.1 hkr, hs2regs k, ite_eq_right hkr]
         exact hreg k hk
     · intro k hk
       simp [arm8ConfigL3] at hk
@@ -531,8 +531,8 @@ theorem asmCaseTwoMem (inst : HolInst 64) (r : Nat) (v : BitVec 64)
   rw [arm8TargetL3_getReg] at hreg
   intro k hk hav
   by_cases hkr : k = r
-  · rw [hkr, htval, hs2regs r, if_pos rfl]
-  · rw [htreg k hk hav hkr, hs2regs k, if_neg hkr]
+  · rw [hkr, htval, hs2regs r, ite_eq_left rfl]
+  · rw [htreg k hk hav hkr, hs2regs k, ite_eq_right hkr]
     exact hreg k ⟨hk, hav⟩
 /-- `X` of the zero register is zero. -/
 theorem arm8X_zero (st : arm8_state) : X (TN := 64) 31#5 st = (0 : BitVec 64) := by

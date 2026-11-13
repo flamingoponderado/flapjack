@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.Logic.Basic
+public import Mathlib.Basic.Logic.Basic
 public import Mathlib.Tactic.CasesM
 public import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateIoEventsMono
 
@@ -33,7 +33,7 @@ theorem evaluateTargetAddClockIoEventsMono {width : Nat} [NeZero width]
         | exact List.prefix_refl _
         | (rw [← hlarge]; exact List.prefix_refl _)
         | (rw [← hsmall, ← hlarge]; exact ih _ _ _ _ hkn)
-        | (rename_i hguard; rw [if_pos hguard] at hlarge)
+        | (rename_i hguard; rw [ite_eq_left hguard] at hlarge)
         | (simp_all only [not_not])
         | cases_type Compiler.Encoders.Asm.HolAddr
         | (simp only [ite_and] at hsmall hlarge)

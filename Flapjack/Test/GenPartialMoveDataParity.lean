@@ -42,8 +42,8 @@ example :
   have hd : decodeLength conf (4 : BitVec 64) = 0 := by rfl
   have ha : (100 : BitVec 64) + (0 + 1) * wordSemBytesInWord = 108 := by rfl
   rw [wordGenGcPartialMoveData]
-  simp only [h, if_false, Nat.one_ne_zero, wordSemTheWord, wordSemIsWordLoc,
-    hb, if_true, hd, ha]
+  simp only [h, ite_false, Nat.one_ne_zero, wordSemTheWord, wordSemIsWordLoc,
+    hb, ite_true, hd, ha]
   rw [wordGenGcPartialMoveData]
   simp
 
@@ -58,8 +58,8 @@ example :
   have hd : decodeLength conf (0x1000000000004 : BitVec 64) = 1 := by rfl
   have ha : (100 : BitVec 64) + (1 + 1) * wordSemBytesInWord = 116 := by rfl
   rw [wordGenGcPartialMoveData]
-  simp only [h, if_false, Nat.one_ne_zero, wordSemTheWord, wordSemIsWordLoc,
-    hb, if_true, hd, ha]
+  simp only [h, ite_false, Nat.one_ne_zero, wordSemTheWord, wordSemIsWordLoc,
+    hb, ite_true, hd, ha]
   rw [wordGenGcPartialMoveData]
   simp
 
@@ -74,8 +74,8 @@ example :
   have hd : decodeLength conf (4 : BitVec 64) = 0 := by rfl
   have ha : (100 : BitVec 64) + (0 + 1) * wordSemBytesInWord = 108 := by rfl
   rw [wordGenGcPartialMoveData]
-  simp only [h, if_false, Nat.one_ne_zero, wordSemTheWord, wordSemIsWordLoc,
-    hb, if_true, hd, ha]
+  simp only [h, ite_false, Nat.one_ne_zero, wordSemTheWord, wordSemIsWordLoc,
+    hb, ite_true, hd, ha]
   rw [wordGenGcPartialMoveData]
   simp
 
@@ -90,7 +90,7 @@ example :
   have hd : decodeLength conf (0 : BitVec 64) = 0 := by rfl
   have ha : (100 : BitVec 64) + wordSemBytesInWord = 108 := by rfl
   rw [wordGenGcPartialMoveData]
-  simp only [h, if_false, Nat.one_ne_zero, wordSemTheWord, wordSemIsWordLoc,
+  simp only [h, ite_false, Nat.one_ne_zero, wordSemTheWord, wordSemIsWordLoc,
     hb, Bool.false_eq_true, hd, ha, wordGenGcPartialMoveList_zero]
   rw [wordGenGcPartialMoveData]
   simp
@@ -110,10 +110,10 @@ example :
   have hm : (116 : BitVec 64) ≠ 100 := by decide
   have hadd : (108 : BitVec 64) + wordSemBytesInWord = 116 := by rfl
   rw [wordGenGcPartialMoveData]
-  simp only [h, if_false, Nat.one_ne_zero, if_true, wordSemTheWord, wordSemIsWordLoc,
+  simp only [h, ite_false, Nat.one_ne_zero, ite_true, wordSemTheWord, wordSemIsWordLoc,
     hb, Bool.false_eq_true, hd, ha]
   rw [wordGenGcPartialMoveList]
-  simp only [show (1 : BitVec 64) ≠ 0 from by decide, if_false, hn,
+  simp only [show (1 : BitVec 64) ≠ 0 from by decide, ite_false, hn,
     wordSemBytesInWord, wordGenGcPartialMove]
   simp only [wordSemIsWordLoc, wordSemTheWord]
   have hz : (1 : BitVec 64) - 1 = 0 := by decide
