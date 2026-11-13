@@ -18,13 +18,6 @@ target expressions under multi-argument introduction. -/
 def CodeRel (maxApp : Nat) (source target : List ClosLang.Exp) : Prop :=
   (∀ e ∈ source, ClosProps.noMti e) ∧ target = introList maxApp source
 
-/-- The source relation is equivalent to successful execution of the pass at
-any initial fuel. This execution connection has no separate HOL original. -/
-theorem codeRel_iff_executed (fuel maxApp : Nat) (source target : List ClosLang.Exp) :
-    CodeRel maxApp source target ↔
-      (∀ e ∈ source, ClosProps.noMti e) ∧ compileFuel fuel true maxApp source = some target := by
-  simp [CodeRel, compileFuel_introList, eq_comm]
-
 /-- Relate a unary source function to a multi-argument target function. -/
 @[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "f_rel_def"]
 def FunctionRel (maxApp : Nat) (source target : Nat × ClosLang.Exp) : Prop :=

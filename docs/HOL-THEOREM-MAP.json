@@ -19508,7 +19508,7 @@
     "statement_status": "reviewed_exact",
     "hol_name": "code_rel_def",
     "lean_name": "CodeRel",
-    "reviewer": "Compared code_rel_typed with the complete source definition: EVERY no_mti is universal membership, and the target equals reviewed introList on the source. codeRel_iff_executed separately connects this relation to the executed pass for every fuel."
+    "reviewer": "Compared code_rel_typed with the complete source definition: EVERY no_mti is universal membership, and the target equals reviewed introList on the source. compileFuel_introList gives the executed introList output for every fuel."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
@@ -133049,7 +133049,7 @@
     "Flapjack.HolFiniteMapExact.holEmpty"
   ],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared semantics_let_op_typed: original source non-failure premise, empty auxiliary oracle entries, positive maximum application, empty code maps, pure compiler/oracle composition and target-to-source semantics equality agree. Compiler configuration and FFI payload types remain independent. The proof derives equal observations from the complete evaluator simulation; compileBounded_list_eq_source connects the executed retry to compileList. holEmpty is the reviewed canonical finite-map result producer; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or end-to-end compiler correctness. Inherits the reals_as_rational_cuts assumption through its dependencies."
+  "reviewer": "Compared semantics_let_op_typed: original source non-failure premise, empty auxiliary oracle entries, positive maximum application, empty code maps, pure compiler/oracle composition and target-to-source semantics equality agree. Compiler configuration and FFI payload types remain independent. The proof derives equal observations from the complete evaluator simulation; compileBounded_eq_source and compileList_eq_map give the executed retry correspondence; ticks_letop_bounded uses the pointwise agreement in the production composition. holEmpty is the reviewed canonical finite-map result producer; evaluation inherits the rational-cut real model. Source comparison and Lean checking do not establish cross-language equivalence or end-to-end compiler correctness. Inherits the reals_as_rational_cuts assumption through its dependencies."
 },
 {
   "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",

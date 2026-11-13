@@ -84,12 +84,4 @@ theorem compileBounded_eq_source (fuel : Nat) (expression : Exp) :
     have equal := compileFuel_eq_source _ expression result retry
     simpa [first, equal] using retry
 
-/-- The production list traversal returns the source-shaped list traversal.
-This is Flapjack infrastructure for the production agreement proof. -/
-theorem compileBounded_list_eq_source (fuel : Nat) (expressions : List Exp) :
-    expressions.mapM (compileBounded fuel) = some (compileList expressions) := by
-  induction expressions with
-  | nil => rfl
-  | cons first rest ih => simp [compileList, compileBounded_eq_source, ih]
-
 end Flapjack.Compiler.Backend.ClosLetop
