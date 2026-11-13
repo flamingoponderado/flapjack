@@ -18,27 +18,6 @@ def Property {C F : Type} (xs : List Bvi.Exp) (env : List Value) (target : BviSt
     ∃ extra sourceNext, evaluate xs env { source with clock := source.clock + extra } = (result, sourceNext) ∧
       RemoveStateRel sourceNext targetNext
 
-/-- Flapjack infrastructure: the empty expression list needs no extra clock. -/
-theorem nil {C F : Type} (env : List Value) (target : BviState C F) : Property [] env target := by
-  intro source result targetNext states run
-  simp [removeTicksListSource, evaluate] at run
-  obtain ⟨rfl, rfl⟩ := run.symm
-  exact ⟨0, source, by simp [evaluate], states⟩
-
-/-- Flapjack infrastructure: variable lookup is unaffected by tick removal. -/
-theorem var {C F : Type} (index : Nat) (env : List Value) (target : BviState C F) :
-    Property [.var index] env target := by
-  intro source result targetNext states run
-  cases found : env[index]? with
-  | none =>
-    simp [removeTicksListSource, removeTicksSource, evaluate, found] at run
-    obtain ⟨rfl, rfl⟩ := run.symm
-    exact ⟨0, source, by simp [evaluate, found], states⟩
-  | some value =>
-    simp [removeTicksListSource, removeTicksSource, evaluate, found] at run
-    obtain ⟨rfl, rfl⟩ := run.symm
-    exact ⟨0, source, by simp [evaluate, found], states⟩
-
 /-- Flapjack infrastructure: restoring a removed tick costs exactly one
 additional clock unit beyond those required by its body. -/
 theorem tick {C F : Type} (body : Bvi.Exp) (env : List Value) (target : BviState C F)
