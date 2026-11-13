@@ -317,9 +317,8 @@ theorem evalUnaryHOL_toGrammarTrees (action : PegActions.Unary)
   cases action with
   | id => simp [PegActions.evalUnaryHOL, PegActions.evalUnary]
   | bindNT nt =>
-    simp [PegActions.evalUnaryHOL, PegActions.evalUnary, ParseTree.mkNode,
-      ParseTree.toGrammarTree, CfgValidation.toGrammarTrees_eq_map,
-      treeListLoc_map_toGrammarTree]
+    simp [PegActions.evalUnaryHOL, PegActions.evalUnary, ParseTree.mkNode, ParseTree.toGrammarTree,
+      CfgValidation.toGrammarTrees_eq_map, treeListLoc_map_toGrammarTree]
 
 /-- The exact generic `mk_linfix_fo` twin agrees with the executable
 `mkLinfix` under the tree conversion. -/
@@ -370,14 +369,491 @@ theorem tokcheckHOL_toGrammarTree (pt : CakeParser.ParseTree) (tok : CakeParser.
     cases symbol with
     | inl rule =>
       simp [tokcheckHOL, PtreeConversion.tokcheck, ParseTree.toGrammarTree,
-        ParseTree.toGrammarSymbol, ParseTree.token, Misc.Grammar.destLf,
-        Misc.Grammar.destTokSym]
+        ParseTree.toGrammarSymbol, ParseTree.token, Misc.Grammar.destLf, Misc.Grammar.destTokSym]
     | inr token =>
       simp [tokcheckHOL, PtreeConversion.tokcheck, ParseTree.toGrammarTree,
-        ParseTree.toGrammarSymbol, ParseTree.token, Misc.Grammar.destLf,
-        Misc.Grammar.destTokSym, decide_eq_beq_token]
+        ParseTree.toGrammarSymbol, ParseTree.token, Misc.Grammar.destLf, Misc.Grammar.destTokSym,
+        decide_eq_beq_token]
   | node rule loc children =>
-    simp [tokcheckHOL, PtreeConversion.tokcheck, ParseTree.toGrammarTree,
-      ParseTree.token, Misc.Grammar.destLf]
+    simp [tokcheckHOL, PtreeConversion.tokcheck, ParseTree.toGrammarTree, ParseTree.token,
+      Misc.Grammar.destLf]
+
+/-! ### Bridges for the `ptree_*` conversions
+
+The executed conversions keep their specialized implementation; these theorems
+connect the exact generic twins to them through `ParseTree.toGrammarTree`.
+They are Flapjack infrastructure and have no HOL original. -/
+
+/-- Deciding equality of nonterminals is their `BEq` comparison. -/
+theorem decide_eq_beq_nonterminal (a b : Nonterminal) :
+    decide (a = b) = (a == b) := rfl
+
+/-- The exact generic `ptree_UQTyop` twin agrees with the executable
+conversion. -/
+theorem ptreeUQTyopHOL_toGrammarTree (pt : CakeParser.ParseTree) :
+    ptreeUQTyopHOL (ParseTree.toGrammarTree pt) = PtreeConversion.ptreeUQTyop pt := by
+  cases pt with
+  | leaf symbol loc =>
+    simp [ptreeUQTyopHOL, PtreeConversion.ptreeUQTyop, PtreeConversion.children,
+      ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token]
+  | node rule loc children =>
+    cases rule with
+    | inr k =>
+      simp [ptreeUQTyopHOL, PtreeConversion.ptreeUQTyop, PtreeConversion.children,
+        ParseTree.toGrammarTree, ParseTree.token]
+    | inl n =>
+      by_cases hn : n = .nUQTyOp
+      · subst hn
+        cases children with
+        | nil =>
+          simp [ptreeUQTyopHOL, PtreeConversion.ptreeUQTyop, PtreeConversion.children,
+            ParseTree.toGrammarTree, ParseTree.token, CfgValidation.toGrammarTrees_eq_map]
+        | cons c rest =>
+          cases rest with
+          | nil =>
+            cases c with
+            | leaf sym l =>
+              cases sym with
+              | inl r =>
+                simp [ptreeUQTyopHOL, PtreeConversion.ptreeUQTyop, PtreeConversion.children,
+                  ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token,
+                  Misc.Grammar.destLf, Misc.Grammar.destTokSym, CakeParser.destSymbolT,
+                  CakeParser.destAlphaT, CfgValidation.toGrammarTrees_eq_map]
+              | inr tok =>
+                cases tok <;>
+                  simp [ptreeUQTyopHOL, PtreeConversion.ptreeUQTyop, PtreeConversion.children,
+                    ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token,
+                    Misc.Grammar.destLf, Misc.Grammar.destTokSym, CakeParser.destSymbolT,
+                    CakeParser.destAlphaT, CfgValidation.toGrammarTrees_eq_map]
+            | node r l cs =>
+              simp [ptreeUQTyopHOL, PtreeConversion.ptreeUQTyop, PtreeConversion.children,
+                ParseTree.toGrammarTree, ParseTree.token, Misc.Grammar.destLf,
+                CakeParser.destSymbolT, CakeParser.destAlphaT, CfgValidation.toGrammarTrees_eq_map]
+          | cons c2 rest2 =>
+            simp [ptreeUQTyopHOL, PtreeConversion.ptreeUQTyop, PtreeConversion.children,
+              ParseTree.toGrammarTree, ParseTree.token, CfgValidation.toGrammarTrees_eq_map]
+      · simp [ptreeUQTyopHOL, PtreeConversion.ptreeUQTyop, PtreeConversion.children,
+        ParseTree.toGrammarTree, ParseTree.token, hn]
+
+/-- The exact generic `ptree_TyvarN` twin agrees with the executable
+conversion. -/
+theorem ptreeTyvarNHOL_toGrammarTree (pt : CakeParser.ParseTree) :
+    ptreeTyvarNHOL (ParseTree.toGrammarTree pt) = PtreeConversion.ptreeTyvarN pt := by
+  cases pt with
+  | leaf symbol loc =>
+    simp [ptreeTyvarNHOL, PtreeConversion.ptreeTyvarN, PtreeConversion.children,
+      ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token, PtreeConversion.tyvar]
+  | node rule loc children =>
+    cases rule with
+    | inr k =>
+      simp [ptreeTyvarNHOL, PtreeConversion.ptreeTyvarN, PtreeConversion.children,
+        ParseTree.toGrammarTree, ParseTree.token, PtreeConversion.tyvar]
+    | inl n =>
+      by_cases hn : n = .nTyvarN
+      · subst hn
+        cases children with
+        | nil =>
+          simp [ptreeTyvarNHOL, PtreeConversion.ptreeTyvarN, PtreeConversion.children,
+            ParseTree.toGrammarTree, ParseTree.token, PtreeConversion.tyvar,
+            CfgValidation.toGrammarTrees_eq_map]
+        | cons c rest =>
+          cases rest with
+          | nil =>
+            cases c with
+            | leaf sym l =>
+              cases sym with
+              | inl r =>
+                simp [ptreeTyvarNHOL, PtreeConversion.ptreeTyvarN, PtreeConversion.children,
+                  ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token,
+                  PtreeConversion.tyvar, Misc.Grammar.destTyvarPT,
+                  CfgValidation.toGrammarTrees_eq_map]
+              | inr tok =>
+                cases tok <;>
+                  simp [ptreeTyvarNHOL, PtreeConversion.ptreeTyvarN, PtreeConversion.children,
+                    ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token,
+                    PtreeConversion.tyvar, Misc.Grammar.destTyvarPT,
+                    CfgValidation.toGrammarTrees_eq_map]
+            | node r l cs =>
+              simp [ptreeTyvarNHOL, PtreeConversion.ptreeTyvarN, PtreeConversion.children,
+                ParseTree.toGrammarTree, ParseTree.token, PtreeConversion.tyvar,
+                Misc.Grammar.destTyvarPT, CfgValidation.toGrammarTrees_eq_map]
+          | cons c2 rest2 =>
+            simp [ptreeTyvarNHOL, PtreeConversion.ptreeTyvarN, PtreeConversion.children,
+              ParseTree.toGrammarTree, ParseTree.token, PtreeConversion.tyvar,
+              CfgValidation.toGrammarTrees_eq_map]
+      · simp [ptreeTyvarNHOL, PtreeConversion.ptreeTyvarN, PtreeConversion.children,
+        ParseTree.toGrammarTree, ParseTree.token, PtreeConversion.tyvar, hn]
+
+/-- The exact generic `ptree_V` twin agrees with the executable conversion. -/
+theorem ptreeVHOL_toGrammarTree (pt : CakeParser.ParseTree) :
+    ptreeVHOL (ParseTree.toGrammarTree pt) = PtreeConversion.ptreeV pt := by
+  cases pt with
+  | leaf symbol loc =>
+    simp [ptreeVHOL, PtreeConversion.ptreeV, PtreeConversion.children, ParseTree.toGrammarTree,
+      ParseTree.toGrammarSymbol, ParseTree.token]
+  | node rule loc children =>
+    cases rule with
+    | inr k =>
+      simp [ptreeVHOL, PtreeConversion.ptreeV, PtreeConversion.children, ParseTree.toGrammarTree,
+        ParseTree.token]
+    | inl n =>
+      by_cases hn : n = .nV
+      · subst hn
+        cases children with
+        | nil =>
+          simp [ptreeVHOL, PtreeConversion.ptreeV, PtreeConversion.children,
+            ParseTree.toGrammarTree, ParseTree.token, CfgValidation.toGrammarTrees_eq_map]
+        | cons c rest =>
+          cases rest with
+          | nil =>
+            cases c with
+            | leaf sym l =>
+              cases sym with
+              | inl r =>
+                simp [ptreeVHOL, PtreeConversion.ptreeV, PtreeConversion.children,
+                  ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token,
+                  Misc.Grammar.destLf, Misc.Grammar.destTokSym, CakeParser.destAlphaT,
+                  CakeParser.destSymbolT, CfgValidation.toGrammarTrees_eq_map]
+              | inr tok =>
+                cases tok <;>
+                  simp [ptreeVHOL, PtreeConversion.ptreeV, PtreeConversion.children,
+                    ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token,
+                    Misc.Grammar.destLf, Misc.Grammar.destTokSym, CakeParser.destAlphaT,
+                    CakeParser.destSymbolT, CfgValidation.toGrammarTrees_eq_map]
+            | node r l cs =>
+              simp [ptreeVHOL, PtreeConversion.ptreeV, PtreeConversion.children,
+                ParseTree.toGrammarTree, ParseTree.token, Misc.Grammar.destLf,
+                CakeParser.destAlphaT, CakeParser.destSymbolT, CfgValidation.toGrammarTrees_eq_map]
+          | cons c2 rest2 =>
+            simp [ptreeVHOL, PtreeConversion.ptreeV, PtreeConversion.children,
+              ParseTree.toGrammarTree, ParseTree.token, CfgValidation.toGrammarTrees_eq_map]
+      · simp [ptreeVHOL, PtreeConversion.ptreeV, PtreeConversion.children, ParseTree.toGrammarTree,
+        ParseTree.token, hn]
+
+/-- The exact generic `ptree_UQConstructorName` twin agrees with the
+executable conversion. -/
+theorem ptreeUQConstructorNameHOL_toGrammarTree (pt : CakeParser.ParseTree) :
+    ptreeUQConstructorNameHOL (ParseTree.toGrammarTree pt) =
+      PtreeConversion.ptreeUQConstructorName pt := by
+  cases pt with
+  | leaf symbol loc =>
+    simp [ptreeUQConstructorNameHOL, PtreeConversion.ptreeUQConstructorName,
+      PtreeConversion.children, ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token]
+  | node rule loc children =>
+    cases rule with
+    | inr k =>
+      simp [ptreeUQConstructorNameHOL, PtreeConversion.ptreeUQConstructorName,
+        PtreeConversion.children, ParseTree.toGrammarTree, ParseTree.token]
+    | inl n =>
+      by_cases hn : n = .nUQConstructorName
+      · subst hn
+        cases children with
+        | nil =>
+          simp [ptreeUQConstructorNameHOL, PtreeConversion.ptreeUQConstructorName,
+            PtreeConversion.children, ParseTree.toGrammarTree, ParseTree.token,
+            CfgValidation.toGrammarTrees_eq_map]
+        | cons c rest =>
+          cases rest with
+          | nil =>
+            cases c with
+            | leaf sym l =>
+              cases sym with
+              | inl r =>
+                simp [ptreeUQConstructorNameHOL, PtreeConversion.ptreeUQConstructorName,
+                  PtreeConversion.children, ParseTree.toGrammarTree, ParseTree.toGrammarSymbol,
+                  ParseTree.token, Misc.Grammar.destLf, Misc.Grammar.destTokSym,
+                  CfgValidation.toGrammarTrees_eq_map]
+              | inr tok =>
+                cases tok <;>
+                  simp [ptreeUQConstructorNameHOL, PtreeConversion.ptreeUQConstructorName,
+                    PtreeConversion.children, ParseTree.toGrammarTree, ParseTree.toGrammarSymbol,
+                    ParseTree.token, Misc.Grammar.destLf, Misc.Grammar.destTokSym,
+                    CakeParser.destAlphaT, CfgValidation.toGrammarTrees_eq_map]
+            | node r l cs =>
+              simp [ptreeUQConstructorNameHOL, PtreeConversion.ptreeUQConstructorName,
+                PtreeConversion.children, ParseTree.toGrammarTree, ParseTree.token,
+                Misc.Grammar.destLf, CfgValidation.toGrammarTrees_eq_map]
+          | cons c2 rest2 =>
+            simp [ptreeUQConstructorNameHOL, PtreeConversion.ptreeUQConstructorName,
+              PtreeConversion.children, ParseTree.toGrammarTree, ParseTree.token,
+              CfgValidation.toGrammarTrees_eq_map]
+      · simp [ptreeUQConstructorNameHOL, PtreeConversion.ptreeUQConstructorName,
+        PtreeConversion.children, ParseTree.toGrammarTree, ParseTree.token, hn]
+
+/-- The exact generic `ptree_StructName` twin agrees with the executable
+conversion. -/
+theorem ptreeStructNameHOL_toGrammarTree (pt : CakeParser.ParseTree) :
+    ptreeStructNameHOL (ParseTree.toGrammarTree pt) =
+      PtreeConversion.ptreeStructName pt := by
+  cases pt with
+  | leaf symbol loc =>
+    simp [ptreeStructNameHOL, PtreeConversion.ptreeStructName, PtreeConversion.children,
+      ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token]
+  | node rule loc children =>
+    cases rule with
+    | inr k =>
+      simp [ptreeStructNameHOL, PtreeConversion.ptreeStructName, PtreeConversion.children,
+        ParseTree.toGrammarTree, ParseTree.token]
+    | inl n =>
+      by_cases hn : n = .nStructName
+      · subst hn
+        cases children with
+        | nil =>
+          simp [ptreeStructNameHOL, PtreeConversion.ptreeStructName, PtreeConversion.children,
+            ParseTree.toGrammarTree, ParseTree.token, CfgValidation.toGrammarTrees_eq_map]
+        | cons c rest =>
+          cases rest with
+          | nil =>
+            cases c with
+            | leaf sym l =>
+              cases sym with
+              | inl r =>
+                simp [ptreeStructNameHOL, PtreeConversion.ptreeStructName,
+                  PtreeConversion.children, ParseTree.toGrammarTree, ParseTree.toGrammarSymbol,
+                  ParseTree.token, Misc.Grammar.destLf, Misc.Grammar.destTokSym,
+                  CfgValidation.toGrammarTrees_eq_map]
+              | inr tok =>
+                cases tok <;>
+                  simp [ptreeStructNameHOL, PtreeConversion.ptreeStructName,
+                    PtreeConversion.children, ParseTree.toGrammarTree, ParseTree.toGrammarSymbol,
+                    ParseTree.token, Misc.Grammar.destLf, Misc.Grammar.destTokSym,
+                    CakeParser.destAlphaT, CfgValidation.toGrammarTrees_eq_map]
+            | node r l cs =>
+              simp [ptreeStructNameHOL, PtreeConversion.ptreeStructName, PtreeConversion.children,
+                ParseTree.toGrammarTree, ParseTree.token, Misc.Grammar.destLf,
+                CfgValidation.toGrammarTrees_eq_map]
+          | cons c2 rest2 =>
+            simp [ptreeStructNameHOL, PtreeConversion.ptreeStructName, PtreeConversion.children,
+              ParseTree.toGrammarTree, ParseTree.token, CfgValidation.toGrammarTrees_eq_map]
+      · simp [ptreeStructNameHOL, PtreeConversion.ptreeStructName, PtreeConversion.children,
+        ParseTree.toGrammarTree, ParseTree.token, hn]
+
+/-- The exact generic `ptree_Eliteral` twin agrees with the executable
+conversion. -/
+theorem ptreeEliteralHOL_toGrammarTree (pt : CakeParser.ParseTree) :
+    ptreeEliteralHOL (ParseTree.toGrammarTree pt) = PtreeConversion.ptreeEliteral pt := by
+  cases pt with
+  | leaf symbol loc =>
+    simp [ptreeEliteralHOL, PtreeConversion.ptreeEliteral, PtreeConversion.children,
+      ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token]
+  | node rule loc children =>
+    cases rule with
+    | inr k =>
+      simp [ptreeEliteralHOL, PtreeConversion.ptreeEliteral, PtreeConversion.children,
+        ParseTree.toGrammarTree, ParseTree.token]
+    | inl n =>
+      by_cases hn : n = .nEliteral
+      · subst hn
+        cases children with
+        | nil =>
+          simp [ptreeEliteralHOL, PtreeConversion.ptreeEliteral, PtreeConversion.children,
+            ParseTree.toGrammarTree, ParseTree.token, CfgValidation.toGrammarTrees_eq_map]
+        | cons c rest =>
+          cases rest with
+          | nil =>
+            cases c with
+            | leaf sym l =>
+              cases sym with
+              | inl r =>
+                simp [ptreeEliteralHOL, PtreeConversion.ptreeEliteral, PtreeConversion.children,
+                  ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token,
+                  Misc.Grammar.destLf, Misc.Grammar.destTokSym, CakeParser.destIntT,
+                  CakeParser.destCharT, CakeParser.destStringT, CakeParser.destWordT,
+                  CakeParser.destFFIT, CfgValidation.toGrammarTrees_eq_map]
+              | inr tok =>
+                cases tok <;>
+                  simp [ptreeEliteralHOL, PtreeConversion.ptreeEliteral, PtreeConversion.children,
+                    ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token,
+                    Misc.Grammar.destLf, Misc.Grammar.destTokSym, CakeParser.destIntT,
+                    CakeParser.destCharT, CakeParser.destStringT, CakeParser.destWordT,
+                    CakeParser.destFFIT, CfgValidation.toGrammarTrees_eq_map]
+            | node r l cs =>
+              simp [ptreeEliteralHOL, PtreeConversion.ptreeEliteral, PtreeConversion.children,
+                ParseTree.toGrammarTree, ParseTree.token, Misc.Grammar.destLf, CakeParser.destIntT,
+                CakeParser.destCharT, CakeParser.destStringT, CakeParser.destWordT,
+                CakeParser.destFFIT, CfgValidation.toGrammarTrees_eq_map]
+          | cons c2 rest2 =>
+            simp [ptreeEliteralHOL, PtreeConversion.ptreeEliteral, PtreeConversion.children,
+              ParseTree.toGrammarTree, ParseTree.token, CfgValidation.toGrammarTrees_eq_map]
+      · simp [ptreeEliteralHOL, PtreeConversion.ptreeEliteral, PtreeConversion.children,
+        ParseTree.toGrammarTree, ParseTree.token, hn]
+
+/-- The exact generic `ptree_Tyop` twin agrees with the executable
+conversion. -/
+theorem ptreeTyopHOL_toGrammarTree (pt : CakeParser.ParseTree) :
+    ptreeTyopHOL (ParseTree.toGrammarTree pt) = PtreeConversion.ptreeTyop pt := by
+  cases pt with
+  | leaf symbol loc =>
+    simp [ptreeTyopHOL, PtreeConversion.ptreeTyop, PtreeConversion.children,
+      ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token,
+      PtreeConversion.ptreeUQTyop]
+  | node rule loc children =>
+    cases rule with
+    | inr k =>
+      simp [ptreeTyopHOL, PtreeConversion.ptreeTyop, PtreeConversion.children,
+        ParseTree.toGrammarTree, ParseTree.token, PtreeConversion.ptreeUQTyop]
+    | inl n =>
+      by_cases hn : n = .nTyOp
+      · subst hn
+        cases children with
+        | nil =>
+          simp [ptreeTyopHOL, PtreeConversion.ptreeTyop, PtreeConversion.children,
+            ParseTree.toGrammarTree, ParseTree.token, PtreeConversion.ptreeUQTyop,
+            CfgValidation.toGrammarTrees_eq_map]
+        | cons c rest =>
+          cases rest with
+          | nil =>
+            cases c with
+            | leaf sym l =>
+              cases sym with
+              | inl r =>
+                simp [ptreeTyopHOL, PtreeConversion.ptreeTyop, PtreeConversion.children,
+                  ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token,
+                  Misc.Grammar.destLf, Misc.Grammar.destTokSym, ptreeUQTyopHOL,
+                  PtreeConversion.ptreeUQTyop, CfgValidation.toGrammarTrees_eq_map]
+              | inr tok =>
+                cases tok <;>
+                  simp [ptreeTyopHOL, PtreeConversion.ptreeTyop, PtreeConversion.children,
+                    ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token,
+                    Misc.Grammar.destLf, Misc.Grammar.destTokSym, CakeParser.destLongidT,
+                    ptreeUQTyopHOL, PtreeConversion.ptreeUQTyop,
+                    CfgValidation.toGrammarTrees_eq_map]
+            | node r l cs =>
+              have h : ptreeUQTyopHOL (Misc.Grammar.ParseTree.node (r, l)
+                    (cs.map ParseTree.toGrammarTree)) =
+                  PtreeConversion.ptreeUQTyop (ParseTree.node r l cs) := by
+                simpa only [ParseTree.toGrammarTree,
+                  CfgValidation.toGrammarTrees_eq_map] using
+                  ptreeUQTyopHOL_toGrammarTree (ParseTree.node r l cs)
+              simp [ptreeTyopHOL, PtreeConversion.ptreeTyop, PtreeConversion.children,
+                ParseTree.toGrammarTree, ParseTree.token, Misc.Grammar.destLf,
+                CfgValidation.toGrammarTrees_eq_map, Option.map, h]
+          | cons c2 rest2 =>
+            simp [ptreeTyopHOL, PtreeConversion.ptreeTyop, PtreeConversion.children,
+              ParseTree.toGrammarTree, ParseTree.token, PtreeConversion.ptreeUQTyop,
+              CfgValidation.toGrammarTrees_eq_map]
+      · simp [ptreeTyopHOL, PtreeConversion.ptreeTyop, PtreeConversion.children,
+        ParseTree.toGrammarTree, ParseTree.token, PtreeConversion.ptreeUQTyop, hn]
+
+/-- The exact generic `ptree_FQV` twin agrees with the executable
+conversion. -/
+theorem ptreeFQVHOL_toGrammarTree (pt : CakeParser.ParseTree) :
+    ptreeFQVHOL (ParseTree.toGrammarTree pt) = PtreeConversion.ptreeFQV pt := by
+  cases pt with
+  | leaf symbol loc =>
+    simp [ptreeFQVHOL, PtreeConversion.ptreeFQV, PtreeConversion.children, ParseTree.toGrammarTree,
+      ParseTree.toGrammarSymbol, ParseTree.token, PtreeConversion.ptreeV]
+  | node rule loc children =>
+    cases rule with
+    | inr k =>
+      simp [ptreeFQVHOL, PtreeConversion.ptreeFQV, PtreeConversion.children,
+        ParseTree.toGrammarTree, ParseTree.token, PtreeConversion.ptreeV]
+    | inl n =>
+      by_cases hn : n = .nFQV
+      · subst hn
+        cases children with
+        | nil =>
+          simp [ptreeFQVHOL, PtreeConversion.ptreeFQV, PtreeConversion.children,
+            ParseTree.toGrammarTree, ParseTree.token, PtreeConversion.ptreeV,
+            CfgValidation.toGrammarTrees_eq_map]
+        | cons c rest =>
+          cases rest with
+          | nil =>
+            cases c with
+            | leaf sym l =>
+              cases sym with
+              | inl r =>
+                simp [ptreeFQVHOL, PtreeConversion.ptreeFQV, PtreeConversion.children,
+                  ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token,
+                  Misc.Grammar.destLf, Misc.Grammar.destTokSym, ptreeVHOL, PtreeConversion.ptreeV,
+                  CfgValidation.toGrammarTrees_eq_map]
+              | inr tok =>
+                cases tok <;>
+                  simp [ptreeFQVHOL, PtreeConversion.ptreeFQV, PtreeConversion.children,
+                    ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token,
+                    Misc.Grammar.destLf, Misc.Grammar.destTokSym, CakeParser.destLongidT,
+                    ptreeVHOL, PtreeConversion.ptreeV, CfgValidation.toGrammarTrees_eq_map]
+            | node r l cs =>
+              have h : ptreeVHOL (Misc.Grammar.ParseTree.node (r, l)
+                    (cs.map ParseTree.toGrammarTree)) =
+                  PtreeConversion.ptreeV (ParseTree.node r l cs) := by
+                simpa only [ParseTree.toGrammarTree,
+                  CfgValidation.toGrammarTrees_eq_map] using
+                  ptreeVHOL_toGrammarTree (ParseTree.node r l cs)
+              simp [ptreeFQVHOL, PtreeConversion.ptreeFQV, PtreeConversion.children,
+                ParseTree.toGrammarTree, ParseTree.token, Misc.Grammar.destLf,
+                CfgValidation.toGrammarTrees_eq_map, Option.map, h]
+              cases hpt : PtreeConversion.ptreeV (ParseTree.node r l cs) <;>
+                simp
+          | cons c2 rest2 =>
+            simp [ptreeFQVHOL, PtreeConversion.ptreeFQV, PtreeConversion.children,
+              ParseTree.toGrammarTree, ParseTree.token, PtreeConversion.ptreeV,
+              CfgValidation.toGrammarTrees_eq_map]
+      · simp [ptreeFQVHOL, PtreeConversion.ptreeFQV, PtreeConversion.children,
+        ParseTree.toGrammarTree, ParseTree.token, PtreeConversion.ptreeV, hn]
+
+/-- The exact generic `ptree_ConstructorName` twin agrees with the executable
+conversion. -/
+theorem ptreeConstructorNameHOL_toGrammarTree (pt : CakeParser.ParseTree) :
+    ptreeConstructorNameHOL (ParseTree.toGrammarTree pt) =
+      PtreeConversion.ptreeConstructorName pt := by
+  cases pt with
+  | leaf symbol loc =>
+    simp [ptreeConstructorNameHOL, PtreeConversion.ptreeConstructorName, PtreeConversion.children,
+      ParseTree.toGrammarTree, ParseTree.toGrammarSymbol, ParseTree.token,
+      PtreeConversion.ptreeUQConstructorName]
+  | node rule loc children =>
+    cases rule with
+    | inr k =>
+      simp [ptreeConstructorNameHOL, PtreeConversion.ptreeConstructorName,
+        PtreeConversion.children, ParseTree.toGrammarTree, ParseTree.token,
+        PtreeConversion.ptreeUQConstructorName]
+    | inl n =>
+      by_cases hn : n = .nConstructorName
+      · subst hn
+        cases children with
+        | nil =>
+          simp [ptreeConstructorNameHOL, PtreeConversion.ptreeConstructorName,
+            PtreeConversion.children, ParseTree.toGrammarTree, ParseTree.token,
+            PtreeConversion.ptreeUQConstructorName, CfgValidation.toGrammarTrees_eq_map]
+        | cons c rest =>
+          cases rest with
+          | nil =>
+            cases c with
+            | leaf sym l =>
+              cases sym with
+              | inl r =>
+                simp [ptreeConstructorNameHOL, PtreeConversion.ptreeConstructorName,
+                  PtreeConversion.children, ParseTree.toGrammarTree, ParseTree.toGrammarSymbol,
+                  ParseTree.token, Misc.Grammar.destLf, Misc.Grammar.destTokSym,
+                  ptreeUQConstructorNameHOL, PtreeConversion.ptreeUQConstructorName,
+                  CfgValidation.toGrammarTrees_eq_map]
+              | inr tok =>
+                cases tok <;>
+                  simp [ptreeConstructorNameHOL, PtreeConversion.ptreeConstructorName,
+                    PtreeConversion.children, ParseTree.toGrammarTree, ParseTree.toGrammarSymbol,
+                    ParseTree.token, Misc.Grammar.destLf, Misc.Grammar.destTokSym,
+                    CakeParser.destLongidT, ptreeUQConstructorNameHOL,
+                    PtreeConversion.ptreeUQConstructorName, CfgValidation.toGrammarTrees_eq_map]
+            | node r l cs =>
+              have h : ptreeUQConstructorNameHOL (Misc.Grammar.ParseTree.node (r, l)
+                    (cs.map ParseTree.toGrammarTree)) =
+                  PtreeConversion.ptreeUQConstructorName (ParseTree.node r l cs) := by
+                simpa only [ParseTree.toGrammarTree,
+                  CfgValidation.toGrammarTrees_eq_map] using
+                  ptreeUQConstructorNameHOL_toGrammarTree (ParseTree.node r l cs)
+              simp [ptreeConstructorNameHOL, PtreeConversion.ptreeConstructorName,
+                PtreeConversion.children, ParseTree.toGrammarTree, ParseTree.token,
+                Misc.Grammar.destLf, CfgValidation.toGrammarTrees_eq_map, Option.map, h]
+              cases hpt : PtreeConversion.ptreeUQConstructorName (ParseTree.node r l cs) <;>
+                simp
+          | cons c2 rest2 =>
+            simp [ptreeConstructorNameHOL, PtreeConversion.ptreeConstructorName,
+              PtreeConversion.children, ParseTree.toGrammarTree, ParseTree.token,
+              PtreeConversion.ptreeUQConstructorName, CfgValidation.toGrammarTrees_eq_map]
+      · simp [ptreeConstructorNameHOL, PtreeConversion.ptreeConstructorName,
+        PtreeConversion.children, ParseTree.toGrammarTree, ParseTree.token,
+        PtreeConversion.ptreeUQConstructorName, hn]
+
 
 end Flapjack.CakeParser.PtreeConversion.Exact
