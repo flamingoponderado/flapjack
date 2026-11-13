@@ -30,7 +30,7 @@ theorem stateCc_compileIncSource {C : Type} (compiler : BviSem.Compiler C) :
 inlining oracle followed by tick cleanup. -/
 theorem stateCo_compileIncSource {C : Type}
     (oracle : BviSem.CompileOracle (Spt (Nat × Bvi.Exp) × C)) :
-    BackendProps.stateCo compileIncSource oracle = removeTicksCo (inCo oracle) := by
+    BackendProps.stateCo compileIncSource oracle = (removeTicksCo ∘ inCo oracle) := by
   funext index
   simp [BackendProps.stateCo, compileIncSource, removeTicksCo, inCo, cleanProg]
 
@@ -43,18 +43,18 @@ theorem evaluate_removeTicks_compile {C F : Type} (program : List (Nat × Nat ×
     (oracle : BviSem.CompileOracle C) (ffi : HolFfiState F) (compiler : BviSem.Compiler C)
     (clock start : Nat) (result : BviResult) (targetNext : BviState C F)
     (run : evaluateTuple ([.call 0 (some start) [] none], [],
-      initialState ffi (sptFromAList (cleanProg program)) (removeTicksCo oracle) compiler clock) =
+      initialState ffi (sptFromAList (cleanProg program)) ((removeTicksCo ∘ oracle)) compiler clock) =
         (result, targetNext)) :
     ∃ extra sourceNext, evaluateTuple ([.call 0 (some start) [] none], [],
       initialState ffi (sptFromAList program) oracle (removeTicksCc compiler) (clock + extra)) =
         (result, sourceNext) ∧ sourceNext.ffi = targetNext.ffi := by
   have related := removeStateRel_initial program oracle compiler ffi clock
   have cleanedRun : evaluate (removeTicksListSource [.call 0 (some start) [] none]) []
-      (initialState ffi (sptFromAList (cleanProg program)) (removeTicksCo oracle) compiler clock) =
+      (initialState ffi (sptFromAList (cleanProg program)) ((removeTicksCo ∘ oracle)) compiler clock) =
         (result, targetNext) := by simpa [evaluateTuple, removeTicksListSource, removeTicksSource] using run
   obtain ⟨extra, sourceNext, sourceRun, finalRel⟩ :=
     RemoveTicksCases.evaluate_removeTicks [.call 0 (some start) [] none] []
-      (initialState ffi (sptFromAList (cleanProg program)) (removeTicksCo oracle) compiler clock)
+      (initialState ffi (sptFromAList (cleanProg program)) ((removeTicksCo ∘ oracle)) compiler clock)
       (initialState ffi (sptFromAList program) oracle (removeTicksCc compiler) clock)
       result targetNext related cleanedRun
   exact ⟨extra, sourceNext, by simpa [evaluateTuple, initialState] using sourceRun, finalRel.2.2.2.1.symm⟩
@@ -94,7 +94,7 @@ theorem evaluateCompileProg {C F : Type}
           .err (.abort .typeError) := by
       simpa [evaluateTuple, stateCc_compileIncSource] using safe
     have run' : evaluate [.call 0 (some start) [] none] []
-        (initialState ffi (sptFromAList (cleanProg intermediate)) (removeTicksCo (inCo oracle)) compiler clock) =
+        (initialState ffi (sptFromAList (cleanProg intermediate)) ((removeTicksCo ∘ inCo oracle)) compiler clock) =
           (result, targetNext) := by
       simpa [evaluateTuple, stateCo_compileIncSource] using run
     obtain ⟨extra, intermediateNext, intermediateRun, intermediateFfi⟩ :=

@@ -132,3 +132,7 @@ val evaluate_remove_ticks_compile_statement =
     s2.ffi = s.ffi``;
 val _ = (print "evaluate_remove_ticks_compile_statement_typed=";
          print_term evaluate_remove_ticks_compile_statement; print "\n");
+
+val _ = show "clean_prog_def_typed" bvi_inlineProofTheory.clean_prog_def;
+val _ = show "remove_ticks_cc_def_typed" bvi_inlineProofTheory.remove_ticks_cc_def;
+val _ = show "remove_ticks_co_def_typed" bvi_inlineProofTheory.remove_ticks_co_def;

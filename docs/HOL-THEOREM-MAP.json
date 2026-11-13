@@ -427,13 +427,37 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "clean_prog_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksRelation.lean",
+    "lean_name": "cleanProg",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL definition and Lean body comparison: Independent label and arity types are retained; mapping preserves both and removes ticks from each BVI expression."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "remove_ticks_cc_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksRelation.lean",
+    "lean_name": "removeTicksCc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL definition and Lean body comparison: Configuration, label, arity and callback result are four independent types; the callback receives the cleaned program."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "remove_ticks_co_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksRelation.lean",
+    "lean_name": "removeTicksCo",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL definition and Lean body comparison: Configuration, label and arity are independent; the pair operation preserves the configuration and cleans the code component."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "evaluate_remove_ticks_compile",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/WholeProgramSimulation.lean",
     "lean_name": "evaluate_removeTicks_compile",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "Independent comparison with the original local statement and its typed HOL capture: all eight binders, the sole cleaned-code initial evaluation premise, the existential extra clock and source state, equal result, and full final FFI-state equality agree. Compiler and FFI carriers are independent and callback word widths match. The specialized Lean oracle helper is extensionally the original pair operation composed with the oracle at this theorem's types. BVI refs use the canonical finite-support representation with a same-module roundtrip; code remains a sparse tree. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8). The capture records the typed statement, not an original proof replay."
+    "reviewer": "Independent comparison with the original local statement and its typed HOL capture: all eight binders, the sole cleaned-code initial evaluation premise, the existential extra clock and source state, equal result, and full final FFI-state equality agree. Compiler and FFI carriers are independent and callback word widths match. The pair-level oracle helper is composed with the oracle as in the original. BVI refs use the canonical finite-support representation with a same-module roundtrip; code remains a sparse tree. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8). The capture records the typed statement, not an original proof replay."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",

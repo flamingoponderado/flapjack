@@ -8,8 +8,9 @@ public import Flapjack.Compiler.Backend.BviInline.Proofs.CompileSimulation
 namespace Flapjack.Compiler.Backend.BviInline
 open BviSem BvlSem
 
-/-- Flapjack infrastructure: remove ticks from every labeled code entry. -/
-def cleanProg (program : List (Nat × Nat × Bvi.Exp)) : List (Nat × Nat × Bvi.Exp) :=
+/-- Remove ticks from each body while preserving arbitrary labels and arities. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "clean_prog_def"]
+def cleanProg {Label Arity : Type} (program : List (Label × Arity × Bvi.Exp)) : List (Label × Arity × Bvi.Exp) :=
   program.map fun (name, arity, body) => (name, arity, removeTicksSource body)
 
 /-- Flapjack infrastructure: tick cleanup preserves program labels. -/
@@ -29,14 +30,19 @@ theorem cleanProg_fromAList (program : List (Nat × Nat × Bvi.Exp)) :
   rw [sptMap_sptFromAList]
   rfl
 
-/-- Flapjack infrastructure: adapt the callback to remove ticks from each
-incoming code segment. -/
-def removeTicksCc {C : Type} (compiler : BviSem.Compiler C) : BviSem.Compiler C :=
+/-- Adapt a compiler callback to remove ticks from each incoming code segment. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "remove_ticks_cc_def"]
+def removeTicksCc {Cfg Label Arity Result : Type}
+    (compiler : Cfg → List (Label × Arity × Bvi.Exp) → Result) :
+    Cfg → List (Label × Arity × Bvi.Exp) → Result :=
   fun config program => compiler config (cleanProg program)
 
-/-- Flapjack infrastructure: remove ticks from each oracle code segment. -/
-def removeTicksCo {C : Type} (oracle : BviSem.CompileOracle C) : BviSem.CompileOracle C :=
-  fun index => ((oracle index).1, cleanProg (oracle index).2)
+/-- Remove ticks from the code component of an oracle entry. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "remove_ticks_co_def"]
+def removeTicksCo {Cfg Label Arity : Type}
+    (entry : Cfg × List (Label × Arity × Bvi.Exp)) :
+    Cfg × List (Label × Arity × Bvi.Exp) :=
+  (entry.1, cleanProg entry.2)
 
 /-- Flapjack infrastructure: state relation for tick cleanup. This remains
 untagged pending source evaluator and state-carrier review. -/
@@ -44,7 +50,7 @@ def RemoveStateRel {C F : Type} (source target : BviState C F) : Prop :=
   target.refs = source.refs ∧ target.clock = source.clock ∧ target.global = source.global ∧
   target.ffi = source.ffi ∧
   target.code = sptMap (fun entry => (entry.1, removeTicksSource entry.2)) source.code ∧
-  target.compileOracle = removeTicksCo source.compileOracle ∧ source.compile = removeTicksCc target.compile
+  target.compileOracle = (removeTicksCo ∘ source.compileOracle) ∧ source.compile = removeTicksCc target.compile
 
 /-- Flapjack infrastructure: equal clock replacement preserves tick-cleanup
 state relatedness. -/
@@ -98,7 +104,7 @@ theorem removeStateRel_initial {C F : Type} (program : List (Nat × Nat × Bvi.E
     (oracle : BviSem.CompileOracle C) (compiler : BviSem.Compiler C)
     (ffi : HolFfiState F) (clock : Nat) :
     RemoveStateRel (initialState ffi (sptFromAList program) oracle (removeTicksCc compiler) clock)
-      (initialState ffi (sptFromAList (cleanProg program)) (removeTicksCo oracle) compiler clock) := by
+      (initialState ffi (sptFromAList (cleanProg program)) ((removeTicksCo ∘ oracle)) compiler clock) := by
   exact ⟨rfl, rfl, rfl, rfl, (cleanProg_fromAList program).symm, rfl, rfl⟩
 
 /-- Flapjack infrastructure: a non-install primitive preserves the tick
