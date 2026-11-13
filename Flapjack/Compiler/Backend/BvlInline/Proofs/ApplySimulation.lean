@@ -68,12 +68,6 @@ theorem doAppSimulation_nonInstall {C F : Type} (s t : State C F)
       run notInstall (by intro key present; rwa [domains] at present)
     exact ⟨_, stateRel_reframe s t next related frame, by simpa [unframe] using successRun⟩
 
-/-- The transformed oracle retains exactly the original entry labels. -/
-theorem tickRemoved_program_labels (program : List (Nat × Nat × Bvl.Exp)) :
-    (program.map (fun (name, arity, body) => (name, arity, removeTicksSing body))).map Prod.fst =
-      program.map Prod.fst := by
-  simp [List.map_map, Function.comp_def]
-
 /-- A mapped program is disjoint from mapped code exactly when the original
 program is disjoint from the original code. -/
 theorem tickRemoved_program_disjoint (code : Spt (Nat × Bvl.Exp))
@@ -88,15 +82,6 @@ theorem tickRemoved_program_disjoint (code : Spt (Nat × Bvl.Exp))
   · intro h entry ⟨original, mem, equal⟩
     subst entry
     exact h original mem
-
-/-- Installing mapped program entries yields the mapped union of the source
-code and installed program. -/
-theorem tickRemoved_code_union (code : Spt (Nat × Bvl.Exp))
-    (program : List (Nat × Nat × Bvl.Exp)) :
-    sptUnion (sptMap (fun (arity, body) => (arity, removeTicksSing body)) code)
-      (sptFromAList (program.map fun (name, arity, body) => (name, arity, removeTicksSing body))) =
-    sptMap (fun (arity, body) => (arity, removeTicksSing body)) (sptUnion code (sptFromAList program)) := by
-  rw [sptMap_sptUnion, sptMap_sptFromAList]
 
 /-- Installation simulation under the tick-removal state relation. -/
 theorem doInstallSimulation {C F : Type} (s t : State C F) (related : stateRel s t)
@@ -126,7 +111,7 @@ theorem doInstallSimulation {C F : Type} (s t : State C F) (related : stateRel s
             rw [fields]
             clear fields related
             simp only [doInstall, bytesEq, wordsEq, compilerEq, tickRemoved_program_disjoint,
-              tickRemoved_program_labels]
+              List.map_map, Function.comp_def]
             clear compilerEq
             cases programs : (s.compileOracle 0).2 with
             | nil =>
@@ -151,7 +136,7 @@ theorem doInstallSimulation {C F : Type} (s t : State C F) (related : stateRel s
                   by_cases same : bytes = bs ∧ words = ws ∧ (s.compileOracle 1).1 = cfg
                   · simp_all
                     rw [if_pos tailFree, if_pos tailFree]
-                    simp [stateRel, ← tickRemoved_code_union]
+                    simp [stateRel, sptMap_sptUnion, sptMap_sptFromAList]
                   · simp_all
                     rw [if_pos tailFree, if_pos tailFree]
                     have notSame : ¬(bytes = bs ∧ words = ws ∧ (s.compileOracle 1).1 = cfg) := by aesop
