@@ -1,6 +1,18 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "eval_ind_alt",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/EvalIndAlt.lean",
+    "lean_name": "evalIndAlt",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the exported original typed theorem and all eleven induction cases, including the exact HOL-generated payload-sensitive expression sizes, result carriers, repeated Force clock premise and all size-bounded Let and Handle hypotheses. The BVL state refs field uses a canonical finite map; its evaluator dependency closure inherits the reviewed reals_as_rational_cuts representation of HOL reals. Generated size equations and concrete HOL size observations are captured in the value-rel probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "do_app_adjust",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/DoAppAdjust.lean",
     "lean_name": "doAppAdjust",

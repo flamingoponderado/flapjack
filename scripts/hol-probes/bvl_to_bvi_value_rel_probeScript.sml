@@ -433,3 +433,13 @@ val doAppAdjustTerm = ``  state_rel b2 s5 t2 /\
         Rval (adjust_bv b2 q,t3)) /\
       state_rel b2 r t3``;
 val _ = (print "do_app_adjust_term_typed="; print_term doAppAdjustTerm; print "\n");
+
+(* Generated sizes include numeric and operation payloads; eval_ind_alt uses
+   these bounds rather than the evaluator termination weight. *)
+val _ = show "bvl_exp_size_generated_typed=" bvlTheory.exp_size_def;
+val _ = show "eval_ind_alt_typed=" bvl_to_bviProofTheory.eval_ind_alt;
+val _ = show "bvl_size_var=" (EVAL ``bvl$exp_size (bvl$Var 7)``);
+val _ = show "bvl_size_force=" (EVAL ``bvl$exp_size (bvl$Force 3 5)``);
+val _ = show "bvl_size_call=" (EVAL ``bvl$exp_size (bvl$Call 4 (SOME 8) [bvl$Var 2])``);
+val _ = show "bvl_size_op=" (EVAL ``bvl$exp_size (bvl$Op (closLang$Label 9) [bvl$Var 3])``);
+val _ = show "bvl_size_let=" (EVAL ``bvl$exp_size (bvl$Let [bvl$Var 4] (bvl$Tick (bvl$Var 2)))``);

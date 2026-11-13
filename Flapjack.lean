@@ -1334,6 +1334,7 @@ import Flapjack.Test.DataSemInstall
 import Flapjack.Test.DataSemEvaluate
 import Flapjack.Test.DataSemSemantics
 import Flapjack.Test.BviToDataTotal
+import Flapjack.Test.BvlGeneratedSizeParity
 import Flapjack.Test.BvlToBviValueParity
 import Flapjack.Test.BviFinaliseParity
 import Flapjack.Test.BviApplyAuxParity
@@ -1466,6 +1467,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileIfCase
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileLetCase
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.BoundEvaluation
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.DoAppAdjust
+import Flapjack.Compiler.Backend.BvlToBvi.Proofs.EvalIndAlt
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.IEvalBound
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileEmptyLet
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileHandle
