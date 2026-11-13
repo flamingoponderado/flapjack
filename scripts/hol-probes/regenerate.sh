@@ -4677,6 +4677,10 @@ run_probe hol_mergesort_probeScript.sml hol_mergesort_probe.out \
   sort2_type sort3_type merge_type mergesortN_type sort2_lt sort2_eq_le sort3_all sort3_dup_le merge_basic merge_unsorted merge_left_empty merge_nontotal msn_full msn_prefix msn_over msn_three_short msn_nontotal msn_zero \
   "$repo_dir/HOL/src/sort/mergesortScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe hol_finitemap_alist_typed_probeScript.sml hol_finitemap_alist_typed_probe.out \
+  ALOOKUP_def_typed ALOOKUP_APPEND_typed ALOOKUP_MEM_typed ALOOKUP_ALL_DISTINCT_MEM_typed alist_to_fmap_def_typed alist_to_fmap_APPEND_typed FUPDATE_LIST_typed FCARD_FUPDATE_typed \
+  "$repo_dir/HOL/src/finite_maps/alistScript.sml" "$cake_dir/pancake"
+
 run_probe machine_ieee_typed_probeScript.sml machine_ieee_typed_probe.out \
   float_to_fp64_def_typed fp64_abs_def_typed fp64_equal_def_typed fp64_greaterEqual_def_typed fp64_greaterThan_def_typed fp64_isNan_def_typed fp64_isSignallingNan_def_typed fp64_lessEqual_def_typed fp64_lessThan_def_typed fp64_negate_def_typed fp64_to_float_def_typed fp64_add_def_typed fp64_div_def_typed fp64_mul_def_typed fp64_mul_add_def_typed fp64_sub_def_typed float_to_fp32_def_typed fp32_to_float_def_typed fp32_to_fp64_def_typed fp32_to_fp64_with_flags_def_typed fp64_to_fp32_def_typed fp64_to_fp32_with_flags_def_typed fp64_to_int_def_typed int_to_fp64_def_typed convert_def_typed real_to_fp32_with_flags_def_typed real_to_fp64_def_typed real_to_fp64_with_flags_def_typed fp64_sqrt_def_typed \
   "$repo_dir/HOL/src/floating-point/machine_ieeeScript.sml" "$cake_dir/pancake"

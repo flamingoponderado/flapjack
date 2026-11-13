@@ -452,7 +452,7 @@
   "hol_path": "HOL/src/finite_maps/alistScript.sml", "hol_name": "ALOOKUP_ALL_DISTINCT_MEM",
   "lean_path": "Flapjack/FiniteMap/AlistExact/Lookup.lean", "lean_name": "holALookup_of_distinct_member",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared alookup_all_distinct_mem_type in clos_call_code_list_probe.out and HOL source: key and value types remain independent, and distinct keys plus pair membership imply the original association-list lookup result."
+  "reviewer": "Compared alookup_all_distinct_mem_type in clos_call_code_list_probe.out and HOL source: key and value types remain independent, and distinct keys plus pair membership imply the original association-list lookup result. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_finitemap_alist_typed_probe.out `ALOOKUP_ALL_DISTINCT_MEM_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_callProofScript.sml", "hol_name": "is_Recclosure_def",
@@ -2920,7 +2920,7 @@
   "lean_name": "alistToFmap_append",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations",
   "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.alistToFmap", "Flapjack.HolFiniteMapExact.union"],
-  "reviewer": "Independent comparison with the HOL source and typed alist_to_fmap_APPEND capture confirms both arbitrary association lists, independent key and value types, and unconditional equality of the canonical maps produced by Flapjack.HolFiniteMapExact.alistToFmap and Flapjack.HolFiniteMapExact.union. Both conversions choose the first binding and union is left-biased, including duplicate and overlapping keys."
+  "reviewer": "Independent comparison with the HOL source and typed alist_to_fmap_APPEND capture confirms both arbitrary association lists, independent key and value types, and unconditional equality of the canonical maps produced by Flapjack.HolFiniteMapExact.alistToFmap and Flapjack.HolFiniteMapExact.union. Both conversions choose the first binding and union is left-biased, including duplicate and overlapping keys. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_finitemap_alist_typed_probe.out `alist_to_fmap_APPEND_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml",
@@ -6724,7 +6724,7 @@
   "lean_path": "Flapjack/FiniteMap/AlistExact/Lookup.lean",
   "lean_name": "holALookup",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the typed alookup_def capture and hypothesis-free alookup_reversed_eq HOL replay. The replay reverses the equality operands to match Lean, with unrestricted key and value types."
+  "reviewer": "Compared the typed alookup_def capture and hypothesis-free alookup_reversed_eq HOL replay. The replay reverses the equality operands to match Lean, with unrestricted key and value types. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_finitemap_alist_typed_probe.out `ALOOKUP_def_typed` re-confirms the capture confirms HOL's two clauses; the Lean rendering reverses the equality operands (`key = entryKey` for HOL's `x = q`), which does not change the result."
 },
 {
   "hol_path": "hol4/src/coretypes/optionScript.sml",
@@ -16594,7 +16594,7 @@
     "lean_name": "alistToFmap",
     "statement_status": "reviewed_fmap_as_finite_support_result",
     "fmap_as_finite_support_result": true,
-    "reviewer": "Compared alist_to_fmap_typed and alist_to_fmap_clauses_typed with HOL's right fold. The key and value types remain independently polymorphic with no caller-supplied equality instance; the canonical result updates the reversed list so the first occurrence wins. The unconditional lookup witness compares the result with an independent raw-map operation, and lookup_alistToFmap_head and lookup_alistToFmap_tail check duplicate and distinct-key behavior. Source review and Lean checking do not establish cross-language equivalence."
+    "reviewer": "Compared alist_to_fmap_typed and alist_to_fmap_clauses_typed with HOL's right fold. The key and value types remain independently polymorphic with no caller-supplied equality instance; the canonical result updates the reversed list so the first occurrence wins. The unconditional lookup witness compares the result with an independent raw-map operation, and lookup_alistToFmap_head and lookup_alistToFmap_tail check duplicate and distinct-key behavior. Source review and Lean checking do not establish cross-language equivalence. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_finitemap_alist_typed_probe.out `alist_to_fmap_def_typed` re-confirms the capture is HOL's right fold of `|+` from `FEMPTY`; the Lean construction is the same update fold over the reversed list (earlier entries keep precedence) and carries the same-module lookup witness."
   },
   {
   "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
@@ -16603,7 +16603,7 @@
   "lean_name": "holEmpty",
   "statement_status": "reviewed_fmap_as_finite_support_result",
   "fmap_as_finite_support_result": true,
-  "reviewer": "Source comparison: Compared fempty_typed and flookup_empty_typed: HOL's empty finite map is polymorphic independently in key and value types and has no binding at any key. The result is the canonical finite-support carrier; the local unconditional lookup witness compares it with the independent raw empty-map codec."
+  "reviewer": "Source comparison: Compared fempty_typed and flookup_empty_typed: HOL's empty finite map is polymorphic independently in key and value types and has no binding at any key. The result is the canonical finite-support carrier; the local unconditional lookup witness compares it with the independent raw empty-map codec. Task-164 audit against the existing typed capture (built HOL4 core theory, no rebuild): the existing capture `fempty_typed` in scripts/hol-probes/finite_map_empty_probe.out already records the typed HOL statement; the carriers and quantifier order match the Lean declaration."
 },
   {
     "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
@@ -16612,7 +16612,7 @@
     "lean_name": "holUpdateList",
     "statement_status": "reviewed_fmap_as_finite_support_result",
     "fmap_as_finite_support_result": true,
-    "reviewer": "Source comparison: compared the polymorphic FUPDATE_LIST definition and its typed fold: both input and result use the canonical finite-support map and entries update left to right using HOL equality. The unconditional lookup witness compares the result with the independent raw update fold."
+    "reviewer": "Source comparison: compared the polymorphic FUPDATE_LIST definition and its typed fold: both input and result use the canonical finite-support map and entries update left to right using HOL equality. The unconditional lookup witness compares the result with the independent raw update fold. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_finitemap_alist_typed_probe.out `FUPDATE_LIST_typed` re-confirms the capture is the left fold of `|+`; the Lean `holUpdateList` is the canonical `updateListEq` fold and carries the same-module lookup witness."
   },
   {
     "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
@@ -16621,7 +16621,7 @@
     "lean_name": "union",
     "statement_status": "reviewed_fmap_as_finite_support_result",
     "fmap_as_finite_support_result": true,
-    "reviewer": "Source comparison with funion_spec_typed: HOL's new_specification introduces the polymorphic FUNION constant; the independent raw lookup witness establishes its left-biased finite-support implementation. The accompanying union_spec proves both specification conjuncts, which uniquely determine the finite map by domain and lookup extensionality."
+    "reviewer": "Source comparison with funion_spec_typed: HOL's new_specification introduces the polymorphic FUNION constant; the independent raw lookup witness establishes its left-biased finite-support implementation. The accompanying union_spec proves both specification conjuncts, which uniquely determine the finite map by domain and lookup extensionality. Task-164 audit against the existing typed capture (built HOL4 core theory, no rebuild): the existing capture `funion_spec_typed` in scripts/hol-probes/finite_map_empty_probe.out already records the typed HOL statement; the carriers and quantifier order match the Lean declaration."
   },
   {
     "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
@@ -16630,7 +16630,7 @@
     "lean_name": "union_spec",
     "statement_status": "reviewed_fmap_as_finite_support_parameters",
     "fmap_as_finite_support_parameters": ["left", "right"],
-    "reviewer": "Source comparison with funion_spec_typed: the two polymorphic input maps share key and value types, and the domain-union and unconditional FAPPLY conjuncts have the same order and conclusions as HOL. Nonempty beta renders HOL type inhabitedness. The canonical map codec witnesses cover both parameters; holFapply preserves the single unspecified out-of-domain value."
+    "reviewer": "Source comparison with funion_spec_typed: the two polymorphic input maps share key and value types, and the domain-union and unconditional FAPPLY conjuncts have the same order and conclusions as HOL. Nonempty beta renders HOL type inhabitedness. The canonical map codec witnesses cover both parameters; holFapply preserves the single unspecified out-of-domain value. Task-164 audit against the existing typed capture (built HOL4 core theory, no rebuild): the existing capture `funion_spec_typed` in scripts/hol-probes/finite_map_empty_probe.out already records the typed HOL statement; the carriers and quantifier order match the Lean declaration."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
@@ -21592,7 +21592,7 @@
     "lean_path": "Flapjack/FiniteMap/AlistExact/Lookup.lean",
     "lean_name": "holALookup_append",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared typed alist_lookup_append in source_eval_oracle_adjust_probe.out: arbitrary independent key and value types, left and right lists followed by the key, and the original NONE/SOME lookup case."
+    "reviewer": "Compared typed alist_lookup_append in source_eval_oracle_adjust_probe.out: arbitrary independent key and value types, left and right lists followed by the key, and the original NONE/SOME lookup case. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_finitemap_alist_typed_probe.out `ALOOKUP_APPEND_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -69893,7 +69893,7 @@
     "fmap_as_finite_support_parameters": [
       "map"
     ],
-    "reviewer": "flapjack-sol-b source comparison 2026-10-02 against full FCARD_FUPDATE445-450: arbitrary original key/payload/map carriers, no hypotheses and both conditional branches retained. FDOM membership is defined lookup not NONE; FCARD counts the actual finite lookup domain, independent of redundant support witnesses. Existing-key update preserves that domain; fresh-key update inserts exactly one key. HOL equality uses classical equality internally with no extra DecidableEq premise. Same-module canonical lookup/finiteSupport codec roundtrip checked. Only named canonical finite-map parameter representation translation; no executable compiler change."
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02 against full FCARD_FUPDATE445-450: arbitrary original key/payload/map carriers, no hypotheses and both conditional branches retained. FDOM membership is defined lookup not NONE; FCARD counts the actual finite lookup domain, independent of redundant support witnesses. Existing-key update preserves that domain; fresh-key update inserts exactly one key. HOL equality uses classical equality internally with no extra DecidableEq premise. Same-module canonical lookup/finiteSupport codec roundtrip checked. Only named canonical finite-map parameter representation translation; no executable compiler change. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_finitemap_alist_typed_probe.out `FCARD_FUPDATE_typed` re-confirms the capture confirms `FCARD` over the updated map with the membership test on the original domain; the Lean statement uses the canonical lookup domain and the same if-branches."
   },
   {
     "lean_path": "Flapjack/FiniteMap/Comparison.lean",
@@ -133153,7 +133153,7 @@
   "lean_path": "Flapjack/FiniteMap/AlistExact/Lookup.lean",
   "lean_name": "holALookup_member",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared the source and typed alookup_member capture: key and value types are independent; a successful ALOOKUP implies membership of the same pair."
+  "reviewer": "Compared the source and typed alookup_member capture: key and value types are independent; a successful ALOOKUP implies membership of the same pair. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_finitemap_alist_typed_probe.out `ALOOKUP_MEM_typed` re-confirms the captured statement, carriers and quantifier order match the Lean declaration, which adds no premise."
 },
 {
   "hol_path": "cakeml/semantics/proofs/semanticPrimitivesPropsScript.sml",

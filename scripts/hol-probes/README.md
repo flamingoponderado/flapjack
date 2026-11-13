@@ -9996,3 +9996,15 @@ reviewed rational-cut model. Regenerate with
 `HOL_PROBE_ONLY=machine_ieee_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean
 correspondence.
+
+`hol_finitemap_alist_typed_probe.out` captures the typed statements of the HOL
+`alist` and `finite_map` declarations ported in `Flapjack/FiniteMap/*.lean` that
+`finite_map_empty_probe.out` does not cover, from the built HOL4 core theories
+(no rebuild): `ALOOKUP_def`, `ALOOKUP_APPEND`, `ALOOKUP_MEM`,
+`ALOOKUP_ALL_DISTINCT_MEM`, `alist_to_fmap_def`, `alist_to_fmap_APPEND`,
+`FUPDATE_LIST` and `FCARD_FUPDATE`. Together with `fempty_typed` and
+`funion_spec_typed` in `finite_map_empty_probe.out` this covers every reviewed
+`HOL/src/finite_maps` row in the manifest. Regenerate with
+`HOL_PROBE_ONLY=hol_finitemap_alist_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
