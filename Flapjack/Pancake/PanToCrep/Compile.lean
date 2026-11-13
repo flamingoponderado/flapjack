@@ -937,15 +937,6 @@ theorem functionInfosHOL_eq_makeFuncsHOL (declarations : List (Decl α)) :
     functionInfosHOL declarations = makeFuncsHOL (functionEntries declarations) := by
   rw [functionInfosHOL, makeFuncsHOL, panToCrepMakeFuncs_eq_map]
 
-def panToCrepCompFuncRiscV (context : PanToCrepHOLContext (BitVec width))
-    (params : List (VarName × Shape)) (body : Prog (BitVec width)) :
-    CrepProg (BitVec width) :=
-  let shapes := params.map Prod.snd
-  let vmax := Shape.shapeSize (.comb shapes) - 1
-  compileProgRiscV
-    (panToCrepMkCtxtHOL (panToCrepMakeVmapHOL params)
-      context.funcs vmax context.eids) body
-
 /-- HOL `comp_func_def` (`cakeml/pancake/pan_to_crepScript.sml:337-343`):
     `comp_func fs eids params body = let vmap = make_vmap params;
     shapes = MAP SND params; vmax = size_of_shape (Comb shapes) - 1 in
