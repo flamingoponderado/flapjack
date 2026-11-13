@@ -169,3 +169,5 @@ val compile_string_thm = Q.prove(
   |> INST_TYPE[alpha|->``:'c``,beta|->``:'ffi``];
 
 val _ = show "compile_string_thm_typed=" compile_string_thm;
+
+val _ = show "HD_APPEND3_typed=" bvl_to_bviProofTheory.HD_APPEND3;

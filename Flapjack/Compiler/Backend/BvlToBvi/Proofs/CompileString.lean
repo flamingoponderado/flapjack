@@ -111,4 +111,16 @@ theorem compileStringThm {C F : Type} (str : List Flapjack.Basis.Pure.MlString.H
   have result := writeChars str [] ls ptr flag env state premises.2 (by simpa using premises.1)
   simpa [List.mapIdx_eq_zipIdx_map, ← premises.2] using result
 
+/-- A nonempty concatenation keeps its head when more elements are appended. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "HD_APPEND3"]
+theorem holHd_append_three {α : Type} [Nonempty α] (l₁ l₂ l₃ : List α)
+    (nonempty : 0 < (l₁ ++ l₂).length) :
+    Flapjack.holHd (l₁ ++ l₂ ++ l₃) = Flapjack.holHd (l₁ ++ l₂) := by
+  cases l₁ with
+  | nil =>
+    cases l₂ with
+    | nil => simp at nonempty
+    | cons head tail => rfl
+  | cons head tail => rfl
+
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

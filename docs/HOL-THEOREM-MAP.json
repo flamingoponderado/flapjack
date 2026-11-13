@@ -1,5 +1,11 @@
 [
  {
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml", "hol_name": "HD_APPEND3",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileString.lean", "lean_name": "holHd_append_three",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed original: for arbitrary lists over an inhabited HOL type, a positive length of the first two lists' concatenation ensures the same head after a third list is appended. Both sides use the source HOL head operation."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml", "hol_name": "compile_string_thm",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileString.lean", "lean_name": "compileStringThm",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
