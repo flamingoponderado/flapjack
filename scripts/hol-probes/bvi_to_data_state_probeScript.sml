@@ -140,3 +140,30 @@ val state_rel_do_app_ffi_err_replay = Q.prove
          dataLangTheory.op_space_reset_def,data_spaceTheory.op_space_req_def,
          dataSemTheory.do_stack_def]);
 val _ = show "state_rel_do_app_FFI_err_replay_typed=" state_rel_do_app_ffi_err_replay;
+
+(* Replay the original local sparse-set lemmas and their inferred types. *)
+open sptreeTheory;
+val domain_list_insert2 = Q.prove
+ (`domain (list_insert xs t) = set xs UNION domain t`,
+  ASM_SET_TAC[domain_list_insert]);
+val domain_list_to_num_set2 = Q.prove
+ (`domain (list_to_num_set xs) = set xs`,
+  ASM_SET_TAC[domain_list_to_num_set]);
+val list_insert_list_to_num_set_replay = Q.prove
+ (`list_insert xs (list_to_num_set (xs ++ ys ++ zs)) =
+   list_to_num_set (xs ++ ys ++ zs)`,
+  DEP_REWRITE_TAC [spt_eq_thm] >>
+  CONJ_TAC >- (simp[] >>
+   `!xs A. wf A ==> wf (list_insert xs A)` by
+     (Induct_on `xs` >> rw[list_insert_def] >>
+      metis_tac[wf_insert ]) >> fs[]) >>
+  rw[] >>
+  qmatch_goalsub_abbrev_tac `lookup n A = lookup n B` >>
+  Cases_on `lookup n A` >>
+  Cases_on `lookup n B` >>
+  fs[] >> UNABBREV_ALL_TAC >>
+  MAP_EVERY imp_res_tac [lookup_NONE_domain ,domain_lookup] >>
+  fs[domain_list_insert2,domain_list_to_num_set2] >> metis_tac[]);
+val _ = show "domain_list_insert2_replay_typed=" domain_list_insert2;
+val _ = show "domain_list_to_num_set2_replay_typed=" domain_list_to_num_set2;
+val _ = show "list_insert_list_to_num_set_replay_typed=" list_insert_list_to_num_set_replay;

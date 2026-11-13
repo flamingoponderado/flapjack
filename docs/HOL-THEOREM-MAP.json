@@ -138435,6 +138435,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
+    "hol_name": "list_insert_list_to_num_set",
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/ListInsert.lean",
+    "lean_name": "listInsert_namesOfList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary natural-number lists, original structural sparse-tree equality and no added premise. The HOL local theorem and its two local domain helpers are replayed with inferred types. The native NumSet carrier retains the source's right-fold list-to-set construction and left-to-right list insertion, including duplicates and empty lists."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml",
     "hol_name": "state_rel_peak_safe",
     "lean_path": "Flapjack/Compiler/Backend/BviToData/Proofs/State.lean",
     "lean_name": "stateRel_peakSafe",
