@@ -46,7 +46,10 @@ jobs:
       # exports their elaborated attributes, so it must not run concurrently
       # with another Lake command in the same worktree.
       - name: Check reviewed @[hol] rows match the elaborated attributes
-        run: python3 scripts/check_hol_ref_export.py
+        run: |
+          free -h
+          ulimit -a
+          /usr/bin/time -v python3 scripts/check_hol_ref_export.py
 
       # The attribute checker is syntactic, but the test compiles throwaway
       # declarations with `lake build`/`lake lean`, so it stays in this job.
