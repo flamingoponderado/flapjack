@@ -521,16 +521,6 @@ DOCUMENTED_MISMATCHES = {
         "functions instead of HOL finite-map fields. Exact finite-support replacement "
         "tracked by flapjack-pxn.18.3.7.1.3.1.1.2.5 (parent .2.3). "
     ),
-    ("Flapjack/Pancake/Semantics/PanSem/LocalUpdatesExact.lean", "updLocalsHOLExact"): (
-        "cakeml/pancake/semantics/panSemScript.sml",
-        "upd_locals_def",
-        "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.3.31; "
-        "FLAPJACK-SPECIFIC, documented_mismatch). HOL upd_locals (panSemScript.sml:431-434) "
-        "sets locals := FEMPTY |++ varargs, a finite map. updLocalsHOLExact "
-        "(LocalUpdatesExact.lean:60) models FEMPTY followed by FUPDATE_LIST pointwise, but "
-        "its PanSemStateExact state type is not restricted to finite maps. Exact "
-        "finite-support replacement tracked by flapjack-pxn.18.3.7.1.3.1.1.2.5 (parent .2.3). "
-    ),
     ("Flapjack/Pancake/Semantics/PanSem/LocalUpdatesExact.lean", "resVarHOLExact"): (
         "cakeml/pancake/semantics/panSemScript.sml",
         "res_var_def",

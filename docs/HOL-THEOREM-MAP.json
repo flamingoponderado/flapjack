@@ -104949,14 +104949,6 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "upd_locals_def",
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/LocalUpdatesExact.lean",
-    "lean_name": "updLocalsHOLExact",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.3.31; FLAPJACK-SPECIFIC, documented_mismatch). HOL upd_locals (panSemScript.sml:431-434) sets locals := FEMPTY |++ varargs, a finite map. updLocalsHOLExact (LocalUpdatesExact.lean:60) models FEMPTY followed by FUPDATE_LIST pointwise, but its PanSemStateExact state type is not restricted to finite maps. Exact finite-support replacement tracked by flapjack-pxn.18.3.7.1.3.1.1.2.5 (parent .2.3)."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "mem_load_32_alt",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/MemLoad32Alt.lean",
     "lean_name": "panMemLoad32HOL_eq_alt",
@@ -135446,7 +135438,7 @@
       "eshapes"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.3.31; panSemScript.sml:431-434: typed capture upd_locals_def_typed in pan_upd_locals_probe.out gives \u2200(varargs :(mlstring # \u03b1 v) list) (s :(\u03b1, 'ffi) state). upd_locals varargs s = s with locals := (FEMPTY :mlstring |-> \u03b1 v) |++ varargs, 0 hypotheses). Lean keeps HOL's binder order varargs s, the mlstring keyed finite map and the FUPDATE_LIST semantics: FEMPTY |++ varargs is HolFiniteMapExact.empty.updateList varargs, so later duplicate bindings win as in HOL. The finite-map fields locals/globals/code/eshapes are the canonical HolFiniteMapExact translation (witness holFmapAsFiniteSupportWitness); word payloads use the type-indexed BitVec translation. The production updLocalsHOLExact stays untagged with its documented_mismatch row. Qualifier is representation-only."
+    "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.3.31; panSemScript.sml:431-434: typed capture upd_locals_def_typed in pan_upd_locals_probe.out gives \u2200(varargs :(mlstring # \u03b1 v) list) (s :(\u03b1, 'ffi) state). upd_locals varargs s = s with locals := (FEMPTY :mlstring |-> \u03b1 v) |++ varargs, 0 hypotheses). Lean keeps HOL's binder order varargs s, the mlstring keyed finite map and the FUPDATE_LIST semantics: FEMPTY |++ varargs is HolFiniteMapExact.empty.updateList varargs, so later duplicate bindings win as in HOL. The finite-map fields locals/globals/code/eshapes are the canonical HolFiniteMapExact translation (witness holFmapAsFiniteSupportWitness); word payloads use the type-indexed BitVec translation. The former function-backed updLocalsHOLExact was retired once its only user, the parity test, moved onto this finite-support carrier. Qualifier is representation-only."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",

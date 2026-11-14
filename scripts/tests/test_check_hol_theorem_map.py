@@ -653,8 +653,6 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             ("Flapjack/Pancake/Semantics/PanSem/IsValidValueExact.lean",
              "isValidValueHOLExact"): "is_valid_value_def",
             ("Flapjack/Pancake/Semantics/PanSem/LocalUpdatesExact.lean",
-             "updLocalsHOLExact"): "upd_locals_def",
-            ("Flapjack/Pancake/Semantics/PanSem/LocalUpdatesExact.lean",
              "resVarHOLExact"): "res_var_def",
             ("Flapjack/Pancake/Semantics/PanSem/DecCallExact.lean",
              "lookupCodeHOLExact"): "lookup_code_def",
@@ -669,6 +667,26 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             self.assertIn("flapjack-pxn.18.3.7.1.3.1.1.2.5", record["reviewer"])
             self.assertTrue(MAP["lean_definition_exists"](MAP["ROOT"], *key))
             self.assertNotIn(key, MAP["tagged_declarations"]())
+
+    def test_pansem_upd_locals_function_backed_mismatch_is_retired(self):
+        # The function-backed updLocalsHOLExact is gone; HOL upd_locals_def is
+        # mapped by the tagged exact-carrier updLocalsHOLFinite twin.
+        key = ("Flapjack/Pancake/Semantics/PanSem/LocalUpdatesExact.lean",
+               "updLocalsHOLExact")
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        self.assertNotIn(key, inventory)
+        exact_key = ("Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+                     "updLocalsHOLFinite")
+        exact = inventory[exact_key]
+        self.assertEqual(
+            (exact["hol_path"], exact["hol_name"]),
+            ("cakeml/pancake/semantics/panSemScript.sml", "upd_locals_def"),
+        )
+        self.assertNotEqual(exact["statement_status"], "documented_mismatch")
+        self.assertIn(exact_key, MAP["tagged_declarations"]())
 
     def test_pansem_mem_alt_ports_and_shmem_mismatches_are_classified(self):
         inventory = {
