@@ -119,8 +119,7 @@ theorem compileCommon_semantics {C F : Type} (ffi : HolFfiState F) (c c' : Confi
             (pureCc ClosAnnotate.compileIncSource cc))
         let nco := stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) mco
         have numberInput : ¬ containsAppSome c.maxApp source := by
-          cases enabled : c.doMti <;>
-            simpa [source, ClosMti.compile, enabled, ClosMti.introList_containsAppSome] using appSafe
+          exact fun bad => appSafe ((ClosMti.compile_containsAppSome c.doMti c.maxApp es).mp bad)
         have numberOracleSafe : ∀ n, (mco n).2.2 = [] ∧
             ¬ containsAppSome c.maxApp (mco n).2.1 := by
           intro n

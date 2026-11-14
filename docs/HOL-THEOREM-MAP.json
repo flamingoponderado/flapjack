@@ -1,6 +1,22 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "compile_EQ_NIL",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Syntactic.lean",
+    "lean_name": "compile_eq_nil",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_eq_nil_typed: the full enabled flag, max_app and closure-expression list yield the same unconditional empty-output equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "contains_App_SOME_compile",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Syntactic.lean",
+    "lean_name": "compile_containsAppSome",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared contains_app_some_compile_typed: the full enabled flag and closure-expression list have the same max_app on both applications, with the original unconditional predicate equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "hol_name": "compile_length",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/TotalView.lean",
     "lean_name": "compile_length",

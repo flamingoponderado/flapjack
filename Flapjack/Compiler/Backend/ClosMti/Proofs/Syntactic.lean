@@ -641,4 +641,16 @@ theorem introList_containsAppSome (maxApp : Nat) (program : List Exp) :
   | cons head tail ih =>
     simp only [introList_cons, containsAppSome, ← introExp_containsAppSome maxApp head, ih]
 
+/-- Optional multi-argument compilation preserves application safety. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "contains_App_SOME_compile"]
+theorem compile_containsAppSome (enabled : Bool) (maxApp : Nat) (program : List Exp) :
+    containsAppSome maxApp (compile enabled maxApp program) ↔ containsAppSome maxApp program := by
+  cases enabled <;> simp [compile, introList_containsAppSome]
+
+/-- Multi-argument compilation returns an empty list exactly for an empty input. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "compile_EQ_NIL"]
+theorem compile_eq_nil (enabled : Bool) (maxApp : Nat) (program : List Exp) :
+    compile enabled maxApp program = [] ↔ program = [] := by
+  cases enabled <;> simp [compile, introList]
+
 end Flapjack.Compiler.Backend.ClosMti

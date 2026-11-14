@@ -163,6 +163,8 @@ fun show label th =
   else raise Fail (label ^ " has hypotheses");
 val _ = show "every_hd_replay_typed" every_hd_replay;
 val _ = show "compile_length_typed" clos_mtiProofTheory.compile_length;
+val _ = show "compile_eq_nil_typed" clos_mtiProofTheory.compile_EQ_NIL;
+val _ = show "contains_app_some_compile_typed" clos_mtiProofTheory.contains_App_SOME_compile;
 val _ = show "mk_fns_def_typed" mk_Fns_def;
 val _ = show "collect_args_def_typed" collect_args_def;
 val _ = show "collect_args_imp_typed" collect_args_IMP;
