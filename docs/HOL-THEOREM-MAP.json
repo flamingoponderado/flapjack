@@ -139362,4 +139362,16 @@
     ],
     "reviewer": "Compared the full local HOL theorem and its typed, hypothesis-free proof replay: both direct and indirect lookup preserve the argument list and produce an inliner-related body. Source compiler state is cache paired with the target compiler state; the FFI type is shared. BVI refs use the canonical finite-support map with a same-module roundtrip."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "in_state_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/StateRelation.lean",
+    "lean_name": "InStateRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "reviewer": "Compared the complete exported HOL definition and inferred-type capture: all nine relation components, cache-paired source compiler state, shared target compiler and FFI types, sparse-tree domains and lookups, and expression relation are retained. BVI refs use the canonical finite-support map with a same-module roundtrip."
+  }
 ]

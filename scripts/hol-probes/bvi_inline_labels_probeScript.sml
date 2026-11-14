@@ -498,3 +498,6 @@ val in_state_rel_find_code_replay = Q.prove
   >> fs [bvlSemTheory.find_code_def, in_state_rel_def, AllCaseEqs()]
   >> metis_tac []);
 val _ = show "in_state_rel_find_code_replay_typed" in_state_rel_find_code_replay;
+
+(* Capture the exported original inliner state relation with inferred types. *)
+val _ = show "in_state_rel_def_typed" bvi_inlineProofTheory.in_state_rel_def;

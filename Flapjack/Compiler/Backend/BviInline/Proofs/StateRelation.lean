@@ -36,8 +36,9 @@ theorem inCoEqStateCo {Index C : Type}
     (oracle : Index → (Spt (Nat × Bvi.Exp) × C) × List (Nat × Nat × Bvi.Exp)) :
     inCo oracle = stateCo inlineAllSource oracle := rfl
 
-/-- Flapjack infrastructure: source and target states for BVI inlining. This
-source-shaped relation remains untagged pending HOL carrier review. -/
+/-- Source and target states for BVI inlining. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "in_state_rel_def"
+  (fmap_as_finite_support := [refs])]
 def InStateRel {C F : Type} (source : BviState (Spt (Nat × Bvi.Exp) × C) F) (target : BviState C F) : Prop :=
   target.refs = source.refs ∧ target.clock = source.clock ∧ target.global = source.global ∧
   target.ffi = source.ffi ∧ target.compileOracle = inCo source.compileOracle ∧
