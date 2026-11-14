@@ -442,3 +442,21 @@ val do_app_state_swap_Rerr_statement =
                  global := s.global; ffi := s.ffi |>) = Rerr error``;
 val _ = (print "do_app_state_swap_Rerr_statement_typed=";
   print_term do_app_state_swap_Rerr_statement; print "\n");
+
+(* Capture this local theorem statement with inferred HOL types. *)
+val do_app_state_swap_Rval_statement =
+  ``∀op args (s:('c,'ffi) bviSem$state)
+      (source_state:('c,'ffi) bviSem$state)
+      (t:('d,'ffi) bviSem$state) value.
+    op ≠ Install ∧
+    do_app op args s = Rval (value,source_state) ∧
+    domain s.code ⊆ domain t.code ⇒
+    do_app op args
+      (t with <| refs := s.refs; clock := s.clock;
+                 global := s.global; ffi := s.ffi |>) =
+    Rval
+      (value,
+       t with <| refs := source_state.refs; clock := source_state.clock;
+                  global := source_state.global; ffi := source_state.ffi |>)``;
+val _ = (print "do_app_state_swap_Rval_statement_typed=";
+  print_term do_app_state_swap_Rval_statement; print "\n");

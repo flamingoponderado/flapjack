@@ -104,4 +104,89 @@ theorem doAppStateSwapRerr {C D F : Type} (op : ClosLang.Op) (args : List Value)
       exact isLabel ⟨n, eq⟩
     exact nonLabelErrorSwap op args source target error notInstall notLabel run domain
 
+/-- Non-label success transfer, used to prove the source state-swap theorem. -/
+private theorem nonLabelSuccessSwap {C D F : Type} (op : ClosLang.Op) (args : List Value)
+    (source next : BviState C F) (target : BviState D F) (value : Value)
+    (notInstall : op ≠ .install) (notLabel : ∀ n, op ≠ .label n)
+    (run : BviSem.doApp op args source = .val (value, next))
+    (domain : ∀ key, sptDomain source.code key → sptDomain target.code key) :
+    BviSem.doApp op args (runtimeFrame source target) = .val (value, runtimeFrame next target) := by
+  have frame := doAppAux_frame op args source target (Or.inr notLabel)
+  have fallbackSource : BviSem.doApp op args source = doAppFallback op args source := by
+    cases op <;> simp_all [BviSem.doApp]
+  have fallbackTarget : BviSem.doApp op args (runtimeFrame source target) =
+      doAppFallback op args (runtimeFrame source target) := by
+    cases op <;> simp_all [BviSem.doApp]
+  rw [fallbackSource] at run
+  rw [fallbackTarget]
+  unfold doAppFallback at run ⊢
+  rw [frame]
+  cases aux : doAppAux op args source with
+  | none => simp_all
+  | some result =>
+    cases result with
+    | some pair => simp_all
+    | none =>
+      simp only [aux, Option.map_some, Option.map_none] at run ⊢
+      have notGlobal : ∀ operation, op ≠ .globOp operation := by
+        intro operation eq
+        subst op
+        exact doAppAux_delegates_not_global operation args source aux
+      rw [toBvl_runtimeFrame]
+      cases original : BvlSem.doApp op args (toBvl source) with
+      | err err => cases err <;> simp [original] at run
+      | val pair =>
+        obtain ⟨out, final⟩ := pair
+        simp only [original, SemanticPrimitivesHOL.Result.val.injEq, Prod.mk.injEq] at run
+        obtain ⟨rfl, rfl⟩ := run
+        have domain' : ∀ key, sptDomain (toBvl source).code key →
+              sptDomain (toBvl (runtimeFrame source target)).code key := by
+          intro key present
+          simpa [toBvl_domain, runtimeFrame] using domain key (by simpa [toBvl_domain] using present)
+        have swapped := BvlProps.doAppFallbackRvalSwap op args (toBvl source) final out
+          (toBvl (runtimeFrame source target)) notGlobal ⟨original, notInstall, domain'⟩
+        rw [swapped]
+        simp only [fromBvl_runtimeFrame]
+
+
+/-- A non-install success is preserved by swapping runtime fields when the
+source code domain is contained in the target domain. The dispatcher inherits
+the real-model assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "do_app_state_swap_Rval"
+  (fmap_as_finite_support := [refs])]
+theorem doAppStateSwapRval {C D F : Type} (op : ClosLang.Op) (args : List Value)
+    (source next : BviState C F) (target : BviState D F) (value : Value)
+    (premises : op ≠ .install ∧ BviSem.doApp op args source = .val (value, next) ∧
+      (∀ key, sptDomain source.code key → sptDomain target.code key)) :
+    BviSem.doApp op args { target with
+      refs := source.refs
+      clock := source.clock
+      global := source.global
+      ffi := source.ffi } = .val (value, { target with
+        refs := next.refs
+        clock := next.clock
+        global := next.global
+        ffi := next.ffi }) := by
+  change BviSem.doApp op args (runtimeFrame source target) = .val (value, runtimeFrame next target)
+  obtain ⟨notInstall, run, domain⟩ := premises
+  by_cases isLabel : ∃ n, op = .label n
+  · obtain ⟨name, rfl⟩ := isLabel
+    cases args with
+    | cons v rest => simp [BviSem.doApp, doAppFallback, doAppAux] at run
+    | nil =>
+      cases sourceLookup : sptLookup name source.code with
+      | none => simp [BviSem.doApp, doAppFallback, doAppAux, sourceLookup] at run
+      | some entry =>
+        have present := domain name (by simp [sptDomain, sourceLookup])
+        cases targetLookup : sptLookup name target.code with
+        | none => simp [sptDomain, targetLookup] at present
+        | some result =>
+          simp [BviSem.doApp, doAppFallback, doAppAux, sourceLookup] at run
+          obtain ⟨rfl, rfl⟩ := run
+          simp [BviSem.doApp, doAppFallback, doAppAux, runtimeFrame, targetLookup]
+  · have notLabel : ∀ n, op ≠ .label n := by
+      intro n eq
+      exact isLabel ⟨n, eq⟩
+    exact nonLabelSuccessSwap op args source next target value notInstall notLabel run domain
+
 end Flapjack.Compiler.Backend.BviInline

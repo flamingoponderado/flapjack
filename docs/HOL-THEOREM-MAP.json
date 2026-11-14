@@ -139315,4 +139315,17 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the full HOL local theorem and inferred-type statement capture (original proof not replayed): source and target compiler state types are independent and share the FFI type; non-install source errors transfer under the original reverse-domain inclusion or non-type-error disjunction. The BVI refs field uses the canonical finite-support map with a same-module roundtrip. Primitive application inherits reals_as_rational_cuts (SOUNDNESS item 8)."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "do_app_state_swap_Rval",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/StateSwap.lean",
+    "lean_name": "doAppStateSwapRval",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the full HOL local theorem and inferred-type statement capture (original proof not replayed): source and target compiler state types are independent and share the FFI type; a non-install success transfers when the source code domain is contained in the target domain, preserving the value and copying the resulting runtime fields. BVI refs use the canonical finite-support map with a same-module roundtrip. Primitive application inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  }
 ]
