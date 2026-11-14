@@ -358,6 +358,16 @@
     "reviewer": "Independent typed HOL source review 2026-11-13: the tuple input and result, independent compiler and FFI carriers, all twelve original clamped evaluation equations, their recursive guards, errors, and clock transitions match. The evaluator uses the reviewed dispatcher and canonical finite-support refs carrier; its source-shaped interface delegates to the curried recursive implementation. The fresh HOL probe replays the full clamped equations and captures the typed induction theorem. Inherits reals_as_rational_cuts through primitive dispatch, as documented in SOUNDNESS item 8."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_exps_correct",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileCorrect.lean",
+    "lean_name": "compileExpsCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": ["State.refs", "BviState.refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the exported typed original in bvl_to_bvi_value_rel_probe.out: all binders, the source evaluation and compilation equations, non-type-error condition, state and environment validity, installed auxiliary code, handler invariant and target global condition are retained. The target evaluation and result map, final state relation, unchanged adjusted environment and agreement on the entire source reference domain are existentially established. HOL compile_exps_sing equates compile_exps_list with compile_exps, represented by compileListSource. The two canonical refs fields have local roundtrip witnesses; code retains Spt and auxiliary code retains AppList. Compiler and FFI types are independent. Inherits reals_as_rational_cuts through evaluation, as documented in SOUNDNESS item 8."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
     "hol_name": "evaluate_clock",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/EvaluateClockFull.lean",

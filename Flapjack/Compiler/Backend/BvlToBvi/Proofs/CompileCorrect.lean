@@ -12,6 +12,20 @@ public import Flapjack.Misc.ClockWeightInduction
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value expWeight expsWeight)
 
+namespace CompileCorrectCarrier
+/-- Canonical BVL reference-map state roundtrip. -/
+theorem holFmapAsFiniteSupportRelationWitness_State {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+
+/-- Canonical BVI reference-map state roundtrip. -/
+theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end CompileCorrectCarrier
+
 /-- The simulation precondition rules out expressions that violate the
 source handler-shape invariant. -/
 theorem simulation_invalidHandler {C F : Type} (xs : List Bvl.Exp) (env : List Value)
@@ -22,8 +36,8 @@ theorem simulation_invalidHandler {C F : Type} (xs : List Bvl.Exp) (env : List V
 
 /-- BVL evaluation is simulated by the BVI code produced for the same
 expression list. The proof uses the source clock for dynamically selected
-function and thunk bodies, and expression weight for structural cases.
-Untagged pending BVI evaluator and dispatcher correspondence review. -/
+function and thunk bodies, and expression weight for structural cases. This
+factored induction supports the complete source theorem below. -/
 theorem simulation_all {C F : Type} (xs : List Bvl.Exp) (env : List Value)
     (source : BvlSem.State (Nat × C) F) : simulation xs env source := by
   refine clockWeightInduction (α := List Bvl.Exp) (σ := BvlSem.State (Nat × C) F) (·.clock)
@@ -164,20 +178,19 @@ theorem simulation_all {C F : Type} (xs : List Bvl.Exp) (env : List Value)
             simp [BvlHandle.Proofs.handleOk]
 
 /-- BVL-to-BVI expression compilation simulates source evaluation while
-preserving the state relation and the existing relocation map. This has the
-source theorem's hypotheses and conclusion, but remains untagged until the
-BVI evaluator and dispatcher have been reviewed against their HOL originals. -/
+preserving the state relation and the existing relocation map. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_exps_correct"
+  (fmap_as_finite_support_relation := [State.refs, BviState.refs])]
 theorem compileExpsCorrect {C F : Type} (xs : List Bvl.Exp) (env : List Value)
-    (source next : BvlSem.State (Nat × C) F) (n n2 : Nat)
-    (res : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value) (target : BviSem.BviState C F)
+    (source : BvlSem.State (Nat × C) F) (n : Nat)
+    (res : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
+    (next : BvlSem.State (Nat × C) F) (target : BviSem.BviState C F) (n2 : Nat)
     (ys : List Bvi.Exp) (aux : AppList (Nat × Nat × Bvi.Exp)) (relocate : Nat → Nat)
-    (run : BvlSem.evaluate xs env source = (res, next))
-    (notTypeError : res ≠ .err (.abort .typeError))
-    (compiled : compileListSource n xs = (ys, aux, n2))
-    (related : stateRel relocate source target)
-    (sourceOk : stateOk source) (envOk : bvOkList source.refs env)
-    (installed : auxCodeInstalled (appListAppend aux) target.code)
-    (handlers : BvlHandle.Proofs.handleOk xs) (global : target.global.isSome = true) :
+    (premises : BvlSem.evaluate xs env source = (res, next) ∧
+      res ≠ .err (.abort .typeError) ∧ compileListSource n xs = (ys, aux, n2) ∧
+      stateRel relocate source target ∧ stateOk source ∧ bvOkList source.refs env ∧
+      auxCodeInstalled (appListAppend aux) target.code ∧
+      BvlHandle.Proofs.handleOk xs ∧ target.global.isSome = true) :
     ∃ targetNext newRelocate clock,
       BviSem.evaluate ys (env.map (adjustBv newRelocate)) (BviProps.incClock clock target) =
         (Flapjack.SemanticPrimitivesProps.mapResult (List.map (adjustBv newRelocate))
@@ -186,6 +199,7 @@ theorem compileExpsCorrect {C F : Type} (xs : List Bvl.Exp) (env : List Value)
       env.map (adjustBv relocate) = env.map (adjustBv newRelocate) ∧
       ∀ key, source.refs.lookup key ≠ none → relocate key = newRelocate key :=
   by
+    obtain ⟨run, notTypeError, compiled, related, sourceOk, envOk, installed, handlers, global⟩ := premises
     simpa only [mapSimulationResult_eq_mapResult] using
       simulation_all xs env source n res next target n2 ys aux relocate run notTypeError compiled related
         sourceOk envOk installed handlers global

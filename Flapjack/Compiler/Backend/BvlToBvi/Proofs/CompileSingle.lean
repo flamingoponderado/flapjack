@@ -10,7 +10,7 @@ open Flapjack.Compiler.Backend.BvlSem (Value)
 open Flapjack.SemanticPrimitivesHOL (Result)
 
 /-- Calling the compiled entry point simulates the corresponding BVL call.
-The result remains untagged pending BVI evaluator and dispatcher review. -/
+This follows from the complete expression compilation simulation. -/
 theorem compileSingleEvaluate {C F : Type} (start : Nat)
     (source next : BvlSem.State (Nat × C) F) (target : BviSem.BviState C F)
     (res : Result (List Value) Value) (relocate : Nat → Nat)
@@ -25,10 +25,10 @@ theorem compileSingleEvaluate {C F : Type} (start : Nat)
       ([.call 0 (some (bvlNumStubs + bvlToBviNamespaces * start)) [] none], .nil, 0) := by
     simp [compileListSource, compileSingSource, smartAppend]
   obtain ⟨targetNext, newRelocate, clock, targetRun, finalRel, _, _⟩ :=
-    compileExpsCorrect [.call 0 (some start) []] [] source next 0 0 res target
-      [.call 0 (some (bvlNumStubs + bvlToBviNamespaces * start)) [] none] .nil relocate run notTypeError
-      compiled related sourceOk (by simp [bvOkList]) (by simp [appListAppend, appendAux, auxCodeInstalled])
-      (by simp [BvlHandle.Proofs.handleOk]) global
+    compileExpsCorrect [.call 0 (some start) []] [] source 0 res next target 0
+      [.call 0 (some (bvlNumStubs + bvlToBviNamespaces * start)) [] none] .nil relocate
+      ⟨run, notTypeError, compiled, related, sourceOk, by simp [bvOkList],
+        by simp [appListAppend, appendAux, auxCodeInstalled], by simp [BvlHandle.Proofs.handleOk], global⟩
   exact ⟨clock, newRelocate, targetNext, by simpa only [mapSimulationResult_eq_mapResult, List.map_nil] using targetRun, finalRel⟩
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs
