@@ -359,6 +359,16 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "evaluate_REPLICATE_0",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/InitGlobalsStub.lean",
+    "lean_name": "evaluateReplicateZero",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed replay of the original local statement and proof in bvl_to_bvi_value_rel_probe.out: for any count, environment and BVI state, evaluation of repeated zero-constant expressions returns the same number of zero values and the unchanged state, with no clock or success premise. The BVI state uses canonical finite-support refs with a same-module roundtrip witness; compiler configuration and FFI payload types are independent. Inherits reals_as_rational_cuts through evaluation, as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "bvi_stubs_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/InitGlobalsStub.lean",
     "lean_name": "bviStubs_evaluate",

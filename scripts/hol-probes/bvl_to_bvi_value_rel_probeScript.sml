@@ -112,6 +112,18 @@ val _ = show "compile_single_evaluate=" compile_single_evaluate;
 val _ = show "compile_prog_evaluate=" compile_prog_evaluate;
 val _ = show "compile_list_distinct_locs=" compile_list_distinct_locs;
 val _ = show "bvi_stubs_evaluate=" bvi_stubs_evaluate;
+local
+  open listTheory bviSemTheory bviPropsTheory
+in
+  val evaluate_REPLICATE_0_replay = Q.prove (
+    `!n. evaluate (REPLICATE n (Op (IntOp (Const 0)) []),env,s) =
+          (Rval (REPLICATE n (Number 0)),s)`,
+    Induct \\ fs [evaluate_def,REPLICATE]
+    \\ once_rewrite_tac [evaluate_CONS]
+    \\ fs [evaluate_def,REPLICATE,do_app_def,do_app_aux_def]
+    \\ fs [EVAL ``small_enough_int 0``]);
+  val _ = show "evaluate_REPLICATE_0_replay=" evaluate_REPLICATE_0_replay;
+end;
 val bv_ok_IMP_adjust_bv_eq_replay = prove (``!b2 a1 b3.
   bv_ok refs a1 /\ (!a. a IN FDOM refs ==> b2 a = b3 a) ==>
   adjust_bv b2 a1 = adjust_bv b3 a1``,

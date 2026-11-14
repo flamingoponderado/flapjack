@@ -16,6 +16,21 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   BviSem.holFmapAsFiniteSupportWitness
 end InitGlobalsCarrier
 
+/-- Repeated zero constants evaluate to repeated zeros without changing state. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "evaluate_REPLICATE_0"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateReplicateZero {C F : Type} (n : Nat) (env : List Value) (state : BviSem.BviState C F) :
+    BviSem.evaluate (List.replicate n (.op (.intOp (.const 0)) [])) env state =
+      (.val (List.replicate n (.number 0)), state) := by
+  apply evaluate_readOnly
+  induction n with
+  | zero => exact .nil
+  | succ n ih =>
+    simp only [List.replicate_succ]
+    constructor
+    · exact evaluate_smallConst 0 env state (by decide)
+    · exact ih
+
 /-- Initial global-array capacity, including the source's lower and upper
 clamps. -/
 def initGlobalsCapacity (n : Nat) : Nat := min (max n 1) initGlobalsMax
