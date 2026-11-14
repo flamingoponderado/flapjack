@@ -9,6 +9,50 @@ val _ = set_trace "BasicProvers.var_eq_old" 1;
 fun bring_fwd_ctors th ty = map ((fn s => Parse.bring_to_front_overload s {Name = s, Thy = th}) o term_to_string) (TypeBase.constructors_of ty);
 val _ = bring_fwd_ctors "closLang" ``:closLang$exp``;
 
+(* Literal replays of clos_mtiProofScript.sml:282-319 and 323-335. *)
+Theorem mk_apps_err_1_replay:
+    ∀ts other env1 s1 e3.
+      evaluate (other,env1,s1) = (Rerr e2,s2) /\
+      LENGTH other = LENGTH ts ==>
+      evaluate ([mk_Apps e3 (ZIP (ts,other))],env1,s1) = (Rerr e2,s2)
+Proof
+  Induct
+  \\ fs [evaluate_def]
+  \\ Cases_on `other` \\ fs [ZIP,mk_Apps_def]
+  \\ once_rewrite_tac [evaluate_CONS]
+  \\ rw [] \\ fs [case_eq_thms,pair_case_eq]
+  \\ rveq \\ fs [] \\ fs [evaluate_def]
+QED
+
+Theorem mk_apps_err_2_replay:
+    ∀ts other env1 s1 e3 vs.
+      evaluate ([e3],env1,s2) = (Rerr e2,s2') /\
+      evaluate (other,env1,s1) = (Rval vs,s2) /\
+      LENGTH other = LENGTH ts ==>
+      evaluate ([mk_Apps e3 (ZIP (ts,other))],env1,s1) = (Rerr e2,s2')
+Proof
+  Induct
+  \\ fs [evaluate_def,mk_Apps_def]
+  \\ Cases_on `other` \\ fs [ZIP,mk_Apps_def]
+  \\ once_rewrite_tac [evaluate_CONS]
+  \\ rw [] \\ fs [case_eq_thms,pair_case_eq]
+  \\ rveq \\ fs [] \\ fs [evaluate_def]
+  \\ imp_res_tac evaluate_SING \\ rveq \\ fs []
+QED
+
+Theorem evaluate_mk_apps_err_replay:
+    !other ts env1 s1 vs.
+      evaluate (other,env1,s1) = (Rval vs,s3) /\
+      evaluate ([e],env1,s3) = (Rerr e3,s2') /\
+      LENGTH other = LENGTH ts ==>
+      evaluate ([mk_Apps e (ZIP (ts,other))],env1,s1) = (Rerr e3,s2')
+Proof
+  Induct \\ Cases_on `ts` \\ fs [mk_Apps_def]
+  \\ fs [evaluate_def]
+  \\ simp [Once evaluate_CONS] \\ rw []
+  \\ fs [case_eq_thms,pair_case_eq] \\ rveq
+QED
+
 (* Literal replay of clos_mtiProofScript.sml:344-367. *)
 Theorem evaluate_mk_apps_ok_replay:
   !other ts env1 s1 vs.
@@ -229,6 +273,9 @@ fun show_thm label th =
 val _ = show_thm "do_install_replay_typed=" do_install_replay;
 val _ = show_thm "evaluate_apps_snoc_replay_typed=" evaluate_apps_snoc_replay;
 val _ = show_thm "evaluate_mk_apps_ok_replay_typed=" evaluate_mk_apps_ok_replay;
+val _ = show_thm "mk_apps_err_1_replay_typed=" mk_apps_err_1_replay;
+val _ = show_thm "mk_apps_err_2_replay_typed=" mk_apps_err_2_replay;
+val _ = show_thm "evaluate_mk_apps_err_replay_typed=" evaluate_mk_apps_err_replay;
 val _ = show_thm "dest_closure_none_apps_replay_typed=" dest_closure_none_apps_replay;
 val _ = show_thm "evaluate_apps_long_replay_typed=" evaluate_apps_long_replay;
 val _ = show_thm "evaluate_apps_timeout_replay_typed=" evaluate_apps_timeout_replay;

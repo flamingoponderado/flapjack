@@ -362,14 +362,16 @@ theorem evaluateApps_nestedFns_long {C F : Type} (args : List ClosSem.Value)
       simp [show 1 + (names.length + 1) = Nat.succ (names.length + 1) by omega,
         List.append_assoc]
 
-/-- Reconstructed applications propagate an error from their argument list.
-This is a Lean-side evaluator property; HOL correspondence is still pending. -/
+/-- Reconstructed applications propagate an error from their argument list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "mk_Apps_err_1"
+  (fmap_as_finite_support := [refs, code])]
 theorem mkApps_argument_error {C F : Type} (traces : List BackendCommon.Tra)
-    (args : List ClosLang.Exp) (env : List ClosSem.Value) (state next : ClosSem.State C F)
-    (error : ErrorResult ClosSem.Value) (function : ClosLang.Exp)
-    (run : ClosSem.evaluate args env state = (.err error, next))
-    (lengthEq : args.length = traces.length) :
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (function : ClosLang.Exp) (error : ErrorResult ClosSem.Value) (next : ClosSem.State C F)
+    (premises : ClosSem.evaluate args env state = (.err error, next) ∧
+      args.length = traces.length) :
     ClosSem.evaluate [mkApps function (traces.zip args)] env state = (.err error, next) := by
+  obtain ⟨run, lengthEq⟩ := premises
   induction traces generalizing args state with
   | nil =>
     cases args with
@@ -404,13 +406,16 @@ theorem mkApps_argument_error {C F : Type} (traces : List BackendCommon.Tra)
 
 /-- After the argument list succeeds, an error in the reconstructed head
 function propagates through all the unary applications. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "mk_Apps_err_2"
+  (fmap_as_finite_support := [refs, code])]
 theorem mkApps_function_error {C F : Type} (traces : List BackendCommon.Tra)
-    (args : List ClosLang.Exp) (env : List ClosSem.Value) (state middle next : ClosSem.State C F)
-    (values : List ClosSem.Value) (error : ErrorResult ClosSem.Value) (function : ClosLang.Exp)
-    (functionRun : ClosSem.evaluate [function] env middle = (.err error, next))
-    (argsRun : ClosSem.evaluate args env state = (.val values, middle))
-    (lengthEq : args.length = traces.length) :
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (function : ClosLang.Exp) (values : List ClosSem.Value) (middle : ClosSem.State C F)
+    (error : ErrorResult ClosSem.Value) (next : ClosSem.State C F)
+    (premises : ClosSem.evaluate [function] env middle = (.err error, next) ∧
+      ClosSem.evaluate args env state = (.val values, middle) ∧ args.length = traces.length) :
     ClosSem.evaluate [mkApps function (traces.zip args)] env state = (.err error, next) := by
+  obtain ⟨functionRun, argsRun, lengthEq⟩ := premises
   induction traces generalizing args state values with
   | nil =>
     cases args with
@@ -445,6 +450,19 @@ theorem mkApps_function_error {C F : Type} (traces : List BackendCommon.Tra)
               have nested := ih args afterFirst tailValues tail lengths
               simpa [mkApps] using unaryApp_function_error trace (mkApps function (traces.zip args)) arg
                 env state afterFirst next value error first nested
+
+/-- Argument success followed by a head error propagates through nested applications. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "evaluate_mk_Apps_err"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateMkApps_error {C F : Type} (args : List ClosLang.Exp) (traces : List BackendCommon.Tra)
+    (env : List ClosSem.Value) (state : ClosSem.State C F) (values : List ClosSem.Value)
+    (function : ClosLang.Exp) (middle : ClosSem.State C F) (error : ErrorResult ClosSem.Value)
+    (next : ClosSem.State C F)
+    (premises : ClosSem.evaluate args env state = (.val values, middle) ∧
+      ClosSem.evaluate [function] env middle = (.err error, next) ∧ args.length = traces.length) :
+    ClosSem.evaluate [mkApps function (traces.zip args)] env state = (.err error, next) :=
+  mkApps_function_error traces args env state function values middle error next
+    ⟨premises.2.1, premises.1, premises.2.2⟩
 
 /-- Successful head and argument evaluation agrees with applying the
 collected values through the corresponding nested unary applications. -/

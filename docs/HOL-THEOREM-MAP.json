@@ -1,6 +1,36 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "mk_Apps_err_1",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Applications.lean",
+    "lean_name": "mkApps_argument_error",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared original local proof and mk_apps_err_1_replay_typed: arbitrary traces, arguments, environment, states and error, failed argument evaluation and length premises, and unchanged error result agree. Closure state refs/code use canonical finite maps with a local roundtrip witness; evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "mk_Apps_err_2",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Applications.lean",
+    "lean_name": "mkApps_function_error",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared original local proof and mk_apps_err_2_replay_typed: function-error, argument-success and length premises in source order, independent states, and error result agree. Closure state refs/code use canonical finite maps with a local roundtrip witness; evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "evaluate_mk_Apps_err",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Applications.lean",
+    "lean_name": "evaluateMkApps_error",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared original local proof and evaluate_mk_apps_err_replay_typed: argument-success, function-error and length premises in source order, independent states, and error result agree. Closure state refs/code use canonical finite maps with a local roundtrip witness; evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "hol_name": "evaluate_mk_Apps_ok",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Applications.lean",
     "lean_name": "mkApps_success",

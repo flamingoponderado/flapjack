@@ -84,8 +84,8 @@ theorem evaluate_collected_app_related {C F : Type} (source target : State C F)
       cases sourceArgsResult with
       | val values => simp [resultRel] at argsRelated
       | err sourceError =>
-        have sourceRun := mkApps_argument_error traces sourceArgs sourceEnv source sourceMiddle
-          sourceError sourceHead sourceArgsRun lengthEq
+        have sourceRun := mkApps_argument_error traces sourceArgs sourceEnv source sourceHead
+          sourceError sourceMiddle ⟨sourceArgsRun, lengthEq⟩
         rw [sourceRun, evaluate, fixClock_evaluate, targetArgsRun]
         simp [nonempty, argsRelated, middleStates]
     | val targetValues =>
@@ -111,8 +111,8 @@ theorem evaluate_collected_app_related {C F : Type} (source target : State C F)
             cases sourceHeadResult with
             | val values => simp [resultRel] at headRelated
             | err sourceError =>
-              have sourceRun := mkApps_function_error traces sourceArgs sourceEnv source sourceMiddle
-                sourceLast sourceValues sourceError sourceHead sourceHeadRun sourceArgsRun lengthEq
+              have sourceRun := mkApps_function_error traces sourceArgs sourceEnv source sourceHead
+                sourceValues sourceMiddle sourceError sourceLast ⟨sourceHeadRun, sourceArgsRun, lengthEq⟩
               rw [sourceRun, evaluate, fixClock_evaluate, targetArgsRun]
               simp only [targetArgsNonempty, Bool.false_eq_true, ↓reduceIte]
               rw [fixClock_evaluate, targetHeadRun]
