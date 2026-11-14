@@ -539,3 +539,6 @@ val _ = show "exp_rel_ind_typed" bvi_inlineProofTheory.exp_rel_ind;
 
 (* Capture the exported original cache-inclusion theorem with inferred types. *)
 val _ = show "inline_all_cache_subspt_typed" bvi_inlineProofTheory.inline_all_cache_subspt;
+
+(* Capture the exported original fresh-insertion inclusion theorem. *)
+val _ = show "subspt_insert_union_fresh_typed" bvi_inlineProofTheory.subspt_insert_union_fresh;

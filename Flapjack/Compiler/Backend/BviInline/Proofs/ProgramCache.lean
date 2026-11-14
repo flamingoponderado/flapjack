@@ -65,6 +65,28 @@ private theorem inlineAllSource_lookup_new (program : List (Nat × Nat × Bvi.Ex
       have tail := ih cache' distinct'.2 fresh' found
       simpa [sptAListLookup, same] using tail
 
+/-- Inserting a fresh key preserves inclusion in the union of the old tree
+and the singleton entry. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "subspt_insert_union_fresh"]
+theorem subsptInsertUnionFresh {α : Type} (cache old : Spt α) (name : Nat) (value : α)
+    (premises : sptSubspt cache old ∧ ¬ sptDomain old name) :
+    sptSubspt (sptInsert name value cache) (sptUnion old (sptInsert name value .ln)) := by
+  obtain ⟨subset, fresh⟩ := premises
+  rw [sptSubsptLookup] at subset ⊢
+  intro key item found
+  by_cases same : key = name
+  · subst key
+    rw [sptLookup_sptInsert_same] at found
+    cases found
+    have absent : sptLookup name old = none := by
+      cases lookup : sptLookup name old with
+      | none => rfl
+      | some entry => exact False.elim (fresh (by simp [sptDomain, lookup]))
+    simp [sptLookup_sptUnion, absent, sptLookup_sptInsert_same]
+  · rw [sptLookup_sptInsert_ne name key value cache same] at found
+    have oldFound := subset key item found
+    simp [sptLookup_sptUnion, oldFound]
+
 /-- The final inlining cache is contained in the old code plus the inlined
 output when the original program has distinct, fresh labels. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "inline_all_cache_subspt"]

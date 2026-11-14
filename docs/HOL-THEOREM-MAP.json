@@ -139475,4 +139475,13 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: the explicit inliner output equation, initial cache inclusion, disjoint program labels, distinctness, and final cache inclusion in the old-code/output union are retained."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "subspt_insert_union_fresh",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/ProgramCache.lean",
+    "lean_name": "subsptInsertUnionFresh",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: for arbitrary sparse-tree payloads, the original inclusion and fresh-key premises imply inclusion after insertion in the left-biased union with the singleton tree."
+  }
 ]
