@@ -75,8 +75,10 @@ theorem simpleExpConsEl (trace : BackendCommon.Tra) (tag : Nat)
     rw [@Flapjack.holEl_eq_getElem ClosLang.Exp ⟨.var .none 0⟩ i xs h.2]
     exact children _ (List.getElem_mem h.2)
 
-/-- Evaluation of a constructed boolean. This is proof infrastructure. -/
-private theorem evaluateMkBool {C F : Type} (b : Bool) (env : List Value) (s : State C F) :
+/-- Evaluating a constructed boolean returns its value without changing the state. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "evaluate_MakeBool"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateMakeBool {C F : Type} (b : Bool) (env : List Value) (s : State C F) :
     evaluate [mkBool b] env s = (.val [boolValue b], s) := by
   cases b <;> rw [mkBool, evaluate_ordinaryOp_eq _ _ _ _ _ (by simp) (by simp)] <;>
     simp [evaluate, doApp, applyBlock, boolValue, BackendCommon.falseTag, BackendCommon.trueTag]
@@ -93,7 +95,7 @@ theorem evaluateConjListFalse {C F : Type} (x : ClosLang.Exp) (xs : List ClosLan
   | cons y ys =>
     simp only [conjList]
     rw [evaluate, fixClock_evaluate, h]
-    simpa [asBool, boolValue, BackendCommon.falseTag] using evaluateMkBool false env s
+    simpa [asBool, boolValue, BackendCommon.falseTag] using evaluateMakeBool false env s
 
 /-- A true head leaves evaluation to the remaining conjunction. -/
 @[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "evaluate_ConjList_T"
@@ -105,7 +107,7 @@ theorem evaluateConjListTrue {C F : Type} (x : ClosLang.Exp) (xs : List ClosLang
     evaluate [conjList (x :: xs)] env s = res := by
   cases xs with
   | nil =>
-    have : evaluate [conjList []] env s = (.val [boolValue true], s) := evaluateMkBool true env s
+    have : evaluate [conjList []] env s = (.val [boolValue true], s) := evaluateMakeBool true env s
     simp only [conjList] at ⊢
     rw [h.2.symm, this, h.1]
   | cons y ys =>
@@ -147,7 +149,7 @@ private theorem conjunctionHead {C F : Type} (x y : ClosLang.Exp) (xs : List Clo
         subst v
         cases flag with
         | false =>
-          simp [asBool, boolValue, BackendCommon.falseTag, evaluateMkBool] at run
+          simp [asBool, boolValue, BackendCommon.falseTag, evaluateMakeBool] at run
           cases b with
           | false => exact Or.inl ⟨rfl, rfl⟩
           | true => simp [BackendCommon.trueTag] at run
@@ -166,7 +168,7 @@ private theorem conjunctionAppend {C F : Type} (xs ys : List ClosLang.Exp)
   | nil =>
     cases b with
     | false =>
-      have trueRun := evaluateMkBool true env s
+      have trueRun := evaluateMakeBool true env s
       simp only [conjList] at h
       rw [trueRun] at h
       simp [boolValue, BackendCommon.trueTag, BackendCommon.falseTag] at h

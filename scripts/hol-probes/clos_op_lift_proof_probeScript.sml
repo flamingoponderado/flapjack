@@ -6,6 +6,11 @@ val _ = Globals.show_types := true;
 fun show label th = if null (hyp th) then
   (print label; print "="; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
+open closSemTheory clos_opTheory;
+val evaluate_make_bool_replay = Q.prove (
+  `∀b. evaluate ([MakeBool b],vs,s) = (Rval [Boolv b],s)`,
+  Cases \\ EVAL_TAC);
+val _ = show "evaluate_make_bool_replay_typed" evaluate_make_bool_replay;
 val _ = show "dont_lift_thm_typed" clos_opProofTheory.dont_lift_thm;
 val _ = show "dont_lift_pure_typed" clos_opProofTheory.dont_lift_pure;
 val _ = show "lift_acc_typed" clos_opProofTheory.lift_exps_acc;

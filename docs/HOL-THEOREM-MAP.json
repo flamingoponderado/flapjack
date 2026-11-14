@@ -19744,6 +19744,16 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+  "hol_name": "evaluate_MakeBool",
+  "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/PureEvaluate.lean",
+  "lean_name": "evaluateMakeBool",
+  "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs", "code"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared evaluate_make_bool_replay_typed from the original local HOL proof: either Boolean evaluates to the corresponding singleton Boolean value with the entire state unchanged, for arbitrary environment and independent compiler and FFI carriers. The canonical refs and code fields use the local roundtrip witness; the evaluator inherits the reals_as_rational_cuts assumption. Source comparison and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
   "hol_name": "evaluate_ConjList_F",
   "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/PureEvaluate.lean",
   "lean_name": "evaluateConjListFalse",
