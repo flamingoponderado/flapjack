@@ -10422,3 +10422,14 @@ splice-expanding helper. The script declares no `[local]` Overload.
 Regenerate with
 `CAKEML=<cakeml tree> HOL_PROBE_ONLY=loop_live_proof_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`set_sep_typed_probe.out` (11 rows) captures the typed statements of the
+reviewed `set_sepScript.sml` rows that earlier probes did not cover (task 184).
+`set_sepTheory` is already built in the pinned HOL installation
+(`examples/machine-code/hoare-triple/.hol/objs`); all eleven declarations,
+including the `new_binder_definition` `SEP_EXISTS`, are exported and read from
+the theory DB. The repository's `hol4/` mirror only carries
+`examples/pl-semantics`, so this probe takes its source text from `$HOL4`
+(falling back to the repository root). Regenerate with
+`CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=set_sep_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.

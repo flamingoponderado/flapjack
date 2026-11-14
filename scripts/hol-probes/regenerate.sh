@@ -11787,3 +11787,9 @@ run_probe loop_live_proof_typed_probeScript.sml loop_live_proof_typed_probe.out 
   mark_correct_typed optimise_correct_typed \
   "$cake_dir/pancake/proofs/loop_liveProofScript.sml" \
   "$cake_dir/pancake/proofs"
+run_probe set_sep_typed_probeScript.sml set_sep_typed_probe.out \
+  one_def_typed emp_def_typed cond_def_typed SEP_EXISTS_typed SPLIT_def_typed \
+  STAR_def_typed STAR_ASSOC_typed STAR_COMM_typed fun2set_def_typed \
+  fun2set_thm_typed write_fun2set_typed \
+  "$hol_dir/examples/machine-code/hoare-triple/set_sepScript.sml" \
+  "$hol_dir/examples/machine-code/hoare-triple"
