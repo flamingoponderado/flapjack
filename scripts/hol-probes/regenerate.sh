@@ -11089,3 +11089,28 @@ run_probe arm8_target_proof_typed_probeScript.sml \
   arm8_encoder_correct_typed arm8_target_ok_typed \
   "$cake_dir/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/arm8/proofs"
+run_probe pancake_pan_to_target_proof_typed_probeScript.sml pancake_pan_to_target_proof_typed_probe.out \
+  option_lt_def_typed compile_prog_max_def_typed const_writes_const_memory_typed \
+  fun2set_update_eq_typed get_var_const_memory_typed get_var_imm_const_memory_typed \
+  get_vars_const_memory_typed inst_const_memory_typed mem_load_32_const_memory_typed \
+  mem_load_byte_aux_const_memory_typed mem_load_const_memory_typed \
+  mem_store_32_const_memory_typed mem_store_byte_aux_const_memory_typed \
+  mem_store_const_memory_typed read_bytearray_const_memory_typed set_var_const_memory_typed \
+  set_vars_const_memory_typed share_inst_const_memory_typed unset_var_const_memory_typed \
+  word_exp_const_memory_typed write_bytearray_const_memory_typed FLOOKUP_MAP_KEYS_LINV_typed \
+  InitGlobals_location_eq_first_name_typed full_make_init_be_typed good_dimindex_0w_8w_typed \
+  good_dimindex_div_mul_typed word_list_exists_addresses_typed word_to_stack_compile_FST_typed \
+  word_semantics_memory_update_typed evaluate_stack_size_limit_const_panLang_typed \
+  inst_stack_limit_const_panLang_typed inst_stack_max_const_panLang_typed \
+  inst_stack_size_const_panLang_typed no_alloc_word_evaluate_typed option_lt_SOME_typed \
+  panLang_wordSem_neq_NotEnoughSpace_typed share_inst_modifies_typed \
+  word_to_word_compile_no_install_no_alloc_typed pan_installed_def_typed \
+  pan_installed_imp_installed_typed pan_to_stack_first_ALL_DISTINCT_typed \
+  pan_to_stack_compile_lab_pres_typed pan_to_lab_labels_ok_typed \
+  word_to_stack_good_code_lemma_typed from_pan_to_lab_no_install_typed \
+  pan_to_lab_good_code_lemma_typed pancake_good_code_def_typed \
+  pan_to_target_compile_semantics_typed cut_state_with_mem_const_typed mem_upd_lemma_typed \
+  push_env_mem_const_typed push_env_mem_upd_typed aligned_n2w_IMP_typed n2w_sub_alt_typed \
+  memory_swap_lemma_typed memory_swap_lemma1_typed \
+  "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" \
+  "$cake_dir/pancake/proofs"

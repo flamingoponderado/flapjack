@@ -10123,6 +10123,35 @@ keeping the variable (an infix `^` for mlstring concatenation is followed by a
 space and is kept). Labels replace an apostrophe with `_prime` so the row
 grammar stays `[A-Za-z][A-Za-z0-9_]*`.
 
+`pancake_pan_to_target_proof_typed_probe.out` and
+`word_convs_proof_typed_probe.out` capture the typed statements of every
+reviewed row of `pan_to_targetProofScript.sml` (56 names) and
+`wordConvsProofScript.sml` (175 names; the 177 reviewed rows share the two
+`ssa_cc_trans_flat_exp_conventions` rows), with the same conventions (task 171).
+Exported theorems and definitions are fetched from the theory database; the
+eight `pan_to_targetProof` and 137 `wordConvsProof` `[local]` theorems are
+parsed literally from the pinned source text; the exported derived theorem
+`remove_dead_prog_conventions` is fetched with its own derived statement; and
+the local derived theorem `const_fp_loop_Seq` is replayed from
+`word_simpTheory.const_fp_loop_def` exactly as the source script derives it
+(`BODY_CONJUNCTS`, filter on `Seq`, `LIST_CONJ`). `pan_to_targetProof` is not a
+default build target, so build it in the private copy with
+
+```
+cd /path/to/cakeml-probe-build/pancake/proofs && \
+  CAKEMLDIR=/path/to/cakeml-probe-build Holmake pan_to_targetProofTheory.uo
+```
+
+(about 7 minutes; it loads `backendProof`, `stack_to_labProof`,
+`lab_to_targetProof`, `pan_to_wordProof`, `pan_to_target` and
+`wordConvsProof`). `wordConvsProof` is a default build target and needs no
+private build. Regenerate with `CAKEML=/path/to/cakeml-probe-build
+HOL_PROBE_ONLY=pancake_pan_to_target_proof_typed_probeScript.sml` or
+`HOL_PROBE_ONLY=word_convs_proof_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The captures support source comparison of
+the inferred carriers, binder order and premise grouping; they do not replay
+the local proofs and do not establish Lean correspondence.
+
 These theories are not built by the default CakeML `Holmake` targets, so the
 probes need a tree where `pancake/`, `pancake/semantics/` and the listed
 `pancake/proofs/` theories are built. Build them in a private copy of the
