@@ -358,6 +358,24 @@
     "reviewer": "Independent typed HOL source review 2026-11-13: the tuple input and result, independent compiler and FFI carriers, all twelve original clamped evaluation equations, their recursive guards, errors, and clock transitions match. The evaluator uses the reviewed dispatcher and canonical finite-support refs carrier; its source-shaped interface delegates to the curried recursive implementation. The fresh HOL probe replays the full clamped equations and captures the typed induction theorem. Inherits reals_as_rational_cuts through primitive dispatch, as documented in SOUNDNESS item 8."
   },
   {
+    "hol_path": "cakeml/compiler/backend/semantics/bvlPropsScript.sml",
+    "hol_name": "get_vars_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlProps/GetVars.lean",
+    "lean_name": "getVars",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original in bvl_to_bvi_value_rel_probe.out: the environment element type remains polymorphic, an empty index list returns an empty list, and each cons checks the corresponding environment index and recursively fails or prepends the selected value in order. Lean getElem? implements the source length check and EL, including out-of-range failure."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "evaluate_MAP_Var",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/VarList.lean",
+    "lean_name": "evaluate_varMap",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed replay of the original local proof in bvl_to_bvi_value_rel_probe.out: for a variable-only expression list whose indices are successfully read from the environment, evaluation of the corresponding BVI variables in the relocated environment yields the relocated result list and unchanged state. The arbitrary relocation, all original premises and full result are retained. The BVI refs field uses the canonical finite-map carrier with a local roundtrip witness; compiler and FFI carriers remain independent. Inherits reals_as_rational_cuts through evaluation, as documented in SOUNDNESS item 8."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "ODD_lemma",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Namespace.lean",

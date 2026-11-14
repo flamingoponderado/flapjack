@@ -1311,6 +1311,7 @@ import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateLength
 import Flapjack.Compiler.Backend.Semantics.BvlSem.EvaluateHOL
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateLength
+import Flapjack.Compiler.Backend.Semantics.BvlProps.GetVars
 import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
 import Flapjack.Compiler.Backend.Semantics.BvlProps.BuildRefs
 import Flapjack.Compiler.Backend.Semantics.BvlProps.ApplyError
@@ -1510,7 +1511,6 @@ import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileCorrect
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitGlobalsStub
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitialStateRel
 import Flapjack.Compiler.Backend.BvlToBvi.SourcePipeline
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.PipelineCorrespondence
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TailrecNames
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TmcNames
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.NoMutcons

@@ -19,6 +19,28 @@ val aux_code_installed_APPEND_replay = prove (``!xs ys code.
 val _ = show "aux_code_installed_APPEND_replay=" aux_code_installed_APPEND_replay;
 val _ = show "aux_code_installed_subspt=" aux_code_installed_subspt;
 val _ = show "isVar_def=" bvlPropsTheory.isVar_def;
+val _ = show "get_vars_def=" bvlPropsTheory.get_vars_def;
+local
+  open bvlSemTheory bviSemTheory backendPropsTheory bvlPropsTheory
+       bvl_to_bviTheory bviPropsTheory bvl_to_bviProofTheory
+in
+  val evaluate_MAP_Var_replay = Q.prove(
+    `!l env vs b s.
+      EVERY isVar l /\ (get_vars (MAP destVar l) env = SOME vs) ==>
+        (evaluate (MAP (Var o destVar) l,MAP (adjust_bv b) env,s) =
+          (Rval (MAP (adjust_bv b) vs),s))`,
+    Induct THEN1 (EVAL_TAC \\ SRW_TAC [] [])
+    \\ Cases \\ full_simp_tac(srw_ss())[isVar_def,destVar_def,get_vars_def]
+    \\ Cases_on `l` \\ full_simp_tac(srw_ss())[bviSemTheory.evaluate_def,get_vars_def,EL_MAP]
+    \\ Cases_on `h` \\ full_simp_tac(srw_ss())[isVar_def,destVar_def]
+    \\ REPEAT STRIP_TAC
+    \\ Cases_on `n' < LENGTH env` \\ full_simp_tac(srw_ss())[]
+    \\ Cases_on `get_vars (MAP destVar t) env` \\ full_simp_tac(srw_ss())[]
+    \\ Q.PAT_X_ASSUM `!xx.bb` (MP_TAC o Q.SPEC `env`) \\ full_simp_tac(srw_ss())[]
+    \\ SRW_TAC [] [] \\ full_simp_tac(srw_ss())[EL_MAP])
+    |> INST_TYPE[beta|->``:'ffi``,alpha|->``:'c``];
+  val _ = show "evaluate_MAP_Var_replay=" evaluate_MAP_Var_replay;
+end;
 val _ = show "bVarBound_def=" bvlPropsTheory.bVarBound_def;
 val bEval_bVarBound_replay = prove (``!xs vs s env.
   bvlProps$bVarBound (LENGTH vs) xs ==>

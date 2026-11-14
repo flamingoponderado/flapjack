@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileLetCase
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.GetVars
 
 @[expose] public section
 
@@ -38,6 +39,42 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
       (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
   BviSem.holFmapAsFiniteSupportWitness
 end VarMapCarrier
+
+/-- Variable lookup commutes with relocation when evaluating the compiled variables. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "evaluate_MAP_Var"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_varMap {C F : Type} (expressions : List Bvl.Exp) (env values : List Value)
+    (relocate : Nat → Nat) (state : BviSem.BviState C F)
+    (premises : expressions.all isVar = true ∧
+      BvlProps.getVars (expressions.map BvlProps.destVar) env = some values) :
+    BviSem.evaluate (expressions.map (fun e => Bvi.Exp.var (BvlProps.destVar e)))
+      (env.map (adjustBv relocate)) state = (.val (values.map (adjustBv relocate)), state) := by
+  induction expressions generalizing values with
+  | nil =>
+    simp [BvlProps.getVars] at premises
+    subst values
+    simp [BviSem.evaluate]
+  | cons head tail ih =>
+    simp only [List.all_cons, Bool.and_eq_true] at premises
+    cases head with
+    | var index =>
+      cases lookup : env[index]? with
+      | none => simp [BvlProps.getVars, BvlProps.destVar, lookup] at premises
+      | some value =>
+        cases rest : BvlProps.getVars (tail.map BvlProps.destVar) env with
+        | none => simp [BvlProps.getVars, BvlProps.destVar, lookup, rest] at premises
+        | some found =>
+          have valuesEq : value :: found = values := by
+            simpa [BvlProps.getVars, BvlProps.destVar, lookup, rest] using premises.2
+          subst values
+          have tailRun := ih found ⟨premises.1.2, rest⟩
+          have mappedLookup : (env.map (adjustBv relocate))[index]? = some (adjustBv relocate value) := by
+            simp [List.getElem?_map, lookup]
+          simp only [List.map_cons, BvlProps.destVar_var]
+          change BviSem.evaluateTuple (_ :: _, _, _) = _
+          rw [BviSem.evaluateCons]
+          simp [BviSem.evaluateTuple, BviSem.evaluate, mappedLookup, tailRun, Flapjack.holHd]
+    | _ => simp [isVar] at premises
 
 /-- Bounded variables evaluate identically with or without a trailing environment. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "evaluate_MAP_Var2"
