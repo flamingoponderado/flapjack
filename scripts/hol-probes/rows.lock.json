@@ -915,7 +915,7 @@
     {"bytes": 251, "out": "loop_sem_ffi_probe.out", "rows": 3, "sha256": "c074c9180334095ff97fb0e487e09c8f12b044b3c51adb4c735499460ec54b87"},
     {"bytes": 579, "out": "loop_sem_ffi_rv64_probe.out", "rows": 9, "sha256": "94458aeac2e0e69ae05032c567ce6dbdc4a21280b5187cd0468705bbfa7d2ea6"},
     {"bytes": 297, "out": "loop_sem_find_code_probe.out", "rows": 9, "sha256": "4b38f47a14f59dea655542079a22aeba81ce4e7b226e820a3ef5dd22ec510621"},
-    {"bytes": 63, "out": "loop_sem_fix_clock_probe.out", "rows": 3, "sha256": "c77ddb6dacdc0733613611ee4a1446f913810bddc007e0ea83ed33df0be45171"},
+    {"bytes": 300, "out": "loop_sem_fix_clock_probe.out", "rows": 5, "sha256": "84927a98a763f43d5a263b7043937fb7cf58d76547eae460a34d5e2e13f6be40"},
     {"bytes": 84, "out": "loop_sem_get_var_imm_probe.out", "rows": 4, "sha256": "4cd8977631ce08a919173ef9f7d142bf6bc902be5c880b365b79de8a991d9281"},
     {"bytes": 150, "out": "loop_sem_get_vars_probe.out", "rows": 5, "sha256": "8e6656865cc3979ef273ede2536d894354483075a73b7b6a1383c7a675ca25d3"},
     {"bytes": 510, "out": "loop_sem_loop_arith_probe.out", "rows": 17, "sha256": "dbed87bbdef0a1e42c5b34c1feeb9e6e33400d001e24c8ef1b0659de4e36119c"},

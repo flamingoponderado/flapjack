@@ -255,12 +255,21 @@ def decClock {width : Nat} [NeZero width] {F : Type}
 
 /-- Exact HOL `fix_clock_def` (`loopSemScript.sml:46-50`):
     `fix_clock old_s (res,new_s) = (res, new_s with clock := if old_s.clock <
-    new_s.clock then old_s.clock else new_s.clock)`. -/
+    new_s.clock then old_s.clock else new_s.clock)`.
+
+    HOL's incoming and returned states have independent carriers: typed capture
+    `fix_clock_def_typed` (`scripts/hol-probes/loop_sem_fix_clock_probe.out`) is
+    `∀(old_s :(δ, ε) state) (res :α) (new_s :(β, γ) state)`, so only their
+    natural-number clocks are related.  The `width'`/`F'` binders keep that
+    independence; the used same-carrier instance is still available by
+    unification. -/
 @[hol "cakeml/pancake/semantics/loopSemScript.sml" "fix_clock_def"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
-def fixClock {width : Nat} [NeZero width] {F : Type} {β : Type}
-    (old : LoopSemStateFiniteExact width F) (step : β × LoopSemStateFiniteExact width F) :
-    β × LoopSemStateFiniteExact width F :=
+def fixClock {width : Nat} [NeZero width] {F : Type}
+    {width' : Nat} [NeZero width'] {F' : Type} {β : Type}
+    (old : LoopSemStateFiniteExact width F)
+    (step : β × LoopSemStateFiniteExact width' F') :
+    β × LoopSemStateFiniteExact width' F' :=
   (step.1, { step.2 with
     clock := if old.clock < step.2.clock then old.clock else step.2.clock })
 

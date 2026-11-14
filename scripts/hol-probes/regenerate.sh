@@ -2859,7 +2859,8 @@ run_probe loop_sem_set_var_probeScript.sml loop_sem_set_var_probe.out \
 run_probe loop_sem_dec_clock_probeScript.sml loop_sem_dec_clock_probe.out \
   dec_clock_five dec_clock_local "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_fix_clock_probeScript.sml loop_sem_fix_clock_probe.out \
-  fix_clock_lower_new fix_clock_zero "$cake_dir/pancake/semantics/loopSemScript.sml"
+  fix_clock_lower_new fix_clock_zero fix_clock_def_typed fix_clock_def_hypotheses \
+  "$cake_dir/pancake/semantics/loopSemScript.sml" "$cake_dir/pancake/semantics"
 
 # The find_code probe observes the returned parameter map via sptree lookups.
 run_probe loop_sem_find_code_probeScript.sml loop_sem_find_code_probe.out \
