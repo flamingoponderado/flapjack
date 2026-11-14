@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBoolean
 public import Mathlib.Data.List.Forall2
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallConst
 public import Flapjack.SemanticPrimitivesProps.ResultRelation
+public import Flapjack.Misc.ListLookupRel
 
 @[expose] public section
 
@@ -166,14 +167,6 @@ theorem evaluateRel_nil {C F : Type} (sourceCode : List ClosLang.Exp) :
   obtain ⟨rfl, rfl⟩ := run
   exact ⟨.val [], source, by rw [evaluate], by simp [resultRel], states⟩
 
-/-- Pointwise lookup preserves a list relation, including out-of-range indices. -/
-theorem forall₂_getElemRel {A B : Type} {rel : A → B → Prop} {left : List A} {right : List B}
-    (related : List.Forall₂ rel left right) (index : Nat) :
-    optionRel rel left[index]? right[index]? := by
-  induction related generalizing index with
-  | nil => cases index <;> trivial
-  | cons head tail ih => cases index <;> simp_all [optionRel]
-
 /-- The variable case of the backward evaluation simulation. -/
 theorem evaluateRel_var {C F : Type} (sourceCode : List ClosLang.Exp)
     (trace : BackendCommon.Tra) (index : Nat) :
@@ -191,7 +184,7 @@ theorem evaluateRel_var {C F : Type} (sourceCode : List ClosLang.Exp)
         simpa [introList] using code.2.symm
       have same := introExp_eq_var source.maxApp expression trace index unary transformed
       subst expression
-      have lookups := forall₂_getElemRel env index
+      have lookups := Flapjack.forall₂_lookupRel env index
       cases sourceLookup : sourceEnv[index]? with
       | none =>
         cases targetLookup : targetEnv[index]? with
