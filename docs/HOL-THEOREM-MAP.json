@@ -1,5 +1,13 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "every_Fn_vs_NONE_insert_interp",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/FunctionAnnotations.lean",
+    "lean_name": "everyFnVarsNone_insertInterp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared every_Fn_vs_NONE_insert_interp_typed and the full annotation and interpreter insertion clauses: arbitrary source lists retain the original annotation premise and conclusion. Independently regenerated the typed HOL probe. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
     "hol_name": "remove_ticks_code_labels",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/CodeLabels.lean",
