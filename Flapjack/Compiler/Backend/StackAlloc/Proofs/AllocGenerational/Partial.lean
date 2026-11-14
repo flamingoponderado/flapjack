@@ -608,7 +608,7 @@ theorem evaluate_partial_refs {width : Nat} [NeZero width] {C F : Type}
             (4, .word i2), (5, r5), (6, r6), (7, r7), (8, r8), (9, r9)] }) := by
   dsimp only
   apply word_gen_gc_partial_move_ref_list_code_thm (conf := conf) (gs := gs) (rs := rs)
-    (2 ^ width) (curr + len) endh 0 i pa 0 0 curr m s.mdomain true i2 pa2 0 0 m2
+    (2 ^ width) (curr + len) endh i pa curr m s.mdomain i2 pa2 m2
   refine ⟨hm, hsl, hws, hw2, hlen, hls, hg, hshift, ?_⟩
   simp [refsInputState, getVar, setVar, HolFiniteMapExact.lookup_updateListEq,
     FUPDATE_LIST_HOL, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL,

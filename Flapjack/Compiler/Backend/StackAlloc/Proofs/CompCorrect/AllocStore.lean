@@ -63,9 +63,10 @@ theorem goal_alloc (s : StackSemStateFiniteExact width C F) (k : Nat) :
     rw [h] at h'
     have hb := hpre.buf
     obtain ⟨ck, l2, he, hsub⟩ := AllocCorrect.alloc_correct (c := c) (l := regs) (n' := n) (m := m)
-      (anything := anything) h' hr hpre.gcFun
-      (by unfold BufBound at hb; show s.bitmaps.length < 2 ^ width - 1; omega)
-      hpre.stack (hpre.regs _ _ hw)
+      (anything := anything)
+      ⟨h', hr, hpre.gcFun,
+        (by unfold BufBound at hb; show s.bitmaps.length < 2 ^ width - 1; omega),
+        hpre.stack, hpre.regs _ _ hw⟩
     refine ⟨ck, l2, ?_, hsub, ?_, fun hh => ?_⟩
     · show evaluate (.call (some (.skip, 0, n, m)) (.inl gcStubLocation) none, _) = _
       convert he using 3

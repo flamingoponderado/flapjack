@@ -400,12 +400,13 @@ theorem wordGenGcMoveRoots_APPEND {width : Nat} [NeZero width] {conf : Config}
       simp [Bool.and_assoc]
 
 /-- Exact HOL `word_gen_gc_partial_move_roots_APPEND` (`stack_allocProofScript.sml:2049-2065`);
-HOL's unused binders `ib1 pb1` are retained. -/
+HOL's unused binders `ib1 pb1`, whose independent types occur nowhere in the
+statement, are vacuous and omitted. -/
 @[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
   "word_gen_gc_partial_move_roots_APPEND" (words_as_type_indexed_bitvec)]
 theorem wordGenGcPartialMoveRoots_APPEND {width : Nat} [NeZero width] {conf : Config}
     {curr : BitVec width} {dm : BitVec width → Bool} {gs rs : BitVec width} :
-    ∀ (xs ys : List (WordLocW width)) (i1 pa1 _ib1 _pb1 : BitVec width)
+    ∀ (xs ys : List (WordLocW width)) (i1 pa1 : BitVec width)
       (m : BitVec width → WordLocW width),
       wordGenGcPartialMoveRoots conf (xs ++ ys, i1, pa1, curr, m, dm, gs, rs) =
         let (ws1, i1, pa1, m1, c1) :=
@@ -416,14 +417,14 @@ theorem wordGenGcPartialMoveRoots_APPEND {width : Nat} [NeZero width] {conf : Co
   intro xs
   induction xs with
   | nil =>
-      intro ys i1 pa1 _ _ m
+      intro ys i1 pa1 m
       simp only [List.nil_append, wordGenGcPartialMoveRoots_nil, Bool.true_and]
   | cons x xs ih =>
-      intro ys i1 pa1 ib1 pb1 m
+      intro ys i1 pa1 m
       simp only [List.cons_append, wordGenGcPartialMoveRoots_cons]
       generalize wordGenGcPartialMove conf (x, i1, pa1, curr, m, dm, gs, rs) = r
       obtain ⟨w1, i1', pa1', m1', c1'⟩ := r
-      simp only [ih _ _ _ ib1 pb1]
+      simp only [ih _ _ _]
       generalize wordGenGcPartialMoveRoots conf (xs, i1', pa1', curr, m1', dm, gs, rs) = r2
       obtain ⟨ws2, i2, pa2, m2, c2⟩ := r2
       generalize wordGenGcPartialMoveRoots conf (ys, i2, pa2, curr, m2, dm, gs, rs) = r3

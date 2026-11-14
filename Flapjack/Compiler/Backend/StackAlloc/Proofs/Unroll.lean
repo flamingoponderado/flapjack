@@ -587,7 +587,7 @@ theorem wordGenGcPartialMoveBitmaps_unroll {descWidth : Nat} {width : Nat} {bitm
             rcases mapBitmap (getBits y) (wordGenGcPartialMoveRoots conf (ts1, i1, pa1, curr, m, dm, gs, rs)).1 stack with
               _ | ⟨a, b⟩ <;> simp [hf2]
           · dsimp only
-            rw [wordGenGcPartialMoveRoots_APPEND ts1 ts2 i1 pa1 0 0 m]
+            rw [wordGenGcPartialMoveRoots_APPEND ts1 ts2 i1 pa1 m]
             generalize hR1 : wordGenGcPartialMoveRoots conf (ts1, i1, pa1, curr, m, dm, gs, rs) = R1
             obtain ⟨wl1, i2, pa2, m2, c2⟩ := R1
             dsimp only
@@ -871,7 +871,7 @@ theorem wordGenGcPartialMoveRootsBitmaps_unroll {width : Nat} {bitmapWidth : Nat
   obtain ⟨wl2, i'', pa'', m'', c2⟩ := R2
   have hroots : wordGenGcPartialMoveRoots conf (sel ++ roots, i1, pa1, curr, m, dm, gs, rs) =
       (wl1 ++ wl2, i'', pa'', m'', c1 && c2) := by
-    rw [wordGenGcPartialMoveRoots_APPEND sel roots i1 pa1 0 0 m, hR1]; dsimp only; rw [hR2]
+    rw [wordGenGcPartialMoveRoots_APPEND sel roots i1 pa1 m, hR1]; dsimp only; rw [hR2]
   have happ := map_bitmap_APPEND (q' := wl2) bits wl1 ws sel rem ⟨hf, hl1.symm⟩
   rcases hm : mapBitmap bits wl1 ws with _ | ⟨hd, ts, rest⟩
   · have hbm : wordGenGcPartialMoveBitmaps conf (w, ws, bitmaps, i1, pa1, curr, m, dm, gs, rs) = none := by
