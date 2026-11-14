@@ -10123,6 +10123,18 @@ keeping the variable (an infix `^` for mlstring concatenation is followed by a
 space and is kept). Labels replace an apostrophe with `_prime` so the row
 grammar stays `[A-Za-z][A-Za-z0-9_]*`.
 
+`word_to_word_proof_typed_probe.out` captures the typed statements of the 28
+distinct HOL names behind the 54 reviewed `word_to_wordProofScript.sml` rows
+(task 172): 20 exported theorems and definitions fetched from the theory
+database, 6 `[local]` theorems parsed literally from the pinned source, and the
+two local derived theorems `code_rel_no_alloc` and `code_rel_no_install`
+replayed from the exported `code_rel_not_created_subprogs` exactly as the source
+derives them (`Q.GEN` on `P`, `Q.SPEC`, `REWRITE_RULE` of the wordConvs
+`no_alloc_subprogs_def`/`no_install_subprogs_def`). The theory is a default
+CakeML build target. Regenerate with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=word_to_word_proof_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
 `pancake_pan_to_target_proof_typed_probe.out` and
 `word_convs_proof_typed_probe.out` capture the typed statements of every
 reviewed row of `pan_to_targetProofScript.sml` (56 names) and

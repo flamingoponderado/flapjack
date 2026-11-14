@@ -11203,3 +11203,17 @@ run_probe word_convs_proof_typed_probeScript.sml word_convs_proof_typed_probe.ou
   const_fp_loop_Seq_typed \
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe word_to_word_proof_typed_probeScript.sml word_to_word_proof_typed_probe.out \
+  code_rel_def_typed compile_to_word_conventions_typed panLang_compile_word_to_word_thm_typed \
+  word_to_word_compile_semantics_typed FST_compile_single_typed compile_single_lem_typed \
+  compile_word_to_word_thm_typed no_install_no_alloc_compile_single_correct_typed \
+  code_rel_ext_def_typed code_rel_ext_word_to_word_typed code_rel_no_share_inst_typed \
+  code_rel_not_created_subprogs_typed cond16bit_inst_select_typed \
+  cond16bit_inst_select_exp_prime_typed full_compile_single_no_share_inst_typed \
+  no_mt_code_full_compile_single_typed no_mt_code_rel_ext_typed no_mt_full_compile_single_typed \
+  no_mt_remove_must_terminate_const_typed remove_must_terminate_no_share_inst_typed \
+  code_rel_union_fromAList_typed compile_single_eta_typed find_code_thm_typed \
+  pop_env_termdep_typed rm_perm_typed compile_single_correct_typed code_rel_no_alloc_typed \
+  code_rel_no_install_typed \
+  "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
