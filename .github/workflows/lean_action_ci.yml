@@ -50,6 +50,7 @@ jobs:
           free -h
           ulimit -a
           cat /sys/fs/cgroup/memory.max 2>/dev/null || true
+          ulimit -s 65536
           if ! python3 scripts/check_hol_ref_export.py; then
             tail -10 .lake/hol-export-progress.log || true
             exit 1

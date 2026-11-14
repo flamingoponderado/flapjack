@@ -275,7 +275,7 @@ elab "#emit_hol_ref_export" : command => do
   let progress ← liftIO <| IO.FS.Handle.mk ".lake/hol-export-progress.log" .write
   for (name, ref) in HolRef.all env do
     count := count + 1
-    if count % 500 == 0 then
+    if count >= 8000 then
       liftIO do
         progress.putStr s!"HOL export progress: {count}: {name}\n"
         progress.flush
