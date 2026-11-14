@@ -42,3 +42,24 @@ val domain_list_delete_replay = Q.prove (
   rw [pred_setTheory.EXTENSION, sptreeTheory.domain_lookup, backend_commonTheory.lookup_list_delete]
   >> Cases_on `MEM x xs` >> fs []);
 val _ = show "domain_list_delete_replay_typed" domain_list_delete_replay;
+(* Local source statement with inferred types; the original proof is not replayed here. *)
+val pure_do_app_Rval_statement = Term `
+  data_live$is_pure op /\ dataSem$do_app op x s = Rval (q,r) ==>
+    ?safe smax. r = s with <|safe_for_space := safe; stack_max := smax|>`;
+val _ = (print "is_pure_do_app_Rval_statement_typed=";
+  print_term pure_do_app_Rval_statement; print "\n");
+
+load "preamble";
+open preamble data_liveTheory dataSemTheory dataLangTheory data_spaceTheory;
+fun cases_on_op q = Cases_on q >|
+  map (MAP_EVERY Cases_on) [[], [], [], [], [`b`], [`g`], [`m`], [], [`t`]];
+val pure_do_app_Rval_replay = prove (
+  ``is_pure op /\ do_app op x s = Rval (q,r) ==>
+    ?safe smax. r = s with <|safe_for_space := safe; stack_max := smax|>``,
+  cases_on_op `op` \\ TRY (rename [‘EqualConst cc’] \\ Cases_on ‘cc’)
+  \\ dsimp[oneline is_pure_def,do_app_def,do_app_aux_def,AllCaseEqs(),AllCasePreds()]
+  \\ simp[do_space_def,dataLangTheory.op_space_reset_def,
+          data_spaceTheory.op_space_req_def,consume_space_def,do_install_def,UNCURRY,AllCaseEqs()]
+  \\ rw[] \\ fs [state_component_equality,is_pure_def,dataLangTheory.op_space_reset_def,
+                data_spaceTheory.op_space_req_def,allowed_op_def,do_stack_def,AllCaseEqs()]);
+val _ = show "is_pure_do_app_Rval_replay_typed" pure_do_app_Rval_replay;

@@ -141140,5 +141140,14 @@
     "lean_name": "domain_list_delete",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the local original theorem and typed HOL proof replay domain_list_delete_replay_typed in data_live_compile_probe.out: both state equality of the Spt domain after list deletion with its original domain minus the keys of the list, with arbitrary map payload. Sets are predicates on Nat and the difference is rendered by conjunction with nonmembership."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_liveProofScript.sml",
+    "hol_name": "is_pure_do_app_Rval_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/DataLive/Proofs/PureSuccess.lean",
+    "lean_name": "isPure_doApp_success",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete local HOL theorem and inferred is_pure_do_app_Rval_replay_typed in data_live_compile_probe.out, replaying the original local HOL proof. The pure operation and successful do_app are the only premises; the witnesses update precisely safe_for_space and stack_max. DataSem.State and the evaluator are separately reviewed, and doApp inherits reals_as_rational_cuts as documented in SOUNDNESS item 8."
   }
 ]
