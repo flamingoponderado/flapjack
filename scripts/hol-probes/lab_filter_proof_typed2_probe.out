@@ -1,0 +1,15 @@
+loc_to_pc_adjust_pc_append_typed=∀(n1 :num) (n2 :num) (code :α sec list) (pc :num) (ls :α sec list). loc_to_pc n1 n2 code = SOME pc ⇒ adjust_pc pc code = adjust_pc pc (code ++ ls)
+loc_to_pc_eq_NONE_typed=∀(n1 :num) (n2 :num) (code :α sec list). loc_to_pc n1 n2 (filter_skip code) = (NONE :num option) ⇒ loc_to_pc n1 n2 code = (NONE :num option)
+loc_to_pc_eq_SOME_typed=∀(n1 :num) (n2 :num) (code :α sec list) (pc :num). loc_to_pc n1 n2 (filter_skip code) = SOME pc ⇒ ∃(pc' :num). loc_to_pc n1 n2 code = SOME pc' ∧ adjust_pc pc' code = pc
+all_skips_evaluate_typed=∀(k :num) (s :(α, β, γ) labSem$state). all_skips s.pc s.code k ∧ ¬s.failed ⇒ ∀(k' :num). (evaluate (s with clock := s.clock + k' + k) :machine_result # (α, β, γ) labSem$state) = (evaluate (s with <|pc := s.pc + k; clock := s.clock + k'|>) :machine_result # (α, β, γ) labSem$state)
+is_Label_not_skip_typed=is_Label (y :α line) ⇒ not_skip y
+state_rw_typed=(s :(α, β, γ) labSem$state) with clock := s.clock = s ∧ s with pc := s.pc = s ∧ s with <|pc := s.pc; clock := s.clock + (k' :num)|> = s with clock := s.clock + k'
+adjust_pc_all_skips_typed=∀(k :num) (pc :num) (code :α sec list). all_skips pc code k ⇒ adjust_pc pc code + (1 :num) = adjust_pc (pc + k + (1 :num)) code
+all_skips_initial_adjust_typed=∀(code :α sec list). ∃(k :num). all_skips (0 :num) code k ∧ adjust_pc k code = (0 :num)
+all_skips_get_lab_after_typed=∀(code :α sec list) (k :num). all_skips (0 :num) code k ⇒ (get_lab_after k code :β word_loc option) = (get_lab_after (0 :num) (filter_skip code) :β word_loc option)
+get_lab_after_adjust_typed=∀(pc :num) (code :α sec list) (k :num). all_skips pc code k ⇒ (get_lab_after (pc + k) code :β word_loc option) = (get_lab_after (adjust_pc pc code) (filter_skip code) :β word_loc option)
+next_label_filter_skip_typed=∀(code :α sec list). (next_label code :β word_loc option) = (next_label (filter_skip code) :β word_loc option)
+state_rel_IMP_sem_EQ_sem_typed=∀(s :(α, β, γ) labSem$state) (t :(α, β, γ) labSem$state). state_rel s t ⇒ (semantics s :behaviour) = (semantics t :behaviour)
+all_skips_evaluate_rw_typed=all_skips (s :(α, β, γ) labSem$state).pc s.code (k :num) ∧ ¬s.failed ∧ s.clock = (clk :num) + k ∧ (t :(α, β, γ) labSem$state) = s with <|pc := s.pc + k; clock := clk|> ⇒ (evaluate s :machine_result # (α, β, γ) labSem$state) = (evaluate t :machine_result # (α, β, γ) labSem$state)
+asm_fetch_aux_eq2_typed=asm_fetch_aux (adjust_pc (pc :num) (code :α sec list)) (filter_skip code) = (x :α line option) ⇒ ∃(k :num). asm_fetch_aux (pc + k) code = x ∧ all_skips pc code k
+asm_fetch_not_skip_adjust_pc_typed=∀(pc :num) (code :α sec list) (inst :β). (∀(x :word8 list) (y :num). asm_fetch_aux pc code ≠ SOME (Asm (Asmi (Inst (Skip :α inst) :α asm)) x y)) ⇒ asm_fetch_aux pc code = asm_fetch_aux (adjust_pc pc code) (filter_skip code)

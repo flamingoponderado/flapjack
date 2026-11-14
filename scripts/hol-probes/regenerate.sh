@@ -11754,3 +11754,11 @@ run_probe stacklang_overloads_typed_probeScript.sml stacklang_overloads_typed_pr
   const_inst_typed left_shift_inst_typed load_inst_typed right_shift_inst_typed store_inst_typed \
   "$cake_dir/compiler/backend/stackLangScript.sml" \
   "$cake_dir/compiler/backend"
+run_probe lab_filter_proof_typed2_probeScript.sml lab_filter_proof_typed2_probe.out \
+  loc_to_pc_adjust_pc_append_typed loc_to_pc_eq_NONE_typed loc_to_pc_eq_SOME_typed \
+  all_skips_evaluate_typed is_Label_not_skip_typed state_rw_typed adjust_pc_all_skips_typed \
+  all_skips_initial_adjust_typed all_skips_get_lab_after_typed get_lab_after_adjust_typed \
+  next_label_filter_skip_typed state_rel_IMP_sem_EQ_sem_typed all_skips_evaluate_rw_typed \
+  asm_fetch_aux_eq2_typed asm_fetch_not_skip_adjust_pc_typed \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
