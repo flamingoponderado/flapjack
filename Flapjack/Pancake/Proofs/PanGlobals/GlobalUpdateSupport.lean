@@ -35,8 +35,8 @@ theorem disjointGlobals_update {width : Nat} [NeZero width]
     (hexists : globals.lookup name ≠ none)
     (hdisjoint : disjointGlobalsHOLExact topAddress context globals) :
     disjointGlobalsHOLExact topAddress context (globals.update (name, value)) := by
-  intro key key' shape address shape' address' hne hkey hkey' hc hc' slot
-  exact hdisjoint key key' shape address shape' address' hne
+  intro key key' shape address shape' address' ⟨hne, hkey, hkey', hc, hc'⟩ slot
+  exact disjointGlobalsHOLExact_apply hdisjoint hne
     ((lookupSupport_update globals name value hexists key).mp hkey)
     ((lookupSupport_update globals name value hexists key').mp hkey') hc hc' slot
 

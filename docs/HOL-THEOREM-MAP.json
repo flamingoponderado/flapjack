@@ -89081,6 +89081,22 @@
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
+    "lean_name": "disjointGlobalsHOLExact_apply",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Task 185 untagged curried eliminator for the tagged disjoint_globals_def: HOL states one five-conjunct antecedent, this keeps callers reading the five arguments. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
+    "lean_name": "disjointGlobalsHOLExact_intro",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Task 185 untagged curried introduction form for the tagged disjoint_globals_def. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
     "hol_path": null,
     "hol_name": null,
