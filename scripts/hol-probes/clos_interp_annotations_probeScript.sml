@@ -72,3 +72,6 @@ val _ = show_thm "interp_assum_def_typed=" clos_interpProofTheory.interp_assum_d
 val _ = show_thm "interp_assum_leq_typed=" clos_interpProofTheory.interp_assum_leq;
 val _ = show_thm "evaluate_insert_interp1_typed=" clos_interpProofTheory.evaluate_insert_interp1;
 val _ = show_thm "evaluate_insert_interp_typed=" clos_interpProofTheory.evaluate_insert_interp;
+val _ = show_thm "opt_interp_thm_typed=" clos_interpProofTheory.opt_interp_thm;
+val _ = show_thm "opt_interp1_thm_prime_typed=" clos_interpProofTheory.opt_interp1_thm';
+val _ = show_thm "opt_interp1_thm_typed=" clos_interpProofTheory.opt_interp1_thm;

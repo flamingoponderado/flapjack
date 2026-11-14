@@ -160,17 +160,27 @@ theorem interpreter_correct {C F : Type} :
         interpreter_correct_list expressions env source target sourceFinal (.val values) run valid assumption related notTypeError
       exact ⟨extra, targetFinal, .val [ClosSem.listToValue values], targetRun, finalRel, rfl⟩
 
+namespace OptInterpPort
+/-- The closure state uses the canonical finite-support map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end OptInterpPort
+
 /-- A selected interpreter replacement simulates its source expression. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "opt_interp_thm"
+  (fmap_as_finite_support := [refs, code])]
 theorem optInterp_correct {C F : Type} (expression replacement : ClosLang.Exp)
-    (source target sourceFinal : ClosSem.State C F)
-    (result : Result (List ClosSem.Value) ClosSem.Value)
-    (selected : optInterp expression = some replacement)
-    (run : ClosSem.evaluate [expression] [] source = (result, sourceFinal))
-    (assumption : InterpAssum C F source.clock) (related : StateRel source target)
-    (notTypeError : result ≠ .err (.abort .typeError)) :
+    (source : ClosSem.State C F) (result : Result (List ClosSem.Value) ClosSem.Value)
+    (sourceFinal target : ClosSem.State C F)
+    (sourceRun : optInterp expression = some replacement ∧ InterpAssum C F source.clock ∧
+      ClosSem.evaluate [expression] [] source = (result, sourceFinal) ∧ StateRel source target ∧
+      result ≠ .err (.abort .typeError)) :
     ∃ extra targetFinal,
       ClosSem.evaluate [replacement] [] { target with clock := extra + target.clock } = (result, targetFinal) ∧
       StateRel sourceFinal targetFinal := by
+  obtain ⟨selected, assumption, run, related, notTypeError⟩ := sourceRun
   have valid : canInterpret expression = true := by
     cases h : canInterpret expression <;> simp [optInterp, h] at selected ⊢
   obtain ⟨extra, targetFinal, targetRun, finalRel⟩ :=
@@ -181,7 +191,21 @@ theorem optInterp_correct {C F : Type} (expression replacement : ClosLang.Exp)
   have enough : 3 ≤ enlarged.clock := by simp [enlarged]
   have clocks : ClosSem.decClock 3 enlarged = { target with clock := extra + target.clock } := by
     simp [ClosSem.decClock, enlarged]
-  have reduction := evaluate_optInterp { source with clock := enlarged.clock } enlarged enlargedRel expression replacement selected enough
+  have reduction : ClosSem.evaluate [replacement] [] enlarged =
+      ClosSem.evaluate [closInterpreterBody]
+        [ClosSem.makeConst (toConstant expression), .block 0 [], .block 0 []]
+        (ClosSem.decClock 3 enlarged) := by
+    unfold optInterp at selected
+    split at selected
+    · simp only [Option.some.injEq] at selected
+      subst replacement
+      exact evaluate_interpreter_call { source with clock := enlarged.clock } enlarged enlargedRel []
+        (.op .none (.blockOp (.cons 0)) []) (.op .none (.blockOp (.cons 0)) [])
+        (.op .none (.blockOp (.constant (toConstant expression))) [])
+        (.block 0 []) (.block 0 []) (ClosSem.makeConst (toConstant expression))
+        (evaluate_cons_nil .none 0 [] enlarged) (evaluate_cons_nil .none 0 [] enlarged)
+        (evaluate_constant .none (toConstant expression) [] enlarged) enough
+    · contradiction
   rw [clocks] at reduction
   have targetRun' : ClosSem.evaluate [closInterpreterBody]
       [ClosSem.makeConst (toConstant expression), .block 0 [], .block 0 []]
@@ -192,22 +216,30 @@ theorem optInterp_correct {C F : Type} (expression replacement : ClosLang.Exp)
   simpa [enlarged, Nat.add_assoc] using reduction
 
 /-- Interpreter replacement with fallback simulates the original expression. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "opt_interp1_thm'"
+  (fmap_as_finite_support := [refs, code])]
 theorem optInterp1_correct {C F : Type} (expression : ClosLang.Exp)
     (source target sourceFinal : ClosSem.State C F)
     (result : Result (List ClosSem.Value) ClosSem.Value)
-    (run : ClosSem.evaluate [expression] [] source = (result, sourceFinal))
-    (assumption : InterpAssum C F source.clock) (related : StateRel source target)
-    (notTypeError : result ≠ .err (.abort .typeError)) :
+    (sourceRun : InterpAssum C F source.clock ∧
+      ClosSem.evaluate [expression] [] source = (result, sourceFinal) ∧ StateRel source target ∧
+      result ≠ .err (.abort .typeError)) :
     ∃ extra targetFinal,
-      ClosSem.evaluate [optInterp1 expression] [] { target with clock := extra + target.clock } = (result, targetFinal) ∧
+      ClosSem.evaluate [optInterp1 expression] [] { target with clock := target.clock + extra } = (result, targetFinal) ∧
       StateRel sourceFinal targetFinal := by
+  obtain ⟨assumption, run, related, notTypeError⟩ := sourceRun
   unfold optInterp1
   cases selected : optInterp expression with
   | none =>
     simp only [Option.getD_none]
-    exact assumption.1 [expression] source [] target result sourceFinal ⟨by omega, run, notTypeError⟩ related
+    obtain ⟨extra, targetFinal, targetRun, finalRel⟩ :=
+      assumption.1 [expression] source [] target result sourceFinal ⟨by omega, run, notTypeError⟩ related
+    exact ⟨extra, targetFinal, by simpa only [Nat.add_comm] using targetRun, finalRel⟩
   | some replacement =>
     simp only [Option.getD_some]
-    exact optInterp_correct expression replacement source target sourceFinal result selected run assumption related notTypeError
+    obtain ⟨extra, targetFinal, targetRun, finalRel⟩ :=
+      optInterp_correct expression replacement source result sourceFinal target
+        ⟨selected, assumption, run, related, notTypeError⟩
+    exact ⟨extra, targetFinal, by simpa only [Nat.add_comm] using targetRun, finalRel⟩
 
 end Flapjack.Compiler.Backend.ClosInterp
