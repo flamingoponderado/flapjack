@@ -8,16 +8,41 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Stubs
 /-! Source-shaped labeled and incremental BVL-to-BVI compilation. -/
 namespace Flapjack.Compiler.Backend.BvlToBvi
 
-/-- Compile a labeled function into the source auxiliary tree. The singleton
-conversion and let-optimizer forms are justified by the original
-`compile_single_eq` and `compile_exp_eq` theorems. -/
+/-- The original labeled-function compiler. HOL head selection is arbitrary on
+empty lists, so this literal definition is noncomputable; `compileSingle_eq`
+proves the executable singleton implementation gives the same result. -/
 @[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "compile_single_def"]
-def compileSingleSource (n : Nat) (program : Nat × Nat × Bvl.Exp) :
+noncomputable def compileSingleSource (n : Nat) (program : Nat × Nat × Bvl.Exp) :
+    AppList (Nat × Nat × Bvi.Exp) × Nat :=
+  let (name, args, body) := program
+  let (converted, aux, next) := compileExpsSource n [body]
+  (smartAppend (.list [(bvlNumStubs + bvlToBviNamespaces * name, args,
+    BviLet.compileExp (@Flapjack.holHd Bvi.Exp ⟨.var 0⟩ converted))]) aux, next)
+
+/-- Executable singleton form, equal to the original definition by
+`compileSingle_eq`. -/
+def compileSingleImpl (n : Nat) (program : Nat × Nat × Bvl.Exp) :
     AppList (Nat × Nat × Bvi.Exp) × Nat :=
   let (name, args, body) := program
   let (converted, aux, next) := compileSingSource n body
   (smartAppend (.list [(bvlNumStubs + bvlToBviNamespaces * name, args,
     BviLet.compileSing [] 0 converted)]) aux, next)
+
+/-- HOLs singleton rewrite for the labeled-function compiler. -/
+@[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "compile_single_eq"]
+theorem compileSingle_eq (n name args : Nat) (body : Bvl.Exp) :
+    compileSingleSource n (name, args, body) =
+      let (converted, aux, next) := compileSingSource n body
+      (smartAppend (.list [(bvlNumStubs + bvlToBviNamespaces * name, args,
+        BviLet.compileExp converted)]) aux, next) := by
+  simp [compileSingleSource, compileExpsSing.1, Flapjack.holHd]
+
+/-- Code generation uses HOLs proved singleton rewrite, including the
+proved let-optimizer rewrite. The canonical source API remains the original. -/
+@[csimp] theorem compileSingleSource_eq_impl : compileSingleSource = compileSingleImpl := by
+  funext n program
+  rcases program with ⟨name, args, body⟩
+  simpa [compileSingleImpl, BviLet.compileExp_eq] using compileSingle_eq n name args body
 
 /-- Compile labeled functions in order, retaining the original tree. -/
 @[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "compile_list_def"]

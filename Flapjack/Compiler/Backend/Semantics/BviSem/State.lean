@@ -86,8 +86,8 @@ def fixClock {C F D G R : Type} (s : BviState C F) (result : R × BviState D G) 
   (result.1, { result.2 with clock := min s.clock result.2.clock })
 
 /-- Copy the shared reference, clock and FFI fields from BVL to BVI. This
-follows the source field update but is untagged until the representation
-qualifier can name the references in both state carriers. -/
+follows HOL bvl_to_bvi_def but is untagged until a qualifier covers the
+state-valued conversion between both finite-map carriers. -/
 def fromBvl {C F : Type} (source : BvlSem.State C F) (target : BviState C F) : BviState C F :=
   { target with refs := source.refs, clock := source.clock, ffi := source.ffi }
 

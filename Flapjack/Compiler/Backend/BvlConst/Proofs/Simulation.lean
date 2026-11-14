@@ -119,7 +119,8 @@ theorem evaluate_envRel_source {C F α : Type} (xs : List Bvl.Exp) (env1 : List 
     evaluateTuple (BvlConst.compile ax xs, env2, s1) = (res, s2) := by
   exact evaluate_envRel xs ax env1 env2 s1 s2 res premises.1 premises.2.1 premises.2.2
 
-/-- Empty-annotation specialization used by the production simulation. -/
+/-- Empty-annotation specialization used by the production simulation. The
+source's vacuous `ys` binder is omitted, and the explicit binders are reordered. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_constProofScript.sml" "compile_thm"
   (fmap_as_finite_support := [refs])]
 theorem evaluate_compileList {C F : Type} (xs : List Bvl.Exp)

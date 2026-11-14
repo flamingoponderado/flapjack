@@ -46,6 +46,7 @@ theorem simulation_install {C F : Type} (arguments : List Bvl.Exp)
         rcases argsCompile : compileListSource n arguments with ⟨argsCode, argsAux, finalName⟩
         have valuesLength := BvlSem.evaluate_length arguments env source middle values argsRun
         have codeLength := compileListSource_length n arguments
+        simp only [compileExpsSource_eq_list] at codeLength
         rw [argsCompile] at codeLength
         change argsCode.length = arguments.length at codeLength
         have twoArgs : argsCode.length = 2 := by simp [valuesEq] at valuesLength; omega

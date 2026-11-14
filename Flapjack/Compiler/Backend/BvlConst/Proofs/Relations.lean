@@ -10,7 +10,10 @@ public import Flapjack.Compiler.Backend.BvlConst
 These definitions follow the original value and environment relations but
 are not tagged as HOL ports: their canonical finite-map state is hidden in the
 value-relation quantifier and cannot be named by the current field qualifier.
-The corresponding representation qualification remains open.
+The corresponding representation qualification remains open. The reviewed
+`evaluate_envRel_source` statement explicitly names the same BVL state carrier;
+its source review separately compares the relation's recursive cases and its
+quantified state with HOL.
 -/
 namespace Flapjack.Compiler.Backend.BvlConst.Proofs
 open Flapjack.Compiler.Backend.BvlSem

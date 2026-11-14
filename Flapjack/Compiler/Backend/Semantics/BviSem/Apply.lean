@@ -14,7 +14,8 @@ open Flapjack.Compiler.Backend.BvlSem
 /-- Construct the BVL state used by the source fallback dispatcher. The
 unspecified fields come from one arbitrary BVL state, as in the source record
 literal; code retains its source tree shape with arbitrary BVL payloads. This
-remains untagged until both state-carrier map translations are qualified. -/
+remains untagged: HOL bvi_to_bvl_def needs a qualifier for a state-valued
+conversion between the two finite-map carriers. -/
 noncomputable def toBvl {C F : Type} (s : BviState C F) : BvlSem.State C F :=
   let config := (s.compileOracle 0).1
   let arbitraryCode : Nat × Bvl.Exp := @Flapjack.holArb (Nat × Bvl.Exp) ⟨(0, .var 0)⟩
@@ -77,38 +78,5 @@ noncomputable def doApp {C F : Type} (op : ClosLang.Op) (args : List Value) (s :
   | .install => doInstall args s
   | _ => doAppFallback op args s
 
-
-namespace ConversionReview
-
-/-- The BVI reference carrier and its explicit finite-support view roundtrip. -/
-theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
-    (∀ s : BviStateBroad C F, (BviState.ofBroad s).toBroad = s) ∧
-      (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
-  BviSem.holFmapAsFiniteSupportWitness
-
-/-- The BVL reference carrier and its explicit finite-support view roundtrip. -/
-theorem holFmapAsFiniteSupportRelationWitness_BvlSem.State {C F : Type} :
-    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
-      (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
-  BvlSem.holFmapAsFiniteSupportWitness
-
-/-- The complete BVL-to-BVI state update, including the retained target fields. -/
-@[hol "cakeml/compiler/backend/semantics/bviSemScript.sml" "bvl_to_bvi_def"
-  (fmap_as_finite_support_relation := [BvlSem.State.refs, BviState.refs])]
-theorem fromBvl_def {C F : Type} (s : BvlSem.State C F) (t : BviState C F) :
-    fromBvl s t = { t with refs := s.refs, clock := s.clock, ffi := s.ffi } := by rfl
-
-/-- The complete BVI-to-BVL state, including arbitrary unspecified fields and code values. -/
-@[hol "cakeml/compiler/backend/semantics/bviSemScript.sml" "bvi_to_bvl_def"
-  (fmap_as_finite_support_relation := [BviState.refs, BvlSem.State.refs])]
-theorem toBvl_def {C F : Type} (s : BviState C F) :
-    (toBvl s : BvlSem.State C F) =
-      let arbitraryCode : Nat × Bvl.Exp := @Flapjack.holArb (Nat × Bvl.Exp) ⟨(0, .var 0)⟩
-      let seed : BvlSem.State C F :=
-        ⟨[], s.refs, 0, (fun _ _ => none), (fun _ => ((s.compileOracle 0).1, [])), .ln, s.ffi⟩
-      let arbitrary : BvlSem.State C F := @Flapjack.holArb (BvlSem.State C F) ⟨seed⟩
-      { arbitrary with refs := s.refs, clock := s.clock, code := sptMap (fun _ => arbitraryCode) s.code, ffi := s.ffi } := by rfl
-
-end ConversionReview
 
 end Flapjack.Compiler.Backend.BviSem

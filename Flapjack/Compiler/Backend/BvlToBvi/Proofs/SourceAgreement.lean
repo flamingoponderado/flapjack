@@ -81,6 +81,7 @@ theorem compileFuel_eq_source (fuel optFuel n : Nat) (exp : Bvl.Exp)
         have fa := compileListFuel_eq_source fuel optFuel n args ba
         have fb := compileFuel_eq_source fuel optFuel n1 inner bi
         have len := compileListSource_length n args
+        simp only [compileExpsSource_eq_list] at len
         simp only [ha] at fa len
         simp only [hb] at fb
         simp [compileFuel, compileSingSource, dest, ha, hb, fa, fb,
@@ -111,6 +112,7 @@ theorem compileFuel_eq_source (fuel optFuel n : Nat) (exp : Bvl.Exp)
       have fb := compileFuel_eq_source fuel optFuel n1 inner bi
       have fc := compileFuel_eq_source fuel optFuel n2 y by'
       have len := compileListSource_length n args
+      simp only [compileExpsSource_eq_list] at len
       simp only [ha] at fa len
       simp only [hb] at fb
       simp only [hc] at fc

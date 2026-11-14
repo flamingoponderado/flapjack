@@ -23,7 +23,7 @@ def isResult (r : BviSem.BviResult) : Prop :=
   ∃ vs, r = .val vs
 
 /-- The source theorem's result-dependent obligations. This is factored
-infrastructure, pending review of the BVI evaluator and the complete proof. -/
+Flapjack infrastructure for the assembled compiler simulation. -/
 def correctOutcome {C F : Type} (res : BviSem.BviResult)
     (t1 t2 : DataSem.State C F) (n next : Nat) (corr live vs : List Nat)
     (env : List BvlSem.Value) (tail : Bool)
@@ -292,8 +292,7 @@ def simulationFor {C F : Type} (xs : List Bvi.Exp) (env : List BvlSem.Value)
 
 /-- The list case assembled from recursive compiler simulations. The second
 induction premise applies to intermediate states reached by a successful
-first expression. This remains untagged until the BVI evaluator is reviewed
-and the assembled induction is in `Proofs.Simulation`. -/
+first expression. This is Flapjack infrastructure for the assembled induction. -/
 theorem compileCorrect_cons {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F)
     (ihFirst : simulationFor [x] env s1)
@@ -396,7 +395,7 @@ theorem compileCorrect_cons {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
               · exact correctOutcome_stop_after_continue head (.err error) t1 tmid t2 n nmid next name corr live names env result ls1 ls2 firstOutcome restOutcome
 
 /-- The empty list satisfies the reusable evaluator induction invariant.
-The evaluator correspondence remains pending source review. -/
+This is Flapjack infrastructure for the assembled induction. -/
 theorem simulationFor_nil {C F : Type} (env : List BvlSem.Value) (s1 : BviSem.BviState C F) :
     simulationFor [] env s1 := by
   intro res s2 t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
@@ -419,7 +418,7 @@ theorem simulationFor_nil {C F : Type} (env : List BvlSem.Value) (s1 : BviSem.Bv
     · exact ⟨fun h => h, List.Forall₂.nil⟩
 
 /-- A variable expression satisfies the reusable evaluator induction invariant.
-The evaluator correspondence remains pending source review. -/
+This is Flapjack infrastructure for the assembled induction. -/
 theorem simulationFor_var {C F : Type} (index : Nat) (env : List BvlSem.Value) (s1 : BviSem.BviState C F) :
     simulationFor [.var index] env s1 := by
   intro res s2 t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
@@ -488,8 +487,7 @@ private theorem outcome_decClock_initial {C F : Type} (res : BviSem.BviResult)
   cases pres <;> simp only [correctOutcome, DataSem.decClock, sameJump]
 
 /-- The tick case of the compiler simulation, assuming the recursive
-simulation at the decremented source clock. This remains untagged pending
-the source evaluator correspondence review. -/
+simulation at the decremented source clock. This is Flapjack induction infrastructure. -/
 theorem simulationFor_tick {C F : Type} (body : Bvi.Exp) (env : List BvlSem.Value)
     (s1 : BviSem.BviState C F)
     (ih : s1.clock ≠ 0 → simulationFor [body] env (BviSem.decClock 1 s1)) :
@@ -527,7 +525,7 @@ theorem simulationFor_tick {C F : Type} (body : Bvi.Exp) (env : List BvlSem.Valu
     · exact (outcome_decClock_initial res t1 t2 n next corr live names env tail pres ls).mp outcome
 
 /-- Return expressions evaluate their argument list and then return its
-projected values. This remains untagged pending the source evaluator review. -/
+projected values. This is Flapjack induction infrastructure. -/
 theorem simulationFor_return {C F : Type} (args : List Bvi.Exp) (env : List BvlSem.Value)
     (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.return args] env s1 := by
@@ -592,8 +590,7 @@ private theorem jumpExc_preserves {C F : Type} (s : BviSem.BviState C F)
   · simp at jump
 
 /-- Raise evaluates its operand, projects the raised value, and transfers
-control through the corresponding exception frame. This remains untagged
-pending the source evaluator review. -/
+control through the corresponding exception frame. This is Flapjack induction infrastructure. -/
 theorem simulationFor_raise {C F : Type} (body : Bvi.Exp) (env : List BvlSem.Value)
     (s1 : BviSem.BviState C F) (ih : simulationFor [body] env s1) :
     simulationFor [.raise body] env s1 := by
@@ -661,8 +658,7 @@ theorem simulationFor_raise {C F : Type} (body : Bvi.Exp) (env : List BvlSem.Val
                 exact ⟨rfl, by simpa using jumpAgain⟩
 
 /-- The `let` case composes binding and body simulations, extending the
-environment by the binding results. This remains untagged pending evaluator
-correspondence review. -/
+environment by the binding results. This is Flapjack induction infrastructure. -/
 theorem simulationFor_let {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F)
     (ihBindings : simulationFor bindings env s1)
@@ -840,8 +836,7 @@ private theorem compileSource_single (n : Nat) (env : List Nat) (tail : Bool) (l
     | cons _ _ => simp at len
 
 /-- Conditional simulation, combining condition evaluation, branch choice,
-and the fresh-result merge for non-tail compilation. This remains untagged
-pending evaluator correspondence review. -/
+and the fresh-result merge for non-tail compilation. This is Flapjack induction infrastructure. -/
 theorem simulationFor_if {C F : Type} (condition yes no : Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F)
     (ihCondition : simulationFor [condition] env s1)

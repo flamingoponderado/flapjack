@@ -624,7 +624,7 @@
     "lean_name": "stateRel_refs",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["refs", "code"],
-    "reviewer": "Compared the local source theorem and state_rel_refs_replay_typed: the reference maps use the target maximum application and the source reference payload relation. optionRel_lookup_iff gives equal domains and related present entries, the original fmap_rel conditions. Canonical finite-support refs and code have a local roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+    "reviewer": "Compared the local source theorem and state_rel_refs_replay_typed: the reference maps use the target maximum application and the source reference payload relation. The conclusion is the pointwise rendering of HOL fmap_rel_def, justified by optionRel_lookup_iff as equal domains and related present entries. Canonical finite-support refs and code have a local roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
@@ -1569,25 +1569,7 @@
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["refs"],
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "Independent typed HOL source review 2026-11-13: exact Install interception, BVI auxiliary outcomes and BVL fallback, including unchanged aborts, Exn-wrapped raises, state conversion, code domains and arbitrary-field independence. The actual BVI state refs uses the canonical finite-support translation and local roundtrip witness. Compiler and FFI carriers are independent; callbacks retain fixed word8 and word64. Inherits reals_as_rational_cuts through delegated primitives, as documented in SOUNDNESS item 8."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
-    "hol_name": "bvl_to_bvi_def",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/Apply.lean",
-    "lean_name": "fromBvl_def",
-    "statement_status": "reviewed_fmap_as_finite_support_relation",
-    "fmap_as_finite_support_relation": ["BvlSem.State.refs", "BviState.refs"],
-    "reviewer": "Independent typed HOL source review 2026-11-13: the full equation copies source refs, clock and ffi into the target and preserves all other target fields; arbitrary shared compiler and FFI carriers and fixed callback widths match. Both refs fields use the canonical finite-support map translation, with separate checked carrier roundtrips."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
-    "hol_name": "bvi_to_bvl_def",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/Apply.lean",
-    "lean_name": "toBvl_def",
-    "statement_status": "reviewed_fmap_as_finite_support_relation",
-    "fmap_as_finite_support_relation": ["BviState.refs", "BvlSem.State.refs"],
-    "reviewer": "Independent typed HOL source review 2026-11-13: the full equation copies refs, clock and ffi, maps the original code tree to one arbitrary BVL code payload, and retains all other fields from one arbitrary BVL state; the seed only witnesses inhabitation. Shared compiler and FFI carriers and fixed callback widths match. Both refs fields use the canonical finite-support map translation, with separate checked carrier roundtrips."
+    "reviewer": "Independent typed HOL source review 2026-11-13: exact Install interception, BVI auxiliary outcomes and BVL fallback, including unchanged aborts, Exn-wrapped raises, state conversion, code domains and arbitrary-field independence. The fallback conversions were separately compared with bvl_to_bvi_def and bvi_to_bvl_def, including their copied and arbitrary fields. The actual BVI state refs uses the canonical finite-support translation and local roundtrip witness. Compiler and FFI carriers are independent; callbacks retain fixed word8 and word64. Inherits reals_as_rational_cuts through delegated primitives, as documented in SOUNDNESS item 8."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
@@ -3430,7 +3412,7 @@
   "lean_path": "Flapjack/Compiler/Backend/BvlConst/Proofs/Simulation.lean", "lean_name": "evaluate_compileList",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared the transformed typed HOL theorem, including binder order, grouped source evaluation and non-type-error premises, and exact target evaluation with the source compile entry and the same result and state. Compiler and FFI carriers remain independent; the BVL state's canonical finite-support refs map has a local roundtrip witness. Evaluator dependencies inherit reals_as_rational_cuts."
+  "reviewer": "Compared the transformed typed HOL theorem, its grouped source evaluation and non-type-error premises, and exact target evaluation with the source compile entry and the same result and state. Lean reorders the explicit binders and omits the vacuous ys binder. Compiler and FFI carriers remain independent; the BVL state's canonical finite-support refs map has a local roundtrip witness. Evaluator dependencies inherit reals_as_rational_cuts."
  },
  {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_constProofScript.sml", "hol_name": "evaluate_compile_exp",
@@ -132596,11 +132578,35 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/SourceSing.lean",
+  "hol_name": "compile_exps_def",
+  "lean_name": "compileExpsSource",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared every typed compile_exps_def clause in bvl_to_bvi_compile_probe.out, including the longer-list recursion, singleton expression cases, original HOL HD translation, auxiliary tree construction and threaded counter. The full compileExpsSing theorem proves the tuple equals the executed singleton/list traversal. Source comparison and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/SourceSing.lean",
+  "hol_name": "compile_exps_sing",
+  "lean_name": "compileExpsSing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared compile_exps_sing in the typed HOL capture: both original ordered universally quantified conjuncts equate the full singleton result and the complete list result, including auxiliary tree and counter. Source comparison and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/SourceProgram.lean",
   "statement_status": "reviewed_exact",
   "hol_name": "compile_single_def",
   "lean_name": "compileSingleSource",
-  "reviewer": "Compared the typed original and its compile_single_eq theorem in bvl_to_bvi_compile_probe.out, including tuple carriers, source singleton conversion, original SmartAppend tree, and exact relocated label. The typed compile_exp_eq capture identifies the let optimizer with compileSing [] 0."
+  "reviewer": "Compared the typed original in bvl_to_bvi_compile_probe.out: source singleton list compilation, HOL head, let optimizer, original auxiliary tree and relocated label. A kernel-checked code-generation rewrite invokes the executable singleton implementation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/SourceProgram.lean",
+  "statement_status": "reviewed_exact",
+  "hol_name": "compile_single_eq",
+  "lean_name": "compileSingle_eq",
+  "reviewer": "Compared the typed compile_single_eq in bvl_to_bvi_compile_probe.out: the original function equals the optimized singleton traversal with the source let optimizer and identical auxiliary tree and counter."
 },
 {
   "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
@@ -140137,9 +140143,9 @@
     "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
     "hol_name": "locals_ok_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/DataProps/Locals.lean",
-    "lean_name": "localsOk_def",
+    "lean_name": "localsOk",
     "statement_status": "reviewed_exact",
-    "reviewer": "Independent typed HOL source review 2026-11-13: arbitrary sparse maps and payload type; localsOk uses sptSubspt, whose exact lookup characterization proves the original full pointwise defining equation."
+    "reviewer": "Independent typed HOL source review: arbitrary sparse maps and payload type, with the original pointwise successful-lookup implication as the definition."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",

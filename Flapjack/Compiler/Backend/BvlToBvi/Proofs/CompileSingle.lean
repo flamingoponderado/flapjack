@@ -40,9 +40,9 @@ theorem compileSingleEvaluate {C F : Type} (start : Nat)
           (fun value => BviSem.ExnOrRet.exn (adjustBv newRelocate value)) res, targetNext) ∧
       stateRel newRelocate next targetNext := by
   obtain ⟨run, related, global, sourceOk, notTypeError⟩ := premises
-  have compiled : compileListSource 0 [.call 0 (some start) []] =
+  have compiled : compileExpsSource 0 [.call 0 (some start) []] =
       ([.call 0 (some (bvlNumStubs + bvlToBviNamespaces * start)) [] none], .nil, 0) := by
-    simp [compileListSource, compileSingSource, smartAppend]
+    simp [compileExpsSource_eq_list, compileListSource, compileSingSource, smartAppend]
   obtain ⟨targetNext, newRelocate, clock, targetRun, finalRel, _, _⟩ :=
     compileExpsCorrect [.call 0 (some start) []] [] source 0 res next target 0
       [.call 0 (some (bvlNumStubs + bvlToBviNamespaces * start)) [] none] .nil relocate

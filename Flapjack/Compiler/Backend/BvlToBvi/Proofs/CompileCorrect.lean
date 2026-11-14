@@ -187,7 +187,7 @@ theorem compileExpsCorrect {C F : Type} (xs : List Bvl.Exp) (env : List Value)
     (next : BvlSem.State (Nat × C) F) (target : BviSem.BviState C F) (n2 : Nat)
     (ys : List Bvi.Exp) (aux : AppList (Nat × Nat × Bvi.Exp)) (relocate : Nat → Nat)
     (premises : BvlSem.evaluate xs env source = (res, next) ∧
-      res ≠ .err (.abort .typeError) ∧ compileListSource n xs = (ys, aux, n2) ∧
+      res ≠ .err (.abort .typeError) ∧ compileExpsSource n xs = (ys, aux, n2) ∧
       stateRel relocate source target ∧ stateOk source ∧ bvOkList source.refs env ∧
       auxCodeInstalled (appListAppend aux) target.code ∧
       BvlHandle.Proofs.handleOk xs ∧ target.global.isSome = true) :
@@ -200,6 +200,7 @@ theorem compileExpsCorrect {C F : Type} (xs : List Bvl.Exp) (env : List Value)
       ∀ key, source.refs.lookup key ≠ none → relocate key = newRelocate key :=
   by
     obtain ⟨run, notTypeError, compiled, related, sourceOk, envOk, installed, handlers, global⟩ := premises
+    rw [compileExpsSource_eq_list] at compiled
     simpa only [mapSimulationResult_eq_mapResult] using
       simulation_all xs env source n res next target n2 ys aux relocate run notTypeError compiled related
         sourceOk envOk installed handlers global

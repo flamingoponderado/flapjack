@@ -100,6 +100,7 @@ theorem simulation_global {C F : Type} (name : Nat) (arguments : List Bvl.Exp)
         intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
         rcases argsCompile : compileListSource n (first :: rest) with ⟨argsCode, argsAux, finalName⟩
         have codeLength := compileListSource_length n (first :: rest)
+        simp only [compileExpsSource_eq_list] at codeLength
         rw [argsCompile] at codeLength
         have codeNonempty : argsCode ≠ [] := by intro eq; simp [eq] at codeLength
         have nilRight : smartAppend argsAux .nil = argsAux := by cases argsAux <;> rfl

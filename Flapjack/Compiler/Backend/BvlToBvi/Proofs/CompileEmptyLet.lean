@@ -29,7 +29,7 @@ theorem simulation_let_empty {C F : Type} (bindings : List Bvl.Exp) (body : Bvl.
       auxCodeInstalled (appListAppend bodyAux) target.code ∧
       sptLookup (bvlNumStubs + bvlToBviNamespaces * finalName + 1) target.code =
         some (bindings.length, BviLet.compileSing [] 0 bodyCode) := by
-    simp only [appListAppend_smartAppend, compileAuxSource,
+    simp only [appListAppend_smartAppend, compileAuxSource, BviLet.compileExp_eq,
       show appListAppend (.list [(bvlNumStubs + bvlToBviNamespaces * finalName + 1,
         bindings.length, BviLet.compileSing [] 0 bodyCode)]) =
           [(bvlNumStubs + bvlToBviNamespaces * finalName + 1,

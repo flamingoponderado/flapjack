@@ -14,7 +14,7 @@ theorem compileSingleFuel_eq_flattened (fuel optFuel n : Nat) (program : Nat × 
       some (appListAppend (compileSingleSource n program).1, (compileSingleSource n program).2) := by
   rcases program with ⟨name, args, body⟩
   rcases h : compileSingSource n body with ⟨converted, aux, next⟩
-  simp only [compileSingleSource, h, appListAppend_smartAppend]
+  simp only [compileSingleSource_eq_impl, compileSingleImpl, h, appListAppend_smartAppend]
   simp [compileSingleFuel, compileBounded_eq_source, h, BviLet.compileExp_eq,
     appListAppend, appendAux]
 

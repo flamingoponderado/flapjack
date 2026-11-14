@@ -205,7 +205,7 @@ private theorem auxNoMutcons_append {a b : AppList (Nat × Nat × Bvi.Exp)}
 
 private theorem auxNoMutcons_fresh (n arity : Nat) (body : Bvi.Exp) (safe : noMutcons body) :
     auxNoMutcons (compileAuxSource (n, arity, body)) := by
-  simp [auxNoMutcons, compileAuxSource, appListAppend, appendAux,
+  simp [auxNoMutcons, compileAuxSource, appListAppend, appendAux, BviLet.compileExp_eq,
     let_compileSing_zero_noMutcons body safe]
 
 private theorem destLetBudget' (exp : Bvl.Exp) :
@@ -326,9 +326,10 @@ theorem compile_exps_sing_noMutcons :
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_exps_no_mutcons"]
 theorem compileExps_noMutcons (n : Nat) (xs : List Bvl.Exp) (c : List Bvi.Exp)
     (aux : AppList (Nat × Nat × Bvi.Exp)) (n1 : Nat)
-    (run : compileListSource n xs = (c, aux, n1)) :
-    (∀ e ∈ c, noMutcons e) ∧ auxNoMutcons aux :=
-  compile_exps_sing_noMutcons.2 n xs c aux n1 run
+    (run : compileExpsSource n xs = (c, aux, n1)) :
+    (∀ e ∈ c, noMutcons e) ∧ (∀ entry ∈ appListAppend aux, noMutcons entry.2.2) := by
+  apply compile_exps_sing_noMutcons.2 n xs c aux n1
+  simpa only [compileExpsSource_eq_list] using run
 
 /-- Each lowered labeled function and its auxiliaries are safe. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_single_no_mutcons"]
@@ -343,7 +344,7 @@ theorem compileSingleSource_noMutcons (n : Nat) (program : Nat × Nat × Bvl.Exp
       BviLet.compileSing [] 0 converted)]) := by
     simp [auxNoMutcons, appListAppend, appendAux, let_compileSing_zero_noMutcons converted safe.1]
   have both := auxNoMutcons_append main safe.2
-  simp [compileSingleSource, h] at run
+  simp [compileSingleSource_eq_impl, compileSingleImpl, h] at run
   obtain ⟨rfl, _⟩ := run
   exact both
 

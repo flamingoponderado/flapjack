@@ -172,7 +172,7 @@ private theorem ffiOp_error_is_final {C F : Type} (name : Basis.Pure.MlString.Ml
 
 /-- If argument evaluation stops with a non-type error, the compiled
 operation stops at the same point, before executing its assignment. This is
-an untagged source case pending evaluator correspondence review. -/
+Flapjack infrastructure for the assembled operation simulation. -/
 theorem simulationFor_op_argsError {C F : Type} (op : ClosLang.Op) (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 s2 : BviSem.BviState C F) (error : ErrorResult BviSem.ExnOrRet)
     (ih : simulationFor args env s1) (argsRun : BviSem.evaluate args env s1 = (.err error, s2))
@@ -214,7 +214,7 @@ theorem simulationFor_op_argsError {C F : Type} (op : ClosLang.Op) (args : List 
 /-- Complete integer-operation expression case of the BVI-to-data simulation.
 The recursive hypothesis covers its argument list; non-type errors propagate
 from arguments, and successful integer application handles both tail modes.
-This remains untagged pending evaluator correspondence review. -/
+This is Flapjack infrastructure for the assembled operation simulation. -/
 theorem simulationFor_op_int {C F : Type} (op : ClosLang.IntOp) (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.intOp op) args] env s1 := by
@@ -298,7 +298,7 @@ theorem simulationFor_op_int {C F : Type} (op : ClosLang.IntOp) (args : List Bvi
 /-- Complete word-operation expression case of the BVI-to-data simulation.
 The recursive hypothesis covers its argument list; non-type errors propagate
 from arguments, and successful word application handles both tail modes.
-This remains untagged pending evaluator correspondence review. -/
+This is Flapjack infrastructure for the assembled operation simulation. -/
 theorem simulationFor_op_word {C F : Type} (op : ClosLang.WordOp) (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.wordOp op) args] env s1 := by
@@ -382,7 +382,7 @@ theorem simulationFor_op_word {C F : Type} (op : ClosLang.WordOp) (args : List B
 /-- Complete block op expression case of the BVI-to-data simulation.
 The recursive hypothesis covers its argument list; non-type errors propagate
 from arguments, and successful block op handles both tail modes.
-This remains untagged pending evaluator correspondence review. -/
+This is Flapjack infrastructure for the assembled operation simulation. -/
 theorem simulationFor_op_block {C F : Type} (op : ClosLang.BlockOp) (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.blockOp op) args] env s1 := by
@@ -466,7 +466,7 @@ theorem simulationFor_op_block {C F : Type} (op : ClosLang.BlockOp) (args : List
 /-- Complete installation expression case of the BVI-to-data simulation.
 The recursive hypothesis covers its argument list; non-type errors propagate
 from arguments, and successful installation handles both tail modes.
-This remains untagged pending evaluator correspondence review. -/
+This is Flapjack infrastructure for the assembled operation simulation. -/
 theorem simulationFor_op_install {C F : Type} (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op .install args] env s1 := by
@@ -548,7 +548,7 @@ theorem simulationFor_op_install {C F : Type} (args : List Bvi.Exp)
               DataSem.flushState, ← resultProjection, stack, handler]
 
 /-- Memory expression simulation for the source operation.
-This remains untagged pending evaluator correspondence review. -/
+This is Flapjack infrastructure for the assembled operation simulation. -/
 theorem simulationFor_op_mem {C F : Type} (op : ClosLang.MemOp) (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F)
     (ih : simulationFor args env s1) :
@@ -633,7 +633,7 @@ theorem simulationFor_op_mem {C F : Type} (op : ClosLang.MemOp) (args : List Bvi
 /-- Complete thunk operation expression case of the BVI-to-data simulation.
 The recursive hypothesis covers its argument list; non-type errors propagate
 from arguments, and successful thunk operation handles both tail modes.
-This remains untagged pending evaluator correspondence review. -/
+This is Flapjack infrastructure for the assembled operation simulation. -/
 theorem simulationFor_op_thunk {C F : Type} (op : AstHOL.ThunkOp) (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.thunkOp op) args] env s1 := by
@@ -720,8 +720,8 @@ theorem simulationFor_op_thunk {C F : Type} (op : AstHOL.ThunkOp) (args : List B
           simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at opRun
 
 /-- Complete FFI-operation expression case of the BVI-to-data simulation,
-including returning calls, terminal events and argument errors. This remains
-untagged pending evaluator correspondence review. -/
+including returning calls, terminal events and argument errors. This is
+Flapjack infrastructure for the assembled operation simulation. -/
 theorem simulationFor_op_ffi {C F : Type} (name : Basis.Pure.MlString.MlString) (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.ffi name) args] env s1 := by
@@ -844,7 +844,7 @@ theorem simulationFor_op_ffi {C F : Type} (name : Basis.Pure.MlString.MlString) 
 /-- Complete global-operation expression case of the BVI-to-data simulation.
 The recursive hypothesis covers its argument list; non-type errors propagate
 from arguments, and successful global application handles both tail modes.
-This remains untagged pending evaluator correspondence review. -/
+This is Flapjack infrastructure for the assembled operation simulation. -/
 theorem simulationFor_op_global {C F : Type} (op : ClosLang.GlobOp) (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.globOp op) args] env s1 := by
@@ -928,7 +928,7 @@ theorem simulationFor_op_global {C F : Type} (op : ClosLang.GlobOp) (args : List
 /-- Complete label-operation expression case of the BVI-to-data simulation.
 The recursive hypothesis covers its argument list; non-type errors propagate
 from arguments, and successful label application handles both tail modes.
-This remains untagged pending evaluator correspondence review. -/
+This is Flapjack infrastructure for the assembled operation simulation. -/
 theorem simulationFor_op_label {C F : Type} (label : Nat) (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op (.label label) args] env s1 := by
@@ -1010,8 +1010,7 @@ theorem simulationFor_op_label {C F : Type} (label : Nat) (args : List Bvi.Exp)
               DataSem.flushState, ← resultProjection, stack, handler]
 
 /-- Every BVI operation satisfies the expression simulation, assuming the
-argument-list induction hypothesis. This assembled result remains untagged
-pending correspondence review of the BVI and data evaluators. -/
+argument-list induction hypothesis. This is Flapjack induction infrastructure. -/
 theorem simulationFor_op {C F : Type} (op : ClosLang.Op) (args : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.op op args] env s1 := by

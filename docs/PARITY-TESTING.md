@@ -1,236 +1,5 @@
 # Pancake parity-testing workflow
 
-After replacing the BVI wrapper's expression-list comparison with a
-kernel-characterized variable-index comparison, the rebuilt `cake` matched
-the pinned CakeML compiler on all 143 fixed source-corpus cases and 40
-structured cases with backend options (seed 116834111). The comparisons
-included complete output, diagnostics, and exit status. The same 143 fixed
-and 40 structured cases matched again after routing both BVI inlining paths
-through the ported `wrapper_ok` definition.
-
-The source-shaped whole BVL-to-BVI pipeline now runs in the configured CakeML
-compiler. After rebuilding `cake`, all 143 fixed source corpus cases matched
-the pinned CakeML executable in output, diagnostics, and exit status:
-`python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --corpus --timeout 90`.
-The same executable also matched 25 rich generated cases (seed 26110921) and
-40 structured-option cases (seed 116834111).
-
-For a pinned CakeML oracle, build from a clean checkout of the `cakeml`
-submodule revision in `/var/tmp/flapjack-cakeml-oracle`, using a built HOL
-checkout at the `HOL` submodule revision. Run
-`HOL4=/path/to/built/HOL scripts/build-pinned-cake.sh`; the script checks both
-source revisions and the resulting executable's embedded version. Set
-`CAKEML_BUILD_DIR` to choose another persistent build directory. The reference
-submodules in this repository remain read-only.
-
-The fixed source corpus includes programs combining array mutation with
-escaping closures and exception handlers, overlapping byte-array copies, and
-64-bit word operations. Run the complete corpus against the pinned compiler
-with `python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --corpus`.
-This compares complete compiler output, diagnostics, and exit status; it is
-not a general equivalence proof.
-
-At Flapjack commit `3027f7f3a2`, a rebuilt `cake` matched the pinned CakeML
-compiler on all 143 fixed corpus cases, including output, diagnostics and exit
-status.
-
-After switching the BVL-to-BVI whole-program compiler to the original
-allocation-count recursion, a rebuilt `cake` again matched all 143 fixed corpus
-cases. The kernel-checked count equivalence and existing whole-program output
-agreement also establish that this switch preserves the previous result for
-every input.
-
-After routing whole-program BVL-to-BVI compilation through the original
-source-shaped definition, a rebuilt `cake` again matched all 143 fixed corpus
-cases, including complete output, diagnostics, and exit status. The existing
-whole-program agreement theorem retains its previous statement for all inputs.
-
-At `e38869acea`, all 38 structured templates matched with seed `20261111`, as
-did 40 structured programs with varied backend options and seed `20261112`.
-Both runs used a 90-second timeout per case.
-
-At Flapjack commit `05992bd4b9`, all 143 fixed corpus cases matched the
-compiler built from the pinned CakeML submodule revision `857f0d98da8f`.
-
-After generalizing closure annotation's label carrier to match HOL, the
-rebuilt executable also matched all 143 fixed corpus cases against that
-pinned compiler, including output, diagnostics, and exit status.
-
-At `45f70abdf1`, 25 generated nested programs matched the pinned compiler's
-complete output, diagnostics, and exit status with:
-
-```sh
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 26110921 --count 25 --timeout 90
-```
-
-After replacing the data-to-word option-valued calls with the proved-total
-operation, the 143 fixed corpus cases, 60 structured-option cases with seed
-`11051109`, and 40 nested programs with seed `11050731` matched the pinned
-compiler. The total operation
-also has a kernel-checked equation
-showing it returns the same result as the previous traversal for every input.
-
-At `86a71e469b`, a further 40 generated nested programs and 60 structured
-programs with varied options matched the pinned compiler's complete output,
-diagnostics, and exit status:
-
-```sh
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 11050731 --count 40 --timeout 90
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 11051109 --count 60 --timeout 90
-```
-
-After merging `main` at `d5f6c5326f`, the rebuilt `cake` matched all 143 fixed
-corpus cases, including array updates holding tree nodes, closures, and
-aliased nested arrays. A further 40 generated programs with varied backend
-options also matched:
-
-```sh
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --corpus --timeout 90
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 116834111 --count 40 --timeout 90
-```
-
-After merging `main` at `efc992d38`, the executable also matched 40 generated
-nested programs, 50 structured programs with backend options, and 100
-display mutations:
-
-```sh
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 116833701 --count 40 --timeout 90
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 116833702 --count 50 --timeout 90
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --display-mutations --seed 116833703 --count 100 --timeout 90
-```
-
-On 2026-11-04, 40 generated nested-closure programs and 80 structured
-programs with varied backend options matched the pinned executable's complete
-output. All 38 structured templates also matched, including escaping mutual
-recursion, higher-order calls, exceptions, and recursive datatypes:
-
-```sh
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 11049187 --count 40 --timeout 90
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 11049190 --count 80 --timeout 90
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-all --seed 11049189 --timeout 90
-```
-
-On 2026-11-03, the pinned bootstrap completed with one HOL build job. Its
-build-produced executable passed `scripts/check-cake-help.py --pinned-reference` and
-`scripts/check-cake-pancake-parity.py --reference`, including the latter's 38
-ASCII lexical diagnostics. These are finite regression checks, not a proof of
-compiler equivalence.
-
-The same executable passed all 236 cases of
-`scripts/check-cake-cli-parity.py --check-pinned-reference`, comparing each
-case's complete stdout, stderr, and exit status directly with Flapjack. It
-also passed all 170 cases of `scripts/check-cake-pinned-parity.py` with
-`--check-reference` and the same direct comparison.
-
-On 2026-11-04, further pinned-oracle comparisons matched complete stdout,
-stderr, and exit status for 40 generated programs, 500 byte mutations, and
-120 configuration mutations:
-
-```sh
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 11052731 --count 40 --timeout 90
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --byte-mutations --seed 11053011 --count 500 --timeout 60
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --config-mutations --seed 11053012 --count 120 --timeout 90
-```
-
-Two additional 300-case samples exercised display output and mutated
-S-expression input; both matched the pinned compiler's complete output,
-diagnostics, and exit status:
-
-```sh
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --display-mutations --seed 11060811 --count 300 --timeout 60
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --sexp-mutations --seed 11060812 --count 300 --timeout 60
-```
-
-A further structured-options run compared 80 generated programs and varied
-backend flags with the pinned executable; complete output, diagnostics, and
-exit status all matched:
-
-```sh
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 11061817 --count 80 --timeout 90
-```
-
-Two further runs against that executable matched complete output, diagnostics,
-and exit status for 350 nested-source mutations and 45 structured programs
-with varied backend options:
-
-```sh
-python3 scripts/fuzz-cake-source-parity.py --reference /path/to/pinned/cake --deep-mutations --seed 8732401 --count 350 --timeout 60
-python3 scripts/fuzz-cake-source-parity.py --reference /path/to/pinned/cake --structured-options --seed 8732402 --count 45 --timeout 120
-```
-
-An additional run against the same bootstrap matched complete output and exit
-status for 300 S-expression mutations and 300 Unicode-source mutations:
-
-```sh
-python3 scripts/fuzz-cake-source-parity.py --reference /path/to/pinned/cake --sexp-mutations --seed 7304219 --count 300 --timeout 60
-python3 scripts/fuzz-cake-source-parity.py --reference /path/to/pinned/cake --unicode-mutations --seed 7304220 --count 300 --timeout 60
-```
-
-At frontend branch commit `622d24353`, the rebuilt `cake` executable matched
-complete output, diagnostics, and exit status for 200 nested-source mutations,
-700 arbitrary-byte mutations, and 80 structured programs with varied backend
-options:
-
-```sh
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --deep-mutations --seed 18802301 --count 200 --timeout 60
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --byte-mutations --seed 19949151 --count 700 --timeout 60
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 18317309 --count 80 --timeout 90
-```
-
-At frontend branch commit `f5e8c421d`, the `cake` executable also matched
-the pinned original's complete stdout, stderr and exit status for 160 nested
-source mutations, 60 accepted structured programs with varied backend options,
-and 60 generated programs using the standard prelude:
-
-```sh
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --deep-mutations --seed 19301103 --count 160 --timeout 60
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 19301104 --count 60 --timeout 120
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 19301105 --count 60 --timeout 90
-```
-
-These generated cases are finite evidence for those inputs, not a general
-output-equivalence proof.
-
-On 2026-11-03, another run of the local `cake` executable against the pinned
-original matched complete stdout, stderr, and exit status for 200 nested-source
-mutations and 40 generated programs using the standard prelude:
-
-```sh
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --deep-mutations --seed 19402421 --count 200 --timeout 60
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 19402422 --count 40 --timeout 90
-```
-
-On 2026-11-04, a further 60 structured programs with varied backend options
-matched the pinned original's complete stdout, stderr, and exit status:
-
-```sh
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 19411104 --count 60 --timeout 120
-```
-
-Another run on 2026-11-04 matched the pinned original's complete stdout,
-stderr, and exit status for 80 generated prelude programs, 80 structured
-programs with varied backend options, and 120 nested-source mutations:
-
-```sh
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 11040817 --count 80 --timeout 90
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 11040818 --count 80 --timeout 120
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --deep-mutations --seed 11040819 --count 120 --timeout 60
-```
-
-On 2026-11-04, the existing `cake` executable also matched the pinned
-original's complete stdout, stderr, and exit status for 160 configuration
-mutations, 180 nested-source mutations, and 40 generated programs with the
-standard prelude:
-
-```sh
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --config-mutations --seed 11040981 --count 160 --timeout 90
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --deep-mutations --seed 11040982 --count 180 --timeout 90
-python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 11040983 --count 40 --timeout 90
-```
-
-These comparisons cover the generated inputs only; they do not establish
-general output equivalence.
-
 Flapjack is a Lean port of the CakeML Pancake compiler. A regression test is
 useful for porting only when it corresponds to behavior of the original
 Pancake implementation. This applies to source-to-RISC-V tests and to tests
@@ -1337,3 +1106,241 @@ bootstrap depends on the historical compiler and is not a verified pinned
 compiler build or a proof of cross-language equivalence. The CLI checker
 checks the historical capture lengths and SHA-256 hashes and directly compares
 stdout, stderr, and exit status between the pinned bootstrap and Lean executable.
+
+## Previous parity runs
+
+After routing BVL-to-BVI single-function compilation through its original
+HOL-shaped definition and a kernel-checked code-generation rewrite, the
+rebuilt `cake` matched the pinned CakeML executable on all 143 fixed source
+corpus cases, including complete output, diagnostics, and exit status.
+
+After replacing the BVI wrapper's expression-list comparison with a
+kernel-characterized variable-index comparison, the rebuilt `cake` matched
+the pinned CakeML compiler on all 143 fixed source-corpus cases and 40
+structured cases with backend options (seed 116834111). The comparisons
+included complete output, diagnostics, and exit status. The same 143 fixed
+and 40 structured cases matched again after routing both BVI inlining paths
+through the ported `wrapper_ok` definition.
+
+The source-shaped whole BVL-to-BVI pipeline now runs in the configured CakeML
+compiler. After rebuilding `cake`, all 143 fixed source corpus cases matched
+the pinned CakeML executable in output, diagnostics, and exit status:
+`python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --corpus --timeout 90`.
+The same executable also matched 25 rich generated cases (seed 26110921) and
+40 structured-option cases (seed 116834111).
+
+For a pinned CakeML oracle, build from a clean checkout of the `cakeml`
+submodule revision in `/var/tmp/flapjack-cakeml-oracle`, using a built HOL
+checkout at the `HOL` submodule revision. Run
+`HOL4=/path/to/built/HOL scripts/build-pinned-cake.sh`; the script checks both
+source revisions and the resulting executable's embedded version. Set
+`CAKEML_BUILD_DIR` to choose another persistent build directory. The reference
+submodules in this repository remain read-only.
+
+The fixed source corpus includes programs combining array mutation with
+escaping closures and exception handlers, overlapping byte-array copies, and
+64-bit word operations. Run the complete corpus against the pinned compiler
+with `python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --corpus`.
+This compares complete compiler output, diagnostics, and exit status; it is
+not a general equivalence proof.
+
+At Flapjack commit `3027f7f3a2`, a rebuilt `cake` matched the pinned CakeML
+compiler on all 143 fixed corpus cases, including output, diagnostics and exit
+status.
+
+After switching the BVL-to-BVI whole-program compiler to the original
+allocation-count recursion, a rebuilt `cake` again matched all 143 fixed corpus
+cases. The kernel-checked count equivalence and existing whole-program output
+agreement also establish that this switch preserves the previous result for
+every input.
+
+After routing whole-program BVL-to-BVI compilation through the original
+source-shaped definition, a rebuilt `cake` again matched all 143 fixed corpus
+cases, including complete output, diagnostics, and exit status. The existing
+whole-program agreement theorem retains its previous statement for all inputs.
+
+At `e38869acea`, all 38 structured templates matched with seed `20261111`, as
+did 40 structured programs with varied backend options and seed `20261112`.
+Both runs used a 90-second timeout per case.
+
+At Flapjack commit `05992bd4b9`, all 143 fixed corpus cases matched the
+compiler built from the pinned CakeML submodule revision `857f0d98da8f`.
+
+After generalizing closure annotation's label carrier to match HOL, the
+rebuilt executable also matched all 143 fixed corpus cases against that
+pinned compiler, including output, diagnostics, and exit status.
+
+At `45f70abdf1`, 25 generated nested programs matched the pinned compiler's
+complete output, diagnostics, and exit status with:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 26110921 --count 25 --timeout 90
+```
+
+After replacing the data-to-word option-valued calls with the proved-total
+operation, the 143 fixed corpus cases, 60 structured-option cases with seed
+`11051109`, and 40 nested programs with seed `11050731` matched the pinned
+compiler. The total operation
+also has a kernel-checked equation
+showing it returns the same result as the previous traversal for every input.
+
+At `86a71e469b`, a further 40 generated nested programs and 60 structured
+programs with varied options matched the pinned compiler's complete output,
+diagnostics, and exit status:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 11050731 --count 40 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 11051109 --count 60 --timeout 90
+```
+
+After merging `main` at `d5f6c5326f`, the rebuilt `cake` matched all 143 fixed
+corpus cases, including array updates holding tree nodes, closures, and
+aliased nested arrays. A further 40 generated programs with varied backend
+options also matched:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --corpus --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 116834111 --count 40 --timeout 90
+```
+
+After merging `main` at `efc992d38`, the executable also matched 40 generated
+nested programs, 50 structured programs with backend options, and 100
+display mutations:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 116833701 --count 40 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 116833702 --count 50 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --display-mutations --seed 116833703 --count 100 --timeout 90
+```
+
+On 2026-11-04, 40 generated nested-closure programs and 80 structured
+programs with varied backend options matched the pinned executable's complete
+output. All 38 structured templates also matched, including escaping mutual
+recursion, higher-order calls, exceptions, and recursive datatypes:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 11049187 --count 40 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 11049190 --count 80 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-all --seed 11049189 --timeout 90
+```
+
+On 2026-11-03, the pinned bootstrap completed with one HOL build job. Its
+build-produced executable passed `scripts/check-cake-help.py --pinned-reference` and
+`scripts/check-cake-pancake-parity.py --reference`, including the latter's 38
+ASCII lexical diagnostics. These are finite regression checks, not a proof of
+compiler equivalence.
+
+The same executable passed all 236 cases of
+`scripts/check-cake-cli-parity.py --check-pinned-reference`, comparing each
+case's complete stdout, stderr, and exit status directly with Flapjack. It
+also passed all 170 cases of `scripts/check-cake-pinned-parity.py` with
+`--check-reference` and the same direct comparison.
+
+On 2026-11-04, further pinned-oracle comparisons matched complete stdout,
+stderr, and exit status for 40 generated programs, 500 byte mutations, and
+120 configuration mutations:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 11052731 --count 40 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --byte-mutations --seed 11053011 --count 500 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --config-mutations --seed 11053012 --count 120 --timeout 90
+```
+
+Two additional 300-case samples exercised display output and mutated
+S-expression input; both matched the pinned compiler's complete output,
+diagnostics, and exit status:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --display-mutations --seed 11060811 --count 300 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --sexp-mutations --seed 11060812 --count 300 --timeout 60
+```
+
+A further structured-options run compared 80 generated programs and varied
+backend flags with the pinned executable; complete output, diagnostics, and
+exit status all matched:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 11061817 --count 80 --timeout 90
+```
+
+Two further runs against that executable matched complete output, diagnostics,
+and exit status for 350 nested-source mutations and 45 structured programs
+with varied backend options:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /path/to/pinned/cake --deep-mutations --seed 8732401 --count 350 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /path/to/pinned/cake --structured-options --seed 8732402 --count 45 --timeout 120
+```
+
+An additional run against the same bootstrap matched complete output and exit
+status for 300 S-expression mutations and 300 Unicode-source mutations:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /path/to/pinned/cake --sexp-mutations --seed 7304219 --count 300 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /path/to/pinned/cake --unicode-mutations --seed 7304220 --count 300 --timeout 60
+```
+
+At frontend branch commit `622d24353`, the rebuilt `cake` executable matched
+complete output, diagnostics, and exit status for 200 nested-source mutations,
+700 arbitrary-byte mutations, and 80 structured programs with varied backend
+options:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --deep-mutations --seed 18802301 --count 200 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --byte-mutations --seed 19949151 --count 700 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 18317309 --count 80 --timeout 90
+```
+
+At frontend branch commit `f5e8c421d`, the `cake` executable also matched
+the pinned original's complete stdout, stderr and exit status for 160 nested
+source mutations, 60 accepted structured programs with varied backend options,
+and 60 generated programs using the standard prelude:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --deep-mutations --seed 19301103 --count 160 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 19301104 --count 60 --timeout 120
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 19301105 --count 60 --timeout 90
+```
+
+These generated cases are finite evidence for those inputs, not a general
+output-equivalence proof.
+
+On 2026-11-03, another run of the local `cake` executable against the pinned
+original matched complete stdout, stderr, and exit status for 200 nested-source
+mutations and 40 generated programs using the standard prelude:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --deep-mutations --seed 19402421 --count 200 --timeout 60
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 19402422 --count 40 --timeout 90
+```
+
+On 2026-11-04, a further 60 structured programs with varied backend options
+matched the pinned original's complete stdout, stderr, and exit status:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 19411104 --count 60 --timeout 120
+```
+
+Another run on 2026-11-04 matched the pinned original's complete stdout,
+stderr, and exit status for 80 generated prelude programs, 80 structured
+programs with varied backend options, and 120 nested-source mutations:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 11040817 --count 80 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --structured-options --seed 11040818 --count 80 --timeout 120
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --deep-mutations --seed 11040819 --count 120 --timeout 60
+```
+
+On 2026-11-04, the existing `cake` executable also matched the pinned
+original's complete stdout, stderr, and exit status for 160 configuration
+mutations, 180 nested-source mutations, and 40 generated programs with the
+standard prelude:
+
+```sh
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --config-mutations --seed 11040981 --count 160 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --deep-mutations --seed 11040982 --count 180 --timeout 90
+python3 scripts/fuzz-cake-source-parity.py --reference /var/tmp/flapjack-pinned-cake --rich --seed 11040983 --count 40 --timeout 90
+```
+
+These comparisons cover the generated inputs only; they do not establish
+general output equivalence.

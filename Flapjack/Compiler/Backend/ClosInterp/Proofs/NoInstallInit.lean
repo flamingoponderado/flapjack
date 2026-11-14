@@ -5,8 +5,7 @@ public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallFull
 @[expose] public section
 
 
-/-! Initial no-install states for interpreter insertion. The evaluator and
-state carriers remain pending HOL correspondence review. -/
+/-! Initial no-install states for interpreter insertion. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL Flapjack.Compiler.Backend.BackendProps
 

@@ -150,6 +150,9 @@ theorem evaluate_locals {C F V : Type} (program : DataLang.Prog) (source : State
         (result, if result = none then { sourceNext with locals := out, safeForSpace := safe, stackMax := stackMax, peakHeapLength := peak }
           else { sourceNext with safeForSpace := safe, stackMax := stackMax, peakHeapLength := peak }) ∧
       localsOk sourceNext.locals out := by
-  exact localSimulation_all program source sourceNext result locals notType run included
+  obtain ⟨out, safe, peak, stackMax, evaluation, subspt⟩ :=
+    localSimulation_all program source sourceNext result locals notType run
+      ((sptSubsptLookup _ _).2 included)
+  exact ⟨out, safe, peak, stackMax, evaluation, (sptSubsptLookup _ _).1 subspt⟩
 
 end Flapjack.Compiler.Backend.DataProps

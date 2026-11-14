@@ -123,6 +123,7 @@ theorem initial_code_correspondence (start n counter : Nat) (programs : List (Na
     compileList_imp counter programs tree finish name arity body
       ⟨compilation, holALookup_of_distinct_member programs name (arity, body) ⟨distinct, member⟩⟩
   have conversion : compileSingSource initialName body = (converted, aux, next) := by
+    rw [compileExpsSource_eq_list] at singletonRun
     rcases h : compileSingSource initialName body with ⟨converted', aux', next'⟩
     have nilRight : smartAppend aux' .nil = aux' := by cases aux' <;> rfl
     simp only [compileListSource, h, nilRight, Prod.mk.injEq, List.cons.injEq] at singletonRun
@@ -130,7 +131,7 @@ theorem initial_code_correspondence (start n counter : Nat) (programs : List (Na
     rfl
   have translated : (bvlNumStubs + bvlToBviNamespaces * name, arity, BviLet.compileSing [] 0 converted) ∈ appListAppend tree := by
     apply holALookup_member
-    simpa [Nat.add_comm] using translatedLookup
+    simpa [Nat.add_comm, BviLet.compileExp_eq] using translatedLookup
   have auxSubset : ∀ entry ∈ appListAppend aux, entry ∈ appListAppend tree := by
     intro entry member
     exact segment.mem member

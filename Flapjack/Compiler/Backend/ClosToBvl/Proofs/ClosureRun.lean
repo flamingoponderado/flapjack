@@ -25,7 +25,7 @@ theorem clRelRun {C F : Type} (maxApp : Nat) (loc : Option Nat)
     (env : List ClosSem.Value) (env' : List BvlSem.Value) (ptr : Nat) (body : ClosLang.Exp)
     (newEnv : List ClosSem.Value) (func : ClosSem.Value) (func' : BvlSem.Value)
     (rest : List ClosSem.Value) (n : Nat) (fvs : List BvlSem.Value)
-    (h : func' = .block 30 (.codePtr ptr :: .number (Int.ofNat n) :: env') ∧
+    (h : func' = .block BackendCommon.closureTag (.codePtr ptr :: .number (Int.ofNat n) :: env') ∧
       destClosurePrime loc func args = some (.fullApp body newEnv rest) ∧
       vRel maxApp f1 refs code func func' ∧
       clRel maxApp (fun p => ∃ r, f1.lookup r = some p) refs code (env, fvs) func func' ∧
@@ -83,7 +83,7 @@ theorem clRelRun {C F : Type} (maxApp : Nat) (loc : Option Nat)
           (.codePtr ptr) (.number (Int.ofNat n)) targetBody
         have suffixLen : suffix.length = arity := suffixLength
         rw [suffixLen, ← envRelated.length_eq] at run
-        simpa [suffix, closure, arityEq, List.append_assoc] using run
+        simpa [suffix, closure, arityEq, List.append_assoc, BackendCommon.closureTag] using run
   | singletonRec bound positive locations vars compiled installed lookup =>
       rename_i arity source aux0 targetBody auxFinal loc0
       simp only [BvlSem.Value.block.injEq, List.cons.injEq, BvlSem.Value.codePtr.injEq,
@@ -130,7 +130,7 @@ theorem clRelRun {C F : Type} (maxApp : Nat) (loc : Option Nat)
           (.codePtr ptr) (.number (Int.ofNat n)) targetBody
         have suffixLen : suffix.length = arity := suffixLength
         rw [suffixLen, ← envRelated.length_eq] at run
-        simpa [suffix, closure, arityEq, List.append_assoc] using run
+        simpa [suffix, closure, arityEq, List.append_assoc, BackendCommon.closureTag] using run
   | mutualRec exps ps positions values fresh stored length index locations vars installed =>
       rename_i functions entries labels targets loc0 shared k
       have rel : clRel maxApp (fun p => ∃ r, f1.lookup r = some p) refs code
@@ -191,5 +191,5 @@ theorem clRelRun {C F : Type} (maxApp : Nat) (loc : Option Nat)
           have sharedLen : (targets2 ++ fvs).length = env.length + (List.map Prod.fst entries).length := by
             simp [targetsLength, ← envRelated.length_eq, Nat.add_comm]
           rw [suffixLen, sharedLen] at run
-          simpa [suffix, closure, arityEq, List.append_assoc] using run
+          simpa [suffix, closure, arityEq, List.append_assoc, BackendCommon.closureTag] using run
 end Flapjack.Compiler.Backend.ClosToBvl

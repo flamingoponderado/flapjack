@@ -37,7 +37,7 @@ theorem simulationWitness_of_equal {C F : Type} (program : DataLang.Prog)
       sptSubspt sourceNext.locals out := by
   refine ⟨sourceNext.locals, sourceNext.safeForSpace, sourceNext.peakHeapLength, sourceNext.stackMax, ?_, ?_⟩
   · simpa using run
-  · exact localsOk_refl _
+  · exact (sptSubsptLookup _ _).2 (localsOk_refl _)
 
 /-- Callee entry overwrites the caller locals. -/
 theorem callEnv_changeLocals {C F : Type} (source : State C F) (locals : Spt DataSem.Value)
@@ -92,20 +92,20 @@ theorem simulationFor_annotatedAssign {C F : Type} (dest : Nat) (op : ClosLang.O
       obtain ⟨rfl, rfl⟩ := run
       exact False.elim (notType rfl)
     | some values =>
-      have targetRead := getVars_of_subspt arguments source.locals locals values included read
+      have targetRead := getVars_of_subspt arguments source.locals locals values ((sptSubsptLookup _ _).1 included) read
       cases cut : cutEnv names source.locals with
       | none =>
         simp [DataSem.evaluate, invalid, read, cutStateOpt, cutState, cut] at run
         obtain ⟨rfl, rfl⟩ := run
         exact False.elim (notType rfl)
       | some env =>
-        have targetCut := cutEnv_of_subspt names source.locals locals env included cut
+        have targetCut := cutEnv_of_subspt names source.locals locals env ((sptSubsptLookup _ _).1 included) cut
         have same : DataSem.evaluate (.assign dest op arguments (some names)) { source with locals := locals } =
             DataSem.evaluate (.assign dest op arguments (some names)) source := by
           simp [DataSem.evaluate, invalid, read, targetRead, cutStateOpt, cutState, cut, targetCut]
         refine ⟨sourceNext.locals, sourceNext.safeForSpace, sourceNext.peakHeapLength, sourceNext.stackMax, ?_, ?_⟩
         · simpa [compile, space, pMakeSpace] using same.trans run
-        · exact localsOk_refl _
+        · exact (sptSubsptLookup _ _).2 (localsOk_refl _)
 
 /-- An unannotated assignment preserves the simulation when the target has
 additional locals; primitive accounting may change the three resource fields. -/
@@ -122,7 +122,7 @@ theorem simulationFor_unannotatedAssign {C F : Type} (dest : Nat) (op : ClosLang
       obtain ⟨rfl, rfl⟩ := run
       exact False.elim (notType rfl)
     | some values =>
-      have targetRead := getVars_of_subspt arguments source.locals locals values included read
+      have targetRead := getVars_of_subspt arguments source.locals locals values ((sptSubsptLookup _ _).1 included) read
       let target := { source with locals := locals }
       have related : DataLive.stateRel source target .ln := by
         rcases DataLive.stateRel_refl source .ln with ⟨code, clock, spaceEq, ffi, refs, global, handler, stack, compiler, oracle, stamps, limits, frames, _⟩
@@ -189,7 +189,7 @@ theorem simulationFor_makeSpace {C F : Type} (amount : Nat) (names : NumSet) :
     obtain ⟨rfl, rfl⟩ := run
     exact False.elim (notType rfl)
   | some env =>
-    have targetCut := cutEnv_of_subspt names source.locals locals env included cut
+    have targetCut := cutEnv_of_subspt names source.locals locals env ((sptSubsptLookup _ _).1 included) cut
     simp [DataSem.evaluate, cut] at run
     obtain ⟨rfl, rfl⟩ := run
     refine ⟨env, (addSpace { source with locals := env } amount).safeForSpace,
@@ -198,7 +198,7 @@ theorem simulationFor_makeSpace {C F : Type} (amount : Nat) (names : NumSet) :
     · change DataSem.evaluate (.seq (.makeSpace amount names) .skip) { source with locals := locals } = _
       rw [DataSem.evaluate_seq_skip]
       simp [DataSem.evaluate, targetCut, addSpace]
-    · exact localsOk_refl _
+    · exact (sptSubsptLookup _ _).2 (localsOk_refl _)
 
 /-- A value return reads the same values and flushes both environments. -/
 theorem simulationFor_return {C F : Type} (names : List Nat) :
@@ -210,7 +210,7 @@ theorem simulationFor_return {C F : Type} (names : List Nat) :
     obtain ⟨rfl, rfl⟩ := run
     exact False.elim (notType rfl)
   | some values =>
-    have targetRead := getVars_of_subspt names source.locals locals values included read
+    have targetRead := getVars_of_subspt names source.locals locals values ((sptSubsptLookup _ _).1 included) read
     simp [DataSem.evaluate, read] at run
     obtain ⟨rfl, rfl⟩ := run
     refine ⟨.ln, source.safeForSpace, source.peakHeapLength, source.stackMax, ?_, ?_⟩
@@ -243,7 +243,7 @@ theorem simulationFor_raise {C F : Type} (name : Nat) :
       obtain ⟨rfl, rfl⟩ := run
       refine ⟨jumped.locals, jumped.safeForSpace, jumped.peakHeapLength, jumped.stackMax, ?_, ?_⟩
       · simp [compile, space, pMakeSpace, DataSem.evaluate, targetRead, targetJump]
-      · exact localsOk_refl _
+      · exact (sptSubsptLookup _ _).2 (localsOk_refl _)
 
 /-- Calls use identical callee states after reading their arguments and,
 for non-tail calls, cutting the explicit saved environment. -/
@@ -257,7 +257,7 @@ theorem simulationFor_call {C F : Type} (ret : Option (List Nat × NumSet)) (des
     obtain ⟨rfl, rfl⟩ := run
     exact False.elim (notType rfl)
   | some values =>
-    have targetRead := getVars_of_subspt arguments source.locals locals values included read
+    have targetRead := getVars_of_subspt arguments source.locals locals values ((sptSubsptLookup _ _).1 included) read
     cases found : findCode dest values source.code source.stackFrameSizes with
     | none =>
       simp [DataSem.evaluate, read, found] at run
@@ -290,7 +290,7 @@ theorem simulationFor_call {C F : Type} (ret : Option (List Nat × NumSet)) (des
             obtain ⟨rfl, rfl⟩ := run
             exact False.elim (notType rfl)
           | some env =>
-            have targetCut := cutEnv_of_subspt names source.locals locals env included cut
+            have targetCut := cutEnv_of_subspt names source.locals locals env ((sptSubsptLookup _ _).1 included) cut
             have same : DataSem.evaluate (.call (some (returns, names)) dest arguments handler) { source with locals := locals } =
                 DataSem.evaluate (.call (some (returns, names)) dest arguments handler) source := by
               simp [DataSem.evaluate, read, targetRead, found, unique, cut, targetCut, callEnv_push_changeLocals]
@@ -339,7 +339,7 @@ theorem simulationFor_force {C F : Type} (ret : Option (Nat × NumSet)) (label s
             obtain ⟨rfl, rfl⟩ := run
             exact False.elim (notType rfl)
           | some env =>
-            have targetCut := cutEnv_of_subspt names source.locals locals env included cut
+            have targetCut := cutEnv_of_subspt names source.locals locals env ((sptSubsptLookup _ _).1 included) cut
             have same : DataSem.evaluate (.force (some (dest, names)) label src) { source with locals := locals } =
                 DataSem.evaluate (.force (some (dest, names)) label src) source := by
               simp [DataSem.evaluate, read, targetRead, inspect, cut, targetCut]
@@ -370,7 +370,7 @@ theorem simulationFor_force {C F : Type} (ret : Option (Nat × NumSet)) (label s
               obtain ⟨rfl, rfl⟩ := run
               exact False.elim (notType rfl)
             | some env =>
-              have targetCut := cutEnv_of_subspt names source.locals locals env included cut
+              have targetCut := cutEnv_of_subspt names source.locals locals env ((sptSubsptLookup _ _).1 included) cut
               have same : DataSem.evaluate (.force (some (dest, names)) label src) { source with locals := locals } =
                   DataSem.evaluate (.force (some (dest, names)) label src) source := by
                 simp [DataSem.evaluate, read, targetRead, inspect, found, cut, targetCut, callEnv_push_changeLocals]

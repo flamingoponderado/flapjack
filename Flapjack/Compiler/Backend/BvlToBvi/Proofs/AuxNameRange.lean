@@ -163,12 +163,13 @@ its counter interval, and compilation does not decrease the counter. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_exps_aux_sorted"]
 theorem compileExps_auxSorted (n : Nat) (es : List Bvl.Exp) (c : List Bvi.Exp)
     (aux : AppList (Nat × Nat × Bvi.Exp)) (n1 : Nat)
-    (compiled : compileListSource n es = (c, aux, n1)) :
+    (compiled : compileExpsSource n es = (c, aux, n1)) :
     holSorted (· < ·) ((appListAppend aux).map Prod.fst) ∧
       ((appListAppend aux).map Prod.fst).Forall (fun x => ∃ k, x = bvlNumStubs + bvlToBviNamespaces * k + 1) ∧
       ((appListAppend aux).map Prod.fst).Forall (fun x =>
         bvlNumStubs + bvlToBviNamespaces * n ≤ x ∧ x < bvlNumStubs + bvlToBviNamespaces * n1) ∧
       n ≤ n1 := by
+  rw [compileExpsSource_eq_list] at compiled
   have range := compileListSource_auxNameRange n es
   rw [compiled] at range
   dsimp only at range
@@ -196,9 +197,10 @@ occurs in the generated auxiliary code. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_exps_aux_contains"]
 theorem compileExps_auxContains (n : Nat) (es : List Bvl.Exp) (c : List Bvi.Exp)
     (aux : AppList (Nat × Nat × Bvi.Exp)) (n1 : Nat)
-    (compiled : compileListSource n es = (c, aux, n1)) :
+    (compiled : compileExpsSource n es = (c, aux, n1)) :
     {x : Nat | ∃ k, x = bvlNumStubs + (k * bvlToBviNamespaces + 1) ∧ n ≤ k ∧ k < n1} ⊆
       {x : Nat | x ∈ (appListAppend aux).map Prod.fst} := by
+  rw [compileExpsSource_eq_list] at compiled
   have range := compileListSource_auxNameRange n es
   rw [compiled] at range
   simp only at range
@@ -233,7 +235,7 @@ theorem compileProgramsSource_nameRange (start : Nat) (programs : List (Nat × N
     have tail := ih next
     simp only [remaining] at tail
     have nextFinish := tail.1
-    simp only [compileProgramsSource, compileSingleSource, first, remaining,
+    simp only [compileProgramsSource, compileSingleSource_eq_impl, compileSingleImpl, first, remaining,
       appListAppend_smartAppend, List.map_append]
     constructor
     · omega
@@ -280,7 +282,7 @@ theorem compileProgramsSource_translatedNames (start : Nat) (programs : List (Na
       omega
     have tail := ih next
     simp only [remaining] at tail
-    simp only [compileProgramsSource, compileSingleSource, first, remaining,
+    simp only [compileProgramsSource, compileSingleSource_eq_impl, compileSingleImpl, first, remaining,
       appListAppend_smartAppend, List.map_append, List.filter_append]
     simp only [appListAppend, appendAux, List.map_cons] at ⊢
     simp only [appListAppend] at noneAux tail
@@ -304,7 +306,7 @@ private theorem compileProgramsSource_freshCoverage (start : Nat) (programs : Li
     have tail := ih next
     simp only [remaining] at tail
     intro k lower upper
-    simp only [compileProgramsSource, compileSingleSource, first, remaining] at upper ⊢
+    simp only [compileProgramsSource, compileSingleSource_eq_impl, compileSingleImpl, first, remaining] at upper ⊢
     simp only [appListAppend_smartAppend, List.map_append, List.mem_append]
     by_cases before : k < next
     · left
@@ -312,7 +314,8 @@ private theorem compileProgramsSource_freshCoverage (start : Nat) (programs : Li
       have compiledBody : compileListSource start [body] = ([converted], aux, next) := by
         simp only [compileListSource, first]
         cases aux <;> rfl
-      have present := compileExps_auxContains start [body] [converted] aux next compiledBody
+      have present := compileExps_auxContains start [body] [converted] aux next
+        (by simpa only [compileExpsSource_eq_list] using compiledBody)
       simpa [Nat.mul_comm, Nat.add_assoc] using (present ⟨k, rfl, lower, before⟩)
     · right
       exact tail k (by omega) upper
@@ -501,7 +504,7 @@ theorem compileProgramsSource_names_nodup (start : Nat) (programs : List (Nat ×
           simp only [bvlToBviNamespaces] at auxEq targetEq
           omega
     have combined : (([label] ++ auxKeys) ++ tailKeys).Nodup := List.nodup_append.mpr ⟨leftNodup, tail, disjoint⟩
-    simp only [compileProgramsSource, compileSingleSource, first, remaining, appListAppend_smartAppend, List.map_append]
+    simp only [compileProgramsSource, compileSingleSource_eq_impl, compileSingleImpl, first, remaining, appListAppend_smartAppend, List.map_append]
     simpa [appListAppend, appendAux, label, auxKeys, tailKeys] using combined
 
 /-- Incremental compilation preserves distinctness of input function labels. -/

@@ -262,6 +262,14 @@ replace source-level review. After rebuilding a tagged declaration, run
 `.lake/build/ir/Flapjack.setup.json`, which can otherwise still point at an
 older cached OLean even when `lake test` passes.
 
+For qualifier checks, `check-hol-refs.py` extracts the tagged declaration's
+header through its first top-level `:=`, recognizing definitions, theorems,
+lemmas, abbreviations, instances, structures, inductives, opaque declarations,
+classes, axioms, and constants. When several carriers could own the named
+fields, an explicitly qualified declaration name can disambiguate a local or
+imported carrier; ambiguous or shadowed names remain ineligible. This syntax
+check does not replace elaborated-attribute checking or source review.
+
 Entries marked `pending_statement_review` or
 `no_hol_reference_pending_classification` must not be described as exact HOL
 ports. A reference tag or a successful build does not substitute for the

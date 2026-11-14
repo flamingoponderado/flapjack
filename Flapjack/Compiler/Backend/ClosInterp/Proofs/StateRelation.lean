@@ -7,8 +7,7 @@ public import Flapjack.Misc.ShiftSeq
 
 @[expose] public section
 
-/-! State and compiler relationships for interpreter insertion. The state
-carrier is proof-side and these declarations await full HOL correspondence review. -/
+/-! State and compiler relationships for interpreter insertion. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.Compiler.Backend.BackendProps
 
