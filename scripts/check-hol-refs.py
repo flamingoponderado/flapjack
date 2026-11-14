@@ -5437,6 +5437,19 @@ def nested_list_combination_allowed(fmap_fields: tuple[str, ...], producer: bool
             and not (producer and fmap_fields))
 
 
+def nested_thunk_map_combination(hol_path: str, hol_name: str, lean_path: str, lean_name: str,
+                                 nested: tuple[str, ...], fmap_fields: tuple[str, ...],
+                                 relation: tuple[tuple[str, str], ...],
+                                 existentials: tuple[str, ...]) -> bool:
+    """The single reviewed nested-relation observer with standalone maps."""
+    return (hol_path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" and
+            hol_name == "rel_update_thunk" and
+            lean_path == "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ThunkOperations.lean" and
+            lean_name == "relUpdateThunkSource" and nested == ("FunctionsRel",) and
+            not fmap_fields and relation == (("State", "refs"), ("State", "code"), ("sourceRefs", "")) and
+            existentials == ("targetRefs",))
+
+
 def main(argv: list[str]) -> int:
     want_mapping = "--mapping" in argv
     want_orphans = "--orphans" in argv
@@ -5503,8 +5516,13 @@ def main(argv: list[str]) -> int:
                     lines, rel, number, hol_path, hol_name, nested_list_rel))
                 producer = (hol_path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" and
                             hol_name == "v_rel")
-                other = bool(list_fields or names_fields or boundary_fields or fmap_result or fmap_relation or
-                             fmap_equalities or words_bitvec or fmap_parameters or fmap_existentials or dimension_width or
+                annotate_thunk_maps = nested_thunk_map_combination(
+                    hol_path, hol_name, rel, find_lean_decl(lines, number - 1), nested_list_rel,
+                    fmap_fields, fmap_relation, fmap_existentials)
+                other = bool(list_fields or names_fields or boundary_fields or fmap_result or
+                             (fmap_relation and not annotate_thunk_maps) or
+                             fmap_equalities or words_bitvec or fmap_parameters or
+                             (fmap_existentials and not annotate_thunk_maps) or dimension_width or
                              fmap_function_positions or fmap_heterogeneous_function_positions or reals_cuts or fmap_equality or
                              result_observations or dimension_widths or fmap_tuple)
                 if not nested_list_combination_allowed(fmap_fields, producer, other):

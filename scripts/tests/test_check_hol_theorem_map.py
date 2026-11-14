@@ -1460,6 +1460,35 @@ class PredicateDomainStatusTest(unittest.TestCase):
 
 
 class NestedRelationStatusTest(unittest.TestCase):
+    def test_thunk_relation_existential_status_is_exact_site_and_shape(self):
+        key = ("Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ThunkOperations.lean", "relUpdateThunkSource")
+        record = {
+            "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml",
+            "hol_name": "rel_update_thunk", "lean_path": key[0], "lean_name": key[1],
+            "statement_status": "reviewed_fmap_as_finite_support_relation_existentials_nested_list_rel_as_mutual",
+            "nested_list_rel_as_mutual": ["FunctionsRel"],
+            "fmap_as_finite_support_relation": ["State.refs", "State.code", "sourceRefs"],
+            "fmap_as_finite_support_existentials": ["targetRefs"],
+            "reviewer": "source comparison nested_list_rel_as_mutual functionsRel_iff State.refs State.code sourceRefs targetRefs",
+        }
+        tag = (record["hol_path"], record["hol_name"], (), (), (), (), False,
+               (("State", "refs"), ("State", "code"), ("sourceRefs", "")), False,
+               False, (), ("targetRefs",), None, (), (), False, False, (), (), (), ("FunctionsRel",))
+        validate = MAP["validate_inventory"]
+        self.assertEqual(validate([record], set(), {key: tag}, set()), [])
+        for changed in ({"statement_status": "reviewed_exact"},
+                        {"nested_list_rel_as_mutual": []},
+                        {"fmap_as_finite_support_relation": ["State.code", "State.refs", "sourceRefs"]},
+                        {"fmap_as_finite_support_existentials": []},
+                        {"reviewer": "source comparison nested_list_rel_as_mutual functionsRel_iff"}):
+            self.assertTrue(validate([{**record, **changed}], set(), {key: tag}, set()))
+        bad_key = (key[0], "other")
+        self.assertTrue(validate([{**record, "lean_name": "other"}], set(), {bad_key: tag}, set()))
+        for index in (7, 11, 20):
+            missing = list(tag)
+            missing[index] = ()
+            self.assertTrue(validate([record], set(), {key: tuple(missing)}, set()))
+
     def test_qualifier_requires_matching_manifest_and_status(self):
         key = ("Flapjack/Example.lean", "ValueRel")
         record = {

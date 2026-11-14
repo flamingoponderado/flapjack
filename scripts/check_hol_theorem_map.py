@@ -1335,6 +1335,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_existentials_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_relation_existentials_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_relation_existentials",
+    "reviewed_fmap_as_finite_support_relation_existentials_nested_list_rel_as_mutual",
     "reviewed_fmap_as_finite_support_relation",
     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_equalities",
@@ -1923,13 +1924,27 @@ def validate_inventory(
         if tuple(record.get("nested_list_rel_as_mutual", ())) != nested_list_rel:
             errors.append(f"{key[0]}:{key[1]}: nested-list relation qualifier does not match @[hol] tag")
         nested_combined_status = "reviewed_fmap_as_finite_support_nested_list_rel_as_mutual"
-        expected_nested_status = nested_combined_status if fmap_fields else "reviewed_nested_list_rel_as_mutual"
-        if bool(nested_list_rel) != (status in {"reviewed_nested_list_rel_as_mutual", nested_combined_status}):
+        nested_relation_existential_status = "reviewed_fmap_as_finite_support_relation_existentials_nested_list_rel_as_mutual"
+        nested_statuses = {"reviewed_nested_list_rel_as_mutual", nested_combined_status,
+                           nested_relation_existential_status}
+        expected_nested_status = (nested_relation_existential_status if fmap_relation or fmap_existentials else
+                                  nested_combined_status if fmap_fields else "reviewed_nested_list_rel_as_mutual")
+        if bool(nested_list_rel) != (status in nested_statuses):
             errors.append(f"{key[0]}:{key[1]}: nested-list relation requires its reviewed status")
         if nested_list_rel and status != expected_nested_status:
             errors.append(f"{key[0]}:{key[1]}: nested-list relation and finite-map qualifiers require matching combined status")
         if status == nested_combined_status and tuple(fmap_fields) != ("refs", "code"):
             errors.append(f"{key[0]}:{key[1]}: combined nested-list qualifier requires refs and code fields")
+        if status == nested_relation_existential_status:
+            expected_site = ("cakeml/compiler/backend/proofs/clos_annotateProofScript.sml", "rel_update_thunk",
+                             "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ThunkOperations.lean", "relUpdateThunkSource")
+            if ((hol_path, hol_name, key[0], key[1]) != expected_site or fmap_fields or
+                    tuple(nested_list_rel) != ("FunctionsRel",) or
+                    tuple(fmap_relation) != (("State", "refs"), ("State", "code"), ("sourceRefs", "")) or
+                    tuple(fmap_existentials) != ("targetRefs",)):
+                errors.append(f"{key[0]}:{key[1]}: nested thunk-update qualification requires its exact site and map entries")
+            if not isinstance(reviewer, str) or any(name not in reviewer for name in ("State.refs", "State.code", "sourceRefs", "targetRefs")):
+                errors.append(f"{key[0]}:{key[1]}: nested thunk-update review must name all map entries")
         if nested_list_rel and (not isinstance(reviewer, str) or "functionsRel_iff" not in reviewer or
                                 "nested_list_rel_as_mutual" not in reviewer or "source" not in reviewer.lower()):
             errors.append(f"{key[0]}:{key[1]}: nested-list relation review must cite qualifier, source and functionsRel_iff")
@@ -2378,6 +2393,7 @@ def validate_inventory(
             combined_existential_words_status,
             combined_relation_existential_status,
             combined_relation_existential_words_status,
+            nested_relation_existential_status,
         }:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_existentials @[hol] tag needs a reviewed "
@@ -2389,6 +2405,7 @@ def validate_inventory(
             combined_existential_words_status,
             combined_relation_existential_status,
             combined_relation_existential_words_status,
+            nested_relation_existential_status,
         }:
             errors.append(
                 f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_existentials needs a "
@@ -2413,6 +2430,7 @@ def validate_inventory(
             combined_relation_words_status,
             combined_relation_existential_status,
             combined_relation_existential_words_status,
+            nested_relation_existential_status,
         }:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_relation @[hol] tag needs a reviewed "

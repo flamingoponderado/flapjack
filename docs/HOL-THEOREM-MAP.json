@@ -16684,6 +16684,17 @@
     "reviewer": "Compared code_rel_cons_typed: related lists with two heads imply the singleton-head and remaining-tail relations at the same bound, in the original direction."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml",
+    "hol_name": "rel_update_thunk",
+    "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ThunkOperations.lean",
+    "lean_name": "relUpdateThunkSource",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_existentials_nested_list_rel_as_mutual",
+    "nested_list_rel_as_mutual": ["FunctionsRel"],
+    "fmap_as_finite_support_relation": ["State.refs", "State.code", "sourceRefs"],
+    "fmap_as_finite_support_existentials": ["targetRefs"],
+    "reviewer": "Compared the complete local source and rel_update_thunk_local_typed replay: the original source update premise yields an existential target update and related final states. The nested_list_rel_as_mutual representation uses functionsRel_iff; State.refs, State.code, sourceRefs and targetRefs use the canonical finite-map witnesses. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
     "hol_name": "LENGTH_remove_fvs",
     "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Syntax.lean",

@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Primitive
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.StateRelation.Original
+public import Flapjack.FiniteMap.BroadCodec
 
 @[expose] public section
 
@@ -98,10 +99,29 @@ theorem updateThunk_related {C F : Type} (source target : State C F)
           | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
             simp [updateThunk]
 
-/-- The source-shaped singleton update result. This is not yet tagged: the
-HOL reference attribute cannot currently combine the nested value-relation
-translation with the finite-map input and existential witness translations. -/
-theorem relUpdateThunkSource {C F : Type} (source target : State C F) (flag : Bool) (ptr : Nat)
+namespace SourceThunkPort
+/-- The canonical closure-state finite maps roundtrip through their broad view. -/
+theorem holFmapAsFiniteSupportRelationWitness_State {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
+/-- The existential reference map has the canonical finite-map roundtrip. -/
+theorem holFmapAsFiniteSupportExistentialWitness_relUpdateThunkSource_targetRefs
+    (targetRefs : HolFiniteMapExact Nat (Ref Value)) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad targetRefs)).lookup = targetRefs.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad targetRefs)).finiteSupport = targetRefs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad targetRefs) = targetRefs := by
+  cases targetRefs
+  exact ⟨rfl, rfl, rfl⟩
+end SourceThunkPort
+
+/-- A successful source thunk update yields a related target update. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "rel_update_thunk"
+  (nested_list_rel_as_mutual := [FunctionsRel])
+  (fmap_as_finite_support_relation := [State.refs, State.code, sourceRefs])
+  (fmap_as_finite_support_existentials := [targetRefs])]
+theorem relUpdateThunkSource {C F : Type} (source target : ClosSem.State C F) (flag : Bool) (ptr : Nat)
     (values nextValues : List Value) (sourceRefs : HolFiniteMapExact Nat (Ref Value))
     (related : StateRelSource source target ∧ List.Forall₂ ValueRel values nextValues)
     (updated : updateThunk [.refPtr flag ptr] source.refs values = some sourceRefs) :

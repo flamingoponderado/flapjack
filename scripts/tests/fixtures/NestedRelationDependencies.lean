@@ -80,6 +80,53 @@ theorem combinedWords : EnvOk → True := by intro _; trivial
   (nested_list_rel_as_mutual := [FunctionsRel]) (fmap_as_finite_support_relation := [State.refs])]
 theorem combinedMapRelation : EnvOk → True := by intro _; trivial
 
+/-- error: Flapjack.Compiler.Backend.ClosAnnotate.badThunkSite: nested relation and finite-map witnesses are restricted to the reviewed thunk update -/
+#guard_msgs in
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "rel_update_thunk"
+  (nested_list_rel_as_mutual := [FunctionsRel])
+  (fmap_as_finite_support_relation := [State.refs, State.code, sourceRefs])
+  (fmap_as_finite_support_existentials := [targetRefs])]
+theorem badThunkSite : ValueRel → True := by intro _; trivial
+
+/-- error: @[hol]: nested_list_rel_as_mutual cannot combine with other qualifiers -/
+#guard_msgs in
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "rel_update_thunk"
+  (nested_list_rel_as_mutual := [FunctionsRel])
+  (fmap_as_finite_support_relation := [State.code, State.refs, sourceRefs])
+  (fmap_as_finite_support_existentials := [targetRefs])]
+theorem reorderedThunkMaps : ValueRel → True := by intro _; trivial
+
+/-- error: @[hol]: nested_list_rel_as_mutual cannot combine with other qualifiers -/
+#guard_msgs in
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "rel_update_thunk"
+  (nested_list_rel_as_mutual := [FunctionsRel])
+  (fmap_as_finite_support_relation := [State.refs, State.code, sourceRefs])]
+theorem missingThunkWitness : ValueRel → True := by intro _; trivial
+
+/-- error: @[hol]: nested_list_rel_as_mutual cannot combine with other qualifiers -/
+#guard_msgs in
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "rel_update_thunk"
+  (nested_list_rel_as_mutual := [FunctionsRel])
+  (fmap_as_finite_support_relation := [State.refs, State.code, sourceRefs])
+  (fmap_as_finite_support_existentials := [targetRefs]) (words_as_type_indexed_bitvec)]
+theorem extraThunkQualifier : ValueRel → True := by intro _; trivial
+
+/-- error: @[hol]: nested_list_rel_as_mutual cannot combine with other qualifiers -/
+#guard_msgs in
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "rel_update_thunk"
+  (nested_list_rel_as_mutual := [FunctionsRel])
+  (fmap_as_finite_support_relation := [State.refs, State.code, sourceRefs])
+  (fmap_as_finite_support_existentials := [targetRefs])]
+theorem wrongThunkSource : ValueRel → True := by intro _; trivial
+
+/-- error: @[hol]: nested_list_rel_as_mutual cannot combine with other qualifiers -/
+#guard_msgs in
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "rel_update_thunk"
+  (nested_list_rel_as_mutual := [FunctionsRel])
+  (fmap_as_finite_support_relation := [State.refs, State.code, sourceRefs])
+  (fmap_as_finite_support_existentials := [targetRefs]) (reals_as_rational_cuts)]
+theorem realThunkQualifier : ValueRel → True := by intro _; trivial
+
 /-- error: @[hol]: nested_list_rel_as_mutual cannot combine with other qualifiers -/
 #guard_msgs in
 @[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "env_set_default"

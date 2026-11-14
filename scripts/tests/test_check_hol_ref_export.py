@@ -84,6 +84,17 @@ class HolRefExportTest(unittest.TestCase):
                 MODULE.check_records([{key: value for key, value in manifest[0].items() if key != missing}],
                                      [{**self.export[0], "qualifiers": fields}])
 
+    def test_nested_relation_existential_arrays_match_export(self):
+        fields = {"nested_list_rel_as_mutual": ["FunctionsRel"],
+                  "fmap_as_finite_support_relation": ["State.refs", "State.code", "sourceRefs"],
+                  "fmap_as_finite_support_existentials": ["targetRefs"]}
+        status = "reviewed_fmap_as_finite_support_relation_existentials_nested_list_rel_as_mutual"
+        manifest = [{**self.manifest[0], "statement_status": status, **fields}]
+        self.assertEqual(MODULE.check_records(manifest, [{**self.export[0], "qualifiers": fields}]), 1)
+        for field in fields:
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                MODULE.check_records(manifest, [{**self.export[0], "qualifiers": {**fields, field: []}}])
+
     def test_nested_audit_requires_witness_comparison_and_ordered_marker(self):
         source = MODULE.NESTED_AUDIT.read_text(encoding="utf-8")
         MODULE.validate_nested_audit_source(source)
