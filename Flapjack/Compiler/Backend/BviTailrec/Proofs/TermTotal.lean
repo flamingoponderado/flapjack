@@ -70,37 +70,5 @@ theorem termAnyFuel_succeeds (fuel : Nat) (ctx : List ValueType) (list : Bool) (
 termination_by fuel
 end
 
-/-- The executable term test cannot fail from traversal fuel. -/
-theorem termBounded_succeeds (fuel : Nat) (ctx : List ValueType) (ty : ValueType) (e : Exp) :
-    ∃ result, termBounded fuel ctx ty e = some result := by
-  cases h : termFuel fuel ctx ty e with
-  | some result => exact ⟨result, by simp [termBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    have done : ∃ result, termFuel (max fuel (expBudget e + 1)) ctx ty e = some result := by
-      cases ty with
-      | int => exact termIntFuel_succeeds _ ctx e bound
-      | list => exact termAnyFuel_succeeds _ ctx true e bound
-      | any => exact termAnyFuel_succeeds _ ctx false e bound
-    obtain ⟨result, done⟩ := done
-    exact ⟨result, by simp [termBounded, h, done]⟩
-
-/-- Candidate-operation checking cannot exhaust its term-analysis fuel. The
-inner `none` remains the ordinary decision that no rewrite applies. -/
-theorem checkOpFuel_succeeds (fuel : Nat) (ctx : List ValueType) (assoc : AssocOp)
-    (loc : Nat) (xs : List Exp) : ∃ result, checkOpFuel fuel ctx assoc loc xs = some result := by
-  cases xs with
-  | nil => exact ⟨_, rfl⟩
-  | cons x xs =>
-    cases xs with
-    | nil => exact ⟨_, rfl⟩
-    | cons y xs =>
-      cases xs with
-      | nil =>
-        obtain ⟨vx, hx⟩ := termBounded_succeeds fuel ctx (opType assoc) x
-        obtain ⟨vy, hy⟩ := termBounded_succeeds fuel ctx (opType assoc) y
-        simp only [checkOpFuel]
-        split <;> simp [hx, hy] <;> repeat' (first | split | exact ⟨_, rfl⟩)
-      | cons z zs => exact ⟨_, rfl⟩
 
 end Flapjack.Compiler.Backend.BviTailrec

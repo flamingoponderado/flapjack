@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermTotal
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermCorrespondence
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.HasRecCorrespondence
 
 @[expose] public section
@@ -45,9 +45,9 @@ theorem scanFuel_succeeds (fuel : Nat) (ctx : List ValueType) (loc : Nat) (e : E
       exact ⟨_, by simp [scanFuel, h]; rfl⟩
     | op op xs =>
       obtain ⟨checked, hc⟩ := checkOpFuel_succeeds fuel ctx (fromOp op) loc xs
-      obtain ⟨term, ht⟩ := termBounded_succeeds fuel ctx (opType (fromOp op)) (.op op xs)
-      cases checked <;> cases term <;>
-        simp [scanFuel, hc, ht] <;> repeat' (first | split | exact ⟨_, rfl⟩)
+      have ht := termBounded_eq fuel ctx (opType (fromOp op)) (.op op xs)
+      cases checked <;> cases termResult : term ctx (opType (fromOp op)) (.op op xs) <;>
+        simp [scanFuel, hc, ht, termResult] <;> repeat' (first | split | exact ⟨_, rfl⟩)
       all_goals simp_all
     | _ => exact ⟨_, rfl⟩
 termination_by fuel
