@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "v_rel_opt_thm",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
+    "lean_name": "valueRelOpt_eq_optionRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Typed literal replay confirms the arbitrary max_app and equality of the complete optional closure-value relations, including absent and mismatched options."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "hol_name": "do_app_lemma",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/PrimitiveThunk.lean",
     "lean_name": "doAppLemma",

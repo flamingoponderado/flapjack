@@ -8,6 +8,13 @@ val _ = diminish_srw_ss ["ABBREV"];
 fun bring_fwd_ctors th ty = map ((fn s => Parse.bring_to_front_overload s {Name = s, Thy = th}) o term_to_string) (TypeBase.constructors_of ty);
 val _ = bring_fwd_ctors "closLang" ``:closLang$exp``;
 
+(* Literal replay of clos_mtiProofScript.sml:509-513. *)
+Theorem value_rel_opt_replay:
+  clos_mtiProof$v_rel_opt m = OPTREL (clos_mtiProof$v_rel m)
+Proof
+  fs [FUN_EQ_THM] \\ Cases  \\ Cases \\ fs [OPTREL_def,clos_mtiProofTheory.v_rel_opt_def]
+QED
+
 (* Literal replays of local lemmas at clos_mtiProofScript.sml:599-609. *)
 Theorem value_rel_to_bytes_replay:
   clos_mtiProof$v_rel max_app x y ==> closSem$v_to_bytes y = closSem$v_to_bytes x
@@ -175,6 +182,7 @@ fun show label th =
     (print label; print "="; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 val _ = show "every_hd_replay_typed" every_hd_replay;
+val _ = show "value_rel_opt_replay_typed" value_rel_opt_replay;
 val _ = show "value_rel_to_bytes_replay_typed" value_rel_to_bytes_replay;
 val _ = show "value_rel_to_words_replay_typed" value_rel_to_words_replay;
 val _ = show "compile_length_typed" clos_mtiProofTheory.compile_length;

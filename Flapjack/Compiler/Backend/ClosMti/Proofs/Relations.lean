@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectArgs
 public import Flapjack.Compiler.Backend.Semantics.ClosSem
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.DecodeRelations
 public import Flapjack.SemanticPrimitivesProps.ResultRelation
+public import Flapjack.Misc.Option.Rel
 public import Mathlib.Data.List.Forall2
 
 @[expose] public section
@@ -82,6 +83,13 @@ def ValueRelOpt (maxApp : Nat) : Option Value → Option Value → Prop
   | none, none => True
   | some left, some right => ValueRel maxApp left right
   | _, _ => False
+
+/-- Optional values use the standard lifting of the value relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "v_rel_opt_thm"]
+theorem valueRelOpt_eq_optionRel (maxApp : Nat) :
+    ValueRelOpt maxApp = Flapjack.optionRel (ValueRel maxApp) := by
+  funext left right
+  cases left <;> cases right <;> rfl
 
 /-- References preserve byte arrays and thunk modes, while their stored values
 follow `ValueRel`. -/

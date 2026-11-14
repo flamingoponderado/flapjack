@@ -213,9 +213,7 @@ theorem simpleStateRel {C F : Type} (maxApp : Nat) :
   · intro s t ⟨eq, states⟩
     obtain ⟨_, _, _, _, _, _, ffi, globals, refs, _, _⟩ := states
     refine ⟨ffi.symm, refs.1, ?_⟩
-    have same : ValueRelOpt maxApp = Flapjack.optionRel (ValueRel maxApp) := by
-      funext a b; cases a <;> cases b <;> rfl
-    simpa [eq, same] using globals
+    simpa [eq, valueRelOpt_eq_optionRel] using globals
   · intro ffi s t ⟨eq, states⟩
     exact ⟨eq, stateRel_withFfi states ffi⟩
   · intro bytes s t ptr ⟨eq, states⟩
@@ -231,9 +229,7 @@ theorem simpleStateRel {C F : Type} (maxApp : Nat) :
   · intro s t xs ys ⟨⟨eq, states⟩, values⟩
     apply And.intro eq
     apply stateRel_withGlobals states xs ys
-    have same : ValueRelOpt maxApp = Flapjack.optionRel (ValueRel maxApp) := by
-      funext a b; cases a <;> cases b <;> rfl
-    simpa [eq, same] using values
+    simpa [eq, valueRelOpt_eq_optionRel] using values
 
 /-- Thunk inspection preserves its error classification and relates values
 when it finds a thunk. This relation is Lean-side simulation infrastructure. -/
