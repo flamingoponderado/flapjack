@@ -23,7 +23,7 @@ end DoAppRecHelpPort
 environment relation when they capture the same related environments. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_app_rec_help"
   (fmap_as_finite_support := [c, tys])]
-theorem doApp_rec_help {α : Type} [Nonempty α] {baseEnv : SemEnv Value} {traces : List BackendCommon.Tra}
+theorem doApp_rec_help {α : Type} {baseEnv : SemEnv Value} {traces : List BackendCommon.Tra}
     {capturedFuns : List (VarN × VarN × AstHOL.Exp)} :
     ∀ (genv : GlobalEnv) (compMap : Environment) (sourceLocal : Namespace ModN VarN Value)
       (flatLocal : FlatSem.Environment FlatSem.Value) (_envVTop : α)

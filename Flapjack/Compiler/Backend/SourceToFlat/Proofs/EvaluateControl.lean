@@ -38,7 +38,7 @@ inductive ResultRel {α β : Type} (payload : GlobalEnv → α → β → Prop) 
 /-- The complete case equations for the result relation. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "result_rel_eqns"
   (fmap_as_finite_support := [c, tys])]
-theorem resultRel_eqns {α β γ : Type} [Nonempty γ] (payload : GlobalEnv → α → β → Prop) :
+theorem resultRel_eqns {α β γ : Type} (payload : GlobalEnv → α → β → Prop) :
     (∀ genv (value : α) (result : Result β FlatSem.Value),
       ResultRel payload genv (.val value) result ↔
         ∃ value', payload genv value value' ∧ result = .val value') ∧
