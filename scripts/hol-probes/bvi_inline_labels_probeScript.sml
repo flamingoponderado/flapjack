@@ -504,3 +504,6 @@ val _ = show "in_state_rel_def_typed" bvi_inlineProofTheory.in_state_rel_def;
 
 (* Capture the exported original environment-extension theorem with inferred types. *)
 val _ = show "evaluate_expand_env_typed" bvi_inlineProofTheory.evaluate_expand_env;
+
+(* Capture the exported original tick-evaluation theorem with inferred types. *)
+val _ = show "evaluate_bvi_mk_tick_typed" bvi_inlineProofTheory.evaluate_bvi_mk_tick;
