@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Primitive
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.StateRelation.Original
 
 @[expose] public section
 
@@ -96,5 +97,22 @@ theorem updateThunk_related {C F : Type} (source target : State C F)
               simpa [states.2.1] using updated
           | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
             simp [updateThunk]
+
+/-- The source-shaped singleton update result. This is not yet tagged: the
+HOL reference attribute cannot currently combine the nested value-relation
+translation with the finite-map input and existential witness translations. -/
+theorem relUpdateThunkSource {C F : Type} (source target : State C F) (flag : Bool) (ptr : Nat)
+    (values nextValues : List Value) (sourceRefs : HolFiniteMapExact Nat (Ref Value))
+    (related : StateRelSource source target ∧ List.Forall₂ ValueRel values nextValues)
+    (updated : updateThunk [.refPtr flag ptr] source.refs values = some sourceRefs) :
+    ∃ targetRefs : HolFiniteMapExact Nat (Ref Value),
+      updateThunk [.refPtr flag ptr] target.refs nextValues = some targetRefs ∧
+        StateRelSource { source with refs := sourceRefs } { target with refs := targetRefs } := by
+  have live := (stateRelSource_iff source target).mp related.1
+  have update := updateThunk_related source target [.refPtr flag ptr] [.refPtr flag ptr]
+    values nextValues (.cons (.refPtr flag ptr) .nil) related.2 live
+  rw [updated] at update
+  obtain ⟨targetRefs, run, states⟩ := update
+  exact ⟨targetRefs, run, (stateRelSource_iff _ _).mpr states⟩
 
 end Flapjack.Compiler.Backend.ClosAnnotate
