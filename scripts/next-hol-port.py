@@ -42,17 +42,21 @@ def read_index(path: Path) -> list[Declaration]:
     return declarations
 
 
-def read_mapping(output: str) -> set[tuple[str, str]]:
-    return {
-        (hol_path.removeprefix("cakeml/"), hol_name)
-        for line in output.splitlines()
-        for _lean_site, _lean_name, hol_path, hol_name in [line.split("\t")]
-    }
+def read_mapping(output: str) -> set[tuple[str, str, int | None]]:
+    tagged = set()
+    for line in output.splitlines():
+        _lean_site, _lean_name, hol_path, hol_reference = line.split("\t")
+        name, separator, source_line = hol_reference.rpartition(":")
+        if separator and source_line.isdecimal():
+            tagged.add((hol_path.removeprefix("cakeml/"), name, int(source_line)))
+        else:
+            tagged.add((hol_path.removeprefix("cakeml/"), hol_reference, None))
+    return tagged
 
 
 def candidates(
     declarations: list[Declaration],
-    tagged: set[tuple[str, str]],
+    tagged: set[tuple[str, str, int | None]],
     source: str,
     goal: str | None,
     kinds: set[str],
@@ -67,10 +71,14 @@ def candidates(
             raise ValueError(f"expected one declaration named {goal!r} in cakeml/{source}; found {len(matches)}")
         cutoff = matches[0].start
     in_scope = [entry for entry in in_file if cutoff is None or entry.start < cutoff]
-    tagged_count = sum((entry.path, entry.name) in tagged for entry in in_scope)
+    def is_tagged(entry: Declaration) -> bool:
+        return ((entry.path, entry.name, entry.start) in tagged or
+                (entry.path, entry.name, None) in tagged)
+
+    tagged_count = sum(is_tagged(entry) for entry in in_scope)
     remaining = [
         entry for entry in in_scope
-        if entry.kind in kinds and (entry.path, entry.name) not in tagged
+        if entry.kind in kinds and not is_tagged(entry)
     ]
     return sorted(remaining, key=lambda entry: (entry.start, entry.name)), tagged_count
 
