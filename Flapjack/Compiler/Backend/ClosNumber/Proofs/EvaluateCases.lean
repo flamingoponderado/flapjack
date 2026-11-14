@@ -7,6 +7,7 @@ public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallConst
+public import Flapjack.Misc.ListLookupRel
 
 @[expose] public section
 
@@ -347,23 +348,6 @@ theorem appSimulation_clock_step {C F : Type} (function nextFunction : Value)
         · exact evaluateApp_full function nextFunction first rest nextArgs source target body bodyEnv remaining
             result sourceNext run found insufficient noType related argsRel stateRel (bodyIH body) applicationIH
 
-/-- An environment lookup preserves a pointwise relation. -/
-theorem related_lookup {α β : Type} {relation : α → β → Prop} {left : List α} {right : List β}
-    (related : List.Forall₂ relation left right) (index : Nat) (value : α)
-    (found : left[index]? = some value) :
-    ∃ target, right[index]? = some target ∧ relation value target := by
-  induction related generalizing index with
-  | nil => simp at found
-  | cons head tail ih =>
-    cases index with
-    | zero =>
-      simp only [List.getElem?_cons_zero, Option.some.injEq] at found
-      subst value
-      exact ⟨_, rfl, head⟩
-    | succ index =>
-      simp only [List.getElem?_cons_succ] at found ⊢
-      exact ih index found
-
 /-- Selecting captured environment slots preserves the value relation. -/
 theorem related_lookupVars (maxApp : Nat) (indices : List Nat) (env nextEnv values : List Value)
     (envRel : List.Forall₂ (ValueRel maxApp) env nextEnv)
@@ -384,7 +368,7 @@ theorem related_lookupVars (maxApp : Nat) (indices : List Nat) (env nextEnv valu
       | some remaining =>
         simp [lookupVars, head, tail] at found
         subst values
-        obtain ⟨nextValue, nextHead, valueRel⟩ := related_lookup envRel index value head
+        obtain ⟨nextValue, nextHead, valueRel⟩ := Flapjack.forall₂_lookup envRel index value head
         obtain ⟨nextRemaining, nextTail, restRel⟩ := ih remaining tail
         exact ⟨nextValue :: nextRemaining, by simp [lookupVars, nextHead, nextTail], .cons valueRel restRel⟩
 
@@ -419,7 +403,7 @@ theorem evaluate_var {C F : Type} (trace : BackendCommon.Tra) (index : Nat) :
     exact False.elim (noType run.1.symm)
   | some value =>
     simp [evaluate, found] at run
-    obtain ⟨targetValue, targetFound, valueRel⟩ := related_lookup envRel index value found
+    obtain ⟨targetValue, targetFound, valueRel⟩ := Flapjack.forall₂_lookup envRel index value found
     obtain ⟨rfl, rfl⟩ := run
     refine ⟨.val [targetValue], target, ?_, ?_, stateRel⟩
     · simp [renumberList, renumber, evaluate, targetFound]
