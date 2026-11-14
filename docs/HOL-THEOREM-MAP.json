@@ -467,6 +467,15 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "remove_state_rel_do_install",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksRelation.lean",
+    "lean_name": "removeStateRel_doInstall",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Independent comparison with the original local statement and typed HOL capture: the sole relation premise yields the complete install match, with the source error payload type A independent of the success-branch target payload type B; the error branch target retains A. Success preserves the value and full target-state relation, while error preserves the identical error. Compiler and FFI state types are independent. A private unconditional result transport is proved for arbitrary payload types, including empty types; no type-conversion or success hypothesis is added. BVI refs use the canonical finite-support map with a same-module roundtrip; code remains a sparse tree. The probe captures the local typed statement, not the original proof."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "remove_state_rel_do_app",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksRelation.lean",
     "lean_name": "removeStateRel_doApp",

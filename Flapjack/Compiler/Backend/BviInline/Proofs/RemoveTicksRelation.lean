@@ -130,6 +130,19 @@ theorem removeStateRel_doApp_nonInstall {C F : Type} (source target : BviState C
       simpa [RemoveStateRel, BviSem.runtimeFrame, compiler, oracle, code] using states.2.2.2.2
     exact ⟨BviSem.runtimeFrame next target, by simpa [run, frameEq] using framed, nextRel⟩
 
+/-- Flapjack infrastructure: installation results have the same value and
+always use a type error across arbitrary error-payload types. This allows the
+generic HOL theorem to reuse the evaluator-specific installation proof. -/
+private theorem doInstall_retype {C F R S : Type} (args : List Value) (state : BviState C F) :
+    BviSem.doInstall (R := R) args state =
+      (match BviSem.doInstall (R := S) args state with
+       | .val pair => .val pair
+       | .err _ => .err (.abort .typeError)) := by
+  unfold BviSem.doInstall
+  repeat' split
+  all_goals simp_all
+  all_goals split at * <;> simp_all
+
 /-- Flapjack infrastructure: successful dynamic installation also preserves
 tick-cleanup state relatedness. -/
 theorem removeStateRel_doInstall_success {C F : Type} (source sourceNext target : BviState C F)
@@ -281,6 +294,36 @@ theorem removeStateRel_doInstall_error {C F : Type} (source target : BviState C 
     rw [run] at sourceRun
     contradiction
 
+/-- Installation preserves the tick-cleanup relation, with independent
+success-branch error payload types. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "remove_state_rel_do_install"
+  (fmap_as_finite_support := [refs])]
+theorem removeStateRel_doInstall {C F A B : Type} (args : List Value)
+    (source target : BviState C F) (states : RemoveStateRel source target) :
+    match BviSem.doInstall (R := A) args source with
+    | .val (value, next) => ∃ targetNext,
+        BviSem.doInstall (R := B) args target = .val (value, targetNext) ∧ RemoveStateRel next targetNext
+    | .err error => BviSem.doInstall (R := A) args target = .err error := by
+  cases sourceRun : BviSem.doInstall (R := ExnOrRet) args source with
+  | val pair =>
+    obtain ⟨value, next⟩ := pair
+    have sourceGeneric : BviSem.doInstall (R := A) args source = .val (value, next) := by
+      rw [doInstall_retype (S := ExnOrRet), sourceRun]
+    simp only [sourceGeneric]
+    obtain ⟨targetNext, targetFixed, relation⟩ :=
+      removeStateRel_doInstall_success source next target args value states sourceRun
+    refine ⟨targetNext, ?_, relation⟩
+    rw [doInstall_retype (R := B) (S := ExnOrRet), targetFixed]
+  | err error =>
+    have errorEq : error = .abort .typeError := BviTailrec.doApp_install_error args source error (by
+      simpa only [BviSem.doApp] using sourceRun)
+    subst error
+    have sourceGeneric : BviSem.doInstall (R := A) args source = .err (.abort .typeError) := by
+      rw [doInstall_retype (S := ExnOrRet), sourceRun]
+    simp only [sourceGeneric]
+    have targetFixed := removeStateRel_doInstall_error source target args (.abort .typeError) states sourceRun
+    rw [doInstall_retype (R := A) (S := ExnOrRet), targetFixed]
+
 /-- Every primitive operation transfers through the tick-cleanup relation,
 preserving both successful results and errors. The dispatcher inherits the
 real-model assumption documented in SOUNDNESS item 8. -/
@@ -294,14 +337,12 @@ theorem removeStateRel_doApp {C F : Type} (op : ClosLang.Op) (args : List Value)
         RemoveStateRel next targetNext := by
   by_cases install : op = .install
   · subst op
-    cases run : BviSem.doApp .install args source with
-    | err error =>
-      exact removeStateRel_doInstall_error source target args error states (by simpa only [BviSem.doApp] using run)
+    have transfer := removeStateRel_doInstall (A := ExnOrRet) (B := ExnOrRet) args source target states
+    cases run : BviSem.doInstall (R := ExnOrRet) args source with
+    | err error => simpa only [BviSem.doApp, run] using transfer
     | val pair =>
       obtain ⟨value, next⟩ := pair
-      obtain ⟨targetNext, targetRun, nextRel⟩ := removeStateRel_doInstall_success source next target args value states
-        (by simpa only [BviSem.doApp] using run)
-      exact ⟨targetNext, by simpa only [BviSem.doApp] using targetRun, nextRel⟩
+      simpa only [BviSem.doApp, run] using transfer
   · exact removeStateRel_doApp_nonInstall source target states op args install
 
 /-- Flapjack infrastructure: primitive simulation also works from the

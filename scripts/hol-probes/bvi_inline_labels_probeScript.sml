@@ -238,3 +238,14 @@ val remove_state_rel_do_app_statement =
       | Rerr err => do_app op args t = Rerr err``;
 val _ = (print "remove_state_rel_do_app_statement_typed=";
          print_term remove_state_rel_do_app_statement; print "\n");
+
+(* Original local installation relation, including independent result types. *)
+val remove_state_rel_do_install_statement =
+  ``∀args (s:('c,'ffi) bviSem$state) t.
+    remove_state_rel s t ⇒
+      case do_install args s of
+      | Rval (value,s1) =>
+          ∃t1. do_install args t = Rval (value,t1) ∧ remove_state_rel s1 t1
+      | Rerr err => do_install args t = Rerr err``;
+val _ = (print "remove_state_rel_do_install_statement_typed=";
+         print_term remove_state_rel_do_install_statement; print "\n");
