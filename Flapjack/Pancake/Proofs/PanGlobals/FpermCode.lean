@@ -17,9 +17,9 @@ open Pancake.PanLang
 is the preimage of the source domain, and each defined payload keeps its
 parameters/return shape while renaming the body. Flapjack codec infrastructure,
 not an independently tagged HOL declaration over unrestricted maps. -/
-def fpermCodeRaw {width : Nat} [NeZero width] (f g : MlS)
-    (code : MlS → Option (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
-    (name : MlS) : Option (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL) :=
+def fpermCodeRaw {width : Nat} [NeZero width] {α γ : Type} (f g : MlS)
+    (code : MlS → Option (α × ProgHOL width × γ))
+    (name : MlS) : Option (α × ProgHOL width × γ) :=
   (code (fpermName f g name)).map fun entry =>
     (entry.1, fpermHOL f g entry.2.1, entry.2.2)
 
@@ -28,9 +28,9 @@ finite-map carrier. Mapping the finite source support through the same swap
 establishes precisely the finite preimage used by HOL's FUN_FMAP. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "fperm_code_def"
   (fmap_as_finite_support_result) (words_as_type_indexed_bitvec)]
-def fpermCodeHOL {width : Nat} [NeZero width] (f g : MlS)
-    (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL)) :
-    HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL) where
+def fpermCodeHOL {width : Nat} [NeZero width] {α γ : Type} (f g : MlS)
+    (code : HolFiniteMapExact MlS (α × ProgHOL width × γ)) :
+    HolFiniteMapExact MlS (α × ProgHOL width × γ) where
   lookup name := (code.lookup (fpermName f g name)).map fun entry =>
     (entry.1, fpermHOL f g entry.2.1, entry.2.2)
   finiteSupport := by
@@ -45,15 +45,15 @@ def fpermCodeHOL {width : Nat} [NeZero width] (f g : MlS)
 /-- Flapjack-specific lookup codec witness against the independent raw HOL
 FUN_FMAP rendering. Neither a target correspondence premise nor a self-equality. -/
 theorem holFmapAsFiniteSupportResultWitness_fpermCodeHOL
-    {width : Nat} [NeZero width] (f g : MlS)
-    (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
+    {width : Nat} [NeZero width] {α γ : Type} (f g : MlS)
+    (code : HolFiniteMapExact MlS (α × ProgHOL width × γ))
     (name : MlS) :
     (fpermCodeHOL f g code).lookup name = fpermCodeRaw f g code.lookup name := rfl
 
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "FLOOKUP_fperm_code'"
   (fmap_as_finite_support_relation := [code]) (words_as_type_indexed_bitvec)]
-theorem flookupFpermCodeHOL' {width : Nat} [NeZero width] (f g : MlS)
-    (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
+theorem flookupFpermCodeHOL' {width : Nat} [NeZero width] {α γ : Type} (f g : MlS)
+    (code : HolFiniteMapExact MlS (α × ProgHOL width × γ))
     (name : MlS) :
     (fpermCodeHOL f g code).lookup name =
       (code.lookup (fpermName f g name)).map (fun entry =>
@@ -61,8 +61,8 @@ theorem flookupFpermCodeHOL' {width : Nat} [NeZero width] (f g : MlS)
 
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "FLOOKUP_fperm_code"
   (fmap_as_finite_support_relation := [code]) (words_as_type_indexed_bitvec)]
-theorem flookupFpermCodeHOL {width : Nat} [NeZero width] (f g : MlS)
-    (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
+theorem flookupFpermCodeHOL {width : Nat} [NeZero width] {α γ : Type} (f g : MlS)
+    (code : HolFiniteMapExact MlS (α × ProgHOL width × γ))
     (name : MlS) :
     (fpermCodeHOL f g code).lookup (fpermName f g name) =
       (code.lookup name).map (fun entry =>
@@ -78,10 +78,10 @@ theorem flookupFpermCodeHOL {width : Nat} [NeZero width] (f g : MlS)
 `holFmapAsFiniteSupportEqualityWitness_fpermCodeHOL_empty`. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "fperm_code_FEMPTY"
   (fmap_as_finite_support_equality) (words_as_type_indexed_bitvec)]
-theorem fpermCodeHOL_empty {width : Nat} [NeZero width] (f g : MlS) :
+theorem fpermCodeHOL_empty {width : Nat} [NeZero width] {α γ : Type} (f g : MlS) :
     fpermCodeHOL f g
       (HolFiniteMapExact.empty : HolFiniteMapExact MlS
-        (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL)) = HolFiniteMapExact.empty := by
+        (α × ProgHOL width × γ)) = HolFiniteMapExact.empty := by
   apply HolFiniteMapExact.ext
   funext name
   rfl
@@ -89,10 +89,10 @@ theorem fpermCodeHOL_empty {width : Nat} [NeZero width] (f g : MlS) :
 /-- Unconditional lookup-level witness for `fpermCodeHOL_empty`: both sides
 agree at the same universally bound key `name`. -/
 theorem holFmapAsFiniteSupportEqualityWitness_fpermCodeHOL_empty
-    {width : Nat} [NeZero width] (f g : MlS) (name : MlS) :
+    {width : Nat} [NeZero width] {α γ : Type} (f g : MlS) (name : MlS) :
     (fpermCodeHOL f g
       (HolFiniteMapExact.empty : HolFiniteMapExact MlS
-        (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))).lookup name =
+        (α × ProgHOL width × γ))).lookup name =
       HolFiniteMapExact.empty.lookup name := by
   rw [fpermCodeHOL_empty]
 
@@ -107,9 +107,9 @@ theorem fpermDecsHOL_append {width : Nat} [NeZero width] (f g : MlS)
 
 /-- Flapjack-specific update factoring for the universal update-list proof.
 HOL has no standalone declaration for this single-update helper. -/
-theorem fpermCodeHOL_updateEq {width : Nat} [NeZero width] (f g : MlS)
-    (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
-    (entry : MlS × List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL) :
+theorem fpermCodeHOL_updateEq {width : Nat} [NeZero width] {α γ : Type} (f g : MlS)
+    (code : HolFiniteMapExact MlS (α × ProgHOL width × γ))
+    (entry : MlS × α × ProgHOL width × γ) :
     fpermCodeHOL f g (code.updateEq entry) =
       (fpermCodeHOL f g code).updateEq
         (fpermName f g entry.1, entry.2.1, fpermHOL f g entry.2.2.1, entry.2.2.2) := by
@@ -128,9 +128,9 @@ theorem fpermCodeHOL_updateEq {width : Nat} [NeZero width] (f g : MlS)
 /-- Flapjack-specific list-update factoring, stronger than HOL's
 functions-only instance. No HOL tag: the source theorem restricts entries to
 the function table of a declaration list. -/
-theorem fpermCodeHOL_updateListEq {width : Nat} [NeZero width] (f g : MlS)
-    (fm : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
-    (entries : List (MlS × List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL)) :
+theorem fpermCodeHOL_updateListEq {width : Nat} [NeZero width] {α γ : Type} (f g : MlS)
+    (fm : HolFiniteMapExact MlS (α × ProgHOL width × γ))
+    (entries : List (MlS × α × ProgHOL width × γ)) :
     fpermCodeHOL f g (fm.updateListEq entries) =
       (fpermCodeHOL f g fm).updateListEq
         (entries.map fun entry =>
@@ -146,18 +146,21 @@ theorem fpermCodeHOL_updateListEq {width : Nat} [NeZero width] (f g : MlS)
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "fperm_code_FUPDATE_LIST_functions"
   (fmap_as_finite_support_relation := [fm]) (words_as_type_indexed_bitvec)]
 theorem fpermCodeHOL_updateList_functions {width : Nat} [NeZero width] (f g : MlS)
-    (fm : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
+    (fm : HolFiniteMapExact MlS
+      (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
     (code : List (DeclHOL width)) :
     fpermCodeHOL f g (fm.updateListEq (functionsHOL code)) =
       (fpermCodeHOL f g fm).updateListEq (functionsHOL (fpermDecsHOL f g code)) := by
   rw [functionsFpermDecsHOL]
   exact fpermCodeHOL_updateListEq f g fm (functionsHOL code)
 
-/-- Exact HOL `lookup_code_fperm_code`: code/body/name permutation leaves
-parameter validation and the returned callee locals and return shape unchanged.
-The canonical lookup used here is the executed faithful Call/DecCall entry. -/
-@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "lookup_code_fperm_code"
-  (fmap_as_finite_support_relation := [code]) (words_as_type_indexed_bitvec)]
+/-! `lookup_code_fperm_code` is NOT an exact port (tag withdrawn in task 169):
+HOL's statement has `args : γ v list` with the value type γ independent of the
+code map's word type, while the Lean lookup is the executed
+`lookupCodeCanonicalHOL`, which is width-indexed through `ValueHOL width`.
+HOL's payload also keeps the parameter-list and return-shape components
+generic. The equation holds at the used instance, but a faithful port needs a
+value carrier generic in its word dimension. -/
 theorem lookupCodeFpermCodeHOL {width : Nat} [NeZero width] (f g : MlS)
     (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
     (name : MlS) (args : List (ValueHOL width)) :

@@ -52,10 +52,11 @@ private theorem lookupCodeHOLFinite_of_exact {width : Nat} [NeZero width]
     rfl
 
 /-- HOL934: original successful code lookup is preserved under state_rel,
-    with compiled body and identical canonical callee locals and return shape. -/
-@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "state_rel_lookup_code"
-  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals, PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code, PanSemStateFiniteExact.eshapes, PanGlobalsContextExact.globals, callee])
-  (words_as_type_indexed_bitvec)]
+    with compiled body and identical canonical callee locals and return shape.
+    NOT an exact port (tag withdrawn in task 169): the typed capture gives
+    `args :γ v list` with the value type γ independent of the state's word
+    type, while Lean's executed lookup is width-indexed (`ValueHOL width`), so
+    the statement is the used instance of a more general HOL theorem. -/
 theorem stateRelLookupCodeHOL {width : Nat} {σ : Type} [NeZero width]
     (context : PanGlobalsContextExact width)
     (source target : PanSemStateFiniteExact width σ) (flag : Bool)

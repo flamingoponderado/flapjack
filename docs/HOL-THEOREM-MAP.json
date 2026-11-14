@@ -86665,7 +86665,7 @@
     "fmap_as_finite_support_relation": [
       "code"
     ],
-    "reviewer": "flapjack-sol source comparison2026-09-30 bead .18.5.2.22.4.1 against pan_globalsProof1617-1685. Uses accepted exact MlS/ProgHOL/ShapeHOL and exact fpermName/fpermHOL/fpermDecsHOL/functionsHOL. FUN_FMAP preimage domain is exactly swapped source domain; absent source key yields NONE, present payload preserves parameters and return shape and permutes body. Finite support via swapped witness list and name involution. Both full Option lookup equations preserve arbitrary key/code; declaration append is structural; update-list theorem proved universally from canonical FUPDATE_LIST order, no success/disjointness/distinctness premises, duplicate keys preserved. Result codec witness is independent raw lookup operation; relation bare map parameters are canonical input maps. FEMPTY single-map equality and canonical lookup_code theorem remain tracked .4.3/.4.2, not claimed ported here. Production/evaluation permutation theorem remains on parent .4/.5."
+    "reviewer": "codewhale source comparison (2026-11-14, task 169): typed capture FLOOKUP_fperm_code_typed shows the generic payload \u03b1 # \u03b2 prog # \u03b3; the theorem is now generic over {\u03b1 \u03b3 : Type} with payload \u03b1 \u00d7 ProgHOL width \u00d7 \u03b3, matching the source. Qualifier: fmap_as_finite_support_relation with words_as_type_indexed_bitvec."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -86677,7 +86677,7 @@
     "fmap_as_finite_support_relation": [
       "code"
     ],
-    "reviewer": "flapjack-sol source comparison2026-09-30 bead .18.5.2.22.4.1 against pan_globalsProof1617-1685. Uses accepted exact MlS/ProgHOL/ShapeHOL and exact fpermName/fpermHOL/fpermDecsHOL/functionsHOL. FUN_FMAP preimage domain is exactly swapped source domain; absent source key yields NONE, present payload preserves parameters and return shape and permutes body. Finite support via swapped witness list and name involution. Both full Option lookup equations preserve arbitrary key/code; declaration append is structural; update-list theorem proved universally from canonical FUPDATE_LIST order, no success/disjointness/distinctness premises, duplicate keys preserved. Result codec witness is independent raw lookup operation; relation bare map parameters are canonical input maps. FEMPTY single-map equality and canonical lookup_code theorem remain tracked .4.3/.4.2, not claimed ported here. Production/evaluation permutation theorem remains on parent .4/.5."
+    "reviewer": "codewhale source comparison (2026-11-14, task 169): typed capture FLOOKUP_fperm_code_typed (prime form) shows the generic payload \u03b1 # \u03b2 prog # \u03b3; the theorem is now generic over {\u03b1 \u03b3 : Type} with payload \u03b1 \u00d7 ProgHOL width \u00d7 \u03b3, matching the source. Qualifier: fmap_as_finite_support_relation with words_as_type_indexed_bitvec."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -86687,7 +86687,7 @@
     "statement_status": "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "fmap_as_finite_support_result": true,
-    "reviewer": "flapjack-sol source comparison2026-09-30 bead .18.5.2.22.4.1 against pan_globalsProof1617-1685. Uses accepted exact MlS/ProgHOL/ShapeHOL and exact fpermName/fpermHOL/fpermDecsHOL/functionsHOL. FUN_FMAP preimage domain is exactly swapped source domain; absent source key yields NONE, present payload preserves parameters and return shape and permutes body. Finite support via swapped witness list and name involution. Both full Option lookup equations preserve arbitrary key/code; declaration append is structural; update-list theorem proved universally from canonical FUPDATE_LIST order, no success/disjointness/distinctness premises, duplicate keys preserved. Result codec witness is independent raw lookup operation; relation bare map parameters are canonical input maps. FEMPTY single-map equality and canonical lookup_code theorem remain tracked .4.3/.4.2, not claimed ported here. Production/evaluation permutation theorem remains on parent .4/.5."
+    "reviewer": "codewhale source comparison (2026-11-14, task 169): the typed capture fperm_code_def_typed in pancake_pan_globals_proof_typed_probe.out gives the payload \u03b1 # \u03b2 prog # \u03b3 with the parameter-list type \u03b1 and the return-shape type \u03b3 independent. fpermCodeHOL is now generic over {\u03b1 \u03b3 : Type} with payload \u03b1 \u00d7 ProgHOL width \u00d7 \u03b3 (the body never inspects those components), so the statement matches the source; \u03b2 is the word dimension. The lookup-level witness holFmapAsFiniteSupportResultWitness_fpermCodeHOL is generalised with it. Qualifier: fmap_as_finite_support_result with words_as_type_indexed_bitvec."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -86697,7 +86697,7 @@
     "statement_status": "reviewed_fmap_as_finite_support_equality_words_as_type_indexed_bitvec",
     "fmap_as_finite_support_equality": true,
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.4.3): exact port of HOL fperm_code_FEMPTY (pan_globalsProofScript.sml:1657), fperm_code f g FEMPTY = FEMPTY, over the reviewed canonical HolFiniteMapExact rendering of the code map (the same carrier as the accepted fperm_code_def port fpermCodeHOL). The whole statement is a single finite-map equality, so it carries the dedicated fmap_as_finite_support_equality qualifier and is witnessed at the lookup level by holFmapAsFiniteSupportEqualityWitness_fpermCodeHOL_empty. Source comparison against the original HOL statement; unconditional, no added assumptions."
+    "reviewer": "codewhale source comparison (2026-11-14, task 169): typed capture fperm_code_FEMPTY_typed shows FEMPTY over the generic payload \u03b1 # \u03b2 prog # \u03b3; fpermCodeHOL is now generic over {\u03b1 \u03b3 : Type}, so the empty-map equality matches the source at the same payload. Qualifier: fmap_as_finite_support_equality with words_as_type_indexed_bitvec."
   },
   {
     "hol_path": null,
@@ -86757,12 +86757,8 @@
     "lean_name": "lookupCodeFpermCodeHOL",
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "lookup_code_fperm_code",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "code"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol (.22.4.4) compared HOL1687-1694 and panSem lookup_code458-467. Unconditional canonical lookup of permuted code at permuted name equals Option.map of fperm on body and identity on canonical callee locals/return shape. Same arbitrary args incl structured values, count/distinctness/LIST_REL checks and ZIP update order. Canonical standalone code finite-map translation and positive-width words only; returned canonical locals are the already reviewed lookup_code carrier. Proof raw clauses preserve all guards; accepted unconditional canonical projection witness plus injectivity by HolFiniteMapExact.ext lifts equality without target-success premise. Coordinator source review pending."
+    "statement_status": "documented_mismatch",
+    "reviewer": "codewhale source comparison (2026-11-14, task 169): tag withdrawn. The typed capture lookup_code_fperm_code_typed in pancake_pan_globals_proof_typed_probe.out gives code : mlstring |-> (\u03b2 # shape) list # \u03b1 prog # \u03b4 and args : \u03b3 v list, with the value type \u03b3 independent of the code map's word type and the parameter-list and return-shape components generic. Lean's lookupCodeFpermCodeHOL uses the executed lookupCodeCanonicalHOL, which is width-indexed (ValueHOL width) and fixes the payload to List (MlS \u00d7 ShapeHOL) \u00d7 ProgHOL width \u00d7 ShapeHOL. The equation holds at the used instance, but a faithful port needs a value carrier generic in its word dimension."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Assembly.lean",
@@ -88926,17 +88922,8 @@
     "lean_name": "stateRelLookupCodeHOL",
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "state_rel_lookup_code",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "PanSemStateFiniteExact.locals",
-      "PanSemStateFiniteExact.globals",
-      "PanSemStateFiniteExact.code",
-      "PanSemStateFiniteExact.eshapes",
-      "PanGlobalsContextExact.globals",
-      "callee"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "Luna A compared HOL934-941 and panSem458-467 lookup_code: original state_rel ls plus successful source lookup implies target lookup of compiled body, same locals and return shape. HOL SOME(prog,newlocals) groups tail of triple; Lean binds callee and returnShape separately. Canonical callee map qualifier names standalone callee, states/context same-module roundtrips. lookupCodeHOLFinite wraps unchanged exact raw lookup using checked finite support; canonical proof irrelevance yields identical map. Nodup parameter names, exact length+pairwise shape equality implement ALL_DISTINCT and LIST_REL; unchanged ZIP and left FUPDATE_LIST last-binding semantics. No extra premise on code/target outcome. Positive words/Type0 FFI, exact MlS keys. Calls1149/1516 verified. Coordinator source review pending."
+    "statement_status": "documented_mismatch",
+    "reviewer": "codewhale source comparison (2026-11-14, task 169): tag withdrawn. The typed capture state_rel_lookup_code_typed in pancake_pan_globals_proof_typed_probe.out gives lookup_code s.code fname (args :\u03b3 v list) with the value type \u03b3 independent of the state's word type, while Lean's stateRelLookupCodeHOL uses lookupCodeHOLFinite, which fixes the arguments to List (ValueHOL width). The compiled-body conclusion holds at that instance, but the source statement is more general."
   },
   {
     "hol_path": null,
@@ -88957,7 +88944,7 @@
       "globals"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.2.23) against pan_globalsProofScript.sml:12-16. HOL quantifies two distinct names/shapes/addresses and one slot; name inequality, presence of both globals, both context lookups, and absence of any slot in both addresses sets are preserved clause-for-clause. Lean's pointwise not (addresses ... slot and addresses ... slot) is exactly HOL DISJOINT; lookup operations are the canonical finite-map translation, names are MlS, shapes ShapeHOL, addresses positive-width BitVec. cglobals/globals are the two bare map parameters and the word dimension has its standard NeZero translation. No extra hypothesis or weaker conclusion; coordinator review required."
+    "reviewer": "codewhale source comparison (2026-11-14, task 169): typed capture disjoint_globals_def_typed gives keys \u03b2 and global values \u03b3 independent of the word type \u03b1. The definition is now generic over {\u03ba V : Type} [DecidableEq \u03ba] with cglobals : \u03ba |-> shape # \u03b1 word and globals : \u03ba |-> V, matching the source; the pointwise DISJOINT conclusion is unchanged. Qualifier: fmap_as_finite_support_relation with words_as_type_indexed_bitvec."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
@@ -89148,16 +89135,8 @@
     "lean_name": "stateRelChangeFfiHOL",
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "state_rel_change_ffi",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "PanSemStateFiniteExact.locals",
-      "PanSemStateFiniteExact.globals",
-      "PanSemStateFiniteExact.code",
-      "PanSemStateFiniteExact.eshapes",
-      "PanGlobalsContextExact.globals"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "Luna A compared HOL1564-1569: same original flag/context/states and arbitrary new FFI x; state_rel implies state_rel after setting ffi=x on both states. All relation conjuncts unchanged except FFI equality becomes reflexive. No new premise on FFI, target result or state. Exact reviewed HolFfiState universe0 host, positive-width state and canonical finite relation carriers; same-module roundtrip witnesses. Direct dependency of source state_rel_write_bytearray at1608 confirmed. Coordinator source review pending."
+    "statement_status": "documented_mismatch",
+    "reviewer": "codewhale source comparison (2026-11-14, task 169): tag withdrawn. The typed capture state_rel_change_ffi_typed in pancake_pan_globals_proof_typed_probe.out gives (s :(\u03b1, \u03b2) state) with the replacement (x :\u03b3 ffi_state), so HOL's record update changes the state's FFI carrier and the implication relates states of different hosts. Lean's PanSemStateFiniteExact width \u03c3 fixes the FFI host at \u03c3 and states the implication for that instance only. Same class as the accepted isValidValueSimps2 withdrawal; a faithful port needs a state carrier polymorphic in the FFI host."
   },
   {
     "hol_path": null,

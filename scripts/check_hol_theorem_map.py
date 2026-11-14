@@ -335,6 +335,35 @@ DOCUMENTED_MISMATCHES = {
         "width, so the Lean statement specialises both. The eight equations are HOL's, but the interface is not "
         "the source shape; a faithful port needs a state carrier polymorphic in the FFI host."
     ),
+    ("Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean", "lookupCodeFpermCodeHOL"): (
+        "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+        "lookup_code_fperm_code",
+        "codewhale source comparison (2026-11-14, task 169): tag withdrawn. The typed capture "
+        "lookup_code_fperm_code_typed in pancake_pan_globals_proof_typed_probe.out gives "
+        "code : mlstring |-> (\u03b2 # shape) list # \u03b1 prog # \u03b4 and args : \u03b3 v list, with the "
+        "value type \u03b3 independent of the code map's word type and the parameter-list and "
+        "return-shape components generic. Lean's lookupCodeFpermCodeHOL uses the executed "
+        "lookupCodeCanonicalHOL, which is width-indexed (ValueHOL width). The equation holds at "
+        "the used instance, but a faithful port needs a value carrier generic in its word dimension."
+    ),
+    ("Flapjack/Pancake/Proofs/PanGlobals/StateRelationFfi.lean", "stateRelChangeFfiHOL"): (
+        "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+        "state_rel_change_ffi",
+        "codewhale source comparison (2026-11-14, task 169): tag withdrawn. The typed capture "
+        "state_rel_change_ffi_typed gives (s :(\u03b1, \u03b2) state) with the replacement "
+        "(x :\u03b3 ffi_state), so HOL's record update changes the state's FFI carrier and the "
+        "implication relates states of different hosts. Lean's PanSemStateFiniteExact width \u03c3 "
+        "fixes the FFI host at \u03c3; a faithful port needs a state carrier polymorphic in the FFI host."
+    ),
+    ("Flapjack/Pancake/Proofs/PanGlobals/StateRelationCode.lean", "stateRelLookupCodeHOL"): (
+        "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+        "state_rel_lookup_code",
+        "codewhale source comparison (2026-11-14, task 169): tag withdrawn. The typed capture "
+        "state_rel_lookup_code_typed gives lookup_code s.code fname (args :\u03b3 v list) with the "
+        "value type \u03b3 independent of the state's word type, while Lean's stateRelLookupCodeHOL "
+        "uses lookupCodeHOLFinite, which fixes the arguments to List (ValueHOL width). The "
+        "compiled-body conclusion holds at that instance only."
+    ),
     ("Flapjack/Compiler/Backend/ClosFvs/Source.lean", "compile"): ("cakeml/compiler/backend/clos_fvsScript.sml", "compile_def", "The executable uses removeList; compileSource is the source-shaped definition and compileSource_eq_compile proves agreement."),
     ("Flapjack/Compiler/Backend/ClosFvs/Source.lean", "compileInc"): ("cakeml/compiler/backend/clos_fvsScript.sml", "compile_inc_def", "The executable uses compile; compileIncSource is the source-shaped definition and compileIncSource_eq_compileInc proves agreement."),
     ("Flapjack/Compiler/Backend/ClosKnown/Compile.lean", "knownCompileInc"): ("cakeml/compiler/backend/clos_knownScript.sml", "known_compile_inc_def", "The executable uses the total traversals; knownCompileIncSource is the source-shaped definition and knownCompileIncSource_eq proves agreement."),

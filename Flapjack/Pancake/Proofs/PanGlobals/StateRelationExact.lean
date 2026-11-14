@@ -57,10 +57,10 @@ def panGlobalsByteAlignedHOL {width : Nat} [NeZero width]
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "disjoint_globals_def"
   (fmap_as_finite_support_relation := [cglobals, globals])
   (words_as_type_indexed_bitvec)]
-def disjointGlobalsHOLExact {width : Nat} [NeZero width]
+def disjointGlobalsHOLExact {width : Nat} [NeZero width] {κ V : Type} [DecidableEq κ]
     (topAddress : BitVec width)
-    (cglobals : HolFiniteMapExact MlS (ShapeHOL × BitVec width))
-    (globals : HolFiniteMapExact MlS (ValueHOL width)) : Prop :=
+    (cglobals : HolFiniteMapExact κ (ShapeHOL × BitVec width))
+    (globals : HolFiniteMapExact κ V) : Prop :=
   ∀ name name' shape address shape' address',
     name ≠ name' →
     globals.lookup name ≠ none →

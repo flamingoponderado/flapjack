@@ -24,10 +24,12 @@ theorem holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact
   PanGlobalsContextExact.holFmapAsFiniteSupportWitness context
 
 /-- Original HOL1564 implication: replacing both FFI states preserves the
-    same relation flag, with no additional premise on the new FFI state. -/
-@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "state_rel_change_ffi"
-  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals, PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code, PanSemStateFiniteExact.eshapes, PanGlobalsContextExact.globals])
-  (words_as_type_indexed_bitvec)]
+    same relation flag, with no additional premise on the new FFI state.
+    NOT an exact port (tag withdrawn in task 169): HOL's typed capture gives
+    `x :γ ffi_state` with the replacement host γ independent of the state's
+    `'ffi`, so the update relates states of different carriers; Lean's
+    `PanSemStateFiniteExact width σ` fixes the host at σ. The implication holds
+    at the fixed-host instance only. -/
 theorem stateRelChangeFfiHOL {width : Nat} {σ : Type} [NeZero width]
     (context : PanGlobalsContextExact width)
     (source target : PanSemStateFiniteExact width σ) (flag : Bool)
