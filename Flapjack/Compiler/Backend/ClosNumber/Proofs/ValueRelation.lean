@@ -2,9 +2,8 @@ module
 
 public import Flapjack.Compiler.Backend.ClosNumber
 public import Flapjack.Compiler.Backend.Semantics.ClosSem
-public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
-public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBlock
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.ListRelations
 public import Mathlib.Data.List.Forall2
 
 @[expose] public section
@@ -39,10 +38,8 @@ inductive ValueRel (maxApp : Nat) : Value → Value → Prop where
       ValueRel maxApp (.recclosure location args env functions index)
         (.recclosure nextLocation nextArgs nextEnv nextFunctions index)
 
-/-- The number-introduction value relation meets the generic simple-value
-conditions used by primitive-operation simulations. Flapjack infrastructure;
-the corresponding HOL declaration is ported as the tagged ClosMti
-`simpleValRel`. -/
+/-- Numbering satisfies the source simple-value relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "simple_val_rel"]
 theorem simpleValRel (maxApp : Nat) : ClosProps.simpleValRel (ValueRel maxApp) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro x n
@@ -82,18 +79,8 @@ theorem simpleValRel (maxApp : Nat) : ClosProps.simpleValRel (ValueRel maxApp) :
     cases h
     trivial
 
-/-- Numbered values preserve scalar constructors and their payloads. -/
-theorem valueRel_number_iff (maxApp : Nat) (number : Int) (target : Value) :
-    ValueRel maxApp (.number number) target ↔ target = .number number := by
-  constructor
-  · intro related
-    cases related
-    rfl
-  · intro equal
-    subst target
-    exact .number number
-
 /-- List values preserve the relation when encoded as closure blocks. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "list_to_v_v_rel"]
 theorem listToValue_related (maxApp : Nat) {left right : List Value}
     (related : List.Forall₂ (ValueRel maxApp) left right) :
     ValueRel maxApp (listToValue left) (listToValue right) := by
@@ -104,80 +91,13 @@ theorem listToValue_related (maxApp : Nat) {left right : List Value}
 
 /-- Related values decode as lists together, preserving every element and
     distinguishing malformed list encodings. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "v_to_list"]
 theorem valueToList_related (maxApp : Nat) (source target : Value)
     (related : ValueRel maxApp source target) :
     match valueToList source, valueToList target with
     | none, none => True
     | some left, some right => List.Forall₂ (ValueRel maxApp) left right
-    | _, _ => False := by
-  cases related with
-  | number _ | word64 _ | byteVector _ | refPtr _ _ | closure | recclosure =>
-    simp [valueToList]
-  | block tag fields nextFields fieldsRel =>
-    cases fieldsRel with
-    | nil => by_cases equal : tag = BackendCommon.nilTag <;> simp [valueToList, equal]
-    | @cons first nextFirst _ _ head tail =>
-      cases tail with
-      | nil => simp [valueToList]
-      | @cons last nextLast _ _ body rest =>
-        cases rest with
-        | cons extra rest => simp [valueToList]
-        | nil =>
-          by_cases equal : tag = BackendCommon.consTag
-          · have bodyRel := valueToList_related maxApp last nextLast body
-            cases left : valueToList last <;> cases right : valueToList nextLast <;>
-              simp_all [valueToList]
-          · simp [valueToList, equal]
-
-termination_by sizeOf source
-decreasing_by simp_wf; omega
-
-/-- Numbering preserves the result of structural equality, including closure
-    and type-error cases. -/
-theorem doEq_related (maxApp : Nat) (left right nextLeft nextRight : Value)
-    (first : ValueRel maxApp left nextLeft) (second : ValueRel maxApp right nextRight) :
-    doEq left right = doEq nextLeft nextRight := by
-  cases first <;> cases second <;> try (simp only [doEq])
-  case block.block tagA fieldsA targetA relA tagB fieldsB targetB relB =>
-    have fieldsEq : doEqList fieldsA fieldsB = doEqList targetA targetB := by
-      have worker : ∀ {as_ as' : List Value}, List.Forall₂ (ValueRel maxApp) as_ as' →
-          (∀ v ∈ as_, v ∈ fieldsA) → ∀ {bs bs' : List Value},
-          List.Forall₂ (ValueRel maxApp) bs bs' → doEqList as_ bs = doEqList as' bs' := by
-        intro as_ as' related membership
-        induction related with
-        | nil =>
-          intro bs bs' relatedB
-          cases relatedB <;> simp [doEqList]
-        | @cons a a' rest rest' head tail ih =>
-          intro bs bs' relatedB
-          cases relatedB with
-          | nil => simp [doEqList]
-          | @cons b b' tailB tailB' headB relatedTail =>
-            have member : a ∈ fieldsA := membership a (by simp)
-            have one := doEq_related maxApp a b a' b' head headB
-            simp only [doEqList, ← one]
-            cases doEq a b with
-            | typeError => rfl
-            | val flag =>
-              cases flag with
-              | false => rfl
-              | true =>
-                apply ih
-                · intro v hv
-                  exact membership v (by simp [hv])
-                · exact relatedTail
-      exact worker relA (by intro v h; exact h) relB
-    simp [← relA.length_eq, ← relB.length_eq, fieldsEq]
-termination_by sizeOf left
-decreasing_by
-  simp_wf
-  have bound := List.sizeOf_lt_of_mem member
-  omega
-
-/-- Every closure constant evaluates to a value related to itself, including
-    recursively nested constructor constants. -/
-theorem makeConst_related (maxApp : Nat) (constant : ClosLang.Const) :
-    ValueRel maxApp (makeConst constant) (makeConst constant) := by
-  exact ClosProps.PrimitiveBlock.makeConstRelated (ValueRel maxApp) (simpleValRel maxApp) constant
+    | _, _ => False :=
+  ClosProps.valueToList_related (ValueRel maxApp) (simpleValRel maxApp) source target related
 
 end Flapjack.Compiler.Backend.ClosNumber

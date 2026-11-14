@@ -1,6 +1,30 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "simple_val_rel",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ValueRelation.lean",
+    "lean_name": "simpleValRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared simple_val_rel_typed: the source simple-value predicate is applied to the numbering value relation at an arbitrary natural maximum application. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "list_to_v_v_rel",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ValueRelation.lean",
+    "lean_name": "listToValue_related",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared list_to_v_v_rel_typed: related lists of full closure values produce related source list encodings at the same arbitrary maximum application. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "v_to_list",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ValueRelation.lean",
+    "lean_name": "valueToList_related",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original local theorem and v_to_list_replay_typed, replaying the source proof: related closure values decode to matching failures or related lists, spelling out the original OPTREL of LIST_REL. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "do_app",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/Primitive.lean",
     "lean_name": "do_app",

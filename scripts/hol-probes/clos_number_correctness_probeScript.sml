@@ -22,6 +22,8 @@ val _ = show "ignore_table_def_typed=" clos_numberTheory.ignore_table_def;
 val _ = show "ignore_table_imp_typed=" clos_numberProofTheory.ignore_table_imp;
 val _ = show "simple_state_rel_typed=" clos_numberProofTheory.simple_state_rel;
 val _ = show "do_app_lemma_typed=" clos_numberProofTheory.do_app_lemma;
+val _ = show "simple_val_rel_typed=" clos_numberProofTheory.simple_val_rel;
+val _ = show "list_to_v_v_rel_typed=" clos_numberProofTheory.list_to_v_v_rel;
 val _ = show "v_rel_rules_typed=" clos_numberProofTheory.v_rel_rules;
 val _ = show "ref_rel_def_typed=" closPropsTheory.ref_rel_def;
 val _ = show "fmap_rel_def_typed=" finite_mapTheory.fmap_rel_def;
@@ -41,6 +43,14 @@ val _ = show "renumber_code_locs_every_Fn_SOME_typed=" clos_numberProofTheory.re
 open closLangTheory clos_numberTheory clos_numberProofTheory closSemTheory closPropsTheory
   listTheory rich_listTheory finite_mapTheory backendPropsTheory miscTheory;
 open preamble;
+val v_to_list_replay = Q.prove(
+  `!x y. v_rel max_app x y ==> OPTREL (LIST_REL (v_rel max_app)) (v_to_list x) (v_to_list y)`,
+  ho_match_mp_tac v_to_list_ind >>
+  simp[v_rel_simp,v_to_list_def,PULL_EXISTS] >>
+  srw_tac[][] >> TRY(srw_tac[][optionTheory.OPTREL_def] >> NO_TAC) >>
+  first_x_assum(fn th => first_x_assum(STRIP_ASSUME_TAC o MATCH_MP th)) >>
+  full_simp_tac(srw_ss())[optionTheory.OPTREL_def]);
+val _ = show "v_to_list_replay_typed=" v_to_list_replay;
 val do_app_replay = Q.prove(
   `state_rel s1 s2 /\ LIST_REL (v_rel s1.max_app) x1 x2 ==>
    (!err. do_app op x1 s1 = Rerr err ==> do_app op x2 s2 = Rerr err) /\
