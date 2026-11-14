@@ -53,14 +53,6 @@ theorem oracle_entry {C F : Type} (s t : State C F) (related : StateRel s t) (n 
     rw [oracle]
     simp [pureCo, compileInc, entry]
 
-/-- Related compiler callbacks receive the same transformed program. This is
-Flapjack infrastructure for the installation proof. -/
-theorem compiler_callback {C F : Type} (s t : State C F) (related : StateRel s t)
-    (config : C) (program : List ClosLang.Exp) :
-    s.compile config (program, []) = t.compile config (removeList program, []) := by
-  rw [related.2.2.2.2.2.2.2.2.2.1, compileIncSource_eq]
-  rfl
-
 /-- Corresponding shifted oracles have the same compiler configuration. This
 is Flapjack infrastructure for the installation proof. -/
 theorem shifted_config {C F : Type} (s t : State C F) (related : StateRel s t) :
@@ -95,7 +87,9 @@ theorem install_pair_related {C F : Type} (s t : State C F)
   have targetNoUpdate : t.code.updateListEq ([] : List (Nat × Nat × ClosLang.Exp)) = t.code := by
     simp [HolFiniteMapExact.updateListEq]
   obtain ⟨config, program, sourceOracle, targetOracle⟩ := oracle_entry s t states 0
-  have callback := compiler_callback s t states config program
+  have callback : s.compile config (program, []) = t.compile config (removeList program, []) := by
+    rw [states.2.2.2.2.2.2.2.2.2.1, compileIncSource_eq]
+    rfl
   have configs := shifted_config s t states
   cases bytesRun : valueToBytes a with
   | none =>
