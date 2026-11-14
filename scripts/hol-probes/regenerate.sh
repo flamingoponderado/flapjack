@@ -11748,3 +11748,9 @@ run_probe flat_pattern_typed_probeScript.sml flat_pattern_typed_probe.out \
   compile_dec_def_typed \
   "$cake_dir/compiler/backend/flat_patternScript.sml" \
   "$cake_dir/compiler/backend"
+run_probe stacklang_overloads_typed_probeScript.sml stacklang_overloads_typed_probe.out \
+  add_1_inst_typed add_bytes_in_word_inst_typed add_inst_typed and_inst_typed div2_inst_typed \
+  move_typed or_inst_typed sub_1_inst_typed sub_inst_typed While_typed xor_inst_typed \
+  const_inst_typed left_shift_inst_typed load_inst_typed right_shift_inst_typed store_inst_typed \
+  "$cake_dir/compiler/backend/stackLangScript.sml" \
+  "$cake_dir/compiler/backend"
