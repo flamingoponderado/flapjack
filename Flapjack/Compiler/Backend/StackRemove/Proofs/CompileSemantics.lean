@@ -105,7 +105,7 @@ extra-clock theorem. Local proof factoring, no assumed event-prefix law. -/
 theorem clockEventFamilyChain {width : Nat} [NeZero width] {C F : Type}
     (program : HolProg width) (source : StackSemStateFiniteExact width C F) :
     HolLList.lprefixChain (clockEventFamily program source) := by
-  rintro first second ⟨firstClock, rfl⟩ ⟨secondClock, rfl⟩
+  rintro first second ⟨⟨firstClock, rfl⟩, ⟨secondClock, rfl⟩⟩
   rcases Nat.le_total firstClock secondClock with ordered | ordered
   · exact Or.inl ((HolLList.lprefix_fromList _ _).mpr
       (clockFamilyEventsPrefix program source firstClock secondClock ordered))

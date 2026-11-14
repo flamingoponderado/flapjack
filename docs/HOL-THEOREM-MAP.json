@@ -71953,7 +71953,7 @@
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
     "lean_name": "equivLprefixChain_thm_conj",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:247-262 `Theorem equiv_lprefix_chain_thm: !ls1 ls2. lprefix_chain ls1 ∧ lprefix_chain ls2 ⇒ (equiv_lprefix_chain ls1 ls2 ⇔ (!ll1 n x. ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x ⇒ ?ll2. ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x) ∧ (!ll2 n x. ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x ⇒ ?ll1. ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x))`. The Lean theorem equivLprefixChain_thm takes the two chain hypotheses h1 h2 and states the same iff with both directions in the same order and the same binders ll1 ll2 n x; HOL conjunction of membership and LNTH is written as chained implications. Generic in α; no width, word or finite-map carrier occurs. Task 181 audit: the tagged declaration states HOL's single conjunction premise; the curried form is retained untagged for Lean callers."
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:247-262 `Theorem equiv_lprefix_chain_thm: !ls1 ls2. lprefix_chain ls1 ∧ lprefix_chain ls2 ⇒ (equiv_lprefix_chain ls1 ls2 ⇔ (!ll1 n x. ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x ⇒ ?ll2. ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x) ∧ (!ll2 n x. ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x ⇒ ?ll1. ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x))`. The Lean theorem equivLprefixChain_thm takes the two chain hypotheses h1 h2 and states the same iff with both directions in the same order and the same binders ll1 ll2 n x; HOL conjunction of membership and LNTH is written as chained implications. Generic in α; no width, word or finite-map carrier occurs. Task 181 audit: the tagged declaration states HOL's single conjunction premise; the curried form is retained untagged for Lean callers. Task 182: both inner implication premises are now single HOL conjunctions of membership and the LNTH observation; the curried untagged form is retained for callers."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
@@ -71961,7 +71961,7 @@
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
     "lean_name": "equiv_lprefix_chain_thm2_conj",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.1.1): HOL lprefix_lubScript.sml:264-304 `Theorem equiv_lprefix_chain_thm2: !ls1 ls2. lprefix_chain ls1 /\\ lprefix_chain ls2 /\\ (!ll2. ll2 IN ls2 ==> LFINITE ll2) ==> (equiv_lprefix_chain ls1 ls2 <=> (∀ll1 n x. ll1 IN ls1 /\\ LNTH n ll1 = SOME x ==> ?ll2. ll2 IN ls2 /\\ LNTH n ll2 = SOME x) /\\ (!ll2 n x. ll2 IN ls2 /\\ ll2 <> [||] ==> ?ll1. ll1 IN ls1 /\\ llist_shorter ll2 ll1))`. The Lean theorem equiv_lprefix_chain_thm2 takes the same three hypotheses curried as h1 : lprefixChain ls1, h2 : lprefixChain ls2 and hfin : ∀ ll2, ls2 ll2 → LFinite ll2, and states the same iff with the same two conjuncts and binder order ll1/ll2 n x; the second conjunct keeps HOL's unused universal n x binders as _n _x (names only). HOL set membership ll ∀ ls is predicate application ls ll, HOL [||] is lnil, and llist_shorter is the same-named LList port, tagged as llist_shorter_def. Generic in α; no width, word or finite-map carrier occurs. Task 181 audit: the tagged declaration states HOL's single conjunction premise; the curried form is retained untagged for Lean callers. HOL's second conjunct binds a vacuous n : β and x : γ; those two binders are omitted and the omission is documented beside the declaration."
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.1.1): HOL lprefix_lubScript.sml:264-304 `Theorem equiv_lprefix_chain_thm2: !ls1 ls2. lprefix_chain ls1 /\\ lprefix_chain ls2 /\\ (!ll2. ll2 IN ls2 ==> LFINITE ll2) ==> (equiv_lprefix_chain ls1 ls2 <=> (∀ll1 n x. ll1 IN ls1 /\\ LNTH n ll1 = SOME x ==> ?ll2. ll2 IN ls2 /\\ LNTH n ll2 = SOME x) /\\ (!ll2 n x. ll2 IN ls2 /\\ ll2 <> [||] ==> ?ll1. ll1 IN ls1 /\\ llist_shorter ll2 ll1))`. The Lean theorem equiv_lprefix_chain_thm2 takes the same three hypotheses curried as h1 : lprefixChain ls1, h2 : lprefixChain ls2 and hfin : ∀ ll2, ls2 ll2 → LFinite ll2, and states the same iff with the same two conjuncts and binder order ll1/ll2 n x; the second conjunct keeps HOL's unused universal n x binders as _n _x (names only). HOL set membership ll ∀ ls is predicate application ls ll, HOL [||] is lnil, and llist_shorter is the same-named LList port, tagged as llist_shorter_def. Generic in α; no width, word or finite-map carrier occurs. Task 181 audit: the tagged declaration states HOL's single conjunction premise; the curried form is retained untagged for Lean callers. HOL's second conjunct binds a vacuous n : β and x : γ; those two binders are omitted and the omission is documented beside the declaration. Task 182: both inner implication premises are now single HOL conjunctions; the curried untagged form is retained for callers."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
@@ -72009,7 +72009,7 @@
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
     "lean_name": "lprefixChain",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 171-174: same two-member prefix comparability; HOL set membership as predicate application, conjunction curried without changing guards. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Author source comparison recorded; coordinator integration acceptance complete."
+    "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 171-174: same two-member prefix comparability; HOL set membership as predicate application, conjunction curried without changing guards. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Author source comparison recorded; coordinator integration acceptance complete. Task 182: the definition body now keeps HOL's single conjunction premise on the two memberships; untagged `lprefixChain_apply` and `lprefixChain_intro` keep callers curried."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
@@ -72079,9 +72079,9 @@
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
     "hol_name": "lprefix_rel_lnth",
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
-    "lean_name": "lprefix_rel_lnth",
+    "lean_name": "lprefix_rel_lnth_conj",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:526-538 `Theorem lprefix_rel_lnth: lprefix_rel ls1 ls2 ⇒ (∀ll1 n x. ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x ⇒ ∃ll2. ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x)`. The Lean theorem lprefix_rel_lnth {ls1 ls2 : HolLList α → Prop} (h : lprefixRel ls1 ls2) : ∀ ll1 n x, ls1 ll1 → lnth n ll1 = some x → ∃ ll2, ls2 ll2 ∧ lnth n ll2 = some x keeps the same hypothesis, binders and existential conclusion; HOL set membership is predicate application. Generic in α; no width, word or finite-map carrier occurs."
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:526-538 `Theorem lprefix_rel_lnth: lprefix_rel ls1 ls2 ⇒ (∀ll1 n x. ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x ⇒ ∃ll2. ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x)`. The Lean theorem lprefix_rel_lnth {ls1 ls2 : HolLList α → Prop} (h : lprefixRel ls1 ls2) : ∀ ll1 n x, ls1 ll1 → lnth n ll1 = some x → ∃ ll2, ls2 ll2 ∧ lnth n ll2 = some x keeps the same hypothesis, binders and existential conclusion; HOL set membership is predicate application. Generic in α; no width, word or finite-map carrier occurs. Task 182: the inner implication premise is now HOL's single conjunction; the curried untagged form is retained for callers."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
@@ -72097,7 +72097,7 @@
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
     "lean_name": "prefixChain",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.4): Original full HOL statements/types freshly captured with zero hypotheses and kernel proof T. HOL full arbitrary alpha list set; native predicate-backed set and List.IsPrefix retain both universally quantified members and the membership antecedent, curried equivalently. No word/FFI/map carrier occurs."
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.4): Original full HOL statements/types freshly captured with zero hypotheses and kernel proof T. HOL full arbitrary alpha list set; native predicate-backed set and List.IsPrefix retain both universally quantified members and the membership antecedent, curried equivalently. No word/FFI/map carrier occurs. Task 182: the definition body now keeps HOL's single conjunction premise; untagged `prefixChain_apply` and `prefixChain_intro` keep callers curried."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",

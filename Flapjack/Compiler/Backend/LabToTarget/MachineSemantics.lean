@@ -22,7 +22,7 @@ family. It is not a separate original HOL declaration. -/
 private theorem clockTraceChain {α : Type} (traces : Nat → List α)
     (h : ∀ i j, traces i <+: traces j ∨ traces j <+: traces i) :
     HolLList.lprefixChain (fun ll => ∃ k, ll = HolLList.fromList (traces k)) := by
-  intro ll1 ll2 h1 h2
+  intro ll1 ll2 ⟨h1, h2⟩
   obtain ⟨k1, rfl⟩ := h1
   obtain ⟨k2, rfl⟩ := h2
   rcases h k1 k2 with h | h

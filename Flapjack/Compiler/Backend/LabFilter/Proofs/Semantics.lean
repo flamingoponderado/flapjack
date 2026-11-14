@@ -52,7 +52,7 @@ private theorem clockTraceChain {width : Nat} [NeZero width] {C F : Type}
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     HolLList.lprefixChain (fun trace => ∃ clock,
       trace = HolLList.fromList (evaluate {s with clock := clock}).2.ffi.ioEvents) := by
-  intro left right hl hr
+  intro left right ⟨hl, hr⟩
   obtain ⟨k1, rfl⟩ := hl
   obtain ⟨k2, rfl⟩ := hr
   rcases evaluatedClockTracesComparable s k1 k2 with h | h

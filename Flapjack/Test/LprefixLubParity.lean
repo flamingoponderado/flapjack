@@ -35,7 +35,7 @@ private def chainB : HolLList Nat → Prop :=
   fun l => l = fromList [0, 1] ∨ l = fromList [0, 1, 2]
 
 private theorem chainA_chain : lprefixChain chainA := by
-  intro a b ha hb
+  intro a b ⟨ha, hb⟩
   rcases ha with rfl | rfl <;> rcases hb with rfl | rfl
   · exact Or.inl (lprefix_refl _)
   · exact Or.inl ((lprefix_fromList _ _).2 ⟨[1, 2], rfl⟩)
@@ -43,7 +43,7 @@ private theorem chainA_chain : lprefixChain chainA := by
   · exact Or.inl (lprefix_refl _)
 
 private theorem chainB_chain : lprefixChain chainB := by
-  intro a b ha hb
+  intro a b ⟨ha, hb⟩
   rcases ha with rfl | rfl <;> rcases hb with rfl | rfl
   · exact Or.inl (lprefix_refl _)
   · exact Or.inl ((lprefix_fromList _ _).2 ⟨[2], rfl⟩)

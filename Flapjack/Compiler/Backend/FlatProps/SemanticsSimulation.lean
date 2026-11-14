@@ -14,7 +14,7 @@ private def traceFamily {C F : Type} (ec : InstallConfig C) (ffi : HolFfiState F
   fun trace => ∃ clock, trace = HolLList.fromList (evaluateDecs (initialState ffi clock ec) ds).1.ffi.ioEvents
 private theorem traceFamily_chain {C F : Type} (ec : InstallConfig C) (ffi : HolFfiState F)
     (ds : List FlatLang.Exp) : HolLList.lprefixChain (traceFamily ec ffi ds) := by
-  intro a b ha hb
+  intro a b ⟨ha, hb⟩
   obtain ⟨k, hk⟩ := ha
   obtain ⟨j, hj⟩ := hb
   subst a

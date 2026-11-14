@@ -23,7 +23,7 @@ theorem cofinal_trace_lub {α : Type} (source target : Nat → List α)
   let sourceSet : HolLList α → Prop := fun trace => ∃ clock, trace = HolLList.fromList (source clock)
   let targetSet : HolLList α → Prop := fun trace => ∃ clock, trace = HolLList.fromList (target clock)
   have sourceChain : HolLList.lprefixChain sourceSet := by
-    rintro first second ⟨i, hi⟩ ⟨j, hj⟩
+    rintro first second ⟨⟨i, hi⟩, ⟨j, hj⟩⟩
     subst first
     subst second
     rcases Nat.le_total i j with earlier | later
@@ -34,7 +34,7 @@ theorem cofinal_trace_lub {α : Type} (source target : Nat → List α)
       apply (HolLList.lprefix_fromList _ _).2
       simpa [Nat.add_sub_of_le later] using sourceMono j (i - j)
   have targetChain : HolLList.lprefixChain targetSet := by
-    rintro first second ⟨i, hi⟩ ⟨j, hj⟩
+    rintro first second ⟨⟨i, hi⟩, ⟨j, hj⟩⟩
     subst first
     subst second
     rcases Nat.le_total i j with earlier | later
