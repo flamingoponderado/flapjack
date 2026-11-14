@@ -10151,6 +10151,24 @@ CakeML build target. Regenerate with `CAKEML=<cakeml tree>
 HOL_PROBE_ONLY=word_to_word_proof_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
+`source_eval_proof_typed_probe.out` captures the typed statements of the 124
+distinct HOL names behind the 264 reviewed `source_evalProofScript.sml` rows
+(task 172): 97 exported theorems and definitions, including the generated
+`v_rel_ind`/`v_rel_cases` principles of the source `Inductive v_rel` and the
+`v_rel_rules` conjunction that defines it, the `compiler_instance` record
+datatype, 22 `[local]` theorems and definitions parsed from the pinned source,
+and four local derived theorems replayed exactly as the source derives them:
+`alist_to_ns_to_bind2` from `namespaceProps.nsAppend_to_nsBindList` and
+`nsAppend_nsEmpty`, `nsSing_eq_bind` from `nsSing_def` with `nsBind_def`/
+`nsEmpty_def`, `record_forward_trans_sym` from `record_forward_trans` under
+`Once CONJ_COMM`, and `adjust_oracle_ev_decs` from `adjust_oracle_evaluate`
+(`UNDISCH`, `CONJUNCTS`, `List.last`, `DISCH_ALL`, `PULL_FORALL`, and the
+`clock := k` specialization). A source `^` immediately followed by an
+identifier is an SML antiquotation and is dropped, keeping the variable. The
+theory is a default CakeML build target. Regenerate with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=source_eval_proof_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
 `pancake_pan_to_target_proof_typed_probe.out` and
 `word_convs_proof_typed_probe.out` capture the typed statements of every
 reviewed row of `pan_to_targetProofScript.sml` (56 names) and

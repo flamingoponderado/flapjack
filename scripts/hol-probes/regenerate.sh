@@ -3109,6 +3109,53 @@ run_probe flat_pattern_proof_typed_probeScript.sml flat_pattern_proof_typed_prob
   comp_thm_typed \
   "$cake_dir/compiler/backend/proofs/flat_patternProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+# The source_evalProof typed probe captures the statement of every reviewed
+# source_evalProof declaration with inferred types: the oracle and compiler
+# instance carriers ('config), the semantics state ('ffi), the value and
+# declaration type variables of the simulation predicates, the record and
+# relation datatypes (compiler_instance, v_rel) and the derived local
+# theorems replayed exactly as the source derives them.
+run_probe source_eval_proof_typed_probeScript.sml source_eval_proof_typed_probe.out \
+  oracle_semantics_prog_typed evaluate_prog_with_clock_put_oracle_typed \
+  get_oracle_props_typed extract_oracle_agrees_typed \
+  evaluate_decs_clock_record_common_prefix_typed evaluate_record_suffix_typed \
+  insert_oracle_correct_typed evaluate_is_record_forward_typed check_dup_ctors_thm_typed \
+  eval_simulation_typed abort_def_typed abort_simps_typed do_eval_sim_typed \
+  do_app_sim_typed declare_env_sim_typed env_rel_nsLift_typed env_rel_nsAppend_typed \
+  env_rel_extend_dec_env_typed env_rel_add_nsBind_typed env_rel_add_nsBindList_typed \
+  env_rel_nsLookup_v_typed pairarg_to_pair_map_typed s_rel_clock_typed \
+  concrete_v_rel_typed v_rel_list_to_v_typed v_to_list_typed v_to_char_list_typed \
+  vs_to_string_typed store_assign_typed store_lookup_typed Num_11_typed do_eq_typed \
+  can_pmatch_all_typed pmatch_typed es_stack_forward_def_typed es_stack_forward_refl_typed \
+  es_stack_forward_trans_typed match_result_rel_def_typed store_lookup_rel_typed \
+  s_rel_store_lookup_typed forward_rules_typed s_rel_def_typed es_forward_def_typed \
+  es_forward_refl_typed es_forward_trans_typed v_rel_forward_typed v_rel_Boolv_typed \
+  env_rel_concrete_v_typed v_rel_typed v_rel_concrete_v_typed env_rel_def_typed \
+  env_rel_mono_rel_typed adjust_oracle_evaluate_typed result_rel_IMP_cases_typed \
+  adjust_oracle_semantics_prog_typed recorded_orac_wf_def_typed orac_s_def_typed \
+  extract_oracle_def_typed get_oracle_def_typed put_oracle_def_typed \
+  precond_eval_state_def_typed orac_agrees_def_typed orac_extended_wf_def_typed \
+  record_forward_def_typed record_forward_refl_typed record_forward_trans_typed \
+  orac_agrees_backward_typed recorded_orac_wf_step_typed reset_env_generation_orac_eqs_typed \
+  insert_declare_env_typed insert_do_eval_typed v_to_list_concrete_typed \
+  maybe_all_list_SOME_typed maybe_all_list_EVERY_typed v_to_word8_list_concrete_typed \
+  v_to_word64_list_concrete_typed compiler_agrees_typed v_to_nat_def_typed \
+  v_to_env_id_def_typed v_to_nat_SOME_typed v_to_env_id_SOME_typed do_eval_record_def_typed \
+  is_record_def_typed is_record_IMP_typed v_rel_abs_typed mk_compiler_fun_from_ci_def_typed \
+  mk_init_eval_state_def_typed insert_gen_oracle_def_typed adjust_oracle_def_typed \
+  is_insert_oracle_def_typed adjust_oracle_insert_gen_oracle_typed do_eval_oracle_def_typed \
+  env_rel_nsEmpty_typed sv_rel_l_cases_typed v_rel_l_simps_typed extract_oracle_SUC_st_typed \
+  extract_oracle_0_st_typed neq_IMP_to_cases_typed env_rel_nsLookup_c_typed \
+  pair_CASE_eq_pairarg_typed less_sub_1_cases_typed abort_imp_intro_typed env_rel_imp_c_typed \
+  s_rel_clock2_typed orac_agrees_s_rel_IMP_typed v_rel_check_type_typed \
+  LIST_REL_v_rel_check_type_typed pmatch_drule_form_typed is_insert_decs_typed \
+  declare_env_adjust_typed adjust_oracle_reset_typed is_insert_related_typed \
+  is_insert_reset_typed declare_env_is_insert_typed do_eval_adjust_typed \
+  recorded_orac_wf_defined_typed extract_oracle_SOME_SUC_typed v_rel_ind_typed \
+  v_rel_cases_typed compiler_instance_typed alist_to_ns_to_bind2_typed nsSing_eq_bind_typed \
+  record_forward_trans_sym_typed adjust_oracle_ev_decs_typed \
+  "$cake_dir/compiler/backend/proofs/source_evalProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
 run_probe word_to_word_find_code_carriers_probeScript.sml word_to_word_find_code_carriers_probe.out \
   find_code_independent_carriers_typed find_code_independent_carriers_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" \
