@@ -219,19 +219,12 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   ClosSem.holFmapAsFiniteSupportWitness
 end ApplyPort
 
-/-- Setting both clocks equally preserves related states. This is Flapjack
-infrastructure for the application simulation. -/
-theorem stateRel_clock {C F : Type} (source target : State C F) (clock : Nat) (related : StateRel source target) :
-    StateRel { source with clock := clock } { target with clock := clock } := by
-  obtain ⟨aux, codeS, codeT, maxApp, positive, _, ffi, globals, refs, compiler, oracle⟩ := related
-  exact ⟨aux, codeS, codeT, maxApp, positive, rfl, ffi, globals, refs, compiler, oracle⟩
-
 /-- Equal clock decrements preserve related states. This is Flapjack
 infrastructure for the application simulation. -/
 theorem stateRel_dec {C F : Type} (source target : State C F) (amount : Nat) (related : StateRel source target) :
     StateRel (decClock amount source) (decClock amount target) := by
   have clocks : target.clock = source.clock := related.2.2.2.2.2.1
-  simpa [decClock, clocks] using stateRel_clock source target (source.clock - amount) related
+  simpa [decClock, clocks] using ((state_rel_clock source target (source.clock - amount)).2 (by simpa [← clocks] using related))
 
 /-- Reverse expression simulation at a fixed target configuration. This is
 Flapjack infrastructure for the mutual evaluator induction. -/
@@ -324,7 +317,7 @@ theorem evaluate_remove_ticks_app_cons {C F : Type} (location : Option Nat) (fun
           rw [if_pos short] at run
           cases run
           refine ⟨0, .err (.abort .timeoutError), { source with clock := 0 }, ?_, rfl,
-            stateRel_clock source target 0 states⟩
+            ((state_rel_clock source target 0).2 (by simpa [← states.2.2.2.2.2.1] using states))⟩
           simpa using (show evaluateApp location sourceFunction (sourceArg :: sourceTail) source =
               (.err (.abort .timeoutError), { source with clock := 0 }) by
             rw [evaluateApp, sourceFound]; dsimp only; rw [if_pos sourceShort]; rfl)
@@ -357,7 +350,7 @@ theorem evaluate_remove_ticks_app_cons {C F : Type} (location : Option Nat) (fun
           rw [if_pos short] at run
           cases run
           refine ⟨0, .err (.abort .timeoutError), { source with clock := 0 }, ?_, rfl,
-            stateRel_clock source target 0 states⟩
+            ((state_rel_clock source target 0).2 (by simpa [← states.2.2.2.2.2.1] using states))⟩
           simpa using (show evaluateApp location sourceFunction (sourceArg :: sourceTail) source =
               (.err (.abort .timeoutError), { source with clock := 0 }) by
             rw [evaluateApp, sourceFound]; dsimp only; rw [if_pos sourceShort]; rfl)
