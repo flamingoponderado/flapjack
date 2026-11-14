@@ -1,9 +1,9 @@
 module
 
-public import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 
 -- Checks below run compiled code from these modules.
-public meta import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
+public meta import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 @[expose] public section
 
 /-!
@@ -12,27 +12,36 @@ public meta import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
 Reproduces the original-HOL oracle rows in
 `scripts/hol-probes/pan_sem_set_var_probe.out` (`set_var_*`, `set_global_*`,
 `upd_locals_*`) and `scripts/hol-probes/pan_res_var_probe.out`
-(`delete_hit`, `delete_other`, `update_hit`) over the exact `MlString`-keyed
-`PanSemStateExact` carrier.
+(`delete_hit`, `delete_other`, `update_hit`) over the exact finite-support
+`PanSemStateFiniteExact` carrier, whose `locals`/`globals` are the canonical
+`HolFiniteMapExact` translation of HOL's `|->` fields.
+
+The observations go through the tagged twins `setVarHOLFinite`,
+`setGlobalHOLFinite`, `updLocalsHOLFinite` and `resVarHOLFinite`. The earlier
+function-backed `updLocalsHOLExact` had no user outside this file and is
+retired, so `upd_locals` is now observed only through its exact twin.
 -/
 
 namespace Flapjack.Test.PanSemLocalUpdatesExactParity
 
 open Flapjack
+open Flapjack.PanSemStateFiniteExact
 
 /-- The faithful HOL `mlstring` of a source string. -/
 abbrev ml (s : String) : Flapjack.Pancake.PanLang.MlS :=
   Flapjack.Basis.Pure.MlString.ofString s
 
 /-- Concrete exact state: locals `x = 5`, `y = 7`, global `g = 1`, clock 5. -/
-def baseState : PanSemStateExact 64 Unit where
-  locals := fun name =>
-    if name = ml "x" then some (.val (.word 5))
-    else if name = ml "y" then some (.val (.word 7)) else none
-  globals := fun name => if name = ml "g" then some (.val (.word 1)) else none
+def baseState : PanSemStateFiniteExact 64 Unit where
+  locals :=
+    (HolFiniteMapExact.empty : HolFiniteMapExact Flapjack.Pancake.PanLang.MlS
+        (ValueHOL 64)).update (ml "x", .val (.word 5)) |>.update (ml "y", .val (.word 7))
+  globals :=
+    (HolFiniteMapExact.empty : HolFiniteMapExact Flapjack.Pancake.PanLang.MlS
+        (ValueHOL 64)).update (ml "g", .val (.word 1))
   structs := []
-  code := fun _ => none
-  eshapes := fun _ => none
+  code := HolFiniteMapExact.empty
+  eshapes := HolFiniteMapExact.empty
   memory := fun _ => .word 0
   memaddrs := fun _ => False
   shMemaddrs := fun _ => False
@@ -50,65 +59,65 @@ def wordOf (result : Option (ValueHOL 64)) : Option Nat :=
 
 -- HOL `set_var_new = SOME 9`.
 def setVarNew : Bool :=
-  wordOf ((setVarHOLExact (width := 64) (ml "z") (.val (.word 9)) baseState).locals (ml "z"))
-    == some 9
+  wordOf ((setVarHOLFinite (width := 64) (ml "z") (.val (.word 9)) baseState).locals.lookup
+    (ml "z")) == some 9
 
 -- HOL `set_var_overwrite = SOME 9`.
 def setVarOverwrite : Bool :=
-  wordOf ((setVarHOLExact (width := 64) (ml "x") (.val (.word 9)) baseState).locals (ml "x"))
-    == some 9
+  wordOf ((setVarHOLFinite (width := 64) (ml "x") (.val (.word 9)) baseState).locals.lookup
+    (ml "x")) == some 9
 
 -- HOL `set_var_other = SOME 7` (unrelated local `y` untouched).
 def setVarOther : Bool :=
-  wordOf ((setVarHOLExact (width := 64) (ml "x") (.val (.word 9)) baseState).locals (ml "y"))
-    == some 7
+  wordOf ((setVarHOLFinite (width := 64) (ml "x") (.val (.word 9)) baseState).locals.lookup
+    (ml "y")) == some 7
 
 -- HOL `set_var_globals = SOME 1` (`set_var` does not touch globals).
 def setVarGlobals : Bool :=
-  wordOf ((setVarHOLExact (width := 64) (ml "x") (.val (.word 9)) baseState).globals (ml "g"))
-    == some 1
+  wordOf ((setVarHOLFinite (width := 64) (ml "x") (.val (.word 9)) baseState).globals.lookup
+    (ml "g")) == some 1
 
 -- HOL `set_var_clock = s.clock` (the clock is preserved).
 def setVarClock : Bool :=
-  (setVarHOLExact (width := 64) (ml "x") (.val (.word 9)) baseState).clock == 5
+  (setVarHOLFinite (width := 64) (ml "x") (.val (.word 9)) baseState).clock == 5
 
 -- HOL `set_global_new = SOME 9`.
 def setGlobalNew : Bool :=
-  wordOf ((setGlobalHOLExact (width := 64) (ml "h") (.val (.word 9)) baseState).globals (ml "h"))
-    == some 9
+  wordOf ((setGlobalHOLFinite (width := 64) (ml "h") (.val (.word 9)) baseState).globals.lookup
+    (ml "h")) == some 9
 
 -- HOL `set_global_locals = SOME 5` (`set_global` does not touch locals).
 def setGlobalLocals : Bool :=
-  wordOf ((setGlobalHOLExact (width := 64) (ml "h") (.val (.word 9)) baseState).locals (ml "x"))
-    == some 5
+  wordOf ((setGlobalHOLFinite (width := 64) (ml "h") (.val (.word 9)) baseState).locals.lookup
+    (ml "x")) == some 5
 
 -- HOL `upd_locals_x = SOME 9`.
 def updLocalsX : Bool :=
-  wordOf ((updLocalsHOLExact (width := 64) [(ml "x", .val (.word 9))] baseState).locals (ml "x"))
-    == some 9
+  wordOf ((updLocalsHOLFinite (width := 64) [(ml "x", .val (.word 9))] baseState).locals.lookup
+    (ml "x")) == some 9
 
 -- HOL `upd_locals_other = NONE` (`upd_locals` starts from `FEMPTY`).
 def updLocalsOther : Bool :=
-  wordOf ((updLocalsHOLExact (width := 64) [(ml "x", .val (.word 9))] baseState).locals (ml "y"))
-    == none
+  wordOf ((updLocalsHOLFinite (width := 64) [(ml "x", .val (.word 9))] baseState).locals.lookup
+    (ml "y")) == none
 
 -- HOL `upd_locals_dup = SOME 11` (later duplicate wins).
 def updLocalsDup : Bool :=
-  wordOf ((updLocalsHOLExact (width := 64)
-      [(ml "x", .val (.word 9)), (ml "x", .val (.word 11))] baseState).locals (ml "x"))
-    == some 11
+  wordOf ((updLocalsHOLFinite (width := 64)
+      [(ml "x", .val (.word 9)), (ml "x", .val (.word 11))] baseState).locals.lookup
+    (ml "x")) == some 11
 
 -- HOL `delete_hit = NONE`.
 def resVarDeleteHit : Bool :=
-  wordOf (resVarHOLExact (width := 64) baseState.locals (ml "x", none) (ml "x")) == none
+  wordOf ((resVarHOLFinite baseState.locals (ml "x", none)).lookup (ml "x")) == none
 
 -- HOL `delete_other = SOME (ValWord 3w)` (here local `x` is 5).
 def resVarDeleteOther : Bool :=
-  wordOf (resVarHOLExact (width := 64) baseState.locals (ml "y", none) (ml "x")) == some 5
+  wordOf ((resVarHOLFinite baseState.locals (ml "y", none)).lookup (ml "x")) == some 5
 
 -- HOL `update_hit = SOME (ValWord 7w)`.
 def resVarUpdateHit : Bool :=
-  wordOf (resVarHOLExact (width := 64) baseState.locals (ml "x", some (.val (.word 7))) (ml "x"))
+  wordOf ((resVarHOLFinite baseState.locals (ml "x", some (.val (.word 7)))).lookup (ml "x"))
     == some 7
 
 /-- Combined parity check: all 13 direct HOL rows above. -/
