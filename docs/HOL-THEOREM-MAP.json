@@ -1,6 +1,22 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "ref_rel_simps",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
+    "lean_name": "refRel_simps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared ref_rel_simps_typed: all three original conjuncts share the arbitrary target reference and max_app; value-array and thunk existential witnesses, relation directions, and fixed-width byte-array equality agree."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "code_rel_CONS_CONS",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
+    "lean_name": "codeRel_cons_cons",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared code_rel_cons_cons_typed: arbitrary limit, both two-or-more source and target expression lists, and the original singleton-head and nonempty-tail relation equivalence agree."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "hol_name": "state_rel_max_app",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/StateRelation.lean",
     "lean_name": "stateRel_maxApp",

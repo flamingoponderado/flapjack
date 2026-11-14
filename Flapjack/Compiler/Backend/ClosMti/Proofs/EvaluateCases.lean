@@ -255,8 +255,8 @@ theorem evaluateRel_consWithin {C F : Type} (limit : Nat) (targetHead targetSeco
     cases sourceRest with
     | nil => simp at length
     | cons sourceSecond sourceTail =>
-      have parts := (codeRel_cons sourceHead targetHead (sourceSecond :: sourceTail)
-        (targetSecond :: targetTail)).mp code
+      have parts := (codeRel_cons_cons source.maxApp sourceHead sourceSecond sourceTail
+        targetHead targetSecond targetTail).mp code
       cases targetHeadRun : evaluate [targetHead] targetEnv target with
       | mk headResult targetMiddle =>
         obtain ⟨sourceHeadResult, sourceMiddle, sourceHeadRun, headRel, middleStates⟩ :=

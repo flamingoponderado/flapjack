@@ -101,6 +101,26 @@ inductive RefRel (maxApp : Nat) : Ref Value → Ref Value → Prop where
   | thunk (mode : AstHOL.ThunkMode) (left right : Value) :
       ValueRel maxApp left right → RefRel maxApp (.thunk mode left) (.thunk mode right)
 
+/-- Characterize related value arrays, byte arrays, and thunks. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "ref_rel_simps"]
+theorem refRel_simps (maxApp : Nat) (vs : List Value) (x : Ref Value)
+    (bytes : List (BitVec 8)) (mode : AstHOL.ThunkMode) (v : Value) :
+    (RefRel maxApp (.valueArray vs) x ↔
+      ∃ ys, x = .valueArray ys ∧ List.Forall₂ (ValueRel maxApp) vs ys) ∧
+    (RefRel maxApp (.byteArray bytes) x ↔ x = .byteArray bytes) ∧
+    (RefRel maxApp (.thunk mode v) x ↔
+      ∃ w, x = .thunk mode w ∧ ValueRel maxApp v w) := by
+  refine ⟨?_, ?_, ?_⟩
+  · constructor
+    · intro h; cases h with | valueArray _ ys rel => exact ⟨ys, rfl, rel⟩
+    · rintro ⟨ys, rfl, rel⟩; exact .valueArray vs ys rel
+  · constructor
+    · intro h; cases h; rfl
+    · intro h; subst x; exact .byteArray bytes
+  · constructor
+    · intro h; cases h with | thunk _ _ w rel => exact ⟨w, rfl, rel⟩
+    · rintro ⟨w, rfl, rel⟩; exact .thunk mode v w rel
+
 /-- Related source and target code have the same number of expressions. -/
 @[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "code_rel_IMP_LENGTH"]
 theorem codeRel_length {maxApp : Nat} {source target : List ClosLang.Exp}
@@ -108,10 +128,12 @@ theorem codeRel_length {maxApp : Nat} {source target : List ClosLang.Exp}
   rw [related.2]
   exact introList_length maxApp source
 
-/-- The executed code relation splits over matching list heads. -/
-theorem codeRel_cons {maxApp : Nat} (x y : ClosLang.Exp) (xs ys : List ClosLang.Exp) :
-    CodeRel maxApp (x :: xs) (y :: ys) ↔
-      CodeRel maxApp [x] [y] ∧ CodeRel maxApp xs ys := by
+/-- Related code lists with at least two expressions split at their heads. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "code_rel_CONS_CONS"]
+theorem codeRel_cons_cons (maxApp : Nat) (x1 x2 : ClosLang.Exp) (xs : List ClosLang.Exp)
+    (y1 y2 : ClosLang.Exp) (ys : List ClosLang.Exp) :
+    CodeRel maxApp (x1 :: x2 :: xs) (y1 :: y2 :: ys) ↔
+      CodeRel maxApp [x1] [y1] ∧ CodeRel maxApp (x2 :: xs) (y2 :: ys) := by
   simp [CodeRel, introList, and_assoc, and_left_comm, and_comm]
 
 /-- The multi-argument value relation meets the generic simple-value
