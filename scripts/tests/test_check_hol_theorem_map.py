@@ -1031,7 +1031,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         )
         self.assertEqual(inventory[exact_key]["hol_name"], "locals_rel_lookup_ctxt")
 
-    def test_is_wf_shape_drop_exact_port(self):
+    def test_is_wf_shape_drop_withdrawn(self):
         inventory = {
             (record["lean_path"], record["lean_name"]): record
             for record in MAP["build_inventory"]()
@@ -1040,13 +1040,13 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                      "isWfShapeExactHOL_drop")
         self.assertEqual(inventory[exact_key]["hol_name"], "is_wf_shape_drop")
         self.assertEqual(inventory[exact_key]["statement_status"],
-                         "pending_statement_review")
+                         "documented_mismatch")
 
         manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
         exact_record = next(record for record in manifest if
                             (record["lean_path"], record["lean_name"]) == exact_key)
         self.assertEqual(exact_record["hol_name"], "is_wf_shape_drop")
-        self.assertEqual(exact_record["statement_status"], "reviewed_exact")
+        self.assertEqual(exact_record["statement_status"], "documented_mismatch")
 
     def test_fperm_decs_decls_production_variant_removed(self):
         inventory = {
