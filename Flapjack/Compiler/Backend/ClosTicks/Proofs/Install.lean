@@ -36,18 +36,6 @@ theorem stateRel_shift {C F : Type} (s t : State C F) (shift clock : Nat) (relat
     funext n
     rfl
 
-/-- Tick removal preserves whether an installed program is empty. This is
-Flapjack infrastructure for the installation proof. -/
-theorem compile_nonempty (program : List ClosLang.Exp) : removeList program ≠ [] ↔ program ≠ [] := by
-  constructor
-  · intro nonempty empty
-    subst program
-    exact nonempty rfl
-  · intro nonempty empty
-    have lengths : (removeList program).length = program.length := by simp [removeList_eq_map]
-    rw [empty] at lengths
-    exact nonempty (List.eq_nil_of_length_eq_zero lengths.symm)
-
 /-- Corresponding oracle entries share their compiler configuration and
 transform the program while leaving the auxiliary component empty. This is
 Flapjack infrastructure for the installation proof. -/
@@ -135,7 +123,7 @@ theorem install_pair_related {C F : Type} (s t : State C F)
             (Flapjack.holShiftSeq 1 s.compileOracle 0).1 = nextConfig ∧ program ≠ []
         · have targetChecks : bytes = compiledBytes ∧ words = compiledWords ∧
               (Flapjack.holShiftSeq 1 t.compileOracle 0).1 = nextConfig ∧ removeList program ≠ [] := by
-            simpa [← configs, compile_nonempty] using checks
+            simpa [← configs, removeList_eq_map] using checks
           by_cases zero : s.clock = 0
           · simp [doInstall, bytesRun, targetBytes, wordsRun, targetWords, sourceOracle, targetOracle,
               sourceCompiled, compiled, checks, targetChecks, zero, clocks, InstallRel,
@@ -146,7 +134,7 @@ theorem install_pair_related {C F : Type} (s t : State C F)
               CodeRel, sourceNoUpdate, targetNoUpdate, shifted]
         · have targetChecks : ¬ (bytes = compiledBytes ∧ words = compiledWords ∧
               (Flapjack.holShiftSeq 1 t.compileOracle 0).1 = nextConfig ∧ removeList program ≠ []) := by
-            simpa [← configs, compile_nonempty] using checks
+            simpa [← configs, removeList_eq_map] using checks
           simp [doInstall, bytesRun, targetBytes, wordsRun, targetWords, sourceOracle, targetOracle,
             sourceCompiled, compiled, checks, targetChecks, InstallRel,
             Flapjack.SemanticPrimitivesProps.excRel, states]
