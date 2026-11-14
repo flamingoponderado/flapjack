@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Control
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Safety
 public import Flapjack.Compiler.Backend.DbVars.Proofs.Lookup
 public import Flapjack.Misc.Sptree.ToAList
 

@@ -1358,7 +1358,6 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.EvaluateCases
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstallSafety
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AppSafety
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Safety
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Control
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.PureBindings
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Function
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.RecursiveFunctions

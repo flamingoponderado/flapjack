@@ -2,7 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Install
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.RecursiveFunctions
-public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Control
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Safety
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.PureBindings
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Primitive
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.PureEvaluate
@@ -371,7 +371,8 @@ theorem evaluate_if_step {C F : Type} (trace : BackendCommon.Tra) (condition yes
             | cons valueRel restRel =>
               cases restRel
               rename_i targetValue
-              have boolEq := valueRel_asBool valueRel
+              have boolEq := ClosProps.PrimitiveBoolean.simpleValRel_asBool
+                ValueRel valueRelSimple value targetValue valueRel
               have middleSafety := (evaluate_preserves_safe.1 [condition]) env source (.val [value]) middle
                 conditionRun code oracle
               cases decision : asBool value with

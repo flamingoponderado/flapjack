@@ -151,14 +151,6 @@ theorem install_pair_related {C F : Type} (s t : State C F)
             sourceCompiled, compiled, checks, targetChecks, InstallRel,
             Flapjack.SemanticPrimitivesProps.excRel, states]
 
-/-- All related installation payload lists yield related outcomes. This is
-Flapjack infrastructure for the installation proof. -/
-theorem install_related {C F : Type} (s t : State C F) (xs ys : List Value)
-    (states : StateRel s t) (values : List.Forall₂ ValueRel xs ys) :
-    InstallRel (doInstall xs s) (doInstall ys t) := by
-  exact ClosProps.install_related install_pair_related
-    (fun s t st => ⟨rfl, st⟩) s t xs ys states values
-
 namespace InstallPort
 /-- The closure state uses canonical finite-map fields. -/
 theorem holFmapAsFiniteSupportWitness {C F : Type} :
@@ -181,7 +173,8 @@ theorem doInstallLemma {C F : Type} (s t : State C F) (xs ys : List Value)
     (by
       intro r1 r2 u v
       cases r1 <;> cases r2 <;> simp [InstallRel])
-    s t xs ys (install_related s t xs ys related.1 related.2)
+    s t xs ys (ClosProps.install_related install_pair_related
+      (fun s t st => ⟨rfl, st⟩) s t xs ys related.1 related.2)
 end InstallPort
 
 end Flapjack.Compiler.Backend.ClosTicks
