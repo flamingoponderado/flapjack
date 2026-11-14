@@ -959,6 +959,7 @@
     {"bytes": 249, "out": "loop_to_word_take_word_to_bytes_probe.out", "rows": 13, "sha256": "f00192c0330218ec1ff363d1f9674ba0290808edc3571b26ed7d560d0107251e"},
     {"bytes": 806, "out": "lprefix_lub_finite_prefix_chain_probe.out", "rows": 12, "sha256": "b2584be9ceece417d80184d5a2fc47de435088c2df4712e632dc3da2d34b343d"},
     {"bytes": 222, "out": "lprefix_lub_llist_shorter_probe.out", "rows": 8, "sha256": "f7c8595e8c099d319bbfa5e72bb8c6ddc69f578d59f63e98115a1559b94b4d9e"},
+    {"bytes": 5382, "out": "lprefix_lub_typed_probe.out", "rows": 29, "sha256": "6a1fb085f29455268208765cd8d3f1d0da1051268554414acce17e5598fc1237"},
     {"bytes": 2691, "out": "machine_ieee_cross_format_probe.out", "rows": 15, "sha256": "c0585b0d50b653c8679d294166770b1284e6509271b9015fecc6891c90c92129"},
     {"bytes": 5748, "out": "machine_ieee_fp64_arith_nan_probe.out", "rows": 13, "sha256": "fa4a1225c3281eb0db3be1fbc170333bb649ab5ecce34d33c9521539f4473b0e"},
     {"bytes": 574, "out": "machine_ieee_fp64_arith_round_probe.out", "rows": 20, "sha256": "7e16838acb2c787153f222e4e7d0988c5f2360d452ef73040288dda939b52a3a"},

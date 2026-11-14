@@ -10392,3 +10392,22 @@ captures the declaration at that source line rather than the first match.
 Regenerate with
 `CAKEML=<cakeml tree> HOL_PROBE_ONLY=<probe>Script.sml
 scripts/hol-probes/regenerate.sh`.
+
+`flat_pattern_typed_probe.out` (17 rows), `stacklang_overloads_typed_probe.out`
+(16 rows), `lab_filter_proof_typed2_probe.out` (15 rows),
+`parmove_typed2_probe.out` (7 rows) and `lprefix_lub_typed_probe.out` (29 rows)
+capture the typed statements of the reviewed `flat_patternScript.sml`,
+`stackLangScript.sml`, `lab_filterProofScript.sml`, `parmoveScript.sml` and
+`lprefix_lubScript.sml` rows that the earlier probes did not cover (task 181).
+All five theories were already built: the CakeML ones in the private copy and
+`lprefix_lubTheory` in the pinned HOL installation's
+`examples/pl-semantics/lprefix_lub/.hol/objs`, so no rebuild is involved and
+that probe takes its source text from the repository's `hol4/` reference tree
+rather than from `CAKEML`. The `stackLangScript.sml` rows are `Overload`s; that
+probe parses each abbreviation from its source line and clears the overload
+before printing, so the capture shows the body and its inferred types. The
+`parmoveScript.sml` statements use the `[local]` `NoRead` overload and the
+`▷`, `▷*`, `⊢`, `≡`, `↪` and `↪*` notation, which the probe restates. Note that
+the lprefix_lub capture is evidence only: its audit found independent element
+type variables and curried conjunction premises that the Lean rows still share
+or curry, so those rows remain pending fixes.

@@ -11767,3 +11767,16 @@ run_probe parmove_typed2_probeScript.sml parmove_typed2_probe.out \
   step_sem_typed eqenv_sym_typed \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" \
   "$cake_dir/compiler/backend/reg_alloc"
+run_probe lprefix_lub_typed_probeScript.sml lprefix_lub_typed_probe.out \
+  IMP_build_lprefix_lub_EQ_typed IMP_equiv_lprefix_chain_typed build_lprefix_lub_def_typed \
+  build_lprefix_lub_f_def_typed build_lprefix_lub_thm_typed build_prefix_lub_intro_typed \
+  equiv_lprefix_chain_def_typed equiv_lprefix_chain_thm_typed equiv_lprefix_chain_thm2_typed \
+  exists_lprefix_chain_nth_typed llist_shorter_def_typed llist_shorter_fromList_typed \
+  llist_shorter_lnth_typed build_lprefix_lub_lem_typed lprefix_chain_def_typed \
+  lprefix_chain_nth_def_typed lprefix_chain_nth_none_mono_typed \
+  lprefix_chain_LNTHs_agree_typed lprefix_lub_def_typed lprefix_rel_def_typed \
+  lprefix_lub_equiv_chain2_typed lprefix_lub_is_chain_typed lprefix_lub_nth_typed \
+  lprefix_rel_lnth_typed not_exists_lprefix_chain_nth_typed prefix_chain_def_typed \
+  prefix_chain_FILTER_typed prefix_chain_lprefix_chain_typed unique_lprefix_lub_typed \
+  "$repo_dir/hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" \
+  "$hol_dir/examples/pl-semantics/lprefix_lub"
