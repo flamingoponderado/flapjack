@@ -74215,8 +74215,13 @@
     "hol_name": "compile_exps_alt",
     "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSyntaxHelpers.lean",
     "lean_name": "compile_exps_alt",
-    "reviewer": "codewhale source comparison (2026-11-14, task 169): tag withdrawn. The typed capture compile_exps_alt_typed in pancake_crep_to_loop_proof_typed_probe.out gives the nil clause at [] :\u03b1 crepLang$exp list and the cons clause at \u03b2 crepLang$exp, so the conjunction is polymorphic in each conjunct's element (word) type independently. Lean's width-indexed compileExpsHOLExact states both equations at one width; a faithful port would bind a width per conjunct.",
-    "statement_status": "documented_mismatch"
+    "reviewer": "codewhale source comparison (2026-11-14, task 170): the typed capture compile_exps_alt_typed in pancake_crep_to_loop_proof_typed_probe.out gives the nil clause at [] :\u03b1 crepLang$exp list and the cons clause at \u03b2 crepLang$exp, so the conjunction is polymorphic in each conjunct's element (word) type independently. compile_exps_alt now binds {v : Nat} [NeZero v] for the nil equation and keeps the cons equation at width, one conjunction as in HOL. Qualifier: fmap_as_finite_support with words_as_type_indexed_bitvec.",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",

@@ -364,15 +364,6 @@ DOCUMENTED_MISMATCHES = {
         "uses lookupCodeHOLFinite, which fixes the arguments to List (ValueHOL width). The "
         "compiled-body conclusion holds at that instance only."
     ),
-    ("Flapjack/Pancake/CrepToLoop/Proofs/CompExpSyntaxHelpers.lean", "compile_exps_alt"): (
-        "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
-        "compile_exps_alt",
-        "codewhale source comparison (2026-11-14, task 169): tag withdrawn. The typed capture "
-        "compile_exps_alt_typed gives the nil clause at [] :\u03b1 crepLang$exp list and the cons "
-        "clause at \u03b2 crepLang$exp, so HOL's conjunction is polymorphic in each conjunct's "
-        "element (word) type independently. Lean's width-indexed compileExpsHOLExact states both "
-        "equations at one width."
-    ),
     ("Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean", "initialProgMakeFuncsElExact"): (
         "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
         "initial_prog_make_funcs_el",
