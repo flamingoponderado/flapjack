@@ -1434,6 +1434,7 @@ import Flapjack.Compiler.Backend.ClosNumber.Proofs.NoLabels
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.ObeysMaxApp
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.ThunkUpdate
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.LookupVars
+import Flapjack.Compiler.Backend.ClosNumber.Proofs.SimpleStateRelation
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.InstallTheorem
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.VarsNone
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.GlobalInvariants

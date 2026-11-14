@@ -138,7 +138,7 @@ theorem evaluate_simulation {C F : Type} :
                     EvalSimulationAt source [.op trace op args] := by
                   intro op notInstall notForce env nextEnv target result next start run noType safe envRel states
                   exact evaluate_ordinaryOp_step trace op args notInstall notForce env nextEnv source target
-                    result next start run noType safe envRel states argsIH (primitiveSimulation_ordinary op notInstall notForce)
+                    result next start run noType safe envRel states argsIH (primitiveSimulation_all op)
                 cases op with
                 | install =>
                   intro env nextEnv target result next start run noType safe envRel states

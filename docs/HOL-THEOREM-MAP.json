@@ -1,6 +1,15 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "simple_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/SimpleStateRelation.lean",
+    "lean_name": "numbering_simpleStateRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared simple_state_rel_typed: the original fixed natural maximum-application bound, numbering value relation and state relation with its source maximum equality agree. The source compiler carrier is Nat paired with the target compiler carrier, and the shared FFI carrier is independent. Canonical finite-support refs and code fields use a local state roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "ignore_table_imp",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/InstallTheorem.lean",
     "lean_name": "ignoreTable_imp",
