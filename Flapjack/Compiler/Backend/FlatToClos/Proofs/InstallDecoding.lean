@@ -9,7 +9,10 @@ public import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
 /-! Installation payload decoding across the proof-side value relation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
 
-/-- Related flat and closure values decode to the same installation bytes. -/
+/-- Related flat and closure values decode to the same installation bytes
+    (`flat_to_closProofScript.sml:1670-1673`). HOL concludes
+    `∃ys. closSem$v_to_bytes y = SOME xs` with `ys` unused, at an independent
+    unconstrained type; that vacuous existential is omitted here. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "v_rel_to_bytes"]
 theorem installBytes_related (source : FlatSem.Value) (target : ClosSem.Value)
     (bytes : List (BitVec 8))
@@ -32,7 +35,10 @@ theorem installBytes_related (source : FlatSem.Value) (target : ClosSem.Value)
         simp [ih _ tail]
   simpa [same] using targetDecoded
 
-/-- Related flat and closure values decode to the same installation words. -/
+/-- Related flat and closure values decode to the same installation words
+    (`flat_to_closProofScript.sml:1643-1646`). HOL concludes
+    `∃ys. closSem$v_to_words y = SOME xs` with `ys` unused, at an independent
+    unconstrained type; that vacuous existential is omitted here. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "v_rel_to_words"]
 theorem installWords_related (source : FlatSem.Value) (target : ClosSem.Value)
     (words : List (BitVec 64))

@@ -27,9 +27,10 @@ namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps Flapjack.EvaluateHOL
 
 
-/-- The full source evaluator simulation, including the independent inhabited
-unused HOL expression binder. The evaluator inherits the rational-cut real
-number assumption. -/
+/-- The full source evaluator simulation. HOL's statement binds a vacuous
+    `es` variable (it occurs nowhere in the body) whose source type is an
+    independent, unconstrained type variable; that binder is omitted here. The
+    evaluator inherits the rational-cut real number assumption. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
 theorem eval_simulation {Config F : Type} (ci : CompilerInstance Config) :
     (∀ (s : State F) (env : SemEnv Value) (exps : List AstHOL.Exp)
