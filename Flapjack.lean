@@ -1778,7 +1778,6 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClock
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockControl
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockApp
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
-import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemantics
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Element
 import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
