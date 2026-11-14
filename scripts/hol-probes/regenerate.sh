@@ -11683,3 +11683,10 @@ run_probe stack_remove_proof_local_typed_probeScript.sml stack_remove_proof_loca
   write_bytearray_IGNORE_non_aligned_typed write_bytearray_lemma_typed \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe riscv_target_proof_local_typed_probeScript.sml riscv_target_proof_local_typed_probe.out \
+  bytes_in_memory_IMP_all_pcs_MEM8_typed bytes_in_memory_thm_typed bytes_in_memory_thm2_typed \
+  lem12b_typed lem4_typed lem5_typed lem6_typed lem8_typed lem9_typed length_riscv_encode_typed \
+  mul_long_typed riscv_encode_not_nil_typed riscv_encoder_correct_typed riscv_encoding_typed \
+  riscv_target_ok_typed ror_typed word_bit_0_add4_typed word_extract_6_typed \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"

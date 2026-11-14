@@ -10351,3 +10351,17 @@ would read them as ordinary free variables with unconstrained types. The
 theories are built in the private copy; see the build recipe above. Regenerate
 with `CAKEML=<cakeml tree> HOL_PROBE_ONLY=<probe>Script.sml
 scripts/hol-probes/regenerate.sh`.
+
+`riscv_target_proof_local_typed_probe.out` (18 rows) captures the typed
+statements of the reviewed `riscv_targetProofScript.sml` rows that the earlier
+riscv_target probes did not cover (task 179). The probe restates the proof
+script's `wordsLib.guess_lengths()` call, because `><` is polymorphic in its
+result width and a raw parse would leave those widths free (`lem12b` printed
+`:β word`/`:γ word`/`:α word` instead of the `word12`/`word12`/`word32` the
+blast lemma is stated at). The three `val ... = blastLib.BBLAST_PROVE ``...`` `
+lemmas are captured by replaying the same blast, so the printed statement is
+the one the theory proves. `riscv_targetProofTheory` is built in the private
+copy (`compiler/encoders/riscv` then `compiler/encoders/riscv/proofs`, with
+`HOLDIR/examples/l3-machine-code/riscv/prog` on the include path). Regenerate
+with `CAKEML=<cakeml tree> HOL_PROBE_ONLY=riscv_target_proof_local_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
