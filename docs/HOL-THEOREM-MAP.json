@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "opt_interp_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/Globals.lean",
+    "lean_name": "optInterp_lemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the closed opt_interp_lemma_replay_typed and all seven original ordered conjuncts, including the guard confined to the application invariant. Independently replayed the local HOL proof. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
     "hol_name": "contains_App_SOME_insert_interp",
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/ApplicationInvariant.lean",
     "lean_name": "containsAppSome_insertInterp",

@@ -1,26 +1,16 @@
-import Flapjack.Compiler.Backend.ClosInterp.Optimise
+import Flapjack.Compiler.Backend.ClosInterp.Proofs.Globals
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
 
 /-! Preservation of function annotations by interpreter insertion. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open ClosLang ClosProps
 
-/-- Local helper for the HOL insertion proof; it has no separate HOL declaration. -/
-private theorem optInterp_fnVarsNone (e e' : Exp) (h : optInterp e = some e') :
-    fnVarsNoneExp e' := by
-  unfold optInterp at h
-  split at h
-  · simp only [Option.some.injEq] at h
-    subst e'
-    simp [fnVarsNoneExp, everyFnVarsNone]
-  · simp at h
-
 /-- Local fallback case of the HOL insertion proof; no separate HOL declaration. -/
 private theorem optInterp1_fnVarsNone (e : Exp) (h : fnVarsNoneExp e) :
     fnVarsNoneExp (optInterp1 e) := by
   cases result : optInterp e with
   | none => simpa [optInterp1, result] using h
-  | some e' => simpa [optInterp1, result] using optInterp_fnVarsNone e e' result
+  | some e' => simpa [optInterp1, result, everyFnVarsNone] using (optInterp_lemma e e' 0 result).2.2.2.1
 
 /-- Local mapped-list case of the HOL insertion proof; no separate HOL declaration. -/
 private theorem mappedOpt_fnVarsNone (es : List Exp) (h : everyFnVarsNone es) :
@@ -34,7 +24,7 @@ private theorem mappedOpt_fnVarsNone (es : List Exp) (h : everyFnVarsNone es) :
 private theorem insertInterp1_fnVarsNone (e : Exp) (h : fnVarsNoneExp e) :
     fnVarsNoneExp (insertInterp1 e) := by
   cases result : optInterp e with
-  | some e' => simpa [insertInterp1, result] using optInterp_fnVarsNone e e' result
+  | some e' => simpa [insertInterp1, result, everyFnVarsNone] using (optInterp_lemma e e' 0 result).2.2.2.1
   | none =>
     cases e <;> simp [insertInterp1, result, fnVarsNoneExp] at h ⊢ <;> try assumption
     case «let» t es body => exact ⟨h.1, mappedOpt_fnVarsNone es h.2⟩

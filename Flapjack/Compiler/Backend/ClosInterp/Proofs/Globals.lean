@@ -2,6 +2,8 @@ module
 
 public import Flapjack.Compiler.Backend.ClosInterp.Optimise
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.Globals
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
 public import Flapjack.Compiler.Backend.FlatProps.GlobalBagProperties
 
 @[expose] public section
@@ -65,9 +67,12 @@ private theorem interpretable_safe (e : Exp) :
     obtain ⟨gs, ss⟩ := ies hs
     simp [elistGlobals, esgcFreeList, unionGlobalBag_eq_empty, ge, gs, se, ss]
 
-private theorem optInterp_safe (e e' : Exp) (h : optInterp e = some e') :
+/-- The complete safety properties of a successful interpreter optimization. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "opt_interp_lemma"]
+theorem optInterp_lemma (e e' : Exp) (maxApp : Nat) (h : optInterp e = some e') :
     setGlobals e' = emptyGlobalBag ∧ setGlobals e = emptyGlobalBag ∧
-      esgcFree e ∧ esgcFree e' := by
+      (1 ≤ maxApp → ¬ containsAppSome maxApp [e']) ∧ everyFnVarsNone [e'] ∧
+      noMti e' ∧ esgcFree e ∧ esgcFree e' := by
   unfold optInterp at h
   split at h
   · rename_i test
@@ -76,22 +81,23 @@ private theorem optInterp_safe (e e' : Exp) (h : optInterp e = some e') :
     simp only [Option.some.injEq] at h
     subst e'
     simp [setGlobals, elistGlobals, opGlobalBag, esgcFree, esgcFreeList,
-      unionGlobalBag_eq_empty, source.1, source.2]
+      unionGlobalBag_eq_empty, source.1, source.2, containsAppSome, containsAppSomeExp,
+      everyFnVarsNone, fnVarsNoneExp, noMti, noMtiList] <;> omega
   · simp at h
 
 private theorem optInterp1_safe (e : Exp) : esgcFree (optInterp1 e) ↔ esgcFree e := by
   cases h : optInterp e with
   | none => simp [optInterp1, h]
   | some e' =>
-    have safe := optInterp_safe e e' h
-    simp [optInterp1, h, safe.2.2.1, safe.2.2.2]
+    obtain ⟨_, _, _, _, _, sourceSafe, targetSafe⟩ := optInterp_lemma e e' 0 h
+    simp [optInterp1, h, sourceSafe, targetSafe]
 
 private theorem optInterp1_globals (e : Exp) : setGlobals (optInterp1 e) = setGlobals e := by
   cases h : optInterp e with
   | none => simp [optInterp1, h]
   | some e' =>
-    have safe := optInterp_safe e e' h
-    simp [optInterp1, h, safe.1, safe.2.1]
+    obtain ⟨targetGlobals, sourceGlobals, _⟩ := optInterp_lemma e e' 0 h
+    simp [optInterp1, h, targetGlobals, sourceGlobals]
 
 private theorem mappedOpt_safe (es : List Exp) :
     esgcFreeList (es.map optInterp1) ↔ esgcFreeList es := by
@@ -108,16 +114,16 @@ private theorem mappedOpt_globals (es : List Exp) :
 private theorem insertInterp1_safe (e : Exp) : esgcFree (insertInterp1 e) ↔ esgcFree e := by
   cases h : optInterp e with
   | some e' =>
-    have safe := optInterp_safe e e' h
-    simp [insertInterp1, h, safe.2.2.1, safe.2.2.2]
+    obtain ⟨_, _, _, _, _, sourceSafe, targetSafe⟩ := optInterp_lemma e e' 0 h
+    simp [insertInterp1, h, sourceSafe, targetSafe]
   | none =>
     cases e <;> simp [insertInterp1, h, esgcFree, mappedOpt_safe]
 
 private theorem insertInterp1_globals (e : Exp) : setGlobals (insertInterp1 e) = setGlobals e := by
   cases h : optInterp e with
   | some e' =>
-    have safe := optInterp_safe e e' h
-    simp [insertInterp1, h, safe.1, safe.2.1]
+    obtain ⟨targetGlobals, sourceGlobals, _⟩ := optInterp_lemma e e' 0 h
+    simp [insertInterp1, h, targetGlobals, sourceGlobals]
   | none =>
     cases e <;> simp [insertInterp1, h, setGlobals, mappedOpt_globals]
 

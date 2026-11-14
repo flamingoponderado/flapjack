@@ -1,26 +1,16 @@
-import Flapjack.Compiler.Backend.ClosInterp.Optimise
+import Flapjack.Compiler.Backend.ClosInterp.Proofs.Globals
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic
 
 /-! Application invariants of interpreter insertion. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open ClosLang ClosProps
 
-/-- Local successful-optimization case of the HOL proof, without a separate HOL declaration. -/
-private theorem optInterp_noAppSome (maxApp : Nat) (positive : 1 ≤ maxApp)
-    (e e' : Exp) (run : optInterp e = some e') : ¬ containsAppSomeExp maxApp e' := by
-  unfold optInterp at run
-  split at run
-  · simp only [Option.some.injEq] at run
-    subst e'
-    simp [containsAppSomeExp, containsAppSome, Nat.not_lt.mpr positive]
-  · simp at run
-
 /-- Local fallback case of the HOL proof, without a separate HOL declaration. -/
 private theorem optInterp1_noAppSome (maxApp : Nat) (positive : 1 ≤ maxApp)
     (e : Exp) (safe : ¬ containsAppSomeExp maxApp e) : ¬ containsAppSomeExp maxApp (optInterp1 e) := by
   cases result : optInterp e with
   | none => simpa [optInterp1, result] using safe
-  | some e' => simpa [optInterp1, result] using optInterp_noAppSome maxApp positive e e' result
+  | some e' => simpa [optInterp1, result, containsAppSome] using ((optInterp_lemma e e' maxApp result).2.2.1 positive)
 
 /-- Local mapped-list case of the HOL proof, without a separate HOL declaration. -/
 private theorem mappedOpt_noAppSome (maxApp : Nat) (positive : 1 ≤ maxApp)
@@ -35,7 +25,7 @@ private theorem mappedOpt_noAppSome (maxApp : Nat) (positive : 1 ≤ maxApp)
 private theorem insertInterp1_noAppSome (maxApp : Nat) (positive : 1 ≤ maxApp)
     (e : Exp) (safe : ¬ containsAppSomeExp maxApp e) : ¬ containsAppSomeExp maxApp (insertInterp1 e) := by
   cases result : optInterp e with
-  | some e' => simpa [insertInterp1, result] using optInterp_noAppSome maxApp positive e e' result
+  | some e' => simpa [insertInterp1, result, containsAppSome] using ((optInterp_lemma e e' maxApp result).2.2.1 positive)
   | none =>
     cases e <;> simp [insertInterp1, result, containsAppSomeExp] at safe ⊢ <;> try assumption
     case «let» t es body => exact ⟨safe.1, mappedOpt_noAppSome maxApp positive es safe.2⟩
