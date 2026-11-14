@@ -12,6 +12,8 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
 
+public import Flapjack.Misc.ListLookupRel
+
 @[expose] public section
 
 /-! Evaluator cases for free-variable removal correctness. -/
@@ -54,17 +56,6 @@ theorem evaluate_remove_fvs_nil {C F : Type} (env nextEnv : List Value)
   subst targetCode
   exact ⟨.val [], target, by simp [evaluate], .nil, states⟩
 
-/-- Indexing related lists gives related optional entries. -/
-theorem list_lookup_related {A B : Type} {relation : A → B → Prop} {left : List A} {right : List B}
-    (related : List.Forall₂ relation left right) (index : Nat) :
-    optionRel relation left[index]? right[index]? := by
-  induction related generalizing index with
-  | nil => simp [optionRel]
-  | cons head tail ih =>
-    cases index with
-    | zero => simpa [optionRel] using head
-    | succ index => simpa using ih index
-
 /-- Capturing the same indices in related environments either fails on both
 sides or returns related values, in order. -/
 theorem environment_lookupVars (indices : List Nat) (env nextEnv : List Value)
@@ -73,7 +64,7 @@ theorem environment_lookupVars (indices : List Nat) (env nextEnv : List Value)
   induction indices with
   | nil => simp [lookupVars, optionRel]
   | cons index rest ih =>
-    have head := list_lookup_related related index
+    have head := Flapjack.forall₂_lookupRel related index
     cases left : env[index]? <;> cases right : nextEnv[index]? <;>
       simp [optionRel, left, right] at head
     · simp [lookupVars, left, right, optionRel]
@@ -163,7 +154,7 @@ theorem evaluate_remove_fvs_var {C F : Type} (trace : BackendCommon.Tra) (index 
       evaluate targetCode nextEnv target = (targetResult, targetNext) ∧
       ResultRel result targetResult ∧ StateRel sourceNext targetNext := by
   obtain ⟨run, envRel, states, code⟩ := premises
-  have lookup := list_lookup_related envRel index
+  have lookup := Flapjack.forall₂_lookupRel envRel index
   cases found : env[index]? with
   | none =>
     have outside := List.getElem?_eq_none_iff.mp found

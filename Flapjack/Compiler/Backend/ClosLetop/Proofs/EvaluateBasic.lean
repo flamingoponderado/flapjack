@@ -5,6 +5,8 @@ public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Primitive
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
 
+public import Flapjack.Misc.ListLookupRel
+
 @[expose] public section
 
 /-! Basic cases of closure let-operation correctness. -/
@@ -38,17 +40,6 @@ theorem evaluate_let_op_nil {C F : Type} (env nextEnv : List Value)
   subst targetCode
   exact ⟨.val [], target, by simp [evaluate], .nil, states⟩
 
-/-- Indexing related lists gives related optional entries. This helper has no standalone HOL declaration. -/
-theorem list_lookup_related {A B : Type} {relation : A → B → Prop} {left : List A} {right : List B}
-    (related : List.Forall₂ relation left right) (index : Nat) :
-    Flapjack.optionRel relation left[index]? right[index]? := by
-  induction related generalizing index with
-  | nil => simp [Flapjack.optionRel]
-  | cons head tail ih =>
-    cases index with
-    | zero => simpa [Flapjack.optionRel] using head
-    | succ index => simpa using ih index
-
 /-- Recursive closures generated from related bundles and environments are
 related at each common index. This helper has no standalone HOL declaration. -/
 theorem recursive_bundle_related (location : Option Nat) (env nextEnv : List Value)
@@ -81,7 +72,7 @@ theorem evaluate_let_op_var {C F : Type} (trace : BackendCommon.Tra) (index : Na
   have codeEq : targetCode = [.var trace index] := by
     simpa [CodeRel, compileList, compileSing] using code
   rw [codeEq]
-  have lookup := list_lookup_related envRel index
+  have lookup := Flapjack.forall₂_lookupRel envRel index
   cases found : env[index]? with
   | none =>
     cases nextFound : nextEnv[index]? with
@@ -473,7 +464,7 @@ theorem environment_lookupVars (indices : List Nat) (env nextEnv : List Value)
   induction indices with
   | nil => simp [lookupVars, Flapjack.optionRel]
   | cons index rest ih =>
-    have head := list_lookup_related related index
+    have head := Flapjack.forall₂_lookupRel related index
     cases left : env[index]? <;> cases right : nextEnv[index]? <;>
       simp [Flapjack.optionRel, left, right] at head
     · simp [lookupVars, left, right, Flapjack.optionRel]

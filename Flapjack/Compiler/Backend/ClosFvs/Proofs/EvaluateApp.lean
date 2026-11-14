@@ -93,7 +93,7 @@ theorem destClosure_full_recclosure (maxApp : Nat) (requested location : Option 
       destClosure maxApp requested (.recclosure location nextSupplied nextEnv nextFunctions index) (nextArg :: nextArgs) =
         some (.fullApp targetBody targetEnv targetRemaining) := by
   have allArgs : List.Forall₂ ValueRel (arg :: args) (nextArg :: nextArgs) := .cons argRel argsRel
-  have lookupRel := list_lookup_related functionsRel index
+  have lookupRel := Flapjack.forall₂_lookupRel functionsRel index
   cases found : functions[index]? with
   | none => simp [destClosure, found] at run
   | some entry =>
@@ -200,7 +200,7 @@ theorem destClosure_none_related (maxApp : Nat) (requested : Option Nat)
           nextSupplied.length < arity) := by simpa [← argsRel.length_eq, ← suppliedRel.length_eq] using valid
       rw [destClosure_closure_source, if_neg targetInvalid]
   | recclosure location supplied nextSupplied env nextEnv functions nextFunctions index envRel suppliedRel functionsRel =>
-    have lookup := list_lookup_related functionsRel index
+    have lookup := Flapjack.forall₂_lookupRel functionsRel index
     cases found : functions[index]? with
     | none =>
       cases targetFound : nextFunctions[index]? with
@@ -254,7 +254,7 @@ theorem destClosure_partial_related (maxApp : Nat) (requested : Option Nat)
     · rw [destClosure_closure_source, if_neg valid] at run
       contradiction
   | recclosure location supplied nextSupplied env nextEnv functions nextFunctions index envRel suppliedRel functionsRel =>
-    have lookup := list_lookup_related functionsRel index
+    have lookup := Flapjack.forall₂_lookupRel functionsRel index
     cases found : functions[index]? with
     | none => simp [destClosure, found] at run
     | some entry =>

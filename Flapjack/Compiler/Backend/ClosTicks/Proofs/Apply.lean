@@ -40,7 +40,7 @@ theorem destClosure_none_related (maxApp : Nat) (requested : Option Nat)
           supplied.length < arity) := by simpa [argsRel.length_eq, suppliedRel.length_eq] using valid
       rw [destClosure_closure_source, if_neg sourceInvalid]
   | recclosure location supplied nextSupplied env nextEnv functions nextFunctions index envRel suppliedRel functionsRel =>
-    have lookup := list_lookup_related functionsRel index
+    have lookup := Flapjack.forall₂_lookupRel functionsRel index
     cases targetFound : nextFunctions[index]? with
     | none =>
       cases found : functions[index]? with
@@ -94,7 +94,7 @@ theorem destClosure_partial_related (maxApp : Nat) (requested : Option Nat)
     · rw [destClosure_closure_source, if_neg valid] at run
       contradiction
   | recclosure location supplied nextSupplied env nextEnv functions nextFunctions index envRel suppliedRel functionsRel =>
-    have lookup := list_lookup_related functionsRel index
+    have lookup := Flapjack.forall₂_lookupRel functionsRel index
     cases targetFound : nextFunctions[index]? with
     | none => simp [destClosure, targetFound] at run
     | some targetEntry =>
@@ -166,7 +166,7 @@ theorem destClosure_full_related (maxApp : Nat) (requested : Option Nat)
     · rw [destClosure_closure_source, if_neg valid] at run
       contradiction
   | recclosure location supplied nextSupplied captured nextCaptured sourceFunctions targetFunctions index envRel suppliedRel functionsRel =>
-    have lookup := list_lookup_related functionsRel index
+    have lookup := Flapjack.forall₂_lookupRel functionsRel index
     cases targetFound : targetFunctions[index]? with
     | none => simp [destClosure, targetFound] at run
     | some targetEntry =>

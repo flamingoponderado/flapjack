@@ -4,6 +4,8 @@ public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Relations
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 public import Mathlib.Tactic
 
+public import Flapjack.Misc.ListLookupRel
+
 @[expose] public section
 
 /-! Evaluator infrastructure for closure tick-removal correctness. -/
@@ -104,18 +106,6 @@ theorem evaluate_remove_ticks_nil {C F : Type} (envTarget : List Value)
   subst sourceCode
   exact ⟨0, .val [], source, by simp [evaluate], .nil, states⟩
 
-/-- Indexing related lists gives related optional entries. This is Flapjack
-infrastructure for recursive closure inspection. -/
-theorem list_lookup_related {A B : Type} {relation : A → B → Prop} {left : List A} {right : List B}
-    (related : List.Forall₂ relation left right) (index : Nat) :
-    Flapjack.optionRel relation left[index]? right[index]? := by
-  induction related generalizing index with
-  | nil => simp [Flapjack.optionRel]
-  | cons head tail ih =>
-    cases index with
-    | zero => simpa [Flapjack.optionRel] using head
-    | succ index => simpa using ih index
-
 /-- The variable case of the reverse tick-removal simulation. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "evaluate_remove_ticks"
   (fmap_as_finite_support := [refs, code])]
@@ -142,7 +132,7 @@ theorem evaluate_remove_ticks_var {C F : Type} (trace : BackendCommon.Tra) (inde
   have removed : [ClosLang.Exp.var trace index] = removeSource [expression] := by
     simpa [CodeRel] using code
   obtain ⟨traces, rfl⟩ := remove_ticks_Var_IMP_mk_Ticks expression trace index removed
-  have lookup := list_lookup_related envRel index
+  have lookup := Flapjack.forall₂_lookupRel envRel index
   have restored : decClock traces.length { source with clock := source.clock + traces.length } = source := by
     simp [decClock]
   cases found : envTarget[index]? with

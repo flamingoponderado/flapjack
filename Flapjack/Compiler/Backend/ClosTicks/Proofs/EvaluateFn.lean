@@ -38,7 +38,7 @@ theorem environment_lookupVars (indices : List Nat) (source target : List Value)
   induction indices with
   | nil => simp [lookupVars, Flapjack.optionRel]
   | cons index rest ih =>
-    have head := list_lookup_related related index
+    have head := Flapjack.forall₂_lookupRel related index
     cases left : source[index]? <;> cases right : target[index]? <;>
       simp [Flapjack.optionRel, left, right] at head
     · simp [lookupVars, left, right, Flapjack.optionRel]
