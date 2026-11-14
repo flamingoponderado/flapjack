@@ -56,3 +56,15 @@ val state_rel_refs_clocks_replay = Q.prove (
   `state_rel s1 s2 ⇒ s1.refs = s2.refs ∧ s1.clock = s2.clock`,
   rw [clos_interpProofTheory.state_rel_def, state_component_equality]);
 val _ = show_thm "state_rel_refs_clocks_replay_typed=" state_rel_refs_clocks_replay;
+val state_rel_update_thunk_replay = Q.prove (
+  `state_rel s1 s2 ⇒
+     update_thunk [RefPtr v ptr] s1.refs vs = SOME refs1 ⇒
+       ∃refs2. update_thunk [RefPtr v ptr] s2.refs vs = SOME refs2 ∧
+         state_rel (s1 with refs := refs1) (s2 with refs := refs2)`,
+  rw [] \\
+  gvs [oneline update_thunk_def, AllCaseEqs()] \\ rw [] \\
+  gvs [oneline dest_thunk_def, AllCaseEqs()] \\
+  (gvs [oneline store_thunk_def, AllCaseEqs()] \\
+   imp_res_tac state_rel_refs_clocks_replay \\ gvs [] \\
+   gvs [clos_interpProofTheory.state_rel_def]));
+val _ = show_thm "state_rel_update_thunk_replay_typed=" state_rel_update_thunk_replay;

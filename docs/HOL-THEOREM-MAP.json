@@ -1,6 +1,16 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "state_rel_update_thunk",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/ForceRelation.lean",
+    "lean_name": "state_rel_update_thunk",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+    "fmap_as_finite_support_relation": ["State.refs", "State.code", "refs1"],
+    "fmap_as_finite_support_existentials": ["refs2"],
+    "reviewer": "Compared the closed state_rel_update_thunk_replay_typed, arbitrary singleton pointer flag, source update and existential target map, complete post-state relation and all thunk-update clauses. Independently replayed the local HOL proof. Canonical State refs/code and input refs1 use the relation qualifier; existential refs2 has its local codec witness. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
     "hol_name": "state_rel_refs_clocks_eqs",
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/StateRelation.lean",
     "lean_name": "stateRel_refs_clocks",
