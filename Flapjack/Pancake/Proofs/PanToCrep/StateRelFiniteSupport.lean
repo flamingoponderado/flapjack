@@ -1280,18 +1280,8 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {ctxtWidth : 
   let resultPost := PanPropsEvalStateFiniteExact.ofPanSemFinite postState
   have hinitial := panToCrepExactInitialShapeInvariant
     source target targetLocals.targetLocals relationContext hstate hlocals
-  have hsourceLocals : ∀ name value, resultSource.locals.lookup name = some value →
-      isWfShapeValueHOLExact resultSource.structs value = true := by
-    intro name value hlookup
-    exact hinitial.1 name value (by
-      simpa [resultSource, PanPropsEvalStateFiniteExact.ofPanSemFinite,
-        PanPropsEvalStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using hlookup)
-  have hsourceGlobals : ∀ name value, resultSource.globals.lookup name = some value →
-      isWfShapeValueHOLExact resultSource.structs value = true := by
-    intro name value hlookup
-    exact hinitial.2 name value (by
-      simpa [resultSource, PanPropsEvalStateFiniteExact.ofPanSemFinite,
-        PanPropsEvalStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using hlookup)
+  have hsourceLocals := hinitial.1
+  have hsourceGlobals := hinitial.2
   have hevalInvariant :
       PanPropsEvalStateFiniteExact.evaluateHOLFinitePair resultSource program =
         (some result, resultPost) := by
@@ -1302,22 +1292,15 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {ctxtWidth : 
       resultPost] using hmap
   have hinvariant := evaluateIsWfShapeInvariantFiniteExact program resultSource
     (some result) resultPost hevalInvariant hsourceLocals hsourceGlobals
-  have hresultWf : Flapjack.panSemResultHOLWf source.structs (some result) := by
-    simpa [resultSource, PanPropsEvalStateFiniteExact.ofPanSemFinite,
-      PanPropsEvalStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using
-      hinvariant.2.2
   have hstructs := panToCrepStateRelFiniteExact_structs
     source target hstate
   cases result with
-  | returned value =>
-      have hvalue :
-          isWfShapeValueHOLExact source.structs value = true := by
-        simpa [Flapjack.panSemResultHOLWf] using hresultWf
-      simpa [hstructs] using hvalue
-  | exception exceptionId value =>
-      have hvalue :
-          isWfShapeValueHOLExact source.structs value = true := by
-        simpa [Flapjack.panSemResultHOLWf] using hresultWf
+  | returned value | exception _ value =>
+      have hvalue : isWfShapeValueHOLExact source.structs value = true := by
+        simpa [Flapjack.panSemResultHOLWf, resultSource,
+          PanPropsEvalStateFiniteExact.ofPanSemFinite,
+          PanPropsEvalStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using
+          hinvariant.2.2
       simpa [hstructs] using hvalue
   | _ => trivial
 
