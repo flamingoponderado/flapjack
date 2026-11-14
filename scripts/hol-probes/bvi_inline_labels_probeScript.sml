@@ -485,3 +485,16 @@ val _ = (print "do_app_state_swap_statement_typed=";
 
 (* Capture the exported original lookup theorem with inferred types. *)
 val _ = show "inline_all_ALOOKUP_typed" bvi_inlineProofTheory.inline_all_ALOOKUP;
+
+(* Replay the original local inlining code-lookup theorem. *)
+val in_state_rel_find_code_replay = Q.prove
+  (`∀s t dest vs args exp.
+    in_state_rel s t ∧
+    find_code dest vs s.code = SOME (args,exp) ⇒
+    ∃exp1. find_code dest vs t.code = SOME (args,exp1) ∧
+      exp_rel t.code exp exp1`,
+   rpt strip_tac
+  >> Cases_on ‘dest’
+  >> fs [bvlSemTheory.find_code_def, in_state_rel_def, AllCaseEqs()]
+  >> metis_tac []);
+val _ = show "in_state_rel_find_code_replay_typed" in_state_rel_find_code_replay;

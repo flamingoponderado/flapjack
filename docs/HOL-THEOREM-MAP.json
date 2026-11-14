@@ -139350,4 +139350,16 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the complete HOL exported theorem and inferred-type capture: explicit inliner output equation, cache inclusion, disjoint labels, distinctness, source association-list lookup, and related output lookup in the union are retained. Natural-key association-list lookup reads the first matching entry."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "in_state_rel_find_code",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/StateRelation.lean",
+    "lean_name": "findCode_inStateRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "reviewer": "Compared the full local HOL theorem and its typed, hypothesis-free proof replay: both direct and indirect lookup preserve the argument list and produce an inliner-related body. Source compiler state is cache paired with the target compiler state; the FFI type is shared. BVI refs use the canonical finite-support map with a same-module roundtrip."
+  }
 ]

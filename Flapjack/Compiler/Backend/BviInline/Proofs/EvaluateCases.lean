@@ -362,7 +362,7 @@ theorem force {C F : Type} (location index : Nat) (env : List Value)
             | some pair =>
               obtain ⟨args, body⟩ := pair
               obtain ⟨body', targetCode, bodyRel⟩ :=
-                findCode_inStateRel source target (some location) [thunk, value] args body states codeFound
+                findCode_inStateRel source target (some location) [thunk, value] args body ⟨states, codeFound⟩
               by_cases zero : source.clock = 0
               · have targetZero : target.clock = 0 := by rw [clocks, zero]
                 refine ⟨{ target with clock := 0 }, ?_, ?_⟩

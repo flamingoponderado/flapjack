@@ -60,13 +60,24 @@ theorem inStateRel_decClock {C F : Type} (source : BviState (Spt (Nat × Bvi.Exp
     InStateRel (BviSem.decClock ticks source) (BviSem.decClock ticks target) := by
   simpa [BviSem.decClock, states.2.1] using inStateRel_with_clock source target states (source.clock - ticks)
 
-/-- Flapjack infrastructure: both direct and indirect code lookup preserve
-arguments and select related bodies under the inliner state relation. -/
+namespace StateRelationCarrier
+/-- The BVI reference carrier has a canonical finite-support roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end StateRelationCarrier
+
+/-- Direct and indirect code lookup preserve arguments and select related
+bodies under the inlining state relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "in_state_rel_find_code"
+  (fmap_as_finite_support := [refs])]
 theorem findCode_inStateRel {C F : Type} (source : BviState (Spt (Nat × Bvi.Exp) × C) F)
     (target : BviState C F) (destination : Option Nat) (values args : List Value) (body : Bvi.Exp)
-    (states : InStateRel source target) (found : findCode destination values source.code = some (args, body)) :
+    (premises : InStateRel source target ∧ findCode destination values source.code = some (args, body)) :
     ∃ transformed, findCode destination values target.code = some (args, transformed) ∧
       ExpRel target.code body transformed := by
+  obtain ⟨states, found⟩ := premises
   have codeRel := states.2.2.2.2.2.2.2.2
   cases destination with
   | some name =>
