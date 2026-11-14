@@ -40,25 +40,6 @@ theorem attachInterpreter_initial_observation {C F : Type} (expressions : List C
     · simpa [ClosSem.initialState] using targetRun
     · rw [stateRel_replaceCompiler sourceFinal targetFinal related]
 
-/-- Attached programs without installation have identical proof-side
-observational semantics under the two initial compiler configurations. -/
-theorem attachInterpreter_noInstall_semantics {C F : Type} (expressions : List ClosLang.Exp)
-    (ffi : HolFfiState F) (maxApp : Nat) (oracle : ClosSem.CompileOracle C)
-    (compiler : ClosSem.Compiler C) (safe : ClosLang.hasInstallList expressions = false)
-    (oracleSafe : ∀ index, (oracle index).2.2 = []) (positive : 1 ≤ maxApp) :
-    ClosSem.semantics ffi maxApp HolFiniteMapExact.empty oracle (pureCc insertProgram compiler) (attachInterpreter expressions) =
-      ClosSem.semantics ffi maxApp HolFiniteMapExact.empty (pureCo insertProgram ∘ oracle) compiler (attachInterpreter expressions) := by
-  apply ClosSem.semantics_eq_of_same_observations
-  intro clock
-  cases sourceRun : ClosSem.evaluate (attachInterpreter expressions) []
-      (ClosSem.initialState ffi maxApp HolFiniteMapExact.empty oracle (pureCc insertProgram compiler) clock) with
-  | mk result sourceFinal =>
-    obtain ⟨targetFinal, targetRun, related, _⟩ :=
-      attachInterpreter_noInstall_initial_simulation expressions ffi maxApp clock oracle compiler sourceFinal result safe oracleSafe positive sourceRun
-    have ffiEq : sourceFinal.ffi = targetFinal.ffi := by
-      rw [stateRel1_replaceCompiler sourceFinal targetFinal related.1]
-    simp [targetRun, ffiEq]
-
 /-- Interpreter attachment preserves the proof-side closure observations,
 including divergence, when the source does not fail. The hypotheses and
 equality direction follow `semantics_attach_interpreter`; this result is
