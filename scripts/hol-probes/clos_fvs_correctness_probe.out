@@ -29,3 +29,4 @@ remove_set_globals_typed=∀(fvs :num) (x :closLang$exp list). MAP set_globals (
 remove_elist_globals_typed=elist_globals (remove_fvs (fvs :num) (xs :closLang$exp list)) = elist_globals xs
 remove_esgc_free_typed=∀(fvs :num) (x :closLang$exp list). EVERY esgc_free (remove_fvs fvs x) ⇔ EVERY esgc_free x
 remove_code_labels_typed=∀(n :num) (es :closLang$exp list). MAP get_code_labels (remove_fvs n es) = MAP get_code_labels es
+remove_every_sing_typed=EVERY (f :closLang$exp -> bool) (remove_fvs (n :num) [(y :closLang$exp)]) ⇔ f (HD (remove_fvs n [y]))

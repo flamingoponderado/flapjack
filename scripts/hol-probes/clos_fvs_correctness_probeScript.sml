@@ -64,3 +64,4 @@ val _ = show "remove_set_globals_typed=" clos_fvsProofTheory.remove_fvs_set_glob
 val _ = show "remove_elist_globals_typed=" clos_fvsProofTheory.remove_fvs_elist_globals;
 val _ = show "remove_esgc_free_typed=" clos_fvsProofTheory.remove_fvs_esgc_free;
 val _ = show "remove_code_labels_typed=" clos_fvsProofTheory.get_code_labels_remove_fvs;
+val _ = show "remove_every_sing_typed=" clos_fvsProofTheory.EVERY_remove_fvs_sing;

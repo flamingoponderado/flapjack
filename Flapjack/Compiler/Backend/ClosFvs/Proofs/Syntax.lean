@@ -293,6 +293,13 @@ decreasing_by all_goals subst_vars; simp_wf <;> omega
 
 end
 
+/-- The singleton removal result satisfies EVERY exactly when its head does. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "EVERY_remove_fvs_sing"]
+theorem every_removeSource_sing (f : Exp → Prop) (n : Nat) (y : Exp) :
+    (∀ e ∈ removeSource n [y], f e) ↔
+      f (@Flapjack.holHd Exp ⟨.var .none 0⟩ (removeSource n [y])) := by
+  simp [removeSource_eq_list, removeList, Flapjack.holHd]
+
 /-- The original list-shaped removal satisfies the HOL invariant. -/
 @[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "remove_fvs_every_Fn_vs_NONE"]
 theorem removeSource_varsNone (bound : Nat) (expressions : List Exp) :
