@@ -1,6 +1,26 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "EVERY_remove_ticks_sing",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean",
+    "lean_name": "EVERY_remove_ticks_sing",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared EVERY_remove_ticks_sing_typed: an arbitrary Boolean predicate agrees on the full source-shaped transformed singleton and its HOL-shaped head; the head is applied to a provably nonempty list. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml", "hol_name": "state_rel_opt_rel_refs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean", "lean_name": "state_rel_opt_rel_refs",
+    "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the original local proof and state_rel_opt_refs_replay_typed: both lookup directions retain the related-state and lookup premises, existential opposite lookup, and source-to-target option relation. Canonical refs and code fields have the local roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml", "hol_name": "state_rel_clock_eqs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean", "lean_name": "state_rel_clock_eqs",
+    "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the original local proof and state_rel_clock_eqs_replay_typed: related states with shared arbitrary compiler and FFI carriers have equal source and target clocks. Canonical refs and code fields have the local roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
     "hol_name": "state_rel_IMP_code_FEMPTY",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean",
     "lean_name": "state_rel_IMP_code_FEMPTY",

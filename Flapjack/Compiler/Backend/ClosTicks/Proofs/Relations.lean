@@ -32,6 +32,13 @@ theorem HD_remove_ticks_SING (e : ClosLang.Exp) :
       (removeSource [e]).length = 1 := by
   simp [removeSource_eq_list, removeList, Flapjack.holHd]
 
+/-- A predicate on a transformed singleton agrees with its application to the head. -/
+@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "EVERY_remove_ticks_sing"]
+theorem EVERY_remove_ticks_sing (predicate : ClosLang.Exp → Bool) (e : ClosLang.Exp) :
+    (removeSource [e]).all predicate =
+      predicate (@Flapjack.holHd ClosLang.Exp ⟨.var .none 0⟩ (removeSource [e])) := by
+  simp [removeSource_eq_list, removeList, Flapjack.holHd]
+
 /-- Tick removal decomposes a nonempty input at its head. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_CONS"]
 theorem remove_ticks_CONS (es : List ClosLang.Exp) (e : ClosLang.Exp) :
@@ -141,6 +148,32 @@ theorem state_rel_IMP_code_FEMPTY {C F : Type} (source target : State C F)
     source.code = HolFiniteMapExact.empty ∧ target.code = HolFiniteMapExact.empty :=
   ⟨related.2.1, related.2.2.1⟩
 
+/-- Related reference maps give related lookup results in either direction. -/
+@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "state_rel_opt_rel_refs"
+  (fmap_as_finite_support := [refs, code])]
+theorem state_rel_opt_rel_refs {C F : Type} (source target : State C F) (key : Nat)
+    (r1 r2 : Option (Ref Value)) :
+    (StateRel source target ∧ source.refs.lookup key = r1 →
+      ∃ r2, target.refs.lookup key = r2 ∧ Flapjack.optionRel RefRel r1 r2) ∧
+    (StateRel source target ∧ target.refs.lookup key = r2 →
+      ∃ r1, source.refs.lookup key = r1 ∧ Flapjack.optionRel RefRel r1 r2) := by
+  constructor
+  · rintro ⟨related, lookup⟩
+    refine ⟨target.refs.lookup key, rfl, ?_⟩
+    rw [← lookup]
+    exact related.2.2.2.2.2.2.2.2.1 key
+  · rintro ⟨related, lookup⟩
+    refine ⟨source.refs.lookup key, rfl, ?_⟩
+    rw [← lookup]
+    exact related.2.2.2.2.2.2.2.2.1 key
+
+/-- Related states have equal clocks. -/
+@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "state_rel_clock_eqs"
+  (fmap_as_finite_support := [refs, code])]
+theorem state_rel_clock_eqs {C F : Type} (source target : State C F)
+    (related : StateRel source target) : source.clock = target.clock :=
+  related.2.2.2.2.2.1.symm
+
 /-- Related code lists have equal length. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "code_rel_IMP_LENGTH"]
 theorem code_rel_IMP_LENGTH (source target : List ClosLang.Exp) (related : CodeRel source target) :
@@ -170,7 +203,7 @@ theorem state_rel_clock {C F : Type} (source target : State C F) (clock : Nat) :
   (fmap_as_finite_support := [refs, code])]
 theorem state_rel_dec_clock {C F : Type} (source target : State C F)
     (related : StateRel source target) : StateRel (decClock 1 source) (decClock 1 target) := by
-  have clockEq : target.clock = source.clock := related.2.2.2.2.2.1
+  have clockEq : target.clock = source.clock := (state_rel_clock_eqs source target related).symm
   simpa [StateRel, decClock, clockEq] using related
 
 end Flapjack.Compiler.Backend.ClosTicks

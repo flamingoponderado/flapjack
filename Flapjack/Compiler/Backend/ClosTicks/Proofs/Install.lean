@@ -55,7 +55,7 @@ theorem install_pair_related {C F : Type} (s t : State C F)
   classical
   have bytesEq := valueRel_bytes a x bytesRel
   have wordsEq := valueRel_words b y wordsRel
-  have clocks : t.clock = s.clock := states.2.2.2.2.2.1
+  have clocks : t.clock = s.clock := (state_rel_clock_eqs s t states).symm
   have shifted := stateRel_shift s t 1 (s.clock - 1) states
   have sourceNoUpdate : s.code.updateListEq ([] : List (Nat × Nat × ClosLang.Exp)) = s.code := by
     simp [HolFiniteMapExact.updateListEq]

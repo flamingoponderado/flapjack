@@ -223,7 +223,7 @@ end ApplyPort
 infrastructure for the application simulation. -/
 theorem stateRel_dec {C F : Type} (source target : State C F) (amount : Nat) (related : StateRel source target) :
     StateRel (decClock amount source) (decClock amount target) := by
-  have clocks : target.clock = source.clock := related.2.2.2.2.2.1
+  have clocks : target.clock = source.clock := (state_rel_clock_eqs source target related).symm
   simpa [decClock, clocks] using ((state_rel_clock source target (source.clock - amount)).2 (by simpa [← clocks] using related))
 
 /-- Reverse expression simulation at a fixed target configuration. This is
@@ -288,7 +288,7 @@ theorem evaluate_remove_ticks_app_cons {C F : Type} (location : Option Nat) (fun
     rename_i sourceArg sourceTail
     have allArgs : List.Forall₂ ValueRel (sourceArg :: sourceTail) (arg :: args) := .cons argRel tailRel
     have maxEq : target.maxApp = source.maxApp := states.2.2.2.1
-    have clockEq : target.clock = source.clock := states.2.2.2.2.2.1
+    have clockEq : target.clock = source.clock := (state_rel_clock_eqs source target states).symm
     cases closureRun : destClosure target.maxApp location function (arg :: args) with
     | none =>
       have sourceClosure := destClosure_none_related target.maxApp location sourceFunction function
