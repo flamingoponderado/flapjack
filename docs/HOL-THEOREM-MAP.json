@@ -1,6 +1,16 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "rel_update_thunk",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ThunkUpdate.lean",
+    "lean_name": "rel_update_thunk",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+    "fmap_as_finite_support_relation": ["State.refs", "State.code", "sourceRefs"],
+    "fmap_as_finite_support_existentials": ["targetRefs"],
+    "reviewer": "Compared the local source theorem and rel_update_thunk_replay_typed: the source compiler carrier is a natural paired with the target compiler carrier, with an independent shared FFI carrier. The related states and value lists, singleton reference pointer, source update equation and existential target update and state relation agree. State refs and code, sourceRefs and existential targetRefs use canonical finite support with state and map roundtrip witnesses. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "renumber_code_locs_obeys_max_app",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ObeysMaxApp.lean",
     "lean_name": "renumberCodeLocs_obeysMaxApp",

@@ -33,7 +33,24 @@ val _ = show "renumber_esgc_free_typed=" clos_numberProofTheory.renumber_code_lo
 val _ = show "every_fn_vs_none_every_typed=" closPropsTheory.every_Fn_vs_NONE_EVERY;
 val _ = show "renumber_code_locs_every_Fn_SOME_typed=" clos_numberProofTheory.renumber_code_locs_every_Fn_SOME;
 open closLangTheory clos_numberTheory clos_numberProofTheory closSemTheory closPropsTheory
-  listTheory rich_listTheory;
+  listTheory rich_listTheory finite_mapTheory;
+val state_rel_refs_replay = Q.prove(
+  `state_rel s t ==> fmap_rel (ref_rel (v_rel t.max_app)) s.refs t.refs`,
+  srw_tac[][state_rel_def]);
+val rel_update_thunk_replay = Q.prove(
+  `state_rel s1 s2 /\ LIST_REL (v_rel s1.max_app) vs ys /\
+   update_thunk [RefPtr v ptr] s1.refs vs = SOME refs1 ==>
+   ?refs2. update_thunk [RefPtr v ptr] s2.refs ys = SOME refs2 /\
+     state_rel (s1 with refs := refs1) (s2 with refs := refs2)`,
+  rw [] >>
+  gvs [oneline update_thunk_def, AllCaseEqs()] >> rw [] >>
+  gvs [oneline dest_thunk_def, AllCaseEqs()] >>
+  (gvs [Once v_rel_cases, oneline store_thunk_def, AllCaseEqs(), PULL_EXISTS] >>
+   rpt (imp_res_tac state_rel_refs_replay >> gvs [fmap_rel_def, FLOOKUP_DEF] >>
+        first_x_assum dxrule >> rw [] >> gvs []) >>
+   gvs [state_rel_def, fmap_rel_def, FAPPLY_FUPDATE_THM] >> rw [] >>
+   simp [Once v_rel_cases] >> metis_tac []));
+val _ = show "rel_update_thunk_replay_typed=" rel_update_thunk_replay;
 val dest_closure_v_rel_none_replay = Q.prove(
   `!f args f' args'.
     v_rel max_app f f' /\ LIST_REL (v_rel max_app) args args' /\
