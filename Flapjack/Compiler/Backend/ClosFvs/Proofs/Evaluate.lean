@@ -54,9 +54,10 @@ theorem evaluate_remove_fvs_nil {C F : Type} (env nextEnv : List Value)
   subst targetCode
   exact ⟨.val [], target, by simp [evaluate], .nil, states⟩
 
-/-- Related environments have related optional results at every index. -/
-theorem environment_lookup (env nextEnv : List Value) (related : List.Forall₂ ValueRel env nextEnv)
-    (index : Nat) : optionRel ValueRel env[index]? nextEnv[index]? := by
+/-- Indexing related lists gives related optional entries. -/
+theorem list_lookup_related {A B : Type} {relation : A → B → Prop} {left : List A} {right : List B}
+    (related : List.Forall₂ relation left right) (index : Nat) :
+    optionRel relation left[index]? right[index]? := by
   induction related generalizing index with
   | nil => simp [optionRel]
   | cons head tail ih =>
@@ -72,7 +73,7 @@ theorem environment_lookupVars (indices : List Nat) (env nextEnv : List Value)
   induction indices with
   | nil => simp [lookupVars, optionRel]
   | cons index rest ih =>
-    have head := environment_lookup env nextEnv related index
+    have head := list_lookup_related related index
     cases left : env[index]? <;> cases right : nextEnv[index]? <;>
       simp [optionRel, left, right] at head
     · simp [lookupVars, left, right, optionRel]
@@ -120,22 +121,21 @@ theorem removeFuns_all (count captured maxApp : Nat) (functions : List (Nat × C
       functions.all (fun (arity, _) => arity ≤ maxApp && arity != 0) := by
   simp [removeFuns_eq_map, Function.comp_def]
 
-/-- Corresponding recursive closures retain their shared indices and captured
-environments. -/
-theorem recursiveClosures_related (location : Option Nat) (env nextEnv : List Value)
-    (functions : List (Nat × ClosLang.Exp)) (envRel : List.Forall₂ ValueRel env nextEnv) :
+/-- Recursive closures generated from related bundles and environments are
+related at each common index. -/
+theorem recursive_bundle_related (location : Option Nat) (env nextEnv : List Value)
+    (functions nextFunctions : List (Nat × ClosLang.Exp))
+    (environments : List.Forall₂ ValueRel env nextEnv)
+    (bodies : List.Forall₂ (FunctionRel (env.length + functions.length)) functions nextFunctions) :
     List.Forall₂ ValueRel
       ((List.range functions.length).map (fun i => Value.recclosure location [] env functions i))
-      ((List.range (removeFuns functions.length env.length functions).length).map
-        (fun i => Value.recclosure location [] nextEnv
-          (removeFuns functions.length env.length functions) i)) := by
-  rw [removeFuns_length]
+      ((List.range nextFunctions.length).map (fun i => Value.recclosure location [] nextEnv nextFunctions i)) := by
+  rw [← bodies.length_eq]
   generalize List.range functions.length = indices
   induction indices with
   | nil => exact .nil
   | cons index rest ih =>
-    exact .cons (.recclosure location [] [] env nextEnv functions _ index envRel .nil
-      (removeFuns_related functions.length env.length functions)) ih
+    exact .cons (.recclosure location [] [] env nextEnv functions nextFunctions index environments .nil bodies) ih
 
 /-- A source variable, including an out-of-scope one, is simulated by the
 corresponding variable or generated type-error expression. -/
@@ -151,7 +151,7 @@ theorem evaluate_remove_fvs_var {C F : Type} (trace : BackendCommon.Tra) (index 
       evaluate targetCode nextEnv target = (targetResult, targetNext) ∧
       ResultRel result targetResult ∧ StateRel sourceNext targetNext := by
   obtain ⟨run, envRel, states, code⟩ := premises
-  have lookup := environment_lookup env nextEnv envRel index
+  have lookup := list_lookup_related envRel index
   cases found : env[index]? with
   | none =>
     have outside := List.getElem?_eq_none_iff.mp found
@@ -738,7 +738,8 @@ theorem evaluate_remove_fvs_letrec {C F : Type} (names : List Flapjack.AstHOL.Va
     let nextRecs := (List.range nextFunctions.length).map
       (fun i => Value.recclosure location [] nextCaptured nextFunctions i)
     have recRel : List.Forall₂ ValueRel recs nextRecs :=
-      recursiveClosures_related location captured nextCaptured functions captures
+      recursive_bundle_related location captured nextCaptured functions nextFunctions captures
+        (removeFuns_related functions.length captured.length functions)
     have bodyRun : evaluate [body] (recs ++ env) source = (result, sourceNext) := by
       rw [evaluate.eq_def] at run
       simp only [arityOk, ↓reduceIte] at run
