@@ -20029,6 +20029,54 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "dest_Op_thm",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/Matchers.lean",
+    "lean_name": "destOp_iff",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_op_thm_typed: the matcher result and expression arguments have the original carriers, the result payload is independently polymorphic, and the trace and operation witnesses retain both source conjuncts. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "dest_Op_Nil_thm",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/Matchers.lean",
+    "lean_name": "destOpNil_iff",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_op_nil_thm_typed: the payload is independently polymorphic and the source equivalence retains the trace and operation witnesses, empty argument list and successful underlying match. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "dest_Cons_thm",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/Matchers.lean",
+    "lean_name": "destCons_iff",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_cons_thm_typed: matching an arbitrary closure operation yields the given natural tag exactly when the operation is the corresponding constructor operation. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "dest_Constant_thm",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/Matchers.lean",
+    "lean_name": "destConstant_iff",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_constant_thm_typed, preserving the three ordered string, integer and fixed word64 alternatives and all three existential witnesses. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "dest_Const_thm",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/Matchers.lean",
+    "lean_name": "destConst_iff",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_const_thm_typed: matching an arbitrary closure operation yields the given integer exactly when the operation is that integer constant. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "fv1_EL",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartFreeVars.lean",
+    "lean_name": "fv1_el",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared fv1_el_typed: for every closure expression list and natural indices n and k, source fv1 of EL k xs together with k < LENGTH xs implies source fv n xs. The HOL EL translation is used only under the original in-bounds premise. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
     "hol_name": "fv1_ConjList",
     "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/LiftFreeVars.lean",
     "lean_name": "freeVarConjList",

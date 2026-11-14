@@ -35,6 +35,12 @@ smart_code_locs_typed=LIST_TO_BAG (code_locs [SmartOp (t :tra) (op :closLang$op)
 list_to_bag_alt_typed=∀(l :α list) (x :α). LIST_TO_BAG l x = LENGTH (FILTER ($= x) l)
 lift_exps_fv_typed=∀(xs :closLang$exp list) (n :num) (binds :closLang$exp list) (ys :closLang$exp list) (k :num) (binds2 :closLang$exp list). lift_exps xs n binds = (ys,k,binds2) ∧ n = LENGTH binds ⇒ k = LENGTH binds2 ∧ (∀(l :num). fv l binds2 ⇒ fv l xs ∨ fv l binds) ∧ ∀(l :num). fv l ys ⇒ l < k
 fv_conj_list_typed=∀(xs :closLang$exp list). fv1 (n :num) (ConjList xs) ⇔ fv n xs
+fv1_el_typed=∀(xs :closLang$exp list) (n :num) (k :num). fv1 n xs❲k❳ ∧ k < LENGTH xs ⇒ fv n xs
+dest_cons_thm_typed=dest_Cons (x :closLang$op) = SOME (i :num) ⇔ x = BlockOp (Cons i :block_op)
+dest_constant_thm_typed=dest_Constant (x :closLang$op) = SOME (i :const_part) ⇔ ∃(s :mlstring) (w :word64) (j :int). x = BlockOp (Constant (ConstStr s)) ∧ i = Str s ∨ x = BlockOp (Constant (ConstInt j)) ∧ i = Int j ∨ x = BlockOp (Constant (ConstWord64 w)) ∧ i = (W64 w :const_part)
+dest_const_thm_typed=dest_Const (x :closLang$op) = SOME (i :int) ⇔ x = IntOp (Const i)
+dest_op_nil_thm_typed=dest_Op_Nil (f :closLang$op -> α option) (x :closLang$exp) = SOME (i :α) ⇔ ∃(tra :tra) (y :closLang$op). x = Op tra y ([] :closLang$exp list) ∧ f y = SOME i
+dest_op_thm_typed=dest_Op (f :closLang$op -> α option) (x :closLang$exp) = SOME ((i :α),(ys :closLang$exp list)) ⇔ ∃(tra :tra) (y :closLang$op). x = Op tra y ys ∧ f y = SOME i
 fv_eq_pure_typed=fv1 (n :num) (eq_pure (x :closLang$exp) (y :closLang$exp)) ⇒ fv1 n x ∨ fv1 n y
 eq_op_fv_typed=eq_op (x :closLang$exp) (y :closLang$exp) = SOME (z :closLang$exp) ⇒ fv (n :num) [z] ⇒ fv n [x] ∨ fv n [y]
 smart_fv_typed=fv1 (n :num) (SmartOp (t :tra) (op :closLang$op) (xs :closLang$exp list)) ⇒ fv1 n (Op t op xs)
