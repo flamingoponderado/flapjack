@@ -11780,3 +11780,10 @@ run_probe lprefix_lub_typed_probeScript.sml lprefix_lub_typed_probe.out \
   prefix_chain_FILTER_typed prefix_chain_lprefix_chain_typed unique_lprefix_lub_typed \
   "$repo_dir/hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" \
   "$hol_dir/examples/pl-semantics/lprefix_lub"
+run_probe loop_live_proof_typed_probeScript.sml loop_live_proof_typed_probe.out \
+  dom_vars_of_exp_in_typed eval_lemma_typed eval_lemma_prime_typed get_vars_subspt_typed \
+  domain_list_delete_typed subspt_IMP_domain_typed subspt_inter_domain_cut_typed \
+  subspt_inter_union_R_typed vars_of_exp_acc_typed vars_of_exp_mono_typed \
+  mark_correct_typed optimise_correct_typed \
+  "$cake_dir/pancake/proofs/loop_liveProofScript.sml" \
+  "$cake_dir/pancake/proofs"

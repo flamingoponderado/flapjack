@@ -10411,3 +10411,14 @@ before printing, so the capture shows the body and its inferred types. The
 the lprefix_lub capture is evidence only: its audit found independent element
 type variables and curried conjunction premises that the Lean rows still share
 or curry, so those rows remain pending fixes.
+
+`loop_live_proof_typed_probe.out` (12 rows) captures the typed statements of
+the reviewed `loop_liveProofScript.sml` rows that the earlier probes did not
+cover (task 184). `loop_liveProofTheory` is built in the private copy; the
+eight exported theorems come from the theory DB and the four `[local]`
+theorems (`get_vars_subspt`, `subspt_IMP_domain`, `subspt_inter_domain_cut`,
+`subspt_inter_union_R`) are parsed from the pinned source with the shared
+splice-expanding helper. The script declares no `[local]` Overload.
+Regenerate with
+`CAKEML=<cakeml tree> HOL_PROBE_ONLY=loop_live_proof_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
