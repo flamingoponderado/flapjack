@@ -37,13 +37,14 @@ theorem inline_initial_state_rel {C F : Type} (program : List (Nat × Nat × Bvi
   have disjoint : ∀ key, sptMem key (.ln : Spt (Nat × Bvi.Exp)) → key ∉ program.map Prod.fst := by
     intro key present
     simp [sptMem, sptDomain, sptLookup] at present
-  have range := inlineAllSource_cache_subspt program .ln .ln distinct emptySubset disjoint
   have names := Proofs.inlineAll_mapFst .ln program
   have disjointSet : Disjoint {key | key ∈ program.map Prod.fst}
       (sptDomain (.ln : Spt (Nat × Bvi.Exp))) :=
     Set.disjoint_left.mpr (fun key member present => disjoint key present member)
+  have range := inlineAllCacheSubspt program .ln .ln cache output
+    ⟨run, emptySubset, disjointSet, distinct⟩
   have outputNames : output.map Prod.fst = program.map Prod.fst := by simpa [run] using names
-  have cacheSub : sptSubspt cache (sptFromAList output) := by simpa [run, sptUnion] using range
+  have cacheSub : sptSubspt cache (sptFromAList output) := by simpa [sptUnion] using range
   have domains : sptDomain (sptFromAList output) = sptDomain (sptFromAList program) := by
     funext key
     apply propext

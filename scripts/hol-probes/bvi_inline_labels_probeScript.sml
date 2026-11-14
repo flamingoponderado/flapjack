@@ -536,3 +536,6 @@ val _ = show "exp_rel_mono_list_typed" bvi_inlineProofTheory.exp_rel_mono_list;
 val _ = show "exp_rel_rules_typed" bvi_inlineProofTheory.exp_rel_rules;
 val _ = show "exp_rel_cases_typed" bvi_inlineProofTheory.exp_rel_cases;
 val _ = show "exp_rel_ind_typed" bvi_inlineProofTheory.exp_rel_ind;
+
+(* Capture the exported original cache-inclusion theorem with inferred types. *)
+val _ = show "inline_all_cache_subspt_typed" bvi_inlineProofTheory.inline_all_cache_subspt;

@@ -11,7 +11,7 @@ namespace Flapjack.Compiler.Backend.BviInline
 
 /-- Flapjack infrastructure: a label absent from the input program is not
 changed in the threaded inliner cache. -/
-theorem inlineAllSource_cache_untouched (program : List (Nat × Nat × Bvi.Exp))
+private theorem inlineAllSource_cache_untouched (program : List (Nat × Nat × Bvi.Exp))
     (cache : Spt (Nat × Bvi.Exp)) (key : Nat) (absent : key ∉ program.map Prod.fst) :
     sptLookup key (inlineAllSource cache program).1 = sptLookup key cache := by
   induction program generalizing cache with
@@ -27,7 +27,7 @@ theorem inlineAllSource_cache_untouched (program : List (Nat × Nat × Bvi.Exp))
 
 /-- Flapjack infrastructure: a newly cached label with distinct input names
 has exactly the corresponding transformed output entry. -/
-theorem inlineAllSource_lookup_new (program : List (Nat × Nat × Bvi.Exp))
+private theorem inlineAllSource_lookup_new (program : List (Nat × Nat × Bvi.Exp))
     (cache : Spt (Nat × Bvi.Exp)) (key : Nat) (value : Nat × Bvi.Exp)
     (distinct : (program.map Prod.fst).Nodup) (fresh : sptLookup key cache = none)
     (found : sptLookup key (inlineAllSource cache program).1 = some value) :
@@ -65,20 +65,30 @@ theorem inlineAllSource_lookup_new (program : List (Nat × Nat × Bvi.Exp))
       have tail := ih cache' distinct'.2 fresh' found
       simpa [sptAListLookup, same] using tail
 
-/-- Flapjack infrastructure: after inlining distinct, fresh program labels,
-the resulting wrapper cache is contained in the old code plus new output. -/
-theorem inlineAllSource_cache_subspt (program : List (Nat × Nat × Bvi.Exp))
-    (cache base : Spt (Nat × Bvi.Exp)) (distinct : (program.map Prod.fst).Nodup)
-    (initialSub : sptSubspt cache base)
-    (disjoint : ∀ key, sptMem key base → key ∉ program.map Prod.fst) :
-    sptSubspt (inlineAllSource cache program).1 (sptUnion base (sptFromAList (inlineAllSource cache program).2)) := by
+/-- The final inlining cache is contained in the old code plus the inlined
+output when the original program has distinct, fresh labels. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "inline_all_cache_subspt"]
+theorem inlineAllCacheSubspt (program : List (Nat × Nat × Bvi.Exp))
+    (cache base finalCache : Spt (Nat × Bvi.Exp)) (output : List (Nat × Nat × Bvi.Exp))
+    (premises : inlineAllSource cache program = (finalCache, output) ∧
+      sptSubspt cache base ∧ Disjoint {key | key ∈ program.map Prod.fst} (sptDomain base) ∧
+      (program.map Prod.fst).Nodup) :
+    sptSubspt finalCache (sptUnion base (sptFromAList output)) := by
+  obtain ⟨compiled, initialSub, disjoint, distinct⟩ := premises
+  have cacheEq : (inlineAllSource cache program).1 = finalCache := congrArg Prod.fst compiled
+  have outputEq : (inlineAllSource cache program).2 = output := congrArg Prod.snd compiled
+  subst finalCache
+  subst output
+  have fresh : ∀ key, sptMem key base → key ∉ program.map Prod.fst := by
+    intro key present member
+    exact Set.disjoint_left.mp disjoint member present
   rw [sptSubsptLookup] at initialSub ⊢
   intro key value found
   by_cases inProgram : key ∈ program.map Prod.fst
   · have baseAbsent : sptLookup key base = none := by
       cases lookup : sptLookup key base with
       | none => rfl
-      | some value => exact False.elim (disjoint key ((sptMem_iff_lookup key base).2 ⟨value, lookup⟩) inProgram)
+      | some value => exact False.elim (fresh key ((sptMem_iff_lookup key base).2 ⟨value, lookup⟩) inProgram)
     have cacheAbsent : sptLookup key cache = none := by
       cases lookup : sptLookup key cache with
       | none => rfl

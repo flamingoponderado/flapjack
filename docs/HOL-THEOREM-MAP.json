@@ -139466,4 +139466,13 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the HOL inductive relation, exported typed rules, cases and induction theorem against all Lean constructors and carriers. The original OPTREL call rule is split into exhaustive none/none and some/some constructors; mixed handlers do not satisfy OPTREL. All remaining rules and the inline lookup, length and tick conditions match."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "inline_all_cache_subspt",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/ProgramCache.lean",
+    "lean_name": "inlineAllCacheSubspt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: the explicit inliner output equation, initial cache inclusion, disjoint program labels, distinctness, and final cache inclusion in the old-code/output union are retained."
+  }
 ]
