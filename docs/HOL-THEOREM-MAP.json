@@ -1,5 +1,13 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "get_code_labels_remove_fvs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/CodeLabels.lean",
+    "lean_name": "get_code_labels_remove_fvs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared remove_code_labels_typed: for every natural bound and full closure expression list, mapping the source get-code-labels operation over free-variable removal yields exactly the original mapped list of sets. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "renumber_code_locs_distinct_lemma",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LocationDistinct.lean",

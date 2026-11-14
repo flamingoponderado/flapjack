@@ -1104,6 +1104,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownLabelOracle
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownAddresses
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.AlistMap
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Syntax
+import Flapjack.Compiler.Backend.ClosFvs.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Arity
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Labels
 import Flapjack.Compiler.Backend.SourceToSource

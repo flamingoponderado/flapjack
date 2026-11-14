@@ -63,3 +63,4 @@ val _ = show "remove_fv_max_typed=" clos_fvsProofTheory.fv_max_remove_fvs;
 val _ = show "remove_set_globals_typed=" clos_fvsProofTheory.remove_fvs_set_globals;
 val _ = show "remove_elist_globals_typed=" clos_fvsProofTheory.remove_fvs_elist_globals;
 val _ = show "remove_esgc_free_typed=" clos_fvsProofTheory.remove_fvs_esgc_free;
+val _ = show "remove_code_labels_typed=" clos_fvsProofTheory.get_code_labels_remove_fvs;
