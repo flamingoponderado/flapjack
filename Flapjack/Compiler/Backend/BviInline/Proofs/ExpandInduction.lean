@@ -130,11 +130,22 @@ theorem step {C F : Type} (xs : List Bvi.Exp) (env : List Value) (state : BviSta
         intro returned next clock
         exact weightIH [body] (returned ++ env) next clock bodyWeight
 
-/-- Flapjack infrastructure: appending an environment cannot change a BVI
-evaluation that does not produce a type error. This source-shaped result
-remains untagged pending the evaluator and carrier review. -/
-theorem evaluate_expand_env {C F : Type} (xs : List Bvi.Exp) (env extra : List Value)
-    (state : BviState C F) (notType : (evaluate xs env state).1 ≠ .err (.abort .typeError)) :
+namespace ExpandEnvironmentCarrier
+/-- The canonical BVI reference-map representation has a roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end ExpandEnvironmentCarrier
+
+/-- Appending an environment does not change a BVI evaluation that does not
+produce a type error. The evaluator inherits the real-model assumption
+documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "evaluate_expand_env"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_expand_env {C F : Type} (xs : List Bvi.Exp) (env : List Value)
+    (state : BviState C F) (extra : List Value)
+    (notType : (evaluate xs env state).1 ≠ .err (.abort .typeError)) :
     evaluate xs (env ++ extra) state = evaluate xs env state := by
   have all : ∀ clock weight, ∀ (xs : List Bvi.Exp) (env : List Value) (state : BviState C F),
       state.clock ≤ clock → expsWeight xs ≤ weight → Property xs env state := by

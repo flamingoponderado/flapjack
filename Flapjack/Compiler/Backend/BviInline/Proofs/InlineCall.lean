@@ -70,7 +70,7 @@ theorem evaluate_inlined_call {C F : Type} (ticks name : Nat) (args : List Bvi.E
               ↓reduceIte, found, timeout] at h
             rw [BviSem.fixClock_evaluate, bodyRun] at h
             simp at h
-          have expanded := ExpandEnv.evaluate_expand_env [body] values env (BviSem.decClock (ticks + 1) middle) bodyNotType
+          have expanded := ExpandEnv.evaluate_expand_env [body] values (BviSem.decClock (ticks + 1) middle) env bodyNotType
           rw [expanded, bodyRun]
           cases result with
           | val values => rfl

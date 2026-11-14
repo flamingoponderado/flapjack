@@ -139374,4 +139374,17 @@
     ],
     "reviewer": "Compared the complete exported HOL definition and inferred-type capture: all nine relation components, cache-paired source compiler state, shared target compiler and FFI types, sparse-tree domains and lookups, and expression relation are retained. BVI refs use the canonical finite-support map with a same-module roundtrip."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "evaluate_expand_env",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/ExpandInduction.lean",
+    "lean_name": "evaluate_expand_env",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: for independent compiler and FFI types, evaluation without a type error is unchanged when an arbitrary suffix is appended to the environment, including the complete result and state. BVI refs use the canonical finite-support map with a same-module roundtrip. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  }
 ]

@@ -501,3 +501,6 @@ val _ = show "in_state_rel_find_code_replay_typed" in_state_rel_find_code_replay
 
 (* Capture the exported original inliner state relation with inferred types. *)
 val _ = show "in_state_rel_def_typed" bvi_inlineProofTheory.in_state_rel_def;
+
+(* Capture the exported original environment-extension theorem with inferred types. *)
+val _ = show "evaluate_expand_env_typed" bvi_inlineProofTheory.evaluate_expand_env;
