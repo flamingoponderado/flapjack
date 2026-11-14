@@ -84,6 +84,15 @@ theorem canonicalWrapper_iff (name arity : Nat) (body : Bvi.Exp) :
   | _ => simp [canonicalWrapper]
 
 
+
+/-- Inlining leaves every eligible wrapper unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "wrapper_ok_inline_exp"]
+theorem wrapperOk_inlineExp (name arity : Nat) (body : Bvi.Exp) (cache : Spt (Nat × Bvi.Exp))
+    (eligible : wrapperOk name arity body = true) : inlineExpSource cache body = body := by
+  have canonical : canonicalWrapper name arity body = true := eligible
+  obtain ⟨rets, ticks, worker, tag, _, rfl⟩ := (canonicalWrapper_iff name arity body).1 canonical
+  simp [inlineExpSource, inlineExpsReverse, inlineExpsGenlistVar]
+
 mutual
 private theorem tickLabels (e : Bvi.Exp) :
     getCodeLabels (removeTicksSource e) = getCodeLabels e := by
@@ -326,7 +335,7 @@ theorem inlineAll_codeLabels : ∀ cs prog,
   | cons entry rest ih =>
     rcases entry with ⟨name, arity, body⟩
     let converted := inlineExpSource cs body
-    let updated := if canonicalWrapper name arity converted then sptInsert name (arity, converted) cs else cs
+    let updated := if wrapperOk name arity converted then sptInsert name (arity, converted) cs else cs
     have bodyBound := inlineExp_codeLabels.1 cs body
     have cacheBound : cacheCodeLabels updated ⊆ getCodeLabels body ∪ cacheCodeLabels cs := by
       dsimp [updated]

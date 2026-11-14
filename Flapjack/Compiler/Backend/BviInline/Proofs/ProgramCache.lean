@@ -38,7 +38,7 @@ private theorem inlineAllSource_lookup_new (program : List (Nat × Nat × Bvi.Ex
     obtain ⟨name, arity, body⟩ := entry
     have distinct' : name ∉ rest.map Prod.fst ∧ (rest.map Prod.fst).Nodup := by simpa using distinct
     let body' := inlineExpSource cache body
-    let cache' := if canonicalWrapper name arity body' then sptInsert name (arity, body') cache else cache
+    let cache' := if wrapperOk name arity body' then sptInsert name (arity, body') cache else cache
     have step : inlineAllSource cache ((name, arity, body) :: rest) =
         ((inlineAllSource cache' rest).1, (name, arity, body') :: (inlineAllSource cache' rest).2) := by
       simp [inlineAllSource, body', cache']
@@ -47,7 +47,7 @@ private theorem inlineAllSource_lookup_new (program : List (Nat × Nat × Bvi.Ex
     · subst key
       have untouched := inlineAllSource_cache_untouched rest cache' name distinct'.1
       rw [untouched] at found
-      by_cases use : canonicalWrapper name arity body' = true
+      by_cases use : wrapperOk name arity body' = true
       · have inserted : sptLookup name cache' = some (arity, body') := by
           simp [cache', use, sptLookup_sptInsert_same]
         rw [inserted] at found

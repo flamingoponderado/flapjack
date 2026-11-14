@@ -77,7 +77,7 @@ def inlineAllSource : Spt (Nat × Exp) → List (Nat × Nat × Exp) → Spt (Nat
   | cache, [] => (cache, [])
   | cache, (name, arity, body) :: rest =>
     let body := inlineExpSource cache body
-    let cache := if canonicalWrapper name arity body then sptInsert name (arity, body) cache else cache
+    let cache := if wrapperOk name arity body then sptInsert name (arity, body) cache else cache
     let (cache, rest) := inlineAllSource cache rest
     (cache, (name, arity, body) :: rest)
 

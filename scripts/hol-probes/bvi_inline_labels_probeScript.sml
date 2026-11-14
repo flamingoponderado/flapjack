@@ -563,3 +563,7 @@ val _ = show "canonical_four_result_wrapper_typed" bvi_inlineTheory.canonical_fo
 val _ = show "malformed_wrappers_rejected_typed" bvi_inlineTheory.malformed_wrappers_rejected;
 val _ = show "canonical_zero_wrapper_eval" (EVAL ``canonical_wrapper 10 0 (bvi$LetCall 0 5 11 [] (bvi$Op (BlockOp (Cons 7)) []))``);
 val _ = show "canonical_nonvar_wrapper_eval" (EVAL ``canonical_wrapper 10 1 (bvi$LetCall 0 5 11 [bvi$Tick (bvi$Var 0)] (bvi$Op (BlockOp (Cons 7)) []))``);
+
+(* Capture the original eligibility definition and wrapper-inlining theorem. *)
+val _ = show "wrapper_ok_def_typed" bvi_inlineTheory.wrapper_ok_def;
+val _ = show "wrapper_ok_inline_exp_typed" bvi_inlineProofTheory.wrapper_ok_inline_exp;

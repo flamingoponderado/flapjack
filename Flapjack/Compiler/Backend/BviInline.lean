@@ -50,6 +50,11 @@ def canonicalWrapper (name arity : Nat) : Exp → Bool
         matchesVariables values (List.range rets).reverse
   | _ => false
 
+/-- A wrapper is eligible exactly when it has the canonical worker shape. -/
+@[hol "cakeml/compiler/backend/bvi_inlineScript.sml" "wrapper_ok_def"]
+def wrapperOk (name arity : Nat) (body : Exp) : Bool :=
+  canonicalWrapper name arity body
+
 /-- Flapjack's bounded traversal of the BVI inliner. `Proofs.Total` proves a
 sufficient bound; the total HOL definition remains to be ported and reviewed. -/
 def inlineExpFuel : Nat → Spt (Nat × Exp) → Exp → Option Exp
@@ -118,7 +123,7 @@ def inlineAllFuel (fuel : Nat) : Spt (Nat × Exp) → List (Nat × Nat × Exp) �
   | cache, [] => some (cache, [])
   | cache, (name, arity, body) :: rest => do
       let body ← inlineExpBounded fuel cache body
-      let cache := if canonicalWrapper name arity body then sptInsert name (arity, body) cache else cache
+      let cache := if wrapperOk name arity body then sptInsert name (arity, body) cache else cache
       let (cache, rest) ← inlineAllFuel fuel cache rest
       pure (cache, (name, arity, body) :: rest)
 

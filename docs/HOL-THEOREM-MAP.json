@@ -139559,4 +139559,21 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: the wrapper predicate holds exactly for the original LetCall worker and generated argument/result variable lists, with only worker inequality. The executable variable-list comparator has a kernel-checked equality characterization."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/bvi_inlineScript.sml",
+    "hol_name": "wrapper_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline.lean",
+    "lean_name": "wrapperOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL definition and inferred-type capture: eligibility is exactly the canonical-wrapper predicate. Both source-shaped and executable inlining paths call this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "wrapper_ok_inline_exp",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "wrapperOk_inlineExp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: eligible wrappers are unchanged by inlining with any cache. The proof uses the complete canonical-wrapper characterization and original variable-list inlining laws."
+  }
 ]

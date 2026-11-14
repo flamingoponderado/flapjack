@@ -37,7 +37,7 @@ theorem inlineAllSource_related_of_output (program : List (Nat × Nat × Bvi.Exp
   | cons entry rest ih =>
     obtain ⟨name, arity, body⟩ := entry
     let body' := inlineExpSource cache body
-    let cache' := if canonicalWrapper name arity body' then sptInsert name (arity, body') cache else cache
+    let cache' := if wrapperOk name arity body' then sptInsert name (arity, body') cache else cache
     have step : inlineAllSource cache ((name, arity, body) :: rest) =
         ((inlineAllSource cache' rest).1, (name, arity, body') :: (inlineAllSource cache' rest).2) := by
       simp [inlineAllSource, body', cache']
@@ -116,7 +116,7 @@ theorem inlineAllHeadNames (cache finalCache : Spt (Nat × Bvi.Exp))
     ∃ tail, output = (name, arity, inlineExpSource cache body) :: tail ∧
       tail.map Prod.fst = rest.map Prod.fst := by
   let body' := inlineExpSource cache body
-  let cache' := if canonicalWrapper name arity body' then sptInsert name (arity, body') cache else cache
+  let cache' := if wrapperOk name arity body' then sptInsert name (arity, body') cache else cache
   have step : inlineAllSource cache ((name, arity, body) :: rest) =
       ((inlineAllSource cache' rest).1, (name, arity, body') :: (inlineAllSource cache' rest).2) := by
     simp [inlineAllSource, body', cache']

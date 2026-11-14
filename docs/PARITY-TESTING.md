@@ -4,7 +4,9 @@ After replacing the BVI wrapper's expression-list comparison with a
 kernel-characterized variable-index comparison, the rebuilt `cake` matched
 the pinned CakeML compiler on all 143 fixed source-corpus cases and 40
 structured cases with backend options (seed 116834111). The comparisons
-included complete output, diagnostics, and exit status.
+included complete output, diagnostics, and exit status. The same 143 fixed
+and 40 structured cases matched again after routing both BVI inlining paths
+through the ported `wrapper_ok` definition.
 
 The source-shaped whole BVL-to-BVI pipeline now runs in the configured CakeML
 compiler. After rebuilding `cake`, all 143 fixed source corpus cases matched

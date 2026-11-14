@@ -120,7 +120,7 @@ theorem doInstall_success_rel {C F R S : Type} (args : List Value)
     rw [oracleRelation]
     simp [inCo, stateCo, oracle1, cfgNextEq]
   have head' : compiled = (key, arity, inlineExpSource cache body) ::
-      (inlineAllSource (if canonicalWrapper key arity (inlineExpSource cache body) then
+      (inlineAllSource (if wrapperOk key arity (inlineExpSource cache body) then
         sptInsert key (arity, inlineExpSource cache body) cache else cache) rest).2 := by
     simp [compiled, code, inlineAllSource]
   have targetRun : doInstall (R := S) args target =
@@ -128,7 +128,7 @@ theorem doInstall_success_rel {C F R S : Type} (args : List Value)
         code := sptUnion target.code (sptFromAList compiled)
         compileOracle := fun n => target.compileOracle (n + 1) }) := by
     have targetUniqueHead : (((key, arity, inlineExpSource cache body) ::
-        (inlineAllSource (if canonicalWrapper key arity (inlineExpSource cache body) then
+        (inlineAllSource (if wrapperOk key arity (inlineExpSource cache body) then
           sptInsert key (arity, inlineExpSource cache body) cache else cache) rest).2).map Prod.fst).Nodup := by
       rw [← head']
       exact targetUnique
