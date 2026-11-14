@@ -78,13 +78,15 @@ theorem crepDest2ExpHOL_bound {width : Nat} [NeZero width] :
   rw [hlog]; omega
 
 /-- Exact HOL `dest_2exp_bound'` (`crep_arithProofScript.sml:40-62`):
-    `∀n w m. dest_2exp 0 w = SOME m ⇒ m < dimindex(:'a)` (HOL's unused binder
-    `n` is kept). -/
+    `∀n w m. dest_2exp 0 w = SOME m ⇒ m < dimindex(:'a)`. HOL's unused binder
+    `n` is retained with its own independent type variable, as HOL infers
+    `n : β` (it occurs nowhere else in the statement). -/
 @[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "dest_2exp_bound'"
   (words_as_type_indexed_bitvec)]
 theorem crepDest2ExpHOL_bound' {width : Nat} [NeZero width] :
-    ∀ (_n : Nat) (w : BitVec width) (m : Nat), crepDest2ExpHOL 0 w = some m → m < width := by
-  intro _ w m h
+    ∀ {β : Type} (_n : β) (w : BitVec width) (m : Nat),
+      crepDest2ExpHOL 0 w = some m → m < width := by
+  intro _ _ w m h
   simpa using (crepDest2ExpHOL_value h).2.1
 
 /-- Exact HOL `eval_mul_const` (`crep_arithProofScript.sml:70-91`):
