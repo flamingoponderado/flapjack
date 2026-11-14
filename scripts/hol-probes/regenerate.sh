@@ -11739,3 +11739,12 @@ run_probe gen_gc_partial_local_typed_probeScript.sml gen_gc_partial_local_typed_
   gc_move_data_r1_typed \
   "$cake_dir/compiler/backend/gc/gen_gc_partialScript.sml" \
   "$cake_dir/compiler/backend/gc"
+run_probe flat_pattern_typed_probeScript.sml flat_pattern_typed_probe.out \
+  compile_pats_def_typed sum_string_ords_def_typed dec_name_to_num_def_typed \
+  enc_num_to_name_aux_def_typed enc_num_to_name_def_typed max_dec_name_def_typed \
+  op_sets_globals_def_typed decode_pos_def_typed simp_guard_def_typed decode_guard_def_typed \
+  decode_dtree_def_typed encode_pat_def_typed compile_pat_bindings_def_typed \
+  compile_pat_rhs_def_typed naive_pattern_match_def_typed naive_pattern_matches_def_typed \
+  compile_dec_def_typed \
+  "$cake_dir/compiler/backend/flat_patternScript.sml" \
+  "$cake_dir/compiler/backend"
