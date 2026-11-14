@@ -16661,6 +16661,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "v_rel_simps",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Relations.lean",
+    "lean_name": "valueRel_simps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all nine conjuncts of value_rel_simps_typed, including common target and Boolean flag, independent same-spelled variables at different types, fixed word and byte widths, both closure relations and their existential binder order. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
     "hol_name": "simple_state_rel",
     "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Primitive.lean",
     "lean_name": "stateRelSimple",

@@ -16,6 +16,7 @@ val _ = show "compile_inc_typed=" clos_fvsTheory.compile_inc_def;
 val _ = show "code_rel_typed=" clos_fvsProofTheory.code_rel_def;
 val _ = show "function_rel_typed=" clos_fvsProofTheory.f_rel_def;
 val _ = show "value_rel_typed=" clos_fvsProofTheory.v_rel_rules;
+val _ = show "value_rel_simps_typed=" clos_fvsProofTheory.v_rel_simps;
 val _ = show "ref_rel_typed=" clos_fvsProofTheory.ref_rel_rules;
 val _ = show "state_rel_typed=" clos_fvsProofTheory.state_rel_def;
 val bytes_list_replay = Q.prove (
