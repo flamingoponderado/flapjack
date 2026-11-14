@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "has_install_list_eq",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/NoInstallInit.lean",
+    "lean_name": "hasInstallList_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the closed has_install_list_eq_replay_typed, the universally quantified expression list and both directions of the existential equivalence, and all recursive installation-test clauses and expression carriers. Independently replayed the local HOL proof. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
     "hol_name": "opt_interp_lemma",
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/Globals.lean",
     "lean_name": "optInterp_lemma",

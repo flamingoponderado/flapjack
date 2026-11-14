@@ -10,6 +10,15 @@ state carriers remain pending HOL correspondence review. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL Flapjack.Compiler.Backend.BackendProps
 
+/-- A list contains an installation exactly when one of its expressions does. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "has_install_list_eq"]
+theorem hasInstallList_eq (expressions : List ClosLang.Exp) :
+    ClosLang.hasInstallList expressions = true ↔
+      ∃ expression ∈ expressions, ClosLang.hasInstall expression = true := by
+  induction expressions with
+  | nil => simp [ClosLang.hasInstallList]
+  | cons expression rest ih => simp [ClosLang.hasInstallList, ih]
+
 /-- The empty code store contains no installation body. -/
 theorem emptyCode_noInstall : codeNoInstall HolFiniteMapExact.empty := by
   intro location arity body found

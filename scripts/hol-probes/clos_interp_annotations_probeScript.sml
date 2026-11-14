@@ -23,3 +23,7 @@ val opt_interp_lemma_replay = Q.prove (
   Cases \\ fs [can_interpret_op_def,op_gbag_def] \\
   Cases_on `g` \\ fs [can_interpret_op_def,op_gbag_def]);
 val _ = show_thm "opt_interp_lemma_replay_typed=" opt_interp_lemma_replay;
+val has_install_list_eq_replay = Q.prove (
+  `∀xs. has_install_list xs ⇔ EXISTS has_install xs`,
+  Induct \\ fs [has_install_def]);
+val _ = show_thm "has_install_list_eq_replay_typed=" has_install_list_eq_replay;
