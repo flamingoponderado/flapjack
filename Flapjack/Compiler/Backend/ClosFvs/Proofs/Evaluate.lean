@@ -504,18 +504,6 @@ theorem evaluate_remove_fvs_let {C F : Type} (trace : BackendCommon.Tra)
         rw [evaluate, fixClock_evaluate, targetRun]
         exact targetBodyRun
 
-/-- The value relation preserves the Boolean observation used by conditionals. -/
-theorem valueRel_asBool {left right : Value} (related : ValueRel left right) :
-    asBool left = asBool right := by
-  cases related with
-  | block tag left right entries =>
-    cases entries with
-    | nil => rfl
-    | cons head tail => cases tag <;> simp [asBool]
-  | number _ | word64 _ | byteVector _ | refPtr _ _ => rfl
-  | closure => rfl
-  | recclosure => rfl
-
 /-- Conditional evaluation preserves both Boolean branches and the
 type-error result for a non-Boolean condition. -/
 @[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "evaluate_remove_fvs"
@@ -583,7 +571,7 @@ theorem evaluate_remove_fvs_if {C F : Type} (trace : BackendCommon.Tra)
         | cons valueRel tailRel =>
           cases tailRel
           rename_i targetValue
-          have boolEq : asBool value = asBool targetValue := valueRel_asBool valueRel
+          have boolEq : asBool value = asBool targetValue := ClosProps.PrimitiveBoolean.simpleValRel_asBool ValueRel valueRelSimple value targetValue valueRel
           cases decision : asBool value with
           | none =>
             have targetDecision : asBool targetValue = none := boolEq.symm.trans decision
