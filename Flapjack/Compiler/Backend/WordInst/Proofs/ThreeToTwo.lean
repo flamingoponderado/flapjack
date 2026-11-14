@@ -12,10 +12,10 @@ Counterpart of `cakeml/compiler/backend/proofs/word_instProofScript.sml:985-1254
 `locals_rel_cut_envs_local`, `three_to_two_reg_Loop`, `three_to_two_reg_correct` and
 `evaluate_three_to_two_reg_prog`, over the exact wordSem evaluator.
 
-HOL's `distinct_tar_reg` on the wordLang instruction carrier is rendered by the
-clause-for-clause `distinctTarReg` of `Flapjack.Pancake.WordConvs` (untagged only
-because its own binder admits width zero); every use below instantiates it at the
-positive width of the surrounding theorem.
+HOL's `distinct_tar_reg` is the reviewed exact `distinctTarRegExact` of
+`Flapjack.Pancake.WordConvs` (tagged `distinct_tar_reg_def` over the positive-width
+`HolInst` carrier); every use below applies it through `HolInst.ofWordLangInst`,
+the native instruction codec.
 -/
 
 namespace Flapjack
@@ -115,14 +115,16 @@ theorem getVar_insert_ne (s : WordSemStateFiniteExact width C F) (r1 r : Nat) (v
 set_option linter.unusedSimpArgs false in
 theorem ttr_binop (bop : BinOp) (r1 r2 : Nat) (ri : WordRegImm (BitVec width))
     (s s' : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))
-    (hd : distinctTarReg (WordLangInst.arith (.binop bop r1 r2 ri)) = true)
+    (hd : distinctTarRegExact
+      (HolInst.ofWordLangInst (WordLangInst.arith (.binop bop r1 r2 ri))) = true)
     (he : evaluate (.inst (.arith (.binop bop r1 r2 ri))) s = (res, s'))
     (herr : res ≠ some .error) :
     evaluate (.seq (.move 0 [(r1, r2)]) (.inst (.arith (.binop bop r1 r1 ri)))) s = (res, s') := by
   rw [evaluate_inst_eq] at he
   cases ri with
   | reg r =>
-    simp only [distinctTarReg, decide_eq_true_eq] at hd
+    simp only [distinctTarRegExact, HolInst.ofWordLangInst, HolArith.ofWordLangArith,
+      HolRegImm.ofWordRegImm, decide_eq_true_eq] at hd
     simp only [inst, assign] at he
     rcases hw : wordExp s (.op bop [.var r2, .var r]) with _ | w
     · simp [hw] at he; exact absurd he.1.symm herr
@@ -164,7 +166,8 @@ theorem wordExp_shift_congr (s1 s2 : WordSemStateFiniteExact width C F) (sh : Sh
 set_option linter.unusedSimpArgs false in
 theorem ttr_shift (sh : Shift) (r1 r2 : Nat) (ri : WordRegImm (BitVec width))
     (s s' : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))
-    (hd : distinctTarReg (WordLangInst.arith (.shift sh r1 r2 ri)) = true)
+    (hd : distinctTarRegExact
+      (HolInst.ofWordLangInst (WordLangInst.arith (.shift sh r1 r2 ri))) = true)
     (he : evaluate (.inst (.arith (.shift sh r1 r2 ri))) s = (res, s'))
     (herr : res ≠ some .error) :
     evaluate (.seq (.move 0 [(r1, r2)]) (.inst (.arith (.shift sh r1 r1 ri)))) s = (res, s') := by
@@ -182,7 +185,8 @@ theorem ttr_shift (sh : Shift) (r1 r2 : Nat) (ri : WordRegImm (BitVec width))
     exact hg.symm
   cases ri with
   | reg r =>
-    simp only [distinctTarReg, decide_eq_true_eq] at hd
+    simp only [distinctTarRegExact, HolInst.ofWordLangInst, HolArith.ofWordLangArith,
+      HolRegImm.ofWordRegImm, decide_eq_true_eq] at hd
     simp only [inst, assign] at he ⊢
     rw [hE (.var r) (by rw [wordExp, wordExp, getVar_insert_ne s r1 r _ hd])]
     rcases hw : wordExp s (.shift sh (.var r2) (.var r)) with _ | w
@@ -258,23 +262,27 @@ theorem ttr_call_some {width : Nat} [NeZero width] {C : Type} {F : Type}
     (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
     (s : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))
     (s' : WordSemStateFiniteExact width C F)
-    (hd : everyInst distinctTarReg (.call (some (n, names, retHandler, l1, l2)) dest args handler) = true)
+    (hd : everyInst (fun i => distinctTarRegExact (HolInst.ofWordLangInst i))
+      (.call (some (n, names, retHandler, l1, l2)) dest args handler) = true)
     (he : evaluate (.call (some (n, names, retHandler, l1, l2)) dest args handler) s = (res, s'))
     (herr : res ≠ some .error)
     (ihr : ∀ (s : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))
       (s' : WordSemStateFiniteExact width C F),
-      everyInst distinctTarReg retHandler = true ∧ evaluate retHandler s = (res, s') ∧
-        res ≠ some .error → evaluate (threeToTwoReg retHandler) s = (res, s'))
+      everyInst (fun i => distinctTarRegExact (HolInst.ofWordLangInst i)) retHandler = true ∧
+        evaluate retHandler s = (res, s') ∧ res ≠ some .error →
+        evaluate (threeToTwoReg retHandler) s = (res, s'))
     (ihh : ∀ (n' : Nat) (hp : WordLangProgHOL (BitVec width)) (l1' l2' : Nat),
       handler = some (n', hp, l1', l2') →
       ∀ (s : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))
         (s' : WordSemStateFiniteExact width C F),
-        everyInst distinctTarReg hp = true ∧ evaluate hp s = (res, s') ∧ res ≠ some .error →
-        evaluate (threeToTwoReg hp) s = (res, s')) :
+        everyInst (fun i => distinctTarRegExact (HolInst.ofWordLangInst i)) hp = true ∧
+          evaluate hp s = (res, s') ∧ res ≠ some .error →
+          evaluate (threeToTwoReg hp) s = (res, s')) :
     evaluate (threeToTwoReg (.call (some (n, names, retHandler, l1, l2)) dest args handler)) s =
       (res, s') := by
   have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
-  have hdr : everyInst distinctTarReg retHandler = true := by
+  have hdr : everyInst (fun i => distinctTarRegExact (HolInst.ofWordLangInst i))
+      retHandler = true := by
     rcases handler with _ | ⟨_, _, _, _⟩ <;>
       simp only [everyInst, Bool.and_eq_true] at hd <;> first | exact hd | exact hd.1
   have hsel : threeToTwoReg (.call (some (n, names, retHandler, l1, l2)) dest args handler) =
@@ -331,7 +339,8 @@ theorem ttr_call_some {width : Nat} [NeZero width] {C : Type} {F : Type}
     | none => exact he
     | some hdl =>
       obtain ⟨n', hprog, l1', l2'⟩ := hdl
-      have hdh : everyInst distinctTarReg hprog = true := by
+      have hdh : everyInst (fun i => distinctTarRegExact (HolInst.ofWordLangInst i))
+          hprog = true := by
         simp only [everyInst, Bool.and_eq_true] at hd
         exact hd.2
       simp only [Option.map_some] at he ⊢
@@ -354,7 +363,8 @@ set_option linter.unusedSimpArgs false in
 theorem three_to_two_reg_correct {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (s' : WordSemStateFiniteExact width C F),
-      everyInst distinctTarReg prog = true ∧ evaluate prog s = (res, s') ∧ res ≠ some .error →
+      everyInst (fun i => distinctTarRegExact (HolInst.ofWordLangInst i)) prog = true ∧
+        evaluate prog s = (res, s') ∧ res ≠ some .error →
       evaluate (threeToTwoReg prog) s = (res, s')
   | .inst i, s, res, s', ⟨hd, he, herr⟩ => by
       simp only [everyInst] at hd
@@ -364,21 +374,24 @@ theorem three_to_two_reg_correct {width : Nat} [NeZero width] {C : Type} {F : Ty
         | binop bop r1 r2 ri => exact ttr_binop bop r1 r2 ri s s' res hd he herr
         | shift sh r1 r2 ri => exact ttr_shift sh r1 r2 ri s s' res hd he herr
         | addCarry r1 r2 r3 r4 =>
-          simp only [distinctTarReg, decide_eq_true_eq] at hd
+          simp only [distinctTarRegExact, HolInst.ofWordLangInst, HolArith.ofWordLangArith,
+      HolRegImm.ofWordRegImm, decide_eq_true_eq] at hd
           rcases hg : getVar r2 s with _ | v
           · rw [evaluate_inst_eq] at he
             simp [inst, WordSemStateFiniteExact.getVars, hg] at he
             exact absurd he.1.symm herr
           exact ttr_inst3 _ _ r1 r2 s v hg (ttr_addCarry_inst r1 r2 r3 r4 s v hg hd) s' res he herr
         | addOverflow r1 r2 r3 r4 =>
-          simp only [distinctTarReg, decide_eq_true_eq] at hd
+          simp only [distinctTarRegExact, HolInst.ofWordLangInst, HolArith.ofWordLangArith,
+      HolRegImm.ofWordRegImm, decide_eq_true_eq] at hd
           rcases hg : getVar r2 s with _ | v
           · rw [evaluate_inst_eq] at he
             simp [inst, WordSemStateFiniteExact.getVars, hg] at he
             exact absurd he.1.symm herr
           exact ttr_inst3 _ _ r1 r2 s v hg (ttr_addOverflow_inst r1 r2 r3 r4 s v hg hd) s' res he herr
         | subOverflow r1 r2 r3 r4 =>
-          simp only [distinctTarReg, decide_eq_true_eq] at hd
+          simp only [distinctTarRegExact, HolInst.ofWordLangInst, HolArith.ofWordLangArith,
+      HolRegImm.ofWordRegImm, decide_eq_true_eq] at hd
           rcases hg : getVar r2 s with _ | v
           · rw [evaluate_inst_eq] at he
             simp [inst, WordSemStateFiniteExact.getVars, hg] at he
@@ -509,7 +522,8 @@ decreasing_by
 theorem evaluate_three_to_two_reg_prog {width : Nat} [NeZero width] {C : Type} {F : Type}
     (prog : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
     (res : Option (WordSemResult width)) (s' : WordSemStateFiniteExact width C F) (t : Bool) :
-    evaluate prog s = (res, s') ∧ res ≠ some .error ∧ everyInst distinctTarReg prog = true →
+    evaluate prog s = (res, s') ∧ res ≠ some .error ∧
+      everyInst (fun i => distinctTarRegExact (HolInst.ofWordLangInst i)) prog = true →
     evaluate (threeToTwoRegProg t prog) s = (res, s') := by
   rintro ⟨he, herr, hd⟩
   cases t

@@ -8,6 +8,13 @@ public import Batteries.Data.List.Basic
 /-! List relation results from HOL list. -/
 namespace Flapjack
 
+/-- Exact port of HOL `oHD` (`HOL/src/list/src/listScript.sml:5474`): the head
+    of a list, if any. -/
+@[hol "HOL/src/list/src/listScript.sml" "oHD_def"]
+def oHD {α : Type} : List α → Option α
+  | [] => none
+  | head :: _ => some head
+
 /-- Updating corresponding positions with related values preserves the list relation. -/
 @[hol "HOL/src/list/src/listScript.sml" "EVERY2_LUPDATE_same"]
 theorem forall₂_set {α β : Type} (relation : α → β → Prop)

@@ -14,8 +14,9 @@ premises. The canonical producer observation qualifier records only finite-map r
 @[hol "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "structure_size_to_fmap"
   (fmap_as_finite_support_result_observations := [Flapjack.Misc.BalancedMap.toFmap])]
 theorem structureSizeToFmap {κ ν : Type} (cmp : κ → κ → Ordering)
-    (tree : Map κ ν) (hgood : goodCmp cmp) (hinv : invariant cmp tree) :
+    (tree : Map κ ν) (h : goodCmp cmp ∧ invariant cmp tree) :
     (Flapjack.Misc.BalancedMap.toFmap cmp tree).card = structureSize tree := by
+  obtain ⟨hgood, hinv⟩ := h
   classical
   induction tree with
   | tip => simp [toFmap, structureSize]
@@ -39,7 +40,8 @@ full semantic-domain induction. The same actual-domain FCARD translation is used
 @[hol "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "size_thm"
   (fmap_as_finite_support_result_observations := [Flapjack.Misc.BalancedMap.toFmap])]
 theorem sizeThm {κ ν : Type} (cmp : κ → κ → Ordering) (tree : Map κ ν)
-    (hgood : goodCmp cmp) (hinv : invariant cmp tree) :
+    (h : goodCmp cmp ∧ invariant cmp tree) :
     size tree = (Flapjack.Misc.BalancedMap.toFmap cmp tree).card := by
-  rw [structureSizeThm cmp tree hinv, structureSizeToFmap cmp tree hgood hinv]
+  obtain ⟨hgood, hinv⟩ := h
+  rw [structureSizeThm cmp tree hinv, structureSizeToFmap cmp tree ⟨hgood, hinv⟩]
 end Flapjack.Misc.BalancedMap

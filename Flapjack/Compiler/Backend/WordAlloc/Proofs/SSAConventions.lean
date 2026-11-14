@@ -12,8 +12,10 @@ public import Flapjack.Pancake.WordConvs
 
 /-! Original SSA reconciliation convention group from word_allocProof. -/
 namespace Flapjack.WordAlloc
+open Flapjack.Compiler.Encoders.Asm
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
 
+set_option linter.unusedSimpArgs false in
 /-- Original four conventions for both fake-move outputs. No freshness,
 map validity, or register bound is assumed by the HOL statement. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
@@ -36,7 +38,8 @@ theorem fakeMoves_conventions {width : Nat} [NeZero width]
       simp only [fakeMoves, he]
       cases hl : sptLookup x left <;> cases hr : sptLookup x right <;>
         simp_all [fakeMove, everyStackVarHOL, callArgConventionHOL,
-          instArgConvention]
+          instArgConventionExact, HolInst.ofWordLangInst, HolArith.ofWordLangArith,
+          HolRegImm.ofWordRegImm]
 
 /-- Original conventions for the actual reconciliation result, including
 both initial merge moves and subsequent fake moves. -/
@@ -73,7 +76,8 @@ theorem fakeSeq_preAllocConventions {width : Nat} [NeZero width] (ls : List Nat)
   | nil => simp [preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
   | cons x xs ih =>
       simpa [preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL,
-        fakeMove, instArgConvention] using ih
+        fakeMove, instArgConventionExact, HolInst.ofWordLangInst,
+        HolArith.ofWordLangArith, HolRegImm.ofWordRegImm] using ih
 
 /-- Original loop setup implication, retaining its actual output equation. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"

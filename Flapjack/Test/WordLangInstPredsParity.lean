@@ -22,6 +22,7 @@ the oracle fixture.
 namespace Flapjack.Test.WordLangInstPredsParity
 
 open Flapjack
+open Flapjack.Compiler.Encoders.Asm
 
 private abbrev W := BitVec 8
 
@@ -57,14 +58,14 @@ private def loopOk : WordLangProgHOL W := .loop emptySet (.inst instSkipInst) em
 private def allocProg : WordLangProgHOL W := .alloc 0 cutsets
 
 -- 15 kernel-checked rows matching the HOL oracle.
-example : distinctTarReg binopSame = false := by decide
-example : distinctTarReg binopDiff = true := by decide
-example : distinctTarReg addCarrySame = false := by decide
-example : distinctTarReg instSkipInst = true := by decide
+example : distinctTarRegExact (HolInst.ofWordLangInst binopSame) = false := by decide
+example : distinctTarRegExact (HolInst.ofWordLangInst binopDiff) = true := by decide
+example : distinctTarRegExact (HolInst.ofWordLangInst addCarrySame) = false := by decide
+example : distinctTarRegExact (HolInst.ofWordLangInst instSkipInst) = true := by decide
 
-example : twoRegInst binopTwoSame = true := by decide
-example : twoRegInst binopTwoDiff = false := by decide
-example : twoRegInst instSkipInst = true := by decide
+example : twoRegInstExact (HolInst.ofWordLangInst binopTwoSame) = true := by decide
+example : twoRegInstExact (HolInst.ofWordLangInst binopTwoDiff) = false := by decide
+example : twoRegInstExact (HolInst.ofWordLangInst instSkipInst) = true := by decide
 
 example : everyInst isSkip instSkip = true := by decide
 example : everyInst isSkip instConst = false := by decide
@@ -75,13 +76,13 @@ example : everyInst isSkip callRetOk = true := by decide
 example : everyInst isSkip loopOk = true := by decide
 example : everyInst isSkip allocProg = true := by decide
 
-#guard distinctTarReg binopSame == false
-#guard distinctTarReg binopDiff == true
-#guard distinctTarReg addCarrySame == false
-#guard distinctTarReg instSkipInst == true
-#guard twoRegInst binopTwoSame == true
-#guard twoRegInst binopTwoDiff == false
-#guard twoRegInst instSkipInst == true
+#guard distinctTarRegExact (HolInst.ofWordLangInst binopSame) == false
+#guard distinctTarRegExact (HolInst.ofWordLangInst binopDiff) == true
+#guard distinctTarRegExact (HolInst.ofWordLangInst addCarrySame) == false
+#guard distinctTarRegExact (HolInst.ofWordLangInst instSkipInst) == true
+#guard twoRegInstExact (HolInst.ofWordLangInst binopTwoSame) == true
+#guard twoRegInstExact (HolInst.ofWordLangInst binopTwoDiff) == false
+#guard twoRegInstExact (HolInst.ofWordLangInst instSkipInst) == true
 #guard everyInst isSkip instSkip == true
 #guard everyInst isSkip instConst == false
 #guard everyInst isSkip opCurrHeap == false
@@ -93,13 +94,13 @@ example : everyInst isSkip allocProg = true := by decide
 
 def runChecks : IO Bool := do
   let checks :=
-    [ (distinctTarReg binopSame == false,
+    [ (distinctTarRegExact (HolInst.ofWordLangInst binopSame) == false,
         "PASS wordConvs distinct_tar_reg rejects targeting the source register")
-    , (distinctTarReg addCarrySame == false,
+    , (distinctTarRegExact (HolInst.ofWordLangInst addCarrySame) == false,
         "PASS wordConvs distinct_tar_reg excludes the source registers for AddCarry")
-    , (twoRegInst binopTwoSame == true,
+    , (twoRegInstExact (HolInst.ofWordLangInst binopTwoSame) == true,
         "PASS wordConvs two_reg_inst accepts equal source/destination")
-    , (twoRegInst binopTwoDiff == false,
+    , (twoRegInstExact (HolInst.ofWordLangInst binopTwoDiff) == false,
         "PASS wordConvs two_reg_inst rejects distinct source/destination")
     , (everyInst isSkip callHandlerBad == true,
         "PASS wordConvs every_inst ignores a handler without return metadata")

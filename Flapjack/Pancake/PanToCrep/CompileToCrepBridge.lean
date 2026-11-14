@@ -6,10 +6,13 @@ public import Flapjack.Pancake.PanToCrep.CompileProg
 @[expose] public section
 
 /-!
-Byte-ranged bridge between the production declaration-only compiler
-`compileToCrepHOL` and the tagged exact `compileToCrepExactHOLW`
-(bead flapjack-tlht).  Flapjack-specific infrastructure: no HOL original,
-so no `@[hol]` tag; the transport codecs are documented beside each lemma.
+Transport lemmas used to compare the String/Shape production carriers with the
+tagged exact MlString/ShapeHOL/BitVec carriers (bead flapjack-tlht).  They
+support the byte-ranged bridge over `alist_to_fmap`/`FUPDATE_LIST`, the
+make-funcs and make-vmap tables, and the declaration codec; the executed
+pan-to-crep route runs the exact `compileToCrepExactHOLW` directly.
+Flapjack-specific infrastructure: no HOL original, so no `@[hol]` tag; the
+transport codecs are documented beside each lemma.
 -/
 
 namespace Flapjack

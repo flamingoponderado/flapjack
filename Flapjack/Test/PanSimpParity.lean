@@ -3,6 +3,7 @@ module
 public import Flapjack.Pancake.PanSimp
 public import Flapjack.Pancake.Proofs.PanSimp
 public import Flapjack.Pancake.PanGlobals
+public import Flapjack.Pancake.Semantics.PanProps
 
 -- Checks below run compiled code from these modules.
 public meta import Flapjack.Pancake.PanGlobals
@@ -13,6 +14,7 @@ public meta import Flapjack.Pancake.Proofs.PanSimp
 namespace Flapjack.Test.PanSimpParity
 
 open Flapjack
+open Flapjack.Pancake.PanLang
 
 theorem smart_seq_skip_skip :
     smartSeq (.skip : Prog Nat) .skip = .skip := by
@@ -222,17 +224,30 @@ def functionsCompileProgParity : Bool :=
 #guard functionsCompileProgParity
 
 /-! Counterpart of Cake's `functions_eq_FILTER`
-    (`panPropsScript.sml:1487`): the function table is the filter-map of the
-    function declarations. -/
-theorem functions_eq_filterMap_fixture :
-    functions compileProgDeclsFixture =
-      compileProgDeclsFixture.filterMap (fun declaration =>
-        match declaration with
-        | .function function =>
-            some (function.name, function.params, function.body,
-              function.returnShape)
-        | _ => none) :=
-  functions_eq_filterMap compileProgDeclsFixture
+    (`panPropsScript.sml:1487`) over the exact `DeclHOL`/`MlString` carrier.
+    The production-carrier `functions_eq_filterMap` duplicate was retired in
+    task 156; the tagged `functionsHOL_eq_FILTER` carries the HOL name. -/
+abbrev MlS := Flapjack.Pancake.PanLang.MlS
+
+def nm (s : String) : MlS := Flapjack.Basis.Pure.MlString.ofString s
+
+def compileProgDeclsHOLFixture : List (DeclHOL 8) :=
+  [.decl ShapeHOL.one (nm "g") (.const (BitVec.ofNat 8 7)),
+   .function
+     { name := nm "f", inline := false, exported := false, params := [],
+       body := .seq .skip .tick, returnShape := ShapeHOL.one }]
+
+theorem functionsHOL_eq_FILTER_fixture :
+    functionsHOL compileProgDeclsHOLFixture =
+      (compileProgDeclsHOLFixture.filter isFunctionHOL).map
+        (fun declaration =>
+          match declaration with
+          | .function function =>
+              (function.name, function.params, function.body, function.returnShape)
+          | _ =>
+              (Flapjack.Basis.Pure.MlString.ofString "", [], ProgHOL.skip,
+                ShapeHOL.one)) :=
+  functionsHOL_eq_FILTER compileProgDeclsHOLFixture
 
 def functionsFilterMapGuard : Bool :=
   (functions compileProgDeclsFixture).length == 1

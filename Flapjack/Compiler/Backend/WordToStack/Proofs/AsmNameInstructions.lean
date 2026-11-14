@@ -80,7 +80,8 @@ theorem arithmeticName {width : Nat} [NeZero width] (conf : AsmConfigExact width
     (room : frame.1 + 1 < conf.regCount - conf.avoidRegs.length)
     (minimum : 4 < frame.1)
     (physical : everyVarInstHOL isPhyVar (.arith instruction) = true)
-    (convention : instArgConvention (.arith instruction) = true)
+    (convention : instArgConventionExact
+      (HolInst.ofWordLangInst (.arith instruction)) = true)
     (valid : instOkLessExact conf (.arith (HolArith.ofWordLangArith instruction)) = true)
     (twoReg : conf.twoRegArith = true →
       twoRegInstExact (.arith (HolArith.ofWordLangArith instruction)) = true) :
@@ -95,7 +96,8 @@ theorem arithmeticName {width : Nat} [NeZero width] (conf : AsmConfigExact width
   all_goals simp only [wInstNative, loadName, writeNameEquation, wReg1, wReg2]
   all_goals try split_ifs
   all_goals simp_all [stackAsmName, instName, arithName, regName, regImmName,
-    instArgConvention, instOkLessExact, twoRegInstExact]
+    instArgConventionExact, HolInst.ofWordLangInst, HolArith.ofWordLangArith,
+    HolRegImm.ofWordRegImm, instOkLessExact, twoRegInstExact]
   all_goals repeat' first | apply And.intro | intro
   all_goals try simp_all
   all_goals try omega
@@ -128,7 +130,8 @@ theorem wordToStackStackAsmNameInst {width : Nat} [NeZero width]
   simp only [compNative]
   simp only [postAllocConventionsHOL, everyVarHOL, Bool.and_eq_true] at conventions
   have physical := conventions.1
-  have convention : instArgConvention instruction = true := conventions.2.2
+  have convention : instArgConventionExact (HolInst.ofWordLangInst instruction) = true :=
+    conventions.2.2
   simp only [fullInstOkLessExact, fullInstOkLessWith] at valid
   simp only [everyInst] at twoReg
   cases instruction with

@@ -398,26 +398,6 @@ theorem evalPanSemRecursiveCallFiniteContext_clock_le_aux {width : Nat} {σ : Ty
     (intro result hres
      cases hres <;> clockDirect)
 
-/-- FLAPJACK-SPECIFIC (not an exact HOL port, so no `@[hol]` tag): the analogue
-    of HOL `evaluate_clock` (`panSemScript.sml:755-766`,
-    `!prog s r s'. evaluate (prog,s) = (r,s') ==> s'.clock <= s.clock`).
-    HOL quantifies over the faithful `panSem$state`; this theorem is stated over
-    the exact finite-support clause-for-clause evaluator
-    `evalPanSemRecursiveCallFiniteContext`, which takes a `FiniteEvalContext`
-    (state plus threaded `DecidablePred` `memaddrs`/`shMemaddrs` fields) instead
-    of a bare state, and whose carrier `PanSemStateFiniteExact` uses canonical
-    `HolFiniteMapExact` maps rather than HOL's mlstring-keyed finite maps. The
-    extra decider context argument and the finite-map carrier representation are
-    differences beyond `names_as_string`, so the tag is withheld; the faithful
-    HOL `evaluate`/`evaluate_clock` port over the exact context is tracked by
-    `flapjack-qj5` (bead `flapjack-4ac.3.48`). -/
-theorem evalPanSemRecursiveCallFiniteContext_clock_le {width : Nat} {σ : Type} [NeZero width]
-    (program : ProgHOL width) (context : FiniteEvalContext width σ)
-    (result : Option (PanSemResultExact width) × FiniteEvalContext width σ)
-    (h : evalPanSemRecursiveCallFiniteContext program context = some result) :
-    result.2.state.clock ≤ context.state.clock :=
-  evalPanSemRecursiveCallFiniteContext_clock_le_aux program context result h
-
 /-- HOL `fix_clock_evaluate` (`panSemScript.sml:768-775`) over the finite-map
     source evaluator: the evaluated result clock already lies below the input
     clock, so clamping it leaves the pair unchanged. -/
@@ -433,7 +413,7 @@ theorem fixClockHOLFinite_evaluate {width : Nat} {σ : Type} [NeZero width]
     unfold evaluateHOLFiniteStateWithDeciders
     split
     · rename_i pair hpair
-      exact evalPanSemRecursiveCallFiniteContext_clock_le program ⟨state, h, hshared⟩ pair hpair
+      exact evalPanSemRecursiveCallFiniteContext_clock_le_aux program ⟨state, h, hshared⟩ pair hpair
     · exact Nat.le_refl _
   cases hres : evaluateHOLFiniteState state program with
   | mk r st =>
@@ -512,7 +492,7 @@ theorem evaluateHOLFiniteState_clock_le {width : Nat} {σ : Type} [NeZero width]
   unfold evaluateHOLFiniteStateWithDeciders
   split
   · rename_i pair hpair
-    exact evalPanSemRecursiveCallFiniteContext_clock_le program _ pair hpair
+    exact evalPanSemRecursiveCallFiniteContext_clock_le_aux program _ pair hpair
   · exact Nat.le_refl _
 
 /-- Exact-shape port of HOL `evaluate_clock` (`panSemScript.sml:755-766`):

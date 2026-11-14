@@ -66,11 +66,45 @@ def expHdlExact {α γ : Type} {width : Nat} [NeZero width]
         (panMap2 (fun destination source => .assign destination source)
           names (loadGlobalsHOL (0 : BitVec 5) names.length))
 
-/-- Consumer bridge to the raw-map helper; its support premise is exactly the
-    finite-domain condition carried intrinsically by `HolFiniteMapExact`. -/
-theorem expHdlExact_eq_expHdlHOL {width : Nat} [NeZero width]
-    (fm : HolFiniteMapExact MlS (ShapeHOL × List Nat)) (v : MlS) :
-    expHdlExact (width := width) fm v = expHdlHOL fm.lookup v := by
-  cases hlookup : fm.lookup v <;> simp [expHdlExact, expHdlHOL, FLOOKUP, hlookup]
+/-- Codec from the production `String`-keyed finite map to the exact
+    `MlString`-keyed finite-support carrier: names go through the total
+    `MlString.ofString` (whose inverse is `toStringOfBytes`), shapes through
+    `shapeToHOL`, and the flattened word lists are unchanged. The support
+    premise is carried explicitly because the production map is a bare
+    function. Flapjack-only representation bridge. -/
+def finiteMapToHOLExact (fm : FiniteMap String (Shape × List Nat))
+    (hsupport : ∃ keys : List String, ∀ key, fm key ≠ none → key ∈ keys) :
+    HolFiniteMapExact MlS (ShapeHOL × List Nat) :=
+  ⟨finiteMapToHOL fm, by
+    obtain ⟨keys, hkeys⟩ := hsupport
+    refine ⟨keys.map Flapjack.Basis.Pure.MlString.ofString, ?_⟩
+    intro key hkey
+    have hsource : fm (Flapjack.Basis.Pure.MlString.toStringOfBytes key) ≠ none := by
+      simpa [finiteMapToHOL] using hkey
+    exact List.mem_map.mpr
+      ⟨_, hkeys _ hsource, Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes key⟩⟩
+
+/-- Narrow kernel bridge: on every byte-ranged variable name, encoding the
+    production finite map and running the tagged exact `expHdlExact` agrees with
+    the `crepProgToHOL` image of the executed `expHdlFiniteMap`. The production
+    helper remains the executed one; routing the executed handler setup through
+    the exact carrier is tracked by `flapjack-pxn.18.3.5.8.13`. -/
+theorem crepProgToHOL_expHdlFiniteMap {width : Nat} [NeZero width]
+    (fm : FiniteMap String (Shape × List Nat)) (v : String)
+    (hsupport : ∃ keys : List String, ∀ key, fm key ≠ none → key ∈ keys)
+    (hv : ∀ c ∈ v.toList, c.toNat < 256) :
+    crepProgToHOL (expHdlFiniteMap (α := BitVec width) fm v)
+      = expHdlExact (width := width) (finiteMapToHOLExact fm hsupport)
+          (Flapjack.Basis.Pure.MlString.ofString v) := by
+  unfold expHdlFiniteMap expHdlExact finiteMapToHOLExact finiteMapToHOL
+  simp only [FLOOKUP]
+  rw [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes v hv]
+  cases h : fm v with
+  | none => simp [crepProgToHOL]
+  | some pair =>
+      obtain ⟨shape, names⟩ := pair
+      simp only [Option.map_some]
+      rw [crepProgToHOL_crepNestedSeqHOL, panMap2_assign_map,
+        crepExpMapToHOL_loadGlobals]
 
 end Flapjack

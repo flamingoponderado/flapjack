@@ -8,7 +8,7 @@ public import Flapjack.Pancake.CrepInline.Canonical
 # Production inline pass vs. the exact tagged inline pass
 
 The legacy production inliner is `compileInlTopHOL` (`CrepInline/Pass.lean`),
-used by the non-executed `compileProgTopHOL` adapter; the executable
+retained as compatibility infrastructure with no executed caller; the executable
 `flapjack-compile` route runs the exact HOL-shaped tagged pass
 `compileInlTopHOLExact` (`CrepInline/Canonical.lean`) through
 `compileProgDeclsHOLW`.  This module proves that the two agree, so the legacy
