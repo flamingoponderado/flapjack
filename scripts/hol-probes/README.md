@@ -10433,3 +10433,18 @@ the theory DB. The repository's `hol4/` mirror only carries
 (falling back to the repository root). Regenerate with
 `CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=set_sep_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`data_to_word_memory_local_typed_probe.out` (11 rows) captures the typed
+statements of the remaining reviewed `data_to_word_memoryProofScript.sml` rows
+that the earlier `data_to_word_memory_proof_typed_probe.out` did not cover
+(task 184). `v_inv_ck` is an `Inductive` block, so the probe reads the generated
+`v_inv_ck_rules` theorem from the theory DB; that conjunction carries the shared
+word dimension and the canonical finite maps of all nine rules. The ten
+`[local]` theorems (`memory_rel_Block_Block_small_eq`, `do_eq_list_F_IMP_MEM`,
+`word_cmp_loop_thm`, `fix_clock_IMP`, `word_mem_eq_thm`,
+`memory_rel_MutBlock_IMP_F`, `memory_rel_isClos`, `eq_explode_APPEND`,
+`eq_assum_APPEND`, `fix_clock_word_eq`) are parsed from the pinned source with
+the shared splice-expanding helper. The script restates the source's `[local]` overload of
+`good_dimindex` to `misc$good_dimindex`. Regenerate with
+`CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=data_to_word_memory_local_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.

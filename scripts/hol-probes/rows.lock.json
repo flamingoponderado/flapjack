@@ -460,6 +460,7 @@
     {"bytes": 81349, "out": "data_to_word_gc_proof_typed_probe.out", "rows": 118, "sha256": "89a3e5b55973598985dd35775b75ea51da49f5d8258e5804a983a2a1dee3b9c6"},
     {"bytes": 139675, "out": "data_to_word_gc_stack_probe.out", "rows": 267, "sha256": "6f210637c62fe26b504bd2b5e08b68726d1f410fe16f0d71a18cdc5c7999c713"},
     {"bytes": 713, "out": "data_to_word_header_types_probe.out", "rows": 4, "sha256": "03f118c02ff75572b365f0d8538d409e9de4b1a9c6383080c7abc540b0ee525f"},
+    {"bytes": 7694, "out": "data_to_word_memory_local_typed_probe.out", "rows": 11, "sha256": "c6662dede1315a452b12512957b5bff3bfcdb5c10f65bb7acb592d3e175409fc"},
     {"bytes": 106263, "out": "data_to_word_memory_proof_typed_probe.out", "rows": 225, "sha256": "b0e2ebd2b7c9d6f3938aa2416059519053bdbe42ea2e9162846dd33ef9161e11"},
     {"bytes": 120747, "out": "data_to_word_memory_repr_probe.out", "rows": 276, "sha256": "d6359e41084d502b6a9fd58f534e0370eca37c44cbd4ba3f2fe23a697feb9d17"},
     {"bytes": 2826, "out": "data_to_word_memory_thunk_probe.out", "rows": 6, "sha256": "ce9f39ac9b11dd922ecfa1f008bdd883c356fde2ebaa0abc4796188fb0954220"},
