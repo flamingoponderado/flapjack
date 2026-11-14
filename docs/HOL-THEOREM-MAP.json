@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+    "hol_name": "let_op_app_call_dests",
+    "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/AppCallDests.lean",
+    "lean_name": "compileSource_appCallDests",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared let_op_app_call_dests_typed: for an arbitrary optional Boolean selection and expression list, the source-shaped let-operation pass preserves the complete set of application and call destinations. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
     "hol_name": "var_list_app_call_dests",
     "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/AppCallDests.lean",
     "lean_name": "varList_appCallDests",

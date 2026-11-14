@@ -10,6 +10,7 @@ let_op_SING_typed=∀(x :closLang$exp). ∃(y :closLang$exp). let_op [x] = [y]
 HD_let_op_SING_typed=∀(x :closLang$exp). [HD (let_op [x])] = let_op [x] ∧ LENGTH (let_op [x]) = (1 :num)
 EVERY_let_op_sing_typed=EVERY (f :closLang$exp -> bool) (let_op [(x :closLang$exp)]) ⇔ f (HD (let_op [x]))
 var_list_app_call_dests_typed=∀(x :num) (y :closLang$exp list) (z :α list). var_list x y z ⇒ app_call_dests (a :bool option) y = (∅ :num -> bool)
+let_op_app_call_dests_typed=∀(es :closLang$exp list). app_call_dests (x :bool option) (let_op es) = app_call_dests x es
 compile_inc_typed=∀(e :closLang$exp list) (xs :β). (compile_inc (e,xs) :closLang$exp list # α list) = (let_op e,([] :α list))
 let_op_vars_none_typed=∀(es :closLang$exp list). every_Fn_vs_NONE (let_op es) ⇔ every_Fn_vs_NONE es
 var_list_length_typed=∀(n :num) (xs :closLang$exp list) (ys :α list). var_list n xs ys ⇒ LENGTH xs = LENGTH ys
