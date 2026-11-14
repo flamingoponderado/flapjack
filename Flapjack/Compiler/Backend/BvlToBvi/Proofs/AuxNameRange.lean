@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileInstallArgs
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Namespace
 public import Mathlib.Data.List.Nodup
 public import Flapjack.Misc.Sorting
 import Mathlib.Data.List.Sort
@@ -261,28 +262,41 @@ theorem compileProgramsSource_nameRange (start : Nat) (programs : List (Nat × N
       · right
         exact ⟨index, by omega, upper, equal⟩
 
-/-- Input-label inclusion, factored out of the original HOL list induction. -/
-private theorem compileProgramsSource_inputCoverage (start : Nat) (programs : List (Nat × Nat × Bvl.Exp)) :
-    ∀ input ∈ programs.map Prod.fst,
-      bvlNumStubs + bvlToBviNamespaces * input ∈
-        (appListAppend (compileProgramsSource start programs).1).map Prod.fst := by
+open Classical in
+/-- Filtering for translated source labels preserves their original order. -/
+theorem compileProgramsSource_translatedNames (start : Nat) (programs : List (Nat × Nat × Bvl.Exp)) :
+    ((appListAppend (compileProgramsSource start programs).1).map Prod.fst).filter
+      (fun name => decide (inNs 0 (name - bvlNumStubs))) =
+    (programs.map Prod.fst).map (fun name => bvlNumStubs + bvlToBviNamespaces * name) := by
   induction programs generalizing start with
-  | nil => simp
+  | nil => simp [compileProgramsSource, appListAppend, appendAux]
   | cons entry rest ih =>
     rcases entry with ⟨key, arity, body⟩
     rcases first : compileSingSource start body with ⟨converted, aux, next⟩
     rcases remaining : compileProgramsSource next rest with ⟨other, finish⟩
+    have range := compileSingSource_auxNameRange start body
+    simp only [first] at range
+    have noneAux : ((appListAppend aux).map Prod.fst).filter
+        (fun name => decide (inNs 0 (name - bvlNumStubs))) = [] := by
+      apply List.filter_eq_nil_iff.mpr
+      intro name member
+      obtain ⟨index, _, _, eq⟩ := auxNameRange_member range name member
+      intro selected
+      have prop : inNs 0 (name - bvlNumStubs) := of_decide_eq_true selected
+      simp only [inNs, bvlToBviNamespaces] at prop
+      simp only [bvlToBviNamespaces] at eq
+      omega
     have tail := ih next
     simp only [remaining] at tail
-    intro input membership
-    simp only [List.map_cons, List.mem_cons] at membership
     simp only [compileProgramsSource, compileSingleSource, first, remaining,
-      appListAppend_smartAppend, List.map_append, List.mem_append]
-    rcases membership with rfl | membership
-    · left
-      simp [appListAppend, appendAux]
-    · right
-      exact tail input membership
+      appListAppend_smartAppend, List.map_append, List.filter_append]
+    simp only [appListAppend, appendAux, List.map_cons] at ⊢
+    simp only [appListAppend] at noneAux tail
+    rw [noneAux, tail]
+    have head : inNs 0 ((bvlNumStubs + bvlToBviNamespaces * key) - bvlNumStubs) := by
+      simp [inNs, bvlToBviNamespaces]
+    simp only [List.map_cons, List.map_nil, List.filter_cons, head, decide_true,
+      List.filter_nil, ↓reduceIte, List.append_nil, List.singleton_append]
 
 /-- Fresh-label inclusion, factored out of the original HOL list induction. -/
 private theorem compileProgramsSource_freshCoverage (start : Nat) (programs : List (Nat × Nat × Bvl.Exp)) :
@@ -311,6 +325,7 @@ private theorem compileProgramsSource_freshCoverage (start : Nat) (programs : Li
     · right
       exact tail k (by omega) upper
 
+open Classical in
 /-- Compiling a list of functions preserves the original exact description
 of its generated label set and the fresh-counter bound. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_list_code_labels_domain"]
@@ -322,7 +337,17 @@ theorem compileList_codeLabelsDomain (n : Nat) (p : List (Nat × Nat × Bvl.Exp)
         {x : Nat | ∃ k, k ∈ p.map Prod.fst ∧ x = bvlNumStubs + k * bvlToBviNamespaces} ∪
         {x : Nat | ∃ k, x = bvlNumStubs + k * bvlToBviNamespaces + 1 ∧ n ≤ k ∧ k < m} := by
   have upper := compileProgramsSource_nameRange n p
-  have inputs := compileProgramsSource_inputCoverage n p
+  have inputs : ∀ input ∈ p.map Prod.fst,
+      bvlNumStubs + bvlToBviNamespaces * input ∈
+        (appListAppend (compileProgramsSource n p).1).map Prod.fst := by
+    intro input member
+    have ordered := compileProgramsSource_translatedNames n p
+    have selected : bvlNumStubs + bvlToBviNamespaces * input ∈
+        ((appListAppend (compileProgramsSource n p).1).map Prod.fst).filter
+          (fun name => decide (inNs 0 (name - bvlNumStubs))) := by
+      rw [ordered]
+      exact List.mem_map.mpr ⟨input, member, rfl⟩
+    exact (List.mem_filter.mp selected).1
   have fresh := compileProgramsSource_freshCoverage n p
   rw [compiled] at upper inputs fresh
   simp only at upper inputs fresh

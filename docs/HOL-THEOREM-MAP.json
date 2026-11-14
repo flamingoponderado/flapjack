@@ -359,6 +359,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_list_distinct_locs",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ListDistinct.lean",
+    "lean_name": "compileList_distinctLocs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the exported typed original in bvl_to_bvi_value_rel_probe.out and between_def in bvl_to_bvi_proof_source_probe.out. The three compilation and distinctness premises and all six conclusions are retained: distinct output labels, half-open namespace-one bounds, ordered namespace-zero filter equality, the stub lower bound, namespace-two and namespace-three exclusions, and the monotone counter. Input and output code retain their original list and AppList carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_prog_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/InitialStateRel.lean",
     "lean_name": "compileProg_evaluate",
