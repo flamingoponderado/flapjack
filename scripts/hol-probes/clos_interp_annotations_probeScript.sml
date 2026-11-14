@@ -75,3 +75,4 @@ val _ = show_thm "evaluate_insert_interp_typed=" clos_interpProofTheory.evaluate
 val _ = show_thm "opt_interp_thm_typed=" clos_interpProofTheory.opt_interp_thm;
 val _ = show_thm "opt_interp1_thm_prime_typed=" clos_interpProofTheory.opt_interp1_thm';
 val _ = show_thm "opt_interp1_thm_typed=" clos_interpProofTheory.opt_interp1_thm;
+val _ = show_thm "clos_interpreter_correct_typed=" clos_interpProofTheory.clos_interpreter_correct;

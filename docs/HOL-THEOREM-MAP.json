@@ -1,6 +1,16 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "clos_interpreter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/InterpreterCorrect.lean",
+    "lean_name": "interpreter_correct",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared clos_interpreter_correct_typed, both original expression and arbitrary-list conjuncts, grouped premises, interpreter arguments, existential clock and final state, success-list encoding and every error result. Reviewed the complete interpreter dispatch and value/state carriers, including arbitrary global indices. Canonical refs and code fields have the local roundtrip witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8; source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
     "hol_name": "opt_interp_thm",
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/InterpreterCorrect.lean",
     "lean_name": "optInterp_correct",
