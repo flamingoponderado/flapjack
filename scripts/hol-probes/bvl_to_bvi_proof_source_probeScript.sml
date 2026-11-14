@@ -23,6 +23,9 @@ fun replay label term = (print (label ^ "="); print_term term; print "\n");
 val _ = show "compile_inc_no_mutcons_typed" bvl_to_bviProofTheory.compile_inc_no_mutcons;
 val _ = show "bvi_tailrec_compile_prog_no_mutcons_typed"
   bvl_to_bviProofTheory.bvi_tailrec_compile_prog_no_mutcons;
+val ODD_lemma_replay = Q.prove (`ODD (2 * n + k) = ODD k`,
+  fs [ODD_ADD] \\ simp [ODD_EVEN,EVEN_DOUBLE]);
+val _ = show "ODD_lemma_replay" ODD_lemma_replay;
 
 val _ = replay "bvi_let_delete_var_no_mutcons_typed"
   ``!x. no_mutcons x ==> no_mutcons (bvi_let$delete_var x)``;

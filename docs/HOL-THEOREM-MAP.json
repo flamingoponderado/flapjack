@@ -359,6 +359,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "ODD_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/Namespace.lean",
+    "lean_name": "odd_double_add",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed replay of the original local statement and proof in bvl_to_bvi_proof_source_probe.out: oddness of 2 * n + k is equivalent to oddness of k for arbitrary natural n and k, with no hypotheses. Mathlib's Nat.odd_iff and HOL's ODD_MOD2_LEM characterize their oddness predicates by remainder one modulo two."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "evaluate_REPLICATE_0",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/InitGlobalsStub.lean",
     "lean_name": "evaluateReplicateZero",

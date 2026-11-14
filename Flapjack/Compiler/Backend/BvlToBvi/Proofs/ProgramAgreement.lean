@@ -14,10 +14,9 @@ theorem compileSingleFuel_eq_flattened (fuel optFuel n : Nat) (program : Nat × 
       some (appListAppend (compileSingleSource n program).1, (compileSingleSource n program).2) := by
   rcases program with ⟨name, args, body⟩
   rcases h : compileSingSource n body with ⟨converted, aux, next⟩
-  have run := compileSingleFuel_eq_source_all fuel optFuel n name args body
-  simp only [h] at run
   simp only [compileSingleSource, h, appListAppend_smartAppend]
-  simpa [appListAppend, appendAux] using run
+  simp [compileSingleFuel, compileBounded_eq_source, h, BviLet.compileExp_eq,
+    appListAppend, appendAux]
 
 /-- Executed labeled-program traversal is the flattening of the original
 tree and retains the same fresh-name counter for every pair of fuel values. -/

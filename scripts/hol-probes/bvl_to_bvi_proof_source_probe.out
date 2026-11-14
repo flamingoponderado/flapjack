@@ -1,5 +1,6 @@
 compile_inc_no_mutcons_typed=(compile_inc (n :num) (prog :(num # num # bvl$exp) list) :num # (num # num # bvi$exp) list) = ((n1 :num),(prog1 :(num # num # bvi$exp) list)) ⇒ EVERY (no_mutcons ∘ (SND :num # bvi$exp -> bvi$exp) ∘ (SND :num # num # bvi$exp -> num # bvi$exp)) prog1
 bvi_tailrec_compile_prog_no_mutcons_typed=∀(b :bool) (next :num) (prog :(num # num # bvi$exp) list) (next1 :num) (prog1 :(num # num # bvi$exp) list). (compile_prog b next prog :num # (num # num # bvi$exp) list) = (next1,prog1) ∧ EVERY (no_mutcons ∘ (SND :num # bvi$exp -> bvi$exp) ∘ (SND :num # num # bvi$exp -> num # bvi$exp)) prog ⇒ EVERY (no_mutcons ∘ (SND :num # bvi$exp -> bvi$exp) ∘ (SND :num # num # bvi$exp -> num # bvi$exp)) prog1
+ODD_lemma_replay=ODD ((2 :num) * (n :num) + (k :num)) ⇔ ODD k
 bvi_let_delete_var_no_mutcons_typed=∀(x :bvi$exp). no_mutcons x ⇒ no_mutcons (delete_var x)
 bvi_let_compile_no_mutcons_typed=(∀(env :num list) (d :num) (e :bvi$exp). no_mutcons e ⇒ no_mutcons (compile_sing env d e :bvi$exp)) ∧ ∀(env :num list) (d :num) (es :bvi$exp list). EVERY no_mutcons es ⇒ EVERY no_mutcons (compile_list env d es :bvi$exp list)
 bvi_let_compile_exp_no_mutcons_typed=∀(x :bvi$exp). no_mutcons x ⇒ no_mutcons (compile_exp x :bvi$exp)

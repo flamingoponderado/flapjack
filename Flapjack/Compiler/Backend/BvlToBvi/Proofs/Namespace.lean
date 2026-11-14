@@ -1,11 +1,18 @@
 module
 
 public import Flapjack.Compiler.Backend.BvlToBvi.Config
+public import Mathlib.Algebra.Ring.Parity
 import Lean.Elab.Tactic.Omega
 
 @[expose] public section
 
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
+
+/-- Adding an even multiple of two preserves oddness. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "ODD_lemma"]
+theorem odd_double_add (n k : Nat) : Odd (2 * n + k) ↔ Odd k := by
+  simp only [Nat.odd_iff]
+  omega
 
 /-- The original interleaved namespace predicate. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "in_ns_def"]
