@@ -20,9 +20,11 @@ from __future__ import annotations
 
 import json
 import hashlib
+import re
 import runpy
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -32,6 +34,8 @@ MANIFEST = ROOT / "docs" / "HOL-THEOREM-MAP.json"
 EXPORTER = ROOT / "scripts" / "HolRefExport.lean"
 NESTED_AUDIT = ROOT / "Flapjack" / "Test" / "NestedRelationAudit.lean"
 NESTED_AUDIT_SHA256 = "77f30bebc1f3622d310d980cf94d13f24b54716d802215872653e111cf34c2c6"
+# Eight batches reduce peak import memory while avoiding hundreds of Lake starts.
+EXPORT_BATCH_COUNT = 8
 
 
 def validate_nested_audit_source(source: str) -> None:
@@ -115,33 +119,84 @@ def validate_export_record(record: Any, line_number: int) -> dict[str, Any]:
     return record
 
 
+def export_batches(umbrella: str, exporter: str, count: int = EXPORT_BATCH_COUNT) -> list[str]:
+    """Partition the original imports without silently dropping umbrella declarations."""
+    strip_comments = runpy.run_path(str(ROOT / "scripts" / "check-hol-refs.py"))["strip_lean_comments"]
+    marker = "\nopen Lean Elab Command Flapjack"
+    if exporter.count(marker) != 1:
+        raise ValueError("unexpected HOL exporter header")
+    header, body = exporter.split(marker, 1)
+    pattern = re.compile(r"import ([A-Za-z_][A-Za-z0-9_.]*)\Z")
+
+    def imports(source: str) -> list[str]:
+        result = []
+        for line in strip_comments(source).splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            match = pattern.fullmatch(line)
+            if not match:
+                raise ValueError(f"unexpected declaration in import-only file: {line}")
+            result.append(match.group(1))
+        return result
+
+    direct = imports(header)
+    if direct.count("Flapjack") != 1 or direct.count("Flapjack.Test.NestedRelationAudit") != 1:
+        raise ValueError("HOL exporter must import the umbrella and nested relation audit")
+    all_imports = list(dict.fromkeys(
+        imports(umbrella) + [name for name in direct if name not in
+                             {"Flapjack", "Flapjack.Test.NestedRelationAudit"}]
+    ))
+    if not all_imports or "Flapjack" in all_imports:
+        raise ValueError("invalid umbrella imports for HOL export")
+    batches = []
+    for index in range(count):
+        selected = all_imports[len(all_imports) * index // count:len(all_imports) * (index + 1) // count]
+        batch_header = "\n".join(f"import {name}" for name in
+                                 ["Flapjack.Test.NestedRelationAudit", *selected])
+        batches.append(batch_header + marker + body)
+    return batches
+
+
 def exported_refs() -> list[dict[str, Any]]:
-    # Use Lake's native `lean` command so the exporter resolves imports from
-    # the current workspace build graph. A saved setup file can keep pointing
-    # at a shared-cache OLean from an older source revision after `lake build`
-    # has rebuilt the local module.
-    result = subprocess.run(
-        ["lake", "--quiet", "lean", str(EXPORTER)],
-        cwd=ROOT,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-    if result.returncode:
-        raise RuntimeError(
-            f"Lean @[hol] export failed (exit {result.returncode}):\n"
-            f"{result.stdout}{result.stderr}"
-        )
-    records = []
-    for line_number, line in enumerate(result.stdout.splitlines(), 1):
-        try:
-            record = json.loads(line)
-        except json.JSONDecodeError as error:
-            raise ValueError(f"Lean export line {line_number} is not JSON: {line[:160]}") from error
-        records.append(validate_export_record(record, line_number))
+    # Each batch is freshly set up by Lake, rather than reusing a saved setup
+    # that may reference OLeans from an older source revision. Batches run
+    # sequentially so their builds cannot race over Lake artifacts.
+    batches = export_batches((ROOT / "Flapjack.lean").read_text(), EXPORTER.read_text())
+    records: dict[str, dict[str, Any]] = {}
+    (ROOT / ".lake").mkdir(exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix="hol-ref-export-", dir=ROOT / ".lake") as directory:
+        for index, source in enumerate(batches):
+            path = Path(directory) / f"Export{index}.lean"
+            path.write_text(source)
+            result = subprocess.run(
+                ["lake", "--quiet", "lean", str(path)], cwd=ROOT,
+                text=True, capture_output=True, check=False,
+            )
+            if result.returncode:
+                raise RuntimeError(
+                    f"Lean @[hol] export batch {index + 1} failed (exit {result.returncode}):\n"
+                    f"{result.stdout}{result.stderr}"
+                )
+            seen_in_batch: set[str] = set()
+            for line_number, line in enumerate(result.stdout.splitlines(), 1):
+                try:
+                    record = json.loads(line)
+                except json.JSONDecodeError as error:
+                    raise ValueError(
+                        f"Lean export batch {index + 1} line {line_number} is not JSON: {line[:160]}"
+                    ) from error
+                record = validate_export_record(record, line_number)
+                name = record["lean_name"]
+                if name in seen_in_batch:
+                    raise ValueError(f"duplicate declaration in Lean export batch: {name}")
+                seen_in_batch.add(name)
+                if name in records and records[name] != record:
+                    raise ValueError(f"Lean export batches disagree on {name}")
+                records[name] = record
     if not records:
         raise ValueError("Lean @[hol] export returned no declarations")
-    return records
+    return list(records.values())
 
 
 def manifest_qualifiers(record: dict[str, Any]) -> dict[str, Any]:

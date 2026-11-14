@@ -315,9 +315,42 @@ class HolRefExportTest(unittest.TestCase):
         })()
         with patch.object(MODULE.subprocess, "run", return_value=result) as run:
             self.assertEqual(MODULE.exported_refs(), self.export)
-        self.assertEqual(run.call_args.args[0], [
-            "lake", "--quiet", "lean", str(MODULE.EXPORTER),
-        ])
+        self.assertEqual(run.call_count, 8)
+        for call in run.call_args_list:
+            self.assertEqual(call.args[0][:3], ["lake", "--quiet", "lean"])
+            self.assertTrue(call.args[0][3].endswith(".lean"))
+
+    def test_batches_cover_umbrella_and_extra_imports(self):
+        umbrella = "import Flapjack.A\nimport Flapjack.B\n"
+        exporter = ("import Flapjack\nimport Flapjack.Test.NestedRelationAudit\n"
+                    "import Flapjack.C\nopen Lean Elab Command Flapjack\n#emit_hol_ref_export\n")
+        batches = MODULE.export_batches(umbrella, exporter, count=2)
+        self.assertEqual(len(batches), 2)
+        for name in ("Flapjack.A", "Flapjack.B", "Flapjack.C"):
+            self.assertEqual(sum(f"import {name}\n" in batch for batch in batches), 1)
+        self.assertTrue(all("import Flapjack.Test.NestedRelationAudit\n" in batch for batch in batches))
+
+    def test_batches_reject_non_import_umbrella(self):
+        exporter = ("import Flapjack\nimport Flapjack.Test.NestedRelationAudit\n"
+                    "open Lean Elab Command Flapjack\n")
+        with self.assertRaisesRegex(ValueError, "import-only"):
+            MODULE.export_batches("import Flapjack.A\ndef extra := 1\n", exporter)
+
+    def test_batches_reject_disagreeing_records(self):
+        first = self.export[0]
+        second = {**first, "hol_name": "different"}
+        results = [type("Completed", (), {"returncode": 0, "stderr": "", "stdout": json.dumps(r)})()
+                   for r in (first, second)]
+        with patch.object(MODULE.subprocess, "run", side_effect=results):
+            with self.assertRaisesRegex(ValueError, "disagree"):
+                MODULE.exported_refs()
+
+    def test_batches_reject_duplicate_record_within_batch(self):
+        line = json.dumps(self.export[0])
+        result = type("Completed", (), {"returncode": 0, "stderr": "", "stdout": line + "\n" + line})()
+        with patch.object(MODULE.subprocess, "run", return_value=result):
+            with self.assertRaisesRegex(ValueError, "duplicate declaration"):
+                MODULE.exported_refs()
 
 
 if __name__ == "__main__":
