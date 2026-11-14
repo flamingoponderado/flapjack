@@ -658,6 +658,16 @@ theorem evaluate_let_op_app {C F : Type} (trace : BackendCommon.Tra)
                   rw [fixClock_evaluate, targetFunctionRun]
                   exact targetRun
 
+/-- Related states have no installed code at any location. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "find_code_lemma"
+  (fmap_as_finite_support := [refs, code])]
+theorem find_code_lemma {C F A : Type} (source target : State C F) (location : Nat)
+    (args : List A) (related : StateRel source target) :
+    findCode location args source.code = none ∧ findCode location args target.code = none := by
+  have sourceEmpty : source.code = HolFiniteMapExact.empty := related.2.1
+  have targetEmpty : target.code = HolFiniteMapExact.empty := related.2.2.1
+  simp [findCode, sourceEmpty, targetEmpty, HolFiniteMapExact.empty]
+
 /-- Direct calls propagate argument errors or fail equally because related
 states have empty installed code. -/
 @[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "evaluate_let_op"
@@ -700,13 +710,13 @@ theorem evaluate_let_op_call {C F : Type} (trace : BackendCommon.Tra)
       cases targetResult with
       | err error => cases error <;> simp [ResultRel] at related
       | val targetValues =>
-        have sourceEmpty : middle.code = HolFiniteMapExact.empty := middleRel.2.1
-        have targetEmpty : targetMiddle.code = HolFiniteMapExact.empty := middleRel.2.2.1
+        have sourceAbsent := (find_code_lemma middle targetMiddle location values middleRel).1
+        have targetAbsent := (find_code_lemma middle targetMiddle location targetValues middleRel).2
         rw [evaluate, fixClock_evaluate, argsRun] at run
-        simp [findCode, sourceEmpty, HolFiniteMapExact.empty] at run
+        simp [sourceAbsent] at run
         obtain ⟨rfl, rfl⟩ := run
         refine ⟨.err (.abort .typeError), targetMiddle, ?_, rfl, middleRel⟩
         rw [evaluate, fixClock_evaluate, targetRun]
-        simp [findCode, targetEmpty, HolFiniteMapExact.empty]
+        simp [targetAbsent]
 
 end Flapjack.Compiler.Backend.ClosLetop

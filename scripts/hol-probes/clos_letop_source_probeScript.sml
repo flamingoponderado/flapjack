@@ -12,6 +12,7 @@ val _ = show "var_list_typed" clos_letopTheory.var_list_def;
 val _ = show "dest_op_typed" clos_letopTheory.dest_op_def;
 val _ = show "dest_op_SOME_IMP_typed" clos_letopProofTheory.dest_op_SOME_IMP;
 val _ = show "lookup_vars_lemma_typed" clos_letopProofTheory.lookup_vars_lemma;
+val _ = show "find_code_lemma_typed" clos_letopProofTheory.find_code_lemma;
 val _ = show "let_op_typed" clos_letopTheory.let_op_def;
 val _ = show "let_op_sing_typed" clos_letopTheory.let_op_sing_def;
 val _ = show "let_op_sing_eq_typed" clos_letopTheory.let_op_sing_eq;
