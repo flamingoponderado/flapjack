@@ -6,6 +6,10 @@ compile_typed=∀(exps :closLang$exp list). compile exps = remove_fvs (0 :num) e
 compile_eq_typed=compile (exps :closLang$exp list) = remove_fvs_list (0 :num) exps
 compile_inc_typed=∀(e :closLang$exp list) (xs :β). (compile_inc (e,xs) :closLang$exp list # α list) = (compile e,([] :α list))
 code_rel_typed=∀(fvs :num) (e1 :closLang$exp list) (e2 :closLang$exp list). code_rel fvs e1 e2 ⇔ e2 = remove_fvs fvs e1
+proof_remove_length_typed=∀(fvs :num) (xs :closLang$exp list). LENGTH (remove_fvs fvs xs) = LENGTH xs
+proof_remove_sing_typed=∀(x :closLang$exp). ∃(y :closLang$exp). remove_fvs (fvs :num) [x] = [y]
+proof_remove_head_typed=∀(x :closLang$exp). [HD (remove_fvs (fvs :num) [x])] = remove_fvs fvs [x]
+proof_remove_every_typed=EVERY (P :closLang$exp -> bool) (remove_fvs (fvs :num) [(x :closLang$exp)]) ⇔ P (HD (remove_fvs fvs [x]))
 code_rel_length_typed=∀(xs :closLang$exp list) (ys :closLang$exp list). code_rel (fvs :num) xs ys ⇒ LENGTH xs = LENGTH ys
 code_rel_cons_typed=code_rel (fvs :num) ((x1 :closLang$exp)::(x2 :closLang$exp)::(xs :closLang$exp list)) ((y1 :closLang$exp)::(y2 :closLang$exp)::(ys :closLang$exp list)) ⇒ code_rel fvs [x1] [y1] ∧ code_rel fvs (x2::xs) (y2::ys)
 function_rel_typed=∀(fvs :num) (a1 :num) (e1 :closLang$exp) (a2 :num) (e2 :closLang$exp). f_rel fvs (a1,e1) (a2,e2) ⇔ a1 = a2 ∧ code_rel (a1 + fvs) [e1] [e2]

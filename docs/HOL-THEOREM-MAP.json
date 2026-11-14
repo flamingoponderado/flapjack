@@ -16685,6 +16685,38 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "LENGTH_remove_fvs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Syntax.lean",
+    "lean_name": "length_removeSource",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared proof_remove_length_typed: arbitrary bound and expression list retain equal length after source removal."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "remove_fvs_SING",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Syntax.lean",
+    "lean_name": "removeSource_is_singleton",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared proof_remove_sing_typed: every source singleton has an existential singleton removal result at an arbitrary bound."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "HD_remove_fvs_SING",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Syntax.lean",
+    "lean_name": "head_removeSource_sing",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared proof_remove_head_typed: the singleton containing HOL head equals the original singleton removal result, which is nonempty."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "EVERY_remove_fvs_SING",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Syntax.lean",
+    "lean_name": "every_removeSource_SING",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared proof_remove_every_typed: arbitrary predicate, expression and bound retain the original EVERY/head equivalence; HOL repeats this later under a differently cased name."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
     "hol_name": "simple_state_rel",
     "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Primitive.lean",
     "lean_name": "stateRelSimple",
