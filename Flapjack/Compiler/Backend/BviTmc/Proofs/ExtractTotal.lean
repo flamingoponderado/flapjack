@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.BviTmc.Proofs.PureTotal
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.PureCorrespondence
 
 @[expose] public section
 
@@ -8,13 +8,6 @@ public import Flapjack.Compiler.Backend.BviTmc.Proofs.PureTotal
 Flapjack infrastructure lemmas, not HOL pass-correctness ports. -/
 namespace Flapjack.Compiler.Backend.BviTmc
 open Bvi
-
-private theorem pureBranch_succeeds (fuel n : Nat) (e : Exp) :
-    ∃ result : Option (List Exp × Sum (List Nat) CallBlock), (do
-      let yes ← pureBounded fuel n e
-      if yes then pure (some ([e], Sum.inl [0])) else pure none) = some result := by
-  obtain ⟨yes, h⟩ := pureBounded_succeeds fuel n e
-  cases yes <;> exact ⟨_, by simp [h]; rfl⟩
 
 mutual
 /-- Extracting one expression succeeds under a structural fuel bound. -/
@@ -34,23 +27,24 @@ theorem extractOneFuel_succeeds (fuel n loc tag : Nat) (e : Exp)
         | cons childTag =>
           have bx : listBudget xs < fuel := by simp_all [expBudget] <;> omega
           obtain ⟨out, hout⟩ := extractListFuel_succeeds fuel n loc childTag xs bx
-          obtain ⟨value, hv⟩ := pureBounded_succeeds fuel n (.op (.blockOp (.cons childTag)) xs)
           cases out with
           | none => exact ⟨_, by simp [extractOneFuel, hout]; rfl⟩
           | some item =>
             obtain ⟨bs, kind⟩ := item
             cases kind with
-            | inl vs => cases value <;> exact ⟨_, by simp [extractOneFuel, hout, hv]; rfl⟩
+            | inl vs =>
+              cases hv : pureExp n (.op (.blockOp (.cons childTag)) xs) <;>
+                exact ⟨_, by simp [extractOneFuel, hout, pureBounded_eq_pureExp, hv]; rfl⟩
             | inr cb => exact ⟨_, by simp [extractOneFuel, hout]; rfl⟩
         | _ =>
           simp only [extractOneFuel]
-          apply pureBranch_succeeds
+          simp [pureBounded_eq_pureExp]; split <;> exact ⟨_, rfl⟩
       | _ =>
         simp only [extractOneFuel]
-        apply pureBranch_succeeds
+        simp [pureBounded_eq_pureExp]; split <;> exact ⟨_, rfl⟩
     | _ =>
       simp only [extractOneFuel]
-      apply pureBranch_succeeds
+      simp [pureBounded_eq_pureExp]; split <;> exact ⟨_, rfl⟩
 termination_by fuel
 
 /-- Extracting an operand list succeeds under its structural fuel bound. -/
