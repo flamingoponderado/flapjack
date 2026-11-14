@@ -10100,3 +10100,61 @@ core theories (no rebuild): `OLEAST_def`, `OLEAST_INTRO`, `list_rel_lastn`,
 `HOL_PROBE_ONLY=hol_<theory>_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean
 correspondence.
+
+`pancake_loop_to_word_proof_typed_probe.out`,
+`pancake_pan_globals_proof_typed_probe.out`,
+`pancake_crep_to_loop_proof_typed_probe.out`,
+`pancake_pan_structs_proof_typed_probe.out`,
+`pancake_pan_simp_proof_typed_probe.out`,
+`pancake_pan_to_word_proof_typed_probe.out` and
+`arm8_target_proof_typed_probe.out` capture the typed statements of every
+reviewed row of those seven HOL proof theories (task 169). Each probe loads the
+original proof theory and prints, with `show_types`, one `_typed` row per
+reviewed HOL name: exported theorems and definitions are fetched from the
+theory database; `[local]` theorems are parsed literally from the pinned source
+text (typed source evidence, not a replay); the seven derived local theorems
+(`acc_vars_acc'`, `evaluate_io_mono_rephrases`, the two `*_flip` lemmas,
+`mem_load_conversion_inst`, `shape_of_convert_v_rev`, `ALL_DISTINCT_MAP_INJ_o`)
+are captured through the base statement named in the probe comment; and the
+`crep_to_loopProof` datatype `semantics_run_res` is captured through its
+constructors. A source `^` immediately followed by an identifier is an SML
+antiquotation of a term variable, and the capture drops the marker while
+keeping the variable (an infix `^` for mlstring concatenation is followed by a
+space and is kept). Labels replace an apostrophe with `_prime` so the row
+grammar stays `[A-Za-z][A-Za-z0-9_]*`.
+
+These theories are not built by the default CakeML `Holmake` targets, so the
+probes need a tree where `pancake/`, `pancake/semantics/` and the listed
+`pancake/proofs/` theories are built. Build them in a private copy of the
+pinned checkout (commit `857f0d98d`), never in the shared reference tree:
+
+```
+cp -a <pinned-cakeml> /path/to/cakeml-probe-build
+find /path/to/cakeml-probe-build -type d -name make-deps -prune -exec rm -rf {} +
+cd /path/to/cakeml-probe-build/pancake && CAKEMLDIR=$PWD Holmake
+cd ../semantics && CAKEMLDIR=/path/to/cakeml-probe-build Holmake
+cd ../proofs && CAKEMLDIR=/path/to/cakeml-probe-build Holmake \
+  loop_callProofTheory.uo crep_arithProofTheory.uo loop_liveProofTheory.uo \
+  pan_globalsProofTheory.uo pan_structsProofTheory.uo pan_simpProofTheory.uo \
+  loop_to_wordProofTheory.uo crep_to_loopProofTheory.uo pan_to_wordProofTheory.uo
+cd ../../compiler/encoders/arm8/proofs && CAKEMLDIR=/path/to/cakeml-probe-build \
+  Holmake arm8_targetProofTheory.uo
+```
+
+The `make-deps` removal is required: the copied dependency caches record the
+original absolute source paths, so Holmake would try to build those theories in
+the shared tree. Setting `CAKEMLDIR` to the copy keeps every generated path
+inside it. `arm8_targetProof` loads the already-built `arm8_stepLib` from
+`$HOLDIR/examples/l3-machine-code/arm8/step` read-only and writes only inside
+the copy. Build cost on this machine: about 8 s (`pancake/`), 71 s
+(`pancake/semantics/`), 2 m 14 s (the eight `pancake/proofs/` targets) and
+4 m 51 s (`arm8_targetProof`), roughly 14 MB of new `.hol/objs`.
+
+Regenerate with `CAKEML=/path/to/cakeml-probe-build
+HOL_PROBE_ONLY=pancake_<theory>_proof_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh` (the probes run from
+`$cake_dir/pancake/proofs`, and the arm8 probe from
+`$cake_dir/compiler/encoders/arm8/proofs`, so the sibling `.hol/objs` load
+paths resolve as for the other groups). The captures support source comparison
+of the inferred carriers, binder order and premise grouping; they do not
+replay the local proofs and do not establish Lean correspondence.

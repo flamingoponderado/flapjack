@@ -11049,3 +11049,43 @@ run_probe cake_ptree_helpers_typed_probeScript.sml cake_ptree_helpers_typed_prob
   isAlpha_def_typed oHD_def_typed ifM_def_typed tokcheckl_def_typed \
   singleSymP_def_typed isSymbolicConstructor_def_typed isConstructor_def_typed \
   "$cake_dir/semantics/tokenUtilsScript.sml" "$cake_dir/semantics"
+# Typed captures for the pancake proof theories (task 169). These theories are
+# not built in the CakeML checkout by default; CAKEML must point at a tree where
+# pancake/, pancake/semantics/ and the listed pancake/proofs/ theories are
+# built. See the build recipe and load path in scripts/hol-probes/README.md.
+run_probe pancake_loop_to_word_proof_typed_probeScript.sml \
+  pancake_loop_to_word_proof_typed_probe.out \
+  TAKE_1_word_to_bytes_typed acc_vars_acc_prime_typed \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe pancake_pan_globals_proof_typed_probeScript.sml \
+  pancake_pan_globals_proof_typed_probe.out \
+  ALL_DISTINCT_compile_top_typed v_neq_v_prime_typed \
+  "$cake_dir/pancake/proofs/pan_globalsProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe pancake_crep_to_loop_proof_typed_probeScript.sml \
+  pancake_crep_to_loop_proof_typed_probe.out \
+  all_distinct_ctxt_lookup_all_distinct_typed \
+  member_cutset_survives_comp_exps_flip_typed \
+  "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe pancake_pan_structs_proof_typed_probeScript.sml \
+  pancake_pan_structs_proof_typed_probe.out \
+  ALOOKUP_eq_afindi_typed shape_of_convert_v_rev_typed \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe pancake_pan_simp_proof_typed_probeScript.sml \
+  pancake_pan_simp_proof_typed_probe.out \
+  compile_correct_typed state_rel_intro_typed \
+  "$cake_dir/pancake/proofs/pan_simpProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe pancake_pan_to_word_proof_typed_probeScript.sml \
+  pancake_pan_to_word_proof_typed_probe.out \
+  FDOM_get_eids_pan_globals_compile_eq_typed ALL_DISTINCT_MAP_INJ_o_typed \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe arm8_target_proof_typed_probeScript.sml \
+  arm8_target_proof_typed_probe.out \
+  arm8_encoder_correct_typed arm8_target_ok_typed \
+  "$cake_dir/compiler/encoders/arm8/proofs/arm8_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/arm8/proofs"
