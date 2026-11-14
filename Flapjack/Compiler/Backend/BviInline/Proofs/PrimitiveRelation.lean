@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviInline.Proofs.InstallRelation
-public import Flapjack.Compiler.Backend.Semantics.BviSem.ApplyRuntimeFrame
+public import Flapjack.Compiler.Backend.BviInline.Proofs.StateSwap
 
 @[expose] public section
 

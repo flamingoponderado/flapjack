@@ -429,3 +429,16 @@ val inline_all_head_names_replay = Q.prove
   >> qspecl_then [`cs`,`(name,arity,body)::rest`] mp_tac inline_all_MAP_FST
   >> simp [inline_all_def, UNCURRY]);
 val _ = show "inline_all_head_names_replay_typed" inline_all_head_names_replay;
+
+(* Capture this local theorem statement with inferred HOL types. *)
+val do_app_state_swap_Rerr_statement =
+  ``∀op args (s:('c,'ffi) bviSem$state)
+      (t:('d,'ffi) bviSem$state) error.
+    op ≠ Install ∧
+    do_app op args s = Rerr error ∧
+    (domain t.code ⊆ domain s.code ∨ error ≠ Rabort Rtype_error) ⇒
+    do_app op args
+      (t with <| refs := s.refs; clock := s.clock;
+                 global := s.global; ffi := s.ffi |>) = Rerr error``;
+val _ = (print "do_app_state_swap_Rerr_statement_typed=";
+  print_term do_app_state_swap_Rerr_statement; print "\n");

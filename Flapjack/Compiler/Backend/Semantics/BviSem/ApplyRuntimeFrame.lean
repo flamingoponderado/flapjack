@@ -16,16 +16,20 @@ def runtimeFrame {C D F G : Type} (source : BviState C F) (target : BviState D G
   ⟨source.refs, source.clock, source.global, target.compile, target.compileOracle, target.code, source.ffi⟩
 
 set_option maxHeartbeats 1200000 in
-/-- Transfer the handled part of the dispatcher between states with equal
-code domains. This helper has no standalone HOL declaration. -/
+/-- Transfer the handled part of the dispatcher when code domains agree or
+the operation is not a label lookup. This helper has no standalone HOL declaration. -/
 theorem doAppAux_frame {C D F G : Type} (op : ClosLang.Op) (args : List Value)
     (source : BviState C F) (target : BviState D G)
-    (domains : sptDomain source.code = sptDomain target.code) :
+    (domains : sptDomain source.code = sptDomain target.code ∨ ∀ name, op ≠ .label name) :
     doAppAux op args (runtimeFrame source target) =
       (doAppAux op args source).map (fun result =>
         result.map fun (value, next) => (value, runtimeFrame next target)) := by
   cases op with
   | label name =>
+    have domains : sptDomain source.code = sptDomain target.code := by
+      rcases domains with domains | notLabel
+      · exact domains
+      · exact (notLabel name rfl).elim
     cases args with
     | nil =>
       have present : (sptLookup name source.code).isSome = (sptLookup name target.code).isSome := by
@@ -84,7 +88,7 @@ theorem doAppFallback_frame {C D F G : Type} (op : ClosLang.Op) (args : List Val
     rw [toBvl_domain, toBvl_domain]
     exact domains
   unfold doAppFallback
-  rw [doAppAux_frame op args source target domains]
+  rw [doAppAux_frame op args source target (Or.inl domains)]
   cases aux : doAppAux op args source with
   | none => rfl
   | some result =>
@@ -103,7 +107,7 @@ theorem doAppFallback_frame {C D F G : Type} (op : ClosLang.Op) (args : List Val
       | err error =>
         have swapped := BvlProps.doAppFallbackRerrSwap op args (toBvl source) error
           (toBvl (runtimeFrame source target)) notGlobal
-          ⟨original, notInstall, by intro key present; rwa [domainBvl]⟩
+          ⟨original, notInstall, Or.inl (by intro key present; rwa [domainBvl])⟩
         rw [swapped]
         cases error <;> rfl
       | val pair =>

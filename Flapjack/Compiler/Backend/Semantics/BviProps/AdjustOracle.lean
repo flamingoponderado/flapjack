@@ -194,7 +194,7 @@ theorem doAppFallback_adjustOracle {C D F : Type} (compiler : Compiler D) (f : C
       | err error =>
         have swapped := BvlProps.doAppFallbackRerrSwap op args (toBvl state) error
           (toBvl (adjustOracle compiler f state)) notGlobal
-          ⟨run, notInstall, by intro key present; rwa [domain]⟩
+          ⟨run, notInstall, Or.inl (by intro key present; rwa [domain])⟩
         rw [swapped]
         cases error <;> simp [adjustOracleResult]
       | val pair =>

@@ -139302,4 +139302,17 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the full statement with the local HOL theorem and its typed, hypothesis-free proof replay: the inliner output equation gives the exact transformed head and preserves the ordered labels of the tail."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "do_app_state_swap_Rerr",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/StateSwap.lean",
+    "lean_name": "doAppStateSwapRerr",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the full HOL local theorem and inferred-type statement capture (original proof not replayed): source and target compiler state types are independent and share the FFI type; non-install source errors transfer under the original reverse-domain inclusion or non-type-error disjunction. The BVI refs field uses the canonical finite-support map with a same-module roundtrip. Primitive application inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  }
 ]
