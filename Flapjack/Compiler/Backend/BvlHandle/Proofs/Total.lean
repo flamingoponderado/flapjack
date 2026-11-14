@@ -50,14 +50,4 @@ theorem compileSeqsFuel_succeeds (fuel limit : Nat) (e : Exp) (acc : Option Exp)
       obtain ⟨result, h⟩ := compileExpFuel_succeeds fuel limit 0 e
       cases acc <;> exact ⟨_, by simp [compileSeqsFuel, notSeq, h]; rfl⟩
 
-/-- The executable sequence retry cannot exhaust traversal fuel. -/
-theorem compileSeqsBounded_succeeds (fuel limit : Nat) (e : Exp) (acc : Option Exp) :
-    ∃ result, compileSeqsBounded fuel limit e acc = some result := by
-  cases h : compileSeqsFuel fuel limit e acc with
-  | some result => exact ⟨result, by simp [compileSeqsBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := compileSeqsFuel_succeeds (max fuel (expBudget e + 1)) limit e acc bound
-    exact ⟨result, by simp [compileSeqsBounded, h, done]⟩
-
 end Flapjack.Compiler.Backend.BvlHandle

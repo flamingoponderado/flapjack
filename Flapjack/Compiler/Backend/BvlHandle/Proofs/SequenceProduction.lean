@@ -82,18 +82,16 @@ theorem compileSeqsBounded_eq_of (compileExp : Nat → Exp → Exp)
     (expressionEq : ∀ fuel limit e, compileExpFuel fuel limit 0 e = some (compileExp limit e))
     (fuel limit : Nat) (e : Exp) (acc : Option Exp) :
     compileSeqsBounded fuel limit e acc = some (compileSeqsWith compileExp limit e acc) := by
-  obtain ⟨result, run⟩ := compileSeqsBounded_succeeds fuel limit e acc
-  have correct : result = compileSeqsWith compileExp limit e acc := by
-    cases first : compileSeqsFuel fuel limit e acc with
-    | some initial =>
-      have h : initial = result := by simpa [compileSeqsBounded, first] using run
-      subst result
-      exact compileSeqsFuel_eq_of compileExp expressionEq fuel limit e acc initial first
-    | none =>
-      have second : compileSeqsFuel (max fuel (expBudget e + 1)) limit e acc = some result := by
-        simpa [compileSeqsBounded, first] using run
-      exact compileSeqsFuel_eq_of compileExp expressionEq _ limit e acc result second
-  simpa [correct] using run
+  unfold compileSeqsBounded
+  cases first : compileSeqsFuel fuel limit e acc with
+  | some initial =>
+    have correct := compileSeqsFuel_eq_of compileExp expressionEq fuel limit e acc initial first
+    simp [correct]
+  | none =>
+    have enough : expBudget e < max fuel (expBudget e + 1) := by omega
+    obtain ⟨result, second⟩ := compileSeqsFuel_succeeds (max fuel (expBudget e + 1)) limit e acc enough
+    have correct := compileSeqsFuel_eq_of compileExp expressionEq _ limit e acc result second
+    simpa [first, correct] using second
 
 /-- The complete executable stage agrees with the abstract source-shaped
 pipeline once constant folding supplies the expression correspondence. -/
