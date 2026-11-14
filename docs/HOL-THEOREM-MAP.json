@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "compile_length",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/TotalView.lean",
+    "lean_name": "compile_length",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_length_typed: the enabled flag, max_app, expression-list carrier and unconditional length equality agree; the compiler is the reviewed HOL-shaped definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "hol_name": "EVERY_HD",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Globals.lean",
     "lean_name": "every_head",

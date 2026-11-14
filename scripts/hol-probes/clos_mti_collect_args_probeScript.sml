@@ -162,6 +162,7 @@ fun show label th =
     (print label; print "="; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 val _ = show "every_hd_replay_typed" every_hd_replay;
+val _ = show "compile_length_typed" clos_mtiProofTheory.compile_length;
 val _ = show "mk_fns_def_typed" mk_Fns_def;
 val _ = show "collect_args_def_typed" collect_args_def;
 val _ = show "collect_args_imp_typed" collect_args_IMP;

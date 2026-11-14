@@ -197,7 +197,7 @@ theorem compileCommon_semantics {C F : Type} (ffi : HolFfiState F) (c c' : Confi
             · simpa [nco, stateCo, ClosNumber.ignoreTable] using free'
           · simpa [nco, stateCo, ClosNumber.ignoreTable] using (numberOracleSafe n).1
         have sourceLength : source.length = es.length := by
-          cases h : c.doMti <;> simp [source, ClosMti.compile, h, ClosMti.introList_length]
+          exact ClosMti.compile_length c.doMti c.maxApp es
         have postEq : compileIncPostKcompile c es = (knownConf, optimized) := by
           simp only [compileIncPostKcompile]
           change ClosKnown.compile c.knownConf

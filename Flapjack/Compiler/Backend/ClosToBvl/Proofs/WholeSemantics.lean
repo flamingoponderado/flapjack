@@ -61,7 +61,7 @@ theorem compile_semantics {C F : Type} (ffi : HolFfiState F) (c c' : Config)
       let source := ClosMti.compile c.doMti c.maxApp es
       let aligned := makeEven (c.nextLoc + max 1 source.length)
       have length : source.length = es.length := by
-        cases h : c.doMti <;> simp [source, ClosMti.compile, h, ClosMti.introList_length]
+        exact ClosMti.compile_length c.doMti c.maxApp es
       cases hr : ClosNumber.renumberList aligned source with
       | mk next numbered =>
         cases hk : ClosKnown.compile c.knownConf numbered with

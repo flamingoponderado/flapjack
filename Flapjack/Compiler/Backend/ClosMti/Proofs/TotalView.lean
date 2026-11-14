@@ -322,6 +322,12 @@ theorem introExp_letrec_vars (maxApp : Nat) (names : List Flapjack.Basis.Pure.Ml
 noncomputable def compile (enabled : Bool) (maxApp : Nat) (es : List Exp) : List Exp :=
   if enabled then introList maxApp es else es
 
+/-- Multi-argument compilation preserves the number of expressions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "compile_length"]
+theorem compile_length (enabled : Bool) (maxApp : Nat) (es : List Exp) :
+    (compile enabled maxApp es).length = es.length := by
+  cases enabled <;> simp [compile, introList_length]
+
 /-- The total compiler agrees with the executed fuel-based compiler. -/
 theorem compileFuel_eq_compile (fuel : Nat) (enabled : Bool) (maxApp : Nat) (es : List Exp) :
     compileFuel fuel enabled maxApp es = some (compile enabled maxApp es) := by
