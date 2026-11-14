@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.BviInline.Proofs.SourceCorrespondence
 public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
 public import Mathlib.Data.List.Forall2
+public import Flapjack.Misc.Option.Rel
 
 @[expose] public section
 
@@ -10,9 +11,8 @@ public import Mathlib.Data.List.Forall2
 namespace Flapjack.Compiler.Backend.BviInline
 open Bvi
 
-/-- Flapjack infrastructure: expression-level inlining relation. This is
-untagged until its nested list and optional-handler carriers are reviewed
-against the original inductive relation. -/
+/-- Flapjack infrastructure: expression-level inlining relation. Its own
+declaration remains untagged pending a separate declaration-level review. -/
 inductive ExpRel (code : Spt (Nat × Bvi.Exp)) : Bvi.Exp → Bvi.Exp → Prop where
   | var (n : Nat) : ExpRel code (.var n) (.var n)
   | force (location index : Nat) : ExpRel code (.force location index) (.force location index)
@@ -33,6 +33,71 @@ inductive ExpRel (code : Spt (Nat × Bvi.Exp)) : Bvi.Exp → Bvi.Exp → Prop wh
   | inlineCall {ticks name xs ys arity body} : List.Forall₂ (ExpRel code) xs ys →
       sptLookup name code = some (arity, body) → ys.length = arity →
       ExpRel code (.call ticks (some name) xs none) (.let ys (mkTick (ticks + 1) body))
+
+
+/-- Inversion of the expression relation for each source constructor. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "exp_rel_inv"]
+theorem expRelInv (c : Spt (Nat × Bvi.Exp)) (n loc : Nat)
+    (x1 x2 x3 x y : Bvi.Exp) (xs : List Bvi.Exp) (op : ClosLang.Op)
+    (rets ticks target : Nat) (dest : Option Nat) (handler : Option Bvi.Exp) :
+    (ExpRel c (.var n) y ↔ y = .var n) ∧
+    (ExpRel c (.force loc n) y ↔ y = .force loc n) ∧
+    (ExpRel c (.ifThenElse x1 x2 x3) y ↔
+      ∃ y1 y2 y3, y = .ifThenElse y1 y2 y3 ∧ ExpRel c x1 y1 ∧
+        ExpRel c x2 y2 ∧ ExpRel c x3 y3) ∧
+    (ExpRel c (.let xs x) y ↔
+      ∃ ys y1, y = .let ys y1 ∧ List.Forall₂ (ExpRel c) xs ys ∧ ExpRel c x y1) ∧
+    (ExpRel c (.raise x) y ↔ ∃ y1, y = .raise y1 ∧ ExpRel c x y1) ∧
+    (ExpRel c (.tick x) y ↔ ∃ y1, y = .tick y1 ∧ ExpRel c x y1) ∧
+    (ExpRel c (.op op xs) y ↔ ∃ ys, y = .op op ys ∧ List.Forall₂ (ExpRel c) xs ys) ∧
+    (ExpRel c (.return xs) y ↔ ∃ ys, y = .return ys ∧ List.Forall₂ (ExpRel c) xs ys) ∧
+    (ExpRel c (.letCall rets ticks target xs x) y ↔
+      ∃ ys y1, y = .letCall rets ticks target ys y1 ∧
+        List.Forall₂ (ExpRel c) xs ys ∧ ExpRel c x y1) ∧
+    (ExpRel c (.call ticks dest xs handler) y ↔
+      (∃ ys handler1, y = .call ticks dest ys handler1 ∧
+        List.Forall₂ (ExpRel c) xs ys ∧ optionRel (ExpRel c) handler handler1) ∨
+      (∃ name ys arity body, dest = some name ∧ handler = none ∧
+        y = .let ys (mkTick (ticks + 1) body) ∧
+        List.Forall₂ (ExpRel c) xs ys ∧ sptLookup name c = some (arity, body) ∧
+        ys.length = arity)) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · constructor
+    · intro h; cases h; rfl
+    · intro h; subst y; exact .var n
+  · constructor
+    · intro h; cases h; rfl
+    · intro h; subst y; exact .force loc n
+  · constructor
+    · intro h; cases h with | ifThenElse a b c => exact ⟨_, _, _, rfl, a, b, c⟩
+    · rintro ⟨_, _, _, rfl, a, b, c⟩; exact .ifThenElse a b c
+  · constructor
+    · intro h; cases h with | letExp a b => exact ⟨_, _, rfl, a, b⟩
+    · rintro ⟨_, _, rfl, a, b⟩; exact .letExp a b
+  · constructor
+    · intro h; cases h with | raise a => exact ⟨_, rfl, a⟩
+    · rintro ⟨_, rfl, a⟩; exact .raise a
+  · constructor
+    · intro h; cases h with | tick a => exact ⟨_, rfl, a⟩
+    · rintro ⟨_, rfl, a⟩; exact .tick a
+  · constructor
+    · intro h; cases h with | op a => exact ⟨_, rfl, a⟩
+    · rintro ⟨_, rfl, a⟩; exact .op a
+  · constructor
+    · intro h; cases h with | returnExp a => exact ⟨_, rfl, a⟩
+    · rintro ⟨_, rfl, a⟩; exact .returnExp a
+  · constructor
+    · intro h; cases h with | letCall a b => exact ⟨_, _, rfl, a, b⟩
+    · rintro ⟨_, _, rfl, a, b⟩; exact .letCall a b
+  · constructor
+    · intro h
+      cases h with
+      | callNone a => exact Or.inl ⟨_, none, rfl, a, trivial⟩
+      | callSome a b => exact Or.inl ⟨_, some _, rfl, a, b⟩
+      | inlineCall a b d => exact Or.inr ⟨_, _, _, _, rfl, rfl, rfl, a, b, d⟩
+    · rintro (⟨ys, h, rfl, a, b⟩ | ⟨name, ys, arity, body, rfl, rfl, rfl, a, b, d⟩)
+      · cases handler <;> cases h <;> simp_all [optionRel, ExpRel.callNone, ExpRel.callSome]
+      · exact .inlineCall a b d
 
 mutual
 /-- Flapjack infrastructure: extending a code tree preserves the

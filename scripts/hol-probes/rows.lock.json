@@ -96,7 +96,7 @@
     {"bytes": 563, "out": "binary_ieee_round_fp64_probe.out", "rows": 20, "sha256": "f07dbddbf44e96eae72f3d6a25feab61aeaead0a558b65848aef4d39768ad4ca"},
     {"bytes": 3759, "out": "binary_ieee_round_probe.out", "rows": 13, "sha256": "2568949fab64d29bfc38e41c18259047e2eb05e90ab7ec663383fd61600dcf9e"},
     {"bytes": 424, "out": "binary_ieee_two_dimensions_probe.out", "rows": 4, "sha256": "dac324b1ba6bab4a5f355e7a8aa5ef7ede95445de4ac5b3d27ab2fe956196373"},
-    {"bytes": 26211, "out": "bvi_inline_labels_probe.out", "rows": 52, "sha256": "34d3c2684e7045ec59826ee9e13129d240652c40d66dec253e0f6b02d9671891"},
+    {"bytes": 27972, "out": "bvi_inline_labels_probe.out", "rows": 53, "sha256": "abce7da2b3f475242196a3487d158c7dfe407848f0d828f14053e9e06d199a63"},
     {"bytes": 4553, "out": "bvi_inline_probe.out", "rows": 2, "sha256": "2fdc238aa38659da3f968b3048a75cbbc61a333184bea836bce1beb6287d3b34"},
     {"bytes": 3154, "out": "bvi_let_compile_probe.out", "rows": 7, "sha256": "e0f8c332f2d048f95e24dc36541537c1f9e31a60a4d8e3cd7e98982700938760"},
     {"bytes": 4379, "out": "bvi_let_helpers_probe.out", "rows": 7, "sha256": "97ad435c3cd8e20a57f9c95e8d89d745383059d9c354580399b25a4bf542cce0"},

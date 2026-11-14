@@ -139238,4 +139238,13 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "codewhale source comparison (2026-11-11; bead flapjack-4ac.3.43; panSemScript.sml:529-547: typed capture sh_mem_store_def_typed in pan_upd_locals_probe.out gives \u2200(w :\u03b3 word) (addr :\u03b1 word) (nb :num) (s :(\u03b1,'ffi) state). sh_mem_store w addr nb s :\u03b2 result option # (\u03b1,'ffi) state = if nb = 0 then if addr \u2208 s.sh_memaddrs then case call_FFI s.ffi (SharedMem MappedWrite) [(n2w nb :word8)] (word_to_bytes w F ++ word_to_bytes addr F) of FFI_return new_ffi _ => (NONE, s with ffi := new_ffi) | FFI_final outcome => (SOME (FinalFFI outcome), s) else (SOME Error, s) else if byte_align addr \u2208 s.sh_memaddrs then (same call with TAKE nb (word_to_bytes w F) ++ word_to_bytes addr F) else (SOME Error, s), 0 hypotheses). Lean keeps every branch, the two FFI outcomes and the ffi-only update; the stored word, the address and the result keep HOL's three independent word dimensions (word : RiscV.Word w, address : RiscV.Word width, result : PanSemResultExact \u03b2), and the argument order is HOL's word, address, nb, state. byte_align is panByteAlignHOL, word_to_bytes is panWordToBytesHOL, TAKE is List.take, call_FFI is callFFIHOL. The map fields locals/globals/code/eshapes are the canonical HolFiniteMapExact translation (witness holFmapAsFiniteSupportWitness). The production single-width, state-first shMemStoreHOLExact stays untagged with its documented_mismatch row. Qualifier is representation-only."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "exp_rel_inv",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/ExpRelation.lean",
+    "lean_name": "expRelInv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete ten-conjunct statement against the HOL local theorem and its typed proof replay: all shared variables, list and option relations, and both call alternatives match. Expression and code-tree carriers are fixed, with no polymorphic state or real-model assumptions."
+  }
 ]

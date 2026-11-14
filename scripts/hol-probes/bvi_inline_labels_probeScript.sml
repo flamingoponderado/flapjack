@@ -336,3 +336,34 @@ val evaluate_inlined_call_replay = Q.prove
   >> namedCases_on `raised` ["exn_val", "ret_vals"]
   >> gvs []);
 val _ = show "evaluate_inlined_call_replay_typed" evaluate_inlined_call_replay;
+
+(* Replay the original local expression-relation inversion theorem. *)
+val exp_rel_inv_replay = Q.prove
+  (`(exp_rel c (Var n) y ⇔ y = Var n) ∧
+  (exp_rel c (Force loc n) y ⇔ y = Force loc n) ∧
+  (exp_rel c (If x1 x2 x3) y ⇔
+     ∃y1 y2 y3. y = If y1 y2 y3 ∧ exp_rel c x1 y1 ∧ exp_rel c x2 y2 ∧
+       exp_rel c x3 y3) ∧
+  (exp_rel c (Let xs x) y ⇔
+     ∃ys y1. y = Let ys y1 ∧ LIST_REL (exp_rel c) xs ys ∧ exp_rel c x y1) ∧
+  (exp_rel c (Raise x) y ⇔ ∃y1. y = Raise y1 ∧ exp_rel c x y1) ∧
+  (exp_rel c (Tick x) y ⇔ ∃y1. y = Tick y1 ∧ exp_rel c x y1) ∧
+  (exp_rel c (Op op xs) y ⇔
+     ∃ys. y = Op op ys ∧ LIST_REL (exp_rel c) xs ys) ∧
+  (exp_rel c (Return xs) y ⇔
+     ∃ys. y = Return ys ∧ LIST_REL (exp_rel c) xs ys) ∧
+  (exp_rel c (LetCall rets ticks target xs x) y ⇔
+     ∃ys y1. y = LetCall rets ticks target ys y1 ∧
+       LIST_REL (exp_rel c) xs ys ∧ exp_rel c x y1) ∧
+  (exp_rel c (bvi$Call ticks dest xs handler) y ⇔
+     (∃ys handler1. y = bvi$Call ticks dest ys handler1 ∧
+        LIST_REL (exp_rel c) xs ys ∧ OPTREL (exp_rel c) handler handler1) ∨
+     (∃n ys arity body.
+        dest = SOME n ∧ handler = NONE ∧
+        y = Let ys (bvi_mk_tick (SUC ticks) body) ∧
+        LIST_REL (exp_rel c) xs ys ∧ lookup n c = SOME (arity,body) ∧
+        LENGTH ys = arity))`,
+   rpt conj_tac
+  >> simp [Once exp_rel_cases]
+  >> metis_tac []);
+val _ = show "exp_rel_inv_replay_typed" exp_rel_inv_replay;
