@@ -1,1 +1,2 @@
 every_Fn_vs_NONE_insert_interp_typed=every_Fn_vs_NONE (xs :closLang$exp list) ⇒ every_Fn_vs_NONE (insert_interp xs)
+contains_App_SOME_insert_interp_typed=¬contains_App_SOME (max_app :num) (xs :closLang$exp list) ∧ (1 :num) ≤ max_app ⇒ ¬contains_App_SOME max_app (insert_interp xs)

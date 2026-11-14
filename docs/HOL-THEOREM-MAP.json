@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "contains_App_SOME_insert_interp",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/ApplicationInvariant.lean",
+    "lean_name": "containsAppSome_insertInterp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared contains_App_SOME_insert_interp_typed and the full application predicate and interpreter insertion clauses, including the force case and the original minimum-arity premise. Independently regenerated the typed HOL probe. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
     "hol_name": "every_Fn_vs_NONE_insert_interp",
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/FunctionAnnotations.lean",
     "lean_name": "everyFnVarsNone_insertInterp",
