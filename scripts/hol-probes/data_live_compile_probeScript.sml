@@ -13,3 +13,4 @@ val _ = show "is_pure_def_typed" data_liveTheory.is_pure_def;
 val _ = show "compile_def_typed" data_liveTheory.compile_def;
 load "data_liveProofTheory";
 val _ = show "get_code_labels_compile_typed" data_liveProofTheory.get_code_labels_compile;
+val _ = show "compile_correct_typed" data_liveProofTheory.compile_correct;

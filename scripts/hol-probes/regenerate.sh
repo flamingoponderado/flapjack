@@ -9808,7 +9808,7 @@ run_probe data_to_word_ops_probeScript.sml data_to_word_ops_probe.out \
   "$cake_dir/compiler/backend"
 
 run_probe data_live_compile_probeScript.sml data_live_compile_probe.out \
-  is_pure_def_typed compile_def_typed get_code_labels_compile_typed \
+  is_pure_def_typed compile_def_typed get_code_labels_compile_typed compile_correct_typed \
   "$cake_dir/compiler/backend/proofs/data_liveProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 

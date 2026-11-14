@@ -141098,5 +141098,14 @@
     "lean_name": "incrementalWrapperExample",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: the two incremental compilations share the same cache and yield the exact original inlined program. The explicit witnesses match the original example."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Compiler/Backend/DataLive/Proofs/CompileCorrect.lean",
+    "lean_name": "compile_correct",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete exported theorem and typed compile_correct_typed capture in data_live_compile_probe.out: independent compiler and FFI state carriers, original non-type-error and stopped premises, four existential resource fields in source order, and exact evaluation/result pair. The data evaluator, state and liveness compiler are separately reviewed; tree maps use the original Spt carrier. The evaluator inherits reals_as_rational_cuts, the real-model assumption documented in SOUNDNESS item 8."
   }
 ]
