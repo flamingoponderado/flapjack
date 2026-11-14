@@ -354,7 +354,7 @@ theorem evaluateRel_tickWithin {C F : Type} (limit : Nat) (trace : BackendCommon
         simpa [introList] using code.2.symm
       obtain ⟨body, rfl, bodyUnary, bodyEq⟩ :=
         introExp_eq_tick source.maxApp expression trace targetBody unary transformed
-      have clocks := (stateRel_clock_maxApp states).1
+      have clocks := stateRel_clocks states
       by_cases zero : target.clock = 0
       · have sourceZero : source.clock = 0 := clocks.trans zero
         simp [evaluate, zero] at run
@@ -722,12 +722,12 @@ theorem evaluateRel_fn {C F : Type} (name : Basis.Pure.MlString.MlString)
       obtain ⟨body, remaining, rfl, bodyUnary, rfl, rfl, collected, targetBodyEq⟩ :=
         introExp_eq_fn source.maxApp expression name location vars arity targetBody unary transformed
       have maxPos : 1 ≤ source.maxApp := by
-        have agreement := stateRel_clock_maxApp states
+        have agreement := (And.intro (stateRel_clocks states) (stateRel_maxApp states))
         omega
       have arityBounds := collectArgsBounds source.maxApp 1 body arity remaining collected maxPos
       obtain ⟨names, bodyEq, arityEq, remainingUnary⟩ :=
         collectArgsUnary source.maxApp 1 body arity remaining collected bodyUnary
-      have targetMax : target.maxApp = source.maxApp := (stateRel_clock_maxApp states).2.1.symm
+      have targetMax : target.maxApp = source.maxApp := (stateRel_maxApp states).1.symm
       have targetBound : arity ≤ target.maxApp := by simpa [targetMax] using arityBounds.2
       have arityNonzero : arity ≠ 0 := by omega
       have closureCode : CodeRel source.maxApp [remaining] [targetBody] := by

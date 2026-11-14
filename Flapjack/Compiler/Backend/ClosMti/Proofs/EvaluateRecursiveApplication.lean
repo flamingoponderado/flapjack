@@ -138,7 +138,7 @@ theorem evaluateApp_recclosure_full_related {C F : Type} (source target : State 
       (evaluateApp none (.recclosure none targetSupplied targetEnv functions index) targetArgs target).2 := by
   have argsLength := argsRel.length_eq
   have suppliedLength := suppliedRel.length_eq
-  have agreement := stateRel_clock_maxApp states
+  have agreement := (And.intro (stateRel_clocks states) (stateRel_maxApp states))
   have targetBound : targetArgs.length ≤ target.maxApp := by omega
   have targetSuppliedBound : targetSupplied.length < arity := by omega
   have targetFull : arity ≤ targetArgs.length + targetSupplied.length := by omega
@@ -185,7 +185,7 @@ theorem evaluateApp_recclosure_partial_related {C F : Type} (source target : Sta
       (evaluateApp none (.recclosure none targetSupplied targetEnv targetFunctions index) targetArgs target).2 := by
   have argsLength := argsRel.length_eq
   have suppliedLength := suppliedRel.length_eq
-  have agreement := stateRel_clock_maxApp states
+  have agreement := (And.intro (stateRel_clocks states) (stateRel_maxApp states))
   have targetBound : targetArgs.length ≤ target.maxApp := by omega
   have suppliedBound : targetSupplied.length < arity := by omega
   have partialBound : targetArgs.length + targetSupplied.length < arity := by omega
@@ -362,7 +362,7 @@ theorem evaluateApp_recclosure_related {C F : Type} (source target : State C F)
             | cons head tail => simp only [List.length_cons] at lengths; omega
           exact empty this
         have sourceMax : 1 ≤ source.maxApp := by
-          have agreement := stateRel_clock_maxApp states
+          have agreement := (And.intro (stateRel_clocks states) (stateRel_maxApp states))
           omega
         have sourceEq := evaluateApps_recclosure_eq_closure source sourceArgs sourceEnv sourceFunctions
           index (mkFns names body) sourceNonempty sourceMax sourceSelected

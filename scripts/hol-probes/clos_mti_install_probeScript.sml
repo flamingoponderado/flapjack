@@ -9,6 +9,19 @@ val _ = set_trace "BasicProvers.var_eq_old" 1;
 fun bring_fwd_ctors th ty = map ((fn s => Parse.bring_to_front_overload s {Name = s, Thy = th}) o term_to_string) (TypeBase.constructors_of ty);
 val _ = bring_fwd_ctors "closLang" ``:closLang$exp``;
 
+(* Literal replays of clos_mtiProofScript.sml:163-173. *)
+Theorem state_rel_max_app_replay:
+  state_rel s t ⇒ s.max_app = t.max_app ∧ 1 ≤ t.max_app
+Proof
+  gvs [state_rel_def]
+QED
+
+Theorem state_rel_clocks_replay:
+  state_rel s t ⇒ s.clock = t.clock
+Proof
+  gvs [state_rel_def]
+QED
+
 (* Literal replays of clos_mtiProofScript.sml:282-319 and 323-335. *)
 Theorem mk_apps_err_1_replay:
     ∀ts other env1 s1 e3.
@@ -271,6 +284,8 @@ fun show_thm label th =
     (print label; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 val _ = show_thm "do_install_replay_typed=" do_install_replay;
+val _ = show_thm "state_rel_max_app_replay_typed=" state_rel_max_app_replay;
+val _ = show_thm "state_rel_clocks_replay_typed=" state_rel_clocks_replay;
 val _ = show_thm "evaluate_apps_snoc_replay_typed=" evaluate_apps_snoc_replay;
 val _ = show_thm "evaluate_mk_apps_ok_replay_typed=" evaluate_mk_apps_ok_replay;
 val _ = show_thm "mk_apps_err_1_replay_typed=" mk_apps_err_1_replay;

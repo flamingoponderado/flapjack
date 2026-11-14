@@ -58,12 +58,21 @@ noncomputable def StateRel {C F : Type} (source target : State C F) : Prop :=
   source.compile = pureCc (compileInc source.maxApp) target.compile ∧
   target.compileOracle = pureCo (compileInc source.maxApp) ∘ source.compileOracle
 
-/-- Related states agree on clock and application limit. -/
-theorem stateRel_clock_maxApp {C F : Type} {source target : State C F}
+/-- Related states have the same positive application limit. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "state_rel_max_app"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRel_maxApp {C F : Type} {source target : State C F}
     (related : StateRel source target) :
-    source.clock = target.clock ∧ source.maxApp = target.maxApp ∧ 1 ≤ target.maxApp := by
-  obtain ⟨_, _, _, maxEq, maxPos, clockEq, _⟩ := related
-  exact ⟨clockEq.symm, maxEq.symm, maxEq ▸ maxPos⟩
+    source.maxApp = target.maxApp ∧ 1 ≤ target.maxApp := by
+  obtain ⟨_, _, _, maxEq, maxPos, _⟩ := related
+  exact ⟨maxEq.symm, maxEq ▸ maxPos⟩
+
+/-- Related states have equal clocks. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "state_rel_clocks"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRel_clocks {C F : Type} {source target : State C F}
+    (related : StateRel source target) : source.clock = target.clock := by
+  exact related.2.2.2.2.2.1.symm
 
 /-- A related pair of finite maps has related lookup results at every key. -/
 theorem fmapRel_lookup {K A B : Type} {r : A → B → Prop}

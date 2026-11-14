@@ -1,6 +1,24 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "state_rel_max_app",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/StateRelation.lean",
+    "lean_name": "stateRel_maxApp",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared literal state_rel_max_app_replay_typed: arbitrary related closure states yield source/target max_app equality and positivity of the target limit. Both state finite maps use the canonical representation with a local roundtrip witness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "state_rel_clocks",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/StateRelation.lean",
+    "lean_name": "stateRel_clocks",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared literal state_rel_clocks_replay_typed: arbitrary related closure states yield the original source-to-target clock equality. Both state finite maps use the canonical representation with a local roundtrip witness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "hol_name": "dest_closure_SOME_IMP",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Applications.lean",
     "lean_name": "destClosure_some_imp",

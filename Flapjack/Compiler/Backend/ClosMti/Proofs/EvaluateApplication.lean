@@ -64,7 +64,7 @@ theorem evaluateApp_closure_partial {C F : Type} (source target : State C F)
       (evaluateApp none (.closure none targetSupplied targetEnv arity targetBody) targetArgs target).2 := by
   have argsLength := argsRel.length_eq
   have suppliedLength := suppliedRel.length_eq
-  have agreement := stateRel_clock_maxApp states
+  have agreement := (And.intro (stateRel_clocks states) (stateRel_maxApp states))
   have targetBound : targetArgs.length ≤ target.maxApp := by omega
   have suppliedBound : targetSupplied.length < arity := by omega
   have partialBound : targetArgs.length + targetSupplied.length < arity := by omega
@@ -130,7 +130,7 @@ theorem evaluateApp_closure_full_timeout {C F : Type} (source target : State C F
     StateRel { source with clock := 0 } { target with clock := 0 } := by
   have argsLength := argsRel.length_eq
   have suppliedLength := suppliedRel.length_eq
-  have agreement := stateRel_clock_maxApp states
+  have agreement := (And.intro (stateRel_clocks states) (stateRel_maxApp states))
   have targetBound : targetArgs.length ≤ target.maxApp := by omega
   have suppliedBound : targetSupplied.length < arity := by omega
   have fullBound : arity ≤ targetArgs.length + targetSupplied.length := by omega
@@ -243,7 +243,7 @@ theorem evaluateApp_closure_full_related {C F : Type} (source target : State C F
     exact ⟨by simp [resultRel, excRel], finalStates⟩
   · have argsLength := argsRel.length_eq
     have suppliedLength := suppliedRel.length_eq
-    have agreement := stateRel_clock_maxApp states
+    have agreement := (And.intro (stateRel_clocks states) (stateRel_maxApp states))
     have count : arity - targetSupplied.length = 1 + names.length := by omega
     have targetBound : targetArgs.length ≤ target.maxApp := by omega
     have targetSuppliedBound : targetSupplied.length < arity := by omega

@@ -204,7 +204,7 @@ theorem evaluate_introApp_step {C F : Type} (source target : State C F)
       (evaluate [.app trace none head [arg]] sourceEnv source).2
       (evaluate [introExp source.maxApp (.app trace none head [arg])] targetEnv target).2 := by
   have positive : 1 ≤ source.maxApp := by
-    have agreement := stateRel_clock_maxApp states
+    have agreement := (And.intro (stateRel_clocks states) (stateRel_maxApp states))
     omega
   have outerCollected : collectApps source.maxApp [] (.app trace none head [arg]) =
       (collectedArgs, collectedHead) := by
