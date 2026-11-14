@@ -10101,6 +10101,17 @@ core theories (no rebuild): `OLEAST_def`, `OLEAST_INTRO`, `list_rel_lastn`,
 The capture supports source comparison; it does not establish Lean
 correspondence.
 
+Every typed probe that parses `[local]` statements from the pinned source text expands
+SML antiquotation splices: a source `^name` splices the term bound by
+`val name = ``term``;` (also `mk_var ("name", type_of y)`, `mk_var ("name", ``: ty``)` and
+`rand ``l = r`` `), and the capture substitutes that term instead of deleting the marker.
+Deleting the marker drops the type constraint the splice carries and unlinks type
+variables shared between occurrences — e.g. `source_to_flatProofScript.sml`'s
+`val s_i1 = ``s_i1 : ('f_orac_st, 'ffi) flatSem$state``;` is spliced into both conjuncts
+of `pmatch`, so HOL shares those two variables there. An unrecognised splice is left
+intact, so the re-parse fails loudly rather than silently weakening the statement
+(task 177).
+
 `pancake_loop_to_word_proof_typed_probe.out`,
 `pancake_pan_globals_proof_typed_probe.out`,
 `pancake_crep_to_loop_proof_typed_probe.out`,
@@ -10118,10 +10129,10 @@ text (typed source evidence, not a replay); the seven derived local theorems
 are captured through the base statement named in the probe comment; and the
 `crep_to_loopProof` datatype `semantics_run_res` is captured through its
 constructors. A source `^` immediately followed by an identifier is an SML
-antiquotation of a term variable, and the capture drops the marker while
-keeping the variable (an infix `^` for mlstring concatenation is followed by a
-space and is kept). Labels replace an apostrophe with `_prime` so the row
-grammar stays `[A-Za-z][A-Za-z0-9_]*`.
+antiquotation of a term variable, and the capture substitutes the bound typed
+term (an infix `^` for mlstring concatenation is followed by a space and is
+kept). Labels replace an apostrophe with `_prime` so the row grammar stays
+`[A-Za-z][A-Za-z0-9_]*`.
 
 `flat_pattern_proof_typed_probe.out` captures the typed statements of the 133
 distinct HOL names behind the 134 reviewed `flat_patternProofScript.sml` rows
@@ -10164,7 +10175,7 @@ and four local derived theorems replayed exactly as the source derives them:
 `Once CONJ_COMM`, and `adjust_oracle_ev_decs` from `adjust_oracle_evaluate`
 (`UNDISCH`, `CONJUNCTS`, `List.last`, `DISCH_ALL`, `PULL_FORALL`, and the
 `clock := k` specialization). A source `^` immediately followed by an
-identifier is an SML antiquotation and is dropped, keeping the variable. The
+identifier is an SML antiquotation and the bound typed term is substituted. The
 theory is a default CakeML build target. Regenerate with `CAKEML=<cakeml tree>
 HOL_PROBE_ONLY=source_eval_proof_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
