@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "renumber_code_locs_no_Labels",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/NoLabels.lean",
+    "lean_name": "renumberCodeLocs_noLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared renumber_no_labels_typed and the no_Labels source clauses: the list and expression conjuncts independently quantify the same locations and full expressions, retain the numbering equation and original no-label premise, and conclude the original output predicate. EVERY is expressed as a membership-bounded universal. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "renumber_code_locs_get_code_labels",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LocationLabels.lean",
     "lean_name": "renumber_code_locs_get_code_labels",

@@ -1430,6 +1430,7 @@ import Flapjack.Compiler.Backend.ClosNumber.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.AnyDests
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationParity
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationLabels
+import Flapjack.Compiler.Backend.ClosNumber.Proofs.NoLabels
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.VarsNone
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.GlobalInvariants
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationDistinct
