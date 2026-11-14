@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosConstant.Proofs.Flatten
+public import Flapjack.Misc.ListEl
 
 @[expose] public section
 
@@ -179,72 +180,6 @@ theorem partsList_dependencies (constants : List Const) (index : Nat) (aux : Lis
             exact finalOrdered
 end
 
-/-- Accumulator indices are distinct. -/
-def distinctIndices (aux : List (ConstPart × Nat)) : Prop := (aux.map Prod.snd).Nodup
-
-/-- Inserting a fresh index preserves distinctness; reusing a part leaves the
-accumulator unchanged. -/
-theorem makePart_distinct (index : Nat) (part : ConstPart) (aux : List (ConstPart × Nat))
-    (bounded : indicesBelow index aux) (distinct : distinctIndices aux) :
-    distinctIndices (makePart index part aux).2.2 := by
-  unfold makePart
-  cases lookup : lookupPart part aux with
-  | some found => exact distinct
-  | none =>
-    simp only [distinctIndices, List.map_cons, List.nodup_cons]
-    constructor
-    · intro member
-      obtain ⟨entry, inAux, equal⟩ := List.mem_map.mp member
-      have bound := bounded entry inAux
-      omega
-    · exact distinct
-
-mutual
-/-- Flattening one constant preserves distinct accumulator indices. -/
-theorem parts_distinct (constant : Const) (index : Nat) (aux : List (ConstPart × Nat))
-    (bounded : indicesBelow index aux) (distinct : distinctIndices aux) :
-    distinctIndices (parts constant index aux).2.2 := by
-  cases constant with
-  | constInt n => exact makePart_distinct index (.int n) aux bounded distinct
-  | constStr text => exact makePart_distinct index (.str text) aux bounded distinct
-  | constWord64 word => exact makePart_distinct index (.w64 word) aux bounded distinct
-  | constCons tag constants =>
-    cases first : partsList constants index aux with
-    | mk next pair =>
-      cases pair with
-      | mk indices nextAux =>
-        have bounds := partsList_bounds constants index aux bounded
-        rw [first] at bounds
-        have nextDistinct := partsList_distinct constants index aux bounded distinct
-        rw [first] at nextDistinct
-        simp only [parts, first]
-        exact makePart_distinct next (.con tag indices) nextAux bounds.2.2 nextDistinct
-
-/-- Flattening a list preserves distinct accumulator indices. -/
-theorem partsList_distinct (constants : List Const) (index : Nat) (aux : List (ConstPart × Nat))
-    (bounded : indicesBelow index aux) (distinct : distinctIndices aux) :
-    distinctIndices (partsList constants index aux).2.2 := by
-  cases constants with
-  | nil => exact distinct
-  | cons constant rest =>
-    cases first : parts constant index aux with
-    | mk next pair =>
-      cases pair with
-      | mk found nextAux =>
-        have bounds := parts_bounds constant index aux bounded
-        rw [first] at bounds
-        have nextDistinct := parts_distinct constant index aux bounded distinct
-        rw [first] at nextDistinct
-        simp only [partsList, first]
-        cases second : partsList rest next nextAux with
-        | mk last pair =>
-          cases pair with
-          | mk indices finalAux =>
-            have finalDistinct := partsList_distinct rest next nextAux bounds.2.2 nextDistinct
-            rw [second] at finalDistinct
-            exact finalDistinct
-end
-
 /-- Accumulator entries enumerate the allocated indices in reverse order. -/
 def canonicalIndices (aux : List (ConstPart × Nat)) : Prop :=
   aux.map Prod.snd = (List.range aux.length).reverse
@@ -308,5 +243,74 @@ theorem partsList_indices (constants : List Const) (index : Nat) (aux : List (Co
             rw [second] at final
             exact final
 end
+
+/-- Accumulator indices follow allocation order, and constructor parts refer
+only to earlier entries. -/
+@[hol "cakeml/compiler/backend/proofs/clos_constantProofScript.sml" "conses_ok_def"]
+noncomputable def consesOk (aux : List (ConstPart × Nat)) : Prop :=
+  (∀ n, n < aux.length → ∃ p,
+    @Flapjack.holEl (ConstPart × Nat) ⟨(.int 0, 0)⟩ n aux.reverse = (p, n)) ∧
+  ∀ tag children child index,
+    (.con tag children, index) ∈ aux ∧ child ∈ children → child < index
+
+/-- HOL's bounded indexing invariant is equivalent to the canonical index
+and dependency invariants used by the reconstruction proof. -/
+theorem consesOk_iff (aux : List (ConstPart × Nat)) :
+    consesOk aux ↔ canonicalIndices aux ∧ dependenciesBelow aux := by
+  letI : Nonempty (ConstPart × Nat) := ⟨(.int 0, 0)⟩
+  have indexEquiv : (∀ n, n < aux.length → ∃ p,
+      @Flapjack.holEl (ConstPart × Nat) ⟨(.int 0, 0)⟩ n aux.reverse = (p, n)) ↔
+      canonicalIndices aux := by
+    constructor
+    · intro h
+      have mapped : aux.reverse.map Prod.snd = List.range aux.length := by
+        apply List.ext_getElem (by simp)
+        intro i hi _
+        have bound : i < aux.reverse.length := by simpa using hi
+        obtain ⟨p, hp⟩ := h i (by simpa using bound)
+        rw [Flapjack.holEl_eq_getElem i aux.reverse bound] at hp
+        simpa using congrArg Prod.snd hp
+      unfold canonicalIndices
+      have reversed := congrArg List.reverse mapped
+      simpa using reversed
+    · intro canonical n hn
+      have mapped : aux.reverse.map Prod.snd = List.range aux.length := by
+        have h := congrArg List.reverse canonical
+        simpa [canonicalIndices] using h
+      have bound : n < aux.reverse.length := by simpa using hn
+      refine ⟨aux.reverse[n].1, ?_⟩
+      rw [Flapjack.holEl_eq_getElem n aux.reverse bound]
+      apply Prod.ext
+      · rfl
+      · have h := congrArg (fun xs : List Nat => xs[n]?) mapped
+        simpa [List.getElem?_eq_getElem bound, hn] using h
+  simp only [consesOk, indexEquiv, dependenciesBelow]
+  constructor
+  · rintro ⟨indices, h⟩
+    exact ⟨indices, fun tag children index mem child childMem => h tag children child index ⟨mem, childMem⟩⟩
+  · rintro ⟨indices, h⟩
+    exact ⟨indices, fun tag children child index hs => h tag children index hs.1 child hs.2⟩
+
+/-- Appending the next allocation preserves the accumulator invariant when
+the new constructor's children refer to earlier entries. -/
+@[hol "cakeml/compiler/backend/proofs/clos_constantProofScript.sml" "IMP_conses_ok_CONS"]
+theorem consesOk_cons (x : ConstPart) (aux : List (ConstPart × Nat))
+    (children : ∀ tag rs, x = .con tag rs → rs.all (fun m => decide (m < aux.length)) = true)
+    (ok : consesOk aux) : consesOk ((x, aux.length) :: aux) := by
+  obtain ⟨canonical, ordered⟩ := (consesOk_iff aux).1 ok
+  apply (consesOk_iff _).2
+  constructor
+  · simp only [canonicalIndices, List.map_cons, List.length_cons, List.range_succ,
+      List.reverse_append, List.reverse_cons, List.reverse_nil, List.nil_append]
+    rw [canonical]
+    rfl
+  · intro tag rs index member child childMem
+    rcases List.mem_cons.mp member with equal | member
+    · have partEq : x = .con tag rs := congrArg Prod.fst equal.symm
+      have indexEq : aux.length = index := congrArg Prod.snd equal.symm
+      subst index
+      have allChildren := children tag rs partEq
+      simpa using (List.all_eq_true.mp allChildren child childMem)
+    · exact ordered tag rs index member child childMem
 
 end Flapjack.Compiler.Backend.ClosConstant.Proofs

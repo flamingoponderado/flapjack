@@ -136037,6 +136037,38 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
+  "hol_name": "LIST_REL_eq",
+  "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Reconstruct.lean",
+  "lean_name": "listRel_eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed local HOL proof replay cc_LIST_REL_eq_replay: the two list element types are independent, f maps the second to the first, the relation is f r = c, and the right side is l = MAP f rs. Source comparison and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
+  "hol_name": "parts_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Reconstruct.lean",
+  "lean_name": "partsFull",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared both conjuncts in cc_parts_thm, including all quantified inputs and outputs, the original distinctness, conses_ok, length and entry-bound premises, and every reconstruction, bound, distinctness and invariant conclusion. The proof derives its internal memory invariant from conses_ok; it adds no premise. Source comparison and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
+  "hol_name": "conses_ok_def",
+  "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Bounds.lean",
+  "lean_name": "consesOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cc_conses_ok_def in the typed HOL capture: bounded indexing of the reversed accumulator yields each allocated index, and every constructor child is below its entry's index. consesOk_iff connects both clauses to the existing canonical-index and dependency invariants. Source comparison and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
+  "hol_name": "IMP_conses_ok_CONS",
+  "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Bounds.lean",
+  "lean_name": "consesOk_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cc_IMP_conses_ok_CONS in the typed HOL capture: every child of the new constructor is below the old accumulator length, followed by the original accumulator invariant; the complete consed accumulator satisfies that invariant. Source comparison and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "make_const_thm",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Reconstruct.lean",
   "lean_name": "makeConst_toParts",

@@ -7,6 +7,10 @@ fun show_thm label th =
   else raise Fail (label ^ " has hypotheses");
 val _ = show_thm "cc_ALOOKUP_conses_ok_IMP=" clos_constantProofTheory.ALOOKUP_conses_ok_IMP;
 val _ = show_thm "cc_IMP_conses_ok_CONS=" clos_constantProofTheory.IMP_conses_ok_CONS;
+val list_rel_eq_replay = Q.prove (
+  `∀l rs. LIST_REL (λc r. f r = c) l rs ⇔ l = MAP f rs`,
+  Induct \\ Cases_on `rs` \\ fs [] \\ metis_tac []);
+val _ = show_thm "cc_LIST_REL_eq_replay=" list_rel_eq_replay;
 val _ = show_thm "cc_add_part_thm=" clos_constantProofTheory.add_part_thm;
 val _ = show_thm "cc_add_parts_thm=" clos_constantProofTheory.add_parts_thm;
 val _ = show_thm "cc_build_prime_def=" clos_constantProofTheory.build'_def;
