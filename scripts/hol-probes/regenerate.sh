@@ -11762,3 +11762,8 @@ run_probe lab_filter_proof_typed2_probeScript.sml lab_filter_proof_typed2_probe.
   asm_fetch_aux_eq2_typed asm_fetch_not_skip_adjust_pc_typed \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe parmove_typed2_probeScript.sml parmove_typed2_probe.out \
+  dstep_step_typed steps_MAP_INJ_typed NoRead_path_typed path_imp_mem_typed path_imp_mem2_typed \
+  step_sem_typed eqenv_sym_typed \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" \
+  "$cake_dir/compiler/backend/reg_alloc"
