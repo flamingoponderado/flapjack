@@ -49,7 +49,8 @@ jobs:
         run: |
           free -h
           ulimit -a
-          /usr/bin/time -v python3 scripts/check_hol_ref_export.py
+          cat /sys/fs/cgroup/memory.max 2>/dev/null || true
+          time python3 scripts/check_hol_ref_export.py
 
       # The attribute checker is syntactic, but the test compiles throwaway
       # declarations with `lake build`/`lake lean`, so it stays in this job.

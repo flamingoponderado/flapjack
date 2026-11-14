@@ -271,7 +271,11 @@ elab "#emit_hol_ref_export" : command => do
     (fun acc (entry : Name × HolRef) => if entry.2.realsAsRationalCuts then acc.insert entry.1 else acc) {}
   let mut known : Std.HashMap Name Bool := {}
   let mut nestedKnown : Std.HashMap Name (Bool × Bool) := {}
+  let mut count := 0
   for (name, ref) in HolRef.all env do
+    count := count + 1
+    if count % 500 == 0 then
+      liftIO <| IO.eprintln s!"HOL export progress: {count}: {name}"
     if !ref.nestedListRelAsMutual.isEmpty then
       let marker := ``Flapjack.Test.nestedRelationAudit_passed
       match env.getModuleIdxFor? marker with
