@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "v_rel_simp",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ValueRelationSimp.lean",
+    "lean_name": "valueRel_simp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all fourteen v_rel_simp_typed constructor equivalences: scalar, block, ordinary closure and recursive closure cases in both argument positions retain the original shared variables, existential witness order, list relations, numbering equations and application-safety conditions. The shared source list l is used for both block fields and ordinary-closure captured environment. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "v_rel_Boolv",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ValueRelation.lean",
     "lean_name": "valueRel_boolValue_iff",

@@ -26,6 +26,7 @@ val _ = show "simple_val_rel_typed=" clos_numberProofTheory.simple_val_rel;
 val _ = show "list_to_v_v_rel_typed=" clos_numberProofTheory.list_to_v_v_rel;
 val _ = show "v_rel_boolv_typed=" clos_numberProofTheory.v_rel_Boolv;
 val _ = show "v_rel_unit_typed=" clos_numberProofTheory.v_rel_Unit;
+val _ = show "v_rel_simp_typed=" clos_numberProofTheory.v_rel_simp;
 val _ = show "v_rel_rules_typed=" clos_numberProofTheory.v_rel_rules;
 val _ = show "ref_rel_def_typed=" closPropsTheory.ref_rel_def;
 val _ = show "fmap_rel_def_typed=" finite_mapTheory.fmap_rel_def;
