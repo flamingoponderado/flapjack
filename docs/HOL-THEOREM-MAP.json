@@ -1,6 +1,22 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+    "hol_name": "var_list_code_labels_imp",
+    "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/CodeLabels.lean",
+    "lean_name": "varList_codeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared var_list_code_labels_imp_typed: arbitrary starting index and independently typed comparison list with the original variable-list premise imply the union of mapped expression label sets is empty. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+    "hol_name": "let_op_get_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/CodeLabels.lean",
+    "lean_name": "compileSource_codeLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared let_op_get_code_labels_typed: mapping the code-label set function over the source-shaped transformed list equals mapping it over the original list, preserving order and multiplicity. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
     "hol_name": "let_op_app_call_dests",
     "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/AppCallDests.lean",
     "lean_name": "compileSource_appCallDests",
