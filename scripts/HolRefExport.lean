@@ -272,10 +272,13 @@ elab "#emit_hol_ref_export" : command => do
   let mut known : Std.HashMap Name Bool := {}
   let mut nestedKnown : Std.HashMap Name (Bool × Bool) := {}
   let mut count := 0
+  let progress ← liftIO <| IO.FS.Handle.mk ".lake/hol-export-progress.log" .write
   for (name, ref) in HolRef.all env do
     count := count + 1
     if count % 500 == 0 then
-      liftIO <| IO.eprintln s!"HOL export progress: {count}: {name}"
+      liftIO do
+        progress.putStr s!"HOL export progress: {count}: {name}\n"
+        progress.flush
     if !ref.nestedListRelAsMutual.isEmpty then
       let marker := ``Flapjack.Test.nestedRelationAudit_passed
       match env.getModuleIdxFor? marker with

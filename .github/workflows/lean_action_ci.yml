@@ -50,7 +50,10 @@ jobs:
           free -h
           ulimit -a
           cat /sys/fs/cgroup/memory.max 2>/dev/null || true
-          time python3 scripts/check_hol_ref_export.py
+          if ! python3 scripts/check_hol_ref_export.py; then
+            tail -10 .lake/hol-export-progress.log || true
+            exit 1
+          fi
 
       # The attribute checker is syntactic, but the test compiles throwaway
       # declarations with `lake build`/`lake lean`, so it stays in this job.
