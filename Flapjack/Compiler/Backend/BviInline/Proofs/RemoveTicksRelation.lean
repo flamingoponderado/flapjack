@@ -291,27 +291,6 @@ theorem removeStateRel_doInstall_success_reverse {C F : Type} (source target tar
       simp_all [BviSem.doInstall]
       exact sourceAbsent.2
 
-/-- Flapjack infrastructure: failed installation is unchanged by tick
-cleanup, including the type-error case. -/
-theorem removeStateRel_doInstall_error {C F : Type} (source target : BviState C F)
-    (args : List Value) (error : Flapjack.SemanticPrimitivesHOL.ErrorResult ExnOrRet)
-    (states : RemoveStateRel source target)
-    (run : BviSem.doInstall (R := ExnOrRet) args source = .err error) :
-    BviSem.doInstall (R := ExnOrRet) args target = .err error := by
-  have errorEq : error = .abort .typeError := BviTailrec.doApp_install_error args source error (by
-    simpa only [BviSem.doApp] using run)
-  cases targetRun : BviSem.doInstall (R := ExnOrRet) args target with
-  | err targetError =>
-    have targetEq : targetError = .abort .typeError := BviTailrec.doApp_install_error args target targetError (by
-      simpa only [BviSem.doApp] using targetRun)
-    simp [errorEq, targetEq]
-  | val pair =>
-    obtain ⟨targetValue, targetNext⟩ := pair
-    obtain ⟨sourceValue, sourceNext, sourceRun⟩ :=
-      removeStateRel_doInstall_success_reverse source target targetNext args targetValue states targetRun
-    rw [run] at sourceRun
-    contradiction
-
 /-- Installation preserves the tick-cleanup relation, with independent
 success-branch error payload types. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "remove_state_rel_do_install"
@@ -333,14 +312,21 @@ theorem removeStateRel_doInstall {C F A B : Type} (args : List Value)
     refine ⟨targetNext, ?_, relation⟩
     rw [doInstall_retype (R := B) (S := ExnOrRet), targetFixed]
   | err error =>
-    have errorEq : error = .abort .typeError := BviTailrec.doApp_install_error args source error (by
-      simpa only [BviSem.doApp] using sourceRun)
+    have errorEq := doInstall_error_type args source error sourceRun
     subst error
     have sourceGeneric : BviSem.doInstall (R := A) args source = .err (.abort .typeError) := by
       rw [doInstall_retype (S := ExnOrRet), sourceRun]
     simp only [sourceGeneric]
-    have targetFixed := removeStateRel_doInstall_error source target args (.abort .typeError) states sourceRun
-    rw [doInstall_retype (R := A) (S := ExnOrRet), targetFixed]
+    cases targetRun : BviSem.doInstall (R := ExnOrRet) args target with
+    | err targetError =>
+      have targetEq := doInstall_error_type args target targetError targetRun
+      rw [doInstall_retype (R := A) (S := ExnOrRet), targetRun, targetEq]
+    | val pair =>
+      obtain ⟨targetValue, targetNext⟩ := pair
+      obtain ⟨sourceValue, sourceNext, success⟩ :=
+        removeStateRel_doInstall_success_reverse source target targetNext args targetValue states targetRun
+      rw [sourceRun] at success
+      contradiction
 
 /-- Every primitive operation transfers through the tick-cleanup relation,
 preserving both successful results and errors. The dispatcher inherits the

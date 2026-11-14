@@ -139272,4 +139272,16 @@
     ],
     "reviewer": "Compared the complete source case split with the local HOL source and inferred-type statement capture (the original proof was not replayed). Source and error target use one polymorphic error payload type; the successful target has an independent type. The full inlining relation and source type-error exception are retained. BVI refs use the canonical finite-support map, with a same-module roundtrip."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "do_install_Rerr_type",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/InstallRelation.lean",
+    "lean_name": "doInstall_error_type",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "reviewer": "Compared the full statement with the local HOL source and its typed, hypothesis-free proof replay: compiler state, FFI, and error payload types are independent; any installation error equals the type error. BVI refs use the canonical finite-support map with a same-module roundtrip."
+  }
 ]

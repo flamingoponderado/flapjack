@@ -389,3 +389,12 @@ val in_state_rel_do_install_statement =
         ∃t2. in_state_rel s2 t2 ∧ do_install a t1 = Rval (v,t2)``;
 val _ = (print "in_state_rel_do_install_statement_typed=";
   print_term in_state_rel_do_install_statement; print "\n");
+
+(* Replay the original local installation-error theorem. *)
+val do_install_Rerr_type_replay = Q.prove
+  (`∀args (s:('c,'ffi) bviSem$state) error.
+    do_install args s = Rerr error ⇒
+    error = Rabort Rtype_error`,
+   rpt strip_tac
+  >> fs [do_install_def, case_eq_thms, UNCURRY]);
+val _ = show "do_install_Rerr_type_replay_typed" do_install_Rerr_type_replay;

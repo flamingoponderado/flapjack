@@ -153,6 +153,18 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   BviSem.holFmapAsFiniteSupportWitness
 end InstallationRelationCarrier
 
+/-- Every failed installation is a type error, independently of the error
+payload type. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "do_install_Rerr_type"
+  (fmap_as_finite_support := [refs])]
+theorem doInstall_error_type {C F R : Type} (args : List Value) (state : BviState C F)
+    (error : Flapjack.SemanticPrimitivesHOL.ErrorResult R)
+    (run : doInstall (R := R) args state = .err error) : error = .abort .typeError := by
+  unfold BviSem.doInstall at run
+  repeat' split at run
+  all_goals simp_all
+  all_goals split at run <;> simp_all
+
 /-- Installation preserves the inlining state relation unless the source
 installation returns a type error. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "in_state_rel_do_install"
@@ -167,11 +179,7 @@ theorem doInstall_rel {C F R S : Type} (args : List Value)
         doInstall (R := S) args target = .val (value, targetNext) := by
   cases run : doInstall (R := R) args source with
   | err error =>
-    have errorEq : error = .abort .typeError := by
-      unfold BviSem.doInstall at run
-      repeat' split at run
-      all_goals simp_all
-      all_goals split at run <;> simp_all
+    have errorEq := doInstall_error_type args source error run
     simp [errorEq]
   | val result =>
     obtain ⟨value, sourceNext⟩ := result
