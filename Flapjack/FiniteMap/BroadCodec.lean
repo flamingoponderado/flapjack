@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.FiniteMap.Exact
 
 @[expose] public section
 

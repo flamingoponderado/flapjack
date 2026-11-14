@@ -8,14 +8,33 @@ public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.MappedRefsUpdate
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL
 
+namespace ThunkRelationCarrier
+
+/-- The closure state's finite maps have canonical finite support. -/
+theorem holFmapAsFiniteSupportRelationWitness_ClosSem.State {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
+/-- The BVL state's reference map has canonical finite support. -/
+theorem holFmapAsFiniteSupportRelationWitness_BvlSem.State {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+
+end ThunkRelationCarrier
+
 /-- A related target value is not a thunk when the source value is not a
 thunk. This includes byte vectors represented by frozen target arrays. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "rel_dest_thunk_NotThunk"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code, BvlSem.State.refs, f])]
 theorem destThunk_notThunk_related {C F : Type} {f : HolFiniteMapExact Nat Nat}
-    (s : ClosSem.State C F) (t : BvlSem.State C F) (states : stateRel f s t)
+    (s : ClosSem.State C F) (t : BvlSem.State C F)
     {source : ClosSem.Value} {target : BvlSem.Value}
-    (related : vRel s.maxApp f t.refs t.code source target)
-    (notThunk : ClosSem.destThunk [source] s.refs = .notThunk) :
+    (premises : stateRel f s t ∧ vRel s.maxApp f t.refs t.code source target ∧
+      ClosSem.destThunk [source] s.refs = .notThunk) :
     BvlSem.destThunk target t.refs = .notThunk := by
+  obtain ⟨states, related, notThunk⟩ := premises
   cases related with
   | number n => rfl
   | word64 w => rfl
@@ -54,7 +73,7 @@ theorem badThunkUpdate_related {C F : Type} {f : HolFiniteMapExact Nat Nat}
   cases h : ClosSem.destThunk [source] s.refs with
   | badRef => simp [h] at good
   | isThunk mode value => simp [h] at good
-  | notThunk => exact targetNot (destThunk_notThunk_related s t states related h)
+  | notThunk => exact targetNot (destThunk_notThunk_related s t ⟨states, related, h⟩)
 
 /-- Allocating related thunk cells extends the pointer map and preserves the
 candidate state relation and target-only reference frame. -/
@@ -237,39 +256,6 @@ theorem updateThunk_error {C F : Type} (mode : AstHOL.ThunkMode) (args : List Cl
                   | evaluated => simpa [good, found] using run.symm
                   | notEvaluated => simp [good, found] at run
 
-/-- Inspecting a related source thunk finds the same mode and a related
-payload in the target store. -/
-theorem destThunk_isThunk_related {C F : Type} {f : HolFiniteMapExact Nat Nat}
-    (s : ClosSem.State C F) (t : BvlSem.State C F) (states : stateRel f s t)
-    {source : ClosSem.Value} {target : BvlSem.Value}
-    (related : vRel s.maxApp f t.refs t.code source target)
-    (mode : AstHOL.ThunkMode) (value : ClosSem.Value)
-    (found : ClosSem.destThunk [source] s.refs = .isThunk mode value) :
-    ∃ targetValue, BvlSem.destThunk target t.refs = .isThunk mode targetValue ∧
-      vRel s.maxApp f t.refs t.code value targetValue := by
-  cases source with
-  | refPtr flag ptr =>
-    cases flag with
-    | true =>
-      cases h : s.refs.lookup ptr with
-      | none => simp [ClosSem.destThunk, h] at found
-      | some cell => cases cell <;> simp [ClosSem.destThunk, h] at found
-    | false =>
-      cases h : s.refs.lookup ptr with
-      | none => simp [ClosSem.destThunk, h] at found
-      | some cell =>
-        cases cell with
-        | valueArray values => simp [ClosSem.destThunk, h] at found
-        | byteArray bytes => simp [ClosSem.destThunk, h] at found
-        | thunk oldMode oldValue =>
-          simp [ClosSem.destThunk, h] at found
-          rcases found with ⟨rfl, rfl⟩
-          obtain ⟨targetPtr, rfl, mapped⟩ := vRel_refPtr_inv related
-          obtain ⟨targetValue, targetFound, valueRel⟩ :=
-            stateRel_thunk_lookup s t states ptr targetPtr oldMode oldValue mapped h
-          exact ⟨targetValue, by simp [BvlSem.destThunk, targetFound], valueRel⟩
-  | _ => simp [ClosSem.destThunk] at found
-
 /-- A successful source thunk inspection can only inspect one correctly
 flagged reference to a thunk cell. -/
 theorem destThunk_isThunk_shape (values : List ClosSem.Value)
@@ -302,6 +288,27 @@ theorem destThunk_isThunk_shape (values : List ClosSem.Value)
               simp [h] at found
               rcases found with ⟨rfl, rfl⟩
               exact ⟨ptr, rfl, h⟩
+
+/-- Inspecting a related source thunk finds the same mode and a related
+payload in the target store. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "rel_dest_thunk"
+  (fmap_as_finite_support_relation := [ClosSem.State.refs, ClosSem.State.code, BvlSem.State.refs, f])]
+theorem destThunk_isThunk_related {C F : Type} {f : HolFiniteMapExact Nat Nat}
+    (s : ClosSem.State C F) (t : BvlSem.State C F)
+    {source : ClosSem.Value} {target : BvlSem.Value}
+    (mode : AstHOL.ThunkMode) (value : ClosSem.Value)
+    (premises : stateRel f s t ∧ vRel s.maxApp f t.refs t.code source target ∧
+      ClosSem.destThunk [source] s.refs = .isThunk mode value) :
+    ∃ targetValue, BvlSem.destThunk target t.refs = .isThunk mode targetValue ∧
+      vRel s.maxApp f t.refs t.code value targetValue := by
+  obtain ⟨states, related, found⟩ := premises
+  obtain ⟨ptr, shape, sourceFound⟩ := destThunk_isThunk_shape [source] s.refs mode value found
+  have sourceEq : source = .refPtr false ptr := (List.cons.inj shape).1
+  subst source
+  obtain ⟨targetPtr, rfl, mapped⟩ := vRel_refPtr_inv related
+  obtain ⟨targetValue, targetFound, valueRel⟩ :=
+    stateRel_thunk_lookup s t states ptr targetPtr mode value mapped sourceFound
+  exact ⟨targetValue, by simp [BvlSem.destThunk, targetFound], valueRel⟩
 
 /-- A successful source force-update identifies the unevaluated thunk cell
 and a returned value that is not itself a thunk. -/

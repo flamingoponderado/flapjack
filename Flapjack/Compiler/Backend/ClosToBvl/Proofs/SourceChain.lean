@@ -121,16 +121,6 @@ theorem initialSourceCode_cons_lookup (name arity : Nat) (body : ClosLang.Exp)
   simp [initialSourceCode, HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL,
     List.foldl_append, FUPDATE_HOL]
 
-/-- Any closure evaluation retains an installed chain, regardless of its
-result. The evaluator's correspondence with HOL is still to be reviewed. -/
-theorem chainInstalled_after_evaluate {C F : Type} (start : Nat) (chain evaluated : List ClosLang.Exp)
-    (env : List Value) (source next : State C F)
-    (result : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value)
-    (installed : chainInstalled start chain source.code) (run : evaluate evaluated env source = (result, next)) :
-    chainInstalled start chain next.code :=
-  chainInstalled_submap start chain source.code next.code
-    ⟨installed, evaluate_code_growth.1 evaluated env source next result run⟩
-
 /-- A generated chain discards all but the last successful value and
 preserves errors. -/
 def sourceChainResult : Flapjack.SemanticPrimitivesHOL.Result (List Value) Value →
@@ -215,8 +205,8 @@ theorem evaluate_sourceChain {C F : Type} (expressions : List ClosLang.Exp) (sta
               | mk tailResult last =>
                 simp only at decomposed
                 rw [tailRun] at decomposed
-                have tailInstalled := chainInstalled_after_evaluate (start + 1) (second :: tail) [first]
-                  [] source middle (.val [value]) chainParts.2 headRun
+                have tailInstalled := chainInstalled_submap (start + 1) (second :: tail) source.code middle.code
+                  ⟨chainParts.2, evaluate_code_growth.1 [first] [] source middle (.val [value]) headRun⟩
                 obtain ⟨body, extra, lookup, chainRun⟩ := ih (start + 1) middle last tailResult
                   (by simp) tailInstalled tailRun
                 have chained := evaluate_sourceChain_first_success source middle last first body (start + 1) extra value
