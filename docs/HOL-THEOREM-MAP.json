@@ -1,6 +1,22 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+    "hol_name": "v_rel_IMP_v_to_bytes_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Install.lean",
+    "lean_name": "valueRel_bytes_list",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original local proof and value_bytes_list_replay_typed: arbitrary related values agree in both directions on decoding the mapped natural values of every word8 list. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+    "hol_name": "v_rel_IMP_v_to_words_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Install.lean",
+    "lean_name": "valueRel_words_list",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original local proof and value_words_list_replay_typed: arbitrary related values agree in both directions on decoding the mapped Word64 values of every word64 list. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
     "hol_name": "v_rel_simps",
     "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Relations.lean",
     "lean_name": "valueRel_simps",

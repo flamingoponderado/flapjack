@@ -18,10 +18,24 @@ open Flapjack.Compiler.Backend.BackendProps
 theorem valueRel_bytes (x y : Value) (related : ValueRel x y) : valueToBytes y = valueToBytes x :=
   (simpleValRel_valueToBytes ValueRel x y ⟨valueRelSimple, related⟩).symm
 
+/-- Related values agree on whether they encode any given byte list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "v_rel_IMP_v_to_bytes_lemma"]
+theorem valueRel_bytes_list (x y : Value) (related : ValueRel x y) (bytes : List (BitVec 8)) :
+    (valueToList x = some (bytes.map (fun b => Value.number b.toNat))) ↔
+      (valueToList y = some (bytes.map (fun b => Value.number b.toNat))) := by
+  rw [← valueToBytes_eq_some, ← valueToBytes_eq_some, valueRel_bytes x y related]
+
 /-- Let-operation-related values decode to the same word sequence. -/
 @[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "v_rel_IMP_v_to_words"]
 theorem valueRel_words (x y : Value) (related : ValueRel x y) : valueToWords y = valueToWords x :=
   (simpleValRel_valueToWords x y ValueRel ⟨valueRelSimple, related⟩).symm
+
+/-- Related values agree on whether they encode any given word list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "v_rel_IMP_v_to_words_lemma"]
+theorem valueRel_words_list (x y : Value) (related : ValueRel x y) (words : List (BitVec 64)) :
+    (valueToList x = some (words.map Value.word64)) ↔
+      (valueToList y = some (words.map Value.word64)) := by
+  rw [← valueToWords_eq_some, ← valueToWords_eq_some, valueRel_words x y related]
 
 /-- Shifting related compiler oracles equally and setting equal clocks
 preserves the let-operation state relation. This is Flapjack infrastructure

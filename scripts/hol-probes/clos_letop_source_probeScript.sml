@@ -52,6 +52,30 @@ val _ = show "code_rel_cons_typed" clos_letopProofTheory.code_rel_CONS_CONS;
 val _ = show "function_rel_typed" clos_letopProofTheory.f_rel_def;
 val _ = show "value_rel_typed" clos_letopProofTheory.v_rel_rules;
 val _ = show "value_rel_simps_typed" clos_letopProofTheory.v_rel_simps;
+val value_bytes_list_replay = prove(
+  ``!x y. v_rel x y ==>
+    !ns. (v_to_list x = SOME (MAP (Number o $& o (w2n:word8->num)) ns)) <=>
+         (v_to_list y = SOME (MAP (Number o $& o (w2n:word8->num)) ns))``,
+  ho_match_mp_tac v_to_list_ind \\ rw []
+  \\ fs [v_to_list_def]
+  \\ Cases_on `tag = cons_tag` \\ fs []
+  \\ res_tac \\ fs [case_eq_thms]
+  \\ Cases_on `ns` \\ fs []
+  \\ eq_tac \\ rw [] \\ fs []
+  \\ Cases_on `h` \\ fs []);
+val _ = show "value_bytes_list_replay_typed" value_bytes_list_replay;
+val value_words_list_replay = prove(
+  ``!x y. v_rel x y ==>
+    !ns. (v_to_list x = SOME (MAP Word64 ns)) <=>
+         (v_to_list y = SOME (MAP Word64 ns))``,
+  ho_match_mp_tac v_to_list_ind \\ rw []
+  \\ fs [v_to_list_def]
+  \\ Cases_on `tag = cons_tag` \\ fs []
+  \\ res_tac \\ fs [case_eq_thms]
+  \\ Cases_on `ns` \\ fs []
+  \\ eq_tac \\ rw [] \\ fs []
+  \\ Cases_on `h` \\ fs []);
+val _ = show "value_words_list_replay_typed" value_words_list_replay;
 val _ = show "ref_rel_typed" clos_letopProofTheory.ref_rel_rules;
 val _ = show "fmap_rel_typed" clos_letopProofTheory.FMAP_REL_def;
 val _ = show "state_rel_typed" clos_letopProofTheory.state_rel_def;
