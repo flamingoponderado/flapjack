@@ -100,7 +100,7 @@ theorem interpreter_let_bindings_value {C F : Type}
   have environmentRun : ClosSem.evaluate [extended] vars targetMid =
       (.val [ClosSem.listToValue (values ++ env)], targetMid) := by
     simp [extended, vars, ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyBlock,
-      ClosSem.valueToList_listToValue]
+      valueToList_listToValue]
   have flagRun : ClosSem.evaluate [flag] vars targetMid = (.val [.block 0 []], targetMid) := by
     simp [flag, ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyBlock]
   have codeRun : ClosSem.evaluate [code] vars targetMid = (.val [ClosSem.makeConst body], targetMid) := by

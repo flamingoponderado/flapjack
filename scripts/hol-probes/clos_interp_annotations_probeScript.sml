@@ -78,3 +78,10 @@ val _ = show_thm "opt_interp1_thm_typed=" clos_interpProofTheory.opt_interp1_thm
 val _ = show_thm "clos_interpreter_correct_typed=" clos_interpProofTheory.clos_interpreter_correct;
 val _ = show_thm "clos_interp_rev_thm_typed=" clos_interpProofTheory.clos_interp_rev_thm;
 val _ = show_thm "clos_interp_el_thm_typed=" clos_interpProofTheory.clos_interp_el_thm;
+val evaluate_Constant_replay = Q.prove (
+  `evaluate ([Op t (BlockOp (Constant c)) []],env,s) = (Rval [make_const c],s)`,
+  fs [evaluate_def,do_app_def]);
+val _ = show_thm "evaluate_Constant_replay_typed=" evaluate_Constant_replay;
+val _ = show_thm "evaluate_Cons_nil_typed=" clos_interpProofTheory.evaluate_Cons_nil;
+val _ = show_thm "evaluate_Global_0_typed=" clos_interpProofTheory.evaluate_Global_0;
+val _ = show_thm "v_to_list_list_to_v_typed=" clos_interpProofTheory.v_to_list_list_to_v;

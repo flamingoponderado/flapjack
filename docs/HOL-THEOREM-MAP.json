@@ -1,6 +1,44 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "evaluate_Constant",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/EvaluateBasic.lean",
+    "lean_name": "evaluate_constant",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared evaluate_Constant_replay_typed, arbitrary trace, constant, environment and state and the exact singleton result and unchanged state. The original local proof was replayed. Canonical refs and code fields have a local roundtrip witness; evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "evaluate_Cons_nil",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/EvaluateBasic.lean",
+    "lean_name": "evaluate_cons_nil",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared evaluate_Cons_nil_typed, arbitrary constructor tag, trace, environment and state and the exact nullary block result and unchanged state. Canonical refs and code fields have a local roundtrip witness; evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "evaluate_Global_0",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/EvaluateBasic.lean",
+    "lean_name": "evaluate_global_zero",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared evaluate_Global_0_typed, original state-relation premise, arbitrary trace, environment and replacement clock, exact installed interpreter closure and unchanged clock-updated target state. Canonical refs and code fields have a local roundtrip witness; evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "v_to_list_list_to_v",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/EvaluateBasic.lean",
+    "lean_name": "valueToList_listToValue",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared v_to_list_list_to_v_typed, all closure values and the exact nil/cons encoding and decoding clauses. The source counterpart uses the shared kernel-checked list roundtrip. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
     "hol_name": "clos_interp_rev_thm",
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/EvaluateRev.lean",
     "lean_name": "evaluate_closInterpRev",
