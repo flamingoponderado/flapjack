@@ -133,6 +133,14 @@ def StateRel {C F : Type} (source target : State C F) : Prop :=
   source.compile = pureCc compileIncSource target.compile ∧
   target.compileOracle = pureCo compileIncSource ∘ source.compileOracle
 
+/-- Related states have empty installed-code maps on both sides. -/
+@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "state_rel_IMP_code_FEMPTY"
+  (fmap_as_finite_support := [refs, code])]
+theorem state_rel_IMP_code_FEMPTY {C F : Type} (source target : State C F)
+    (related : StateRel source target) :
+    source.code = HolFiniteMapExact.empty ∧ target.code = HolFiniteMapExact.empty :=
+  ⟨related.2.1, related.2.2.1⟩
+
 /-- Related code lists have equal length. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "code_rel_IMP_LENGTH"]
 theorem code_rel_IMP_LENGTH (source target : List ClosLang.Exp) (related : CodeRel source target) :

@@ -1,6 +1,15 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "state_rel_IMP_code_FEMPTY",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean",
+    "lean_name": "state_rel_IMP_code_FEMPTY",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the original local proof and state_rel_code_empty_replay_typed: the related-state premise entails source and target empty code maps in the original conjunct order. Canonical refs and code fields have the local roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
     "hol_name": "lookup_vars_lemma",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/EvaluateFn.lean",
     "lean_name": "lookup_vars_lemma",

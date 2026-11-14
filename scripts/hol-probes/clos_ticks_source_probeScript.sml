@@ -110,6 +110,11 @@ val rel_update_thunk_replay = prove (rel_update_thunk_statement,
    gvs [clos_ticksProofTheory.state_rel_def, clos_ticksProofTheory.FMAP_REL_def, finite_mapTheory.FLOOKUP_UPDATE] >> rw [] >>
    simp [Once clos_ticksProofTheory.ref_rel_cases]));
 val _ = show "rel_update_thunk_replay_typed" rel_update_thunk_replay;
+val state_rel_code_empty_replay = Q.prove (
+  `clos_ticksProof$state_rel (s :('c,'ffi) closSem$state) t ==>
+    s.code = FEMPTY /\ t.code = FEMPTY`,
+  fs [clos_ticksProofTheory.state_rel_def]);
+val _ = show "state_rel_code_empty_replay_typed" state_rel_code_empty_replay;
 val state_rel_dec_clock_replay = Q.prove (
   `clos_ticksProof$state_rel (s1 :('c,'ffi) closSem$state) s2 ==>
    clos_ticksProof$state_rel (closSem$dec_clock 1 s1) (closSem$dec_clock 1 s2)`,
