@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "renumber_code_locs_list_els",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ClosureApplication.lean",
+    "lean_name": "renumber_code_locs_list_els",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local source theorem and renumber_list_els_replay_typed, replaying the original proof: the numbering pair equation and input-index bound imply that the corresponding output element is the result of numbering the input element at some location. Both element lookups use the source HOL EL model; output length equality derives its bound. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "state_rel_max_app",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/StateRelation.lean",
     "lean_name": "stateRel_maxApp",

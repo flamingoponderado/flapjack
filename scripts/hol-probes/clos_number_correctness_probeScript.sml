@@ -59,6 +59,7 @@ Induct >> simp[renumber_code_locs_def] >>
   first_x_assum (MATCH_MP_TAC o MP_CANON) >>
   simp[] >>
   METIS_TAC[pair_CASES,SND]);
+val _ = show "renumber_list_els_replay_typed=" renumber_list_els_replay;
 val dest_closure_partial_replay = Q.prove(`!c f args f' args'.
     v_rel max_app f f' ∧
     LIST_REL (v_rel max_app) args args' ∧
