@@ -78,8 +78,15 @@ theorem recursiveFunctions_installed_at (maxApp : Nat) (functions : List (Nat ×
       compileExpsHOL maxApp [body] bodyAux = ([targetBody], bodyFinalAux) ∧
       sptLookup (base + 2 * index) code = some (arity + 1, (codeForReccCase envLength arity targetBody).2) ∧
       codeInstalled bodyFinalAux code := by
-  have priorInstalled := codeInstalled_buildAux
-    (compiled.map (fun (n, exp) => codeForReccCase envLength n exp)) base finalAux code installed
+  have priorInstalled : codeInstalled finalAux code := by
+    let entries := compiled.map (fun (n, exp) => codeForReccCase envLength n exp)
+    let built := buildAux base entries finalAux
+    obtain ⟨added, suffix⟩ := buildAux_result_suffix base entries finalAux built.1 built.2 (Prod.eta built).symm
+    intro entry member
+    apply installed entry
+    change entry ∈ built.2
+    rw [suffix]
+    exact List.mem_append_right added member
   obtain ⟨targetBody, bodyAux, bodyFinalAux, targetFound, bodyCompiled, bodyInstalled⟩ :=
     compileExpFuns_installed_at maxApp functions aux finalAux compiled code index arity body run priorInstalled found
   have entryFound : (compiled.map (fun (n, exp) => codeForReccCase envLength n exp))[index]? =

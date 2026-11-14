@@ -145,6 +145,140 @@
   "reviewer": "Independent typed HOL comparison confirms the original compilation equality, full length and suffix conclusions, binder order, and faithful closure and BVL carriers."
  },
  {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "v_rel_IMP_v_to_bytes_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "vRel_valueToBytes_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Compared the literal local HOL source proof and typed replay: arbitrary related source and target values satisfy both directions of byte-list decoding equivalence for every fixed-width word8 list, using the original integer encoding. The f and refs inputs use canonical finite support and same-module codec witnesses."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "v_rel_IMP_v_to_bytes",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "vRel_valueToBytes",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Compared the literal local HOL source proof and typed replay: related source and target values have equal full optional byte decodings, including NONE, with fixed word8 bytes. The f and refs inputs use canonical finite support and same-module codec witnesses."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "not_domain_lookup",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode/Original.lean", "lean_name": "notDomainLookup",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: the natural-number key, arbitrary sparse-tree payload type, negated domain membership and lookup-equals-NONE equivalence agree without well-formedness assumptions."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "cl_rel_union",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ClosureRelation.lean", "lean_name": "clRel_union",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["refs"],
+  "reviewer": "Compared the original local source and typed HOL replay: the arbitrary natural-number set, source/target closure values and environment pair, reference map, left-biased sparse-tree union and complete implication agree. The refs parameter uses canonical finite support with its same-module codec witness."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "v_rel_union",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ValueRelation.lean", "lean_name": "vRel_union",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Compared the original local source and typed HOL replay: the arbitrary added code tree and source/target values, left-biased union and entire implication agree. The relocation map f and refs use canonical finite support with same-module codec witnesses."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "FEVERY_FUPDATE_LIST_SUFF",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/FiniteMapEvery.lean", "lean_name": "fEvery_fupdateList_suff",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["x"],
+  "reviewer": "Compared the typed HOL source: independent arbitrary key and value types, the predicate on key/value pairs, original map and list predicate premises, and the updated-map predicate conclusion agree, including repeated keys. The input x is canonical finite support with a same-module lookup/support codec witness; updates use HOL equality internally."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "code_installed_insert",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode/Original.lean", "lean_name": "codeInstalled_insert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: independently polymorphic payloads, arbitrary sparse tree and inserted value, installed-code and fresh-key premises, and the updated-tree installation conclusion agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "chain_exps_cons",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "chainExps_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: every source-expression list, including the empty list, yields an existential zero-arity head and tail of the generated chain."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_chain_exps_cons",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "compileExps_chainExps_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original local proof and typed HOL replay: the nonempty source list, arbitrary initial accumulator, both compilation-result equations and resulting auxiliary equality retain the fixed source and target carriers and original quantifier order."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_APPEND",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "compileExps_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: the universally quantified maximum, two source lists and accumulator, complete pair-let compilation, appended target expressions and final auxiliary accumulator match."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_same_aux",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "compileExps_same_aux",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: both empty-accumulator compilation equations, name-extraction equation and resulting original/chain auxiliary equality match, including the empty-program case. extractNameSource_eq_extractName kernel-proves the executable extractName equals the reviewed HOL-shaped extractNameSource."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "compile_exps_twice_IS_SUBLIST",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Install.lean", "lean_name": "compileExps_twice_isSublist",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source and IS_SUBLIST definition: all three premises and fixed expression and auxiliary carriers match. HOL IS_SUBLIST aux x7 says x7 is a contiguous infix of aux, represented by Lean originalAux <:+: aux. extractNameSource_eq_extractName kernel-proves the executable extractName equals the reviewed HOL-shaped extractNameSource."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "code_installed_cons",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/InstalledCode.lean", "lean_name": "codeInstalled_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: the independent polymorphic entry payloads, sparse-tree carrier, installed cons premise and installed tail conclusion agree."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "chained_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainEvaluation.lean", "lean_name": "chained_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed HOL source: the original quantifier order, arbitrary initial accumulator, HD premise, mapped chain and tail, two compilation equations, installation and nonempty conditions, and the extra-clock final-state and LAST/error conclusions agree. MAP2 is zip followed by map and Abbrev is identity. The BVL state's refs use canonical finite support and a same-module roundtrip witness; evaluation inherits reals_as_rational_cuts and SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "evaluate_IMP_evaluate_chained",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ChainEvaluation.lean", "lean_name": "evaluate_imp_evaluate_chained",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Compared the typed HOL source: the eight premises retain the supplied program-prefix installation, both compilation equations, extracted name and nonempty compiled list. MAP2 is zip followed by map, Abbrev is identity, and the existential extra clock and result preserve the original final state and LAST/error cases. The BVL state's refs field uses canonical finite support with a same-module roundtrip witness; code is an Spt tree. extractNameSource_eq_extractName kernel-proves the executable extractName equals the reviewed HOL-shaped extractNameSource. Evaluation inherits reals_as_rational_cuts and SOUNDNESS item 8."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "refs_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ConstantBuild.lean", "lean_name": "refs_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BvlSem.State.refs"],
+  "reviewer": "Compared the original local source proof and typed HOL replay: the BVL state's independent compiler and FFI carriers and self-update equality agree. Its refs field uses the canonical finite-support representation with a same-module state roundtrip witness."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "do_build_const_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/ConstantBuild.lean", "lean_name": "doBuildConst_thm",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+  "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code", "BvlSem.State.refs", "f1", "f2", "refs"],
+  "fmap_as_finite_support_existentials": ["f2out"],
+  "reviewer": "Compared the typed HOL theorem: the historical BVL state's compiler and FFI carriers are independent of the shared source/current BVL carriers; all four premises, existential relocation map, value and updated-state relations, submap and frame conclusions agree. State fields and the f1, f2, refs and f2out maps use canonical finite support, with local state and existential codec roundtrips."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "rel_dest_thunk_NotThunk",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Thunk.lean", "lean_name": "destThunk_notThunk_related",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code", "BvlSem.State.refs", "f"],
+  "reviewer": "Compared the typed HOL theorem: the shared compiler and FFI carriers, finite pointer map, three conjunctive premises, source singleton thunk inspection, and target NotThunk conclusion agree. The state fields and pointer map use canonical finite-support maps, with same-module carrier roundtrips."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "rel_dest_thunk",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Thunk.lean", "lean_name": "destThunk_isThunk_related",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["ClosSem.State.refs", "ClosSem.State.code", "BvlSem.State.refs", "f"],
+  "reviewer": "Compared the typed HOL theorem: the shared state carriers, finite pointer map, three conjunctive premises, source singleton inspection, existential target payload, equal thunk mode and related payload conclusion agree. The state fields and pointer map use canonical finite-support maps, with same-module carrier roundtrips."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "build_aux_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/LabelOrigins.lean", "lean_name": "buildAux_thm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original local proof and typed HOL replay: all five binders, fixed BVL carriers, complete build_aux equality, and reversed generated label sequence agree. GENLIST (n + 2 * i) is translated to a mapped range."
+ },
+ {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "lemma2",
+  "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Accumulator.lean", "lean_name": "buildAux_result_suffix",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original local proof and typed HOL replay: the complete build_aux result equality implies its output accumulator has the input accumulator as a suffix, with fixed BVL expression carriers and no additional premises."
+ },
+ {
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "build_aux_append_aux",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/Accumulator.lean", "lean_name": "buildAux_append_aux",
   "statement_status": "reviewed_exact",

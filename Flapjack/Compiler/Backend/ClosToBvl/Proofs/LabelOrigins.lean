@@ -28,6 +28,18 @@ theorem buildAux_label_list (entries : List (Nat × Bvl.Exp)) (start : Nat) (aux
     simp only [Function.comp_def]
     omega
 
+/-- The labels produced by recursive-group construction, in output order. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "build_aux_thm"]
+theorem buildAux_thm (entries : List (Nat × Bvl.Exp)) (start : Nat)
+    (aux : List (Nat × Nat × Bvl.Exp)) (next : Nat)
+    (added : List (Nat × Nat × Bvl.Exp))
+    (run : buildAux start entries aux = (next, added ++ aux)) :
+    added.map Prod.fst =
+      ((List.range entries.length).map (fun index => start + 2 * index)).reverse := by
+  have labels := buildAux_label_list entries start aux
+  rw [run, List.map_append] at labels
+  simpa only [List.append_cancel_right_eq] using labels
+
 mutual
 
 /-- Compiling an expression prepends its closure labels, shifted by the stub
@@ -73,9 +85,7 @@ theorem compileExp_aux_labels (maxApp : Nat) (expression : ClosLang.Exp) (aux : 
       | cons second tail =>
         have length : (compileExpFunsHOL maxApp (first :: second :: tail) aux).1.length =
             (first :: second :: tail).length := by
-          cases run : compileExpFunsHOL maxApp (first :: second :: tail) aux with
-          | mk compiled finalAux =>
-            simpa only [run] using compileExpFuns_length maxApp (first :: second :: tail) aux finalAux compiled run
+          exact compileExpFuns_length maxApp (first :: second :: tail) aux _ _ (Prod.eta _).symm
         simp [compileExpHOL, ClosProps.codeLocationsExp, compileExpFuns_aux_labels maxApp (first :: second :: tail),
           compileExp_aux_labels maxApp body, buildAux_label_list, List.reverse_append,
           List.map_append, List.append_assoc, length]
@@ -127,22 +137,6 @@ theorem compileExps_codeLocs (maxApp : Nat) (expressions : List ClosLang.Exp)
   simp only [List.append_cancel_right_eq] at labels
   simpa [Nat.add_comm] using labels
 
-/-- Zipping one compiled expression per source entry retains exactly the
-source entry labels, shifted by the runtime-stub prefix. -/
-private theorem zip_entry_labels (offset : Nat) (program : List (Nat × Nat × ClosLang.Exp))
-    (compiled : List Bvl.Exp) (lengthEq : compiled.length = program.length) :
-    (((program.zip compiled).map (fun ((loc, arity, _), body) => (loc + offset, arity, body))).map Prod.fst) =
-      program.map (fun entry => entry.1 + offset) := by
-  induction program generalizing compiled with
-  | nil => simp
-  | cons first rest ih =>
-    cases compiled with
-    | nil => simp at lengthEq
-    | cons body remaining =>
-      obtain ⟨name, arity, expression⟩ := first
-      simp only [List.length_cons, Nat.succ.injEq] at lengthEq
-      simp [ih remaining lengthEq]
-
 /-- Program conversion emits shifted entry labels followed by the shifted,
 reversed closure locations of the source bodies. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_prog_code_locs"]
@@ -158,7 +152,10 @@ theorem compileProg_codeLocs (maxApp : Nat) (program : List (Nat × Nat × ClosL
       (by simpa using run)
     simp only [List.length_map] at lengthEq
     simp only [compileProgExpsHOL, run, List.map_append]
-    rw [zip_entry_labels (numStubs maxApp) program compiled lengthEq, labels]
+    have zipped := congrArg (List.map (fun entry : Nat × Nat × ClosLang.Exp => entry.1 + numStubs maxApp))
+      (List.map_fst_zip (l₁ := program) (l₂ := compiled) (Nat.le_of_eq lengthEq.symm))
+    simp only [List.map_map, Function.comp_def] at zipped ⊢
+    rw [zipped, labels]
     simp [Nat.add_comm]
 
 /-- Program conversion labels are the shifted source entry and closure labels. -/

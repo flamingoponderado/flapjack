@@ -59,6 +59,95 @@ val _ = show_thm "code_locs_Op_cons_typed=" clos_to_bvlProofTheory.code_locs_Op_
 val _ = show_thm "MAP_FST_chain_exps_typed=" clos_to_bvlProofTheory.MAP_FST_chain_exps;
 val _ = show_thm "set_MAP_code_sort_typed=" clos_to_bvlProofTheory.set_MAP_code_sort;
 val _ = show_thm "compile_exps_IMP_acc_typed=" clos_to_bvlProofTheory.compile_exps_IMP_acc;
+(* Replay the local accumulator-suffix theorem with its inferred carriers. *)
+val build_aux_lemma2_replay = Q.prove (
+  `clos_to_bvl$build_aux n k aux = (a,b) ==> ?z. b = z ++ aux`,
+  mp_tac (SPEC_ALL clos_to_bvlTheory.build_aux_acc) >> rw[] >> fs[]);
+val _ = show_thm "build_aux_lemma2_replay=" build_aux_lemma2_replay;
+(* Replay the original local recursive-layout label theorem. *)
+local
+  open preamble listTheory clos_to_bvlTheory
+in
+  val build_aux_thm_replay = Q.prove (
+    `!c n aux n7 aux7.
+      build_aux n c aux = (n7,aux7++aux) ==>
+      MAP FST aux7 = REVERSE (GENLIST ($+ n o $* 2) (LENGTH c))`,
+    Induct >> simp[build_aux_def] >> srw_tac[][] >>
+    qmatch_assum_abbrev_tac `build_aux nn kk auxx = Z` >>
+    qspecl_then [`kk`,`nn`,`auxx`] strip_assume_tac build_aux_acc >>
+    Cases_on `build_aux nn kk auxx` >> UNABBREV_ALL_TAC >> full_simp_tac(srw_ss())[] >> srw_tac[][] >>
+    full_simp_tac std_ss [Once (CONS_APPEND)] >>
+    full_simp_tac std_ss [Once (GSYM APPEND_ASSOC)] >> res_tac >>
+    srw_tac[][GENLIST,REVERSE_APPEND,REVERSE_GENLIST,PRE_SUB1] >>
+    simp[LIST_EQ_REWRITE]);
+  val _ = show_thm "build_aux_thm_replay=" build_aux_thm_replay;
+end;
+val _ = show_thm "rel_dest_thunk_NotThunk_typed=" clos_to_bvlProofTheory.rel_dest_thunk_NotThunk;
+val _ = show_thm "rel_dest_thunk_typed=" clos_to_bvlProofTheory.rel_dest_thunk;
+val _ = show_thm "do_build_const_thm_typed=" clos_to_bvlProofTheory.do_build_const_thm;
+(* The original local state-update equality with its independent state carriers. *)
+val refs_lemma_replay = Q.prove (
+  `(t2 with refs := t2.refs) = (t2 : ('a,'b) bvlSem$state)`,
+  fs [bvlSemTheory.state_component_equality]);
+val _ = show_thm "refs_lemma_replay=" refs_lemma_replay;
+val _ = show_thm "evaluate_IMP_evaluate_chained_typed=" clos_to_bvlProofTheory.evaluate_IMP_evaluate_chained;
+val _ = show_thm "chained_lemma_typed=" clos_to_bvlProofTheory.chained_lemma;
+val _ = show_thm "code_installed_cons_typed=" clos_to_bvlProofTheory.code_installed_cons;
+val _ = show_thm "compile_exps_same_aux_typed=" clos_to_bvlProofTheory.compile_exps_same_aux;
+val _ = show_thm "compile_exps_twice_IS_SUBLIST_typed=" clos_to_bvlProofTheory.compile_exps_twice_IS_SUBLIST;
+val _ = show_thm "compile_exps_APPEND_typed=" clos_to_bvlProofTheory.compile_exps_APPEND;
+val _ = show_thm "chain_exps_cons_typed=" clos_to_bvlProofTheory.chain_exps_cons;
+val _ = show_thm "code_installed_insert_typed=" clos_to_bvlProofTheory.code_installed_insert;
+val _ = show_thm "FEVERY_FUPDATE_LIST_SUFF_typed=" clos_to_bvlProofTheory.FEVERY_FUPDATE_LIST_SUFF;
+val _ = show_thm "not_domain_lookup_typed=" clos_to_bvlProofTheory.not_domain_lookup;
+(* The original union lemmas are local; replay their full statements from the
+   exported sparse-tree monotonicity theorems. *)
+val cl_rel_union_replay = Q.prove (
+  `!a x y. clos_to_bvlProof$cl_rel max_app f2 refs code a x y ==>
+           clos_to_bvlProof$cl_rel max_app f2 refs (sptree$union code c2) a x y`,
+  metis_tac [clos_to_bvlProofTheory.cl_rel_subspt, sptreeTheory.subspt_union]);
+val _ = show_thm "cl_rel_union_replay=" cl_rel_union_replay;
+val v_rel_union_replay = Q.prove (
+  `!c2 x y. clos_to_bvlProof$v_rel max_app f2 refs code x y ==>
+            clos_to_bvlProof$v_rel max_app f2 refs (sptree$union code c2) x y`,
+  metis_tac [clos_to_bvlProofTheory.v_rel_subspt, sptreeTheory.subspt_union]);
+val _ = show_thm "v_rel_union_replay=" v_rel_union_replay;
+(* Replay the original local byte-list and optional-decoding theorems. *)
+local
+  open preamble clos_to_bvlProofTheory backend_commonTheory
+in
+  val v_rel_IMP_v_to_bytes_lemma_replay = Q.prove (
+    `!x y. v_rel max_app f refs code x y ==>
+      !ns. (closSem$v_to_list x = SOME (MAP (closSem$Number o $& o (w2n:word8->num)) ns)) <=>
+           (bvlSem$v_to_list y = SOME (MAP (bvlSem$Number o $& o (w2n:word8->num)) ns))`,
+    ho_match_mp_tac closSemTheory.v_to_list_ind >> rw [] >>
+    fs [bvlSemTheory.v_to_list_def,closSemTheory.v_to_list_def,v_rel_SIMP] >>
+    Cases_on `tag = cons_tag` >> fs [] >> rveq >> fs [] >>
+    res_tac >> fs [bvlPropsTheory.case_eq_thms,v_rel_SIMP] >-
+      (Cases_on `ns` >> fs [] >> rveq >> fs [v_rel_SIMP] >> rveq >> fs [] >>
+       rw [] >> fs [] >> eq_tac >> rw [] >> fs [v_rel_SIMP]) >>
+    Cases_on `ys` >> fs [bvlSemTheory.v_to_list_def]);
+  val _ = show_thm "v_rel_IMP_v_to_bytes_lemma_replay=" v_rel_IMP_v_to_bytes_lemma_replay;
+  val v_rel_IMP_v_to_bytes_replay = Q.prove (
+    `v_rel max_app f refs code x y ==> bvlSem$v_to_bytes y = closSem$v_to_bytes x`,
+    rw [bvlSemTheory.v_to_bytes_def,closSemTheory.v_to_bytes_def] >>
+    old_drule v_rel_IMP_v_to_bytes_lemma_replay >> fs []);
+  val _ = show_thm "v_rel_IMP_v_to_bytes_replay=" v_rel_IMP_v_to_bytes_replay;
+end;
+(* Replay the original local chain-compilation accumulator theorem. *)
+local
+  open preamble listTheory clos_to_bvlTheory
+in
+  val compile_exps_chain_exps_cons_replay = Q.prove (
+    `!n h t a new_exps aux x6 x7.
+      compile_exps max_app (MAP (SND o SND) (chain_exps n (h::t))) a = (new_exps,aux) /\
+      compile_exps max_app (h::t) a = (x6,x7) ==> x7 = aux`,
+    Induct_on `t` >> fs [chain_exps_def] >> rw [] >> fs [] >>
+    ntac 2 (pop_assum mp_tac) >>
+    simp [Once compile_exps_CONS] >> fs [compile_exps_def] >>
+    rpt (pairarg_tac >> fs []) >> rveq >> fs [] >> rw [] >> res_tac >> fs []);
+  val _ = show_thm "compile_exps_chain_exps_cons_replay=" compile_exps_chain_exps_cons_replay;
+end;
 val _ = show_thm "build_aux_append_aux_typed=" clos_to_bvlProofTheory.build_aux_append_aux;
 val _ = show_thm "compile_exps_append_aux_typed=" clos_to_bvlProofTheory.compile_exps_append_aux;
 val _ = show_thm "compile_exps_eq_append_typed=" clos_to_bvlProofTheory.compile_exps_eq_append;

@@ -33,7 +33,7 @@ theorem evaluatePost_force_evaluated {C F : Type} (s sMiddle : ClosSem.State C F
     | cons thunkRel tail =>
       cases tail
       obtain ⟨targetValue, targetFound, valueRel⟩ :=
-        destThunk_isThunk_related sMiddle tMiddle state thunkRel .evaluated value found
+        destThunk_isThunk_related sMiddle tMiddle .evaluated value ⟨state, thunkRel, found⟩
       refine ⟨clock, .val [targetValue], tMiddle, fMiddle, ?_, ?_, state, map, refs, annotations, clocks⟩
       · rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, targetRun]
         simp [BvlSem.evaluate, targetFound]
@@ -412,7 +412,7 @@ theorem evaluatePost_force_unevaluated_success_below {C F : Type} (clockBound : 
   apply evaluatePost_force_argument s sMiddle _ t sourceEnv targetEnv f args targetArgs thunk _ argsRun argsPost
   intro targetThunk tMiddle fMiddle states thunkRel annotations
   obtain ⟨targetFunction, targetFound, functionRel⟩ :=
-    destThunk_isThunk_related sMiddle tMiddle states thunkRel .notEvaluated function found
+    destThunk_isThunk_related sMiddle tMiddle .notEvaluated function ⟨states, thunkRel, found⟩
   have appPost := appIH sMiddle sFinal tMiddle [function] [targetFunction] fMiddle [] []
     [.let [.op (.blockOp (.cons 0)) [], .var 0] (mkClCall (.var 1) [.var 0])] (.val [value])
     middleBound appRun (by simp) (compile_force_appUnit sMiddle.maxApp [])
@@ -450,7 +450,7 @@ theorem evaluatePost_force_unevaluated_error_below {C F : Type} (clockBound : Na
   apply evaluatePost_force_argument s sMiddle sFinal t sourceEnv targetEnv f args targetArgs thunk _ argsRun argsPost
   intro targetThunk tMiddle fMiddle states thunkRel annotations
   obtain ⟨targetFunction, targetFound, functionRel⟩ :=
-    destThunk_isThunk_related sMiddle tMiddle states thunkRel .notEvaluated function found
+    destThunk_isThunk_related sMiddle tMiddle .notEvaluated function ⟨states, thunkRel, found⟩
   have appPost := appIH sMiddle sFinal tMiddle [function] [targetFunction] fMiddle [] []
     [.let [.op (.blockOp (.cons 0)) [], .var 0] (mkClCall (.var 1) [.var 0])] (.err error)
     middleBound appRun noType (compile_force_appUnit sMiddle.maxApp [])

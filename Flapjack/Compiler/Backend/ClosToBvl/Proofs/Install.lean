@@ -3,6 +3,8 @@ module
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockList
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.WordRelation
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FreshTargetRefs
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InstalledCode.Original
+public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.FiniteMapEvery
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.Conversions
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
@@ -13,27 +15,91 @@ public import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL
 
-/-- A source byte list and a related target value decode to identical bytes. -/
-theorem install_valueToBytes_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    (source : ClosSem.Value) (target : BvlSem.Value) (bytes : List (BitVec 8))
-    (related : vRel maxApp f refs code source target)
-    (decoded : ClosSem.valueToBytes source = some bytes) :
-    BvlSem.valueToBytes target = some bytes := by
-  have sourceList := (ClosSem.valueToBytes_eq_some source bytes).1 decoded
-  obtain ⟨values, targetList, valuesRel⟩ := decodedList_related source target _ related sourceList
-  have valuesEq : values = bytes.map (fun b => BvlSem.Value.number b.toNat) := by
-    clear decoded sourceList targetList related
-    induction bytes generalizing values with
-    | nil => cases valuesRel; rfl
-    | cons byte rest ih =>
-      cases valuesRel with
-      | cons head tail =>
-        have first := vRel_number_inv head
-        have remaining := ih _ tail
-        simp [first, remaining]
-  apply (BvlSem.valueToBytes_eq_some target bytes).2
-  simpa [valuesEq] using targetList
+/-- Canonical relocation-map codec for byte-decoding correspondence. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_valueToBytes_lemma_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup key = f.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f := by
+  cases f
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Canonical reference-map codec for byte-decoding correspondence. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_valueToBytes_lemma_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).lookup key = refs.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).finiteSupport = refs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs) = refs := by
+  cases refs
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Related values decode to the same byte-encoded list in both directions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_IMP_v_to_bytes_lemma"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem vRel_valueToBytes_lemma (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp)) :
+    ∀ source target, vRel maxApp f refs code source target → ∀ bytes : List (BitVec 8),
+      (ClosSem.valueToList source = some (bytes.map (fun b => .number b.toNat))) ↔
+      (BvlSem.valueToList target = some (bytes.map (fun b => .number b.toNat))) := by
+  intro source target related bytes
+  constructor
+  · intro decoded
+    obtain ⟨values, targetList, valuesRel⟩ := decodedList_related source target _ related decoded
+    have valuesEq : values = bytes.map (fun b => BvlSem.Value.number b.toNat) := by
+      clear decoded targetList related
+      induction bytes generalizing values with
+      | nil => cases valuesRel; rfl
+      | cons byte rest ih =>
+        cases valuesRel with
+        | cons head tail =>
+          have first := vRel_number_inv head
+          have remaining := ih _ tail
+          simp [first, remaining]
+    simpa [valuesEq] using targetList
+  · intro decoded
+    have targetEq := BvlSem.listToValue_valueToList target _ decoded
+    rw [← targetEq] at related
+    obtain ⟨values, sourceList, valuesRel⟩ := valueToList_related_reverse _ source related
+    have valuesEq : values = bytes.map (fun b => ClosSem.Value.number b.toNat) := by
+      clear decoded targetEq sourceList related
+      induction bytes generalizing values with
+      | nil => cases valuesRel; rfl
+      | cons byte rest ih =>
+        cases valuesRel with
+        | cons head tail =>
+          cases head
+          have remaining := ih _ tail
+          simp [remaining]
+    simpa [valuesEq] using sourceList
+
+/-- Canonical relocation-map codec for full byte-decoding equality. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_valueToBytes_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup key = f.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f :=
+  holFmapAsFiniteSupportParamWitness_vRel_valueToBytes_lemma_f f key
+
+/-- Canonical reference-map codec for full byte-decoding equality. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_valueToBytes_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).lookup key = refs.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).finiteSupport = refs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs) = refs :=
+  holFmapAsFiniteSupportParamWitness_vRel_valueToBytes_lemma_refs refs key
+
+/-- Related source and target values have identical optional byte decodings. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_IMP_v_to_bytes"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem vRel_valueToBytes (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (source : ClosSem.Value) (target : BvlSem.Value)
+    (related : vRel maxApp f refs code source target) :
+    BvlSem.valueToBytes target = ClosSem.valueToBytes source := by
+  apply Option.ext
+  intro bytes
+  simp only [BvlSem.valueToBytes_eq_some, ClosSem.valueToBytes_eq_some]
+  exact (vRel_valueToBytes_lemma maxApp f refs code source target related bytes).symm
 
 /-- A source word list and a related target value decode to identical words. -/
 theorem install_valueToWords_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
@@ -69,6 +135,14 @@ theorem compileProgExps_head_zero (maxApp start : Nat) (expression : ClosLang.Ex
     | mk bodies finalAux =>
       refine ⟨body, (rest.zip bodies).map (fun ((loc, args, _), exp) => (loc + numStubs maxApp, args, exp)) ++ finalAux, ?_⟩
       simp [compileProgExpsHOL, compileExps_eq_list, compileExpListHOL, first, remaining]
+
+/-- Every source chain begins with a zero-arity entry. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chain_exps_cons"]
+theorem chainExps_cons (n : Nat) (expressions : List ClosLang.Exp) :
+    ∃ k1 k2 other, chainExps n expressions = (k1, 0, k2) :: other := by
+  cases expressions with
+  | nil => simp [chainExps]
+  | cons first rest => cases rest <;> simp [chainExps]
 
 /-- Every incremental compilation has a zero-arity entry for the extracted
 main location, even when the expression list is empty. -/
@@ -113,7 +187,9 @@ theorem install_target_run {C F : Type} (s : ClosSem.State C F) (t : BvlSem.Stat
           code := sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))
           compileOracle := fun n => t.compileOracle (n + 1) }) := by
   obtain ⟨start, body, tail, extracted, program⟩ := compileInc_head s.maxApp (expressions, auxiliary)
-  have targetBytesDecoded := install_valueToBytes_related sourceBytes targetBytes bytes bytesRel bytesDecoded
+  have targetBytesDecoded : BvlSem.valueToBytes targetBytes = some bytes := by
+    rw [vRel_valueToBytes s.maxApp f t.refs t.code sourceBytes targetBytes bytesRel]
+    exact bytesDecoded
   have targetWordsDecoded := install_valueToWords_related sourceWords targetWords words wordsRel wordsDecoded
   obtain ⟨headEq, compileEq, nodup, fresh⟩ := compileOracleInv_head s.maxApp s.code s.compile s.compileOracle
     t.code t.compile t.compileOracle oracle
@@ -307,37 +383,22 @@ theorem compileProgExps_entry_installed (maxApp : Nat) (program : List (Nat × N
       exact ⟨((name, arity, source), target), zipped, rfl⟩
     exact ⟨auxBefore, target, auxAfter, singleton, allInstalled _ outputMember, auxInstalled⟩
 
-private theorem install_assoc_lookup {α : Type} (entries : List (Nat × α)) (key : Nat) (value : α)
-    (distinct : (entries.map Prod.fst).Nodup) (member : (key, value) ∈ entries) :
-    sptAListLookup key entries = some value := by
-  induction entries with
-  | nil => simp at member
-  | cons entry rest ih =>
-    obtain ⟨other, payload⟩ := entry
-    simp only [List.map_cons, List.nodup_cons] at distinct
-    simp only [List.mem_cons] at member
-    cases member with
-    | inl same =>
-      cases same
-      simp [sptAListLookup]
-    | inr inRest =>
-      have different : key ≠ other := by
-        intro equal
-        subst other
-        apply distinct.1
-        exact List.mem_map.mpr ⟨(key, value), inRest, rfl⟩
-      simp [sptAListLookup, different, ih distinct.2 inRest]
-
 /-- Fresh, distinct target entries are all installed in the union of the old
-code and the tree built from those entries. -/
+code and the tree built from those entries. This Flapjack-specific composition
+reuses the HOL association-list and disjoint-union theorems at installation sites. -/
 theorem install_codeInstalled (code : Spt (Nat × Bvl.Exp)) (entries : List (Nat × Nat × Bvl.Exp))
     (distinct : (entries.map Prod.fst).Nodup)
     (fresh : ∀ entry ∈ entries, sptLookup entry.1 code = none) :
     codeInstalled entries (sptUnion code (sptFromAList entries)) := by
-  intro entry member
-  obtain ⟨key, arity, body⟩ := entry
-  rw [sptLookup_sptUnion, fresh (key, arity, body) member, sptLookup_sptFromAList]
-  exact install_assoc_lookup entries key (arity, body) distinct member
+  apply codeInstalled_union entries (sptFromAList entries) code
+  constructor
+  · exact codeInstalled_fromAList_strong entries entries ⟨distinct, List.infix_refl entries⟩
+  · intro key ⟨member, present⟩
+    obtain ⟨entry, entryMember, entryKey⟩ := List.mem_map.mp member
+    obtain ⟨value, lookup⟩ := (sptMem_iff_lookup _ _).1 present
+    have absent := fresh entry entryMember
+    rw [entryKey, lookup] at absent
+    contradiction
 
 /-- Every auxiliary source entry in the next oracle program has a compiled
 entry and installed auxiliary code after the target installation. -/
@@ -408,9 +469,8 @@ theorem install_code_relation {C F : Type} (s : ClosSem.State C F) (t : BvlSem.S
     exact install_auxiliary_entry s t config expressions auxiliary name arity body sourceHead newEntry oracle
   | inr oldEntry =>
     obtain ⟨auxBefore, target, auxAfter, compiled, lookup, installed⟩ := oldCode name arity body oldEntry
-    have growth := sptSubsptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))
-    refine ⟨auxBefore, target, auxAfter, compiled, ?_, codeInstalled_subspt installed growth⟩
-    exact (sptSubsptLookup _ _).1 growth _ _ lookup
+    refine ⟨auxBefore, target, auxAfter, compiled, ?_, codeInstalled_union1 _ _ _ installed⟩
+    rw [sptLookup_sptUnion, lookup]
 
 /-- Installing an oracle program preserves the candidate source/target state
 relation, including old values, newly compiled code and the shifted oracle. -/
@@ -430,9 +490,7 @@ theorem install_stateRel {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State 
     generic, partialCode, force, oracle, oldCode⟩ := states
   let added := sptFromAList (compileInc s.maxApp (expressions, auxiliary))
   have growth : sptSubspt t.code (sptUnion t.code added) := sptSubsptUnion _ _
-  have valuesGrow : ∀ a b, vRel s.maxApp f t.refs t.code a b → vRel s.maxApp f t.refs (sptUnion t.code added) a b := by
-    intro a b related
-    exact vRel_subspt f t.refs ⟨related, growth⟩
+  have valuesGrow := vRel_union s.maxApp f t.refs t.code added
   have shift := compileOracleInv_shift s.maxApp s.code (s.code.updateListEq auxiliary)
     s.compile s.compileOracle t.code t.compile t.compileOracle oracle
   have oracleHead : t.compileOracle 0 = (config, compileInc s.maxApp (expressions, auxiliary)) := by
@@ -467,19 +525,22 @@ theorem install_codeAnnotations {C F : Type} (s : ClosSem.State C F) (t : BvlSem
     (oracle : compileOracleInv s.maxApp s.code s.compile s.compileOracle t.code t.compile t.compileOracle) :
     codeAnnotations { s with code := s.code.updateListEq auxiliary } := by
   have oracleAnnotations := oracle.2.2.2.2 0 config expressions auxiliary sourceHead
-  have newLocations : ∀ entry ∈ auxiliary, ClosProps.everyFnLocationSome [entry.2.2] := by
-    exact oracleAnnotations.2.2.1
-  have newVars : ∀ entry ∈ auxiliary, ClosProps.everyFnVarsSome [entry.2.2] := by
-    exact oracleAnnotations.2.2.2
+  have allAnnotations := fEvery_fupdateList_suff auxiliary s.code
+    (fun entry => ClosProps.everyFnLocationSome [entry.2.2] ∧ ClosProps.everyFnVarsSome [entry.2.2])
+    ⟨by
+      intro name value found
+      obtain ⟨arity, body⟩ := value
+      exact ⟨annotations.1 name arity body found, annotations.2 name arity body found⟩,
+     fun entry member => ⟨oracleAnnotations.2.2.1 entry member, oracleAnnotations.2.2.2 entry member⟩⟩
+  have sameDecision : (fun (a b : Nat) => Classical.propDecidable (a = b)) = instDecidableEqNat :=
+    Subsingleton.elim _ _
+  simp only [HolFiniteMapExact.lookup_updateListEq] at allAnnotations
+  rw [sameDecision] at allAnnotations
   constructor
   · intro name arity body found
-    cases install_source_lookup s.code auxiliary name arity body found with
-    | inl member => exact newLocations (name, arity, body) member
-    | inr old => exact annotations.1 name arity body old
+    exact (allAnnotations name (arity, body) (by simpa only [HolFiniteMapExact.lookup_updateListEq] using found)).1
   · intro name arity body found
-    cases install_source_lookup s.code auxiliary name arity body found with
-    | inl member => exact newVars (name, arity, body) member
-    | inr old => exact annotations.2 name arity body old
+    exact (allAnnotations name (arity, body) (by simpa only [HolFiniteMapExact.lookup_updateListEq] using found)).2
 
 /-- The next installation's compiled main entry can be called indirectly
 with no arguments in the extended target code. -/
@@ -526,23 +587,37 @@ theorem evaluate_install_target_call {C F : Type}
   rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, opRun]
   simp [mainFound]
 
-/-- For a nonempty expression list, adding chain calls changes the generated
+/-- Adding chain calls changes the generated
 expressions but leaves the compiler's auxiliary-code accumulator unchanged. -/
 theorem compileExps_chain_aux (maxApp : Nat) (expressions : List ClosLang.Exp)
-    (start : Nat) (aux : List (Nat × Nat × Bvl.Exp)) (nonempty : expressions ≠ []) :
+    (start : Nat) (aux : List (Nat × Nat × Bvl.Exp)) :
     (compileExpsHOL maxApp ((chainExps start expressions).map (fun (_, _, exp) => exp)) aux).2 =
       (compileExpsHOL maxApp expressions aux).2 := by
   induction expressions generalizing start aux with
-  | nil => contradiction
+  | nil => simp [chainExps, compileExps_eq_list, compileExpListHOL, compileExpHOL]
   | cons first rest ih =>
     cases rest with
     | nil => simp [chainExps]
     | cons second tail =>
       cases firstRun : compileExpHOL maxApp first aux with
       | mk target middle =>
-        have tailEq := ih (start + 1) middle (by simp)
+        have tailEq := ih (start + 1) middle
         simp only [compileExps_eq_list] at tailEq ⊢
         simpa [chainExps, compileExpListHOL, compileExpHOL, firstRun] using tailEq
+
+/-- Compiling a nonempty chain and its original expressions produces the same
+final auxiliary accumulator from the same initial accumulator. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_exps_chain_exps_cons"]
+theorem compileExps_chainExps_cons (maxApp start : Nat) (first : ClosLang.Exp)
+    (rest : List ClosLang.Exp) (initial : List (Nat × Nat × Bvl.Exp))
+    (newExps : List Bvl.Exp) (aux : List (Nat × Nat × Bvl.Exp))
+    (compiled : List Bvl.Exp) (originalAux : List (Nat × Nat × Bvl.Exp))
+    (premises : compileExpsHOL maxApp ((chainExps start (first :: rest)).map (fun (_, _, exp) => exp)) initial =
+        (newExps, aux) ∧
+      compileExpsHOL maxApp (first :: rest) initial = (compiled, originalAux)) :
+    originalAux = aux := by
+  have same := compileExps_chain_aux maxApp (first :: rest) start initial
+  simpa only [premises.1, premises.2] using same.symm
 
 /-- Removing an entry-name marker does not change generated auxiliary code. -/
 theorem extractName_aux (maxApp : Nat) (expressions : List ClosLang.Exp)
@@ -576,18 +651,22 @@ theorem extractName_nonempty (expressions : List ClosLang.Exp) (start : Nat)
   · cases extract
     exact nonempty
 
-/-- The extracted, chained body produces the same auxiliary accumulator as
-the original nonempty source program. -/
-theorem compileExps_extract_chain_aux (maxApp : Nat) (expressions : List ClosLang.Exp)
-    (start : Nat) (real : List ClosLang.Exp) (aux : List (Nat × Nat × Bvl.Exp))
-    (extract : extractName expressions = (start, real)) (nonempty : expressions ≠ []) :
-    (compileExpsHOL maxApp ((chainExps start real).map (fun (_, _, exp) => exp)) aux).2 =
-      (compileExpsHOL maxApp expressions aux).2 := by
-  rw [compileExps_chain_aux maxApp real start aux (extractName_nonempty expressions start real extract nonempty)]
-  exact (extractName_aux maxApp expressions start real aux extract).symm
+/-- Name extraction and chaining preserve the original auxiliary code. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_exps_same_aux"]
+theorem compileExps_same_aux (maxApp start : Nat) (real expressions : List ClosLang.Exp)
+    (newExps compiled : List Bvl.Exp) (aux originalAux : List (Nat × Nat × Bvl.Exp))
+    (premises : compileExpsHOL maxApp ((chainExps start real).map (fun (_, _, exp) => exp)) [] = (newExps, aux) ∧
+      extractName expressions = (start, real) ∧
+      compileExpsHOL maxApp expressions [] = (compiled, originalAux)) : originalAux = aux := by
+  obtain ⟨chainRun, extract, originalRun⟩ := premises
+  have same := compileExps_chain_aux maxApp real start []
+  have extractSame := extractName_aux maxApp expressions start real [] extract
+  simp only [chainRun, originalRun] at same extractSame
+  exact extractSame.trans same.symm
 
 /-- Compiling concatenated expression lists threads the same auxiliary state
 as compiling each list in sequence. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_exps_APPEND"]
 theorem compileExps_append (maxApp : Nat) (left right : List ClosLang.Exp)
     (aux : List (Nat × Nat × Bvl.Exp)) :
     compileExpsHOL maxApp (left ++ right) aux =
@@ -608,49 +687,62 @@ theorem compileExps_append (maxApp : Nat) (left right : List ClosLang.Exp)
           simp [restRun, rightRun] at step
           simp [compileExpListHOL, firstRun, step, restRun, rightRun]
 
-/-- Installing the incrementally compiled program also installs the
-auxiliary code produced by compiling its original nonempty expression list. -/
+/-- Auxiliary code from the original program occurs in the compilation of
+the extracted chain followed by additional expressions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_exps_twice_IS_SUBLIST"]
+theorem compileExps_twice_isSublist (expressions real additional : List ClosLang.Exp)
+    (start maxApp : Nat) (newExps compiled : List Bvl.Exp)
+    (aux originalAux : List (Nat × Nat × Bvl.Exp))
+    (premises : extractName expressions = (start, real) ∧
+      compileExpsHOL maxApp ((chainExps start real).map (fun (_, _, exp) => exp) ++ additional) [] =
+        (newExps, aux) ∧
+      compileExpsHOL maxApp expressions [] = (compiled, originalAux)) :
+    originalAux <:+: aux := by
+  obtain ⟨extract, whole, originalRun⟩ := premises
+  cases chainRun : compileExpsHOL maxApp ((chainExps start real).map (fun (_, _, exp) => exp)) [] with
+  | mk chainTargets chainAux =>
+    cases extraRun : compileExpsHOL maxApp additional chainAux with
+    | mk extraTargets finalAux =>
+      have pairEq : (chainTargets ++ extraTargets, finalAux) = (newExps, aux) := by
+        simpa [compileExps_append, chainRun, extraRun] using whole
+      cases pairEq
+      have same := compileExps_same_aux maxApp start real expressions chainTargets compiled chainAux originalAux
+        ⟨chainRun, extract, originalRun⟩
+      have suffix := compileExps_acc maxApp additional chainAux
+      rw [extraRun] at suffix
+      obtain ⟨_, added, finalEq⟩ := suffix
+      have included : chainAux <:+ aux := ⟨added, finalEq.symm⟩
+      simpa [same] using included.isInfix
+
+/-- Installing the incremental program also installs its original auxiliary code. -/
 theorem compileInc_original_aux_installed (maxApp : Nat) (expressions : List ClosLang.Exp)
     (auxiliary : List (Nat × Nat × ClosLang.Exp)) (compiled : List Bvl.Exp)
     (originalAux : List (Nat × Nat × Bvl.Exp)) (code : Spt (Nat × Bvl.Exp))
-    (nonempty : expressions ≠ [])
     (originalRun : compileExpsHOL maxApp expressions [] = (compiled, originalAux))
     (installed : codeInstalled (compileInc maxApp (expressions, auxiliary)) code) :
     codeInstalled originalAux code := by
   cases extract : extractName expressions with
   | mk start real =>
-    let chained := (chainExps start real).map (fun (_, _, exp) => exp)
-    let extra := auxiliary.map (fun (_, _, exp) => exp)
-    cases chainRun : compileExpsHOL maxApp chained [] with
-    | mk chainTargets chainAux =>
-      have auxEq : chainAux = originalAux := by
-        have h := compileExps_extract_chain_aux maxApp expressions start real [] extract nonempty
-        simpa [chained, chainRun, originalRun] using h
-      cases extraRun : compileExpsHOL maxApp extra chainAux with
-      | mk extraTargets finalAux =>
-        have whole : compileExpsHOL maxApp (chained ++ extra) [] =
-            (chainTargets ++ extraTargets, finalAux) := by
-          simp [compileExps_append, chainRun, extraRun]
-        have installed' : codeInstalled
-            (((chainExps start real ++ auxiliary).zip (chainTargets ++ extraTargets)).map
-              (fun ((loc, args, _), exp) => (loc + numStubs maxApp, args, exp)) ++ finalAux) code := by
-          have h : (chainExps start real ++ auxiliary).map (fun (_, _, exp) => exp) = chained ++ extra := by
-            simp [chained, extra]
-          simp only [compileInc, extractNameSource_eq_extractName, extract, compileProgExpsHOL, h, whole] at installed
-          exact installed
-        have outputInstalled : codeInstalled finalAux code := by
-          intro entry member
-          exact installed' entry (List.mem_append_right _ member)
-        have chainInstalled : codeInstalled chainAux code :=
-          compileExps_codeInstalled maxApp extra chainAux finalAux extraTargets code extraRun outputInstalled
-        simpa [auxEq] using chainInstalled
+    cases whole : compileExpsHOL maxApp
+        ((chainExps start real).map (fun (_, _, exp) => exp) ++
+          auxiliary.map (fun (_, _, exp) => exp)) [] with
+    | mk targets finalAux =>
+      have included := compileExps_twice_isSublist expressions real
+        (auxiliary.map (fun (_, _, exp) => exp)) start maxApp targets compiled finalAux originalAux
+        ⟨extract, whole, originalRun⟩
+      have installed' : codeInstalled
+          ((((chainExps start real ++ auxiliary).zip targets).map
+            (fun ((loc, args, _), exp) => (loc + numStubs maxApp, args, exp))) ++ finalAux) code := by
+        simpa [compileInc, extractNameSource_eq_extractName, extract, compileProgExpsHOL,
+          List.map_append, whole] using installed
+      intro entry member
+      exact installed' entry (List.mem_append_right _ (included.sublist.subset member))
 
-/-- After target installation, the auxiliary code generated by compiling the
-source oracle's original nonempty main program is installed as well. -/
+/-- After target installation, the original main program's auxiliary code is installed. -/
 theorem install_original_aux_installed {C F : Type} (s : ClosSem.State C F) (t : BvlSem.State C F)
     (config : C) (expressions : List ClosLang.Exp) (auxiliary : List (Nat × Nat × ClosLang.Exp))
     (compiled : List Bvl.Exp) (originalAux : List (Nat × Nat × Bvl.Exp))
-    (sourceHead : s.compileOracle 0 = (config, expressions, auxiliary)) (nonempty : expressions ≠ [])
+    (sourceHead : s.compileOracle 0 = (config, expressions, auxiliary))
     (originalRun : compileExpsHOL s.maxApp expressions [] = (compiled, originalAux))
     (oracle : compileOracleInv s.maxApp s.code s.compile s.compileOracle t.code t.compile t.compileOracle) :
     codeInstalled originalAux (sptUnion t.code (sptFromAList (compileInc s.maxApp (expressions, auxiliary)))) := by
@@ -663,6 +755,6 @@ theorem install_original_aux_installed {C F : Type} (s : ClosSem.State C F) (t :
   have targetFresh : ∀ entry ∈ compileInc s.maxApp (expressions, auxiliary), sptLookup entry.1 t.code = none := by
     simpa [targetHead] using fresh
   have installed := install_codeInstalled t.code (compileInc s.maxApp (expressions, auxiliary)) distinct targetFresh
-  exact compileInc_original_aux_installed s.maxApp expressions auxiliary compiled originalAux _ nonempty originalRun installed
+  exact compileInc_original_aux_installed s.maxApp expressions auxiliary compiled originalAux _ originalRun installed
 
 end Flapjack.Compiler.Backend.ClosToBvl

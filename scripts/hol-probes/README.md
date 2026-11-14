@@ -9917,8 +9917,15 @@ It also replays the local `evaluate_init1` and
 `evaluate_init` proofs with their inferred BVL state and evaluation types,
 `show_SUBSET` with its polymorphic set carrier, `REPLICATE_1` with its
 polymorphic list element type, `obvious_arith_comm` over naturals, the
-polymorphic pair-projection lemma, and the local closure and BVL initial-clock
-lemmas. Regenerate with
+polymorphic pair-projection lemma, the local closure and BVL initial-clock
+lemmas, bidirectional byte decoding, sparse-tree domain lookup,
+value/closure code-union preservation, finite-map predicate preservation,
+chain-head and compilation accumulator relations, sparse-tree code
+installation, both
+chained-evaluation theorems, the reference-update identity, constant-builder and thunk-inspection
+relation theorems, and the recursive-layout
+accumulator-suffix and label-list theorems.
+Regenerate with
 `HOL_PROBE_ONLY=clos_to_bvl_chain_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source comparison; it does not establish Lean correspondence.
 

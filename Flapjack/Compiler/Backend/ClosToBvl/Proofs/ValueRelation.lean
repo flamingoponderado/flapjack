@@ -185,6 +185,32 @@ theorem vRel_subspt {maxApp : Nat} (f : HolFiniteMapExact Nat Nat)
   · intro a b xs ys head tail headIh tailIh code2 sub
     exact .cons (headIh code2 sub) (tailIh code2 sub)
 
+/-- Canonical relocation-map codec for the value-relation union theorem. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_union_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (ofBroad (toBroad f) f.finiteSupport).lookup key = f.lookup key ∧
+    (ofBroad (toBroad f) f.finiteSupport).finiteSupport = f.finiteSupport ∧
+    ofBroad (toBroad f) f.finiteSupport = f :=
+  holFmapAsFiniteSupportParamWitness_vRel_f f key
+
+/-- Canonical reference-map codec for the value-relation union theorem. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_union_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧
+    (ofBroad (toBroad refs) refs.finiteSupport).finiteSupport = refs.finiteSupport ∧
+    ofBroad (toBroad refs) refs.finiteSupport = refs :=
+  holFmapAsFiniteSupportParamWitness_vRel_refs refs key
+
+/-- Adding code on the right of a left-biased union preserves related values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_union"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem vRel_union (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp)) :
+    ∀ extra source target, vRel maxApp f refs code source target →
+      vRel maxApp f refs (sptUnion code extra) source target := by
+  intro extra source target related
+  exact vRel_subspt f refs ⟨related, sptSubsptUnion code extra⟩
+
 theorem holFmapAsFiniteSupportParamWitness_envRel_f
     (f : HolFiniteMapExact Nat Nat) (key : Nat) :
     (ofBroad (toBroad f) f.finiteSupport).lookup key = f.lookup key ∧

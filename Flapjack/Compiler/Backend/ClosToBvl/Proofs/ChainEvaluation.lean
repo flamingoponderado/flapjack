@@ -54,13 +54,36 @@ theorem compile_chain_entries (maxApp start : Nat) (expressions : List ClosLang.
               tailRun, bvlChain, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] at tailShape ⊢
             exact tailShape
 
-/-- When the first expression fails, the chained entry propagates that error
-without entering the next code block. -/
-theorem evaluate_chain_first_error {C F : Type} (s next : BvlSem.State C F)
-    (first : Bvl.Exp) (address : Nat) (error : ErrorResult BvlSem.Value)
-    (run : BvlSem.evaluate [first] [] s = (.err error, next)) :
-    BvlSem.evaluate [.let [first] (.call 0 (some address) [])] [] s = (.err error, next) := by
-  rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, run]
+/-- Compiling a nonempty source chain followed by additional entries puts the
+compiled chain at the front of the mapped program. This Flapjack-specific list
+factoring supports both the original evaluation theorem and incremental code
+installation; HOL proves the corresponding reasoning inside those proofs. -/
+theorem compiled_chain_prefix (maxApp start : Nat) (real : List ClosLang.Exp)
+    (additional : List (Nat × Nat × ClosLang.Exp)) (compiled newExps : List Bvl.Exp)
+    (compiledAux finalAux : List (Nat × Nat × Bvl.Exp))
+    (nonempty : real ≠ []) (compile : compileExpsHOL maxApp real [] = (compiled, compiledAux))
+    (whole : compileExpsHOL maxApp
+      ((chainExps start real).map (fun (_, _, exp) => exp) ++
+        additional.map (fun (_, _, exp) => exp)) [] = (newExps, finalAux)) :
+    ∃ suffix,
+      (((chainExps start real ++ additional).zip newExps).map
+        (fun ((loc, arity, _), body) => (loc + numStubs maxApp, arity, body))) =
+        bvlChain (start + numStubs maxApp) compiled ++ suffix := by
+  cases chainRun : compileExpsHOL maxApp ((chainExps start real).map (fun (_, _, exp) => exp)) [] with
+  | mk chainTargets chainAux =>
+    cases extraRun : compileExpsHOL maxApp (additional.map (fun (_, _, exp) => exp)) chainAux with
+    | mk extraTargets outputAux =>
+      have result : (chainTargets ++ extraTargets, outputAux) = (newExps, finalAux) := by
+        simpa [compileExps_append, chainRun, extraRun] using whole
+      cases result
+      have lengths : (chainExps start real).length = chainTargets.length := by
+        have h := compileExps_length maxApp _ [] chainTargets chainAux chainRun
+        simpa using h.symm
+      have shape := compile_chain_entries maxApp start real [] nonempty
+      simp only [compile, chainRun] at shape
+      refine ⟨(additional.zip extraTargets).map
+        (fun ((loc, arity, _), body) => (loc + numStubs maxApp, arity, body)), ?_⟩
+      rw [List.zip_append lengths, List.map_append, shape]
 
 /-- A successful chain step supplies one clock unit for the generated call,
 then continues with the next installed body at the requested extra clock. -/
@@ -81,6 +104,13 @@ preserves an error unchanged. -/
 def chainResult : Result (List BvlSem.Value) BvlSem.Value → Result (List BvlSem.Value) BvlSem.Value
   | .err error => .err error
   | .val values => .val (values.getLast?.toList)
+
+/-- Flapjack conversion between optional last lookup and HOL LAST on cons lists. -/
+private theorem chainResult_val_cons (first : BvlSem.Value) (rest : List BvlSem.Value) :
+    chainResult (.val (first :: rest)) = .val [Flapjack.holLast (first :: rest)] := by
+  induction rest generalizing first with
+  | nil => simp [chainResult, List.getLast?, Flapjack.holLast]
+  | cons next rest ih => simpa [chainResult, List.getLast?, Flapjack.holLast] using ih next
 
 /-- An installed target chain executes the original nonempty expression list,
 returning its last value or the same error and preserving the final state. -/
@@ -116,7 +146,9 @@ theorem evaluate_bvlChain {C F : Type} (expressions : List Bvl.Exp) (start : Nat
           simp at decomposed
           rcases decomposed with ⟨rfl, rfl⟩
           exact ⟨.let [first] (.call 0 (some (start + 1)) []), 0, by simp [bvlChain],
-            by simpa [chainResult] using evaluate_chain_first_error s middle first (start + 1) error headRun⟩
+            by
+              change BvlSem.evaluate [.let [first] (.call 0 (some (start + 1)) [])] [] s = (.err error, middle)
+              rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, headRun]⟩
         | val values =>
           have length := BvlSem.evaluate_length [first] [] s middle values headRun
           cases values with
@@ -133,10 +165,7 @@ theorem evaluate_bvlChain {C F : Type} (expressions : List Bvl.Exp) (start : Nat
                   BvlProps.evaluateMono [first] [] s (.val [value]) middle headRun
                 have tailInstalled : codeInstalled (bvlChain (start + 1) (second :: tail)) middle.code := by
                   apply codeInstalled_subspt (code2 := middle.code) ?_ growth
-                  intro entry member
-                  apply installed entry
-                  simp only [bvlChain, List.mem_cons]
-                  exact Or.inr member
+                  exact codeInstalled_cons _ _ _ installed
                 obtain ⟨body, extra, member, chainRun⟩ := ih (start + 1) middle last tailResult (by simp) tailInstalled tailRun
                 have lookup : sptLookup (start + 1) middle.code = some (0, body) := tailInstalled _ member
                 have chained := evaluate_chain_first_success s middle last first body (start + 1) extra value
@@ -168,38 +197,19 @@ theorem compileInc_bvlChain_installed (maxApp start : Nat) (expressions real : L
     (compile : compileExpsHOL maxApp real [] = (compiled, finalAux))
     (installed : codeInstalled (compileInc maxApp (expressions, auxiliary)) code) :
     codeInstalled (bvlChain (start + numStubs maxApp) compiled) code := by
-  let chainSource := chainExps start real
-  let chainExps := chainSource.map (fun (_, _, exp) => exp)
-  let extraExps := auxiliary.map (fun (_, _, exp) => exp)
-  cases chainRun : compileExpsHOL maxApp chainExps [] with
-  | mk chainTargets chainAux =>
-    cases extraRun : compileExpsHOL maxApp extraExps chainAux with
-    | mk extraTargets outputAux =>
-      have whole : compileExpsHOL maxApp (chainExps ++ extraExps) [] =
-          (chainTargets ++ extraTargets, outputAux) := by
-        simp [compileExps_append, chainRun, extraRun]
-      have lengths : chainSource.length = chainTargets.length := by
-        have h := compileExps_length maxApp chainExps [] chainTargets chainAux chainRun
-        simpa [chainExps] using h.symm
-      have shape := compile_chain_entries maxApp start real [] nonempty
-      have chainRun' : compileExpsHOL maxApp ((Flapjack.Compiler.Backend.ClosToBvl.chainExps start real).map (fun (_, _, exp) => exp)) [] =
-          (chainTargets, chainAux) := by
-        simpa [chainExps, chainSource] using chainRun
-      simp only [compile, chainRun'] at shape
-      have shape' : (chainSource.zip chainTargets).map
-          (fun ((loc, arity, _), body) => (loc + numStubs maxApp, arity, body)) =
-            bvlChain (start + numStubs maxApp) compiled := by
-        simpa [chainSource] using shape
-      have installed' : codeInstalled
-          (((chainSource ++ auxiliary).zip (chainTargets ++ extraTargets)).map
-            (fun ((loc, arity, _), body) => (loc + numStubs maxApp, arity, body)) ++ outputAux) code := by
-        have h : (chainSource ++ auxiliary).map (fun (_, _, exp) => exp) = chainExps ++ extraExps := by
-          simp [chainExps, extraExps]
-        simpa [compileInc, extractNameSource_eq_extractName, extract, compileProgExpsHOL, chainSource, h, whole] using installed
-      rw [List.zip_append lengths, List.map_append, shape'] at installed'
-      intro entry member
-      apply installed' entry
-      simp [member]
+  cases whole : compileExpsHOL maxApp
+      ((chainExps start real).map (fun (_, _, exp) => exp) ++
+        auxiliary.map (fun (_, _, exp) => exp)) [] with
+  | mk newExps outputAux =>
+    obtain ⟨suffix, chainPrefix⟩ := compiled_chain_prefix maxApp start real auxiliary
+      compiled newExps finalAux outputAux nonempty compile whole
+    have installed' : codeInstalled
+        ((bvlChain (start + numStubs maxApp) compiled ++ suffix) ++ outputAux) code := by
+      simpa [compileInc, extractNameSource_eq_extractName, extract, compileProgExpsHOL,
+        List.map_append, whole, chainPrefix] using installed
+    intro entry member
+    apply installed' entry
+    exact List.mem_append_left _ (List.mem_append_left _ member)
 
 /-- Evaluating the compiled extracted body is reproduced by the actual
 installed incremental main entry, with enough extra clock for the chain calls. -/
@@ -313,6 +323,168 @@ theorem evaluate_extractName_compiled {C F : Type} (maxApp start : Nat)
             simp at run
             rcases run with ⟨rfl, rfl⟩
             exact ⟨.val (value :: tail), rfl, by simp [chainResult]⟩
+
+namespace ChainedEvaluationCarrier
+
+/-- BVL reference maps use the canonical finite-support representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+
+end ChainedEvaluationCarrier
+
+/-- Executing a compiled list is reproduced by the first installed chained
+entry, preserving the final state and the last value or the original error. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "chained_lemma"
+  (fmap_as_finite_support := [refs])]
+theorem chained_lemma {C F : Type} (index : Nat) (expressions : List ClosLang.Exp)
+    (compiled : List Bvl.Exp) (s : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (result : Result (List BvlSem.Value) BvlSem.Value)
+    (final : Flapjack.Compiler.Backend.BvlSem.State C F) (program : List (Nat × Nat × Bvl.Exp))
+    (firstLabel : Nat) (body : Bvl.Exp) (newExps : List Bvl.Exp)
+    (rest : List (Nat × Nat × Bvl.Exp)) (acc compiledAux : List (Nat × Nat × Bvl.Exp))
+    (maxApp : Nat) (aux : List (Nat × Nat × Bvl.Exp))
+    (premises : BvlSem.evaluate compiled [] s = (result, final) ∧
+      Flapjack.holHd program = (firstLabel, 0, body) ∧
+      program = (((chainExps index expressions).zip newExps).map
+        (fun ((loc, arity, _), exp) => (loc + numStubs maxApp, arity, exp))) ++ rest ∧
+      compileExpsHOL maxApp expressions acc = (compiled, compiledAux) ∧
+      compileExpsHOL maxApp ((chainExps index expressions).map (fun (_, _, exp) => exp)) acc =
+        (newExps, aux) ∧ codeInstalled program s.code ∧ compiled ≠ []) :
+    ∃ extra result', BvlSem.evaluate [body] [] { s with clock := extra + s.clock } = (result', final) ∧
+      (match result with
+       | .val values => result' = .val [Flapjack.holLast values]
+       | .err error => result' = .err error) := by
+  obtain ⟨run, head, shape, compile, chainCompile, installed, compiledNonempty⟩ := premises
+  have nonempty : expressions ≠ [] := by
+    intro empty
+    have len := compileExps_length maxApp expressions acc compiled compiledAux compile
+    rw [empty] at len
+    exact compiledNonempty (List.length_eq_zero_iff.mp (by simpa using len))
+  have chainShape := compile_chain_entries maxApp index expressions acc nonempty
+  simp only [compile, chainCompile] at chainShape
+  rw [chainShape] at shape
+  have chainInstalled : codeInstalled (bvlChain (index + numStubs maxApp) compiled) s.code := by
+    intro entry member
+    apply installed entry
+    rw [shape]
+    exact List.mem_append_left rest member
+  obtain ⟨chainBody, extra, chainMember, chainRun⟩ :=
+    evaluate_bvlChain compiled (index + numStubs maxApp) s final result compiledNonempty chainInstalled run
+  have headMember : (index + numStubs maxApp, 0, body) ∈ bvlChain (index + numStubs maxApp) compiled := by
+    rw [shape] at head
+    cases compiled with
+    | nil => contradiction
+    | cons first tail =>
+      cases tail with
+      | nil =>
+        simp only [bvlChain, List.cons_append, Flapjack.holHd, Prod.mk.injEq, true_and] at head
+        simp only [bvlChain, List.mem_singleton, Prod.mk.injEq, true_and]
+        exact head.2.symm
+      | cons next remaining =>
+        simp only [bvlChain, List.cons_append, Flapjack.holHd, Prod.mk.injEq, true_and] at head
+        simp only [bvlChain, List.mem_cons, Prod.mk.injEq, true_and]
+        exact Or.inl head.2.symm
+  have headLookup := chainInstalled _ headMember
+  have chainLookup := chainInstalled _ chainMember
+  have bodyEq : chainBody = body := by
+    simpa using chainLookup.symm.trans headLookup
+  refine ⟨extra, chainResult result, ?_, ?_⟩
+  · simpa [bodyEq, Nat.add_comm] using chainRun
+  · cases result with
+    | err error => rfl
+    | val values =>
+      have len := BvlSem.evaluate_length compiled [] s final values run
+      have valuesNonempty : values ≠ [] := by
+        intro empty
+        rw [empty] at len
+        exact compiledNonempty (List.length_eq_zero_iff.mp (by simpa using len.symm))
+      cases values with
+      | nil => contradiction
+      | cons first tail => exact chainResult_val_cons first tail
+
+/-- The original installed program prefix executes the same final result as
+the compiled source list, allowing extra clock for the generated chain calls. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "evaluate_IMP_evaluate_chained"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_imp_evaluate_chained {C F : Type} (compiled : List Bvl.Exp)
+    (s final : Flapjack.Compiler.Backend.BvlSem.State C F) (result : Result (List BvlSem.Value) BvlSem.Value)
+    (program aux : List (Nat × Nat × Bvl.Exp)) (firstLabel : Nat) (body : Bvl.Exp)
+    (rest : List (Nat × Nat × Bvl.Exp)) (start maxApp : Nat)
+    (real expressions : List ClosLang.Exp) (additional : List (Nat × Nat × ClosLang.Exp))
+    (newExps : List Bvl.Exp) (sourceAux : List (Nat × Nat × Bvl.Exp))
+    (premises : BvlSem.evaluate compiled [] s = (result, final) ∧
+      program ++ aux = (firstLabel, 0, body) :: rest ∧
+      program = (((chainExps start real ++ additional).zip newExps).map
+        (fun ((loc, arity, _), exp) => (loc + numStubs maxApp, arity, exp))) ∧
+      compileExpsHOL maxApp expressions [] = (compiled, sourceAux) ∧
+      compileExpsHOL maxApp ((chainExps start real).map (fun (_, _, exp) => exp) ++
+        additional.map (fun (_, _, exp) => exp)) [] = (newExps, aux) ∧
+      extractName expressions = (start, real) ∧ codeInstalled program s.code ∧ compiled ≠ []) :
+    ∃ extra result', BvlSem.evaluate [body] [] { s with clock := s.clock + extra } = (result', final) ∧
+      (match result with
+       | .val values => result' = .val [Flapjack.holLast values]
+       | .err error => result' = .err error) := by
+  obtain ⟨run, head, shape, compile, whole, extract, installed, compiledNonempty⟩ := premises
+  have expressionsNonempty : expressions ≠ [] := by
+    intro empty
+    have len := compileExps_length maxApp expressions [] compiled sourceAux compile
+    rw [empty] at len
+    exact compiledNonempty (List.length_eq_zero_iff.mp (by simpa using len))
+  have realNonempty := extractName_nonempty expressions start real extract expressionsNonempty
+  cases realCompile : compileExpsHOL maxApp real [] with
+  | mk realTargets realAux =>
+    obtain ⟨suffix, prefixEq⟩ := compiled_chain_prefix maxApp start real additional realTargets newExps
+      realAux aux realNonempty realCompile whole
+    rw [← shape] at prefixEq
+    have chainInstalled : codeInstalled (bvlChain (start + numStubs maxApp) realTargets) s.code := by
+      intro entry member
+      apply installed entry
+      rw [prefixEq]
+      exact List.mem_append_left suffix member
+    have targetsNonempty : realTargets ≠ [] := by
+      intro empty
+      have len := compileExps_length maxApp real [] realTargets realAux realCompile
+      rw [empty] at len
+      exact realNonempty (List.length_eq_zero_iff.mp (by simpa using len.symm))
+    obtain ⟨realResult, realRun, resultEq⟩ := evaluate_extractName_compiled maxApp start expressions real
+      compiled realTargets sourceAux s final result extract expressionsNonempty compile (by simp [realCompile]) run
+    obtain ⟨chainBody, extra, chainMember, chainRun⟩ :=
+      evaluate_bvlChain realTargets (start + numStubs maxApp) s final realResult targetsNonempty chainInstalled realRun
+    have headMember : (start + numStubs maxApp, 0, body) ∈
+        bvlChain (start + numStubs maxApp) realTargets := by
+      rw [prefixEq] at head
+      cases realTargets with
+      | nil => contradiction
+      | cons first tail =>
+        cases tail with
+        | nil =>
+          simp only [bvlChain, List.cons_append, List.cons.injEq, Prod.mk.injEq, true_and] at head
+          simp only [bvlChain, List.mem_singleton, Prod.mk.injEq, true_and]
+          exact head.1.2.symm
+        | cons next remaining =>
+          simp only [bvlChain, List.cons_append, List.cons.injEq, Prod.mk.injEq, true_and] at head
+          simp only [bvlChain, List.mem_cons, Prod.mk.injEq, true_and]
+          exact Or.inl head.1.2.symm
+    have headLookup : sptLookup (start + numStubs maxApp) s.code = some (0, body) :=
+      chainInstalled _ headMember
+    have chainLookup := chainInstalled _ chainMember
+    have bodyEq : chainBody = body := by
+      simpa using chainLookup.symm.trans headLookup
+    refine ⟨extra, chainResult result, ?_, ?_⟩
+    · simpa [bodyEq, ← resultEq] using chainRun
+    · cases result with
+      | err error => rfl
+      | val values =>
+        have len := BvlSem.evaluate_length compiled [] s final values run
+        have valuesNonempty : values ≠ [] := by
+          intro empty
+          rw [empty] at len
+          exact compiledNonempty (List.length_eq_zero_iff.mp (by simpa using len.symm))
+        cases values with
+        | nil => contradiction
+        | cons first rest => exact chainResult_val_cons first rest
 
 /-- Evaluation of the original compiled nonempty program is reproduced by
 the actual installed incremental main entry, up to its final result projection. -/
@@ -470,7 +642,7 @@ theorem install_success_body_simulation {C F : Type}
     have originalCompile : compileExpsHOL s.maxApp expressions [] = (compiled, aux) := by simpa [maxApp] using compile
     have codeInstalled' : codeInstalled aux targetNext.code := by
       simpa [targetNext] using install_original_aux_installed s t config expressions auxiliary compiled aux
-        sourceHead nonempty originalCompile oracle
+        sourceHead originalCompile oracle
     have post := bodyIH installedSource finalSource targetNext [] [] f [] aux compiled result smaller bodyRun noType compile
       locations annotations' vars codeInstalled' (by simp [envRel]) states'
     obtain ⟨bodyExtra, targetResult, targetFinal, fFinal, targetRun, resultRelated, finalStates,
