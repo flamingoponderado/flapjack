@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "evaluate_SING_intro",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/EvaluateBasic.lean",
+    "lean_name": "evaluate_singleton_intro",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the closed evaluate_SING_intro_replay_typed, original conjunctive premise and singleton conclusion, retaining independent element, error and state-component types. Independently replayed the local HOL proof. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
     "hol_name": "LIST_REL_eq'",
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/PrimitiveRelation.lean",
     "lean_name": "listRel_eq",

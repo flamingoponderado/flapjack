@@ -59,4 +59,12 @@ theorem valueToList_listToValue (values : List ClosSem.Value) :
     ClosSem.valueToList (ClosSem.listToValue values) = some values :=
   ClosSem.valueToList_listToValue values
 
+/-- Replace a singleton result list by an equal list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "evaluate_SING_intro"]
+theorem evaluate_singleton_intro {A B S : Type}
+    (x : Flapjack.SemanticPrimitivesHOL.Result (List A) B × S) (v : A) (s : S) (vs : List A)
+    (h : x = (.val [v], s) ∧ vs = [v]) : x = (.val vs, s) := by
+  obtain ⟨rfl, rfl⟩ := h
+  rfl
+
 end Flapjack.Compiler.Backend.ClosInterp

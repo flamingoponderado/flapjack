@@ -94,3 +94,7 @@ val optrel_eq_replay = Q.prove (
   `OPTREL (λv1 v2. v1 = v2) = (λx y. x = y)`,
   fs [OPTREL_eq, SF ETA_ss]);
 val _ = show_thm "optrel_eq_replay_typed=" optrel_eq_replay;
+val evaluate_SING_intro_replay = Q.prove (
+  `x = (Rval [v],s) ∧ vs = [v] ⇒ x = (Rval vs,s)`,
+  rw []);
+val _ = show_thm "evaluate_SING_intro_replay_typed=" evaluate_SING_intro_replay;

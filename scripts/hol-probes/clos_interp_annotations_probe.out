@@ -31,3 +31,4 @@ v_to_list_list_to_v_typed=∀(a :v list). v_to_list (list_to_v a) = SOME a
 do_app_oHD_globals_typed=(do_app (p :closLang$op) (vs :v list) (s1 :(α, β) state) :(v # (α, β) state, v) result) = (Rval ((v :v),(s2 :(α, β) state)) :(v # (α, β) state, v) result) ⇒ oHD s1.globals = SOME (SOME (x :v)) ⇒ oHD s2.globals = SOME (SOME x)
 list_rel_eq_replay_typed=∀(xs :α) (ys :β). LIST_REL (λ(v1 :γ) (v2 :γ). v1 = v2) = (λ(xs :γ list) (ys :γ list). xs = ys)
 optrel_eq_replay_typed=OPTREL (λ(v1 :α) (v2 :α). v1 = v2) = (λ(x :α option) (y :α option). x = y)
+evaluate_SING_intro_replay_typed=(x :(α list, β) result # γ) = ((Rval [(v :α)] :(α list, β) result),(s :γ)) ∧ (vs :α list) = [v] ⇒ x = ((Rval vs :(α list, β) result),s)
