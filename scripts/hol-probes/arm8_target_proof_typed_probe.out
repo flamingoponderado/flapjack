@@ -1,0 +1,4 @@
+arm8_encoder_correct_typed=encoder_correct arm8_target
+lsl_typed=∀(r :word6) (q :word6) (n :num) (x :word64) (wmask :word64) (tmask :word64). n < (64 :num) ∧ Abbrev (r = (n2w (((64 :num) − n) MOD (64 :num)) :word6)) ∧ Abbrev (q = r + (63w :word6)) ∧ (DecodeBitMasks ((1w :word1),q,r,F) :(word64 # word64) option) = SOME (wmask,tmask) ⇒ (tmask && wmask) && x ⇄ w2n r = x ≪ n
+lsr_typed=∀(n :num) (x :word64) (wmask :word64) (tmask :word64). n < (64 :num) ∧ (DecodeBitMasks ((1w :word1),(63w :word6),(n2w n :word6),F) :(word64 # word64) option) = SOME (wmask,tmask) ⇒ (tmask && wmask) && x ⇄ n = x ⋙ n
+arm8_target_ok_typed=target_ok arm8_target
