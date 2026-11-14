@@ -567,3 +567,6 @@ val _ = show "canonical_nonvar_wrapper_eval" (EVAL ``canonical_wrapper 10 1 (bvi
 (* Capture the original eligibility definition and wrapper-inlining theorem. *)
 val _ = show "wrapper_ok_def_typed" bvi_inlineTheory.wrapper_ok_def;
 val _ = show "wrapper_ok_inline_exp_typed" bvi_inlineProofTheory.wrapper_ok_inline_exp;
+
+(* Capture the exported incremental-wrapper example with inferred types. *)
+val _ = show "incremental_wrapper_example_typed" bvi_inlineProofTheory.incremental_wrapper_example;

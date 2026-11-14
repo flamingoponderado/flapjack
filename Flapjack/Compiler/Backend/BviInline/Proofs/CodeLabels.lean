@@ -63,6 +63,21 @@ theorem inlineExpsGenlistVar (cache : Spt (Nat × Bvi.Exp)) (n : Nat) :
     inlineExpsSource cache ((List.range n).map Bvi.Exp.var) = (List.range n).map Bvi.Exp.var :=
   inlineExpsMapVar cache (List.range n)
 
+/-- A wrapper cached by one incremental compilation is used by the next. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "incremental_wrapper_example"]
+theorem incrementalWrapperExample : ∃ cache first second,
+    compileIncSource .ln [(10, 0, .letCall 0 0 11 [] (.op (.blockOp (.cons 7)) []))] = (cache, first) ∧
+    compileIncSource cache [(12, 0, .call 0 (some 10) [] none)] = (cache, second) ∧
+    second = [(12, 0, .let [] (.letCall 0 0 11 [] (.op (.blockOp (.cons 7)) [])))] := by
+  refine ⟨sptInsert 10 (0, .letCall 0 0 11 [] (.op (.blockOp (.cons 7)) [])) .ln,
+    [(10, 0, .letCall 0 0 11 [] (.op (.blockOp (.cons 7)) []))],
+    [(12, 0, .let [] (.letCall 0 0 11 [] (.op (.blockOp (.cons 7)) [])))], ?_, ?_, rfl⟩
+  · simp [compileIncSource, inlineAllSource, inlineExpSource, inlineExpsSource,
+      wrapperOk, canonicalWrapper, matchesVariables, removeTicksSource, removeTicksListSource]
+  · simp [compileIncSource, inlineAllSource, inlineExpSource, inlineExpsSource,
+      wrapperOk, canonicalWrapper, removeTicksSource, removeTicksListSource,
+      mkTick, sptLookup_sptInsert_same]
+
 /-- A canonical wrapper has exactly the original worker and variable-list shape. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "canonical_wrapper_thm"]
 theorem canonicalWrapper_iff (name arity : Nat) (body : Bvi.Exp) :

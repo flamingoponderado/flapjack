@@ -139576,4 +139576,13 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: eligible wrappers are unchanged by inlining with any cache. The proof uses the complete canonical-wrapper characterization and original variable-list inlining laws."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "incremental_wrapper_example",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "incrementalWrapperExample",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: the two incremental compilations share the same cache and yield the exact original inlined program. The explicit witnesses match the original example."
+  }
 ]
