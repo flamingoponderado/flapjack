@@ -115,7 +115,7 @@ theorem evaluateApp_partial {C F : Type} (function nextFunction first : Value)
   obtain ⟨nextPartial, nextFound, partialRel⟩ :=
     destClosure_related_partial source.maxApp partialValue function (first :: rest) nextFunction nextArgs
       ⟨related, argsRel, found⟩
-  have maxEq : source.maxApp = target.maxApp := (stateRel_clock_maxApp stateRel).2
+  have maxEq : source.maxApp = target.maxApp := stateRel_maxApp source target stateRel
   have clockEq : source.clock = target.clock := stateRel.1
   have lengthEq : (first :: rest).length = nextArgs.length := argsRel.length_eq
   cases argsRel with
@@ -180,7 +180,7 @@ theorem evaluateApp_full_timeout {C F : Type} (function nextFunction first : Val
   obtain ⟨nextEnv, nextRemaining, start, nextFound, envRel, remainingRel, bodySafe⟩ :=
     destClosure_related_full source.maxApp body () function (first :: rest) nextFunction nextArgs
       bodyEnv remaining ⟨related, argsRel, found⟩
-  have maxEq : source.maxApp = target.maxApp := (stateRel_clock_maxApp stateRel).2
+  have maxEq : source.maxApp = target.maxApp := stateRel_maxApp source target stateRel
   have clockEq : source.clock = target.clock := stateRel.1
   have lengthEq : (first :: rest).length = nextArgs.length := argsRel.length_eq
   have remainingEq : remaining.length = nextRemaining.length := remainingRel.length_eq
@@ -222,7 +222,7 @@ theorem evaluateApp_full {C F : Type} (function nextFunction first : Value)
   obtain ⟨nextEnv, nextRemaining, start, nextFound, envRel, remainingRel, bodySafe⟩ :=
     destClosure_related_full source.maxApp body () function (first :: rest) nextFunction nextArgs
       bodyEnv remaining ⟨related, argsRel, found⟩
-  have maxEq : source.maxApp = target.maxApp := (stateRel_clock_maxApp stateRel).2
+  have maxEq : source.maxApp = target.maxApp := stateRel_maxApp source target stateRel
   have clockEq : source.clock = target.clock := stateRel.1
   have lengthEq : (first :: rest).length = nextArgs.length := argsRel.length_eq
   have remainingEq : remaining.length = nextRemaining.length := remainingRel.length_eq
@@ -431,7 +431,7 @@ theorem evaluate_fn {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
     (location : Option Nat) (selected : Option (List Nat)) (arity : Nat) (body : ClosLang.Exp) :
     EvalSimulation (C := C) (F := F) [.fn name location selected arity body] := by
   intro env nextEnv source target result sourceNext start run noType safe envRel stateRel
-  have maxEq : source.maxApp = target.maxApp := (stateRel_clock_maxApp stateRel).2
+  have maxEq : source.maxApp = target.maxApp := stateRel_maxApp source target stateRel
   have bodySafe : ¬ ClosProps.containsAppSome source.maxApp [body] := by
     simpa [ClosProps.containsAppSome, ClosProps.containsAppSomeExp] using safe
   cases selected with
@@ -894,7 +894,7 @@ theorem evaluate_letrec_step {C F : Type} (names : List Flapjack.AstHOL.VarN)
     simpa [ClosProps.containsAppSomeFuns_eq_map] using safeParts.1
   have bodySafe : ¬ ClosProps.containsAppSome source.maxApp [body] := by
     simpa [ClosProps.containsAppSome] using safeParts.2
-  have maxEq : source.maxApp = target.maxApp := (stateRel_clock_maxApp stateRel).2
+  have maxEq : source.maxApp = target.maxApp := stateRel_maxApp source target stateRel
   rw [evaluate.eq_def] at run
   by_cases arityOk : functions.all (fun (arity, _) => arity ≤ source.maxApp && arity != 0)
   · simp only [arityOk, ↓reduceIte] at run

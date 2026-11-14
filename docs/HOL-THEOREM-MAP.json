@@ -1,6 +1,60 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "state_rel_max_app",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/StateRelation.lean",
+    "lean_name": "stateRel_maxApp",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the local source theorem and state_rel_max_app_replay_typed: related states have equal maximum application arities, with independent compiler and shared FFI carriers. The state has canonical finite-support refs and code and a local roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "state_rel_clock",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/StateRelation.lean",
+    "lean_name": "stateRel_clock",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the local source theorem and state_rel_clock_replay_typed: related states have equal clocks, with independent compiler and shared FFI carriers. The state has canonical finite-support refs and code and a local roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "state_rel_with_clock",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/StateRelation.lean",
+    "lean_name": "stateRel_withClock",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the local source theorem and state_rel_with_clock_replay_typed: updating both related states with the same arbitrary clock preserves the full state relation. The compiler and FFI carriers remain independent, and canonical finite-support refs and code have a local roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "state_rel_globals",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/StateRelation.lean",
+    "lean_name": "stateRel_globals",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the local source theorem and state_rel_globals_replay_typed: related states have global lists related by the option lifting of the numbering value relation at the source bound. Canonical finite-support refs and code have a local roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "state_rel_refs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/StateRelation.lean",
+    "lean_name": "stateRel_refs",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the local source theorem and state_rel_refs_replay_typed: the reference maps use the target maximum application and the source reference payload relation. optionRel_lookup_iff gives equal domains and related present entries, the original fmap_rel conditions. Canonical finite-support refs and code have a local roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "state_rel_code",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/StateRelation.lean",
+    "lean_name": "stateRel_code",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the local source theorem and state_rel_code_replay_typed: both original code maps equal the canonical empty finite map. Canonical finite-support refs and code have a local state roundtrip witness; empty is the finite map with no defined entries. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "v_rel_simp",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ValueRelationSimp.lean",
     "lean_name": "valueRel_simp",

@@ -71,14 +71,51 @@ def StateRel {C F : Type} (source : State (Nat × C) F) (target : State C F) : P
     ¬ ClosProps.containsAppSome source.maxApp (source.compileOracle index).2.1) ∧
   source.code = HolFiniteMapExact.empty ∧ target.code = HolFiniteMapExact.empty
 
-/-- Related states expose identical clocks and maximum application arities. -/
-theorem stateRel_clock_maxApp {C F : Type} {source : State (Nat × C) F} {target : State C F}
-    (related : StateRel source target) : source.clock = target.clock ∧ source.maxApp = target.maxApp :=
-  ⟨related.1, related.2.2.1.symm⟩
+/-- Related states have equal maximum application arities. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "state_rel_max_app"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRel_maxApp {C F : Type} (source : State (Nat × C) F) (target : State C F)
+    (related : StateRel source target) : source.maxApp = target.maxApp :=
+  related.2.2.1.symm
+
+/-- Related states have equal clocks. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "state_rel_clock"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRel_clock {C F : Type} (source : State (Nat × C) F) (target : State C F)
+    (related : StateRel source target) : source.clock = target.clock :=
+  related.1
+
+/-- Related states have pointwise-related global stores. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "state_rel_globals"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRel_globals {C F : Type} (source : State (Nat × C) F) (target : State C F)
+    (related : StateRel source target) :
+    List.Forall₂ (optionRel (ValueRel source.maxApp)) source.globals target.globals :=
+  related.2.2.2.2.2.2.1
+
+/-- Related states have corresponding reference maps at the target bound.
+The pointwise option relation is equivalent to the source finite-map
+relation by `optionRel_lookup_iff`. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "state_rel_refs"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRel_refs {C F : Type} (source : State (Nat × C) F) (target : State C F)
+    (related : StateRel source target) :
+    ∀ key, optionRel (RefRel target.maxApp) (source.refs.lookup key) (target.refs.lookup key) := by
+  simpa only [related.2.2.1] using related.2.2.2.2.2.1
+
+/-- Both related states have empty code maps. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "state_rel_code"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRel_code {C F : Type} (source : State (Nat × C) F) (target : State C F)
+    (related : StateRel source target) :
+    source.code = HolFiniteMapExact.empty ∧ target.code = HolFiniteMapExact.empty :=
+  ⟨related.2.2.2.2.2.2.2.2.1, related.2.2.2.2.2.2.2.2.2⟩
 
 /-- Updating both clocks preserves the numbering state relation. -/
-theorem stateRel_withClock {C F : Type} {source : State (Nat × C) F} {target : State C F}
-    (clock : Nat) (related : StateRel source target) :
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "state_rel_with_clock"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRel_withClock {C F : Type} (clock : Nat) {source : State (Nat × C) F} {target : State C F}
+    (related : StateRel source target) :
     StateRel { source with clock := clock } { target with clock := clock } := by
   simpa [StateRel] using related.2
 

@@ -200,6 +200,18 @@ val _ = show "rel_update_thunk_replay_typed=" rel_update_thunk_replay;
 val state_rel_max_app_replay = Q.prove(`!s t. state_rel s t ==> s.max_app = t.max_app`, srw_tac[][state_rel_def]);
 val state_rel_clock_replay = Q.prove(`state_rel s t ==> s.clock = t.clock`, rw[state_rel_def]);
 val state_rel_code_replay = Q.prove(`state_rel s t ==> s.code = FEMPTY /\ t.code = FEMPTY`, rw[state_rel_def]);
+val state_rel_with_clock_replay = Q.prove(
+  `!s t. state_rel s t ==> state_rel (s with clock := x) (t with clock := x)`,
+  srw_tac[][state_rel_def] >> rfs[]);
+val state_rel_globals_replay = Q.prove(
+  `state_rel s t ==> LIST_REL (OPTREL (v_rel s.max_app)) s.globals t.globals`,
+  srw_tac[][state_rel_def]);
+val _ = show "state_rel_max_app_replay_typed=" state_rel_max_app_replay;
+val _ = show "state_rel_clock_replay_typed=" state_rel_clock_replay;
+val _ = show "state_rel_with_clock_replay_typed=" state_rel_with_clock_replay;
+val _ = show "state_rel_globals_replay_typed=" state_rel_globals_replay;
+val _ = show "state_rel_refs_replay_typed=" state_rel_refs_replay;
+val _ = show "state_rel_code_replay_typed=" state_rel_code_replay;
 val v_to_bytes_replay = Q.prove(`v_rel m v w ==> v_to_bytes v = v_to_bytes w`, metis_tac [simple_val_rel, simple_val_rel_v_to_bytes]);
 val v_to_words_replay = Q.prove(`v_rel m v w ==> v_to_words v = v_to_words w`, metis_tac [simple_val_rel, simple_val_rel_v_to_words]);
 val _ = show "v_to_bytes_replay_typed=" v_to_bytes_replay;
