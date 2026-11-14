@@ -796,12 +796,6 @@ import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateCases
 import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateInstall
 import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateLetrec
 import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluatePrimitive
-import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveGlobal
-import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveFfi
-import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveAlloc
-import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveArray
-import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveBlock
-import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveByteVector
 import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateForce
 import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateApplication
 import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateRecursiveApplication
