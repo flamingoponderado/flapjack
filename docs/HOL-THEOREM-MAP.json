@@ -133233,6 +133233,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+  "hol_name": "set_globals_HD_remove_fvs_SING",
+  "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Syntax.lean",
+  "lean_name": "setGlobals_head_removeSource_sing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared remove_sing_head_globals_typed in clos_fvs_correctness_probe.out: the arbitrary bound and expression, singleton removal, HOL head and globals equality agree. The removal result is a singleton, so the unspecified empty-list head is not observed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
   "hol_name": "EVERY_remove_fvs_sing",
   "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Syntax.lean",
   "lean_name": "every_removeSource_sing",

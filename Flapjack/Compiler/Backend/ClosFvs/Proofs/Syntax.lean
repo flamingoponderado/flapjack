@@ -324,6 +324,14 @@ theorem removeSource_setGlobals (bound : Nat) (expressions : List Exp) :
     (removeSource bound expressions).map setGlobals = expressions.map setGlobals := by
   simpa using removeList_setGlobals expressions bound
 
+/-- Removing free variables from a singleton preserves its head's globals. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "set_globals_HD_remove_fvs_SING"]
+theorem setGlobals_head_removeSource_sing (bound : Nat) (expression : Exp) :
+    setGlobals (@Flapjack.holHd Exp ⟨.var .none 0⟩ (removeSource bound [expression])) =
+      setGlobals expression := by
+  have h := removeSource_setGlobals bound [expression]
+  simpa [removeSource_eq_list, removeList, Flapjack.holHd] using h
+
 /-- The original list-shaped removal satisfies the HOL invariant. -/
 @[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "remove_fvs_esgc_free"]
 theorem removeSource_esgcFree (bound : Nat) (expressions : List Exp) :
