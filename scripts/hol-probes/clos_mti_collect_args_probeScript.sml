@@ -202,6 +202,7 @@ val _ = show "result_rel_rval2_typed" clos_mtiProofTheory.result_rel_Rval2;
 val _ = show "intro_multi_nil_typed" clos_mtiProofTheory.intro_multi_nil;
 val _ = show "intro_multi_eq_nil_typed" clos_mtiProofTheory.intro_multi_EQ_NIL;
 val _ = show "do_app_lemma_typed" clos_mtiProofTheory.do_app_lemma;
+val _ = show "dest_closure_some_imp_typed" clos_mtiProofTheory.dest_closure_SOME_IMP;
 val _ = show "value_rel_simps_typed" clos_mtiProofTheory.v_rel_simps;
 val _ = show "mk_fns_def_typed" mk_Fns_def;
 val _ = show "collect_args_def_typed" collect_args_def;

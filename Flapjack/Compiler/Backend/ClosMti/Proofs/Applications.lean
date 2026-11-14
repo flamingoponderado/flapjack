@@ -12,6 +12,18 @@ public import Mathlib.Data.List.Induction
 namespace Flapjack.Compiler.Backend.ClosMti
 open Flapjack.SemanticPrimitivesHOL
 
+/-- A successful closure decomposition starts from a closure or recursive closure. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "dest_closure_SOME_IMP"]
+theorem destClosure_some_imp (maxApp : Nat) (location : Option Nat) (function : ClosSem.Value)
+    (args : List ClosSem.Value) (result : ClosSem.AppKind)
+    (run : ClosSem.destClosure maxApp location function args = some result) :
+    (∃ loc supplied env arity body, function = .closure loc supplied env arity body) ∨
+      (∃ loc supplied env funs index, function = .recclosure loc supplied env funs index) := by
+  cases function with
+  | closure loc supplied env arity body => exact Or.inl ⟨loc, supplied, env, arity, body, rfl⟩
+  | recclosure loc supplied env funs index => exact Or.inr ⟨loc, supplied, env, funs, index, rfl⟩
+  | _ => simp [ClosSem.destClosure] at run
+
 /-- An error while evaluating the argument of a unary application propagates. -/
 theorem unaryApp_arg_error {C F : Type} (trace : BackendCommon.Tra)
     (function arg : ClosLang.Exp) (env : List ClosSem.Value) (state next : ClosSem.State C F)
