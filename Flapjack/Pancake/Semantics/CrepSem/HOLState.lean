@@ -757,20 +757,34 @@ def decClockCrepSemHOL {width : Nat} [NeZero width] {σ : Type}
 
 /-- Port of HOL `fix_clock_def` (`crepSemScript.sml:150-152`) over the
     finite-support `CrepSemHOLState` carrier. The result is polymorphic in the
-    unconstrained `res` component, as in HOL. -/
+    unconstrained `res` component, as in HOL.
+
+    HOL's incoming and returned states have independent carriers: typed capture
+    `fix_clock_def_typed` (`scripts/hol-probes/crep_semantics_probe.out`) is
+    `∀(old_s :(δ, ε) state) (res :α) (new_s :(β, γ) state)`, so only their
+    natural-number clocks are related.  The `width'`/`σ'` binders keep that
+    independence; the used same-carrier instance is still available by
+    unification. -/
 @[hol "cakeml/pancake/semantics/crepSemScript.sml" "fix_clock_def" (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
-def fixClockCrepSemHOL {width : Nat} [NeZero width] {σ : Type} {β : Type}
-    (oldState : CrepSemHOLState width σ) (step : β × CrepSemHOLState width σ) :
-    β × CrepSemHOLState width σ :=
+def fixClockCrepSemHOL {width : Nat} [NeZero width] {σ : Type}
+    {width' : Nat} [NeZero width'] {σ' : Type} {β : Type}
+    (oldState : CrepSemHOLState width σ) (step : β × CrepSemHOLState width' σ') :
+    β × CrepSemHOLState width' σ' :=
   (step.1, { step.2 with
     clock := if oldState.clock < step.2.clock then oldState.clock else step.2.clock })
 
 /-- Port of HOL `fix_clock_IMP_LESS_EQ` (`crepSemScript.sml:155-158`):
-    `fix_clock` never increases the clock. -/
+    `fix_clock` never increases the clock.  Typed capture
+    `fix_clock_IMP_LESS_EQ_typed` (`scripts/hol-probes/crep_semantics_probe.out`)
+    is `∀(x :β # (γ, δ) state). fix_clock (s :(α, 'ffi) state) x =
+    ((res :β),(s1 :(γ, δ) state)) ⇒ s1.clock ≤ s.clock` with no hypotheses, so
+    the old and returned states keep independent word/FFI carriers; the binders
+    follow HOL's order (`x` outermost, then `s`, `res`, `s1`). -/
 @[hol "cakeml/pancake/semantics/crepSemScript.sml" "fix_clock_IMP_LESS_EQ" (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 theorem fixClockCrepSemHOL_IMP_LESS_EQ {width : Nat} [NeZero width] {σ : Type}
-    {β : Type} (state : CrepSemHOLState width σ) (x : β × CrepSemHOLState width σ)
-    (res : β) (s1 : CrepSemHOLState width σ)
+    {width' : Nat} [NeZero width'] {σ' : Type} {β : Type}
+    (x : β × CrepSemHOLState width' σ')
+    (state : CrepSemHOLState width σ) (res : β) (s1 : CrepSemHOLState width' σ')
     (h : fixClockCrepSemHOL state x = (res, s1)) : s1.clock ≤ state.clock := by
   obtain ⟨value, stepState⟩ := x
   simp only [fixClockCrepSemHOL, Prod.mk.injEq] at h

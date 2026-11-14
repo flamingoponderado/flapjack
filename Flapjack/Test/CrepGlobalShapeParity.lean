@@ -341,7 +341,7 @@ example :
     old state's clock. -/
 example : (fixClockCrepSemHOL localBaseFinite (true, localBaseFinite)).2.clock ≤
     localBaseFinite.clock :=
-  fixClockCrepSemHOL_IMP_LESS_EQ localBaseFinite (true, localBaseFinite) true
+  fixClockCrepSemHOL_IMP_LESS_EQ (true, localBaseFinite) localBaseFinite true
     (fixClockCrepSemHOL localBaseFinite (true, localBaseFinite)).2 rfl
 
 example :

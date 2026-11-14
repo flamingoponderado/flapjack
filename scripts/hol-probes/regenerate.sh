@@ -2648,6 +2648,8 @@ run_probe pan_structs_compile_exp_probeScript.sml pan_structs_compile_exp_probe.
   rstruct old_shapes_map "$cake_dir/pancake/pan_structsScript.sml"
 run_probe crep_semantics_probeScript.sml crep_semantics_probe.out \
   semantics_timeout_is_nonterminal semantics_break_is_nonterminal \
+  fix_clock_def_typed fix_clock_def_hypotheses \
+  fix_clock_IMP_LESS_EQ_typed fix_clock_IMP_LESS_EQ_hypotheses \
   "$cake_dir/pancake/semantics/crepSemScript.sml"
 run_probe crep_res_var_probeScript.sml crep_res_var_probe.out \
   res_var_delete_hit res_var_update_hit \

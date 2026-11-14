@@ -373,7 +373,7 @@
     {"bytes": 267, "out": "crep_runtime_word_boundary_probe.out", "rows": 12, "sha256": "130a862b898d10188abb7430615889c34761553828e74c0350a725925050367c"},
     {"bytes": 205, "out": "crep_runtime_write_bytes_probe.out", "rows": 7, "sha256": "735096f1060269edae98f0a3b419c705970ed64b6ddeefbef1498630d31858c2"},
     {"bytes": 2818, "out": "crep_sem_evaluate_ind_probe.out", "rows": 1, "sha256": "703bafcb0136744f54b191a9e3812d94159b083adfcff68aead6b77a98c7e000"},
-    {"bytes": 100, "out": "crep_semantics_probe.out", "rows": 3, "sha256": "c826be349beb95782ec9251421d3220fade39725eccf9738fe5d8c7c03eb88be"},
+    {"bytes": 527, "out": "crep_semantics_probe.out", "rows": 7, "sha256": "6f494e8f523ddf41258dd44f9a3d169dcc95d8db83cd8be1ae6d362800fa5ecd"},
     {"bytes": 74, "out": "crep_sh_mem_load_probe.out", "rows": 2, "sha256": "c5752680237d036477093e5ceba43a281f7acefd43865a94af4e6e4c86ed7466"},
     {"bytes": 158, "out": "crep_sh_mem_op_probe.out", "rows": 8, "sha256": "b6fc2f5067b6e241fff5dd623159c16bfded5d7c6ef6b72c63c9aea514f12a2b"},
     {"bytes": 106, "out": "crep_sh_mem_store_probe.out", "rows": 3, "sha256": "e36284d4a631170566da49d045c840387f02a7e63b4184af06f4da2881f218d5"},
