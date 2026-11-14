@@ -28,14 +28,25 @@ theorem doApp_ok {C F : Type} (op : ClosLang.Op)
     (run : doApp op args s = .val (value, t)) :
     stateOk t ∧ bvOk t.refs value ∧ (bvOkList s.refs env → bvOkList t.refs env) := by
   cases op with
-  | label index => exact doApp_ok_label index args env s t value ok argsOk run
+  | label index =>
+    simp only [doApp] at run
+    split at run
+    · simp only [Flapjack.SemanticPrimitivesHOL.Result.val.injEq, Prod.mk.injEq] at run
+      rcases run with ⟨rfl, rfl⟩
+      exact ⟨ok, by simp [bvOk], id⟩
+    · contradiction
   | ffi name => exact doApp_ok_ffi name args env s t value ok argsOk run
   | intOp op => exact doApp_ok_int op args env s t value ok argsOk run
   | wordOp op => exact doApp_ok_word op args env s t value ok argsOk run
   | blockOp op => exact doApp_ok_block op args env s t value ok argsOk run
   | globOp op => exact doApp_ok_global op args env s t value ok argsOk run
   | memOp op => exact doApp_ok_memory op args env s t value ok argsOk run
-  | install => exact doApp_ok_install args env s t value ok argsOk run
+  | install =>
+    simp only [doApp, BvlSem.doInstall] at run
+    repeat' first | split at run | contradiction
+    all_goals simp only [Flapjack.SemanticPrimitivesHOL.Result.val.injEq, Prod.mk.injEq] at run
+    all_goals rcases run with ⟨rfl, rfl⟩
+    all_goals exact ⟨ok, by simp [bvOk], id⟩
   | thunkOp op => exact doApp_ok_thunk op args env s t value ok argsOk run
 
 /-- A successful primitive application preserves state and result validity. -/

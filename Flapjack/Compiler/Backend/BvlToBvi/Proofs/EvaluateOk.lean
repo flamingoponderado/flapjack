@@ -41,28 +41,6 @@ def evalOkBelow {C F : Type} (clock : Nat) : Prop :=
     evaluate expressions env s = (result, t) → stateOk s → bvOkList s.refs env →
     stateOk t ∧ evalResultOk t.refs result ∧ bvOkList t.refs env
 
-/-- Empty-expression-list case of the BVL evaluator invariant. -/
-theorem evaluateOk_nil {C F : Type} (clock : Nat) : @evalOk C F clock [] := by
-  intro env s t result clockLe run ok envOk
-  simp [evaluate] at run
-  rcases run with ⟨rfl, rfl⟩
-  exact ⟨ok, by simp [evalResultOk, bvOkList], envOk⟩
-
-/-- Variable case of the BVL evaluator invariant. -/
-theorem evaluateOk_var {C F : Type} (clock : Nat) (index : Nat) : @evalOk C F clock [.var index] := by
-  intro env s t result clockLe run ok envOk
-  cases lookup : env[index]? with
-  | none =>
-    simp [evaluate, lookup] at run
-    rcases run with ⟨rfl, rfl⟩
-    exact ⟨ok, trivial, envOk⟩
-  | some value =>
-    simp [evaluate, lookup] at run
-    rcases run with ⟨rfl, rfl⟩
-    exact ⟨ok, by
-      simp only [evalResultOk, bvOkList, and_true]
-      exact (bvOkList_iff _ _).1 envOk value (List.mem_of_getElem? lookup), envOk⟩
-
 /-- Tick case of the BVL evaluator invariant, using the body induction
 hypothesis with the source's decremented clock. -/
 theorem evaluateOk_tick {C F : Type} (clock : Nat) (body : Bvl.Exp) (ih : @evalOk C F clock [body]) :

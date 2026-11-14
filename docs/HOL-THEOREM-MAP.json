@@ -359,6 +359,26 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/EvaluateClockFull.lean",
+    "lean_name": "evaluate_clock",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed original in bvi_sem_state_probe.out: the expression list, environment, initial state, result, final state, evaluation equation and final-clock bound are unchanged. The curried evaluator is the implementation of the reviewed tuple interface; compiler and FFI types remain independent. The local roundtrip witness records the canonical refs representation. Inherits reals_as_rational_cuts through evaluation, as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
+    "hol_name": "fix_clock_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/EvaluateClockFull.lean",
+    "lean_name": "fixClock_evaluate",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed original in bvi_sem_state_probe.out: for an arbitrary expression list, environment and BVI state, clamping the evaluation result equals the original evaluation result. The curried evaluator implements the reviewed tuple interface; compiler and FFI types remain independent. The local roundtrip witness records the canonical refs representation. Inherits reals_as_rational_cuts through evaluation, as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/bviSemScript.sml",
     "hol_name": "do_app_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/BviSem/Apply.lean",
     "lean_name": "doApp",
@@ -131528,30 +131548,6 @@
   ],
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Compared the typed full do_app_ok theorem in bvl_to_bvi_value_rel_probe.out. This is its BlockOp Build for arbitrary constant parts, including the actual resulting reference allocation, using doBuild_ok case; the original state and argument well-formedness and successful doApp premises and all three conclusions, including preservation of any prior environment, are retained. bvOkList_iff relates the source EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation. The complete primitive theorem is assembled in ApplyAllOk. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
-  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ApplyOk.lean",
-  "hol_name": "do_app_ok",
-  "lean_name": "doApp_ok_label",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared the typed full do_app_ok theorem in bvl_to_bvi_value_rel_probe.out. This is its Label for arbitrary code index and lookup outcomes case; the original state and argument well-formedness and successful doApp premises and all three conclusions, including preservation of any prior environment, are retained. bvOkList_iff relates the source EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation. The complete primitive theorem is assembled in ApplyAllOk. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
-  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ApplyOk.lean",
-  "hol_name": "do_app_ok",
-  "lean_name": "doApp_ok_install",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared the typed full do_app_ok theorem in bvl_to_bvi_value_rel_probe.out. This is its Install for arbitrary decoded payloads and compiler-oracle outcomes case; the original state and argument well-formedness and successful doApp premises and all three conclusions, including preservation of any prior environment, are retained. bvOkList_iff relates the source EVERY predicate. The local canonical state roundtrip covers refs; doApp inherits the floating-point real-carrier representation. The complete primitive theorem is assembled in ApplyAllOk. Inherits the reals_as_rational_cuts assumption through its dependencies."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",

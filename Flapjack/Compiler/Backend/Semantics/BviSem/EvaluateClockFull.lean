@@ -8,6 +8,14 @@ public import Flapjack.Misc.ClockWeightInduction
 namespace Flapjack.Compiler.Backend.BviSem
 open Flapjack.Compiler.Backend.BvlSem (Value)
 
+namespace ClockCarrier
+/-- The canonical BVI reference-map representation roundtrips. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviStateBroad C F, (BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end ClockCarrier
+
 /-- Forcing an unevaluated thunk consumes one clock tick. -/
 theorem evaluate_force_clock_step {C F : Type} (env : List Value) (state : BviState C F)
     (location index : Nat)
@@ -139,9 +147,8 @@ theorem evaluate_letCall_clock_step {C F : Type} (env : List Value) (state : Bvi
               · exact Nat.le_trans (bodyClock body (values ++ env) callFinal calledSmaller)
                   (Nat.le_of_lt calledSmaller)
               · simpa using Nat.le_of_lt calledSmaller
-/-- The source-shaped BVI evaluator does not increase its input clock. This
-is a Flapjack invariant; the evaluator itself has not yet been reviewed as an
-exact HOL port. -/
+/-- The BVI evaluator does not increase its input clock. This factored form
+supports the original result below and has no separate HOL declaration. -/
 theorem evaluate_clock_le {C F : Type} (expressions : List Bvi.Exp) (env : List Value) (state : BviState C F) :
     (evaluate expressions env state).2.clock ≤ state.clock := by
   refine clockWeightInduction (α := List Bvi.Exp) (σ := BviState C F) (·.clock) expsWeight
@@ -216,8 +223,17 @@ theorem evaluate_clock_le {C F : Type} (expressions : List Bvi.Exp) (env : List 
       | op op args => exact evaluate_op_clock env state op args
 
 
-/-- The termination-only clock clamp is inert on BVI evaluation results. This
-is untagged while the underlying evaluator remains pending source review. -/
+/-- An evaluation's final clock is bounded by its initial clock. -/
+@[hol "cakeml/compiler/backend/semantics/bviSemScript.sml" "evaluate_clock"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_clock {C F : Type} (expressions : List Bvi.Exp) (env : List Value)
+    (state : BviState C F) (result : BviResult) (next : BviState C F)
+    (run : evaluate expressions env state = (result, next)) : next.clock ≤ state.clock := by
+  simpa [run] using evaluate_clock_le expressions env state
+
+/-- The termination-only clock clamp is inert on BVI evaluation results. -/
+@[hol "cakeml/compiler/backend/semantics/bviSemScript.sml" "fix_clock_evaluate"
+  (fmap_as_finite_support := [refs])]
 theorem fixClock_evaluate {C F : Type} (expressions : List Bvi.Exp)
     (env : List Value) (state : BviState C F) :
     fixClock state (evaluate expressions env state) = evaluate expressions env state := by
