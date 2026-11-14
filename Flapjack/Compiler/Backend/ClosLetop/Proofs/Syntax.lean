@@ -11,6 +11,19 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic.LabelsAndA
 namespace Flapjack.Compiler.Backend.ClosLetop
 open ClosLang ClosProps
 
+/-- Compiling a singleton produces a singleton. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "let_op_SING"]
+theorem compileSource_singleton (expression : Exp) :
+    ∃ result, compileSource [expression] = [result] := by
+  exact ⟨compileSing expression, by simp [compileSource_eq_list, compileList]⟩
+
+/-- The head reconstructs a compiled singleton, whose length is one. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "HD_let_op_SING"]
+theorem compileSource_singleton_head (expression : Exp) :
+    [@Flapjack.holHd Exp ⟨.var .none 0⟩ (compileSource [expression])] =
+        compileSource [expression] ∧ (compileSource [expression]).length = 1 := by
+  simp [compileSource_eq_list, compileList, Flapjack.holHd]
+
 /-- A recognized variable list contains neither labels nor excessive applications. -/
 @[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "var_list_no_Labels"]
 theorem varList_noLabels {α : Type} (n : Nat) (xs : List Exp) (ys : List α)

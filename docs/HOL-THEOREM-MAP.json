@@ -1,5 +1,21 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+    "hol_name": "let_op_SING",
+    "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Syntax.lean",
+    "lean_name": "compileSource_singleton",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared let_op_SING_typed: every closure expression has an existential result whose singleton is exactly the source-shaped traversal of its singleton. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+    "hol_name": "HD_let_op_SING",
+    "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Syntax.lean",
+    "lean_name": "compileSource_singleton_head",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared HD_let_op_SING_typed: for every closure expression, the singleton containing the HOL-shaped head of the source traversal equals the traversal and its length is one. The traversal is provably nonempty, so the head's default is unobservable. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
     "hol_name": "get_code_labels_remove_fvs",
     "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/CodeLabels.lean",
