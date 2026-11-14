@@ -10100,6 +10100,7 @@ run_probe word_sem_typed_probeScript.sml word_sem_typed_probe.out \
   semantics_def_typed word_lang_safe_for_space_def_typed sh_mem_load_def_typed sh_mem_load16_def_typed sh_mem_load32_def_typed sh_mem_load_byte_def_typed sh_mem_set_var_def_typed sh_mem_store_def_typed \
   sh_mem_store16_def_typed sh_mem_store32_def_typed sh_mem_store_byte_def_typed share_inst_def_typed buffer_typed result_typed stack_frame_typed state_typed \
   buffer_flush_def_typed buffer_write_def_typed isException_def_typed isResult_def_typed stack_size_def_typed stack_size_frame_def_typed \
+  fix_clock_IMP_LESS_EQ_replay_typed fix_clock_IMP_LESS_EQ_replay_hypotheses \
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 

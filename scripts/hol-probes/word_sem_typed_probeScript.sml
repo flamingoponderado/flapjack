@@ -117,3 +117,16 @@ val _ = emit "isException_def_typed" "isException_def";
 val _ = emit "isResult_def_typed" "isResult_def";
 val _ = emit "stack_size_def_typed" "stack_size_def";
 val _ = emit "stack_size_frame_def_typed" "stack_size_frame_def";
+
+(* Typed replay of the [local] theorem fix_clock_IMP_LESS_EQ (task 167).  It is
+   not exported, so replay its source statement with explicit type variables. *)
+val fix_clock_IMP_LESS_EQ_replay =
+  prove(``!x. fix_clock (s:('a,'b,'c) state) (x:'r # ('d,'e,'f) state) =
+        ((res:'r),(s1:('d,'e,'f) state)) ==>
+      s1.clock <= s.clock /\ s1.termdep = s.termdep``,
+    full_simp_tac(srw_ss())[wordSemTheory.fix_clock_def,FORALL_PROD] >>
+    srw_tac[][] >> full_simp_tac(srw_ss())[] >> decide_tac);
+val _ = (print "fix_clock_IMP_LESS_EQ_replay_typed=";
+  print_term (concl fix_clock_IMP_LESS_EQ_replay); print "\n");
+val _ = print ("fix_clock_IMP_LESS_EQ_replay_hypotheses=" ^
+  Int.toString (length (hyp fix_clock_IMP_LESS_EQ_replay)) ^ "\n");

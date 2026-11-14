@@ -79,17 +79,31 @@ theorem termdep_rw {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL local `fix_clock_IMP_LESS_EQ` (`wordSemScript.sml:964-968`):
     `∀x. fix_clock s x = (res,s1) ⇒ s1.clock ≤ s.clock ∧ s1.termdep =
-    s.termdep`, where `res` and `s1` are free in HOL and bound here. -/
+    s.termdep`, where `res` and `s1` are free in HOL and bound here.
+
+    The theorem is `[local]` in HOL and not exported, so its typing comes from
+    the typed replay `fix_clock_IMP_LESS_EQ_replay_typed`
+    (`scripts/hol-probes/word_sem_typed_probe.out`):
+    `∀(x :ς # (δ, ε, ζ) state). fix_clock (s :(α, β, γ) state) x =
+    ((res :ς),(s1 :(δ, ε, ζ) state)) ⇒ s1.clock ≤ s.clock ∧ s1.termdep =
+    s.termdep`, with no hypotheses.  The old and returned states therefore have
+    independent word/compiler/FFI carriers (`width'`/`C'`/`F'` here), and the
+    binders follow HOL's order (`x` outermost, then `s`, `res`, `s1`). -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "fix_clock_IMP_LESS_EQ"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem fixClock_IMP_LESS_EQ {width : Nat} [NeZero width] {C : Type} {F : Type} {β : Type}
-    (s : WordSemStateFiniteExact width C F) (res : β) (s1 : WordSemStateFiniteExact width C F) :
-    ∀ x, fixClock s x = (res, s1) → s1.clock ≤ s.clock ∧ s1.termdep = s.termdep := by
-  intro x h
+theorem fixClock_IMP_LESS_EQ {width : Nat} [NeZero width] {C : Type} {F : Type}
+    {width' : Nat} [NeZero width'] {C' : Type} {F' : Type} {β : Type}
+    (x : β × WordSemStateFiniteExact width' C' F')
+    (s : WordSemStateFiniteExact width C F) (res : β)
+    (s1 : WordSemStateFiniteExact width' C' F')
+    (h : fixClock s x = (res, s1)) :
+    s1.clock ≤ s.clock ∧ s1.termdep = s.termdep := by
+  obtain ⟨value, stepState⟩ := x
   simp only [fixClock, Prod.mk.injEq] at h
-  obtain ⟨_, rfl⟩ := h
+  obtain ⟨_, hstate⟩ := h
+  subst hstate
   refine ⟨?_, rfl⟩
-  dsimp only
+  change (if s.clock < stepState.clock then s.clock else stepState.clock) ≤ s.clock
   split <;> omega
 
 end WordSemStateFiniteExact
