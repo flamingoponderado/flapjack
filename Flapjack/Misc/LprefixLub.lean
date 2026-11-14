@@ -77,12 +77,19 @@ theorem lprefixChainNth_eq_none {n : Nat} {ls : HolLList α → Prop}
 
 /-- HOL's original chain-guarded absence statement (215-219), without
     weakening its hypotheses to those of the stronger internal helper. -/
-@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml"
-  "not_exists_lprefix_chain_nth"]
 theorem not_exists_lprefix_chain_nth {ls : HolLList α → Prop} {n : Nat}
     (_hchain : lprefixChain ls) (h : ∀ l, ls l → lnth n l = none) :
     lprefixChainNth n ls = none :=
   lprefixChainNth_eq_none h
+
+/-- HOL `not_exists_lprefix_chain_nth` (`215-219`), with the source's
+    conjunction premise. The curried form above serves Lean callers. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml"
+  "not_exists_lprefix_chain_nth"]
+theorem not_exists_lprefix_chain_nth_conj {ls : HolLList α → Prop} {n : Nat}
+    (h : lprefixChain ls ∧ ∀ l, ls l → lnth n l = none) :
+    lprefixChainNth n ls = none :=
+  not_exists_lprefix_chain_nth h.1 h.2
 
 /-- When `x` is the unique witness of `P`, `holOptionSome P` returns exactly
     `some x` (HOL's `some` picks a fixed but unknown witness; uniqueness pins it). -/
@@ -95,11 +102,8 @@ theorem holOptionSome_eq_some {P : α → Prop} {x : α} (hP : P x)
   · rename_i h
     exact absurd ⟨x, hP⟩ h
 
-/-- HOL `lprefix_chain_nth_none_mono`
-    (`lprefix_lubScript.sml:225-228`): over a chain, if the family has no value at
-    `m` then it has none at any `n ≥ m`.  The chain binder is kept for HOL's
-    shape; the Lean proof does not need it. -/
-@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "lprefix_chain_nth_none_mono"]
+/-- Curried convenience form of `lprefixChainNth_none_mono_conj`; the tagged
+    declaration below keeps HOL's single conjunction premise. -/
 theorem lprefixChainNth_none_mono {m n : Nat} {ls : HolLList α → Prop}
     (_hchain : lprefixChain ls) (hle : m ≤ n) (hm : lprefixChainNth m ls = none) :
     lprefixChainNth n ls = none := by
@@ -116,9 +120,17 @@ theorem lprefixChainNth_none_mono {m n : Nat} {ls : HolLList α → Prop}
       | none => exact absurd hmn hmne
       | some y => exact absurd ⟨l, hl, hmn⟩ ((holOptionSome_none hm) y)
 
+/-- HOL `lprefix_chain_nth_none_mono`
+    (`lprefix_lubScript.sml:225-228`): over a chain, if the family has no value at
+    `m` then it has none at any `n ≥ m`, stated with the source's conjunction. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "lprefix_chain_nth_none_mono"]
+theorem lprefixChainNth_none_mono_conj {m n : Nat} {ls : HolLList α → Prop}
+    (h : lprefixChain ls ∧ m ≤ n ∧ lprefixChainNth m ls = none) :
+    lprefixChainNth n ls = none :=
+  lprefixChainNth_none_mono h.1 h.2.1 h.2.2
+
 /-- HOL `lprefix_chain_LNTHs_agree` (`lprefix_lubScript.sml:182-187`): on a chain,
     any two members defined at `n` carry the same value there. -/
-@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "lprefix_chain_LNTHs_agree"]
 theorem lprefixChain_LNTHs_agree {ls : HolLList α → Prop} (hchain : lprefixChain ls)
     {l1 l2 : HolLList α} (h1 : ls l1) (h2 : ls l2) {n : Nat} {x1 x2 : α}
     (hx1 : lnth n l1 = some x1) (hx2 : lnth n l2 = some x2) : x1 = x2 := by
@@ -128,9 +140,17 @@ theorem lprefixChain_LNTHs_agree {ls : HolLList α → Prop} (hchain : lprefixCh
   · rw [lprefix_lnth h hx2] at hx1
     exact (Option.some.inj hx1).symm
 
+/-- HOL `lprefix_chain_LNTHs_agree` (`lprefix_lubScript.sml:182-187`), with the
+    source's five-conjunct premise. The curried form above serves Lean callers. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "lprefix_chain_LNTHs_agree"]
+theorem lprefixChain_LNTHs_agree_conj {ls : HolLList α → Prop} {l1 l2 : HolLList α}
+    {n : Nat} {x1 x2 : α}
+    (h : lprefixChain ls ∧ ls l1 ∧ ls l2 ∧ lnth n l1 = some x1 ∧ lnth n l2 = some x2) :
+    x1 = x2 :=
+  lprefixChain_LNTHs_agree h.1 h.2.1 h.2.2.1 h.2.2.2.1 h.2.2.2.2
+
 /-- HOL `exists_lprefix_chain_nth` (`lprefix_lubScript.sml:205-208`): on a chain,
     if a member has value `x` at `n`, `lprefixChainNth` returns `x`. -/
-@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "exists_lprefix_chain_nth"]
 theorem exists_lprefixChainNth {ls : HolLList α → Prop} (hchain : lprefixChain ls)
     {n : Nat} {x : α} (hx : ∃ l, ls l ∧ lnth n l = some x) :
     lprefixChainNth n ls = some x := by
@@ -140,6 +160,14 @@ theorem exists_lprefixChainNth {ls : HolLList α → Prop} (hchain : lprefixChai
   · intro y hy
     obtain ⟨l, hl, hln⟩ := hy
     exact lprefixChain_LNTHs_agree hchain hl hl0 hln hl0n
+
+/-- HOL `exists_lprefix_chain_nth` (`lprefix_lubScript.sml:205-208`), with the
+    source's conjunction premise. The curried form above serves Lean callers. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "exists_lprefix_chain_nth"]
+theorem exists_lprefixChainNth_conj {ls : HolLList α → Prop} {n : Nat} {x : α}
+    (h : lprefixChain ls ∧ ∃ l, ls l ∧ lnth n l = some x) :
+    lprefixChainNth n ls = some x :=
+  exists_lprefixChainNth h.1 h.2
 
 /-- On a chain the `lunfold` index underlying `build_lprefix_lub` advances by
     exactly one, so its step stays at `buildLprefixLubF`. -/
@@ -172,10 +200,16 @@ theorem lnth_buildLprefixLub {ls : HolLList α → Prop} (hchain : lprefixChain 
 
 /-- HOL `unique_lprefix_lub` (`lprefix_lubScript.sml:419-422`): two least upper
     bounds of the same family are equal. -/
-@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "unique_lprefix_lub"]
 theorem unique_lprefix_lub {ls : HolLList α → Prop} {ll1 ll2 : HolLList α}
     (h1 : lprefixLub ls ll1) (h2 : lprefixLub ls ll2) : ll1 = ll2 :=
   lprefix_antisym (h1.2 ll2 h2.1) (h2.2 ll1 h1.1)
+
+/-- HOL `unique_lprefix_lub` (`lprefix_lubScript.sml:419-422`), with the source's
+    conjunction premise. The curried form above serves Lean callers. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "unique_lprefix_lub"]
+theorem unique_lprefix_lub_conj {ls : HolLList α → Prop} {ll1 ll2 : HolLList α}
+    (h : lprefixLub ls ll1 ∧ lprefixLub ls ll2) : ll1 = ll2 :=
+  unique_lprefix_lub h.1 h.2
 
 /-- Flapjack-only representation-level iteration lemma for `lunfoldStep`.
     HOL's result is about LNTH of LUNFOLD, not the internal step pair; the exact
@@ -324,7 +358,6 @@ theorem lprefix_lub_is_chain {ls : HolLList α → Prop} {ll : HolLList α}
   exact lprefix_total_of_common (h.1 a ha) (h.1 b hb)
 
 /-- HOL `equiv_lprefix_chain_thm` (`lprefix_lubScript.sml:247-262`). -/
-@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "equiv_lprefix_chain_thm"]
 theorem equivLprefixChain_thm {ls1 ls2 : HolLList α → Prop}
     (h1 : lprefixChain ls1) (h2 : lprefixChain ls2) :
     (equivLprefixChain ls1 ls2 ↔
@@ -368,19 +401,33 @@ theorem equivLprefixChain_thm {ls1 ls2 : HolLList α → Prop}
         obtain ⟨l2, hl2, hln2⟩ := hdir.1 l1 n x hl1 hln1
         exact (exists_lprefixChainNth h2 ⟨l2, hl2, hln2⟩).symm
 
+/-- HOL `equiv_lprefix_chain_thm` (`lprefix_lubScript.sml:247-262`), with the
+    source's conjunction premise. The curried form above serves Lean callers. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "equiv_lprefix_chain_thm"]
+theorem equivLprefixChain_thm_conj {ls1 ls2 : HolLList α → Prop}
+    (h : lprefixChain ls1 ∧ lprefixChain ls2) :
+    (equivLprefixChain ls1 ls2 ↔
+      (∀ ll1 n x, ls1 ll1 → lnth n ll1 = some x →
+        ∃ ll2, ls2 ll2 ∧ lnth n ll2 = some x) ∧
+      (∀ ll2 n x, ls2 ll2 → lnth n ll2 = some x →
+        ∃ ll1, ls1 ll1 ∧ lnth n ll1 = some x)) :=
+  equivLprefixChain_thm h.1 h.2
+
 /-- HOL `llist_shorter` (`lprefix_lubScript.sml:122-129`): `ll1` is no longer
-    than `ll2`; `none` is the infinite length. -/
+    than `ll2`; `none` is the infinite length. HOL leaves the two lists'
+    element types independent, so the definition is polymorphic in both. -/
 @[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "llist_shorter_def"]
-def llistShorter (ll1 ll2 : HolLList α) : Prop :=
+def llistShorter {α β : Type} (ll1 : HolLList α) (ll2 : HolLList β) : Prop :=
   match llength ll1, llength ll2 with
   | none, none => True
   | some _, none => True
   | none, some _ => False
   | some x, some y => x ≤ y
 
-/-- HOL `llist_shorter_fromList` (`lprefix_lubScript.sml:163-169`). -/
+/-- HOL `llist_shorter_fromList` (`lprefix_lubScript.sml:163-169`). The two
+    input lists keep HOL's independent element types. -/
 @[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "llist_shorter_fromList"]
-theorem llistShorter_fromList (l1 l2 : List α) :
+theorem llistShorter_fromList {α β : Type} (l1 : List α) (l2 : List β) :
     llistShorter (fromList l1) (fromList l2) ↔ l1.length ≤ l2.length := by
   simp [llistShorter, llength_fromList]
 
@@ -393,9 +440,9 @@ theorem llistShorter_fromList (l1 l2 : List α) :
     scanner does not distinguish a theorem value from other ML values, so
     avoiding tags on non-theorem ML values is a source-review duty. -/
 @[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "llist_shorter_lnth"]
-theorem llistShorter_lnth {ll1 ll2 : HolLList α} :
+theorem llistShorter_lnth {α β : Type} {ll1 : HolLList α} {ll2 : HolLList β} :
     llistShorter ll1 ll2 ↔
-      ∀ n x, lnth n ll1 = some x → ∃ y, lnth n ll2 = some y := by
+      ∀ n x, lnth n ll1 = some x → ∃ y : β, lnth n ll2 = some y := by
   cases h1 : llength ll1 with
   | none =>
       cases h2 : llength ll2 with
@@ -448,20 +495,19 @@ theorem llistShorter_lnth {ll1 ll2 : HolLList α} :
     families chains and every member of `ls2` finite, `equiv_lprefix_chain`
     equivalently says that `ls2` supplies a value wherever `ls1` does and that
     every non-empty `ls2` member is `llist_shorter` than some `ls1` member. -/
-@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "equiv_lprefix_chain_thm2"]
 theorem equiv_lprefix_chain_thm2 {ls1 ls2 : HolLList α → Prop}
     (h1 : lprefixChain ls1) (h2 : lprefixChain ls2)
     (hfin : ∀ ll2, ls2 ll2 → LFinite ll2) :
     (equivLprefixChain ls1 ls2 ↔
       (∀ (ll1 : HolLList α) (n : Nat) (x : α), ls1 ll1 → lnth n ll1 = some x →
         ∃ ll2, ls2 ll2 ∧ lnth n ll2 = some x) ∧
-      (∀ (ll2 : HolLList α) (_n : Nat) (_x : α), ls2 ll2 → ll2 ≠ lnil →
+      (∀ (ll2 : HolLList α), ls2 ll2 → ll2 ≠ lnil →
         ∃ ll1, ls1 ll1 ∧ llistShorter ll2 ll1)) := by
   rw [equivLprefixChain_thm h1 h2]
   constructor
   · intro ⟨hA, hB⟩
     refine ⟨hA, ?_⟩
-    intro ll2 n x hl2 hne
+    intro ll2 hl2 hne
     obtain ⟨len, _, hrel⟩ := llength_spec (hfin ll2 hl2)
     have hlen0 : len ≠ 0 := by
       intro h0
@@ -487,11 +533,26 @@ theorem equiv_lprefix_chain_thm2 {ls1 ls2 : HolLList α → Prop}
       have : lnth n (lnil : HolLList α) = none := by rw [lnth_eq_rep]; rfl
       rw [this] at hln
       exact Option.some_ne_none x hln.symm
-    obtain ⟨ll1, hl1, hsh⟩ := hC ll2 n x hl2 hne
+    obtain ⟨ll1, hl1, hsh⟩ := hC ll2 hl2 hne
     obtain ⟨z, hz⟩ := (llistShorter_lnth.mp hsh) n x hln
     obtain ⟨ll2', hl2', hln2'⟩ := hA ll1 n z hl1 hz
     have hzx : z = x := lprefixChain_LNTHs_agree h2 hl2' hl2 hln2' hln
     exact ⟨ll1, hl1, by rw [hzx] at hz; exact hz⟩
+
+/-- HOL `equiv_lprefix_chain_thm2` (`lprefix_lubScript.sml:264-304`), with the
+    source's conjunction premise. HOL's second conjunct binds a vacuous `n : β`
+    and `x : γ` (unused type variables); those two binders are omitted here and
+    the remaining binders keep their order. The curried form above serves Lean
+    callers. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "equiv_lprefix_chain_thm2"]
+theorem equiv_lprefix_chain_thm2_conj {ls1 ls2 : HolLList α → Prop}
+    (h : lprefixChain ls1 ∧ lprefixChain ls2 ∧ (∀ ll2, ls2 ll2 → LFinite ll2)) :
+    (equivLprefixChain ls1 ls2 ↔
+      (∀ (ll1 : HolLList α) (n : Nat) (x : α), ls1 ll1 → lnth n ll1 = some x →
+        ∃ ll2, ls2 ll2 ∧ lnth n ll2 = some x) ∧
+      (∀ (ll2 : HolLList α), ls2 ll2 → ll2 ≠ lnil →
+        ∃ ll1, ls1 ll1 ∧ llistShorter ll2 ll1)) :=
+  equiv_lprefix_chain_thm2 h.1 h.2.1 h.2.2
 
 /-- HOL `lprefix_rel_lnth` (`lprefix_lubScript.sml:526-538`). -/
 @[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "lprefix_rel_lnth"]
@@ -503,7 +564,6 @@ theorem lprefix_rel_lnth {ls1 ls2 : HolLList α → Prop} (h : lprefixRel ls1 ls
   exact ⟨l2, hl2, lprefix_lnth hpre hln⟩
 
 /-- HOL `IMP_equiv_lprefix_chain` (`lprefix_lubScript.sml:540-548`). -/
-@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "IMP_equiv_lprefix_chain"]
 theorem IMP_equiv_lprefix_chain {ls1 ls2 : HolLList α → Prop}
     (h1 : lprefixChain ls1) (h2 : lprefixChain ls2)
     (hr12 : lprefixRel ls1 ls2) (hr21 : lprefixRel ls2 ls1) :
@@ -511,8 +571,15 @@ theorem IMP_equiv_lprefix_chain {ls1 ls2 : HolLList α → Prop}
   rw [equivLprefixChain_thm h1 h2]
   exact ⟨lprefix_rel_lnth hr12, lprefix_rel_lnth hr21⟩
 
+/-- HOL `IMP_equiv_lprefix_chain` (`lprefix_lubScript.sml:540-548`), with the
+    source's four-conjunct premise. The curried form above serves Lean callers. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "IMP_equiv_lprefix_chain"]
+theorem IMP_equiv_lprefix_chain_conj {ls1 ls2 : HolLList α → Prop}
+    (h : lprefixChain ls1 ∧ lprefixChain ls2 ∧ lprefixRel ls1 ls2 ∧ lprefixRel ls2 ls1) :
+    equivLprefixChain ls1 ls2 :=
+  IMP_equiv_lprefix_chain h.1 h.2.1 h.2.2.1 h.2.2.2
+
 /-- HOL `lprefix_lub_equiv_chain2` (`lprefix_lubScript.sml:471-484`). -/
-@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "lprefix_lub_equiv_chain2"]
 theorem lprefix_lub_equiv_chain2 {ls1 ls2 : HolLList α → Prop} {ll1 ll2 : HolLList α}
     (h1 : lprefixLub ls1 ll1) (h2 : lprefixLub ls2 ll2) :
     (ll1 = ll2 ↔ equivLprefixChain ls1 ls2) := by
@@ -531,14 +598,29 @@ theorem lprefix_lub_equiv_chain2 {ls1 ls2 : HolLList α → Prop} {ll1 ll2 : Hol
     rw [(lprefix_lub_nth hc1).mp h1 n, (lprefix_lub_nth hc2).mp h2 n]
     exact heq n
 
+/-- HOL `lprefix_lub_equiv_chain2` (`lprefix_lubScript.sml:471-484`), with the
+    source's conjunction premise. The curried form above serves Lean callers. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "lprefix_lub_equiv_chain2"]
+theorem lprefix_lub_equiv_chain2_conj {ls1 ls2 : HolLList α → Prop} {ll1 ll2 : HolLList α}
+    (h : lprefixLub ls1 ll1 ∧ lprefixLub ls2 ll2) :
+    (ll1 = ll2 ↔ equivLprefixChain ls1 ls2) :=
+  lprefix_lub_equiv_chain2 h.1 h.2
+
 /-- HOL `IMP_build_lprefix_lub_EQ` (`lprefix_lubScript.sml:550-558`). -/
-@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "IMP_build_lprefix_lub_EQ"]
 theorem IMP_build_lprefix_lub_EQ {ls1 ls2 : HolLList α → Prop}
     (h1 : lprefixChain ls1) (h2 : lprefixChain ls2)
     (hr12 : lprefixRel ls1 ls2) (hr21 : lprefixRel ls2 ls1) :
     buildLprefixLub ls1 = buildLprefixLub ls2 :=
   (lprefix_lub_equiv_chain2 (buildLprefixLub_thm h1) (buildLprefixLub_thm h2)).mpr
     (IMP_equiv_lprefix_chain h1 h2 hr12 hr21)
+
+/-- HOL `IMP_build_lprefix_lub_EQ` (`lprefix_lubScript.sml:550-558`), with the
+    source's four-conjunct premise. The curried form above serves Lean callers. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "IMP_build_lprefix_lub_EQ"]
+theorem IMP_build_lprefix_lub_EQ_conj {ls1 ls2 : HolLList α → Prop}
+    (h : lprefixChain ls1 ∧ lprefixChain ls2 ∧ lprefixRel ls1 ls2 ∧ lprefixRel ls2 ls1) :
+    buildLprefixLub ls1 = buildLprefixLub ls2 :=
+  IMP_build_lprefix_lub_EQ h.1 h.2.1 h.2.2.1 h.2.2.2
 
 /-- HOL finite-list prefix chains, with the full arbitrary element carrier and
 predicate-backed set. Ordinary lists retain HOL's constructor representation. -/

@@ -71895,17 +71895,17 @@
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
     "hol_name": "IMP_build_lprefix_lub_EQ",
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
-    "lean_name": "IMP_build_lprefix_lub_EQ",
+    "lean_name": "IMP_build_lprefix_lub_EQ_conj",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:550-558 `Theorem IMP_build_lprefix_lub_EQ: lprefix_chain ls1 ∧ lprefix_chain ls2 ∧ lprefix_rel ls1 ls2 ∧ lprefix_rel ls2 ls1 ⇒ build_lprefix_lub ls1 = build_lprefix_lub ls2`. The Lean theorem IMP_build_lprefix_lub_EQ takes the same four premises and concludes buildLprefixLub ls1 = buildLprefixLub ls2 over the untagged buildLprefixLub rendering. Generic in α; no width, word or finite-map carrier occurs."
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:550-558 `Theorem IMP_build_lprefix_lub_EQ: lprefix_chain ls1 ∧ lprefix_chain ls2 ∧ lprefix_rel ls1 ls2 ∧ lprefix_rel ls2 ls1 ⇒ build_lprefix_lub ls1 = build_lprefix_lub ls2`. The Lean theorem IMP_build_lprefix_lub_EQ takes the same four premises and concludes buildLprefixLub ls1 = buildLprefixLub ls2 over the untagged buildLprefixLub rendering. Generic in α; no width, word or finite-map carrier occurs. Task 181 audit: the tagged declaration states HOL's single conjunction premise; the curried form is retained untagged for Lean callers."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
     "hol_name": "IMP_equiv_lprefix_chain",
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
-    "lean_name": "IMP_equiv_lprefix_chain",
+    "lean_name": "IMP_equiv_lprefix_chain_conj",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:540-548 `Theorem IMP_equiv_lprefix_chain: lprefix_chain ls1 ∧ lprefix_chain ls2 ∧ lprefix_rel ls1 ls2 ∧ lprefix_rel ls2 ls1 ⇒ equiv_lprefix_chain ls1 ls2`. The Lean theorem IMP_equiv_lprefix_chain takes h1 h2 hr12 hr21 in the same four-premise order and concludes equivLprefixChain ls1 ls2, using the tagged relations. Generic in α; no width, word or finite-map carrier occurs."
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:540-548 `Theorem IMP_equiv_lprefix_chain: lprefix_chain ls1 ∧ lprefix_chain ls2 ∧ lprefix_rel ls1 ls2 ∧ lprefix_rel ls2 ls1 ⇒ equiv_lprefix_chain ls1 ls2`. The Lean theorem IMP_equiv_lprefix_chain takes h1 h2 hr12 hr21 in the same four-premise order and concludes equivLprefixChain ls1 ls2, using the tagged relations. Generic in α; no width, word or finite-map carrier occurs. Task 181 audit: the tagged declaration states HOL's single conjunction premise; the curried form is retained untagged for Lean callers."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
@@ -71951,25 +71951,25 @@
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
     "hol_name": "equiv_lprefix_chain_thm",
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
-    "lean_name": "equivLprefixChain_thm",
+    "lean_name": "equivLprefixChain_thm_conj",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:247-262 `Theorem equiv_lprefix_chain_thm: !ls1 ls2. lprefix_chain ls1 ∧ lprefix_chain ls2 ⇒ (equiv_lprefix_chain ls1 ls2 ⇔ (!ll1 n x. ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x ⇒ ?ll2. ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x) ∧ (!ll2 n x. ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x ⇒ ?ll1. ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x))`. The Lean theorem equivLprefixChain_thm takes the two chain hypotheses h1 h2 and states the same iff with both directions in the same order and the same binders ll1 ll2 n x; HOL conjunction of membership and LNTH is written as chained implications. Generic in α; no width, word or finite-map carrier occurs."
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:247-262 `Theorem equiv_lprefix_chain_thm: !ls1 ls2. lprefix_chain ls1 ∧ lprefix_chain ls2 ⇒ (equiv_lprefix_chain ls1 ls2 ⇔ (!ll1 n x. ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x ⇒ ?ll2. ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x) ∧ (!ll2 n x. ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x ⇒ ?ll1. ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x))`. The Lean theorem equivLprefixChain_thm takes the two chain hypotheses h1 h2 and states the same iff with both directions in the same order and the same binders ll1 ll2 n x; HOL conjunction of membership and LNTH is written as chained implications. Generic in α; no width, word or finite-map carrier occurs. Task 181 audit: the tagged declaration states HOL's single conjunction premise; the curried form is retained untagged for Lean callers."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
     "hol_name": "equiv_lprefix_chain_thm2",
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
-    "lean_name": "equiv_lprefix_chain_thm2",
+    "lean_name": "equiv_lprefix_chain_thm2_conj",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.1.1): HOL lprefix_lubScript.sml:264-304 `Theorem equiv_lprefix_chain_thm2: !ls1 ls2. lprefix_chain ls1 /\\ lprefix_chain ls2 /\\ (!ll2. ll2 IN ls2 ==> LFINITE ll2) ==> (equiv_lprefix_chain ls1 ls2 <=> (∀ll1 n x. ll1 IN ls1 /\\ LNTH n ll1 = SOME x ==> ?ll2. ll2 IN ls2 /\\ LNTH n ll2 = SOME x) /\\ (!ll2 n x. ll2 IN ls2 /\\ ll2 <> [||] ==> ?ll1. ll1 IN ls1 /\\ llist_shorter ll2 ll1))`. The Lean theorem equiv_lprefix_chain_thm2 takes the same three hypotheses curried as h1 : lprefixChain ls1, h2 : lprefixChain ls2 and hfin : ∀ ll2, ls2 ll2 → LFinite ll2, and states the same iff with the same two conjuncts and binder order ll1/ll2 n x; the second conjunct keeps HOL's unused universal n x binders as _n _x (names only). HOL set membership ll ∀ ls is predicate application ls ll, HOL [||] is lnil, and llist_shorter is the same-named LList port, tagged as llist_shorter_def. Generic in α; no width, word or finite-map carrier occurs."
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.1.1): HOL lprefix_lubScript.sml:264-304 `Theorem equiv_lprefix_chain_thm2: !ls1 ls2. lprefix_chain ls1 /\\ lprefix_chain ls2 /\\ (!ll2. ll2 IN ls2 ==> LFINITE ll2) ==> (equiv_lprefix_chain ls1 ls2 <=> (∀ll1 n x. ll1 IN ls1 /\\ LNTH n ll1 = SOME x ==> ?ll2. ll2 IN ls2 /\\ LNTH n ll2 = SOME x) /\\ (!ll2 n x. ll2 IN ls2 /\\ ll2 <> [||] ==> ?ll1. ll1 IN ls1 /\\ llist_shorter ll2 ll1))`. The Lean theorem equiv_lprefix_chain_thm2 takes the same three hypotheses curried as h1 : lprefixChain ls1, h2 : lprefixChain ls2 and hfin : ∀ ll2, ls2 ll2 → LFinite ll2, and states the same iff with the same two conjuncts and binder order ll1/ll2 n x; the second conjunct keeps HOL's unused universal n x binders as _n _x (names only). HOL set membership ll ∀ ls is predicate application ls ll, HOL [||] is lnil, and llist_shorter is the same-named LList port, tagged as llist_shorter_def. Generic in α; no width, word or finite-map carrier occurs. Task 181 audit: the tagged declaration states HOL's single conjunction premise; the curried form is retained untagged for Lean callers. HOL's second conjunct binds a vacuous n : β and x : γ; those two binders are omitted and the omission is documented beside the declaration."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
     "hol_name": "exists_lprefix_chain_nth",
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
-    "lean_name": "exists_lprefixChainNth",
+    "lean_name": "exists_lprefixChainNth_conj",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 205-211: same chain and existential member SOME observation imply selected SAME value. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Author source comparison recorded; coordinator integration acceptance complete."
+    "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 205-211: same chain and existential member SOME observation imply selected SAME value. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Author source comparison recorded; coordinator integration acceptance complete. Task 181 audit: the tagged declaration states HOL's single conjunction premise; the curried form is retained untagged for Lean callers."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
@@ -71977,7 +71977,7 @@
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
     "lean_name": "llistShorter",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.1.1): HOL lprefix_lubScript.sml:122-129 `Definition llist_shorter_def` declares `llist_shorter ll1 ll2` by case analysis on `(LLENGTH ll1, LLENGTH ll2)`: (NONE,NONE) and (SOME _,NONE) are true, (NONE,SOME _) is false, and (SOME x,SOME y) is x <= y. The Lean def llistShorter matches clause for clause over HolLList with llength (NONE=`none`), same constructor order. Generic in alpha; no width, word or finite-map carrier occurs."
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.1.1): HOL lprefix_lubScript.sml:122-129 `Definition llist_shorter_def` declares `llist_shorter ll1 ll2` by case analysis on `(LLENGTH ll1, LLENGTH ll2)`: (NONE,NONE) and (SOME _,NONE) are true, (NONE,SOME _) is false, and (SOME x,SOME y) is x <= y. The Lean def llistShorter matches clause for clause over HolLList with llength (NONE=`none`), same constructor order. Generic in alpha; no width, word or finite-map carrier occurs. Task 181 audit: HOL leaves the two element types independent; Lean binds α and β separately."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
@@ -71985,7 +71985,7 @@
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
     "lean_name": "llistShorter_fromList",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.1.1): HOL lprefix_lubScript.sml:163-169 `Theorem llist_shorter_fromList: !l1 l2. llist_shorter (fromList l1) (fromList l2) <=> LENGTH l1 <= LENGTH l2`. The Lean theorem llistShorter_fromList binds l1 l2 and states the same iff with the same orientation, using the tagged llistShorter and llength_fromList. Generic in alpha; no width, word or finite-map carrier occurs."
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.1.1): HOL lprefix_lubScript.sml:163-169 `Theorem llist_shorter_fromList: !l1 l2. llist_shorter (fromList l1) (fromList l2) <=> LENGTH l1 <= LENGTH l2`. The Lean theorem llistShorter_fromList binds l1 l2 and states the same iff with the same orientation, using the tagged llistShorter and llength_fromList. Generic in alpha; no width, word or finite-map carrier occurs. Task 181 audit: HOL leaves the two element types independent; Lean binds α and β separately."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
@@ -71993,7 +71993,7 @@
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
     "lean_name": "llistShorter_lnth",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-b rc27 source comparison pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae lines131-161 local val Q.prove: exact iff llist_shorter ll1 ll2 versus forall n x LNTH n ll1=SOME x implies exists y LNTH n ll2=SOME y. Same arbitrary element/list/index/payload carriers, no equality of x and y added and no chain premise. Imported llength is finite length versus NONE infinity; original option length order preserved. Proof/cases unchanged. Coordinator integration acceptance complete; author source comparison recorded; no executable changes."
+    "reviewer": "flapjack-luna-b rc27 source comparison pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae lines131-161 local val Q.prove: exact iff llist_shorter ll1 ll2 versus forall n x LNTH n ll1=SOME x implies exists y LNTH n ll2=SOME y. Same arbitrary element/list/index/payload carriers, no equality of x and y added and no chain premise. Imported llength is finite length versus NONE infinity; original option length order preserved. Proof/cases unchanged. Coordinator integration acceptance complete; author source comparison recorded; no executable changes. Task 181 audit: HOL leaves the two element types independent; Lean binds α and β separately, with the witness at β."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
@@ -72023,17 +72023,17 @@
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
     "hol_name": "lprefix_chain_nth_none_mono",
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
-    "lean_name": "lprefixChainNth_none_mono",
+    "lean_name": "lprefixChainNth_none_mono_conj",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 225-231: retains chain, m<=n, nth m NONE, conclusion nth n NONE; unused chain guard preserved. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Author source comparison recorded; coordinator integration acceptance complete."
+    "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 225-231: retains chain, m<=n, nth m NONE, conclusion nth n NONE; unused chain guard preserved. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Author source comparison recorded; coordinator integration acceptance complete. Task 181 audit: the tagged declaration states HOL's single conjunction premise; the curried form is retained untagged for Lean callers."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
     "hol_name": "lprefix_chain_LNTHs_agree",
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
-    "lean_name": "lprefixChain_LNTHs_agree",
+    "lean_name": "lprefixChain_LNTHs_agree_conj",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 182-188: retains chain, both memberships and both SAME-index SOME observations; conclusion x1=x2, no distinctness or ordering premise. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Author source comparison recorded; coordinator integration acceptance complete."
+    "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 182-188: retains chain, both memberships and both SAME-index SOME observations; conclusion x1=x2, no distinctness or ordering premise. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Author source comparison recorded; coordinator integration acceptance complete. Task 181 audit: the tagged declaration states HOL's single conjunction premise; the curried form is retained untagged for Lean callers."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
@@ -72055,9 +72055,9 @@
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
     "hol_name": "lprefix_lub_equiv_chain2",
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
-    "lean_name": "lprefix_lub_equiv_chain2",
+    "lean_name": "lprefix_lub_equiv_chain2_conj",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:471-484 `Theorem lprefix_lub_equiv_chain2: !ls1 ls2 ll1 ll2. lprefix_lub ls1 ll1 ∧ lprefix_lub ls2 ll2 ⇒ (ll1 = ll2 ⇔ equiv_lprefix_chain ls1 ls2)`. The Lean theorem lprefix_lub_equiv_chain2 binds ls1 ls2 ll1 ll2 with the same two LUB hypotheses h1 h2 and concludes the same equality/equivalence iff with the same orientation. Generic in α; no width, word or finite-map carrier occurs."
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:471-484 `Theorem lprefix_lub_equiv_chain2: !ls1 ls2 ll1 ll2. lprefix_lub ls1 ll1 ∧ lprefix_lub ls2 ll2 ⇒ (ll1 = ll2 ⇔ equiv_lprefix_chain ls1 ls2)`. The Lean theorem lprefix_lub_equiv_chain2 binds ls1 ls2 ll1 ll2 with the same two LUB hypotheses h1 h2 and concludes the same equality/equivalence iff with the same orientation. Generic in α; no width, word or finite-map carrier occurs. Task 181 audit: the tagged declaration states HOL's single conjunction premise; the curried form is retained untagged for Lean callers."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
@@ -72087,9 +72087,9 @@
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
     "hol_name": "not_exists_lprefix_chain_nth",
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
-    "lean_name": "not_exists_lprefix_chain_nth",
+    "lean_name": "not_exists_lprefix_chain_nth_conj",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 215-219: exact wrapper retains original chain and every-member NONE guards; stronger untagged helper discharges proof, no dropped premise on tagged statement. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Author source comparison recorded; coordinator integration acceptance complete."
+    "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 215-219: exact wrapper retains original chain and every-member NONE guards; stronger untagged helper discharges proof, no dropped premise on tagged statement. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Author source comparison recorded; coordinator integration acceptance complete. Task 181 audit: the tagged declaration states HOL's single conjunction premise; the curried form is retained untagged for Lean callers."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
@@ -72119,9 +72119,9 @@
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
     "hol_name": "unique_lprefix_lub",
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
-    "lean_name": "unique_lprefix_lub",
+    "lean_name": "unique_lprefix_lub_conj",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 419-425: same arbitrary family and two LUB premises imply equality; no chain premise added. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Author source comparison recorded; coordinator integration acceptance complete."
+    "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 419-425: same arbitrary family and two LUB premises imply equality; no chain premise added. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Author source comparison recorded; coordinator integration acceptance complete. Task 181 audit: the tagged declaration states HOL's single conjunction premise; the curried form is retained untagged for Lean callers."
   },
   {
     "lean_path": "Flapjack/Misc/MachineIeee.lean",
