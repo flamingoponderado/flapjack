@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.BviTmc.Proofs.Total
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.RewriteCorrespondence
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.CodeRelation
 
 @[expose] public section
@@ -85,23 +85,26 @@ theorem compileEachFuel_next_mono (fuel next last : Nat) (code output : List (Na
     exact ⟨0, by simp⟩
   | cons entry rest ih =>
     obtain ⟨loc, arity, body⟩ := entry
-    obtain ⟨decision, compiled⟩ := compileExpBounded_succeeds fuel loc next arity body
-    cases decision with
+    have compiled := compileExpBounded_eq_source fuel loc next arity body
+    cases decision : compileExpSource loc next arity body with
     | none =>
-      obtain ⟨⟨tailNext, tailCode⟩, tail⟩ := compileEachFuel_succeeds fuel next rest
+      rcases tailSource : compileEachSource next rest with ⟨tailNext, tailCode⟩
+      have tail : compileEachFuel fuel next rest = some (tailNext, tailCode) := by
+        simpa only [tailSource] using compileEachFuel_eq_source fuel next rest
       have same : (last, output) = (tailNext, (loc, arity, body) :: tailCode) := by
         have eq : some (tailNext, (loc, arity, body) :: tailCode) = some (last, output) := by
-          simpa [compileEachFuel, compiled, tail] using run
+          simpa [compileEachFuel, compiled, decision, tail] using run
         exact (Option.some.inj eq).symm
       obtain ⟨k, equal⟩ := ih next tailNext tailCode tail
       exact ⟨k, (congrArg Prod.fst same).trans equal⟩
     | some pair =>
       obtain ⟨wrapper, worker⟩ := pair
-      obtain ⟨⟨tailNext, tailCode⟩, tail⟩ :=
-        compileEachFuel_succeeds fuel (next + Flapjack.bvlToBviNamespaces) rest
+      rcases tailSource : compileEachSource (next + Flapjack.bvlToBviNamespaces) rest with ⟨tailNext, tailCode⟩
+      have tail : compileEachFuel fuel (next + Flapjack.bvlToBviNamespaces) rest = some (tailNext, tailCode) := by
+        simpa only [tailSource] using compileEachFuel_eq_source fuel (next + Flapjack.bvlToBviNamespaces) rest
       have same : (last, output) = (tailNext, (loc, arity, wrapper) :: (next, arity + 2, worker) :: tailCode) := by
         have eq : some (tailNext, (loc, arity, wrapper) :: (next, arity + 2, worker) :: tailCode) =
-            some (last, output) := by simpa [compileEachFuel, compiled, tail] using run
+            some (last, output) := by simpa [compileEachFuel, compiled, decision, tail] using run
         exact (Option.some.inj eq).symm
       obtain ⟨k, equal⟩ := ih (next + Flapjack.bvlToBviNamespaces) tailNext tailCode tail
       refine ⟨k + 1, ?_⟩
@@ -135,13 +138,15 @@ theorem compileEachFuel_mem (fuel : Nat) (code : List (Nat × Nat × Bvi.Exp))
   | nil => simp [compileEachFuel] at run; obtain ⟨_, rfl⟩ := run; simp at member
   | cons entry rest ih =>
     obtain ⟨loc, arity, body⟩ := entry
-    obtain ⟨decision, compiled⟩ := compileExpBounded_succeeds fuel loc next arity body
-    cases decision with
+    have compiled := compileExpBounded_eq_source fuel loc next arity body
+    cases decision : compileExpSource loc next arity body with
     | none =>
-      obtain ⟨⟨tailNext, tailCode⟩, tail⟩ := compileEachFuel_succeeds fuel next rest
+      rcases tailSource : compileEachSource next rest with ⟨tailNext, tailCode⟩
+      have tail : compileEachFuel fuel next rest = some (tailNext, tailCode) := by
+        simpa only [tailSource] using compileEachFuel_eq_source fuel next rest
       have equal : (tailNext, (loc, arity, body) :: tailCode) = (last, output) := by
         apply Option.some.inj
-        simpa [compileEachFuel, compiled, tail] using run
+        simpa [compileEachFuel, compiled, decision, tail] using run
       obtain ⟨rfl, rfl⟩ := equal
       simp only [List.map_cons, List.mem_cons] at member ⊢
       rcases member with same | other
@@ -151,11 +156,12 @@ theorem compileEachFuel_mem (fuel : Nat) (code : List (Nat × Nat × Bvi.Exp))
         · exact Or.inr fresh
     | some pair =>
       obtain ⟨wrapper, worker⟩ := pair
-      obtain ⟨⟨tailNext, tailCode⟩, tail⟩ :=
-        compileEachFuel_succeeds fuel (next + Flapjack.bvlToBviNamespaces) rest
+      rcases tailSource : compileEachSource (next + Flapjack.bvlToBviNamespaces) rest with ⟨tailNext, tailCode⟩
+      have tail : compileEachFuel fuel (next + Flapjack.bvlToBviNamespaces) rest = some (tailNext, tailCode) := by
+        simpa only [tailSource] using compileEachFuel_eq_source fuel (next + Flapjack.bvlToBviNamespaces) rest
       have equal : (tailNext, (loc, arity, wrapper) :: (next, arity + 2, worker) :: tailCode) = (last, output) := by
         apply Option.some.inj
-        simpa [compileEachFuel, compiled, tail] using run
+        simpa [compileEachFuel, compiled, decision, tail] using run
       obtain ⟨rfl, rfl⟩ := equal
       have ⟨k, advance⟩ := compileEachFuel_next_mono fuel (next + Flapjack.bvlToBviNamespaces) last rest tailCode tail
       simp only [List.map_cons, List.mem_cons] at member ⊢

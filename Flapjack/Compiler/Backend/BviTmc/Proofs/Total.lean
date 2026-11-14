@@ -83,31 +83,4 @@ theorem compileExpFuel_succeeds (fuel loc next arity : Nat) (e : Exp)
     obtain ⟨worker, hs⟩ := rewriteWorkerFuel_succeeds fuel loc next arity (arity + 1) arity e bound
     exact ⟨_, by simp [compileExpFuel, hw, hs]; rfl⟩
 
-/-- The executable retry never fails due to TMC traversal fuel. -/
-theorem compileExpBounded_succeeds (fuel loc next arity : Nat) (e : Exp) :
-    ∃ result, compileExpBounded fuel loc next arity e = some result := by
-  cases h : compileExpFuel fuel loc next arity e with
-  | some result => exact ⟨result, by simp [compileExpBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := compileExpFuel_succeeds (max fuel (expBudget e + 1)) loc next arity e bound
-    exact ⟨result, by simp [compileExpBounded, h, done]⟩
-
-/-- Processing a program cannot fail due to TMC traversal fuel. -/
-theorem compileEachFuel_succeeds (fuel next : Nat) (code : List (Nat × Nat × Exp)) :
-    ∃ result, compileEachFuel fuel next code = some result := by
-  induction code generalizing next with
-  | nil => exact ⟨_, rfl⟩
-  | cons p ps ih =>
-    obtain ⟨loc, arity, body⟩ := p
-    obtain ⟨decision, hd⟩ := compileExpBounded_succeeds fuel loc next arity body
-    cases decision with
-    | none =>
-      obtain ⟨⟨next', rest⟩, hr⟩ := ih next
-      exact ⟨_, by simp [compileEachFuel, hd, hr]; rfl⟩
-    | some pair =>
-      obtain ⟨wrapper, worker⟩ := pair
-      obtain ⟨⟨next', rest⟩, hr⟩ := ih (next + Flapjack.bvlToBviNamespaces)
-      exact ⟨_, by simp [compileEachFuel, hd, hr]; rfl⟩
-
 end Flapjack.Compiler.Backend.BviTmc
