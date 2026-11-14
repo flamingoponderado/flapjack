@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviInline.Proofs.ExpandInduction
+public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateList
 
 @[expose] public section
 
@@ -8,15 +9,27 @@ public import Flapjack.Compiler.Backend.BviInline.Proofs.ExpandInduction
 namespace Flapjack.Compiler.Backend.BviInline
 open BviSem BvlSem
 
-/-- Flapjack infrastructure: replacing a direct call with the inliner's let
-and ticks preserves its evaluation when the original call does not type-error.
-The source-shaped result remains untagged pending HOL carrier review. -/
+namespace InlinedCallCarrier
+/-- The canonical BVI reference-map representation has a roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end InlinedCallCarrier
+
+/-- Replacing a direct call with the inliner's let and ticks preserves its
+evaluation when the original call does not type-error. The evaluator inherits
+the real-model assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "evaluate_inlined_call"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_inlined_call {C F : Type} (ticks name : Nat) (args : List Bvi.Exp)
     (body : Bvi.Exp) (env : List Value) (state : BviState C F)
-    (lookup : sptLookup name state.code = some (args.length, body))
-    (notType : (evaluate [.call ticks (some name) args none] env state).1 ≠ .err (.abort .typeError)) :
-    evaluate [.let args (mkTick (ticks + 1) body)] env state =
-      evaluate [.call ticks (some name) args none] env state := by
+    (premises : sptLookup name state.code = some (args.length, body) ∧
+      (evaluateTuple ([.call ticks (some name) args none], env, state)).1 ≠ .err (.abort .typeError)) :
+    evaluateTuple ([.let args (mkTick (ticks + 1) body)], env, state) =
+      evaluateTuple ([.call ticks (some name) args none], env, state) := by
+  obtain ⟨lookup, notType⟩ := premises
+  simp only [evaluateTuple] at notType ⊢
   cases argsRun : evaluate args env state with
   | mk argsResult middle =>
     cases argsResult with

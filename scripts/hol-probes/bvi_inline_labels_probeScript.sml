@@ -303,3 +303,36 @@ val _ = show "remove_state_rel_def_typed" bvi_inlineProofTheory.remove_state_rel
 (* Original exported empty-list and complete inliner simulation theorems. *)
 val _ = show "remove_ticks_exps_NIL_typed" bvi_inlineProofTheory.remove_ticks_exps_NIL;
 val _ = show "evaluate_inline_typed" bvi_inlineProofTheory.evaluate_inline;
+
+(* Replay the original local inlined-call evaluation lemma. *)
+val evaluate_inlined_call_replay = Q.prove
+  (`lookup n t.code = SOME (LENGTH ys,body) ∧
+    FST (evaluate ([Call ticks (SOME n) ys NONE],env,t)) ≠
+      Rerr (Rabort Rtype_error) ⇒
+    evaluate ([Let ys (bvi_mk_tick (SUC ticks) body)],env,t) =
+    evaluate ([Call ticks (SOME n) ys NONE],env,t)`,
+   strip_tac
+  >> gvs [evaluate_def, evaluate_bvi_mk_tick, bvlSemTheory.find_code_def]
+  >> namedCases_on `evaluate (ys,env,t)` ["args_res args_state"]
+  >> namedCases_on `args_res` ["args_vals", "args_err"]
+  >> gvs []
+  >> drule bviPropsTheory.evaluate_IMP_LENGTH
+  >> imp_res_tac evaluate_code_mono
+  >> strip_tac
+  >> `lookup n args_state.code = SOME (LENGTH args_vals,body)`
+       by gvs [subspt_lookup]
+  >> gvs [ADD1]
+  >> IF_CASES_TAC
+  >- simp []
+  >> qspecl_then [`[body]`,`args_vals`,`dec_clock (ticks + 1) args_state`,`env`]
+       mp_tac evaluate_expand_env
+  >> namedCases_on
+       `evaluate ([body],args_vals,dec_clock (ticks + 1) args_state)`
+       ["body_res body_state"]
+  >> namedCases_on `body_res` ["body_vals", "body_err"]
+  >> gvs []
+  >> namedCases_on `body_err` ["raised", "abort_kind"]
+  >> gvs []
+  >> namedCases_on `raised` ["exn_val", "ret_vals"]
+  >> gvs []);
+val _ = show "evaluate_inlined_call_replay_typed" evaluate_inlined_call_replay;

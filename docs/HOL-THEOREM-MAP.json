@@ -475,6 +475,16 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "evaluate_inlined_call",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/InlineCall.lean",
+    "lean_name": "evaluate_inlined_call",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent comparison with the typed HOL source and literal original proof replay: lookup with the exact argument length and the non-type-error call condition imply full equality of the inlined let/tick and original call evaluations, including result and state. All original timeout, abort, exception and return cases are retained. Compiler and FFI types are independent. BVI refs use the canonical finite-support map with a same-module roundtrip; code remains a sparse tree. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "evaluate_inline",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/EvaluateInduction.lean",
     "lean_name": "evaluate_inline",

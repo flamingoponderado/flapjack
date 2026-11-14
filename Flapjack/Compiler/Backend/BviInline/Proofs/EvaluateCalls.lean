@@ -173,7 +173,9 @@ theorem callNone {C F : Type} (ticks : Nat) (destination : Option Nat)
       have targetNotType : (evaluate [.call ticks (some name) targetArgs none] env target).1 ≠ .err (.abort .typeError) := by
         rw [targetRun]
         exact notType
-      have inlined := evaluate_inlined_call ticks name targetArgs body env target (by simpa [length] using lookup) targetNotType
+      have inlined := evaluate_inlined_call ticks name targetArgs body env target
+        ⟨by simpa [length] using lookup, targetNotType⟩
+      simp only [evaluateTuple] at inlined
       exact ⟨targetNext, inlined.trans targetRun, nextRel⟩
 
 /-- Flapjack infrastructure: let-call transfers the callee result and, when
