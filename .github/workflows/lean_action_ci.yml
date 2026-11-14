@@ -32,12 +32,6 @@ jobs:
       - name: Clean the workspace except .lake
         run: git clean -ffdx -e .lake
 
-      # Repair the single runner artifact implicated by the exporter crash.
-      - name: Rebuild suspect Parmove artifact
-        run: |
-          prefix=.lake/build/lib/lean/Flapjack/Compiler/Backend/Parmove/FstepDstep
-          rm -f "$prefix".{olean,olean.hash,olean.private,olean.private.hash,olean.server,olean.server.hash,ilean,ilean.hash,trace}
-
       # The workspace declares FlapjackTest as its test driver, so lean-action
       # runs `lake build` and `lake test` here.
       - uses: leanprover/lean-action@v1
