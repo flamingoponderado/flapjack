@@ -312,12 +312,19 @@ theorem evaluate_remove_fvs_raise {C F : Type} (trace : BackendCommon.Tra)
           obtain ⟨rfl, rfl⟩ := run
           exact ⟨.err (.raise _), targetNext, by simp [evaluate, targetRun], valueRel, nextRel⟩
 
+/-- Related states have the same clock. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "state_rel_clocks_eqs"
+  (fmap_as_finite_support := [refs, code])]
+theorem state_rel_clocks_eqs {C F : Type} (source target : State C F)
+    (related : StateRel source target) : source.clock = target.clock := by
+  exact related.2.2.2.2.2.1.symm
+
 /-- Decrementing both clocks preserves the state relation. -/
 @[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "state_rel_dec_clock"
   (fmap_as_finite_support := [refs, code])]
 theorem state_rel_dec_clock {C F : Type} (source target : State C F)
     (related : StateRel source target) : StateRel (decClock 1 source) (decClock 1 target) := by
-  have clockEq : target.clock = source.clock := related.2.2.2.2.2.1
+  have clockEq : target.clock = source.clock := (state_rel_clocks_eqs source target related).symm
   simpa [StateRel, decClock, clockEq] using related
 
 /-- A tick either times out on both sides or evaluates related bodies. -/

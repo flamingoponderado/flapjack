@@ -18,6 +18,11 @@ val _ = show "function_rel_typed=" clos_fvsProofTheory.f_rel_def;
 val _ = show "value_rel_typed=" clos_fvsProofTheory.v_rel_rules;
 val _ = show "ref_rel_typed=" clos_fvsProofTheory.ref_rel_rules;
 val _ = show "state_rel_typed=" clos_fvsProofTheory.state_rel_def;
+val state_rel_clocks_eqs_replay = Q.prove (
+  `clos_fvsProof$state_rel (s1 :('c,'ffi) closSem$state) s2 ==>
+   s1.clock = s2.clock`,
+  simp [clos_fvsProofTheory.state_rel_def]);
+val _ = show "state_rel_clocks_eqs_typed=" state_rel_clocks_eqs_replay;
 val state_rel_dec_clock_replay = Q.prove (
   `clos_fvsProof$state_rel (s1 :('c,'ffi) closSem$state) s2 ==>
    clos_fvsProof$state_rel (closSem$dec_clock 1 s1) (closSem$dec_clock 1 s2)`,

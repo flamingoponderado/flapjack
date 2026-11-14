@@ -16609,6 +16609,15 @@
     "reviewer": "Compared the local source statement and state_rel_dec_clock_typed, a typed HOL replay. Both states share the independent compiler and FFI carriers; the original relation premise and one-clock decrement conclusion are retained. The canonical refs and code finite maps have the local roundtrip witness. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "state_rel_clocks_eqs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Evaluate.lean",
+    "lean_name": "state_rel_clocks_eqs",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the local source theorem and typed HOL replay state_rel_clocks_eqs_typed: arbitrary related states share independent compiler and FFI carriers and their clocks are equal in the same direction. Canonical refs and code finite maps have the local roundtrip witness. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
   "hol_name": "evaluate_remove_fvs",
   "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Evaluate.lean",
