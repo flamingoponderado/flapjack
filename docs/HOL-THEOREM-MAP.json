@@ -19894,7 +19894,7 @@
     "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "find_code_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/BvlSem/Call.lean", "lean_name": "findCode",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared both original clauses and inferred types in bvl_sem_values_probe.out. Code entries retain their independently polymorphic payload α and the original sparse-tree carrier. Direct and indirect lookups preserve arity checks; the nonempty guard makes holLast and dropLast agree with HOL LAST and FRONT on the used path. Original direct, indirect and failure examples are kernel-replayed."
+    "reviewer": "codewhale source comparison (2026-11-14, task 169): the typed capture find_code_def_typed (loopSem) gives args :\u03b1 word_loc list and code :(num # \u03b2) num_map with the word_loc type \u03b1 independent of the program payload type \u03b2. findCode now binds both widths ({v w : Nat}, each with its own [NeZero]), so the definition matches the source. Qualifier: words_as_type_indexed_bitvec."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/bvlSemScript.sml", "hol_name": "dest_thunk_ret",
@@ -74215,13 +74215,8 @@
     "hol_name": "compile_exps_alt",
     "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSyntaxHelpers.lean",
     "lean_name": "compile_exps_alt",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.5): HOL compile_exps_alt (crep_to_loopProofScript.sml:394-402) states the two equations `compile_exps ctxt tmp l [] = ([],[],tmp,l)` and `compile_exps ctxt tmp l (e::es) = let (p,le,tmp',l') = compile_exp ctxt tmp l e; (p1,les,tmp'',l'') = compile_exps ctxt tmp' l' es in (p ++ p1,le::les,tmp'',l'')` with free ctxt tmp l e es; Lean states the same conjunction over the tagged compileExpHOLExact and its list half compileExpsHOLExact. fmap_as_finite_support [vars, funcs]: quantifies over the exact context CrepToLoopContextExact whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers.",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "vars",
-      "funcs"
-    ]
+    "reviewer": "codewhale source comparison (2026-11-14, task 169): tag withdrawn. The typed capture compile_exps_alt_typed in pancake_crep_to_loop_proof_typed_probe.out gives the nil clause at [] :\u03b1 crepLang$exp list and the cons clause at \u03b2 crepLang$exp, so the conjunction is polymorphic in each conjunct's element (word) type independently. Lean's width-indexed compileExpsHOLExact states both equations at one width; a faithful port would bind a width per conjunct.",
+    "statement_status": "documented_mismatch"
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
@@ -74533,7 +74528,7 @@
       "globals"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.10): HOL find_code_collapse_cases (crep_to_loopProofScript.sml:3264-3272, [local]) `(dest <> NONE ==> dest = SOME loc) ==> find_code dest (args1 ++ TAKE (case dest of NONE => 1 | SOME _ => 0) [Loc loc 0]) st.code = (case lookup loc st.code of NONE => NONE | SOME (params,exp) => if LENGTH args1 = LENGTH params then SOME (fromAList (ZIP (params,args1)),exp) else NONE)` (free dest loc args1 st); Lean states the same premise and equation over the tagged findCode, sptLookup, sptFromAList and List.zip/take. fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact; same-module re-exported canonical witness."
+    "reviewer": "codewhale source comparison (2026-11-14, task 169): the typed capture find_code_collapse_cases_typed gives args1 :\u03b1 word_loc list with the state at (\u03b2, \u03b3), so the argument word_loc width is independent of the state's word width. The theorem now binds {v : Nat} [NeZero v] for the arguments and keeps the state at width. Qualifier: fmap_as_finite_support with words_as_type_indexed_bitvec."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
@@ -74578,9 +74573,8 @@
     "hol_name": "initial_prog_make_funcs_el",
     "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
     "lean_name": "initialProgMakeFuncsElExact",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.20.5) against crep_to_loopProofScript.sml:3942-3945. HOL binds prog, start, n; assumes FLOOKUP (make_funcs prog) start = SOME (n + first_name,0); and concludes (start,[],(SND o SND) (EL n prog)) = EL n prog /\\ n < LENGTH prog. Lean keeps that binder order, lookup equality and conclusion order over List (MlString × List Nat × CrepProgHOL width), using the tagged exact finite-support make_funcs_def carrier and firstLoopName for first_name. `initialProgEL` chooses an explicit fallback for an out-of-range list index, but the theorem's conclusion establishes n < prog.length; the helper equality proves that fallback is not observed. The exact zipped-entry lemma shows the successful lookup's label fixes index n and its zero arity fixes the parameter list to []. No evaluator, extra hypothesis or conclusion is introduced. The only direct representation qualifier is HOL's positive type-indexed word width mapped to BitVec width. Proof-only; no production-path change."
+    "statement_status": "documented_mismatch",
+    "reviewer": "codewhale source comparison (2026-11-14, task 169): tag withdrawn. The typed capture initial_prog_make_funcs_el_typed gives prog : (\u03b1 # \u03b2 list # \u03b3) list and start : \u03b1 with the name, parameter-list and program types independent. Lean fixes them to MlS, List Nat and CrepProgHOL width; the lookup equation holds at that instance only."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
@@ -74989,7 +74983,7 @@
       "tglobals"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.31.3): HOL globals_rel_def (crep_to_loopProofScript.sml:54-58) `globals_rel sglobals tglobals <=> !ad v. FLOOKUP sglobals ad = SOME v ==> FLOOKUP tglobals ad = SOME (wlab_wloc v)`; same quantifiers and implication. fmap_as_finite_support_relation [sglobals, tglobals]: both parameters are standalone HOL |-> finite maps (5 word |-> 'a word_lab / 'a word_loc) bound at the canonical HolFiniteMapExact translation, FLOOKUP as .lookup. Exact-carrier port alongside the production-carrier StateRel rendering (PanWordLab/LoopValue), so exact CrepSemHOLState/LoopSemStateFiniteExact fields can be related. (words_as_type_indexed_bitvec): HOL 'a word as BitVec width with [NeZero width]."
+    "reviewer": "codewhale source comparison (2026-11-14, task 169): the typed capture globals_rel_def_typed gives sglobals :\u03b1 |-> \u03b2 word_lab and tglobals :\u03b1 |-> \u03b2 word_loc with the key type \u03b1 generic; the definition is now generic over {\u03ba : Type} [DecidableEq \u03ba], matching the source. Qualifier: fmap_as_finite_support_relation with words_as_type_indexed_bitvec."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
@@ -75002,7 +74996,7 @@
       "tglobals"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.31.3): HOL globals_rel_intro (crep_to_loopProofScript.sml:211-214) `globals_rel sglobals tglobals ==> !ad v. FLOOKUP sglobals ad = SOME v ==> FLOOKUP tglobals ad = SOME (wlab_wloc v)`; same statement over crepToLoopGlobalsRelHOLExact. fmap_as_finite_support_relation [sglobals, tglobals]: both parameters are standalone HOL |-> finite maps (5 word |-> 'a word_lab / 'a word_loc) bound at the canonical HolFiniteMapExact translation, FLOOKUP as .lookup. Exact-carrier port alongside the production-carrier StateRel rendering (PanWordLab/LoopValue), so exact CrepSemHOLState/LoopSemStateFiniteExact fields can be related. (words_as_type_indexed_bitvec): HOL 'a word as BitVec width with [NeZero width]."
+    "reviewer": "codewhale source comparison (2026-11-14, task 169): typed capture globals_rel_intro_typed keeps the key type generic; the introduction rule is now generic over {\u03ba : Type} [DecidableEq \u03ba]. Qualifier: words_as_type_indexed_bitvec."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",

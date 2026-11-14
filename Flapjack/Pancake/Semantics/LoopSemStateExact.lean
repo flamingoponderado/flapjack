@@ -331,9 +331,9 @@ def callEnv {width : Nat} [NeZero width] {F : Type}
     and drops it (`FRONT`).  Both check the argument count and bind the
     parameters with `fromAList (ZIP ...)`. -/
 @[hol "cakeml/pancake/semantics/loopSemScript.sml" "find_code_def" (words_as_type_indexed_bitvec)]
-def findCode {width : Nat} [NeZero width] :
-    Option Nat → List (WordLocW width) → Spt (List Nat × HolLoopProg width) →
-      Option (Spt (WordLocW width) × HolLoopProg width)
+def findCode {v w : Nat} [NeZero v] [NeZero w] :
+    Option Nat → List (WordLocW v) → Spt (List Nat × HolLoopProg w) →
+      Option (Spt (WordLocW v) × HolLoopProg w)
   | some target, arguments, code =>
       match sptLookup target code with
       | none => none

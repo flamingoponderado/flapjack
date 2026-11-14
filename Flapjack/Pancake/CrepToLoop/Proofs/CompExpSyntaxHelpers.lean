@@ -115,10 +115,12 @@ theorem cut_sets_MAPi_Assign :
         funext n; simp only [Function.comp]; omega
       rw [hf, ih, hg]; simp
 
-/-- Exact HOL `compile_exps_alt` (`crep_to_loopProofScript.sml:394-402`): the two
-    defining equations of the list half of `compile_exp_def`. -/
-@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "compile_exps_alt"
-  (fmap_as_finite_support := [vars, funcs]) (words_as_type_indexed_bitvec)]
+/-- The two defining equations of the list half of `compile_exp_def`.
+    NOT an exact port (tag withdrawn in task 169): the typed capture gives the
+    nil clause at `[] :α crepLang$exp list` and the cons clause at
+    `β crepLang$exp`, so HOL's conjunction is polymorphic in each conjunct's
+    element (word) type independently; this statement fixes both to `width`.
+    The equations hold at that instance only. -/
 theorem compile_exps_alt (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet)
     (e : CrepExpHOL width) (es : List (CrepExpHOL width)) :
     compileExpsHOLExact ctxt tmp l [] =

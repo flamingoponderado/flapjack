@@ -41,8 +41,9 @@ def crepToLoopMemRelHOLExact {width : Nat} [NeZero width] (smem : BitVec width �
       FLOOKUP tglobals ad = SOME (wlab_wloc v)`. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "globals_rel_def"
   (fmap_as_finite_support_relation := [sglobals, tglobals]) (words_as_type_indexed_bitvec)]
-def crepToLoopGlobalsRelHOLExact {width : Nat} [NeZero width] (sglobals : HolFiniteMapExact (BitVec 5) (HolWordLab width))
-    (tglobals : HolFiniteMapExact (BitVec 5) (WordLocW width)) : Prop :=
+def crepToLoopGlobalsRelHOLExact {width : Nat} [NeZero width] {κ : Type} [DecidableEq κ]
+    (sglobals : HolFiniteMapExact κ (HolWordLab width))
+    (tglobals : HolFiniteMapExact κ (WordLocW width)) : Prop :=
   ∀ ad v, sglobals.lookup ad = some v → tglobals.lookup ad = some (wlabWlocExact v)
 
 /-- Exact HOL `mem_rel_intro` (`crep_to_loopProofScript.sml:203-205`). -/
@@ -57,9 +58,9 @@ theorem crepToLoopMemRelHOLExact_intro {width : Nat} [NeZero width] (smem : BitV
 /-- Exact HOL `globals_rel_intro` (`crep_to_loopProofScript.sml:211-214`). -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "globals_rel_intro"
   (fmap_as_finite_support_relation := [sglobals, tglobals]) (words_as_type_indexed_bitvec)]
-theorem crepToLoopGlobalsRelHOLExact_intro {width : Nat} [NeZero width]
-    (sglobals : HolFiniteMapExact (BitVec 5) (HolWordLab width))
-    (tglobals : HolFiniteMapExact (BitVec 5) (WordLocW width)) :
+theorem crepToLoopGlobalsRelHOLExact_intro {width : Nat} [NeZero width] {κ : Type} [DecidableEq κ]
+    (sglobals : HolFiniteMapExact κ (HolWordLab width))
+    (tglobals : HolFiniteMapExact κ (WordLocW width)) :
     crepToLoopGlobalsRelHOLExact sglobals tglobals →
       ∀ ad v, sglobals.lookup ad = some v → tglobals.lookup ad = some (wlabWlocExact v) :=
   fun h => h

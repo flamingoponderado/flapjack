@@ -58,21 +58,25 @@ private def envLookup (key : Nat) :
   | some (env, _) => sptLookup key env
   | none => none
 
+private def findCode32 (dest : Option Nat) (args : List W)
+    (code : Spt (List Nat × HolLoopProg 32)) : Option (Spt W × HolLoopProg 32) :=
+  findCode (v := 32) (w := 32) dest args code
+
 def findCodeGuard : Bool :=
   -- find_code_label_first=SOME (Word 3w), find_code_label_second=SOME (Word 4w)
-  envLookup 1 (findCode (some 5) [.word 3, .word 4] code2) == some (.word 3) &&
-  envLookup 2 (findCode (some 5) [.word 3, .word 4] code2) == some (.word 4) &&
+  envLookup 1 (findCode32 (some 5) [.word 3, .word 4] code2) == some (.word 3) &&
+  envLookup 2 (findCode32 (some 5) [.word 3, .word 4] code2) == some (.word 4) &&
   -- find_code_label_len_mismatch=NONE, find_code_label_missing=NONE
-  (findCode (some 5) [.word 3] code2).isNone &&
-  (findCode (some 6) [.word 3, .word 4] code2).isNone &&
+  (findCode32 (some 5) [.word 3] code2).isNone &&
+  (findCode32 (some 6) [.word 3, .word 4] code2).isNone &&
   -- find_code_link_first=SOME (Word 3w), find_code_link_wrong_len=NONE
-  envLookup 7 (findCode none [.word 3, .loc 9 0] code1) == some (.word 3) &&
-  (findCode none [.loc 9 0] code1).isNone &&
+  envLookup 7 (findCode32 none [.word 3, .loc 9 0] code1) == some (.word 3) &&
+  (findCode32 none [.loc 9 0] code1).isNone &&
   -- find_code_empty_args=NONE, find_code_bad_last=NONE
-  (findCode none ([] : List W) code1).isNone &&
-  (findCode none [.word 3, .word 4] code1).isNone &&
+  (findCode32 none ([] : List W) code1).isNone &&
+  (findCode32 none [.word 3, .word 4] code1).isNone &&
   -- find_code_dup_first=SOME (Word 5w)
-  envLookup 1 (findCode (some 5) [.word 5, .word 7] codeDup) == some (.word 5)
+  envLookup 1 (findCode32 (some 5) [.word 5, .word 7] codeDup) == some (.word 5)
 
 #guard setVarsGuard
 #guard callEnvGuard

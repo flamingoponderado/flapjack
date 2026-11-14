@@ -221,9 +221,13 @@ private theorem initialProgEL_eq_getElem {width : Nat} [NeZero width]
     `EL` is rendered by `initialProgEL`; the conclusion itself establishes
     `n < prog.length`, and `initialProgEL_eq_getElem` shows the chosen fallback
     is never observed. Only the HOL positive word width uses the reviewed
-    type-indexed BitVec qualifier. -/
-@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "initial_prog_make_funcs_el"
-  (words_as_type_indexed_bitvec)]
+    type-indexed BitVec qualifier.
+
+    NOT an exact port (tag withdrawn in task 169): the typed capture gives
+    `prog : (α # β list # γ) list` and `start : α` with the name, parameter-list
+    and program types independent, while this statement fixes them to MlS,
+    `List Nat` and `CrepProgHOL width`. The lookup equation holds at that
+    instance only. -/
 theorem initialProgMakeFuncsElExact {width : Nat} [NeZero width] :
     ∀ (prog : List (Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width))
       (start : Basis.Pure.MlString.MlString) (n : Nat),
