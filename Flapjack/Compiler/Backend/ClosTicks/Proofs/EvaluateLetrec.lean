@@ -194,7 +194,7 @@ theorem evaluate_remove_ticks_letrec {C F : Type} (names : List Flapjack.AstHOL.
         simp [evaluate, sourceBad])
   | some indices =>
     by_cases arityOk : (removeFuns sourceFunctions).all (fun (arity, _) => arity ≤ target.maxApp && arity != 0) = true
-    · have captureRel := environment_lookupVars indices envSource envTarget envRel
+    · have captureRel := lookup_vars_lemma indices envSource envTarget envRel
       cases targetCapture : lookupVars indices envTarget with
       | none =>
         cases sourceCapture : lookupVars indices envSource with
@@ -208,13 +208,13 @@ theorem evaluate_remove_ticks_letrec {C F : Type} (names : List Flapjack.AstHOL.
               { source with clock := source.clock + (0 + traces.length) } = (.err (.abort .typeError), source) by
             rw [wrapped]
             simp [evaluate, sourceArity, sourceCapture])
-        | some values => simp [targetCapture, sourceCapture, Flapjack.optionRel] at captureRel
+        | some values => simp [targetCapture, sourceCapture] at captureRel
       | some values =>
         cases sourceCapture : lookupVars indices envSource with
-        | none => simp [targetCapture, sourceCapture, Flapjack.optionRel] at captureRel
+        | none => simp [targetCapture, sourceCapture] at captureRel
         | some sourceValues =>
           exact success sourceValues values arityOk sourceCapture targetCapture
-            (by simpa [targetCapture, sourceCapture, Flapjack.optionRel] using captureRel)
+            (by simpa [targetCapture, sourceCapture] using captureRel)
     · have sourceBad : ¬ sourceFunctions.all (fun (arity, _) => arity ≤ source.maxApp && arity != 0) = true := by
         simpa [maxEq, removeFuns_all] using arityOk
       simp [evaluate, arityOk] at run

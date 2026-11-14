@@ -23,6 +23,7 @@ val _ = show "code_rel_typed" clos_ticksProofTheory.code_rel_def;
 val _ = show "function_rel_typed" clos_ticksProofTheory.f_rel_def;
 val _ = show "value_rel_typed" clos_ticksProofTheory.v_rel_rules;
 val _ = show "value_rel_simps_typed" clos_ticksProofTheory.v_rel_simps;
+val _ = show "lookup_vars_lemma_typed" clos_ticksProofTheory.lookup_vars_lemma;
 val _ = show "ref_rel_typed" clos_ticksProofTheory.ref_rel_rules;
 val _ = show "state_rel_typed" clos_ticksProofTheory.state_rel_def;
 val _ = show "code_rel_length_typed" clos_ticksProofTheory.code_rel_IMP_LENGTH;

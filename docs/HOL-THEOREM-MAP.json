@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "lookup_vars_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/EvaluateFn.lean",
+    "lean_name": "lookup_vars_lemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared lookup_vars_lemma_typed: arbitrary related environments retain the target lookup case, source failure equality and existential source result related to the target in the original direction and conjunct order. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
     "hol_name": "v_rel_simps",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean",
     "lean_name": "valueRel_simps",
