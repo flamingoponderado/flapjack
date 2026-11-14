@@ -139247,4 +139247,17 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the complete ten-conjunct statement against the HOL local theorem and its typed proof replay: all shared variables, list and option relations, and both call alternatives match. Expression and code-tree carriers are fixed, with no polymorphic state or real-model assumptions."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "in_do_app_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/PrimitiveRelation.lean",
+    "lean_name": "doApp_rel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete case split with the local HOL source and inferred-type statement capture (the original proof was not replayed): related states imply matching non-type errors or a related successful target state with the same value. The two compiler-state types and FFI carrier match the HOL instantiation. The BVI refs field uses the canonical finite-support carrier, witnessed by the same-module roundtrip. Primitive application inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  }
 ]
