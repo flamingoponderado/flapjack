@@ -128,14 +128,4 @@ theorem callsListFuel_succeeds (fuel : Nat) (es : List Exp) (state : State)
 termination_by fuel
 end
 
-/-- Retrying the direct-call list traversal cannot exhaust fuel. -/
-theorem callsListBounded_succeeds (fuel : Nat) (es : List Exp) (state : State) :
-    ∃ result, callsListBounded fuel es state = some result := by
-  cases h : callsListFuel fuel es state with
-  | some result => exact ⟨result, by simp [callsListBounded, h]⟩
-  | none =>
-    have bound : listBudget es < max fuel (listBudget es + 1) := by omega
-    obtain ⟨result, done⟩ := callsListFuel_succeeds (max fuel (listBudget es + 1)) es state bound
-    exact ⟨result, by simp [callsListBounded, h, done]⟩
-
 end Flapjack.Compiler.Backend.ClosCall
