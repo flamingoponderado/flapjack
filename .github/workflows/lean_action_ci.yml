@@ -32,6 +32,12 @@ jobs:
       - name: Clean the workspace except .lake
         run: git clean -ffdx -e .lake
 
+      # Repair the single runner artifact implicated by the exporter crash.
+      - name: Rebuild suspect Parmove artifact
+        run: |
+          prefix=.lake/build/lib/lean/Flapjack/Compiler/Backend/Parmove/FstepDstep
+          rm -f "$prefix".{olean,olean.hash,olean.private,olean.private.hash,olean.server,olean.server.hash,ilean,ilean.hash,trace}
+
       # The workspace declares FlapjackTest as its test driver, so lean-action
       # runs `lake build` and `lake test` here.
       - uses: leanprover/lean-action@v1
@@ -46,15 +52,7 @@ jobs:
       # exports their elaborated attributes, so it must not run concurrently
       # with another Lake command in the same worktree.
       - name: Check reviewed @[hol] rows match the elaborated attributes
-        run: |
-          free -h
-          ulimit -a
-          cat /sys/fs/cgroup/memory.max 2>/dev/null || true
-          ulimit -s 65536
-          if ! python3 scripts/check_hol_ref_export.py; then
-            tail -10 .lake/hol-export-progress.log || true
-            exit 1
-          fi
+        run: python3 scripts/check_hol_ref_export.py
 
       # The attribute checker is syntactic, but the test compiles throwaway
       # declarations with `lake build`/`lake lean`, so it stays in this job.

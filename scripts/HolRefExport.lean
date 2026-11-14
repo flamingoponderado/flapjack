@@ -271,14 +271,7 @@ elab "#emit_hol_ref_export" : command => do
     (fun acc (entry : Name × HolRef) => if entry.2.realsAsRationalCuts then acc.insert entry.1 else acc) {}
   let mut known : Std.HashMap Name Bool := {}
   let mut nestedKnown : Std.HashMap Name (Bool × Bool) := {}
-  let mut count := 0
-  let progress ← liftIO <| IO.FS.Handle.mk ".lake/hol-export-progress.log" .write
   for (name, ref) in HolRef.all env do
-    count := count + 1
-    if count >= 8000 then
-      liftIO do
-        progress.putStr s!"HOL export progress: {count}: {name}\n"
-        progress.flush
     if !ref.nestedListRelAsMutual.isEmpty then
       let marker := ``Flapjack.Test.nestedRelationAudit_passed
       match env.getModuleIdxFor? marker with
@@ -289,10 +282,6 @@ elab "#emit_hol_ref_export" : command => do
     match env.find? name with
     | none => throwError "missing declaration {name}"
     | some info =>
-        if count >= 8317 then
-          liftIO do
-            progress.putStr "  found declaration\n"
-            progress.flush
         if !ref.fmapAsFiniteSupportParameterPredicateDomain.isEmpty then
           unless ref.path == "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" &&
               (ref.name == "eval_sim_def" || ref.name == "IMP_semantics_eq") &&
@@ -312,10 +301,6 @@ elab "#emit_hol_ref_export" : command => do
         if isRelation && !ref.fmapAsFiniteSupport.isEmpty then
           throwError "nested-list relation producer has finite-map qualifier {name}"
         let ((observes, exposes), nestedKnown') := nestedListRelationDependenciesCached env info nestedKnown
-        if count >= 8317 then
-          liftIO do
-            progress.putStr "  nested traversal complete\n"
-            progress.flush
         nestedKnown := nestedKnown'
         if !ref.nestedListRelAsMutual.isEmpty then
           let observerScope := name.toString.startsWith "Flapjack.Compiler.Backend.ClosAnnotate." &&
@@ -368,10 +353,6 @@ elab "#emit_hol_ref_export" : command => do
           ("qualifiers", Json.mkObj qualifiers)]
         if !ref.realsAsRationalCuts then
           let (reaches, known') := reachesRealsCuts env realsTagged known name
-          if count >= 8317 then
-            liftIO do
-              progress.putStr "  real traversal complete\n"
-              progress.flush
           known := known'
           if reaches then
             fields := fields ++ [("inherits_reals_as_rational_cuts", toJson true)]
