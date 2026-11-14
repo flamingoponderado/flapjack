@@ -181,6 +181,31 @@ termination_by sizeOf expressions
 decreasing_by all_goals (simp_wf; omega)
 end
 
+/-- Inlining a call without a handler preserves the expression relation when
+the cache is contained in the target code and its arguments are related. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "inline_call_none_exp_rel"]
+theorem inlineCallNoneExpRel (cache code : Spt (Nat × Bvi.Exp))
+    (expressions : List Bvi.Exp) (ticks : Nat) (destination : Option Nat)
+    (premises : sptSubspt cache code ∧
+      List.Forall₂ (ExpRel code) expressions (inlineExpsSource cache expressions)) :
+    ExpRel code (.call ticks destination expressions none)
+      (inlineExpSource cache (.call ticks destination expressions none)) := by
+  obtain ⟨subset, related⟩ := premises
+  cases destination with
+  | none =>
+    simpa [inlineExpSource] using ExpRel.callNone (ticks := ticks) (target := none) related
+  | some name =>
+    cases lookup : sptLookup name cache with
+    | none =>
+      simpa [inlineExpSource, lookup] using ExpRel.callNone (ticks := ticks) (target := some name) related
+    | some entry =>
+      obtain ⟨arity, body⟩ := entry
+      by_cases length : (inlineExpsSource cache expressions).length = arity
+      · have present : sptMem name cache := (sptMem_iff_lookup name cache).2 ⟨_, lookup⟩
+        have targetLookup : sptLookup name code = some (arity, body) := (subset name present).2.trans lookup
+        simpa [inlineExpSource, lookup, length] using ExpRel.inlineCall (ticks := ticks) related targetLookup length
+      · simpa [inlineExpSource, lookup, length] using ExpRel.callNone (ticks := ticks) (target := some name) related
+
 mutual
 /-- Flapjack infrastructure: inlining an expression produces an expression
 related under any code tree containing the cache. -/
@@ -208,24 +233,8 @@ private theorem inlineExpSource_rel (cache code : Spt (Nat × Bvi.Exp)) (express
       simpa [inlineExpSource] using ExpRel.callSome (ticks := ticks) (target := target)
         (inlineExpsSource_rel cache code xs subset) (inlineExpSource_rel cache code body subset)
     | none =>
-      cases target with
-      | none =>
-        simpa [inlineExpSource] using ExpRel.callNone (ticks := ticks) (target := none)
-          (inlineExpsSource_rel cache code xs subset)
-      | some name =>
-        cases lookup : sptLookup name cache with
-        | none =>
-          simpa [inlineExpSource, lookup] using ExpRel.callNone (ticks := ticks) (target := some name)
-            (inlineExpsSource_rel cache code xs subset)
-        | some entry =>
-          obtain ⟨arity, body⟩ := entry
-          by_cases length : (inlineExpsSource cache xs).length = arity
-          · have present : sptMem name cache := (sptMem_iff_lookup name cache).2 ⟨_, lookup⟩
-            have targetLookup : sptLookup name code = some (arity, body) := (subset name present).2.trans lookup
-            simpa [inlineExpSource, lookup, length] using ExpRel.inlineCall (ticks := ticks)
-              (inlineExpsSource_rel cache code xs subset) targetLookup length
-          · simpa [inlineExpSource, lookup, length] using ExpRel.callNone (ticks := ticks) (target := some name)
-              (inlineExpsSource_rel cache code xs subset)
+      exact inlineCallNoneExpRel cache code xs ticks target
+        ⟨subset, inlineExpsSource_rel cache code xs subset⟩
 termination_by sizeOf expression
 decreasing_by all_goals simp_wf <;> omega
 

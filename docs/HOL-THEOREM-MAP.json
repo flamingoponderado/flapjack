@@ -139409,4 +139409,13 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: cache inclusion implies both the universal expression relation and the pointwise expression-list relation for the corresponding inliner results."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "inline_call_none_exp_rel",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/ExpRelation.lean",
+    "lean_name": "inlineCallNoneExpRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: cache inclusion and pointwise related inlined arguments imply the expression relation for the inlined call with no handler, preserving the original destination and tick parameters."
+  }
 ]

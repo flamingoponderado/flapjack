@@ -510,3 +510,6 @@ val _ = show "evaluate_bvi_mk_tick_typed" bvi_inlineProofTheory.evaluate_bvi_mk_
 
 (* Capture the exported original mutual expression-relation theorem. *)
 val _ = show "inline_exp_rel_typed" bvi_inlineProofTheory.inline_exp_rel;
+
+(* Capture the exported original no-handler call relation theorem. *)
+val _ = show "inline_call_none_exp_rel_typed" bvi_inlineProofTheory.inline_call_none_exp_rel;
