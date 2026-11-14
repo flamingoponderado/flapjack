@@ -112955,7 +112955,7 @@
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
     "hol_name": "do_eq_list_F_IMP_MEM",
     "statement_status": "reviewed_exact",
-    "reviewer": "Source comparison: the local do_eq_list_F_IMP_MEM theorem and its typed replay retain the polymorphic reference-cell payload, two data-value lists, false equality result, equal lengths, and an index where the element equality returns false. Lean indexing carries the bounds proofs for both lists; the second bound follows from the source equal-length premise."
+    "reviewer": "Source comparison against the typed do_eq_list_F_IMP_MEM_typed capture: the theorem retains the polymorphic reference-cell payload, the two data-value lists, the false equality result, the equal-length premise and HOL's single existential index bound, with HOL's total EL rendered by holEl. Task 186 replaced the earlier dependent-bound-binder form, which carried a second list bound, with this HOL-shaped statement; the untagged doEqList_falseElement_getElem derives the getElem form for callers."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Memory/Relation/CompareLoop.lean",

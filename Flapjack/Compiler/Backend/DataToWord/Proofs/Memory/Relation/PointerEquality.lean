@@ -42,7 +42,8 @@ theorem memoryRel_pointerEq_blockBlock {width : Nat} [NeZero width] (conf : Conf
       by_cases clos1 : isClosure tag1 vals1 <;> by_cases clos2 : isClosure tag1 vals2 <;>
         simp [doEq, clos1, clos2, lengths] at compare
       exact compare
-    obtain ⟨i, hi1, hi2, different⟩ := doEqList_falseElement refs vals1 vals2 ⟨listEq, lengths.symm⟩
+    obtain ⟨i, hi1, hi2, different⟩ :=
+      doEqList_falseElement_getElem refs vals1 vals2 ⟨listEq, lengths.symm⟩
     obtain ⟨w1, addr1, _, loc1, real1, _, inv1⟩ :=
       memoryRel_elAny conf bigEndian next refs space store memory domain ts1 tag1 vals1 (.word w)
         ((.block ts2 tag1 vals2, .word w) :: vars) i hi1 ⟨inv, good⟩
