@@ -1,5 +1,5 @@
 (* Typed captures for the gen_gc_partial reviewed rows that earlier probes did not
-   cover (task 179). The theory is built in a private copy of the pinned CakeML
+   cover (task 180). The theory is built in a private copy of the pinned CakeML
    tree (commit 857f0d98d); see scripts/hol-probes/README.md for the build
    recipe and the CAKEML load path. Exported theorems and definitions are
    fetched from the theory DB; `[local]` theorems are parsed from the pinned
@@ -333,4 +333,22 @@ fun capture_val_quote label name =
 ") end;
 
 
-val _ = capture "gc_move_data_r1_typed" "gc_move_data_r1";
+(*
+ * gen_gc_partialScript.sml declares `Theorem gc_move_data_r1[local]` three
+ * times (796, 884, 1137); the reviewed row is the 1137 occurrence, which is
+ * the one the manifest tag cites. Capture that exact declaration.
+ *)
+fun statement_at lineno =
+  let
+    val body = List.drop (source_lines, lineno)
+    fun take [] = []
+      | take (l :: rest) =
+          if String.isPrefix "Proof" (strip_leading l) then []
+          else l :: take rest
+  in String.concatWith "\n" (take body) end;
+
+fun capture_at label lineno =
+  let val tm = Parse.Term [QUOTE (strip_antiquote (statement_at lineno))]
+  in (print (label ^ "="); print_term tm; print "\n") end;
+
+val _ = capture_at "gc_move_data_r1_typed" 1137;

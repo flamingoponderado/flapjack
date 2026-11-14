@@ -10385,6 +10385,10 @@ fetched from the theory DB, datatypes are captured as constructor signatures
 through `TypeBase.constructors_of`, and `[local]` theorems are parsed from the
 pinned source text with the shared splice-expanding helper. None of these five
 scripts declares a `[local]` Overload that the captured statements use
-(`wordPropsScript.sml`'s `PERM_STACK` is exported). Regenerate with
+(`wordPropsScript.sml`'s `PERM_STACK` is exported). `gen_gc_partialScript.sml`
+declares `Theorem gc_move_data_r1[local]` three times (lines 796, 884 and 1137);
+the reviewed row is the 1137 occurrence the manifest tag cites, so that probe
+captures the declaration at that source line rather than the first match.
+Regenerate with
 `CAKEML=<cakeml tree> HOL_PROBE_ONLY=<probe>Script.sml
 scripts/hol-probes/regenerate.sh`.

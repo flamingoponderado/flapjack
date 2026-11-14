@@ -1,5 +1,5 @@
 (* Typed captures for the loopProps reviewed rows that earlier probes did not
-   cover (task 179). The theory is built in a private copy of the pinned CakeML
+   cover (task 180). The theory is built in a private copy of the pinned CakeML
    tree (commit 857f0d98d); see scripts/hol-probes/README.md for the build
    recipe and the CAKEML load path. Exported theorems and definitions are
    fetched from the theory DB; `[local]` theorems are parsed from the pinned
