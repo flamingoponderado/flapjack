@@ -18583,7 +18583,7 @@
     "hol_name": "pmatch",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["c", "tys"],
-    "reviewer": "Compared both conjuncts and all quantified types and ordered premises against pmatch_typed in source_to_flat_proof_typed_probe.out, which records HOL's four independent state type variables: alpha and beta in the first conjunct and the separate gamma and delta in the second. Lean binds them as C F and C' F' so neither pair is merged. The global environment uses canonical finite maps for c and tys with a local roundtrip witness."
+    "reviewer": "Compared both conjuncts and all quantified types and ordered premises against pmatch_typed in source_to_flat_proof_typed_probe.out. HOL splices ^s_i1, whose `val s_i1 = ``s_i1 : ('f_orac_st, 'ffi) flatSem$state``;` binding (line 1061) fixes and shares the flat state's two type variables across both conjuncts, and the source state's 'ffi is linked to them through s_rel, so Lean binds one C F for both conjuncts (an earlier split into C F / C' F' came from a capture that had deleted the splice). The global environment uses canonical finite maps for c and tys with a local roundtrip witness."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Equality.lean",
