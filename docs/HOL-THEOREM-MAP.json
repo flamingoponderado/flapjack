@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "v_rel_simps",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/ValueRelSimps.lean",
+    "lean_name": "valueRel_simps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all nine conjuncts of value_rel_simps_typed, including ordinary and partial recursive closures, full existential witnesses, relation direction, total HOL list indexing under its original bound, and Boolean/unit cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "hol_name": "LIST_REL_f_rel_IMP",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
     "lean_name": "functionRelList_no_zero",
