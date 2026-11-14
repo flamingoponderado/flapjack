@@ -141107,5 +141107,30 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the complete exported theorem and typed compile_correct_typed capture in data_live_compile_probe.out: independent compiler and FFI state carriers, original non-type-error and stopped premises, four existential resource fields in source order, and exact evaluation/result pair. The data evaluator, state and liveness compiler are separately reviewed; tree maps use the original Spt carrier. The evaluator inherits reals_as_rational_cuts, the real-model assumption documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_liveProofScript.sml",
+    "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataLive/Proofs/State.lean",
+    "lean_name": "stateRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all fourteen conjuncts against state_rel_def_typed in data_live_compile_probe.out, including independent compiler and FFI parameters, stack length, all unchanged fields and local lookup on the domain of the original Spt live set. DataSem.State and Spt carriers are separately reviewed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_liveProofScript.sml",
+    "hol_name": "state_rel_ID",
+    "lean_path": "Flapjack/Compiler/Backend/DataLive/Proofs/State.lean",
+    "lean_name": "stateRel_refl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local theorem and its typed original proof replay state_rel_ID_replay_typed in data_live_compile_probe.out: the same state is related to itself for every original Spt live set, with independent compiler and FFI parameters."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_liveProofScript.sml",
+    "hol_name": "evaluate_compile",
+    "lean_path": "Flapjack/Compiler/Backend/DataLive/Proofs/CompileAll.lean",
+    "lean_name": "evaluate_compile",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the full local source theorem and inferred evaluate_compile_statement_typed in data_live_compile_probe.out; this is a typed source statement, not a replay of the local HOL induction proof. Independent compiler and FFI state carriers, both live sets, exact compiled pair, full exception-jump condition and result-dependent postcondition are retained. The evaluator inherits reals_as_rational_cuts as documented in SOUNDNESS item 8."
   }
 ]

@@ -13,8 +13,8 @@ open Flapjack Flapjack.Compiler.Backend.DataSem
 open Classical
 
 /-- States agree on the fields observed by the liveness proof and on every
-live local. This follows the source relation but is untagged until its state
-carriers and complete statement have been reviewed against HOL. -/
+live local. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "state_rel_def"]
 def stateRel {C F : Type} (source target : State C F) (live : NumSet) : Prop :=
   source.code = target.code ∧ source.clock = target.clock ∧ source.space = target.space ∧
   source.ffi = target.ffi ∧ source.refs = target.refs ∧ source.global = target.global ∧
@@ -25,6 +25,7 @@ def stateRel {C F : Type} (source target : State C F) (live : NumSet) : Prop :=
   ∀ key, sptMem key live → sptLookup key source.locals = sptLookup key target.locals
 
 /-- A state is related to itself for every live set. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "state_rel_ID"]
 theorem stateRel_refl {C F : Type} (state : State C F) (live : NumSet) : stateRel state state live := by
   simp [stateRel]
 
