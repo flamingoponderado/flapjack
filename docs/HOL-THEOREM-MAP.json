@@ -129837,30 +129837,6 @@
   "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
   "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InlineEvaluation.lean",
   "hol_name": "evaluate_inline",
-  "lean_name": "evaluateInline_nil",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this is the empty-list case, with original state and expression relations, source run and non-type-error premises, and existential target evaluation and final relation. Source configuration is cache paired with target configuration; FFI type is shared. The local witness covers refs only and the evaluator inherits floating-point real-carrier assumptions. The full theorem is not yet assembled. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-  {
-  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
-  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InlineEvaluation.lean",
-  "hol_name": "evaluate_inline",
-  "lean_name": "evaluateInline_var",
-  "statement_status": "reviewed_fmap_as_finite_support",
-  "fmap_as_finite_support": [
-    "refs"
-  ],
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed evaluate_inline in bvl_inline_state_rel_probe.out: this specializes both related expression lists to the same singleton variable and retains the original relation, source run, non-type-error premise and existential target evaluation/final relation. The refs witness covers only the canonical BVL reference map; the evaluator inherits floating-point real-carrier assumptions. Inherits the reals_as_rational_cuts assumption through its dependencies."
-},
-  {
-  "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
-  "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/InlineEvaluation.lean",
-  "hol_name": "evaluate_inline",
   "lean_name": "evaluateInline_tick",
   "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": [

@@ -50,8 +50,15 @@ theorem evaluateInline {C F : Type} (expressions : List Bvl.Exp) (env : List Bvl
     smaller₀ es' s' h1 out a last t res rel expRel run valid
   intro out a last t res rel expRel run valid
   cases expRel with
-  | nil => exact evaluateInline_nil limit a s last t res rel .nil run valid
-  | var index => exact evaluateInline_var limit index a s last t res rel (.var index) run valid
+  | nil =>
+    simp [evaluateTuple, evaluate] at run
+    rcases run with ⟨rfl, rfl⟩
+    exact ⟨t, by simp [evaluateTuple, evaluate], rel⟩
+  | var index =>
+    simp only [evaluateTuple] at run
+    cases found : a[index]? <;> simp [evaluate, found] at run
+    all_goals rcases run with ⟨rfl, rfl⟩
+    all_goals exact ⟨t, by simp [evaluateTuple, evaluate, found], rel⟩
   | cons headRel tailRel =>
     rename_i x x1 y y1 xs ys
     refine evaluateInline_cons limit x x1 y y1 xs ys a s last t ?_ ?_ res rel
