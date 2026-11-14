@@ -10528,6 +10528,12 @@ run_probe flat_elim_local_typed_probeScript.sml flat_elim_local_typed_probe.out 
   "$cake_dir/compiler/backend/proofs/flat_elimProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe pan_globals_defs_typed_probeScript.sml pan_globals_defs_typed_probe.out \
+  dec_shapes_def_typed fperm_decs_def_typed fperm_def_typed fperm_name_def_typed fresh_name_def_typed \
+  new_main_name_def_typed resort_decls_def_typed compile_top_def_typed \
+  "$cake_dir/pancake/pan_globalsScript.sml" \
+  "$cake_dir/pancake"
+
 run_probe lab_filter_proof_typed_probeScript.sml lab_filter_proof_typed_probe.out \
   filter_correct_typed adjust_pc_def_typed all_skips_def_typed asm_fetch_aux_eq_typed sec_ends_with_label_filter_skip_typed filter_skip_semantics_typed share_mem_op_FFI_final_filter_correct_typed share_mem_op_FFI_return_filter_correct_typed \
   share_mem_op_NONE_filter_correct_typed state_rel_def_typed \

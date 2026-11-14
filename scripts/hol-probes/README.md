@@ -10481,3 +10481,13 @@ with the local `pair_case_eq`, `pair_lam_lem` and `flatSemTheory.case_eq_thms`
 re-proved in the probe). Regenerate with
 `CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=flat_elim_local_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`pan_globals_defs_typed_probe.out` (8 rows) captures the reviewed
+`pan_globalsScript.sml` definition rows that earlier probes did not cover
+(task 184): `dec_shapes`, `fperm`, `fperm_decs`, `fperm_name`, `fresh_name`,
+`new_main_name`, `resort_decls` and `compile_top`. All eight are exported, so
+they are read from the theory DB with types; `fperm_name` shows HOL's fully
+polymorphic `'a -> 'a -> 'a -> 'a` rendering, and `compile_top` shows the
+`ALOOKUP (functions decs) start` first-match selection. Regenerate with
+`CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=pan_globals_defs_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
