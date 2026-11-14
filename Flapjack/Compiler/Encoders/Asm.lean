@@ -393,6 +393,30 @@ structure AsmConfigExact (width : Nat) [NeZero width] where
   cjumpOffset : BitVec width × BitVec width
   locOffset : BitVec width × BitVec width
 
+/-- Flapjack-only carrier conversion (no HOL original): view a production
+`AsmConfig` as the exact `AsmConfigExact`.  The two records agree field by field
+except `encode`, whose argument type differs; the `wordConvs` validity predicates
+read only the configuration fields, never `encode`, so the conversion fixes an
+arbitrary encoder. -/
+def AsmConfig.toExact {width : Nat} [NeZero width] (config : AsmConfig width) :
+    AsmConfigExact width where
+  isa := config.isa
+  encode := fun _ => []
+  bigEndian := config.bigEndian
+  codeAlignment := config.codeAlignment
+  linkReg := config.linkReg
+  avoidRegs := config.avoidRegs
+  regCount := config.regCount
+  fpRegCount := config.fpRegCount
+  twoRegArith := config.twoRegArith
+  validImm := config.validImm
+  addrOffset := config.addrOffset
+  hwOffset := config.hwOffset
+  byteOffset := config.byteOffset
+  jumpOffset := config.jumpOffset
+  cjumpOffset := config.cjumpOffset
+  locOffset := config.locOffset
+
 /-- HOL `asmScript.sml:174-176`:
 `reg_ok r c <=> r < c.reg_count /\ ~MEM r c.avoid_regs`.
 Exact port over the exact `AsmConfigExact` carrier (`encode : HolAsm width → word8 list`)
@@ -406,8 +430,8 @@ def asmRegOkExact {width : Nat} [NeZero width] (register : Nat)
 /-- HOL `asmScript.sml:178-179`:
 `fp_reg_ok d c <=> d < c.fp_reg_count`.
 Exact port over the exact `AsmConfigExact` carrier with the HOL argument order
-`fp_reg_ok d c`; the width-general executed `asmFpRegOk` remains the untagged
-production form.  Bead flapjack-4ac.6.1.2. -/
+`fp_reg_ok d c`.  This is the only spelling of the predicate.  Bead
+flapjack-4ac.6.1.2. -/
 @[hol "cakeml/compiler/encoders/asm/asmScript.sml" "fp_reg_ok_def"]
 def asmFpRegOkExact {width : Nat} [NeZero width] (register : Nat)
     (config : AsmConfigExact width) : Bool :=
@@ -545,42 +569,6 @@ def asmArithOkExact {width : Nat} [NeZero width] (operation : HolArith width)
         asmRegOkExact destination config && asmRegOkExact result config &&
         asmRegOkExact sourceLeft config && asmRegOkExact sourceRight config &&
         (!(config.isa == .mips || config.isa == .riscv) || !(destination == sourceLeft))
-
-
-/--
-    Not an exact HOL port: this Lean declaration quantifies `width : Nat`
-    without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
-    dimensions are positive.  The manifest records this mismatch (bead
-    flapjack-4ac.6); restore the HOL tag only after correcting the width
-    binder and reviewing callers.
-    The HOL tag was withdrawn. -/
-def asmFpRegOk {width : Nat} (config : AsmConfig width) (register : Nat) : Bool :=
-  register < config.fpRegCount
-
-
-/-- HOL `offset_ok_def` uses the signed word comparison `<=` (HOL's `<=` on
-words is signed, unlike `word_ls`), so the bounds are compared as integers.
-    Not an exact HOL port: this Lean declaration quantifies `width : Nat`
-    without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
-    dimensions are positive.  The manifest records this mismatch (bead
-    flapjack-4ac.6); restore the HOL tag only after correcting the width
-    binder and reviewing callers.
-    -/
-def asmOffsetOk {width : Nat} (alignment : Nat)
-    (bounds : BitVec width × BitVec width) (offset : BitVec width) : Bool :=
-  bounds.1.toInt ≤ offset.toInt && offset.toInt ≤ bounds.2.toInt &&
-    asmAligned alignment offset
-
-def asmAddrOffsetOk {width : Nat} (config : AsmConfig width) (offset : BitVec width) : Bool :=
-  asmOffsetOk 0 config.addrOffset offset
-
-def asmHwOffsetOk {width : Nat} (config : AsmConfig width) (offset : BitVec width) : Bool :=
-  asmOffsetOk 0 config.hwOffset offset
-
-def asmByteOffsetOk {width : Nat} (config : AsmConfig width) (offset : BitVec width) : Bool :=
-  asmOffsetOk 0 config.byteOffset offset
-
-
 
 
 /-- HOL `min12` (`sw2sw (INT_MINw : word12) : word64`). -/

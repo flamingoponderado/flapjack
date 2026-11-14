@@ -9,6 +9,7 @@ public import Flapjack.CompileFunctionDistinct
 public import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
 public import Flapjack.Pancake.PanToCrep.CompileToCrepBridge
 public import Flapjack.Pancake.CrepInline.InlineRouteNames
+public import Flapjack.Pancake.CrepInline.Canonical
 public import Flapjack.Pancake.LoopToWord.CompFuncExact
 public import Flapjack.Pancake.LoopToWord.LoopProgCarrierCodec
 public import Flapjack.RiscV.WordDiagnostics
@@ -30,6 +31,7 @@ set_option backward.privateInPublic.warn false
 namespace Flapjack.Test.CompileProgParity
 
 open Flapjack Flapjack.Pancake.PanLang
+open Flapjack.Basis.Pure.MlString
 
 def compileProgProbeContext : CompileContext Nat :=
   { vars := [], functions := [], exceptions := [], maxVar := 0,
@@ -63,14 +65,15 @@ def compileProgProbeDecls : List (Decl Nat) :=
 /-! Direct `compile_inl_top_def` boundary oracle: the named source pass keeps
     the function table while recursively expanding the selected inline names. -/
 def compileInlTopOracle : Bool :=
-  match panToCrepCompileInlTop ["first", "second"]
-      [CompiledFunction.mk "first" [] (.call none "second" []) .one,
-       CompiledFunction.mk "second" [] (.return [.const 9]) .one] with
+  match CrepInlineCanonical.compileInlTopHOLExact (width := 8)
+      [ofString "first", ofString "second"]
+      [(ofString "first", [], .call none (ofString "second") []),
+       (ofString "second", [], .return [.const 9])] with
   | [first, second] =>
-      (match first.body with
+      (match first.2.2 with
       | .seq .tick (.return [.const 9]) => true
       | _ => false) &&
-      (match second.body with
+      (match second.2.2 with
       | .return [.const 9] => true
       | _ => false)
   | _ => false
@@ -80,33 +83,39 @@ def compileInlTopOracle : Bool :=
 /-! Direct HOL `compile_prog_probe.out` cases for the production triple-list
     `compile_inl_top` boundary. The first duplicate `id` definition wins in
     HOL's `alist_to_fmap`, while nested inline calls expand recursively. -/
-def holInlineDuplicateInput : List (FunName × List Nat × CrepProg (BitVec 8)) :=
-  [("id", [], .return [.const 7]),
-   ("id", [], .return [.const 9]),
-   ("main", [], .call none "id" [])]
+def holInlineDuplicateInput :
+    List (CrepInlineMapHOLName × List Nat × CrepProgHOL 8) :=
+  [(ofString "id", [], .return [.const 7]),
+   (ofString "id", [], .return [.const 9]),
+   (ofString "main", [], .call none (ofString "id") [])]
 
 def holInlineDuplicateParity : Bool :=
-  match compileInlTopHOL ["id"] holInlineDuplicateInput with
-  | [(first, [], .return [.const firstValue]),
-     (second, [], .return [.const secondValue]),
-     (main, [], .seq .tick (.return [.const returned]))] =>
-      first == "id" && second == "id" && main == "main" &&
+  match CrepInlineCanonical.compileInlTopHOLExact (width := 8) [ofString "id"]
+    holInlineDuplicateInput with
+  | [(firstName, [], .return [.const firstValue]),
+     (secondName, [], .return [.const secondValue]),
+     (mainName, [], .seq .tick (.return [.const returned]))] =>
+      firstName == ofString "id" && secondName == ofString "id" &&
+        mainName == ofString "main" &&
         firstValue == 7 && secondValue == 9 && returned == 7
   | _ => false
 
 #guard holInlineDuplicateParity
 
-def holInlineNestedInput : List (FunName × List Nat × CrepProg (BitVec 8)) :=
-  [("leaf", [], .return [.const 7]),
-   ("mid", [], .call none "leaf" []),
-   ("main", [], .call none "mid" [])]
+def holInlineNestedInput :
+    List (CrepInlineMapHOLName × List Nat × CrepProgHOL 8) :=
+  [(ofString "leaf", [], .return [.const 7]),
+   (ofString "mid", [], .call none (ofString "leaf") []),
+   (ofString "main", [], .call none (ofString "mid") [])]
 
 def holInlineNestedParity : Bool :=
-  match compileInlTopHOL ["leaf", "mid"] holInlineNestedInput with
-  | [(leaf, [], .return [.const leafValue]),
-     (mid, [], .seq .tick (.return [.const midValue])),
-     (main, [], .seq .tick (.seq .tick (.return [.const mainValue])))] =>
-      leaf == "leaf" && mid == "mid" && main == "main" &&
+  match CrepInlineCanonical.compileInlTopHOLExact (width := 8)
+    [ofString "leaf", ofString "mid"] holInlineNestedInput with
+  | [(leafName, [], .return [.const leafValue]),
+     (midName, [], .seq .tick (.return [.const midValue])),
+     (mainName, [], .seq .tick (.seq .tick (.return [.const mainValue])))] =>
+      leafName == ofString "leaf" && midName == ofString "mid" &&
+        mainName == ofString "main" &&
         leafValue == 7 && midValue == 7 && mainValue == 7
   | _ => false
 
@@ -116,49 +125,6 @@ def holInlineNestedParity : Bool :=
     `compile_prog` triple-list boundary. These declarations are word8 as in
     the HOL EVAL query, and cover the complete empty, duplicate-first, and
     nested-inline outputs rather than testing `compile_inl_top` in isolation. -/
-def compileProgTopEmptyParity : Bool :=
-  match compileProgTopHOL ([] : List (Decl (BitVec 8))) with
-  | [] => true
-  | _ => false
-
-def compileProgTopDuplicateParity : Bool :=
-  let declarations : List (Decl (BitVec 8)) :=
-    [.function
-       { name := "id", inline := true, exported := false, params := [],
-         body := .return (.const 7), returnShape := .one },
-     .function
-       { name := "id", inline := true, exported := false, params := [],
-         body := .return (.const 9), returnShape := .one },
-     .function
-       { name := "main", inline := false, exported := true, params := [],
-         body := .call none "id" [], returnShape := .one }]
-  match compileProgTopHOL declarations with
-  | [("id", [], .return [.const 7]),
-     ("id", [], .return [.const 9]),
-     ("main", [], .seq .tick (.return [.const 7]))] => true
-  | _ => false
-
-def compileProgTopNestedParity : Bool :=
-  let declarations : List (Decl (BitVec 8)) :=
-    [.function
-       { name := "leaf", inline := true, exported := false, params := [],
-         body := .return (.const 7), returnShape := .one },
-     .function
-       { name := "mid", inline := true, exported := false, params := [],
-         body := .call none "leaf" [], returnShape := .one },
-     .function
-       { name := "main", inline := false, exported := true, params := [],
-         body := .call none "mid" [], returnShape := .one }]
-  match compileProgTopHOL declarations with
-  | [("leaf", [], .return [.const 7]),
-     ("mid", [], .seq .tick (.return [.const 7])),
-     ("main", [], .seq .tick (.seq .tick (.return [.const 7])))] => true
-  | _ => false
-
-#guard compileProgTopEmptyParity
-#guard compileProgTopDuplicateParity
-#guard compileProgTopNestedParity
-
 /-! The same committed HOL `compile_prog_probe.out` rows are exercised through
     the exact body route, with explicit constructor-level byte-range evidence
     for the hand-built syntax used by the HOL probe. -/
@@ -320,11 +286,36 @@ theorem compileProgExactCycleDeclsByteRanged :
     exact compileProbeInlineCallRanged (width := 8) "main" "f"
       compileProbeNameMainRanged compileProbeNameFRanged
 
+def compileProgExactCycleDeclsHOL : List (DeclHOL 8) :=
+  [.function ⟨ofString "f", true, false, [], .call none (ofString "g") [], .one⟩,
+   .function ⟨ofString "g", true, false, [], .call none (ofString "f") [], .one⟩,
+   .function ⟨ofString "main", false, true, [], .call none (ofString "f") [], .one⟩]
+
+def exactDeclIsTriple (name : MlS) (params : List Nat)
+    (body : CrepProgHOL 8 → Bool) : MlS × List Nat × CrepProgHOL 8 → Bool
+  | (n, ps, prog) => n == name && ps == params && body prog
+
+def exactDeclIsCall (n : MlS) : CrepProgHOL 8 → Bool
+  | .call none name [] => name == n
+  | _ => false
+
+def exactDeclIsSeqTickCall (n : MlS) : CrepProgHOL 8 → Bool
+  | .seq .tick rest => exactDeclIsCall n rest
+  | _ => false
+
+def exactDeclIsSeqTickSeqTickCall (n : MlS) : CrepProgHOL 8 → Bool
+  | .seq .tick rest => exactDeclIsSeqTickCall n rest
+  | _ => false
+
 def compileProgCycleCompatibilityParity : Bool :=
-  match compileProgTopHOL compileProgExactCycleDecls with
-  | [("f", [], .seq .tick (.call none "f" [])),
-     ("g", [], .seq .tick (.call none "g" [])),
-     ("main", [], .seq .tick (.seq .tick (.call none "f" [])))] => true
+  match compileProgDeclsHOLW compileProgExactCycleDeclsHOL with
+  | [t1, t2, t3] =>
+      exactDeclIsTriple (ofString "f") []
+        (exactDeclIsSeqTickCall (ofString "f")) t1 &&
+      exactDeclIsTriple (ofString "g") []
+        (exactDeclIsSeqTickCall (ofString "g")) t2 &&
+      exactDeclIsTriple (ofString "main") []
+        (exactDeclIsSeqTickSeqTickCall (ofString "f")) t3
   | _ => false
 
 #guard compileProgCycleCompatibilityParity
@@ -360,13 +351,30 @@ theorem compileProgExactHandlerDeclsByteRanged :
             compileProbeNameIdRanged, by simp, True.intro⟩⟩⟩
     · simp [ShapeByteRanged]
 
+def exactDeclIsReturnConst (n : Nat) : CrepProgHOL 8 → Bool
+  | .return [.const m] => m == BitVec.ofNat 8 n
+  | _ => false
+
+def compileProgExactHandlerDeclsHOL : List (DeclHOL 8) :=
+  [.exnDecl (ofString "E") .one,
+   .function ⟨ofString "id", true, false, [], .return (.const 7), .one⟩,
+   .function ⟨ofString "main", false, true, [],
+     .call (some (none, some (ofString "E", ofString "caught",
+       .call none (ofString "id") []))) (ofString "id") [], .one⟩]
+
+def exactDeclIsHandlerMain : CrepProgHOL 8 → Bool
+  | .dec 1 (.const 0)
+      (.call (some ([1], some (0, .seq .skip
+        (.seq .tick (.return [.const handledValue]))))) name []) =>
+      handledValue == BitVec.ofNat 8 7 && name == ofString "id"
+  | _ => false
+
 def compileProgHandlerCompatibilityParity : Bool :=
-  match compileProgTopHOL compileProgExactHandlerDecls with
-  | [("id", [], .return [.const value]),
-     ("main", [], .dec 1 (.const 0)
-       (.call (some ([1], some (0, .seq .skip
-         (.seq .tick (.return [.const handledValue]))))) "id" []))] =>
-      value == BitVec.ofNat 8 7 && handledValue == BitVec.ofNat 8 7
+  match compileProgDeclsHOLW compileProgExactHandlerDeclsHOL with
+  | [t1, t2] =>
+      exactDeclIsTriple (ofString "id") []
+        (exactDeclIsReturnConst 7) t1 &&
+      exactDeclIsTriple (ofString "main") [] exactDeclIsHandlerMain t2
   | _ => false
 
 #guard compileProgHandlerCompatibilityParity
@@ -400,12 +408,28 @@ theorem compileProgExactAggregateReturnDeclsByteRanged :
       exact ⟨compileProbeNamePairRanged, by simp, True.intro⟩
     · simp [ShapeByteRanged]
 
+def compileProgExactAggregateReturnDeclsHOL : List (DeclHOL 8) :=
+  [.function ⟨ofString "pair", true, false, [],
+     .return (.rstruct [.const 7, .const 9]), .comb [.one, .one]⟩,
+   .function ⟨ofString "main", false, true, [],
+     .call none (ofString "pair") [], .comb [.one, .one]⟩]
+
+def exactDeclIsReturnTwo (first second : Nat) : CrepProgHOL 8 → Bool
+  | .return [.const x, .const y] =>
+      x == BitVec.ofNat 8 first && y == BitVec.ofNat 8 second
+  | _ => false
+
+def exactDeclIsSeqTickReturnTwo (first second : Nat) : CrepProgHOL 8 → Bool
+  | .seq .tick rest => exactDeclIsReturnTwo first second rest
+  | _ => false
+
 def compileProgAggregateReturnCompatibilityParity : Bool :=
-  match compileProgTopHOL compileProgExactAggregateReturnDecls with
-  | [("pair", [], .return [.const first, .const second]),
-     ("main", [], .seq .tick (.return [.const mainFirst, .const mainSecond]))] =>
-      first == BitVec.ofNat 8 7 && second == BitVec.ofNat 8 9 &&
-        mainFirst == BitVec.ofNat 8 7 && mainSecond == BitVec.ofNat 8 9
+  match compileProgDeclsHOLW compileProgExactAggregateReturnDeclsHOL with
+  | [t1, t2] =>
+      exactDeclIsTriple (ofString "pair") []
+        (exactDeclIsReturnTwo 7 9) t1 &&
+      exactDeclIsTriple (ofString "main") []
+        (exactDeclIsSeqTickReturnTwo 7 9) t2
   | _ => false
 
 #guard compileProgAggregateReturnCompatibilityParity
@@ -454,10 +478,6 @@ tagged declaration-level `compileProgDeclsHOLW` (bead `flapjack-4ac.2.20.2.1`).
 structural matchers for the row shapes rather than equality. -/
 
 open Flapjack.Basis.Pure.MlString
-
-def exactDeclIsReturnConst (n : Nat) : CrepProgHOL 8 → Bool
-  | .return [.const m] => m == BitVec.ofNat 8 n
-  | _ => false
 
 def exactDeclIsSeqTickReturnConst (n : Nat) : CrepProgHOL 8 → Bool
   | .seq .tick rest => exactDeclIsReturnConst n rest

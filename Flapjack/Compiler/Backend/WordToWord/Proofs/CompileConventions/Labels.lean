@@ -54,8 +54,9 @@ private theorem singleLabels {width : Nat} [NeZero width] (two : Bool)
     extract_labels_word_common_subexp_elim, ← deadLabels c,
     ← WordAlloc.fullSsaCcTrans_labPres, ← instSelect_labPres] using h
 
-/-- Flapjack infrastructure: equal-length actual oracle zip induction; HOL uses EL/ZIP. -/
-private theorem zipSections {width : Nat} [NeZero width] (two : Bool)
+/-- Flapjack infrastructure: equal-length actual oracle zip induction; HOL uses EL/ZIP.
+    Public so `compileToWordConventions` can assemble the full conjunction directly. -/
+theorem zipSections {width : Nat} [NeZero width] (two : Bool)
     (k alg : Nat) (c : AsmConfigExact width)
     (programs : List (Nat × Nat × WordLangProgHOL (BitVec width)))
     (oracles : List (Option (Spt Nat))) (lengths : oracles.length = programs.length) :
@@ -76,20 +77,5 @@ private theorem zipSections {width : Nat} [NeZero width] (two : Bool)
       · simpa [fullCompileSingle, compileSingle] using congrArg (List.cons p.1) names
       · simpa only [List.zip_cons_cons, List.map_cons] using
           List.Forall₂.cons (singleLabels two k alg c (p, oracle)) labels
-
-/-- Original958–1014 first two conjunction sections: whole names and EVERY2 labels.
-Retains original no-share-or-ISA input guard, unused in these structural sections.
-This untagged supporting lemma proves only part of the conjunction; the full
-tagged theorem is assembled in `CompileConventions.Output`. -/
-theorem compileNamesLabels {width : Nat} [NeZero width] (wc : Config)
-    (ac : AsmConfigExact width)
-    (programs : List (Nat × Nat × WordLangProgHOL (BitVec width)))
-    (_guard : ∀ p ∈ programs, noShareInstSubprogsHOL p.2.2 = true ∨ ac.isa ≠ .ag32) :
-    (compile wc ac programs).2.map Prod.fst = programs.map Prod.fst ∧
-    List.Forall₂ labelsRel (programs.map (fun p => extractLabels p.2.2))
-      ((compile wc ac programs).2.map (fun p => extractLabels p.2.2)) := by
-  exact zipSections ac.twoRegArith (ac.regCount - (5 + ac.avoidRegs.length))
-    wc.regAlg ac programs (nextNOracle programs.length wc.colOracle).1
-    (compile_zip_length wc programs)
 
 end Flapjack.Compiler.Backend.WordToWord.CompileConventions

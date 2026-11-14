@@ -285,13 +285,20 @@ def lookupKvarHOLFinite {width : Nat} {σ : Type} [NeZero width]
     over the finite-map state carrier. It performs the selected `FLOOKUP` and
     compares the two `shape_of` results; absent variables are invalid. The
     finite-map qualifier records the carrier translation used by
-    `PanSemStateFiniteExact`. -/
+    `PanSemStateFiniteExact`.
+
+    HOL infers `is_valid_value : (α, β) state -> varkind -> mlstring ->
+    γ v -> bool`: the candidate value's word width `γ` is independent of the
+    state's `α` (typed capture `scripts/hol-probes/pan_upd_locals_probe.out`,
+    `kvar_defs_typed`, fourth conjunct). The `valueWidth` binder keeps that
+    independence; `shapeOfHOLExact` is width-polymorphic, so the comparison is
+    still HOL's `shape_of value = shape_of w`. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "is_valid_value_def"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 def isValidValueHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (kind : VarKind) (name : MlS)
-    (value : ValueHOL width) : Bool :=
+    {valueWidth : Nat} [NeZero valueWidth] (value : ValueHOL valueWidth) : Bool :=
   match lookupKvarHOLFinite kind name state with
   | some existing => shapeEqHOL (shapeOfHOLExact value) (shapeOfHOLExact existing)
   | none => false
@@ -349,6 +356,50 @@ def setKvarHOLFinite {width : Nat} {σ : Type} [NeZero width]
   match kind with
   | .local => setVarHOLFinite name value state
   | .global => setGlobalHOLFinite name value state
+
+/-- Exact port of HOL `kvar_defs` (`cakeml/pancake/semantics/panSemScript.sml:502-503`):
+`LIST_CONJ [set_var_def, set_global_def, set_kvar_def, is_valid_value_def,
+lookup_kvar_def]`, i.e. the five accessor-definition equations in that order.
+Each conjunct is the body equation of the already tagged exact definitions over
+`PanSemStateFiniteExact`; the `locals`/`globals`/`code`/`eshapes` finite-map
+fields use the reviewed `HolFiniteMapExact` translation (canonical witness
+`holFmapAsFiniteSupportWitness` in this module) and `'a word`/`'ffi` use the
+`BitVec width`/`σ : Type` translation. No quantifier, hypothesis, or side
+condition is added. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "kvar_defs"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem kvarDefsHOLFinite {width : Nat} {σ : Type} {σ4 : Type} {valueWidth : Nat}
+    [NeZero width] [NeZero valueWidth] :
+    (∀ (name : MlS) (value : ValueHOL width) (state : PanSemStateFiniteExact width σ),
+        setVarHOLFinite name value state =
+          { state with locals := state.locals.update (name, value) }) ∧
+    (∀ (name : MlS) (value : ValueHOL width) (state : PanSemStateFiniteExact width σ),
+        setGlobalHOLFinite name value state =
+          { state with globals := state.globals.update (name, value) }) ∧
+    (∀ (kind : VarKind) (name : MlS) (value : ValueHOL width)
+        (state : PanSemStateFiniteExact width σ),
+        setKvarHOLFinite kind name value state =
+          match kind with
+          | .local => setVarHOLFinite name value state
+          | .global => setGlobalHOLFinite name value state) ∧
+    (∀ (state : PanSemStateFiniteExact width σ4) (kind : VarKind) (name : MlS)
+        (value : ValueHOL valueWidth),
+        isValidValueHOLFinite state kind name value =
+          match lookupKvarHOLFinite kind name state with
+          | some existing =>
+              shapeEqHOL (shapeOfHOLExact value) (shapeOfHOLExact existing)
+          | none => false) ∧
+    (∀ (kind : VarKind) (name : MlS) (state : PanSemStateFiniteExact width σ),
+        lookupKvarHOLFinite kind name state =
+          match kind with
+          | .local => state.locals.lookup name
+          | .global => state.globals.lookup name) :=
+  ⟨fun _ _ _ => rfl,
+   fun _ _ _ => rfl,
+   fun kind _ _ _ => by cases kind <;> rfl,
+   fun _ _ _ _ => rfl,
+   fun kind _ _ => by cases kind <;> rfl⟩
 
 /-- The finite-support keyed-variable write is compatible with the broad exact
     one. -/

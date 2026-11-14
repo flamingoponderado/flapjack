@@ -20,6 +20,7 @@ backend `asm$inst` / `wordLang$prog` syntax.
 namespace Flapjack.Test.WordLangCallArgParity
 
 open Flapjack
+open Flapjack.Compiler.Encoders.Asm
 
 private abbrev W := BitVec 8
 private def w8 (n : Nat) : W := BitVec.ofNat 8 n
@@ -52,15 +53,15 @@ private def callSomeOk : WordLangProgHOL W :=
 private def callInstOk : WordLangProgHOL W := .inst instAddCarryOk
 private def seqBad : WordLangProgHOL W := .seq (.raise 2) (.raise 3)
 
-example : instArgConvention instAddCarryOk = true := by decide
-example : instArgConvention instAddCarryBad = false := by decide
-example : instArgConvention instShiftOk = true := by decide
-example : instArgConvention instShiftBad = false := by decide
-example : instArgConvention instLongMulOk = true := by decide
-example : instArgConvention instLongDivOk = true := by decide
-example : instArgConvention instAddOverflowOk = true := by decide
-example : instArgConvention instSubOverflowBad = false := by decide
-example : instArgConvention instConst = true := by decide
+example : instArgConventionExact (HolInst.ofWordLangInst instAddCarryOk) = true := by decide
+example : instArgConventionExact (HolInst.ofWordLangInst instAddCarryBad) = false := by decide
+example : instArgConventionExact (HolInst.ofWordLangInst instShiftOk) = true := by decide
+example : instArgConventionExact (HolInst.ofWordLangInst instShiftBad) = false := by decide
+example : instArgConventionExact (HolInst.ofWordLangInst instLongMulOk) = true := by decide
+example : instArgConventionExact (HolInst.ofWordLangInst instLongDivOk) = true := by decide
+example : instArgConventionExact (HolInst.ofWordLangInst instAddOverflowOk) = true := by decide
+example : instArgConventionExact (HolInst.ofWordLangInst instSubOverflowBad) = false := by decide
+example : instArgConventionExact (HolInst.ofWordLangInst instConst) = true := by decide
 
 example : callArgConventionHOL returnOk = true := by decide
 example : callArgConventionHOL returnBad = false := by decide
@@ -78,18 +79,28 @@ example : callArgConventionHOL callInstOk = true := by decide
 example : callArgConventionHOL seqBad = false := by decide
 
 private def guards : List Bool :=
-  [ instArgConvention instAddCarryOk, instArgConvention instAddCarryBad
-  , instArgConvention instShiftOk, instArgConvention instShiftBad
-  , instArgConvention instLongMulOk, instArgConvention instLongDivOk
-  , instArgConvention instAddOverflowOk, instArgConvention instSubOverflowBad
-  , instArgConvention instConst
-  , callArgConventionHOL returnOk, callArgConventionHOL returnBad
-  , callArgConventionHOL raiseOk, callArgConventionHOL raiseBad
-  , callArgConventionHOL installOk, callArgConventionHOL installBad
-  , callArgConventionHOL allocOk, callArgConventionHOL allocBad
+  [ instArgConventionExact (HolInst.ofWordLangInst instAddCarryOk)
+  , instArgConventionExact (HolInst.ofWordLangInst instAddCarryBad)
+  , instArgConventionExact (HolInst.ofWordLangInst instShiftOk)
+  , instArgConventionExact (HolInst.ofWordLangInst instShiftBad)
+  , instArgConventionExact (HolInst.ofWordLangInst instLongMulOk)
+  , instArgConventionExact (HolInst.ofWordLangInst instLongDivOk)
+  , instArgConventionExact (HolInst.ofWordLangInst instAddOverflowOk)
+  , instArgConventionExact (HolInst.ofWordLangInst instSubOverflowBad)
+  , instArgConventionExact (HolInst.ofWordLangInst instConst)
+  , callArgConventionHOL returnOk
+  , callArgConventionHOL returnBad
+  , callArgConventionHOL raiseOk
+  , callArgConventionHOL raiseBad
+  , callArgConventionHOL installOk
+  , callArgConventionHOL installBad
+  , callArgConventionHOL allocOk
+  , callArgConventionHOL allocBad
   , callArgConventionHOL storeConstsOk
-  , callArgConventionHOL callNoneOk, callArgConventionHOL callNoneBad
-  , callArgConventionHOL callSomeOk, callArgConventionHOL callInstOk
+  , callArgConventionHOL callNoneOk
+  , callArgConventionHOL callNoneBad
+  , callArgConventionHOL callSomeOk
+  , callArgConventionHOL callInstOk
   , callArgConventionHOL seqBad ]
 
 private def expected : List Bool :=

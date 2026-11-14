@@ -1,0 +1,7 @@
+symbol_typed=TOK::α -> (α, β) symbol; NT::β + num -> (α, β) symbol
+parsetree_typed=Lf::(α, β) symbol # 'locs -> (α, β, 'locs) parsetree; Nd::(β + num) # 'locs -> (α, β, 'locs) parsetree list -> (α, β, 'locs) parsetree
+ptree_loc_def_typed=ptree_loc (Lf ((v0 :(β, γ) symbol),(l :α))) = l ∧ ptree_loc (Nd ((v1 :γ + num),l) (v2 :(β, γ, α) parsetree list)) = l
+ptree_list_loc_def_typed=∀(l :(α, β, locs) parsetree list). ptree_list_loc l = merge_list_locs (MAP (ptree_loc :(α, β, locs) parsetree -> locs) l)
+ptree_head_def_typed=ptree_head (Lf ((tok :(α, β) symbol),(l :γ))) = tok ∧ ptree_head (Nd ((nt :β + num),l) (children :(α, β, γ) parsetree list)) = (NT nt :(α, β) symbol)
+isTOK_def_typed=(∀(tok :α). isTOK (TOK tok :(α, β) symbol) ⇔ T) ∧ ∀(n :β + num). isTOK (NT n :(α, β) symbol) ⇔ F
+destTOK_def_typed=destTOK ((TOK (tk :α) :(α, β) symbol),(v0 :γ)) = SOME tk ∧ destTOK ((NT (v6 :β + num) :(α, β) symbol),(v2 :γ)) = (NONE :α option)

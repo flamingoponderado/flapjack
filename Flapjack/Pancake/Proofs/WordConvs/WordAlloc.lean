@@ -133,27 +133,35 @@ theorem applyColour_flatExpConventions {width : Nat} [NeZero width] (f : Nat →
 is preserved by arbitrary renaming, without assuming injectivity. -/
 private theorem twoRegInst_applyColourInst {width : Nat} [NeZero width]
     (f : Nat → Nat) (i : WordLangInst (BitVec width)) :
-    twoRegInst i = true → twoRegInst (applyColourInst f i) = true := by
+    twoRegInstExact (HolInst.ofWordLangInst i) = true →
+      twoRegInstExact (HolInst.ofWordLangInst (applyColourInst f i)) = true := by
   intro h
   cases i with
-  | skip => simp [applyColourInst, applyColourInstCore, twoRegInst]
-  | const r w => simp [applyColourInst, applyColourInstCore, twoRegInst]
+  | skip => simp [applyColourInst, applyColourInstCore, twoRegInstExact,
+      HolInst.ofWordLangInst]
+  | const r w => simp [applyColourInst, applyColourInstCore, twoRegInstExact,
+      HolInst.ofWordLangInst]
   | arith a =>
-      cases a <;> simp_all [applyColourInst, applyColourInstCore, twoRegInst, beq_iff_eq]
+      cases a <;> simp_all [applyColourInst, applyColourInstCore, twoRegInstExact,
+        HolInst.ofWordLangInst, HolArith.ofWordLangArith, HolRegImm.ofWordRegImm,
+        beq_iff_eq]
   | mem op r a =>
-      cases op <;> cases a <;> simp [applyColourInst, applyColourInstCore, twoRegInst]
+      cases op <;> cases a <;> simp [applyColourInst, applyColourInstCore, twoRegInstExact,
+        HolInst.ofWordLangInst]
   | fp op =>
-      cases op <;> simp [applyColourInst, applyColourInstCore, twoRegInst]
+      cases op <;> simp [applyColourInst, applyColourInstCore, twoRegInstExact,
+        HolInst.ofWordLangInst]
 
 /-- Original full instruction-convention implication. The positive-width theorem
-uses the constructor-for-constructor instruction carrier and the literal
-`twoRegInst` clauses; its width-general helper admits zero width, but this
-statement retains HOL positivity. -/
+uses the reviewed exact `twoRegInstExact` over the constructor-for-constructor
+`HolInst` carrier, applied through `HolInst.ofWordLangInst`. -/
 @[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
   "word_alloc_two_reg_inst_lem" (words_as_type_indexed_bitvec)]
 theorem applyColour_twoRegInst {width : Nat} [NeZero width] (f : Nat → Nat) :
     ∀ prog : WordLangProgHOL (BitVec width),
-      everyInst twoRegInst prog = true → everyInst twoRegInst (applyColour f prog) = true
+      everyInst (fun i => twoRegInstExact (HolInst.ofWordLangInst i)) prog = true →
+        everyInst (fun i => twoRegInstExact (HolInst.ofWordLangInst i))
+          (applyColour f prog) = true
   | .seq a b => by
       intro h
       simp_all [applyColour, everyInst, applyColour_twoRegInst f a, applyColour_twoRegInst f b]
@@ -173,7 +181,8 @@ theorem applyColour_twoRegInst {width : Nat} [NeZero width] (f : Nat → Nat) :
       simp_all [applyColour, everyInst, applyColour_twoRegInst f r, applyColour_twoRegInst f p]
   | .inst i => by simpa [applyColour, everyInst] using twoRegInst_applyColourInst f i
   | .opCurrHeap _ _ _ => by
-      simp only [applyColour, everyInst, twoRegInst, beq_iff_eq]
+      simp only [applyColour, everyInst, twoRegInstExact, HolInst.ofWordLangInst,
+        HolArith.ofWordLangArith, HolRegImm.ofWordRegImm, beq_iff_eq]
       intro h
       exact congrArg f h
   | .skip | .move _ _ | .assign _ _ | .get _ _ | .store _ _ | .set _ _ | .shareInst _ _ _
@@ -198,7 +207,9 @@ theorem wordAlloc_flatExpConventions {width : Nat} [NeZero width]
 theorem wordAlloc_twoRegInst {width : Nat} [NeZero width]
     (fc : Nat) (c : AsmConfigExact width) (alg k : Nat)
     (prog : WordLangProgHOL (BitVec width)) (col : Option (Spt Nat)) :
-    everyInst twoRegInst prog = true → everyInst twoRegInst (wordAlloc fc c alg k prog col) = true := by
+    everyInst (fun i => twoRegInstExact (HolInst.ofWordLangInst i)) prog = true →
+      everyInst (fun i => twoRegInstExact (HolInst.ofWordLangInst i))
+        (wordAlloc fc c alg k prog col) = true := by
   rcases wordAlloc_cases fc c alg k prog col with h | ⟨f, h⟩
   · rw [h]; exact id
   · rw [h]; exact applyColour_twoRegInst f prog

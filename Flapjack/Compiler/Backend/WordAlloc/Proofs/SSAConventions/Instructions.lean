@@ -8,7 +8,9 @@ public import Flapjack.Compiler.Backend.WordAlloc.ProductionSSAMemoryGuard
 
 namespace Flapjack.WordAlloc
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
+open Flapjack.Compiler.Encoders.Asm
 
+set_option linter.unusedSimpArgs false in
 /-- Full original instruction case of the SSA convention theorem. All native
 instruction constructors and word-width branches remain in scope. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
@@ -23,6 +25,26 @@ theorem ssaCcTrans_preAllocInst {width : Nat} [NeZero width]
   simp only [ssaCcTrans]
   fun_cases ssaCcTransInst instruction ssa next <;>
     simp_all [nextVarRename, preAllocConventionsHOL, everyStackVarHOL,
-      callArgConventionHOL, instArgConvention]
+      callArgConventionHOL, instArgConventionExact, HolInst.ofWordLangInst,
+      HolArith.ofWordLangArith, HolRegImm.ofWordRegImm]
+  all_goals
+    try
+      cases ‹WordRegImm (BitVec width)› <;>
+        simp_all [instArgConventionExact, HolInst.ofWordLangInst,
+          HolArith.ofWordLangArith, HolRegImm.ofWordRegImm]
+  all_goals
+    try
+      cases instruction <;>
+        simp_all [ssaCcTransInst, nextVarRename, preAllocConventionsHOL,
+          everyStackVarHOL, callArgConventionHOL, instArgConventionExact,
+          HolInst.ofWordLangInst, HolArith.ofWordLangArith, HolRegImm.ofWordRegImm]
+  all_goals
+    try
+      cases ‹WordLangArith (BitVec width)› <;>
+        simp_all [ssaCcTransInst, nextVarRename, preAllocConventionsHOL,
+          everyStackVarHOL, callArgConventionHOL, instArgConventionExact,
+          HolInst.ofWordLangInst, HolArith.ofWordLangArith, HolRegImm.ofWordRegImm]
+  all_goals
+    try grind
 
 end Flapjack.WordAlloc

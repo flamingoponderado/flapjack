@@ -37,6 +37,20 @@ same cardinality and exposes the same data, matching the repo convention of
 modeling HOL word types with `BitVec`. -/
 abbrev HolChar := BitVec 8
 
+/-- Exact port of HOL `isLower` (`HOL/src/string/stringScript.sml:78`): the
+    character code lies between `#"a"` and `#"z"`. -/
+@[hol "HOL/src/string/stringScript.sml" "isLower_def"]
+def isLowerChar (c : HolChar) : Bool := 97 ≤ c.toNat && c.toNat ≤ 122
+
+/-- Exact port of HOL `isUpper` (`HOL/src/string/stringScript.sml:82`): the
+    character code lies between `#"A"` and `#"Z"`. -/
+@[hol "HOL/src/string/stringScript.sml" "isUpper_def"]
+def isUpperChar (c : HolChar) : Bool := 65 ≤ c.toNat && c.toNat ≤ 90
+
+/-- Exact port of HOL `isAlpha` (`HOL/src/string/stringScript.sml:86`). -/
+@[hol "HOL/src/string/stringScript.sml" "isAlpha_def"]
+def isAlphaChar (c : HolChar) : Bool := isLowerChar c || isUpperChar c
+
 /-- Exact port of HOL `Datatype: mlstring = implode string`
     (`cakeml/basis/pure/mlstringScript.sml:19-21`).
 

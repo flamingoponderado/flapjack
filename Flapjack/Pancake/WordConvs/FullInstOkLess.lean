@@ -10,8 +10,10 @@ open Flapjack.Compiler.Encoders.Asm
 /-- Entire original full_inst_ok_less program lifting at exact positive-word
 and assembler-configuration carriers. Instruction validity uses reviewed exact
 HolInst conversion; ShareInst uses precisely the source four/two/remaining memop
-partition and exact address extraction. Recursive clauses are shared with the
-untagged compatibility wrapper through policy-parameterized infrastructure.
+partition and exact address extraction. The recursive traversal is the shared
+policy-parameterized `fullInstOkLessWith` (Flapjack infrastructure with no HOL
+counterpart of its own); the tagged definition supplies the exact instruction
+and address policies.
 The original backend defines this guard in semantics/wordConvsScript.sml and
 uses it in proofs, rather than invoking it from executable compiler passes.
 Native WordToStack naming and assembler-convention theorems use this exact

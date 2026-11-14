@@ -296,15 +296,15 @@ returning `(eid, shape)` for each `ExnDecl` and dropping
 uses `ShapeHOL`, so this is an exact word-indexed port (the production
 `exceptionEntries` uses Lean `String` and monomorphic `Shape`).
 
-`compileProgTopHOLWithMetadataOfExact` calls
-`compileProgTopHOLProductionExact` (`PanToCrep/CompileProg.lean`), which
-constructs the exception map with `panToCrepGetEidsFromDeclsOfExactHOL`, whose
-body calls this tagged `exceptionsHOL` (`PanToCrep/Compile.lean`). The
-byte-range premise is what makes the `DeclHOL` codec total for names and shapes
-on this route; the helper's equality theorem proves it preserves the prior
-exception map. Keep this distinction explicit: that route executes
-`exceptionsHOL`, while the
-general compatibility context helpers remain String-backed. -/
+The executed pan-to-crep route reaches this definition through
+`compileProgDeclsHOLW` → `compileToCrepExactHOLW` →
+`getEidsFromDeclsHOL` (`PanToCrep/CompileExact.lean`,
+`PanToCrep/ContextExact.lean`), whose `getEidsEntriesHOL` body calls this
+tagged `exceptionsHOL`. The byte-range premise is what makes the `DeclHOL`
+codec total for names and shapes on this route; the helper's equality theorem
+proves it preserves the prior exception map. Keep this distinction explicit:
+that route executes `exceptionsHOL`, while the general compatibility context
+helpers remain String-backed. -/
 @[hol "cakeml/pancake/panLangScript.sml" "exceptions_def"]
 def exceptionsHOL {width : Nat} [NeZero width] :
     List (DeclHOL width) → List (MlS × ShapeHOL)
