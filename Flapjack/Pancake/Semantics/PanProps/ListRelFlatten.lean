@@ -245,8 +245,7 @@ theorem listRelFlattenWithShapeFlookupHOL {α : Type} [DecidableEq α]
   have hvalues : names.length = sizeOfShapeHOL (.comb shapes) := hnames.trans hsize.symm
   have hnshapes : n < shapes.length := by omega
   have hnBound : n < (withShapeHOL shapes names).length := by
-    rw [withShapeHOLLength]
-    omega
+    simpa [withShapeHOLLength] using hnshapes
   rw [elHOL_eq_getElem (withShapeHOL shapes names) n hnBound] at hgroup hn'
   have hgroupSize : sizeOfShapeHOL (shapes[n]'hnshapes) = (flattenHOL value).length :=
     (withShapeHOLGetElemLength shapes names n hvalues hnshapes).symm.trans hgroup
@@ -262,15 +261,12 @@ theorem listRelFlattenWithShapeFlookupHOL {α : Type} [DecidableEq α]
     rw [List.getElem?_take, if_pos hin, List.getElem?_take, if_pos hin,
       List.getElem?_eq_some_iff.mpr ⟨hish, rfl⟩,
       List.getElem?_eq_some_iff.mpr ⟨hians, rfl⟩]
-    simp only [Option.map_some]
-    rw [listRelGetElem hrel hish hians]
+    simp only [Option.map_some, listRelGetElem hrel hish hians]
   have hident : sizeOfShapeHOL (.comb (shapes.take n)) =
       ((args.take n).map flattenHOL).flatten.length := by
-    apply sizeOfShapeHOLCombEqFlattenHOLLengthOfGetElem (shapes.take n) (args.take n)
-    · rw [List.length_take, List.length_take, hlen]
-    · exact hrelTake
-    · intro arg hmem
-      exact hwf arg (List.mem_of_mem_take hmem)
+    exact sizeOfShapeHOLCombEqFlattenHOLLengthOfGetElem (shapes.take n) (args.take n)
+      (by rw [List.length_take, List.length_take, hlen]) hrelTake
+      (fun arg hmem => hwf arg (List.mem_of_mem_take hmem))
   have hboundSize : sizeOfShapeHOL (.comb (shapes.take n)) + n' <
       sizeOfShapeHOL (.comb shapes) := by
     have hsplit := sizeOfShapeHOL_comb_append (shapes.take n) (shapes.drop n)
@@ -282,28 +278,25 @@ theorem listRelFlattenWithShapeFlookupHOL {α : Type} [DecidableEq α]
     exact hboundSize
   have hbound' : sizeOfShapeHOL (.comb (shapes.take n)) + n' <
       (args.map flattenHOL).flatten.length := by
-    rw [← hnames]
-    exact hbound
+    simpa [hnames] using hbound
   have hwfShapes : ∀ shape, shape ∈ shapes → isWfShapeNilHOL shape = true := by
     intro shape hmem
     obtain ⟨i, hi, hix⟩ := List.getElem_of_mem hmem
     have hians : i < args.length := by omega
-    have hval := hwf (args[i]'hians) (List.getElem_mem hians)
-    have hbridge := isWfShapeExactHOL_shapeOfHOLExact_eq_isWfShapeValueHOLExact_nil
-      ([] : StructContextExact) rfl (args[i]'hians)
-    have hshape := listRelGetElem hrel hi hians
-    rw [← hix, hshape]
-    simpa [isWfShapeNilHOL] using hbridge.trans hval
+    rw [← hix, listRelGetElem hrel hi hians]
+    simpa [isWfShapeNilHOL] using
+      (isWfShapeExactHOL_shapeOfHOLExact_eq_isWfShapeValueHOLExact_nil
+        ([] : StructContextExact) rfl (args[i]'hians)).trans
+        (hwf (args[i]'hians) (List.getElem_mem hians))
   have hgroupElem :
       ((withShapeHOL shapes names)[n]'(by
                                         rw [withShapeHOLLength]
                                         omega))[n']'hn' =
         names[sizeOfShapeHOL (.comb (shapes.take n)) + n']'hbound := by
     have hstep := elElWithShapeHOL shapes names n n'
-      ⟨hvalues, hnshapes, (by
-        rw [elHOL_eq_getElem shapes n hnshapes]
-        rw [hgroupSize]
-        exact hn'val), hwfShapes⟩
+      ⟨hvalues, hnshapes, by
+        rw [elHOL_eq_getElem shapes n hnshapes, hgroupSize]
+        exact hn'val, hwfShapes⟩
     rw [hstep]
     congr 1
     omega
@@ -311,28 +304,15 @@ theorem listRelFlattenWithShapeFlookupHOL {α : Type} [DecidableEq α]
       sizeOfShapeHOL (.comb (shapes.take n)) + n']? = (flattenHOL value)[n']? := by
     rw [hident, List.length_flatten, List.map_take,
       getElem?_flatten_take_sum (l := args.map flattenHOL) (n := n) (n' := n')
-        (by
-          rw [List.length_map]
-          exact hn)
-        (by
-          rw [List.getElem_map, hget]
-          exact hn'val)]
+        (by rw [List.length_map]; exact hn) (by rw [List.getElem_map, hget]; exact hn'val)]
     rw [List.getElem_map, hget]
   have hflatElem : ((args.map flattenHOL).flatten)[
       sizeOfShapeHOL (.comb (shapes.take n)) + n']'hbound' =
       (flattenHOL value)[n']'(by
                                rw [← hgroup]
                                exact hn') := by
-    have hsome : ((args.map flattenHOL).flatten)[
-        sizeOfShapeHOL (.comb (shapes.take n)) + n']? =
-        some ((flattenHOL value)[n']'(by
-                                       rw [← hgroup]
-                                       exact hn')) := by
-      rw [hflat?, List.getElem?_eq_some_iff.mpr ⟨(by
-        rw [← hgroup]
-        exact hn'), rfl⟩]
-    obtain ⟨_, hfe⟩ := List.getElem?_eq_some_iff.mp hsome
-    exact hfe
+    rw [List.getElem?_eq_getElem hbound', List.getElem?_eq_getElem hn'val] at hflat?
+    exact Option.some.inj hflat?
   rw [hgroupElem]
   exact (updateEqZipFlookupExactHOL names HolFiniteMapExact.empty
       (args.map flattenHOL).flatten (sizeOfShapeHOL (.comb (shapes.take n)) + n')
