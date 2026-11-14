@@ -216,7 +216,10 @@ theorem aLookupRel_cons {K A B : Type} (predicate : K → Prop) (key : K) (relat
   · simpa [holALookup, same] using tail query selected
 
 /-- Narrowing observed keys and weakening their value relation preserves
-related lookups, including HOL's independently typed vacuous binders. -/
+related lookups, including HOL's independently typed vacuous binders `y : δ` and
+`z : ε`, which stay explicit as `D` and `E` terms. The `[Nonempty D]`/`[Nonempty E]`
+instances are HOL's type inhabitedness (every HOL type has an element), needed
+only to instantiate those binders. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_mono"]
 theorem aLookupRel_mono {K A B D E : Type} [Nonempty D] [Nonempty E]
     (predicate : K → Prop) (relation : A → B → Prop) (left : List (K × A)) (right : List (K × B))

@@ -10123,6 +10123,22 @@ keeping the variable (an infix `^` for mlstring concatenation is followed by a
 space and is kept). Labels replace an apostrophe with `_prime` so the row
 grammar stays `[A-Za-z][A-Za-z0-9_]*`.
 
+`flat_pattern_proof_typed_probe.out` captures the typed statements of the 133
+distinct HOL names behind the 134 reviewed `flat_patternProofScript.sml` rows
+(task 172): 122 exported theorems and definitions, 7 exported derived theorems
+(`ALOOKUP_FILTER_EQ`, `FILTER_EQ_MONO`, `FILTER_EQ_MONO_TRANS`, `v_rel_l_cases`,
+`naive_pattern_match_correct_inst`, `fold_Boolv`, `do_app_thm`) fetched with
+their own derived statements, the `[local]` theorem `state_rel_IMP_clock`
+parsed from the pinned source, the generated `v_rel_ind`/`v_rel_cases`
+principles of the mutual `Inductive v_rel`, and the local derived `comp_thm`
+replayed from `pattern_compTheory.comp_thm` exactly as the source rewrites it
+(`REWRITE_RULE` of `IS_SOME_EQ_NOT_NONE`, `SIMP_RULE` with `IS_SOME_EXISTS`
+and `PULL_EXISTS`). The mutual `v_rel` itself is captured through its
+`v_rel_rules` theorem. The theory is a default CakeML build target.
+Regenerate with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=flat_pattern_proof_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
 `word_to_word_proof_typed_probe.out` captures the typed statements of the 28
 distinct HOL names behind the 54 reviewed `word_to_wordProofScript.sml` rows
 (task 172): 20 exported theorems and definitions fetched from the theory
