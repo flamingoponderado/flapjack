@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "renumber_code_locs_imp_EVEN",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LocationParity.lean",
+    "lean_name": "renumberCodeLocs_imp_even",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared renumber_imp_even_typed: both conjuncts share the same starting and final locations, retain their original list or expression compilation equality and even-start premises, and conclude evenness of the final location."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "renumber_code_locs_any_dests",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/AnyDests.lean",
     "lean_name": "renumber_code_locs_any_dests",

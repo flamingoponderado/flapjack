@@ -154,4 +154,17 @@ theorem renumberCodeLocs_even :
   · intro n e hn
     simpa [codeLocations_singleton] using evenExpr e n hn
 
+/-- An even starting location produces an even next location. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "renumber_code_locs_imp_EVEN"]
+theorem renumberCodeLocs_imp_even (n next : Nat) (es out : List Exp) (e result : Exp) :
+    (renumberList n es = (next, out) ∧ n % 2 = 0 → next % 2 = 0) ∧
+    (renumber n e = (next, result) ∧ n % 2 = 0 → next % 2 = 0) := by
+  constructor
+  · rintro ⟨run, even⟩
+    have h := (renumberCodeLocs_even.1 n es even).1
+    simpa [run] using h
+  · rintro ⟨run, even⟩
+    have h := (renumberCodeLocs_even.2 n e even).1
+    simpa [run] using h
+
 end Flapjack.Compiler.Backend.ClosNumber

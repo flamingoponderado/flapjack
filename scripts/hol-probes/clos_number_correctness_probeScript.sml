@@ -8,6 +8,7 @@ fun show label th = if null (hyp th) then
   else raise Fail (label ^ " has hypotheses");
 val _ = show "renumber_def_typed=" clos_numberTheory.renumber_code_locs_def;
 val _ = show "renumber_any_dests_typed=" clos_numberProofTheory.renumber_code_locs_any_dests;
+val _ = show "renumber_imp_even_typed=" clos_numberProofTheory.renumber_code_locs_imp_EVEN;
 val _ = show "compile_inc_def_typed=" clos_numberTheory.compile_inc_def;
 val _ = show "make_even_def_typed=" miscTheory.make_even_def;
 val _ = show "even_make_even_typed=" miscTheory.EVEN_make_even;
