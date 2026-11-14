@@ -18,6 +18,13 @@ open Flapjack.Compiler.Backend.BackendProps
 theorem valueRel_bytes (x y : Value) (related : ValueRel x y) : valueToBytes y = valueToBytes x :=
   (simpleValRel_valueToBytes ValueRel x y ⟨valueRelSimple, related⟩).symm
 
+/-- Related values agree on whether they encode any given list of bytes. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "v_rel_IMP_v_to_bytes_lemma"]
+theorem valueRel_bytes_list (x y : Value) (related : ValueRel x y) (bytes : List (BitVec 8)) :
+    (valueToList x = some (bytes.map (fun b => Value.number b.toNat))) ↔
+      (valueToList y = some (bytes.map (fun b => Value.number b.toNat))) := by
+  rw [← valueToBytes_eq_some, ← valueToBytes_eq_some, valueRel_bytes x y related]
+
 /-- Free-variable-related values decode to the same word sequence. -/
 @[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "v_rel_IMP_v_to_words"]
 theorem valueRel_words (x y : Value) (related : ValueRel x y) : valueToWords y = valueToWords x :=

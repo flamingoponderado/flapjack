@@ -14955,6 +14955,14 @@
   "reviewer": "Compared known_bytes_list_replay_typed, replaying the original source-local proof: related full values agree on decoding the arbitrary fixed-width list, with the same hypotheses and iff conclusion."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+  "hol_name": "v_rel_IMP_v_to_bytes_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Install.lean",
+  "lean_name": "valueRel_bytes_list",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local HOL source and bytes_list_typed replay: arbitrary related values agree on whether list decoding yields the mapped word8-to-integer sequence, for every byte list, in both directions. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_knownProofScript.sml",
   "hol_name": "v_rel_IMP_v_to_words_lemma",
   "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Proofs/SimulationDecode.lean",

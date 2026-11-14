@@ -18,6 +18,16 @@ val _ = show "function_rel_typed=" clos_fvsProofTheory.f_rel_def;
 val _ = show "value_rel_typed=" clos_fvsProofTheory.v_rel_rules;
 val _ = show "ref_rel_typed=" clos_fvsProofTheory.ref_rel_rules;
 val _ = show "state_rel_typed=" clos_fvsProofTheory.state_rel_def;
+val bytes_list_replay = Q.prove (
+  `!x y. clos_fvsProof$v_rel x y ==>
+     !ns. (closSem$v_to_list x = SOME (MAP (closSem$Number o $& o (w2n:word8->num)) ns)) <=>
+          (closSem$v_to_list y = SOME (MAP (closSem$Number o $& o (w2n:word8->num)) ns))`,
+  ho_match_mp_tac closSemTheory.v_to_list_ind >> rw [] >>
+  fs [closSemTheory.v_to_list_def] >>
+  Cases_on `tag = cons_tag` >> fs [] >>
+  res_tac >> fs [closSemTheory.case_eq_thms] >>
+  Cases_on `ns` >> fs [] >> eq_tac >> rw [] >> fs [] >> Cases_on `h` >> fs []);
+val _ = show "bytes_list_typed=" bytes_list_replay;
 val words_list_replay = Q.prove (
   `!x y. clos_fvsProof$v_rel x y ==>
      !ns. (closSem$v_to_list x = SOME (MAP closSem$Word64 ns)) <=>
