@@ -85,3 +85,12 @@ val _ = show_thm "evaluate_Constant_replay_typed=" evaluate_Constant_replay;
 val _ = show_thm "evaluate_Cons_nil_typed=" clos_interpProofTheory.evaluate_Cons_nil;
 val _ = show_thm "evaluate_Global_0_typed=" clos_interpProofTheory.evaluate_Global_0;
 val _ = show_thm "v_to_list_list_to_v_typed=" clos_interpProofTheory.v_to_list_list_to_v;
+val _ = show_thm "do_app_oHD_globals_typed=" clos_interpProofTheory.do_app_oHD_globals;
+val list_rel_eq_replay = Q.prove (
+  `∀xs ys. LIST_REL (λv1 v2. v1 = v2) = (λxs ys. xs = ys)`,
+  fs [LIST_REL_eq, SF ETA_ss]);
+val _ = show_thm "list_rel_eq_replay_typed=" list_rel_eq_replay;
+val optrel_eq_replay = Q.prove (
+  `OPTREL (λv1 v2. v1 = v2) = (λx y. x = y)`,
+  fs [OPTREL_eq, SF ETA_ss]);
+val _ = show_thm "optrel_eq_replay_typed=" optrel_eq_replay;

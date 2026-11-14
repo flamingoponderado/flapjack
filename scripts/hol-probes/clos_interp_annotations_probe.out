@@ -28,3 +28,6 @@ evaluate_Constant_replay_typed=evaluate ([Op (t :tra) (BlockOp (Constant (c :con
 evaluate_Cons_nil_typed=evaluate ([Op (t :tra) (BlockOp (Cons (n :num) :block_op)) ([] :closLang$exp list)],(env :v list),(s :(α, β) state)) = ((Rval [Block n ([] :v list)] :(v list, v) result),s)
 evaluate_Global_0_typed=state_rel (s :(α, β) state) (t :(α, β) state) ⇒ evaluate ([Op (tr :tra) (GlobOp (Global (0 :num))) ([] :closLang$exp list)],(env :v list),t with clock := (k :num)) = ((Rval [(Closure (NONE :num option) ([] :v list) ([] :v list) (1 :num) clos_interpreter :v)] :(v list, v) result),t with clock := k)
 v_to_list_list_to_v_typed=∀(a :v list). v_to_list (list_to_v a) = SOME a
+do_app_oHD_globals_typed=(do_app (p :closLang$op) (vs :v list) (s1 :(α, β) state) :(v # (α, β) state, v) result) = (Rval ((v :v),(s2 :(α, β) state)) :(v # (α, β) state, v) result) ⇒ oHD s1.globals = SOME (SOME (x :v)) ⇒ oHD s2.globals = SOME (SOME x)
+list_rel_eq_replay_typed=∀(xs :α) (ys :β). LIST_REL (λ(v1 :γ) (v2 :γ). v1 = v2) = (λ(xs :γ list) (ys :γ list). xs = ys)
+optrel_eq_replay_typed=OPTREL (λ(v1 :α) (v2 :α). v1 = v2) = (λ(x :α option) (y :α option). x = y)

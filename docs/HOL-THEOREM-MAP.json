@@ -1,6 +1,32 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "LIST_REL_eq'",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/PrimitiveRelation.lean",
+    "lean_name": "listRel_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the closed list_rel_eq_replay_typed, including full function equality and the two unused binders with types independently quantified from each other and from the list element type. Independently replayed the local HOL proof. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "OPTREL_eq'",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/PrimitiveRelation.lean",
+    "lean_name": "optRel_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the closed optrel_eq_replay_typed, full function equality and all option cases. Independently replayed the local HOL proof. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "do_app_oHD_globals",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/PrimitiveRelation.lean",
+    "lean_name": "doApp_firstGlobal",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared do_app_oHD_globals_typed, the ordered successful primitive and present-head premises, arbitrary operation and values, unchanged initialized global head, and all primitive cases. Canonical refs and code fields have the local roundtrip witness. Primitive dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8; source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
     "hol_name": "evaluate_Constant",
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/EvaluateBasic.lean",
     "lean_name": "evaluate_constant",

@@ -1,6 +1,8 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosInterp.Proofs.InsertionCorrect
+public import Flapjack.Misc.Option.Rel
+public import Mathlib.Data.List.Forall2
 
 @[expose] public section
 
@@ -8,6 +10,31 @@ public import Flapjack.Compiler.Backend.ClosInterp.Proofs.InsertionCorrect
 The evaluator and state carriers remain pending HOL correspondence review. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL
+
+/-- Equality lifted to lists is equality of lists, independently of the two
+unused parameters in the original local theorem. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "LIST_REL_eq'"]
+theorem listRel_eq {A B V : Type} :
+    ∀ (_xs : A) (_ys : B),
+      List.Forall₂ (fun v1 v2 : V => v1 = v2) = (fun xs ys : List V => xs = ys) := by
+  intro _ _
+  exact List.forall₂_eq_eq_eq
+
+/-- Equality lifted to optional values is equality of optional values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "OPTREL_eq'"]
+theorem optRel_eq {V : Type} :
+    Flapjack.optionRel (fun v1 v2 : V => v1 = v2) = (fun x y : Option V => x = y) := by
+  funext x y
+  apply propext
+  cases x <;> cases y <;> simp [Flapjack.optionRel]
+
+namespace PrimitivePort
+/-- The closure state uses the canonical finite-support map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end PrimitivePort
 
 /-- Replace compiler fields in an optional successful primitive result. -/
 def replaceCompilerOption {C F : Type} (compiler : ClosSem.Compiler C) (oracle : ClosSem.CompileOracle C)
@@ -249,10 +276,12 @@ theorem applyMemory_globals {C F : Type} (op : ClosLang.MemOp) (args : List Clos
   all_goals aesop
 
 /-- An ordinary successful primitive preserves an initialized first global. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "do_app_oHD_globals"
+  (fmap_as_finite_support := [refs, code])]
 theorem doApp_firstGlobal {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
     (state next : ClosSem.State C F) (value installed : ClosSem.Value)
-    (present : state.globals.head? = some (some installed))
-    (run : ClosSem.doApp op args state = .val (value, next)) :
+    (run : ClosSem.doApp op args state = .val (value, next))
+    (present : state.globals.head? = some (some installed)) :
     next.globals.head? = some (some installed) := by
   cases op with
   | globOp operation =>
@@ -316,9 +345,9 @@ theorem doApp_stateRel {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Valu
     rcases run with ⟨rfl, rfl⟩
     have fields := doApp_compilerFields op args target targetFinal targetValue targetRun
     have slot := doApp_firstGlobal op args target targetFinal targetValue
-      (.closure none [] [] 1 closInterpreter) (by
+      (.closure none [] [] 1 closInterpreter) targetRun (by
         rw [← related.1.2.2.2.2.2.2.2.1]
-        exact related.2) targetRun
+        exact related.2)
     rcases fields with ⟨compileEq, oracleEq, codeEq, maxEq⟩
     rcases related with ⟨⟨safe, sourceCode, targetCode, oldMaxEq, positive, clockEq,
       ffiEq, globalsEq, refsEq, compilerEq, oracleRel⟩, installed⟩
