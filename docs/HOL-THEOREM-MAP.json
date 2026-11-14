@@ -467,6 +467,24 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "remove_ticks_exps_NIL",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksRelation.lean",
+    "lean_name": "removeTicksListNil",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL theorem comparison: the fixed BVI expression-list empty case equals the empty list."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "evaluate_inline",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/EvaluateInduction.lean",
+    "lean_name": "evaluate_inline",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL theorem comparison: all seven binders and original relation, expression-list relation, source evaluation and non-type-error premises imply the full existential target evaluation with the same result and final state relation. Source states carry cache paired with C while target states carry C; F is independent. All original expression and state relation clauses and optional-handler cases were compared. BVI refs use the canonical finite-support map with a same-module roundtrip; code remains a sparse tree. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8). The probe captures the original exported theorem, not a replay of its suspended proof."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "remove_state_rel_def",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksRelation.lean",
     "lean_name": "RemoveStateRel",

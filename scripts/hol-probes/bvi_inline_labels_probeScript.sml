@@ -299,3 +299,7 @@ val remove_state_rel_find_code_eq_replay = Q.prove
   >> gvs []);
 val _ = show "remove_state_rel_find_code_eq_replay_typed" remove_state_rel_find_code_eq_replay;
 val _ = show "remove_state_rel_def_typed" bvi_inlineProofTheory.remove_state_rel_def;
+
+(* Original exported empty-list and complete inliner simulation theorems. *)
+val _ = show "remove_ticks_exps_NIL_typed" bvi_inlineProofTheory.remove_ticks_exps_NIL;
+val _ = show "evaluate_inline_typed" bvi_inlineProofTheory.evaluate_inline;

@@ -64,6 +64,11 @@ def RemoveStateRel {C F : Type} (source target : BviState C F) : Prop :=
   target.code = sptMap (fun entry => (entry.1, removeTicksSource entry.2)) source.code ∧
   target.compileOracle = (removeTicksCo ∘ source.compileOracle) ∧ source.compile = removeTicksCc target.compile
 
+/-- Removing ticks from an empty expression list leaves it empty. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "remove_ticks_exps_NIL"]
+theorem removeTicksListNil : removeTicksListSource [] = [] := by
+  simp [removeTicksListSource]
+
 /-- Flapjack infrastructure: equal clock replacement preserves tick-cleanup
 state relatedness. -/
 theorem removeStateRel_with_clock {C F : Type} (source target : BviState C F)

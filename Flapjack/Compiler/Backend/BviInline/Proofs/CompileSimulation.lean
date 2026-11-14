@@ -76,10 +76,9 @@ theorem evaluate_inline_compile {C F : Type} (program : List (Nat × Nat × Bvi.
       initialState ffi (sptFromAList output) (stateCo inlineAllSource oracle) compiler clock) =
         (result, targetNext) ∧ InStateRel sourceNext targetNext := by
   obtain ⟨run, oracleCache, distinct, evaluation, notType⟩ := premises
-  apply EvaluateCases.evaluate_inline_result _ _ _ _ sourceNext _ result
-    (inline_initial_state_rel program cache output oracle ffi compiler clock ⟨run, oracleCache, distinct⟩)
-    _ evaluation notType
-  exact .cons (expRel_refl _ _) .nil
+  apply EvaluateCases.evaluate_inline _ _ _ result sourceNext _ _
+  exact ⟨inline_initial_state_rel program cache output oracle ffi compiler clock ⟨run, oracleCache, distinct⟩,
+    .cons (expRel_refl _ _) .nil, evaluation, notType⟩
 
 
 end Flapjack.Compiler.Backend.BviInline
