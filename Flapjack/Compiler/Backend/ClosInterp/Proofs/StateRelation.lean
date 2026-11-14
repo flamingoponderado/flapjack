@@ -31,6 +31,16 @@ def StateRel {C F : Type} (source target : ClosSem.State C F) : Prop :=
   StateRel1 source target ∧ source.globals.head? =
     some (some (.closure none [] [] 1 closInterpreter))
 
+/-- States related before installing the interpreter differ only in their
+compiler callback and oracle. -/
+theorem stateRel1_replaceCompiler {C F : Type} (source target : ClosSem.State C F)
+    (related : StateRel1 source target) :
+    source = { target with compile := source.compile, compileOracle := source.compileOracle } := by
+  rcases related with ⟨_, sourceCode, targetCode, maxEq, _, clockEq, ffiEq, globalsEq, refsEq, _, _⟩
+  cases source
+  cases target
+  simp_all
+
 /-- Giving both related states the same clock preserves the relation. -/
 theorem stateRel_withClock {C F : Type} {source target : ClosSem.State C F}
     (related : StateRel source target) (clock : Nat) :

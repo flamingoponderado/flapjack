@@ -301,21 +301,12 @@ theorem doApp_firstGlobal {C F : Type} (op : ClosLang.Op) (args : List ClosSem.V
     all_goals aesop
   | label | install => simp [ClosSem.doApp] at run
 
-/-- Related states differ only in the compiler callback and oracle. -/
-theorem stateRel_replaceCompiler {C F : Type} (source target : ClosSem.State C F)
-    (related : StateRel source target) :
-    source = { target with compile := source.compile, compileOracle := source.compileOracle } := by
-  rcases related.1 with ⟨_, sourceCode, targetCode, maxEq, _, clockEq, ffiEq, globalsEq, refsEq, _, _⟩
-  cases source
-  cases target
-  simp_all
-
 /-- A successful ordinary primitive preserves the interpreter state relation. -/
 theorem doApp_stateRel {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
     (source target sourceFinal : ClosSem.State C F) (value : ClosSem.Value)
     (related : StateRel source target) (run : ClosSem.doApp op args source = .val (value, sourceFinal)) :
     ∃ targetFinal, ClosSem.doApp op args target = .val (value, targetFinal) ∧ StateRel sourceFinal targetFinal := by
-  have sourceEq := stateRel_replaceCompiler source target related
+  have sourceEq := stateRel1_replaceCompiler source target related.1
   rw [sourceEq, doApp_replaceCompiler] at run
   cases targetRun : ClosSem.doApp op args target with
   | err error => simp [targetRun, replaceCompilerResult] at run
@@ -344,9 +335,9 @@ theorem doApp_stateRel {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Valu
 /-- Ordinary primitive errors agree in related states. -/
 theorem doApp_error_stateRel {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
     (source target : ClosSem.State C F) (error : ErrorResult ClosSem.Value)
-    (related : StateRel source target) (run : ClosSem.doApp op args source = .err error) :
+    (related : StateRel1 source target) (run : ClosSem.doApp op args source = .err error) :
     ClosSem.doApp op args target = .err error := by
-  have sourceEq := stateRel_replaceCompiler source target related
+  have sourceEq := stateRel1_replaceCompiler source target related
   rw [sourceEq, doApp_replaceCompiler] at run
   cases targetRun : ClosSem.doApp op args target with
   | err targetError =>
@@ -395,7 +386,7 @@ theorem evaluate_ordinaryOp_simulation_step {C F : Type} (trace : BackendCommon.
       | err error =>
         simp [appRun] at run
         rcases run with ⟨rfl, rfl⟩
-        have targetApp := doApp_error_stateRel op values.reverse sourceMid targetMid error midRel appRun
+        have targetApp := doApp_error_stateRel op values.reverse sourceMid targetMid error midRel.1 appRun
         refine ⟨extra, targetMid, ?_, midRel⟩
         rw [ClosSem.evaluate_ordinaryOp_eq trace op args env _ notInstall notForce, targetArgs]
         simp [targetApp]

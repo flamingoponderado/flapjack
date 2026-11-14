@@ -38,7 +38,7 @@ theorem attachInterpreter_initial_observation {C F : Type} (expressions : List C
       attachInterpreter_initial_simulation expressions ffi maxApp clock oracle compiler sourceFinal result needs oracleSafe positive run notTypeError
     refine ⟨extra, targetFinal, ?_, ?_⟩
     · simpa [ClosSem.initialState] using targetRun
-    · rw [stateRel_replaceCompiler sourceFinal targetFinal related]
+    · rw [stateRel1_replaceCompiler sourceFinal targetFinal related.1]
 
 /-- Interpreter attachment preserves the proof-side closure observations,
 including divergence, when the source does not fail. The hypotheses and
