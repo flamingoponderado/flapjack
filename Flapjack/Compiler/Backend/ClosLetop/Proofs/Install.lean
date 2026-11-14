@@ -67,14 +67,6 @@ theorem oracle_entry {C F : Type} (s t : State C F) (related : StateRel s t) (n 
     rw [oracle]
     simp [pureCo, compileInc, entry]
 
-/-- Corresponding shifted oracles have the same compiler configuration. This
-is Flapjack infrastructure for the installation proof. -/
-theorem shifted_config {C F : Type} (s t : State C F) (related : StateRel s t) :
-    (Flapjack.holShiftSeq 1 s.compileOracle 0).1 =
-      (Flapjack.holShiftSeq 1 t.compileOracle 0).1 := by
-  obtain ⟨config, program, left, right⟩ := oracle_entry s t related 1
-  simp [Flapjack.holShiftSeq, left, right]
-
 /-- Installation outcomes preserve exceptions or relate nonempty programs,
 along with their resulting states. This is Flapjack infrastructure for the
 installation proof. -/
@@ -104,7 +96,10 @@ theorem install_pair_related {C F : Type} (s t : State C F)
   have callback : s.compile config (program, []) = t.compile config (compileList program, []) := by
     rw [states.2.2.2.2.2.2.2.2.2.1, compileIncSource_eq]
     rfl
-  have configs := shifted_config s t states
+  have configs : (Flapjack.holShiftSeq 1 s.compileOracle 0).1 =
+      (Flapjack.holShiftSeq 1 t.compileOracle 0).1 := by
+    rw [states.2.2.2.2.2.2.2.2.2.2]
+    rfl
   cases bytesRun : valueToBytes a with
   | none =>
     have targetBytes : valueToBytes x = none := bytesEq.trans bytesRun
