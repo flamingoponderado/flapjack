@@ -12,23 +12,6 @@ public import Aesop
 namespace Flapjack.Compiler.Backend.BvlHandle
 open Bvl BvlToBvi
 
-/-- The executable short-circuit fold computes the source list raise test. -/
-theorem foldRaiseBounded_eq (fuel : Nat) (xs : List Exp) (init : Bool) :
-    xs.foldlM (fun b e => if b then pure true else canRaiseBounded fuel e) init =
-      some (init || canRaiseList xs) := by
-  induction xs generalizing init with
-  | nil => cases init <;> simp [canRaiseList]
-  | cons e es ih =>
-    simp only [canRaiseBounded_eq] at ih ⊢
-    cases init with
-    | true =>
-      simp only [List.foldlM_cons, ↓reduceIte, bind, Option.bind]
-      simpa [canRaiseList] using ih true
-    | false =>
-      simp only [List.foldlM_cons, Bool.false_eq_true, ↓reduceIte,
-        bind, Option.bind]
-      simpa [canRaiseList] using ih (canRaise e)
-
 private theorem fallback_eq (fuel : Nat)
     (ih : ∀ expression result, simplifyFuel fuel expression = some result → result = handleSimp expression)
     (body handler : Exp) (depth : Nat) (result : Exp)

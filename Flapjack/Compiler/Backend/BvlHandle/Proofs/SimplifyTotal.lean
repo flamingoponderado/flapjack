@@ -11,18 +11,22 @@ Flapjack infrastructure, not HOL pass-correctness ports. -/
 namespace Flapjack.Compiler.Backend.BvlHandle
 open Bvl BvlToBvi
 
-private theorem foldRaise_succeeds (xs : List Exp) (fuel : Nat) (init : Bool) :
-    ∃ result, xs.foldlM (fun found e => if found then pure true else canRaiseBounded fuel e) init = some result := by
+/-- The executable short-circuit fold computes the source list raise test. -/
+theorem foldRaiseBounded_eq (fuel : Nat) (xs : List Exp) (init : Bool) :
+    xs.foldlM (fun b e => if b then pure true else canRaiseBounded fuel e) init =
+      some (init || canRaiseList xs) := by
   induction xs generalizing init with
-  | nil => exact ⟨init, rfl⟩
-  | cons x xs ih =>
+  | nil => cases init <;> simp [canRaiseList]
+  | cons e es ih =>
+    simp only [canRaiseBounded_eq] at ih ⊢
     cases init with
     | true =>
-      obtain ⟨result, hr⟩ := ih true
-      exact ⟨result, by simpa using hr⟩
+      simp only [List.foldlM_cons, ↓reduceIte, bind, Option.bind]
+      simpa [canRaiseList] using ih true
     | false =>
-      obtain ⟨result, hr⟩ := ih (canRaise x)
-      exact ⟨result, by simpa [canRaiseBounded_eq] using hr⟩
+      simp only [List.foldlM_cons, Bool.false_eq_true, ↓reduceIte,
+        bind, Option.bind]
+      simpa [canRaiseList] using ih (canRaise e)
 
 mutual
 /-- Handler simplification succeeds under a structural fuel bound. -/
@@ -92,12 +96,12 @@ theorem makeHandleFuel_succeeds (fuel : Nat) (x handler : Exp) (depth : Nat)
     | «let» xs body =>
       have bb : expBudget body + expBudget handler + 1 < fuel := by simp_all [expBudget]; omega
       have bl : listBudget xs < fuel := by simp_all [expBudget]; omega
-      obtain ⟨raises, hr⟩ := foldRaise_succeeds xs fuel false
-      simp only [Option.pure_def] at hr
+      have hr := foldRaiseBounded_eq fuel xs false
+      simp only [Bool.false_or, Option.pure_def] at hr
       obtain ⟨ys, hy⟩ := mapM_succeeds xs (simplifyFuel fuel) (by
         intro e he; apply simplifyFuel_succeeds; have := member_budget_lt xs e he; omega)
       obtain ⟨body', hbody⟩ := makeHandleFuel_succeeds fuel body handler (depth + xs.length) bb
-      cases raises <;> exact ⟨_, by simp [makeHandleFuel, hx, hh, ha, hr, hy, hbody]; rfl⟩
+      cases raises : canRaiseList xs <;> exact ⟨_, by simp [makeHandleFuel, hx, hh, ha, hr, raises, hy, hbody]; rfl⟩
     | ifThenElse cond yes no =>
       have bc : expBudget cond < fuel := by simp_all [expBudget]; omega
       have by' : expBudget yes < fuel := by simp_all [expBudget]; omega
