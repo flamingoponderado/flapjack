@@ -167,3 +167,24 @@ load "clos_knownTheory";
 val _ = show "known_compile_typed" clos_knownTheory.compile_def;
 val _ = show "known_static_conf_typed" clos_knownTheory.known_static_conf_def;
 val _ = show "known_compile_inc_typed" clos_knownTheory.known_compile_inc_def;
+local
+  open closPropsTheory
+in
+val var_list_code_locs_replay = prove(
+  ``!k l x. var_list k l x ==> code_locs l = []``,
+  ho_match_mp_tac var_list_ind
+  \\ rw [] \\ fs [var_list_def, code_locs_def]
+  \\ rveq \\ fs []
+  \\ once_rewrite_tac [code_locs_cons]
+  \\ fs [code_locs_def]);
+val _ = show "var_list_code_locs_replay_typed" var_list_code_locs_replay;
+val var_list_let_op_code_locs_replay = prove(
+  ``!k l x. var_list k (let_op l) x ==> code_locs l = []``,
+  ho_match_mp_tac var_list_ind
+  \\ rw [] \\ fs [var_list_def, code_locs_def]
+  \\ pop_assum mp_tac
+  \\ rename [`_::l`]
+  \\ Cases_on `l` \\ fs [let_op_def, var_list_def, code_locs_def]
+  \\ every_case_tac \\ fs [var_list_def]);
+val _ = show "var_list_let_op_code_locs_replay_typed" var_list_let_op_code_locs_replay;
+end;

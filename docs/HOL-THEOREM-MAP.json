@@ -1,6 +1,22 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+    "hol_name": "var_list_IMP_code_locs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/CodeLocations.lean",
+    "lean_name": "varList_codeLocations",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original local proof and var_list_code_locs_replay_typed: the natural starting index, expression list, independently typed comparison list, variable-list premise and empty code-location conclusion agree. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+    "hol_name": "var_list_let_op_IMP_code_locs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/CodeLocations.lean",
+    "lean_name": "varList_compileSource_codeLocations",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original local proof and var_list_let_op_code_locs_replay_typed: the variable-list premise applies to the source-shaped transformed expression list and the empty code-location conclusion applies to the original list; the comparison-list type remains independent. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
     "hol_name": "state_rel_clocks_eqs",
     "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Relations.lean",
     "lean_name": "state_rel_clocks_eqs",
