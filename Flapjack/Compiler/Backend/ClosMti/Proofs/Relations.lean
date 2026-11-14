@@ -123,6 +123,18 @@ theorem simpleValRel (maxApp : Nat) : ClosProps.simpleValRel (ValueRel maxApp) :
   · intro body arity env args loc x h; cases h; trivial
   · intro index funs env args loc x h; cases h <;> trivial
 
+/-- Related values have identical byte-decoder results. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "v_rel_IMP_v_to_bytes"]
+theorem valueRel_toBytes (maxApp : Nat) (x y : Value) (related : ValueRel maxApp x y) :
+    valueToBytes y = valueToBytes x :=
+  (ClosProps.simpleValRel_valueToBytes (ValueRel maxApp) x y ⟨simpleValRel maxApp, related⟩).symm
+
+/-- Related values have identical 64-bit word-decoder results. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "v_rel_IMP_v_to_words"]
+theorem valueRel_toWords (maxApp : Nat) (x y : Value) (related : ValueRel maxApp x y) :
+    valueToWords y = valueToWords x :=
+  (ClosProps.simpleValRel_valueToWords x y (ValueRel maxApp) ⟨simpleValRel maxApp, related⟩).symm
+
 /-- A source-related target function has positive arity. -/
 theorem functionRel_target_arity_pos {maxApp : Nat} {source target : Nat × ClosLang.Exp}
     (related : FunctionRel maxApp source target) : 0 < target.1 := by

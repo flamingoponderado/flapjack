@@ -39,11 +39,9 @@ theorem doInstall_nonType_related {C F : Type} (source target : State C F)
       cases rest
       rename_i targetByte targetWord
       have targetBytes : valueToBytes targetByte = some bytes := by
-        rw [← ClosProps.simpleValRel_valueToBytes (ValueRel source.maxApp) byteValue targetByte
-          ⟨simpleValRel source.maxApp, bytesRel⟩, bytesRun]
+        rw [valueRel_toBytes source.maxApp byteValue targetByte bytesRel, bytesRun]
       have targetWords : valueToWords targetWord = some words := by
-        rw [← ClosProps.simpleValRel_valueToWords wordValue targetWord (ValueRel source.maxApp)
-          ⟨simpleValRel source.maxApp, wordsRel⟩, wordsRun]
+        rw [valueRel_toWords source.maxApp wordValue targetWord wordsRel, wordsRun]
       have prior := states
       obtain ⟨safe, sourceCode, targetCode, maxEq, positive, clockEq, ffiEq,
         globals, refs, compilerEq, oracleEq⟩ := prior
@@ -105,11 +103,9 @@ theorem doInstall_typeError_related {C F : Type} (source target : State C F)
       cases rest
       rename_i sourceByte sourceWord
       have sourceBytes : valueToBytes sourceByte = some bytes := by
-        rw [ClosProps.simpleValRel_valueToBytes (ValueRel source.maxApp) sourceByte byteValue
-          ⟨simpleValRel source.maxApp, bytesRel⟩, bytesRun]
+        rw [← valueRel_toBytes source.maxApp sourceByte byteValue bytesRel, bytesRun]
       have sourceWords : valueToWords sourceWord = some words := by
-        rw [ClosProps.simpleValRel_valueToWords sourceWord wordValue (ValueRel source.maxApp)
-          ⟨simpleValRel source.maxApp, wordsRel⟩, wordsRun]
+        rw [← valueRel_toWords source.maxApp sourceWord wordValue wordsRel, wordsRun]
       obtain ⟨safe, _, _, _, _, _, _, _, _, compilerEq, oracleEq⟩ := states
       cases sourceOracle : source.compileOracle 0 with
       | mk sourceConfig program =>

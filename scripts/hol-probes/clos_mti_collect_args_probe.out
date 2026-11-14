@@ -1,4 +1,6 @@
 every_hd_replay_typed=EVERY (P :α -> bool) (l :α list) ∧ l ≠ ([] :α list) ⇒ P (HD l)
+value_rel_to_bytes_replay_typed=v_rel (max_app :num) (x :v) (y :v) ⇒ v_to_bytes y = v_to_bytes x
+value_rel_to_words_replay_typed=v_rel (max_app :num) (x :v) (y :v) ⇒ v_to_words y = v_to_words x
 compile_length_typed=LENGTH (compile (do_mti :bool) (max_app :num) (es :closLang$exp list)) = LENGTH es
 compile_eq_nil_typed=∀(do_mti :bool) (es :closLang$exp list). compile do_mti (max_app :num) es = ([] :closLang$exp list) ⇔ es = ([] :closLang$exp list)
 contains_app_some_compile_typed=∀(do_mti :bool) (es :closLang$exp list). contains_App_SOME (max_app :num) (compile do_mti max_app es) ⇔ contains_App_SOME max_app es

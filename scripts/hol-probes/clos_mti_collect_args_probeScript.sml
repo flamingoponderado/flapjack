@@ -8,6 +8,19 @@ val _ = diminish_srw_ss ["ABBREV"];
 fun bring_fwd_ctors th ty = map ((fn s => Parse.bring_to_front_overload s {Name = s, Thy = th}) o term_to_string) (TypeBase.constructors_of ty);
 val _ = bring_fwd_ctors "closLang" ``:closLang$exp``;
 
+(* Literal replays of local lemmas at clos_mtiProofScript.sml:599-609. *)
+Theorem value_rel_to_bytes_replay:
+  clos_mtiProof$v_rel max_app x y ==> closSem$v_to_bytes y = closSem$v_to_bytes x
+Proof
+  metis_tac [clos_mtiProofTheory.simple_val_rel, closPropsTheory.simple_val_rel_v_to_bytes]
+QED
+
+Theorem value_rel_to_words_replay:
+  clos_mtiProof$v_rel max_app x y ==> closSem$v_to_words y = closSem$v_to_words x
+Proof
+  metis_tac [clos_mtiProofTheory.simple_val_rel, closPropsTheory.simple_val_rel_v_to_words]
+QED
+
 (* Literal replay of the local theorem at clos_mtiProofScript.sml:1432. *)
 Theorem every_hd_replay:
   EVERY P l /\ l <> [] ==> P (HD l)
@@ -162,6 +175,8 @@ fun show label th =
     (print label; print "="; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 val _ = show "every_hd_replay_typed" every_hd_replay;
+val _ = show "value_rel_to_bytes_replay_typed" value_rel_to_bytes_replay;
+val _ = show "value_rel_to_words_replay_typed" value_rel_to_words_replay;
 val _ = show "compile_length_typed" clos_mtiProofTheory.compile_length;
 val _ = show "compile_eq_nil_typed" clos_mtiProofTheory.compile_EQ_NIL;
 val _ = show "contains_app_some_compile_typed" clos_mtiProofTheory.contains_App_SOME_compile;

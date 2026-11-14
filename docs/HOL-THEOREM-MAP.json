@@ -1,6 +1,22 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "v_rel_IMP_v_to_bytes",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
+    "lean_name": "valueRel_toBytes",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Typed literal replay confirms arbitrary max_app and closure values, the original value relation premise, and equality of the full optional byte-decoder outputs in the original order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "v_rel_IMP_v_to_words",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
+    "lean_name": "valueRel_toWords",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Typed literal replay confirms arbitrary max_app and closure values, the original value relation premise, and equality of the full optional 64-bit-word decoder outputs in the original order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "hol_name": "result_rel_Rval2",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
     "lean_name": "resultRel_val_right",
