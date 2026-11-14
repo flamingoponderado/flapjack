@@ -23,6 +23,13 @@ theorem valueRel_bytes (x y : Value) (related : ValueRel x y) : valueToBytes y =
 theorem valueRel_words (x y : Value) (related : ValueRel x y) : valueToWords y = valueToWords x :=
   (simpleValRel_valueToWords x y ValueRel ⟨valueRelSimple, related⟩).symm
 
+/-- Related values agree on whether they encode any given list of words. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "v_rel_IMP_v_to_words_lemma"]
+theorem valueRel_words_list (x y : Value) (related : ValueRel x y) (words : List (BitVec 64)) :
+    (valueToList x = some (words.map Value.word64)) ↔
+      (valueToList y = some (words.map Value.word64)) := by
+  rw [← valueToWords_eq_some, ← valueToWords_eq_some, valueRel_words x y related]
+
 /-- Shifting related compiler oracles equally and setting equal clocks
 preserves the free-variable state relation. -/
 theorem stateRel_shift {C F : Type} (s t : State C F) (shift clock : Nat) (related : StateRel s t) :

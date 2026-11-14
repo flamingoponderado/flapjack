@@ -16628,7 +16628,15 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
-    "hol_name": "lookup_vars_lemma",
+  "hol_name": "v_rel_IMP_v_to_words_lemma",
+  "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Install.lean",
+  "lean_name": "valueRel_words_list",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the local HOL source and words_list_typed replay: arbitrary related values agree on whether list decoding yields the mapped word64 sequence, for every word list, in both directions. Source review and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+  "hol_name": "lookup_vars_lemma",
     "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Evaluate.lean",
     "lean_name": "lookup_vars_lemma",
     "statement_status": "reviewed_exact",
