@@ -482,3 +482,6 @@ val do_app_state_swap_statement =
       Rerr error))``;
 val _ = (print "do_app_state_swap_statement_typed=";
   print_term do_app_state_swap_statement; print "\n");
+
+(* Capture the exported original lookup theorem with inferred types. *)
+val _ = show "inline_all_ALOOKUP_typed" bvi_inlineProofTheory.inline_all_ALOOKUP;

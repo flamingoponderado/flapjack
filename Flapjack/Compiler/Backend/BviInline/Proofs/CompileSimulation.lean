@@ -39,7 +39,9 @@ theorem inline_initial_state_rel {C F : Type} (program : List (Nat × Nat × Bvi
     simp [sptMem, sptDomain, sptLookup] at present
   have range := inlineAllSource_cache_subspt program .ln .ln distinct emptySubset disjoint
   have names := Proofs.inlineAll_mapFst .ln program
-  have codeRelation := inlineAllSource_related program .ln .ln distinct emptySubset disjoint
+  have disjointSet : Disjoint {key | key ∈ program.map Prod.fst}
+      (sptDomain (.ln : Spt (Nat × Bvi.Exp))) :=
+    Set.disjoint_left.mpr (fun key member present => disjoint key present member)
   have outputNames : output.map Prod.fst = program.map Prod.fst := by simpa [run] using names
   have cacheSub : sptSubspt cache (sptFromAList output) := by simpa [run, sptUnion] using range
   have domains : sptDomain (sptFromAList output) = sptDomain (sptFromAList program) := by
@@ -52,10 +54,12 @@ theorem inline_initial_state_rel {C F : Type} (program : List (Nat × Nat × Bvi
   · intro name arity body found
     have association : sptAListLookup name program = some (arity, body) := by
       simpa [initialState, sptLookup_sptFromAList] using found
-    obtain ⟨transformed, outputFound, relation⟩ := codeRelation name arity body association
+    obtain ⟨transformed, outputFound, relation⟩ :=
+      inlineAllALookup program .ln .ln cache output name arity body
+        ⟨run, emptySubset, disjointSet, distinct, association⟩
     refine ⟨transformed, ?_, ?_⟩
-    · simpa [initialState, sptLookup_sptFromAList, run] using outputFound
-    · simpa [initialState, sptUnion, run] using relation
+    · simpa [initialState, sptLookup_sptFromAList] using outputFound
+    · simpa [initialState, sptUnion] using relation
 
 /-- Initial-call execution through inlining preserves any result other than
     a type error and produces related final states. The evaluator inherits

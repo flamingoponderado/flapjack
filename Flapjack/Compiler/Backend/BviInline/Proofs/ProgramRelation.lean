@@ -68,14 +68,23 @@ theorem inlineAllSource_related_of_output (program : List (Nat × Nat × Bvi.Exp
       obtain ⟨transformed, found, related⟩ := ih cache' nextSubset tailEntries key count original tailLookup
       exact ⟨transformed, by simpa [sptAListLookup, same] using found, related⟩
 
-/-- Flapjack infrastructure: inlining distinct labels fresh in the old code
-preserves each source entry as a related entry in the combined target code. -/
-theorem inlineAllSource_related (program : List (Nat × Nat × Bvi.Exp))
-    (cache base : Spt (Nat × Bvi.Exp)) (distinct : (program.map Prod.fst).Nodup)
-    (subset : sptSubspt cache base) (disjoint : ∀ key, sptMem key base → key ∉ program.map Prod.fst)
-    (name arity : Nat) (body : Bvi.Exp) (lookup : sptAListLookup name program = some (arity, body)) :
-    ∃ transformed, sptAListLookup name (inlineAllSource cache program).2 = some (arity, transformed) ∧
-      ExpRel (sptUnion base (sptFromAList (inlineAllSource cache program).2)) body transformed := by
+/-- Inlining a distinct program with labels fresh in the old target preserves
+each association-list lookup as a related output lookup. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "inline_all_ALOOKUP"]
+theorem inlineAllALookup (program : List (Nat × Nat × Bvi.Exp))
+    (cache base finalCache : Spt (Nat × Bvi.Exp)) (output : List (Nat × Nat × Bvi.Exp))
+    (name arity : Nat) (body : Bvi.Exp)
+    (premises : inlineAllSource cache program = (finalCache, output) ∧
+      sptSubspt cache base ∧ Disjoint {key | key ∈ program.map Prod.fst} (sptDomain base) ∧
+      (program.map Prod.fst).Nodup ∧ sptAListLookup name program = some (arity, body)) :
+    ∃ transformed, sptAListLookup name output = some (arity, transformed) ∧
+      ExpRel (sptUnion base (sptFromAList output)) body transformed := by
+  obtain ⟨compiled, subset, disjoint, distinct, lookup⟩ := premises
+  have outEq : (inlineAllSource cache program).2 = output := congrArg Prod.snd compiled
+  subst output
+  have fresh : ∀ key, sptMem key base → key ∉ program.map Prod.fst := by
+    intro key present member
+    exact Set.disjoint_left.mp disjoint member present
   let output := (inlineAllSource cache program).2
   let target := sptUnion base (sptFromAList output)
   have targetSubset : sptSubspt cache target :=
@@ -92,7 +101,7 @@ theorem inlineAllSource_related (program : List (Nat × Nat × Bvi.Exp))
     have absent : sptLookup key base = none := by
       cases found : sptLookup key base with
       | none => rfl
-      | some value => exact False.elim (disjoint key ((sptMem_iff_lookup key base).2 ⟨value, found⟩) inProgram)
+      | some value => exact False.elim (fresh key ((sptMem_iff_lookup key base).2 ⟨value, found⟩) inProgram)
     dsimp [target]
     rw [sptLookup_sptUnion, absent]
     exact BviTailrec.sptFromAList_lookup_of_mem output key (a, b) outputDistinct member
@@ -150,7 +159,9 @@ theorem inlineAllLookupUnion (cache : Spt (Nat × Bvi.Exp))
     have listFound : sptAListLookup key program = some (arity, body) := by
       simpa [old, sptLookup_sptFromAList] using found
     obtain ⟨transformed, outputFound, related⟩ :=
-      inlineAllSource_related program cache target distinct subset fresh key arity body listFound
+      inlineAllALookup program cache target (inlineAllSource cache program).1
+        (inlineAllSource cache program).2 key arity body
+        ⟨(Prod.eta _).symm, subset, disjoint, distinct, listFound⟩
     have member : key ∈ program.map Prod.fst := by
       have present := sptAListLookup_mem key program (arity, body) listFound
       exact List.mem_map.mpr ⟨(key, arity, body), present, rfl⟩

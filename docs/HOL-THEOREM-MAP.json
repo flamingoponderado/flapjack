@@ -139341,4 +139341,13 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the full HOL local theorem and inferred-type statement capture (original proof not replayed). Source and target compiler and FFI types are independent; the record update changes the target FFI type to the source FFI type. The success and error branches retain their original one-sided domain conditions and exact outcomes. BVI refs use the canonical finite-support map with a same-module roundtrip. Primitive application inherits reals_as_rational_cuts (SOUNDNESS item 8)."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "inline_all_ALOOKUP",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/ProgramRelation.lean",
+    "lean_name": "inlineAllALookup",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete HOL exported theorem and inferred-type capture: explicit inliner output equation, cache inclusion, disjoint labels, distinctness, source association-list lookup, and related output lookup in the union are retained. Natural-key association-list lookup reads the first matching entry."
+  }
 ]
