@@ -28,8 +28,8 @@ private theorem preserveRelated {C F : Type} (limit : Nat)
   simpa [inStateRel, runtimeFrame, code, compiler, oracle] using related.2.2.2.2
 
 /-- Non-install primitives preserve the inlining relation, including errors.
-The installation case of the original local theorem remains open; this
-restricted helper is Flapjack infrastructure and is not tagged as that theorem. -/
+This Flapjack-specific helper supports the full primitive simulation, whose
+installation case is proved separately in `InstallApply`. -/
 theorem inDoApp_nonInstall {C F : Type} (limit : Nat)
     (source : State (Spt (Nat × Bvl.Exp) × C) F) (target : State C F)
     (related : inStateRel limit source target) (op : ClosLang.Op) (args : List BvlSem.Value)

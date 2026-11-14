@@ -129572,6 +129572,15 @@
     "reviewer": "Compared the typed source in bvl_inline_state_rel_probe.out: configuration, program label and arity are independent type variables. The adapter keeps configuration, labels and arities and maps each body using the checked singleton tick-removal equivalence."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
+    "hol_name": "semantics_remove_ticks",
+    "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/Semantics.lean",
+    "lean_name": "removeTicks_semantics",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete typed original in bvl_inline_proof_shape_probe.out: the same sparse-tree code map, oracle and compiler adapters, independent configuration and FFI types, and fixed callback word widths occur in an unconditional equality of the two whole-program behaviors. The checked singleton equivalence identifies removeTicksSing with HD of remove_ticks on a singleton. The separately reviewed evaluator and semantics record their internal reference-map representation; this theorem has no state binder. Inherits reals_as_rational_cuts through semantic primitives, as documented in SOUNDNESS item 8."
+  },
+  {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml",
   "lean_path": "Flapjack/Compiler/Backend/BvlInline/Proofs/CompileProg.lean",
   "hol_name": "evaluate_compile_prog",

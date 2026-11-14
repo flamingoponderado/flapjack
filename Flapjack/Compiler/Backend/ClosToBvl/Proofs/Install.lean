@@ -395,43 +395,6 @@ theorem install_source_inv {C F : Type} (s next : ClosSem.State C F)
                   simp only [Prod.mk.injEq] at run
                   exact False.elim (noType run.1.symm)
 
-/-- Each indexed output expression comes from compiling the corresponding
-source singleton, and its auxiliary output is installed whenever the final
-accumulator is installed. This supports the new-code part of installation. -/
-theorem compileExps_index_installed (maxApp : Nat) (expressions : List ClosLang.Exp)
-    (aux finalAux : List (Nat × Nat × Bvl.Exp)) (compiled : List Bvl.Exp)
-    (code : Spt (Nat × Bvl.Exp)) (index : Nat) (source : ClosLang.Exp) (target : Bvl.Exp)
-    (run : compileExpsHOL maxApp expressions aux = (compiled, finalAux))
-    (sourceAt : expressions[index]? = some source) (targetAt : compiled[index]? = some target)
-    (installed : codeInstalled finalAux code) :
-    ∃ auxBefore auxAfter, compileExpsHOL maxApp [source] auxBefore = ([target], auxAfter) ∧
-      codeInstalled auxAfter code := by
-  induction expressions generalizing aux finalAux compiled index with
-  | nil => simp at sourceAt
-  | cons first rest ih =>
-    cases firstRun : compileExpHOL maxApp first aux with
-    | mk firstTarget middleAux =>
-      cases restRun : compileExpListHOL maxApp rest middleAux with
-      | mk restTargets lastAux =>
-        have whole : compileExpsHOL maxApp (first :: rest) aux = (firstTarget :: restTargets, lastAux) := by
-          simp [compileExps_eq_list, compileExpListHOL, firstRun, restRun]
-        have equal := run.symm.trans whole
-        cases equal
-        cases index with
-        | zero =>
-          simp only [List.getElem?_cons_zero, Option.some.injEq] at sourceAt targetAt
-          subst source
-          subst target
-          have tailRun : compileExpsHOL maxApp rest middleAux = (restTargets, finalAux) := by
-            simpa [compileExps_eq_list] using restRun
-          have firstInstalled := compileExps_codeInstalled maxApp rest middleAux finalAux restTargets code tailRun installed
-          exact ⟨aux, middleAux, by simp [compileExps_eq_list, compileExpListHOL, firstRun], firstInstalled⟩
-        | succ index =>
-          simp only [List.getElem?_cons_succ] at sourceAt targetAt
-          have tailRun : compileExpsHOL maxApp rest middleAux = (restTargets, finalAux) := by
-            simpa [compileExps_eq_list] using restRun
-          exact ih middleAux finalAux restTargets index tailRun sourceAt targetAt installed
-
 /-- If a compiled program is installed, each source entry resolves at its
 shifted target label and the auxiliary code for that entry is installed. -/
 theorem compileProgExps_entry_installed (maxApp : Nat) (program : List (Nat × Nat × ClosLang.Exp))
@@ -454,12 +417,18 @@ theorem compileProgExps_entry_installed (maxApp : Nat) (program : List (Nat × N
       simpa using compileExps_length maxApp (program.map (fun (_, _, exp) => exp)) [] targets finalAux compiledRun
     have targetBound : index < targets.length := by omega
     let target := targets[index]
-    have sourceAt : (program.map (fun (_, _, exp) => exp))[index]? = some source := by
-      simp [List.getElem?_map, List.getElem?_eq_getElem indexBound, sourceEq]
-    have targetAt : targets[index]? = some target := List.getElem?_eq_getElem targetBound
-    obtain ⟨auxBefore, auxAfter, singleton, auxInstalled⟩ :=
-      compileExps_index_installed maxApp (program.map (fun (_, _, exp) => exp)) [] finalAux targets
-        code index source target compiledRun sourceAt targetAt finalInstalled
+    let : Nonempty ClosLang.Exp := ⟨source⟩
+    obtain ⟨auxBefore, auxAfter, singleton, included⟩ :=
+      compileExps_el maxApp (program.map (fun (_, _, exp) => exp)) [] targets finalAux index
+        ⟨compiledRun, by simpa using indexBound⟩
+    have sourceEl : holEl index (program.map (fun (_, _, exp) => exp)) = source := by
+      rw [holEl_eq_getElem index _ (by simpa using indexBound)]
+      simp [List.getElem_map, sourceEq]
+    have targetEl : holEl index targets = target := holEl_eq_getElem index targets targetBound
+    rw [sourceEl, targetEl] at singleton
+    have auxInstalled : codeInstalled auxAfter code := by
+      intro entry member
+      exact finalInstalled entry (included.sublist.subset member)
     have zipBound : index < (program.zip targets).length := by simp [List.length_zip]; omega
     have zipped : ((name, arity, source), target) ∈ program.zip targets := by
       apply List.mem_iff_getElem.mpr

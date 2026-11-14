@@ -7,10 +7,7 @@ public import Flapjack.Compiler.Backend.Semantics.BvlSem.Semantics
 
 @[expose] public section
 
-/-! Whole-program observations for BVL tick removal. These declarations are
-Flapjack infrastructure; the HOL semantics theorem is not yet classified as a
-port because its internal BVL state uses a finite-map representation that is
-not exposed in the theorem's signature. -/
+/-! Whole-program observations for BVL tick removal. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs
 open Flapjack.Compiler.Backend.BvlSem
 open Flapjack.Compiler.Backend.BvlProps
@@ -119,9 +116,9 @@ theorem semantics_eq_clockSemantics {C F : Type} (ffi : HolFfiState F)
   simp only [terminating, initialObservation, evaluateTuple]
   rfl
 
-/-- Tick removal preserves the entire BVL whole-program behavior. This
-Flapjack theorem is untagged until the internally used finite-map state has a
-reviewed HOL reference qualifier for declarations without state parameters. -/
+/-- Tick removal preserves the entire BVL whole-program behavior. The
+semantics inherit the real-model assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "semantics_remove_ticks"]
 theorem removeTicks_semantics {C F : Type} (ffi : HolFfiState F)
     (program : Spt (Nat × Bvl.Exp)) (oracle : CompileOracle C)
     (compiler : Compiler C) (start : Nat) :
