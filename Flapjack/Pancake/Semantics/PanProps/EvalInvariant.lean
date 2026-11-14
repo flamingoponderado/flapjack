@@ -8148,9 +8148,9 @@ theorem shMemLoadStepFieldsHOLFinite {width : Nat} {σ : Type} [NeZero width]
   classical
   intro post
   have hstep : ∀ (kind : VarKind) (addr : RiscV.Word width) (nb : Nat),
-      let q := (@PanSemStateFiniteExact.shMemLoadHOLFiniteExact width σ _ state
-        (fun current => Classical.propDecidable (state.shMemaddrs current))
-        kind name addr nb).2
+      let q := (@PanSemStateFiniteExact.shMemLoadHOLFiniteExact width σ _ width _
+        kind name addr nb state
+        (fun current => Classical.propDecidable (state.shMemaddrs current))).2
       q.memaddrs = state.memaddrs ∧ q.shMemaddrs = state.shMemaddrs ∧
         q.be = state.be ∧ q.eshapes = state.eshapes ∧
         q.baseAddr = state.baseAddr ∧ q.structs = state.structs ∧

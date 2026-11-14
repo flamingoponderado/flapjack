@@ -230,7 +230,7 @@ theorem flattenCorrectInstall (s1 : StackSemStateFiniteExact width C F)
   rcases ho : s1.compileOracle 0 with ⟨cfg, progs, bm⟩
   have hprogs : (s1.compileOracle 0).2.1 = progs := by rw [ho]
   simp only [ho, hus, Bool.false_eq_true, if_false] at ev
-  rcases hfl : wordSemBufferFlush s1.codeBuffer w1 w2 with _ | ⟨bytes, cb⟩
+  rcases hfl : wordSemBufferFlush (outBw := 8) s1.codeBuffer w1 w2 with _ | ⟨bytes, cb⟩
   · simp only [hfl] at ev; exact (err ev).elim
   simp only [hfl] at ev
   rcases hc : s1.compile cfg progs with _ | ⟨bytes', cfg'⟩

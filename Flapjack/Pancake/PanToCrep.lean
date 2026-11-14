@@ -308,7 +308,8 @@ def retVar (shape : Shape) (names : List Nat) : Option Nat :=
     narrow kernel bridge on every production shape; the name is discarded, so
     no byte-rangedness premise is needed. -/
 @[hol "cakeml/pancake/pan_to_crepScript.sml" "ret_var_def"]
-def retVarHOL (shape : Flapjack.Pancake.PanLang.ShapeHOL) (names : List Nat) : Option Nat :=
+def retVarHOL {α : Type} (shape : Flapjack.Pancake.PanLang.ShapeHOL) (names : List α) :
+    Option α :=
   match shape with
   | .one => names.head?
   | .comb shapes =>
@@ -508,7 +509,9 @@ def wrapRt : Option (Shape × List Nat) → Option (Shape × List Nat)
     stays `NONE`, the empty one-word slot `SOME (One, [])` is normalized to
     `NONE`, and every other option is returned unchanged. -/
 @[hol "cakeml/pancake/pan_to_crepScript.sml" "wrap_rt_def"]
-def wrapRtHOL : Option (Flapjack.Pancake.PanLang.ShapeHOL × List Nat) → Option (Flapjack.Pancake.PanLang.ShapeHOL × List Nat)
+def wrapRtHOL {α : Type} :
+    Option (Flapjack.Pancake.PanLang.ShapeHOL × List α) →
+      Option (Flapjack.Pancake.PanLang.ShapeHOL × List α)
   | none => none
   | some (.one, []) => none
   | value => value

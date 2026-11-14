@@ -28,9 +28,10 @@ private def view (b : WordSemBuffer 64 8) : BitVec 64 × List (BitVec 8) × Nat 
 
 /-- `buffer_flush_hit=SOME ([1w; 2w],<|position := 10w; buffer := []; space_left := 3|>)` -/
 def bufferFlushHit : Bool :=
-  (wordSemBufferFlush cb 8 10).map (fun (l, b) => (l, view b)) == some ([1, 2], (10, [], 3))
+  (wordSemBufferFlush (outBw := 8) cb 8 10).map (fun (l, b) => (l, view b)) ==
+    some ([1, 2], (10, [], 3))
 /-- `buffer_flush_miss=NONE` -/
-def bufferFlushMiss : Bool := (wordSemBufferFlush cb 8 11).isNone
+def bufferFlushMiss : Bool := (wordSemBufferFlush (outBw := 8) cb 8 11).isNone
 /-- `buffer_write_hit=SOME <|position := 8w; buffer := [1w; 2w; 5w]; space_left := 2|>` -/
 def bufferWriteHit : Bool := (wordSemBufferWrite cb 10 5).map view == some (8, [1, 2, 5], 2)
 /-- `buffer_write_miss=NONE` -/

@@ -466,11 +466,14 @@ theorem evalNestedDecsSeqResVarEqHOL {width : Nat} [NeZero width] {σ : Type} :
 `globals_lookup t v = OPT_MMAP (FLOOKUP t.globals) (GENLIST (fun x => n2w x) (size_of_shape (shape_of v)))`.
 HOL's `t.globals` is the `5 word |-> 'a word_lab` finite map of the crepSem state, and `GENLIST ...`
 is `List.range ... |>.map BitVec.ofNat 5`; `OPT_MMAP (FLOOKUP _)` is `List.mapM` over `.lookup`.
-The state finite-map fields use the reviewed `HolFiniteMapExact` translation of HOL's `|->`. -/
+The state finite-map fields use the reviewed `HolFiniteMapExact` translation of HOL's `|->`.
+The typed HOL statement keeps the value type independent of the state's word type
+(`t :(α,β) state`, `v :γ v`), so the exact twin binds `{valueWidth}` separately from the
+state width `{width}`; the result is a `List (HolWordLab width)` either way. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "globals_lookup_def"
   (fmap_as_finite_support := [locals, globals, code])]
-def globalsLookupHOL {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) (value : ValueHOL width) :
+def globalsLookupHOL {width : Nat} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
+    {σ : Type} (state : CrepSemHOLState width σ) (value : ValueHOL valueWidth) :
     Option (List (HolWordLab width)) :=
   ((List.range (Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact value))).map
     (fun index => BitVec.ofNat 5 index)).mapM state.globals.lookup
@@ -539,12 +542,16 @@ private theorem loadGlobalsHOL_zero_eq_range {width : Nat} [NeZero width]
     `let (res,s') = ... in` is the outer `let` on the result pair. The
     `CrepSemHOLState` finite maps use the reviewed `HolFiniteMapExact`
     translation (same-module witness `EvalNestedDecsFiniteSupport.holFmapAsFiniteSupportWitness`)
-    and `'a word`/`'ffi` use the `BitVec width`/`σ : Type` translation. -/
+    and `'a word`/`'ffi` use the `BitVec width`/`σ : Type` translation.  The typed HOL
+    statement keeps the loaded-value type `γ v` independent of the state's word type
+    (`s :(α,β) state`), so the exact twin binds `{valueWidth}` separately; the shape and
+    the resulting `α word_lab list` are computed at the state width as in HOL. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "evaluate_nested_decs_load_globals"
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
 theorem evaluateNestedDecsLoadGlobalsCrepHOL {width : Nat} [NeZero width]
-    {σ : Type} (state : CrepSemHOLState width σ) (value : ValueHOL width)
+    {valueWidth : Nat} [NeZero valueWidth]
+    {σ : Type} (state : CrepSemHOLState width σ) (value : ValueHOL valueWidth)
     (values : List (HolWordLab width)) (names : List Nat)
     (body : CrepProgHOL width)
     (h : globalsLookupHOL state value = some values ∧

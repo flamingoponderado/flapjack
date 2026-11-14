@@ -52,7 +52,7 @@ example : fpSemFpBopComp .mul = holFp64Mul .roundTiesToEven := rfl
 
 example : fpSemFpBopComp .div = holFp64Div .roundTiesToEven := rfl
 
-example : fpSemFpTopComp .fma = fpSemFpfma := rfl
+example : fpSemFpTopComp FpTop.fma = fpSemFpfma := rfl
 
 /-! ## Concrete Boolean rows, checked in the kernel -/
 

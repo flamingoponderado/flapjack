@@ -79,11 +79,11 @@ def FlattenIH {width : Nat} [NeZero width] {C F : Type}
     MeasureLt p' s' p s → FlattenProp p' s'
 
 theorem appListAppendList {α : Type} (l : List α) : appListAppend (.list l) = l :=
-  (appListAppend_thm .nil .nil l).2.1
+  (appListAppend_thm_sameType .nil .nil l).2.1
 
 theorem appListAppendAppend {α : Type} (a b : AppList α) :
     appListAppend (.append a b) = appListAppend a ++ appListAppend b :=
-  (appListAppend_thm a b []).1
+  (appListAppend_thm_sameType a b []).1
 
 theorem withSameClock {width : Nat} [NeZero width] {C F : Type}
     (t : Flapjack.Compiler.Backend.LabSem.State width C F) : { t with clock := t.clock } = t := rfl
@@ -107,6 +107,6 @@ theorem flattenCorrectSkip {width : Nat} [NeZero width] {C F : Type}
   rintro t r s2 n l cs bs t1 ⟨ev, -, rel, -, -, -⟩
   rw [StackSemEvaluate.evaluate_skip] at ev
   cases ev
-  exact flattenConclStay rel (by simp [flattenHOL, (appListAppend_thm .nil .nil []).2.1])
+  exact flattenConclStay rel (by simp [flattenHOL, (appListAppend_thm_sameType .nil .nil []).2.1])
 
 end Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect

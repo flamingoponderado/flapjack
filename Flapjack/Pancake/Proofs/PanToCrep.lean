@@ -242,7 +242,7 @@ private theorem loadShapeBytes_length {width : Nat}
     carries the HOL premise `index < count` without an Option result. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "load_shape_el_rel"]
 theorem loadShapeBytes_getElem_rel {width : Nat} [NeZero width]
-    (address : BitVec width) (count index : Nat)
+    (count index : Nat) (address : BitVec width)
     (value : CrepExp (BitVec width)) (hindex : index < count) :
     (loadShapeBytes address count value)[index]'(by
       simpa [loadShapeBytes_length] using hindex) =
@@ -329,27 +329,35 @@ private theorem compFieldHOL_mem_of_index_lt {width : Nat} [NeZero width]
               (Flapjack.Pancake.PanLang.sizeOfShapeHOL shape)) hindex' hmem')
 
 /-- Exact port of HOL `mem_comp_field`
-    (`pan_to_crepProofScript.sml:666`). The value, shape, and expression
-    carriers are `ValueHOL`, `ShapeHOL`, and `CrepExpHOL`; `hindex`, the
-    flattened-size premise, the `comp_field` result equation, the record-shape
-    equation, and the membership conclusion match HOL directly. -/
-@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "mem_comp_field"]
+    (`pan_to_crepProofScript.sml:666-672`). The value, shape, and expression
+    carriers are `ValueHOL`, `ShapeHOL`, and `CrepExpHOL`; the typed capture
+    `mem_comp_field_typed` (`pan_to_crep_proof_typed_probe.out:14`) gives
+    `e :α crepLang$exp list` and `vs :β v list`, so the expression width α and
+    the value width β are independent. HOL has the single five-part
+    conjunctive premise
+    `i < LENGTH vs ∧ LENGTH e = size_of_shape (shape_of (RStruct vs)) ∧
+     comp_field i sh e = (es,shp) ∧ Comb sh = shape_of (RStruct vs) ∧
+     MEM ce es`; the port takes that one premise and destructures it
+    (task 152 item 3). -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "mem_comp_field"
+  (words_as_type_indexed_bitvec)]
 theorem memCompFieldHOLExact {width : Nat} [NeZero width]
+    {valueWidth : Nat} [NeZero valueWidth]
     (shapes : List Flapjack.Pancake.PanLang.ShapeHOL) (index : Nat)
     (expressions : List (CrepExpHOL width))
     (selectedShape : Flapjack.Pancake.PanLang.ShapeHOL)
     (candidate : CrepExpHOL width) (selected : List (CrepExpHOL width))
-    (values : List (ValueHOL width))
-    (hindex : index < values.length)
-    (_hlength : expressions.length =
-      Flapjack.Pancake.PanLang.sizeOfShapeHOL
-        (shapeOfHOLExact (.rStruct values)))
-    (hcompiled : compFieldHOL index shapes expressions =
-      (selected, selectedShape))
-    (hshape : Flapjack.Pancake.PanLang.ShapeHOL.comb shapes =
-      shapeOfHOLExact (.rStruct values))
-    (hmem : candidate ∈ selected) :
+    (values : List (ValueHOL valueWidth))
+    (h : index < values.length ∧
+      expressions.length =
+        Flapjack.Pancake.PanLang.sizeOfShapeHOL
+          (shapeOfHOLExact (.rStruct values)) ∧
+      compFieldHOL index shapes expressions = (selected, selectedShape) ∧
+      Flapjack.Pancake.PanLang.ShapeHOL.comb shapes =
+        shapeOfHOLExact (.rStruct values) ∧
+      candidate ∈ selected) :
     candidate ∈ expressions := by
+  obtain ⟨hindex, _hlength, hcompiled, hshape, hmem⟩ := h
   have hshapes : shapes = values.map shapeOfHOLExact :=
     Flapjack.Pancake.PanLang.ShapeHOL.comb.inj
       (by simpa [shapeOfHOLExact] using hshape)
@@ -358,6 +366,28 @@ theorem memCompFieldHOLExact {width : Nat} [NeZero width]
   have hmem' : candidate ∈ (compFieldHOL index shapes expressions).1 := by
     simpa [hcompiled] using hmem
   exact compFieldHOL_mem_of_index_lt index shapes expressions candidate hindex' hmem'
+
+/-- Untagged curried wrapper for callers that hold the five premises
+    separately; the tagged theorem takes HOL's single conjunction. -/
+theorem memCompFieldHOLExact_curried {width : Nat} [NeZero width]
+    {valueWidth : Nat} [NeZero valueWidth]
+    (shapes : List Flapjack.Pancake.PanLang.ShapeHOL) (index : Nat)
+    (expressions : List (CrepExpHOL width))
+    (selectedShape : Flapjack.Pancake.PanLang.ShapeHOL)
+    (candidate : CrepExpHOL width) (selected : List (CrepExpHOL width))
+    (values : List (ValueHOL valueWidth))
+    (hindex : index < values.length)
+    (hlength : expressions.length =
+      Flapjack.Pancake.PanLang.sizeOfShapeHOL
+        (shapeOfHOLExact (.rStruct values)))
+    (hcompiled : compFieldHOL index shapes expressions =
+      (selected, selectedShape))
+    (hshape : Flapjack.Pancake.PanLang.ShapeHOL.comb shapes =
+      shapeOfHOLExact (.rStruct values))
+    (hmem : candidate ∈ selected) :
+    candidate ∈ expressions :=
+  memCompFieldHOLExact shapes index expressions selectedShape candidate selected
+    values ⟨hindex, hlength, hcompiled, hshape, hmem⟩
 
 /-- Exact port of HOL `mem_comp_field_lem`
     (`pan_to_crepProofScript.sml:397-406`), which states
@@ -1049,6 +1079,31 @@ theorem FLOOKUP_FUPDATE_LIST_reverse_eq_lookup [BEq α] [LawfulBEq α]
         have h2 : (key == entryKey) = false :=
           beq_eq_false_iff_ne.mpr (fun he => h he.symm)
         simp [h1, h2, ih]
+
+/-- Flapjack-specific finite-map support: the HOL-equality `FUPDATE_LIST_HOL`
+    fold over a reversed association list agrees with `List.lookup`, i.e. the
+    first source occurrence wins, exactly like HOL `alist_to_fmap`. -/
+private theorem fupdateListHOL_reverse_eq_foldr {α β : Type} [DecidableEq α]
+    (entries : List (α × β)) :
+    FUPDATE_LIST_HOL (FEMPTY : FiniteMap α β) entries.reverse =
+      List.foldr (fun entry map => FUPDATE_HOL map entry) FEMPTY entries := by
+  simp only [FUPDATE_LIST_HOL, List.foldl_reverse]
+
+theorem FUPDATE_LIST_HOL_reverse_apply_eq_lookup [DecidableEq α] [BEq α]
+    [LawfulBEq α] (entries : List (α × β)) (key : α) :
+    (FUPDATE_LIST_HOL (FEMPTY : FiniteMap α β) entries.reverse) key =
+      List.lookup key entries := by
+  rw [fupdateListHOL_reverse_eq_foldr]
+  induction entries with
+  | nil => rfl
+  | cons entry entries ih =>
+      obtain ⟨entryKey, entryValue⟩ := entry
+      rw [List.foldr_cons, List.lookup_cons]
+      by_cases h : key = entryKey
+      · subst h
+        simp [FUPDATE_HOL]
+      · have h1 : (key == entryKey) = false := beq_eq_false_iff_ne.mpr h
+        simp [FUPDATE_HOL, h, h1, ih]
 
 /-- Flapjack-specific list fact: mapping a key-preserving projection through an
     association list commutes with `List.lookup` (the list-level `ALOOKUP_MAP`
@@ -1766,11 +1821,11 @@ open Flapjack.Pancake.PanLang
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "is_wf_shape_nil_length_flatten"]
 theorem isWfShapeExactHOL_length_flatten {width : Nat} [NeZero width]
     (value : ValueHOL width) (words : List (HolWordLab width))
-    (hwf : isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true)
-    (hzero : sizeOfShapeHOL (shapeOfHOLExact value) = 0 → words = [])
-    (hpositive : 0 < sizeOfShapeHOL (shapeOfHOLExact value) →
-      words = flattenHOL value) :
+    (h : isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true ∧
+      (sizeOfShapeHOL (shapeOfHOLExact value) = 0 → words = []) ∧
+      (0 < sizeOfShapeHOL (shapeOfHOLExact value) → words = flattenHOL value)) :
     words.length = sizeOfShapeHOL (shapeOfHOLExact value) := by
+  obtain ⟨hwf, hzero, hpositive⟩ := h
   by_cases hz : sizeOfShapeHOL (shapeOfHOLExact value) = 0
   · simp [hzero hz, hz]
   · have hpos : 0 < sizeOfShapeHOL (shapeOfHOLExact value) := Nat.pos_of_ne_zero hz
@@ -1782,7 +1837,7 @@ a declaration list containing only function or exception declarations leaves the
 structure context unchanged. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "decs_stcnames_lemma"]
 theorem decsStcnamesHOLExact_of_functions_or_exnDecls {width : Nat} [NeZero width]
-    (context : StructContextExact) (code : List (DeclHOL width))
+    (code : List (DeclHOL width)) (context : StructContextExact)
     (h : code.all (fun declaration =>
       isFunctionHOL declaration || isExnDeclHOL declaration) = true) :
     decsStcnamesHOLExact (width := width) context code = some context := by
@@ -1950,31 +2005,57 @@ theorem ctxtFcEidsEqHOL {width : Nat} [NeZero width]
     (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
     (ctxtFcExactHOL cvs em vs shs ns : PanToCrepContextExact width).eids = em := rfl
 
+namespace CtxtFcVmaxRelationWitnesses
+
+/-- Same-module canonical carrier witness for the `ctxt_fc_vmax` relation
+    qualifier: the imported exact context carrier roundtrips through its broad
+    counterpart. It is declared under a fresh local namespace so it does not
+    clash with the imported witness of the same leaf name. -/
+theorem holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact {width : Nat}
+    [NeZero width] (context : PanToCrepContextExact width) :
+    PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context :=
+  PanToCrepContextExact.holFmapAsFiniteSupportWitness context
+
+end CtxtFcVmaxRelationWitnesses
+
 /-- Exact port of HOL `ctxt_fc_vmax`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2307`):
-    `(ctxt_fc ctxt.funcs em vs shs ns).vmax = MAX_LIST ns`. HOL's first
-    argument `ctxt.funcs` is a projection of an implicitly universally
-    quantified `context` record and `ctxt_fc` ignores it in the `vmax` clause,
-    so the Lean statement's bare `cvs` argument is equivalent. The statement
-    keeps HOL's argument order `(cvs, em, vs, shs, ns)` and its unrestricted
-    quantifiers; the constructed context's `vmax` field is definitionally
-    `maxList ns`, so the statement is a no-premise projection. `.vmax` is a
-    `Nat` that depends only on `ns`, so the conclusion does not traverse any
-    finite-map field, but the term is stated over the imported exact
-    `PanToCrepContextExact` carrier and binds the `cvs`/`em` maps to its
-    `funcs`/`eids` fields; the `fmap_as_finite_support := [funcs, eids]`
-    qualifier records that canonical `HolFiniteMapExact` translation
-    (same-module witness `CtxtFcExact.holFmapAsFiniteSupportWitness`). The
-    signature is width-indexed with `BitVec width` exception codes and
-    `[NeZero width]`, so HOL's type-indexed `'a word` translation is recorded by
-    the `(words_as_type_indexed_bitvec)` qualifier. Direct HOL-EVAL rows
+    `(ctxt_fc ctxt.funcs em vs shs ns).vmax = MAX_LIST ns`. The typed capture
+    `ctxt_fc_vmax_typed` (`pan_to_crep_proof_typed_probe.out:4`) types the
+    context at `β context` and `em` at `α word`, so the context's word
+    dimension is independent of the exception-code width; the statement binds
+    `{ctxtWidth}` and `{width}` separately and states HOL's `ctxt` binder with
+    its `.funcs` projection (task 152 item 4). The argument order
+    `(ctxt, em, vs, shs, ns)` and HOL's unrestricted quantifiers are kept; the
+    constructed context's `vmax` field is definitionally `maxList ns`, so the
+    statement is a no-premise projection. `.vmax` is a `Nat` that depends only
+    on `ns`, so the conclusion does not traverse any finite-map field, but the
+    statement still binds two canonical maps: HOL's `ctxt.funcs` field and the
+    standalone `em : mlstring |-> 'a word`. The multi-carrier relation
+    qualifier `(fmap_as_finite_support_relation :=
+    [PanToCrepContextExact.funcs, em])` records both `HolFiniteMapExact`
+    translations, with the same-module carrier witness
+    `holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact` for the
+    imported exact context carrier (task 153 item 2). The signature
+    is width-indexed with `BitVec width` exception codes and `[NeZero width]`,
+    so HOL's type-indexed `'a word` translation is recorded by the
+    `(words_as_type_indexed_bitvec)` qualifier. Direct HOL-EVAL rows
     `vmax_nonempty_list=T`/`vmax_empty_list=T` in
     `scripts/hol-probes/ctxt_fc_probe.out` are replayed by the kernel-checked
     regression in `Flapjack.Test.PanToCrepContextExactParity`. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_fc_vmax"
-  (fmap_as_finite_support := [funcs, eids])
+  (fmap_as_finite_support_relation := [PanToCrepContextExact.funcs, em])
   (words_as_type_indexed_bitvec)]
-theorem ctxtFcVmaxHOL {width : Nat} [NeZero width]
+theorem ctxtFcVmaxHOL {width : Nat} {ctxtWidth : Nat} [NeZero width] [NeZero ctxtWidth]
+    (ctxt : PanToCrepContextExact ctxtWidth)
+    (em : HolFiniteMapExact MlS (BitVec width))
+    (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
+    (ctxtFcExactHOL ctxt.funcs em vs shs ns : PanToCrepContextExact width).vmax =
+      maxList ns := rfl
+
+/-- Untagged bare-map form of `ctxt_fc_vmax` for callers that only hold the
+    `funcs` map; the tagged statement follows HOL's `ctxt` binder. -/
+theorem ctxtFcVmaxHOL_bare {width : Nat} [NeZero width]
     (cvs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
     (em : HolFiniteMapExact MlS (BitVec width))
     (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :

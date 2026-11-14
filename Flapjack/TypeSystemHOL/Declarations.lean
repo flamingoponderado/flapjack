@@ -21,8 +21,17 @@ def checkCtorTenv (env : TenvAbbrev) : TypeDef → Prop
     (∀ ctor ∈ ctors, ∀ t ∈ ctor.2, checkFreevarsAst tvs t = true ∧ checkTypeNames env t = true) ∧
     name ∉ rest.map (fun (_, name, _) => name) ∧ checkCtorTenv env rest
 
+/-- HOL `build_ctor_tenv_def` keeps five type variables independent: the
+    namespace module and constructor-name types `α`/`β`, the type-variable type
+    `γ`, the type-identifier type `δ` and the type-name type `ε` (typed capture
+    `build_ctor_tenv_def_typed` in `type_system_typed_probe.out`). The Lean
+    definition binds them generically; the declaration-typing rule instantiates
+    them at `MlString`/`MlString`/`MlString`/`Nat`/`MlString` (`TypeDef`,
+    `List Nat`, `TenvCtor`). -/
 @[hol "cakeml/semantics/typeSystemScript.sml" "build_ctor_tenv_def"]
-def buildCtorTenv (env : TenvAbbrev) : TypeDef → List Nat → TenvCtor
+def buildCtorTenv {α β γ δ ε : Type} (env : TenvAbbrev) :
+    List (γ × ε × List (β × List AstT)) → List δ →
+    Namespace α β (γ × List SemanticT × δ)
   | [], [] => alistToNs []
   | (tvs, _, ctors) :: rest, id :: ids =>
     nsAppend (buildCtorTenv env rest ids)

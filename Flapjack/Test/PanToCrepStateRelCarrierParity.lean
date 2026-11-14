@@ -550,14 +550,14 @@ example {width : Nat} [NeZero width]
     (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
     (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (name : MlS) (value : ValueHOL width)
-    (hrel : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals)
-    (hlookup : sourceLocals.lookup name = some value) :
+    (h : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals ∧
+      sourceLocals.lookup name = some value) :
     ∃ slots, context.vars.lookup name = some (shapeOfHOLExact value, slots) ∧
       slots.length = (flattenHOL value).length ∧
       slots.mapM targetLocals.lookup = some (flattenHOL value) ∧
       isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true :=
   panToCrepLocalsRelLookupCtxtFiniteExact context sourceLocals targetLocals
-    name value hrel hlookup
+    name value h
 
 /-- Concrete exact-carrier derivations recovering the slot `[0]`, shape `One`,
     flattened word `5`, and well-formedness for the one-word local. -/
@@ -570,7 +570,7 @@ private theorem lookupCtxtExactFixture :
       (shapeOfHOLExact lookupCtxtValue) = true := by
   have hextract := panToCrepLocalsRelLookupCtxtFiniteExact lookupCtxtContext
     lookupCtxtSourceLocals lookupCtxtTargetLocals lookupCtxtName lookupCtxtValue
-    lookupCtxtLocalsRel lookupCtxtSource_lookup_self
+    ⟨lookupCtxtLocalsRel, lookupCtxtSource_lookup_self⟩
   obtain ⟨slots, hcontext, _hlen, hmap, hwf⟩ := hextract
   have hslots : slots = [0] := by
     have h := congrArg (fun option => option.map Prod.snd) hcontext
@@ -594,7 +594,7 @@ example {width : Nat} [NeZero width]
     (hlookup : context.vars.lookup name = some (shape, slots))
     (hindex : n < slots.length) :
     slots[n] ≤ context.vmax :=
-  ctxtMaxElLeqFiniteExact context name shape slots n hmax hlookup hindex
+  ctxtMaxElLeqFiniteExact context name shape slots n ⟨hmax, hlookup, hindex⟩
 
 /-- Concrete exact-carrier instance: the one-slot `lookupCtxtContext` fixture
     (`vars` maps `x` to `(One, [0])`, `vmax = 0`) bounds its selected slot. -/
@@ -608,7 +608,7 @@ private theorem ctxtMaxElLeqFixture :
     rw [lookupCtxtVars_lookup]
     simp
   exact ctxtMaxElLeqFiniteExact lookupCtxtContext lookupCtxtName ShapeHOL.one
-    [0] 0 hmax hlookup (by simp)
+    [0] 0 ⟨hmax, hlookup, by simp⟩
 
 private def lookupCtxtGuard : Bool :=
   (match lookupCtxtContext.vars.lookup lookupCtxtName with
@@ -631,12 +631,12 @@ example {width : Nat} [NeZero width]
     (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
     (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (slot : Nat) (newValue : HolWordLab width)
-    (hrel : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals)
-    (habove : context.vmax < slot) :
+    (h : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals ∧
+      context.vmax < slot) :
     panToCrepLocalsRelFiniteExact context sourceLocals
       (targetLocals.updateEq (slot, newValue)) :=
   panToCrepLocalRelGtVmaxPreservedFiniteExact context sourceLocals targetLocals
-    slot newValue hrel habove
+    slot newValue h
 
 /-- Concrete exact-carrier instance: the one-slot `lookupCtxtContext` fixture
     (`vars` maps `x` to `(One, [0])`, `vmax = 0`) stays related after the target
@@ -650,7 +650,7 @@ private theorem localRelGtVmaxFixture :
       some (HolWordLab.word (7 : BitVec 8)) := by
   refine ⟨panToCrepLocalRelGtVmaxPreservedFiniteExact lookupCtxtContext
     lookupCtxtSourceLocals lookupCtxtTargetLocals 1
-    (HolWordLab.word (7 : BitVec 8)) lookupCtxtLocalsRel (by decide), ?_⟩
+    (HolWordLab.word (7 : BitVec 8)) ⟨lookupCtxtLocalsRel, by decide⟩, ?_⟩
   simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
 
 private def localRelGtVmaxGuard : Bool :=

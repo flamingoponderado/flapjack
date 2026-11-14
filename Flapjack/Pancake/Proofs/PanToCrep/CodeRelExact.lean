@@ -150,9 +150,9 @@ private theorem compFuncExactHOLW_ctxtFcExactHOL {width : Nat} [NeZero width]
   (words_as_type_indexed_bitvec)]
 theorem mkCtxtCodeImpCodeRelExactHOLW {width : Nat} [NeZero width]
     (declarations : List (DeclHOL width))
-    (_hdistinct : (functionsHOL declarations).map Prod.fst |>.Nodup)
-    (hlocalised : ∀ entry ∈ functionsHOL declarations,
-      localisedProgHOL entry.2.2.1 = true) :
+    (h : ((functionsHOL declarations).map Prod.fst).Nodup ∧
+      (∀ entry ∈ functionsHOL declarations,
+        localisedProgHOL entry.2.2.1 = true)) :
     codeRelExactHOLW
       (mkCtxtExactHOL HolFiniteMapExact.empty
         (makeFuncsExactHOL (functionsHOL declarations)) 0
@@ -160,6 +160,7 @@ theorem mkCtxtCodeImpCodeRelExactHOLW {width : Nat} [NeZero width]
       (HolFiniteMapExact.empty.updateList (functionsHOL declarations).reverse)
       (HolFiniteMapExact.empty.updateList
         (compileToCrepExactHOLW declarations).reverse) := by
+  obtain ⟨_hdistinct, hlocalised⟩ := h
   intro function variableShapes program returnShape hsource
   change Flapjack.FLOOKUP
       (Flapjack.FUPDATE_LIST Flapjack.FEMPTY
@@ -174,14 +175,15 @@ theorem mkCtxtCodeImpCodeRelExactHOLW {width : Nat} [NeZero width]
     simp
   have hbody : localisedProgHOL program = true := hlocalised _ hmem
   refine ⟨hbody, ?_, ?_⟩
-  · change Flapjack.FLOOKUP
-      (Flapjack.alistToFmap (makeFuncsEntriesHOL (functionsHOL declarations)))
-      function = some (variableShapes, returnShape)
-    change Flapjack.FLOOKUP
-      (Flapjack.alistToFmap
-        ((functionsHOL declarations).map fun entry =>
-          (entry.1, (entry.2.1, entry.2.2.2)))) function = _
-    rw [flookup_alistToFmap_eq_lookup,
+  · change (HolFiniteMapExact.empty.updateListEq
+      (((functionsHOL declarations).map fun entry =>
+        (entry.1, (entry.2.1, entry.2.2.2))).reverse)).lookup function =
+      some (variableShapes, returnShape)
+    rw [HolFiniteMapExact.lookup_updateListEq]
+    change (FUPDATE_LIST_HOL (FEMPTY : FiniteMap MlS
+      (List (MlS × ShapeHOL) × ShapeHOL)) _) function =
+      some (variableShapes, returnShape)
+    rw [Flapjack.FUPDATE_LIST_HOL_reverse_apply_eq_lookup,
       lookup_map_preserveFst
         (project := fun value : List (MlS × ShapeHOL) ×
           (Flapjack.Pancake.PanLang.ProgHOL width × ShapeHOL) =>
@@ -298,7 +300,11 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
        code_rel ctxt (empty_locals s).code (empty_locals t).code`.
 
     HOL clears only the source and target `locals` fields, so the `code` fields
-    consumed by `code_rel` are unchanged. The Lean statement keeps HOL's context
+    consumed by `code_rel` are unchanged. The typed capture
+    `code_rel_empty_locals_typed` (`pan_to_crep_proof_typed_probe.out:19`) types
+    the source `s :(α, β) panSem$state` and the target `t :(α, γ) state` with
+    independent FFI types, so the statement binds `{σ}` and `{τ}` separately. The
+    Lean statement keeps HOL's context
     and both state binders over the exact `PanToCrepContextExact`,
     `PanSemStateFiniteExact`, and `CrepSemHOLState` carriers, and applies the
     tagged exact `emptyLocalsHOLFinite` / `CrepSemHOLState.emptyLocals` state
@@ -319,10 +325,11 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
   (fmap_as_finite_support_relation :=
     [PanSemStateFiniteExact.code, CrepSemHOLState.code])
   (words_as_type_indexed_bitvec)]
-theorem codeRelExactHOLW_emptyLocals {width : Nat} [NeZero width] {σ : Type}
+theorem codeRelExactHOLW_emptyLocals {width : Nat} [NeZero width]
+    {σ : Type} {τ : Type}
     (context : PanToCrepContextExact width)
     (source : PanSemStateFiniteExact width σ)
-    (target : CrepSemHOLState width σ) :
+    (target : CrepSemHOLState width τ) :
     codeRelExactHOLW context source.code target.code →
       codeRelExactHOLW context (source.emptyLocalsHOLFinite).code
         (CrepSemHOLState.emptyLocals target).code := by

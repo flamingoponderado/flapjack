@@ -76,7 +76,7 @@ private noncomputable def bodyOutput :=
 
 private theorem fivePremises :
     evalListHOLFiniteClassical sourceState [] = some [] ∧
-    Flapjack.lookupCodeHOLExact sourceState.code.lookup sourceName [] =
+    Flapjack.lookupCodeHOLExact (valueWidth := Width) sourceState.code.lookup sourceName [] =
       some (returnBody, (fun _ => none), ShapeHOL.one) ∧
     bodyOutput = (some (.returned (.val (.word resultWord))), bodyOutput.2) ∧
     panToCrepStateRelFiniteExact sourceState targetState ∧
@@ -106,7 +106,7 @@ private theorem fivePremises :
 
 theorem returnShapeInvariantFixture :
     isWfShapeValueHOLExact ([] : StructContextExact) (.val (.word resultWord)) = true := by
-  have h := panToCrepFiniteEvaluateShapeInvariantRetInst2
+  have h := panToCrepFiniteEvaluateShapeInvariantRetInst2_curried
     (arguments := []) (source := sourceState) (fname := sourceName)
     (values := []) (lookupBody := returnBody)
     (newlocals := HolFiniteMapExact.empty) (returnShape := .one)
@@ -118,7 +118,7 @@ theorem returnShapeInvariantFixture :
     (hbody := by exact fivePremises.2.2.1)
     (hstate := fivePremises.2.2.2.1)
     (hlocals := fivePremises.2.2.2.2)
-  simpa [resultWord] using h
+  simpa [resultWord, panSemResultShapeInvariantHOL] using h
 
 def runChecks : IO Bool := do
   IO.println "PASS Pan-to-Crep ret_inst2 exact five-premise HOL fixture"

@@ -16,7 +16,7 @@ theorem insertBitmapIsPrefix {α : Type} (words : List α)
     (appListAppend bitmaps.1).IsPrefix (appListAppend output.1) := by
   have hout := congrArg Prod.fst h
   simp only [insertBitmap] at hout
-  rw [← hout, (appListAppend_thm bitmaps.1 (.list words) words).1]
+  rw [← hout, (appListAppend_thm_sameType bitmaps.1 (.list words) words).1]
   exact ⟨words, by simp [appListAppend, appendAux]⟩
 
 end Flapjack.Compiler.Backend.WordToStack

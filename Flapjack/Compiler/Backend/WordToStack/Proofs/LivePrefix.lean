@@ -24,7 +24,7 @@ theorem wLiveIsPrefix {width : Nat} [NeZero width]
     exact ⟨[], by simp⟩
   · simp only [wLiveNative, empty, ↓reduceIte, insertBitmap] at hout
     rw [← hout]
-    rw [(appListAppend_thm bitmaps.1
+    rw [(appListAppend_thm_sameType bitmaps.1
       (.list (writeBitmapExact live.2 frame.1 frame.2.2))
       (writeBitmapExact live.2 frame.1 frame.2.2)).1]
     exact ⟨_, rfl⟩

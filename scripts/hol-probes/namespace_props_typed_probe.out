@@ -1,0 +1,12 @@
+nsLookup_nsEmpty_typed=∀(id :(α, β) id). nsLookup (nsEmpty :(α, β, γ) namespace) id = (NONE :γ option)
+nsLookupMod_nsEmpty_typed=∀(x :α) (y :α list). nsLookupMod (nsEmpty :(α, β, γ) namespace) (x::y) = (NONE :(α, β, γ) namespace option)
+nsLookup_nsLift_typed=∀(mn :α) (e :(α, β, γ) namespace) (id :(α, β) id). nsLookup (nsLift mn e) id = case id of (Short v :(α, β) id) => (NONE :γ option) | Long mn' id' => if mn = mn' then nsLookup e id' else (NONE :γ option)
+nsLookupMod_nsLift_typed=∀(mn :α) (e :(α, β, γ) namespace) (path :α list). nsLookupMod (nsLift mn e) path = case path of ([] :α list) => SOME (nsLift mn e) | mn'::path' => if mn = mn' then nsLookupMod e path' else (NONE :(α, β, γ) namespace option)
+nsDom_nsLift_typed=∀(mn :α) (n :(α, β, γ) namespace). nsDom (nsLift mn n) = IMAGE (Long mn :(α, β) id -> (α, β) id) (nsDom n)
+nsDomMod_nsLift_typed=∀(mn :α) (n :(α, β, γ) namespace). nsDomMod (nsLift mn n) = ([] :α list) INSERT IMAGE (CONS mn) (nsDomMod n)
+nsDom_nsAppend_equal_typed=∀(n1 :(α, β, γ) namespace) (n2 :(α, β, γ) namespace) (n3 :(α, β, δ) namespace) (n4 :(α, β, δ) namespace). nsDom n1 = nsDom n3 ∧ nsDom n2 = nsDom n4 ∧ nsDomMod n1 = nsDomMod n3 ∧ nsDomMod n2 = nsDomMod n4 ⇒ nsDom (nsAppend n1 n2) = nsDom (nsAppend n3 n4) ∧ nsDomMod (nsAppend n1 n2) = nsDomMod (nsAppend n3 n4)
+nsAppend_nsEmpty_typed=∀(env :(α, β, γ) namespace). nsAppend env (nsEmpty :(α, β, γ) namespace) = env ∧ nsAppend (nsEmpty :(α, β, γ) namespace) env = env
+nsLookup_nsBind_typed=(∀(n :α) (v :β) (e :(γ, α, β) namespace). nsLookup (nsBind n v e) (Short n :(γ, α) id) = SOME v) ∧ ∀(n :(δ, ε) id) (n' :ε) (v :ζ) (e :(δ, ε, ζ) namespace). n ≠ (Short n' :(δ, ε) id) ⇒ nsLookup (nsBind n' v e) n = nsLookup e n
+nsAppend_assoc_typed=∀(e1 :(α, β, γ) namespace) (e2 :(α, β, γ) namespace) (e3 :(α, β, γ) namespace). nsAppend e1 (nsAppend e2 e3) = nsAppend (nsAppend e1 e2) e3
+nsAppend_to_nsBindList_typed=∀(l :(α # β) list). nsAppend (alist_to_ns l :(γ, α, β) namespace) (e :(γ, α, β) namespace) = nsBindList l e
+nsAll_nsAppend_typed=∀(f :(α, β) id -> γ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, γ) namespace). nsAll f e1 ∧ nsAll f e2 ⇒ nsAll f (nsAppend e1 e2)

@@ -540,7 +540,8 @@ end
 
 /-- `ALOOKUP` of an appended context is the first match in the prefix, or else
     the lookup in the suffix (HOL `ALOOKUP_APPEND`). -/
-theorem structContextLookupHOL_append (name : MlS) (first second : StructContextExact) :
+theorem structContextLookupHOL_append {α : Type} (name : MlS)
+    (first second : List (MlS × α)) :
     structContextLookupHOL name (first ++ second) =
       (match structContextLookupHOL name first with
         | some info => some info
@@ -550,8 +551,9 @@ theorem structContextLookupHOL_append (name : MlS) (first second : StructContext
   | cons pair rest ih =>
       obtain ⟨candidate, info⟩ := pair
       by_cases h : name = candidate
-      · simp [h]
-      · simp [h, ih]
+      · simp only [List.cons_append, structContextLookupHOL, if_pos h]
+      · simp only [List.cons_append, structContextLookupHOL, if_neg h]
+        exact ih
 
 @[simp] theorem sizeOfShapeWithContextHOL_one (context : StructContextExact) :
     sizeOfShapeWithContextHOL context .one = 1 := rfl

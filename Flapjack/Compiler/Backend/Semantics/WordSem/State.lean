@@ -50,15 +50,19 @@ structure WordSemBuffer (aw : Nat) (bw : Nat) [NeZero aw] [NeZero bw] where
   spaceLeft : Nat
 
 /-- Exact HOL `buffer_flush_def` (`wordSemScript.sml:22-28`).  HOL
-    `n2w (dimindex (:'b) DIV 8) : 'a word` is `BitVec.ofNat aw (bw / 8)`. -/
+    `n2w (dimindex (:'b) DIV 8) : 'a word` is `BitVec.ofNat aw (bw / 8)`.
+    HOL's result buffer has an element width independent of the input's
+    (`buffer_flush_def_typed` in `word_sem_typed_probe.out`), because the
+    flushed buffer holds the empty list. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "buffer_flush_def"
   (words_as_type_indexed_bitvec)]
-def wordSemBufferFlush {aw : Nat} {bw : Nat} [NeZero aw] [NeZero bw]
+def wordSemBufferFlush {aw : Nat} {bw : Nat} {outBw : Nat}
+    [NeZero aw] [NeZero bw] [NeZero outBw]
     (cb : WordSemBuffer aw bw) (w1 w2 : BitVec aw) :
-    Option (List (BitVec bw) × WordSemBuffer aw bw) :=
+    Option (List (BitVec bw) × WordSemBuffer aw outBw) :=
   if cb.position = w1 ∧
       cb.position + BitVec.ofNat aw (bw / 8) * BitVec.ofNat aw cb.buffer.length = w2 then
-    some (cb.buffer, { cb with position := w2, buffer := [] })
+    some (cb.buffer, { position := w2, buffer := [], spaceLeft := cb.spaceLeft })
   else none
 
 /-- Exact HOL `buffer_write_def` (`wordSemScript.sml:30-35`). -/

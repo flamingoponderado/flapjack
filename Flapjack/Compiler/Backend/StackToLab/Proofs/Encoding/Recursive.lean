@@ -30,7 +30,7 @@ the executed production replacement remain open work.
 already tagged misc append_thm; no separate HOL declaration is asserted. -/
 private theorem appendList_eq {α : Type} (left right : AppList α) :
     appListAppend (.append left right) = appListAppend left ++ appListAppend right :=
-  (appListAppend_thm left right []).1
+  (appListAppend_thm_sameType left right []).1
 
 /-- Recursive constructor piece under whole-statement structural motives for its subprograms; not a literal flatten_ind case. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"

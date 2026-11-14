@@ -62,18 +62,27 @@ def evalSymbol (check : SymbolCheck) (s : MlString) : Bool :=
   | .validList => validListSym s.explode
   | .validPrefix => validPrefixSym s.explode
 
-/-- Evaluate the source predicate on a qualified identifier's tail. -/
+/-- Exact port of HOL `pegexec_cml_fo$eval_token_longid_check_alt_def`: the
+three `TokenLongid` predicates on a qualified identifier's tail.  The typed
+capture (`eval_token_longid_check_alt_def_typed` in
+`scripts/hol-probes/pegexec_cml_fo_source_probe.out`) keeps the first pair
+component generic (`(str :α, s :mlstring)`), so the twin binds `{α : Type}`;
+only the tail string is inspected. -/
 @[hol "cakeml/compiler/parsing/pegexec_cml_foScript.sml" "eval_token_longid_check_alt_def"]
-def evalLongid (check : LongidCheck) (name : Path × MlString) : Bool :=
+def evalLongid {α : Type} (check : LongidCheck) (name : α × MlString) : Bool :=
   match check, name.2.explode with
   | _, [] => false
   | .tailNonempty, _ :: _ => true
   | .tailNonemptyHeadAlphaNotUpper, c :: _ => !alpha c || !upper c
   | .ctorUpperInitial, c :: _ => alpha c && upper c
 
-/-- Evaluate a first-order PEG token predicate, ignoring its location. -/
+/-- Exact port of HOL `pegexec_cml_fo$eval_token_check_def`: the first-order
+PEG token predicates.  The typed capture (`eval_token_check_def_typed` in
+`scripts/hol-probes/pegexec_cml_fo_source_probe.out`) keeps the location type
+generic (`∀(t :token) (l :α)`), so the twin binds `{α : Type}`; the token is
+HOL's fixed `token` type, matching `Token`. -/
 @[hol "cakeml/compiler/parsing/pegexec_cml_foScript.sml" "eval_token_check_def"]
-def evalToken (check : TokenCheck) (input : Token × Locs) : Bool :=
+def evalToken {α : Type} (check : TokenCheck) (input : Token × α) : Bool :=
   let t := input.1
   match check, t with
   | .always, _ => true

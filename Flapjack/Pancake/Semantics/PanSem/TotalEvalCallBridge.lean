@@ -176,7 +176,7 @@ theorem panSemTotalCodeLookup_agree {σ : Type}
     exact hb
   have hcodeRel := hrel.2.2.2.1 (toStringOfBytes function) hfn
   rw [ofString_toStringOfBytes] at hcodeRel
-  have hexactNone : ∀ v, lookupCodeHOLExact exact.code.lookup function v = none →
+  have hexactNone : ∀ v, lookupCodeHOLExact (valueWidth := 64) exact.code.lookup function v = none →
       lookupCodeHOLFinite exact.code.lookup function v = none :=
     fun v h => (lookupCodeHOLFinite_eq_none_iff _ _ _).mpr h
   cases hlk : panSemCodeLookup production.code (toStringOfBytes function) with

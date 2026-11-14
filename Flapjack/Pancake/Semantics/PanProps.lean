@@ -676,8 +676,8 @@ mutual
       `ALOOKUP`, `isSome` is the Bool rendering of `<> NONE`, and
       `isWfShapeValuesHOLExact` is the `EVERY` fold over `MAP SND`. -/
   @[hol "cakeml/pancake/semantics/panPropsScript.sml" "is_wf_shape_v_def"]
-  def isWfShapeValueHOLExact {width : Nat} [NeZero width]
-      (context : Flapjack.Pancake.PanLang.StructContextExact) : ValueHOL width → Bool
+  def isWfShapeValueHOLExact {α : Type} {width : Nat} [NeZero width]
+      (context : List (MlS × α)) : ValueHOL width → Bool
     | .val _ => true
     | .rStruct values => isWfShapeValuesHOLExact context values
     | .nStruct name fields =>
@@ -693,8 +693,8 @@ mutual
          omega)
 
   /- `EVERY (is_wf_shape_v sctxt) vs` over an exact value list. -/
-  def isWfShapeValuesHOLExact {width : Nat} [NeZero width]
-      (context : Flapjack.Pancake.PanLang.StructContextExact) : List (ValueHOL width) → Bool
+  def isWfShapeValuesHOLExact {α : Type} {width : Nat} [NeZero width]
+      (context : List (MlS × α)) : List (ValueHOL width) → Bool
     | [] => true
     | value :: values =>
         isWfShapeValueHOLExact context value && isWfShapeValuesHOLExact context values
@@ -702,8 +702,8 @@ mutual
   decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial
 end
 
-private theorem isWfShapeValuesHOLExact_of_mem {width : Nat} [NeZero width]
-    (context : Flapjack.Pancake.PanLang.StructContextExact)
+private theorem isWfShapeValuesHOLExact_of_mem {α : Type} {width : Nat} [NeZero width]
+    (context : List (MlS × α))
     (values : List (ValueHOL width))
     (h : ∀ value, value ∈ values → isWfShapeValueHOLExact context value = true) :
     isWfShapeValuesHOLExact context values = true := by
@@ -713,8 +713,8 @@ private theorem isWfShapeValuesHOLExact_of_mem {width : Nat} [NeZero width]
       simp only [isWfShapeValuesHOLExact, Bool.and_eq_true]
       exact ⟨h head (by simp), ih (fun value hv => h value (by simp [hv]))⟩
 
-private theorem isWfShapeValuesHOLExact_mem {width : Nat} [NeZero width]
-    (context : Flapjack.Pancake.PanLang.StructContextExact)
+private theorem isWfShapeValuesHOLExact_mem {α : Type} {width : Nat} [NeZero width]
+    (context : List (MlS × α))
     (values : List (ValueHOL width))
     (h : isWfShapeValuesHOLExact context values = true)
     {value : ValueHOL width} (hmem : value ∈ values) :
@@ -739,8 +739,8 @@ private theorem getElemOption_mem {α : Type} (values : List α) (index : Nat)
           simp only [List.getElem?_cons_succ] at hget
           exact List.mem_cons_of_mem head (ih index value hget)
 
-private theorem lookupFieldHOL_isWfShapeValuesHOLExact {width : Nat} [NeZero width]
-    (context : Flapjack.Pancake.PanLang.StructContextExact) (name : MlS)
+private theorem lookupFieldHOL_isWfShapeValuesHOLExact {α : Type} {width : Nat} [NeZero width]
+    (context : List (MlS × α)) (name : MlS)
     (fields : List (MlStringHOL × ValueHOL width))
     (hfields : isWfShapeValuesHOLExact context (fields.map Prod.snd) = true)
     (value : ValueHOL width) (hlookup : lookupFieldHOL name fields = some value) :
@@ -793,8 +793,8 @@ private theorem lookupFieldHOL_isWfShapeValuesHOLExact {width : Nat} [NeZero wid
 /-- Untagged support: the exact value-level well-formedness predicate implies
     that the exact `shape_of` image is well-formed (`is_wf_shape_of_v`
     `panPropsScript.sml:38`). -/
-private theorem isWfShapeValueHOLExact_shapeOf_val {width : Nat} [NeZero width]
-    (context : Flapjack.Pancake.PanLang.StructContextExact) (value : ValueHOL width) :
+private theorem isWfShapeValueHOLExact_shapeOf_val {α : Type} {width : Nat} [NeZero width]
+    (context : List (MlS × α)) (value : ValueHOL width) :
     isWfShapeValueHOLExact context value = true →
       Flapjack.Pancake.PanLang.isWfShapeExactHOL context (shapeOfHOLExact value) = true := by
   induction value using isWfShapeValueHOLExact.induct
@@ -802,7 +802,8 @@ private theorem isWfShapeValueHOLExact_shapeOf_val {width : Nat} [NeZero width]
       isWfShapeValuesHOLExact context values = true →
         Flapjack.Pancake.PanLang.isWfShapesExactHOL context (values.map shapeOfHOLExact) = true) with
   | case1 value =>
-      simp [shapeOfHOLExact]
+      simp [shapeOfHOLExact, isWfShapeValueHOLExact.eq_1,
+        Flapjack.Pancake.PanLang.isWfShapeExactHOL.eq_1]
   | case2 values ih =>
       intro h
       simp only [isWfShapeValueHOLExact.eq_2] at h
@@ -829,8 +830,8 @@ private theorem isWfShapeValueHOLExact_shapeOf_val {width : Nat} [NeZero width]
     predicates are rendered as `= true`, matching the accepted
     `flattenHOL_length_eq_sizeOfShapeHOL` style; no extra hypotheses. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "is_wf_shape_of_v"]
-theorem isWfShapeValueHOLExact_shapeOfHOLExact {width : Nat} [NeZero width]
-    (context : Flapjack.Pancake.PanLang.StructContextExact) (value : ValueHOL width)
+theorem isWfShapeValueHOLExact_shapeOfHOLExact {α : Type} {width : Nat} [NeZero width]
+    (context : List (MlS × α)) (value : ValueHOL width)
     (h : isWfShapeValueHOLExact context value = true) :
     Flapjack.Pancake.PanLang.isWfShapeExactHOL context (shapeOfHOLExact value) = true :=
   isWfShapeValueHOLExact_shapeOf_val context value h
@@ -843,8 +844,8 @@ theorem isWfShapeValueHOLExact_shapeOfHOLExact {width : Nat} [NeZero width]
     `isWfShapeValueHOLExact` over `ValueHOL width`; the Bool predicate is
     rendered as `= true`, matching the accepted port style. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "pan_primop_is_wf_shape_v"]
-theorem panPrimopHOLExact_isWfShapeValueHOLExact {width : Nat} [NeZero width]
-    (context : Flapjack.Pancake.PanLang.StructContextExact) (operator : PrimOp)
+theorem panPrimopHOLExact_isWfShapeValueHOLExact {α : Type} {width : Nat} [NeZero width]
+    (context : List (MlS × α)) (operator : PrimOp)
     (values : List (ValueHOL width)) (value : ValueHOL width)
     (h : panPrimopHOLExact operator values = some value) :
     isWfShapeValueHOLExact context value = true := by
@@ -866,8 +867,8 @@ theorem panPrimopHOLExact_isWfShapeValueHOLExact {width : Nat} [NeZero width]
     word payload as positive-width `BitVec`, without adding a premise. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "is_wf_shape_v_nil_step1"
   (words_as_type_indexed_bitvec)]
-theorem isWfShapeValueHOLExact_nil_step1 {width : Nat} [NeZero width]
-    (context : Flapjack.Pancake.PanLang.StructContextExact) (value : ValueHOL width)
+theorem isWfShapeValueHOLExact_nil_step1 {α : Type} {width : Nat} [NeZero width]
+    (context : List (MlS × α)) (value : ValueHOL width)
     (h : context = [] ∧
       Flapjack.Pancake.PanLang.isWfShapeExactHOL context (shapeOfHOLExact value) = true) :
     isWfShapeValueHOLExact context value = true := by
@@ -876,17 +877,18 @@ theorem isWfShapeValueHOLExact_nil_step1 {width : Nat} [NeZero width]
   induction value using isWfShapeValueHOLExact.induct
     (motive2 := fun values =>
       Flapjack.Pancake.PanLang.isWfShapesExactHOL
-          ([] : Flapjack.Pancake.PanLang.StructContextExact)
+          ([] : List (MlS × α))
           (values.map shapeOfHOLExact) = true →
         isWfShapeValuesHOLExact
-          ([] : Flapjack.Pancake.PanLang.StructContextExact) values = true) with
+          ([] : List (MlS × α)) values = true) with
   | case1 value => simp only [isWfShapeValueHOLExact.eq_1]
   | case2 values ih =>
       simpa [shapeOfHOLExact, Flapjack.Pancake.PanLang.isWfShapeExactHOL,
         isWfShapeValueHOLExact.eq_2] using
         ih (by simpa [shapeOfHOLExact, Flapjack.Pancake.PanLang.isWfShapeExactHOL] using hshape)
   | case3 name fields _ =>
-      simp [shapeOfHOLExact] at hshape
+      simp [shapeOfHOLExact, Flapjack.Pancake.PanLang.isWfShapeExactHOL.eq_3,
+        Flapjack.Pancake.PanLang.structContextLookupHOL] at hshape
   | case4 => simp only [isWfShapeValuesHOLExact.eq_1]
   | case5 value values ihValue ihValues =>
       rename_i hshape'
@@ -903,8 +905,8 @@ theorem isWfShapeValueHOLExact_nil_step1 {width : Nat} [NeZero width]
     `is_wf_shape_of_v` port. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "is_wf_shape_v_nil" 56]
 theorem isWfShapeExactHOL_shapeOfHOLExact_eq_isWfShapeValueHOLExact_nil
-    {width : Nat} [NeZero width]
-    (context : Flapjack.Pancake.PanLang.StructContextExact) (hctx : context = [])
+    {α : Type} {width : Nat} [NeZero width]
+    (context : List (MlS × α)) (hctx : context = [])
     (value : ValueHOL width) :
     Flapjack.Pancake.PanLang.isWfShapeExactHOL context (shapeOfHOLExact value) =
       isWfShapeValueHOLExact context value := by
@@ -923,8 +925,8 @@ theorem isWfShapeExactHOL_shapeOfHOLExact_eq_isWfShapeValueHOLExact_nil
     `List.drop`, and `structContextLookupHOL_append` plays the role of
     `ALOOKUP_APPEND`. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "is_wf_shape_v_drop"]
-theorem isWfShapeValueHOLExact_drop {width : Nat} [NeZero width]
-    (taken : Nat) (context : Flapjack.Pancake.PanLang.StructContextExact) (value : ValueHOL width)
+theorem isWfShapeValueHOLExact_drop {α : Type} {width : Nat} [NeZero width]
+    (taken : Nat) (context : List (MlS × α)) (value : ValueHOL width)
     (h : isWfShapeValueHOLExact (context.drop taken) value = true) :
     isWfShapeValueHOLExact context value = true := by
   induction value using isWfShapeValueHOLExact.induct
@@ -960,8 +962,8 @@ theorem isWfShapeValueHOLExact_drop {width : Nat} [NeZero width]
 
 /-- `isWfShapeValuesHOLExact` is preserved when the struct context is a `DROP`
     (list form of `isWfShapeValueHOLExact_drop`). -/
-theorem isWfShapeValuesHOLExact_drop {width : Nat} [NeZero width] (taken : Nat)
-    (context : Flapjack.Pancake.PanLang.StructContextExact) (values : List (ValueHOL width))
+theorem isWfShapeValuesHOLExact_drop {α : Type} {width : Nat} [NeZero width] (taken : Nat)
+    (context : List (MlS × α)) (values : List (ValueHOL width))
     (h : isWfShapeValuesHOLExact (context.drop taken) values = true) :
     isWfShapeValuesHOLExact context values = true := by
   induction values with

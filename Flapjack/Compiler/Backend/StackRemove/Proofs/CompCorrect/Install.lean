@@ -190,7 +190,7 @@ theorem compCorrectInstall {width : Nat} [NeZero width] {C F : Type}
     rcases oracle : source.compileOracle 0 with ⟨cfg, programs, bitmaps⟩
     simp only [oracle, if_pos relation.1] at sourceRun
     split at sourceRun
-    next _ _ bytes codeBuffer data dataBuffer codeFlush dataFlush =>
+    next _ _ _ bytes cb data dataBuffer codeFlush dataFlush =>
       split at sourceRun
       next _ _ _ compiledBytes nextConfig entry program rest compileRun =>
         split at sourceRun
@@ -218,7 +218,7 @@ theorem compCorrectInstall {width : Nat} [NeZero width] {C F : Type}
           subst postSource
           refine ⟨0, installedState first entry
             (((entry, program) :: rest).map (progComp jump bounds pointer)) bitmaps
-            codeBuffer target.dataBuffer target, ?_, ?_⟩
+            cb target.dataBuffer target, ?_, ?_⟩
           · simpa only [comp, Nat.zero_add] using
               (evaluate_install first second third fourth fifth target).trans (by
                 simp only [firstRead, secondRead, thirdRead, fourthRead,
@@ -228,7 +228,7 @@ theorem compCorrectInstall {width : Nat} [NeZero width] {C F : Type}
                   targetCompileCons, List.map_cons, progComp, condition.1, nextConfigEq,
                   and_self, if_true, installedState])
           · exact stateRelInstall jump bounds pointer first entry source target
-              ((entry, program) :: rest) bitmaps codeBuffer dataBuffer w3 w4
+              ((entry, program) :: rest) bitmaps cb dataBuffer w3 w4
               relation bound.1 programsEq dataFlush
         next => exact False.elim (notError (Prod.mk.inj sourceRun).1.symm)
       next => exact False.elim (notError (Prod.mk.inj sourceRun).1.symm)

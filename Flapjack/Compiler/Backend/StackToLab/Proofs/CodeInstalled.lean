@@ -739,7 +739,8 @@ theorem progToSection_eq {width : Nat} [NeZero width] (n : Nat) (p : HolProg wid
       ⟨n, appListAppend (flattenHOL true p n (Compiler.Backend.StackAlloc.nextLab p 2) [] []).1 ++
         [.label n (if isSeqHOL p then
           (flattenHOL true p n (Compiler.Backend.StackAlloc.nextLab p 2) [] []).2.2 else 1) 0]⟩ := by
-  simp only [progToSectionHOL, (appListAppend_thm _ _ []).1, (appListAppend_thm .nil .nil _).2.1]
+  simp only [progToSectionHOL, (appListAppend_thm_sameType _ _ []).1,
+    (appListAppend_thm_sameType .nil .nil _).2.1]
 
 /-- Complete original section-name law of the section compiler. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "MAP_prog_to_section_FST" 228
@@ -819,10 +820,10 @@ theorem codeInstalledProgToSection {width : Nat} [NeZero width] :
 
 private theorem appAppend {α : Type} (a b : AppList α) :
     appListAppend (.append a b) = appListAppend a ++ appListAppend b :=
-  (appListAppend_thm a b []).1
+  (appListAppend_thm_sameType a b []).1
 
 private theorem appList {α : Type} (l : List α) : appListAppend (.list l) = l :=
-  (appListAppend_thm .nil .nil l).2.1
+  (appListAppend_thm_sameType .nil .nil l).2.1
 
 private theorem skipNoLabels {width : Nat} [NeZero width] (p : HolProg width)
     (l : Nat × Nat) : stackIsSkip p = true → ¬ StackSem.getLabelsExact p l := by

@@ -37,10 +37,14 @@ def forceRename {α : Type} : List (Nat × α) → Spt α → Spt α
   | (x, y) :: xs, ssa => forceRename xs (sptInsert x y ssa)
 
 /-- Literal `mk_prio` (`word_allocScript.sml:300-305`): prefer the branch that
-is literally `Skip`. -/
+is literally `Skip`. The typed capture `mk_prio_def_typed`
+(`word_alloc_typed_probe.out`) gives `el :α prog` and `er :β prog` with
+independent word types, so the Lean statement keeps the two word dimensions
+separate; the body only inspects the constructor. -/
 @[hol "cakeml/compiler/backend/word_allocScript.sml" "mk_prio_def"
   (words_as_type_indexed_bitvec)]
-def mkPrio {width : Nat} [NeZero width] (el er : WordLangProgHOL (BitVec width)) :
+def mkPrio {width : Nat} [NeZero width] {width' : Nat} [NeZero width']
+    (el : WordLangProgHOL (BitVec width)) (er : WordLangProgHOL (BitVec width')) :
     Option (Unit ⊕ Unit) :=
   match el with
   | .skip => some (.inl ())

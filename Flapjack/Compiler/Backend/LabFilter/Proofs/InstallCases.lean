@@ -136,7 +136,7 @@ theorem filterCorrectInstall {width : Nat} [NeZero width] {C : Type} {F : Type}
         conv => lhs; rw [evaluate]
         simp only [htclock, ↓reduceIte, asmFetch, halign, hr0, hr1, hr2]
       | loc sectionId labelId =>
-        cases hflush : wordSemBufferFlush t1.codeBuffer start finish with
+        cases hflush : wordSemBufferFlush (outBw := 8) t1.codeBuffer start finish with
         | none =>
           have he := heval
           conv at he => lhs; rw [evaluate]

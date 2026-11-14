@@ -126,8 +126,8 @@ noncomputable abbrev shMemLoadFin {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (kind : VarKind) (name : MlS)
     (addr : RiscV.Word width) (nb : Nat) :
     Option (PanSemResultExact width) × PanSemStateFiniteExact width σ :=
-  @shMemLoadHOLFiniteExact width σ _ state
-    (fun a => Classical.propDecidable (state.shMemaddrs a)) kind name addr nb
+  @shMemLoadHOLFiniteExact width σ _ width _ kind name addr nb state
+    (fun a => Classical.propDecidable (state.shMemaddrs a))
 
 /-- Flapjack-only support: a successful `ShMemStore` step preserves the
     pan_globals relation between the two memories.  The store only reads

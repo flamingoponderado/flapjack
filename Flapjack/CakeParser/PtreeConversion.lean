@@ -20,7 +20,11 @@ private def children (n : Nonterminal) : ParseTree → Option (List ParseTree)
   | .node (.inl actual) _ xs => if actual == n then some xs else none
   | _ => none
 
-@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "tokcheck_def"]
+/-- Tag withdrawn (task 147): HOL `tokcheck_def` is `∀(pt :(α, β, γ) parsetree) (tok :α)`, generic
+    in the terminal type `α`, the nonterminal type `β` and the location type `γ`; Lean fixes them to
+    `Token`, `Nonterminal` and `Locs`. `pt.token == some tok` implements HOL's `OPTION_BIND (destLf
+    pt) destTOK = SOME tok`, but a specialised instance is not an exact port; a faithful port needs
+    a generic parsetree and terminal carrier. -/
 def tokcheck (pt : ParseTree) (tok : Token) : Bool := pt.token == some tok
 
 @[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "Long_Short_def"]
@@ -33,33 +37,48 @@ private def tyvar (pt : ParseTree) : Option MlString :=
   | some (.tyvarT s) => some s
   | _ => none
 
-@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_UQTyop_def"]
+/-- Tag withdrawn (task 147): HOL `ptree_UQTyop_def` takes `(token, MMLnonT, α) parsetree` with the
+    location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's
+    `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port
+    needs a parsetree carrier generic in the location type. -/
 def ptreeUQTyop (pt : ParseTree) : Option MlString := do
   let [leaf] ← children .nUQTyOp pt | none
   match leaf.token with
   | some (.symbolT s) | some (.alphaT s) => some s
   | _ => none
 
-@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_TyvarN_def"]
+/-- Tag withdrawn (task 147): HOL `ptree_TyvarN_def` takes `(token, MMLnonT, α) parsetree` with the
+    location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's
+    `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port
+    needs a parsetree carrier generic in the location type. -/
 def ptreeTyvarN (pt : ParseTree) : Option MlString := do
   let [leaf] ← children .nTyvarN pt | none
   tyvar leaf
 
-@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_Tyop_def"]
+/-- Tag withdrawn (task 147): HOL `ptree_Tyop_def` takes `(token, MMLnonT, α) parsetree` with the
+    location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's
+    `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port
+    needs a parsetree carrier generic in the location type. -/
 def ptreeTyop (pt : ParseTree) : Option (Ident MlString MlString) := do
   let [child] ← children .nTyOp pt | none
   match child.token with
   | some (.longidT path s) => some (longShort path s)
   | _ => (ptreeUQTyop child).map Ident.short
 
-@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_V_def"]
+/-- Tag withdrawn (task 147): HOL `ptree_V_def` takes `(token, MMLnonT, α) parsetree` with the
+    location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's
+    `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port
+    needs a parsetree carrier generic in the location type. -/
 def ptreeV (pt : ParseTree) : Option MlString := do
   let [leaf] ← children .nV pt | none
   match leaf.token with
   | some (.alphaT s) | some (.symbolT s) => some s
   | _ => none
 
-@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_FQV_def"]
+/-- Tag withdrawn (task 147): HOL `ptree_FQV_def` takes `(token, MMLnonT, α) parsetree` with the
+    location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's
+    `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port
+    needs a parsetree carrier generic in the location type. -/
 def ptreeFQV (pt : ParseTree) : Option (Ident MlString MlString) := do
   let [child] ← children .nFQV pt | none
   match ptreeV child with
@@ -205,14 +224,20 @@ def ptreeTypeAbbrevDec (pt : ParseTree) : Option Dec := do
   some (.dtabbrev loc vars n t)
 
 
-@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_UQConstructorName_def"]
+/-- Tag withdrawn (task 147): HOL `ptree_UQConstructorName_def` takes `(token, MMLnonT, α)
+    parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location
+    payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact
+    port; a faithful port needs a parsetree carrier generic in the location type. -/
 def ptreeUQConstructorName (pt : ParseTree) : Option MlString := do
   let [leaf] ← children .nUQConstructorName pt | none
   match leaf.token with
   | some (.alphaT s) => some s
   | _ => none
 
-@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_ConstructorName_def"]
+/-- Tag withdrawn (task 147): HOL `ptree_ConstructorName_def` takes `(token, MMLnonT, α) parsetree`
+    with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to
+    CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a
+    faithful port needs a parsetree carrier generic in the location type. -/
 def ptreeConstructorName (pt : ParseTree) : Option (Ident MlString MlString) := do
   let [child] ← children .nConstructorName pt | none
   match ptreeUQConstructorName child with
@@ -229,7 +254,10 @@ private def uppercase (s : MlString) : Bool :=
 private def constructorName (s : MlString) : Bool :=
   s == ofString "::" || uppercase s
 
-@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_OpID_def"]
+/-- Tag withdrawn (task 147): HOL `ptree_OpID_def` takes `(token, MMLnonT, α) parsetree` with the
+    location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's
+    `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port
+    needs a parsetree carrier generic in the location type. -/
 def ptreeOpID (pt : ParseTree) : Option Exp := do
   let [leaf] ← children .nOpID pt | none
   match leaf.token with
@@ -262,7 +290,10 @@ def maybeHandleRef : Pat → Pat
   | .pcon (some (.short s)) [p] => if s == ofString "Ref" then .pref p else .pcon (some (.short s)) [p]
   | p => p
 
-@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_Eliteral_def"]
+/-- Tag withdrawn (task 147): HOL `ptree_Eliteral_def` takes `(token, MMLnonT, α) parsetree` with
+    the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's
+    `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port
+    needs a parsetree carrier generic in the location type. -/
 def ptreeEliteral (pt : ParseTree) : Option Exp := do
   let [leaf] ← children .nEliteral pt | none
   match leaf.token with
@@ -367,7 +398,10 @@ private def symOp (p : List HolChar → Bool) (xs : List ParseTree) : Option (Id
   let some (.symbolT s) := leaf.token | none
   if p s.explode then some (.short s) else none
 
-@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_Op_def"]
+/-- Tag withdrawn (task 147): HOL `ptree_Op_def` is generic in the identifier name type `α` (its
+    result is `(α, mlstring) id option`) and the location type `β`, while Lean fixes them to
+    `MlString` and `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a
+    faithful port needs generic name and location carriers. -/
 def ptreeOp (pt : ParseTree) : Option (Ident MlString MlString) := do
   let .node (.inl n) _ xs := pt | none
   match n with
@@ -769,7 +803,10 @@ private def typeDec (pt : ParseTree) : Option TypeDef := do
   if !tokcheck kw .datatypeT then none else
   linfixWorker .nDtypeDecls .andT dtypeDecl (treeSize decls + 1) decls
 
-@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_StructName_def"]
+/-- Tag withdrawn (task 147): HOL `ptree_StructName_def` takes `(token, MMLnonT, α) parsetree` with
+    the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's
+    `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port
+    needs a parsetree carrier generic in the location type. -/
 def ptreeStructName (pt : ParseTree) : Option MlString := do
   let [leaf] ← children .nStructName pt | none
   match leaf.token with

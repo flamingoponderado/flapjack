@@ -118,7 +118,8 @@ theorem lookup_init {width : Nat} [NeZero width]
     (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
     (f : MlS) (b : ProgHOL width) (rs : ShapeHOL)
     (h : code.lookup f = some ([], b, rs)) :
-    lookupCodeHOLFinite code.lookup f [] = some (b, HolFiniteMapExact.empty, rs) := by
+    lookupCodeHOLFinite (valueWidth := width) code.lookup f [] =
+      some (b, HolFiniteMapExact.empty, rs) := by
   unfold lookupCodeHOLFinite
   split
   · rename_i hn

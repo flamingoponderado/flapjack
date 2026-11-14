@@ -838,7 +838,7 @@ theorem progToSectionApp_lines {Inst Cmp RegImm Binop Memop Addr MlString AsmIns
               appListAppend (AppList.append lines
                   (.list [.label sectionId (if isSeq program then nextA else 1) 0]))
                 = linesF ++ [.label sectionId (if isSeq program then nextF else 1) 0] := by
-            have hthm := appListAppend_thm lines
+            have hthm := appListAppend_thm_sameType lines
               (.list [.label sectionId (if isSeq program then nextA else 1) 0])
               [.label sectionId (if isSeq program then nextA else 1) 0]
             rw [hthm.1, hthm.2.1, hnext, hlines]

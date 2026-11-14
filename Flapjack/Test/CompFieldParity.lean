@@ -96,27 +96,27 @@ private def exactFieldExpressions : List (CrepExpHOL 8) :=
     direct HOL `comp_field` EVAL oracle. -/
 example :
     (CrepExpHOL.const (1 : BitVec 8)) ∈ exactFieldExpressions := by
-  apply memCompFieldHOLExact exactFieldShapes 0 exactFieldExpressions
+  exact memCompFieldHOLExact exactFieldShapes 0 exactFieldExpressions
     .one (.const 1) [.const 1] exactFieldValues
-  · decide
-  · simp [exactFieldExpressions, exactFieldValues, shapeOfHOLExact,
-      Flapjack.Pancake.PanLang.sizeOfShapeHOL]
-  · rfl
-  · simp [exactFieldShapes, exactFieldValues, shapeOfHOLExact]
-  · simp
+    ⟨by decide, by
+      simp [exactFieldExpressions, exactFieldValues, shapeOfHOLExact,
+        Flapjack.Pancake.PanLang.sizeOfShapeHOL],
+     rfl,
+     by simp [exactFieldShapes, exactFieldValues, shapeOfHOLExact],
+     by simp⟩
 
 /-- The exact theorem also carries membership from the second selected field,
     matching the `second` direct HOL oracle row. -/
 example :
     (CrepExpHOL.const (3 : BitVec 8)) ∈ exactFieldExpressions := by
-  apply memCompFieldHOLExact exactFieldShapes 1 exactFieldExpressions
+  exact memCompFieldHOLExact exactFieldShapes 1 exactFieldExpressions
     (.comb [.one, .one]) (.const 3) [.const 2, .const 3] exactFieldValues
-  · decide
-  · simp [exactFieldExpressions, exactFieldValues, shapeOfHOLExact,
-      Flapjack.Pancake.PanLang.sizeOfShapeHOL]
-  · rfl
-  · simp [exactFieldShapes, exactFieldValues, shapeOfHOLExact]
-  · simp
+    ⟨by decide, by
+      simp [exactFieldExpressions, exactFieldValues, shapeOfHOLExact,
+        Flapjack.Pancake.PanLang.sizeOfShapeHOL],
+     rfl,
+     by simp [exactFieldShapes, exactFieldValues, shapeOfHOLExact],
+     by simp⟩
 
 /-- Exact-carrier `mem_comp_field_lem` regression: the `fallback` direct HOL
     oracle row selects exactly the HOL `Const 0w` fallback, so the membership

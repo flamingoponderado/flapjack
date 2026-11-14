@@ -25,7 +25,7 @@ theorem nativePrefix {width : Nat} [NeZero width] (cutsets : Spt Unit × Spt Uni
       (plain.1, appListAppend priorData ++ appListAppend plain.2.1, plain.2.2) := by
   have flattenAppend (left right : AppList (BitVec width)) :
       appListAppend (.append left right) = appListAppend left ++ appListAppend right :=
-    (appListAppend_thm left right []).1
+    (appListAppend_thm_sameType left right []).1
   by_cases empty : kf.2.1 = 0 <;>
     simp [Native.wLiveNative, empty, insertBitmap, flattenAppend, List.append_assoc]
 

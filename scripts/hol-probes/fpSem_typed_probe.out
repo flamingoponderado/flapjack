@@ -1,0 +1,10 @@
+fp_bop_typed=FP_Add::fp_bop; FP_Sub::fp_bop; FP_Mul::fp_bop; FP_Div::fp_bop
+fp_cmp_typed=FP_Less::fp_cmp; FP_LessEqual::fp_cmp; FP_Greater::fp_cmp; FP_GreaterEqual::fp_cmp; FP_Equal::fp_cmp
+fp_top_typed=FP_Fma::fp_top
+fp_uop_typed=FP_Abs::fp_uop; FP_Neg::fp_uop; FP_Sqrt::fp_uop
+fp_bop_comp_def_typed=∀(fop :fp_bop). fp_bop_comp fop = case fop of FP_Add => fp64_add roundTiesToEven | FP_Sub => fp64_sub roundTiesToEven | FP_Mul => fp64_mul roundTiesToEven | FP_Div => fp64_div roundTiesToEven
+fp_cmp_def_typed=∀(cmp :opb). fp_cmp cmp = case cmp of Lt => fp64_lessThan | Gt => fp64_greaterThan | Leq => fp64_lessEqual | Geq => fp64_greaterEqual
+fp_cmp_comp_def_typed=∀(fop :fp_cmp). fp_cmp_comp fop = case fop of FP_Less => fp64_lessThan | FP_LessEqual => fp64_lessEqual | FP_Greater => fp64_greaterThan | FP_GreaterEqual => fp64_greaterEqual | FP_Equal => fp64_equal
+fp_top_comp_def_typed=∀(fop :α). fp_top_comp fop = fpfma
+fp_uop_comp_def_typed=∀(fop :fp_uop). fp_uop_comp fop = case fop of FP_Abs => fp64_abs | FP_Neg => fp64_negate | FP_Sqrt => fp64_sqrt roundTiesToEven
+fpfma_def_typed=∀(v1 :word64) (v2 :word64) (v3 :word64). fpfma v1 v2 v3 = fp64_mul_add roundTiesToEven v2 v3 v1
