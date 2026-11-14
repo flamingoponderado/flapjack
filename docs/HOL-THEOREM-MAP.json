@@ -16627,6 +16627,15 @@
     "reviewer": "Compared the local source theorem and state_rel_opt_rel_refs_typed HOL replay: both lookup directions, optional results, existential witnesses and related states with independent shared compiler and FFI carriers agree. Canonical refs and code finite maps have the local roundtrip witness. Source review and Lean checking do not establish cross-language equivalence."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "simple_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Primitive.lean",
+    "lean_name": "stateRelSimple",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the original local theorem and simple_state_rel_typed replay: the full simple-state relation applies to the free-variable value and state relations, with independent compiler and FFI carriers shared by both states. The canonical refs and code finite-map fields have a local roundtrip witness. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
   "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
   "hol_name": "evaluate_remove_fvs",
   "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Evaluate.lean",
