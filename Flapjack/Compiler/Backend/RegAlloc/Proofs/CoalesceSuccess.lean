@@ -493,7 +493,7 @@ theorem doCoalesceSuccess (k : Nat) :
       obtain ⟨s4, h4, hg4, hsub4, hdim4, htag4⟩ := doCoalesceRealSuccess x y c1 c2
         { s with coalesced := coal, unavail_moves_wl := ys ++ s.unavail_moves_wl,
                  avail_moves_wl := ms } ⟨hy, hx, hc1, hc2, hg3⟩
-      obtain ⟨s5, _, h5, hg5, hsub5, hdim5, htag5⟩ := unspillSuccess (α := Unit) k s4 hg4
+      obtain ⟨s5, h5, hg5, hsub5, hdim5, htag5⟩ := unspillSuccess k s4 hg4
       obtain ⟨s6, h6, hg6, hadj6, hdim6, htag6⟩ :=
         respill_ok k x s5 hg5 (by rw [← hdim5, ← hdim4]; exact hx)
       refine ⟨s6, true, ?_, hg6,

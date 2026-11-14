@@ -265,7 +265,7 @@ implicit parameters. All four original curried premise groups are retained. -/
   "word_gen_gc_partial_move_data_code_thm"
   (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem word_gen_gc_partial_move_data_code_thm {width : Nat} [NeZero width]
-    {C F D E : Type} [Nonempty D] [Nonempty E]
+    {C F : Type}
     {conf : Config} {gs rs : BitVec width} :
     ∀ (k : Nat) (ha1 i1 pa1 old1 : BitVec width) (m1 : BitVec width → WordLocW width)
       (dm1 : BitVec width → Bool) (c1 : Bool) (i2 pa2 : BitVec width)
@@ -286,7 +286,7 @@ theorem word_gen_gc_partial_move_data_code_thm {width : Nat} [NeZero width]
       (s.regs.lookup 6).isSome = true →
       (s.regs.lookup 7).isSome = true →
       getVar 8 s = some (.word ha1) ∧ c1 = true →
-      ∃ ck r0 r1 r2 r5 r6 r7, ∃ (_t0 : D) (_t1 : E),
+      ∃ ck r0 r1 r2 r5 r6 r7,
         evaluate (wordGenGcPartialMoveDataCode conf, { s with clock := s.clock + ck }) =
           (none, { s with
             memory := m2
@@ -299,8 +299,6 @@ theorem word_gen_gc_partial_move_data_code_thm {width : Nat} [NeZero width]
     wordGenGcPartialMoveDataCode_run hsl hws hw2 hlen hg hshift old1 gs rs k ha1 i1 pa1
       i2 pa2 m2 s hm hcurr huse hgs hrs h0 h1 h2 (by simpa [getVar] using h3)
       (by simpa [getVar] using h4) h5 h6 h7 (by simpa [getVar] using h8)
-  obtain ⟨t0⟩ := ‹Nonempty D›
-  obtain ⟨t1⟩ := ‹Nonempty E›
-  exact ⟨ck, r0, r1, r2, r5, r6, r7, t0, t1, he⟩
+  exact ⟨ck, r0, r1, r2, r5, r6, r7, he⟩
 
 end Flapjack.Compiler.Backend.StackAlloc

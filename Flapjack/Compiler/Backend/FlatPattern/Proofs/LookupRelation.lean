@@ -216,22 +216,21 @@ theorem aLookupRel_cons {K A B : Type} (predicate : K → Prop) (key : K) (relat
   · simpa [holALookup, same] using tail query selected
 
 /-- Narrowing observed keys and weakening their value relation preserves
-related lookups, including HOL's independently typed vacuous binders `y : δ` and
-`z : ε`, which stay explicit as `D` and `E` terms. The `[Nonempty D]`/`[Nonempty E]`
-instances are HOL's type inhabitedness (every HOL type has an element), needed
-only to instantiate those binders. -/
+related lookups. HOL's independently typed binders `y : δ` and `z : ε` in the
+narrowing hypothesis are vacuous, so they are omitted here; no inhabitedness
+instance is needed. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_mono"]
-theorem aLookupRel_mono {K A B D E : Type} [Nonempty D] [Nonempty E]
+theorem aLookupRel_mono {K A B : Type}
     (predicate : K → Prop) (relation : A → B → Prop) (left : List (K × A)) (right : List (K × B))
     (predicate' : K → Prop) (relation' : A → B → Prop)
     (premises : aLookupRel predicate relation left right ∧
-      (∀ key (_unusedLeft : D) (_unusedRight : E), predicate' key → predicate key) ∧
+      (∀ key, predicate' key → predicate key) ∧
       (∀ key leftValue rightValue,
         predicate' key ∧ relation leftValue rightValue → relation' leftValue rightValue)) :
     aLookupRel predicate' relation' left right := by
   obtain ⟨related, narrow, weaken⟩ := premises
   intro key selected
-  have old := related key (narrow key (Classical.choice ‹Nonempty D›) (Classical.choice ‹Nonempty E›) selected)
+  have old := related key (narrow key selected)
   cases leftLookup : holALookup left key <;> cases rightLookup : holALookup right key <;>
     simp [leftLookup, rightLookup, optionRel] at old ⊢
   exact weaken key _ _ ⟨selected, old⟩
@@ -274,8 +273,8 @@ theorem aLookupRel_mono_rel {K A B : Type} (relation relation' : A → B → Pro
     (left : List (K × A)) (right : List (K × B))
     (weaken : ∀ leftValue rightValue, relation leftValue rightValue → relation' leftValue rightValue)
     (related : aLookupRel predicate relation left right) : aLookupRel predicate relation' left right := by
-  exact aLookupRel_mono (D := Unit) (E := Unit) predicate relation left right predicate relation'
-    ⟨related, (fun _ _ _ selected => selected), (fun _ _ _ h => weaken _ _ h.2)⟩
+  exact aLookupRel_mono predicate relation left right predicate relation'
+    ⟨related, (fun _ selected => selected), (fun _ _ _ h => weaken _ _ h.2)⟩
 
 /-- Equality-related lookup results are equal at observed keys. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_EQ_ALOOKUP"]

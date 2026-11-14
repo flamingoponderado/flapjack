@@ -137,19 +137,18 @@ private theorem memoryRel_bignumHeaderCore {width : Nat} [NeZero width] (conf : 
         · simpa [BitVec.mul_comm] using addr
 
 /-- A related bignum has the original encoded header at its decoded address.
-    The three unused existential carriers are independently inhabited, as
-    are all HOL types. -/
+    HOL's three unused existential carriers `_ff :β`, `_x :γ` and `_y :δ` are
+    vacuous, so they are omitted and no inhabitedness instance is needed. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "memory_rel_Number_bignum_header"
   (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
-theorem memoryRel_bignumHeader {β γ δ : Type} [Nonempty β] [Nonempty γ] [Nonempty δ]
-    {width : Nat} [NeZero width] (conf : Config) (be : Bool)
+theorem memoryRel_bignumHeader {width : Nat} [NeZero width] (conf : Config) (be : Bool)
     (next : Nat) (refs : Spt (BvlSem.Ref Value)) (space : Nat)
     (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
     (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
     (value : Int) (location : WordLocW width) (vars : List (Value × WordLocW width)) :
     memoryRel conf be next refs space store memory domain ((.number value, location) :: vars) ∧
       ¬ smallInt width value ∧ goodDimindex width →
-    ∃ (_ff : β) (w : BitVec width) (_x : γ) (address : BitVec width) (_y : δ),
+    ∃ (w : BitVec width) (address : BitVec width),
       location = .word w ∧ getRealAddr conf store w = some address ∧
       let digits : List (BitVec width) := Misc.Multiword.n2mw value.natAbs
       let tag : BitVec width := ((if value < 0 then 1 else 0) <<< 2) ||| 3
@@ -158,8 +157,7 @@ theorem memoryRel_bignumHeader {β γ δ : Type} [Nonempty β] [Nonempty γ] [No
   intro h
   obtain ⟨w, address, locationEq, addressEq, encoded, headerEq, _⟩ :=
     memoryRel_bignumHeaderCore conf be next refs space store memory domain value location vars h
-  exact ⟨Classical.choice inferInstance, w, Classical.choice inferInstance, address,
-    Classical.choice inferInstance, locationEq, addressEq, encoded, headerEq⟩
+  exact ⟨w, address, locationEq, addressEq, encoded, headerEq⟩
 
 /-- A related bignum exposes its complete separated multiword payload. This
     Flapjack helper is a consequence used toward the original bignum memory

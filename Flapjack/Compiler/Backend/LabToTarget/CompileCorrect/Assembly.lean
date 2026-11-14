@@ -95,21 +95,21 @@ theorem compileCorrectFor_all {width : Nat} [NeZero width] {S Q F : Type}
     | halt => exact compileCorrect_halt s1 w bytes n hc hf
 
 /-- The original `compile_correct`. HOL's existential binds an unused `t2` of
-an otherwise unconstrained type variable; it is retained over an arbitrary
-`T`, nonempty as every HOL type is. -/
+an otherwise unconstrained type variable, so the vacuous binder is omitted and
+no inhabitedness instance is needed. -/
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "compile_correct"
   (words_as_type_indexed_bitvec)]
-theorem compileCorrect {width : Nat} [NeZero width] {S Q : Type} {F : Type} {T : Type}
-    [Nonempty T] (p : BitVec width) (s1 : Flapjack.Compiler.Backend.LabSem.State width Config F)
+theorem compileCorrect {width : Nat} [NeZero width] {S Q : Type} {F : Type}
+    (p : BitVec width) (s1 : Flapjack.Compiler.Backend.LabSem.State width Config F)
     (res : MachineResult) (mc : MachineConfig width S Q)
     (s2 : Flapjack.Compiler.Backend.LabSem.State width Config F) (code2 : LabProgHOL width)
     (labs : Spt (Spt Nat)) (t1 : AsmState width) (ms1 : S) :
     oracleTie mc ms1 s1 ∧ evaluate s1 = (res, s2) ∧ res ≠ .error ∧
       encoderCorrect mc.target ∧ stateRel (mc, code2, labs, p) s1 t1 ms1 →
-    ∃ (k : Nat) (_t2 : T) (ms2 : S),
+    ∃ (k : Nat) (ms2 : S),
       evaluateTargetHOL mc s1.ffi (s1.clock + k) ms1 = (res, ms2, s2.ffi) := by
   intro h
   obtain ⟨k, ms2, hk⟩ := compileCorrectFor_all s1 res mc s2 code2 labs t1 ms1 p h
-  exact ⟨k, Classical.arbitrary T, ms2, hk⟩
+  exact ⟨k, ms2, hk⟩
 
 end Flapjack.Compiler.Backend.LabToTarget

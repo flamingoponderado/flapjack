@@ -65,7 +65,7 @@ theorem doFreezeSuccess (k : Nat) :
         obtain ⟨g1, g2, g3, g4, g5, g6, g7, g8, g9, g10, _, g12, g13, g14⟩ := hg2
         exact ⟨g1, g2, g3, g4, g5, g6, g7, g8, g9, g10, fun v hv => by
           rw [hd2]; exact hfr v (by rw [hf]; exact List.mem_cons_of_mem _ hv), g12, g13, g14⟩
-      obtain ⟨s4, _, h4, hg4, hsub4, hd4, ht4⟩ := unspillSuccess (α := Unit) k _ hg3
+      obtain ⟨s4, h4, hg4, hsub4, hd4, ht4⟩ := unspillSuccess k _ hg3
       refine ⟨s4, true, ?_, hg4, fun a b h => hsub4 a b (ha2 ▸ h), hd2.symm.trans hd4,
         ht2.symm.trans ht4⟩
       simp only [doFreeze, Translator.Monadic.MonadBase.bind, getFreezeWl, hf, ignoreBind, h1, h2,
@@ -182,7 +182,7 @@ theorem doSpillSuccess (scost : Option (Spt Nat)) (k : Nat) :
         obtain ⟨g1, g2, g3, g4, g5, g6, g7, g8, g9, _, g11, g12, g13, g14⟩ := hg2
         exact ⟨g1, g2, g3, g4, g5, g6, g7, g8, g9, fun v hv => by rw [hd2]; exact hys v hv, g11,
           g12, g13, g14⟩
-      obtain ⟨s4, _, h4, hg4, hsub4, hd4, ht4⟩ := unspillSuccess (α := Unit) k _ hg3
+      obtain ⟨s4, h4, hg4, hsub4, hd4, ht4⟩ := unspillSuccess k _ hg3
       refine ⟨s4, ?_, hg4, fun a b h => hsub4 a b (ha2 ▸ h), hd2.symm.trans hd4,
         ht2.symm.trans ht4⟩
       simp only [ignoreBind, h1, h2, setSpillWl, h4, ret]

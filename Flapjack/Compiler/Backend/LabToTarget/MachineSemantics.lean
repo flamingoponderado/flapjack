@@ -55,7 +55,7 @@ theorem machineSemEqSem {width : Nat} [NeZero width] {S Q F : Type}
       intro he
       apply hnoerror
       exact ⟨k, by rw [hev]; exact he⟩
-    obtain ⟨extra, _, ms2, htarget⟩ := compileCorrect (T := Unit) p {s with clock := k}
+    obtain ⟨extra, ms2, htarget⟩ := compileCorrect p {s with clock := k}
       result mc next code2 labs t1 ms
       ⟨oracleTie_clock mc ms s k htie, hev, hresult, hencoder,
         stateRelClock (mc, code2, labs, p) s t1 ms k hrel⟩

@@ -652,7 +652,7 @@ theorem evaluate_partial_data {width : Nat} [NeZero width] {C F : Type}
             (4, .word i2), (5, r5), (6, r6), (7, r7), (8, .word pa2)] }) := by
   dsimp only
   have H := word_gen_gc_partial_move_data_code_thm (conf := conf) (gs := gs) (rs := rs)
-    (D := Unit) (E := Unit) (2 ^ width) other i pa curr m s.mdomain true i2 pa2 m2
+    (2 ^ width) other i pa curr m s.mdomain true i2 pa2 m2
     (dataInputState other i pa q0 q1 q2 q5 q6 q7 q8 q9 m s)
   have HH := H (by
     refine ⟨hm, hsl, hws, hw2, hlen, hls, hshift, ?_⟩
@@ -664,7 +664,7 @@ theorem evaluate_partial_data {width : Nat} [NeZero width] {C F : Type}
     (by simp [dataInputState, setVar, HolFiniteMapExact.lookup_updateListEq,
       FUPDATE_LIST_HOL, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL])
     (by simp [dataInputState, getVar, setVar, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL])
-  obtain ⟨ck, r0, r1, r2, r5, r6, r7, t0, t1, heval⟩ := HH
+  obtain ⟨ck, r0, r1, r2, r5, r6, r7, heval⟩ := HH
   exact ⟨ck, r0, r1, r2, r5, r6, r7, heval⟩
 
 /-- Concrete memcpy input after the data-pass output and seven preparation instructions. -/

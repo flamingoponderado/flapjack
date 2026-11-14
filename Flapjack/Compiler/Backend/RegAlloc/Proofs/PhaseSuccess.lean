@@ -233,13 +233,13 @@ theorem reviveMovesSuccess (s : State) (ls : List Nat) :
     · exact List.mem_append_right _ hx
     · cases hx
 
-/-- Exact HOL `unspill_success` (`reg_allocProofScript.sml:2206-2237`); the unused
-existential `b` keeps its polymorphic HOL type. -/
+/-- Exact HOL `unspill_success` (`reg_allocProofScript.sml:2206-2237`); HOL's unused
+existential `b` is vacuous, so it is omitted and no inhabitedness instance is needed. -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "unspill_success"]
-theorem unspillSuccess {α : Type} [Nonempty α] :
+theorem unspillSuccess :
     ∀ (k : Nat) (s : State),
       goodRaState s →
-      ∃ (s' : State) (_b : α), unspill k s = (.success (), s') ∧ goodRaState s' ∧
+      ∃ (s' : State), unspill k s = (.success (), s') ∧ goodRaState s' ∧
         isSubgraph s.adj_ls s'.adj_ls ∧ s.dim = s'.dim ∧ s.node_tag = s'.node_tag := by
   intro k s hg
   obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14⟩ := hg
@@ -276,7 +276,7 @@ theorem unspillSuccess {α : Type} [Nonempty α] :
       · exact h13 m hm
   let s' : State := { s1 with
     spill_wl := gtk, simp_wl := ls ++ s1.simp_wl, freeze_wl := lf ++ s1.freeze_wl }
-  refine ⟨s', Classical.ofNonempty, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨s', ?_, ?_, ?_, ?_, ?_⟩
   · have hp2 : stExPartition moveRelatedSub ltk [] []
         { s with avail_moves_wl := A, unavail_moves_wl := U } = (.success (lf, ls), s1) := hpart2
     simp only [unspill, Translator.Monadic.MonadBase.bind, getDim, getSpillWl, hpart, ignoreBind,
@@ -356,7 +356,7 @@ theorem doSimplifySuccess (k : Nat) :
     refine ⟨h1, h2, h3, h4, h5, h6, h7, h8, ?_, h10, h11, h12, h13, h14⟩
     intro v hv
     exact absurd hv List.not_mem_nil
-  obtain ⟨s', _, hrun3, hg', hsub, hdim, htag⟩ := unspillSuccess (α := Unit) k s2 hg3
+  obtain ⟨s', hrun3, hg', hsub, hdim, htag⟩ := unspillSuccess k s2 hg3
   refine ⟨s', true, ?_, hg', hsub, hdim, htag⟩
   simp only [doSimplify, Translator.Monadic.MonadBase.bind, getSimpWl, if_neg he, ignoreBind,
     hrun1, hrun2, setSimpWl]

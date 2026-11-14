@@ -22011,7 +22011,7 @@
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel_mono",
     "statement_status": "reviewed_exact",
-    "reviewer": "Reviewed against HOL and alookup_rel_mono_typed: the original grouped premises and free-variable order are retained, including two vacuous universally quantified variables of independent inhabited types. Source-shaped grouped premises and free-variable order were rechecked against HOL."
+    "reviewer": "Reviewed against HOL and alookup_rel_mono_typed: the original grouped premises and free-variable order are retained, including two vacuous universally quantified variables of independent inhabited types. Source-shaped grouped premises and free-variable order were rechecked against HOL. Update: HOL's vacuous `y :δ` and `z :ε` binders in the narrowing hypothesis are omitted, so no `[Nonempty D]`/`[Nonempty E]` instance remains; the remaining premises and the conclusion are unchanged."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
@@ -26402,7 +26402,7 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct): original lab_to_targetProofScript.sml:7528-7558 compile_correct: !s1 res mc_conf s2 code2 labs t1 ms1. oracle_tie mc_conf ms1 s1 /\\ evaluate s1 = (res,s2) /\\ res <> Error /\\ encoder_correct mc_conf.target /\\ state_rel (mc_conf,code2,labs,p) s1 t1 ms1 ==> ?k t2 ms2. evaluate mc_conf s1.ffi (s1.clock + k) ms1 = (res,ms2,s2.ffi), with p free (outermost explicit binder) and t2 of an otherwise unconstrained type variable (captured type gamma in lab_to_target_compile_correct_probe compile_correct_types), retained as an arbitrary T with [Nonempty T] since every HOL type is inhabited. All hypotheses and the existential conclusion are the source's; no target run or post-state relation assumed. The proof assembles the case pieces (Asm Inst/JumpReg, CBW, ShareMemOp, Jump, JumpCmp, Call, LocValue, CallFFI, Install, Halt, timeout, error) by strong induction on the source clock, which realises evaluate_ind since every recursive evaluate call has clock - 1. Positive BitVec width only translation; inherits reals_as_rational_cuts and docs/SOUNDNESS.md item 8 through encoder_correct and asm_inst."
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct): original lab_to_targetProofScript.sml:7528-7558 compile_correct: !s1 res mc_conf s2 code2 labs t1 ms1. oracle_tie mc_conf ms1 s1 /\\ evaluate s1 = (res,s2) /\\ res <> Error /\\ encoder_correct mc_conf.target /\\ state_rel (mc_conf,code2,labs,p) s1 t1 ms1 ==> ?k t2 ms2. evaluate mc_conf s1.ffi (s1.clock + k) ms1 = (res,ms2,s2.ffi), with p free (outermost explicit binder) and t2 of an otherwise unconstrained type variable (captured type gamma in lab_to_target_compile_correct_probe compile_correct_types), retained as an arbitrary T with [Nonempty T] since every HOL type is inhabited. All hypotheses and the existential conclusion are the source's; no target run or post-state relation assumed. The proof assembles the case pieces (Asm Inst/JumpReg, CBW, ShareMemOp, Jump, JumpCmp, Call, LocValue, CallFFI, Install, Halt, timeout, error) by strong induction on the source clock, which realises evaluate_ind since every recursive evaluate call has clock - 1. Positive BitVec width only translation; inherits reals_as_rational_cuts and docs/SOUNDNESS.md item 8 through encoder_correct and asm_inst. Update: HOL's vacuous existential binder `t2 : T` is omitted, so no `[Nonempty T]` instance remains; the remaining binders and conclusion are unchanged."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CompileCorrect/CallFfi.lean",
@@ -34810,7 +34810,7 @@
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/PhaseSuccess.lean",
     "lean_name": "unspillSuccess",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.13): reg_allocProofScript.sml:2206-2237; the unused existential b has polymorphic type α in HOL (re-elaborated: (b :α)), kept as {α : Type} [Nonempty α] (HOL types are inhabited). [local] theorem, statement compared clause by clause with the source text (DB.fetch does not export local theorems; free-variable types re-elaborated in HOL). good_ra_state is the exact tagged goodRaState (whose has_edge/no_clash read through HOL EL as the exact holEl), EVERY/MEM list quantification/membership, record updates Lean structure updates, over the exact tagged reg_alloc definitions (Allocator.lean/Worklists.lean/SplitDegree.lean). Kernel-checked; standard axioms; no extra premise."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.13): reg_allocProofScript.sml:2206-2237; the unused existential b has polymorphic type α in HOL (re-elaborated: (b :α)), kept as {α : Type} [Nonempty α] (HOL types are inhabited). [local] theorem, statement compared clause by clause with the source text (DB.fetch does not export local theorems; free-variable types re-elaborated in HOL). good_ra_state is the exact tagged goodRaState (whose has_edge/no_clash read through HOL EL as the exact holEl), EVERY/MEM list quantification/membership, record updates Lean structure updates, over the exact tagged reg_alloc definitions (Allocator.lean/Worklists.lean/SplitDegree.lean). Kernel-checked; standard axioms; no extra premise. Update: HOL's vacuous existential binder `b : α` is omitted, so no `[Nonempty α]` instance remains; the remaining binders and the complete conclusion are unchanged."
   },
   {
     "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
@@ -40873,7 +40873,7 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol-b source comparison 2026-10-02, original stack_allocProofScript.sml:4124-4241: full binder order and four curried premise groups, free conf/gs/rs implicit; all shift/width/lenSize/goodDimindex, store, memory/domain and register hypotheses preserved. Exact StackSem evaluate existential clock, memory m2 and nine-register update (register8 Word pa2); store unchanged. Complete fuel induction follows original empty/data-bit/pointer-list cases using native partial-list theorem and evaluateAddClock, no supplied target evaluation. Fresh original HOL typed capture confirms unused existential t0:delta,t1:epsilon, retained as independently arbitrary D/E with Nonempty instances; main source-review policy agmsg2026-10-02T10:04:33Z confirms standard HOL inhabited-type interpretation, not additional operational premise/qualifier. Canonical actual StackSemStateFiniteExact regs/fpRegs/store codec witness; positive-width BitVec NeZero. Seven original concrete EVAL observations; no claimed concrete oracle for unspecified theWord(Loc). Inst evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts, not an independent review of all dependencies."
+    "reviewer": "flapjack-sol-b source comparison 2026-10-02, original stack_allocProofScript.sml:4124-4241: full binder order and four curried premise groups, free conf/gs/rs implicit; all shift/width/lenSize/goodDimindex, store, memory/domain and register hypotheses preserved. Exact StackSem evaluate existential clock, memory m2 and nine-register update (register8 Word pa2); store unchanged. Complete fuel induction follows original empty/data-bit/pointer-list cases using native partial-list theorem and evaluateAddClock, no supplied target evaluation. Fresh original HOL typed capture confirms unused existential t0:delta,t1:epsilon, retained as independently arbitrary D/E with Nonempty instances; main source-review policy agmsg2026-10-02T10:04:33Z confirms standard HOL inhabited-type interpretation, not additional operational premise/qualifier. Canonical actual StackSemStateFiniteExact regs/fpRegs/store codec witness; positive-width BitVec NeZero. Seven original concrete EVAL observations; no claimed concrete oracle for unspecified theWord(Loc). Inst evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts, not an independent review of all dependencies. Update: HOL's vacuous existential binders `t0 : D` and `t1 : E` are omitted, so no `[Nonempty D]`/`[Nonempty E]` instance remains; all four premise groups and the conclusion are unchanged."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
@@ -133659,7 +133659,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/InstallDecoding.lean",
   "lean_name": "installBytes_related",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared v_rel_to_bytes_typed in flat_to_clos_relation_probe.out: source and closure values, fixed 8-bit byte list, conjunctive premise, decoded result and independent unused existential type match. Nonempty α represents HOL types' inhabitation."
+  "reviewer": "Compared v_rel_to_bytes_typed in flat_to_clos_relation_probe.out: source and closure values, fixed 8-bit byte list, conjunctive premise, decoded result and independent unused existential type match. Nonempty α represents HOL types' inhabitation. Update: HOL's vacuous existential carrier is omitted, so no `[Nonempty α]` instance remains; the premise and the decoded-bytes conclusion are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
@@ -133667,7 +133667,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/InstallDecoding.lean",
   "lean_name": "installWords_related",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared v_rel_to_words_typed in flat_to_clos_relation_probe.out: source and closure values, fixed 64-bit word list, conjunctive premise, decoded result and independent unused existential type match. Nonempty α represents HOL types' inhabitation."
+  "reviewer": "Compared v_rel_to_words_typed in flat_to_clos_relation_probe.out: source and closure values, fixed 64-bit word list, conjunctive premise, decoded result and independent unused existential type match. Nonempty α represents HOL types' inhabitation. Update: HOL's vacuous existential carrier is omitted, so no `[Nonempty α]` instance remains; the premise and the decoded-words conclusion are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -133876,7 +133876,7 @@
     "store"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Source comparison with memory_rel_Number_bignum_header_typed in data_to_word_memory_repr_probe.out. The complete original conjunction of premises, location equality, real-address lookup, header encodability and memory result agree. The independent unused existential types β, γ and δ are represented by three independent Lean types with Nonempty instances, matching HOL type inhabitation; their quantifier order is retained. The sign bit inlines multiword b2w_def and b2n_def as if-then-else over word values 1 and 0. The standalone store uses canonical finite support, and positive-width BitVec represents HOL words. The private helper additionally proves domain membership for the pending thunk proof; it is not the tagged statement."
+  "reviewer": "Source comparison with memory_rel_Number_bignum_header_typed in data_to_word_memory_repr_probe.out. The complete original conjunction of premises, location equality, real-address lookup, header encodability and memory result agree. The independent unused existential types β, γ and δ are represented by three independent Lean types with Nonempty instances, matching HOL type inhabitation; their quantifier order is retained. The sign bit inlines multiword b2w_def and b2n_def as if-then-else over word values 1 and 0. The standalone store uses canonical finite support, and positive-width BitVec represents HOL words. The private helper additionally proves domain membership for the pending thunk proof; it is not the tagged statement. Update: HOL's vacuous existential carriers `_ff :β`, `_x :γ` and `_y :δ` are omitted, so no inhabitedness instances remain; the premise and the header conclusion are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml",
