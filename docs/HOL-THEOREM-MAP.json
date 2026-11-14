@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "remove_ticks_app_call_dests",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/AppCallDests.lean",
+    "lean_name": "removeSource_appCallDests",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared remove_ticks_app_call_dests_typed and the original collector and removal clauses: arbitrary Boolean-option selection and expression lists retain the full destination-set equality. Independently replayed the HOL proof and regenerated the typed probe. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
     "hol_name": "EVERY_remove_ticks_sing",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean",
     "lean_name": "EVERY_remove_ticks_sing",
