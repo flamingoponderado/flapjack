@@ -28,6 +28,17 @@ Proof
   \\ Cases_on `t` \\ fs []
 QED
 
+(* Literal replay of clos_mtiProofScript.sml:369-377. *)
+Theorem dest_closure_none_apps_replay:
+  !xs f1 s1.
+      dest_closure s1.max_app NONE f1 [LAST xs] = NONE /\ xs <> [] ==>
+      evaluate_apps f1 xs s1 = (Rerr (Rabort Rtype_error),s1)
+Proof
+  Induct \\ fs [evaluate_apps_def]
+  \\ Cases_on `xs` \\ fs [evaluate_apps_def]
+  \\ fs [evaluate_apps_def,evaluate_def]
+QED
+
 (* Literal replays of clos_mtiProofScript.sml:397-453. *)
 Theorem evaluate_apps_timeout_replay:
   !ys ts s1 e1 env.
@@ -191,6 +202,7 @@ fun show_thm label th =
   else raise Fail (label ^ " has hypotheses");
 val _ = show_thm "do_install_replay_typed=" do_install_replay;
 val _ = show_thm "evaluate_apps_snoc_replay_typed=" evaluate_apps_snoc_replay;
+val _ = show_thm "dest_closure_none_apps_replay_typed=" dest_closure_none_apps_replay;
 val _ = show_thm "evaluate_apps_long_replay_typed=" evaluate_apps_long_replay;
 val _ = show_thm "evaluate_apps_timeout_replay_typed=" evaluate_apps_timeout_replay;
 val _ = show_thm "evaluate_apps_timeout_alt_replay_typed=" evaluate_apps_timeout_alt_replay;

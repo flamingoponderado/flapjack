@@ -1,6 +1,26 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "evaluate_apps_SNOC",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Applications.lean",
+    "lean_name": "evaluateApps_snoc",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the original local theorem and evaluate_apps_snoc_replay_typed: arbitrary values and state, appended last argument, singleton continuation and unchanged other result cases agree. Closure state refs and code use canonical finite maps with a local roundtrip witness; the evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "dest_closure_NONE_IMP_apps",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Applications.lean",
+    "lean_name": "evaluateApps_badClosure",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the original local theorem and dest_closure_none_apps_replay_typed: arbitrary argument list, HOL LAST, failed closure lookup and nonempty premises, type-error result and unchanged state agree. The nonempty premise excludes the unspecified empty LAST. Closure state refs and code use canonical finite maps with a local roundtrip witness; the evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "hol_name": "evaluate_apps_Clos_short",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Applications.lean",
     "lean_name": "evaluateApps_nestedFns_short",

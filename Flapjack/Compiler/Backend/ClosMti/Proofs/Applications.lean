@@ -90,8 +90,9 @@ theorem evaluateApps_singleton {C F : Type} (fn : ClosSem.Value) (args : List Cl
           | nil => exact ⟨value, rfl⟩
           | cons other tail => simp at length
 
-/-- Applying the last argument first decomposes a reconstructed application
-chain. This uses the Lean evaluator; its HOL correspondence remains open. -/
+/-- Applying the last argument first decomposes a reconstructed application chain. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "evaluate_apps_SNOC"
+  (fmap_as_finite_support := [refs, code])]
 theorem evaluateApps_snoc {C F : Type} (args : List ClosSem.Value) (x fn : ClosSem.Value)
     (state : ClosSem.State C F) :
     evaluateApps fn (args ++ [x]) state =
@@ -133,6 +134,29 @@ theorem evaluateApps_snoc_badClosure {C F : Type} (args : List ClosSem.Value)
     split <;> simp_all
   rw [evaluateApps_snoc]
   rw [badApp]
+
+private theorem holLast_append_singleton (xs : List ClosSem.Value) (x : ClosSem.Value) :
+    @Flapjack.holLast ClosSem.Value ⟨ClosSem.unitValue⟩ (xs ++ [x]) = x := by
+  induction xs with
+  | nil => simp [Flapjack.holLast]
+  | cons head tail ih =>
+    cases tail with
+    | nil => simp [Flapjack.holLast]
+    | cons next rest => simpa [Flapjack.holLast] using ih
+
+/-- A failed closure lookup for the last argument aborts a nonempty chain. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "dest_closure_NONE_IMP_apps"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateApps_badClosure {C F : Type} (args : List ClosSem.Value)
+    (fn : ClosSem.Value) (state : ClosSem.State C F)
+    (premises : ClosSem.destClosure state.maxApp none fn
+      [@Flapjack.holLast ClosSem.Value ⟨ClosSem.unitValue⟩ args] = none ∧ args ≠ []) :
+    evaluateApps fn args state = (.err (.abort .typeError), state) := by
+  induction args using List.reverseRecOn with
+  | nil => exact False.elim (premises.2 rfl)
+  | append_singleton args x _ih =>
+    apply evaluateApps_snoc_badClosure args x fn state
+    simpa only [holLast_append_singleton] using premises.1
 
 /-- Applying one argument to a unary closure whose body is another function
 captures that argument and consumes one clock tick. This is a property of the
