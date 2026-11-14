@@ -79,6 +79,13 @@ theorem simpleValRel (maxApp : Nat) : ClosProps.simpleValRel (ValueRel maxApp) :
     cases h
     trivial
 
+/-- Equivalent booleans are related through their source value encodings. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "v_rel_Boolv_mono"]
+theorem valueRel_boolValue (maxApp : Nat) (x y : Bool) (equivalent : x = true ↔ y = true) :
+    ValueRel maxApp (boolValue x) (boolValue y) := by
+  cases x <;> cases y <;> simp_all [boolValue]
+  all_goals exact .block _ [] [] .nil
+
 /-- List values preserve the relation when encoded as closure blocks. -/
 @[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "list_to_v_v_rel"]
 theorem listToValue_related (maxApp : Nat) {left right : List Value}

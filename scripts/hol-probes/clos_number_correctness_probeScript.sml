@@ -43,6 +43,10 @@ val _ = show "renumber_code_locs_every_Fn_SOME_typed=" clos_numberProofTheory.re
 open closLangTheory clos_numberTheory clos_numberProofTheory closSemTheory closPropsTheory
   listTheory rich_listTheory finite_mapTheory backendPropsTheory miscTheory;
 open preamble;
+val v_rel_Boolv_mono_replay = Q.prove(
+  `(x <=> y) ==> v_rel max_app (Boolv x) (Boolv y)`,
+  Cases_on `x` >> simp[Boolv_def,v_rel_simp]);
+val _ = show "v_rel_boolv_mono_replay_typed=" v_rel_Boolv_mono_replay;
 val v_to_list_replay = Q.prove(
   `!x y. v_rel max_app x y ==> OPTREL (LIST_REL (v_rel max_app)) (v_to_list x) (v_to_list y)`,
   ho_match_mp_tac v_to_list_ind >>

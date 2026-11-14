@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "v_rel_Boolv_mono",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ValueRelation.lean",
+    "lean_name": "valueRel_boolValue",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local source theorem and v_rel_boolv_mono_replay_typed, replaying its original proof: equivalence of arbitrary booleans implies the numbering value relation on their source Boolv encodings at an arbitrary natural maximum application. Lean expresses boolean equivalence by equivalence of equality to true. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "simple_val_rel",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ValueRelation.lean",
     "lean_name": "simpleValRel",
