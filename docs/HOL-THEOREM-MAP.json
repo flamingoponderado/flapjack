@@ -75122,7 +75122,7 @@
       "tglobals"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "codewhale source comparison (2026-11-14, task 169): the typed capture globals_rel_def_typed gives sglobals :\u03b1 |-> \u03b2 word_lab and tglobals :\u03b1 |-> \u03b2 word_loc with the key type \u03b1 generic; the definition is now generic over {\u03ba : Type} [DecidableEq \u03ba], matching the source. Qualifier: fmap_as_finite_support_relation with words_as_type_indexed_bitvec."
+    "reviewer": "codewhale source comparison (2026-11-14, task 169): the typed capture globals_rel_def_typed gives sglobals :\u03b1 |-> \u03b2 word_lab and tglobals :\u03b1 |-> \u03b2 word_loc with the key type \u03b1 generic; the definition is now generic over {\u03ba : Type} with no DecidableEq instance (HOL's key type is unrestricted and the body only uses lookup and inequality), matching the source. Qualifier: fmap_as_finite_support_relation with words_as_type_indexed_bitvec."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
@@ -75135,7 +75135,7 @@
       "tglobals"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "codewhale source comparison (2026-11-14, task 169): typed capture globals_rel_intro_typed keeps the key type generic; the introduction rule is now generic over {\u03ba : Type} [DecidableEq \u03ba]. Qualifier: words_as_type_indexed_bitvec."
+    "reviewer": "codewhale source comparison (2026-11-14, task 169): typed capture globals_rel_intro_typed keeps the key type generic; the introduction rule is now generic over {\u03ba : Type} with no DecidableEq instance (HOL's key type is unrestricted and the body only uses lookup and inequality). Qualifier: words_as_type_indexed_bitvec."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
@@ -89077,7 +89077,7 @@
       "globals"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "codewhale source comparison (2026-11-14, task 169): typed capture disjoint_globals_def_typed gives keys \u03b2 and global values \u03b3 independent of the word type \u03b1. The definition is now generic over {\u03ba V : Type} [DecidableEq \u03ba] with cglobals : \u03ba |-> shape # \u03b1 word and globals : \u03ba |-> V, matching the source; the pointwise DISJOINT conclusion is unchanged. Qualifier: fmap_as_finite_support_relation with words_as_type_indexed_bitvec."
+    "reviewer": "codewhale source comparison (2026-11-14, task 169): typed capture disjoint_globals_def_typed gives keys \u03b2 and global values \u03b3 independent of the word type \u03b1. The definition is now generic over {\u03ba V : Type} with no DecidableEq instance (HOL's key type is unrestricted and the body only uses lookup and inequality) with cglobals : \u03ba |-> shape # \u03b1 word and globals : \u03ba |-> V, matching the source; it states HOL's single five-conjunct antecedent (name inequality, both globals lookups present, both cglobals lookups equal to a shape/address pair), with untagged disjointGlobalsHOLExact_apply/_intro keeping callers curried; the pointwise DISJOINT conclusion is unchanged. Qualifier: fmap_as_finite_support_relation with words_as_type_indexed_bitvec."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
