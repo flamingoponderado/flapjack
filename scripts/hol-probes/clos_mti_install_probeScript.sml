@@ -9,6 +9,32 @@ val _ = set_trace "BasicProvers.var_eq_old" 1;
 fun bring_fwd_ctors th ty = map ((fn s => Parse.bring_to_front_overload s {Name = s, Thy = th}) o term_to_string) (TypeBase.constructors_of ty);
 val _ = bring_fwd_ctors "closLang" ``:closLang$exp``;
 
+(* Literal replay of clos_mtiProofScript.sml:344-367. *)
+Theorem evaluate_mk_apps_ok_replay:
+  !other ts env1 s1 vs.
+      evaluate ([e],env1,s3) = (Rval [f],s2') /\
+      evaluate (other,env1,s1) = (Rval vs,s3) /\
+      LENGTH other = LENGTH ts ==>
+      evaluate ([mk_Apps e (ZIP (ts,other))],env1,s1) =
+      evaluate_apps f vs s2'
+Proof
+  once_rewrite_tac [CONJ_COMM]
+  \\ Induct \\ Cases_on `ts` \\ fs [mk_Apps_def]
+  \\ fs [evaluate_def,evaluate_apps_def]
+  \\ simp [Once evaluate_CONS] \\ rw []
+  \\ fs [case_eq_thms,pair_case_eq] \\ rveq
+  \\ first_x_assum (qspec_then `t` mp_tac) \\ fs []
+  \\ rpt (disch_then drule)
+  \\ strip_tac \\ fs []
+  \\ Cases_on `evaluate_apps f vs' s2'` \\ fs []
+  \\ imp_res_tac evaluate_SING \\ fs []
+  \\ rveq \\ fs []
+  \\ fs [evaluate_apps_def]
+  \\ Cases_on `q` \\ fs []
+  \\ imp_res_tac evaluate_SING \\ fs []
+  \\ rveq \\ fs []
+QED
+
 (* Literal replays of clos_mtiProofScript.sml:379-394 and 455-484. *)
 Theorem evaluate_apps_snoc_replay:
   !xs x f s.
@@ -202,6 +228,7 @@ fun show_thm label th =
   else raise Fail (label ^ " has hypotheses");
 val _ = show_thm "do_install_replay_typed=" do_install_replay;
 val _ = show_thm "evaluate_apps_snoc_replay_typed=" evaluate_apps_snoc_replay;
+val _ = show_thm "evaluate_mk_apps_ok_replay_typed=" evaluate_mk_apps_ok_replay;
 val _ = show_thm "dest_closure_none_apps_replay_typed=" dest_closure_none_apps_replay;
 val _ = show_thm "evaluate_apps_long_replay_typed=" evaluate_apps_long_replay;
 val _ = show_thm "evaluate_apps_timeout_replay_typed=" evaluate_apps_timeout_replay;

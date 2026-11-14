@@ -448,13 +448,15 @@ theorem mkApps_function_error {C F : Type} (traces : List BackendCommon.Tra)
 
 /-- Successful head and argument evaluation agrees with applying the
 collected values through the corresponding nested unary applications. -/
-theorem mkApps_success {C F : Type} (traces : List BackendCommon.Tra)
-    (args : List ClosLang.Exp) (env : List ClosSem.Value) (state middle next : ClosSem.State C F)
-    (values : List ClosSem.Value) (fn : ClosSem.Value) (function : ClosLang.Exp)
-    (functionRun : ClosSem.evaluate [function] env middle = (.val [fn], next))
-    (argsRun : ClosSem.evaluate args env state = (.val values, middle))
-    (lengthEq : args.length = traces.length) :
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "evaluate_mk_Apps_ok"
+  (fmap_as_finite_support := [refs, code])]
+theorem mkApps_success {C F : Type} (args : List ClosLang.Exp) (traces : List BackendCommon.Tra)
+    (env : List ClosSem.Value) (state : ClosSem.State C F) (values : List ClosSem.Value)
+    (function : ClosLang.Exp) (middle : ClosSem.State C F) (fn : ClosSem.Value) (next : ClosSem.State C F)
+    (premises : ClosSem.evaluate [function] env middle = (.val [fn], next) ∧
+      ClosSem.evaluate args env state = (.val values, middle) ∧ args.length = traces.length) :
     ClosSem.evaluate [mkApps function (traces.zip args)] env state = evaluateApps fn values next := by
+  obtain ⟨functionRun, argsRun, lengthEq⟩ := premises
   induction traces generalizing args state values with
   | nil =>
     cases args with

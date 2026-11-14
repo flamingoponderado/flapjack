@@ -1,6 +1,16 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "evaluate_mk_Apps_ok",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Applications.lean",
+    "lean_name": "mkApps_success",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the original local theorem and evaluate_mk_apps_ok_replay_typed: argument and trace lists, independent states, singleton function and argument-evaluation premises, list length condition, zipped application construction, and unrestricted application-chain result agree. Closure state refs and code use canonical finite maps with a local roundtrip witness; the evaluator inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "hol_name": "evaluate_apps_SNOC",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Applications.lean",
     "lean_name": "evaluateApps_snoc",

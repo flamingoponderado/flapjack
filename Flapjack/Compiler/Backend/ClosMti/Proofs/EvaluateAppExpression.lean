@@ -134,8 +134,8 @@ theorem evaluate_collected_app_related {C F : Type} (source target : State C F)
                 omega
               have applied := appIH sourceLast targetLast sourceFunction targetFunction sourceValues targetValues
                 lastClock lastStates functionRel valuesRel valuesBound
-              have sourceRun := mkApps_success traces sourceArgs sourceEnv source sourceMiddle sourceLast
-                sourceValues sourceFunction sourceHead sourceHeadRun sourceArgsRun lengthEq
+              have sourceRun := mkApps_success sourceArgs traces sourceEnv source sourceValues
+                sourceHead sourceMiddle sourceFunction sourceLast ⟨sourceHeadRun, sourceArgsRun, lengthEq⟩
               rw [sourceRun, evaluate, fixClock_evaluate, targetArgsRun]
               simp only [targetArgsNonempty, Bool.false_eq_true, ↓reduceIte]
               rw [fixClock_evaluate, targetHeadRun]
