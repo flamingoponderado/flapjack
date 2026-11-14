@@ -467,6 +467,24 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "remove_state_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksRelation.lean",
+    "lean_name": "RemoveStateRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Independent typed HOL definition comparison: all seven original components and orientations agree, including complete FFI state equality, sparse-tree code mapping, oracle composition and compiler adaptation. Source and target share independent compiler and FFI types, with fixed callback word widths. BVI refs use the canonical finite-support map with a same-module roundtrip; code remains a sparse tree."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "remove_state_rel_find_code_eq",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksRelation.lean",
+    "lean_name": "findCode_removeStateRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Independent typed HOL source comparison and literal original proof replay: the relation premise and arbitrary destination and arguments yield the full optional lookup equality, preserving returned arguments and removing ticks from the body. Direct and indirect lookup, missing labels, empty arguments and arity checks match. Compiler and FFI types are independent. BVI refs use the canonical finite-support map with a same-module roundtrip; code remains a sparse tree."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "clock_sub_lt",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksInduction.lean",
     "lean_name": "clockSubLt",

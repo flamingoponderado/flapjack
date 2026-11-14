@@ -55,8 +55,9 @@ def removeTicksCo {Cfg Label Arity : Type}
     Cfg × List (Label × Arity × Bvi.Exp) :=
   (entry.1, cleanProg entry.2)
 
-/-- Flapjack infrastructure: state relation for tick cleanup. This remains
-untagged pending source evaluator and state-carrier review. -/
+/-- The source and target state relation for tick cleanup. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "remove_state_rel_def"
+  (fmap_as_finite_support := [refs])]
 def RemoveStateRel {C F : Type} (source target : BviState C F) : Prop :=
   target.refs = source.refs ∧ target.clock = source.clock ∧ target.global = source.global ∧
   target.ffi = source.ffi ∧
@@ -77,8 +78,9 @@ theorem removeStateRel_decClock {C F : Type} (source target : BviState C F)
     RemoveStateRel (BviSem.decClock ticks source) (BviSem.decClock ticks target) := by
   simpa [BviSem.decClock, states.2.1] using removeStateRel_with_clock source target states (source.clock - ticks)
 
-/-- Flapjack infrastructure: matching code lookup preserves arguments and
-removes ticks from the selected callee. -/
+/-- Matching code lookup preserves arguments and removes ticks from the selected callee. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "remove_state_rel_find_code_eq"
+  (fmap_as_finite_support := [refs])]
 theorem findCode_removeStateRel {C F : Type} (source target : BviState C F)
     (states : RemoveStateRel source target) (destination : Option Nat) (args : List Value) :
     findCode destination args target.code =

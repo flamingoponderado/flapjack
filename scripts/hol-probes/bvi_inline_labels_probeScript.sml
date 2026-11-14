@@ -283,3 +283,19 @@ val evaluate_add_extra_clock_replay = Q.prove
   >> disch_then (qspec_then `extra'` mp_tac)
   >> simp [inc_clock_def]);
 val _ = show "evaluate_add_extra_clock_replay_typed" evaluate_add_extra_clock_replay;
+
+(* Replay the local tick-removal code-lookup lemma. *)
+val remove_state_rel_find_code_eq_replay = Q.prove
+  (`∀s (t:('c,'ffi) bviSem$state).
+    remove_state_rel s t ⇒
+    ∀dest vs.
+      find_code dest vs t.code =
+        OPTION_MAP (I ## remove_ticks_exp) (find_code dest vs s.code)`,
+   rpt strip_tac
+  >> gvs [remove_state_rel_def]
+  >> Cases_on `dest`
+  >> gvs [bvlSemTheory.find_code_def, lookup_map]
+  >> every_case_tac
+  >> gvs []);
+val _ = show "remove_state_rel_find_code_eq_replay_typed" remove_state_rel_find_code_eq_replay;
+val _ = show "remove_state_rel_def_typed" bvi_inlineProofTheory.remove_state_rel_def;
