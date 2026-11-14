@@ -5,8 +5,7 @@ public import Flapjack.Compiler.Backend.ClosInterp.Proofs.InitRelation
 @[expose] public section
 
 
-/-! Values and states used for the no-install interpreter-insertion case.
-These proof-side definitions await HOL carrier and statement review. -/
+/-! Values and states used for the no-install interpreter-insertion case. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL Flapjack.Compiler.Backend.BackendProps
 
@@ -17,7 +16,10 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   ClosSem.holFmapAsFiniteSupportWitness
 
 mutual
-/-- A value contains no closure body that can execute installation. -/
+/-- A value contains no closure body that can execute installation. The two
+closure environment checks are ordered differently from HOL's conjunction;
+`hasInstallFuns` checks every recursive function body. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "v_ok_def"]
 def valueNoInstall : ClosSem.Value → Bool
   | .number _ | .word64 _ | .byteVector _ | .refPtr _ _ => true
   | .block _ values => valuesNoInstall values
@@ -44,6 +46,7 @@ theorem valuesNoInstall_iff (values : List ClosSem.Value) :
 
 /-- An evaluator result contains only no-install values when it succeeds or
 raises; an abort has no returned value to inspect. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "res_ok_def"]
 def resultNoInstall : Result (List ClosSem.Value) ClosSem.Value → Prop
   | .val values => valuesNoInstall values = true
   | .err (.raise value) => valueNoInstall value = true

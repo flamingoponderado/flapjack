@@ -265,6 +265,22 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "v_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/NoInstallValues.lean",
+    "lean_name": "valueNoInstall",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared v_ok_def_typed and all seven clauses over the fixed closure value carrier. The environment checks occur in the opposite conjunction order; valuesNoInstall checks EVERY and hasInstallFuns checks every recursive function body. The original index bound and all value fields remain. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "res_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/NoInstallValues.lean",
+    "lean_name": "resultNoInstall",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared res_ok_def_typed and all three clauses on the fixed (value list, value) result carrier: arbitrary aborts, raised values, and successful value lists. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
     "hol_name": "lookup_vars_ok",
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/NoInstallValues.lean",
     "lean_name": "lookupVars_ok",

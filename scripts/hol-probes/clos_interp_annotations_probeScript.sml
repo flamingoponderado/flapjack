@@ -27,6 +27,8 @@ val has_install_list_eq_replay = Q.prove (
   `∀xs. has_install_list xs ⇔ EXISTS has_install xs`,
   Induct \\ fs [has_install_def]);
 val _ = show_thm "has_install_list_eq_replay_typed=" has_install_list_eq_replay;
+val _ = show_thm "v_ok_def_typed=" clos_interpProofTheory.v_ok_def;
+val _ = show_thm "res_ok_def_typed=" clos_interpProofTheory.res_ok_def;
 val lookup_vars_ok_replay = Q.prove (
   `∀vs env env'. lookup_vars vs env = SOME env' ∧ EVERY v_ok env ⇒ EVERY v_ok env'`,
   Induct \\ fs [lookup_vars_def] \\
