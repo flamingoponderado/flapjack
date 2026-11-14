@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "renumber_code_locs_obeys_max_app",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ObeysMaxApp.lean",
+    "lean_name": "renumberCodeLocs_obeysMaxApp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared renumber_obeys_max_app_typed and the source obeys_max_app clauses: the shared natural arity bound and the independently quantified list and expression conjuncts retain the original numbering equality and input predicate, concluding the corresponding output predicate. EVERY is expressed as a membership-bounded universal. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "renumber_code_locs_no_Labels",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/NoLabels.lean",
     "lean_name": "renumberCodeLocs_noLabels",
