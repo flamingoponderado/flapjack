@@ -205,6 +205,7 @@ val _ = show "do_app_lemma_typed" clos_mtiProofTheory.do_app_lemma;
 val _ = show "dest_closure_some_imp_typed" clos_mtiProofTheory.dest_closure_SOME_IMP;
 val _ = show "ref_rel_simps_typed" clos_mtiProofTheory.ref_rel_simps;
 val _ = show "code_rel_cons_cons_typed" clos_mtiProofTheory.code_rel_CONS_CONS;
+val _ = show "no_mti_eta_typed" clos_mtiProofTheory.no_mti_def;
 val _ = show "value_rel_simps_typed" clos_mtiProofTheory.v_rel_simps;
 val _ = show "mk_fns_def_typed" mk_Fns_def;
 val _ = show "collect_args_def_typed" collect_args_def;

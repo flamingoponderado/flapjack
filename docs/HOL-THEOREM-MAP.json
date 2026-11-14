@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "no_mti_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Syntactic.lean",
+    "lean_name": "noMti_eqns",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared all eleven eta-normalized clauses in no_mti_eta_typed, including quantified constructor fields, expression-list EVERY predicates, recursive-function pair predicates, application arity and optional annotations."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "hol_name": "ref_rel_simps",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
     "lean_name": "refRel_simps",
