@@ -53,22 +53,21 @@ theorem removeFuns_all (maxApp : Nat) (functions : List (Nat × ClosLang.Exp)) :
       functions.all (fun (arity, _) => arity ≤ maxApp && arity != 0) := by
   simp [removeFuns_eq_map, Function.comp_def]
 
-/-- Related environments yield related recursive closures. This is Flapjack
-infrastructure for the recursive-closure case. -/
-theorem recursiveClosures_related (location : Option Nat) (source target : List Value)
-    (functions : List (Nat × ClosLang.Exp)) (envRel : List.Forall₂ ValueRel source target) :
+/-- Related recursive bundles yield related closures at each index. This is
+Flapjack infrastructure for recursive closure inspection. -/
+theorem recursive_bundle_related (location : Option Nat) (env nextEnv : List Value)
+    (functions nextFunctions : List (Nat × ClosLang.Exp))
+    (environments : List.Forall₂ ValueRel env nextEnv)
+    (bodies : List.Forall₂ FunctionRel functions nextFunctions) :
     List.Forall₂ ValueRel
-      ((List.range functions.length).map (fun i => Value.recclosure location [] source functions i))
-      ((List.range (removeFuns functions).length).map
-        (fun i => Value.recclosure location [] target (removeFuns functions) i)) := by
-  have length : (removeFuns functions).length = functions.length := by simp [removeFuns_eq_map]
-  rw [length]
+      ((List.range functions.length).map (fun i => Value.recclosure location [] env functions i))
+      ((List.range nextFunctions.length).map (fun i => Value.recclosure location [] nextEnv nextFunctions i)) := by
+  rw [← bodies.length_eq]
   generalize List.range functions.length = indices
   induction indices with
   | nil => exact .nil
   | cons index rest ih =>
-    exact .cons (.recclosure location [] [] source target functions _ index envRel .nil
-      (removeFuns_related functions)) ih
+    exact .cons (.recclosure location [] [] env nextEnv functions nextFunctions index environments .nil bodies) ih
 
 /-- Capture all values or the requested indices. This is Flapjack
 infrastructure for stating the original induction hypothesis. -/
@@ -151,7 +150,8 @@ theorem evaluate_remove_ticks_letrec {C F : Type} (names : List Flapjack.AstHOL.
     let sourceRecs := (List.range sourceFunctions.length).map
       (fun i => Value.recclosure location [] sourceCaptured sourceFunctions i)
     have recRel : List.Forall₂ ValueRel sourceRecs targetRecs :=
-      recursiveClosures_related location sourceCaptured targetCaptured sourceFunctions captures
+      recursive_bundle_related location sourceCaptured targetCaptured sourceFunctions (removeFuns sourceFunctions)
+        captures (removeFuns_related sourceFunctions)
     have bodyRun : evaluate [removeSing sourceBody] (targetRecs ++ envTarget) target = (result, targetNext) := by
       rw [evaluate.eq_def] at run
       simp only [arityOk, ↓reduceIte] at run

@@ -14,34 +14,6 @@ open Flapjack.Compiler.Backend.ClosSem
 open Flapjack.Compiler.Backend.ClosProps
 open Flapjack.SemanticPrimitivesHOL (Result)
 
-/-- Indexing related lists gives related optional entries. This is Flapjack
-infrastructure for recursive closure inspection. -/
-theorem list_lookup_related {A B : Type} {relation : A → B → Prop} {left : List A} {right : List B}
-    (related : List.Forall₂ relation left right) (index : Nat) :
-    Flapjack.optionRel relation left[index]? right[index]? := by
-  induction related generalizing index with
-  | nil => simp [Flapjack.optionRel]
-  | cons head tail ih =>
-    cases index with
-    | zero => simpa [Flapjack.optionRel] using head
-    | succ index => simpa using ih index
-
-/-- Related recursive bundles yield related closures at each index. This is
-Flapjack infrastructure for recursive closure inspection. -/
-theorem recursive_bundle_related (location : Option Nat) (env nextEnv : List Value)
-    (functions nextFunctions : List (Nat × ClosLang.Exp))
-    (environments : List.Forall₂ ValueRel env nextEnv)
-    (bodies : List.Forall₂ FunctionRel functions nextFunctions) :
-    List.Forall₂ ValueRel
-      ((List.range functions.length).map (fun i => Value.recclosure location [] env functions i))
-      ((List.range nextFunctions.length).map (fun i => Value.recclosure location [] nextEnv nextFunctions i)) := by
-  rw [← bodies.length_eq]
-  generalize List.range functions.length = indices
-  induction indices with
-  | nil => exact .nil
-  | cons index rest ih =>
-    exact .cons (.recclosure location [] [] env nextEnv functions nextFunctions index environments .nil bodies) ih
-
 /-- Successful closure inspection only accepts a closure or recursive closure. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "dest_closure_SOME_IMP"]
 theorem destClosure_some_shape (maxApp : Nat) (location : Option Nat) (function : Value)

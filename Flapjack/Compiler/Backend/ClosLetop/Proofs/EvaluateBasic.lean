@@ -38,16 +38,32 @@ theorem evaluate_let_op_nil {C F : Type} (env nextEnv : List Value)
   subst targetCode
   exact ⟨.val [], target, by simp [evaluate], .nil, states⟩
 
-/-- Related environments have related optional results at every index. This
-lookup lemma is Lean-side infrastructure, not a standalone HOL declaration. -/
-theorem environment_lookup (env nextEnv : List Value) (related : List.Forall₂ ValueRel env nextEnv)
-    (index : Nat) : Flapjack.optionRel ValueRel env[index]? nextEnv[index]? := by
+/-- Indexing related lists gives related optional entries. This helper has no standalone HOL declaration. -/
+theorem list_lookup_related {A B : Type} {relation : A → B → Prop} {left : List A} {right : List B}
+    (related : List.Forall₂ relation left right) (index : Nat) :
+    Flapjack.optionRel relation left[index]? right[index]? := by
   induction related generalizing index with
   | nil => simp [Flapjack.optionRel]
   | cons head tail ih =>
     cases index with
     | zero => simpa [Flapjack.optionRel] using head
     | succ index => simpa using ih index
+
+/-- Recursive closures generated from related bundles and environments are
+related at each common index. This helper has no standalone HOL declaration. -/
+theorem recursive_bundle_related (location : Option Nat) (env nextEnv : List Value)
+    (functions nextFunctions : List (Nat × ClosLang.Exp))
+    (environments : List.Forall₂ ValueRel env nextEnv)
+    (bodies : List.Forall₂ (FunctionRel) functions nextFunctions) :
+    List.Forall₂ ValueRel
+      ((List.range functions.length).map (fun i => Value.recclosure location [] env functions i))
+      ((List.range nextFunctions.length).map (fun i => Value.recclosure location [] nextEnv nextFunctions i)) := by
+  rw [← bodies.length_eq]
+  generalize List.range functions.length = indices
+  induction indices with
+  | nil => exact .nil
+  | cons index rest ih =>
+    exact .cons (.recclosure location [] [] env nextEnv functions nextFunctions index environments .nil bodies) ih
 
 /-- Variables read related values, or both evaluations report a type error. -/
 @[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "evaluate_let_op"
@@ -65,7 +81,7 @@ theorem evaluate_let_op_var {C F : Type} (trace : BackendCommon.Tra) (index : Na
   have codeEq : targetCode = [.var trace index] := by
     simpa [CodeRel, compileList, compileSing] using code
   rw [codeEq]
-  have lookup := environment_lookup env nextEnv envRel index
+  have lookup := list_lookup_related envRel index
   cases found : env[index]? with
   | none =>
     cases nextFound : nextEnv[index]? with
@@ -457,7 +473,7 @@ theorem environment_lookupVars (indices : List Nat) (env nextEnv : List Value)
   induction indices with
   | nil => simp [lookupVars, Flapjack.optionRel]
   | cons index rest ih =>
-    have head := environment_lookup env nextEnv related index
+    have head := list_lookup_related related index
     cases left : env[index]? <;> cases right : nextEnv[index]? <;>
       simp [Flapjack.optionRel, left, right] at head
     · simp [lookupVars, left, right, Flapjack.optionRel]

@@ -104,9 +104,11 @@ theorem evaluate_remove_ticks_nil {C F : Type} (envTarget : List Value)
   subst sourceCode
   exact ⟨0, .val [], source, by simp [evaluate], .nil, states⟩
 
-/-- Related environments return related values at each common index. -/
-theorem environment_lookup (source target : List Value) (related : List.Forall₂ ValueRel source target)
-    (index : Nat) : Flapjack.optionRel ValueRel source[index]? target[index]? := by
+/-- Indexing related lists gives related optional entries. This is Flapjack
+infrastructure for recursive closure inspection. -/
+theorem list_lookup_related {A B : Type} {relation : A → B → Prop} {left : List A} {right : List B}
+    (related : List.Forall₂ relation left right) (index : Nat) :
+    Flapjack.optionRel relation left[index]? right[index]? := by
   induction related generalizing index with
   | nil => simp [Flapjack.optionRel]
   | cons head tail ih =>
@@ -140,7 +142,7 @@ theorem evaluate_remove_ticks_var {C F : Type} (trace : BackendCommon.Tra) (inde
   have removed : [ClosLang.Exp.var trace index] = removeSource [expression] := by
     simpa [CodeRel] using code
   obtain ⟨traces, rfl⟩ := remove_ticks_Var_IMP_mk_Ticks expression trace index removed
-  have lookup := environment_lookup envSource envTarget envRel index
+  have lookup := list_lookup_related envRel index
   have restored : decClock traces.length { source with clock := source.clock + traces.length } = source := by
     simp [decClock]
   cases found : envTarget[index]? with
