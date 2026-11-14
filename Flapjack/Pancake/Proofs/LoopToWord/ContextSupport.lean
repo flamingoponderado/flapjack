@@ -185,22 +185,17 @@ theorem wordSemCutEnvMkNewCutsetIMPHOL {β : Type}
     sptLookup 0 result = sptLookup 0 locals := by
   have hempty : wordSemCutNames (Spt.ln : WordLangNumSetHOL) locals =
       some (Spt.ln : Spt β) := by
-    have hinter : sptInter locals (Spt.ln : WordLangNumSetHOL) = Spt.ln := by
-      cases locals <;> simp [sptInter]
-    simp [wordSemCutNames, LoopSemStateFiniteExact.sptSubsetLive, hinter]
+    cases locals <;> simp [wordSemCutNames, LoopSemStateFiniteExact.sptSubsetLive, sptInter]
   unfold wordSemCutEnv at hcut
   cases hfirst : wordSemCutNames (mkNewCutsetHOL context live) locals with
   | none => simp [wordSemCutEnvs, hfirst, hempty] at hcut
   | some first =>
       have hsubset : LoopSemStateFiniteExact.sptSubsetLive
           (mkNewCutsetHOL context live) locals := by
-        change (if LoopSemStateFiniteExact.sptSubsetLive
-            (mkNewCutsetHOL context live) locals
-          then some (sptInter locals (mkNewCutsetHOL context live)) else none) =
-          some first at hfirst
-        split at hfirst
-        · assumption
-        · simp at hfirst
+        by_cases h : LoopSemStateFiniteExact.sptSubsetLive
+          (mkNewCutsetHOL context live) locals
+        · exact h
+        · simp [wordSemCutNames, h] at hfirst
       have hfirstEq : sptInter locals (mkNewCutsetHOL context live) = first := by
         simpa [wordSemCutNames, hsubset] using hfirst
       have hzero : sptMem 0 (mkNewCutsetHOL context live) := by
@@ -280,9 +275,7 @@ theorem wordSemCutEnvMkNewCutsetHOL {width : Nat} [NeZero width]
     targetLocals zeroValue hrel hdomain hzero
   have hempty : wordSemCutNames (Spt.ln : WordLangNumSetHOL) targetLocals =
       some (Spt.ln : Spt (WordLocW width)) := by
-    have hinter : sptInter targetLocals (Spt.ln : WordLangNumSetHOL) = Spt.ln := by
-      cases targetLocals <;> simp [sptInter]
-    simp [wordSemCutNames, LoopSemStateFiniteExact.sptSubsetLive, hinter]
+    cases targetLocals <;> simp [wordSemCutNames, LoopSemStateFiniteExact.sptSubsetLive, sptInter]
   refine ⟨sptInter targetLocals (mkNewCutsetHOL context live), ?_, ?_⟩
   · simp only [wordSemCutEnv, wordSemCutEnvs]
     rw [hempty]
@@ -307,21 +300,11 @@ theorem wordSemCutEnvMkNewCutsetHOL {width : Nat} [NeZero width]
         simp [findVarHOL, hcontext]
       have hregisterTree : sptMem register
           (toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context))) := by
-        have hregisterList : register ∈
-            (fromNumSetHOL live).map (findVarHOL context) :=
-          List.mem_map.mpr ⟨name, hnameList, hregisterFind⟩
-        have hdomainTree := congrFun
-          (sptDomain_toNumSetHOL
-            ((fromNumSetHOL live).map (findVarHOL context))) register
-        change sptDomain
-          (toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context))) register
-        rw [hdomainTree]
-        exact hregisterList
+        change sptDomain (toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context))) register
+        rw [sptDomain_toNumSetHOL]
+        exact List.mem_map.mpr ⟨name, hnameList, hregisterFind⟩
       have hregisterCut : sptMem register (mkNewCutsetHOL context live) := by
-        change sptMem register (sptInsert 0 ()
-          (toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context))))
-        rw [sptMem_sptInsert]
-        exact Or.inr hregisterTree
+        simp [mkNewCutsetHOL, sptMem_sptInsert, hregisterTree]
       have htargetCut : sptLookup register
           (sptInter targetLocals (mkNewCutsetHOL context live)) = some value := by
         rw [Flapjack.sptLookup_sptInter]
