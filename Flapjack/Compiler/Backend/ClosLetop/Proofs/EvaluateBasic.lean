@@ -227,7 +227,7 @@ theorem evaluate_let_op_raise {C F : Type} (trace : BackendCommon.Tra)
   (fmap_as_finite_support := [refs, code])]
 theorem state_rel_dec_clock {C F : Type} (source target : State C F)
     (related : StateRel source target) : StateRel (decClock 1 source) (decClock 1 target) := by
-  have clockEq : target.clock = source.clock := related.2.2.2.2.2.1
+  have clockEq : target.clock = source.clock := (state_rel_clocks_eqs source target related).symm
   simpa [StateRel, decClock, clockEq] using related
 
 /-- A tick either times out on both sides or evaluates related bodies. -/
@@ -254,7 +254,7 @@ theorem evaluate_let_op_tick {C F : Type} (trace : BackendCommon.Tra)
   have codeEq : targetCode = [.tick trace (compileSing body)] := by
     simpa [CodeRel, compileList, compileSing] using code
   rw [codeEq]
-  have clockEq : target.clock = source.clock := states.2.2.2.2.2.1
+  have clockEq : target.clock = source.clock := (state_rel_clocks_eqs source target states).symm
   by_cases zero : source.clock = 0
   · have targetZero : target.clock = 0 := clockEq.trans zero
     simp [evaluate, zero] at run

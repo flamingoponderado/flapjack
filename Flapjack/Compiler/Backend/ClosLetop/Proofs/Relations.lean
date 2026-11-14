@@ -122,6 +122,13 @@ def StateRel {C F : Type} (source target : State C F) : Prop :=
   source.compile = pureCc compileIncSource target.compile ∧
   target.compileOracle = pureCo compileIncSource ∘ source.compileOracle
 
+/-- Related states have equal clocks. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "state_rel_clocks_eqs"
+  (fmap_as_finite_support := [refs, code])]
+theorem state_rel_clocks_eqs {C F : Type} (source target : State C F)
+    (related : StateRel source target) : source.clock = target.clock :=
+  related.2.2.2.2.2.1.symm
+
 /-- Related code lists have the same length. -/
 @[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "code_rel_IMP_LENGTH"]
 theorem codeRel_length (source target : List ClosLang.Exp) (related : CodeRel source target) :

@@ -287,7 +287,7 @@ theorem stateRel_clock {C F : Type} (source target : State C F) (clock : Nat) (r
 /-- Decrementing both clocks by the same amount preserves the state relation. This helper has no standalone HOL declaration. -/
 theorem stateRel_dec {C F : Type} (source target : State C F) (amount : Nat) (related : StateRel source target) :
     StateRel (decClock amount source) (decClock amount target) := by
-  have clocks : target.clock = source.clock := related.2.2.2.2.2.1
+  have clocks : target.clock = source.clock := (state_rel_clocks_eqs source target related).symm
   simpa [decClock, clocks] using stateRel_clock source target (source.clock - amount) related
 
 /-- Applying a related function to an empty argument list returns the
@@ -331,7 +331,7 @@ theorem evaluate_let_op_app_cons {C F : Type} (location : Option Nat) (function 
     rename_i targetArg targetTail
     have allArgs : List.Forall₂ ValueRel (arg :: args) (targetArg :: targetTail) := .cons argRel tailRel
     have maxEq : target.maxApp = source.maxApp := states.2.2.2.1
-    have clockEq : target.clock = source.clock := states.2.2.2.2.2.1
+    have clockEq : target.clock = source.clock := (state_rel_clocks_eqs source target states).symm
     cases closureRun : destClosure source.maxApp location function (arg :: args) with
     | none =>
       have targetClosure := destClosure_none_related source.maxApp location function targetFunction

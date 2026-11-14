@@ -1,6 +1,15 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+    "hol_name": "state_rel_clocks_eqs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Relations.lean",
+    "lean_name": "state_rel_clocks_eqs",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the original local proof and state_rel_clocks_eqs_replay_typed: related states with shared arbitrary compiler and FFI carriers have equal source and target clocks. Canonical refs and code maps have the local roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
     "hol_name": "state_rel_opt_rel_refs",
     "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Primitive.lean",
     "lean_name": "state_rel_opt_rel_refs",
