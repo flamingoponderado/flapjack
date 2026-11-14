@@ -16628,6 +16628,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "lookup_vars_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Evaluate.lean",
+    "lean_name": "lookup_vars_lemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared lookup_vars_lemma_typed: arbitrary indices and related environments retain both original lookup branches, including the existential related result and target lookup equality. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
     "hol_name": "state_rel_opt_rel_refs",
     "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Relations.lean",
     "lean_name": "state_rel_opt_rel_refs",

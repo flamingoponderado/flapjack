@@ -83,6 +83,18 @@ theorem environment_lookupVars (indices : List Nat) (env nextEnv : List Value)
       · simp [lookupVars, left, right, leftTail, rightTail, optionRel]
       · simp [lookupVars, left, right, leftTail, rightTail, optionRel, head, ih]
 
+/-- Looking up the same indices in related environments preserves captures. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "lookup_vars_lemma"]
+theorem lookup_vars_lemma (indices : List Nat) (env nextEnv : List Value)
+    (related : List.Forall₂ ValueRel env nextEnv) :
+    match lookupVars indices env with
+    | none => lookupVars indices nextEnv = none
+    | some values => ∃ nextValues, List.Forall₂ ValueRel values nextValues ∧
+        lookupVars indices nextEnv = some nextValues := by
+  have capture := environment_lookupVars indices env nextEnv related
+  cases left : lookupVars indices env <;> cases right : lookupVars indices nextEnv <;>
+    simp_all [optionRel]
+
 /-- A successful capture contains one value per selected index. -/
 theorem lookupVars_length (indices : List Nat) (env values : List Value)
     (found : lookupVars indices env = some values) : values.length = indices.length := by

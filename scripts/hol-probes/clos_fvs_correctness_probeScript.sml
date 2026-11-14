@@ -73,6 +73,7 @@ val update_thunk_statement = ``clos_fvsProof$state_rel (s1 :('c,'ffi) closSem$st
                clos_fvsProof$state_rel (s1 with refs := refs1) (s2 with refs := refs2))``;
 val _ = (print "update_thunk_statement_typed="; print_term update_thunk_statement; print "\n");
 val _ = show "dest_closure_some_typed=" clos_fvsProofTheory.dest_closure_SOME_IMP;
+val _ = show "lookup_vars_lemma_typed=" clos_fvsProofTheory.lookup_vars_lemma;
 val _ = show "find_code_lemma_typed=" clos_fvsProofTheory.find_code_lemma;
 val _ = show "dest_closure_full_typed=" clos_fvsProofTheory.dest_closure_SOME_Full_app;
 val _ = show "evaluate_remove_typed=" clos_fvsProofTheory.evaluate_remove_fvs;
