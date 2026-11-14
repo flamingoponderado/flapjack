@@ -8,6 +8,11 @@ fun show label th = if null (hyp th) then
   (print (label ^ "="); print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 val _ = show "remove_ticks_typed" clos_ticksTheory.remove_ticks_def;
+val _ = show "remove_ticks_IMP_LENGTH_typed" clos_ticksProofTheory.remove_ticks_IMP_LENGTH;
+val _ = show "remove_ticks_SING_typed" clos_ticksProofTheory.remove_ticks_SING;
+val _ = show "HD_remove_ticks_SING_typed" clos_ticksProofTheory.HD_remove_ticks_SING;
+val _ = show "remove_ticks_CONS_typed" clos_ticksProofTheory.remove_ticks_CONS;
+val _ = show "code_rel_CONS_CONS_typed" clos_ticksProofTheory.code_rel_CONS_CONS;
 val _ = show "remove_sing_typed" clos_ticksTheory.remove_ticks_sing_def;
 val _ = show "remove_sing_eq_typed" clos_ticksTheory.remove_ticks_sing_eq;
 val _ = show "compile_inc_typed" clos_ticksTheory.compile_inc_def;

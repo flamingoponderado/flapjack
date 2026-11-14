@@ -1,5 +1,35 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml", "hol_name": "remove_ticks_IMP_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean", "lean_name": "remove_ticks_IMP_LENGTH",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared remove_ticks_IMP_LENGTH_typed: the result equality premise and original source-to-result length equality match. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml", "hol_name": "remove_ticks_SING",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean", "lean_name": "remove_ticks_SING",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared remove_ticks_SING_typed: every singleton input has an existential singleton output under the original traversal. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml", "hol_name": "HD_remove_ticks_SING",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean", "lean_name": "HD_remove_ticks_SING",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared HD_remove_ticks_SING_typed: the original singleton head reconstruction and length-one conjuncts both hold; the HOL-shaped head is applied to a provably nonempty list. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml", "hol_name": "remove_ticks_CONS",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean", "lean_name": "remove_ticks_CONS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared remove_ticks_CONS_typed: arbitrary tail and head retain the source singleton-head and transformed-tail equation. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml", "hol_name": "code_rel_CONS_CONS",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean", "lean_name": "code_rel_CONS_CONS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared code_rel_CONS_CONS_typed: arbitrary two-head lists satisfy the original full equivalence with the singleton-head and remaining-tail code relations. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
     "hol_name": "var_list_code_labels_imp",
     "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/CodeLabels.lean",

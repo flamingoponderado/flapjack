@@ -13,6 +13,40 @@ open Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.BackendProps
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "code_rel_def"]
 def CodeRel (source target : List ClosLang.Exp) : Prop := target = removeSource source
 
+/-- Tick removal preserves length whenever its result is given. -/
+@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_IMP_LENGTH"]
+theorem remove_ticks_IMP_LENGTH (es xs : List ClosLang.Exp) (result : xs = removeSource es) :
+    es.length = xs.length := by
+  subst xs
+  exact (removeSource_length es).symm
+
+/-- Tick removal maps a singleton to a singleton. -/
+@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_SING"]
+theorem remove_ticks_SING (e : ClosLang.Exp) : ∃ result, removeSource [e] = [result] := by
+  exact ⟨removeSing e, removeSource_sing_eq.1 e⟩
+
+/-- The head reconstructs a tick-removed singleton, whose length is one. -/
+@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "HD_remove_ticks_SING"]
+theorem HD_remove_ticks_SING (e : ClosLang.Exp) :
+    [@Flapjack.holHd ClosLang.Exp ⟨.var .none 0⟩ (removeSource [e])] = removeSource [e] ∧
+      (removeSource [e]).length = 1 := by
+  simp [removeSource_eq_list, removeList, Flapjack.holHd]
+
+/-- Tick removal decomposes a nonempty input at its head. -/
+@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "remove_ticks_CONS"]
+theorem remove_ticks_CONS (es : List ClosLang.Exp) (e : ClosLang.Exp) :
+    removeSource (e :: es) =
+      (@Flapjack.holHd ClosLang.Exp ⟨.var .none 0⟩ (removeSource [e])) :: removeSource es := by
+  simp [removeSource_eq_list, removeList, Flapjack.holHd]
+
+/-- The code relation splits at the first element in both directions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "code_rel_CONS_CONS"]
+theorem code_rel_CONS_CONS (x1 x2 : ClosLang.Exp) (xs : List ClosLang.Exp)
+    (y1 y2 : ClosLang.Exp) (ys : List ClosLang.Exp) :
+    CodeRel (x1 :: x2 :: xs) (y1 :: y2 :: ys) ↔
+      CodeRel [x1] [y1] ∧ CodeRel (x2 :: xs) (y2 :: ys) := by
+  simp [CodeRel, removeSource_eq_list, removeList]
+
 /-- Related recursive function bodies retain their arity. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "f_rel_def"]
 def FunctionRel {α : Type} (source target : α × ClosLang.Exp) : Prop :=
