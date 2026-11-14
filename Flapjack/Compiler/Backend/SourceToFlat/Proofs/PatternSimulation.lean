@@ -148,10 +148,12 @@ theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
     GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
 end PatternMatchPort
 
-/-- Pattern and pattern-list matching are preserved by compilation. -/
+/-- Pattern and pattern-list matching are preserved by compilation. HOL's two
+conjuncts carry independent state type variables, kept separate here as
+`C F` for the single-pattern case and `C' F'` for the list case. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "pmatch"
   (fmap_as_finite_support := [c, tys])]
-theorem pmatch_source {C F : Type} (genv : GlobalEnv) (compMap2 : Environment)
+theorem pmatch_source {C F C' F' : Type} (genv : GlobalEnv) (compMap2 : Environment)
     (shadowers : VarN → Prop) (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (compMap : Environment) :
     (∀ (constructors : Namespace ModN ConN (Nat × Stamp)) (store : Store SemanticPrimitivesHOL.Value)
       (pattern : Pat) (source : SemanticPrimitivesHOL.Value)
@@ -171,7 +173,8 @@ theorem pmatch_source {C F : Type} (genv : GlobalEnv) (compMap2 : Environment)
       (bindings : List (VarN × SemanticPrimitivesHOL.Value))
       (result : MatchResult (List (VarN × SemanticPrimitivesHOL.Value)))
       (bound suffix : List (VarN × SemanticPrimitivesHOL.Value)) (flatEnv : List (VarN × FlatSem.Value))
-      (flatState : FlatSem.State C F) (flats : List FlatSem.Value) (sourceState : SemanticPrimitivesHOL.State F),
+      (flatState : FlatSem.State C' F') (flats : List FlatSem.Value)
+      (sourceState : SemanticPrimitivesHOL.State F'),
       SemanticPrimitivesHOL.pmatchList constructors store patterns sources bindings = result ∧
       GlobalEnvInv genv compMap2 shadowers sourceEnv ∧ genvCOk genv.c ∧ genvCTysOk genv.c genv.tys ∧
       constructors = sourceEnv.c ∧ compMap2.c = compMap.c ∧ bindings = bound ++ suffix ∧

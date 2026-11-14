@@ -49,9 +49,10 @@ theorem fst_pairMap_id {α β γ : Type} (f : β → γ) (pair : α × β) :
   "genv_c_ok_same_type_FST_eq_imp_same_ctor" (fmap_as_finite_support_parameters := [genvC])]
 theorem genvCOk_sameType_ctorEq (genvC : HolFiniteMapExact ConstructorKey Stamp)
     (cn1 cn2 : FlatLang.CtorId × FlatLang.TypeId) (l1 l2 : Nat) (s1 s2 : Stamp)
-    (ok : genvCOk genvC) (lookup1 : genvC.lookup (cn1, l1) = some s1)
-    (lookup2 : genvC.lookup (cn2, l2) = some s2) (same : sameType s1 s2 = true)
-    (first : cn1.1 = cn2.1) (length : l1 = l2) : sameCtor s1 s2 = true := by
+    (premises : genvCOk genvC ∧ genvC.lookup (cn1, l1) = some s1 ∧
+      genvC.lookup (cn2, l2) = some s2 ∧ sameType s1 s2 = true ∧
+      cn1.1 = cn2.1 ∧ l1 = l2) : sameCtor s1 s2 = true := by
+  obtain ⟨ok, lookup1, lookup2, same, first, length⟩ := premises
   have typeSame : FlatSem.ctorSameType (some cn1) (some cn2) :=
     (ok.2.2.2.1 cn1 cn2 l1 l2 s1 s2 lookup1 lookup2).mp (by simpa [ctorSameType] using same)
   have second : cn1.2 = cn2.2 := by simpa [FlatSem.ctorSameType] using typeSame

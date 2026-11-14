@@ -18316,7 +18316,7 @@
     "hol_name": "do_eval",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["c", "tys"],
-    "reviewer": "Compared source_to_flat_do_eval in cake_subglobals_probe.out with the full typed HOL statement: the same source success, invariant and list relation imply the same existential flat callback configuration, compilation, invariant and oracle/global preservation conclusions. The unused fin_idx existential retains its independent polymorphic HOL type and HOL inhabitance as Nonempty; compiler payload and FFI types remain independent. The canonical global environment c and tys fields are qualified."
+    "reviewer": "Compared source_to_flat_do_eval in source_to_flat_proof_typed_probe.out with the full typed HOL statement: the same source success, invariant and list relation imply the same existential flat callback configuration, compilation, invariant and oracle/global preservation conclusions. HOL's unused fin_idx existential carries a vacuous type variable; it is omitted (documented beside the declaration), so no inhabitance instance is needed. Compiler payload and FFI types remain independent. The canonical global environment c and tys fields are qualified."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
@@ -18583,7 +18583,7 @@
     "hol_name": "pmatch",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["c", "tys"],
-    "reviewer": "Compared both conjuncts and all quantified types and ordered premises against pmatch_replay_typed, obtained by replaying the original local HOL proof. The global environment uses canonical finite maps for c and tys with a local roundtrip witness."
+    "reviewer": "Compared both conjuncts and all quantified types and ordered premises against pmatch_typed in source_to_flat_proof_typed_probe.out, which records HOL's four independent state type variables: alpha and beta in the first conjunct and the separate gamma and delta in the second. Lean binds them as C F and C' F' so neither pair is merged. The global environment uses canonical finite maps for c and tys with a local roundtrip witness."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Equality.lean",
@@ -123633,7 +123633,7 @@
     "fmap_as_finite_support_parameters": [
       "genvC"
     ],
-    "reviewer": "Codex source comparison: retains the original constructor-map invariant, two lookup hypotheses, same source type, equal flat constructor IDs and equal arities, concluding same source constructor. The finite-map input has a same-module lookup/support codec roundtrip; the fully typed original theorem is in source_to_flat_global_env_probe."
+    "reviewer": "Codex source comparison: HOL states one six-part conjunction (constructor-map invariant, both lookups, same source type, equal flat constructor IDs and equal arities); Lean keeps it as a single conjunctive premise, concluding the same source constructor. The finite-map input has a same-module lookup/support codec roundtrip; the fully typed original theorem is in source_to_flat_proof_typed_probe.out."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",

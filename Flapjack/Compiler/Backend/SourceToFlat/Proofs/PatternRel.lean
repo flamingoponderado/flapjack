@@ -244,7 +244,8 @@ theorem pmatch_namedConstructor_related {C F : Type} (genv : GlobalEnv) (compMap
           intro ⟨sameFlat, sameLength⟩
           have arityEq : arity = sources.length := patternArity.symm.trans (sameLength.trans lengths.symm)
           have sameSource := genvCOk_sameType_ctorEq genv.c (flatCn, group.map Prod.fst) flatStamp
-            arity sources.length expected actual ok expectedLookup actualLookup sameType sameFlat arityEq
+            arity sources.length expected actual
+            ⟨ok, expectedLookup, actualLookup, sameType, sameFlat, arityEq⟩
           exact sameCtor sameSource
         have compatible' : FlatSem.PmatchStampsOk (some (flatCn, group)) (some flatStamp)
             arity flats.length := by simpa [patternArity] using compatible
