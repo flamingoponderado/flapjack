@@ -104704,14 +104704,6 @@
     "reviewer": "Codex (source comparison with panSemScript.sml:436-438: HOL updates the finite mlstring-keyed locals map to FEMPTY; panEmptyLocals uses the production String-keyed unrestricted lookup-function state. emptyLocalsHOLExact in PanSem/StateExact.lean improves the name and value carriers, but its untouched map fields still admit infinite support. Direct HOL rows empty_locals/empty_locals_globals/empty_locals_clock are in pan_empty_locals_probe.out and sampled by PanSemEmptyLocalsHOLParity. No exact finite-map bridge; tag remains withdrawn pending flapjack-pxn.18.3.7.1.3.1.1.2."
   },
   {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "fix_clock_IMP_LESS_EQ",
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/ClockExact.lean",
-    "lean_name": "fixClockHOLExact_IMP_LESS_EQ",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.3.35; FLAPJACK-SPECIFIC, documented_mismatch). HOL fix_clock_IMP_LESS_EQ (panSemScript.sml:451-457) states over panSem$state finite maps that a fix_clock step cannot raise the clock. fixClockHOLExact_IMP_LESS_EQ (ClockExact.lean:47) keeps the same quantifiers and conclusion but PanSemStateExact uses unrestricted functions in place of the finite-map fields, admitting infinite support. Exact finite-support replacement over PanSemStateFiniteExact tracked by flapjack-pxn.18.3.7.1.3.1.1.2.5 (parent .2.3)."
-  },
-  {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
     "hol_name": "evaluate_add_clock_or_timeout",
     "hol_line": 834,
@@ -105448,7 +105440,22 @@
       "code",
       "eshapes"
     ],
-    "reviewer": "flapjack-ds3 (source comparison, bead flapjack-pxn.18.3.7.1.3.1.1.2.4): HOL fix_clock_def panSemScript.sml:446-449 is `fix_clock old_s (res, new_s) = (res, new_s with clock := if old_s.clock < new_s.clock then old_s.clock else new_s.clock)`. fixClockHOLFinite matches the pair result and clamped clock clause for clause over PanSemStateFiniteExact; the four finite-map fields are the canonical HolFiniteMapExact translation (witness holFmapAsFiniteSupportWitness). Qualifier is representation-only. HOL word-dimension audit (flapjack-4ac.14): the tagged declaration and its owning width-indexed carrier mention a word type at the width identifier (`BitVec width` / `RiscV.Word width`) with `[NeZero width]`, so `(words_as_type_indexed_bitvec)` applies in addition to the finite-support field qualifier; the manifest status is the combined one.",
+    "reviewer": "flapjack-ds3 (source comparison, bead flapjack-pxn.18.3.7.1.3.1.1.2.4): HOL fix_clock_def panSemScript.sml:446-449 is `fix_clock old_s (res, new_s) = (res, new_s with clock := if old_s.clock < new_s.clock then old_s.clock else new_s.clock)`. fixClockHOLFinite matches the pair result and clamped clock clause for clause over PanSemStateFiniteExact; the four finite-map fields are the canonical HolFiniteMapExact translation (witness holFmapAsFiniteSupportWitness). Qualifier is representation-only. HOL word-dimension audit (flapjack-4ac.14): the tagged declaration and its owning width-indexed carrier mention a word type at the width identifier (`BitVec width` / `RiscV.Word width`) with `[NeZero width]`, so `(words_as_type_indexed_bitvec)` applies in addition to the finite-support field qualifier; the manifest status is the combined one. Independent-carrier audit (task 167): typed capture fix_clock_def_typed in pan_sem_typed_probe.out gives forall(old_s :(delta, epsilon) state) (res :alpha) (new_s :(beta, gamma) state), so the tagged definition is generic over the returned state's width and FFI carrier (width'/sigma'); the earlier same-carrier signature identified them and was generalized. The used same-carrier instance is still available by unification.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "fix_clock_IMP_LESS_EQ",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "fixClockHOLFinite_IMP_LESS_EQ",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "reviewer": "codewhale source comparison (2026-11-14; bead flapjack-pxn.18.3.7.1.3.1.1.2.5): HOL fix_clock_IMP_LESS_EQ (panSemScript.sml:451-457) is `!x. fix_clock ^s x = (res,s1) ==> s1.clock <= s.clock`; typed capture fix_clock_IMP_LESS_EQ_typed in pan_upd_locals_probe.out gives forall(x :beta # (gamma, delta) state). fix_clock (s :(alpha, 'ffi) state) x = ((res :beta),(s1 :(gamma, delta) state)) => s1.clock <= s.clock with 0 hypotheses, so the old state and the returned state have independent word and FFI carriers. Lean keeps that independence (width/sigma versus width'/sigma'), HOL's binder order (x outermost, then s, res, s1) and the single inequality conclusion, with no added premise. The finite-map fields locals/globals/code/eshapes are the canonical HolFiniteMapExact translation (witness holFmapAsFiniteSupportWitness); word payloads use the type-indexed BitVec translation. Qualifier is representation-only.",
     "words_as_type_indexed_bitvec": true
   },
   {

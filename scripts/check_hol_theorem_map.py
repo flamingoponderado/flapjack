@@ -453,19 +453,6 @@ DOCUMENTED_MISMATCHES = {
         "port depends on the exact panSem evaluate and is tracked by "
         "flapjack-pxn.18.4.4 / flapjack-pxn.18.4.3 and flapjack-pxn.18.3.6.9. "
     ),
-    ("Flapjack/Pancake/Semantics/PanSem/ClockExact.lean", "fixClockHOLExact_IMP_LESS_EQ"): (
-        "cakeml/pancake/semantics/panSemScript.sml",
-        "fix_clock_IMP_LESS_EQ",
-        "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.3.35; "
-        "FLAPJACK-SPECIFIC, documented_mismatch). HOL fix_clock_IMP_LESS_EQ "
-        "(panSemScript.sml:451-457) states over panSem$state, whose locals/globals/"
-        "code/eshapes are finite maps, that a fix_clock step cannot raise the clock. "
-        "fixClockHOLExact_IMP_LESS_EQ (ClockExact.lean:47) keeps the same quantifiers "
-        "and conclusion but the carrier PanSemStateExact uses unrestricted functions "
-        "in place of those finite-map fields, a strict superset admitting infinite "
-        "support. Exact finite-support replacement over PanSemStateFiniteExact tracked "
-        "by flapjack-pxn.18.3.7.1.3.1.1.2.5 (parent .2.3). "
-    ),
     ("Flapjack/Pancake/Semantics/PanSem/StateSimpExact.lean", "kvar_simps"): (
         "cakeml/pancake/semantics/panSemScript.sml",
         "kvar_simps",

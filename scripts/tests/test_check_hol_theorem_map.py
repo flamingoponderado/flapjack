@@ -634,14 +634,32 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertNotEqual(exact["statement_status"], "documented_mismatch")
         self.assertIn(exact_key, MAP["tagged_declarations"]())
 
+    def test_pansem_fix_clock_imp_less_eq_mismatch_is_retired(self):
+        # The function-backed fixClockHOLExact_IMP_LESS_EQ is gone; HOL
+        # fix_clock_IMP_LESS_EQ is mapped by the tagged exact-carrier twin.
+        key = ("Flapjack/Pancake/Semantics/PanSem/ClockExact.lean",
+               "fixClockHOLExact_IMP_LESS_EQ")
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        self.assertNotIn(key, inventory)
+        exact_key = ("Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+                     "fixClockHOLFinite_IMP_LESS_EQ")
+        exact = inventory[exact_key]
+        self.assertEqual(
+            (exact["hol_path"], exact["hol_name"]),
+            ("cakeml/pancake/semantics/panSemScript.sml", "fix_clock_IMP_LESS_EQ"),
+        )
+        self.assertNotEqual(exact["statement_status"], "documented_mismatch")
+        self.assertIn(exact_key, MAP["tagged_declarations"]())
+
     def test_pansem_state_defs_function_backed_mismatches_are_documented(self):
         inventory = {
             (record["lean_path"], record["lean_name"]): record
             for record in MAP["build_inventory"]()
         }
         cases = {
-            ("Flapjack/Pancake/Semantics/PanSem/ClockExact.lean",
-             "fixClockHOLExact_IMP_LESS_EQ"): "fix_clock_IMP_LESS_EQ",
             ("Flapjack/Pancake/Semantics/PanSem/StateSimpExact.lean",
              "kvar_simps"): "kvar_simps",
             ("Flapjack/Pancake/Semantics/PanSem/StateSimpExact.lean",

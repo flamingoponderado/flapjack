@@ -239,24 +239,58 @@ def decClockHOLFinite {width : Nat} {σ : Type} [NeZero width]
     `fix_clock old_s (res, new_s) = (res, new_s with clock := if old_s.clock <
     new_s.clock then old_s.clock else new_s.clock)`.  The pair result and the
     clamped clock match clause for clause; the four finite-map fields are
-    recorded by the `fmap_as_finite_support` qualifier. -/
+    recorded by the `fmap_as_finite_support` qualifier.
+
+    HOL's incoming and returned states have independent carriers: the typed
+    capture `fix_clock_def_typed` (`scripts/hol-probes/pan_sem_typed_probe.out`)
+    is `∀(old_s :(δ, ε) state) (res :α) (new_s :(β, γ) state)`, so only their
+    natural-number clocks are related.  The `width'`/`σ'` binders keep that
+    independence; the used same-carrier instance is still available by
+    unification. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "fix_clock_def"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
-def fixClockHOLFinite {width : Nat} {σ : Type} [NeZero width] {β : Type}
+def fixClockHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    {width' : Nat} {σ' : Type} [NeZero width'] {β : Type}
     (oldState : PanSemStateFiniteExact width σ)
-    (step : β × PanSemStateFiniteExact width σ) :
-    β × PanSemStateFiniteExact width σ :=
+    (step : β × PanSemStateFiniteExact width' σ') :
+    β × PanSemStateFiniteExact width' σ' :=
   (step.1, { step.2 with
     clock := if oldState.clock < step.2.clock then oldState.clock else step.2.clock })
 
-/-- The finite-support fix-clock is compatible with the broad exact one. -/
+/-- The finite-support fix-clock is compatible with the broad exact one on the
+    used same-carrier instance. -/
 @[simp] theorem toExact_fixClockHOLFinite {width : Nat} {σ : Type} [NeZero width]
     {β : Type} (oldState : PanSemStateFiniteExact width σ)
     (step : β × PanSemStateFiniteExact width σ) :
     (fixClockHOLFinite oldState step).2.toExact =
       (fixClockHOLExact oldState.toExact (step.1, step.2.toExact)).2 :=
   rfl
+
+/-- Exact HOL `fix_clock_IMP_LESS_EQ` (`panSemScript.sml:451-457`):
+    `!x. fix_clock ^s x = (res,s1) ==> s1.clock <= s.clock`.  The typed capture
+    `fix_clock_IMP_LESS_EQ_typed` (`scripts/hol-probes/pan_upd_locals_probe.out`)
+    is `∀(x :β # (γ, δ) state). fix_clock (s :(α, 'ffi) state) x =
+    ((res :β),(s1 :(γ, δ) state)) ⇒ s1.clock ≤ s.clock` with no hypotheses, so
+    the old state and the returned state keep independent word/FFI carriers;
+    the binders follow HOL's order (`x` outermost, then `s`, `res`, `s1`). -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "fix_clock_IMP_LESS_EQ"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem fixClockHOLFinite_IMP_LESS_EQ {width : Nat} {σ : Type} [NeZero width]
+    {width' : Nat} {σ' : Type} [NeZero width'] {β : Type}
+    (step : β × PanSemStateFiniteExact width' σ')
+    (state : PanSemStateFiniteExact width σ) (result : β)
+    (state1 : PanSemStateFiniteExact width' σ')
+    (h : fixClockHOLFinite state step = (result, state1)) :
+    state1.clock ≤ state.clock := by
+  obtain ⟨stepResult, stepState⟩ := step
+  simp only [fixClockHOLFinite, Prod.mk.injEq] at h
+  obtain ⟨_, hstate⟩ := h
+  subst hstate
+  change (if state.clock < stepState.clock then state.clock else stepState.clock) ≤
+    state.clock
+  split <;> omega
 
 /-- HOL `lookup_kvar_def` (`cakeml/pancake/semantics/panSemScript.sml:415-420`):
     `lookup_kvar vk v s = case vk of Local => FLOOKUP s.locals v | Global =>
