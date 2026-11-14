@@ -216,7 +216,7 @@ private theorem cutEnv_before_assign {α : Type} (source target : Spt α) (names
     split at cut
     · assumption
     · simp at cut
-  have targetRead := getVars_of_subspt arguments source target values included read
+  have targetRead := getVars_of_subspt arguments source target values ((sptSubsptLookup _ _).1 included) read
   let preNames := sptListInsert arguments (sptDelete dest names)
   have prePresent : ∀ key, sptMem key preNames → sptMem key target := by
     intro key member
@@ -453,7 +453,7 @@ private theorem moveReservation {C F : Type} (dest src amount : Nat) (names : Nu
     | some env =>
       have found : sptLookup src state.locals = some value := read
       obtain ⟨before, cutBefore, readBefore, enlarged⟩ :=
-        cutEnv_before_move state.locals state.locals names dest src value env (localsOk_refl _) found cut
+        cutEnv_before_move state.locals state.locals names dest src value env ((sptSubsptLookup _ _).2 (localsOk_refl _)) found cut
       have moveRun : evaluate (.move dest src) state = (none, setVar dest value state) := by
         simp [DataSem.evaluate, read]
       rw [DataSem.evaluate, fixClock_evaluate, moveRun] at run
@@ -485,7 +485,7 @@ private theorem moveReservation {C F : Type} (dest src amount : Nat) (names : Nu
             else { next with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }) ∧
         sptSubspt next.locals out
       obtain ⟨out, safe, peak, mx, enlargedRun, included⟩ :=
-        evaluate_locals body old result next () larger notType run enlarged
+        evaluate_locals body old result next () larger notType run ((sptSubsptLookup _ _).1 enlarged)
       let base := { old with locals := larger }
       have same : moved = { base with safeForSpace := moved.safeForSpace, peakHeapLength := moved.peakHeapLength, stackMax := moved.stackMax } := by
         rfl
@@ -493,7 +493,7 @@ private theorem moveReservation {C F : Type} (dest src amount : Nat) (names : Nu
         (if result = none then { next with locals := out, safeForSpace := safe, peakHeapLength := peak, stackMax := mx }
           else { next with safeForSpace := safe, peakHeapLength := peak, stackMax := mx })
         base result moved.peakHeapLength body enlargedRun
-      refine ⟨out, safe2, peak2, mx2, ?_, included⟩
+      refine ⟨out, safe2, peak2, mx2, ?_, (sptSubsptLookup _ _).2 included⟩
       cases result <;> simpa [← same] using transported
 
 private theorem assignReservation {C F : Type} (dest : Nat) (op : ClosLang.Op) (arguments : List Nat)
@@ -538,7 +538,7 @@ private theorem assignReservation {C F : Type} (dest : Nat) (op : ClosLang.Op) (
           have sourceCut : cutEnv names (sptInsert dest value state.locals) = some resultEnv := by
             simpa [assigned, setVar, installSfs, control.1] using cut
           obtain ⟨before, beforeCut, beforeRead, afterIncluded⟩ :=
-            cutEnv_before_assign state.locals state.locals names dest arguments values value resultEnv (localsOk_refl _) read sourceCut
+            cutEnv_before_assign state.locals state.locals names dest arguments values value resultEnv ((sptSubsptLookup _ _).2 (localsOk_refl _)) read sourceCut
           rw [DataSem.evaluate, fixClock_evaluate] at run
           have spaceRun : evaluate (.makeSpace amount names) assigned =
               (none, addSpace { assigned with locals := resultEnv } amount) := by
@@ -582,7 +582,7 @@ private theorem assignReservation {C F : Type} (dest : Nat) (op : ClosLang.Op) (
                 else { next with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }) ∧
             sptSubspt next.locals out
           obtain ⟨out, safe, peak, mx, enlargedRun, included⟩ :=
-            evaluate_locals body old result next () larger notType run afterIncluded
+            evaluate_locals body old result next () larger notType run ((sptSubsptLookup _ _).1 afterIncluded)
           let base := { old with locals := larger }
           have same : targetNext = { base with safeForSpace := targetNext.safeForSpace, peakHeapLength := targetNext.peakHeapLength, stackMax := targetNext.stackMax } := by
             dsimp only [targetNext]
@@ -592,7 +592,7 @@ private theorem assignReservation {C F : Type} (dest : Nat) (op : ClosLang.Op) (
             (if result = none then { next with locals := out, safeForSpace := safe, peakHeapLength := peak, stackMax := mx }
               else { next with safeForSpace := safe, peakHeapLength := peak, stackMax := mx })
             base result targetNext.peakHeapLength body enlargedRun
-          refine ⟨out, safe2, peak2, mx2, ?_, included⟩
+          refine ⟨out, safe2, peak2, mx2, ?_, (sptSubsptLookup _ _).2 included⟩
           cases result <;> simpa [← same] using transported
   · have invalid : DataLang.opRequiresNames op = true := by cases h : DataLang.opRequiresNames op <;> simp_all
     simp [DataSem.evaluate, invalid, fixClock, typeError] at run
@@ -720,7 +720,10 @@ theorem evaluate_compile {C F V : Type} (program : DataLang.Prog) (source : Stat
         (result, if result = none then { sourceNext with locals := out, safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }
           else { sourceNext with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }) ∧
       localsOk sourceNext.locals out :=
-  simulationFor_all program source sourceNext result locals notType run included
+  by
+    obtain ⟨out, safe, peak, mx, resultRun, resultIncluded⟩ :=
+      simulationFor_all program source sourceNext result locals notType run ((sptSubsptLookup _ _).2 included)
+    exact ⟨out, safe, peak, mx, resultRun, (sptSubsptLookup _ _).1 resultIncluded⟩
 
 /-- Stopped non-type-error evaluation is preserved by reservation compilation. -/
 @[hol "cakeml/compiler/backend/proofs/data_spaceProofScript.sml" "compile_correct"]

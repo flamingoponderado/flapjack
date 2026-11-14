@@ -899,8 +899,8 @@ def evalCrepSemHOLProg {width : Nat} [NeZero width] {σ : Type}
       match hstep : step with
       | (none, stepState) =>
           have hclk : stepState.clock ≤ state.clock :=
-            fixClockCrepSemHOL_IMP_LESS_EQ state
-              (evalCrepSemHOLProg state memDec shMemDec first) none stepState
+            fixClockCrepSemHOL_IMP_LESS_EQ (evalCrepSemHOLProg state memDec shMemDec first)
+              state none stepState
               (by simpa using hstep)
           evalCrepSemHOLProg (crepStampExactDomains state stepState) memDec shMemDec second
       | (some _, _) => step
@@ -923,8 +923,9 @@ def evalCrepSemHOLProg {width : Nat} [NeZero width] {σ : Type}
               match hfixed : fixed with
               | (none, loopState) =>
                   have hbound : loopState.clock ≤ decState.clock :=
-                    fixClockCrepSemHOL_IMP_LESS_EQ decState
-                      (evalCrepSemHOLProg decState memDec shMemDec body) none
+                    fixClockCrepSemHOL_IMP_LESS_EQ
+                      (evalCrepSemHOLProg decState memDec shMemDec body)
+                      decState none
                       loopState (by simpa [fixed] using hfixed)
                   have hlt : (crepStampExactDomains state loopState).clock < state.clock := by
                     simp [decState, decClockCrepSemHOL] at hbound
@@ -934,8 +935,9 @@ def evalCrepSemHOLProg {width : Nat} [NeZero width] {σ : Type}
                     (.while condition body)
               | (some (.continue 0), loopState) =>
                   have hbound : loopState.clock ≤ decState.clock :=
-                    fixClockCrepSemHOL_IMP_LESS_EQ decState
+                    fixClockCrepSemHOL_IMP_LESS_EQ
                       (evalCrepSemHOLProg decState memDec shMemDec body)
+                      decState
                       (some (.continue 0)) loopState (by simpa [fixed] using hfixed)
                   have hlt : (crepStampExactDomains state loopState).clock < state.clock := by
                     simp [decState, decClockCrepSemHOL] at hbound
@@ -997,8 +999,9 @@ def evalCrepSemHOLProg {width : Nat} [NeZero width] {σ : Type}
                               crepStampExactDomains state
                                 { bodyState with locals := state.locals }
                             have hbound : bodyState.clock ≤ decCallee.clock :=
-                              fixClockCrepSemHOL_IMP_LESS_EQ decCallee
+                              fixClockCrepSemHOL_IMP_LESS_EQ
                                 (evalCrepSemHOLProg decCallee memDec shMemDec body)
+                                decCallee
                                 (some (.exception eid)) bodyState
                                 (by simpa [fixed] using hfixed)
                             have hlt : bodyState.clock < state.clock := by
@@ -2372,8 +2375,9 @@ theorem evalCrepSemHOLProg_preserves_domains {width : Nat} [NeZero width] {σ : 
               · rename_i stepState hstep
                 have hSecond := ihSecond (crepStampExactDomains state stepState)
                   (by
-                    have hb := fixClockCrepSemHOL_IMP_LESS_EQ state
-                      (evalCrepSemHOLProg state memDec shMemDec first) none stepState
+                    have hb := fixClockCrepSemHOL_IMP_LESS_EQ
+                                 (evalCrepSemHOLProg state memDec shMemDec first)
+                      state none stepState
                       (by simpa using hstep)
                     change stepState.clock ≤ c
                     omega)
@@ -2432,9 +2436,10 @@ theorem evalCrepSemHOLProg_preserves_domains {width : Nat} [NeZero width] {σ : 
                         have hb : (fixClockCrepSemHOL (decClockCrepSemHOL state)
                             (evalCrepSemHOLProg (decClockCrepSemHOL state) memDec shMemDec
                               body)).2.clock ≤ (decClockCrepSemHOL state).clock :=
-                          fixClockCrepSemHOL_IMP_LESS_EQ (decClockCrepSemHOL state)
+                          fixClockCrepSemHOL_IMP_LESS_EQ
                             (evalCrepSemHOLProg (decClockCrepSemHOL state) memDec shMemDec
-                              body) _ _ rfl
+                              body)
+                            (decClockCrepSemHOL state) _ _ rfl
                         have hb2 : (decClockCrepSemHOL state).clock < c := by
                           simp only [decClockCrepSemHOL]
                           omega
@@ -2548,14 +2553,15 @@ theorem evalCrepSemHOLProg_preserves_domains {width : Nat} [NeZero width] {σ : 
                                     { state with locals :=
                                       HolFiniteMapExact.empty.updateList (parameters.zip values) }).clock :=
                                 fixClockCrepSemHOL_IMP_LESS_EQ
-                                  (decClockCrepSemHOL
-                                    { state with locals :=
-                                      HolFiniteMapExact.empty.updateList (parameters.zip values) })
                                   (evalCrepSemHOLProg
                                     (decClockCrepSemHOL
                                       { state with locals :=
                                         HolFiniteMapExact.empty.updateList (parameters.zip values) })
-                                    memDec shMemDec body) _ _ rfl
+                                    memDec shMemDec body)
+                                  (decClockCrepSemHOL
+                                    { state with locals :=
+                                      HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                        _ _ rfl
                               have hb2 : (decClockCrepSemHOL
                                   { state with locals :=
                                     HolFiniteMapExact.empty.updateList (parameters.zip values) }).clock < c := by
@@ -2658,14 +2664,15 @@ theorem evalCrepSemHOLProg_preserves_domains {width : Nat} [NeZero width] {σ : 
                                   { state with locals :=
                                     HolFiniteMapExact.empty.updateList (parameters.zip values) }).clock :=
                               fixClockCrepSemHOL_IMP_LESS_EQ
-                                (decClockCrepSemHOL
-                                  { state with locals :=
-                                    HolFiniteMapExact.empty.updateList (parameters.zip values) })
                                 (evalCrepSemHOLProg
                                   (decClockCrepSemHOL
                                     { state with locals :=
                                       HolFiniteMapExact.empty.updateList (parameters.zip values) })
-                                  memDec shMemDec body) _ _ rfl
+                                  memDec shMemDec body)
+                                (decClockCrepSemHOL
+                                  { state with locals :=
+                                    HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                      _ _ rfl
                             have hb2 : (decClockCrepSemHOL
                                 { state with locals :=
                                   HolFiniteMapExact.empty.updateList (parameters.zip values) }).clock < c := by
@@ -3918,8 +3925,8 @@ theorem evalCrepSemHOLProg.inductHOL {width : Nat} [NeZero width] {σ : Type}
         | none =>
             exact hseq_none state memDec shMemDec first second hfirst (fun stepState' hstep => by
               have hclk : stepState'.clock ≤ state.clock :=
-                fixClockCrepSemHOL_IMP_LESS_EQ state
-                  (evalCrepSemHOLProg state memDec shMemDec first) none stepState' hstep
+                fixClockCrepSemHOL_IMP_LESS_EQ (evalCrepSemHOLProg state memDec shMemDec first)
+                  state none stepState' hstep
               exact ih (crepStampExactDomains state stepState') memDec shMemDec second (by
                 rw [Prod.lex_def]
                 by_cases hlt : stepState'.clock < state.clock
@@ -3982,8 +3989,9 @@ theorem evalCrepSemHOLProg.inductHOL {width : Nat} [NeZero width] {σ : Type}
                         refine hwhile_none state memDec shMemDec condition body w h hwne hclk
                           (fun loopState' hfx _ => ?_)
                         have hbnd : loopState'.clock ≤ (decClockCrepSemHOL state).clock :=
-                          fixClockCrepSemHOL_IMP_LESS_EQ (decClockCrepSemHOL state)
+                          fixClockCrepSemHOL_IMP_LESS_EQ
                             (evalCrepSemHOLProg (decClockCrepSemHOL state) memDec shMemDec body)
+                            (decClockCrepSemHOL state)
                             none loopState' hfx
                         have hlex : Prod.Lex Nat.lt Nat.lt
                             ((crepStampExactDomains state loopState').clock,
@@ -4003,8 +4011,9 @@ theorem evalCrepSemHOLProg.inductHOL {width : Nat} [NeZero width] {σ : Type}
                             refine hwhile_continue state memDec shMemDec condition body w h hwne hclk
                               (fun loopState' hfx _ => ?_)
                             have hbnd : loopState'.clock ≤ (decClockCrepSemHOL state).clock :=
-                              fixClockCrepSemHOL_IMP_LESS_EQ (decClockCrepSemHOL state)
+                              fixClockCrepSemHOL_IMP_LESS_EQ
                                 (evalCrepSemHOLProg (decClockCrepSemHOL state) memDec shMemDec body)
+                                (decClockCrepSemHOL state)
                                 (some (.continue 0)) loopState' hfx
                             have hlex : Prod.Lex Nat.lt Nat.lt
                                 ((crepStampExactDomains state loopState').clock,
@@ -4070,16 +4079,16 @@ theorem evalCrepSemHOLProg.inductHOL {width : Nat} [NeZero width] {σ : Type}
                                 locals := HolFiniteMapExact.empty.updateList
                                   (parameters.zip values) }).clock :=
                           fixClockCrepSemHOL_IMP_LESS_EQ
-                            (decClockCrepSemHOL
-                              { state with
-                                locals := HolFiniteMapExact.empty.updateList
-                                  (parameters.zip values) })
                             (evalCrepSemHOLProg
                               (decClockCrepSemHOL
                                 { state with
                                   locals := HolFiniteMapExact.empty.updateList
                                     (parameters.zip values) })
                               memDec shMemDec body)
+                            (decClockCrepSemHOL
+                              { state with
+                                locals := HolFiniteMapExact.empty.updateList
+                                  (parameters.zip values) })
                             (some (.exception eid)) bodyState hfx
                         simp only [decClockCrepSemHOL_clock'] at hbnd ⊢
                         exact Nat.lt_of_le_of_lt hbnd
@@ -4166,7 +4175,7 @@ private theorem fixClock_clock_le {width : Nat} [NeZero width] {σ : Type}
     (step : Option (CrepResultHOLExact width) × CrepSemHOLState width σ) :
     (fixClockCrepSemHOL state step).2.clock ≤ state.clock := by
   cases h : fixClockCrepSemHOL state step with
-  | mk r s' => exact fixClockCrepSemHOL_IMP_LESS_EQ state step r s' h
+  | mk r s' => exact fixClockCrepSemHOL_IMP_LESS_EQ step state r s' h
 
 private theorem shMemLoadClockEq {width : Nat} [NeZero width] {σ : Type}
     (operator : WordMemOp) (name : Nat) (address : BitVec width)
@@ -4354,8 +4363,9 @@ theorem evalCrepSemHOLProg_clock_le {width : Nat} [NeZero width] {σ : Type}
               · rename_i stepState hstep
                 have hSecond := ihSecond (crepStampExactDomains state stepState)
                   (by
-                    have hb := fixClockCrepSemHOL_IMP_LESS_EQ state
-                      (evalCrepSemHOLProg state memDec shMemDec first) none stepState
+                    have hb := fixClockCrepSemHOL_IMP_LESS_EQ
+                                 (evalCrepSemHOLProg state memDec shMemDec first)
+                      state none stepState
                       (by simpa using hstep)
                     change stepState.clock ≤ c
                     omega)
@@ -4364,16 +4374,18 @@ theorem evalCrepSemHOLProg_clock_le {width : Nat} [NeZero width] {σ : Type}
                 exact Nat.le_trans hSecond
                   (by
                     change stepState.clock ≤ state.clock
-                    exact fixClockCrepSemHOL_IMP_LESS_EQ state
-                      (evalCrepSemHOLProg state memDec shMemDec first) none stepState
+                    exact fixClockCrepSemHOL_IMP_LESS_EQ
+                            (evalCrepSemHOLProg state memDec shMemDec first)
+                      state none stepState
                       (by simpa using hstep))
               · rename_i val stepState hstep
                 have hstep' : fixClockCrepSemHOL state
                     (evalCrepSemHOLProg state memDec shMemDec first) = (some val, stepState) :=
                   hstep
                 rw [hstep']
-                exact fixClockCrepSemHOL_IMP_LESS_EQ state
-                  (evalCrepSemHOLProg state memDec shMemDec first) (some val) stepState hstep
+                exact fixClockCrepSemHOL_IMP_LESS_EQ
+                        (evalCrepSemHOLProg state memDec shMemDec first)
+                  state (some val) stepState hstep
           | ite condition thenBranch elseBranch =>
               have hsubT : sizeOf thenBranch < n := by
                 have h1 : sizeOf thenBranch <

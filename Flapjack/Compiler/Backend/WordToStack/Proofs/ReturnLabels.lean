@@ -13,9 +13,9 @@ open Flapjack.Compiler.Backend.StackLang Flapjack.StackSem
 right-nested `list_Seq` tree. No register, frame, count or width bound is added. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "copy_ret_aux_thm"
   (words_as_type_indexed_bitvec)]
-theorem copyRetAuxThm {width : Nat} [NeZero width] (k f n : Nat) :
-    (copyRetAuxNative k f 0 : HolProg width) = .skip ∧
-    (copyRetAuxNative k f (n + 1) : HolProg width) =
+theorem copyRetAuxThm {width1 : Nat} {width2 : Nat} [NeZero width1] [NeZero width2] (k f n : Nat) :
+    (copyRetAuxNative k f 0 : HolProg width1) = .skip ∧
+    (copyRetAuxNative k f (n + 1) : HolProg width2) =
       listSeq [.stackLoad k n, .stackStore k (n + f), copyRetAuxNative k f n] := by
   exact ⟨rfl, rfl⟩
 

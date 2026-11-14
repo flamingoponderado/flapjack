@@ -1,0 +1,7 @@
+perm_def_typed=∀(L1 :α list) (L2 :α list). PERM L1 L2 ⇔ ∀(x :α). FILTER ($= x) L1 = FILTER ($= x) L2
+sorted_def_typed=(∀(R :α -> α -> bool). SORTED R ([] :α list) ⇔ T) ∧ (∀(x :α) (R :α -> α -> bool). SORTED R [x] ⇔ T) ∧ ∀(y :α) (x :α) (rst :α list) (R :α -> α -> bool). SORTED R (x::y::rst) ⇔ R x y ∧ SORTED R (y::rst)
+sorted_eq_typed=∀(R :α -> α -> bool) (L :α list) (x :α). transitive R ⇒ (SORTED R (x::L) ⇔ SORTED R L ∧ ∀(y :α). MEM y L ⇒ R x y)
+sorted_tl_typed=SORTED (R :α -> α -> bool) ((x :α)::(xs :α list)) ⇒ SORTED R xs
+part_def_typed=(∀(P :α -> bool) (l1 :α list) (l2 :α list). PART P ([] :α list) l1 l2 = (l1,l2)) ∧ ∀(P :α -> bool) (h :α) (rst :α list) (l1 :α list) (l2 :α list). PART P (h::rst) l1 l2 = if P h then PART P rst (h::l1) l2 else PART P rst l1 (h::l2)
+parts_have_prop_typed=∀(P :α -> bool) (L :α list) (A :α list) (B :α list) (l1 :α list) (l2 :α list). (A,B) = PART P L l1 l2 ∧ (∀(x :α). MEM x l1 ⇒ P x) ∧ (∀(x :α). MEM x l2 ⇒ ¬P x) ⇒ (∀(z :α). MEM z A ⇒ P z) ∧ ∀(z :α). MEM z B ⇒ ¬P z
+partition_def_typed=∀(P :α -> bool) (l :α list). PARTITION P l = PART P l ([] :α list) ([] :α list)

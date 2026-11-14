@@ -10,20 +10,15 @@ public import Flapjack.Misc.Sptree.Wf
 namespace Flapjack.Compiler.Backend.DataProps
 open Flapjack Flapjack.Compiler.Backend.DataSem
 
-/-- The HOL locals relation uses the existing sparse-tree extension relation. -/
-abbrev localsOk {α : Type} (source target : Spt α) : Prop := sptSubspt source target
-
-/-- The complete pointwise defining equation for the local-environment relation. -/
+/-- The local-environment relation preserves every successful lookup. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "locals_ok_def"]
-theorem localsOk_def {α : Type} (source target : Spt α) :
-    localsOk source target ↔
-      ∀ key value, sptLookup key source = some value → sptLookup key target = some value :=
-  sptSubsptLookup source target
+def localsOk {α : Type} (source target : Spt α) : Prop :=
+  ∀ key value, sptLookup key source = some value → sptLookup key target = some value
 
 /-- Every local environment extends itself. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "locals_ok_refl"]
 theorem localsOk_refl {α : Type} (locals : Spt α) : localsOk locals locals := by
-  exact (localsOk_def locals locals).2 (fun _ _ found => found)
+  exact fun _ _ found => found
 
 /-- Extending locals preserves every successful variable-list read. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "locals_ok_get_vars"]
@@ -40,7 +35,7 @@ theorem getVars_of_subspt {α : Type} (names : List Nat) (source target : Spt α
       | none => simp [DataSem.getVars, first, rest] at read
       | some tail =>
         have targetFirst : DataSem.getVar name target = some value :=
-          (sptSubsptLookup source target).1 included name value first
+          included name value first
         have targetRest := ih tail rest
         simp [DataSem.getVars, first, rest] at read
         subst values
@@ -69,14 +64,15 @@ theorem cutEnv_of_subspt {α : Type} (names : NumSet) (source target result : Sp
     (included : localsOk source target) (cut : DataSem.cutEnv names source = some result) :
     DataSem.cutEnv names target = some result := by
   classical
+  have subspt : sptSubspt source target := (sptSubsptLookup source target).2 included
   have present : ∀ key, sptMem key names → sptMem key source := by
     unfold DataSem.cutEnv at cut
     split at cut
     · assumption
     · simp at cut
   have targetPresent : ∀ key, sptMem key names → sptMem key target :=
-    fun key member => (included key (present key member)).1
-  have interEq := inter_eq_of_subspt source target names included present
+    fun key member => (subspt key (present key member)).1
+  have interEq := inter_eq_of_subspt source target names subspt present
   unfold DataSem.cutEnv at cut ⊢
   rw [if_pos present] at cut
   rw [if_pos targetPresent, ← interEq]

@@ -23,9 +23,7 @@ end IEvalBoundCarrier
 /-- Compiled bounded, handler-safe BVL expressions cannot observe an appended
 BVI environment. The first counter is the vacuous outer binder in HOL's
 original statement. -/
-@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "iEval_bVarBound"
-  (fmap_as_finite_support := [refs])]
-theorem iEvalBound {C F : Type} (_outer : Nat) (xs : List Bvl.Exp) (n : Nat)
+private theorem iEvalBoundOptimized {C F : Type} (_outer : Nat) (xs : List Bvl.Exp) (n : Nat)
     (vs : List Value) (state : BviSem.BviState C F) (env : List Value)
     (premises : bVarBound vs.length xs ∧ BvlHandle.Proofs.handleOk xs) :
     BviSem.evaluate (compileListSource n xs).1 (vs ++ env) state =
@@ -48,7 +46,7 @@ theorem iEvalBound {C F : Type} (_outer : Nat) (xs : List Bvl.Exp) (n : Nat)
         simp only [bVarBound, BvlHandle.Proofs.handleOk] at premises
         rcases hx : compileSingSource n body with ⟨converted, code, nextName⟩
         have nilRight : smartAppend code .nil = code := by cases code <;> rfl
-        have bodySame := iEvalBound _outer [body] n vs (BviSem.decClock 1 state) env premises
+        have bodySame := iEvalBoundOptimized _outer [body] n vs (BviSem.decClock 1 state) env premises
         simp only [compileListSource, hx, nilRight] at bodySame
         simp only [compileListSource, compileSingSource, hx, nilRight]
         rw [BviSem.evaluate, BviSem.evaluate]
@@ -69,6 +67,7 @@ theorem iEvalBound {C F : Type} (_outer : Nat) (xs : List Bvl.Exp) (n : Nat)
               simp only [bVarBound] at h
               exact h.2.1
             obtain ⟨aux, compiledArgs, empty⟩ := compileExps_varList bindings n shapes.1
+            rw [compileExpsSource_eq_list] at compiledArgs
             rcases innerCode : compileSingSource n inner with ⟨converted, innerAux, nextName⟩
             obtain ⟨ts, left, right⟩ := evaluate_varMapBound bindings vs env state ⟨argBound, shapes.1⟩
             simp only [compileListSource, compileSingSource, List.isEmpty_nil, if_true,
@@ -83,7 +82,7 @@ theorem iEvalBound {C F : Type} (_outer : Nat) (xs : List Bvl.Exp) (n : Nat)
           rcases hx : compileListSource n (first :: rest) with ⟨bindingCode, bindingAux, n1⟩
           rcases hb : compileSingSource n1 body with ⟨bodyCode, bodyAux, n2⟩
           have bodyNil : smartAppend bodyAux .nil = bodyAux := by cases bodyAux <;> rfl
-          have argsSame := iEvalBound _outer (first :: rest) n vs state env ⟨premises.1.1, handlers.1⟩
+          have argsSame := iEvalBoundOptimized _outer (first :: rest) n vs state env ⟨premises.1.1, handlers.1⟩
           simp only [hx] at argsSame
           simp only [compileListSource, compileSingSource, List.isEmpty_cons, Bool.false_eq_true,
             if_false, hx, hb]
@@ -97,10 +96,11 @@ theorem iEvalBound {C F : Type} (_outer : Nat) (xs : List Bvl.Exp) (n : Nat)
               dsimp only
               have valLen := BviSem.evaluate_length bindingCode vs state next values run
               have codeLen := compileListSource_length n (first :: rest)
+              simp only [compileExpsSource_eq_list] at codeLen
               simp only [hx] at codeLen
               have bodyBound : bVarBound (values ++ vs).length [body] := by
                 simpa [List.length_append, valLen, codeLen, Nat.add_comm] using premises.1.2
-              have bodySame := iEvalBound _outer [body] n1 (values ++ vs) next env
+              have bodySame := iEvalBoundOptimized _outer [body] n1 (values ++ vs) next env
                 ⟨bodyBound, handlers.2⟩
               simp only [compileListSource, hb, bodyNil] at bodySame
               simpa [List.append_assoc] using bodySame
@@ -119,6 +119,7 @@ theorem iEvalBound {C F : Type} (_outer : Nat) (xs : List Bvl.Exp) (n : Nat)
             simp only [bVarBound] at h
             exact h.2
           obtain ⟨aux, compiledArgs, empty⟩ := compileExps_varList bindings n handlers.1
+          rw [compileExpsSource_eq_list] at compiledArgs
           rcases innerCode : compileSingSource n inner with ⟨converted, innerAux, n1⟩
           rcases handlerCode : compileSingSource n1 handler with ⟨convertedHandler, handlerAux, n2⟩
           have handlerNil : smartAppend handlerAux .nil = handlerAux := by cases handlerAux <;> rfl
@@ -130,7 +131,7 @@ theorem iEvalBound {C F : Type} (_outer : Nat) (xs : List Bvl.Exp) (n : Nat)
               BviSem.evaluate [convertedHandler] (value :: (vs ++ env)) next =
                 BviSem.evaluate [convertedHandler] (value :: vs) next := by
             have bound : bVarBound (value :: vs).length [handler] := by simpa [Nat.add_comm] using boundHandler
-            have h := iEvalBound _outer [handler] n1 (value :: vs) next env ⟨bound, handlers.2.2.2⟩
+            have h := iEvalBoundOptimized _outer [handler] n1 (value :: vs) next env ⟨bound, handlers.2.2.2⟩
             simpa only [compileListSource, handlerCode, handlerNil, List.cons_append] using h
           simp only [Option.isNone_some, Bool.false_and, Bool.false_eq_true, ↓reduceIte, handlerSame]
         | _ => simp [BvlHandle.Proofs.handleOk] at premises
@@ -142,7 +143,7 @@ theorem iEvalBound {C F : Type} (_outer : Nat) (xs : List Bvl.Exp) (n : Nat)
         have condNil : smartAppend condAux .nil = condAux := by cases condAux <;> rfl
         have yesNil : smartAppend yesAux .nil = yesAux := by cases yesAux <;> rfl
         have noNil : smartAppend noAux .nil = noAux := by cases noAux <;> rfl
-        have condSame := iEvalBound _outer [condition] n vs state env ⟨premises.1.1, premises.2.1⟩
+        have condSame := iEvalBoundOptimized _outer [condition] n vs state env ⟨premises.1.1, premises.2.1⟩
         simp only [compileListSource, hc, condNil] at condSame
         simp only [compileListSource, compileSingSource, hc, hy, hn]
         rw [BviSem.evaluate, BviSem.evaluate, BviSem.fixClock_evaluate,
@@ -153,15 +154,15 @@ theorem iEvalBound {C F : Type} (_outer : Nat) (xs : List Bvl.Exp) (n : Nat)
           | err error => rfl
           | val values =>
             dsimp only
-            have yesSame := iEvalBound _outer [yes] n1 vs next env ⟨premises.1.2.1, premises.2.2.1⟩
-            have noSame := iEvalBound _outer [no] n2 vs next env ⟨premises.1.2.2, premises.2.2.2⟩
+            have yesSame := iEvalBoundOptimized _outer [yes] n1 vs next env ⟨premises.1.2.1, premises.2.2.1⟩
+            have noSame := iEvalBoundOptimized _outer [no] n2 vs next env ⟨premises.1.2.2, premises.2.2.2⟩
             simp only [compileListSource, hy, hn, yesNil, noNil] at yesSame noSame
             simp only [yesSame, noSame]
       | call ticks dest args =>
         simp only [bVarBound, BvlHandle.Proofs.handleOk] at premises
         rcases hx : compileListSource n args with ⟨converted, code, nextName⟩
         have nilRight : smartAppend code .nil = code := by cases code <;> rfl
-        have argsSame := iEvalBound _outer args n vs state env premises
+        have argsSame := iEvalBoundOptimized _outer args n vs state env premises
         simp only [hx] at argsSame
         simp only [compileListSource, compileSingSource, hx, nilRight]
         rw [BviSem.evaluate, BviSem.evaluate, BviSem.fixClock_evaluate,
@@ -170,14 +171,14 @@ theorem iEvalBound {C F : Type} (_outer : Nat) (xs : List Bvl.Exp) (n : Nat)
         simp only [bVarBound, BvlHandle.Proofs.handleOk] at premises
         rcases hx : compileSingSource n body with ⟨converted, code, nextName⟩
         have nilRight : smartAppend code .nil = code := by cases code <;> rfl
-        have bodySame := iEvalBound _outer [body] n vs state env premises
+        have bodySame := iEvalBoundOptimized _outer [body] n vs state env premises
         simp only [compileListSource, hx, nilRight] at bodySame
         simp only [compileListSource, compileSingSource, hx, nilRight]
         rw [BviSem.evaluate, BviSem.evaluate, bodySame]
       | op op args =>
         simp only [bVarBound, BvlHandle.Proofs.handleOk] at premises
         rcases hx : compileListSource n args with ⟨converted, code, nextName⟩
-        have argsSame := iEvalBound _outer args n vs state env premises
+        have argsSame := iEvalBoundOptimized _outer args n vs state env premises
         simp only [hx] at argsSame
         simp only [compileListSource, compileSingSource, hx]
         have zeroRun (e : List Value) (s : BviSem.BviState C F) :
@@ -474,7 +475,7 @@ theorem iEvalBound {C F : Type} (_outer : Nat) (xs : List Bvl.Exp) (n : Nat)
       rcases hx : compileSingSource n first with ⟨converted, code, nextName⟩
       rcases ht : compileListSource nextName (second :: tail) with ⟨compiledTail, aux, finalName⟩
       have nilRight : smartAppend code .nil = code := by cases code <;> rfl
-      have headSame := iEvalBound _outer [first] n vs state env ⟨premises.1.1, premises.2.1⟩
+      have headSame := iEvalBoundOptimized _outer [first] n vs state env ⟨premises.1.1, premises.2.1⟩
       simp only [compileListSource, hx, nilRight] at headSame
       simp only [compileListSource, hx, ht]
       change BviSem.evaluateTuple (converted :: compiledTail, vs ++ env, state) =
@@ -490,7 +491,7 @@ theorem iEvalBound {C F : Type} (_outer : Nat) (xs : List Bvl.Exp) (n : Nat)
         | err error => rfl
         | val values =>
           dsimp only
-          have tailSame := iEvalBound _outer (second :: tail) nextName vs next env ⟨premises.1.2, premises.2.2⟩
+          have tailSame := iEvalBoundOptimized _outer (second :: tail) nextName vs next env ⟨premises.1.2, premises.2.2⟩
           simp only [ht] at tailSame
           change BviSem.evaluateTuple (compiledTail, vs ++ env, next) =
             BviSem.evaluateTuple (compiledTail, vs, next) at tailSame
@@ -501,13 +502,24 @@ decreasing_by
   all_goals simp only [expsWeight, expWeight]
   all_goals try (have := expWeight_pos second)
   all_goals omega
+/-- The original compiled list cannot observe an appended environment. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "iEval_bVarBound"
+  (fmap_as_finite_support := [refs])]
+theorem iEvalBound {C F : Type} (_outer : Nat) (xs : List Bvl.Exp) (n : Nat)
+    (vs : List Value) (state : BviSem.BviState C F) (env : List Value)
+    (premises : bVarBound vs.length xs ∧ BvlHandle.Proofs.handleOk xs) :
+    BviSem.evaluate (compileExpsSource n xs).1 (vs ++ env) state =
+      BviSem.evaluate (compileExpsSource n xs).1 vs state := by
+  simpa only [compileExpsSource_eq_list] using
+    iEvalBoundOptimized _outer xs n vs state env premises
+
 /-- Naming the compiled list preserves environment independence. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "iEval_bVarBound_extra"
   (fmap_as_finite_support := [refs])]
 theorem iEvalBound_extra {Outer C F : Type} (_outer : Outer) (xs : List Bvl.Exp) (n : Nat)
     (vs : List Value) (state : BviSem.BviState C F) (env : List Value) (d : List Bvi.Exp)
     (premises : bVarBound vs.length xs ∧ BvlHandle.Proofs.handleOk xs ∧
-      d = (compileListSource n xs).1) :
+      d = (compileExpsSource n xs).1) :
     BviSem.evaluate d (vs ++ env) state = BviSem.evaluate d vs state := by
   rcases premises with ⟨bounded, handlers, rfl⟩
   exact iEvalBound 0 xs n vs state env ⟨bounded, handlers⟩

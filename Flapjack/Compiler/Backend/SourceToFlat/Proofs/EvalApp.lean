@@ -195,8 +195,8 @@ theorem exprSim_eval_timeout_from_callback {C F : Type} [Nonempty C]
         simpa using List.forall₂_reverse_iff.mpr reversedRel
       have invariant' : OracleInvariant.factoredInvariant interp transform gen genv idxs sourceArguments flatArguments := by
         simpa [flatRun] using invariant
-      obtain ⟨_, _, _, flatDecs, flatConfig, _, _, _, _, _, _, flatDecoded, flatLength, _⟩ :=
-        OracleInvariant.doEval_correct (Fin := Nat) sourceValues sourceArguments evalEnv decs begin
+      obtain ⟨_, _, _, flatDecs, flatConfig, _, _, _, _, _, flatDecoded, flatLength, _⟩ :=
+        OracleInvariant.doEval_correct sourceValues sourceArguments evalEnv decs begin
           interp transform gen genv idxs flatArguments flatValues.reverse ⟨decoded, invariant', valuesRel⟩
       obtain ⟨a, b, c, d, bytes, words, flatShape⟩ :=
         OracleInvariant.list_length_six flatValues.reverse flatLength
@@ -363,10 +363,10 @@ theorem eval_declaration_context {C F : Type} [Nonempty C]
        | some (.evalOracle prior) => ∃ beginState, begin = some (.evalOracle beginState) ∧
            beginState.envs = (addEnvGeneration prior).envs ∧ beginState.generation = (addEnvGeneration prior).generation
        | _ => False) ∧ (EvaluateHOL.decClock { source with evalState := begin }).clock < source.clock := by
-  obtain ⟨baseGenv, envId, config, flatDecs, flatConfig, next, start', finish', _, other', indexEq,
+  obtain ⟨baseGenv, envId, config, flatDecs, flatConfig, next, start', finish', other', indexEq,
     flatDecoded, flatLength, compiled, nonempty, postInv, generation, future, envInv, nextCfg, previous,
     cGrowth, tGrowth, vGrowth, oracleSubmap, oracleShape⟩ :=
-    OracleInvariant.doEval_correct (Fin := Nat) sourceValues source evalEnv decs begin interp transform
+    OracleInvariant.doEval_correct sourceValues source evalEnv decs begin interp transform
       gen genv (start, finish, other) flat flatValues ⟨decoded, invariant, valuesRel⟩
   have configEq := OracleInvariant.flatDoEval_config _ _ _ _ _ flatDecoded
   subst flatConfig

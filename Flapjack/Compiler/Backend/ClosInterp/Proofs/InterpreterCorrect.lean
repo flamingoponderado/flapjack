@@ -4,8 +4,7 @@ public import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterCons
 
 @[expose] public section
 
-/-! Assembly of the interpreter simulation over the proof-side evaluator.
-The evaluator and state carriers remain pending HOL correspondence review. -/
+/-! Assembly of the interpreter simulation over the closure evaluator. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL
 

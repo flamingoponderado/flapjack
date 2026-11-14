@@ -1,0 +1,1 @@
+totord_typed=∀(c :α -> α -> ordering). TotOrd c ⇔ (∀(x :α) (y :α). c x y = EQUAL ⇔ x = y) ∧ (∀(x :α) (y :α). c x y = GREATER ⇔ c y x = LESS) ∧ ∀(x :α) (y :α) (z :α). c x y = LESS ∧ c y z = LESS ⇒ c x z = LESS

@@ -96,8 +96,10 @@ theorem doEval_install {C F : Type} (source : FlatSem.State C F) (target : ClosS
     | cons wordsRelated rest =>
       cases rest
       rename_i targetBytes targetWords
-      have targetBytesDecoded := (installBytes_related (α := Unit) bytesValue targetBytes bytes ⟨bytesRelated, bytesDecoded⟩).choose_spec
-      have targetWordsDecoded := (installWords_related (α := Unit) wordsValue targetWords words ⟨wordsRelated, wordsDecoded⟩).choose_spec
+      have targetBytesDecoded :=
+        installBytes_related bytesValue targetBytes bytes ⟨bytesRelated, bytesDecoded⟩
+      have targetWordsDecoded :=
+        installWords_related wordsValue targetWords words ⟨wordsRelated, wordsDecoded⟩
       rcases states.2.2.2.2.2.2 with ⟨safe, oracleEq, compileEq⟩
       have oracleTarget : target.compileOracle 0 =
           (compilerState, incCompileDecsProofSide decs) := by

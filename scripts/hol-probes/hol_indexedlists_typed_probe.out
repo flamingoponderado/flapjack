@@ -1,0 +1,1 @@
+findi_def_typed=(∀(x :α). findi x ([] :α list) = (0 :num)) ∧ ∀(x :α) (h :α) (t :α list). findi x (h::t) = if x = h then (0 :num) else (1 :num) + findi x t

@@ -347,7 +347,7 @@ theorem valueRel_weakening :
 the value slots agree and the constructor/type maps grow. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "v_rel_weakening2"
   (fmap_as_finite_support := [c, tys])]
-theorem valueRel_weakening2 {A B C : Type} [Nonempty A] [Nonempty B] [Nonempty C]
+theorem valueRel_weakening2 {A B C : Type}
     (new : GlobalEnv) :
     (∀ old source flat, ValueRel old source flat → ∀ (_unused : A),
       old.c.submap new.c ∧ old.tys.submap new.tys ∧ old.v = new.v →

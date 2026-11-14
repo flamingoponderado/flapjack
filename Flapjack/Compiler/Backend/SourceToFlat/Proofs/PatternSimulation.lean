@@ -148,7 +148,11 @@ theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
     GlobalEnv.ofBroad (GlobalEnv.toBroad env) = env := GlobalEnv.holFmapAsFiniteSupportWitness env
 end PatternMatchPort
 
-/-- Pattern and pattern-list matching are preserved by compilation. -/
+/-- Pattern and pattern-list matching are preserved by compilation. HOL splices
+`^s_i1`, whose `val s_i1 = ``s_i1 : ('f_orac_st, 'ffi) flatSem$state``;`
+binding shares the flat state's two type variables between both conjuncts (and
+shares `'ffi` with the source state through `s_rel`), so Lean binds one `C F`
+for both. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "pmatch"
   (fmap_as_finite_support := [c, tys])]
 theorem pmatch_source {C F : Type} (genv : GlobalEnv) (compMap2 : Environment)
@@ -171,7 +175,8 @@ theorem pmatch_source {C F : Type} (genv : GlobalEnv) (compMap2 : Environment)
       (bindings : List (VarN × SemanticPrimitivesHOL.Value))
       (result : MatchResult (List (VarN × SemanticPrimitivesHOL.Value)))
       (bound suffix : List (VarN × SemanticPrimitivesHOL.Value)) (flatEnv : List (VarN × FlatSem.Value))
-      (flatState : FlatSem.State C F) (flats : List FlatSem.Value) (sourceState : SemanticPrimitivesHOL.State F),
+      (flatState : FlatSem.State C F) (flats : List FlatSem.Value)
+      (sourceState : SemanticPrimitivesHOL.State F),
       SemanticPrimitivesHOL.pmatchList constructors store patterns sources bindings = result ∧
       GlobalEnvInv genv compMap2 shadowers sourceEnv ∧ genvCOk genv.c ∧ genvCTysOk genv.c genv.tys ∧
       constructors = sourceEnv.c ∧ compMap2.c = compMap.c ∧ bindings = bound ++ suffix ∧

@@ -6,8 +6,7 @@ public import Mathlib.Data.List.Forall2
 
 @[expose] public section
 
-/-! Primitive noninterference for the proof-side interpreter simulation.
-The evaluator and state carriers remain pending HOL correspondence review. -/
+/-! Primitive noninterference for the interpreter simulation. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL
 

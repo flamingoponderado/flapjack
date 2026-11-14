@@ -92,8 +92,8 @@ theorem getVars_congr (ns : List Nat) (s t : LoopSemStateFiniteExact width F)
     `!ns st l ck. get_vars ns (st with clock := ck) = get_vars ns st`. -/
 @[hol "cakeml/pancake/semantics/loopPropsScript.sml" "get_vars_clock_upd_eq"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
-theorem get_vars_clock_upd_eq (ns : List Nat) (st : LoopSemStateFiniteExact width F)
-    (_l : Spt (WordLocW width)) (ck : Nat) :
+theorem get_vars_clock_upd_eq {γ : Type} (ns : List Nat) (st : LoopSemStateFiniteExact width F)
+    (_l : γ) (ck : Nat) :
     getVars ns { st with clock := ck } = getVars ns st :=
   getVars_congr ns _ _ (fun _ _ => rfl)
 
@@ -158,8 +158,8 @@ theorem get_vars_local_update_some_eq :
       eval t e = eval s e`. -/
 @[hol "cakeml/pancake/semantics/loopPropsScript.sml" "locals_touched_eq_eval_eq"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
-theorem locals_touched_eq_eval_eq (s : LoopSemStateFiniteExact width F) :
-    ∀ (e : HolLoopExp width) (t : LoopSemStateFiniteExact width F),
+theorem locals_touched_eq_eval_eq {F2 : Type} (s : LoopSemStateFiniteExact width F) :
+    ∀ (e : HolLoopExp width) (t : LoopSemStateFiniteExact width F2),
       s.globals = t.globals ∧ s.memory = t.memory ∧ s.mdomain = t.mdomain ∧
       s.baseAddr = t.baseAddr ∧ s.topAddr = t.topAddr ∧
       (∀ n, n ∈ holLoopLocalsTouched e → sptLookup n s.locals = sptLookup n t.locals) →

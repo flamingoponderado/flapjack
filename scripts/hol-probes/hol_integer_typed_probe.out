@@ -1,0 +1,2 @@
+int_div_type=:int -> int -> int
+int_mod_type=:int -> int -> int

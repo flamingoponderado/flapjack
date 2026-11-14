@@ -1,10 +1,12 @@
 module
 
 public import Flapjack.Pancake.Semantics.PanSem.ClockExact
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 
 -- Checks below run compiled code from these modules.
 public meta import Flapjack.Pancake.Semantics.PanSem.ClockExact
 public meta import Flapjack.Pancake.Semantics.PanSem.StateExact
+public meta import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 public meta import Flapjack.Pancake.Semantics.PanSem.TickShMemExact
 public meta import Flapjack.Pancake.WordConvs
 @[expose] public section
@@ -21,6 +23,7 @@ exact states. The clock semantics are the HOL `fix_clock`/`dec_clock` ones
 namespace Flapjack.Test.PanSemClockExactParity
 
 open Flapjack
+open Flapjack.PanSemStateFiniteExact
 
 open Flapjack.Pancake.PanLang (MlS ShapeHOL ExpHOL ProgHOL)
 
@@ -59,13 +62,30 @@ def noopRecurse : PanSemStateExact 8 Unit →
 def noopEvalExpression : PanSemStateExact 8 Unit → ExpHOL 8 → Option (ValueHOL 8) :=
   fun _ _ => none
 
-/-- The tagged exact `fix_clock_IMP_LESS_EQ` instantiated at clock 9 / new clock 4. -/
+/-- A concrete finite-support exact state with the given clock. -/
+abbrev baseStateFinite (clock : Nat) : PanSemStateFiniteExact 8 Unit :=
+  { locals := HolFiniteMapExact.empty
+    globals := HolFiniteMapExact.empty
+    structs := []
+    code := HolFiniteMapExact.empty
+    eshapes := HolFiniteMapExact.empty
+    memory := fun _ => .word 0
+    memaddrs := fun _ => False
+    shMemaddrs := fun _ => False
+    clock := clock
+    be := false
+    ffi := { oracle := fun _ _ _ _ => .final .failed, ffiState := (), ioEvents := [] }
+    baseAddr := 0
+    topAddr := 100 }
+
+/-- The tagged exact `fix_clock_IMP_LESS_EQ` instantiated at clock 9 / new clock 4
+    over the finite-support carrier. -/
 example :
-    (fixClockHOLExact (baseState 9) ((none : Option Nat), baseState 4)).2.clock ≤
-      (baseState 9).clock :=
-  fixClockHOLExact_IMP_LESS_EQ (baseState 9) (none : Option Nat)
-    (fixClockHOLExact (baseState 9) ((none : Option Nat), baseState 4)).2
-    ((none : Option Nat), baseState 4) rfl
+    (fixClockHOLFinite (baseStateFinite 9) ((none : Option Nat), baseStateFinite 4)).2.clock ≤
+      (baseStateFinite 9).clock :=
+  fixClockHOLFinite_IMP_LESS_EQ ((none : Option Nat), baseStateFinite 4)
+    (baseStateFinite 9) (none : Option Nat)
+    (fixClockHOLFinite (baseStateFinite 9) ((none : Option Nat), baseStateFinite 4)).2 rfl
 
 /-- The untagged `fix_clock` bound keeps a smaller new clock and clamps a larger one. -/
 example : ((fixClockHOLExact (baseState 9) ((none : Option Nat), baseState 4)).2.clock,

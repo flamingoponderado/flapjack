@@ -14,10 +14,11 @@ theorem compileList_imp (n : Nat) (prog : List (Nat × Nat × Bvl.Exp))
     (code : AppList (Nat × Nat × Bvi.Exp)) (n' name arity : Nat) (exp : Bvl.Exp)
     (premises : compileProgramsSource n prog = (code, n') ∧ holALookup prog name = some (arity, exp)) :
     ∃ n0 c aux n1,
-      compileListSource n0 [exp] = ([c], aux, n1) ∧
+      compileExpsSource n0 [exp] = ([c], aux, n1) ∧
       holALookup (appListAppend code) (bvlToBviNamespaces * name + bvlNumStubs) =
-        some (arity, BviLet.compileSing [] 0 c) ∧
+        some (arity, BviLet.compileExp c) ∧
       (appListAppend aux) <:+: (appListAppend code) := by
+  simp only [compileExpsSource_eq_list, BviLet.compileExp_eq]
   induction prog generalizing n code n' with
   | nil => simp [holALookup] at premises
   | cons entry rest ih =>
@@ -29,7 +30,7 @@ theorem compileList_imp (n : Nat) (prog : List (Nat × Nat × Bvl.Exp))
       | mk aux next =>
         cases hrest : compileProgramsSource next rest with
         | mk tree finish =>
-          simp only [compileProgramsSource, compileSingleSource, hfirst, hrest] at compiled
+          simp only [compileProgramsSource, compileSingleSource_eq_impl, compileSingleImpl, hfirst, hrest] at compiled
           cases compiled
           by_cases equal : name = key
           · subst key
@@ -156,6 +157,7 @@ theorem installed_code_correspondence {C F : Type} (relocate : Nat → Nat)
       compileList_imp (source.compileOracle 0).1.1 programs tree finish name arity body
         ⟨compilation, holALookup_of_distinct_member programs name (arity, body) ⟨sourceDistinct, member⟩⟩
     have conversion : compileSingSource counter body = (converted, aux, next) := by
+      rw [compileExpsSource_eq_list] at singletonRun
       rcases h : compileSingSource counter body with ⟨converted', aux', next'⟩
       have nilRight : smartAppend aux' .nil = aux' := by cases aux' <;> rfl
       simp only [compileListSource, h, nilRight, Prod.mk.injEq, List.cons.injEq] at singletonRun
@@ -163,7 +165,7 @@ theorem installed_code_correspondence {C F : Type} (relocate : Nat → Nat)
       rfl
     have translated : (bvlNumStubs + bvlToBviNamespaces * name, arity, BviLet.compileSing [] 0 converted) ∈ appListAppend tree := by
       apply holALookup_member
-      simpa [Nat.add_comm] using translatedLookup
+      simpa [Nat.add_comm, BviLet.compileExp_eq] using translatedLookup
     have auxSubset : ∀ entry ∈ appListAppend aux, entry ∈ appListAppend tree := by
       intro entry member
       exact segment.mem member

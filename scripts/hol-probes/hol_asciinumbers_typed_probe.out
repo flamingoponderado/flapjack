@@ -1,0 +1,3 @@
+hex_typed=∀(n :num). HEX n = if n < (10 :num) then CHR (ORD #"0" + n) else if n < (16 :num) then CHR (ORD #"A" + (n − (10 :num))) else #"\^@"
+n2s_def_typed=∀(b :num) (f :num -> char) (n :num). n2s b f n = REVERSE (MAP f (n2l b n))
+num_to_dec_string_def_typed=toString = n2s (10 :num) HEX

@@ -97,7 +97,7 @@ theorem semanticsAux_shift {width : Nat} [NeZero width] {C F : Type}
       (∀ k d, (G k).2.ffi.ioEvents <+: (G (k + d)).2.ffi.ioEvents) →
       lprefixChain (fun l => ∃ k, l = fromList (G k).2.ffi.ioEvents) := by
     intro G hG
-    rintro _ _ ⟨i, rfl⟩ ⟨j, rfl⟩
+    rintro _ _ ⟨⟨i, rfl⟩, ⟨j, rfl⟩⟩
     rcases Nat.le_total i j with hij | hji
     · obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hij
       exact Or.inl ((lprefix_fromList _ _).2 (hG i d))

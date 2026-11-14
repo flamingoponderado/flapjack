@@ -95,7 +95,7 @@ theorem stateRel_globals {C F : Type} (source : State (Nat × C) F) (target : St
 
 /-- Related states have corresponding reference maps at the target bound.
 The pointwise option relation is equivalent to the source finite-map
-relation by `optionRel_lookup_iff`. -/
+relation `fmap_rel_def` by `optionRel_lookup_iff`. -/
 @[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "state_rel_refs"
   (fmap_as_finite_support := [refs, code])]
 theorem stateRel_refs {C F : Type} (source : State (Nat × C) F) (target : State C F)

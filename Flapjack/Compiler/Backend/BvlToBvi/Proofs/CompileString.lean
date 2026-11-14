@@ -105,7 +105,7 @@ theorem compileStringThm {C F : Type} (str : List Flapjack.Basis.Pure.MlString.H
         .op (.memOp .updateByte)
           [.op (.intOp (.const (Int.ofNat c.toNat))) [], compileInt (Int.ofNat n), .var 0])
       (.refPtr flag ptr :: env) state =
-      (.val (List.replicate ls.length BvlSem.unitValue),
+      (.val (List.replicate str.length BvlSem.unitValue),
         { state with refs := state.refs.updateEq (ptr, .byteArray true
           (str.map fun c => BitVec.ofNat 8 c.toNat)) }) := by
   have result := writeChars str [] ls ptr flag env state premises.2 (by simpa using premises.1)

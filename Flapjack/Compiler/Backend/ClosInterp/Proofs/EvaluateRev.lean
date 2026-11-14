@@ -4,8 +4,7 @@ public import Flapjack.Compiler.Backend.ClosInterp.Proofs.EvaluateEl
 
 @[expose] public section
 
-/-! Correctness of the interpreter's list reversal helper. The evaluator and
-value carriers remain proof-side and await full HOL correspondence review. -/
+/-! Correctness of the interpreter's list reversal helper. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 
 namespace EvalRevPort

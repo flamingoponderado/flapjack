@@ -1,0 +1,7 @@
+hd_typed=∀(h :α) (t :α list). HD (h::t) = h
+last_def_typed=∀(h :α) (t :α list). LAST (h::t) = if t = ([] :α list) then h else LAST t
+last_cons_typed=(∀(x :α). LAST [x] = x) ∧ ∀(x :α) (y :α) (z :α list). LAST (x::y::z) = LAST (y::z)
+el_def_typed=(∀(l :α list). l❲(0 :num)❳ = HD l) ∧ ∀(n :num) (l :α list). l❲SUC n❳ = (TL l)❲n❳
+every2_lupdate_same_typed=∀(P :α -> β -> bool) (l1 :α list) (l2 :β list) (v1 :α) (v2 :β) (n :num). P v1 v2 ∧ LIST_REL P l1 l2 ⇒ LIST_REL P l1❲n ↦ v1❳ l2❲n ↦ v2❳
+list_size_thm_typed=(∀(f :α -> num). list_size f ([] :α list) = (0 :num)) ∧ ∀(f :α -> num) (a0 :α) (a1 :α list). list_size f (a0::a1) = (1 :num) + f a0 + list_size f a1
+ohd_def_typed=∀(l :α list). oHD l = case l of ([] :α list) => (NONE :α option) | h::v1 => SOME h

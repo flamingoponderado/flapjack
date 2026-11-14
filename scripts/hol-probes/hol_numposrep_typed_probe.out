@@ -1,0 +1,1 @@
+n2l_def_typed=∀(n :num) (b :num). n2l b n = if n < b ∨ b < (2 :num) then [n MOD b] else n MOD b::n2l b (n DIV b)

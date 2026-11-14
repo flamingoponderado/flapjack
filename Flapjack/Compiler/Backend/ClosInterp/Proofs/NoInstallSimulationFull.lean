@@ -5,8 +5,7 @@ public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallAppRelation
 @[expose] public section
 
 
-/-! Mutual equal-clock no-install simulation for the proof-side evaluator.
-The evaluator and state carriers await HOL correspondence review. -/
+/-! Mutual equal-clock no-install simulation for the closure evaluator. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL
 

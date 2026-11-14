@@ -17,9 +17,10 @@ auxiliary code. -/
 theorem compileExps_varList (expressions : List Bvl.Exp) (n : Nat)
     (onlyVars : expressions.all isVar = true) :
     ∃ aux : AppList (Nat × Nat × Bvi.Exp),
-      compileListSource n expressions =
+      compileExpsSource n expressions =
         (expressions.map (fun exp => Bvi.Exp.var (BvlProps.destVar exp)), aux, n) ∧
       appListAppend aux = [] := by
+  simp only [compileExpsSource_eq_list]
   induction expressions generalizing n with
   | nil => exact ⟨.nil, by simp [compileListSource, appListAppend, appendAux]⟩
   | cons head tail ih =>

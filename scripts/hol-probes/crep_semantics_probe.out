@@ -1,5 +1,13 @@
 semantics_timeout_is_nonterminal=T
-
 semantics_return_is_success=T
-
 semantics_break_is_nonterminal=T
+fix_clock_def_typed=∀(old_s :(δ, ε) state) (res :α) (new_s :(β, γ) state).
+  fix_clock old_s (res,new_s) =
+  (res,
+   new_s with
+   clock := if old_s.clock < new_s.clock then old_s.clock else new_s.clock)
+fix_clock_def_hypotheses=0
+fix_clock_IMP_LESS_EQ_typed=∀(x :β # (γ, δ) state).
+  fix_clock (s :(α, 'ffi) state) x = ((res :β),(s1 :(γ, δ) state)) ⇒
+  s1.clock ≤ s.clock
+fix_clock_IMP_LESS_EQ_hypotheses=0

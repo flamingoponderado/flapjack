@@ -1,0 +1,7 @@
+dstep_step_typed=∀(s1 :(α option # α option) list # (α option # α option) list # (α option # α option) list) (s2 :(α option # α option) list # (α option # α option) list # (α option # α option) list). s1 ↪ s2 ⇒ ⊢ s1 ⇒ s1 ▷* s2
+steps_MAP_INJ_typed=∀(s1 :(α option # α option) list # (α option # α option) list # (α option # α option) list) (s2 :(α option # α option) list # (α option # α option) list # (α option # α option) list). s1 ▷* s2 ⇒ inj_on_state (f :α option -> β option) s1 ⇒ map_state f s1 ▷* map_state f s2
+NoRead_path_typed=∀(σ :(α # α) list). path σ ∧ windmill σ ∧ LENGTH σ ≥ (2 :num) ∧ FST (HD σ) ≠ SND (LAST σ) ⇒ NoRead (TL σ) (FST (HD σ))
+path_imp_mem_typed=path ((x :α # α)::(y :(α # α) list)) ⇒ ¬NULL y ⇒ MEM (SND x) (MAP (FST :α # α -> α) y)
+path_imp_mem2_typed=path (x :(α # α) list) ⇒ ∀(y :α). MEM y (MAP (SND :α # α -> α) x) ∧ y ≠ SND (LAST x) ⇒ MEM y (MAP (FST :α # α -> α) x)
+step_sem_typed=∀(s1 :(α option # α option) list # (α option # α option) list # (α option # α option) list) (s2 :(α option # α option) list # (α option # α option) list # (α option # α option) list). s1 ▷ s2 ⇒ ⊢ s1 ⇒ ∀(ρ :α option -> β). sem s1 ρ ≡ sem s2 ρ
+eqenv_sym_typed=(p1 :α option -> β) ≡ (p2 :α option -> β) ⇒ p2 ≡ p1

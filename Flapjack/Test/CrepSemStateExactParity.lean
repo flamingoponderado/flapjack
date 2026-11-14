@@ -166,7 +166,7 @@ example :
 example (res : Option Nat) (s1 : CrepSemHOLState 8 Unit)
     (h : fixClockCrepSemHOL (withLocalsOne 5) (some 7, withLocalsOne 9) = (res, s1)) :
     s1.clock ≤ 5 :=
-  fixClockCrepSemHOL_IMP_LESS_EQ (withLocalsOne 5) (some 7, withLocalsOne 9) res s1 h
+  fixClockCrepSemHOL_IMP_LESS_EQ (some 7, withLocalsOne 9) (withLocalsOne 5) res s1 h
 
 def runChecks : IO Bool := do
   if stateExactGuard then

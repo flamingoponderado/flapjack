@@ -237,7 +237,7 @@ theorem compileIncSource_head (counter key arity : Nat) (body : Bvl.Exp)
   rcases first : compileSingSource counter body with ⟨converted, aux, next⟩
   rcases remaining : compileProgramsSource next rest with ⟨other, final⟩
   refine ⟨BviLet.compileSing [] 0 converted, appListAppend aux ++ appListAppend other, ?_⟩
-  simp only [compileIncSource, compileProgramsSource, compileSingleSource, first, remaining,
+  simp only [compileIncSource, compileProgramsSource, compileSingleSource_eq_impl, compileSingleImpl, first, remaining,
     appListAppend_smartAppend]
   simp [appListAppend, appendAux]
 

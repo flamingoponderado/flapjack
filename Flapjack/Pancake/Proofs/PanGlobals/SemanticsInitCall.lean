@@ -50,8 +50,10 @@ theorem lubImageSuc {α : Type} (f : Nat → HolLList α)
     · obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hji
       exact Or.inr (mono j d)
   apply IMP_build_lprefix_lub_EQ
-  · rintro _ _ ⟨i, rfl⟩ ⟨j, rfl⟩; exact cmp i j
-  · rintro _ _ ⟨i, rfl⟩ ⟨j, rfl⟩; exact cmp (i + 1) (j + 1)
+  · rintro _ _ ⟨⟨i, rfl⟩, ⟨j, rfl⟩⟩
+    exact cmp i j
+  · rintro _ _ ⟨⟨i, rfl⟩, ⟨j, rfl⟩⟩
+    exact cmp (i + 1) (j + 1)
   · rintro _ ⟨k, rfl⟩; exact ⟨f (k + 1), ⟨k, rfl⟩, h k⟩
   · rintro _ ⟨k, rfl⟩; exact ⟨f (k + 1), ⟨k + 1, rfl⟩, lprefix_refl _⟩
 

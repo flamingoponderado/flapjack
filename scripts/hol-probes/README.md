@@ -9986,3 +9986,468 @@ original local value-size lemma proof, and concrete closure, word and nested
 constant sizes. Regenerate with
 `HOL_PROBE_ONLY=clossem_generated_size_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The capture supports source review; it is not a cross-language proof.
+
+`bag_typed_probe.out` captures the typed statements of the HOL `bag` theory
+declarations ported in `Flapjack/Misc/Bag*.lean` from the built HOL4 core theory
+(no rebuild): the `bag` type abbreviation (`'a -> num`), `EMPTY_BAG`, `BAG_INN`,
+`BAG_IN`, `BAG_UNION`, `BAG_INSERT`, `SUB_BAG`, `BAG_ALL_DISTINCT`, `BAG_OF_SET`,
+`SET_OF_BAG`, `FINITE_BAG`, `FINITE_EMPTY_BAG`, `FINITE_BAG_INSERT`,
+`FINITE_BAG_UNION_1` (a `[local]` theorem, captured as a typed statement parse),
+`BAG_UNION_EMPTY` (three independently quantified conjuncts),
+`BAG_ALL_DISTINCT_SUB_BAG`, `BAG_IMAGE_DEF`, `BAG_FILTER_DEF`, `BAG_CARD`,
+`BAG_CARD_RELn`, `SUB_BAG_CARD`, `FINITE_SUB_BAG`, and `FINITE_BAG_FILTER`.
+Regenerate with
+`HOL_PROBE_ONLY=bag_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
+
+`hol_mergesort_typed_probe.out` captures the typed statements of the HOL
+`mergesort` theory declarations ported in `Flapjack/Misc/Mergesort.lean` from
+the built HOL4 core theory (no rebuild): `merge_def`, `merge_empty` (with its
+vacuous independently typed `acc` binder), `merge_sorted`, the two
+`merge_tail_correct` theorems, `mergesortN_def`, `mergesortN_correct`,
+`mergesortN_sorted`, `sort2_def`, `sort2_sorted`, `sort2_tail_correct`,
+`sort3_def`, `sort3_sorted`, `sort3_tail_correct`, and typed statement parses of
+the `[local]` theorems `mem_sorted_append`, `merge_last_lem1` and
+`merge_last_lem2` (parses, not proof replays). Regenerate with
+`HOL_PROBE_ONLY=hol_mergesort_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
+
+`hol_llist_typed_probe.out` captures the typed statements of the HOL `llist`
+theory declarations ported in `Flapjack/Misc/LList.lean` from the built HOL4
+core theory (no rebuild): `fromList_11`, `LAPPEND_ASSOC`, `LAPPEND_EQ_LNIL`,
+`LAPPEND_fromList`, `LAPPEND11_FINITE1`, `LAPPEND_NIL_2ND`, the `LAPPEND` spec
+equation, `LDROP`, `LFINITE_fromList`, `LFINITE_APPEND`,
+`LFINITE_LAPPEND_IMP_NIL`, `NOT_LFINITE_APPEND`, the `LFLATTEN` specification
+equation, `LFLATTEN_EQ_NIL`, `LFLATTEN_THM` (four independently quantified
+conjuncts), `every_def`, `every_thm`, `exists_LNTH`, `LPREFIX_APPEND`,
+`to_fromList`, `LPREFIX_NTH`, `LPREFIX_ANTISYM`, `LPREFIX_TRANS`,
+`prefixes_lprefix_total`, `from_toList`, `LUNFOLD_def`, `LUNFOLD`,
+`LUNFOLD_UNIQUE`, `LUNFOLD_BISIMULATION` (independent state types), and the
+`LLIST_BISIMULATION0`, `LLIST_STRONG_BISIMULATION` and `every_coind` theorems.
+Regenerate with
+`HOL_PROBE_ONLY=hol_llist_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
+
+`machine_ieee_typed_probe.out` captures the typed statements of the HOL
+`machine_ieee` definitions ported in `Flapjack/Misc/MachineIeee*.lean` from the
+built HOL4 core theory (no rebuild): the `fp64`/`fp32` codecs and field
+extracts, the comparison and classification predicates, the arithmetic
+definitions (`fp64_add`/`sub`/`mul`/`div`/`mul_add`), the fp32/fp64 and
+int/real conversions, the generic `convert`, and `fp64_sqrt`. The capture shows
+the fixed `word64`/`word32` carriers, the `(52,11)`/`(23,8)` float carriers, the
+independent type variables of `convert`, and the `real` inputs rendered by the
+reviewed rational-cut model. Regenerate with
+`HOL_PROBE_ONLY=machine_ieee_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
+
+`hol_finitemap_alist_typed_probe.out` captures the typed statements of the HOL
+`alist` and `finite_map` declarations ported in `Flapjack/FiniteMap/*.lean` that
+`finite_map_empty_probe.out` does not cover, from the built HOL4 core theories
+(no rebuild): `ALOOKUP_def`, `ALOOKUP_APPEND`, `ALOOKUP_MEM`,
+`ALOOKUP_ALL_DISTINCT_MEM`, `alist_to_fmap_def`, `alist_to_fmap_APPEND`,
+`FUPDATE_LIST` and `FCARD_FUPDATE`. Together with `fempty_typed` and
+`funion_spec_typed` in `finite_map_empty_probe.out` this covers every reviewed
+`HOL/src/finite_maps` row in the manifest. Regenerate with
+`HOL_PROBE_ONLY=hol_finitemap_alist_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
+
+`hol_byte_typed_probe.out` captures the typed statements of the HOL `byte`
+theory declarations ported in `Flapjack/Byte*.lean` from the built HOL4 core
+theory (no rebuild): `byte_index_def`, `get_byte_def`, `word_to_bytes_def`,
+`word_to_bytes_aux_def`, `get_byte_set_byte` (with its `8 ≤ dimindex` premise),
+`set_byte_def`, `word_of_bytes_def`, `word_slice_alt_def`, `bytes_to_word_def`
+and `bytes_in_word_def`. The capture shows the arbitrary word dimension `α`,
+the `word8` byte payload and the `dimindex (:α) DIV 8` byte count retained by
+the Lean renderings. Regenerate with
+`HOL_PROBE_ONLY=hol_byte_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
+
+`hol_alignment_words_typed_probe.out` captures the typed statements of the HOL
+`alignment` declarations and `words` declarations ported in
+`Flapjack/Misc/Alignment.lean` and `Flapjack/Misc/Words/*.lean` from the built
+HOL4 core theories (no rebuild): `align_def`, `aligned_def`, `byte_align_def`,
+`byte_aligned_def`, `aligned_add_sub`, `word_slice_def`, `w2s_def`,
+`word_to_hex_string_def` and `word_replicate_def` (with its independent input
+and output widths). Regenerate with
+`HOL_PROBE_ONLY=hol_alignment_words_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
+
+`hol_sorting_typed_probe.out` captures the typed statements of the seven
+reviewed `HOL/src/sort/sortingScript.sml` rows from the built HOL4 core theory
+(no rebuild): `PERM_DEF`, `SORTED_DEF` (three conjuncts, each independently
+quantified over the element type), `SORTED_EQ`, `SORTED_TL`, `PART_DEF`,
+`PARTs_HAVE_PROP` and `PARTITION_DEF`. The older `hol_sorting_probe.out` keeps
+the type rows and EVAL examples; this capture adds the `show_types` statements
+used for the source comparison. Regenerate with
+`HOL_PROBE_ONLY=hol_sorting_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
+
+`hol_list_typed_probe.out` captures the typed statements of the seven reviewed
+`HOL/src/list/src/listScript.sml` rows from the built HOL4 core theory (no
+rebuild): `HD`, `LAST_DEF`, `LAST_CONS`, `EL_def`, `EVERY2_LUPDATE_same` (with
+independent input and output element types), `list_size_thm` and `oHD_def`.
+Regenerate with
+`HOL_PROBE_ONLY=hol_list_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
+
+`hol_logroot_typed_probe.out` captures the typed HOL `logroot` statements of
+the four reviewed `HOL/src/num/extra_theories/logrootScript.sml` rows from the
+built HOL4 core theory (no rebuild): `LOG_exists`, the `num -> num -> num` type
+of the `new_specification` constant `LOG`, the specification theorem `LOG` and
+`LOG_UNIQUE`. Regenerate with
+`HOL_PROBE_ONLY=hol_logroot_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
+
+`hol_option_typed_probe.out`, `hol_predset_typed_probe.out`,
+`hol_relation_typed_probe.out` and `hol_pair_typed_probe.out` capture the typed
+statements of the reviewed `option`, `pred_set`, `relation` and `pair` rows from
+the built HOL4 core theories (no rebuild): `some_def`, `THE_DEF`, `OPTREL_def`,
+`INJ_DEF`, `LINV_LO`, `LINV_OPT_def`, `transitive_def`, `total_def`,
+`RPROD_DEF` (four independent type variables) and `LEX_DEF`. Regenerate with
+`HOL_PROBE_ONLY=hol_<theory>_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
+
+`hol_comparison_typed_probe.out`, `hol_toto_typed_probe.out`,
+`hol_integer_typed_probe.out`, `hol_bit_typed_probe.out`,
+`hol_numposrep_typed_probe.out` and `hol_indexedlists_typed_probe.out` capture
+the typed statements of the reviewed finite-map comparison, `TotOrd`, integer
+division/remainder, `LOG2`, `n2l` and `findi` rows from the built HOL4 core
+theories (no rebuild): `good_cmp_def`, `TotOrder_imp_good_cmp`, `cmp_thms`, the
+`TotOrd` definition, the `int_div`/`int_mod` constant types, `LOG2_def`,
+`n2l_def` and `findi_def`. Regenerate with
+`HOL_PROBE_ONLY=hol_<theory>_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
+
+`hol_asciinumbers_typed_probe.out` and `hol_string_typed_probe.out` capture the
+typed statements of the reviewed `HOL/src/string` rows from the built HOL4 core
+theories (no rebuild): `HEX`, `n2s_def`, `num_to_dec_string_def`, `isLower_def`,
+`isUpper_def`, `isAlpha_def` and `char_size_def`. Regenerate with
+`HOL_PROBE_ONLY=hol_asciinumbers_typed_probeScript.sml` or
+`HOL_PROBE_ONLY=hol_string_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
+
+`hol_while_typed_probe.out`, `hol_richlist_typed_probe.out` and
+`hol_statetransformer_typed_probe.out` capture the typed statements of the
+reviewed `While`, `rich_list` and `state_transformer` rows from the built HOL4
+core theories (no rebuild): `OLEAST_def`, `OLEAST_INTRO`, `list_rel_lastn`,
+`LIST_REL_REPLICATE_same` and `FOR_def`. Regenerate with
+`HOL_PROBE_ONLY=hol_<theory>_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The capture supports source comparison; it does not establish Lean
+correspondence.
+
+Every typed probe that parses `[local]` statements from the pinned source text expands
+SML antiquotation splices: a source `^name` splices the term bound by
+`val name = ``term``;` (also `mk_var ("name", type_of y)`, `mk_var ("name", ``: ty``)` and
+`rand ``l = r`` `), and the capture substitutes that term instead of deleting the marker.
+Deleting the marker drops the type constraint the splice carries and unlinks type
+variables shared between occurrences — e.g. `source_to_flatProofScript.sml`'s
+`val s_i1 = ``s_i1 : ('f_orac_st, 'ffi) flatSem$state``;` is spliced into both conjuncts
+of `pmatch`, so HOL shares those two variables there. An unrecognised splice is left
+intact, so the re-parse fails loudly rather than silently weakening the statement
+(task 177).
+
+`pancake_loop_to_word_proof_typed_probe.out`,
+`pancake_pan_globals_proof_typed_probe.out`,
+`pancake_crep_to_loop_proof_typed_probe.out`,
+`pancake_pan_structs_proof_typed_probe.out`,
+`pancake_pan_simp_proof_typed_probe.out`,
+`pancake_pan_to_word_proof_typed_probe.out` and
+`arm8_target_proof_typed_probe.out` capture the typed statements of every
+reviewed row of those seven HOL proof theories (task 169). Each probe loads the
+original proof theory and prints, with `show_types`, one `_typed` row per
+reviewed HOL name: exported theorems and definitions are fetched from the
+theory database; `[local]` theorems are parsed literally from the pinned source
+text (typed source evidence, not a replay); the seven derived local theorems
+(`acc_vars_acc'`, `evaluate_io_mono_rephrases`, the two `*_flip` lemmas,
+`mem_load_conversion_inst`, `shape_of_convert_v_rev`, `ALL_DISTINCT_MAP_INJ_o`)
+are captured through the base statement named in the probe comment; and the
+`crep_to_loopProof` datatype `semantics_run_res` is captured through its
+constructors. A source `^` immediately followed by an identifier is an SML
+antiquotation of a term variable, and the capture substitutes the bound typed
+term (an infix `^` for mlstring concatenation is followed by a space and is
+kept). Labels replace an apostrophe with `_prime` so the row grammar stays
+`[A-Za-z][A-Za-z0-9_]*`.
+
+`flat_pattern_proof_typed_probe.out` captures the typed statements of the 133
+distinct HOL names behind the 134 reviewed `flat_patternProofScript.sml` rows
+(task 172): 122 exported theorems and definitions, 7 exported derived theorems
+(`ALOOKUP_FILTER_EQ`, `FILTER_EQ_MONO`, `FILTER_EQ_MONO_TRANS`, `v_rel_l_cases`,
+`naive_pattern_match_correct_inst`, `fold_Boolv`, `do_app_thm`) fetched with
+their own derived statements, the `[local]` theorem `state_rel_IMP_clock`
+parsed from the pinned source, the generated `v_rel_ind`/`v_rel_cases`
+principles of the mutual `Inductive v_rel`, and the local derived `comp_thm`
+replayed from `pattern_compTheory.comp_thm` exactly as the source rewrites it
+(`REWRITE_RULE` of `IS_SOME_EQ_NOT_NONE`, `SIMP_RULE` with `IS_SOME_EXISTS`
+and `PULL_EXISTS`). The mutual `v_rel` itself is captured through its
+`v_rel_rules` theorem. The theory is a default CakeML build target.
+Regenerate with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=flat_pattern_proof_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+`word_to_word_proof_typed_probe.out` captures the typed statements of the 28
+distinct HOL names behind the 54 reviewed `word_to_wordProofScript.sml` rows
+(task 172): 20 exported theorems and definitions fetched from the theory
+database, 6 `[local]` theorems parsed literally from the pinned source, and the
+two local derived theorems `code_rel_no_alloc` and `code_rel_no_install`
+replayed from the exported `code_rel_not_created_subprogs` exactly as the source
+derives them (`Q.GEN` on `P`, `Q.SPEC`, `REWRITE_RULE` of the wordConvs
+`no_alloc_subprogs_def`/`no_install_subprogs_def`). The theory is a default
+CakeML build target. Regenerate with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=word_to_word_proof_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+`source_eval_proof_typed_probe.out` captures the typed statements of the 124
+distinct HOL names behind the 264 reviewed `source_evalProofScript.sml` rows
+(task 172): 97 exported theorems and definitions, including the generated
+`v_rel_ind`/`v_rel_cases` principles of the source `Inductive v_rel` and the
+`v_rel_rules` conjunction that defines it, the `compiler_instance` record
+datatype, 22 `[local]` theorems and definitions parsed from the pinned source,
+and four local derived theorems replayed exactly as the source derives them:
+`alist_to_ns_to_bind2` from `namespaceProps.nsAppend_to_nsBindList` and
+`nsAppend_nsEmpty`, `nsSing_eq_bind` from `nsSing_def` with `nsBind_def`/
+`nsEmpty_def`, `record_forward_trans_sym` from `record_forward_trans` under
+`Once CONJ_COMM`, and `adjust_oracle_ev_decs` from `adjust_oracle_evaluate`
+(`UNDISCH`, `CONJUNCTS`, `List.last`, `DISCH_ALL`, `PULL_FORALL`, and the
+`clock := k` specialization). A source `^` immediately followed by an
+identifier is an SML antiquotation and the bound typed term is substituted. The
+theory is a default CakeML build target. Regenerate with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=source_eval_proof_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+`pancake_pan_to_target_proof_typed_probe.out` and
+`word_convs_proof_typed_probe.out` capture the typed statements of every
+reviewed row of `pan_to_targetProofScript.sml` (56 names) and
+`wordConvsProofScript.sml` (175 names; the 177 reviewed rows share the two
+`ssa_cc_trans_flat_exp_conventions` rows), with the same conventions (task 171).
+Exported theorems and definitions are fetched from the theory database; the
+eight `pan_to_targetProof` and 137 `wordConvsProof` `[local]` theorems are
+parsed literally from the pinned source text; the exported derived theorem
+`remove_dead_prog_conventions` is fetched with its own derived statement; and
+the local derived theorem `const_fp_loop_Seq` is replayed from
+`word_simpTheory.const_fp_loop_def` exactly as the source script derives it
+(`BODY_CONJUNCTS`, filter on `Seq`, `LIST_CONJ`). `pan_to_targetProof` is not a
+default build target, so build it in the private copy with
+
+```
+cd /path/to/cakeml-probe-build/pancake/proofs && \
+  CAKEMLDIR=/path/to/cakeml-probe-build Holmake pan_to_targetProofTheory.uo
+```
+
+(about 7 minutes; it loads `backendProof`, `stack_to_labProof`,
+`lab_to_targetProof`, `pan_to_wordProof`, `pan_to_target` and
+`wordConvsProof`). `wordConvsProof` is a default build target and needs no
+private build. Regenerate with `CAKEML=/path/to/cakeml-probe-build
+HOL_PROBE_ONLY=pancake_pan_to_target_proof_typed_probeScript.sml` or
+`HOL_PROBE_ONLY=word_convs_proof_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The captures support source comparison of
+the inferred carriers, binder order and premise grouping; they do not replay
+the local proofs and do not establish Lean correspondence.
+
+These theories are not built by the default CakeML `Holmake` targets, so the
+probes need a tree where `pancake/`, `pancake/semantics/` and the listed
+`pancake/proofs/` theories are built. Build them in a private copy of the
+pinned checkout (commit `857f0d98d`), never in the shared reference tree:
+
+```
+cp -a <pinned-cakeml> /path/to/cakeml-probe-build
+find /path/to/cakeml-probe-build -type d -name make-deps -prune -exec rm -rf {} +
+cd /path/to/cakeml-probe-build/pancake && CAKEMLDIR=$PWD Holmake
+cd ../semantics && CAKEMLDIR=/path/to/cakeml-probe-build Holmake
+cd ../proofs && CAKEMLDIR=/path/to/cakeml-probe-build Holmake \
+  loop_callProofTheory.uo crep_arithProofTheory.uo loop_liveProofTheory.uo \
+  pan_globalsProofTheory.uo pan_structsProofTheory.uo pan_simpProofTheory.uo \
+  loop_to_wordProofTheory.uo crep_to_loopProofTheory.uo pan_to_wordProofTheory.uo
+cd ../../compiler/encoders/arm8/proofs && CAKEMLDIR=/path/to/cakeml-probe-build \
+  Holmake arm8_targetProofTheory.uo
+```
+
+The `make-deps` removal is required: the copied dependency caches record the
+original absolute source paths, so Holmake would try to build those theories in
+the shared tree. Setting `CAKEMLDIR` to the copy keeps every generated path
+inside it. `arm8_targetProof` loads the already-built `arm8_stepLib` from
+`$HOLDIR/examples/l3-machine-code/arm8/step` read-only and writes only inside
+the copy. Build cost on this machine: about 8 s (`pancake/`), 71 s
+(`pancake/semantics/`), 2 m 14 s (the eight `pancake/proofs/` targets) and
+4 m 51 s (`arm8_targetProof`), roughly 14 MB of new `.hol/objs`.
+
+Regenerate with `CAKEML=/path/to/cakeml-probe-build
+HOL_PROBE_ONLY=pancake_<theory>_proof_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh` (the probes run from
+`$cake_dir/pancake/proofs`, and the arm8 probe from
+`$cake_dir/compiler/encoders/arm8/proofs`, so the sibling `.hol/objs` load
+paths resolve as for the other groups). The captures support source comparison
+of the inferred carriers, binder order and premise grouping; they do not
+replay the local proofs and do not establish Lean correspondence.
+
+`source_to_flat_proof_typed_probe.out` captures the typed statements of the 241
+distinct HOL names behind the 283 reviewed `source_to_flatProofScript.sml` rows
+(task 174): exported theorems and definitions fetched from the theory database,
+78 `[local]` theorems parsed literally from the pinned source, the `global_env`
+and `idx_types` datatypes captured through their constructors, the five mutual
+`Inductive` relations (`v_rel`, `result_rel`, `sv_rel`, `s_rel`, `env_all_rel`)
+captured through their `_rules` theorems, and three derived local theorems
+replayed exactly as the source derives them (`v_rel_eqns`,
+`v_rel_eqns_non_global`, `compile_flat_BAG_ALL_DISTINCT`). A source `^`
+immediately followed by an identifier is an SML antiquotation and is dropped,
+keeping the variable. The theory is a default CakeML build target. Regenerate
+with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=source_to_flat_proof_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The capture supports source comparison of
+the inferred carriers, binder order and premise grouping; it does not replay
+the remaining local proofs and does not establish Lean correspondence.
+
+`pattern_exh_typed_probe.out` captures the typed statements of the 84 distinct
+HOL names behind the 91 reviewed `pattern_exhScript.sml` rows (task 174): 32
+exported theorems and definitions fetched from the theory database, 51
+`[local]` theorems parsed literally from the pinned source, and the `ctor`
+datatype captured through its constructors. The theory is a default CakeML
+build target. Regenerate with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=pattern_exh_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The capture supports source comparison; it
+does not replay the local proofs and does not establish Lean correspondence.
+
+`fromSexp_typed_probe.out` captures the typed statements of all 97 reviewed
+`fromSexpScript.sml` rows (task 174); every one is an exported definition or
+theorem fetched from the theory database, and labels replace an apostrophe with
+`_prime`. The theory is not a default CakeML build target, so build it in the
+private copy first (`cd compiler/parsing && CAKEMLDIR=<cakeml tree> Holmake
+fromSexpTheory.uo`, about 30 s; it reads the already-built `simpleSexp`
+theories from `$HOLDIR` and writes only inside the copy). Regenerate with
+`CAKEML=<cakeml tree> HOL_PROBE_ONLY=fromSexp_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The capture supports source comparison; it
+does not establish Lean correspondence.
+
+`word_cse_typed_probe.out` captures the typed statements of the 51 `[local]`
+theorems behind the reviewed `word_cseProofScript.sml` rows that the earlier
+word_cse probes did not capture (task 175); every name is a `Theorem` parsed
+literally from the pinned source. Regenerate with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=word_cse_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_local_typed_probe.out` captures the typed statements of the 57
+`[local]` theorems behind the reviewed `reg_allocProofScript.sml` rows that the
+earlier reg_alloc probes did not capture (task 175). The source enables the
+`st_ex` monad syntax, so the probe enables it too (`temp_add_monadsyntax`,
+`temp_enable_monad "st_ex"`); without it the `do ... od` blocks resolve
+`return` against the wrong monad overload. Regenerate with `CAKEML=<cakeml
+tree> HOL_PROBE_ONLY=reg_alloc_local_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+`stack_alloc_local_typed_probe.out` captures the typed statements of the 46
+`[local]` theorems behind the reviewed `stack_allocProofScript.sml` rows that
+the earlier stack_alloc probes did not capture (task 175). Regenerate with
+`CAKEML=<cakeml tree> HOL_PROBE_ONLY=stack_alloc_local_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+`lab_to_target_proof_local_typed_probe.out` captures the typed statements of
+the 88 reviewed `lab_to_targetProofScript.sml` rows that the earlier
+lab_to_target probes did not capture (task 175): 82 `[local]` theorems parsed
+from the pinned source, one `val ... = Q.prove(...) |> GSYM` theorem captured
+through its symmetric statement, and four `Overload` abbreviations captured
+with `print_without_macros` so the expansion rather than the overload name is
+printed. `semantics_compile_lemma` is derived in the source from
+`semantics_compile_lemma'`; the probe rebuilds that statement at term level
+(fifteen-conjunct antecedent implying `implements' T ...`). Statements that
+splice an SML antiquotation (`val s1 = ``s1:('a,lab_to_target$config,'ffi)
+labSem$state``;` used as `^s1`) are captured with the splice *expanded* to
+`(term)`, so the printed types keep HOL's type constraints: the eleven
+`IMP_bytes_in_memory_*` lemmas print `(α, config, 'ffi)` while
+`IMP_bytes_in_memory_JumpReg` (no splice) prints a free configuration type.
+Regenerate with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=lab_to_target_proof_local_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+`stack_to_lab_proof_local_typed_probe.out` (30 rows),
+`word_alloc_proof_local_typed_probe.out` (141 rows) and
+`word_to_stack_proof_local_typed_probe.out` (154 rows) capture the typed
+statements of the reviewed `stack_to_labProofScript.sml`, `word_allocProofScript.sml`
+and `word_to_stackProofScript.sml` rows that the earlier probes did not cover
+(task 178). Exported theorems and definitions are fetched from the theory DB;
+`[local]` theorems are parsed from the pinned source text with SML antiquotation
+splices expanded by the shared helper above; derived lemmas are captured through
+the statement named in the probe comment (`code_installed'_cons_non_label` and
+`evaluate_stack_move_clock`/`get_code_labels_wReg` through their `Q.prove`
+quotes, `DROP_list_LUPDATE_lemma` and `list_next_var_rename_props_2` through
+their base theorems). The three theories are built in the private copy; see the
+build recipe above. Regenerate with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=<probe>Script.sml scripts/hol-probes/regenerate.sh`.
+
+`crep_arith_proof_local_typed_probe.out` (11 rows),
+`stack_names_proof_local_typed_probe.out` (6 rows) and
+`stack_remove_proof_local_typed_probe.out` (39 rows) capture the typed
+statements of the reviewed `crep_arithProofScript.sml`, `stack_namesProofScript.sml`
+and `stack_removeProofScript.sml` rows that the earlier probes did not cover
+(task 179). Exported theorems are fetched from the theory DB; `[local]` theorems
+are parsed from the pinned source text with the shared splice-expanding helper.
+The crep_arith script declares `mapc`/`mapcs` as `[local]` `Overload`s and
+stack_remove declares `num_stubs` as one; the theory does not export them, so
+the probes restate those three overloads before parsing, otherwise the parser
+would read them as ordinary free variables with unconstrained types. The
+theories are built in the private copy; see the build recipe above. Regenerate
+with `CAKEML=<cakeml tree> HOL_PROBE_ONLY=<probe>Script.sml
+scripts/hol-probes/regenerate.sh`.
+
+`riscv_target_proof_local_typed_probe.out` (18 rows) captures the typed
+statements of the reviewed `riscv_targetProofScript.sml` rows that the earlier
+riscv_target probes did not cover (task 179). The probe restates the proof
+script's `wordsLib.guess_lengths()` call, because `><` is polymorphic in its
+result width and a raw parse would leave those widths free (`lem12b` printed
+`:β word`/`:γ word`/`:α word` instead of the `word12`/`word12`/`word32` the
+blast lemma is stated at). The three `val ... = blastLib.BBLAST_PROVE ``...`` `
+lemmas are captured by replaying the same blast, so the printed statement is
+the one the theory proves. `riscv_targetProofTheory` is built in the private
+copy (`compiler/encoders/riscv` then `compiler/encoders/riscv/proofs`, with
+`HOLDIR/examples/l3-machine-code/riscv/prog` on the include path). Regenerate
+with `CAKEML=<cakeml tree> HOL_PROBE_ONLY=riscv_target_proof_local_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+`source_to_flat_config_typed_probe.out` (11 rows),
+`loop_props_local_typed_probe.out` (32 rows),
+`word_inst_proof_local_typed_probe.out` (26 rows),
+`word_props_local_typed_probe.out` (23 rows) and
+`gen_gc_partial_local_typed_probe.out` (1 row) capture the typed statements of
+the reviewed `source_to_flatScript.sml`, `loopPropsScript.sml`,
+`word_instProofScript.sml`, `wordPropsScript.sml` and `gen_gc_partialScript.sml`
+rows that the earlier probes did not cover (task 180). Exported definitions are
+fetched from the theory DB, datatypes are captured as constructor signatures
+through `TypeBase.constructors_of`, and `[local]` theorems are parsed from the
+pinned source text with the shared splice-expanding helper. None of these five
+scripts declares a `[local]` Overload that the captured statements use
+(`wordPropsScript.sml`'s `PERM_STACK` is exported). `gen_gc_partialScript.sml`
+declares `Theorem gc_move_data_r1[local]` three times (lines 796, 884 and 1137);
+the reviewed row is the 1137 occurrence the manifest tag cites, so that probe
+captures the declaration at that source line rather than the first match.
+Regenerate with
+`CAKEML=<cakeml tree> HOL_PROBE_ONLY=<probe>Script.sml
+scripts/hol-probes/regenerate.sh`.
+
+`flat_pattern_typed_probe.out` (17 rows), `stacklang_overloads_typed_probe.out`
+(16 rows), `lab_filter_proof_typed2_probe.out` (15 rows),
+`parmove_typed2_probe.out` (7 rows) and `lprefix_lub_typed_probe.out` (29 rows)
+capture the typed statements of the reviewed `flat_patternScript.sml`,
+`stackLangScript.sml`, `lab_filterProofScript.sml`, `parmoveScript.sml` and
+`lprefix_lubScript.sml` rows that the earlier probes did not cover (task 181).
+All five theories were already built: the CakeML ones in the private copy and
+`lprefix_lubTheory` in the pinned HOL installation's
+`examples/pl-semantics/lprefix_lub/.hol/objs`, so no rebuild is involved and
+that probe takes its source text from the repository's `hol4/` reference tree
+rather than from `CAKEML`. The `stackLangScript.sml` rows are `Overload`s; that
+probe parses each abbreviation from its source line and clears the overload
+before printing, so the capture shows the body and its inferred types. The
+`parmoveScript.sml` statements use the `[local]` `NoRead` overload and the
+`▷`, `▷*`, `⊢`, `≡`, `↪` and `↪*` notation, which the probe restates. Note that
+the lprefix_lub capture is evidence only: its audit found independent element
+type variables and curried conjunction premises that the Lean rows still share
+or curry, so those rows remain pending fixes.

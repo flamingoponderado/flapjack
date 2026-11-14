@@ -15,7 +15,7 @@ private theorem panPropsSemanticsWrapper_chain
     (hpre : ∀ k k' ev, f (k + k') = (.Incomplete, ev) →
       ∃ r' ev', f k = (r', ev') ∧ ev' <+: ev) :
     HolLList.lprefixChain (fun l => ∃ k, l = HolLList.fromList (f k).2) := by
-  intro l1 l2 ⟨k1, e1⟩ ⟨k2, e2⟩
+  intro l1 l2 ⟨⟨k1, e1⟩, ⟨k2, e2⟩⟩
   subst e1; subst e2
   have mono : ∀ a b, a ≤ b → (f a).2 <+: (f b).2 := by
     intro a b hab

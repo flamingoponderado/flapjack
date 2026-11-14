@@ -233,8 +233,9 @@ theorem evalCrepSemHOLProg_ioEvents_prefix {width : Nat} [NeZero width] {σ : Ty
                     have hstate : state.ffi.ioEvents <+: stepState.ffi.ioEvents := by
                       simpa [hstepFfi] using ihFirst
                     have hclk2 : (crepStampExactDomains state stepState).clock ≤ c := by
-                      have hb := fixClockCrepSemHOL_IMP_LESS_EQ state
-                        (evalCrepSemHOLProg state memDec shMemDec first) none stepState
+                      have hb := fixClockCrepSemHOL_IMP_LESS_EQ
+                                   (evalCrepSemHOLProg state memDec shMemDec first)
+                        state none stepState
                         (by simpa using hfix)
                       change stepState.clock ≤ c
                       omega
@@ -301,9 +302,10 @@ theorem evalCrepSemHOLProg_ioEvents_prefix {width : Nat} [NeZero width] {σ : Ty
                         have hb : (fixClockCrepSemHOL (decClockCrepSemHOL state)
                               (evalCrepSemHOLProg (decClockCrepSemHOL state) memDec shMemDec
                                 body)).2.clock ≤ (decClockCrepSemHOL state).clock :=
-                          fixClockCrepSemHOL_IMP_LESS_EQ (decClockCrepSemHOL state)
+                          fixClockCrepSemHOL_IMP_LESS_EQ
                             (evalCrepSemHOLProg (decClockCrepSemHOL state) memDec shMemDec
-                              body) _ _ rfl
+                              body)
+                            (decClockCrepSemHOL state) _ _ rfl
                         have hb2 : (decClockCrepSemHOL state).clock < c := by
                           simp only [decClockCrepSemHOL]; omega
                         change (fixClockCrepSemHOL (decClockCrepSemHOL state)
@@ -391,7 +393,8 @@ theorem evalCrepSemHOLProg_ioEvents_prefix {width : Nat} [NeZero width] {σ : Ty
                         · have ihBody := ihClock
                               (decClockCrepSemHOL
                                 { state with locals :=
-                                  HolFiniteMapExact.empty.updateList (parameters.zip values) }).clock
+                                  (HolFiniteMapExact.empty.updateList
+                                    (parameters.zip values)) }).clock
                               (by simp only [decClockCrepSemHOL]; omega)
                               (decClockCrepSemHOL
                                 { state with locals :=
@@ -426,46 +429,60 @@ theorem evalCrepSemHOLProg_ioEvents_prefix {width : Nat} [NeZero width] {σ : Ty
                                     { (fixClockCrepSemHOL
                                         (decClockCrepSemHOL
                                           { state with locals :=
-                                            HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                            (HolFiniteMapExact.empty.updateList
+                                              (parameters.zip values))
+                                          })
                                         (evalCrepSemHOLProg
                                           (decClockCrepSemHOL
                                             { state with locals :=
-                                              HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                              (HolFiniteMapExact.empty.updateList
+                                                (parameters.zip values))
+                                            })
                                           memDec shMemDec body)).2 with
                                       locals := state.locals }).clock < c := by
                                 change (fixClockCrepSemHOL
                                     (decClockCrepSemHOL
                                       { state with locals :=
-                                        HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                        HolFiniteMapExact.empty.updateList (parameters.zip values)
+                                      })
                                     (evalCrepSemHOLProg
                                       (decClockCrepSemHOL
                                         { state with locals :=
-                                          HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                          HolFiniteMapExact.empty.updateList (parameters.zip values)
+                                        })
                                       memDec shMemDec body)).2.clock < c
                                 have hb : (fixClockCrepSemHOL
                                       (decClockCrepSemHOL
                                         { state with locals :=
-                                          HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                          HolFiniteMapExact.empty.updateList (parameters.zip values)
+                                        })
                                       (evalCrepSemHOLProg
                                         (decClockCrepSemHOL
                                           { state with locals :=
-                                            HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                            (HolFiniteMapExact.empty.updateList
+                                              (parameters.zip values))
+                                          })
                                         memDec shMemDec body)).2.clock ≤
                                     (decClockCrepSemHOL
                                       { state with locals :=
-                                        HolFiniteMapExact.empty.updateList (parameters.zip values) }).clock :=
+                                        (HolFiniteMapExact.empty.updateList
+                                          (parameters.zip values)) }).clock :=
                                   fixClockCrepSemHOL_IMP_LESS_EQ
-                                    (decClockCrepSemHOL
-                                      { state with locals :=
-                                        HolFiniteMapExact.empty.updateList (parameters.zip values) })
                                     (evalCrepSemHOLProg
                                       (decClockCrepSemHOL
                                         { state with locals :=
-                                          HolFiniteMapExact.empty.updateList (parameters.zip values) })
-                                      memDec shMemDec body) _ _ rfl
+                                          HolFiniteMapExact.empty.updateList (parameters.zip values)
+                                        })
+                                      memDec shMemDec body)
+                                    (decClockCrepSemHOL
+                                      { state with locals :=
+                                        HolFiniteMapExact.empty.updateList (parameters.zip values)
+                                      })
+                                          _ _ rfl
                                 have hb2 : (decClockCrepSemHOL
                                     { state with locals :=
-                                      HolFiniteMapExact.empty.updateList (parameters.zip values) }).clock < c := by
+                                      (HolFiniteMapExact.empty.updateList
+                                        (parameters.zip values)) }).clock < c := by
                                   simp only [decClockCrepSemHOL]; omega
                                 omega
                               have ihHandler := ihClock
@@ -473,22 +490,28 @@ theorem evalCrepSemHOLProg_ioEvents_prefix {width : Nat} [NeZero width] {σ : Ty
                                   { (fixClockCrepSemHOL
                                       (decClockCrepSemHOL
                                         { state with locals :=
-                                          HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                          HolFiniteMapExact.empty.updateList (parameters.zip values)
+                                        })
                                       (evalCrepSemHOLProg
                                         (decClockCrepSemHOL
                                           { state with locals :=
-                                            HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                            (HolFiniteMapExact.empty.updateList
+                                              (parameters.zip values))
+                                          })
                                         memDec shMemDec body)).2 with
                                     locals := state.locals }).clock hhandlerClock
                                 (crepStampExactDomains state
                                   { (fixClockCrepSemHOL
                                       (decClockCrepSemHOL
                                         { state with locals :=
-                                          HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                          HolFiniteMapExact.empty.updateList (parameters.zip values)
+                                        })
                                       (evalCrepSemHOLProg
                                         (decClockCrepSemHOL
                                           { state with locals :=
-                                            HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                            (HolFiniteMapExact.empty.updateList
+                                              (parameters.zip values))
+                                          })
                                         memDec shMemDec body)).2 with
                                     locals := state.locals })
                                 (by omega) memDec shMemDec handlerBody
@@ -535,46 +558,60 @@ theorem evalCrepSemHOLProg_ioEvents_prefix {width : Nat} [NeZero width] {σ : Ty
                                     { (fixClockCrepSemHOL
                                         (decClockCrepSemHOL
                                           { state with locals :=
-                                            HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                            (HolFiniteMapExact.empty.updateList
+                                              (parameters.zip values))
+                                          })
                                         (evalCrepSemHOLProg
                                           (decClockCrepSemHOL
                                             { state with locals :=
-                                              HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                              (HolFiniteMapExact.empty.updateList
+                                                (parameters.zip values))
+                                            })
                                           memDec shMemDec body)).2 with
                                       locals := state.locals }).clock < c := by
                                 change (fixClockCrepSemHOL
                                     (decClockCrepSemHOL
                                       { state with locals :=
-                                        HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                        HolFiniteMapExact.empty.updateList (parameters.zip values)
+                                      })
                                     (evalCrepSemHOLProg
                                       (decClockCrepSemHOL
                                         { state with locals :=
-                                          HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                          HolFiniteMapExact.empty.updateList (parameters.zip values)
+                                        })
                                       memDec shMemDec body)).2.clock < c
                                 have hb : (fixClockCrepSemHOL
                                       (decClockCrepSemHOL
                                         { state with locals :=
-                                          HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                          HolFiniteMapExact.empty.updateList (parameters.zip values)
+                                        })
                                       (evalCrepSemHOLProg
                                         (decClockCrepSemHOL
                                           { state with locals :=
-                                            HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                            (HolFiniteMapExact.empty.updateList
+                                              (parameters.zip values))
+                                          })
                                         memDec shMemDec body)).2.clock ≤
                                     (decClockCrepSemHOL
                                       { state with locals :=
-                                        HolFiniteMapExact.empty.updateList (parameters.zip values) }).clock :=
+                                        (HolFiniteMapExact.empty.updateList
+                                          (parameters.zip values)) }).clock :=
                                   fixClockCrepSemHOL_IMP_LESS_EQ
-                                    (decClockCrepSemHOL
-                                      { state with locals :=
-                                        HolFiniteMapExact.empty.updateList (parameters.zip values) })
                                     (evalCrepSemHOLProg
                                       (decClockCrepSemHOL
                                         { state with locals :=
-                                          HolFiniteMapExact.empty.updateList (parameters.zip values) })
-                                      memDec shMemDec body) _ _ rfl
+                                          HolFiniteMapExact.empty.updateList (parameters.zip values)
+                                        })
+                                      memDec shMemDec body)
+                                    (decClockCrepSemHOL
+                                      { state with locals :=
+                                        HolFiniteMapExact.empty.updateList (parameters.zip values)
+                                      })
+                                          _ _ rfl
                                 have hb2 : (decClockCrepSemHOL
                                     { state with locals :=
-                                      HolFiniteMapExact.empty.updateList (parameters.zip values) }).clock < c := by
+                                      (HolFiniteMapExact.empty.updateList
+                                        (parameters.zip values)) }).clock < c := by
                                   simp only [decClockCrepSemHOL]; omega
                                 omega
                               have ihHandler := ihClock
@@ -582,22 +619,28 @@ theorem evalCrepSemHOLProg_ioEvents_prefix {width : Nat} [NeZero width] {σ : Ty
                                   { (fixClockCrepSemHOL
                                       (decClockCrepSemHOL
                                         { state with locals :=
-                                          HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                          HolFiniteMapExact.empty.updateList (parameters.zip values)
+                                        })
                                       (evalCrepSemHOLProg
                                         (decClockCrepSemHOL
                                           { state with locals :=
-                                            HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                            (HolFiniteMapExact.empty.updateList
+                                              (parameters.zip values))
+                                          })
                                         memDec shMemDec body)).2 with
                                     locals := state.locals }).clock hhandlerClock
                                 (crepStampExactDomains state
                                   { (fixClockCrepSemHOL
                                       (decClockCrepSemHOL
                                         { state with locals :=
-                                          HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                          HolFiniteMapExact.empty.updateList (parameters.zip values)
+                                        })
                                       (evalCrepSemHOLProg
                                         (decClockCrepSemHOL
                                           { state with locals :=
-                                            HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                            (HolFiniteMapExact.empty.updateList
+                                              (parameters.zip values))
+                                          })
                                         memDec shMemDec body)).2 with
                                     locals := state.locals })
                                 (by omega) memDec shMemDec handlerBody

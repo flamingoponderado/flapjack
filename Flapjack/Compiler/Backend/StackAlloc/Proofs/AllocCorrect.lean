@@ -89,11 +89,9 @@ theorem alloc_correct {width : Nat} [NeZero width] {C F : Type}
     {c : DataToWord.Config} {w : BitVec width} {s t : StackSemStateFiniteExact width C F}
     {r : Option (StackSemResult width)} {l : HolFiniteMapExact Nat (WordLocW width)}
     {n' m : Nat} {anything : WordSemGcFun width}
-    (ha : StackSemAllocation.alloc w s = (r, t)) (hr : r ≠ some .error)
-    (hgc : s.gcFun = wordGcFun c)
-    (hbl : s.bitmaps.length < 2 ^ width - 1)
-    (hstack : s.stack.length * (width / 8) < 2 ^ width)
-    (hl1 : l.lookup 1 = some (.word w)) :
+    (premises : StackSemAllocation.alloc w s = (r, t) ∧ r ≠ some .error ∧
+      s.gcFun = wordGcFun c ∧ s.bitmaps.length < 2 ^ width - 1 ∧
+      s.stack.length * (width / 8) < 2 ^ width ∧ l.lookup 1 = some (.word w)) :
     ∃ ck l2,
       evaluate (.call (some (.skip, 0, n', m)) (.inl gcStubLocation) none, { s with
         useStore := true
@@ -111,6 +109,7 @@ theorem alloc_correct {width : Nat} [NeZero width] {C F : Type}
           regs := l2
           gcFun := anything }) ∧
       t.regs.submap l2 := by
+  obtain ⟨ha, hr, hgc, hbl, hstack, hl1⟩ := premises
   have hl0' : (l.updateEq (0, .loc n' m)).lookup 0 = some (.loc n' m) := by
     simp [HolFiniteMapExact.updateEq, FUPDATE_HOL]
   have hl1' : (l.updateEq (0, .loc n' m)).lookup 1 = some (.word w) := by

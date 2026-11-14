@@ -5,8 +5,7 @@ public import Flapjack.FiniteMap.BroadCodec
 
 @[expose] public section
 
-/-! Thunk-force simulation for the proof-side evaluator. The semantics and
-finite-map carriers remain pending HOL correspondence review. -/
+/-! Thunk-force simulation for the closure evaluator. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL
 

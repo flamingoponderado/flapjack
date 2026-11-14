@@ -7,6 +7,7 @@ fun show label th = if null (hyp th) then (print label; print_term (concl th); p
   else raise Fail (label ^ " has hypotheses");
 val _ = show "smart_append_def=" miscTheory.SmartAppend_def;
 val _ = show "compile_aux_def=" compile_aux_def;
+val _ = show "compile_exps_def=" compile_exps_def;
 val _ = show "compile_exps_sing_def=" compile_exps_sing_def;
 val _ = show "compile_exps_sing=" compile_exps_sing;
 val _ = show "compile_aux_example=" (EVAL ``compile_aux (2, T, bvi$Var 1)``);

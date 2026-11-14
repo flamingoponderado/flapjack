@@ -20,7 +20,7 @@ private def auxLabels (aux : AppList (Nat × Nat × Bvi.Exp)) : Set Nat :=
 private theorem auxLabels_fresh (n arity : Nat) (body : Bvi.Exp) :
     auxLabels (compileAuxSource (n, arity, body)) = BviProps.getCodeLabels body := by
   ext label
-  simp [auxLabels, compileAuxSource, appListAppend, appendAux, ← BviLet.compileExp_eq,
+  simp [auxLabels, compileAuxSource, appListAppend, appendAux,
     compileExp_codeLabels]
 
 private theorem auxLabels_append (a b : AppList (Nat × Nat × Bvi.Exp)) :
@@ -300,13 +300,14 @@ labels, freshly allocated auxiliary labels, and stub labels. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_exps_get_code_labels"]
 theorem compileExps_getCodeLabels (n : Nat) (xs : List Bvl.Exp) (ys : List Bvi.Exp)
     (aux : AppList (Nat × Nat × Bvi.Exp)) (m x y : Nat)
-    (compiled : compileListSource n xs = (ys, aux, m)) :
+    (compiled : compileExpsSource n xs = (ys, aux, m)) :
     (⋃₀ (BviProps.getCodeLabels '' {e | e ∈ ys})) ∪
       (⋃₀ (BviProps.getCodeLabels '' {e | e ∈ (appListAppend aux).map (fun p => p.2.2)})) ⊆
     ((fun k => bvlNumStubs + k * bvlToBviNamespaces) ''
       (⋃₀ (BvlProps.getCodeLabels '' {e | e ∈ xs}))) ∪
     {label | ∃ k, label = bvlNumStubs + (k * bvlToBviNamespaces + 1) ∧ n ≤ k ∧ k < m} ∪
     {label | label ∈ (stubs x y).map Prod.fst} := by
+  rw [compileExpsSource_eq_list] at compiled
   rw [← BviProps.getCodeLabelsList_eq, ← BvlProps.getCodeLabelsList_eq]
   have result := listBound n xs x y
   simp only [compiled] at result
@@ -327,9 +328,11 @@ theorem compileSingle_getCodeLabels (n : Nat) (p : Nat × Nat × Bvl.Exp)
   have singleton : compileListSource n [body] = ([out], aux, next) := by
     simp only [compileListSource.eq_2, h, compileListSource.eq_1]
     cases aux <;> rfl
-  have bound := compileExps_getCodeLabels n [body] [out] aux next x y singleton
-  have fresh := compileExps_auxContains n [body] [out] aux next singleton
-  simp only [compileSingleSource, h, Prod.mk.injEq] at compiled
+  have originalSingleton : compileExpsSource n [body] = ([out], aux, next) := by
+    simpa only [compileExpsSource_eq_list] using singleton
+  have bound := compileExps_getCodeLabels n [body] [out] aux next x y originalSingleton
+  have fresh := compileExps_auxContains n [body] [out] aux next originalSingleton
+  simp only [compileSingleSource_eq_impl, compileSingleImpl, h, Prod.mk.injEq] at compiled
   rcases compiled with ⟨rfl, rfl⟩
   simp only [appListAppend_smartAppend] at *
   simp [appListAppend, appendAux, ← BviLet.compileExp_eq, compileExp_codeLabels] at *

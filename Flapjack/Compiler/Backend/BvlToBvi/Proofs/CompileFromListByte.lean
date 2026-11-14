@@ -146,6 +146,7 @@ theorem simulation_fromListByte {C F : Type} (arguments : List Bvl.Exp)
         rcases argsCompile : compileListSource n arguments with ⟨argsCode, argsAux, finalName⟩
         have valuesLength := BvlSem.evaluate_length arguments env source middle values argsRun
         have codeLength := compileListSource_length n arguments
+        simp only [compileExpsSource_eq_list] at codeLength
         rw [argsCompile] at codeLength
         have codeNonempty : argsCode ≠ [] := by intro eq; simp [eq, valuesEq] at codeLength valuesLength; omega
         have lowered : compileOp (.memOp .fromListByte) argsCode =

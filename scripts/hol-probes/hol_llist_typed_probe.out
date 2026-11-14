@@ -1,0 +1,32 @@
+fromList_11_typed=∀(xs :α list) (ys :α list). fromList xs = fromList ys ⇔ xs = ys
+LAPPEND_ASSOC_typed=∀(ll1 :α llist) (ll2 :α llist) (ll3 :α llist). ll1 ++ₗ ll2 ++ₗ ll3 = ll1 ++ₗ (ll2 ++ₗ ll3)
+LAPPEND_EQ_LNIL_typed=(l1 :α llist) ++ₗ (l2 :α llist) = ([||] :α llist) ⇔ l1 = ([||] :α llist) ∧ l2 = ([||] :α llist)
+LAPPEND_fromList_typed=∀(l1 :α list) (l2 :α list). fromList l1 ++ₗ fromList l2 = fromList (l1 ⧺ l2)
+LAPPEND11_FINITE1_typed=∀(l1 :α llist) (l2 :α llist) (l3 :α llist). LFINITE l1 ⇒ (l1 ++ₗ l2 = l1 ++ₗ l3 ⇔ l2 = l3)
+LAPPEND_NIL_2ND_typed=∀(ll :α llist). ll ++ₗ ([||] :α llist) = ll
+LAPPEND_typed=(∀(x :α llist). ([||] :α llist) ++ₗ x = x) ∧ ∀(h :α) (t :α llist) (x :α llist). h:::t ++ₗ x = h:::(t ++ₗ x)
+LDROP_typed=(∀(ll :α llist). LDROP (0 :num) ll = SOME ll) ∧ ∀(n :num) (ll :α llist). LDROP (SUC n) ll = OPTION_JOIN (OPTION_MAP (LDROP n :α llist -> α llist option) (LTL ll))
+LFINITE_fromList_typed=∀(l :α list). LFINITE (fromList l)
+LFINITE_APPEND_typed=∀(ll1 :α llist) (ll2 :α llist). LFINITE (ll1 ++ₗ ll2) ⇔ LFINITE ll1 ∧ LFINITE ll2
+LFINITE_LAPPEND_IMP_NIL_typed=∀(ll :α llist). LFINITE ll ⇒ ∀(l2 :α llist). ll ++ₗ l2 = ll ⇒ l2 = ([||] :α llist)
+NOT_LFINITE_APPEND_typed=∀(ll1 :α llist) (ll2 :α llist). ¬LFINITE ll1 ⇒ ll1 ++ₗ ll2 = ll1
+LFLATTEN_typed=∀(ll :α llist llist). LFLATTEN ll = if every ($= ([||] :α llist)) ll then ([||] :α llist) else if THE (LHD ll) = ([||] :α llist) then LFLATTEN (THE (LTL ll)) else THE (LHD (THE (LHD ll))):::LFLATTEN (THE (LTL (THE (LHD ll))):::THE (LTL ll))
+LFLATTEN_EQ_NIL_typed=∀(ll :α llist llist). LFLATTEN ll = ([||] :α llist) ⇔ every ($= ([||] :α llist)) ll
+LFLATTEN_THM_typed=LFLATTEN ([||] :α llist llist) = ([||] :α llist) ∧ (∀(tl :β). LFLATTEN (([||] :γ llist):::(t :γ llist llist)) = LFLATTEN t) ∧ ∀(h :δ) (t :δ llist) (tl :δ llist llist). LFLATTEN ((h:::t):::tl) = h:::LFLATTEN (t:::tl)
+every_def_typed=∀(P :α -> bool) (ll :α llist). every P ll ⇔ ¬exists ($¬ ∘ P) ll
+every_thm_typed=(every (P :α -> bool) ([||] :α llist) ⇔ T) ∧ (every P ((h :α):::(t :α llist)) ⇔ P h ∧ every P t)
+exists_LNTH_typed=∀(l :α llist). exists (P :α -> bool) l ⇔ ∃(n :num) (e :α). SOME e = LNTH n l ∧ P e
+LPREFIX_APPEND_typed=LPREFIX (l1 :α llist) (l2 :α llist) ⇔ ∃(ll :α llist). l2 = l1 ++ₗ ll
+to_fromList_typed=∀(ll :α llist). LFINITE ll ⇒ fromList (THE (toList ll)) = ll
+LPREFIX_NTH_typed=LPREFIX (l1 :α llist) (l2 :α llist) ⇔ ∀(i :num) (v :α). LNTH i l1 = SOME v ⇒ LNTH i l2 = SOME v
+LPREFIX_ANTISYM_typed=LPREFIX (l1 :α llist) (l2 :α llist) ∧ LPREFIX l2 l1 ⇒ l1 = l2
+LPREFIX_TRANS_typed=LPREFIX (l1 :α llist) (l2 :α llist) ∧ LPREFIX l2 (l3 :α llist) ⇒ LPREFIX l1 l3
+prefixes_lprefix_total_typed=∀(ll :α llist) (l1 :α llist) (l2 :α llist). LPREFIX l1 ll ∧ LPREFIX l2 ll ⇒ LPREFIX l1 l2 ∨ LPREFIX l2 l1
+from_toList_typed=∀(l :α list). toList (fromList l) = SOME l
+LUNFOLD_def_typed=∀(f :β -> (β # α) option) (z :β). LUNFOLD f z = llist_abs (λ(n :num). OPTION_MAP (SND :β # α -> α) (FUNPOW (λ(m :(β # α) option). OPTION_BIND m (UNCURRY ((K :(β # α) option -> α -> (β # α) option) ∘ f))) n (f z)))
+LUNFOLD_typed=∀(f :α -> (α # β) option) (x :α). LUNFOLD f x = case f x of (NONE :(α # β) option) => ([||] :β llist) | SOME (v1,v2) => v2:::LUNFOLD f v1
+LUNFOLD_UNIQUE_typed=∀(f :α -> (α # β) option) (g :α -> β llist). (∀(x :α). g x = case f x of (NONE :(α # β) option) => ([||] :β llist) | SOME (v1,v2) => v2:::g v1) ⇒ ∀(y :α). g y = LUNFOLD f y
+LUNFOLD_BISIMULATION_typed=∀(f1 :α -> (α # β) option) (f2 :γ -> (γ # β) option) (x1 :α) (x2 :γ). LUNFOLD f1 x1 = LUNFOLD f2 x2 ⇔ ∃(R :α -> γ -> bool). R x1 x2 ∧ ∀(y1 :α) (y2 :γ). R y1 y2 ⇒ f1 y1 = (NONE :(α # β) option) ∧ f2 y2 = (NONE :(γ # β) option) ∨ ∃(h :β) (t1 :α) (t2 :γ). f1 y1 = SOME (t1,h) ∧ f2 y2 = SOME (t2,h) ∧ R t1 t2
+LLIST_BISIMULATION0_typed=∀(ll1 :α llist) (ll2 :α llist). ll1 = ll2 ⇔ ∃(R :α llist -> α llist -> bool). R ll1 ll2 ∧ ∀(ll3 :α llist) (ll4 :α llist). R ll3 ll4 ⇒ ll3 = ([||] :α llist) ∧ ll4 = ([||] :α llist) ∨ ∃(h :α) (t1 :α llist) (t2 :α llist). ll3 = h:::t1 ∧ ll4 = h:::t2 ∧ R t1 t2
+LLIST_STRONG_BISIMULATION_typed=∀(ll1 :α llist) (ll2 :α llist). ll1 = ll2 ⇔ ∃(R :α llist -> α llist -> bool). R ll1 ll2 ∧ ∀(ll3 :α llist) (ll4 :α llist). R ll3 ll4 ⇒ ll3 = ll4 ∨ ∃(h :α) (t1 :α llist) (t2 :α llist). ll3 = h:::t1 ∧ ll4 = h:::t2 ∧ R t1 t2
+every_coind_typed=∀(P :α -> bool) (Q :α llist -> bool). (∀(h :α) (t :α llist). Q (h:::t) ⇒ P h ∧ Q t) ⇒ ∀(ll :α llist). Q ll ⇒ every P ll
