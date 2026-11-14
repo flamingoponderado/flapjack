@@ -143,16 +143,6 @@ theorem compileListFuel_eq_source (fuel optFuel n : Nat) (xs : List Bvl.Exp)
 termination_by fuel
 end
 
-/-- An exhausted initial traversal takes the checked sufficient-fuel retry,
-which agrees with the source-shaped conversion. -/
-theorem compileBounded_eq_source_of_exhausted (fuel optFuel n : Nat) (exp : Bvl.Exp)
-    (exhausted : compileFuel fuel optFuel n exp = none) :
-    compileBounded fuel optFuel n exp =
-      some ((compileSingSource n exp).1,
-        appListAppend (compileSingSource n exp).2.1, (compileSingSource n exp).2.2) := by
-  have bound : expBudget exp < max fuel (expBudget exp + 1) := by omega
-  simp [compileBounded, exhausted, compileFuel_eq_source _ optFuel n exp bound]
-
 /-- Every successful executable traversal matches the flattened source result,
 even when it succeeds below the structural bound. -/
 theorem compileFuel_success_eq_source (fuel optFuel n : Nat) (exp : Bvl.Exp)
@@ -175,7 +165,9 @@ theorem compileBounded_eq_source (fuel optFuel n : Nat) (exp : Bvl.Exp) :
       some ((compileSingSource n exp).1,
         appListAppend (compileSingSource n exp).2.1, (compileSingSource n exp).2.2) := by
   cases run : compileFuel fuel optFuel n exp with
-  | none => exact compileBounded_eq_source_of_exhausted fuel optFuel n exp run
+  | none =>
+    have bound : expBudget exp < max fuel (expBudget exp + 1) := by omega
+    simp [compileBounded, run, compileFuel_eq_source _ optFuel n exp bound]
   | some result =>
     have eq := compileFuel_success_eq_source fuel optFuel n exp result run
     simp [compileBounded, run, eq]

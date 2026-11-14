@@ -311,7 +311,8 @@ theorem compileEntryWithInit {C F : Type} (start n clock : Nat) (ffi : HolFfiSta
       (.number 1 :: List.replicate (initGlobalsCapacity n - 1) (.number 0))) }
   have global : ready.global.isSome = true := by simp [ready]
   obtain ⟨extra, newRelocate, targetNext, targetRun, finalRel⟩ :=
-    compileSingleEvaluate start source next ready res relocate run related global sourceOk notTypeError
+    compileSingleEvaluate start source next ready res relocate ⟨run, related, global, sourceOk, notTypeError⟩
+  rw [← mapSimulationResult_eq_mapResult] at targetRun
   have initialized := evaluate_stubs_init entry n (clock + extra) ffi code oracle compiler
   have readyShift : BviProps.incClock extra ready =
       { BviSem.initialState ffi tree oracle compiler (clock + extra) with
