@@ -10,7 +10,10 @@ public import Flapjack.EvaluateProps.Length
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps Flapjack.EvaluateHOL
 
-/-- Flapjack induction infrastructure with no separate HOL declaration: the expression conjunct of the mutual simulation. -/
+/-- Flapjack induction infrastructure with no separate HOL declaration: the
+    expression conjunct of the mutual simulation. It omits HOL `eval_simulation`'s
+    vacuous `es` binder (an independent, unconstrained type variable that occurs
+    nowhere in the body). -/
 def ExpsSimAt {Config F : Type} (ci : CompilerInstance Config)
     (s : State F) (env : SemEnv Value) (exps : List Flapjack.AstHOL.Exp) : Prop :=
   ∀ (s' : State F) (res : Result (List Value) Value) (t : State F) (env' : SemEnv Value),
@@ -31,8 +34,9 @@ def DecsSimAt {Config F : Type} (ci : CompilerInstance Config) (s : State F)
       es' = oracleState t'.evalState ∧ resultRel (envRel (ValueRel es')) (ValueRel es') res res' ∧
       envStoreForward (oracleState t.evalState) es' ∧ (¬ abort res' → envStackForward (oracleState t.evalState) es')
 
-/-- The expression-list sequencing induction case. `rest` and the independent
-unused `es` binder correspond to HOL's two distinct variables named `es`. -/
+/-- The expression-list sequencing induction case. HOL's unused `es` binder is
+    omitted through the `ExpsSimAt` motive; `rest` is the remaining expression
+    list. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
 theorem evalSimulation_ExpsCons {Config F : Type} (ci : CompilerInstance Config)
     (s : State F) (env : SemEnv Value) (first second : Flapjack.AstHOL.Exp) (rest : List Flapjack.AstHOL.Exp)

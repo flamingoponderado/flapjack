@@ -382,6 +382,13 @@ example :
     (fixClockCrepSemHOL localBaseFinite ((true, localBaseFinite))).1 = true := by
   rfl
 
+/-- HOL `fix_clock` leaves the result component unconstrained: the original
+    width-indexed `fixCrepHolClockW` threads a plain `Bool` result through
+    unchanged (kept beside the finite-support `fixClockCrepSemHOL` example). -/
+example :
+    (fixCrepHolClockW { localBase with clock := 5 } ((true, localBase))).1 = true := by
+  simp [fixCrepHolClockW]
+
 /-- HOL `fix_clock_IMP_LESS_EQ` oracle: the clock clamped by the tagged
     finite-support result-polymorphic `fixClockCrepSemHOL` never exceeds the
     old state's clock. -/
