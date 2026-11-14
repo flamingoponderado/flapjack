@@ -24,6 +24,13 @@ theorem compileSource_singleton_head (expression : Exp) :
         compileSource [expression] ∧ (compileSource [expression]).length = 1 := by
   simp [compileSource_eq_list, compileList, Flapjack.holHd]
 
+/-- A predicate holds over a transformed singleton exactly as it does on its head. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "EVERY_let_op_sing"]
+theorem every_compileSource_singleton (predicate : Exp → Bool) (expression : Exp) :
+    (compileSource [expression]).all predicate =
+      predicate (@Flapjack.holHd Exp ⟨.var .none 0⟩ (compileSource [expression])) := by
+  simp [compileSource_eq_list, compileList, Flapjack.holHd]
+
 /-- A recognized operation has the requested operator and variable list. -/
 @[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "dest_op_SOME_IMP"]
 theorem destOp_some_imp {α : Type} (expression : Exp) (args : List α) (op : Op)

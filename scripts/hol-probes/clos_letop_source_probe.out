@@ -8,6 +8,7 @@ let_op_sing_typed=(∀(v :num) (t :tra). let_op_sing (Var t v :closLang$exp) = (
 let_op_sing_eq_typed=(∀(e :closLang$exp). let_op [e] = [let_op_sing e]) ∧ (∀(es :closLang$exp list). let_op es = let_op_list es) ∧ ∀(fns :(num # closLang$exp) list). let_op_let fns = MAP (λ((num_args :num),(x :closLang$exp)). (num_args,HD (let_op [x]))) fns
 let_op_SING_typed=∀(x :closLang$exp). ∃(y :closLang$exp). let_op [x] = [y]
 HD_let_op_SING_typed=∀(x :closLang$exp). [HD (let_op [x])] = let_op [x] ∧ LENGTH (let_op [x]) = (1 :num)
+EVERY_let_op_sing_typed=EVERY (f :closLang$exp -> bool) (let_op [(x :closLang$exp)]) ⇔ f (HD (let_op [x]))
 compile_inc_typed=∀(e :closLang$exp list) (xs :β). (compile_inc (e,xs) :closLang$exp list # α list) = (let_op e,([] :α list))
 let_op_vars_none_typed=∀(es :closLang$exp list). every_Fn_vs_NONE (let_op es) ⇔ every_Fn_vs_NONE es
 var_list_length_typed=∀(n :num) (xs :closLang$exp list) (ys :α list). var_list n xs ys ⇒ LENGTH xs = LENGTH ys

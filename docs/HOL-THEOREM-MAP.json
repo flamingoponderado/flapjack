@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+    "hol_name": "EVERY_let_op_sing",
+    "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Syntax.lean",
+    "lean_name": "every_compileSource_singleton",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared EVERY_let_op_sing_typed: an arbitrary Boolean predicate on closure expressions agrees with EVERY over the source-shaped transformed singleton and its HOL-shaped head. The transformed list is provably nonempty, so the head default is unobservable. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
     "hol_name": "var_list_IMP_code_locs",
     "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/CodeLocations.lean",
     "lean_name": "varList_codeLocations",
