@@ -51,18 +51,19 @@ theorem instSelect_flatExpConventions {width : Nat} [NeZero width]
         | constructor
 
 /-- Original complete instruction-selection instruction-validity theorem.
-Only the original zero-offset configuration and source-instruction premises
-are assumed; every native constructor and nested handler remains in scope. -/
+HOL's single conjunctive premise (zero-offset address, halfword and byte policies
+plus the source instruction predicate) is kept as one conjunction hypothesis;
+every native constructor and nested handler remains in scope. -/
 @[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
   "inst_select_full_inst_ok_less" (words_as_type_indexed_bitvec)]
 theorem instSelect_fullInstOkLess {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (temporary : Nat)
     (program : WordLangProgHOL (BitVec width))
-    (addressZero : addrOffsetOk config 0 = true)
-    (halfwordZero : hwOffsetOk config 0 = true)
-    (byteZero : byteOffsetOk config 0 = true)
-    (source : everyInst (fun i => instOkLessExact config (HolInst.ofWordLangInst i)) program = true) :
+    (h : addrOffsetOk config 0 = true ∧ hwOffsetOk config 0 = true ∧
+      byteOffsetOk config 0 = true ∧
+      everyInst (fun i => instOkLessExact config (HolInst.ofWordLangInst i)) program = true) :
     fullInstOkLessExact config (instSelect config temporary program) = true := by
+  obtain ⟨addressZero, halfwordZero, byteZero, source⟩ := h
   have expressionValid (target temp : Nat) (expression : WordLangExpHOL (BitVec width)) :=
     instSelectExp_fullInstOkLess config target temp expression addressZero
   induction program using

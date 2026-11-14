@@ -1,0 +1,175 @@
+every_inst_distinct_tar_reg_copy_prop_typed=every_inst (distinct_tar_reg :α inst -> bool) (p :α prog) ⇒ every_inst (distinct_tar_reg :α inst -> bool) (copy_prop p)
+extract_labels_copy_prop_typed=extract_labels (copy_prop (p :α prog)) = extract_labels p
+flat_exp_conventions_copy_prop_typed=flat_exp_conventions (p :α prog) ⇒ flat_exp_conventions (copy_prop p)
+full_inst_ok_less_copy_prop_typed=full_inst_ok_less (ac :α asm_config) (p :α prog) ⇒ full_inst_ok_less ac (copy_prop p)
+pre_alloc_conventions_copy_prop_typed=pre_alloc_conventions (p :α prog) ⇒ pre_alloc_conventions (copy_prop p)
+wf_cutsets_copy_prop_typed=wf_cutsets (p :α prog) ⇒ wf_cutsets (copy_prop p)
+inst_select_flat_exp_conventions_typed=∀(c :α asm_config) (temp :num) (prog :α prog). flat_exp_conventions (inst_select c temp prog)
+inst_select_full_inst_ok_less_typed=∀(c :α asm_config) (temp :num) (prog :α prog). addr_offset_ok c (0w :α word) ∧ hw_offset_ok c (0w :α word) ∧ byte_offset_ok c (0w :α word) ∧ every_inst (inst_ok_less c) prog ⇒ full_inst_ok_less c (inst_select c temp prog)
+inst_select_lab_pres_typed=∀(c :α asm_config) (temp :num) (prog :α prog). extract_labels prog = extract_labels (inst_select c temp prog)
+compile_single_not_created_subprogs_typed=not_created_subprogs (P :α prog -> bool) (SND (SND (FST (prog_opt :(num # num # α prog) # num sptree$num_map option)))) ⇒ not_created_subprogs P (SND (SND (compile_single (two_reg_arith :bool) (reg_count :num) (alg :num) (c :α asm_config) prog_opt)))
+remove_must_terminate_conventions_typed=∀(p :α prog) (c :α asm_config) (k :num). (let (comp :α prog) = remove_must_terminate p in (flat_exp_conventions p ⇒ flat_exp_conventions comp) ∧ (full_inst_ok_less c p ⇒ full_inst_ok_less c comp) ∧ (post_alloc_conventions k p ⇒ post_alloc_conventions k comp) ∧ (every_inst (P :α inst -> bool) p ⇒ every_inst P comp) ∧ extract_labels p = extract_labels comp)
+full_ssa_cc_trans_flat_exp_conventions_typed=∀(prog :α prog) (n :num). flat_exp_conventions prog ⇒ flat_exp_conventions (full_ssa_cc_trans n prog)
+full_ssa_cc_trans_lab_pres_typed=∀(prog :α prog) (n :num). extract_labels prog = extract_labels (full_ssa_cc_trans n prog)
+full_ssa_cc_trans_wf_cutsets_typed=∀(n :num) (prog :α prog). wf_cutsets (full_ssa_cc_trans n prog)
+three_to_two_reg_prog_flat_exp_conventions_typed=∀(prog :α prog). flat_exp_conventions prog ⇒ flat_exp_conventions (three_to_two_reg_prog (b :bool) prog)
+three_to_two_reg_prog_full_inst_ok_less_typed=∀(prog :α prog). full_inst_ok_less (c :α asm_config) prog ⇒ full_inst_ok_less c (three_to_two_reg_prog (b :bool) prog)
+three_to_two_reg_prog_lab_pres_typed=∀(prog :α prog). extract_labels prog = extract_labels (three_to_two_reg_prog (b :bool) prog)
+three_to_two_reg_prog_pre_alloc_conventions_typed=∀(prog :α prog). pre_alloc_conventions prog ⇒ pre_alloc_conventions (three_to_two_reg_prog (b :bool) prog)
+three_to_two_reg_prog_two_reg_inst_typed=∀(prog :α prog). (b :bool) ⇒ every_inst (two_reg_inst :α inst -> bool) (three_to_two_reg_prog b prog)
+three_to_two_reg_prog_wf_cutsets_typed=∀(prog :α prog). wf_cutsets prog ⇒ wf_cutsets (three_to_two_reg_prog (b :bool) prog)
+every_inst_remove_unreach_typed=every_inst (P :α inst -> bool) (p :α prog) ⇒ every_inst P (remove_unreach p)
+flat_exp_conventions_remove_unreach_typed=flat_exp_conventions (p :α prog) ⇒ flat_exp_conventions (remove_unreach p)
+full_inst_ok_less_remove_unreach_typed=full_inst_ok_less (ac :α asm_config) (p :α prog) ⇒ full_inst_ok_less ac (remove_unreach p)
+wf_cutsets_remove_unreach_typed=wf_cutsets (p :α prog) ⇒ wf_cutsets (remove_unreach p)
+labels_rel_remove_unreach_typed=labels_rel (extract_labels (q :α prog)) (extract_labels (remove_unreach q))
+pre_alloc_conventions_remove_unreach_typed=pre_alloc_conventions (p :α prog) ⇒ pre_alloc_conventions (remove_unreach p)
+word_alloc_flat_exp_conventions_typed=∀(fc :num) (c :α asm_config) (alg :num) (k :num) (prog :α prog) (col_opt :num sptree$num_map option). flat_exp_conventions prog ⇒ flat_exp_conventions (word_alloc fc c alg k prog col_opt)
+word_alloc_lab_pres_typed=extract_labels (prog :α prog) = extract_labels (word_alloc (fc :num) (c :α asm_config) (alg :num) (k :num) prog (col_opt :num sptree$num_map option))
+word_alloc_two_reg_inst_typed=∀(fc :num) (c :α asm_config) (alg :num) (k :num) (prog :α prog) (col_opt :num sptree$num_map option). every_inst (two_reg_inst :α inst -> bool) prog ⇒ every_inst (two_reg_inst :α inst -> bool) (word_alloc fc c alg k prog col_opt)
+extract_labels_word_common_subexp_elim_typed=extract_labels (word_common_subexp_elim (p :α prog)) = extract_labels p
+flat_exp_conventions_word_common_subexp_elim_typed=flat_exp_conventions (p :α prog) ⇒ flat_exp_conventions (word_common_subexp_elim p)
+wf_cutsets_word_common_subexp_elim_typed=wf_cutsets (p :α prog) ⇒ wf_cutsets (word_common_subexp_elim p)
+compile_exp_no_inst_typed=∀(prog :α prog). every_inst (P :α inst -> bool) prog ⇒ every_inst P (compile_exp prog)
+extract_labels_compile_exp_typed=∀(p :α prog). labels_rel (extract_labels p) (extract_labels (compile_exp p))
+word_good_handlers_word_to_word_incr_typed=EVERY (λ((n :num),(m :num),(pp :α prog)). word_good_handlers n pp) (progs :(num # num # α prog) list) ⇒ EVERY (λ((n :num),(m :num),(pp :α prog)). word_good_handlers n pp) (MAP (λ(p :num # num # α prog). full_compile_single (tra :bool) (reg_count1 :num) (ralg :num) (asm_c :α asm_config) (p,(NONE :num sptree$num_map option))) progs)
+word_good_handlers_word_to_word_typed=EVERY (λ((n :num),(m :num),(pp :α prog)). word_good_handlers n pp) (progs :(num # num # α prog) list) ⇒ EVERY (λ((n :num),(m :num),(pp :α prog)). word_good_handlers n pp) (SND (compile (wc :config) (ac :α asm_config) progs))
+remove_dead_prog_conventions_typed=(flat_exp_conventions (p :α prog) ⇒ flat_exp_conventions (remove_dead_prog p)) ∧ (full_inst_ok_less (c :α asm_config) p ⇒ full_inst_ok_less c (remove_dead_prog p)) ∧ (pre_alloc_conventions p ⇒ pre_alloc_conventions (remove_dead_prog p)) ∧ (every_inst (P :α inst -> bool) p ⇒ every_inst P (remove_dead_prog p)) ∧ (wf_cutsets p ⇒ wf_cutsets (remove_dead_prog p)) ∧ extract_labels p = extract_labels (remove_dead_prog p)
+apply_colour_lab_pres_typed=∀(col :num -> num) (prog :α prog). extract_labels prog = extract_labels (apply_colour col prog)
+apply_colour_not_created_subprogs_typed=not_created_subprogs (P :α prog -> bool) (prog :α prog) ⇒ not_created_subprogs P (apply_colour (f :num -> num) prog)
+word_get_code_labels_apply_colour_typed=∀(col :num -> num) (ps :α prog). word_get_code_labels (apply_colour col ps) = word_get_code_labels ps
+word_good_handlers_apply_colour_typed=∀(col :num -> num) (ps :α prog). word_good_handlers (n :num) (apply_colour col ps) ⇔ word_good_handlers n ps
+copy_prop_not_created_subprogs_typed=not_created_subprogs (P :α prog -> bool) (prog :α prog) ⇒ not_created_subprogs P (copy_prop prog)
+copy_prop_prog_not_alloc_var_typed=∀(p :α prog) (cs :copy_state). (∀(x :num). ¬is_alloc_var x ⇒ (lookup x cs.to_eq :num option) = (NONE :num option)) ⇒ ∀(x :num). ¬is_alloc_var x ⇒ (lookup x (SND (copy_prop_prog p cs)).to_eq :num option) = (NONE :num option)
+copy_prop_prog_not_alloc_var_aux1_typed=(∀(x :num). ¬is_alloc_var x ⇒ (lookup x (cs :copy_state).to_eq :num option) = (NONE :num option)) ⇒ ¬is_alloc_var (x :num) ⇒ (lookup x (remove_eq cs (y :num)).to_eq :num option) = (NONE :num option)
+copy_prop_prog_not_alloc_var_aux2_typed=∀(cs :copy_state). (∀(x :num). ¬is_alloc_var x ⇒ (lookup x cs.to_eq :num option) = (NONE :num option)) ⇒ ¬is_alloc_var (x :num) ⇒ (lookup x (remove_eqs cs (yy :num list)).to_eq :num option) = (NONE :num option)
+every_inst_distinct_tar_reg_copy_prop_aux_typed=∀(p :α prog) (cs :copy_state). every_inst (distinct_tar_reg :α inst -> bool) p ⇒ every_inst (distinct_tar_reg :α inst -> bool) (FST (copy_prop_prog p cs))
+extract_labels_copy_prop_aux_typed=∀(p :α prog) (cs :copy_state). extract_labels (FST (copy_prop_prog p cs)) = extract_labels p
+flat_exp_conventions_copy_prop_aux_typed=∀(p :α prog) (cs :copy_state). flat_exp_conventions p ⇒ flat_exp_conventions (FST (copy_prop_prog p cs))
+full_inst_ok_less_copy_prop_aux_typed=∀(p :α prog) (cs :copy_state). full_inst_ok_less (ac :α asm_config) p ⇒ full_inst_ok_less ac (FST (copy_prop_prog p cs))
+pre_alloc_conventions_copy_prop_aux_typed=∀(p :α prog) (cs :copy_state). (∀(x :num). ¬is_alloc_var x ⇒ (lookup x cs.to_eq :num option) = (NONE :num option)) ⇒ pre_alloc_conventions p ⇒ pre_alloc_conventions (FST (copy_prop_prog p cs))
+wf_cutsets_copy_prop_aux_typed=∀(p :α prog) (cs :copy_state). wf_cutsets p ⇒ wf_cutsets (FST (copy_prop_prog p cs))
+word_get_code_labels_copy_prop_typed=word_get_code_labels (copy_prop (ps :α prog)) = word_get_code_labels ps
+word_good_handlers_copy_prop_typed=word_good_handlers (n :num) (copy_prop (ps :α prog)) ⇔ word_good_handlers n ps
+inst_select_exp_flat_exp_conventions_typed=∀(c :α asm_config) (tar :num) (temp :num) (exp :α exp). flat_exp_conventions (inst_select_exp c tar temp exp)
+inst_select_exp_full_inst_ok_less_typed=∀(c :α asm_config) (tar :num) (temp :num) (exp :α exp). addr_offset_ok c (0w :α word) ⇒ full_inst_ok_less c (inst_select_exp c tar temp exp)
+inst_select_exp_no_lab_typed=∀(c :α asm_config) (temp :num) (temp' :num) (exp :α exp). extract_labels (inst_select_exp c temp temp' exp) = ([] :(num # num) list)
+compile_exp_not_created_subprogs_typed=not_created_subprogs (P :α prog -> bool) (p :α prog) ⇒ not_created_subprogs P (compile_exp p)
+not_created_subprogs_const_fp_typed=not_created_subprogs (P :α prog -> bool) (p :α prog) ⇒ not_created_subprogs P (const_fp p)
+not_created_subprogs_const_fp_loop_typed=∀(p :α prog) (cs :α word sptree$num_map) (p1 :α prog) (cs1 :α word sptree$num_map). const_fp_loop p cs = (p1,cs1) ⇒ not_created_subprogs (P :α prog -> bool) p ⇒ not_created_subprogs P p1
+not_created_subprogs_hoist2_typed=∀(N :num) (p1 :α prog) (interm :α prog) (dummy :α prog) (p2 :α prog). try_if_hoist2 N p1 interm dummy p2 = SOME (p3 :α prog) ⇒ not_created_subprogs (P :α prog -> bool) p1 ⇒ not_created_subprogs P interm ⇒ not_created_subprogs P p2 ⇒ not_created_subprogs P p3
+inst_select_not_created_subprogs_typed=not_created_subprogs (P :α prog -> bool) (prog :α prog) ⇒ not_created_subprogs P (inst_select (c :α asm_config) (n :num) prog)
+inst_select_exp_not_created_subprogs_typed=not_created_subprogs (P :α prog -> bool) (inst_select_exp (c :α asm_config) (c' :num) (n :num) (exp :α exp))
+not_created_subprogs_push_out_if_typed=∀(p :α prog). not_created_subprogs (P :α prog -> bool) (push_out_if p) ⇔ not_created_subprogs P p
+not_created_subprogs_Seq_assoc_typed=∀(p1 :α prog) (p2 :α prog). not_created_subprogs (P :α prog -> bool) (Seq_assoc p1 p2) ⇔ not_created_subprogs P p1 ∧ not_created_subprogs P p2
+not_created_subprogs_simp_duplicate_if_typed=∀(p :α prog). not_created_subprogs (P :α prog -> bool) p ⇒ not_created_subprogs P (simp_duplicate_if p)
+not_created_subprogs_SmartSeq_typed=not_created_subprogs (P :α prog -> bool) (SmartSeq (p1 :α prog) (p2 :α prog)) ⇔ not_created_subprogs P p1 ∧ not_created_subprogs P p2
+not_created_subprogs_drop_consts_typed=not_created_subprogs (P :α prog -> bool) (SmartSeq (drop_consts (cs :α word sptree$num_map) (ls :num list)) (p :α prog)) ⇔ not_created_subprogs P p
+fake_moves_not_created_subprogs_typed=(fake_moves (prio :(unit + unit) option) (ls :num list) (nL :num sptree$num_map) (nR :num sptree$num_map) (n :num) :α prog # α prog # num # num sptree$num_map # num sptree$num_map) = ((prog1 :α prog),(prog2 :α prog),(n' :num),(ssa :num sptree$num_map),(ssa' :num sptree$num_map)) ⇒ not_created_subprogs (P :α prog -> bool) prog1 ∧ not_created_subprogs P prog2
+fake_seq_not_created_subprogs_typed=∀(ls :num list). not_created_subprogs (P :α prog -> bool) (FOLDR (Seq :α prog -> α prog -> α prog) (Skip :α prog) (MAP (λ(r :num). (fake_move r :α prog)) ls))
+full_ssa_cc_trans_not_created_subprogs_typed=not_created_subprogs (P :α prog -> bool) (prog :α prog) ⇒ not_created_subprogs P (full_ssa_cc_trans (n :num) prog)
+loop_setup_not_created_subprogs_typed=(loop_setup (names :sptree$num_set) (exit_names :sptree$num_set) (ssa :num sptree$num_map) (na :num) :α prog # num sptree$num_map # num) = ((setup_prog :α prog),(ssa' :num sptree$num_map),(na' :num)) ⇒ not_created_subprogs (P :α prog -> bool) setup_prog
+setup_ssa_not_created_subprogs_typed=not_created_subprogs (P :α prog -> bool) (prog :α prog) ∧ (setup_ssa (n :num) (v :num) prog :α prog # num sptree$num_map # num) = ((mov :α prog),(ssa :num sptree$num_map),(na :num)) ⇒ not_created_subprogs P mov
+ssa_cc_trans_not_created_subprogs_typed=not_created_subprogs (P :α prog -> bool) (prog :α prog) ∧ ssa_cc_trans prog (ssa :num sptree$num_map) (n :num) (lt :(num sptree$num_map # sptree$num_set # sptree$num_set) list) = ((prog' :α prog),(ssa' :num sptree$num_map),(na :num)) ⇒ not_created_subprogs P prog'
+ssa_cc_trans_inst_not_created_subprogs_typed=ssa_cc_trans_inst (i :α inst) (ssa :num sptree$num_map) (na :num) = ((i' :α prog),(ssa' :num sptree$num_map),(na' :num)) ⇒ not_created_subprogs (P :α prog -> bool) i'
+remove_unreach_not_created_subprogs_typed=not_created_subprogs (P :α prog -> bool) (prog :α prog) ⇒ not_created_subprogs P (remove_unreach prog)
+Seq_assoc_right_not_created_subprogs_typed=not_created_subprogs (P :α prog -> bool) (ps :α prog) ∧ not_created_subprogs P (qs :α prog) ⇒ not_created_subprogs P (Seq_assoc_right ps qs)
+SimpSeq_not_created_subprogs_typed=not_created_subprogs (P :α prog -> bool) (ps :α prog) ∧ not_created_subprogs P (qs :α prog) ⇒ not_created_subprogs P (SimpSeq ps qs)
+three_to_two_reg_prog_not_created_subprogs_typed=∀(prog :α prog). not_created_subprogs (P :α prog -> bool) prog ⇒ not_created_subprogs P (three_to_two_reg_prog (b :bool) prog)
+word_get_code_labels_remove_dead_typed=∀(ps :α prog) (live :sptree$num_set) (nlive :store_name list) (lt :(sptree$num_set # sptree$num_set) list). word_get_code_labels (FST (remove_dead ps live nlive lt)) ⊆ word_get_code_labels ps
+word_get_code_labels_remove_dead_prog_typed=word_get_code_labels (remove_dead_prog (ps :α prog)) ⊆ word_get_code_labels ps
+word_good_handlers_remove_dead_typed=∀(ps :α prog) (live :sptree$num_set) (nlive :store_name list) (lt :(sptree$num_set # sptree$num_set) list). word_good_handlers (n :num) (FST (remove_dead ps live nlive lt)) ⇔ word_good_handlers n ps
+word_good_handlers_remove_dead_prog_typed=word_good_handlers (n :num) (remove_dead_prog (ps :α prog)) ⇔ word_good_handlers n ps
+remove_dead_conventions_typed=∀(p :α prog) (live :sptree$num_set) (nlive :store_name list) (lt :(sptree$num_set # sptree$num_set) list) (c :α asm_config) (k :β). (let (comp :α prog) = FST (remove_dead p live nlive lt) in (flat_exp_conventions p ⇒ flat_exp_conventions comp) ∧ (full_inst_ok_less c p ⇒ full_inst_ok_less c comp) ∧ (pre_alloc_conventions p ⇒ pre_alloc_conventions comp) ∧ (every_inst (P :α inst -> bool) p ⇒ every_inst P comp) ∧ (wf_cutsets p ⇒ wf_cutsets comp) ∧ extract_labels p = extract_labels comp)
+remove_dead_prog_not_created_subprogs_typed=not_created_subprogs (P :α prog -> bool) (prog :α prog) ⇒ not_created_subprogs P (remove_dead_prog prog)
+remove_dead_not_created_subprogs_typed=∀(prog :α prog) (q :sptree$num_set) (r :store_name list) (lt :(sptree$num_set # sptree$num_set) list). not_created_subprogs (P :α prog -> bool) prog ⇒ not_created_subprogs P (FST (remove_dead prog q r lt))
+word_get_code_labels_remove_must_terminate_typed=∀(ps :α prog). word_get_code_labels (remove_must_terminate ps) = word_get_code_labels ps
+word_good_handlers_remove_must_terminate_typed=∀(ps :α prog). word_good_handlers (n :num) (remove_must_terminate ps) ⇔ word_good_handlers n ps
+flat_exp_conventions_fake_moves_typed=∀(ls :num list) (ssal :num sptree$num_map) (ssar :num sptree$num_map) (na :num) (l :α prog) (r :α prog) (a :num) (b :num sptree$num_map) (c :num sptree$num_map) (conf :β). (fake_moves (prio :(unit + unit) option) ls ssal ssar na :α prog # α prog # num # num sptree$num_map # num sptree$num_map) = (l,r,a,b,c) ⇒ flat_exp_conventions l ∧ flat_exp_conventions r
+fake_seq_flat_exp_conventions_typed=∀(ls :num list). flat_exp_conventions (FOLDR (Seq :α prog -> α prog -> α prog) (Skip :α prog) (MAP (λ(r :num). (fake_move r :α prog)) ls))
+loop_setup_flat_exp_conventions_typed=(loop_setup (names :sptree$num_set) (exit_names :sptree$num_set) (ssa :num sptree$num_map) (na :num) :α prog # num sptree$num_map # num) = ((setup_prog :α prog),(ssa' :num sptree$num_map),(na' :num)) ⇒ flat_exp_conventions setup_prog
+ssa_reconcile_flat_exp_conventions_typed=flat_exp_conventions (ssa_reconcile (cur_ssa :num sptree$num_map) (tgt_ssa :num sptree$num_map) (ns :β sptree$num_map) :α prog)
+ssa_cc_trans_flat_exp_conventions_typed=∀(prog :α prog) (ssa :num sptree$num_map) (na :num) (lt :(num sptree$num_map # sptree$num_set # sptree$num_set) list). flat_exp_conventions prog ⇒ flat_exp_conventions (FST (ssa_cc_trans prog ssa na lt))
+fake_moves_no_labs_typed=∀(ls :num list) (a :num sptree$num_map) (b :num sptree$num_map) (c :num) (d :α prog) (e :α prog) (f :num) (g :num sptree$num_map) (h :num sptree$num_map). (fake_moves (prio :(unit + unit) option) ls a b c :α prog # α prog # num # num sptree$num_map # num sptree$num_map) = (d,e,f,g,h) ⇒ extract_labels d = ([] :(num # num) list) ∧ extract_labels e = ([] :(num # num) list)
+fake_seq_no_labs_typed=∀(ls :num list). extract_labels (FOLDR (Seq :α prog -> α prog -> α prog) (Skip :α prog) (MAP (λ(r :num). (fake_move r :α prog)) ls)) = ([] :(num # num) list)
+loop_setup_no_labs_typed=(loop_setup (names :sptree$num_set) (exit_names :sptree$num_set) (ssa :num sptree$num_map) (na :num) :α prog # num sptree$num_map # num) = ((setup_prog :α prog),(ssa' :num sptree$num_map),(na' :num)) ⇒ extract_labels setup_prog = ([] :(num # num) list)
+ssa_reconcile_no_labs_typed=extract_labels (ssa_reconcile (cur_ssa :num sptree$num_map) (tgt_ssa :num sptree$num_map) (ns :β sptree$num_map) :α prog) = ([] :(num # num) list)
+fake_moves_wf_cutsets_typed=∀(ls :num list) (A :num sptree$num_map) (B :num sptree$num_map) (C :num) (L :α prog) (R :α prog) (D :num) (E :num sptree$num_map) (G :num sptree$num_map). (fake_moves (prio :(unit + unit) option) ls A B C :α prog # α prog # num # num sptree$num_map # num sptree$num_map) = (L,R,D,E,G) ⇒ wf_cutsets L ∧ wf_cutsets R
+fake_seq_wf_cutsets_typed=∀(ls :num list). wf_cutsets (FOLDR (Seq :α prog -> α prog -> α prog) (Skip :α prog) (MAP (λ(r :num). (fake_move r :α prog)) ls))
+loop_setup_wf_cutsets_typed=(loop_setup (names :sptree$num_set) (exit_names :sptree$num_set) (ssa :num sptree$num_map) (na :num) :α prog # num sptree$num_map # num) = ((setup_prog :α prog),(ssa' :num sptree$num_map),(na' :num)) ⇒ wf_cutsets setup_prog
+ssa_cc_trans_wf_cutsets_typed=∀(prog :α prog) (ssa :num sptree$num_map) (na :num) (lt :(num sptree$num_map # sptree$num_set # sptree$num_set) list). (let ((prog' :α prog),(ssa' :num sptree$num_map),(na' :num)) = ssa_cc_trans prog ssa na lt in wf_cutsets prog')
+ssa_reconcile_wf_cutsets_typed=wf_cutsets (ssa_reconcile (cur_ssa :num sptree$num_map) (tgt_ssa :num sptree$num_map) (ns :β sptree$num_map) :α prog)
+extract_labels_SmartSeq_typed=extract_labels (SmartSeq (p1 :α prog) (p2 :α prog)) = extract_labels (Seq p1 p2)
+every_inst_Seq_assoc_right_lemma_typed=∀(p1 :α prog) (p2 :α prog). every_inst (P :α inst -> bool) p1 ∧ every_inst P p2 ⇒ every_inst P (Seq_assoc_right p1 p2)
+every_inst_SimpSeq_typed=every_inst (P :α inst -> bool) (p1 :α prog) ∧ every_inst P (p2 :α prog) ⇒ every_inst P (SimpSeq p1 p2)
+flat_exp_conventions_Seq_assoc_right_lemma_typed=∀(p1 :α prog) (p2 :α prog). flat_exp_conventions p1 ∧ flat_exp_conventions p2 ⇒ flat_exp_conventions (Seq_assoc_right p1 p2)
+flat_exp_conventions_SimpSeq_typed=flat_exp_conventions (p1 :α prog) ∧ flat_exp_conventions (p2 :α prog) ⇒ flat_exp_conventions (SimpSeq p1 p2)
+full_inst_ok_less_Seq_assoc_right_lemma_typed=∀(p1 :α prog) (p2 :α prog). full_inst_ok_less (ac :α asm_config) p1 ∧ full_inst_ok_less ac p2 ⇒ full_inst_ok_less ac (Seq_assoc_right p1 p2)
+wf_cutsets_Seq_assoc_right_lemma_typed=∀(p1 :α prog) (p2 :α prog). wf_cutsets p1 ∧ wf_cutsets p2 ⇒ wf_cutsets (Seq_assoc_right p1 p2)
+wf_cutsets_SimpSeq_typed=wf_cutsets (p1 :α prog) ∧ wf_cutsets (p2 :α prog) ⇒ wf_cutsets (SimpSeq p1 p2)
+ALL_DISTINCT_extract_labels_remove_unreach_typed=ALL_DISTINCT (extract_labels (p :α prog)) ⇒ ALL_DISTINCT (extract_labels (remove_unreach p))
+ALL_DISTINCT_extract_labels_Seq_assoc_right_lemma_typed=∀(p1 :α prog) (p2 :α prog). ALL_DISTINCT (extract_labels p1 ++ extract_labels p2) ⇒ ALL_DISTINCT (extract_labels (Seq_assoc_right p1 p2))
+extract_labels_remove_unreach_typed=set (extract_labels (remove_unreach (p :α prog))) ⊆ set (extract_labels p)
+extract_labels_Seq_assoc_right_lemma_typed=∀(p1 :α prog) (p2 :α prog). set (extract_labels (Seq_assoc_right p1 p2)) ⊆ set (extract_labels p1) ∪ set (extract_labels p2)
+extract_labels_SimpSeq_typed=set (extract_labels (SimpSeq (p1 :α prog) (p2 :α prog))) ⊆ set (extract_labels (Seq p1 p2))
+MEM_extract_labels_Seq_assoc_right_lemma_typed=∀(p1 :α prog) (p2 :α prog) (x :num # num). MEM x (extract_labels (Seq_assoc_right p1 p2)) ⇒ MEM x (extract_labels p1) ∨ MEM x (extract_labels p2)
+call_arg_convention_remove_unreach_typed=call_arg_convention (p :α prog) ⇒ call_arg_convention (remove_unreach p)
+call_arg_convention_Seq_assoc_right_lemma_typed=∀(p1 :α prog) (p2 :α prog). call_arg_convention p1 ∧ call_arg_convention p2 ⇒ call_arg_convention (Seq_assoc_right p1 p2)
+every_stack_var_is_stack_var_remove_unreach_typed=every_stack_var is_stack_var (p :α prog) ⇒ every_stack_var is_stack_var (remove_unreach p)
+every_stack_var_is_stack_var_Seq_assoc_right_lemma_typed=∀(p1 :α prog) (p2 :α prog). every_stack_var is_stack_var p1 ∧ every_stack_var is_stack_var p2 ⇒ every_stack_var is_stack_var (Seq_assoc_right p1 p2)
+word_alloc_flat_exp_conventions_lem_typed=∀(f :num -> num) (prog :α prog). flat_exp_conventions prog ⇒ flat_exp_conventions (apply_colour f prog)
+word_alloc_two_reg_inst_lem_typed=∀(f :num -> num) (prog :α prog). every_inst (two_reg_inst :α inst -> bool) prog ⇒ every_inst (two_reg_inst :α inst -> bool) (apply_colour f prog)
+word_get_code_labels_word_alloc_typed=word_get_code_labels (word_alloc (fc :num) (c :α asm_config) (alg :num) (k :num) (prog :α prog) (col_opt :num sptree$num_map option)) = word_get_code_labels prog
+word_good_handlers_word_alloc_typed=word_good_handlers (n :num) (word_alloc (fc :num) (c :α asm_config) (alg :num) (k :num) (prog :α prog) (col_opt :num sptree$num_map option)) ⇔ word_good_handlers n prog
+word_alloc_not_created_subprogs_typed=not_created_subprogs (P :α prog -> bool) (prog :α prog) ⇒ not_created_subprogs P (word_alloc (n :num) (c :α asm_config) (a :num) (r :num) prog (cl :num sptree$num_map option))
+word_common_subexp_elim_not_created_subprogs_typed=not_created_subprogs (P :α prog -> bool) (prog :α prog) ⇒ not_created_subprogs P (word_common_subexp_elim prog)
+word_cseInst_not_created_subprogs_typed=∀(env :knowledge) (i :α inst). not_created_subprogs (P :α prog -> bool) (SND (word_cseInst env i))
+word_cse_extract_labels_typed=∀(p :α prog) (d :knowledge) (d1 :knowledge) (p1 :α prog). word_cse d p = (d1,p1) ⇒ extract_labels p1 = extract_labels p
+word_cse_flat_exp_conventions_typed=∀(p :α prog) (data :knowledge) (data' :knowledge) (q :α prog). flat_exp_conventions p ∧ word_cse data p = (data',q) ⇒ flat_exp_conventions q
+word_cse_get_code_labels_typed=∀(p :α prog) (data :knowledge) (data' :knowledge) (q :α prog). word_cse data p = (data',q) ⇒ word_get_code_labels q ⊆ word_get_code_labels p
+word_cse_not_created_subprogs_typed=∀(p :α prog) (env :knowledge). not_created_subprogs (P :α prog -> bool) p ⇒ not_created_subprogs P (SND (word_cse env p))
+word_cse_wf_cutsets_typed=∀(p :α prog) (data :knowledge) (data' :knowledge) (q :α prog). wf_cutsets p ∧ word_cse data p = (data',q) ⇒ wf_cutsets q
+word_get_code_labels_word_common_subexp_elim_typed=word_get_code_labels (word_common_subexp_elim (p :α prog)) ⊆ word_get_code_labels p
+word_good_handlers_word_common_subexp_elim_typed=word_good_handlers (q :num) (word_common_subexp_elim (p :α prog)) ⇔ word_good_handlers q p
+dest_Seq_no_inst_typed=∀(prog :α prog). every_inst (P :α inst -> bool) prog ⇒ every_inst P (FST (dest_Seq prog)) ∧ every_inst P (SND (dest_Seq prog))
+every_inst_const_fp_typed=∀(prog :α prog). every_inst (P :α inst -> bool) prog ⇒ every_inst P (const_fp prog)
+every_inst_drop_consts_typed=every_inst (P :α inst -> bool) (SmartSeq (drop_consts (cs :α word sptree$num_map) (ls :num list)) (p :α prog)) ⇔ every_inst P p
+every_inst_SmartSeq_typed=every_inst (P :α inst -> bool) (SmartSeq (p :α prog) (q :α prog)) ⇔ every_inst P p ∧ every_inst P q
+Seq_assoc_no_inst_typed=∀(p1 :α prog) (p2 :α prog). every_inst (P :α inst -> bool) p1 ∧ every_inst P p2 ⇒ every_inst P (Seq_assoc p1 p2)
+simp_duplicate_if_no_inst_typed=∀(p :α prog). every_inst (P :α inst -> bool) p ⇒ every_inst P (simp_duplicate_if p)
+simp_push_out_if_no_inst_typed=∀(p :α prog). every_inst (P :α inst -> bool) p ⇒ every_inst P (push_out_if p)
+try_if_hoist2_no_inst_typed=∀(N :num) (p1 :α prog) (interm :α prog) (dummy :α prog) (p2 :α prog) (s :β). try_if_hoist2 N p1 interm dummy p2 = SOME (p3 :α prog) ⇒ every_inst (P :α inst -> bool) p1 ⇒ every_inst P interm ⇒ every_inst P p2 ⇒ every_inst P p3
+extract_labels_const_fp_typed=labels_rel (extract_labels (p :α prog)) (extract_labels (const_fp p))
+extract_labels_const_fp_loop_typed=∀(p :α prog) (cs :α word sptree$num_map) (p1 :α prog) (cs1 :α word sptree$num_map). const_fp_loop p cs = (p1,cs1) ⇒ labels_rel (extract_labels p) (extract_labels p1)
+labels_rel_hoist2_typed=∀(N :num) (p1 :α prog) (interm :α prog) (dummy :α prog) (p2 :α prog) (s :β). try_if_hoist2 N p1 interm dummy p2 = SOME (p3 :α prog) ⇒ dest_If p2 = SOME ((cmp :cmp),(lhs :num),(rhs :α reg_imm),(br1 :α prog),(br2 :α prog)) ⇒ dummy = (If cmp lhs rhs (Raise (1 :num) :α prog) (Raise (2 :num) :α prog) :α prog) ⇒ extract_labels interm = ([] :(num # num) list) ⇒ labels_rel (extract_labels p1 ++ extract_labels p2) (extract_labels p3)
+labels_rel_simp_duplicate_if_typed=∀(p :α prog). labels_rel (extract_labels p) (extract_labels (simp_duplicate_if p))
+const_fp_loop_dummy_cases_typed=const_fp_loop (If (cmp :cmp) (lhs :num) (rhs :α reg_imm) (Raise (1 :num) :α prog) (Raise (2 :num) :α prog) :α prog) (cs :α word sptree$num_map) = ((p2 :α prog),(cs2 :α word sptree$num_map)) ⇒ dest_Raise_num p2 = (1 :num) ∧ (∀(br1 :α prog) (br2 :α prog). const_fp_loop (If cmp lhs rhs br1 br2 :α prog) cs = const_fp_loop br1 cs) ∨ dest_Raise_num p2 = (2 :num) ∧ (∀(br1 :α prog) (br2 :α prog). const_fp_loop (If cmp lhs rhs br1 br2 :α prog) cs = const_fp_loop br2 cs) ∨ dest_Raise_num p2 = (0 :num)
+dest_If_thm_typed=dest_If (x2 :α prog) = SOME ((g1 :cmp),(g2 :num),(g3 :α reg_imm),(g4 :α prog),(g5 :α prog)) ⇔ x2 = (If g1 g2 g3 g4 g5 :α prog)
+labels_rel_push_out_if_typed=∀(p :α prog). labels_rel (extract_labels p) (extract_labels (push_out_if p))
+extract_labels_drop_consts_typed=extract_labels (SmartSeq (drop_consts (cs :α word sptree$num_map) (ls :num list)) (p :α prog)) = extract_labels p
+extract_labels_drop_consts_1_typed=extract_labels (drop_consts (cs :α word sptree$num_map) (ls :num list)) = ([] :(num # num) list)
+extract_labels_Seq_assoc_typed=extract_labels (Seq_assoc (Skip :α prog) (p :α prog)) = extract_labels p
+extract_labels_Seq_assoc_lemma_typed=∀(p1 :α prog) (p2 :α prog). extract_labels (Seq_assoc p1 p2) = extract_labels p1 ++ extract_labels p2
+labels_rel_append_imp_typed=labels_rel ((Y :α list) ++ (X :α list)) (Z :α list) ⇒ labels_rel (X ++ Y) Z
+word_good_handlers_inst_select_exp_typed=∀(a :α asm_config) (b :num) (c :num) (exp :α exp). word_good_handlers (n :num) (inst_select_exp a b c exp)
+word_good_handlers_inst_select_typed=∀(ac :α asm_config) (v :num) (ps :α prog). word_good_handlers (n :num) (inst_select ac v ps) ⇔ word_good_handlers n ps
+word_good_handlers_three_to_two_reg_prog_typed=∀(ps :α prog). word_good_handlers (n :num) (three_to_two_reg_prog (b :bool) ps) ⇔ word_good_handlers n ps
+word_good_handlers_SimpSeq_typed=word_good_handlers (n :num) (ps :α prog) ∧ word_good_handlers n (qs :α prog) ⇒ word_good_handlers n (SimpSeq ps qs)
+word_good_handlers_Seq_assoc_right_typed=word_good_handlers (n :num) (ps :α prog) ∧ word_good_handlers n (qs :α prog) ⇒ word_good_handlers n (Seq_assoc_right ps qs)
+word_good_handlers_remove_unreach_typed=word_good_handlers (n :num) (ps :α prog) ⇒ word_good_handlers n (remove_unreach ps)
+word_good_handlers_SmartSeq_typed=word_good_handlers (n :num) (SmartSeq (p :α prog) (q :α prog)) ⇔ word_good_handlers n p ∧ word_good_handlers n q
+word_good_handlers_Seq_assoc_typed=∀(p1 :α prog) (p2 :α prog). word_good_handlers (n :num) (Seq_assoc p1 p2) ⇔ word_good_handlers n p1 ∧ word_good_handlers n p2
+word_good_handlers_drop_consts_typed=∀(args :num list). word_good_handlers (n :num) (drop_consts (l :α word sptree$num_map) args)
+word_good_handlers_const_fp_loop_typed=∀(p :α prog) (l :α word sptree$num_map). word_good_handlers (n :num) p ⇒ word_good_handlers n (FST (const_fp_loop p l))
+word_good_handlers_try_if_hoist2_typed=∀(N :num) (p1 :α prog) (interm :α prog) (dummy :α prog) (p2 :α prog) (s :β). try_if_hoist2 N p1 interm dummy p2 = SOME (p3 :α prog) ⇒ word_good_handlers (n :num) p1 ∧ word_good_handlers n p2 ∧ word_good_handlers n interm ⇒ word_good_handlers n p3
+word_good_handlers_simp_duplicate_if_typed=∀(p :α prog). word_good_handlers (n :num) p ⇒ word_good_handlers n (simp_duplicate_if p)
+word_good_handlers_simp_push_out_if_typed=∀(p :α prog). word_good_handlers (n :num) p ⇒ word_good_handlers n (push_out_if p)
+word_good_handlers_word_simp_typed=∀(ps :α prog). word_good_handlers (n :num) ps ⇒ word_good_handlers n (compile_exp ps)
+word_good_handlers_fake_moves_typed=∀(a :num list) (b :num sptree$num_map) (c :num sptree$num_map) (d :num) (e :α prog) (f :α prog) (g :num) (h :num sptree$num_map) (i :num sptree$num_map). (fake_moves (prio :(unit + unit) option) a b c d :α prog # α prog # num # num sptree$num_map # num sptree$num_map) = (e,f,g,h,i) ⇒ word_good_handlers (n :num) e ∧ word_good_handlers n f
+word_good_handlers_ssa_cc_trans_typed=∀(x :α prog) (y :num sptree$num_map) (z :num) (lt :(num sptree$num_map # sptree$num_set # sptree$num_set) list) (a :α prog) (b :num sptree$num_map) (c :num). ssa_cc_trans x y z lt = (a,b,c) ⇒ (word_good_handlers (n :num) a ⇔ word_good_handlers n x)
+word_good_handlers_full_ssa_cc_trans_typed=∀(m :num) (p :α prog). word_good_handlers (n :num) (full_ssa_cc_trans m p) ⇔ word_good_handlers n p
+word_good_handlers_word_to_word_incr_helper_typed=∀(oracles :num sptree$num_map option list). LENGTH (progs :(num # num # α prog) list) = LENGTH oracles ⇒ EVERY (λ((n :num),(m :num),(pp :α prog)). word_good_handlers n pp) progs ⇒ EVERY (λ((n :num),(m :num),(pp :α prog)). word_good_handlers n pp) (MAP (full_compile_single (tra :bool) (reg_count1 :num) (ralg :num) (asm_c :α asm_config)) (ZIP (progs,oracles)))
+loop_setup_good_handlers_typed=(loop_setup (names :sptree$num_set) (exit_names :sptree$num_set) (ssa :num sptree$num_map) (na :num) :α prog # num sptree$num_map # num) = ((setup_prog :α prog),(ssa' :num sptree$num_map),(na' :num)) ⇒ word_good_handlers (n :num) setup_prog
+fake_seq_good_handlers_typed=∀(ls :num list). word_good_handlers (n :num) (FOLDR (Seq :α prog -> α prog -> α prog) (Skip :α prog) (MAP (λ(r :num). (fake_move r :α prog)) ls))
+ssa_reconcile_good_handlers_typed=word_good_handlers (n :num) (ssa_reconcile (cur_ssa :num sptree$num_map) (tgt_ssa :num sptree$num_map) (ns :β sptree$num_map) :α prog)
+const_fp_loop_Seq_typed=const_fp_loop (Seq (p1 :α prog) (p2 :α prog)) (cs :α word sptree$num_map) = (let ((p1' :α prog),(cs' :α word sptree$num_map)) = const_fp_loop p1 cs; ((p2' :α prog),(cs'' :α word sptree$num_map)) = const_fp_loop p2 cs' in (Seq p1' p2',cs''))

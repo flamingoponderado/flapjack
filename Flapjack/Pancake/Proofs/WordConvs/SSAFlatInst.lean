@@ -9,10 +9,15 @@ public import Flapjack.Compiler.Backend.WordAlloc.ProductionSSAMemoryGuard
 namespace Flapjack.WordAlloc
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
 
-/-- Original complete Inst case of SSA flat-expression preservation, including
-all native instruction constructors, FP width branches and fallback clauses. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "ssa_cc_trans_flat_exp_conventions" (words_as_type_indexed_bitvec)]
+/-- Original Inst constructor case of SSA flat-expression preservation, including
+all native instruction constructors, FP width branches and fallback clauses.
+
+This is the `prog = Inst instruction` instance of HOL
+`ssa_cc_trans_flat_exp_conventions` (`wordConvsProofScript.sml:1417-1430`), which
+quantifies an arbitrary program. A specialized instance is not an exact port of that
+statement, so the `@[hol]` tag was withdrawn (task 171); this remains untagged
+infrastructure. The exact general port is the tagged `ssaCcTrans_flatExpConventions`
+in `SSAFlatProgram.lean`. -/
 theorem ssaCcTrans_flatExpInst {width : Nat} [NeZero width]
     (instruction : WordLangInst (BitVec width)) (ssa : Spt Nat) (next : Nat)
     (tables : List (Spt Nat × Spt Unit × Spt Unit))

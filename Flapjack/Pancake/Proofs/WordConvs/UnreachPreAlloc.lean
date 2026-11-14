@@ -39,14 +39,15 @@ private theorem callArgConvention_simpSeq {width : Nat} [NeZero width]
     | simp_all +zetaDelta only [callArgConventionHOL, Bool.and_eq_true, true_and, and_true]
 
 /-- Original source pre-allocation component preservation for right association,
-with both source-programme premises, including all returning call handlers. -/
+with HOL's single conjunctive source premise kept as one conjunction hypothesis,
+including all returning call handlers. -/
 @[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
   "call_arg_convention_Seq_assoc_right_lemma" (words_as_type_indexed_bitvec)]
 theorem callArgConvention_seqAssocRight {width : Nat} [NeZero width]
     (first second : WordLangProgHOL (BitVec width))
-    (firstValid : callArgConventionHOL first = true)
-    (secondValid : callArgConventionHOL second = true) :
+    (h : callArgConventionHOL first = true ∧ callArgConventionHOL second = true) :
     callArgConventionHOL (seqAssocRight first second) = true := by
+  obtain ⟨firstValid, secondValid⟩ := h
   induction first using
       (measure (fun p : WordLangProgHOL (BitVec width) => sizeOf p)).wf.induction
       generalizing second with
@@ -68,7 +69,7 @@ theorem callArgConvention_removeUnreach {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width))
     (source : callArgConventionHOL program = true) :
     callArgConventionHOL (removeUnreach program) = true :=
-  callArgConvention_seqAssocRight program .skip source rfl
+  callArgConvention_seqAssocRight program .skip ⟨source, rfl⟩
 
 /-- Flapjack factoring of the same native descriptor analysis for the original
 source convention proof; HOL has no separately named descriptor theorem. -/
@@ -100,14 +101,16 @@ private theorem stackVarConvention_simpSeq {width : Nat} [NeZero width]
     | simp_all +zetaDelta [everyStackVarHOL]
 
 /-- Original source pre-allocation component preservation for right association,
-with both source-programme premises, including all returning call handlers. -/
+with HOL's single conjunctive source premise kept as one conjunction hypothesis,
+including all returning call handlers. -/
 @[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
   "every_stack_var_is_stack_var_Seq_assoc_right_lemma" (words_as_type_indexed_bitvec)]
 theorem stackVarConvention_seqAssocRight {width : Nat} [NeZero width]
     (first second : WordLangProgHOL (BitVec width))
-    (firstValid : everyStackVarHOL isStackVar first = true)
-    (secondValid : everyStackVarHOL isStackVar second = true) :
+    (h : everyStackVarHOL isStackVar first = true ∧
+      everyStackVarHOL isStackVar second = true) :
     everyStackVarHOL isStackVar (seqAssocRight first second) = true := by
+  obtain ⟨firstValid, secondValid⟩ := h
   induction first using
       (measure (fun p : WordLangProgHOL (BitVec width) => sizeOf p)).wf.induction
       generalizing second with
@@ -129,7 +132,7 @@ theorem stackVarConvention_removeUnreach {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width))
     (source : everyStackVarHOL isStackVar program = true) :
     everyStackVarHOL isStackVar (removeUnreach program) = true :=
-  stackVarConvention_seqAssocRight program .skip source rfl
+  stackVarConvention_seqAssocRight program .skip ⟨source, rfl⟩
 
 /-- Original whole pre-allocation convention preservation; exactly the source
 convention premise, with no target assumptions or restricted constructors. -/

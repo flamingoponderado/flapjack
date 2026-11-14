@@ -381,6 +381,15 @@ DOCUMENTED_MISMATCHES = {
         "StructContextExact; the induction principle sizeOfShapeWithContextHOL.induct is stated "
         "over that carrier."
     ),
+    ("Flapjack/Pancake/Proofs/WordConvs/SSAFlatInst.lean", "ssaCcTrans_flatExpInst"): (
+        "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+        "ssa_cc_trans_flat_exp_conventions",
+        "codewhale source comparison (2026-11-14, task 171): tag withdrawn. HOL quantifies an "
+        "arbitrary prog with ssa, na and the loop-table list and concludes flat_exp_conventions "
+        "(FST (ssa_cc_trans prog ssa na lt)) from flat_exp_conventions prog; the Lean declaration "
+        "is the prog = Inst instruction instance, a specialization rather than an exact port. The "
+        "exact general port is the tagged ssaCcTrans_flatExpConventions in SSAFlatProgram.lean."
+    ),
     ("Flapjack/Compiler/Backend/ClosFvs/Source.lean", "compile"): ("cakeml/compiler/backend/clos_fvsScript.sml", "compile_def", "The executable uses removeList; compileSource is the source-shaped definition and compileSource_eq_compile proves agreement."),
     ("Flapjack/Compiler/Backend/ClosFvs/Source.lean", "compileInc"): ("cakeml/compiler/backend/clos_fvsScript.sml", "compile_inc_def", "The executable uses compile; compileIncSource is the source-shaped definition and compileIncSource_eq_compileInc proves agreement."),
     ("Flapjack/Compiler/Backend/ClosKnown/Compile.lean", "knownCompileInc"): ("cakeml/compiler/backend/clos_knownScript.sml", "known_compile_inc_def", "The executable uses the total traversals; knownCompileIncSource is the source-shaped definition and knownCompileIncSource_eq proves agreement."),

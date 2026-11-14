@@ -1048,6 +1048,25 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertEqual(exact_record["hol_name"], "is_wf_shape_drop")
         self.assertEqual(exact_record["statement_status"], "documented_mismatch")
 
+    def test_ssa_cc_trans_flat_exp_inst_withdrawn(self):
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        exact_key = ("Flapjack/Pancake/Proofs/WordConvs/SSAFlatInst.lean",
+                     "ssaCcTrans_flatExpInst")
+        self.assertEqual(inventory[exact_key]["hol_name"],
+                         "ssa_cc_trans_flat_exp_conventions")
+        self.assertEqual(inventory[exact_key]["statement_status"],
+                         "documented_mismatch")
+
+        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        exact_record = next(record for record in manifest if
+                            (record["lean_path"], record["lean_name"]) == exact_key)
+        self.assertEqual(exact_record["hol_name"],
+                         "ssa_cc_trans_flat_exp_conventions")
+        self.assertEqual(exact_record["statement_status"], "documented_mismatch")
+
     def test_fperm_decs_decls_production_variant_removed(self):
         inventory = {
             (record["lean_path"], record["lean_name"]): record

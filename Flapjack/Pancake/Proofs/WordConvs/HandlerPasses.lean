@@ -109,27 +109,28 @@ private theorem goodHandlers_ofDestSeqMove {width : Nat} [NeZero width] (n : Nat
   case seq first second =>
     cases first <;> simp_all [goodHandlersHOL]
 
-/-- Original SimpSeq implication retains both source guards and all native
-terminal/skip/move-merging cases. -/
+/-- Original SimpSeq implication retains HOL's single conjunctive source guard
+as one conjunction hypothesis and all native terminal/skip/move-merging cases. -/
 @[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
   "word_good_handlers_SimpSeq" (words_as_type_indexed_bitvec)]
 theorem goodHandlers_simpSeq {width : Nat} [NeZero width] (n : Nat)
     (first second : WordLangProgHOL (BitVec width))
-    (firstValid : goodHandlersHOL n first = true)
-    (secondValid : goodHandlersHOL n second = true) :
+    (h : goodHandlersHOL n first = true ∧ goodHandlersHOL n second = true) :
     goodHandlersHOL n (simpSeq first second) = true := by
+  obtain ⟨firstValid, secondValid⟩ := h
   fun_cases simpSeq first second <;> simp_all +zetaDelta [goodHandlersHOL]
   all_goals apply goodHandlers_ofDestSeqMove <;> assumption
 
-/-- Original right-association implication with both source guards; native
-nested return and exception handlers are included. -/
+/-- Original right-association implication with HOL's single conjunctive source
+guard kept as one conjunction hypothesis; native nested return and exception
+handlers are included. -/
 @[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
   "word_good_handlers_Seq_assoc_right" (words_as_type_indexed_bitvec)]
 theorem goodHandlers_seqAssocRight {width : Nat} [NeZero width] (n : Nat)
     (first second : WordLangProgHOL (BitVec width))
-    (firstValid : goodHandlersHOL n first = true)
-    (secondValid : goodHandlersHOL n second = true) :
+    (h : goodHandlersHOL n first = true ∧ goodHandlersHOL n second = true) :
     goodHandlersHOL n (seqAssocRight first second) = true := by
+  obtain ⟨firstValid, secondValid⟩ := h
   induction first using
       (measure (fun p : WordLangProgHOL (BitVec width) => sizeOf p)).wf.induction
       generalizing second with
@@ -151,6 +152,6 @@ theorem goodHandlers_seqAssocRight {width : Nat} [NeZero width] (n : Nat)
 theorem goodHandlers_removeUnreach {width : Nat} [NeZero width] (n : Nat)
     (program : WordLangProgHOL (BitVec width)) (source : goodHandlersHOL n program = true) :
     goodHandlersHOL n (removeUnreach program) = true :=
-  goodHandlers_seqAssocRight n program .skip source rfl
+  goodHandlers_seqAssocRight n program .skip ⟨source, rfl⟩
 
 end Flapjack.WordConvs
