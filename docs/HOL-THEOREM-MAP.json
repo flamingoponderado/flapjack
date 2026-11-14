@@ -359,6 +359,16 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "compile_prog_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/InitialStateRel.lean",
+    "lean_name": "compileProg_evaluate",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": ["State.refs", "BviState.refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the exported typed original in bvl_to_bvi_value_rel_probe.out: the complete compilation and source evaluation equations, positive initial clock, distinct names, program and oracle handler conditions, counter bound and non-type-error premise are retained. The target initial-state evaluation, result map including the source exception case, existential extra clock and relocation, and final state relation match. The BVL and BVI refs fields use canonical finite maps with same-module roundtrip witnesses; code remains Spt. Compiler configuration and FFI payload types are independent. Inherits reals_as_rational_cuts through evaluation, as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_single_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/CompileSingle.lean",
     "lean_name": "compileSingleEvaluate",

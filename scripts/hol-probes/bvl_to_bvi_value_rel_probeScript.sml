@@ -109,6 +109,7 @@ val _ = show "do_app_ok=" do_app_ok;
 val _ = show "evaluate_ok=" evaluate_ok;
 val _ = show "compile_exps_correct=" compile_exps_correct;
 val _ = show "compile_single_evaluate=" compile_single_evaluate;
+val _ = show "compile_prog_evaluate=" compile_prog_evaluate;
 val bv_ok_IMP_adjust_bv_eq_replay = prove (``!b2 a1 b3.
   bv_ok refs a1 /\ (!a. a IN FDOM refs ==> b2 a = b3 a) ==>
   adjust_bv b2 a1 = adjust_bv b3 a1``,
