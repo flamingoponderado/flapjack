@@ -1,5 +1,13 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "EVERY_HD",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Globals.lean",
+    "lean_name": "every_head",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Typed literal replay confirms the polymorphic predicate, list, nonempty-list premise and head conclusion. Lean's Nonempty carrier models the inhabited HOL type; the empty-list head is not observed under the premise."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",

@@ -8,6 +8,13 @@ val _ = diminish_srw_ss ["ABBREV"];
 fun bring_fwd_ctors th ty = map ((fn s => Parse.bring_to_front_overload s {Name = s, Thy = th}) o term_to_string) (TypeBase.constructors_of ty);
 val _ = bring_fwd_ctors "closLang" ``:closLang$exp``;
 
+(* Literal replay of the local theorem at clos_mtiProofScript.sml:1432. *)
+Theorem every_hd_replay:
+  EVERY P l /\ l <> [] ==> P (HD l)
+Proof
+  Cases_on `l` >> simp[]
+QED
+
 (* Literal replays of clos_mtiProofScript.sml:63-66 and 177-201. *)
 Definition mk_Fns_def:
   mk_Fns [] e = e /\
@@ -154,6 +161,7 @@ fun show label th =
   if null (hyp th) then
     (print label; print "="; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
+val _ = show "every_hd_replay_typed" every_hd_replay;
 val _ = show "mk_fns_def_typed" mk_Fns_def;
 val _ = show "collect_args_def_typed" collect_args_def;
 val _ = show "collect_args_imp_typed" collect_args_IMP;

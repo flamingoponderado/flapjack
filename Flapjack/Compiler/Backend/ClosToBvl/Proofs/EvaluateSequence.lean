@@ -151,17 +151,6 @@ theorem expressionSimulation_below {C F : Type} (clockBound : Nat) (expressions 
   intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result _
   exact simulation s sFinal t sourceEnv targetEnv f aux finalAux compiled result
 
-/-- Proving the simulation at every finite clock bound suffices for the
-unrestricted expression simulation. -/
-theorem expressionSimulation_iff_below {C F : Type} (expressions : List ClosLang.Exp) :
-    expressionSimulation (C := C) (F := F) expressions ↔
-      ∀ clockBound, expressionSimulationBelow (C := C) (F := F) clockBound expressions := by
-  constructor
-  · intro simulation clockBound
-    exact expressionSimulation_below clockBound expressions simulation
-  · intro simulation s sFinal t sourceEnv targetEnv f aux finalAux compiled result
-    exact simulation (s.clock + 1) s sFinal t sourceEnv targetEnv f aux finalAux compiled result (by omega)
-
 /-- The empty expression list satisfies the source-shaped simulation. -/
 theorem expressionSimulation_nil {C F : Type} : expressionSimulation (C := C) (F := F) [] := by
   intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result run noTypeError compile
