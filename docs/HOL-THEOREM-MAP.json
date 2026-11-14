@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+    "hol_name": "v_rel_simps",
+    "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Relations.lean",
+    "lean_name": "valueRel_simps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared value_rel_simps_typed: all nine constructor, boolean and unit equivalences, shared variables, existential ordering, source-to-target list relations, and closure code relation match the inferred HOL statement. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
     "hol_name": "let_op_SING",
     "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Syntax.lean",
     "lean_name": "compileSource_singleton",

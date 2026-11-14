@@ -51,6 +51,7 @@ val _ = show "code_rel_length_typed" clos_letopProofTheory.code_rel_IMP_LENGTH;
 val _ = show "code_rel_cons_typed" clos_letopProofTheory.code_rel_CONS_CONS;
 val _ = show "function_rel_typed" clos_letopProofTheory.f_rel_def;
 val _ = show "value_rel_typed" clos_letopProofTheory.v_rel_rules;
+val _ = show "value_rel_simps_typed" clos_letopProofTheory.v_rel_simps;
 val _ = show "ref_rel_typed" clos_letopProofTheory.ref_rel_rules;
 val _ = show "fmap_rel_typed" clos_letopProofTheory.FMAP_REL_def;
 val _ = show "state_rel_typed" clos_letopProofTheory.state_rel_def;
