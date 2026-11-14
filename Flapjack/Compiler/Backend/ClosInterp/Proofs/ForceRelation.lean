@@ -17,7 +17,7 @@ theorem updateThunk_stateRel {C F : Type} (source target : ClosSem.State C F)
     ClosSem.updateThunk targets target.refs values = some refs ∧
       StateRel { source with refs := refs } { target with refs := refs } := by
   constructor
-  · rw [← related.1.2.2.2.2.2.2.2.2.1]
+  · rw [← (stateRel_refs_clocks related).1]
     exact run
   · rcases related with ⟨⟨safe, sc, tc, maxEq, maxPositive, clock, ffi, globals, _, compiler, oracle⟩, installed⟩
     exact ⟨⟨safe, sc, tc, maxEq, maxPositive, clock, ffi, globals, rfl, compiler, oracle⟩, installed⟩

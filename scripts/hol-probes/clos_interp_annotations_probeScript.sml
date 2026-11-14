@@ -52,3 +52,7 @@ val _ = show_thm "state_rel_def_typed=" clos_interpProofTheory.state_rel_def;
 val _ = show_thm "state_rel_1_def_typed=" clos_interpProofTheory.state_rel_1_def;
 val _ = show_thm "evaluate_interp_lemma_typed=" clos_interpProofTheory.evaluate_interp_lemma;
 val _ = show_thm "evaluate_interp_thm_typed=" clos_interpProofTheory.evaluate_interp_thm;
+val state_rel_refs_clocks_replay = Q.prove (
+  `state_rel s1 s2 ⇒ s1.refs = s2.refs ∧ s1.clock = s2.clock`,
+  rw [clos_interpProofTheory.state_rel_def, state_component_equality]);
+val _ = show_thm "state_rel_refs_clocks_replay_typed=" state_rel_refs_clocks_replay;

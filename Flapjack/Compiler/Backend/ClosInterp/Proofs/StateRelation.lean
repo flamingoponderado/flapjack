@@ -43,6 +43,13 @@ def StateRel {C F : Type} (source target : ClosSem.State C F) : Prop :=
   StateRel1 source target ∧ source.globals.head? =
     some (some (.closure none [] [] 1 closInterpreter))
 
+/-- Related interpreter states have equal reference stores and clocks. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "state_rel_refs_clocks_eqs"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRel_refs_clocks {C F : Type} {source target : ClosSem.State C F}
+    (related : StateRel source target) : source.refs = target.refs ∧ source.clock = target.clock :=
+  ⟨related.1.2.2.2.2.2.2.2.2.1, related.1.2.2.2.2.2.1.symm⟩
+
 /-- States related before installing the interpreter differ only in their
 compiler callback and oracle. -/
 theorem stateRel1_replaceCompiler {C F : Type} (source target : ClosSem.State C F)

@@ -1,6 +1,15 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "state_rel_refs_clocks_eqs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/StateRelation.lean",
+    "lean_name": "stateRel_refs_clocks",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the closed state_rel_refs_clocks_replay_typed: related states have equal full reference maps and clocks in the original order and direction. Independently replayed the local HOL proof. Canonical refs and code fields have the local roundtrip witness; source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
     "hol_name": "state_rel_1_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/StateRelation.lean",
     "lean_name": "StateRel1",
