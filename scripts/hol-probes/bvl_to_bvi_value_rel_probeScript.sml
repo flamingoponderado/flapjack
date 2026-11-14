@@ -111,6 +111,7 @@ val _ = show "compile_exps_correct=" compile_exps_correct;
 val _ = show "compile_single_evaluate=" compile_single_evaluate;
 val _ = show "compile_prog_evaluate=" compile_prog_evaluate;
 val _ = show "compile_list_distinct_locs=" compile_list_distinct_locs;
+val _ = show "bvi_stubs_evaluate=" bvi_stubs_evaluate;
 val bv_ok_IMP_adjust_bv_eq_replay = prove (``!b2 a1 b3.
   bv_ok refs a1 /\ (!a. a IN FDOM refs ==> b2 a = b3 a) ==>
   adjust_bv b2 a1 = adjust_bv b3 a1``,

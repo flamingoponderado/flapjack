@@ -8,6 +8,14 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileSingle
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value)
 
+namespace InitGlobalsCarrier
+/-- The canonical BVI reference-map state representation roundtrips. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end InitGlobalsCarrier
+
 /-- Initial global-array capacity, including the source's lower and upper
 clamps. -/
 def initGlobalsCapacity (n : Nat) : Nat := min (max n 1) initGlobalsMax
@@ -129,21 +137,6 @@ theorem evaluate_initGlobals_handler {C F : Type} (start : Nat) (env : List Valu
               | ret values => simp
     · simp [Ne.symm arityZero]
 
-/-- Initialization followed by the entry call, with uncaught exceptions
-returned as singleton values. -/
-theorem evaluate_initGlobals {C F : Type} (start n : Nat) (state : BviSem.BviState C F) :
-    let size := initGlobalsCapacity n
-    let ptr := BvlSem.leastUnusedRef state.refs
-    let ready : BviSem.BviState C F := { state with
-      global := some ptr
-      refs := state.refs.updateEq (ptr, .valueArray (.number 1 :: List.replicate (size - 1) (.number 0))) }
-    BviSem.evaluate [(initGlobalsCode start n).2] [] state =
-      let (result, last) := BviSem.evaluate [.call 0 (some start) [] none] [] ready
-      (match result with
-        | .err (.raise (.exn value)) => .val [value]
-        | other => other, last) := by
-  rw [evaluate_initGlobals_prefix, evaluate_initGlobals_handler]
-
 /-- An ordinary call converts a callee's internal return signal to a type
 error, so it never exposes a return signal to its caller. -/
 theorem evaluate_entry_noReturn {C F : Type} (start : Nat) (state next : BviSem.BviState C F)
@@ -201,7 +194,7 @@ theorem evaluate_initGlobals_call {C F : Type} (start n : Nat) (state : BviSem.B
   conv_lhs =>
     simp only [BviSem.evaluate, BvlSem.findCode, code', List.length_nil, ite_true,
       Nat.zero_add, Nat.lt_one_iff, clock, if_false, BviSem.fixClock_evaluate]
-  rw [evaluate_initGlobals]
+  rw [evaluate_initGlobals_prefix, evaluate_initGlobals_handler]
   cases callRun : BviSem.evaluate [.call 0 (some start) [] none] [] ready with
   | mk result last =>
     cases result with
@@ -213,13 +206,6 @@ theorem evaluate_initGlobals_call {C F : Type} (start n : Nat) (state : BviSem.B
         cases raised with
         | exn value => rfl
         | ret values => exact (evaluate_entry_noReturn start ready last values callRun).elim
-
-/-- The initialization entry is present in the source-ordered stub list. -/
-theorem lookup_initGlobals_stubs (start n : Nat) (code : List (Nat × Nat × Bvi.Exp)) :
-    sptLookup initGlobalsLocation (sptFromAList (stubs start n ++ code)) = some (initGlobalsCode start n) := by
-  rw [sptLookup_sptFromAList]
-  simp [stubs, sptAListLookup, initGlobalsLocation, copyGlobalsLocation, allocGlobalLocation]
-  omega
 
 /-- Every runtime stub required by the state relation is installed before
 the compiled program entries. -/
@@ -240,8 +226,8 @@ theorem lookup_staticStubs (start n : Nat) (code : List (Nat × Nat × Bvi.Exp))
     dataNumStubs, wordNumStubs, stackNumStubs]
 
 /-- Starting the generated stub program initializes the target global array
-and then executes the entry point. Untagged pending BVI evaluator and
-dispatcher correspondence review. -/
+and then executes the entry point. This all-clock helper supports the original
+bounded theorem and the whole-program simulation. -/
 theorem evaluate_stubs_init {C F : Type} (start n clock : Nat) (ffi : HolFfiState F)
     (code : List (Nat × Nat × Bvi.Exp)) (oracle : BviSem.CompileOracle C) (compiler : BviSem.Compiler C) :
     let tree := sptFromAList (stubs start n ++ code)
@@ -259,13 +245,42 @@ theorem evaluate_stubs_init {C F : Type} (start n clock : Nat) (ffi : HolFfiStat
   let tree := sptFromAList (stubs start n ++ code)
   let initial := BviSem.initialState ffi tree oracle compiler (clock + 1)
   have lookup : sptLookup initGlobalsLocation initial.code = some (initGlobalsCode start n) := by
-    exact lookup_initGlobals_stubs start n code
+    change sptLookup initGlobalsLocation (sptFromAList (stubs start n ++ code)) = some (initGlobalsCode start n)
+    rw [sptLookup_sptFromAList]
+    simp [stubs, sptAListLookup, initGlobalsLocation, copyGlobalsLocation, allocGlobalLocation]
+    omega
   have nonzero : initial.clock ≠ 0 := by simp [initial, BviSem.initialState]
   have result := evaluate_initGlobals_call start n initial lookup nonzero
   have least : BvlSem.leastUnusedRef (HolFiniteMapExact.empty : HolFiniteMapExact Nat (BvlSem.Ref Value)) = 0 := by
     apply BvlSem.leastUnusedRef_eq_zero
     rfl
   simpa [initial, BviSem.initialState, BviSem.decClock, least] using result
+
+/-- The initializer stub produces the source-specified global array and
+continues with the compiled entry point. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "bvi_stubs_evaluate"
+  (fmap_as_finite_support := [refs])]
+theorem bviStubs_evaluate {C F : Type} (n start : Nat) (ffi : HolFfiState F)
+    (code : List (Nat × Nat × Bvi.Exp)) (clock : Nat)
+    (oracle : BviSem.CompileOracle C) (compiler : BviSem.Compiler C)
+    (_bounds : 0 < clock ∧ bvlNumStubs ≤ start) :
+    let ready : BviSem.BviState C F := {
+      global := some 0
+      ffi := ffi
+      clock := clock
+      compile := compiler
+      compileOracle := oracle
+      code := sptFromAList (stubs start n ++ code)
+      refs := HolFiniteMapExact.empty.updateEq (0, .valueArray
+        (.number 1 :: List.replicate ((min (max n 1) initGlobalsMax) - 1) (.number 0))) }
+    BviSem.evaluate [.call 0 (some initGlobalsLocation) [] none] []
+        (BviSem.initialState ffi (sptFromAList (stubs start n ++ code)) oracle compiler (clock + 1)) =
+      let (result, last) := BviSem.evaluate [.call 0 (some start) [] none] [] ready
+      (match result with
+        | .err (.raise (.exn value)) => .val [value]
+        | other => other, last) := by
+  simpa [BviSem.initialState, initGlobalsCapacity] using
+    evaluate_stubs_init start n clock ffi code oracle compiler
 
 /-- The initialization handler commutes with the simulation's result mapping. -/
 theorem mapSimulationResult_handleException (relocate : Nat → Nat)

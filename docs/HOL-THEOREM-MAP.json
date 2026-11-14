@@ -359,6 +359,16 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+    "hol_name": "bvi_stubs_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/InitGlobalsStub.lean",
+    "lean_name": "bviStubs_evaluate",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the exported typed original in bvl_to_bvi_value_rel_probe.out: both positive-clock and stub-bound premises, all initialized-state fields, finite-map update, clamped global-array size, initializer and entry evaluations, and exception-to-singleton result match. The original BVI state uses canonical finite-support refs with a same-module roundtrip witness; code remains Spt. Compiler configuration and FFI payload types are independent. Inherits reals_as_rational_cuts through evaluation, as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
     "hol_name": "compile_list_distinct_locs",
     "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/ListDistinct.lean",
     "lean_name": "compileList_distinctLocs",
