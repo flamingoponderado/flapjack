@@ -16619,6 +16619,15 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "find_code_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Evaluate.lean",
+    "lean_name": "find_code_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared find_code_lemma_typed: related states with independent shared compiler and FFI carriers, arbitrary location and independently typed argument list imply both code lookups fail. Canonical refs and code finite maps have the local roundtrip witness. Source review and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
     "hol_name": "state_rel_opt_rel_refs",
     "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Relations.lean",
     "lean_name": "state_rel_opt_rel_refs",
