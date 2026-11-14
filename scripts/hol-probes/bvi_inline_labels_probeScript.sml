@@ -263,3 +263,23 @@ val clean_prog_simps_replay = Q.prove
   >> Induct_on `prog`
   >> simp [clean_prog_def, fromAList_def, map_insert, FORALL_PROD]);
 val _ = show "clean_prog_simps_replay_typed" clean_prog_simps_replay;
+
+(* Replay the original local clock arithmetic and evaluator lemmas. *)
+val clock_sub_lt_replay = Q.prove
+  (`∀x k:num. x ≠ 0 ∧ x ≤ k ⇒ x - 1 < k`,
+   rpt strip_tac
+  >> fs [NOT_ZERO]
+  >> irule SUB_LESS
+  >> fs []);
+val _ = show "clock_sub_lt_replay_typed" clock_sub_lt_replay;
+val evaluate_add_extra_clock_replay = Q.prove
+  (`∀xs env (s:('c,'ffi) bviSem$state) res s1 extra extra'.
+    evaluate (xs,env,s with clock := extra + s.clock) = (res,s1) ∧
+    res ≠ Rerr (Rabort Rtimeout_error) ⇒
+    evaluate (xs,env,s with clock := extra + extra' + s.clock) =
+      (res,s1 with clock := extra' + s1.clock)`,
+   rpt strip_tac
+  >> drule_all evaluate_add_clock
+  >> disch_then (qspec_then `extra'` mp_tac)
+  >> simp [inc_clock_def]);
+val _ = show "evaluate_add_extra_clock_replay_typed" evaluate_add_extra_clock_replay;

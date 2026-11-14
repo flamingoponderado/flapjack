@@ -17,6 +17,26 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   BviSem.holFmapAsFiniteSupportWitness
 end TickSimulationCarrier
 
+/-- A positive clock bounded by a limit becomes strictly smaller after one tick. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "clock_sub_lt"]
+theorem clockSubLt (x clock : Nat) (premises : x ≠ 0 ∧ x ≤ clock) : x - 1 < clock := by
+  omega
+
+/-- A non-timeout evaluation remains stable when another clock increment is
+added. The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "evaluate_add_extra_clock"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateAddExtraClock {C F : Type} (expressions : List Bvi.Exp) (env : List Value)
+    (state : BviState C F) (result : BviResult) (next : BviState C F) (extra more : Nat)
+    (premises : evaluateTuple (expressions, env, { state with clock := extra + state.clock }) = (result, next) ∧
+      result ≠ .err (.abort .timeoutError)) :
+    evaluateTuple (expressions, env, { state with clock := extra + more + state.clock }) =
+      (result, { next with clock := more + next.clock }) := by
+  obtain ⟨run, notTimeout⟩ := premises
+  have shifted := BviProps.evaluate_addClock expressions env { state with clock := extra + state.clock }
+    next result more run notTimeout
+  simpa [evaluateTuple, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using shifted
+
 /-- Flapjack infrastructure: smaller expression induction hypothesis. -/
 def SmallerWeight {C F : Type} (clock weight : Nat) : Prop :=
   ∀ (xs : List Bvi.Exp) (env : List Value) (state : BviState C F),

@@ -467,6 +467,24 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "clock_sub_lt",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksInduction.lean",
+    "lean_name": "clockSubLt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL comparison and literal original proof replay: both natural-number binders, the nonzero and upper-bound premises, and the strict predecessor conclusion agree."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "evaluate_add_extra_clock",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksInduction.lean",
+    "lean_name": "evaluateAddExtraClock",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Independent typed HOL comparison and literal original proof replay: all seven binders and the original evaluation and non-timeout premises yield the identical result with the specified extra clock in the input and final state. All non-timeout results are retained. Compiler and FFI types are independent; BVI refs use the canonical finite-support map with a same-module roundtrip and code remains a sparse tree. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "clean_prog_CONS",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksRelation.lean",
     "lean_name": "cleanProgCons",
