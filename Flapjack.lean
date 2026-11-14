@@ -1614,7 +1614,6 @@ import Flapjack.Compiler.Backend.DataLive.Proofs.CompileAll
 import Flapjack.Compiler.Backend.DataLive.Proofs.CompileCorrect
 import Flapjack.Compiler.Backend.Semantics.DataProps.ValueLocals
 import Flapjack.Compiler.Backend.Semantics.DataProps.AbortControl
-import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateControl
 import Flapjack.Compiler.Backend.Semantics.DataProps.StackResult
 import Flapjack.Compiler.Backend.Semantics.DataProps.StackResultPrimitive
 import Flapjack.Compiler.Backend.Semantics.DataProps.JumpPush

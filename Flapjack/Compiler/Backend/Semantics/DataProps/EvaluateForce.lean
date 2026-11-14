@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.Semantics.DataProps.EvaluateControl
+public import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
 
 @[expose] public section
 
