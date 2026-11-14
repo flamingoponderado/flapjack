@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+    "hol_name": "var_list_app_call_dests",
+    "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/AppCallDests.lean",
+    "lean_name": "varList_appCallDests",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared var_list_app_call_dests_typed: arbitrary starting index, expression list and independently typed comparison list, variable-list premise and empty set of application and call destinations for an arbitrary optional Boolean selection agree. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
     "hol_name": "EVERY_let_op_sing",
     "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Syntax.lean",
     "lean_name": "every_compileSource_singleton",

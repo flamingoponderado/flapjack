@@ -1092,6 +1092,7 @@ import Flapjack.Compiler.Backend.ClosLetop.Proofs.Apply
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Simulation
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Syntax
+import Flapjack.Compiler.Backend.ClosLetop.Proofs.AppCallDests
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Arity
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Labels
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.KnownLabelOracle
