@@ -86,6 +86,25 @@ theorem valueRel_boolValue (maxApp : Nat) (x y : Bool) (equivalent : x = true �
   cases x <;> cases y <;> simp_all [boolValue]
   all_goals exact .block _ [] [] .nil
 
+/-- The value relation identifies a Boolean value with itself in either position. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "v_rel_Boolv"]
+theorem valueRel_boolValue_iff (maxApp : Nat) (x : Value) (b : Bool) :
+    (ValueRel maxApp x (boolValue b) ↔ x = boolValue b) ∧
+    (ValueRel maxApp (boolValue b) x ↔ x = boolValue b) := by
+  cases b <;> simp only [boolValue, Bool.false_eq_true, ↓reduceIte]
+  all_goals constructor
+  all_goals constructor
+  all_goals (intro h; first | (cases h with | block _ _ _ rel => cases rel; rfl) | (subst x; exact .block _ [] [] .nil))
+
+/-- The value relation identifies the unit value with itself in either position. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "v_rel_Unit"]
+theorem valueRel_unit_iff (maxApp : Nat) (x : Value) :
+    (ValueRel maxApp x unitValue ↔ x = unitValue) ∧
+    (ValueRel maxApp unitValue x ↔ x = unitValue) := by
+  simp only [unitValue]
+  constructor <;> constructor
+  all_goals (intro h; first | (cases h with | block _ _ _ rel => cases rel; rfl) | (subst x; exact .block _ [] [] .nil))
+
 /-- List values preserve the relation when encoded as closure blocks. -/
 @[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "list_to_v_v_rel"]
 theorem listToValue_related (maxApp : Nat) {left right : List Value}

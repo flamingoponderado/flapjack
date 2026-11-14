@@ -24,6 +24,8 @@ val _ = show "simple_state_rel_typed=" clos_numberProofTheory.simple_state_rel;
 val _ = show "do_app_lemma_typed=" clos_numberProofTheory.do_app_lemma;
 val _ = show "simple_val_rel_typed=" clos_numberProofTheory.simple_val_rel;
 val _ = show "list_to_v_v_rel_typed=" clos_numberProofTheory.list_to_v_v_rel;
+val _ = show "v_rel_boolv_typed=" clos_numberProofTheory.v_rel_Boolv;
+val _ = show "v_rel_unit_typed=" clos_numberProofTheory.v_rel_Unit;
 val _ = show "v_rel_rules_typed=" clos_numberProofTheory.v_rel_rules;
 val _ = show "ref_rel_def_typed=" closPropsTheory.ref_rel_def;
 val _ = show "fmap_rel_def_typed=" finite_mapTheory.fmap_rel_def;
@@ -43,6 +45,10 @@ val _ = show "renumber_code_locs_every_Fn_SOME_typed=" clos_numberProofTheory.re
 open closLangTheory clos_numberTheory clos_numberProofTheory closSemTheory closPropsTheory
   listTheory rich_listTheory finite_mapTheory backendPropsTheory miscTheory;
 open preamble;
+val helper_replay = Q.prove(
+  `SND ((\(n',x'). (n',[x'])) x) = [SND x]`,
+  Cases_on `x` >> full_simp_tac(srw_ss())[]);
+val _ = show "singleton_snd_replay_typed=" helper_replay;
 val renumber_list_els_replay = Q.prove(`∀ls ls' n n'. renumber_code_locs_list n ls = (n',ls') ⇒
       ∀x. x < LENGTH ls ⇒
         ∃m. EL x ls' = SND (renumber_code_locs m (EL x ls))`,

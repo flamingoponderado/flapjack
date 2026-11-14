@@ -8,6 +8,13 @@ public import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationInvariants
 
 /-! Closure application prerequisites for numbering correctness. -/
 namespace Flapjack.Compiler.Backend.ClosNumber
+/-- A singleton mapping preserves the second projection of a pair. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "helper"]
+theorem singleton_snd {α β : Type} (x : α × β) :
+    (match x with | (first, second) => (first, [second])).2 = [x.2] := by
+  cases x
+  rfl
+
 open Flapjack.Compiler.Backend.ClosSem
 
 /-- Each numbered list entry comes from numbering its corresponding source

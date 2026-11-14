@@ -1,6 +1,30 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "v_rel_Boolv",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ValueRelation.lean",
+    "lean_name": "valueRel_boolValue_iff",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared v_rel_boolv_typed: both original equivalences characterize the numbering value relation in either direction against the same arbitrary source Boolean encoding. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "v_rel_Unit",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ValueRelation.lean",
+    "lean_name": "valueRel_unit_iff",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared v_rel_unit_typed: both original equivalences characterize the numbering value relation in either direction against the source unit encoding. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "helper",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ClosureApplication.lean",
+    "lean_name": "singleton_snd",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local source theorem and singleton_snd_replay_typed, replaying its original proof: an arbitrary pair over two independent types retains its second component under the source singleton mapping. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "dest_closure_v_rel_partial",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ClosureApplication.lean",
     "lean_name": "destClosure_related_partial",
