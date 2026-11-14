@@ -36,23 +36,6 @@ theorem stateRel_shift {C F : Type} (s t : State C F) (shift clock : Nat) (relat
     funext n
     rfl
 
-/-- Corresponding oracle entries share their compiler configuration and
-transform the program while leaving the auxiliary component empty. This is
-Flapjack infrastructure for the installation proof. -/
-theorem oracle_entry {C F : Type} (s t : State C F) (related : StateRel s t) (n : Nat) :
-    ∃ config program, s.compileOracle n = (config, program, []) ∧
-      t.compileOracle n = (config, removeList program, []) := by
-  have aux := related.1 n
-  have oracle := related.2.2.2.2.2.2.2.2.2.2
-  cases entry : s.compileOracle n with
-  | mk config rest =>
-    rcases rest with ⟨program, auxiliary⟩
-    have empty : auxiliary = [] := by simpa [entry] using aux
-    subst auxiliary
-    refine ⟨config, program, rfl, ?_⟩
-    rw [oracle]
-    simp [pureCo, compileInc, entry]
-
 /-- Installation outcomes preserve exceptions or relate nonempty programs,
 along with their resulting states. This is Flapjack infrastructure for the
 installation proof. -/
@@ -78,7 +61,12 @@ theorem install_pair_related {C F : Type} (s t : State C F)
     simp [HolFiniteMapExact.updateListEq]
   have targetNoUpdate : t.code.updateListEq ([] : List (Nat × Nat × ClosLang.Exp)) = t.code := by
     simp [HolFiniteMapExact.updateListEq]
-  obtain ⟨config, program, sourceOracle, targetOracle⟩ := oracle_entry s t states 0
+  rcases sourceOracle : s.compileOracle 0 with ⟨config, program, auxiliary⟩
+  have auxiliaryEmpty : auxiliary = [] := by simpa [sourceOracle] using states.1 0
+  subst auxiliary
+  have targetOracle : t.compileOracle 0 = (config, removeList program, []) := by
+    rw [states.2.2.2.2.2.2.2.2.2.2]
+    simp [pureCo, compileInc, sourceOracle]
   have callback : s.compile config (program, []) = t.compile config (removeList program, []) := by
     rw [states.2.2.2.2.2.2.2.2.2.1, compileIncSource_eq]
     rfl
