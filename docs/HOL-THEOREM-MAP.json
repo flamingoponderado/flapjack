@@ -136037,6 +136037,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
+  "hol_name": "make_const_thm",
+  "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Reconstruct.lean",
+  "lean_name": "makeConst_toParts",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cc_make_const_thm in the typed HOL capture: make_const c = build_const' (to_parts c) for arbitrary closLang constants. Lean uses the corresponding reviewed constant interpreter, parts builder and value reconstruction. The theorem composes the full syntax reconstruction with the general interpretation lemma; source comparison and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "build_const_to_parts",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Reconstruct.lean",
   "lean_name": "buildConst_toParts",

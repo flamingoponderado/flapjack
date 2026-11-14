@@ -178,4 +178,13 @@ theorem buildConst_toParts (constant : Const) : buildConstSyntax (toParts consta
         change Const.constCons tag (indices.map (builtMemory aux)) = Const.constCons tag constants
         rw [reconstructed.1]
 
+/-- Interpreting a constant agrees with interpreting its flattened parts. -/
+@[hol "cakeml/compiler/backend/proofs/clos_constantProofScript.sml" "make_const_thm"]
+theorem makeConst_toParts (constant : Const) :
+    ClosSem.makeConst constant = buildConst (toParts constant) := by
+  calc
+    ClosSem.makeConst constant = ClosSem.makeConst (buildConstSyntax (toParts constant)) :=
+      congrArg ClosSem.makeConst (buildConst_toParts constant).symm
+    _ = buildConst (toParts constant) := makeConst_buildConstSyntax _
+
 end Flapjack.Compiler.Backend.ClosConstant.Proofs
