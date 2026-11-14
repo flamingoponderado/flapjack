@@ -41,6 +41,20 @@ val _ = show "renumber_code_locs_every_Fn_SOME_typed=" clos_numberProofTheory.re
 open closLangTheory clos_numberTheory clos_numberProofTheory closSemTheory closPropsTheory
   listTheory rich_listTheory finite_mapTheory backendPropsTheory miscTheory;
 open preamble;
+val do_app_replay = Q.prove(
+  `state_rel s1 s2 /\ LIST_REL (v_rel s1.max_app) x1 x2 ==>
+   (!err. do_app op x1 s1 = Rerr err ==> do_app op x2 s2 = Rerr err) /\
+   (!v1 w1. do_app op x1 s1 = Rval (v1,w1) ==>
+     ?v2 w2. do_app op x2 s2 = Rval (v2,w2) /\
+       v_rel s1.max_app v1 v2 /\ state_rel w1 w2)`,
+  rpt strip_tac >>
+  drule (GEN_ALL do_app_lemma) >>
+  disch_then drule >>
+  disch_then (qspec_then `op` mp_tac) >> fs [] >>
+  rw [] >> fs [] >>
+  Cases_on `err` >> gvs [] >>
+  gvs [oneline do_app_def, AllCaseEqs()]);
+val _ = show "do_app_replay_typed=" do_app_replay;
 val state_rel_refs_replay = Q.prove(
   `state_rel s t ==> fmap_rel (ref_rel (v_rel t.max_app)) s.refs t.refs`,
   srw_tac[][state_rel_def]);

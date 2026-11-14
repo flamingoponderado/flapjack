@@ -1,6 +1,16 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "do_app",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/Primitive.lean",
+    "lean_name": "do_app",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the local source theorem and do_app_replay_typed, replaying its original proof: the original related states and arguments imply identical errors and, for every successful source result, an existential successful target result with related value and state. The source compiler carrier is Nat paired with the target carrier and the shared FFI carrier remains independent. Canonical finite-support refs and code use a local state roundtrip witness. The primitive evaluator inherits rational-cut reals. Source comparison and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "do_app_lemma",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/Primitive.lean",
     "lean_name": "do_app_lemma",

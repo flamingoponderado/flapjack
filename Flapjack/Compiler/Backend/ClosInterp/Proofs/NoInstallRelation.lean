@@ -103,7 +103,7 @@ theorem evaluate_ordinaryOp_noInstall_relation_step {C F : Type} (trace : Backen
         · rw [ClosSem.evaluate_ordinaryOp_eq trace op args env target notInstall notForce, targetArgs]
           simp [targetApp]
         · cases error with
-          | raise value => exact False.elim (doApp_not_raise op arguments.reverse sourceLast value appRun)
+          | raise value => exact False.elim (ClosSem.doApp_not_raise op arguments.reverse sourceLast value appRun)
           | abort _ => trivial
       | val pair =>
         rcases pair with ⟨value, final⟩
