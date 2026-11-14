@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermTotal
-public import Flapjack.Compiler.Backend.BviTailrec.Proofs.HasRecTotal
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.HasRecCorrespondence
 
 @[expose] public section
 
@@ -93,11 +93,11 @@ theorem scanListBounded_succeeds (fuel : Nat) (ctx : List ValueType) (loc : Nat)
 The inner `none` is the ordinary decision not to rewrite. -/
 theorem checkExpFuel_succeeds (fuel loc arity : Nat) (e : Exp) :
     ∃ result, checkExpFuel fuel loc arity e = some result := by
-  obtain ⟨isRec, hr⟩ := hasRecBounded_succeeds fuel loc e
-  cases isRec with
-  | false => exact ⟨_, by simp [checkExpFuel, hr]; rfl⟩
+  have hr := hasRecBounded_eq fuel loc e
+  cases isRec : hasRecSing loc e with
+  | false => exact ⟨_, by simp [checkExpFuel, hr, isRec]; rfl⟩
   | true =>
     obtain ⟨⟨ctx, ty, rec, op⟩, hs⟩ := scanBounded_succeeds fuel (List.replicate arity .any) loc e
-    cases op <;> simp [checkExpFuel, hr, hs] <;> repeat' (first | split | exact ⟨_, rfl⟩)
+    cases op <;> simp [checkExpFuel, hr, isRec, hs] <;> repeat' (first | split | exact ⟨_, rfl⟩)
 
 end Flapjack.Compiler.Backend.BviTailrec
