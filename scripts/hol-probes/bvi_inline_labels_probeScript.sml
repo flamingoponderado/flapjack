@@ -249,3 +249,17 @@ val remove_state_rel_do_install_statement =
       | Rerr err => do_install args t = Rerr err``;
 val _ = (print "remove_state_rel_do_install_statement_typed=";
          print_term remove_state_rel_do_install_statement; print "\n");
+
+(* Replay the original local clean-program simplification lemmas. *)
+val clean_prog_CONS_replay = Q.prove
+  (`clean_prog [] = [] ∧
+    clean_prog (p::ps) = (I ## I ## remove_ticks_exp) p :: clean_prog ps`,
+   simp [clean_prog_def, PAIR_MAP, ELIM_UNCURRY]);
+val _ = show "clean_prog_CONS_replay_typed" clean_prog_CONS_replay;
+val clean_prog_simps_replay = Q.prove
+  (`MAP FST (clean_prog prog) = MAP FST prog ∧
+    map (I ## remove_ticks_exp) (fromAList prog) = fromAList (clean_prog prog)`,
+   conj_tac
+  >> Induct_on `prog`
+  >> simp [clean_prog_def, fromAList_def, map_insert, FORALL_PROD]);
+val _ = show "clean_prog_simps_replay_typed" clean_prog_simps_replay;

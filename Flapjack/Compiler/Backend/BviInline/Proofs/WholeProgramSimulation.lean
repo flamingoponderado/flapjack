@@ -54,7 +54,7 @@ theorem evaluate_removeTicks_compile {C F : Type} (program : List (Nat × Nat ×
   have related : RemoveStateRel
       (initialState ffi (sptFromAList program) oracle (removeTicksCc compiler) clock)
       (initialState ffi (sptFromAList (cleanProg program)) (removeTicksCo ∘ oracle) compiler clock) :=
-    ⟨rfl, rfl, rfl, rfl, (cleanProg_fromAList program).symm, rfl, rfl⟩
+    ⟨rfl, rfl, rfl, rfl, (cleanProgSimps program).2.symm, rfl, rfl⟩
   have cleanedRun : evaluate (removeTicksListSource [.call 0 (some start) [] none]) []
       (initialState ffi (sptFromAList (cleanProg program)) ((removeTicksCo ∘ oracle)) compiler clock) =
         (result, targetNext) := by simpa [evaluateTuple, removeTicksListSource, removeTicksSource] using run

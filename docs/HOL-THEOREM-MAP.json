@@ -467,6 +467,22 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "clean_prog_CONS",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksRelation.lean",
+    "lean_name": "cleanProgCons",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source comparison and literal original proof replay: The empty conjunct and cons conjunct retain four independent label and arity types; the cons branch applies tick removal only to the body."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "clean_prog_simps",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksRelation.lean",
+    "lean_name": "cleanProgSimps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Independent typed HOL source comparison and literal original proof replay: Both original conjuncts share the same program with Nat keys and an independent generic arity: labels are preserved and sparse-tree conversion commutes with cleanup."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
     "hol_name": "remove_state_rel_do_install",
     "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/RemoveTicksRelation.lean",
     "lean_name": "removeStateRel_doInstall",

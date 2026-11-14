@@ -22,11 +22,22 @@ end TickPrimitiveCarrier
 def cleanProg {Label Arity : Type} (program : List (Label × Arity × Bvi.Exp)) : List (Label × Arity × Bvi.Exp) :=
   program.map fun (name, arity, body) => (name, arity, removeTicksSource body)
 
-/-- Flapjack infrastructure: tree conversion and association-list conversion
-commute with tick cleanup, including malformed sparse-tree shapes. -/
-theorem cleanProg_fromAList (program : List (Nat × Nat × Bvi.Exp)) :
-    sptMap (fun entry => (entry.1, removeTicksSource entry.2)) (sptFromAList program) =
-      sptFromAList (cleanProg program) := by
+/-- Empty and cons programs reduce by applying tick removal to each body. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "clean_prog_CONS"]
+theorem cleanProgCons {A B C D : Type} (entry : C × D × Bvi.Exp)
+    (rest : List (C × D × Bvi.Exp)) :
+    cleanProg ([] : List (A × B × Bvi.Exp)) = [] ∧
+      cleanProg (entry :: rest) = (entry.1, entry.2.1, removeTicksSource entry.2.2) :: cleanProg rest := by
+  cases entry with
+  | mk name pair => cases pair; exact ⟨rfl, rfl⟩
+
+/-- Tick cleanup preserves labels and commutes with sparse-tree conversion. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "clean_prog_simps"]
+theorem cleanProgSimps {Arity : Type} (program : List (Nat × Arity × Bvi.Exp)) :
+    (cleanProg program).map Prod.fst = program.map Prod.fst ∧
+      sptMap (fun entry => (entry.1, removeTicksSource entry.2)) (sptFromAList program) =
+        sptFromAList (cleanProg program) := by
+  refine ⟨Proofs.removeTicksProg_mapFst program, ?_⟩
   rw [sptMap_sptFromAList]
   rfl
 
@@ -199,7 +210,7 @@ theorem removeStateRel_doInstall_success {C F : Type} (source sourceNext target 
   · rw [stateEq]
     rcases states with ⟨refs, clock, global, ffi, codeRel, oracleRel, compilerRel⟩
     refine ⟨refs, clock, global, ffi, ?_, ?_, compilerRel⟩
-    · simp [code, cleaned, codeRel, sptMap_sptUnion, cleanProg_fromAList]
+    · simp [code, cleaned, codeRel, sptMap_sptUnion, (cleanProgSimps code).2]
     · funext n
       exact congrFun oracleRel (n + 1)
 
