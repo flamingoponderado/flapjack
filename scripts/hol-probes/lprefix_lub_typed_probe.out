@@ -1,0 +1,29 @@
+IMP_build_lprefix_lub_EQ_typed=lprefix_chain (ls1 :α llist -> bool) ∧ lprefix_chain (ls2 :α llist -> bool) ∧ lprefix_rel ls1 ls2 ∧ lprefix_rel ls2 ls1 ⇒ LUB ls1 = LUB ls2
+IMP_equiv_lprefix_chain_typed=lprefix_chain (ls1 :α llist -> bool) ∧ lprefix_chain (ls2 :α llist -> bool) ∧ lprefix_rel ls1 ls2 ∧ lprefix_rel ls2 ls1 ⇒ equiv_lprefix_chain ls1 ls2
+build_lprefix_lub_def_typed=∀(ls :α llist -> bool). LUB ls = LUNFOLD (build_lprefix_lub_f ls) (0 :num)
+build_lprefix_lub_f_def_typed=∀(ls :α llist -> bool) (n :num). build_lprefix_lub_f ls n = OPTION_MAP (λ(x :α). (n + (1 :num),x)) (lprefix_chain_nth n ls)
+build_lprefix_lub_thm_typed=∀(ls :α llist -> bool). lprefix_chain ls ⇒ lprefix_lub ls (LUB ls)
+build_prefix_lub_intro_typed=lprefix_chain (ls :α llist -> bool) ⇒ (lprefix_lub ls (lub :α llist) ⇔ lub = LUB ls)
+equiv_lprefix_chain_def_typed=∀(ls1 :α llist -> bool) (ls2 :α llist -> bool). equiv_lprefix_chain ls1 ls2 ⇔ ∀(n :num). lprefix_chain_nth n ls1 = lprefix_chain_nth n ls2
+equiv_lprefix_chain_thm_typed=∀(ls1 :α llist -> bool) (ls2 :α llist -> bool). lprefix_chain ls1 ∧ lprefix_chain ls2 ⇒ (equiv_lprefix_chain ls1 ls2 ⇔ (∀(ll1 :α llist) (n :num) (x :α). ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x ⇒ ∃(ll2 :α llist). ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x) ∧ ∀(ll2 :α llist) (n :num) (x :α). ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x ⇒ ∃(ll1 :α llist). ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x)
+equiv_lprefix_chain_thm2_typed=∀(ls1 :α llist -> bool) (ls2 :α llist -> bool). lprefix_chain ls1 ∧ lprefix_chain ls2 ∧ (∀(ll2 :α llist). ll2 ∈ ls2 ⇒ LFINITE ll2) ⇒ (equiv_lprefix_chain ls1 ls2 ⇔ (∀(ll1 :α llist) (n :num) (x :α). ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x ⇒ ∃(ll2 :α llist). ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x) ∧ ∀(ll2 :α llist) (n :β) (x :γ). ll2 ∈ ls2 ∧ ll2 ≠ ([||] :α llist) ⇒ ∃(ll1 :α llist). ll1 ∈ ls1 ∧ llist_shorter ll2 ll1)
+exists_lprefix_chain_nth_typed=∀(ls :α llist -> bool) (n :num) (x :α). lprefix_chain ls ∧ (∃(l :α llist). l ∈ ls ∧ LNTH n l = SOME x) ⇒ lprefix_chain_nth n ls = SOME x
+llist_shorter_def_typed=∀(ll1 :α llist) (ll2 :β llist). llist_shorter ll1 ll2 ⇔ case (LLENGTH ll1,LLENGTH ll2) of (v,(NONE :num option)) => T | ((NONE :num option),SOME x) => F | (SOME x',SOME x) => x' ≤ x
+llist_shorter_fromList_typed=∀(l1 :α list) (l2 :β list). llist_shorter (fromList l1) (fromList l2) ⇔ LENGTH l1 ≤ LENGTH l2
+llist_shorter_lnth_typed=∀(ll1 :α llist) (ll2 :β llist). llist_shorter ll1 ll2 ⇔ ∀(n :num) (x :α). LNTH n ll1 = SOME x ⇒ ∃(y :β). LNTH n ll2 = SOME y
+build_lprefix_lub_lem_typed=∀(ls :α llist -> bool). lprefix_chain ls ⇒ ∀(m :num) (n :num). LNTH n (LUNFOLD (build_lprefix_lub_f ls) m) = lprefix_chain_nth (m + n) ls
+lprefix_chain_def_typed=∀(ls :α llist -> bool). lprefix_chain ls ⇔ ∀(ll1 :α llist) (ll2 :α llist). ll1 ∈ ls ∧ ll2 ∈ ls ⇒ LPREFIX ll1 ll2 ∨ LPREFIX ll2 ll1
+lprefix_chain_nth_def_typed=∀(n :num) (ls :α llist -> bool). lprefix_chain_nth n ls = some(x :α). ∃(l :α llist). l ∈ ls ∧ LNTH n l = SOME x
+lprefix_chain_nth_none_mono_typed=∀(m :num) (n :num) (ls :α llist -> bool). lprefix_chain ls ∧ m ≤ n ∧ lprefix_chain_nth m ls = (NONE :α option) ⇒ lprefix_chain_nth n ls = (NONE :α option)
+lprefix_chain_LNTHs_agree_typed=lprefix_chain (ls :α llist -> bool) ∧ (l1 :α llist) ∈ ls ∧ (l2 :α llist) ∈ ls ∧ LNTH (n :num) l1 = SOME (x1 :α) ∧ LNTH n l2 = SOME (x2 :α) ⇒ x1 = x2
+lprefix_lub_def_typed=∀(ls :α llist -> bool) (lub :α llist). lprefix_lub ls lub ⇔ (∀(ll :α llist). ll ∈ ls ⇒ LPREFIX ll lub) ∧ ∀(ub :α llist). (∀(ll :α llist). ll ∈ ls ⇒ LPREFIX ll ub) ⇒ LPREFIX lub ub
+lprefix_rel_def_typed=∀(s1 :α llist -> bool) (s2 :α llist -> bool). lprefix_rel s1 s2 ⇔ ∀(l1 :α llist). l1 ∈ s1 ⇒ ∃(l2 :α llist). l2 ∈ s2 ∧ LPREFIX l1 l2
+lprefix_lub_equiv_chain2_typed=∀(ls1 :α llist -> bool) (ls2 :α llist -> bool) (ll1 :α llist) (ll2 :α llist). lprefix_lub ls1 ll1 ∧ lprefix_lub ls2 ll2 ⇒ (ll1 = ll2 ⇔ equiv_lprefix_chain ls1 ls2)
+lprefix_lub_is_chain_typed=∀(ls :α llist -> bool) (ll :α llist). lprefix_lub ls ll ⇒ lprefix_chain ls
+lprefix_lub_nth_typed=∀(ls :α llist -> bool) (lub :α llist). lprefix_chain ls ⇒ (lprefix_lub ls lub ⇔ ∀(n :num). LNTH n lub = lprefix_chain_nth n ls)
+lprefix_rel_lnth_typed=lprefix_rel (ls1 :α llist -> bool) (ls2 :α llist -> bool) ⇒ ∀(ll1 :α llist) (n :num) (x :α). ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x ⇒ ∃(ll2 :α llist). ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x
+not_exists_lprefix_chain_nth_typed=∀(ls :α llist -> bool) (n :num). lprefix_chain ls ∧ (∀(l :α llist). l ∈ ls ⇒ LNTH n l = (NONE :α option)) ⇒ lprefix_chain_nth n ls = (NONE :α option)
+prefix_chain_def_typed=∀(ls :α list -> bool). prefix_chain ls ⇔ ∀(l1 :α list) (l2 :α list). l1 ∈ ls ∧ l2 ∈ ls ⇒ l1 ≼ l2 ∨ l2 ≼ l1
+prefix_chain_FILTER_typed=prefix_chain (ls :α list -> bool) ⇒ prefix_chain (IMAGE (FILTER (P :α -> bool)) ls)
+prefix_chain_lprefix_chain_typed=prefix_chain (ls :α list -> bool) ⇒ lprefix_chain (IMAGE (fromList :α list -> α llist) ls)
+unique_lprefix_lub_typed=∀(f :α llist -> bool) (ll1 :α llist) (ll2 :α llist). lprefix_lub f ll1 ∧ lprefix_lub f ll2 ⇒ ll1 = ll2

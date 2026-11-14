@@ -1,0 +1,2 @@
+transitive_def_typed=∀(R :α -> α -> bool). transitive R ⇔ ∀(x :α) (y :α) (z :α). R x y ∧ R y z ⇒ R x z
+total_def_typed=∀(R :α -> α -> bool). total R ⇔ ∀(x :α) (y :α). R x y ∨ R y x

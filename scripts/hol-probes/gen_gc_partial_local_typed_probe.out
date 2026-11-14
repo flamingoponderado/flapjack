@@ -1,0 +1,1 @@
+gc_move_data_r1_typed=(gc_move_data (conf :β gen_gc_partial_conf) (state :(α, β) gc_state)).r1 = state.r1

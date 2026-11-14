@@ -64,8 +64,8 @@ private theorem coreNoReturn {width : Nat} [NeZero width] {σ : Type}
     dsimp only at h
     split at h
     · rename_i next hstep
-      have hclock := fixClockCrepSemHOL_IMP_LESS_EQ s
-        (evalCrepSemHOLProg s md sd first) none next hstep
+      have hclock := fixClockCrepSemHOL_IMP_LESS_EQ (evalCrepSemHOLProg s md sd first)
+        s none next hstep
       exact (ih (crepStampExactDomains s next) md sd second (by
         have hsize : sizeOf second < sizeOf (.seq first second : CrepProgHOL width) := by
           simp; omega

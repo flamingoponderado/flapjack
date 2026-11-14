@@ -21,14 +21,14 @@ theorem clockTraceLub_eq {α : Type} (source target : Nat → List α)
   let S := fun trace => ∃ clock, trace = HolLList.fromList (source clock)
   let T := fun trace => ∃ clock, trace = HolLList.fromList (target clock)
   have sourceChain : HolLList.lprefixChain S := by
-    rintro _ _ ⟨i, rfl⟩ ⟨j, rfl⟩
+    rintro _ _ ⟨⟨i, rfl⟩, ⟨j, rfl⟩⟩
     rcases Nat.le_total i j with le | le
     · obtain ⟨extra, rfl⟩ := Nat.exists_eq_add_of_le le
       exact Or.inl ((HolLList.lprefix_fromList _ _).2 (sourceMono i extra))
     · obtain ⟨extra, rfl⟩ := Nat.exists_eq_add_of_le le
       exact Or.inr ((HolLList.lprefix_fromList _ _).2 (sourceMono j extra))
   have targetChain : HolLList.lprefixChain T := by
-    rintro _ _ ⟨i, rfl⟩ ⟨j, rfl⟩
+    rintro _ _ ⟨⟨i, rfl⟩, ⟨j, rfl⟩⟩
     rcases Nat.le_total i j with le | le
     · obtain ⟨extra, rfl⟩ := Nat.exists_eq_add_of_le le
       exact Or.inl ((HolLList.lprefix_fromList _ _).2 (targetMono i extra))

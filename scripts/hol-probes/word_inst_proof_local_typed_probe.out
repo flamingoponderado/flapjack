@@ -1,0 +1,26 @@
+EL_FILTER_typed=∀(ls :α list) (x :num). x < LENGTH (FILTER (P :α -> bool) ls) ⇒ P (FILTER P ls)❲x❳
+EVERY_is_const_word_exp_typed=∀(ls :α exp list). EVERY (is_const :α exp -> bool) ls ⇒ EVERY (IS_SOME :α word_loc option -> bool) (MAP (λ(a :α exp). (word_exp (s :(α, β, γ) state) a :α word_loc option)) ls)
+PERM_SWAP_typed=PERM ((A :α list) ++ (B :α list) ++ (C :α list)) (B ++ (A ++ C))
+PERM_SWAP_SIMP_typed=PERM ((A :α list) ++ (B :α)::(C :α list)) (B::(A ++ C))
+all_consts_simp_typed=(op :binop) ≠ Sub ⇒ ∀(ls :α exp list). EVERY (is_const :α exp -> bool) ls ⇒ (word_exp (s :(α, β, γ) state) (Op op ls) :α word_loc option) = SOME (Word (THE (word_op op (MAP (rm_const :α exp -> α word) ls))))
+convert_sub_every_var_exp_typed=∀(ls :α exp list). (∀(x :α exp). MEM x ls ⇒ every_var_exp (P :num -> bool) x) ⇒ every_var_exp P (convert_sub ls)
+convert_sub_ok_typed=∀(ls :α exp list). (word_exp (s :(α, β, γ) state) (convert_sub ls) :α word_loc option) = (word_exp s (Op Sub ls) :α word_loc option)
+flatten_exp_binary_branch_exp_typed=∀(exp :α exp). binary_branch_exp (flatten_exp exp)
+flatten_exp_every_var_exp_typed=∀(exp :α exp). every_var_exp (P :num -> bool) exp ⇒ every_var_exp P (flatten_exp exp)
+flatten_exp_ok_typed=∀(exp :α exp) (s :(α, β, γ) state) (x :α word_loc). (word_exp s exp :α word_loc option) = SOME x ⇒ (word_exp s (flatten_exp exp) :α word_loc option) = SOME x
+inst_select_exp_thm_typed=∀(c :α asm_config) (tar :num) (temp :num) (exp :α exp) (s :(α, β, γ) state) (w :α word_loc) (loc :α word_loc sptree$num_map). binary_branch_exp exp ∧ every_var_exp (λ(x :num). x < temp) exp ∧ locals_rel temp s.locals loc ∧ (word_exp s exp :α word_loc option) = SOME w ⇒ ∃(loc' :α word_loc sptree$num_map). evaluate (inst_select_exp c tar temp exp,s with locals := loc) = ((NONE :α result option),s with locals := loc') ∧ ∀(x :num). if x = tar then lookup x loc' = SOME w else if x < temp then lookup x loc' = lookup x s.locals else T
+locals_rel_cut_envs_local_typed=locals_rel (temp :num) (loc :α word_loc sptree$num_map) (loc' :α word_loc sptree$num_map) ∧ every_name (λ(x :num). x < temp) (names :sptree$num_set # sptree$num_set) ∧ cut_envs names loc = SOME (x :α word_loc sptree$num_map # α word_loc sptree$num_map) ⇒ cut_envs names loc' = SOME x
+locals_rm_typed=(D :(α, β, γ) state) with locals := D.locals = D
+optimize_consts_every_var_exp_typed=∀(ls :α exp list). (∀(x :α exp). MEM x ls ⇒ every_var_exp (P :num -> bool) x) ⇒ every_var_exp P (optimize_consts (op :binop) ls)
+optimize_consts_ok_typed=(op :binop) ≠ Sub ∧ (word_exp (s :(α, β, γ) state) (Op op (ls :α exp list)) :α word_loc option) = SOME (x :α word_loc) ⇒ (word_exp s (optimize_consts op ls) :α word_loc option) = SOME x
+pull_exp_every_var_exp_typed=∀(exp :α exp). every_var_exp (P :num -> bool) exp ⇒ every_var_exp P (pull_exp exp)
+pull_exp_ok_typed=∀(exp :α exp) (s :(α, β, γ) state) (x :α word_loc). (word_exp s exp :α word_loc option) = SOME x ⇒ (word_exp s (pull_exp exp) :α word_loc option) = SOME x
+pull_ops_ok_typed=(op :binop) ≠ Sub ⇒ ∀(ls :α exp list). (word_exp (s :(α, β, γ) state) (Op op (pull_ops op ls ([] :α exp list))) :α word_loc option) = (word_exp s (Op op ls) :α word_loc option)
+pull_ops_simp_pull_ops_perm_typed=∀(ls :α exp list) (x :α exp list). PERM (pull_ops (op :binop) ls x) (pull_ops_simp op ls ++ x)
+pull_ops_simp_pull_ops_word_exp_typed=(op :binop) ≠ Sub ⇒ (word_exp (s :(α, β, γ) state) (Op op (pull_ops op (ls :α exp list) ([] :α exp list))) :α word_loc option) = (word_exp s (Op op (pull_ops_simp op ls)) :α word_loc option)
+the_words_append_typed=∀(ls :α word_loc option list) (ls' :α word_loc option list). the_words (ls ++ ls') = case the_words ls of (NONE :α word list option) => (NONE :α word list option) | SOME w => case the_words ls' of (NONE :α word list option) => (NONE :α word list option) | SOME w' => SOME (w ++ w')
+word_exp_op_mono_typed=(op :binop) ≠ Sub ⇒ (word_exp (s :(α, β, γ) state) (Op op (ls :α exp list)) :α word_loc option) = (word_exp s (Op op (ls' :α exp list)) :α word_loc option) ⇒ (word_exp s (Op op ((x :α exp)::ls)) :α word_loc option) = (word_exp s (Op op (x::ls')) :α word_loc option)
+word_exp_op_op_typed=(op :binop) ≠ Sub ⇒ ∀(ls :α exp list) (ls' :α exp list). (word_exp (s :(α, β, γ) state) (Op op ls) :α word_loc option) = (word_exp s (Op op ls') :α word_loc option) ⇒ (word_exp s (Op op ((l :α exp list) ++ ls)) :α word_loc option) = (word_exp s (Op op (Op op l::ls')) :α word_loc option)
+word_exp_op_permute_lem_typed=(op :binop) ≠ Sub ⇒ ∀(ls :α exp list) (ls' :α exp list). PERM ls ls' ⇒ (word_exp (s :(α, β, γ) state) (Op op ls) :α word_loc option) = (word_exp s (Op op ls') :α word_loc option)
+word_exp_reduce_const_typed=(word_exp (s :(α, β, γ) state) (Op (op :binop) ((Const (w :α word) :α exp)::(rest :α exp list))) :α word_loc option) = SOME (x :α word_loc) ⇒ (word_exp s (reduce_const op w rest) :α word_loc option) = SOME x
+word_exp_swap_head_typed=∀(B :α exp list). (op :binop) ≠ Sub ⇒ (word_exp (s :(α, β, γ) state) (Op op (A :α exp list)) :α word_loc option) = SOME (Word (w :α word)) ⇒ (word_exp s (Op op (B ++ A)) :α word_loc option) = (word_exp s (Op op ((Const w :α exp)::B)) :α word_loc option)

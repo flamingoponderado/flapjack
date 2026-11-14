@@ -1,0 +1,2 @@
+oleast_def_typed=∀(P :num -> bool). $OLEAST P = if ∃(n :num). P n then SOME (LEAST(n :num). P n) else (NONE :num option)
+oleast_intro_typed=((∀(n :num). ¬(P :num -> bool) n) ⇒ (Q :num option -> bool) (NONE :num option)) ∧ (∀(n :num). P n ∧ (∀(m :num). m < n ⇒ ¬P m) ⇒ Q (SOME n)) ⇒ Q ($OLEAST P)

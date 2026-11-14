@@ -142,22 +142,30 @@ theorem evaluate_nested_seq_append_some :
 @[hol "cakeml/pancake/semantics/loopPropsScript.sml" "evaluate_nested_seq_cases"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem evaluate_nested_seq_cases :
-    (∀ (p q : List (HolLoopProg width)) (s st t : LoopSemStateFiniteExact width F),
-      evaluate (loopNestedSeqHOL (p ++ q)) s = (none, t) ∧
-      evaluate (loopNestedSeqHOL p) s = (none, st) →
-      evaluate (loopNestedSeqHOL q) st = (none, t)) ∧
-    (∀ (p : List (HolLoopProg width)) (s st : LoopSemStateFiniteExact width F)
-      (q : List (HolLoopProg width)),
-      evaluate (loopNestedSeqHOL p) s = (none, st) →
-      evaluate (loopNestedSeqHOL (p ++ q)) s = evaluate (loopNestedSeqHOL q) st) ∧
-    (∀ (p : List (HolLoopProg width)) (s : LoopSemStateFiniteExact width F)
-      (res : Option (LoopResultExact width)) (st : LoopSemStateFiniteExact width F)
-      (q : List (HolLoopProg width)),
-      evaluate (loopNestedSeqHOL p) s = (res, st) ∧ res ≠ none →
-      evaluate (loopNestedSeqHOL (p ++ q)) s = evaluate (loopNestedSeqHOL p) s) :=
-  ⟨fun p q s st t ⟨h1, h2⟩ => by rw [← evaluate_nested_seq_append_none p s st q h2]; exact h1,
-   fun p s st q h => evaluate_nested_seq_append_none p s st q h,
-   fun p s res st q ⟨h, hr⟩ => evaluate_nested_seq_append_some p s res st q h hr⟩
+    (∀ {width1 : Nat} [NeZero width1] {F1 : Type},
+      ∀ (p q : List (HolLoopProg width1)) (s st t : LoopSemStateFiniteExact width1 F1),
+        evaluate (loopNestedSeqHOL (p ++ q)) s = (none, t) ∧
+        evaluate (loopNestedSeqHOL p) s = (none, st) →
+        evaluate (loopNestedSeqHOL q) st = (none, t)) ∧
+    (∀ {width2 : Nat} [NeZero width2] {F2 : Type},
+      ∀ (p : List (HolLoopProg width2)) (s st : LoopSemStateFiniteExact width2 F2)
+        (q : List (HolLoopProg width2)),
+        evaluate (loopNestedSeqHOL p) s = (none, st) →
+        evaluate (loopNestedSeqHOL (p ++ q)) s = evaluate (loopNestedSeqHOL q) st) ∧
+    (∀ {width3 : Nat} [NeZero width3] {F3 : Type},
+      ∀ (p : List (HolLoopProg width3)) (s : LoopSemStateFiniteExact width3 F3)
+        (res : Option (LoopResultExact width3)) (st : LoopSemStateFiniteExact width3 F3)
+        (q : List (HolLoopProg width3)),
+        evaluate (loopNestedSeqHOL p) s = (res, st) ∧ res ≠ none →
+        evaluate (loopNestedSeqHOL (p ++ q)) s = evaluate (loopNestedSeqHOL p) s) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro _width1 _inst1 _F1 p q s st t ⟨h1, h2⟩
+    rw [← evaluate_nested_seq_append_none p s st q h2]
+    exact h1
+  · intro _width2 _inst2 _F2 p s st q h
+    exact evaluate_nested_seq_append_none p s st q h
+  · intro _width3 _inst3 _F3 p s res st q ⟨h, hr⟩
+    exact evaluate_nested_seq_append_some p s res st q h hr
 
 /-- Exact HOL `evaluate_nested_seq_comb_seq` (`loopPropsScript.sml:1089-1092`):
     `!p q t. evaluate (Seq (nested_seq p) (nested_seq q), t) =

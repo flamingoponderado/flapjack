@@ -253,7 +253,8 @@ end GenPartialMoveRefListSupport
 /-- Exact HOL `word_gen_gc_partial_move_ref_list_code_thm`
 (`stack_allocProofScript.sml:3899-3990`, `[local]` in HOL), with HOL's binder
 order; HOL's free `conf`, `gs` and `rs` are implicit, and its quantified
-`r2a2 ib1 pb1 c1 ib2 pb2`, which the statement never mentions, are kept.
+`r2a2 ib1 pb1 c1 ib2 pb2`, which the statement never mentions, are vacuous and
+omitted (their independent HOL types occur nowhere in the statement).
 `FLOOKUP s.store`, `k IN FDOM`, `|++` and `get_var` are the canonical carrier's
 lookups, `updateListEq` and `getVar`, and `Temp nw` is `WordStore.temp n`; the
 existentials `ck r0 r1 r2 r5 r6 r7 r8 r9` are kept. -/
@@ -262,9 +263,9 @@ existentials `ck r0 r1 r2 r5 r6 r7 r8 r9` are kept. -/
   (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem word_gen_gc_partial_move_ref_list_code_thm {width : Nat} [NeZero width] {C F : Type}
     {conf : Config} {gs rs : BitVec width} :
-    ∀ (k : Nat) (r2a1 r1a1 _r2a2 i1 pa1 _ib1 _pb1 old1 : BitVec width)
-      (m1 : BitVec width → WordLocW width) (dm1 : BitVec width → Bool) (_c1 : Bool)
-      (i2 pa2 _ib2 _pb2 : BitVec width) (m2 : BitVec width → WordLocW width)
+    ∀ (k : Nat) (r2a1 r1a1 i1 pa1 old1 : BitVec width)
+      (m1 : BitVec width → WordLocW width) (dm1 : BitVec width → Bool)
+      (i2 pa2 : BitVec width) (m2 : BitVec width → WordLocW width)
       (s : StackSemStateFiniteExact width C F),
       wordGenGcPartialMoveRefList k conf (r1a1, i1, pa1, old1, m1, dm1, true, gs, rs, r2a1) =
           (i2, pa2, m2, true) ∧
@@ -286,7 +287,7 @@ theorem word_gen_gc_partial_move_ref_list_code_thm {width : Nat} [NeZero width] 
             memory := m2
             regs := s.regs.updateListEq [(0, r0), (1, r1), (2, r2), (3, .word pa2),
               (4, .word i2), (5, r5), (6, r6), (7, r7), (8, r8), (9, r9)] }) := by
-  rintro k r2a1 r1a1 _ i1 pa1 _ _ old1 m1 dm1 _ i2 pa2 _ _ m2 s
+  rintro k r2a1 r1a1 i1 pa1 old1 m1 dm1 i2 pa2 m2 s
     ⟨hm, hsl, hws, hw2, hlen, -, hg, hshift, hcurr, huse, rfl, rfl, hgs, hrs, h0, h1, h2, h3, h4,
       h5, h6, h7, h8, h9⟩
   exact wordGenGcPartialMoveRefListCode_run hsl hws hw2 hlen hg hshift r2a1 old1 k r1a1 i1 pa1

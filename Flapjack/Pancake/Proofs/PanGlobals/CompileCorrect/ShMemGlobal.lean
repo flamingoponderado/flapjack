@@ -217,7 +217,7 @@ theorem stateRelGlobalWriteHOL {width : Nat} {σ : Type} [NeZero width]
           ¬ addresses (t.topAddr - gaddr)
             ([HolWordLab.word w] : List (HolWordLab width)).length x := by
         intro x hx hstore
-        exact hdisj name nm .one gaddr (shapeOfHOLExact value) addr' hnme hsrc hnmnone
+        exact disjointGlobalsHOLExact_apply hdisj hnme hsrc hnmnone
           hctxt hctx' x ⟨by simpa [List.length_singleton, sizeOfShapeHOL_one] using hstore, hx⟩
       refine ⟨addr', hctx', hwf', ?_, hdis', halign'⟩
       rw [memStoresLoadDisjointHOL.1 (shapeOfHOLExact value) (t.topAddr - gaddr)
@@ -241,7 +241,7 @@ theorem stateRelGlobalWriteHOL {width : Nat} {σ : Type} [NeZero width]
     exact hffi
   · intro function parameters program returnShape hcode'
     exact hcode function parameters program returnShape hcode'
-  · intro n1 n2 sh1 ad1 sh2 ad2 hne hn1 hn2 hc1 hc2 slot
+  · intro n1 n2 sh1 ad1 sh2 ad2 ⟨hne, hn1, hn2, hc1, hc2⟩ slot
     rw [hunfold n1] at hn1
     rw [hunfold n2] at hn2
     by_cases h1 : n1 = name
@@ -251,17 +251,17 @@ theorem stateRelGlobalWriteHOL {width : Nat} {σ : Type} [NeZero width]
       rw [if_neg h2] at hn2
       have hp1 : (sh1, ad1) = (.one, gaddr) := Option.some.inj (hc1.symm.trans hctxt)
       rw [(Prod.mk.inj hp1).1, (Prod.mk.inj hp1).2]
-      exact hdisj name n2 .one gaddr sh2 ad2 hne hsrc hn2 hctxt hc2 slot
+      exact disjointGlobalsHOLExact_apply hdisj hne hsrc hn2 hctxt hc2 slot
     · by_cases h2 : n2 = name
       · rw [h2] at hn2 hne hc2
         rw [if_pos rfl] at hn2
         rw [if_neg h1] at hn1
         have hp2 : (sh2, ad2) = (.one, gaddr) := Option.some.inj (hc2.symm.trans hctxt)
         rw [(Prod.mk.inj hp2).1, (Prod.mk.inj hp2).2]
-        exact hdisj n1 name sh1 ad1 .one gaddr hne hn1 hsrc hc1 hctxt slot
+        exact disjointGlobalsHOLExact_apply hdisj hne hn1 hsrc hc1 hctxt slot
       · rw [if_neg h1] at hn1
         rw [if_neg h2] at hn2
-        exact hdisj n1 n2 sh1 ad1 sh2 ad2 hne hn1 hn2 hc1 hc2 slot
+        exact disjointGlobalsHOLExact_apply hdisj hne hn1 hn2 hc1 hc2 slot
   · show ¬ t.memaddrs t.topAddr
     exact htopmem
   · show panGlobalsByteAlignedHOL t.topAddr

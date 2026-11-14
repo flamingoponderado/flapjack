@@ -853,10 +853,12 @@ theorem doEval_oracle_combined {C F : Type} [Nonempty C]
       (storeList_weak genv _ _ _ ⟨refs, conditions.1, conditions.2.1, conditions.2.2⟩) clock ffi
 
 /-- A successful source Eval has a corresponding flat Eval and preserves the
-compiler invariants and global-environment relationships. -/
+compiler invariants and global-environment relationships. HOL's unused
+`fin_idx` existential carries a vacuous type variable, so it is omitted and no
+inhabitance instance is required. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "do_eval"
   (fmap_as_finite_support := [c, tys])]
-theorem doEval_correct {C F Fin : Type} [Nonempty C] [Nonempty Fin]
+theorem doEval_correct {C F : Type} [Nonempty C]
     (sourceValues : List Value) (source : SemanticPrimitivesHOL.State F)
     (env : SemEnv Value) (decs : List Dec) (after : Option EvalState)
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
@@ -868,7 +870,7 @@ theorem doEval_correct {C F Fin : Type} [Nonempty C] [Nonempty Fin]
       List.Forall₂ (ValueRel genv) sourceValues flatValues →
       ∃ (genv' : GlobalEnv) (envId : Nat × Nat) (config : Config) (flatDecs : List FlatLang.Exp)
         (evalConfig : FlatSem.InstallConfig C) (next : Config) (start finish : NextIndices)
-        (_finIdx : Fin) (other : Set (Nat × IndexKind)),
+        (other : Set (Nat × IndexKind)),
         idxs = (start, finish, other) ∧
         FlatSem.doEval (flatValues.drop 4) flat.evalConfig = some (flatDecs, evalConfig, FlatSem.unitValue) ∧
         flatValues.length = 6 ∧ incCompileProg envId config decs = (next, flatDecs) ∧ flatDecs ≠ [] ∧
@@ -922,7 +924,7 @@ theorem doEval_correct {C F Fin : Type} [Nonempty C] [Nonempty Fin]
       have components := (globalGrowth_iff genv genv').mp growth
       refine ⟨genv', envId, config, flatDecs,
         { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle },
-        next, start, finish, Classical.choice inferInstance, other, rfl, flatSuccess, flatLength,
+        next, start, finish, other, rfl, flatSuccess, flatLength,
         compiled, nonempty, ?_, genRel, future, envInv, nextCfg, finishPrev,
         components.2.1, components.2.2, components.1, ?_, ?_⟩
       · refine ⟨constructors, typesOk, states', range', invs', related', ?_, ?_, ?_, ?_⟩

@@ -116,7 +116,7 @@ example (s : Flapjack.Compiler.Backend.LabSem.State 64 Nat Nat) :
   rw [hs]
   congr 1
   apply HolLList.unique_lprefix_lub (HolLList.buildLprefixLub_thm ?_) ?_
-  · intro first second hfirst hsecond
+  · intro first second ⟨hfirst, hsecond⟩
     subst first
     subst second
     exact Or.inl (HolLList.lprefix_refl _)

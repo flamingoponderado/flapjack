@@ -1,0 +1,4 @@
+islower_def_typed=∀(c :char). isLower c ⇔ (97 :num) ≤ ORD c ∧ ORD c ≤ (122 :num)
+isupper_def_typed=∀(c :char). isUpper c ⇔ (65 :num) ≤ ORD c ∧ ORD c ≤ (90 :num)
+isalpha_def_typed=∀(c :char). isAlpha c ⇔ isLower c ∨ isUpper c
+char_size_def_typed=∀(c :char). char_size c = (0 :num)

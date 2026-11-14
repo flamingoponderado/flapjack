@@ -228,8 +228,8 @@ theorem doCoalesce_production (limit : Nat) {native : State} {production : CakeR
     have mg : goodRaState merged := mergedEq.symm ▸ mergedGood
     have md : prepared.dim = merged.dim := by simpa only [mergedEq] using mergeDim
     obtain ⟨unspilled, unspillRun, unspilledRel⟩ := unspill_production limit mergedRel mg
-    obtain ⟨sourceUnspilled, _, sourceUnspillRun, unspilledGood, _, unspillDim, _⟩ :=
-      unspillSuccess (α := Unit) limit merged mg
+    obtain ⟨sourceUnspilled, sourceUnspillRun, unspilledGood, _, unspillDim, _⟩ :=
+      unspillSuccess limit merged mg
     have unspilledEq := congrArg Prod.snd (unspillRun.symm.trans sourceUnspillRun)
     change unspilled = sourceUnspilled at unspilledEq
     have ug : goodRaState unspilled := unspilledEq.symm ▸ unspilledGood

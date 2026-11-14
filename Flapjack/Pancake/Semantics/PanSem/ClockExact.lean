@@ -18,10 +18,13 @@ HOL `panSemScript.sml` proves:
   `!prog s r s'. evaluate (prog,s) = (r,s') ==> s'.clock <= s.clock`.
 * `fix_clock_evaluate` (`:768-775`): `fix_clock s (evaluate (prog,s)) = evaluate (prog,s)`.
 
-The function-backed rendering below is `fix_clock_IMP_LESS_EQ` over the
-`mlstring`-keyed `PanSemStateExact` record. Its theorem tag is withheld because
-that record has unrestricted lookup-function fields where HOL `state` has
-finite-map fields. HOL `evaluate_clock` has exactly the hypothesis
+HOL `fix_clock_IMP_LESS_EQ` is ported exactly as
+`fixClockHOLFinite_IMP_LESS_EQ` (`StateExactFiniteMap.lean`), over the
+finite-support `PanSemStateFiniteExact` carrier and with HOL's independent old
+and returned state carriers. The function-backed rendering that used to live
+here was retired once its only user moved onto that twin; the untagged
+`fixClockHOLExact_clock_le` below remains an internal helper for the clause
+interfaces. HOL `evaluate_clock` has exactly the hypothesis
 `evaluate (prog,s) = (r,s')` and concludes `s'.clock <= s.clock`; it adds no
 fuel, evaluator-totality, or state-invariant premise. The Lean clock-bound
 interfaces below instead take a supplied evaluator and a clock-bound
@@ -58,20 +61,6 @@ theorem fixClockHOLExact_clock_le {width : Nat} {σ : Type} [NeZero width] {β :
   obtain ⟨result, state1⟩ := step
   simp only [fixClockHOLExact]
   split <;> omega
-
-/-- Function-backed rendering of HOL `fix_clock_IMP_LESS_EQ`
-    (`panSemScript.sml:451-457`); untagged because the state map fields are not
-    constrained to finite support. The exact finite-support replacement over
-    `PanSemStateFiniteExact` is tracked by `flapjack-pxn.18.3.7.1.3.1.1.2.5`
-    (parent `.2.3`). -/
-theorem fixClockHOLExact_IMP_LESS_EQ {width : Nat} {σ : Type} [NeZero width] {β : Type}
-    (state : PanSemStateExact width σ) (result : β) (state1 : PanSemStateExact width σ)
-    (step : β × PanSemStateExact width σ)
-    (h : fixClockHOLExact state step = (result, state1)) :
-    state1.clock ≤ state.clock := by
-  have hle := fixClockHOLExact_clock_le state step
-  rw [h] at hle
-  exact hle
 
 /-- Untagged: `empty_locals` keeps the clock. -/
 @[simp] theorem emptyLocalsHOLExact_clock_le {width : Nat} {σ : Type} [NeZero width]

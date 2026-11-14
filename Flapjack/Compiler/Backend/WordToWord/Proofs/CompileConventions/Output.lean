@@ -75,7 +75,7 @@ private theorem singleValid {width : Nat} [NeZero width] (two : Bool)
   apply WordCse.full_inst_ok_less_word_common_subexp_elim
   apply (removeDeadProgConventions (fun _ => true) _ c).2.1
   apply WordAlloc.fullSsaCcTrans_fullInstOkLess
-  apply instSelect_fullInstOkLess _ _ _ addressZero halfZero byteZero
+  apply instSelect_fullInstOkLess _ _ _ ⟨addressZero, halfZero, byteZero, ?_⟩
   exact WordSimpInstructions.compileExpNoInst _ _ source
 
 /-- Flapjack infrastructure: original inline enabled two-register proof. -/

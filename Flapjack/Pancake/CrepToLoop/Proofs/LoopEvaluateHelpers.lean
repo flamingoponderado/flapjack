@@ -186,7 +186,7 @@ theorem evaluate_twice_cases (prog : HolLoopProg width) (s : LoopSemStateFiniteE
       obtain ⟨rfl, rfl⟩ := hadd
       exact ⟨rfl, s4.clock, by rw [with_clock_with_clock]⟩
 
-theorem findCode_none_append_loc (args1 : List (WordLocW width)) (loc : Nat)
+theorem findCode_none_append_loc {v : Nat} [NeZero v] (args1 : List (WordLocW v)) (loc : Nat)
     (code : Spt (List Nat × HolLoopProg width)) :
     findCode none (args1 ++ [WordLocW.loc loc 0]) code =
       (match sptLookup loc code with
@@ -222,7 +222,8 @@ theorem findCode_none_append_loc (args1 : List (WordLocW width)) (loc : Nat)
     and `TAKE` is `List.take`. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "find_code_collapse_cases"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
-theorem find_code_collapse_cases (dest : Option Nat) (loc : Nat) (args1 : List (WordLocW width))
+theorem find_code_collapse_cases {v : Nat} [NeZero v]
+    (dest : Option Nat) (loc : Nat) (args1 : List (WordLocW v))
     (st : LoopSemStateFiniteExact width F) :
     (dest ≠ none → dest = some loc) →
       findCode dest (args1 ++ List.take (match dest with | none => 1 | some _ => 0)

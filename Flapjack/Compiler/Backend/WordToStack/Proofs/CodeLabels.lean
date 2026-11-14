@@ -49,10 +49,10 @@ theorem stackMoveCodeLabels {width : Nat} [NeZero width]
 /-- Both complete source label sets of the return-copy loop are empty. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
   "get_code_handler_labels_copy_ret_aux" (words_as_type_indexed_bitvec)]
-theorem getCodeHandlerLabelsCopyRetAux {width : Nat} [NeZero width]
+theorem getCodeHandlerLabelsCopyRetAux {width1 : Nat} {width2 : Nat} [NeZero width1] [NeZero width2]
     (k f n owner : Nat) :
-    getCodeLabels (copyRetAuxNative k f n : HolProg width) = ∅ ∧
-    stackGetHandlerLabels owner (copyRetAuxNative k f n : HolProg width) = ∅ := by
+    getCodeLabels (copyRetAuxNative k f n : HolProg width1) = ∅ ∧
+    stackGetHandlerLabels owner (copyRetAuxNative k f n : HolProg width2) = ∅ := by
   induction n with
   | zero => simp [copyRetAuxNative, getCodeLabels, stackGetHandlerLabels]
   | succ n ih => simpa [copyRetAuxNative, listSeq, getCodeLabels, stackGetHandlerLabels] using ih
@@ -70,7 +70,7 @@ theorem getCodeHandlerLabelsCopyRet {width : Nat} [NeZero width] {β γ : Type}
   simp only [copyRetNative]
   split
   · exact ⟨rfl, rfl⟩
-  · have labels := getCodeHandlerLabelsCopyRetAux (width := width) kf.1
+  · have labels := getCodeHandlerLabelsCopyRetAux (width1 := width) (width2 := width) kf.1
       (if b then kf.2.1 + WordToStack.handlerSlots perf else kf.2.1)
       (WordToStack.numStackRet kf.1 vs) owner
     simp only [getCodeLabels, stackGetHandlerLabels, labels.1, labels.2, Set.empty_union]

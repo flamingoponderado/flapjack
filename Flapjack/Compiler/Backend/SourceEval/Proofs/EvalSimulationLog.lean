@@ -10,14 +10,14 @@ open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesP
 
 /-- Short-circuit Boolean expressions preserve the source evaluator simulation. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
-theorem evalSimulation_Log {Config F A : Type} [Nonempty A] (ci : CompilerInstance Config)
+theorem evalSimulation_Log {Config F : Type} (ci : CompilerInstance Config)
     (s : State F) (env : SemEnv Value) (op : Lop) (first second : Flapjack.AstHOL.Exp)
     (ih : (∀ middle outcome values selection branch, evaluate s env [first] = (middle, outcome) ∧
       outcome = .val values ∧ doLog op (headValue values) second = some selection ∧ selection = .exp branch →
-      ExpsSimAt (A := A) ci middle env [branch]) ∧ ExpsSimAt (A := A) ci s env [first]) :
-    ExpsSimAt (A := A) ci s env [.log op first second] := by
+      ExpsSimAt ci middle env [branch]) ∧ ExpsSimAt ci s env [first]) :
+    ExpsSimAt ci s env [.log op first second] := by
   obtain ⟨branchIH, firstIH⟩ := ih
-  intro s' res es t env' ⟨run, related, envRelated, safe⟩
+  intro s' res t env' ⟨run, related, envRelated, safe⟩
   rw [evaluate, (fixClockEvaluate s env [first] []).1] at run
   cases firstRun : evaluate s env [first] with
   | mk middle firstResult =>
@@ -27,7 +27,7 @@ theorem evalSimulation_Log {Config F A : Type} [Nonempty A] (ci : CompilerInstan
       cases run
       have firstSafe : Result.err error ≠ .err (.abort .typeError) := safe
       obtain ⟨es₁, t₁, r₁, targetRun, stateRel₁, esEq, resultRel₁, fwd, stack⟩ :=
-        firstIH s' (.err error) es t env' ⟨firstRun, related, envRelated, firstSafe⟩
+        firstIH s' (.err error) t env' ⟨firstRun, related, envRelated, firstSafe⟩
       cases r₁ with
       | val values => cases resultRel₁
       | err targetErr =>
@@ -36,7 +36,7 @@ theorem evalSimulation_Log {Config F A : Type} [Nonempty A] (ci : CompilerInstan
     | val values =>
       simp only [firstRun] at run
       obtain ⟨es₁, t₁, r₁, targetRun, stateRel₁, esEq, resultRel₁, fwd₁, stack₁⟩ :=
-        firstIH middle (.val values) es t env' ⟨firstRun, related, envRelated, by simp⟩
+        firstIH middle (.val values) t env' ⟨firstRun, related, envRelated, by simp⟩
       cases r₁ with
       | err err => cases resultRel₁
       | val targetValues =>
@@ -89,7 +89,8 @@ theorem evalSimulation_Log {Config F A : Type} [Nonempty A] (ci : CompilerInstan
                 (forwardRules (oracleState t.evalState) (.conv none []) (.conv none []) es₁ [] [] env env').2.2.1
                   ⟨envRelated, fwd₁⟩
               obtain ⟨es₂, t₂, r₂, branchRun, stateRel₂, esEq₂, resultRel₂, fwd₂, stack₂⟩ :=
-                branchIH middle (.val [head]) [head] (.exp branch) branch ⟨firstRun, rfl, chosen, rfl⟩ s' res es t₁ env'
+                branchIH middle (.val [head]) [head] (.exp branch) branch
+                  ⟨firstRun, rfl, chosen, rfl⟩ s' res t₁ env'
                   ⟨run, stateRel₁, by simpa [esEq] using envRelated₁, safe⟩
               refine ⟨es₂, t₂, r₂, ?_, stateRel₂, esEq₂, resultRel₂, ?_, ?_⟩
               · rw [evaluate, (fixClockEvaluate t env' [first] []).1, targetRun]

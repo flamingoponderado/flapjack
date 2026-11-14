@@ -634,14 +634,32 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertNotEqual(exact["statement_status"], "documented_mismatch")
         self.assertIn(exact_key, MAP["tagged_declarations"]())
 
+    def test_pansem_fix_clock_imp_less_eq_mismatch_is_retired(self):
+        # The function-backed fixClockHOLExact_IMP_LESS_EQ is gone; HOL
+        # fix_clock_IMP_LESS_EQ is mapped by the tagged exact-carrier twin.
+        key = ("Flapjack/Pancake/Semantics/PanSem/ClockExact.lean",
+               "fixClockHOLExact_IMP_LESS_EQ")
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        self.assertNotIn(key, inventory)
+        exact_key = ("Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+                     "fixClockHOLFinite_IMP_LESS_EQ")
+        exact = inventory[exact_key]
+        self.assertEqual(
+            (exact["hol_path"], exact["hol_name"]),
+            ("cakeml/pancake/semantics/panSemScript.sml", "fix_clock_IMP_LESS_EQ"),
+        )
+        self.assertNotEqual(exact["statement_status"], "documented_mismatch")
+        self.assertIn(exact_key, MAP["tagged_declarations"]())
+
     def test_pansem_state_defs_function_backed_mismatches_are_documented(self):
         inventory = {
             (record["lean_path"], record["lean_name"]): record
             for record in MAP["build_inventory"]()
         }
         cases = {
-            ("Flapjack/Pancake/Semantics/PanSem/ClockExact.lean",
-             "fixClockHOLExact_IMP_LESS_EQ"): "fix_clock_IMP_LESS_EQ",
             ("Flapjack/Pancake/Semantics/PanSem/StateSimpExact.lean",
              "kvar_simps"): "kvar_simps",
             ("Flapjack/Pancake/Semantics/PanSem/StateSimpExact.lean",
@@ -652,8 +670,6 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
              "kvar_defs"): "kvar_defs",
             ("Flapjack/Pancake/Semantics/PanSem/IsValidValueExact.lean",
              "isValidValueHOLExact"): "is_valid_value_def",
-            ("Flapjack/Pancake/Semantics/PanSem/LocalUpdatesExact.lean",
-             "updLocalsHOLExact"): "upd_locals_def",
             ("Flapjack/Pancake/Semantics/PanSem/LocalUpdatesExact.lean",
              "resVarHOLExact"): "res_var_def",
             ("Flapjack/Pancake/Semantics/PanSem/DecCallExact.lean",
@@ -669,6 +685,26 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             self.assertIn("flapjack-pxn.18.3.7.1.3.1.1.2.5", record["reviewer"])
             self.assertTrue(MAP["lean_definition_exists"](MAP["ROOT"], *key))
             self.assertNotIn(key, MAP["tagged_declarations"]())
+
+    def test_pansem_upd_locals_function_backed_mismatch_is_retired(self):
+        # The function-backed updLocalsHOLExact is gone; HOL upd_locals_def is
+        # mapped by the tagged exact-carrier updLocalsHOLFinite twin.
+        key = ("Flapjack/Pancake/Semantics/PanSem/LocalUpdatesExact.lean",
+               "updLocalsHOLExact")
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        self.assertNotIn(key, inventory)
+        exact_key = ("Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+                     "updLocalsHOLFinite")
+        exact = inventory[exact_key]
+        self.assertEqual(
+            (exact["hol_path"], exact["hol_name"]),
+            ("cakeml/pancake/semantics/panSemScript.sml", "upd_locals_def"),
+        )
+        self.assertNotEqual(exact["statement_status"], "documented_mismatch")
+        self.assertIn(exact_key, MAP["tagged_declarations"]())
 
     def test_pansem_mem_alt_ports_and_shmem_mismatches_are_classified(self):
         inventory = {
@@ -744,7 +780,6 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             "decCrepHolClockW": "dec_clock_def",
             "emptyCrepHolLocalsW": "empty_locals_def",
             "fixCrepHolClockW": "fix_clock_def",
-            "fixCrepHolClock_IMP_LESS_EQW": "fix_clock_IMP_LESS_EQ",
         }
         for lean_name, hol_name in expected.items():
             key = ("Flapjack/Pancake/Semantics/CrepSem.lean", lean_name)
@@ -758,6 +793,27 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                 self.assertIn("infinite", record["reviewer"])
                 self.assertTrue(MAP["lean_definition_exists"](MAP["ROOT"], *key))
                 self.assertNotIn(key, MAP["tagged_declarations"]())
+
+    def test_crep_fix_clock_imp_less_eq_carrier_mismatch_is_retired(self):
+        # The width-indexed CrepHolState bound is gone; HOL fix_clock_IMP_LESS_EQ
+        # is mapped by the tagged exact-carrier fixClockCrepSemHOL_IMP_LESS_EQ.
+        key = ("Flapjack/Pancake/Semantics/CrepSem.lean",
+               "fixCrepHolClock_IMP_LESS_EQW")
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        self.assertNotIn(key, inventory)
+        exact_key = ("Flapjack/Pancake/Semantics/CrepSem/HOLState.lean",
+                     "fixClockCrepSemHOL_IMP_LESS_EQ")
+        exact = inventory[exact_key]
+        self.assertEqual(
+            (exact["hol_path"], exact["hol_name"]),
+            ("cakeml/pancake/semantics/crepSemScript.sml",
+             "fix_clock_IMP_LESS_EQ"),
+        )
+        self.assertNotEqual(exact["statement_status"], "documented_mismatch")
+        self.assertIn(exact_key, MAP["tagged_declarations"]())
 
     def test_removed_crepprops_mismatches_are_absent(self):
         inventory = {
@@ -975,7 +1031,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         )
         self.assertEqual(inventory[exact_key]["hol_name"], "locals_rel_lookup_ctxt")
 
-    def test_is_wf_shape_drop_exact_port(self):
+    def test_is_wf_shape_drop_withdrawn(self):
         inventory = {
             (record["lean_path"], record["lean_name"]): record
             for record in MAP["build_inventory"]()
@@ -984,13 +1040,32 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                      "isWfShapeExactHOL_drop")
         self.assertEqual(inventory[exact_key]["hol_name"], "is_wf_shape_drop")
         self.assertEqual(inventory[exact_key]["statement_status"],
-                         "pending_statement_review")
+                         "documented_mismatch")
 
         manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
         exact_record = next(record for record in manifest if
                             (record["lean_path"], record["lean_name"]) == exact_key)
         self.assertEqual(exact_record["hol_name"], "is_wf_shape_drop")
-        self.assertEqual(exact_record["statement_status"], "reviewed_exact")
+        self.assertEqual(exact_record["statement_status"], "documented_mismatch")
+
+    def test_ssa_cc_trans_flat_exp_inst_withdrawn(self):
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        exact_key = ("Flapjack/Pancake/Proofs/WordConvs/SSAFlatInst.lean",
+                     "ssaCcTrans_flatExpInst")
+        self.assertEqual(inventory[exact_key]["hol_name"],
+                         "ssa_cc_trans_flat_exp_conventions")
+        self.assertEqual(inventory[exact_key]["statement_status"],
+                         "documented_mismatch")
+
+        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        exact_record = next(record for record in manifest if
+                            (record["lean_path"], record["lean_name"]) == exact_key)
+        self.assertEqual(exact_record["hol_name"],
+                         "ssa_cc_trans_flat_exp_conventions")
+        self.assertEqual(exact_record["statement_status"], "documented_mismatch")
 
     def test_fperm_decs_decls_production_variant_removed(self):
         inventory = {

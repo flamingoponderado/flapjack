@@ -32,3 +32,15 @@ val _ = print_eval "semantics_return_is_success"
 val _ = print_eval "semantics_break_is_nonterminal"
   ``case crepSem$evaluate (Break 2,^s) of
       (res,s') => res = SOME (Break 2)``;
+
+(* Typed captures of the two-state fix_clock declarations (task 167). *)
+fun emit_typed label th = (print (label ^ "=");
+  Lib.with_flag (Globals.show_types, true) print_term (concl th);
+  print "\n");
+
+val _ = emit_typed "fix_clock_def_typed" crepSemTheory.fix_clock_def;
+val _ = print ("fix_clock_def_hypotheses=" ^
+  Int.toString (length (hyp crepSemTheory.fix_clock_def)) ^ "\n");
+val _ = emit_typed "fix_clock_IMP_LESS_EQ_typed" crepSemTheory.fix_clock_IMP_LESS_EQ;
+val _ = print ("fix_clock_IMP_LESS_EQ_hypotheses=" ^
+  Int.toString (length (hyp crepSemTheory.fix_clock_IMP_LESS_EQ)) ^ "\n");
