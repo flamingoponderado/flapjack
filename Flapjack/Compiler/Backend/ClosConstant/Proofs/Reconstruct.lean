@@ -291,6 +291,8 @@ theorem makeConst_toParts (constant : Const) :
   calc
     ClosSem.makeConst constant = ClosSem.makeConst (buildConstSyntax (toParts constant)) :=
       congrArg ClosSem.makeConst (buildConst_toParts constant).symm
-    _ = buildConst (toParts constant) := makeConst_buildConstSyntax _
+    _ = buildConst (toParts constant) := by
+      simpa [buildConstSyntax, buildConst, ClosSem.makeConst] using
+        makeConst_buildSyntax (toParts constant) (fun _ => .constInt 0) 0
 
 end Flapjack.Compiler.Backend.ClosConstant.Proofs

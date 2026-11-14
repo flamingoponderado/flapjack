@@ -160,13 +160,6 @@ theorem makeConst_buildSyntax (parts : List ConstPart) (memory : Nat → Const) 
     · cases part <;> simp [buildPartSyntax, buildPart, makeConst, List.map_map]
     · rfl
 
-/-- Building and evaluating a syntax constant agrees with building values
-directly, for every part sequence. -/
-theorem makeConst_buildConstSyntax (parts : List ConstPart) :
-    makeConst (buildConstSyntax parts) = buildConst parts := by
-  simpa [buildConstSyntax, buildConst, makeConst] using
-    makeConst_buildSyntax parts (fun _ => .constInt 0) 0
-
 /-- Shifting constructor tags does not merge distinct parts. -/
 @[hol "cakeml/compiler/backend/proofs/clos_constantProofScript.sml" "update_tag_11"]
 theorem updateTag_eq_iff (x y : ConstPart) : updateTag x = updateTag y ↔ x = y := by

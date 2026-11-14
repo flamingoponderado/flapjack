@@ -313,4 +313,46 @@ theorem consesOk_cons (x : ConstPart) (aux : List (ConstPart × Nat))
       simpa using (List.all_eq_true.mp allChildren child childMem)
     · exact ordered tag rs index member child childMem
 
+/-- A successful association-list lookup in a valid accumulator gives the
+original allocation position, list decomposition, and dependency bound. -/
+@[hol "cakeml/compiler/backend/proofs/clos_constantProofScript.sml" "ALOOKUP_conses_ok_IMP"]
+theorem lookupConses (aux : List (ConstPart × Nat)) (x : ConstPart) (r : Nat)
+    (premises : lookupPart x aux = some r ∧ consesOk aux) :
+    ∃ xs ys : List (ConstPart × Nat),
+      aux.reverse.map Prod.fst = xs.reverse.map Prod.fst ++ [x] ++ ys.reverse.map Prod.fst ∧
+      xs.length = r ∧ r < aux.length ∧
+      ∀ t children y, x = .con t children ∧ y ∈ children → y < r := by
+  induction aux generalizing r with
+  | nil => simp [lookupPart] at premises
+  | cons head tail ih =>
+    obtain ⟨p, i⟩ := head
+    obtain ⟨found, ok⟩ := premises
+    obtain ⟨canonical, ordered⟩ := (consesOk_iff _).1 ok
+    have canonParts : i = tail.length ∧ canonicalIndices tail := by
+      simp only [canonicalIndices, List.map_cons, List.length_cons, List.range_succ,
+        List.reverse_append, List.reverse_cons, List.reverse_nil, List.nil_append,
+        List.singleton_append, List.cons.injEq] at canonical
+      exact canonical
+    obtain ⟨rfl, tailCanonical⟩ := canonParts
+    have tailOrdered : dependenciesBelow tail := by
+      intro tag children index member child childMem
+      exact ordered tag children index (List.mem_cons_of_mem _ member) child childMem
+    have tailOk := (consesOk_iff tail).2 ⟨tailCanonical, tailOrdered⟩
+    simp only [lookupPart] at found
+    split at found
+    · rename_i equal
+      simp only [Option.some.injEq] at found
+      subst r
+      subst p
+      refine ⟨tail, [], ?_, rfl, by simp, ?_⟩
+      · simp
+      · intro tag children child ⟨partEq, member⟩
+        subst x
+        exact ordered tag children tail.length (by simp) child member
+    · obtain ⟨xs, ys, sequence, length, bound, dependencies⟩ := ih r ⟨found, tailOk⟩
+      refine ⟨xs, (p, tail.length) :: ys, ?_, length, by simpa using Nat.lt_succ_of_lt bound, dependencies⟩
+      simp only [List.reverse_cons, List.map_append, List.map_cons, List.map_nil]
+      rw [sequence]
+      simp only [List.append_assoc]
+
 end Flapjack.Compiler.Backend.ClosConstant.Proofs

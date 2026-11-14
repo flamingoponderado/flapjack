@@ -136037,6 +136037,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
+  "hol_name": "ALOOKUP_conses_ok_IMP",
+  "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Bounds.lean",
+  "lean_name": "lookupConses",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cc_ALOOKUP_conses_ok_IMP in the typed HOL capture: the successful association-list lookup and conses_ok premises, both arbitrary existential segments, the reversed mapped-list decomposition, segment length, index bound, and every constructor-child dependency are retained. lookupPart performs the original first matching association-list lookup. Source comparison and Lean checking do not establish cross-language equivalence."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/clos_constantProofScript.sml",
   "hol_name": "LIST_REL_eq",
   "lean_path": "Flapjack/Compiler/Backend/ClosConstant/Proofs/Reconstruct.lean",
   "lean_name": "listRel_eq",
