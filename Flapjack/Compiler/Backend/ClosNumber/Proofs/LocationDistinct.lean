@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationInvariants
+public import Flapjack.Misc.Sorting
 import Mathlib.Data.List.Sort
 
 @[expose] public section
@@ -178,14 +179,37 @@ termination_by sizeOf fs
 decreasing_by all_goals subst_vars; simp_wf; omega
 end
 
+/-- Numbering produces sorted code locations within its allocated interval. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "renumber_code_locs_distinct_lemma"]
+theorem renumber_code_locs_distinct_lemma :
+    (∀ n es, Flapjack.holSorted (· < ·) (codeLocations (renumberList n es).2) ∧
+      (∀ x ∈ codeLocations (renumberList n es).2, n ≤ x) ∧
+      (∀ x ∈ codeLocations (renumberList n es).2, x < (renumberList n es).1)) ∧
+    (∀ n e, Flapjack.holSorted (· < ·) (codeLocations [(renumber n e).2]) ∧
+      (∀ x ∈ codeLocations [(renumber n e).2], n ≤ x) ∧
+      (∀ x ∈ codeLocations [(renumber n e).2], x < (renumber n e).1)) := by
+  constructor
+  · intro n es
+    have all := orderedList es n
+    exact ⟨Flapjack.holSorted_of_pairwise _ _ all.1,
+      fun x hx => (all.2 x hx).1, fun x hx => (all.2 x hx).2⟩
+  · intro n e
+    have all := orderedExpr e n
+    simpa only [codeLocations_singleton] using
+      And.intro (Flapjack.holSorted_of_pairwise _ _ all.1)
+        (And.intro (fun x hx => (all.2 x hx).1) (fun x hx => (all.2 x hx).2))
+
 /-- The numbered expression list has distinct, bounded code locations. -/
 @[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "renumber_code_locs_list_distinct"]
 theorem renumberList_codeLocations_distinct (n : Nat) (es : List Exp) :
     (codeLocations (renumberList n es).2).Nodup ∧
       (∀ x ∈ codeLocations (renumberList n es).2, n ≤ x) ∧
       (∀ x ∈ codeLocations (renumberList n es).2, x < (renumberList n es).1) := by
-  have all := orderedList es n
-  exact ⟨all.1.nodup, fun x hx => (all.2 x hx).1, fun x hx => (all.2 x hx).2⟩
+  have all := renumber_code_locs_distinct_lemma.1 n es
+  have trans : Flapjack.holTransitive (· < · : Nat → Nat → Prop) := by
+    intro x y z ⟨xy, yz⟩
+    exact Nat.lt_trans xy yz
+  exact ⟨(Flapjack.pairwise_of_holSorted _ trans _ all.1).nodup, all.2⟩
 
 /-- A numbered expression has distinct, bounded code locations. -/
 @[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "renumber_code_locs_distinct"]
@@ -193,8 +217,10 @@ theorem renumber_codeLocations_distinct (n : Nat) (e : Exp) :
     (codeLocations [(renumber n e).2]).Nodup ∧
       (∀ x ∈ codeLocations [(renumber n e).2], n ≤ x) ∧
       (∀ x ∈ codeLocations [(renumber n e).2], x < (renumber n e).1) := by
-  have all := orderedExpr e n
-  simpa [codeLocations_singleton] using
-    And.intro all.1.nodup (And.intro (fun x hx => (all.2 x hx).1) (fun x hx => (all.2 x hx).2))
+  have all := renumber_code_locs_distinct_lemma.2 n e
+  have trans : Flapjack.holTransitive (· < · : Nat → Nat → Prop) := by
+    intro x y z ⟨xy, yz⟩
+    exact Nat.lt_trans xy yz
+  exact ⟨(Flapjack.pairwise_of_holSorted _ trans _ all.1).nodup, all.2⟩
 
 end Flapjack.Compiler.Backend.ClosNumber

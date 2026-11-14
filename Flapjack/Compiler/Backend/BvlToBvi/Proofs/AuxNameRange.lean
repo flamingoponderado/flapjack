@@ -157,14 +157,6 @@ theorem auxNameRange_nodup {start finish : Nat} {aux : AppList (Nat × Nat × Bv
   simp only [bvlToBviNamespaces] at equal
   omega
 
-private theorem auxSortedOfPairwise {α : Type} (R : α → α → Prop) :
-    ∀ xs : List α, xs.Pairwise R → holSorted R xs
-  | [], _ => trivial
-  | [_], _ => trivial
-  | x :: y :: rest, pairwise =>
-    ⟨(List.pairwise_cons.mp pairwise).1 y (by simp),
-      auxSortedOfPairwise R (y :: rest) (List.pairwise_cons.mp pairwise).2⟩
-
 
 /-- Auxiliary names are sorted, belong to their namespace and lie within
 its counter interval, and compilation does not decrease the counter. -/
@@ -183,7 +175,7 @@ theorem compileExps_auxSorted (n : Nat) (es : List Bvl.Exp) (c : List Bvi.Exp)
   refine ⟨?_, ?_, ?_, auxNameRange_mono range⟩
   · obtain ⟨count, _, names⟩ := range
     rw [names]
-    apply auxSortedOfPairwise
+    apply holSorted_of_pairwise
     unfold auxNameSequence
     apply List.pairwise_map.mpr
     apply List.Pairwise.imp (fun {a b} h => ?_) (List.pairwise_lt_range' 1 (by omega))

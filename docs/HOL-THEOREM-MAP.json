@@ -1,6 +1,22 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "renumber_code_locs_distinct_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LocationDistinct.lean",
+    "lean_name": "renumber_code_locs_distinct_lemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local source theorem and renumber_distinct_lemma_replay_typed, replaying the original proof. Both independently quantified list and expression cases retain HOL's adjacent SORTED predicate, the lower and strict upper bounds, and the original numbered outputs and counters. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "renumber_code_locs_list_length",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LocationInvariants.lean",
+    "lean_name": "renumber_code_locs_list_length",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared renumber_list_length_typed: the universally quantified input list, initial and final counters and output list retain the original numbering equation and length conclusion. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "renumber_code_locs_list_els",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ClosureApplication.lean",
     "lean_name": "renumber_code_locs_list_els",

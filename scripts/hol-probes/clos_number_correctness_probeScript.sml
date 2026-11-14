@@ -35,6 +35,7 @@ val _ = show "renumber_correct_typed=" clos_numberProofTheory.renumber_code_locs
 val _ = show "renumber_code_locs_inc_typed=" clos_numberProofTheory.renumber_code_locs_inc;
 val _ = show "renumber_code_locs_imp_inc_typed=" clos_numberProofTheory.renumber_code_locs_imp_inc;
 val _ = show "renumber_list_imp_length_typed=" clos_numberProofTheory.renumber_code_locs_list_IMP_LENGTH;
+val _ = show "renumber_list_length_typed=" clos_numberProofTheory.renumber_code_locs_list_length;
 val _ = show "renumber_list_distinct_typed=" clos_numberProofTheory.renumber_code_locs_list_distinct;
 val _ = show "renumber_distinct_typed=" clos_numberProofTheory.renumber_code_locs_distinct;
 val _ = show "renumber_even_typed=" clos_numberProofTheory.renumber_code_locs_EVEN;
@@ -46,6 +47,78 @@ val _ = show "renumber_code_locs_every_Fn_SOME_typed=" clos_numberProofTheory.re
 open closLangTheory clos_numberTheory clos_numberProofTheory closSemTheory closPropsTheory
   listTheory rich_listTheory finite_mapTheory backendPropsTheory miscTheory;
 open preamble;
+fun tac (g as (asl,w)) =
+  let
+    fun finder tm =
+      let
+        val (f,args) = strip_comb tm
+      in
+        (same_const``renumber_code_locs`` f orelse
+         same_const``renumber_code_locs_list`` f)
+        andalso
+         all is_var args
+        andalso
+         length args = 2
+      end
+    val tms = find_terms finder w
+  in
+    map_every (fn tm => Cases_on [ANTIQUOTE tm]) tms g
+  end
+
+val renumber_distinct_lemma_replay = Q.prove(`(∀n es. SORTED $< (code_locs (SND (renumber_code_locs_list n es))) ∧
+            EVERY ($<= n) (code_locs (SND (renumber_code_locs_list n es))) ∧
+            EVERY ($> (FST (renumber_code_locs_list n es))) (code_locs (SND (renumber_code_locs_list n es)))) ∧
+    (∀n e. SORTED $< (code_locs [SND (renumber_code_locs n e)]) ∧
+            EVERY ($<= n) (code_locs [SND (renumber_code_locs n e)]) ∧
+            EVERY ($> (FST (renumber_code_locs n e))) (code_locs [SND (renumber_code_locs n e)]))`,
+ho_match_mp_tac renumber_code_locs_ind >>
+  simp[renumber_code_locs_def,code_locs_def,pairTheory.UNCURRY] >>
+  srw_tac[][] >> rpt (CHANGED_TAC tac >> full_simp_tac(srw_ss())[]) >> srw_tac[][] >>
+  imp_res_tac renumber_code_locs_imp_inc >> simp[] >>
+  simp[EVERY_GENLIST] >>
+  TRY (
+    CHANGED_TAC(simp[EVERY_MEM]) >>
+    full_simp_tac(srw_ss())[EVERY_MEM] >>
+    srw_tac[][] >> res_tac >> fsrw_tac[ARITH_ss][] >>
+    NO_TAC ) >>
+  TRY (
+    CHANGED_TAC(simp[EVERY_MEM]) >>
+    full_simp_tac(srw_ss())[EVERY_MEM] >>
+    simp[Once code_locs_cons] >>
+    srw_tac[][] >> res_tac >> fsrw_tac[ARITH_ss][] >>
+    NO_TAC ) >>
+  ‘transitive prim_rec$<’ by fs [transitive_def] >>
+  simp [sortingTheory.SORTED_APPEND] >>
+  rpt conj_tac >>
+  TRY (
+    srw_tac[][] >> full_simp_tac(srw_ss())[EVERY_MEM] >> res_tac >> fsrw_tac[ARITH_ss][] >>
+    NO_TAC) >>
+  TRY (
+    simp[Once code_locs_cons] >>
+    simp [sortingTheory.SORTED_APPEND] >> simp[] >>
+    srw_tac[][] >> full_simp_tac(srw_ss())[EVERY_MEM] >> res_tac >> fsrw_tac[ARITH_ss][] >>
+    NO_TAC ) >>
+  TRY (
+    Cases_on`renumber_code_locs (n+2) e`>>full_simp_tac(srw_ss())[] >>
+    simp[less_sorted_eq] >>
+    imp_res_tac renumber_code_locs_imp_inc >>
+    srw_tac[][] >> full_simp_tac(srw_ss())[EVERY_MEM] >> res_tac >> fsrw_tac[ARITH_ss][] >>
+    NO_TAC) >>
+  fs[times_add_o,GSYM MAP_GENLIST,sorted_map,
+     SORTED_inv_image_LESS_PLUS,
+     SORTED_GENLIST_TIMES] >>
+  Cases_on `renumber_code_locs_list n (MAP SND fns)` >>
+  full_simp_tac(srw_ss())[] >>
+  Cases_on`renumber_code_locs (q+2 * LENGTH fns) e`>>full_simp_tac(srw_ss())[] >>
+  rpt(CHANGED_TAC tac >> full_simp_tac(srw_ss())[])>>
+  simp[MEM_GENLIST,MEM_MAP,PULL_EXISTS] >>
+  imp_res_tac renumber_code_locs_imp_inc >>
+  imp_res_tac renumber_code_locs_list_length >>
+  srw_tac[][] >> full_simp_tac(srw_ss())[EVERY_MEM] >> res_tac >> fsrw_tac[ARITH_ss][] >>
+  srw_tac[][] >> full_simp_tac(srw_ss())[EVERY_MEM] >> res_tac >> fsrw_tac[ARITH_ss][MAP_ZIP] >>
+  rev_full_simp_tac(srw_ss())[MAP_ZIP] >>
+  srw_tac[][] >> full_simp_tac(srw_ss())[EVERY_MEM] >> res_tac >> fsrw_tac[ARITH_ss][MAP_ZIP]);
+val _ = show "renumber_distinct_lemma_replay_typed=" renumber_distinct_lemma_replay;
 val helper_replay = Q.prove(
   `SND ((\(n',x'). (n',[x'])) x) = [SND x]`,
   Cases_on `x` >> full_simp_tac(srw_ss())[]);
