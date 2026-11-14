@@ -252,15 +252,13 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 
 end GenPartialMoveDataSupport
 
-/-- Full original partial-data simulation statement, source-reviewed with
-the unused HOL existential types retained. Original HOL parses `t0 : δ`
-and `t1 : ε`, independently of the state word-location carrier. HOL types are
-inhabited; the explicit `Nonempty` instances below preserve that interpretation
-for arbitrary Lean carriers instead of dropping or specializing the binders.
-HOL type variables range over nonempty carriers; these instances are the
-standard type interpretation, not an operational premise or another data
-representation translation. `conf`, `gs`, and `rs` are free in the original source and remain
-implicit parameters. All four original curried premise groups are retained. -/
+/-- Full original partial-data simulation statement (`stack_allocProofScript.sml:4124-4151`,
+    `[local]`). HOL's conclusion binds the vacuous existentials `t0 : δ` and
+    `t1 : ε` (independent, unconstrained type variables that occur nowhere in
+    the body); both are omitted here. The four `==>` premise groups are kept
+    curried, `conf`, `gs` and `rs` are free variables and remain implicit
+    parameters, and the state carries the reviewed `StackSemStateFiniteExact`
+    finite-map rendering. -/
 @[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
   "word_gen_gc_partial_move_data_code_thm"
   (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]

@@ -10,7 +10,10 @@ public import Flapjack.EvaluateProps.Length
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps Flapjack.EvaluateHOL
 
-/-- Value declarations preserve the source evaluator simulation. -/
+/-- Value declarations preserve the source evaluator simulation. The
+    `ExpsSimAt` motive omits HOL's vacuous `es` binder (an independent,
+    unconstrained type variable), matching the documented omission in
+    `eval_simulation`. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
 theorem evalSimulation_Dlet {Config F : Type} (ci : CompilerInstance Config) (s : State F)
     (env : SemEnv Value) (loc : Flapjack.Misc.Location.Locs) (pat : Pat) (expr : Flapjack.AstHOL.Exp)

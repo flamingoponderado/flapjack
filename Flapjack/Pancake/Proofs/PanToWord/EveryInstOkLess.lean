@@ -418,9 +418,15 @@ theorem everyInstOkLessCrepToLoopCompile {width : Nat} [NeZero width]
     exact ⟨⟨hexps _ _ _ hvs, everyProg_zipWith_assign c _ _⟩,
       by simp [everyProgHOL, loopInstOk], by simp⟩
   case seq f g =>
-    have hf := ih (sizeOf f) (by rw [← hs]; simp; omega) ctxt ns f rfl
+    have hf := ih (sizeOf f) (by
+                                 rw [← hs]
+                                 simp
+                                 omega) ctxt ns f rfl
       ⟨ht, fun e h => he e (by rw [crepExpsOfHOL]; simp [h])⟩
-    have hg := ih (sizeOf g) (by rw [← hs]; simp; omega) ctxt ns g rfl
+    have hg := ih (sizeOf g) (by
+                                 rw [← hs]
+                                 simp
+                                 omega) ctxt ns g rfl
       ⟨ht, fun e h => he e (by rw [crepExpsOfHOL]; simp [h])⟩
     rw [compileHOLExact.eq_def]; dsimp only
     unfold everyProgHOL
@@ -428,7 +434,10 @@ theorem everyInstOkLessCrepToLoopCompile {width : Nat} [NeZero width]
   case dec n v b =>
     have hv := he v (by rw [crepExpsOfHOL]; simp)
     rw [compileHOLExact.eq_def]; dsimp only
-    have hb := ih (sizeOf b) (by rw [← hs]; simp; omega)
+    have hb := ih (sizeOf b) (by
+                                 rw [← hs]
+                                 simp
+                                 omega)
       { ctxt with vars := ctxt.vars.updateEq (n, (compileExpHOLExact ctxt (ctxt.vmax + 1) ns v).2.2.1),
                   vmax := (compileExpHOLExact ctxt (ctxt.vmax + 1) ns v).2.2.1 }
       (sptInsert (compileExpHOLExact ctxt (ctxt.vmax + 1) ns v).2.2.1 () ns) b rfl
@@ -439,9 +448,15 @@ theorem everyInstOkLessCrepToLoopCompile {width : Nat} [NeZero width]
     exact ⟨by simp [loopInstOk], by simp [everyProgHOL, loopInstOk], hb⟩
   case ite cond t f =>
     have hc := he cond (by rw [crepExpsOfHOL]; simp)
-    have hT := ih (sizeOf t) (by rw [← hs]; simp; omega) ctxt ns t rfl
+    have hT := ih (sizeOf t) (by
+                                 rw [← hs]
+                                 simp
+                                 omega) ctxt ns t rfl
       ⟨ht, fun e h => he e (by rw [crepExpsOfHOL]; simp [h])⟩
-    have hF := ih (sizeOf f) (by rw [← hs]; simp; omega) ctxt ns f rfl
+    have hF := ih (sizeOf f) (by
+                                 rw [← hs]
+                                 simp
+                                 omega) ctxt ns f rfl
       ⟨ht, fun e h => he e (by rw [crepExpsOfHOL]; simp [h])⟩
     rw [compileHOLExact.eq_def]; dsimp only
     rw [everyProgLoopInstOkNestedSeq]
@@ -451,7 +466,10 @@ theorem everyInstOkLessCrepToLoopCompile {width : Nat} [NeZero width]
     exact ⟨by simp [loopInstOk], hT, hF⟩
   case «while» cond b =>
     have hc := he cond (by rw [crepExpsOfHOL]; simp)
-    have hb := ih (sizeOf b) (by rw [← hs]; simp; omega) ctxt ns b rfl
+    have hb := ih (sizeOf b) (by
+                                 rw [← hs]
+                                 simp
+                                 omega) ctxt ns b rfl
       ⟨ht, fun e h => he e (by rw [crepExpsOfHOL]; simp [h])⟩
     rw [compileHOLExact.eq_def]; dsimp only
     unfold everyProgHOL
@@ -473,7 +491,10 @@ theorem everyInstOkLessCrepToLoopCompile {width : Nat} [NeZero width]
     rcases ri with _ | ⟨rv, _ | ⟨exn, hp⟩⟩
     · simp [everyProgHOL, loopInstOk]
     · simp [everyProgHOL, loopInstOk]
-    · have hh := ih (sizeOf hp) (by rw [← hs]; simp; omega) ctxt ns hp rfl
+    · have hh := ih (sizeOf hp) (by
+                                    rw [← hs]
+                                    simp
+                                    omega) ctxt ns hp rfl
         ⟨ht, fun e h => he e (by rw [crepExpsOfHOL]; simp [h])⟩
       dsimp only
       unfold everyProgHOL
@@ -625,18 +646,36 @@ theorem crepExpsOfHOL_crepSimpProgHOL {width : Nat} [NeZero width] :
   cases prog
   case dec n v b =>
     simp only [crepSimpProgHOL, crepExpsOfHOL, List.map_cons]
-    rw [ih (sizeOf b) (by rw [← hs]; simp; omega) b rfl]
+    rw [ih (sizeOf b) (by
+                          rw [← hs]
+                          simp
+                          omega) b rfl]
   case seq f g =>
     simp only [crepSimpProgHOL, crepExpsOfHOL, List.map_append]
-    rw [ih (sizeOf f) (by rw [← hs]; simp; omega) f rfl,
-      ih (sizeOf g) (by rw [← hs]; simp; omega) g rfl]
+    rw [ih (sizeOf f) (by
+                          rw [← hs]
+                          simp
+                          omega) f rfl,
+      ih (sizeOf g) (by
+                        rw [← hs]
+                        simp
+                        omega) g rfl]
   case ite c t f =>
     simp only [crepSimpProgHOL, crepExpsOfHOL, List.map_cons, List.map_append]
-    rw [ih (sizeOf t) (by rw [← hs]; simp; omega) t rfl,
-      ih (sizeOf f) (by rw [← hs]; simp; omega) f rfl]
+    rw [ih (sizeOf t) (by
+                          rw [← hs]
+                          simp
+                          omega) t rfl,
+      ih (sizeOf f) (by
+                        rw [← hs]
+                        simp
+                        omega) f rfl]
   case «while» c b =>
     simp only [crepSimpProgHOL, crepExpsOfHOL, List.map_cons]
-    rw [ih (sizeOf b) (by rw [← hs]; simp; omega) b rfl]
+    rw [ih (sizeOf b) (by
+                          rw [← hs]
+                          simp
+                          omega) b rfl]
   case call ri name args =>
     cases ri with
     | none => simp [crepSimpProgHOL, crepExpsOfHOL]
@@ -647,7 +686,10 @@ theorem crepExpsOfHOL_crepSimpProgHOL {width : Nat} [NeZero width] :
       | some hbpair =>
         obtain ⟨exn, hb⟩ := hbpair
         simp only [crepSimpProgHOL, crepExpsOfHOL, List.map_append]
-        rw [ih (sizeOf hb) (by rw [← hs]; simp; omega) hb rfl]
+        rw [ih (sizeOf hb) (by
+                               rw [← hs]
+                               simp
+                               omega) hb rfl]
   all_goals simp [crepSimpProgHOL, crepExpsOfHOL]
 
 /-- Full original every_inst_ok_arith_simp_prog (`pan_to_wordProofScript.sml:910-925`). -/

@@ -57,21 +57,59 @@ def panGlobalsByteAlignedHOL {width : Nat} [NeZero width]
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "disjoint_globals_def"
   (fmap_as_finite_support_relation := [cglobals, globals])
   (words_as_type_indexed_bitvec)]
-def disjointGlobalsHOLExact {width : Nat} [NeZero width] {κ V : Type} [DecidableEq κ]
+def disjointGlobalsHOLExact {width : Nat} [NeZero width] {κ V : Type}
     (topAddress : BitVec width)
     (cglobals : HolFiniteMapExact κ (ShapeHOL × BitVec width))
     (globals : HolFiniteMapExact κ V) : Prop :=
   ∀ name name' shape address shape' address',
-    name ≠ name' →
-    globals.lookup name ≠ none →
-    globals.lookup name' ≠ none →
-    cglobals.lookup name = some (shape, address) →
+    name ≠ name' ∧
+    globals.lookup name ≠ none ∧
+    globals.lookup name' ≠ none ∧
+    cglobals.lookup name = some (shape, address) ∧
     cglobals.lookup name' = some (shape', address') →
     ∀ slot,
       ¬ (Flapjack.Compiler.Backend.StackRemove.addresses
           (topAddress - address) (sizeOfShapeHOL shape) slot ∧
         Flapjack.Compiler.Backend.StackRemove.addresses
           (topAddress - address') (sizeOfShapeHOL shape') slot)
+
+/-- Curried eliminator for `disjointGlobalsHOLExact`: HOL states one
+    five-conjunct premise, this keeps Lean callers reading the five arguments. -/
+theorem disjointGlobalsHOLExact_apply {width : Nat} [NeZero width] {κ V : Type}
+    {topAddress : BitVec width}
+    {cglobals : HolFiniteMapExact κ (ShapeHOL × BitVec width)}
+    {globals : HolFiniteMapExact κ V}
+    (h : disjointGlobalsHOLExact topAddress cglobals globals)
+    {name name' : κ} {shape : ShapeHOL} {address : BitVec width}
+    {shape' : ShapeHOL} {address' : BitVec width}
+    (hne : name ≠ name') (hg : globals.lookup name ≠ none)
+    (hg' : globals.lookup name' ≠ none)
+    (hc : cglobals.lookup name = some (shape, address))
+    (hc' : cglobals.lookup name' = some (shape', address')) :
+    ∀ slot,
+      ¬ (Flapjack.Compiler.Backend.StackRemove.addresses
+          (topAddress - address) (sizeOfShapeHOL shape) slot ∧
+        Flapjack.Compiler.Backend.StackRemove.addresses
+          (topAddress - address') (sizeOfShapeHOL shape') slot) :=
+  h name name' shape address shape' address' ⟨hne, hg, hg', hc, hc'⟩
+
+/-- Curried introduction form for `disjointGlobalsHOLExact`. -/
+theorem disjointGlobalsHOLExact_intro {width : Nat} [NeZero width] {κ V : Type}
+    (topAddress : BitVec width)
+    (cglobals : HolFiniteMapExact κ (ShapeHOL × BitVec width))
+    (globals : HolFiniteMapExact κ V)
+    (h : ∀ name name' shape address shape' address',
+      name ≠ name' → globals.lookup name ≠ none → globals.lookup name' ≠ none →
+      cglobals.lookup name = some (shape, address) →
+      cglobals.lookup name' = some (shape', address') →
+      ∀ slot,
+        ¬ (Flapjack.Compiler.Backend.StackRemove.addresses
+            (topAddress - address) (sizeOfShapeHOL shape) slot ∧
+          Flapjack.Compiler.Backend.StackRemove.addresses
+            (topAddress - address') (sizeOfShapeHOL shape') slot)) :
+    disjointGlobalsHOLExact topAddress cglobals globals :=
+  fun name name' shape address shape' address' hab =>
+    h name name' shape address shape' address' hab.1 hab.2.1 hab.2.2.1 hab.2.2.2.1 hab.2.2.2.2
 
 /-- Same-module canonical finite-map relation witness for the exact
     `PanSemStateFiniteExact` carrier. -/

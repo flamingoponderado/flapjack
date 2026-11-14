@@ -46,7 +46,7 @@ theorem initializerMapsDisjoint {width : Nat} {σ : Type} [NeZero width]
       freeBase address).mpr (Or.inr (by simpa only [panBytesInWord] using h))
     simpa only [Nat.add_comm] using h'
   obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, hdisjoint, _⟩ := hrel
-  intro key key' sh addr sh' addr' hne hk hk' hc hc' address
+  intro key key' sh addr sh' addr' ⟨hne, hk, hk', hc, hc'⟩ address
   change (source.globals.update (name, value)).lookup key ≠ none at hk
   change (source.globals.update (name, value)).lookup key' ≠ none at hk'
   by_cases heq : key = name
@@ -78,6 +78,6 @@ theorem initializerMapsDisjoint {width : Nat} {σ : Type} [NeZero width]
         simpa [HolFiniteMapExact.lookup_update_pointwise, FUPDATE, heq', Ne.symm heq'] using hk'
       have hctx' : context.globals.lookup key' = some (sh', addr') := by
         simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, heq'] using hc'
-      exact hdisjoint key key' sh addr sh' addr' hne hold hold' hctx hctx' address
+      exact disjointGlobalsHOLExact_apply hdisjoint hne hold hold' hctx hctx' address
 
 end Flapjack.PanGlobalsInitGlobalsMapDisjoint

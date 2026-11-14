@@ -304,7 +304,11 @@ theorem listRelFlattenWithShapeFlookupHOL {α : Type} [DecidableEq α]
       sizeOfShapeHOL (.comb (shapes.take n)) + n']? = (flattenHOL value)[n']? := by
     rw [hident, List.length_flatten, List.map_take,
       getElem?_flatten_take_sum (l := args.map flattenHOL) (n := n) (n' := n')
-        (by rw [List.length_map]; exact hn) (by rw [List.getElem_map, hget]; exact hn'val)]
+        (by
+          rw [List.length_map]
+          exact hn) (by
+          rw [List.getElem_map, hget]
+          exact hn'val)]
     rw [List.getElem_map, hget]
   have hflatElem : ((args.map flattenHOL).flatten)[
       sizeOfShapeHOL (.comb (shapes.take n)) + n']'hbound' =

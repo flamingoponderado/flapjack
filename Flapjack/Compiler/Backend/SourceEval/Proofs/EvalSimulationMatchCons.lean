@@ -10,7 +10,10 @@ public import Flapjack.NamespaceProps
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps Flapjack.EvaluateHOL
 
-/-- A pattern-match row preserves the source evaluator simulation. -/
+/-- A pattern-match row preserves the source evaluator simulation. The
+    `ExpsSimAt` motive omits HOL's vacuous `es` binder (an independent,
+    unconstrained type variable), matching the documented omission in
+    `eval_simulation`. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
 theorem evalSimulation_MatchCons {Config F : Type} (ci : CompilerInstance Config)
     (s : State F) (env : SemEnv Value) (x : Value) (pat : Pat) (expr : Flapjack.AstHOL.Exp)
