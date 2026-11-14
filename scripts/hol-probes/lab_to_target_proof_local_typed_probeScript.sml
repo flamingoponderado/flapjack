@@ -76,15 +76,45 @@ fun statement_of name =
     else stmt
   end;
 
+(* SML antiquotation splices a *typed* term into a statement, e.g.
+     val s1 = ``s1:('a,lab_to_target$config,'ffi) labSem$state``;
+     code_similar ^s1.code code2
+   makes HOL fix labSem's configuration type to lab_to_target$config. Deleting
+   the splice would drop that constraint and print a free type variable, so
+   expand `val name = ``term``;` bindings to `(term)` instead. An unknown
+   splice is left intact so the re-parse fails loudly rather than silently
+   weakening the captured statement. *)
+fun antiquote_env lines =
+  List.foldl (fn (l, acc) =>
+    let val l' = strip_leading l in
+      if not (String.isPrefix "val " l') then acc
+      else
+        case String.tokens (fn c => c = #" ") l' of
+          ("val" :: name :: _) =>
+            (case String.tokens (fn c => c = #"`") l' of
+               (_ :: body :: _) =>
+                 if String.size body = 0 then acc else (name, body) :: acc
+             | _ => acc)
+        | _ => acc
+    end) [] lines;
+
+val antiquote_bindings = antiquote_env source_lines;
+
 fun strip_antiquote s =
   let
+    fun take_name (cs, acc) =
+      case cs of
+        (c :: rest) => if Char.isAlphaNum c orelse c = #"_"
+                       then take_name (rest, c :: acc)
+                       else (String.implode (List.rev acc), cs)
+      | [] => (String.implode (List.rev acc), [])
     fun go [] acc = String.concat (List.rev acc)
       | go (#"^" :: rest) acc =
-        (case rest of
-           (c :: _) => if Char.isAlphaNum c orelse c = #"_"
-                       then go rest acc
-                       else go rest (String.str #"^" :: acc)
-         | [] => go rest (String.str #"^" :: acc))
+        let val (name, rest') = take_name (rest, []) in
+          case List.find (fn (k, _) => k = name) antiquote_bindings of
+            SOME (_, body) => go rest' (("(" ^ body ^ ")") :: acc)
+          | NONE => go rest (String.str #"^" :: acc)
+        end
       | go (c :: rest) acc = go rest (String.str c :: acc)
   in go (String.explode s) [] end;
 

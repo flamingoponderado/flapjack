@@ -10301,7 +10301,12 @@ through its symmetric statement, and four `Overload` abbreviations captured
 with `print_without_macros` so the expansion rather than the overload name is
 printed. `semantics_compile_lemma` is derived in the source from
 `semantics_compile_lemma'`; the probe rebuilds that statement at term level
-(fifteen-conjunct antecedent implying `implements' T ...`). Regenerate with
-`CAKEML=<cakeml tree>
+(fifteen-conjunct antecedent implying `implements' T ...`). Statements that
+splice an SML antiquotation (`val s1 = ``s1:('a,lab_to_target$config,'ffi)
+labSem$state``;` used as `^s1`) are captured with the splice *expanded* to
+`(term)`, so the printed types keep HOL's type constraints: the eleven
+`IMP_bytes_in_memory_*` lemmas print `(α, config, 'ffi)` while
+`IMP_bytes_in_memory_JumpReg` (no splice) prints a free configuration type.
+Regenerate with `CAKEML=<cakeml tree>
 HOL_PROBE_ONLY=lab_to_target_proof_local_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
