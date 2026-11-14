@@ -149,4 +149,20 @@ theorem functionRel_target_arity_pos {maxApp : Nat} {source target : Nat × Clos
   obtain ⟨_, names, _, _, _, _, _, eq⟩ := related
   omega
 
+/-- No target function in related function lists has zero arity. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "LIST_REL_f_rel_IMP"]
+theorem functionRelList_no_zero (maxApp : Nat) (target source : List (Nat × ClosLang.Exp))
+    (related : List.Forall₂ (FunctionRel maxApp) source target) :
+    ∀ body, (0, body) ∉ target := by
+  induction related with
+  | nil => simp
+  | @cons left right ls rs head tail ih =>
+    intro body member
+    simp only [List.mem_cons] at member
+    rcases member with equal | member
+    · have positive := functionRel_target_arity_pos head
+      rw [← equal] at positive
+      omega
+    · exact ih body member
+
 end Flapjack.Compiler.Backend.ClosMti

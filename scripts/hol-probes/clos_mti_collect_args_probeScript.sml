@@ -8,6 +8,15 @@ val _ = diminish_srw_ss ["ABBREV"];
 fun bring_fwd_ctors th ty = map ((fn s => Parse.bring_to_front_overload s {Name = s, Thy = th}) o term_to_string) (TypeBase.constructors_of ty);
 val _ = bring_fwd_ctors "closLang" ``:closLang$exp``;
 
+(* Literal replay of clos_mtiProofScript.sml:486-492. *)
+Theorem function_rel_list_no_zero_replay:
+  !fns funs1. LIST_REL (clos_mtiProof$f_rel max_app) funs1 fns ==> !x. ~(MEM (0,x) fns)
+Proof
+  Induct \\ fs [PULL_EXISTS] \\ rw [] \\ res_tac
+  \\ res_tac \\ fs []
+  \\ Cases_on `x` \\ Cases_on `h` \\ fs [clos_mtiProofTheory.f_rel_def]
+QED
+
 (* Literal replay of clos_mtiProofScript.sml:509-513. *)
 Theorem value_rel_opt_replay:
   clos_mtiProof$v_rel_opt m = OPTREL (clos_mtiProof$v_rel m)
@@ -182,6 +191,7 @@ fun show label th =
     (print label; print "="; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 val _ = show "every_hd_replay_typed" every_hd_replay;
+val _ = show "function_rel_list_no_zero_replay_typed" function_rel_list_no_zero_replay;
 val _ = show "value_rel_opt_replay_typed" value_rel_opt_replay;
 val _ = show "value_rel_to_bytes_replay_typed" value_rel_to_bytes_replay;
 val _ = show "value_rel_to_words_replay_typed" value_rel_to_words_replay;
@@ -192,6 +202,7 @@ val _ = show "result_rel_rval2_typed" clos_mtiProofTheory.result_rel_Rval2;
 val _ = show "intro_multi_nil_typed" clos_mtiProofTheory.intro_multi_nil;
 val _ = show "intro_multi_eq_nil_typed" clos_mtiProofTheory.intro_multi_EQ_NIL;
 val _ = show "do_app_lemma_typed" clos_mtiProofTheory.do_app_lemma;
+val _ = show "value_rel_simps_typed" clos_mtiProofTheory.v_rel_simps;
 val _ = show "mk_fns_def_typed" mk_Fns_def;
 val _ = show "collect_args_def_typed" collect_args_def;
 val _ = show "collect_args_imp_typed" collect_args_IMP;

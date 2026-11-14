@@ -315,7 +315,7 @@ finite correspondence evidence, not a proof of equivalence with the complete
 HOL compiler. Regenerate with
 `HOL_PROBE_ONLY=data_to_word_fragment_comp_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-`clos_mti_collect_args_probe.out` captures typed operation and result-relation, empty-output, compile-length, and application-safety theorems, replays of the local EVERY_HD, optional relation, and value-decoder lemmas, and the typed original argument and
+`clos_mti_collect_args_probe.out` captures the full value-relation characterization and typed operation, result-relation, empty-output, compile-length, and application-safety theorems, replays of local function-list, EVERY_HD, optional relation, and value-decoder lemmas, and the typed original argument and
 application collectors and replays the nested function/application definitions,
 accumulator lemmas, syntax preservation and reconstruction invariants. Regenerate with
 `HOL_PROBE_ONLY=clos_mti_collect_args_probeScript.sml scripts/hol-probes/regenerate.sh`.

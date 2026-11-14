@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "LIST_REL_f_rel_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
+    "lean_name": "functionRelList_no_zero",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Typed literal replay confirms arbitrary max_app and source/target lists, the source-to-target function relation premise, and universal exclusion of zero-arity target pairs."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "hol_name": "v_rel_opt_thm",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
     "lean_name": "valueRelOpt_eq_optionRel",
