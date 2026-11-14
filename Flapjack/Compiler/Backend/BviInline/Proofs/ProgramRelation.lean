@@ -62,7 +62,7 @@ theorem inlineAllSource_related_of_output (program : List (Nat × Nat × Bvi.Exp
     · subst key
       simp [sptAListLookup] at lookup
       rcases lookup with ⟨rfl, rfl⟩
-      exact ⟨body', by simp [sptAListLookup], inlineExpSource_rel cache code body subset⟩
+      exact ⟨body', by simp [sptAListLookup], (inlineExpRel cache code subset).1 body⟩
     · have tailLookup : sptAListLookup key rest = some (count, original) := by
         simpa [sptAListLookup, same] using lookup
       obtain ⟨transformed, found, related⟩ := ih cache' nextSubset tailEntries key count original tailLookup

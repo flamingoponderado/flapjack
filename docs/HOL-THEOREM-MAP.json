@@ -139400,4 +139400,13 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: independent compiler and FFI types, the strict clock < tick count boundary, timeout with clock zero, and full body evaluation after clock decrement are retained. BVI refs use the canonical finite-support map with a same-module roundtrip. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8)."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "inline_exp_rel",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/ExpRelation.lean",
+    "lean_name": "inlineExpRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: cache inclusion implies both the universal expression relation and the pointwise expression-list relation for the corresponding inliner results."
+  }
 ]

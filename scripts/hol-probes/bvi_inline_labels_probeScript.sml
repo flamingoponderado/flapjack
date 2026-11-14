@@ -507,3 +507,6 @@ val _ = show "evaluate_expand_env_typed" bvi_inlineProofTheory.evaluate_expand_e
 
 (* Capture the exported original tick-evaluation theorem with inferred types. *)
 val _ = show "evaluate_bvi_mk_tick_typed" bvi_inlineProofTheory.evaluate_bvi_mk_tick;
+
+(* Capture the exported original mutual expression-relation theorem. *)
+val _ = show "inline_exp_rel_typed" bvi_inlineProofTheory.inline_exp_rel;

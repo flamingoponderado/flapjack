@@ -184,7 +184,7 @@ end
 mutual
 /-- Flapjack infrastructure: inlining an expression produces an expression
 related under any code tree containing the cache. -/
-theorem inlineExpSource_rel (cache code : Spt (Nat × Bvi.Exp)) (expression : Bvi.Exp)
+private theorem inlineExpSource_rel (cache code : Spt (Nat × Bvi.Exp)) (expression : Bvi.Exp)
     (subset : sptSubspt cache code) : ExpRel code expression (inlineExpSource cache expression) := by
   cases expression with
   | var n => simpa [inlineExpSource] using ExpRel.var (code := code) n
@@ -231,7 +231,7 @@ decreasing_by all_goals simp_wf <;> omega
 
 /-- Flapjack infrastructure: inlining a list preserves the pointwise
 expression relation under the same cache inclusion. -/
-theorem inlineExpsSource_rel (cache code : Spt (Nat × Bvi.Exp)) (expressions : List Bvi.Exp)
+private theorem inlineExpsSource_rel (cache code : Spt (Nat × Bvi.Exp)) (expressions : List Bvi.Exp)
     (subset : sptSubspt cache code) : List.Forall₂ (ExpRel code) expressions (inlineExpsSource cache expressions) := by
   cases expressions with
   | nil => simp [inlineExpsSource]
@@ -241,5 +241,15 @@ theorem inlineExpsSource_rel (cache code : Spt (Nat × Bvi.Exp)) (expressions : 
 termination_by sizeOf expressions
 decreasing_by all_goals (simp_wf; omega)
 end
+
+
+/-- Inlining an expression or expression list preserves the expression
+relation when the target code contains the inlining cache. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "inline_exp_rel"]
+theorem inlineExpRel (cache code : Spt (Nat × Bvi.Exp)) (subset : sptSubspt cache code) :
+    (∀ expression, ExpRel code expression (inlineExpSource cache expression)) ∧
+    (∀ expressions, List.Forall₂ (ExpRel code) expressions (inlineExpsSource cache expressions)) := by
+  exact ⟨fun expression => inlineExpSource_rel cache code expression subset,
+    fun expressions => inlineExpsSource_rel cache code expressions subset⟩
 
 end Flapjack.Compiler.Backend.BviInline
