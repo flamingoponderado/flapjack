@@ -11690,3 +11690,52 @@ run_probe riscv_target_proof_local_typed_probeScript.sml riscv_target_proof_loca
   riscv_target_ok_typed ror_typed word_bit_0_add4_typed word_extract_6_typed \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe source_to_flat_config_typed_probeScript.sml source_to_flat_config_typed_probe.out \
+  alloc_env_ref_def_typed compile_flat_def_typed environment_generation_store_typed \
+  environment_store_typed glob_alloc_def_typed inc_compile_def_typed inc_compile_prog_def_typed \
+  lookup_env_id_def_typed next_indices_typed store_env_id_def_typed var_name_typed \
+  "$cake_dir/compiler/backend/source_to_flatScript.sml" \
+  "$cake_dir/compiler/backend"
+run_probe loop_props_local_typed_probeScript.sml loop_props_local_typed_probe.out \
+  acc_vars_acc_typed assigned_vars_nested_assign_typed assigned_vars_nested_seq_split_typed \
+  assigned_vars_seq_split_typed comp_syn_cut_sets_mem_domain_typed \
+  comp_syn_impl_cut_sets_subspt_typed comp_syn_ok_lookup_locals_eq_typed \
+  comp_syn_ok_nested_seq_typed comp_syn_ok_nested_seq2_typed comp_syn_ok_seq2_typed \
+  comp_syn_ok_upd_local_clock_typed comp_syntax_ok_def_typed cut_sets_def_typed \
+  cut_sets_nested_seq_typed cut_sets_union_domain_subset_typed \
+  cut_sets_union_domain_union_typed eval_upd_locals_clock_eq_typed \
+  evaluate_nested_seq_cases_typed evaluate_nested_seq_comb_seq_typed \
+  evaluate_tail_calls_eqs_typed every_prog_def_typed get_vars_clock_upd_eq_typed \
+  get_vars_local_clock_upd_eq_typed get_vars_local_update_some_eq_typed \
+  locals_touched_eq_eval_eq_typed lookup_alist_insert_any_typed \
+  loop_eval_nested_assign_distinct_eq_typed nested_assigns_survives_typed \
+  nested_seq_pure_evaluation_typed survives_def_typed survives_nested_seq_intro_typed \
+  unassigned_vars_evaluate_same_typed \
+  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
+run_probe word_inst_proof_local_typed_probeScript.sml word_inst_proof_local_typed_probe.out \
+  EL_FILTER_typed EVERY_is_const_word_exp_typed PERM_SWAP_typed PERM_SWAP_SIMP_typed \
+  all_consts_simp_typed convert_sub_every_var_exp_typed convert_sub_ok_typed \
+  flatten_exp_binary_branch_exp_typed flatten_exp_every_var_exp_typed flatten_exp_ok_typed \
+  inst_select_exp_thm_typed locals_rel_cut_envs_local_typed locals_rm_typed \
+  optimize_consts_every_var_exp_typed optimize_consts_ok_typed pull_exp_every_var_exp_typed \
+  pull_exp_ok_typed pull_ops_ok_typed pull_ops_simp_pull_ops_perm_typed \
+  pull_ops_simp_pull_ops_word_exp_typed the_words_append_typed word_exp_op_mono_typed \
+  word_exp_op_op_typed word_exp_op_permute_lem_typed word_exp_reduce_const_typed \
+  word_exp_swap_head_typed \
+  "$cake_dir/compiler/backend/proofs/word_instProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+run_probe word_props_local_typed_probeScript.sml word_props_local_typed_probe.out \
+  call_env_option_le_stack_max_typed call_push_env_option_le_stack_max_typed \
+  dec_stack_stack_key_eq_typed handler_eq_typed inst_code_gc_fun_const_typed \
+  locals_rel_delete_typed locals_rel_set_var_typed s_frame_key_eq_sym_typed \
+  s_frame_key_eq_trans_typed s_frame_val_eq_sym_typed s_frame_val_eq_trans_typed \
+  s_key_eq_APPEND_typed s_key_eq_LASTN_typed s_key_eq_LASTN_exists_typed s_key_eq_REVERSE_typed \
+  s_key_eq_TAKE_typed s_val_eq_APPEND_typed s_val_eq_LASTN_typed s_val_eq_REVERSE_typed \
+  s_val_eq_TAKE_typed s_val_eq_dec_stack_typed s_val_eq_enc_stack_typed s_val_eq_tail_typed \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+run_probe gen_gc_partial_local_typed_probeScript.sml gen_gc_partial_local_typed_probe.out \
+  gc_move_data_r1_typed \
+  "$cake_dir/compiler/backend/gc/gen_gc_partialScript.sml" \
+  "$cake_dir/compiler/backend/gc"

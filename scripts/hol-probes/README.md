@@ -10372,3 +10372,19 @@ copy (`compiler/encoders/riscv` then `compiler/encoders/riscv/proofs`, with
 `HOLDIR/examples/l3-machine-code/riscv/prog` on the include path). Regenerate
 with `CAKEML=<cakeml tree> HOL_PROBE_ONLY=riscv_target_proof_local_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`source_to_flat_config_typed_probe.out` (11 rows),
+`loop_props_local_typed_probe.out` (32 rows),
+`word_inst_proof_local_typed_probe.out` (26 rows),
+`word_props_local_typed_probe.out` (23 rows) and
+`gen_gc_partial_local_typed_probe.out` (1 row) capture the typed statements of
+the reviewed `source_to_flatScript.sml`, `loopPropsScript.sml`,
+`word_instProofScript.sml`, `wordPropsScript.sml` and `gen_gc_partialScript.sml`
+rows that the earlier probes did not cover (task 180). Exported definitions are
+fetched from the theory DB, datatypes are captured as constructor signatures
+through `TypeBase.constructors_of`, and `[local]` theorems are parsed from the
+pinned source text with the shared splice-expanding helper. None of these five
+scripts declares a `[local]` Overload that the captured statements use
+(`wordPropsScript.sml`'s `PERM_STACK` is exported). Regenerate with
+`CAKEML=<cakeml tree> HOL_PROBE_ONLY=<probe>Script.sml
+scripts/hol-probes/regenerate.sh`.

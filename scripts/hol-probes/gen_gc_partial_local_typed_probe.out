@@ -1,0 +1,1 @@
+gc_move_data_r1_typed=∀(refs :(α, β) heap_element list) (state :(α, β) gc_state) (conf :β gen_gc_partial_conf). (gc_move_data conf (state with r1 := refs)).r1 = refs
