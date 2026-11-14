@@ -234,9 +234,9 @@ theorem lineOk_labelTarget {width : Nat} [NeZero width] (c : AsmConfigExact widt
 
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
   "IMP_bytes_in_memory_Jump" (words_as_type_indexed_bitvec)]
-theorem imp_bytesInMemory_jump {width : Nat} [NeZero width] {S Q F : Type}
+theorem imp_bytesInMemory_jump {width : Nat} [NeZero width] {S Q C F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
-    (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
+    (s1 : LabSem.State width C F) (code2 : LabProgHOL width) (p : BitVec width)
     (t1 : AsmState width) (jtarget : Lab) (l : BitVec width) (bytes : List (BitVec 8))
     (n : Nat) :
     codeSimilar s1.code code2 ∧ allEncOk mc.target.config labs ffis 0 code2 ∧
@@ -263,9 +263,9 @@ theorem imp_bytesInMemory_jump {width : Nat} [NeZero width] {S Q F : Type}
 
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
   "IMP_bytes_in_memory_JumpCmp" (words_as_type_indexed_bitvec)]
-theorem imp_bytesInMemory_jumpCmp {width : Nat} [NeZero width] {S Q F : Type}
+theorem imp_bytesInMemory_jumpCmp {width : Nat} [NeZero width] {S Q C F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
-    (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
+    (s1 : LabSem.State width C F) (code2 : LabProgHOL width) (p : BitVec width)
     (t1 : AsmState width) (cmp : HolCmp) (rr : Nat) (ri : HolRegImm width) (jtarget : Lab)
     (l : BitVec width) (bytes : List (BitVec 8)) (n : Nat) :
     codeSimilar s1.code code2 ∧ allEncOk mc.target.config labs ffis 0 code2 ∧
@@ -293,9 +293,9 @@ theorem imp_bytesInMemory_jumpCmp {width : Nat} [NeZero width] {S Q F : Type}
 
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
   "IMP_bytes_in_memory_JumpCmp_1" (words_as_type_indexed_bitvec)]
-theorem imp_bytesInMemory_jumpCmp_1 {width : Nat} [NeZero width] {S Q F : Type}
+theorem imp_bytesInMemory_jumpCmp_1 {width : Nat} [NeZero width] {S Q C F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
-    (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
+    (s1 : LabSem.State width C F) (code2 : LabProgHOL width) (p : BitVec width)
     (t1 : AsmState width) (cmp : HolCmp) (rr : Nat) (ri : HolRegImm width) (jtarget : Lab)
     (l : BitVec width) (bytes : List (BitVec 8)) (n : Nat) :
     codeSimilar s1.code code2 ∧ allEncOk mc.target.config labs ffis 0 code2 ∧
@@ -324,9 +324,9 @@ theorem imp_bytesInMemory_jumpCmp_1 {width : Nat} [NeZero width] {S Q F : Type}
 
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
   "IMP_bytes_in_memory_Call" (words_as_type_indexed_bitvec)]
-theorem imp_bytesInMemory_call {width : Nat} [NeZero width] {S Q F : Type}
+theorem imp_bytesInMemory_call {width : Nat} [NeZero width] {S Q C F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
-    (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
+    (s1 : LabSem.State width C F) (code2 : LabProgHOL width) (p : BitVec width)
     (t1 : AsmState width) (ww : Lab) (l : BitVec width) (bytes : List (BitVec 8)) (n : Nat) :
     codeSimilar s1.code code2 ∧ allEncOk mc.target.config labs ffis 0 code2 ∧
       bytesInMemHOL p (progToBytes code2) t1.mem t1.memDomain
@@ -344,9 +344,9 @@ theorem imp_bytesInMemory_call {width : Nat} [NeZero width] {S Q F : Type}
 
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
   "IMP_bytes_in_memory_LocValue" (words_as_type_indexed_bitvec)]
-theorem imp_bytesInMemory_locValue {width : Nat} [NeZero width] {S Q F : Type}
+theorem imp_bytesInMemory_locValue {width : Nat} [NeZero width] {S Q C F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
-    (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
+    (s1 : LabSem.State width C F) (code2 : LabProgHOL width) (p : BitVec width)
     (t1 : AsmState width) (reg l1 l2 : Nat) (l : BitVec width) (bytes : List (BitVec 8))
     (n : Nat) :
     codeSimilar s1.code code2 ∧ allEncOk mc.target.config labs ffis 0 code2 ∧
@@ -405,9 +405,9 @@ theorem imp_bytesInMemory_asmLine {width : Nat} [NeZero width] {S Q C F : Type}
 
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
   "IMP_bytes_in_memory_Inst" (words_as_type_indexed_bitvec)]
-theorem imp_bytesInMemory_inst {width : Nat} [NeZero width] {S Q F : Type}
+theorem imp_bytesInMemory_inst {width : Nat} [NeZero width] {S Q C F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
-    (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
+    (s1 : LabSem.State width C F) (code2 : LabProgHOL width) (p : BitVec width)
     (t1 : AsmState width) (i : HolInst width) (bytes : List (BitVec 8)) (len : Nat) :
     codeSimilar s1.code code2 ∧ allEncOk mc.target.config labs ffis 0 code2 ∧
       bytesInMemHOL p (progToBytes code2) t1.mem t1.memDomain
@@ -425,9 +425,9 @@ theorem imp_bytesInMemory_inst {width : Nat} [NeZero width] {S Q F : Type}
 
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
   "IMP_bytes_in_memory_Cbw" (words_as_type_indexed_bitvec)]
-theorem imp_bytesInMemory_cbw {width : Nat} [NeZero width] {S Q F : Type}
+theorem imp_bytesInMemory_cbw {width : Nat} [NeZero width] {S Q C F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
-    (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
+    (s1 : LabSem.State width C F) (code2 : LabProgHOL width) (p : BitVec width)
     (t1 : AsmState width) (r1 r2 : Nat) (bytes : List (BitVec 8)) (len : Nat) :
     codeSimilar s1.code code2 ∧ allEncOk mc.target.config labs ffis 0 code2 ∧
       bytesInMemHOL p (progToBytes code2) t1.mem t1.memDomain
@@ -445,9 +445,9 @@ theorem imp_bytesInMemory_cbw {width : Nat} [NeZero width] {S Q F : Type}
 
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
   "IMP_bytes_in_memory_CallFFI" (words_as_type_indexed_bitvec)]
-theorem imp_bytesInMemory_callFFI {width : Nat} [NeZero width] {S Q F : Type}
+theorem imp_bytesInMemory_callFFI {width : Nat} [NeZero width] {S Q C F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
-    (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
+    (s1 : LabSem.State width C F) (code2 : LabProgHOL width) (p : BitVec width)
     (t1 : AsmState width) (name : MlString) (l : BitVec width) (bytes : List (BitVec 8))
     (n : Nat) :
     codeSimilar s1.code code2 ∧ allEncOk mc.target.config labs ffis 0 code2 ∧
@@ -474,9 +474,9 @@ theorem imp_bytesInMemory_callFFI {width : Nat} [NeZero width] {S Q F : Type}
 
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
   "IMP_bytes_in_memory_Halt" (words_as_type_indexed_bitvec)]
-theorem imp_bytesInMemory_halt {width : Nat} [NeZero width] {S Q F : Type}
+theorem imp_bytesInMemory_halt {width : Nat} [NeZero width] {S Q C F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
-    (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
+    (s1 : LabSem.State width C F) (code2 : LabProgHOL width) (p : BitVec width)
     (t1 : AsmState width) (l : BitVec width) (bytes : List (BitVec 8)) (n : Nat) :
     codeSimilar s1.code code2 ∧ allEncOk mc.target.config labs ffis 0 code2 ∧
       bytesInMemHOL p (progToBytes code2) t1.mem t1.memDomain
@@ -501,9 +501,9 @@ theorem imp_bytesInMemory_halt {width : Nat} [NeZero width] {S Q F : Type}
 
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
   "IMP_bytes_in_memory_Install" (words_as_type_indexed_bitvec)]
-theorem imp_bytesInMemory_install {width : Nat} [NeZero width] {S Q F : Type}
+theorem imp_bytesInMemory_install {width : Nat} [NeZero width] {S Q C F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
-    (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
+    (s1 : LabSem.State width C F) (code2 : LabProgHOL width) (p : BitVec width)
     (t1 : AsmState width) (c : BitVec width) (l : List (BitVec 8)) (n : Nat) :
     codeSimilar s1.code code2 ∧ allEncOk mc.target.config labs ffis 0 code2 ∧
       bytesInMemHOL p (progToBytes code2) t1.mem t1.memDomain
@@ -541,9 +541,9 @@ theorem asmFetchAux_posVal_lengthEq {width : Nat} [NeZero width]
 
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
   "IMP_bytes_in_memory_ShareMem" (words_as_type_indexed_bitvec)]
-theorem imp_bytesInMemory_shareMem {width : Nat} [NeZero width] {S Q F : Type}
+theorem imp_bytesInMemory_shareMem {width : Nat} [NeZero width] {S Q C F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
-    (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
+    (s1 : LabSem.State width C F) (code2 : LabProgHOL width) (p : BitVec width)
     (t1 : AsmState width) (mop : HolMemop) (r : Nat) (ad : HolAddr width)
     (l : List (BitVec 8)) (n : Nat) :
     asmFetchAux s1.pc s1.code = some (.asm (.shareMem mop r ad) l n) ∧
