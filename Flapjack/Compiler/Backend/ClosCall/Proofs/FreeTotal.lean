@@ -108,21 +108,6 @@ theorem freeListFuel_succeeds (fuel : Nat) (xs : List Exp) (bound : listBudget x
 termination_by fuel
 end
 
-/-- The production free-variable retry cannot exhaust traversal fuel. -/
-theorem freeBounded_succeeds (fuel : Nat) (e : Exp) :
-    ∃ result, freeBounded fuel e = some result := by
-  cases h : freeFuel fuel e with
-  | some result => exact ⟨result, by simp [freeBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := freeFuel_succeeds (max fuel (expBudget e + 1)) e bound
-    exact ⟨result, by simp [freeBounded, h, done]⟩
-
-/-- Closedness checks cannot fail from free-variable traversal fuel. -/
-theorem closedFuel_succeeds (fuel : Nat) (e : Exp) : ∃ result, closedFuel fuel e = some result := by
-  obtain ⟨⟨e', free⟩, h⟩ := freeBounded_succeeds fuel e
-  exact ⟨_, by simp [closedFuel, h]; rfl⟩
-
 /-- Free-variable annotation preserves the length of an expression list. -/
 theorem freeListFuel_length (fuel : Nat) (es result : List Exp) (vars : DbVarSet)
     (run : freeListFuel fuel es = some (result, vars)) : result.length = es.length := by
