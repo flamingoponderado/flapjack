@@ -45,18 +45,4 @@ theorem stateRel_fields {C F : Type} (s t : State C F) (related : stateRel s t) 
   · simpa using congrArg (fun state : State C F => state.clock) fields
   · simpa using congrArg (fun state : State C F => state.ffi) fields
 
-/-- Code lookup commutes with tick removal under the relation. -/
-theorem stateRel_lookup {C F : Type} (s t : State C F) (related : stateRel s t) (name : Nat) :
-    sptLookup name t.code = (sptLookup name s.code).map
-      (fun (arity, body) => (arity, removeTicksSing body)) := by
-  have fields := congrArg (fun state : State C F => sptLookup name state.code) related.1
-  simpa [sptLookup_sptMap] using fields
-
-/-- Related compiler callbacks agree after transforming their program input. -/
-theorem stateRel_compile {C F : Type} (s t : State C F) (related : stateRel s t)
-    (config : C) (program : List (Nat × Nat × Bvl.Exp)) :
-    s.compile config program = t.compile config
-      (program.map fun (name, arity, body) => (name, arity, removeTicksSing body)) := by
-  exact congrFun (congrFun related.2 config) program
-
 end Flapjack.Compiler.Backend.BvlInline.Proofs

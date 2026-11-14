@@ -148,14 +148,4 @@ theorem introMultiBounded_eq_of_success (fuel maxApp : Nat) (e result : Exp)
     introMultiBounded fuel maxApp e = some result := by
   simp [introMultiBounded, success]
 
-/-- Whole-program multi-argument introduction cannot exhaust traversal fuel. -/
-theorem compileFuel_succeeds (fuel : Nat) (enabled : Bool) (maxApp : Nat) (es : List Exp) :
-    ∃ result, compileFuel fuel enabled maxApp es = some result := by
-  cases enabled with
-  | false => exact ⟨_, rfl⟩
-  | true =>
-    obtain ⟨result, h⟩ := mapM_succeeds es (introMultiBounded fuel maxApp) (by
-      intro e _; exact introMultiBounded_succeeds fuel maxApp e)
-    exact ⟨result, by simpa [compileFuel] using h⟩
-
 end Flapjack.Compiler.Backend.ClosMti
