@@ -12,6 +12,8 @@ val _ = show "renumber_imp_even_typed=" clos_numberProofTheory.renumber_code_loc
 val _ = show "renumber_labels_typed=" clos_numberProofTheory.renumber_code_locs_get_code_labels;
 val _ = show "renumber_no_labels_typed=" clos_numberProofTheory.renumber_code_locs_no_Labels;
 val _ = show "renumber_obeys_max_app_typed=" clos_numberProofTheory.renumber_code_locs_obeys_max_app;
+val _ = show "lookup_vars_none_related_typed=" clos_numberProofTheory.lookup_vars_NONE_related_env;
+val _ = show "lookup_vars_some_related_typed=" clos_numberProofTheory.lookup_vars_SOME_related_env;
 val _ = show "compile_inc_def_typed=" clos_numberTheory.compile_inc_def;
 val _ = show "make_even_def_typed=" miscTheory.make_even_def;
 val _ = show "even_make_even_typed=" miscTheory.EVEN_make_even;

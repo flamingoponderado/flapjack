@@ -1,6 +1,22 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "lookup_vars_NONE_related_env",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LookupVars.lean",
+    "lean_name": "lookupVars_none_relatedEnv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared lookup_vars_none_related_typed: related closure-value environments and the same natural index list imply the same lookup failure on either side, with the original equivalence and value-relation parameter. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "lookup_vars_SOME_related_env",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LookupVars.lean",
+    "lean_name": "lookupVars_some_relatedEnv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared lookup_vars_some_related_typed: the related input environments and both successful lookup equations imply the value relation between the two exact results, using the original shared index list and value-relation parameter. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "rel_update_thunk",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ThunkUpdate.lean",
     "lean_name": "rel_update_thunk",
