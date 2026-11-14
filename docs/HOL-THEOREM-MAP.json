@@ -1,6 +1,15 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "do_install",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/InstallTheorem.lean",
+    "lean_name": "do_install",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the source local theorem and do_install_replay_typed, replaying its original proof and local prerequisites. Both timeout and success cases, original premises, target existential, safety and maximum-application conditions, numbered expressions and final state relation agree. The timeout case retains its unused independent polymorphic err binder; the source compiler carrier is Nat paired with the target carrier and the FFI carrier is shared independently. The state uses canonical refs and code finite maps with a local roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "lookup_vars_NONE_related_env",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LookupVars.lean",
     "lean_name": "lookupVars_none_relatedEnv",

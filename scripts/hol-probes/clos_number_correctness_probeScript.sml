@@ -1,4 +1,5 @@
 (* Typed source statements for closure numbering correctness. *)
+load "preamble";
 load "clos_numberProofTheory";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
@@ -35,7 +36,8 @@ val _ = show "renumber_esgc_free_typed=" clos_numberProofTheory.renumber_code_lo
 val _ = show "every_fn_vs_none_every_typed=" closPropsTheory.every_Fn_vs_NONE_EVERY;
 val _ = show "renumber_code_locs_every_Fn_SOME_typed=" clos_numberProofTheory.renumber_code_locs_every_Fn_SOME;
 open closLangTheory clos_numberTheory clos_numberProofTheory closSemTheory closPropsTheory
-  listTheory rich_listTheory finite_mapTheory;
+  listTheory rich_listTheory finite_mapTheory backendPropsTheory miscTheory;
+open preamble;
 val state_rel_refs_replay = Q.prove(
   `state_rel s t ==> fmap_rel (ref_rel (v_rel t.max_app)) s.refs t.refs`,
   srw_tac[][state_rel_def]);
@@ -53,6 +55,58 @@ val rel_update_thunk_replay = Q.prove(
    gvs [state_rel_def, fmap_rel_def, FAPPLY_FUPDATE_THM] >> rw [] >>
    simp [Once v_rel_cases] >> metis_tac []));
 val _ = show "rel_update_thunk_replay_typed=" rel_update_thunk_replay;
+val state_rel_max_app_replay = Q.prove(`!s t. state_rel s t ==> s.max_app = t.max_app`, srw_tac[][state_rel_def]);
+val state_rel_clock_replay = Q.prove(`state_rel s t ==> s.clock = t.clock`, rw[state_rel_def]);
+val state_rel_code_replay = Q.prove(`state_rel s t ==> s.code = FEMPTY /\ t.code = FEMPTY`, rw[state_rel_def]);
+val v_to_bytes_replay = Q.prove(`v_rel m v w ==> v_to_bytes v = v_to_bytes w`, metis_tac [simple_val_rel, simple_val_rel_v_to_bytes]);
+val v_to_words_replay = Q.prove(`v_rel m v w ==> v_to_words v = v_to_words w`, metis_tac [simple_val_rel, simple_val_rel_v_to_words]);
+val do_install_replay = Q.prove(`state_rel s1 s2 ∧
+   LIST_REL (v_rel s1.max_app) x1 x2 ⇒
+   (∀err t. do_install x1 s1 = (Rerr (Rabort Rtimeout_error),t) ⇒
+            ?t'. do_install x2 s2 = (Rerr (Rabort Rtimeout_error),t') /\
+                 state_rel t t') ∧
+   (∀e1 t1. do_install x1 s1 = (Rval e1,t1) ⇒
+     ∃e2 t2. do_install x2 s2 = (Rval e2,t2) ∧
+             ¬contains_App_SOME t1.max_app (e1) ∧ t1.max_app = s1.max_app ∧
+             e2 = SND (compile_inc (FST(FST(s1.compile_oracle 0))) e1) ∧
+             state_rel t1 t2)`,
+strip_tac
+  >> `∃res. do_install x1 s1 = res` by fs[]
+  >> fs[do_install_def,case_eq_thms] >> rveq >> fs[]
+  >> imp_res_tac v_to_bytes_replay >> fs[]
+  >> imp_res_tac v_to_words_replay >> fs[]
+  >> pairarg_tac >> fs[] >> pairarg_tac >> fs[]
+  >> imp_res_tac state_rel_code_replay >> fs[]
+  >> imp_res_tac state_rel_max_app_replay >> fs[]
+  >> imp_res_tac state_rel_clock_replay >> fs[]
+  >> fs[shift_seq_def]
+  >> `s2.compile_oracle = state_co (ignore_table compile_inc) s1.compile_oracle` by fs[state_rel_def]
+  >> `s1.compile = state_cc (ignore_table compile_inc) s2.compile` by fs[state_rel_def]
+  >> fs[]
+  >> qpat_x_assum`state_co _ _ _ = _`mp_tac
+  >> simp[Once state_co_def]
+  >> pairarg_tac >> fs[]
+  >> pairarg_tac >> fs[]
+  >> strip_tac >> rveq
+  >> imp_res_tac ignore_table_imp >> fs[]
+  >> IF_CASES_TAC >> fs[]
+  >> simp[state_cc_def]
+  >> CASE_TAC >> fs[]
+  >> split_pair_case_tac >> fs[] >> rveq
+  >> simp[FST_state_co]
+  >> split_pair_case_tac >> fs[] >> rveq
+  >> split_pair_case_tac >> fs[] >> rveq
+  >> IF_CASES_TAC >> fs[]
+  >> fs[CaseEq"bool"]
+  >> fs[ignore_table_def]
+  >> pairarg_tac >> fs[] >> rveq
+  >> rename [`_ = (st1,code1)`]
+  >> `code1 <> []` by
+    (fs [compile_inc_def] >> pairarg_tac >> fs [] >> rveq >> fs [])
+  >> fs[state_rel_def,state_co_def,ignore_table_def]
+  >> fs[FUPDATE_LIST_THM]
+  >> metis_tac[FUPDATE_LIST_THM,FST,SND,DECIDE``(n+1n)+1 = n+2``,LENGTH_NIL]);
+val _ = show "do_install_replay_typed=" do_install_replay;
 val dest_closure_v_rel_none_replay = Q.prove(
   `!f args f' args'.
     v_rel max_app f f' /\ LIST_REL (v_rel max_app) args args' /\
