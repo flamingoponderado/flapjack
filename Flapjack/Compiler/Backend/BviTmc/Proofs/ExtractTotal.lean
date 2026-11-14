@@ -82,34 +82,4 @@ theorem extractListFuel_succeeds (fuel n loc tag : Nat) (xs : List Exp)
 termination_by fuel
 end
 
-/-- The executable extraction wrapper cannot fail due to traversal fuel. -/
-theorem extractListBounded_succeeds (fuel n loc tag : Nat) (xs : List Exp) :
-    ∃ result, extractListBounded fuel n loc tag xs = some result := by
-  cases h : extractListFuel fuel n loc tag xs with
-  | some result => exact ⟨result, by simp [extractListBounded, h]⟩
-  | none =>
-    have bound : listBudget xs < max fuel (listBudget xs + 1) := by omega
-    obtain ⟨result, done⟩ := extractListFuel_succeeds (max fuel (listBudget xs + 1)) n loc tag xs bound
-    exact ⟨result, by simp [extractListBounded, h, done]⟩
-
-/-- Constructor-block extraction cannot fail from traversal fuel. The inner
-`none` still represents an expression that does not match the optimization. -/
-theorem toBlockFuel_succeeds (fuel n loc : Nat) (e : Exp) :
-    ∃ result, toBlockFuel fuel n loc e = some result := by
-  cases e with
-  | op op xs =>
-    cases op with
-    | blockOp bop =>
-      cases bop with
-      | cons tag =>
-        obtain ⟨out, h⟩ := extractListBounded_succeeds fuel n loc tag xs
-        cases out with
-        | none => exact ⟨_, by simp [toBlockFuel, h]; rfl⟩
-        | some item =>
-          obtain ⟨bs, kind⟩ := item
-          cases kind <;> exact ⟨_, by simp [toBlockFuel, h]; rfl⟩
-      | _ => exact ⟨_, rfl⟩
-    | _ => exact ⟨_, rfl⟩
-  | _ => exact ⟨_, rfl⟩
-
 end Flapjack.Compiler.Backend.BviTmc

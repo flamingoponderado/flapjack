@@ -192,16 +192,15 @@ end
 /-- The executable retry always returns the source extraction result. -/
 theorem extractListBounded_eq_source (fuel n loc tag : Nat) (xs : List Exp) :
     extractListBounded fuel n loc tag xs = some (extractListSource n loc tag xs) := by
-  obtain ⟨result, run⟩ := extractListBounded_succeeds fuel n loc tag xs
   cases first : extractListFuel fuel n loc tag xs with
   | some value =>
     have equal := extractListFuel_success_eq fuel n loc tag xs value first
     simp [extractListBounded, first, equal]
   | none =>
-    have retry : extractListFuel (max fuel (listBudget xs + 1)) n loc tag xs = some result := by
-      simpa [extractListBounded, first] using run
+    have enough : listBudget xs < max fuel (listBudget xs + 1) := by omega
+    obtain ⟨result, retry⟩ := extractListFuel_succeeds (max fuel (listBudget xs + 1)) n loc tag xs enough
     have equal := extractListFuel_success_eq _ n loc tag xs result retry
-    simpa [equal] using run
+    simp [extractListBounded, first, retry, equal]
 
 /-- Source conversion of a direct call or constructor to a call block. -/
 @[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "bvi_to_cb_def"]

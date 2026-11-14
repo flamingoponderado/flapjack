@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractTotal
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractCorrespondence
 
 @[expose] public section
 
@@ -31,12 +31,12 @@ theorem rewriteWrapperFuel_succeeds (fuel loc next n : Nat) (e : Exp)
       obtain ⟨out, h⟩ := ih n x bx
       exact ⟨_, by simp [rewriteWrapperFuel, h]; rfl⟩
     | op op xs =>
-      obtain ⟨out, h⟩ := toBlockFuel_succeeds fuel n loc (.op op xs)
-      cases out with
-      | none => exact ⟨_, by simp [rewriteWrapperFuel, h]; rfl⟩
+      have h := toBlockFuel_eq_source fuel n loc (.op op xs)
+      cases out : toBlockSource n loc (.op op xs) with
+      | none => exact ⟨_, by simp [rewriteWrapperFuel, h, out]; rfl⟩
       | some item =>
         obtain ⟨bs, cb⟩ := item
-        cases cb <;> exact ⟨_, by simp [rewriteWrapperFuel, h]; rfl⟩
+        cases cb <;> exact ⟨_, by simp [rewriteWrapperFuel, h, out]; rfl⟩
     | _ => exact ⟨_, rfl⟩
 
 /-- Worker rewriting succeeds under a structural fuel bound. -/
@@ -61,15 +61,15 @@ theorem rewriteWorkerFuel_succeeds (fuel loc next ptr idx n : Nat) (e : Exp)
       obtain ⟨out, h⟩ := ih ptr idx n x bx
       exact ⟨_, by simp [rewriteWorkerFuel, h]; rfl⟩
     | op op xs =>
-      obtain ⟨out, h⟩ := toBlockFuel_succeeds fuel n loc (.op op xs)
-      cases out with
-      | none => exact ⟨_, by simp [rewriteWorkerFuel, h]; rfl⟩
-      | some item => obtain ⟨bs, cb⟩ := item; exact ⟨_, by simp [rewriteWorkerFuel, h]; rfl⟩
+      have h := toBlockFuel_eq_source fuel n loc (.op op xs)
+      cases out : toBlockSource n loc (.op op xs) with
+      | none => exact ⟨_, by simp [rewriteWorkerFuel, h, out]; rfl⟩
+      | some item => obtain ⟨bs, cb⟩ := item; exact ⟨_, by simp [rewriteWorkerFuel, h, out]; rfl⟩
     | call ticks dest xs handler =>
-      obtain ⟨out, h⟩ := toBlockFuel_succeeds fuel n loc (.call ticks dest xs handler)
-      cases out with
-      | none => exact ⟨_, by simp [rewriteWorkerFuel, h]; rfl⟩
-      | some item => obtain ⟨bs, cb⟩ := item; exact ⟨_, by simp [rewriteWorkerFuel, h]; rfl⟩
+      have h := toBlockFuel_eq_source fuel n loc (.call ticks dest xs handler)
+      cases out : toBlockSource n loc (.call ticks dest xs handler) with
+      | none => exact ⟨_, by simp [rewriteWorkerFuel, h, out]; rfl⟩
+      | some item => obtain ⟨bs, cb⟩ := item; exact ⟨_, by simp [rewriteWorkerFuel, h, out]; rfl⟩
     | _ => exact ⟨_, rfl⟩
 
 /-- A structurally sufficient budget makes both wrapper and worker rewriting
