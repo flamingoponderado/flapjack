@@ -382,7 +382,7 @@ theorem evaluate_letrec_noInstall_relation_step {C F : Type} (names : List Flapj
         dsimp only at run
         rw [if_pos good, captured] at run
         dsimp only at run
-        have capturedOk := lookupVars_noInstall selected env values envOk captured
+        have capturedOk := lookupVars_ok selected env values ⟨captured, envOk⟩
         have bodyEnvOk : valuesNoInstall
             ((List.range functions.length).map (fun i => ClosSem.Value.recclosure location [] values functions i) ++ env) = true :=
           (valuesNoInstall_append _ _).2 ⟨recursiveClosure_bundle_noInstall location values functions capturedOk functionsOk, envOk⟩

@@ -2,3 +2,4 @@ every_Fn_vs_NONE_insert_interp_typed=every_Fn_vs_NONE (xs :closLang$exp list) �
 contains_App_SOME_insert_interp_typed=¬contains_App_SOME (max_app :num) (xs :closLang$exp list) ∧ (1 :num) ≤ max_app ⇒ ¬contains_App_SOME max_app (insert_interp xs)
 opt_interp_lemma_replay_typed=opt_interp (x :closLang$exp) = SOME (x' :closLang$exp) ⇒ set_globals x' = ({||} :num -> num) ∧ set_globals x = ({||} :num -> num) ∧ ((1 :num) ≤ (max_app :num) ⇒ ¬contains_App_SOME max_app [x']) ∧ every_Fn_vs_NONE [x'] ∧ no_mti x' ∧ esgc_free x ∧ esgc_free x'
 has_install_list_eq_replay_typed=∀(xs :closLang$exp list). has_install_list xs ⇔ EXISTS has_install xs
+lookup_vars_ok_replay_typed=∀(vs :num list) (env :v list) (env' :v list). lookup_vars vs env = SOME env' ∧ EVERY v_ok env ⇒ EVERY v_ok env'

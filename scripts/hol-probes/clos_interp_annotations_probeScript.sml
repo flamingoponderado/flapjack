@@ -1,6 +1,6 @@
 load "preamble"; load "clos_interpProofTheory";
 open HolKernel Parse boolLib bossLib;
-open preamble closLangTheory closPropsTheory clos_interpTheory;
+open preamble closLangTheory closSemTheory closPropsTheory clos_interpTheory;
 val _ = Globals.linewidth := 1000000;
 fun show_thm label th =
   if null (hyp th) then (print label; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
@@ -27,3 +27,10 @@ val has_install_list_eq_replay = Q.prove (
   `∀xs. has_install_list xs ⇔ EXISTS has_install xs`,
   Induct \\ fs [has_install_def]);
 val _ = show_thm "has_install_list_eq_replay_typed=" has_install_list_eq_replay;
+val lookup_vars_ok_replay = Q.prove (
+  `∀vs env env'. lookup_vars vs env = SOME env' ∧ EVERY v_ok env ⇒ EVERY v_ok env'`,
+  Induct \\ fs [lookup_vars_def] \\
+  rw [] \\ gvs [AllCaseEqs()] \\
+  res_tac \\ fs [] \\
+  gvs [EVERY_EL]);
+val _ = show_thm "lookup_vars_ok_replay_typed=" lookup_vars_ok_replay;

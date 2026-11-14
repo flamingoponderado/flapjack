@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "lookup_vars_ok",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/NoInstallValues.lean",
+    "lean_name": "lookupVars_ok",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the closed lookup_vars_ok_replay_typed, all quantified lists and conjunctive premises, the full closure-value carrier, all recursive value-safety clauses and polymorphic lookup behavior. Independently replayed the HOL proof. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
     "hol_name": "has_install_list_eq",
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/NoInstallInit.lean",
     "lean_name": "hasInstallList_eq",

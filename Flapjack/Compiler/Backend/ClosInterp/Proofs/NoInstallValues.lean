@@ -61,9 +61,11 @@ def StateRelNoInstall {C F : Type} (source target : ClosSem.State C F) : Prop :=
     refsNoInstall target.refs
 
 /-- Selecting environment variables preserves the no-install invariant. -/
-theorem lookupVars_noInstall (indices : List Nat) (env selected : List ClosSem.Value)
-    (valid : valuesNoInstall env = true) (run : ClosSem.lookupVars indices env = some selected) :
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "lookup_vars_ok"]
+theorem lookupVars_ok (indices : List Nat) (env selected : List ClosSem.Value)
+    (assumptions : ClosSem.lookupVars indices env = some selected ∧ valuesNoInstall env = true) :
     valuesNoInstall selected = true := by
+  obtain ⟨run, valid⟩ := assumptions
   induction indices generalizing selected with
   | nil =>
     simp [ClosSem.lookupVars] at run
