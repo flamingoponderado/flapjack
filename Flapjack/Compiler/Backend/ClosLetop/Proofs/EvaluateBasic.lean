@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosLetop.Proofs.EvaluateLet
+public import Flapjack.Compiler.Backend.ClosLetop.Proofs.Primitive
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
 
@@ -339,19 +340,6 @@ theorem evaluate_let_op_handle {C F : Type} (trace : BackendCommon.Tra)
             rw [evaluate, fixClock_evaluate, targetRun]
             exact targetHandlerRun
 
-/-- The value relation preserves the Boolean observation used by conditionals.
-This Lean-side helper has no standalone HOL declaration. -/
-theorem valueRel_asBool {left right : Value} (related : ValueRel left right) :
-    asBool left = asBool right := by
-  cases related with
-  | block tag left right entries =>
-    cases entries with
-    | nil => rfl
-    | cons head tail => cases tag <;> simp [asBool]
-  | number _ | word64 _ | byteVector _ | refPtr _ _ => rfl
-  | closure => rfl
-  | recclosure => rfl
-
 /-- Conditional evaluation preserves both Boolean branches and the
 type-error result for a non-Boolean condition. -/
 @[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "evaluate_let_op"
@@ -419,7 +407,8 @@ theorem evaluate_let_op_if {C F : Type} (trace : BackendCommon.Tra)
         | cons valueRel tailRel =>
           cases tailRel
           rename_i targetValue
-          have boolEq : asBool value = asBool targetValue := valueRel_asBool valueRel
+          have boolEq : asBool value = asBool targetValue := Flapjack.Compiler.Backend.ClosProps.PrimitiveBoolean.simpleValRel_asBool
+            ValueRel valueRelSimple value targetValue valueRel
           cases decision : asBool value with
           | none =>
             have targetDecision : asBool targetValue = none := boolEq.symm.trans decision
