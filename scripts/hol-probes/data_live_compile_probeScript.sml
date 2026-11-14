@@ -35,3 +35,10 @@ val evaluate_compile_statement = Term `
     ?t2. (dataSem$evaluate (d,t1) = (res,t2)) /\
       data_liveProof$state_rel s2 t2 (case res of NONE => l2 | _ => LN)`;
 val _ = (print "evaluate_compile_statement_typed="; print_term evaluate_compile_statement; print "\n");
+(* The local theorem is not exported; replay the original proof with inferred types. *)
+val domain_list_delete_replay = Q.prove (
+  `!xs l. sptree$domain (backend_common$list_delete xs l) =
+          sptree$domain l DIFF set xs`,
+  rw [pred_setTheory.EXTENSION, sptreeTheory.domain_lookup, backend_commonTheory.lookup_list_delete]
+  >> Cases_on `MEM x xs` >> fs []);
+val _ = show "domain_list_delete_replay_typed" domain_list_delete_replay;

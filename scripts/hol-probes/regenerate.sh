@@ -9810,6 +9810,7 @@ run_probe data_to_word_ops_probeScript.sml data_to_word_ops_probe.out \
 run_probe data_live_compile_probeScript.sml data_live_compile_probe.out \
   is_pure_def_typed compile_def_typed get_code_labels_compile_typed compile_correct_typed \
   state_rel_def_typed state_rel_ID_replay_typed evaluate_compile_statement_typed \
+  domain_list_delete_replay_typed \
   "$cake_dir/compiler/backend/proofs/data_liveProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 

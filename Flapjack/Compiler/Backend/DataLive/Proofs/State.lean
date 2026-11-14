@@ -29,6 +29,16 @@ def stateRel {C F : Type} (source target : State C F) (live : NumSet) : Prop :=
 theorem stateRel_refl {C F : Type} (state : State C F) (live : NumSet) : stateRel state state live := by
   simp [stateRel]
 
+/-- Deleting a list of keys removes exactly those keys from the domain. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "domain_list_delete"]
+theorem domain_list_delete {α : Type} (keys : List Nat) (tree : Spt α) :
+    sptDomain (sptListDelete keys tree) =
+      (fun key => sptDomain tree key ∧ key ∉ keys) := by
+  funext key
+  apply propext
+  simp only [sptDomain, sptLookup_sptListDelete]
+  by_cases present : key ∈ keys <;> simp [present]
+
 /-- Restricting a live set preserves the state relation. -/
 theorem stateRel_mono {C F : Type} (source target : State C F) (larger smaller : NumSet)
     (related : stateRel source target larger)

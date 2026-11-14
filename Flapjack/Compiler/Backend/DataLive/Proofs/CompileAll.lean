@@ -74,7 +74,9 @@ theorem evaluate_compile {C F : Type} (program : DataLang.Prog)
         ∃ targetJump, jumpExc target = some targetJump ∧ stateRel sourceJump targetJump .ln ∧
           targetJump.handler = sourceJump.handler ∧ targetJump.stack.length = sourceJump.stack.length)) :
     ∃ targetNext, DataSem.evaluate compiled target = (result, targetNext) ∧
-      stateRel sourceNext targetNext (match result with | none => live | some _ => .ln) := by
+      stateRel sourceNext targetNext
+        (match (motive := ∀ _ : Option (Result (List DataSem.Value) DataSem.Value), NumSet) result with
+         | none => live | some _ => .ln) := by
   obtain ⟨run, related, compilation, notType, exception⟩ := premises
   have sim := simulationFor_all (C := C) (F := F) program live
   unfold simulationFor at sim

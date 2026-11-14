@@ -141132,5 +141132,13 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the full local source theorem and inferred evaluate_compile_statement_typed in data_live_compile_probe.out; this is a typed source statement, not a replay of the local HOL induction proof. Independent compiler and FFI state carriers, both live sets, exact compiled pair, full exception-jump condition and result-dependent postcondition are retained. The evaluator inherits reals_as_rational_cuts as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_liveProofScript.sml",
+    "hol_name": "domain_list_delete",
+    "lean_path": "Flapjack/Compiler/Backend/DataLive/Proofs/State.lean",
+    "lean_name": "domain_list_delete",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local original theorem and typed HOL proof replay domain_list_delete_replay_typed in data_live_compile_probe.out: both state equality of the Spt domain after list deletion with its original domain minus the keys of the list, with arbitrary map payload. Sets are predicates on Nat and the difference is rendered by conjunction with nonmembership."
   }
 ]
