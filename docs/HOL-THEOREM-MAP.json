@@ -1,6 +1,24 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "state_rel'_clock",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/NoInstallValues.lean",
+    "lean_name": "stateRelNoInstall_clock",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the closed state_rel_prime_clock_replay_typed and the shared-state relation: the target clock equals the source clock. Independently replayed the local HOL proof. Canonical refs and code fields have the local roundtrip witness; source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "state_rel'_refs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/NoInstallValues.lean",
+    "lean_name": "stateRelNoInstall_refs",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the closed state_rel_prime_refs_replay_typed: the complete target reference map equals the source reference map. Independently replayed the local HOL proof. Canonical refs and code fields have the local roundtrip witness; source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
     "hol_name": "state_rel'_def",
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/NoInstallValues.lean",
     "lean_name": "StateRelNoInstall",

@@ -310,7 +310,7 @@ run_probe clos_interp_review_probeScript.sml clos_interp_review_probe.out \
   "$cake_dir/compiler/backend/clos_interpScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_interp_annotations_probeScript.sml clos_interp_annotations_probe.out \
-  every_Fn_vs_NONE_insert_interp_typed contains_App_SOME_insert_interp_typed opt_interp_lemma_replay_typed has_install_list_eq_replay_typed lookup_vars_ok_replay_typed state_rel_prime_def_typed state_rel_prime_dec_clock_replay_typed \
+  every_Fn_vs_NONE_insert_interp_typed contains_App_SOME_insert_interp_typed opt_interp_lemma_replay_typed has_install_list_eq_replay_typed lookup_vars_ok_replay_typed state_rel_prime_def_typed state_rel_prime_dec_clock_replay_typed state_rel_prime_clock_replay_typed state_rel_prime_refs_replay_typed \
   "$cake_dir/compiler/backend/proofs/clos_interpProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe clos_interp_semantics_probeScript.sml clos_interp_semantics_probe.out \

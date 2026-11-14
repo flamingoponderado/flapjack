@@ -68,6 +68,19 @@ def StateRelNoInstall {C F : Type} (source target : ClosSem.State C F) : Prop :=
     (∀ entry ∈ target.globals, ∀ value, entry = some value → valueNoInstall value = true) ∧
     refsNoInstall target.refs
 
+/-- Related no-install states have equal clocks. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "state_rel'_clock"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRelNoInstall_clock {C F : Type} {source target : ClosSem.State C F}
+    (related : StateRelNoInstall source target) : target.clock = source.clock := related.1.2.2.2.2.2.1
+
+/-- Related no-install states have equal reference stores. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "state_rel'_refs"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRelNoInstall_refs {C F : Type} {source target : ClosSem.State C F}
+    (related : StateRelNoInstall source target) : target.refs = source.refs :=
+  related.1.2.2.2.2.2.2.2.2.1.symm
+
 /-- Selecting environment variables preserves the no-install invariant. -/
 @[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "lookup_vars_ok"]
 theorem lookupVars_ok (indices : List Nat) (env selected : List ClosSem.Value)

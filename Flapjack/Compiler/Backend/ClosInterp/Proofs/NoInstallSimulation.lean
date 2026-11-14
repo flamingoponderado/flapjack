@@ -10,10 +10,6 @@ The evaluator and state carriers await HOL correspondence review. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL
 
-/-- Related states have the same clock. -/
-theorem stateRelNoInstall_clock {C F : Type} {source target : ClosSem.State C F}
-    (related : StateRelNoInstall source target) : target.clock = source.clock := related.1.2.2.2.2.2.1
-
 /-- Replacing the clocks of related states by the same value preserves their relation. -/
 theorem stateRelNoInstall_withClock {C F : Type} {source target : ClosSem.State C F}
     (related : StateRelNoInstall source target) (clock : Nat) :

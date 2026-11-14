@@ -39,3 +39,11 @@ val state_rel_prime_dec_clock_replay = Q.prove (
   `state_rel' s t ⇒ state_rel' (dec_clock 1 s) (dec_clock 1 t)`,
   gvs [clos_interpProofTheory.state_rel'_def, dec_clock_def]);
 val _ = show_thm "state_rel_prime_dec_clock_replay_typed=" state_rel_prime_dec_clock_replay;
+val state_rel_prime_clock_replay = Q.prove (
+  `state_rel' s t ⇒ t.clock = s.clock`,
+  fs [clos_interpProofTheory.state_rel'_def]);
+val _ = show_thm "state_rel_prime_clock_replay_typed=" state_rel_prime_clock_replay;
+val state_rel_prime_refs_replay = Q.prove (
+  `state_rel' s t ⇒ t.refs = s.refs`,
+  fs [clos_interpProofTheory.state_rel'_def]);
+val _ = show_thm "state_rel_prime_refs_replay_typed=" state_rel_prime_refs_replay;
