@@ -10448,3 +10448,14 @@ the shared splice-expanding helper. The script restates the source's `[local]` o
 `good_dimindex` to `misc$good_dimindex`. Regenerate with
 `CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=data_to_word_memory_local_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`pan_lang_types_typed_probe.out` (10 rows) captures the `panLangScript.sml`
+type abbreviations and overloads that the earlier `pan_lang_typed_probe.out`
+did not cover (task 184). Each `Type` line is read from the pinned source and
+its right-hand side is parsed and printed with types, so `stcname`, `fldname`,
+`varname`, `funname`, `eid` and `decname` show `:mlstring` and `index` shows
+`:num`. The three `Overload`s (`TailCall`, `AssignCall`, `StandAloneCall`) are
+printed with the overload cleared, so the partially applied `Call` constructor
+is visible with its inferred `prog` type variable. Regenerate with
+`CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=pan_lang_types_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.

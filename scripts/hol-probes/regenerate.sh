@@ -10508,6 +10508,12 @@ run_probe pan_lang_typed_probeScript.sml pan_lang_typed_probe.out \
   "$cake_dir/pancake/panLangScript.sml" \
   "$cake_dir/pancake"
 
+run_probe pan_lang_types_typed_probeScript.sml pan_lang_types_typed_probe.out \
+  stcname_typed fldname_typed varname_typed funname_typed eid_typed decname_typed index_typed \
+  TailCall_typed AssignCall_typed StandAloneCall_typed \
+  "$cake_dir/pancake/panLangScript.sml" \
+  "$cake_dir/pancake"
+
 run_probe lab_filter_proof_typed_probeScript.sml lab_filter_proof_typed_probe.out \
   filter_correct_typed adjust_pc_def_typed all_skips_def_typed asm_fetch_aux_eq_typed sec_ends_with_label_filter_skip_typed filter_skip_semantics_typed share_mem_op_FFI_final_filter_correct_typed share_mem_op_FFI_return_filter_correct_typed \
   share_mem_op_NONE_filter_correct_typed state_rel_def_typed \
