@@ -6,6 +6,7 @@ public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.CodeLocations
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstallSafety
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.StateRelation.Original
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.DecodeRelations
 
 @[expose] public section
 
@@ -23,99 +24,19 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   ClosSem.holFmapAsFiniteSupportWitness
 end InstallProofPort
 
-/-- Lists of numeric values cannot change under the candidate value relation. -/
-theorem related_number_list (numbers : List Int) (values : List Value)
-    (related : List.Forall₂ ValueRel (numbers.map Value.number) values) :
-    values = numbers.map Value.number := by
-  induction numbers generalizing values with
-  | nil => cases related; rfl
-  | cons number numbers ih =>
-    cases related with
-    | cons head tail =>
-      cases head
-      simp only [List.map_cons, List.cons.injEq, true_and]
-      exact ih _ tail
-
-/-- Lists of 64-bit words cannot change under the candidate value relation. -/
-theorem related_word_list (words : List (BitVec 64)) (values : List Value)
-    (related : List.Forall₂ ValueRel (words.map Value.word64) values) :
-    values = words.map Value.word64 := by
-  induction words generalizing values with
-  | nil => cases related; rfl
-  | cons word words ih =>
-    cases related with
-    | cons head tail =>
-      cases head
-      simp only [List.map_cons, List.cons.injEq, true_and]
-      exact ih _ tail
-
-private theorem related_number_list_right (numbers : List Int) (values : List Value)
-    (related : List.Forall₂ ValueRel values (numbers.map Value.number)) :
-    values = numbers.map Value.number := by
-  induction numbers generalizing values with
-  | nil => cases related; rfl
-  | cons number numbers ih =>
-    cases related with
-    | cons head tail =>
-      cases head
-      simp only [List.map_cons, List.cons.injEq, true_and]
-      exact ih _ tail
-
-private theorem related_word_list_right (words : List (BitVec 64)) (values : List Value)
-    (related : List.Forall₂ ValueRel values (words.map Value.word64)) :
-    values = words.map Value.word64 := by
-  induction words generalizing values with
-  | nil => cases related; rfl
-  | cons word words ih =>
-    cases related with
-    | cons head tail =>
-      cases head
-      simp only [List.map_cons, List.cons.injEq, true_and]
-      exact ih _ tail
-
 /-- Related values have equal byte-decoding results, including failure. -/
 @[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_to_bytes"
   (nested_list_rel_as_mutual := [FunctionsRel])]
 theorem valueToBytes_related (value nextValue : Value) (related : ValueRel value nextValue) :
-    valueToBytes value = valueToBytes nextValue := by
-  rcases valueToList_relation value nextValue related with ⟨left, right⟩ | ⟨xs, ys, left, right, lists⟩
-  · cases l : valueToBytes value <;> cases r : valueToBytes nextValue <;>
-      simp_all [valueToBytes_eq_some]
-  · apply Option.ext
-    intro bytes
-    rw [valueToBytes_eq_some, valueToBytes_eq_some, left, right]
-    simp only [Option.some.injEq]
-    constructor
-    · intro eq
-      subst xs
-      have listRel : List.Forall₂ ValueRel ((bytes.map (fun b => (b.toNat : Int))).map Value.number) ys := by
-        simpa [List.map_map] using lists
-      simpa [List.map_map, Function.comp_def] using related_number_list (bytes.map (fun b => (b.toNat : Int))) ys listRel
-    · intro eq
-      subst ys
-      have listRel : List.Forall₂ ValueRel xs ((bytes.map (fun b => (b.toNat : Int))).map Value.number) := by
-        simpa [List.map_map] using lists
-      simpa [List.map_map, Function.comp_def] using related_number_list_right (bytes.map (fun b => (b.toNat : Int))) xs listRel
+    valueToBytes value = valueToBytes nextValue :=
+  ClosProps.simpleValRel_valueToBytes ValueRel value nextValue ⟨valueRelSimple, related⟩
 
 /-- Related values have equal word-decoding results, including failure. -/
 @[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "v_to_words"
   (nested_list_rel_as_mutual := [FunctionsRel])]
 theorem valueToWords_related (value nextValue : Value) (related : ValueRel value nextValue) :
-    valueToWords value = valueToWords nextValue := by
-  rcases valueToList_relation value nextValue related with ⟨left, right⟩ | ⟨xs, ys, left, right, lists⟩
-  · cases l : valueToWords value <;> cases r : valueToWords nextValue <;>
-      simp_all [valueToWords_eq_some]
-  · apply Option.ext
-    intro words
-    rw [valueToWords_eq_some, valueToWords_eq_some, left, right]
-    simp only [Option.some.injEq]
-    constructor
-    · intro eq
-      subst xs
-      exact related_word_list words ys lists
-    · intro eq
-      subst ys
-      exact related_word_list_right words xs lists
+    valueToWords value = valueToWords nextValue :=
+  ClosProps.simpleValRel_valueToWords value nextValue ValueRel ⟨valueRelSimple, related⟩
 
 /-- Updating a pair of related code lookups with corresponding annotated
 entries preserves their relation, including repeated keys. -/
