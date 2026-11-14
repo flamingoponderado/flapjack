@@ -68,3 +68,7 @@ val state_rel_update_thunk_replay = Q.prove (
    imp_res_tac state_rel_refs_clocks_replay \\ gvs [] \\
    gvs [clos_interpProofTheory.state_rel_def]));
 val _ = show_thm "state_rel_update_thunk_replay_typed=" state_rel_update_thunk_replay;
+val _ = show_thm "interp_assum_def_typed=" clos_interpProofTheory.interp_assum_def;
+val _ = show_thm "interp_assum_leq_typed=" clos_interpProofTheory.interp_assum_leq;
+val _ = show_thm "evaluate_insert_interp1_typed=" clos_interpProofTheory.evaluate_insert_interp1;
+val _ = show_thm "evaluate_insert_interp_typed=" clos_interpProofTheory.evaluate_insert_interp;

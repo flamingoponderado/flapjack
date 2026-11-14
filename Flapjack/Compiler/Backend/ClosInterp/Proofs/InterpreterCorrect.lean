@@ -205,7 +205,7 @@ theorem optInterp1_correct {C F : Type} (expression : ClosLang.Exp)
   cases selected : optInterp expression with
   | none =>
     simp only [Option.getD_none]
-    exact assumption.1 [expression] source [] target result sourceFinal (by omega) run notTypeError related
+    exact assumption.1 [expression] source [] target result sourceFinal ⟨by omega, run, notTypeError⟩ related
   | some replacement =>
     simp only [Option.getD_some]
     exact optInterp_correct expression replacement source target sourceFinal result selected run assumption related notTypeError

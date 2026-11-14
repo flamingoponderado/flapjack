@@ -132,7 +132,7 @@ theorem insertInterp1_let_fallback_correct {C F : Type} (trace : BackendCommon.T
         have bound := ClosSem.evaluate_clock_le bindings [] source
         simpa [bindingsRun] using bound
       obtain ⟨bodyExtra, targetFinal, targetBody, finalRel⟩ :=
-        assumption.1 [body] sourceMid (values ++ []) targetMid result sourceFinal sourceBound run notTypeError midRel
+        assumption.1 [body] sourceMid (values ++ []) targetMid result sourceFinal ⟨sourceBound, run, notTypeError⟩ midRel
       have shiftedBindings := ClosSem.evaluate_addClock.1 (bindings.map optInterp1) []
         { target with clock := bindingsExtra + target.clock } targetMid (.val values) bodyExtra targetBindings (by simp)
       let enlarged := { target with clock := (bindingsExtra + target.clock) + bodyExtra }
@@ -147,36 +147,61 @@ theorem insertInterp1_let_fallback_correct {C F : Type} (trace : BackendCommon.T
         exact bodyRun'
       simpa [enlarged, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using targetRun
 
+namespace InsertInterpPort
+/-- The closure state uses the canonical finite-support map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end InsertInterpPort
+
 /-- One-level interpreter insertion preserves singleton evaluation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "evaluate_insert_interp1"
+  (fmap_as_finite_support := [refs, code])]
 theorem insertInterp1_correct {C F : Type} (expression : ClosLang.Exp)
-    (source target sourceFinal : ClosSem.State C F) (result : Result (List ClosSem.Value) ClosSem.Value)
-    (run : ClosSem.evaluate [expression] [] source = (result, sourceFinal))
-    (assumption : InterpAssum C F source.clock) (related : StateRel source target)
-    (notTypeError : result ≠ .err (.abort .typeError)) :
+    (source sourceFinal : ClosSem.State C F) (result : Result (List ClosSem.Value) ClosSem.Value)
+    (target : ClosSem.State C F)
+    (sourceRun : InterpAssum C F source.clock ∧
+      ClosSem.evaluate [expression] [] source = (result, sourceFinal) ∧
+      StateRel source target ∧ result ≠ .err (.abort .typeError)) :
     ∃ extra targetFinal,
+      ClosSem.evaluate [insertInterp1 expression] [] { target with clock := target.clock + extra } =
+        (result, targetFinal) ∧ StateRel sourceFinal targetFinal := by
+  obtain ⟨assumption, run, related, notTypeError⟩ := sourceRun
+  have simulation : ∃ extra targetFinal,
       ClosSem.evaluate [insertInterp1 expression] [] { target with clock := extra + target.clock } =
         (result, targetFinal) ∧ StateRel sourceFinal targetFinal := by
-  cases selected : optInterp expression with
-  | some replacement =>
-    simpa [insertInterp1, selected] using
-      optInterp_correct expression replacement source target sourceFinal result selected run assumption related notTypeError
-  | none =>
-    cases expression <;> simp only [insertInterp1, selected]
-    case «let» trace bindings body =>
-      exact insertInterp1_let_fallback_correct trace bindings body source target sourceFinal result run assumption related notTypeError
-    all_goals
-      exact assumption.1 [_] source [] target result sourceFinal (by omega) run notTypeError related
+    cases selected : optInterp expression with
+    | some replacement =>
+      simpa [insertInterp1, selected] using
+        optInterp_correct expression replacement source target sourceFinal result selected run assumption related notTypeError
+    | none =>
+      cases expression <;> simp only [insertInterp1, selected]
+      case «let» trace bindings body =>
+        exact insertInterp1_let_fallback_correct trace bindings body source target sourceFinal result run assumption related notTypeError
+      all_goals
+        exact assumption.1 [_] source [] target result sourceFinal ⟨by omega, run, notTypeError⟩ related
+  obtain ⟨extra, targetFinal, targetRun, finalRel⟩ := simulation
+  exact ⟨extra, targetFinal, by simpa only [Nat.add_comm] using targetRun, finalRel⟩
 
 /-- Mapping interpreter insertion over a program preserves its evaluation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "evaluate_insert_interp"
+  (fmap_as_finite_support := [refs, code])]
 theorem insertInterp_correct {C F : Type} (expressions : List ClosLang.Exp)
-    (source target sourceFinal : ClosSem.State C F) (result : Result (List ClosSem.Value) ClosSem.Value)
-    (run : ClosSem.evaluate expressions [] source = (result, sourceFinal))
-    (assumption : InterpAssum C F source.clock) (related : StateRel source target)
-    (notTypeError : result ≠ .err (.abort .typeError)) :
+    (source sourceFinal : ClosSem.State C F) (result : Result (List ClosSem.Value) ClosSem.Value)
+    (target : ClosSem.State C F)
+    (sourceRun : InterpAssum C F source.clock ∧
+      ClosSem.evaluate expressions [] source = (result, sourceFinal) ∧
+      StateRel source target ∧ result ≠ .err (.abort .typeError)) :
     ∃ extra targetFinal,
-      ClosSem.evaluate (insertInterp expressions) [] { target with clock := extra + target.clock } =
+      ClosSem.evaluate (insertInterp expressions) [] { target with clock := target.clock + extra } =
         (result, targetFinal) ∧ StateRel sourceFinal targetFinal := by
-  exact evaluate_map_simulation insertInterp1 insertInterp1_correct expressions source target sourceFinal result
-    run assumption related notTypeError
+  obtain ⟨assumption, run, related, notTypeError⟩ := sourceRun
+  obtain ⟨extra, targetFinal, targetRun, finalRel⟩ :=
+    evaluate_map_simulation insertInterp1 (fun expression s t s' r eval assum rel safe => by
+      simpa only [Nat.add_comm] using
+        insertInterp1_correct expression s s' r t ⟨assum, eval, rel, safe⟩)
+      expressions source target sourceFinal result run assumption related notTypeError
+  exact ⟨extra, targetFinal, by simpa only [insertInterp, Nat.add_comm] using targetRun, finalRel⟩
 
 end Flapjack.Compiler.Backend.ClosInterp

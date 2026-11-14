@@ -202,11 +202,14 @@ theorem evaluate_interp_lemma {C F : Type} :
                   intro program installedSource installedTarget installedFinal installedResult bound installedRun installedRel installedNotTypeError
                   have installedAssumption : InterpAssum C F installedSource.clock := by
                     constructor
-                    · intro xs st e target res final clockLe eval notTypeError rel
-                      exact smaller xs e st target final res (by omega) eval rel notTypeError
-                    · intro vs st loc fn target res final clockLe app notTypeError rel
-                      exact (clockIH st.clock (by omega)).1 loc fn vs st target final res rfl app rel notTypeError
-                  exact insertInterp_correct program installedSource installedTarget installedFinal installedResult installedRun installedAssumption installedRel installedNotTypeError
+                    · intro xs st e target res final sourceRun rel
+                      exact smaller xs e st target final res (by omega) sourceRun.2.1 rel sourceRun.2.2
+                    · intro vs st loc fn target res final sourceRun rel
+                      exact (clockIH st.clock (by omega)).1 loc fn vs st target final res rfl sourceRun.2.1 rel sourceRun.2.2
+                  obtain ⟨extra, targetFinal, targetRun, finalRel⟩ :=
+                    insertInterp_correct program installedSource installedFinal installedResult installedTarget
+                      ⟨installedAssumption, installedRun, installedRel, installedNotTypeError⟩
+                  exact ⟨extra, targetFinal, by simpa only [Nat.add_comm] using targetRun, finalRel⟩
                 | thunkOp operation =>
                   cases operation with
                   | forceThunk =>

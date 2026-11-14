@@ -155,7 +155,7 @@ theorem interpreter_correct_app_values {C F : Type}
     simp only [functionRun] at bound
     omega
   obtain ⟨applyExtra, targetFinal, targetApply, finalRel⟩ :=
-    assumption.2 [value] sourceReady none fn targetReady result sourceFinal readyBound applyRun notTypeError readyRel
+    assumption.2 [value] sourceReady none fn targetReady result sourceFinal ⟨readyBound, applyRun, notTypeError⟩ readyRel
   let offset := 3 + (functionExtra + applyExtra)
   let enlarged := { target with clock := 3 + ((argumentExtra + target.clock) + offset) }
   let enlargedMid := { targetMid with clock := targetMid.clock + offset }

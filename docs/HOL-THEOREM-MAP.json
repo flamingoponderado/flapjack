@@ -1,6 +1,26 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "evaluate_insert_interp1",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/InsertionCorrect.lean",
+    "lean_name": "insertInterp1_correct",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared evaluate_insert_interp1_typed, the grouped original assumption, singleton evaluation, clock extension, result and complete post-state relation, including the source-shaped InterpAssum body. Canonical refs and code fields have the local roundtrip witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8; source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "evaluate_insert_interp",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/InsertionCorrect.lean",
+    "lean_name": "insertInterp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared evaluate_insert_interp_typed, arbitrary expression list, grouped original assumption, clock extension, result and complete post-state relation, including the source-shaped InterpAssum body. Canonical refs and code fields have the local roundtrip witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8; source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
     "hol_name": "state_rel_update_thunk",
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/ForceRelation.lean",
     "lean_name": "state_rel_update_thunk",
