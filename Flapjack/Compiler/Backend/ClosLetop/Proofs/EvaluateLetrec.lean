@@ -130,7 +130,7 @@ theorem evaluate_let_op_letrec {C F : Type} (names : List Flapjack.AstHOL.VarN)
         by simp [evaluate, maxEq, compileFuns_all, arityOk], rfl, states⟩
   | some indices =>
     by_cases arityOk : functions.all (fun (arity, _) => arity ≤ source.maxApp && arity != 0) = true
-    · have captureRel := environment_lookupVars indices env nextEnv envRel
+    · have captureRel := lookup_vars_lemma indices env nextEnv envRel
       cases capture : lookupVars indices env with
       | none =>
         cases nextCapture : lookupVars indices nextEnv with
@@ -139,13 +139,13 @@ theorem evaluate_let_op_letrec {C F : Type} (names : List Flapjack.AstHOL.VarN)
           obtain ⟨rfl, rfl⟩ := run
           exact ⟨.err (.abort .typeError), target,
             by simp [evaluate, maxEq, compileFuns_all, arityOk, nextCapture], rfl, states⟩
-        | some values => simp [capture, nextCapture, Flapjack.optionRel] at captureRel
+        | some values => simp [capture, nextCapture] at captureRel
       | some values =>
         cases nextCapture : lookupVars indices nextEnv with
-        | none => simp [capture, nextCapture, Flapjack.optionRel] at captureRel
+        | none => simp [capture, nextCapture] at captureRel
         | some nextValues =>
           exact success values nextValues arityOk capture nextCapture
-            (by simpa [capture, nextCapture, Flapjack.optionRel] using captureRel)
+            (by simpa [capture, nextCapture] using captureRel)
     · simp [evaluate, arityOk] at run
       obtain ⟨rfl, rfl⟩ := run
       exact ⟨.err (.abort .typeError), target,

@@ -456,23 +456,31 @@ theorem evaluate_let_op_if {C F : Type} (trace : BackendCommon.Tra)
               rw [evaluate, fixClock_evaluate, targetRun]
               simpa [targetDecision] using targetBranchRun
 
-/-- Capturing the same indices in related environments either fails on both
-sides or returns related values, in order. This Lean-side helper has no standalone HOL declaration. -/
-theorem environment_lookupVars (indices : List Nat) (env nextEnv : List Value)
+/-- Related environments agree on lookup failure or return related values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "lookup_vars_lemma"]
+theorem lookup_vars_lemma (indices : List Nat) (env nextEnv : List Value)
     (related : List.Forall₂ ValueRel env nextEnv) :
-    Flapjack.optionRel (List.Forall₂ ValueRel) (lookupVars indices env) (lookupVars indices nextEnv) := by
-  induction indices with
-  | nil => simp [lookupVars, Flapjack.optionRel]
-  | cons index rest ih =>
-    have head := Flapjack.forall₂_lookupRel related index
-    cases left : env[index]? <;> cases right : nextEnv[index]? <;>
-      simp [Flapjack.optionRel, left, right] at head
-    · simp [lookupVars, left, right, Flapjack.optionRel]
-    · rename_i value nextValue
-      cases leftTail : lookupVars rest env <;> cases rightTail : lookupVars rest nextEnv <;>
-        simp [Flapjack.optionRel, leftTail, rightTail] at ih
-      · simp [lookupVars, left, right, leftTail, rightTail, Flapjack.optionRel]
-      · simp [lookupVars, left, right, leftTail, rightTail, Flapjack.optionRel, head, ih]
+    match lookupVars indices env with
+    | none => lookupVars indices nextEnv = none
+    | some values => ∃ nextValues, List.Forall₂ ValueRel values nextValues ∧
+        lookupVars indices nextEnv = some nextValues := by
+  have lifted : Flapjack.optionRel (List.Forall₂ ValueRel)
+      (lookupVars indices env) (lookupVars indices nextEnv) := by
+    induction indices with
+    | nil => simp [lookupVars, Flapjack.optionRel]
+    | cons index rest ih =>
+      have head := Flapjack.forall₂_lookupRel related index
+      cases left : env[index]? <;> cases right : nextEnv[index]? <;>
+        simp [Flapjack.optionRel, left, right] at head
+      · simp [lookupVars, left, right, Flapjack.optionRel]
+      · rename_i value nextValue
+        cases leftTail : lookupVars rest env <;> cases rightTail : lookupVars rest nextEnv <;>
+          simp [Flapjack.optionRel, leftTail, rightTail] at ih
+        · simp [lookupVars, left, right, leftTail, rightTail, Flapjack.optionRel]
+        · simp [lookupVars, left, right, leftTail, rightTail, Flapjack.optionRel, head, ih]
+
+  cases left : lookupVars indices env <;> cases right : lookupVars indices nextEnv <;>
+    simp_all [Flapjack.optionRel]
 
 /-- Function construction preserves closure values and both capture and
 arity errors. -/
@@ -509,7 +517,7 @@ theorem evaluate_let_op_fn {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlS
       exact ⟨.err (.abort .typeError), target, by simp [evaluate, maxEq, arityOk], rfl, states⟩
   | some indices =>
     by_cases arityOk : arity ≤ source.maxApp ∧ arity ≠ 0
-    · have captureRel := environment_lookupVars indices env nextEnv envRel
+    · have captureRel := lookup_vars_lemma indices env nextEnv envRel
       cases capture : lookupVars indices env with
       | none =>
         cases nextCapture : lookupVars indices nextEnv with
@@ -518,13 +526,13 @@ theorem evaluate_let_op_fn {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlS
           obtain ⟨rfl, rfl⟩ := run
           exact ⟨.err (.abort .typeError), target,
             by simp [evaluate, maxEq, arityOk, nextCapture], rfl, states⟩
-        | some values => simp [capture, nextCapture, Flapjack.optionRel] at captureRel
+        | some values => simp [capture, nextCapture] at captureRel
       | some values =>
         cases nextCapture : lookupVars indices nextEnv with
-        | none => simp [capture, nextCapture, Flapjack.optionRel] at captureRel
+        | none => simp [capture, nextCapture] at captureRel
         | some nextValues =>
           have captures : List.Forall₂ ValueRel values nextValues := by
-            simpa [capture, nextCapture, Flapjack.optionRel] using captureRel
+            simpa [capture, nextCapture] using captureRel
           simp [evaluate, arityOk, capture] at run
           obtain ⟨rfl, rfl⟩ := run
           refine ⟨.val [.closure location [] nextValues arity

@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+    "hol_name": "lookup_vars_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/EvaluateBasic.lean",
+    "lean_name": "lookup_vars_lemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared lookup_vars_lemma_typed: arbitrary indices and related environments retain the original source lookup case, failure equality and existential related successful result, including conjunct order. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
     "hol_name": "dest_op_SOME_IMP",
     "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Syntax.lean",
     "lean_name": "destOp_some_imp",
