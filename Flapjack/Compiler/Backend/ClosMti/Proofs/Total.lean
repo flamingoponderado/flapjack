@@ -142,10 +142,4 @@ theorem introMultiBounded_succeeds (fuel maxApp : Nat) (e : Exp) :
     obtain ⟨result, done⟩ := introMultiFuel_succeeds (max fuel (expBudget e + 1)) maxApp e bound
     exact ⟨result, by simp [introMultiBounded, h, done]⟩
 
-/-- Retrying preserves every previously successful traversal result. -/
-theorem introMultiBounded_eq_of_success (fuel maxApp : Nat) (e result : Exp)
-    (success : introMultiFuel fuel maxApp e = some result) :
-    introMultiBounded fuel maxApp e = some result := by
-  simp [introMultiBounded, success]
-
 end Flapjack.Compiler.Backend.ClosMti

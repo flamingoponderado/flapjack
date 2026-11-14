@@ -30,7 +30,8 @@ theorem introExp_bounded (fuel maxApp : Nat) (e : Exp) :
 /-- Any successful ordinary traversal returns the extracted result. -/
 theorem introExp_eq_of_fuel (fuel maxApp : Nat) (e result : Exp)
     (run : introMultiFuel fuel maxApp e = some result) : introExp maxApp e = result := by
-  have bounded := introMultiBounded_eq_of_success fuel maxApp e result run
+  have bounded : introMultiBounded fuel maxApp e = some result := by
+    simp [introMultiBounded, run]
   rw [introExp_bounded] at bounded
   exact Option.some.inj bounded
 
