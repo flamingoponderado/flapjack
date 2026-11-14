@@ -10271,3 +10271,37 @@ theories from `$HOLDIR` and writes only inside the copy). Regenerate with
 `CAKEML=<cakeml tree> HOL_PROBE_ONLY=fromSexp_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`. The capture supports source comparison; it
 does not establish Lean correspondence.
+
+`word_cse_typed_probe.out` captures the typed statements of the 51 `[local]`
+theorems behind the reviewed `word_cseProofScript.sml` rows that the earlier
+word_cse probes did not capture (task 175); every name is a `Theorem` parsed
+literally from the pinned source. Regenerate with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=word_cse_typed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_local_typed_probe.out` captures the typed statements of the 57
+`[local]` theorems behind the reviewed `reg_allocProofScript.sml` rows that the
+earlier reg_alloc probes did not capture (task 175). The source enables the
+`st_ex` monad syntax, so the probe enables it too (`temp_add_monadsyntax`,
+`temp_enable_monad "st_ex"`); without it the `do ... od` blocks resolve
+`return` against the wrong monad overload. Regenerate with `CAKEML=<cakeml
+tree> HOL_PROBE_ONLY=reg_alloc_local_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+`stack_alloc_local_typed_probe.out` captures the typed statements of the 46
+`[local]` theorems behind the reviewed `stack_allocProofScript.sml` rows that
+the earlier stack_alloc probes did not capture (task 175). Regenerate with
+`CAKEML=<cakeml tree> HOL_PROBE_ONLY=stack_alloc_local_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+`lab_to_target_proof_local_typed_probe.out` captures the typed statements of
+the 88 reviewed `lab_to_targetProofScript.sml` rows that the earlier
+lab_to_target probes did not capture (task 175): 82 `[local]` theorems parsed
+from the pinned source, one `val ... = Q.prove(...) |> GSYM` theorem captured
+through its symmetric statement, and four `Overload` abbreviations captured
+with `print_without_macros` so the expansion rather than the overload name is
+printed. `semantics_compile_lemma` is derived in the source from
+`semantics_compile_lemma'`; the probe rebuilds that statement at term level
+(fifteen-conjunct antecedent implying `implements' T ...`). Regenerate with
+`CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=lab_to_target_proof_local_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.

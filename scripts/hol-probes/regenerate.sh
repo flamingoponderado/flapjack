@@ -11442,3 +11442,106 @@ run_probe fromSexp_typed_probeScript.sml fromSexp_typed_probe.out \
   typesexp_sexptype_typed \
   "$cake_dir/compiler/parsing/fromSexpScript.sml" \
   "$cake_dir/compiler/parsing"
+run_probe word_cse_typed_probeScript.sml word_cse_typed_probe.out \
+  ALL_DISTINCT_MAP_FST_FILTER_typed MAP_FST_lemma_typed MAP_SND_lemma_typed \
+  can_mem_arith_ODD_reads_typed canonicalArith_reads_self_or_fresh_typed \
+  canonicalRegs_prime_self_or_fresh_typed canonicalRegs_prime_self_or_fresh_wf_typed \
+  canonicalRegs_self_or_fresh_typed canonicalRegs_self_or_fresh_wf_typed \
+  data_inv_alist_insert_locals_typed data_inv_cons_gets_typed data_inv_filter_gets_typed \
+  data_inv_insert_canonical_pair_typed data_inv_insert_gets_typed \
+  data_inv_insert_instrs_Arith_typed data_inv_insert_instrs_Const_typed \
+  data_inv_insert_instrs_LocValue_typed data_inv_insert_instrs_OpCurrHeap_typed \
+  data_inv_insert_loads_typed data_inv_insert_pair_typed data_inv_invalidate_regs_typed \
+  data_inv_move_pairs_typed data_inv_reinsert_canonical_typed evaluate_arith_agree_typed \
+  evaluate_arith_clock_typed evaluate_arith_memory_typed evaluate_arith_unset_var_typed \
+  evaluate_load_agree_typed evaluate_load_change_addr_typed evaluate_load_clock_typed \
+  evaluate_load_unset_var_typed get_set_vars_in_typed get_set_vars_in_2_typed \
+  get_set_vars_not_in_typed if_eq_rw_typed in_names_set_insert_self_typed \
+  in_names_set_register_reads_typed lookup_invalidate_regs_typed \
+  lookup_invalidate_regs_mono_typed lookup_set_vars_not_in_typed wf_data_cons_gets_typed \
+  wf_data_filter_gets_typed wf_data_insert_gets_typed wf_data_insert_instrs_Arith_typed \
+  wf_data_insert_instrs_Const_typed wf_data_insert_instrs_LocValue_typed \
+  wf_data_insert_instrs_OpCurrHeap_typed wf_data_insert_loads_typed wf_data_move_pairs_typed \
+  wf_data_reinsert_canonical_typed with_locals_insert_typed \
+  "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+run_probe reg_alloc_local_typed_probeScript.sml reg_alloc_local_typed_probe.out \
+  ALL_DISTINCT_set_INJ_typed GT_TRANS_typed GT_sorted_eq_typed INJ_less_typed \
+  MEM_MAP_IMAGE_typed MEM_smerge_typed SORTED_HEAD_LT_typed UNION_DIFF_3_typed \
+  assign_Atemps_FOREACH_lem_typed assign_Stemps_FOREACH_lem_typed bg_ok_success_typed \
+  canonize_move_success_typed coalesce_parent_success_typed consistency_ok_success_typed \
+  dec_deg_success_typed dec_degree_success_typed do_alloc1_success_typed \
+  do_coalesce_real_success_typed do_coalesce_success_typed do_freeze_success_typed \
+  do_prefreeze_success_typed do_simplify_success_typed do_spill_success_typed \
+  do_step_success_typed domain_eq_IMAGE_typed extract_color_st_ex_MAP_lem_typed \
+  first_match_col_correct_typed full_consistency_ok_success_typed is_clique_FILTER_typed \
+  is_clique_subgraph_typed is_not_coalesced_succeeds_typed list_remap_domain_typed \
+  list_remap_wf_typed mk_bij_aux_domain_typed mk_tags_st_ex_FOREACH_lem_typed \
+  neg_first_match_col_correct_typed no_clash_LUPDATE_Fixed_typed no_clash_LUPDATE_Stemp_typed \
+  opt_split_typed push_stack_success_typed remove_colours_succeeds_typed \
+  reset_move_related_success_typed revive_moves_success_typed rpt_do_step_success_typed \
+  set_FILTER_typed sorted_insert_correct_lem_typed st_ex_FILTER_considered_var_typed \
+  st_ex_FILTER_consistency_ok_typed st_ex_FILTER_full_consistency_ok_typed \
+  st_ex_FILTER_is_not_coalesced_typed st_ex_FIRST_consistency_ok_bg_ok_typed \
+  st_ex_FOREACH_update_move_related_typed st_ex_PARTITION_move_related_sub_typed \
+  st_ex_PARTITION_split_degree_typed st_ex_list_MAX_deg_success_typed \
+  st_ex_list_MIN_cost_success_typed unspill_success_typed \
+  "$cake_dir/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/reg_alloc/proofs"
+run_probe stack_alloc_local_typed_probeScript.sml stack_alloc_local_typed_probe.out \
+  EL_LENGTH_ADD_LEMMA_typed LUPDATE_LENGTH_ADD_LEMMA_typed MAX_SIMP_typed \
+  SUBMAP_DOMSUB_both_typed SUBMAP_FUPDATE_both_typed alloc_correct_typed enc_dec_stack_typed \
+  evaluate_SetNewTrigger_typed filter_bitmap_APPEND_typed filter_bitmap_map_bitmap_IMP_typed \
+  find_code_IMP_lookup_typed gc_thm_typed get_bits_intro_typed get_var_imm_case_typed \
+  isWord_thm_typed is_fwd_ptr_iff_typed lookup_IMP_lookup_compile_typed lower_2w_eq_typed \
+  lt_dimindex_MOD_dimword_typed map_bitmap_APPEND_typed prog_comp_lemma_typed \
+  split_num_forall_to_10_typed with_same_regs_lemma_typed word_gc_fun_thm_typed \
+  word_gc_move_bitmap_unroll_typed word_gc_move_bitmaps_unroll_typed \
+  word_gc_move_loop_code_thm_typed word_gc_move_roots_APPEND_typed \
+  word_gc_move_roots_bitmaps_typed word_gen_gc_move_bitmap_unroll_typed \
+  word_gen_gc_move_bitmaps_unroll_typed word_gen_gc_move_data_code_thm_typed \
+  word_gen_gc_move_loop_code_thm_typed word_gen_gc_move_refs_code_thm_typed \
+  word_gen_gc_move_roots_APPEND_typed word_gen_gc_move_roots_bitmaps_typed \
+  word_gen_gc_partial_move_bitmap_unroll_typed word_gen_gc_partial_move_bitmaps_unroll_typed \
+  word_gen_gc_partial_move_data_code_thm_typed \
+  word_gen_gc_partial_move_ref_list_code_thm_typed word_gen_gc_partial_move_ref_list_ok_typed \
+  word_gen_gc_partial_move_roots_APPEND_typed word_gen_gc_partial_move_roots_bitmaps_typed \
+  word_lsr_dimindex_typed word_msb_IMP_bit_length_typed word_sub_0_eq_typed \
+  "$cake_dir/compiler/backend/proofs/stack_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_proof_local_typed_probeScript.sml lab_to_target_proof_local_typed_probe.out \
+  CallFFI_bytearray_lemma_typed EVERY_label_zero_add_nop_typed IMP_bytes_in_memory_typed \
+  IMP_bytes_in_memory_Call_typed IMP_bytes_in_memory_CallFFI_typed \
+  IMP_bytes_in_memory_Cbw_typed IMP_bytes_in_memory_Halt_typed IMP_bytes_in_memory_Inst_typed \
+  IMP_bytes_in_memory_Install_typed IMP_bytes_in_memory_Jump_typed \
+  IMP_bytes_in_memory_JumpCmp_typed IMP_bytes_in_memory_JumpCmp_1_typed \
+  IMP_bytes_in_memory_JumpReg_typed IMP_bytes_in_memory_LocValue_typed IMP_has_io_name_typed \
+  LIST_REL_enc_line_typed MOD4_CASES_typed MOD8_CASES_typed MULT_ADD_LESS_MULT_typed \
+  add_nop_sec_label_ok_typed aligned_IMP_ADD_LESS_dimword_typed all_enc_ok_even_typed \
+  all_enc_ok_lab_lookup_even_typed all_enc_ok_pre_enc_sec_list_typed \
+  all_enc_ok_pre_filter_skip_typed all_enc_ok_pre_lines_upd_lab_len_typed \
+  all_enc_ok_pre_pad_code_typed all_enc_ok_pre_upd_lab_len_typed \
+  all_enc_ok_prog_to_bytes_EVEN_typed all_enc_ok_split_typed all_encd0_typed \
+  all_labs_exist_typed all_length_leq_typed arith_upd_lemma_typed byte_align_32_CASES_typed \
+  byte_align_32_IMP_typed byte_align_32_eq_typed byte_align_64_CASES_typed \
+  byte_align_64_IMP_typed byte_align_64_eq_typed bytes_in_mem_APPEND_typed \
+  bytes_in_mem_IMP_memory_typed bytes_in_mem_asm_write_bytearray_typed \
+  bytes_in_mem_asm_write_bytearray_lemma_typed dimword_eq_32_imp_or_bytes_typed \
+  dimword_eq_64_imp_or_bytes_typed enc_lines_again_IMP_similar_typed \
+  enc_lines_again_all_enc_ok_pre_typed enc_lines_again_sec_labels_ok_typed \
+  enc_lines_again_simp_EQ_typed enc_secs_again_all_enc_ok_pre_typed enc_with_nop_thm_typed \
+  evaluate_ignore_clocks_typed evaluate_nop_steps_typed find_ffi_names_append_typed \
+  find_index_MAP_w2n_typed find_index_append_typed fp_upd_lemma_typed \
+  get_zero_labs_acc_eq_get_zero_labels_typed has_io_name_find_index_typed lab_lookup_IMP_typed \
+  lab_lookup_compute_labels_test_typed len_no_lab_typed \
+  line_get_zero_labs_acc_eq_line_get_zero_labels_typed line_length_MOD_0_typed \
+  line_ok_pre_add_nop_typed line_ok_pre_pad_section_typed line_similar_add_nop_typed \
+  line_similar_lines_upd_lab_len_typed line_similar_trans_typed lines_upd_lab_len_AUX_typed \
+  lines_upd_lab_len_sec_label_ok_typed list_add_if_fresh_simp_typed loc_to_pc_append_typed \
+  not_not_skip_IMP_Skip_typed pad_section_sec_label_ok_typed pos_val_thm0_typed \
+  prog_to_bytes_lemma_typed read_bytearray_state_rel_typed remove_labels_loop_thm_typed \
+  sec_get_zero_labs_acc_eq_sec_get_zero_labels_typed semantics_compile_lemma_typed \
+  semantics_compile_lemma_prime_typed shift_interfer_0_typed upd_pc_with_pc_typed \
+  word_cmp_lemma_typed write_bytearray_NOT_Loc_typed zero_labs_acc_of_eq_zero_labs_of_typed \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
