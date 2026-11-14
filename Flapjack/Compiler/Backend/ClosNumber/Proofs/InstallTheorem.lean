@@ -8,6 +8,17 @@ public import Flapjack.Compiler.Backend.ClosNumber.Proofs.Install
 namespace Flapjack.Compiler.Backend.ClosNumber
 open Flapjack Flapjack.Compiler.Backend.ClosSem
 
+/-- The adapter preserves the auxiliary part of the input pair. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "ignore_table_imp"]
+theorem ignoreTable_imp {S Code S' Code' Aux : Type}
+    (f : S → Code → S' × Code') (st : S) (input : Code × Aux)
+    (st' : S') (output : Code' × Aux)
+    (run : ignoreTable f st input = (st', output)) : output.2 = input.2 := by
+  cases input with
+  | mk code aux =>
+    cases h : f st code with
+    | mk nextState nextCode => simpa [ignoreTable, h] using (congrArg (fun p => p.2.2) run).symm
+
 namespace InstallPort
 /-- The closure state has the canonical finite-map representation. -/
 theorem holFmapAsFiniteSupportWitness {C F : Type} :

@@ -19,6 +19,7 @@ val _ = show "compile_inc_def_typed=" clos_numberTheory.compile_inc_def;
 val _ = show "make_even_def_typed=" miscTheory.make_even_def;
 val _ = show "even_make_even_typed=" miscTheory.EVEN_make_even;
 val _ = show "ignore_table_def_typed=" clos_numberTheory.ignore_table_def;
+val _ = show "ignore_table_imp_typed=" clos_numberProofTheory.ignore_table_imp;
 val _ = show "v_rel_rules_typed=" clos_numberProofTheory.v_rel_rules;
 val _ = show "ref_rel_def_typed=" closPropsTheory.ref_rel_def;
 val _ = show "fmap_rel_def_typed=" finite_mapTheory.fmap_rel_def;
@@ -60,6 +61,8 @@ val state_rel_clock_replay = Q.prove(`state_rel s t ==> s.clock = t.clock`, rw[s
 val state_rel_code_replay = Q.prove(`state_rel s t ==> s.code = FEMPTY /\ t.code = FEMPTY`, rw[state_rel_def]);
 val v_to_bytes_replay = Q.prove(`v_rel m v w ==> v_to_bytes v = v_to_bytes w`, metis_tac [simple_val_rel, simple_val_rel_v_to_bytes]);
 val v_to_words_replay = Q.prove(`v_rel m v w ==> v_to_words v = v_to_words w`, metis_tac [simple_val_rel, simple_val_rel_v_to_words]);
+val _ = show "v_to_bytes_replay_typed=" v_to_bytes_replay;
+val _ = show "v_to_words_replay_typed=" v_to_words_replay;
 val do_install_replay = Q.prove(`state_rel s1 s2 ∧
    LIST_REL (v_rel s1.max_app) x1 x2 ⇒
    (∀err t. do_install x1 s1 = (Rerr (Rabort Rtimeout_error),t) ⇒

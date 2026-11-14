@@ -1,6 +1,30 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "ignore_table_imp",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/InstallTheorem.lean",
+    "lean_name": "ignoreTable_imp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared ignore_table_imp_typed: all five input state, code, output state, code and auxiliary carriers remain independent, and the original adapter equation implies equality of the auxiliary pair projections. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "v_to_bytes",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/Install.lean",
+    "lean_name": "valueToBytes_related",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local theorem and v_to_bytes_replay_typed: related full closure values yield equal optional lists of fixed-width bytes, including failure, for the same arbitrary natural maximum application. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "v_to_words",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/Install.lean",
+    "lean_name": "valueToWords_related",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local theorem and v_to_words_replay_typed: related full closure values yield equal optional lists of fixed-width 64-bit words, including failure, for the same arbitrary natural maximum application. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "do_install",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/InstallTheorem.lean",
     "lean_name": "do_install",
