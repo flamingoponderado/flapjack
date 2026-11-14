@@ -48,3 +48,7 @@ val state_rel_prime_refs_replay = Q.prove (
   fs [clos_interpProofTheory.state_rel'_def]);
 val _ = show_thm "state_rel_prime_refs_replay_typed=" state_rel_prime_refs_replay;
 val _ = show_thm "evaluate_change_oracle_typed=" clos_interpProofTheory.evaluate_change_oracle;
+val _ = show_thm "state_rel_def_typed=" clos_interpProofTheory.state_rel_def;
+val _ = show_thm "state_rel_1_def_typed=" clos_interpProofTheory.state_rel_1_def;
+val _ = show_thm "evaluate_interp_lemma_typed=" clos_interpProofTheory.evaluate_interp_lemma;
+val _ = show_thm "evaluate_interp_thm_typed=" clos_interpProofTheory.evaluate_interp_thm;

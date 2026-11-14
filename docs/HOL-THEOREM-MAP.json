@@ -1,6 +1,44 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "state_rel_1_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/StateRelation.lean",
+    "lean_name": "StateRel1",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared state_rel_1_def_typed, all state fields, empty code, oracle safety and compiler/oracle equations. Canonical refs and code fields have the local roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/StateRelation.lean",
+    "lean_name": "StateRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared state_rel_def_typed, all state relation clauses and the exact source global-slot-zero interpreter closure and reviewed interpreter body. Canonical refs and code fields have the local roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "evaluate_interp_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/SimulationFull.lean",
+    "lean_name": "evaluate_interp_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared evaluate_interp_lemma_typed, both ordered evaluation and application conjuncts, error premises, clock extensions, results and post-state relations. The canonical refs and code fields have the local roundtrip witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "evaluate_interp_thm",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/SimulationFull.lean",
+    "lean_name": "evaluate_interp_thm",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared evaluate_interp_thm_typed, its ordered premises, arbitrary expression list and environment, existential clock extension, result and full post-state relation. Canonical refs and code fields have the local roundtrip witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
     "hol_name": "evaluate_change_oracle",
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/NoInstallSimulationFull.lean",
     "lean_name": "evaluate_change_oracle",

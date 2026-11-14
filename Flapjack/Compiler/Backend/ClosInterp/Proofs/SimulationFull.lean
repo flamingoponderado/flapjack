@@ -10,20 +10,28 @@ state carriers remain pending HOL correspondence review. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL
 
-/-- Related proof-side evaluator states simulate evaluation and application. -/
-theorem evaluate_simulation {C F : Type} :
-    (∀ (expressions : List ClosLang.Exp) (env : List ClosSem.Value)
-      (source target sourceFinal : ClosSem.State C F) (result : Result (List ClosSem.Value) ClosSem.Value),
-      ClosSem.evaluate expressions env source = (result, sourceFinal) → StateRel source target →
-      result ≠ .err (.abort .typeError) → ∃ extra targetFinal,
-        ClosSem.evaluate expressions env { target with clock := extra + target.clock } = (result, targetFinal) ∧
-        StateRel sourceFinal targetFinal) ∧
-    (∀ (location : Option Nat) (function : ClosSem.Value) (args : List ClosSem.Value)
-      (source target sourceFinal : ClosSem.State C F) (result : Result (List ClosSem.Value) ClosSem.Value),
-      ClosSem.evaluateApp location function args source = (result, sourceFinal) → StateRel source target →
-      result ≠ .err (.abort .typeError) → ∃ extra targetFinal,
-        ClosSem.evaluateApp location function args { target with clock := extra + target.clock } = (result, targetFinal) ∧
-        StateRel sourceFinal targetFinal) := by
+namespace EvaluateInterp
+
+/-- The closure state uses the canonical finite-support map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
+/-- Evaluation and closure application preserve the interpreter relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "evaluate_interp_lemma"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluate_interp_lemma {C F : Type} :
+    (∀ (xs : List ClosLang.Exp) (s1 : ClosSem.State C F) (env : List ClosSem.Value)
+      (t1 : ClosSem.State C F) (res : Result (List ClosSem.Value) ClosSem.Value) (s2 : ClosSem.State C F),
+      ClosSem.evaluate xs env s1 = (res, s2) ∧ res ≠ .err (.abort .typeError) →
+      StateRel s1 t1 → ∃ ck t2,
+        ClosSem.evaluate xs env { t1 with clock := t1.clock + ck } = (res, t2) ∧ StateRel s2 t2) ∧
+    (∀ (args : List ClosSem.Value) (s1 : ClosSem.State C F) (loc : Option Nat) (f : ClosSem.Value)
+      (t1 : ClosSem.State C F) (res : Result (List ClosSem.Value) ClosSem.Value) (s2 : ClosSem.State C F),
+      ClosSem.evaluateApp loc f args s1 = (res, s2) ∧ res ≠ .err (.abort .typeError) →
+      StateRel s1 t1 → ∃ ck t2,
+        ClosSem.evaluateApp loc f args { t1 with clock := t1.clock + ck } = (res, t2) ∧ StateRel s2 t2) := by
   have all : ∀ clock : Nat,
       (∀ (location : Option Nat) (function : ClosSem.Value) (args : List ClosSem.Value)
         (source target sourceFinal : ClosSem.State C F) (result : Result (List ClosSem.Value) ClosSem.Value),
@@ -214,9 +222,24 @@ theorem evaluate_simulation {C F : Type} :
                 | label _ | ffi _ | intOp _ | wordOp _ | blockOp _ | globOp _ | memOp _ =>
                   exact ordinary _ (by simp) (by simp) run
   constructor
-  · intro expressions env source target sourceFinal result run related notTypeError
-    exact (all source.clock).2 (ClosSem.expsWeight expressions) expressions env source target sourceFinal result rfl rfl run related notTypeError
-  · intro location function args source target sourceFinal result run related notTypeError
-    exact (all source.clock).1 location function args source target sourceFinal result rfl run related notTypeError
+  · intro xs s1 env t1 res s2 source related
+    obtain ⟨ck, t2, run, rel⟩ :=
+      (all s1.clock).2 (ClosSem.expsWeight xs) xs env s1 t1 s2 res rfl rfl source.1 related source.2
+    exact ⟨ck, t2, by simpa only [Nat.add_comm] using run, rel⟩
+  · intro args s1 loc f t1 res s2 source related
+    obtain ⟨ck, t2, run, rel⟩ :=
+      (all s1.clock).1 loc f args s1 t1 s2 res rfl source.1 related source.2
+    exact ⟨ck, t2, by simpa only [Nat.add_comm] using run, rel⟩
+
+/-- Expression evaluation preserves the interpreter relation at an extended clock. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "evaluate_interp_thm"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluate_interp_thm {C F : Type} (xs : List ClosLang.Exp) (env : List ClosSem.Value)
+    (s1 t1 : ClosSem.State C F) (res : Result (List ClosSem.Value) ClosSem.Value) (s2 : ClosSem.State C F)
+    (source : ClosSem.evaluate xs env s1 = (res, s2) ∧ res ≠ .err (.abort .typeError) ∧ StateRel s1 t1) :
+    ∃ ck t2, ClosSem.evaluate xs env { t1 with clock := t1.clock + ck } = (res, t2) ∧ StateRel s2 t2 :=
+  evaluate_interp_lemma.1 xs s1 env t1 res s2 ⟨source.1, source.2.1⟩ source.2.2
+
+end EvaluateInterp
 
 end Flapjack.Compiler.Backend.ClosInterp

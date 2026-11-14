@@ -64,14 +64,14 @@ theorem attachInterpreter_installed_simulation {C F : Type} (expressions : List 
       simp at sourceRun
       exact notTypeError sourceRun.1.symm
     obtain ⟨extra, targetLast, targetBody, finalRel⟩ :=
-      evaluate_simulation.1 expressions [] sourceInitialized targetInitialized sourceLast bodyResult bodyRun
-        initializedRel bodyNotTypeError
+      EvaluateInterp.evaluate_interp_lemma.1 expressions sourceInitialized [] targetInitialized bodyResult sourceLast
+        ⟨bodyRun, bodyNotTypeError⟩ initializedRel
     have targetInitRun : ClosSem.evaluate [compileInit true] [] { target with clock := extra + target.clock } =
         (.val [ClosSem.unitValue], { targetInitialized with clock := extra + targetInitialized.clock }) := by
       simpa [targetInitialized] using evaluate_compileInit_true
         { target with clock := extra + target.clock } (by simpa using targetEmpty) (by simpa using targetPositive)
     have targetBody' : ClosSem.evaluate expressions [] { targetInitialized with clock := extra + targetInitialized.clock } =
-        (bodyResult, targetLast) := targetBody
+        (bodyResult, targetLast) := by simpa only [Nat.add_comm] using targetBody
     have targetSequence := ClosProps.evaluate_cons_value (compileInit true) expressions []
       { target with clock := extra + target.clock } { targetInitialized with clock := extra + targetInitialized.clock }
       ClosSem.unitValue targetInitRun
