@@ -235,6 +235,38 @@ theorem evaluate_noInstall_simulation {C F : Type} :
   · intro location function args source target final result functionOk argsOk related run
     exact (all source.clock).1 location function args source target final result rfl functionOk argsOk related run
 
+namespace EvaluateChangeOracle
+
+/-- The closure state uses the canonical finite-support map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
+/-- Evaluating without installation is unchanged by the oracle transformation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "evaluate_change_oracle"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluate_change_oracle {C F : Type} :
+    (∀ {N : Type} (tmp : List ClosLang.Exp × List ClosSem.Value × ClosSem.State C F)
+      (xs : List ClosLang.Exp) (env : List ClosSem.Value) (s1 t1 : ClosSem.State C F)
+      (res : Result (List ClosSem.Value) ClosSem.Value) (s2 : ClosSem.State C F) (_n : N),
+      tmp = (xs, env, s1) ∧ ClosSem.evaluate xs env s1 = (res, s2) ∧
+          res ≠ .err (.abort .typeError) →
+      StateRelNoInstall s1 t1 ∧ ClosLang.hasInstallList xs = false ∧ valuesNoInstall env = true →
+      ∃ t2, ClosSem.evaluate xs env t1 = (res, t2) ∧ StateRelNoInstall s2 t2 ∧ resultNoInstall res) ∧
+    (∀ (loc : Option Nat) (f : ClosSem.Value) (args : List ClosSem.Value) (s : ClosSem.State C F)
+      (res : Result (List ClosSem.Value) ClosSem.Value) (s2 t1 : ClosSem.State C F),
+      ClosSem.evaluateApp loc f args s = (res, s2) ∧ res ≠ .err (.abort .typeError) →
+      StateRelNoInstall s t1 ∧ valuesNoInstall args = true ∧ valueNoInstall f = true →
+      ∃ t2, ClosSem.evaluateApp loc f args t1 = (res, t2) ∧ StateRelNoInstall s2 t2 ∧ resultNoInstall res) := by
+  constructor
+  · intro N tmp xs env s1 t1 res s2 n source related
+    exact evaluate_noInstall_simulation.1 xs env s1 t1 s2 res related.2.1 related.2.2 related.1 source.2.1
+  · intro loc f args s res s2 t1 source related
+    exact evaluate_noInstall_simulation.2 loc f args s t1 s2 res related.2.2 related.2.1 related.1 source.1
+
+end EvaluateChangeOracle
+
 /-- For an attached program without installation, the two initial compiler
 configurations agree at the same clock and preserve the no-install relation. -/
 theorem attachInterpreter_noInstall_initial_simulation {C F : Type} (expressions : List ClosLang.Exp)

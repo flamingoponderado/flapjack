@@ -47,3 +47,4 @@ val state_rel_prime_refs_replay = Q.prove (
   `state_rel' s t ⇒ t.refs = s.refs`,
   fs [clos_interpProofTheory.state_rel'_def]);
 val _ = show_thm "state_rel_prime_refs_replay_typed=" state_rel_prime_refs_replay;
+val _ = show_thm "evaluate_change_oracle_typed=" clos_interpProofTheory.evaluate_change_oracle;
