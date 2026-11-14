@@ -70,8 +70,9 @@ end StrongLocalsWitnesses
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_get_var"
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
-theorem strongLocalsRelGetVar {width : Nat} [NeZero width] {C F : Type}
-    (f : Nat → Nat) (live : Nat → Prop) (st cst : WordSemStateFiniteExact width C F)
+theorem strongLocalsRelGetVar {width : Nat} [NeZero width] {C₁ F₁ C₂ F₂ : Type}
+    (f : Nat → Nat) (live : Nat → Prop) (st : WordSemStateFiniteExact width C₁ F₁)
+    (cst : WordSemStateFiniteExact width C₂ F₂)
     (n : Nat) (x : WordLocW width)
     (h : strongLocalsRel f live st.locals cst.locals ∧ live n ∧
       WordSemStateFiniteExact.getVar n st = some x) :
@@ -83,8 +84,9 @@ condition applies only to registers; immediate success needs no local lookup. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_get_var_imm"
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
-theorem strongLocalsRelGetVarImm {width : Nat} [NeZero width] {C F : Type}
-    (f : Nat → Nat) (live : Nat → Prop) (st cst : WordSemStateFiniteExact width C F)
+theorem strongLocalsRelGetVarImm {width : Nat} [NeZero width] {C₁ F₁ C₂ F₂ : Type}
+    (f : Nat → Nat) (live : Nat → Prop) (st : WordSemStateFiniteExact width C₁ F₁)
+    (cst : WordSemStateFiniteExact width C₂ F₂)
     (n : WordRegImm (BitVec width)) (x : WordLocW width)
     (h : strongLocalsRel f live st.locals cst.locals ∧
       (match n with | .reg key => live key | .imm _ => True) ∧
@@ -99,9 +101,9 @@ transported, preserving list order and duplicates. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_get_vars"
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
-theorem strongLocalsRelGetVars {width : Nat} [NeZero width] {C F : Type} :
+theorem strongLocalsRelGetVars {width : Nat} [NeZero width] {C₁ F₁ C₂ F₂ : Type} :
     ∀ (ls : List Nat) (y : List (WordLocW width)) (f : Nat → Nat) (live : Nat → Prop)
-      (st cst : WordSemStateFiniteExact width C F),
+      (st : WordSemStateFiniteExact width C₁ F₁) (cst : WordSemStateFiniteExact width C₂ F₂),
       strongLocalsRel f live st.locals cst.locals ∧ (∀ x, x ∈ ls → live x) ∧
         WordSemStateFiniteExact.getVars ls st = some y →
       WordSemStateFiniteExact.getVars (ls.map f) cst = some y := by

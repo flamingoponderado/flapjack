@@ -13,14 +13,14 @@ open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesP
 
 /-- Conditional expressions preserve the source evaluator simulation. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
-theorem evalSimulation_If {Config F A : Type} [Nonempty A] (ci : CompilerInstance Config)
+theorem evalSimulation_If {Config F : Type} (ci : CompilerInstance Config)
     (s : State F) (env : SemEnv Value) (cond yes no : Flapjack.AstHOL.Exp)
     (ih : (∀ middle outcome values branch, evaluate s env [cond] = (middle, outcome) ∧
       outcome = .val values ∧ doIf (headValue values) yes no = some branch →
-      ExpsSimAt (A := A) ci middle env [branch]) ∧ ExpsSimAt (A := A) ci s env [cond]) :
-    ExpsSimAt (A := A) ci s env [.if_ cond yes no] := by
+      ExpsSimAt ci middle env [branch]) ∧ ExpsSimAt ci s env [cond]) :
+    ExpsSimAt ci s env [.if_ cond yes no] := by
   obtain ⟨branchIH, condIH⟩ := ih
-  intro s' res es t env' ⟨run, related, envRelated, safe⟩
+  intro s' res t env' ⟨run, related, envRelated, safe⟩
   rw [evaluate, (fixClockEvaluate s env [cond] []).1] at run
   cases condRun : evaluate s env [cond] with
   | mk middle condResult =>
@@ -30,7 +30,7 @@ theorem evalSimulation_If {Config F A : Type} [Nonempty A] (ci : CompilerInstanc
       cases run
       have condSafe : Result.err error ≠ .err (.abort .typeError) := safe
       obtain ⟨es₁, t₁, r₁, targetRun, stateRel₁, esEq, resultRel₁, fwd, stack⟩ :=
-        condIH s' (.err error) es t env' ⟨condRun, related, envRelated, condSafe⟩
+        condIH s' (.err error) t env' ⟨condRun, related, envRelated, condSafe⟩
       cases r₁ with
       | val values => cases resultRel₁
       | err targetErr =>
@@ -45,7 +45,7 @@ theorem evalSimulation_If {Config F A : Type} [Nonempty A] (ci : CompilerInstanc
         exact (safe rfl).elim
       next branch chosen =>
         obtain ⟨es₁, t₁, r₁, targetRun, stateRel₁, esEq, resultRel₁, fwd₁, stack₁⟩ :=
-          condIH middle (.val values) es t env' ⟨condRun, related, envRelated, by simp⟩
+          condIH middle (.val values) t env' ⟨condRun, related, envRelated, by simp⟩
         cases r₁ with
         | err err => cases resultRel₁
         | val targetValues =>
@@ -65,7 +65,7 @@ theorem evalSimulation_If {Config F A : Type} [Nonempty A] (ci : CompilerInstanc
                 (forwardRules (oracleState t.evalState) (.conv none []) (.conv none []) es₁ [] [] env env').2.2.1
                   ⟨envRelated, fwd₁⟩
               obtain ⟨es₂, t₂, r₂, branchRun, stateRel₂, esEq₂, resultRel₂, fwd₂, stack₂⟩ :=
-                branchIH middle (.val [head]) [head] branch ⟨condRun, rfl, chosen⟩ s' res es t₁ env'
+                branchIH middle (.val [head]) [head] branch ⟨condRun, rfl, chosen⟩ s' res t₁ env'
                   ⟨run, stateRel₁, by simpa [esEq] using envRelated₁, safe⟩
               refine ⟨es₂, t₂, r₂, ?_, stateRel₂, esEq₂, resultRel₂, ?_, ?_⟩
               · rw [evaluate, (fixClockEvaluate t env' [cond] []).1, targetRun]

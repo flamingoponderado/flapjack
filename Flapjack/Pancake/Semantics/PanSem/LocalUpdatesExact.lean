@@ -25,6 +25,12 @@ quantify over arbitrary functions and therefore are not exact HOL ports. Their
 `@[hol]` tags are withheld pending a state carrier whose fields enforce finite
 support.
 
+`upd_locals` is already ported exactly as `updLocalsHOLFinite`
+(`StateExactFiniteMap.lean`). The function-backed `updLocalsHOLExact` that used
+to live here had no user outside the parity test, so it was retired once that
+test moved onto the finite-support carrier; `upd_locals` is now observed only
+through its tagged exact twin.
+
 Direct HOL oracle rows:
 
 * `scripts/hol-probes/pan_sem_set_var_probe.out` —
@@ -57,19 +63,6 @@ def setGlobalHOLExact {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateExact width σ) : PanSemStateExact width σ :=
   { state with
     globals := fun current => if current = name then some value else state.globals current }
-
-/-- Function-backed analogue of HOL `panSem$upd_locals` (`panSemScript.sml:431-434`).
-    It models FEMPTY followed by FUPDATE_LIST pointwise, but is untagged because
-    its state type is not restricted to finite maps. Exact finite-support
-    replacement tracked by `flapjack-pxn.18.3.7.1.3.1.1.2.5` (parent `.2.3`). -/
-def updLocalsHOLExact {width : Nat} {σ : Type} [NeZero width]
-    (varargs : List (MlS × ValueHOL width))
-    (state : PanSemStateExact width σ) : PanSemStateExact width σ :=
-  { state with
-    locals := List.foldl
-      (fun (map : MlS → Option (ValueHOL width)) (entry : MlS × ValueHOL width) =>
-        fun current => if current = entry.1 then some entry.2 else map current)
-      (fun _ => none) varargs }
 
 /-- Function-backed analogue of HOL `panSem$res_var` (`panSemScript.sml:505-508`).
     Its delete/update behavior is pointwise, but its function-map input is not

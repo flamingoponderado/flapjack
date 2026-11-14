@@ -335,6 +335,61 @@ DOCUMENTED_MISMATCHES = {
         "width, so the Lean statement specialises both. The eight equations are HOL's, but the interface is not "
         "the source shape; a faithful port needs a state carrier polymorphic in the FFI host."
     ),
+    ("Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean", "lookupCodeFpermCodeHOL"): (
+        "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+        "lookup_code_fperm_code",
+        "codewhale source comparison (2026-11-14, task 169): tag withdrawn. The typed capture "
+        "lookup_code_fperm_code_typed in pancake_pan_globals_proof_typed_probe.out gives "
+        "code : mlstring |-> (\u03b2 # shape) list # \u03b1 prog # \u03b4 and args : \u03b3 v list, with the "
+        "value type \u03b3 independent of the code map's word type and the parameter-list and "
+        "return-shape components generic. Lean's lookupCodeFpermCodeHOL uses the executed "
+        "lookupCodeCanonicalHOL, which is width-indexed (ValueHOL width). The equation holds at "
+        "the used instance, but a faithful port needs a value carrier generic in its word dimension."
+    ),
+    ("Flapjack/Pancake/Proofs/PanGlobals/StateRelationFfi.lean", "stateRelChangeFfiHOL"): (
+        "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+        "state_rel_change_ffi",
+        "codewhale source comparison (2026-11-14, task 169): tag withdrawn. The typed capture "
+        "state_rel_change_ffi_typed gives (s :(\u03b1, \u03b2) state) with the replacement "
+        "(x :\u03b3 ffi_state), so HOL's record update changes the state's FFI carrier and the "
+        "implication relates states of different hosts. Lean's PanSemStateFiniteExact width \u03c3 "
+        "fixes the FFI host at \u03c3; a faithful port needs a state carrier polymorphic in the FFI host."
+    ),
+    ("Flapjack/Pancake/Proofs/PanGlobals/StateRelationCode.lean", "stateRelLookupCodeHOL"): (
+        "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+        "state_rel_lookup_code",
+        "codewhale source comparison (2026-11-14, task 169): tag withdrawn. The typed capture "
+        "state_rel_lookup_code_typed gives lookup_code s.code fname (args :\u03b3 v list) with the "
+        "value type \u03b3 independent of the state's word type, while Lean's stateRelLookupCodeHOL "
+        "uses lookupCodeHOLFinite, which fixes the arguments to List (ValueHOL width). The "
+        "compiled-body conclusion holds at that instance only."
+    ),
+    ("Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean", "initialProgMakeFuncsElExact"): (
+        "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+        "initial_prog_make_funcs_el",
+        "codewhale source comparison (2026-11-14, task 169): tag withdrawn. The typed capture "
+        "gives prog : (\u03b1 # \u03b2 list # \u03b3) list and start : \u03b1 with the name, "
+        "parameter-list and program types independent. Lean fixes them to MlS, List Nat and "
+        "CrepProgHOL width; the lookup equation holds at that instance only."
+    ),
+    ("Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean", "isWfShapeExactHOL_drop"): (
+        "cakeml/pancake/proofs/pan_structsProofScript.sml",
+        "is_wf_shape_drop",
+        "codewhale source comparison (2026-11-14, task 169): tag withdrawn. The typed capture "
+        "gives sh_ctxt :(mlstring # \u03b1) list with the payload type generic (HOL's is_wf_shape "
+        "only tests name presence), while the Lean statement fixes the context to "
+        "StructContextExact; the induction principle sizeOfShapeWithContextHOL.induct is stated "
+        "over that carrier."
+    ),
+    ("Flapjack/Pancake/Proofs/WordConvs/SSAFlatInst.lean", "ssaCcTrans_flatExpInst"): (
+        "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+        "ssa_cc_trans_flat_exp_conventions",
+        "codewhale source comparison (2026-11-14, task 171): tag withdrawn. HOL quantifies an "
+        "arbitrary prog with ssa, na and the loop-table list and concludes flat_exp_conventions "
+        "(FST (ssa_cc_trans prog ssa na lt)) from flat_exp_conventions prog; the Lean declaration "
+        "is the prog = Inst instruction instance, a specialization rather than an exact port. The "
+        "exact general port is the tagged ssaCcTrans_flatExpConventions in SSAFlatProgram.lean."
+    ),
     ("Flapjack/Compiler/Backend/ClosFvs/Source.lean", "compile"): ("cakeml/compiler/backend/clos_fvsScript.sml", "compile_def", "The executable uses removeList; compileSource is the source-shaped definition and compileSource_eq_compile proves agreement."),
     ("Flapjack/Compiler/Backend/ClosFvs/Source.lean", "compileInc"): ("cakeml/compiler/backend/clos_fvsScript.sml", "compile_inc_def", "The executable uses compile; compileIncSource is the source-shaped definition and compileIncSource_eq_compileInc proves agreement."),
     ("Flapjack/Compiler/Backend/ClosKnown/Compile.lean", "knownCompileInc"): ("cakeml/compiler/backend/clos_knownScript.sml", "known_compile_inc_def", "The executable uses the total traversals; knownCompileIncSource is the source-shaped definition and knownCompileIncSource_eq proves agreement."),
@@ -453,19 +508,6 @@ DOCUMENTED_MISMATCHES = {
         "port depends on the exact panSem evaluate and is tracked by "
         "flapjack-pxn.18.4.4 / flapjack-pxn.18.4.3 and flapjack-pxn.18.3.6.9. "
     ),
-    ("Flapjack/Pancake/Semantics/PanSem/ClockExact.lean", "fixClockHOLExact_IMP_LESS_EQ"): (
-        "cakeml/pancake/semantics/panSemScript.sml",
-        "fix_clock_IMP_LESS_EQ",
-        "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.3.35; "
-        "FLAPJACK-SPECIFIC, documented_mismatch). HOL fix_clock_IMP_LESS_EQ "
-        "(panSemScript.sml:451-457) states over panSem$state, whose locals/globals/"
-        "code/eshapes are finite maps, that a fix_clock step cannot raise the clock. "
-        "fixClockHOLExact_IMP_LESS_EQ (ClockExact.lean:47) keeps the same quantifiers "
-        "and conclusion but the carrier PanSemStateExact uses unrestricted functions "
-        "in place of those finite-map fields, a strict superset admitting infinite "
-        "support. Exact finite-support replacement over PanSemStateFiniteExact tracked "
-        "by flapjack-pxn.18.3.7.1.3.1.1.2.5 (parent .2.3). "
-    ),
     ("Flapjack/Pancake/Semantics/PanSem/StateSimpExact.lean", "kvar_simps"): (
         "cakeml/pancake/semantics/panSemScript.sml",
         "kvar_simps",
@@ -520,16 +562,6 @@ DOCUMENTED_MISMATCHES = {
         "ShapeHOL/ValueHOL, but its PanSemStateExact argument admits arbitrary lookup "
         "functions instead of HOL finite-map fields. Exact finite-support replacement "
         "tracked by flapjack-pxn.18.3.7.1.3.1.1.2.5 (parent .2.3). "
-    ),
-    ("Flapjack/Pancake/Semantics/PanSem/LocalUpdatesExact.lean", "updLocalsHOLExact"): (
-        "cakeml/pancake/semantics/panSemScript.sml",
-        "upd_locals_def",
-        "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.3.31; "
-        "FLAPJACK-SPECIFIC, documented_mismatch). HOL upd_locals (panSemScript.sml:431-434) "
-        "sets locals := FEMPTY |++ varargs, a finite map. updLocalsHOLExact "
-        "(LocalUpdatesExact.lean:60) models FEMPTY followed by FUPDATE_LIST pointwise, but "
-        "its PanSemStateExact state type is not restricted to finite maps. Exact "
-        "finite-support replacement tracked by flapjack-pxn.18.3.7.1.3.1.1.2.5 (parent .2.3). "
     ),
     ("Flapjack/Pancake/Semantics/PanSem/LocalUpdatesExact.lean", "resVarHOLExact"): (
         "cakeml/pancake/semantics/panSemScript.sml",
@@ -798,24 +830,6 @@ DOCUMENTED_MISMATCHES = {
         "are in crep_dec_clock_simp_probe.out, and empty_locals_none / "
         "empty_locals_fields_preserved in crep_local_updates_probe.out; sampled by "
         "Flapjack/Test/CrepGlobalShapeParity.lean:284-285. No exact "
-        "finite-support carrier; tag remains withdrawn pending "
-        "flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Semantics/CrepSem.lean", "fixCrepHolClock_IMP_LESS_EQW"): (
-        "cakeml/pancake/semantics/crepSemScript.sml",
-        "fix_clock_IMP_LESS_EQ",
-        "Codex (source comparison with crepSemScript.sml:155-160: the bound "
-        "`fix_clock s x = (res,s1) ==> s1.clock <= s.clock` matches the Lean "
-        "inequality, with HOL's pair variable and implicit res/s1 exposed as the "
-        "explicit step/result/newState binders. However the quantified whole-state "
-        "carrier CrepHolState (BitVec width) stores locals/globals/code as "
-        "unrestricted Nat-to-Option, BitVec-5-to-Option and FunName-to-Option "
-        "functions that admit infinite support, a strict superset of HOL's finite "
-        "maps (crepSemScript.sml:20-31). names_as_string cannot authorize that "
-        "carrier and no NameRanged byte witness applies to a clock inequality. "
-        "Direct HOL rows fix_clock_clamps / fix_clock_keeps_lower are in "
-        "crep_fix_clock_probe.out and sampled by "
-        "Flapjack/Test/CrepGlobalShapeParity.lean:307-312. No exact "
         "finite-support carrier; tag remains withdrawn pending "
         "flapjack-pxn.18.3.7.1.3.1.1.3.1."
     ),

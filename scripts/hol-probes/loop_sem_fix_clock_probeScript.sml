@@ -27,3 +27,11 @@ val _ = print_eval "fix_clock_lower_old"
 val _ = print_eval "fix_clock_zero"
   ``(SND (fix_clock (^s with clock := 0)
       (Result [], (^s with clock := 0)))).clock``
+
+(* Typed capture of the two-state fix_clock_def (task 167). *)
+val _ = (print "fix_clock_def_typed=";
+  Lib.with_flag (Globals.show_types, true)
+    print_term (concl loopSemTheory.fix_clock_def);
+  print "\n");
+val _ = print ("fix_clock_def_hypotheses=" ^
+  Int.toString (length (hyp loopSemTheory.fix_clock_def)) ^ "\n");

@@ -53,8 +53,7 @@ theorem stateRel_storePreserves {width : Nat} {σ : Type} [NeZero width]
         ¬ addresses (target.topAddr - address) (flattenHOL value).length slot := by
       intro slot hslot hwrite
       rw [hlength] at hwrite
-      exact hdisjoint name' name (shapeOfHOLExact value') address'
-        (shapeOfHOLExact oldValue) address hne (by simp [hlookup'])
+      exact disjointGlobalsHOLExact_apply hdisjoint hne (by simp [hlookup'])
         (by simp [hlookup]) hc' hcontext slot ⟨hslot, hwrite⟩
     refine ⟨address', hc', ?_⟩
     rw [memStoresLoadDisjointHOL.1 (shapeOfHOLExact value') (target.topAddr - address)

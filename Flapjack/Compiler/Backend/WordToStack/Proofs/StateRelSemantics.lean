@@ -281,14 +281,14 @@ theorem sourceTerminationUnique (s : WordSemStateFiniteExact width (Nat × C) F)
 
 theorem sourceFamilyChain (s : WordSemStateFiniteExact width (Nat × C) F) (start : Nat) :
     HolLList.lprefixChain (sourceFamily s start) := by
-  rintro first second ⟨k1, rfl⟩ ⟨k2, rfl⟩
+  rintro first second ⟨⟨k1, rfl⟩, ⟨k2, rfl⟩⟩
   rcases Nat.le_total k1 k2 with le | le
   · exact Or.inl ((HolLList.lprefix_fromList _ _).mpr (wordEntryEventsMono s start k1 k2 le))
   · exact Or.inr ((HolLList.lprefix_fromList _ _).mpr (wordEntryEventsMono s start k2 k1 le))
 
 theorem targetFamilyChain (t : StackSemStateFiniteExact width C F) (start : Nat) :
     HolLList.lprefixChain (targetFamily t start) := by
-  rintro first second ⟨k1, rfl⟩ ⟨k2, rfl⟩
+  rintro first second ⟨⟨k1, rfl⟩, ⟨k2, rfl⟩⟩
   rcases Nat.le_total k1 k2 with le | le
   · exact Or.inl ((HolLList.lprefix_fromList _ _).mpr (stackEntryEventsMono t start k1 k2 le))
   · exact Or.inr ((HolLList.lprefix_fromList _ _).mpr (stackEntryEventsMono t start k2 k1 le))

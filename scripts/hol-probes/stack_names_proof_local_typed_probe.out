@@ -1,0 +1,6 @@
+comp_STOP_Loop_typed=comp (f :num sptree$num_map) (STOP (Loop (c1 :α stackLang$prog) :α stackLang$prog)) = STOP (Loop (comp f c1) :α stackLang$prog)
+compile_semantics_alt_typed=∀(s :(α, β, γ) state) (t :(α, β, γ) state). find_name (f :num sptree$num_map) PERMUTES 𝕌(:num) ∧ rename_state t.compile f s = t ∧ s.compile = (λ(c :β). (t.compile c :(num # α stackLang$prog) list -> (word8 list # β) option) ∘ (compile f :(num # α stackLang$prog) list -> (num # α stackLang$prog) list)) ∧ ¬s.use_alloc ∧ ¬s.use_store ∧ ¬s.use_stack ⇒ semantics (start :num) t = semantics start s
+loc_check_rename_state_typed=loc_check (rename_state (c :β -> (num # α stackLang$prog) list -> (word8 list # β) option) (f :num sptree$num_map) (s :(α, β, γ) state)).code ((l1 :num),(l2 :num)) ⇔ loc_check s.code (l1,l2)
+names_ok_imp_typed=names_ok (f :num sptree$num_map) (c :α asm_config).reg_count c.avoid_regs ⇒ ∀(n :num). reg_name n c ⇒ reg_ok (find_name f n) c
+names_ok_imp2_typed=names_ok (f :num sptree$num_map) (c :α asm_config).reg_count c.avoid_regs ∧ (n :num) ≠ (n' :num) ∧ reg_name n c ∧ reg_name n' c ⇒ find_name f n ≠ find_name f n'
+stack_names_comp_stack_asm_ok_typed=∀(f :num sptree$num_map) (p :α stackLang$prog). stack_asm_name (c :α asm_config) p ∧ names_ok f c.reg_count c.avoid_regs ∧ fixed_names f c ⇒ stack_asm_ok c (comp f p)

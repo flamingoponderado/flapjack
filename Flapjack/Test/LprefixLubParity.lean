@@ -35,7 +35,7 @@ private def chainB : HolLList Nat → Prop :=
   fun l => l = fromList [0, 1] ∨ l = fromList [0, 1, 2]
 
 private theorem chainA_chain : lprefixChain chainA := by
-  intro a b ha hb
+  intro a b ⟨ha, hb⟩
   rcases ha with rfl | rfl <;> rcases hb with rfl | rfl
   · exact Or.inl (lprefix_refl _)
   · exact Or.inl ((lprefix_fromList _ _).2 ⟨[1, 2], rfl⟩)
@@ -43,7 +43,7 @@ private theorem chainA_chain : lprefixChain chainA := by
   · exact Or.inl (lprefix_refl _)
 
 private theorem chainB_chain : lprefixChain chainB := by
-  intro a b ha hb
+  intro a b ⟨ha, hb⟩
   rcases ha with rfl | rfl <;> rcases hb with rfl | rfl
   · exact Or.inl (lprefix_refl _)
   · exact Or.inl ((lprefix_fromList _ _).2 ⟨[2], rfl⟩)
@@ -111,12 +111,12 @@ example : ∃ y, lnth 1 (fromList [0, 1, 2]) = some y :=
 example : (equivLprefixChain chainA chainB ↔
     (∀ (ll1 : HolLList Nat) (n : Nat) (x : Nat), chainA ll1 → lnth n ll1 = some x →
       ∃ ll2, chainB ll2 ∧ lnth n ll2 = some x) ∧
-    (∀ (ll2 : HolLList Nat) (_n : Nat) (_x : Nat), chainB ll2 → ll2 ≠ lnil →
+    (∀ (ll2 : HolLList Nat), chainB ll2 → ll2 ≠ lnil →
       ∃ ll1, chainA ll1 ∧ llistShorter ll2 ll1)) :=
   equiv_lprefix_chain_thm2 chainA_chain chainB_chain chainB_fin
 
 -- The `llist_shorter` conjunct extracted from a concrete `equiv_lprefix_chain`.
-example : ∀ (ll2 : HolLList Nat) (_n : Nat) (_x : Nat), chainB ll2 → ll2 ≠ lnil →
+example : ∀ (ll2 : HolLList Nat), chainB ll2 → ll2 ≠ lnil →
     ∃ ll1, chainA ll1 ∧ llistShorter ll2 ll1 :=
   ((equiv_lprefix_chain_thm2 chainA_chain chainB_chain chainB_fin).mp
     (IMP_equiv_lprefix_chain chainA_chain chainB_chain relAB relBA)).2

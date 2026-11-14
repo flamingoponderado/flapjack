@@ -447,7 +447,7 @@ theorem compileTopSemanticsDeclsHOL {width : Nat} {σ : Type} [NeZero width]
       · intro f ps p rs h
         rw [hcode] at h
         cases h
-      · intro _ _ _ _ _ _ _ h
+      · intro _ _ _ _ _ _ ⟨_, h, _, _, _⟩ _
         exact absurd (by rw [hglobals]; rfl) h
       · rintro (h | h)
         · exact htopNot h

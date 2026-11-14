@@ -36,7 +36,7 @@ theorem evaluateProg_ioEventsChain {σ : Type} (st : State σ) (env : SemEnv Val
     (prog : List Dec) :
     HolLList.lprefixChain (fun events => ∃ k : Nat,
       HolLList.fromList (evaluateProgWithClock st env k prog).1.ioEvents = events) := by
-  intro left right hl hr
+  intro left right ⟨hl, hr⟩
   obtain ⟨k₁, rfl⟩ := hl
   obtain ⟨k₂, rfl⟩ := hr
   rcases Nat.le_total k₁ k₂ with hk | hk

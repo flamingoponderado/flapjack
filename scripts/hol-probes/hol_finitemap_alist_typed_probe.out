@@ -1,0 +1,8 @@
+ALOOKUP_def_typed=(∀(q :β). ALOOKUP ([] :(β # α) list) q = (NONE :α option)) ∧ ∀(y :α) (x :β) (t :(β # α) list) (q :β). ALOOKUP ((x,y)::t) q = if x = q then SOME y else ALOOKUP t q
+ALOOKUP_APPEND_typed=∀(l1 :(α # β) list) (l2 :(α # β) list) (k :α). ALOOKUP (l1 ⧺ l2) k = case ALOOKUP l1 k of (NONE :β option) => ALOOKUP l2 k | SOME v => SOME v
+ALOOKUP_MEM_typed=∀(al :(α # β) list) (k :α) (v :β). ALOOKUP al k = SOME v ⇒ MEM (k,v) al
+ALOOKUP_ALL_DISTINCT_MEM_typed=ALL_DISTINCT (MAP (FST :α # β -> α) (al :(α # β) list)) ∧ MEM ((k :α),(v :β)) al ⇒ ALOOKUP al k = SOME v
+alist_to_fmap_def_typed=∀(s :(α # β) list). alist_to_fmap s = FOLDR (λ((k :α),(v :β)) (f :α |-> β). f⟨k ↦ v⟩) (FEMPTY :α |-> β) s
+alist_to_fmap_APPEND_typed=∀(l1 :(α # β) list) (l2 :(α # β) list). alist_to_fmap (l1 ⧺ l2) = alist_to_fmap l1 ⊌ alist_to_fmap l2
+FUPDATE_LIST_typed=($|++ :(α |-> β) -> (α # β) list -> (α |-> β)) = FOLDL ($|+ :(α |-> β) -> α # β -> (α |-> β))
+FCARD_FUPDATE_typed=∀(fm :α |-> β) (a :α) (b :β). FCARD fm⟨a ↦ b⟩ = if a ∈ FDOM fm then FCARD fm else (1 :num) + FCARD fm

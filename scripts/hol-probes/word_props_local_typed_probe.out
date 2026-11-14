@@ -1,0 +1,23 @@
+call_env_option_le_stack_max_typed=option_le (s :(α, β, γ) state).stack_max (call_env (args1 :α word_loc list) (ss :num option) s).stack_max
+call_push_env_option_le_stack_max_typed=option_le (s :(α, β, γ) state).stack_max (call_env (args1 :α word_loc list) (ss :num option) (push_env (envs :α word_loc sptree$num_map # α word_loc sptree$num_map) (handler :(num # α prog # num # num) option) s)).stack_max
+dec_stack_stack_key_eq_typed=∀(wl :α word_loc list) (st :α stack_frame list) (st' :α stack_frame list). dec_stack wl st = SOME st' ⇒ s_key_eq st st'
+handler_eq_typed=(x :(α, β, γ) state) with handler := x.handler = x
+inst_code_gc_fun_const_typed=inst (i :α inst) (s :(α, β, γ) state) = SOME (t :(α, β, γ) state) ⇒ s.code = t.code ∧ s.gc_fun = t.gc_fun ∧ s.sh_mdomain = t.sh_mdomain ∧ s.mdomain = t.mdomain ∧ (s.be ⇔ t.be) ∧ s.compile = t.compile ∧ s.stack_size = t.stack_size ∧ s.stack_limit = t.stack_limit
+locals_rel_delete_typed=∀(n :num) (s :α word_loc sptree$num_map) (t :α word_loc sptree$num_map). locals_rel (temp :num) s t ⇒ locals_rel temp (delete n s) (delete n t)
+locals_rel_set_var_typed=∀(n :num) (s :α word_loc sptree$num_map) (t :α word_loc sptree$num_map). locals_rel (temp :num) s t ⇒ locals_rel temp (insert n (v :α word_loc) s) (insert n v t)
+s_frame_key_eq_sym_typed=∀(a :α stack_frame) (b :α stack_frame). s_frame_key_eq a b ⇔ s_frame_key_eq b a
+s_frame_key_eq_trans_typed=∀(a :α stack_frame) (b :α stack_frame) (c :α stack_frame). s_frame_key_eq a b ∧ s_frame_key_eq b c ⇒ s_frame_key_eq a c
+s_frame_val_eq_sym_typed=∀(a :α stack_frame) (b :α stack_frame). s_frame_val_eq a b ⇔ s_frame_val_eq b a
+s_frame_val_eq_trans_typed=∀(a :α stack_frame) (b :α stack_frame) (c :α stack_frame). s_frame_val_eq a b ∧ s_frame_val_eq b c ⇒ s_frame_val_eq a c
+s_key_eq_APPEND_typed=∀(s :α stack_frame list) (t :α stack_frame list) (x :α stack_frame list) (y :α stack_frame list). s_key_eq s t ∧ s_key_eq x y ⇒ s_key_eq (s ++ x) (t ++ y)
+s_key_eq_LASTN_typed=∀(s :α stack_frame list) (t :α stack_frame list) (n :num). s_key_eq s t ⇒ s_key_eq (LASTN n s) (LASTN n t)
+s_key_eq_LASTN_exists_typed=∀(s :α stack_frame list) (t :α stack_frame list) (n :num) (m :num option) (e0 :(num # α word_loc) list) (e :(num # α word_loc) list) (y :num # num # num) (xs :α stack_frame list). s_key_eq s t ∧ LASTN n s = StackFrame m e0 e (SOME y)::xs ⇒ ∃(e' :(num # α word_loc) list) (ls :α stack_frame list). LASTN n t = StackFrame m e0 e' (SOME y)::ls ∧ MAP (FST :num # α word_loc -> num) e' = MAP (FST :num # α word_loc -> num) e ∧ s_key_eq xs ls
+s_key_eq_REVERSE_typed=∀(s :α stack_frame list) (t :α stack_frame list). s_key_eq s t ⇒ s_key_eq (REVERSE s) (REVERSE t)
+s_key_eq_TAKE_typed=∀(s :α stack_frame list) (t :α stack_frame list) (n :num). s_key_eq s t ⇒ s_key_eq (TAKE n s) (TAKE n t)
+s_val_eq_APPEND_typed=∀(s :α stack_frame list) (t :α stack_frame list) (x :α stack_frame list) (y :α stack_frame list). s_val_eq s t ∧ s_val_eq x y ⇒ s_val_eq (s ++ x) (t ++ y)
+s_val_eq_LASTN_typed=∀(s :α stack_frame list) (t :α stack_frame list) (n :num). s_val_eq s t ⇒ s_val_eq (LASTN n s) (LASTN n t)
+s_val_eq_REVERSE_typed=∀(s :α stack_frame list) (t :α stack_frame list). s_val_eq s t ⇒ s_val_eq (REVERSE s) (REVERSE t)
+s_val_eq_TAKE_typed=∀(s :α stack_frame list) (t :α stack_frame list) (n :num). s_val_eq s t ⇒ s_val_eq (TAKE n s) (TAKE n t)
+s_val_eq_dec_stack_typed=∀(q :α word_loc list) (st :α stack_frame list) (st' :α stack_frame list) (x :α stack_frame list). s_val_eq st st' ∧ dec_stack q st = SOME x ⇒ ∃(y :α stack_frame list). dec_stack q st' = SOME y ∧ s_val_eq x y
+s_val_eq_enc_stack_typed=∀(st :α stack_frame list) (st' :α stack_frame list). s_val_eq st st' ⇒ enc_stack st = enc_stack st'
+s_val_eq_tail_typed=∀(a :α stack_frame) (b :α stack_frame list) (c :α stack_frame) (d :α stack_frame list). s_val_eq (a::b) (c::d) ⇒ s_val_eq b d

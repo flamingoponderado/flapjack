@@ -1,0 +1,9 @@
+align_def_typed=∀(p :num) (w :α word). align p w = (dimindex (:α) − (1 :num) '' p) w
+aligned_def_typed=∀(p :num) (w :α word). aligned p w ⇔ align p w = w
+byte_align_def_typed=∀(w :α word). byte_align w = align (LOG2 (dimindex (:α) DIV (8 :num))) w
+byte_aligned_def_typed=∀(w :α word). byte_aligned w ⇔ aligned (LOG2 (dimindex (:α) DIV (8 :num))) w
+aligned_add_sub_typed=∀(p :num) (a :α word) (b :α word). aligned p b ⇒ (aligned p (a + b) ⇔ aligned p a) ∧ (aligned p (a − b) ⇔ aligned p a)
+word_slice_def_typed=∀(h :num) (l :num). ((h '' l) :α word -> α word) = (λ(w :α word). (FCP(i :num). l ≤ i ∧ i ≤ MIN h (dimindex (:α) − (1 :num)) ∧ w ' i))
+w2s_def_typed=∀(b :num) (f :num -> char) (w :α word). w2s b f w = n2s b f (w2n w)
+word_to_hex_string_def_typed=(word_to_hex_string :α word -> string) = (w2s (16 :num) HEX :α word -> string)
+word_replicate_def_typed=∀(n :num) (w :α word). (word_replicate n w :β word) = (FCP(i :num). i < n * dimindex (:α) ∧ w ' (i MOD dimindex (:α)))

@@ -1,0 +1,4 @@
+log_exists_typed=∃(f :num -> num -> num). ∀(a :num) (n :num). (1 :num) < a ∧ (0 :num) < n ⇒ a ** f a n ≤ n ∧ n < a ** SUC (f a n)
+log_type=:num -> num -> num
+log_spec_typed=∀(a :num) (n :num). (1 :num) < a ∧ (0 :num) < n ⇒ a ** LOG a n ≤ n ∧ n < a ** SUC (LOG a n)
+log_unique_typed=∀(a :num) (n :num) (p :num). a ** p ≤ n ∧ n < a ** SUC p ⇒ LOG a n = p

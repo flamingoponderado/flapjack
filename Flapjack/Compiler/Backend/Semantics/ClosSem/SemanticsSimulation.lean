@@ -92,12 +92,12 @@ theorem clocked_traces_lub_eq {α : Type} (source target : Nat → List α)
     HolLList.buildLprefixLub (fun trace => ∃ clock, trace = HolLList.fromList (source clock)) =
       HolLList.buildLprefixLub (fun trace => ∃ clock, trace = HolLList.fromList (target clock)) := by
   apply HolLList.IMP_build_lprefix_lub_EQ
-  · intro x y ⟨k, hk⟩ ⟨l, hl⟩
+  · intro x y ⟨⟨k, hk⟩, ⟨l, hl⟩⟩
     subst x; subst y
     rcases Nat.le_total k l with h | h
     · exact Or.inl ((HolLList.lprefix_fromList _ _).2 (sourceMono k l h))
     · exact Or.inr ((HolLList.lprefix_fromList _ _).2 (sourceMono l k h))
-  · intro x y ⟨k, hk⟩ ⟨l, hl⟩
+  · intro x y ⟨⟨k, hk⟩, ⟨l, hl⟩⟩
     subst x; subst y
     rcases Nat.le_total k l with h | h
     · exact Or.inl ((HolLList.lprefix_fromList _ _).2 (targetMono k l h))

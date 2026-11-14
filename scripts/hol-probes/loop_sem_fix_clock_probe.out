@@ -1,5 +1,9 @@
 fix_clock_lower_new=4
-
 fix_clock_lower_old=4
-
 fix_clock_zero=0
+fix_clock_def_typed=∀(old_s :(δ, ε) state) (res :α) (new_s :(β, γ) state).
+  fix_clock old_s (res,new_s) =
+  (res,
+   new_s with
+   clock := if old_s.clock < new_s.clock then old_s.clock else new_s.clock)
+fix_clock_def_hypotheses=0
