@@ -35,8 +35,11 @@ theorem inStateRel_after_install {C F : Type}
     rwa [← domains]
   have range := inlineAllSource_cache_subspt (source.compileOracle 0).2
     (source.compileOracle 0).1.1 target.code distinct cache targetFresh
-  have codes := inlineAllSource_union_related (source.compileOracle 0).2
-    (source.compileOracle 0).1.1 source.code target.code distinct cache targetFresh codeRel
+  have codes := inlineAllLookupUnion (source.compileOracle 0).1.1 (source.compileOracle 0).2
+    (inlineAllSource (source.compileOracle 0).1.1 (source.compileOracle 0).2).1
+    (inlineAllSource (source.compileOracle 0).1.1 (source.compileOracle 0).2).2 source.code target.code
+    ⟨(Prod.eta _).symm, cache, domains, codeRel,
+      Set.disjoint_left.mpr (fun key member present => targetFresh key present member), distinct⟩
   have newDomains : sptDomain (sptUnion target.code
       (sptFromAList (inlineAllSource (source.compileOracle 0).1.1 (source.compileOracle 0).2).2)) =
       sptDomain (sptUnion source.code (sptFromAList (source.compileOracle 0).2)) := by

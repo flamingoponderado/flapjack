@@ -398,3 +398,21 @@ val do_install_Rerr_type_replay = Q.prove
    rpt strip_tac
   >> fs [do_install_def, case_eq_thms, UNCURRY]);
 val _ = show "do_install_Rerr_type_replay_typed" do_install_Rerr_type_replay;
+
+(* Capture this local theorem statement with inferred HOL types. *)
+val inline_all_lookup_union_statement =
+  ``inline_all cs prog = (final_cache,out) ∧
+  subspt cs target ∧
+  domain target = domain source ∧
+  (∀k arity exp. lookup k source = SOME (arity,exp) ⇒
+     ∃exp1. lookup k target = SOME (arity,exp1) ∧
+            exp_rel target exp exp1) ∧
+  DISJOINT (set (MAP FST prog)) (domain target) ∧
+  ALL_DISTINCT (MAP FST prog) ⇒
+  ∀k arity exp.
+    lookup k (union source (fromAList prog)) = SOME (arity,exp) ⇒
+    ∃exp1.
+      lookup k (union target (fromAList out)) = SOME (arity,exp1) ∧
+      exp_rel (union target (fromAList out)) exp exp1``;
+val _ = (print "inline_all_lookup_union_statement_typed=";
+  print_term inline_all_lookup_union_statement; print "\n");

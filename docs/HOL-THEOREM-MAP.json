@@ -139284,4 +139284,13 @@
     ],
     "reviewer": "Compared the full statement with the local HOL source and its typed, hypothesis-free proof replay: compiler state, FFI, and error payload types are independent; any installation error equals the type error. BVI refs use the canonical finite-support map with a same-module roundtrip."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "inline_all_lookup_union",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/ProgramRelation.lean",
+    "lean_name": "inlineAllLookupUnion",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete HOL local theorem and its inferred-type statement capture (original proof not replayed): the inliner output equation, cache subset, domain equality, related existing code, disjoint labels, distinctness, and resulting full lookup relation are retained."
+  }
 ]
