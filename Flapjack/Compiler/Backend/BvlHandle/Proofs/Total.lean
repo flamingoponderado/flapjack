@@ -1,7 +1,7 @@
 module
 
-public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyTotal
-public import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileTotal
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyProduction
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileProduction
 public import Flapjack.Compiler.Backend.BvlConst.Proofs.Total
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SequenceRecognition
 
@@ -16,9 +16,7 @@ open Bvl BvlToBvi
 input, independently of the caller's initial fuel. -/
 theorem compileExpWithoutConstantsFuel_succeeds (fuel limit arity : Nat) (e : Exp) :
     ∃ result, compileExpWithoutConstantsFuel fuel limit arity e = some result := by
-  obtain ⟨e', hs⟩ := simplifyBounded_succeeds fuel e
-  obtain ⟨⟨out, live, size, safe⟩, hc⟩ := compileBounded_succeeds fuel limit arity e'
-  exact ⟨out, by simp [compileExpWithoutConstantsFuel, hs, hc]⟩
+  simp [compileExpWithoutConstantsFuel, simplifyBounded_eq, compileBounded_eq]
 
 /-- Constant propagation followed by handler compilation cannot exhaust
 traversal fuel. -/
@@ -36,8 +34,8 @@ theorem compileSeqsFuel_succeeds (fuel limit : Nat) (e : Exp) (acc : Option Exp)
   | succ fuel ih =>
     by_cases shape : ∃ x y, e = Exp.let [x, y] (Exp.var 1)
     · obtain ⟨x, y, rfl⟩ := shape
-      have bx : expBudget x < fuel := by simp_all [expBudget, listBudget] <;> omega
-      have by' : expBudget y < fuel := by simp_all [expBudget, listBudget] <;> omega
+      have bx : expBudget x < fuel := by simp_all [expBudget, listBudget]; omega
+      have by' : expBudget y < fuel := by simp_all [expBudget, listBudget]; omega
       obtain ⟨rest, hr⟩ := ih y acc by'
       obtain ⟨result, hx⟩ := ih x (some rest) bx
       exact ⟨result, by simp [compileSeqsFuel, destSeq, hr, hx]⟩

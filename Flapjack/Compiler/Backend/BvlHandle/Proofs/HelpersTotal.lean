@@ -101,24 +101,4 @@ theorem adjustVarsFuel_succeeds (fuel depth shift : Nat) (e : Exp) (bound : expB
         intro x hx; apply ih; have := member_budget_lt xs x hx; omega)
       exact ⟨_, by simp [adjustVarsFuel, hy]; rfl⟩
 
-/-- The raise-test retry cannot exhaust traversal fuel. -/
-theorem canRaiseBounded_succeeds (fuel : Nat) (e : Exp) :
-    ∃ result, canRaiseBounded fuel e = some result := by
-  cases h : canRaiseFuel fuel e with
-  | some result => exact ⟨result, by simp [canRaiseBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := canRaiseFuel_succeeds (max fuel (expBudget e + 1)) e bound
-    exact ⟨result, by simp [canRaiseBounded, h, done]⟩
-
-/-- The variable-adjustment retry cannot exhaust traversal fuel. -/
-theorem adjustVarsBounded_succeeds (fuel depth shift : Nat) (e : Exp) :
-    ∃ result, adjustVarsBounded fuel depth shift e = some result := by
-  cases h : adjustVarsFuel fuel depth shift e with
-  | some result => exact ⟨result, by simp [adjustVarsBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := adjustVarsFuel_succeeds (max fuel (expBudget e + 1)) depth shift e bound
-    exact ⟨result, by simp [adjustVarsBounded, h, done]⟩
-
 end Flapjack.Compiler.Backend.BvlHandle
