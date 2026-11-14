@@ -69,35 +69,4 @@ theorem scanListFuel_succeeds (fuel : Nat) (ctx : List ValueType) (loc : Nat) (x
 termination_by fuel
 end
 
-/-- The executable scan cannot exhaust traversal fuel. -/
-theorem scanBounded_succeeds (fuel : Nat) (ctx : List ValueType) (loc : Nat) (e : Exp) :
-    ∃ result, scanBounded fuel ctx loc e = some result := by
-  cases h : scanFuel fuel ctx loc e with
-  | some result => exact ⟨result, by simp [scanBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := scanFuel_succeeds (max fuel (expBudget e + 1)) ctx loc e bound
-    exact ⟨result, by simp [scanBounded, h, done]⟩
-
-/-- The executable operand scan cannot exhaust traversal fuel. -/
-theorem scanListBounded_succeeds (fuel : Nat) (ctx : List ValueType) (loc : Nat) (xs : List Exp) :
-    ∃ result, scanListBounded fuel ctx loc xs = some result := by
-  cases h : scanListFuel fuel ctx loc xs with
-  | some result => exact ⟨result, by simp [scanListBounded, h]⟩
-  | none =>
-    have bound : listBudget xs < max fuel (listBudget xs + 1) := by omega
-    obtain ⟨result, done⟩ := scanListFuel_succeeds (max fuel (listBudget xs + 1)) ctx loc xs bound
-    exact ⟨result, by simp [scanListBounded, h, done]⟩
-
-/-- Checking whether to optimize an expression cannot fail from scan fuel.
-The inner `none` is the ordinary decision not to rewrite. -/
-theorem checkExpFuel_succeeds (fuel loc arity : Nat) (e : Exp) :
-    ∃ result, checkExpFuel fuel loc arity e = some result := by
-  have hr := hasRecBounded_eq fuel loc e
-  cases isRec : hasRecSing loc e with
-  | false => exact ⟨_, by simp [checkExpFuel, hr, isRec]; rfl⟩
-  | true =>
-    obtain ⟨⟨ctx, ty, rec, op⟩, hs⟩ := scanBounded_succeeds fuel (List.replicate arity .any) loc e
-    cases op <;> simp [checkExpFuel, hr, isRec, hs] <;> repeat' (first | split | exact ⟨_, rfl⟩)
-
 end Flapjack.Compiler.Backend.BviTailrec

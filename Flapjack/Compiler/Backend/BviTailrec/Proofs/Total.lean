@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTailrec.Rewrite
-public import Flapjack.Compiler.Backend.BviTailrec.Proofs.ScanTotal
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.ScanCorrespondence
 
 @[expose] public section
 
@@ -21,13 +21,14 @@ theorem rewriteFuel_succeeds (fuel loc next : Nat) (op : AssocOp) (acc : Nat)
     | ifThenElse cond yes no =>
       have by' : expBudget yes < fuel := by simp_all [expBudget] <;> omega
       have bn : expBudget no < fuel := by simp_all [expBudget] <;> omega
-      obtain ⟨⟨ctx', ty, rec, assoc⟩, hc⟩ := scanBounded_succeeds fuel ctx loc cond
+      let ctx' := (scanSing ctx loc cond).1
       obtain ⟨⟨ry, y⟩, hy⟩ := ih acc ctx' yes by'
       obtain ⟨⟨rn, n⟩, hn⟩ := ih acc ctx' no bn
-      exact ⟨_, by simp [rewriteFuel, hc, hy, hn]; rfl⟩
+      exact ⟨_, by simp [rewriteFuel, scanBounded_eq, ctx', hy, hn]; rfl⟩
     | «let» xs body =>
       have bb : expBudget body < fuel := by simp_all [expBudget] <;> omega
-      obtain ⟨scans, hs⟩ := scanListBounded_succeeds fuel ctx loc xs
+      let scans := scanList ctx loc xs
+      have hs : scanListBounded fuel ctx loc xs = some scans := scanListBounded_eq fuel ctx loc xs
       let types := scans.map fun (_, ty, _, _) => ty
       let last := match scans.getLast? with | some (cs, _, _, _) => cs | none => ctx
       obtain ⟨⟨r, body'⟩, hb⟩ := ih (acc + xs.length) (types ++ last) body bb
@@ -51,12 +52,12 @@ theorem rewriteFuel_succeeds (fuel loc next : Nat) (op : AssocOp) (acc : Nat)
 The inner `none` remains the ordinary no-rewrite decision. -/
 theorem compileExpFuel_succeeds (fuel loc next arity : Nat) (e : Exp)
     (bound : expBudget e < fuel) : ∃ result, compileExpFuel fuel loc next arity e = some result := by
-  obtain ⟨decision, hd⟩ := checkExpFuel_succeeds fuel loc arity e
-  cases decision with
-  | none => exact ⟨_, by simp [compileExpFuel, hd]; rfl⟩
+  have hd := checkExpFuel_eq fuel loc arity e
+  cases decision : checkExpSingle loc arity e with
+  | none => exact ⟨_, by simp [compileExpFuel, hd, decision]; rfl⟩
   | some op =>
     obtain ⟨⟨changed, worker⟩, hw⟩ :=
       rewriteFuel_succeeds fuel loc next op arity (List.replicate arity .any) e bound
-    exact ⟨_, by simp [compileExpFuel, hd, hw]; rfl⟩
+    exact ⟨_, by simp [compileExpFuel, hd, decision, hw]; rfl⟩
 
 end Flapjack.Compiler.Backend.BviTailrec
