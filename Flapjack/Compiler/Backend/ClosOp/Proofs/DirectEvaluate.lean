@@ -752,18 +752,6 @@ theorem eqDirectThmStringPair {C F : Type} (tx ty : BackendCommon.Tra) (x y : Fl
   cases y
   simp [Flapjack.Basis.Pure.MlString.MlString.explode, eq_comm]
 
-/-- Recover an integer literal from the source matcher. -/
-private theorem intSome (x : ClosLang.Exp) (i : Int) (h : destOpNil destConst x = some i) :
-    ∃ trace, x = .op trace (.intOp (.const i)) [] := by
-  rw [destOpConst_eq_previous] at h
-  cases x <;> try simp at h
-  case op trace op args =>
-    cases op <;> try simp at h
-    case intOp op =>
-      cases op <;> try simp at h
-      case const v =>
-        cases args <;> simp_all
-
 /-- Recover one of the three source constant forms from the matcher. -/
 private theorem constantSome (x : ClosLang.Exp) (c : ConstPart)
     (h : destOpNil destConstant x = some c) :
@@ -816,12 +804,12 @@ theorem eqDirectThm {C F : Type} (x y : ClosLang.Exp) (env : List Value)
     evaluate [z] env s = (res, s1) := by
   cases ix : destOpNil destConst x with
   | some i =>
-    obtain ⟨trace, rfl⟩ := intSome x i ix
+    obtain ⟨trace, rfl⟩ := integerLiteral_of_match x i ix
     exact eqDirectThmIntLeft trace i y env s s1 res t z h
   | none =>
     cases iy : destOpNil destConst y with
     | some i =>
-      obtain ⟨trace, rfl⟩ := intSome y i iy
+      obtain ⟨trace, rfl⟩ := integerLiteral_of_match y i iy
       exact eqDirectThmIntRight trace i x env s s1 res t z h
     | none =>
       cases cx : destOpNil destConstant x with

@@ -185,17 +185,6 @@ private theorem evalIntLiteral {C F : Type} (t : BackendCommon.Tra) (i : Int)
   rw [evaluate_ordinaryOp_eq t _ _ env s (by simp) (by simp)]
   simp [evaluate, doApp, applyNumeric, doIntApp]
 
-/-- The source integer matcher identifies a literal expression. -/
-private theorem intSome (x : ClosLang.Exp) (i : Int) (h : destOpNil destConst x = some i) :
-    ∃ t, x = .op t (.intOp (.const i)) [] := by
-  rw [destOpConst_eq_previous] at h
-  cases x <;> try simp at h
-  case op t op xs =>
-    cases op <;> try simp at h
-    case intOp io =>
-      cases io <;> try simp at h
-      case const j => cases xs <;> simp_all
-
 /-- Binary integer case of the source smart-operation theorem. -/
 @[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "SmartOp_thm"
   (fmap_as_finite_support := [refs, code])]
@@ -217,8 +206,8 @@ theorem smartOpThmInteger {C F : Type} (t : BackendCommon.Tra) (op : ClosLang.In
       | some b =>
         simp [destOpConsts, hx, hy] at consts
         rcases consts with ⟨rfl, rfl⟩
-        obtain ⟨tx, rfl⟩ := intSome x a hx
-        obtain ⟨ty, rfl⟩ := intSome y b hy
+        obtain ⟨tx, rfl⟩ := integerLiteral_of_match x a hx
+        obtain ⟨ty, rfl⟩ := integerLiteral_of_match y b hy
         have operands : evaluate [.op tx (.intOp (.const a)) [], .op ty (.intOp (.const b)) []]
             env s = (.val [.number a, .number b], s) := by
           rw [ClosProps.evaluate_cons_value _ _ env s s (.number a) (evalIntLiteral tx a env s),
@@ -410,6 +399,23 @@ theorem smartOpThmUnary {C F : Type} (t : BackendCommon.Tra) (op : ClosLang.Op)
       all_goals simpa [smartOp, smartOp', found, consOp, destElemAt, destTagLenEq, destTagEq, destLenEq] using h.1
     | _ => simpa [smartOp, smartOp', found, consOp, destElemAt, destTagLenEq, destTagEq, destLenEq] using h.1
 
+/-- Four list cases cover the empty, singleton, pair, and longer lists. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "list_split3"]
+theorem listSplit3 {α : Type} (P : List α → Prop)
+    (premises : P [] ∧ (∀ x y z zs, P (x :: y :: z :: zs)) ∧
+      (∀ x, P [x]) ∧ (∀ x y, P [x, y])) : ∀ xs, P xs := by
+  intro xs
+  rcases premises with ⟨nil, many, single, pair⟩
+  cases xs with
+  | nil => exact nil
+  | cons x xs =>
+    cases xs with
+    | nil => exact single x
+    | cons y xs =>
+      cases xs with
+      | nil => exact pair x y
+      | cons z zs => exact many x y z zs
+
 /-- Source smart-operation evaluation correctness. -/
 @[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "SmartOp_thm"
   (fmap_as_finite_support := [refs, code])]
@@ -417,14 +423,14 @@ theorem smartOpThm {C F : Type} (t : BackendCommon.Tra) (op : ClosLang.Op)
     (xs : List ClosLang.Exp) (env : List Value) (s s1 : State C F) (res : Result (List Value) Value)
     (h : evaluate [.op t op xs] env s = (res, s1) ∧ res ≠ .err (.abort .typeError)) :
     evaluate [smartOp t op xs] env s = (res, s1) := by
-  cases xs with
-  | nil => exact smartOpThmNil t op env s s1 res h
-  | cons x xs =>
-    cases xs with
-    | nil => exact smartOpThmUnary t op x env s s1 res h
-    | cons y xs =>
-      cases xs with
-      | nil => exact smartOpThmBinary t op x y env s s1 res h
-      | cons z rest => exact smartOpThmMany t op x y z rest env s s1 res h
+  have allCases : ∀ expressions,
+      evaluate [.op t op expressions] env s = (res, s1) ∧ res ≠ .err (.abort .typeError) →
+        evaluate [smartOp t op expressions] env s = (res, s1) := by
+    apply listSplit3
+    exact ⟨smartOpThmNil t op env s s1 res,
+      fun x y z rest => smartOpThmMany t op x y z rest env s s1 res,
+      fun x => smartOpThmUnary t op x env s s1 res,
+      fun x y => smartOpThmBinary t op x y env s s1 res⟩
+  exact allCases xs h
 
 end Flapjack.Compiler.Backend.ClosOp

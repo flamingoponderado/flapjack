@@ -20079,6 +20079,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
+    "hol_name": "list_split3",
+    "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartEvaluate.lean",
+    "lean_name": "listSplit3",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared list_split3_replay_typed from the local HOL proof: arbitrary list element carrier and predicate, the original grouped empty, at-least-three, singleton and pair premises, and the conclusion for every list. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_opProofScript.sml",
     "hol_name": "fv1_EL",
     "lean_path": "Flapjack/Compiler/Backend/ClosOp/Proofs/SmartFreeVars.lean",
     "lean_name": "fv1_el",
