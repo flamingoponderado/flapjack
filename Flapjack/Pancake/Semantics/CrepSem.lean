@@ -988,48 +988,6 @@ theorem fixCrepHolClock_clock_le (oldState : CrepHolState α σ)
   · simp only [fixCrepHolClock, hlt, if_false]
     exact Nat.le_of_not_lt hlt
 
-/-! FLAPJACK-SPECIFIC (not a statement-exact HOL port). Source-reviewed against
-    HOL `crepSem$fix_clock_IMP_LESS_EQ` (`cakeml/pancake/semantics/crepSemScript.sml:155-160`),
-    which states `!x. fix_clock s x = (res,s1) ==> s1.clock <= s.clock`. The Lean
-    bound is the same inequality, with the HOL pair variable `x` and the implicit
-    `res`/`s1` exposed as the explicit binders `step`/`result`/`newState` (an
-    inessential binder reshaping, not a semantic difference). The mismatch is the
-    quantified whole-state carrier: in `CrepHolState (BitVec width) σ` the fields
-    `locals : Nat → Option _`, `globals : BitVec 5 → Option _` and
-    `code : FunName → Option _` (CrepSem.lean:102-113) are raw functions that admit
-    infinite-support inhabitants, a strict superset of HOL's finite maps
-    `varname |-> 'a word_lab`, `5 word |-> 'a word_lab` and
-    `funname |-> (varname list # prog)` (`crepSemScript.sml:20-31`), so the
-    statement ranges over states HOL cannot represent. The `names_as_string`
-    qualifier cannot authorize that carrier and no `NameRanged` byte witness
-    applies because the result is an inequality on a state field, not a name.
-    Direct HOL rows `fix_clock_clamps=(...)` and `fix_clock_keeps_lower=(...)` are
-    in `scripts/hol-probes/crep_fix_clock_probe.out`; the bound is sampled by
-    `Flapjack/Test/CrepGlobalShapeParity.lean:307-312`. The
-    `@[hol fix_clock_IMP_LESS_EQ]` tag was withdrawn in the
-    `flapjack-pxn.18.3.7.1.3.1.1.3` audit and remains WITHDRAWN
-    (`docs/HOL-THEOREM-MAP.json` records `fixCrepHolClock_IMP_LESS_EQW` as
-    `documented_mismatch`); The exact finite-support carrier restoration now
-    exists as the tagged `fixClockCrepSemHOL_IMP_LESS_EQ` (`CrepSem/HOLState.lean`,
-    reviewed in the manifest); this production-carrier form stays untagged and
-    its executable re-basing remains tracked by `flapjack-pxn.18.3.7.1.3.1.1.3.1`. -/
-theorem fixCrepHolClock_IMP_LESS_EQW {width : Nat} [NeZero width] {σ : Type} {β : Type}
-    (oldState : CrepHolState (BitVec width) σ)
-    (step : β × CrepHolState (BitVec width) σ)
-    (result : β) (newState : CrepHolState (BitVec width) σ)
-    (hfixed : fixCrepHolClockW oldState step = (result, newState)) :
-    newState.clock ≤ oldState.clock := by
-  obtain ⟨stepResult, stepState⟩ := step
-  have hbound :
-      (fixCrepHolClockW oldState (stepResult, stepState)).2.clock ≤
-        oldState.clock := by
-    by_cases hlt : oldState.clock < stepState.clock
-    · simp [fixCrepHolClockW, hlt]
-    · simp only [fixCrepHolClockW, hlt, if_false]
-      exact Nat.le_of_not_lt hlt
-  rw [hfixed] at hbound
-  exact hbound
-
 def crepRuntimeMemWidth : WordMemOp → Nat
   | .load | .store => 0
   | .load8 | .store8 => 1

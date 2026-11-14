@@ -762,7 +762,6 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             "decCrepHolClockW": "dec_clock_def",
             "emptyCrepHolLocalsW": "empty_locals_def",
             "fixCrepHolClockW": "fix_clock_def",
-            "fixCrepHolClock_IMP_LESS_EQW": "fix_clock_IMP_LESS_EQ",
         }
         for lean_name, hol_name in expected.items():
             key = ("Flapjack/Pancake/Semantics/CrepSem.lean", lean_name)
@@ -776,6 +775,27 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                 self.assertIn("infinite", record["reviewer"])
                 self.assertTrue(MAP["lean_definition_exists"](MAP["ROOT"], *key))
                 self.assertNotIn(key, MAP["tagged_declarations"]())
+
+    def test_crep_fix_clock_imp_less_eq_carrier_mismatch_is_retired(self):
+        # The width-indexed CrepHolState bound is gone; HOL fix_clock_IMP_LESS_EQ
+        # is mapped by the tagged exact-carrier fixClockCrepSemHOL_IMP_LESS_EQ.
+        key = ("Flapjack/Pancake/Semantics/CrepSem.lean",
+               "fixCrepHolClock_IMP_LESS_EQW")
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        self.assertNotIn(key, inventory)
+        exact_key = ("Flapjack/Pancake/Semantics/CrepSem/HOLState.lean",
+                     "fixClockCrepSemHOL_IMP_LESS_EQ")
+        exact = inventory[exact_key]
+        self.assertEqual(
+            (exact["hol_path"], exact["hol_name"]),
+            ("cakeml/pancake/semantics/crepSemScript.sml",
+             "fix_clock_IMP_LESS_EQ"),
+        )
+        self.assertNotEqual(exact["statement_status"], "documented_mismatch")
+        self.assertIn(exact_key, MAP["tagged_declarations"]())
 
     def test_removed_crepprops_mismatches_are_absent(self):
         inventory = {

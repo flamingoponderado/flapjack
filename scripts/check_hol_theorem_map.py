@@ -791,24 +791,6 @@ DOCUMENTED_MISMATCHES = {
         "finite-support carrier; tag remains withdrawn pending "
         "flapjack-pxn.18.3.7.1.3.1.1.3.1."
     ),
-    ("Flapjack/Pancake/Semantics/CrepSem.lean", "fixCrepHolClock_IMP_LESS_EQW"): (
-        "cakeml/pancake/semantics/crepSemScript.sml",
-        "fix_clock_IMP_LESS_EQ",
-        "Codex (source comparison with crepSemScript.sml:155-160: the bound "
-        "`fix_clock s x = (res,s1) ==> s1.clock <= s.clock` matches the Lean "
-        "inequality, with HOL's pair variable and implicit res/s1 exposed as the "
-        "explicit step/result/newState binders. However the quantified whole-state "
-        "carrier CrepHolState (BitVec width) stores locals/globals/code as "
-        "unrestricted Nat-to-Option, BitVec-5-to-Option and FunName-to-Option "
-        "functions that admit infinite support, a strict superset of HOL's finite "
-        "maps (crepSemScript.sml:20-31). names_as_string cannot authorize that "
-        "carrier and no NameRanged byte witness applies to a clock inequality. "
-        "Direct HOL rows fix_clock_clamps / fix_clock_keeps_lower are in "
-        "crep_fix_clock_probe.out and sampled by "
-        "Flapjack/Test/CrepGlobalShapeParity.lean:307-312. No exact "
-        "finite-support carrier; tag remains withdrawn pending "
-        "flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
     ("Flapjack/Pancake/Semantics/CrepSem.lean", "fixCrepHolClockW"): (
         "cakeml/pancake/semantics/crepSemScript.sml",
         "fix_clock_def",

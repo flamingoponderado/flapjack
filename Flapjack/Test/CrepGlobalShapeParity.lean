@@ -1,14 +1,17 @@
 module
 
 public import Flapjack.Pancake.Semantics.CrepSem
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
 public import Flapjack.Pancake.Semantics.CrepSem.Eval
 public import Flapjack.Pancake.Semantics.CrepProps
 public import Flapjack.Pancake.Proofs.CrepInline
 
 import all Flapjack.Pancake.Semantics.CrepSem
+import all Flapjack.Pancake.Semantics.CrepSem.HOLState
 import all Flapjack.Pancake.Semantics.CrepSem.Eval
 import all Flapjack.Pancake.Semantics.CrepProps
 import all Flapjack.Pancake.Proofs.CrepInline
+public meta import Flapjack.Pancake.Semantics.CrepSem.HOLState
 public meta import Flapjack.PanValues
 public meta import Flapjack.RiscV.Model
 public meta import Flapjack.RiscV.PanMemory
@@ -236,49 +239,67 @@ def localBase : CrepHolState (BitVec 64) Unit :=
     baseAddress := 3
     topAddress := 100 }
 
+/-- The exact finite-support carrier fixture with the same values as
+    `localBase`: local `2 = 9`, clock 5, base 3, top 100.  The HOL probe rows
+    below are replayed through the tagged finite-support twins. -/
+def localBaseFinite : CrepSemHOLState 64 Unit where
+  locals :=
+    (HolFiniteMapExact.empty : HolFiniteMapExact Nat (HolWordLab 64)).updateEq
+      (2, .word (9 : BitVec 64))
+  globals := HolFiniteMapExact.empty
+  code := HolFiniteMapExact.empty
+  memory := fun _ => .word 0
+  memaddrs := fun _ => False
+  shMemaddrs := fun _ => False
+  clock := 5
+  be := false
+  ffi := { oracle := fun _ _ _ _ => .final .failed, ffiState := (), ioEvents := [] }
+  baseAddr := 3
+  topAddr := 100
+
 -- set_var_hit.
 example :
-    FLOOKUP (setCrepHolVar 1 (PanWordLab.word (7 : BitVec 64)) localBase).locals 1 =
-      some (PanWordLab.word (7 : BitVec 64)) := by
+    (CrepSemHOLState.setVar 1 (.word (7 : BitVec 64)) localBaseFinite).locals.lookup 1 =
+      some (.word (7 : BitVec 64)) := by
   rfl
 
 -- set_var_keeps_other.
 example :
-    FLOOKUP (setCrepHolVar 1 (PanWordLab.word (7 : BitVec 64)) localBase).locals 2 =
-      some (PanWordLab.word (9 : BitVec 64)) := by
+    (CrepSemHOLState.setVar 1 (.word (7 : BitVec 64)) localBaseFinite).locals.lookup 2 =
+      some (.word (9 : BitVec 64)) := by
   rfl
 
 -- upd_locals_replace: `FEMPTY |++ varargs`, so the old binding is dropped.
 example :
-    FLOOKUP (updCrepHolLocals [(1, PanWordLab.word (3 : BitVec 64))] localBase).locals 1 =
-        some (PanWordLab.word (3 : BitVec 64)) ∧
-      FLOOKUP (updCrepHolLocals [(1, PanWordLab.word (3 : BitVec 64))] localBase).locals 2 =
+    (CrepSemHOLState.updLocals [(1, .word (3 : BitVec 64))] localBaseFinite).locals.lookup 1 =
+        some (.word (3 : BitVec 64)) ∧
+      (CrepSemHOLState.updLocals [(1, .word (3 : BitVec 64))] localBaseFinite).locals.lookup 2 =
         none := by
   constructor <;> rfl
 
 -- empty_locals_none.
 example :
-    FLOOKUP (emptyCrepHolLocals localBase).locals 2 = none := by
+    (CrepSemHOLState.emptyLocals localBaseFinite).locals.lookup 2 = none := by
   rfl
 
 -- set_var_fields_preserved.
 example :
-    (setCrepHolVar 1 (PanWordLab.word (7 : BitVec 64)) localBase).clock = 5 ∧
-      (setCrepHolVar 1 (PanWordLab.word (7 : BitVec 64)) localBase).baseAddress = 3 ∧
-      (setCrepHolVar 1 (PanWordLab.word (7 : BitVec 64)) localBase).topAddress = 100 :=
+    (CrepSemHOLState.setVar 1 (.word (7 : BitVec 64)) localBaseFinite).clock = 5 ∧
+      (CrepSemHOLState.setVar 1 (.word (7 : BitVec 64)) localBaseFinite).baseAddr = 3 ∧
+      (CrepSemHOLState.setVar 1 (.word (7 : BitVec 64)) localBaseFinite).topAddr = 100 :=
   ⟨rfl, rfl, rfl⟩
 
 -- empty_locals_fields_preserved.
 example :
-    (emptyCrepHolLocals localBase).clock = 5 ∧
-      (emptyCrepHolLocals localBase).memory = localBase.memory :=
+    (CrepSemHOLState.emptyLocals localBaseFinite).clock = 5 ∧
+      (CrepSemHOLState.emptyLocals localBaseFinite).memory = localBaseFinite.memory :=
   ⟨rfl, rfl⟩
 
-#guard FLOOKUP (setCrepHolVar 1 (PanWordLab.word (7 : BitVec 64)) localBase).locals 1 ==
-          some (PanWordLab.word (7 : BitVec 64)) &&
-        FLOOKUP (updCrepHolLocals [(1, PanWordLab.word (3 : BitVec 64))] localBase).locals 2 ==
+#guard (CrepSemHOLState.setVar 1 (.word (7 : BitVec 64)) localBaseFinite).locals.lookup 1 ==
+          some (.word (7 : BitVec 64)) &&
+        (CrepSemHOLState.updLocals [(1, .word (3 : BitVec 64))] localBaseFinite).locals.lookup 2 ==
           none &&
-        FLOOKUP (emptyCrepHolLocals localBase).locals 2 == none
+        (CrepSemHOLState.emptyLocals localBaseFinite).locals.lookup 2 == none
 
 -- Width-indexed tagged counterparts agree with the generic production defs
 -- (exact-shape rule: the HOL tags live on the `BitVec width` carriers).
@@ -309,19 +330,19 @@ example :
     ((CrepRuntimeResult.normal : CrepRuntimeResult (BitVec 64) Unit), localBase)
 
 /-- HOL `fix_clock` leaves the result component unconstrained, so the tagged
-    width-indexed counterpart is result-polymorphic: here the result carrier is
-    a plain `Bool`, and it is threaded through unchanged. -/
+    finite-support counterpart is result-polymorphic: here the result carrier
+    is a plain `Bool`, and it is threaded through unchanged. -/
 example :
-    (fixCrepHolClockW { localBase with clock := 5 } ((true, localBase))).1 = true := by
-  simp [fixCrepHolClockW]
+    (fixClockCrepSemHOL localBaseFinite ((true, localBaseFinite))).1 = true := by
+  rfl
 
 /-- HOL `fix_clock_IMP_LESS_EQ` oracle: the clock clamped by the tagged
-    width-indexed result-polymorphic `fixCrepHolClockW` never exceeds the old
-    state's clock. -/
-example : (fixCrepHolClockW localBase ((true, localBase))).2.clock ≤ localBase.clock := by
-  apply fixCrepHolClock_IMP_LESS_EQW (β := Bool) localBase (true, localBase)
-    true localBase
-  simp [fixCrepHolClockW, localBase]
+    finite-support result-polymorphic `fixClockCrepSemHOL` never exceeds the
+    old state's clock. -/
+example : (fixClockCrepSemHOL localBaseFinite (true, localBaseFinite)).2.clock ≤
+    localBaseFinite.clock :=
+  fixClockCrepSemHOL_IMP_LESS_EQ localBaseFinite (true, localBaseFinite) true
+    (fixClockCrepSemHOL localBaseFinite (true, localBaseFinite)).2 rfl
 
 example :
     memLoadCrepHolW (0 : BitVec 64) localBase = memLoadCrepHol (0 : BitVec 64) localBase :=
