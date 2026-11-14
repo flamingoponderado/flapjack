@@ -460,3 +460,25 @@ val do_app_state_swap_Rval_statement =
                   global := source_state.global; ffi := source_state.ffi |>)``;
 val _ = (print "do_app_state_swap_Rval_statement_typed=";
   print_term do_app_state_swap_Rval_statement; print "\n");
+
+(* Capture this local theorem statement with inferred HOL types. *)
+val do_app_state_swap_statement =
+  ``op ≠ Install ⇒
+    ((do_app op args s = Rval (value,s1) ∧
+      domain s.code ⊆ domain t.code ⇒
+      do_app op args
+        (t with <| refs := s.refs; clock := s.clock;
+                   global := s.global; ffi := s.ffi |>) =
+      Rval
+        (value,
+         t with <| refs := s1.refs; clock := s1.clock;
+                   global := s1.global; ffi := s1.ffi |>)) ∧
+     (do_app op args s = Rerr error ∧
+      (domain t.code ⊆ domain s.code ∨
+       error ≠ Rabort Rtype_error) ⇒
+      do_app op args
+        (t with <| refs := s.refs; clock := s.clock;
+                   global := s.global; ffi := s.ffi |>) =
+      Rerr error))``;
+val _ = (print "do_app_state_swap_statement_typed=";
+  print_term do_app_state_swap_statement; print "\n");

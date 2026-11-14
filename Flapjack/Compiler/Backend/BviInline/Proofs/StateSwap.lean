@@ -189,4 +189,42 @@ theorem doAppStateSwapRval {C D F : Type} (op : ClosLang.Op) (args : List Value)
       exact isLabel ⟨n, eq⟩
     exact nonLabelSuccessSwap op args source next target value notInstall notLabel run domain
 
+
+/-- The complete primitive state-swap result, with independent target FFI
+type and the original success and error domain conditions. The dispatcher
+inherits the real-model assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "do_app_state_swap"
+  (fmap_as_finite_support := [refs])]
+theorem doAppStateSwap {C D F G : Type} (op : ClosLang.Op) (args : List Value)
+    (source next : BviState C F) (target : BviState D G) (value : Value)
+    (error : SemanticPrimitivesHOL.ErrorResult ExnOrRet) (notInstall : op ≠ .install) :
+    ((BviSem.doApp op args source = .val (value, next) ∧
+      (∀ key, sptDomain source.code key → sptDomain target.code key)) →
+      BviSem.doApp op args { target with
+        refs := source.refs
+        clock := source.clock
+        global := source.global
+        ffi := source.ffi } = .val (value, { target with
+          refs := next.refs
+          clock := next.clock
+          global := next.global
+          ffi := next.ffi })) ∧
+    ((BviSem.doApp op args source = .err error ∧
+      ((∀ key, sptDomain target.code key → sptDomain source.code key) ∨
+        error ≠ .abort .typeError)) →
+      BviSem.doApp op args { target with
+        refs := source.refs
+        clock := source.clock
+        global := source.global
+        ffi := source.ffi } = .err error) := by
+  constructor
+  · rintro ⟨run, subset⟩
+    have swapped := doAppStateSwapRval op args source next (runtimeFrame source target) value
+      ⟨notInstall, run, subset⟩
+    simpa [runtimeFrame] using swapped
+  · rintro ⟨run, condition⟩
+    have swapped := doAppStateSwapRerr op args source (runtimeFrame source target) error
+      ⟨notInstall, run, condition⟩
+    simpa [runtimeFrame] using swapped
+
 end Flapjack.Compiler.Backend.BviInline
