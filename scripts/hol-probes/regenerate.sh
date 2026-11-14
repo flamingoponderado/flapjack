@@ -11311,3 +11311,134 @@ run_probe word_to_word_proof_typed_probeScript.sml word_to_word_proof_typed_prob
   code_rel_no_install_typed \
   "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe source_to_flat_proof_typed_probeScript.sml source_to_flat_proof_typed_probe.out \
+  ALL_DISJOINT_CONS_typed ALL_DISJOINT_DEF_typed ALL_DISJOINT_MOVE_typed \
+  ALL_DISJOINT_SUBSETS_typed ALL_DISJOINT_elem_typed ALOOKUP_MAP_3_typed \
+  ALOOKUP_alloc_defs_typed ALOOKUP_alloc_defs_EL_typed Boolv_11_typed EL_APPEND_IF_typed \
+  EL_add_SOME_SOME_typed FILTER_MAPi_ID_typed FST_PAIR_MAP_I_typed FST_SND_EQ_CASE_typed \
+  LIST_REL_IMP_EL_typed LIST_REL_IMP_EL2_typed LIST_REL_sv_rel_weak_typed MAPi_SNOC_typed \
+  NOT_NULL_EQ_typed SND_eq_typed SUB_BAG_IMP_typed abort_compile_dec_result_typed \
+  abort_def_typed abort_simps_typed alloc_tags1_imp_typed alloc_tags_invariant_typed \
+  bind_locals_def_typed bind_locals_fold_nsBind_typed build_tdefs_no_mod_typed \
+  can_pmatch_all_IMP_pmatch_rows_typed check_type_IMP_v_rel_typed \
+  check_type_v_rel_MAP_flat_to_v_typed check_type_v_rel_flat_to_v_typed compile_correct_typed \
+  compile_decs_elist_globals_typed compile_decs_env_gen_inv_typed compile_decs_esgc_free_typed \
+  compile_decs_future_rel_typed compile_decs_generation_typed compile_decs_idx_prev_typed \
+  compile_decs_num_bindings_typed compile_esgc_free_typed compile_exp_esgc_free_typed \
+  compile_exps_length_typed compile_flat_correct_typed compile_flat_esgc_free_typed \
+  compile_flat_sub_bag_typed compile_funs_dom2_typed compile_globals_BAG_ALL_DISTINCT_typed \
+  compile_no_Mat_typed compile_prog_correct_typed compile_prog_esgc_free_typed \
+  compile_prog_semantics_typed compile_semantics_typed ctor_same_type_SND_typed \
+  ctor_same_type_refl_typed declare_env_store_env_id_typed do_app_typed do_app_rec_help_typed \
+  do_arith_INL_typed do_arith_INR_typed do_conversion_INL_typed do_conversion_INR_typed \
+  do_eq_typed do_eval_typed do_opapp_typed do_test_lemma_typed drestrict_lem_typed \
+  drop_4_via_el_typed env_all_rel_typed env_all_rel_cases_typed env_all_rel_weak_typed \
+  env_domain_eq_append_typed env_domain_eq_def_typed env_gen_future_rel_def_typed \
+  env_gen_future_rel_forward_typed env_gen_inv_def_typed env_gen_rel_def_typed \
+  env_rel_LIST_REL_typed env_rel_append_typed env_rel_bind_one_typed env_rel_dom_typed \
+  env_rel_el_typed env_rel_lookup_typed env_rel_one_typed env_rel_weak_typed \
+  env_store_inv_def_typed env_updated_lem_typed eta2_typed eval_ref_inv_def_typed \
+  eval_state_call_rel_def_typed eval_state_call_rel_refl_typed eval_state_call_rel_trans_typed \
+  evaluate_Bool_typed evaluate_foldr_let_err_typed evaluate_make_varls_typed \
+  fin_idx_match_def_typed find_recfun_typed flookup_funion_submap_typed fst_lem_typed \
+  funion_submap_typed genv_allocated_idxs_def_typed genv_c_ok_def_typed genv_c_ok_extend_typed \
+  genv_c_ok_pmatch_stamps_ok_typed genv_c_ok_same_type_FST_eq_imp_same_ctor_typed \
+  genv_c_tys_ok_def_typed genv_c_tys_ok_extend_typed genv_lookup_cons_typed \
+  genv_lookup_nil_typed global_env_typed global_env_inv_add_locals_typed \
+  global_env_inv_append_typed global_env_inv_extend_typed global_env_inv_extend2_typed \
+  global_env_inv_weak_typed has_bools_def_typed has_exns_def_typed has_lists_def_typed \
+  idx_block_def_typed idx_block_union_final_typed idx_final_block_def_typed idx_prev_def_typed \
+  idx_prev_refl_typed idx_prev_trans_typed idx_range_rel_def_typed \
+  idx_range_rel_v_REPLICATE_NONE_typed idx_range_shrink_typed idx_types_typed \
+  idx_types_FORALL_typed inc_compile_esgc_free_typed \
+  inc_compile_globals_BAG_ALL_DISTINCT_typed inc_compile_no_Mat_typed \
+  inc_compile_prog_env_submap_typed inc_compile_prog_esgc_free_typed \
+  inc_compile_prog_idx_prev_typed inc_compile_prog_nonempty_typed init_eval_state_ok_def_typed \
+  init_genv_def_typed init_genv_els_def_typed init_genv_next_typed init_genv_ok_typed \
+  init_genv_ty_els_def_typed init_genv_tys_ok_typed init_global_env_inv_def_typed \
+  init_global_env_inv_imp_typed invariant_IMP_s_rel_typed invariant_begin_alloc_blanks_typed \
+  invariant_change_clock_typed invariant_change_eval_ref_typed invariant_dec_clock_typed \
+  invariant_def_typed invariant_end_eval_typed invariant_env_gen_inv_typed \
+  invariant_genv_c_ok_typed invariant_globals_typed invariant_idx_range_shrink_typed \
+  invariant_idx_range_shrink_gen_typed invariant_make_varls_typed keep_glob_alloc_typed \
+  list_to_v_v_rel_typed lookup_build_rec_env_lem_typed make_varls_esgc_free_typed \
+  mapi_map_typed match_result_rel_def_typed match_result_rel_imp_typed \
+  maybe_all_list_SOME_typed mem_size_lemma_typed monotonic_globals_state_co_compile_typed \
+  not_abort_IMP_cases_typed nsAll_extend_env_typed nsAppend_bind_locals_typed \
+  nsAppend_foldl_typed nsAppend_foldl_prime_typed nsBindList_pat_tups_bind_locals_typed \
+  nsLookup_nsBind_If_typed num_bindings_def_typed op_gbag_astOp_to_flatOp_typed \
+  opt_bind_lem_typed opt_case_bool_eq_typed orac_config_envs_subspt_def_typed \
+  orac_config_envs_subspt_refl_typed orac_config_envs_subspt_trans_typed \
+  orac_forward_rel_def_typed orac_forward_rel_refl_typed orac_forward_rel_trans_typed \
+  orac_rel_SOME_eval_typed orac_rel_def_typed orac_rel_inner_def_typed \
+  pat_bindings_compile_pat_typed pmatch_typed pmatch_invariant_typed pmatch_rows_drop_4_typed \
+  precondition1_change_clock_typed precondition1_def_typed precondition_def_typed \
+  precondition_stamp_helper_typed result_rel_typed result_rel_eqns_typed s_rel_typed \
+  sem_env_eq_lemma_typed set_globals_make_varls_typed some_f_inj_eq_typed \
+  src_orac_env_invs_def_typed src_orac_env_invs_lookup_env_typed src_orac_gen_inv_def_typed \
+  src_orac_invs_def_typed src_orac_invs_weak_typed src_orac_next_cfg_def_typed \
+  src_orac_next_cfg_inner_def_typed src_orac_step_invs_def_typed step_1_typed \
+  subglobals_NONE_typed subglobals_add_NONE_typed subglobals_def_typed subglobals_refl_typed \
+  subglobals_refl_append_typed subglobals_trans_typed submap_distinct_fupdate_flookup_typed \
+  submap_fupdate_flookup_typed sv_rel_typed sv_rel_weak_typed v_rel_typed v_rel_Bool_eqn_typed \
+  v_rel_cases_typed v_rel_check_type_typed v_rel_global_eqn_typed v_rel_ind_typed \
+  v_rel_lems_typed v_rel_more_eqns_typed v_rel_weak_typed v_rel_weakening_typed \
+  v_rel_weakening2_typed v_to_char_list_typed v_to_list_typed v_to_word64_list_rel_typed \
+  v_to_word8_list_rel_typed vs_to_string_typed compile_flat_BAG_ALL_DISTINCT_typed \
+  v_rel_eqns_typed v_rel_eqns_non_global_typed \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+run_probe pattern_exh_typed_probeScript.sml pattern_exh_typed_probe.out \
+  LENGTH_anys_typed LENGTH_dest_val_typed LENGTH_expand_list_typed MEM_add_head_typed \
+  MEM_ctor_keep_typed MEM_ctor_nub_typed MEM_mk_conses_typed MEM_mk_prods_typed \
+  MEM_mk_refs_typed MEM_mk_rows_typed MEM_spec_mats_typed MEM_tag_ctors_typed \
+  add_head_def_typed anys_def_typed col_ctors_def_typed col_ctors_thm_typed ctor_typed \
+  ctor_arity_def_typed ctor_inter_def_typed ctor_keep_def_typed ctor_nub_def_typed \
+  ctors_of_def_typed ctors_of_thm_typed default_mat_MEM_typed default_mat_def_typed \
+  default_row_def_typed default_row_thm_typed dest_val_def_typed dest_val_eq_SOME_typed \
+  exh_all_def_typed exh_all_thm_typed exh_matrix_def_typed exh_matrix_thm_typed \
+  exh_mats_append_typed exh_rows_def_typed exh_rows_eq_typed exh_rows_thm_typed \
+  exh_steps_def_typed exh_steps_list_append_typed expand_def_typed expand_thm_typed \
+  mat_len_append_typed mat_len_def_typed mat_len_default_mat_typed \
+  mat_len_default_mat_less_typed mat_weight_append_typed mat_weight_def_typed \
+  mat_weight_default_mat_typed mat_weight_spec_mat_typed mat_weight_spec_mat_less_typed \
+  mat_weight_spec_row_typed mat_weight_spec_row_less_typed match_EXISTS_typed \
+  match_no_PTypeFailure_typed mats_len_def_typed mats_weight_def_typed \
+  mats_weight_spec_mats_typed mk_conses_def_typed mk_prods_def_typed mk_refs_def_typed \
+  mk_rows_def_typed or_rows_def_typed or_rows_hit_typed or_rows_ok_typed pand_assoc_typed \
+  pand_def_typed pand_eq_PMatchSuccess_typed pand_eq_PTypeFailure_typed pand_simps_typed \
+  pat_weight_def_typed pats_weight_anys_typed pats_weight_append_typed pmatch_Any_typed \
+  pmatch_list_LENGTH_typed pmatch_list_anys_typed pmatch_list_append_typed \
+  pmatch_list_cons_typed pmatch_list_nil_typed spec_mat_MEM_typed spec_mat_def_typed \
+  spec_mats_def_typed spec_row_def_typed spec_row_thm_typed tag_ctors_def_typed \
+  "$cake_dir/compiler/backend/pattern_matching/pattern_exhScript.sml" \
+  "$cake_dir/compiler/backend/pattern_matching"
+run_probe fromSexp_typed_probeScript.sml fromSexp_typed_probe.out \
+  SEXSTR_11_typed SEXSTR_def_typed SEXSTR_distinct_typed SEXSTR_remove_typed \
+  arithsexp_11_typed arithsexp_def_typed arithsexp_sexparith_typed decode_control_def_typed \
+  decode_encode_control_typed decode_prim_type_def_typed decode_prim_type_prim_typesexp_typed \
+  decode_test_def_typed decode_test_testsexp_typed decsexp_11_typed decsexp_def_typed \
+  decsexp_sexpdec_typed encode_control_def_typed encode_control_remove_typed \
+  encode_decode_control_typed expsexp_11_typed expsexp_def_typed expsexp_sexpexp_typed \
+  idsexp_11_typed idsexp_def_typed idsexp_sexpid_odestSEXSTR_typed \
+  idsexp_sexpid_odestSEXSTR_prime_typed listsexp_11_typed listsexp_def_typed litsexp_11_typed \
+  litsexp_def_typed litsexp_sexplit_typed locnsexp_11_typed locnsexp_def_typed \
+  locnsexp_sexplocn_typed locnsexp_sexplocpt_typed locnsexp_sexplocpt0_typed locssexp_11_typed \
+  locssexp_def_typed logsexp_11_typed logsexp_def_typed logsexp_sexplog_typed \
+  odestSEXSTR_SEXSTR_typed odestSEXSTR_SOME_typed odestSEXSTR_def_typed opsexp_11_typed \
+  opsexp_def_typed opsexp_sexpop_typed optsexp_11_typed optsexp_def_typed patsexp_11_typed \
+  patsexp_def_typed patsexp_sexppat_typed patsexp_sexppat0_typed prim_typesexp_11_typed \
+  prim_typesexp_def_typed sexparith_arithsexp_typed sexparith_def_typed sexpdec_decsexp_typed \
+  sexpdec_def_typed sexpexp_def_typed sexpexp_expsexp_typed sexpid_def_typed \
+  sexpid_odestSEXSTR_idsexp_typed sexplist_SOME_typed sexplist_def_typed \
+  sexplist_listsexp_rwt_typed sexplit_def_typed sexplit_litsexp_typed sexplocn_def_typed \
+  sexplocn_locnsexp_typed sexplocpt_def_typed sexplocpt_locnsexp_typed sexplog_def_typed \
+  sexplog_logsexp_typed sexpop_def_typed sexpop_opsexp_typed sexpopt_SOME_typed \
+  sexpopt_def_typed sexpopt_optsexp_typed sexppair_SOME_typed sexppair_def_typed \
+  sexppat_def_typed sexppat_patsexp_typed sexpprim_type_testsexp_typed sexptest_testsexp_typed \
+  sexptype_def_typed sexptype_def_def_typed sexptype_def_type_defsexp_typed \
+  sexptype_typesexp_typed testsexp_11_typed testsexp_def_typed type_defsexp_11_typed \
+  type_defsexp_def_typed type_defsexp_sexptype_def_typed typesexp_11_typed typesexp_def_typed \
+  typesexp_sexptype_typed \
+  "$cake_dir/compiler/parsing/fromSexpScript.sml" \
+  "$cake_dir/compiler/parsing"

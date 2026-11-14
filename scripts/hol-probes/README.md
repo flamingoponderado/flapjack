@@ -10233,3 +10233,41 @@ scripts/hol-probes/regenerate.sh` (the probes run from
 paths resolve as for the other groups). The captures support source comparison
 of the inferred carriers, binder order and premise grouping; they do not
 replay the local proofs and do not establish Lean correspondence.
+
+`source_to_flat_proof_typed_probe.out` captures the typed statements of the 241
+distinct HOL names behind the 283 reviewed `source_to_flatProofScript.sml` rows
+(task 174): exported theorems and definitions fetched from the theory database,
+78 `[local]` theorems parsed literally from the pinned source, the `global_env`
+and `idx_types` datatypes captured through their constructors, the five mutual
+`Inductive` relations (`v_rel`, `result_rel`, `sv_rel`, `s_rel`, `env_all_rel`)
+captured through their `_rules` theorems, and three derived local theorems
+replayed exactly as the source derives them (`v_rel_eqns`,
+`v_rel_eqns_non_global`, `compile_flat_BAG_ALL_DISTINCT`). A source `^`
+immediately followed by an identifier is an SML antiquotation and is dropped,
+keeping the variable. The theory is a default CakeML build target. Regenerate
+with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=source_to_flat_proof_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The capture supports source comparison of
+the inferred carriers, binder order and premise grouping; it does not replay
+the remaining local proofs and does not establish Lean correspondence.
+
+`pattern_exh_typed_probe.out` captures the typed statements of the 84 distinct
+HOL names behind the 91 reviewed `pattern_exhScript.sml` rows (task 174): 32
+exported theorems and definitions fetched from the theory database, 51
+`[local]` theorems parsed literally from the pinned source, and the `ctor`
+datatype captured through its constructors. The theory is a default CakeML
+build target. Regenerate with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=pattern_exh_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The capture supports source comparison; it
+does not replay the local proofs and does not establish Lean correspondence.
+
+`fromSexp_typed_probe.out` captures the typed statements of all 97 reviewed
+`fromSexpScript.sml` rows (task 174); every one is an exported definition or
+theorem fetched from the theory database, and labels replace an apostrophe with
+`_prime`. The theory is not a default CakeML build target, so build it in the
+private copy first (`cd compiler/parsing && CAKEMLDIR=<cakeml tree> Holmake
+fromSexpTheory.uo`, about 30 s; it reads the already-built `simpleSexp`
+theories from `$HOLDIR` and writes only inside the copy). Regenerate with
+`CAKEML=<cakeml tree> HOL_PROBE_ONLY=fromSexp_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The capture supports source comparison; it
+does not establish Lean correspondence.
