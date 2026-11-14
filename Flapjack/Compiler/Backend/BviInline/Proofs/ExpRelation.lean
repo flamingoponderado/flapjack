@@ -102,43 +102,59 @@ theorem expRelInv (c : Spt (Nat × Bvi.Exp)) (n loc : Nat)
 mutual
 /-- Flapjack infrastructure: extending a code tree preserves the
 expression-level inlining relation. -/
-theorem expRel_mono (source target : Spt (Nat × Bvi.Exp)) (expression result : Bvi.Exp)
+private theorem expRelMonoAux (source target : Spt (Nat × Bvi.Exp)) (expression result : Bvi.Exp)
     (related : ExpRel source expression result) (subset : sptSubspt source target) :
     ExpRel target expression result := by
   cases related with
   | var n => exact .var n
   | force location index => exact .force location index
   | ifThenElse hx hy hz =>
-    exact .ifThenElse (expRel_mono source target _ _ hx subset)
-      (expRel_mono source target _ _ hy subset) (expRel_mono source target _ _ hz subset)
+    exact .ifThenElse (expRelMonoAux source target _ _ hx subset)
+      (expRelMonoAux source target _ _ hy subset) (expRelMonoAux source target _ _ hz subset)
   | letExp hxs hb =>
-    exact .letExp (expsRel_mono source target _ _ hxs subset) (expRel_mono source target _ _ hb subset)
-  | raise hb => exact .raise (expRel_mono source target _ _ hb subset)
-  | tick hb => exact .tick (expRel_mono source target _ _ hb subset)
-  | op hxs => exact .op (expsRel_mono source target _ _ hxs subset)
-  | callNone hxs => exact .callNone (expsRel_mono source target _ _ hxs subset)
+    exact .letExp (expsRelMonoAux source target _ _ hxs subset) (expRelMonoAux source target _ _ hb subset)
+  | raise hb => exact .raise (expRelMonoAux source target _ _ hb subset)
+  | tick hb => exact .tick (expRelMonoAux source target _ _ hb subset)
+  | op hxs => exact .op (expsRelMonoAux source target _ _ hxs subset)
+  | callNone hxs => exact .callNone (expsRelMonoAux source target _ _ hxs subset)
   | callSome hxs hb =>
-    exact .callSome (expsRel_mono source target _ _ hxs subset) (expRel_mono source target _ _ hb subset)
+    exact .callSome (expsRelMonoAux source target _ _ hxs subset) (expRelMonoAux source target _ _ hb subset)
   | letCall hxs hb =>
-    exact .letCall (expsRel_mono source target _ _ hxs subset) (expRel_mono source target _ _ hb subset)
-  | returnExp hxs => exact .returnExp (expsRel_mono source target _ _ hxs subset)
+    exact .letCall (expsRelMonoAux source target _ _ hxs subset) (expRelMonoAux source target _ _ hb subset)
+  | returnExp hxs => exact .returnExp (expsRelMonoAux source target _ _ hxs subset)
   | inlineCall hxs lookup length =>
     have present := (sptMem_iff_lookup _ source).2 ⟨_, lookup⟩
-    exact .inlineCall (expsRel_mono source target _ _ hxs subset) ((subset _ present).2.trans lookup) length
+    exact .inlineCall (expsRelMonoAux source target _ _ hxs subset) ((subset _ present).2.trans lookup) length
 termination_by sizeOf expression
 decreasing_by all_goals simp_wf <;> omega
 
 /-- Flapjack infrastructure: code extension also preserves the pointwise
 relation on expression lists. -/
-theorem expsRel_mono (source target : Spt (Nat × Bvi.Exp)) (expressions results : List Bvi.Exp)
+private theorem expsRelMonoAux (source target : Spt (Nat × Bvi.Exp)) (expressions results : List Bvi.Exp)
     (related : List.Forall₂ (ExpRel source) expressions results) (subset : sptSubspt source target) :
     List.Forall₂ (ExpRel target) expressions results := by
   cases related with
   | nil => exact .nil
-  | cons head tail => exact .cons (expRel_mono source target _ _ head subset) (expsRel_mono source target _ _ tail subset)
+  | cons head tail => exact .cons (expRelMonoAux source target _ _ head subset) (expsRelMonoAux source target _ _ tail subset)
 termination_by sizeOf expressions
 decreasing_by all_goals (simp_wf; omega)
 end
+
+
+/-- Extending the code tree preserves the expression relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "exp_rel_mono"]
+theorem expRelMono (source : Spt (Nat × Bvi.Exp)) (expression result : Bvi.Exp)
+    (related : ExpRel source expression result) (target : Spt (Nat × Bvi.Exp))
+    (subset : sptSubspt source target) : ExpRel target expression result :=
+  expRelMonoAux source target expression result related subset
+
+/-- Extending the code tree preserves the pointwise expression-list relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "exp_rel_mono_list"]
+theorem expRelMonoList (source : Spt (Nat × Bvi.Exp)) (expressions results : List Bvi.Exp)
+    (target : Spt (Nat × Bvi.Exp))
+    (premises : List.Forall₂ (ExpRel source) expressions results ∧ sptSubspt source target) :
+    List.Forall₂ (ExpRel target) expressions results :=
+  expsRelMonoAux source target expressions results premises.1 premises.2
 
 /-- Flapjack infrastructure: BVI evaluation preserves expression and list
 relations because it only extends the code table. -/
@@ -148,8 +164,8 @@ theorem evaluate_expRel_mono {C F : Type} (executed : List Bvi.Exp) (env : List 
     (∀ x y, ExpRel source.code x y → ExpRel target.code x y) ∧
     (∀ xs ys, List.Forall₂ (ExpRel source.code) xs ys → List.Forall₂ (ExpRel target.code) xs ys) := by
   have subset := BviProps.evaluate_code_mono executed env source target result run
-  exact ⟨fun x y related => expRel_mono source.code target.code x y related subset,
-    fun xs ys related => expsRel_mono source.code target.code xs ys related subset⟩
+  exact ⟨fun x y related => expRelMono source.code x y related target.code subset,
+    fun xs ys related => expRelMonoList source.code xs ys target.code ⟨related, subset⟩⟩
 
 
 namespace EvaluationRelationCarrier

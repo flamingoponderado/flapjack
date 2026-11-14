@@ -153,7 +153,7 @@ theorem inlineAllLookupUnion (cache : Spt (Nat × Bvi.Exp))
     simp [old] at found
     obtain ⟨rfl, rfl⟩ := found.symm
     obtain ⟨transformed, targetFound, related⟩ := oldRelated key arity body old
-    refine ⟨transformed, ?_, expRel_mono target _ _ _ related (sptSubsptUnion target _)⟩
+    refine ⟨transformed, ?_, expRelMono target _ _ related _ (sptSubsptUnion target _)⟩
     simp [sptLookup_sptUnion, targetFound]
   | none =>
     have listFound : sptAListLookup key program = some (arity, body) := by

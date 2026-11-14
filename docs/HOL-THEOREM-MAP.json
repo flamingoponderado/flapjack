@@ -139440,4 +139440,21 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the complete HOL local theorem and its typed, hypothesis-free proof replay: each of the two original implications retains the shared evaluation equation and its individual expression or list-relation premise. BVI refs use the canonical finite-support map with a same-module roundtrip. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8)."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "exp_rel_mono",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/ExpRelation.lean",
+    "lean_name": "expRelMono",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: related expressions remain related under any sparse-tree code extension, with the original quantified variable and premise order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "exp_rel_mono_list",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/ExpRelation.lean",
+    "lean_name": "expRelMonoList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: pointwise related expression lists remain related under a sparse-tree code extension, with the original conjunction of premises."
+  }
 ]

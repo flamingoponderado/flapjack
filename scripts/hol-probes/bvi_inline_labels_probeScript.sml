@@ -527,3 +527,7 @@ val exp_rel_evaluate_mono_replay = Q.prove
   >> imp_res_tac evaluate_code_mono
   >> metis_tac [exp_rel_mono, exp_rel_mono_list]);
 val _ = show "exp_rel_evaluate_mono_replay_typed" exp_rel_evaluate_mono_replay;
+
+(* Capture the exported original expression and list monotonicity theorems. *)
+val _ = show "exp_rel_mono_typed" bvi_inlineProofTheory.exp_rel_mono;
+val _ = show "exp_rel_mono_list_typed" bvi_inlineProofTheory.exp_rel_mono_list;
