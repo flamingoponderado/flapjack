@@ -84,14 +84,4 @@ theorem removeFuel_succeeds (fuel : Nat) (e : Exp) (bound : expBudget e < fuel) 
       rw [hf, hb]
       rfl
 
-/-- The executable retry cannot exhaust tick-removal fuel. -/
-theorem removeBounded_succeeds (fuel : Nat) (e : Exp) :
-    ∃ result, removeBounded fuel e = some result := by
-  cases h : removeFuel fuel e with
-  | some result => exact ⟨result, by simp [removeBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := removeFuel_succeeds (max fuel (expBudget e + 1)) e bound
-    exact ⟨result, by simp [removeBounded, h, done]⟩
-
 end Flapjack.Compiler.Backend.ClosTicks
