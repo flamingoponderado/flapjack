@@ -211,7 +211,8 @@ theorem compileMatch_pmatchRows_index_bound {C F : Type} (cfg stateCfg : Config)
   have envs : aLookupRel (fun key => decNameToNum key < n) ValueRel env env' := by
     apply aLookupRel_mono _ ValueRel env env' _ ValueRel
     refine ⟨envsWide, ?_, ?_⟩
-    · intro key h; exact Nat.lt_of_lt_of_le h (Nat.le_max_left _ _)
+    · intro key h
+      exact Nat.lt_of_lt_of_le h (Nat.le_max_left _ _)
     · intro _ _ _ h; exact h.2
   obtain ⟨bodyBound, flag, compiledBody, compiled, targetEl, bodyLe, patLe⟩ :=
     compileMatch_index cfg pattern body rows (compileMatch cfg rows).2.2 (compileMatch cfg rows).1
