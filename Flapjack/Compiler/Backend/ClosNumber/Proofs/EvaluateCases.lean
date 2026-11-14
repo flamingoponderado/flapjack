@@ -768,18 +768,6 @@ theorem evaluate_handle_step {C F : Type} (trace : BackendCommon.Tra)
               exact targetHandlerRun
             · simpa [maxEq] using handlerRel
 
-/-- Numbering preserves the evaluator's Boolean observation. -/
-theorem valueRel_asBool {maxApp : Nat} {left right : Value}
-    (related : ValueRel maxApp left right) : asBool left = asBool right := by
-  cases related with
-  | block tag left right entries =>
-    cases entries with
-    | nil => rfl
-    | cons head tail => cases tag <;> simp [asBool]
-  | number _ | word64 _ | byteVector _ | refPtr _ _ => rfl
-  | closure => rfl
-  | recclosure => rfl
-
 /-- Conditionals follow the same branch after numbering, assuming the
     condition and both branches satisfy their simulations. -/
 theorem evaluate_if_step {C F : Type} (trace : BackendCommon.Tra) (condition yes no : ClosLang.Exp)
@@ -833,7 +821,8 @@ theorem evaluate_if_step {C F : Type} (trace : BackendCommon.Tra) (condition yes
             | cons valueRel tailRel =>
               cases tailRel
               rename_i targetValue
-              have boolEq : asBool value = asBool targetValue := valueRel_asBool valueRel
+              have boolEq : asBool value = asBool targetValue := ClosProps.PrimitiveBoolean.simpleValRel_asBool (ValueRel source.maxApp)
+                (simpleValRel source.maxApp) value targetValue valueRel
               have middleClock : middle.clock ≤ source.clock := by
                 have h := evaluate_clock_le [condition] env source
                 simpa [conditionRun] using h

@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosMti.Proofs.Applications
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBoolean
 public import Mathlib.Data.List.Forall2
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallConst
 public import Flapjack.SemanticPrimitivesProps.ResultRelation
@@ -153,19 +154,6 @@ theorem introExp_eq_fn (maxApp : Nat) (expression : ClosLang.Exp)
     cases found : collectArgs maxApp 1 sourceBody with
     | mk count body =>
       simp_all
-
-/-- Related closure values either decode to the same Boolean or both fail to
-decode. -/
-theorem valueRel_asBool {maxApp : Nat} {left right : Value}
-    (related : ValueRel maxApp left right) : asBool left = asBool right := by
-  cases related <;> try rfl
-  case block tag left right fields =>
-    cases fields with
-    | nil => rfl
-    | cons head tail =>
-      cases tag with
-      | zero => rfl
-      | succ tag => cases tag <;> rfl
 
 /-- Empty target code is simulated by empty source code. -/
 theorem evaluateRel_nil {C F : Type} (sourceCode : List ClosLang.Exp) :
@@ -659,7 +647,8 @@ theorem evaluateRel_ifWithin {C F : Type} (limit : Nat) (trace : BackendCommon.T
                   | nil =>
                     have valueRel : ValueRel source.maxApp sourceValue targetValue := by
                       simpa [resultRel] using conditionRel
-                    have sameBool := valueRel_asBool valueRel
+                    have sameBool := ClosProps.PrimitiveBoolean.simpleValRel_asBool
+                      (ValueRel source.maxApp) (simpleValRel source.maxApp) sourceValue targetValue valueRel
                     have envMiddle : List.Forall₂ (ValueRel sourceMiddle.maxApp) sourceEnv targetEnv := by
                       simpa [maxEq] using env
                     cases boolRun : asBool targetValue with

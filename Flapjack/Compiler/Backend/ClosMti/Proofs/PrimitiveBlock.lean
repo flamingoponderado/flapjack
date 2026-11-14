@@ -108,7 +108,8 @@ theorem primitiveSimulation_block_boolNot {C F : Type} :
     cases tail with
     | nil =>
       rename_i value nextValue
-      have same := valueRel_asBool head
+      have same := ClosProps.PrimitiveBoolean.simpleValRel_asBool
+        (ValueRel source.maxApp) (simpleValRel source.maxApp) value nextValue head
       cases observation : asBool value with
       | none =>
         have targetObservation : asBool nextValue = none := by rw [← same, observation]
@@ -132,8 +133,10 @@ theorem primitiveSimulation_block_boolTest {C F : Type} (test : AstHOL.Test) :
       cases tail with
       | nil =>
         rename_i firstValue nextFirst secondValue nextSecond
-        have sameFirst := valueRel_asBool first
-        have sameSecond := valueRel_asBool second
+        have sameFirst := ClosProps.PrimitiveBoolean.simpleValRel_asBool
+          (ValueRel source.maxApp) (simpleValRel source.maxApp) firstValue nextFirst first
+        have sameSecond := ClosProps.PrimitiveBoolean.simpleValRel_asBool
+          (ValueRel source.maxApp) (simpleValRel source.maxApp) secondValue nextSecond second
         cases firstObs : asBool firstValue with
         | none => simp [doApp, applyBlock, ← sameFirst, firstObs, excRel]
         | some x =>
