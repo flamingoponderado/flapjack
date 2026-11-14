@@ -322,6 +322,14 @@ theorem compile_exps_sing_noMutcons :
   · intro n es c aux n1 run
     simpa only [run] using compileListSource_noMutcons n es
 
+/-- Expression-list compilation emits no mutable constructor operations. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_exps_no_mutcons"]
+theorem compileExps_noMutcons (n : Nat) (xs : List Bvl.Exp) (c : List Bvi.Exp)
+    (aux : AppList (Nat × Nat × Bvi.Exp)) (n1 : Nat)
+    (run : compileListSource n xs = (c, aux, n1)) :
+    (∀ e ∈ c, noMutcons e) ∧ auxNoMutcons aux :=
+  compile_exps_sing_noMutcons.2 n xs c aux n1 run
+
 /-- Each lowered labeled function and its auxiliaries are safe. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_single_no_mutcons"]
 theorem compileSingleSource_noMutcons (n : Nat) (program : Nat × Nat × Bvl.Exp)

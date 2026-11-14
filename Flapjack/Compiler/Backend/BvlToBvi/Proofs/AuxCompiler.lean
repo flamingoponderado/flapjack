@@ -25,15 +25,4 @@ theorem compileAuxFuel_eq_flattened (fuel k args : Nat) (body : Bvi.Exp) :
       some (appListAppend (compileAuxSource (k, args, body))) := by
   simp [compileAuxFuel_eq_source, compileAuxSource, appListAppend, appendAux]
 
-/-- Once expression conversion returns, the production function entry uses
-the same total let optimizer, independently of its optimizer fuel. The
-expression-conversion correspondence remains a separate obligation. -/
-theorem compileSingleFuel_eq_source (fuel optFuel n name args : Nat) (body : Bvl.Exp)
-    (converted : Bvi.Exp) (aux : List (Nat × Nat × Bvi.Exp)) (next : Nat)
-    (run : compileBounded fuel optFuel n body = some (converted, aux, next)) :
-    compileSingleFuel fuel optFuel n (name, args, body) =
-      some ((bvlNumStubs + bvlToBviNamespaces * name, args,
-        BviLet.compileSing [] 0 converted) :: aux, next) := by
-  simp [compileSingleFuel, run, BviLet.compileExp_eq]
-
 end Flapjack.Compiler.Backend.BvlToBvi

@@ -134447,6 +134447,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
+  "hol_name": "compile_exps_no_mutcons",
+  "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
+  "lean_name": "compileExps_noMutcons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the original local theorem and its typed statement transcription in bvl_to_bvi_proof_source_probe.out. The same expression-list compilation equation implies safety for every generated expression and each flattened auxiliary body, with all counter and app_list binders retained. HOL's compile_exps_sing theorem equates compile_exps with compile_exps_list, represented by compileListSource; auxNoMutcons expands to the original EVERY over append. The HOL capture is a typed transcription, not a replay of the local proof."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",
   "hol_name": "bvi_let_delete_var_no_mutcons",
   "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Proofs/NoMutcons.lean",
   "lean_name": "deleteVar_noMutcons",

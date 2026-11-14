@@ -54,41 +54,6 @@ def simulation {C F : Type} (xs : List Bvl.Exp) (env : List Value)
       env.map (adjustBv relocate) = env.map (adjustBv newRelocate) ∧
       ∀ key, source.refs.lookup key ≠ none → relocate key = newRelocate key
 
-/-- The empty-list case of the source evaluator simulation, untagged until
-the BVI evaluator and full induction theorem are source-reviewed. -/
-theorem simulation_nil {C F : Type} (env : List Value) (source : BvlSem.State (Nat × C) F) :
-    simulation [] env source := by
-  intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
-  simp [BvlSem.evaluate] at run
-  rcases run with ⟨rfl, rfl⟩
-  simp [compileListSource] at compiled
-  rcases compiled with ⟨rfl, rfl, rfl⟩
-  refine ⟨target, relocate, 0, ?_, related, rfl, ?_⟩
-  · simp [BviSem.evaluate, BviProps.incClock, mapSimulationResult]
-  · intro key member
-    rfl
-
-/-- The variable case of the source evaluator simulation. The original
-no-type-error premise excludes out-of-range variables. Untagged pending BVI
-evaluator and full induction review. -/
-theorem simulation_var {C F : Type} (index : Nat) (env : List Value)
-    (source : BvlSem.State (Nat × C) F) : simulation [.var index] env source := by
-  intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
-  cases lookup : env[index]? with
-  | none =>
-    simp [BvlSem.evaluate, lookup] at run
-    rcases run with ⟨rfl, _⟩
-    exact (notTypeError rfl).elim
-  | some value =>
-    simp [BvlSem.evaluate, lookup] at run
-    rcases run with ⟨rfl, rfl⟩
-    simp [compileListSource, compileSingSource, smartAppend] at compiled
-    rcases compiled with ⟨rfl, rfl, rfl⟩
-    refine ⟨target, relocate, 0, ?_, related, rfl, ?_⟩
-    · simp [BviSem.evaluate, BviProps.incClock, mapSimulationResult, lookup]
-    · intro key member
-      rfl
-
 /-- The tick case follows from the body at one less clock. Untagged pending
 BVI evaluator qualification and full induction review. -/
 theorem simulation_tick {C F : Type} (body : Bvl.Exp) (env : List Value)

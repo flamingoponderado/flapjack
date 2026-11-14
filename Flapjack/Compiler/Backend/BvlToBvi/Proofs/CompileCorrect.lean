@@ -37,7 +37,16 @@ theorem simulation_all {C F : Type} (xs : List Bvl.Exp) (env : List Value)
       (s : BvlSem.State (Nat × C) F) h => smaller₀ es s h environment'
   intro environment
   cases expressions with
-  | nil => exact simulation_nil environment state
+  | nil =>
+    intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
+    simp [BvlSem.evaluate] at run
+    rcases run with ⟨rfl, rfl⟩
+    simp [compileListSource] at compiled
+    rcases compiled with ⟨rfl, rfl, rfl⟩
+    refine ⟨target, relocate, 0, ?_, related, rfl, ?_⟩
+    · simp [BviSem.evaluate, BviProps.incClock, mapSimulationResult]
+    · intro key member
+      rfl
   | cons first rest =>
     cases rest with
     | cons second tail =>
@@ -52,7 +61,22 @@ theorem simulation_all {C F : Type} (xs : List Bvl.Exp) (env : List Value)
         omega
     | nil =>
       cases first with
-      | var index => exact simulation_var index environment state
+      | var index =>
+        intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
+        cases lookup : environment[index]? with
+        | none =>
+          simp [BvlSem.evaluate, lookup] at run
+          rcases run with ⟨rfl, _⟩
+          exact (notTypeError rfl).elim
+        | some value =>
+          simp [BvlSem.evaluate, lookup] at run
+          rcases run with ⟨rfl, rfl⟩
+          simp [compileListSource, compileSingSource, smartAppend] at compiled
+          rcases compiled with ⟨rfl, rfl, rfl⟩
+          refine ⟨target, relocate, 0, ?_, related, rfl, ?_⟩
+          · simp [BviSem.evaluate, BviProps.incClock, mapSimulationResult, lookup]
+          · intro key member
+            rfl
       | raise body =>
         apply simulation_raise body environment state
         apply exprIH [body] environment state (by omega)

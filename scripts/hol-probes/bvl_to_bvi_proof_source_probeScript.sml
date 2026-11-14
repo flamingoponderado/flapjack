@@ -42,6 +42,9 @@ val _ = replay "compile_exps_sing_no_mutcons_typed"
     (!n es c aux n1.
       bvl_to_bvi$compile_exps_list n es = (c,aux,n1) ==>
       EVERY no_mutcons c /\ EVERY (no_mutcons o SND o SND) (misc$append aux))``;
+val _ = replay "compile_exps_no_mutcons_typed"
+  ``!n xs c aux n1. bvl_to_bvi$compile_exps n xs = (c,aux,n1) ==>
+      EVERY no_mutcons c /\ EVERY (no_mutcons o SND o SND) (misc$append aux)``;
 val _ = replay "compile_single_no_mutcons_typed"
   ``!n p q n1. bvl_to_bvi$compile_single n p = (q,n1) ==>
       EVERY (no_mutcons o SND o SND) (misc$append q)``;

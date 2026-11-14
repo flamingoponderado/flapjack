@@ -187,7 +187,6 @@ theorem compileSingleFuel_eq_source_all (fuel optFuel n name args : Nat) (exp : 
       some ((bvlNumStubs + bvlToBviNamespaces * name, args,
         BviLet.compileSing [] 0 (compileSingSource n exp).1) ::
         appListAppend (compileSingSource n exp).2.1, (compileSingSource n exp).2.2) := by
-  exact compileSingleFuel_eq_source fuel optFuel n name args exp _ _ _
-    (compileBounded_eq_source fuel optFuel n exp)
+  simp [compileSingleFuel, compileBounded_eq_source, BviLet.compileExp_eq]
 
 end Flapjack.Compiler.Backend.BvlToBvi
