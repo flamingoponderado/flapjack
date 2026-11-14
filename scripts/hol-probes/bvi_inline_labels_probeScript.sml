@@ -545,3 +545,21 @@ val _ = show "subspt_insert_union_fresh_typed" bvi_inlineProofTheory.subspt_inse
 
 (* Capture the exported original distinct-label preservation theorem. *)
 val _ = show "compile_inc_ALL_DISTINCT_typed" bvi_inlineProofTheory.compile_inc_ALL_DISTINCT;
+
+(* Capture the exported original expression-list inlining theorems. *)
+val _ = show "inline_exps_MAP_typed" bvi_inlineProofTheory.inline_exps_MAP;
+val _ = show "inline_exps_REVERSE_typed" bvi_inlineProofTheory.inline_exps_REVERSE;
+val _ = show "inline_exps_MAP_Var_typed" bvi_inlineProofTheory.inline_exps_MAP_Var;
+val _ = show "inline_exps_GENLIST_Var_typed" bvi_inlineProofTheory.inline_exps_GENLIST_Var;
+
+(* Capture the exported original expression-list length and cons theorems. *)
+val _ = show "inline_exps_LENGTH_typed" bvi_inlineProofTheory.inline_exps_LENGTH;
+val _ = show "remove_ticks_exps_LENGTH_typed" bvi_inlineProofTheory.remove_ticks_exps_LENGTH;
+val _ = show "inline_exps_CONS_typed" bvi_inlineProofTheory.inline_exps_CONS;
+
+(* Capture the original wrapper shape theorem and executable boundary observations. *)
+val _ = show "canonical_wrapper_thm_typed" bvi_inlineProofTheory.canonical_wrapper_thm;
+val _ = show "canonical_four_result_wrapper_typed" bvi_inlineTheory.canonical_four_result_wrapper;
+val _ = show "malformed_wrappers_rejected_typed" bvi_inlineTheory.malformed_wrappers_rejected;
+val _ = show "canonical_zero_wrapper_eval" (EVAL ``canonical_wrapper 10 0 (bvi$LetCall 0 5 11 [] (bvi$Op (BlockOp (Cons 7)) []))``);
+val _ = show "canonical_nonvar_wrapper_eval" (EVAL ``canonical_wrapper 10 1 (bvi$LetCall 0 5 11 [bvi$Tick (bvi$Var 0)] (bvi$Op (BlockOp (Cons 7)) []))``);

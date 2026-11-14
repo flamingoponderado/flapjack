@@ -21,14 +21,33 @@ def mkTick : Nat → Exp → Exp
   | 0, e => e
   | n + 1, e => .tick (mkTick n e)
 
+/-- Check that expressions are exactly the variables named by the given
+indices. This is executable infrastructure for the wrapper recognizer. -/
+def matchesVariables : List Exp → List Nat → Bool
+  | [], [] => true
+  | .var index :: expressions, expected :: indices =>
+      index == expected && matchesVariables expressions indices
+  | _, _ => false
+
+/-- Flapjack-specific correctness of the executable variable-list check:
+it succeeds exactly on the corresponding list of variable expressions. -/
+theorem matchesVariables_eq_true_iff (expressions : List Exp) (indices : List Nat) :
+    matchesVariables expressions indices = true ↔ expressions = indices.map Exp.var := by
+  induction indices generalizing expressions with
+  | nil => cases expressions <;> simp [matchesVariables]
+  | cons index rest ih =>
+    cases expressions with
+    | nil => simp [matchesVariables]
+    | cons expression tail => cases expression <;> simp [matchesVariables, ih]
+
 /-- Check the original worker-wrapper shape: the arguments are exactly the
 worker's `arity` variables in order and the boxed values are exactly the
 reversed `rets` variables, as in HOL's GENLIST equations. -/
 @[hol "cakeml/compiler/backend/bvi_inlineScript.sml" "canonical_wrapper_def"]
 def canonicalWrapper (name arity : Nat) : Exp → Bool
   | .letCall rets _ worker args (.op (.blockOp (.cons _)) values) =>
-      worker != name && args == (List.range arity).map Exp.var &&
-        values == ((List.range rets).map Exp.var).reverse
+      worker != name && matchesVariables args (List.range arity) &&
+        matchesVariables values (List.range rets).reverse
   | _ => false
 
 /-- Flapjack's bounded traversal of the BVI inliner. `Proofs.Total` proves a

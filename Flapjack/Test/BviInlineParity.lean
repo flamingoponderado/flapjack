@@ -29,6 +29,26 @@ private def wrapper : Bvi.Exp :=
 
 #guard BviInline.canonicalWrapper 10 2 wrapper
 #guard !(BviInline.canonicalWrapper 11 2 wrapper)
+
+-- The four-result and malformed shapes are captured from the original HOL
+-- bvi_inline theory; the empty and non-variable cases exercise its boundary.
+private def wrapper4 : Bvi.Exp :=
+  .letCall 4 0 11 [.var 0, .var 1, .var 2]
+    (.op (.blockOp (.cons 7)) [.var 3, .var 2, .var 1, .var 0])
+#guard BviInline.canonicalWrapper 10 3 wrapper4
+#guard !(BviInline.canonicalWrapper 10 3
+  (.letCall 4 0 10 [.var 0, .var 1, .var 2]
+    (.op (.blockOp (.cons 7)) [.var 0, .var 1, .var 2, .var 3])))
+#guard !(BviInline.canonicalWrapper 10 3
+  (.letCall 4 0 11 [.var 0, .var 2, .var 1]
+    (.op (.blockOp (.cons 7)) [.var 0, .var 1, .var 2, .var 3])))
+#guard !(BviInline.canonicalWrapper 10 3
+  (.letCall 4 0 11 [.var 0, .var 1, .var 2]
+    (.op (.blockOp (.cons 7)) [.var 0, .var 1, .var 2])))
+#guard !(BviInline.canonicalWrapper 10 3 (.return [.var 0, .var 1, .var 2]))
+#guard BviInline.canonicalWrapper 10 0 (.letCall 0 5 11 [] (.op (.blockOp (.cons 7)) []))
+#guard !(BviInline.canonicalWrapper 10 1
+  (.letCall 0 5 11 [.tick (.var 0)] (.op (.blockOp (.cons 7)) [])))
 #guard match BviInline.compileProgFuel 100 [(10, 2, wrapper), (12, 0, .call 5 (some 10) [.var 3, .var 4] none)] with
   | some (_, [(10, 2, .letCall 2 0 11 [.var 0, .var 1] (.op (.blockOp (.cons 7)) [.var 1, .var 0])),
       (12, 0, .let [.var 3, .var 4] (.letCall 2 0 11 [.var 0, .var 1] (.op (.blockOp (.cons 7)) [.var 1, .var 0])))]) => true

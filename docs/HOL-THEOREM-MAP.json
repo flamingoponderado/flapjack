@@ -123849,7 +123849,7 @@
     "hol_path": "cakeml/compiler/backend/bvi_inlineScript.sml",
     "hol_name": "canonical_wrapper_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "Independently compared the typed bvi_inline_probe capture (`canonical_wrapper name arity (LetCall rets ticks worker args (Op (BlockOp (Cons tag)) rvs)) \u21d4 worker \u2260 name \u2227 args = GENLIST Var arity \u2227 rvs = REVERSE (GENLIST Var rets)` and F for every other constructor) with canonicalWrapper: worker != name, args == (List.range arity).map Exp.var and values == ((List.range rets).map Exp.var).reverse are the same three conditions (GENLIST Var n = (List.range n).map Var, REVERSE = List.reverse, structural BEq equality of Exp is HOL equality), and the wildcard `_ => false` covers the constructors the capture prints as F."
+    "reviewer": "Independently compared the typed bvi_inline_probe capture (`canonical_wrapper name arity (LetCall rets ticks worker args (Op (BlockOp (Cons tag)) rvs)) \u21d4 worker \u2260 name \u2227 args = GENLIST Var arity \u2227 rvs = REVERSE (GENLIST Var rets)` and F for every other constructor) with canonicalWrapper: worker != name, matchesVariables args (List.range arity), and matchesVariables values (List.range rets).reverse implement the same three conditions (GENLIST Var n = (List.range n).map Var, REVERSE = List.reverse); the executed matchesVariables comparator is proven to accept exactly the corresponding Var list by matchesVariables_eq_true_iff, and the wildcard `_ => false` covers the constructors the capture prints as F."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec.lean",
@@ -139492,5 +139492,71 @@
     "lean_name": "compileInc_allDistinct",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: the compile result equation and distinct input labels imply distinct output labels, derived from the full original label-preservation theorem."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "inline_exps_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "inlineExpsLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture. Inlining preserves expression-list length."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "remove_ticks_exps_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "removeTicksExpsLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture. Tick removal preserves expression-list length."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "inline_exps_CONS",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "inlineExpsCons",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture. Inlining a cons expression list applies the original head and tail equations."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "inline_exps_MAP",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "inlineExpsMap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture. Inlining an expression list is the map of the original expression inliner."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "inline_exps_REVERSE",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "inlineExpsReverse",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture. Inlining commutes with reversing an expression list."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "inline_exps_MAP_Var",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "inlineExpsMapVar",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture. Inlining a mapped list of variables leaves it unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "inline_exps_GENLIST_Var",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "inlineExpsGenlistVar",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture. Inlining GENLIST Var n, represented by mapping Var over List.range n, leaves it unchanged."
+  }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "canonical_wrapper_thm",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "canonicalWrapper_iff",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: the wrapper predicate holds exactly for the original LetCall worker and generated argument/result variable lists, with only worker inequality. The executable variable-list comparator has a kernel-checked equality characterization."
   }
 ]

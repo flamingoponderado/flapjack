@@ -11,6 +11,79 @@ public import Flapjack.Misc.Sptree.ToList
 namespace Flapjack.Compiler.Backend.BviInline.Proofs
 open Flapjack.Compiler.Backend.BviProps
 
+
+/-- Inlining preserves the length of an expression list. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "inline_exps_LENGTH"]
+theorem inlineExpsLength (cache : Spt (Nat × Bvi.Exp)) (expressions : List Bvi.Exp) :
+    (inlineExpsSource cache expressions).length = expressions.length := by
+  induction expressions with
+  | nil => simp [inlineExpsSource]
+  | cons expression rest ih => simp [inlineExpsSource, ih]
+
+/-- Removing ticks preserves the length of an expression list. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "remove_ticks_exps_LENGTH"]
+theorem removeTicksExpsLength (expressions : List Bvi.Exp) :
+    (removeTicksListSource expressions).length = expressions.length := by
+  induction expressions with
+  | nil => simp [removeTicksListSource]
+  | cons expression rest ih => simp [removeTicksListSource, ih]
+
+/-- Inlining a cons list applies inlining to its head and tail. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "inline_exps_CONS"]
+theorem inlineExpsCons (cache : Spt (Nat × Bvi.Exp)) (expression : Bvi.Exp) (rest : List Bvi.Exp) :
+    inlineExpsSource cache (expression :: rest) =
+      inlineExpSource cache expression :: inlineExpsSource cache rest := by
+  simp [inlineExpsSource]
+
+/-- Inlining an expression list is pointwise inlining. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "inline_exps_MAP"]
+theorem inlineExpsMap (cache : Spt (Nat × Bvi.Exp)) (expressions : List Bvi.Exp) :
+    inlineExpsSource cache expressions = expressions.map (inlineExpSource cache) := by
+  induction expressions with
+  | nil => simp [inlineExpsSource]
+  | cons expression rest ih => simp [inlineExpsSource, ih]
+
+/-- Inlining commutes with reversing an expression list. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "inline_exps_REVERSE"]
+theorem inlineExpsReverse (cache : Spt (Nat × Bvi.Exp)) (expressions : List Bvi.Exp) :
+    inlineExpsSource cache expressions.reverse = (inlineExpsSource cache expressions).reverse := by
+  simp [inlineExpsMap]
+
+/-- Inlining a list of variables leaves it unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "inline_exps_MAP_Var"]
+theorem inlineExpsMapVar (cache : Spt (Nat × Bvi.Exp)) (names : List Nat) :
+    inlineExpsSource cache (names.map Bvi.Exp.var) = names.map Bvi.Exp.var := by
+  induction names with
+  | nil => simp [inlineExpsSource]
+  | cons name rest ih => simp [inlineExpsSource, inlineExpSource, ih]
+
+/-- Inlining generated variables leaves the generated list unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "inline_exps_GENLIST_Var"]
+theorem inlineExpsGenlistVar (cache : Spt (Nat × Bvi.Exp)) (n : Nat) :
+    inlineExpsSource cache ((List.range n).map Bvi.Exp.var) = (List.range n).map Bvi.Exp.var :=
+  inlineExpsMapVar cache (List.range n)
+
+/-- A canonical wrapper has exactly the original worker and variable-list shape. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "canonical_wrapper_thm"]
+theorem canonicalWrapper_iff (name arity : Nat) (body : Bvi.Exp) :
+    canonicalWrapper name arity body = true ↔
+      ∃ rets ticks worker tag, worker ≠ name ∧
+        body = .letCall rets ticks worker ((List.range arity).map Bvi.Exp.var)
+          (.op (.blockOp (.cons tag)) (((List.range rets).map Bvi.Exp.var).reverse)) := by
+  cases body with
+  | letCall rets ticks worker args continuation =>
+    cases continuation with
+    | op op values =>
+      cases op with
+      | blockOp block =>
+        cases block with
+        | cons tag => simp [canonicalWrapper, matchesVariables_eq_true_iff, List.map_reverse, and_assoc]
+        | _ => simp [canonicalWrapper]
+      | _ => simp [canonicalWrapper]
+    | _ => simp [canonicalWrapper]
+  | _ => simp [canonicalWrapper]
+
+
 mutual
 private theorem tickLabels (e : Bvi.Exp) :
     getCodeLabels (removeTicksSource e) = getCodeLabels e := by
