@@ -72,4 +72,23 @@ def StateRel {C F : Type} (source target : State C F) : Prop :=
   source.compile = pureCc compileIncSource target.compile ∧
   target.compileOracle = pureCo compileIncSource ∘ source.compileOracle
 
+/-- Related reference maps give related lookup results in either direction. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "state_rel_opt_rel_refs"
+  (fmap_as_finite_support := [refs, code])]
+theorem state_rel_opt_rel_refs {C F : Type} (source target : State C F) (key : Nat)
+    (r1 r2 : Option (Ref Value)) :
+    (StateRel source target ∧ source.refs.lookup key = r1 →
+      ∃ r2, target.refs.lookup key = r2 ∧ optionRel RefRel r1 r2) ∧
+    (StateRel source target ∧ target.refs.lookup key = r2 →
+      ∃ r1, source.refs.lookup key = r1 ∧ optionRel RefRel r1 r2) := by
+  constructor
+  · rintro ⟨related, lookup⟩
+    refine ⟨target.refs.lookup key, rfl, ?_⟩
+    rw [← lookup]
+    exact related.2.2.2.2.2.2.2.2.1 key
+  · rintro ⟨related, lookup⟩
+    refine ⟨source.refs.lookup key, rfl, ?_⟩
+    rw [← lookup]
+    exact related.2.2.2.2.2.2.2.2.1 key
+
 end Flapjack.Compiler.Backend.ClosFvs

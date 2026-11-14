@@ -18,6 +18,14 @@ val _ = show "function_rel_typed=" clos_fvsProofTheory.f_rel_def;
 val _ = show "value_rel_typed=" clos_fvsProofTheory.v_rel_rules;
 val _ = show "ref_rel_typed=" clos_fvsProofTheory.ref_rel_rules;
 val _ = show "state_rel_typed=" clos_fvsProofTheory.state_rel_def;
+val state_rel_opt_rel_refs_replay = Q.prove (
+  `(clos_fvsProof$state_rel (s1 :('c,'ffi) closSem$state) s2 /\ FLOOKUP s1.refs n = r1 ==>
+       ?r2. FLOOKUP s2.refs n = r2 /\ OPTREL clos_fvsProof$ref_rel r1 r2) /\
+   (clos_fvsProof$state_rel s1 s2 /\ FLOOKUP s2.refs n = r2 ==>
+       ?r1. FLOOKUP s1.refs n = r1 /\ OPTREL clos_fvsProof$ref_rel r1 r2)`,
+  rw [] \\ gvs [clos_fvsProofTheory.state_rel_def, finite_mapTheory.fmap_rel_def,
+    finite_mapTheory.FLOOKUP_DEF] \\ rw []);
+val _ = show "state_rel_opt_rel_refs_typed=" state_rel_opt_rel_refs_replay;
 val state_rel_clocks_eqs_replay = Q.prove (
   `clos_fvsProof$state_rel (s1 :('c,'ffi) closSem$state) s2 ==>
    s1.clock = s2.clock`,
