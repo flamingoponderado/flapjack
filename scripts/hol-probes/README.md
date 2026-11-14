@@ -10471,3 +10471,13 @@ derivations (`OPT_MMAP_CONG` specialization and the six `EVAL` conjuncts). The
 before printing the expanded application. Regenerate with
 `CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=pan_props_local_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`flat_elim_local_typed_probe.out` (8 rows) captures the remaining reviewed
+`flat_elimProofScript.sml` rows that earlier probes did not cover (task 184).
+The seven `[local]` declarations are parsed from the pinned source with the
+shared splice-expanding helper; `v_has_Eval_Unitv` is the source's `EVAL` val,
+and `do_app_cases` replays the source derivation (`SIMP_CONV` over `do_app_def`
+with the local `pair_case_eq`, `pair_lam_lem` and `flatSemTheory.case_eq_thms`
+re-proved in the probe). Regenerate with
+`CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=flat_elim_local_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.

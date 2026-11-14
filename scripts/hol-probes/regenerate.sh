@@ -10522,6 +10522,12 @@ run_probe pan_props_local_typed_probeScript.sml pan_props_local_typed_probe.out 
   "$cake_dir/pancake/semantics/panPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 
+run_probe flat_elim_local_typed_probeScript.sml flat_elim_local_typed_probe.out \
+  find_v_globalsL_EL_trans_typed not_v_has_Eval_EVERY_EL_typed v_has_Eval_Unitv_typed not_LE_LESS_IMP_typed \
+  EL_REP_NONE_SOME_trivia_typed do_app_cases_typed elist_globals_filter_typed elist_globals_filter_SUB_BAG_typed \
+  "$cake_dir/compiler/backend/proofs/flat_elimProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
 run_probe lab_filter_proof_typed_probeScript.sml lab_filter_proof_typed_probe.out \
   filter_correct_typed adjust_pc_def_typed all_skips_def_typed asm_fetch_aux_eq_typed sec_ends_with_label_filter_skip_typed filter_skip_semantics_typed share_mem_op_FFI_final_filter_correct_typed share_mem_op_FFI_return_filter_correct_typed \
   share_mem_op_NONE_filter_correct_typed state_rel_def_typed \
