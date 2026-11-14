@@ -1,6 +1,15 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+    "hol_name": "state_rel_opt_rel_refs",
+    "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Primitive.lean",
+    "lean_name": "state_rel_opt_rel_refs",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the original local proof and state_rel_opt_rel_refs_replay_typed: each related-state lookup equality yields the opposite lookup and the same directed option relation, in both original conjuncts. The canonical refs and code finite maps have the local roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
     "hol_name": "find_code_lemma",
     "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/EvaluateBasic.lean",
     "lean_name": "find_code_lemma",

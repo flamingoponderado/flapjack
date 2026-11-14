@@ -136,6 +136,7 @@ val state_rel_opt_rel_refs_replay = prove(
     (state_rel s1 s2 /\ FLOOKUP s2.refs n = r2 ==>
      ?r1. FLOOKUP s1.refs n = r1 /\ OPTREL ref_rel r1 r2)``,
   rw [] \\ gvs [state_rel_def, FMAP_REL_def, FLOOKUP_DEF] \\ rw []);
+val _ = show "state_rel_opt_rel_refs_replay_typed" state_rel_opt_rel_refs_replay;
 val rel_update_thunk_replay = prove(
   ``state_rel s1 s2 /\ LIST_REL v_rel vs ys ==>
     (update_thunk [RefPtr v ptr] s1.refs vs = NONE ==>
