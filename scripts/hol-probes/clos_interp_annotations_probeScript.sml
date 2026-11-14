@@ -34,3 +34,8 @@ val lookup_vars_ok_replay = Q.prove (
   res_tac \\ fs [] \\
   gvs [EVERY_EL]);
 val _ = show_thm "lookup_vars_ok_replay_typed=" lookup_vars_ok_replay;
+val _ = show_thm "state_rel_prime_def_typed=" clos_interpProofTheory.state_rel'_def;
+val state_rel_prime_dec_clock_replay = Q.prove (
+  `state_rel' s t ⇒ state_rel' (dec_clock 1 s) (dec_clock 1 t)`,
+  gvs [clos_interpProofTheory.state_rel'_def, dec_clock_def]);
+val _ = show_thm "state_rel_prime_dec_clock_replay_typed=" state_rel_prime_dec_clock_replay;

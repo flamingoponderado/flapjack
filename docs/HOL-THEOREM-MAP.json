@@ -1,6 +1,24 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "state_rel'_def",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/NoInstallValues.lean",
+    "lean_name": "StateRelNoInstall",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared state_rel_prime_def_typed, all state fields, oracle and compiler equations, global safety and both finite-map reference safety obligations. The canonical refs and code fields have the local roundtrip witness. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "state_rel'_dec_clock",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/NoInstallValues.lean",
+    "lean_name": "stateRelNoInstall_decClock_one",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "reviewer": "Compared the closed state_rel_prime_dec_clock_replay_typed and both related states after subtracting exactly one clock step. Independently replayed the HOL local proof. Canonical refs and code fields have the local roundtrip witness; source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
     "hol_name": "lookup_vars_ok",
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/NoInstallValues.lean",
     "lean_name": "lookupVars_ok",

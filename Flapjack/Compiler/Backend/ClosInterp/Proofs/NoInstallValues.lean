@@ -10,6 +10,12 @@ These proof-side definitions await HOL carrier and statement review. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL Flapjack.Compiler.Backend.BackendProps
 
+/-- The closure state uses the canonical finite-support map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
 mutual
 /-- A value contains no closure body that can execute installation. -/
 def valueNoInstall : ClosSem.Value → Bool
@@ -55,6 +61,8 @@ def refsNoInstall (refs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value)) : P
 
 /-- Relation for the no-install case: related compiler state plus the
 no-install invariants for target globals and references. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "state_rel'_def"
+  (fmap_as_finite_support := [refs, code])]
 def StateRelNoInstall {C F : Type} (source target : ClosSem.State C F) : Prop :=
   StateRel1 source target ∧
     (∀ entry ∈ target.globals, ∀ value, entry = some value → valueNoInstall value = true) ∧
@@ -136,6 +144,14 @@ theorem stateRelNoInstall_decClock {C F : Type} (source target : ClosSem.State C
   rcases related with ⟨⟨safe, sc, tc, maxEq, maxPositive, clock, ffi, globals, refs, compiler, oracle⟩, globalOk, refsOk⟩
   exact ⟨⟨safe, sc, tc, maxEq, maxPositive, by simp [ClosSem.decClock, clock], ffi, globals, refs, compiler, oracle⟩,
     globalOk, refsOk⟩
+
+/-- Related no-install states remain related after consuming one clock step. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "state_rel'_dec_clock"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRelNoInstall_decClock_one {C F : Type} (source target : ClosSem.State C F)
+    (related : StateRelNoInstall source target) :
+    StateRelNoInstall (ClosSem.decClock 1 source) (ClosSem.decClock 1 target) :=
+  stateRelNoInstall_decClock source target related 1
 
 /-- The two initial states satisfy the no-install relation when the source
 oracle has no auxiliary code. -/

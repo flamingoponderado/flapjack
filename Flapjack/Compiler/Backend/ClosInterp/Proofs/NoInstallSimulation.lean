@@ -328,7 +328,7 @@ theorem evaluate_tick_noInstall_relation_step {C F : Type} (trace : BackendCommo
   · simp [zero] at run
     have smaller : (ClosSem.decClock 1 source).clock < source.clock := by simp [ClosSem.decClock]; omega
     obtain ⟨targetFinal, targetBody, finalRel, resultOk⟩ :=
-      bodyIH _ _ final result smaller run (stateRelNoInstall_decClock source target related 1)
+      bodyIH _ _ final result smaller run (stateRelNoInstall_decClock_one source target related)
     refine ⟨targetFinal, ?_, finalRel, resultOk⟩
     simpa [ClosSem.evaluate, clockEq, zero] using targetBody
 
