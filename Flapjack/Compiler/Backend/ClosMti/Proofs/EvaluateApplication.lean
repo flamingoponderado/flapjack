@@ -82,14 +82,14 @@ theorem evaluateApp_closure_partial {C F : Type} (source target : State C F)
       split <;> simp_all
   by_cases timeout : target.clock < targetArgs.length
   · have sourceTimeout : source.clock < sourceArgs.length := by omega
-    have sourceRun := evaluateApps_nestedFns_timeout sourceArgs names sourceBody
-      (sourceSupplied ++ sourceEnv) source sourceTimeout partialCount (by omega)
+    have sourceRun := evaluateApps_nestedFns_timeout sourceArgs names source sourceBody
+      (sourceSupplied ++ sourceEnv) ⟨sourceTimeout, partialCount, by omega⟩
     rw [sourceRun, targetRun]
     simp only [timeout, ↓reduceIte]
     exact ⟨by simp [resultRel, excRel], stateRel_withClock states 0⟩
   · have sourceClock : sourceArgs.length ≤ source.clock := by omega
-    have sourceRun := evaluateApps_nestedFns_short sourceArgs names sourceBody
-      (sourceSupplied ++ sourceEnv) source sourceClock partialCount (by omega)
+    have sourceRun := evaluateApps_nestedFns_short sourceArgs names source sourceBody
+      (sourceSupplied ++ sourceEnv) ⟨sourceClock, partialCount, by omega⟩
     have combined : List.Forall₂ (ValueRel source.maxApp)
         (sourceArgs ++ sourceSupplied) (targetArgs ++ targetSupplied) :=
       List.rel_append argsRel suppliedRel
@@ -135,8 +135,8 @@ theorem evaluateApp_closure_full_timeout {C F : Type} (source target : State C F
   have suppliedBound : targetSupplied.length < arity := by omega
   have fullBound : arity ≤ targetArgs.length + targetSupplied.length := by omega
   have costTimeout : target.clock < arity - targetSupplied.length := by omega
-  refine ⟨evaluateApps_nestedFns_timeout_long sourceArgs names sourceBody
-    (sourceSupplied ++ sourceEnv) source timeout full (by omega), ?_, stateRel_withClock states 0⟩
+  refine ⟨evaluateApps_nestedFns_timeout_long sourceArgs names source sourceBody
+    (sourceSupplied ++ sourceEnv) ⟨timeout, full, by omega⟩, ?_, stateRel_withClock states 0⟩
   cases targetArgs with
   | nil => simp only [List.length_nil] at argsLength; omega
   | cons first rest =>

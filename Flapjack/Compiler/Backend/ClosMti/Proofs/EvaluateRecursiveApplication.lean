@@ -205,14 +205,14 @@ theorem evaluateApp_recclosure_partial_related {C F : Type} (source target : Sta
       split <;> simp_all
   by_cases timeout : target.clock < targetArgs.length
   · have sourceTimeout : source.clock < sourceArgs.length := by omega
-    have sourceRun := evaluateApps_nestedFns_timeout sourceArgs names sourceBody
-      (sourceSupplied ++ recursive ++ sourceEnv) source sourceTimeout partialCount (by omega)
+    have sourceRun := evaluateApps_nestedFns_timeout sourceArgs names source sourceBody
+      (sourceSupplied ++ recursive ++ sourceEnv) ⟨sourceTimeout, partialCount, by omega⟩
     rw [sourceRun, targetRun]
     simp only [timeout, ↓reduceIte]
     exact ⟨by simp [resultRel, excRel], stateRel_withClock states 0⟩
   · have sourceClock : sourceArgs.length ≤ source.clock := by omega
-    have sourceRun := evaluateApps_nestedFns_short sourceArgs names sourceBody
-      (sourceSupplied ++ recursive ++ sourceEnv) source sourceClock partialCount (by omega)
+    have sourceRun := evaluateApps_nestedFns_short sourceArgs names source sourceBody
+      (sourceSupplied ++ recursive ++ sourceEnv) ⟨sourceClock, partialCount, by omega⟩
     have combined := List.rel_append argsRel suppliedRel
     have nextArity : 1 + (names.drop sourceArgs.length).length +
         (sourceArgs ++ sourceSupplied).length = arity := by

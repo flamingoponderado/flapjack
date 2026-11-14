@@ -184,16 +184,17 @@ theorem evaluateApp_unary {C F : Type} (body : ClosLang.Exp) (env : List ClosSem
           | cons other rest => rfl
 
 /-- Applying no more arguments than there are nested unary functions captures
-them in order and consumes one tick per argument. This is stated over the
-current Lean evaluator, pending its HOL correspondence review. -/
+them in order and consumes one tick per argument. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "evaluate_apps_Clos_short"
+  (fmap_as_finite_support := [refs, code])]
 theorem evaluateApps_nestedFns_short {C F : Type} (args : List ClosSem.Value)
-    (names : List Flapjack.Basis.Pure.MlString.MlString) (body : ClosLang.Exp)
-    (env : List ClosSem.Value) (state : ClosSem.State C F)
-    (clock : args.length ≤ state.clock) (lengths : args.length ≤ names.length)
-    (maxApp : 1 ≤ state.maxApp) :
+    (names : List Flapjack.Basis.Pure.MlString.MlString) (state : ClosSem.State C F)
+    (body : ClosLang.Exp) (env : List ClosSem.Value)
+    (premises : args.length ≤ state.clock ∧ args.length ≤ names.length ∧ 1 ≤ state.maxApp) :
     evaluateApps (.closure none [] env 1 (mkFns names body)) args state =
       (.val [.closure none [] (args ++ env) 1 (mkFns (names.drop args.length) body)],
         ClosSem.decClock args.length state) := by
+  obtain ⟨clock, lengths, maxApp⟩ := premises
   induction args using List.reverseRecOn generalizing names env state with
   | nil => simp [evaluateApps, ClosSem.decClock]
   | append_singleton args x ih =>
@@ -210,7 +211,7 @@ theorem evaluateApps_nestedFns_short {C F : Type} (args : List ClosSem.Value)
       simp only [mkFns]
       rw [evaluateApp_nestedFn name (mkFns names body) env x state maxApp clockOne]
       simp only
-      rw [ih names (x :: env) (ClosSem.decClock 1 state) tailClock tailLength tailMax]
+      rw [ih names (ClosSem.decClock 1 state) (x :: env) tailClock tailLength tailMax]
       simp [List.length_append, ClosSem.decClock, List.append_assoc, Nat.sub_sub,
         Nat.add_comm]
 
@@ -232,13 +233,15 @@ theorem evaluateApp_unary_timeout {C F : Type}
 
 /-- If the clock runs out while consuming nested unary functions, the
 reconstructed chain returns the timeout and leaves its clock at zero. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "evaluate_apps_Clos_timeout"
+  (fmap_as_finite_support := [refs, code])]
 theorem evaluateApps_nestedFns_timeout {C F : Type} (args : List ClosSem.Value)
-    (names : List Flapjack.Basis.Pure.MlString.MlString) (body : ClosLang.Exp)
-    (env : List ClosSem.Value) (state : ClosSem.State C F)
-    (clock : state.clock < args.length) (lengths : args.length ≤ names.length)
-    (maxApp : 1 ≤ state.maxApp) :
+    (names : List Flapjack.Basis.Pure.MlString.MlString) (state : ClosSem.State C F)
+    (body : ClosLang.Exp) (env : List ClosSem.Value)
+    (premises : state.clock < args.length ∧ args.length ≤ names.length ∧ 1 ≤ state.maxApp) :
     evaluateApps (.closure none [] env 1 (mkFns names body)) args state =
       (.err (.abort .timeoutError), { state with clock := 0 }) := by
+  obtain ⟨clock, lengths, maxApp⟩ := premises
   induction args using List.reverseRecOn generalizing names env state with
   | nil => simp at clock
   | append_singleton args x ih =>
@@ -257,18 +260,20 @@ theorem evaluateApps_nestedFns_timeout {C F : Type} (args : List ClosSem.Value)
           simpa [ClosSem.decClock] using maxApp
         rw [evaluateApp_nestedFn name (mkFns names body) env x state maxApp clockOne]
         simp only
-        rw [ih names (x :: env) (ClosSem.decClock 1 state) tailClock tailLength tailMax]
+        rw [ih names (ClosSem.decClock 1 state) (x :: env) tailClock tailLength tailMax]
         simp [ClosSem.decClock]
 
 /-- Timeout also occurs before reaching the final body when there are more
 arguments than nested functions and the clock is no larger than their count. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "evaluate_apps_Clos_timeout_alt"
+  (fmap_as_finite_support := [refs, code])]
 theorem evaluateApps_nestedFns_timeout_long {C F : Type} (args : List ClosSem.Value)
-    (names : List Flapjack.Basis.Pure.MlString.MlString) (body : ClosLang.Exp)
-    (env : List ClosSem.Value) (state : ClosSem.State C F)
-    (clock : state.clock ≤ names.length) (lengths : names.length < args.length)
-    (maxApp : 1 ≤ state.maxApp) :
+    (names : List Flapjack.Basis.Pure.MlString.MlString) (state : ClosSem.State C F)
+    (body : ClosLang.Exp) (env : List ClosSem.Value)
+    (premises : state.clock ≤ names.length ∧ names.length < args.length ∧ 1 ≤ state.maxApp) :
     evaluateApps (.closure none [] env 1 (mkFns names body)) args state =
       (.err (.abort .timeoutError), { state with clock := 0 }) := by
+  obtain ⟨clock, lengths, maxApp⟩ := premises
   induction args using List.reverseRecOn generalizing names env state with
   | nil => simp at lengths
   | append_singleton args x ih =>
@@ -290,7 +295,7 @@ theorem evaluateApps_nestedFns_timeout_long {C F : Type} (args : List ClosSem.Va
           simpa [ClosSem.decClock] using maxApp
         rw [evaluateApp_nestedFn name (mkFns names body) env x state maxApp clockOne]
         simp only
-        rw [ih names (x :: env) (ClosSem.decClock 1 state) tailClock tailLength tailMax]
+        rw [ih names (ClosSem.decClock 1 state) (x :: env) tailClock tailLength tailMax]
         simp [ClosSem.decClock]
 
 /-- When the nested functions and final unary closure are fully applied,

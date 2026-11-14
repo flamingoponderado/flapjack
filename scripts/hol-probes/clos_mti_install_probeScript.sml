@@ -28,6 +28,65 @@ Proof
   \\ Cases_on `t` \\ fs []
 QED
 
+(* Literal replays of clos_mtiProofScript.sml:397-453. *)
+Theorem evaluate_apps_timeout_replay:
+  !ys ts s1 e1 env.
+      s1.clock < LENGTH ys /\ LENGTH ys <= LENGTH ts /\
+      1 ≤ s1.max_app ==>
+      evaluate_apps (Closure NONE [] env 1 (mk_Fns ts e1))
+        ys s1 = (Rerr (Rabort Rtimeout_error),s1 with clock := 0)
+Proof
+  recInduct SNOC_INDUCT \\ rw []
+  \\ fs [evaluate_apps_snoc_replay]
+  \\ fs [evaluate_def,dest_closure_def,check_loc_def]
+  \\ IF_CASES_TAC \\ fs []
+  \\ Cases_on `ts` \\ fs [mk_Fns_def,evaluate_def]
+  \\ fs [EVAL ``(dec_clock 1 s).max_app``]
+  \\ `(dec_clock 1 s1).clock < LENGTH l` by (EVAL_TAC \\ fs [])
+  \\ first_x_assum drule
+  \\ fs [dec_clock_def]
+QED
+
+Theorem evaluate_apps_timeout_alt_replay:
+  !ys ts s1 e1 env.
+      s1.clock <= LENGTH ts /\ LENGTH ts < LENGTH ys /\
+      1 ≤ s1.max_app ==>
+      evaluate_apps (Closure NONE [] env 1 (mk_Fns ts e1))
+        ys s1 = (Rerr (Rabort Rtimeout_error),s1 with clock := 0)
+Proof
+  recInduct SNOC_INDUCT \\ rw []
+  \\ fs [evaluate_apps_snoc_replay]
+  \\ fs [evaluate_def,dest_closure_def,check_loc_def]
+  \\ IF_CASES_TAC \\ fs []
+  \\ Cases_on `ts` \\ fs [mk_Fns_def,evaluate_def]
+  \\ fs [EVAL ``(dec_clock 1 s).max_app``]
+  \\ `(dec_clock 1 s1).clock <= LENGTH t` by (EVAL_TAC \\ fs [])
+  \\ first_x_assum drule
+  \\ fs [dec_clock_def]
+QED
+
+Theorem evaluate_apps_short_replay:
+  !ys ts s1 e1 env.
+      LENGTH ys <= s1.clock /\ LENGTH ys <= LENGTH ts /\
+      1 ≤ s1.max_app ==>
+      evaluate_apps (Closure NONE [] env 1 (mk_Fns ts e1)) ys s1 =
+         (Rval [Closure NONE [] (ys ++ env) 1
+                   (mk_Fns (DROP (LENGTH ys) ts) e1)],
+          dec_clock (LENGTH ys) s1)
+Proof
+  recInduct SNOC_INDUCT \\ rw []
+  \\ fs [evaluate_apps_snoc_replay,evaluate_apps_def]
+  THEN1 (fs [state_component_equality,dec_clock_def])
+  \\ fs [evaluate_def,dest_closure_def,check_loc_def]
+  \\ Cases_on `ts` \\ fs [mk_Fns_def,evaluate_def]
+  \\ fs [EVAL ``(dec_clock 1 s).max_app``]
+  \\ `LENGTH l <= (dec_clock 1 s1).clock` by (EVAL_TAC \\ fs [])
+  \\ first_x_assum drule
+  \\ fs [EVAL ``(dec_clock 1 s).max_app``]
+  \\ disch_then drule
+  \\ fs [dec_clock_def,ADD1]
+QED
+
 Theorem evaluate_apps_long_replay:
   !ys ts s1 e1 env.
       LENGTH ts < s1.clock /\ LENGTH ts < LENGTH ys /\
@@ -133,5 +192,8 @@ fun show_thm label th =
 val _ = show_thm "do_install_replay_typed=" do_install_replay;
 val _ = show_thm "evaluate_apps_snoc_replay_typed=" evaluate_apps_snoc_replay;
 val _ = show_thm "evaluate_apps_long_replay_typed=" evaluate_apps_long_replay;
+val _ = show_thm "evaluate_apps_timeout_replay_typed=" evaluate_apps_timeout_replay;
+val _ = show_thm "evaluate_apps_timeout_alt_replay_typed=" evaluate_apps_timeout_alt_replay;
+val _ = show_thm "evaluate_apps_short_replay_typed=" evaluate_apps_short_replay;
 val _ = show_thm "state_rel_opt_rel_refs_replay_typed=" state_rel_opt_rel_refs_replay;
 val _ = show_thm "rel_update_thunk_replay_typed=" rel_update_thunk_replay;
