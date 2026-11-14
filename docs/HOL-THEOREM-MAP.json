@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "renumber_code_locs_get_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LocationLabels.lean",
+    "lean_name": "renumber_code_locs_get_code_labels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared renumber_labels_typed: both independently quantified list and expression cases retain the numbering equation, empty input labels and even starting location, and conclude the same set of even-spaced labels below the returned location. The list hypothesis spells out EVERY over MAP by membership; the list conclusion uses the set image of the members for BIGUNION. EVEN is remainder zero. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "renumber_code_locs_imp_EVEN",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/LocationParity.lean",
     "lean_name": "renumberCodeLocs_imp_even",
