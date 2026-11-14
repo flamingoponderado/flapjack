@@ -73,6 +73,37 @@ inductive ValueRel : Value → Value → Prop where
       ValueRel (.recclosure location args env functions index)
         (.recclosure location nextArgs nextEnv nextFunctions index)
 
+/-- Constructor equations for the target side of the tick-removal value relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "v_rel_simps"]
+theorem valueRel_simps (n : Int) (tag : Nat) (fields : List Value) (word : BitVec 64)
+    (bytes : List (BitVec 8)) (flag : Bool) (ptr : Nat)
+    (loc : Option Nat) (args env : List Value) (arity : Nat) (body : ClosLang.Exp)
+    (recLoc : Option Nat) (recArgs recEnv : List Value) (funs : List (Nat × ClosLang.Exp))
+    (index : Nat) (x : Value) :
+    (ValueRel x (.number n) ↔ x = .number n) ∧
+    (ValueRel x (.block tag fields) ↔ ∃ xs, x = .block tag xs ∧ List.Forall₂ ValueRel xs fields) ∧
+    (ValueRel x (.word64 word) ↔ x = .word64 word) ∧
+    (ValueRel x (.byteVector bytes) ↔ x = .byteVector bytes) ∧
+    (ValueRel x (.refPtr flag ptr) ↔ x = .refPtr flag ptr) ∧
+    (ValueRel x (.closure loc args env arity body) ↔
+      ∃ args1 env1 body1, x = .closure loc args1 env1 arity body1 ∧
+        List.Forall₂ ValueRel env1 env ∧ List.Forall₂ ValueRel args1 args ∧
+        CodeRel [body1] [body]) ∧
+    (ValueRel x (.recclosure recLoc recArgs recEnv funs index) ↔
+      ∃ funs1 args1 env1, x = .recclosure recLoc args1 env1 funs1 index ∧
+        List.Forall₂ ValueRel env1 recEnv ∧ List.Forall₂ ValueRel args1 recArgs ∧
+        List.Forall₂ FunctionRel funs1 funs) ∧
+    (ValueRel x (boolValue flag) ↔ x = boolValue flag) ∧
+    (ValueRel x unitValue ↔ x = unitValue) := by
+  repeat' constructor
+  all_goals try (intro h; cases h; simp_all)
+  all_goals try (intro h; subst x; constructor)
+  all_goals try (rintro ⟨_, _, _, rfl, h₁, h₂, h₃⟩; exact .closure _ _ _ _ _ _ _ _ h₁ h₂ h₃)
+  all_goals try simp_all [boolValue, unitValue]
+  all_goals try (rename_i h; exact .block _ _ _ h.2)
+  all_goals intros
+  all_goals exact .recclosure _ _ _ _ _ _ _ _ ‹_› ‹_› ‹_›
+
 /-- Reference payloads retain their kind while values remain related. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "ref_rel"]
 inductive RefRel : Ref Value → Ref Value → Prop where

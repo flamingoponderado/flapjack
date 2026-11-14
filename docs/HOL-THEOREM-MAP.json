@@ -1,5 +1,13 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml",
+    "hol_name": "v_rel_simps",
+    "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean",
+    "lean_name": "valueRel_simps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared value_rel_simps_typed: all nine target-constructor, Boolean and unit equivalences retain their shared variables, existential order, source-to-target list relations and tick-removal code relation. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml", "hol_name": "remove_ticks_IMP_LENGTH",
     "lean_path": "Flapjack/Compiler/Backend/ClosTicks/Proofs/Relations.lean", "lean_name": "remove_ticks_IMP_LENGTH",
     "statement_status": "reviewed_exact",

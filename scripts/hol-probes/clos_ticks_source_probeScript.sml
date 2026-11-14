@@ -22,6 +22,7 @@ val _ = show "remove_no_labels_typed" clos_ticksProofTheory.remove_ticks_no_Labe
 val _ = show "code_rel_typed" clos_ticksProofTheory.code_rel_def;
 val _ = show "function_rel_typed" clos_ticksProofTheory.f_rel_def;
 val _ = show "value_rel_typed" clos_ticksProofTheory.v_rel_rules;
+val _ = show "value_rel_simps_typed" clos_ticksProofTheory.v_rel_simps;
 val _ = show "ref_rel_typed" clos_ticksProofTheory.ref_rel_rules;
 val _ = show "state_rel_typed" clos_ticksProofTheory.state_rel_def;
 val _ = show "code_rel_length_typed" clos_ticksProofTheory.code_rel_IMP_LENGTH;
