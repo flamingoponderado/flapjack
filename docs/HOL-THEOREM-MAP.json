@@ -139293,4 +139293,13 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the complete HOL local theorem and its inferred-type statement capture (original proof not replayed): the inliner output equation, cache subset, domain equality, related existing code, disjoint labels, distinctness, and resulting full lookup relation are retained."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "inline_all_head_names",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/ProgramRelation.lean",
+    "lean_name": "inlineAllHeadNames",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the full statement with the local HOL theorem and its typed, hypothesis-free proof replay: the inliner output equation gives the exact transformed head and preserves the ordered labels of the tail."
+  }
 ]

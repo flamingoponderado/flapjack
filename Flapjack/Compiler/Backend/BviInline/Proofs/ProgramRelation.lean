@@ -82,13 +82,13 @@ theorem inlineAllSource_related (program : List (Nat × Nat × Bvi.Exp))
     sptSubsptTrans cache base target ⟨subset, sptSubsptUnion base (sptFromAList output)⟩
   have outputDistinct : (output.map Prod.fst).Nodup := by
     dsimp [output]
-    rw [inlineAllSource_names]
+    rw [Proofs.inlineAll_mapFst]
     exact distinct
   have entries : ∀ key a b, (key, a, b) ∈ output → sptLookup key target = some (a, b) := by
     intro key a b member
     have inOutput : key ∈ output.map Prod.fst := List.mem_map.mpr ⟨(key, a, b), member, rfl⟩
     have inProgram : key ∈ program.map Prod.fst := by
-      simpa [output, inlineAllSource_names] using inOutput
+      simpa [output, Proofs.inlineAll_mapFst] using inOutput
     have absent : sptLookup key base = none := by
       cases found : sptLookup key base with
       | none => rfl
@@ -97,6 +97,24 @@ theorem inlineAllSource_related (program : List (Nat × Nat × Bvi.Exp))
     rw [sptLookup_sptUnion, absent]
     exact BviTailrec.sptFromAList_lookup_of_mem output key (a, b) outputDistinct member
   exact inlineAllSource_related_of_output program cache target targetSubset entries name arity body lookup
+
+/-- Inlining a nonempty program preserves its first label and the labels of
+the remaining entries. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "inline_all_head_names"]
+theorem inlineAllHeadNames (cache finalCache : Spt (Nat × Bvi.Exp))
+    (name arity : Nat) (body : Bvi.Exp) (rest output : List (Nat × Nat × Bvi.Exp))
+    (compiled : inlineAllSource cache ((name, arity, body) :: rest) = (finalCache, output)) :
+    ∃ tail, output = (name, arity, inlineExpSource cache body) :: tail ∧
+      tail.map Prod.fst = rest.map Prod.fst := by
+  let body' := inlineExpSource cache body
+  let cache' := if canonicalWrapper name arity body' then sptInsert name (arity, body') cache else cache
+  have step : inlineAllSource cache ((name, arity, body) :: rest) =
+      ((inlineAllSource cache' rest).1, (name, arity, body') :: (inlineAllSource cache' rest).2) := by
+    simp [inlineAllSource, body', cache']
+  rw [step] at compiled
+  have outEq := congrArg Prod.snd compiled
+  refine ⟨(inlineAllSource cache' rest).2, ?_, Proofs.inlineAll_mapFst cache' rest⟩
+  exact outEq.symm
 
 /-- Inlining a fresh segment preserves the relation between source and target
 code lookups after their respective unions. -/

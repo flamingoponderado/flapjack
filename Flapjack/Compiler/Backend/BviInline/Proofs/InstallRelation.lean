@@ -49,7 +49,7 @@ theorem inStateRel_after_install {C F : Type}
     change sptDomain source.code name ∨ sptMem name (sptFromAList
       (inlineAllSource (source.compileOracle 0).1.1 (source.compileOracle 0).2).2) ↔
       sptDomain source.code name ∨ sptMem name (sptFromAList (source.compileOracle 0).2)
-    rw [BviTailrec.sptFromAList_mem_iff, BviTailrec.sptFromAList_mem_iff, inlineAllSource_names]
+    rw [BviTailrec.sptFromAList_mem_iff, BviTailrec.sptFromAList_mem_iff, Proofs.inlineAll_mapFst]
   refine ⟨refs, clock, global, ffi, ?_, ?_, compiler, newDomains, codes⟩
   · funext n
     exact congrFun oracle (n + 1)
@@ -75,7 +75,7 @@ theorem doInstall_success_rel {C F R S : Type} (args : List Value)
     intro entry member
     have memberNames : entry.1 ∈ code.map Prod.fst := by
       have h : entry.1 ∈ compiled.map Prod.fst := List.mem_map_of_mem member
-      simpa [compiled, inlineAllSource_names] using h
+      simpa [compiled, Proofs.inlineAll_mapFst] using h
     obtain ⟨original, originalMem, same⟩ := List.mem_map.mp memberNames
     have no := absent original (by simpa [code] using originalMem)
     cases lookup : sptLookup entry.1 target.code with
@@ -86,7 +86,7 @@ theorem doInstall_success_rel {C F R S : Type} (args : List Value)
       have absentSource : sptLookup entry.1 source.code = none := by simpa [same] using no
       simp [sptDomain, absentSource] at present
   have targetUnique : (compiled.map Prod.fst).Nodup := by
-    simpa [compiled, inlineAllSource_names, code] using unique
+    simpa [compiled, Proofs.inlineAll_mapFst, code] using unique
   have targetOracle0 : target.compileOracle 0 = (config, compiled) := by
     rw [oracleRelation]
     simp [inCo, stateCo, oracle0, code, compiled]

@@ -38,7 +38,7 @@ theorem inline_initial_state_rel {C F : Type} (program : List (Nat × Nat × Bvi
     intro key present
     simp [sptMem, sptDomain, sptLookup] at present
   have range := inlineAllSource_cache_subspt program .ln .ln distinct emptySubset disjoint
-  have names := inlineAllSource_names program .ln
+  have names := Proofs.inlineAll_mapFst .ln program
   have codeRelation := inlineAllSource_related program .ln .ln distinct emptySubset disjoint
   have outputNames : output.map Prod.fst = program.map Prod.fst := by simpa [run] using names
   have cacheSub : sptSubspt cache (sptFromAList output) := by simpa [run, sptUnion] using range

@@ -1,23 +1,13 @@
 module
 
 public import Flapjack.Compiler.Backend.BviInline.Proofs.StateRelation
+public import Flapjack.Compiler.Backend.BviInline.Proofs.CodeLabels
 public import Flapjack.Misc.Sptree.Subspt
 
 @[expose] public section
 
 /-! Cache invariants for BVI program inlining. -/
 namespace Flapjack.Compiler.Backend.BviInline
-
-/-- Flapjack infrastructure: the inliner preserves the ordered program
-labels, regardless of cache insertions. -/
-theorem inlineAllSource_names (program : List (Nat × Nat × Bvi.Exp)) (cache : Spt (Nat × Bvi.Exp)) :
-    (inlineAllSource cache program).2.map Prod.fst = program.map Prod.fst := by
-  induction program generalizing cache with
-  | nil => simp [inlineAllSource]
-  | cons entry rest ih =>
-    obtain ⟨name, arity, body⟩ := entry
-    simp only [inlineAllSource]
-    split <;> simp [ih]
 
 /-- Flapjack infrastructure: a label absent from the input program is not
 changed in the threaded inliner cache. -/

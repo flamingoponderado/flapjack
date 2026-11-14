@@ -416,3 +416,16 @@ val inline_all_lookup_union_statement =
       exp_rel (union target (fromAList out)) exp exp1``;
 val _ = (print "inline_all_lookup_union_statement_typed=";
   print_term inline_all_lookup_union_statement; print "\n");
+
+(* Replay the original local inlined-head theorem. *)
+val inline_all_head_names_replay = Q.prove
+  (`inline_all cs ((name,arity,body)::rest) = (final_cache,out) ⇒
+  ∃tail.
+    out = (name,arity,inline_exp cs body)::tail ∧
+    MAP FST tail = MAP FST rest`,
+   rw [inline_all_def]
+  >> pairarg_tac
+  >> gvs []
+  >> qspecl_then [`cs`,`(name,arity,body)::rest`] mp_tac inline_all_MAP_FST
+  >> simp [inline_all_def, UNCURRY]);
+val _ = show "inline_all_head_names_replay_typed" inline_all_head_names_replay;
