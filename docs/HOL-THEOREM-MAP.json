@@ -16669,6 +16669,22 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "code_rel_IMP_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Relations.lean",
+    "lean_name": "code_rel_IMP_LENGTH",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared code_rel_length_typed: the same bound and arbitrary related expression lists imply source length equals target length."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
+    "hol_name": "code_rel_CONS_CONS",
+    "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Relations.lean",
+    "lean_name": "code_rel_CONS_CONS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared code_rel_cons_typed: related lists with two heads imply the singleton-head and remaining-tail relations at the same bound, in the original direction."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml",
     "hol_name": "simple_state_rel",
     "lean_path": "Flapjack/Compiler/Backend/ClosFvs/Proofs/Primitive.lean",
     "lean_name": "stateRelSimple",

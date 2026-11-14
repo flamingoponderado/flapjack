@@ -14,6 +14,8 @@ val _ = show "compile_typed=" clos_fvsTheory.compile_def;
 val _ = show "compile_eq_typed=" clos_fvsTheory.compile_eq;
 val _ = show "compile_inc_typed=" clos_fvsTheory.compile_inc_def;
 val _ = show "code_rel_typed=" clos_fvsProofTheory.code_rel_def;
+val _ = show "code_rel_length_typed=" clos_fvsProofTheory.code_rel_IMP_LENGTH;
+val _ = show "code_rel_cons_typed=" clos_fvsProofTheory.code_rel_CONS_CONS;
 val _ = show "function_rel_typed=" clos_fvsProofTheory.f_rel_def;
 val _ = show "value_rel_typed=" clos_fvsProofTheory.v_rel_rules;
 val _ = show "value_rel_simps_typed=" clos_fvsProofTheory.v_rel_simps;

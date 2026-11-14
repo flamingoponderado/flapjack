@@ -17,6 +17,21 @@ open Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.BackendProps
 def CodeRel (bound : Nat) (source target : List ClosLang.Exp) : Prop :=
   target = removeSource bound source
 
+/-- The code relation preserves expression-list length. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "code_rel_IMP_LENGTH"]
+theorem code_rel_IMP_LENGTH (bound : Nat) (xs ys : List ClosLang.Exp)
+    (related : CodeRel bound xs ys) : xs.length = ys.length := by
+  change ys = removeSource bound xs at related
+  rw [related, removeSource_length]
+
+/-- A related list with two heads splits into related head and tail lists. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "code_rel_CONS_CONS"]
+theorem code_rel_CONS_CONS (bound : Nat) (x1 x2 y1 y2 : ClosLang.Exp)
+    (xs ys : List ClosLang.Exp) (related : CodeRel bound (x1 :: x2 :: xs) (y1 :: y2 :: ys)) :
+    CodeRel bound [x1] [y1] ∧ CodeRel bound (x2 :: xs) (y2 :: ys) := by
+  simp [CodeRel, removeSource_eq_list, removeList] at related ⊢
+  exact ⟨related.1, related.2⟩
+
 /-- Related recursive function bodies retain their arity. -/
 @[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "f_rel_def"]
 def FunctionRel (bound : Nat) (source target : Nat × ClosLang.Exp) : Prop :=
