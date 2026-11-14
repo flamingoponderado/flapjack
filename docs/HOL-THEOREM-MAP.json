@@ -1,6 +1,16 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "do_app_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/Primitive.lean",
+    "lean_name": "do_app_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared do_app_lemma_typed: related states and arguments imply the original result match, with related errors or a related value and final state, including preservation of the initial maximum application. Source compiler carrier is Nat paired with the target carrier, and FFI is shared independently. The state has canonical finite-support refs and code with a local roundtrip witness. The primitive evaluator inherits rational-cut reals. Source comparison and Lean checking do not establish cross-language equivalence. Inherits the reals_as_rational_cuts assumption through its dependencies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "simple_state_rel",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/SimpleStateRelation.lean",
     "lean_name": "numbering_simpleStateRel",

@@ -1,8 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosNumber.Proofs.StateRelation
-public import Flapjack.Compiler.Backend.ClosNumber.Proofs.SimpleStateRelation
-public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveTotal
+public import Flapjack.Compiler.Backend.ClosNumber.Proofs.Primitive
 public import Flapjack.Compiler.Backend.ClosNumber.Proofs.ClosureApplication
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateExact
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
@@ -1191,10 +1190,7 @@ theorem evaluate_ordinaryOp_step {C F : Type} (trace : BackendCommon.Tra)
 theorem primitiveSimulation_all {C F : Type} (op : ClosLang.Op) :
     PrimitiveSimulation (C := C) (F := F) op := by
   intro args nextArgs source target argsRel stateRel
-  have sim := ClosProps.PrimitiveTotal.simpleValRelDoApp (ValueRel source.maxApp)
-    (fun (s : State (Nat × C) F) (t : State C F) => s.maxApp = source.maxApp ∧ StateRel s t)
-    source target args nextArgs op ⟨simpleValRel source.maxApp, numbering_simpleStateRel source.maxApp⟩
-    ⟨⟨rfl, stateRel⟩, argsRel⟩
+  have sim := PrimitivePort.do_app_lemma source target args nextArgs op ⟨stateRel, argsRel⟩
   cases run : doApp op args source with
   | err error =>
     simp only [run] at sim

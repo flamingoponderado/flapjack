@@ -21,6 +21,7 @@ val _ = show "even_make_even_typed=" miscTheory.EVEN_make_even;
 val _ = show "ignore_table_def_typed=" clos_numberTheory.ignore_table_def;
 val _ = show "ignore_table_imp_typed=" clos_numberProofTheory.ignore_table_imp;
 val _ = show "simple_state_rel_typed=" clos_numberProofTheory.simple_state_rel;
+val _ = show "do_app_lemma_typed=" clos_numberProofTheory.do_app_lemma;
 val _ = show "v_rel_rules_typed=" clos_numberProofTheory.v_rel_rules;
 val _ = show "ref_rel_def_typed=" closPropsTheory.ref_rel_def;
 val _ = show "fmap_rel_def_typed=" finite_mapTheory.fmap_rel_def;
