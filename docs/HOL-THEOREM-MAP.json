@@ -139418,4 +139418,13 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: cache inclusion and pointwise related inlined arguments imply the expression relation for the inlined call with no handler, preserving the original destination and tick parameters."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "exp_rel_refl",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/ExpRelation.lean",
+    "lean_name": "expRel_refl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: every BVI expression is related to itself under any sparse-tree code map. The mutual list proof is internal induction support."
+  }
 ]

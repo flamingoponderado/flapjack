@@ -513,3 +513,6 @@ val _ = show "inline_exp_rel_typed" bvi_inlineProofTheory.inline_exp_rel;
 
 (* Capture the exported original no-handler call relation theorem. *)
 val _ = show "inline_call_none_exp_rel_typed" bvi_inlineProofTheory.inline_call_none_exp_rel;
+
+(* Capture the exported original expression-relation reflexivity theorem. *)
+val _ = show "exp_rel_refl_typed" bvi_inlineProofTheory.exp_rel_refl;

@@ -152,7 +152,8 @@ theorem evaluate_expRel_mono {C F : Type} (executed : List Bvi.Exp) (env : List 
     fun xs ys related => expsRel_mono source.code target.code xs ys related subset⟩
 
 mutual
-/-- Flapjack infrastructure: every expression is related to itself. -/
+/-- Every expression is related to itself by the inlining relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "exp_rel_refl"]
 theorem expRel_refl (code : Spt (Nat × Bvi.Exp)) (expression : Bvi.Exp) : ExpRel code expression expression := by
   cases expression with
   | var n => exact .var n
@@ -172,7 +173,7 @@ termination_by sizeOf expression
 decreasing_by all_goals simp_wf <;> omega
 
 /-- Flapjack infrastructure: reflexivity extends pointwise to lists. -/
-theorem expsRel_refl (code : Spt (Nat × Bvi.Exp)) (expressions : List Bvi.Exp) :
+private theorem expsRel_refl (code : Spt (Nat × Bvi.Exp)) (expressions : List Bvi.Exp) :
     List.Forall₂ (ExpRel code) expressions expressions := by
   cases expressions with
   | nil => exact .nil
