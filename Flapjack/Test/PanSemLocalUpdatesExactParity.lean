@@ -120,6 +120,110 @@ def resVarUpdateHit : Bool :=
   wordOf ((resVarHOLFinite baseState.locals (ml "x", some (.val (.word 7)))).lookup (ml "x"))
     == some 7
 
+/-- Function-backed exact state with the same values as `baseState`: locals
+    `x = 5`, `y = 7`, global `g = 1`, clock 5. The kernel checks below replay
+    the same HOL rows through the still-live function-backed
+    `setVarHOLExact`/`setGlobalHOLExact`/`resVarHOLExact`, alongside the
+    finite-support observations above. -/
+def baseStateExact : PanSemStateExact 64 Unit where
+  locals := fun name =>
+    if name = ml "x" then some (.val (.word 5))
+    else if name = ml "y" then some (.val (.word 7)) else none
+  globals := fun name => if name = ml "g" then some (.val (.word 1)) else none
+  structs := []
+  code := fun _ => none
+  eshapes := fun _ => none
+  memory := fun _ => .word 0
+  memaddrs := fun _ => False
+  shMemaddrs := fun _ => False
+  clock := 5
+  be := false
+  ffi := { oracle := fun _ _ _ _ => .final .failed, ffiState := (), ioEvents := [] }
+  baseAddr := 0
+  topAddr := 100
+
+-- HOL `set_var_new = SOME 9`.
+example :
+    wordOf ((setVarHOLExact (width := 64) (ml "z") (.val (.word 9)) baseStateExact).locals
+      (ml "z")) = some 9 := by
+  simp [setVarHOLExact, baseStateExact, wordOf]
+
+-- HOL `set_var_overwrite = SOME 9`.
+example :
+    wordOf ((setVarHOLExact (width := 64) (ml "x") (.val (.word 9)) baseStateExact).locals
+      (ml "x")) = some 9 := by
+  simp [setVarHOLExact, baseStateExact, wordOf]
+
+-- HOL `set_var_other = SOME 7` (unrelated local `y` untouched).
+example :
+    wordOf ((setVarHOLExact (width := 64) (ml "x") (.val (.word 9)) baseStateExact).locals
+      (ml "y")) = some 7 := by
+  decide
+
+-- HOL `set_var_globals = SOME 1` (`set_var` does not touch globals).
+example :
+    wordOf ((setVarHOLExact (width := 64) (ml "x") (.val (.word 9)) baseStateExact).globals
+      (ml "g")) = some 1 := by
+  simp [setVarHOLExact, baseStateExact, wordOf]
+
+-- HOL `set_var_clock = s.clock` (the clock is preserved).
+example :
+    (setVarHOLExact (width := 64) (ml "x") (.val (.word 9)) baseStateExact).clock = 5 := by
+  simp [setVarHOLExact, baseStateExact]
+
+-- HOL `set_global_new = SOME 9`.
+example :
+    wordOf ((setGlobalHOLExact (width := 64) (ml "h") (.val (.word 9)) baseStateExact).globals
+      (ml "h")) = some 9 := by
+  simp [setGlobalHOLExact, baseStateExact, wordOf]
+
+-- HOL `set_global_locals = SOME 5` (`set_global` does not touch locals).
+example :
+    wordOf ((setGlobalHOLExact (width := 64) (ml "h") (.val (.word 9)) baseStateExact).locals
+      (ml "x")) = some 5 := by
+  simp [setGlobalHOLExact, baseStateExact, wordOf]
+
+-- HOL `delete_hit = NONE`.
+example :
+    wordOf (resVarHOLExact (width := 64) baseStateExact.locals (ml "x", none) (ml "x")) =
+      none := by
+  simp [resVarHOLExact, wordOf]
+
+-- HOL `delete_other = SOME (ValWord 3w)` (here local `x` is 5).
+example :
+    wordOf (resVarHOLExact (width := 64) baseStateExact.locals (ml "y", none) (ml "x")) =
+      some 5 := by
+  decide
+
+-- HOL `update_hit = SOME (ValWord 7w)`.
+example :
+    wordOf (resVarHOLExact (width := 64) baseStateExact.locals
+      (ml "x", some (.val (.word 7))) (ml "x")) = some 7 := by
+  simp [resVarHOLExact, wordOf]
+
+/-- Combined guard over the still-live function-backed exact updates: the ten
+    HOL rows above. Kept alongside `localUpdatesGuard`'s finite-support rows. -/
+def localUpdatesGuardExact : Bool :=
+  wordOf ((setVarHOLExact (width := 64) (ml "z") (.val (.word 9)) baseStateExact).locals
+      (ml "z")) == some 9 &&
+  wordOf ((setVarHOLExact (width := 64) (ml "x") (.val (.word 9)) baseStateExact).locals
+      (ml "x")) == some 9 &&
+  wordOf ((setVarHOLExact (width := 64) (ml "x") (.val (.word 9)) baseStateExact).locals
+      (ml "y")) == some 7 &&
+  wordOf ((setVarHOLExact (width := 64) (ml "x") (.val (.word 9)) baseStateExact).globals
+      (ml "g")) == some 1 &&
+  (setVarHOLExact (width := 64) (ml "x") (.val (.word 9)) baseStateExact).clock == 5 &&
+  wordOf ((setGlobalHOLExact (width := 64) (ml "h") (.val (.word 9)) baseStateExact).globals
+      (ml "h")) == some 9 &&
+  wordOf ((setGlobalHOLExact (width := 64) (ml "h") (.val (.word 9)) baseStateExact).locals
+      (ml "x")) == some 5 &&
+  wordOf (resVarHOLExact (width := 64) baseStateExact.locals (ml "x", none) (ml "x")) == none &&
+  wordOf (resVarHOLExact (width := 64) baseStateExact.locals (ml "y", none) (ml "x")) == some 5 &&
+  wordOf (resVarHOLExact (width := 64) baseStateExact.locals
+      (ml "x", some (.val (.word 7))) (ml "x")) == some 7
+
+#guard localUpdatesGuardExact
+
 /-- Combined parity check: all 13 direct HOL rows above. -/
 def localUpdatesGuard : Bool :=
   setVarNew && setVarOverwrite && setVarOther && setVarGlobals && setVarClock &&

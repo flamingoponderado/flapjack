@@ -239,6 +239,52 @@ def localBase : CrepHolState (BitVec 64) Unit :=
     baseAddress := 3
     topAddress := 100 }
 
+-- set_var_hit.
+example :
+    FLOOKUP (setCrepHolVar 1 (PanWordLab.word (7 : BitVec 64)) localBase).locals 1 =
+      some (PanWordLab.word (7 : BitVec 64)) := by
+  rfl
+
+-- set_var_keeps_other.
+example :
+    FLOOKUP (setCrepHolVar 1 (PanWordLab.word (7 : BitVec 64)) localBase).locals 2 =
+      some (PanWordLab.word (9 : BitVec 64)) := by
+  rfl
+
+-- upd_locals_replace: `FEMPTY |++ varargs`, so the old binding is dropped.
+example :
+    FLOOKUP (updCrepHolLocals [(1, PanWordLab.word (3 : BitVec 64))] localBase).locals 1 =
+        some (PanWordLab.word (3 : BitVec 64)) ∧
+      FLOOKUP (updCrepHolLocals [(1, PanWordLab.word (3 : BitVec 64))] localBase).locals 2 =
+        none := by
+  constructor
+  · rfl
+  · rfl
+
+-- empty_locals_none.
+example :
+    FLOOKUP (emptyCrepHolLocals localBase).locals 2 = none := by
+  rfl
+
+-- set_var_fields_preserved.
+example :
+    (setCrepHolVar 1 (PanWordLab.word (7 : BitVec 64)) localBase).clock = 5 ∧
+      (setCrepHolVar 1 (PanWordLab.word (7 : BitVec 64)) localBase).baseAddress = 3 ∧
+      (setCrepHolVar 1 (PanWordLab.word (7 : BitVec 64)) localBase).topAddress = 100 :=
+  ⟨rfl, rfl, rfl⟩
+
+-- empty_locals_fields_preserved.
+example :
+    (emptyCrepHolLocals localBase).clock = 5 ∧
+      (emptyCrepHolLocals localBase).memory = localBase.memory :=
+  ⟨rfl, rfl⟩
+
+#guard FLOOKUP (setCrepHolVar 1 (PanWordLab.word (7 : BitVec 64)) localBase).locals 1 ==
+          some (PanWordLab.word (7 : BitVec 64)) &&
+        FLOOKUP (updCrepHolLocals [(1, PanWordLab.word (3 : BitVec 64))] localBase).locals 2 ==
+          none &&
+        FLOOKUP (emptyCrepHolLocals localBase).locals 2 == none
+
 /-- The exact finite-support carrier fixture with the same values as
     `localBase`: local `2 = 9`, clock 5, base 3, top 100.  The HOL probe rows
     below are replayed through the tagged finite-support twins. -/
