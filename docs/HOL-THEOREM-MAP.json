@@ -103333,7 +103333,7 @@
     "lean_path": "Flapjack/Pancake/Semantics/PanProps.lean",
     "lean_name": "optMmapEqSomeHelper",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-4ac.4.89; exact HOL [local] helper panProps$opt_mmap_eq_some_helper (panPropsScript.sml:1575-1582): `OPT_MMAP f xs = SOME zs /\\ (!x. MEM x xs ==> !y. f x = SOME y ==> g x = SOME y) ==> OPT_MMAP g xs = SOME zs`. Lean `optMmapEqSomeHelper {α β} (f g : α → Option β) : ∀ xs zs, xs.mapM f = some zs → (∀ x ∈ xs, ∀ y, f x = some y → g x = some y) → xs.mapM g = some zs`. HOL OPT_MMAP is the repository's List.mapM for Option (cf. tagged OPT_MMAP_MEM_IMP); the statement is fully polymorphic, so no carrier side condition. Parity: Flapjack/Test/PanPropsLocalisedParity.lean."
+    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-4ac.4.89, task 184 typed capture `opt_mmap_eq_some_helper_typed`; exact HOL [local] helper panProps$opt_mmap_eq_some_helper (panPropsScript.sml:1575-1582): `OPT_MMAP f xs = SOME zs /\\ (!x. MEM x xs ==> !y. f x = SOME y ==> g x = SOME y) ==> OPT_MMAP g xs = SOME zs`. Lean `optMmapEqSomeHelper {α β} (f g : α → Option β) : ∀ xs zs, xs.mapM f = some zs ∧ (∀ x ∈ xs, ∀ y, f x = some y → g x = some y) → xs.mapM g = some zs`. The two premises are one conjunction, as in HOL; the earlier curried form was repaired in task 184. HOL OPT_MMAP is the repository's List.mapM for Option (cf. tagged OPT_MMAP_MEM_IMP); the statement is fully polymorphic, so no carrier side condition. Parity: Flapjack/Test/PanPropsLocalisedParity.lean."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",

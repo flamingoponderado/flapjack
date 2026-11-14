@@ -10459,3 +10459,15 @@ printed with the overload cleared, so the partially applied `Call` constructor
 is visible with its inferred `prog` type variable. Regenerate with
 `CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=pan_lang_types_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`pan_props_local_typed_probe.out` (12 rows) captures the remaining reviewed
+`panPropsScript.sml` rows that earlier probes did not cover (task 184). The
+exported `functions_FILTER'` and the ten `[local]` declarations are parsed from
+the pinned source with the shared splice-expanding helper; `opt_mmap_helper_thm`
+and `structs_simps` are derived declarations, so the probe replays their source
+derivations (`OPT_MMAP_CONG` specialization and the six `EVAL` conjuncts). The
+`is_wf_shape_nil` and `is_wf_shape_v_nil` overloads splice the source's
+`structs_nil_v` (the evaluated `TAKE 0 s.structs`), which the probe rebuilds
+before printing the expanded application. Regenerate with
+`CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=pan_props_local_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
