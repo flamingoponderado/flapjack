@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
+    "hol_name": "dest_op_SOME_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Syntax.lean",
+    "lean_name": "destOp_some_imp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared dest_op_SOME_IMP_typed: the polymorphic argument list, successful destination premise, existential trace and expression list, source operation equality and zero-indexed variable-list conclusion all match. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_letopProofScript.sml",
     "hol_name": "v_rel_IMP_v_to_bytes_lemma",
     "lean_path": "Flapjack/Compiler/Backend/ClosLetop/Proofs/Install.lean",
     "lean_name": "valueRel_bytes_list",

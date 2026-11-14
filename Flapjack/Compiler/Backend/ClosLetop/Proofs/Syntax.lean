@@ -24,6 +24,14 @@ theorem compileSource_singleton_head (expression : Exp) :
         compileSource [expression] ∧ (compileSource [expression]).length = 1 := by
   simp [compileSource_eq_list, compileList, Flapjack.holHd]
 
+/-- A recognized operation has the requested operator and variable list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "dest_op_SOME_IMP"]
+theorem destOp_some_imp {α : Type} (expression : Exp) (args : List α) (op : Op)
+    (found : destOp expression args = some op) :
+    ∃ trace expressions, expression = .op trace op expressions ∧ varList 0 expressions args = true := by
+  cases expression <;> simp_all [destOp]
+  case op trace _ expressions => exact ⟨trace, expressions, ⟨rfl, rfl⟩, found.1⟩
+
 /-- A recognized variable list contains neither labels nor excessive applications. -/
 @[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "var_list_no_Labels"]
 theorem varList_noLabels {α : Type} (n : Nat) (xs : List Exp) (ys : List α)
