@@ -192,8 +192,12 @@ theorem compileEachSource_next_mono (next last : Nat) (code output : List (Nat �
 theorem compileProgSource_next_mono (enabled : Bool) (next last : Nat)
     (code output : List (Nat × Nat × Bvi.Exp)) (run : compileProgSource enabled next code = (last, output)) :
     ∃ k, last = next + Flapjack.bvlToBviNamespaces * k := by
-  apply compileProgFuel_next_mono 0 enabled next last code output
-  simp [compileProgFuel_eq_source, run]
+  cases enabled with
+  | false =>
+    simp [compileProgSource] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact ⟨0, by simp⟩
+  | true => exact compileEachSource_next_mono next last code output (by simpa [compileProgSource] using run)
 
 /-- Every output label was present in the input or allocated in the worker
 interval. -/
@@ -211,7 +215,12 @@ theorem compileProgSource_mem (enabled : Bool) (next last label : Nat)
     (member : label ∈ output.map Prod.fst) :
     label ∈ code.map Prod.fst ∨
       (next ≤ label ∧ label < last ∧ ∃ k, label = next + k * Flapjack.bvlToBviNamespaces) := by
-  exact compileProgFuel_mem 0 enabled next last label code output (by simp [compileProgFuel_eq_source, run]) member
+  cases enabled with
+  | false =>
+    simp [compileProgSource] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact Or.inl member
+  | true => exact compileEachSource_mem next last label code output (by simpa [compileProgSource] using run) member
 
 private theorem freeNames_advance (next name steps : Nat) (free : freeNames next name) :
     freeNames (next + Flapjack.bvlToBviNamespaces * steps) name := by

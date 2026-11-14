@@ -112,19 +112,6 @@ theorem compileEachFuel_next_mono (fuel next last : Nat) (code output : List (Na
       rw [lastEq]
       simpa [Nat.mul_add, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using equal
 
-/-- The enabled or disabled executable pass advances only by namespace
-strides. This is a fuel-based helper rather than a claim of HOL correspondence. -/
-theorem compileProgFuel_next_mono (fuel : Nat) (enabled : Bool) (next last : Nat)
-    (code output : List (Nat × Nat × Bvi.Exp))
-    (run : compileProgFuel fuel enabled next code = some (last, output)) :
-    ∃ k, last = next + Flapjack.bvlToBviNamespaces * k := by
-  cases enabled with
-  | false =>
-    simp [compileProgFuel] at run
-    obtain ⟨rfl, rfl⟩ := run
-    exact ⟨0, by simp⟩
-  | true => exact compileEachFuel_next_mono fuel next last code output (by simpa [compileProgFuel] using run)
-
 /-- Every emitted label is an original label or a worker allocated within
 the counter interval. This concerns the executed fuel-based pass and is
 untagged until correspondence with the HOL definition is established. -/
@@ -178,20 +165,5 @@ theorem compileEachFuel_mem (fuel : Nat) (code : List (Nat × Nat × Bvi.Exp))
           refine ⟨by omega, hi, j + 1, ?_⟩
           simp only [Nat.add_mul, Nat.one_mul]
           omega
-
-/-- The same output-label bound applies to the enabled or disabled
-production entry point. -/
-theorem compileProgFuel_mem (fuel : Nat) (enabled : Bool) (next last label : Nat)
-    (code output : List (Nat × Nat × Bvi.Exp))
-    (run : compileProgFuel fuel enabled next code = some (last, output))
-    (member : label ∈ output.map Prod.fst) :
-    label ∈ code.map Prod.fst ∨
-      (next ≤ label ∧ label < last ∧ ∃ k, label = next + k * Flapjack.bvlToBviNamespaces) := by
-  cases enabled with
-  | false =>
-    simp [compileProgFuel] at run
-    obtain ⟨rfl, rfl⟩ := run
-    exact Or.inl member
-  | true => exact compileEachFuel_mem fuel code next last label output (by simpa [compileProgFuel] using run) member
 
 end Flapjack.Compiler.Backend.BviTmc
