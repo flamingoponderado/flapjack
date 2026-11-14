@@ -542,3 +542,6 @@ val _ = show "inline_all_cache_subspt_typed" bvi_inlineProofTheory.inline_all_ca
 
 (* Capture the exported original fresh-insertion inclusion theorem. *)
 val _ = show "subspt_insert_union_fresh_typed" bvi_inlineProofTheory.subspt_insert_union_fresh;
+
+(* Capture the exported original distinct-label preservation theorem. *)
+val _ = show "compile_inc_ALL_DISTINCT_typed" bvi_inlineProofTheory.compile_inc_ALL_DISTINCT;

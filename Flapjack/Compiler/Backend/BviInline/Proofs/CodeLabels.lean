@@ -105,6 +105,15 @@ theorem compileInc_mapFst (cs cs1 : Spt (Nat × Bvi.Exp)) (prog prog1 : List (Na
   rcases compiled with ⟨rfl, rfl⟩
   rw [removeTicksProg_mapFst, names]
 
+/-- Incremental compilation preserves distinct program keys. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "compile_inc_ALL_DISTINCT"]
+theorem compileInc_allDistinct (cs cs1 : Spt (Nat × Bvi.Exp))
+    (prog prog1 : List (Nat × Nat × Bvi.Exp))
+    (premises : compileIncSource cs prog = (cs1, prog1) ∧ (prog.map Prod.fst).Nodup) :
+    (prog1.map Prod.fst).Nodup := by
+  rw [compileInc_mapFst cs cs1 prog prog1 premises.1]
+  exact premises.2
+
 /-- Labels present in cached inliner bodies. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "cache_code_labels_def"]
 def cacheCodeLabels (cs : Spt (Nat × Bvi.Exp)) : Set Nat :=

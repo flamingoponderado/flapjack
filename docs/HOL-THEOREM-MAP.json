@@ -139484,4 +139484,13 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: for arbitrary sparse-tree payloads, the original inclusion and fresh-key premises imply inclusion after insertion in the left-biased union with the singleton tree."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "compile_inc_ALL_DISTINCT",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/CodeLabels.lean",
+    "lean_name": "compileInc_allDistinct",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: the compile result equation and distinct input labels imply distinct output labels, derived from the full original label-preservation theorem."
+  }
 ]
