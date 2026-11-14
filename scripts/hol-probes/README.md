@@ -10321,3 +10321,18 @@ labSem$state``;` used as `^s1`) are captured with the splice *expanded* to
 Regenerate with `CAKEML=<cakeml tree>
 HOL_PROBE_ONLY=lab_to_target_proof_local_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`stack_to_lab_proof_local_typed_probe.out` (30 rows),
+`word_alloc_proof_local_typed_probe.out` (141 rows) and
+`word_to_stack_proof_local_typed_probe.out` (154 rows) capture the typed
+statements of the reviewed `stack_to_labProofScript.sml`, `word_allocProofScript.sml`
+and `word_to_stackProofScript.sml` rows that the earlier probes did not cover
+(task 178). Exported theorems and definitions are fetched from the theory DB;
+`[local]` theorems are parsed from the pinned source text with SML antiquotation
+splices expanded by the shared helper above; derived lemmas are captured through
+the statement named in the probe comment (`code_installed'_cons_non_label` and
+`evaluate_stack_move_clock`/`get_code_labels_wReg` through their `Q.prove`
+quotes, `DROP_list_LUPDATE_lemma` and `list_next_var_rename_props_2` through
+their base theorems). The three theories are built in the private copy; see the
+build recipe above. Regenerate with `CAKEML=<cakeml tree>
+HOL_PROBE_ONLY=<probe>Script.sml scripts/hol-probes/regenerate.sh`.
