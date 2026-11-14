@@ -1448,7 +1448,6 @@ import Flapjack.Compiler.Backend.ClosNumber.Proofs.Evaluate
 import Flapjack.Compiler.Backend.ClosNumber.Proofs.Semantics
 import Flapjack.Test.CakeIncrementalBviParity
 import Flapjack.Test.FlatToClosHelpersParity
-import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Total
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Values
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxCode
 import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxCompiler
