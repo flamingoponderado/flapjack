@@ -516,3 +516,14 @@ val _ = show "inline_call_none_exp_rel_typed" bvi_inlineProofTheory.inline_call_
 
 (* Capture the exported original expression-relation reflexivity theorem. *)
 val _ = show "exp_rel_refl_typed" bvi_inlineProofTheory.exp_rel_refl;
+
+(* Replay the original local relation-preservation theorem. *)
+val exp_rel_evaluate_mono_replay = Q.prove
+  (`(evaluate (es,env,t) = (res,t1) ∧ exp_rel t.code x y ⇒
+     exp_rel t1.code x y) ∧
+  (evaluate (es,env,t) = (res,t1) ∧ LIST_REL (exp_rel t.code) xs ys ⇒
+     LIST_REL (exp_rel t1.code) xs ys)`,
+   rw []
+  >> imp_res_tac evaluate_code_mono
+  >> metis_tac [exp_rel_mono, exp_rel_mono_list]);
+val _ = show "exp_rel_evaluate_mono_replay_typed" exp_rel_evaluate_mono_replay;

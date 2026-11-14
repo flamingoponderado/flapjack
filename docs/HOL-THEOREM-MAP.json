@@ -139427,4 +139427,17 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: every BVI expression is related to itself under any sparse-tree code map. The mutual list proof is internal induction support."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "exp_rel_evaluate_mono",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/ExpRelation.lean",
+    "lean_name": "expRelEvaluateMono",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the complete HOL local theorem and its typed, hypothesis-free proof replay: each of the two original implications retains the shared evaluation equation and its individual expression or list-relation premise. BVI refs use the canonical finite-support map with a same-module roundtrip. The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  }
 ]

@@ -151,6 +151,33 @@ theorem evaluate_expRel_mono {C F : Type} (executed : List Bvi.Exp) (env : List 
   exact ⟨fun x y related => expRel_mono source.code target.code x y related subset,
     fun xs ys related => expsRel_mono source.code target.code xs ys related subset⟩
 
+
+namespace EvaluationRelationCarrier
+/-- The canonical BVI reference-map representation has a roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end EvaluationRelationCarrier
+
+/-- BVI evaluation preserves both individual expression relations and
+pointwise expression-list relations. The evaluator inherits the real-model
+assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "exp_rel_evaluate_mono"
+  (fmap_as_finite_support := [refs])]
+theorem expRelEvaluateMono {C F : Type} (executed : List Bvi.Exp) (env : List BvlSem.Value)
+    (source target : BviSem.BviState C F) (result : BviSem.BviResult)
+    (x y : Bvi.Exp) (xs ys : List Bvi.Exp) :
+    ((BviSem.evaluate executed env source = (result, target) ∧ ExpRel source.code x y) →
+      ExpRel target.code x y) ∧
+    ((BviSem.evaluate executed env source = (result, target) ∧
+      List.Forall₂ (ExpRel source.code) xs ys) → List.Forall₂ (ExpRel target.code) xs ys) := by
+  constructor
+  · rintro ⟨run, related⟩
+    exact (evaluate_expRel_mono executed env source target result run).1 x y related
+  · rintro ⟨run, related⟩
+    exact (evaluate_expRel_mono executed env source target result run).2 xs ys related
+
 mutual
 /-- Every expression is related to itself by the inlining relation. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "exp_rel_refl"]
