@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
 public import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectArgs
 public import Flapjack.Compiler.Backend.Semantics.ClosSem
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.DecodeRelations
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
 public import Mathlib.Data.List.Forall2
 
 @[expose] public section
@@ -11,6 +12,14 @@ public import Mathlib.Data.List.Forall2
 /-! Proof-side relations for the multi-argument introduction simulation. -/
 namespace Flapjack.Compiler.Backend.ClosMti
 open ClosLang ClosSem
+
+/-- A result related to a successful result is itself successful with related values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "result_rel_Rval2"]
+theorem resultRel_val_right {A B C D : Type} (values : A → B → Prop)
+    (errors : C → D → Prop) (result : Flapjack.SemanticPrimitivesHOL.Result A C) (value : B) :
+    Flapjack.SemanticPrimitivesProps.resultRel values errors result (.val value) ↔
+      ∃ source, result = .val source ∧ values source value := by
+  cases result <;> simp [Flapjack.SemanticPrimitivesProps.resultRel]
 
 /-- Source expressions satisfy the unary invariant and transform to the
 target expressions under multi-argument introduction. -/

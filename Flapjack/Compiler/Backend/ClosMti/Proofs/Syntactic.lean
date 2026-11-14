@@ -653,4 +653,15 @@ theorem compile_eq_nil (enabled : Bool) (maxApp : Nat) (program : List Exp) :
     compile enabled maxApp program = [] ↔ program = [] := by
   cases enabled <;> simp [compile, introList]
 
+/-- Multi-argument introduction returns an empty list exactly for an empty input. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "intro_multi_EQ_NIL"]
+theorem introList_eq_nil (maxApp : Nat) (program : List Exp) :
+    introList maxApp program = [] ↔ program = [] := by
+  simp [introList]
+
+/-- Multi-argument introduction preserves the empty list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "intro_multi_nil"]
+theorem introList_nil (maxApp : Nat) : introList maxApp [] = [] := by
+  exact (introList_eq_nil maxApp []).2 rfl
+
 end Flapjack.Compiler.Backend.ClosMti

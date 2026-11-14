@@ -1,6 +1,30 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "result_rel_Rval2",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
+    "lean_name": "resultRel_val_right",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared result_rel_rval2_typed: all four independent value and error payload types, both relations, the arbitrary left result and right success payload, existential and conjunction agree."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "intro_multi_nil",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Syntactic.lean",
+    "lean_name": "introList_nil",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared intro_multi_nil_typed: the arbitrary max_app and empty input/output closure-expression lists agree."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "intro_multi_EQ_NIL",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Syntactic.lean",
+    "lean_name": "introList_eq_nil",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared intro_multi_eq_nil_typed: the arbitrary max_app and expression list, and both directions of the empty-output equivalence agree."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "hol_name": "compile_EQ_NIL",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Syntactic.lean",
     "lean_name": "compile_eq_nil",
