@@ -35,7 +35,7 @@ def parityGuard : Bool :=
 /-! Exact-carrier `retVarHOL` rows mirroring the same HOL fixture. -/
 
 def holParityGuard : Bool :=
-  retVarHOL .one [] == none &&
+  retVarHOL (α := Nat) .one [] == none &&
   retVarHOL .one [3, 4] == some 3 &&
   retVarHOL (.comb [.one]) [5] == some 5 &&
   retVarHOL (.comb [.one, .one]) [6] == none &&

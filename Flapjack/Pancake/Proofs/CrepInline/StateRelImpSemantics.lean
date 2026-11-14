@@ -75,8 +75,8 @@ theorem fstMap3F
      ALL_DISTINCT (MAP FST (compile_inl_prog inl_fs crep_code))`. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "compile_inline_distinct"
   (fmap_as_finite_support_parameters := [inl_fs]) (words_as_type_indexed_bitvec)]
-theorem compileInlineDistinct
-    (crep_code : List (CrepInlineMapHOLName × List Nat × CrepProgHOL width))
+theorem compileInlineDistinct {α : Type}
+    (crep_code : List (CrepInlineMapHOLName × α × CrepProgHOL width))
     (inl_fs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width)) :
     (crep_code.map Prod.fst).Nodup →
       ((compileInlProgHOLExact inl_fs crep_code).map Prod.fst).Nodup := by

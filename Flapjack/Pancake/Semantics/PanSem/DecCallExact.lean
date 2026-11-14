@@ -40,12 +40,17 @@ open Flapjack.Pancake.PanLang (MlS ShapeHOL ExpHOL ProgHOL)
 /-- Function-backed rendering of HOL `panSem$lookup_code` (`panSemScript.sml:458-467`).
     The lookup and argument checks are retained, but this helper is untagged
     because `code` is an unrestricted function rather than a HOL finite map.
+    HOL leaves the body payload polymorphic
+    (`code :ε |-> (β # shape) list # α # δ` in `lookup_code_def_typed`,
+    `pan_sem_typed_probe.out:22`), so the payload stays generic as `P` here;
+    the evaluator instantiates it with `ProgHOL width`.
     Exact finite-support replacement tracked by
     `flapjack-pxn.18.3.7.1.3.1.1.2.5` (parent `.2.3`). -/
-def lookupCodeHOLExact {width : Nat} [NeZero width]
-    (code : MlS → Option (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
-    (fname : MlS) (arguments : List (ValueHOL width)) :
-    Option (ProgHOL width × (MlS → Option (ValueHOL width)) × ShapeHOL) :=
+def lookupCodeHOLExact {ε β δ P : Type} [DecidableEq β]
+    {valueWidth : Nat} [NeZero valueWidth]
+    (code : ε → Option (List (β × ShapeHOL) × P × δ))
+    (fname : ε) (arguments : List (ValueHOL valueWidth)) :
+    Option (P × (β → Option (ValueHOL valueWidth)) × δ) :=
   match code fname with
   | none => none
   | some (parameters, body, returnShape) =>
@@ -54,15 +59,16 @@ def lookupCodeHOLExact {width : Nat} [NeZero width]
             (fun pair => shapeEqHOL pair.1.2 (shapeOfHOLExact pair.2))) = true then
         some (body,
           List.foldl
-            (fun (map : MlS → Option (ValueHOL width)) (entry : MlS × ValueHOL width) =>
+            (fun (map : β → Option (ValueHOL valueWidth)) (entry : β × ValueHOL valueWidth) =>
               fun current => if current = entry.1 then some entry.2 else map current)
             (fun _ => none) ((parameters.map Prod.fst).zip arguments),
           returnShape)
       else none
 
-@[simp] theorem lookupCodeHOLExact_of_code_none {width : Nat} [NeZero width]
-    (code : MlS → Option (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
-    (fname : MlS) (arguments : List (ValueHOL width))
+@[simp] theorem lookupCodeHOLExact_of_code_none {ε β δ P : Type} [DecidableEq β]
+    {valueWidth : Nat} [NeZero valueWidth]
+    (code : ε → Option (List (β × ShapeHOL) × P × δ))
+    (fname : ε) (arguments : List (ValueHOL valueWidth))
     (h : code fname = none) :
     lookupCodeHOLExact code fname arguments = none := by
   simp [lookupCodeHOLExact, h]
@@ -138,10 +144,13 @@ inductive ListRel {α β : Type} (R : α → β → Prop) : List α → List β 
 /-- Exact port of HOL `panSem$vshapes_args_rel_imp_eq_len_MAP`
     (`panSemScript.sml:740`): the shape relation between declared parameters
     and evaluated arguments implies both the length and the `MAP SND`/`MAP
-    shape_of` equalities. -/
+    shape_of` equalities. The typed capture
+    `vshapes_args_rel_imp_eq_len_MAP_typed` (`pan_sem_typed_probe.out`) gives
+    `vshapes :(α # shape) list`, so the parameter-name type is generic in HOL;
+    the Lean statement binds it too (in use `α = MlS`). -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "vshapes_args_rel_imp_eq_len_MAP"]
-theorem vshapesArgsRel_imp_eq_len_MAP {width : Nat} [NeZero width]
-    (vshapes : List (MlS × ShapeHOL)) (args : List (ValueHOL width))
+theorem vshapesArgsRel_imp_eq_len_MAP {α : Type} {width : Nat} [NeZero width]
+    (vshapes : List (α × ShapeHOL)) (args : List (ValueHOL width))
     (h : ListRel (fun vshape arg => vshape.2 = shapeOfHOLExact arg) vshapes args) :
     vshapes.length = args.length ∧
       vshapes.map Prod.snd = args.map shapeOfHOLExact := by

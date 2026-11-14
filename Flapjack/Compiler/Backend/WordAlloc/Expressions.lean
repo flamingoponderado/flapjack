@@ -30,9 +30,12 @@ def applyColourExp {width : Nat} [NeZero width] (f : Nat → Nat) :
     WordLangExpHOL (BitVec width) → WordLangExpHOL (BitVec width) :=
   applyColourExpCore f
 
-/-- HOL big_union uses a right fold and the exact left-biased Spt union. -/
+/-- HOL big_union uses a right fold and the exact left-biased Spt union. The
+    typed capture `big_union_def_typed` (`word_alloc_typed_probe.out`) keeps the
+    payload type `α` of the `α sptree num_map` list generic, so the Lean
+    definition binds it too (in use `α = Unit`). -/
 @[hol "cakeml/compiler/backend/word_allocScript.sml" "big_union_def"]
-def bigUnion (sets : List (Spt Unit)) : Spt Unit :=
+def bigUnion {α : Type} (sets : List (Spt α)) : Spt α :=
   sets.foldr sptUnion .ln
 
 /-- Exact HOL get_live_exp, including both expression-valued Shift operands. -/

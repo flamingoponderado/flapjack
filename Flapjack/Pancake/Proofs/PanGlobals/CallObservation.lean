@@ -37,7 +37,7 @@ theorem panGlobals_call_emptyLocals_observation {width : Nat} {σ : Type}
   rw [evalPanSemRecursiveCallFiniteContext.eq_5,
     evalPanSemRecursiveCallFiniteContext.eq_5]
   simp only [evalListHOLFinite, evalListHOLExact]
-  cases hlookup : lookupCodeHOLFinite state.code.lookup start [] with
+  cases hlookup : lookupCodeHOLFinite (valueWidth := width) state.code.lookup start [] with
   | none => simp [context, cleared, emptyLocalsHOLFinite, hlookup]
   | some data =>
       obtain ⟨body, callee, shape⟩ := data

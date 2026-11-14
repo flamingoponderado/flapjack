@@ -28,7 +28,7 @@ theorem wLiveLength {width : Nat} [NeZero width]
     exact ⟨h.2, rfl⟩
   · simp only [wLiveNative, empty, ↓reduceIte, insertBitmap] at hout
     rw [← hout]
-    rw [(appListAppend_thm bitmaps.1
+    rw [(appListAppend_thm_sameType bitmaps.1
       (.list (writeBitmapExact live.2 frame.1 frame.2.2))
       (writeBitmapExact live.2 frame.1 frame.2.2)).1]
     simp only [appListAppend, appendAux, List.append_nil, List.length_append]

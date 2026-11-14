@@ -7,10 +7,14 @@ public import Flapjack.Compiler.Backend.Bvi.Syntax
 /-! Helpers for the BVI let-propagation pass. -/
 namespace Flapjack.Compiler.Backend.BviLet
 
-/-- Compute the displacement for a variable binding; other expressions do
-not introduce a propagated variable. -/
+/-- Exact port of HOL `bvi_let$extract_def` (`bvi_letScript.sml`):
+`extract (Var n) ys = n + LENGTH ys + 1` and `0` for every other expression
+constructor.  The typed capture (`extract_def_typed` in
+`scripts/hol-probes/bvi_let_helpers_probe.out`) keeps the displaced list's
+element type generic (`ys :α list`), so the twin binds `{α : Type}`; the
+expression argument is HOL's fixed BVI `exp` type, matching `Bvi.Exp`. -/
 @[hol "cakeml/compiler/backend/bvi_letScript.sml" "extract_def"]
-def extract (e : Bvi.Exp) (ys : List Bvi.Exp) : Nat :=
+def extract {α : Type} (e : Bvi.Exp) (ys : List α) : Nat :=
   match e with | .var n => n + ys.length + 1 | _ => 0
 
 /-- Build the displacement environment from right to left. -/

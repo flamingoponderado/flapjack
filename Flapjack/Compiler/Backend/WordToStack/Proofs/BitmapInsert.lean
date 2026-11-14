@@ -28,8 +28,8 @@ theorem readBitmapInsertBitmap {width : Nat} [NeZero width]
       Flapjack.StackSem.readBitmap bitmap := by
   simp only [insertBitmap, Prod.mk.injEq] at hinsert
   rcases hinsert with ⟨⟨htree, _hnext⟩, hoffset⟩
-  rw [← htree, (appListAppend_thm old (.list bitmap) bitmap).1,
-    (appListAppend_thm old (.list bitmap) bitmap).2.1]
+  rw [← htree, (appListAppend_thm_sameType old (.list bitmap) bitmap).1,
+    (appListAppend_thm_sameType old (.list bitmap) bitmap).2.1]
   rw [Nat.mod_eq_of_lt hindex, ← hoffset, hcounter, ← List.append_assoc,
     ← List.length_append, List.drop_append_length]
 

@@ -1,0 +1,34 @@
+MAP3_MAP2_typed=∀(l1 :α list) (l2 :β list) (l3 :γ list) (f :α -> β -> γ -> δ). LENGTH l1 = LENGTH l3 ∧ LENGTH l2 = LENGTH l3 ⇒ MAP3 f l1 l2 l3 = (MAP2 (UNCURRY f) (ZIP (l1,l2)) l3 :δ list)
+MAX_LIST_add_not_mem_typed=∀(xs :num list). ¬MEM (MAX_LIST xs + (1 :num)) xs
+MAX_LIST_i_genlist_typed=∀(n :num). MAX_LIST (GENLIST (I :num -> num) n) = n − (1 :num)
+all_distinct_drop_typed=∀(ns :α list) (n :num). ALL_DISTINCT ns ∧ n ≤ LENGTH ns ⇒ ALL_DISTINCT (DROP n ns)
+all_distinct_el_fst_same_eq_typed=∀(xs :(α # β) list) (n :num) (n' :num) (x :α) (y :β) (y' :β). ALL_DISTINCT (MAP (FST :α # β -> α) xs) ∧ n < LENGTH xs ∧ n' < LENGTH xs ∧ xs❲n❳ = (x,y) ∧ xs❲n'❳ = (x,y') ⇒ n = n'
+all_distinct_take_typed=∀(ns :α list) (n :num). ALL_DISTINCT ns ∧ n ≤ LENGTH ns ⇒ ALL_DISTINCT (TAKE n ns)
+all_distinct_take_frop_disjoint_typed=∀(ns :α list) (n :num). ALL_DISTINCT ns ∧ n ≤ LENGTH ns ⇒ DISJOINT (set (TAKE n ns)) (set (DROP n ns))
+disjoint_drop_take_sum_typed=∀(n :num) (m :num) (p :num) (ns :α list). ALL_DISTINCT ns ⇒ DISJOINT (set (TAKE p (DROP (n + m) ns))) (set (TAKE n ns))
+disjoint_not_mem_el_typed=∀(xs :α list) (ys :α list) (n :num). DISJOINT (set xs) (set ys) ∧ n < LENGTH xs ⇒ ¬MEM xs❲n❳ ys
+disjoint_take_drop_sum_typed=∀(n :num) (m :num) (p :num) (ns :α list). ALL_DISTINCT ns ⇒ DISJOINT (set (TAKE n ns)) (set (TAKE p (DROP (n + m) ns)))
+distinct_lists_append_typed=ALL_DISTINCT ((xs :α list) ++ (ys :α list)) ⇒ distinct_lists xs ys
+distinct_lists_append_intro_typed=distinct_lists (xs :α list) (ys :α list) ∧ distinct_lists xs (zs :α list) ⇒ distinct_lists xs (ys ++ zs)
+distinct_lists_append_right_elim_typed=distinct_lists (xs :α list) ((ys :α list) ++ (zs :α list)) ⇒ distinct_lists xs ys ∧ distinct_lists xs zs
+distinct_lists_commutes_typed=distinct_lists (xs :α list) (ys :α list) ⇔ distinct_lists ys xs
+distinct_lists_cons_typed=distinct_lists ((ns :α list) ++ (xs :α list)) ((ys :α list) ++ (zs :α list)) ⇒ distinct_lists xs zs
+distinct_lists_eq_disjoint_typed=distinct_lists (xs :α list) (ys :α list) ⇔ DISJOINT (set xs) (set ys)
+distinct_lists_simp_cons_typed=distinct_lists (xs :α list) ((y :α)::(ys :α list)) ⇒ distinct_lists xs ys
+el_pair_map_fst_el_typed=∀(xs :(α # β # γ) list) (n :num) (x :α) (y :β) (z :γ). n < LENGTH xs ∧ xs❲n❳ = (x,y,z) ⇒ x = (MAP (FST :α # β # γ -> α) xs)❲n❳
+el_reduc_tl_typed=∀(l :α list) (n :num). (0 :num) < n ∧ n < LENGTH l ⇒ l❲n❳ = (TL l)❲n − (1 :num)❳
+genlist_distinct_max_typed=∀(n :num) (ys :num list) (m :num). (∀(y :num). MEM y ys ⇒ y ≤ m) ⇒ distinct_lists (GENLIST (λ(x :num). SUC x + m) n) ys
+map_the_some_cancel_typed=∀(xs :α list). MAP ((THE :α option -> α) ∘ (SOME :α -> α option)) xs = xs
+map_append_eq_drop_typed=∀(xs :α list) (ys :β list) (zs :β list) (f :α -> β). MAP f xs = ys ++ zs ⇒ MAP f (DROP (LENGTH ys) xs) = zs
+max_foldr_lt_typed=∀(xs :num list) (x :num) (n :num) (m :num). MEM x xs ∧ n ≤ x ∧ (0 :num) < m ⇒ x < FOLDR MAX n xs + m
+mem_genlist_add_suc_val_typed=∀(n :num) (x :num) (k :num). MEM x (GENLIST (λ(x :num). SUC x + k) n) ⇒ k < x ∧ x ≤ n + k
+opt_mmap_eq_some_typed=∀(xs :α list) (f :α -> β option) (ys :β list). OPT_MMAP f xs = SOME ys ⇔ MAP f xs = MAP (SOME :β -> β option) ys
+opt_mmap_el_typed=∀(l :α list) (f :α -> β option) (x :β list) (n :num). OPT_MMAP f l = SOME x ∧ n < LENGTH l ⇒ f l❲n❳ = SOME x❲n❳
+opt_mmap_length_eq_typed=∀(l :α list) (f :α -> β option) (n :β list). OPT_MMAP f l = SOME n ⇒ LENGTH l = LENGTH n
+opt_mmap_mem_defined_typed=∀(l :α list) (f :α -> β option) (m :β list) (e :α) (n :β). OPT_MMAP f l = SOME m ∧ MEM e l ∧ f e = SOME n ⇒ MEM n m
+opt_mmap_mem_func_typed=∀(l :α list) (f :α -> β option) (n :β list) (g :α). OPT_MMAP f l = SOME n ∧ MEM g l ⇒ ∃(m :β). f g = SOME m
+opt_mmap_opt_map_typed=∀(l :α list) (f :α -> β option) (n :β list) (g :β -> γ). OPT_MMAP f l = SOME n ⇒ OPT_MMAP (λ(a :α). OPTION_MAP g (f a)) l = SOME (MAP g n)
+set_eq_membership_typed=(a :α -> bool) = (b :α -> bool) ∧ (x :α) ∈ a ⇒ x ∈ b
+ctxt_max_def_typed=∀(n :num) (fm :α |-> β # num list). ctxt_max n fm ⇔ (0 :num) ≤ n ∧ ∀(v :α) (a :β) (xs :num list). FLOOKUP fm v = SOME (a,xs) ⇒ ∀(x :num). MEM x xs ⇒ x ≤ n
+no_overlap_def_typed=∀(fm :α |-> β # γ list). no_overlap fm ⇔ (∀(x :α) (a :β) (xs :γ list). FLOOKUP fm x = SOME (a,xs) ⇒ ALL_DISTINCT xs) ∧ ∀(x :α) (y :α) (a :β) (b :β) (xs :γ list) (ys :γ list). FLOOKUP fm x = SOME (a,xs) ∧ FLOOKUP fm y = SOME (b,ys) ∧ ¬DISJOINT (set xs) (set ys) ⇒ x = y
+update_eq_zip_flookup_typed=∀(xs :α list) (f :α |-> β) (ys :β list) (n :num). ALL_DISTINCT xs ∧ LENGTH xs = LENGTH ys ∧ n < LENGTH xs ⇒ FLOOKUP (f |++ ZIP (xs,ys)) xs❲n❳ = SOME ys❲n❳

@@ -55,8 +55,9 @@ def holAsmSignedLess {width : Nat} (left right : BitVec width) : Bool :=
 `asm$word_cmp_def` (`cakeml/compiler/encoders/asm/asmScript.sml:313-321`).
 The result is Boolean as in HOL; the Crep evaluator separately embeds it as
 a word. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "word_cmp_def"]
-def wordCmpHOL [NeZero width] (operator : Cmp)
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "word_cmp_def"
+  (words_as_type_indexed_bitvec)]
+def wordCmpHOL {width : Nat} [NeZero width] (operator : Cmp)
     (left right : BitVec width) : Bool :=
   match operator with
   | .equal => left == right

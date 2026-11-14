@@ -59,7 +59,8 @@ def rows : List (String × Bool) :=
       (fun a => a = 8 || a = 16) == true),
    ("const_addresses_miss", wordSemConstAddresses (8 : BitVec 64) [(true, 1), (false, 2)]
       (fun a => a = 8) == false),
-   ("const_addresses_nil", wordSemConstAddresses (8 : BitVec 64) [] (fun _ => false) == true),
+   ("const_addresses_nil", wordSemConstAddresses (8 : BitVec 64)
+      ([] : List (Bool × BitVec 64)) (fun _ => false) == true),
    ("const_writes", writes == (.word 101, .word 2, .loc 0 0)),
    ("stop", wordSemSTOP (5 : Nat) == 5),
    ("bad_fun_return_none", wordSemBadFunReturn (none : Option R) == true),

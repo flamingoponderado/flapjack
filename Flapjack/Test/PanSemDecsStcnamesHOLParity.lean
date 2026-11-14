@@ -92,7 +92,7 @@ private def functionAndExn : List (DeclHOL 8) :=
 
 example (context : StructContextExact) :
     decsStcnamesHOLExact (width := 8) context functionAndExn = some context := by
-  apply decsStcnamesHOLExact_of_functions_or_exnDecls
+  refine decsStcnamesHOLExact_of_functions_or_exnDecls functionAndExn context ?_
   decide
 
 private def decsGuard : Bool :=

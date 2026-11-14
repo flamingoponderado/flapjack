@@ -122,11 +122,13 @@ def lookupOkGuard : Bool :=
 
 /-- `lookup_code_bad_arg=(F,NONE)`. -/
 def lookupBadArgGuard : Bool :=
-  (PanSemStateFiniteExact.lookupCodeCanonicalHOL canonicalCodeMap (ml "f") [.rStruct []]).isNone
+  (PanSemStateFiniteExact.lookupCodeCanonicalHOL (valueWidth := 64) canonicalCodeMap (ml "f")
+    [.rStruct []]).isNone
 
 /-- `lookup_code_dup_param=(F,NONE)`. -/
 def lookupDupParamGuard : Bool :=
-  (PanSemStateFiniteExact.lookupCodeCanonicalHOL canonicalDuplicateCodeMap (ml "f") [.val (.word 3)]).isNone
+  (PanSemStateFiniteExact.lookupCodeCanonicalHOL (valueWidth := 64) canonicalDuplicateCodeMap
+    (ml "f") [.val (.word 3)]).isNone
 
 /-- `deccall_clause_ok=(SOME (Return (ValWord 3w)),SOME (ValWord 0w),NONE)`. -/
 def decCallOkGuard : Bool :=
@@ -184,8 +186,8 @@ def decCallExactGuard : Bool :=
     decCallClockZeroGuard && decCallBadShapeGuard && decCallMissingFunctionGuard
 
 -- `lookupCodeHOLExact_of_code_none`: a code map missing the function returns none.
-example : lookupCodeHOLExact (width := 8) (fun _ => none) (ml "g")
-      [.val (.word (3 : BitVec 8))] = none :=
+example : lookupCodeHOLExact (ε := MlS) (β := MlS) (δ := ShapeHOL) (P := BitVec 8)
+      (fun _ => none) (ml "g") [.val (.word (3 : BitVec 8))] = none :=
   lookupCodeHOLExact_of_code_none _ _ _ rfl
 
 #guard lookupOkGuard

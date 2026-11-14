@@ -349,11 +349,16 @@ theorem pushEnv_stack_cons {width : Nat} [NeZero width] {C : Type} {F : Type}
   rcases handler with _ | ⟨_, _, _, _⟩ <;> rfl
 
 /-- Exact HOL `LIST_REL_call_Result` (`word_simpProofScript.sml:598-608`); HOL's
-    unused binder `s'` is kept. -/
+    unused binder `s'` is kept. The typed capture
+    `LIST_REL_call_Result_typed` (`word_simp_proof_typed_probe.out`) shows the
+    incoming state at `(α,β,γ)`, the unused `s'` at an unrelated `δ`, and both
+    later states at `(α,ε,ζ)`; the Lean statement keeps `s'` fully generic and
+    lets the incoming state's compiler/FFI types differ from the later ones. -/
 @[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "LIST_REL_call_Result"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem LIST_REL_call_Result {width : Nat} [NeZero width] {C : Type} {F : Type} :
-    ∀ (s _s' s'' s''' : WordSemStateFiniteExact width C F)
+theorem LIST_REL_call_Result {width : Nat} [NeZero width] {C F C₂ F₂ δ : Type} :
+    ∀ (s : WordSemStateFiniteExact width C F) (_s' : δ)
+      (s'' s''' : WordSemStateFiniteExact width C₂ F₂)
       (env : Spt (WordLocW width) × Spt (WordLocW width))
       (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)),
       List.Forall₂ sfGcConsts (pushEnv env handler s).stack s''.stack ∧ popEnv s'' = some s''' ∧
@@ -425,12 +430,18 @@ theorem EVERY2_trans_LASTN_sf_gc_consts {width : Nat} [NeZero width] :
   exact forall₂_trans' (fun a b c hab hbc => sfGcConstsTrans a b c ⟨hab, hbc⟩)
     (listRelLastN sfGcConsts l l' n ⟨hn, h1⟩) h2
 
-/-- Exact HOL `LIST_REL_push_env` (`word_simpProofScript.sml:635-640`). -/
+/-- Exact HOL `LIST_REL_push_env` (`word_simpProofScript.sml:635-640`). The
+    typed capture `LIST_REL_push_env_typed`
+    (`word_simp_proof_typed_probe.out`) shows `R : α stack_frame -> β stack_frame
+    -> bool` with the two states at independent word dimensions, so the Lean
+    statement keeps `R`'s domain and codomain widths separate. -/
 @[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "LIST_REL_push_env"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem LIST_REL_push_env {width : Nat} [NeZero width] {C : Type} {F : Type} :
-    ∀ (R : WordSemStackFrame width → WordSemStackFrame width → Prop)
-      (s s' : WordSemStateFiniteExact width C F) (env : Spt (WordLocW width) × Spt (WordLocW width))
+theorem LIST_REL_push_env {width : Nat} [NeZero width] {width' : Nat} [NeZero width']
+    {C F C' F' : Type} :
+    ∀ (R : WordSemStackFrame width → WordSemStackFrame width' → Prop)
+      (s : WordSemStateFiniteExact width C F) (s' : WordSemStateFiniteExact width' C' F')
+      (env : Spt (WordLocW width) × Spt (WordLocW width))
       (h : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)),
       List.Forall₂ R (pushEnv env h s).stack s'.stack → List.Forall₂ R s.stack s'.stack.tail := by
   intro R s s' env h hrel

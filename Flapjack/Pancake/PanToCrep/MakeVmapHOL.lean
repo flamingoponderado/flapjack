@@ -53,17 +53,21 @@ def panToCrepMakeVmapRaw (params : List (MlS × ShapeHOL)) :
   let cvars := shs.zip (withShapeHOL shs ns)
   FUPDATE_LIST (fun _ => none) (pvars.zip cvars)
 
-/-- Exact port of HOL `pan_to_crep$make_vmap_def`
+/-- HOL `pan_to_crep$make_vmap_def`
     (`cakeml/pancake/pan_to_crepScript.sml:327-334`). `MAP FST`/`MAP SND` are
     `List.map Prod.fst`/`Prod.snd`, `GENLIST I n` is `List.range n`,
     `size_of_shape (Comb shs)` is `sizeOfShapeHOL (.comb shs)`, `with_shape` is
     the tagged `withShapeHOL`, and `FEMPTY |++` is `HolFiniteMapExact.updateList`
     over `HolFiniteMapExact.empty` (the `FUPDATE_LIST` fold, later duplicates
-    winning). The result is the canonical finite-support translation of the HOL
-    finite map; the standalone qualifier is justified by the lookup witness
-    below. -/
-@[hol "cakeml/pancake/pan_to_crepScript.sml" "make_vmap_def"
-  (fmap_as_finite_support_result)]
+    winning).
+
+    Tag withdrawn (task 149): the typed capture `make_vmap_def_typed`
+    (`pan_to_crep_typed_probe.out`) gives `params :(α # shape) list` and result
+    `α |-> shape # num list`, so HOL's variable-name type `α` is generic, while
+    the Lean definition fixes it to `MlS`. Generalising the key would need
+    `[BEq α] [LawfulBEq α]` for `HolFiniteMapExact.updateList`, whereas the
+    accepted rendering of HOL equality on a generic key type is
+    `[DecidableEq α]`, so this is the `α = MlS` instance, not an exact port. -/
 def panToCrepMakeVmapHOLExact (params : List (MlS × ShapeHOL)) :
     HolFiniteMapExact MlS (ShapeHOL × List Nat) :=
   let pvars := params.map Prod.fst

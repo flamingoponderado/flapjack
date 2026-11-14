@@ -152,7 +152,8 @@ theorem compileAllEncOkPreHOL {width : Nat} [NeZero width]
         (Flapjack.Compiler.Backend.StackAlloc.nextLab program 2) [] []
         lines done next config zero (valid (sectionId, program) inPrograms) flattened
       simp only [progToSectionHOL, flattened]
-      rw [(appListAppend_thm lines (.list [.label sectionId (if isSeqHOL program then next else 1) 0]) []).1]
+      rw [(appListAppend_thm_sameType lines
+        (.list [.label sectionId (if isSeqHOL program then next else 1) 0]) []).1]
       intro line inLines
       rcases List.mem_append.mp inLines with fromBody | fromLabel
       · exact safe line fromBody

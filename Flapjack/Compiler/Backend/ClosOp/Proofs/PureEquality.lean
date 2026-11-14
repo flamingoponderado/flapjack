@@ -297,7 +297,7 @@ theorem eqPureThmOneConstructorMismatch {C F : Type} (tx : BackendCommon.Tra)
     (p.1, ClosLang.Exp.op .none (.blockOp (.elemAt p.2)) [y])
   have flatten (e : ClosLang.Exp) (tree : Flapjack.AppList ClosLang.Exp) :
       Flapjack.appListAppend (.append (.list [e]) tree) = e :: Flapjack.appListAppend tree := by
-    rw [(Flapjack.appListAppend_thm (.list [e]) tree []).1]
+    rw [(Flapjack.appListAppend_thm_sameType (.list [e]) tree []).1]
     rfl
   have result : eqPure (.op tx (.blockOp (.cons tagX)) xs) y =
       conjList (.op .none (.blockOp (.tagLenEq tagX xs.length)) [y] ::
@@ -398,7 +398,7 @@ theorem eqPureThmOneConstructorMatch {C F : Type} (tx : BackendCommon.Tra)
   have recResult := ih (valuesX.reverse.zip fieldsY) b ⟨paired, mappedEq, outSimple⟩
   have flatten (e : ClosLang.Exp) (tree : Flapjack.AppList ClosLang.Exp) :
       Flapjack.appListAppend (.append (.list [e]) tree) = e :: Flapjack.appListAppend tree := by
-    rw [(Flapjack.appListAppend_thm (.list [e]) tree []).1]
+    rw [(Flapjack.appListAppend_thm_sameType (.list [e]) tree []).1]
     rfl
   have result : eqPure (.op tx (.blockOp (.cons tagX)) xs) y =
       conjList (.op .none (.blockOp (.tagLenEq tagX xs.length)) [y] ::
@@ -539,7 +539,7 @@ private theorem pureListCorrect {C F : Type} (env : List Value) (s : State C F)
           Flapjack.appListAppend (eqPureList [(px, py)]) ++
             Flapjack.appListAppend (eqPureList (q :: rest)) := by
         conv_lhs => rw [eqPureList]
-        exact (Flapjack.appListAppend_thm _ _ []).1
+        exact (Flapjack.appListAppend_thm_sameType _ _ []).1
       rw [flatten] at simple ⊢
       have simpleHead : ∀ e ∈ Flapjack.appListAppend (eqPureList [(px, py)]), SimpleExp e := by
         intro e he

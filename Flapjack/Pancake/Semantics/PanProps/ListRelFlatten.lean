@@ -16,8 +16,9 @@ and of `list_rel_flatten_with_shape_length` / `list_rel_flatten_with_shape_flook
 (lines 549-613), which combine the `with_shape` lemmas of `PanProps/WithShape.lean`
 with `update_eq_zip_flookup` (`PanCommonProps/FiniteMapExact.lean`).
 HOL `LIST_REL` is the exact `ListRel`, `EVERY is_wf_shape_v_nil` is membership
-over `isWfShapeValueHOLExact []`, and `size_of_shape`/`shape_of`/`flatten` are
-the `sizeOfShapeHOL`/`shapeOfHOLExact`/`flattenHOL` functions over `ValueHOL`.
+over `isWfShapeValueHOLExact ([] : StructContextExact)`, and
+`size_of_shape`/`shape_of`/`flatten` are the
+`sizeOfShapeHOL`/`shapeOfHOLExact`/`flattenHOL` functions over `ValueHOL`.
 HOL's `'a word` is the positive-width word carrier of `ValueHOL width`
 (`words_as_type_indexed_bitvec`).
 -/
@@ -39,7 +40,7 @@ open Flapjack.Pancake.PanLang (MlS ShapeHOL sizeOfShapeHOL sizeOfShapesHOL
 theorem listRelLengthShapeOfFlattenBetterHOL {width : Nat} [NeZero width] :
     ∀ (vshs : List ShapeHOL) (args : List (ValueHOL width)),
       ListRel (fun vsh arg => vsh = shapeOfHOLExact arg) vshs args ∧
-        (∀ arg, arg ∈ args → isWfShapeValueHOLExact [] arg = true) →
+        (∀ arg, arg ∈ args → isWfShapeValueHOLExact ([] : StructContextExact) arg = true) →
       sizeOfShapeHOL (.comb vshs) = (args.map flattenHOL).flatten.length := by
   intro vshs args ⟨hrel, hwf⟩
   induction hrel with
@@ -62,7 +63,7 @@ theorem listRelLengthShapeOfFlattenBetterHOL {width : Nat} [NeZero width] :
 theorem listRelLengthShapeOfFlattenHOL {width : Nat} [NeZero width] {β : Type} :
     ∀ (vshs : List (β × ShapeHOL)) (args : List (ValueHOL width)),
       ListRel (fun vsh arg => vsh.2 = shapeOfHOLExact arg) vshs args ∧
-        (∀ arg, arg ∈ args → isWfShapeValueHOLExact [] arg = true) →
+        (∀ arg, arg ∈ args → isWfShapeValueHOLExact ([] : StructContextExact) arg = true) →
       sizeOfShapeHOL (.comb (vshs.map Prod.snd)) =
         (args.map flattenHOL).flatten.length := by
   intro vshs args ⟨hrel, hwf⟩
@@ -83,7 +84,7 @@ Their exact Lean twins use the tagged `withShapeHOL`, `elElWithShapeHOL` and
 for HOL `FEMPTY`, and `flattenHOL`/`shapeOfHOLExact`/`isWfShapeValueHOLExact`
 for the `ValueHOL width` arguments.  HOL's `LIST_REL (λsh arg. sh = shape_of
 arg) sh args` is the exact `ListRel` relation, and `EVERY is_wf_shape_v_nil
-args` is membership over `isWfShapeValueHOLExact []`.  The helpers below are
+args` is membership over `isWfShapeValueHOLExact ([] : StructContextExact)`.  The helpers below are
 untagged infrastructure: Lean's `getElem` needs the bounds that HOL's total
 `EL` supplies, and the shape well-formedness that HOL discharges inside
 `el_el_with_shape`'s proof is derived here from the `LIST_REL` hypothesis.
@@ -129,7 +130,7 @@ theorem sizeOfShapeHOLCombEqFlattenHOLLengthOfGetElem {width : Nat} [NeZero widt
     (vshs : List ShapeHOL) (args : List (ValueHOL width))
     (hlen : vshs.length = args.length)
     (hrel : ∀ i, i < args.length → vshs[i]? = (args[i]?).map shapeOfHOLExact)
-    (hwf : ∀ arg, arg ∈ args → isWfShapeValueHOLExact [] arg = true) :
+    (hwf : ∀ arg, arg ∈ args → isWfShapeValueHOLExact ([] : StructContextExact) arg = true) :
     sizeOfShapeHOL (.comb vshs) = (args.map flattenHOL).flatten.length := by
   induction args generalizing vshs with
   | nil =>
@@ -151,10 +152,10 @@ theorem sizeOfShapeHOLCombEqFlattenHOLLengthOfGetElem {width : Nat} [NeZero widt
             have h := hrel (i + 1) (by simp [hi])
             simpa [List.getElem?_cons_succ] using h
           have hwfTail : ∀ other, other ∈ args →
-              isWfShapeValueHOLExact [] other = true :=
+              isWfShapeValueHOLExact ([] : StructContextExact) other = true :=
             fun other hmem => hwf other (by simp [hmem])
           have hshapeWf : Flapjack.Pancake.PanLang.isWfShapeExactHOL
-              ([] : Flapjack.Pancake.PanLang.StructContextExact)
+              ([] : StructContextExact)
               (shapeOfHOLExact arg) = true := by
             rw [isWfShapeExactHOL_shapeOfHOLExact_eq_isWfShapeValueHOLExact_nil [] rfl arg]
             exact hwf arg (by simp)
@@ -175,7 +176,7 @@ theorem listRelFlattenWithShapeLengthHOL {α : Type} {width : Nat} [NeZero width
       sizeOfShapeHOL (.comb shapes) = (args.map flattenHOL).flatten.length ∧
       elHOL args n = value ∧ n < args.length ∧ args.length = shapes.length ∧
       ListRel (fun shape arg => shape = shapeOfHOLExact arg) shapes args ∧
-      (∀ arg, arg ∈ args → isWfShapeValueHOLExact [] arg = true)) :
+      (∀ arg, arg ∈ args → isWfShapeValueHOLExact ([] : StructContextExact) arg = true)) :
     ((withShapeHOL shapes names)[n]'(by
         obtain ⟨-, -, -, hn, hlen, -, -⟩ := h
         rw [withShapeHOLLength]
@@ -189,12 +190,12 @@ theorem listRelFlattenWithShapeLengthHOL {α : Type} {width : Nat} [NeZero width
     have h := listRelGetElem hrel hnshapes hn
     rw [hget] at h
     exact h
-  have hwfval : isWfShapeValueHOLExact [] value = true :=
+  have hwfval : isWfShapeValueHOLExact ([] : StructContextExact) value = true :=
     hwf value (by
                 rw [← hget]
                 exact List.getElem_mem hn)
   have hshapeWf : Flapjack.Pancake.PanLang.isWfShapeExactHOL
-      ([] : Flapjack.Pancake.PanLang.StructContextExact)
+      ([] : StructContextExact)
       (shapeOfHOLExact value) = true := by
     rw [isWfShapeExactHOL_shapeOfHOLExact_eq_isWfShapeValueHOLExact_nil [] rfl value]
     exact hwfval
@@ -216,7 +217,7 @@ theorem listRelFlattenWithShapeFlookupHOL {α : Type} [DecidableEq α]
       sizeOfShapeHOL (.comb shapes) = (args.map flattenHOL).flatten.length ∧
       elHOL args n = value ∧ n < args.length ∧ args.length = shapes.length ∧
       ListRel (fun shape arg => shape = shapeOfHOLExact arg) shapes args ∧
-      (∀ arg, arg ∈ args → isWfShapeValueHOLExact [] arg = true) ∧
+      (∀ arg, arg ∈ args → isWfShapeValueHOLExact ([] : StructContextExact) arg = true) ∧
       (elHOL (withShapeHOL shapes names) n).length = (flattenHOL value).length ∧
       n' < (elHOL (withShapeHOL shapes names) n).length) :
     (HolFiniteMapExact.empty.updateListEq
@@ -289,7 +290,7 @@ theorem listRelFlattenWithShapeFlookupHOL {α : Type} [DecidableEq α]
     have hians : i < args.length := by omega
     have hval := hwf (args[i]'hians) (List.getElem_mem hians)
     have hbridge := isWfShapeExactHOL_shapeOfHOLExact_eq_isWfShapeValueHOLExact_nil
-      [] rfl (args[i]'hians)
+      ([] : StructContextExact) rfl (args[i]'hians)
     have hshape := listRelGetElem hrel hi hians
     rw [← hix, hshape]
     simpa [isWfShapeNilHOL] using hbridge.trans hval

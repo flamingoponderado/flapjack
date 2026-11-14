@@ -24,8 +24,8 @@ private theorem loadUnchanged {width : Nat} {σ : Type} [NeZero width]
     (address : BitVec width) (nb : Nat) (state : PanSemStateFiniteExact width σ)
     (hne : kind = .local → name ≠ destination)
     (result : Option (PanSemResultExact width)) (post : PanSemStateFiniteExact width σ)
-    (heval : @shMemLoadHOLFiniteExact width σ _ state
-      (fun a => Classical.propDecidable (state.shMemaddrs a)) kind destination address nb = (result, post))
+    (heval : @shMemLoadHOLFiniteExact width σ _ width _ kind destination address nb state
+      (fun a => Classical.propDecidable (state.shMemaddrs a)) = (result, post))
     (hgood : goodResHOL result = true) (herror : result ≠ some .error) :
     post.locals.lookup name = state.locals.lookup name := by
   classical

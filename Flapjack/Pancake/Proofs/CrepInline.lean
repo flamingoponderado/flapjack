@@ -772,12 +772,20 @@ def crepInlineLocalsRelExact {width : Nat} [NeZero width] {σ : Type}
 `a` to `a'` equal those added from `b` to `b'`, i.e.
 `FDIFF a'.locals (FDOM a.locals) = FDIFF b'.locals (FDOM b.locals)`.
 `crepHolFdiff`/`crepHolFdom` render HOL's `FDIFF`/`FDOM` extensionally over
-`CrepSemHOLState`'s finite-support `locals` field. -/
+`CrepSemHOLState`'s finite-support `locals` field.  The typed capture
+(`locals_ext_rel_def_typed` in
+`scripts/hol-probes/crep_inline_proof_typed_probe.out`) keeps the four states at
+independent type instances (`a :(α, β) state`, `b :(γ, δ) state`,
+`a' :(ε, ζ) state`, `b' :(ε, η) state`), so the twin binds independent widths
+`w1`/`w2` for `a`/`b`, the shared width `w3` for `a'`/`b'`, and four independent
+FFI hosts. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "locals_ext_rel_def"
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
-def crepInlineLocalsExtRelExact {width : Nat} [NeZero width] {σ : Type}
-    (a b a' b' : CrepSemHOLState width σ) : Prop :=
+def crepInlineLocalsExtRelExact {w1 w2 w3 : Nat} [NeZero w1] [NeZero w2] [NeZero w3]
+    {σ1 σ2 σ3 σ4 : Type}
+    (a : CrepSemHOLState w1 σ1) (b : CrepSemHOLState w2 σ2)
+    (a' : CrepSemHOLState w3 σ3) (b' : CrepSemHOLState w3 σ4) : Prop :=
   crepHolFdiff a'.locals.lookup (crepHolFdom a.locals.lookup) =
     crepHolFdiff b'.locals.lookup (crepHolFdom b.locals.lookup)
 

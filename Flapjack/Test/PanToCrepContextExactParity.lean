@@ -327,13 +327,13 @@ example : (ctxtFcExactHOL (width := 8) HolFiniteMapExact.empty HolFiniteMapExact
     supplied unsorted slot list. -/
 example : (ctxtFcExactHOL (width := 8) HolFiniteMapExact.empty HolFiniteMapExact.empty
     [] [] [4, 1, 7, 3]).vmax = 7 :=
-  ctxtFcVmaxHOL HolFiniteMapExact.empty HolFiniteMapExact.empty [] [] [4, 1, 7, 3]
+  ctxtFcVmaxHOL_bare HolFiniteMapExact.empty HolFiniteMapExact.empty [] [] [4, 1, 7, 3]
 
 /-- Direct replay of the HOL-EVAL `vmax_empty_list=T` row
     (`scripts/hol-probes/ctxt_fc_probe.out`) through the exact
     `ctxt_fc_vmax` port: `MAX_LIST []` is `0`. -/
 example : (ctxtFcExactHOL (width := 8) HolFiniteMapExact.empty HolFiniteMapExact.empty
     [] [] []).vmax = 0 :=
-  ctxtFcVmaxHOL HolFiniteMapExact.empty HolFiniteMapExact.empty [] [] []
+  ctxtFcVmaxHOL_bare HolFiniteMapExact.empty HolFiniteMapExact.empty [] [] []
 
 end Flapjack.Test.PanToCrepContextExactParity

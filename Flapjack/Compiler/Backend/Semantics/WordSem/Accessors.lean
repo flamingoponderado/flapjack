@@ -144,12 +144,17 @@ def decClock {width : Nat} [NeZero width] {C : Type} {F : Type}
   { state with clock := state.clock - 1 }
 
 /-- Exact HOL `fix_clock_def` (`wordSemScript.sml:266-271`): the new clock is
-    the smaller of the two clocks, and `termdep` is restored from `old_s`. -/
+    the smaller of the two clocks, and `termdep` is restored from `old_s`.
+    HOL's incoming and returned states have independent word, compiler and FFI
+    carriers (`fix_clock_def_typed` in `word_sem_typed_probe.out`), so only
+    their natural-number clocks are related. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "fix_clock_def"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-def fixClock {width : Nat} [NeZero width] {C : Type} {F : Type} {β : Type}
-    (old : WordSemStateFiniteExact width C F) (step : β × WordSemStateFiniteExact width C F) :
-    β × WordSemStateFiniteExact width C F :=
+def fixClock {width returnedWidth : Nat} [NeZero width] [NeZero returnedWidth]
+    {C F ReturnedC ReturnedF R : Type}
+    (old : WordSemStateFiniteExact width C F)
+    (step : R × WordSemStateFiniteExact returnedWidth ReturnedC ReturnedF) :
+    R × WordSemStateFiniteExact returnedWidth ReturnedC ReturnedF :=
   (step.1, { step.2 with
     clock := if old.clock < step.2.clock then old.clock else step.2.clock,
     termdep := old.termdep })

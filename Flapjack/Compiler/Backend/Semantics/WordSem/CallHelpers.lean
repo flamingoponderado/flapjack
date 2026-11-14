@@ -119,11 +119,16 @@ def wordSemMustTerminateLimit (width : Nat) [NeZero width] : Nat :=
 /-- Exact HOL `const_addresses_def` (`wordSemScript.sml:980-984`):
     `const_addresses a [] d = T` and
     `const_addresses a (x::xs) d = (a IN d ∧ const_addresses (a +
-    bytes_in_word) xs d)`.  The `'a word set` uses the set-as-Bool rendering. -/
+    bytes_in_word) xs d)`.  The typed capture
+    (`const_addresses_def_typed` in
+    `scripts/hol-probes/word_to_stack_proof_typed_probe.out`) keeps the list's
+    element type generic (`∀(a :β word) (xs :α list) (d :β word → bool)`), so
+    the twin binds `{α : Type}`; the `'a word set` uses the set-as-Bool
+    rendering. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "const_addresses_def"
   (words_as_type_indexed_bitvec)]
-def wordSemConstAddresses {width : Nat} [NeZero width] :
-    BitVec width → List (Bool × BitVec width) → (BitVec width → Bool) → Bool
+def wordSemConstAddresses {α : Type} {width : Nat} [NeZero width] :
+    BitVec width → List α → (BitVec width → Bool) → Bool
   | _, [], _ => true
   | a, _ :: xs, d => d a && wordSemConstAddresses (a + wordSemBytesInWord) xs d
 

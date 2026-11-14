@@ -181,9 +181,12 @@ noncomputable def fpSemFpfma (v1 v2 v3 : BitVec 64) : BitVec 64 :=
   holFp64MulAdd .roundTiesToEven v2 v3 v1
 
 /-- Exact HOL `fp_top_comp_def` (`fpSemScript.sml:64-66`): `fp_top_comp fop =
-    fpfma`, i.e. the construction ignores `fop`. -/
+    fpfma`, i.e. the construction ignores `fop`.  HOL leaves `fop`'s type
+    polymorphic (`fp_top_comp_def_typed=∀(fop :α). fp_top_comp fop = fpfma`),
+    so the argument type stays generic here; callers instantiate `α` with the
+    `fp_top` carrier `FpTop`. -/
 @[hol "cakeml/semantics/fpSemScript.sml" "fp_top_comp_def"]
-noncomputable def fpSemFpTopComp : FpTop → BitVec 64 → BitVec 64 → BitVec 64 → BitVec 64 :=
+noncomputable def fpSemFpTopComp {α : Type} : α → BitVec 64 → BitVec 64 → BitVec 64 → BitVec 64 :=
   fun _ => fpSemFpfma
 
 end Flapjack

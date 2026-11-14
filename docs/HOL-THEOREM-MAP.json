@@ -11195,7 +11195,7 @@
   "lean_path": "Flapjack/Compiler/Backend/GenGcPartial/Proofs/Simulation.lean",
   "lean_name": "gcMoveData_simulation",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared gc_move_data_simulation_typed with source lines 979-988: the partial run, sim_inv, the child pointer bound, the heap-length equation, the major gcMoveData run and its ok imply sim_inv after the move and the translated state equality."
+  "reviewer": "Compared gc_move_data_simulation_typed with source lines 979-988: the partial run, sim_inv, the child pointer bound, the heap-length equation, the major gcMoveData run and its ok imply sim_inv after the move and the translated state equality. Task-149 typed capture re-review: gc_move_data_simulation_typed binds a vacuous ptr1' : γ that the statement never uses; its omission is documented in the Lean docstring."
 },
 {
   "hol_path": "cakeml/compiler/backend/gc/gen_gc_partialScript.sml",
@@ -40744,9 +40744,8 @@
     "hol_name": "encoded_bytes_in_mem_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/EncodedBytes.lean",
     "lean_name": "encodedBytesInMemHOL",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pbmi) against targetSemScript.sml:52-57: encoded_bytes_in_mem c pc m md <=> ?i k. k * (2 ** c.code_alignment) < LENGTH (c.encode i) /\\ bytes_in_memory pc (DROP (k * (2 ** c.code_alignment)) (c.encode i)) m md, verbatim; 2 ** code_alignment -> 2 ^ codeAlignment, DROP -> List.drop, encode : 'a asm -> word8 list -> HolAsm width -> List (BitVec 8), words qualifier for the BitVec width/8 carriers; bytes_in_memory is the tagged bytesInMemoryHOL."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 149): the typed capture encoded_bytes_in_mem_def_typed (target_sem_typed_probe.out) gives c : \u03b1 asm_config and pc : \u03b2 word, so HOL's instruction type \u03b1 is independent of the word dimension; Lean's AsmConfigExact fixes encode : HolAsm width -> List (BitVec 8). The clauses are HOL's, but this is the \u03b1 = HolAsm width instance, not an exact port; a faithful port needs an asm-config carrier generic in its instruction type."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/Evaluate.lean",
@@ -40985,7 +40984,7 @@
       "store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.2): HOL fix_clock old_s (res,new_s) (:266-271) = (res, new_s with <| clock := if old_s.clock < new_s.clock then old_s.clock else new_s.clock; termdep := old_s.termdep |>); Lean the same on the pair, polymorphic result type β as HOL. Row fix_clock=(5,3,7). The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemAccessorsSupport.holFmapAsFiniteSupportWitness. Words are BitVec width with [NeZero width]; no other representation change. Rows of scripts/hol-probes/word_sem_accessors_probe.out are checked by Flapjack.Test.WordSemAccessorsParity (state rows are kernel-checked over an arbitrary base state, matching the probe's record updates of a free s)."
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.2), re-reviewed with the typed capture fix_clock_def_typed in scripts/hol-probes/word_sem_typed_probe.out: HOL fix_clock old_s (res,new_s) (:266-271) = (res, new_s with <| clock := if old_s.clock < new_s.clock then old_s.clock else new_s.clock; termdep := old_s.termdep |>). The capture shows the incoming state at (ε,ζ,η), the returned state at (β,γ,δ) and the result at α, i.e. all seven type variables are independent; the Lean definition now binds independent widths and compiler/FFI carriers for the incoming and returned states (R for the result) and keeps the same field update. The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemAccessorsSupport.holFmapAsFiniteSupportWitness. Words are BitVec width with [NeZero width]; no other representation change."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Accessors.lean",
@@ -41361,7 +41360,7 @@
     "hol_name": "const_addresses_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL const_addresses (:980-984): a [] d = T, a (x::xs) d = (a IN d ∧ const_addresses (a + bytes_in_word) xs d); Lean identical with the set-as-Bool 'a word set and bytes_in_word = n2w (dimindex (:'a) DIV 8) as wordSemBytesInWord. Words are BitVec width with [NeZero width] (words_as_type_indexed_bitvec); no other representation change. Specialization note: HOL const_addresses is polymorphic in the type-indexed word (a word set and a word), while this Lean declaration is specialized to the wordSem instance over BitVec width and the set-as-Bool rendering, which is the only instance used on the executed path. Rows const_addresses_* of scripts/hol-probes/word_sem_call_helpers_probe.out are checked by Flapjack.Test.WordSemCallHelpersParity."
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL const_addresses (:980-984): a [] d = T, a (x::xs) d = (a IN d ∧ const_addresses (a + bytes_in_word) xs d); Lean identical with the set-as-Bool 'a word set and bytes_in_word = n2w (dimindex (:'a) DIV 8) as wordSemBytesInWord. Words are BitVec width with [NeZero width] (words_as_type_indexed_bitvec); no other representation change. Specialization note: HOL const_addresses is polymorphic in the type-indexed word (a word set and a word), while this Lean declaration is specialized to the wordSem instance over BitVec width and the set-as-Bool rendering, which is the only instance used on the executed path. Rows const_addresses_* of scripts/hol-probes/word_sem_call_helpers_probe.out are checked by Flapjack.Test.WordSemCallHelpersParity. Task 148: the typed capture const_addresses_def_typed (scripts/hol-probes/word_to_stack_proof_typed_probe.out) shows two independent HOL type variables: (a :α word) and the list element type (xs :β list), which the definition never inspects. The twin now binds {α : Type} for the element list alongside {width} [NeZero width] for the word, so the previous element-type specialisation is removed; the word translation remains the reviewed words_as_type_indexed_bitvec rendering."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/CallHelpers.lean",
@@ -44046,9 +44045,8 @@
     "lean_name": "stackSizeEq2",
     "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
     "hol_name": "stack_size_eq2",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead 4.4 wordProps: original 1785-1791 both conjuncts, arbitrary frame and stack. Positive width only (words_as_type_indexed_bitvec). Fresh literal original proof replay (wordsem_state_laws probe), statement aconv, closed, 0 hypotheses."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 148): HOL `stack_size_eq2` (wordPropsScript.sml:1785-1791) conjoins two instances of the polymorphic `stack_size`: the typed capture `stack_size_eq2_typed` in scripts/hol-probes/word_props_typed_probe.out types the cons conjunct at `(sfrm :α stack_frame)` and `(stack :α stack_frame list)`, and the empty-list conjunct at an independent `([] :β stack_frame list)`. The Lean statement fixes both at `width`-indexed frames, so it is the `β = width` instance of HOL's universal empty-list equation. The cons conjunct remains the reviewed word-translated instance; a faithful port needs a stack-size function generic in the frame type."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Semantics.lean",
@@ -44268,7 +44266,7 @@
     "hol_name": "buffer_flush_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.1): HOL buffer_flush (:22-28): if cb.position = w1 ∧ cb.position + n2w (dimindex (:'b) DIV 8) * n2w (LENGTH cb.buffer) = w2 then SOME (cb.buffer, cb with <| position := w2; buffer := [] |>) else NONE. It is the same with n2w k : 'a word as BitVec.ofNat aw k. Direct HOL rows buffer_flush_hit/miss in word_sem_carriers_probe.out are matched by Flapjack.Test.WordSemCarriersParity. Words are BitVec at positive width with NeZero; no other representation change."
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.1), re-reviewed with the typed capture buffer_flush_def_typed in scripts/hol-probes/word_sem_typed_probe.out: HOL buffer_flush (:22-28) on cb :(α,β) buffer with w1 w2 :α word returns SOME (cb.buffer, cb with <| position := w2; buffer := [] |>) :(β word list # (α,γ) buffer) option, else NONE. The capture shows the returned buffer's element width γ independent of the input's β (the flushed buffer holds the empty list), so the Lean definition binds an independent outBw for the result buffer; n2w (dimindex (:'b) DIV 8) : 'a word stays BitVec.ofNat aw (bw / 8). Direct HOL rows buffer_flush_hit/miss in word_sem_carriers_probe.out are matched by Flapjack.Test.WordSemCarriersParity. Words are BitVec at positive width with NeZero; no other representation change."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/State.lean",
@@ -54170,7 +54168,7 @@
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Expressions.lean",
     "lean_name": "bigUnion",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-cveo: compared word_allocScript.sml:580-586 and 755-769. Exact WordLangExpHOL at positive BitVec width (NeZero) retains Const/Var/Lookup/Load/Op and binary expression-valued Shift. apply_colour_exp renames Var only, recursively maps lists and both Shift operands; Const and fixed store names are unchanged. get_live_exp uses exact Spt insertion/union and big_union right fold with LN seed. No changed side conditions. Initial proof-only delivery was partial progress. Current production routing is accepted on closed dependencies flapjack-7c9s and flapjack-5qbn: Allocator.lean wordApplyColourExpRoute calls applyColourExpExecutable, the kernel-proved csimp wordApplyColourExp_eq_route rewrites compiled callers, and wordApplyColourExp_toHOL proves correspondence to the reviewed positive-width definition. WordDeadCode.lean Assign/Store/Set/ShareInst set boundaries consume liveExpressionKeys, which calls getLiveExpExecutable and hence getLiveExp through constant erasure; getLiveExpExecutable_exact and liveExpressionKeys_exact prove complete Spt/key-traversal correspondence, including both Shift operands. Source re-audit flapjack-luna-c 2026-10-01, bead flapjack-cveo: all six colouring/liveness constructors and bigUnion right fold match literal HOL580-586/755-766. No new executable change; the previously accepted production-route oracle evidence remains separate from this source audit. Body-lock refresh source review 2026-09-30, bead flapjack-7c9s: getLiveExp source and positive-width signature are unchanged by factoring preceding colouring recursion, but its elaborated body hash regenerated. Re-compared every clause with HOL word_allocScript760-766: singleton Var insertion, recursive Load, right-fold union over mapped Op arguments, binary Shift union in operand order, and LN for Const/Lookup. No live-set behavior or premise change."
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-cveo: compared word_allocScript.sml:580-586 and 755-769. Exact WordLangExpHOL at positive BitVec width (NeZero) retains Const/Var/Lookup/Load/Op and binary expression-valued Shift. apply_colour_exp renames Var only, recursively maps lists and both Shift operands; Const and fixed store names are unchanged. get_live_exp uses exact Spt insertion/union and big_union right fold with LN seed. No changed side conditions. Initial proof-only delivery was partial progress. Current production routing is accepted on closed dependencies flapjack-7c9s and flapjack-5qbn: Allocator.lean wordApplyColourExpRoute calls applyColourExpExecutable, the kernel-proved csimp wordApplyColourExp_eq_route rewrites compiled callers, and wordApplyColourExp_toHOL proves correspondence to the reviewed positive-width definition. WordDeadCode.lean Assign/Store/Set/ShareInst set boundaries consume liveExpressionKeys, which calls getLiveExpExecutable and hence getLiveExp through constant erasure; getLiveExpExecutable_exact and liveExpressionKeys_exact prove complete Spt/key-traversal correspondence, including both Shift operands. Source re-audit flapjack-luna-c 2026-10-01, bead flapjack-cveo: all six colouring/liveness constructors and bigUnion right fold match literal HOL580-586/755-766. No new executable change; the previously accepted production-route oracle evidence remains separate from this source audit. Body-lock refresh source review 2026-09-30, bead flapjack-7c9s: getLiveExp source and positive-width signature are unchanged by factoring preceding colouring recursion, but its elaborated body hash regenerated. Re-compared every clause with HOL word_allocScript760-766: singleton Var insertion, recursive Load, right-fold union over mapped Op arguments, binary Shift union in operand order, and LN for Const/Lookup. No live-set behavior or premise change. Task-148 typed capture re-review: big_union_def_typed in word_alloc_typed_probe.out keeps the payload type α of the α sptree num_map list generic; the Lean definition now binds {α : Type} (in use Unit)."
   },
   {
     "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
@@ -59751,7 +59749,7 @@
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSAHelpers.lean",
     "lean_name": "mkPrio",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.9): word_allocScript.sml:300-305 mk_prio el er = if el = Skip then SOME (INL()) else if er = Skip then SOME (INR()) else NONE; the prog equality tests with Skip as matches on .skip (equality with a nullary constructor holds exactly for that constructor). HOL α prog with α the word dimension is WordLangProgHOL (BitVec width), [NeZero width] (words_as_type_indexed_bitvec). Original EVAL rows (scripts/hol-probes/word_alloc_ssa_helpers_probe.out, 12 rows, 64-bit) replayed by definitional equality in Flapjack.Test.WordAllocSSAHelpersParity. No extra premise. Proof-side port; executed list-state SSA pass not routed through it. Coordinator integration acceptance complete; author source comparison recorded."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.9): word_allocScript.sml:300-305 mk_prio el er = if el = Skip then SOME (INL()) else if er = Skip then SOME (INR()) else NONE; the prog equality tests with Skip as matches on .skip (equality with a nullary constructor holds exactly for that constructor). HOL α prog with α the word dimension is WordLangProgHOL (BitVec width), [NeZero width] (words_as_type_indexed_bitvec). Original EVAL rows (scripts/hol-probes/word_alloc_ssa_helpers_probe.out, 12 rows, 64-bit) replayed by definitional equality in Flapjack.Test.WordAllocSSAHelpersParity. No extra premise. Proof-side port; executed list-state SSA pass not routed through it. Coordinator integration acceptance complete; author source comparison recorded. Task-148 typed capture re-review: mk_prio_def_typed gives el :α prog and er :β prog with independent word types; the Lean definition now keeps the two word dimensions separate (width and width')."
   },
   {
     "words_as_type_indexed_bitvec": true,
@@ -65477,7 +65475,7 @@
       "store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 598-602: !s s' s'' s''' env handler. LIST_REL sf_gc_consts (push_env env handler s).stack s''.stack /\\ pop_env s'' = SOME s''' /\\ s''.handler = (push_env env handler s).handler ==> LIST_REL sf_gc_consts s.stack s'''.stack /\\ s'''.handler = s.handler Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpGcConstsSupport.holFmapAsFiniteSupportWitness; positive width only."
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 598-602: !s s' s'' s''' env handler. LIST_REL sf_gc_consts (push_env env handler s).stack s''.stack /\\ pop_env s'' = SOME s''' /\\ s''.handler = (push_env env handler s).handler ==> LIST_REL sf_gc_consts s.stack s'''.stack /\\ s'''.handler = s.handler Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpGcConstsSupport.holFmapAsFiniteSupportWitness; positive width only. Task-148 typed capture re-review: LIST_REL_call_Result_typed in word_simp_proof_typed_probe.out shows the incoming state at (α,β,γ), the unused s' at an unrelated δ, and both later states at (α,ε,ζ); the Lean statement now keeps s' fully generic and lets the incoming state's compiler/FFI types differ from the later states' (same word dimension α)."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
@@ -65490,7 +65488,7 @@
       "store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 635-635: !R s s' env h. LIST_REL R (push_env env h s).stack s'.stack ==> LIST_REL R s.stack (TL s'.stack) Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpGcConstsSupport.holFmapAsFiniteSupportWitness; positive width only."
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 635-635: !R s s' env h. LIST_REL R (push_env env h s).stack s'.stack ==> LIST_REL R s.stack (TL s'.stack) Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpGcConstsSupport.holFmapAsFiniteSupportWitness; positive width only. Task-148 typed capture re-review: LIST_REL_push_env_typed gives R : α stack_frame -> β stack_frame -> bool with the two states at independent word dimensions; the Lean statement now keeps R's domain and codomain widths separate (width and width') and the two states at their own compiler/FFI carriers."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
@@ -68400,7 +68398,7 @@
     "hol_name": "const_addresses_append",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-const-memory-append): source5983-5992 arbitrary lists/domain/base, complete source domain predicate iff prefix predicate AND suffix predicate at base+bytes_in_word*n2w(prefixlength); HOL word set translated by existing native Bool characteristic function, Boolean truth as Prop equality, no new condition. Uses actual tagged native WordSem constant operations and bytes_in_word=ofNat(width/8), modular word dimension/FFI-free translation, arbitrary positive dimensions retain stride0 below8. Two literal unchanged complete original proof replays and252 matching kernel/original complete memory/domain fixtures; widths1/2/8/32/64/80, wrap/relocation overflow/long70-entry cases, every address at small widths. No held HD/EL, default, carrier, target evaluator or trust policy change."
+    "reviewer": "flapjack-sol2 source comparison (flapjack-word-stack-const-memory-append): source5983-5992 arbitrary lists/domain/base, complete source domain predicate iff prefix predicate AND suffix predicate at base+bytes_in_word*n2w(prefixlength); HOL word set translated by existing native Bool characteristic function, Boolean truth as Prop equality, no new condition. Uses actual tagged native WordSem constant operations and bytes_in_word=ofNat(width/8), modular word dimension/FFI-free translation, arbitrary positive dimensions retain stride0 below8. Two literal unchanged complete original proof replays and252 matching kernel/original complete memory/domain fixtures; widths1/2/8/32/64/80, wrap/relocation overflow/long70-entry cases, every address at small widths. No held HD/EL, default, carrier, target evaluator or trust policy change. Task 148: the typed capture const_addresses_append_typed (scripts/hol-probes/word_to_stack_proof_typed_probe.out) keeps the element type of xs/ys independent of the word dimension ((xs :α list) (ys :α list) (dm :β word -> bool) (a :β word)); the twin now binds {α : Type} for the lists and {width} [NeZero width] for the word, matching both independent HOL variables."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ConstMemoryAppend.lean",
@@ -73374,8 +73372,9 @@
     "hol_name": "word_cmp_def",
     "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
     "lean_name": "wordCmpHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (placed in the asm counterpart; compared all eight source constructors, signed and unsigned order, tests, and negations against word_cmp_def and crep_eval_cmp_rv64_probe.out)"
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Task-149 source comparison against the typed capture word_cmp_def_typed in scripts/hol-probes/asm_typed_probe.out: HOL compares `w1 w2 :\u03b1 word` and returns a Boolean, so the only carrier difference is HOL's type-indexed `'a word` rendered as positive-width `BitVec width` with `[NeZero width]`; all eight constructors, signed and unsigned order, tests and negations match word_cmp_def and crep_eval_cmp_rv64_probe.out."
   },
   {
     "lean_path": "Flapjack/Compiler/Encoders/AsmProps/ArithmeticPreservation.lean",
@@ -74221,7 +74220,7 @@
     "lean_path": "Flapjack/FpSemHOL.lean",
     "lean_name": "fpSemFpTopComp",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-h29l.6.2.6): HOL fp_top_comp fop = fpfma (fpSemScript.sml:64-66): the selector ignores its argument and returns the fpfma function. Lean fpSemFpTopComp is fun _ => fpSemFpfma, so definitionally equal; the tagged fpfma_def port (fpSemFpfma) is already reviewed under flapjack-h29l.6.2.2. Flapjack.Test.FpSemOpsParity checks fpSemFpTopComp .fma = fpSemFpfma by rfl. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement or definition reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst, or the fpSem fpfma) through untagged or tagged definitions, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-h29l.6.2.6): HOL fp_top_comp fop = fpfma (fpSemScript.sml:64-66): the selector ignores its argument and returns the fpfma function. Lean fpSemFpTopComp is fun _ => fpSemFpfma, so definitionally equal; the tagged fpfma_def port (fpSemFpfma) is already reviewed under flapjack-h29l.6.2.2. The typed capture fp_top_comp_def_typed=∀(fop :α). fp_top_comp fop = fpfma shows HOL leaves the argument polymorphic, so fpSemFpTopComp is generic over {α : Type} (task 149 identification audit; callers instantiate α with FpTop). Flapjack.Test.FpSemOpsParity checks fpSemFpTopComp .fma = fpSemFpfma by rfl. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement or definition reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst, or the fpSem fpfma) through untagged or tagged definitions, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
   },
   {
@@ -74349,7 +74348,7 @@
     "lean_path": "Flapjack/Misc/AppList.lean",
     "lean_name": "appListAppend_thm",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-main (2026-09-24: Append/List/Nil conjunction and universal variables match miscScript.sml:218-224)"
+    "reviewer": "flapjack-main (2026-09-24: Append/List/Nil conjunction and universal variables match miscScript.sml:218-224) Task-149 typed capture re-review: append_thm_typed in misc_typed_probe.out shows the three conjuncts at independent types (α app_list, β list, γ app_list); the tagged theorem now binds α β γ, and the compiler proofs use the untagged same-type instance appListAppend_thm_sameType."
   },
   {
     "hol_path": "cakeml/misc/miscScript.sml",
@@ -77602,7 +77601,7 @@
     "lean_path": "Flapjack/Pancake/CrepInline/Canonical.lean",
     "lean_name": "compileInlProgHOLExact",
     "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.7) against cakeml/pancake/crep_inlineScript.sml:259-262. HOL MAPs each (name, params, body) triple to the same name and params with inline_prog (inl_fs \\ name) body. Lean maps over the same List triple carrier, uses HolFiniteMapExact.erase for DOMSUB and the tagged inlineProgHOLExact; the standalone inl_fs parameter has a same-module lookup/finite-support roundtrip witness. MlString is the exact tagged HOL mlstring carrier, and the word-indexed program carrier uses words_as_type_indexed_bitvec. No BEq/LawfulBEq binders remain on the tagged declaration. Direct HOL output rows for inlining are replayed by canonicalOracleGuard. The executed parser-backed path reaches the computable support-certified companion compileInlProgHOLExactWithSupport through compileInlTopHOLExact in compileProgDeclsHOLW; this Classical.choose wrapper is its proof-facing form, and the String-backed compileInlTopHOL remains for the non-executed compileProgTopHOL adapter.",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.7) against cakeml/pancake/crep_inlineScript.sml:259-262. HOL MAPs each (name, params, body) triple to the same name and params with inline_prog (inl_fs \\ name) body. Lean maps over the same List triple carrier, uses HolFiniteMapExact.erase for DOMSUB and the tagged inlineProgHOLExact; the standalone inl_fs parameter has a same-module lookup/finite-support roundtrip witness. MlString is the exact tagged HOL mlstring carrier, and the word-indexed program carrier uses words_as_type_indexed_bitvec. No BEq/LawfulBEq binders remain on the tagged declaration. Direct HOL output rows for inlining are replayed by canonicalOracleGuard. The executed parser-backed path reaches the computable support-certified companion compileInlProgHOLExactWithSupport through compileInlTopHOLExact in compileProgDeclsHOLW; this Classical.choose wrapper is its proof-facing form, and the String-backed compileInlTopHOL remains for the non-executed compileProgTopHOL adapter. Task 148: the typed capture compile_inl_prog_def_typed (scripts/hol-probes/crep_inline_proof_typed_probe.out) keeps the code entry's middle component generic (prog :(mlstring # α # β crepLang$prog) list); the twin now binds {α : Type} for that component instead of fixing it to List Nat, while the inline map and the prog carrier keep their reviewed width-indexed renderings.",
     "fmap_as_finite_support_parameters": [
       "inl_fs"
     ],
@@ -81293,7 +81292,7 @@
     "lean_path": "Flapjack/Pancake/PanToCrep.lean",
     "lean_name": "retVarHOL",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-deepseek-three (source comparison, bead flapjack-pxn.18.3.5.8.9): ret_var's three clauses (pan_to_crepScript.sml:114-119) are ret_var One ns = oHD ns, ret_var (Comb sh) ns = if size_of_shape (Comb sh) = 1 then oHD ns else NONE, and ret_var (Named sh) ns = NONE. HOL oHD (HOL/src/list/src/listScript.sml:5474) is exactly List.head?, and Lean sizeOfShapeHOL is the tagged size_of_shape_def over ShapeHOL (panLangScript.sml:174). retVarHOL is stated over the exact MlString-backed ShapeHOL carrier with matching constructor arities and field types; the Named name is carried exactly as an MlString and then discarded by the function. Direct HOL rows are in scripts/hol-probes/ret_var_probe.out; Lean exact-carrier rows and the retVarHOL_shapeToHOL kernel bridge to production retVar are checked in Flapjack/Test/RetVarParity.lean. Production retVar stays untagged."
+    "reviewer": "flapjack-deepseek-three (source comparison, bead flapjack-pxn.18.3.5.8.9): ret_var's three clauses (pan_to_crepScript.sml:114-119) are ret_var One ns = oHD ns, ret_var (Comb sh) ns = if size_of_shape (Comb sh) = 1 then oHD ns else NONE, and ret_var (Named sh) ns = NONE. HOL oHD (HOL/src/list/src/listScript.sml:5474) is exactly List.head?, and Lean sizeOfShapeHOL is the tagged size_of_shape_def over ShapeHOL (panLangScript.sml:174). retVarHOL is stated over the exact MlString-backed ShapeHOL carrier with matching constructor arities and field types; the Named name is carried exactly as an MlString and then discarded by the function. Direct HOL rows are in scripts/hol-probes/ret_var_probe.out; Lean exact-carrier rows and the retVarHOL_shapeToHOL kernel bridge to production retVar are checked in Flapjack/Test/RetVarParity.lean. Production retVar stays untagged. Task-152 sweep: HOL ret_var is polymorphic in its list element type (ret_var : shape -> α list -> α option), so retVarHOL now binds {α : Type} instead of fixing α = Nat; the production bridge instantiates α = Nat."
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
@@ -81301,7 +81300,7 @@
     "lean_path": "Flapjack/Pancake/PanToCrep.lean",
     "lean_name": "wrapRtHOL",
     "statement_status": "reviewed_exact",
-    "reviewer": "Codex (source comparison at pan_to_crepScript.sml:131-136): HOL wrap_rt n = case n of NONE => NONE | SOME (One,[]) => NONE | m => m over the mlstring-named shape; Lean wrapRtHOL has the identical three clauses over the exact MlString-backed ShapeHOL carrier. Narrow codec bridge wrapRtHOL_map_shapeToHOL relates production wrapRt. Direct HOL rows none/empty_one/one_word/comb_empty/named in scripts/hol-probes/wrap_rt_probe.out; replayed on ShapeHOL and production in Flapjack/Test/WrapRtParity.lean."
+    "reviewer": "Codex (source comparison at pan_to_crepScript.sml:131-136): HOL wrap_rt n = case n of NONE => NONE | SOME (One,[]) => NONE | m => m over the mlstring-named shape; Lean wrapRtHOL has the identical three clauses over the exact MlString-backed ShapeHOL carrier. Narrow codec bridge wrapRtHOL_map_shapeToHOL relates production wrapRt. Direct HOL rows none/empty_one/one_word/comb_empty/named in scripts/hol-probes/wrap_rt_probe.out; replayed on ShapeHOL and production in Flapjack/Test/WrapRtParity.lean. Task-149 typed capture re-review: wrap_rt_def_typed in pan_to_crep_typed_probe.out gives n :(shape # α list) option, so HOL's slot-element type α is generic; wrapRtHOL now binds it (in use α = Nat)."
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
@@ -81369,7 +81368,7 @@
     "lean_name": "compileProgDeclsHOLW",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol source comparison (2026-09-30, bead flapjack-4ac.2.20.2.2; pan_to_crepScript.sml:393-397): sole List (DeclHOL width) input and ordered List (MlS x List Nat x CrepProgHOL width) output, no hypotheses. HOL extracts MAP FST (functions (FILTER inlinable prog)), then compile_to_crep prog, then compile_inl_top with those two arguments. Lean uses exactly reviewed inlinableHOL/functionsHOL/compileToCrepExactHOLW/CrepInlineCanonical.compileInlTopHOLExact in the same order. The canonical wrapper uses first-binding alist lookup and DOMSUB per function, and its unconditional compileInlTopHOLExact_eq_compileInlProgHOLExact theorem removes the computational support certificate to identify the source-shaped compile_inl_prog/inline_prog composition. The finite maps are local intermediates, so no map qualifier applies to this signature. Positive type-indexed HOL words translate to BitVec width with NeZero width. Existing exact DeclHOL kernel oracle replays cover empty, inline call, duplicate-first and nested inline cases in CompileProgParity. This declaration is the executed pan-to-crep compile_prog stage: panToWordCompileProgHOL calls compileProgDeclsHOLW, which calls compileToCrepExactHOLW and compileInlTopHOLExact. No performance exception is claimed; the direct-oracle/production bridge child4ac.2.20.2.1 stays open."
+    "reviewer": "codewhale source comparison (2026-11-11; task 145; typed HOL capture compile_prog_def_typed in scripts/hol-probes/pan_phase4_exact_probe.out, 0 hypotheses). pan_to_crepScript.sml:393-397: ∀(prog :α decl list). compile_prog prog = let inl_fs_names = MAP FST (functions (FILTER inlinable prog)); to_crep = compile_to_crep prog in compile_inl_top inl_fs_names to_crep. The only type variable α is the declaration list's word parameter, translated to {width} as BitVec width (the standard words_as_type_indexed_bitvec rendering). Lean keeps the order and every clause: inlinableHOL for HOL's inlinable, functionsHOL for functions, (…).map Prod.fst for MAP FST, compileToCrepExactHOLW for compile_to_crep, and CrepInlineCanonical.compileInlTopHOLExact for compile_inl_top; the result is the same ordered (mlstring # num list # α prog) list at CrepProgHOL width. The canonical inline wrapper's unconditional compileInlTopHOLExact_eq_compileInlProgHOLExact identifies the computable implementation with the source-shaped wrapper without adding any certificate or successful-pass premise. Representation-only: no changed quantifier, hypothesis or conclusion beyond the recorded word translation."
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
@@ -81431,7 +81430,7 @@
     "lean_name": "makeFuncsExactHOL",
     "statement_status": "reviewed_fmap_as_finite_support_result",
     "fmap_as_finite_support_result": true,
-    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.2.17): HOL pan_to_crepScript.sml:366-374 defines make_funcs prog = let fnames = MAP FST prog; params = MAP (FST o SND) prog; returns = MAP (SND o SND o SND) prog; fs = MAP3 (fun x y z => (x,y,z)) fnames params returns in alist_to_fmap fs, where alist_to_fmap is the right fold FOLDR FUPDATE FEMPTY (first entry wins on a duplicate key). Lean quantifies the same program list (the output of the tagged functionsHOL, entries (name, params, body, return)) and returns the reviewed canonical finite-support map HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL), with lookup exactly Flapjack.alistToFmap (makeFuncsEntriesHOL prog) where makeFuncsEntriesHOL is the literal MAP3 rendering of HOL's let-bound fs and Flapjack.alistToFmap is the untagged alist_to_fmap right fold. The standalone-result qualifier records only that MlS-keyed fmap representation; the same-module witness holFmapAsFiniteSupportResultWitness_makeFuncsExactHOL states the unconditional lookup-level equation against the raw alistToFmap operation. No extra hypotheses or side conditions."
+    "reviewer": "codewhale source comparison (2026-11-11; task 145/146; typed HOL capture make_funcs_def_typed in scripts/hol-probes/pan_phase4_exact_probe.out, 0 hypotheses). pan_to_crepScript.sml:366-374: ∀(prog :(α # β # δ # γ) list). make_funcs prog = let fnames = MAP FST prog; params = MAP (FST o SND) prog; returns = MAP (SND o SND o SND) prog; fs = MAP3 (λx y z. (x,y,z)) fnames params returns in alist_to_fmap fs. The exact twin is generic over HOL's four independent type variables: {α β γ δ}, with [DecidableEq α] as the accepted rendering of HOL equality on the generic key type (no BEq). It takes prog : List (α × β × δ × γ) and returns the canonical finite-support map HolFiniteMapExact α (β × γ); HOL's MAP3 (λx y z. (x,y,z)) over the three projections is the ordered association list (x, (y, z)), and alist_to_fmap is the right-fold FUPDATE from FEMPTY (first entry wins on a duplicate key), rendered by HolFiniteMapExact.empty.updateListEq over the reversed list. The standalone fmap_as_finite_support_result qualifier records only that finite-support representation; the same-module witness holFmapAsFiniteSupportResultWitness_makeFuncsExactHOL states the unconditional lookup-level correspondence to the raw right-fold FUPDATE_LIST_HOL rendering of alist_to_fmap, at the same key and with no premises. The used panSem instance (name MlS, params List (MlS × ShapeHOL), body ProgHOL width, return ShapeHOL) is kept as the untagged abbreviation makeFuncsUsedHOL for callers; the generic declaration instantiates there automatically. No changed hypothesis or conclusion."
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
@@ -81444,7 +81443,7 @@
       "funcs",
       "eids"
     ],
-    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-4ac.2.11): HOL mk_ctxt_def (pan_to_crepScript.sml:310-316) is `mk_ctxt vmap fs m (es:eid |-> 'a word) = <|vars := vmap; funcs := fs; eids := es; vmax := m|>`. mkCtxtExactHOL matches clause for clause: argument order (vmap, fs, m, es) and field assignment (vars/funcs/eids/vmax) are identical, and the record carrier is the reviewed exact PanToCrepContextExact, whose vars/funcs/eids fields use the canonical HolFiniteMapExact translation of HOL `|->` (MlString keys, ShapeHOL values, BitVec width exception codes) with same-module roundtrip witness holFmapAsFiniteSupportWitness. The fmap_as_finite_support qualifier records only that finite-support representation; it authorizes no change to the quantifier, argument order, or resulting record. Direct HOL mk_ctxt_fields rows are in scripts/hol-probes/compile_to_crep_probe.out and are replayed by Flapjack.Test.PanToCrepContextExactParity."
+    "reviewer": "codewhale source comparison (2026-11-11; task 145; typed HOL capture mk_ctxt_def_typed in scripts/hol-probes/pan_phase4_exact_probe.out, 0 hypotheses). pan_to_crepScript.sml:310-316: ∀(vmap :mlstring |-> shape # num list) (fs :mlstring |-> (mlstring # shape) list # shape) (m :num) (es :mlstring |-> α word). mk_ctxt vmap fs m es = <|vars := vmap; funcs := fs; eids := es; vmax := m|>. mkCtxtExactHOL matches clause for clause: argument order vmap, fs, m, es and field assignment vars/funcs/eids/vmax are identical, the map keys are HOL's fixed mlstring and the values are HOL's fixed shape # num list and (mlstring # shape) list # shape, and the only type variable α (the exception-code word) stays independent as {width}. The record carrier is the reviewed exact PanToCrepContextExact, whose vars/funcs/eids fields are the canonical HolFiniteMapExact translation of HOL `|->` (MlString keys, ShapeHOL values, BitVec width codes) with the same-module roundtrip witness holFmapAsFiniteSupportWitness. Representation-only: no changed quantifier, hypothesis or conclusion."
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
@@ -81456,16 +81455,15 @@
       "fm"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison against pan_to_crepScript.sml:106-112 and crepLangScript.sml:33,116-118: Lean keeps HOL's direct fm then v binder order; HolFiniteMapExact MlS (ShapeHOL × List Nat) is the canonical translation of the finite map and its checked parameter witness roundtrips lookup/support. On lookup miss both return Skip. On hit both discard vshp and form nested_seq (MAP2 Assign ns (load_globals 0w (LENGTH ns)); Lean's crepNestedSeqHOL/panMap2/loadGlobalsHOL clauses match. HOL crepLang's LoadGlob field is fixed 5 word, which Lean represents as BitVec 5; the result program's generic word parameter is CrepProgHOL width with [NeZero width], the standard positive-dimensional word translation. Probe rows remain checked by ExpHdlHOLParity. The two qualifiers authorize only these map and word-carrier translations; no extra premise or changed result."
+    "reviewer": "flapjack-luna-b source comparison against pan_to_crepScript.sml:106-112 and crepLangScript.sml:33,116-118: Lean keeps HOL's direct fm then v binder order; HolFiniteMapExact α (γ × List Nat) is the canonical translation of the finite map and its checked parameter witness roundtrips lookup/support. On lookup miss both return Skip. On hit both discard vshp and form nested_seq (MAP2 Assign ns (load_globals 0w (LENGTH ns)); Lean's crepNestedSeqHOL/panMap2/loadGlobalsHOL clauses match. HOL crepLang's LoadGlob field is fixed 5 word, which Lean represents as BitVec 5; the result program's generic word parameter is CrepProgHOL width with [NeZero width], the standard positive-dimensional word translation. Probe rows remain checked by ExpHdlHOLParity. The two qualifiers authorize only these map and word-carrier translations; no extra premise or changed result. Task-149/151 typed capture re-review: exp_hdl_def_typed gives fm :β |-> γ # num list, v :β and result α prog, so all three HOL type variables are independent: the key β (in use MlS), the discarded shape component γ (in use ShapeHOL) and the program payload α (rendered as CrepProgHOL width). expHdlExact binds the key type generically and, after task 151, the shape component γ as well: vshp is never used, so HOL's γ is arbitrary and fixing it to ShapeHOL was a specialization. The parameter witness and its broad codec are generalised over both; callers instantiate γ = ShapeHOL."
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
     "hol_name": "make_vmap_def",
     "lean_path": "Flapjack/Pancake/PanToCrep/MakeVmapHOL.lean",
     "lean_name": "panToCrepMakeVmapHOLExact",
-    "statement_status": "reviewed_fmap_as_finite_support_result",
-    "fmap_as_finite_support_result": true,
-    "reviewer": "flapjack-ds10 (source comparison, bead flapjack-4ac.2.13): HOL make_vmap_def (pan_to_crepScript.sml:327-334) returns the finite map FEMPTY |++ ZIP (pvars, ZIP (shs, with_shape shs (GENLIST I (size_of_shape (Comb shs))))) directly. panToCrepMakeVmapHOLExact reproduces the construction clause-for-clause over the canonical carrier HolFiniteMapExact MlS (ShapeHOL × List Nat): MAP FST/SND = List.map Prod.fst/snd, GENLIST I = List.range, with_shape = tagged withShapeHOL, size_of_shape = tagged sizeOfShapeHOL, and |++ = HolFiniteMapExact.updateList (the FUPDATE_LIST fold, later duplicates winning). The standalone qualifier is justified by the same-module lookup witness holFmapAsFiniteSupportResultWitness_panToCrepMakeVmapHOLExact: (panToCrepMakeVmapHOLExact params).lookup key = panToCrepMakeVmapRaw params key, the raw FUPDATE_LIST-backed HOL map. Direct HOL-EVAL rows make_vmap_shaped/make_vmap_duplicate_lookup from scripts/hol-probes/compile_to_crep_probe.out are replayed by Flapjack/Test/PanToCrepMakeVmapParity.lean. The executed pan-to-crep boundary uses this exact definition through compFuncExactHOLW; the String/Shape-keyed panToCrepMakeVmapHOL remains untagged legacy infrastructure. The qualifier is representation-only and does not change the quantifiers, side conditions, or result."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 149): the typed capture make_vmap_def_typed in scripts/hol-probes/pan_to_crep_typed_probe.out gives params :(α # shape) list and result α |-> shape # num list, so HOL's variable-name type α is generic, while this definition fixes it to MlS. Generalising the key would need [BEq α] [LawfulBEq α] for HolFiniteMapExact.updateList, whereas the accepted rendering of HOL equality on a generic key type is [DecidableEq α]; the definition is the α = MlS instance. A faithful port needs a key-generic finite-map update that follows the DecidableEq convention."
   },
   {
     "lean_path": "Flapjack/Pancake/PanToTarget.lean",
@@ -82566,7 +82564,7 @@
       "code"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (2026-09-29; bead flapjack-2de.16) against crep_inlineProofScript.sml:162-165. HOL defines locals_ext_rel a b a' b' as FDIFF a'.locals (FDOM a.locals) = FDIFF b'.locals (FDOM b.locals); Lean states the same equality over CrepSemHOLState, rendering FDIFF/FDOM extensionally on the canonical HolFiniteMapExact locals field via crepHolFdiff/crepHolFdom, with the same four state parameters and no extra hypotheses. The carrier's locals/globals/code fields use canonical HolFiniteMapExact with the same-module holFmapAsFiniteSupportWitness, and positive-width BitVec records HOL's type-indexed words. Direct HOL rows locals_ext_rel_self, locals_ext_rel_same_extension and locals_ext_rel_unequal_witness in crep_inline_relations_probe.out; Lean replay in Flapjack/Test/CrepInlineRelationsExactParity.lean."
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29; bead flapjack-2de.16) against crep_inlineProofScript.sml:162-165. HOL defines locals_ext_rel a b a' b' as FDIFF a'.locals (FDOM a.locals) = FDIFF b'.locals (FDOM b.locals); Lean states the same equality over CrepSemHOLState, rendering FDIFF/FDOM extensionally on the canonical HolFiniteMapExact locals field via crepHolFdiff/crepHolFdom, with the same four state parameters and no extra hypotheses. The carrier's locals/globals/code fields use canonical HolFiniteMapExact with the same-module holFmapAsFiniteSupportWitness, and positive-width BitVec records HOL's type-indexed words. Direct HOL rows locals_ext_rel_self, locals_ext_rel_same_extension and locals_ext_rel_unequal_witness in crep_inline_relations_probe.out; Lean replay in Flapjack/Test/CrepInlineRelationsExactParity.lean. Task 148: the typed capture locals_ext_rel_def_typed (scripts/hol-probes/crep_inline_proof_typed_probe.out) keeps the four states at independent type instances: a :(α, β) state, b :(γ, δ) state, a' :(ε, ζ) state, b' :(ε, η) state. The twin now binds three independent widths w1/w2/w3 (a and b independent, a' and b' sharing w3) and four independent FFI hosts σ1..σ4, instead of fixing every state at one width and one σ; the FDIFF/FDOM body and the finite-support qualifier are unchanged."
   },
   {
     "hol_path": null,
@@ -85418,7 +85416,7 @@
       "inl_fs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-2de.4.1): crep_inlineProofScript.sml:3270-3272 forall crep_code inl_fs. ALL_DISTINCT (MAP FST crep_code) ==> ALL_DISTINCT (MAP FST (compile_inl_prog inl_fs crep_code)). Lean binds crep_code inl_fs in HOL order; ALL_DISTINCT is List.Nodup, MAP FST is List.map Prod.fst, and compile_inl_prog is the tagged compileInlProgHOLExact. Same premise and conclusion."
+    "reviewer": "flapjack-opus source comparison (bead flapjack-2de.4.1): crep_inlineProofScript.sml:3270-3272 forall crep_code inl_fs. ALL_DISTINCT (MAP FST crep_code) ==> ALL_DISTINCT (MAP FST (compile_inl_prog inl_fs crep_code)). Lean binds crep_code inl_fs in HOL order; ALL_DISTINCT is List.Nodup, MAP FST is List.map Prod.fst, and compile_inl_prog is the tagged compileInlProgHOLExact. Same premise and conclusion. Task 148: the typed capture compile_inline_distinct_typed (scripts/hol-probes/crep_inline_proof_typed_probe.out) keeps the code entry's middle component generic ((crep_code :(mlstring # α # β crepLang$prog) list)); the theorem now binds {α : Type} for that component, matching HOL's independent α instead of fixing it to List Nat."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
@@ -98149,13 +98147,29 @@
     "hol_name": "ctxt_fc_vmax",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "ctxtFcVmaxHOL",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "funcs",
-      "eids"
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanToCrepContextExact.funcs",
+      "em"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-09-27; beads flapjack-4ac.5.93, recovered after the words/imported-owner policy landed): HOL ctxt_fc_vmax (pan_to_crepProofScript.sml:2307-2312) proves the no-premise projection (ctxt_fc ctxt.funcs em vs shs ns).vmax = MAX_LIST ns by rw [ctxt_fc_def]. HOL's first argument ctxt.funcs is a projection of an implicitly universally quantified context record and ctxt_fc ignores it in the vmax clause, so the Lean statement's bare cvs argument is equivalent. The Lean theorem ctxtFcVmaxHOL states the same projection over the exact PanToCrepContextExact carrier; the argument order (cvs, em, vs, shs, ns) and the unrestricted quantifiers match, and MAX_LIST is maxList. The conclusion is a Nat that depends only on ns and does not traverse a finite-map field, but the term is stated over the imported exact carrier and binds the cvs/em maps to its funcs/eids fields, so the fmap_as_finite_support := [funcs, eids] qualifier records that canonical HolFiniteMapExact translation (same-module witness CtxtFcExact.holFmapAsFiniteSupportWitness). HOL word-dimension audit (flapjack-4ac.14 policy): the signature is width-indexed with BitVec width exception codes and [NeZero width], so (words_as_type_indexed_bitvec) also applies and the combined status is used. Direct HOL-EVAL rows vmax_nonempty_list=T and vmax_empty_list=T in scripts/hol-probes/ctxt_fc_probe.out are replayed by the kernel-checked regression in Flapjack/Test/PanToCrepContextExactParity.lean."
+    "reviewer": "flapjack-ds9 source comparison (2026-09-27; beads flapjack-4ac.5.93, recovered after the words/imported-owner policy landed): HOL ctxt_fc_vmax (pan_to_crepProofScript.sml:2307-2312) proves the no-premise projection (ctxt_fc ctxt.funcs em vs shs ns).vmax = MAX_LIST ns by rw [ctxt_fc_def]. The typed capture ctxt_fc_vmax_typed (pan_to_crep_proof_typed_probe.out:4) types the context at β context and em at α word, so the context's word dimension is independent of the exception-code width. The Lean theorem ctxtFcVmaxHOL states HOL's ctxt binder with its .funcs projection and binds {ctxtWidth} and {width} separately (task 152 item 4); the argument order (ctxt, em, vs, shs, ns) and the unrestricted quantifiers match, and MAX_LIST is maxList. The untagged ctxtFcVmaxHOL_bare keeps the earlier bare-map form for callers. The conclusion is a Nat that depends only on ns and does not traverse a finite-map field, but the term is stated over the imported exact carrier and binds ctxt.funcs, so the multi-carrier relation qualifier (fmap_as_finite_support_relation := [PanToCrepContextExact.funcs, em]) records both canonical HolFiniteMapExact translations (task 153 item 2): the imported carrier field ctxt.funcs and the standalone HOL binder em : mlstring |-> alpha word, with the same-module carrier witness holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact. The earlier field-only qualifier [funcs] did not cover em, which HOL explicitly quantifies. HOL word-dimension audit (flapjack-4ac.14 policy): the signature is width-indexed with BitVec width exception codes and [NeZero width], so (words_as_type_indexed_bitvec) also applies and the combined status is used. Direct HOL-EVAL rows vmax_nonempty_list=T and vmax_empty_list=T in scripts/hol-probes/ctxt_fc_probe.out are replayed by the kernel-checked regression in Flapjack/Test/PanToCrepContextExactParity.lean."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific representation witness, not a HOL declaration: same-module roundtrip of the imported PanToCrepContextExact carrier through its broad counterpart, required by the ctxt_fc_vmax relation qualifier (task 153 item 2). It is declared under the fresh namespace CtxtFcVmaxRelationWitnesses so it does not clash with the imported witness of the same leaf name."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "ctxtFcVmaxHOL_bare",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific bare-map form of the tagged ctxt_fc_vmax port: it takes the funcs map directly instead of HOL's ctxt binder, for callers that only hold that map (task 152 item 4). It has no HOL declaration of its own."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -98163,7 +98177,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "decsStcnamesHOLExact_of_functions_or_exnDecls",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.5.77): exact port of HOL `decs_stcnames_lemma` (`pan_to_crepProofScript.sml:4963-4969`). HOL `EVERY (λd. is_function d ∨ is_exn_decl d) code ⇒ decs_stcnames ctxt code = SOME ctxt` is rendered as `code.all (fun d => isFunctionHOL d || isExnDeclHOL d) = true ⇒ decsStcnamesHOLExact context code = some context` over the exact `DeclHOL width`/`StructContextExact` carriers, reusing `decsStcnamesHOLExact` (tagged `decs_stcnames_def`, `panSemScript.sml:839`). `List.all`/`Bool` mirror `EVERY`, and `some` mirrors `SOME`."
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-4ac.5.77): exact port of HOL `decs_stcnames_lemma` (`pan_to_crepProofScript.sml:4963-4969`). HOL `EVERY (λd. is_function d ∨ is_exn_decl d) code ⇒ decs_stcnames ctxt code = SOME ctxt` is rendered as `code.all (fun d => isFunctionHOL d || isExnDeclHOL d) = true ⇒ decsStcnamesHOLExact context code = some context` over the exact `DeclHOL width`/`StructContextExact` carriers, reusing `decsStcnamesHOLExact` (tagged `decs_stcnames_def`, `panSemScript.sml:839`). `List.all`/`Bool` mirror `EVERY`, and `some` mirrors `SOME`. Task-152 sweep: the binder order now follows HOL's code-then-ctxt order (the Lean header had context-then-code); premise and conclusion are unchanged."
   },
   {
     "hol_path": null,
@@ -98236,7 +98250,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "isWfShapeExactHOL_length_flatten",
     "statement_status": "reviewed_exact",
-    "reviewer": "Codex (source comparison; exact ValueHOL/ShapeHOL rendering: is_wf_shape_nil rendered as isWfShapeExactHOL ([] : StructContextExact), shape_of as shapeOfHOLExact, size_of_shape as sizeOfShapeHOL, flatten as flattenHOL, LENGTH as .length; both HOL side conditions preserved; reused the exact flattenHOL_length_eq_sizeOfShapeHOL (panPropsScript.sml:171); oracle rows iwf_val/iwf_struct/iwf_nested/iwf_val_len/iwf_size_val/iwf_wf_val/iwf_wf_struct in scripts/hol-probes/pan_to_crep_is_wf_shape_nil_probe.out, reproduced by Flapjack/Test/PanToCrepStateRelParity.lean)"
+    "reviewer": "Codex (source comparison; exact ValueHOL/ShapeHOL rendering: is_wf_shape_nil rendered as isWfShapeExactHOL ([] : StructContextExact), shape_of as shapeOfHOLExact, size_of_shape as sizeOfShapeHOL, flatten as flattenHOL, LENGTH as .length; both HOL side conditions preserved; reused the exact flattenHOL_length_eq_sizeOfShapeHOL (panPropsScript.sml:171); oracle rows iwf_val/iwf_struct/iwf_nested/iwf_val_len/iwf_size_val/iwf_wf_val/iwf_wf_struct in scripts/hol-probes/pan_to_crep_is_wf_shape_nil_probe.out, reproduced by Flapjack/Test/PanToCrepStateRelParity.lean. Task-152 sweep: the tagged statement now takes HOL's single conjunctive premise (is_wf_shape_nil ∧ (size=0 ⇒ l=[]) ∧ (0<size ⇒ l=flatten)) instead of three curried premises."
   },
   {
     "hol_path": null,
@@ -98252,7 +98266,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "loadShapeBytes_getElem_rel",
     "statement_status": "reviewed_exact",
-    "reviewer": "Codex (source comparison)"
+    "reviewer": "Codex (source comparison). Task-152 sweep: the binder order now follows HOL's m, n, a, [t], e order (count, index, address, value); HOL's ffi type t is vacuous and omitted."
   },
   {
     "hol_path": null,
@@ -98269,6 +98283,22 @@
     "lean_name": "lookup_map_preserveFst",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific list fact: a key-preserving projection commutes with List.lookup (HOL ALOOKUP_MAP analogue used inside mk_ctxt_code_imp_code_rel). Not a standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "fupdateListHOL_reverse_eq_foldr",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific finite-map support: the HOL-equality FUPDATE_LIST_HOL fold over a reversed association list is the right-fold FUPDATE_HOL from FEMPTY over the original list (the alist_to_fmap shape). Not a standalone HOL declaration; local infrastructure for FUPDATE_LIST_HOL_reverse_apply_eq_lookup."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "FUPDATE_LIST_HOL_reverse_apply_eq_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific finite-map support: applying the HOL-equality FUPDATE_LIST_HOL fold over a reversed association list equals List.lookup on the original list (first occurrence wins), matching HOL alist_to_fmap/ALOOKUP. Not a standalone HOL declaration."
   },
   {
     "hol_path": null,
@@ -98315,8 +98345,17 @@
     "hol_name": "mem_comp_field",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "memCompFieldHOLExact",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Exact port of pan_to_crepProofScript.sml:666: i < LENGTH vs, LENGTH e = size_of_shape (shape_of (RStruct vs)), comp_field i sh e = (es, shp), Comb sh = shape_of (RStruct vs), and MEM ce es imply MEM ce e. Uses exact ShapeHOL, ValueHOL, and CrepExpHOL carriers; [NeZero width] reflects positive HOL word dimension. The source theorem's length premise is retained even though this proof does not need it. Direct HOL-EVAL comp_field rows first/second in scripts/hol-probes/comp_field_probe.out are reproduced over exact carriers in CompFieldParity, which also exercises this theorem at both selections."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+    "reviewer": "Exact port of pan_to_crepProofScript.sml:666-672: the single conjunctive premise i < LENGTH vs ∧ LENGTH e = size_of_shape (shape_of (RStruct vs)) ∧ comp_field i sh e = (es, shp) ∧ Comb sh = shape_of (RStruct vs) ∧ MEM ce es implies MEM ce e. Uses exact ShapeHOL, ValueHOL, and CrepExpHOL carriers. The typed capture mem_comp_field_typed (pan_to_crep_proof_typed_probe.out:14) gives e :α crepLang$exp list and vs :β v list, so the expression width α and value width β are independent: the statement binds {width} and {valueWidth} separately with their own [NeZero] discharges and takes HOL's one conjunction, destructured in the proof (task 152 item 3). The source theorem's length premise is retained even though this proof does not need it. Direct HOL-EVAL comp_field rows first/second in scripts/hol-probes/comp_field_probe.out are reproduced over exact carriers in CompFieldParity, which also exercises this theorem at both selections."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "memCompFieldHOLExact_curried",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific curried wrapper around the tagged mem_comp_field port: it takes the five premises separately and passes them as HOL's single conjunction (task 152 item 3). It has no HOL declaration of its own; callers that already hold the premises separately use it."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -98508,7 +98547,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CodeRelExact.lean",
     "lean_name": "codeRelExactHOLW_emptyLocals",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-ds9 source comparison (bead flapjack-4ac.5.90): HOL code_rel_empty_locals (pan_to_crepProofScript.sml:96-100) is code_rel ctxt s.code t.code ==> code_rel ctxt (empty_locals s).code (empty_locals t).code with no other premises. The Lean codeRelExactHOLW_emptyLocals keeps the same context and both state binders over PanToCrepContextExact/PanSemStateFiniteExact/CrepSemHOLState, applies the tagged exact PanSemStateFiniteExact.emptyLocalsHOLFinite and CrepSemHOLState.emptyLocals updates, and uses the exact codeRelExactHOLW relation. HOL empty_locals clears only the locals field, so the two code fields passed to code_rel are definitionally unchanged; the proof is the definitional unfolding mirroring HOL's rw [code_rel_def, empty_locals_def, panSemTheory.empty_locals_def] >> metis_tac[]. The relation qualifier records only the canonical HolFiniteMapExact translation of the two traversed code fields PanSemStateFiniteExact.code and CrepSemHOLState.code; the context's own funcs/eids translation is already recorded on the tagged codeRelExactHOLW relation. Same-module witnesses holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact and holFmapAsFiniteSupportRelationWitness_CrepSemHOLState forward the canonical roundtrips. No quantifier, hypothesis, side condition, or conclusion is added, changed, or weakened. This tags only the exact proof-side theorem, not the production codeRel carriers. The combined words_as_type_indexed_bitvec qualifier records the type-indexed 'a word -> BitVec width translation (bead flapjack-ikjm.4).",
+    "reviewer": "flapjack-ds9 source comparison (bead flapjack-4ac.5.90): HOL code_rel_empty_locals (pan_to_crepProofScript.sml:96-100) is code_rel ctxt s.code t.code ==> code_rel ctxt (empty_locals s).code (empty_locals t).code with no other premises. The Lean codeRelExactHOLW_emptyLocals keeps the same context and both state binders over PanToCrepContextExact/PanSemStateFiniteExact/CrepSemHOLState, applies the tagged exact PanSemStateFiniteExact.emptyLocalsHOLFinite and CrepSemHOLState.emptyLocals updates, and uses the exact codeRelExactHOLW relation. HOL empty_locals clears only the locals field, so the two code fields passed to code_rel are definitionally unchanged; the proof is the definitional unfolding mirroring HOL's rw [code_rel_def, empty_locals_def, panSemTheory.empty_locals_def] >> metis_tac[]. The relation qualifier records only the canonical HolFiniteMapExact translation of the two traversed code fields PanSemStateFiniteExact.code and CrepSemHOLState.code; the context's own funcs/eids translation is already recorded on the tagged codeRelExactHOLW relation. Same-module witnesses holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact and holFmapAsFiniteSupportRelationWitness_CrepSemHOLState forward the canonical roundtrips. No quantifier, hypothesis, side condition, or conclusion is added, changed, or weakened. This tags only the exact proof-side theorem, not the production codeRel carriers. The combined words_as_type_indexed_bitvec qualifier records the type-indexed 'a word -> BitVec width translation (bead flapjack-ikjm.4). The typed capture code_rel_empty_locals_typed (pan_to_crep_proof_typed_probe.out:19) gives s :(α, β) panSem$state and t :(α, γ) state with independent FFI types, so the statement binds {σ} and {τ} separately instead of one shared host type (task-152 sweep).",
     "fmap_as_finite_support_relation": [
       "PanSemStateFiniteExact.code",
       "CrepSemHOLState.code"
@@ -98581,7 +98620,7 @@
       "PanToCrepContextExact.eids"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-c source review (flapjack-pxn.18.4.3.73.4): compared HOL mk_ctxt_code_imp_code_rel at pan_to_crepProofScript.sml:4604-4616 clause-by-clause. Both statements quantify the declaration program, require distinct function names and localization of every body, then establish code_rel under mk_ctxt FEMPTY (make_funcs (functions pan_code)) 0 (get_eids_from_decls pan_code) between alist_to_fmap (functions pan_code) and alist_to_fmap (compile_to_crep pan_code). Lean uses exact DeclHOL/MlS/ShapeHOL/ProgHOL/CrepProgHOL carriers; source/target alist_to_fmap values are represented by HolFiniteMapExact.updateList of reversed lists, preserving first-occurrence lookup, and compilation is through tagged compileToCrepExactHOLW/compileProgExactHOLW. The code_rel relation uses exact context funcs/eids fields, recorded with the canonical finite-support relation qualifier and its same-module context roundtrip witness; positive-width BitVec is resolved through the tagged DeclHOL -> FunDeclHOL/ProgHOL -> ExpHOL carrier chain and records HOL's type-indexed word. No additional premises or arbitrary-context narrowing were introduced. The direct code_rel_generated_initial EVAL expansion and theorem discharge rows are in scripts/hol-probes/code_rel_probe.out; the matching exact-carrier kernel regression is in Flapjack.Test.PanToCrepCodeRelParity."
+    "reviewer": "flapjack-luna-c source review (flapjack-pxn.18.4.3.73.4): compared HOL mk_ctxt_code_imp_code_rel at pan_to_crepProofScript.sml:4604-4616 clause-by-clause. Both statements quantify the declaration program, require distinct function names and localization of every body, then establish code_rel under mk_ctxt FEMPTY (make_funcs (functions pan_code)) 0 (get_eids_from_decls pan_code) between alist_to_fmap (functions pan_code) and alist_to_fmap (compile_to_crep pan_code). Lean uses exact DeclHOL/MlS/ShapeHOL/ProgHOL/CrepProgHOL carriers; source/target alist_to_fmap values are represented by HolFiniteMapExact.updateList of reversed lists, preserving first-occurrence lookup, and compilation is through tagged compileToCrepExactHOLW/compileProgExactHOLW. The code_rel relation uses exact context funcs/eids fields, recorded with the canonical finite-support relation qualifier and its same-module context roundtrip witness; positive-width BitVec is resolved through the tagged DeclHOL -> FunDeclHOL/ProgHOL -> ExpHOL carrier chain and records HOL's type-indexed word. No additional premises or arbitrary-context narrowing were introduced. The direct code_rel_generated_initial EVAL expansion and theorem discharge rows are in scripts/hol-probes/code_rel_probe.out; the matching exact-carrier kernel regression is in Flapjack.Test.PanToCrepCodeRelParity. Task-152 sweep: the tagged statement now takes HOL's single conjunctive premise (ALL_DISTINCT ∧ EVERY) instead of two curried premises; the internal caller and the code-rel parity test build the conjunction."
   },
   {
     "hol_path": null,
@@ -99060,7 +99099,7 @@
       "code"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-09-28; bead flapjack-4ac.5.97): HOL evaluate_nested_decs_load_globals (pan_to_crepProofScript.sml:4139-4176) quantifies s rv rvs vs p in appearance order; Lean keeps that order as state value values names body. Premise globals_lookup s rv = SOME rvs /\\ size_of_shape (shape_of rv) <= 32 /\\ ALL_DISTINCT vs /\\ LENGTH vs = size_of_shape (shape_of rv) maps conjunct-for-conjunct to hLookup / _hSize / hDistinct / hLength. Conclusion evaluate (nested_decs vs (load_globals 0w (size_of_shape (shape_of rv))) p, s) = let (res,s') = evaluate (p, s with locals := s.locals |++ ZIP (vs, rvs)) in (res, s' with locals := FOLDL res_var s'.locals (ZIP (vs, MAP (FLOOKUP s.locals) vs))) is rendered with the reviewed globalsLookupHOL/sizeOfShapeHOL/shapeOfHOLExact/nestedDecsHOL/loadGlobalsHOL and the tagged line-443 evalCrepSemHOLProgExact; |++ is updateListEq, FLOOKUP is .lookup, FOLDL res_var is the HolFiniteMapExact.resVarEq fold, and HOL's let (res,s') = ... in is the outer let on the result pair. The CrepSemHOLState locals/globals/code maps use the canonical HolFiniteMapExact carrier (same-module witness EvalNestedDecsFiniteSupport.holFmapAsFiniteSupportWitness), and 'a word / 'ffi use the BitVec width [NeZero width] / sigma : Type translation. The proof derives the statement from the tagged evalNestedDecsSeqResVarEqHOL; the direct HOL probe eval_nested_decs_load_globals_probe.out and the derived regression exactWordEquation in Test/CrepNestedDecsLoadGlobalsParity.lean cover it."
+    "reviewer": "codewhale source comparison (2026-11-11; task 145; typed HOL capture evaluate_nested_decs_load_globals_typed in scripts/hol-probes/pan_phase4_exact_probe.out, 0 hypotheses). pan_to_crepProofScript.sml:4139-4176: globals_lookup (s :(α,β) state) (rv :γ v) = SOME (rvs :α word_lab list) ∧ size_of_shape (shape_of rv) ≤ 32 ∧ ALL_DISTINCT (vs :num list) ∧ LENGTH vs = size_of_shape (shape_of rv) ⇒ evaluate (nested_decs vs (load_globals (0w :word5) (size_of_shape (shape_of rv)) :α exp list) (p :α prog), s) = let (res,s') = evaluate (p, s with locals := s.locals |++ ZIP (vs,rvs)) in (res, s' with locals := FOLDL res_var s'.locals (ZIP (vs,MAP (FLOOKUP s.locals) vs))). The loaded value type γ is independent of the state's word type α; Lean binds {valueWidth} with its own [NeZero valueWidth] separately from the state width {width}. The quantifier order s, rv, rvs, vs, p is kept as state, value, values, names, body; the four conjuncts are one conjoined premise in HOL order, rendered as globalsLookupHOL (now value-width independent) / sizeOfShapeHOL (shapeOfHOLExact value) ≤ 32 / names.Nodup / names.length = sizeOfShapeHOL (shapeOfHOLExact value). |++ is updateListEq, FLOOKUP is .lookup, FOLDL res_var is the HolFiniteMapExact.resVarEq fold, nested_decs/load_globals are nestedDecsHOL/loadGlobalsHOL at width, and the Crep evaluate is evalCrepSemHOLProgExact. The three finite-map fields use the reviewed HolFiniteMapExact translation and 'a word/'ffi use the BitVec width/σ translation. Representation-only: no changed hypothesis, conclusion or clause."
   },
   {
     "hol_path": null,
@@ -99081,7 +99120,7 @@
       "globals",
       "code"
     ],
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.60.1.1): source comparison of HOL globals_lookup_def (pan_to_crepProofScript.sml:435-438) against this exact port. HOL OPT_MMAP (FLOOKUP t.globals) (GENLIST (fun x => n2w x) (size_of_shape (shape_of v))) is rendered as List.mapM over the reviewed HolFiniteMapExact translation of the crepSem state's 5 word |-> 'a word_lab globals map, with GENLIST ... = List.range ... |> List.map BitVec.ofNat 5 and size_of_shape/shape_of = sizeOfShapeHOL/shapeOfHOLExact. The production String/PanValue globalsLookup stays a documented_mismatch."
+    "reviewer": "codewhale source comparison (2026-11-11; task 145; typed HOL capture globals_lookup_def_typed in scripts/hol-probes/pan_phase4_exact_probe.out, 0 hypotheses). pan_to_crepProofScript.sml:435-438: ∀(t :(α,β) state) (v :γ v). globals_lookup t v = OPT_MMAP (FLOOKUP t.globals) (GENLIST (λx. n2w x) (size_of_shape (shape_of v))). The value type γ is independent of the state's word type α. Lean keeps that independence: {valueWidth} with its own [NeZero valueWidth] is separate from the state width {width}, and the result stays Option (List (HolWordLab width)) because t.globals is the 5 word |-> α word_lab map. OPT_MMAP (FLOOKUP t.globals) is List.mapM over the canonical HolFiniteMapExact .lookup of the crepSem state's globals field, and GENLIST (λx. n2w x) (size_of_shape (shape_of v)) is List.range ... |> List.map BitVec.ofNat 5 over sizeOfShapeHOL (shapeOfHOLExact v). Representation-only: no changed quantifier, hypothesis or conclusion beyond the recorded finite-map and word/FFI translations. The production String/PanValue globalsLookup stays a documented_mismatch."
   },
   {
     "hol_path": null,
@@ -100985,7 +101024,7 @@
       "vars"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-09-27; bead flapjack-4ac.5.94, recovered after the words/imported-owner policy landed): HOL ctxt_max_el_leq (pan_to_crepProofScript.sml:1493-1503) has the conjunction ctxt_max ctxt.vmax ctxt.vars and FLOOKUP ctxt.vars v = SOME (sh,ns) and n < LENGTH ns as its premise and concludes EL n ns <= ctxt.vmax. Lean keeps exactly those three premise conjuncts (curried) and the same conclusion: ctxt_max becomes the exact-carrier rendering ctxtMaxFiniteExact (the predicate already used inside the tagged locals_rel_def), FLOOKUP becomes .lookup, EL n ns becomes the bounded getElem slots[n], and LENGTH/<= become List.length/<=. The only finite-map value traversed is the named PanToCrepContextExact.vars field of the imported exact carrier, whose same-module canonical field witness CtxtMaxElLeqExact.holFmapAsFiniteSupportWitness establishes the reviewed finite-support translation; vmax is Nat and is not a finite-map field. HOL word-dimension audit (flapjack-4ac.14 policy): the imported carrier PanToCrepContextExact width carries [NeZero width] and BitVec width exception codes, so (words_as_type_indexed_bitvec) also applies and the combined status is used. The proof is HOL's rw [ctxt_max_def] with the bound instantiated at EL n ns and EL_MEM. No direct HOL-EVAL oracle row exists for this symbolic-index lemma, so the kernel-checked concrete instance in Flapjack/Test/PanToCrepStateRelCarrierParity.lean replays it. This exact-carrier port replaces the removed String-keyed analogue."
+    "reviewer": "flapjack-ds9 source comparison (2026-09-27; bead flapjack-4ac.5.94, recovered after the words/imported-owner policy landed): HOL ctxt_max_el_leq (pan_to_crepProofScript.sml:1493-1503) has the conjunction ctxt_max ctxt.vmax ctxt.vars and FLOOKUP ctxt.vars v = SOME (sh,ns) and n < LENGTH ns as its premise and concludes EL n ns <= ctxt.vmax. Lean keeps exactly those three premise conjuncts (curried) and the same conclusion: ctxt_max becomes the exact-carrier rendering ctxtMaxFiniteExact (the predicate already used inside the tagged locals_rel_def), FLOOKUP becomes .lookup, EL n ns becomes the bounded getElem slots[n], and LENGTH/<= become List.length/<=. The only finite-map value traversed is the named PanToCrepContextExact.vars field of the imported exact carrier, whose same-module canonical field witness CtxtMaxElLeqExact.holFmapAsFiniteSupportWitness establishes the reviewed finite-support translation; vmax is Nat and is not a finite-map field. HOL word-dimension audit (flapjack-4ac.14 policy): the imported carrier PanToCrepContextExact width carries [NeZero width] and BitVec width exception codes, so (words_as_type_indexed_bitvec) also applies and the combined status is used. The proof is HOL's rw [ctxt_max_def] with the bound instantiated at EL n ns and EL_MEM. No direct HOL-EVAL oracle row exists for this symbolic-index lemma, so the kernel-checked concrete instance in Flapjack/Test/PanToCrepStateRelCarrierParity.lean replays it. This exact-carrier port replaces the removed String-keyed analogue. Task-152 sweep: the tagged statement now takes HOL's single conjunctive premise (ctxt_max ∧ FLOOKUP ∧ n < LENGTH ns) instead of three curried premises; the parity test builds the conjunction."
   },
   {
     "hol_path": null,
@@ -101079,7 +101118,7 @@
       "t"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.95.1; pan_to_crepProofScript.sml:4179-4225): HOL !ct s t v x ns. locals_rel ct s t /\\ is_wf_shape_nil (shape_of v) /\\ ALL_DISTINCT ns /\\ (!x. MEM x ns ==> ct.vmax < x /\\ x <= ct.vmax + size_of_shape (shape_of v)) /\\ LENGTH ns = size_of_shape (shape_of v) ==> locals_rel (ct with <|vars := ct.vars |+ (x,(shape_of v,ns)); vmax := ct.vmax + size_of_shape (shape_of v)|>) (s |+ (x,v)) (t |++ ZIP(ns, flatten v)). Lean keeps the binders ct s t v x ns and the single conjunctive premise; the inner bound x is y (MEM is ∈, ALL_DISTINCT is Nodup, LENGTH is length). locals_rel/is_wf_shape_nil/shape_of/size_of_shape/flatten are the tagged exact ports. |+ on ct.vars and s is HolFiniteMapExact.update, the FUPDATE port used by the exact compiler's DecCall context and the Pan set_var; |++ ZIP on t is updateListEq (zip); the record update is Lean's structure update. The relation qualifier names PanToCrepContextExact.vars and the standalone locals s t. 'a word is BitVec width with [NeZero width]."
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.95.1; pan_to_crepProofScript.sml:4179-4225): HOL !ct s t v x ns. locals_rel ct s t /\\ is_wf_shape_nil (shape_of v) /\\ ALL_DISTINCT ns /\\ (!x. MEM x ns ==> ct.vmax < x /\\ x <= ct.vmax + size_of_shape (shape_of v)) /\\ LENGTH ns = size_of_shape (shape_of v) ==> locals_rel (ct with <|vars := ct.vars |+ (x,(shape_of v,ns)); vmax := ct.vmax + size_of_shape (shape_of v)|>) (s |+ (x,v)) (t |++ ZIP(ns, flatten v)). Lean keeps the binders ct s t v x ns and the single conjunctive premise; the inner bound x is y (MEM is ∈, ALL_DISTINCT is Nodup, LENGTH is length). locals_rel/is_wf_shape_nil/shape_of/size_of_shape/flatten are the tagged exact ports. |+ on ct.vars and s is HolFiniteMapExact.update, the FUPDATE port used by the exact compiler's DecCall context and the Pan set_var; |++ ZIP on t is updateListEq (zip); the record update is Lean's structure update. The relation qualifier names PanToCrepContextExact.vars and the standalone locals s t. 'a word is BitVec width with [NeZero width]. The typed capture locals_rel_extend_new_var_typed (pan_to_crep_proof_typed_probe.out:36) types the context at α context and the locals at β, so the statement binds {ctxtWidth} and {width} separately (task 152 item 1)."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -101105,7 +101144,7 @@
       "tLocs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-28, flapjack-pxn.18.4.3.1; pan_to_crepProofScript.sml:2328-2343): HOL opt_mmap_eval_is_wf_shape_v has the conjunctive premise OPT_MMAP (eval s) es = SOME vs /\\ state_rel s t /\\ locals_rel ctxt s.locals t_locs, and concludes EVERY is_wf_shape_v_nil vs. Lean keeps the same conjunction in the same order: evalListHOLFiniteClassical s es = some vs is the exact finite OPT_MMAP (eval s) (the list step of the tagged Pan evaluator, with the classical address-set decision internal), and panToCrepStateRelFiniteExact and panToCrepLocalsRelFiniteExact are the tagged relations. The conclusion is ∀ v ∈ vs, isWfShapeValueHOLExact [] v = true (EVERY is membership; is_wf_shape_v_nil is is_wf_shape_v []). Free HOL variables es vs s t ctxt t_locs are the explicit binders; there are no extra premises. The traversed finite maps are PanSemStateFiniteExact.globals (state_rel's FEMPTY), PanSemStateFiniteExact.locals, PanToCrepContextExact.vars, and the standalone t_locs; same-module canonical witnesses cover both carriers. This supersedes the former documented-mismatch production analogue. Coordinator review (2026-09-28): the declaration is width-indexed (ValueHOL width / BitVec width, [NeZero width]), so (words_as_type_indexed_bitvec) records HOL's 'a word translation. Combined with the relation qualifier."
+    "reviewer": "flapjack-opus source comparison (2026-09-28, flapjack-pxn.18.4.3.1; pan_to_crepProofScript.sml:2328-2343): HOL opt_mmap_eval_is_wf_shape_v has the conjunctive premise OPT_MMAP (eval s) es = SOME vs /\\ state_rel s t /\\ locals_rel ctxt s.locals t_locs, and concludes EVERY is_wf_shape_v_nil vs. Lean keeps the same conjunction in the same order: evalListHOLFiniteClassical s es = some vs is the exact finite OPT_MMAP (eval s) (the list step of the tagged Pan evaluator, with the classical address-set decision internal), and panToCrepStateRelFiniteExact and panToCrepLocalsRelFiniteExact are the tagged relations. The conclusion is ∀ v ∈ vs, isWfShapeValueHOLExact [] v = true (EVERY is membership; is_wf_shape_v_nil is is_wf_shape_v []). Free HOL variables es vs s t ctxt t_locs are the explicit binders; there are no extra premises. The traversed finite maps are PanSemStateFiniteExact.globals (state_rel's FEMPTY), PanSemStateFiniteExact.locals, PanToCrepContextExact.vars, and the standalone t_locs; same-module canonical witnesses cover both carriers. This supersedes the former documented-mismatch production analogue. Coordinator review (2026-09-28): the declaration is width-indexed (ValueHOL width / BitVec width, [NeZero width]), so (words_as_type_indexed_bitvec) records HOL's 'a word translation. Combined with the relation qualifier. The typed capture opt_mmap_eval_is_wf_shape_v_typed (pan_to_crep_proof_typed_probe.out:38) types the context at γ context, independent of the state's α, so the statement binds {ctxtWidth} separately (task 152 item 1)."
   },
   {
     "hol_path": null,
@@ -101141,7 +101180,7 @@
       "compilerCodes",
       "sourceShapes"
     ],
-    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.3): compared against HOL excp_rel_def (pan_to_crepProofScript.sml:16-23): FDOM seids = FDOM ceids is rendered pointwise as equality of definedness on the canonical HolFiniteMapExact lookup, and FLOOKUP ceids e = SOME n becomes compilerCodes.lookup e = some n; the injectivity conjunct and the fact that source values are unrelated to compiler values match clause-for-clause. Both finite maps are standalone exact-map parameters (no owning carrier), so the relation qualifier records them as bare entries. Direct HOL EVAL oracle rows live in scripts/hol-probes/excp_rel_probe.out and Lean fixtures in Flapjack/Test/PanToCrepCodeRelParity.lean."
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.3): compared against HOL excp_rel_def (pan_to_crepProofScript.sml:16-23): FDOM seids = FDOM ceids is rendered pointwise as equality of definedness on the canonical HolFiniteMapExact lookup, and FLOOKUP ceids e = SOME n becomes compilerCodes.lookup e = some n; the injectivity conjunct and the fact that source values are unrelated to compiler values match clause-for-clause. Both finite maps are standalone exact-map parameters (no owning carrier), so the relation qualifier records them as bare entries. Direct HOL EVAL oracle rows live in scripts/hol-probes/excp_rel_probe.out and Lean fixtures in Flapjack/Test/PanToCrepCodeRelParity.lean. Task-148 typed capture re-review: excp_rel_def_typed in pan_to_crep_proof_typed_probe.out gives ceids : α |-> β and seids : α |-> γ, i.e. the key type and both value types are independent; the Lean relation now binds α β γ generically (in use MlS, BitVec width, ShapeHOL), so no type variable is identified."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
@@ -101158,7 +101197,15 @@
       "PanToCrepTargetLocalsExact.targetLocals"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Flapjack-luna-a source comparison (2026-09-27, flapjack-4ac.5.83/.5.46): HOL evaluate_shape_invariant_ret_inst at pan_to_crepProofScript.sml:3016-3028 quantifies p, s, v, s', t, ctxt, and t_locs and has exactly evaluate (p,s)=(SOME v,s'), state_rel s t, locals_rel ctxt s.locals t_locs; its only conclusion cases are Return and Exception payloads satisfying is_wf_shape_v_nil, else T. Lean panToCrepFiniteEvaluateShapeInvariantRetInst has those same variables/premises/conclusion, with HOL state/result/value/program/shape/name carriers represented by PanSemStateFiniteExact, PanSemResultExact, ValueHOL, ProgHOL, ShapeHOL, and MlS; [NeZero width] is the positive HOL word dimension. state_rel_def and locals_rel_def were compared at pan_to_crepProofScript.sml:45-82; ctxt_max/no_overlap at pan_commonPropsScript.sml:11-24. The only nonidentity representations are the six listed HolFiniteMapExact fields, each with a same-module owning-carrier roundtrip witness. The finite evaluator's 21 constructor clauses were compared with panSemScript.sml:556-761: recursive finite-context clauses mirror Dec/Seq/If/While/Call/DecCall; nonrecursive clauses use exact clause helpers and finite-support post-state reconstruction; the outer assembly marker is total, and the 66-case projection to the broad exact evaluator is kernel-checked. evaluateHOLFiniteState therefore has HOL's result-option × state shape and no additional premise; its unreachable assembly fallback changes no result. The evaluator's function-shaped entry remains untagged; the HOL evaluate_def equation theorem is tracked by flapjack-qj5. Source-reviewed carrier qualifier: The word carriers use the same positive BitVec width with [NeZero width], and σ : Type is the universe-0 FFI host; words_as_type_indexed_bitvec records only these carrier translations."
+    "reviewer": "Flapjack-luna-a source comparison (2026-09-27, flapjack-4ac.5.83/.5.46): HOL evaluate_shape_invariant_ret_inst at pan_to_crepProofScript.sml:3016-3028 quantifies p, s, v, s', t, ctxt, and t_locs and has exactly evaluate (p,s)=(SOME v,s'), state_rel s t, locals_rel ctxt s.locals t_locs; its only conclusion cases are Return and Exception payloads satisfying is_wf_shape_v_nil, else T. Lean panToCrepFiniteEvaluateShapeInvariantRetInst has those same variables/premises/conclusion, with HOL state/result/value/program/shape/name carriers represented by PanSemStateFiniteExact, PanSemResultExact, ValueHOL, ProgHOL, ShapeHOL, and MlS; [NeZero width] is the positive HOL word dimension. state_rel_def and locals_rel_def were compared at pan_to_crepProofScript.sml:45-82; ctxt_max/no_overlap at pan_commonPropsScript.sml:11-24. The only nonidentity representations are the six listed HolFiniteMapExact fields, each with a same-module owning-carrier roundtrip witness. The finite evaluator's 21 constructor clauses were compared with panSemScript.sml:556-761: recursive finite-context clauses mirror Dec/Seq/If/While/Call/DecCall; nonrecursive clauses use exact clause helpers and finite-support post-state reconstruction; the outer assembly marker is total, and the 66-case projection to the broad exact evaluator is kernel-checked. evaluateHOLFiniteState therefore has HOL's result-option × state shape and no additional premise; its unreachable assembly fallback changes no result. The evaluator's function-shaped entry remains untagged; the HOL evaluate_def equation theorem is tracked by flapjack-qj5. Source-reviewed carrier qualifier: The state and target word carriers use the same positive BitVec width with [NeZero width]; the typed capture evaluate_shape_invariant_ret_inst_typed (pan_to_crep_local_typed_probe.out:5) types the context at γ context, independent of the state's α, so the context width ctxtWidth is bound separately with its own positivity (task-152 sweep). Task-153: the tagged statement now follows HOL's binder order p, s, v, s', t, ctxt, t_locs (program, source, result, postState, target, relationContext, targetLocals) and takes HOL's single conjunction premise in HOL's order — evaluation ∧ state relation ∧ locals relation — as in pan_to_crepProofScript.sml:3016 and the capture; the curried panToCrepFiniteEvaluateShapeInvariantRetInst_curried is untagged convenience API. σ : Type is the universe-0 FFI host; words_as_type_indexed_bitvec records only these carrier translations."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepFiniteEvaluateShapeInvariantRetInst_curried",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific curried wrapper around the tagged evaluate_shape_invariant_ret_inst port, keeping the previous argument order for callers; it passes the three premises as HOL single conjunction (task 153 item 1). It has no HOL declaration of its own."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
@@ -101176,7 +101223,15 @@
       "newlocals"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison (2026-09-27, flapjack-4ac.5.47.1.2): HOL evaluate_shape_invariant_ret_inst2 at pan_to_crepProofScript.sml:3031-3044 first-occurrence quantifier order is argexps, s, fname, args, p2, newlocals, rsh, p, v, s', t, ctxt, t_locs. Its five premises are successful OPT_MMAP (eval s) argexps, successful lookup_code s.code fname args, successful evaluate (p, dec_clock s with locals := newlocals), state_rel s t, and pre-call locals_rel ctxt s.locals t_locs; its conclusion is exactly the Return/Exception is_wf_shape_v_nil case split with T otherwise. Lean preserves these separate binders, including lookupBody for p2 and program for p, and these five premises in order. evalListHOLFiniteClassical only chooses Lean's decidability procedure for HOL set membership internally; its body is the exact finite evalListHOLFinite view, so no proposition or typeclass premise is added. The body premise uses the same evaluateHOLFiniteState result-option × state view source-reviewed for evaluate_shape_invariant_ret_inst at line 3016; its finite evaluator clauses and projection are reviewed against panSemScript.sml:556-761. PanSemStateFiniteExact, PanToCrepContextExact, MlS, ValueHOL, ShapeHOL, ProgHOL, and PanSemResultExact supply the source carriers; [NeZero width] represents positive HOL dimindex. The exact locals relation input and source state relation were compared at pan_to_crepProofScript.sml:45-82, and lookup_code_wf_shape_invariant_step at panPropsScript.sml:1233 is kernel-composed by panToCrepCallEntryShapeInvariantFiniteExact. Return/Exception payloads are rendered by isWfShapeValueHOLExact [] and other result constructors by True. The seven named owner/parameter maps are the only accepted finite-support translations; PanSemStateFiniteExact and PanToCrepContextExact have same-module canonical roundtrip witnesses, while targetLocals and newlocals are standalone HolFiniteMapExact parameters. MlS is the exact HOL mlstring carrier, so no String qualifier is used. Source-reviewed carrier qualifier: All word occurrences are type-indexed by the same Lean BitVec width with [NeZero width], and the FFI parameter is σ : Type; words_as_type_indexed_bitvec records only those HOL word-dimension/FFI carrier translations."
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27, flapjack-4ac.5.47.1.2): HOL evaluate_shape_invariant_ret_inst2 at pan_to_crepProofScript.sml:3031-3044 quantifies s, argexps, args, fname, p, p2, newlocals, rsh, v, s', t, ctxt, t_locs in that order, as printed by the typed capture pan_to_crep_local_typed_probe.out:6 (the earlier argexps-first transcription in this note was corrected in task 153). Its single premise is the conjunction OPT_MMAP (eval s) argexps = SOME args /\\ lookup_code s.code fname args = SOME (p2,newlocals,rsh) /\\ evaluate (p, dec_clock s with locals := newlocals) = (SOME v,s') /\\ state_rel s t /\\ locals_rel ctxt s.locals t_locs; its conclusion is exactly the Return/Exception is_wf_shape_v_nil case split with T otherwise. Lean preserves these binders, including lookupBody for p2 and program for p, and the same five-part conjunction in the same order. evalListHOLFiniteClassical only chooses Lean's decidability procedure for HOL set membership internally; its body is the exact finite evalListHOLFinite view, so no proposition or typeclass premise is added. The body premise uses the same evaluateHOLFiniteState result-option × state view source-reviewed for evaluate_shape_invariant_ret_inst at line 3016; its finite evaluator clauses and projection are reviewed against panSemScript.sml:556-761. PanSemStateFiniteExact, PanToCrepContextExact, MlS, ValueHOL, ShapeHOL, ProgHOL, and PanSemResultExact supply the source carriers; [NeZero width] represents positive HOL dimindex. The exact locals relation input and source state relation were compared at pan_to_crepProofScript.sml:45-82, and lookup_code_wf_shape_invariant_step at panPropsScript.sml:1233 is kernel-composed by panToCrepCallEntryShapeInvariantFiniteExact. Return/Exception payloads are rendered by isWfShapeValueHOLExact [] and other result constructors by True. The seven named owner/parameter maps are the only accepted finite-support translations; PanSemStateFiniteExact and PanToCrepContextExact have same-module canonical roundtrip witnesses, while targetLocals and newlocals are standalone HolFiniteMapExact parameters. MlS is the exact HOL mlstring carrier, so no String qualifier is used. Source-reviewed carrier qualifier: The state and target word occurrences are type-indexed by the same Lean BitVec width with [NeZero width]; the typed capture evaluate_shape_invariant_ret_inst2_typed (pan_to_crep_local_typed_probe.out:6) types the context at γ context, independent of the state's α, so the context width ctxtWidth is bound separately with its own positivity (task-152 sweep). Task-153: the tagged statement now follows the capture's binder order s, argexps, args, fname, p, p2, newlocals, rsh, v, s', t, ctxt, t_locs and takes HOL's single five-part conjunction premise in HOL's order — argument evaluation ∧ code lookup ∧ body evaluation ∧ state relation ∧ locals relation — as in pan_to_crepProofScript.sml:3031 and pan_to_crep_local_typed_probe.out:6; the curried panToCrepFiniteEvaluateShapeInvariantRetInst2_curried is untagged convenience API. The FFI parameter is σ : Type; words_as_type_indexed_bitvec records only those HOL word-dimension/FFI carrier translations."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepFiniteEvaluateShapeInvariantRetInst2_curried",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific curried wrapper around the tagged evaluate_shape_invariant_ret_inst2 port: production callers hold the five premises separately and it passes them as HOL single conjunction (task 153 item 1). It has no HOL declaration of its own."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -101190,7 +101245,7 @@
       "sourceLocals",
       "targetLocals"
     ],
-    "reviewer": "flapjack-ds9 source comparison (2026-09-27, flapjack-4ac.5.96; pan_to_crepProofScript.sml:2245-2261): HOL local_rel_gt_vmax_preserved has exactly locals_rel ct l l' and ct.vmax < n as premises and concludes locals_rel ct l (l' |+ (n,v)). Lean keeps those two premises (panToCrepLocalsRelFiniteExact and habove : context.vmax < slot) and the same conclusion over targetLocals.updateEq (slot, newValue), the equality-based rendering of HOL FUPDATE. The relation traverses the named PanToCrepContextExact.vars field and the standalone sourceLocals/targetLocals parameters; the PanToCrepContextExact same-module canonical relation witness and the bare parameter binders establish the reviewed finite-support translations. The only representation difference is the finite-support carrier. No hypotheses, quantifiers, side conditions, or conclusions differ. [NeZero width] models HOL's positive word dimension. This exact-carrier port replaces the removed String-keyed analogue."
+    "reviewer": "flapjack-ds9 source comparison (2026-09-27, flapjack-4ac.5.96; pan_to_crepProofScript.sml:2245-2261): HOL local_rel_gt_vmax_preserved has exactly locals_rel ct l l' and ct.vmax < n as premises and concludes locals_rel ct l (l' |+ (n,v)). Lean takes HOL's single conjunctive premise (panToCrepLocalsRelFiniteExact ∧ context.vmax < slot) and the same conclusion over targetLocals.updateEq (slot, newValue), the equality-based rendering of HOL FUPDATE. The typed capture local_rel_gt_vmax_preserved_typed (pan_to_crep_proof_typed_probe.out:40) types the context at α context and the locals at β, so the statement binds {ctxtWidth} and {width} separately (task 152 item 1). The relation traverses the named PanToCrepContextExact.vars field and the standalone sourceLocals/targetLocals parameters; the PanToCrepContextExact same-module canonical relation witness and the bare parameter binders establish the reviewed finite-support translations. The only representation difference is the finite-support carrier. No hypotheses, quantifiers, side conditions, or conclusions differ. [NeZero width] [NeZero ctxtWidth] model HOL's positive word dimensions. This exact-carrier port replaces the removed String-keyed analogue."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -101199,7 +101254,7 @@
     "lean_name": "panToCrepLocalsRelFiniteExact",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds8 source comparison (bead flapjack-pxn.18.3.7.1.3.1.4, approved by coordinator after comparing HOL locals_rel_def lines 71-78 with Lean lines 82-93): clause-for-clause match. no_overlap/ctxt_max map to noOverlapFiniteExact/ctxtMaxFiniteExact; FLOOKUP m k = SOME x maps to m.lookup k = some x; shape_of to shapeOfHOLExact; OPT_MMAP (FLOOKUP t_locals) ns = SOME vs to slots.mapM targetLocals.lookup = some words; flatten v = vs to flattenHOL value = words; is_wf_shape_nil (shape_of v) to isWfShapeExactHOL [] (shapeOfHOLExact value) = true. Exactly three finite maps are traversed: context.vars (owning PanToCrepContextExact field, recorded dotted) and the standalone parameters sourceLocals/targetLocals (recorded bare, bound at the canonical HolFiniteMapExact translation). No extra hypotheses beyond [NeZero width]; no production String/Shape relation is tagged. Source-reviewed carrier qualifier: ValueHOL/ShapeHOL and HolWordLab use the same positive BitVec width with [NeZero width]; words_as_type_indexed_bitvec records only this word-dimension translation.",
+    "reviewer": "flapjack-ds8 source comparison (bead flapjack-pxn.18.3.7.1.3.1.4, approved by coordinator after comparing HOL locals_rel_def lines 71-78 with Lean lines 82-93): clause-for-clause match. no_overlap/ctxt_max map to noOverlapFiniteExact/ctxtMaxFiniteExact; FLOOKUP m k = SOME x maps to m.lookup k = some x; shape_of to shapeOfHOLExact; OPT_MMAP (FLOOKUP t_locals) ns = SOME vs to slots.mapM targetLocals.lookup = some words; flatten v = vs to flattenHOL value = words; is_wf_shape_nil (shape_of v) to isWfShapeExactHOL [] (shapeOfHOLExact value) = true. Exactly three finite maps are traversed: context.vars (owning PanToCrepContextExact field, recorded dotted) and the standalone parameters sourceLocals/targetLocals (recorded bare, bound at the canonical HolFiniteMapExact translation). No extra hypotheses beyond the [NeZero width] [NeZero ctxtWidth] discharges; no production String/Shape relation is tagged. Source-reviewed carrier qualifier: ValueHOL/ShapeHOL and HolWordLab use the same positive BitVec width with [NeZero width]; words_as_type_indexed_bitvec records only this word-dimension translation. Task-148 typed capture re-review: locals_rel_def_typed shows ctxt : β context and both locals maps at α, so HOL's context word dimension β is independent of the locals' α. Although the relation reads only ctxt.vars/ctxt.vmax, the declaration keeps that independence (PR #1395 review finding 2): it binds {ctxtWidth} for the context's eids words and {width} for the source/target local values, each with its own [NeZero] discharge.",
     "fmap_as_finite_support_relation": [
       "PanToCrepContextExact.vars",
       "sourceLocals",
@@ -101231,6 +101286,22 @@
     "reviewer": "Flapjack-specific bridge from the literal is_wf_shape_nil (shape_of v) conjunct in the exact local relation to value-level is_wf_shape_v. The proof uses the exact is_wf_shape_v_nil equivalence and supports, but is not itself, the tagged locals_rel_wf_shape port."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepLocalsRelWfShapeFiniteExact_curried",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific curried wrapper around the tagged locals_rel_wf_shape port: it takes the relation and the present-local lookup as two separate premises and passes them to panToCrepLocalsRelWfShapeFiniteExact as the single HOL conjunction (PR #1395 review finding 3). It has no HOL declaration of its own; callers that already hold the premises separately use it."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepLocalsRelLookupCtxtFiniteExact_curried",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific curried wrapper around the tagged locals_rel_lookup_ctxt port: it takes the relation and the present-local lookup as two separate premises and passes them to panToCrepLocalsRelLookupCtxtFiniteExact as the single HOL conjunction (PR #1395 review finding 3). It has no HOL declaration of its own; callers that already hold the premises separately use it."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "locals_rel_lookup_ctxt",
     "hol_line": 527,
@@ -101242,7 +101313,7 @@
       "sourceLocals",
       "targetLocals"
     ],
-    "reviewer": "flapjack-ds9 source comparison (2026-09-27, flapjack-4ac.5.88; pan_to_crepProofScript.sml:527-534): HOL locals_rel_lookup_ctxt has the conjunction locals_rel ctxt lcl lcl' /\\ FLOOKUP lcl vr = SOME v as its only premise and concludes ?ns. FLOOKUP ctxt.vars vr = SOME (shape_of v,ns) /\\ LENGTH ns = LENGTH (flatten v) /\\ OPT_MMAP (FLOOKUP lcl') ns = SOME (flatten v) /\\ is_wf_shape_nil (shape_of v). Lean keeps exactly those two premises (curried) and the four existential conjuncts in the same order: FLOOKUP becomes .lookup, shape_of/flatten/is_wf_shape_nil become shapeOfHOLExact/flattenHOL/isWfShapeExactHOL ([] : StructContextExact), and OPT_MMAP becomes List.mapM. The relation traverses the named PanToCrepContextExact.vars field and the standalone sourceLocals/targetLocals parameters; the PanToCrepContextExact same-module canonical witness and the bare parameter binders establish the reviewed finite-support translations. The LENGTH clause is derived from the tagged HOL opt_mmap_length_eq. [NeZero width] models HOL's positive word dimension. This exact-carrier port replaces the withdrawn String-keyed localsRelLookupCtxt analogue (still recorded below as documented_mismatch)."
+    "reviewer": "flapjack-ds9 source comparison (2026-09-27, flapjack-4ac.5.88; pan_to_crepProofScript.sml:527-534): HOL locals_rel_lookup_ctxt has the conjunction locals_rel ctxt lcl lcl' /\\ FLOOKUP lcl vr = SOME v as its only premise and concludes ?ns. FLOOKUP ctxt.vars vr = SOME (shape_of v,ns) /\\ LENGTH ns = LENGTH (flatten v) /\\ OPT_MMAP (FLOOKUP lcl') ns = SOME (flatten v) /\\ is_wf_shape_nil (shape_of v). Lean takes exactly that single conjunctive premise and keeps the four existential conjuncts in the same order (PR #1395 review finding 3): FLOOKUP becomes .lookup, shape_of/flatten/is_wf_shape_nil become shapeOfHOLExact/flattenHOL/isWfShapeExactHOL ([] : StructContextExact), and OPT_MMAP becomes List.mapM. The relation traverses the named PanToCrepContextExact.vars field and the standalone sourceLocals/targetLocals parameters; the PanToCrepContextExact same-module canonical witness and the bare parameter binders establish the reviewed finite-support translations. The LENGTH clause is derived from the tagged HOL opt_mmap_length_eq. [NeZero width] models HOL's positive word dimension. This exact-carrier port replaces the withdrawn String-keyed localsRelLookupCtxt analogue (still recorded below as documented_mismatch). Task-148 typed capture re-review: locals_rel_lookup_ctxt_typed shows the context at α context and the locals at β, so the context's word dimension is independent of the locals'; the declaration binds {ctxtWidth} and {width} separately with their own [NeZero] discharges (PR #1395 review finding 2)."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -101257,7 +101328,7 @@
       "targetLocals"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison (2026-09-27, flapjack-4ac.5.83; pan_to_crepProofScript.sml:2345-2351): HOL locals_rel_wf_shape has exactly locals_rel ctxt s_locs t_locs and FLOOKUP s_locs nm = SOME v as premises, concluding is_wf_shape_v_nil v. Lean preserves these premises using panToCrepLocalsRelFiniteExact and sourceLocals.lookup, and concludes isWfShapeValueHOLExact [] value = true, the exact is_wf_shape_v_nil value rendering. The relation's three traversed map carriers are the named PanToCrepContextExact.vars, sourceLocals, and targetLocals; their same-module canonical witnesses establish the reviewed finite-support translations. [NeZero width] models HOL's positive word dimension. Source-reviewed carrier qualifier: ValueHOL/ShapeHOL and HolWordLab use the same positive BitVec width with [NeZero width]; words_as_type_indexed_bitvec records only this word-dimension translation."
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27, flapjack-4ac.5.83; pan_to_crepProofScript.sml:2345-2351): HOL locals_rel_wf_shape has the single conjunctive premise locals_rel ctxt s_locs t_locs /\\ FLOOKUP s_locs nm = SOME v and concludes is_wf_shape_v_nil v. Lean takes that same conjunction as one premise (PR #1395 review finding 3), destructures it into panToCrepLocalsRelFiniteExact and sourceLocals.lookup, and concludes isWfShapeValueHOLExact [] value = true, the exact is_wf_shape_v_nil value rendering. The relation's three traversed map carriers are the named PanToCrepContextExact.vars, sourceLocals, and targetLocals; their same-module canonical witnesses establish the reviewed finite-support translations. [NeZero width] models HOL's positive word dimension. Source-reviewed carrier qualifier: ValueHOL/ShapeHOL and HolWordLab use the same positive BitVec width with [NeZero width]; words_as_type_indexed_bitvec records only this word-dimension translation. Task-148 typed capture re-review: locals_rel_wf_shape_typed shows the context at α context and the locals at β, so the context's word dimension is independent of the locals'; the declaration binds {ctxtWidth} and {width} separately with their own [NeZero] discharges (PR #1395 review finding 2)."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -101326,7 +101397,7 @@
     "lean_name": "slcHOL",
     "statement_status": "reviewed_fmap_as_finite_support_result",
     "fmap_as_finite_support_result": true,
-    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.36): HOL slc_def (pan_to_crepProofScript.sml:2313-2315) = slc vshs args = FEMPTY |++ ZIP (MAP FST vshs, args); keys varname=mlstring map to the exact MlS carrier, values 'a v map to ValueHOL width, and the result is the canonical HolFiniteMapExact MlS (ValueHOL width). The same-module witness holFmapAsFiniteSupportResultWitness_slcHOL states the unconditional lookup correspondence to the raw FUPDATE_LIST_HOL operation."
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.36): HOL slc_def (pan_to_crepProofScript.sml:2313-2315) = slc vshs args = FEMPTY |++ ZIP (MAP FST vshs, args); keys varname=mlstring map to the exact MlS carrier, values 'a v map to ValueHOL width, and the result is the canonical HolFiniteMapExact MlS (ValueHOL width). The same-module witness holFmapAsFiniteSupportResultWitness_slcHOL states the unconditional lookup correspondence to the raw FUPDATE_LIST_HOL operation. Task-148 typed capture re-review: slc_def_typed gives vshs :(α # γ) list, args :β list and result α |-> β; the definition now binds α γ β generically with [DecidableEq α] (in use MlS, ShapeHOL, ValueHOL width)."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -101335,7 +101406,7 @@
     "lean_name": "slcTlcRwHOL",
     "statement_status": "reviewed_fmap_as_finite_support_equalities",
     "fmap_as_finite_support_equalities": true,
-    "reviewer": "flapjack-ds8 source comparison (bead flapjack-4ac.5.86.1): HOL slc_tlc_rw (pan_to_crepProofScript.sml:2321-2326) states two map equalities FEMPTY |++ ZIP (MAP FST vsh,args) = slc vsh args and FEMPTY |++ ZIP (ns,FLAT (MAP flatten args)) = tlc ns args. The Lean theorem states the same two HolFiniteMapExact equalities over the exact MlS/ShapeHOL/ValueHOL/HolWordLab carriers, with |++ rendered by updateListEq and flatten by flattenHOL. Source review confirms conjunct 1 corresponds to the slc map (witness holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1: lookup of updateListEq empty ((variables.map Prod.fst).zip arguments) equals lookup of slcHOL variables arguments) and conjunct 2 corresponds to the tlc map (witness _2: lookup of updateListEq empty (slots.zip ((arguments.map flattenHOL).flatten)) equals lookup of tlcHOL slots arguments); both witnesses are same-module kernel-checked and do not mention the theorem."
+    "reviewer": "flapjack-ds8 source comparison (bead flapjack-4ac.5.86.1): HOL slc_tlc_rw (pan_to_crepProofScript.sml:2321-2326) states two map equalities FEMPTY |++ ZIP (MAP FST vsh,args) = slc vsh args and FEMPTY |++ ZIP (ns,FLAT (MAP flatten args)) = tlc ns args. The Lean theorem states the same two HolFiniteMapExact equalities over the exact MlS/ShapeHOL/ValueHOL/HolWordLab carriers, with |++ rendered by updateListEq and flatten by flattenHOL. Source review confirms conjunct 1 corresponds to the slc map (witness holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1: lookup of updateListEq empty ((variables.map Prod.fst).zip arguments) equals lookup of slcHOL variables arguments) and conjunct 2 corresponds to the tlc map (witness _2: lookup of updateListEq empty (slots.zip ((arguments.map flattenHOL).flatten)) equals lookup of tlcHOL slots arguments); both witnesses are same-module kernel-checked and do not mention the theorem. Task-148 typed capture re-review: slc_tlc_rw_typed gives independent α, γ, β (the word dimension) and δ; the theorem now binds α γ δ generically (in use MlS, ShapeHOL, Nat) and keeps the BitVec width rendering for β, with both witnesses generalised accordingly."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -101344,7 +101415,7 @@
     "lean_name": "tlcHOL",
     "statement_status": "reviewed_fmap_as_finite_support_result",
     "fmap_as_finite_support_result": true,
-    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.37): exact port of HOL tlc_def (pan_to_crepProofScript.sml:2317-2319) `tlc ns args = FEMPTY |++ ZIP (ns, FLAT (MAP flatten args))`. Keys num->Nat and values 'a word_lab->HolWordLab width match; `|++` is rendered by the reviewed HolFiniteMapExact.updateListEq (HOL FUPDATE_LIST with HOL =), and flatten is the tagged flattenHOL. The standalone result qualifier records only the finite-support representation; the same-module holFmapAsFiniteSupportResultWitness_tlcHOL states the unconditional lookup-level correspondence to raw FUPDATE_LIST_HOL. Production tlc stays an untagged documented carrier mismatch."
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.37): exact port of HOL tlc_def (pan_to_crepProofScript.sml:2317-2319) `tlc ns args = FEMPTY |++ ZIP (ns, FLAT (MAP flatten args))`. Keys num->Nat and values 'a word_lab->HolWordLab width match; `|++` is rendered by the reviewed HolFiniteMapExact.updateListEq (HOL FUPDATE_LIST with HOL =), and flatten is the tagged flattenHOL. The standalone result qualifier records only the finite-support representation; the same-module holFmapAsFiniteSupportResultWitness_tlcHOL states the unconditional lookup-level correspondence to raw FUPDATE_LIST_HOL. Production tlc stays an untagged documented carrier mismatch. Task-148 typed capture re-review: tlc_def_typed gives ns : α list and result α |-> β word_lab; the definition now binds the slot key type generically with [DecidableEq α] (in use Nat)."
   },
   {
     "hol_path": null,
@@ -101380,7 +101451,7 @@
       "seids"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.4.4.2): HOL get_eids_imp_excp_rel (pan_to_crepProofScript.sml:4656-4660): !seids pc. size_of_eids pc < dimword (:'a) /\\ FDOM seids = FDOM (get_eids_from_decls pc) ==> excp_rel (get_eids_from_decls pc) seids. Lean keeps the binders seids pc and the conjunctive premise, over the tagged sizeOfEidsHOL, getEidsFromDeclsHOL and panToCrepExcpRelFiniteExact. dimword (:'a) is 2 ^ width. FDOM equality is pointwise definedness of the canonical lookups, as in the tagged excp_rel_def. seids is a standalone HolFiniteMapExact parameter (bare relation entry); getEidsFromDeclsHOL's result is its own tagged fmap_as_finite_support_result carrier. No extra premise. The proof follows HOL: injectivity of the codes n2w i for indices below size_of_eids < dimword. Kernel-checked."
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.4.4.2): HOL get_eids_imp_excp_rel (pan_to_crepProofScript.sml:4656-4660): !seids pc. size_of_eids pc < dimword (:'a) /\\ FDOM seids = FDOM (get_eids_from_decls pc) ==> excp_rel (get_eids_from_decls pc) seids. Lean keeps the binders seids pc and the conjunctive premise, over the tagged sizeOfEidsHOL, getEidsFromDeclsHOL and panToCrepExcpRelFiniteExact. dimword (:'a) is 2 ^ width. FDOM equality is pointwise definedness of the canonical lookups, as in the tagged excp_rel_def. seids is a standalone HolFiniteMapExact parameter (bare relation entry); getEidsFromDeclsHOL's result is its own tagged fmap_as_finite_support_result carrier. No extra premise. The proof follows HOL: injectivity of the codes n2w i for indices below size_of_eids < dimword. Kernel-checked. Task-152 sweep: the typed capture gives seids :mlstring |-> β with β independent of the declaration width, so the statement binds {β : Type} instead of fixing β = ShapeHOL; the FDOM-equality premise and injectivity conclusion are unchanged."
   },
   {
     "hol_path": null,
@@ -101426,7 +101497,7 @@
       "es"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.4.4.2): HOL mk_ctxt_imp_locals_rel (pan_to_crepProofScript.sml:4677-4679): !pc lcl es. locals_rel (mk_ctxt FEMPTY (make_funcs pc) 0 es) FEMPTY lcl. Lean keeps the binders pc lcl es over the tagged mkCtxtExactHOL, makeFuncsExactHOL and panToCrepLocalsRelFiniteExact. FEMPTY is HolFiniteMapExact.empty. pc has make_funcs' input type (name, params, body, return shape). lcl and es are standalone finite-map parameters, and vars is the context field locals_rel traverses (same-module witness PanToCrepStateRelImpSemanticsWitnesses). No premise. Kernel-checked."
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.4.4.2): HOL mk_ctxt_imp_locals_rel (pan_to_crepProofScript.sml:4677-4679): !pc lcl es. locals_rel (mk_ctxt FEMPTY (make_funcs pc) 0 es) FEMPTY lcl. Lean keeps the binders pc lcl es over the tagged mkCtxtExactHOL, makeFuncsExactHOL and panToCrepLocalsRelFiniteExact. FEMPTY is HolFiniteMapExact.empty. pc has make_funcs' input type (name, params, body, return shape), with the body payload α arbitrary (bound as {P}, task 152 item 2). The typed capture mk_ctxt_imp_locals_rel_typed (pan_to_crep_proof_typed_probe.out:49) types lcl at β word_lab and es at γ word, so those widths are independent and bound separately. lcl and es are standalone finite-map parameters, and vars is the context field locals_rel traverses (same-module witness PanToCrepStateRelImpSemanticsWitnesses). No premise. Kernel-checked."
   },
   {
     "hol_path": null,
@@ -107311,7 +107382,7 @@
     "lean_path": "Flapjack/Pancake/Semantics/PanProps.lean",
     "lean_name": "isWfShapeExactHOL_shapeOfHOLExact_eq_isWfShapeValueHOLExact_nil",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-4ac.4.8; exact HOL panProps$is_wf_shape_v_nil (panPropsScript.sml:56): !xs v. xs = [] ==> is_wf_shape xs (shape_of v) = is_wf_shape_v xs v. Lean `{width : Nat} [NeZero width] (context : StructContextExact) (hctx : context = []) (value : ValueHOL width) : Flapjack.Pancake.PanLang.isWfShapeExactHOL context (shapeOfHOLExact value) = isWfShapeValueHOLExact context value` is HOL's equality between the two Bool predicates with the context-equality side condition kept as an explicit hypothesis; forward direction is the tagged isWfShapeValueHOLExact_shapeOfHOLExact, backward is isWfShapeValueHOLExact_nil_step1. No extra hypotheses; [NeZero width] models HOL's positive word dimension. Source only, since no dedicated probe exists; parity example in Flapjack/Test/PanStructsValueValidityParity.lean)"
+    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-4ac.4.8; exact HOL panProps$is_wf_shape_v_nil (panPropsScript.sml:56): !xs v. xs = [] ==> is_wf_shape xs (shape_of v) = is_wf_shape_v xs v. Lean `{width : Nat} [NeZero width] (context : StructContextExact) (hctx : context = []) (value : ValueHOL width) : Flapjack.Pancake.PanLang.isWfShapeExactHOL context (shapeOfHOLExact value) = isWfShapeValueHOLExact context value` is HOL's equality between the two Bool predicates with the context-equality side condition kept as an explicit hypothesis; forward direction is the tagged isWfShapeValueHOLExact_shapeOfHOLExact, backward is isWfShapeValueHOLExact_nil_step1. No extra hypotheses; [NeZero width] models HOL's positive word dimension. Source only, since no dedicated probe exists; parity example in Flapjack/Test/PanStructsValueValidityParity.lean) Task 148: the typed capture (pan_props_typed_probe.out) keeps the struct context payload generic ((sctxt :(mlstring # α) list)) and the value's word dimension independent (β). The twin now binds {α : Type} over List (MlS × α) for the context and {width} [NeZero width] for the value carrier, instead of fixing the context payload to StructInfoHOLExact."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
@@ -107327,7 +107398,7 @@
     "lean_path": "Flapjack/Pancake/Semantics/PanProps.lean",
     "lean_name": "isWfShapeValueHOLExact",
     "statement_status": "reviewed_exact",
-    "reviewer": "Codex and flapjack-ds6 (source comparison, bead flapjack-pxn.18.5.17.1.3.14; exact HOL panProps$is_wf_shape_v (panPropsScript.sml:24-34) over the exact ValueHOL width value carrier and the exact MlString-keyed StructContextExact context: Val -> true, RStruct -> EVERY fold isWfShapeValuesHOLExact, NStruct -> structContextLookupHOL isSome (ALOOKUP <> NONE) and the EVERY fold over MAP SND; termination over v_size mirrored by sizeOf; direct HOL rows is_wf_shape_v_word/named_match/named_missing/named_mismatch/duplicate_second/nested_match in scripts/hol-probes/pan_structs_value_validity_probe.out reproduced by Flapjack/Test/PanStructsValueValidityParity.lean)"
+    "reviewer": "Codex and flapjack-ds6 (source comparison, bead flapjack-pxn.18.5.17.1.3.14; exact HOL panProps$is_wf_shape_v (panPropsScript.sml:24-34) over the exact ValueHOL width value carrier and the exact MlString-keyed StructContextExact context: Val -> true, RStruct -> EVERY fold isWfShapeValuesHOLExact, NStruct -> structContextLookupHOL isSome (ALOOKUP <> NONE) and the EVERY fold over MAP SND; termination over v_size mirrored by sizeOf; direct HOL rows is_wf_shape_v_word/named_match/named_missing/named_mismatch/duplicate_second/nested_match in scripts/hol-probes/pan_structs_value_validity_probe.out reproduced by Flapjack/Test/PanStructsValueValidityParity.lean) Task 148: the typed capture (pan_props_typed_probe.out) keeps the struct context payload generic ((sctxt :(mlstring # α) list)) and the value's word dimension independent (β). The twin now binds {α : Type} over List (MlS × α) for the context and {width} [NeZero width] for the value carrier, instead of fixing the context payload to StructInfoHOLExact."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
@@ -107335,7 +107406,7 @@
     "lean_path": "Flapjack/Pancake/Semantics/PanProps.lean",
     "lean_name": "isWfShapeValueHOLExact_drop",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-4ac.4.9; exact HOL panProps$is_wf_shape_v_drop (panPropsScript.sml:63): !sctxt v. is_wf_shape_v (DROP k sctxt) v ==> is_wf_shape_v sctxt v. Lean `{width : Nat} [NeZero width] (taken : Nat) (context : StructContextExact) (value : ValueHOL width) (h : isWfShapeValueHOLExact (context.drop taken) value = true) : isWfShapeValueHOLExact context value = true`; HOL DROP is Lean List.drop; the NStruct clause uses structContextLookupHOL_append (Flapjack/Pancake/PanLang/Decl.lean:435, HOL ALOOKUP_APPEND) together with List.take_append_drop. No extra hypotheses; [NeZero width] models HOL's positive word dimension. Direct HOL rows is_wf_shape_v_* in pan_structs_value_validity_probe.out; parity example in Flapjack/Test/PanStructsValueValidityParity.lean)"
+    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-4ac.4.9; exact HOL panProps$is_wf_shape_v_drop (panPropsScript.sml:63): !sctxt v. is_wf_shape_v (DROP k sctxt) v ==> is_wf_shape_v sctxt v. Lean `{width : Nat} [NeZero width] (taken : Nat) (context : StructContextExact) (value : ValueHOL width) (h : isWfShapeValueHOLExact (context.drop taken) value = true) : isWfShapeValueHOLExact context value = true`; HOL DROP is Lean List.drop; the NStruct clause uses structContextLookupHOL_append (Flapjack/Pancake/PanLang/Decl.lean:435, HOL ALOOKUP_APPEND) together with List.take_append_drop. No extra hypotheses; [NeZero width] models HOL's positive word dimension. Direct HOL rows is_wf_shape_v_* in pan_structs_value_validity_probe.out; parity example in Flapjack/Test/PanStructsValueValidityParity.lean) Task 148: the typed capture (pan_props_typed_probe.out) keeps the struct context payload generic ((sctxt :(mlstring # α) list)) and the value's word dimension independent (β). The twin now binds {α : Type} over List (MlS × α) for the context and {width} [NeZero width] for the value carrier, instead of fixing the context payload to StructInfoHOLExact."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
@@ -107344,7 +107415,7 @@
     "lean_name": "isWfShapeValueHOLExact_nil_step1",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-4ac.4.7; exact HOL panProps$is_wf_shape_v_nil_step1 (panPropsScript.sml:48): !sctxt v. sctxt = [] /\\ is_wf_shape sctxt (shape_of v) ==> is_wf_shape_v sctxt v. Lean `{width : Nat} [NeZero width] (context : StructContextExact) (value : ValueHOL width) (h : context = [] /\\ Flapjack.Pancake.PanLang.isWfShapeExactHOL context (shapeOfHOLExact value) = true) : isWfShapeValueHOLExact context value = true` renders the conjunction with /\\ and the Bool predicates with `= true`; carriers are the already-reviewed exact StructContextExact/ValueHOL/isWfShapeExactHOL/shapeOfHOLExact. No extra hypotheses; [NeZero width] models HOL's positive word dimension. Proof by induction on the value with the context substituted to []. Direct HOL rows is_wf_shape_v_* in pan_structs_value_validity_probe.out; parity example in Flapjack/Test/PanStructsValueValidityParity.lean)"
+    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-4ac.4.7; exact HOL panProps$is_wf_shape_v_nil_step1 (panPropsScript.sml:48): !sctxt v. sctxt = [] /\\ is_wf_shape sctxt (shape_of v) ==> is_wf_shape_v sctxt v. Lean `{width : Nat} [NeZero width] (context : StructContextExact) (value : ValueHOL width) (h : context = [] /\\ Flapjack.Pancake.PanLang.isWfShapeExactHOL context (shapeOfHOLExact value) = true) : isWfShapeValueHOLExact context value = true` renders the conjunction with /\\ and the Bool predicates with `= true`; carriers are the already-reviewed exact StructContextExact/ValueHOL/isWfShapeExactHOL/shapeOfHOLExact. No extra hypotheses; [NeZero width] models HOL's positive word dimension. Proof by induction on the value with the context substituted to []. Direct HOL rows is_wf_shape_v_* in pan_structs_value_validity_probe.out; parity example in Flapjack/Test/PanStructsValueValidityParity.lean) Task 148: the typed capture (pan_props_typed_probe.out) keeps the struct context payload generic ((sctxt :(mlstring # α) list)) and the value's word dimension independent (β). The twin now binds {α : Type} over List (MlS × α) for the context and {width} [NeZero width] for the value carrier, instead of fixing the context payload to StructInfoHOLExact."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
@@ -107352,7 +107423,7 @@
     "lean_path": "Flapjack/Pancake/Semantics/PanProps.lean",
     "lean_name": "isWfShapeValueHOLExact_shapeOfHOLExact",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-4ac.4.6; exact HOL panProps$is_wf_shape_of_v (panPropsScript.sml:38): !sctxt v. is_wf_shape_v sctxt v ==> is_wf_shape sctxt (shape_of v). Lean statement is `{width : Nat} [NeZero width] (context : StructContextExact) (value : ValueHOL width) (h : isWfShapeValueHOLExact context value = true) : isWfShapeExactHOL context (shapeOfHOLExact value) = true`, clause-for-clause over the exact isWfShapeValueHOLExact/isWfShapeExactHOL/shapeOfHOLExact carriers; no extra hypotheses; [NeZero width] represents HOL's positive word dimension. Direct HOL rows is_wf_shape_v_* in pan_structs_value_validity_probe.out and spv_* in pan_props_shape_res_var_probe.out; parity example in Flapjack/Test/PanPropsShapeOfWfParity.lean)"
+    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-4ac.4.6; exact HOL panProps$is_wf_shape_of_v (panPropsScript.sml:38): !sctxt v. is_wf_shape_v sctxt v ==> is_wf_shape sctxt (shape_of v). Lean statement is `{width : Nat} [NeZero width] (context : StructContextExact) (value : ValueHOL width) (h : isWfShapeValueHOLExact context value = true) : isWfShapeExactHOL context (shapeOfHOLExact value) = true`, clause-for-clause over the exact isWfShapeValueHOLExact/isWfShapeExactHOL/shapeOfHOLExact carriers; no extra hypotheses; [NeZero width] represents HOL's positive word dimension. Direct HOL rows is_wf_shape_v_* in pan_structs_value_validity_probe.out and spv_* in pan_props_shape_res_var_probe.out; parity example in Flapjack/Test/PanPropsShapeOfWfParity.lean) Task 148: the typed capture (pan_props_typed_probe.out) keeps the struct context payload generic ((sctxt :(mlstring # α) list)) and the value's word dimension independent (β). The twin now binds {α : Type} over List (MlS × α) for the context and {width} [NeZero width] for the value carrier, instead of fixing the context payload to StructInfoHOLExact."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
@@ -107440,7 +107511,7 @@
     "lean_path": "Flapjack/Pancake/Semantics/PanProps.lean",
     "lean_name": "panPrimopHOLExact_isWfShapeValueHOLExact",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-4ac.4.14; exact HOL panProps$pan_primop_is_wf_shape_v (panPropsScript.sml:162): !sctxt pop args value. pan_primop pop args = SOME value ==> is_wf_shape_v sctxt value. Lean `{width : Nat} [NeZero width] (context : StructContextExact) (operator : PrimOp) (values : List (ValueHOL width)) (value : ValueHOL width) (h : panPrimopHOLExact operator values = some value) : isWfShapeValueHOLExact context value = true`; BOTH pan_primop and is_wf_shape_v are the already-reviewed exact ports panPrimopHOLExact (panSemScript.sml:196) and isWfShapeValueHOLExact (panPropsScript.sml:24), the Bool predicate rendered as = true, no extra hypotheses; [NeZero width] models HOL's positive word dimension. Proof by case analysis on the pan_primop match. Direct HOL rows pan_primop_* in pan_sem_pan_primop_probe.out; parity examples in Flapjack/Test/PanStructsValueValidityParity.lean)"
+    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-4ac.4.14; exact HOL panProps$pan_primop_is_wf_shape_v (panPropsScript.sml:162): !sctxt pop args value. pan_primop pop args = SOME value ==> is_wf_shape_v sctxt value. Lean `{width : Nat} [NeZero width] (context : StructContextExact) (operator : PrimOp) (values : List (ValueHOL width)) (value : ValueHOL width) (h : panPrimopHOLExact operator values = some value) : isWfShapeValueHOLExact context value = true`; BOTH pan_primop and is_wf_shape_v are the already-reviewed exact ports panPrimopHOLExact (panSemScript.sml:196) and isWfShapeValueHOLExact (panPropsScript.sml:24), the Bool predicate rendered as = true, no extra hypotheses; [NeZero width] models HOL's positive word dimension. Proof by case analysis on the pan_primop match. Direct HOL rows pan_primop_* in pan_sem_pan_primop_probe.out; parity examples in Flapjack/Test/PanStructsValueValidityParity.lean) Task 148: the typed capture (pan_props_typed_probe.out) keeps the struct context payload generic ((sctxt :(mlstring # α) list)) and the value's word dimension independent (β). The twin now binds {α : Type} over List (MlS × α) for the context and {width} [NeZero width] for the value carrier, instead of fixing the context payload to StructInfoHOLExact."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
@@ -108967,7 +109038,7 @@
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/DecCallExact.lean",
     "lean_name": "vshapesArgsRel_imp_eq_len_MAP",
     "statement_status": "reviewed_exact",
-    "reviewer": "Codex (source comparison against panSemScript.sml:740 `!vshapes args. LIST_REL (\\vshape arg. SND vshape = shape_of arg) vshapes args ==> LENGTH vshapes = LENGTH args /\\ MAP SND vshapes = MAP shape_of args`; exact carriers vshapes : List (MlS # ShapeHOL), args : List (ValueHOL width), shape_of = shapeOfHOLExact (untagged pending nested-word qualifier support); HOL LIST_REL carried by the propositional ListRel because this core has no List.Forall2; oracle rows vra_one/vra_two/vra_bad/vra_len_one/vra_map_two in scripts/hol-probes/pan_sem_vshapes_args_rel_probe.out reproduced by Flapjack/Test/PanSemDecCallExactParity.lean)"
+    "reviewer": "Codex (source comparison against panSemScript.sml:740 `!vshapes args. LIST_REL (\\vshape arg. SND vshape = shape_of arg) vshapes args ==> LENGTH vshapes = LENGTH args /\\ MAP SND vshapes = MAP shape_of args`; exact carriers vshapes : List (MlS # ShapeHOL), args : List (ValueHOL width), shape_of = shapeOfHOLExact (untagged pending nested-word qualifier support); HOL LIST_REL carried by the propositional ListRel because this core has no List.Forall2; oracle rows vra_one/vra_two/vra_bad/vra_len_one/vra_map_two in scripts/hol-probes/pan_sem_vshapes_args_rel_probe.out reproduced by Flapjack/Test/PanSemDecCallExactParity.lean) Task-149 typed capture re-review: vshapes_args_rel_imp_eq_len_MAP_typed gives vshapes :(α # shape) list, so the parameter-name type is generic in HOL; the Lean statement now binds it (in use α = MlS)."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
@@ -109302,7 +109373,7 @@
       "code",
       "eshapes"
     ],
-    "reviewer": "flapjack-ds3 (source comparison, bead flapjack-pxn.18.3.7.1.3.1.1.2.4): HOL empty_locals_def panSemScript.sml:437-439 is `empty_locals s = s with locals := FEMPTY`. emptyLocalsHOLFinite matches, clearing locals to the canonical empty finite map, over PanSemStateFiniteExact whose finite-map fields are the canonical HolFiniteMapExact translation (witness holFmapAsFiniteSupportWitness). Note: a distinct panSem empty_locals_def entry maps to the untagged panEmptyLocals documented-mismatch analogue. Qualifier is representation-only. HOL word-dimension audit (flapjack-4ac.14): the tagged declaration and its owning width-indexed carrier mention a word type at the width identifier (`BitVec width` / `RiscV.Word width`) with `[NeZero width]`, so `(words_as_type_indexed_bitvec)` applies in addition to the finite-support field qualifier; the manifest status is the combined one.",
+    "reviewer": "codewhale source comparison (2026-11-11; task 145; typed HOL capture empty_locals_def_typed in scripts/hol-probes/pan_phase4_exact_probe.out, 0 hypotheses). panSemScript.sml:437-439: ∀(s :(α,'ffi) panSem$state). empty_locals s = s with locals := (FEMPTY :mlstring |-> α v). emptyLocalsHOLFinite matches clause for clause: the only field written is locals, set to the canonical empty HolFiniteMapExact (lookup always none, finite support the empty list); every other field is unchanged. The state's word width α and FFI host 'ffi stay independent as width and σ. The four finite-map fields are the canonical HolFiniteMapExact translation recorded by the qualifier (same-module witness holFmapAsFiniteSupportWitness), and BitVec width/σ is the reviewed word/FFI translation. Representation-only: no changed quantifier, hypothesis or conclusion. The production panEmptyLocals remains a documented_mismatch analogue over the raw function-carrier state.",
     "words_as_type_indexed_bitvec": true
   },
   {
@@ -109719,7 +109790,7 @@
       "result_2"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison panSemScript458-467: canonical code input and optional callee-local result have distinct HolFiniteMapExact value types at argument_1/result_2. FLOOKUP, ALL_DISTINCT(MAP FST), LIST_REL shape equality and ordered FEMPTY FUPDATE_LIST ZIP clauses retained through reviewed raw helper; length equality plus zipped shapeEqHOL_eq_true renders LIST_REL including empty/mismatched lengths. Native MlS/ShapeHOL/ProgHOL/ValueHOL and positive word dimension reviewed. Same-module unconditional tuple-pattern Option.map witness projects only locals.lookup and preserves body/return shape, both failures and successes, no ambient/extra assumptions. Actual recursive Call/DecCall evaluator sites consume canonical code directly; theorem statements unchanged and raw helper remains untagged. Qualifier and conservative witness syntax source-reviewed under closed .22.4.2.1; no whole compiler completion claim."
+    "reviewer": "codewhale source comparison (2026-11-11; tasks 145/147; typed HOL capture lookup_code_def_typed in scripts/hol-probes/pan_phase4_exact_probe.out, 0 hypotheses). panSemScript.sml:458-467: ∀(code :ε |-> (β # shape) list # α # δ) (fname :ε) (args :γ v list). (lookup_code code fname args :(α # (β |-> γ v) # δ) option) = case FLOOKUP code fname of NONE => NONE | SOME (vshapes,prog,rshape) => if ALL_DISTINCT (MAP FST vshapes) ∧ LIST_REL (λ vshape arg. SND vshape = shape_of arg) vshapes args then SOME (prog, FEMPTY |++ ZIP (MAP FST vshapes,args), rshape) else NONE. The exact twin keeps HOL's independent type variables: {ε β δ P : Type} for the code-map key, the formal-variable name, the return shape and the body payload α, with [DecidableEq ε] [DecidableEq β] as Lean's rendering of HOL equality on those generic types (no BEq), and {valueWidth} for γ (argument values); HOL's fixed shape stays ShapeHOL. α is an arbitrary payload type, not a word or program type: lookup_code only passes it through, so the Lean twin binds P generically (PR #1395 review finding 1) and the evaluator instantiates P := ProgHOL width. The code map is HolFiniteMapExact ε (List (β × ShapeHOL) × P × δ) and the callee-locals result is HolFiniteMapExact β (ValueHOL valueWidth). The argument order (code, fname, args) and every clause are kept: FLOOKUP is the canonical code map's .lookup, ALL_DISTINCT(MAP FST) is Nodup over the projected keys, LIST_REL is rendered by equal lengths plus zipped shapeEqHOL (shapeEqHOL_eq_true gives structural equality), and the ordered FEMPTY |++ ZIP is the canonical empty map's updateListEq over the zipped formals and arguments. The two finite-map carriers are recorded at argument_1/result_2 by the heterogeneous-function qualifier; the same-module unconditional tuple-pattern Option.map witness projects only locals.lookup and preserves body/return shape for both failure and success, with no ambient or extra assumptions. The recursive Call/DecCall evaluator instantiates ε = β = MlS, δ = ShapeHOL, P = ProgHOL width and valueWidth = width."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
@@ -109793,7 +109864,7 @@
       "code",
       "eshapes"
     ],
-    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-qj5.10.1): HOL panSemScript.sml:510-527 tests the raw address for nb=0 and byte_align address otherwise; an address outside sh_memaddrs returns (SOME Error,s). In-domain branches call call_FFI with SharedMem MappedRead, [n2w nb], and word_to_bytes addr F. FFI_final returns SOME (FinalFFI outcome) with empty_locals s. FFI_return stores ValWord (word_of_bytes F 0w new_bytes) via set_kvar, then updates ffi to new_ffi. shMemLoadHOLFiniteExact has those branches directly on PanSemStateFiniteExact, using the exact Pan word/FFI helpers and finite-map set/empty operations; it does not call broad shMemLoadHOLExact. Its four named maps are owned by PanSemStateFiniteExact and use the same-module HolFiniteMapExact roundtrip witness. The finite-support qualifier records only that carrier translation; the implicit decidability evidence is classical and adds no semantic premise. The existing eight-row pan_sem_sh_mem_probe.out guard checks the equivalent broad helper, and shMemLoadHOLFiniteExact_toExact proves pointwise agreement on every finite state. The helper is proof-side so far; production routing remains open. HOL word-dimension audit (flapjack-4ac.14): the tagged declaration and its owning width-indexed carrier mention a word type at the width identifier (`BitVec width` / `RiscV.Word width`) with `[NeZero width]`, so `(words_as_type_indexed_bitvec)` applies in addition to the finite-support field qualifier; the manifest status is the combined one.",
+    "reviewer": "codewhale source comparison (2026-11-11; task 145; typed HOL capture sh_mem_load_def_typed in scripts/hol-probes/pan_phase4_exact_probe.out, 0 hypotheses). panSemScript.sml:510-527: ∀(vk :varkind) (v :mlstring) (addr :α word) (nb :num) (s :(α,'ffi) state). (sh_mem_load vk v addr nb s : β panSem$result option # (α,'ffi) state) = ...; the result type β is independent of the address/state width α. Lean keeps that independence: {resultWidth} [NeZero resultWidth] is a separate parameter from the address/state width, and the argument order is HOL's vk, v, addr, nb, s (the production shMemLoadHOLExact keeps the state-first order and a single width and stays a documented_mismatch analogue). Branches compared: nb = 0 tests the raw address, otherwise byte_align addr; an address outside sh_memaddrs returns (SOME Error, s); call_FFI uses SharedMem MappedRead, [n2w nb] and word_to_bytes addr F; FFI_final returns FinalFFI with empty_locals s; FFI_return stores ValWord (word_of_bytes F 0w new_bytes) via set_kvar and updates only ffi. The locals/globals/code/eshapes fields are the canonical HolFiniteMapExact translation with the same-module witness holFmapAsFiniteSupportWitness. Representation-only: no changed quantifier, hypothesis or conclusion beyond the recorded word/FFI translation.",
     "words_as_type_indexed_bitvec": true
   },
   {
@@ -110438,16 +110509,18 @@
     "hol_name": "word_op_def",
     "lean_path": "Flapjack/Pancake/WordLang.lean",
     "lean_name": "wordOpHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (compared source word_op cases, fold identities, and binary Sub arity)"
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Task-149 source comparison against the typed capture word_op_def_typed in scripts/hol-probes/word_lang_typed_probe.out: HOL quantifies over `ws : \u03b1 word list` and returns `\u03b1 word option`, so the only carrier difference is HOL's type-indexed `'a word` rendered as positive-width `BitVec width` with `[NeZero width]`; the cases, fold identities and binary Sub arity match the source."
   },
   {
     "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
     "hol_name": "word_sh_def",
     "lean_path": "Flapjack/Pancake/WordLang.lean",
     "lean_name": "wordShiftHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (compared nonzero width-bound guard and all Lsl/Lsr/Asr/Ror cases against source)"
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Task-149 source comparison against the typed capture word_sh_def_typed in scripts/hol-probes/word_lang_typed_probe.out: HOL takes `w :\u03b1 word` and returns `\u03b1 word option`, so the only carrier difference is HOL's type-indexed `'a word` rendered as positive-width `BitVec width` with `[NeZero width]`; the nonzero width-bound guard and all Lsl/Lsr/Asr/Ror cases match the source."
   },
   {
     "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
@@ -124026,7 +124099,7 @@
     "hol_path": "cakeml/compiler/backend/bvi_letScript.sml",
     "hol_name": "extract_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "Independently compared the typed bvi_let_helpers_probe capture (`extract (Var n) ys = n + LENGTH ys + 1` and 0 for every other constructor, printed one clause per constructor) with extract: the Var clause is n + ys.length + 1 and the wildcard `_ => 0` covers exactly the other nine constructors shown in the capture."
+    "reviewer": "Independently compared the typed bvi_let_helpers_probe capture (`extract (Var n) ys = n + LENGTH ys + 1` and 0 for every other constructor, printed one clause per constructor) with extract: the Var clause is n + ys.length + 1 and the wildcard `_ => 0` covers exactly the other nine constructors shown in the capture. Task 147: the typed capture keeps the displaced list's element type generic (ys :α list) while the expression argument is the fixed BVI exp type; the twin now binds {α : Type} for the list and keeps Bvi.Exp for the expression, so the statement matches HOL's polymorphic ys with no identification."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviLet/Helpers.lean",
@@ -124916,7 +124989,7 @@
     "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
     "hol_name": "pure_op_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "Compared pure_op_def_typed with source lines 10-22: the Label, FFI, IntOp Const with empty args, WordOp, BlockOp Cons and remaining operation clauses match; small_enough_int n is the -268435457 <= n <= 268435457 bound, and Lean's match on op and args covers the same eleven clauses."
+    "reviewer": "Compared pure_op_def_typed with source lines 10-22: the Label, FFI, IntOp Const with empty args, WordOp, BlockOp Cons and remaining operation clauses match; small_enough_int n is the -268435457 <= n <= 268435457 bound, and Lean's match on op and args covers the same eleven clauses. Task 147: the typed capture keeps the argument list's element type generic (`pure_op (op : op) (args :α list)`); the twin now binds {α : Type} for that list while the operation stays HOL's fixed op type (ClosLang.Op), so no type variable is identified."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/BviTmc.lean",
@@ -125042,12 +125115,12 @@
   {
     "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "evalLongid",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_token_longid_check_alt_def",
-    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed eval_token_longid_check_alt_def_typed: tail_nonempty (str,s) ⇔ s ≠ «»; tail_nonempty_head_alpha_not_upper ⇔ if s = «» then F else isAlpha (strsub s 0) ⇒ ¬isUpper (strsub s 0); ctor_upper_initial ⇔ if s = «» then F else isAlpha (strsub s 0) ∧ isUpper (strsub s 0). Lean's empty-guard clauses match, with alpha (65..90 or 97..122) as HOL's isAlpha and upper as isUpper."
+    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed eval_token_longid_check_alt_def_typed: tail_nonempty (str,s) ⇔ s ≠ «»; tail_nonempty_head_alpha_not_upper ⇔ if s = «» then F else isAlpha (strsub s 0) ⇒ ¬isUpper (strsub s 0); ctor_upper_initial ⇔ if s = «» then F else isAlpha (strsub s 0) ∧ isUpper (strsub s 0). Lean's empty-guard clauses match, with alpha (65..90 or 97..122) as HOL's isAlpha and upper as isUpper. Task 147: the typed capture keeps the pair's first component generic ((str :α), (s :mlstring)); the twin now binds {α : Type} and ignores that component, matching HOL's polymorphic str while keeping the fixed mlstring tail."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "evalToken",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_token_check_def",
-    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed eval_token_check_def_typed gives all seventeen clauses: always T, never F, eq t0 ⇔ t = t0, isInt/isString/isCharT/isWordT/destFFIT, alpha/symbol/longid via destAlphaT/destSymbolT/destLongidT and the three checks, isTyvarT/isAlphaSym/isLongidT, and the three opid nonempty cases. Lean's pattern clauses match; the tokenUtils predicates are one-line token-case definitions that Lean inlines (isInt t = case t of IntT _ => T | _ => F, etc.)."
+    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed eval_token_check_def_typed gives all seventeen clauses: always T, never F, eq t0 ⇔ t = t0, isInt/isString/isCharT/isWordT/destFFIT, alpha/symbol/longid via destAlphaT/destSymbolT/destLongidT and the three checks, isTyvarT/isAlphaSym/isLongidT, and the three opid nonempty cases. Lean's pattern clauses match; the tokenUtils predicates are one-line token-case definitions that Lean inlines (isInt t = case t of IntT _ => T | _ => F, etc.). Task 147: the typed capture keeps the location type generic (∀(t :token) (l :α)); the twin now binds {α : Type} for the location pair component while the token stays HOL's fixed token type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "Unary",
@@ -125062,12 +125135,12 @@
   {
     "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "evalUnary",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_unary_def",
-    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed eval_unary_def_typed: eval_unary SemU_id v = v; eval_unary (SemU_bindNT nt) v = [Nd (nt, ptree_list_loc v) v]. Lean's clauses match, with mkNode n xs = Nd (n, listLocation xs) xs."
+    "statement_status": "documented_mismatch", "reviewer": "Tag withdrawn (task 147): HOL `eval_unary_def` applies `eval_unary` to `(α, MMLnonT, locs) parsetree list` with the terminal type `α` generic, while Lean's `ParseTree` fixes the terminal type to CakeML's `Token`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the terminal type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "mkLinfix",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "mk_linfix_fo_def",
-    "statement_status": "reviewed_exact", "reviewer": "source comparison 2026-11-10: typed mk_linfix_fo_def_typed: mk_linfix_fo tgt acc [] = acc; [t] = acc; (opt::t::rest) = mk_linfix_fo tgt (mkNd_fo tgt [acc; opt; t]) rest. Lean's three clauses match with mkNode."
+    "statement_status": "documented_mismatch", "reviewer": "Tag withdrawn (task 147): HOL `mk_linfix_fo_def` is generic in the terminal type `α` and the rule-index type `β` of `(α, β, locs) parsetree` and `β + num`, while Lean's `ParseTree`/`Rule` fix them to `Token` and `Sum Nonterminal Nat`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in both type parameters."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "evalBinary",
@@ -125096,7 +125169,7 @@
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml",
     "hol_name": "nt_rule_fo_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: Flapjack/CakeParser/PegGrammar.lean is generated from this definition by scripts/generate-cake-peg-grammar.py, which parses the pinned cakeml/compiler/parsing/pegexec_cml_foScript.sml and rejects unfamiliar syntax; the generator --check gate keeps the Lean definition in sync. The typed nt_rule_fo_def capture in pegexec_cml_fo_source_probe.out confirms the clause order, the INL/INR rule keys and the final `nt_rule_fo _ = NONE` default that Lean renders as `| _ => none`."
+    "reviewer": "source comparison 2026-11-10: Flapjack/CakeParser/PegGrammar.lean is generated from this definition by scripts/generate-cake-peg-grammar.py, which parses the pinned cakeml/compiler/parsing/pegexec_cml_foScript.sml and rejects unfamiliar syntax; the generator --check gate keeps the Lean definition in sync. The typed nt_rule_fo_def capture in pegexec_cml_fo_source_probe.out confirms the clause order, the INL/INR rule keys and the final `nt_rule_fo _ = NONE` default that Lean renders as `| _ => none`. Task 147: the typed capture applies the rule to `(INL nV : MMLnonT + α)` with the rule-index summand generic; the twin now binds {α : Type} and takes `Sum Nonterminal α`, leaving the used CakeML instance `Rule = Sum Nonterminal Nat` to the callers. The 69 INL branches and the `INR` fallback to NONE are unchanged."
   },
   {
     "lean_path": "Flapjack/CakeParser/PegEval.lean",
@@ -125111,8 +125184,8 @@
     "lean_name": "tokcheck",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "tokcheck_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed tokcheck_def_typed in cml_ptree_conversion_source_probe.out: tokcheck pt tok ⇔ OPTION_BIND (destLf pt) destTOK = SOME tok. Lean pt.token == some tok where ParseTree.token is exactly OPTION_BIND destLf destTOK (some only for a terminal leaf), so the equality is the same."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `tokcheck_def` is `∀(pt :(α, β, γ) parsetree) (tok :α)`, generic in the terminal type `α`, the nonterminal type `β` and the location type `γ`; Lean fixes them to `Token`, `Nonterminal` and `Locs`. `pt.token == some tok` implements HOL's `OPTION_BIND (destLf pt) destTOK = SOME tok`, but a specialised instance is not an exact port; a faithful port needs a generic parsetree and terminal carrier."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
@@ -125127,40 +125200,40 @@
     "lean_name": "ptreeUQTyop",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_UQTyop_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_UQTyop_def_typed: Lf → NONE; Nd nt args → if FST nt ≠ mkNT nUQTyOp then NONE else case args of [] → NONE | [pt] → OPTION_BIND (destLf pt) (λlf. OPTION_BIND (destTOK lf) (λtk. OPTION_CHOICE (destSymbolT tk) (destAlphaT tk))) | _ → NONE. Lean's children .nUQTyOp / singleton / leaf.token / symbolT-alphaT clauses implement the same branches."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_UQTyop_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeTyvarN",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_TyvarN_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_TyvarN_def_typed: Nd with FST = mkNT nTyvarN and [tyv] → destTyvarPT tyv, all else NONE. Lean's tyvar helper is destTyvarPT (token = TyvarT s → SOME s) applied to the single child."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_TyvarN_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeTyop",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_Tyop_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_Tyop_def_typed: Nd with FST = mkNT nTyOp and [pt] → OPTION_CHOICE (OPTION_BIND (OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destLongidT) (λ(xs,s). SOME (Long_Short xs s))) (OPTION_BIND (ptree_UQTyop pt) (λnm. SOME (Short nm))); all else NONE. Lean matches with child.token longidT and (ptreeUQTyop child).map Ident.short."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_Tyop_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeV",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_V_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_V_def_typed: Nd guarded by FST nt = mkNT nV, then [] → NONE | [pt] → OPTION_BIND (OPTION_BIND (destLf pt) destTOK) (λt. OPTION_CHOICE (destAlphaT t) (destSymbolT t)) | _ → NONE. Lean's children .nV and singleton alphaT-symbolT clauses match."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_V_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeFQV",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_FQV_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_FQV_def_typed: [pt] → OPTION_CHOICE (OPTION_MAP Short (ptree_V pt)) (OPTION_BIND (OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destLongidT) (λ(xs,s). SOME (Long_Short xs s))). Lean's match on ptreeV first and the longidT fallback match."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_FQV_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
@@ -125175,24 +125248,24 @@
     "lean_name": "ptreeUQConstructorName",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_UQConstructorName_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_UQConstructorName_def_typed: Nd with FST = mkNT nUQConstructorName and [pt] → OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destAlphaT; all else NONE. Lean's children/singleton/alphaT clause matches."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_UQConstructorName_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeConstructorName",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_ConstructorName_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_ConstructorName_def_typed: Nd with FST = mkNT nConstructorName and [pt] → OPTION_CHOICE (OPTION_BIND (ptree_UQConstructorName pt) (λs. SOME (Short s))) (OPTION_BIND (OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destLongidT) (λ(xs,s). SOME (Long_Short xs s))); all else NONE. Lean matches."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_ConstructorName_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeOpID",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_OpID_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_OpID_def_typed: Nd with FST = mkNT nOpID and [Lf (TK tk)] → OPTION_CHOICE chain: destAlphaT tk with isConstructor (explode s) choosing Con (Short s) [] or Var (Short s); destSymbolT tk with isSymbolicConstructor choosing Con or Var; destLongidT tk with isConstructor choosing Con (Long_Short path s) [] or Var; then StarT via isSymbolicConstructor \"*\" (false, so Var (Short «*»)), EqualsT → Var (Short «=»), else NONE. Lean's constructorName = (s == \"::\" || uppercase s) implements isConstructor (isSymbolicConstructor or upper-alpha head), and the symbol/longid/star/equals clauses match."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_OpID_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
@@ -125223,16 +125296,16 @@
     "lean_name": "ptreeEliteral",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_Eliteral_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_Eliteral_def_typed: Nd guarded by LENGTH subs = 1 ∧ FST nt = mkNT nEliteral, then destIntT → Lit (IntLit i), destCharT → Lit (Char c), destStringT → Lit (StrLit s), destWordT → Lit (Word64 (n2w n)), destFFIT → App (FFI s) []; all else NONE. Lean's singleton/leaf.token clauses match, with BitVec.ofNat 64 n for n2w n."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_Eliteral_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
     "lean_name": "ptreeOp",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_Op_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_Op_def_typed: nMultOps → StarT → Short «*», AlphaT «mod»/«div» → those, else singleSymP (validMultSym o explode) subs; nAddOps/nListOps → singleSymP validAddSym/validListSym; nRelOps → OPTION_CHOICE (singleSymP validRelSym subs) (EqualsT → Short «=»); nCompOps → SymbolT «:=» → «:=», AlphaT «o» → «o»; else NONE. Lean's ptreeOp branches and symOp helper (singleton symbol leaf with the predicate on explode) match each case."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_Op_def` is generic in the identifier name type `α` (its result is `(α, mlstring) id option`) and the location type `β`, while Lean fixes them to `MlString` and `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs generic name and location carriers."
   },
   {
     "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
@@ -125295,8 +125368,8 @@
     "lean_name": "ptreeStructName",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
     "hol_name": "ptree_StructName_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed ptree_StructName_def_typed: Nd with FST = mkNT nStructName and [pt] → OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destAlphaT; all else NONE. Lean's children/singleton/alphaT clause matches."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Tag withdrawn (task 147): HOL `ptree_StructName_def` takes `(token, MMLnonT, α) parsetree` with the location type `α` generic, while Lean's `ParseTree` fixes the location payload to CakeML's `Locs`. The clauses are HOL's, but a specialised instance is not an exact port; a faithful port needs a parsetree carrier generic in the location type."
   },
   {
     "lean_path": "Flapjack/TypeSystemHOL.lean",
@@ -127210,7 +127283,7 @@
     "lean_path": "Flapjack/TypeSystemHOL/Declarations.lean",
     "lean_name": "buildCtorTenv",
     "statement_status": "reviewed_exact",
-    "reviewer": "source comparison 2026-11-10: typed `build_ctor`: [] [] = alist_to_ns []; (tvs,tn,ctors)::tds with id::ids = nsAppend (recursive) (alist_to_ns (REVERSE (MAP (λ(cn,ts). (cn,(tvs,MAP (type_name_subst tenvT) ts,id))) ctors))); fallback alist_to_ns []; Lean is clause-identical with alistToNs."
+    "reviewer": "source comparison 2026-11-10: typed `build_ctor`: [] [] = alist_to_ns []; (tvs,tn,ctors)::tds with id::ids = nsAppend (recursive) (alist_to_ns (REVERSE (MAP (λ(cn,ts). (cn,(tvs,MAP (type_name_subst tenvT) ts,id))) ctors))); fallback alist_to_ns []; Lean is clause-identical with alistToNs. Task-148 typed capture re-review: build_ctor_tenv_def_typed keeps five independent type variables (namespace module α, constructor name β, type variable γ, type identifier δ, type name ε); the Lean definition now binds all five generically and the datatype rule instantiates them at MlString/MlString/MlString/Nat/MlString."
   },
   {
     "hol_path": "cakeml/semantics/typeSystemScript.sml",

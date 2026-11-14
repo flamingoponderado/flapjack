@@ -47,7 +47,7 @@ private theorem insert_bitmapAccounting {α : Type} (words : List α)
   rw [← hout]
   unfold BitmapAccounting
   intro bound
-  rw [(appListAppend_thm bs.1 (.list words) words).1]
+  rw [(appListAppend_thm_sameType bs.1 (.list words) words).1]
   simp only [appListAppend, appendAux, List.append_nil, List.length_append]
   exact ⟨Nat.add_le_add_right bound _, by omega⟩
 

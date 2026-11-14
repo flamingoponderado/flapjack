@@ -93,8 +93,8 @@ private theorem getEidsEntriesHOL_mem {width : Nat} [NeZero width]
     `excp_rel_def`. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "get_eids_imp_excp_rel"
   (fmap_as_finite_support_relation := [seids]) (words_as_type_indexed_bitvec)]
-theorem getEidsImpExcpRelExact {width : Nat} [NeZero width] :
-    ∀ (seids : HolFiniteMapExact MlS ShapeHOL) (pc : List (DeclHOL width)),
+theorem getEidsImpExcpRelExact {width : Nat} [NeZero width] {β : Type} :
+    ∀ (seids : HolFiniteMapExact MlS β) (pc : List (DeclHOL width)),
       sizeOfEidsHOL pc < 2 ^ width ∧
         (∀ key, (seids.lookup key).isSome = ((getEidsFromDeclsHOL pc).lookup key).isSome) →
       panToCrepExcpRelFiniteExact (getEidsFromDeclsHOL pc) seids := by
@@ -117,14 +117,24 @@ theorem getEidsImpExcpRelExact {width : Nat} [NeZero width] :
   rfl
 
 /-- Exact HOL `mk_ctxt_imp_locals_rel` (`pan_to_crepProofScript.sml:4677-4679`):
-    `!pc lcl es. locals_rel (mk_ctxt FEMPTY (make_funcs pc) 0 es) FEMPTY lcl`. -/
+    `!pc lcl es. locals_rel (mk_ctxt FEMPTY (make_funcs pc) 0 es) FEMPTY lcl`.
+
+    The typed capture `mk_ctxt_imp_locals_rel_typed`
+    (`pan_to_crep_proof_typed_probe.out:49`) gives
+    `pc :(mlstring # (mlstring # shape) list # α # shape) list`,
+    `lcl :num |-> β word_lab` and `es :mlstring |-> γ word`: the declaration
+    body type α is an arbitrary payload, and the local and exception-code
+    widths β and γ are independent. The statement keeps HOL's `pc, lcl, es`
+    order and binds `{P}` for the body payload plus `{lclWidth}`/`{esWidth}`
+    (task 152 item 2). -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "mk_ctxt_imp_locals_rel"
   (fmap_as_finite_support_relation := [PanToCrepContextExact.vars, lcl, es])
   (words_as_type_indexed_bitvec)]
-theorem mkCtxtImpLocalsRelExact {width : Nat} [NeZero width] :
-    ∀ (pc : List (MlS × List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
-      (lcl : HolFiniteMapExact Nat (HolWordLab width))
-      (es : HolFiniteMapExact MlS (BitVec width)),
+theorem mkCtxtImpLocalsRelExact {P : Type} {lclWidth : Nat} {esWidth : Nat}
+    [NeZero lclWidth] [NeZero esWidth] :
+    ∀ (pc : List (MlS × List (MlS × ShapeHOL) × P × ShapeHOL))
+      (lcl : HolFiniteMapExact Nat (HolWordLab lclWidth))
+      (es : HolFiniteMapExact MlS (BitVec esWidth)),
       panToCrepLocalsRelFiniteExact
         (mkCtxtExactHOL HolFiniteMapExact.empty (makeFuncsExactHOL pc) 0 es : PanToCrepContextExact width)
         HolFiniteMapExact.empty lcl := by
@@ -295,7 +305,7 @@ theorem stateRelImpSemanticsToCrep {width : Nat} {σ : Type} [NeZero width] :
         ({ t with clock := k } : CrepSemHOLState width σ).code := by
       show codeRelExactHOLW ctxt s.code t.code
       rw [hscode, htcode]
-      exact mkCtxtCodeImpCodeRelExactHOLW pan_code hdist hlocal
+      exact mkCtxtCodeImpCodeRelExactHOLW pan_code ⟨hdist, hlocal⟩
     have hexcp : panToCrepExcpRelFiniteExact ctxt.eids
         ({ s with clock := k } : PanSemStateFiniteExact width σ).eshapes :=
       getEidsImpExcpRelExact s.eshapes pan_code ⟨hsize, hdom⟩

@@ -168,7 +168,8 @@ private theorem insertedBitmapSlice {width : Nat} [NeZero width]
   have flatten : appListAppend (AppList.append bs
       (.list (Compiler.Backend.WordToStack.constWordsToBitmapW words words.length))) =
       appListAppend bs ++ Compiler.Backend.WordToStack.constWordsToBitmapW words words.length := by
-    rw [(appListAppend_thm bs (.list (Compiler.Backend.WordToStack.constWordsToBitmapW words words.length))
+    rw [(appListAppend_thm_sameType bs
+      (.list (Compiler.Backend.WordToStack.constWordsToBitmapW words words.length))
       (Compiler.Backend.WordToStack.constWordsToBitmapW words words.length)).1]
     simp [appListAppend,appendAux]
   rw [flatten] at bitmapPrefix

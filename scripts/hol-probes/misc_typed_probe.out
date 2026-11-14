@@ -1,0 +1,67 @@
+subspt_domain_SUBSET_typed=subspt (t1 :α sptree$num_map) (t2 :α sptree$num_map) ⇒ (domain t1 :num -> bool) ⊆ (domain t2 :num -> bool)
+DISJOINT_IMAGE_SUC_typed=DISJOINT (IMAGE SUC (x :num -> bool)) (IMAGE SUC (y :num -> bool)) ⇔ DISJOINT x y
+IMAGE_SUC_SUBSET_UNION_typed=IMAGE SUC (x :num -> bool) ⊆ IMAGE SUC (y :num -> bool) ∪ IMAGE SUC (z :num -> bool) ⇔ x ⊆ y ∪ z
+toAList_domain_typed=∀(x :num). MEM x (MAP (FST :num # α -> num) (toAList (t :α sptree$num_map))) ⇔ x ∈ (domain t :num -> bool)
+make_even_def_typed=∀(n :num). make_even n = if EVEN n then n else n + (1 :num)
+EVEN_make_even_typed=EVEN (make_even (x :num))
+opt_bind_def_typed=∀(n :α option) (v :β) (e :(α # β) list). opt_bind n v e = case n of (NONE :α option) => e | SOME n' => (n',v)::e
+enumerate_def_typed=(∀(n :num). (enumerate n ([] :α list) :(num # α) list) = ([] :(num # α) list)) ∧ ∀(n :num) (x :α) (xs :α list). (enumerate n (x::xs) :(num # α) list) = (n,x)::(enumerate (n + (1 :num)) xs :(num # α) list)
+lookup_vars_def_typed=(∀(env :α list). lookup_vars ([] :num list) env = SOME ([] :α list)) ∧ ∀(v :num) (vs :num list) (env :α list). lookup_vars (v::vs) env = if v < LENGTH env then case lookup_vars vs env of (NONE :α list option) => (NONE :α list option) | SOME xs => SOME (env❲v❳::xs) else (NONE :α list option)
+anub_def_typed=(∀(acc :α list). anub ([] :(α # β) list) acc = ([] :(α # β) list)) ∧ ∀(v :β) (ls :(α # β) list) (k :α) (acc :α list). anub ((k,v)::ls) acc = if MEM k acc then anub ls acc else (k,v)::anub ls (k::acc)
+anub_all_distinct_keys_typed=∀(ls :(α # β) list) (acc :α list). ALL_DISTINCT acc ⇒ ALL_DISTINCT (MAP (FST :α # β -> α) (anub ls acc) ++ acc)
+app_list_typed=List::α list -> α app_list; Append::α app_list -> α app_list -> α app_list; Nil::α app_list
+append_def_typed=∀(l :α app_list). append l = append_aux l ([] :α list)
+append_thm_typed=append (Append (l1 :α app_list) (l2 :α app_list)) = append l1 ++ append l2 ∧ append (List (xs :β list)) = xs ∧ append (Nil :γ app_list) = ([] :γ list)
+append_aux_def_typed=(∀(aux :α list). append_aux (Nil :α app_list) aux = aux) ∧ (∀(xs :α list) (aux :α list). append_aux (List xs) aux = xs ++ aux) ∧ ∀(l1 :α app_list) (l2 :α app_list) (aux :α list). append_aux (Append l1 l2) aux = append_aux l1 (append_aux l2 aux)
+append_aux_thm_typed=∀(l :α app_list) (xs :α list). append_aux l xs = append_aux l ([] :α list) ++ xs
+asm_write_bytearray_def_typed=(∀(a :α word) (m :α word -> word8). asm_write_bytearray a ([] :word8 list) m = m) ∧ ∀(a :α word) (x :word8) (xs :word8 list) (m :α word -> word8). asm_write_bytearray a (x::xs) m = (asm_write_bytearray (a + (1w :α word)) xs m)⦇a ↦ x⦈
+bytes_in_mem_def_typed=(∀(a :α word) (m :α word -> β) (md :α word -> bool) (k :α word -> bool). bytes_in_mem a ([] :β list) m md k ⇔ T) ∧ ∀(a :α word) (b :β) (bs :β list) (m :α word -> β) (md :α word -> bool) (k :α word -> bool). bytes_in_mem a (b::bs) m md k ⇔ a ∈ md ∧ a ∉ k ∧ m a = b ∧ bytes_in_mem (a + (1w :α word)) bs m md k
+bytes_in_mem_IMP_typed=∀(xs :word8 list) (p :α word). bytes_in_mem p xs (m :α word -> word8) (dm :α word -> bool) (dm1 :α word -> bool) ⇒ bytes_in_memory p xs m dm
+bytes_in_memory_def_typed=(∀(a :α word) (m :α word -> word8) (dm :α word -> bool). bytes_in_memory a ([] :word8 list) m dm ⇔ T) ∧ ∀(a :α word) (x :word8) (xs :word8 list) (m :α word -> word8) (dm :α word -> bool). bytes_in_memory a (x::xs) m dm ⇔ m a = x ∧ a ∈ dm ∧ bytes_in_memory (a + (1w :α word)) xs m dm
+bytes_in_memory_APPEND_typed=∀(l1 :word8 list) (l2 :word8 list) (pc :α word) (mem :α word -> word8) (mem_domain :α word -> bool). bytes_in_memory pc (l1 ++ l2) mem mem_domain ⇔ bytes_in_memory pc l1 mem mem_domain ∧ bytes_in_memory (pc + (n2w (LENGTH l1) :α word)) l2 mem mem_domain
+bytes_in_memory_change_mem_typed=∀(a :α word) (bs :word8 list) (m1 :α word -> word8) (m2 :α word -> word8) (md :α word -> bool). bytes_in_memory a bs m1 md ∧ (∀(n :num). n < LENGTH bs ⇒ m1 (a + (n2w n :α word)) = m2 (a + (n2w n :α word))) ⇒ bytes_in_memory a bs m2 md
+bytes_in_memory_in_domain_typed=∀(a :α word) (bs :word8 list) (m :α word -> word8) (md :α word -> bool) (k :num). bytes_in_memory a bs m md ∧ k < LENGTH bs ⇒ a + (n2w k :α word) ∈ md
+find_index_def_typed=(∀(v0 :α) (v1 :num). find_index v0 ([] :α list) v1 = (NONE :num option)) ∧ ∀(y :α) (x :α) (xs :α list) (n :num). find_index y (x::xs) n = if x = y then SOME n else find_index y xs (n + (1 :num))
+find_index_APPEND_typed=∀(l1 :α list) (l2 :α list) (x' :α) (n :num). find_index x' (l1 ++ l2) n = case find_index x' l1 n of (NONE :num option) => find_index x' l2 (n + LENGTH l1) | SOME x => SOME x
+find_index_LESS_LENGTH_typed=∀(ls :α list) (n :α) (m :num) (i :num). find_index n ls m = SOME i ⇒ m ≤ i ∧ i < m + LENGTH ls
+find_index_ALL_DISTINCT_EL_eq_typed=∀(ls :α list). ALL_DISTINCT ls ⇒ ∀(x :α) (m :num) (i :num). find_index x ls m = SOME i ⇔ ∃(j :num). i = m + j ∧ j < LENGTH ls ∧ x = ls❲j❳
+find_index_MEM_typed=∀(ls :α list) (x :α) (n :num). MEM x ls ⇒ ∃(i :num). find_index x ls n = SOME (n + i) ∧ i < LENGTH ls ∧ ls❲i❳ = x
+find_index_shift_typed=∀(ls :α list) (x :α) (k :num) (j :num). find_index x ls k = SOME j ⇒ j ≥ k ∧ ∀(n :num). find_index x ls n = SOME (j − k + n)
+find_index_shift_0_typed=∀(ls :α list) (x :α) (k :num). find_index x ls k = OPTION_MAP (λ(x :num). x + k) (find_index x ls (0 :num))
+find_index_is_MEM_typed=∀(x :α) (ls :α list) (n :num) (j :num). find_index x ls n = SOME j ⇒ MEM x ls
+FLAT_REPLICATE_NIL_typed=∀(n :num). FLAT (REPLICATE n ([] :α list)) = ([] :α list)
+FOLDR_MAX_0_MAX_LIST_typed=∀(ls :num list). FOLDR MAX (0 :num) ls = MAX_LIST ls
+get_byte_set_byte_diff_typed=good_dimindex (:α) ∧ (a :α word) ≠ (a' :α word) ∧ byte_align a = byte_align a' ⇒ get_byte a (set_byte a' (b :word8) (w :α word) (be :bool)) be = get_byte a w be
+good_dimindex_get_byte_set_byte_typed=good_dimindex (:α) ⇒ get_byte (a :α word) (set_byte a (b :word8) (w :α word) (be :bool)) be = b
+good_dimindex_def_typed=good_dimindex (:α) ⇔ dimindex (:α) = (32 :num) ∨ dimindex (:α) = (64 :num)
+LLOOKUP_def_typed=(∀(n :num). LLOOKUP ([] :α list) n = (NONE :α option)) ∧ ∀(n :num) (x :α) (xs :α list). LLOOKUP (x::xs) n = if n = (0 :num) then SOME x else LLOOKUP xs (n − (1 :num))
+LLOOKUP_DROP_typed=LLOOKUP (DROP (m :num) (xs :α list)) (n :num) = LLOOKUP xs (m + n)
+LLOOKUP_LUPDATE_typed=∀(xs :α list) (i :num) (n :num) (x :α). LLOOKUP xs❲i ↦ x❳ n = if i ≠ n then LLOOKUP xs n else if i < LENGTH xs then SOME x else (NONE :α option)
+LLOOKUP_TAKE_IMP_typed=LLOOKUP (TAKE (m :num) (xs :α list)) (n :num) = SOME (x :α) ⇒ LLOOKUP xs n = SOME x
+list_subset_def_typed=∀(l1 :α list) (l2 :α list). list_subset l1 l2 ⇔ EVERY (λ(x :α). MEM x l2) l1
+lookup_any_def_typed=∀(x :num) (sp :α sptree$num_map) (d :α). lookup_any x sp d = case lookup x sp of (NONE :α option) => d | SOME m => m
+max3_def_typed=∀(x :num) (y :num) (z :num). max3 x y z = if x > y then if z > x then z else x else if z > y then z else y
+the_def_typed=(∀(v0 :α) (x :α). the v0 (SOME x) = x) ∧ ∀(x :α). the x (NONE :α option) = x
+IMP_OPT_MMAP_EQ_typed=∀(l1 :α list) (l2 :β list). MAP (f1 :α -> γ option) l1 = MAP (f2 :β -> γ option) l2 ⇒ OPT_MMAP f1 l1 = OPT_MMAP f2 l2
+OPT_MMAP_CONG_typed=∀(l1 :α list) (l2 :α list) (f :α -> β option) (f' :α -> β option). l1 = l2 ∧ (∀(x :α). MEM x l2 ⇒ f x = f' x) ⇒ OPT_MMAP f l1 = OPT_MMAP f' l2
+PERM_PART_typed=∀(P :α -> bool) (L :α list) (l1 :α list) (l2 :α list) (p :α list) (q :α list). (p,q) = PART P L l1 l2 ⇒ PERM (L ++ (l1 ++ l2)) (p ++ q)
+PERM_PARTITION_typed=∀(P :α -> bool) (L :α list) (A :α list) (B :α list). (A,B) = PARTITION P L ⇒ PERM L (A ++ B)
+shift_seq_def_typed=∀(k :num) (s :num -> α). shift_seq k s = (λ(i :num). s (i + k))
+fromList2_def_typed=∀(l :α list). fromList2 l = SND (FOLDL (λ((i :num),(t :α sptree$num_map)) (a :α). (i + (2 :num),insert i a t)) ((0 :num),(LN :α sptree$num_map)) l)
+alist_insert_REVERSE_typed=∀(xs :num list) (ys :α list) (s :α sptree$num_map). ALL_DISTINCT xs ∧ LENGTH xs = LENGTH ys ⇒ alist_insert (REVERSE xs) (REVERSE ys) s = alist_insert xs ys s
+domain_fromList2_typed=∀(q :α list). (domain (fromList2 q) :num -> bool) = set (GENLIST (λ(x :num). (2 :num) * x) (LENGTH q))
+EVEN_fromList2_typed=∀(l :α list) (n :num). n ∈ (domain (fromList2 l) :num -> bool) ⇒ EVEN n
+TAKE_FLAT_REPLICATE_LEQ_typed=∀(j :num) (k :num) (ls :α list) (len :num). len = LENGTH ls ∧ k ≤ j ⇒ TAKE (k * len) (FLAT (REPLICATE j ls)) = FLAT (REPLICATE k ls)
+UNCURRY_eq_pair_typed=UNCURRY (f :β -> γ -> α) (v :β # γ) = (z :α) ⇔ ∃(a :β) (b :γ). v = (a,b) ∧ f a b = z
+word_list_def_typed=(∀(a :α word). word_list a ([] :β list) = (emp :(α word # β -> bool) -> bool)) ∧ ∀(a :α word) (x :β) (xs :β list). word_list a (x::xs) = (one (a,x) :(α word # β -> bool) -> bool) * word_list (a + (bytes_in_word :α word)) xs
+word_list_exists_def_typed=∀(a :α word) (n :num). (word_list_exists a n :(α word # β -> bool) -> bool) = SEP_EXISTS(xs :β list). word_list a xs * (cond (LENGTH xs = n) :(α word # β -> bool) -> bool)
+read_bytearray_def_typed=(∀(a :β word) (get_byte :β word -> α option). read_bytearray a (0 :num) get_byte = SOME ([] :α list)) ∧ ∀(a :β word) (n :num) (get_byte :β word -> α option). read_bytearray a (SUC n) get_byte = case get_byte a of (NONE :α option) => (NONE :α list option) | SOME b => case read_bytearray (a + (1w :β word)) n get_byte of (NONE :α list option) => (NONE :α list option) | SOME bs => SOME (b::bs)
+fun2set_disjoint_union_typed=DISJOINT (d1 :α -> bool) (d2 :α -> bool) ∧ (p :(α # β -> bool) -> bool) (fun2set ((m :α -> β),d1)) ∧ (q :(α # β -> bool) -> bool) (fun2set (m,d2)) ⇒ (p * q) (fun2set (m,d1 ∪ d2))
+UPDATE_LIST_def_typed=($=++ :(α -> β) -> (α # β) list -> α -> β) = FOLDL (flip (UNCURRY (UPDATE :α -> β -> (α -> β) -> α -> β)))
+APPLY_UPDATE_LIST_ALOOKUP_typed=∀(ls :(α # β) list) (f :α -> β) (x :α). (f =++ ls) x = case ALOOKUP (REVERSE ls) x of (NONE :β option) => f x | SOME y => y
+MOD_SUB_LEMMA_typed=(n :num) MOD (k :num) = (0 :num) ∧ (m :num) MOD k = (0 :num) ∧ (0 :num) < k ⇒ (n − m) MOD k = (0 :num)
+DISJOINT_INTER_typed=DISJOINT (b :α -> bool) (c :α -> bool) ⇒ DISJOINT ((a :α -> bool) ∩ b) (a ∩ c)
+IMP_MULT_DIV_LESS_typed=(m :num) ≠ (0 :num) ∧ (d :num) < (k :num) ⇒ m * (d DIV m) < k
+DIV_LESS_DIV_typed=(n :num) MOD (k :num) = (0 :num) ∧ (m :num) MOD k = (0 :num) ∧ n < m ∧ (0 :num) < k ⇒ n DIV k < m DIV k
+WORD_LS_IMP_typed=(a :α word) ≤₊ (b :α word) ⇒ ∃(k :num). Abbrev (b = a + (n2w k :α word)) ∧ w2n (b − a) = k ∧ ∀(w :α word). a ≤₊ w ∧ w <₊ b ⇔ ∃(i :num). w = a + (n2w i :α word) ∧ i < k
+SmartAppend_def_typed=SmartAppend (Nil :α app_list) (l2 :α app_list) = l2 ∧ SmartAppend (List (v2 :α list)) (Nil :α app_list) = List v2 ∧ SmartAppend (Append (v3 :α app_list) (v4 :α app_list)) (Nil :α app_list) = Append v3 v4 ∧ SmartAppend (List (v5 :α list)) (List (v11 :α list)) = Append (List v5) (List v11) ∧ SmartAppend (List v5) (Append (v12 :α app_list) (v13 :α app_list)) = Append (List v5) (Append v12 v13) ∧ SmartAppend (Append (v6 :α app_list) (v7 :α app_list)) (List (v17 :α list)) = Append (Append v6 v7) (List v17) ∧ SmartAppend (Append v6 v7) (Append (v18 :α app_list) (v19 :α app_list)) = Append (Append v6 v7) (Append v18 v19)

@@ -1,0 +1,27 @@
+closure_tag_def_typed=closure_tag = (30 :num)
+partial_app_tag_def_typed=partial_app_tag = (31 :num)
+tuple_tag_def_typed=tuple_tag = (0 :num)
+data_num_stubs_def_typed=data_num_stubs = word_num_stubs + (32 :num) + (23 :num)
+stack_num_stubs_def_typed=stack_num_stubs = (5 :num)
+word_add_carry_def_typed=∀(l :α word) (r :α word) (c :α word). word_add_carry l r c = (let (res :num) = w2n l + w2n r + if c = (0w :α word) then (0 :num) else (1 :num) in ((n2w res :α word),if dimword (:α) ≤ res then (1w :α word) else (0w :α word)))
+word_num_stubs_def_typed=word_num_stubs = stack_num_stubs + (1 :num) + (1 :num)
+word_shift_def_typed=word_shift (:α) = if dimindex (:α) = (32 :num) then (2 :num) else (3 :num)
+bvl_num_stub_MOD_typed=bvl_num_stubs MOD bvl_to_bvi_namespaces = (0 :num)
+bvl_num_stubs_def_typed=bvl_num_stubs = data_num_stubs + (9 :num) + (1 :num)
+bvl_to_bvi_namespaces_def_typed=bvl_to_bvi_namespaces = (4 :num)
+opw_typed=Andw::opw; Orw::opw; Xor::opw; Add::opw; Sub::opw
+tra_typed=SourceLoc::num -> num -> num -> num -> tra; Cons::tra -> num -> tra; Union::tra -> tra -> tra; None::tra
+mk_cons_def_typed=∀(tr :tra) (n :num). tr § n = case tr of SourceLoc v8 v9 v10 v11 => tr ▷ n | v12 ▷ v13 => tr ▷ n | Union v14 v15 => tr ▷ n | None => None
+orphan_trace_def_typed=orphan_trace = SourceLoc (2 :num) (2 :num) (1 :num) (1 :num)
+list_delete_def_typed=(∀(s :α sptree$num_map). list_delete ([] :num list) s = s) ∧ ∀(v :num) (vs :num list) (s :α sptree$num_map). list_delete (v::vs) s = list_delete vs (delete v s)
+false_tag_def_typed=false_tag = (0 :num)
+true_tag_def_typed=true_tag = (1 :num)
+bool_to_tag_def_typed=∀(b :bool). bool_to_tag b = if b then true_tag else false_tag
+clos_tag_shift_def_typed=∀(tag :num). clos_tag_shift tag = if tag < (30 :num) then tag else tag + (2 :num)
+bind_tag_def_typed=bind_tag = (0 :num)
+chr_tag_def_typed=chr_tag = (1 :num)
+div_tag_def_typed=div_tag = (2 :num)
+subscript_tag_def_typed=subscript_tag = (3 :num)
+nil_tag_def_typed=nil_tag = (0 :num)
+cons_tag_def_typed=cons_tag = (0 :num)
+small_enough_int_def_typed=∀(i :int). small_enough_int i ⇔ -(268435457 :int) ≤ i ∧ i ≤ (268435457 :int)

@@ -447,19 +447,26 @@ def setKvarFfiHOLFinite {width : Nat} {σ : Type} [NeZero width]
   rw [toExact_setKvarHOLFinite]
 
 /-- HOL `sh_mem_load_def` (`cakeml/pancake/semantics/panSemScript.sml:510-527`)
-    over the finite-map state carrier. The branches follow HOL directly: test
-    the raw address when `nb = 0`, otherwise the byte-aligned address; call
-    `call_FFI` with `SharedMem MappedRead`, `[n2w nb]`, and
-    `word_to_bytes addr F`; on `FFI_final`, clear locals; on `FFI_return`,
-    install the loaded word with `set_kvar` and update only `ffi`. The four
-    map fields use the canonical finite-support carrier recorded by the tag. -/
+    over the finite-map state carrier.  The typed HOL statement quantifies the
+    target variable, the address, the byte count, the state and the result at
+    independent types (`vk :varkind`, `v :mlstring`, `addr :α word`, `nb :num`,
+    `s :(α,'ffi) state`, result `β result`), and its argument order is
+    `vk, v, addr, nb, s`; the exact twin keeps the independent result width and
+    HOL's order, while the production `shMemLoadHOLExact` uses a single width
+    and the state-first order.  The branches follow HOL directly: test the raw
+    address when `nb = 0`, otherwise the byte-aligned address; call `call_FFI`
+    with `SharedMem MappedRead`, `[n2w nb]`, and `word_to_bytes addr F`; on
+    `FFI_final`, clear locals; on `FFI_return`, install the loaded word with
+    `set_kvar` and update only `ffi`.  The four map fields use the canonical
+    finite-support carrier recorded by the tag. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "sh_mem_load_def"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 def shMemLoadHOLFiniteExact {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs]
-    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat) :
-    Option (PanSemResultExact width) × PanSemStateFiniteExact width σ :=
+    {resultWidth : Nat} [NeZero resultWidth]
+    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat)
+    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs] :
+    Option (PanSemResultExact resultWidth) × PanSemStateFiniteExact width σ :=
   if nb = 0 then
     if state.shMemaddrs address then
       match callFFIHOL state.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
@@ -483,9 +490,9 @@ def shMemLoadHOLFiniteExact {width : Nat} {σ : Type} [NeZero width]
     forgetting finite-map support after the direct finite-carrier load gives
     the broad helper's result on the same finite input. -/
 theorem shMemLoadHOLFiniteExact_toExact {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs]
-    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat) :
-    let loaded := shMemLoadHOLFiniteExact state kind name address nb
+    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat)
+    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs] :
+    let loaded := shMemLoadHOLFiniteExact (resultWidth := width) kind name address nb state
     (loaded.1, loaded.2.toExact) =
       shMemLoadHOLExact state.toExact kind name address nb := by
   classical
@@ -559,20 +566,20 @@ private theorem ofExact_eq_finite_of_toExact_eq {width : Nat} {σ : Type}
     rebuilding the broad load result with its finite-support proof gives the
     direct finite-carrier helper's result. -/
 theorem shMemLoadHOLFiniteExact_repack {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs]
-    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat) :
-    let loaded := shMemLoadHOLFiniteExact state kind name address nb
+    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat)
+    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs] :
+    let loaded := shMemLoadHOLFiniteExact (resultWidth := width) kind name address nb state
     let broad := shMemLoadHOLExact state.toExact kind name address nb
     (broad.1, ofExact broad.2
     (shMemLoadHOLExact_finiteSupport state.toExact kind name address nb
         state.toExact_finiteSupport)) = (loaded.1, loaded.2) := by
-  have h := shMemLoadHOLFiniteExact_toExact state kind name address nb
+  have h := shMemLoadHOLFiniteExact_toExact kind name address nb state
   dsimp only at h
   apply Prod.ext
   · exact (congrArg Prod.fst h).symm
   · have hsnd :
         (shMemLoadHOLExact state.toExact kind name address nb).2 =
-          (shMemLoadHOLFiniteExact state kind name address nb).2.toExact :=
+          (shMemLoadHOLFiniteExact (resultWidth := width) kind name address nb state).2.toExact :=
       (congrArg Prod.snd h).symm
     exact ofExact_eq_finite_of_toExact_eq _ _ hsnd
       (shMemLoadHOLExact_finiteSupport state.toExact kind name address nb
@@ -935,11 +942,14 @@ def evaluateHOLFiniteViaExact {width : Nat} {σ : Type} [NeZero width]
     lookup.  It wraps `lookupCodeHOLExact`'s callee-local function as a
     `HolFiniteMapExact`, so the finite evaluator can bind the lookup result in a
     plain `match` instead of a dependent `match hlookup : ...` (whose equation
-    blocks the projection proofs). -/
-def lookupCodeHOLFinite {width : Nat} [NeZero width]
-    (code : MlS → Option (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
-    (fname : MlS) (values : List (ValueHOL width)) :
-    Option (ProgHOL width × HolFiniteMapExact MlS (ValueHOL width) × ShapeHOL) :=
+    blocks the projection proofs).  HOL's body payload is polymorphic
+    (`α` in `lookup_code_def_typed`), so it stays generic as `P`; the evaluator
+    instantiates `P = ProgHOL width`. -/
+def lookupCodeHOLFinite {ε β δ P : Type} [DecidableEq β]
+    {valueWidth : Nat} [NeZero valueWidth]
+    (code : ε → Option (List (β × ShapeHOL) × P × δ))
+    (fname : ε) (values : List (ValueHOL valueWidth)) :
+    Option (P × HolFiniteMapExact β (ValueHOL valueWidth) × δ) :=
   match h : lookupCodeHOLExact code fname values with
   | none => none
   | some (body, calleeLocals, returnShape) =>
@@ -952,16 +962,28 @@ def lookupCodeHOLFinite {width : Nat} [NeZero width]
 /-- Canonical finite-map rendering of lookup_code. Source458-467 retains
 FLOOKUP, ALL_DISTINCT, LIST_REL and ordered FUPDATE_LIST over ZIP. LIST_REL is
 rendered by equal lengths and zipped shapeEqHOL; shapeEqHOL_eq_true supplies
-structural equality. Both code and callee locals use canonical finite support;
-MlS, ProgHOL, ShapeHOL and ValueHOL retain the reviewed source carriers.
-The recursive finite evaluator uses this entry point in Call and DecCall. -/
+structural equality. Both code and callee locals use canonical finite support.
+The typed HOL statement
+(`lookup_code_def_typed` in `scripts/hol-probes/pan_phase4_exact_probe.out`)
+quantifies `code :ε |-> (β # shape) list # α # δ`, `fname :ε` and
+`args :γ v list`: the map key ε, the variable name β and the return shape δ are
+all generic, the body payload α is an arbitrary type (the definition only
+passes it through; it is not a word or program type), and only the argument
+value type γ is a type-indexed word.  The exact twin keeps every one of them:
+`{ε β δ P : Type}` with `[DecidableEq ε] [DecidableEq β]` (Lean's rendering of
+HOL equality on the generic key and variable types, no BEq), `P` for α,
+`{valueWidth}` for γ, and the callee-locals map is
+`HolFiniteMapExact β (ValueHOL valueWidth)`.  The recursive finite evaluator
+instantiates ε = β = MlS, δ = ShapeHOL, `P = ProgHOL width` and
+`valueWidth = width` in Call and DecCall. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "lookup_code_def"
   (fmap_as_finite_support_heterogeneous_function := [argument_1, result_2])
   (words_as_type_indexed_bitvec)]
-def lookupCodeCanonicalHOL {width : Nat} [NeZero width]
-    (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
-    (fname : MlS) (arguments : List (ValueHOL width)) :
-    Option (ProgHOL width × HolFiniteMapExact MlS (ValueHOL width) × ShapeHOL) :=
+def lookupCodeCanonicalHOL {ε β δ P : Type} [DecidableEq ε] [DecidableEq β]
+    {valueWidth : Nat} [NeZero valueWidth]
+    (code : HolFiniteMapExact ε (List (β × ShapeHOL) × P × δ))
+    (fname : ε) (arguments : List (ValueHOL valueWidth)) :
+    Option (P × HolFiniteMapExact β (ValueHOL valueWidth) × δ) :=
   lookupCodeHOLFinite code.lookup fname arguments
 
 attribute [reducible] lookupCodeCanonicalHOL
@@ -971,9 +993,10 @@ raw lookup operation. Both failure and successful structured callee maps are
 covered; no success equation is assumed. This is representation infrastructure
 with no independently named HOL declaration. -/
 theorem holFmapAsFiniteSupportHeterogeneousFunctionWitness_lookupCodeCanonicalHOL
-    {width : Nat} [NeZero width]
-    (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
-    (fname : MlS) (arguments : List (ValueHOL width)) :
+    {ε β δ P : Type} [DecidableEq ε] [DecidableEq β]
+    {valueWidth : Nat} [NeZero valueWidth]
+    (code : HolFiniteMapExact ε (List (β × ShapeHOL) × P × δ))
+    (fname : ε) (arguments : List (ValueHOL valueWidth)) :
     (lookupCodeCanonicalHOL code fname arguments).map
       (fun (body, locals, shape) => (body, locals.lookup, shape)) =
       lookupCodeHOLExact code.lookup fname arguments := by
@@ -981,9 +1004,10 @@ theorem holFmapAsFiniteSupportHeterogeneousFunctionWitness_lookupCodeCanonicalHO
   split <;> simp_all
 
 /-- `lookupCodeHOLFinite` fails exactly when the underlying HOL lookup fails. -/
-theorem lookupCodeHOLFinite_eq_none_iff {width : Nat} [NeZero width]
-    (code : MlS → Option (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
-    (fname : MlS) (values : List (ValueHOL width)) :
+theorem lookupCodeHOLFinite_eq_none_iff {ε β δ P : Type} [DecidableEq β]
+    {valueWidth : Nat} [NeZero valueWidth]
+    (code : ε → Option (List (β × ShapeHOL) × P × δ))
+    (fname : ε) (values : List (ValueHOL valueWidth)) :
     lookupCodeHOLFinite code fname values = none ↔
       lookupCodeHOLExact code fname values = none := by
   unfold lookupCodeHOLFinite
@@ -991,10 +1015,11 @@ theorem lookupCodeHOLFinite_eq_none_iff {width : Nat} [NeZero width]
 
 /-- A successful `lookupCodeHOLFinite` forgets to the underlying HOL lookup
     result (the callee map is projected through `.lookup`). -/
-theorem lookupCodeHOLFinite_eq_some {width : Nat} [NeZero width]
-    (code : MlS → Option (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
-    (fname : MlS) (values : List (ValueHOL width)) (body : ProgHOL width)
-    (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape : ShapeHOL)
+theorem lookupCodeHOLFinite_eq_some {ε β δ P : Type} [DecidableEq β]
+    {valueWidth : Nat} [NeZero valueWidth]
+    (code : ε → Option (List (β × ShapeHOL) × P × δ))
+    (fname : ε) (values : List (ValueHOL valueWidth)) (body : P)
+    (callee : HolFiniteMapExact β (ValueHOL valueWidth)) (returnShape : δ)
     (h : lookupCodeHOLFinite code fname values = some (body, callee, returnShape)) :
     lookupCodeHOLExact code fname values = some (body, callee.lookup, returnShape) := by
   unfold lookupCodeHOLFinite at h
@@ -2817,9 +2842,9 @@ theorem evaluateHOLFiniteState_shMemLoad_source {width : Nat} {σ : Type}
       | some (.val (.word addr)) =>
           match lookupKvarHOLFinite kind name state with
           | some (.val (.word _)) =>
-              let loaded := @shMemLoadHOLFiniteExact width σ _ state
+              let loaded := @shMemLoadHOLFiniteExact width σ _ width _ kind name addr
+                (nbOpHOL operator) state
                 (fun current => Classical.propDecidable (state.shMemaddrs current))
-                kind name addr (nbOpHOL operator)
               (loaded.1, loaded.2)
           | _ => (some .error, state)
       | _ => (some .error, state) := by
@@ -2831,7 +2856,7 @@ theorem evaluateHOLFiniteState_shMemLoad_source {width : Nat} {σ : Type}
     repeat' split <;> simp_all <;> try apply ofExact_toExact_any
   case h_1 =>
     exact (Prod.mk.inj
-      (shMemLoadHOLFiniteExact_repack state kind name _ (nbOpHOL operator)))
+      (shMemLoadHOLFiniteExact_repack kind name _ (nbOpHOL operator) state))
 
 /-- HOL `evaluate_def`'s `ExtCall` equation (`panSemScript.sml:711-726`,
     restated at line 780). It preserves the four ordered expression checks,

@@ -1,0 +1,108 @@
+empty_locals_def_typed=∀(s :(α, 'ffi) panSem$state).
+  empty_locals s = s with locals := (FEMPTY :mlstring |-> α v)
+empty_locals_def_hypotheses=0
+lookup_code_def_typed=∀(code :ε |-> (β # shape) list # α # δ) (fname :ε) (args :γ v list).
+  (lookup_code code fname args :(α # (β |-> γ v) # δ) option) =
+  case FLOOKUP code fname of
+    (NONE :((β # shape) list # α # δ) option) =>
+      (NONE :(α # (β |-> γ v) # δ) option)
+  | SOME (vshapes,prog,rshape) =>
+    if
+      ALL_DISTINCT (MAP (FST :β # shape -> β) vshapes) ∧
+      LIST_REL (λ(vshape :β # shape) (arg :γ v). SND vshape = shape_of arg)
+        vshapes args
+    then
+      SOME
+        (prog,
+         (FEMPTY :β |-> γ v) |++ ZIP (MAP (FST :β # shape -> β) vshapes,args),
+         rshape)
+    else (NONE :(α # (β |-> γ v) # δ) option)
+lookup_code_def_hypotheses=0
+sh_mem_load_def_typed=∀(vk :varkind) (v :mlstring) (addr :α word) (nb :num)
+    (s :(α, 'ffi) panSem$state).
+  (sh_mem_load vk v addr nb s :
+   β panSem$result option # (α, 'ffi) panSem$state) =
+  if nb = (0 :num) then
+    if addr ∈ s.sh_memaddrs then
+      case
+        call_FFI s.ffi (SharedMem MappedRead) [(n2w nb :word8)]
+          (word_to_bytes addr F)
+      of
+        FFI_return new_ffi new_bytes =>
+          ((NONE :β panSem$result option),
+           set_kvar vk v (ValWord (word_of_bytes F (0w :α word) new_bytes)) s with
+           ffi := new_ffi)
+      | (FFI_final outcome :'ffi ffi_result) =>
+        (SOME (FinalFFI outcome :β panSem$result),empty_locals s)
+    else (SOME (Error :β panSem$result),s)
+  else if byte_align addr ∈ s.sh_memaddrs then
+    case
+      call_FFI s.ffi (SharedMem MappedRead) [(n2w nb :word8)]
+        (word_to_bytes addr F)
+    of
+      FFI_return new_ffi new_bytes =>
+        ((NONE :β panSem$result option),
+         set_kvar vk v (ValWord (word_of_bytes F (0w :α word) new_bytes)) s with
+         ffi := new_ffi)
+    | (FFI_final outcome :'ffi ffi_result) =>
+      (SOME (FinalFFI outcome :β panSem$result),empty_locals s)
+  else (SOME (Error :β panSem$result),s)
+sh_mem_load_def_hypotheses=0
+mk_ctxt_def_typed=∀(vmap :mlstring |-> shape # num list)
+    (fs :mlstring |-> (mlstring # shape) list # shape) (m :num)
+    (es :mlstring |-> α word).
+  mk_ctxt vmap fs m es = <|vars := vmap; funcs := fs; eids := es; vmax := m|>
+mk_ctxt_def_hypotheses=0
+make_funcs_def_typed=∀(prog :(α # β # δ # γ) list).
+  make_funcs prog =
+  (let
+     (fnames :α list) = MAP (FST :α # β # δ # γ -> α) prog;
+     (params :β list) =
+       MAP ((FST :β # δ # γ -> β) ∘ (SND :α # β # δ # γ -> β # δ # γ)) prog;
+     (returns :γ list) =
+       MAP
+         ((SND :δ # γ -> γ) ∘ (SND :β # δ # γ -> δ # γ) ∘
+          (SND :α # β # δ # γ -> β # δ # γ)) prog;
+     (fs :(α # β # γ) list) =
+       MAP3 (λ(x :α) (y :β) (z :γ). (x,y,z)) fnames params returns
+   in
+     alist_to_fmap fs)
+make_funcs_def_hypotheses=0
+compile_prog_def_typed=∀(prog :α decl list).
+  compile_prog prog =
+  (let
+     (inl_fs_names :mlstring list) =
+       MAP
+         (FST :mlstring # (mlstring # shape) list # α panLang$prog # shape ->
+               mlstring)
+         (functions (FILTER (inlinable :α decl -> bool) prog));
+     (to_crep :(mlstring # num list # α prog) list) = compile_to_crep prog
+   in
+     compile_inl_top inl_fs_names to_crep)
+compile_prog_def_hypotheses=0
+evaluate_nested_decs_load_globals_typed=globals_lookup (s :(α, β) state) (rv :γ v) = SOME (rvs :α word_lab list) ∧
+size_of_shape (shape_of rv) ≤ (32 :num) ∧ ALL_DISTINCT (vs :num list) ∧
+LENGTH vs = size_of_shape (shape_of rv) ⇒
+(evaluate
+   (nested_decs vs
+      (load_globals (0w :word5) (size_of_shape (shape_of rv)) :α exp list)
+      (p :α prog),s) :α result option # (α, β) state) =
+(let
+   ((res :α result option),(s' :(α, β) state)) =
+     (evaluate (p,s with locals := s.locals |++ ZIP (vs,rvs)) :
+      α result option # (α, β) state)
+ in
+   (res,
+    s' with
+    locals :=
+      FOLDL
+        (res_var :(num |-> α word_lab) ->
+                  num # α word_lab option -> (num |-> α word_lab)) s'.locals
+        (ZIP (vs,MAP (FLOOKUP s.locals) vs))))
+evaluate_nested_decs_load_globals_hypotheses=0
+globals_lookup_def_typed=∀(t :(α, β) state) (v :γ v).
+  globals_lookup t v =
+  OPT_MMAP (FLOOKUP t.globals)
+    (GENLIST (λ(x :num). (n2w x :word5)) (size_of_shape (shape_of v)))
+globals_lookup_def_hypotheses=0
+pan_phase4_exact_probe_done

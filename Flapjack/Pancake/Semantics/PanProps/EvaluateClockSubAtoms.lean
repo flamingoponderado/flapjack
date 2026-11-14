@@ -150,7 +150,7 @@ theorem nt_storeByte {width : Nat} {σ : Type} [NeZero width] (a b : ExpHOL widt
 theorem shMemLoad_nt {width : Nat} {σ : Type} [NeZero width]
     (u : PanSemStateFiniteExact width σ) (inst : DecidablePred u.shMemaddrs)
     (k : VarKind) (name : MlS) (addr : RiscV.Word width) (nb : Nat) :
-    (@shMemLoadHOLFiniteExact width σ _ u inst k name addr nb).1 ≠ some .timeOut := by
+    (@shMemLoadHOLFiniteExact width σ _ width _ k name addr nb u inst).1 ≠ some .timeOut := by
   unfold shMemLoadHOLFiniteExact
   split <;> split <;> (try split) <;> simp
 

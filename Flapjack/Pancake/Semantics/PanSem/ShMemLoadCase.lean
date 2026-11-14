@@ -35,9 +35,8 @@ theorem evaluateHOLFiniteState_shMemLoad_source {width : Nat} {σ : Type}
           match Flapjack.PanSemStateFiniteExact.lookupKvarHOLFinite kind name state with
           | some (.val (.word _)) =>
               let loaded := @Flapjack.PanSemStateFiniteExact.shMemLoadHOLFiniteExact
-                width σ _ state
+                width σ _ width _ kind name addr (Flapjack.nbOpHOL operator) state
                 (fun current => Classical.propDecidable (state.shMemaddrs current))
-                kind name addr (Flapjack.nbOpHOL operator)
               (loaded.1, loaded.2)
           | _ => (some .error, state)
       | _ => (some .error, state) :=

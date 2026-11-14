@@ -29,12 +29,11 @@ an independent HOL declaration. -/
 theorem shMemLoadHOLFiniteExact_permCode {width : Nat} {σ : Type} [NeZero width]
     (f g : MlS) (state : PanSemStateFiniteExact width σ)
     (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat) :
-    let loaded := @shMemLoadHOLFiniteExact width σ _ state
+    let loaded := @shMemLoadHOLFiniteExact width σ _ width _ kind name address nb state
         (fun current => Classical.propDecidable (state.shMemaddrs current))
-        kind name address nb
-    @shMemLoadHOLFiniteExact width σ _ { state with code := fpermCodeHOL f g state.code }
-        (fun current => Classical.propDecidable (state.shMemaddrs current))
-        kind name address nb =
+    @shMemLoadHOLFiniteExact width σ _ width _ kind name address nb
+        { state with code := fpermCodeHOL f g state.code }
+        (fun current => Classical.propDecidable (state.shMemaddrs current)) =
       (loaded.1, { loaded.2 with code := fpermCodeHOL f g loaded.2.code }) := by
   classical
   cases state with

@@ -20,7 +20,7 @@ section
 variable {width : Nat} [NeZero width] {C F : Type}
 
 private theorem appList' {α : Type} (l : List α) : appListAppend (.list l) = l :=
-  (appListAppend_thm .nil .nil l).2.1
+  (appListAppend_thm_sameType .nil .nil l).2.1
 
 /-- A single installed non-label line is fetched at the installation point. -/
 theorem fetchSingle {pc : Nat} {x : LabLineHOL width}

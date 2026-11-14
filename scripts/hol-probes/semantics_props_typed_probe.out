@@ -1,0 +1,8 @@
+extend_with_resource_limit_def_typed=∀(behaviours :behaviour -> bool). extend_with_resource_limit behaviours = behaviours ∪ {Terminate Resource_limit_hit io_list | ∃(t :outcome) (l :io_event list). Terminate t l ∈ behaviours ∧ io_list ≼ l} ∪ {Terminate Resource_limit_hit io_list | ∃(ll :io_event llist). Diverge ll ∈ behaviours ∧ LPREFIX (fromList io_list :io_event llist) ll}
+extend_with_resource_limit_not_fail_typed=(x :behaviour) ∈ extend_with_resource_limit (y :behaviour -> bool) ∧ Fail ∉ y ⇒ x ≠ Fail
+implements_def_typed=∀(x :behaviour -> bool) (y :behaviour -> bool). implements x y ⇔ Fail ∉ y ⇒ x ⊆ extend_with_resource_limit y
+implements_trans_typed=implements (y :behaviour -> bool) (z :behaviour -> bool) ⇒ implements (x :behaviour -> bool) y ⇒ implements x z
+evaluate_prog_events_determ_typed=∀(st :α semanticPrimitives$state) (env :v sem_env) (k :num) (p :dec list) (k' :num). LENGTH (FST (evaluate_prog_with_clock st env k p)).io_events = LENGTH (FST (evaluate_prog_with_clock st env k' p)).io_events ⇒ (FST (evaluate_prog_with_clock st env k p)).io_events = (FST (evaluate_prog_with_clock st env k' p)).io_events
+evaluate_prog_io_events_chain_typed=lprefix_chain (IMAGE (λ(k :num). (fromList (FST (evaluate_prog_with_clock (st :α semanticPrimitives$state) (env :v sem_env) k (prog :dec list))).io_events :io_event llist)) 𝕌(:num))
+semantics_prog_total_typed=∀(s :α semanticPrimitives$state) (e :v sem_env) (p :dec list). ∃(b :behaviour). semantics_prog s e p b
+semantics_prog_deterministic_typed=∀(s :α semanticPrimitives$state) (e :v sem_env) (p :dec list) (b :behaviour) (b' :behaviour). semantics_prog s e p b ∧ semantics_prog s e p b' ⇒ b = b'

@@ -38,8 +38,9 @@ def wordOp [Add α] [Sub α] [AndOp α] [OrOp α] [HXor α α α]
 /-! Exact source counterpart of CakeML `wordLang$word_op_def`
 (`cakeml/compiler/backend/wordLangScript.sml:302-311`). HOL quantifies over
 `'a word`; Lean represents that polymorphic word width by `BitVec width`. -/
-@[hol "cakeml/compiler/backend/wordLangScript.sml" "word_op_def"]
-def wordOpHOL [NeZero width] (operator : BinOp)
+@[hol "cakeml/compiler/backend/wordLangScript.sml" "word_op_def"
+  (words_as_type_indexed_bitvec)]
+def wordOpHOL {width : Nat} [NeZero width] (operator : BinOp)
     (values : List (BitVec width)) : Option (BitVec width) :=
   wordOp operator values
 
@@ -47,8 +48,9 @@ def wordOpHOL [NeZero width] (operator : BinOp)
 `wordLang$word_sh_def` (`cakeml/compiler/backend/wordLangScript.sml:313-321`).
 The shift amount is natural because HOL `word_sh` receives `w2n w2` from the
 Crep evaluator. -/
-@[hol "cakeml/compiler/backend/wordLangScript.sml" "word_sh_def"]
-def wordShiftHOL [NeZero width] (operator : Shift)
+@[hol "cakeml/compiler/backend/wordLangScript.sml" "word_sh_def"
+  (words_as_type_indexed_bitvec)]
+def wordShiftHOL {width : Nat} [NeZero width] (operator : Shift)
     (value : BitVec width) (amount : Nat) : Option (BitVec width) :=
   if amount ≠ 0 ∧ width ≤ amount then none
   else

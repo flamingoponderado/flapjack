@@ -1227,7 +1227,10 @@ theorem gcMoveData_simulationCore {α β : Type} (conf : Config β) (state : GcS
     | dataElement children n data => exact False.elim (notData children n data rfl)
 
 /-- Partial copied-data scanning simulates the major collector and preserves
-the simulation invariant. The local HOL proof has not yet been replayed. -/
+the simulation invariant. The local HOL proof has not yet been replayed.
+HOL's typed capture `gc_move_data_simulation_typed`
+(`gen_gc_partial_source_probe.out`) binds a vacuous `ptr1' : γ` that the
+statement never uses, so it is omitted here. -/
 @[hol "cakeml/compiler/backend/gc/gen_gc_partialScript.sml" "gc_move_data_simulation"]
 theorem gcMoveData_simulation {α β : Type} (conf : Config β)
     (state state1 : GcState α β) (heap0 : List (HeapElement α β))

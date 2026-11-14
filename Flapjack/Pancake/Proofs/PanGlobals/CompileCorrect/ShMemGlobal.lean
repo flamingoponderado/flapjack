@@ -423,8 +423,9 @@ theorem evaluateHOLFiniteState_compile_shMemLoad_global {width : Nat} {σ : Type
       (let name' := mlstrAppend name (ofString "'")
        let t2 := setVarHOLFinite name' (.val (.word (BitVec.ofNat width 0)))
           (setVarHOLFinite name (.val (.word addr)) t)
-       let loaded := @shMemLoadHOLFiniteExact width σ _ t2
-          (fun a => Classical.propDecidable (t2.shMemaddrs a)) .local name' addr (nbOpHOL op)
+       let loaded := @shMemLoadHOLFiniteExact width σ _ width _ .local name' addr
+          (nbOpHOL op) t2
+          (fun a => Classical.propDecidable (t2.shMemaddrs a))
        let wrapLocals := fun (st : PanSemStateFiniteExact width σ) =>
           {st with
             locals := HolFiniteMapExact.resVarEq
@@ -455,13 +456,13 @@ theorem evaluateHOLFiniteState_compile_shMemLoad_global {width : Nat} {σ : Type
   dsimp only
   simp only [PanSemStateFiniteExact.evalHOLFinite_var_local, lookupKvarHOLFinite,
     lookup_setVarHOLFinite, Flapjack.PanGlobalsShMemLoadLemmas.vNeqV' name, if_false, if_true]
-  cases hload : @shMemLoadHOLFiniteExact width σ _
+  cases hload : @shMemLoadHOLFiniteExact width σ _ width _ .local
+      (mlstrAppend name (ofString "'")) addr (nbOpHOL op)
       (setVarHOLFinite (mlstrAppend name (ofString "'")) (ValueHOL.val (HolWordLab.word 0#width))
         (setVarHOLFinite name (ValueHOL.val (HolWordLab.word addr)) t))
       (fun a => Classical.propDecidable
         ((setVarHOLFinite (mlstrAppend name (ofString "'")) (ValueHOL.val (HolWordLab.word 0#width))
-          (setVarHOLFinite name (ValueHOL.val (HolWordLab.word addr)) t)).shMemaddrs a))
-      .local (mlstrAppend name (ofString "'")) addr (nbOpHOL op) with
+          (setVarHOLFinite name (ValueHOL.val (HolWordLab.word addr)) t)).shMemaddrs a)) with
   | mk r st => cases r <;> rfl
 
 /-- `ShMemLoad` Global sub-case of HOL `compile_correct`.  HOL resumes the
