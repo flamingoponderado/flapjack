@@ -2,7 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SimplifyProduction
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.CompileProduction
-public import Flapjack.Compiler.Backend.BvlConst.Proofs.Total
+public import Flapjack.Compiler.Backend.BvlConst.Proofs.CompileProduction
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.SequenceRecognition
 
 @[expose] public section
@@ -12,19 +12,12 @@ proofs do not establish HOL correspondence or pass correctness. -/
 namespace Flapjack.Compiler.Backend.BvlHandle
 open Bvl BvlToBvi
 
-/-- Handler simplification and live-variable compilation succeed for every
-input, independently of the caller's initial fuel. -/
-theorem compileExpWithoutConstantsFuel_succeeds (fuel limit arity : Nat) (e : Exp) :
-    ∃ result, compileExpWithoutConstantsFuel fuel limit arity e = some result := by
-  simp [compileExpWithoutConstantsFuel, simplifyBounded_eq, compileBounded_eq]
-
 /-- Constant propagation followed by handler compilation cannot exhaust
 traversal fuel. -/
 theorem compileExpFuel_succeeds (fuel limit arity : Nat) (e : Exp) :
     ∃ result, compileExpFuel fuel limit arity e = some result := by
-  obtain ⟨e', hc⟩ := BvlConst.compileBounded_succeeds fuel [] e
-  obtain ⟨out, hh⟩ := compileExpWithoutConstantsFuel_succeeds fuel limit arity e'
-  exact ⟨out, by simp [compileExpFuel, hc, hh]⟩
+  simp [compileExpFuel, BvlConst.compileBounded_eq, compileExpWithoutConstantsFuel,
+    simplifyBounded_eq, compileBounded_eq]
 
 /-- Sequence splitting succeeds with a structural bound on its input. -/
 theorem compileSeqsFuel_succeeds (fuel limit : Nat) (e : Exp) (acc : Option Exp)
