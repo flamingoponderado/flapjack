@@ -93519,8 +93519,8 @@
     "hol_name": "is_wf_shape_drop",
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
     "lean_name": "isWfShapeExactHOL_drop",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Source-reviewed against pan_structsProofScript.sml:114-127. The implication that is_wf_shape holds on DROP n ctxt entails it on ctxt is unchanged, using exact StructContextExact/MlS/ShapeHOL carriers and the HOL Boolean predicate. Named-shape lookup isSome is preserved by suffix inclusion. The production String/cache-backed isWfShape_drop analogue was removed."
+    "statement_status": "documented_mismatch",
+    "reviewer": "codewhale source comparison (2026-11-14, task 169): tag withdrawn. The typed capture is_wf_shape_drop_typed in pancake_pan_structs_proof_typed_probe.out gives sh_ctxt :(mlstring # alpha) list with the payload type generic, since HOL's is_wf_shape only tests name presence; the Lean statement fixes the context to StructContextExact and the induction principle sizeOfShapeWithContextHOL.induct is stated over that carrier."
   },
   {
     "hol_path": null,

@@ -111,9 +111,15 @@ private theorem structInfosOkExact_lookup_isSome_drop (name : MlS)
           · simp [structContextLookupHOL, hmatch]
           · simpa [structContextLookupHOL, hmatch] using hrest
 
-/-- Exact HOL `is_wf_shape_drop` (`pan_structsProofScript.sml:114`): a shape
-    valid in a context suffix remains valid in the full context. -/
-@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "is_wf_shape_drop"]
+/-- HOL `is_wf_shape_drop` (`pan_structsProofScript.sml:114`): a shape valid
+    in a context suffix remains valid in the full context.
+
+    NOT an exact port (tag withdrawn in task 169): the typed capture gives
+    `sh_ctxt :(mlstring # α) list` with the payload type α generic (HOL's
+    `is_wf_shape` only tests name presence), while this statement fixes the
+    context to `StructContextExact`. The induction principle
+    `sizeOfShapeWithContextHOL.induct` is stated over that carrier, so the
+    instance is what the port proves. -/
 theorem isWfShapeExactHOL_drop (context : StructContextExact) (shape : ShapeHOL)
     (n : Nat) :
     isWfShapeExactHOL (context.drop n) shape = true →

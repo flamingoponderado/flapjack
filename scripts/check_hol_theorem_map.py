@@ -381,6 +381,15 @@ DOCUMENTED_MISMATCHES = {
         "parameter-list and program types independent. Lean fixes them to MlS, List Nat and "
         "CrepProgHOL width; the lookup equation holds at that instance only."
     ),
+    ("Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean", "isWfShapeExactHOL_drop"): (
+        "cakeml/pancake/proofs/pan_structsProofScript.sml",
+        "is_wf_shape_drop",
+        "codewhale source comparison (2026-11-14, task 169): tag withdrawn. The typed capture "
+        "gives sh_ctxt :(mlstring # \u03b1) list with the payload type generic (HOL's is_wf_shape "
+        "only tests name presence), while the Lean statement fixes the context to "
+        "StructContextExact; the induction principle sizeOfShapeWithContextHOL.induct is stated "
+        "over that carrier."
+    ),
     ("Flapjack/Compiler/Backend/ClosFvs/Source.lean", "compile"): ("cakeml/compiler/backend/clos_fvsScript.sml", "compile_def", "The executable uses removeList; compileSource is the source-shaped definition and compileSource_eq_compile proves agreement."),
     ("Flapjack/Compiler/Backend/ClosFvs/Source.lean", "compileInc"): ("cakeml/compiler/backend/clos_fvsScript.sml", "compile_inc_def", "The executable uses compile; compileIncSource is the source-shaped definition and compileIncSource_eq_compileInc proves agreement."),
     ("Flapjack/Compiler/Backend/ClosKnown/Compile.lean", "knownCompileInc"): ("cakeml/compiler/backend/clos_knownScript.sml", "known_compile_inc_def", "The executable uses the total traversals; knownCompileIncSource is the source-shaped definition and knownCompileIncSource_eq proves agreement."),
