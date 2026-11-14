@@ -6,6 +6,7 @@ public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Safety
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.PureBindings
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Primitive
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.PureEvaluate
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
 
 @[expose] public section
 
@@ -58,12 +59,14 @@ theorem evaluate_ordinary_op_step {C F : Type} (trace : BackendCommon.Tra) (op :
           cases outcome with
           | val pair => simp [AppResultRel, sourceApp] at appRel
           | err targetError =>
-            rw [evaluate_ordinary_op_values trace op args env source middle values notInstall notForce argsRun, sourceApp] at run
+            simp only [evaluate_ordinaryOp_eq trace op args env source notInstall notForce,
+              argsRun, sourceApp] at run
             cases run
             refine ⟨.err targetError, targetMiddle, ?_, ?_, middleRel⟩
             · rw [altFree_op]
               simp only [shiftList, shiftSing]
-              rw [evaluate_ordinary_op_values _ _ _ _ _ _ _ notInstall notForce targetRun, appRun]
+              simp only [evaluate_ordinaryOp_eq _ _ _ _ _ notInstall notForce,
+                targetRun, appRun]
             · simpa [AppResultRel, sourceApp] using appRel
         | val pair =>
           obtain ⟨value, last⟩ := pair
@@ -73,12 +76,14 @@ theorem evaluate_ordinary_op_step {C F : Type} (trace : BackendCommon.Tra) (op :
             obtain ⟨targetValue, targetLast⟩ := targetPair
             have related : ValueRel value targetValue ∧ StateRel last targetLast := by
               simpa [AppResultRel, sourceApp] using appRel
-            rw [evaluate_ordinary_op_values trace op args env source middle values notInstall notForce argsRun, sourceApp] at run
+            simp only [evaluate_ordinaryOp_eq trace op args env source notInstall notForce,
+              argsRun, sourceApp] at run
             cases run
             refine ⟨.val [targetValue], targetLast, ?_, .cons related.1 .nil, related.2⟩
             rw [altFree_op]
             simp only [shiftList, shiftSing]
-            rw [evaluate_ordinary_op_values _ _ _ _ _ _ _ notInstall notForce targetRun, appRun]
+            simp only [evaluate_ordinaryOp_eq _ _ _ _ _ notInstall notForce,
+                targetRun, appRun]
 
 /-- All ordinary primitives have a state-local simulation step. -/
 theorem evaluate_ordinary_all_step {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.Op)

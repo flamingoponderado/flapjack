@@ -40,18 +40,6 @@ theorem destThunk_related {C F : Type} (source target : State C F)
     cases flag <;> simp_all
   | _ => simp [destThunk, DestThunkRel]
 
-/-- Thunk-update validity agrees for related values and stores. -/
-theorem badThunkUpdate_related {C F : Type} (source target : State C F)
-    (mode : AstHOL.ThunkMode) (value nextValue : Value) (valueRel : ValueRel value nextValue)
-    (states : StateRel source target) :
-    badThunkUpdate mode value source.refs = badThunkUpdate mode nextValue target.refs := by
-  have related := destThunk_related source target value nextValue valueRel states
-  unfold badThunkUpdate
-  split
-  · cases left : destThunk [value] source.refs <;> cases right : destThunk [nextValue] target.refs <;>
-      simp_all [DestThunkRel]
-  · rfl
-
 /-- Thunk inspection also agrees on non-singleton argument lists. -/
 theorem destThunk_list_related {C F : Type} (source target : State C F)
     (values nextValues : List Value) (valuesRel : List.Forall₂ ValueRel values nextValues)
