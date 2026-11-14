@@ -32,3 +32,4 @@ do_app_oHD_globals_typed=(do_app (p :closLang$op) (vs :v list) (s1 :(α, β) sta
 list_rel_eq_replay_typed=∀(xs :α) (ys :β). LIST_REL (λ(v1 :γ) (v2 :γ). v1 = v2) = (λ(xs :γ list) (ys :γ list). xs = ys)
 optrel_eq_replay_typed=OPTREL (λ(v1 :α) (v2 :α). v1 = v2) = (λ(x :α option) (y :α option). x = y)
 evaluate_SING_intro_replay_typed=(x :(α list, β) result # γ) = ((Rval [(v :α)] :(α list, β) result),(s :γ)) ∧ (vs :α list) = [v] ⇒ x = ((Rval vs :(α list, β) result),s)
+init_globals_replay_typed=(initial_state (ffi :β ffi_state) (max_app :num) (f :num |-> num # closLang$exp) (co :num -> α # closLang$exp list # (num # num # closLang$exp) list) (cc :α -> closLang$exp list # (num # num # closLang$exp) list -> (word8 list # word64 list # α) option) (ck :num)).globals = ([] :v option list)

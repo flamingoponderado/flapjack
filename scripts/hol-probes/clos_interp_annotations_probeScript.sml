@@ -98,3 +98,7 @@ val evaluate_SING_intro_replay = Q.prove (
   `x = (Rval [v],s) ∧ vs = [v] ⇒ x = (Rval vs,s)`,
   rw []);
 val _ = show_thm "evaluate_SING_intro_replay_typed=" evaluate_SING_intro_replay;
+val init_globals_replay = Q.prove (
+  `(initial_state ffi max_app f co cc ck).globals = []`,
+  EVAL_TAC);
+val _ = show_thm "init_globals_replay_typed=" init_globals_replay;

@@ -1,6 +1,15 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
+    "hol_name": "init_globals",
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/InitRelation.lean",
+    "lean_name": "init_globals",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": ["State.refs", "State.code", "f"],
+    "reviewer": "Compared the closed init_globals_replay_typed, arbitrary initial code map, compiler/oracle configuration, FFI state and original empty-global conclusion. Independently replayed the local HOL proof and compared the complete initial-state definition. The canonical state fields have a local roundtrip witness and f is the standalone canonical map input; source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_interpProofScript.sml",
     "hol_name": "evaluate_SING_intro",
     "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Proofs/EvaluateBasic.lean",
     "lean_name": "evaluate_singleton_intro",

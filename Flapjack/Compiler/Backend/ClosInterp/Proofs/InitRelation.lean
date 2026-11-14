@@ -10,6 +10,25 @@ The evaluator and state carriers remain pending HOL correspondence review. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL Flapjack.Compiler.Backend.BackendProps
 
+namespace InitialGlobals
+open ClosSem
+
+/-- The closure state roundtrips through its canonical finite-map view. -/
+theorem holFmapAsFiniteSupportRelationWitness_State {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
+/-- A closure evaluator's initial global list is empty. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "init_globals"
+  (fmap_as_finite_support_relation := [State.refs, State.code, f])]
+theorem init_globals {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
+    (f : HolFiniteMapExact Nat (Nat × ClosLang.Exp)) (co : CompileOracle C)
+    (cc : Compiler C) (ck : Nat) :
+    (initialState ffi maxApp f co cc ck : State C F).globals = [] := rfl
+
+end InitialGlobals
+
 /-- Initialization allocates global slot zero and installs the interpreter. -/
 theorem evaluate_compileInit_true {C F : Type} (state : ClosSem.State C F)
     (emptyGlobals : state.globals = []) (positive : 1 ≤ state.maxApp) :
