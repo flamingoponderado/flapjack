@@ -31,27 +31,6 @@ def StateRel {C F : Type} (source target : ClosSem.State C F) : Prop :=
   StateRel1 source target ∧ source.globals.head? =
     some (some (.closure none [] [] 1 closInterpreter))
 
-/-- Simultaneously shifting the future compilation streams preserves the
-state relationship. -/
-theorem stateRel1_shift {C F : Type} {source target : ClosSem.State C F}
-    (related : StateRel1 source target) (offset : Nat) :
-    StateRel1 { source with compileOracle := Flapjack.holShiftSeq offset source.compileOracle }
-      { target with compileOracle := Flapjack.holShiftSeq offset target.compileOracle } := by
-  rcases related with ⟨safe, sc, tc, maxEq, maxPositive, clock, ffi, globals, refs, compiler, oracle⟩
-  refine ⟨?_, sc, tc, maxEq, maxPositive, clock, ffi, globals, refs, compiler, ?_⟩
-  · intro index
-    exact safe (index + offset)
-  · rw [oracle]
-    rfl
-
-/-- Shifting compilation streams preserves the installed interpreter too. -/
-theorem stateRel_shift {C F : Type} {source target : ClosSem.State C F}
-    (related : StateRel source target) (offset : Nat) :
-    StateRel { source with compileOracle := Flapjack.holShiftSeq offset source.compileOracle }
-      { target with compileOracle := Flapjack.holShiftSeq offset target.compileOracle } :=
-  ⟨stateRel1_shift related.1 offset, related.2⟩
-
-
 /-- Giving both related states the same clock preserves the relation. -/
 theorem stateRel_withClock {C F : Type} {source target : ClosSem.State C F}
     (related : StateRel source target) (clock : Nat) :
