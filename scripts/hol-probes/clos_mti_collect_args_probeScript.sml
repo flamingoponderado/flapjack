@@ -183,6 +183,7 @@ val _ = show "contains_app_some_compile_typed" clos_mtiProofTheory.contains_App_
 val _ = show "result_rel_rval2_typed" clos_mtiProofTheory.result_rel_Rval2;
 val _ = show "intro_multi_nil_typed" clos_mtiProofTheory.intro_multi_nil;
 val _ = show "intro_multi_eq_nil_typed" clos_mtiProofTheory.intro_multi_EQ_NIL;
+val _ = show "do_app_lemma_typed" clos_mtiProofTheory.do_app_lemma;
 val _ = show "mk_fns_def_typed" mk_Fns_def;
 val _ = show "collect_args_def_typed" collect_args_def;
 val _ = show "collect_args_imp_typed" collect_args_IMP;

@@ -89,28 +89,49 @@ theorem primitiveSimulation_thunk_update {C F : Type} (mode : AstHOL.ThunkMode) 
           simp [doApp, excRel]
       | cons head tail => simp [doApp, excRel]
 
-/-- Every ordinary operation in the current closure dispatcher preserves the
-relation. Installation and forced thunks use their separate evaluator cases;
-the dispatcher still requires source correspondence review. -/
-theorem primitiveSimulation_ordinary {C F : Type} (op : ClosLang.Op)
-    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk) :
-    @PrimitiveSimulation C F op := by
-  cases op with
-  | install => exact (notInstall rfl).elim
-  | label _ =>
-    intro source target left right states values
-    simp [doApp, excRel]
-  | ffi name => exact primitiveSimulation_ffi name
-  | intOp operation => exact primitiveSimulation_int operation
-  | wordOp operation => exact primitiveSimulation_word operation
-  | blockOp operation => exact primitiveSimulation_block operation
-  | globOp operation => exact primitiveSimulation_global operation
-  | memOp operation => exact primitiveSimulation_memory operation
-  | thunkOp operation =>
-    cases operation with
-    | forceThunk => exact (notForce rfl).elim
-    | allocThunk mode => exact primitiveSimulation_thunk_alloc mode
-    | updateThunk mode => exact primitiveSimulation_thunk_update mode
+namespace DoAppLemma
+/-- The closure state uses the canonical finite-map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end DoAppLemma
+
+/-- Primitive application preserves related values, states, and errors. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "do_app_lemma"
+  (fmap_as_finite_support := [refs, code])]
+theorem doAppLemma {C F : Type} (source target : State C F) (left right : List Value)
+    (op : ClosLang.Op) (premises : StateRel source target ∧
+      List.Forall₂ (ValueRel source.maxApp) left right) :
+    match doApp op right target with
+    | .err targetError => ∃ sourceError,
+        doApp op left source = .err sourceError ∧
+        excRel (ValueRel source.maxApp) sourceError targetError
+    | .val (targetValue, targetFinal) => ∃ sourceValue sourceFinal,
+        ValueRel source.maxApp sourceValue targetValue ∧ StateRel sourceFinal targetFinal ∧
+        doApp op left source = .val (sourceValue, sourceFinal) := by
+  have allOps : @PrimitiveSimulation C F op := by
+    cases op with
+    | install =>
+      intro source target left right states values
+      simp [doApp, excRel]
+    | label _ =>
+      intro source target left right states values
+      simp [doApp, excRel]
+    | ffi name => exact primitiveSimulation_ffi name
+    | intOp operation => exact primitiveSimulation_int operation
+    | wordOp operation => exact primitiveSimulation_word operation
+    | blockOp operation => exact primitiveSimulation_block operation
+    | globOp operation => exact primitiveSimulation_global operation
+    | memOp operation => exact primitiveSimulation_memory operation
+    | thunkOp operation =>
+      cases operation with
+      | forceThunk =>
+        intro source target left right states values
+        simp [doApp, excRel]
+      | allocThunk mode => exact primitiveSimulation_thunk_alloc mode
+      | updateThunk mode => exact primitiveSimulation_thunk_update mode
+  exact allOps source target left right premises.1 premises.2
 
 /-- Every ordinary operation preserves the clock-bounded simulation. -/
 theorem evaluateRel_allOrdinaryWithin {C F : Type} (limit : Nat) (trace : BackendCommon.Tra) (op : ClosLang.Op)
@@ -119,6 +140,6 @@ theorem evaluateRel_allOrdinaryWithin {C F : Type} (limit : Nat) (trace : Backen
     (argsIH : ∀ sourceCode, @EvaluateRelWithin C F limit sourceCode targetArgs) :
     @EvaluateRelWithin C F limit sourceCode [.op trace op targetArgs] :=
   evaluateRel_ordinaryWithin limit trace op targetArgs sourceCode notInstall notForce argsIH
-    (primitiveSimulation_ordinary op notInstall notForce)
+    (fun source target left right states values => doAppLemma source target left right op ⟨states, values⟩)
 
 end Flapjack.Compiler.Backend.ClosMti

@@ -1,6 +1,16 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
+    "hol_name": "do_app_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/PrimitiveThunk.lean",
+    "lean_name": "doAppLemma",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs", "code"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared do_app_lemma_typed: both related states, related argument lists, unrestricted operation, and both target-result cases have the original existential results, relations, evaluation equality and conjunction order. The closure state uses canonical finite-support refs and code with a local roundtrip witness; doApp inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml",
     "hol_name": "v_rel_IMP_v_to_bytes",
     "lean_path": "Flapjack/Compiler/Backend/ClosMti/Proofs/Relations.lean",
     "lean_name": "valueRel_toBytes",
