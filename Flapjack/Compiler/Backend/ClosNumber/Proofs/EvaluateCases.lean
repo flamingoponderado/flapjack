@@ -113,8 +113,8 @@ theorem evaluateApp_partial {C F : Type} (function nextFunction first : Value)
     ∃ targetResult targetNext, evaluateApp none nextFunction nextArgs target = (targetResult, targetNext) ∧
       ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext := by
   obtain ⟨nextPartial, nextFound, partialRel⟩ :=
-    destClosure_related_partial source.maxApp function nextFunction (first :: rest) nextArgs partialValue
-      related argsRel found
+    destClosure_related_partial source.maxApp partialValue function (first :: rest) nextFunction nextArgs
+      ⟨related, argsRel, found⟩
   have maxEq : source.maxApp = target.maxApp := (stateRel_clock_maxApp stateRel).2
   have clockEq : source.clock = target.clock := stateRel.1
   have lengthEq : (first :: rest).length = nextArgs.length := argsRel.length_eq
@@ -177,9 +177,9 @@ theorem evaluateApp_full_timeout {C F : Type} (function nextFunction first : Val
     (stateRel : StateRel source target) :
     ∃ targetResult targetNext, evaluateApp none nextFunction nextArgs target = (targetResult, targetNext) ∧
       ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext := by
-  obtain ⟨start, nextEnv, nextRemaining, nextFound, envRel, remainingRel, bodySafe⟩ :=
-    destClosure_related_full source.maxApp function nextFunction (first :: rest) nextArgs
-      body bodyEnv remaining related argsRel found
+  obtain ⟨nextEnv, nextRemaining, start, nextFound, envRel, remainingRel, bodySafe⟩ :=
+    destClosure_related_full source.maxApp body () function (first :: rest) nextFunction nextArgs
+      bodyEnv remaining ⟨related, argsRel, found⟩
   have maxEq : source.maxApp = target.maxApp := (stateRel_clock_maxApp stateRel).2
   have clockEq : source.clock = target.clock := stateRel.1
   have lengthEq : (first :: rest).length = nextArgs.length := argsRel.length_eq
@@ -219,9 +219,9 @@ theorem evaluateApp_full {C F : Type} (function nextFunction first : Value)
     (applicationIH : AppSimulationClockBelow (C := C) (F := F) source.clock) :
     ∃ targetResult targetNext, evaluateApp none nextFunction nextArgs target = (targetResult, targetNext) ∧
       ResultRel source.maxApp result targetResult ∧ StateRel sourceNext targetNext := by
-  obtain ⟨start, nextEnv, nextRemaining, nextFound, envRel, remainingRel, bodySafe⟩ :=
-    destClosure_related_full source.maxApp function nextFunction (first :: rest) nextArgs
-      body bodyEnv remaining related argsRel found
+  obtain ⟨nextEnv, nextRemaining, start, nextFound, envRel, remainingRel, bodySafe⟩ :=
+    destClosure_related_full source.maxApp body () function (first :: rest) nextFunction nextArgs
+      bodyEnv remaining ⟨related, argsRel, found⟩
   have maxEq : source.maxApp = target.maxApp := (stateRel_clock_maxApp stateRel).2
   have clockEq : source.clock = target.clock := stateRel.1
   have lengthEq : (first :: rest).length = nextArgs.length := argsRel.length_eq

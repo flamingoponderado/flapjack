@@ -340,12 +340,14 @@ theorem destClosure_related_none (maxApp : Nat) (source : Value) (args : List Va
       functions suppliedRel argsRel rejected
 
 /-- Related closure values preserve successful partial indirect applications. -/
-theorem destClosure_related_partial (maxApp : Nat) (source target : Value) (args nextArgs : List Value)
-    (result : Value) (related : ValueRel maxApp source target)
-    (argsRel : List.Forall₂ (ValueRel maxApp) args nextArgs)
-    (run : destClosure maxApp none source args = some (.partialApp result)) :
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "dest_closure_v_rel_partial"]
+theorem destClosure_related_partial (maxApp : Nat) (result source : Value) (args : List Value)
+    (target : Value) (nextArgs : List Value)
+    (h : ValueRel maxApp source target ∧ List.Forall₂ (ValueRel maxApp) args nextArgs ∧
+      destClosure maxApp none source args = some (.partialApp result)) :
     ∃ nextResult, destClosure maxApp none target nextArgs = some (.partialApp nextResult) ∧
       ValueRel maxApp result nextResult := by
+  obtain ⟨related, argsRel, run⟩ := h
   cases related with
   | number _ | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ => simp [destClosure] at run
   | closure location nextLocation supplied nextSupplied env nextEnv arity start body nextBody envRel suppliedRel safe bodyEq =>
@@ -359,24 +361,28 @@ theorem destClosure_related_partial (maxApp : Nat) (source target : Value) (args
 
 /-- Related closure values preserve successful full indirect applications,
 with a numbered body and related argument and over-application environments. -/
-theorem destClosure_related_full (maxApp : Nat) (source target : Value) (args nextArgs : List Value)
-    (body : ClosLang.Exp) (env remaining : List Value) (related : ValueRel maxApp source target)
-    (argsRel : List.Forall₂ (ValueRel maxApp) args nextArgs)
-    (run : destClosure maxApp none source args = some (.fullApp body env remaining)) :
-    ∃ start nextEnv nextRemaining,
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "dest_closure_v_rel_full"]
+theorem destClosure_related_full {α : Type} (maxApp : Nat) (body : ClosLang.Exp)
+    (_c : α) (source : Value) (args : List Value) (target : Value) (nextArgs env remaining : List Value)
+    (h : ValueRel maxApp source target ∧ List.Forall₂ (ValueRel maxApp) args nextArgs ∧
+      destClosure maxApp none source args = some (.fullApp body env remaining)) :
+    ∃ nextEnv nextRemaining start,
       destClosure maxApp none target nextArgs = some (.fullApp (renumber start body).2 nextEnv nextRemaining) ∧
       List.Forall₂ (ValueRel maxApp) env nextEnv ∧ List.Forall₂ (ValueRel maxApp) remaining nextRemaining ∧
       ¬ ClosProps.containsAppSome maxApp [body] := by
+  obtain ⟨related, argsRel, run⟩ := h
   cases related with
   | number _ | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ => simp [destClosure] at run
   | closure location nextLocation supplied nextSupplied captured nextCaptured arity start original nextBody envRel suppliedRel safe bodyEq =>
     subst nextBody
     obtain ⟨nextEnv, nextRemaining, result⟩ := destClosure_numbered_full maxApp arity start location nextLocation
       supplied nextSupplied captured nextCaptured args nextArgs original body env remaining suppliedRel envRel argsRel safe run
-    exact ⟨start, nextEnv, nextRemaining, result⟩
+    exact ⟨nextEnv, nextRemaining, start, result⟩
   | recclosure location nextLocation supplied nextSupplied captured nextCaptured functions nextFunctions index start envRel suppliedRel safe functionsEq =>
     subst nextFunctions
-    exact destRecclosure_numbered_full maxApp start index location nextLocation supplied nextSupplied captured nextCaptured args nextArgs
-      functions body env remaining suppliedRel envRel argsRel safe run
+    obtain ⟨number, nextEnv, nextRemaining, result⟩ :=
+      destRecclosure_numbered_full maxApp start index location nextLocation supplied nextSupplied captured nextCaptured args nextArgs
+        functions body env remaining suppliedRel envRel argsRel safe run
+    exact ⟨nextEnv, nextRemaining, number, result⟩
 
 end Flapjack.Compiler.Backend.ClosNumber

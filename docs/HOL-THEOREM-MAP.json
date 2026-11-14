@@ -1,6 +1,22 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "dest_closure_v_rel_partial",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ClosureApplication.lean",
+    "lean_name": "destClosure_related_partial",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local source theorem and dest_closure_partial_replay_typed, replaying the original proof: related full closure values and arguments and the original partial-application equation imply an existential target partial application with related closure value. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
+    "hol_name": "dest_closure_v_rel_full",
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ClosureApplication.lean",
+    "lean_name": "destClosure_related_full",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local source theorem and dest_closure_full_replay_typed, replaying the original proof: the unused c binder has an independent polymorphic type, source and target closures and arguments retain their original relations and full-application equation, and the target argument lists and numbering location are existential in source order with all original relation and body-safety conclusions. Source comparison and Lean checking do not establish cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/clos_numberProofScript.sml",
     "hol_name": "v_rel_Boolv_mono",
     "lean_path": "Flapjack/Compiler/Backend/ClosNumber/Proofs/ValueRelation.lean",
     "lean_name": "valueRel_boolValue",

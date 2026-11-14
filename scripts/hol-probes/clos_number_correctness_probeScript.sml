@@ -43,6 +43,110 @@ val _ = show "renumber_code_locs_every_Fn_SOME_typed=" clos_numberProofTheory.re
 open closLangTheory clos_numberTheory clos_numberProofTheory closSemTheory closPropsTheory
   listTheory rich_listTheory finite_mapTheory backendPropsTheory miscTheory;
 open preamble;
+val renumber_list_els_replay = Q.prove(`∀ls ls' n n'. renumber_code_locs_list n ls = (n',ls') ⇒
+      ∀x. x < LENGTH ls ⇒
+        ∃m. EL x ls' = SND (renumber_code_locs m (EL x ls))`,
+Induct >> simp[renumber_code_locs_def] >>
+  simp[UNCURRY] >> srw_tac[][] >>
+  Cases_on`x`>>full_simp_tac(srw_ss())[] >- METIS_TAC[] >>
+  first_x_assum (MATCH_MP_TAC o MP_CANON) >>
+  simp[] >>
+  METIS_TAC[pair_CASES,SND]);
+val dest_closure_partial_replay = Q.prove(`!c f args f' args'.
+    v_rel max_app f f' ∧
+    LIST_REL (v_rel max_app) args args' ∧
+    dest_closure max_app NONE f args = SOME (Partial_app c)
+    ⇒
+    ?c'.
+      dest_closure max_app NONE f' args' = SOME (Partial_app c') ∧
+      v_rel max_app c c'`,
+srw_tac[][] >>
+  imp_res_tac EVERY2_LENGTH >>
+  full_simp_tac(srw_ss())[dest_closure_def, v_rel_cases] >>
+  BasicProvers.EVERY_CASE_TAC >>
+  full_simp_tac(srw_ss())[LET_THM, check_loc_def] >>
+  srw_tac[][] >>
+  imp_res_tac EVERY2_LENGTH >>
+  srw_tac[][] >>
+  TRY decide_tac
+  >- metis_tac [EVERY2_APPEND] >>
+  Cases_on `EL k es` >>
+  full_simp_tac(srw_ss())[] >>
+  BasicProvers.EVERY_CASE_TAC >>
+  full_simp_tac(srw_ss())[] >>
+  Cases_on `renumber_code_locs_list n (MAP SND es)` >>
+  imp_res_tac renumber_code_locs_list_length >>
+  srw_tac[][] >>
+  Cases_on `EL k (ZIP (MAP FST es,r'))` >>
+  srw_tac[][] >>
+  CCONTR_TAC >>
+  full_simp_tac(srw_ss())[] >>
+  `k < LENGTH es` by decide_tac >>
+  `LENGTH (MAP FST es) = LENGTH r'` by metis_tac [LENGTH_MAP] >>
+  full_simp_tac(srw_ss())[EL_ZIP, EL_MAP] >>
+  srw_tac[][] >>
+  rev_full_simp_tac(srw_ss())[] >>
+  metis_tac [SND, EVERY2_APPEND]);
+val _ = show "dest_closure_partial_replay_typed=" dest_closure_partial_replay;
+val dest_closure_full_replay = Q.prove(`!c f args f' args' args1 args2.
+    v_rel max_app f f' ∧
+    LIST_REL (v_rel max_app) args args' ∧
+    dest_closure max_app NONE f args = SOME (Full_app exp args1 args2)
+    ⇒
+    ?args1' args2' n.
+      dest_closure max_app NONE f' args' = SOME (Full_app (SND (renumber_code_locs n exp)) args1' args2') ∧
+      LIST_REL (v_rel max_app) args1 args1' ∧
+      LIST_REL (v_rel max_app) args2 args2' ∧
+      ~contains_App_SOME max_app [exp]`,
+srw_tac[][] >>
+  imp_res_tac EVERY2_LENGTH >>
+  full_simp_tac(srw_ss())[dest_closure_def, v_rel_cases] >>
+  BasicProvers.EVERY_CASE_TAC >>
+  full_simp_tac(srw_ss())[LET_THM, check_loc_def] >>
+  srw_tac[][] >>
+  imp_res_tac EVERY2_LENGTH >>
+  srw_tac[][] >>
+  TRY (qexists_tac `n`) >>
+  TRY decide_tac >>
+  srw_tac[][] >>
+  TRY decide_tac >>
+  TRY (`n' - LENGTH argenv' ≤ LENGTH args'` by decide_tac) >>
+  full_simp_tac(srw_ss())[] >>
+  srw_tac[][DROP_REVERSE, TAKE_REVERSE] >>
+  TRY (`n' - LENGTH argenv' ≤ LENGTH args'` by decide_tac)
+  >- metis_tac [list_rel_butlastn, list_rel_lastn, EVERY2_APPEND]
+  >- metis_tac [list_rel_butlastn, list_rel_lastn, EVERY2_APPEND] >>
+  Cases_on `renumber_code_locs_list n (MAP SND es)` >>
+  full_simp_tac(srw_ss())[] >>
+  Cases_on `EL k es` >>
+  full_simp_tac(srw_ss())[] >>
+  Cases_on `LENGTH args' + LENGTH argenv' < q'` >>
+  full_simp_tac(srw_ss())[] >>
+  srw_tac[][] >>
+  imp_res_tac renumber_code_locs_list_length >>
+  srw_tac[][] >>
+  `k < LENGTH es` by decide_tac >>
+  full_simp_tac(srw_ss())[EL_ZIP, EL_MAP] >>
+  `LIST_REL (v_rel max_app) (GENLIST (Recclosure o' [] env es) (LENGTH es))
+                    (GENLIST (Recclosure p' [] env' (ZIP (MAP FST es,r))) (LENGTH es))`
+                 by (srw_tac[][LIST_REL_EL_EQN] >>
+                     srw_tac[][v_rel_cases] >>
+                     qexists_tac `n` >>
+                     srw_tac[][]) >>
+  full_simp_tac(srw_ss())[Once contains_App_SOME_EXISTS] >>
+  full_simp_tac(srw_ss())[EVERY_MAP, EVERY_EL] >>
+  first_x_assum (fn th => first_assum (mp_tac o MATCH_MP th)) >>
+  srw_tac[][] >>
+  imp_res_tac renumber_list_els_replay >>
+  full_simp_tac(srw_ss())[] >>
+  pop_assum (fn th => first_assum (mp_tac o MATCH_MP th)) >>
+  srw_tac[][EL_MAP] >>
+  qexists_tac `m` >>
+  simp [DROP_REVERSE, TAKE_REVERSE] >>
+  `q' - LENGTH argenv' ≤ LENGTH args` by decide_tac >>
+  srw_tac[][] >>
+  metis_tac [EVERY2_APPEND, list_rel_lastn, LENGTH_LASTN, LENGTH_GENLIST, EVERY2_LENGTH, list_rel_butlastn]);
+val _ = show "dest_closure_full_replay_typed=" dest_closure_full_replay;
 val v_rel_Boolv_mono_replay = Q.prove(
   `(x <=> y) ==> v_rel max_app (Boolv x) (Boolv y)`,
   Cases_on `x` >> simp[Boolv_def,v_rel_simp]);
