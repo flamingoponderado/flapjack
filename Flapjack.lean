@@ -1094,6 +1094,7 @@ import Flapjack.Compiler.Backend.ClosLetop.Proofs.Semantics
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Syntax
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.AppCallDests
 import Flapjack.Compiler.Backend.ClosTicks.Proofs.AppCallDests
+import Flapjack.Compiler.Backend.ClosTicks.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.CodeLabels
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Arity
 import Flapjack.Compiler.Backend.ClosLetop.Proofs.Labels

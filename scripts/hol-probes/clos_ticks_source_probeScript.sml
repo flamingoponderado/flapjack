@@ -13,6 +13,7 @@ val _ = show "remove_ticks_SING_typed" clos_ticksProofTheory.remove_ticks_SING;
 val _ = show "HD_remove_ticks_SING_typed" clos_ticksProofTheory.HD_remove_ticks_SING;
 val _ = show "EVERY_remove_ticks_sing_typed" clos_ticksProofTheory.EVERY_remove_ticks_sing;
 val _ = show "remove_ticks_app_call_dests_typed" clos_ticksProofTheory.remove_ticks_app_call_dests;
+val _ = show "remove_ticks_code_labels_typed" clos_ticksProofTheory.remove_ticks_code_labels;
 val _ = show "remove_ticks_CONS_typed" clos_ticksProofTheory.remove_ticks_CONS;
 val _ = show "code_rel_CONS_CONS_typed" clos_ticksProofTheory.code_rel_CONS_CONS;
 val _ = show "remove_sing_typed" clos_ticksTheory.remove_ticks_sing_def;
