@@ -378,3 +378,14 @@ val in_do_app_lemma_statement =
         ∃t2. in_state_rel s2 t2 ∧ do_app op a t1 = Rval (v,t2)``;
 val _ = (print "in_do_app_lemma_statement_typed=";
   print_term in_do_app_lemma_statement; print "\n");
+
+(* Capture this local theorem statement with inferred HOL types. *)
+val in_state_rel_do_install_statement =
+  ``in_state_rel s1 t1 ⇒
+    case do_install a s1 of
+    | Rerr err =>
+        (err ≠ Rabort Rtype_error ⇒ do_install a t1 = Rerr err)
+    | Rval (v,s2) =>
+        ∃t2. in_state_rel s2 t2 ∧ do_install a t1 = Rval (v,t2)``;
+val _ = (print "in_state_rel_do_install_statement_typed=";
+  print_term in_state_rel_do_install_statement; print "\n");

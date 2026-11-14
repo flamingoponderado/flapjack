@@ -54,11 +54,11 @@ theorem inStateRel_after_install {C F : Type}
 
 /-- Flapjack infrastructure: a successful source installation is reproduced
 by the inlined target, with the same entry pointer and related states. -/
-theorem doInstall_success_rel {C F : Type} (args : List Value)
+theorem doInstall_success_rel {C F R S : Type} (args : List Value)
     (source sourceNext : BviState (Spt (Nat × Bvi.Exp) × C) F)
     (target : BviState C F) (value : Value) (related : InStateRel source target)
-    (run : doInstall (R := ExnOrRet) args source = .val (value, sourceNext)) :
-    ∃ targetNext, doInstall (R := ExnOrRet) args target = .val (value, targetNext) ∧
+    (run : doInstall (R := R) args source = .val (value, sourceNext)) :
+    ∃ targetNext, doInstall (R := S) args target = .val (value, targetNext) ∧
       InStateRel sourceNext targetNext := by
   obtain ⟨v1, v2, len1, len2, bytes, data, cfg, key, arity, body, rest, cfgNext,
     argsEq, decode1, decode2, lenEq1, lenEq2, oracle0, absent, unique, callback, oracle1, valueEq, stateEq⟩ :=
@@ -116,7 +116,7 @@ theorem doInstall_success_rel {C F : Type} (args : List Value)
       (inlineAllSource (if canonicalWrapper key arity (inlineExpSource cache body) then
         sptInsert key (arity, inlineExpSource cache body) cache else cache) rest).2 := by
     simp [compiled, code, inlineAllSource]
-  have targetRun : doInstall (R := ExnOrRet) args target =
+  have targetRun : doInstall (R := S) args target =
       .val (.codePtr key, { target with
         code := sptUnion target.code (sptFromAList compiled)
         compileOracle := fun n => target.compileOracle (n + 1) }) := by
@@ -145,27 +145,38 @@ theorem doInstall_success_rel {C F : Type} (args : List Value)
   · simpa [valueEq] using targetRun
   · simpa [stateEq, oracle0, code, compiled] using stateRelated
 
-/-- Flapjack infrastructure: the installation case of the primitive
-simulation. A source type error is intentionally unconstrained, matching
-the error convention of the evaluator simulation. -/
-theorem doApp_install_rel {C F : Type} (args : List Value)
+namespace InstallationRelationCarrier
+/-- The canonical BVI reference-map representation has a roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end InstallationRelationCarrier
+
+/-- Installation preserves the inlining state relation unless the source
+installation returns a type error. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "in_state_rel_do_install"
+  (fmap_as_finite_support := [refs])]
+theorem doInstall_rel {C F R S : Type} (args : List Value)
     (source : BviState (Spt (Nat × Bvi.Exp) × C) F) (target : BviState C F)
     (related : InStateRel source target) :
-    match doApp .install args source with
-    | .err error => error ≠ .abort .typeError → doApp .install args target = .err error
+    match doInstall (R := R) args source with
+    | .err error => error ≠ .abort .typeError → doInstall (R := R) args target = .err error
     | .val (value, sourceNext) =>
       ∃ targetNext, InStateRel sourceNext targetNext ∧
-        doApp .install args target = .val (value, targetNext) := by
-  cases run : doApp .install args source with
+        doInstall (R := S) args target = .val (value, targetNext) := by
+  cases run : doInstall (R := R) args source with
   | err error =>
-    have errorEq := BviTailrec.doApp_install_error args source error run
+    have errorEq : error = .abort .typeError := by
+      unfold BviSem.doInstall at run
+      repeat' split at run
+      all_goals simp_all
+      all_goals split at run <;> simp_all
     simp [errorEq]
   | val result =>
     obtain ⟨value, sourceNext⟩ := result
-    have installRun : doInstall (R := ExnOrRet) args source = .val (value, sourceNext) := by
-      simpa only [BviSem.doApp] using run
     obtain ⟨targetNext, targetRun, states⟩ :=
-      doInstall_success_rel args source sourceNext target value related installRun
-    exact ⟨targetNext, states, by simpa only [BviSem.doApp] using targetRun⟩
+      doInstall_success_rel args source sourceNext target value related run
+    exact ⟨targetNext, states, targetRun⟩
 
 end Flapjack.Compiler.Backend.BviInline

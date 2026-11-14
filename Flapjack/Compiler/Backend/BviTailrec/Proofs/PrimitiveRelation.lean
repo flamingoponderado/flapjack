@@ -791,8 +791,8 @@ theorem stateRel_doApp_thunk_error {C F : Type} (op : AstHOL.ThunkOp) (args : Li
   | val pair => cases pair; simp [found] at run
 /-- A successful installation exposes the exact decoded arguments, compiler
 result, disjointness checks, and shifted oracle. -/
-theorem doInstall_success_inv {C F : Type} (args : List Value) (s next : BviSem.BviState C F) (v : Value)
-    (run : BviSem.doInstall (R := BviSem.ExnOrRet) args s = .val (v, next)) :
+theorem doInstall_success_inv {C F R : Type} (args : List Value) (s next : BviSem.BviState C F) (v : Value)
+    (run : BviSem.doInstall (R := R) args s = .val (v, next)) :
     ∃ v1 v2 len1 len2 bytes data cfg key arity body rest cfgNext,
       args = [v1, v2, .number len1, .number len2] ∧
       valueToBytes v1 = some bytes ∧ valueToWords v2 = some data ∧

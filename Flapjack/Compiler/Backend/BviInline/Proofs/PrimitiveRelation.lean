@@ -36,7 +36,12 @@ theorem doApp_rel {C F : Type} (source : BviState (Spt (Nat × Bvi.Exp) × C) F)
         BviSem.doApp op args target = .val (value, targetNext) := by
   by_cases install : op = .install
   · subst op
-    exact doApp_install_rel args source target related
+    have simulation := doInstall_rel (R := ExnOrRet) (S := ExnOrRet) args source target related
+    cases run : doInstall (R := ExnOrRet) args source with
+    | err error => simpa [BviSem.doApp, run] using simulation
+    | val result =>
+      obtain ⟨value, next⟩ := result
+      simpa [BviSem.doApp, run] using simulation
   · have frameEq : runtimeFrame source target = target := by
       rcases related with ⟨refs, clock, global, ffi, _⟩
       cases source

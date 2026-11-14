@@ -139260,4 +139260,16 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the complete case split with the local HOL source and inferred-type statement capture (the original proof was not replayed): related states imply matching non-type errors or a related successful target state with the same value. The two compiler-state types and FFI carrier match the HOL instantiation. The BVI refs field uses the canonical finite-support carrier, witnessed by the same-module roundtrip. Primitive application inherits reals_as_rational_cuts (SOUNDNESS item 8)."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "in_state_rel_do_install",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/InstallRelation.lean",
+    "lean_name": "doInstall_rel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "refs"
+    ],
+    "reviewer": "Compared the complete source case split with the local HOL source and inferred-type statement capture (the original proof was not replayed). Source and error target use one polymorphic error payload type; the successful target has an independent type. The full inlining relation and source type-error exception are retained. BVI refs use the canonical finite-support map, with a same-module roundtrip."
+  }
 ]
