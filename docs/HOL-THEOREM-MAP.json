@@ -5285,7 +5285,7 @@
   "lean_name": "eval_simulation",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared the typed source_eval_simulation capture in source_eval_oracle_adjust_probe.out:121: all three conjuncts retain their quantified carriers, original premises and conclusions, including the independent inhabited unused expression binder. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared the typed source_eval_simulation capture in source_eval_oracle_adjust_probe.out:121: all three conjuncts retain their quantified carriers, original premises and conclusions, including the independent inhabited unused expression binder. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: HOL's unused `es :α` binder is vacuous, so the induction motive `ExpsSimAt` and this statement omit it and no `[Nonempty]` instance remains; all three conjuncts keep their original premises and conclusions."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5294,7 +5294,7 @@
   "lean_name": "evalSimulation_App",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the App case retains all four original induction hypotheses, intermediate result and pair equalities, guards, and the complete expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the App case retains all four original induction hypotheses, intermediate result and pair equalities, guards, and the complete expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: the `ExpsSimAt` motive omits HOL's vacuous `es :α` binder, so no `[Nonempty A]` instance remains; the premises and conclusions are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5303,7 +5303,7 @@
   "lean_name": "evalSimulation_Dlet",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece of the assembled mutual eval_simulation theorem; independently reviewed against the typed HOL induction and simulation conclusions. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Dlet case retains the guarded expression induction hypothesis and complete declaration simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece of the assembled mutual eval_simulation theorem; independently reviewed against the typed HOL induction and simulation conclusions. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Dlet case retains the guarded expression induction hypothesis and complete declaration simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: the `ExpsSimAt` motive omits HOL's vacuous `es :α` binder, so no `[Nonempty A]` instance remains; the premises and conclusions are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5384,7 +5384,7 @@
   "lean_name": "evalSimulation_Letrec",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece of the assembled mutual eval_simulation theorem; independently reviewed against the typed HOL induction and simulation conclusions. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Letrec case retains the distinct-function-name guard and original recursive environment in its body induction hypothesis. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece of the assembled mutual eval_simulation theorem; independently reviewed against the typed HOL induction and simulation conclusions. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Letrec case retains the distinct-function-name guard and original recursive environment in its body induction hypothesis. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: the `ExpsSimAt` motive omits HOL's vacuous `es :α` binder, so no `[Nonempty A]` instance remains; the premises and conclusions are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5393,7 +5393,7 @@
   "lean_name": "evalSimulation_Log",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece of the assembled mutual eval_simulation theorem; independently reviewed against the typed HOL induction and simulation conclusions. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Log case retains the guarded continuation induction hypothesis, both intermediate result equations and the operand induction hypothesis in HOL order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece of the assembled mutual eval_simulation theorem; independently reviewed against the typed HOL induction and simulation conclusions. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Log case retains the guarded continuation induction hypothesis, both intermediate result equations and the operand induction hypothesis in HOL order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: the `ExpsSimAt` motive omits HOL's vacuous `es :α` binder, so no `[Nonempty A]` instance remains; the premises and conclusions are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5402,7 +5402,7 @@
   "lean_name": "evalSimulation_If",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Case piece of the assembled mutual eval_simulation theorem; independently reviewed against the typed HOL induction and simulation conclusions. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the If case retains the branch-selection induction hypothesis, intermediate result equation and condition induction hypothesis in HOL order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Case piece of the assembled mutual eval_simulation theorem; independently reviewed against the typed HOL induction and simulation conclusions. Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the If case retains the branch-selection induction hypothesis, intermediate result equation and condition induction hypothesis in HOL order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: the `ExpsSimAt` motive omits HOL's vacuous `es :α` binder, so no `[Nonempty A]` instance remains; the premises and conclusions are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5411,7 +5411,7 @@
   "lean_name": "evalSimulation_Let",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Let case retains both induction hypotheses, the intermediate result equality and the original optional-binding environment. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Let case retains both induction hypotheses, the intermediate result equality and the original optional-binding environment. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: the `ExpsSimAt` motive omits HOL's vacuous `es :α` binder, so no `[Nonempty A]` instance remains; the premises and conclusions are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5420,7 +5420,7 @@
   "lean_name": "evalSimulation_Mat",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Mat case retains the guarded match induction hypothesis, the intermediate result equality and expression hypothesis in HOL order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Mat case retains the guarded match induction hypothesis, the intermediate result equality and expression hypothesis in HOL order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: the `ExpsSimAt` motive omits HOL's vacuous `es :α` binder, so no `[Nonempty A]` instance remains; the premises and conclusions are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5429,7 +5429,7 @@
   "lean_name": "evalSimulation_MatchCons",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the match-row case retains both induction hypotheses and their original distinctness and pattern-match guards. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the match-row case retains both induction hypotheses and their original distinctness and pattern-match guards. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: the `ExpsSimAt` motive omits HOL's vacuous `es :α` binder, so no `[Nonempty A]` instance remains; the premises and conclusions are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5438,7 +5438,7 @@
   "lean_name": "evalSimulation_Handle",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Handle case retains the guarded match induction hypothesis, both result equations, and the expression induction hypothesis in HOL order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Handle case retains the guarded match induction hypothesis, both result equations, and the expression induction hypothesis in HOL order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: the `ExpsSimAt` motive omits HOL's vacuous `es :α` binder, so no `[Nonempty A]` instance remains; the premises and conclusions are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5447,7 +5447,7 @@
   "lean_name": "evalSimulation_Con",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Con case retains the constructor-check-guarded induction hypothesis on the reversed arguments and the full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Con case retains the constructor-check-guarded induction hypothesis on the reversed arguments and the full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: the `ExpsSimAt` motive omits HOL's vacuous `es :α` binder, so no `[Nonempty A]` instance remains; the premises and conclusions are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5456,7 +5456,7 @@
   "lean_name": "evalSimulation_Lit",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Lit case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Lit case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: the `ExpsSimAt` motive omits HOL's vacuous `es :α` binder, so no `[Nonempty A]` instance remains; the premises and conclusions are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5465,7 +5465,7 @@
   "lean_name": "evalSimulation_Raise",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Raise case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Raise case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: the `ExpsSimAt` motive omits HOL's vacuous `es :α` binder, so no `[Nonempty A]` instance remains; the premises and conclusions are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5474,7 +5474,7 @@
   "lean_name": "evalSimulation_Var",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Var case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Var case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: the `ExpsSimAt` motive omits HOL's vacuous `es :α` binder, so no `[Nonempty A]` instance remains; the premises and conclusions are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5483,7 +5483,7 @@
   "lean_name": "evalSimulation_Fn",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Fn case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Fn case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: the `ExpsSimAt` motive omits HOL's vacuous `es :α` binder, so no `[Nonempty A]` instance remains; the premises and conclusions are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5492,7 +5492,7 @@
   "lean_name": "evalSimulation_Tannot",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Tannot case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Tannot case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: the `ExpsSimAt` motive omits HOL's vacuous `es :α` binder, so no `[Nonempty A]` instance remains; the premises and conclusions are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5501,7 +5501,7 @@
   "lean_name": "evalSimulation_Lannot",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Lannot case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the Lannot case retains the original induction hypotheses and full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: the `ExpsSimAt` motive omits HOL's vacuous `es :α` binder, so no `[Nonempty A]` instance remains; the premises and conclusions are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5510,7 +5510,7 @@
   "lean_name": "evalSimulation_ExpsCons",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the expression-list cons case retains the two original induction hypotheses as one conjunction, including the tail evaluation's independent result and equality premise, and the full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared typed source_eval_simulation and evaluate_induction in source_eval_oracle_adjust_probe.out: the expression-list cons case retains the two original induction hypotheses as one conjunction, including the tail evaluation's independent result and equality premise, and the full expression simulation conclusion. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: the `ExpsSimAt` motive omits HOL's vacuous `es :α` binder, so no `[Nonempty A]` instance remains; the premises and conclusions are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5519,7 +5519,7 @@
   "lean_name": "evalSimulation_ExpsNil",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_eval_simulation at source_eval_oracle_adjust_probe.out:121 and evaluate_induction: empty expression list, retaining the vacuous independent inhabited es binder. The source premises and all six conclusions retain their original order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared typed source_eval_simulation at source_eval_oracle_adjust_probe.out:121 and evaluate_induction: empty expression list, retaining the vacuous independent inhabited es binder. The source premises and all six conclusions retain their original order. The evaluator inherits the reals_as_rational_cuts assumption (docs/SOUNDNESS.md item 8). Update: the `ExpsSimAt` motive omits HOL's vacuous `es :α` binder, so no `[Nonempty A]` instance remains; the premises and conclusions are unchanged."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
@@ -5586,7 +5586,7 @@
   "lean_name": "doApp_sim",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared typed source_do_app_simulation in source_eval_oracle_adjust_probe.out: the source application, state relation, reversed pointwise operand relation, non-type-error premise, all four existential witnesses including the unused independent inhabited ref1, and target application, store and result relations retain the original shape. The FFI and compiler configuration carriers are independent. Primitive evaluation inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8)."
+  "reviewer": "Compared typed source_do_app_simulation in source_eval_oracle_adjust_probe.out: the source application, state relation, reversed pointwise operand relation, non-type-error premise, all four existential witnesses including the unused independent inhabited ref1, and target application, store and result relations retain the original shape. The FFI and compiler configuration carriers are independent. Primitive evaluation inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8). Update: HOL's unused `ref1 :β` existential is vacuous, so it is omitted and no `[Nonempty β]` instance remains; the remaining binders and all four conjuncts are unchanged."
 },
 {
   "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",

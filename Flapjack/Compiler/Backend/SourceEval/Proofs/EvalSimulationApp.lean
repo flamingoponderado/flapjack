@@ -17,14 +17,14 @@ open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesP
 induction hypotheses retain the original pair and result binders and guards.
 The evaluator inherits the rational-cut real-number assumption. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
-theorem evalSimulation_App {Config F A : Type} [Nonempty A] (ci : CompilerInstance Config)
+theorem evalSimulation_App {Config F : Type} (ci : CompilerInstance Config)
     (s : State F) (env : SemEnv Value) (op : Op) (args : List Flapjack.AstHOL.Exp)
     (ih :
       (∀ (middle : State F) (outcome : Result (List Value) Value) (values : List Value)
           (pair : SemEnv Value × Flapjack.AstHOL.Exp) (callEnv : SemEnv Value) (body : Flapjack.AstHOL.Exp),
         evaluate s env args.reverse = (middle, outcome) ∧ outcome = .val values ∧
         getOpClass op = .funApp ∧ doOpApp values.reverse = some pair ∧
-        pair = (callEnv, body) ∧ middle.clock ≠ 0 → ExpsSimAt (A := A) ci (decClock middle) callEnv [body]) ∧
+        pair = (callEnv, body) ∧ middle.clock ≠ 0 → ExpsSimAt ci (decClock middle) callEnv [body]) ∧
       (∀ (middle : State F) (outcome : Result (List Value) Value) (values : List Value)
           (decoded : State F) (decodedResult : Result (SemEnv Value × List Dec) Value)
           (pair : SemEnv Value × List Dec) (evalEnv : SemEnv Value) (decs : List Dec),
@@ -38,11 +38,11 @@ theorem evalSimulation_App {Config F A : Type} [Nonempty A] (ci : CompilerInstan
         evaluate s env args.reverse = (middle, outcome) ∧ outcome = .val values ∧
         getOpClass op = .force ∧ destThunk values.reverse middle.refs = .isThunk mode thunk ∧
         mode = .notEvaluated ∧ doOpApp [thunk, .conv none []] = some pair ∧
-        pair = (callEnv, body) ∧ middle.clock ≠ 0 → ExpsSimAt (A := A) ci (decClock middle) callEnv [body]) ∧
-      ExpsSimAt (A := A) ci s env args.reverse) :
-    ExpsSimAt (A := A) ci s env [.app op args] := by
+        pair = (callEnv, body) ∧ middle.clock ≠ 0 → ExpsSimAt ci (decClock middle) callEnv [body]) ∧
+      ExpsSimAt ci s env args.reverse) :
+    ExpsSimAt ci s env [.app op args] := by
   obtain ⟨callIH, evalIH, forceIH, argsIH⟩ := ih
-  intro s' res es t env' ⟨run, related, envRelated, safe⟩
+  intro s' res t env' ⟨run, related, envRelated, safe⟩
   rw [evaluate, (fixClockEvaluate s env args.reverse []).1] at run
   cases argsRun : evaluate s env args.reverse with
   | mk middle argResult =>
@@ -52,7 +52,7 @@ theorem evalSimulation_App {Config F A : Type} [Nonempty A] (ci : CompilerInstan
       cases run
       have argsSafe : Result.err error ≠ .err (.abort .typeError) := safe
       obtain ⟨es₁, t₁, r₁, targetRun, stateRel₁, esEq, resultRel₁, fwd, stack⟩ :=
-        argsIH s' (.err error) es t env' ⟨argsRun, related, envRelated, argsSafe⟩
+        argsIH s' (.err error) t env' ⟨argsRun, related, envRelated, argsSafe⟩
       cases r₁ with
       | val values => cases resultRel₁
       | err targetErr =>
@@ -60,7 +60,7 @@ theorem evalSimulation_App {Config F A : Type} [Nonempty A] (ci : CompilerInstan
         rw [evaluate, (fixClockEvaluate t env' args.reverse []).1, targetRun]
     | val values =>
       obtain ⟨es₁, t₁, r₁, targetRun, stateRel₁, esEq, resultRel₁, fwd₁, stack₁⟩ :=
-        argsIH middle (.val values) es t env' ⟨argsRun, related, envRelated, by simp⟩
+        argsIH middle (.val values) t env' ⟨argsRun, related, envRelated, by simp⟩
       cases r₁ with
       | err error => cases resultRel₁
       | val targetValues =>
@@ -95,7 +95,7 @@ theorem evalSimulation_App {Config F A : Type} [Nonempty A] (ci : CompilerInstan
               have targetClock : t₁.clock ≠ 0 := by simpa [← clockEq] using clockZero
               obtain ⟨es₂, t₂, r₂, targetCall, stateRel₂, esEq₂, resultRel₂, fwd₂, stack₂⟩ :=
                 callIH middle (.val values) values (callEnv, body) callEnv body
-                  ⟨argsRun, rfl, opClass, app, rfl, clockZero⟩ s' res es (decClock t₁) callEnv'
+                  ⟨argsRun, rfl, opClass, app, rfl, clockZero⟩ s' res (decClock t₁) callEnv'
                   ⟨run, decRel, by simpa [esEq, decClock] using callEnvRel, safe⟩
               refine ⟨es₂, t₂, r₂, ?_, stateRel₂, esEq₂, resultRel₂, ?_, ?_⟩
               · rw [evaluate, (fixClockEvaluate t env' args.reverse []).1, targetRun]
@@ -174,7 +174,8 @@ theorem evalSimulation_App {Config F A : Type} [Nonempty A] (ci : CompilerInstan
                         cases run
                         obtain ⟨es₂, t₂, r₂, targetCall, stateRel₂, esEq₂, resultRel₂, fwd₂, stack₂⟩ :=
                           forceIH middle (.val values) values .notEvaluated value (callEnv, body) callEnv body
-                            ⟨argsRun, rfl, opClass, thunk, rfl, app, rfl, clockZero⟩ s' (.err error) es (decClock t₁) callEnv'
+                            ⟨argsRun, rfl, opClass, thunk, rfl, app, rfl,
+                              clockZero⟩ s' (.err error) (decClock t₁) callEnv'
                             ⟨callRun, decRel, by simpa [esEq, decClock] using callEnvRel, safe⟩
                         cases r₂ with
                         | val vals => cases resultRel₂
@@ -198,7 +199,7 @@ theorem evalSimulation_App {Config F A : Type} [Nonempty A] (ci : CompilerInstan
                           obtain ⟨es₂, t₂, r₂, targetCall, stateRel₂, esEq₂, resultRel₂, fwd₂, stack₂⟩ :=
                             forceIH middle (.val values) values .notEvaluated value (callEnv, body) callEnv body
                               ⟨argsRun, rfl, opClass, thunk, rfl, app, rfl, clockZero⟩
-                              after (.val newValues) es (decClock t₁) callEnv'
+                              after (.val newValues) (decClock t₁) callEnv'
                               ⟨callRun, decRel, by simpa [esEq, decClock] using callEnvRel, by simp⟩
                           cases r₂ with
                           | err error => cases resultRel₂
@@ -388,8 +389,8 @@ theorem evalSimulation_App {Config F A : Type} [Nonempty A] (ci : CompilerInstan
               cases result <;> simp_all [listResult]
             have relatedValues : List.Forall₂ (ValueRel (oracleState t₁.evalState)) values targetValues := by
               simpa [esEq] using valuesRel
-            obtain ⟨_, refs', result', oracle', oracleEq, targetApp, storesRel, resultRel⟩ :=
-              doApp_sim (β := Unit) middle op values refs ffi result ci t₁ targetValues
+            obtain ⟨refs', result', oracle', oracleEq, targetApp, storesRel, resultRel⟩ :=
+              doApp_sim middle op values refs ffi result ci t₁ targetValues
                 ⟨app, stateRel₁, relatedValues, resultSafe⟩
             refine ⟨oracle', { t₁ with refs := refs', ffi := ffi }, listResult result', ?_, ?_, ?_, ?_, ?_, ?_⟩
             · rw [evaluate, (fixClockEvaluate t env' args.reverse []).1, targetRun]

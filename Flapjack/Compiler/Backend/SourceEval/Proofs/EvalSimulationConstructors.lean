@@ -12,12 +12,12 @@ open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL Flapja
 
 /-- Constructor evaluation preserves the source evaluator simulation. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
-theorem evalSimulation_Con {Config F A : Type} [Nonempty A] (ci : CompilerInstance Config)
+theorem evalSimulation_Con {Config F : Type} (ci : CompilerInstance Config)
     (s : State F) (env : SemEnv Value) (name : Option (Ident ModN ConN))
     (args : List Flapjack.AstHOL.Exp)
-    (ih : doConCheck env.c name args.length = true → ExpsSimAt (A := A) ci s env args.reverse) :
-    ExpsSimAt (A := A) ci s env [.con name args] := by
-  intro s' res es t env' ⟨run, related, envRelated, safe⟩
+    (ih : doConCheck env.c name args.length = true → ExpsSimAt ci s env args.reverse) :
+    ExpsSimAt ci s env [.con name args] := by
+  intro s' res t env' ⟨run, related, envRelated, safe⟩
   have constructors : env'.c = env.c := envRel_imp_c _ env env' envRelated
   by_cases check : doConCheck env.c name args.length = true
   · have targetCheck : doConCheck env'.c name args.length = true := by simpa [constructors] using check
@@ -31,7 +31,7 @@ theorem evalSimulation_Con {Config F A : Type} [Nonempty A] (ci : CompilerInstan
         cases run
         have subSafe : Result.err error ≠ .err (.abort .typeError) := safe
         obtain ⟨es₁, t₁, r₁, targetRun, stateRel₁, esEq, resultRel₁, fwd, stack⟩ :=
-          ih check s' (.err error) es t env' ⟨subRun, related, envRelated, subSafe⟩
+          ih check s' (.err error) t env' ⟨subRun, related, envRelated, subSafe⟩
         cases r₁ with
         | val vals => cases resultRel₁
         | err err' =>
@@ -48,7 +48,7 @@ theorem evalSimulation_Con {Config F A : Type} [Nonempty A] (ci : CompilerInstan
           simp only [built] at run
           cases run
           obtain ⟨es₁, t₁, r₁, targetRun, stateRel₁, esEq, resultRel₁, fwd, stack⟩ :=
-            ih check s' (.val values) es t env' ⟨subRun, related, envRelated, by simp⟩
+            ih check s' (.val values) t env' ⟨subRun, related, envRelated, by simp⟩
           cases r₁ with
           | err err => cases resultRel₁
           | val values' =>

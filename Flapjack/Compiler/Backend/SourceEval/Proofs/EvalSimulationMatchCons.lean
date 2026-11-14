@@ -12,11 +12,11 @@ open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL Flapja
 
 /-- A pattern-match row preserves the source evaluator simulation. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
-theorem evalSimulation_MatchCons {Config F A : Type} [Nonempty A] (ci : CompilerInstance Config)
+theorem evalSimulation_MatchCons {Config F : Type} (ci : CompilerInstance Config)
     (s : State F) (env : SemEnv Value) (x : Value) (pat : Pat) (expr : Flapjack.AstHOL.Exp)
     (rows : List (Pat × Flapjack.AstHOL.Exp)) (err : Value)
     (ih : (∀ bindings, (patBindings pat).Nodup ∧ pmatch env.c s.refs pat x [] = .match bindings →
-      ExpsSimAt (A := A) ci s { env with v := nsAppend (alistToNs bindings) env.v } [expr]) ∧
+      ExpsSimAt ci s { env with v := nsAppend (alistToNs bindings) env.v } [expr]) ∧
       ((patBindings pat).Nodup ∧ pmatch env.c s.refs pat x [] = .noMatch →
         MatchSimAt ci s env x rows err)) :
     MatchSimAt ci s env x ((pat, expr) :: rows) err := by
@@ -52,7 +52,7 @@ theorem evalSimulation_MatchCons {Config F A : Type} [Nonempty A] (ci : Compiler
         rw [nsAppend_to_nsBindList, nsAppend_to_nsBindList]
         exact envRel_add_nsBindList _ env env.v env' env'.v bindings bindings' ⟨envRelated, bindingsRel⟩
       obtain ⟨es', t', res', targetRun, rel', eq, resultRel', fwd, stack⟩ :=
-        bodyIH bindings ⟨distinct, sourceMatch⟩ s' res (Classical.choice inferInstance) t
+        bodyIH bindings ⟨distinct, sourceMatch⟩ s' res t
           { env' with v := nsAppend (alistToNs bindings') env'.v }
           ⟨sourceRun, related, nextEnvRelated, safe⟩
       exact ⟨es', t', res', by simpa [evaluateMatch, distinct, targetMatch] using targetRun,

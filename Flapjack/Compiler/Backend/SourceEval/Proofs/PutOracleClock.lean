@@ -58,7 +58,7 @@ theorem evaluate_prog_with_clock_put_oracle {Config F : Type} (oracle : EvalOrac
             Flapjack.holEl, Flapjack.holHd]
         have relatedClock := stateRel_setClock ci s t k relation
         obtain ⟨finalOracle, target, targetRes, targetRun, targetRel, finalEq, resultRelated, _, _⟩ :=
-          (eval_simulation (A := Unit) ci).2.2 _ env decs after result _ env
+          (eval_simulation ci).2.2 _ env decs after result _ env
             ⟨sourceRun, relatedClock, envRel_concrete env _ concrete, safe⟩
         have finalSafe : targetRes ≠ .err (.abort .typeError) := by
           intro bad

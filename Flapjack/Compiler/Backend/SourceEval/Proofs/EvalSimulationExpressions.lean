@@ -9,10 +9,10 @@ namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps Flapjack.EvaluateHOL
 /-- Literal expressions preserve the value relation. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
-theorem evalSimulation_Lit {Config F A : Type} [Nonempty A] (ci : CompilerInstance Config)
+theorem evalSimulation_Lit {Config F : Type} (ci : CompilerInstance Config)
     (s : State F) (env : SemEnv Value) (lit : Lit) :
-    ExpsSimAt (A := A) ci s env [.lit lit] := by
-  intro s' res es t env' ⟨run, related, envRelated, safe⟩
+    ExpsSimAt ci s env [.lit lit] := by
+  intro s' res t env' ⟨run, related, envRelated, safe⟩
   simp [evaluate] at run
   obtain ⟨rfl, rfl⟩ := run
   refine ⟨oracleState t.evalState, t, .val [.litv lit], ?_, related, rfl, ?_,
@@ -21,11 +21,11 @@ theorem evalSimulation_Lit {Config F A : Type} [Nonempty A] (ci : CompilerInstan
   · exact List.Forall₂.cons (ValueRel.lit _) List.Forall₂.nil
 /-- Raising an exception preserves the simulation. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
-theorem evalSimulation_Raise {Config F A : Type} [Nonempty A] (ci : CompilerInstance Config)
+theorem evalSimulation_Raise {Config F : Type} (ci : CompilerInstance Config)
     (s : State F) (env : SemEnv Value) (expr : Flapjack.AstHOL.Exp)
-    (ih : ExpsSimAt (A := A) ci s env [expr]) :
-    ExpsSimAt (A := A) ci s env [.raise expr] := by
-  intro s' res es t env' ⟨run, related, envRelated, safe⟩
+    (ih : ExpsSimAt ci s env [expr]) :
+    ExpsSimAt ci s env [.raise expr] := by
+  intro s' res t env' ⟨run, related, envRelated, safe⟩
   rw [evaluate] at run
   cases subRun : evaluate s env [expr] with
   | mk middle subResult =>
@@ -35,7 +35,7 @@ theorem evalSimulation_Raise {Config F A : Type} [Nonempty A] (ci : CompilerInst
       cases run
       have subSafe : Result.err error ≠ .err (.abort .typeError) := safe
       obtain ⟨es₁, t₁, r₁, targetRun, stateRel₁, esEq, resultRel₁, fwd, stack⟩ :=
-        ih s' (.err error) es t env' ⟨subRun, related, envRelated, subSafe⟩
+        ih s' (.err error) t env' ⟨subRun, related, envRelated, subSafe⟩
       cases r₁ with
       | val vals => cases resultRel₁
       | err err' =>
@@ -45,7 +45,7 @@ theorem evalSimulation_Raise {Config F A : Type} [Nonempty A] (ci : CompilerInst
       simp only [subRun] at run
       cases run
       obtain ⟨es₁, t₁, r₁, targetRun, stateRel₁, esEq, resultRel₁, fwd, stack⟩ :=
-        ih s' (.val values) es t env' ⟨subRun, related, envRelated, by simp⟩
+        ih s' (.val values) t env' ⟨subRun, related, envRelated, by simp⟩
       cases r₁ with
       | err err => cases resultRel₁
       | val targetValues =>
@@ -62,10 +62,10 @@ theorem evalSimulation_Raise {Config F A : Type} [Nonempty A] (ci : CompilerInst
               exact stack (by simp [abort])
 /-- Variable lookup preserves the value relation. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
-theorem evalSimulation_Var {Config F A : Type} [Nonempty A] (ci : CompilerInstance Config)
+theorem evalSimulation_Var {Config F : Type} (ci : CompilerInstance Config)
     (s : State F) (env : SemEnv Value) (name : Flapjack.NamespaceHOL.Ident ModN VarN) :
-    ExpsSimAt (A := A) ci s env [.var name] := by
-  intro s' res es t env' ⟨run, related, envRelated, safe⟩
+    ExpsSimAt ci s env [.var name] := by
+  intro s' res t env' ⟨run, related, envRelated, safe⟩
   cases found : Flapjack.NamespaceHOL.nsLookup env.v name with
   | none =>
     simp [evaluate, found, typeError] at run
@@ -83,10 +83,10 @@ theorem evalSimulation_Var {Config F A : Type} [Nonempty A] (ci : CompilerInstan
 
 /-- Function literals preserve the environment relation. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
-theorem evalSimulation_Fn {Config F A : Type} [Nonempty A] (ci : CompilerInstance Config)
+theorem evalSimulation_Fn {Config F : Type} (ci : CompilerInstance Config)
     (s : State F) (env : SemEnv Value) (name : VarN) (body : Flapjack.AstHOL.Exp) :
-    ExpsSimAt (A := A) ci s env [.fn name body] := by
-  intro s' res es t env' ⟨run, related, envRelated, safe⟩
+    ExpsSimAt ci s env [.fn name body] := by
+  intro s' res t env' ⟨run, related, envRelated, safe⟩
   simp [evaluate] at run
   obtain ⟨rfl, rfl⟩ := run
   refine ⟨oracleState t.evalState, t, .val [.closure env' name body], ?_, related, rfl, ?_,
@@ -95,23 +95,23 @@ theorem evalSimulation_Fn {Config F A : Type} [Nonempty A] (ci : CompilerInstanc
   · exact List.Forall₂.cons (ValueRel.closure ((valueEnvRel_iff _ _ _).mpr envRelated)) List.Forall₂.nil
 /-- Type annotations preserve the expression simulation. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
-theorem evalSimulation_Tannot {Config F A : Type} [Nonempty A] (ci : CompilerInstance Config)
+theorem evalSimulation_Tannot {Config F : Type} (ci : CompilerInstance Config)
     (s : State F) (env : SemEnv Value) (expr : Flapjack.AstHOL.Exp) (typ : AstT)
-    (ih : ExpsSimAt (A := A) ci s env [expr]) :
-    ExpsSimAt (A := A) ci s env [.tannot expr typ] := by
-  intro s' res es t env' ⟨run, related, envRelated, safe⟩
+    (ih : ExpsSimAt ci s env [expr]) :
+    ExpsSimAt ci s env [.tannot expr typ] := by
+  intro s' res t env' ⟨run, related, envRelated, safe⟩
   obtain ⟨es₁, t₁, r₁, targetRun, stateRel₁, esEq, resultRel₁, fwd, stack⟩ :=
-    ih s' res es t env' ⟨by simpa [evaluate] using run, related, envRelated, safe⟩
+    ih s' res t env' ⟨by simpa [evaluate] using run, related, envRelated, safe⟩
   exact ⟨es₁, t₁, r₁, by simpa [evaluate] using targetRun, stateRel₁, esEq, resultRel₁, fwd, stack⟩
 
 /-- Location annotations preserve the expression simulation. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
-theorem evalSimulation_Lannot {Config F A : Type} [Nonempty A] (ci : CompilerInstance Config)
+theorem evalSimulation_Lannot {Config F : Type} (ci : CompilerInstance Config)
     (s : State F) (env : SemEnv Value) (expr : Flapjack.AstHOL.Exp) (loc : Flapjack.Misc.Location.Locs)
-    (ih : ExpsSimAt (A := A) ci s env [expr]) :
-    ExpsSimAt (A := A) ci s env [.lannot expr loc] := by
-  intro s' res es t env' ⟨run, related, envRelated, safe⟩
+    (ih : ExpsSimAt ci s env [expr]) :
+    ExpsSimAt ci s env [.lannot expr loc] := by
+  intro s' res t env' ⟨run, related, envRelated, safe⟩
   obtain ⟨es₁, t₁, r₁, targetRun, stateRel₁, esEq, resultRel₁, fwd, stack⟩ :=
-    ih s' res es t env' ⟨by simpa [evaluate] using run, related, envRelated, safe⟩
+    ih s' res t env' ⟨by simpa [evaluate] using run, related, envRelated, safe⟩
   exact ⟨es₁, t₁, r₁, by simpa [evaluate] using targetRun, stateRel₁, esEq, resultRel₁, fwd, stack⟩
 end Flapjack.Compiler.Backend.SourceEval.Proofs

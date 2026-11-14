@@ -14,8 +14,9 @@ open Flapjack.NamespaceHOL Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapja
 
 /-- Empty expression-list case; HOL's unused `es` has an independent inhabited type. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
-theorem evalSimulation_ExpsNil {Config F A : Type} [Nonempty A] (ci : CompilerInstance Config) (s : State F) (env : SemEnv Value)
-    (s' : State F) (res : Result (List Value) Value) (_es : A) (t : State F) (env' : SemEnv Value)
+theorem evalSimulation_ExpsNil {Config F : Type} (ci : CompilerInstance Config) (s : State F)
+    (env : SemEnv Value)
+    (s' : State F) (res : Result (List Value) Value) (t : State F) (env' : SemEnv Value)
     (premises : evaluate s env [] = (s', res) ∧ stateRel ci s t ∧
       envRel (ValueRel (oracleState t.evalState)) env env' ∧ res ≠ .err (.abort .typeError)) :
     ∃ es' t' res', evaluate t env' [] = (t', res') ∧ stateRel ci s' t' ∧

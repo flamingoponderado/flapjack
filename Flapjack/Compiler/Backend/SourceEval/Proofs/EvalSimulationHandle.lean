@@ -23,16 +23,16 @@ def MatchSimAt {Config F : Type} (ci : CompilerInstance Config) (s : State F)
 
 /-- Exception handlers preserve the source evaluator simulation. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
-theorem evalSimulation_Handle {Config F A : Type} [Nonempty A] (ci : CompilerInstance Config)
+theorem evalSimulation_Handle {Config F : Type} (ci : CompilerInstance Config)
     (s : State F) (env : SemEnv Value) (expr : Flapjack.AstHOL.Exp)
     (rows : List (Pat × Flapjack.AstHOL.Exp))
     (ih : (∀ middle outcome err value, evaluate s env [expr] = (middle, outcome) ∧
        outcome = .err err ∧ err = .raise value ∧
        canPmatchAll env.c middle.refs (rows.map Prod.fst) value = true →
-       MatchSimAt ci middle env value rows value) ∧ ExpsSimAt (A := A) ci s env [expr]) :
-    ExpsSimAt (A := A) ci s env [.handle expr rows] := by
+       MatchSimAt ci middle env value rows value) ∧ ExpsSimAt ci s env [expr]) :
+    ExpsSimAt ci s env [.handle expr rows] := by
   obtain ⟨matchIH, exprIH⟩ := ih
-  intro s' res es t env' ⟨run, related, envRelated, safe⟩
+  intro s' res t env' ⟨run, related, envRelated, safe⟩
   rw [evaluate, (fixClockEvaluate s env [expr] []).1] at run
   cases subRun : evaluate s env [expr] with
   | mk middle subResult =>
@@ -41,7 +41,7 @@ theorem evalSimulation_Handle {Config F A : Type} [Nonempty A] (ci : CompilerIns
       simp only [subRun] at run
       cases run
       obtain ⟨es₁, t₁, r₁, targetRun, stateRel₁, esEq, resultRel₁, fwd, stack⟩ :=
-        exprIH s' (.val values) es t env' ⟨subRun, related, envRelated, by simp⟩
+        exprIH s' (.val values) t env' ⟨subRun, related, envRelated, by simp⟩
       cases r₁ with
       | err err => cases resultRel₁
       | val targetValues =>
@@ -54,7 +54,7 @@ theorem evalSimulation_Handle {Config F A : Type} [Nonempty A] (ci : CompilerIns
         cases run
         have subSafe : Result.err (.abort why) ≠ .err (.abort .typeError) := safe
         obtain ⟨es₁, t₁, r₁, targetRun, stateRel₁, esEq, resultRel₁, fwd, stack⟩ :=
-          exprIH s' (.err (.abort why)) es t env' ⟨subRun, related, envRelated, subSafe⟩
+          exprIH s' (.err (.abort why)) t env' ⟨subRun, related, envRelated, subSafe⟩
         cases r₁ with
         | val values => cases resultRel₁
         | err targetErr =>
@@ -70,7 +70,7 @@ theorem evalSimulation_Handle {Config F A : Type} [Nonempty A] (ci : CompilerIns
         by_cases canMatch : canPmatchAll env.c middle.refs (rows.map Prod.fst) value = true
         · simp only [canMatch, ↓reduceIte] at run
           obtain ⟨es₁, t₁, r₁, targetRun, stateRel₁, esEq, resultRel₁, fwd₁, stack₁⟩ :=
-            exprIH middle (.err (.raise value)) es t env' ⟨subRun, related, envRelated, by simp⟩
+            exprIH middle (.err (.raise value)) t env' ⟨subRun, related, envRelated, by simp⟩
           cases r₁ with
           | val values => cases resultRel₁
           | err targetErr =>

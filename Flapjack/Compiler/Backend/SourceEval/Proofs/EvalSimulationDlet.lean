@@ -12,10 +12,10 @@ open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL Flapja
 
 /-- Value declarations preserve the source evaluator simulation. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
-theorem evalSimulation_Dlet {Config F A : Type} [Nonempty A] (ci : CompilerInstance Config) (s : State F)
+theorem evalSimulation_Dlet {Config F : Type} (ci : CompilerInstance Config) (s : State F)
     (env : SemEnv Value) (loc : Flapjack.Misc.Location.Locs) (pat : Pat) (expr : Flapjack.AstHOL.Exp)
     (ih : (patBindings pat).Nodup ∧ everyExp (oneConCheck env.c) expr = true →
-      ExpsSimAt (A := A) ci s env [expr]) : DecsSimAt ci s env [.dlet loc pat expr] := by
+      ExpsSimAt ci s env [expr]) : DecsSimAt ci s env [.dlet loc pat expr] := by
   intro s' res t env' ⟨run, related, envRelated, safe⟩
   have constructors : env.c = env'.c := envRelated.1
   by_cases guard : (decide (patBindings pat).Nodup && everyExp (oneConCheck env.c) expr) = true
@@ -36,7 +36,7 @@ theorem evalSimulation_Dlet {Config F A : Type} [Nonempty A] (ci : CompilerInsta
           cases eq
           exact safe rfl
         obtain ⟨es₁, t₁, r₁, targetRun, stateRel₁, esEq, resultRel₁, fwd, stack⟩ :=
-          ih guardParts s' (.err error) (Classical.choice inferInstance) t env'
+          ih guardParts s' (.err error) t env'
             ⟨exprRun, related, envRelated, exprSafe⟩
         cases r₁ with
         | val values => cases resultRel₁
@@ -51,7 +51,7 @@ theorem evalSimulation_Dlet {Config F A : Type} [Nonempty A] (ci : CompilerInsta
       | val values =>
         simp only [exprRun] at run
         obtain ⟨es₁, t₁, r₁, targetRun, stateRel₁, esEq, resultRel₁, fwd, stack⟩ :=
-          ih guardParts middle (.val values) (Classical.choice inferInstance) t env'
+          ih guardParts middle (.val values) t env'
             ⟨exprRun, related, envRelated, by simp⟩
         cases r₁ with
         | err err => cases resultRel₁

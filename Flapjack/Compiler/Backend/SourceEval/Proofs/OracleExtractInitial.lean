@@ -39,7 +39,7 @@ theorem extract_oracle_0_st {Config F : Type} (t : State F) (env : SemEnv Value)
         exact bad
       have relation := stateRel_setClock ci s t (Nat.find existsClock) related
       obtain ⟨es, target', result', targetRun', related', esEq, _, _, _⟩ :=
-        (eval_simulation (A := Unit) ci).2.2 _ env decs source result _ env
+        (eval_simulation ci).2.2 _ env decs source result _ env
           ⟨sourceRun, relation, envRel_concrete env _ concrete, safe⟩
       rw [targetRun] at targetRun'
       cases targetRun'

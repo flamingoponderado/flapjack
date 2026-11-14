@@ -31,9 +31,9 @@ open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL Flapja
 unused HOL expression binder. The evaluator inherits the rational-cut real
 number assumption. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "eval_simulation"]
-theorem eval_simulation {Config F A : Type} [Nonempty A] (ci : CompilerInstance Config) :
+theorem eval_simulation {Config F : Type} (ci : CompilerInstance Config) :
     (∀ (s : State F) (env : SemEnv Value) (exps : List AstHOL.Exp)
-      (s' : State F) (res : Result (List Value) Value) (_es : A) (t : State F) (env' : SemEnv Value),
+      (s' : State F) (res : Result (List Value) Value) (t : State F) (env' : SemEnv Value),
       evaluate s env exps = (s', res) ∧ stateRel ci s t ∧
         envRel (ValueRel (oracleState t.evalState)) env env' ∧ res ≠ .err (.abort .typeError) →
       ∃ es' t' res', evaluate t env' exps = (t', res') ∧ stateRel ci s' t' ∧
@@ -57,7 +57,7 @@ theorem eval_simulation {Config F A : Type} [Nonempty A] (ci : CompilerInstance 
         es' = oracleState t'.evalState ∧ resultRel (envRel (ValueRel es')) (ValueRel es') res res' ∧
         envStoreForward (oracleState t.evalState) es' ∧
         (¬ abort res' → envStackForward (oracleState t.evalState) es')) := by
-  apply fullEvaluateInd (ExpsSimAt (A := A) ci) (MatchSimAt ci) (DecsSimAt ci)
+  apply fullEvaluateInd (ExpsSimAt ci) (MatchSimAt ci) (DecsSimAt ci)
   exact ⟨evalSimulation_ExpsNil ci, evalSimulation_ExpsCons ci, evalSimulation_Lit ci,
     evalSimulation_Raise ci, evalSimulation_Handle ci, evalSimulation_Con ci,
     evalSimulation_Var ci, evalSimulation_Fn ci, evalSimulation_App ci,

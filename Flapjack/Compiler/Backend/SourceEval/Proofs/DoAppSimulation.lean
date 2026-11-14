@@ -100,16 +100,16 @@ private theorem badRelated (oracle : EvalOracleState) (s t : Store Value) (v w :
 
 
 /-- Primitive applications preserve related stores and results.
-The unused HOL existential `ref1` has an independent inhabited type `β`.
+The unused HOL existential `ref1 :β` is omitted, as the rules allow for a vacuous binder.
 Primitive evaluation inherits the rational-cut real-number assumption. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "do_app_sim"]
-theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
+theorem doApp_sim {Config F : Type} (s : State F) (op : Op)
     (xs : List Value) (refs : Store Value) (ffi : HolFfiState F) (r : Result Value Value)
     (ci : CompilerInstance Config) (t : State F) (ys : List Value)
     (premises : doApp (s.refs, s.ffi) op xs.reverse = some ((refs, ffi), r) ∧
       stateRel ci s t ∧ List.Forall₂ (ValueRel (oracleState t.evalState)) xs ys ∧
       r ≠ .err (.abort .typeError)) :
-    ∃ (_ref1 : β) (refs' : Store Value) (r' : Result Value Value) (es : EvalOracleState),
+    ∃ (refs' : Store Value) (r' : Result Value Value) (es : EvalOracleState),
       es = oracleState t.evalState ∧ doApp (t.refs, t.ffi) op ys.reverse = some ((refs', ffi), r') ∧
       List.Forall₂ (storeValueRel (ValueRel es)) refs refs' ∧ resultRel (ValueRel es) (ValueRel es) r r' := by
   obtain ⟨run, ⟨dec, oracle, targetRefs, target, stores, rem⟩, values, safe⟩ := premises
@@ -125,14 +125,14 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
     simp only at refEq ffiEq
     subst refs
     subst ffi
-    exact ⟨Classical.choice inferInstance, targetRefs, r, oracle, rfl, targetRun, stores, resultRel⟩
+    exact ⟨targetRefs, r, oracle, rfl, targetRun, stores, resultRel⟩
   | fromTo sourceType targetType =>
     obtain ⟨refEq, ffiEq, targetRun, resultRel⟩ := conversionApp_transport oracle (s.refs, s.ffi)
       (targetRefs, s.ffi) sourceType targetType xsr ysr refs ffi r run reversed
     simp only at refEq ffiEq
     subst refs
     subst ffi
-    exact ⟨Classical.choice inferInstance, targetRefs, r, oracle, rfl, targetRun, stores, resultRel⟩
+    exact ⟨targetRefs, r, oracle, rfl, targetRun, stores, resultRel⟩
   | shift size shift amount =>
     cases reversed with
     | nil => cases size <;> simp [doApp, doAppNumericCore, doAppBasic] at run
@@ -145,12 +145,12 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
           cases size <;> cases lit <;> simp [doApp, doAppNumericCore, doAppBasic] at run
           all_goals obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
           case w8.word8 word =>
-            refine ⟨Classical.choice inferInstance, targetRefs,
+            refine ⟨targetRefs,
               .val (.litv (.word8 (shift8Lookup shift word amount))), oracle, rfl, ?_, stores, ?_⟩
             · simp [doApp, doAppNumericCore, doAppBasic]
             · exact ValueRel.lit _
           case w64.word64 word =>
-            refine ⟨Classical.choice inferInstance, targetRefs,
+            refine ⟨targetRefs,
               .val (.litv (.word64 (shift64Lookup shift word amount))), oracle, rfl, ?_, stores, ?_⟩
             · simp [doApp, doAppNumericCore, doAppBasic]
             · exact ValueRel.lit _
@@ -172,7 +172,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
               ⟨compare, head, secondRel⟩
             simp [doApp, doAppNumericCore, doAppBasic, compare] at run
             obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-            refine ⟨Classical.choice inferInstance, targetRefs, .val (boolValue bit), oracle,
+            refine ⟨targetRefs, .val (boolValue bit), oracle,
               rfl, ?_, stores, ?_⟩
             · simp [doApp, doAppNumericCore, doAppBasic, targetCompare]
             · cases bit <;> exact .con .nil
@@ -193,7 +193,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             have targetRun := doTest_simulation oracle test typ x y x' y' bit testRun first second
             simp only [testRun] at run
             cases run
-            refine ⟨Classical.choice inferInstance, targetRefs, .val (boolValue bit), oracle, rfl, ?_, stores, ?_⟩
+            refine ⟨targetRefs, .val (boolValue bit), oracle, rfl, ?_, stores, ?_⟩
             · simp [targetRun]
             · cases bit <;> exact .con .nil
   | opapp =>
@@ -218,7 +218,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                 storeAssign_related stores index (show storeValueRel (ValueRel oracle) (.refv value) (.refv value') from valueRel) assigned
               simp only [assigned] at run
               cases run
-              refine ⟨Classical.choice inferInstance, updated', .val (.conv none []), oracle, rfl, ?_, related, ?_⟩
+              refine ⟨updated', .val (.conv none []), oracle, rfl, ?_, related, ?_⟩
               · simp [assign']
               · exact .con .nil
           | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
@@ -231,7 +231,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
       | nil =>
         simp only [doApp, doAppNumericCore, doAppBasic, storeAlloc] at run ⊢
         cases run
-        refine ⟨Classical.choice inferInstance, _, _, oracle, rfl, rfl, ?_, ?_⟩
+        refine ⟨_, _, oracle, rfl, rfl, ?_, ?_⟩
         · exact List.rel_append stores (.cons h .nil)
         · simp [resultRel, List.Forall₂.length_eq stores]
           exact .loc true _
@@ -256,7 +256,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                 have valueRel : ValueRel oracle value value' := related
                 simp only [found] at run
                 cases run
-                refine ⟨Classical.choice inferInstance, targetRefs, .val value', oracle, rfl, ?_, stores, ?_⟩
+                refine ⟨targetRefs, .val value', oracle, rfl, ?_, stores, ?_⟩
                 · simp [found']
                 · exact valueRel
               | _ => simp [storeValueRel] at related
@@ -284,14 +284,14 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                   by_cases negative : size < 0
                   · simp [negative, boundsFailure] at run
                     obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-                    refine ⟨Classical.choice inferInstance, targetRefs, .err (.raise subExnV), oracle,
+                    refine ⟨targetRefs, .err (.raise subExnV), oracle,
                       rfl, ?_, stores, ?_⟩
                     · simp [negative, boundsFailure]
                     · simp [resultRel, excRel, subExnV]
                       exact .con .nil
                   · simp [negative, storeAlloc] at run
                     obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-                    refine ⟨Classical.choice inferInstance,
+                    refine ⟨
                       targetRefs ++ [.w8array (List.replicate size.toNat byte)],
                       .val (.loc true targetRefs.length), oracle, rfl, ?_, ?_, ?_⟩
                     · simp [negative, storeAlloc]
@@ -336,7 +336,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                         false index items items (· = ·) (.litv ∘ Lit.word8) (.litv ∘ Lit.word8)
                         itemsRel (fun _ _ h => by subst_vars; exact ValueRel.lit _) r sourceRun
                       obtain ⟨rfl, rfl⟩ := Prod.mk.inj stateEq
-                      exact ⟨Classical.choice inferInstance, targetRefs, r', oracle, rfl,
+                      exact ⟨targetRefs, r', oracle, rfl,
                         by simpa [doApp, doAppNumericCore, doAppBasic, safeFlag, found'] using targetRun,
                         stores, resultRelated⟩
                     | _ => simp [storeValueRel] at related
@@ -366,7 +366,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                 subst items'
                 simp only [found] at run
                 cases run
-                refine ⟨Classical.choice inferInstance, targetRefs, .val (.litv (.intLit items.length)), oracle,
+                refine ⟨targetRefs, .val (.litv (.intLit items.length)), oracle,
                   rfl, ?_, stores, ?_⟩
                 · simp [found']
                 · simp only [resultRel]
@@ -416,7 +416,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                               indexedUpdate_related oracle s.refs targetRefs s.ffi ffi false address index items items
                                 word word (· = ·) .w8array .w8array stores itemsRel rfl
                                 (fun _ _ h => by simpa [storeValueRel, List.forall₂_eq_eq_eq] using h) refs r sourceRun
-                            exact ⟨Classical.choice inferInstance, refs', r', oracle, rfl,
+                            exact ⟨refs', r', oracle, rfl,
                               by simpa [doApp, doAppNumericCore, doAppBasic, safeFlag, found'] using targetRun,
                               targetStores, resultRelated⟩
                           | _ => simp [storeValueRel] at related
@@ -455,7 +455,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                         | none =>
                           simp [doApp, doAppNumericCore, doAppBasic, copied, boundsFailure] at run
                           obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-                          refine ⟨Classical.choice inferInstance, targetRefs, .err (.raise subExnV), oracle,
+                          refine ⟨targetRefs, .err (.raise subExnV), oracle,
                             rfl, ?_, stores, ?_⟩
                           · simp [doApp, doAppNumericCore, doAppBasic, copied, boundsFailure]
                           · simp [resultRel, excRel, subExnV]
@@ -463,7 +463,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                         | some chars =>
                           simp [doApp, doAppNumericCore, doAppBasic, copied] at run
                           obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-                          refine ⟨Classical.choice inferInstance, targetRefs, .val (.litv (.strLit (.implode chars))),
+                          refine ⟨targetRefs, .val (.litv (.strLit (.implode chars))),
                             oracle, rfl, ?_, stores, ?_⟩
                           · simp [doApp, doAppNumericCore, doAppBasic, copied]
                           · exact ValueRel.lit _
@@ -524,7 +524,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                                         | none =>
                                           simp [doApp, doAppNumericCore, doAppBasic, found, copied, boundsFailure] at run
                                           obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-                                          refine ⟨Classical.choice inferInstance, targetRefs, .err (.raise subExnV), oracle,
+                                          refine ⟨targetRefs, .err (.raise subExnV), oracle,
                                             rfl, ?_, stores, ?_⟩
                                           · simp [doApp, doAppNumericCore, doAppBasic, found', copied, boundsFailure]
                                           · simp [resultRel, excRel, subExnV]
@@ -537,7 +537,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                                               (show storeValueRel (ValueRel oracle) (.w8array output) (.w8array output) from rfl) assigned
                                             simp [doApp, doAppNumericCore, doAppBasic, found, copied, assigned] at run
                                             obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-                                            refine ⟨Classical.choice inferInstance, updated', .val (.conv none []), oracle,
+                                            refine ⟨updated', .val (.conv none []), oracle,
                                               rfl, ?_, related, ?_⟩
                                             · simp [doApp, doAppNumericCore, doAppBasic, found', copied, assign']
                                             · exact .con .nil
@@ -589,7 +589,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                               | none =>
                                 simp [doApp, doAppNumericCore, doAppBasic, found, copied, boundsFailure] at run
                                 obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-                                refine ⟨Classical.choice inferInstance, targetRefs, .err (.raise subExnV), oracle,
+                                refine ⟨targetRefs, .err (.raise subExnV), oracle,
                                   rfl, ?_, stores, ?_⟩
                                 · simp [doApp, doAppNumericCore, doAppBasic, found', copied, boundsFailure]
                                 · simp [resultRel, excRel, subExnV]
@@ -597,7 +597,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                               | some chars =>
                                 simp [doApp, doAppNumericCore, doAppBasic, found, copied] at run
                                 obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-                                refine ⟨Classical.choice inferInstance, targetRefs, .val (.litv (.strLit (.implode chars))),
+                                refine ⟨targetRefs, .val (.litv (.strLit (.implode chars))),
                                   oracle, rfl, ?_, stores, ?_⟩
                                 · simp [doApp, doAppNumericCore, doAppBasic, found', copied]
                                 · exact ValueRel.lit _
@@ -667,7 +667,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                                               | none =>
                                                 simp [doApp, doAppNumericCore, doAppBasic, sourceFound, found, copied, boundsFailure] at run
                                                 obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-                                                refine ⟨Classical.choice inferInstance, targetRefs, .err (.raise subExnV), oracle,
+                                                refine ⟨targetRefs, .err (.raise subExnV), oracle,
                                                   rfl, ?_, stores, ?_⟩
                                                 · simp [doApp, doAppNumericCore, doAppBasic, sourceFound', found', copied, boundsFailure]
                                                 · simp [resultRel, excRel, subExnV]
@@ -680,7 +680,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                                                     (show storeValueRel (ValueRel oracle) (.w8array output) (.w8array output) from rfl) assigned
                                                   simp [doApp, doAppNumericCore, doAppBasic, sourceFound, found, copied, assigned] at run
                                                   obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-                                                  refine ⟨Classical.choice inferInstance, updated', .val (.conv none []), oracle,
+                                                  refine ⟨updated', .val (.conv none []), oracle,
                                                     rfl, ?_, related, ?_⟩
                                                   · simp [doApp, doAppNumericCore, doAppBasic, sourceFound', found', copied, assign']
                                                   · exact .con .nil
@@ -732,7 +732,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                             (show storeValueRel (ValueRel oracle) (.w8array output) (.w8array output) from rfl) assigned
                           simp [doApp, doAppNumericCore, doAppBasic, found, computed, assigned] at run
                           obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-                          refine ⟨Classical.choice inferInstance, updated', .val (.conv none []), oracle, rfl, ?_, related, ?_⟩
+                          refine ⟨updated', .val (.conv none []), oracle, rfl, ?_, related, ?_⟩
                           · simp [doApp, doAppNumericCore, doAppBasic, found', computed, assign']
                           · exact .con .nil
                     | _ => simp [storeValueRel] at related
@@ -754,7 +754,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
           have decodedTarget := valueToCharList_related oracle source target chars ⟨decoded, head⟩
           simp only [decoded] at run
           cases run
-          refine ⟨Classical.choice inferInstance, targetRefs, .val (.litv (.strLit (.implode chars))), oracle, rfl, ?_, stores, ?_⟩
+          refine ⟨targetRefs, .val (.litv (.strLit (.implode chars))), oracle, rfl, ?_, stores, ?_⟩
           · simp [decodedTarget]
           · exact ValueRel.lit _
   | explode =>
@@ -770,7 +770,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
           | strLit str =>
             simp [doApp, doAppNumericCore, doAppBasic] at run
             obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-            refine ⟨Classical.choice inferInstance, targetRefs,
+            refine ⟨targetRefs,
               .val (listToValue (str.explode.map (.litv ∘ Lit.char))), oracle, rfl, ?_, stores, ?_⟩
             · simp [doApp, doAppNumericCore, doAppBasic]
             · apply (vRelListToValue oracle _ _).mpr
@@ -805,7 +805,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                     false index text.explode text.explode (· = ·) (.litv ∘ Lit.char) (.litv ∘ Lit.char)
                     itemsRel (fun _ _ h => by subst_vars; exact ValueRel.lit _) r sourceRun
                   obtain ⟨rfl, rfl⟩ := Prod.mk.inj stateEq
-                  exact ⟨Classical.choice inferInstance, targetRefs, r', oracle, rfl,
+                  exact ⟨targetRefs, r', oracle, rfl,
                     by simpa [doApp, doAppNumericCore, doAppBasic] using targetRun, stores, related⟩
                 | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
               | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
@@ -824,7 +824,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
           | strLit str =>
             simp [doApp, doAppNumericCore, doAppBasic] at run
             obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-            refine ⟨Classical.choice inferInstance, targetRefs,
+            refine ⟨targetRefs,
               .val (.litv (.intLit str.explode.length)), oracle, rfl, ?_, stores, ?_⟩
             · simp [doApp, doAppNumericCore, doAppBasic]
             · exact ValueRel.lit _
@@ -850,7 +850,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             obtain ⟨⟨refEq, ffiEq⟩, rfl⟩ := run
             subst refs
             subst ffi
-            refine ⟨Classical.choice inferInstance, targetRefs, .val (.litv (.strLit result)), oracle, rfl, ?_, stores, ?_⟩
+            refine ⟨targetRefs, .val (.litv (.strLit result)), oracle, rfl, ?_, stores, ?_⟩
             · simp [decodedTarget, targetStrings]
             · exact ValueRel.lit _
   | vfromList =>
@@ -869,7 +869,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
           obtain ⟨⟨refEq, ffiEq⟩, rfl⟩ := run
           subst refs
           subst ffi
-          refine ⟨Classical.choice inferInstance, targetRefs, .val (.vectorv parts'), oracle, rfl, ?_, stores, ?_⟩
+          refine ⟨targetRefs, .val (.vectorv parts'), oracle, rfl, ?_, stores, ?_⟩
           · simp [decodedTarget]
           · exact ValueRel.vector relatedParts
   | vsub =>
@@ -895,7 +895,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                   (targetRefs, s.ffi) (refs, ffi) false index items items' (ValueRel oracle) id id
                   itemsRel (fun _ _ h => h) r sourceRun
                 obtain ⟨rfl, rfl⟩ := Prod.mk.inj stateEq
-                exact ⟨Classical.choice inferInstance, targetRefs, r', oracle, rfl,
+                exact ⟨targetRefs, r', oracle, rfl,
                   by simpa [doApp, doAppNumericCore, doAppBasic, flag] using targetRun, stores, related⟩
               | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
@@ -911,7 +911,8 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
         | @vector sourceItems targetItems related =>
           simp [doApp, doAppNumericCore, doAppBasic] at run
           obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-          refine ⟨Classical.choice inferInstance, targetRefs, .val (.litv (.intLit targetItems.length)), oracle, rfl, ?_, stores, ?_⟩
+          refine ⟨targetRefs, .val (.litv (.intLit targetItems.length)), oracle, rfl, ?_,
+            stores, ?_⟩
           · simp [doApp, doAppNumericCore, doAppBasic]
           · simp only [resultRel, List.Forall₂.length_eq related]
             exact ValueRel.lit _
@@ -934,14 +935,14 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
               by_cases negative : size < 0
               · simp [negative, boundsFailure] at run
                 obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-                refine ⟨Classical.choice inferInstance, targetRefs, .err (.raise subExnV), oracle,
+                refine ⟨targetRefs, .err (.raise subExnV), oracle,
                   rfl, ?_, stores, ?_⟩
                 · simp [negative, boundsFailure]
                 · simp [resultRel, excRel, subExnV]
                   exact .con .nil
               · simp [negative, storeAlloc] at run
                 obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-                refine ⟨Classical.choice inferInstance,
+                refine ⟨
                   targetRefs ++ [.varray (List.replicate size.toNat value')],
                   .val (.loc true targetRefs.length), oracle, rfl, ?_, ?_, ?_⟩
                 · simp [negative, storeAlloc]
@@ -968,7 +969,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             | nil =>
               simp [doApp, doAppNumericCore, doAppBasic, storeAlloc] at run
               obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-              refine ⟨Classical.choice inferInstance, targetRefs ++ [.varray []],
+              refine ⟨targetRefs ++ [.varray []],
                 .val (.loc true targetRefs.length), oracle, rfl, ?_, ?_, ?_⟩
               · simp [doApp, doAppNumericCore, doAppBasic, storeAlloc]
               · exact List.rel_append stores (.cons .nil .nil)
@@ -978,7 +979,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
   | aallocFixed =>
     simp only [doApp, doAppNumericCore, doAppBasic, storeAlloc] at run ⊢
     cases run
-    refine ⟨Classical.choice inferInstance, _, _, oracle, rfl, rfl, ?_, ?_⟩
+    refine ⟨_, _, oracle, rfl, rfl, ?_, ?_⟩
     · exact List.rel_append stores (.cons reversed .nil)
     · simp [resultRel, List.Forall₂.length_eq stores]
       exact .loc true _
@@ -1013,7 +1014,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                       obtain ⟨stateEq, r', targetRun, resultRelated⟩ := indexedRead_related oracle (s.refs, s.ffi) (targetRefs, s.ffi) (refs, ffi)
                         false index items items' (ValueRel oracle) id id itemsRel (fun _ _ h => h) r sourceRun
                       obtain ⟨rfl, rfl⟩ := Prod.mk.inj stateEq
-                      exact ⟨Classical.choice inferInstance, targetRefs, r', oracle, rfl,
+                      exact ⟨targetRefs, r', oracle, rfl,
                         by simpa [doApp, doAppNumericCore, doAppBasic, safeFlag, found'] using targetRun,
                         stores, resultRelated⟩
                     | _ => simp [storeValueRel] at related
@@ -1042,7 +1043,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                 have itemsRel : List.Forall₂ (ValueRel oracle) items items' := related
                 simp only [found] at run
                 cases run
-                refine ⟨Classical.choice inferInstance, targetRefs, .val (.litv (.intLit items'.length)), oracle,
+                refine ⟨targetRefs, .val (.litv (.intLit items'.length)), oracle,
                   rfl, ?_, stores, ?_⟩
                 · simp [found']
                 · simp only [resultRel, List.Forall₂.length_eq itemsRel]
@@ -1086,7 +1087,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                           indexedUpdate_related oracle s.refs targetRefs s.ffi ffi false address index items items'
                             value value' (ValueRel oracle) .varray .varray stores itemsRel third
                             (fun _ _ h => h) refs r sourceRun
-                        exact ⟨Classical.choice inferInstance, refs', r', oracle, rfl,
+                        exact ⟨refs', r', oracle, rfl,
                           by simpa [doApp, doAppNumericCore, doAppBasic, safeFlag, found'] using targetRun,
                           targetStores, resultRelated⟩
                       | _ => simp [storeValueRel] at related
@@ -1116,7 +1117,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                 obtain ⟨stateEq, r', targetRun, related⟩ := indexedRead_related oracle (s.refs, s.ffi) (targetRefs, s.ffi) (refs, ffi)
                   true index items items' (ValueRel oracle) id id itemsRel (fun _ _ h => h) r sourceRun
                 obtain ⟨rfl, rfl⟩ := Prod.mk.inj stateEq
-                exact ⟨Classical.choice inferInstance, targetRefs, r', oracle, rfl,
+                exact ⟨targetRefs, r', oracle, rfl,
                   by simpa [doApp, doAppNumericCore, doAppBasic, flag] using targetRun, stores, related⟩
               | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
             | _ => simp [doApp, doAppNumericCore, doAppBasic] at run
@@ -1152,7 +1153,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                       obtain ⟨stateEq, r', targetRun, resultRelated⟩ := indexedRead_related oracle (s.refs, s.ffi) (targetRefs, s.ffi) (refs, ffi)
                         true index items items' (ValueRel oracle) id id itemsRel (fun _ _ h => h) r sourceRun
                       obtain ⟨rfl, rfl⟩ := Prod.mk.inj stateEq
-                      exact ⟨Classical.choice inferInstance, targetRefs, r', oracle, rfl,
+                      exact ⟨targetRefs, r', oracle, rfl,
                         by simpa [doApp, doAppNumericCore, doAppBasic, safeFlag, found'] using targetRun,
                         stores, resultRelated⟩
                     | _ => simp [storeValueRel] at related
@@ -1196,7 +1197,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                           indexedUpdate_related oracle s.refs targetRefs s.ffi ffi true address index items items'
                             value value' (ValueRel oracle) .varray .varray stores itemsRel third
                             (fun _ _ h => h) refs r sourceRun
-                        exact ⟨Classical.choice inferInstance, refs', r', oracle, rfl,
+                        exact ⟨refs', r', oracle, rfl,
                           by simpa [doApp, doAppNumericCore, doAppBasic, safeFlag, found'] using targetRun,
                           targetStores, resultRelated⟩
                       | _ => simp [storeValueRel] at related
@@ -1238,7 +1239,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                         true index items items (· = ·) (.litv ∘ Lit.word8) (.litv ∘ Lit.word8)
                         itemsRel (fun _ _ h => by subst_vars; exact ValueRel.lit _) r sourceRun
                       obtain ⟨rfl, rfl⟩ := Prod.mk.inj stateEq
-                      exact ⟨Classical.choice inferInstance, targetRefs, r', oracle, rfl,
+                      exact ⟨targetRefs, r', oracle, rfl,
                         by simpa [doApp, doAppNumericCore, doAppBasic, safeFlag, found'] using targetRun,
                         stores, resultRelated⟩
                     | _ => simp [storeValueRel] at related
@@ -1288,7 +1289,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                               indexedUpdate_related oracle s.refs targetRefs s.ffi ffi true address index items items
                                 word word (· = ·) .w8array .w8array stores itemsRel rfl
                                 (fun _ _ h => by simpa [storeValueRel, List.forall₂_eq_eq_eq] using h) refs r sourceRun
-                            exact ⟨Classical.choice inferInstance, refs', r', oracle, rfl,
+                            exact ⟨refs', r', oracle, rfl,
                               by simpa [doApp, doAppNumericCore, doAppBasic, safeFlag, found'] using targetRun,
                               targetStores, resultRelated⟩
                           | _ => simp [storeValueRel] at related
@@ -1315,7 +1316,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
             have targetBad : badThunkUpdate mode y targetRefs = false := by rw [← badEq, bad]
             simp [bad, storeAlloc] at run
             obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-            refine ⟨Classical.choice inferInstance, targetRefs ++ [.thunk mode y],
+            refine ⟨targetRefs ++ [.thunk mode y],
               .val (.loc false targetRefs.length), oracle, rfl, ?_, ?_, ?_⟩
             · simp [targetBad, storeAlloc]
             · exact List.rel_append stores (.cons ⟨rfl, head⟩ .nil)
@@ -1350,7 +1351,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                         ⟨rfl, valueRel⟩) assigned
                     simp [bad, assigned] at run
                     obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-                    refine ⟨Classical.choice inferInstance, updated', .val (.conv none []),
+                    refine ⟨updated', .val (.conv none []),
                       oracle, rfl, ?_, related, ?_⟩
                     · simp [targetBad, assign']
                     · exact .con .nil
@@ -1378,7 +1379,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
               obtain ⟨right', second', rightRel⟩ := valueToList_related oracle source2 target2 right ⟨second, head2⟩
               simp [first, second] at run
               obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-              refine ⟨Classical.choice inferInstance, targetRefs, .val (listToValue (left' ++ right')),
+              refine ⟨targetRefs, .val (listToValue (left' ++ right')),
                 oracle, rfl, ?_, stores, ?_⟩
               · simp [first', second']
               · exact (vRelListToValue oracle _ _).mpr (List.rel_append leftRel rightRel)
@@ -1402,7 +1403,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                 | intLit second =>
                   simp [doApp, doAppNumericCore, doAppBasic] at run
                   obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-                  refine ⟨Classical.choice inferInstance, targetRefs, .val (.conv none []), oracle,
+                  refine ⟨targetRefs, .val (.conv none []), oracle,
                     rfl, ?_, stores, ?_⟩
                   · simp [doApp, doAppNumericCore, doAppBasic]
                   · exact .con .nil
@@ -1445,13 +1446,13 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                             (show storeValueRel (ValueRel oracle) (.w8array resultBytes) (.w8array resultBytes) from rfl) assigned
                           simp [doApp, doAppNumericCore, doAppBasic, found, called, assigned] at run
                           obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-                          refine ⟨Classical.choice inferInstance, updated', .val (.conv none []), oracle, rfl, ?_, related, ?_⟩
+                          refine ⟨updated', .val (.conv none []), oracle, rfl, ?_, related, ?_⟩
                           · simp [doApp, doAppNumericCore, doAppBasic, found', called, assign']
                           · exact .con .nil
                       | final event =>
                         simp [doApp, doAppNumericCore, doAppBasic, found, called] at run
                         obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-                        refine ⟨Classical.choice inferInstance, targetRefs, .err (.abort (.ffiError event)), oracle,
+                        refine ⟨targetRefs, .err (.abort (.ffiError event)), oracle,
                           rfl, ?_, stores, ?_⟩
                         · simp [doApp, doAppNumericCore, doAppBasic, found', called]
                         · simp [resultRel, excRel]
@@ -1476,7 +1477,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
           rcases id with ⟨generation, index⟩
           simp [doApp, doAppNumericCore, doAppBasic] at run
           obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-          refine ⟨Classical.choice inferInstance, targetRefs,
+          refine ⟨targetRefs,
             .val (.conv none [natToValue generation, natToValue index]), oracle, rfl, ?_, stores, ?_⟩
           · simp [doApp, doAppNumericCore, doAppBasic]
           · apply ValueRel.con
@@ -1497,7 +1498,7 @@ theorem doApp_sim {Config F β : Type} [Nonempty β] (s : State F) (op : Op)
                 | nil =>
                   simp [doApp, doAppNumericCore, doAppBasic] at run
                   obtain ⟨⟨rfl, rfl⟩, rfl⟩ := run
-                  refine ⟨Classical.choice inferInstance, targetRefs,
+                  refine ⟨targetRefs,
                     .val (.conv none [first', second']), oracle, rfl, ?_, stores, ?_⟩
                   · simp [doApp, doAppNumericCore, doAppBasic]
                   · exact .con (.cons firstRel (.cons secondRel .nil))
