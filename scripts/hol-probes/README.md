@@ -10336,3 +10336,18 @@ quotes, `DROP_list_LUPDATE_lemma` and `list_next_var_rename_props_2` through
 their base theorems). The three theories are built in the private copy; see the
 build recipe above. Regenerate with `CAKEML=<cakeml tree>
 HOL_PROBE_ONLY=<probe>Script.sml scripts/hol-probes/regenerate.sh`.
+
+`crep_arith_proof_local_typed_probe.out` (11 rows),
+`stack_names_proof_local_typed_probe.out` (6 rows) and
+`stack_remove_proof_local_typed_probe.out` (39 rows) capture the typed
+statements of the reviewed `crep_arithProofScript.sml`, `stack_namesProofScript.sml`
+and `stack_removeProofScript.sml` rows that the earlier probes did not cover
+(task 179). Exported theorems are fetched from the theory DB; `[local]` theorems
+are parsed from the pinned source text with the shared splice-expanding helper.
+The crep_arith script declares `mapc`/`mapcs` as `[local]` `Overload`s and
+stack_remove declares `num_stubs` as one; the theory does not export them, so
+the probes restate those three overloads before parsing, otherwise the parser
+would read them as ordinary free variables with unconstrained types. The
+theories are built in the private copy; see the build recipe above. Regenerate
+with `CAKEML=<cakeml tree> HOL_PROBE_ONLY=<probe>Script.sml
+scripts/hol-probes/regenerate.sh`.

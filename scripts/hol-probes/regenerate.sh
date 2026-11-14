@@ -11656,3 +11656,30 @@ run_probe word_to_stack_proof_local_typed_probeScript.sml word_to_stack_proof_lo
   word_stack_dec_stack_sorted_typed \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe crep_arith_proof_local_typed_probeScript.sml crep_arith_proof_local_typed_probe.out \
+  OPT_MMAP_EQ_SOME_MONO_typed dest_2exp_bound_typed dest_2exp_bound_prime_typed \
+  dest_const_thm_typed eval_mul_const_typed lookup_code_typed opt_mmap_simp_exp_correct_typed \
+  sh_mem_op_code_typed simp_exp_correct_typed simp_exp_correct1_typed simp_prog_correct_typed \
+  "$cake_dir/pancake/proofs/crep_arithProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+run_probe stack_names_proof_local_typed_probeScript.sml stack_names_proof_local_typed_probe.out \
+  comp_STOP_Loop_typed compile_semantics_alt_typed loc_check_rename_state_typed \
+  names_ok_imp_typed names_ok_imp2_typed stack_names_comp_stack_asm_ok_typed \
+  "$cake_dir/compiler/backend/proofs/stack_namesProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+run_probe stack_remove_proof_local_typed_probeScript.sml stack_remove_proof_local_typed_probe.out \
+  IMP_code_rel_typed INSERT_DELETE_EQ_DELETE_typed IN_addresses_typed MAP_mem_val_MAP_INL_typed \
+  MOD_EQ_IMP_MULT_typed MOD_LESS_EQ_MOD_IMP_typed assoc_lem_typed evaluate_downshift_typed \
+  evaluate_init_code_clock_typed evaluate_upshift_typed find_code_lemma_typed \
+  find_code_lemma2_typed fmap_simp_lemma1_typed get_labels_downshift_typed \
+  get_labels_stack_alloc_typed get_labels_stack_free_typed get_labels_upshift_typed \
+  get_stack_heap_limit_prime_prime_def_typed get_stack_heap_limit_prime_def_typed \
+  init_reduce_stack_space_typed mem_load_32_IMP_typed mem_load_byte_aux_IMP_typed \
+  mem_load_lemma_typed mem_load_lemma2_typed memory_addresses_typed \
+  memory_fun2set_IMP_read_typed name_cases_typed read_bytearray_IMP_read_bytearray_typed \
+  star_move_lemma_typed state_rel_get_var_typed state_rel_read_typed store_write_lemma_typed \
+  word_list_IMP_read_mem_typed word_list_and_rev_join_lemma_typed word_store_CurrHeap_typed \
+  write_bytearray_EQ_typed write_bytearray_IGNORE_typed \
+  write_bytearray_IGNORE_non_aligned_typed write_bytearray_lemma_typed \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
