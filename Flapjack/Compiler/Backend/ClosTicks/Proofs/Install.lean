@@ -23,19 +23,6 @@ theorem valueRel_bytes (x y : Value) (related : ValueRel x y) : valueToBytes y =
 theorem valueRel_words (x y : Value) (related : ValueRel x y) : valueToWords y = valueToWords x :=
   (simpleValRel_valueToWords x y ValueRel ⟨valueRelSimple, related⟩).symm
 
-/-- Shifting related compiler oracles equally and setting equal clocks
-preserves the tick-removal state relation. This is Flapjack infrastructure
-for the installation proof. -/
-theorem stateRel_shift {C F : Type} (s t : State C F) (shift clock : Nat) (related : StateRel s t) :
-    StateRel { s with clock := clock, compileOracle := Flapjack.holShiftSeq shift s.compileOracle }
-      { t with clock := clock, compileOracle := Flapjack.holShiftSeq shift t.compileOracle } := by
-  obtain ⟨aux, codeS, codeT, maxApp, positive, _, ffi, globals, refs, compiler, oracle⟩ := related
-  refine ⟨?_, codeS, codeT, maxApp, positive, rfl, ffi, globals, refs, compiler, ?_⟩
-  · intro n; exact aux (n + shift)
-  · rw [oracle]
-    funext n
-    rfl
-
 /-- Installation outcomes preserve exceptions or relate nonempty programs,
 along with their resulting states. This is Flapjack infrastructure for the
 installation proof. -/
@@ -56,7 +43,15 @@ theorem install_pair_related {C F : Type} (s t : State C F)
   have bytesEq := valueRel_bytes a x bytesRel
   have wordsEq := valueRel_words b y wordsRel
   have clocks : t.clock = s.clock := (state_rel_clock_eqs s t states).symm
-  have shifted := stateRel_shift s t 1 (s.clock - 1) states
+  have shifted : StateRel
+      { s with clock := s.clock - 1, compileOracle := Flapjack.holShiftSeq 1 s.compileOracle }
+      { t with clock := s.clock - 1, compileOracle := Flapjack.holShiftSeq 1 t.compileOracle } := by
+    obtain ⟨aux, codeS, codeT, maxApp, positive, _, ffi, globals, refs, compiler, oracle⟩ := states
+    refine ⟨?_, codeS, codeT, maxApp, positive, rfl, ffi, globals, refs, compiler, ?_⟩
+    · intro n; exact aux (n + 1)
+    · rw [oracle]
+      funext n
+      rfl
   have sourceNoUpdate : s.code.updateListEq ([] : List (Nat × Nat × ClosLang.Exp)) = s.code := by
     simp [HolFiniteMapExact.updateListEq]
   have targetNoUpdate : t.code.updateListEq ([] : List (Nat × Nat × ClosLang.Exp)) = t.code := by
