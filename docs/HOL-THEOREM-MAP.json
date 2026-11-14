@@ -139457,4 +139457,13 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the complete exported HOL theorem and inferred-type capture: pointwise related expression lists remain related under a sparse-tree code extension, with the original conjunction of premises."
   }
+,
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml",
+    "hol_name": "exp_rel",
+    "lean_path": "Flapjack/Compiler/Backend/BviInline/Proofs/ExpRelation.lean",
+    "lean_name": "ExpRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the HOL inductive relation, exported typed rules, cases and induction theorem against all Lean constructors and carriers. The original OPTREL call rule is split into exhaustive none/none and some/some constructors; mixed handlers do not satisfy OPTREL. All remaining rules and the inline lookup, length and tick conditions match."
+  }
 ]

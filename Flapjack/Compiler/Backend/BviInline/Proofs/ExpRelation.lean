@@ -11,8 +11,10 @@ public import Flapjack.Misc.Option.Rel
 namespace Flapjack.Compiler.Backend.BviInline
 open Bvi
 
-/-- Flapjack infrastructure: expression-level inlining relation. Its own
-declaration remains untagged pending a separate declaration-level review. -/
+/-- Expression-level inlining relation. The HOL optional-handler call rule
+is split into its none/none and some/some cases; mixed handlers cannot satisfy
+the original option relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "exp_rel"]
 inductive ExpRel (code : Spt (Nat × Bvi.Exp)) : Bvi.Exp → Bvi.Exp → Prop where
   | var (n : Nat) : ExpRel code (.var n) (.var n)
   | force (location index : Nat) : ExpRel code (.force location index) (.force location index)

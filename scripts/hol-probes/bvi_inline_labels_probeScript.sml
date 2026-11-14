@@ -531,3 +531,8 @@ val _ = show "exp_rel_evaluate_mono_replay_typed" exp_rel_evaluate_mono_replay;
 (* Capture the exported original expression and list monotonicity theorems. *)
 val _ = show "exp_rel_mono_typed" bvi_inlineProofTheory.exp_rel_mono;
 val _ = show "exp_rel_mono_list_typed" bvi_inlineProofTheory.exp_rel_mono_list;
+
+(* Capture the exported original inductive rules and cases with inferred types. *)
+val _ = show "exp_rel_rules_typed" bvi_inlineProofTheory.exp_rel_rules;
+val _ = show "exp_rel_cases_typed" bvi_inlineProofTheory.exp_rel_cases;
+val _ = show "exp_rel_ind_typed" bvi_inlineProofTheory.exp_rel_ind;
