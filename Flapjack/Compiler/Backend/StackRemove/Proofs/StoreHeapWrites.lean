@@ -102,7 +102,8 @@ frame-preservation, target execution or store-value premise. -/
 @[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "store_write_lemma"
   (fmap_as_finite_support_relation := [StackSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
-theorem storeWriteLemma {width : Nat} [NeZero width] {C F : Type}
+theorem storeWriteLemma {width : Nat} [NeZero width] {shiftWidth : Nat} [NeZero shiftWidth]
+    {C F : Type}
     (name : StoreName) (source : StackSemStateFiniteExact width C F)
     (memory : BitVec width → WordLocW width) (domain : BitVec width → Prop)
     (value : WordLocW width)
@@ -113,10 +114,12 @@ theorem storeWriteLemma {width : Nat} [NeZero width] {C F : Type}
           (SetSep.star
             (SetSep.star (memoryHOL source.memory (fun address => source.mdomain address = true))
               (Misc.wordList
-                (theSomeWord ((source.store.lookup .bitmapBase).map wordLocWToGeneric) <<< wordShiftAmount width)
+                (theSomeWord ((source.store.lookup .bitmapBase).map wordLocWToGeneric) <<<
+                  wordShiftAmount shiftWidth)
                 ((source.bitmaps ++ source.dataBuffer.buffer).map WordLocW.word)))
             (Misc.wordListExists
-              ((theSomeWord ((source.store.lookup .bitmapBase).map wordLocWToGeneric) <<< wordShiftAmount width) +
+              ((theSomeWord ((source.store.lookup .bitmapBase).map wordLocWToGeneric) <<<
+                  wordShiftAmount shiftWidth) +
                 bytesInWord width * BitVec.ofNat width (source.dataBuffer.buffer.length + source.bitmaps.length))
               source.dataBuffer.spaceLeft))
           (wordStoreHOL base source.store))
@@ -127,10 +130,12 @@ theorem storeWriteLemma {width : Nat} [NeZero width] {C F : Type}
           (SetSep.star
             (SetSep.star (memoryHOL source.memory (fun address => source.mdomain address = true))
               (Misc.wordList
-                (theSomeWord ((source.store.lookup .bitmapBase).map wordLocWToGeneric) <<< wordShiftAmount width)
+                (theSomeWord ((source.store.lookup .bitmapBase).map wordLocWToGeneric) <<<
+                  wordShiftAmount shiftWidth)
                 ((source.bitmaps ++ source.dataBuffer.buffer).map WordLocW.word)))
             (Misc.wordListExists
-              ((theSomeWord ((source.store.lookup .bitmapBase).map wordLocWToGeneric) <<< wordShiftAmount width) +
+              ((theSomeWord ((source.store.lookup .bitmapBase).map wordLocWToGeneric) <<<
+                  wordShiftAmount shiftWidth) +
                 bytesInWord width * BitVec.ofNat width (source.dataBuffer.buffer.length + source.bitmaps.length))
               source.dataBuffer.spaceLeft))
           (wordStoreHOL base (source.store.updateEq (StackSemRegisterTransfers.storeOfSyntax name, value))))

@@ -81,7 +81,7 @@ theorem stateRelSetStore {width : Nat} [NeZero width] {C F : Type}
     h18, h19, h20, h21, h22, h23, h24, ?_⟩
   simp only [baseLookup] at h25 ⊢
   refine ⟨h25.1, h25.2.1, h25.2.2.1, h25.2.2.2.1, ?_⟩
-  have written := StoreHeapWrites.storeWriteLemma name source target.memory
+  have written := StoreHeapWrites.storeWriteLemma (shiftWidth := width) name source target.memory
     (fun address => target.mdomain address = true) value base
     ⟨StoreNames.nameCases name notCurrHeap, by
       simpa only [List.length_append, Nat.add_comm] using h25.2.2.2.2⟩
