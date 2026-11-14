@@ -115528,6 +115528,14 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "crepExpsOfHOL_crepSimpProgHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: simplifying a program maps its expression list pointwise through crepSimpExpHOL; used to apply the exact every_inst_ok_arith_simp_exp twin to each simplified expression. No HOL declaration states this list identity."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
     "lean_name": "mem_zipWith_exists",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only: membership in List.zipWith (HOL MAP2_MAP/EVERY_MAP step)."
