@@ -293,20 +293,21 @@ theorem evaluateApps_nestedFns_timeout_long {C F : Type} (args : List ClosSem.Va
         rw [ih names (x :: env) (ClosSem.decClock 1 state) tailClock tailLength tailMax]
         simp [ClosSem.decClock]
 
-/-- When the nested functions and their final unary closure are fully applied,
-evaluate the body with the consumed arguments and continue with the remainder.
-This is a Lean-evaluator result pending the source correspondence review. -/
+/-- When the nested functions and final unary closure are fully applied,
+evaluate the body with the consumed arguments and continue with the remainder. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "evaluate_apps_Clos_long"
+  (fmap_as_finite_support := [refs, code])]
 theorem evaluateApps_nestedFns_long {C F : Type} (args : List ClosSem.Value)
-    (names : List Flapjack.Basis.Pure.MlString.MlString) (body : ClosLang.Exp)
-    (env : List ClosSem.Value) (state : ClosSem.State C F)
-    (clock : names.length < state.clock) (lengths : names.length < args.length)
-    (maxApp : 1 ≤ state.maxApp) :
+    (names : List Flapjack.Basis.Pure.MlString.MlString) (state : ClosSem.State C F)
+    (body : ClosLang.Exp) (env : List ClosSem.Value)
+    (premises : names.length < state.clock ∧ names.length < args.length ∧ 1 ≤ state.maxApp) :
     evaluateApps (.closure none [] env 1 (mkFns names body)) args state =
       match ClosSem.evaluate [body]
           ((args.reverse.take (1 + names.length)).reverse ++ env)
           (ClosSem.decClock (1 + names.length) state) with
       | (.val [value], next) => evaluateApps value ((args.reverse.drop (1 + names.length)).reverse) next
       | result => result := by
+  obtain ⟨clock, lengths, maxApp⟩ := premises
   induction args using List.reverseRecOn generalizing names env state with
   | nil => simp at lengths
   | append_singleton args x ih =>
@@ -327,7 +328,7 @@ theorem evaluateApps_nestedFns_long {C F : Type} (args : List ClosSem.Value)
       simp only [mkFns]
       rw [evaluateApp_nestedFn name (mkFns names body) env x state maxApp clockOne]
       simp only
-      rw [ih names (x :: env) (ClosSem.decClock 1 state) tailClock tailLength tailMax]
+      rw [ih names (ClosSem.decClock 1 state) (x :: env) tailClock tailLength tailMax]
       simp [List.reverse_append, ClosSem.decClock, Nat.sub_sub, Nat.add_comm]
       simp [show 1 + (names.length + 1) = Nat.succ (names.length + 1) by omega,
         List.append_assoc]

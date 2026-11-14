@@ -9,6 +9,56 @@ val _ = set_trace "BasicProvers.var_eq_old" 1;
 fun bring_fwd_ctors th ty = map ((fn s => Parse.bring_to_front_overload s {Name = s, Thy = th}) o term_to_string) (TypeBase.constructors_of ty);
 val _ = bring_fwd_ctors "closLang" ``:closLang$exp``;
 
+(* Literal replays of clos_mtiProofScript.sml:379-394 and 455-484. *)
+Theorem evaluate_apps_snoc_replay:
+  !xs x f s.
+    evaluate_apps f (SNOC x xs) s =
+      case evaluate_app NONE f [x] s of
+      | (Rval [v], s) => evaluate_apps v xs s
+      | res => res
+Proof
+  Induct
+  THEN1 (fs [evaluate_apps_def] \\ rw []
+         \\ every_case_tac \\ fs [])
+  \\ fs [SNOC_APPEND]
+  \\ fs [evaluate_apps_def] \\ rw []
+  \\ Cases_on `evaluate_app NONE f [x] s` \\ fs []
+  \\ Cases_on `q` \\ fs []
+  \\ Cases_on `a` \\ fs []
+  \\ Cases_on `t` \\ fs []
+QED
+
+Theorem evaluate_apps_long_replay:
+  !ys ts s1 e1 env.
+      LENGTH ts < s1.clock /\ LENGTH ts < LENGTH ys /\
+      1 ≤ s1.max_app ==>
+      evaluate_apps (Closure NONE [] env 1 (mk_Fns ts e1)) ys s1 =
+        case evaluate ([e1],REVERSE (TAKE (1+LENGTH ts) (REVERSE ys)) ++ env,
+                dec_clock (1+LENGTH ts) s1) of
+        | (Rval [v],s) =>
+             evaluate_apps v (REVERSE (DROP (1+LENGTH ts) (REVERSE ys))) s
+        | res => res
+Proof
+  recInduct SNOC_INDUCT \\ rw []
+  \\ fs [evaluate_apps_snoc_replay,evaluate_apps_def]
+  \\ fs [evaluate_def,Once dest_closure_def,check_loc_def]
+  \\ Cases_on `ts` \\ fs [mk_Fns_def,evaluate_def]
+  THEN1
+   (fs [REVERSE_SNOC]
+    \\ Cases_on `evaluate ([e1],x::env,dec_clock 1 s1)` \\ fs []
+    \\ Cases_on `q` \\ fs []
+    \\ Cases_on `a` \\ fs []
+    \\ Cases_on `t` \\ fs [])
+  \\ fs [EVAL ``(dec_clock 1 s).max_app``]
+  \\ `LENGTH t < (dec_clock 1 s1).clock` by (EVAL_TAC \\ fs [])
+  \\ first_x_assum drule
+  \\ fs [EVAL ``(dec_clock 1 s).max_app``]
+  \\ disch_then kall_tac
+  \\ fs [REVERSE_SNOC] \\ fs [ADD1]
+  \\ fs [dec_clock_def,ADD1]
+  \\ simp_tac std_ss [GSYM APPEND_ASSOC,APPEND]
+QED
+
 (* Replay the local lookup lemma used by the thunk-update case. *)
 Theorem state_rel_opt_rel_refs_replay:
   (state_rel s1 s2 ∧ FLOOKUP s1.refs n = r1 ⇒
@@ -81,5 +131,7 @@ fun show_thm label th =
     (print label; Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 val _ = show_thm "do_install_replay_typed=" do_install_replay;
+val _ = show_thm "evaluate_apps_snoc_replay_typed=" evaluate_apps_snoc_replay;
+val _ = show_thm "evaluate_apps_long_replay_typed=" evaluate_apps_long_replay;
 val _ = show_thm "state_rel_opt_rel_refs_replay_typed=" state_rel_opt_rel_refs_replay;
 val _ = show_thm "rel_update_thunk_replay_typed=" rel_update_thunk_replay;

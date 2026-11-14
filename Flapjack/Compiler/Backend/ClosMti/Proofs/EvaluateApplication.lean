@@ -261,8 +261,8 @@ theorem evaluateApp_closure_full_related {C F : Type} (source target : State C F
     have consumed := (List.forall₂_reverse_iff).2 (List.forall₂_take (1 + names.length) reversed)
     have remaining := (List.forall₂_reverse_iff).2 (List.forall₂_drop (1 + names.length) reversed)
     have environments := List.rel_append consumed (List.rel_append suppliedRel envRel)
-    rw [evaluateApps_nestedFns_long sourceArgs names sourceBody (sourceSupplied ++ sourceEnv) source
-      (by omega) full (by omega),
+    rw [evaluateApps_nestedFns_long sourceArgs names source sourceBody (sourceSupplied ++ sourceEnv)
+      ⟨by omega, full, by omega⟩,
       evaluateApp_closure_full target targetArgs targetSupplied targetEnv arity targetBody
         targetNonempty targetBound targetSuppliedBound targetFull targetClock, count]
     cases targetRun : evaluate [targetBody]
