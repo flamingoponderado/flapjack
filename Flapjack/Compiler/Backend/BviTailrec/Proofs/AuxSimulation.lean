@@ -149,4 +149,64 @@ theorem stateRel_doApp {C F : Type} (op : ClosLang.Op) (vs : List Value)
             · exact relatedNextRuntimeFrame source (BviSem.fromBvl nextBvl source) target related
                 ⟨rfl, rfl, rfl⟩
 
+/-- Non-install, non-label, non-build dispatcher errors are preserved between
+related states. The full dispatcher inherits the real-model assumption in
+SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "state_rel_do_app_err"
+  (fmap_as_finite_support := [refs])]
+theorem stateRel_doAppErr {C F : Type} (op : ClosLang.Op) (vs : List Value)
+    (source : BviSem.BviState (Nat × C) F)
+    (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
+    (target : BviSem.BviState C F)
+    (premises : BviSem.doApp op vs source = .err error ∧ stateRel source target ∧
+      op ≠ .install ∧ (∀ n, op ≠ .label n) ∧
+      (∀ parts : List ClosLang.ConstPart, op ≠ .blockOp (.build parts))) :
+    BviSem.doApp op vs target = .err error := by
+  obtain ⟨run, related, notInstall, notLabel, _⟩ := premises
+  have nonInstall (state : BviSem.BviState (Nat × C) F) :
+      BviSem.doApp op vs state = BviSem.doAppFallback op vs state := by
+    cases op <;> simp_all [BviSem.doApp]
+  have nonInstallTarget (state : BviSem.BviState C F) :
+      BviSem.doApp op vs state = BviSem.doAppFallback op vs state := by
+    cases op <;> simp_all [BviSem.doApp]
+  rw [nonInstall source] at run
+  rw [nonInstallTarget target]
+  obtain ⟨targetResult, targetAux, relation⟩ := stateRel_doAppAux op vs source
+    (BviSem.doAppAux op vs source) target ⟨rfl, related, notInstall, notLabel⟩
+  cases aux : BviSem.doAppAux op vs source with
+  | none =>
+    rw [aux] at relation
+    cases targetResult with
+    | none => simpa [BviSem.doAppFallback, aux, targetAux] using run
+    | some inner => contradiction
+  | some inner =>
+    cases inner with
+    | some pair => simp [BviSem.doAppFallback, aux] at run
+    | none =>
+      rw [aux] at relation
+      cases targetResult with
+      | none => contradiction
+      | some targetInner =>
+        cases targetInner with
+        | some pair => contradiction
+        | none =>
+          simp only [BviSem.doAppFallback, aux] at run
+          cases bvlRun : BvlSem.doApp op vs (BviSem.toBvl source) with
+          | val pair =>
+            cases pair
+            simp [bvlRun] at run
+          | err bvlError =>
+            have notGlobal : ∀ operation, op ≠ .globOp operation := by
+              intro operation eq
+              subst op
+              exact BviSem.doAppAux_delegates_not_global operation vs source aux
+            have swapped := BvlProps.doAppFallbackRerrSwap op vs (BviSem.toBvl source) bvlError
+              (BviSem.toBvl target) notGlobal ⟨bvlRun, notInstall, Or.inr notLabel⟩
+            have bvlFrame : BvlProps.fallbackFrame (BviSem.toBvl source) (BviSem.toBvl target) =
+                BviSem.toBvl target := by
+              have eq := BviSem.toBvl_runtimeFrame source target
+              simpa only [relatedRuntimeFrame source target related] using eq.symm
+            rw [bvlFrame] at swapped
+            cases bvlError <;> simp_all [BviSem.doAppFallback]
+
 end Flapjack.Compiler.Backend.BviTailrec
