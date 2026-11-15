@@ -1790,7 +1790,7 @@ theorem doApp_op_rel_listAppend {C F : Type} (f : HolFiniteMapExact Nat Nat)
                   BviSem.fromBvl_toBvl, decodedFirst, decodedSecond] at run
                 obtain ⟨rfl, rfl⟩ := run
                 refine ⟨f, listToValue (targetFieldsFirst ++ targetFieldsSecond), target, ?_,
-                  listToValue_rel f _ _
+                  listToValue_rel _ _ f
                     (List.rel_append firstFieldsRel secondFieldsRel), statesRelated, ?_,
                   onlyFresh_refl f target.refs, holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
                 · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,

@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "list_to_v_v_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
+  "lean_name": "listToValue_rel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Source comparison: Compared list_to_v_v_rel_typed in bvi_tmc_proof_source_probe.out: the full pairwise value relation implies the value relation of the two encoded lists. Original list/map binder order and full Value carriers match; the pointer map uses canonical finite support with a same-module witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "v_to_list_v_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
   "lean_name": "valueToList_rel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f"],

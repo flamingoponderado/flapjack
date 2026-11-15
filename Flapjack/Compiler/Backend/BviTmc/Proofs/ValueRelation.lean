@@ -258,11 +258,10 @@ theorem envRel_strip_extras (f : HolFiniteMapExact Nat Nat) (source target : Lis
 theorem holFmapAsFiniteSupportParamWitness_listToValue_rel_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
-/-- Encoding lists of related values yields related source list values.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_to_v_v_rel" (fmap_as_finite_support_parameters := [f])] -/
-theorem listToValue_rel (f : HolFiniteMapExact Nat Nat) (xs ys : List Value)
+/-- Encoding lists of related values yields related source list values. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_to_v_v_rel"
+  (fmap_as_finite_support_parameters := [f])]
+theorem listToValue_rel (xs ys : List Value) (f : HolFiniteMapExact Nat Nat)
     (related : List.Forall₂ (valueRel f) xs ys) : valueRel f (listToValue xs) (listToValue ys) := by
   induction related with
   | nil => exact .block _ [] [] .nil
