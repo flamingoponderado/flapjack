@@ -13,6 +13,7 @@ open Flapjack.Compiler.Backend.BvlSem Flapjack.Compiler.Backend.BviTmc Lean Meta
 set_option linter.unusedVariables false
 
 private theorem alternativeExpInhabited : Nonempty Bvi.Exp := ⟨.var 0⟩
+private theorem alternativeValueInhabited : Nonempty Value := ⟨.number 0⟩
 
 -- These are well-typed counterexamples, not mutations of an expression with
 -- potentially inconsistent applications after a binder type is changed.
@@ -81,6 +82,15 @@ private def mutateWrapper (value : Expr) (head : Name) (arity : Nat) : MetaM Exp
       else none
     | _ => none
 
+private def mutateWorker (value : Expr) (rewrite : Expr → Option Expr) : MetaM Expr :=
+  mutateConclusion value fun e =>
+    match e with
+    | .app (.app (.const ``And []) (.forallE name domain body binder)) worker =>
+      if name.eraseMacroScopes == `wrap then
+        some (mkApp2 (mkConst ``And) (.forallE name domain body binder) (worker.replace rewrite))
+      else none
+    | _ => none
+
 run_meta do
   let .defnInfo info ← getConstInfo ``Flapjack.Compiler.Backend.BviTmc.Induction.hypothesis
     | throwError "missing TMC induction predicate"
@@ -94,6 +104,16 @@ run_meta do
   unless ← isDefEq info.value alternativeWitness do throwError "inhabitation proofs are not definitionally equal"
   let alternativeProblems ← tmcHypothesisUniversalBinderProblems info.type alternativeWitness
   unless alternativeProblems.isEmpty do throwError "equivalent inhabitation proof rejected: {alternativeProblems}"
+  let alternativeValueWitness := info.value.replace fun e =>
+    if e.isAppOfArity ``holEl 4 && e.getAppArgs[0]! == mkConst ``Value then
+      some (mkAppN (mkConst ``holEl) #[e.getAppArgs[0]!, mkConst ``alternativeValueInhabited,
+        e.getAppArgs[2]!, e.getAppArgs[3]!])
+    else none
+  if alternativeValueWitness == info.value then throwError "value inhabitation proof substitution did not apply"
+  unless ← isDefEq info.value alternativeValueWitness do throwError "value inhabitation proofs are not definitionally equal"
+  let alternativeValueProblems ← tmcHypothesisUniversalBinderProblems info.type alternativeValueWitness
+  unless alternativeValueProblems.isEmpty do
+    throwError "equivalent value inhabitation proof rejected: {alternativeValueProblems}"
   for (name, message) in [(``extraMapDomain, "universal binder 1 has the wrong name, visibility or carrier"),
       (``falseClockGuard, "clock guard or simulation premise has the wrong shape"),
       (``fakeSimulation, "simulation premise must contain the six original conjuncts"),
@@ -178,6 +198,60 @@ run_meta do
   let noWrapperFresh ← mutateWrapper info.value ``onlyFresh 3
   let noWrapperUnchanged ← mutateWrapper info.value ``holesUnchangedExcept 7
   let noWrapperNotFinal ← mutateWrapper info.value ``holesStillNotFinalised 6
+  let noWorker ← mutateConclusion info.value fun e =>
+    match e with
+    | .app (.app (.const ``And []) (.forallE name domain body binder)) _ =>
+      if name.eraseMacroScopes == `wrap then
+        some (mkApp2 (mkConst ``And) (.forallE name domain body binder) (mkConst ``True))
+      else none
+    | _ => none
+  let noWorkerInitialHole ← mutateWorker info.value fun e =>
+    if e.isAppOfArity ``holeHasVal 5 then some (mkConst ``True) else none
+  let noWorkerNotFinal ← mutateWorker info.value fun e =>
+    if e.isAppOfArity ``holeNotFinalised 4 then some (mkConst ``True) else none
+  let noWorkerPointer ← mutateWorker info.value fun e =>
+    if e.isAppOfArity ``Eq 3 && (e.getAppArgs[1]!).isAppOfArity ``holEl 4 then
+      some (mkConst ``True) else none
+  let noWorkerRewrite ← mutateWorker info.value fun e =>
+    if e.isAppOfArity ``rewriteWorkerSource 6 then some e.getAppArgs[5]! else none
+  let wrongWorkerIndex ← mutateWorker info.value fun e =>
+    if e.isAppOfArity ``rewriteWorkerSource 6 then
+      some (mkAppN (mkConst ``rewriteWorkerSource)
+        #[e.getAppArgs[0]!, e.getAppArgs[1]!, e.getAppArgs[2]!, e.getAppArgs[2]!,
+          e.getAppArgs[4]!, e.getAppArgs[5]!]) else none
+  let wrongWorkerPointerIndex ← mutateWorker info.value fun e =>
+    if e.isAppOfArity ``holEl 4 && e.getAppArgs[0]! == mkConst ``Value then
+      some (mkAppN (mkConst ``holEl) #[e.getAppArgs[0]!, e.getAppArgs[1]!,
+        mkNatLit 0, e.getAppArgs[3]!]) else none
+  let wrongWorkerPointerList ← mutateWorker info.value fun e =>
+    if e.isAppOfArity ``holEl 4 && e.getAppArgs[0]! == mkConst ``Value then
+      some (mkAppN (mkConst ``holEl) #[e.getAppArgs[0]!, e.getAppArgs[1]!,
+        e.getAppArgs[2]!, mkApp (mkConst ``List.nil [Level.zero]) (mkConst ``Value)]) else none
+  let noWorkerResult ← mutateWorker info.value fun e =>
+    if e.isAppOfArity ``ResultRelation.optResRel 3 then some (mkConst ``True) else none
+  let noWorkerState ← mutateWorker info.value fun e =>
+    if e.isAppOfArity ``stateRel 5 then some (mkConst ``True) else none
+  let noWorkerSubmap ← mutateWorker info.value fun e =>
+    if e.isAppOfArity ``HolFiniteMapExact.submap 4 then some (mkConst ``True) else none
+  let noWorkerFresh ← mutateWorker info.value fun e =>
+    if e.isAppOfArity ``onlyFresh 3 then some (mkConst ``True) else none
+  let noWorkerUnchanged ← mutateWorker info.value fun e =>
+    if e.isAppOfArity ``holesUnchangedExcept 7 then some (mkConst ``True) else none
+  let noWorkerStill ← mutateWorker info.value fun e =>
+    if e.isAppOfArity ``holesStillNotFinalised 6 then some (mkConst ``True) else none
+  let noWorkerBlock ← mutateWorker info.value fun e =>
+    if e.isAppOfArity ``mutableBlockRel 5 then some (mkConst ``True) else none
+  let noWorkerReturnCondition ← mutateWorker info.value fun e =>
+    if e.isAppOfArity ``Eq 3 &&
+        (e.getAppArgs[2]!).isAppOfArity ``Flapjack.SemanticPrimitivesHOL.Result.val 3 then
+      some (mkConst ``True) else none
+  let noWorkerFinalHole ← mutateWorker info.value fun e =>
+    match e with
+    | .forallE name _ _ _ =>
+      if name.eraseMacroScopes == `resValue then
+        some (e.replace fun term => if term.isAppOfArity ``holeHasVal 5 then some (mkConst ``True) else none)
+      else none
+    | _ => none
   for (label, bad) in [("hidden map", hidden), ("renamed map", renamed), ("wrong map carrier", wrongCarrier),
       ("missing simulation conclusion", noConclusion), ("missing source run", noSourceRun),
       ("missing environment relation", noEnvRelation), ("missing expression safety", noSafeExpressions),
@@ -191,7 +265,16 @@ run_meta do
       ("wrong wrapper location", wrongWrapperLocation), ("missing wrapper run", noWrapperRun),
       ("missing wrapper result relation", noWrapperResult), ("missing wrapper state", noWrapperState),
       ("missing wrapper submap", noWrapperSubmap), ("missing wrapper freshness", noWrapperFresh),
-      ("missing wrapper unchanged holes", noWrapperUnchanged), ("missing wrapper unfinished holes", noWrapperNotFinal)] do
+      ("missing wrapper unchanged holes", noWrapperUnchanged), ("missing wrapper unfinished holes", noWrapperNotFinal),
+      ("missing worker", noWorker), ("missing initial worker hole", noWorkerInitialHole),
+      ("missing worker hole status", noWorkerNotFinal), ("missing worker pointer", noWorkerPointer),
+      ("missing worker rewrite", noWorkerRewrite), ("wrong worker index", wrongWorkerIndex),
+      ("wrong worker pointer index", wrongWorkerPointerIndex), ("wrong worker pointer list", wrongWorkerPointerList),
+      ("missing worker result relation", noWorkerResult),
+      ("missing worker state", noWorkerState), ("missing worker submap", noWorkerSubmap),
+      ("missing worker freshness", noWorkerFresh), ("missing worker unchanged holes", noWorkerUnchanged),
+      ("missing worker unfinished holes", noWorkerStill), ("missing worker block relation", noWorkerBlock),
+      ("missing worker result premise", noWorkerReturnCondition), ("missing final worker hole", noWorkerFinalHole)] do
     if label != "hidden map" && label != "renamed map" && bad == info.value then
       throwError "mutation did not apply: {label}"
     let problems ← tmcHypothesisUniversalBinderProblems info.type bad

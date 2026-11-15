@@ -56,10 +56,125 @@ private def tmcResultFrame (c ffi program environment target final result map ne
     #[nat, nat, value, map, refs target, refs next]
   return #[targetRun, resultRel, states, submap, fresh, unchanged, notFinal]
 
+private def tmcWorkerProblems (worker c ffi xs env1 env2 target final result map loc dest opt : Expr) : MetaM (Array String) := do
+  let nat := mkConst `Nat
+  let value := mkConst `Flapjack.Compiler.Backend.BvlSem.Value
+  let values := mkApp (mkConst `List [Level.zero]) value
+  let exp := mkConst `Flapjack.Compiler.Backend.Bvi.Exp
+  let resultType := mkConst `Flapjack.Compiler.Backend.BviSem.BviResult
+  let state := mkApp2 (mkConst `Flapjack.Compiler.Backend.BviSem.BviState) c ffi
+  let pointerMap := mkApp2 (mkConst `Flapjack.HolFiniteMapExact) nat nat
+  let refs (s : Expr) := mkAppN (mkConst `Flapjack.Compiler.Backend.BviSem.BviState.refs) #[c, ffi, s]
+  let lengthEnv := mkApp2 (mkConst `List.length [Level.zero]) value env1
+  forallTelescope worker fun args conclusion => do
+    unless args.size == 3 do return #["worker simulation binders changed"]
+    let enabled ← args[0]!.fvarId!.getDecl
+    let hole ← args[1]!.fvarId!.getDecl
+    let assumptions ← args[2]!.fvarId!.getDecl
+    let eqOpt := mkApp3 (mkConst ``Eq [Level.succ Level.zero]) (mkConst `Bool) opt (mkConst `Bool.true)
+    unless enabled.binderInfo == .default && enabled.type == eqOpt &&
+        hole.userName == `holePtr && hole.binderInfo == .default && hole.type == nat &&
+        assumptions.binderInfo == .default do
+      return #["worker simulation binders changed"]
+    let .app (.app (.const ``And []) initialHole)
+        (.app (.app (.const ``And []) notFinal) pointerEq) := assumptions.type
+      | return #["worker simulation premises changed"]
+    let initialProblems ← tmcExists initialHole value `c fun v body => do
+      let expected := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.holeHasVal)
+        #[map, env1, env2, refs target, v]
+      return if body == expected then #[] else #["worker initial hole value changed"]
+    unless initialProblems.isEmpty do return initialProblems
+    let expectedNotFinal := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.holeNotFinalised)
+      #[nat, value, refs target, args[1]!]
+    unless pointerEq.isAppOfArity ``Eq 3 do return #["worker pointer premise changed"]
+    let selected := pointerEq.getAppArgs[1]!
+    unless selected.isAppOfArity `Flapjack.holEl 4 && selected.getAppArgs[0]! == value &&
+        selected.getAppArgs[2]! == lengthEnv && selected.getAppArgs[3]! == env2 do
+      return #["worker pointer selection changed"]
+    unless ← isDefEq (← inferType selected.getAppArgs[1]!)
+        (mkApp (mkConst ``Nonempty [Level.succ Level.zero]) value) do
+      return #["worker pointer selection has the wrong inhabitation witness"]
+    let ptr := mkApp2 (mkConst `Flapjack.Compiler.Backend.BvlSem.Value.refPtr)
+      (mkConst `Bool.false) args[1]!
+    let expectedPointer := mkApp3 (mkConst ``Eq [Level.succ Level.zero]) value selected ptr
+    unless notFinal == expectedNotFinal && pointerEq == expectedPointer do
+      return #["worker hole or pointer premise changed"]
+    tmcExists conclusion resultType `workResult fun workResult afterResult =>
+      tmcExists afterResult pointerMap `workMap fun workMap afterMap =>
+        tmcExists afterMap state `workState fun workState workBody => do
+          let mut clauses := #[]
+          let mut resultCase := workBody
+          for _ in [:7] do
+            match resultCase with
+            | .app (.app (.const ``And []) first) rest =>
+              clauses := clauses.push first
+              resultCase := rest
+            | _ => return #["worker simulation must contain the seven original conjuncts"]
+          let some head := clauses[0]!.find? (fun e => e.isAppOfArity `Flapjack.holHd 3)
+            | return #["worker head selection missing"]
+          unless head.getAppArgs[0]! == exp && head.getAppArgs[2]! == xs do
+            return #["worker head selection changed"]
+          unless ← isDefEq (← inferType head.getAppArgs[1]!)
+              (mkApp (mkConst ``Nonempty [Level.succ Level.zero]) exp) do
+            return #["worker head selection has the wrong inhabitation witness"]
+          let literal := Expr.lit (.natVal 1)
+          let one := mkAppN (mkConst `OfNat.ofNat [Level.zero])
+            #[nat, literal, mkApp (mkConst `instOfNatNat) literal]
+          let addInst := mkApp2 (mkConst `instHAdd [Level.zero]) nat (mkConst `instAddNat)
+          let nextIndex := mkAppN (mkConst `HAdd.hAdd [Level.zero, Level.zero, Level.zero])
+            #[nat, nat, nat, addInst, lengthEnv, one]
+          let rewritten := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.rewriteWorkerSource)
+            #[loc, dest, lengthEnv, nextIndex, lengthEnv, head]
+          let program := mkApp3 (mkConst `List.cons [Level.zero]) exp rewritten
+            (mkApp (mkConst `List.nil [Level.zero]) exp)
+          let evaluation := mkAppN (mkConst `Flapjack.Compiler.Backend.BviSem.evaluate)
+            #[c, ffi, program, env2, target]
+          let output := mkAppN (mkConst `Prod.mk [Level.zero, Level.zero])
+            #[resultType, state, workResult, workState]
+          let run := mkApp3 (mkConst ``Eq [Level.succ Level.zero])
+            (mkApp2 (mkConst `Flapjack.Compiler.Backend.BviSem.EvalResult) c ffi) evaluation output
+          let relation := mkApp3 (mkConst `Flapjack.Compiler.Backend.BviTmc.ResultRelation.optResRel)
+            workMap result workResult
+          let states := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.stateRel)
+            #[c, ffi, workMap, final, workState]
+          let submap := mkAppN (mkConst `Flapjack.HolFiniteMapExact.submap) #[nat, nat, map, workMap]
+          let fresh := mkApp3 (mkConst `Flapjack.Compiler.Backend.BviTmc.onlyFresh) map workMap (refs target)
+          let singleton := mkAppN (mkConst `Singleton.singleton [Level.zero, Level.zero])
+            #[nat, mkApp (mkConst `Set [Level.zero]) nat,
+              mkApp (mkConst `Set.instSingletonSet [Level.zero]) nat, args[1]!]
+          let unchanged := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.holesUnchangedExcept)
+            #[nat, nat, value, map, refs target, refs workState, singleton]
+          let still := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.holesStillNotFinalised)
+            #[nat, nat, value, map, refs target, refs workState]
+          unless clauses == #[run, relation, states, submap, fresh, unchanged, still] do
+            return #["worker target simulation changed"]
+          forallTelescope resultCase fun resultArgs resultConclusion => do
+            unless resultArgs.size == 2 do return #["worker result case changed"]
+            let returned ← resultArgs[0]!.fvarId!.getDecl
+            let equality ← resultArgs[1]!.fvarId!.getDecl
+            let resultValues := mkApp3 (mkConst `List.cons [Level.zero]) value resultArgs[0]!
+              (mkApp (mkConst `List.nil [Level.zero]) value)
+            let successful := mkApp3 (mkConst `Flapjack.SemanticPrimitivesHOL.Result.val)
+              values (mkConst `Flapjack.Compiler.Backend.BviSem.ExnOrRet) resultValues
+            let expectedEquality := mkApp3 (mkConst ``Eq [Level.succ Level.zero]) resultType result successful
+            unless returned.userName == `resValue && returned.binderInfo == .default && returned.type == value &&
+                equality.binderInfo == .default && equality.type == expectedEquality do
+              return #["worker result premise changed"]
+            tmcExists resultConclusion value `resValue' fun resultValue afterValue => do
+              let refType := mkApp (mkConst `Flapjack.Compiler.Backend.BvlSem.Ref) value
+              let erased := mkAppN (mkConst `Flapjack.HolFiniteMapExact.eraseEq)
+                #[nat, refType, mkConst `instDecidableEqNat, refs workState, args[1]!]
+              let block := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.mutableBlockRel)
+                #[workMap, refs target, erased, resultArgs[0]!, resultValue]
+              let holeValue := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.holeHasVal)
+                #[map, env1, env2, refs workState, resultValue]
+              unless afterValue == mkApp2 (mkConst ``And) block holeValue do
+                return #["worker result relation or final hole changed"]
+              return #[]
+
 /-- Check the elaborated TMC induction predicate's telescopes, clock guard,
-simulation premise, ordinary target simulation and wrapper simulation.
-The caller must independently validate the worker branch, all map scopes,
-codec and declaration ownership. -/
+simulation premise and ordinary, wrapper and worker simulations. The caller
+must independently validate map-scope inventory, codec and declaration ownership. -/
 def tmcHypothesisUniversalBinderProblems (type value : Expr) : MetaM (Array String) := do
   unless ← isDefEq (← inferType value) type do
     return #["predicate body has the wrong declaration type"]
@@ -193,9 +308,9 @@ def tmcHypothesisUniversalBinderProblems (type value : Expr) : MetaM (Array Stri
               unless dest.userName == `locOpt && dest.binderInfo == .default && dest.type == nat &&
                   code.binderInfo == .default && code.type == expectedCode do
                 return #["optimized branch entry changed"]
-              let .app (.app (.const ``And []) wrapper) _worker := body
+              let .app (.app (.const ``And []) wrapper) worker := body
                 | return #["optimized wrapper and worker branches must both be present"]
-              forallTelescope wrapper fun wrapArgs wrapConclusion => do
+              let wrapperProblems ← forallTelescope wrapper fun wrapArgs wrapConclusion => do
                 unless wrapArgs.size == 2 do return #["wrapper simulation binders changed"]
                 let wrap ← wrapArgs[0]!.fvarId!.getDecl
                 let assumption ← wrapArgs[1]!.fvarId!.getDecl
@@ -248,5 +363,7 @@ def tmcHypothesisUniversalBinderProblems (type value : Expr) : MetaM (Array Stri
                           wrapState wrapMap wrapResult do
                         return #["wrapper target simulation changed"]
                       return #[]
+              unless wrapperProblems.isEmpty do return wrapperProblems
+              tmcWorkerProblems worker c ffi xs env1 env2 target final result map binders[8]! args[0]! opt
 
 end Flapjack
