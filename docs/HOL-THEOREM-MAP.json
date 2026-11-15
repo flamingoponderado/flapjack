@@ -24142,6 +24142,13 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "compile_each_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteSimulation.lean", "lean_name": "compileEach_semantics",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed original compile_each_semantics_typed in bvi_tailrec_semantics_probe.out: arbitrary program, compiler and oracle with independent compiler and FFI carriers; the full input and oracle conditions, compiled-worker bound, compilation equation and source non-Fail premise; and equality of complete source and target behaviors. Semantics inherit reals_as_rational_cuts as documented in SOUNDNESS item 8."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/data_simpProofScript.sml", "hol_name": "evaluate_Seq_Skip",
     "lean_path": "Flapjack/Compiler/Backend/DataSimp/Proofs/Correct.lean", "lean_name": "evaluate_Seq_Skip",
     "statement_status": "reviewed_exact",

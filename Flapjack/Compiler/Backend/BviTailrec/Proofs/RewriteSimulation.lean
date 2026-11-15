@@ -4180,8 +4180,9 @@ theorem transformCompiler_eq_stateCc {C : Type} (compiler : BviSem.Compiler C) :
       simp [transformCompiler, BackendProps.stateCc, h, hcompiler]
 
 /-- Compiling each function preserves whole-program BVI behavior when the
-source does not fail. This source-shaped result remains untagged until the
-evaluator, state relation, and compilation carriers are reviewed against HOL. -/
+source does not fail. Semantics inherit the real-model assumption in SOUNDNESS
+item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_each_semantics"]
 theorem compileEach_semantics {C F : Type}
     (next : Nat) (program : List (Nat × Nat × Bvi.Exp))
     (oracle : BviSem.CompileOracle (Nat × C)) (compiled : List (Nat × Nat × Bvi.Exp))
