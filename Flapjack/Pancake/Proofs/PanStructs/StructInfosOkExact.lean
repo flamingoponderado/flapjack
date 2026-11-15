@@ -111,15 +111,11 @@ private theorem structInfosOkExact_lookup_isSome_drop (name : MlS)
           · simp [structContextLookupHOL, hmatch]
           · simpa [structContextLookupHOL, hmatch] using hrest
 
-/-- HOL `is_wf_shape_drop` (`pan_structsProofScript.sml:114`): a shape valid
-    in a context suffix remains valid in the full context.
-
-    NOT an exact port (tag withdrawn in task 169): the typed capture gives
-    `sh_ctxt :(mlstring # α) list` with the payload type α generic (HOL's
-    `is_wf_shape` only tests name presence), while this statement fixes the
-    context to `StructContextExact`. The induction principle
-    `sizeOfShapeWithContextHOL.induct` is stated over that carrier, so the
-    instance is what the port proves. -/
+/-- `StructContextExact` instance of HOL `is_wf_shape_drop`
+    (`pan_structsProofScript.sml:114`): a shape valid in a context suffix
+    remains valid in the full context.  This is proof infrastructure for the
+    exact-carrier developments; the tagged payload-polymorphic port of HOL's
+    statement is `isWfShapeHOL_drop` above. -/
 theorem isWfShapeExactHOL_drop (context : StructContextExact) (shape : ShapeHOL)
     (n : Nat) :
     isWfShapeExactHOL (context.drop n) shape = true →
@@ -354,5 +350,54 @@ theorem structInfosOkHOLExact_lookup_fields_nodup (name : MlS)
         have hrest : structInfosOkHOLExact rest := by
           simpa using structInfosOkHOLExact_drop 1 ((candidate, entryInfo) :: rest) hok
         exact ih hlookup hrest
+
+
+/-- Exact HOL `is_wf_shape_drop` (`pan_structsProofScript.sml:114-116`):
+    `!sh_ctxt sh n. is_wf_shape (DROP n sh_ctxt) sh ==> is_wf_shape sh_ctxt sh`.
+    HOL's context payload type is independent, and `is_wf_shape` only tests
+    name presence, so the context is the payload-polymorphic
+    `List (MlS × α)` carrier of the tagged `isWfShapeExactHOL`. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "is_wf_shape_drop"]
+theorem isWfShapeHOL_drop {α : Type} (sh_ctxt : List (MlS × α)) (sh : ShapeHOL)
+    (n : Nat) :
+    isWfShapeExactHOL (sh_ctxt.drop n) sh = true →
+      isWfShapeExactHOL sh_ctxt sh = true := by
+  have hlookupDrop : ∀ (ctxt : List (MlS × α)) (name : MlS) (k : Nat),
+      (structContextLookupHOL name (ctxt.drop k)).isSome = true →
+        (structContextLookupHOL name ctxt).isSome = true := by
+    intro ctxt
+    induction ctxt with
+    | nil => intro name k; cases k <;> simp [structContextLookupHOL]
+    | cons entry rest ih =>
+        intro name k
+        obtain ⟨candidate, info⟩ := entry
+        cases k with
+        | zero => simp
+        | succ j =>
+            simp only [List.drop_succ_cons]
+            intro h
+            have hrest := ih name j h
+            by_cases hmatch : name = candidate
+            · simp [structContextLookupHOL, hmatch]
+            · simpa [structContextLookupHOL, hmatch] using hrest
+  let contextDrop := sh_ctxt.drop n
+  refine isWfShapeExactHOL.induct
+    (motive_1 := fun sh =>
+      isWfShapeExactHOL contextDrop sh = true → isWfShapeExactHOL sh_ctxt sh = true)
+    (motive_2 := fun shapes =>
+      isWfShapesExactHOL contextDrop shapes = true →
+        isWfShapesExactHOL sh_ctxt shapes = true)
+    ?_ ?_ ?_ ?_ ?_ sh
+  · intro _; rfl
+  · intro shapes ih hwf
+    simpa only [isWfShapeExactHOL] using ih hwf
+  · intro name hwf
+    have hctx := hlookupDrop sh_ctxt name n (by
+      simpa [contextDrop, isWfShapeExactHOL] using hwf)
+    simpa [isWfShapeExactHOL] using hctx
+  · intro _; rfl
+  · intro shape rest ihShape ihRest hwf
+    simp only [isWfShapesExactHOL, Bool.and_eq_true] at hwf ⊢
+    exact ⟨ihShape hwf.1, ihRest hwf.2⟩
 
 end Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
