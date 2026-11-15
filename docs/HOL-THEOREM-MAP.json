@@ -123979,7 +123979,7 @@
     "hol_name": "pmatch_list_append",
     "statement_status": "reviewed_fmap_as_finite_support_parameters",
     "fmap_as_finite_support_parameters": ["refs"],
-    "reviewer": "Compared the source length premise and combination of the two matches on appended pattern and value lists against the typed local HOL replay in pattern_exh_steps_probe.out. The same-module witness checks the canonical finite-map parameter roundtrip."
+    "reviewer": "Compared the source binder order, length premise and combination of the two matches on appended pattern and value lists against the typed local HOL statement in pattern_exh_steps_probe.out and the source proof. The same-module witness checks the canonical finite-map parameter roundtrip."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/PatternExh/Proofs/Soundness.lean",
@@ -135583,6 +135583,20 @@
   "lean_name": "envRel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f"],
   "reviewer": "Compared env_rel_def_typed in bvi_tmc_proof_source_probe.out: arbitrary optimization flag, environments and finite pointer map retain the original split, value relation, guarded length, HOL EL and typed hole-pointer/index clauses. The pointer map uses canonical finite support and the same-module parameter witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "eor_rel_def", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ResultRelation.lean",
+  "lean_name": "eorRel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Compared eor_rel_def_typed in bvi_tmc_proof_source_probe.out: Exn payloads use valueRel, Ret value lists use Forall₂ valueRel, and mismatched constructors are false. Both operands use the BVI ExnOrRet carrier; f uses canonical finite support and the same-module parameter witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "opt_res_rel_def", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ResultRelation.lean",
+  "lean_name": "optResRel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Compared opt_res_rel_def_typed in bvi_tmc_proof_source_probe.out: any source success relates only to the singleton Block 0 [] success, errors use excRel eorRel, and other pairs are false. Both operands have the BVI value-list/exn-or-ret result carrier; f uses canonical finite support and the same-module parameter witness."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
