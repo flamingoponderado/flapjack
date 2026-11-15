@@ -2,7 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractionSafety
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.OperationSimulation
-public import Flapjack.Compiler.Backend.BviTmc.Proofs.VariableSimulation
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.FillHole
 
 @[expose] public section
 
@@ -122,17 +122,44 @@ theorem evaluate_variable_post {C F : Type} (loc index : Nat) (source : BviState
     (run : evaluate [.var index] env1 source = (result, final))
     (notTypeError : result ≠ .err (.abort .typeError)) (environments : envRel opt f env1 env2)
     (states : stateRel f source target) : SingletonPost (.var index) source target env1 env2 opt f loc result final := by
-  obtain ⟨next, g, targetResult, targetRun, related, nextStates, extension, fresh, unchanged, still, optimized⟩ :=
-    VariableSimulation.evaluate_variable index source env1 result final opt f target env2 loc run environments states notTypeError
-  refine ⟨⟨next, g, targetResult, targetRun, related, nextStates, extension, fresh, unchanged, still⟩, ?_⟩
-  intro dest code
-  obtain ⟨wrap, worker⟩ := optimized dest code
-  constructor
-  · intro wrapper rewrite
-    exact wrap wrapper ⟨rfl, rewrite⟩
-  · intro optTrue ptr c hole notFinal pointer
-    exact worker optTrue env1.length (env1.length + 1) ptr
-      (rewriteWorkerSource loc dest env1.length (env1.length + 1) env1.length (.var index))
-      ⟨rfl, rfl, ⟨c, hole⟩, notFinal, rfl, pointer⟩
+  have sourceBound : index < env1.length := by
+    by_contra invalid
+    have failure : evaluate [.var index] env1 source = (.err (.abort .typeError), source) := by
+      simp [BviSem.evaluate, invalid]
+    rw [run] at failure
+    exact notTypeError (congrArg Prod.fst failure)
+  have targetBound : index < env2.length := by
+    have length := envRel_length opt f env1 env2 environments
+    omega
+  have related := envRel_el opt f env1 env2 index ⟨environments, sourceBound⟩
+  have sourceRun : evaluate [.var index] env1 source = (.val [holEl index env1], source) := by
+    simp [BviSem.evaluate, sourceBound, holEl_eq_getElem index env1 sourceBound]
+  have targetRun : evaluate [.var index] env2 target = (.val [holEl index env2], target) := by
+    simp [BviSem.evaluate, targetBound, holEl_eq_getElem index env2 targetBound]
+  have same := run.symm.trans sourceRun
+  cases same
+  refine ⟨?_, ?_⟩
+  · exact ⟨target, f, .val [holEl index env2], targetRun,
+      List.Forall₂.cons related .nil, states, (fun _ _ found => found),
+      onlyFresh_refl f target.refs, holesUnchanged_refl f target.refs ∅,
+      holesStill_refl f target.refs⟩
+  · intro locOpt _code
+    constructor
+    · intro wrap wrapper
+      simp [rewriteWrapperSource] at wrapper
+    · intro optTrue holePtr c hole notFinal pointer
+      simp only [rewriteWorkerSource]
+      have optEnvironments : envRel true f env1 env2 := by simpa [optTrue] using environments
+      obtain ⟨workResult, workMap, workState, workRun, workRelation, workStates, extension, only,
+        unchanged, still, fillValue, mutable, filledHole⟩ :=
+        FillHole.evaluate_fill_hole_val holePtr (.var index) f f env1 env2 source source target target
+          (holEl index env1) (holEl index env2) c ⟨sourceRun, targetRun, optEnvironments, states,
+          (fun _ _ found => found), related, hole, notFinal, (holesUnchanged_refl f target.refs ∅),
+          (holesStill_refl f target.refs), (onlyFresh_refl f target.refs), states, pointer⟩
+      refine ⟨workResult, workMap, workState, workRun, workRelation, workStates, extension, only,
+        unchanged, still, ?_⟩
+      intro resValue eq
+      cases eq
+      exact ⟨fillValue, mutable, filledHole⟩
 
 end Flapjack.Compiler.Backend.BviTmc.StructuralHypothesis

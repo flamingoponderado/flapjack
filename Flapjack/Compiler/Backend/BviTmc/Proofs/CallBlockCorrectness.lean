@@ -21,39 +21,39 @@ theorem evaluate_cb {C F A : Type} (cb : CallBlock) (loc : Nat)
       wfBlock env1.length cb ∧ envRel opt f env1 env2 ∧ stateRel f source target ∧
       source.clock ≤ clock ∧ result ≠ .err (.abort .typeError) ∧
       (∀ xs (s : BviState (Nat × C) F), Induction.hypothesis xs s clock)) :
-    (∃ (r : BviResult) (s : BviState C F) (g : HolFiniteMapExact Nat Nat),
+    (∃ (r : BviResult), ∃ (s : BviState C F), ∃ (ordinaryMap : HolFiniteMapExact Nat Nat),
       evaluate [callBlockToBvi loc cb] env2 target = (r, s) ∧
-      resultRel (List.Forall₂ (valueRel g)) (eorRel g) result r ∧ stateRel g final s ∧
-      f.submap g ∧ onlyFresh f g target.refs ∧ holesUnchangedExcept f target.refs s.refs ∅ ∧
+      resultRel (List.Forall₂ (valueRel ordinaryMap)) (eorRel ordinaryMap) result r ∧ stateRel ordinaryMap final s ∧
+      f.submap ordinaryMap ∧ onlyFresh f ordinaryMap target.refs ∧ holesUnchangedExcept f target.refs s.refs ∅ ∧
       holesStillNotFinalised f target.refs s.refs) ∧
     ∀ dest, optimisedCode loc dest source.code target.code →
       (∀ tag left child right, cb = .callBlock tag left child right →
-        ∃ (s : BviState C F) (g : HolFiniteMapExact Nat Nat) (r : BviResult),
+        ∃ (s : BviState C F), ∃ (wrapMap : HolFiniteMapExact Nat Nat), ∃ (r : BviResult),
           evaluate [wrapperBlockSource tag left child right dest] env2 target = (r, s) ∧
-          resultRel (List.Forall₂ (valueRel g)) (eorRel g) result r ∧ stateRel g final s ∧
-          f.submap g ∧ onlyFresh f g target.refs ∧ holesUnchangedExcept f target.refs s.refs ∅ ∧
+          resultRel (List.Forall₂ (valueRel wrapMap)) (eorRel wrapMap) result r ∧ stateRel wrapMap final s ∧
+          f.submap wrapMap ∧ onlyFresh f wrapMap target.refs ∧ holesUnchangedExcept f target.refs s.refs ∅ ∧
           holesStillNotFinalised f target.refs s.refs) ∧
       (∀ (refs : HolFiniteMapExact Nat (Ref Value)) extras slot idx ptr,
         stateRefRel f source.refs refs ∧
         (∃ c, CallBlockEnvironment.allocHoleHasVal f refs extras slot idx c) ∧
         target.refs.domain ⊆ refs.domain ∧ holEl slot extras = .refPtr false ptr →
-        ∃ (r : BviResult) (s : BviState C F) (g : HolFiniteMapExact Nat Nat),
+        ∃ (r : BviResult), ∃ (s : BviState C F), ∃ (auxMap : HolFiniteMapExact Nat Nat),
           evaluate [workerAuxSource (shiftBlock extras.length cb) dest slot idx] (extras ++ env2)
             { target with refs := refs } = (r, s) ∧
-          optResRel g result r ∧ stateRel g final s ∧ f.submap g ∧ onlyFresh f g refs ∧
+          optResRel auxMap result r ∧ stateRel auxMap final s ∧ f.submap auxMap ∧ onlyFresh f auxMap refs ∧
           holesUnchangedExcept f refs s.refs {ptr} ∧ holesStillNotFinalised f refs s.refs ∧
           ∀ v, result = .val [v] → ∃ v',
-            mutableBlockRel g target.refs (s.refs.eraseEq ptr) v v' ∧
+            mutableBlockRel auxMap target.refs (s.refs.eraseEq ptr) v v' ∧
             CallBlockEnvironment.allocHoleHasVal f s.refs extras slot idx v') ∧
       (opt = true → ∀ slot idx (_work : A) ptr,
         slot = env1.length ∧ idx = env1.length + 1 ∧
         (∃ c, holeHasVal f env1 env2 target.refs c) ∧ holeNotFinalised target.refs ptr ∧
         holEl slot env2 = .refPtr false ptr →
-        ∃ (r : BviResult) (g : HolFiniteMapExact Nat Nat) (s : BviState C F),
+        ∃ (r : BviResult), ∃ (workMap : HolFiniteMapExact Nat Nat), ∃ (s : BviState C F),
           evaluate [workerBlockSource cb dest slot idx] env2 target = (r, s) ∧
-          optResRel g result r ∧ stateRel g final s ∧ f.submap g ∧ onlyFresh f g target.refs ∧
+          optResRel workMap result r ∧ stateRel workMap final s ∧ f.submap workMap ∧ onlyFresh f workMap target.refs ∧
           holesUnchangedExcept f target.refs s.refs {ptr} ∧ holesStillNotFinalised f target.refs s.refs ∧
-          ∀ v, result = .val [v] → ∃ v', mutableBlockRel g target.refs (s.refs.eraseEq ptr) v v' ∧
+          ∀ v, result = .val [v] → ∃ v', mutableBlockRel workMap target.refs (s.refs.eraseEq ptr) v v' ∧
             holeHasVal f env1 env2 s.refs v') := by
   obtain ⟨run, wf, env, states, _, noError, _⟩ := h
   have ih : SmallerClockIH (C := C) (F := F) source.clock := by
