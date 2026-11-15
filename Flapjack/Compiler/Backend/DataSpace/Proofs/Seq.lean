@@ -65,21 +65,6 @@ private theorem evalSeqSkipAssoc {C F : Type} (first second : DataLang.Prog) (st
   conv_lhs => rw [DataSem.evaluate, fixClock_evaluate, evaluate_seq_skip]
   rw [DataSem.evaluate, fixClock_evaluate]
 
-/-- Normalizing a sparse tree produces a well-formed tree. This helper is
-Flapjack infrastructure for comparing the results of two environment cuts. -/
-private theorem sptWf_normalize {α : Type} (tree : Spt α) : sptWf (sptMkWf tree) = true := by
-  induction tree with
-  | ln => rfl
-  | ls value => rfl
-  | bn left right ihLeft ihRight =>
-    simp only [sptMkWf]
-    cases hleft : sptMkWf left <;> cases hright : sptMkWf right <;>
-      simp_all [sptMkBN, sptWf, sptIsEmpty]
-  | bs left value right ihLeft ihRight =>
-    simp only [sptMkWf]
-    cases hleft : sptMkWf left <;> cases hright : sptMkWf right <;>
-      simp_all [sptMkBS, sptWf, sptIsEmpty]
-
 /-- Two successful cuts equal a single cut by the intersection. -/
 private theorem cutEnv_twice {α : Type} (first second : NumSet) (source middle result : Spt α)
     (firstCut : cutEnv first source = some middle)
@@ -105,9 +90,9 @@ private theorem cutEnv_twice {α : Type} (first second : NumSet) (source middle 
     split at secondCut
     · simp only [Option.some.injEq] at secondCut
       subst result
-      exact sptWf_normalize _
+      exact sptWf_mkWf _
     · simp at secondCut
-  have targetWf : sptWf target = true := sptWf_normalize _
+  have targetWf : sptWf target = true := sptWf_mkWf _
   have eq : result = target := by
     apply (sptEqThm result target ⟨resultWf, targetWf⟩).2
     intro key

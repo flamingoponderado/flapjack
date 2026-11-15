@@ -14,6 +14,7 @@ size_def_typed=size (LN :α num_map) = (0 :num) ∧ (∀(a :α). size ⦕ 0 ↦ 
 delete_def_typed=(∀(k :num). isEmpty (delete k (LN :α num_map))) ∧ (∀(k :num) (a :α). delete k ⦕ 0 ↦ a ⦖ = if k = (0 :num) then (LN :α num_map) else ⦕ 0 ↦ a ⦖) ∧ (∀(k :num) (t1 :α num_map) (t2 :α num_map). delete k (BN t1 t2) = if k = (0 :num) then BN t1 t2 else if EVEN k then mk_BN (delete ((k − (1 :num)) DIV (2 :num)) t1) t2 else mk_BN t1 (delete ((k − (1 :num)) DIV (2 :num)) t2)) ∧ ∀(k :num) (t1 :α num_map) (a :α) (t2 :α num_map). delete k (BS t1 a t2) = if k = (0 :num) then BN t1 t2 else if EVEN k then mk_BS (delete ((k − (1 :num)) DIV (2 :num)) t1) a t2 else mk_BS t1 a (delete ((k − (1 :num)) DIV (2 :num)) t2)
 fromList_def_typed=∀(l :α list). fromList l = SND (FOLDL (λ((i :num),(t :α num_map)) (a :α). (i + (1 :num),insert i a t)) ((0 :num),(LN :α num_map)) l)
 lookup_mk_wf_typed=∀(x :num) (t :α num_map). lookup x (mk_wf t) = lookup x t
+wf_mk_wf_typed=∀(t :α num_map). wf (mk_wf t)
 domain_inter_typed=∀*(t2 :β num_map) (t1 :α num_map) . domain (inter (t1 :α num_map) (t2 :β num_map)) = domain t1 ∩ domain t2
 domain_union_typed=∀*(t2 :α num_map) (t1 :α num_map) . domain (union (t1 :α num_map) (t2 :α num_map)) = domain t1 ∪ domain t2
 lookup_inter_typed=∀(m1 :α num_map) (m2 :β num_map) (k :num). lookup k (inter m1 m2) = case (lookup k m1,lookup k m2) of ((NONE :α option),v4) => (NONE :α option) | (SOME v,(NONE :β option)) => (NONE :α option) | (SOME v,SOME w) => SOME v

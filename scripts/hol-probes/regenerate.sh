@@ -9810,7 +9810,7 @@ run_probe data_to_word_ops_probeScript.sml data_to_word_ops_probe.out \
 run_probe data_live_compile_probeScript.sml data_live_compile_probe.out \
   is_pure_def_typed compile_def_typed get_code_labels_compile_typed compile_correct_typed \
   state_rel_def_typed state_rel_ID_replay_typed evaluate_compile_statement_typed \
-  domain_list_delete_replay_typed is_pure_do_app_Rval_statement_typed \
+  domain_list_delete_replay_typed is_pure_pmatch_typed is_pure_do_app_Rval_statement_typed \
   is_pure_do_app_Rval_replay_typed is_pure_do_app_Rerr_replay_typed \
   state_rel_IMP_get_vars_replay_typed state_rel_IMP_do_app_aux_err_replay_typed \
   state_rel_IMP_do_app_err_replay_typed state_rel_IMP_do_app_aux_replay_typed \
@@ -10962,7 +10962,7 @@ run_probe binary_ieee_typed_probeScript.sml binary_ieee_typed_probe.out \
 run_probe sptree_typed_probeScript.sml sptree_typed_probe.out \
   domain_def_typed domain_fromList_typed MEM_toListA_typed MEM_toList_typed domain_lookup_typed \
   spt_typed lookup_def_typed insert_def_typed mk_BN_def_typed mk_BS_def_typed union_def_typed \
-  fromAList_def_typed size_def_typed delete_def_typed fromList_def_typed lookup_mk_wf_typed domain_inter_typed \
+  fromAList_def_typed size_def_typed delete_def_typed fromList_def_typed lookup_mk_wf_typed wf_mk_wf_typed domain_inter_typed \
   domain_union_typed lookup_inter_typed lookup_union_typed wf_def_typed filter_v_def_typed lookup_filter_v_typed \
   lrnext_def_typed toAList_def_typed foldi_def_typed foldi_FOLDR_toAList_typed insert_unchanged_typed \
   inter_eq_def_typed lookup_inter_eq_typed domain_map_typed lookup_map_typed map_def_typed map_fromAList_typed \

@@ -24142,6 +24142,12 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml", "hol_name": "wf_mk_wf",
+    "lean_path": "Flapjack/Misc/Sptree/MkWf.lean", "lean_name": "sptWf_mkWf",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original captured in sptree_typed_probe.out: normalizing any polymorphic sparse tree produces a well-formed tree, with no input well-formedness premise."
+  },
+  {
     "hol_path": "hol4/src/finite_maps/sptreeScript.sml", "hol_name": "lookup_mk_wf",
     "lean_path": "Flapjack/Misc/Sptree/MkWf.lean", "lean_name": "sptLookup_mkWf",
     "statement_status": "reviewed_exact",
