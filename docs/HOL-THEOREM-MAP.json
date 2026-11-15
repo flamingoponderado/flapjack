@@ -135699,6 +135699,24 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_fill_hole", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/FillHole.lean",
+  "lean_name": "evaluate_fill_hole", "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+  "fmap_as_finite_support_relation": ["BviState.refs", "f", "fNext"],
+  "fmap_as_finite_support_existentials": ["fillMap"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared evaluate_fill_hole_typed in bvi_tmc_proof_source_probe.out: all thirteen original premises imply the complete fill evaluation, result and state relations, submap, freshness, both hole invariants and conditional mutable-block result. The free hole pointer remains independent outside the original binders. The BviState reference field and input maps use canonical finite support; existential fillMap has a same-module roundtrip witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_fill_hole_val", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/FillHole.lean",
+  "lean_name": "evaluate_fill_hole_val", "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+  "fmap_as_finite_support_relation": ["BviState.refs", "f", "fNext"],
+  "fmap_as_finite_support_existentials": ["fillMap"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared evaluate_fill_hole_val_typed in bvi_tmc_proof_source_probe.out: all thirteen original premises imply the complete fill evaluation, result and state relations, submap, freshness, both hole invariants and mutable-block witness for related singleton values. The free hole pointer remains independent outside the original binders. The BviState reference field and input maps use canonical finite support; existential fillMap has a same-module roundtrip witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "list_rel_reverse", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
   "lean_name": "listRel_reverse", "statement_status": "reviewed_exact",
   "reviewer": "Source comparison: Compared list_rel_reverse_typed in bvi_tmc_proof_source_probe.out: an arbitrary heterogeneous relation holds pointwise on two lists exactly when it holds on both reversed lists. Both element types and the relation remain independent."

@@ -161,8 +161,8 @@ theorem evaluate_call_no_handler_non_extracted {C F : Type} (loc ticks : Nat)
     have optEnv : envRel true f env1 env2 := by simpa [optTrue] using environments
     obtain ⟨next, g, targetResult, targetRun, related, nextStates, extension, fresh, unchanged, still⟩ := core
     obtain ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩ :=
-      FillHole.evaluate_fill_hole (.call ticks dest args none) f g env1 env2 source final target next result targetResult c holePtr
-        run targetRun optEnv states extension related hole notFinal unchanged still fresh nextStates pointer
+      FillHole.evaluate_fill_hole holePtr (.call ticks dest args none) f g env1 env2 source final target next result targetResult c
+        ⟨run, targetRun, optEnv, states, extension, related, hole, notFinal, unchanged, still, fresh, nextStates, pointer⟩
     simp only [rewriteWorkerSource, notExtracted]
     exact ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩
 
@@ -381,9 +381,9 @@ theorem evaluate_call_handled_exception_non_extracted {C F : Type} (loc ticks de
     have optEnv : envRel true f env1 env2 := by simpa [optTrue] using environments
     obtain ⟨next, g, targetResult, targetRun, related, nextStates, extension, fresh, unchanged, still⟩ := core
     obtain ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩ :=
-      FillHole.evaluate_fill_hole (.call ticks (some destination) args (some handler)) f g env1 env2 source
-        final target next result targetResult c holePtr run targetRun optEnv states extension related hole
-        notFinal unchanged still fresh nextStates pointer
+      FillHole.evaluate_fill_hole holePtr (.call ticks (some destination) args (some handler)) f g env1 env2 source
+        final target next result targetResult c ⟨run, targetRun, optEnv, states, extension, related, hole,
+        notFinal, unchanged, still, fresh, nextStates, pointer⟩
     simp only [rewriteWorkerSource, notExtracted]
     exact ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩
 
@@ -500,9 +500,9 @@ theorem evaluate_call_handler_inactive_non_extracted {C F : Type} (loc ticks des
     have optEnv : envRel true f env1 env2 := by simpa [optTrue] using environments
     obtain ⟨next, g, targetResult, targetRun, related, nextStates, extension, fresh, unchanged, still⟩ := core
     obtain ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩ :=
-      FillHole.evaluate_fill_hole (.call ticks (some destination) args (some handler)) f g env1 env2 source
-        final target next result targetResult c holePtr handledRun targetRun optEnv states extension related hole
-        notFinal unchanged still fresh nextStates pointer
+      FillHole.evaluate_fill_hole holePtr (.call ticks (some destination) args (some handler)) f g env1 env2 source
+        final target next result targetResult c ⟨handledRun, targetRun, optEnv, states, extension, related, hole,
+        notFinal, unchanged, still, fresh, nextStates, pointer⟩
     simp only [rewriteWorkerSource, notExtracted]
     exact ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩
 
@@ -549,9 +549,9 @@ theorem evaluate_call_handler_argument_error {C F : Type} (loc ticks destination
     have optEnv : envRel true f env1 env2 := by simpa [optTrue] using environments
     obtain ⟨last, h, targetResult, targetRun, rel, lastStates, ext, only, unch, rest⟩ := core
     obtain ⟨fillResult, fillMap, fillState, fillRun, fillRel, state, fillExt, fillOnly, fillUnch, fillRest, filled⟩ :=
-      FillHole.evaluate_fill_hole (.call ticks (some destination) args (some handler)) f h env1 env2 source
-        middle target last (.err error) targetResult c holePtr run targetRun optEnv states ext rel hole
-        notFinal unch rest only lastStates pointer
+      FillHole.evaluate_fill_hole holePtr (.call ticks (some destination) args (some handler)) f h env1 env2 source
+        middle target last (.err error) targetResult c ⟨run, targetRun, optEnv, states, ext, rel, hole,
+        notFinal, unch, rest, only, lastStates, pointer⟩
     simp only [rewriteWorkerSource, notExtracted]
     exact ⟨fillResult, fillMap, fillState, fillRun, fillRel, state, fillExt, fillOnly, fillUnch, fillRest, filled⟩
 

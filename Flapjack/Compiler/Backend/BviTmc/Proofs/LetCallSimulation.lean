@@ -178,9 +178,9 @@ theorem evaluate_letcall_return_post {C F : Type} (loc rets ticks destination : 
     have optEnv : envRel true f env1 env2 := by simpa [optTrue] using environments
     obtain ⟨next, g, targetResult, targetRun, related, nextStates, extension, fresh, unchanged, still⟩ := core
     obtain ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩ :=
-      FillHole.evaluate_fill_hole (.letCall rets ticks destination args continuation) f g env1 env2 source
-        final target next result targetResult c holePtr run targetRun optEnv states extension related hole
-        notFinal unchanged still fresh nextStates pointer
+      FillHole.evaluate_fill_hole holePtr (.letCall rets ticks destination args continuation) f g env1 env2 source
+        final target next result targetResult c ⟨run, targetRun, optEnv, states, extension, related, hole,
+        notFinal, unchanged, still, fresh, nextStates, pointer⟩
     simp only [rewriteWorkerSource]
     exact ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩
 
@@ -276,9 +276,9 @@ theorem evaluate_letcall_error_post {C F : Type} (loc rets ticks destination : N
     · intro optTrue holePtr c hole notFinal pointer
       have optEnv : envRel true f env1 env2 := by simpa [optTrue] using environments
       obtain ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩ :=
-        FillHole.evaluate_fill_hole (.letCall rets ticks destination args continuation) f g env1 env2 source
-          final target next (.err error) (.err targetError) c holePtr sourceRun targetRun optEnv states extension
-          related hole notFinal unchanged still fresh nextStates pointer
+        FillHole.evaluate_fill_hole holePtr (.letCall rets ticks destination args continuation) f g env1 env2 source
+          final target next (.err error) (.err targetError) c ⟨sourceRun, targetRun, optEnv, states, extension,
+          related, hole, notFinal, unchanged, still, fresh, nextStates, pointer⟩
       simp only [rewriteWorkerSource]
       exact ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩
 

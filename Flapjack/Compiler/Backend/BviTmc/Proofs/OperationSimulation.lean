@@ -115,8 +115,8 @@ theorem evaluate_op_non_extracted {C F : Type} (op : ClosLang.Op) (args : List B
       have optEnv : envRel true f env1 env2 := by simpa [optTrue] using environments
       obtain ⟨next, g, targetResult, targetRun, resultRel', nextStates, extension, fresh, unchanged, still⟩ := core
       obtain ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩ :=
-        FillHole.evaluate_fill_hole (.op op args) f g env1 env2 source final target next result targetResult c holePtr
-          run targetRun optEnv states extension resultRel' hole notFinal unchanged still fresh nextStates pointer
+        FillHole.evaluate_fill_hole holePtr (.op op args) f g env1 env2 source final target next result targetResult c
+          ⟨run, targetRun, optEnv, states, extension, resultRel', hole, notFinal, unchanged, still, fresh, nextStates, pointer⟩
       simp only [rewriteWorkerSource, notExtracted]
       exact ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩
 

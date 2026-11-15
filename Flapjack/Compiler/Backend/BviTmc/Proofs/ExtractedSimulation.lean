@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockSimulation
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.LetSimulation
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractionWellFormed
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.LetWorkerBlock
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ListExtraction
 
 @[expose] public section
 

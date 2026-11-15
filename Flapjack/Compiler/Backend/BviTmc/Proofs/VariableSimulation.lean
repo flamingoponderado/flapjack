@@ -80,10 +80,10 @@ theorem evaluate_variable {C F : Type} (index : Nat)
       have optEnvironments : envRel true f env1 env2 := by simpa [optTrue] using environments
       obtain ⟨workResult, workMap, workState, workRun, workRelation, workStates, extension, only,
         unchanged, still, fillValue, mutable, filledHole⟩ :=
-        FillHole.evaluate_fill_hole_val (.var index) f f env1 env2 source source target target
-          (holEl index env1) (holEl index env2) c holePtr sourceRun targetRun optEnvironments states
-          (fun _ _ found => found) related hole notFinal (holesUnchanged_refl f target.refs ∅)
-          (holesStill_refl f target.refs) (onlyFresh_refl f target.refs) states pointer
+        FillHole.evaluate_fill_hole_val holePtr (.var index) f f env1 env2 source source target target
+          (holEl index env1) (holEl index env2) c ⟨sourceRun, targetRun, optEnvironments, states,
+          (fun _ _ found => found), related, hole, notFinal, (holesUnchanged_refl f target.refs ∅),
+          (holesStill_refl f target.refs), (onlyFresh_refl f target.refs), states, pointer⟩
       refine ⟨workResult, workMap, workState, workRun, workRelation, workStates, extension, only,
         unchanged, still, ?_⟩
       intro resValue eq

@@ -153,8 +153,8 @@ theorem evaluate_force_from_clock {C F : Type} (loc location index : Nat)
     have optEnv : envRel true f env1 env2 := by simpa [optTrue] using environments
     obtain ⟨next, g, targetResult, targetRun, related, nextStates, extension, fresh, unchanged, still⟩ := core
     obtain ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩ :=
-      FillHole.evaluate_fill_hole (.force location index) f g env1 env2 source final target next result targetResult c ptr
-        run targetRun optEnv states extension related hole notFinal unchanged still fresh nextStates pointer
+      FillHole.evaluate_fill_hole ptr (.force location index) f g env1 env2 source final target next result targetResult c
+        ⟨run, targetRun, optEnv, states, extension, related, hole, notFinal, unchanged, still, fresh, nextStates, pointer⟩
     simpa only [rewriteWorkerSource] using
       (show IfWorker.WorkerCore (fillHoleSource env1.length (env1.length + 1) (.force location index))
         env1 env2 f target ptr result final from ⟨fillResult, fillMap, fillState, fillRun, rel, state, ext, only, unch, rest, filled⟩)
