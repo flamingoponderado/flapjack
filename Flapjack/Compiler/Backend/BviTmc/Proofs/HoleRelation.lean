@@ -48,14 +48,14 @@ theorem holFmapAsFiniteSupportParamWitness_holeHasVal_submap_fNext (fNext : HolF
 theorem holFmapAsFiniteSupportParamWitness_holeHasVal_submap_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
-/-- A hole outside a larger pointer-map range is outside a submap's range.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_submap" (fmap_as_finite_support_parameters := [f, fNext, refs])] -/
+/-- A hole outside a larger pointer-map range is outside a submap's range. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_submap"
+  (fmap_as_finite_support_parameters := [f, fNext, refs])]
 theorem holeHasVal_submap (f : HolFiniteMapExact Nat Nat) (fNext : HolFiniteMapExact Nat Nat)
     (env1 env2 : List Value) (refs : HolFiniteMapExact Nat (Ref Value)) (c : Value)
-    (hole : holeHasVal fNext env1 env2 refs c) (submap : f.submap fNext) :
+    (h : holeHasVal fNext env1 env2 refs c ∧ f.submap fNext) :
     holeHasVal f env1 env2 refs c := by
+  obtain ⟨hole, submap⟩ := h
   obtain ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, outside, found⟩ := hole
   refine ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, ?_, found⟩
   intro ⟨key, mapped⟩
@@ -459,14 +459,14 @@ theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_subset_refs {β γ : T
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_subset_refsNew {β γ : Type} (refsNew : HolFiniteMapExact β (Ref γ)) :
     mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
 
-/-- Allowing changes at more locations preserves the hole invariant.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_subset" (fmap_as_finite_support_parameters := [f, refs, refsNew])] -/
+/-- Allowing changes at more locations preserves the hole invariant. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_subset"
+  (fmap_as_finite_support_parameters := [f, refs, refsNew])]
 theorem holesUnchanged_subset {α β γ : Type} (f : HolFiniteMapExact α β)
     (refs : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ))
-    (changed larger : Set β) (related : holesUnchangedExcept f refs refsNew changed)
-    (subset : changed ⊆ larger) : holesUnchangedExcept f refs refsNew larger := by
+    (changed larger : Set β) (h : holesUnchangedExcept f refs refsNew changed ∧ changed ⊆ larger) :
+    holesUnchangedExcept f refs refsNew larger := by
+  obtain ⟨related, subset⟩ := h
   intro ptr tag finalised left child right ⟨outside, found⟩
   obtain ⟨finalised', child', lookup, same⟩ := related ptr tag finalised left child right ⟨outside, found⟩
   exact ⟨finalised', child', lookup, fun absent => same (fun mem => absent (subset mem))⟩

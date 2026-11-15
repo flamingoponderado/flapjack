@@ -135699,6 +135699,20 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "holes_unchanged_except_subset", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "holesUnchanged_subset", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "refs", "refsNew"],
+  "reviewer": "Source comparison: Compared holes_unchanged_except_subset_typed in bvi_tmc_proof_source_probe.out: the unchanged-hole relation and changed-set inclusion jointly imply the relation with the larger changed set, preserving independent map-key, pointer and cell types. Named maps use canonical finite support and same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "hole_has_val_submap", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "holeHasVal_submap", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "fNext", "refs"],
+  "reviewer": "Source comparison: Compared hole_has_val_submap_typed in bvi_tmc_proof_source_probe.out: the hole relation under the extended map and submap inclusion jointly imply the original hole relation under the smaller map. Named maps use canonical finite support and same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "holes_unchanged_except_refl", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
   "lean_name": "holesUnchanged_refl", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "refs"],

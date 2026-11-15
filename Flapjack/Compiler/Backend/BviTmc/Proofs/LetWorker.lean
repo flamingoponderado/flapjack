@@ -58,7 +58,7 @@ theorem evaluate_let_worker {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.E
         rw [BviSem.evaluate, BviSem.fixClock_evaluate, bindingsRun] at run
         obtain ⟨rfl, rfl⟩ := run.symm
         refine ⟨.err error', g, middleTarget, ?_, related, middleStates, extension, fresh,
-          holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} unchanged (by simp), still, ?_⟩
+          holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} ⟨unchanged, by simp⟩, still, ?_⟩
         · simp only [rewriteWorkerSource]
           rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetRun]
         · intro _ impossible; cases impossible
@@ -97,7 +97,7 @@ theorem evaluate_let_worker {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.E
           intro k v found; exact bodyExtension k v (extension k v found)
         have domain := BviProps.evaluate_refs_subset bindings env2 target middleTarget (.val values') targetRun
         have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh bodyFresh domain
-        have widened := holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} unchanged (by simp)
+        have widened := holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} ⟨unchanged, by simp⟩
         have allUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs workState.refs {holePtr}
           ⟨widened, bodyUnchanged, fresh, extension⟩
         have allStill := holesStill_trans f g target.refs middleTarget.refs workState.refs ()
@@ -109,7 +109,7 @@ theorem evaluate_let_worker {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.E
         · intro resValue success
           obtain ⟨resValue', block, filledHole⟩ := filled resValue success
           have baseHole := holeHasVal_unappend g values values' env1 env2 workState.refs resValue' filledHole valuesRelated
-          refine ⟨resValue', ?_, holeHasVal_submap f g env1 env2 workState.refs resValue' baseHole extension⟩
+          refine ⟨resValue', ?_, holeHasVal_submap f g env1 env2 workState.refs resValue' ⟨baseHole, extension⟩⟩
           exact mutableBlockRel_old_subset h middleTarget.refs (workState.refs.eraseEq holePtr)
             resValue resValue' target.refs block domain
 

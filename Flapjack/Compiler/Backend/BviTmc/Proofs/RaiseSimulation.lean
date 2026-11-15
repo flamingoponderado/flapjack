@@ -104,7 +104,7 @@ theorem evaluate_raise {C F : Type} (body : Bvi.Exp)
       simp only [rewriteWorkerSource] at worker
       subst work
       refine ⟨.err targetError, nextMap, next, targetRun, related, states, extension, fresh,
-        holesUnchanged_subset f target.refs next.refs ∅ {holePtr} unchanged (by simp), still, ?_⟩
+        holesUnchanged_subset f target.refs next.refs ∅ {holePtr} ⟨unchanged, by simp⟩, still, ?_⟩
       intro _ impossible; cases impossible
   cases childRun : evaluate [body] env1 source with
   | mk childResult childFinal =>

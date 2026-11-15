@@ -81,7 +81,7 @@ theorem evaluate_if_worker {C F : Type} (condition yes no : Bvi.Exp)
         rw [BviSem.evaluate, BviSem.fixClock_evaluate, conditionRun] at run
         obtain ⟨rfl, rfl⟩ := run.symm
         refine ⟨.err error', g, middleTarget, ?_, related, middleStates, extension, fresh,
-          holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} unchanged (by simp), still, ?_⟩
+          holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} ⟨unchanged, by simp⟩, still, ?_⟩
         · simp only [rewriteWorkerSource]
           rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetRun]
         · intro _ impossible; cases impossible
@@ -128,7 +128,7 @@ theorem evaluate_if_worker {C F : Type} (condition yes no : Bvi.Exp)
             intro k v found; exact branchExtension k v (extension k v found)
           have domain := BviProps.evaluate_refs_subset [condition] env2 target middleTarget (.val [value']) targetRun
           have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh branchFresh domain
-          have widened := holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} unchanged (by simp)
+          have widened := holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} ⟨unchanged, by simp⟩
           have allUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs workState.refs {holePtr}
             ⟨widened, branchUnchanged, fresh, extension⟩
           have allStill := holesStill_trans f g target.refs middleTarget.refs workState.refs ()
@@ -143,7 +143,7 @@ theorem evaluate_if_worker {C F : Type} (condition yes no : Bvi.Exp)
             cases boolean <;> simpa [decoded', selected] using workRun
           · intro resValue success
             obtain ⟨resValue', block, filledHole⟩ := filled resValue success
-            refine ⟨resValue', ?_, holeHasVal_submap f g env1 env2 workState.refs resValue' filledHole extension⟩
+            refine ⟨resValue', ?_, holeHasVal_submap f g env1 env2 workState.refs resValue' ⟨filledHole, extension⟩⟩
             exact mutableBlockRel_old_subset h middleTarget.refs (workState.refs.eraseEq holePtr)
               resValue resValue' target.refs block domain
 

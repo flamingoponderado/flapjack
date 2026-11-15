@@ -105,7 +105,7 @@ theorem evaluate_return {C F : Type} (args : List Bvi.Exp)
       subst work
       have workRun := FillHole.evaluate_fillHole_error (.return args) i j env2 target next targetError targetRun
       refine ⟨.err targetError, nextMap, next, workRun, related, states, extension, fresh,
-        holesUnchanged_subset f target.refs next.refs ∅ {holePtr} unchanged (by simp), still, ?_⟩
+        holesUnchanged_subset f target.refs next.refs ∅ {holePtr} ⟨unchanged, by simp⟩, still, ?_⟩
       intro _ impossible; cases impossible
   cases childRun : evaluate args env1 source with
   | mk childResult childFinal =>

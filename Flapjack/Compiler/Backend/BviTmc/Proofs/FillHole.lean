@@ -195,7 +195,7 @@ theorem evaluate_fill_hole {C F : Type} (e : Bvi.Exp)
       have fillRun := evaluate_fillHole_error e env1.length (env1.length + 1) env2 target targetNext targetError targetRun
       refine ⟨.err targetError, fNext, targetNext, fillRun, ?_, nextStates, submap, fresh, ?_, still, ?_⟩
       · simpa [resultRel, optResRel] using results
-      · exact holesUnchanged_subset f target.refs targetNext.refs ∅ {holePtr} unchanged (by simp)
+      · exact holesUnchanged_subset f target.refs targetNext.refs ∅ {holePtr} ⟨unchanged, by simp⟩
       · intro value impossible; cases impossible
 
 end Flapjack.Compiler.Backend.BviTmc.FillHole
