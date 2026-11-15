@@ -11881,3 +11881,13 @@ run_probe mlstring_char_typed_probeScript.sml mlstring_char_typed_probe.out \
   char_to_word8_def_typed word8_to_char_def_typed \
   "$cake_dir/basis/pure/mlstringScript.sml" \
   "$cake_dir/basis/pure"
+
+run_probe crep_to_loop_defs_typed_probeScript.sml crep_to_loop_defs_typed_probe.out \
+  compile_crepop_def_typed ocompile_def_typed \
+  "$cake_dir/pancake/crep_to_loopScript.sml" \
+  "$cake_dir/pancake"
+
+run_probe pan_structs_defs_typed_probeScript.sml pan_structs_defs_typed_probe.out \
+  afindi_def_typed compile_shape_def_typed old_exp_shape_def_typed \
+  "$cake_dir/pancake/pan_structsScript.sml" \
+  "$cake_dir/pancake"

@@ -10578,3 +10578,20 @@ The `strlen_def` and `LENGTH_explode` rows are already captured by
 `mlstring_length_probe.out`. Regenerate with `CAKEML=<cakeml tree>
 HOL4=<HOL tree> HOL_PROBE_ONLY=mlstring_char_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`crep_to_loop_defs_typed_probe.out` (2 rows) captures the reviewed
+`crep_to_loopScript.sml` definition rows that earlier probes did not cover
+(task 187): `compile_crepop_def` (including the ARMv7 two-result branch) and
+`ocompile_def` (`optimise ∘ compile ctxt l`). Regenerate with
+`CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=crep_to_loop_defs_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+`pan_structs_defs_typed_probe.out` (3 rows) captures the reviewed
+`pan_structsScript.sml` definitions that earlier probes did not cover
+(task 187): `afindi_def` (both equations), `compile_shape_def` (the three
+`compile_shape` and two `compile_shapes` equations) and `old_exp_shape_def`
+(all 20 `old_exp_shape`/`old_exp_shapes` equations, including the `One` default
+for `RField` out-of-range indices and the nested `NField` structure lookup).
+Regenerate with `CAKEML=<cakeml tree> HOL4=<HOL tree>
+HOL_PROBE_ONLY=pan_structs_defs_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
