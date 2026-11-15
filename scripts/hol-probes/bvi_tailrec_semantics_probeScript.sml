@@ -27,6 +27,10 @@ val _ = show_thm "try_update_EL_typed=" bvi_tailrecProofTheory.try_update_EL;
 val _ = show_thm "try_update_twice_typed=" bvi_tailrecProofTheory.try_update_twice;
 val _ = show_thm "index_of_simp_typed=" bvi_tailrecProofTheory.index_of_simp;
 val _ = show_thm "scan_expr_ty_rel_typed=" bvi_tailrecProofTheory.scan_expr_ty_rel;
+val _ = show_thm "check_op_thm_typed=" bvi_tailrecProofTheory.check_op_thm;
+val _ = show_thm "optimized_code_def_typed=" bvi_tailrecProofTheory.optimized_code_def;
+val _ = show_thm "code_rel_subspt_typed=" bvi_tailrecProofTheory.code_rel_subspt;
+val _ = show_thm "compile_each_LENGTH_typed=" bvi_tailrecProofTheory.compile_each_LENGTH;
 (* The two find-code theorems are local in the original script. Replay their
    original statements and proofs so their inferred types are captured. *)
 open preamble bvi_tailrecProofTheory bvi_tailrecTheory bviPropsTheory bviSemTheory;

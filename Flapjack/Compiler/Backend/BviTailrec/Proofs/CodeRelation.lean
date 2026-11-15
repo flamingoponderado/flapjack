@@ -21,6 +21,7 @@ def codeRel (source target : Spt (Nat × Bvi.Exp)) : Prop :=
 
 /-- An optimized function and its worker are present at their designated
 locations in a transformed code tree. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "optimized_code_def"]
 def optimizedCode (loc arity : Nat) (body : Bvi.Exp) (workerLoc : Nat)
     (code : Spt (Nat × Bvi.Exp)) (op : AssocOp) : Prop :=
   ∃ wrapper worker, compileExpSource loc workerLoc arity body = some (wrapper, worker) ∧
@@ -122,6 +123,7 @@ theorem codeRel_domain (source target : Spt (Nat × Bvi.Exp)) (h : codeRel sourc
   exact (sptMem_iff_lookup loc target).mpr ⟨(arity, compiled), found⟩
 
 /-- Extending a related target tree preserves the code relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "code_rel_subspt"]
 theorem codeRel_subspt (source target extended : Spt (Nat × Bvi.Exp))
     (h : codeRel source target ∧ sptSubspt target extended) : codeRel source extended := by
   obtain ⟨related, subset⟩ := h
@@ -190,6 +192,7 @@ theorem codeRel_union (x y t s : Spt (Nat × Bvi.Exp))
         lookup_union_right_of_disjoint y s disjoint workerLoc _ workerFound⟩
 
 /-- Function-list compilation never reduces the number of entries. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_each_LENGTH"]
 theorem compileEachSource_length (next : Nat) (code : List (Nat × Nat × Bvi.Exp)) :
     code.length ≤ (compileEachSource next code).2.length := by
   induction code generalizing next with

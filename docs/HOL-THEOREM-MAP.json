@@ -24142,6 +24142,30 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "check_op_thm",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteCorrespondence.lean", "lean_name": "checkOp_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared check_op_thm_typed in bvi_tailrec_semantics_probe.out: an arbitrary successful operator check implies existential recursive and pure expressions satisfying the original recursion, term, normalized-output and two input-order alternatives. The full BVI expression, operator and type-context carriers are retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "optimized_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "optimizedCode",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared optimized_code_def_typed in bvi_tailrec_semantics_probe.out: the arbitrary sparse code tree, label, arity, expression, worker label and operator have the same two existential expressions and four ordered compile, check and lookup conjuncts."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "code_rel_subspt",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "codeRel_subspt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared code_rel_subspt_typed in bvi_tailrec_semantics_probe.out: the original code relation and sparse-tree substructure premises imply the complete relation with the extended target; sptSubspt uses the HOL domain-and-lookup characterization."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "compile_each_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "compileEachSource_length",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_each_LENGTH_typed in bvi_tailrec_semantics_probe.out: for any initial label and BVI program, the original compile_each output program has at least the input length. The source-shaped compileEachSource is the reviewed compile_each operation."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "scan_expr_ty_rel",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/ScanSound.lean", "lean_name": "scanExpr_tyRel",
     "statement_status": "reviewed_fmap_as_finite_support",

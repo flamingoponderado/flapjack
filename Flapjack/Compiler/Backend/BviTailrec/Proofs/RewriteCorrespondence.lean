@@ -123,7 +123,7 @@ theorem trySwap_success_shape (loc : Nat) (assoc : AssocOp) (e x y : Exp)
 
 /-- A successful candidate check identifies the recursive call and its pure
 accumulator operand, and records whether the input operands were swapped.
-The carriers remain untagged until source review is complete. -/
+This Flapjack strengthening also retains the non-Noop and append-order facts. -/
 theorem checkOp_candidate (ctx : List ValueType) (assoc : AssocOp) (loc : Nat)
     (e checked : Exp) (run : checkOp ctx assoc loc e = some checked) :
     ∃ recursive pure,
@@ -146,6 +146,22 @@ theorem checkOp_candidate (ctx : List ValueType) (assoc : AssocOp) (loc : Nat)
       obtain ⟨notNoop, shape⟩ := trySwap_success_shape loc assoc e pure recursive selected
       exact ⟨recursive, pure, facts.1, facts.2, rfl, notNoop, shape⟩
     next => simp at run
+
+/-- A successful operator check identifies the recursive and pure operands. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "check_op_thm"]
+theorem checkOp_thm (ctx : List ValueType) (assoc : AssocOp) (loc : Nat)
+    (e checked : Exp) (run : checkOp ctx assoc loc e = some checked) :
+    ∃ recursive pure,
+      isRec loc recursive = true ∧ term ctx (opType assoc) pure = true ∧
+      checked = .op (toOp assoc) [pure, recursive] ∧
+      (e = .op (toOp assoc) [recursive, pure] ∨ e = .op (toOp assoc) [pure, recursive]) := by
+  obtain ⟨recursive, pure, rec, termOk, checkedEq, _, original⟩ :=
+    checkOp_candidate ctx assoc loc e checked run
+  refine ⟨recursive, pure, rec, termOk, ?_, ?_⟩
+  · simpa [applyOp] using checkedEq
+  · rcases original with same | ⟨_, swapped⟩
+    · exact Or.inr (by simpa [applyOp] using same)
+    · exact Or.inl (by simpa [applyOp] using swapped)
 
 /-- A successful candidate uses a direct self-call without an exception
 handler. -/
