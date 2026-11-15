@@ -5533,15 +5533,22 @@ def main(argv: list[str]) -> int:
             where = f"{rel}:{number}"
             tmc_ref = (hol_path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" and
                        hol_name == "hypothesis_def")
-            if tmc_ref and not fmap_universals:
-                errors.append(f"{where}: TMC hypothesis requires its universal map qualifier")
+            tmc_call = (hol_path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" and
+                        hol_name == "evaluate_cb")
+            if (tmc_ref or tmc_call) and not fmap_universals:
+                errors.append(f"{where}: TMC declaration requires its universal map qualifier")
             if fmap_universals:
                 lean_name = find_lean_decl(lines, number - 1)
-                if (not tmc_ref or rel != "Flapjack/Compiler/Backend/BviTmc/Proofs/Induction.lean" or
-                        lean_name != "hypothesis" or hol_line is not None or fmap_universals != ("f",) or
-                        fmap_relation != (("BviState", "refs"),) or
-                        fmap_existentials != ("nextMap", "wrapMap", "workMap")):
-                    errors.append(f"{where}: universal maps require the reviewed TMC hypothesis and exact binders")
+                hypothesis = (tmc_ref and rel == "Flapjack/Compiler/Backend/BviTmc/Proofs/Induction.lean" and
+                              lean_name == "hypothesis" and fmap_universals == ("f",) and
+                              fmap_relation == (("BviState", "refs"),) and
+                              fmap_existentials == ("nextMap", "wrapMap", "workMap"))
+                call_block = (tmc_call and rel == "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockCorrectness.lean" and
+                              lean_name == "evaluate_cb" and fmap_universals == ("refs",) and
+                              fmap_relation == (("BviState", "refs"), ("f", "")) and
+                              fmap_existentials == ("ordinaryMap", "wrapMap", "auxMap", "workMap"))
+                if hol_line is not None or not (hypothesis or call_block):
+                    errors.append(f"{where}: universal maps require a reviewed TMC declaration and exact binders")
                 if (list_fields or names_fields or boundary_fields or fmap_fields or fmap_result or
                         fmap_equalities or words_bitvec or fmap_parameters or dimension_width or
                         fmap_function_positions or fmap_heterogeneous_function_positions or reals_cuts or
@@ -5549,9 +5556,12 @@ def main(argv: list[str]) -> int:
                         nested_list_rel or predicate_domain):
                     errors.append(f"{where}: TMC universal maps cannot combine with other representation qualifiers")
                 source = tagged_declaration_source(lines, number)
-                if not re.search(r"∀[\s\S]*?\(f\s*:\s*HolFiniteMapExact\s+Nat\s+Nat\s*\)", source):
+                if hypothesis and not re.search(r"∀[\s\S]*?\(f\s*:\s*HolFiniteMapExact\s+Nat\s+Nat\s*\)", source):
                     errors.append(f"{where}: TMC hypothesis must bind f as a universal Nat map")
-                witness = "holFmapAsFiniteSupportUniversalWitness_hypothesis_f"
+                if call_block and not re.search(r"∀\s*\(refs\s*:\s*HolFiniteMapExact\s+Nat\s*\(Ref\s+Value\)\s*\)", source):
+                    errors.append(f"{where}: TMC call-block theorem must bind its universal reference map")
+                witness = ("holFmapAsFiniteSupportUniversalWitness_hypothesis_f" if hypothesis else
+                           "holFmapAsFiniteSupportUniversalWitness_evaluate_cb_refs")
                 if not re.search(r"(?m)^\s*theorem\s+" + witness + r"\b", strip_lean_comments("\n".join(lines))):
                     errors.append(f"{where}: TMC universal map requires its same-module witness")
             if predicate_domain:

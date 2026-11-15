@@ -4,6 +4,7 @@ public meta import Lean
 public meta import Flapjack.HolRef.PredicateCodec
 public meta import Flapjack.HolRef.SimulationBody
 public meta import Flapjack.HolRef.TmcUniversalBinder
+public meta import Flapjack.HolRef.TmcCallBlockDeclaration
 
 public meta section
 
@@ -216,8 +217,8 @@ structure HolRef where
       first map domain of its higher-order `rel` parameter. This narrow
       qualifier requires the dedicated source and elaborated audits. -/
   fmapAsFiniteSupportParameterPredicateDomain : Array String := #[]
-  /-- Body-bound universal maps of the reviewed TMC hypothesis. This qualifier
-      is restricted to its original state field and existential map binders. -/
+  /-- Body-bound universal maps of the reviewed TMC hypothesis and call-block
+      theorem. Each site requires its exact state and existential map binders. -/
   fmapAsFiniteSupportUniversals : Array String := #[]
   /-- Explicit imported map-result producers observed by this declaration's type.
       Every producer must already carry `fmap_as_finite_support_result`, return
@@ -398,12 +399,15 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
   if fmapAsFiniteSupportRelation.toList.eraseDups.length != fmapAsFiniteSupportRelation.size then
     throwError "@[hol]: fmap_as_finite_support_relation entries must be distinct"
   if !fmapAsFiniteSupportUniversals.isEmpty then
+    let hypothesis := name == "hypothesis_def" && fmapAsFiniteSupportUniversals == #["f"] &&
+      fmapAsFiniteSupportRelation == #[("BviState", "refs")] &&
+      fmapAsFiniteSupportExistentials == #["nextMap", "wrapMap", "workMap"]
+    let callBlock := name == "evaluate_cb" && fmapAsFiniteSupportUniversals == #["refs"] &&
+      fmapAsFiniteSupportRelation == #[("BviState", "refs"), ("", "f")] &&
+      fmapAsFiniteSupportExistentials == #["ordinaryMap", "wrapMap", "auxMap", "workMap"]
     unless path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" &&
-        name == "hypothesis_def" && line?.isNone &&
-        fmapAsFiniteSupportUniversals == #["f"] &&
-        fmapAsFiniteSupportRelation == #[("BviState", "refs")] &&
-        fmapAsFiniteSupportExistentials == #["nextMap", "wrapMap", "workMap"] do
-      throwError "@[hol]: universal maps require the reviewed TMC hypothesis and its exact map binders"
+        line?.isNone && (hypothesis || callBlock) do
+      throwError "@[hol]: universal maps require a reviewed TMC declaration and its exact map binders"
     if !listAsArray.isEmpty || !namesAsString.isEmpty || !namesAsStringBoundary.isEmpty ||
         !fmapAsFiniteSupport.isEmpty || fmapAsFiniteSupportResult ||
         !fmapAsFiniteSupportFunction.isEmpty || !fmapAsFiniteSupportTuple.isEmpty ||
@@ -1031,17 +1035,44 @@ def nestedListRelationDependenciesCached (env : Environment) (root : ConstantInf
 def nestedListRelationDependencies (env : Environment) (root : ConstantInfo) : Bool × Bool :=
   (nestedListRelationDependenciesCached env root {}).1
 
-initialize holRefAttribute : ParametricAttribute HolRef ←
-  registerParametricAttribute {
+/-- The call-block port relies on this exact imported hypothesis reference. -/
+def tmcHypothesisReferenceValid (ref : Option HolRef) : Bool :=
+  let expected : HolRef := {
+    path := "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+    name := "hypothesis_def",
+    fmapAsFiniteSupportRelation := #[("BviState", "refs")],
+    fmapAsFiniteSupportExistentials := #["nextMap", "wrapMap", "workMap"],
+    fmapAsFiniteSupportUniversals := #["f"] }
+  ref == some expected
+
+initialize holRefAttributeCell : IO.Ref (Option (ParametricAttribute HolRef)) ← IO.mkRef none
+
+/-- Fail closed if the attribute registry or its imported hypothesis entry is missing. -/
+def tmcHypothesisMetadataProblems (registered : Option (ParametricAttribute HolRef))
+    (env : Environment) : Array String :=
+  match registered with
+  | none => #["HOL attribute unavailable for TMC hypothesis metadata check"]
+  | some attr =>
+    if tmcHypothesisReferenceValid
+        (attr.getParam? env `Flapjack.Compiler.Backend.BviTmc.Induction.hypothesis) then #[]
+    else #["imported TMC hypothesis reference changed or missing"]
+
+initialize holRefAttribute : ParametricAttribute HolRef ← do
+  let attr ← registerParametricAttribute {
     name := `hol
     descr := "original HOL4 declaration (file path and declaration name) ported by this Lean declaration"
     getParam := fun _ stx => parseHolRefAttribute stx
     afterSet := fun decl ref => do
       if ref.path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" &&
-          ref.name == "hypothesis_def" && ref.fmapAsFiniteSupportUniversals.isEmpty then
-        logError m!"{decl}: TMC hypothesis requires its universal map qualifier"
+          (ref.name == "hypothesis_def" || ref.name == "evaluate_cb") &&
+          ref.fmapAsFiniteSupportUniversals.isEmpty then
+        logError m!"{decl}: TMC declaration requires its universal map qualifier"
       if !ref.fmapAsFiniteSupportUniversals.isEmpty then
-        let problems ← (tmcHypothesisDeclarationProblems decl).run'
+        if ref.name == "evaluate_cb" then
+          let metadataProblems := tmcHypothesisMetadataProblems (← holRefAttributeCell.get) (← getEnv)
+          for problem in metadataProblems do logError m!"{decl}: {problem}"
+        let problems ← (if ref.name == "hypothesis_def" then
+          tmcHypothesisDeclarationProblems decl else tmcCallBlockDeclarationProblems decl).run'
         for problem in problems do
           logError m!"{decl}: (fmap_as_finite_support_universals) {problem}"
       if !ref.nestedListRelAsMutual.isEmpty &&
@@ -1106,6 +1137,8 @@ initialize holRefAttribute : ParametricAttribute HolRef ←
               logError m!"{decl}: (words_as_type_indexed_bitvec) {problem}"
         | none => pure ()
   }
+  holRefAttributeCell.set (some attr)
+  return attr
 
 private def HolRef.qualifierSuffix (ref : HolRef) : String :=
   let listAsArray := if ref.listAsArray.isEmpty then "" else

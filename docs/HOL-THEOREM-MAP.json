@@ -142729,5 +142729,17 @@
     "fmap_as_finite_support_universals": ["f"],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source comparison with hypothesis_def_typed in bvi_tmc_proof_source_probe.out: independent compiler and FFI types, clock guard, complete simulation premise, ordinary nextMap result and the wrapper wrapMap and worker workMap conclusions are retained. The universal f, those three existential maps, and BviState.refs use the canonical finite-support representation with unconditional codec witnesses; their checked elaborated shapes do not replace HOL correspondence review. Evaluation inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+    "hol_name": "evaluate_cb",
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockCorrectness.lean",
+    "lean_name": "evaluate_cb",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_existentials_universals",
+    "fmap_as_finite_support_relation": ["BviState.refs", "f"],
+    "fmap_as_finite_support_existentials": ["ordinaryMap", "wrapMap", "auxMap", "workMap"],
+    "fmap_as_finite_support_universals": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison with evaluate_cb_typed in bvi_tmc_proof_source_probe.out: independent compiler, FFI and worker types, the complete premise, ordinary and wrapper simulations, auxiliary and worker executions and singleton-success relations are retained. BviState.refs, input f, universal refs, and existential ordinaryMap, wrapMap, auxMap and workMap use the canonical finite-support representation with unconditional codec witnesses. Evaluation inherits reals_as_rational_cuts (SOUNDNESS item 8)."
   }
 ]

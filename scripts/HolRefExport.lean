@@ -283,14 +283,18 @@ elab "#emit_hol_ref_export" : command => do
     | none => throwError "missing declaration {name}"
     | some info =>
         if ref.path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" &&
-            ref.name == "hypothesis_def" && ref.fmapAsFiniteSupportUniversals.isEmpty then
+            (ref.name == "hypothesis_def" || ref.name == "evaluate_cb") &&
+            ref.fmapAsFiniteSupportUniversals.isEmpty then
           throwError "missing TMC universal map qualifier on {name}"
         if !ref.fmapAsFiniteSupportUniversals.isEmpty then
-          unless ref.path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" &&
-              ref.name == "hypothesis_def" && ref.fmapAsFiniteSupportUniversals == #["f"] &&
+          let hypothesis := ref.name == "hypothesis_def" && ref.fmapAsFiniteSupportUniversals == #["f"] &&
               ref.fmapAsFiniteSupportRelation == #[("BviState", "refs")] &&
-              ref.fmapAsFiniteSupportExistentials == #["nextMap", "wrapMap", "workMap"] &&
-              ref.line?.isNone && ref.listAsArray.isEmpty && ref.namesAsString.isEmpty &&
+              ref.fmapAsFiniteSupportExistentials == #["nextMap", "wrapMap", "workMap"]
+          let callBlock := ref.name == "evaluate_cb" && ref.fmapAsFiniteSupportUniversals == #["refs"] &&
+              ref.fmapAsFiniteSupportRelation == #[("BviState", "refs"), ("", "f")] &&
+              ref.fmapAsFiniteSupportExistentials == #["ordinaryMap", "wrapMap", "auxMap", "workMap"]
+          unless ref.path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" &&
+              (hypothesis || callBlock) && ref.line?.isNone && ref.listAsArray.isEmpty && ref.namesAsString.isEmpty &&
               ref.namesAsStringBoundary.isEmpty && ref.fmapAsFiniteSupport.isEmpty &&
               !ref.fmapAsFiniteSupportResult && ref.fmapAsFiniteSupportFunction.isEmpty &&
               ref.fmapAsFiniteSupportTuple.isEmpty && ref.fmapAsFiniteSupportHeterogeneousFunction.isEmpty &&
@@ -300,7 +304,12 @@ elab "#emit_hol_ref_export" : command => do
               !ref.wordsAsTypeIndexedBitvec && ref.wordDimensionAsWidth.isNone &&
               ref.wordDimensionsAsWidths.isEmpty && !ref.realsAsRationalCuts && ref.nestedListRelAsMutual.isEmpty do
             throwError "invalid TMC universal map reference or binders on {name}"
-          let problems ← liftTermElabM (tmcHypothesisDeclarationProblems name)
+          if callBlock then
+            unless tmcHypothesisReferenceValid
+                (HolRef.get? env `Flapjack.Compiler.Backend.BviTmc.Induction.hypothesis) do
+              throwError "changed imported TMC hypothesis reference for {name}"
+          let problems ← liftTermElabM (if hypothesis then
+            tmcHypothesisDeclarationProblems name else tmcCallBlockDeclarationProblems name)
           unless problems.isEmpty do
             throwError "invalid TMC hypothesis {name}: {problems}"
         if !ref.fmapAsFiniteSupportParameterPredicateDomain.isEmpty then

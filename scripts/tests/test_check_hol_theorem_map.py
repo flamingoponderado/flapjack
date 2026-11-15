@@ -1688,6 +1688,30 @@ class ValidateInventoryTest(unittest.TestCase):
 
 
 class TmcUniversalStatusTest(unittest.TestCase):
+    def test_call_block_requires_its_exact_site_and_map_scopes(self):
+        key = ("Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockCorrectness.lean", "evaluate_cb")
+        record = {
+            "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+            "hol_name": "evaluate_cb", "lean_path": key[0], "lean_name": key[1],
+            "statement_status": "reviewed_fmap_as_finite_support_relation_existentials_universals",
+            "fmap_as_finite_support_relation": ["BviState.refs", "f"],
+            "fmap_as_finite_support_existentials": ["ordinaryMap", "wrapMap", "auxMap", "workMap"],
+            "fmap_as_finite_support_universals": ["refs"],
+            "reviewer": "Source comparison BviState.refs f refs ordinaryMap wrapMap auxMap workMap.",
+        }
+        tag = (record["hol_path"], record["hol_name"], (), (), (), (), False,
+               (("BviState", "refs"), ("f", "")), False, False, (),
+               ("ordinaryMap", "wrapMap", "auxMap", "workMap"), None, (), (), False,
+               False, (), (), (), (), (), ("refs",))
+        validate = MAP["validate_inventory"]
+        self.assertEqual(validate([record], set(), {key: tag}, set()), [])
+        for index in (7, 11, 22):
+            changed = list(tag)
+            changed[index] = ()
+            self.assertTrue(validate([record], set(), {key: tuple(changed)}, set()))
+        self.assertTrue(validate([{**record, "lean_name": "other"}], set(),
+                                 {(key[0], "other"): tag}, set()))
+
     def test_exact_site_and_all_map_qualifiers_are_required(self):
         key = ("Flapjack/Compiler/Backend/BviTmc/Proofs/Induction.lean", "hypothesis")
         record = {

@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.Induction
+import all Flapjack.Compiler.Backend.BviTmc.Proofs.Induction
 
 @[expose] public section
 
@@ -53,10 +54,12 @@ theorem holFmapAsFiniteSupportExistentialWitness_evaluate_cb_workMap
     FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad workMap) = workMap :=
   Induction.holFmapAsFiniteSupportExistentialWitness_evaluate_rewrite_tmc_workMap workMap
 
-/-- Source-shaped `evaluate_cb` from `bvi_tmcProofScript.sml`. This remains
-untagged pending review of the theorem's universally quantified reference map,
-input map, existential result maps, and BVI state reference representation.
-Evaluation inherits the rational-cuts real model (SOUNDNESS item 8). -/
+/-- Call-block simulation with canonical finite-map representations. Evaluation
+inherits the rational-cuts real model (SOUNDNESS item 8). -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_cb"
+  (fmap_as_finite_support_relation := [BviState.refs, f])
+  (fmap_as_finite_support_existentials := [ordinaryMap, wrapMap, auxMap, workMap])
+  (fmap_as_finite_support_universals := [refs])]
 theorem evaluate_cb {C F A : Type} (cb : CallBlock) (loc : Nat)
     (f : HolFiniteMapExact Nat Nat) (opt : Bool) (env1 env2 : List Value)
     (source : BviState (Nat × C) F) (target : BviState C F)

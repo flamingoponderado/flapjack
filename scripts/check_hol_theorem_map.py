@@ -1725,15 +1725,24 @@ def validate_inventory(
         if bool(fmap_universals) != (status == universal_status):
             errors.append(f"{key[0]}:{key[1]}: universal maps require their combined reviewed status")
         if fmap_universals:
-            expected_site = ("cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml", "hypothesis_def",
-                             "Flapjack/Compiler/Backend/BviTmc/Proofs/Induction.lean", "hypothesis")
-            if ((hol_path, hol_name, key[0], key[1]) != expected_site or fmap_universals != ("f",) or
-                    fmap_relation != (("BviState", "refs"),) or
-                    fmap_existentials != ("nextMap", "wrapMap", "workMap") or
-                    any(tag[2:7]) or any(tag[8:11]) or any(tag[12:22])):
+            hypothesis = ((hol_path, hol_name, key[0], key[1]) ==
+                          ("cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml", "hypothesis_def",
+                           "Flapjack/Compiler/Backend/BviTmc/Proofs/Induction.lean", "hypothesis") and
+                          fmap_universals == ("f",) and fmap_relation == (("BviState", "refs"),) and
+                          fmap_existentials == ("nextMap", "wrapMap", "workMap"))
+            call_block = ((hol_path, hol_name, key[0], key[1]) ==
+                          ("cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml", "evaluate_cb",
+                           "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockCorrectness.lean", "evaluate_cb") and
+                          fmap_universals == ("refs",) and
+                          fmap_relation == (("BviState", "refs"), ("f", "")) and
+                          fmap_existentials == ("ordinaryMap", "wrapMap", "auxMap", "workMap"))
+            if (not (hypothesis or call_block) or any(tag[2:7]) or
+                    any(tag[8:11]) or any(tag[12:22])):
                 errors.append(f"{key[0]}:{key[1]}: TMC universal qualifier requires its exact site and maps")
             if (not isinstance(reviewer, str) or "source" not in reviewer.lower() or
-                    any(name not in reviewer for name in ("BviState.refs", "nextMap", "wrapMap", "workMap"))):
+                    any(name not in reviewer for name in
+                        (("BviState.refs", "nextMap", "wrapMap", "workMap") if hypothesis else
+                         ("BviState.refs", "ordinaryMap", "wrapMap", "auxMap", "workMap", "refs")))):
                 errors.append(f"{key[0]}:{key[1]}: TMC universal map review must name its source and maps")
         predicate_status = "reviewed_fmap_as_finite_support_parameter_predicate_domain"
         if tuple(record.get("fmap_as_finite_support_parameter_predicate_domain", ())) != predicate_domain:

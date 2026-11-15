@@ -21,15 +21,36 @@ run_meta do
     throwError "TMC fixture attribute was not applied"
   unless ← Lean.Core.liftIOCore tmcFixtureCalled.get do
     throwError "TMC fixture attribute callback did not run"
+  let source := HolRef.get? (← getEnv) `Flapjack.Compiler.Backend.BviTmc.Induction.hypothesis
+  unless tmcHypothesisReferenceValid source do
+    throwError "actual TMC hypothesis reference rejected"
+  if tmcHypothesisReferenceValid none then
+    throwError "missing TMC hypothesis reference accepted"
+  unless (tmcHypothesisMetadataProblems none (← getEnv)).size == 1 do
+    throwError "missing TMC attribute registry was accepted"
+  let some source := source | throwError "missing TMC hypothesis reference"
+  if tmcHypothesisReferenceValid (some { source with name := "other" }) ||
+      tmcHypothesisReferenceValid (some { source with realsAsRationalCuts := true }) ||
+      tmcHypothesisReferenceValid (some { source with fmapAsFiniteSupportUniversals := #[] }) then
+    throwError "changed TMC hypothesis reference accepted"
 
 /--
-error: @[hol]: universal maps require the reviewed TMC hypothesis and its exact map binders
+error: @[hol]: universal maps require a reviewed TMC declaration and its exact map binders
 -/
 #guard_msgs in @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hypothesis_def"
   (fmap_as_finite_support_relation := [BviState.refs])
   (fmap_as_finite_support_existentials := [wrapMap, nextMap, workMap])
   (fmap_as_finite_support_universals := [f])]
 private def tmcWrongMapOrder : Nat := 0
+
+/--
+error: @[hol]: universal maps require a reviewed TMC declaration and its exact map binders
+-/
+#guard_msgs in @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_cb"
+  (fmap_as_finite_support_relation := [BviState.refs, f])
+  (fmap_as_finite_support_existentials := [ordinaryMap, wrapMap, workMap, auxMap])
+  (fmap_as_finite_support_universals := [refs])]
+private def tmcWrongCallBlockMapOrder : Nat := 0
 
 /--
 error: @[hol]: universal map qualifier may appear only once
