@@ -115,7 +115,7 @@ private theorem extractList_inl_shape (n loc tag : Nat) (args bs : List Bvi.Exp)
                     List.range ((y :: ys).length + 1)
                   rw [List.range_succ_eq_map]
                 · simp only [List.length_cons, List.length_nil, List.length_map, List.length_range,
-                    List.length_append, shiftVarsSource] at sizeBound ⊢
+                    List.length_append, shiftVars] at sizeBound ⊢
                   have := smallEnoughInt_nat_le sizeBound
                   omega
               next => simp at run

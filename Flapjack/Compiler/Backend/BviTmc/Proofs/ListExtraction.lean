@@ -171,7 +171,7 @@ theorem evaluate_head_call_case {C F : Type}
               · exact (evaluate_append_frame_error loc tag child _ _ next headState error
                   (extended tailValues)).trans original
               · intro extras
-                have frameError := evaluate_append_frame_error loc tag child (shiftVarsSource firstBs.length vs)
+                have frameError := evaluate_append_frame_error loc tag child (shiftVars firstBs.length vs)
                   (headValues ++ (tailValues ++ extras)) next headState error
                   (extended (tailValues ++ extras))
                 simpa [List.append_assoc] using frameError.trans original
@@ -198,23 +198,23 @@ theorem evaluate_head_call_case {C F : Type}
               simp [BviSem.evaluateTuple, argsRun, tailRun]
             have count := evaluate_length firstBs env state next values argsRun
             have rightRun (extras : List Value) (s : BviState C F) :
-                evaluate ((shiftVarsSource firstBs.length vs).map Bvi.Exp.var)
+                evaluate ((shiftVars firstBs.length vs).map Bvi.Exp.var)
                   ((values ++ tailValues) ++ extras) s = (.val tailValues, s) := by
               have extended := evaluate_vars_expand_env vs tailValues s tailValues extras (varsRun s)
               have shifted := evaluate_shift_vars vs (tailValues ++ extras) s values
-              simpa [shiftVarsSource, shiftVars, ← count, List.append_assoc, extended] using shifted
+              simpa [shiftVars, ← count, List.append_assoc, extended] using shifted
             refine ⟨.val (values ++ tailValues), next, bindingsRun, ?_, ?_⟩
             · intro actual eq; cases eq
               obtain ⟨frame, extended⟩ := success values rfl
               obtain ⟨v, same, appended⟩ := evaluate_append_frame_success loc tag child
-                (shiftVarsSource firstBs.length vs) tailValues (values ++ tailValues) next headState
+                (shiftVars firstBs.length vs) tailValues (values ++ tailValues) next headState
                 (.block tag [value]) (by simpa using rightRun []) (extended tailValues)
               cases same
               constructor
               · exact appended.trans original
               · intro extras
                 obtain ⟨v, same, appended⟩ := evaluate_append_frame_success loc tag child
-                  (shiftVarsSource firstBs.length vs) tailValues ((values ++ tailValues) ++ extras)
+                  (shiftVars firstBs.length vs) tailValues ((values ++ tailValues) ++ extras)
                   next headState (.block tag [value]) (rightRun extras)
                   (by simpa [List.append_assoc] using extended (tailValues ++ extras))
                 cases same

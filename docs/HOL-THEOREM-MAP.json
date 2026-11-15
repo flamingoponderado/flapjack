@@ -136485,14 +136485,6 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
-  "hol_name": "shift_vars_def",
-  "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ExtractCorrespondence.lean",
-  "lean_name": "shiftVarsSource",
-  "statement_status": "reviewed_exact",
-  "reviewer": "Compared shift_vars_def_typed with source lines 138-141: Lean defines shiftVarsSource as List.map (fun h => h + n); its empty and cons cases are the two HOL equations."
-},
-{
-  "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
   "hol_name": "bvi_to_cb_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ExtractCorrespondence.lean",
   "lean_name": "toBlockSource",
