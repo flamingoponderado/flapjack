@@ -11838,3 +11838,10 @@ run_probe sorting_typed_probeScript.sml sorting_typed_probe.out \
   PARTs_HAVE_PROP_typed PARTITION_DEF_typed SORTED_TL_typed \
   "$hol_dir/src/sort/sortingScript.sml" \
   "$hol_dir/src/sort"
+
+run_probe flat_props_local_typed_probeScript.sml flat_props_local_typed_probe.out \
+  build_rec_env_help_lem_typed do_app_add_to_clock_typed do_app_add_to_clock_NONE_typed \
+  check_type_LIST_REL_same_typed evaluate_decs_add_to_clock_initial_state_typed \
+  evaluate_decs_add_to_clock_initial_state_io_events_mono_typed initial_state_with_clock_typed \
+  "$cake_dir/compiler/backend/semantics/flatPropsScript.sml" \
+  "$cake_dir/compiler/backend/semantics"

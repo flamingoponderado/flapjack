@@ -515,6 +515,7 @@
     {"bytes": 10548, "out": "flat_pattern_typed_probe.out", "rows": 17, "sha256": "21da65a28d755e6d8a40d255656d1b5fcb6812ed6554ecbc48a62559190327c1"},
     {"bytes": 1093, "out": "flat_props_evaluate_match_probe.out", "rows": 3, "sha256": "8f4da80cebdbda0e8e147b4fd06e69a613f0225eadc56651252202a28dcfae4d"},
     {"bytes": 136, "out": "flat_props_globals_probe.out", "rows": 2, "sha256": "764c4f33d9dc6aab50e55f88d9b01ec4ccecb3b1ac2f55df4f3dcbd089a15811"},
+    {"bytes": 2062, "out": "flat_props_local_typed_probe.out", "rows": 7, "sha256": "2fb46005013cbd957680fc48d55d0232e955f01a81abf80acdaf5133f776c5fa"},
     {"bytes": 35517, "out": "flat_props_typed_probe.out", "rows": 84, "sha256": "5f63c2ec2a38898e2e065e9d156f9bd827d143d33683b8e0acfe388f1e3c43da"},
     {"bytes": 139304, "out": "flat_sem_typed_probe.out", "rows": 45, "sha256": "4b2a90ad2c3fe5281a1fb57ddb4d4d550f93e16815b286796b0a412d51be2745"},
     {"bytes": 17271, "out": "flat_to_clos_globals_probe.out", "rows": 42, "sha256": "a6706e73d9234b5bfabda995782a310918e667561d6d173db8a8f770ff4b012b"},

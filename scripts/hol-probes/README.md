@@ -10512,3 +10512,13 @@ from the theory DB; the source text in `$HOL4` is read only for the shared
 freshness contract. Regenerate with
 `CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=sorting_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`flat_props_local_typed_probe.out` (7 rows) captures the reviewed
+`flatPropsScript.sml` rows that earlier probes did not cover (task 186):
+`build_rec_env_help_lem`, `do_app_add_to_clock`, `do_app_add_to_clock_NONE`,
+`check_type_LIST_REL_same`, `evaluate_decs_add_to_clock_initial_state`,
+`evaluate_decs_add_to_clock_initial_state_io_events_mono` and
+`initial_state_with_clock`. All are `[local]`, so they are parsed from the
+pinned source with the splice-expanding helper. Regenerate with
+`CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=flat_props_local_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
