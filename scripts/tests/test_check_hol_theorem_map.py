@@ -777,9 +777,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             for record in MAP["build_inventory"]()
         }
         expected = {
-            "decCrepHolClockW": "dec_clock_def",
             "emptyCrepHolLocalsW": "empty_locals_def",
-            "fixCrepHolClockW": "fix_clock_def",
         }
         for lean_name, hol_name in expected.items():
             key = ("Flapjack/Pancake/Semantics/CrepSem.lean", lean_name)
@@ -793,6 +791,32 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                 self.assertIn("infinite", record["reviewer"])
                 self.assertTrue(MAP["lean_definition_exists"](MAP["ROOT"], *key))
                 self.assertNotIn(key, MAP["tagged_declarations"]())
+
+    def test_crep_clock_width_mirrors_are_retired(self):
+        # The raw-carrier width-indexed dec_clock/fix_clock mirrors are gone;
+        # HOL dec_clock_def and fix_clock_def are mapped by the tagged
+        # finite-support decClockCrepSemHOL and fixClockCrepSemHOL.
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        for lean_name in ("decCrepHolClockW", "fixCrepHolClockW"):
+            key = ("Flapjack/Pancake/Semantics/CrepSem.lean", lean_name)
+            with self.subTest(key=key):
+                self.assertNotIn(key, inventory)
+                self.assertFalse(MAP["lean_definition_exists"](MAP["ROOT"], *key))
+        twins = {
+            "decClockCrepSemHOL": "dec_clock_def",
+            "fixClockCrepSemHOL": "fix_clock_def",
+        }
+        for lean_name, hol_name in twins.items():
+            key = ("Flapjack/Pancake/Semantics/CrepSem/HOLState.lean", lean_name)
+            with self.subTest(key=key):
+                record = inventory[key]
+                self.assertEqual(record["hol_name"], hol_name)
+                self.assertNotEqual(record["statement_status"],
+                                    "documented_mismatch")
+                self.assertIn(key, MAP["tagged_declarations"]())
 
     def test_crep_fix_clock_imp_less_eq_carrier_mismatch_is_retired(self):
         # The width-indexed CrepHolState bound is gone; HOL fix_clock_IMP_LESS_EQ
