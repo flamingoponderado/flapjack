@@ -135685,6 +135685,27 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "hole_has_val_def", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "holeHasVal", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Source comparison: Compared hole_has_val_def_typed in bvi_tmc_proof_source_probe.out: the original optimized environment length, hole pointer, integer index, range exclusion, and complete mutable-block lookup with arbitrary finalisation flag. Named finite maps use canonical finite support and same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "hole_not_finalised_def", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "holeNotFinalised", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["refs"],
+  "reviewer": "Source comparison: Compared hole_not_finalised_def_typed in bvi_tmc_proof_source_probe.out: the independent pointer and value types and all original existential mutable-block fields with false finalisation. Named finite maps use canonical finite support and same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "only_fresh_def", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "onlyFresh", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "g", "refsOld"],
+  "reviewer": "Source comparison: Compared only_fresh_def_typed in bvi_tmc_proof_source_probe.out: the original range difference and old heap-domain exclusion with both concrete pointer maps and full reference values. Named finite maps use canonical finite support and same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "state_rel_filled", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/StateRelation.lean",
   "lean_name": "stateRel_filled", "statement_status": "reviewed_fmap_as_finite_support_relation",
   "fmap_as_finite_support_relation": ["BviState.refs", "f"],
