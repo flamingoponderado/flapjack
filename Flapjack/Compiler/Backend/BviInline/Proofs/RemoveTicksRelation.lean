@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviInline.Proofs.CompileSimulation
+public import Flapjack.Compiler.Backend.BviInline.Proofs.CodeLabels
 
 @[expose] public section
 
@@ -8,43 +9,65 @@ public import Flapjack.Compiler.Backend.BviInline.Proofs.CompileSimulation
 namespace Flapjack.Compiler.Backend.BviInline
 open BviSem BvlSem
 
-/-- Flapjack infrastructure: remove ticks from every labeled code entry. -/
-def cleanProg (program : List (Nat × Nat × Bvi.Exp)) : List (Nat × Nat × Bvi.Exp) :=
+namespace TickPrimitiveCarrier
+/-- The BVI reference-map representation has a canonical roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end TickPrimitiveCarrier
+
+/-- Remove ticks from each body while preserving arbitrary labels and arities. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "clean_prog_def"]
+def cleanProg {Label Arity : Type} (program : List (Label × Arity × Bvi.Exp)) : List (Label × Arity × Bvi.Exp) :=
   program.map fun (name, arity, body) => (name, arity, removeTicksSource body)
 
-/-- Flapjack infrastructure: tick cleanup preserves program labels. -/
-theorem cleanProg_names (program : List (Nat × Nat × Bvi.Exp)) :
-    (cleanProg program).map Prod.fst = program.map Prod.fst := by
-  induction program with
-  | nil => rfl
-  | cons entry rest ih =>
-    obtain ⟨name, arity, body⟩ := entry
-    simp [cleanProg, ← ih]
+/-- Empty and cons programs reduce by applying tick removal to each body. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "clean_prog_CONS"]
+theorem cleanProgCons {A B C D : Type} (entry : C × D × Bvi.Exp)
+    (rest : List (C × D × Bvi.Exp)) :
+    cleanProg ([] : List (A × B × Bvi.Exp)) = [] ∧
+      cleanProg (entry :: rest) = (entry.1, entry.2.1, removeTicksSource entry.2.2) :: cleanProg rest := by
+  cases entry with
+  | mk name pair => cases pair; exact ⟨rfl, rfl⟩
 
-/-- Flapjack infrastructure: tree conversion and association-list conversion
-commute with tick cleanup, including malformed sparse-tree shapes. -/
-theorem cleanProg_fromAList (program : List (Nat × Nat × Bvi.Exp)) :
-    sptMap (fun entry => (entry.1, removeTicksSource entry.2)) (sptFromAList program) =
-      sptFromAList (cleanProg program) := by
+/-- Tick cleanup preserves labels and commutes with sparse-tree conversion. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "clean_prog_simps"]
+theorem cleanProgSimps {Arity : Type} (program : List (Nat × Arity × Bvi.Exp)) :
+    (cleanProg program).map Prod.fst = program.map Prod.fst ∧
+      sptMap (fun entry => (entry.1, removeTicksSource entry.2)) (sptFromAList program) =
+        sptFromAList (cleanProg program) := by
+  refine ⟨Proofs.removeTicksProg_mapFst program, ?_⟩
   rw [sptMap_sptFromAList]
   rfl
 
-/-- Flapjack infrastructure: adapt the callback to remove ticks from each
-incoming code segment. -/
-def removeTicksCc {C : Type} (compiler : BviSem.Compiler C) : BviSem.Compiler C :=
+/-- Adapt a compiler callback to remove ticks from each incoming code segment. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "remove_ticks_cc_def"]
+def removeTicksCc {Cfg Label Arity Result : Type}
+    (compiler : Cfg → List (Label × Arity × Bvi.Exp) → Result) :
+    Cfg → List (Label × Arity × Bvi.Exp) → Result :=
   fun config program => compiler config (cleanProg program)
 
-/-- Flapjack infrastructure: remove ticks from each oracle code segment. -/
-def removeTicksCo {C : Type} (oracle : BviSem.CompileOracle C) : BviSem.CompileOracle C :=
-  fun index => ((oracle index).1, cleanProg (oracle index).2)
+/-- Remove ticks from the code component of an oracle entry. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "remove_ticks_co_def"]
+def removeTicksCo {Cfg Label Arity : Type}
+    (entry : Cfg × List (Label × Arity × Bvi.Exp)) :
+    Cfg × List (Label × Arity × Bvi.Exp) :=
+  (entry.1, cleanProg entry.2)
 
-/-- Flapjack infrastructure: state relation for tick cleanup. This remains
-untagged pending source evaluator and state-carrier review. -/
+/-- The source and target state relation for tick cleanup. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "remove_state_rel_def"
+  (fmap_as_finite_support := [refs])]
 def RemoveStateRel {C F : Type} (source target : BviState C F) : Prop :=
   target.refs = source.refs ∧ target.clock = source.clock ∧ target.global = source.global ∧
   target.ffi = source.ffi ∧
   target.code = sptMap (fun entry => (entry.1, removeTicksSource entry.2)) source.code ∧
-  target.compileOracle = removeTicksCo source.compileOracle ∧ source.compile = removeTicksCc target.compile
+  target.compileOracle = (removeTicksCo ∘ source.compileOracle) ∧ source.compile = removeTicksCc target.compile
+
+/-- Removing ticks from an empty expression list leaves it empty. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "remove_ticks_exps_NIL"]
+theorem removeTicksListNil : removeTicksListSource [] = [] := by
+  simp [removeTicksListSource]
 
 /-- Flapjack infrastructure: equal clock replacement preserves tick-cleanup
 state relatedness. -/
@@ -60,8 +83,9 @@ theorem removeStateRel_decClock {C F : Type} (source target : BviState C F)
     RemoveStateRel (BviSem.decClock ticks source) (BviSem.decClock ticks target) := by
   simpa [BviSem.decClock, states.2.1] using removeStateRel_with_clock source target states (source.clock - ticks)
 
-/-- Flapjack infrastructure: matching code lookup preserves arguments and
-removes ticks from the selected callee. -/
+/-- Matching code lookup preserves arguments and removes ticks from the selected callee. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "remove_state_rel_find_code_eq"
+  (fmap_as_finite_support := [refs])]
 theorem findCode_removeStateRel {C F : Type} (source target : BviState C F)
     (states : RemoveStateRel source target) (destination : Option Nat) (args : List Value) :
     findCode destination args target.code =
@@ -91,15 +115,6 @@ theorem findCode_removeStateRel {C F : Type} (source target : BviState C F)
           simp only [Option.map_some]
           split <;> rfl
       | _ => rfl
-
-/-- Flapjack infrastructure: cleaned programs start in tick-related states
-when their oracle and compiler callbacks are adapted in the same way. -/
-theorem removeStateRel_initial {C F : Type} (program : List (Nat × Nat × Bvi.Exp))
-    (oracle : BviSem.CompileOracle C) (compiler : BviSem.Compiler C)
-    (ffi : HolFfiState F) (clock : Nat) :
-    RemoveStateRel (initialState ffi (sptFromAList program) oracle (removeTicksCc compiler) clock)
-      (initialState ffi (sptFromAList (cleanProg program)) (removeTicksCo oracle) compiler clock) := by
-  exact ⟨rfl, rfl, rfl, rfl, (cleanProg_fromAList program).symm, rfl, rfl⟩
 
 /-- Flapjack infrastructure: a non-install primitive preserves the tick
 cleanup relation and transfers its result, including errors. -/
@@ -133,6 +148,19 @@ theorem removeStateRel_doApp_nonInstall {C F : Type} (source target : BviState C
       simpa [RemoveStateRel, BviSem.runtimeFrame, compiler, oracle, code] using states.2.2.2.2
     exact ⟨BviSem.runtimeFrame next target, by simpa [run, frameEq] using framed, nextRel⟩
 
+/-- Flapjack infrastructure: installation results have the same value and
+always use a type error across arbitrary error-payload types. This allows the
+generic HOL theorem to reuse the evaluator-specific installation proof. -/
+private theorem doInstall_retype {C F R S : Type} (args : List Value) (state : BviState C F) :
+    BviSem.doInstall (R := R) args state =
+      (match BviSem.doInstall (R := S) args state with
+       | .val pair => .val pair
+       | .err _ => .err (.abort .typeError)) := by
+  unfold BviSem.doInstall
+  repeat' split
+  all_goals simp_all
+  all_goals split at * <;> simp_all
+
 /-- Flapjack infrastructure: successful dynamic installation also preserves
 tick-cleanup state relatedness. -/
 theorem removeStateRel_doInstall_success {C F : Type} (source sourceNext target : BviState C F)
@@ -151,7 +179,7 @@ theorem removeStateRel_doInstall_success {C F : Type} (source sourceNext target 
     intro entry member
     have memberNames : entry.1 ∈ code.map Prod.fst := by
       have h : entry.1 ∈ cleaned.map Prod.fst := List.mem_map_of_mem member
-      simpa [cleaned, cleanProg_names] using h
+      simpa [cleaned, cleanProg, List.map_map, Function.comp_def] using h
     obtain ⟨original, originalMem, same⟩ := List.mem_map.mp memberNames
     have no := absent original (by simpa [code] using originalMem)
     cases found : sptLookup entry.1 target.code with
@@ -161,7 +189,7 @@ theorem removeStateRel_doInstall_success {C F : Type} (source sourceNext target 
       rw [← domains] at present
       have absentSource : sptLookup entry.1 source.code = none := by simpa [same] using no
       simp [sptDomain, absentSource] at present
-  have targetUnique : (cleaned.map Prod.fst).Nodup := by simpa [cleaned, cleanProg_names, code] using unique
+  have targetUnique : (cleaned.map Prod.fst).Nodup := by simpa [cleaned, cleanProg, List.map_map, Function.comp_def, code] using unique
   have targetOracle0 : target.compileOracle 0 = (config, cleaned) := by
     rw [states.2.2.2.2.2.1]
     simp [removeTicksCo, oracle0, cleaned, code]
@@ -189,7 +217,7 @@ theorem removeStateRel_doInstall_success {C F : Type} (source sourceNext target 
   · rw [stateEq]
     rcases states with ⟨refs, clock, global, ffi, codeRel, oracleRel, compilerRel⟩
     refine ⟨refs, clock, global, ffi, ?_, ?_, compilerRel⟩
-    · simp [code, cleaned, codeRel, sptMap_sptUnion, cleanProg_fromAList]
+    · simp [code, cleaned, codeRel, sptMap_sptUnion, (cleanProgSimps code).2]
     · funext n
       exact congrFun oracleRel (n + 1)
 
@@ -223,7 +251,9 @@ theorem removeStateRel_doInstall_success_reverse {C F : Type} (source target tar
       have keyEq : sourceKey = key := congrArg Prod.fst heads
       subst sourceKey
       have sourceUnique : (((key, sourceArity, sourceBody) :: tail).map Prod.fst).Nodup := by
-        have names := cleanProg_names ((key, sourceArity, sourceBody) :: tail)
+        have names : (cleanProg ((key, sourceArity, sourceBody) :: tail)).map Prod.fst =
+            ((key, sourceArity, sourceBody) :: tail).map Prod.fst :=
+          Proofs.removeTicksProg_mapFst ((key, sourceArity, sourceBody) :: tail)
         rw [codeEq] at names
         rw [heads, tails] at names
         rw [← names]
@@ -234,7 +264,9 @@ theorem removeStateRel_doInstall_success_reverse {C F : Type} (source target tar
         intro entry member
         have memberNames : entry.1 ∈ ((key, arity, body) :: rest).map Prod.fst := by
           have h : entry.1 ∈ (((key, sourceArity, sourceBody) :: tail).map Prod.fst) := List.mem_map_of_mem member
-          rw [← cleanProg_names ((key, sourceArity, sourceBody) :: tail), codeEq, heads, tails] at h
+          rw [← (show (cleanProg ((key, sourceArity, sourceBody) :: tail)).map Prod.fst =
+            ((key, sourceArity, sourceBody) :: tail).map Prod.fst from
+            Proofs.removeTicksProg_mapFst ((key, sourceArity, sourceBody) :: tail)), codeEq, heads, tails] at h
           exact h
         obtain ⟨other, otherMem, same⟩ := List.mem_map.mp memberNames
         have no := absent other otherMem
@@ -259,45 +291,62 @@ theorem removeStateRel_doInstall_success_reverse {C F : Type} (source target tar
       simp_all [BviSem.doInstall]
       exact sourceAbsent.2
 
-/-- Flapjack infrastructure: failed installation is unchanged by tick
-cleanup, including the type-error case. -/
-theorem removeStateRel_doInstall_error {C F : Type} (source target : BviState C F)
-    (args : List Value) (error : Flapjack.SemanticPrimitivesHOL.ErrorResult ExnOrRet)
-    (states : RemoveStateRel source target)
-    (run : BviSem.doInstall (R := ExnOrRet) args source = .err error) :
-    BviSem.doInstall (R := ExnOrRet) args target = .err error := by
-  have errorEq : error = .abort .typeError := BviTailrec.doApp_install_error args source error (by
-    simpa only [BviSem.doApp] using run)
-  cases targetRun : BviSem.doInstall (R := ExnOrRet) args target with
-  | err targetError =>
-    have targetEq : targetError = .abort .typeError := BviTailrec.doApp_install_error args target targetError (by
-      simpa only [BviSem.doApp] using targetRun)
-    simp [errorEq, targetEq]
+/-- Installation preserves the tick-cleanup relation, with independent
+success-branch error payload types. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "remove_state_rel_do_install"
+  (fmap_as_finite_support := [refs])]
+theorem removeStateRel_doInstall {C F A B : Type} (args : List Value)
+    (source target : BviState C F) (states : RemoveStateRel source target) :
+    match BviSem.doInstall (R := A) args source with
+    | .val (value, next) => ∃ targetNext,
+        BviSem.doInstall (R := B) args target = .val (value, targetNext) ∧ RemoveStateRel next targetNext
+    | .err error => BviSem.doInstall (R := A) args target = .err error := by
+  cases sourceRun : BviSem.doInstall (R := ExnOrRet) args source with
   | val pair =>
-    obtain ⟨targetValue, targetNext⟩ := pair
-    obtain ⟨sourceValue, sourceNext, sourceRun⟩ :=
-      removeStateRel_doInstall_success_reverse source target targetNext args targetValue states targetRun
-    rw [run] at sourceRun
-    contradiction
+    obtain ⟨value, next⟩ := pair
+    have sourceGeneric : BviSem.doInstall (R := A) args source = .val (value, next) := by
+      rw [doInstall_retype (S := ExnOrRet), sourceRun]
+    simp only [sourceGeneric]
+    obtain ⟨targetNext, targetFixed, relation⟩ :=
+      removeStateRel_doInstall_success source next target args value states sourceRun
+    refine ⟨targetNext, ?_, relation⟩
+    rw [doInstall_retype (R := B) (S := ExnOrRet), targetFixed]
+  | err error =>
+    have errorEq := doInstall_error_type args source error sourceRun
+    subst error
+    have sourceGeneric : BviSem.doInstall (R := A) args source = .err (.abort .typeError) := by
+      rw [doInstall_retype (S := ExnOrRet), sourceRun]
+    simp only [sourceGeneric]
+    cases targetRun : BviSem.doInstall (R := ExnOrRet) args target with
+    | err targetError =>
+      have targetEq := doInstall_error_type args target targetError targetRun
+      rw [doInstall_retype (R := A) (S := ExnOrRet), targetRun, targetEq]
+    | val pair =>
+      obtain ⟨targetValue, targetNext⟩ := pair
+      obtain ⟨sourceValue, sourceNext, success⟩ :=
+        removeStateRel_doInstall_success_reverse source target targetNext args targetValue states targetRun
+      rw [sourceRun] at success
+      contradiction
 
-/-- Flapjack infrastructure: every primitive operation transfers through the
-tick-cleanup relation, preserving both successful results and errors. -/
-theorem removeStateRel_doApp {C F : Type} (source target : BviState C F)
-    (states : RemoveStateRel source target) (op : ClosLang.Op) (args : List Value) :
+/-- Every primitive operation transfers through the tick-cleanup relation,
+preserving both successful results and errors. The dispatcher inherits the
+real-model assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "remove_state_rel_do_app"
+  (fmap_as_finite_support := [refs])]
+theorem removeStateRel_doApp {C F : Type} (op : ClosLang.Op) (args : List Value)
+    (source target : BviState C F) (states : RemoveStateRel source target) :
     match BviSem.doApp op args source with
     | .err error => BviSem.doApp op args target = .err error
     | .val (value, next) => ∃ targetNext, BviSem.doApp op args target = .val (value, targetNext) ∧
         RemoveStateRel next targetNext := by
   by_cases install : op = .install
   · subst op
-    cases run : BviSem.doApp .install args source with
-    | err error =>
-      exact removeStateRel_doInstall_error source target args error states (by simpa only [BviSem.doApp] using run)
+    have transfer := removeStateRel_doInstall (A := ExnOrRet) (B := ExnOrRet) args source target states
+    cases run : BviSem.doInstall (R := ExnOrRet) args source with
+    | err error => simpa only [BviSem.doApp, run] using transfer
     | val pair =>
       obtain ⟨value, next⟩ := pair
-      obtain ⟨targetNext, targetRun, nextRel⟩ := removeStateRel_doInstall_success source next target args value states
-        (by simpa only [BviSem.doApp] using run)
-      exact ⟨targetNext, by simpa only [BviSem.doApp] using targetRun, nextRel⟩
+      simpa only [BviSem.doApp, run] using transfer
   · exact removeStateRel_doApp_nonInstall source target states op args install
 
 /-- Flapjack infrastructure: primitive simulation also works from the
@@ -308,7 +357,7 @@ theorem removeStateRel_doApp_reverse {C F : Type} (source target : BviState C F)
     | .err error => BviSem.doApp op args source = .err error
     | .val (value, next) => ∃ sourceNext, BviSem.doApp op args source = .val (value, sourceNext) ∧
         RemoveStateRel sourceNext next := by
-  have forward := removeStateRel_doApp source target states op args
+  have forward := removeStateRel_doApp op args source target states
   cases sourceRun : BviSem.doApp op args source with
   | err error =>
     rw [sourceRun] at forward

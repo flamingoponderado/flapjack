@@ -36,7 +36,11 @@ theorem evaluateOk_bounded {C F : Type} (clock : Nat) :
           exact weightIH (expsWeight expressions) lt expressions rfl
         intro expressions measure
         cases expressions with
-        | nil => exact evaluateOk_nil clock
+        | nil =>
+          intro env s t result clockLe run ok envOk
+          simp [BvlSem.evaluate] at run
+          rcases run with ⟨rfl, rfl⟩
+          exact ⟨ok, by simp [evalResultOk, bvOkList], envOk⟩
         | cons first rest =>
           cases rest with
           | cons second tail =>
@@ -45,7 +49,19 @@ theorem evaluateOk_bounded {C F : Type} (clock : Nat) :
             · apply smaller; simp only [expsWeight] at measure ⊢; omega
           | nil =>
             cases first with
-            | var index => exact evaluateOk_var clock index
+            | var index =>
+              intro env s t result clockLe run ok envOk
+              cases lookup : env[index]? with
+              | none =>
+                simp [BvlSem.evaluate, lookup] at run
+                rcases run with ⟨rfl, rfl⟩
+                exact ⟨ok, trivial, envOk⟩
+              | some value =>
+                simp [BvlSem.evaluate, lookup] at run
+                rcases run with ⟨rfl, rfl⟩
+                exact ⟨ok, by
+                  simp only [evalResultOk, bvOkList, and_true]
+                  exact (bvOkList_iff _ _).1 envOk value (List.mem_of_getElem? lookup), envOk⟩
             | ifThenElse condition yes no =>
               apply evaluateOk_if clock condition yes no
               all_goals apply smaller

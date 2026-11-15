@@ -14,34 +14,6 @@ open Flapjack.Compiler.Backend.ClosSem
 open Flapjack.Compiler.Backend.ClosProps
 open Flapjack.SemanticPrimitivesHOL (Result)
 
-/-- Indexing related lists gives related optional entries. This is Flapjack
-infrastructure for recursive closure inspection. -/
-theorem list_lookup_related {A B : Type} {relation : A → B → Prop} {left : List A} {right : List B}
-    (related : List.Forall₂ relation left right) (index : Nat) :
-    Flapjack.optionRel relation left[index]? right[index]? := by
-  induction related generalizing index with
-  | nil => simp [Flapjack.optionRel]
-  | cons head tail ih =>
-    cases index with
-    | zero => simpa [Flapjack.optionRel] using head
-    | succ index => simpa using ih index
-
-/-- Related recursive bundles yield related closures at each index. This is
-Flapjack infrastructure for recursive closure inspection. -/
-theorem recursive_bundle_related (location : Option Nat) (env nextEnv : List Value)
-    (functions nextFunctions : List (Nat × ClosLang.Exp))
-    (environments : List.Forall₂ ValueRel env nextEnv)
-    (bodies : List.Forall₂ FunctionRel functions nextFunctions) :
-    List.Forall₂ ValueRel
-      ((List.range functions.length).map (fun i => Value.recclosure location [] env functions i))
-      ((List.range nextFunctions.length).map (fun i => Value.recclosure location [] nextEnv nextFunctions i)) := by
-  rw [← bodies.length_eq]
-  generalize List.range functions.length = indices
-  induction indices with
-  | nil => exact .nil
-  | cons index rest ih =>
-    exact .cons (.recclosure location [] [] env nextEnv functions nextFunctions index environments .nil bodies) ih
-
 /-- Successful closure inspection only accepts a closure or recursive closure. -/
 @[hol "cakeml/compiler/backend/proofs/clos_ticksProofScript.sml" "dest_closure_SOME_IMP"]
 theorem destClosure_some_shape (maxApp : Nat) (location : Option Nat) (function : Value)
@@ -68,7 +40,7 @@ theorem destClosure_none_related (maxApp : Nat) (requested : Option Nat)
           supplied.length < arity) := by simpa [argsRel.length_eq, suppliedRel.length_eq] using valid
       rw [destClosure_closure_source, if_neg sourceInvalid]
   | recclosure location supplied nextSupplied env nextEnv functions nextFunctions index envRel suppliedRel functionsRel =>
-    have lookup := list_lookup_related functionsRel index
+    have lookup := Flapjack.forall₂_lookupRel functionsRel index
     cases targetFound : nextFunctions[index]? with
     | none =>
       cases found : functions[index]? with
@@ -122,7 +94,7 @@ theorem destClosure_partial_related (maxApp : Nat) (requested : Option Nat)
     · rw [destClosure_closure_source, if_neg valid] at run
       contradiction
   | recclosure location supplied nextSupplied env nextEnv functions nextFunctions index envRel suppliedRel functionsRel =>
-    have lookup := list_lookup_related functionsRel index
+    have lookup := Flapjack.forall₂_lookupRel functionsRel index
     cases targetFound : nextFunctions[index]? with
     | none => simp [destClosure, targetFound] at run
     | some targetEntry =>
@@ -194,7 +166,7 @@ theorem destClosure_full_related (maxApp : Nat) (requested : Option Nat)
     · rw [destClosure_closure_source, if_neg valid] at run
       contradiction
   | recclosure location supplied nextSupplied captured nextCaptured sourceFunctions targetFunctions index envRel suppliedRel functionsRel =>
-    have lookup := list_lookup_related functionsRel index
+    have lookup := Flapjack.forall₂_lookupRel functionsRel index
     cases targetFound : targetFunctions[index]? with
     | none => simp [destClosure, targetFound] at run
     | some targetEntry =>
@@ -247,19 +219,12 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   ClosSem.holFmapAsFiniteSupportWitness
 end ApplyPort
 
-/-- Setting both clocks equally preserves related states. This is Flapjack
-infrastructure for the application simulation. -/
-theorem stateRel_clock {C F : Type} (source target : State C F) (clock : Nat) (related : StateRel source target) :
-    StateRel { source with clock := clock } { target with clock := clock } := by
-  obtain ⟨aux, codeS, codeT, maxApp, positive, _, ffi, globals, refs, compiler, oracle⟩ := related
-  exact ⟨aux, codeS, codeT, maxApp, positive, rfl, ffi, globals, refs, compiler, oracle⟩
-
 /-- Equal clock decrements preserve related states. This is Flapjack
 infrastructure for the application simulation. -/
 theorem stateRel_dec {C F : Type} (source target : State C F) (amount : Nat) (related : StateRel source target) :
     StateRel (decClock amount source) (decClock amount target) := by
-  have clocks : target.clock = source.clock := related.2.2.2.2.2.1
-  simpa [decClock, clocks] using stateRel_clock source target (source.clock - amount) related
+  have clocks : target.clock = source.clock := (state_rel_clock_eqs source target related).symm
+  simpa [decClock, clocks] using ((state_rel_clock source target (source.clock - amount)).2 (by simpa [← clocks] using related))
 
 /-- Reverse expression simulation at a fixed target configuration. This is
 Flapjack infrastructure for the mutual evaluator induction. -/
@@ -323,7 +288,7 @@ theorem evaluate_remove_ticks_app_cons {C F : Type} (location : Option Nat) (fun
     rename_i sourceArg sourceTail
     have allArgs : List.Forall₂ ValueRel (sourceArg :: sourceTail) (arg :: args) := .cons argRel tailRel
     have maxEq : target.maxApp = source.maxApp := states.2.2.2.1
-    have clockEq : target.clock = source.clock := states.2.2.2.2.2.1
+    have clockEq : target.clock = source.clock := (state_rel_clock_eqs source target states).symm
     cases closureRun : destClosure target.maxApp location function (arg :: args) with
     | none =>
       have sourceClosure := destClosure_none_related target.maxApp location sourceFunction function
@@ -352,7 +317,7 @@ theorem evaluate_remove_ticks_app_cons {C F : Type} (location : Option Nat) (fun
           rw [if_pos short] at run
           cases run
           refine ⟨0, .err (.abort .timeoutError), { source with clock := 0 }, ?_, rfl,
-            stateRel_clock source target 0 states⟩
+            ((state_rel_clock source target 0).2 (by simpa [← states.2.2.2.2.2.1] using states))⟩
           simpa using (show evaluateApp location sourceFunction (sourceArg :: sourceTail) source =
               (.err (.abort .timeoutError), { source with clock := 0 }) by
             rw [evaluateApp, sourceFound]; dsimp only; rw [if_pos sourceShort]; rfl)
@@ -385,7 +350,7 @@ theorem evaluate_remove_ticks_app_cons {C F : Type} (location : Option Nat) (fun
           rw [if_pos short] at run
           cases run
           refine ⟨0, .err (.abort .timeoutError), { source with clock := 0 }, ?_, rfl,
-            stateRel_clock source target 0 states⟩
+            ((state_rel_clock source target 0).2 (by simpa [← states.2.2.2.2.2.1] using states))⟩
           simpa using (show evaluateApp location sourceFunction (sourceArg :: sourceTail) source =
               (.err (.abort .timeoutError), { source with clock := 0 }) by
             rw [evaluateApp, sourceFound]; dsimp only; rw [if_pos sourceShort]; rfl)

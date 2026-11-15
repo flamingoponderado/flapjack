@@ -8,27 +8,43 @@ public import Flapjack.Compiler.Backend.BviInline.Proofs.EvaluateInduction
 namespace Flapjack.Compiler.Backend.BviInline
 open BviSem BackendProps
 
-/-- Flapjack infrastructure: starting with an empty inlining cache produces
-related initial states when the oracle begins with the resulting cache and
-program labels are distinct. HOL carrier review remains pending. -/
-theorem inline_initial_state_rel {C F : Type} (program output : List (Nat × Nat × Bvi.Exp))
-    (cache : Spt (Nat × Bvi.Exp)) (oracle : BviSem.CompileOracle (Spt (Nat × Bvi.Exp) × C))
+namespace InlineCompilerCarrier
+/-- The BVI reference-map representation has a canonical roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end InlineCompilerCarrier
+
+/-- Inlining from an empty cache yields related initial states when the
+oracle starts with the resulting cache and program labels are distinct. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "inline_initial_state_rel"
+  (fmap_as_finite_support := [refs])]
+theorem inline_initial_state_rel {C F : Type} (program : List (Nat × Nat × Bvi.Exp))
+    (cache : Spt (Nat × Bvi.Exp)) (output : List (Nat × Nat × Bvi.Exp))
+    (oracle : BviSem.CompileOracle (Spt (Nat × Bvi.Exp) × C))
     (ffi : HolFfiState F) (compiler : BviSem.Compiler C) (clock : Nat)
-    (run : inlineAllSource .ln program = (cache, output))
-    (oracleCache : (oracle 0).1.1 = cache) (distinct : (program.map Prod.fst).Nodup) :
-    InStateRel (initialState ffi (sptFromAList program) oracle (inCc compiler) clock)
-      (initialState ffi (sptFromAList output) (inCo oracle) compiler clock) := by
+    (premises : inlineAllSource .ln program = (cache, output) ∧
+      (oracle 0).1.1 = cache ∧ (program.map Prod.fst).Nodup) :
+    InStateRel
+      (initialState ffi (sptFromAList program) oracle (stateCc inlineAllSource compiler) clock :
+        BviState (Spt (Nat × Bvi.Exp) × C) F)
+      (initialState ffi (sptFromAList output) (stateCo inlineAllSource oracle) compiler clock) := by
+  obtain ⟨run, oracleCache, distinct⟩ := premises
   have emptySubset : sptSubspt (.ln : Spt (Nat × Bvi.Exp)) .ln := by
     rw [sptSubsptLookup]
     simp [sptLookup]
   have disjoint : ∀ key, sptMem key (.ln : Spt (Nat × Bvi.Exp)) → key ∉ program.map Prod.fst := by
     intro key present
     simp [sptMem, sptDomain, sptLookup] at present
-  have range := inlineAllSource_cache_subspt program .ln .ln distinct emptySubset disjoint
-  have names := inlineAllSource_names program .ln
-  have codeRelation := inlineAllSource_related program .ln .ln distinct emptySubset disjoint
+  have names := Proofs.inlineAll_mapFst .ln program
+  have disjointSet : Disjoint {key | key ∈ program.map Prod.fst}
+      (sptDomain (.ln : Spt (Nat × Bvi.Exp))) :=
+    Set.disjoint_left.mpr (fun key member present => disjoint key present member)
+  have range := inlineAllCacheSubspt program .ln .ln cache output
+    ⟨run, emptySubset, disjointSet, distinct⟩
   have outputNames : output.map Prod.fst = program.map Prod.fst := by simpa [run] using names
-  have cacheSub : sptSubspt cache (sptFromAList output) := by simpa [run, sptUnion] using range
+  have cacheSub : sptSubspt cache (sptFromAList output) := by simpa [sptUnion] using range
   have domains : sptDomain (sptFromAList output) = sptDomain (sptFromAList program) := by
     funext key
     apply propext
@@ -39,52 +55,35 @@ theorem inline_initial_state_rel {C F : Type} (program output : List (Nat × Nat
   · intro name arity body found
     have association : sptAListLookup name program = some (arity, body) := by
       simpa [initialState, sptLookup_sptFromAList] using found
-    obtain ⟨transformed, outputFound, relation⟩ := codeRelation name arity body association
+    obtain ⟨transformed, outputFound, relation⟩ :=
+      inlineAllALookup program .ln .ln cache output name arity body
+        ⟨run, emptySubset, disjointSet, distinct, association⟩
     refine ⟨transformed, ?_, ?_⟩
-    · simpa [initialState, sptLookup_sptFromAList, run] using outputFound
-    · simpa [initialState, sptUnion, run] using relation
+    · simpa [initialState, sptLookup_sptFromAList] using outputFound
+    · simpa [initialState, sptUnion] using relation
 
-/-- Flapjack infrastructure: running the initial call after the inlining
-stage preserves its non-type-error result and produces related states. This
-does not yet include the subsequent tick-removal stage. -/
-theorem evaluate_inline_compile {C F : Type} (program output : List (Nat × Nat × Bvi.Exp))
-    (cache : Spt (Nat × Bvi.Exp)) (oracle : BviSem.CompileOracle (Spt (Nat × Bvi.Exp) × C))
-    (ffi : HolFfiState F) (compiler : BviSem.Compiler C) (clock start : Nat)
-    (result : BviResult) (sourceNext : BviState (Spt (Nat × Bvi.Exp) × C) F)
-    (run : inlineAllSource .ln program = (cache, output))
-    (oracleCache : (oracle 0).1.1 = cache) (distinct : (program.map Prod.fst).Nodup)
-    (evaluation : evaluate [.call 0 (some start) [] none] []
-      (initialState ffi (sptFromAList program) oracle (inCc compiler) clock) = (result, sourceNext))
-    (notType : result ≠ .err (.abort .typeError)) :
-    ∃ targetNext, evaluate [.call 0 (some start) [] none] []
-      (initialState ffi (sptFromAList output) (inCo oracle) compiler clock) = (result, targetNext) ∧
-      InStateRel sourceNext targetNext := by
-  apply EvaluateCases.evaluate_inline_result _ _ _ _ sourceNext _ result
-    (inline_initial_state_rel program output cache oracle ffi compiler clock run oracleCache distinct)
-    _ evaluation notType
-  exact .cons (expRel_refl _ _) .nil
-
-/-- Flapjack infrastructure: the production fuelled inlining stage has the
-same initial-call simulation, for any supplied fuel. The later tick cleanup
-still requires its separate semantics proof. -/
-theorem evaluate_inlineFuel_compile {C F : Type} (fuel : Nat)
-    (program output : List (Nat × Nat × Bvi.Exp)) (cache : Spt (Nat × Bvi.Exp))
+/-- Initial-call execution through inlining preserves any result other than
+    a type error and produces related final states. The evaluator inherits
+    the real-model assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "evaluate_inline_compile"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_inline_compile {C F : Type} (program : List (Nat × Nat × Bvi.Exp))
+    (cache : Spt (Nat × Bvi.Exp)) (output : List (Nat × Nat × Bvi.Exp))
     (oracle : BviSem.CompileOracle (Spt (Nat × Bvi.Exp) × C))
     (ffi : HolFfiState F) (compiler : BviSem.Compiler C) (clock start : Nat)
     (result : BviResult) (sourceNext : BviState (Spt (Nat × Bvi.Exp) × C) F)
-    (run : inlineAllFuel fuel .ln program = some (cache, output))
-    (oracleCache : (oracle 0).1.1 = cache) (distinct : (program.map Prod.fst).Nodup)
-    (evaluation : evaluate [.call 0 (some start) [] none] []
-      (initialState ffi (sptFromAList program) oracle (inCc compiler) clock) = (result, sourceNext))
-    (notType : result ≠ .err (.abort .typeError)) :
-    ∃ targetNext, evaluate [.call 0 (some start) [] none] []
-      (initialState ffi (sptFromAList output) (inCo oracle) compiler clock) = (result, targetNext) ∧
-      InStateRel sourceNext targetNext := by
-  have sourceRun : inlineAllSource .ln program = (cache, output) := by
-    have equality := inlineAllFuel_eq_source fuel .ln program
-    rw [run] at equality
-    exact (Option.some.inj equality).symm
-  exact evaluate_inline_compile program output cache oracle ffi compiler clock start result sourceNext
-    sourceRun oracleCache distinct evaluation notType
+    (premises : inlineAllSource .ln program = (cache, output) ∧
+      (oracle 0).1.1 = cache ∧ (program.map Prod.fst).Nodup ∧
+      evaluateTuple ([.call 0 (some start) [] none], [],
+        initialState ffi (sptFromAList program) oracle (stateCc inlineAllSource compiler) clock) =
+          (result, sourceNext) ∧ result ≠ .err (.abort .typeError)) :
+    ∃ targetNext, evaluateTuple ([.call 0 (some start) [] none], [],
+      initialState ffi (sptFromAList output) (stateCo inlineAllSource oracle) compiler clock) =
+        (result, targetNext) ∧ InStateRel sourceNext targetNext := by
+  obtain ⟨run, oracleCache, distinct, evaluation, notType⟩ := premises
+  apply EvaluateCases.evaluate_inline _ _ _ result sourceNext _ _
+  exact ⟨inline_initial_state_rel program cache output oracle ffi compiler clock ⟨run, oracleCache, distinct⟩,
+    .cons (expRel_refl _ _) .nil, evaluation, notType⟩
+
 
 end Flapjack.Compiler.Backend.BviInline

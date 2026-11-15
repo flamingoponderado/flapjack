@@ -18,20 +18,6 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
   BvlSem.holFmapAsFiniteSupportWitness
 end SimulationCarrier
 
-/-- Related states have identical code domains. -/
-theorem stateRel_codeDomain {C F : Type} (s t : State C F) (related : stateRel s t) :
-    sptDomain t.code = sptDomain s.code := by
-  have code := congrArg (fun state : State C F => state.code) related.1
-  rw [code, sptDomain_sptMap]
-
-/-- Replace a transformed state's code fields to recover its source state. -/
-theorem stateRel_unframe {C F : Type} (s t : State C F) (related : stateRel s t) :
-    { t with code := s.code, compile := s.compile, compileOracle := s.compileOracle } = s := by
-  have fields := stateRel_fields s t related
-  cases s
-  cases t
-  simp_all
-
 /-- A state that retains transformed code fields can be paired with its
 source-framed counterpart. -/
 theorem stateRel_reframe {C F : Type} (s t next : State C F) (related : stateRel s t)
@@ -54,8 +40,14 @@ theorem doAppSimulation_nonInstall {C F : Type} (s t : State C F)
     | .err error => doApp op args s = .err error
     | .val (value, next) => ∃ sourceNext, stateRel sourceNext next ∧
         doApp op args s = .val (value, sourceNext) := by
-  have domains := stateRel_codeDomain s t related
-  have unframe := stateRel_unframe s t related
+  have domains : sptDomain t.code = sptDomain s.code := by
+    have code := congrArg (fun state : State C F => state.code) related.1
+    rw [code, sptDomain_sptMap]
+  have unframe : { t with code := s.code, compile := s.compile, compileOracle := s.compileOracle } = s := by
+    have fields := stateRel_fields s t related
+    cases s
+    cases t
+    simp_all
   cases run : doApp op args t with
   | err error =>
     have errorRun := doApp_withCodeErr op args t error s.code s.compile s.compileOracle
@@ -67,12 +59,6 @@ theorem doAppSimulation_nonInstall {C F : Type} (s t : State C F)
     have successRun := doApp_withCode op args t next value s.code s.compile s.compileOracle
       run notInstall (by intro key present; rwa [domains] at present)
     exact ⟨_, stateRel_reframe s t next related frame, by simpa [unframe] using successRun⟩
-
-/-- The transformed oracle retains exactly the original entry labels. -/
-theorem tickRemoved_program_labels (program : List (Nat × Nat × Bvl.Exp)) :
-    (program.map (fun (name, arity, body) => (name, arity, removeTicksSing body))).map Prod.fst =
-      program.map Prod.fst := by
-  simp [List.map_map, Function.comp_def]
 
 /-- A mapped program is disjoint from mapped code exactly when the original
 program is disjoint from the original code. -/
@@ -88,15 +74,6 @@ theorem tickRemoved_program_disjoint (code : Spt (Nat × Bvl.Exp))
   · intro h entry ⟨original, mem, equal⟩
     subst entry
     exact h original mem
-
-/-- Installing mapped program entries yields the mapped union of the source
-code and installed program. -/
-theorem tickRemoved_code_union (code : Spt (Nat × Bvl.Exp))
-    (program : List (Nat × Nat × Bvl.Exp)) :
-    sptUnion (sptMap (fun (arity, body) => (arity, removeTicksSing body)) code)
-      (sptFromAList (program.map fun (name, arity, body) => (name, arity, removeTicksSing body))) =
-    sptMap (fun (arity, body) => (arity, removeTicksSing body)) (sptUnion code (sptFromAList program)) := by
-  rw [sptMap_sptUnion, sptMap_sptFromAList]
 
 /-- Installation simulation under the tick-removal state relation. -/
 theorem doInstallSimulation {C F : Type} (s t : State C F) (related : stateRel s t)
@@ -126,7 +103,7 @@ theorem doInstallSimulation {C F : Type} (s t : State C F) (related : stateRel s
             rw [fields]
             clear fields related
             simp only [doInstall, bytesEq, wordsEq, compilerEq, tickRemoved_program_disjoint,
-              tickRemoved_program_labels]
+              List.map_map, Function.comp_def]
             clear compilerEq
             cases programs : (s.compileOracle 0).2 with
             | nil =>
@@ -151,7 +128,7 @@ theorem doInstallSimulation {C F : Type} (s t : State C F) (related : stateRel s
                   by_cases same : bytes = bs ∧ words = ws ∧ (s.compileOracle 1).1 = cfg
                   · simp_all
                     rw [if_pos tailFree, if_pos tailFree]
-                    simp [stateRel, ← tickRemoved_code_union]
+                    simp [stateRel, sptMap_sptUnion, sptMap_sptFromAList]
                   · simp_all
                     rw [if_pos tailFree, if_pos tailFree]
                     have notSame : ¬(bytes = bs ∧ words = ws ∧ (s.compileOracle 1).1 = cfg) := by aesop

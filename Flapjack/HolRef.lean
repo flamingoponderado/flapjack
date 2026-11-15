@@ -476,11 +476,17 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
   if !nestedListRelAsMutual.isEmpty then
     unless nestedListRelAsMutual == #["FunctionsRel"] do
       throwError "@[hol]: nested_list_rel_as_mutual is restricted to the reviewed closure relation"
+    let annotateThunkMaps :=
+      path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" &&
+      name == "rel_update_thunk" &&
+      fmapAsFiniteSupportRelation == #[("State", "refs"), ("State", "code"), ("", "sourceRefs")] &&
+      fmapAsFiniteSupportExistentials == #["targetRefs"] && fmapAsFiniteSupport.isEmpty
     if !listAsArray.isEmpty || !namesAsString.isEmpty || !namesAsStringBoundary.isEmpty ||
         (!fmapAsFiniteSupport.isEmpty && fmapAsFiniteSupport != #["refs", "code"]) || fmapAsFiniteSupportResult ||
         !fmapAsFiniteSupportFunction.isEmpty || !fmapAsFiniteSupportTuple.isEmpty ||
         !fmapAsFiniteSupportHeterogeneousFunction.isEmpty || !fmapAsFiniteSupportParameters.isEmpty ||
-        !fmapAsFiniteSupportExistentials.isEmpty || !fmapAsFiniteSupportRelation.isEmpty ||
+        (!fmapAsFiniteSupportExistentials.isEmpty && !annotateThunkMaps) ||
+        (!fmapAsFiniteSupportRelation.isEmpty && !annotateThunkMaps) ||
         fmapAsFiniteSupportEqualities || fmapAsFiniteSupportEquality ||
         !fmapAsFiniteSupportResultObservations.isEmpty || wordsAsTypeIndexedBitvec ||
         wordDimensionAsWidth.isSome || !wordDimensionsAsWidths.isEmpty || realsAsRationalCuts then
@@ -998,6 +1004,10 @@ initialize holRefAttribute : ParametricAttribute HolRef ←
     descr := "original HOL4 declaration (file path and declaration name) ported by this Lean declaration"
     getParam := fun _ stx => parseHolRefAttribute stx
     afterSet := fun decl ref => do
+      if !ref.nestedListRelAsMutual.isEmpty &&
+          (!ref.fmapAsFiniteSupportRelation.isEmpty || !ref.fmapAsFiniteSupportExistentials.isEmpty) then
+        unless decl == `Flapjack.Compiler.Backend.ClosAnnotate.relUpdateThunkSource do
+          logError m!"{decl}: nested relation and finite-map witnesses are restricted to the reviewed thunk update"
       if !ref.fmapAsFiniteSupportParameterPredicateDomain.isEmpty then
         let expectedRef := if ref.name == "eval_sim_def" then
           decl == `Flapjack.Compiler.Backend.ClosToBvl.evalSim

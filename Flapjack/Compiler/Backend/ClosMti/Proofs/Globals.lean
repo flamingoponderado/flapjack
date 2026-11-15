@@ -10,6 +10,14 @@ namespace Flapjack.Compiler.Backend.ClosMti
 open ClosLang ClosProps
 open Flapjack.Compiler.Backend.FlatProps (unionGlobalBag)
 
+/-- A predicate holding for every member of a nonempty list holds for its head. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "EVERY_HD"]
+theorem every_head {α : Type} [Nonempty α] (P : α → Prop) (xs : List α)
+    (premises : (∀ x ∈ xs, P x) ∧ xs ≠ []) : P (Flapjack.holHd xs) := by
+  cases xs with
+  | nil => exact False.elim (premises.2 rfl)
+  | cons x xs => exact premises.1 x (by simp)
+
 /-- Collecting function arguments preserves the global-write bag. -/
 @[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "collect_args_preserves_set_globals"]
 theorem collectArgs_preserves_setGlobals (maxApp count : Nat) (expression : Exp)

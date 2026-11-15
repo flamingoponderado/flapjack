@@ -299,16 +299,15 @@ theorem compileExpFuel_success_eq (fuel loc next arity : Nat) (e : Exp)
 /-- The production retry returns the total source-shaped function result. -/
 theorem compileExpBounded_eq_source (fuel loc next arity : Nat) (e : Exp) :
     compileExpBounded fuel loc next arity e = some (compileExpSource loc next arity e) := by
-  obtain ⟨result, run⟩ := compileExpBounded_succeeds fuel loc next arity e
   cases first : compileExpFuel fuel loc next arity e with
   | some value =>
     have equal := compileExpFuel_success_eq fuel loc next arity e value first
     simp [compileExpBounded, first, equal]
   | none =>
-    have retry : compileExpFuel (max fuel (expBudget e + 1)) loc next arity e = some result := by
-      simpa [compileExpBounded, first] using run
+    have enough : expBudget e < max fuel (expBudget e + 1) := by omega
+    obtain ⟨result, retry⟩ := compileExpFuel_succeeds (max fuel (expBudget e + 1)) loc next arity e enough
     have equal := compileExpFuel_success_eq _ loc next arity e result retry
-    simpa [equal] using run
+    simp [compileExpBounded, first, retry, equal]
 
 /-- Source-shaped program traversal in function order. -/
 @[hol "cakeml/compiler/backend/bvi_tmcScript.sml" "compile_each_def"]

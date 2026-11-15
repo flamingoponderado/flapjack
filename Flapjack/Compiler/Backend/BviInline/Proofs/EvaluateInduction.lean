@@ -9,6 +9,14 @@ namespace Flapjack.Compiler.Backend.BviInline.EvaluateCases
 open BviSem
 open BvlSem (Value)
 
+namespace InlineEvaluationCarrier
+/-- The BVI reference-map representation has a canonical roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end InlineEvaluationCarrier
+
 /-- Flapjack infrastructure: same-clock structural induction hypothesis. -/
 def SmallerWeight {C F : Type} (clock weight : Nat) : Prop :=
   ∀ (xs : List Bvi.Exp) (env : List Value) (state : BviState (Spt (Nat × Bvi.Exp) × C) F),
@@ -26,7 +34,10 @@ theorem step {C F : Type} (xs : List Bvi.Exp) (env : List Value)
     (weightIH : SmallerWeight (C := C) (F := F) state.clock (expsWeight xs))
     (clockIH : SmallerClock (C := C) (F := F) state.clock) : Property xs env state := by
   cases xs with
-  | nil => exact nil env state
+  | nil =>
+    intro target ys states expressions _
+    cases expressions
+    exact ⟨target, by simp [evaluate], by simpa [evaluate] using states⟩
   | cons e rest =>
     cases rest with
     | cons second rest =>
@@ -44,7 +55,15 @@ theorem step {C F : Type} (xs : List Bvi.Exp) (env : List Value)
       exact weightIH (second :: rest) env next clock tailWeight
     | nil =>
       cases e with
-      | var index => exact var index env state
+      | var index =>
+        intro target ys states expressions notType
+        cases expressions with
+        | cons expression rest =>
+          cases rest
+          cases expression
+          cases found : env[index]? with
+          | none => simp [evaluate, found] at notType
+          | some value => exact ⟨target, by simp [evaluate, found], by simpa [evaluate, found] using states⟩
       | force location index =>
         apply force location index env state
         intro args body nonzero
@@ -137,11 +156,18 @@ theorem step {C F : Type} (xs : List Bvi.Exp) (env : List Value)
         · intro values next clock
           exact weightIH [body] (values ++ env) next clock bodyWeight
 
-/-- Flapjack infrastructure: related BVI expression lists evaluate to the
-same non-type-error result and related states. This source-shaped theorem is
-untagged pending HOL evaluator and carrier review. -/
+/-- Inlining preserves every non-type-error evaluation and the full state
+relation. The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "evaluate_inline"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_inline {C F : Type} (xs : List Bvi.Exp) (env : List Value)
-    (source : BviState (Spt (Nat × Bvi.Exp) × C) F) : Property xs env source := by
+    (source : BviState (Spt (Nat × Bvi.Exp) × C) F) (result : BviResult)
+    (sourceNext : BviState (Spt (Nat × Bvi.Exp) × C) F) (target : BviState C F)
+    (ys : List Bvi.Exp)
+    (premises : InStateRel source target ∧ List.Forall₂ (ExpRel target.code) xs ys ∧
+      evaluateTuple (xs, env, source) = (result, sourceNext) ∧
+      result ≠ .err (.abort .typeError)) :
+    ∃ targetNext, evaluateTuple (ys, env, target) = (result, targetNext) ∧ InStateRel sourceNext targetNext := by
   have all : ∀ clock weight, ∀ (xs : List Bvi.Exp) (env : List Value)
       (state : BviState (Spt (Nat × Bvi.Exp) × C) F),
       state.clock ≤ clock → expsWeight xs ≤ weight → Property xs env state := by
@@ -163,18 +189,10 @@ theorem evaluate_inline {C F : Type} (xs : List Bvi.Exp) (env : List Value)
           · have lessWeight : expsWeight ys < weight := by omega
             exact weightIH (expsWeight ys) lessWeight ys a s (by omega) (Nat.le_refl _)
         exact step xs env state smallerWeight smallerClock
-  exact all source.clock (expsWeight xs) xs env source (Nat.le_refl _) (Nat.le_refl _)
-
-/-- Flapjack infrastructure: explicit-result form of the inliner evaluation
-simulation. The original HOL theorem remains untagged pending source and
-carrier qualification for the evaluator and inlining relation. -/
-theorem evaluate_inline_result {C F : Type} (xs ys : List Bvi.Exp) (env : List Value)
-    (source sourceNext : BviState (Spt (Nat × Bvi.Exp) × C) F) (target : BviState C F)
-    (result : BviResult) (states : InStateRel source target)
-    (expressions : List.Forall₂ (ExpRel target.code) xs ys)
-    (run : evaluate xs env source = (result, sourceNext)) (notType : result ≠ .err (.abort .typeError)) :
-    ∃ targetNext, evaluate ys env target = (result, targetNext) ∧ InStateRel sourceNext targetNext := by
-  have simulation := evaluate_inline xs env source target ys states expressions (by simpa [run] using notType)
-  simpa [run] using simulation
+  obtain ⟨states, expressions, run, notType⟩ := premises
+  simp only [evaluateTuple] at run
+  have simulation := all source.clock (expsWeight xs) xs env source (Nat.le_refl _) (Nat.le_refl _)
+    target ys states expressions (by simpa [run] using notType)
+  simpa [evaluateTuple, run] using simulation
 
 end Flapjack.Compiler.Backend.BviInline.EvaluateCases

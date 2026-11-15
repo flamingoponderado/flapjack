@@ -32,34 +32,12 @@ theorem compileFuns_related (functions : List (Nat × ClosLang.Exp)) :
     rcases function with ⟨arity, body⟩
     exact .cons (by simp [FunctionRel, CodeRel, compileList]) (by simpa [compileFuns] using ih)
 
-/-- Cleanup preserves the number of recursive functions. This helper is
-Lean-side infrastructure, not a standalone HOL declaration. -/
-theorem compileFuns_length (functions : List (Nat × ClosLang.Exp)) :
-    (compileFuns functions).length = functions.length := by
-  simp [compileFuns_eq_map]
-
 /-- Cleanup preserves the arity check on recursive functions. This helper is
 Lean-side infrastructure, not a standalone HOL declaration. -/
 theorem compileFuns_all (maxApp : Nat) (functions : List (Nat × ClosLang.Exp)) :
     (compileFuns functions).all (fun (arity, _) => arity ≤ maxApp && arity != 0) =
       functions.all (fun (arity, _) => arity ≤ maxApp && arity != 0) := by
   simp [compileFuns_eq_map, Function.comp_def]
-
-/-- Recursive closures preserve their indices and related captures. This
-helper is Lean-side infrastructure, not a standalone HOL declaration. -/
-theorem recursiveClosures_related (location : Option Nat) (env nextEnv : List Value)
-    (functions : List (Nat × ClosLang.Exp)) (envRel : List.Forall₂ ValueRel env nextEnv) :
-    List.Forall₂ ValueRel
-      ((List.range functions.length).map (fun i => Value.recclosure location [] env functions i))
-      ((List.range (compileFuns functions).length).map
-        (fun i => Value.recclosure location [] nextEnv (compileFuns functions) i)) := by
-  rw [compileFuns_length]
-  generalize List.range functions.length = indices
-  induction indices with
-  | nil => exact .nil
-  | cons index rest ih =>
-    exact .cons (.recclosure location [] [] env nextEnv functions _ index envRel .nil
-      (compileFuns_related functions)) ih
 
 /-- Recursive closure construction preserves related environments and then
 simulates the body under those environments. -/
@@ -111,7 +89,8 @@ theorem evaluate_let_op_letrec {C F : Type} (names : List Flapjack.AstHOL.VarN)
     let nextRecs := (List.range nextFunctions.length).map
       (fun i => Value.recclosure location [] nextCaptured nextFunctions i)
     have recRel : List.Forall₂ ValueRel recs nextRecs :=
-      recursiveClosures_related location captured nextCaptured functions captures
+      recursive_bundle_related location captured nextCaptured functions (compileFuns functions)
+        captures (compileFuns_related functions)
     have bodyRun : evaluate [body] (recs ++ env) source = (result, sourceNext) := by
       rw [evaluate.eq_def] at run
       simp only [arityOk, ↓reduceIte] at run
@@ -151,7 +130,7 @@ theorem evaluate_let_op_letrec {C F : Type} (names : List Flapjack.AstHOL.VarN)
         by simp [evaluate, maxEq, compileFuns_all, arityOk], rfl, states⟩
   | some indices =>
     by_cases arityOk : functions.all (fun (arity, _) => arity ≤ source.maxApp && arity != 0) = true
-    · have captureRel := environment_lookupVars indices env nextEnv envRel
+    · have captureRel := lookup_vars_lemma indices env nextEnv envRel
       cases capture : lookupVars indices env with
       | none =>
         cases nextCapture : lookupVars indices nextEnv with
@@ -160,13 +139,13 @@ theorem evaluate_let_op_letrec {C F : Type} (names : List Flapjack.AstHOL.VarN)
           obtain ⟨rfl, rfl⟩ := run
           exact ⟨.err (.abort .typeError), target,
             by simp [evaluate, maxEq, compileFuns_all, arityOk, nextCapture], rfl, states⟩
-        | some values => simp [capture, nextCapture, Flapjack.optionRel] at captureRel
+        | some values => simp [capture, nextCapture] at captureRel
       | some values =>
         cases nextCapture : lookupVars indices nextEnv with
-        | none => simp [capture, nextCapture, Flapjack.optionRel] at captureRel
+        | none => simp [capture, nextCapture] at captureRel
         | some nextValues =>
           exact success values nextValues arityOk capture nextCapture
-            (by simpa [capture, nextCapture, Flapjack.optionRel] using captureRel)
+            (by simpa [capture, nextCapture] using captureRel)
     · simp [evaluate, arityOk] at run
       obtain ⟨rfl, rfl⟩ := run
       exact ⟨.err (.abort .typeError), target,

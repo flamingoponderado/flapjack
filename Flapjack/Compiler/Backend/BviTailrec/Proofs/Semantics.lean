@@ -47,7 +47,7 @@ theorem listToValue_decode (xs : List Value) : valueToList (listToValue xs) = so
 @[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "list_to_v_imp"]
 theorem listToValue_of_decode (x : Value) (xs : List Value)
     (h : valueToList x = some xs) : listToValue xs = x :=
-  BvlToBvi.Proofs.valueToList_inverse x xs h
+  Flapjack.Compiler.Backend.BvlSem.listToValue_valueToList x xs h
 
 /-- A sound type context has exactly one entry per environment value. -/
 theorem tyRel_length {env : List Value} {types : List ValueType} (h : tyRel env types) :
@@ -112,15 +112,6 @@ theorem tyRel_update {env : List Value} {types : List ValueType} (related : tyRe
     · exact related
   | _ => exact related
 
-/-- Refining both operands preserves the environment relation when their
-variable values satisfy the inferred type. -/
-theorem tyRel_updateContext {env : List Value} {types : List ValueType} (related : tyRel env types)
-    (ty : ValueType) (x y : Bvi.Exp)
-    (soundX : ∀ n, x = .var n → ∃ value, env[n]? = some value ∧ valueMatchesType value ty)
-    (soundY : ∀ n, y = .var n → ∃ value, env[n]? = some value ∧ valueMatchesType value ty) :
-    tyRel env (updateContext ty types x y) := by
-  exact tyRel_update (tyRel_update related ty x soundX) ty y soundY
-
 /-- If an operand evaluates to a value of the inferred type, refining its
 variable entry preserves the type relation. -/
 theorem tyRel_update_of_evaluation {C F : Type} {env : List Value} {types : List ValueType}
@@ -184,28 +175,6 @@ theorem scanExpr_var_sound {C F : Type} (ts : List ValueType) (loc n : Nat)
   simp only [found, Option.getD_some, List.mem_singleton, forall_eq, List.map_cons, List.map_nil]
   exact ⟨related, .cons typed .nil⟩
 
-/-- Variable case of integer-term evaluation. This is untagged until the
-source evaluator's state and primitive dispatcher have been reviewed. -/
-theorem termInt_var_evaluation {C F : Type} (ts : List ValueType) (n : Nat)
-    (env : List Value) (state next : BviSem.BviState C F) (result : BviSem.BviResult)
-    (h : termInt ts (.var n) = true ∧ tyRel env ts ∧
-      BviSem.evaluate [.var n] env state = (result, next)) :
-    state = next ∧ ∃ value, result = .val [value] ∧
-      (∀ state' : BviSem.BviState C F, BviSem.evaluate [.var n] env state' = (result, state')) ∧
-      ∃ k, value = .number k := by
-  obtain ⟨term, related, run⟩ := h
-  have found : ts[n]? = some .int := by
-    cases hget : ts[n]? with
-    | none => simp [termInt, hget] at term
-    | some ty =>
-      cases ty <;> simp_all [termInt, BEq.beq, Option.instBEq.beq, instBEqValueType.beq, ValueType.ctorIdx]
-  obtain ⟨value, lookup, typed, _⟩ := tyRel_lookup related n .int found
-  obtain ⟨k, eq⟩ := typed rfl
-  have resultEq : (result, next) = (.val [value], state) := by
-    simpa [BviSem.evaluate, lookup] using run.symm
-  cases resultEq
-  exact ⟨rfl, value, rfl, (by intro state'; simp [BviSem.evaluate, lookup]), k, eq⟩
-
 /-- A small integer constant evaluates to its integer value without changing
 the BVI state. This is untagged pending evaluator and dispatcher review. -/
 theorem evaluate_smallInt {C F : Type} (k : Int) (small : smallEnoughInt k)
@@ -213,26 +182,6 @@ theorem evaluate_smallInt {C F : Type} (k : Int) (small : smallEnoughInt k)
     BviSem.evaluate [.op (.intOp (.const k)) []] env state = (.val [.number k], state) := by
   simp [BviSem.evaluate, BviSem.fixClock, BviSem.doApp, BviSem.doAppFallback,
     BviSem.doAppAux, small]
-
-/-- Constant case of the integer-term evaluation theorem, with the source
-term checker supplying the small-integer side condition. -/
-theorem termInt_const_evaluation {C F : Type} (ts : List ValueType) (k : Int)
-    (env : List Value) (state next : BviSem.BviState C F) (result : BviSem.BviResult)
-    (h : termInt ts (.op (.intOp (.const k)) []) = true ∧ tyRel env ts ∧
-      BviSem.evaluate [.op (.intOp (.const k)) []] env state = (result, next)) :
-    state = next ∧ ∃ value, result = .val [value] ∧
-      (∀ state' : BviSem.BviState C F,
-        BviSem.evaluate [.op (.intOp (.const k)) []] env state' = (result, state')) ∧
-      ∃ integer, value = .number integer := by
-  obtain ⟨term, _, run⟩ := h
-  have small : smallEnoughInt k := by
-    rw [termInt.eq_def] at term
-    change (decide (-268435457 ≤ k) && decide (k ≤ 268435457)) = true at term
-    simpa [smallEnoughInt] using term
-  have resultEq : (result, next) = (.val [.number k], state) := by
-    simpa [evaluate_smallInt k small env state] using run.symm
-  cases resultEq
-  exact ⟨rfl, .number k, rfl, (fun state' => evaluate_smallInt k small env state'), k, rfl⟩
 
 /-- Arithmetic operators accepted by the integer-term checker return an
 integer and preserve the state for two integer operands. -/

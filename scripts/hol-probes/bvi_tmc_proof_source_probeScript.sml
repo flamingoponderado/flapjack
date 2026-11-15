@@ -56,3 +56,99 @@ val _ = print_term
       compile_exp loc next args exp = SOME w ⇒
       ∀next2. ∃w'. compile_exp loc next2 args exp = SOME w'``;
 val _ = print "\n";
+
+val _ = show "compile_each_keeps_names_typed" bvi_tmcProofTheory.compile_each_keeps_names;
+val _ = show "compile_prog_keeps_names_typed" bvi_tmcProofTheory.compile_prog_keeps_names;
+
+(* These local results are replayed with their original source proofs. *)
+val vars_labels = Q.prove
+  (`BIGUNION (set (MAP bviProps$get_code_labels (MAP (λn. bvi$Var n) vs))) = ∅`,
+   Induct_on `vs` \\ gvs []);
+val _ = show "get_code_labels_MAP_Var_replay_typed" vars_labels;
+val worker_aux_labels = Q.prove
+  (`∀cb loc_opt ptr idx.
+     bviProps$get_code_labels (bvi_tmc$cb_to_bvi_worker_aux cb loc_opt ptr idx) = {loc_opt}`,
+   recInduct bvi_tmcTheory.cb_to_bvi_worker_aux_ind
+   \\ simp [bvi_tmcTheory.cb_to_bvi_worker_aux_def, bvi_tmcTheory.optimise_call_def,
+            bvi_tmcTheory.mut_cons_def, bvi_tmcTheory.update_cons_def,
+            closLangTheory.assign_get_code_label_def, vars_labels]);
+val _ = show "cb_to_bvi_worker_aux_code_labels_replay_typed" worker_aux_labels;
+val worker_labels = Q.prove
+  (`bviProps$get_code_labels (bvi_tmc$cb_to_bvi_worker cb loc_opt ptr idx) = {loc_opt}`,
+   Cases_on `cb`
+   \\ simp [bvi_tmcTheory.cb_to_bvi_worker_def, bvi_tmcTheory.optimise_call_def,
+            bvi_tmcTheory.mut_cons_def, bvi_tmcTheory.update_cons_def,
+            closLangTheory.assign_get_code_label_def, worker_aux_labels, vars_labels]);
+val _ = show "cb_to_bvi_worker_code_labels_replay_typed" worker_labels;
+val wrapper_labels = Q.prove
+  (`bviProps$get_code_labels (bvi_tmc$cb_to_bvi_wrapper tag left child right loc_opt) = {loc_opt}`,
+   simp [bvi_tmcTheory.cb_to_bvi_wrapper_def, bvi_tmcTheory.mut_cons_def,
+         bvi_tmcTheory.finalise_cons_def, closLangTheory.assign_get_code_label_def,
+         worker_aux_labels, vars_labels]);
+val _ = show "cb_to_bvi_wrapper_code_labels_replay_typed" wrapper_labels;
+
+(* Replay the original mutual extraction-label theorem. *)
+val extraction_labels = Q.prove
+  (`(∀n loc tag exp bs r.
+       bvi_tmc$bvi_to_cb_aux_sing n loc tag exp = SOME (bs,r) ⇒
+       BIGUNION (set (MAP bviProps$get_code_labels bs)) ⊆ bviProps$get_code_labels exp) ∧
+     (∀n loc tag args bs r.
+       bvi_tmc$bvi_to_cb_aux n loc tag args = SOME (bs,r) ⇒
+       BIGUNION (set (MAP bviProps$get_code_labels bs)) ⊆
+       BIGUNION (set (MAP bviProps$get_code_labels args)))`,
+   ho_match_mp_tac bvi_tmcTheory.bvi_to_cb_aux_ind
+   \\ rw []
+   \\ gvs [bvi_tmcTheory.bvi_to_cb_aux_def, bvi_tmcTheory.call_to_cb_def,
+           CaseEq "call_block", CaseEq "prod", CaseEq "option", CaseEq "sum", CaseEq "list"]
+   \\ gvs [SUBSET_DEF] \\ rw [] \\ res_tac \\ gvs []);
+val _ = show "bvi_to_cb_aux_code_labels_lemma_replay_typed" extraction_labels;
+
+val to_block_labels = Q.prove
+  (`∀n loc exp bs cb.
+      bvi_tmc$bvi_to_cb n loc exp = SOME (bs,cb) ⇒
+      BIGUNION (set (MAP bviProps$get_code_labels bs)) ⊆ bviProps$get_code_labels exp`,
+   Cases_on `exp`
+   \\ gvs [bvi_tmcTheory.bvi_to_cb_def, bvi_tmcTheory.call_to_cb_def, CaseEq "prod", CaseEq "option", CaseEq "sum"]
+   \\ rw []
+   >- gvs [SUBSET_DEF]
+   \\ drule (cj 2 extraction_labels)
+   \\ gvs [SUBSET_DEF]);
+val _ = show "bvi_to_cb_code_labels_replay_typed" to_block_labels;
+
+val rewrite_wrapper_labels = Q.prove
+  (`∀loc loc_opt n exp y.
+      bvi_tmc$rewrite_wrapper loc loc_opt n exp = SOME y ⇒
+      bviProps$get_code_labels y ⊆ bviProps$get_code_labels exp ∪ {loc_opt}`,
+   recInduct bvi_tmcTheory.rewrite_wrapper_ind
+   \\ rw [bvi_tmcTheory.rewrite_wrapper_def]
+   \\ gvs [CaseEq "option", CaseEq "prod", CaseEq "call_block", wrapper_labels]
+   \\ imp_res_tac to_block_labels
+   \\ gvs [SUBSET_DEF] \\ rw [] \\ res_tac \\ gvs []);
+val _ = show "rewrite_wrapper_code_labels_replay_typed" rewrite_wrapper_labels;
+
+val rewrite_worker_labels = Q.prove
+  (`∀loc loc_opt p i n exp.
+      bviProps$get_code_labels (bvi_tmc$rewrite_worker loc loc_opt p i n exp) ⊆
+      bviProps$get_code_labels exp ∪ {loc_opt}`,
+   recInduct bvi_tmcTheory.rewrite_worker_ind
+   \\ rw [bvi_tmcTheory.rewrite_worker_def, bvi_tmcTheory.fill_hole_def,
+          closLangTheory.assign_get_code_label_def]
+   \\ every_case_tac
+   \\ gvs [bvi_tmcTheory.fill_hole_def, closLangTheory.assign_get_code_label_def, worker_labels]
+   \\ imp_res_tac to_block_labels
+   \\ gvs [SUBSET_DEF] \\ rw [] \\ res_tac \\ gvs []);
+val _ = show "rewrite_worker_code_labels_replay_typed" rewrite_worker_labels;
+
+val compile_exp_labels = Q.prove
+  (`bvi_tmc$compile_exp loc next arity exp = SOME (exp_w,exp_k) ⇒
+      bviProps$get_code_labels exp_w ⊆ bviProps$get_code_labels exp ∪ {next} ∧
+      bviProps$get_code_labels exp_k ⊆ bviProps$get_code_labels exp ∪ {next}`,
+   rw [bvi_tmcTheory.compile_exp_def, CaseEq "option"]
+   \\ imp_res_tac rewrite_wrapper_labels
+   \\ gvs [rewrite_worker_labels]);
+val _ = show "compile_exp_code_labels_replay_typed" compile_exp_labels;
+
+val _ = show "compile_each_good_code_labels_typed" bvi_tmcProofTheory.compile_each_good_code_labels;
+val _ = show "compile_prog_good_code_labels_typed" bvi_tmcProofTheory.compile_prog_good_code_labels;
+val _ = show "compile_prog_semantics_typed" bvi_tmcProofTheory.compile_prog_semantics;
+val _ = show "compile_each_semantics_typed" bvi_tmcProofTheory.compile_each_semantics;

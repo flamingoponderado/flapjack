@@ -167,8 +167,8 @@ theorem compileConst_build_related {C F : Type} (constant : ClosLang.Const)
       stateRel f s { t with refs := refs } ∧ unmappedRefsSubmap t.refs refs f f := by
   obtain ⟨value, refs, run, relation, finalStates, frame⟩ :=
     constantBuildConst_related (toParts constant) s t f states
-  have sourceValue : buildConst (toParts constant) = ClosSem.makeConst constant := by
-    rw [← makeConst_buildConstSyntax, buildConst_toParts]
+  have sourceValue : buildConst (toParts constant) = ClosSem.makeConst constant :=
+    (makeConst_toParts constant).symm
   exact ⟨value, refs, compileConst_thm constant prereqs, run, sourceValue ▸ relation, finalStates, frame⟩
 
 end Flapjack.Compiler.Backend.ClosToBvl

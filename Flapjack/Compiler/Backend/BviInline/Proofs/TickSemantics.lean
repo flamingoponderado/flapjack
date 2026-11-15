@@ -7,9 +7,19 @@ public import Flapjack.Compiler.Backend.BviInline.Proofs.ExpRelation
 /-! Clock behavior of ticks inserted by the BVI inliner. -/
 namespace Flapjack.Compiler.Backend.BviInline
 
-/-- Flapjack infrastructure: evaluating inserted ticks either exhausts the
-clock or evaluates the body after the corresponding clock decrement. This
-source-shaped theorem remains untagged pending HOL carrier review. -/
+namespace TickSemanticsCarrier
+/-- The canonical BVI reference-map representation has a roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end TickSemanticsCarrier
+
+/-- Evaluating inserted ticks either exhausts the clock or evaluates the body
+after the corresponding decrement. The evaluator inherits the real-model
+assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "evaluate_bvi_mk_tick"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_mkTick {C F : Type} (expression : Bvi.Exp) (env : List BvlSem.Value)
     (state : BviSem.BviState C F) (n : Nat) :
     BviSem.evaluate [mkTick n expression] env state =
@@ -22,8 +32,7 @@ theorem evaluate_mkTick {C F : Type} (expression : Bvi.Exp) (env : List BvlSem.V
     by_cases zero : state.clock = 0
     · have same : { state with clock := 0 } = state := by cases state; simp_all
       simp [zero, same]
-    · have positive : 0 < state.clock := by omega
-      simp only [zero, ↓reduceIte]
+    · simp only [zero, ↓reduceIte]
       rw [ih]
       have small : (BviSem.decClock 1 state).clock < n ↔ state.clock < n + 1 := by
         simp [BviSem.decClock]

@@ -5,32 +5,21 @@ public import Flapjack.Compiler.Backend.BviToData.Proofs.Install
 
 @[expose] public section
 
-/-! Entry-call consequences of the BVI-to-data simulation. The evaluator and
-state carriers remain pending correspondence review. -/
+/-! Initial-state and program-label facts for BVI-to-data correctness. -/
 namespace Flapjack.Compiler.Backend.BviToData
 open Flapjack Flapjack.SemanticPrimitivesHOL
 
-/-- An initial direct call never returns the BVI internal return marker. -/
-theorem entryCall_notReturn {C F : Type} (start : Nat) (source next : BviSem.BviState C F)
-    (res : BviSem.BviResult)
-    (run : BviSem.evaluate [.call 0 (some start) [] none] [] source = (res, next)) : ¬ isReturn res := by
-  intro ⟨values, eq⟩
-  subst res
-  simp only [BviSem.evaluate, BviSem.fixClock, Nat.min_self] at run
-  cases code : BvlSem.findCode (some start) [] source.code with
-  | none => simp [code] at run
-  | some pair =>
-    obtain ⟨args, body⟩ := pair
-    by_cases zero : source.clock = 0
-    · simp [code, zero] at run
-    · generalize called : BviSem.evaluate [body] args (BviSem.decClock 1 source) = result
-      obtain ⟨r, state⟩ := result
-      cases r with
-      | val xs => simp [code, zero, called] at run
-      | err error =>
-        cases error with
-        | abort reason => simp [code, zero, called] at run
-        | raise raised => cases raised <;> simp [code, zero, called] at run
+/-- Compiling a program part preserves its function name. -/
+@[simp, hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "FST_compile_part"]
+theorem fst_compilePart (part : Nat × Nat × Bvi.Exp) :
+    (compilePart part).1 = part.1 := by
+  rfl
+
+/-- Compiling a program preserves the sequence of function names. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "MAP_FST_compile_prog"]
+theorem map_fst_compileProg (program : List (Nat × Nat × Bvi.Exp)) :
+    (compileProg program).map Prod.fst = program.map Prod.fst := by
+  simp [compileProg, List.map_map, Function.comp_def, fst_compilePart]
 
 /-- Initial BVI and data states satisfy the simulation relation when the data
 code and compiler oracle are obtained by compiling the BVI program lists. -/

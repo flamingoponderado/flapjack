@@ -1,0 +1,572 @@
+(* Typed original source equations and label-preservation theorem. *)
+load "bvi_inlineTheory";
+load "bvi_inlineProofTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = Globals.show_types := true;
+fun show label th = if null (hyp th) then
+  (print (label ^ "="); print_term (concl th); print "\n")
+  else raise Fail (label ^ " has hypotheses");
+val _ = show "remove_ticks_exp_def_typed" bvi_inlineTheory.remove_ticks_exp_def;
+val _ = show "remove_ticks_get_code_labels_typed" bvi_inlineProofTheory.remove_ticks_get_code_labels;
+val _ = show "remove_ticks_prog_code_labels_typed" bvi_inlineProofTheory.remove_ticks_prog_code_labels;
+val _ = show "MAP_FST_remove_ticks_prog_typed" bvi_inlineProofTheory.MAP_FST_remove_ticks_prog;
+val _ = show "inline_all_def_typed" bvi_inlineTheory.inline_all_def;
+val _ = show "compile_inc_def_typed" bvi_inlineTheory.compile_inc_def;
+val _ = show "compile_inc_code_labels_typed" bvi_inlineProofTheory.compile_inc_code_labels;
+val _ = show "inline_all_MAP_FST_typed" bvi_inlineProofTheory.inline_all_MAP_FST;
+val _ = show "compile_inc_MAP_FST_typed" bvi_inlineProofTheory.compile_inc_MAP_FST;
+val _ = show "inline_exp_def_typed" bvi_inlineTheory.inline_exp_def;
+val _ = show "cache_code_labels_def_typed" bvi_inlineProofTheory.cache_code_labels_def;
+val _ = show "lookup_cache_code_labels_typed" bvi_inlineProofTheory.lookup_cache_code_labels;
+val _ = show "cache_code_labels_insert_typed" bvi_inlineProofTheory.cache_code_labels_insert;
+val _ = show "bvi_mk_tick_get_code_labels_typed" bvi_inlineProofTheory.bvi_mk_tick_get_code_labels;
+val _ = show "inline_exp_code_labels_typed" bvi_inlineProofTheory.inline_exp_code_labels;
+val _ = show "compile_prog_def_typed" bvi_inlineTheory.compile_prog_def;
+val _ = show "inline_all_code_labels_typed" bvi_inlineProofTheory.inline_all_code_labels;
+val _ = show "compile_prog_code_labels_typed" bvi_inlineProofTheory.compile_prog_code_labels;
+val _ = show "compile_prog_semantics_typed" bvi_inlineProofTheory.compile_prog_semantics;
+
+(* Replay the original local semantics safety proofs. *)
+load "preamble";
+open preamble bviSemTheory;
+val semantics_not_Fail_cond_replay = Q.prove
+  (`∀ffi code co cc start.
+    semantics ffi code co cc start ≠ Fail ⇒
+    ¬∃j e. FST (evaluate ([Call 0 (SOME start) [] NONE],[],
+      initial_state ffi code co cc j)) = Rerr e ∧
+      e ≠ Rabort Rtimeout_error ∧ ∀f. e ≠ Rabort (Rffi_error f)`,
+   rpt strip_tac
+  >> qpat_x_assum `semantics _ _ _ _ _ ≠ Fail` mp_tac
+  >> simp [semantics_def]
+  >> IF_CASES_TAC
+  >- simp []
+  >> fs []
+  >> qpat_x_assum `∀a b. _` (qspecl_then [`j`,`e`] mp_tac)
+  >> fs []);
+val _ = show "semantics_not_Fail_cond_replay_typed" semantics_not_Fail_cond_replay;
+val semantics_no_type_error_replay = Q.prove
+  (`∀ffi code co cc start.
+    semantics ffi code co cc start ≠ Fail ⇒
+    ∀j. FST (evaluate ([Call 0 (SOME start) [] NONE],[],
+      initial_state ffi code co cc j)) ≠ Rerr (Rabort Rtype_error)`,
+   rpt strip_tac
+  >> drule semantics_not_Fail_cond_replay
+  >> simp []
+  >> qexistsl [`j`,`Rabort Rtype_error`]
+  >> gvs []);
+val _ = show "semantics_no_type_error_replay_typed" semantics_no_type_error_replay;
+
+(* Replay the remaining original local semantics observations. *)
+load "bviPropsTheory";
+open bviPropsTheory;
+val semantics_terminate_unique_replay = Q.prove
+  (`∀ffi code co cc start k1 r1 t1 k2 r2 t2.
+    evaluate ([Call 0 (SOME start) [] NONE],[],
+      initial_state ffi code co cc k1) = (r1,t1) ∧
+    evaluate ([Call 0 (SOME start) [] NONE],[],
+      initial_state ffi code co cc k2) = (r2,t2) ∧
+    r1 ≠ Rerr (Rabort Rtimeout_error) ∧
+    r2 ≠ Rerr (Rabort Rtimeout_error) ⇒
+    r1 = r2 ∧ t1.ffi = t2.ffi`,
+   rpt gen_tac
+  >> strip_tac
+  >> qpat_assum `evaluate (_,_,initial_state _ _ _ _ k1) = _` assume_tac
+  >> drule evaluate_add_clock
+  >> fs [inc_clock_def]
+  >> disch_then (qspec_then `k2` assume_tac)
+  >> qpat_assum `evaluate (_,_,initial_state _ _ _ _ k2) = _` assume_tac
+  >> drule evaluate_add_clock
+  >> fs [inc_clock_def]
+  >> disch_then (qspec_then `k1` assume_tac)
+  >> fs [state_component_equality]);
+val _ = show "semantics_terminate_unique_replay_typed" semantics_terminate_unique_replay;
+val semantics_error_cases_replay = Q.prove
+  (`∀ffi code co cc start.
+    semantics ffi code co cc start ≠ Fail ⇒
+    ∀j e t. evaluate ([Call 0 (SOME start) [] NONE],[],
+      initial_state ffi code co cc j) = (Rerr e,t) ⇒
+      e = Rabort Rtimeout_error ∨ ∃f. e = Rabort (Rffi_error f)`,
+   rpt strip_tac
+  >> drule semantics_not_Fail_cond_replay
+  >> rw []
+  >> first_x_assum (qspecl_then [`j`,`e`] mp_tac)
+  >> gvs []);
+val _ = show "semantics_error_cases_replay_typed" semantics_error_cases_replay;
+
+(* The local theorem is not exported; capture its original statement with
+   inferred types. This is a typed term, not a replay of its proof. *)
+load "backendPropsTheory";
+open bvi_inlineTheory backendPropsTheory;
+val evaluate_compile_prog_statement =
+  ``∀prog cs1 prog1 co ffi cc k start r s.
+  compile_prog prog = (cs1,prog1) ∧
+  FST (FST (co 0)) = cs1 ∧
+  ALL_DISTINCT (MAP FST prog) ∧
+  (∀j. FST (evaluate ([Call 0 (SOME start) [] NONE],[],
+         initial_state ffi (fromAList prog) co
+           (state_cc compile_inc cc) j)) ≠ Rerr (Rabort Rtype_error)) ∧
+  evaluate ([Call 0 (SOME start) [] NONE],[],
+    initial_state ffi (fromAList prog1) (state_co compile_inc co) cc k) =
+      (r,s) ⇒
+  ∃ck s2.
+    evaluate ([Call 0 (SOME start) [] NONE],[],
+      initial_state ffi (fromAList prog) co
+        (state_cc compile_inc cc) (k + ck)) = (r,s2) ∧
+    s2.ffi = s.ffi``;
+val _ = (print "evaluate_compile_prog_statement_typed=";
+         print_term evaluate_compile_prog_statement; print "\n");
+
+(* The local theorem is not exported; capture the source statement and
+   its inferred types without claiming a proof replay. *)
+open bvi_inlineProofTheory;
+val evaluate_remove_ticks_compile_statement =
+  ``∀prog co ffi cc k start r s.
+  evaluate ([Call 0 (SOME start) [] NONE],[],
+    initial_state ffi (fromAList (clean_prog prog))
+      (remove_ticks_co ∘ co) cc k) = (r,s) ⇒
+  ∃ck s2.
+    evaluate ([Call 0 (SOME start) [] NONE],[],
+      initial_state ffi (fromAList prog) co (remove_ticks_cc cc) (k + ck)) =
+        (r,s2) ∧
+    s2.ffi = s.ffi``;
+val _ = (print "evaluate_remove_ticks_compile_statement_typed=";
+         print_term evaluate_remove_ticks_compile_statement; print "\n");
+
+val _ = show "clean_prog_def_typed" bvi_inlineProofTheory.clean_prog_def;
+val _ = show "remove_ticks_cc_def_typed" bvi_inlineProofTheory.remove_ticks_cc_def;
+val _ = show "remove_ticks_co_def_typed" bvi_inlineProofTheory.remove_ticks_co_def;
+
+(* The local inlining lemma's original statement, with inferred types. *)
+val evaluate_inline_compile_statement =
+  ``∀prog cs1 prog1 co ffi cc k start r s.
+  inline_all LN prog = (cs1,prog1) ∧
+  FST (FST (co 0)) = cs1 ∧
+  ALL_DISTINCT (MAP FST prog) ∧
+  evaluate ([Call 0 (SOME start) [] NONE],[],
+    initial_state ffi (fromAList prog) co (state_cc inline_all cc) k) =
+      (r,s) ∧
+  r ≠ Rerr (Rabort Rtype_error) ⇒
+  ∃s2.
+    evaluate ([Call 0 (SOME start) [] NONE],[],
+      initial_state ffi (fromAList prog1) (state_co inline_all co) cc k) =
+        (r,s2) ∧
+    in_state_rel s s2``;
+val _ = (print "evaluate_inline_compile_statement_typed=";
+         print_term evaluate_inline_compile_statement; print "\n");
+
+(* The local initial-state relation lemma's original typed statement. *)
+val inline_initial_state_rel_statement =
+  ``∀prog cs1 prog1 co ffi cc clk.
+  inline_all LN prog = (cs1,prog1) ∧
+  FST (FST (co 0)) = cs1 ∧
+  ALL_DISTINCT (MAP FST prog) ⇒
+  in_state_rel
+    (initial_state ffi (fromAList prog) co (state_cc inline_all cc) clk)
+    (initial_state ffi (fromAList prog1) (state_co inline_all co) cc clk)``;
+val _ = (print "inline_initial_state_rel_statement_typed=";
+         print_term inline_initial_state_rel_statement; print "\n");
+
+(* Replay the original local clock/I/O-event monotonicity proof. *)
+val evaluate_add_clock_io_events_mono_replay = Q.prove
+  (`∀exps env (s:('c,'ffi) bviSem$state) k extra.
+    (SND (evaluate (exps,env,s with clock := k))).ffi.io_events ≼
+    (SND (evaluate (exps,env,s with clock := k + extra))).ffi.io_events`,
+   rpt strip_tac
+  >> qspecl_then [`exps`,`env`,`s with clock := k`,`extra`] mp_tac
+       evaluate_add_to_clock_io_events_mono
+  >> simp [inc_clock_def]);
+val _ = show "evaluate_add_clock_io_events_mono_replay_typed"
+  evaluate_add_clock_io_events_mono_replay;
+
+(* Original adapter definitions and their local equalities. *)
+val _ = show "in_cc_def_typed" bvi_inlineProofTheory.in_cc_def;
+val _ = show "in_co_def_typed" bvi_inlineProofTheory.in_co_def;
+val in_cc_eq_state_cc_replay = Q.prove
+  (`in_cc cc = state_cc inline_all cc`,
+   rw [in_cc_def, state_cc_def, FUN_EQ_THM, FORALL_PROD]
+  >> rpt (pairarg_tac >> fs []));
+val _ = show "in_cc_eq_state_cc_replay_typed" in_cc_eq_state_cc_replay;
+val in_co_eq_state_co_replay = Q.prove
+  (`in_co co = state_co inline_all co`,
+   rw [in_co_def, state_co_def, FUN_EQ_THM]
+  >> rpt (pairarg_tac >> fs []));
+val _ = show "in_co_eq_state_co_replay_typed" in_co_eq_state_co_replay;
+
+(* The original incremental compiler/oracle factorization and proofs. *)
+val _ = show "state_cc_compile_inc_eq_typed" bvi_inlineProofTheory.state_cc_compile_inc_eq;
+val _ = show "state_co_compile_inc_eq_typed" bvi_inlineProofTheory.state_co_compile_inc_eq;
+val state_cc_compile_inc_eq_replay = Q.prove
+  (`state_cc compile_inc cc = state_cc inline_all (remove_ticks_cc cc)`,
+   rw [state_cc_def, compile_inc_def, remove_ticks_cc_def, FUN_EQ_THM]
+  >> rpt (pairarg_tac >> gvs [clean_prog_def]));
+val _ = show "state_cc_compile_inc_eq_replay_typed" state_cc_compile_inc_eq_replay;
+val state_co_compile_inc_eq_replay = Q.prove
+  (`state_co compile_inc co = remove_ticks_co ∘ state_co inline_all co`,
+   rw [state_co_def, compile_inc_def, remove_ticks_co_def, FUN_EQ_THM]
+  >> rpt (pairarg_tac >> gvs [clean_prog_def]));
+val _ = show "state_co_compile_inc_eq_replay_typed" state_co_compile_inc_eq_replay;
+
+(* The full tick-removal evaluation theorem, including its inferred types. *)
+val _ = show "evaluate_remove_ticks_typed" bvi_inlineProofTheory.evaluate_remove_ticks;
+
+(* The local mutual theorem is not exported; capture its original typed statement. *)
+val evaluate_remove_ticks_mutual_statement =
+  ``∀k.
+    (∀e env (t:('c,'ffi) bviSem$state) s res t1.
+       remove_state_rel s t ∧ t.clock ≤ k ∧
+       evaluate ([remove_ticks_exp e],env,t) = (res,t1) ⇒
+       ∃extra s1.
+         evaluate ([e],env,s with clock := s.clock + extra) =
+           (res,s1) ∧ remove_state_rel s1 t1) ∧
+    (∀es env (t:('c,'ffi) bviSem$state) s res t1.
+       remove_state_rel s t ∧ t.clock ≤ k ∧
+       evaluate (remove_ticks_exps es,env,t) = (res,t1) ⇒
+       ∃extra s1.
+         evaluate (es,env,s with clock := s.clock + extra) =
+           (res,s1) ∧ remove_state_rel s1 t1)``;
+val _ = (print "evaluate_remove_ticks_mutual_statement_typed=";
+         print_term evaluate_remove_ticks_mutual_statement; print "\n");
+
+(* Original local primitive-operation relation statement, with inferred types. *)
+val remove_state_rel_do_app_statement =
+  ``∀op args (s:('c,'ffi) bviSem$state) t.
+    remove_state_rel s t ⇒
+      case do_app op args s of
+      | Rval (value,s1) =>
+          ∃t1. do_app op args t = Rval (value,t1) ∧ remove_state_rel s1 t1
+      | Rerr err => do_app op args t = Rerr err``;
+val _ = (print "remove_state_rel_do_app_statement_typed=";
+         print_term remove_state_rel_do_app_statement; print "\n");
+
+(* Original local installation relation, including independent result types. *)
+val remove_state_rel_do_install_statement =
+  ``∀args (s:('c,'ffi) bviSem$state) t.
+    remove_state_rel s t ⇒
+      case do_install args s of
+      | Rval (value,s1) =>
+          ∃t1. do_install args t = Rval (value,t1) ∧ remove_state_rel s1 t1
+      | Rerr err => do_install args t = Rerr err``;
+val _ = (print "remove_state_rel_do_install_statement_typed=";
+         print_term remove_state_rel_do_install_statement; print "\n");
+
+(* Replay the original local clean-program simplification lemmas. *)
+val clean_prog_CONS_replay = Q.prove
+  (`clean_prog [] = [] ∧
+    clean_prog (p::ps) = (I ## I ## remove_ticks_exp) p :: clean_prog ps`,
+   simp [clean_prog_def, PAIR_MAP, ELIM_UNCURRY]);
+val _ = show "clean_prog_CONS_replay_typed" clean_prog_CONS_replay;
+val clean_prog_simps_replay = Q.prove
+  (`MAP FST (clean_prog prog) = MAP FST prog ∧
+    map (I ## remove_ticks_exp) (fromAList prog) = fromAList (clean_prog prog)`,
+   conj_tac
+  >> Induct_on `prog`
+  >> simp [clean_prog_def, fromAList_def, map_insert, FORALL_PROD]);
+val _ = show "clean_prog_simps_replay_typed" clean_prog_simps_replay;
+
+(* Replay the original local clock arithmetic and evaluator lemmas. *)
+val clock_sub_lt_replay = Q.prove
+  (`∀x k:num. x ≠ 0 ∧ x ≤ k ⇒ x - 1 < k`,
+   rpt strip_tac
+  >> fs [NOT_ZERO]
+  >> irule SUB_LESS
+  >> fs []);
+val _ = show "clock_sub_lt_replay_typed" clock_sub_lt_replay;
+val evaluate_add_extra_clock_replay = Q.prove
+  (`∀xs env (s:('c,'ffi) bviSem$state) res s1 extra extra'.
+    evaluate (xs,env,s with clock := extra + s.clock) = (res,s1) ∧
+    res ≠ Rerr (Rabort Rtimeout_error) ⇒
+    evaluate (xs,env,s with clock := extra + extra' + s.clock) =
+      (res,s1 with clock := extra' + s1.clock)`,
+   rpt strip_tac
+  >> drule_all evaluate_add_clock
+  >> disch_then (qspec_then `extra'` mp_tac)
+  >> simp [inc_clock_def]);
+val _ = show "evaluate_add_extra_clock_replay_typed" evaluate_add_extra_clock_replay;
+
+(* Replay the local tick-removal code-lookup lemma. *)
+val remove_state_rel_find_code_eq_replay = Q.prove
+  (`∀s (t:('c,'ffi) bviSem$state).
+    remove_state_rel s t ⇒
+    ∀dest vs.
+      find_code dest vs t.code =
+        OPTION_MAP (I ## remove_ticks_exp) (find_code dest vs s.code)`,
+   rpt strip_tac
+  >> gvs [remove_state_rel_def]
+  >> Cases_on `dest`
+  >> gvs [bvlSemTheory.find_code_def, lookup_map]
+  >> every_case_tac
+  >> gvs []);
+val _ = show "remove_state_rel_find_code_eq_replay_typed" remove_state_rel_find_code_eq_replay;
+val _ = show "remove_state_rel_def_typed" bvi_inlineProofTheory.remove_state_rel_def;
+
+(* Original exported empty-list and complete inliner simulation theorems. *)
+val _ = show "remove_ticks_exps_NIL_typed" bvi_inlineProofTheory.remove_ticks_exps_NIL;
+val _ = show "evaluate_inline_typed" bvi_inlineProofTheory.evaluate_inline;
+
+(* Replay the original local inlined-call evaluation lemma. *)
+val evaluate_inlined_call_replay = Q.prove
+  (`lookup n t.code = SOME (LENGTH ys,body) ∧
+    FST (evaluate ([Call ticks (SOME n) ys NONE],env,t)) ≠
+      Rerr (Rabort Rtype_error) ⇒
+    evaluate ([Let ys (bvi_mk_tick (SUC ticks) body)],env,t) =
+    evaluate ([Call ticks (SOME n) ys NONE],env,t)`,
+   strip_tac
+  >> gvs [evaluate_def, evaluate_bvi_mk_tick, bvlSemTheory.find_code_def]
+  >> namedCases_on `evaluate (ys,env,t)` ["args_res args_state"]
+  >> namedCases_on `args_res` ["args_vals", "args_err"]
+  >> gvs []
+  >> drule bviPropsTheory.evaluate_IMP_LENGTH
+  >> imp_res_tac evaluate_code_mono
+  >> strip_tac
+  >> `lookup n args_state.code = SOME (LENGTH args_vals,body)`
+       by gvs [subspt_lookup]
+  >> gvs [ADD1]
+  >> IF_CASES_TAC
+  >- simp []
+  >> qspecl_then [`[body]`,`args_vals`,`dec_clock (ticks + 1) args_state`,`env`]
+       mp_tac evaluate_expand_env
+  >> namedCases_on
+       `evaluate ([body],args_vals,dec_clock (ticks + 1) args_state)`
+       ["body_res body_state"]
+  >> namedCases_on `body_res` ["body_vals", "body_err"]
+  >> gvs []
+  >> namedCases_on `body_err` ["raised", "abort_kind"]
+  >> gvs []
+  >> namedCases_on `raised` ["exn_val", "ret_vals"]
+  >> gvs []);
+val _ = show "evaluate_inlined_call_replay_typed" evaluate_inlined_call_replay;
+
+(* Replay the original local expression-relation inversion theorem. *)
+val exp_rel_inv_replay = Q.prove
+  (`(exp_rel c (Var n) y ⇔ y = Var n) ∧
+  (exp_rel c (Force loc n) y ⇔ y = Force loc n) ∧
+  (exp_rel c (If x1 x2 x3) y ⇔
+     ∃y1 y2 y3. y = If y1 y2 y3 ∧ exp_rel c x1 y1 ∧ exp_rel c x2 y2 ∧
+       exp_rel c x3 y3) ∧
+  (exp_rel c (Let xs x) y ⇔
+     ∃ys y1. y = Let ys y1 ∧ LIST_REL (exp_rel c) xs ys ∧ exp_rel c x y1) ∧
+  (exp_rel c (Raise x) y ⇔ ∃y1. y = Raise y1 ∧ exp_rel c x y1) ∧
+  (exp_rel c (Tick x) y ⇔ ∃y1. y = Tick y1 ∧ exp_rel c x y1) ∧
+  (exp_rel c (Op op xs) y ⇔
+     ∃ys. y = Op op ys ∧ LIST_REL (exp_rel c) xs ys) ∧
+  (exp_rel c (Return xs) y ⇔
+     ∃ys. y = Return ys ∧ LIST_REL (exp_rel c) xs ys) ∧
+  (exp_rel c (LetCall rets ticks target xs x) y ⇔
+     ∃ys y1. y = LetCall rets ticks target ys y1 ∧
+       LIST_REL (exp_rel c) xs ys ∧ exp_rel c x y1) ∧
+  (exp_rel c (bvi$Call ticks dest xs handler) y ⇔
+     (∃ys handler1. y = bvi$Call ticks dest ys handler1 ∧
+        LIST_REL (exp_rel c) xs ys ∧ OPTREL (exp_rel c) handler handler1) ∨
+     (∃n ys arity body.
+        dest = SOME n ∧ handler = NONE ∧
+        y = Let ys (bvi_mk_tick (SUC ticks) body) ∧
+        LIST_REL (exp_rel c) xs ys ∧ lookup n c = SOME (arity,body) ∧
+        LENGTH ys = arity))`,
+   rpt conj_tac
+  >> simp [Once exp_rel_cases]
+  >> metis_tac []);
+val _ = show "exp_rel_inv_replay_typed" exp_rel_inv_replay;
+
+(* Capture this local theorem statement with inferred HOL types. *)
+val in_do_app_lemma_statement =
+  ``in_state_rel s1 t1 ⇒
+    case do_app op a s1 of
+    | Rerr err =>
+        (err ≠ Rabort Rtype_error ⇒ do_app op a t1 = Rerr err)
+    | Rval (v,s2) =>
+        ∃t2. in_state_rel s2 t2 ∧ do_app op a t1 = Rval (v,t2)``;
+val _ = (print "in_do_app_lemma_statement_typed=";
+  print_term in_do_app_lemma_statement; print "\n");
+
+(* Capture this local theorem statement with inferred HOL types. *)
+val in_state_rel_do_install_statement =
+  ``in_state_rel s1 t1 ⇒
+    case do_install a s1 of
+    | Rerr err =>
+        (err ≠ Rabort Rtype_error ⇒ do_install a t1 = Rerr err)
+    | Rval (v,s2) =>
+        ∃t2. in_state_rel s2 t2 ∧ do_install a t1 = Rval (v,t2)``;
+val _ = (print "in_state_rel_do_install_statement_typed=";
+  print_term in_state_rel_do_install_statement; print "\n");
+
+(* Replay the original local installation-error theorem. *)
+val do_install_Rerr_type_replay = Q.prove
+  (`∀args (s:('c,'ffi) bviSem$state) error.
+    do_install args s = Rerr error ⇒
+    error = Rabort Rtype_error`,
+   rpt strip_tac
+  >> fs [do_install_def, case_eq_thms, UNCURRY]);
+val _ = show "do_install_Rerr_type_replay_typed" do_install_Rerr_type_replay;
+
+(* Capture this local theorem statement with inferred HOL types. *)
+val inline_all_lookup_union_statement =
+  ``inline_all cs prog = (final_cache,out) ∧
+  subspt cs target ∧
+  domain target = domain source ∧
+  (∀k arity exp. lookup k source = SOME (arity,exp) ⇒
+     ∃exp1. lookup k target = SOME (arity,exp1) ∧
+            exp_rel target exp exp1) ∧
+  DISJOINT (set (MAP FST prog)) (domain target) ∧
+  ALL_DISTINCT (MAP FST prog) ⇒
+  ∀k arity exp.
+    lookup k (union source (fromAList prog)) = SOME (arity,exp) ⇒
+    ∃exp1.
+      lookup k (union target (fromAList out)) = SOME (arity,exp1) ∧
+      exp_rel (union target (fromAList out)) exp exp1``;
+val _ = (print "inline_all_lookup_union_statement_typed=";
+  print_term inline_all_lookup_union_statement; print "\n");
+
+(* Replay the original local inlined-head theorem. *)
+val inline_all_head_names_replay = Q.prove
+  (`inline_all cs ((name,arity,body)::rest) = (final_cache,out) ⇒
+  ∃tail.
+    out = (name,arity,inline_exp cs body)::tail ∧
+    MAP FST tail = MAP FST rest`,
+   rw [inline_all_def]
+  >> pairarg_tac
+  >> gvs []
+  >> qspecl_then [`cs`,`(name,arity,body)::rest`] mp_tac inline_all_MAP_FST
+  >> simp [inline_all_def, UNCURRY]);
+val _ = show "inline_all_head_names_replay_typed" inline_all_head_names_replay;
+
+(* Capture this local theorem statement with inferred HOL types. *)
+val do_app_state_swap_Rerr_statement =
+  ``∀op args (s:('c,'ffi) bviSem$state)
+      (t:('d,'ffi) bviSem$state) error.
+    op ≠ Install ∧
+    do_app op args s = Rerr error ∧
+    (domain t.code ⊆ domain s.code ∨ error ≠ Rabort Rtype_error) ⇒
+    do_app op args
+      (t with <| refs := s.refs; clock := s.clock;
+                 global := s.global; ffi := s.ffi |>) = Rerr error``;
+val _ = (print "do_app_state_swap_Rerr_statement_typed=";
+  print_term do_app_state_swap_Rerr_statement; print "\n");
+
+(* Capture this local theorem statement with inferred HOL types. *)
+val do_app_state_swap_Rval_statement =
+  ``∀op args (s:('c,'ffi) bviSem$state)
+      (source_state:('c,'ffi) bviSem$state)
+      (t:('d,'ffi) bviSem$state) value.
+    op ≠ Install ∧
+    do_app op args s = Rval (value,source_state) ∧
+    domain s.code ⊆ domain t.code ⇒
+    do_app op args
+      (t with <| refs := s.refs; clock := s.clock;
+                 global := s.global; ffi := s.ffi |>) =
+    Rval
+      (value,
+       t with <| refs := source_state.refs; clock := source_state.clock;
+                  global := source_state.global; ffi := source_state.ffi |>)``;
+val _ = (print "do_app_state_swap_Rval_statement_typed=";
+  print_term do_app_state_swap_Rval_statement; print "\n");
+
+(* Capture this local theorem statement with inferred HOL types. *)
+val do_app_state_swap_statement =
+  ``op ≠ Install ⇒
+    ((do_app op args s = Rval (value,s1) ∧
+      domain s.code ⊆ domain t.code ⇒
+      do_app op args
+        (t with <| refs := s.refs; clock := s.clock;
+                   global := s.global; ffi := s.ffi |>) =
+      Rval
+        (value,
+         t with <| refs := s1.refs; clock := s1.clock;
+                   global := s1.global; ffi := s1.ffi |>)) ∧
+     (do_app op args s = Rerr error ∧
+      (domain t.code ⊆ domain s.code ∨
+       error ≠ Rabort Rtype_error) ⇒
+      do_app op args
+        (t with <| refs := s.refs; clock := s.clock;
+                   global := s.global; ffi := s.ffi |>) =
+      Rerr error))``;
+val _ = (print "do_app_state_swap_statement_typed=";
+  print_term do_app_state_swap_statement; print "\n");
+
+(* Capture the exported original lookup theorem with inferred types. *)
+val _ = show "inline_all_ALOOKUP_typed" bvi_inlineProofTheory.inline_all_ALOOKUP;
+
+(* Replay the original local inlining code-lookup theorem. *)
+val in_state_rel_find_code_replay = Q.prove
+  (`∀s t dest vs args exp.
+    in_state_rel s t ∧
+    find_code dest vs s.code = SOME (args,exp) ⇒
+    ∃exp1. find_code dest vs t.code = SOME (args,exp1) ∧
+      exp_rel t.code exp exp1`,
+   rpt strip_tac
+  >> Cases_on ‘dest’
+  >> fs [bvlSemTheory.find_code_def, in_state_rel_def, AllCaseEqs()]
+  >> metis_tac []);
+val _ = show "in_state_rel_find_code_replay_typed" in_state_rel_find_code_replay;
+
+(* Capture the exported original inliner state relation with inferred types. *)
+val _ = show "in_state_rel_def_typed" bvi_inlineProofTheory.in_state_rel_def;
+
+(* Capture the exported original environment-extension theorem with inferred types. *)
+val _ = show "evaluate_expand_env_typed" bvi_inlineProofTheory.evaluate_expand_env;
+
+(* Capture the exported original tick-evaluation theorem with inferred types. *)
+val _ = show "evaluate_bvi_mk_tick_typed" bvi_inlineProofTheory.evaluate_bvi_mk_tick;
+
+(* Capture the exported original mutual expression-relation theorem. *)
+val _ = show "inline_exp_rel_typed" bvi_inlineProofTheory.inline_exp_rel;
+
+(* Capture the exported original no-handler call relation theorem. *)
+val _ = show "inline_call_none_exp_rel_typed" bvi_inlineProofTheory.inline_call_none_exp_rel;
+
+(* Capture the exported original expression-relation reflexivity theorem. *)
+val _ = show "exp_rel_refl_typed" bvi_inlineProofTheory.exp_rel_refl;
+
+(* Replay the original local relation-preservation theorem. *)
+val exp_rel_evaluate_mono_replay = Q.prove
+  (`(evaluate (es,env,t) = (res,t1) ∧ exp_rel t.code x y ⇒
+     exp_rel t1.code x y) ∧
+  (evaluate (es,env,t) = (res,t1) ∧ LIST_REL (exp_rel t.code) xs ys ⇒
+     LIST_REL (exp_rel t1.code) xs ys)`,
+   rw []
+  >> imp_res_tac evaluate_code_mono
+  >> metis_tac [exp_rel_mono, exp_rel_mono_list]);
+val _ = show "exp_rel_evaluate_mono_replay_typed" exp_rel_evaluate_mono_replay;
+
+(* Capture the exported original expression and list monotonicity theorems. *)
+val _ = show "exp_rel_mono_typed" bvi_inlineProofTheory.exp_rel_mono;
+val _ = show "exp_rel_mono_list_typed" bvi_inlineProofTheory.exp_rel_mono_list;
+
+(* Capture the exported original inductive rules and cases with inferred types. *)
+val _ = show "exp_rel_rules_typed" bvi_inlineProofTheory.exp_rel_rules;
+val _ = show "exp_rel_cases_typed" bvi_inlineProofTheory.exp_rel_cases;
+val _ = show "exp_rel_ind_typed" bvi_inlineProofTheory.exp_rel_ind;
+
+(* Capture the exported original cache-inclusion theorem with inferred types. *)
+val _ = show "inline_all_cache_subspt_typed" bvi_inlineProofTheory.inline_all_cache_subspt;
+
+(* Capture the exported original fresh-insertion inclusion theorem. *)
+val _ = show "subspt_insert_union_fresh_typed" bvi_inlineProofTheory.subspt_insert_union_fresh;
+
+(* Capture the exported original distinct-label preservation theorem. *)
+val _ = show "compile_inc_ALL_DISTINCT_typed" bvi_inlineProofTheory.compile_inc_ALL_DISTINCT;
+
+(* Capture the exported original expression-list inlining theorems. *)
+val _ = show "inline_exps_MAP_typed" bvi_inlineProofTheory.inline_exps_MAP;
+val _ = show "inline_exps_REVERSE_typed" bvi_inlineProofTheory.inline_exps_REVERSE;
+val _ = show "inline_exps_MAP_Var_typed" bvi_inlineProofTheory.inline_exps_MAP_Var;
+val _ = show "inline_exps_GENLIST_Var_typed" bvi_inlineProofTheory.inline_exps_GENLIST_Var;
+
+(* Capture the exported original expression-list length and cons theorems. *)
+val _ = show "inline_exps_LENGTH_typed" bvi_inlineProofTheory.inline_exps_LENGTH;
+val _ = show "remove_ticks_exps_LENGTH_typed" bvi_inlineProofTheory.remove_ticks_exps_LENGTH;
+val _ = show "inline_exps_CONS_typed" bvi_inlineProofTheory.inline_exps_CONS;
+
+(* Capture the original wrapper shape theorem and executable boundary observations. *)
+val _ = show "canonical_wrapper_thm_typed" bvi_inlineProofTheory.canonical_wrapper_thm;
+val _ = show "canonical_four_result_wrapper_typed" bvi_inlineTheory.canonical_four_result_wrapper;
+val _ = show "malformed_wrappers_rejected_typed" bvi_inlineTheory.malformed_wrappers_rejected;
+val _ = show "canonical_zero_wrapper_eval" (EVAL ``canonical_wrapper 10 0 (bvi$LetCall 0 5 11 [] (bvi$Op (BlockOp (Cons 7)) []))``);
+val _ = show "canonical_nonvar_wrapper_eval" (EVAL ``canonical_wrapper 10 1 (bvi$LetCall 0 5 11 [bvi$Tick (bvi$Var 0)] (bvi$Op (BlockOp (Cons 7)) []))``);
+
+(* Capture the original eligibility definition and wrapper-inlining theorem. *)
+val _ = show "wrapper_ok_def_typed" bvi_inlineTheory.wrapper_ok_def;
+val _ = show "wrapper_ok_inline_exp_typed" bvi_inlineProofTheory.wrapper_ok_inline_exp;
+
+(* Capture the exported incremental-wrapper example with inferred types. *)
+val _ = show "incremental_wrapper_example_typed" bvi_inlineProofTheory.incremental_wrapper_example;

@@ -137,36 +137,6 @@ theorem aallocFixed_related {C F : Type} (genv : GlobalEnv)
   rw [offset]
   exact .location genv _ true
 
-/-- Byte-array length returns the same literal from related states. This is
-Flapjack infrastructure over the partial primitive dispatchers. -/
-theorem aw8length_related {C F : Type} (genv : GlobalEnv)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (statesRel : StateRel genv sourceState flatState) (flag : Bool) (n : Nat)
-    (bytes : List (BitVec 8)) (lookup : storeLookup n sourceState.refs = some (.w8array bytes)) :
-    doAppBasic (sourceState.refs, sourceState.ffi) .aw8length [.loc flag n] =
-      some (some ((sourceState.refs, sourceState.ffi), .val (.litv (.intLit bytes.length)))) ∧
-    FlatSem.doAppMemory flatState .aw8length [.loc flag (n + 1)] =
-      some (some (flatState, .val (.litv (.intLit bytes.length)))) ∧
-    ValueRel genv (.litv (.intLit bytes.length)) (.litv (.intLit bytes.length)) := by
-  have flatLookup := stateRel_byteArray_lookup genv sourceState flatState statesRel n bytes lookup
-  exact ⟨by simp [doAppBasic, lookup], by simp [FlatSem.doAppMemory, flatLookup],
-    .literal genv _⟩
-
-/-- Array length agrees between related source and flat stores. -/
-theorem alength_related {C F : Type} (genv : GlobalEnv)
-    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
-    (statesRel : StateRel genv sourceState flatState) (flag : Bool) (n : Nat)
-    (values : List SemanticPrimitivesHOL.Value) (lookup : storeLookup n sourceState.refs = some (.varray values)) :
-    doAppBasic (sourceState.refs, sourceState.ffi) .alength [.loc flag n] =
-      some (some ((sourceState.refs, sourceState.ffi), .val (.litv (.intLit values.length)))) ∧
-    FlatSem.doAppMemory flatState .alength [.loc flag (n + 1)] =
-      some (some (flatState, .val (.litv (.intLit values.length)))) ∧
-    ValueRel genv (.litv (.intLit values.length)) (.litv (.intLit values.length)) := by
-  obtain ⟨flatValues, flatLookup, valuesRel⟩ := stateRel_array_lookup genv sourceState flatState statesRel n values lookup
-  have length := List.Forall₂.length_eq valuesRel
-  exact ⟨by simp [doAppBasic, lookup], by simp [FlatSem.doAppMemory, flatLookup, ← length],
-    .literal genv _⟩
-
 /-- Array reads preserve related values in the factored source and flat stores. -/
 theorem asub_related {C F : Type} (genv : GlobalEnv)
     (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
@@ -432,24 +402,5 @@ theorem ffi_return_related {C F : Type} (genv : GlobalEnv)
   refine ⟨_, flatRefs, ?_, ?_, finalRel, reserved⟩
   · simp [doAppBasic, lookup, returned, assigned]
   · simp [FlatSem.doAppData, flatLookup, ← ffiEq, returned, flatAssigned]
-
-/-- A terminal external call produces the same final event without changing
-stored data. This relies only on the factored state relation. -/
-theorem ffi_final_related {C F : Type} (genv : GlobalEnv)
-    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
-    (statesRel : StateRel genv source flat) (name : Basis.Pure.MlString.MlString)
-    (configuration : Basis.Pure.MlString.MlString) (flag : Bool) (address : Nat)
-    (bytes : List (BitVec 8)) (event : HolFinalEvent)
-    (lookup : storeLookup address source.refs = some (.w8array bytes))
-    (finished : callFFIHOL source.ffi (.extCall name) configuration.explode bytes = .final event) :
-    doAppBasic (source.refs, source.ffi) (.ffi name) [.litv (.strLit configuration), .loc flag address] =
-      some (some ((source.refs, source.ffi), .err (.abort (.ffiError event)))) ∧
-    FlatSem.doAppData flat (.ffi name) [.litv (.strLit configuration), .loc flag (address + 1)] =
-      some (some (flat, .err (.abort (.ffiError event)))) := by
-  have flatLookup := stateRel_byteArray_lookup genv source flat statesRel address bytes lookup
-  have ffiEq := (stateRel_iff genv source flat).mp statesRel |>.2.2.2
-  constructor
-  · simp [doAppBasic, lookup, finished]
-  · simp [FlatSem.doAppData, flatLookup, ← ffiEq, finished]
 
 end Flapjack.Compiler.Backend.SourceToFlat

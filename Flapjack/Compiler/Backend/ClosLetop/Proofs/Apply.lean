@@ -12,33 +12,6 @@ open Flapjack.Compiler.Backend.ClosSem
 open Flapjack.Compiler.Backend.ClosProps
 open Flapjack.SemanticPrimitivesHOL (Result)
 
-/-- Indexing related lists gives related optional entries. This helper has no standalone HOL declaration. -/
-theorem list_lookup_related {A B : Type} {relation : A → B → Prop} {left : List A} {right : List B}
-    (related : List.Forall₂ relation left right) (index : Nat) :
-    Flapjack.optionRel relation left[index]? right[index]? := by
-  induction related generalizing index with
-  | nil => simp [Flapjack.optionRel]
-  | cons head tail ih =>
-    cases index with
-    | zero => simpa [Flapjack.optionRel] using head
-    | succ index => simpa using ih index
-
-/-- Recursive closures generated from related bundles and environments are
-related at each common index. This helper has no standalone HOL declaration. -/
-theorem recursive_bundle_related (location : Option Nat) (env nextEnv : List Value)
-    (functions nextFunctions : List (Nat × ClosLang.Exp))
-    (environments : List.Forall₂ ValueRel env nextEnv)
-    (bodies : List.Forall₂ (FunctionRel) functions nextFunctions) :
-    List.Forall₂ ValueRel
-      ((List.range functions.length).map (fun i => Value.recclosure location [] env functions i))
-      ((List.range nextFunctions.length).map (fun i => Value.recclosure location [] nextEnv nextFunctions i)) := by
-  rw [← bodies.length_eq]
-  generalize List.range functions.length = indices
-  induction indices with
-  | nil => exact .nil
-  | cons index rest ih =>
-    exact .cons (.recclosure location [] [] env nextEnv functions nextFunctions index environments .nil bodies) ih
-
 /-- A successful closure inspection only accepts ordinary or recursive
 closures. -/
 @[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "dest_closure_SOME_IMP"]
@@ -108,7 +81,7 @@ theorem destClosure_full_recclosure (maxApp : Nat) (requested location : Option 
       destClosure maxApp requested (.recclosure location nextSupplied nextEnv nextFunctions index) (nextArg :: nextArgs) =
         some (.fullApp targetBody targetEnv targetRemaining) := by
   have allArgs : List.Forall₂ ValueRel (arg :: args) (nextArg :: nextArgs) := .cons argRel argsRel
-  have lookupRel := list_lookup_related functionsRel index
+  have lookupRel := Flapjack.forall₂_lookupRel functionsRel index
   cases found : functions[index]? with
   | none => simp [destClosure, found] at run
   | some entry =>
@@ -202,7 +175,7 @@ theorem destClosure_none_related (maxApp : Nat) (requested : Option Nat)
           nextSupplied.length < arity) := by simpa [← argsRel.length_eq, ← suppliedRel.length_eq] using valid
       rw [destClosure_closure_source, if_neg targetInvalid]
   | recclosure location supplied nextSupplied env nextEnv functions nextFunctions index envRel suppliedRel functionsRel =>
-    have lookup := list_lookup_related functionsRel index
+    have lookup := Flapjack.forall₂_lookupRel functionsRel index
     cases found : functions[index]? with
     | none =>
       cases targetFound : nextFunctions[index]? with
@@ -256,7 +229,7 @@ theorem destClosure_partial_related (maxApp : Nat) (requested : Option Nat)
     · rw [destClosure_closure_source, if_neg valid] at run
       contradiction
   | recclosure location supplied nextSupplied env nextEnv functions nextFunctions index envRel suppliedRel functionsRel =>
-    have lookup := list_lookup_related functionsRel index
+    have lookup := Flapjack.forall₂_lookupRel functionsRel index
     cases found : functions[index]? with
     | none => simp [destClosure, found] at run
     | some entry =>
@@ -314,7 +287,7 @@ theorem stateRel_clock {C F : Type} (source target : State C F) (clock : Nat) (r
 /-- Decrementing both clocks by the same amount preserves the state relation. This helper has no standalone HOL declaration. -/
 theorem stateRel_dec {C F : Type} (source target : State C F) (amount : Nat) (related : StateRel source target) :
     StateRel (decClock amount source) (decClock amount target) := by
-  have clocks : target.clock = source.clock := related.2.2.2.2.2.1
+  have clocks : target.clock = source.clock := (state_rel_clocks_eqs source target related).symm
   simpa [decClock, clocks] using stateRel_clock source target (source.clock - amount) related
 
 /-- Applying a related function to an empty argument list returns the
@@ -358,7 +331,7 @@ theorem evaluate_let_op_app_cons {C F : Type} (location : Option Nat) (function 
     rename_i targetArg targetTail
     have allArgs : List.Forall₂ ValueRel (arg :: args) (targetArg :: targetTail) := .cons argRel tailRel
     have maxEq : target.maxApp = source.maxApp := states.2.2.2.1
-    have clockEq : target.clock = source.clock := states.2.2.2.2.2.1
+    have clockEq : target.clock = source.clock := (state_rel_clocks_eqs source target states).symm
     cases closureRun : destClosure source.maxApp location function (arg :: args) with
     | none =>
       have targetClosure := destClosure_none_related source.maxApp location function targetFunction

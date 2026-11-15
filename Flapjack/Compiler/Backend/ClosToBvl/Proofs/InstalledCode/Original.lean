@@ -29,6 +29,13 @@ theorem codeInstalled_fromAList_strong {A B : Type} : ∀ (ls ls' : List (Nat ×
       List.inj_on_of_nodup_map h.1 otherMem inAll rfl
     exact congrArg Prod.snd eq
 
+/-- A distinct-key association list installs each entry in its contiguous sublist. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "code_installed_fromAList"]
+theorem codeInstalled_fromAList {A B : Type} (ls aux : List (Nat × A × B)) :
+    ((ls.map Prod.fst).Nodup ∧ aux <:+: ls) →
+      codeInstalled aux (sptFromAList ls) :=
+  codeInstalled_fromAList_strong ls aux
+
 /-- Left-biased tree union preserves installed code when the left tree is
 disjoint from the installed labels. -/
 @[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "code_installed_union"]

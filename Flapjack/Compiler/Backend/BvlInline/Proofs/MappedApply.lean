@@ -11,29 +11,6 @@ namespace Flapjack.Compiler.Backend.BvlInline.Proofs
 open Flapjack.Compiler.Backend.BvlSem Flapjack.Compiler.Backend.BvlProps
 open Flapjack.SemanticPrimitivesHOL
 
-/-- Non-install primitives preserve a generic mapped-state relation. This is
-Flapjack proof infrastructure, not a standalone HOL declaration. -/
-theorem mappedDoApp_nonInstall {C F : Type} (transform : Nat → Bvl.Exp → Bvl.Exp)
-    (s t : State C F) (related : mappedStateRel transform s t)
-    (op : ClosLang.Op) (args : List BvlSem.Value) (notInstall : op ≠ .install) :
-    match doApp op args t with
-    | .err error => doApp op args s = .err error
-    | .val (value, next) => ∃ sourceNext, mappedStateRel transform sourceNext next ∧
-        doApp op args s = .val (value, sourceNext) := by
-  have domains := mappedStateRel_codeDomain transform s t related
-  have unframe := mappedStateRel_unframe transform s t related
-  cases run : doApp op args t with
-  | err error =>
-    have errorRun := doApp_withCodeErr op args t error s.code s.compile s.compileOracle
-      run notInstall (Or.inl (by intro key present; rwa [domains]))
-    simpa [unframe] using errorRun
-  | val pair =>
-    obtain ⟨value, next⟩ := pair
-    have frame := doApp_code op args t next value notInstall run
-    have successRun := doApp_withCode op args t next value s.code s.compile s.compileOracle
-      run notInstall (by intro key present; rwa [domains] at present)
-    exact ⟨_, mappedStateRel_reframe transform s t next related frame, by simpa [unframe] using successRun⟩
-
 /-- Installation is simulated by an arity-preserving body map, in both its
 success and error branches. This is Flapjack proof infrastructure. -/
 theorem mappedDoInstall {C F : Type} (transform : Nat → Bvl.Exp → Bvl.Exp)
@@ -63,7 +40,7 @@ theorem mappedDoInstall {C F : Type} (transform : Nat → Bvl.Exp → Bvl.Exp)
             rw [fields]
             clear fields related
             simp only [doInstall, bytesEq, wordsEq, compilerEq, mappedProgram_disjoint,
-              mappedProgram_labels]
+              List.map_map, Function.comp_def]
             clear compilerEq
             cases programs : (s.compileOracle 0).2 with
             | nil =>
@@ -88,7 +65,7 @@ theorem mappedDoInstall {C F : Type} (transform : Nat → Bvl.Exp → Bvl.Exp)
                   by_cases same : bytes = bs ∧ words = ws ∧ (s.compileOracle 1).1 = cfg
                   · simp_all
                     rw [if_pos tailFree, if_pos tailFree]
-                    simp [mappedStateRel, ← mappedProgram_codeUnion]
+                    simp [mappedStateRel, sptMap_sptUnion, sptMap_sptFromAList]
                   · simp_all
                     rw [if_pos tailFree, if_pos tailFree]
                     have notSame : ¬(bytes = bs ∧ words = ws ∧ (s.compileOracle 1).1 = cfg) := by aesop
@@ -114,7 +91,9 @@ theorem mappedDoApp {C F : Type} (transform : Nat → Bvl.Exp → Bvl.Exp)
       cases s
       cases t
       simp_all [runtimeFrame]
-    have domains := mappedStateRel_codeDomain transform s t related
+    have domains : sptDomain t.code = sptDomain s.code := by
+      have code := congrArg (fun state : State C F => state.code) related.1
+      rw [code, sptDomain_sptMap]
     cases run : doApp op args s with
     | err error =>
       have swapped := doAppRerrSwap op args s error t

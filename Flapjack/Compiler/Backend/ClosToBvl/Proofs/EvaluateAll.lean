@@ -94,8 +94,10 @@ theorem expressionSimulationBelow_all {C F : Type} (clockBound : Nat)
 /-- The unrestricted candidate simulation follows by choosing a clock bound
 larger than the initial source clock. -/
 theorem expressionSimulation_all {C F : Type} (expressions : List ClosLang.Exp) :
-    expressionSimulation (C := C) (F := F) expressions :=
-  (expressionSimulation_iff_below expressions).2 (fun bound => expressionSimulationBelow_all bound expressions)
+    expressionSimulation (C := C) (F := F) expressions := by
+  intro s sFinal t sourceEnv targetEnv f aux finalAux compiled result
+  exact expressionSimulationBelow_all (s.clock + 1) expressions s sFinal t sourceEnv targetEnv
+    f aux finalAux compiled result (by omega)
 
 /-- Indirect closure application is simulated for every nonempty argument
 list, discharging the body-simulation premise of the application induction. -/

@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxHandle
+public import Flapjack.Compiler.Backend.BvlHandle.Proofs.GeneratedShape
 
 @[expose] public section
 
@@ -8,13 +9,6 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.AuxHandle
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value)
 open Flapjack.SemanticPrimitivesHOL (Result)
-
-private theorem handleOk_varList (xs : List Bvl.Exp) (onlyVars : xs.all BvlProps.isVar = true) :
-    BvlHandle.Proofs.handleOk xs := by
-  rw [BvlHandle.Proofs.handleOk_every]
-  intro expression member
-  have isVariable := (List.all_eq_true.mp onlyVars) expression member
-  cases expression <;> simp_all [BvlProps.isVar, BvlHandle.Proofs.handleOk]
 
 /-- Handler simulation for a variable-only, bounded protected let.
 Untagged pending BVI evaluator and dispatcher correspondence review. -/
@@ -42,7 +36,7 @@ theorem simulation_handle {C F : Type} (bindings : List Bvl.Exp) (body handler :
       auxCodeInstalled (appListAppend handlerAux) target.code ∧
       sptLookup (bvlNumStubs + bvlToBviNamespaces * finalName + 1) target.code =
         some (bindings.length, BviLet.compileSing [] 0 bodyCode) := by
-    simp only [appListAppend_smartAppend, compileAuxSource,
+    simp only [appListAppend_smartAppend, compileAuxSource, BviLet.compileExp_eq,
       show appListAppend (.list [(bvlNumStubs + bvlToBviNamespaces * finalName + 1,
         bindings.length, BviLet.compileSing [] 0 bodyCode)]) =
           [(bvlNumStubs + bvlToBviNamespaces * finalName + 1,
@@ -56,6 +50,12 @@ theorem simulation_handle {C F : Type} (bindings : List Bvl.Exp) (body handler :
   have shape : bindings.all BvlProps.isVar = true ∧ BvlProps.bVarBound bindings.length [body] ∧
       BvlHandle.Proofs.handleOk [body] ∧ BvlHandle.Proofs.handleOk [handler] := by
     simpa [BvlHandle.Proofs.handleOk, and_assoc] using handlers
+  have bindingsHandle : BvlHandle.Proofs.handleOk bindings :=
+    BvlHandle.Proofs.handleOk_varConstList bindings (by
+      rw [List.forall_iff_forall_mem]
+      intro expression member
+      have isVarCase := (List.all_eq_true.mp shape.1) expression member
+      cases expression <;> simp_all [BvlProps.isVar])
   rw [BvlSem.evaluate, BvlSem.fixClock_evaluate, BvlSem.evaluate, BvlSem.fixClock_evaluate] at run
   cases bindingsRun : BvlSem.evaluate bindings env source with
   | mk bindingsResult mid =>
@@ -66,13 +66,13 @@ theorem simulation_handle {C F : Type} (bindings : List Bvl.Exp) (body handler :
       simp [bindingsRun] at run
       exact (notTypeError run.1.symm).elim
     | val values =>
-      have unchanged := (evaluate_varList_members bindings env source mid values shape.1 bindingsRun).2
+      have unchanged := (evaluate_varList_members bindings env source mid values ⟨shape.1, bindingsRun⟩).2
       subst mid
       have valuesLength := BvlSem.evaluate_length bindings env source source values bindingsRun
       have bodyBound : BvlProps.bVarBound values.length [body] := by simpa [valuesLength] using shape.2.1
       rw [bindingsRun] at run
       dsimp only at run
-      rw [evaluate_bVarBound [body] values env source bodyBound] at run
+      rw [evaluate_bVarBound [body] values source env bodyBound] at run
       cases bodyRun : BvlSem.evaluate [body] values source with
       | mk bodyResult bodyMid =>
         have bodyNotType : bodyResult ≠ .err (.abort .typeError) := by
@@ -81,13 +81,13 @@ theorem simulation_handle {C F : Type} (bindings : List Bvl.Exp) (body handler :
           simp [bodyRun] at run
           exact notTypeError run.1.symm
         have valuesOk : bvOkList source.refs values := by
-          have members := (evaluate_varList_members bindings env source source values shape.1 bindingsRun).1
+          have members := (evaluate_varList_members bindings env source source values ⟨shape.1, bindingsRun⟩).1
           apply (bvOkList_iff _ _).2
           intro value member
-          exact (bvOkList_iff _ _).1 envOk value (members value member)
+          exact (bvOkList_iff _ _).1 envOk value (List.forall_iff_forall_mem.mp members value member)
         obtain ⟨targetMid, midRelocate, bindingsClock, targetBindings, relatedMid, envMidEq, refsMidEq⟩ :=
           bindingsIH n (.val values) source target n1 bindingsCode bindingsAux relocate bindingsRun (by simp)
-            bindingsCompile related sourceOk envOk pieces.1 (handleOk_varList bindings shape.1) global
+            bindingsCompile related sourceOk envOk pieces.1 bindingsHandle global
         have targetCodeGrowth := BviProps.evaluate_code_mono bindingsCode (env.map (adjustBv midRelocate))
           (BviProps.incClock bindingsClock target) targetMid (.val (values.map (adjustBv midRelocate))) (by
             simpa [mapSimulationResult] using targetBindings)

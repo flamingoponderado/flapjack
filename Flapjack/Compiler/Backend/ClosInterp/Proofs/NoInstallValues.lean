@@ -5,13 +5,21 @@ public import Flapjack.Compiler.Backend.ClosInterp.Proofs.InitRelation
 @[expose] public section
 
 
-/-! Values and states used for the no-install interpreter-insertion case.
-These proof-side definitions await HOL carrier and statement review. -/
+/-! Values and states used for the no-install interpreter-insertion case. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL Flapjack.Compiler.Backend.BackendProps
 
+/-- The closure state uses the canonical finite-support map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
 mutual
-/-- A value contains no closure body that can execute installation. -/
+/-- A value contains no closure body that can execute installation. The two
+closure environment checks are ordered differently from HOL's conjunction;
+`hasInstallFuns` checks every recursive function body. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "v_ok_def"]
 def valueNoInstall : ClosSem.Value → Bool
   | .number _ | .word64 _ | .byteVector _ | .refPtr _ _ => true
   | .block _ values => valuesNoInstall values
@@ -38,6 +46,7 @@ theorem valuesNoInstall_iff (values : List ClosSem.Value) :
 
 /-- An evaluator result contains only no-install values when it succeeds or
 raises; an abort has no returned value to inspect. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "res_ok_def"]
 def resultNoInstall : Result (List ClosSem.Value) ClosSem.Value → Prop
   | .val values => valuesNoInstall values = true
   | .err (.raise value) => valueNoInstall value = true
@@ -55,15 +64,32 @@ def refsNoInstall (refs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value)) : P
 
 /-- Relation for the no-install case: related compiler state plus the
 no-install invariants for target globals and references. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "state_rel'_def"
+  (fmap_as_finite_support := [refs, code])]
 def StateRelNoInstall {C F : Type} (source target : ClosSem.State C F) : Prop :=
   StateRel1 source target ∧
     (∀ entry ∈ target.globals, ∀ value, entry = some value → valueNoInstall value = true) ∧
     refsNoInstall target.refs
 
+/-- Related no-install states have equal clocks. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "state_rel'_clock"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRelNoInstall_clock {C F : Type} {source target : ClosSem.State C F}
+    (related : StateRelNoInstall source target) : target.clock = source.clock := related.1.2.2.2.2.2.1
+
+/-- Related no-install states have equal reference stores. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "state_rel'_refs"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRelNoInstall_refs {C F : Type} {source target : ClosSem.State C F}
+    (related : StateRelNoInstall source target) : target.refs = source.refs :=
+  related.1.2.2.2.2.2.2.2.2.1.symm
+
 /-- Selecting environment variables preserves the no-install invariant. -/
-theorem lookupVars_noInstall (indices : List Nat) (env selected : List ClosSem.Value)
-    (valid : valuesNoInstall env = true) (run : ClosSem.lookupVars indices env = some selected) :
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "lookup_vars_ok"]
+theorem lookupVars_ok (indices : List Nat) (env selected : List ClosSem.Value)
+    (assumptions : ClosSem.lookupVars indices env = some selected ∧ valuesNoInstall env = true) :
     valuesNoInstall selected = true := by
+  obtain ⟨run, valid⟩ := assumptions
   induction indices generalizing selected with
   | nil =>
     simp [ClosSem.lookupVars] at run
@@ -134,6 +160,14 @@ theorem stateRelNoInstall_decClock {C F : Type} (source target : ClosSem.State C
   rcases related with ⟨⟨safe, sc, tc, maxEq, maxPositive, clock, ffi, globals, refs, compiler, oracle⟩, globalOk, refsOk⟩
   exact ⟨⟨safe, sc, tc, maxEq, maxPositive, by simp [ClosSem.decClock, clock], ffi, globals, refs, compiler, oracle⟩,
     globalOk, refsOk⟩
+
+/-- Related no-install states remain related after consuming one clock step. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "state_rel'_dec_clock"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRelNoInstall_decClock_one {C F : Type} (source target : ClosSem.State C F)
+    (related : StateRelNoInstall source target) :
+    StateRelNoInstall (ClosSem.decClock 1 source) (ClosSem.decClock 1 target) :=
+  stateRelNoInstall_decClock source target related 1
 
 /-- The two initial states satisfy the no-install relation when the source
 oracle has no auxiliary code. -/
@@ -234,13 +268,6 @@ decreasing_by
   have h := List.sizeOf_lt_of_mem childMember
   simp_wf
   omega
-
-/-- A list has no installation exactly when each of its expressions does not. -/
-theorem hasInstallList_eq_false_iff (expressions : List ClosLang.Exp) :
-    ClosLang.hasInstallList expressions = false ↔ ∀ expression ∈ expressions, ClosLang.hasInstall expression = false := by
-  induction expressions with
-  | nil => simp [ClosLang.hasInstallList]
-  | cons expression rest ih => simp [ClosLang.hasInstallList, ih]
 
 /-- Updating a reference with a safe payload preserves the reference invariant. -/
 theorem refsNoInstall_update (refs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value))

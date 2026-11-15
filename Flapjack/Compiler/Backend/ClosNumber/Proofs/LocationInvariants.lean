@@ -74,6 +74,14 @@ theorem renumberList_imp_length (start : Nat) (expressions : List Exp)
   have length := renumberList_length expressions start
   simpa [run] using length
 
+/-- Numbering preserves the length of every explicitly returned list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "renumber_code_locs_list_length"]
+theorem renumber_code_locs_list_length :
+    ∀ expressions start next output, renumberList start expressions = (next, output) →
+      output.length = expressions.length := by
+  intro expressions start next output run
+  exact renumberList_imp_length start expressions next output run
+
 mutual
 
 /-- Numbering never moves the next available location backwards. -/

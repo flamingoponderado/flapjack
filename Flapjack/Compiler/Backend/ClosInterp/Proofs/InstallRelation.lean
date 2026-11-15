@@ -9,45 +9,6 @@ semantics and finite-map carriers remain pending HOL correspondence review. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL Flapjack.Compiler.Backend.BackendProps
 
-/-- Updating a finite map with no entries leaves it unchanged. -/
-theorem finiteMap_updateListEq_nil {α β : Type} [DecidableEq α] (map : HolFiniteMapExact α β) :
-    map.updateListEq [] = map := by
-  cases map
-  simp [HolFiniteMapExact.updateListEq, FUPDATE_LIST_HOL]
-
-/-- Interpreter insertion preserves whether a program is empty. -/
-theorem insertInterp_eq_nil (expressions : List ClosLang.Exp) :
-    insertInterp expressions = [] ↔ expressions = [] := by
-  simp [insertInterp]
-
-/-- Related installation oracles supply the same configuration, with
-interpreter insertion applied to the target expressions. -/
-theorem stateRel_oracle_head {C F : Type} (source target : ClosSem.State C F)
-    (related : StateRel source target) (config : C) (expressions : List ClosLang.Exp)
-    (oracle : source.compileOracle 0 = (config, (expressions, []))) :
-    target.compileOracle 0 = (config, (insertInterp expressions, [])) := by
-  have rel := related.1.2.2.2.2.2.2.2.2.2.2
-  rw [rel]
-  simp [oracle, pureCo, insertProgram]
-
-/-- Related compilers agree on the corresponding installation request. -/
-theorem stateRel_compile {C F : Type} (source target : ClosSem.State C F)
-    (related : StateRel source target) (config : C) (expressions : List ClosLang.Exp) :
-    source.compile config (expressions, []) = target.compile config (insertInterp expressions, []) := by
-  have rel := related.1.2.2.2.2.2.2.2.2.2.1
-  rw [rel]
-  rfl
-
-/-- Shifting related oracles and consuming equal clock preserves the state relation. -/
-theorem stateRel_installNext {C F : Type} (source target : ClosSem.State C F)
-    (related : StateRel source target) :
-    StateRel { source with code := source.code.updateListEq [], compileOracle := Flapjack.holShiftSeq 1 source.compileOracle, clock := source.clock - 1 }
-      { target with code := target.code.updateListEq [], compileOracle := Flapjack.holShiftSeq 1 target.compileOracle, clock := target.clock - 1 } := by
-  have shifted := stateRel_shift related 1
-  have clockEq : target.clock = source.clock := related.1.2.2.2.2.2.1
-  have shiftedClock := stateRel_withClock shifted (source.clock - 1)
-  simpa [finiteMap_updateListEq_nil, clockEq] using shiftedClock
-
 /-- Non-type-error installation outcomes correspond in related states. -/
 theorem doInstall_stateRel {C F : Type} (values : List ClosSem.Value)
     (source target sourceFinal : ClosSem.State C F) (result : Result (List ClosLang.Exp) ClosSem.Value)
@@ -66,8 +27,13 @@ theorem doInstall_stateRel {C F : Type} (values : List ClosSem.Value)
     | mk expressions auxiliary =>
       simp [sourceHead] at safe
       subst auxiliary
-      have targetHead := stateRel_oracle_head source target related config expressions sourceHead
-      have compilerEq := stateRel_compile source target related config expressions
+      have targetHead : target.compileOracle 0 = (config, (insertInterp expressions, [])) := by
+        rw [related.1.2.2.2.2.2.2.2.2.2.2]
+        simp [sourceHead, pureCo, insertProgram]
+      have compilerEq : source.compile config (expressions, []) =
+          target.compile config (insertInterp expressions, []) := by
+        rw [related.1.2.2.2.2.2.2.2.2.2.1]
+        rfl
       have clockEq : target.clock = source.clock := related.1.2.2.2.2.2.1
       cases values with
       | nil => simp [ClosSem.doInstall] at run; exact (notTypeError run.1.symm).elim
@@ -103,8 +69,18 @@ theorem doInstall_stateRel {C F : Type} (values : List ClosSem.Value)
                   · have targetValid : bytes = compiledBytes ∧ words = compiledWords ∧
                         (Flapjack.holShiftSeq 1 target.compileOracle 0).1 = nextConfig ∧ insertInterp expressions ≠ [] := by
                       rcases valid with ⟨bytesEq, wordsEq, configEq, nonempty⟩
-                      exact ⟨bytesEq, wordsEq, shiftConfig.trans configEq, fun h => nonempty (insertInterp_eq_nil expressions |>.mp h)⟩
-                    have nextRel := stateRel_installNext source target related
+                      exact ⟨bytesEq, wordsEq, shiftConfig.trans configEq, fun h => nonempty (by simpa [insertInterp] using h)⟩
+                    have nextRel : StateRel
+                        { source with code := source.code.updateListEq [], compileOracle := Flapjack.holShiftSeq 1 source.compileOracle, clock := source.clock - 1 }
+                        { target with code := target.code.updateListEq [], compileOracle := Flapjack.holShiftSeq 1 target.compileOracle, clock := target.clock - 1 } := by
+                      rcases related with ⟨⟨safe, sc, tc, maxEq, positive, clock, ffi, globals, refs, compiler, oracle⟩, interpreter⟩
+                      simp only [HolFiniteMapExact.updateListEq, FUPDATE_LIST_HOL]
+                      refine ⟨⟨?_, sc, tc, maxEq, positive, ?_, ffi, globals, refs, compiler, ?_⟩, interpreter⟩
+                      · intro index
+                        exact safe (index + 1)
+                      · simp only [clock]
+                      · rw [oracle]
+                        rfl
                     by_cases zero : source.clock = 0
                     · have sourceResult : ClosSem.doInstall [bytesValue, wordsValue] source =
                           (.err (.abort .timeoutError), { source with code := source.code.updateListEq [], compileOracle := Flapjack.holShiftSeq 1 source.compileOracle, clock := source.clock - 1 }) := by

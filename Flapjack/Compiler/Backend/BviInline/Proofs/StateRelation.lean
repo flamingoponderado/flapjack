@@ -9,17 +9,36 @@ public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 namespace Flapjack.Compiler.Backend.BviInline
 open BviSem BvlSem BackendProps
 
-/-- Flapjack infrastructure: the inliner's source-shaped compiler adapter. -/
-def inCc {C : Type} (compiler : BviSem.Compiler C) : BviSem.Compiler (Spt (Nat × Bvi.Exp) × C) :=
+/-- Thread the inlining cache through a downstream compiler callback. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "in_cc_def"]
+def inCc {C CNext Code Data : Type}
+    (compiler : C → List (Nat × Nat × Bvi.Exp) → Option (Code × Data × CNext)) :
+    Spt (Nat × Bvi.Exp) × C → List (Nat × Nat × Bvi.Exp) →
+      Option (Code × Data × Spt (Nat × Bvi.Exp) × CNext) :=
   stateCc inlineAllSource compiler
 
-/-- Flapjack infrastructure: transform each future code segment with its
-cached wrappers. -/
-def inCo {C : Type} (oracle : BviSem.CompileOracle (Spt (Nat × Bvi.Exp) × C)) : BviSem.CompileOracle C :=
+/-- Transform each future code segment using its stored wrapper cache. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "in_co_def"]
+def inCo {Index C : Type}
+    (oracle : Index → (Spt (Nat × Bvi.Exp) × C) × List (Nat × Nat × Bvi.Exp)) :
+    Index → C × List (Nat × Nat × Bvi.Exp) :=
   stateCo inlineAllSource oracle
 
-/-- Flapjack infrastructure: source and target states for BVI inlining. This
-source-shaped relation remains untagged pending HOL carrier review. -/
+/-- The inlining compiler adapter is the generic state compiler adapter. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "in_cc_eq_state_cc"]
+theorem inCcEqStateCc {C CNext Code Data : Type}
+    (compiler : C → List (Nat × Nat × Bvi.Exp) → Option (Code × Data × CNext)) :
+    inCc compiler = stateCc inlineAllSource compiler := rfl
+
+/-- The inlining oracle adapter is the generic state oracle adapter. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "in_co_eq_state_co"]
+theorem inCoEqStateCo {Index C : Type}
+    (oracle : Index → (Spt (Nat × Bvi.Exp) × C) × List (Nat × Nat × Bvi.Exp)) :
+    inCo oracle = stateCo inlineAllSource oracle := rfl
+
+/-- Source and target states for BVI inlining. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "in_state_rel_def"
+  (fmap_as_finite_support := [refs])]
 def InStateRel {C F : Type} (source : BviState (Spt (Nat × Bvi.Exp) × C) F) (target : BviState C F) : Prop :=
   target.refs = source.refs ∧ target.clock = source.clock ∧ target.global = source.global ∧
   target.ffi = source.ffi ∧ target.compileOracle = inCo source.compileOracle ∧
@@ -42,19 +61,24 @@ theorem inStateRel_decClock {C F : Type} (source : BviState (Spt (Nat × Bvi.Exp
     InStateRel (BviSem.decClock ticks source) (BviSem.decClock ticks target) := by
   simpa [BviSem.decClock, states.2.1] using inStateRel_with_clock source target states (source.clock - ticks)
 
-/-- Flapjack infrastructure: an inliner-related state has the same clock and
-observable FFI state as its source. -/
-theorem inStateRel_observables {C F : Type} (source : BviState (Spt (Nat × Bvi.Exp) × C) F)
-    (target : BviState C F) (states : InStateRel source target) :
-    target.clock = source.clock ∧ target.ffi = source.ffi := ⟨states.2.1, states.2.2.2.1⟩
+namespace StateRelationCarrier
+/-- The BVI reference carrier has a canonical finite-support roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end StateRelationCarrier
 
-/-- Flapjack infrastructure: both direct and indirect code lookup preserve
-arguments and select related bodies under the inliner state relation. -/
+/-- Direct and indirect code lookup preserve arguments and select related
+bodies under the inlining state relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "in_state_rel_find_code"
+  (fmap_as_finite_support := [refs])]
 theorem findCode_inStateRel {C F : Type} (source : BviState (Spt (Nat × Bvi.Exp) × C) F)
     (target : BviState C F) (destination : Option Nat) (values args : List Value) (body : Bvi.Exp)
-    (states : InStateRel source target) (found : findCode destination values source.code = some (args, body)) :
+    (premises : InStateRel source target ∧ findCode destination values source.code = some (args, body)) :
     ∃ transformed, findCode destination values target.code = some (args, transformed) ∧
       ExpRel target.code body transformed := by
+  obtain ⟨states, found⟩ := premises
   have codeRel := states.2.2.2.2.2.2.2.2
   cases destination with
   | some name =>

@@ -1,6 +1,8 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Primitive
+public import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.StateRelation.Original
+public import Flapjack.FiniteMap.BroadCodec
 
 @[expose] public section
 
@@ -39,18 +41,6 @@ theorem destThunk_related {C F : Type} (source target : State C F)
     cases leftRef <;> cases rightRef <;> simp_all
     cases flag <;> simp_all
   | _ => simp [destThunk, DestThunkRel]
-
-/-- Thunk-update validity agrees for related values and stores. -/
-theorem badThunkUpdate_related {C F : Type} (source target : State C F)
-    (mode : AstHOL.ThunkMode) (value nextValue : Value) (valueRel : ValueRel value nextValue)
-    (states : StateRel source target) :
-    badThunkUpdate mode value source.refs = badThunkUpdate mode nextValue target.refs := by
-  have related := destThunk_related source target value nextValue valueRel states
-  unfold badThunkUpdate
-  split
-  · cases left : destThunk [value] source.refs <;> cases right : destThunk [nextValue] target.refs <;>
-      simp_all [DestThunkRel]
-  · rfl
 
 /-- Thunk inspection also agrees on non-singleton argument lists. -/
 theorem destThunk_list_related {C F : Type} (source target : State C F)
@@ -108,5 +98,41 @@ theorem updateThunk_related {C F : Type} (source target : State C F)
               simpa [states.2.1] using updated
           | number _ | word64 _ | block _ _ _ _ | byteVector _ | closure | recclosure =>
             simp [updateThunk]
+
+namespace SourceThunkPort
+/-- The canonical closure-state finite maps roundtrip through their broad view. -/
+theorem holFmapAsFiniteSupportRelationWitness_State {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
+/-- The existential reference map has the canonical finite-map roundtrip. -/
+theorem holFmapAsFiniteSupportExistentialWitness_relUpdateThunkSource_targetRefs
+    (targetRefs : HolFiniteMapExact Nat (Ref Value)) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad targetRefs)).lookup = targetRefs.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad targetRefs)).finiteSupport = targetRefs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad targetRefs) = targetRefs := by
+  cases targetRefs
+  exact ⟨rfl, rfl, rfl⟩
+end SourceThunkPort
+
+/-- A successful source thunk update yields a related target update. -/
+@[hol "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" "rel_update_thunk"
+  (nested_list_rel_as_mutual := [FunctionsRel])
+  (fmap_as_finite_support_relation := [State.refs, State.code, sourceRefs])
+  (fmap_as_finite_support_existentials := [targetRefs])]
+theorem relUpdateThunkSource {C F : Type} (source target : ClosSem.State C F) (flag : Bool) (ptr : Nat)
+    (values nextValues : List Value) (sourceRefs : HolFiniteMapExact Nat (Ref Value))
+    (related : StateRelSource source target ∧ List.Forall₂ ValueRel values nextValues)
+    (updated : updateThunk [.refPtr flag ptr] source.refs values = some sourceRefs) :
+    ∃ targetRefs : HolFiniteMapExact Nat (Ref Value),
+      updateThunk [.refPtr flag ptr] target.refs nextValues = some targetRefs ∧
+        StateRelSource { source with refs := sourceRefs } { target with refs := targetRefs } := by
+  have live := (stateRelSource_iff source target).mp related.1
+  have update := updateThunk_related source target [.refPtr flag ptr] [.refPtr flag ptr]
+    values nextValues (.cons (.refPtr flag ptr) .nil) related.2 live
+  rw [updated] at update
+  obtain ⟨targetRefs, run, states⟩ := update
+  exact ⟨targetRefs, run, (stateRelSource_iff _ _).mpr states⟩
 
 end Flapjack.Compiler.Backend.ClosAnnotate

@@ -184,16 +184,43 @@ whole namespace strides. -/
 theorem compileEachSource_next_mono (next last : Nat) (code output : List (Nat × Nat × Bvi.Exp))
     (run : compileEachSource next code = (last, output)) :
     ∃ k, last = next + Flapjack.bvlToBviNamespaces * k := by
-  apply compileEachFuel_next_mono 0 next last code output
-  simp [compileEachFuel_eq_source, run]
+  induction code generalizing next last output with
+  | nil =>
+    simp [compileEachSource] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact ⟨0, by simp⟩
+  | cons entry rest ih =>
+    obtain ⟨loc, arity, body⟩ := entry
+    cases decision : compileExpSource loc next arity body with
+    | none =>
+      rcases tailSource : compileEachSource next rest with ⟨tailNext, tailCode⟩
+      have same : (last, output) = (tailNext, (loc, arity, body) :: tailCode) := by
+        simpa [compileEachSource, decision, tailSource] using run.symm
+      obtain ⟨k, equal⟩ := ih next tailNext tailCode tailSource
+      exact ⟨k, (congrArg Prod.fst same).trans equal⟩
+    | some pair =>
+      obtain ⟨wrapper, worker⟩ := pair
+      rcases tailSource : compileEachSource (next + Flapjack.bvlToBviNamespaces) rest with ⟨tailNext, tailCode⟩
+      have same : (last, output) = (tailNext, (loc, arity, wrapper) :: (next, arity + 2, worker) :: tailCode) := by
+        simpa [compileEachSource, decision, tailSource] using run.symm
+      obtain ⟨k, equal⟩ := ih (next + Flapjack.bvlToBviNamespaces) tailNext tailCode tailSource
+      refine ⟨k + 1, ?_⟩
+      have lastEq : last = tailNext := congrArg Prod.fst same
+      rw [lastEq]
+      simpa [Nat.mul_add, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using equal
+
 
 /-- The source program entry point has the same counter property. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "compile_prog_next_mono"]
 theorem compileProgSource_next_mono (enabled : Bool) (next last : Nat)
     (code output : List (Nat × Nat × Bvi.Exp)) (run : compileProgSource enabled next code = (last, output)) :
     ∃ k, last = next + Flapjack.bvlToBviNamespaces * k := by
-  apply compileProgFuel_next_mono 0 enabled next last code output
-  simp [compileProgFuel_eq_source, run]
+  cases enabled with
+  | false =>
+    simp [compileProgSource] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact ⟨0, by simp⟩
+  | true => exact compileEachSource_next_mono next last code output (by simpa [compileProgSource] using run)
 
 /-- Every output label was present in the input or allocated in the worker
 interval. -/
@@ -202,7 +229,44 @@ theorem compileEachSource_mem (next last label : Nat) (code output : List (Nat �
     (run : compileEachSource next code = (last, output)) (member : label ∈ output.map Prod.fst) :
     label ∈ code.map Prod.fst ∨
       (next ≤ label ∧ label < last ∧ ∃ k, label = next + k * Flapjack.bvlToBviNamespaces) := by
-  exact compileEachFuel_mem 0 code next last label output (by simp [compileEachFuel_eq_source, run]) member
+  induction code generalizing next last output with
+  | nil => simp [compileEachSource] at run; obtain ⟨_, rfl⟩ := run; simp at member
+  | cons entry rest ih =>
+    obtain ⟨loc, arity, body⟩ := entry
+    cases decision : compileExpSource loc next arity body with
+    | none =>
+      rcases tailSource : compileEachSource next rest with ⟨tailNext, tailCode⟩
+      have equal : (tailNext, (loc, arity, body) :: tailCode) = (last, output) := by
+        simpa [compileEachSource, decision, tailSource] using run
+      obtain ⟨rfl, rfl⟩ := equal
+      simp only [List.map_cons, List.mem_cons] at member ⊢
+      rcases member with same | other
+      · exact Or.inl (Or.inl same)
+      · rcases ih next last tailCode tailSource other with found | fresh
+        · exact Or.inl (Or.inr found)
+        · exact Or.inr fresh
+    | some pair =>
+      obtain ⟨wrapper, worker⟩ := pair
+      rcases tailSource : compileEachSource (next + Flapjack.bvlToBviNamespaces) rest with ⟨tailNext, tailCode⟩
+      have equal : (tailNext, (loc, arity, wrapper) :: (next, arity + 2, worker) :: tailCode) = (last, output) := by
+        simpa [compileEachSource, decision, tailSource] using run
+      obtain ⟨rfl, rfl⟩ := equal
+      have ⟨k, advance⟩ := compileEachSource_next_mono (next + Flapjack.bvlToBviNamespaces) last rest tailCode tailSource
+      simp only [List.map_cons, List.mem_cons] at member ⊢
+      rcases member with same | same | other
+      · exact Or.inl (Or.inl same)
+      · subst label
+        right
+        refine ⟨by omega, ?_, 0, by simp⟩
+        have positive : 0 < Flapjack.bvlToBviNamespaces := by decide
+        omega
+      · rcases ih (next + Flapjack.bvlToBviNamespaces) last tailCode tailSource other with found | ⟨lo, hi, j, eq⟩
+        · exact Or.inl (Or.inr found)
+        · right
+          refine ⟨by omega, hi, j + 1, ?_⟩
+          simp only [Nat.add_mul, Nat.one_mul]
+          omega
+
 
 /-- The corresponding output-label property for the source program pass. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "compile_prog_MEM"]
@@ -211,7 +275,12 @@ theorem compileProgSource_mem (enabled : Bool) (next last label : Nat)
     (member : label ∈ output.map Prod.fst) :
     label ∈ code.map Prod.fst ∨
       (next ≤ label ∧ label < last ∧ ∃ k, label = next + k * Flapjack.bvlToBviNamespaces) := by
-  exact compileProgFuel_mem 0 enabled next last label code output (by simp [compileProgFuel_eq_source, run]) member
+  cases enabled with
+  | false =>
+    simp [compileProgSource] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact Or.inl member
+  | true => exact compileEachSource_mem next last label code output (by simpa [compileProgSource] using run) member
 
 private theorem freeNames_advance (next name steps : Nat) (free : freeNames next name) :
     freeNames (next + Flapjack.bvlToBviNamespaces * steps) name := by

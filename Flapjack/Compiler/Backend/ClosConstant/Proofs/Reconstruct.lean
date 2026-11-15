@@ -1,6 +1,8 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosConstant.Proofs.Bounds
+public import Mathlib.Data.List.Forall2
+public import Mathlib.Data.List.Nodup
 
 @[expose] public section
 
@@ -64,6 +66,38 @@ theorem entriesBuilt_cons (part : ConstPart) (aux : List (ConstPart × Nat))
     intro tag children equal child childMem
     subst other
     exact Nat.lt_trans (ordered tag children index member child childMem) indexBound
+
+/-- Canonical allocation indices bound every entry. This Flapjack helper
+connects the HOL accumulator invariant to the reconstruction proof. -/
+theorem canonicalIndices_bounds (aux : List (ConstPart × Nat))
+    (canonical : canonicalIndices aux) : indicesBelow aux.length aux := by
+  intro entry member
+  have found : entry.2 ∈ aux.map Prod.snd := List.mem_map.mpr ⟨entry, member, rfl⟩
+  rw [canonical] at found
+  simpa using found
+
+/-- The canonical and dependency invariants imply the memory invariant used
+by Flapjack's reconstruction proof. -/
+theorem entriesBuilt_of_canonical (aux : List (ConstPart × Nat))
+    (canonical : canonicalIndices aux) (ordered : dependenciesBelow aux) : entriesBuilt aux := by
+  induction aux with
+  | nil => simp [entriesBuilt]
+  | cons head tail ih =>
+    obtain ⟨part, index⟩ := head
+    have canonParts : index = tail.length ∧ canonicalIndices tail := by
+      simp only [canonicalIndices, List.map_cons, List.length_cons, List.range_succ,
+        List.reverse_append, List.reverse_cons, List.reverse_nil, List.nil_append,
+        List.singleton_append, List.cons.injEq] at canonical
+      exact canonical
+    obtain ⟨rfl, tailCanonical⟩ := canonParts
+    have tailOrdered : dependenciesBelow tail := by
+      intro tag children idx mem child childMem
+      exact ordered tag children idx (List.mem_cons_of_mem _ mem) child childMem
+    have built := ih tailCanonical tailOrdered
+    apply entriesBuilt_cons part tail (canonicalIndices_bounds tail tailCanonical) tailOrdered built
+    intro tag children partEq child childMem
+    subst part
+    exact ordered tag children tail.length (by simp) child childMem
 
 /-- Later allocations cannot change an index in an existing accumulator. -/
 theorem builtMemory_suffix (added aux : List (ConstPart × Nat)) (key : Nat)
@@ -156,6 +190,78 @@ theorem partsList_reconstruct (constants : List Const) (index : Nat) (aux : List
             exact ⟨by rw [unchanged, inductionResult.1, restRec.1], restRec.2⟩
 end
 
+/-- A functional list relation is equality with the mapped list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_constantProofScript.sml" "LIST_REL_eq"]
+theorem listRel_eq {α β : Type} (f : β → α) (xs : List α) (ys : List β) :
+    List.Forall₂ (fun x y => f y = x) xs ys ↔ xs = ys.map f := by
+  have h := List.forall₂_map_right_iff (R := (· = ·)) (f := f) (l := xs) (u := ys)
+  rw [List.forall₂_eq_eq_eq] at h
+  constructor
+  · intro rel
+    apply h.mpr
+    exact rel.imp (fun _ _ eq => eq.symm)
+  · intro eq
+    exact (h.mp eq).imp (fun _ _ eq => eq.symm)
+
+/-- Flattening constants and lists preserves the complete HOL accumulator
+invariants and reconstructs each original constant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_constantProofScript.sml" "parts_thm"]
+theorem partsFull :
+    (∀ (c : Const) (n : Nat) (aux : List (ConstPart × Nat)) (m r : Nat)
+      (res : List (ConstPart × Nat)),
+      parts c n aux = (m, r, res) ∧ (aux.map Prod.snd).Nodup ∧ consesOk aux ∧
+        n = aux.length ∧ aux.all (fun p => decide (p.2 < n)) = true →
+      (buildMap (fun _ => .constInt 0) 0 (res.reverse.map Prod.fst)) r = c ∧ n ≤ m ∧ r < m ∧ (res.map Prod.snd).Nodup ∧
+        consesOk res ∧ m = res.length ∧ res.all (fun p => decide (p.2 < m)) = true) ∧
+    (∀ (cs : List Const) (n : Nat) (aux : List (ConstPart × Nat)) (m : Nat)
+      (rs : List Nat) (res : List (ConstPart × Nat)),
+      partsList cs n aux = (m, rs, res) ∧ (aux.map Prod.snd).Nodup ∧ consesOk aux ∧
+        n = aux.length ∧ aux.all (fun p => decide (p.2 < n)) = true →
+      List.Forall₂ (fun c r => (buildMap (fun _ => .constInt 0) 0 (res.reverse.map Prod.fst)) r = c) cs rs ∧ n ≤ m ∧
+        (res.map Prod.snd).Nodup ∧ rs.all (fun k => decide (k < m)) = true ∧
+        consesOk res ∧ m = res.length ∧ res.all (fun p => decide (p.2 < m)) = true) := by
+  constructor
+  · intro c n aux m r res ⟨run, distinct, ok, matching, allBound⟩
+    obtain ⟨canonical, ordered⟩ := (consesOk_iff aux).1 ok
+    have bounded : indicesBelow n aux := by
+      intro entry mem
+      simpa using (List.all_eq_true.mp allBound entry mem)
+    have built := entriesBuilt_of_canonical aux canonical ordered
+    have reconstruction := parts_reconstruct c n aux matching canonical bounded ordered built
+    have bounds := parts_bounds c n aux bounded
+    have orderedResult := parts_dependencies c n aux bounded ordered
+    have canonicalResult := parts_indices c n aux matching canonical
+    rw [run] at reconstruction bounds orderedResult canonicalResult
+    refine ⟨reconstruction.1, bounds.1, bounds.2.1, ?_, ?_, canonicalResult.1, ?_⟩
+    · rw [canonicalResult.2]
+      exact List.nodup_reverse.mpr List.nodup_range
+    · exact (consesOk_iff res).2 ⟨canonicalResult.2, orderedResult⟩
+    · apply List.all_eq_true.mpr
+      intro entry mem
+      simpa using bounds.2.2 entry mem
+  · intro cs n aux m rs res ⟨run, distinct, ok, matching, allBound⟩
+    obtain ⟨canonical, ordered⟩ := (consesOk_iff aux).1 ok
+    have bounded : indicesBelow n aux := by
+      intro entry mem
+      simpa using (List.all_eq_true.mp allBound entry mem)
+    have built := entriesBuilt_of_canonical aux canonical ordered
+    have reconstruction := partsList_reconstruct cs n aux matching canonical bounded ordered built
+    have bounds := partsList_bounds cs n aux bounded
+    have orderedResult := partsList_dependencies cs n aux bounded ordered
+    have canonicalResult := partsList_indices cs n aux matching canonical
+    rw [run] at reconstruction bounds orderedResult canonicalResult
+    refine ⟨?_, bounds.1, ?_, ?_, ?_, canonicalResult.1, ?_⟩
+    · exact (listRel_eq _ cs rs).2 reconstruction.1.symm
+    · rw [canonicalResult.2]
+      exact List.nodup_reverse.mpr List.nodup_range
+    · apply List.all_eq_true.mpr
+      intro entry mem
+      simpa using bounds.2.1 entry mem
+    · exact (consesOk_iff res).2 ⟨canonicalResult.2, orderedResult⟩
+    · apply List.all_eq_true.mpr
+      intro entry mem
+      simpa using bounds.2.2 entry mem
+
 /-- Flattening and rebuilding a constant recovers the original syntax tree. -/
 @[hol "cakeml/compiler/backend/proofs/clos_constantProofScript.sml" "build_const_to_parts"]
 theorem buildConst_toParts (constant : Const) : buildConstSyntax (toParts constant) = constant := by
@@ -177,5 +283,16 @@ theorem buildConst_toParts (constant : Const) : buildConstSyntax (toParts consta
         simp only [Nat.add_sub_cancel, ↓reduceIte, ← List.map_reverse]
         change Const.constCons tag (indices.map (builtMemory aux)) = Const.constCons tag constants
         rw [reconstructed.1]
+
+/-- Interpreting a constant agrees with interpreting its flattened parts. -/
+@[hol "cakeml/compiler/backend/proofs/clos_constantProofScript.sml" "make_const_thm"]
+theorem makeConst_toParts (constant : Const) :
+    ClosSem.makeConst constant = buildConst (toParts constant) := by
+  calc
+    ClosSem.makeConst constant = ClosSem.makeConst (buildConstSyntax (toParts constant)) :=
+      congrArg ClosSem.makeConst (buildConst_toParts constant).symm
+    _ = buildConst (toParts constant) := by
+      simpa [buildConstSyntax, buildConst, ClosSem.makeConst] using
+        makeConst_buildSyntax (toParts constant) (fun _ => .constInt 0) 0
 
 end Flapjack.Compiler.Backend.ClosConstant.Proofs

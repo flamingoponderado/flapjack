@@ -111,7 +111,8 @@ theorem doAppFallbackRerrSwap {C D F G : Type} (op : ClosLang.Op) (args : List B
     (target : Flapjack.Compiler.Backend.BvlSem.State D G)
     (notGlobal : ∀ operation, op ≠ .globOp operation)
     (h : doApp op args source = .err error ∧ op ≠ .install ∧
-      (∀ key, sptDomain target.code key → sptDomain source.code key)) :
+      ((∀ key, sptDomain target.code key → sptDomain source.code key) ∨
+        error ≠ .abort .typeError)) :
     doApp op args (fallbackFrame source target) = .err error := by
   rcases h with ⟨run, notInstall, domain⟩
   cases op with
@@ -140,7 +141,8 @@ theorem doAppFallbackRerrSwap {C D F G : Type} (op : ClosLang.Op) (args : List B
         cases newFound : sptLookup index target.code with
         | none => simp [doApp, fallbackFrame, newFound]
         | some entry =>
-          have present := domain index (by simp [sptDomain, newFound])
+          have domain' := domain.resolve_right (by simp)
+          have present := domain' index (by simp [sptDomain, newFound])
           simp [sptDomain, found] at present
   | install => exact (notInstall rfl).elim
   | ffi | thunkOp =>

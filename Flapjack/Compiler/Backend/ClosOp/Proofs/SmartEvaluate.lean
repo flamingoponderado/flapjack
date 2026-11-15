@@ -185,12 +185,6 @@ private theorem evalIntLiteral {C F : Type} (t : BackendCommon.Tra) (i : Int)
   rw [evaluate_ordinaryOp_eq t _ _ env s (by simp) (by simp)]
   simp [evaluate, doApp, applyNumeric, doIntApp]
 
-/-- Source boolean construction used by constant folding. -/
-private theorem evalBoolLiteral {C F : Type} (b : Bool) (env : List Value) (s : State C F) :
-    evaluate [mkBool b] env s = (.val [boolValue b], s) := by
-  cases b <;> rw [mkBool, evaluate_ordinaryOp_eq _ _ _ _ _ (by simp) (by simp)] <;>
-    simp [evaluate, doApp, applyBlock, boolValue, BackendCommon.falseTag, BackendCommon.trueTag]
-
 /-- The source integer matcher identifies a literal expression. -/
 private theorem intSome (x : ClosLang.Exp) (i : Int) (h : destOpNil destConst x = some i) :
     ∃ t, x = .op t (.intOp (.const i)) [] := by
@@ -231,7 +225,7 @@ theorem smartOpThmInteger {C F : Type} (t : BackendCommon.Tra) (op : ClosLang.In
             evalIntLiteral ty b env s]
         rw [evaluate_ordinaryOp_eq t _ _ env s (by simp) (by simp), operands] at h
         cases op <;> simp [smartOp, smartOp', destOpConsts, hx, hy, integerOp, mkInt,
-          evalIntLiteral, evalBoolLiteral, doApp, applyNumeric, doIntApp] at h ⊢
+          evalIntLiteral, evaluateMakeBool, doApp, applyNumeric, doIntApp] at h ⊢
         all_goals try exact h.1
         all_goals try exact (h.2 h.1.1.symm).elim
         all_goals by_cases zero : a = 0 <;> simp [zero] at h ⊢
@@ -297,7 +291,7 @@ theorem smartOpThmTagLen {C F : Type} (t tx : BackendCommon.Tra) (n len tag : Na
         apply Bool.eq_iff_iff.mpr
         simp only [beq_iff_eq]
         exact eq_comm
-      simp [argsRun, doApp, applyBlock, evalBoolLiteral, lengthEq, tagSym] at h ⊢
+      simp [argsRun, doApp, applyBlock, evaluateMakeBool, lengthEq, tagSym] at h ⊢
       exact h.1
 
 /-- Unary tag test on a constructor. -/
@@ -323,7 +317,7 @@ theorem smartOpThmTag {C F : Type} (t tx : BackendCommon.Tra) (n tag : Nat)
         apply Bool.eq_iff_iff.mpr
         simp only [beq_iff_eq]
         exact eq_comm
-      simp [argsRun, doApp, applyBlock, evalBoolLiteral, tagSym] at h ⊢
+      simp [argsRun, doApp, applyBlock, evaluateMakeBool, tagSym] at h ⊢
       exact h.1
 
 /-- Unary field-count test on a constructor. -/
@@ -346,7 +340,7 @@ theorem smartOpThmLen {C F : Type} (t tx : BackendCommon.Tra) (len tag : Nat)
     | err err => simp [argsRun] at h ⊢; exact h.1
     | val values =>
       have lengthEq := evaluate_length.1 args env s next values argsRun
-      simp [argsRun, doApp, applyBlock, evalBoolLiteral, lengthEq] at h ⊢
+      simp [argsRun, doApp, applyBlock, evaluateMakeBool, lengthEq] at h ⊢
       exact h.1
 
 /-- Unary field-projection case on a constructor. -/

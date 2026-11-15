@@ -6,6 +6,11 @@ val _ = Globals.show_types := true;
 fun show label th = if null (hyp th) then
   (print label; print "="; print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
+open closSemTheory clos_opTheory;
+val evaluate_make_bool_replay = Q.prove (
+  `∀b. evaluate ([MakeBool b],vs,s) = (Rval [Boolv b],s)`,
+  Cases \\ EVAL_TAC);
+val _ = show "evaluate_make_bool_replay_typed" evaluate_make_bool_replay;
 val _ = show "dont_lift_thm_typed" clos_opProofTheory.dont_lift_thm;
 val _ = show "dont_lift_pure_typed" clos_opProofTheory.dont_lift_pure;
 val _ = show "lift_acc_typed" clos_opProofTheory.lift_exps_acc;
@@ -43,6 +48,12 @@ val _ = show "smart_code_locs_typed" clos_opProofTheory.code_locs_SmartOp;
 val _ = show "list_to_bag_alt_typed" containerTheory.LIST_TO_BAG_alt;
 val _ = show "lift_exps_fv_typed" clos_opProofTheory.lift_exps_fv;
 val _ = show "fv_conj_list_typed" clos_opProofTheory.fv1_ConjList;
+val _ = show "fv1_el_typed" clos_opProofTheory.fv1_EL;
+val _ = show "dest_cons_thm_typed" clos_opProofTheory.dest_Cons_thm;
+val _ = show "dest_constant_thm_typed" clos_opProofTheory.dest_Constant_thm;
+val _ = show "dest_const_thm_typed" clos_opProofTheory.dest_Const_thm;
+val _ = show "dest_op_nil_thm_typed" clos_opProofTheory.dest_Op_Nil_thm;
+val _ = show "dest_op_thm_typed" clos_opProofTheory.dest_Op_thm;
 val _ = show "fv_eq_pure_typed" clos_opProofTheory.fv1_eq_pure;
 val _ = show "eq_op_fv_typed" clos_opProofTheory.eq_op_fv;
 val _ = show "smart_fv_typed" clos_opProofTheory.fv1_SmartOp;

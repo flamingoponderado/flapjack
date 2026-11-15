@@ -31,11 +31,22 @@ theorem valueRelSimple : simpleValRel ValueRel := by
   · intro body arity env args loc x h; cases h; simp [isClos]
   · intro index funs env args loc x h; cases h; simp [isClos]
 
-/-- Related states expose related reference lookups. This helper is Lean-side
-infrastructure, not a standalone HOL declaration. -/
-theorem stateRel_lookupRefs {C F : Type} {s t : State C F} (related : StateRel s t) (key : Nat) :
-    Flapjack.optionRel RefRel (s.refs.lookup key) (t.refs.lookup key) :=
-  ClosMti.fmapRel_lookup related.2.2.2.2.2.2.2.2.1 key
+/-- Related states match reference lookups in either direction. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "state_rel_opt_rel_refs"
+  (fmap_as_finite_support := [refs, code])]
+theorem state_rel_opt_rel_refs {C F : Type} (s t : State C F) (key : Nat)
+    (left right : Option (Ref Value)) :
+    (StateRel s t ∧ s.refs.lookup key = left →
+      ∃ right, t.refs.lookup key = right ∧ Flapjack.optionRel RefRel left right) ∧
+    (StateRel s t ∧ t.refs.lookup key = right →
+      ∃ left, s.refs.lookup key = left ∧ Flapjack.optionRel RefRel left right) := by
+  constructor
+  · rintro ⟨states, found⟩
+    refine ⟨t.refs.lookup key, rfl, ?_⟩
+    simpa only [found] using ClosMti.fmapRel_lookup states.2.2.2.2.2.2.2.2.1 key
+  · rintro ⟨states, found⟩
+    refine ⟨s.refs.lookup key, rfl, ?_⟩
+    simpa only [found] using ClosMti.fmapRel_lookup states.2.2.2.2.2.2.2.2.1 key
 
 /-- Updating corresponding references preserves the relation. This helper is
 Lean-side infrastructure, not a standalone HOL declaration. -/
@@ -61,10 +72,10 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
 theorem stateRelSimple {C F : Type} : simpleStateRel ValueRel (StateRel : State C F → State C F → Prop) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro s t ptr ⟨missing, related⟩
-    have lookup := stateRel_lookupRefs related ptr
+    obtain ⟨_, rfl, lookup⟩ := (state_rel_opt_rel_refs s t ptr (s.refs.lookup ptr) (t.refs.lookup ptr)).1 ⟨related, rfl⟩
     cases left : s.refs.lookup ptr <;> simp_all [Flapjack.optionRel]
   · intro bytes t s ptr ⟨found, related⟩
-    have lookup := stateRel_lookupRefs related ptr
+    obtain ⟨_, rfl, lookup⟩ := (state_rel_opt_rel_refs s t ptr (s.refs.lookup ptr) (t.refs.lookup ptr)).1 ⟨related, rfl⟩
     cases left : s.refs.lookup ptr with
     | none => simp [left, found, Flapjack.optionRel] at lookup
     | some value =>
@@ -72,7 +83,7 @@ theorem stateRelSimple {C F : Type} : simpleStateRel ValueRel (StateRel : State 
       cases lookup
       rfl
   · intro values t s ptr ⟨found, related⟩
-    have lookup := stateRel_lookupRefs related ptr
+    obtain ⟨_, rfl, lookup⟩ := (state_rel_opt_rel_refs s t ptr (s.refs.lookup ptr) (t.refs.lookup ptr)).1 ⟨related, rfl⟩
     cases left : s.refs.lookup ptr with
     | none => simp [left, found, Flapjack.optionRel] at lookup
     | some value =>
@@ -80,7 +91,7 @@ theorem stateRelSimple {C F : Type} : simpleStateRel ValueRel (StateRel : State 
       cases lookup with
       | valueArray xs _ rel => exact ⟨xs, rfl, rel⟩
   · intro mode value t s ptr ⟨found, related⟩
-    have lookup := stateRel_lookupRefs related ptr
+    obtain ⟨_, rfl, lookup⟩ := (state_rel_opt_rel_refs s t ptr (s.refs.lookup ptr) (t.refs.lookup ptr)).1 ⟨related, rfl⟩
     cases left : s.refs.lookup ptr with
     | none => simp [left, found, Flapjack.optionRel] at lookup
     | some entry =>

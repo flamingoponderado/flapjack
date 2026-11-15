@@ -76,7 +76,12 @@ theorem getVarsLocalsEq {width : Nat} [NeZero width] {C F : Type}
   (words_as_type_indexed_bitvec)]
 theorem evaluateRemoveDead_Move {width : Nat} [NeZero width] {C F : Type} (pri : Nat)
     (moves : List (Nat × Nat)) :
-    removeDeadGoal C F (.move pri moves : WordLangProgHOL (BitVec width)) := by
+    ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+      (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+      (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+      (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+      removeDeadBody (.move pri moves : WordLangProgHOL (BitVec width)) live nlive lt prog' livein nlivein st t tstore res rst := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, herr⟩
   rw [evaluate] at hev
   by_cases hnd : (moves.map Prod.fst).Nodup

@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.BviToData.Proofs.State
 public import Flapjack.Compiler.Backend.BviToData.Proofs.Apply
 public import Flapjack.Compiler.Backend.BviToData.Proofs.CutEnv
+public import Flapjack.Compiler.Backend.DataSpace.Proofs.State
 public import Flapjack.Compiler.Backend.Semantics.DataSem.Apply
 
 @[expose] public section
@@ -234,7 +235,7 @@ theorem evaluate_iAssign_makeSpace {C F : Type} (op : ClosLang.Op)
       · exact operandPresent key operand
       · exact livePresent key liveMember
     · exact corrPresent key corrMember
-  have length := getVars_length operands target.locals args read
+  have length := DataSpace.getVars_length operands target.locals args read
   have shape : iAssign dest op operands live corr =
       .seq (.makeSpace (DataSpace.opSpaceReq op args.length) (namesOfList (operands ++ live ++ corr)))
         (.assign dest op operands none) := by
@@ -272,7 +273,7 @@ theorem evaluate_iAssign_noSpace {C F : Type} (op : ClosLang.Op)
       DataSem.evaluate (iAssign dest op operands live corr) target =
         (none, DataSem.setVar dest value (DataSem.installSfs op targetNext)) ∧
       result = dataToBviValue value ∧ stateRel next (DataSem.setVar dest value (DataSem.installSfs op targetNext)) := by
-  have length := getVars_length operands target.locals args read
+  have length := DataSpace.getVars_length operands target.locals args read
   have enough : DataLang.opSpaceReset op = true ∨ DataSpace.opSpaceReq op args.length ≤ target.space := by
     right
     simp [length, noSpace]

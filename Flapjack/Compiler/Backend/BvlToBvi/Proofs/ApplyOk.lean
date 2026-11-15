@@ -40,35 +40,6 @@ theorem doApp_ok_build {C F : Type} (parts : List ClosLang.ConstPart)
   | cons head tail =>
     simp [doApp, BvlSem.applyBlock] at run
 
-/-- Code-label case of primitive application. -/
-@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "do_app_ok"
-  (fmap_as_finite_support := [refs])]
-theorem doApp_ok_label {C F : Type} (index : Nat)
-    (args env : List Value) (s t : Flapjack.Compiler.Backend.BvlSem.State C F) (value : Value)
-    (ok : stateOk s) (_argsOk : bvOkList s.refs args)
-    (run : doApp (.label index) args s = .val (value, t)) :
-    stateOk t ∧ bvOk t.refs value ∧ (bvOkList s.refs env → bvOkList t.refs env) := by
-  simp only [doApp] at run
-  split at run
-  · simp only [Flapjack.SemanticPrimitivesHOL.Result.val.injEq, Prod.mk.injEq] at run
-    rcases run with ⟨rfl, rfl⟩
-    exact ⟨ok, by simp [bvOk], id⟩
-  · contradiction
-
-/-- Code-installation case of primitive application. -/
-@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "do_app_ok"
-  (fmap_as_finite_support := [refs])]
-theorem doApp_ok_install {C F : Type}
-    (args env : List Value) (s t : Flapjack.Compiler.Backend.BvlSem.State C F) (value : Value)
-    (ok : stateOk s) (_argsOk : bvOkList s.refs args)
-    (run : doApp .install args s = .val (value, t)) :
-    stateOk t ∧ bvOk t.refs value ∧ (bvOkList s.refs env → bvOkList t.refs env) := by
-  simp only [doApp, BvlSem.doInstall] at run
-  repeat' first | split at run | contradiction
-  all_goals simp only [Flapjack.SemanticPrimitivesHOL.Result.val.injEq, Prod.mk.injEq] at run
-  all_goals rcases run with ⟨rfl, rfl⟩
-  all_goals exact ⟨ok, by simp [bvOk], id⟩
-
 /-- FFI case of primitive application. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "do_app_ok"
   (fmap_as_finite_support := [refs])]

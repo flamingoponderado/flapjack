@@ -10,6 +10,14 @@ namespace Flapjack.Compiler.Backend.BviLet.Proofs
 open Flapjack.Compiler.Backend.BviSem
 open Flapjack.Compiler.Backend.BvlSem (Value)
 
+namespace DeleteVarListCarrier
+/-- The BVI reference state and its finite-support representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviStateBroad C F, (BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end DeleteVarListCarrier
+
 /-- A successful singleton remains successful after deleting a variable,
 with the same state. This is Flapjack infrastructure for the list proof. -/
 theorem evaluate_deleteVar_success {C F : Type} (expression : Bvi.Exp)
@@ -52,15 +60,17 @@ theorem evaluate_deleteVar_head_rel {C F : Type} (expression : Bvi.Exp)
         simpa [lengths, Nat.add_comm] using lookup
   | _ => exact ⟨value, by simpa [deleteVar] using run, by simp [extract]⟩
 
-/-- Successful deletion returns a related environment and preserves the
-final state. Untagged until the BVI evaluator and dispatcher are reviewed. -/
+/-- Successful deletion returns a related environment and preserves the final state. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "evaluate_delete_var_Rval"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_deleteVar_list_success {C F : Type} (expressions : List Bvi.Exp)
-    (targetEnv sourceEnv : List Value) (state final : BviState C F) (values : List Value)
-    (offsets : List Nat) (d : Nat)
-    (run : evaluateTuple (expressions, targetEnv, state) = (.val values, final))
-    (related : envRel offsets d sourceEnv targetEnv) :
+    (targetEnv : List Value) (state : BviState C F) (values : List Value) (final : BviState C F)
+    (offsets : List Nat) (sourceEnv : List Value) (d : Nat)
+    (premises : evaluateTuple (expressions, targetEnv, state) = (.val values, final) ∧
+      envRel offsets d sourceEnv targetEnv) :
     ∃ output, evaluateTuple (expressions.map deleteVar, targetEnv, state) = (.val output, final) ∧
       envRel (extractList expressions ++ offsets) d (values ++ sourceEnv) (output ++ targetEnv) := by
+  obtain ⟨run, related⟩ := premises
   induction expressions generalizing state values with
   | nil =>
     simp [evaluateTuple, evaluate] at run
@@ -95,14 +105,17 @@ theorem evaluate_deleteVar_list_success {C F : Type} (expressions : List Bvi.Exp
             · simp only [extractList, List.cons_append, envRel]
               exact ⟨headRel, tailRel⟩
 
-/-- Deleting variable aliases preserves a non-type-error list failure and
-its final state. Untagged until the BVI evaluator and dispatcher are reviewed. -/
+/-- Deleting variable aliases preserves a non-type-error list failure and its final state. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "evaluate_delete_var_Rerr"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_deleteVar_list_error {C F : Type} (expressions : List Bvi.Exp)
-    (env : List Value) (state final : BviState C F)
+    (state final : BviState C F)
     (error : Flapjack.SemanticPrimitivesHOL.ErrorResult ExnOrRet)
-    (run : evaluateTuple (expressions, env, state) = (.err error, final))
-    (notTypeError : error ≠ .abort .typeError) :
+    (env : List Value)
+    (premises : evaluateTuple (expressions, env, state) = (.err error, final) ∧
+      error ≠ .abort .typeError) :
     evaluateTuple (expressions.map deleteVar, env, state) = (.err error, final) := by
+  obtain ⟨run, notTypeError⟩ := premises
   induction expressions generalizing state with
   | nil => simp [evaluateTuple, evaluate] at run
   | cons head tail ih =>
@@ -116,7 +129,7 @@ theorem evaluate_deleteVar_list_error {C F : Type} (expressions : List Bvi.Exp)
         simp [headRun] at run
         rcases run with ⟨rfl, rfl⟩
         have transformed : evaluateTuple ([deleteVar head], env, state) = (.err headError, next) :=
-          evaluate_deleteVar_error head env state next headError headRun notTypeError
+          evaluate_deleteVar_error head state next headError env ⟨headRun, notTypeError⟩
         rw [transformed]
       | val values =>
         have headRun' : evaluate [head] env state = (.val values, next) := headRun

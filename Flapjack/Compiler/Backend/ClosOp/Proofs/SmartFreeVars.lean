@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftFreeVars
+public import Flapjack.Misc.ListEl
 
 @[expose] public section
 
@@ -15,23 +16,15 @@ private theorem fvMember (n : Nat) (xs : List Exp) :
   | nil => simp [freeVars]
   | cons x xs ih => simp [freeVars, ih, or_and_right, exists_or]
 
-/-- Flapjack proof infrastructure, not a separate HOL theorem. -/
-private theorem fvAppend (n : Nat) (xs ys : List Exp) :
-    freeVars n (xs ++ ys) ↔ freeVars n xs ∨ freeVars n ys := by
-  induction xs with
-  | nil => simp [freeVars]
-  | cons x xs ih => simp [freeVars, ih, or_assoc]
-
-/-- Flapjack proof infrastructure, not a separate HOL theorem. -/
-private theorem consFV (x : Exp) (tag : Nat) (ys : List Exp)
-    (h : cons x = some (tag,ys)) (l : Nat) : freeVarExp l x ↔ freeVars l ys := by
-  rw [destOpCons_eq_previous] at h
-  cases x <;> try simp at h
-  case op t op args =>
-    cases op <;> try simp at h
-    case blockOp op =>
-      cases op <;> try simp at h
-      case cons tag2 => obtain ⟨rfl,rfl⟩ := h; rfl
+/-- A free variable in a bounded list element occurs in the whole list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_opProofScript.sml" "fv1_EL"]
+theorem fv1_el (xs : List Exp) (n k : Nat)
+    (premises : freeVar n (@Flapjack.holEl Exp ⟨.var .none 0⟩ k xs) ∧ k < xs.length) :
+    freeVars n xs := by
+  obtain ⟨free, bound⟩ := premises
+  rw [@Flapjack.holEl_eq_getElem Exp ⟨.var .none 0⟩ k xs bound] at free
+  apply (fvMember n xs).2
+  exact ⟨xs[k], List.getElem_mem bound, by simpa [freeVar, freeVars] using free⟩
 
 /-- Flapjack proof infrastructure, not a separate HOL theorem. -/
 private theorem intStageFV (x y z : Exp) (h : eqDirectConst x y = some z) (n : Nat)
@@ -87,10 +80,10 @@ private theorem treeFV (pairs : List (Exp × Exp)) (n : Nat)
     obtain ⟨a,b,hm,hv⟩ := ih hv
     rcases hv with hv | hv
     · apply Or.inl
-      apply (consFV x tagY xs hx n).mpr
+      apply (consFreeVars x tagY xs hx n).mpr
       exact (fvMember n xs).mpr ⟨a,List.mem_reverse.mp (List.of_mem_zip hm).1,hv⟩
     · apply Or.inr
-      apply (consFV y tagY ys hy n).mpr
+      apply (consFreeVars y tagY ys hy n).mpr
       exact (fvMember n ys).mpr ⟨b,List.mem_reverse.mp (List.of_mem_zip hm).2,hv⟩
   case case6 =>
     rename_i x y hd tag xs hx hy fields ih
@@ -104,7 +97,7 @@ private theorem treeFV (pairs : List (Exp × Exp)) (n : Nat)
       obtain ⟨rfl,rfl⟩ := heq
       simp only [freeVarExp, freeVars, or_false] at hv
       rcases hv with hv | hv
-      · exact Or.inl ((consFV x tag xs hx n).mpr ((fvMember n xs).mpr ⟨e,List.mem_reverse.mp (List.of_mem_zip hm).1,hv⟩))
+      · exact Or.inl ((consFreeVars x tag xs hx n).mpr ((fvMember n xs).mpr ⟨e,List.mem_reverse.mp (List.of_mem_zip hm).1,hv⟩))
       · exact Or.inr hv
   case case7 =>
     rename_i x y hd tag ys hx hy ih
@@ -113,7 +106,7 @@ private theorem treeFV (pairs : List (Exp × Exp)) (n : Nat)
   case case8 =>
     rename_i p q rest ihp ihrest
     intro hv
-    rw [appendAux_thm, fvAppend] at hv
+    rw [appendAux_thm, freeVars_append] at hv
     rcases hv with hv | hv
     · exact Or.inl (ihp hv)
     · exact Or.inr (ihrest hv)
@@ -221,7 +214,7 @@ theorem smartFV (n : Nat) (t : BackendCommon.Tra) (op : Op) (xs : List Exp)
             obtain ⟨tag,args⟩ := p
             simp only [hc] at hs
             have hv := consStageFV op tag args z hs n hzfv
-            have hx := (consFV x tag args hc n).mpr hv
+            have hx := (consFreeVars x tag args hc n).mpr hv
             simpa [freeVars] using hx
         | cons y rest =>
           cases rest with

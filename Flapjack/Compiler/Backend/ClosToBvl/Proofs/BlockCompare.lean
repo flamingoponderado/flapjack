@@ -24,17 +24,6 @@ def BlockCompare.op : BlockCompare → ClosLang.Op
   | .stringEq text => .blockOp (.equalConst (.str text))
   | .bounds => .blockOp .boundsCheckBlock
 
-/-- A related byte vector points to the matching frozen target array. -/
-theorem vRel_byteVector_inv {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {bytes : List (BitVec 8)} {target : BvlSem.Value}
-    (related : vRel maxApp f refs code (.byteVector bytes) target) :
-    ∃ ptr, target = .refPtr true ptr ∧ refs.lookup ptr = some (.byteArray true bytes) := by
-  cases related with
-  | byteVector found _ => exact ⟨_, rfl, found⟩
-  | closure _ closure => cases closure
-  | partialClosure _ _ _ _ _ added _ closure => cases closure <;> simp [addArgs] at added
-
 /-- Successful comparisons preserve related values and leave both states unchanged. -/
 theorem blockCompare_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
     (op : BlockCompare) (args : List ClosSem.Value) (targets : List BvlSem.Value)
@@ -87,7 +76,7 @@ theorem blockCompare_dispatch {C F : Type} {f : HolFiniteMapExact Nat Nat}
           cases related with
           | cons head tail =>
             cases tail
-            obtain ⟨ptr, rfl, found⟩ := vRel_byteVector_inv head
+            obtain ⟨ptr, rfl, found, _⟩ := vRel_byteVector_iff.mp head
             rcases run with ⟨rfl, rfl⟩
             refine ⟨_, ?_, (vRel_bool_iff _ _ _ _ _ (.number 0) _).1.mpr rfl⟩
             simp [compileOp, BvlSem.doApp, BvlSem.applyBlock, found]

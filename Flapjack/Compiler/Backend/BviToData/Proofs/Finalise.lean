@@ -11,6 +11,24 @@ public import Flapjack.Misc.SptreeLookup
 namespace Flapjack.Compiler.Backend.BviToData
 open Flapjack
 
+/-- The canonical input reference map survives its broad-view codec. -/
+theorem holFmapAsFiniteSupportParamWitness_finaliseCons_projection_bviRefs
+    (bviRefs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (HolFiniteMapExact.ofBroadCardinality (HolFiniteMapExact.toBroadlookupCardinality bviRefs) bviRefs.finiteSupport).lookup key = bviRefs.lookup key ∧
+    (HolFiniteMapExact.ofBroadCardinality (HolFiniteMapExact.toBroadlookupCardinality bviRefs) bviRefs.finiteSupport).finiteSupport = bviRefs.finiteSupport ∧
+    HolFiniteMapExact.ofBroadCardinality (HolFiniteMapExact.toBroadlookupCardinality bviRefs) bviRefs.finiteSupport = bviRefs := by
+  cases bviRefs
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- The canonical output reference map survives its broad-view codec. -/
+theorem holFmapAsFiniteSupportParamWitness_finaliseCons_projection_bviNext
+    (bviNext : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (HolFiniteMapExact.ofBroadCardinality (HolFiniteMapExact.toBroadlookupCardinality bviNext) bviNext.finiteSupport).lookup key = bviNext.lookup key ∧
+    (HolFiniteMapExact.ofBroadCardinality (HolFiniteMapExact.toBroadlookupCardinality bviNext) bviNext.finiteSupport).finiteSupport = bviNext.finiteSupport ∧
+    HolFiniteMapExact.ofBroadCardinality (HolFiniteMapExact.toBroadlookupCardinality bviNext) bviNext.finiteSupport = bviNext := by
+  cases bviNext
+  exact ⟨rfl, rfl, rfl⟩
+
 /-- Removing the same reference preserves the lookup projection. -/
 private theorem delete_related (dataRefs : Spt (BvlSem.Ref DataSem.Value))
     (bviRefs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat)
@@ -38,8 +56,9 @@ private theorem insert_related (dataRefs : Spt (BvlSem.Ref DataSem.Value))
 
 /-- Successful BVI mutable-constructor finalization has a data counterpart
 whose value and reference store project to the BVI result. The timestamp is
-threaded through the data side. This proof-side theorem remains untagged
-pending review of its finite-map carrier against the HOL statement. -/
+threaded through the data side. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "data_to_bvi_finalise_cons"
+  (fmap_as_finite_support_parameters := [bviRefs, bviNext])]
 theorem finaliseCons_projection (value : DataSem.Value) (refs : Spt (BvlSem.Ref DataSem.Value))
     (timestamp : Option Nat) (bviRefs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
     (bviValue : BvlSem.Value) (bviNext : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))

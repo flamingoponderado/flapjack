@@ -42,7 +42,10 @@ theorem refLookup_update {C F : Type} (s t : State C F) (ptr : Nat)
   · simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using refs key
 
 /-- The free-variable state relation satisfies the generic primitive interface. -/
-theorem stateRelSimple {C F : Type} : simpleStateRel ValueRel (StateRel (C := C) (F := F)) := by
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "simple_state_rel"
+  (fmap_as_finite_support := [refs, code])]
+theorem stateRelSimple {C F : Type} :
+    simpleStateRel ValueRel (StateRel : State C F → State C F → Prop) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro s t ptr ⟨missing, related⟩
     have lookup := related.2.2.2.2.2.2.2.2.1 ptr

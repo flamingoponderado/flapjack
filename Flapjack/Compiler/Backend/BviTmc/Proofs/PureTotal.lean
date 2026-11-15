@@ -46,14 +46,4 @@ theorem pureFuel_succeeds (fuel n : Nat) (e : Exp) (bound : expBudget e < fuel) 
       cases h : pureOp op xs <;> simp_all [pureFuel] <;> exact ⟨_, rfl⟩
     | _ => exact ⟨_, rfl⟩
 
-/-- The executable purity wrapper cannot fail from insufficient fuel. -/
-theorem pureBounded_succeeds (fuel n : Nat) (e : Exp) :
-    ∃ result, pureBounded fuel n e = some result := by
-  cases h : pureFuel fuel n e with
-  | some result => exact ⟨result, by simp [pureBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := pureFuel_succeeds (max fuel (expBudget e + 1)) n e bound
-    exact ⟨result, by simp [pureBounded, h, done]⟩
-
 end Flapjack.Compiler.Backend.BviTmc

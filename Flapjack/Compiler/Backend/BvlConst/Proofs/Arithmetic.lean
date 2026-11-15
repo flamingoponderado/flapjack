@@ -139,16 +139,6 @@ theorem evaluate_mul_mul_constants {C F : Type} (x : Bvl.Exp) (m n : Int)
         simp [evaluate_intOp, evaluate_snoc_const, h, Flapjack.holHd,
           doApp, applyNumeric, doIntApp, Int.mul_assoc]
 
-/-- The nested-add branch of the source binary rewrite. This is a Flapjack
-equation exposing the executed helper's case split. -/
-theorem smartOp2_nestedAdd_eq (x : Bvl.Exp) (m n : Int) :
-    smartOp2 (.intOp .add,
-      .op (.intOp .add) [x, .op (.intOp (.const m)) []],
-      .op (.intOp (.const n)) []) =
-      if n + m = 0 then x else .op (.intOp .add) [x, .op (.intOp (.const (n + m))) []] := by
-  change (if n + m == 0 then x else .op (.intOp .add) [x, .op (.intOp (.const (n + m))) []]) = _
-  simp
-
 namespace ArithmeticCarrier
 /-- Canonical BVL reference-map state representation roundtrip. -/
 theorem holFmapAsFiniteSupportWitness {C F : Type} :
@@ -171,9 +161,10 @@ theorem smartOp2_add_nestedAdd_correct {C F : Type} (x : Bvl.Exp) (m n : Int)
       .op (.intOp .add) [x, .op (.intOp (.const m)) []],
       .op (.intOp (.const n)) [])], env, state) = (result, final) := by
   have normalized := (evaluate_add_add_constants x m n env state).symm.trans run
-  rw [smartOp2_nestedAdd_eq]
+  change evaluateTuple ([if n + m == 0 then x else
+    .op (.intOp .add) [x, .op (.intOp (.const (n + m))) []]], env, state) = (result, final)
   by_cases h : n + m = 0
-  · simp only [h, ↓reduceIte]
+  · simp only [h]
     apply evaluate_add_zero x env state final result
     · simpa [h] using normalized
     · exact notTypeError

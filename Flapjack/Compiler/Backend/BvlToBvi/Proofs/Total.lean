@@ -106,14 +106,4 @@ theorem compileListFuel_succeeds (fuel optFuel n : Nat) (xs : List Bvl.Exp)
 termination_by fuel
 end
 
-/-- Retrying with the structural bound always produces a result. -/
-theorem compileBounded_succeeds (fuel optFuel n : Nat) (exp : Bvl.Exp) :
-    ∃ result, compileBounded fuel optFuel n exp = some result := by
-  cases h : compileFuel fuel optFuel n exp with
-  | some result => exact ⟨result, by simp [compileBounded, h]⟩
-  | none =>
-    have bound : expBudget exp < max fuel (expBudget exp + 1) := by omega
-    obtain ⟨result, done⟩ := compileFuel_succeeds (max fuel (expBudget exp + 1)) optFuel n exp bound
-    exact ⟨result, by simp [compileBounded, h, done]⟩
-
 end Flapjack.Compiler.Backend.BvlToBvi

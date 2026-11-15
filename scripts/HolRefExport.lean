@@ -303,6 +303,23 @@ elab "#emit_hol_ref_export" : command => do
         let ((observes, exposes), nestedKnown') := nestedListRelationDependenciesCached env info nestedKnown
         nestedKnown := nestedKnown'
         if !ref.nestedListRelAsMutual.isEmpty then
+          if !ref.fmapAsFiniteSupportRelation.isEmpty || !ref.fmapAsFiniteSupportExistentials.isEmpty then
+            unless name == `Flapjack.Compiler.Backend.ClosAnnotate.relUpdateThunkSource &&
+                ref.path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" &&
+                ref.name == "rel_update_thunk" &&
+                ref.nestedListRelAsMutual == #["FunctionsRel"] &&
+                ref.fmapAsFiniteSupportRelation == #[("State", "refs"), ("State", "code"), ("", "sourceRefs")] &&
+                ref.fmapAsFiniteSupportExistentials == #["targetRefs"] &&
+                ref.listAsArray.isEmpty && ref.namesAsString.isEmpty && ref.namesAsStringBoundary.isEmpty &&
+                ref.fmapAsFiniteSupport.isEmpty && !ref.fmapAsFiniteSupportResult &&
+                ref.fmapAsFiniteSupportFunction.isEmpty && ref.fmapAsFiniteSupportTuple.isEmpty &&
+                ref.fmapAsFiniteSupportHeterogeneousFunction.isEmpty && ref.fmapAsFiniteSupportParameters.isEmpty &&
+                ref.fmapAsFiniteSupportParameterPredicateDomain.isEmpty &&
+                !ref.fmapAsFiniteSupportParameterObservations &&
+                ref.fmapAsFiniteSupportResultObservations.isEmpty && !ref.fmapAsFiniteSupportEqualities &&
+                !ref.fmapAsFiniteSupportEquality && !ref.wordsAsTypeIndexedBitvec &&
+                ref.wordDimensionAsWidth.isNone && ref.wordDimensionsAsWidths.isEmpty && !ref.realsAsRationalCuts do
+              throwError "invalid nested-list and finite-map thunk-update qualification on {name}"
           let observerScope := name.toString.startsWith "Flapjack.Compiler.Backend.ClosAnnotate." &&
             (ref.path == "cakeml/compiler/backend/proofs/clos_annotateProofScript.sml" ||
              ref.path == "cakeml/compiler/backend/clos_annotateScript.sml")

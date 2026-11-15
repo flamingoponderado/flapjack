@@ -81,6 +81,7 @@ theorem compileFuel_eq_source (fuel optFuel n : Nat) (exp : Bvl.Exp)
         have fa := compileListFuel_eq_source fuel optFuel n args ba
         have fb := compileFuel_eq_source fuel optFuel n1 inner bi
         have len := compileListSource_length n args
+        simp only [compileExpsSource_eq_list] at len
         simp only [ha] at fa len
         simp only [hb] at fb
         simp [compileFuel, compileSingSource, dest, ha, hb, fa, fb,
@@ -111,6 +112,7 @@ theorem compileFuel_eq_source (fuel optFuel n : Nat) (exp : Bvl.Exp)
       have fb := compileFuel_eq_source fuel optFuel n1 inner bi
       have fc := compileFuel_eq_source fuel optFuel n2 y by'
       have len := compileListSource_length n args
+      simp only [compileExpsSource_eq_list] at len
       simp only [ha] at fa len
       simp only [hb] at fb
       simp only [hc] at fc
@@ -143,25 +145,6 @@ theorem compileListFuel_eq_source (fuel optFuel n : Nat) (xs : List Bvl.Exp)
 termination_by fuel
 end
 
-/-- The executed retry agrees with source conversion when the initial fuel
-exceeds the structural bound. -/
-theorem compileBounded_eq_source_of_bound (fuel optFuel n : Nat) (exp : Bvl.Exp)
-    (bound : expBudget exp < fuel) :
-    compileBounded fuel optFuel n exp =
-      some ((compileSingSource n exp).1,
-        appListAppend (compileSingSource n exp).2.1, (compileSingSource n exp).2.2) := by
-  simp [compileBounded, compileFuel_eq_source fuel optFuel n exp bound]
-
-/-- An exhausted initial traversal takes the checked sufficient-fuel retry,
-which agrees with the source-shaped conversion. -/
-theorem compileBounded_eq_source_of_exhausted (fuel optFuel n : Nat) (exp : Bvl.Exp)
-    (exhausted : compileFuel fuel optFuel n exp = none) :
-    compileBounded fuel optFuel n exp =
-      some ((compileSingSource n exp).1,
-        appListAppend (compileSingSource n exp).2.1, (compileSingSource n exp).2.2) := by
-  have bound : expBudget exp < max fuel (expBudget exp + 1) := by omega
-  simp [compileBounded, exhausted, compileFuel_eq_source _ optFuel n exp bound]
-
 /-- Every successful executable traversal matches the flattened source result,
 even when it succeeds below the structural bound. -/
 theorem compileFuel_success_eq_source (fuel optFuel n : Nat) (exp : Bvl.Exp)
@@ -184,30 +167,11 @@ theorem compileBounded_eq_source (fuel optFuel n : Nat) (exp : Bvl.Exp) :
       some ((compileSingSource n exp).1,
         appListAppend (compileSingSource n exp).2.1, (compileSingSource n exp).2.2) := by
   cases run : compileFuel fuel optFuel n exp with
-  | none => exact compileBounded_eq_source_of_exhausted fuel optFuel n exp run
+  | none =>
+    have bound : expBudget exp < max fuel (expBudget exp + 1) := by omega
+    simp [compileBounded, run, compileFuel_eq_source _ optFuel n exp bound]
   | some result =>
     have eq := compileFuel_success_eq_source fuel optFuel n exp result run
     simp [compileBounded, run, eq]
-
-/-- A labeled function compiled with sufficient initial fuel has the
-source-shaped expression, optimized body, and flattened auxiliary code. -/
-theorem compileSingleFuel_eq_source_of_bound (fuel optFuel n name args : Nat) (exp : Bvl.Exp)
-    (bound : expBudget exp < fuel) :
-    compileSingleFuel fuel optFuel n (name, args, exp) =
-      some ((bvlNumStubs + bvlToBviNamespaces * name, args,
-        BviLet.compileSing [] 0 (compileSingSource n exp).1) ::
-        appListAppend (compileSingSource n exp).2.1, (compileSingSource n exp).2.2) := by
-  exact compileSingleFuel_eq_source fuel optFuel n name args exp _ _ _
-    (compileBounded_eq_source_of_bound fuel optFuel n exp bound)
-
-/-- Each executed labeled-function conversion uses the source-shaped
-expression and let optimizers, with the auxiliary tree flattened in order. -/
-theorem compileSingleFuel_eq_source_all (fuel optFuel n name args : Nat) (exp : Bvl.Exp) :
-    compileSingleFuel fuel optFuel n (name, args, exp) =
-      some ((bvlNumStubs + bvlToBviNamespaces * name, args,
-        BviLet.compileSing [] 0 (compileSingSource n exp).1) ::
-        appListAppend (compileSingSource n exp).2.1, (compileSingSource n exp).2.2) := by
-  exact compileSingleFuel_eq_source fuel optFuel n name args exp _ _ _
-    (compileBounded_eq_source fuel optFuel n exp)
 
 end Flapjack.Compiler.Backend.BvlToBvi

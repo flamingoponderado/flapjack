@@ -60,7 +60,12 @@ theorem removeDeadPost_clock {width : Nat} [NeZero width] {C F : Type} (live : N
 theorem evaluateRemoveDead_Seq {width : Nat} [NeZero width] {C F : Type}
     (s1 s2 : WordLangProgHOL (BitVec width)) (ih1 : removeDeadGoal C F s1)
     (ih2 : removeDeadGoal C F s2) :
-    removeDeadGoal C F (.seq s1 s2) := by
+    ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+      (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+      (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+      (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+      removeDeadBody (.seq s1 s2) live nlive lt prog' livein nlivein st t tstore res rst := by
   have hseq := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.1
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, hflat, hrd, herr⟩
   simp only [flatExpConventions, Bool.and_eq_true] at hflat
@@ -113,7 +118,12 @@ theorem evaluateRemoveDead_Seq {width : Nat} [NeZero width] {C F : Type}
   (words_as_type_indexed_bitvec)]
 theorem evaluateRemoveDead_MustTerminate {width : Nat} [NeZero width] {C F : Type}
     (p : WordLangProgHOL (BitVec width)) (ih : removeDeadGoal C F p) :
-    removeDeadGoal C F (.mustTerminate p) := by
+    ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+      (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+      (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+      (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+      removeDeadBody (.mustTerminate p) live nlive lt prog' livein nlivein st t tstore res rst := by
   have hmt := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.1
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, hflat, hrd, herr⟩
   simp only [flatExpConventions] at hflat
@@ -167,7 +177,12 @@ theorem evaluateRemoveDead_MustTerminate {width : Nat} [NeZero width] {C F : Typ
 theorem evaluateRemoveDead_If {width : Nat} [NeZero width] {C F : Type} (cmp : Cmp) (r1 : Nat)
     (ri : WordRegImm (BitVec width)) (e2 e3 : WordLangProgHOL (BitVec width))
     (ih2 : removeDeadGoal C F e2) (ih3 : removeDeadGoal C F e3) :
-    removeDeadGoal C F (.ite cmp r1 ri e2 e3) := by
+    ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+      (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+      (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+      (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+      removeDeadBody (.ite cmp r1 ri e2 e3) live nlive lt prog' livein nlivein st t tstore res rst := by
   have hite := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, hflat, hrd, herr⟩
   simp only [flatExpConventions, Bool.and_eq_true] at hflat
@@ -245,7 +260,12 @@ body statement for the loop's own context. -/
   (words_as_type_indexed_bitvec)]
 theorem evaluateRemoveDead_Loop {width : Nat} [NeZero width] {C F : Type} (names : NumSet)
     (body : WordLangProgHOL (BitVec width)) (exitNames : NumSet) (ih : removeDeadGoal C F body) :
-    removeDeadGoal C F (.loop names body exitNames) := by
+    ∀ (live : NumSet) (nlive : List WordStoreHOL) (lt : List (NumSet × NumSet))
+      (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet) (nlivein : List WordStoreHOL)
+      (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
+      (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),
+      removeDeadBody (.loop names body exitNames) live nlive lt prog' livein nlivein st t tstore res rst := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, hflat, hrd, herr⟩
   simp only [flatExpConventions] at hflat
   have hnl : nlivein = [] := by

@@ -8,6 +8,14 @@ fun show label th = if null (hyp th) then
   (print (label ^ "="); print_term (concl th); print "\n")
   else raise Fail (label ^ " has hypotheses");
 val _ = show "remove_ticks_typed" clos_ticksTheory.remove_ticks_def;
+val _ = show "remove_ticks_IMP_LENGTH_typed" clos_ticksProofTheory.remove_ticks_IMP_LENGTH;
+val _ = show "remove_ticks_SING_typed" clos_ticksProofTheory.remove_ticks_SING;
+val _ = show "HD_remove_ticks_SING_typed" clos_ticksProofTheory.HD_remove_ticks_SING;
+val _ = show "EVERY_remove_ticks_sing_typed" clos_ticksProofTheory.EVERY_remove_ticks_sing;
+val _ = show "remove_ticks_app_call_dests_typed" clos_ticksProofTheory.remove_ticks_app_call_dests;
+val _ = show "remove_ticks_code_labels_typed" clos_ticksProofTheory.remove_ticks_code_labels;
+val _ = show "remove_ticks_CONS_typed" clos_ticksProofTheory.remove_ticks_CONS;
+val _ = show "code_rel_CONS_CONS_typed" clos_ticksProofTheory.code_rel_CONS_CONS;
 val _ = show "remove_sing_typed" clos_ticksTheory.remove_ticks_sing_def;
 val _ = show "remove_sing_eq_typed" clos_ticksTheory.remove_ticks_sing_eq;
 val _ = show "compile_inc_typed" clos_ticksTheory.compile_inc_def;
@@ -17,6 +25,8 @@ val _ = show "remove_no_labels_typed" clos_ticksProofTheory.remove_ticks_no_Labe
 val _ = show "code_rel_typed" clos_ticksProofTheory.code_rel_def;
 val _ = show "function_rel_typed" clos_ticksProofTheory.f_rel_def;
 val _ = show "value_rel_typed" clos_ticksProofTheory.v_rel_rules;
+val _ = show "value_rel_simps_typed" clos_ticksProofTheory.v_rel_simps;
+val _ = show "lookup_vars_lemma_typed" clos_ticksProofTheory.lookup_vars_lemma;
 val _ = show "ref_rel_typed" clos_ticksProofTheory.ref_rel_rules;
 val _ = show "state_rel_typed" clos_ticksProofTheory.state_rel_def;
 val _ = show "code_rel_length_typed" clos_ticksProofTheory.code_rel_IMP_LENGTH;
@@ -94,6 +104,7 @@ val state_rel_opt_refs_replay = Q.prove (
       ?r1. FLOOKUP s1.refs n = r1 /\ OPTREL clos_ticksProof$ref_rel r1 r2)`,
   rw [] >> gvs [clos_ticksProofTheory.state_rel_def, clos_ticksProofTheory.FMAP_REL_def,
     finite_mapTheory.FLOOKUP_DEF] >> rw []);
+val _ = show "state_rel_opt_refs_replay_typed" state_rel_opt_refs_replay;
 val rel_update_thunk_replay = prove (rel_update_thunk_statement,
   rw [] >> gvs [oneline closSemTheory.update_thunk_def, AllCaseEqs()] >> rw [] >>
   gvs [oneline closSemTheory.dest_thunk_def, AllCaseEqs()] >>
@@ -103,6 +114,15 @@ val rel_update_thunk_replay = prove (rel_update_thunk_statement,
    gvs [clos_ticksProofTheory.state_rel_def, clos_ticksProofTheory.FMAP_REL_def, finite_mapTheory.FLOOKUP_UPDATE] >> rw [] >>
    simp [Once clos_ticksProofTheory.ref_rel_cases]));
 val _ = show "rel_update_thunk_replay_typed" rel_update_thunk_replay;
+val state_rel_code_empty_replay = Q.prove (
+  `clos_ticksProof$state_rel (s :('c,'ffi) closSem$state) t ==>
+    s.code = FEMPTY /\ t.code = FEMPTY`,
+  fs [clos_ticksProofTheory.state_rel_def]);
+val _ = show "state_rel_code_empty_replay_typed" state_rel_code_empty_replay;
+val state_rel_clock_eqs_replay = Q.prove (
+  `clos_ticksProof$state_rel (s :('c,'ffi) closSem$state) t ==> s.clock = t.clock`,
+  gvs [clos_ticksProofTheory.state_rel_def]);
+val _ = show "state_rel_clock_eqs_replay_typed" state_rel_clock_eqs_replay;
 val state_rel_dec_clock_replay = Q.prove (
   `clos_ticksProof$state_rel (s1 :('c,'ffi) closSem$state) s2 ==>
    clos_ticksProof$state_rel (closSem$dec_clock 1 s1) (closSem$dec_clock 1 s2)`,

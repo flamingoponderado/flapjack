@@ -31,10 +31,8 @@ open Flapjack Flapjack.SemanticPrimitivesHOL
 open Classical
 noncomputable section
 
-/-- Successful BVI primitive application is simulated by data primitive
-application under the original pass restrictions. This assembled statement
-is untagged until its state carriers and the complete HOL source theorem have
-been reviewed together. -/
+/-- Flapjack simulation infrastructure for the full data dispatcher. This
+also handles `CopyByte`, which the separate original HOL theorem excludes. -/
 theorem doApp_projection {C F : Type} (op : ClosLang.Op)
     (target : DataSem.State C F) (source : BviSem.BviState C F)
     (args : List DataSem.Value) (result : BvlSem.Value) (next : BviSem.BviState C F)

@@ -93,18 +93,4 @@ theorem compileListFuel_succeeds (fuel n : Nat) (env live : List Nat)
 termination_by fuel
 end
 
-/-- The production expression-lowering wrapper cannot fail from insufficient
-fuel, independently of the caller's budget. -/
-theorem compileExpBounded_succeeds (fuel argc : Nat) (exp : Bvi.Exp) :
-    ∃ result, compileExpBounded fuel argc exp = some result := by
-  cases h : compileExpFuel fuel argc exp with
-  | some result => exact ⟨result, by simp [compileExpBounded, h]⟩
-  | none =>
-    have bound : expBudget exp < max fuel (expBudget exp + 1) := by omega
-    obtain ⟨⟨prog, _, _⟩, done⟩ :=
-      compileFuel_succeeds (max fuel (expBudget exp + 1)) argc (List.range argc) true [] exp bound
-    refine ⟨optimise prog, ?_⟩
-    simp only [compileExpBounded, h]
-    simp [compileExpFuel, done]
-
 end Flapjack.Compiler.Backend.BviToData

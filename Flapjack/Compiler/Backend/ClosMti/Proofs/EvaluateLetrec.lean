@@ -117,9 +117,9 @@ theorem evaluateRel_letrecWithin {C F : Type} (limit : Nat) (names : List Basis.
       obtain ⟨functions, body, rfl, functionsUnary, bodyUnary, rfl, rfl, rfl, bodyEq⟩ :=
         introExp_eq_letrec source.maxApp expression names location vars targetFunctions targetBody unary transformed
       have positive : 1 ≤ source.maxApp := by
-        have agreement := stateRel_clock_maxApp states
+        have agreement := (And.intro (stateRel_clocks states) (stateRel_maxApp states))
         omega
-      have targetMax : target.maxApp = source.maxApp := (stateRel_clock_maxApp states).2.1.symm
+      have targetMax : target.maxApp = source.maxApp := (stateRel_maxApp states).1.symm
       have functionsRel := functionRel_introFuns source.maxApp functions positive functionsUnary
       have valid := introFuns_valid source.maxApp functions positive functionsUnary
       have targetValid : (functions.map (introFun source.maxApp)).all

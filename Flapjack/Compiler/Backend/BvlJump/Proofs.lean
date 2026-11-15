@@ -2,19 +2,29 @@ module
 
 public import Flapjack.Compiler.Backend.BvlJump
 public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateList
+public import Flapjack.Compiler.Backend.Semantics.BvlProps.CodeLabels
 
 @[expose] public section
 
-/-! Simulation facts for the balanced BVL dispatcher. The BVL evaluator and
-its carriers still need HOL correspondence review, so these helpers are not
-tagged as ports of the original proof. -/
+/-! Simulation facts for the balanced BVL dispatcher. -/
 namespace Flapjack.Compiler.Backend.BvlJump
 open Flapjack.SemanticPrimitivesHOL
 
+namespace JumpCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end JumpCarrier
+
 /-- A generated jump tree selects the indexed branch in the same state and
 environment when its selector lies within the branch list. -/
-theorem evaluate_jumpList {C F : Type} (n : Nat) (xs : List Bvl.Exp) (k : Nat)
-    (env : List BvlSem.Value) (s : BvlSem.State C F) (bound : k < xs.length) :
+@[hol "cakeml/compiler/backend/proofs/bvl_jumpProofScript.sml" "evaluate_JumpList"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_jumpList {C F : Type} {env : List BvlSem.Value}
+    {s : Flapjack.Compiler.Backend.BvlSem.State C F}
+    (n : Nat) (xs : List Bvl.Exp) (k : Nat) (bound : k < xs.length) :
     BvlSem.evaluate [jumpList n xs] (.number (Int.ofNat (n + k)) :: env) s =
       BvlSem.evaluate [xs[k]] (.number (Int.ofNat (n + k)) :: env) s := by
   cases xs with
@@ -58,12 +68,12 @@ theorem evaluate_jumpList {C F : Type} (n : Nat) (xs : List Bvl.Exp) (k : Nat)
       by_cases left : k < mid
       · simp only [left, decide_true, BvlSem.boolValue, BackendCommon.boolToTag, BackendCommon.trueTag, BvlSem.asBool]
         have takeBound : k < (xs.take mid).length := by simp [List.length_take]; omega
-        rw [evaluate_jumpList n (xs.take mid) k env s takeBound]
+        rw [evaluate_jumpList n (xs.take mid) k takeBound]
         simp [List.getElem_take, xs]
       · simp only [left, decide_false, BvlSem.boolValue, BackendCommon.boolToTag, BackendCommon.falseTag, BvlSem.asBool]
         have dropBound : k - mid < (xs.drop mid).length := by simp [List.length_drop]; omega
         have indexEq : n + mid + (k - mid) = n + k := by omega
-        have step := evaluate_jumpList (n + mid) (xs.drop mid) (k - mid) env s dropBound
+        have step := evaluate_jumpList (env := env) (s := s) (n + mid) (xs.drop mid) (k - mid) dropBound
         simp only [indexEq, List.getElem_drop] at step
         simpa [xs, show mid + (k - mid) = k by omega] using step
 termination_by xs.length
@@ -74,13 +84,56 @@ decreasing_by
     omega
 
 /-- Evaluating the selector and generated jump enters the indexed branch. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_jumpProofScript.sml" "evaluate_Jump"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_jump {C F : Type} (selector : Bvl.Exp) (xs : List Bvl.Exp)
-    (env : List BvlSem.Value) (s next : BvlSem.State C F) (n : Nat)
-    (selectorRun : BvlSem.evaluate [selector] env s = (.val [.number (Int.ofNat n)], next))
-    (bound : n < xs.length) :
+    (env : List BvlSem.Value) (s next : Flapjack.Compiler.Backend.BvlSem.State C F) (n : Nat)
+    (premises : BvlSem.evaluate [selector] env s = (.val [.number (Int.ofNat n)], next) ∧
+      n < xs.length) :
     BvlSem.evaluate [jump selector xs] env s =
-      BvlSem.evaluate [xs[n]] (.number (Int.ofNat n) :: env) next := by
-  rw [jump, BvlSem.evaluate, BvlSem.fixClock_evaluate, selectorRun]
-  simpa using evaluate_jumpList 0 xs n env next bound
+      BvlSem.evaluate [xs[n]'premises.2] (.number (Int.ofNat n) :: env) next := by
+  obtain ⟨selectorRun, bound⟩ := premises
+  rw [jump, BvlSem.evaluate, BvlSem.fixClock_evaluate]
+  simp only [selectorRun, List.cons_append, List.nil_append]
+  simpa using evaluate_jumpList (env := env) (s := next) 0 xs n bound
+
+/-- The balanced dispatcher references exactly the labels in its branches. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_jumpProofScript.sml" "bvl_get_code_labels_JumpList"]
+theorem jumpList_codeLabels (n : Nat) (xs : List Bvl.Exp) :
+    BvlProps.getCodeLabels (jumpList n xs) =
+      ⋃₀ (BvlProps.getCodeLabels '' {e | e ∈ xs}) := by
+  cases xs with
+  | nil => simp [jumpList, BvlProps.getCodeLabels, BvlProps.getCodeLabelsList,
+      ClosLang.assignGetCodeLabel]
+  | cons first rest =>
+    cases rest with
+    | nil => simp [jumpList]
+    | cons second rest =>
+      let xs := first :: second :: rest
+      let mid := xs.length / 2
+      have positive : 0 < mid := by dsimp [mid, xs]; omega
+      have less : mid < xs.length := by dsimp [mid, xs]; omega
+      have labelsSplit :
+          (⋃₀ (BvlProps.getCodeLabels '' {e | e ∈ xs.take mid})) ∪
+            (⋃₀ (BvlProps.getCodeLabels '' {e | e ∈ xs.drop mid})) =
+          ⋃₀ (BvlProps.getCodeLabels '' {e | e ∈ xs}) := by
+        conv_rhs => rw [← List.take_append_drop mid xs]
+        ext label
+        simp only [Set.mem_union, Set.mem_sUnion, Set.mem_image, Set.mem_ofPred_eq, List.mem_append]
+        aesop
+      change BvlProps.getCodeLabels (jumpList n xs) = _
+      rw [jumpList]
+      change BvlProps.getCodeLabels (.ifThenElse _ (jumpList n (xs.take mid))
+        (jumpList (n + mid) (xs.drop mid))) = _
+      simp only [BvlProps.getCodeLabels]
+      rw [jumpList_codeLabels n (xs.take mid), jumpList_codeLabels (n + mid) (xs.drop mid)]
+      split <;> simpa [xs, BvlProps.getCodeLabels, BvlProps.getCodeLabelsList,
+        ClosLang.assignGetCodeLabel] using labelsSplit
+termination_by xs.length
+decreasing_by
+  all_goals
+    try simp_wf
+    simp_all
+    omega
 
 end Flapjack.Compiler.Backend.BvlJump

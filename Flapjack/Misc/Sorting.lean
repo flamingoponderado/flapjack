@@ -57,6 +57,16 @@ def holSorted {α : Type} (R : α → α → Prop) : List α → Prop
   | [_] => True
   | x :: y :: rest => R x y ∧ holSorted R (y :: rest)
 
+/-- Pairwise related elements are adjacent-sorted. This is Flapjack
+infrastructure relating Lean's list predicate to HOL's `SORTED`. -/
+theorem holSorted_of_pairwise {α : Type} (R : α → α → Prop) :
+    ∀ xs : List α, xs.Pairwise R → holSorted R xs
+  | [], _ => trivial
+  | [_], _ => trivial
+  | x :: y :: rest, pairwise =>
+    ⟨(List.pairwise_cons.mp pairwise).1 y (by simp),
+      holSorted_of_pairwise R (y :: rest) (List.pairwise_cons.mp pairwise).2⟩
+
 /-- Exact HOL `SORTED_EQ` (`sortingScript.sml:588-596`); HOL `transitive` is the
 tagged `holTransitive`. -/
 @[hol "HOL/src/sort/sortingScript.sml" "SORTED_EQ"]
@@ -77,6 +87,15 @@ theorem holSortedEq {α : Type} :
         · exact htr x h y ⟨hxh, ((ih h htr).mp hs).2 y hy⟩
       · rintro ⟨hs, hall⟩
         exact ⟨hall h (Or.inl rfl), hs⟩
+
+/-- Under a transitive relation, HOL's adjacent sorting entails pairwise
+relatedness. This is Flapjack infrastructure for Lean list reasoning. -/
+theorem pairwise_of_holSorted {α : Type} (R : α → α → Prop) (trans : holTransitive R) :
+    ∀ xs : List α, holSorted R xs → xs.Pairwise R
+  | [], _ => .nil
+  | x :: xs, sorted =>
+    let parts := (holSortedEq R xs x trans).mp sorted
+    List.pairwise_cons.mpr ⟨parts.2, pairwise_of_holSorted R trans xs parts.1⟩
 
 /-- Exact HOL `SORTED_TL` (`sortingScript.sml:1117-1121`). -/
 @[hol "HOL/src/sort/sortingScript.sml" "SORTED_TL"]

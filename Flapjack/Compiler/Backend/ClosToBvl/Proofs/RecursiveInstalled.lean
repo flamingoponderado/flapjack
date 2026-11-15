@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.InstalledCode
+public import Flapjack.Compiler.Backend.Semantics.BvlSem.State
 public import Mathlib.Data.List.Enum
 
 @[expose] public section
@@ -53,16 +54,6 @@ theorem compileExpFuns_installed_at (maxApp : Nat) (functions : List (Nat × Clo
             ih auxMiddle auxLast targetRest index tailRun installed found
           exact ⟨targetBody, bodyAux, bodyFinalAux, targetFound, bodyCompiled, bodyInstalled⟩
 
-/-- Installing a recursive layout installs the exact entry generated for any
-in-bounds input function, at its corresponding even-spaced location. -/
-theorem codeInstalled_buildAux_index (entries : List (Nat × Bvl.Exp)) (base : Nat)
-    (aux : List (Nat × Nat × Bvl.Exp)) (code : Spt (Nat × Bvl.Exp))
-    (index arity : Nat) (body : Bvl.Exp)
-    (installed : codeInstalled (buildAux base entries aux).2 code)
-    (found : entries[index]? = some (arity, body)) :
-    sptLookup (base + 2 * index) code = some (arity, body) := by
-  exact installed _ (buildAux_index entries base aux index arity body found)
-
 /-- Each source function in a compiled recursive group has its own installed
 compiled body at the matching generated label. Its auxiliary code is also
 installed. This is the indexed code-layout obligation for constructing the
@@ -93,7 +84,70 @@ theorem recursiveFunctions_installed_at (maxApp : Nat) (functions : List (Nat ×
       some (arity + 1, (codeForReccCase envLength arity targetBody).2) := by
     simp [List.getElem?_map, targetFound, codeForReccCase]
   exact ⟨targetBody, bodyAux, bodyFinalAux, bodyCompiled,
-    codeInstalled_buildAux_index _ base finalAux code index (arity + 1) _ installed entryFound, bodyInstalled⟩
+    installed _ (buildAux_index _ base finalAux index (arity + 1) _ entryFound), bodyInstalled⟩
+
+local instance : Nonempty ClosLang.Exp := ⟨.var .none 0⟩
+local instance : Nonempty Bvl.Exp := ⟨.var 0⟩
+
+namespace RecursiveInstalledCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end RecursiveInstalledCarrier
+
+/-- Each indexed recursive function body and its generated code are installed. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "compile_exps_LIST_IMP_compile_exps_EL"
+  (fmap_as_finite_support := [refs])]
+theorem compileExpsListImpCompileExpsEl {C F : Type} (exps : List (Nat × ClosLang.Exp)) (aux1 : List (Nat × Nat × Bvl.Exp))
+    (c7 : List Bvl.Exp) (aux7 : List (Nat × Nat × Bvl.Exp)) (i n8 n4 : Nat) (aux5 : List (Nat × Nat × Bvl.Exp))
+    (numArgs : Nat) (e : ClosLang.Exp) (maxApp k : Nat) (t1 : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (premises : holEl i exps = (numArgs, e) ∧
+      compileExpsHOL maxApp (exps.map Prod.snd) aux1 = (c7, aux7) ∧ i < exps.length ∧
+      buildAux n8 (List.zipWith (codeForReccCase k) (exps.map Prod.fst) c7) aux7 = (n4, aux5) ∧
+      codeInstalled aux5 t1.code) :
+    ∃ aux c aux1', compileExpsHOL maxApp [e] aux = ([c], aux1') ∧
+      sptLookup (n8 + 2*i) t1.code = some (numArgs + 1, (codeForReccCase k numArgs c).2) ∧
+      codeInstalled aux1' t1.code := by
+  obtain ⟨found, compiled, bound, built, installed⟩ := premises
+  have sourceFound : exps[i]? = some (numArgs, e) := by
+    rw [List.getElem?_eq_getElem bound]
+    rw [holEl_eq_getElem i exps bound] at found
+    exact congrArg some found
+  have lengths : c7.length = exps.length := by
+    simpa using compileExps_length maxApp (exps.map Prod.snd) aux1 c7 aux7 compiled
+  have prior : codeInstalled aux7 t1.code := by
+    obtain ⟨added, suffix⟩ := buildAux_result_suffix n8 _ aux7 n4 aux5 built
+    intro entry member
+    apply installed entry
+    rw [suffix]
+    exact List.mem_append_right added member
+  obtain ⟨aux, final, singleton, included⟩ := compileExps_el maxApp (exps.map Prod.snd) aux1 c7 aux7 i
+    ⟨compiled, by simpa using bound⟩
+  have sourceBody : holEl i (exps.map Prod.snd) = e := by
+    rw [holEl_eq_getElem i _ (by simpa using bound)]
+    have h := (List.getElem?_eq_some_iff.mp sourceFound).2
+    simp [List.getElem_map, h]
+  have outputBound : i < c7.length := by omega
+  have targetEq : c7[i]? = some (holEl i c7) := by
+    rw [List.getElem?_eq_getElem outputBound, holEl_eq_getElem i c7 outputBound]
+  have arityFound : (exps.map Prod.fst)[i]? = some numArgs := by
+    simp [List.getElem?_map, sourceFound]
+  have entryFound : (List.zipWith (codeForReccCase k) (exps.map Prod.fst) c7)[i]? =
+      some (numArgs + 1, (codeForReccCase k numArgs (holEl i c7)).2) := by
+    simp [List.getElem?_zipWith, arityFound, targetEq, codeForReccCase]
+  have lookup : sptLookup (n8 + 2*i) t1.code =
+      some (numArgs + 1, (codeForReccCase k numArgs (holEl i c7)).2) := by
+    apply installed (n8 + 2*i, numArgs + 1, (codeForReccCase k numArgs (holEl i c7)).2)
+    have auxEq := congrArg Prod.snd built
+    simp only at auxEq
+    rw [← auxEq]
+    exact buildAux_index _ n8 aux7 i (numArgs + 1) _ entryFound
+  refine ⟨aux, holEl i c7, final, ?_, lookup, ?_⟩
+  · simpa [sourceBody] using singleton
+  · intro entry member
+    exact prior entry (included.sublist.subset member)
 
 /-- The compiler's even-spaced code layout satisfies the whole
 `closureCodeInstalled` relation for a recursive group with valid arities.

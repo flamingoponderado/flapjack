@@ -10,9 +10,19 @@ fun show label th = if null (hyp th) then
   else raise Fail (label ^ " has hypotheses");
 val _ = show "var_list_typed" clos_letopTheory.var_list_def;
 val _ = show "dest_op_typed" clos_letopTheory.dest_op_def;
+val _ = show "dest_op_SOME_IMP_typed" clos_letopProofTheory.dest_op_SOME_IMP;
+val _ = show "lookup_vars_lemma_typed" clos_letopProofTheory.lookup_vars_lemma;
+val _ = show "find_code_lemma_typed" clos_letopProofTheory.find_code_lemma;
 val _ = show "let_op_typed" clos_letopTheory.let_op_def;
 val _ = show "let_op_sing_typed" clos_letopTheory.let_op_sing_def;
 val _ = show "let_op_sing_eq_typed" clos_letopTheory.let_op_sing_eq;
+val _ = show "let_op_SING_typed" clos_letopProofTheory.let_op_SING;
+val _ = show "HD_let_op_SING_typed" clos_letopProofTheory.HD_let_op_SING;
+val _ = show "EVERY_let_op_sing_typed" clos_letopProofTheory.EVERY_let_op_sing;
+val _ = show "var_list_app_call_dests_typed" clos_letopProofTheory.var_list_app_call_dests;
+val _ = show "let_op_app_call_dests_typed" clos_letopProofTheory.let_op_app_call_dests;
+val _ = show "var_list_code_labels_imp_typed" clos_letopProofTheory.var_list_code_labels_imp;
+val _ = show "let_op_get_code_labels_typed" clos_letopProofTheory.let_op_get_code_labels;
 val _ = show "compile_inc_typed" clos_letopTheory.compile_inc_def;
 val _ = show "let_op_vars_none_typed" clos_letopProofTheory.let_op_every_Fn_vs_NONE;
 val _ = show "var_list_length_typed" clos_letopProofTheory.var_list_IMP_LENGTH;
@@ -49,9 +59,38 @@ val _ = show "code_rel_length_typed" clos_letopProofTheory.code_rel_IMP_LENGTH;
 val _ = show "code_rel_cons_typed" clos_letopProofTheory.code_rel_CONS_CONS;
 val _ = show "function_rel_typed" clos_letopProofTheory.f_rel_def;
 val _ = show "value_rel_typed" clos_letopProofTheory.v_rel_rules;
+val _ = show "value_rel_simps_typed" clos_letopProofTheory.v_rel_simps;
+val value_bytes_list_replay = prove(
+  ``!x y. v_rel x y ==>
+    !ns. (v_to_list x = SOME (MAP (Number o $& o (w2n:word8->num)) ns)) <=>
+         (v_to_list y = SOME (MAP (Number o $& o (w2n:word8->num)) ns))``,
+  ho_match_mp_tac v_to_list_ind \\ rw []
+  \\ fs [v_to_list_def]
+  \\ Cases_on `tag = cons_tag` \\ fs []
+  \\ res_tac \\ fs [case_eq_thms]
+  \\ Cases_on `ns` \\ fs []
+  \\ eq_tac \\ rw [] \\ fs []
+  \\ Cases_on `h` \\ fs []);
+val _ = show "value_bytes_list_replay_typed" value_bytes_list_replay;
+val value_words_list_replay = prove(
+  ``!x y. v_rel x y ==>
+    !ns. (v_to_list x = SOME (MAP Word64 ns)) <=>
+         (v_to_list y = SOME (MAP Word64 ns))``,
+  ho_match_mp_tac v_to_list_ind \\ rw []
+  \\ fs [v_to_list_def]
+  \\ Cases_on `tag = cons_tag` \\ fs []
+  \\ res_tac \\ fs [case_eq_thms]
+  \\ Cases_on `ns` \\ fs []
+  \\ eq_tac \\ rw [] \\ fs []
+  \\ Cases_on `h` \\ fs []);
+val _ = show "value_words_list_replay_typed" value_words_list_replay;
 val _ = show "ref_rel_typed" clos_letopProofTheory.ref_rel_rules;
 val _ = show "fmap_rel_typed" clos_letopProofTheory.FMAP_REL_def;
 val _ = show "state_rel_typed" clos_letopProofTheory.state_rel_def;
+val state_rel_clocks_eqs_replay = prove(
+  ``state_rel s1 s2 ==> s1.clock = s2.clock``,
+  rw [state_rel_def, state_component_equality]);
+val _ = show "state_rel_clocks_eqs_replay_typed" state_rel_clocks_eqs_replay;
 val _ = show "evaluate_let_op_typed" clos_letopProofTheory.evaluate_let_op;
 val state_rel_dec_clock_replay = prove(
   ``state_rel s1 s2 ==> state_rel (dec_clock 1 s1) (dec_clock 1 s2)``,
@@ -106,6 +145,7 @@ val state_rel_opt_rel_refs_replay = prove(
     (state_rel s1 s2 /\ FLOOKUP s2.refs n = r2 ==>
      ?r1. FLOOKUP s1.refs n = r1 /\ OPTREL ref_rel r1 r2)``,
   rw [] \\ gvs [state_rel_def, FMAP_REL_def, FLOOKUP_DEF] \\ rw []);
+val _ = show "state_rel_opt_rel_refs_replay_typed" state_rel_opt_rel_refs_replay;
 val rel_update_thunk_replay = prove(
   ``state_rel s1 s2 /\ LIST_REL v_rel vs ys ==>
     (update_thunk [RefPtr v ptr] s1.refs vs = NONE ==>
@@ -132,3 +172,24 @@ load "clos_knownTheory";
 val _ = show "known_compile_typed" clos_knownTheory.compile_def;
 val _ = show "known_static_conf_typed" clos_knownTheory.known_static_conf_def;
 val _ = show "known_compile_inc_typed" clos_knownTheory.known_compile_inc_def;
+local
+  open closPropsTheory
+in
+val var_list_code_locs_replay = prove(
+  ``!k l x. var_list k l x ==> code_locs l = []``,
+  ho_match_mp_tac var_list_ind
+  \\ rw [] \\ fs [var_list_def, code_locs_def]
+  \\ rveq \\ fs []
+  \\ once_rewrite_tac [code_locs_cons]
+  \\ fs [code_locs_def]);
+val _ = show "var_list_code_locs_replay_typed" var_list_code_locs_replay;
+val var_list_let_op_code_locs_replay = prove(
+  ``!k l x. var_list k (let_op l) x ==> code_locs l = []``,
+  ho_match_mp_tac var_list_ind
+  \\ rw [] \\ fs [var_list_def, code_locs_def]
+  \\ pop_assum mp_tac
+  \\ rename [`_::l`]
+  \\ Cases_on `l` \\ fs [let_op_def, var_list_def, code_locs_def]
+  \\ every_case_tac \\ fs [var_list_def]);
+val _ = show "var_list_let_op_code_locs_replay_typed" var_list_let_op_code_locs_replay;
+end;

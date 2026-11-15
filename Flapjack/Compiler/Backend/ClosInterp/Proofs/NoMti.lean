@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.ClosInterp.Optimise
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.Globals
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
 
 @[expose] public section
@@ -9,18 +9,10 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.NoMti
 namespace Flapjack.Compiler.Backend.ClosInterp
 open ClosLang ClosProps
 
-private theorem optInterp_noMti (e e' : Exp) (h : optInterp e = some e') : noMti e' := by
-  unfold optInterp at h
-  split at h
-  · simp only [Option.some.injEq] at h
-    subst e'
-    simp [noMti, noMtiList]
-  · simp at h
-
 private theorem optInterp1_noMti (e : Exp) (h : noMti e) : noMti (optInterp1 e) := by
   cases result : optInterp e with
   | none => simpa [optInterp1, result] using h
-  | some e' => simpa [optInterp1, result] using optInterp_noMti e e' result
+  | some e' => simpa [optInterp1, result] using (optInterp_lemma e e' 0 result).2.2.2.2.1
 
 private theorem mappedOpt_noMti (es : List Exp) (h : noMtiList es) :
     noMtiList (es.map optInterp1) := by
@@ -31,7 +23,7 @@ private theorem mappedOpt_noMti (es : List Exp) (h : noMtiList es) :
 
 private theorem insertInterp1_noMti (e : Exp) (h : noMti e) : noMti (insertInterp1 e) := by
   cases result : optInterp e with
-  | some e' => simpa [insertInterp1, result] using optInterp_noMti e e' result
+  | some e' => simpa [insertInterp1, result] using (optInterp_lemma e e' 0 result).2.2.2.2.1
   | none =>
     cases e <;> simp [insertInterp1, result, noMti] at h ⊢ <;> try assumption
     case «let» t es body => exact ⟨mappedOpt_noMti es h.1, h.2⟩

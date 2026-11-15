@@ -43,6 +43,25 @@ class NextHolPortTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "expected one declaration"):
             PORT.candidates([declaration], set(), "pancake/example.sml", "missing", {"Definition"})
 
+    def test_line_qualified_mapping_matches_only_the_named_declaration(self):
+        source = "compiler/backend/proofs/exampleScript.sml"
+        declarations = [
+            PORT.Declaration("Theorem", "rebound", source, 10, 14),
+            PORT.Declaration("Theorem", "rebound", source, 20, 24),
+        ]
+        tagged = PORT.read_mapping(
+            "Flapjack/Example.lean:4\tported\tcakeml/" + source + "\trebound:10\n"
+        )
+        found, count = PORT.candidates(declarations, tagged, source, None, {"Theorem"})
+        self.assertEqual([entry.start for entry in found], [20])
+        self.assertEqual(count, 1)
+        tagged |= PORT.read_mapping(
+            "Flapjack/Example.lean:9\tportedAgain\tcakeml/" + source + "\trebound:20\n"
+        )
+        found, count = PORT.candidates(declarations, tagged, source, None, {"Theorem"})
+        self.assertEqual(found, [])
+        self.assertEqual(count, 2)
+
     def test_frontend_script_candidates_use_index_and_hol_mapping(self):
         source = "compiler/backend/proofs/source_to_flatProofScript.sml"
         declarations = [

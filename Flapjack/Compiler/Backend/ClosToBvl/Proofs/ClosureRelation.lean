@@ -64,6 +64,21 @@ inductive clRel (maxApp : Nat) (fs : Nat → Prop)
       closureCodeInstalled maxApp code expsPs env →
       clRel maxApp fs refs code (env, ys) (.recclosure (some loc) [] env exps k) (holEl k rs)
 
+/-- Non-closure source constructors cannot satisfy the closure relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_F"
+  (fmap_as_finite_support_relation := [refs])]
+theorem clRel_nonValues (maxApp : Nat) (fs : Nat → Prop)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (env : List ClosSem.Value) (ys : List BvlSem.Value) (i : Int) (w : BitVec 64)
+    (b : Bool) (p tag : Nat) (xs : List ClosSem.Value) (bs : List (BitVec 8))
+    (target : BvlSem.Value) :
+    ¬ clRel maxApp fs refs code (env, ys) (.number i) target ∧
+    ¬ clRel maxApp fs refs code (env, ys) (.word64 w) target ∧
+    ¬ clRel maxApp fs refs code (env, ys) (.refPtr b p) target ∧
+    ¬ clRel maxApp fs refs code (env, ys) (.block tag xs) target ∧
+    ¬ clRel maxApp fs refs code (env, ys) (.byteVector bs) target := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> intro related <;> cases related
+
 theorem holFmapAsFiniteSupportParamWitness_clRel_subspt_refs
     (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
     (ofBroad (toBroad refs) refs.finiteSupport).lookup key = refs.lookup key ∧

@@ -30,7 +30,8 @@ theorem introExp_bounded (fuel maxApp : Nat) (e : Exp) :
 /-- Any successful ordinary traversal returns the extracted result. -/
 theorem introExp_eq_of_fuel (fuel maxApp : Nat) (e result : Exp)
     (run : introMultiFuel fuel maxApp e = some result) : introExp maxApp e = result := by
-  have bounded := introMultiBounded_eq_of_success fuel maxApp e result run
+  have bounded : introMultiBounded fuel maxApp e = some result := by
+    simp [introMultiBounded, run]
   rw [introExp_bounded] at bounded
   exact Option.some.inj bounded
 
@@ -321,6 +322,12 @@ theorem introExp_letrec_vars (maxApp : Nat) (names : List Flapjack.Basis.Pure.Ml
 @[hol "cakeml/compiler/backend/clos_mtiScript.sml" "compile_def"]
 noncomputable def compile (enabled : Bool) (maxApp : Nat) (es : List Exp) : List Exp :=
   if enabled then introList maxApp es else es
+
+/-- Multi-argument compilation preserves the number of expressions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "compile_length"]
+theorem compile_length (enabled : Bool) (maxApp : Nat) (es : List Exp) :
+    (compile enabled maxApp es).length = es.length := by
+  cases enabled <;> simp [compile, introList_length]
 
 /-- The total compiler agrees with the executed fuel-based compiler. -/
 theorem compileFuel_eq_compile (fuel : Nat) (enabled : Bool) (maxApp : Nat) (es : List Exp) :

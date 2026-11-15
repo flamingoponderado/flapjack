@@ -64,7 +64,7 @@ theorem evaluateApp_closure_partial {C F : Type} (source target : State C F)
       (evaluateApp none (.closure none targetSupplied targetEnv arity targetBody) targetArgs target).2 := by
   have argsLength := argsRel.length_eq
   have suppliedLength := suppliedRel.length_eq
-  have agreement := stateRel_clock_maxApp states
+  have agreement := (And.intro (stateRel_clocks states) (stateRel_maxApp states))
   have targetBound : targetArgs.length ≤ target.maxApp := by omega
   have suppliedBound : targetSupplied.length < arity := by omega
   have partialBound : targetArgs.length + targetSupplied.length < arity := by omega
@@ -82,14 +82,14 @@ theorem evaluateApp_closure_partial {C F : Type} (source target : State C F)
       split <;> simp_all
   by_cases timeout : target.clock < targetArgs.length
   · have sourceTimeout : source.clock < sourceArgs.length := by omega
-    have sourceRun := evaluateApps_nestedFns_timeout sourceArgs names sourceBody
-      (sourceSupplied ++ sourceEnv) source sourceTimeout partialCount (by omega)
+    have sourceRun := evaluateApps_nestedFns_timeout sourceArgs names source sourceBody
+      (sourceSupplied ++ sourceEnv) ⟨sourceTimeout, partialCount, by omega⟩
     rw [sourceRun, targetRun]
     simp only [timeout, ↓reduceIte]
     exact ⟨by simp [resultRel, excRel], stateRel_withClock states 0⟩
   · have sourceClock : sourceArgs.length ≤ source.clock := by omega
-    have sourceRun := evaluateApps_nestedFns_short sourceArgs names sourceBody
-      (sourceSupplied ++ sourceEnv) source sourceClock partialCount (by omega)
+    have sourceRun := evaluateApps_nestedFns_short sourceArgs names source sourceBody
+      (sourceSupplied ++ sourceEnv) ⟨sourceClock, partialCount, by omega⟩
     have combined : List.Forall₂ (ValueRel source.maxApp)
         (sourceArgs ++ sourceSupplied) (targetArgs ++ targetSupplied) :=
       List.rel_append argsRel suppliedRel
@@ -130,13 +130,13 @@ theorem evaluateApp_closure_full_timeout {C F : Type} (source target : State C F
     StateRel { source with clock := 0 } { target with clock := 0 } := by
   have argsLength := argsRel.length_eq
   have suppliedLength := suppliedRel.length_eq
-  have agreement := stateRel_clock_maxApp states
+  have agreement := (And.intro (stateRel_clocks states) (stateRel_maxApp states))
   have targetBound : targetArgs.length ≤ target.maxApp := by omega
   have suppliedBound : targetSupplied.length < arity := by omega
   have fullBound : arity ≤ targetArgs.length + targetSupplied.length := by omega
   have costTimeout : target.clock < arity - targetSupplied.length := by omega
-  refine ⟨evaluateApps_nestedFns_timeout_long sourceArgs names sourceBody
-    (sourceSupplied ++ sourceEnv) source timeout full (by omega), ?_, stateRel_withClock states 0⟩
+  refine ⟨evaluateApps_nestedFns_timeout_long sourceArgs names source sourceBody
+    (sourceSupplied ++ sourceEnv) ⟨timeout, full, by omega⟩, ?_, stateRel_withClock states 0⟩
   cases targetArgs with
   | nil => simp only [List.length_nil] at argsLength; omega
   | cons first rest =>
@@ -243,7 +243,7 @@ theorem evaluateApp_closure_full_related {C F : Type} (source target : State C F
     exact ⟨by simp [resultRel, excRel], finalStates⟩
   · have argsLength := argsRel.length_eq
     have suppliedLength := suppliedRel.length_eq
-    have agreement := stateRel_clock_maxApp states
+    have agreement := (And.intro (stateRel_clocks states) (stateRel_maxApp states))
     have count : arity - targetSupplied.length = 1 + names.length := by omega
     have targetBound : targetArgs.length ≤ target.maxApp := by omega
     have targetSuppliedBound : targetSupplied.length < arity := by omega
@@ -261,8 +261,8 @@ theorem evaluateApp_closure_full_related {C F : Type} (source target : State C F
     have consumed := (List.forall₂_reverse_iff).2 (List.forall₂_take (1 + names.length) reversed)
     have remaining := (List.forall₂_reverse_iff).2 (List.forall₂_drop (1 + names.length) reversed)
     have environments := List.rel_append consumed (List.rel_append suppliedRel envRel)
-    rw [evaluateApps_nestedFns_long sourceArgs names sourceBody (sourceSupplied ++ sourceEnv) source
-      (by omega) full (by omega),
+    rw [evaluateApps_nestedFns_long sourceArgs names source sourceBody (sourceSupplied ++ sourceEnv)
+      ⟨by omega, full, by omega⟩,
       evaluateApp_closure_full target targetArgs targetSupplied targetEnv arity targetBody
         targetNonempty targetBound targetSuppliedBound targetFull targetClock, count]
     cases targetRun : evaluate [targetBody]

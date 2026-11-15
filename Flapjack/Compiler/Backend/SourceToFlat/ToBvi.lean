@@ -3,12 +3,7 @@ module
 public import Flapjack.Compiler.Backend.SourceToFlat.ToClos
 public import Flapjack.Compiler.Backend.ClosToBvl.Prepared
 public import Flapjack.Compiler.Backend.BvlToBvi.Compile
-public import Flapjack.Compiler.Backend.BvlToBvi.Names
-public import Flapjack.Compiler.Backend.BviInline
-public import Flapjack.Compiler.Backend.BvlInline
-public import Flapjack.Compiler.Backend.BviTailrec.Rewrite
-public import Flapjack.Compiler.Backend.BviTmc
-public import Flapjack.Compiler.Backend.BvlToBvi.Config
+public import Flapjack.Compiler.Backend.BvlToBvi.SourcePipeline
 
 @[expose] public section
 
@@ -62,12 +57,8 @@ def compileCakeToBviConfiguredFuel (fuel : Nat) (source : Config) (closure : Clo
     Option (Config × ClosToBvl.Config × BvlToBvi.Config × List (Nat × Nat × Bvi.Exp) × Spt Basis.Pure.MlString.MlString) := do
   let (source, exps) ← compileCakeToClosFuel fuel source decls
   let (closure, bvl, names) ← ClosToBvl.compileCallMtiFuel? fuel closure exps
-  let (inlines, bvl) ← BvlInline.compileProgFuel fuel bvlConfig.inlineSizeLimit bvlConfig.expCut bvlConfig.splitMainAtSeq bvl
-  let (start, code, next1) ← BvlToBvi.compileProgFuel fuel fuel closure.start 0 bvl
-  let (next2, code) ← BviTailrec.compileProgFuel fuel bvlConfig.doTailrec (Flapjack.bvlNumStubs + 2) code
-  let (next3, code) ← BviTmc.compileProgFuel fuel bvlConfig.doTmc (Flapjack.bvlNumStubs + 3) code
-  let (bviInlines, code) ← BviInline.compileProgFuel fuel code
-  let names := BvlToBvi.getNames (code.map fun (n, _, _) => n) names
+  let (start, code, inlines, bviInlines, next1, next2, next3, names) :=
+    BvlToBvi.compileSource closure.start bvlConfig names bvl
   let closure := { closure with start := start }
   let bvlConfig := { bvlConfig with inlines := inlines, bviInlines := bviInlines, nextName1 := next1, nextName2 := next2, nextName3 := next3 }
   pure (source, closure, bvlConfig, code, names)

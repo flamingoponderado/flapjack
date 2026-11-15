@@ -41,14 +41,4 @@ theorem hasRecFuel_succeeds (fuel loc : Nat) (e : Exp) (bound : expBudget e < fu
       | true => exact ⟨true, by simp [hasRecFuel, found]⟩
     | _ => exact ⟨_, rfl⟩
 
-/-- The executable recursion analysis cannot fail from fuel exhaustion. -/
-theorem hasRecBounded_succeeds (fuel loc : Nat) (e : Exp) :
-    ∃ result, hasRecBounded fuel loc e = some result := by
-  cases h : hasRecFuel fuel loc e with
-  | some result => exact ⟨result, by simp [hasRecBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := hasRecFuel_succeeds (max fuel (expBudget e + 1)) loc e bound
-    exact ⟨result, by simp [hasRecBounded, h, done]⟩
-
 end Flapjack.Compiler.Backend.BviTailrec

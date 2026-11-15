@@ -293,6 +293,37 @@ decreasing_by all_goals subst_vars; simp_wf <;> omega
 
 end
 
+/-- The singleton removal result satisfies EVERY exactly when its head does. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "EVERY_remove_fvs_sing"]
+theorem every_removeSource_sing (f : Exp → Prop) (n : Nat) (y : Exp) :
+    (∀ e ∈ removeSource n [y], f e) ↔
+      f (@Flapjack.holHd Exp ⟨.var .none 0⟩ (removeSource n [y])) := by
+  simp [removeSource_eq_list, removeList, Flapjack.holHd]
+
+/-- The proof script repeats the singleton EVERY equivalence. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "EVERY_remove_fvs_SING"]
+theorem every_removeSource_SING (f : Exp → Prop) (n : Nat) (y : Exp) :
+    (∀ e ∈ removeSource n [y], f e) ↔
+      f (@Flapjack.holHd Exp ⟨.var .none 0⟩ (removeSource n [y])) :=
+  every_removeSource_sing f n y
+
+/-- Taking the head of a singleton removal reconstructs its result. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "HD_remove_fvs_SING"]
+theorem head_removeSource_sing (n : Nat) (x : Exp) :
+    [@Flapjack.holHd Exp ⟨.var .none 0⟩ (removeSource n [x])] = removeSource n [x] := by
+  simp [removeSource_eq_list, removeList, Flapjack.holHd]
+
+/-- Removing free variables from a singleton produces a singleton. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "remove_fvs_SING"]
+theorem removeSource_is_singleton (n : Nat) (x : Exp) :
+    ∃ y, removeSource n [x] = [y] := by
+  exact ⟨removeSing n x, by simp [removeSource_eq_list, removeList]⟩
+
+/-- The proof script repeats length preservation for free-variable removal. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "LENGTH_remove_fvs"]
+theorem length_removeSource (n : Nat) (xs : List Exp) :
+    (removeSource n xs).length = xs.length := removeSource_length n xs
+
 /-- The original list-shaped removal satisfies the HOL invariant. -/
 @[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "remove_fvs_every_Fn_vs_NONE"]
 theorem removeSource_varsNone (bound : Nat) (expressions : List Exp) :
@@ -316,6 +347,14 @@ theorem removeSource_globals (bound : Nat) (expressions : List Exp) :
 theorem removeSource_setGlobals (bound : Nat) (expressions : List Exp) :
     (removeSource bound expressions).map setGlobals = expressions.map setGlobals := by
   simpa using removeList_setGlobals expressions bound
+
+/-- Removing free variables from a singleton preserves its head's globals. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "set_globals_HD_remove_fvs_SING"]
+theorem setGlobals_head_removeSource_sing (bound : Nat) (expression : Exp) :
+    setGlobals (@Flapjack.holHd Exp ⟨.var .none 0⟩ (removeSource bound [expression])) =
+      setGlobals expression := by
+  have h := removeSource_setGlobals bound [expression]
+  simpa [removeSource_eq_list, removeList, Flapjack.holHd] using h
 
 /-- The original list-shaped removal satisfies the HOL invariant. -/
 @[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "remove_fvs_esgc_free"]

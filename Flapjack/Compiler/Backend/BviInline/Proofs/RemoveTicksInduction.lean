@@ -9,6 +9,34 @@ namespace Flapjack.Compiler.Backend.BviInline.RemoveTicksCases
 open BviSem
 open BvlSem (Value)
 
+namespace TickSimulationCarrier
+/-- The BVI reference-map representation has a canonical roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end TickSimulationCarrier
+
+/-- A positive clock bounded by a limit becomes strictly smaller after one tick. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "clock_sub_lt"]
+theorem clockSubLt (x clock : Nat) (premises : x ≠ 0 ∧ x ≤ clock) : x - 1 < clock := by
+  omega
+
+/-- A non-timeout evaluation remains stable when another clock increment is
+added. The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "evaluate_add_extra_clock"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateAddExtraClock {C F : Type} (expressions : List Bvi.Exp) (env : List Value)
+    (state : BviState C F) (result : BviResult) (next : BviState C F) (extra more : Nat)
+    (premises : evaluateTuple (expressions, env, { state with clock := extra + state.clock }) = (result, next) ∧
+      result ≠ .err (.abort .timeoutError)) :
+    evaluateTuple (expressions, env, { state with clock := extra + more + state.clock }) =
+      (result, { next with clock := more + next.clock }) := by
+  obtain ⟨run, notTimeout⟩ := premises
+  have shifted := BviProps.evaluate_addClock expressions env { state with clock := extra + state.clock }
+    next result more run notTimeout
+  simpa [evaluateTuple, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using shifted
+
 /-- Flapjack infrastructure: smaller expression induction hypothesis. -/
 def SmallerWeight {C F : Type} (clock weight : Nat) : Prop :=
   ∀ (xs : List Bvi.Exp) (env : List Value) (state : BviState C F),
@@ -25,7 +53,11 @@ theorem step {C F : Type} (xs : List Bvi.Exp) (env : List Value) (state : BviSta
     (weightIH : SmallerWeight (C := C) (F := F) state.clock (expsWeight xs))
     (clockIH : SmallerClock (C := C) (F := F) state.clock) : Property xs env state := by
   cases xs with
-  | nil => exact nil env state
+  | nil =>
+    intro source result targetNext states run
+    simp [removeTicksListSource, evaluate] at run
+    obtain ⟨rfl, rfl⟩ := run.symm
+    exact ⟨0, source, by simp [evaluate], states⟩
   | cons e rest =>
     cases rest with
     | cons second rest =>
@@ -43,7 +75,11 @@ theorem step {C F : Type} (xs : List Bvi.Exp) (env : List Value) (state : BviSta
       exact weightIH (second :: rest) env next clock tailWeight
     | nil =>
       cases e with
-      | var index => exact var index env state
+      | var index =>
+        intro source result targetNext states run
+        cases found : env[index]? <;> simp [removeTicksListSource, removeTicksSource, evaluate, found] at run
+        all_goals obtain ⟨rfl, rfl⟩ := run.symm
+        all_goals exact ⟨0, source, by simp [evaluate, found], states⟩
       | force location index =>
         apply force location index env state
         intro args body nonzero
@@ -136,11 +172,18 @@ theorem step {C F : Type} (xs : List Bvi.Exp) (env : List Value) (state : BviSta
         · intro values next clock
           exact weightIH [body] (values ++ env) next clock bodyWeight
 
-/-- Flapjack infrastructure: every tick-cleaned expression list can be
-simulated by the original list with some extra clock and related states. The
-HOL evaluator and carrier comparison remains pending. -/
-theorem evaluate_removeTicks {C F : Type} (xs : List Bvi.Exp) (env : List Value)
-    (target : BviState C F) : Property xs env target := by
+/-- Every tick-cleaned evaluation is simulated by the original expression
+list with an additional clock and related final states. The evaluator inherits
+the real-model assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "evaluate_remove_ticks"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_removeTicks {C F : Type} (clock : Nat) (xs : List Bvi.Exp) (env : List Value)
+    (target source : BviState C F) (result : BviResult) (targetNext : BviState C F)
+    (premises : RemoveStateRel source target ∧ target.clock = clock ∧
+      evaluateTuple (removeTicksListSource xs, env, target) = (result, targetNext)) :
+    ∃ extra sourceNext,
+      evaluateTuple (xs, env, { source with clock := source.clock + extra }) = (result, sourceNext) ∧
+        RemoveStateRel sourceNext targetNext := by
   have all : ∀ clock weight, ∀ (xs : List Bvi.Exp) (env : List Value) (state : BviState C F),
       state.clock ≤ clock → expsWeight xs ≤ weight → Property xs env state := by
     intro clock
@@ -161,6 +204,34 @@ theorem evaluate_removeTicks {C F : Type} (xs : List Bvi.Exp) (env : List Value)
           · have lessWeight : expsWeight ys < weight := by omega
             exact weightIH (expsWeight ys) lessWeight ys a s (by omega) (Nat.le_refl _)
         exact step xs env state smallerWeight smallerClock
+  obtain ⟨states, _, run⟩ := premises
   exact all target.clock (expsWeight xs) xs env target (Nat.le_refl _) (Nat.le_refl _)
+    source result targetNext states run
+
+/-- Clock-bounded singleton and list simulations for tick removal. The
+evaluator inherits the real-model assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "evaluate_remove_ticks_mutual"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateRemoveTicksMutual {C F : Type} (clock : Nat) :
+    (∀ (expression : Bvi.Exp) (env : List Value) (target source : BviState C F)
+        (result : BviResult) (targetNext : BviState C F),
+      RemoveStateRel source target ∧ target.clock ≤ clock ∧
+        evaluateTuple ([removeTicksSource expression], env, target) = (result, targetNext) →
+      ∃ extra sourceNext,
+        evaluateTuple ([expression], env, { source with clock := source.clock + extra }) =
+          (result, sourceNext) ∧ RemoveStateRel sourceNext targetNext) ∧
+    (∀ (expressions : List Bvi.Exp) (env : List Value) (target source : BviState C F)
+        (result : BviResult) (targetNext : BviState C F),
+      RemoveStateRel source target ∧ target.clock ≤ clock ∧
+        evaluateTuple (removeTicksListSource expressions, env, target) = (result, targetNext) →
+      ∃ extra sourceNext,
+        evaluateTuple (expressions, env, { source with clock := source.clock + extra }) =
+          (result, sourceNext) ∧ RemoveStateRel sourceNext targetNext) := by
+  constructor
+  · intro expression env target source result targetNext ⟨states, _, run⟩
+    apply evaluate_removeTicks target.clock [expression] env target source result targetNext
+    exact ⟨states, rfl, by simpa [removeTicksListSource] using run⟩
+  · intro expressions env target source result targetNext ⟨states, _, run⟩
+    exact evaluate_removeTicks target.clock expressions env target source result targetNext ⟨states, rfl, run⟩
 
 end Flapjack.Compiler.Backend.BviInline.RemoveTicksCases

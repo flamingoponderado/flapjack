@@ -9,7 +9,9 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.CodeLocations
 namespace Flapjack.Compiler.Backend.ClosLetop
 open ClosLang ClosProps
 
-private theorem varList_codeLocations {α : Type} (n : Nat) (xs : List Exp) (ys : List α)
+/-- Recognized variable lists have no code locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "var_list_IMP_code_locs"]
+theorem varList_codeLocations {α : Type} (n : Nat) (xs : List Exp) (ys : List α)
     (h : varList n xs ys = true) : codeLocations xs = [] := by
   induction xs generalizing n ys with
   | nil => rfl
@@ -74,5 +76,12 @@ end
 @[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "code_locs_let_op"]
 theorem compileSource_codeLocations (xs : List Exp) : codeLocations (compileSource xs) = codeLocations xs := by
   simpa using compileList_codeLocations xs
+
+/-- If the transformed list is a variable list, the source has no code locations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "var_list_let_op_IMP_code_locs"]
+theorem varList_compileSource_codeLocations {α : Type} (n : Nat) (xs : List Exp) (ys : List α)
+    (h : varList n (compileSource xs) ys = true) : codeLocations xs = [] := by
+  rw [← compileSource_codeLocations xs]
+  exact varList_codeLocations n (compileSource xs) ys h
 
 end Flapjack.Compiler.Backend.ClosLetop

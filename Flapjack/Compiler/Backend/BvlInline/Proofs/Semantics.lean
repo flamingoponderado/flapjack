@@ -7,10 +7,7 @@ public import Flapjack.Compiler.Backend.Semantics.BvlSem.Semantics
 
 @[expose] public section
 
-/-! Whole-program observations for BVL tick removal. These declarations are
-Flapjack infrastructure; the HOL semantics theorem is not yet classified as a
-port because its internal BVL state uses a finite-map representation that is
-not exposed in the theorem's signature. -/
+/-! Whole-program observations for BVL tick removal. -/
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs
 open Flapjack.Compiler.Backend.BvlSem
 open Flapjack.Compiler.Backend.BvlProps
@@ -31,11 +28,10 @@ theorem initialObservation_stable {C F : Type} (ffi : HolFfiState F)
     (compiler : Compiler C) (start : Nat) :
     clockStable (initialObservation ffi program oracle compiler start) := by
   intro clock extra notTimeout
-  let state := initialState ffi program oracle compiler clock
-  let run := evaluate [.call 0 (some start) []] [] state
-  have shifted := evaluate_addClock [.call 0 (some start) []] [] state run.2 run.1 extra
-    (by simp [run]) notTimeout
-  simpa [initialObservation, state, run, initialState] using
+  let run := evaluate [.call 0 (some start) []] [] (initialState ffi program oracle compiler clock)
+  have shifted := evaluateAddClockInitialState [.call 0 (some start) []] [] ffi program oracle compiler
+    clock run.1 run.2 ⟨by simp [run, evaluateTuple], notTimeout⟩ extra
+  simpa [initialObservation, run, evaluateTuple] using
     congrArg (fun output => (output.1, output.2.ffi.ioEvents)) shifted
 
 /-- Increasing the initial clock extends the observed event trace. -/
@@ -120,9 +116,9 @@ theorem semantics_eq_clockSemantics {C F : Type} (ffi : HolFfiState F)
   simp only [terminating, initialObservation, evaluateTuple]
   rfl
 
-/-- Tick removal preserves the entire BVL whole-program behavior. This
-Flapjack theorem is untagged until the internally used finite-map state has a
-reviewed HOL reference qualifier for declarations without state parameters. -/
+/-- Tick removal preserves the entire BVL whole-program behavior. The
+semantics inherit the real-model assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "semantics_remove_ticks"]
 theorem removeTicks_semantics {C F : Type} (ffi : HolFfiState F)
     (program : Spt (Nat × Bvl.Exp)) (oracle : CompileOracle C)
     (compiler : Compiler C) (start : Nat) :

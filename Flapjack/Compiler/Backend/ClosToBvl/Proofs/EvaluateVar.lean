@@ -10,6 +10,35 @@ public import Flapjack.Compiler.Backend.Semantics.BvlSem.Evaluate
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.SemanticPrimitivesHOL
 
+local instance : Nonempty ClosSem.Value := ⟨.number 0⟩
+
+/-- A bounded source index is also bounded in a related target environment,
+and the values at that index are related. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "LESS_LENGTH_env_rel_IMP"
+  (fmap_as_finite_support_relation := [f, refs])]
+theorem envRel_index (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp)) :
+    ∀ (env : List ClosSem.Value) (targetEnv : List BvlSem.Value) (n : Nat),
+      n < env.length ∧ envRel maxApp f refs code env targetEnv →
+      n < targetEnv.length ∧ vRel maxApp f refs code (holEl n env) (holEl n targetEnv) := by
+  intro env
+  induction env with
+  | nil =>
+      intro targetEnv n ⟨bound, _⟩
+      simp at bound
+  | cons head tail ih =>
+      intro targetEnv n ⟨bound, related⟩
+      cases targetEnv with
+      | nil => exact False.elim related
+      | cons targetHead targetTail =>
+          cases n with
+          | zero =>
+              simpa [holEl, holHd] using related.1
+          | succ n =>
+              have bound' : n < tail.length := by simpa using bound
+              have result := ih targetTail n ⟨bound', related.2⟩
+              simpa [holEl] using result
+
 /-- A lookup in the related source environment has a related target value at
 the same index. This helper is Flapjack infrastructure for the variable case. -/
 theorem envRel_lookup {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
@@ -17,20 +46,13 @@ theorem envRel_lookup {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     {env : List ClosSem.Value} {targetEnv : List BvlSem.Value} {index : Nat} {value : ClosSem.Value}
     (related : envRel maxApp f refs code env targetEnv) (found : env[index]? = some value) :
     ∃ targetValue, targetEnv[index]? = some targetValue ∧ vRel maxApp f refs code value targetValue := by
-  induction env generalizing targetEnv index with
-  | nil => simp at found
-  | cons head tail ih =>
-      cases targetEnv with
-      | nil => exact False.elim related
-      | cons targetHead targetTail =>
-          cases index with
-          | zero =>
-              simp only [List.getElem?_cons_zero, Option.some.injEq] at found
-              subst value
-              exact ⟨targetHead, rfl, related.1⟩
-          | succ index =>
-              simp only [List.getElem?_cons_succ] at found ⊢
-              exact ih related.2 found
+  obtain ⟨sourceBound, sourceEq⟩ := List.getElem?_eq_some_iff.mp found
+  obtain ⟨targetBound, valuesRelated⟩ := envRel_index maxApp f refs code env targetEnv index
+    ⟨sourceBound, related⟩
+  refine ⟨holEl index targetEnv, ?_, ?_⟩
+  · rw [holEl_eq_getElem index targetEnv targetBound, List.getElem?_eq_getElem targetBound]
+  · rw [holEl_eq_getElem index env sourceBound, sourceEq] at valuesRelated
+    exact valuesRelated
 
 /-- A successfully evaluated source variable has a corresponding BVL
 evaluation with the same clock and related value. This is untagged: the

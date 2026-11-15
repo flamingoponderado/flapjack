@@ -23,13 +23,6 @@ def evaluationSimulationAt {C F : Type} (env : FlatSem.Environment FlatSem.Value
       flatStateRel reachable next targetNext ∧ globalsWithin (findPrimitiveResultGlobals result) reachable ∧
       valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues result)
 
-/-- Decrementing the clock of both states preserves their relation. -/
-theorem flatStateRel_decClock {C F : Type} (reachable : NumSet) (source target : FlatSem.State C F)
-    (related : flatStateRel reachable source target) :
-    flatStateRel reachable (FlatSem.decClock source) (FlatSem.decClock target) := by
-  obtain ⟨clock, refs, ffi, globals, refsClosed, refsSafe⟩ := related
-  exact ⟨by simp [FlatSem.decClock, clock], refs, ffi, globals, refsClosed, refsSafe⟩
-
 /-- Function application simulation at a fixed initial state, given the
 argument-list induction hypothesis and simulation at all smaller clocks.
 This is a clock-induction step, not the assembled HOL theorem. -/
@@ -98,10 +91,11 @@ theorem evaluate_call_simulation_step {C F : Type} (env : FlatSem.Environment Fl
             simp only [FlatSem.decClock]
             have bound := Nat.min_le_left source.clock argState.clock
             omega
-          have recursiveRelated := flatStateRel_decClock reachable _ _ clampedRelated
           obtain ⟨targetNext, evaluated, nextRelated, closed, safe⟩ :=
-            smallerClock newEnv _ body decrease next result reachable _ run
-              (singletonLookups_within body reachable invariants.1) recursiveRelated invariants.2.2.1
+            smallerClock newEnv _ body decrease next result reachable
+              (FlatSem.decClock { targetArgState with clock := min target.clock targetArgState.clock }) run
+              (singletonLookups_within body reachable invariants.1)
+              ⟨congrArg (fun n : Nat => n - 1) clockEq, clampedRelated.2⟩ invariants.2.2.1
               invariants.2.2.2 (singletonExpression_noEval body invariants.2.1) notTypeError
           refine ⟨targetNext, ?_, nextRelated, closed, safe⟩
           simpa [FlatSem.evaluate, targetArgEval, FlatSem.fixClock, call, ← clockEq, zero] using evaluated

@@ -12,6 +12,8 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClockShift
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallStep
 
+public import Flapjack.Misc.ListLookupRel
+
 @[expose] public section
 
 /-! Evaluator cases for free-variable removal correctness. -/
@@ -54,33 +56,31 @@ theorem evaluate_remove_fvs_nil {C F : Type} (env nextEnv : List Value)
   subst targetCode
   exact ⟨.val [], target, by simp [evaluate], .nil, states⟩
 
-/-- Related environments have related optional results at every index. -/
-theorem environment_lookup (env nextEnv : List Value) (related : List.Forall₂ ValueRel env nextEnv)
-    (index : Nat) : optionRel ValueRel env[index]? nextEnv[index]? := by
-  induction related generalizing index with
-  | nil => simp [optionRel]
-  | cons head tail ih =>
-    cases index with
-    | zero => simpa [optionRel] using head
-    | succ index => simpa using ih index
-
-/-- Capturing the same indices in related environments either fails on both
-sides or returns related values, in order. -/
-theorem environment_lookupVars (indices : List Nat) (env nextEnv : List Value)
+/-- Looking up the same indices in related environments preserves captures. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "lookup_vars_lemma"]
+theorem lookup_vars_lemma (indices : List Nat) (env nextEnv : List Value)
     (related : List.Forall₂ ValueRel env nextEnv) :
-    optionRel (List.Forall₂ ValueRel) (lookupVars indices env) (lookupVars indices nextEnv) := by
-  induction indices with
-  | nil => simp [lookupVars, optionRel]
-  | cons index rest ih =>
-    have head := environment_lookup env nextEnv related index
-    cases left : env[index]? <;> cases right : nextEnv[index]? <;>
-      simp [optionRel, left, right] at head
-    · simp [lookupVars, left, right, optionRel]
-    · rename_i value nextValue
-      cases leftTail : lookupVars rest env <;> cases rightTail : lookupVars rest nextEnv <;>
-        simp [optionRel, leftTail, rightTail] at ih
-      · simp [lookupVars, left, right, leftTail, rightTail, optionRel]
-      · simp [lookupVars, left, right, leftTail, rightTail, optionRel, head, ih]
+    match lookupVars indices env with
+    | none => lookupVars indices nextEnv = none
+    | some values => ∃ nextValues, List.Forall₂ ValueRel values nextValues ∧
+        lookupVars indices nextEnv = some nextValues := by
+  have capture : optionRel (List.Forall₂ ValueRel)
+      (lookupVars indices env) (lookupVars indices nextEnv) := by
+    induction indices with
+    | nil => simp [lookupVars, optionRel]
+    | cons index rest ih =>
+      have head := Flapjack.forall₂_lookupRel related index
+      cases left : env[index]? <;> cases right : nextEnv[index]? <;>
+        simp [optionRel, left, right] at head
+      · simp [lookupVars, left, right, optionRel]
+      · rename_i value nextValue
+        cases leftTail : lookupVars rest env <;> cases rightTail : lookupVars rest nextEnv <;>
+          simp [optionRel, leftTail, rightTail] at ih
+        · simp [lookupVars, left, right, leftTail, rightTail, optionRel]
+        · simp [lookupVars, left, right, leftTail, rightTail, optionRel, head, ih]
+
+  cases left : lookupVars indices env <;> cases right : lookupVars indices nextEnv <;>
+    simp_all [optionRel]
 
 /-- A successful capture contains one value per selected index. -/
 theorem lookupVars_length (indices : List Nat) (env values : List Value)
@@ -120,22 +120,21 @@ theorem removeFuns_all (count captured maxApp : Nat) (functions : List (Nat × C
       functions.all (fun (arity, _) => arity ≤ maxApp && arity != 0) := by
   simp [removeFuns_eq_map, Function.comp_def]
 
-/-- Corresponding recursive closures retain their shared indices and captured
-environments. -/
-theorem recursiveClosures_related (location : Option Nat) (env nextEnv : List Value)
-    (functions : List (Nat × ClosLang.Exp)) (envRel : List.Forall₂ ValueRel env nextEnv) :
+/-- Recursive closures generated from related bundles and environments are
+related at each common index. -/
+theorem recursive_bundle_related (location : Option Nat) (env nextEnv : List Value)
+    (functions nextFunctions : List (Nat × ClosLang.Exp))
+    (environments : List.Forall₂ ValueRel env nextEnv)
+    (bodies : List.Forall₂ (FunctionRel (env.length + functions.length)) functions nextFunctions) :
     List.Forall₂ ValueRel
       ((List.range functions.length).map (fun i => Value.recclosure location [] env functions i))
-      ((List.range (removeFuns functions.length env.length functions).length).map
-        (fun i => Value.recclosure location [] nextEnv
-          (removeFuns functions.length env.length functions) i)) := by
-  rw [removeFuns_length]
+      ((List.range nextFunctions.length).map (fun i => Value.recclosure location [] nextEnv nextFunctions i)) := by
+  rw [← bodies.length_eq]
   generalize List.range functions.length = indices
   induction indices with
   | nil => exact .nil
   | cons index rest ih =>
-    exact .cons (.recclosure location [] [] env nextEnv functions _ index envRel .nil
-      (removeFuns_related functions.length env.length functions)) ih
+    exact .cons (.recclosure location [] [] env nextEnv functions nextFunctions index environments .nil bodies) ih
 
 /-- A source variable, including an out-of-scope one, is simulated by the
 corresponding variable or generated type-error expression. -/
@@ -151,7 +150,7 @@ theorem evaluate_remove_fvs_var {C F : Type} (trace : BackendCommon.Tra) (index 
       evaluate targetCode nextEnv target = (targetResult, targetNext) ∧
       ResultRel result targetResult ∧ StateRel sourceNext targetNext := by
   obtain ⟨run, envRel, states, code⟩ := premises
-  have lookup := environment_lookup env nextEnv envRel index
+  have lookup := Flapjack.forall₂_lookupRel envRel index
   cases found : env[index]? with
   | none =>
     have outside := List.getElem?_eq_none_iff.mp found
@@ -312,12 +311,19 @@ theorem evaluate_remove_fvs_raise {C F : Type} (trace : BackendCommon.Tra)
           obtain ⟨rfl, rfl⟩ := run
           exact ⟨.err (.raise _), targetNext, by simp [evaluate, targetRun], valueRel, nextRel⟩
 
+/-- Related states have the same clock. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "state_rel_clocks_eqs"
+  (fmap_as_finite_support := [refs, code])]
+theorem state_rel_clocks_eqs {C F : Type} (source target : State C F)
+    (related : StateRel source target) : source.clock = target.clock := by
+  exact related.2.2.2.2.2.1.symm
+
 /-- Decrementing both clocks preserves the state relation. -/
 @[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "state_rel_dec_clock"
   (fmap_as_finite_support := [refs, code])]
 theorem state_rel_dec_clock {C F : Type} (source target : State C F)
     (related : StateRel source target) : StateRel (decClock 1 source) (decClock 1 target) := by
-  have clockEq : target.clock = source.clock := related.2.2.2.2.2.1
+  have clockEq : target.clock = source.clock := (state_rel_clocks_eqs source target related).symm
   simpa [StateRel, decClock, clockEq] using related
 
 /-- A tick either times out on both sides or evaluates related bodies. -/
@@ -504,18 +510,6 @@ theorem evaluate_remove_fvs_let {C F : Type} (trace : BackendCommon.Tra)
         rw [evaluate, fixClock_evaluate, targetRun]
         exact targetBodyRun
 
-/-- The value relation preserves the Boolean observation used by conditionals. -/
-theorem valueRel_asBool {left right : Value} (related : ValueRel left right) :
-    asBool left = asBool right := by
-  cases related with
-  | block tag left right entries =>
-    cases entries with
-    | nil => rfl
-    | cons head tail => cases tag <;> simp [asBool]
-  | number _ | word64 _ | byteVector _ | refPtr _ _ => rfl
-  | closure => rfl
-  | recclosure => rfl
-
 /-- Conditional evaluation preserves both Boolean branches and the
 type-error result for a non-Boolean condition. -/
 @[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "evaluate_remove_fvs"
@@ -583,7 +577,7 @@ theorem evaluate_remove_fvs_if {C F : Type} (trace : BackendCommon.Tra)
         | cons valueRel tailRel =>
           cases tailRel
           rename_i targetValue
-          have boolEq : asBool value = asBool targetValue := valueRel_asBool valueRel
+          have boolEq : asBool value = asBool targetValue := ClosProps.PrimitiveBoolean.simpleValRel_asBool ValueRel valueRelSimple value targetValue valueRel
           cases decision : asBool value with
           | none =>
             have targetDecision : asBool targetValue = none := boolEq.symm.trans decision
@@ -659,7 +653,7 @@ theorem evaluate_remove_fvs_fn {C F : Type} (name : Flapjack.Basis.Pure.MlString
       exact ⟨.err (.abort .typeError), target, by simp [evaluate, maxEq, arityOk], rfl, states⟩
   | some indices =>
     by_cases arityOk : arity ≤ source.maxApp ∧ arity ≠ 0
-    · have captureRel := environment_lookupVars indices env nextEnv envRel
+    · have captureRel := lookup_vars_lemma indices env nextEnv envRel
       cases capture : lookupVars indices env with
       | none =>
         cases nextCapture : lookupVars indices nextEnv with
@@ -668,13 +662,13 @@ theorem evaluate_remove_fvs_fn {C F : Type} (name : Flapjack.Basis.Pure.MlString
           obtain ⟨rfl, rfl⟩ := run
           exact ⟨.err (.abort .typeError), target,
             by simp [evaluate, maxEq, arityOk, nextCapture], rfl, states⟩
-        | some values => simp [capture, nextCapture, optionRel] at captureRel
+        | some values => simp [capture, nextCapture] at captureRel
       | some values =>
         cases nextCapture : lookupVars indices nextEnv with
-        | none => simp [capture, nextCapture, optionRel] at captureRel
+        | none => simp [capture, nextCapture] at captureRel
         | some nextValues =>
           have captures : List.Forall₂ ValueRel values nextValues := by
-            simpa [capture, nextCapture, optionRel] using captureRel
+            simpa [capture, nextCapture] using captureRel
           have length := lookupVars_length indices env values capture
           simp [evaluate, arityOk, capture] at run
           obtain ⟨rfl, rfl⟩ := run
@@ -738,7 +732,8 @@ theorem evaluate_remove_fvs_letrec {C F : Type} (names : List Flapjack.AstHOL.Va
     let nextRecs := (List.range nextFunctions.length).map
       (fun i => Value.recclosure location [] nextCaptured nextFunctions i)
     have recRel : List.Forall₂ ValueRel recs nextRecs :=
-      recursiveClosures_related location captured nextCaptured functions captures
+      recursive_bundle_related location captured nextCaptured functions nextFunctions captures
+        (removeFuns_related functions.length captured.length functions)
     have bodyRun : evaluate [body] (recs ++ env) source = (result, sourceNext) := by
       rw [evaluate.eq_def] at run
       simp only [arityOk, ↓reduceIte] at run
@@ -778,7 +773,7 @@ theorem evaluate_remove_fvs_letrec {C F : Type} (names : List Flapjack.AstHOL.Va
         by simp [evaluate, maxEq, removeFuns_all, arityOk], rfl, states⟩
   | some indices =>
     by_cases arityOk : functions.all (fun (arity, _) => arity ≤ source.maxApp && arity != 0) = true
-    · have captureRel := environment_lookupVars indices env nextEnv envRel
+    · have captureRel := lookup_vars_lemma indices env nextEnv envRel
       cases capture : lookupVars indices env with
       | none =>
         cases nextCapture : lookupVars indices nextEnv with
@@ -787,13 +782,13 @@ theorem evaluate_remove_fvs_letrec {C F : Type} (names : List Flapjack.AstHOL.Va
           obtain ⟨rfl, rfl⟩ := run
           exact ⟨.err (.abort .typeError), target,
             by simp [evaluate, maxEq, removeFuns_all, arityOk, nextCapture], rfl, states⟩
-        | some values => simp [capture, nextCapture, optionRel] at captureRel
+        | some values => simp [capture, nextCapture] at captureRel
       | some values =>
         cases nextCapture : lookupVars indices nextEnv with
-        | none => simp [capture, nextCapture, optionRel] at captureRel
+        | none => simp [capture, nextCapture] at captureRel
         | some nextValues =>
           exact success values nextValues arityOk capture nextCapture
-            (lookupVars_length indices env values capture) (by simpa [capture, nextCapture, optionRel] using captureRel)
+            (lookupVars_length indices env values capture) (by simpa [capture, nextCapture] using captureRel)
     · simp [evaluate, arityOk] at run
       obtain ⟨rfl, rfl⟩ := run
       exact ⟨.err (.abort .typeError), target,
@@ -913,6 +908,16 @@ theorem evaluate_remove_fvs_app {C F : Type} (trace : BackendCommon.Tra)
                   rw [fixClock_evaluate, targetFunctionRun]
                   exact targetRun
 
+/-- Related states have no installed code at any location. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "find_code_lemma"
+  (fmap_as_finite_support := [refs, code])]
+theorem find_code_lemma {C F A : Type} (source target : State C F) (location : Nat)
+    (args : List A) (related : StateRel source target) :
+    findCode location args source.code = none ∧ findCode location args target.code = none := by
+  have sourceEmpty : source.code = HolFiniteMapExact.empty := related.2.1
+  have targetEmpty : target.code = HolFiniteMapExact.empty := related.2.2.1
+  simp [findCode, sourceEmpty, targetEmpty, HolFiniteMapExact.empty]
+
 /-- Direct calls propagate argument errors or fail equally because related
 states have empty installed code. -/
 @[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "evaluate_remove_fvs"
@@ -955,14 +960,14 @@ theorem evaluate_remove_fvs_call {C F : Type} (trace : BackendCommon.Tra)
       cases targetResult with
       | err error => cases error <;> simp [ResultRel] at related
       | val targetValues =>
-        have sourceEmpty : middle.code = HolFiniteMapExact.empty := middleRel.2.1
-        have targetEmpty : targetMiddle.code = HolFiniteMapExact.empty := middleRel.2.2.1
+        have sourceAbsent := (find_code_lemma middle targetMiddle location values middleRel).1
+        have targetAbsent := (find_code_lemma middle targetMiddle location targetValues middleRel).2
         rw [evaluate, fixClock_evaluate, argsRun] at run
-        simp [findCode, sourceEmpty, HolFiniteMapExact.empty] at run
+        simp [sourceAbsent] at run
         obtain ⟨rfl, rfl⟩ := run
         refine ⟨.err (.abort .typeError), targetMiddle, ?_, rfl, middleRel⟩
         rw [evaluate, fixClock_evaluate, targetRun]
-        simp [findCode, targetEmpty, HolFiniteMapExact.empty]
+        simp [targetAbsent]
 
 /-- Ordinary operations simulate after related argument evaluation. This
 Flapjack helper isolates the non-install, non-forcing dispatcher branch of

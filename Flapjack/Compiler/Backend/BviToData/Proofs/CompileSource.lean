@@ -10,6 +10,14 @@ public import Mathlib.Tactic
 namespace Flapjack.Compiler.Backend.BviToData
 open Classical
 
+/-- Compiling a labeled function preserves its label and arity. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "compile_part_thm"]
+theorem compilePart_fn :
+    compilePart = (fun (x, y) => (x, (fun (a, b) => (a, compileExp a b)) y)) := by
+  funext part
+  rcases part with ⟨x, a, b⟩
+  rfl
+
 /-- The source compiler assigns one result name per input expression. This
 is the equality form used to establish the original `compile_LENGTH` result. -/
 theorem compileSource_length (n : Nat) (env : List Nat) (tail : Bool) (live : List Nat) (xs : List Bvi.Exp) :
@@ -81,18 +89,5 @@ theorem compileSing_source_eq :
       cases rest with
       | nil => simpa [compileList] using agrees
       | cons y ys => simpa using agrees
-
-/-- The executable compiler's total traversal yields the original
-list-shaped definition of the optimized expression compiler. -/
-theorem compileExp_source (argc : Nat) (exp : Bvi.Exp) :
-    compileExp argc exp = optimise (compileSource argc (List.range argc) true [] [exp]).1 := by
-  rfl
-
-/-- At any initial fuel, the executable bounded compiler returns the
-original optimized list-shaped compilation. -/
-theorem compileExpBounded_source (fuel argc : Nat) (exp : Bvi.Exp) :
-    compileExpBounded fuel argc exp =
-      some (optimise (compileSource argc (List.range argc) true [] [exp]).1) := by
-  rw [compileExpBounded_agrees_all fuel argc exp, compileExp_source]
 
 end Flapjack.Compiler.Backend.BviToData

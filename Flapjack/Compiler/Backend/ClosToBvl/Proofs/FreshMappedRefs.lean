@@ -70,10 +70,7 @@ theorem stateRel_alloc_mapped {C F : Type} (s : ClosSem.State C F) (t : BvlSem.S
     intro a b rel
     exact vRel_grow_refs rel submap frame
   refine ⟨ffi, ?_, table, ?_, ?_, ?_, ?_, ?_, generic, partialCode, force, oracle, code⟩
-  · apply globals.imp
-    intro a b rel
-    cases a <;> cases b <;> simp only [optionValueRel] at rel ⊢
-    exact grow _ _ rel
+  · exact globals.imp (fun _ _ rel => optionValueRel_mono grow rel)
   · intro x₁ x₂ y first second
     by_cases a : x₁ = sourcePtr <;> by_cases b : x₂ = sourcePtr
     · exact a.trans b.symm

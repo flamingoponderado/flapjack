@@ -12,6 +12,18 @@ public import Mathlib.Data.List.Induction
 namespace Flapjack.Compiler.Backend.ClosMti
 open Flapjack.SemanticPrimitivesHOL
 
+/-- A successful closure decomposition starts from a closure or recursive closure. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "dest_closure_SOME_IMP"]
+theorem destClosure_some_imp (maxApp : Nat) (location : Option Nat) (function : ClosSem.Value)
+    (args : List ClosSem.Value) (result : ClosSem.AppKind)
+    (run : ClosSem.destClosure maxApp location function args = some result) :
+    (∃ loc supplied env arity body, function = .closure loc supplied env arity body) ∨
+      (∃ loc supplied env funs index, function = .recclosure loc supplied env funs index) := by
+  cases function with
+  | closure loc supplied env arity body => exact Or.inl ⟨loc, supplied, env, arity, body, rfl⟩
+  | recclosure loc supplied env funs index => exact Or.inr ⟨loc, supplied, env, funs, index, rfl⟩
+  | _ => simp [ClosSem.destClosure] at run
+
 /-- An error while evaluating the argument of a unary application propagates. -/
 theorem unaryApp_arg_error {C F : Type} (trace : BackendCommon.Tra)
     (function arg : ClosLang.Exp) (env : List ClosSem.Value) (state next : ClosSem.State C F)
@@ -90,8 +102,9 @@ theorem evaluateApps_singleton {C F : Type} (fn : ClosSem.Value) (args : List Cl
           | nil => exact ⟨value, rfl⟩
           | cons other tail => simp at length
 
-/-- Applying the last argument first decomposes a reconstructed application
-chain. This uses the Lean evaluator; its HOL correspondence remains open. -/
+/-- Applying the last argument first decomposes a reconstructed application chain. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "evaluate_apps_SNOC"
+  (fmap_as_finite_support := [refs, code])]
 theorem evaluateApps_snoc {C F : Type} (args : List ClosSem.Value) (x fn : ClosSem.Value)
     (state : ClosSem.State C F) :
     evaluateApps fn (args ++ [x]) state =
@@ -133,6 +146,29 @@ theorem evaluateApps_snoc_badClosure {C F : Type} (args : List ClosSem.Value)
     split <;> simp_all
   rw [evaluateApps_snoc]
   rw [badApp]
+
+private theorem holLast_append_singleton (xs : List ClosSem.Value) (x : ClosSem.Value) :
+    @Flapjack.holLast ClosSem.Value ⟨ClosSem.unitValue⟩ (xs ++ [x]) = x := by
+  induction xs with
+  | nil => simp [Flapjack.holLast]
+  | cons head tail ih =>
+    cases tail with
+    | nil => simp [Flapjack.holLast]
+    | cons next rest => simpa [Flapjack.holLast] using ih
+
+/-- A failed closure lookup for the last argument aborts a nonempty chain. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "dest_closure_NONE_IMP_apps"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateApps_badClosure {C F : Type} (args : List ClosSem.Value)
+    (fn : ClosSem.Value) (state : ClosSem.State C F)
+    (premises : ClosSem.destClosure state.maxApp none fn
+      [@Flapjack.holLast ClosSem.Value ⟨ClosSem.unitValue⟩ args] = none ∧ args ≠ []) :
+    evaluateApps fn args state = (.err (.abort .typeError), state) := by
+  induction args using List.reverseRecOn with
+  | nil => exact False.elim (premises.2 rfl)
+  | append_singleton args x _ih =>
+    apply evaluateApps_snoc_badClosure args x fn state
+    simpa only [holLast_append_singleton] using premises.1
 
 /-- Applying one argument to a unary closure whose body is another function
 captures that argument and consumes one clock tick. This is a property of the
@@ -184,16 +220,17 @@ theorem evaluateApp_unary {C F : Type} (body : ClosLang.Exp) (env : List ClosSem
           | cons other rest => rfl
 
 /-- Applying no more arguments than there are nested unary functions captures
-them in order and consumes one tick per argument. This is stated over the
-current Lean evaluator, pending its HOL correspondence review. -/
+them in order and consumes one tick per argument. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "evaluate_apps_Clos_short"
+  (fmap_as_finite_support := [refs, code])]
 theorem evaluateApps_nestedFns_short {C F : Type} (args : List ClosSem.Value)
-    (names : List Flapjack.Basis.Pure.MlString.MlString) (body : ClosLang.Exp)
-    (env : List ClosSem.Value) (state : ClosSem.State C F)
-    (clock : args.length ≤ state.clock) (lengths : args.length ≤ names.length)
-    (maxApp : 1 ≤ state.maxApp) :
+    (names : List Flapjack.Basis.Pure.MlString.MlString) (state : ClosSem.State C F)
+    (body : ClosLang.Exp) (env : List ClosSem.Value)
+    (premises : args.length ≤ state.clock ∧ args.length ≤ names.length ∧ 1 ≤ state.maxApp) :
     evaluateApps (.closure none [] env 1 (mkFns names body)) args state =
       (.val [.closure none [] (args ++ env) 1 (mkFns (names.drop args.length) body)],
         ClosSem.decClock args.length state) := by
+  obtain ⟨clock, lengths, maxApp⟩ := premises
   induction args using List.reverseRecOn generalizing names env state with
   | nil => simp [evaluateApps, ClosSem.decClock]
   | append_singleton args x ih =>
@@ -210,7 +247,7 @@ theorem evaluateApps_nestedFns_short {C F : Type} (args : List ClosSem.Value)
       simp only [mkFns]
       rw [evaluateApp_nestedFn name (mkFns names body) env x state maxApp clockOne]
       simp only
-      rw [ih names (x :: env) (ClosSem.decClock 1 state) tailClock tailLength tailMax]
+      rw [ih names (ClosSem.decClock 1 state) (x :: env) tailClock tailLength tailMax]
       simp [List.length_append, ClosSem.decClock, List.append_assoc, Nat.sub_sub,
         Nat.add_comm]
 
@@ -232,13 +269,15 @@ theorem evaluateApp_unary_timeout {C F : Type}
 
 /-- If the clock runs out while consuming nested unary functions, the
 reconstructed chain returns the timeout and leaves its clock at zero. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "evaluate_apps_Clos_timeout"
+  (fmap_as_finite_support := [refs, code])]
 theorem evaluateApps_nestedFns_timeout {C F : Type} (args : List ClosSem.Value)
-    (names : List Flapjack.Basis.Pure.MlString.MlString) (body : ClosLang.Exp)
-    (env : List ClosSem.Value) (state : ClosSem.State C F)
-    (clock : state.clock < args.length) (lengths : args.length ≤ names.length)
-    (maxApp : 1 ≤ state.maxApp) :
+    (names : List Flapjack.Basis.Pure.MlString.MlString) (state : ClosSem.State C F)
+    (body : ClosLang.Exp) (env : List ClosSem.Value)
+    (premises : state.clock < args.length ∧ args.length ≤ names.length ∧ 1 ≤ state.maxApp) :
     evaluateApps (.closure none [] env 1 (mkFns names body)) args state =
       (.err (.abort .timeoutError), { state with clock := 0 }) := by
+  obtain ⟨clock, lengths, maxApp⟩ := premises
   induction args using List.reverseRecOn generalizing names env state with
   | nil => simp at clock
   | append_singleton args x ih =>
@@ -257,18 +296,20 @@ theorem evaluateApps_nestedFns_timeout {C F : Type} (args : List ClosSem.Value)
           simpa [ClosSem.decClock] using maxApp
         rw [evaluateApp_nestedFn name (mkFns names body) env x state maxApp clockOne]
         simp only
-        rw [ih names (x :: env) (ClosSem.decClock 1 state) tailClock tailLength tailMax]
+        rw [ih names (ClosSem.decClock 1 state) (x :: env) tailClock tailLength tailMax]
         simp [ClosSem.decClock]
 
 /-- Timeout also occurs before reaching the final body when there are more
 arguments than nested functions and the clock is no larger than their count. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "evaluate_apps_Clos_timeout_alt"
+  (fmap_as_finite_support := [refs, code])]
 theorem evaluateApps_nestedFns_timeout_long {C F : Type} (args : List ClosSem.Value)
-    (names : List Flapjack.Basis.Pure.MlString.MlString) (body : ClosLang.Exp)
-    (env : List ClosSem.Value) (state : ClosSem.State C F)
-    (clock : state.clock ≤ names.length) (lengths : names.length < args.length)
-    (maxApp : 1 ≤ state.maxApp) :
+    (names : List Flapjack.Basis.Pure.MlString.MlString) (state : ClosSem.State C F)
+    (body : ClosLang.Exp) (env : List ClosSem.Value)
+    (premises : state.clock ≤ names.length ∧ names.length < args.length ∧ 1 ≤ state.maxApp) :
     evaluateApps (.closure none [] env 1 (mkFns names body)) args state =
       (.err (.abort .timeoutError), { state with clock := 0 }) := by
+  obtain ⟨clock, lengths, maxApp⟩ := premises
   induction args using List.reverseRecOn generalizing names env state with
   | nil => simp at lengths
   | append_singleton args x ih =>
@@ -290,23 +331,24 @@ theorem evaluateApps_nestedFns_timeout_long {C F : Type} (args : List ClosSem.Va
           simpa [ClosSem.decClock] using maxApp
         rw [evaluateApp_nestedFn name (mkFns names body) env x state maxApp clockOne]
         simp only
-        rw [ih names (x :: env) (ClosSem.decClock 1 state) tailClock tailLength tailMax]
+        rw [ih names (ClosSem.decClock 1 state) (x :: env) tailClock tailLength tailMax]
         simp [ClosSem.decClock]
 
-/-- When the nested functions and their final unary closure are fully applied,
-evaluate the body with the consumed arguments and continue with the remainder.
-This is a Lean-evaluator result pending the source correspondence review. -/
+/-- When the nested functions and final unary closure are fully applied,
+evaluate the body with the consumed arguments and continue with the remainder. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "evaluate_apps_Clos_long"
+  (fmap_as_finite_support := [refs, code])]
 theorem evaluateApps_nestedFns_long {C F : Type} (args : List ClosSem.Value)
-    (names : List Flapjack.Basis.Pure.MlString.MlString) (body : ClosLang.Exp)
-    (env : List ClosSem.Value) (state : ClosSem.State C F)
-    (clock : names.length < state.clock) (lengths : names.length < args.length)
-    (maxApp : 1 ≤ state.maxApp) :
+    (names : List Flapjack.Basis.Pure.MlString.MlString) (state : ClosSem.State C F)
+    (body : ClosLang.Exp) (env : List ClosSem.Value)
+    (premises : names.length < state.clock ∧ names.length < args.length ∧ 1 ≤ state.maxApp) :
     evaluateApps (.closure none [] env 1 (mkFns names body)) args state =
       match ClosSem.evaluate [body]
           ((args.reverse.take (1 + names.length)).reverse ++ env)
           (ClosSem.decClock (1 + names.length) state) with
       | (.val [value], next) => evaluateApps value ((args.reverse.drop (1 + names.length)).reverse) next
       | result => result := by
+  obtain ⟨clock, lengths, maxApp⟩ := premises
   induction args using List.reverseRecOn generalizing names env state with
   | nil => simp at lengths
   | append_singleton args x ih =>
@@ -327,19 +369,21 @@ theorem evaluateApps_nestedFns_long {C F : Type} (args : List ClosSem.Value)
       simp only [mkFns]
       rw [evaluateApp_nestedFn name (mkFns names body) env x state maxApp clockOne]
       simp only
-      rw [ih names (x :: env) (ClosSem.decClock 1 state) tailClock tailLength tailMax]
+      rw [ih names (ClosSem.decClock 1 state) (x :: env) tailClock tailLength tailMax]
       simp [List.reverse_append, ClosSem.decClock, Nat.sub_sub, Nat.add_comm]
       simp [show 1 + (names.length + 1) = Nat.succ (names.length + 1) by omega,
         List.append_assoc]
 
-/-- Reconstructed applications propagate an error from their argument list.
-This is a Lean-side evaluator property; HOL correspondence is still pending. -/
+/-- Reconstructed applications propagate an error from their argument list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "mk_Apps_err_1"
+  (fmap_as_finite_support := [refs, code])]
 theorem mkApps_argument_error {C F : Type} (traces : List BackendCommon.Tra)
-    (args : List ClosLang.Exp) (env : List ClosSem.Value) (state next : ClosSem.State C F)
-    (error : ErrorResult ClosSem.Value) (function : ClosLang.Exp)
-    (run : ClosSem.evaluate args env state = (.err error, next))
-    (lengthEq : args.length = traces.length) :
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (function : ClosLang.Exp) (error : ErrorResult ClosSem.Value) (next : ClosSem.State C F)
+    (premises : ClosSem.evaluate args env state = (.err error, next) ∧
+      args.length = traces.length) :
     ClosSem.evaluate [mkApps function (traces.zip args)] env state = (.err error, next) := by
+  obtain ⟨run, lengthEq⟩ := premises
   induction traces generalizing args state with
   | nil =>
     cases args with
@@ -374,13 +418,16 @@ theorem mkApps_argument_error {C F : Type} (traces : List BackendCommon.Tra)
 
 /-- After the argument list succeeds, an error in the reconstructed head
 function propagates through all the unary applications. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "mk_Apps_err_2"
+  (fmap_as_finite_support := [refs, code])]
 theorem mkApps_function_error {C F : Type} (traces : List BackendCommon.Tra)
-    (args : List ClosLang.Exp) (env : List ClosSem.Value) (state middle next : ClosSem.State C F)
-    (values : List ClosSem.Value) (error : ErrorResult ClosSem.Value) (function : ClosLang.Exp)
-    (functionRun : ClosSem.evaluate [function] env middle = (.err error, next))
-    (argsRun : ClosSem.evaluate args env state = (.val values, middle))
-    (lengthEq : args.length = traces.length) :
+    (args : List ClosLang.Exp) (env : List ClosSem.Value) (state : ClosSem.State C F)
+    (function : ClosLang.Exp) (values : List ClosSem.Value) (middle : ClosSem.State C F)
+    (error : ErrorResult ClosSem.Value) (next : ClosSem.State C F)
+    (premises : ClosSem.evaluate [function] env middle = (.err error, next) ∧
+      ClosSem.evaluate args env state = (.val values, middle) ∧ args.length = traces.length) :
     ClosSem.evaluate [mkApps function (traces.zip args)] env state = (.err error, next) := by
+  obtain ⟨functionRun, argsRun, lengthEq⟩ := premises
   induction traces generalizing args state values with
   | nil =>
     cases args with
@@ -416,15 +463,30 @@ theorem mkApps_function_error {C F : Type} (traces : List BackendCommon.Tra)
               simpa [mkApps] using unaryApp_function_error trace (mkApps function (traces.zip args)) arg
                 env state afterFirst next value error first nested
 
+/-- Argument success followed by a head error propagates through nested applications. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "evaluate_mk_Apps_err"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluateMkApps_error {C F : Type} (args : List ClosLang.Exp) (traces : List BackendCommon.Tra)
+    (env : List ClosSem.Value) (state : ClosSem.State C F) (values : List ClosSem.Value)
+    (function : ClosLang.Exp) (middle : ClosSem.State C F) (error : ErrorResult ClosSem.Value)
+    (next : ClosSem.State C F)
+    (premises : ClosSem.evaluate args env state = (.val values, middle) ∧
+      ClosSem.evaluate [function] env middle = (.err error, next) ∧ args.length = traces.length) :
+    ClosSem.evaluate [mkApps function (traces.zip args)] env state = (.err error, next) :=
+  mkApps_function_error traces args env state function values middle error next
+    ⟨premises.2.1, premises.1, premises.2.2⟩
+
 /-- Successful head and argument evaluation agrees with applying the
 collected values through the corresponding nested unary applications. -/
-theorem mkApps_success {C F : Type} (traces : List BackendCommon.Tra)
-    (args : List ClosLang.Exp) (env : List ClosSem.Value) (state middle next : ClosSem.State C F)
-    (values : List ClosSem.Value) (fn : ClosSem.Value) (function : ClosLang.Exp)
-    (functionRun : ClosSem.evaluate [function] env middle = (.val [fn], next))
-    (argsRun : ClosSem.evaluate args env state = (.val values, middle))
-    (lengthEq : args.length = traces.length) :
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "evaluate_mk_Apps_ok"
+  (fmap_as_finite_support := [refs, code])]
+theorem mkApps_success {C F : Type} (args : List ClosLang.Exp) (traces : List BackendCommon.Tra)
+    (env : List ClosSem.Value) (state : ClosSem.State C F) (values : List ClosSem.Value)
+    (function : ClosLang.Exp) (middle : ClosSem.State C F) (fn : ClosSem.Value) (next : ClosSem.State C F)
+    (premises : ClosSem.evaluate [function] env middle = (.val [fn], next) ∧
+      ClosSem.evaluate args env state = (.val values, middle) ∧ args.length = traces.length) :
     ClosSem.evaluate [mkApps function (traces.zip args)] env state = evaluateApps fn values next := by
+  obtain ⟨functionRun, argsRun, lengthEq⟩ := premises
   induction traces generalizing args state values with
   | nil =>
     cases args with

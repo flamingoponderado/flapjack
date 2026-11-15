@@ -1,15 +1,18 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosToBvl.Proofs.BlockCompare
+public import Flapjack.FiniteMap.BroadCodec
 
 @[expose] public section
 
 /-! Reference and constructor equality in the closure-to-BVL simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 open Flapjack.Compiler.Backend.BackendCommon
+open Flapjack.SemanticPrimitivesHOL
 
 /-- Shifted source blocks cannot be mistaken for closure blocks. -/
-theorem shiftedTag_notClosure (tag : Nat) (fields : List BvlSem.Value) :
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "not_isClos"]
+theorem shiftedTag_notClosure {α : Type} (tag : Nat) (fields : List α) :
     ¬ BvlSem.isClosure (closTagShift tag) fields := by
   simp only [BvlSem.isClosure, closTagShift]
   split <;> omega
@@ -108,17 +111,6 @@ theorem doEq_class_mismatch {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     simpa [← vRel_eqClass first, ← vRel_eqClass second] using different
   rw [sourceEq_class_mismatch a b different, targetEq_class_mismatch refs x y targetDifferent]
 
-/-- A source reference pointer is mapped to the corresponding target pointer. -/
-theorem vRel_refPtr_inv {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {flag : Bool} {ptr : Nat} {target : BvlSem.Value}
-    (related : vRel maxApp f refs code (.refPtr flag ptr) target) :
-    ∃ targetPtr, target = .refPtr flag targetPtr ∧ f.lookup ptr = some targetPtr := by
-  cases related with
-  | refPtr found => exact ⟨_, rfl, found⟩
-  | closure _ closure => cases closure
-  | partialClosure _ _ _ _ _ added _ closure => cases closure <;> simp [addArgs] at added
-
 /-- Injection makes source reference equality agree with relocated equality. -/
 theorem relocated_pointer_eq {f : HolFiniteMapExact Nat Nat}
     (injective : ∀ x₁ x₂ y, f.lookup x₁ = some y → f.lookup x₂ = some y → x₁ = x₂)
@@ -133,22 +125,24 @@ theorem relocated_pointer_eq {f : HolFiniteMapExact Nat Nat}
     exact injective a b x first second
 
 /-- Equality of related mutable-reference pointers agrees when the target
-state satisfies the existing injection and frozen-byte-array exclusions. -/
-theorem doEq_related_refPtrs {C F : Type} {f : HolFiniteMapExact Nat Nat}
-    (s : ClosSem.State C F) (t : BvlSem.State C F) (states : stateRel f s t)
+map satisfies the original injection and frozen-byte-array conditions. -/
+theorem doEq_related_refPtrs {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    (injective : ∀ a b y, f.lookup a = some y → f.lookup b = some y → a = b)
+    (noFrozen : ∀ a y bytes, f.lookup a = some y → refs.lookup y ≠ some (.byteArray true bytes))
     (flagA flagB : Bool) (a b : Nat) (x y : BvlSem.Value)
-    (first : vRel s.maxApp f t.refs t.code (.refPtr flagA a) x)
-    (second : vRel s.maxApp f t.refs t.code (.refPtr flagB b) y) :
-    ClosSem.doEq (.refPtr flagA a) (.refPtr flagB b) = BvlSem.doEq t.refs x y := by
+    (first : vRel maxApp f refs code (.refPtr flagA a) x)
+    (second : vRel maxApp f refs code (.refPtr flagB b) y) :
+    ClosSem.doEq (.refPtr flagA a) (.refPtr flagB b) = BvlSem.doEq refs x y := by
   obtain ⟨targetA, rfl, mapA⟩ := vRel_refPtr_inv first
   obtain ⟨targetB, rfl, mapB⟩ := vRel_refPtr_inv second
-  have pointerEq := relocated_pointer_eq states.2.2.2.1 mapA mapB
-  have notFrozenA : ∀ bytes, t.refs.lookup targetA ≠ some (.byteArray true bytes) :=
-    fun bytes => states.2.2.2.2.1 a targetA bytes mapA
-  have notFrozenB : ∀ bytes, t.refs.lookup targetB ≠ some (.byteArray true bytes) :=
-    fun bytes => states.2.2.2.2.1 b targetB bytes mapB
+  have pointerEq := relocated_pointer_eq injective mapA mapB
+  have notFrozenA : ∀ bytes, refs.lookup targetA ≠ some (.byteArray true bytes) :=
+    fun bytes => noFrozen a targetA bytes mapA
+  have notFrozenB : ∀ bytes, refs.lookup targetB ≠ some (.byteArray true bytes) :=
+    fun bytes => noFrozen b targetB bytes mapB
   cases flagA <;> cases flagB <;> simp [ClosSem.doEq, BvlSem.doEq]
-  cases firstRef : t.refs.lookup targetA <;> cases secondRef : t.refs.lookup targetB <;> simp_all
+  cases firstRef : refs.lookup targetA <;> cases secondRef : refs.lookup targetB <;> simp_all
 
 /-- Equality of related byte vectors reads the same frozen target arrays. -/
 theorem doEq_related_byteVectors {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
@@ -157,36 +151,38 @@ theorem doEq_related_byteVectors {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
     (first : vRel maxApp f refs code (.byteVector a) x)
     (second : vRel maxApp f refs code (.byteVector b) y) :
     ClosSem.doEq (.byteVector a) (.byteVector b) = BvlSem.doEq refs x y := by
-  obtain ⟨targetA, rfl, foundA⟩ := vRel_byteVector_inv first
-  obtain ⟨targetB, rfl, foundB⟩ := vRel_byteVector_inv second
+  obtain ⟨targetA, rfl, foundA, _⟩ := vRel_byteVector_iff.mp first
+  obtain ⟨targetB, rfl, foundB, _⟩ := vRel_byteVector_iff.mp second
   simp [ClosSem.doEq, BvlSem.doEq, foundA, foundB]
 
 /-- Equality of a source byte vector and source reference remains a type
 error: a relocated reference cannot point at a frozen byte array. -/
-theorem doEq_byteVector_refPtr {C F : Type} {f : HolFiniteMapExact Nat Nat}
-    (s : ClosSem.State C F) (t : BvlSem.State C F) (states : stateRel f s t)
+theorem doEq_byteVector_refPtr {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    (noFrozen : ∀ a y bytes, f.lookup a = some y → refs.lookup y ≠ some (.byteArray true bytes))
     (bytes : List (BitVec 8)) (flag : Bool) (ptr : Nat) (x y : BvlSem.Value)
-    (first : vRel s.maxApp f t.refs t.code (.byteVector bytes) x)
-    (second : vRel s.maxApp f t.refs t.code (.refPtr flag ptr) y) :
-    ClosSem.doEq (.byteVector bytes) (.refPtr flag ptr) = BvlSem.doEq t.refs x y := by
-  obtain ⟨bytePtr, rfl, byteLookup⟩ := vRel_byteVector_inv first
+    (first : vRel maxApp f refs code (.byteVector bytes) x)
+    (second : vRel maxApp f refs code (.refPtr flag ptr) y) :
+    ClosSem.doEq (.byteVector bytes) (.refPtr flag ptr) = BvlSem.doEq refs x y := by
+  obtain ⟨bytePtr, rfl, byteLookup, _⟩ := vRel_byteVector_iff.mp first
   obtain ⟨targetPtr, rfl, map⟩ := vRel_refPtr_inv second
-  have notFrozen : ∀ bs, t.refs.lookup targetPtr ≠ some (.byteArray true bs) :=
-    fun bs => states.2.2.2.2.1 ptr targetPtr bs map
+  have notFrozen : ∀ bs, refs.lookup targetPtr ≠ some (.byteArray true bs) :=
+    fun bs => noFrozen ptr targetPtr bs map
   cases flag <;> simp [ClosSem.doEq, BvlSem.doEq, byteLookup]
 
 /-- Equality of a source reference and source byte vector remains a type
 error in the reversed argument order as well. -/
-theorem doEq_refPtr_byteVector {C F : Type} {f : HolFiniteMapExact Nat Nat}
-    (s : ClosSem.State C F) (t : BvlSem.State C F) (states : stateRel f s t)
+theorem doEq_refPtr_byteVector {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
+    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
+    (noFrozen : ∀ a y bytes, f.lookup a = some y → refs.lookup y ≠ some (.byteArray true bytes))
     (flag : Bool) (ptr : Nat) (bytes : List (BitVec 8)) (x y : BvlSem.Value)
-    (first : vRel s.maxApp f t.refs t.code (.refPtr flag ptr) x)
-    (second : vRel s.maxApp f t.refs t.code (.byteVector bytes) y) :
-    ClosSem.doEq (.refPtr flag ptr) (.byteVector bytes) = BvlSem.doEq t.refs x y := by
+    (first : vRel maxApp f refs code (.refPtr flag ptr) x)
+    (second : vRel maxApp f refs code (.byteVector bytes) y) :
+    ClosSem.doEq (.refPtr flag ptr) (.byteVector bytes) = BvlSem.doEq refs x y := by
   obtain ⟨targetPtr, rfl, map⟩ := vRel_refPtr_inv first
-  obtain ⟨bytePtr, rfl, byteLookup⟩ := vRel_byteVector_inv second
-  have notFrozen : ∀ bs, t.refs.lookup targetPtr ≠ some (.byteArray true bs) :=
-    fun bs => states.2.2.2.2.1 ptr targetPtr bs map
+  obtain ⟨bytePtr, rfl, byteLookup, _⟩ := vRel_byteVector_iff.mp second
+  have notFrozen : ∀ bs, refs.lookup targetPtr ≠ some (.byteArray true bs) :=
+    fun bs => noFrozen ptr targetPtr bs map
   cases flag <;> simp [ClosSem.doEq, BvlSem.doEq, byteLookup]
 
 /-- Source closures and their related target closures compare equal, whether
@@ -240,28 +236,77 @@ theorem doEq_nonClosure_closure {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
   | number | word64 | codePtr | refPtr =>
     cases a <;> cases b <;> simp_all [sourceIsClosure, ClosSem.doEq, BvlSem.doEq]
 
-/-- Pointwise equality correspondence lifts to the recursive list comparator. -/
-theorem doEqList_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    (pointwise : ∀ a b x y, vRel maxApp f refs code a x → vRel maxApp f refs code b y →
-      ClosSem.doEq a b = BvlSem.doEq refs x y)
-    {xs ys : List ClosSem.Value} {xs' ys' : List BvlSem.Value}
-    (first : List.Forall₂ (vRel maxApp f refs code) xs xs')
-    (second : List.Forall₂ (vRel maxApp f refs code) ys ys') :
-    ClosSem.doEqList xs ys = BvlSem.doEqList refs xs' ys' := by
-  induction first generalizing ys ys' with
-  | nil => cases second <;> simp [ClosSem.doEqList, BvlSem.doEqList]
-  | cons head tail ih =>
-    cases second with
-    | nil => simp [ClosSem.doEqList, BvlSem.doEqList]
-    | cons head' tail' =>
-      simp only [ClosSem.doEqList, BvlSem.doEqList, ← pointwise _ _ _ _ head head']
-      cases ClosSem.doEq _ _ with
+-- Scalar and list comparison recurse together on the structure of their inputs.
+mutual
+private theorem doEqSymCore {α : Type} (refs : HolFiniteMapExact Nat (BvlSem.Ref α))
+    (x y : BvlSem.Value) : BvlSem.doEq refs x y = BvlSem.doEq refs y x := by
+  cases x <;> cases y <;> simp only [BvlSem.doEq] <;> try rfl
+  case number.number => simp [eq_comm]
+  case word64.word64 => simp [eq_comm]
+  case block.block a xs b ys =>
+    repeat' split <;> simp_all [doEqListSymCore refs xs ys, eq_comm]
+    all_goals aesop
+  case refPtr.refPtr a x b y =>
+    cases a <;> cases b <;> simp
+    cases h1 : refs.lookup x <;> cases h2 : refs.lookup y
+    all_goals repeat' (casesm BvlSem.Ref _)
+    all_goals repeat' (casesm Bool)
+    all_goals simp_all [eq_comm]
+
+termination_by sizeOf x
+
+private theorem doEqListSymCore {α : Type} (refs : HolFiniteMapExact Nat (BvlSem.Ref α))
+    (xs ys : List BvlSem.Value) : BvlSem.doEqList refs xs ys = BvlSem.doEqList refs ys xs := by
+  cases xs with
+  | nil => cases ys <;> simp [BvlSem.doEqList]
+  | cons x xs =>
+    cases ys with
+    | nil => simp [BvlSem.doEqList]
+    | cons y ys =>
+      rw [BvlSem.doEqList, BvlSem.doEqList, doEqSymCore refs x y]
+      cases BvlSem.doEq refs y x with
       | typeError => rfl
-      | val result =>
-        cases result with
-        | false => rfl
-        | true => exact ih tail'
+      | val flag => cases flag <;> simp [doEqListSymCore refs xs ys]
+termination_by sizeOf xs
+end
+
+/-- BVL value and list equality are symmetric for every reference map. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "do_eq_sym"
+  (fmap_as_finite_support_relation := [refsScalar, refsList])]
+theorem doEqSym {α : Type} :
+    (∀ (refsScalar : HolFiniteMapExact Nat (BvlSem.Ref α)) x y,
+      BvlSem.doEq refsScalar x y = BvlSem.doEq refsScalar y x) ∧
+    (∀ (refsList : HolFiniteMapExact Nat (BvlSem.Ref α)) xs ys,
+      BvlSem.doEqList refsList xs ys = BvlSem.doEqList refsList ys xs) := by
+  exact ⟨fun refs x y => doEqSymCore refs x y, fun refs xs ys => doEqListSymCore refs xs ys⟩
+
+/-- The comparator's reference map has the canonical finite-support codec. -/
+theorem holFmapAsFiniteSupportParamWitness_doEqListTrueIff_refs {α : Type}
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref α)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).lookup key = refs.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).finiteSupport = refs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs) = refs := by
+  cases refs
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- List equality returns true exactly when all corresponding comparisons do. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "do_eq_list_T_every"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem doEqListTrueIff {α : Type} (refs : HolFiniteMapExact Nat (BvlSem.Ref α)) :
+    ∀ vs1 vs2 : List BvlSem.Value,
+      BvlSem.doEqList refs vs1 vs2 = .val true ↔
+        List.Forall₂ (fun a b => BvlSem.doEq refs a b = .val true) vs1 vs2 := by
+  intro vs1
+  induction vs1 with
+  | nil => intro vs2; cases vs2 <;> simp [BvlSem.doEqList]
+  | cons a rest ih =>
+    intro vs2
+    cases vs2 with
+    | nil => simp [BvlSem.doEqList]
+    | cons b tail =>
+      cases h : BvlSem.doEq refs a b with
+      | typeError => simp [BvlSem.doEqList, h]
+      | val flag => cases flag <;> simp [BvlSem.doEqList, h, ih]
 
 /-- Equality of related ordinary blocks reduces to equality of their field
 lists; shifted tags never enter the reserved closure range. -/

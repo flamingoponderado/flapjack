@@ -58,45 +58,6 @@ def evaluationSimulation {C F : Type} (expressions : List FlatLang.Exp) : Prop :
       flatStateRel reachable next targetNext ∧ globalsWithin (findPrimitiveResultGlobals result) reachable ∧
       valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues result)
 
-/-- The empty-expression case of the original evaluation simulation. This is a Flapjack proof helper with no separate HOL theorem. -/
-theorem evaluate_keep_flatStateRel_empty {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (source next target : FlatSem.State C F) (result : Result (List FlatSem.Value) FlatSem.Value)
-    (reachable : NumSet) (run : FlatSem.evaluate env source [] = (next, result))
-    (_lookupsClosed : globalsWithin (findGlobalsList destGlobalVarLookup []) reachable)
-    (related : flatStateRel reachable source target)
-    (_envClosed : globalsWithin (findEnvGlobals env) reachable)
-    (_envSafe : bindingsNoEval env.v) (_expressionsSafe : expressionsNoEval [])
-    (_notTypeError : result ≠ .err (.abort .typeError)) :
-    ∃ targetNext, FlatSem.evaluate env target [] = (targetNext, result) ∧
-      flatStateRel reachable next targetNext ∧
-      globalsWithin (findPrimitiveResultGlobals result) reachable ∧
-      valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues result) := by
-  simp [FlatSem.evaluate] at run
-  rcases run with ⟨rfl, rfl⟩
-  refine ⟨target, by simp [FlatSem.evaluate], related, ?_, ?_⟩
-  · simp [findPrimitiveResultGlobals, findValuesGlobals, globalsWithin, sptMem, sptDomain]
-  · simp [Flapjack.Compiler.Backend.FlatProps.resultValues, valuesNoEval]
-
-/-- The literal case of the original evaluation simulation. This is a Flapjack proof helper with no separate HOL theorem. -/
-theorem evaluate_keep_flatStateRel_lit {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (source next target : FlatSem.State C F) (result : Result (List FlatSem.Value) FlatSem.Value)
-    (reachable : NumSet) (tra : BackendCommon.Tra) (lit : Flapjack.AstHOL.Lit)
-    (run : FlatSem.evaluate env source [.lit tra lit] = (next, result))
-    (_lookupsClosed : globalsWithin (findGlobalsList destGlobalVarLookup [.lit tra lit]) reachable)
-    (related : flatStateRel reachable source target)
-    (_envClosed : globalsWithin (findEnvGlobals env) reachable)
-    (_envSafe : bindingsNoEval env.v) (_expressionsSafe : expressionsNoEval [.lit tra lit])
-    (_notTypeError : result ≠ .err (.abort .typeError)) :
-    ∃ targetNext, FlatSem.evaluate env target [.lit tra lit] = (targetNext, result) ∧
-      flatStateRel reachable next targetNext ∧
-      globalsWithin (findPrimitiveResultGlobals result) reachable ∧
-      valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues result) := by
-  simp [FlatSem.evaluate] at run
-  rcases run with ⟨rfl, rfl⟩
-  have resultSafe := primitiveResult_value_invariants reachable (.litv lit)
-    (by simp [findValueGlobals, globalsWithin, sptMem, sptDomain]) (by simp [valueHasEval])
-  exact ⟨target, by simp [FlatSem.evaluate], related, resultSafe.1, resultSafe.2⟩
-
 /-- The local-variable case of the original evaluation simulation. This is a Flapjack proof helper with no separate HOL theorem. -/
 theorem evaluate_keep_flatStateRel_var {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (source next target : FlatSem.State C F) (result : Result (List FlatSem.Value) FlatSem.Value)

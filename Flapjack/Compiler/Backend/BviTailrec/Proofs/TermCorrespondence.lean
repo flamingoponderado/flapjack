@@ -132,18 +132,38 @@ theorem termFuel_eq (fuel : Nat) (ctx : List ValueType) (ty : ValueType)
 for every initial fuel value. -/
 theorem termBounded_eq (fuel : Nat) (ctx : List ValueType) (ty : ValueType) (expression : Exp) :
     termBounded fuel ctx ty expression = some (term ctx ty expression) := by
-  obtain ⟨result, run⟩ := termBounded_succeeds fuel ctx ty expression
-  have same : result = term ctx ty expression := by
-    cases first : termFuel fuel ctx ty expression with
-    | some initial =>
-      have initialEq : initial = result := by simpa [termBounded, first] using run
-      subst result
-      exact termFuel_eq fuel ctx ty expression initial first
-    | none =>
-      have retry : termFuel (max fuel (expBudget expression + 1)) ctx ty expression = some result := by
-        simpa [termBounded, first] using run
-      exact termFuel_eq _ ctx ty expression result retry
-  simpa [same] using run
+  unfold termBounded
+  cases first : termFuel fuel ctx ty expression with
+  | some initial =>
+    have correct := termFuel_eq fuel ctx ty expression initial first
+    simp [correct]
+  | none =>
+    have enough : expBudget expression < max fuel (expBudget expression + 1) := by omega
+    have succeeds : ∃ result, termFuel (max fuel (expBudget expression + 1)) ctx ty expression = some result := by
+      cases ty with
+      | int => exact termIntFuel_succeeds _ ctx expression enough
+      | list => exact termAnyFuel_succeeds _ ctx true expression enough
+      | any => exact termAnyFuel_succeeds _ ctx false expression enough
+    obtain ⟨result, retry⟩ := succeeds
+    have correct := termFuel_eq _ ctx ty expression result retry
+    simpa [first, correct] using retry
+
+/-- Candidate-operation checking cannot exhaust its term-analysis fuel. The
+inner `none` remains the ordinary decision that no rewrite applies. -/
+theorem checkOpFuel_succeeds (fuel : Nat) (ctx : List ValueType) (assoc : AssocOp)
+    (loc : Nat) (xs : List Exp) : ∃ result, checkOpFuel fuel ctx assoc loc xs = some result := by
+  cases xs with
+  | nil => exact ⟨_, rfl⟩
+  | cons x xs =>
+    cases xs with
+    | nil => exact ⟨_, rfl⟩
+    | cons y xs =>
+      cases xs with
+      | nil =>
+        simp only [checkOpFuel]
+        split <;> simp [termBounded_eq] <;> repeat' (first | split | exact ⟨_, rfl⟩)
+      | cons z zs => exact ⟨_, rfl⟩
+
 
 /-- For a real accumulator operator, production candidate checking returns
 the original CakeML result on the corresponding BVI operation. -/

@@ -1,26 +1,13 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosInterp.Proofs.PrimitiveRelation
+public import Flapjack.FiniteMap.BroadCodec
 
 @[expose] public section
 
-/-! Thunk-force simulation for the proof-side evaluator. The semantics and
-finite-map carriers remain pending HOL correspondence review. -/
+/-! Thunk-force simulation for the closure evaluator. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL
-
-/-- Replacing both reference stores by the same store preserves the relation. -/
-theorem stateRel_withRefs {C F : Type} (source target : ClosSem.State C F)
-    (related : StateRel source target) (refs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value)) :
-    StateRel { source with refs := refs } { target with refs := refs } := by
-  rcases related with ⟨⟨safe, sc, tc, maxEq, maxPositive, clock, ffi, globals, _, compiler, oracle⟩, installed⟩
-  exact ⟨⟨safe, sc, tc, maxEq, maxPositive, clock, ffi, globals, rfl, compiler, oracle⟩, installed⟩
-
-/-- Thunk inspection is identical in related states. -/
-theorem destThunk_stateRel {C F : Type} (source target : ClosSem.State C F)
-    (related : StateRel source target) (values : List ClosSem.Value) :
-    ClosSem.destThunk values source.refs = ClosSem.destThunk values target.refs := by
-  rw [related.1.2.2.2.2.2.2.2.2.1]
 
 /-- A thunk update produces the same reference store in related states. -/
 theorem updateThunk_stateRel {C F : Type} (source target : ClosSem.State C F)
@@ -30,9 +17,44 @@ theorem updateThunk_stateRel {C F : Type} (source target : ClosSem.State C F)
     ClosSem.updateThunk targets target.refs values = some refs ∧
       StateRel { source with refs := refs } { target with refs := refs } := by
   constructor
-  · rw [← related.1.2.2.2.2.2.2.2.2.1]
+  · rw [← (stateRel_refs_clocks related).1]
     exact run
-  · exact stateRel_withRefs source target related refs
+  · rcases related with ⟨⟨safe, sc, tc, maxEq, maxPositive, clock, ffi, globals, _, compiler, oracle⟩, installed⟩
+    exact ⟨⟨safe, sc, tc, maxEq, maxPositive, clock, ffi, globals, rfl, compiler, oracle⟩, installed⟩
+
+namespace ThunkUpdate
+open ClosSem
+
+/-- The closure state roundtrips through its canonical finite-map view. -/
+theorem holFmapAsFiniteSupportRelationWitness_State {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : State C F, State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+
+/-- Canonical codec for the existential reference map. -/
+theorem holFmapAsFiniteSupportExistentialWitness_state_rel_update_thunk_refs2
+    (refs2 : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value)) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs2)).lookup = refs2.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs2)).finiteSupport = refs2.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs2) = refs2 := by
+  cases refs2
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Updating a singleton thunk pointer preserves the interpreter relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "state_rel_update_thunk"
+  (fmap_as_finite_support_relation := [State.refs, State.code, refs1])
+  (fmap_as_finite_support_existentials := [refs2])]
+theorem state_rel_update_thunk {C F : Type} (s1 s2 : State C F) (v : Bool) (ptr : Nat)
+    (vs : List ClosSem.Value) (refs1 : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value))
+    (related : StateRel s1 s2)
+    (run : ClosSem.updateThunk [.refPtr v ptr] s1.refs vs = some refs1) :
+    ∃ (refs2 : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value)),
+      ClosSem.updateThunk [.refPtr v ptr] s2.refs vs = some refs2 ∧
+        StateRel { s1 with refs := refs1 } { s2 with refs := refs2 } := by
+  obtain ⟨targetRun, updatedRel⟩ := updateThunk_stateRel s1 s2 related [.refPtr v ptr] vs refs1 run
+  exact ⟨refs1, targetRun, updatedRel⟩
+
+end ThunkUpdate
 
 /-- Thunk forcing preserves the state relation, assuming simulations for
 the argument list and the forced thunk computation. -/
@@ -80,7 +102,8 @@ theorem evaluate_force_simulation_step {C F : Type} (trace : BackendCommon.Tra)
       rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, targetArgs]
     | val values =>
       dsimp only at run
-      have inspectEq := destThunk_stateRel sourceMid targetMid midRel values
+      have inspectEq : ClosSem.destThunk values sourceMid.refs = ClosSem.destThunk values targetMid.refs := by
+        rw [midRel.1.2.2.2.2.2.2.2.2.1]
       cases inspected : ClosSem.destThunk values sourceMid.refs with
       | badRef | notThunk =>
         simp [inspected] at run

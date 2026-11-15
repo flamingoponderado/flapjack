@@ -244,7 +244,7 @@ theorem evaluate_fn_noInstall {C F : Type} (name : Flapjack.AstHOL.VarN)
       | some values =>
         simp [ClosSem.evaluate.eq_def, arityOk, captured] at run
         rcases run with ⟨rfl, rfl⟩
-        have capturedOk := lookupVars_noInstall names env values envOk captured
+        have capturedOk := lookupVars_ok names env values ⟨captured, envOk⟩
         exact ⟨by simp [resultNoInstall, valuesNoInstall, valueNoInstall, bodyOk, capturedOk], stateOk⟩
   · simp [ClosSem.evaluate.eq_def, arityOk] at run
     rcases run with ⟨rfl, rfl⟩
@@ -285,7 +285,7 @@ theorem evaluate_letrec_noInstall_step {C F : Type} (names : List Flapjack.AstHO
         dsimp only at run
         rw [if_pos good, captured] at run
         dsimp only at run
-        have capturedOk := lookupVars_noInstall selected env values envOk captured
+        have capturedOk := lookupVars_ok selected env values ⟨captured, envOk⟩
         apply bodyIH _ ?_ run
         apply (valuesNoInstall_append _ _).2
         exact ⟨recursiveClosure_bundle_noInstall location values functions capturedOk functionsOk, envOk⟩

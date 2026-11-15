@@ -40,24 +40,6 @@ theorem accumulator_identity_right (op : AssocOp) (value : Value)
     simp [accumulatorApply, opIdValue, valueToList, BackendCommon.nilTag, decode, encode]
   | noop => contradiction
 
-/-- A well-typed accumulator value is unchanged by the source identity on
-the left. -/
-theorem accumulator_identity_left (op : AssocOp) (value : Value)
-    (notNoop : op ≠ .noop) (typed : valueMatchesType value (opType op)) :
-    accumulatorApply op [opIdValue op, value] = some value := by
-  cases op with
-  | plus =>
-    obtain ⟨n, rfl⟩ := typed.1 rfl
-    simp [accumulatorApply, opIdValue, BvlSem.doIntApp]
-  | times =>
-    obtain ⟨n, rfl⟩ := typed.1 rfl
-    simp [accumulatorApply, opIdValue, BvlSem.doIntApp]
-  | append =>
-    obtain ⟨xs, decode⟩ := typed.2 rfl
-    have encode := listToValue_of_decode value xs decode
-    simp [accumulatorApply, opIdValue, valueToList, BackendCommon.nilTag, decode, encode]
-  | noop => contradiction
-
 /-- Combining two well-typed accumulator values succeeds and retains the
 operator's required type. -/
 theorem accumulator_typed (op : AssocOp) (x y : Value) (notNoop : op ≠ .noop)
@@ -77,38 +59,6 @@ theorem accumulator_typed (op : AssocOp) (x y : Value) (notNoop : op ≠ .noop)
     obtain ⟨ys, hy⟩ := ty.2 rfl
     exact ⟨listToValue (xs ++ ys), by simp [accumulatorApply, hx, hy],
       by simp [valueMatchesType, opType, valueToList_listToValue]⟩
-  | noop => contradiction
-
-/-- The accumulator operations associate on values of their required type.
-This supplies the algebraic step for moving an accumulator across a recursive
-call. -/
-theorem accumulator_associative (op : AssocOp) (x y z : Value)
-    (notNoop : op ≠ .noop) (tx : valueMatchesType x (opType op))
-    (ty : valueMatchesType y (opType op)) (tz : valueMatchesType z (opType op)) :
-    ∃ xy yz result, accumulatorApply op [x, y] = some xy ∧
-      accumulatorApply op [y, z] = some yz ∧
-      accumulatorApply op [xy, z] = some result ∧
-      accumulatorApply op [x, yz] = some result := by
-  cases op with
-  | plus =>
-    obtain ⟨a, rfl⟩ := tx.1 rfl
-    obtain ⟨b, rfl⟩ := ty.1 rfl
-    obtain ⟨c, rfl⟩ := tz.1 rfl
-    refine ⟨.number (a + b), .number (b + c), .number ((a + b) + c), ?_, ?_, ?_, ?_⟩
-    all_goals simp [accumulatorApply, BvlSem.doIntApp, Int.add_assoc]
-  | times =>
-    obtain ⟨a, rfl⟩ := tx.1 rfl
-    obtain ⟨b, rfl⟩ := ty.1 rfl
-    obtain ⟨c, rfl⟩ := tz.1 rfl
-    refine ⟨.number (a * b), .number (b * c), .number ((a * b) * c), ?_, ?_, ?_, ?_⟩
-    all_goals simp [accumulatorApply, BvlSem.doIntApp, Int.mul_assoc]
-  | append =>
-    obtain ⟨xs, hx⟩ := tx.2 rfl
-    obtain ⟨ys, hy⟩ := ty.2 rfl
-    obtain ⟨zs, hz⟩ := tz.2 rfl
-    refine ⟨listToValue (xs ++ ys), listToValue (ys ++ zs), listToValue ((xs ++ ys) ++ zs),
-      ?_, ?_, ?_, ?_⟩
-    all_goals simp [accumulatorApply, hx, hy, hz, valueToList_listToValue, List.append_assoc]
   | noop => contradiction
 
 /-- Reassociation also preserves failure when the recursive result is not
@@ -137,24 +87,6 @@ theorem accumulator_associative_partial (op : AssocOp) (x y z : Value)
     cases hx : valueToList x with
     | none => simp [accumulatorApply, hx]
     | some xs => simp [accumulatorApply, hx, hy, hz, valueToList_listToValue, List.append_assoc]
-  | noop => contradiction
-
-/-- The integer accumulator operations are commutative, as required when
-the source rewrite swaps a recursive left operand. List append is excluded. -/
-theorem accumulator_commutative (op : AssocOp) (x y : Value)
-    (notNoop : op ≠ .noop) (notAppend : op ≠ .append)
-    (tx : valueMatchesType x (opType op)) (ty : valueMatchesType y (opType op)) :
-    accumulatorApply op [x, y] = accumulatorApply op [y, x] := by
-  cases op with
-  | plus =>
-    obtain ⟨a, rfl⟩ := tx.1 rfl
-    obtain ⟨b, rfl⟩ := ty.1 rfl
-    simp [accumulatorApply, BvlSem.doIntApp, Int.add_comm]
-  | times =>
-    obtain ⟨a, rfl⟩ := tx.1 rfl
-    obtain ⟨b, rfl⟩ := ty.1 rfl
-    simp [accumulatorApply, BvlSem.doIntApp, Int.mul_comm]
-  | append => contradiction
   | noop => contradiction
 
 /-- The integer accumulator operations are commutative even on malformed
@@ -222,15 +154,6 @@ theorem stateRel_doApp_toOp {C F : Type} (op : AssocOp) (args : List Value)
     simp [found] at run
     obtain ⟨rfl, rfl⟩ := run
     exact ⟨target, by simp [doApp_toOp_pure, found], related⟩
-
-/-- Accumulator dispatch errors do not depend on compiler state. -/
-theorem doApp_toOp_error {C F D G : Type} (op : AssocOp) (args : List Value)
-    (source : BviSem.BviState C F) (target : BviSem.BviState D G)
-    (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
-    (run : BviSem.doApp (toOp op) args source = .err error) :
-    BviSem.doApp (toOp op) args target = .err error := by
-  rw [doApp_toOp_pure] at run ⊢
-  cases found : accumulatorApply op args <;> simp_all
 
 /-- Updating related states with the same reference map preserves the state
 relation. -/
@@ -868,8 +791,8 @@ theorem stateRel_doApp_thunk_error {C F : Type} (op : AstHOL.ThunkOp) (args : Li
   | val pair => cases pair; simp [found] at run
 /-- A successful installation exposes the exact decoded arguments, compiler
 result, disjointness checks, and shifted oracle. -/
-theorem doInstall_success_inv {C F : Type} (args : List Value) (s next : BviSem.BviState C F) (v : Value)
-    (run : BviSem.doInstall (R := BviSem.ExnOrRet) args s = .val (v, next)) :
+theorem doInstall_success_inv {C F R : Type} (args : List Value) (s next : BviSem.BviState C F) (v : Value)
+    (run : BviSem.doInstall (R := R) args s = .val (v, next)) :
     ∃ v1 v2 len1 len2 bytes data cfg key arity body rest cfgNext,
       args = [v1, v2, .number len1, .number len2] ∧
       valueToBytes v1 = some bytes ∧ valueToWords v2 = some data ∧
@@ -987,24 +910,6 @@ theorem doApp_blockCons {C F : Type} (tag : Nat) (args : List Value) (state : Bv
     BviSem.doApp (.blockOp (.cons tag)) args state = .val (.block tag args, state) := by
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
     BvlSem.applyBlock, BviSem.fromBvl_toBvl]
-
-/-- A constant-block build returns the value and reference store produced by
-the shared builder; nonempty argument lists are rejected. -/
-theorem doApp_blockBuild_effect {C F : Type} (parts : List ClosLang.ConstPart)
-    (args : List Value) (state : BviSem.BviState C F) :
-    BviSem.doApp (.blockOp (.build parts)) args state =
-      match args with
-      | [] => let (value, refs) := doBuildConst parts state.refs
-        .val (value, { state with refs := refs })
-      | _ => .err (.abort .typeError) := by
-  cases args with
-  | nil =>
-    cases built : doBuildConst parts state.refs with
-    | mk value refs =>
-      simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
-        BvlSem.applyBlock, BviSem.toBvl, BviSem.fromBvl, built]
-  | cons value rest =>
-    simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock]
 
 /-- Value computed by BVI's two-argument block-from-list primitive. -/
 def blockFromListValue (tag : Nat) (args : List Value) : Option Value :=

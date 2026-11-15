@@ -6,7 +6,7 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileSemantics
 public import Flapjack.Compiler.Backend.SourceToFlat.Proofs.NoMat
 public import Flapjack.Compiler.Backend.FlatToClos.Proofs.InstallPipeline
-public import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemantics
+public import Flapjack.Compiler.Backend.ClosInterp.Proofs.AttachSemanticsSource
 public import Flapjack.Compiler.Backend.FlatToClos.Proofs.NoMti
 public import Flapjack.Compiler.Backend.ClosMti.Proofs.Semantics
 public import Flapjack.FiniteMap.EmptyExact

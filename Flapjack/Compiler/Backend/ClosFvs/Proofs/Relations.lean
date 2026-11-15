@@ -17,6 +17,21 @@ open Flapjack.Compiler.Backend.ClosSem Flapjack.Compiler.Backend.BackendProps
 def CodeRel (bound : Nat) (source target : List ClosLang.Exp) : Prop :=
   target = removeSource bound source
 
+/-- The code relation preserves expression-list length. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "code_rel_IMP_LENGTH"]
+theorem code_rel_IMP_LENGTH (bound : Nat) (xs ys : List ClosLang.Exp)
+    (related : CodeRel bound xs ys) : xs.length = ys.length := by
+  change ys = removeSource bound xs at related
+  rw [related, removeSource_length]
+
+/-- A related list with two heads splits into related head and tail lists. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "code_rel_CONS_CONS"]
+theorem code_rel_CONS_CONS (bound : Nat) (x1 x2 y1 y2 : ClosLang.Exp)
+    (xs ys : List ClosLang.Exp) (related : CodeRel bound (x1 :: x2 :: xs) (y1 :: y2 :: ys)) :
+    CodeRel bound [x1] [y1] ∧ CodeRel bound (x2 :: xs) (y2 :: ys) := by
+  simp [CodeRel, removeSource_eq_list, removeList] at related ⊢
+  exact ⟨related.1, related.2⟩
+
 /-- Related recursive function bodies retain their arity. -/
 @[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "f_rel_def"]
 def FunctionRel (bound : Nat) (source target : Nat × ClosLang.Exp) : Prop :=
@@ -42,6 +57,37 @@ inductive ValueRel : Value → Value → Prop where
       List.Forall₂ (FunctionRel (env.length + functions.length)) functions nextFunctions →
       ValueRel (.recclosure location args env functions index)
         (.recclosure location nextArgs nextEnv nextFunctions index)
+
+/-- Constructor equations for the free-variable value relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "v_rel_simps"]
+theorem valueRel_simps (n : Int) (tag : Nat) (fields : List Value) (word : BitVec 64)
+    (bytes : List (BitVec 8)) (flag : Bool) (ptr : Nat)
+    (loc : Option Nat) (args env : List Value) (arity : Nat) (body : ClosLang.Exp)
+    (recLoc : Option Nat) (recArgs recEnv : List Value) (funs : List (Nat × ClosLang.Exp))
+    (index : Nat) (x : Value) :
+    (ValueRel (.number n) x ↔ x = .number n) ∧
+    (ValueRel (.block tag fields) x ↔ ∃ ys, x = .block tag ys ∧ List.Forall₂ ValueRel fields ys) ∧
+    (ValueRel (.word64 word) x ↔ x = .word64 word) ∧
+    (ValueRel (.byteVector bytes) x ↔ x = .byteVector bytes) ∧
+    (ValueRel (.refPtr flag ptr) x ↔ x = .refPtr flag ptr) ∧
+    (ValueRel (.closure loc args env arity body) x ↔
+      ∃ args2 env2 body2, x = .closure loc args2 env2 arity body2 ∧
+        List.Forall₂ ValueRel env env2 ∧ List.Forall₂ ValueRel args args2 ∧
+        CodeRel (env.length + arity) [body] [body2]) ∧
+    (ValueRel (.recclosure recLoc recArgs recEnv funs index) x ↔
+      ∃ funs2 args2 env2, x = .recclosure recLoc args2 env2 funs2 index ∧
+        List.Forall₂ ValueRel recEnv env2 ∧ List.Forall₂ ValueRel recArgs args2 ∧
+        List.Forall₂ (FunctionRel (recEnv.length + funs.length)) funs funs2) ∧
+    (ValueRel (boolValue flag) x ↔ x = boolValue flag) ∧
+    (ValueRel unitValue x ↔ x = unitValue) := by
+  repeat' constructor
+  all_goals try (intro h; cases h; simp_all)
+  all_goals try (intro h; subst x; constructor)
+  all_goals try (rintro ⟨_, _, _, rfl, h₁, h₂, h₃⟩; exact .closure _ _ _ _ _ _ _ _ h₁ h₂ h₃)
+  all_goals try simp_all [boolValue, unitValue]
+  all_goals try (rename_i h; exact .block _ _ _ h.2)
+  all_goals intros
+  all_goals exact .recclosure _ _ _ _ _ _ _ _ ‹_› ‹_› ‹_›
 
 /-- Reference payloads retain their kind while values remain related. -/
 @[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "ref_rel"]
@@ -71,5 +117,24 @@ def StateRel {C F : Type} (source target : State C F) : Prop :=
   (∀ key, optionRel RefRel (source.refs.lookup key) (target.refs.lookup key)) ∧
   source.compile = pureCc compileIncSource target.compile ∧
   target.compileOracle = pureCo compileIncSource ∘ source.compileOracle
+
+/-- Related reference maps give related lookup results in either direction. -/
+@[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "state_rel_opt_rel_refs"
+  (fmap_as_finite_support := [refs, code])]
+theorem state_rel_opt_rel_refs {C F : Type} (source target : State C F) (key : Nat)
+    (r1 r2 : Option (Ref Value)) :
+    (StateRel source target ∧ source.refs.lookup key = r1 →
+      ∃ r2, target.refs.lookup key = r2 ∧ optionRel RefRel r1 r2) ∧
+    (StateRel source target ∧ target.refs.lookup key = r2 →
+      ∃ r1, source.refs.lookup key = r1 ∧ optionRel RefRel r1 r2) := by
+  constructor
+  · rintro ⟨related, lookup⟩
+    refine ⟨target.refs.lookup key, rfl, ?_⟩
+    rw [← lookup]
+    exact related.2.2.2.2.2.2.2.2.1 key
+  · rintro ⟨related, lookup⟩
+    refine ⟨source.refs.lookup key, rfl, ?_⟩
+    rw [← lookup]
+    exact related.2.2.2.2.2.2.2.2.1 key
 
 end Flapjack.Compiler.Backend.ClosFvs

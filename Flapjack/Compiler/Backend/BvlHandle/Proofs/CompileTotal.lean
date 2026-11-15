@@ -81,14 +81,4 @@ theorem compileListFuel_succeeds (fuel limit env : Nat) (xs : List Exp)
 termination_by fuel
 end
 
-/-- The executable retry cannot exhaust live-variable compilation fuel. -/
-theorem compileBounded_succeeds (fuel limit env : Nat) (e : Exp) :
-    ∃ result, compileBounded fuel limit env e = some result := by
-  cases h : compileFuel fuel limit env e with
-  | some result => exact ⟨result, by simp [compileBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := compileFuel_succeeds (max fuel (expBudget e + 1)) limit env e bound
-    exact ⟨result, by simp [compileBounded, h, done]⟩
-
 end Flapjack.Compiler.Backend.BvlHandle

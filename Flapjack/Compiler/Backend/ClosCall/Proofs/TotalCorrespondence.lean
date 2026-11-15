@@ -244,19 +244,16 @@ private theorem callsListFuel_correct (fuel : Nat) (es : List Exp) (state : Stat
 This Flapjack bridge discharges both fuel exhaustion and output agreement. -/
 theorem callsListBounded_correct (fuel : Nat) (es : List Exp) (state : State) :
     callsListBounded fuel es state = some (callsSingList es state) := by
-  obtain ⟨result, run⟩ := callsListBounded_succeeds fuel es state
-  have eq : result = callsSingList es state := by
-    unfold callsListBounded at run
-    cases first : callsListFuel fuel es state with
-    | none =>
-      have retry : callsListFuel (max fuel (listBudget es + 1)) es state = some result := by
-        simpa [first] using run
-      exact callsListFuel_correct _ es state result retry
-    | some value =>
-      have same : value = result := by simpa [first] using run
-      subst value
-      exact callsListFuel_correct fuel es state result first
-  simpa [eq] using run
+  unfold callsListBounded
+  cases first : callsListFuel fuel es state with
+  | some value =>
+    have eq := callsListFuel_correct fuel es state value first
+    simp [eq]
+  | none =>
+    have bound : listBudget es < max fuel (listBudget es + 1) := by omega
+    obtain ⟨result, retry⟩ := callsListFuel_succeeds (max fuel (listBudget es + 1)) es state bound
+    have eq := callsListFuel_correct _ es state result retry
+    simpa [first, eq] using retry
 
 /-- The executable conditional pass agrees with the total traversal when
 enabled and returns the unchanged input when disabled. This is a bridge from

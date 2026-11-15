@@ -9,6 +9,17 @@ fun show label th = if null (hyp th) then (print label; print_term (concl th); p
 val _ = show "value_rel=" v_rel_def;
 val _ = show "env_rel=" env_rel_def;
 val _ = show "env_rel_length=" env_rel_length;
+val _ = show "evaluate_EQ_NIL=" evaluate_EQ_NIL;
+val _ = show "compile_thm=" compile_thm;
+val _ = show "evaluate_compile_exp=" evaluate_compile_exp;
+val _ = show "delete_var_code_labels=" delete_var_code_labels;
+val _ = show "dest_simple_SOME_code_labels=" dest_simple_SOME_code_labels;
+val _ = show "SmartOp1_code_labels=" SmartOp1_code_labels;
+val _ = show "SmartOp2_code_labels=" SmartOp2_code_labels;
+val _ = show "SmartOp_code_labels=" SmartOp_code_labels;
+val _ = show "compile_code_labels=" compile_code_labels;
+val _ = show "compile_exp_code_labels=" compile_exp_code_labels;
+val _ = show "MEM_extract_list_code_labels=" MEM_extract_list_code_labels;
 val env_rel_LLOOKUP_NONE_replay = prove (``
   !ax env env2 n.
     env_rel (:'c) (:'ffi) ax env env2 /\

@@ -13,6 +13,30 @@ public import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
 
 /-! Value decoding needed by the dynamic-installation simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
+
+/-- Membership in a contiguous sublist implies membership in its containing list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "IS_SUBLIST_MEM"]
+theorem isSublistMem {α : Type} (ls ls' : List α) (x : α) :
+    x ∈ ls ∧ ls <:+: ls' → x ∈ ls' := by
+  intro ⟨member, contained⟩
+  exact contained.mem member
+
+/-- Appending to a list preserves its contiguous sublists. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "IS_SUBLIST_APPEND1"]
+theorem isSublistAppend1 {α : Type} (a b c : List α) :
+    c <:+: a → c <:+: a ++ b := by
+  exact List.infix_append_of_infix_left
+
+/-- Prepending to a list preserves its contiguous sublists. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "IS_SUBLIST_APPEND2"]
+theorem isSublistAppend2 {α : Type} (a b c : List α) :
+    c <:+: b → c <:+: a ++ b := by
+  exact List.infix_append_of_infix_right
+
+/-- Every list is a contiguous sublist of itself. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "IS_SUBLIST_REFL"]
+theorem isSublistRefl {α : Type} (ls : List α) : ls <:+: ls := by
+  exact List.infix_refl ls
 open Flapjack.SemanticPrimitivesHOL
 
 /-- Canonical relocation-map codec for byte-decoding correspondence. -/
@@ -44,7 +68,7 @@ theorem vRel_valueToBytes_lemma (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
   intro source target related bytes
   constructor
   · intro decoded
-    obtain ⟨values, targetList, valuesRel⟩ := decodedList_related source target _ related decoded
+    obtain ⟨values, targetList, valuesRel⟩ := decodedList_related source _ target ⟨decoded, related⟩
     have valuesEq : values = bytes.map (fun b => BvlSem.Value.number b.toNat) := by
       clear decoded targetList related
       induction bytes generalizing values with
@@ -101,27 +125,89 @@ theorem vRel_valueToBytes (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
   simp only [BvlSem.valueToBytes_eq_some, ClosSem.valueToBytes_eq_some]
   exact (vRel_valueToBytes_lemma maxApp f refs code source target related bytes).symm
 
-/-- A source word list and a related target value decode to identical words. -/
-theorem install_valueToWords_related {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    (source : ClosSem.Value) (target : BvlSem.Value) (words : List (BitVec 64))
-    (related : vRel maxApp f refs code source target)
-    (decoded : ClosSem.valueToWords source = some words) :
-    BvlSem.valueToWords target = some words := by
-  have sourceList := (ClosSem.valueToWords_eq_some source words).1 decoded
-  obtain ⟨values, targetList, valuesRel⟩ := decodedList_related source target _ related sourceList
-  have valuesEq : values = words.map BvlSem.Value.word64 := by
-    clear decoded sourceList targetList related
-    induction words generalizing values with
-    | nil => cases valuesRel; rfl
-    | cons word rest ih =>
-      cases valuesRel with
-      | cons head tail =>
-        have first := vRel_word64_inv head
-        have remaining := ih _ tail
-        simp [first, remaining]
-  apply (BvlSem.valueToWords_eq_some target words).2
-  simpa [valuesEq] using targetList
+/-- Canonical relocation-map codec for word-decoding correspondence. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_valueToWords_lemma_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup key = f.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f :=
+  holFmapAsFiniteSupportParamWitness_vRel_valueToBytes_lemma_f f key
+
+/-- Canonical reference-map codec for word-decoding correspondence. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_valueToWords_lemma_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).lookup key = refs.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).finiteSupport = refs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs) = refs :=
+  holFmapAsFiniteSupportParamWitness_vRel_valueToBytes_lemma_refs refs key
+
+/-- Related values decode to the same word-encoded list in both directions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_IMP_v_to_words_lemma"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem vRel_valueToWords_lemma (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp)) :
+    ∀ source target, vRel maxApp f refs code source target → ∀ words : List (BitVec 64),
+      (ClosSem.valueToList source = some (words.map .word64)) ↔
+      (BvlSem.valueToList target = some (words.map .word64)) := by
+  intro source target related words
+  constructor
+  · intro decoded
+    obtain ⟨values, targetList, valuesRel⟩ := decodedList_related source _ target ⟨decoded, related⟩
+    have valuesEq : values = words.map BvlSem.Value.word64 := by
+      clear decoded targetList related
+      induction words generalizing values with
+      | nil => cases valuesRel; rfl
+      | cons word rest ih =>
+        cases valuesRel with
+        | cons head tail =>
+          have first := vRel_word64_inv head
+          have remaining := ih _ tail
+          simp [first, remaining]
+    simpa [valuesEq] using targetList
+  · intro decoded
+    have targetEq := BvlSem.listToValue_valueToList target _ decoded
+    rw [← targetEq] at related
+    obtain ⟨values, sourceList, valuesRel⟩ := valueToList_related_reverse _ source related
+    have valuesEq : values = words.map ClosSem.Value.word64 := by
+      clear decoded targetEq sourceList related
+      induction words generalizing values with
+      | nil => cases valuesRel; rfl
+      | cons word rest ih =>
+        cases valuesRel with
+        | cons head tail =>
+          cases head
+          have remaining := ih _ tail
+          simp [remaining]
+    simpa [valuesEq] using sourceList
+
+/-- Canonical relocation-map codec for full word-decoding equality. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_valueToWords_f
+    (f : HolFiniteMapExact Nat Nat) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup key = f.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f :=
+  holFmapAsFiniteSupportParamWitness_vRel_valueToWords_lemma_f f key
+
+/-- Canonical reference-map codec for full word-decoding equality. -/
+theorem holFmapAsFiniteSupportParamWitness_vRel_valueToWords_refs
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).lookup key = refs.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).finiteSupport = refs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs) = refs :=
+  holFmapAsFiniteSupportParamWitness_vRel_valueToWords_lemma_refs refs key
+
+/-- Related source and target values have identical optional word decodings. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_IMP_v_to_words"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem vRel_valueToWords (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (source : ClosSem.Value) (target : BvlSem.Value)
+    (related : vRel maxApp f refs code source target) :
+    BvlSem.valueToWords target = ClosSem.valueToWords source := by
+  apply Option.ext
+  intro words
+  simp only [BvlSem.valueToWords_eq_some, ClosSem.valueToWords_eq_some]
+  exact (vRel_valueToWords_lemma maxApp f refs code source target related words).symm
 
 /-- Compiling a program whose first entry has arity zero preserves its first
 location, shifted past the generated closure-call stubs. -/
@@ -190,7 +276,9 @@ theorem install_target_run {C F : Type} (s : ClosSem.State C F) (t : BvlSem.Stat
   have targetBytesDecoded : BvlSem.valueToBytes targetBytes = some bytes := by
     rw [vRel_valueToBytes s.maxApp f t.refs t.code sourceBytes targetBytes bytesRel]
     exact bytesDecoded
-  have targetWordsDecoded := install_valueToWords_related sourceWords targetWords words wordsRel wordsDecoded
+  have targetWordsDecoded : BvlSem.valueToWords targetWords = some words := by
+    rw [vRel_valueToWords s.maxApp f t.refs t.code sourceWords targetWords wordsRel]
+    exact wordsDecoded
   obtain ⟨headEq, compileEq, nodup, fresh⟩ := compileOracleInv_head s.maxApp s.code s.compile s.compileOracle
     t.code t.compile t.compileOracle oracle
   have targetHead : t.compileOracle 0 = (config, compileInc s.maxApp (expressions, auxiliary)) := by
@@ -307,43 +395,6 @@ theorem install_source_inv {C F : Type} (s next : ClosSem.State C F)
                   simp only [Prod.mk.injEq] at run
                   exact False.elim (noType run.1.symm)
 
-/-- Each indexed output expression comes from compiling the corresponding
-source singleton, and its auxiliary output is installed whenever the final
-accumulator is installed. This supports the new-code part of installation. -/
-theorem compileExps_index_installed (maxApp : Nat) (expressions : List ClosLang.Exp)
-    (aux finalAux : List (Nat × Nat × Bvl.Exp)) (compiled : List Bvl.Exp)
-    (code : Spt (Nat × Bvl.Exp)) (index : Nat) (source : ClosLang.Exp) (target : Bvl.Exp)
-    (run : compileExpsHOL maxApp expressions aux = (compiled, finalAux))
-    (sourceAt : expressions[index]? = some source) (targetAt : compiled[index]? = some target)
-    (installed : codeInstalled finalAux code) :
-    ∃ auxBefore auxAfter, compileExpsHOL maxApp [source] auxBefore = ([target], auxAfter) ∧
-      codeInstalled auxAfter code := by
-  induction expressions generalizing aux finalAux compiled index with
-  | nil => simp at sourceAt
-  | cons first rest ih =>
-    cases firstRun : compileExpHOL maxApp first aux with
-    | mk firstTarget middleAux =>
-      cases restRun : compileExpListHOL maxApp rest middleAux with
-      | mk restTargets lastAux =>
-        have whole : compileExpsHOL maxApp (first :: rest) aux = (firstTarget :: restTargets, lastAux) := by
-          simp [compileExps_eq_list, compileExpListHOL, firstRun, restRun]
-        have equal := run.symm.trans whole
-        cases equal
-        cases index with
-        | zero =>
-          simp only [List.getElem?_cons_zero, Option.some.injEq] at sourceAt targetAt
-          subst source
-          subst target
-          have tailRun : compileExpsHOL maxApp rest middleAux = (restTargets, finalAux) := by
-            simpa [compileExps_eq_list] using restRun
-          have firstInstalled := compileExps_codeInstalled maxApp rest middleAux finalAux restTargets code tailRun installed
-          exact ⟨aux, middleAux, by simp [compileExps_eq_list, compileExpListHOL, firstRun], firstInstalled⟩
-        | succ index =>
-          simp only [List.getElem?_cons_succ] at sourceAt targetAt
-          have tailRun : compileExpsHOL maxApp rest middleAux = (restTargets, finalAux) := by
-            simpa [compileExps_eq_list] using restRun
-          exact ih middleAux finalAux restTargets index tailRun sourceAt targetAt installed
-
 /-- If a compiled program is installed, each source entry resolves at its
 shifted target label and the auxiliary code for that entry is installed. -/
 theorem compileProgExps_entry_installed (maxApp : Nat) (program : List (Nat × Nat × ClosLang.Exp))
@@ -366,12 +417,18 @@ theorem compileProgExps_entry_installed (maxApp : Nat) (program : List (Nat × N
       simpa using compileExps_length maxApp (program.map (fun (_, _, exp) => exp)) [] targets finalAux compiledRun
     have targetBound : index < targets.length := by omega
     let target := targets[index]
-    have sourceAt : (program.map (fun (_, _, exp) => exp))[index]? = some source := by
-      simp [List.getElem?_map, List.getElem?_eq_getElem indexBound, sourceEq]
-    have targetAt : targets[index]? = some target := List.getElem?_eq_getElem targetBound
-    obtain ⟨auxBefore, auxAfter, singleton, auxInstalled⟩ :=
-      compileExps_index_installed maxApp (program.map (fun (_, _, exp) => exp)) [] finalAux targets
-        code index source target compiledRun sourceAt targetAt finalInstalled
+    let : Nonempty ClosLang.Exp := ⟨source⟩
+    obtain ⟨auxBefore, auxAfter, singleton, included⟩ :=
+      compileExps_el maxApp (program.map (fun (_, _, exp) => exp)) [] targets finalAux index
+        ⟨compiledRun, by simpa using indexBound⟩
+    have sourceEl : holEl index (program.map (fun (_, _, exp) => exp)) = source := by
+      rw [holEl_eq_getElem index _ (by simpa using indexBound)]
+      simp [List.getElem_map, sourceEq]
+    have targetEl : holEl index targets = target := holEl_eq_getElem index targets targetBound
+    rw [sourceEl, targetEl] at singleton
+    have auxInstalled : codeInstalled auxAfter code := by
+      intro entry member
+      exact finalInstalled entry (included.sublist.subset member)
     have zipBound : index < (program.zip targets).length := by simp [List.length_zip]; omega
     have zipped : ((name, arity, source), target) ∈ program.zip targets := by
       apply List.mem_iff_getElem.mpr

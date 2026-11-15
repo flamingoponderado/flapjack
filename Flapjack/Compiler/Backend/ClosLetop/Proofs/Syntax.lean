@@ -11,6 +11,34 @@ public import Flapjack.Compiler.Backend.Semantics.ClosProps.Syntactic.LabelsAndA
 namespace Flapjack.Compiler.Backend.ClosLetop
 open ClosLang ClosProps
 
+/-- Compiling a singleton produces a singleton. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "let_op_SING"]
+theorem compileSource_singleton (expression : Exp) :
+    ∃ result, compileSource [expression] = [result] := by
+  exact ⟨compileSing expression, by simp [compileSource_eq_list, compileList]⟩
+
+/-- The head reconstructs a compiled singleton, whose length is one. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "HD_let_op_SING"]
+theorem compileSource_singleton_head (expression : Exp) :
+    [@Flapjack.holHd Exp ⟨.var .none 0⟩ (compileSource [expression])] =
+        compileSource [expression] ∧ (compileSource [expression]).length = 1 := by
+  simp [compileSource_eq_list, compileList, Flapjack.holHd]
+
+/-- A predicate holds over a transformed singleton exactly as it does on its head. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "EVERY_let_op_sing"]
+theorem every_compileSource_singleton (predicate : Exp → Bool) (expression : Exp) :
+    (compileSource [expression]).all predicate =
+      predicate (@Flapjack.holHd Exp ⟨.var .none 0⟩ (compileSource [expression])) := by
+  simp [compileSource_eq_list, compileList, Flapjack.holHd]
+
+/-- A recognized operation has the requested operator and variable list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "dest_op_SOME_IMP"]
+theorem destOp_some_imp {α : Type} (expression : Exp) (args : List α) (op : Op)
+    (found : destOp expression args = some op) :
+    ∃ trace expressions, expression = .op trace op expressions ∧ varList 0 expressions args = true := by
+  cases expression <;> simp_all [destOp]
+  case op trace _ expressions => exact ⟨trace, expressions, ⟨rfl, rfl⟩, found.1⟩
+
 /-- A recognized variable list contains neither labels nor excessive applications. -/
 @[hol "cakeml/compiler/backend/proofs/clos_letopProofScript.sml" "var_list_no_Labels"]
 theorem varList_noLabels {α : Type} (n : Nat) (xs : List Exp) (ys : List α)

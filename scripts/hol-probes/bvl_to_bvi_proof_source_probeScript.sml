@@ -23,6 +23,9 @@ fun replay label term = (print (label ^ "="); print_term term; print "\n");
 val _ = show "compile_inc_no_mutcons_typed" bvl_to_bviProofTheory.compile_inc_no_mutcons;
 val _ = show "bvi_tailrec_compile_prog_no_mutcons_typed"
   bvl_to_bviProofTheory.bvi_tailrec_compile_prog_no_mutcons;
+val ODD_lemma_replay = Q.prove (`ODD (2 * n + k) = ODD k`,
+  fs [ODD_ADD] \\ simp [ODD_EVEN,EVEN_DOUBLE]);
+val _ = show "ODD_lemma_replay" ODD_lemma_replay;
 
 val _ = replay "bvi_let_delete_var_no_mutcons_typed"
   ``!x. no_mutcons x ==> no_mutcons (bvi_let$delete_var x)``;
@@ -42,6 +45,9 @@ val _ = replay "compile_exps_sing_no_mutcons_typed"
     (!n es c aux n1.
       bvl_to_bvi$compile_exps_list n es = (c,aux,n1) ==>
       EVERY no_mutcons c /\ EVERY (no_mutcons o SND o SND) (misc$append aux))``;
+val _ = replay "compile_exps_no_mutcons_typed"
+  ``!n xs c aux n1. bvl_to_bvi$compile_exps n xs = (c,aux,n1) ==>
+      EVERY no_mutcons c /\ EVERY (no_mutcons o SND o SND) (misc$append aux)``;
 val _ = replay "compile_single_no_mutcons_typed"
   ``!n p q n1. bvl_to_bvi$compile_single n p = (q,n1) ==>
       EVERY (no_mutcons o SND o SND) (misc$append q)``;
@@ -97,3 +103,31 @@ val _ = replay "bvi_tailrec_compile_each_no_mutcons_typed"
       bvi_tailrec$compile_each next prog = (next1,prog1) /\
       EVERY (no_mutcons o SND o SND) prog ==>
       EVERY (no_mutcons o SND o SND) prog1``;
+
+val _ = show "compile_get_code_labels_typed" bvl_to_bviProofTheory.compile_get_code_labels;
+val _ = show "compile_distinct_names_typed" bvl_to_bviProofTheory.compile_distinct_names;
+val _ = show "full_co_def_typed" bvl_to_bviProofTheory.full_co_def;
+val _ = show "full_cc_def_typed" bvl_to_bviProofTheory.full_cc_def;
+val _ = show "ALL_DISTINCT_MAP_FST_SND_full_co_typed" bvl_to_bviProofTheory.ALL_DISTINCT_MAP_FST_SND_full_co;
+val _ = show "compile_prog_no_mutcons_typed" bvl_to_bviProofTheory.compile_prog_no_mutcons;
+
+(* Replay the local namespace-to-free-names lemma. *)
+val every_free_names = Q.prove
+  (`EVERY (λn. ¬in_ns 2 (n − backend_common$bvl_num_stubs)) (MAP FST xs) ⇒
+    EVERY (bvi_tailrecProof$free_names (backend_common$bvl_num_stubs + 2) o FST) xs`,
+   rw [EVERY_MEM, EVERY_MAP, in_ns_def, bvi_tailrecProofTheory.free_names_def]
+   \\ res_tac \\ CCONTR_TAC \\ gvs []
+   \\ first_x_assum drule
+   \\ qpat_x_assum `_ = FST e` (assume_tac o GSYM) \\ gvs []
+   \\ assume_tac (EVAL ``backend_common$bvl_to_bvi_namespaces``)
+   \\ simp [arithmeticTheory.MOD_TIMES]);
+val _ = show "EVERY_free_names_not_in_ns_2_replay_typed" every_free_names;
+
+val _ = show "compile_prog_avoids_nss_2_typed" bvl_to_bviProofTheory.compile_prog_avoids_nss_2;
+val _ = show "compile_prog_avoids_nss_3_typed" bvl_to_bviProofTheory.compile_prog_avoids_nss_3;
+
+val _ = show "compile_prog_distinct_locs_typed" bvl_to_bviProofTheory.compile_prog_distinct_locs;
+val _ = show "between_def_typed" miscTheory.between_def;
+
+val _ = show "compile_prog_semantics_typed" bvl_to_bviProofTheory.compile_prog_semantics;
+val _ = show "compile_semantics_typed" bvl_to_bviProofTheory.compile_semantics;

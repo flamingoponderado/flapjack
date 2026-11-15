@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviToData.Proofs.Value
+public import Flapjack.Compiler.Backend.BviToData.Proofs.State
 public import Flapjack.Compiler.Backend.Semantics.DataSem.Control
 public import Flapjack.Compiler.Backend.Semantics.BviSem.Thunk
 
@@ -52,5 +53,38 @@ theorem badThunkUpdate_projection (mode : AstHOL.ThunkMode) (value : DataSem.Val
   cases hd : DataSem.destThunk value dataRefs <;>
     cases hb : BvlSem.destThunk (dataToBviValue value) bviRefs <;>
     simp_all [projectThunkResult, BviSem.fromBvlThunkResult]
+
+/- The source BVI reference map uses the canonical finite-support carrier. -/
+namespace ThunkCarrier
+
+theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
+    (∀ state : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad state).toBroad = state) ∧
+    (∀ state : BviSem.BviState C F, BviSem.BviState.ofBroad state.toBroad = state) :=
+  BviSem.holFmapAsFiniteSupportWitness
+
+end ThunkCarrier
+
+/-- Related BVI and data states inspect corresponding thunk contents. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "state_rel_dest_thunk"
+  (fmap_as_finite_support_relation := [BviState.refs])]
+theorem stateRel_destThunk {C F : Type} (source : BviSem.BviState C F) (target : DataSem.State C F)
+    (value : DataSem.Value) (mode : AstHOL.ThunkMode) (bviValue : BvlSem.Value)
+    (related : stateRel source target)
+    (found : BviSem.destThunk (dataToBviValue value) source.refs = .isThunk mode bviValue) :
+    ∃ dataValue, DataSem.destThunk value target.refs = .isThunk mode dataValue ∧
+      dataToBviValue dataValue = bviValue := by
+  have refs : ∀ key, source.refs.lookup key = (sptLookup key target.refs).map dataToBviRef := by
+    intro key
+    simpa [sptLookup_sptMap] using related.2.2.2.2.1 key
+  have projected := destThunk_projection value target.refs source.refs refs
+  rw [found] at projected
+  cases inspected : DataSem.destThunk value target.refs with
+  | badRef => simp [inspected, projectThunkResult] at projected
+  | notThunk => simp [inspected, projectThunkResult] at projected
+  | isThunk dataMode dataValue =>
+    simp [inspected, projectThunkResult] at projected
+    obtain ⟨rfl, rfl⟩ := projected
+    exact ⟨dataValue, rfl, rfl⟩
+
 
 end Flapjack.Compiler.Backend.BviToData

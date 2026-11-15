@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallPrimitives
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyNoRaise
 
 @[expose] public section
 
@@ -99,15 +100,6 @@ theorem doApp_code {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
     all_goals simp_all
     all_goals (rcases run with ⟨_, rfl⟩; rfl)
   | label | install => simp [ClosSem.doApp] at run
-
-/-- Ordinary primitive dispatch never raises a language exception. -/
-theorem doApp_not_raise {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
-    (state : ClosSem.State C F) (value : ClosSem.Value) :
-    ClosSem.doApp op args state ≠ .err (.raise value) := by
-  unfold ClosSem.doApp
-  repeat' split
-  all_goals simp_all
-  all_goals split <;> simp_all
 
 /-- The parts of a closure evaluator state relevant to the no-install invariant. -/
 def evalStateNoInstall {C F : Type} (state : ClosSem.State C F) : Prop :=
@@ -344,7 +336,7 @@ theorem evaluate_ordinaryOp_noInstall_step {C F : Type} (trace : BackendCommon.T
         rcases run with ⟨rfl, rfl⟩
         constructor
         · cases error with
-          | raise value => exact False.elim (doApp_not_raise op arguments.reverse last value appRun)
+          | raise value => exact False.elim (ClosSem.doApp_not_raise op arguments.reverse last value appRun)
           | abort _ => trivial
         · exact lastOk
       | val pair =>

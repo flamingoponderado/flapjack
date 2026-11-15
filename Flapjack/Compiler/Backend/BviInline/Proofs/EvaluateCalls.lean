@@ -70,7 +70,7 @@ theorem callNone_direct {C F : Type} (ticks : Nat) (destination : Option Nat)
       | some pair =>
         obtain ⟨callArgs, body⟩ := pair
         obtain ⟨targetBody, targetCode, bodyRel⟩ :=
-          findCode_inStateRel next targetNext destination values callArgs body nextRel codeFound
+          findCode_inStateRel next targetNext destination values callArgs body ⟨nextRel, codeFound⟩
         by_cases timeout : next.clock < ticks + 1
         · have targetTimeout : targetNext.clock < ticks + 1 := by simpa [nextRel.2.1] using timeout
           refine ⟨{ targetNext with clock := 0 }, ?_, ?_⟩
@@ -173,7 +173,9 @@ theorem callNone {C F : Type} (ticks : Nat) (destination : Option Nat)
       have targetNotType : (evaluate [.call ticks (some name) targetArgs none] env target).1 ≠ .err (.abort .typeError) := by
         rw [targetRun]
         exact notType
-      have inlined := evaluate_inlined_call ticks name targetArgs body env target (by simpa [length] using lookup) targetNotType
+      have inlined := evaluate_inlined_call ticks name targetArgs body env target
+        ⟨by simpa [length] using lookup, targetNotType⟩
+      simp only [evaluateTuple] at inlined
       exact ⟨targetNext, inlined.trans targetRun, nextRel⟩
 
 /-- Flapjack infrastructure: let-call transfers the callee result and, when
@@ -221,7 +223,7 @@ theorem letCall {C F : Type} (rets ticks destination : Nat) (args : List Bvi.Exp
           | some pair =>
             obtain ⟨callArgs, callee⟩ := pair
             obtain ⟨targetCallee, targetCode, calleeRel⟩ :=
-              findCode_inStateRel next targetNext (some destination) values callArgs callee nextRel codeFound
+              findCode_inStateRel next targetNext (some destination) values callArgs callee ⟨nextRel, codeFound⟩
             by_cases timeout : next.clock < ticks + 1
             · have targetTimeout : targetNext.clock < ticks + 1 := by simpa [nextRel.2.1] using timeout
               refine ⟨{ targetNext with clock := 0 }, ?_, ?_⟩
@@ -352,7 +354,7 @@ theorem callSome {C F : Type} (ticks destination : Nat) (args : List Bvi.Exp)
           | some pair =>
             obtain ⟨callArgs, callee⟩ := pair
             obtain ⟨targetCallee, targetCode, calleeRel⟩ :=
-              findCode_inStateRel next targetNext (some destination) values callArgs callee nextRel codeFound
+              findCode_inStateRel next targetNext (some destination) values callArgs callee ⟨nextRel, codeFound⟩
             by_cases timeout : next.clock < ticks + 1
             · have targetTimeout : targetNext.clock < ticks + 1 := by simpa [nextRel.2.1] using timeout
               refine ⟨{ targetNext with clock := 0 }, ?_, ?_⟩

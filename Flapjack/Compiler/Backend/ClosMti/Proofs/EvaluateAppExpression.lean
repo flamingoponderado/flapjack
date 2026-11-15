@@ -84,8 +84,8 @@ theorem evaluate_collected_app_related {C F : Type} (source target : State C F)
       cases sourceArgsResult with
       | val values => simp [resultRel] at argsRelated
       | err sourceError =>
-        have sourceRun := mkApps_argument_error traces sourceArgs sourceEnv source sourceMiddle
-          sourceError sourceHead sourceArgsRun lengthEq
+        have sourceRun := mkApps_argument_error traces sourceArgs sourceEnv source sourceHead
+          sourceError sourceMiddle ⟨sourceArgsRun, lengthEq⟩
         rw [sourceRun, evaluate, fixClock_evaluate, targetArgsRun]
         simp [nonempty, argsRelated, middleStates]
     | val targetValues =>
@@ -111,8 +111,8 @@ theorem evaluate_collected_app_related {C F : Type} (source target : State C F)
             cases sourceHeadResult with
             | val values => simp [resultRel] at headRelated
             | err sourceError =>
-              have sourceRun := mkApps_function_error traces sourceArgs sourceEnv source sourceMiddle
-                sourceLast sourceValues sourceError sourceHead sourceHeadRun sourceArgsRun lengthEq
+              have sourceRun := mkApps_function_error traces sourceArgs sourceEnv source sourceHead
+                sourceValues sourceMiddle sourceError sourceLast ⟨sourceHeadRun, sourceArgsRun, lengthEq⟩
               rw [sourceRun, evaluate, fixClock_evaluate, targetArgsRun]
               simp only [targetArgsNonempty, Bool.false_eq_true, ↓reduceIte]
               rw [fixClock_evaluate, targetHeadRun]
@@ -134,8 +134,8 @@ theorem evaluate_collected_app_related {C F : Type} (source target : State C F)
                 omega
               have applied := appIH sourceLast targetLast sourceFunction targetFunction sourceValues targetValues
                 lastClock lastStates functionRel valuesRel valuesBound
-              have sourceRun := mkApps_success traces sourceArgs sourceEnv source sourceMiddle sourceLast
-                sourceValues sourceFunction sourceHead sourceHeadRun sourceArgsRun lengthEq
+              have sourceRun := mkApps_success sourceArgs traces sourceEnv source sourceValues
+                sourceHead sourceMiddle sourceFunction sourceLast ⟨sourceHeadRun, sourceArgsRun, lengthEq⟩
               rw [sourceRun, evaluate, fixClock_evaluate, targetArgsRun]
               simp only [targetArgsNonempty, Bool.false_eq_true, ↓reduceIte]
               rw [fixClock_evaluate, targetHeadRun]
@@ -204,7 +204,7 @@ theorem evaluate_introApp_step {C F : Type} (source target : State C F)
       (evaluate [.app trace none head [arg]] sourceEnv source).2
       (evaluate [introExp source.maxApp (.app trace none head [arg])] targetEnv target).2 := by
   have positive : 1 ≤ source.maxApp := by
-    have agreement := stateRel_clock_maxApp states
+    have agreement := (And.intro (stateRel_clocks states) (stateRel_maxApp states))
     omega
   have outerCollected : collectApps source.maxApp [] (.app trace none head [arg]) =
       (collectedArgs, collectedHead) := by

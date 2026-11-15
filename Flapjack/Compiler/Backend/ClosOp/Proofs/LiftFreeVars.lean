@@ -1,7 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftReduction
-public import Flapjack.Compiler.Backend.Semantics.ClosProps.FreeVars
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.FreeVars.Append
 
 @[expose] public section
 
@@ -10,19 +10,12 @@ namespace Flapjack.Compiler.Backend.ClosOp
 open ClosLang ClosProps
 
 /-- Flapjack proof infrastructure, not a separate HOL theorem. -/
-private theorem fvAppend (n : Nat) (xs ys : List Exp) :
-    freeVars n (xs ++ ys) ↔ freeVars n xs ∨ freeVars n ys := by
-  induction xs with
-  | nil => simp [freeVars]
-  | cons x xs ih => simp [freeVars, ih, or_assoc]
-
-/-- Flapjack proof infrastructure, not a separate HOL theorem. -/
 private theorem dontFV (x : Exp) (h : dontLift x = true) (n : Nat) : ¬ freeVarExp n x := by
   rcases (dontLiftCharacterization x).mp h with ⟨t,i,rfl⟩ | ⟨t,i,rfl⟩ | ⟨t,s,rfl⟩ | ⟨t,i,rfl⟩ | ⟨t,w,rfl⟩ <;>
     simp [freeVarExp, freeVars]
 
 /-- Flapjack proof infrastructure, not a separate HOL theorem. -/
-private theorem consFV (x : Exp) (tag : Nat) (ys : List Exp)
+theorem consFreeVars (x : Exp) (tag : Nat) (ys : List Exp)
     (h : cons x = some (tag,ys)) (l : Nat) : freeVarExp l x ↔ freeVars l ys := by
   rw [destOpCons_eq_previous] at h
   cases x <;> try simp at h
@@ -62,7 +55,7 @@ private theorem liftFV (xs : List Exp) (n : Nat) (binds : List Exp)
       rcases ihx.1 l hv with hv | hv
       · exact Or.inl (Or.inr hv)
       · rcases ihy.1 l hv with hv | hv
-        · exact Or.inl (Or.inl ((consFV x tag ys hc l).mpr hv))
+        · exact Or.inl (Or.inl ((consFreeVars x tag ys hc l).mpr hv))
         · exact Or.inr hv
     · intro l hv
       rcases hv with hv | hv
@@ -78,7 +71,7 @@ private theorem liftFV (xs : List Exp) (n : Nat) (binds : List Exp)
     · intro l hv
       rcases ih.1 l hv with hv | hv
       · exact Or.inl (Or.inr hv)
-      · rw [fvAppend] at hv
+      · rw [freeVars_append] at hv
         simp only [freeVars, or_false] at hv
         rcases hv with hv | hv
         · exact Or.inr hv
