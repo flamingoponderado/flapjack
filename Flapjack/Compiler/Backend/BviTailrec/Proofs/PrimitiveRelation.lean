@@ -307,7 +307,7 @@ theorem stateRel_doApp_label {C F : Type} (label : Nat) (args : List Value)
     | some entry =>
       obtain ⟨arity, body⟩ := entry
       obtain ⟨compiled, targetLookup⟩ :=
-        codeRel_lookup_exists source.code target.code (stateRel_codeRel source target related)
+        codeRel_lookup_arity source.code target.code (stateRel_codeRel source target related)
           label arity body sourceLookup
       simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, sourceLookup] at run
       obtain ⟨rfl, rfl⟩ := run

@@ -58,19 +58,6 @@ theorem compileExpSource_of_check (loc next arity : Nat) (body : Bvi.Exp) (op : 
     ∃ wrapper worker, compileExpSource loc next arity body = some (wrapper, worker) := by
   simp [compileExpSource, check]
 
-/-- Related code retains a function at every original location. -/
-theorem codeRel_lookup_exists (source target : Spt (Nat × Bvi.Exp)) (h : codeRel source target)
-    (loc arity : Nat) (body : Bvi.Exp) (lookup : sptLookup loc source = some (arity, body)) :
-    ∃ compiled, sptLookup loc target = some compiled := by
-  cases check : checkExpOriginal loc arity body with
-  | none =>
-    have untouched := (h loc arity body .noop lookup).1 check
-    exact ⟨(arity, body), untouched⟩
-  | some op =>
-    obtain ⟨workerLoc, workerLookup⟩ := (h loc arity body op lookup).2 check
-    obtain ⟨wrapper, worker, compiled⟩ := compileExpSource_of_check loc workerLoc arity body op check
-    exact ⟨(arity, wrapper), (workerLookup wrapper worker compiled).1⟩
-
 /-- Related code retains the original arity at every original location. -/
 theorem codeRel_lookup_arity (source target : Spt (Nat × Bvi.Exp)) (h : codeRel source target)
     (loc arity : Nat) (body : Bvi.Exp) (lookup : sptLookup loc source = some (arity, body)) :
@@ -125,8 +112,8 @@ theorem codeRel_domain (source target : Spt (Nat × Bvi.Exp)) (h : codeRel sourc
     ∀ loc, sptMem loc source → sptMem loc target := by
   intro loc mem
   obtain ⟨⟨arity, body⟩, lookup⟩ := (sptMem_iff_lookup loc source).mp mem
-  obtain ⟨compiled, found⟩ := codeRel_lookup_exists source target h loc arity body lookup
-  exact (sptMem_iff_lookup loc target).mpr ⟨compiled, found⟩
+  obtain ⟨compiled, found⟩ := codeRel_lookup_arity source target h loc arity body lookup
+  exact (sptMem_iff_lookup loc target).mpr ⟨(arity, compiled), found⟩
 
 /-- Extending a related target tree preserves the code relation. -/
 theorem codeRel_subspt (source target extended : Spt (Nat × Bvi.Exp))
