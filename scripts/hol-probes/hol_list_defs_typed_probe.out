@@ -1,0 +1,5 @@
+EL_def_typed=(∀(l :α list). l❲(0 :num)❳ = HD l) ∧ ∀(n :num) (l :α list). l❲SUC n❳ = (TL l)❲n❳
+HD_typed=∀(h :α) (t :α list). HD (h::t) = h
+LAST_DEF_typed=∀(h :α) (t :α list). LAST (h::t) = if t = ([] :α list) then h else LAST t
+LAST_CONS_typed=(∀(x :α). LAST [x] = x) ∧ ∀(x :α) (y :α) (z :α list). LAST (x::y::z) = LAST (y::z)
+EVERY2_LUPDATE_same_typed=∀(P :α -> β -> bool) (l1 :α list) (l2 :β list) (v1 :α) (v2 :β) (n :num). P v1 v2 ∧ LIST_REL P l1 l2 ⇒ LIST_REL P l1❲n ↦ v1❳ l2❲n ↦ v2❳

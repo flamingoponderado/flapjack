@@ -1,0 +1,4 @@
+unique_rep_typed=CPstate_inv (cs :copy_state) ⇒ (c :num) ∈ (domain cs.from_eq :num -> bool) ∧ (c' :num) ∈ (domain cs.from_eq :num -> bool) ∧ c ≠ c' ⇒ lookup c cs.from_eq ≠ lookup c' cs.from_eq
+n_lt_n1_typed=(n :num) < n + (1 :num) ∧ ((x :num) < (y :num) ∧ y < (z :num) ⇒ x < z)
+same_classD_prime_typed=CPstate_inv (cs :copy_state) ∧ lookup_store_eq cs (x :store_name) = SOME (lookup_eq cs (y :num)) ⇒ ∃(c :num) (rep :num). ALOOKUP cs.store_to_eq x = SOME c ∧ lookup y cs.to_eq = SOME c ∧ lookup c cs.from_eq = SOME rep
+remove_eq_model_insert_prime_typed=CPstate_inv (cs :copy_state) ∧ CPstate_models cs (st :(α, β, γ) state) ∧ (st' :(α, β, γ) state).locals = insert (t :num) (val :α word_loc) st.locals ∧ st'.store = st.store ⇒ CPstate_models (remove_eq cs t) st'

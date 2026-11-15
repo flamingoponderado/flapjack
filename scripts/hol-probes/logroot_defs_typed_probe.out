@@ -1,0 +1,3 @@
+log_exists_typed=∀(a :num) (n :num). (1 :num) < a ∧ (0 :num) < n ⇒ ∃(log :num). a ** log ≤ n ∧ n < a ** SUC log
+LOG_typed=∀(a :num) (n :num). (1 :num) < a ∧ (0 :num) < n ⇒ a ** LOG a n ≤ n ∧ n < a ** SUC (LOG a n)
+LOG_UNIQUE_typed=∀(a :num) (n :num) (p :num). a ** p ≤ n ∧ n < a ** SUC p ⇒ LOG a n = p

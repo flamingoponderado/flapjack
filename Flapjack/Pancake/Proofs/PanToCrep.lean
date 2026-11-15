@@ -808,28 +808,6 @@ theorem panToCrepSourceLoad32HOLCase
   simp only [Option.map_map]
   rfl
 
-/-- Source-shaped port of HOL `state_rel_globals[local]`
-    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:65`), a projection of
-    `state_rel`.
-
-    FLAPJACK-SPECIFIC (not an exact HOL port; review `flapjack-pxn.18.3.7.1.3`): the
-    hypothesis is the Flapjack-specific `stateRel` over production `PanSemState`/
-    `CrepRuntimeState`, not HOL `state_rel`, and the conclusion is stated over the
-    production carrier `FiniteMap VarName (PanValue α)` rather than HOL
-    `varname |-> 'a v`. The mismatch is not limited to the String-vs-`mlstring` domain
-    key (`VarName` vs `varname`): `stateRel` also relates an optional `PanValue`
-    source memory to a total `word_lab` target memory and the value type is
-    `PanValue α` vs `'a v` (see `stateRel_structs` above and the `state_rel_def` note),
-    so the `(names_as_string := ...)` qualifier does not apply. The exact projection
-    is the tagged `panToCrepStateRelFiniteExact_globals`
-    (`Proofs/PanToCrep/StateRelFiniteSupport.lean`); this production-carrier
-    declaration is Flapjack-specific infrastructure and carries no manifest row.
-    Carrier work remains tracked by `flapjack-pxn.18.3.5.8`. -/
-theorem stateRel_globals (s : PanSemState α (FfiState σ)) (t : CrepRuntimeState α σ)
-    (hrel : stateRel s t) : s.globals = (FEMPTY : FiniteMap VarName (PanValue α)) := by
-  rcases hrel with ⟨_, _, _, _, hglobals, _, _, _, _, _⟩
-  exact hglobals
-
 /-- Canonicalizing the target with `riscv64CrepRuntimeTarget` does not change
     the state relation: it only edits fields (`bytesInWord`, `memoryModel`,
     `ffiContext`) that `stateRel` does not constrain, together with `bigEndian`,
@@ -2039,5 +2017,19 @@ theorem ctxtFcVmaxHOL_bare {width : Nat} [NeZero width]
     (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
     (ctxtFcExactHOL cvs em vs shs ns : PanToCrepContextExact width).vmax =
       maxList ns := rfl
+
+/-- Exact port of HOL `flatten_nil_no_size` (`pan_to_crepProofScript.sml:3001`).
+The typed capture `flatten_nil_no_size_typed` gives
+`∀(x :α v). is_wf_shape_nil (shape_of x) ⇒
+  (flatten x = ([] :α word_lab list) ⇔ size_of_shape (shape_of x) = 0)`.
+`is_wf_shape_nil` is the empty-context overload, rendered as
+`isWfShapeExactHOL [] = true` by the tagged `length_flatten_eq_size_of_shape`
+port; the equivalence follows from its length form. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "flatten_nil_no_size"
+  (words_as_type_indexed_bitvec)]
+theorem flattenHOL_eq_nil_iff_sizeOfShapeHOL {width : Nat} [NeZero width] (v : ValueHOL width)
+    (h : isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact v) = true) :
+    flattenHOL v = [] ↔ sizeOfShapeHOL (shapeOfHOLExact v) = 0 := by
+  rw [← List.length_eq_zero_iff, flattenHOL_length_eq_sizeOfShapeHOL v h]
 
 end Flapjack

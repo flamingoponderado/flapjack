@@ -284,7 +284,13 @@ private theorem independentSrcRhs_eq {C F : Type} (s : State C F) (op : AstHOL.O
 
 open Classical in
 /-- Complete generated application case analysis; floating-point dependencies
-inherit the rational-cut assumption recorded in SOUNDNESS item 8. -/
+inherit the rational-cut assumption recorded in SOUNDNESS item 8. The `Src`
+disjunct is the source's expanded `op_CASE` on `ast$op`, factored as the
+untagged `independentSrcRhs`; the private `independentSrcRhs_eq` proves
+`doApp (.src op) vs = independentSrcRhs s op vs`, so the disjunct is the same
+term. The other seven disjuncts are the source clauses, with `holEl`, `holHd`
+and `holThe` for EL, HD and THE and `.isSome = true` for IS_SOME (the typed
+capture `do_app_cases_typed` is the comparison). -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_cases"]
 theorem doAppCases {C F : Type} (st : State C F) (op : FlatLang.Op)
     (vs : List Value) (st' : State C F) (v : Result Value Value) :

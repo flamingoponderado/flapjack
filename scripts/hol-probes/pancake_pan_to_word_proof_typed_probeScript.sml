@@ -316,6 +316,9 @@ val _ = capture "exp_ids_structs_compile_typed" "exp_ids_structs_compile";
 val _ = capture "function_names_structs_compile_decs_typed" "function_names_structs_compile_decs";
 val _ = capture "size_of_eids_structs_compile_eq_typed" "size_of_eids_structs_compile_eq";
 
+val _ = emit_exported "compile_decs_fun_names_typed" "compile_decs_fun_names";
+val _ = capture "semantics_decls_has_main_pp_typed" "semantics_decls_has_main''";
+
 (* Derived local theorems: the base statement is captured typed under
    the derived theorem name; the derivation is named in each comment,
    so the carriers are the base statement carriers. *)

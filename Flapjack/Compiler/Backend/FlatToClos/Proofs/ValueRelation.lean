@@ -151,8 +151,9 @@ def replaceEnvValues {α β : Type} (_env : FlatSem.Environment α)
 theorem envRel_cons {α : Type} {env : FlatSem.Environment α}
     {xs : List (VarN × FlatSem.Value)} {names : List (Option MlString)}
     {values : List ClosSem.Value} {name : VarN} {source : FlatSem.Value} {target : ClosSem.Value}
-    (related : EnvRel (replaceEnvValues env xs) names values) (head : ValueRel source target) :
+    (premises : EnvRel (replaceEnvValues env xs) names values ∧ ValueRel source target) :
     EnvRel (replaceEnvValues env ((name, source) :: xs)) (some name :: names) (target :: values) := by
+  obtain ⟨related, head⟩ := premises
   apply (envRel_iff_lookup _ _ _).2
   intro key value found
   by_cases same : key = name
@@ -177,7 +178,7 @@ theorem envRel_cons_upd {α : Type} (env : FlatSem.Environment α)
     (premises : EnvRel (replaceEnvValues env (update env.v)) names values ∧ ValueRel source target) :
     EnvRel (replaceEnvValues env ((fun xs => (name, source) :: update xs) env.v))
       (some name :: names) (target :: values) := by
-  exact envRel_cons premises.1 premises.2
+  exact envRel_cons ⟨premises.1, premises.2⟩
 
 /-- An unnamed binding consumes a target slot without adding a source name. -/
 theorem envRel_skip {env names values} (related : EnvRel env names values) (target : ClosSem.Value) :
@@ -195,11 +196,12 @@ theorem envRel_append {α : Type} {env : FlatSem.Environment FlatSem.Value}
     {env1 : FlatSem.Environment α}
     {names namePrefix : List (Option MlString)} {values targets : List ClosSem.Value}
     {entries : List (VarN × FlatSem.Value)}
-    (related : EnvRel env names values)
-    (prefixRelated : List.Forall₂ ValueRel (entries.map Prod.snd) targets)
-    (prefixNames : namePrefix = entries.map (fun entry => some entry.1)) :
+    (premises : EnvRel env names values ∧
+      List.Forall₂ ValueRel (entries.map Prod.snd) targets ∧
+      namePrefix = entries.map (fun entry => some entry.1)) :
     EnvRel (replaceEnvValues env1 (entries ++ env.v))
       (namePrefix ++ names) (targets ++ values) := by
+  obtain ⟨related, prefixRelated, prefixNames⟩ := premises
   subst namePrefix
   have envEq : replaceEnvValues env1 (entries ++ env.v) = { env with v := entries ++ env.v } := by
     cases env; rfl
@@ -214,6 +216,6 @@ theorem envRel_append {α : Type} {env : FlatSem.Environment FlatSem.Value}
     | mk name source =>
       cases prefixRelated with
       | cons head tail =>
-        simpa [replaceEnvValues] using envRel_cons (env := env) (ih tail) head
+        simpa [replaceEnvValues] using envRel_cons (env := env) ⟨ih tail, head⟩
 
 end Flapjack.Compiler.Backend.FlatToClos

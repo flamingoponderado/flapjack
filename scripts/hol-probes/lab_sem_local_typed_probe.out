@@ -1,0 +1,1 @@
+asm_fetch_IMP_typed=asm_fetch (s :(α, β, γ) state) = SOME (x :α line) ⇒ s.pc < asm_code_length s.code

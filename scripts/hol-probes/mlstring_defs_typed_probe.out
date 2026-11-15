@@ -1,0 +1,2 @@
+LENGTH_explode_typed=STRLEN (explode (s :mlstring)) = strlen s
+mlstring_typed=implode::string -> mlstring

@@ -25,3 +25,5 @@ subscript_tag_def_typed=subscript_tag = (3 :num)
 nil_tag_def_typed=nil_tag = (0 :num)
 cons_tag_def_typed=cons_tag = (0 :num)
 small_enough_int_def_typed=∀(i :int). small_enough_int i ⇔ -(268435457 :int) ≤ i ∧ i ≤ (268435457 :int)
+data_num_stubs_EVEN_typed=EVEN data_num_stubs
+lookup_list_delete_typed=∀(xs :num list) (l :α sptree$num_map) (n :num). lookup n (list_delete xs l) = if MEM n xs then (NONE :α option) else lookup n l

@@ -1,0 +1,10 @@
+stcname_typed=Type stcname = :mlstring
+fldname_typed=Type fldname = :mlstring
+varname_typed=Type varname = :mlstring
+funname_typed=Type funname = :mlstring
+eid_typed=Type eid = :mlstring
+decname_typed=Type decname = :mlstring
+index_typed=Type index = :num
+TailCall_typed=(Call (NONE :((varkind # mlstring) option # (mlstring # mlstring # α prog) option) option) :mlstring -> α exp list -> α prog)
+AssignCall_typed=λ(s :varkind # mlstring) (h :(mlstring # mlstring # α prog) option). (Call (SOME (SOME s,h)) :mlstring -> α exp list -> α prog)
+StandAloneCall_typed=λ(h :(mlstring # mlstring # α prog) option). (Call (SOME ((NONE :(varkind # mlstring) option),h)) :mlstring -> α exp list -> α prog)

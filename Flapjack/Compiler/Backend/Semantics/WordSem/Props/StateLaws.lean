@@ -260,4 +260,108 @@ theorem lastNStackSizeSome {width : Nat} [NeZero width] :
       obtain ⟨y, hy, hle⟩ := ih n (wordSemLastN n st) b ⟨rfl, hs, by simp at h3; omega⟩
       exact ⟨y, hlast ▸ hy, by omega⟩
 
+namespace WordSemStateFiniteExact
+
+/-- Exact HOL `inc_clock_def` (`wordPropsScript.sml:4443-4445`): adding `n`
+    clock ticks. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "inc_clock_def"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+def incClock {width : Nat} [NeZero width] {C : Type} {F : Type} (n : Nat)
+    (t : WordSemStateFiniteExact width C F) : WordSemStateFiniteExact width C F :=
+  { t with clock := t.clock + n }
+
+/-- Exact HOL `inc_clock_0` (`wordPropsScript.sml:4447-4450`). -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "inc_clock_0"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem incClock_zero {width : Nat} [NeZero width] {C : Type} {F : Type}
+    (t : WordSemStateFiniteExact width C F) : incClock 0 t = t := by
+  simp [incClock]
+
+/-- Exact HOL `inc_clock_inc_clock` (`wordPropsScript.sml:4453-4456`). -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "inc_clock_inc_clock"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem incClock_incClock {width : Nat} [NeZero width] {C : Type} {F : Type}
+    (n m : Nat) (t : WordSemStateFiniteExact width C F) :
+    incClock n (incClock m t) = incClock (n + m) t := by
+  simp [incClock]
+  omega
+
+end WordSemStateFiniteExact
+
+/-- Exact HOL `with_locals_same_clock` (`wordPropsScript.sml:1450-1454`):
+    rewriting the locals and clock to their own values is the same as
+    rewriting the locals alone. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "with_locals_same_clock"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem withLocalsSameClock {width : Nat} [NeZero width] {C : Type} {F : Type}
+    (s : WordSemStateFiniteExact width C F) (l : Spt (WordLocW width)) :
+    ({ s with locals := l, clock := s.clock } : WordSemStateFiniteExact width C F) =
+      { s with locals := l } := by
+  rfl
+
+/-- Exact HOL `word_cmp_Word_Word` (`wordPropsScript.sml:5197-5200`): on two
+    word values the comparison is the tagged asm `word_cmp`. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "word_cmp_Word_Word"
+  (words_as_type_indexed_bitvec)]
+theorem wordCmpWordWord {width : Nat} [NeZero width] (cmp : Cmp)
+    (c c' : BitVec width) :
+    wordSemWordCmp cmp (.word c) (.word c') =
+      some (Flapjack.Compiler.Encoders.Asm.wordCmpHOL cmp c c') := by
+  cases cmp
+  all_goals rfl
+
+namespace WordSemStateFiniteExact
+
+/-- Exact HOL `push_env_dec_clock_stack` (`wordPropsScript.sml:3879`):
+    taking a clock tick before pushing an environment leaves `stack_max` and
+    the stack list unchanged. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "push_env_dec_clock_stack"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem pushEnv_decClock_stack {width : Nat} [NeZero width] {C : Type} {F : Type}
+    (y : Spt (WordLocW width) × Spt (WordLocW width))
+    (opt : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (t : WordSemStateFiniteExact width C F) :
+    (pushEnv y opt (decClock t)).stackMax = (pushEnv y opt t).stackMax ∧
+    (pushEnv y opt (decClock t)).stack = (pushEnv y opt t).stack := by
+  cases opt with
+  | none => simp [pushEnv, decClock]
+  | some h => simp [pushEnv, decClock]
+
+end WordSemStateFiniteExact
+
+/-- Exact HOL `OPTION_MAP2_ADD_0` (`wordPropsScript.sml:4019`): adding a
+    `SOME 0` on either side leaves the operand alone. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "OPTION_MAP2_ADD_0"]
+theorem wordSemOptionAdd_zero (m : Option Nat) :
+    wordSemOptionAdd m (some 0) = m ∧ wordSemOptionAdd (some 0) m = m := by
+  rcases m with _ | _
+  all_goals simp [wordSemOptionAdd]
+
+/-- Exact HOL `stack_size_some_at_least_one` (`wordPropsScript.sml:3896`):
+    a computed stack size is at least one. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "stack_size_some_at_least_one"
+  (words_as_type_indexed_bitvec)]
+theorem stackSizeSomeAtLeastOne {width : Nat} [NeZero width] :
+    ∀ (stk : List (WordSemStackFrame width)) (sz : Nat),
+      wordSemStackSize stk = some sz → 1 ≤ sz := by
+  intro stk
+  induction stk with
+  | nil =>
+    intro sz h
+    simp [wordSemStackSize] at h
+    omega
+  | cons fr rest ih =>
+    intro sz h
+    change wordSemOptionAdd (wordSemStackSizeFrame fr) (wordSemStackSize rest) = some sz at h
+    rcases hf : wordSemStackSizeFrame fr with _ | a
+    · rw [hf] at h
+      simp [wordSemOptionAdd] at h
+    · rcases hs : wordSemStackSize rest with _ | b
+      · rw [hf, hs] at h
+        simp [wordSemOptionAdd] at h
+      · rw [hf, hs] at h
+        simp only [wordSemOptionAdd, Option.some.injEq] at h
+        have hb := ih b hs
+        omega
+
 end Flapjack

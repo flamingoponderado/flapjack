@@ -83,12 +83,10 @@ theorem exactEquationRestoresAbsentLocal :
       (result.1, { result.2 with locals :=
         ((List.zip names (names.map stateAbsent.locals.lookup)).foldl
           (fun current entry => HolFiniteMapExact.resVarEq current entry) result.2.locals) }) := by
-  apply evalNestedDecsSeqResVarEqCrepHOL stateAbsent expressions names values body
-  · simp [evalCrepSemHOLExpDefault, evalCrepSemHOLExpWithMemDec, evalCrepSemHOLExp,
-      expressions, values]
-  · rfl
-  · decide
-  · decide
+  have htwin := evalNestedDecsSeqResVarEqHOL expressions names stateAbsent values body
+    ⟨by simp [evalCrepSemHOLExpDefault, evalCrepSemHOLExpWithMemDec, evalCrepSemHOLExp,
+      expressions, values], rfl, by decide, by decide⟩
+  simpa using htwin
 
 theorem exactEquationRestoresExistingLocal :
     evalCrepSemHOLProgExact statePresent (nestedDecsHOL names expressions body) =
@@ -97,12 +95,10 @@ theorem exactEquationRestoresExistingLocal :
       (result.1, { result.2 with locals :=
         ((List.zip names (names.map statePresent.locals.lookup)).foldl
           (fun current entry => HolFiniteMapExact.resVarEq current entry) result.2.locals) }) := by
-  apply evalNestedDecsSeqResVarEqCrepHOL statePresent expressions names values body
-  · simp [evalCrepSemHOLExpDefault, evalCrepSemHOLExpWithMemDec, evalCrepSemHOLExp,
-      expressions, values]
-  · rfl
-  · decide
-  · decide
+  have htwin := evalNestedDecsSeqResVarEqHOL expressions names statePresent values body
+    ⟨by simp [evalCrepSemHOLExpDefault, evalCrepSemHOLExpWithMemDec, evalCrepSemHOLExp,
+      expressions, values], rfl, by decide, by decide⟩
+  simpa using htwin
 
 private def restoreAbsentLocalOracleRow : Bool :=
   match evalCrepSemHOLProg stateAbsent memDecAbsent shMemDecAbsent

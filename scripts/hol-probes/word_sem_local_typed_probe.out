@@ -1,0 +1,3 @@
+termdep_rw_typed=(call_env (p_1 :α word_loc list) (ss :num option) (s :(α, γ, 'ffi) state)).termdep = s.termdep ∧ (dec_clock s).termdep = s.termdep ∧ (set_var (n :num) (v :α word_loc) s).termdep = s.termdep
+inst_clock_typed=inst (i :α inst) (s :(α, β, γ) state) = SOME (s2 :(α, β, γ) state) ⇒ s2.clock ≤ s.clock ∧ s2.termdep = s.termdep
+gc_fun_type_typed=Type gc_fun_type = :α word_loc list # (α word -> α word_loc) # (α word -> bool) # (store_name |-> α word_loc) -> (α word_loc list # (α word -> α word_loc) # (store_name |-> α word_loc)) option

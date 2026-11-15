@@ -68,6 +68,24 @@ def typeGroupIdType {α β γ : Type} : Option (α × Option (β × γ)) → Opt
   | some (cn, none) => some (cn, none)
   | some (cn, some (tyId, _)) => some (cn, some tyId)
 
+/-- Exact HOL `type_group_id_type_MAP` (`source_to_flatScript.sml:94`):
+    `type_group_id_type` is the option map of the identity on the constructor
+    name and the first projection on the optional type id. -/
+@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "type_group_id_type_MAP"]
+theorem typeGroupIdType_map {α β γ : Type} :
+    (typeGroupIdType (α := α) (β := β) (γ := γ)) =
+      Option.map (Prod.map id (Option.map Prod.fst)) := by
+  funext x
+  cases x with
+  | none => rfl
+  | some entry =>
+      obtain ⟨cn, opt⟩ := entry
+      cases opt with
+      | none => rfl
+      | some pair =>
+          obtain ⟨tyId, ty⟩ := pair
+          rfl
+
 /-- Exact HOL `str_sep_def`: the one-character string `«_»` (character code 95). -/
 @[hol "cakeml/compiler/backend/source_to_flatScript.sml" "str_sep_def"]
 def strSep : MlString := .implode [95]
@@ -107,6 +125,21 @@ theorem fst_allocDefs {α : Type} : ∀ (n next : Nat) (names : List α),
   induction names generalizing n next with
   | nil => rfl
   | cons name names ih => simp [allocDefs, ih]
+
+/-- Exact HOL `alloc_defs_append` (`source_to_flatScript.sml:272`): allocating
+    an appended list advances the counters by the length of the first list. -/
+@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "alloc_defs_append"]
+theorem allocDefs_append {α : Type} (m n : Nat) (l1 l2 : List α) :
+    allocDefs m n (l1 ++ l2) =
+      allocDefs m n l1 ++ allocDefs (m + l1.length) (n + l1.length) l2 := by
+  induction l1 generalizing m n with
+  | nil => simp [allocDefs]
+  | cons x xs ih =>
+      simp only [List.cons_append, allocDefs, List.length_cons]
+      rw [ih]
+      have first : m + 1 + xs.length = m + (xs.length + 1) := by omega
+      have second : n + 1 + xs.length = n + (xs.length + 1) := by omega
+      rw [first, second]
 
 /-- Exact HOL `make_varls_def`; the singleton clause precedes the general cons
 clause, as in HOL's clause order. -/

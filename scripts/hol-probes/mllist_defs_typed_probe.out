@@ -1,0 +1,5 @@
+sort_def_typed=(sort :(α -> α -> bool) -> α list -> α list) = (mergesort_tail :(α -> α -> bool) -> α list -> α list)
+sort_SORTED_typed=∀(R :α -> α -> bool) (L :α list). transitive R ∧ total R ⇒ SORTED R (sort R L)
+sort_MEM_typed=∀(R :α -> α -> bool) (L :α list). MEM (x :α) (sort R L) ⇔ MEM x L
+sort_PERM_typed=∀(R :α -> α -> bool) (L :α list). PERM L (sort R L)
+sort_LENGTH_typed=∀(R :α -> α -> bool) (l :α list). LENGTH (sort R l) = LENGTH l

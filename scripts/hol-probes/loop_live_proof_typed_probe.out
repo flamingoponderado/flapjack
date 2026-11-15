@@ -1,0 +1,12 @@
+dom_vars_of_exp_in_typed=(v :num) ∈ (domain (l :sptree$num_set) :num -> bool) ⇒ v ∈ (domain (vars_of_exp (x :α loopLang$exp) l) :num -> bool)
+eval_lemma_typed=∀(s :(α, β) state) (exp :α loopLang$exp) (w :α word_loc) (l :sptree$num_set). eval s exp = SOME w ∧ subspt (inter s.locals (vars_of_exp exp l)) (locals :α word_loc sptree$num_map) ⇒ eval (s with locals := locals) exp = SOME w
+eval_lemma_prime_typed=∀(s :(α, β) state) (exp :α loopLang$exp) (w :α word_loc) (l :γ). eval s exp = SOME w ∧ subspt s.locals (locals :α word_loc sptree$num_map) ⇒ eval (s with locals := locals) exp = SOME w
+get_vars_subspt_typed=∀(rhss :num list) (ws :α word_loc list) (s :(α, β) state) (extra :sptree$num_set) (locals :α word_loc sptree$num_map). (get_vars rhss s :α word_loc list option) = SOME ws ∧ subspt (inter s.locals (list_insert rhss extra)) locals ⇒ (get_vars rhss (s with locals := locals) :α word_loc list option) = SOME ws
+domain_list_delete_typed=∀(vs :num list) (s :α sptree$num_map). (domain (list_delete vs s) :num -> bool) = (domain s :num -> bool) DIFF set vs
+subspt_IMP_domain_typed=subspt (l1 :α sptree$num_map) (l2 :α sptree$num_map) ⇒ (domain l1 :num -> bool) ⊆ (domain l2 :num -> bool)
+subspt_inter_domain_cut_typed=∀(X :α sptree$num_map) (m1 :β sptree$num_map) (m2 :β sptree$num_map). (domain X :num -> bool) ⊆ (domain m1 :num -> bool) ∧ subspt (inter m1 X) m2 ⇒ (domain X :num -> bool) ⊆ (domain m2 :num -> bool)
+subspt_inter_union_R_typed=∀(A :α sptree$num_map) (B :β sptree$num_map) (C :β sptree$num_map) (D :α sptree$num_map). subspt (inter A (union B C)) D ⇒ subspt (inter A C) D
+vars_of_exp_acc_typed=∀(exp :α loopLang$exp) (l :sptree$num_set). (domain (vars_of_exp exp l) :num -> bool) = (domain (union (vars_of_exp exp (LN :sptree$num_set)) l) :num -> bool)
+vars_of_exp_mono_typed=∀(exp :α loopLang$exp) (l :sptree$num_set). subspt l (vars_of_exp exp l)
+mark_correct_typed=∀(prog :α loopLang$prog) (s :(α, β) state) (res :α result option) (s1 :(α, β) state). (evaluate (prog,s) :α result option # (α, β) state) = (res,s1) ⇒ (evaluate (FST (mark_all prog),s) :α result option # (α, β) state) = (res,s1)
+optimise_correct_typed=(evaluate ((prog :α loopLang$prog),(s :(α, β) state)) :α result option # (α, β) state) = ((res :α result option),(s1 :(α, β) state)) ∧ res ≠ SOME (Error :α result) ∧ (∀(n :num). res ≠ SOME (Break n :α result)) ∧ (∀(n :num). res ≠ SOME (Continue n :α result)) ∧ res ≠ (NONE :α result option) ⇒ (evaluate (optimise prog,s) :α result option # (α, β) state) = (res,s1)

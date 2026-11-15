@@ -348,3 +348,7 @@ val _ = dt_label "next_indices_typed" "next_indices";
 val _ = emit_exported "store_env_id_def_typed" "store_env_id_def";
 (* var_name: datatype *)
 val _ = dt_label "var_name_typed" "var_name";
+val _ = emit_exported "compile_exps_append_typed" "compile_exps_append";
+val _ = emit_exported "compile_funs_dom_typed" "compile_funs_dom";
+val _ = emit_exported "alloc_defs_append_typed" "alloc_defs_append";
+val _ = emit_exported "type_group_id_type_MAP_typed" "type_group_id_type_MAP";

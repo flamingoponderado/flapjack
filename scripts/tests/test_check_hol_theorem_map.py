@@ -777,9 +777,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             for record in MAP["build_inventory"]()
         }
         expected = {
-            "decCrepHolClockW": "dec_clock_def",
             "emptyCrepHolLocalsW": "empty_locals_def",
-            "fixCrepHolClockW": "fix_clock_def",
         }
         for lean_name, hol_name in expected.items():
             key = ("Flapjack/Pancake/Semantics/CrepSem.lean", lean_name)
@@ -793,6 +791,32 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                 self.assertIn("infinite", record["reviewer"])
                 self.assertTrue(MAP["lean_definition_exists"](MAP["ROOT"], *key))
                 self.assertNotIn(key, MAP["tagged_declarations"]())
+
+    def test_crep_clock_width_mirrors_are_retired(self):
+        # The raw-carrier width-indexed dec_clock/fix_clock mirrors are gone;
+        # HOL dec_clock_def and fix_clock_def are mapped by the tagged
+        # finite-support decClockCrepSemHOL and fixClockCrepSemHOL.
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        for lean_name in ("decCrepHolClockW", "fixCrepHolClockW"):
+            key = ("Flapjack/Pancake/Semantics/CrepSem.lean", lean_name)
+            with self.subTest(key=key):
+                self.assertNotIn(key, inventory)
+                self.assertFalse(MAP["lean_definition_exists"](MAP["ROOT"], *key))
+        twins = {
+            "decClockCrepSemHOL": "dec_clock_def",
+            "fixClockCrepSemHOL": "fix_clock_def",
+        }
+        for lean_name, hol_name in twins.items():
+            key = ("Flapjack/Pancake/Semantics/CrepSem/HOLState.lean", lean_name)
+            with self.subTest(key=key):
+                record = inventory[key]
+                self.assertEqual(record["hol_name"], hol_name)
+                self.assertNotEqual(record["statement_status"],
+                                    "documented_mismatch")
+                self.assertIn(key, MAP["tagged_declarations"]())
 
     def test_crep_fix_clock_imp_less_eq_carrier_mismatch_is_retired(self):
         # The width-indexed CrepHolState bound is gone; HOL fix_clock_IMP_LESS_EQ
@@ -940,6 +964,63 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             MAP["tagged_declarations"](),
         )
 
+    def test_eval_nested_decs_crep_hol_mirror_is_retired(self):
+        # The Flapjack-shaped curried form is gone; HOL
+        # eval_nested_decs_seq_res_var_eq is mapped by the tagged
+        # evalNestedDecsSeqResVarEqHOL with HOL's single conjunctive premise.
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        self.assertNotIn(
+            ("Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+             "evalNestedDecsSeqResVarEqCrepHOL"),
+            inventory,
+        )
+        key = ("Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+               "evalNestedDecsSeqResVarEqHOL")
+        record = inventory[key]
+        self.assertEqual(record["hol_name"], "eval_nested_decs_seq_res_var_eq")
+        self.assertNotEqual(record["statement_status"], "documented_mismatch")
+        self.assertIn(key, MAP["tagged_declarations"]())
+
+    def test_shape_val_localised_conjunct_is_retired(self):
+        # The standalone first conjunct is gone; HOL localised_exp_shape_val is
+        # mapped by the tagged two-conjunct localisedExpShapeValHOL.
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        self.assertNotIn(
+            ("Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
+             "shapeValLocalised"),
+            inventory,
+        )
+        key = ("Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
+               "localisedExpShapeValHOL")
+        record = inventory[key]
+        self.assertEqual(record["hol_name"], "localised_exp_shape_val")
+        self.assertNotEqual(record["statement_status"], "documented_mismatch")
+        self.assertIn(key, MAP["tagged_declarations"]())
+
+    def test_state_rel_globals_projection_is_retired(self):
+        # The production-carrier projection is gone; HOL state_rel_globals is
+        # mapped by the tagged panToCrepStateRelFiniteExact_globals.
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        self.assertNotIn(
+            ("Flapjack/Pancake/Proofs/PanToCrep.lean", "stateRel_globals"),
+            inventory,
+        )
+        key = ("Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+               "panToCrepStateRelFiniteExact_globals")
+        record = inventory[key]
+        self.assertEqual(record["hol_name"], "state_rel_globals")
+        self.assertNotEqual(record["statement_status"], "documented_mismatch")
+        self.assertIn(key, MAP["tagged_declarations"]())
+
     def test_stack_size_eq2_mismatch_is_retired(self):
         # The unused width-specialized stack_size_eq2 analogue is gone; HOL
         # stack_size_eq2 has no exact Lean port (independent frame types), and
@@ -1048,24 +1129,26 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertEqual(exact_record["hol_name"], "is_wf_shape_drop")
         self.assertEqual(exact_record["statement_status"], "documented_mismatch")
 
-    def test_ssa_cc_trans_flat_exp_inst_withdrawn(self):
+    def test_ssa_cc_trans_flat_exp_inst_is_retired(self):
+        # The Inst-case helper is gone; HOL ssa_cc_trans_flat_exp_conventions is
+        # mapped by the tagged general ssaCcTrans_flatExpConventions twin.
+        retired_key = ("Flapjack/Pancake/Proofs/WordConvs/SSAFlatInst.lean",
+                       "ssaCcTrans_flatExpInst")
         inventory = {
             (record["lean_path"], record["lean_name"]): record
             for record in MAP["build_inventory"]()
         }
-        exact_key = ("Flapjack/Pancake/Proofs/WordConvs/SSAFlatInst.lean",
-                     "ssaCcTrans_flatExpInst")
-        self.assertEqual(inventory[exact_key]["hol_name"],
-                         "ssa_cc_trans_flat_exp_conventions")
-        self.assertEqual(inventory[exact_key]["statement_status"],
-                         "documented_mismatch")
-
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
-        exact_record = next(record for record in manifest if
-                            (record["lean_path"], record["lean_name"]) == exact_key)
-        self.assertEqual(exact_record["hol_name"],
-                         "ssa_cc_trans_flat_exp_conventions")
-        self.assertEqual(exact_record["statement_status"], "documented_mismatch")
+        self.assertNotIn(retired_key, inventory)
+        exact_key = ("Flapjack/Pancake/Proofs/WordConvs/SSAFlatProgram.lean",
+                     "ssaCcTrans_flatExpConventions")
+        exact = inventory[exact_key]
+        self.assertEqual(
+            (exact["hol_path"], exact["hol_name"]),
+            ("cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+             "ssa_cc_trans_flat_exp_conventions"),
+        )
+        self.assertNotEqual(exact["statement_status"], "documented_mismatch")
+        self.assertIn(exact_key, MAP["tagged_declarations"]())
 
     def test_fperm_decs_decls_production_variant_removed(self):
         inventory = {
@@ -1339,30 +1422,43 @@ class ValidateInventoryTest(unittest.TestCase):
         errors = MAP["validate_inventory"]([record], {key}, {key: reference})
         self.assertTrue(any("must not carry an @[hol] tag" in error for error in errors))
 
-    def test_res_var_hol_equality_forms_are_documented_mismatch(self):
+    def test_res_var_hol_equality_forms_are_retired(self):
+        # The raw-carrier res_var cluster is gone; HOL res_var_commutes_strong,
+        # res_var_foldl_commutes_strong, flookup_res_var_is_mem_zip_eq and
+        # FOLDL_res_var_ZIP_lookup_var are mapped by the tagged exact twins.
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
         manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
         by_key = {
-            (record["lean_path"], record["lean_name"]): record for record in manifest
+            (record["lean_path"], record["lean_name"]): record
+            for record in manifest
         }
-        hol_forms = {
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "foldl_res_var_zip_lookup_var_hol"): "FOLDL_res_var_ZIP_lookup_var",
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "res_var_commutes_strong_hol"): "res_var_commutes_strong",
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "res_var_foldl_commutes_strong_hol"): "res_var_foldl_commutes_strong",
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "flookup_res_var_is_mem_zip_eq_hol"): "flookup_res_var_is_mem_zip_eq",
+        retired = {
+            "foldl_res_var_zip_lookup_var_hol",
+            "res_var_commutes_strong_hol",
+            "res_var_foldl_commutes_strong_hol",
+            "flookup_res_var_is_mem_zip_eq_hol",
         }
-        for key, hol_name in hol_forms.items():
-            with self.subTest(key=key):
+        for name in retired:
+            key = ("Flapjack/Pancake/Proofs/CrepInline.lean", name)
+            self.assertNotIn(key, inventory)
+            self.assertNotIn(key, by_key)
+        twins = {
+            "res_var_commutes_strong_exact": "res_var_commutes_strong",
+            "res_var_foldl_commutes_strong_exact": "res_var_foldl_commutes_strong",
+            "flookup_res_var_is_mem_zip_eq_exact": "flookup_res_var_is_mem_zip_eq",
+            "foldl_res_var_zip_lookup_var_exact": "FOLDL_res_var_ZIP_lookup_var",
+        }
+        for name, hol_name in twins.items():
+            with self.subTest(name=name):
+                key = ("Flapjack/Pancake/Proofs/CrepInline.lean", name)
                 record = by_key[key]
                 self.assertEqual(record["hol_name"], hol_name)
-                self.assertEqual(record["statement_status"], "documented_mismatch")
-                self.assertIn("infinite-support", record["reviewer"])
-                self.assertIn("flapjack-pxn.18.3.7.1.3.1.1.3.1",
-                              record["reviewer"])
-                self.assertNotIn(key, MAP["tagged_declarations"]())
+                self.assertEqual(record["statement_status"],
+                                 "reviewed_fmap_as_finite_support_relation")
+                self.assertIn(key, MAP["tagged_declarations"]())
 
 
     def test_globals_lookup_carrier_mismatch_is_documented(self):

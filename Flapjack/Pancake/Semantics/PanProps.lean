@@ -1612,13 +1612,16 @@ def localisedProgHOL {width : Nat} [NeZero width] :
 
     HOL's `OPT_MMAP` is the repository's `List.mapM` for `Option` (cf. the
     tagged `OPT_MMAP_MEM_IMP`); the statement is fully polymorphic, so there is
-    no carrier side condition. -/
+    no carrier side condition. HOL states the two premises as one conjunction,
+    so they are one conjunction here too (the typed capture
+    `opt_mmap_eq_some_helper_typed` is the comparison). -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "opt_mmap_eq_some_helper" 1575]
 theorem optMmapEqSomeHelper {α β : Type} (f g : α → Option β) :
-    ∀ (xs : List α) (zs : List β), xs.mapM f = some zs →
-      (∀ x ∈ xs, ∀ y, f x = some y → g x = some y) → xs.mapM g = some zs
-  | [], zs, h, _ => h
-  | x :: xs, zs, h, hfg => by
+    ∀ (xs : List α) (zs : List β),
+      xs.mapM f = some zs ∧ (∀ x ∈ xs, ∀ y, f x = some y → g x = some y) →
+      xs.mapM g = some zs
+  | [], zs, ⟨h, _⟩ => h
+  | x :: xs, zs, ⟨h, hfg⟩ => by
       rw [List.mapM_cons] at h ⊢
       cases hx : f x with
       | none => simp [hx] at h
@@ -1631,8 +1634,8 @@ theorem optMmapEqSomeHelper {α β : Type} (f g : α → Option β) :
           | some ys =>
               have hz : zs = a :: ys := by simpa [hys, hx] using h.symm
               subst hz
-              rw [optMmapEqSomeHelper f g xs ys hys
-                    (fun z hz' b hb => hfg z (by simp [hz']) b hb)]
+              rw [optMmapEqSomeHelper f g xs ys ⟨hys,
+                    (fun z hz' b hb => hfg z (by simp [hz']) b hb)⟩]
               rfl
 
 /-- Exact port of Cake's `not_mem_map_flat` (`panPropsScript.sml:1035-1039`):
@@ -1762,8 +1765,6 @@ mutual
         rw [panIsWfShapeValueHOL_toHOL context value,
           panIsWfShapeValuesHOL_mapSnd_toHOL context fields]
 end
-
-/-! HOL `fdoms_eq_flookup_some_none` remains to be ported over finite maps. -/
 
 /-- HOL `OPT_MMAP_MEM_IMP` (`panPropsScript.sml:115`): if `OPT_MMAP f xs` succeeds
     with `ys`, every element of `ys` is the image under `f` of an element of `xs`.

@@ -1,0 +1,5 @@
+validMultSym_def_typed=∀(s :string). validMultSym s ⇔ "/" ≼ s ∨ "*" ≼ s ∨ "%" ≼ s ∨ "&" ≼ s
+validAddSym_def_typed=∀(s :string). validAddSym s ⇔ s ≠ ("" :string) ∧ HD s ∈ {#"+"; #"-"; #"^"} ∨ (2 :num) ≤ STRLEN s ∧ HD s = #"|"
+validRelSym_def_typed=∀(s :string). validRelSym s ⇔ "<" ≼ s ∨ ">" ≼ s ∨ (2 :num) ≤ STRLEN s ∧ ("=" ≼ s ∨ "~" ≼ s)
+validListSym_def_typed=∀(s :string). validListSym s ⇔ "@" ≼ s ∨ ":" ≼ s ∧ (2 :num) ≤ STRLEN s ∧ s ≠ ":="
+validPrefixSym_def_typed=∀(s :string). validPrefixSym s ⇔ s = "~" ∨ "!" ≼ s ∨ "?" ≼ s

@@ -353,6 +353,8 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorFree
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorHeap
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Correct.ConstructorSetup
 import Flapjack.Compiler.Backend.Semantics.DataProps.ResourceCall
+import Flapjack.Compiler.Backend.Semantics.DataProps.OptionLemmas
+import Flapjack.Compiler.Backend.Semantics.DataProps.InitialStateLaws
 import Flapjack.Compiler.Backend.Semantics.DataProps.ApplyConst
 import Flapjack.Compiler.Backend.Semantics.DataProps.ApplyErrors
 import Flapjack.Compiler.Backend.Semantics.DataProps.HeapSwap
@@ -2082,6 +2084,7 @@ import Flapjack.Compiler.Backend.LabToTarget.SectionLookupPositions
 import Flapjack.Compiler.Backend.LabToTarget.InitialEncodingNavigation
 import Flapjack.Compiler.Backend.LabToTarget.SectionLookupPreservation
 import Flapjack.Compiler.Backend.LabProps.LabelExtractionValidity
+import Flapjack.Compiler.Backend.LabProps.LabelExtraction
 import Flapjack.Misc.Words.Formatting
 import Flapjack.Misc.Words.Replicate
 import Flapjack.Misc.Words.Log2
@@ -2956,6 +2959,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Seq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ReadsLiveExpressions
 import Flapjack.Compiler.Backend.LabSem.Navigation
 import Flapjack.Compiler.Backend.LabProps.SectionEnd
+import Flapjack.Compiler.Backend.LabProps.StateUpdates
 import Flapjack.Compiler.Backend.LabSem.Updates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CheckPartialCol
 import Flapjack.Misc.Sptree.InsertUnchanged
@@ -3367,6 +3371,7 @@ import Flapjack.SemanticsProps.Clock
 import Flapjack.SemanticsProps.Determinism
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.BackendCommon
+import Flapjack.Compiler.Backend.BackendCommon.StubParity
 import Flapjack.Compiler.Backend.Semantics.WordSem
 import Flapjack.Compiler.Backend.Semantics.WordSem.State
 import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
@@ -3563,6 +3568,7 @@ import Flapjack.Pancake.Semantics.PanProps.MemByteArray
 import Flapjack.Pancake.Semantics.PanSem.ShMemExact
 import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
 import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+import Flapjack.Pancake.Semantics.PanProps.FiniteMapDomain
 import Flapjack.Pancake.Semantics.PanProps.EvaluateResultInvariant
 import Flapjack.Pancake.Semantics.PanProps.LocalisedExpSimps
 import Flapjack.Pancake.Semantics.PanProps.NamelessExpSimps

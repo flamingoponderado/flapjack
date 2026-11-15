@@ -7,7 +7,9 @@ and `AGENTS.md`).  This script checks, without running Lean, that
 
 * the cited file exists in the `cakeml` submodule or the explicitly allowed
   byte-pinned HOL4 snapshot (including its retained license), and
-* a HOL declaration with exactly that name is declared in that file; when
+* a HOL declaration with exactly that name is declared in that file, outside
+  any SML comment (comments nest, and ``(*`` inside a string literal does not
+  start one; a name that appears only inside a comment is rejected); when
   the name is duplicated, the tag must cite a matching source line
   (`Theorem`, `Triviality`, `Definition`, `Datatype`, `Inductive`,
   `CoInductive`, `Overload`, `Type`, an SML-level `val name = ...`, or the
@@ -5227,7 +5229,9 @@ DATA_TO_WORD_SCRIPT = "cakeml/compiler/backend/data_to_wordScript.sml"
 DATA_TO_WORD_SCRIPT_SHA256 = "7652bdbae271202f216ef97fa925dc4ca7eb11790ccc270c20ec3b649399f2fc"
 
 
-def data_to_word_assign_declarations(path: Path, source: str) -> list[tuple[str, int]]:
+def data_to_word_assign_declarations(
+    path: Path, source: str, live_source: str | None = None
+) -> list[tuple[str, int]]:
     """Index Define-generated assign definitions in the reviewed pinned script.
 
     assign_Define calls Define, which saves the quoted constant's definition
@@ -5239,23 +5243,80 @@ def data_to_word_assign_declarations(path: Path, source: str) -> list[tuple[str,
         return []
     if hashlib.sha256(source.encode()).hexdigest() != DATA_TO_WORD_SCRIPT_SHA256:
         return []
-    bindings = re.finditer(
-        r"^val def = assign_Define `\s*(assign_[A-Za-z0-9_']+)\b[^`]*?`\s*;",
-        source, re.M | re.S)
+    pattern = r"^val def = assign_Define `\s*(assign_[A-Za-z0-9_']+)\b[^`]*?`\s*;"
+    bindings = list(re.finditer(pattern, source, re.M | re.S))
+    # Keep only bindings that are live (not inside an SML comment): comment
+    # blanking preserves offsets, so the same match must start in live text.
+    live = source if live_source is None else live_source
+    live_starts = {match.start() for match in re.finditer(pattern, live, re.M | re.S)}
     return [(match.group(1) + "_def", source.count("\n", 0, match.start()) + 1)
-            for match in bindings]
+            for match in bindings if match.start() in live_starts]
 
 
-def pansem_eval_ind_declaration(path: Path, source: str) -> int | None:
+def pansem_eval_ind_declaration(
+    path: Path, source: str, live_source: str | None = None
+) -> int | None:
     if path.parts[-4:] != tuple(PANSEM_EVAL_IND_PATH.split("/")):
         return None
-    blocks = list(re.finditer(r"^Definition eval_def:\n.*?^End\b", source, re.M | re.S))
+    pattern = r"^Definition eval_def:\n.*?^End\b"
+    blocks = list(re.finditer(pattern, source, re.M | re.S))
     if len(blocks) != 1:
         return None
     block = blocks[0]
+    live = source if live_source is None else live_source
+    if block.start() not in {match.start() for match in re.finditer(pattern, live, re.M | re.S)}:
+        return None
     if hashlib.sha256(block.group().encode()).hexdigest() != PANSEM_EVAL_DEF_SHA256:
         return None
     return source.count("\n", 0, block.start()) + 1
+
+
+def strip_sml_comments(text: str) -> str:
+    """Blank nested SML comments while preserving every newline.
+
+    SML comments nest, and a ``(*`` inside a string or character literal does
+    not start one.  Inside a comment no string literal is lexed specially, so
+    a ``*)`` there closes the innermost comment.  Comment characters become
+    spaces (newlines are kept), which leaves line numbers and the surrounding
+    live source unchanged for the declaration scan.
+    """
+    out = list(text)
+    index = 0
+    length = len(text)
+    depth = 0
+    while index < length:
+        if depth:
+            if text.startswith("(*", index):
+                depth += 1
+                out[index] = out[index + 1] = " "
+                index += 2
+            elif text.startswith("*)", index):
+                depth -= 1
+                out[index] = out[index + 1] = " "
+                index += 2
+            else:
+                if text[index] != "\n":
+                    out[index] = " "
+                index += 1
+            continue
+        if text.startswith("(*", index):
+            depth = 1
+            out[index] = out[index + 1] = " "
+            index += 2
+            continue
+        if text[index] == '"':
+            index += 1
+            while index < length:
+                if text[index] == "\\":
+                    index += 2
+                    continue
+                if text[index] == '"':
+                    index += 1
+                    break
+                index += 1
+            continue
+        index += 1
+    return "".join(out)
 
 
 def hol_declaration_lines(
@@ -5285,7 +5346,11 @@ def hol_declaration_lines(
         datatype_end = re.compile(r"^End\b")
         in_datatype = False
         pending_datatype_name: tuple[str, int] | None = None
-        source_text = path.read_text(encoding="utf-8", errors="replace")
+        # A declaration that exists only inside an SML comment is not a HOL
+        # declaration; blank comments before scanning (line numbers preserved).
+        raw_text = path.read_text(encoding="utf-8", errors="replace")
+        source_text = strip_sml_comments(raw_text)
+        stripped_lines = source_text.splitlines()
         for number, line in enumerate(source_text.splitlines(keepends=True), start=1):
             if in_datatype:
                 if datatype_end.match(line):
@@ -5329,10 +5394,11 @@ def hol_declaration_lines(
                 names.setdefault(name, []).append(number)
         for carrier, _runner, number, _end in HOL_DEFINE_RUN(source_text):
             names.setdefault(carrier, []).append(number)
-        eval_ind_line = pansem_eval_ind_declaration(path, source_text)
+        eval_ind_line = pansem_eval_ind_declaration(path, raw_text, source_text)
         if eval_ind_line is not None:
             names.setdefault("eval_ind", []).append(eval_ind_line)
-        for name, number in data_to_word_assign_declarations(path, source_text):
+        for name, number in data_to_word_assign_declarations(
+                path, raw_text, source_text):
             names.setdefault(name, []).append(number)
         # `val NAME = fetch "-" "NAME";` re-binds the theorem the factory
         # generated under its own name; it is the same declaration, already

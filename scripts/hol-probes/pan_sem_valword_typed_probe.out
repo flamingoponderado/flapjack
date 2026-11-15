@@ -1,0 +1,1 @@
+ValWord_typed=λ(w :α word). Val (Word w :α word_lab)

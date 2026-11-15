@@ -1,0 +1,11 @@
+one_def_typed=∀(x :α). (one x :(α -> bool) -> bool) = (λ(s :α -> bool). s = {x})
+emp_def_typed=(emp :(α -> bool) -> bool) = (λ(s :α -> bool). s = (∅ :α -> bool))
+cond_def_typed=∀(c :bool). (cond c :(α -> bool) -> bool) = (λ(s :α -> bool). s = (∅ :α -> bool) ∧ c)
+SEP_EXISTS_typed=($SEP_EXISTS :(β -> (α -> bool) -> bool) -> (α -> bool) -> bool) = (λ(f :β -> (α -> bool) -> bool) (s :α -> bool). ∃(y :β). f y s)
+SPLIT_def_typed=∀(s :α -> bool) (u :α -> bool) (v :α -> bool). SPLIT s (u,v) ⇔ u ∪ v = s ∧ DISJOINT u v
+STAR_def_typed=∀(p :(α -> bool) -> bool) (q :(α -> bool) -> bool). p * q = (λ(s :α -> bool). ∃(u :α -> bool) (v :α -> bool). SPLIT s (u,v) ∧ p u ∧ q v)
+STAR_ASSOC_typed=∀(p :(α -> bool) -> bool) (q :(α -> bool) -> bool) (r :(α -> bool) -> bool). p * (q * r) = p * q * r
+STAR_COMM_typed=∀(p :(α -> bool) -> bool) (q :(α -> bool) -> bool). p * q = q * p
+fun2set_def_typed=∀(f :β -> α) (d :β -> bool). fun2set (f,d) = {(a,f a) | a ∈ d}
+fun2set_thm_typed=∀(f :β -> α) (d :β -> bool) (a :β) (x :α). fun2set (f,d) (a,x) ⇔ f a = x ∧ a ∈ d
+write_fun2set_typed=∀(y :α) (a :β) (x :α) (p :(β # α -> bool) -> bool) (f :β -> α). ((one (a,x) :(β # α -> bool) -> bool) * p) (fun2set (f,(d :β -> bool))) ⇒ (p * (one (a,y) :(β # α -> bool) -> bool)) (fun2set (f⦇a ↦ y⦈,d))

@@ -1,0 +1,1 @@
+heap_addresses_SNOC_typed=∀(xs :(α, β) heap_element list) (n :num) (x :(α, β) heap_element). heap_addresses n (xs ++ [x]) = heap_addresses n xs ∪ {heap_length xs + n}

@@ -1,0 +1,5 @@
+pop_env_stack_gc_typed=∀(s :(α, β, γ) state). pop_env s = SOME (s' :(α, β, γ) state) ⇒ s'.gc_fun = s.gc_fun
+lookup_FOLDR_delete_typed=∀(l :num list) (m :α sptree$num_map) (v :num) (w :α). lookup v (FOLDR (delete :num -> α sptree$num_map -> α sptree$num_map) m l) = SOME w ⇒ lookup v m = SOME w ∧ ¬MEM v l
+evaluate_try_if_hoist2_typed=∀(N :num) (p1 :α prog) (interm :α prog) (dummy :α prog) (p2 :α prog) (s :(α, β, γ) state). try_if_hoist2 N p1 interm dummy p2 = SOME (p3 :α prog) ⇒ gc_fun_const_ok s.gc_fun ⇒ evaluate (p3,s) = evaluate (Seq (Seq p1 interm) p2,s)
+evaluate_try_if_hoist1_typed=try_if_hoist1 (p1 :α prog) (p2 :α prog) = SOME (p3 :α prog) ⇒ gc_fun_const_ok (s :(α, β, γ) state).gc_fun ⇒ evaluate (p3,s) = evaluate (Seq p1 p2,s)
+push_out_if_aux_T_typed=∀(c2 :α prog) (c2' :α prog) (res :α result option) (s :(α, β, γ) state) (s' :(α, β, γ) state). push_out_if_aux c2 = (c2',T) ⇒ evaluate (c2,s) = (res,s') ⇒ res ≠ (NONE :α result option)

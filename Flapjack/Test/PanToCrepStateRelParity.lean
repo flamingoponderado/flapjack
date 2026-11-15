@@ -127,13 +127,12 @@ def skipCodeLookupGuard : Bool :=
     (lookupCrepRuntimeCode "id" [] skipCodeRuntime.code).isSome
 
 theorem stateRel_globals_fixture :
-    sourceState.globals = (FEMPTY : FiniteMap VarName (PanValue Nat)) :=
-  stateRel_globals sourceState targetState stateRel_satisfied
+    sourceState.globals = (FEMPTY : FiniteMap VarName (PanValue Nat)) := rfl
 
 theorem rejectsNonEmptyGlobals :
     ¬ stateRel nonEmptyGlobalsSourceState targetState := by
   intro hrel
-  have hglobals := stateRel_globals nonEmptyGlobalsSourceState targetState hrel
+  have hglobals := hrel.2.2.2.2.1
   have h0 := congrFun hglobals "x"
   simp [nonEmptyGlobalsSourceState, sourceState, FEMPTY] at h0
 

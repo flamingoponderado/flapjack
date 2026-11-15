@@ -1,0 +1,2 @@
+compile_crepop_def_typed=∀(target :architecture) (x :num) (y :num) (tmp :num) (l :β). (compile_crepop Mul target x y tmp l :α prog list # num) = if target = ARMv7 then ([(Arith (LLongMul tmp (tmp + (1 :num)) x y) :α prog)],tmp + (1 :num)) else ([(Arith (LLongMul tmp tmp x y) :α prog)],tmp)
+ocompile_def_typed=∀(ctxt :context) (l :sptree$num_set) (p :α crepLang$prog). ocompile ctxt l p = ((optimise :α prog -> α prog) ∘ (compile ctxt l :α crepLang$prog -> α prog)) p

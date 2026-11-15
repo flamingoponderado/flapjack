@@ -170,79 +170,21 @@ def crepHolSubmap {κ : Type} (s t : κ → Option β) : Prop :=
   ∀ n v, s n = some v → t n = some v
 
 
-/-! ## HOL-equality (`=`) forms of the `res_var` cluster
+/-! ## `res_var` cluster over the exact finite-support carrier
 
-FLAPJACK-SPECIFIC (not exact HOL ports).  The HOL declarations below quantify
-the key type freely and use propositional equality; `DecidableEq` is Lean's
-encoding of HOL `=`, so the `resVarHOL` forms below
-remove the `BEq`/`LawfulBEq` side conditions of the production forms.  They are
-still NOT exact HOL ports, because they quantify Lean's raw function carrier
-`FiniteMap α β := α → Option β` (`Flapjack/FiniteMap/Basic.lean:19`), which
-admits infinite-support inhabitants, whereas HOL `α |-> β` is finite-support.
-`DecidableEq` alone does not repair that: the statements still range over
-functions HOL cannot represent.  The faithful ports over
-`HolFiniteMapExact α β` (`Flapjack/Pancake/Semantics/CrepSem/HOLState.lean`)
-exist as the tagged `res_var_commutes_strong_exact`,
-`res_var_foldl_commutes_strong_exact`,
-`flookup_res_var_is_mem_zip_eq_exact` and
-`foldl_res_var_zip_lookup_var_exact` below.  The `_hol` declarations are the
-raw-carrier counterparts: `flookup_res_var_is_mem_zip_eq_exact` and
-`foldl_res_var_zip_lookup_var_exact` delegate to the matching `_hol` lemma at
-the raw lookup level, while the other two exact twins are proved directly over
-the carrier.  The `_hol` declarations stay untagged and keep their
-documented_mismatch rows because Proofs theorems require manifest coverage. -/
+The raw-carrier `res_var_commutes_strong_hol`, `res_var_foldl_commutes_strong_hol`,
+`flookup_res_var_is_mem_zip_eq_hol` and `foldl_res_var_zip_lookup_var_hol` are
+retired.  They quantified Lean's function carrier `FiniteMap α β := α → Option β`
+(`Flapjack/FiniteMap/Basic.lean:19`), which admits infinite-support inhabitants
+that HOL `α |-> β` cannot represent, and only this module and its parity test used
+them.  HOL `res_var_commutes_strong`, `res_var_foldl_commutes_strong`,
+`flookup_res_var_is_mem_zip_eq` and `FOLDL_res_var_ZIP_lookup_var`
+(`crep_inlineProofScript.sml:699/706/802/2661`) are carried by the tagged
+`*_exact` declarations below, stated over the canonical finite-support carrier
+`HolFiniteMapExact α β`
+(`Flapjack/Pancake/Semantics/CrepSem/HOLState.lean`) with its HOL-equality
+(`DecidableEq`) `resVarEq`. -/
 
-
-theorem res_var_commutes_strong_hol {α : Type} {β : Type} [DecidableEq α]
-    (lc lc' : FiniteMap α β) (n h : α) :
-    resVarHOL (resVarHOL lc (h, FLOOKUP lc' h)) (n, FLOOKUP lc' n) =
-      resVarHOL (resVarHOL lc (n, FLOOKUP lc' n)) (h, FLOOKUP lc' h) := by
-  by_cases hne : n = h
-  · subst hne
-    rfl
-  · exact resVarHOL_commutes lc lc' n h hne
-
-theorem res_var_foldl_commutes_strong_hol {α : Type} {β : Type} [DecidableEq α]
-    (h : α) (vs : List α) (lc1 lc2 : FiniteMap α β) :
-    resVarHOL ((vs.zip (vs.map (FLOOKUP lc2))).foldl resVarHOL lc1)
-        (h, FLOOKUP lc2 h) =
-      (vs.zip (vs.map (FLOOKUP lc2))).foldl resVarHOL
-        (resVarHOL lc1 (h, FLOOKUP lc2 h)) := by
-  induction vs generalizing lc1 with
-  | nil => simp
-  | cons v vs ih =>
-      simp only [List.map_cons, List.zip_cons_cons, List.foldl_cons]
-      rw [ih (resVarHOL lc1 (v, FLOOKUP lc2 v)),
-        (res_var_commutes_strong_hol lc1 lc2 v h).symm]
-
-theorem flookup_res_var_is_mem_zip_eq_hol {α : Type} {β : Type} [DecidableEq α]
-    (xs : List α) (x : α) (lc1 lc2 : FiniteMap α β) (hx : x ∈ xs) :
-    FLOOKUP ((xs.zip (xs.map (FLOOKUP lc2))).foldl resVarHOL lc1) x =
-      FLOOKUP lc2 x := by
-  induction xs with
-  | nil => simp at hx
-  | cons a as ih =>
-      simp only [List.map_cons, List.zip_cons_cons, List.foldl_cons]
-      rw [← res_var_foldl_commutes_strong_hol a as lc1 lc2, FLOOKUP_resVarHOL]
-      rcases List.mem_cons.mp hx with hxa | hxas
-      · subst hxa
-        simp
-      · by_cases hxea : x = a
-        · subst hxea
-          simp
-        · rw [if_neg hxea]
-          exact ih hxas
-
-theorem foldl_res_var_zip_lookup_var_hol {α : Type} {β : Type} [DecidableEq α]
-    (l l' l1 : FiniteMap α β) (ns : List α) (x : α) (v : β)
-    (hsub : crepHolSubmap ((ns.zip (ns.map (FLOOKUP l'))).foldl resVarHOL l) l1)
-    (hv : FLOOKUP l x = some v) (hx : x ∉ ns) :
-    FLOOKUP l1 x = some v := by
-  apply hsub x v
-  change FLOOKUP ((ns.zip (ns.map (FLOOKUP l'))).foldl resVarHOL l) x = some v
-  rw [FLOOKUP_foldl_resVarHOL_zip_not_mem ns (ns.map (FLOOKUP l')) l x
-    (by simp [List.length_map]) hx]
-  exact hv
 
 /-! ## Exact finite-support (`HolFiniteMapExact`) forms of the `SUBMAP` cluster
 
@@ -307,15 +249,14 @@ theorem submap_imp_domsub_fupdate_exact {κ : Type} {β : Type} [DecidableEq κ]
 
 /-! ## Exact finite-support (`HolFiniteMapExact`) forms of the `res_var` cluster
 
-The `_hol` statements above still quantify Lean's raw function carrier
-`FiniteMap α β := α → Option β`, which admits infinite-support inhabitants that
-HOL `α |-> β` cannot represent.  The declarations below state the same HOL
-clauses (`crep_inlineProofScript.sml:699/706/802/2661/2675`) over the canonical
+The declarations below state HOL's clauses
+(`crep_inlineProofScript.sml:699/706/802/2661/2675`) over the canonical
 finite-support carrier `HolFiniteMapExact` with its HOL-equality
 (`DecidableEq`) `resVarEq`, so they carry the exact HOL statements with no
-`BEq`/`LawfulBEq` side conditions.  The two bridges `resVarEq_lookup` and
-`foldl_resVarEq_lookup` are untagged Flapjack infrastructure: they only relate
-the exact carrier's lookup to HOL's raw `res_var` map operation. -/
+`BEq`/`LawfulBEq` side conditions and no raw infinite-support carrier.  The two
+bridges `resVarEq_lookup` and `foldl_resVarEq_lookup` are untagged Flapjack
+infrastructure: they only relate the exact carrier's lookup to HOL's raw
+`res_var` map operation. -/
 
 open HolFiniteMapExact
 
@@ -377,8 +318,22 @@ theorem flookup_res_var_is_mem_zip_eq_exact {α : Type} {β : Type} [DecidableEq
     (xs : List α) (x : α) (lc1 : HolFiniteMapExact α β) (lc2 : HolFiniteMapExact α β)
     (hx : x ∈ xs) :
     ((xs.zip (xs.map (fun y => lc2.lookup y))).foldl resVarEq lc1).lookup x = lc2.lookup x := by
-  rw [foldl_resVarEq_lookup]
-  exact flookup_res_var_is_mem_zip_eq_hol xs x lc1.lookup lc2.lookup hx
+  induction xs generalizing lc1 with
+  | nil => simp at hx
+  | cons a as ih =>
+      simp only [List.map_cons, List.zip_cons_cons, List.foldl_cons]
+      rw [← res_var_foldl_commutes_strong_exact a as lc1 lc2, resVarEq_lookup]
+      change FLOOKUP (resVarHOL ((as.zip (as.map (fun y => lc2.lookup y))).foldl
+        resVarEq lc1).lookup (a, lc2.lookup a)) x = lc2.lookup x
+      rw [FLOOKUP_resVarHOL]
+      rcases List.mem_cons.mp hx with hxa | hxas
+      · subst hxa
+        simp
+      · by_cases hxea : x = a
+        · subst hxea
+          simp
+        · rw [if_neg hxea]
+          exact ih lc1 hxas
 
 /-- HOL `FOLDL_res_var_ZIP_lookup_var` (`crep_inlineProofScript.sml:2661`) over
     the exact finite-support carrier. -/
@@ -390,8 +345,13 @@ theorem foldl_res_var_zip_lookup_var_exact {α : Type} {β : Type} [DecidableEq 
     (hsub : ((ns.zip (ns.map (fun y => l'.lookup y))).foldl resVarEq l).submap l1)
     (hv : l.lookup x = some v) (hx : x ∉ ns) :
     l1.lookup x = some v := by
-  exact foldl_res_var_zip_lookup_var_hol l.lookup l'.lookup l1.lookup ns x v
-    (fun n w hw => hsub n w (by rwa [foldl_resVarEq_lookup])) hv hx
+  apply hsub x v
+  rw [foldl_resVarEq_lookup]
+  change FLOOKUP (List.foldl resVarHOL l.lookup
+    (ns.zip (ns.map (fun y => l'.lookup y)))) x = some v
+  rw [FLOOKUP_foldl_resVarHOL_zip_not_mem ns (ns.map (fun y => l'.lookup y)) l.lookup x
+      (by simp [List.length_map]) hx]
+  exact hv
 
 /-- HOL `FOLDL_res_var_ZIP_lookup` (`crep_inlineProofScript.sml:2675`) over the
     exact finite-support carrier. -/

@@ -1,0 +1,2 @@
+enc_ok_not_empty_typed=enc_ok (c :α asm_config) ∧ asm_ok (w :α asm) c ⇒ c.encode w ≠ ([] :word8 list)
+shift_interfer_intro_typed=shift_interfer (k1 :num) (shift_interfer (k2 :num) (c :(α, β, γ) machine_config)) = shift_interfer (k1 + k2) c
