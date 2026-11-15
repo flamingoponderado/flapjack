@@ -298,4 +298,47 @@ theorem rewrite_scan_expr (loc next : Nat) (assoc : AssocOp) (acc : Nat)
     subst op
     exact invariant.2 selected
 
+/-- A selected operation has a successful accumulator check. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "scan_expr_check_op"]
+theorem scanExpr_checkOp (ts : List ValueType) (loc : Nat) (op : ClosLang.Op)
+    (xs : List Bvi.Exp) (tt : List ValueType) (ty : ValueType) (r : Bool) (opr : AssocOp)
+    (scan : scanExpr ts loc [.op op xs] = [(tt, ty, r, some opr)]) :
+    (checkOp ts opr loc (.op op xs)).isSome = true := by
+  have choice : (scanSing ts loc (.op op xs)).2.2.2 = some opr := by
+    rw [scanExpr_single] at scan
+    have eq : scanSing ts loc (.op op xs) = (tt, ty, r, some opr) := by simpa using scan
+    rw [eq]
+  rw [scanSing_op_choice] at choice
+  split at choice
+  · simp at choice
+  · split at choice
+    · have same : fromOp op = opr := by simpa using choice
+      subst opr
+      assumption
+    · simp at choice
+
+/-- A selected accumulator represents the original operation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "scan_expr_op_same"]
+theorem scanExpr_opSame (ts : List ValueType) (loc : Nat) (op : ClosLang.Op)
+    (xs : List Bvi.Exp) (tt : List ValueType) (ty : ValueType) (r : Bool) (opr : AssocOp)
+    (scan : scanExpr ts loc [.op op xs] = [(tt, ty, r, some opr)]) :
+    op = toOp opr := by
+  have choice : (scanSing ts loc (.op op xs)).2.2.2 = some opr := by
+    rw [scanExpr_single] at scan
+    have eq : scanSing ts loc (.op op xs) = (tt, ty, r, some opr) := by simpa using scan
+    rw [eq]
+  rw [scanSing_op_choice] at choice
+  split at choice
+  · simp at choice
+  · rename_i notNoop
+    split at choice
+    · have same : fromOp op = opr := by simpa using choice
+      subst opr
+      have recognized : fromOp op ≠ .noop := by
+        intro eq
+        rw [eq] at notNoop
+        exact notNoop rfl
+      exact (toOp_fromOp op recognized).symm
+    · simp at choice
+
 end Flapjack.Compiler.Backend.BviTailrec

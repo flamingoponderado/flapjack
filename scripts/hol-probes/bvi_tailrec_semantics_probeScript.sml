@@ -81,3 +81,5 @@ val code_rel_find_code_none_replay = Q.prove
    \\ CASE_TAC \\ fs [] \\ rw []
    \\ pairarg_tac \\ fs []);
 val _ = show_thm "code_rel_find_code_NONE_replay_typed=" code_rel_find_code_none_replay;
+val _ = show_thm "scan_expr_check_op_typed=" bvi_tailrecProofTheory.scan_expr_check_op;
+val _ = show_thm "scan_expr_op_same_typed=" bvi_tailrecProofTheory.scan_expr_op_same;
