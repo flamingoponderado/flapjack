@@ -128,7 +128,18 @@ theorem doApp_toOp_pure {C F : Type} (op : AssocOp) (args : List Value)
         | nil =>
           cases hx : valueToList x <;> cases hy : valueToList y <;> simp [hx, hy, BviSem.fromBvl_toBvl]
 
-/-- Successful accumulator dispatch preserves the input state. -/
+namespace DoAppToOpCarrier
+/-- The BVI reference-map carrier roundtrips through its finite-support view. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end DoAppToOpCarrier
+
+/-- Successful accumulator dispatch preserves the input state. The dispatcher
+inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "do_app_to_op_state"
+  (fmap_as_finite_support := [refs])]
 theorem doApp_toOp_state {C F : Type} (op : AssocOp) (args : List Value)
     (state next : BviSem.BviState C F) (result : Value)
     (run : BviSem.doApp (toOp op) args state = .val (result, next)) : next = state := by
@@ -1257,14 +1268,6 @@ theorem envRel_worker (op : AssocOp) (args : List Value) (value : Value)
     obtain ⟨values, decode⟩ := typed.2 rfl
     simp [envRel, opType, decode]
   | noop => contradiction
-
-namespace EvaluateLetWrapCarrier
-/-- The BVI reference-map carrier roundtrips through its finite-support view. -/
-theorem holFmapAsFiniteSupportWitness {C F : Type} :
-    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
-      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
-  BviSem.holFmapAsFiniteSupportWitness
-end EvaluateLetWrapCarrier
 
 /-- The wrapper evaluates its worker under the original arguments, followed
 by the accumulator identity and the original environment. Evaluation inherits

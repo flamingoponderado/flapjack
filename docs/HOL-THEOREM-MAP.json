@@ -24142,6 +24142,14 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "do_app_to_op_state",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/PrimitiveRelation.lean", "lean_name": "doApp_toOp_state",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared do_app_to_op_state_typed in bvi_tailrec_semantics_probe.out: arbitrary accumulator operation, argument list, initial and final BVI states and result value; a successful original dispatcher run implies the complete final state equals the initial state. Compiler and FFI payload types are independent, refs uses the canonical finite-support state carrier with a same-module roundtrip witness, and the dispatcher inherits reals_as_rational_cuts as documented in SOUNDNESS item 8."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "code_rel_union",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "codeRel_union",
     "statement_status": "reviewed_exact",
