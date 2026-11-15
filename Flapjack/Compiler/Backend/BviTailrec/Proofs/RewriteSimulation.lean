@@ -175,8 +175,7 @@ theorem rewriteTailPropertyThrough_mono {C F : Type} {xs : List Bvi.Exp} {lower 
 
 /-- Well-founded induction for the rewrite simulation: structural recursion
 stays within the current clock bound, and arbitrary expressions may be used
-at a strictly smaller bound. The step itself remains to be established for all
-expression cases; this helper is not the HOL correctness theorem. -/
+at a strictly smaller bound. This Flapjack helper supports the closed simulation. -/
 theorem rewriteTailProperty_of_bounded_step {C F : Type}
     (step : ∀ limit xs,
       (∀ ys, sizeOf ys < sizeOf xs → rewriteTailPropertyThrough (C := C) (F := F) limit ys) →
@@ -3964,14 +3963,8 @@ theorem rewriteTail_singleton_through {C F : Type} (limit : Nat) (e : Bvi.Exp)
     exact rewriteTail_return_through limit args (structuralIH args (by simp_wf; omega))
       source env1 result sourceNext optimized target acc env2 loc ts ty clockBound hyp
 
-/-- The complete rewrite simulation follows from the bounded operation case.
-The operation premise is still open; this reduction is not a HOL theorem port. -/
-theorem rewriteTailProperty_of_op_through {C F : Type}
-    (opStep : ∀ limit operation args,
-      (∀ xs, sizeOf xs < sizeOf [Bvi.Exp.op operation args] →
-        rewriteTailPropertyThrough (C := C) (F := F) limit xs) →
-      (∀ smaller, smaller < limit → ∀ xs, rewriteTailPropertyThrough (C := C) (F := F) smaller xs) →
-      rewriteTailPropertyThrough (C := C) (F := F) limit [.op operation args]) :
+/-- The rewrite simulation follows by induction on source clock and expression size. -/
+theorem rewriteTailProperty_all {C F : Type} :
     ∀ xs, rewriteTailProperty (C := C) (F := F) xs := by
   apply rewriteTailProperty_of_bounded_step
   intro limit xs structuralIH clockIH
@@ -3980,45 +3973,15 @@ theorem rewriteTailProperty_of_op_through {C F : Type}
   apply rewriteTail_singleton_through limit e singletonIH clockIH
   intro operation args opEq
   subst e
-  exact opStep limit operation args singletonIH clockIH
-
-/-- The rewrite simulation reduces to bounded integer and block operation
-steps. Both premises are outstanding; this is not a HOL theorem port. -/
-theorem rewriteTailProperty_of_int_block_through {C F : Type}
-    (intStep : ∀ limit op args,
-      (∀ xs, sizeOf xs < sizeOf [Bvi.Exp.op (.intOp op) args] →
-        rewriteTailPropertyThrough (C := C) (F := F) limit xs) →
-      (∀ smaller, smaller < limit → ∀ xs, rewriteTailPropertyThrough (C := C) (F := F) smaller xs) →
-      rewriteTailPropertyThrough (C := C) (F := F) limit [.op (.intOp op) args])
-    (blockStep : ∀ limit op args,
-      (∀ xs, sizeOf xs < sizeOf [Bvi.Exp.op (.blockOp op) args] →
-        rewriteTailPropertyThrough (C := C) (F := F) limit xs) →
-      (∀ smaller, smaller < limit → ∀ xs, rewriteTailPropertyThrough (C := C) (F := F) smaller xs) →
-      rewriteTailPropertyThrough (C := C) (F := F) limit [.op (.blockOp op) args]) :
-    ∀ xs, rewriteTailProperty (C := C) (F := F) xs := by
-  apply rewriteTailProperty_of_op_through
-  intro limit operation args structuralIH clockIH
-  apply rewriteTail_op_through_of_int_block limit operation args structuralIH
-  · intro op eq
-    subst operation
-    exact intStep limit op args structuralIH clockIH
-  · intro op eq
-    subst operation
-    exact blockStep limit op args structuralIH clockIH
-
-/-- The rewrite simulation follows by induction on the source clock and
-expression size. This Flapjack formulation still requires comparison with
-the complete HOL theorem statement before it can be tagged as its port. -/
-theorem rewriteTailProperty_all {C F : Type} :
-    ∀ xs, rewriteTailProperty (C := C) (F := F) xs := by
-  apply rewriteTailProperty_of_int_block_through
-  all_goals intro limit op args structuralIH clockIH
+  apply rewriteTail_op_through_of_int_block limit operation args singletonIH
+  all_goals intro op eq
+  all_goals subst operation
   all_goals intro source env1 result sourceNext optimized target acc env2 loc ts ty clockBound hyp
   all_goals first
     | apply rewriteTail_op_intOp_of_size_through limit op args source env1 result sourceNext optimized target
-        acc env2 loc ts ty structuralIH ?_ clockBound hyp
+        acc env2 loc ts ty singletonIH ?_ clockBound hyp
     | apply rewriteTail_op_blockOp_of_size_through limit op args source env1 result sourceNext optimized target
-        acc env2 loc ts ty structuralIH ?_ clockBound hyp
+        acc env2 loc ts ty singletonIH ?_ clockBound hyp
   all_goals
     intro body called values r last smaller opt target' acc' env2' loc' ts' ty' h
     exact clockIH called.clock (by omega) [body] called values r last opt target' acc' env2' loc' ts' ty'
@@ -4098,13 +4061,6 @@ theorem transformCompiler_eq_stateCc {C : Type} (compiler : BviSem.Compiler C) :
       rcases output with ⟨bytes, data, config'⟩
       simp [transformCompiler, BackendProps.stateCc, h, hcompiler]
 
-namespace EvaluateCompileEachCarrier
-/-- The BVI reference-map carrier roundtrips through its finite-support view. -/
-theorem holFmapAsFiniteSupportWitness {C F : Type} :
-    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
-      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
-  BviSem.holFmapAsFiniteSupportWitness
-end EvaluateCompileEachCarrier
 
 /-- Evaluation of the initial call is preserved by compiling every function.
 The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
