@@ -4012,28 +4012,63 @@ theorem initialState_compileEach_related {C F : Type}
   intro n ⟨member, worker⟩
   exact workerBound n ((sptFromAList_mem_iff _ n).mp member) worker
 
+/-- The tail-recursion oracle adapter is the standard incremental-pass
+oracle adapter. -/
+theorem transformOracle_eq_stateCo {C : Type} (oracle : BviSem.CompileOracle (Nat × C)) :
+    transformOracle oracle = BackendProps.stateCo compileEachSource oracle := by
+  funext index
+  cases h : oracle index with
+  | mk config program => cases config; rfl
+
+/-- The tail-recursion callback is the standard incremental-pass callback. -/
+theorem transformCompiler_eq_stateCc {C : Type} (compiler : BviSem.Compiler C) :
+    transformCompiler compiler = BackendProps.stateCc compileEachSource compiler := by
+  funext config program
+  rcases config with ⟨next, config⟩
+  cases h : compileEachSource next program with
+  | mk next' compiled =>
+    cases hcompiler : compiler config compiled with
+    | none => simp [transformCompiler, BackendProps.stateCc, h, hcompiler]
+    | some output =>
+      rcases output with ⟨bytes, data, config'⟩
+      simp [transformCompiler, BackendProps.stateCc, h, hcompiler]
+
+namespace EvaluateCompileEachCarrier
+/-- The BVI reference-map carrier roundtrips through its finite-support view. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end EvaluateCompileEachCarrier
+
 /-- Evaluation of the initial call is preserved by compiling every function.
-This source-shaped theorem remains untagged pending review of the BVI
-evaluator and the pass's state and code representations against HOL. -/
+The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "evaluate_compile_each"
+  (fmap_as_finite_support := [refs])]
 theorem evaluateCompileEach {C F : Type}
-    (next : Nat) (program : List (Nat × Nat × Bvi.Exp)) (ffi : HolFfiState F)
-    (oracle : BviSem.CompileOracle (Nat × C)) (compiler : BviSem.Compiler C) (clock start : Nat)
+    (next : Nat) (program : List (Nat × Nat × Bvi.Exp))
+    (oracle : BviSem.CompileOracle (Nat × C)) (start : Nat) (ffi : HolFfiState F)
+    (compiler : BviSem.Compiler C) (clock : Nat)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
-    (condition : inputCondition next program)
-    (oracleCondition : ∀ n, inputCondition (oracle n).1.1 (oracle n).2)
-    (workerBound : ∀ n, n ∈ (compileEachSource next program).2.map Prod.fst →
-      inWorkerNamespace n → n < (oracle 0).1.1)
-    (run : BviSem.evaluate [.call 0 (some start) [] none] []
-      (BviSem.initialState ffi (sptFromAList program) oracle (transformCompiler compiler) clock) =
-      (result, sourceNext))
-    (notTypeError : result ≠ .err (.abort .typeError)) :
-    ∃ targetNext,
+    (premises : inputCondition next program ∧
+      (∀ n next cfg prog, oracle n = ((next, cfg), prog) → inputCondition next prog) ∧
+      (∀ n, n ∈ (compileEachSource next program).2.map Prod.fst ∧
+        inWorkerNamespace n → n < (oracle 0).1.1) ∧
+      BviSem.evaluate [.call 0 (some start) [] none] []
+        (BviSem.initialState ffi (sptFromAList program) oracle
+          (BackendProps.stateCc compileEachSource compiler) clock) = (result, sourceNext) ∧
+      result ≠ .err (.abort .typeError)) :
+    ∃ targetNext : BviSem.BviState C F,
       BviSem.evaluate [.call 0 (some start) [] none] []
         (BviSem.initialState ffi (sptFromAList (compileEachSource next program).2)
-          (transformOracle oracle) compiler clock) = (result, targetNext) ∧
+          (BackendProps.stateCo compileEachSource oracle) compiler clock) = (result, targetNext) ∧
       stateRel sourceNext targetNext := by
+  obtain ⟨condition, oracleCondition, workerBound, run, notTypeError⟩ := premises
+  rw [← transformCompiler_eq_stateCc] at run
+  rw [← transformOracle_eq_stateCo]
   have related := initialState_compileEach_related next program ffi oracle compiler clock
-    condition oracleCondition workerBound
+    condition (fun n => oracleCondition n _ _ _ rfl)
+    (fun n member inNamespace => workerBound n ⟨member, inNamespace⟩)
   have simulation := rewriteTailProperty_all (C := C) (F := F) [.call 0 (some start) [] none]
     (BviSem.initialState ffi (sptFromAList program) oracle (transformCompiler compiler) clock)
     [] result sourceNext false
@@ -4067,8 +4102,12 @@ theorem compileEach_initial_observations {C F : Type}
       (BviSem.initialState ffi (sptFromAList program) oracle (transformCompiler compiler) clock) with
   | mk result sourceNext =>
     have notType : result ≠ .err (.abort .typeError) := by simpa [BviSem.evaluateTuple, run] using noType
-    obtain ⟨targetNext, targetRun, related⟩ := evaluateCompileEach next program ffi oracle compiler clock start
-      result sourceNext condition oracleCondition workerBound run notType
+    have sourceRun := run
+    rw [transformCompiler_eq_stateCc] at sourceRun
+    obtain ⟨targetNext, targetRun, related⟩ := evaluateCompileEach next program oracle start ffi compiler clock
+      result sourceNext ⟨condition, (by intro n n' cfg prog h; simpa only [h] using oracleCondition n),
+        (by intro n h; exact workerBound n h.1 h.2), sourceRun, notType⟩
+    rw [← transformOracle_eq_stateCo] at targetRun
     have ffiEqual := (stateRel_const sourceNext targetNext related).2.2.2
     simp [targetRun, ffiEqual]
 
@@ -4157,27 +4196,6 @@ theorem semantics_eq_of_initial_projections {C D F : Type} (ffi : HolFfiState F)
         by rw [(same clock).2]; exact trace⟩
   unfold BviSem.semantics
   simp_rw [sameResult, sameTrace, sameObservation]
-
-/-- The tail-recursion oracle adapter is the standard incremental-pass
-oracle adapter. -/
-theorem transformOracle_eq_stateCo {C : Type} (oracle : BviSem.CompileOracle (Nat × C)) :
-    transformOracle oracle = BackendProps.stateCo compileEachSource oracle := by
-  funext index
-  cases h : oracle index with
-  | mk config program => cases config; rfl
-
-/-- The tail-recursion callback is the standard incremental-pass callback. -/
-theorem transformCompiler_eq_stateCc {C : Type} (compiler : BviSem.Compiler C) :
-    transformCompiler compiler = BackendProps.stateCc compileEachSource compiler := by
-  funext config program
-  rcases config with ⟨next, config⟩
-  cases h : compileEachSource next program with
-  | mk next' compiled =>
-    cases hcompiler : compiler config compiled with
-    | none => simp [transformCompiler, BackendProps.stateCc, h, hcompiler]
-    | some output =>
-      rcases output with ⟨bytes, data, config'⟩
-      simp [transformCompiler, BackendProps.stateCc, h, hcompiler]
 
 /-- Compiling each function preserves whole-program BVI behavior when the
 source does not fail. Semantics inherit the real-model assumption in SOUNDNESS

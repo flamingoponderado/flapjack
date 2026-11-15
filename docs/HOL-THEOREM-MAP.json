@@ -24142,6 +24142,14 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "evaluate_compile_each",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteSimulation.lean", "lean_name": "evaluateCompileEach",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the typed original evaluate_compile_each_typed in bvi_tailrec_semantics_probe.out: original input and oracle conditions, worker bound, complete source evaluation and non-type-error premises imply the existential target state, identical result and complete state relation. Source and target states instantiate the reviewed BviState carrier at compiler types Nat × C and C, with independent compiler payload C and FFI payload F; refs uses canonical finite support, witnessed by the same-module BviState/BviStateBroad roundtrip, while code remains an Spt. Evaluation inherits reals_as_rational_cuts as documented in SOUNDNESS item 8."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "compile_each_semantics",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteSimulation.lean", "lean_name": "compileEach_semantics",
     "statement_status": "reviewed_exact",
