@@ -24245,6 +24245,21 @@
     "reviewer": "Compared compile_prog_MEM_typed in bvi_tailrec_semantics_probe.out: arbitrary enabled flag, compilation pair and output-label membership retain both complete original-label and fresh-interval alternatives with the same namespace-stride witness."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "EVERY_free_names_SUCSUC",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "everyFreeNames_advance", "statement_status": "reviewed_exact",
+    "reviewer": "Compared EVERY_free_names_SUCSUC_replay_typed in bvi_tailrec_semantics_probe.out, replaying the original local HOL proof: every name in an arbitrary-payload pair list remains free after one namespace increment."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "EVERY_free_names_thm",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "everyFreeNames_lookup", "statement_status": "reviewed_exact",
+    "reviewer": "Compared EVERY_free_names_thm_replay_typed in bvi_tailrec_semantics_probe.out, replaying the original local HOL proof: successful first-match tree lookup in an arbitrary-payload pair list inherits freedom, without a distinctness assumption."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "compile_each_intro",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "compileEachSource_intro", "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_each_intro_replay_typed in bvi_tailrec_semantics_probe.out, replaying the original local HOL proof: original absence, freedom and complete compilation equation imply both output absence and freedom at the resulting location."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "compile_exp_next_addr",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "compileExpSource_none_next", "statement_status": "reviewed_exact",
     "reviewer": "Compared compile_exp_next_addr_replay_typed in bvi_tailrec_semantics_probe.out, replaying the original local HOL proof: failed expression compilation stays failed after advancing the worker namespace; arity is a natural number."

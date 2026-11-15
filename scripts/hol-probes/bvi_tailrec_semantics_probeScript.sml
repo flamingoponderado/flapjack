@@ -129,3 +129,33 @@ val check_exp_SOME_compile_exp_replay = Q.prove
    fs [bvi_tailrecTheory.compile_exp_def, bvi_tailrecTheory.check_exp_def]
    \\ rw [] \\ rw [] \\ pairarg_tac \\ fs []);
 val _ = show_thm "check_exp_SOME_compile_exp_replay_typed=" check_exp_SOME_compile_exp_replay;
+val EVERY_free_names_SUCSUC_replay = Q.prove
+  (`∀xs. EVERY (free_names n o FST) xs ⇒
+      EVERY (free_names (n + bvl_to_bvi_namespaces) o FST) xs`,
+   Induct \\ strip_tac \\ fs [] \\ strip_tac \\ imp_res_tac more_free_names_replay);
+val _ = show_thm "EVERY_free_names_SUCSUC_replay_typed=" EVERY_free_names_SUCSUC_replay;
+val EVERY_free_names_thm_replay = Q.prove
+  (`EVERY (free_names next o FST) prog ∧ lookup loc (fromAList prog) = SOME x ⇒
+      free_names next loc`,
+   rw [sptreeTheory.lookup_fromAList, EVERY_MEM]
+   \\ imp_res_tac ALOOKUP_MEM
+   \\ first_x_assum (qspec_then `(loc, x)` mp_tac) \\ rw []);
+val _ = show_thm "EVERY_free_names_thm_replay_typed=" EVERY_free_names_thm_replay;
+val compile_each_intro_replay = Q.prove
+  (`∀xs n ys n1 name.
+      ¬MEM name (MAP FST xs) ∧ free_names n name ∧
+      compile_each n xs = (n1, ys) ⇒
+        ¬MEM name (MAP FST ys) ∧ free_names n1 name`,
+   Induct
+   >- fs [bvi_tailrecTheory.compile_each_def]
+   \\ gen_tac
+   \\ PairCases_on `h`
+   \\ rpt gen_tac
+   \\ simp [bvi_tailrecTheory.compile_each_def]
+   \\ rpt (pairarg_tac \\ fs [])
+   \\ PURE_TOP_CASE_TAC \\ fs []
+   >- (rpt strip_tac \\ rveq \\ fs [] \\ metis_tac [])
+   \\ PURE_CASE_TAC \\ fs []
+   \\ rpt strip_tac \\ rveq \\ fs []
+   \\ metis_tac [is_free_name_replay, more_free_names_replay]);
+val _ = show_thm "compile_each_intro_replay_typed=" compile_each_intro_replay;

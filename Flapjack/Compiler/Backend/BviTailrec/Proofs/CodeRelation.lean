@@ -382,6 +382,37 @@ theorem compileEachSource_avoids_free (next name : Nat) (code : List (Nat × Nat
   · apply free k
     simpa [Nat.mul_comm] using eq.symm
 
+/-- Advancing the worker namespace preserves freedom for every list entry. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "EVERY_free_names_SUCSUC"]
+theorem everyFreeNames_advance {α : Type} (n : Nat) (xs : List (Nat × α))
+    (free : xs.Forall (fun entry => freeNames n entry.1)) :
+    xs.Forall (fun entry => freeNames (n + Flapjack.bvlToBviNamespaces) entry.1) := by
+  exact free.imp (fun _ h => freeNames_advance_one n _ h)
+
+/-- A successful first-match lookup inherits freedom from its input list. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "EVERY_free_names_thm"]
+theorem everyFreeNames_lookup {α : Type} (next : Nat) (prog : List (Nat × α))
+    (loc : Nat) (x : α)
+    (premises : prog.Forall (fun entry => freeNames next entry.1) ∧
+      sptLookup loc (sptFromAList prog) = some x) : freeNames next loc := by
+  have member : (loc, x) ∈ prog :=
+    sptAListLookup_mem loc prog x (by simpa [sptLookup_sptFromAList] using premises.2)
+  exact (List.forall_iff_forall_mem.mp premises.1) (loc, x) member
+
+/-- Compilation neither introduces a free absent name nor consumes its
+freedom at the next worker location. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_each_intro"]
+theorem compileEachSource_intro (xs : List (Nat × Nat × Bvi.Exp)) (n : Nat)
+    (ys : List (Nat × Nat × Bvi.Exp)) (n1 name : Nat)
+    (premises : name ∉ xs.map Prod.fst ∧ freeNames n name ∧
+      compileEachSource n xs = (n1, ys)) :
+    name ∉ ys.map Prod.fst ∧ freeNames n1 name := by
+  obtain ⟨absent, free, compiled⟩ := premises
+  have avoid := compileEachSource_avoids_free n name xs free absent
+  have preserved := compileEachSource_preserves_free n name xs free
+  rw [compiled] at avoid preserved
+  exact ⟨avoid, preserved⟩
+
 /-- Any label below the next worker is free. -/
 theorem freeNames_of_lt (next name : Nat) (bound : name < next) : freeNames next name := by
   intro k eq
