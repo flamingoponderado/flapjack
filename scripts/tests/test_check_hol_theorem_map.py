@@ -964,6 +964,26 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             MAP["tagged_declarations"](),
         )
 
+    def test_eval_nested_decs_crep_hol_mirror_is_retired(self):
+        # The Flapjack-shaped curried form is gone; HOL
+        # eval_nested_decs_seq_res_var_eq is mapped by the tagged
+        # evalNestedDecsSeqResVarEqHOL with HOL's single conjunctive premise.
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        self.assertNotIn(
+            ("Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+             "evalNestedDecsSeqResVarEqCrepHOL"),
+            inventory,
+        )
+        key = ("Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+               "evalNestedDecsSeqResVarEqHOL")
+        record = inventory[key]
+        self.assertEqual(record["hol_name"], "eval_nested_decs_seq_res_var_eq")
+        self.assertNotEqual(record["statement_status"], "documented_mismatch")
+        self.assertIn(key, MAP["tagged_declarations"]())
+
     def test_stack_size_eq2_mismatch_is_retired(self):
         # The unused width-specialized stack_size_eq2 analogue is gone; HOL
         # stack_size_eq2 has no exact Lean port (independent frame types), and
