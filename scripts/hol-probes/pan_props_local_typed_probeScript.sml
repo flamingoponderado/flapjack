@@ -400,5 +400,6 @@ val _ = capture "evaluate_structs_invariant_typed" "evaluate_structs_invariant";
 val _ = capture "list_rel_length_shape_of_flatten_better_typed" "list_rel_length_shape_of_flatten_better";
 (* is_wf_shape_nil: replay of the source term *)
 val _ = term_label "is_wf_shape_nil_typed" ((let val f = ``is_wf_shape : (mlstring # struct_info) list -> shape -> bool`` val _ = Parse.clear_overloads_on "is_wf_shape_nil" in Term.mk_comb (f, structs_nil_v) end));
+val _ = emit_exported "fdoms_eq_flookup_some_none_typed" "fdoms_eq_flookup_some_none";
 (* is_wf_shape_v_nil: replay of the source term *)
 val _ = term_label "is_wf_shape_v_nil_typed" ((let val f = ``is_wf_shape_v : (mlstring # struct_info) list -> α v -> bool`` val _ = Parse.clear_overloads_on "is_wf_shape_v_nil" in Term.mk_comb (f, structs_nil_v) end));
