@@ -16,8 +16,8 @@ the CakeML translator, and its equation with the tagged `st_ex_MAP`
 SML comment at line 1148 and closes it only at the final `*)` of the file, so
 neither definition reaches `linear_scanTheory` and a theory-DB lookup fails.
 The declarations therefore carry no `@[hol]` tag: they are Flapjack
-infrastructure ported from commented-out source text, and their tags were
-withdrawn under task 188. The executed allocator is unchanged.
+infrastructure ported from commented-out source text, and their `@[hol]` tags
+were withdrawn. The executed allocator is unchanged.
 -/
 
 namespace Flapjack.LinearScan

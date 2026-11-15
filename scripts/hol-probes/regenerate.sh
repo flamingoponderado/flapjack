@@ -12073,3 +12073,20 @@ run_probe data_props_local_typed_probeScript.sml data_props_local_typed_probe.ou
   cut_state_opt_swap_input_typed evaluate_fl_smx_safe_peak_swap_aux_typed \
   "$cake_dir/compiler/backend/semantics/dataPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
+
+run_probe gram_defs_typed_probeScript.sml gram_defs_typed_probe.out \
+  validMultSym_def_typed validAddSym_def_typed validRelSym_def_typed \
+  validListSym_def_typed validPrefixSym_def_typed \
+  "$cake_dir/semantics/gramScript.sml" \
+  "$cake_dir/semantics"
+
+run_probe type_system_defs_typed_probeScript.sml type_system_defs_typed_probe.out \
+  tenv_abbrev_typed tenv_ctor_typed tenv_val_typed type_p_typed \
+  "$cake_dir/semantics/typeSystemScript.sml" \
+  "$cake_dir/semantics"
+
+run_probe semantics_props_defs_typed_probeScript.sml semantics_props_defs_typed_probe.out \
+  extend_with_resource_limit_prime_def_typed implements_prime_def_typed \
+  implements_prime_F_typed isPREFIX_IMP_LPREFIX_typed \
+  "$cake_dir/semantics/proofs/semanticsPropsScript.sml" \
+  "$cake_dir/semantics/proofs"

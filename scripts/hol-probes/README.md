@@ -10715,3 +10715,15 @@ helper; the last one's HOL false branch binds an unused `smx : γ`, which the
 Lean twin omits as a documented vacuous binder. Regenerate with
 `CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=data_props_local_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`gram_defs_typed_probe.out`, `type_system_defs_typed_probe.out` and
+`semantics_props_defs_typed_probe.out` (5+4+4 rows) capture the reviewed
+cakeml semantics rows that earlier probes did not cover (task 189):
+`validMultSym_def`, `validAddSym_def`, `validRelSym_def`, `validListSym_def`,
+`validPrefixSym_def` (gram); the `tenv_abbrev`, `tenv_ctor` and `tenv_val` Type
+abbreviations plus the `type_p` Inductive captured as its generated
+`type_p_rules` (typeSystem); and `extend_with_resource_limit'_def`,
+`implements'_def`, `implements'_F` and the `[local]` `isPREFIX_IMP_LPREFIX`
+(semanticsProps). Regenerate each with `CAKEML=<cakeml tree>
+HOL4=<HOL tree> HOL_PROBE_ONLY=<probe>_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
