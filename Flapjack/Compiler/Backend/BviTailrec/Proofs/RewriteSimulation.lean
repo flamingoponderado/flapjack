@@ -376,6 +376,20 @@ theorem rewriteTail_nil {C F : Type} (source : BviSem.BviState (Nat × C) F)
   have impossible := singleton enabled
   simp at impossible
 
+/-- A selected scan operation is not Noop. The unused polymorphic binder is
+present in the original theorem. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "scan_expr_not_Noop"]
+theorem scanExpr_notNoop {α : Type} (e : Bvi.Exp) (ts : List ValueType) (loc : Nat)
+    (tt : List ValueType) (ty : ValueType) (r : Bool) (_ok : α) (op : AssocOp)
+    (scan : scanExpr ts loc [e] = [(tt, ty, r, some op)]) : op ≠ .noop := by
+  intro same
+  subst op
+  rw [scanExpr_single] at scan
+  have eq : scanSing ts loc e = (tt, ty, r, some .noop) := by simpa using scan
+  have notNoop := scanSing_ne_noop ts loc e
+  rw [eq] at notNoop
+  exact notNoop rfl
+
 /-- Variable case of the source rewrite simulation. No optimization can be
 selected by a variable scan. This Flapjack helper supports the assembly. -/
 theorem rewriteTail_var {C F : Type} (n : Nat) (source : BviSem.BviState (Nat × C) F)

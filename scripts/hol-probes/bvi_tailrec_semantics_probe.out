@@ -62,3 +62,6 @@ decide_ty_simp_typed=decide_ty (ty1 :v_ty) (ty2 :v_ty) = (ty3 :v_ty) ∧ ty3 ≠
 to_op_11_typed=to_op (op1 :assoc_op) = to_op (op2 :assoc_op) ⇔ op1 = op2
 get_bin_args_SOME_typed=∀(exp :bvi$exp) (q :bvi$exp # bvi$exp). get_bin_args exp = SOME q ⇔ ∃(e1 :bvi$exp) (e2 :bvi$exp) (op :closLang$op). q = (e1,e2) ∧ exp = (Op op [e1; e2] :bvi$exp)
 opbinargs_SOME_typed=∀(exp :bvi$exp) (opr :assoc_op). opbinargs opr exp = SOME (q :bvi$exp # bvi$exp) ⇔ opr ≠ Noop ∧ ∃(x :bvi$exp) (y :bvi$exp). q = (x,y) ∧ exp = (Op (to_op opr) [x; y] :bvi$exp)
+to_op_eq_simp_typed=(to_op (x :assoc_op) = IntOp Add ⇔ x = Plus) ∧ (to_op x = IntOp Mult ⇔ x = Times) ∧ (to_op x = IntOp Mod ⇔ x = Noop) ∧ (to_op x = BlockOp ListAppend ⇔ x = Append) ∧ (IntOp Add = to_op x ⇔ x = Plus) ∧ (IntOp Mult = to_op x ⇔ x = Times) ∧ (BlockOp ListAppend = to_op x ⇔ x = Append) ∧ (IntOp Mod = to_op x ⇔ x = Noop)
+op_eq_simp_typed=(op_eq Plus (x :bvi$exp) ⇔ ∃(xs :bvi$exp list). x = (Op (IntOp Add) xs :bvi$exp)) ∧ (op_eq Times x ⇔ ∃(xs :bvi$exp list). x = (Op (IntOp Mult) xs :bvi$exp)) ∧ (op_eq Append x ⇔ ∃(xs :bvi$exp list). x = (Op (BlockOp ListAppend) xs :bvi$exp))
+scan_expr_not_Noop_typed=∀(exp :bvi$exp) (ts :v_ty list) (loc :num) (tt :v_ty list) (ty :v_ty) (r :bool) (ok :α) (op :assoc_op). scan_expr ts loc [exp] = [(tt,ty,r,SOME op)] ⇒ op ≠ Noop

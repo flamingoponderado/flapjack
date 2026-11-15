@@ -10,6 +10,31 @@ source-shaped rewrite, using the source single-expression scan form. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi
 
+/-- The four accumulator operations map to their source operators. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "to_op_eq_simp"]
+theorem toOp_eq_simp (x : AssocOp) :
+    (toOp x = .intOp .add ↔ x = .plus) ∧
+      (toOp x = .intOp .mult ↔ x = .times) ∧
+      (toOp x = .intOp .mod ↔ x = .noop) ∧
+      (toOp x = .blockOp .listAppend ↔ x = .append) ∧
+      (.intOp .add = toOp x ↔ x = .plus) ∧
+      (.intOp .mult = toOp x ↔ x = .times) ∧
+      (.blockOp .listAppend = toOp x ↔ x = .append) ∧
+      (.intOp .mod = toOp x ↔ x = .noop) := by
+  cases x <;> simp [toOp]
+
+/-- Recognized accumulator operators agree with their source expression forms. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "op_eq_simp"]
+theorem opEq_simp (e : Exp) :
+    (opEq .plus e = true ↔ ∃ xs, e = .op (.intOp .add) xs) ∧
+      (opEq .times e = true ↔ ∃ xs, e = .op (.intOp .mult) xs) ∧
+      (opEq .append e = true ↔ ∃ xs, e = .op (.blockOp .listAppend) xs) := by
+  cases e <;> simp [opEq]
+  case op operation args =>
+    cases operation <;> simp
+    all_goals rename_i operation
+    all_goals cases operation <;> simp
+
 /-- Binary operand extraction succeeds exactly on a two-operand operation. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "get_bin_args_SOME"]
 theorem getBinArgs_some (e : Exp) (q : Exp × Exp) :

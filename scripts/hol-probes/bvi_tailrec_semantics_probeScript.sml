@@ -100,3 +100,6 @@ val _ = show_thm "decide_ty_simp_typed=" bvi_tailrecProofTheory.decide_ty_simp;
 val _ = show_thm "to_op_11_typed=" bvi_tailrecProofTheory.to_op_11;
 val _ = show_thm "get_bin_args_SOME_typed=" bvi_tailrecProofTheory.get_bin_args_SOME;
 val _ = show_thm "opbinargs_SOME_typed=" bvi_tailrecProofTheory.opbinargs_SOME;
+val _ = show_thm "to_op_eq_simp_typed=" bvi_tailrecProofTheory.to_op_eq_simp;
+val _ = show_thm "op_eq_simp_typed=" bvi_tailrecProofTheory.op_eq_simp;
+val _ = show_thm "scan_expr_not_Noop_typed=" bvi_tailrecProofTheory.scan_expr_not_Noop;
