@@ -1,7 +1,9 @@
 module
 
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Induction
+import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockCorrectness
 meta import Flapjack.HolRef.TmcUniversalBinder
+meta import Flapjack.HolRef.TmcCallBlockDeclaration
 meta import Flapjack.Test.TmcAttributeFixture
 
 meta section
@@ -17,6 +19,10 @@ run_meta do
   let problems ← tmcHypothesisDeclarationProblems name
   unless problems.any (·.contains "must be a checked theorem") do
     throwError "ordinary TMC import unexpectedly passed the checked-witness audit: {problems}"
+  let callBlock ← tmcCallBlockDeclarationProblems
+    `Flapjack.Compiler.Backend.BviTmc.CallBlockCorrectness.evaluate_cb
+  unless callBlock.any (·.contains "must be a checked theorem") do
+    throwError "ordinary call-block import unexpectedly passed checked-proof audit: {callBlock}"
 
 /--
 error: TMC attribute fixture: Flapjack.Compiler.Backend.BviTmc.Induction.holFmapAsFiniteSupportUniversalWitness_hypothesis_f must be a checked theorem

@@ -1,8 +1,10 @@
 module
 
 import all Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockCorrectness
+import all Flapjack.Compiler.Backend.BviTmc.Proofs.Induction
 meta import Flapjack.HolRef.TmcUniversalBinder
 meta import Flapjack.HolRef.TmcCallBlockShape
+meta import Flapjack.HolRef.TmcCallBlockDeclaration
 
 meta section
 
@@ -79,6 +81,33 @@ private def hiddenMapConjunct : Prop :=
 
 run_meta do
   let info ← getConstInfo ``Flapjack.Compiler.Backend.BviTmc.CallBlockCorrectness.evaluate_cb
+  let declaration ← tmcCallBlockDeclarationProblems ``Flapjack.Compiler.Backend.BviTmc.CallBlockCorrectness.evaluate_cb
+  unless declaration.isEmpty do throwError "actual call-block declaration rejected: {declaration}"
+  if (← tmcCallBlockDeclarationProblems ``validInventory).isEmpty then
+    throwError "call-block declaration audit accepted a different declaration"
+  let stateWitness ← getConstInfo
+    ``Flapjack.Compiler.Backend.BviTmc.CallBlockCorrectness.holFmapAsFiniteSupportRelationWitness_BviState
+  let changedState := stateWitness.type.replace fun term =>
+    if term.isAppOfArity ``Eq 3 then some (mkConst ``True) else none
+  unless ← isDefEq (← inferType changedState) (mkSort Level.zero) do
+    throwError "state witness mutation is not well typed"
+  if (← tmcCallBlockStateWitnessProblems changedState).isEmpty then
+    throwError "state witness audit accepted removed roundtrips"
+  let value := mkConst `Flapjack.Compiler.Backend.BvlSem.Value
+  for (name, item, pointwise) in [
+      (``Flapjack.Compiler.Backend.BviTmc.CallBlockCorrectness.holFmapAsFiniteSupportUniversalWitness_evaluate_cb_refs,
+        mkApp (mkConst `Flapjack.Compiler.Backend.BvlSem.Ref) value, true),
+      (``Flapjack.Compiler.Backend.BviTmc.CallBlockCorrectness.holFmapAsFiniteSupportExistentialWitness_evaluate_cb_auxMap,
+        mkConst `Nat, false)] do
+    let witness ← getConstInfo name
+    unless (← tmcCallBlockMapWitnessProblems witness.type item pointwise).isEmpty do
+      throwError "map witness audit rejected {name}"
+    let changed := witness.type.replace fun term =>
+      if term.isAppOfArity ``Eq 3 then some (mkConst ``True) else none
+    unless ← isDefEq (← inferType changed) (mkSort Level.zero) do
+      throwError "map witness mutation is not well typed: {name}"
+    if (← tmcCallBlockMapWitnessProblems changed item pointwise).isEmpty then
+      throwError "map witness audit accepted removed roundtrips: {name}"
   let premise ← tmcCallBlockPremiseProblems info.type
   unless premise.isEmpty do throwError "actual call-block premise rejected: {premise}"
   let ordinary ← tmcCallBlockOrdinaryProblems info.type
