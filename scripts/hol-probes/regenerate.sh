@@ -12151,3 +12151,47 @@ run_probe hol_stdlib_tail_typed_probeScript.sml hol_stdlib_tail_typed_probe.out 
   LEX_DEF_typed RPROD_DEF_typed OLEAST_def_typed OLEAST_INTRO_typed OPTREL_def_typed THE_DEF_typed LIST_REL_REPLICATE_same_typed locn_typed locs_typed merge_list_locs_def_typed sexp_typed TotOrder_imp_good_cmp_typed TotOrd_typed FOR_def_typed LOG2_def_typed LOG_exists_typed HEX_typed \
   "$hol_dir/src/coretypes/pairScript.sml" "$cake_dir/compiler/backend"
 
+
+run_probe ns_types_typed_probeScript.sml ns_types_typed_probe.out \
+  alist_typed id_typed namespace_typed \
+  "$cake_dir/semantics/namespaceScript.sml" "$cake_dir/semantics"
+
+run_probe sem_prims_types_typed_probeScript.sml sem_prims_types_typed_probe.out \
+  compiler_args_typed eval_oracle_fun_typed store_ffi_typed \
+  "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
+run_probe semantics_defs_typed_probeScript.sml semantics_defs_typed_probe.out \
+  evaluate_prog_with_clock_def_typed semantics_prog_def_typed \
+  "$cake_dir/semantics/semanticsScript.sml" "$cake_dir/semantics"
+
+run_probe tokens_defs_typed_probeScript.sml tokens_defs_typed_probe.out \
+  path_typed token_typed \
+  "$cake_dir/semantics/tokensScript.sml" "$cake_dir/semantics"
+
+run_probe prim_types_defs_typed_probeScript.sml prim_types_defs_typed_probe.out \
+  add_to_sem_env_def_typed prim_sem_env_def_typed \
+  "$cake_dir/semantics/primTypesScript.sml" "$cake_dir/semantics"
+
+run_probe ffi_defs_typed_probeScript.sml ffi_defs_typed_probe.out \
+  oracle_function_typed \
+  "$cake_dir/semantics/ffi/ffiScript.sml" "$cake_dir/semantics/ffi"
+
+run_probe misc_defs_typed_probeScript.sml misc_defs_typed_probe.out \
+  LLOOKUP_typed num_set_typed \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
+
+run_probe data_sem_check_typed_probeScript.sml data_sem_check_typed_probe.out \
+  check_res_size_of_typed \
+  "$cake_dir/compiler/backend/semantics/dataSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe infer_env_typed_probeScript.sml infer_env_typed_probe.out \
+  inf_env_typed \
+  "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
+
+run_probe pegexec_valid_add_typed_probeScript.sml pegexec_valid_add_typed_probe.out \
+  validAddSym_alt_def_typed \
+  "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
+
+run_probe mlstring_defs_typed_probeScript.sml mlstring_defs_typed_probe.out \
+  LENGTH_explode_typed mlstring_typed \
+  "$cake_dir/basis/pure/mlstringScript.sml" "$cake_dir/basis/pure"

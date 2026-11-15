@@ -1,0 +1,3 @@
+alist_typed=Type alist = :('k # φ) list
+id_typed=Short::ξ -> (ν, ξ) id; Long::ν -> (ν, ξ) id -> (ν, ξ) id
+namespace_typed=Bind::(ξ # φ) list -> (ν # (ν, ξ, φ) namespace) list -> (ν, ξ, φ) namespace

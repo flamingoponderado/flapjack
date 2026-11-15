@@ -10772,3 +10772,17 @@ probe loads every theory and fetches each declaration from its own theory DB;
 it needs the HOL examples load path for `locationTheory`/`simpleSexpTheory`
 (`Globals.HOLDIR ^ "/examples/formal-languages/context-free"`). The bag Type
 abbreviation reads its source text, so it has a probe of its own.
+
+The cakeml semantics tail uses one probe per theory: `ns_types_typed` (namespace
+`alist` abbreviation, `id` and `namespace` datatypes), `sem_prims_types_typed`
+(`compiler_args`, `eval_oracle_fun`, `store_ffi` abbreviations),
+`semantics_defs_typed` (`evaluate_prog_with_clock_def`, `semantics_prog_def`),
+`tokens_defs_typed` (`path`, `token` datatypes), `prim_types_defs_typed`
+(`add_to_sem_env_def`, `prim_sem_env_def`), `ffi_defs_typed`
+(`oracle_function`), `misc_defs_typed` (`LLOOKUP` overload, `num_set`),
+`data_sem_check_typed` (the `[local]` `check_res_size_of`), `infer_env_typed`
+(`inf_env` record datatype), `pegexec_valid_add_typed`
+(`validAddSym_alt_def`) and `mlstring_defs_typed` (`LENGTH_explode`, `mlstring`).
+Datatype rows print the constructor types through `TypeBase`, so the row names
+(`id_typed`, `token_typed`, …) carry the carriers that earlier probes captured
+only under different labels (`id_datatype_typed`, `token_axiom_typed`, …).

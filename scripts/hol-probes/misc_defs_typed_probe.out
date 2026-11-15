@@ -1,0 +1,2 @@
+LLOOKUP_typed=λ(l :α list) (n :num). oEL n l
+num_set_typed=Type num_set = :sptree$num_set
