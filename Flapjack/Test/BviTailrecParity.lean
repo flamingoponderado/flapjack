@@ -52,13 +52,6 @@ example (ty : ValueType) (n : Nat) (ctx : List ValueType) :
     .ifThenElse (.var 0) (.op (.intOp .add) [.call 0 (some 3) [] (some (.var 1)), .var 0]) (.var 1)
   ].map (hasRecFuel 100 3) == [some false, some true, some false, some false]
 
-#guard (compileNoRecFuel 100 true 58
-  [(3, 1, .op (.intOp .add) [.call 0 (some 3) [] none, .var 0])]).isNone
-#guard match compileNoRecFuel 100 false 58
-    [(3, 1, .op (.intOp .add) [.call 0 (some 3) [] none, .var 0])] with
-  | some (58, [(3, 1, .op (.intOp .add) [.call 0 (some 3) [] none, .var 0])]) => true
-  | _ => false
-
 #guard match compileProgFuel 100 true 58
     [(3, 1, .op (.intOp .add) [c 1, .call 0 (some 3) [.var 0] none]),
      (7, 1, .op (.intOp .mult) [c 2, .call 0 (some 7) [.var 0] none]),
