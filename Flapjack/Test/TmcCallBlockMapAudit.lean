@@ -85,6 +85,107 @@ run_meta do
   unless ordinary.isEmpty do throwError "actual ordinary call-block branch rejected: {ordinary}"
   let wrapper ← tmcCallBlockWrapperProblems info.type
   unless wrapper.isEmpty do throwError "actual call-block wrapper branch rejected: {wrapper}"
+  let entries ← tmcCallBlockWorkerEntryProblems info.type
+  unless entries.isEmpty do throwError "actual auxiliary/worker entries rejected: {entries}"
+  for (binder, name, arity) in [
+      (`refs, `Flapjack.Compiler.Backend.BviTmc.stateRefRel, 3),
+      (`refs, `Flapjack.Compiler.Backend.BviTmc.CallBlockEnvironment.allocHoleHasVal, 8),
+      (`refs, `LE.le, 4),
+      (`_work, `Flapjack.Compiler.Backend.BviTmc.holeHasVal, 5),
+      (`_work, `Flapjack.Compiler.Backend.BviTmc.holeNotFinalised, 4)] do
+    let changed := info.type.replace fun expression =>
+      match expression with
+      | .forallE n _ _ _ =>
+        if n == binder then
+          some (expression.replace fun term =>
+            if term.isAppOfArity name arity then some (mkConst ``True) else none)
+        else none
+      | _ => none
+    if changed == info.type then throwError "entry mutation did not apply: {name}"
+    unless ← isDefEq (← inferType changed) (mkSort Level.zero) do
+      throwError "entry mutation is not a well-typed proposition: {name}"
+    unless (← tmcCallBlockWrapperProblems changed).isEmpty do
+      throwError "entry mutation unexpectedly altered wrapper: {name}"
+    if (← tmcCallBlockWorkerEntryProblems changed).isEmpty then
+      throwError "entry audit accepted a removed condition: {name}"
+  let tiedWork := info.type.replace fun expression =>
+    match expression with
+    | .forallE `_work _ body visibility =>
+      some (.forallE `_work (mkConst ``Unit) body visibility)
+    | _ => none
+  if tiedWork == info.type then throwError "worker type mutation did not apply"
+  unless ← isDefEq (← inferType tiedWork) (mkSort Level.zero) do
+    throwError "worker type mutation is not a well-typed proposition"
+  unless (← tmcCallBlockWrapperProblems tiedWork).isEmpty do
+    throwError "worker type mutation unexpectedly altered wrapper"
+  if (← tmcCallBlockWorkerEntryProblems tiedWork).isEmpty then
+    throwError "entry audit accepted a specialized worker type"
+  for binder in [`refs, `_work] do
+    let noPointer := info.type.replace fun expression =>
+      match expression with
+      | .forallE n _ _ _ =>
+        if n == binder then
+          some (expression.replace fun term =>
+            if term.isAppOfArity ``Eq 3 && term.getAppArgs[1]!.isAppOfArity `Flapjack.holEl 4 then
+              some (mkConst ``True)
+            else none)
+        else none
+      | _ => none
+    if noPointer == info.type then throwError "pointer mutation did not apply: {binder}"
+    unless ← isDefEq (← inferType noPointer) (mkSort Level.zero) do
+      throwError "pointer mutation is not a well-typed proposition: {binder}"
+    unless (← tmcCallBlockWrapperProblems noPointer).isEmpty do
+      throwError "pointer mutation unexpectedly altered wrapper: {binder}"
+    if (← tmcCallBlockWorkerEntryProblems noPointer).isEmpty then
+      throwError "entry audit accepted a removed pointer equality: {binder}"
+  let reversedDomain := info.type.replace fun expression =>
+    match expression with
+    | .forallE `refs _ _ _ =>
+      some (expression.replace fun term =>
+        if term.isAppOfArity `LE.le 4 then
+          let a := term.getAppArgs
+          some (mkAppN term.getAppFn #[a[0]!, a[1]!, a[3]!, a[2]!])
+        else none)
+    | _ => none
+  if reversedDomain == info.type then throwError "domain reversal did not apply"
+  unless ← isDefEq (← inferType reversedDomain) (mkSort Level.zero) do
+    throwError "domain reversal is not a well-typed proposition"
+  unless (← tmcCallBlockWrapperProblems reversedDomain).isEmpty do
+    throwError "domain reversal unexpectedly altered wrapper"
+  if (← tmcCallBlockWorkerEntryProblems reversedDomain).isEmpty then
+    throwError "entry audit accepted a reversed domain inclusion"
+  for binder in [`refs, `_work] do
+    let wrongFlag := info.type.replace fun expression =>
+      match expression with
+      | .forallE n _ _ _ =>
+        if n == binder then
+          some (expression.replace fun term =>
+            if term.isAppOfArity `Flapjack.Compiler.Backend.BvlSem.Value.refPtr 2 &&
+                term.getAppArgs[0]! == mkConst `Bool.false then
+              some (mkApp2 term.getAppFn (mkConst `Bool.true) term.getAppArgs[1]!)
+            else none)
+        else none
+      | _ => none
+    if wrongFlag == info.type then throwError "pointer flag mutation did not apply: {binder}"
+    unless ← isDefEq (← inferType wrongFlag) (mkSort Level.zero) do
+      throwError "pointer flag mutation is not a well-typed proposition: {binder}"
+    unless (← tmcCallBlockWrapperProblems wrongFlag).isEmpty do
+      throwError "pointer flag mutation unexpectedly altered wrapper: {binder}"
+    if (← tmcCallBlockWorkerEntryProblems wrongFlag).isEmpty then
+      throwError "entry audit accepted a changed pointer flag: {binder}"
+  let wrongIndex := info.type.replace fun expression =>
+    match expression with
+    | .forallE `_work _ _ _ =>
+      some (expression.replace fun term =>
+        if term.isAppOfArity `HAdd.hAdd 6 then some term.getAppArgs[4]! else none)
+    | _ => none
+  if wrongIndex == info.type then throwError "worker index mutation did not apply"
+  unless ← isDefEq (← inferType wrongIndex) (mkSort Level.zero) do
+    throwError "worker index mutation is not a well-typed proposition"
+  unless (← tmcCallBlockWrapperProblems wrongIndex).isEmpty do
+    throwError "worker index mutation unexpectedly altered wrapper"
+  if (← tmcCallBlockWorkerEntryProblems wrongIndex).isEmpty then
+    throwError "entry audit accepted a changed worker index"
   let wrongWrapper := info.type.replace fun expression =>
     if expression.isAppOfArity `Flapjack.Compiler.Backend.BviTmc.wrapperBlockSource 5 then
       some (mkApp (mkConst `Flapjack.Compiler.Backend.Bvi.Exp.var) (mkNatLit 0))

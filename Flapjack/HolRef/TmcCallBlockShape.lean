@@ -205,4 +205,121 @@ def tmcCallBlockWrapperProblems (type : Expr) : MetaM (Array String) := do
                 return #["wrapper call-block simulation changed"]
               return #[]
 
+/-- Check the auxiliary and worker entry telescopes and premises, including the
+existential result carriers. Their result bodies require a separate audit. -/
+def tmcCallBlockWorkerEntryProblems (type : Expr) : MetaM (Array String) := do
+  let earlier ← tmcCallBlockWrapperProblems type
+  unless earlier.isEmpty do return earlier
+  forallTelescope type fun args conclusion => do
+    let .app (.app (.const ``And []) _) optimized := conclusion
+      | return #["missing optimized branch"]
+    forallTelescope optimized fun _ body => do
+      let .app (.app (.const ``And []) _)
+          (.app (.app (.const ``And []) auxiliary) worker) := body
+        | return #["optimized branches must be wrapper, auxiliary and worker"]
+      let nat := mkConst `Nat
+      let value := mkConst `Flapjack.Compiler.Backend.BvlSem.Value
+      let values := mkApp (mkConst `List [Level.zero]) value
+      let refType := mkApp (mkConst `Flapjack.Compiler.Backend.BvlSem.Ref) value
+      let refMap := mkApp2 (mkConst `Flapjack.HolFiniteMapExact) nat refType
+      let map := mkApp2 (mkConst `Flapjack.HolFiniteMapExact) nat nat
+      let c := args[0]!
+      let ffi := args[1]!
+      let pair := mkApp2 (mkConst `Prod [Level.zero, Level.zero]) nat c
+      let state (cfg : Expr) := mkApp2 (mkConst `Flapjack.Compiler.Backend.BviSem.BviState) cfg ffi
+      let refs (cfg s : Expr) := mkAppN (mkConst `Flapjack.Compiler.Backend.BviSem.BviState.refs) #[cfg, ffi, s]
+      let f := args[5]!
+      let env1 := args[7]!
+      let env2 := args[8]!
+      let targetRefs := refs c args[10]!
+      let resultType := mkConst `Flapjack.Compiler.Backend.BviSem.BviResult
+      let pointerProblems (e slot environment ptr : Expr) : MetaM (Array String) := do
+        unless e.isAppOfArity ``Eq 3 do return #["pointer premise is not an equality"]
+        let selected := e.getAppArgs[1]!
+        unless selected.isAppOfArity `Flapjack.holEl 4 && selected.getAppArgs[0]! == value &&
+            selected.getAppArgs[2]! == slot && selected.getAppArgs[3]! == environment do
+          return #["pointer selection changed"]
+        unless ← isDefEq (← inferType selected.getAppArgs[1]!)
+            (mkApp (mkConst ``Nonempty [Level.succ Level.zero]) value) do
+          return #["pointer selection has the wrong inhabitation witness"]
+        let expectedPtr := mkApp2 (mkConst `Flapjack.Compiler.Backend.BvlSem.Value.refPtr)
+          (mkConst `Bool.false) ptr
+        unless e == mkApp3 (mkConst ``Eq [Level.succ Level.zero]) value selected expectedPtr do
+          return #["pointer equality changed"]
+        return #[]
+      let auxProblems ← forallTelescope auxiliary fun xs rest => do
+        unless xs.size == 6 do return #["auxiliary entry telescope changed"]
+        let names := #[`refs, `extras, `slot, `idx, `ptr]
+        let types := #[refMap, values, nat, nat, nat]
+        for i in [:names.size] do
+          let d ← xs[i]!.fvarId!.getDecl
+          unless d.userName == names[i]! && d.binderInfo == .default && d.type == types[i]! do
+            return #[s!"auxiliary binder {i} changed"]
+        let premise ← xs[5]!.fvarId!.getDecl
+        unless premise.binderInfo == .default do return #["auxiliary premise visibility changed"]
+        let .app (.app (.const ``And []) stateRel)
+            (.app (.app (.const ``And []) hole)
+              (.app (.app (.const ``And []) domain) pointer)) := premise.type
+          | return #["auxiliary premise conjuncts changed"]
+        let expectedState := mkApp3 (mkConst `Flapjack.Compiler.Backend.BviTmc.stateRefRel)
+          f (refs pair args[9]!) xs[0]!
+        let domainOf (m : Expr) := mkAppN (mkConst `Flapjack.HolFiniteMapExact.domain) #[nat, refType, m]
+        let set := mkApp (mkConst `Set [Level.zero]) nat
+        let expectedDomain := mkAppN (mkConst `LE.le [Level.zero])
+          #[set, mkApp (mkConst `Set.instLE [Level.zero]) nat, domainOf targetRefs, domainOf xs[0]!]
+        unless stateRel == expectedState && domain == expectedDomain do
+          return #["auxiliary state relation or domain premise changed"]
+        let holeProblems ← tmcExists hole value `c fun v holeBody => do
+          let expected := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.CallBlockEnvironment.allocHoleHasVal)
+            #[nat, value, f, xs[0]!, xs[1]!, xs[2]!, xs[3]!, v]
+          return if holeBody == expected then #[] else #["auxiliary initial hole changed"]
+        unless holeProblems.isEmpty do return holeProblems
+        let ptrProblems ← pointerProblems pointer xs[2]! xs[1]! xs[4]!
+        unless ptrProblems.isEmpty do return ptrProblems
+        tmcExists rest resultType `r fun _ afterResult =>
+          tmcExists afterResult (state c) `s fun _ afterState =>
+            tmcExists afterState map `auxMap fun _ _ => return #[]
+      unless auxProblems.isEmpty do return auxProblems
+      forallTelescope worker fun xs rest => do
+        unless xs.size == 6 do return #["worker entry telescope changed"]
+        let enabled ← xs[0]!.fvarId!.getDecl
+        let expectedEnabled := mkApp3 (mkConst ``Eq [Level.succ Level.zero])
+          (mkConst `Bool) args[6]! (mkConst `Bool.true)
+        unless enabled.binderInfo == .default && enabled.type == expectedEnabled do
+          return #["worker optimization guard changed"]
+        let names := #[`slot, `idx, `_work, `ptr]
+        let types := #[nat, nat, args[2]!, nat]
+        for i in [:names.size] do
+          let d ← xs[i + 1]!.fvarId!.getDecl
+          unless d.userName == names[i]! && d.binderInfo == .default && d.type == types[i]! do
+            return #[s!"worker binder {i} changed"]
+        let premise ← xs[5]!.fvarId!.getDecl
+        unless premise.binderInfo == .default do return #["worker premise visibility changed"]
+        let .app (.app (.const ``And []) slotEq)
+            (.app (.app (.const ``And []) idxEq)
+              (.app (.app (.const ``And []) hole)
+                (.app (.app (.const ``And []) notFinal) pointer))) := premise.type
+          | return #["worker premise conjuncts changed"]
+        let length := mkApp2 (mkConst `List.length [Level.zero]) value env1
+        let literal := Expr.lit (.natVal 1)
+        let one := mkAppN (mkConst `OfNat.ofNat [Level.zero])
+          #[nat, literal, mkApp (mkConst `instOfNatNat) literal]
+        let add := mkAppN (mkConst `HAdd.hAdd [Level.zero, Level.zero, Level.zero])
+          #[nat, nat, nat, mkApp2 (mkConst `instHAdd [Level.zero]) nat (mkConst `instAddNat), length, one]
+        let eq (x y : Expr) := mkApp3 (mkConst ``Eq [Level.succ Level.zero]) nat x y
+        let expectedNotFinal := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.holeNotFinalised)
+          #[nat, value, targetRefs, xs[4]!]
+        unless slotEq == eq xs[1]! length && idxEq == eq xs[2]! add && notFinal == expectedNotFinal do
+          return #["worker index or hole premise changed"]
+        let holeProblems ← tmcExists hole value `c fun v holeBody => do
+          let expected := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.holeHasVal)
+            #[f, env1, env2, targetRefs, v]
+          return if holeBody == expected then #[] else #["worker initial hole changed"]
+        unless holeProblems.isEmpty do return holeProblems
+        let ptrProblems ← pointerProblems pointer xs[1]! env2 xs[4]!
+        unless ptrProblems.isEmpty do return ptrProblems
+        tmcExists rest resultType `r fun _ afterResult =>
+          tmcExists afterResult map `workMap fun _ afterMap =>
+            tmcExists afterMap (state c) `s fun _ _ => return #[]
+
 end Flapjack
