@@ -30451,22 +30451,6 @@
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor update_sorted_regs_def (fetched by `val update_sorted_regs_def = fetch \"-\" \"update_sorted_regs_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator integration acceptance complete; author source comparison recorded."
   },
   {
-    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
-    "hol_name": "map_colors_sub_def",
-    "lean_path": "Flapjack/Compiler/Backend/LinearScan/MapColorsSub.lean",
-    "lean_name": "mapColorsSub",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02: linear_scanScript.sml:1264-1268 map_colors_sub [] = return []; map_colors_sub (x::xs) = do fx <- colors_sub x; fxs <- map_colors_sub xs; return (fx::fxs) od, over the tagged colors_sub, st_ex_bind (bind) and st_ex_return (ret) in the linear_scan hidden-state monad; same two clauses and effect order."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
-    "hol_name": "map_colors_sub_eq",
-    "lean_path": "Flapjack/Compiler/Backend/LinearScan/MapColorsSub.lean",
-    "lean_name": "mapColorsSubEq",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-02: linear_scanScript.sml:1270-1274 map_colors_sub = st_ex_MAP colors_sub, a function equality over the tagged stExMap; kernel-checked by funext and list induction; no premise."
-  },
-  {
     "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
     "hol_name": "check_clash_tree_apply_bijection",
     "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ApplyBijection.lean",
