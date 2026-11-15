@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "no_mutblock", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
+  "lean_name": "no_mutblock", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "source", "target"],
+  "reviewer": "Source comparison: Compared no_mutblock_typed in bvi_tmc_proof_source_probe.out: the full state reference relation and a source lookup of an arbitrary mutable block imply false. Binder order and mutable-block fields match; the three finite maps use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "do_word_app_v_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/WordRelation.lean",
   "lean_name": "doWordApp_rel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f"],

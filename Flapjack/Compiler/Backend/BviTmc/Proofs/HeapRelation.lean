@@ -270,14 +270,15 @@ theorem holFmapAsFiniteSupportParamWitness_no_mutblock_source (source : HolFinit
 theorem holFmapAsFiniteSupportParamWitness_no_mutblock_target (target : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup target) target.finiteSupport = target := by cases target; rfl
 
-/-- A related source heap cannot already contain a TMC mutable block.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "no_mutblock" (fmap_as_finite_support_parameters := [f, source, target])] -/
+/-- A related source heap cannot already contain a TMC mutable block. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "no_mutblock"
+  (fmap_as_finite_support_parameters := [f, source, target])]
 theorem no_mutblock (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMapExact Nat (Ref Value))
     (target : HolFiniteMapExact Nat (Ref Value)) (ptr tag : Nat) (finalised : Bool)
-    (left : List Value) (child : Value) (right : List Value) (related : stateRefRel f source target)
-    (found : source.lookup ptr = some (.mutBlock tag finalised left child right)) : False := by
+    (left : List Value) (child : Value) (right : List Value)
+    (h : stateRefRel f source target ∧
+      source.lookup ptr = some (.mutBlock tag finalised left child right)) : False := by
+  obtain ⟨related, found⟩ := h
   obtain ⟨_, _, _, cells, _⟩ := related.2 ptr _ found
   cases cells
 

@@ -516,7 +516,7 @@ theorem doApp_op_rel_updateCons {C F : Type} (f : HolFiniteMapExact Nat Nat)
     repeat' split at effect
     all_goals try contradiction
     rename_i args flag ptr index child other tag finalised left old right found condition
-    exact (no_mutblock f source.refs target.refs ptr tag finalised left old right statesRelated.1 found).elim
+    exact (no_mutblock f source.refs target.refs ptr tag finalised left old right ⟨statesRelated.1, found⟩).elim
 
 /-- Allocating an array of related values extends the pointer renaming with
 the fresh source and target addresses.
