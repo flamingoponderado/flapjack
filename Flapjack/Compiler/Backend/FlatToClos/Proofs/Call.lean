@@ -28,7 +28,9 @@ theorem doOpApp_related (function : FlatSem.Value) (targetFunction : ClosSem.Val
   | closure environments safe =>
     simp [FlatSem.doOpApp] at applied
     rcases applied with ⟨rfl, rfl⟩
-    refine ⟨_, _, ?_, envRel_cons (env := (⟨[]⟩ : FlatSem.Environment FlatSem.Value)) ⟨environments, argumentRel⟩, safe⟩
+    refine ⟨_, _, ?_,
+      envRel_cons (env := (⟨[]⟩ : FlatSem.Environment FlatSem.Value))
+        ⟨environments, argumentRel⟩, safe⟩
     simp [ClosSem.destClosure, ClosSem.checkLoc, positive]
   | recclosure bound environments distinct safe =>
     rename_i env names values funs index
