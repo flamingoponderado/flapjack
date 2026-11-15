@@ -175,7 +175,7 @@ theorem doBuild_related (parts : List ClosLang.ConstPart) (f : HolFiniteMapExact
           (fun key => if key = i then midValue else m' key) (i + 1) midSource midTarget
           midHeaps midInj nextValues
       refine ⟨lastMap, lastValue, lastTarget, ?_, ?_, ?_, lastInj, ?_,
-        onlyFresh_trans f midMap lastMap target midTarget firstFresh secondFresh firstDomain,
+        onlyFresh_trans f midMap lastMap target midTarget ⟨firstFresh, secondFresh, firstDomain⟩,
         holesUnchanged_trans f midMap target midTarget lastTarget ∅ ⟨firstHoles, secondHoles, firstFresh, firstSubmap⟩,
         holesStill_trans f midMap target midTarget lastTarget () ⟨firstStill, secondStill, firstFresh, firstSubmap⟩,
         firstDomain.trans secondDomain⟩

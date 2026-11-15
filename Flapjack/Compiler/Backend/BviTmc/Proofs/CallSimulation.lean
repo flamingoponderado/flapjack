@@ -118,7 +118,7 @@ theorem evaluate_call_no_handler_core {C F : Type} (loc ticks : Nat) (dest : Opt
               have targetNoReturn := ForceSimulation.related_no_return h result targetResult related noReturn
               have domain := BviProps.evaluate_refs_subset args env2 target middleTarget (.val values') targetArgsRun
               have totalExtension : f.submap h := fun key value found => bodyExtension key value (extension key value found)
-              have totalFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh bodyFresh domain
+              have totalFresh := onlyFresh_trans f g h target.refs middleTarget.refs ⟨fresh, bodyFresh, domain⟩
               have totalUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs next.refs ∅
                 ⟨unchanged, bodyUnchanged, fresh, extension⟩
               have totalStill := holesStill_trans f g target.refs middleTarget.refs next.refs () ⟨still, bodyStill, fresh, extension⟩
@@ -322,13 +322,13 @@ theorem evaluate_call_handled_exception {C F : Type} (loc ticks destination : Na
     have bodyDomain := BviProps.evaluate_refs_subset [body'] callArgs' (decClock (ticks + 1) middleTarget) next
       (.err (.raise (.exn raisedTarget))) targetBodyRun
     have firstExtension : f.submap h := fun key value present => bodyExtension key value (extension key value present)
-    have firstFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh bodyFresh argsDomain
+    have firstFresh := onlyFresh_trans f g h target.refs middleTarget.refs ⟨fresh, bodyFresh, argsDomain⟩
     have firstUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs next.refs ∅
       ⟨unchanged, bodyUnchanged, fresh, extension⟩
     have firstStill := holesStill_trans f g target.refs middleTarget.refs next.refs () ⟨still, bodyStill, fresh, extension⟩
     have allExtension : f.submap k := fun key value present => handlerExtension key value (firstExtension key value present)
-    have allFresh := onlyFresh_trans f h k target.refs next.refs firstFresh handlerFresh
-      (Set.Subset.trans argsDomain bodyDomain)
+    have allFresh := onlyFresh_trans f h k target.refs next.refs
+      ⟨firstFresh, handlerFresh, Set.Subset.trans argsDomain bodyDomain⟩
     have allUnchanged := holesUnchanged_trans f h target.refs next.refs last.refs ∅
       ⟨firstUnchanged, handlerUnchanged, firstFresh, firstExtension⟩
     have allStill := holesStill_trans f h target.refs next.refs last.refs () ⟨firstStill, handlerStill, firstFresh, firstExtension⟩

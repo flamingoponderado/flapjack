@@ -91,7 +91,7 @@ theorem evaluate_cons_cons {C F : Type} (first second : Bvi.Exp) (rest : List Bv
           have extension : f.submap h := by
             intro key value found; exact secondExtension key value (firstExtension key value found)
           have domain := BviProps.evaluate_refs_subset [first] env2 target middleTarget (.val [headValue']) headTargetRun
-          have fresh := onlyFresh_trans f g h target.refs middleTarget.refs firstFresh secondFresh domain
+          have fresh := onlyFresh_trans f g h target.refs middleTarget.refs ⟨firstFresh, secondFresh, domain⟩
           have unchanged := holesUnchanged_trans f g target.refs middleTarget.refs last.refs ∅
             ⟨firstUnchanged, secondUnchanged, firstFresh, firstExtension⟩
           have still := holesStill_trans f g target.refs middleTarget.refs last.refs ()

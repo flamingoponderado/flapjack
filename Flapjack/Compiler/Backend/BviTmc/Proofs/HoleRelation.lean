@@ -595,14 +595,14 @@ theorem holFmapAsFiniteSupportParamWitness_onlyFresh_trans_refs (refs : HolFinit
 theorem holFmapAsFiniteSupportParamWitness_onlyFresh_trans_middle (middle : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup middle) middle.finiteSupport = middle := by cases middle; rfl
 
-/-- Freshness composes when the intermediate heap retains its old domain.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "only_fresh_trans" (fmap_as_finite_support_parameters := [f, g, h, refs, middle])] -/
+/-- Freshness composes when the intermediate heap retains its old domain. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "only_fresh_trans"
+  (fmap_as_finite_support_parameters := [f, g, h, refs, middle])]
 theorem onlyFresh_trans (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat) (h : HolFiniteMapExact Nat Nat)
     (refs : HolFiniteMapExact Nat (Ref Value)) (middle : HolFiniteMapExact Nat (Ref Value))
-    (first : onlyFresh f g refs) (second : onlyFresh g h middle)
-    (domain : refs.domain ⊆ middle.domain) : onlyFresh f h refs := by
+    (conditions : onlyFresh f g refs ∧ onlyFresh g h middle ∧
+      refs.domain ⊆ middle.domain) : onlyFresh f h refs := by
+  obtain ⟨first, second, domain⟩ := conditions
   intro ptr ⟨new, outside⟩
   by_cases intermediate : ptr ∈ mapRange g
   · exact first ptr ⟨intermediate, outside⟩

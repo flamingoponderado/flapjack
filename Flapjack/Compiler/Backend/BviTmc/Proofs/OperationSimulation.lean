@@ -72,7 +72,7 @@ theorem evaluate_op_core {C F : Type} (op : ClosLang.Op) (args : List Bvi.Exp)
           have submap : f.submap h := by
             intro k v found; exact appExtension k v (extension k v found)
           have domain := BviProps.evaluate_refs_subset args env2 target middleTarget (.val values') targetRun
-          have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh appFresh domain
+          have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs ⟨fresh, appFresh, domain⟩
           have allUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs lastTarget.refs ∅
             ⟨unchanged, appUnchanged, fresh, extension⟩
           have allStill := holesStill_trans f g target.refs middleTarget.refs lastTarget.refs ()
