@@ -93,16 +93,6 @@ theorem checkExpOriginal_scan (loc arity : Nat) (e : Bvi.Exp) (op : AssocOp)
       exact ⟨ctx, ty, branch, by rw [scanExpr_single, hscan], sameType, notAny, notOp⟩
     · simp at check
 
-/-- Every environment satisfies the all-unknown context used when checking a
-function body. -/
-theorem tyRel_replicate_any (values : List Value) :
-    tyRel values (List.replicate values.length .any) := by
-  induction values with
-  | nil => simp [tyRel]
-  | cons value rest ih =>
-    simp only [List.length_cons, List.replicate_succ]
-    exact .cons (by simp) ih
-
 /-- A successful checked function body returns a value satisfying the
 selected accumulator operator's type. -/
 theorem checkExpOriginal_result_type {C F : Type} (loc arity : Nat) (body : Bvi.Exp)
@@ -112,7 +102,7 @@ theorem checkExpOriginal_result_type {C F : Type} (loc arity : Nat) (body : Bvi.
     valueMatchesType value (opType op) := by
   obtain ⟨ctx, ty, branch, scan, sameType, _, _⟩ := checkExpOriginal_scan loc arity body op check
   have envType : tyRel env (List.replicate arity .any) := by
-    simpa [lengthEq] using tyRel_replicate_any env
+    simpa [lengthEq] using tyRel_unknown env
   have sound := scanSound_list (List.replicate arity .any) loc [body] env state next [value] envType run
   rw [scan] at sound
   simp only [List.map_cons, List.map_nil] at sound
@@ -700,7 +690,7 @@ theorem evaluate_related_callee {C F : Type} (loc arity : Nat) (body : Bvi.Exp)
       BviSem.evaluate [compiled] env target = (result, targetNext) ∧
       stateRel sourceNext targetNext := by
   have types : tyRel env (List.replicate arity .any) := by
-    simpa [lengthEq] using tyRel_replicate_any env
+    simpa [lengthEq] using tyRel_unknown env
   have codeRelated := stateRel_codeRel source target related
   cases check : checkExpOriginal loc arity body with
   | none =>
@@ -1226,7 +1216,7 @@ theorem evaluate_optimized_worker_body {C F : Type} (loc arity workerLoc : Nat)
   have envRelated : envRel (opType op) true arity args (args ++ [accumulator]) := by
     simpa [lengthEq] using envRel_worker op args accumulator notNoop typed
   have types : tyRel args (List.replicate arity .any) := by
-    simpa [lengthEq] using tyRel_replicate_any args
+    simpa [lengthEq] using tyRel_unknown args
   have hyp : rewriteTailHyp [body] source args result sourceNext true target arity (args ++ [accumulator])
       loc (List.replicate arity .any) (opType op) :=
     ⟨run, envRelated, related, types, by simp, notTypeError⟩
@@ -1294,7 +1284,7 @@ theorem evaluate_optimized_worker_call {C F : Type}
   have envRelated : envRel (opType op) true arity callArgs (callArgs ++ [newValue]) := by
     simpa [lengthEq] using envRel_worker op callArgs newValue notNoop typed
   have types : tyRel callArgs (List.replicate arity .any) := by
-    simpa [lengthEq] using tyRel_replicate_any callArgs
+    simpa [lengthEq] using tyRel_unknown callArgs
   have hyp : rewriteTailHyp [body] (BviSem.decClock (ticks + 1) sourceMiddle) callArgs bodyResult sourceNext
       true (BviSem.decClock (ticks + 1) targetMiddle) arity (callArgs ++ [newValue]) loc
       (List.replicate arity .any) (opType op) :=
@@ -1366,7 +1356,7 @@ theorem evaluate_worker_candidate_success {C F : Type}
   have envRelated : envRel (opType op) true arity callArgs (callArgs ++ [newValue]) := by
     simpa [lengthEq] using envRel_worker op callArgs newValue notNoop typed
   have types : tyRel callArgs (List.replicate arity .any) := by
-    simpa [lengthEq] using tyRel_replicate_any callArgs
+    simpa [lengthEq] using tyRel_unknown callArgs
   have hyp : rewriteTailHyp [body] (BviSem.decClock (ticks + 1) sourceMiddle) callArgs bodyResult sourceNext
       true (BviSem.decClock (ticks + 1) targetMiddle) arity (callArgs ++ [newValue]) loc
       (List.replicate arity .any) (opType op) :=
@@ -2381,7 +2371,7 @@ theorem rewriteTail_letCall_through {C F : Type} (limit : Nat) (rets ticks place
                       have contEnv := envRel_prepend ty false acc env1 env2 returned disabled
                       have contTypes : tyRel (returned ++ env1) (List.replicate returned.length .any ++ ts) :=
                         tyRel_append env1 ts (List.replicate returned.length .any) returned
-                          ⟨types, tyRel_replicate_any returned⟩
+                          ⟨types, tyRel_unknown returned⟩
                       have contHyp : rewriteTailHyp [cont] last (returned ++ env1) result sourceNext false
                           targetLast (returned.length + acc) (returned ++ env2) loc
                           (List.replicate returned.length .any ++ ts) ty :=
