@@ -10759,3 +10759,16 @@ Skolemized instance of that local theorem with no quoted statement of its own.
 These read source from `$HOL4`; regenerate with `CAKEML=<cakeml tree>
 HOL4=<HOL tree> HOL_PROBE_ONLY=<probe>_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`hol_stdlib_tail_typed_probe.out` and `bag_abbrev_typed_probe.out` (17+1 rows)
+capture the remaining reviewed HOL stdlib rows: pair (`LEX_DEF`, `RPROD_DEF`),
+While (`OLEAST_def`, `OLEAST_INTRO`), option (`OPTREL_def`, `THE_DEF`),
+rich_list (`LIST_REL_REPLICATE_same`), location (`locn`, `locs`,
+`merge_list_locs_def`), simpleSexp (`sexp`), comparison
+(`TotOrder_imp_good_cmp`), toto (`TotOrd`), state_transformer (`FOR_def`), bit
+(`LOG2_def`), logroot (`LOG_exists`, the exported theorem itself, not the
+`[local]` base), ASCIInumbers (`HEX`) and bag's `Type bag = “:'a -> num”`. One
+probe loads every theory and fetches each declaration from its own theory DB;
+it needs the HOL examples load path for `locationTheory`/`simpleSexpTheory`
+(`Globals.HOLDIR ^ "/examples/formal-languages/context-free"`). The bag Type
+abbreviation reads its source text, so it has a probe of its own.

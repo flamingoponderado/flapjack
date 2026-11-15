@@ -12142,3 +12142,12 @@ run_probe finite_map_defs_typed_probeScript.sml finite_map_defs_typed_probe.out 
 run_probe pred_set_defs_typed_probeScript.sml pred_set_defs_typed_probe.out \
   INJ_DEF_typed LINV_LO_typed LINV_OPT_def_typed \
   "$hol_dir/src/pred_set/src/pred_setScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bag_abbrev_typed_probeScript.sml bag_abbrev_typed_probe.out \
+  bag_typed \
+  "$hol_dir/src/bag/bagScript.sml" "$cake_dir/compiler/backend"
+
+run_probe hol_stdlib_tail_typed_probeScript.sml hol_stdlib_tail_typed_probe.out \
+  LEX_DEF_typed RPROD_DEF_typed OLEAST_def_typed OLEAST_INTRO_typed OPTREL_def_typed THE_DEF_typed LIST_REL_REPLICATE_same_typed locn_typed locs_typed merge_list_locs_def_typed sexp_typed TotOrder_imp_good_cmp_typed TotOrd_typed FOR_def_typed LOG2_def_typed LOG_exists_typed HEX_typed \
+  "$hol_dir/src/coretypes/pairScript.sml" "$cake_dir/compiler/backend"
+
