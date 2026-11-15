@@ -10595,3 +10595,21 @@ for `RField` out-of-range indices and the nested `NField` structure lookup).
 Regenerate with `CAKEML=<cakeml tree> HOL4=<HOL tree>
 HOL_PROBE_ONLY=pan_structs_defs_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`loop_call_local_typed_probe.out` (5 rows) captures the reviewed
+`loop_callProofScript.sml` rows that earlier probes did not cover (task 187):
+`labels_in_def` (the definition), `get_vars_front`, `get_vars_last`,
+`evaluate_ShMem_neq_locals` and `evaluate_ShMem_not_load_locals`, all exported
+from `loop_callProofTheory`. Regenerate with `CAKEML=<cakeml tree>
+HOL4=<HOL tree> HOL_PROBE_ONLY=loop_call_local_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+`pan_to_crep_primed_typed_probe.out` (2 rows) captures the reviewed
+`pan_to_crepProofScript.sml` primed rows that earlier probes did not cover
+(task 187): `eval_distinct_lists_not_affect'` and
+`opt_mmap_eval_distinct_lists_not_affect'`, exported from
+`pan_to_crepProofTheory`. The latter's HOL statement binds the unused
+`ws : γ`, which the Lean twin keeps as `_ws`. Regenerate with
+`CAKEML=<cakeml tree> HOL4=<HOL tree>
+HOL_PROBE_ONLY=pan_to_crep_primed_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.

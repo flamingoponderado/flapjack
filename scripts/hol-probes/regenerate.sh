@@ -11891,3 +11891,14 @@ run_probe pan_structs_defs_typed_probeScript.sml pan_structs_defs_typed_probe.ou
   afindi_def_typed compile_shape_def_typed old_exp_shape_def_typed \
   "$cake_dir/pancake/pan_structsScript.sml" \
   "$cake_dir/pancake"
+
+run_probe loop_call_local_typed_probeScript.sml loop_call_local_typed_probe.out \
+  labels_in_def_typed get_vars_front_typed get_vars_last_typed \
+  evaluate_ShMem_neq_locals_typed evaluate_ShMem_not_load_locals_typed \
+  "$cake_dir/pancake/proofs/loop_callProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+
+run_probe pan_to_crep_primed_typed_probeScript.sml pan_to_crep_primed_typed_probe.out \
+  eval_distinct_lists_not_affect_prime_typed opt_mmap_eval_distinct_lists_not_affect_prime_typed \
+  "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
+  "$cake_dir/pancake/proofs"
