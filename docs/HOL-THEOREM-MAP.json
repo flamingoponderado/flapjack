@@ -135586,6 +135586,20 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "env_rel_cons", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
+  "lean_name": "envRel_cons", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Source comparison: Compared env_rel_cons_typed in bvi_tmc_proof_source_probe.out: the original environment relation and related-value conjunction implies the relation of the two environments prefixed by those values. The pointer map uses canonical finite support with a same-module witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "env_rel_append", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
+  "lean_name": "envRel_append", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Source comparison: Compared env_rel_append_typed in bvi_tmc_proof_source_probe.out: the original environment relation and full related-value-list conjunction implies the relation of the environments prefixed by those lists. The pointer map uses canonical finite support with a same-module witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "env_rel_relax_opt", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
   "lean_name": "envRel_relax", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f"],

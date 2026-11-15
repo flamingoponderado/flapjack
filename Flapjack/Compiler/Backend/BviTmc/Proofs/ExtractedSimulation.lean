@@ -58,7 +58,7 @@ theorem evaluate_extracted_ordinary {C F : Type} (loc : Nat) (cb : CallBlock) (e
     apply LetSimulation.evaluate_let_to_core bindings (callBlockToBvi loc cb) (callBlockToBvi loc cb)
       source env1 result final opt f target env2 sourceRun notTypeError environments bindingsIH
     intro values values' mid g t blockRun valuesRelated env states sourceBindings targetBindings
-    have nextEnv := envRel_append opt g env1 env2 values values' env valuesRelated
+    have nextEnv := envRel_append opt g env1 env2 values values' ⟨env, valuesRelated⟩
     have valueLength := evaluate_length bindings env1 source mid values sourceBindings
     have blockWf : wfBlock (values ++ env1).length cb := by
       apply wfBlock_expand bindings.length (values ++ env1).length cb (toBlock_wf env1.length loc e bindings cb extracted)
@@ -101,7 +101,7 @@ theorem evaluate_extracted_wrapper {C F : Type} (loc dest tag : Nat) (left right
     (wrapperBlockSource tag left child right dest) source env1 result final opt f target env2
     sourceRun notTypeError environments bindingsIH
   intro values values' mid g t blockRun valuesRelated env states sourceBindings targetBindings
-  have nextEnv := envRel_append opt g env1 env2 values values' env valuesRelated
+  have nextEnv := envRel_append opt g env1 env2 values values' ⟨env, valuesRelated⟩
   have nextCode := WrapperCases.evaluate_pres_opt_code loc dest source mid target t bindings env1 env2
     (.val values) (.val values') code sourceBindings targetBindings
   have valueLength := evaluate_length bindings env1 source mid values sourceBindings

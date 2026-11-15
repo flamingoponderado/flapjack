@@ -202,8 +202,8 @@ theorem evaluate_call_handler_from_weight {C F : Type} (loc ticks destination : 
           simpa [resultRel, excRel, eorRel] using related
         have envRelated : envRel opt h (raised :: env1) (raisedTarget :: env2) :=
           envRel_cons opt h env1 env2 raised raisedTarget
-            (envRel_submap opt f h env1 env2 ⟨environments,
-              (fun key value found => extension key value (initialExtension key value found))⟩) valuesRelated
+            ⟨envRel_submap opt f h env1 env2 ⟨environments,
+              (fun key value found => extension key value (initialExtension key value found))⟩, valuesRelated⟩
         have finalClock : bodyFinal.clock ≤ initial.clock := by
           have bound := evaluate_clock_le [body] callEnv bodyStart
           rw [bodyRun] at bound

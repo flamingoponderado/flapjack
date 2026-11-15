@@ -141,26 +141,26 @@ theorem envRel_relax (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source target
 theorem holFmapAsFiniteSupportParamWitness_envRel_cons_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
-/-- Prefixing related values preserves related environments.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_cons" (fmap_as_finite_support_parameters := [f])] -/
+/-- Prefixing related values preserves related environments. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_cons"
+  (fmap_as_finite_support_parameters := [f])]
 theorem envRel_cons (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source target : List Value)
-    (a b : Value) (related : envRel opt f source target) (values : valueRel f a b) :
+    (a b : Value) (h : envRel opt f source target ∧ valueRel f a b) :
     envRel opt f (a :: source) (b :: target) := by
+  obtain ⟨related, values⟩ := h
   obtain ⟨xs, ys, rfl, pairs, extras⟩ := related
   exact ⟨b :: xs, ys, rfl, .cons values pairs, extras⟩
 
 theorem holFmapAsFiniteSupportParamWitness_envRel_append_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
-/-- Prefixing lists of related values preserves related environments.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_append" (fmap_as_finite_support_parameters := [f])] -/
+/-- Prefixing lists of related values preserves related environments. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_append"
+  (fmap_as_finite_support_parameters := [f])]
 theorem envRel_append (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source target a b : List Value)
-    (related : envRel opt f source target) (values : List.Forall₂ (valueRel f) a b) :
+    (h : envRel opt f source target ∧ List.Forall₂ (valueRel f) a b) :
     envRel opt f (a ++ source) (b ++ target) := by
+  obtain ⟨related, values⟩ := h
   obtain ⟨xs, ys, rfl, pairs, extras⟩ := related
   refine ⟨b ++ xs, ys, by simp [List.append_assoc], ?_, extras⟩
   induction values with

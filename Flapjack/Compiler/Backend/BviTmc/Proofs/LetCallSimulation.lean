@@ -44,8 +44,8 @@ theorem continuation_from_weight {C F : Type} (loc rets ticks destination : Nat)
           simpa [resultRel, excRel, eorRel] using related
         have envRelated : envRel false h (returned ++ env1) (returnedTarget ++ env2) :=
           envRel_append false h env1 env2 returned returnedTarget
-            (envRel_relax opt h env1 env2 (envRel_submap opt f h env1 env2 ⟨environments,
-              (fun key value found => extension key value (initialExtension key value found))⟩)) valuesRelated
+            ⟨envRel_relax opt h env1 env2 (envRel_submap opt f h env1 env2 ⟨environments,
+              (fun key value found => extension key value (initialExtension key value found))⟩), valuesRelated⟩
         have finalClock : bodyFinal.clock ≤ initial.clock := by
           have bound := evaluate_clock_le [body] callEnv bodyStart
           rw [bodyRun] at bound

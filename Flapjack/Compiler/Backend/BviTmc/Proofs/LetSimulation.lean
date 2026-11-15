@@ -89,7 +89,7 @@ theorem evaluate_let_core {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp
   apply evaluate_let_to_core bindings body body source env1 result final opt f target env2
     run notTypeError environments bindingsIH
   intro values values' mid g t bodyRun valuesRelated env states sourceRun _targetRun
-  exact bodyIH values values' mid g t sourceRun bodyRun (envRel_append opt g env1 env2 values values' env valuesRelated) states
+  exact bodyIH values values' mid g t sourceRun bodyRun (envRel_append opt g env1 env2 values values' ⟨env, valuesRelated⟩) states
 
 /-- Flapjack infrastructure: the let-wrapper simulation from the binding and
 body induction hypotheses, with optimized code preserved through bindings. -/
@@ -120,7 +120,7 @@ theorem evaluate_let_wrapper {C F : Type} (bindings : List Bvi.Exp) (body wrappe
     bindings env1 env2 (.val values) (.val values') code sourceBindings targetBindings
   have valueLength := evaluate_length bindings env1 source mid values sourceBindings
   exact bodyIH values values' mid g t body' sourceBindings bodyRun
-    (envRel_append opt g env1 env2 values values' env valuesRelated) states nextCode (by
+    (envRel_append opt g env1 env2 values values' ⟨env, valuesRelated⟩) states nextCode (by
       simpa [List.length_append, valueLength, Nat.add_comm] using rewrite)
 
 end Flapjack.Compiler.Backend.BviTmc.LetSimulation

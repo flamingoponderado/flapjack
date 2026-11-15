@@ -91,7 +91,7 @@ theorem evaluate_let_worker {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.E
         obtain ⟨workResult, h, workState, workRun, workRel, states, bodyExtension,
           bodyFresh, bodyUnchanged, bodyStill, filled⟩ :=
           bodyIH values values' middle g middleTarget bindingsRun run
-            (envRel_append true g env1 env2 values values' (envRel_submap true f g env1 env2 ⟨environments, extension⟩) valuesRelated)
+            (envRel_append true g env1 env2 values values' ⟨envRel_submap true f g env1 env2 ⟨environments, extension⟩, valuesRelated⟩)
             middleStates extendedHole nextNotFinal extendedPointer nextCode
         have submap : f.submap h := by
           intro k v found; exact bodyExtension k v (extension k v found)

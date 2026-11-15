@@ -10,6 +10,8 @@ list_rel_submap_typed=LIST_REL (v_rel (f :num |-> num)) (env1 :v list) (env2 :v 
 env_rel_submap_typed=env_rel (opt :bool) (f :num |-> num) (env1 :v list) (env2 :v list) ∧ f ⊑ (f' :num |-> num) ⇒ env_rel opt f' env1 env2
 ref_rel_submap_typed=∀(f :num |-> num) (f' :num |-> num) (v :v ref) (w :v ref). ref_rel f v w ∧ f ⊑ f' ⇒ ref_rel f' v w
 env_rel_relax_opt_typed=∀(opt :bool) (f :num |-> num) (env1 :v list) (env2 :v list). env_rel opt f env1 env2 ⇒ env_rel F f env1 env2
+env_rel_cons_typed=env_rel (opt :bool) (f :num |-> num) (env1 :v list) (env2 :v list) ∧ v_rel f (a :v) (b :v) ⇒ env_rel opt f (a::env1) (b::env2)
+env_rel_append_typed=env_rel (opt :bool) (f :num |-> num) (env1 :v list) (env2 :v list) ∧ LIST_REL (v_rel f) (a :v list) (b :v list) ⇒ env_rel opt f (a ++ env1) (b ++ env2)
 env_rel_length_opt_typed=∀(f :num |-> num) (env1 :v list) (env2 :v list). env_rel T f env1 env2 ⇒ LENGTH env2 = LENGTH env1 + (2 :num)
 env_rel_length_non_opt_typed=∀(f :num |-> num) (env1 :v list) (env2 :v list). env_rel F f env1 env2 ⇒ LENGTH env2 ≥ LENGTH env1
 env_rel_length_typed=∀(opt :bool) (f :num |-> num) (env1 :v list) (env2 :v list). env_rel opt f env1 env2 ⇒ LENGTH env2 ≥ LENGTH env1
