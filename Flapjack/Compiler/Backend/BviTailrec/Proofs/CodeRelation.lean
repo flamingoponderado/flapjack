@@ -157,6 +157,7 @@ theorem lookup_union_right_of_disjoint {α : Type} (left right : Spt α)
 
 /-- Disjoint target installations preserve the code relation under
 left-biased code-tree union. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "code_rel_union"]
 theorem codeRel_union (x y t s : Spt (Nat × Bvi.Exp))
     (h : codeRel x y ∧ codeRel t s ∧ (∀ n, sptMem n s → ¬sptMem n y)) :
     codeRel (sptUnion x t) (sptUnion y s) := by
@@ -564,11 +565,25 @@ theorem sptFromAList_mem_iff {α : Type} (code : List (Nat × α)) (name : Nat) 
     obtain ⟨key, value⟩ := entry
     simp [sptFromAList, sptMem_sptInsert, ih]
 
-/-- Compiling code preserves the source-to-worker namespace relation. -/
-theorem compileEachSource_namespaceRel (next : Nat) (code : List (Nat × Nat × Bvi.Exp))
-    (bounds : Flapjack.bvlNumStubs ≤ next) (worker : inWorkerNamespace next)
-    (original : ∀ name ∈ code.map Prod.fst, Flapjack.bvlNumStubs ≤ name → ¬inWorkerNamespace name) :
-    namespaceRel (sptFromAList code) (sptFromAList (compileEachSource next code).2) := by
+/-- Compilation places original and worker labels in their source namespaces. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_each_namespace_rel"]
+theorem compileEach_namespaceRel (next : Nat) (code : List (Nat × Nat × Bvi.Exp))
+    (next1 : Nat) (prog2 : List (Nat × Nat × Bvi.Exp))
+    (premises : compileEachSource next code = (next1, prog2) ∧
+      inWorkerNamespace next ∧ Flapjack.bvlNumStubs ≤ next ∧
+      ∀ entry ∈ code.filter (fun entry => decide (Flapjack.bvlNumStubs ≤ entry.1)),
+        ¬inWorkerNamespace entry.1) :
+    namespaceRel (sptFromAList code) (sptFromAList prog2) := by
+  obtain ⟨compiled, worker, _, outside⟩ := premises
+  have original : ∀ name ∈ code.map Prod.fst,
+      Flapjack.bvlNumStubs ≤ name → ¬inWorkerNamespace name := by
+    intro name member above
+    obtain ⟨entry, present, eq⟩ := List.mem_map.mp member
+    have selected : entry ∈ code.filter (fun entry => decide (Flapjack.bvlNumStubs ≤ entry.1)) :=
+      List.mem_filter.mpr ⟨present, by simpa [eq] using above⟩
+    simpa [eq] using outside entry selected
+  have output : (compileEachSource next code).2 = prog2 := by rw [compiled]
+  rw [← output]
   have generated (name : Nat) (k : Nat) (eq : name = next + k * Flapjack.bvlToBviNamespaces) :
       inWorkerNamespace name := by
     subst name
@@ -594,11 +609,12 @@ theorem compileEachSource_namespaceRel (next : Nat) (code : List (Nat × Nat × 
     · exact old
     · omega
 
-/-- Union preserves the namespace relation. This applies in particular to
-the disjoint code installations used by the source simulation. -/
+/-- Disjoint target installations preserve the namespace relation under union. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "namespace_rel_union"]
 theorem namespaceRel_union {α : Type} (x y t s : Spt α)
-    (left : namespaceRel x y) (right : namespaceRel t s) :
+    (premises : namespaceRel x y ∧ namespaceRel t s ∧ (∀ n, sptMem n s → ¬sptMem n y)) :
     namespaceRel (sptUnion x t) (sptUnion y s) := by
+  obtain ⟨left, right, _⟩ := premises
   obtain ⟨leftAbove, leftNoWorker, leftBelow⟩ := left
   obtain ⟨rightAbove, rightNoWorker, rightBelow⟩ := right
   refine ⟨?_, ?_, ?_⟩
@@ -648,15 +664,9 @@ theorem compileEachSource_install_relations (next : Nat) (code : List (Nat × Na
     obtain ⟨entry, present, equal⟩ := List.mem_map.mp member
     subst name
     exact free entry present
-  have outsideLabels : ∀ name ∈ code.map Prod.fst,
-      Flapjack.bvlNumStubs ≤ name → ¬inWorkerNamespace name := by
-    intro name member above
-    obtain ⟨entry, present, equal⟩ := List.mem_map.mp member
-    subst name
-    apply outside entry
-    exact List.mem_filter.mpr ⟨present, by simpa using above⟩
   exact ⟨compileEachSource_codeRel next code unique freeLabels,
-    compileEachSource_namespaceRel next code bounds worker outsideLabels,
+    compileEach_namespaceRel next code (compileEachSource next code).1 (compileEachSource next code).2
+      ⟨(Prod.eta _).symm, worker, bounds, outside⟩,
     compileEachSource_labels_nodup code next unique freeLabels⟩
 
 /-- Compiled installation entries are disjoint from existing target code
@@ -804,7 +814,7 @@ theorem stateRel_install_code_and_oracle {C F : Type} (source : BviSem.BviState 
     rw [oracle]
     rfl
   · exact codeRel_union _ _ _ _ ⟨codeRelOld, codeRelNew, disjoint⟩
-  · exact namespaceRel_union _ _ _ _ namespaceOld namespaceNew
+  · exact namespaceRel_union _ _ _ _ ⟨namespaceOld, namespaceNew, disjoint⟩
   · intro n
     exact conditions (n + 1)
   · intro n ⟨mem, worker⟩

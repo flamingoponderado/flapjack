@@ -24142,6 +24142,24 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "code_rel_union",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "codeRel_union",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared code_rel_union_typed in bvi_tailrec_semantics_probe.out: both complete code relations and disjointness of the two target domains imply the original relation between the corresponding left-biased unions. Pointwise nonmembership renders HOL domain disjointness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "namespace_rel_union",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "namespaceRel_union",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared namespace_rel_union_typed in bvi_tailrec_semantics_probe.out: all four sparse trees share the original arbitrary payload type, and both relations and disjoint target domains imply the complete relation between unions. Pointwise nonmembership renders HOL domain disjointness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "compile_each_namespace_rel",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "compileEach_namespaceRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_each_namespace_rel_typed in bvi_tailrec_semantics_probe.out: the original compile pair, worker-namespace, stub bound and EVERY over filtered source entries imply the complete namespace relation on original and compiled trees. Membership quantification expresses HOL EVERY."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "compile_each_touched",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean", "lean_name": "compileEach_touched",
     "statement_status": "reviewed_exact",

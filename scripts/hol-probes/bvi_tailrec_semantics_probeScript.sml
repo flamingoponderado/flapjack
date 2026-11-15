@@ -42,6 +42,9 @@ val _ = show_thm "compile_each_touched_typed=" bvi_tailrecProofTheory.compile_ea
 val _ = show_thm "compile_each_code_rel_typed=" bvi_tailrecProofTheory.compile_each_code_rel;
 val _ = show_thm "compile_each_ALL_DISTINCT_typed=" bvi_tailrecProofTheory.compile_each_ALL_DISTINCT;
 val _ = show_thm "compile_prog_ALL_DISTINCT_typed=" bvi_tailrecProofTheory.compile_prog_ALL_DISTINCT;
+val _ = show_thm "code_rel_union_typed=" bvi_tailrecProofTheory.code_rel_union;
+val _ = show_thm "namespace_rel_union_typed=" bvi_tailrecProofTheory.namespace_rel_union;
+val _ = show_thm "compile_each_namespace_rel_typed=" bvi_tailrecProofTheory.compile_each_namespace_rel;
 (* The two find-code theorems are local in the original script. Replay their
    original statements and proofs so their inferred types are captured. *)
 open preamble bvi_tailrecProofTheory bvi_tailrecTheory bviPropsTheory bviSemTheory;
