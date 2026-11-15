@@ -10613,3 +10613,21 @@ scripts/hol-probes/regenerate.sh`.
 `CAKEML=<cakeml tree> HOL4=<HOL tree>
 HOL_PROBE_ONLY=pan_to_crep_primed_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`stack_rawcall_defs_typed_probe.out`, `word_unreach_defs_typed_probe.out`,
+`source_let_defs_typed_probe.out`, `stack_names_defs_typed_probe.out` and
+`word_cse_defs_typed_probe.out` (4+4+4+3+4 rows) capture the reviewed
+compiler/backend definition rows that earlier probes did not cover (task 187):
+`seq_stack_alloc`, `collect_info`, `dest_case`, `comp_top` (stack_rawcall);
+`dest_Seq_Move`, `SimpSeq`, `Seq_assoc_right`, `remove_unreach` (word_unreach);
+`dest_Let`, `dest_Letrec`, `lift_let`, `lift_lets` (source_let);
+`ri_find_name`, `inst_find_name`, `dest_find_name` (stack_names); and the
+`knowledge` record type, `canonicalRegs'`, `canonicalImmReg'` plus `Seqs`
+(word_cse). All are exported from their theory except `Seqs`: the source calls
+`Theory.delete_const "Seqs"` at `word_cseScript.sml:905`, so `Seqs_def` is not
+exported and `Seqs` no longer parses (it resolves to `ast$Seqs`); the probe
+therefore captures the typed `Seqs_ind` induction theorem, which fixes
+`Seqs : α prog list -> α prog`, and the three equations are read from the source
+at lines 642-646. Regenerate each with
+`CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=<probe>_probeScript.sml
+scripts/hol-probes/regenerate.sh`.

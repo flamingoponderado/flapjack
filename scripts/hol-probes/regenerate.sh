@@ -11902,3 +11902,28 @@ run_probe pan_to_crep_primed_typed_probeScript.sml pan_to_crep_primed_typed_prob
   eval_distinct_lists_not_affect_prime_typed opt_mmap_eval_distinct_lists_not_affect_prime_typed \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
   "$cake_dir/pancake/proofs"
+
+run_probe stack_rawcall_defs_typed_probeScript.sml stack_rawcall_defs_typed_probe.out \
+  seq_stack_alloc_def_typed collect_info_def_typed dest_case_def_typed comp_top_def_typed \
+  "$cake_dir/compiler/backend/stack_rawcallScript.sml" \
+  "$cake_dir/compiler/backend"
+
+run_probe word_unreach_defs_typed_probeScript.sml word_unreach_defs_typed_probe.out \
+  dest_Seq_Move_def_typed SimpSeq_def_typed Seq_assoc_right_def_typed remove_unreach_def_typed \
+  "$cake_dir/compiler/backend/word_unreachScript.sml" \
+  "$cake_dir/compiler/backend"
+
+run_probe source_let_defs_typed_probeScript.sml source_let_defs_typed_probe.out \
+  dest_Let_def_typed dest_Letrec_def_typed lift_let_def_typed lift_lets_def_typed \
+  "$cake_dir/compiler/backend/source_letScript.sml" \
+  "$cake_dir/compiler/backend"
+
+run_probe stack_names_defs_typed_probeScript.sml stack_names_defs_typed_probe.out \
+  ri_find_name_def_typed inst_find_name_def_typed dest_find_name_def_typed \
+  "$cake_dir/compiler/backend/stack_namesScript.sml" \
+  "$cake_dir/compiler/backend"
+
+run_probe word_cse_defs_typed_probeScript.sml word_cse_defs_typed_probe.out \
+  knowledge_typed canonicalRegs_prime_def_typed canonicalImmReg_prime_def_typed Seqs_ind_typed \
+  "$cake_dir/compiler/backend/word_cseScript.sml" \
+  "$cake_dir/compiler/backend"

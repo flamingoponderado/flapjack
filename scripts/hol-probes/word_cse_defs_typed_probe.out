@@ -1,0 +1,4 @@
+knowledge_typed=recordtype.knowledge::num sptree$num_map -> num sptree$num_map -> (store_name # num) list -> (num list, num) balanced_map -> (num list, num) balanced_map -> knowledge
+canonicalRegs_prime_def_typed=∀(avoid :num) (data :knowledge) (r :num). canonicalRegs' avoid data r = (let (n :num) = canonicalRegs data r in if n = avoid then r else n)
+canonicalImmReg_prime_def_typed=(∀(avoid :num) (data :knowledge) (r :num). canonicalImmReg' avoid data (Reg r :α reg_imm) = (Reg (canonicalRegs' avoid data r) :α reg_imm)) ∧ ∀(avoid :num) (data :knowledge) (w :α word). canonicalImmReg' avoid data (Imm w) = Imm w
+Seqs_ind_typed=∀(P :α prog list -> bool). P ([] :α prog list) ∧ (∀(x :α prog). P [x]) ∧ (∀(x :α prog) (y :α prog) (xs :α prog list). P (y::xs) ⇒ P (x::y::xs)) ⇒ ∀(v :α prog list). P v
