@@ -135586,6 +135586,27 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "list_rel_submap", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
+  "lean_name": "listRel_submap", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "g"],
+  "reviewer": "Source comparison: Compared list_rel_submap_typed: the original conjunction of the full value list relation and pointer submap implies the same list relation under the extended map. Both list elements are BVL values and both maps use the canonical finite-support carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "env_rel_submap", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
+  "lean_name": "envRel_submap", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "g"],
+  "reviewer": "Source comparison: Compared env_rel_submap_typed: the same optimization flag and environments satisfy the original environment relation after pointer-map extension, under the original conjunctive premise. Both maps use the canonical finite-support carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "ref_rel_submap", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
+  "lean_name": "refRel_submap", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "g"],
+  "reviewer": "Source comparison: Compared ref_rel_submap_typed: the full reference-cell relation and pointer submap imply the same relation under the extended map, with original map and reference binders and conjunction. Both maps use the canonical finite-support carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "v_rel_submap",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
   "lean_name": "valueRel_submap", "statement_status": "reviewed_fmap_as_finite_support_parameters",

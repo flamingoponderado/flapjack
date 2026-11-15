@@ -55,7 +55,7 @@ theorem evaluate_let_to_core {C F : Type} (bindings : List Bvi.Exp) (body target
         obtain ⟨last, h, bodyResult, bodyRun, bodyRel, states, bodyExtension,
           bodyFresh, bodyUnchanged, bodyStill⟩ :=
           bodyIH values values' middle g middleTarget run valuesRelated
-            (envRel_submap opt f g env1 env2 environments extension) middleStates
+            (envRel_submap opt f g env1 env2 ⟨environments, extension⟩) middleStates
             bindingsRun targetRun
         have submap : f.submap h := by
           intro k v found; exact bodyExtension k v (extension k v found)

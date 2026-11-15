@@ -85,7 +85,7 @@ theorem evaluate_if_to_core {C F : Type} (condition yes no yesTarget noTarget : 
           obtain ⟨last, h, branchResult, branchRun, branchRel, states, branchExtension,
             branchFresh, branchUnchanged, branchStill⟩ :=
             branchIH selected selectedTarget middle g middleTarget branchPair branchSource
-              (envRel_submap opt f g env1 env2 environments extension) middleStates
+              (envRel_submap opt f g env1 env2 ⟨environments, extension⟩) middleStates
               ⟨.val [value], .val [value'], conditionRun, targetRun⟩
           have submap : f.submap h := by
             intro k v found; exact branchExtension k v (extension k v found)

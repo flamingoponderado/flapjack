@@ -48,16 +48,16 @@ theorem holFmapAsFiniteSupportParamWitness_refRel_submap_f (f : HolFiniteMapExac
 theorem holFmapAsFiniteSupportParamWitness_refRel_submap_g (g : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup g) g.finiteSupport = g := by cases g; rfl
 
-/-- Extending the pointer map preserves the reference-cell relation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "ref_rel_submap" (fmap_as_finite_support_parameters := [f, g])] -/
+/-- Extending the pointer map preserves the reference-cell relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "ref_rel_submap"
+  (fmap_as_finite_support_parameters := [f, g])]
 theorem refRel_submap (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
-    (source target : Ref Value) (related : refRel f source target) (submap : f.submap g) :
+    (source target : Ref Value) (h : refRel f source target ∧ f.submap g) :
     refRel g source target := by
+  obtain ⟨related, submap⟩ := h
   cases related with
   | byteArray b bytes => exact .byteArray b bytes
-  | valueArray xs ys values => exact .valueArray xs ys (listRel_submap f g xs ys values submap)
+  | valueArray xs ys values => exact .valueArray xs ys (listRel_submap f g xs ys ⟨values, submap⟩)
   | thunk mode x y value => exact .thunk mode x y (valueRel_submap f x y g ⟨value, submap⟩)
 
 theorem holFmapAsFiniteSupportParamWitness_fmapInj_update_f (f : HolFiniteMapExact Nat Nat) :
@@ -209,7 +209,7 @@ theorem stateRefRel_alloc (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMap
         intro same
         subst j
         exact rangeFresh i rename
-      exact ⟨j, cell, extension i j rename, refRel_submap f (f.updateEq (src, tgt)) old cell cellsRel extension,
+      exact ⟨j, cell, extension i j rename, refRel_submap f (f.updateEq (src, tgt)) old cell ⟨cellsRel, extension⟩,
         by simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using targetFound⟩
 
 theorem holFmapAsFiniteSupportParamWitness_stateRefRel_lookup_f (f : HolFiniteMapExact Nat Nat) :

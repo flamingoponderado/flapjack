@@ -340,8 +340,8 @@ theorem evaluate_wrapper_core {C F : Type} (loc dest tag : Nat) (left right : Li
         alloc.2.1 filledHole fresh
       have leftRelated := CallBlockEnvironment.wfVars_list_rel left opt f env1 env2 environments leftWf
       have rightRelated := CallBlockEnvironment.wfVars_list_rel right opt f env1 env2 environments rightWf
-      have leftNext := listRel_submap f g _ _ leftRelated extension
-      have rightNext := listRel_submap f g _ _ rightRelated extension
+      have leftNext := listRel_submap f g _ _ ⟨leftRelated, extension⟩
+      have rightNext := listRel_submap f g _ _ ⟨rightRelated, extension⟩
       have outside := fresh_not_in_range f source.refs target.refs states.1
       obtain ⟨value, refs, targetRun, valueRelated, heaps, finalUnchanged, finalStill⟩ :=
         evaluate_wrapper_success_related tag left right child dest env2 target next f g mid.refs

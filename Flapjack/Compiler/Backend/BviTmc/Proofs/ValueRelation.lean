@@ -101,13 +101,13 @@ theorem holFmapAsFiniteSupportParamWitness_listRel_submap_f (f : HolFiniteMapExa
 theorem holFmapAsFiniteSupportParamWitness_listRel_submap_g (g : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup g) g.finiteSupport = g := by cases g; rfl
 
-/-- Extending the pointer map preserves related lists.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_rel_submap" (fmap_as_finite_support_parameters := [f, g])] -/
+/-- Extending the pointer map preserves related lists. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_rel_submap"
+  (fmap_as_finite_support_parameters := [f, g])]
 theorem listRel_submap (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
-    (source target : List Value) (related : List.Forall₂ (valueRel f) source target)
-    (submap : f.submap g) : List.Forall₂ (valueRel g) source target := by
+    (source target : List Value) (h : List.Forall₂ (valueRel f) source target ∧ f.submap g) :
+    List.Forall₂ (valueRel g) source target := by
+  obtain ⟨related, submap⟩ := h
   induction related with
   | nil => exact .nil
   | cons head tail ih => exact .cons (valueRel_submap f _ _ g ⟨head, submap⟩) ih
@@ -117,15 +117,15 @@ theorem holFmapAsFiniteSupportParamWitness_envRel_submap_f (f : HolFiniteMapExac
 theorem holFmapAsFiniteSupportParamWitness_envRel_submap_g (g : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup g) g.finiteSupport = g := by cases g; rfl
 
-/-- Extending the pointer map preserves related environments.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_submap" (fmap_as_finite_support_parameters := [f, g])] -/
+/-- Extending the pointer map preserves related environments. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_submap"
+  (fmap_as_finite_support_parameters := [f, g])]
 theorem envRel_submap (opt : Bool) (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
-    (source target : List Value) (related : envRel opt f source target) (submap : f.submap g) :
+    (source target : List Value) (h : envRel opt f source target ∧ f.submap g) :
     envRel opt g source target := by
+  obtain ⟨related, submap⟩ := h
   obtain ⟨xs, ys, equal, pairs, extras⟩ := related
-  exact ⟨xs, ys, equal, listRel_submap f g source xs pairs submap, extras⟩
+  exact ⟨xs, ys, equal, listRel_submap f g source xs ⟨pairs, submap⟩, extras⟩
 
 theorem holFmapAsFiniteSupportParamWitness_envRel_relax_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl

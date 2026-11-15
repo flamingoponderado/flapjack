@@ -121,7 +121,7 @@ theorem evaluate_if_worker {C F : Type} (condition yes no : Bvi.Exp)
           obtain ⟨workResult, h, workState, workRun, workRel, states, branchExtension,
             branchFresh, branchUnchanged, branchStill, filled⟩ :=
             branchIH selected middle g middleTarget ⟨.val [value], conditionRun⟩ branchMember branchSource
-              (envRel_submap true f g env1 env2 environments extension) middleStates nextHole nextNotFinal
+              (envRel_submap true f g env1 env2 ⟨environments, extension⟩) middleStates nextHole nextNotFinal
               (WrapperCases.evaluate_pres_opt_code loc locOpt source middle target middleTarget
                 [condition] env1 env2 (.val [value]) (.val [value']) code conditionRun targetRun)
           have submap : f.submap h := by

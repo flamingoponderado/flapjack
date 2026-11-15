@@ -445,8 +445,8 @@ theorem evaluate_aux_frame_core {C F : Type} (loc dest tag : Nat) (left right : 
         (by simp [holEl, holHd]) (by simp) (by simp [holEl, holHd])
       have leftRelated := CallBlockEnvironment.wfVars_list_rel left opt f env1 env2 environments wf.1
       have rightRelated := CallBlockEnvironment.wfVars_list_rel right opt f env1 env2 environments wf.2.2.1
-      have leftNext := listRel_submap f g _ _ leftRelated extension
-      have rightNext := listRel_submap f g _ _ rightRelated extension
+      have leftNext := listRel_submap f g _ _ ⟨leftRelated, extension⟩
+      have rightNext := listRel_submap f g _ _ ⟨rightRelated, extension⟩
       have freshOutside := fresh_not_in_range f source.refs target.refs states.1
       have blocks := linked_frame_block_relation f g oldRefs target.refs next.refs ptr oldTag tag oldLeft oldRight
         (right.map (fun n => holEl n env2)).reverse (left.map (fun n => holEl n env2)).reverse

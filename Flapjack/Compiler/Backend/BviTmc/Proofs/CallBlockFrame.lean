@@ -103,8 +103,8 @@ theorem evaluate_frame_core {C F : Type} (loc tag : Nat) (left right : List Nat)
           cases related with | cons h _ => exact h
         have leftRelated := wfVars_list_rel left opt f env1 env2 environments leftWf
         have rightRelated := wfVars_list_rel right opt f env1 env2 environments rightWf
-        have leftNext := listRel_submap f g _ _ leftRelated extension
-        have rightNext := listRel_submap f g _ _ rightRelated extension
+        have leftNext := listRel_submap f g _ _ ⟨leftRelated, extension⟩
+        have rightNext := listRel_submap f g _ _ ⟨rightRelated, extension⟩
         have fields : List.Forall₂ (valueRel g)
             ((right.map (fun n => holEl n env1)).reverse ++ [value] ++ (left.map (fun n => holEl n env1)).reverse)
             ((right.map (fun n => holEl n env2)).reverse ++ [value'] ++ (left.map (fun n => holEl n env2)).reverse) := by
