@@ -100,21 +100,21 @@ theorem holFmapAsFiniteSupportParamWitness_stateRefRel_filled_target (target : H
     mapofBroad (maptoBroadlookup target) target.finiteSupport = target := by cases target; rfl
 
 /-- Updating a target location outside the pointer-map range preserves the
-reference relation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_filled" (fmap_as_finite_support_parameters := [f, source, target])] -/
+reference relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_filled"
+  (fmap_as_finite_support_parameters := [f, source, target])]
 theorem stateRefRel_filled (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMapExact Nat (Ref Value))
     (target : HolFiniteMapExact Nat (Ref Value)) (key : Nat) (value : Ref Value)
-    (related : stateRefRel f source target) (fresh : ∀ i, f.lookup i ≠ some key) :
+    (h : stateRefRel f source target ∧ ¬ ∃ i, f.lookup i = some key) :
     stateRefRel f source (target.updateEq (key, value)) := by
+  obtain ⟨related, fresh⟩ := h
   refine ⟨related.1, ?_⟩
   intro i v found
   obtain ⟨j, w, mapped, cells, lookup⟩ := related.2 i v found
   have different : j ≠ key := by
     intro equal
     subst j
-    exact fresh i mapped
+    exact fresh ⟨i, mapped⟩
   refine ⟨j, w, mapped, cells, ?_⟩
   simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using lookup
 

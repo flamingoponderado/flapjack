@@ -75,7 +75,7 @@ theorem stateRel_filled {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (source : BviState (Nat × C) F) (target : BviState C F) (key : Nat) (value : BvlSem.Ref BvlSem.Value)
     (related : stateRel f source target) (fresh : ∀ i, f.lookup i ≠ some key) :
     stateRel f source { target with refs := target.refs.updateEq (key, value) } := by
-  exact ⟨stateRefRel_filled f source.refs target.refs key value related.1 fresh, related.2⟩
+  exact ⟨stateRefRel_filled f source.refs target.refs key value ⟨related.1, fun ⟨i, mapped⟩ => fresh i mapped⟩, related.2⟩
 
 /-- Flapjack installation helper: disjoint source and transformed code can be
 installed together while both compiler oracles advance. -/

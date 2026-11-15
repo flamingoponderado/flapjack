@@ -57,10 +57,9 @@ theorem link_frame_invariants (f : HolFiniteMapExact Nat Nat)
     contradiction
   let first := refs.updateEq (ptr, .mutBlock oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight)
   have firstHeaps : stateRefRel f sourceRefs first :=
-    stateRefRel_filled f sourceRefs refs ptr _ heaps (fun i mapped => outside ⟨i, mapped⟩)
+    stateRefRel_filled f sourceRefs refs ptr _ ⟨heaps, outside⟩
   have linkedHeaps := stateRefRel_filled f sourceRefs first (leastUnusedRef refs)
-    (.mutBlock tag false newLeft (.number 0) newRight) firstHeaps
-    (fun i mapped => freshOutside ⟨i, mapped⟩)
+    (.mutBlock tag false newLeft (.number 0) newRight) ⟨firstHeaps, freshOutside⟩
   refine ⟨oldTag, oldLeft, oldRight, found, different, linkedHeaps, ?_, ?_, ?_, ?_⟩
   · refine ⟨leastUnusedRef refs, tag, newLeft, newRight, by simp, ?_, rfl, small, freshOutside, ?_⟩
     · simp [holEl, holHd]

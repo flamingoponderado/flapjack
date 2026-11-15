@@ -94,7 +94,7 @@ theorem evaluate_finalise_cons (v2 : Value) (targetRefs : HolFiniteMapExact Nat 
             · subst sourceTag
               rw [shape]
               exact .block _ _ _ listRel
-            · exact stateRefRel_filled fNext sourceRefs childRefs ptr _ childHeaps (fun i mapped => outside ⟨i, mapped⟩)
+            · exact stateRefRel_filled fNext sourceRefs childRefs ptr _ ⟨childHeaps, outside⟩
             · have childUnchanged' : holesUnchangedExcept fNext
                   (@HolFiniteMapExact.eraseEq Nat (Ref Value) (Classical.decEq Nat) targetRefs ptr) childRefs ∅ := by
                 rw [eraseEq]

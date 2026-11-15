@@ -83,7 +83,7 @@ theorem alloc_frame_invariants {C F : Type} (tag : Nat) (left right : List Nat)
   dsimp only
   have outside := fresh_not_in_range f source.refs target.refs states.1
   refine ⟨?_, ?_, ?_, ?_⟩
-  · exact stateRefRel_filled f source.refs target.refs _ _ states.1 (fun i h => outside ⟨i, h⟩)
+  · exact stateRefRel_filled f source.refs target.refs _ _ ⟨states.1, outside⟩
   · refine ⟨leastUnusedRef target.refs, tag, (right.map (fun n => holEl n env)).reverse,
       (left.map (fun n => holEl n env)).reverse, by simp, rfl, ?_, ?_, outside, ?_⟩
     · simp

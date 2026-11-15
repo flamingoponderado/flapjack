@@ -135685,6 +135685,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "state_ref_rel_filled", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
+  "lean_name": "stateRefRel_filled", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "source", "target"],
+  "reviewer": "Source comparison: Compared state_ref_rel_filled_typed in bvi_tmc_proof_source_probe.out: the original heap relation and pointer-map range nonmembership jointly imply that the target heap remains related after the same finite-map update. Range nonmembership is expressed by absence of a successful lookup, as in HOL FRANGE_FLOOKUP. All three maps use canonical finite support with separate same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "state_ref_rel_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
   "lean_name": "stateRefRel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
