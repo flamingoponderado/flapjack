@@ -10,3 +10,4 @@ nsLookup_nsBind_typed=(∀(n :α) (v :β) (e :(γ, α, β) namespace). nsLookup 
 nsAppend_assoc_typed=∀(e1 :(α, β, γ) namespace) (e2 :(α, β, γ) namespace) (e3 :(α, β, γ) namespace). nsAppend e1 (nsAppend e2 e3) = nsAppend (nsAppend e1 e2) e3
 nsAppend_to_nsBindList_typed=∀(l :(α # β) list). nsAppend (alist_to_ns l :(γ, α, β) namespace) (e :(γ, α, β) namespace) = nsBindList l e
 nsAll_nsAppend_typed=∀(f :(α, β) id -> γ -> bool) (e1 :(α, β, γ) namespace) (e2 :(α, β, γ) namespace). nsAll f e1 ∧ nsAll f e2 ⇒ nsAll f (nsAppend e1 e2)
+nsAll_nsBind_typed=∀(P :(α, β) id -> γ -> bool) (x :β) (v :γ) (e :(α, β, γ) namespace). P (Short x :(α, β) id) v ∧ nsAll P e ⇒ nsAll P (nsBind x v e)

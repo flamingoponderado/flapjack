@@ -142741,5 +142741,125 @@
     "fmap_as_finite_support_universals": ["refs"],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source comparison with evaluate_cb_typed in bvi_tmc_proof_source_probe.out: independent compiler, FFI and worker types, the complete premise, ordinary and wrapper simulations, auxiliary and worker executions and singleton-success relations are retained. BviState.refs, input f, universal refs, and existential ordinaryMap, wrapMap, auxMap and workMap use the canonical finite-support representation with unconditional codec witnesses. Evaluation inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": "cakeml/compiler/inference/inferPropsScript.sml",
+    "hol_name": "set_tids_def",
+    "lean_path": "Flapjack/Compiler/Inference/InferProps.lean",
+    "lean_name": "setTids",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with set_tids_def_typed in infer_props_tids_probe.out: each application contributes its Nat identifier and the union of its children's sets; both variable cases are empty. The list helper implements the original MAP and BIGUNION."
+  },
+  {
+    "hol_path": "cakeml/compiler/inference/inferPropsScript.sml",
+    "hol_name": "unconvert_t_def",
+    "lean_path": "Flapjack/Compiler/Inference/InferProps.lean",
+    "lean_name": "unconvertT",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with unconvert_t_def_typed in infer_props_tids_probe.out: de Bruijn indices and application names are preserved, the list helper implements MAP, and a named variable yields the shared opaque HOL ARB Nat."
+  },
+  {
+    "hol_path": "cakeml/compiler/inference/inferPropsScript.sml",
+    "hol_name": "inf_set_tids_def",
+    "lean_path": "Flapjack/Compiler/Inference/InferProps.lean",
+    "lean_name": "infSetTids",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with inf_set_tids_def_typed in infer_props_tids_probe.out: application membership is its Nat identifier or membership in any child set; both inference-variable cases are empty. The list helper implements MAP and BIGUNION."
+  },
+  {
+    "hol_path": "cakeml/compiler/inference/inferPropsScript.sml",
+    "hol_name": "inf_set_tids_unconvert",
+    "lean_path": "Flapjack/Compiler/Inference/InferProps.lean",
+    "lean_name": "infSetTidsUnconvert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with inf_set_tids_unconvert_typed in infer_props_tids_probe.out: all declarative types have equal identifier sets before and after unconvertT, with no extra premises. The proof uses function and proposition extensionality for HOL set equality."
+  },
+  {
+    "hol_path": "cakeml/compiler/inference/inferPropsScript.sml",
+    "hol_name": "inf_set_tids_subset_def",
+    "lean_path": "Flapjack/Compiler/Inference/InferProps.lean",
+    "lean_name": "infSetTidsSubset",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with inf_set_tids_subset_def_typed in infer_props_tids_probe.out: the original identifier set is a subset of tids, with the same parameter order and no additional condition."
+  },
+  {
+    "hol_path": "cakeml/compiler/inference/inferPropsScript.sml",
+    "hol_name": "inf_set_tids_ienv_def",
+    "lean_path": "Flapjack/Compiler/Inference/InferProps.lean",
+    "lean_name": "infSetTidsIenv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with inf_set_tids_ienv_def_typed in infer_props_tids_probe.out: nsAll over the type, constructor and value namespaces preserves the original order, tuple fields, EVERY predicate and constructor identifier membership."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml",
+    "hol_name": "nsAll_nsBind",
+    "lean_path": "Flapjack/NamespaceProps.lean",
+    "lean_name": "nsAll_nsBind",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with nsAll_nsBind_typed in namespace_props_typed_probe.out: all three namespace types remain independent, and the new-entry and existing-namespace premises imply nsAll for the full binding. Classical key equality is internal to the Lean statement."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/typeSoundInvariantsScript.sml",
+    "hol_name": "tenv_abbrev_ok_def",
+    "lean_path": "Flapjack/TypeSoundInvariants.lean",
+    "lean_name": "tenvAbbrevOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with tenv_abbrev_ok_def_typed in type_sound_env_probe.out: independent namespace key types and the full free-variable check at bound zero are preserved."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/typeSoundInvariantsScript.sml",
+    "hol_name": "tenv_ctor_ok_def",
+    "lean_path": "Flapjack/TypeSoundInvariants.lean",
+    "lean_name": "tenvCtorOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with tenv_ctor_ok_def_typed in type_sound_env_probe.out: both namespace key types and the unused constructor-tag type remain independent, and every constructor argument type is checked."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/typeSoundInvariantsScript.sml",
+    "hol_name": "tenv_val_ok_def",
+    "lean_path": "Flapjack/TypeSoundInvariants.lean",
+    "lean_name": "tenvValOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with tenv_val_ok_def_typed in type_sound_env_probe.out: independent namespace key types, numeric bound, empty named-variable list and complete namespace check match."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/typeSoundInvariantsScript.sml",
+    "hol_name": "tenv_ok_def",
+    "lean_path": "Flapjack/TypeSoundInvariants.lean",
+    "lean_name": "tenvOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with tenv_ok_def_typed in type_sound_env_probe.out: the value, constructor and abbreviation checks use the corresponding fields in the original conjunction order."
+  },
+  {
+    "hol_path": "cakeml/compiler/repl/repl_typesScript.sml",
+    "hol_name": "tenv_ok_prim_tenv",
+    "lean_path": "Flapjack/Compiler/Repl/ReplTypes.lean",
+    "lean_name": "tenvOkPrimTenv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared repl_typesScript.sml and tenv_ok_prim_tenv_replay_typed in type_sound_env_probe.out: the closed well-formedness statement matches; the capture replays the original proof rather than fetching a built repl_types theory."
+  },
+  {
+    "hol_path": "cakeml/compiler/inference/inferScript.sml",
+    "hol_name": "check_t_def",
+    "lean_path": "Flapjack/Compiler/Inference/Infer/EnvironmentInvariant.lean",
+    "lean_name": "checkT",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with check_t_def_typed in infer_props_tids_probe.out: unification-variable set membership, strict de Bruijn bound and EVERY over application arguments match, with the constructor identifier ignored."
+  },
+  {
+    "hol_path": "cakeml/compiler/inference/inferScript.sml",
+    "hol_name": "ienv_val_ok_def",
+    "lean_path": "Flapjack/Compiler/Inference/Infer/EnvironmentInvariant.lean",
+    "lean_name": "ienvValOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with ienv_val_ok_def_typed in infer_props_tids_probe.out: independent namespace key types and the original checkT over each bound count and inference type are preserved."
+  },
+  {
+    "hol_path": "cakeml/compiler/inference/inferPropsScript.sml",
+    "hol_name": "ienv_ok_def",
+    "lean_path": "Flapjack/Compiler/Inference/InferProps.lean",
+    "lean_name": "ienvOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison with ienv_ok_def_typed in infer_props_tids_probe.out: inference values, semantic constructors and semantic abbreviations are checked in the original order with the same input uvars."
   }
 ]

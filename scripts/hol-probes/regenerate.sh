@@ -9776,6 +9776,16 @@ run_probe infer_subst_probeScript.sml infer_subst_probe.out \
   "$cake_dir/compiler/inference/inferScript.sml" \
   "$cake_dir/compiler/inference"
 
+run_probe infer_props_tids_probeScript.sml infer_props_tids_probe.out \
+  set_tids_def_typed unconvert_t_def_typed inf_set_tids_def_typed inf_set_tids_subset_def_typed inf_set_tids_ienv_def_typed inf_set_tids_unconvert_typed check_t_def_typed ienv_val_ok_def_typed ienv_ok_def_typed \
+  "$cake_dir/compiler/inference/inferPropsScript.sml" \
+  "$cake_dir/compiler/inference"
+
+run_probe type_sound_env_probeScript.sml type_sound_env_probe.out \
+  tenv_abbrev_ok_def_typed tenv_ctor_ok_def_typed tenv_val_ok_def_typed tenv_ok_def_typed tenv_ok_prim_tenv_replay_typed \
+  "$cake_dir/semantics/proofs/typeSoundInvariantsScript.sml" \
+  "$cake_dir/semantics/proofs"
+
 run_probe gram_valid_sym_probeScript.sml gram_valid_sym_probe.out \
   valid_mult_sym_def_typed valid_add_sym_def_typed valid_rel_sym_def_typed valid_list_sym_def_typed valid_prefix_sym_def_typed \
   "$cake_dir/semantics/gramScript.sml" \
@@ -10848,7 +10858,7 @@ run_probe semantics_props_typed_probeScript.sml semantics_props_typed_probe.out 
 
 run_probe namespace_props_typed_probeScript.sml namespace_props_typed_probe.out \
   nsLookup_nsEmpty_typed nsLookupMod_nsEmpty_typed nsLookup_nsLift_typed nsLookupMod_nsLift_typed nsDom_nsLift_typed nsDomMod_nsLift_typed nsDom_nsAppend_equal_typed nsAppend_nsEmpty_typed \
-  nsLookup_nsBind_typed nsAppend_assoc_typed nsAppend_to_nsBindList_typed nsAll_nsAppend_typed \
+  nsLookup_nsBind_typed nsAppend_assoc_typed nsAppend_to_nsBindList_typed nsAll_nsAppend_typed nsAll_nsBind_typed \
   "$cake_dir/semantics/proofs/namespacePropsScript.sml" \
   "$cake_dir/semantics/proofs"
 

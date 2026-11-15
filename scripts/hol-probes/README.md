@@ -10451,3 +10451,15 @@ before printing, so the capture shows the body and its inferred types. The
 the lprefix_lub capture is evidence only: its audit found independent element
 type variables and curried conjunction premises that the Lean rows still share
 or curry, so those rows remain pending fixes.
+
+`infer_props_tids_probe.out` captures typed identifier-set and conversion
+definitions and `inf_set_tids_unconvert`, prerequisites for the initial
+inference environment in `compilerProof$type_config_ok`. Regenerate with
+`HOL_PROBE_ONLY=infer_props_tids_probeScript.sml`. The capture supports source
+review; it is not a cross-language equivalence proof.
+
+`type_sound_env_probe.out` captures the declarative environment invariants
+with their independent namespace key and constructor-tag types, and replays
+the `tenv_ok_prim_tenv` proof from `repl_typesScript.sml` without building in
+the read-only reference checkout. Regenerate with
+`HOL_PROBE_ONLY=type_sound_env_probeScript.sml`.

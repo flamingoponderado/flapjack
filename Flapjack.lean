@@ -3776,6 +3776,11 @@ import Flapjack.CakeParser.ToSexp
 import Flapjack.Test.CakeFromSexpParity
 import Flapjack.RiscV.CakeArtifactFormat
 import Flapjack.Compiler.Inference.Infer
+import Flapjack.Compiler.Inference.InferProps
+import Flapjack.TypeSoundInvariants
+import Flapjack.Compiler.Repl.ReplTypes
+import Flapjack.Compiler.Proofs.CompilerProof
+import Flapjack.Test.CakeTypeInvariantParity
 import Flapjack.Compiler.Inference.Infer.Core
 import Flapjack.Compiler.Inference.Infer.Diagnostics
 import Flapjack.Compiler.Inference.Unify
