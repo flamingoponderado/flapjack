@@ -8,6 +8,15 @@ public import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
 /-! Data simplification proof infrastructure. -/
 namespace Flapjack.Compiler.Backend.DataSimp
 
+/-- The continuation that evaluates a trailing skip is the identity on a
+result and state pair. The evaluator inherits SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_simpProofScript.sml" "lam_skip_id"]
+theorem lam_skip_id {C F : Type}
+    (x : Option (Flapjack.SemanticPrimitivesHOL.Result (List DataSem.Value) DataSem.Value) × DataSem.State C F) :
+    (fun (result, state) => if result = none then DataSem.evaluate .skip state else (result, state)) x = x := by
+  obtain ⟨result, state⟩ := x
+  cases result <;> simp [DataSem.evaluate]
+
 /-- Sequencing with a continuation has the same result as `pSeq`. This is
 untagged pending correspondence review of the data evaluator. -/
 theorem evaluate_pSeq {C F : Type} (first continuation : DataLang.Prog)
