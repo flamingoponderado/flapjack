@@ -328,14 +328,4 @@ theorem fixClockEvaluate {C F : Type} (state : State C F) (program : DataLang.Pr
     simp only [run] at bound
     simp [fixClock, Nat.min_eq_right bound]
 
-/-- A trailing skip does not change a data-language evaluation. This is
-untagged while the evaluator correspondence is under review. -/
-theorem evaluate_seq_skip {C F : Type} (program : DataLang.Prog) (state : State C F) :
-    evaluate (.seq program .skip) state = evaluate program state := by
-  have clockBound := evaluate_clock_le program state
-  cases run : evaluate program state with
-  | mk result next =>
-    simp only [run] at clockBound
-    cases result <;> simp [evaluate, run, fixClock, Nat.min_eq_right clockBound]
-
 end Flapjack.Compiler.Backend.DataSem

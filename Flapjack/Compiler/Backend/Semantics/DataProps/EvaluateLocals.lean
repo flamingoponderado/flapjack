@@ -103,7 +103,7 @@ private theorem localSimulation_all {C F : Type} (program : DataLang.Prog) :
           (DataSpace.simulationFor_tick (C := C) (F := F))
       | makeSpace amount names =>
         simpa [LocalSimulation, DataSpace.simulationFor, DataSpace.compile, DataSpace.space,
-          DataSpace.pMakeSpace, DataSem.evaluate_seq_skip] using
+          DataSpace.pMakeSpace, DataSimp.evaluate_Seq_Skip] using
           (DataSpace.simulationFor_makeSpace (C := C) (F := F) amount names)
       | raise name =>
         simpa [LocalSimulation, DataSpace.simulationFor, DataSpace.compile, DataSpace.space, DataSpace.pMakeSpace] using

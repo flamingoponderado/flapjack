@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Backend.Semantics.DataProps.Jump
 public import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
 public import Flapjack.Compiler.Backend.DataLive.Proofs.PrimitiveAll
 public import Flapjack.Compiler.Backend.DataLive.Proofs.CompileCorrect
+public import Flapjack.Compiler.Backend.DataSimp.Proofs.Correct
 
 @[expose] public section
 
@@ -196,7 +197,7 @@ theorem simulationFor_makeSpace {C F : Type} (amount : Nat) (names : NumSet) :
       (addSpace { source with locals := env } amount).peakHeapLength,
       (addSpace { source with locals := env } amount).stackMax, ?_, ?_⟩
     · change DataSem.evaluate (.seq (.makeSpace amount names) .skip) { source with locals := locals } = _
-      rw [DataSem.evaluate_seq_skip]
+      rw [DataSimp.evaluate_Seq_Skip]
       simp [DataSem.evaluate, targetCut, addSpace]
     · exact (sptSubsptLookup _ _).2 (localsOk_refl _)
 

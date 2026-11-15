@@ -62,7 +62,7 @@ private theorem compileSeqSkip (second : DataLang.Prog) :
 
 private theorem evalSeqSkipAssoc {C F : Type} (first second : DataLang.Prog) (state : State C F) :
     evaluate (.seq (.seq first .skip) second) state = evaluate (.seq first second) state := by
-  conv_lhs => rw [DataSem.evaluate, fixClockEvaluate, evaluate_seq_skip]
+  conv_lhs => rw [DataSem.evaluate, fixClockEvaluate, DataSimp.evaluate_Seq_Skip]
   rw [DataSem.evaluate, fixClockEvaluate]
 
 /-- Two successful cuts equal a single cut by the intersection. -/

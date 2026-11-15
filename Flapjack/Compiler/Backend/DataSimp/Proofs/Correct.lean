@@ -8,6 +8,17 @@ public import Flapjack.Compiler.Backend.Semantics.DataSem.EvaluateClock
 /-! Data simplification proof infrastructure. -/
 namespace Flapjack.Compiler.Backend.DataSimp
 
+/-- Sequencing with a trailing skip leaves evaluation unchanged.
+The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_simpProofScript.sml" "evaluate_Seq_Skip"]
+theorem evaluate_Seq_Skip {C F : Type} (program : DataLang.Prog) (state : DataSem.State C F) :
+    DataSem.evaluate (.seq program .skip) state = DataSem.evaluate program state := by
+  have clockBound := DataSem.evaluate_clock_le program state
+  cases run : DataSem.evaluate program state with
+  | mk result next =>
+    simp only [run] at clockBound
+    cases result <;> simp [DataSem.evaluate, run, DataSem.fixClock, Nat.min_eq_right clockBound]
+
 /-- The continuation that evaluates a trailing skip is the identity on a
 result and state pair. The evaluator inherits SOUNDNESS item 8. -/
 @[hol "cakeml/compiler/backend/proofs/data_simpProofScript.sml" "lam_skip_id"]
@@ -23,7 +34,7 @@ The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
 theorem evaluate_pSeq {C F : Type} (first continuation : DataLang.Prog)
     (state : DataSem.State C F) :
     DataSem.evaluate (pSeq first continuation) state = DataSem.evaluate (.seq first continuation) state := by
-  cases continuation <;> simp [pSeq, DataSem.evaluate_seq_skip]
+  cases continuation <;> simp [pSeq, evaluate_Seq_Skip]
 
 /-- Sequencing is associative under the clocked data evaluator. -/
 theorem evaluate_seq_assoc {C F : Type} (first second third : DataLang.Prog)
@@ -109,8 +120,8 @@ theorem evaluate_simp {C F : Type} (program : DataLang.Prog) (state : DataSem.St
     apply evaluate_seq_congr _ _ continuation continuation
     · intro state
       apply evaluate_if_congr
-      · intro state; simpa [DataSem.evaluate_seq_skip] using evaluate_simp yes state .skip
-      · intro state; simpa [DataSem.evaluate_seq_skip] using evaluate_simp no state .skip
+      · intro state; simpa [evaluate_Seq_Skip] using evaluate_simp yes state .skip
+      · intro state; simpa [evaluate_Seq_Skip] using evaluate_simp no state .skip
     · intro state; rfl
   | call ret dest names handler =>
     cases handler with
@@ -122,7 +133,7 @@ theorem evaluate_simp {C F : Type} (program : DataLang.Prog) (state : DataSem.St
       · intro state
         apply evaluate_call_handler_congr
         intro state
-        simpa [DataSem.evaluate_seq_skip] using evaluate_simp handler state .skip
+        simpa [evaluate_Seq_Skip] using evaluate_simp handler state .skip
       · intro state; rfl
   | move dest src => simp [DataSimp.simp, evaluate_pSeq]
   | assign dest op names live => simp [DataSimp.simp, evaluate_pSeq]
@@ -137,6 +148,6 @@ The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
 @[hol "cakeml/compiler/backend/proofs/data_simpProofScript.sml" "simp_correct"]
 theorem simp_correct {C F : Type} (program : DataLang.Prog) (state : DataSem.State C F) :
     DataSem.evaluate (simp program .skip) state = DataSem.evaluate program state := by
-  simpa [DataSem.evaluate_seq_skip] using evaluate_simp program state .skip
+  simpa [evaluate_Seq_Skip] using evaluate_simp program state .skip
 
 end Flapjack.Compiler.Backend.DataSimp
