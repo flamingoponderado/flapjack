@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "unchanged_hole_has_val", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "unchanged_holeHasVal", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "fNext", "refs", "refsNext"],
+  "reviewer": "Source comparison: Compared unchanged_hole_has_val_typed in bvi_tmc_proof_source_probe.out: the original hole relation, freshness, unchanged-hole relation and nonmembership conjunction imply the hole relation for the extended map and new heap. The typed environment, pointer, integer, value and changed-set binders match; all four map parameters use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "holes_unchanged_except_changed", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
   "lean_name": "holesUnchanged_changed", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "refsOld", "refsNew"],

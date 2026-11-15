@@ -196,18 +196,18 @@ theorem holFmapAsFiniteSupportParamWitness_unchanged_holeHasVal_refs (refs : Hol
 theorem holFmapAsFiniteSupportParamWitness_unchanged_holeHasVal_refsNext (refsNext : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup refsNext) refsNext.finiteSupport = refsNext := by cases refsNext; rfl
 
-/-- An unchanged hole remains valid when the pointer map grows only at fresh locations.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "unchanged_hole_has_val" (fmap_as_finite_support_parameters := [f, fNext, refs, refsNext])] -/
+/-- An unchanged hole remains valid when the pointer map grows only at fresh locations. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "unchanged_hole_has_val"
+  (fmap_as_finite_support_parameters := [f, fNext, refs, refsNext])]
 theorem unchanged_holeHasVal (f : HolFiniteMapExact Nat Nat) (fNext : HolFiniteMapExact Nat Nat)
     (env1 envPrefix : List Value) (holePtr : Nat) (holeIdx : Int)
     (refs : HolFiniteMapExact Nat (Ref Value)) (refsNext : HolFiniteMapExact Nat (Ref Value))
     (c : Value) (changed : Set Nat)
-    (hole : holeHasVal f env1 (envPrefix ++ [.refPtr false holePtr, .number holeIdx]) refs c)
-    (fresh : onlyFresh f fNext refs) (unchanged : holesUnchangedExcept f refs refsNext changed)
-    (notChanged : holePtr ∉ changed) :
+    (h : holeHasVal f env1 (envPrefix ++ [.refPtr false holePtr, .number holeIdx]) refs c ∧
+      onlyFresh f fNext refs ∧ holesUnchangedExcept f refs refsNext changed ∧
+      holePtr ∉ changed) :
     holeHasVal fNext env1 (envPrefix ++ [.refPtr false holePtr, .number holeIdx]) refsNext c := by
+  obtain ⟨hole, fresh, unchanged, notChanged⟩ := h
   obtain ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, outside, found⟩ := hole
   have prefixLength : envPrefix.length = env1.length := by simp only [List.length_append, List.length_cons, List.length_nil] at length; omega
   have knownPtr : holEl env1.length (envPrefix ++ [.refPtr false holePtr, .number holeIdx]) =

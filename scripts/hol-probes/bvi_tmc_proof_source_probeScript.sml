@@ -29,6 +29,7 @@ val _ = show "holes_unchanged_except_del_typed" bvi_tmcProofTheory.holes_unchang
 val _ = show "holes_unchanged_except_del_SING_typed" bvi_tmcProofTheory.holes_unchanged_except_del_SING;
 val _ = show "holes_unchanged_except_changed_typed" bvi_tmcProofTheory.holes_unchanged_except_changed;
 val _ = show "holes_unchanged_except_filled_typed" bvi_tmcProofTheory.holes_unchanged_except_filled;
+val _ = show "unchanged_hole_has_val_typed" bvi_tmcProofTheory.unchanged_hole_has_val;
 val _ = show "hole_has_val_submap_typed" bvi_tmcProofTheory.hole_has_val_submap;
 val _ = show "holes_unchanged_except_trans_typed" bvi_tmcProofTheory.holes_unchanged_except_trans;
 val _ = show "holes_still_not_finalised_trans_typed" bvi_tmcProofTheory.holes_still_not_finalised_trans;
