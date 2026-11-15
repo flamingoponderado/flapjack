@@ -18,6 +18,10 @@ private def mapofBroad {α β : Type} (lookup : α → Option β)
     (support : ∃ keys : List α, ∀ key, lookup key ≠ none → key ∈ keys) : HolFiniteMapExact α β :=
   ⟨lookup, support⟩
 
+/-- HOL finite-map range, as a membership predicate. -/
+def mapRange {α β : Type} (f : HolFiniteMapExact α β) : Set β :=
+  {value | ∃ key, f.lookup key = some value}
+
 theorem holFmapAsFiniteSupportParamWitness_stateRefRel_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 theorem holFmapAsFiniteSupportParamWitness_stateRefRel_source (source : HolFiniteMapExact Nat (Ref Value)) :
@@ -167,15 +171,15 @@ theorem holFmapAsFiniteSupportParamWitness_stateRefRel_alloc_target (target : Ho
     mapofBroad (maptoBroadlookup target) target.finiteSupport = target := by cases target; rfl
 
 /-- Fresh source and target allocation extends the pointer map and keeps
-the reference heaps related.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_alloc" (fmap_as_finite_support_parameters := [f, source, target])] -/
+the reference heaps related. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_alloc"
+  (fmap_as_finite_support_parameters := [f, source, target])]
 theorem stateRefRel_alloc (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMapExact Nat (Ref Value))
     (target : HolFiniteMapExact Nat (Ref Value)) (src tgt : Nat) (v w : Ref Value)
-    (related : stateRefRel f source target) (srcFresh : src ∉ source.domain) (_tgtFresh : tgt ∉ target.domain)
-    (rangeFresh : ∀ i, f.lookup i ≠ some tgt) (cells : refRel (f.updateEq (src, tgt)) v w) :
+    (h : stateRefRel f source target ∧ src ∉ source.domain ∧ tgt ∉ target.domain ∧
+      tgt ∉ mapRange f ∧ refRel (f.updateEq (src, tgt)) v w) :
     stateRefRel (f.updateEq (src, tgt)) (source.updateEq (src, v)) (target.updateEq (tgt, w)) := by
+  obtain ⟨related, srcFresh, _tgtFresh, rangeFresh, cells⟩ := h
   have mapMissing : f.lookup src = none := by
     have notMem : src ∉ f.domain := by rw [related.1]; exact srcFresh
     simpa [HolFiniteMapExact.domain] using notMem
@@ -208,7 +212,7 @@ theorem stateRefRel_alloc (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMap
       have different : j ≠ tgt := by
         intro same
         subst j
-        exact rangeFresh i rename
+        exact rangeFresh ⟨i, rename⟩
       exact ⟨j, cell, extension i j rename, refRel_submap f (f.updateEq (src, tgt)) old cell ⟨cellsRel, extension⟩,
         by simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using targetFound⟩
 

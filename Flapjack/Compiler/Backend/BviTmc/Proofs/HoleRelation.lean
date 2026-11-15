@@ -19,10 +19,6 @@ private def mapofBroad {α β : Type} (lookup : α → Option β)
     (support : ∃ keys : List α, ∀ key, lookup key ≠ none → key ∈ keys) : HolFiniteMapExact α β :=
   ⟨lookup, support⟩
 
-/-- HOL finite-map range, as a membership predicate. -/
-def mapRange {α β : Type} (f : HolFiniteMapExact α β) : Set β :=
-  {value | ∃ key, f.lookup key = some value}
-
 theorem holFmapAsFiniteSupportParamWitness_holeHasVal_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 theorem holFmapAsFiniteSupportParamWitness_holeHasVal_refs (refs : HolFiniteMapExact Nat (Ref Value)) :

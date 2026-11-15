@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "state_ref_rel_alloc", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
+  "lean_name": "stateRefRel_alloc", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "source", "target"],
+  "reviewer": "Source comparison: Compared state_ref_rel_alloc_typed in bvi_tmc_proof_source_probe.out: the original heap relation, both fresh-domain facts, target range exclusion and full reference relation under the extended map conjunctively imply the heap relation for the three updated maps. All original types and binder order match; maps use canonical finite support and same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "holes_still_not_finalised_frange_update", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
   "lean_name": "holesStill_rangeUpdate", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "refs"],
