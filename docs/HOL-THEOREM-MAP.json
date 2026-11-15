@@ -24142,6 +24142,12 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/data_liveScript.sml", "hol_name": "is_pure_pmatch",
+    "lean_path": "Flapjack/Compiler/Backend/DataLive.lean", "lean_name": "isPure_pmatch",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed original is_pure_pmatch_typed in data_live_compile_probe.out, preserving source pattern order, each false case and the default true case over the complete closLang operation datatype."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/data_spaceProofScript.sml", "hol_name": "IMP_sptree_eq",
     "lean_path": "Flapjack/Compiler/Backend/DataSpace/Proofs/State.lean", "lean_name": "impSptreeEq",
     "statement_status": "reviewed_exact",
