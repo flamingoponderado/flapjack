@@ -18,6 +18,9 @@ val _ = show_thm "code_rel_def_typed=" bvi_tailrecProofTheory.code_rel_def;
 val _ = show_thm "code_rel_domain_typed=" bvi_tailrecProofTheory.code_rel_domain;
 val _ = show_thm "evaluate_let_wrap_typed=" bvi_tailrecProofTheory.evaluate_let_wrap;
 val _ = show_thm "evaluate_complete_ind_typed=" bvi_tailrecProofTheory.evaluate_complete_ind;
+val _ = show_thm "EVERY_LAST1_typed=" bvi_tailrecProofTheory.EVERY_LAST1;
+val _ = show_thm "scan_expr_LENGTH_typed=" bvi_tailrecProofTheory.scan_expr_LENGTH;
+val _ = show_thm "LAST1_thm_typed=" bvi_tailrecProofTheory.LAST1_thm;
 (* The two find-code theorems are local in the original script. Replay their
    original statements and proofs so their inferred types are captured. *)
 open preamble bvi_tailrecProofTheory bvi_tailrecTheory bviPropsTheory bviSemTheory;

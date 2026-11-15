@@ -24142,6 +24142,24 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "EVERY_LAST1",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/ScanCorrespondence.lean", "lean_name": "every_last1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared EVERY_LAST1_typed in bvi_tailrec_semantics_probe.out: arbitrary element type and predicate, list and element, with the original conjunction of EVERY and successful LAST1 implying the predicate at that element. Lean getLast? implements the source LAST1 clauses, including the empty case."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "scan_expr_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/ScanCorrespondence.lean", "lean_name": "scanExpr_context_length",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared scan_expr_LENGTH_typed in bvi_tailrec_semantics_probe.out: arbitrary input context, label, BVI expressions and output scan list, with the original scan equation implying every output context has the input length. Lean membership quantification expresses HOL EVERY over the same scan tuple carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "LAST1_thm",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/ScanCorrespondence.lean", "lean_name": "last1_none_iff",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared LAST1_thm_typed in bvi_tailrec_semantics_probe.out: for an arbitrary polymorphic list, absence of its LAST1 is equivalent to the list being empty. Lean getLast? implements the source LAST1 clauses."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "evaluate_complete_ind",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CompleteInduction.lean", "lean_name": "evaluate_complete_ind",
     "statement_status": "reviewed_fmap_as_finite_support",

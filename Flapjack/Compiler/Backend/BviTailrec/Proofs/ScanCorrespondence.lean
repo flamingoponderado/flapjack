@@ -197,13 +197,25 @@ theorem scanList_context_length (ctx : List ValueType) (loc : Nat) (xs : List Ex
 termination_by sizeOf xs
 end
 
-/-- Every context produced by the source-shaped list scan has the input
-context's length. -/
+/-- The last member of a list satisfies a predicate that holds throughout it. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "EVERY_LAST1"]
+theorem every_last1 {α : Type} {P : α → Prop} (xs : List α) (y : α)
+    (premises : (∀ x ∈ xs, P x) ∧ xs.getLast? = some y) : P y := by
+  exact premises.1 y (List.mem_of_getLast? premises.2)
+
+/-- Every context produced by the scan has the input context's length. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "scan_expr_LENGTH"]
 theorem scanExpr_context_length (ctx : List ValueType) (loc : Nat) (xs : List Exp)
-    (entry : List ValueType × ValueType × Bool × Option AssocOp)
-    (mem : entry ∈ scanExpr ctx loc xs) : entry.1.length = ctx.length := by
-  rw [scanExpr_list] at mem
+    (ys : List (List ValueType × ValueType × Bool × Option AssocOp))
+    (scan : scanExpr ctx loc xs = ys) : ∀ entry ∈ ys, entry.1.length = ctx.length := by
+  intro entry mem
+  rw [← scan, scanExpr_list] at mem
   exact scanList_context_length ctx loc xs entry mem
+
+/-- The optional last element is absent exactly for an empty list. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "LAST1_thm"]
+theorem last1_none_iff {α : Type} (xs : List α) : xs.getLast? = none ↔ xs = [] :=
+  List.getLast?_eq_none_iff
 
 /-- Every recognized accumulator operator round-trips to its source BVI
 operation. -/
