@@ -11,6 +11,8 @@ fun show label th = if null (hyp th) then
   else raise Fail (label ^ " has hypotheses");
 
 val _ = show "free_names_def_typed" bvi_tmcProofTheory.free_names_def;
+val _ = show "fmap_inj_def_typed" bvi_tmcProofTheory.fmap_inj_def;
+val _ = show "fmap_inj_update_typed" bvi_tmcProofTheory.fmap_inj_update;
 val _ = show "namespace_rel_def_typed" bvi_tmcProofTheory.namespace_rel_def;
 val _ = show "input_condition_def_typed" bvi_tmcProofTheory.input_condition_def;
 val _ = show "no_mutcons_def_typed" bvi_tmcProofTheory.no_mutcons_def;

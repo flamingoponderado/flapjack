@@ -56,7 +56,9 @@ theorem freshHeapAllocation (f : HolFiniteMapExact Nat Nat)
   refine ⟨by simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL],
     stateRefRel_alloc f source target src tgt v w related srcFresh tgtFresh notRange
       (refRel_submap f _ v w cells extension),
-    fmapInj_update f src tgt injective notRange, extension, ?_, ?_, ?_, ?_⟩
+    fmapInj_update f src tgt ⟨injective, by
+      rintro ⟨key, found⟩
+      exact notRange key found⟩, extension, ?_, ?_, ?_, ?_⟩
   · intro ptr ⟨⟨key, found⟩, absent⟩
     by_cases equal : key = src
     · subst key

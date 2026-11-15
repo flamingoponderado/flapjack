@@ -51,7 +51,9 @@ theorem stateRel_alloc {C F : Type} (f : HolFiniteMapExact Nat Nat)
   refine ⟨by simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL], ?_, extension, ?_, ?_, ?_⟩
   · rcases related with ⟨heap, clock, global, ffi, oracle, compiler, code, names, inputs, workers, inj⟩
     refine ⟨stateRefRel_alloc f source.refs target.refs src tgt v w heap srcFresh tgtFresh notRange cells,
-      clock, ?_, ffi, oracle, compiler, code, names, inputs, workers, fmapInj_update f src tgt inj notRange⟩
+      clock, ?_, ffi, oracle, compiler, code, names, inputs, workers, fmapInj_update f src tgt ⟨inj, by
+        rintro ⟨key, found⟩
+        exact notRange key found⟩⟩
     cases hs : source.global <;> cases ht : target.global <;> simp_all
     exact extension _ _ global
   · intro ptr ⟨⟨key, lookup⟩, outside⟩

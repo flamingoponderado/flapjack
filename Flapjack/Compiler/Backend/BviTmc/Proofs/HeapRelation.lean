@@ -38,10 +38,9 @@ def stateRefRel (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMapExact Nat 
 theorem holFmapAsFiniteSupportParamWitness_fmapInj_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
-/-- Pointer renaming is injective on its finite domain.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fmap_inj_def" (fmap_as_finite_support_parameters := [f])] -/
+/-- Pointer renaming is injective on its finite domain. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fmap_inj_def"
+  (fmap_as_finite_support_parameters := [f])]
 def fmapInj (f : HolFiniteMapExact Nat Nat) : Prop :=
   ∀ p1 p2 q, f.lookup p1 = some q ∧ f.lookup p2 = some q → p1 = p2
 
@@ -65,12 +64,16 @@ theorem refRel_submap (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat
 theorem holFmapAsFiniteSupportParamWitness_fmapInj_update_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
-/-- Extending the pointer map at a fresh target keeps it injective.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fmap_inj_update" (fmap_as_finite_support_parameters := [f])] -/
-theorem fmapInj_update (f : HolFiniteMapExact Nat Nat) (key value : Nat) (injective : fmapInj f)
-    (fresh : ∀ key', f.lookup key' ≠ some value) : fmapInj (f.updateEq (key, value)) := by
+/-- Extending an injective map with a value outside its range preserves injectivity. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fmap_inj_update"
+  (fmap_as_finite_support_parameters := [f])]
+theorem fmapInj_update (f : HolFiniteMapExact Nat Nat) (key value : Nat)
+    (premises : fmapInj f ∧ ¬ ∃ key', f.lookup key' = some value) :
+    fmapInj (f.updateEq (key, value)) := by
+  obtain ⟨injective, outsideRange⟩ := premises
+  have fresh : ∀ key', f.lookup key' ≠ some value := by
+    intro key' found
+    exact outsideRange ⟨key', found⟩
   intro p1 p2 q ⟨h1, h2⟩
   by_cases eq1 : p1 = key <;> by_cases eq2 : p2 = key
   · exact eq1.trans eq2.symm

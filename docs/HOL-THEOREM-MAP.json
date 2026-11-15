@@ -135565,6 +135565,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "fmap_inj_def",
+  "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
+  "lean_name": "fmapInj", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Compared fmap_inj_def_typed in bvi_tmc_proof_source_probe.out: the original finite map from Nat to Nat is injective exactly when any two keys with the same successful lookup agree. The input uses the canonical finite-support map with its same-module roundtrip witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "fmap_inj_update",
+  "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
+  "lean_name": "fmapInj_update", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Compared fmap_inj_update_typed in bvi_tmc_proof_source_probe.out: arbitrary Nat key and value, the original conjunction of injectivity and value outside the map range, and injectivity of the single update. Range nonmembership is expressed by absence of a successful lookup for that value; f uses the canonical finite-support map with its same-module roundtrip witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "free_names_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeNames.lean",
   "lean_name": "freeNames",
