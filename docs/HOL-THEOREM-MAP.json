@@ -135699,6 +135699,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_bvi_to_cb", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ListExtraction.lean",
+  "lean_name": "evaluate_bvi_to_cb", "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared evaluate_bvi_to_cb_typed in bvi_tmc_proof_source_probe.out. The source evaluation, successful extraction and environment-bound conjunction implies that the reconstructed let evaluates to the same full result and final state, for arbitrary call blocks and full states. The state reference field uses canonical finite support with a same-module witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "evaluate_bvi_to_cb_aux_inr_lemma", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ListExtraction.lean",
   "lean_name": "evaluate_inr_lemma", "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["refs"],

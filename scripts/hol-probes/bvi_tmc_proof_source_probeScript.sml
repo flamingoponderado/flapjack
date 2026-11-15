@@ -398,6 +398,7 @@ ho_match_mp_tac bvi_to_cb_aux_ind
   >> gvs [CaseEq "prod", CaseEq "result", do_app_def, do_app_aux_def, evaluate_shift_cb_sing]);
 val _ = show "evaluate_bvi_to_cb_aux_inr_lemma_replay_typed" inr_local_replay;
 val _ = show "evaluate_bvi_to_cb_aux_inr_typed" bvi_tmcProofTheory.evaluate_bvi_to_cb_aux_inr;
+val _ = show "evaluate_bvi_to_cb_typed" bvi_tmcProofTheory.evaluate_bvi_to_cb;
 val _ = show "hole_has_val_submap_typed" bvi_tmcProofTheory.hole_has_val_submap;
 val _ = show "holes_unchanged_except_trans_typed" bvi_tmcProofTheory.holes_unchanged_except_trans;
 val _ = show "holes_still_not_finalised_trans_typed" bvi_tmcProofTheory.holes_still_not_finalised_trans;

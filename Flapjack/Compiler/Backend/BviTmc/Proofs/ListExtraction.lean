@@ -446,15 +446,15 @@ theorem evaluate_inr_lemma {C F : Type} :
     exact evaluateOne_inr n loc tag e env state final result bs cb h.1 h.2.1 h.2.2
   · exact evaluateList_inr
 
-/-- Successful call-block conversion preserves evaluation when let-bound.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb" (fmap_as_finite_support := [refs])] -/
+/-- Successful call-block conversion preserves evaluation when let-bound. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_bvi_to_cb {C F : Type} (cb : CallBlock) (n loc : Nat) (e : Bvi.Exp)
     (env : List Value) (state final : BviState C F) (result : BviResult) (bs : List Bvi.Exp)
-    (run : evaluate [e] env state = (result, final))
-    (extracted : toBlockSource n loc e = some (bs, cb)) (bound : n ≤ env.length) :
+    (h : evaluate [e] env state = (result, final) ∧
+      toBlockSource n loc e = some (bs, cb) ∧ n ≤ env.length) :
     evaluate [.let bs (callBlockToBvi loc cb)] env state = (result, final) := by
+  obtain ⟨run, extracted, bound⟩ := h
   cases e with
   | call ticks dest args handler =>
     exact CallExtraction.evaluate_bvi_to_cb_call cb n loc ticks dest args handler env state final result bs

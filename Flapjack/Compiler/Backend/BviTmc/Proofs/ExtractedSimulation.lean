@@ -54,7 +54,7 @@ theorem evaluate_extracted_ordinary {C F : Type} (loc : Nat) (cb : CallBlock) (e
       CallBlockSimulation.OrdinaryBodyIH loc mid t (values ++ env1) (values' ++ env2) g) :
     Core [e] env2 f target result final := by
   have sourceRun := ListExtraction.evaluate_bvi_to_cb cb env1.length loc e env1 source final result bindings
-    run extracted (Nat.le_refl _)
+    ⟨run, extracted, Nat.le_refl _⟩
   have letCore : Core [.let bindings (callBlockToBvi loc cb)] env2 f target result final := by
     apply LetSimulation.evaluate_let_to_core bindings (callBlockToBvi loc cb) (callBlockToBvi loc cb)
       source env1 result final opt f target env2 sourceRun notTypeError environments bindingsIH
@@ -71,7 +71,7 @@ theorem evaluate_extracted_ordinary {C F : Type} (loc : Nat) (cb : CallBlock) (e
   cases targetRun : evaluate [e] env2 target with
   | mk actual targetFinal =>
     have targetLet := ListExtraction.evaluate_bvi_to_cb cb env1.length loc e env2 target targetFinal actual bindings
-      targetRun extracted (envRel_length opt f env1 env2 environments)
+      ⟨targetRun, extracted, envRel_length opt f env1 env2 environments⟩
     rw [targetLetRun] at targetLet
     cases targetLet
     exact ⟨next, g, targetResult, targetRun, related, nextStates, extension, fresh, unchanged, still⟩
@@ -97,7 +97,7 @@ theorem evaluate_extracted_wrapper {C F : Type} (loc dest tag : Nat) (left right
       WorkerBodyIH loc dest mid (values ++ env1) (values' ++ env2) g) :
     Core [.let bindings (wrapperBlockSource tag left child right dest)] env2 f target result final := by
   have sourceRun := ListExtraction.evaluate_bvi_to_cb (.callBlock tag left child right)
-    env1.length loc e env1 source final result bindings run extracted (Nat.le_refl _)
+    env1.length loc e env1 source final result bindings ⟨run, extracted, Nat.le_refl _⟩
   apply LetSimulation.evaluate_let_to_core bindings (callBlockToBvi loc (.callBlock tag left child right))
     (wrapperBlockSource tag left child right dest) source env1 result final opt f target env2
     sourceRun notTypeError environments bindingsIH
@@ -136,7 +136,7 @@ theorem evaluate_extracted_worker {C F : Type} (loc dest ptr : Nat) (cb : CallBl
     IfWorker.WorkerCore (.let bindings (workerBlockSource cb dest (bindings.length + env1.length)
       (bindings.length + env1.length + 1))) env1 env2 f target ptr result final := by
   have sourceRun := ListExtraction.evaluate_bvi_to_cb cb env1.length loc e env1 source final result bindings
-    run extracted (Nat.le_refl _)
+    ⟨run, extracted, Nat.le_refl _⟩
   apply LetWorkerBlock.evaluate_let_worker_block bindings (callBlockToBvi loc cb) cb source env1 result final
     f target env2 loc dest ptr sourceRun notTypeError environments initial hole notFinal pointer code bindingsIH
   intro values values' mid g t valueLength sourceBindings blockRun nextEnv nextStates nextHole nextNotFinal nextPointer nextCode
