@@ -141169,6 +141169,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/data_liveProofScript.sml",
+    "hol_name": "SPLIT_PAIR",
+    "lean_path": "Flapjack/Compiler/Backend/DataLive/Proofs/State.lean",
+    "lean_name": "splitPair",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local HOL theorem and literal original proof replay SPLIT_PAIR_replay_typed in data_live_compile_probe.out: independent pair component types, original binder order, and both projection equalities in their original orientation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_liveProofScript.sml",
     "hol_name": "jump_exc_IMP_state_rel",
     "lean_path": "Flapjack/Compiler/Backend/DataLive/Proofs/State.lean",
     "lean_name": "jumpExc_imp_stateRel",

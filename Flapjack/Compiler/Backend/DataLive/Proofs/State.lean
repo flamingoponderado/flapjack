@@ -12,6 +12,13 @@ namespace Flapjack.Compiler.Backend.DataLive
 open Flapjack Flapjack.Compiler.Backend.DataSem
 open Classical
 
+/-- Pair equality is equivalent to equality of both projections. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "SPLIT_PAIR"]
+theorem splitPair {α β : Type} (x : α × β) (y : α) (z : β) :
+    (x = (y, z)) ↔ (y = x.1) ∧ (z = x.2) := by
+  cases x
+  simp [eq_comm]
+
 /-- States agree on the fields observed by the liveness proof and on every
 live local. -/
 @[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "state_rel_def"]

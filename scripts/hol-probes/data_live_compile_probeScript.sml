@@ -173,3 +173,8 @@ val jump_exc_IMP_state_rel = prove (
   \\ every_case_tac >> fs[]
   \\ SRW_TAC [] [] \\ fs [state_rel_def]);
 val _ = show "jump_exc_IMP_state_rel_replay_typed" jump_exc_IMP_state_rel;
+
+val SPLIT_PAIR = prove (
+  ``!x y z. (x = (y,z)) <=> (y = FST x) /\ (z = SND x)``,
+  Cases \\ SRW_TAC [] [] \\ METIS_TAC []);
+val _ = show "SPLIT_PAIR_replay_typed" SPLIT_PAIR;
