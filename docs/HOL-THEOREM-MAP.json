@@ -24142,6 +24142,18 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "rewrite_scan_expr",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteScan.lean", "lean_name": "rewrite_scan_expr",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared rewrite_scan_expr_typed in bvi_tailrec_semantics_probe.out: all original label, operation, context, expression, scan and rewrite-result binders; the bundled rewrite equation, non-Noop and singleton scan premises; and the complete NONE/SOME operator-choice conclusion are preserved."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "scan_expr_op_type",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteScan.lean", "lean_name": "scanExpr_op_type",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared scan_expr_op_type_typed in bvi_tailrec_semantics_probe.out: every output tuple of an arbitrary original scan satisfies the full NONE/SOME operator condition under the original scan equation. Membership quantification expresses HOL EVERY on the same scan tuple carrier."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "check_op_thm",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteCorrespondence.lean", "lean_name": "checkOp_thm",
     "statement_status": "reviewed_exact",

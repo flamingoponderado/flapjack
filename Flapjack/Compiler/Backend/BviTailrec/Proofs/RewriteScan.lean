@@ -4,8 +4,8 @@ public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteCorrespondence
 
 @[expose] public section
 
-/-! Relationships between scan results and tail-rewrite flags. The source
-carriers remain subject to HOL review. -/
+/-! Relationships between scan results and tail-rewrite flags. Untagged
+helpers support the source-shaped theorems below. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi
 
@@ -70,8 +70,8 @@ theorem rewriteSingle_op_scan (ctx : List ValueType) (loc next acc : Nat)
           exact (same scan).elim
         · simp at scan
 
-/-- The rewrite flag agrees with the scan's operator choice. This is
-untagged until the evaluator-independent carriers are source-reviewed. -/
+/-- The singleton rewrite flag agrees with the scan's operator choice.
+This Flapjack helper supports the full source-shaped theorem below. -/
 theorem rewriteSingle_scan (e : Exp) (ctx : List ValueType) (loc next acc : Nat)
     (assoc : AssocOp) (notNoop : assoc ≠ .noop) :
     ((scanSing ctx loc e).2.2.2 = none → (rewriteSingle loc next assoc acc ctx e).1 = false) ∧
@@ -261,8 +261,8 @@ theorem scanList_choice_type (xs : List Exp) (ctx : List ValueType) (loc : Nat) 
     · exact scanList_choice_type rest (scanSing ctx loc x).1 loc entry member
 termination_by sizeOf xs
 
-/-- Source-shaped operator-type invariant for every entry in a list scan.
-This remains untagged until the scan carriers are source-reviewed. -/
+/-- Operator-type invariant for every entry in a list scan. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "scan_expr_op_type"]
 theorem scanExpr_op_type (ctx : List ValueType) (loc : Nat) (xs : List Exp)
     (ys : List (List ValueType × ValueType × Bool × Option AssocOp))
     (scan : scanExpr ctx loc xs = ys) :
@@ -273,18 +273,18 @@ theorem scanExpr_op_type (ctx : List ValueType) (loc : Nat) (xs : List Exp)
   rw [scanExpr_list]
   exact scanList_choice_type xs ctx loc
 
-/-- Source-shaped rewrite/scan invariant: no scan choice means no rewrite;
-a matching selected operator forces the rewrite flag. The scan and rewrite
-carriers remain subject to source review. -/
+/-- No scan choice means no rewrite; a matching selected operator forces
+the rewrite flag. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "rewrite_scan_expr"]
 theorem rewrite_scan_expr (loc next : Nat) (assoc : AssocOp) (acc : Nat)
     (ctx : List ValueType) (e : Exp) (outCtx : List ValueType) (ty : ValueType)
     (flag : Bool) (output : Exp) (branch : Bool) (choice : Option AssocOp)
-    (rewritten : rewriteSource loc next assoc acc ctx e = (flag, output))
-    (notNoop : assoc ≠ .noop)
-    (scanned : scanExpr ctx loc [e] = [(outCtx, ty, branch, choice)]) :
+    (premises : rewriteSource loc next assoc acc ctx e = (flag, output) ∧
+      assoc ≠ .noop ∧ scanExpr ctx loc [e] = [(outCtx, ty, branch, choice)]) :
     match choice with
     | none => flag = false
     | some selected => assoc = selected → flag = true := by
+  obtain ⟨rewritten, notNoop, scanned⟩ := premises
   have invariant := rewriteSingle_scan e ctx loc next acc assoc notNoop
   rw [rewriteSingle_eq_source, rewritten] at invariant
   have selected : (scanSing ctx loc e).2.2.2 = choice := by
