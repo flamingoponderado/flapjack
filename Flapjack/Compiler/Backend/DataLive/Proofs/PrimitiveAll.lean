@@ -167,6 +167,28 @@ theorem stateRel_doApp_success {C F : Type} (source target sourceNext : State C 
     obtain ⟨rfl, nextRel⟩ := simulation
     exact ⟨targetNext, rfl, nextRel⟩
 
+/-- A successful primitive has the complete target-state shape in the
+original liveness proof. The dispatcher inherits SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "state_rel_IMP_do_app"]
+theorem stateRel_doApp_success_exact {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
+    (source : State C F) (value : DataSem.Value) (next target : State C F) (live : NumSet)
+    (premises : doApp op args source = .val (value, next) ∧ stateRel source target live) :
+    source.handler = next.handler ∧ source.stack = next.stack ∧
+    ∃ safe peak smx lss, doApp op args target = .val (value,
+      { next with locals := target.locals, localsSize := lss, stack := target.stack, stackMax := smx, handler := target.handler, safeForSpace := safe, peakHeapLength := peak }) := by
+  obtain ⟨run, related⟩ := premises
+  have sourceFrame := doApp_control op args source next value run
+  refine ⟨sourceFrame.2.2.1.symm, sourceFrame.2.1.symm, ?_⟩
+  obtain ⟨targetNext, targetRun, nextRel⟩ :=
+    stateRel_doApp_success source target next live op args value related run
+  have targetFrame := doApp_control op args target targetNext value targetRun
+  refine ⟨targetNext.safeForSpace, targetNext.peakHeapLength, targetNext.stackMax,
+    targetNext.localsSize, ?_⟩
+  exact targetRun.trans (congrArg
+    (fun state => (Result.val (value, state) : Result (DataSem.Value × State C F) DataSem.Value))
+    (stateRel_reconstruct next targetNext target live nextRel targetFrame.1
+      targetFrame.2.1 targetFrame.2.2.1))
+
 /-- If the initial local environments are equal, a successful primitive
 preserves that equality as well as the liveness relation. This auxiliary
 fact supports the evaluator stack-swap proof. -/

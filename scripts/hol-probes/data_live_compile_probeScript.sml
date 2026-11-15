@@ -133,3 +133,31 @@ val state_rel_IMP_do_app_aux = prove (
   \\ gvs [AllCaseEqs()]
   \\ ASM_SIMP_TAC (srw_ss()) [dataSemTheory.state_component_equality]);
 val _ = show "state_rel_IMP_do_app_aux_replay_typed" state_rel_IMP_do_app_aux;
+
+load "dataPropsTheory";
+open dataPropsTheory;
+val state_rel_IMP_do_app = prove (
+  ``(do_app op args s1 = Rval (v,s2)) /\
+    state_rel s1 t1 anything ==>
+    (s1.handler = s2.handler) /\ (s1.stack = s2.stack) /\
+    (∃safe peak smx lss. do_app op args t1 = Rval (v,s2 with <| locals := t1.locals ;
+                                                   locals_size := lss ;
+                                                   stack := t1.stack ;
+                                                   stack_max := smx ;
+                                                   handler := t1.handler ;
+                                                   safe_for_space := safe ;
+                                                   peak_heap_length := peak|>))``,
+  STRIP_TAC
+  \\ IMP_RES_TAC do_app_const
+  \\ fs [do_app_def, do_space_def, do_install_def
+        , state_rel_def, consume_space_def
+        , UNCURRY, case_eq_thms]
+  \\ ASM_SIMP_TAC (srw_ss()) [dataSemTheory.state_component_equality]
+  >- (rveq \\ fs [] \\ rfs [])
+  \\ qmatch_goalsub_abbrev_tac `do_app_aux op args t1'`
+  \\ TRY (qpat_x_assum `_ = s1'` (ASSUME_TAC o GSYM))
+  \\ `state_rel s1' t1' anything` by (UNABBREV_ALL_TAC \\ fs [state_rel_def])
+  \\ drule_then (qspecl_then [`t1'`,`anything`] mp_tac) state_rel_IMP_do_app_aux
+  \\ fs [state_rel_def] \\ rfs [] \\ rveq
+  \\ fs [Abbr `t1'`]);
+val _ = show "state_rel_IMP_do_app_replay_typed" state_rel_IMP_do_app;
