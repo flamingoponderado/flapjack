@@ -2815,8 +2815,8 @@ theorem rewriteTail_if_through {C F : Type} (limit : Nat) (cond yes no : Bvi.Exp
               cases flag <;> simpa [selected] using branchApplied
 
 
-/-- Operation evaluation is simulated when both successful applications and
-primitive errors agree on related states. This includes non-type FFI errors. -/
+/-- Operation evaluation is simulated when successful applications and
+non-type primitive errors agree on related states. This includes FFI errors. -/
 theorem evaluate_op_related_errors_through {C F : Type} (limit : Nat) (operation : ClosLang.Op) (args : List Bvi.Exp)
     (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
     (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
@@ -2830,7 +2830,7 @@ theorem evaluate_op_related_errors_through {C F : Type} (limit : Nat) (operation
     (appError : ∀ (values : List Value) (s : BviSem.BviState (Nat × C) F)
       (u : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet),
       stateRel s u → BviSem.doApp operation values s = .err error →
-      BviSem.doApp operation values u = .err error)
+      error ≠ .abort .typeError → BviSem.doApp operation values u = .err error)
     (clockBound : source.clock ≤ limit)
     (hyp : rewriteTailHyp [.op operation args] source env1 result sourceNext
       optimized target acc env2 loc ts ty) :
@@ -2865,7 +2865,11 @@ theorem evaluate_op_related_errors_through {C F : Type} (limit : Nat) (operation
       | err error =>
         have same : (.err error, middle) = (result, sourceNext) := by simpa [argsRun, applied] using run
         cases same
-        have targetApplied := appError values.reverse sourceNext targetMiddle error middleRelated applied
+        have errorOk : error ≠ .abort .typeError := by
+          intro bad
+          subst error
+          exact notTypeError rfl
+        have targetApplied := appError values.reverse sourceNext targetMiddle error middleRelated applied errorOk
         refine ⟨targetMiddle, ?_, middleRelated⟩
         rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
         dsimp only
@@ -2903,47 +2907,10 @@ theorem evaluate_op_related_through {C F : Type} (limit : Nat) (operation : Clos
       optimized target acc env2 loc ts ty) :
     ∃ targetNext, BviSem.evaluate [.op operation args] env2 target = (result, targetNext) ∧
       stateRel sourceNext targetNext := by
-  obtain ⟨run, envRelated, related, types, _, notTypeError⟩ := hyp
-  have disabled := envRel_disable ty optimized acc env1 env2 envRelated
-  rw [BviSem.evaluate, BviSem.fixClock_evaluate] at run
-  cases argsRun : BviSem.evaluate args env1 source with
-  | mk argsResult middle =>
-    cases argsResult with
-    | err error =>
-      simp only [argsRun] at run
-      have ok : (.err error : BviSem.BviResult) ≠ .err (.abort .typeError) := by
-        intro bad
-        apply notTypeError
-        exact (congrArg Prod.fst run).symm.trans bad
-      have argsHyp : rewriteTailHyp args source env1 (.err error) middle false
-          target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, ok⟩
-      obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
-        argsIH source env1 (.err error) middle false target acc env2 loc ts ty clockBound argsHyp
-      have same : (.err error, middle) = (result, sourceNext) := by simpa [argsRun] using run
-      cases same
-      refine ⟨targetMiddle, ?_, middleRelated⟩
-      rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
-    | val values =>
-      have argsHyp : rewriteTailHyp args source env1 (.val values) middle false
-          target acc env2 loc ts ty := ⟨argsRun, disabled, related, types, by simp, by simp⟩
-      obtain ⟨targetMiddle, targetArgs, middleRelated, _⟩ :=
-        argsIH source env1 (.val values) middle false target acc env2 loc ts ty clockBound argsHyp
-      cases applied : BviSem.doApp operation values.reverse middle with
-      | err error =>
-        have typeError := appError values.reverse middle error applied
-        subst error
-        simp [argsRun, applied] at run
-        exact (notTypeError run.1.symm).elim
-      | val pair =>
-        obtain ⟨value, last⟩ := pair
-        have same : (.val [value], last) = (result, sourceNext) := by simpa [argsRun, applied] using run
-        cases same
-        obtain ⟨targetNext, targetApplied, finalRelated⟩ :=
-          appSuccess values.reverse middle sourceNext targetMiddle value middleRelated applied
-        refine ⟨targetNext, ?_, finalRelated⟩
-        rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgs]
-        dsimp only
-        rw [targetApplied]
+  apply evaluate_op_related_errors_through limit operation args source env1 result sourceNext
+    optimized target acc env2 loc ts ty argsIH appSuccess ?_ clockBound hyp
+  intro values s u error _ run errorOk
+  exact (errorOk (appError values s error run)).elim
 
 
 /-- Shared operation simulation for a primitive whose scan selects no
@@ -3000,7 +2967,7 @@ theorem rewriteTail_op_ffi_through {C F : Type} (limit : Nat) (name : Flapjack.B
         stateRel_doApp (.ffi name) vs source value sourceNext target
           ⟨run, related, by simp, by
             intro n
-            simp⟩) (fun vs source target error related run =>
+            simp⟩) (fun vs source target error related run _errorOk =>
         stateRel_doAppErr (.ffi name) vs source error target
           ⟨run, related, by simp, by
             intro n
@@ -3169,7 +3136,7 @@ theorem rewriteTail_op_thunkOp_through {C F : Type} (limit : Nat) (operation : A
         stateRel_doApp (.thunkOp operation) vs source value sourceNext target
           ⟨run, related, by simp, by
             intro n
-            simp⟩) (fun vs source target error related run =>
+            simp⟩) (fun vs source target error related run _errorOk =>
         stateRel_doAppErr (.thunkOp operation) vs source error target
           ⟨run, related, by simp, by
             intro n
