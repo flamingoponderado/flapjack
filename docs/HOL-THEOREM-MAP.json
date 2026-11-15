@@ -24245,6 +24245,24 @@
     "reviewer": "Compared compile_prog_MEM_typed in bvi_tailrec_semantics_probe.out: arbitrary enabled flag, compilation pair and output-label membership retain both complete original-label and fresh-interval alternatives with the same namespace-stride witness."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "decide_ty_imp",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteScan.lean", "lean_name": "decideType_imp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared decide_ty_imp_typed in bvi_tailrec_semantics_probe.out: a non-Any merged type implies both arbitrary input types are non-Any."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "op_type_simp",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteScan.lean", "lean_name": "opType_simp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared op_type_simp_typed in bvi_tailrec_semantics_probe.out: all three original List, Any and Int equivalences are preserved in one conjunction, including the Plus-or-Times disjunction."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "op_type_lem",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteScan.lean", "lean_name": "opType_lem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared op_type_lem_typed in bvi_tailrec_semantics_probe.out: an arbitrary operation is non-Noop exactly when its operand type is non-Any."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "term_ok_int_SING",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/Semantics.lean", "lean_name": "termInt_evaluation",
     "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,

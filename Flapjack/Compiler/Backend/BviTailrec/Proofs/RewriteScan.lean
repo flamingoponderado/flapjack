@@ -341,4 +341,23 @@ theorem scanExpr_opSame (ts : List ValueType) (loc : Nat) (op : ClosLang.Op)
       exact (toOp_fromOp op recognized).symm
     · simp at choice
 
+/-- A specific merged type requires both input types to be specific. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "decide_ty_imp"]
+theorem decideType_imp (ty1 ty2 : ValueType) (specific : decideType ty1 ty2 ≠ .any) :
+    ty1 ≠ .any ∧ ty2 ≠ .any := by
+  cases ty1 <;> cases ty2 <;> simp_all [decideType]
+
+/-- The accumulator type determines the corresponding operation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "op_type_simp"]
+theorem opType_simp (op : AssocOp) :
+    (.list = opType op ↔ op = .append) ∧
+      (.any = opType op ↔ op = .noop) ∧
+      (.int = opType op ↔ op = .plus ∨ op = .times) := by
+  cases op <;> simp [opType]
+
+/-- Nontrivial accumulator operations have a specific operand type. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "op_type_lem"]
+theorem opType_lem (op : AssocOp) : op ≠ .noop ↔ opType op ≠ .any := by
+  cases op <;> simp [opType]
+
 end Flapjack.Compiler.Backend.BviTailrec
