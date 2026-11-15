@@ -2,6 +2,7 @@ module
 
 import all Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockCorrectness
 meta import Flapjack.HolRef.TmcUniversalBinder
+meta import Flapjack.HolRef.TmcCallBlockShape
 
 meta section
 
@@ -78,6 +79,122 @@ private def hiddenMapConjunct : Prop :=
 
 run_meta do
   let info ← getConstInfo ``Flapjack.Compiler.Backend.BviTmc.CallBlockCorrectness.evaluate_cb
+  let premise ← tmcCallBlockPremiseProblems info.type
+  unless premise.isEmpty do throwError "actual call-block premise rejected: {premise}"
+  let ordinary ← tmcCallBlockOrdinaryProblems info.type
+  unless ordinary.isEmpty do throwError "actual ordinary call-block branch rejected: {ordinary}"
+  let wrapper ← tmcCallBlockWrapperProblems info.type
+  unless wrapper.isEmpty do throwError "actual call-block wrapper branch rejected: {wrapper}"
+  let wrongWrapper := info.type.replace fun expression =>
+    if expression.isAppOfArity `Flapjack.Compiler.Backend.BviTmc.wrapperBlockSource 5 then
+      some (mkApp (mkConst `Flapjack.Compiler.Backend.Bvi.Exp.var) (mkNatLit 0))
+    else none
+  if wrongWrapper == info.type then throwError "wrapper program mutation did not apply"
+  unless ← isDefEq (← inferType wrongWrapper) (mkSort Level.zero) do
+    throwError "wrapper program mutation was not a well-typed proposition"
+  if (← tmcCallBlockWrapperProblems wrongWrapper).isEmpty then
+    throwError "wrapper audit accepted a changed wrapper program"
+  let noCodeGuard := info.type.replace fun expression =>
+    if expression.isAppOfArity `Flapjack.Compiler.Backend.BviTmc.optimisedCode 4 then
+      some (mkConst ``True)
+    else none
+  if noCodeGuard == info.type then throwError "optimized-code mutation did not apply"
+  unless ← isDefEq (← inferType noCodeGuard) (mkSort Level.zero) do
+    throwError "optimized-code mutation was not a well-typed proposition"
+  if (← tmcCallBlockWrapperProblems noCodeGuard).isEmpty then
+    throwError "wrapper audit accepted a removed optimized-code guard"
+  let noConstructorGuard := info.type.replace fun expression =>
+    if expression.isAppOfArity ``Eq 3 && expression.getAppArgs[2]!.isAppOfArity
+        `Flapjack.Compiler.Backend.BviTmc.CallBlock.callBlock 4 then
+      some (mkConst ``True)
+    else none
+  if noConstructorGuard == info.type then throwError "wrapper constructor mutation did not apply"
+  unless ← isDefEq (← inferType noConstructorGuard) (mkSort Level.zero) do
+    throwError "wrapper constructor mutation was not a well-typed proposition"
+  if (← tmcCallBlockWrapperProblems noConstructorGuard).isEmpty then
+    throwError "wrapper audit accepted a removed constructor premise"
+  let noWrapperRun := info.type.replace fun expression =>
+    match expression with
+    | .forallE `tag _ _ _ =>
+      some (expression.replace fun term =>
+        if term.isAppOfArity ``Eq 3 &&
+            term.getAppArgs[1]!.isAppOfArity `Flapjack.Compiler.Backend.BviSem.evaluate 5 then
+          some (mkConst ``True)
+        else none)
+    | _ => none
+  if noWrapperRun == info.type then throwError "wrapper evaluation mutation did not apply"
+  unless ← isDefEq (← inferType noWrapperRun) (mkSort Level.zero) do
+    throwError "wrapper evaluation mutation was not a well-typed proposition"
+  unless (← tmcCallBlockOrdinaryProblems noWrapperRun).isEmpty do
+    throwError "wrapper evaluation mutation unexpectedly altered ordinary branch"
+  if (← tmcCallBlockWrapperProblems noWrapperRun).isEmpty then
+    throwError "wrapper audit accepted a removed evaluation clause"
+  for (name, arity) in [(`Flapjack.Compiler.Backend.BviTmc.onlyFresh, 3),
+      (`Flapjack.Compiler.Backend.BviTmc.holesUnchangedExcept, 7),
+      (`Flapjack.Compiler.Backend.BviTmc.holesStillNotFinalised, 6),
+      (`Flapjack.Compiler.Backend.BviTmc.stateRel, 5),
+      (`Flapjack.HolFiniteMapExact.submap, 4),
+      (`Flapjack.SemanticPrimitivesProps.resultRel, 8)] do
+    let changed := info.type.replace fun expression =>
+      match expression with
+      | .forallE `tag _ _ _ =>
+        some (expression.replace fun term =>
+          if term.isAppOfArity name arity then some (mkConst ``True) else none)
+      | _ => none
+    if changed == info.type then throwError "wrapper frame mutation did not apply: {name}"
+    unless ← isDefEq (← inferType changed) (mkSort Level.zero) do
+      throwError "wrapper frame mutation was not a well-typed proposition: {name}"
+    unless (← tmcCallBlockOrdinaryProblems changed).isEmpty do
+      throwError "wrapper mutation unexpectedly altered ordinary branch: {name}"
+    if (← tmcCallBlockWrapperProblems changed).isEmpty then
+      throwError "wrapper audit accepted a removed frame condition: {name}"
+  for (name, arity) in [(`Flapjack.Compiler.Backend.BviTmc.onlyFresh, 3),
+      (`Flapjack.Compiler.Backend.BviTmc.holesUnchangedExcept, 7),
+      (`Flapjack.Compiler.Backend.BviTmc.holesStillNotFinalised, 6)] do
+    let changed := info.type.replace fun expression =>
+      if expression.isAppOfArity name arity then some (mkConst ``True) else none
+    if changed == info.type then throwError "ordinary branch mutation did not apply: {name}"
+    unless ← isDefEq (← inferType changed) (mkSort Level.zero) do
+      throwError "ordinary branch mutation was not a well-typed proposition: {name}"
+    if (← tmcCallBlockOrdinaryProblems changed).isEmpty then
+      throwError "ordinary branch audit accepted a removed condition: {name}"
+  let wrongVisibility := match info.type with
+    | .forallE name domain body _ => .forallE name domain body .default
+    | _ => info.type
+  unless ← isDefEq (← inferType wrongVisibility) (mkSort Level.zero) do
+    throwError "outer visibility mutation was not a well-typed proposition"
+  if (← tmcCallBlockPremiseProblems wrongVisibility).isEmpty then
+    throwError "call-block premise audit accepted a visible compiler type"
+  for (name, arity) in [(`Flapjack.Compiler.Backend.BviTmc.wfBlock, 2),
+      (`Flapjack.Compiler.Backend.BviTmc.envRel, 4),
+      (`Flapjack.Compiler.Backend.BviTmc.stateRel, 5), (`LE.le, 4), (``Ne, 3),
+      (`Flapjack.Compiler.Backend.BviTmc.Induction.hypothesis, 5)] do
+    let weakened := info.type.replace fun expression =>
+      if expression.isAppOfArity name arity then some (mkConst ``True) else none
+    if weakened == info.type then throwError "premise mutation did not apply: {name}"
+    unless ← isDefEq (← inferType weakened) (mkSort Level.zero) do
+      throwError "premise mutation was not a well-typed proposition: {name}"
+    if (← tmcCallBlockPremiseProblems weakened).isEmpty then
+      throwError "call-block premise audit accepted a removed condition: {name}"
+  let noRun := info.type.replace fun expression =>
+    if expression.isAppOfArity ``Eq 3 &&
+        expression.getAppArgs[1]!.isAppOfArity `Flapjack.Compiler.Backend.BviSem.evaluate 5 then
+      some (mkConst ``True)
+    else none
+  if noRun == info.type then throwError "evaluation-premise mutation did not apply"
+  unless ← isDefEq (← inferType noRun) (mkSort Level.zero) do
+    throwError "evaluation-premise mutation was not a well-typed proposition"
+  if (← tmcCallBlockPremiseProblems noRun).isEmpty then
+    throwError "call-block premise audit accepted a removed evaluation premise"
+  let hidden := info.type.replace fun expression =>
+    if expression.isAppOfArity `Flapjack.Compiler.Backend.BviTmc.wfBlock 2 then
+      some (mkApp2 (mkConst ``And) expression (mkConst ``hiddenMapPredicate))
+    else none
+  if hidden == info.type then throwError "hidden premise mutation did not apply"
+  unless ← isDefEq (← inferType hidden) (mkSort Level.zero) do
+    throwError "hidden premise mutation was not a well-typed proposition"
+  if (← tmcCallBlockPremiseProblems hidden).isEmpty then
+    throwError "call-block premise audit accepted an extra named predicate"
   let actual ← tmcCallBlockMapInventoryProblems info.type
   unless actual.isEmpty do throwError "actual call-block binder inventory rejected: {actual}"
   let .defnInfo valid ← getConstInfo ``validInventory | throwError "missing valid fixture"

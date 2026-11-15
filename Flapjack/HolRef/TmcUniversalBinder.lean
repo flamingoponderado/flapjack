@@ -142,7 +142,8 @@ def tmcCallBlockMapInventoryProblems (type : Expr) : MetaM (Array String) := do
   unless found == expected do return #[s!"unexpected call-block finite-map binder inventory: {repr found}"]
   return #[]
 
-private def tmcExists (expression domain : Expr) (name : Name)
+/-- Inspect one explicitly named existential binder in a TMC audit. -/
+def tmcExists (expression domain : Expr) (name : Name)
     (next : Expr → Expr → MetaM (Array String)) : MetaM (Array String) := do
   let .app (.app (.const ``Exists [Level.succ Level.zero]) actualDomain) predicate := expression
     | return #[s!"{name} must be an existential"]
@@ -154,7 +155,8 @@ private def tmcExists (expression domain : Expr) (name : Name)
       return #[s!"{name} has the wrong binder"]
     next args[0]! body
 
-private def tmcResultFrame (c ffi program environment target final result map next nextMap nextResult : Expr) : Array Expr := Id.run do
+/-- Construct the seven ordinary TMC simulation obligations for an audit. -/
+def tmcResultFrame (c ffi program environment target final result map next nextMap nextResult : Expr) : Array Expr := Id.run do
   let nat := mkConst `Nat
   let state := mkApp2 (mkConst `Flapjack.Compiler.Backend.BviSem.BviState) c ffi
   let value := mkConst `Flapjack.Compiler.Backend.BvlSem.Value
