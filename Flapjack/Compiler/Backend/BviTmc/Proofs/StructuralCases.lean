@@ -1,7 +1,6 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.StructuralHypothesis
-public import Flapjack.Compiler.Backend.BviTmc.Proofs.TickSimulation
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.IfAssembly
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.LetAssembly
 
@@ -10,60 +9,6 @@ public import Flapjack.Compiler.Backend.BviTmc.Proofs.LetAssembly
 /-! Singleton expression cases for the TMC structural induction. -/
 namespace Flapjack.Compiler.Backend.BviTmc.StructuralCases
 open BviTmc BviSem BvlSem ListSimulation ClockHypothesis StructuralHypothesis SemanticPrimitivesProps ResultRelation
-
-/-- Flapjack infrastructure: the singleton simulation in the shape used by
-the earlier case proofs, with explicit worker indices and result names. -/
-def RawSingletonPost {C F : Type} (e : Bvi.Exp) (source : BviState (Nat × C) F)
-    (target : BviState C F) (env1 env2 : List Value) (opt : Bool) (f : HolFiniteMapExact Nat Nat)
-    (loc : Nat) (result : BviResult) (final : BviState (Nat × C) F) : Prop :=
-  ∃ (next : BviState C F) (nextMap : HolFiniteMapExact Nat Nat) (nextResult : BviResult),
-    evaluate [e] env2 target = (nextResult, next) ∧
-    SemanticPrimitivesProps.resultRel (List.Forall₂ (valueRel nextMap)) (ResultRelation.eorRel nextMap) result nextResult ∧
-    stateRel nextMap final next ∧ f.submap nextMap ∧ onlyFresh f nextMap target.refs ∧
-    holesUnchangedExcept f target.refs next.refs ∅ ∧ holesStillNotFinalised f target.refs next.refs ∧
-    ∀ dest, optimisedCode loc dest source.code target.code →
-      (∀ wrapper, ([e] : List Bvi.Exp).length = 1 ∧ rewriteWrapperSource loc dest env1.length e = some wrapper →
-        Core [wrapper] env2 f target result final) ∧
-      (opt = true → ∀ i j ptr work,
-        i = env1.length ∧ j = env1.length + 1 ∧ (∃ c, holeHasVal f env1 env2 target.refs c) ∧
-        holeNotFinalised target.refs ptr ∧ rewriteWorkerSource loc dest i j env1.length e = work ∧
-        holEl i env2 = .refPtr false ptr → IfWorker.WorkerCore work env1 env2 f target ptr result final)
-
-/-- Flapjack infrastructure: convert the earlier explicit singleton
-conclusion to the factored form used by the structural induction. -/
-theorem raw_to_singleton {C F : Type} (e : Bvi.Exp) (source : BviState (Nat × C) F)
-    (target : BviState C F) (env1 env2 : List Value) (opt : Bool) (f : HolFiniteMapExact Nat Nat)
-    (loc : Nat) (result : BviResult) (final : BviState (Nat × C) F)
-    (raw : RawSingletonPost e source target env1 env2 opt f loc result final) :
-    SingletonPost e source target env1 env2 opt f loc result final := by
-  obtain ⟨next, g, targetResult, run, related, states, extension, fresh, unchanged, still, optimized⟩ := raw
-  refine ⟨⟨next, g, targetResult, run, related, states, extension, fresh, unchanged, still⟩, ?_⟩
-  intro dest code
-  obtain ⟨wrapper, worker⟩ := optimized dest code
-  exact ⟨fun w rewrite => wrapper w ⟨rfl, rewrite⟩,
-    fun optTrue ptr c hole notFinal pointer => worker optTrue env1.length (env1.length + 1) ptr
-      (rewriteWorkerSource loc dest env1.length (env1.length + 1) env1.length e)
-      ⟨rfl, rfl, ⟨c, hole⟩, notFinal, rfl, pointer⟩⟩
-
-/-- Flapjack infrastructure: expand the factored singleton conclusion for
-case proofs that still use explicit worker indices. -/
-theorem singleton_to_raw {C F : Type} (e : Bvi.Exp) (source : BviState (Nat × C) F)
-    (target : BviState C F) (env1 env2 : List Value) (opt : Bool) (f : HolFiniteMapExact Nat Nat)
-    (loc : Nat) (result : BviResult) (final : BviState (Nat × C) F)
-    (post : SingletonPost e source target env1 env2 opt f loc result final) :
-    RawSingletonPost e source target env1 env2 opt f loc result final := by
-  obtain ⟨⟨next, g, targetResult, run, related, states, extension, fresh, unchanged, still⟩, optimized⟩ := post
-  refine ⟨next, g, targetResult, run, related, states, extension, fresh, unchanged, still, ?_⟩
-  intro dest code
-  obtain ⟨wrapper, worker⟩ := optimized dest code
-  constructor
-  · intro w ⟨_, rewrite⟩
-    exact wrapper w rewrite
-  · intro optTrue i j ptr work ⟨iEq, jEq, ⟨c, hole⟩, notFinal, rewrite, pointer⟩
-    subst i
-    subst j
-    subst work
-    exact worker optTrue ptr c hole notFinal pointer
 
 /-- Flapjack infrastructure: the return case follows from the smaller-weight
 argument-list hypothesis. -/
@@ -232,17 +177,74 @@ theorem evaluate_tick_from_clock {C F : Type} (loc : Nat) (body : Bvi.Exp)
     SingletonPost (.tick body) source target env1 env2 opt f loc result final := by
   rw [noMutcons.eq_def] at safe
   dsimp only at safe
-  apply raw_to_singleton
-  apply TickSimulation.evaluate_tick body source env1 result final opt f target env2 loc run states
-  intro positive bodyRun
-  have smaller : (BviSem.decClock 1 source).clock < source.clock := by
-    simp [BviSem.decClock]
-    omega
-  have decStates : stateRel f (BviSem.decClock 1 source) (BviSem.decClock 1 target) := by
-    simpa [BviSem.decClock, states.2.1] using stateRel_with_clock (source.clock - 1) f source target states
-  have post := ih body (BviSem.decClock 1 source) (BviSem.decClock 1 target) env1 env2 opt f loc result final
-    smaller bodyRun safe environments decStates notTypeError
-  exact singleton_to_raw body (BviSem.decClock 1 source) (BviSem.decClock 1 target) env1 env2 opt f loc result final post
+  by_cases zeroClock : source.clock = 0
+  · have targetClock : target.clock = 0 := states.2.1.trans zeroClock
+    have sourceRun : evaluate [.tick body] env1 source = (.err (.abort .timeoutError), source) := by
+      simp [BviSem.evaluate, zeroClock]
+    have same := run.symm.trans sourceRun
+    cases same
+    have targetRun (e : Bvi.Exp) :
+        evaluate [.tick e] env2 target = (.err (.abort .timeoutError), target) := by
+      simp [BviSem.evaluate, targetClock]
+    refine ⟨?_, ?_⟩
+    · refine ⟨target, f, .err (.abort .timeoutError), targetRun body, ?_, states,
+        (fun _ _ found => found), onlyFresh_refl f target.refs,
+        holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
+      simp [resultRel, excRel]
+    · intro locOpt _code
+      constructor
+      · intro wrap wrapper
+        simp only [rewriteWrapperSource] at wrapper
+        cases h : rewriteWrapperSource loc locOpt env1.length body with
+        | none => simp [h] at wrapper
+        | some inner =>
+          simp [h] at wrapper
+          subst wrap
+          refine ⟨target, f, .err (.abort .timeoutError), targetRun inner, ?_, states,
+            (fun _ _ found => found), onlyFresh_refl f target.refs,
+            holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
+          simp [resultRel, excRel]
+      · intro _opt holePtr _c _hole _notFinal _pointer
+        simp only [rewriteWorkerSource]
+        refine ⟨.err (.abort .timeoutError), f, target, targetRun _, ?_, states,
+          (fun _ _ found => found), onlyFresh_refl f target.refs,
+          holesUnchanged_refl f target.refs {holePtr}, holesStill_refl f target.refs, ?_⟩
+        · simp [optResRel, excRel]
+        · intro _ impossible; cases impossible
+  · have targetPositive : target.clock ≠ 0 := by simpa [states.2.1] using zeroClock
+    have bodyRun : evaluate [body] env1 (BviSem.decClock 1 source) = (result, final) := by
+      simpa [BviSem.evaluate, zeroClock] using run
+    have smaller : (BviSem.decClock 1 source).clock < source.clock := by
+      simp [BviSem.decClock]
+      omega
+    have decStates : stateRel f (BviSem.decClock 1 source) (BviSem.decClock 1 target) := by
+      simpa [BviSem.decClock, states.2.1] using stateRel_with_clock (source.clock - 1) f source target states
+    have post := ih body (BviSem.decClock 1 source) (BviSem.decClock 1 target) env1 env2 opt f loc result final
+      smaller bodyRun safe environments decStates notTypeError
+    obtain ⟨⟨next, nextMap, nextResult, targetRun, related, nextStates, extension, fresh,
+      unchanged, still⟩, optimised⟩ := post
+    refine ⟨⟨next, nextMap, nextResult, ?_, related, nextStates, extension, fresh, unchanged, still⟩, ?_⟩
+    · simpa [BviSem.evaluate, targetPositive] using targetRun
+    · intro locOpt code
+      obtain ⟨wrapperIH, workerIH⟩ := optimised locOpt code
+      constructor
+      · intro wrap wrapper
+        simp only [rewriteWrapperSource] at wrapper
+        cases h : rewriteWrapperSource loc locOpt env1.length body with
+        | none => simp [h] at wrapper
+        | some inner =>
+          simp [h] at wrapper
+          subst wrap
+          obtain ⟨wrapState, wrapMap, wrapResult, innerRun, rel, state, ext, only, unch, rest⟩ :=
+            wrapperIH inner h
+          refine ⟨wrapState, wrapMap, wrapResult, ?_, rel, state, ext, only, unch, rest⟩
+          simpa [BviSem.evaluate, targetPositive] using innerRun
+      · intro optTrue holePtr c hole notFinal pointer
+        simp only [rewriteWorkerSource]
+        obtain ⟨workResult, workMap, workState, innerRun, rel, state, ext, only, unch, rest, filled⟩ :=
+          workerIH optTrue holePtr c hole notFinal pointer
+        refine ⟨workResult, workMap, workState, ?_, rel, state, ext, only, unch, rest, filled⟩
+        simpa [BviSem.evaluate, targetPositive] using innerRun
 
 /-- Flapjack infrastructure: the conditional case follows from the common
 smaller-weight induction, including the selected branch's clock bound. -/
