@@ -130,10 +130,9 @@ theorem envRel_submap (opt : Bool) (f : HolFiniteMapExact Nat Nat) (g : HolFinit
 theorem holFmapAsFiniteSupportParamWitness_envRel_relax_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
-/-- Dropping the optimized-hole requirement preserves the environment relation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_relax_opt" (fmap_as_finite_support_parameters := [f])] -/
+/-- Dropping the optimized-hole requirement preserves the environment relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_relax_opt"
+  (fmap_as_finite_support_parameters := [f])]
 theorem envRel_relax (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source target : List Value)
     (related : envRel opt f source target) : envRel false f source target := by
   obtain ⟨xs, ys, equal, pairs, _⟩ := related
@@ -171,10 +170,9 @@ theorem envRel_append (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source targe
 theorem holFmapAsFiniteSupportParamWitness_envRel_length_opt_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
-/-- Optimized environments contain precisely two additional values.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_length_opt" (fmap_as_finite_support_parameters := [f])] -/
+/-- Optimized environments contain precisely two additional values. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_length_opt"
+  (fmap_as_finite_support_parameters := [f])]
 theorem envRel_length_opt (f : HolFiniteMapExact Nat Nat) (source target : List Value)
     (related : envRel true f source target) : target.length = source.length + 2 := by
   obtain ⟨xs, ys, rfl, pairs, extras⟩ := related
@@ -185,10 +183,9 @@ theorem envRel_length_opt (f : HolFiniteMapExact Nat Nat) (source target : List 
 theorem holFmapAsFiniteSupportParamWitness_envRel_length_non_opt_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
-/-- An unoptimized target environment is at least as long as the source.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_length_non_opt" (fmap_as_finite_support_parameters := [f])] -/
+/-- An unoptimized target environment is at least as long as the source. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_length_non_opt"
+  (fmap_as_finite_support_parameters := [f])]
 theorem envRel_length_non_opt (f : HolFiniteMapExact Nat Nat) (source target : List Value)
     (related : envRel false f source target) : source.length ≤ target.length := by
   obtain ⟨xs, ys, rfl, pairs, _⟩ := related
@@ -198,10 +195,9 @@ theorem envRel_length_non_opt (f : HolFiniteMapExact Nat Nat) (source target : L
 theorem holFmapAsFiniteSupportParamWitness_envRel_length_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
-/-- Related target environments are at least as long as their sources.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_length" (fmap_as_finite_support_parameters := [f])] -/
+/-- Related target environments are at least as long as their sources. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_length"
+  (fmap_as_finite_support_parameters := [f])]
 theorem envRel_length (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source target : List Value)
     (related : envRel opt f source target) : source.length ≤ target.length := by
   cases opt with
@@ -212,10 +208,9 @@ theorem holFmapAsFiniteSupportParamWitness_envRel_strip_extras_f (f : HolFiniteM
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- An optimized environment splits into a related prefix and its two
-hole-management values.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_strip_extras" (fmap_as_finite_support_parameters := [f])] -/
+hole-management values. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_strip_extras"
+  (fmap_as_finite_support_parameters := [f])]
 theorem envRel_strip_extras (f : HolFiniteMapExact Nat Nat) (source target : List Value)
     (related : envRel true f source target) :
     ∃ envPrefix ptr idx, envRel false f source envPrefix ∧
