@@ -24,9 +24,41 @@ private def tmcExists (expression domain : Expr) (name : Name)
       return #[s!"{name} has the wrong binder"]
     next args[0]! body
 
-/-- Check the elaborated TMC induction predicate's telescopes, clock guard
-and simulation premise, and the ordinary target-simulation conjuncts.
-The caller must independently validate the optimized branches, all map scopes,
+private def tmcResultFrame (c ffi program environment target final result map next nextMap nextResult : Expr) : Array Expr := Id.run do
+  let nat := mkConst `Nat
+  let state := mkApp2 (mkConst `Flapjack.Compiler.Backend.BviSem.BviState) c ffi
+  let value := mkConst `Flapjack.Compiler.Backend.BvlSem.Value
+  let values := mkApp (mkConst `List [Level.zero]) value
+  let errorType := mkConst `Flapjack.Compiler.Backend.BviSem.ExnOrRet
+  let resultType := mkConst `Flapjack.Compiler.Backend.BviSem.BviResult
+  let targetEval := mkAppN (mkConst `Flapjack.Compiler.Backend.BviSem.evaluate)
+    #[c, ffi, program, environment, target]
+  let targetOutput := mkAppN (mkConst `Prod.mk [Level.zero, Level.zero])
+    #[resultType, state, nextResult, next]
+  let targetRun := mkApp3 (mkConst ``Eq [Level.succ Level.zero])
+    (mkApp2 (mkConst `Flapjack.Compiler.Backend.BviSem.EvalResult) c ffi) targetEval targetOutput
+  let valueRel := mkApp (mkConst `Flapjack.Compiler.Backend.BviTmc.valueRel) nextMap
+  let listRel := mkApp3 (mkConst `List.Forall₂ [Level.zero, Level.zero]) value value valueRel
+  let eor := mkApp (mkConst `Flapjack.Compiler.Backend.BviTmc.ResultRelation.eorRel) nextMap
+  let resultRel := mkAppN (mkConst `Flapjack.SemanticPrimitivesProps.resultRel)
+    #[values, values, errorType, errorType, listRel, eor, result, nextResult]
+  let states := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.stateRel)
+    #[c, ffi, nextMap, final, next]
+  let submap := mkAppN (mkConst `Flapjack.HolFiniteMapExact.submap) #[nat, nat, map, nextMap]
+  let refs (s : Expr) := mkAppN (mkConst `Flapjack.Compiler.Backend.BviSem.BviState.refs) #[c, ffi, s]
+  let fresh := mkApp3 (mkConst `Flapjack.Compiler.Backend.BviTmc.onlyFresh) map nextMap (refs target)
+  let empty := mkApp2 (mkConst `EmptyCollection.emptyCollection [Level.zero])
+    (mkApp (mkConst `Set [Level.zero]) nat)
+    (mkApp (mkConst `Set.instEmptyCollection [Level.zero]) nat)
+  let unchanged := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.holesUnchangedExcept)
+    #[nat, nat, value, map, refs target, refs next, empty]
+  let notFinal := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.holesStillNotFinalised)
+    #[nat, nat, value, map, refs target, refs next]
+  return #[targetRun, resultRel, states, submap, fresh, unchanged, notFinal]
+
+/-- Check the elaborated TMC induction predicate's telescopes, clock guard,
+simulation premise, ordinary target simulation and wrapper simulation.
+The caller must independently validate the worker branch, all map scopes,
 codec and declaration ownership. -/
 def tmcHypothesisUniversalBinderProblems (type value : Expr) : MetaM (Array String) := do
   unless ← isDefEq (← inferType value) type do
@@ -148,43 +180,73 @@ def tmcHypothesisUniversalBinderProblems (type value : Expr) : MetaM (Array Stri
                 ordinaryClauses := ordinaryClauses.push first
                 optimized := rest
               | _ => return #["ordinary simulation must contain the seven original conjuncts"]
-            let targetEval := mkAppN (mkConst `Flapjack.Compiler.Backend.BviSem.evaluate)
-              #[c, ffi, xs, env2, target]
-            let targetOutput := mkAppN (mkConst `Prod.mk [Level.zero, Level.zero])
-              #[resultType, state c, nextResult, next]
-            let targetRun := mkApp3 (mkConst ``Eq [Level.succ Level.zero])
-              (mkApp2 (mkConst `Flapjack.Compiler.Backend.BviSem.EvalResult) c ffi) targetEval targetOutput
-            let value := mkConst `Flapjack.Compiler.Backend.BvlSem.Value
-            let valueRel := mkApp (mkConst `Flapjack.Compiler.Backend.BviTmc.valueRel) nextMap
-            let listRel := mkApp3 (mkConst `List.Forall₂ [Level.zero, Level.zero]) value value valueRel
-            let eor := mkApp (mkConst `Flapjack.Compiler.Backend.BviTmc.ResultRelation.eorRel) nextMap
-            let resultRel := mkAppN (mkConst `Flapjack.SemanticPrimitivesProps.resultRel)
-              #[values, values, errorType, errorType, listRel, eor, result, nextResult]
-            let states := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.stateRel)
-              #[c, ffi, nextMap, final, next]
-            let submap := mkAppN (mkConst `Flapjack.HolFiniteMapExact.submap) #[nat, nat, map, nextMap]
-            let refs (s : Expr) := mkAppN (mkConst `Flapjack.Compiler.Backend.BviSem.BviState.refs) #[c, ffi, s]
-            let fresh := mkApp3 (mkConst `Flapjack.Compiler.Backend.BviTmc.onlyFresh) map nextMap (refs target)
-            let empty := mkApp2 (mkConst `EmptyCollection.emptyCollection [Level.zero])
-              (mkApp (mkConst `Set [Level.zero]) nat)
-              (mkApp (mkConst `Set.instEmptyCollection [Level.zero]) nat)
-            let unchanged := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.holesUnchangedExcept)
-              #[nat, nat, value, map, refs target, refs next, empty]
-            let notFinal := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.holesStillNotFinalised)
-              #[nat, nat, value, map, refs target, refs next]
-            unless ordinaryClauses == #[targetRun, resultRel, states, submap, fresh, unchanged, notFinal] do
+            unless ordinaryClauses == tmcResultFrame c ffi xs env2 target final result map next nextMap nextResult do
               return #["ordinary target simulation changed"]
-            let optimizedShape ← forallTelescope optimized fun args body => do
-              unless args.size == 2 do return false
+            forallTelescope optimized fun args body => do
+              unless args.size == 2 do return #["optimized branch entry changed"]
               let dest ← args[0]!.fvarId!.getDecl
               let code ← args[1]!.fvarId!.getDecl
               let codeField (cfg s : Expr) :=
                 mkAppN (mkConst `Flapjack.Compiler.Backend.BviSem.BviState.code) #[cfg, ffi, s]
               let expectedCode := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.optimisedCode)
                 #[binders[8]!, args[0]!, codeField pair source, codeField c target]
-              return dest.userName == `locOpt && dest.binderInfo == .default && dest.type == nat &&
-                code.binderInfo == .default && code.type == expectedCode && body.isAppOfArity ``And 2
-            unless optimizedShape do return #["optimized branch entry changed"]
-            return #[]
+              unless dest.userName == `locOpt && dest.binderInfo == .default && dest.type == nat &&
+                  code.binderInfo == .default && code.type == expectedCode do
+                return #["optimized branch entry changed"]
+              let .app (.app (.const ``And []) wrapper) _worker := body
+                | return #["optimized wrapper and worker branches must both be present"]
+              forallTelescope wrapper fun wrapArgs wrapConclusion => do
+                unless wrapArgs.size == 2 do return #["wrapper simulation binders changed"]
+                let wrap ← wrapArgs[0]!.fvarId!.getDecl
+                let assumption ← wrapArgs[1]!.fvarId!.getDecl
+                let exp := mkConst `Flapjack.Compiler.Backend.Bvi.Exp
+                let lengthExp := mkApp2 (mkConst `List.length [Level.zero]) exp xs
+                let literal := Expr.lit (.natVal 1)
+                let one := mkAppN (mkConst `OfNat.ofNat [Level.zero])
+                  #[nat, literal, mkApp (mkConst `instOfNatNat) literal]
+                let singleton := mkApp3 (mkConst ``Eq [Level.succ Level.zero]) nat lengthExp one
+                let lengthEnv := mkApp2 (mkConst `List.length [Level.zero])
+                  (mkConst `Flapjack.Compiler.Backend.BvlSem.Value) env1
+                let .app (.app (.const ``And []) _) actualRewriteEq := assumption.type
+                  | return #["wrapper simulation premise changed"]
+                unless actualRewriteEq.isAppOfArity ``Eq 3 do
+                  return #["wrapper simulation premise changed"]
+                let actualRewrite := actualRewriteEq.getAppArgs[1]!
+                unless actualRewrite.isAppOfArity `Flapjack.Compiler.Backend.BviTmc.rewriteWrapperSource 4 do
+                  return #["wrapper simulation premise changed"]
+                let head := actualRewrite.getAppArgs[3]!
+                unless head.isAppOfArity `Flapjack.holHd 3 && head.getAppArgs[0]! == exp &&
+                    head.getAppArgs[2]! == xs do
+                  return #["wrapper head selection changed"]
+                let inhabitedType := mkApp (mkConst ``Nonempty [Level.succ Level.zero]) exp
+                unless ← isDefEq (← inferType head.getAppArgs[1]!) inhabitedType do
+                  return #["wrapper head selection has the wrong inhabitation witness"]
+                let rewritten := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.rewriteWrapperSource)
+                  #[binders[8]!, args[0]!, lengthEnv, head]
+                let optionExp := mkApp (mkConst `Option [Level.zero]) exp
+                let someWrap := mkApp2 (mkConst `Option.some [Level.zero]) exp wrapArgs[0]!
+                let rewriteEq := mkApp3 (mkConst ``Eq [Level.succ Level.zero]) optionExp rewritten someWrap
+                let expectedAssumption := mkApp2 (mkConst ``And) singleton rewriteEq
+                unless wrap.userName == `wrap && wrap.binderInfo == .default && wrap.type == exp &&
+                    assumption.binderInfo == .default && assumption.type == expectedAssumption do
+                  return #["wrapper simulation premise changed"]
+                tmcExists wrapConclusion (state c) `wrapState fun wrapState afterWrapState =>
+                  tmcExists afterWrapState expectedMap `wrapMap fun wrapMap afterWrapMap =>
+                    tmcExists afterWrapMap resultType `wrapResult fun wrapResult wrapBody => do
+                      let mut wrapClauses := #[]
+                      let mut last := wrapBody
+                      for _ in [:6] do
+                        match last with
+                        | .app (.app (.const ``And []) first) rest =>
+                          wrapClauses := wrapClauses.push first
+                          last := rest
+                        | _ => return #["wrapper simulation must contain the seven original conjuncts"]
+                      wrapClauses := wrapClauses.push last
+                      let nil := mkApp (mkConst `List.nil [Level.zero]) exp
+                      let program := mkApp3 (mkConst `List.cons [Level.zero]) exp wrapArgs[0]! nil
+                      unless wrapClauses == tmcResultFrame c ffi program env2 target final result map
+                          wrapState wrapMap wrapResult do
+                        return #["wrapper target simulation changed"]
+                      return #[]
 
 end Flapjack
