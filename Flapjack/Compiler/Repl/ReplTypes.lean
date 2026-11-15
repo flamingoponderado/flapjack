@@ -2,12 +2,20 @@ module
 
 public import Flapjack.TypeSoundInvariants
 public import Flapjack.PrimTypesHOL.Types
+public import Flapjack.Compiler.Inference.EnvRel
 
 @[expose] public section
 
 /-! Primitive type-environment facts used by the compiler and REPL proofs. -/
 namespace Flapjack.Compiler.Repl.ReplTypes
 open Flapjack.NamespaceHOL Flapjack.PrimTypesHOL Flapjack.TypeSystemHOL Flapjack.TypeSoundInvariants
+
+@[hol "cakeml/compiler/repl/repl_typesScript.sml" "init_config_tenv_to_ienv"]
+theorem initConfig_eq_tenvToIenv :
+    Flapjack.Compiler.Inference.Infer.initConfig =
+      Flapjack.Compiler.Inference.EnvRel.tenvToIenv primTenv := by
+  simp [Flapjack.Compiler.Inference.Infer.initConfig,
+    Flapjack.Compiler.Inference.EnvRel.tenvToIenv, primTenv, nsEmpty, nsMap]
 
 @[hol "cakeml/compiler/repl/repl_typesScript.sml" "tenv_ok_prim_tenv"]
 theorem tenvOkPrimTenv : tenvOk primTenv := by

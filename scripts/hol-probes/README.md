@@ -10464,6 +10464,12 @@ the `tenv_ok_prim_tenv` proof from `repl_typesScript.sml` without building in
 the read-only reference checkout. Regenerate with
 `HOL_PROBE_ONLY=type_sound_env_probeScript.sml`.
 
+`env_rel_init_probe.out` reconstructs the original `tenv_to_ienv` definition
+and replays the `lookup_varE_empty` and `init_config_tenv_to_ienv` proofs with
+their inferred types. The environment-relation and REPL theories are not
+fetched by this probe; regenerate with
+`HOL_PROBE_ONLY=env_rel_init_probeScript.sml`.
+
 `loop_live_proof_typed_probe.out` (12 rows) captures the typed statements of
 the reviewed `loop_liveProofScript.sml` rows that the earlier probes did not
 cover (task 184). `loop_liveProofTheory` is built in the private copy; the

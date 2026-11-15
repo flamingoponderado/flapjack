@@ -137915,5 +137915,29 @@
     "lean_name": "ienvOk",
     "statement_status": "reviewed_exact",
     "reviewer": "Source comparison with ienv_ok_def_typed in infer_props_tids_probe.out: inference values, semantic constructors and semantic abbreviations are checked in the original order with the same input uvars."
+  },
+  {
+    "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
+    "hol_name": "tenv_to_ienv_def",
+    "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
+    "lean_name": "tenvToIenv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original definition and tenv_to_ienv_replay_typed in env_rel_init_probe.out: the complete TypeEnv is converted by recursively mapping each value binding through unconvertT, preserving its variable count and copying the constructor and type namespaces. The capture reconstructs the source definition under a fresh HOL constant rather than fetching envRelTheory."
+  },
+  {
+    "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
+    "hol_name": "lookup_varE_empty",
+    "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
+    "lean_name": "lookupVarEEmpty",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original theorem and lookup_varE_empty_replay_typed in env_rel_init_probe.out: for every identifier with both mlstring carriers, lookup in the empty local environment returns NONE. The capture replays the original proof without fetching envRelTheory."
+  },
+  {
+    "hol_path": "cakeml/compiler/repl/repl_typesScript.sml",
+    "hol_name": "init_config_tenv_to_ienv",
+    "lean_path": "Flapjack/Compiler/Repl/ReplTypes.lean",
+    "lean_name": "initConfig_eq_tenvToIenv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original theorem and init_config_tenv_to_ienv_replay_typed in env_rel_init_probe.out: the initial inference configuration equals the conversion of the primitive type environment, in the original direction. The capture replays the source proof using a reconstructed conversion, not a fetched repl_typesTheory theorem."
   }
 ]

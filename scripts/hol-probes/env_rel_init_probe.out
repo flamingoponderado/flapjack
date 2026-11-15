@@ -1,0 +1,3 @@
+tenv_to_ienv_replay_typed=∀(tenv :type_env). probe_tenv_to_ienv tenv = <|inf_v := nsMap (λ((tvs :num),(t :t)). (tvs,unconvert_t t)) tenv.v; inf_c := tenv.c; inf_t := tenv.t|>
+lookup_varE_empty_replay_typed=∀(x :(mlstring, mlstring) id). lookup_varE x Empty = (NONE :(num # t) option)
+init_config_tenv_to_ienv_replay_typed=init_config = probe_tenv_to_ienv prim_tenv

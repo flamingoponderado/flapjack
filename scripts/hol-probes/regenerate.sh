@@ -9790,6 +9790,11 @@ run_probe infer_props_tids_probeScript.sml infer_props_tids_probe.out \
   "$cake_dir/compiler/inference/inferPropsScript.sml" \
   "$cake_dir/compiler/inference"
 
+run_probe env_rel_init_probeScript.sml env_rel_init_probe.out \
+  tenv_to_ienv_replay_typed lookup_varE_empty_replay_typed init_config_tenv_to_ienv_replay_typed \
+  "$cake_dir/compiler/inference/proofs/envRelScript.sml" \
+  "$cake_dir/compiler/inference"
+
 run_probe type_sound_env_probeScript.sml type_sound_env_probe.out \
   tenv_abbrev_ok_def_typed tenv_ctor_ok_def_typed tenv_val_ok_def_typed tenv_ok_def_typed tenv_ok_prim_tenv_replay_typed \
   "$cake_dir/semantics/proofs/typeSoundInvariantsScript.sml" \
