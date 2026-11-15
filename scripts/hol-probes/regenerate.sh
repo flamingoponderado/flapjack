@@ -11210,7 +11210,7 @@ run_probe pancake_pan_simp_proof_typed_probeScript.sml \
   "$cake_dir/pancake/proofs"
 run_probe pancake_pan_to_word_proof_typed_probeScript.sml \
   pancake_pan_to_word_proof_typed_probe.out \
-  FDOM_get_eids_pan_globals_compile_eq_typed ALL_DISTINCT_MAP_INJ_o_typed \
+  FDOM_get_eids_pan_globals_compile_eq_typed compile_decs_fun_names_typed semantics_decls_has_main_pp_typed ALL_DISTINCT_MAP_INJ_o_typed \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe arm8_target_proof_typed_probeScript.sml \

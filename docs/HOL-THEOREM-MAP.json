@@ -135715,5 +135715,25 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "codewhale source comparison (2026-11-15, task 199): typed capture compile_exps_eq_map_typed in scripts/hol-probes/pancake_pan_structs_proof_typed_probe.out gives the function equality (compile_exps (ctxt :context) :α panLang$exp list -> α panLang$exp list) = MAP (compile_exp ctxt :α panLang$exp -> α panLang$exp), with the only type variable inside panLang$exp. Lean states the same function equality (no extra list binder) over the exact carriers compileExpsExact/compileExpExact, with the width pinned so both sides share it; the only carrier translation is the type-indexed word to BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "semantics_decls_has_main''",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "semanticsDeclsHasMainPanToWordHOLDoublePrime",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "codewhale source comparison (2026-11-15, task 199): typed capture semantics_decls_has_main_pp_typed in scripts/hol-probes/pancake_pan_to_word_proof_typed_probe.out binds the result as v and keeps one four-conjunct premise: semantics_decls (s :(α, β) panSem$state) start code = v ∧ s.code = FEMPTY ∧ ALL_DISTINCT (MAP FST (functions code)) ∧ v ≠ Fail, concluding ∃body rshape. ALOOKUP (functions code) start = SOME ([],body,rshape). Lean keeps the binders s start code v, the single conjunction and the same existential; ALOOKUP is List.lookup, FEMPTY is HolFiniteMapExact.empty, Fail is .fail. The four finite-map fields are the reviewed canonical translation and the only word use is BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "compile_decs_fun_names",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "compileDecsExactHOL_fun_names",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["globals"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "codewhale source comparison (2026-11-15, task 199): typed capture compile_decs_fun_names_typed in scripts/hol-probes/pancake_pan_to_word_proof_typed_probe.out gives ∀(ctxt :α pan_globals$context) (code :α decl list). MAP FST (functions (FST(SND(compile_decs ctxt code)))) = MAP FST (functions code), with the context's only finite-map field globals. Lean keeps both binders, the same second-component projection (.2.1) and both MAP FST projections over functionsHOL; the four-tuple order matches HOL's compile_decs result."
   }
 ]

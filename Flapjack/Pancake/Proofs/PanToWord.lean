@@ -319,6 +319,67 @@ theorem semanticsDeclsHasMainPanToWordHOL {width : Nat} {σ : Type} [NeZero widt
   rw [hcode, PanGlobalsCompileTopSemanticsDecls.emptyUpdateListLookup _ _ hnd] at h
   exact ⟨body, rshape, h⟩
 
+/-- Exact port of HOL `semantics_decls_has_main''`
+(`pan_to_wordProofScript.sml:343`). The typed capture
+`semantics_decls_has_main_pp_typed` binds the result as `v` and keeps HOL's
+single four-conjunct premise; the statement follows from the tagged
+`semantics_decls_has_main'` port. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "semantics_decls_has_main''"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem semanticsDeclsHasMainPanToWordHOLDoublePrime {width : Nat} {σ : Type} [NeZero width]
+    (s : PanSemStateFiniteExact width σ) (start : MlS) (code : List (DeclHOL width))
+    (v : HolBehaviour) :
+    PanSemStateFiniteExact.semanticsDecls s start code = v ∧
+      s.code = HolFiniteMapExact.empty ∧ ((functionsHOL code).map Prod.fst).Nodup ∧
+      v ≠ .fail →
+    ∃ body rshape, List.lookup start (functionsHOL code) = some ([], body, rshape) := by
+  rintro ⟨hres, hcode, hnd, hne⟩
+  refine semanticsDeclsHasMainPanToWordHOL s start code ⟨hcode, hnd, ?_⟩
+  rw [hres]
+  exact hne
+
+
+namespace PanToWordGlobalsContextFiniteSupport
+
+/-- Local same-module witness for the canonical finite-support
+`PanGlobalsContextExact` carrier used by the `fmap_as_finite_support := [globals]`
+qualified port below (an imported witness may be re-exported as a local one). -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width]
+    (context : PanGlobalsContextExact width) :
+    PanGlobalsContextExact.ofBroad (PanGlobalsContextExact.toBroad context) = context :=
+  PanGlobalsContextExact.holFmapAsFiniteSupportWitness context
+
+end PanToWordGlobalsContextFiniteSupport
+
+/-- Exact port of HOL `compile_decs_fun_names` (`pan_to_wordProofScript.sml:355`).
+The typed capture `compile_decs_fun_names_typed` gives
+`∀(ctxt :α pan_globals$context) (code :α decl list).
+  MAP FST (functions (FST(SND(compile_decs ctxt code)))) = MAP FST (functions code)`,
+so Lean keeps both binders and both projections; the context's only finite-map
+field is `globals`. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "compile_decs_fun_names"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem compileDecsExactHOL_fun_names {width : Nat} [NeZero width]
+    (ctxt : PanGlobalsContextExact width) (code : List (DeclHOL width)) :
+    (functionsHOL (compileDecsExactHOL ctxt code).2.1).map Prod.fst =
+      (functionsHOL code).map Prod.fst := by
+  induction code generalizing ctxt with
+  | nil => simp only [compileDecsExactHOL, functionsHOL, List.map_nil]
+  | cons d ds ih =>
+      cases d with
+      | decl shape name value =>
+          simp only [compileDecsExactHOL, functionsHOL]
+          exact ih _
+      | function declaration =>
+          simp only [compileDecsExactHOL, functionsHOL, List.map_cons]
+          rw [ih ctxt]
+      | exnDecl exceptionName shape =>
+          simp only [compileDecsExactHOL, functionsHOL]
+          exact ih _
+      | name name fields =>
+          simp only [compileDecsExactHOL]
+          exact ih _
 
 /-- Exact HOL `map_map2_fst_lemma` (`pan_to_wordProofScript.sml:118-126`);
 `MAP2 (λx y. (x,y))` is `List.zip`. -/
