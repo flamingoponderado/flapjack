@@ -8,16 +8,6 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.ListLengthStub
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value)
 
-/-- Sequential evaluation of a pair, allowing the second expression to change state. -/
-theorem evaluate_pair_threaded {C F : Type} (first second : Bvi.Exp) (env : List Value)
-    (state next final : BviSem.BviState C F) (x y : Value)
-    (firstRun : BviSem.evaluate [first] env state = (.val [x], next))
-    (secondRun : BviSem.evaluate [second] env next = (.val [y], final)) :
-    BviSem.evaluate [first, second] env state = (.val [x, y], final) := by
-  change BviSem.evaluateTuple (first :: [second], env, state) = _
-  rw [BviSem.evaluateCons]
-  simp [BviSem.evaluateTuple, firstRun, secondRun, Flapjack.holHd]
-
 /-- The generated list-length call returns the length of a decoded list.
 Untagged pending BVI evaluator and dispatcher correspondence review. -/
 theorem evaluate_listLength_call {C F : Type} (value : Value) (values : List Value)
@@ -64,7 +54,7 @@ theorem evaluate_fromListBody {C F : Type} (tag : Nat) (value : Value) (values :
   have argsRun : BviSem.evaluate [.var 0, .call 0 (some listLengthLocation)
         [.var 0, .op (.intOp (.const 0)) []] none] (value :: env) (BviProps.incClock clock state) =
       (.val [value, .number (Int.ofNat values.length)], state) := by
-    exact evaluate_pair_threaded _ _ _ _ _ _ _ _ varRun lengthRun
+    exact evaluate_pair _ _ _ _ _ _ varRun lengthRun
   rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, decode]
 

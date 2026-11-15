@@ -78,7 +78,7 @@ theorem evaluate_copyByteAllocate_body {C F : Type}
     rw [equal, fresh] at srcLookup
     contradiction
   have allocArgs : BviSem.evaluate [zero, .var 0] input state = (.val [.number 0, .number length], state) := by
-    apply evaluate_pair
+    apply evaluate_pair (next := state)
     · simp [zero, BviSem.evaluate, BviSem.fixClock, BviSem.doApp, BviSem.doAppFallback,
         BviSem.doAppAux, BackendCommon.smallEnoughInt]
     · simp [input, BviSem.evaluate]

@@ -42,12 +42,13 @@ theorem evaluate_listLength_nil {C F : Type} (state : BviSem.BviState C F) (n : 
   change BviSem.evaluate [.var 1] [BvlSem.listToValue [], .number n] state = _
   simp [BviSem.evaluate]
 
-/-- Sequential evaluation of two state-preserving expressions. -/
+/-- Sequential evaluation of two expressions threads the intermediate state.
+This is proof infrastructure for the BVI list evaluator. -/
 theorem evaluate_pair {C F : Type} (first second : Bvi.Exp) (env : List Value)
-    (state : BviSem.BviState C F) (x y : Value)
-    (firstRun : BviSem.evaluate [first] env state = (.val [x], state))
-    (secondRun : BviSem.evaluate [second] env state = (.val [y], state)) :
-    BviSem.evaluate [first, second] env state = (.val [x, y], state) := by
+    (state : BviSem.BviState C F) (x y : Value) {next final : BviSem.BviState C F}
+    (firstRun : BviSem.evaluate [first] env state = (.val [x], next))
+    (secondRun : BviSem.evaluate [second] env next = (.val [y], final)) :
+    BviSem.evaluate [first, second] env state = (.val [x, y], final) := by
   change BviSem.evaluateTuple (first :: [second], env, state) = _
   rw [BviSem.evaluateCons]
   simp [BviSem.evaluateTuple, firstRun, secondRun, Flapjack.holHd]
