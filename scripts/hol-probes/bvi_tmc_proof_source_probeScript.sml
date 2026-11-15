@@ -30,6 +30,7 @@ val _ = show "list_rel_env_rel_typed" bvi_tmcProofTheory.list_rel_env_rel;
 val _ = show "env_rel_length_opt_typed" bvi_tmcProofTheory.env_rel_length_opt;
 val _ = show "env_rel_length_non_opt_typed" bvi_tmcProofTheory.env_rel_length_non_opt;
 val _ = show "env_rel_length_typed" bvi_tmcProofTheory.env_rel_length;
+val _ = show "env_rel_extras_opt_typed" bvi_tmcProofTheory.env_rel_extras_opt;
 val _ = show "env_rel_strip_extras_typed" bvi_tmcProofTheory.env_rel_strip_extras;
 val _ = show "namespace_rel_def_typed" bvi_tmcProofTheory.namespace_rel_def;
 val _ = show "input_condition_def_typed" bvi_tmcProofTheory.input_condition_def;

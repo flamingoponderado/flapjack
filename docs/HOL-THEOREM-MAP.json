@@ -135642,6 +135642,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "env_rel_extras_opt", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
+  "lean_name": "envRel_extras_opt", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Source comparison: Compared env_rel_extras_opt_typed in bvi_tmc_proof_source_probe.out: the true-flag environment relation implies existence of the original pointer and integer at the source length and its successor, selected using HOL EL. The pointer map uses canonical finite support with a same-module witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "env_rel_strip_extras", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
   "lean_name": "envRel_strip_extras", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f"],

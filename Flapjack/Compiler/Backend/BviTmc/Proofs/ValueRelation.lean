@@ -204,6 +204,30 @@ theorem envRel_length (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source targe
   | false => exact envRel_length_non_opt f source target related
   | true => have length := envRel_length_opt f source target related; omega
 
+theorem holFmapAsFiniteSupportParamWitness_envRel_extras_opt_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+
+/-- An optimized environment stores its hole pointer and index after the related prefix. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_extras_opt"
+  (fmap_as_finite_support_parameters := [f])]
+theorem envRel_extras_opt (f : HolFiniteMapExact Nat Nat) (source target : List Value)
+    (related : envRel true f source target) :
+    ∃ ptr idx, holEl source.length target = .refPtr false ptr ∧
+      holEl (source.length + 1) target = .number idx := by
+  obtain ⟨front, extras, rfl, entries, extra⟩ := related
+  obtain ⟨len, ptr, idx, ptrEq, idxEq, _⟩ := extra rfl
+  have sameLength := entries.length_eq
+  have atExtra (n : Nat) (bound : n < extras.length) :
+      holEl (source.length + n) (front ++ extras) = holEl n extras := by
+    have fullBound : source.length + n < (front ++ extras).length := by
+      simp only [List.length_append]
+      omega
+    rw [holEl_eq_getElem _ _ fullBound, holEl_eq_getElem _ _ bound]
+    simp [List.getElem_append_right, sameLength]
+  refine ⟨ptr, idx, ?_, ?_⟩
+  · simpa using (atExtra 0 (by omega)).trans ptrEq
+  · exact (atExtra 1 (by omega)).trans idxEq
+
 theorem holFmapAsFiniteSupportParamWitness_envRel_strip_extras_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
