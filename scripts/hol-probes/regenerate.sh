@@ -12066,3 +12066,10 @@ run_probe data_to_word_proof_typed_probeScript.sml data_to_word_proof_typed_prob
   memory_rel_Thunk_bits_typed \
   "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe data_props_local_typed_probeScript.sml data_props_local_typed_probe.out \
+  consume_space_with_stack_typed consume_space_with_locals_typed \
+  cut_state_opt_with_swap_typed cut_state_opt_stack_max_typed \
+  cut_state_opt_swap_input_typed evaluate_fl_smx_safe_peak_swap_aux_typed \
+  "$cake_dir/compiler/backend/semantics/dataPropsScript.sml" \
+  "$cake_dir/compiler/backend/semantics"

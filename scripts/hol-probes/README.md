@@ -10704,3 +10704,14 @@ statement implements); `size_of_seen_SUBSET`, `size_of_seen_Block`
 `memory_rel_Thunk_bits` (data_to_wordProof). Regenerate each with
 `CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=<probe>_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`data_props_local_typed_probe.out` (6 rows) captures the reviewed
+`dataPropsScript.sml` rows that earlier probes did not cover (task 188):
+`consume_space_with_stack`, `consume_space_with_locals`,
+`cut_state_opt_with_swap`, `cut_state_opt_stack_max`,
+`cut_state_opt_swap_input` and `evaluate_fl_smx_safe_peak_swap_aux`. All are
+`[local]`, so they are parsed from the pinned source with the splice-expanding
+helper; the last one's HOL false branch binds an unused `smx : γ`, which the
+Lean twin omits as a documented vacuous binder. Regenerate with
+`CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=data_props_local_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
