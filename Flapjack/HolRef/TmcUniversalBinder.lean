@@ -5,10 +5,8 @@ public meta import Lean.Util.CollectAxioms
 
 public meta section
 
-/-! Preliminary elaborated check for the body-bound map in the TMC
-induction hypothesis. This does not enable a HOL qualifier: the complete
-predicate body, existential scopes, codec witnesses and source correspondence
-still require separate checks. -/
+/-! Elaborated audits for the TMC induction hypothesis and a preliminary
+call-block map inventory. These checks do not replace HOL source review. -/
 
 namespace Flapjack
 open Lean Meta
@@ -49,11 +47,14 @@ private partial def tmcContainsNestedMap (expression : Expr) (fuel : Nat) : Meta
   | _ => return false
 
 private def tmcMapBinder (name : Name) (domain : Expr) (kind : TmcMapBinderKind)
-    (visibility : BinderInfo) (positive : Option Bool) : MetaM (Array TmcMapBinder × Array String) := do
+    (visibility : BinderInfo) (positive : Option Bool) (allowRefs : Bool) : MetaM (Array TmcMapBinder × Array String) := do
   let normal ← whnf domain
   let canonical := mkApp2 (mkConst `Flapjack.HolFiniteMapExact) (mkConst `Nat) (mkConst `Nat)
+  let refs := mkApp2 (mkConst `Flapjack.HolFiniteMapExact) (mkConst `Nat)
+    (mkApp (mkConst `Flapjack.Compiler.Backend.BvlSem.Ref) (mkConst `Flapjack.Compiler.Backend.BvlSem.Value))
   if normal.isAppOfArity `Flapjack.HolFiniteMapExact 2 then
-    if domain != canonical || normal != canonical || visibility != .default then
+    let expected := if allowRefs && name == `refs then refs else canonical
+    if domain != expected || normal != expected || visibility != .default then
       return (#[], #[s!"map binder {name} has an aliased, noncanonical or hidden carrier"])
     return (#[⟨name, kind, positive⟩], #[])
   if (normal.find? (·.isConstOf `Flapjack.HolFiniteMapExact)).isSome then
@@ -65,57 +66,57 @@ private def tmcMapBinder (name : Name) (domain : Expr) (kind : TmcMapBinderKind)
       return (#[], #[s!"map binder {name} is nested in an unsupported carrier"])
   return (#[], #[])
 
-private partial def tmcMapInventoryVisit (expression : Expr) (positive : Option Bool) :
+private partial def tmcMapInventoryVisit (expression : Expr) (positive : Option Bool) (allowRefs : Bool) :
     MetaM (Array TmcMapBinder × Array String) := do
   match expression with
   | .app (.app (.const ``Exists _) domain) (.lam name binderDomain body visibility) =>
     unless domain == binderDomain do return (#[], #["existential binder domain changed"])
-    let (binderMaps, binderErrors) ← tmcMapBinder name domain .existential visibility positive
-    let (domainMaps, domainErrors) ← tmcMapInventoryVisit domain positive
+    let (binderMaps, binderErrors) ← tmcMapBinder name domain .existential visibility positive allowRefs
+    let (domainMaps, domainErrors) ← tmcMapInventoryVisit domain positive allowRefs
     withLocalDecl name visibility domain fun localVar => do
-      let (bodyMaps, bodyErrors) ← tmcMapInventoryVisit (body.instantiate1 localVar) positive
+      let (bodyMaps, bodyErrors) ← tmcMapInventoryVisit (body.instantiate1 localVar) positive allowRefs
       return (binderMaps ++ domainMaps ++ bodyMaps, binderErrors ++ domainErrors ++ bodyErrors)
   | .forallE name domain body visibility =>
-    let (binderMaps, binderErrors) ← tmcMapBinder name domain .universal visibility positive
+    let (binderMaps, binderErrors) ← tmcMapBinder name domain .universal visibility positive allowRefs
     let domainPositive := if ← isProp domain then positive.map (!·) else positive
-    let (domainMaps, domainErrors) ← tmcMapInventoryVisit domain domainPositive
+    let (domainMaps, domainErrors) ← tmcMapInventoryVisit domain domainPositive allowRefs
     withLocalDecl name visibility domain fun localVar => do
-      let (bodyMaps, bodyErrors) ← tmcMapInventoryVisit (body.instantiate1 localVar) positive
+      let (bodyMaps, bodyErrors) ← tmcMapInventoryVisit (body.instantiate1 localVar) positive allowRefs
       return (binderMaps ++ domainMaps ++ bodyMaps, binderErrors ++ domainErrors ++ bodyErrors)
   | .lam name domain body visibility =>
-    let (binderMaps, binderErrors) ← tmcMapBinder name domain .other visibility none
-    let (domainMaps, domainErrors) ← tmcMapInventoryVisit domain none
+    let (binderMaps, binderErrors) ← tmcMapBinder name domain .other visibility none allowRefs
+    let (domainMaps, domainErrors) ← tmcMapInventoryVisit domain none allowRefs
     withLocalDecl name visibility domain fun localVar => do
-      let (bodyMaps, bodyErrors) ← tmcMapInventoryVisit (body.instantiate1 localVar) none
+      let (bodyMaps, bodyErrors) ← tmcMapInventoryVisit (body.instantiate1 localVar) none allowRefs
       return (binderMaps ++ domainMaps ++ bodyMaps, binderErrors ++ domainErrors ++ bodyErrors)
   | .letE name type value body _ =>
-    let (binderMaps, binderErrors) ← tmcMapBinder name type .other .default none
-    let (typeMaps, typeErrors) ← tmcMapInventoryVisit type none
-    let (valueMaps, valueErrors) ← tmcMapInventoryVisit value none
+    let (binderMaps, binderErrors) ← tmcMapBinder name type .other .default none allowRefs
+    let (typeMaps, typeErrors) ← tmcMapInventoryVisit type none allowRefs
+    let (valueMaps, valueErrors) ← tmcMapInventoryVisit value none allowRefs
     withLetDecl name type value fun localVar => do
-      let (bodyMaps, bodyErrors) ← tmcMapInventoryVisit (body.instantiate1 localVar) none
+      let (bodyMaps, bodyErrors) ← tmcMapInventoryVisit (body.instantiate1 localVar) none allowRefs
       return (binderMaps ++ typeMaps ++ valueMaps ++ bodyMaps,
         binderErrors ++ typeErrors ++ valueErrors ++ bodyErrors)
   | .app (.app (.const ``And []) left) right
   | .app (.app (.const ``Or []) left) right =>
-    let (leftMaps, leftErrors) ← tmcMapInventoryVisit left positive
-    let (rightMaps, rightErrors) ← tmcMapInventoryVisit right positive
+    let (leftMaps, leftErrors) ← tmcMapInventoryVisit left positive allowRefs
+    let (rightMaps, rightErrors) ← tmcMapInventoryVisit right positive allowRefs
     return (leftMaps ++ rightMaps, leftErrors ++ rightErrors)
   | .app (.const ``Not []) proposition =>
-    tmcMapInventoryVisit proposition (positive.map (!·))
+    tmcMapInventoryVisit proposition (positive.map (!·)) allowRefs
   | .app function argument =>
-    let (functionMaps, functionErrors) ← tmcMapInventoryVisit function none
-    let (argumentMaps, argumentErrors) ← tmcMapInventoryVisit argument none
+    let (functionMaps, functionErrors) ← tmcMapInventoryVisit function none allowRefs
+    let (argumentMaps, argumentErrors) ← tmcMapInventoryVisit argument none allowRefs
     return (functionMaps ++ argumentMaps, functionErrors ++ argumentErrors)
-  | .mdata _ body => tmcMapInventoryVisit body positive
-  | .proj _ _ body => tmcMapInventoryVisit body none
+  | .mdata _ body => tmcMapInventoryVisit body positive allowRefs
+  | .proj _ _ body => tmcMapInventoryVisit body none allowRefs
   | .mvar _ => return (#[], #["map inventory cannot inspect metavariables"])
   | _ => return (#[], #[])
 
 /-- Inventory the direct map binders in an opened TMC hypothesis body.
 This check does not establish the predicate's semantic shape or qualify a tag. -/
 def tmcHypothesisMapInventoryProblems (body : Expr) : MetaM (Array String) := do
-  let (found, errors) ← tmcMapInventoryVisit body (some true)
+  let (found, errors) ← tmcMapInventoryVisit body (some true) false
   unless errors.isEmpty do return errors
   let expected : Array TmcMapBinder := #[
     ⟨`f, .universal, some true⟩,
@@ -123,6 +124,22 @@ def tmcHypothesisMapInventoryProblems (body : Expr) : MetaM (Array String) := do
     ⟨`wrapMap, .existential, some true⟩,
     ⟨`workMap, .existential, some true⟩]
   unless found == expected do return #[s!"unexpected finite-map binder inventory: {repr found}"]
+  return #[]
+
+/-- Audit direct map binders in `evaluate_cb`. This preliminary check neither
+unfolds named predicates nor validates the theorem's other hypotheses or
+conclusions; it cannot by itself justify a HOL qualifier. -/
+def tmcCallBlockMapInventoryProblems (type : Expr) : MetaM (Array String) := do
+  let (found, errors) ← tmcMapInventoryVisit type (some true) true
+  unless errors.isEmpty do return errors
+  let expected : Array TmcMapBinder := #[
+    ⟨`f, .universal, some true⟩,
+    ⟨`ordinaryMap, .existential, some true⟩,
+    ⟨`wrapMap, .existential, some true⟩,
+    ⟨`refs, .universal, some true⟩,
+    ⟨`auxMap, .existential, some true⟩,
+    ⟨`workMap, .existential, some true⟩]
+  unless found == expected do return #[s!"unexpected call-block finite-map binder inventory: {repr found}"]
   return #[]
 
 private def tmcExists (expression domain : Expr) (name : Name)
