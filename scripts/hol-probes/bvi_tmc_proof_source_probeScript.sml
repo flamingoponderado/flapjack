@@ -17,6 +17,7 @@ val _ = show "v_rel_rules_typed" bvi_tmcProofTheory.v_rel_rules;
 val _ = show "ref_rel_rules_typed" bvi_tmcProofTheory.ref_rel_rules;
 val _ = show "env_rel_def_typed" bvi_tmcProofTheory.env_rel_def;
 val _ = show "state_ref_rel_def_typed" bvi_tmcProofTheory.state_ref_rel_def;
+val _ = show "v_rel_submap_typed" bvi_tmcProofTheory.v_rel_submap;
 val _ = show "namespace_rel_def_typed" bvi_tmcProofTheory.namespace_rel_def;
 val _ = show "input_condition_def_typed" bvi_tmcProofTheory.input_condition_def;
 val _ = show "no_mutcons_def_typed" bvi_tmcProofTheory.no_mutcons_def;

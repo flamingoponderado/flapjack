@@ -58,7 +58,7 @@ theorem refRel_submap (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat
   cases related with
   | byteArray b bytes => exact .byteArray b bytes
   | valueArray xs ys values => exact .valueArray xs ys (listRel_submap f g xs ys values submap)
-  | thunk mode x y value => exact .thunk mode x y (valueRel_submap f g x y value submap)
+  | thunk mode x y value => exact .thunk mode x y (valueRel_submap f x y g ⟨value, submap⟩)
 
 theorem holFmapAsFiniteSupportParamWitness_fmapInj_update_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl

@@ -135586,6 +135586,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "v_rel_submap",
+  "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
+  "lean_name": "valueRel_submap", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "g"],
+  "reviewer": "Compared v_rel_submap_typed in bvi_tmc_proof_source_probe.out: both pointer maps and values retain their original binder order and the conjunction of the value relation and submap inclusion implies the same relation under the extended map. Both maps use canonical finite support with separate parameter witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "state_ref_rel_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
   "lean_name": "stateRefRel", "statement_status": "reviewed_fmap_as_finite_support_parameters",

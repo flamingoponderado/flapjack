@@ -65,12 +65,12 @@ theorem holFmapAsFiniteSupportParamWitness_valueRel_submap_f (f : HolFiniteMapEx
 theorem holFmapAsFiniteSupportParamWitness_valueRel_submap_g (g : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup g) g.finiteSupport = g := by cases g; rfl
 
-/-- Extending the pointer map preserves related values.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_rel_submap" (fmap_as_finite_support_parameters := [f, g])] -/
-theorem valueRel_submap (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat) (v1 v2 : Value)
-    (related : valueRel f v1 v2) (submap : f.submap g) : valueRel g v1 v2 := by
+/-- Extending the pointer map preserves related values. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_rel_submap"
+  (fmap_as_finite_support_parameters := [f, g])]
+theorem valueRel_submap (f : HolFiniteMapExact Nat Nat) (v1 v2 : Value) (g : HolFiniteMapExact Nat Nat)
+    (h : valueRel f v1 v2 ∧ f.submap g) : valueRel g v1 v2 := by
+  obtain ⟨related, submap⟩ := h
   cases related with
   | number i => exact .number i
   | word64 w => exact .word64 w
@@ -80,7 +80,7 @@ theorem valueRel_submap (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact N
     apply valueRel.block
     have each : ∀ x ∈ xs, ∀ y, valueRel f x y → valueRel g x y := by
       intro x member y rel
-      exact valueRel_submap f g x y rel submap
+      exact valueRel_submap f x y g ⟨rel, submap⟩
     induction pairs with
     | nil => exact .nil
     | cons rel rest ih =>
@@ -92,6 +92,7 @@ theorem valueRel_submap (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact N
 termination_by sizeOf v1
 decreasing_by
   have smaller := List.sizeOf_lt_of_mem member
+  subst v1
   simp_wf
   omega
 
@@ -109,7 +110,7 @@ theorem listRel_submap (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Na
     (submap : f.submap g) : List.Forall₂ (valueRel g) source target := by
   induction related with
   | nil => exact .nil
-  | cons head tail ih => exact .cons (valueRel_submap f g _ _ head submap) ih
+  | cons head tail ih => exact .cons (valueRel_submap f _ _ g ⟨head, submap⟩) ih
 
 theorem holFmapAsFiniteSupportParamWitness_envRel_submap_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl

@@ -168,7 +168,7 @@ theorem doBuild_related (parts : List ClosLang.ConstPart) (f : HolFiniteMapExact
         by_cases equal : key = i
         · simp [equal, partValue]
         · simp only [equal, ↓reduceIte]
-          exact valueRel_submap f midMap _ _ (values key) firstSubmap
+          exact valueRel_submap f _ _ midMap ⟨values key, firstSubmap⟩
       obtain ⟨lastMap, lastValue, lastTarget, targetRun, resultRel, lastHeaps, lastInj,
         secondSubmap, secondFresh, secondHoles, secondStill, secondDomain⟩ :=
         ih midMap (fun key => if key = i then sourceValue else m key)
