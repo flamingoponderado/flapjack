@@ -24142,6 +24142,14 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "scan_expr_ty_rel",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/ScanSound.lean", "lean_name": "scanExpr_tyRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared scan_expr_ty_rel_typed in bvi_tailrec_semantics_probe.out: arbitrary context, location, expression list, environment, scan results, state, returned values and final state; the original related-context, scan-equation and full successful-evaluation premises; and both original output typing conclusions. Compiler and FFI payloads are independent, with the same state carrier throughout; refs uses canonical finite support with a same-module roundtrip witness. Evaluation inherits reals_as_rational_cuts as documented in SOUNDNESS item 8."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "try_update_EL",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/UpdateIndex.lean", "lean_name": "tryUpdate_el",
     "statement_status": "reviewed_exact",

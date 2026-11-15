@@ -774,11 +774,21 @@ theorem scanSound_list {C F : Type} (ctx : List ValueType) (loc : Nat) (xs : Lis
 termination_by sizeOf xs
 end
 
-/-- The source-shaped scan type-soundness theorem. This remains untagged
-until the BVI evaluator and dispatcher are reviewed against the source. -/
+namespace ScanExprTyRelCarrier
+/-- The BVI reference-map carrier roundtrips through its finite-support view. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end ScanExprTyRelCarrier
+
+/-- The scan preserves environment types and describes the values produced by
+evaluation. Evaluation inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "scan_expr_ty_rel"
+  (fmap_as_finite_support := [refs])]
 theorem scanExpr_tyRel {C F : Type} (ts : List ValueType) (loc : Nat) (xs : List Bvi.Exp)
     (env : List Value) (ys : List (List ValueType × ValueType × Bool × Option AssocOp))
-    (state next : BviSem.BviState C F) (values : List Value)
+    (state : BviSem.BviState C F) (values : List Value) (next : BviSem.BviState C F)
     (hyp : tyRel env ts ∧ scanExpr ts loc xs = ys ∧
       BviSem.evaluate xs env state = (.val values, next)) :
     (∀ entry ∈ ys, tyRel env entry.1) ∧ tyRel values (ys.map fun (_, ty, _, _) => ty) := by
