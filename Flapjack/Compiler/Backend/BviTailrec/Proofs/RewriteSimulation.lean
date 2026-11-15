@@ -14,13 +14,12 @@ public import Flapjack.Misc.ClockWeightInduction
 @[expose] public section
 
 
-/-! Cases of the source tail-recursion rewrite simulation. The evaluator,
-source scan and compilation carriers remain subject to HOL review. -/
+/-! Cases and assembly for the source tail-recursion rewrite simulation. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi BvlSem
 
-/-- A scan never selects the non-optimizing operator. This is untagged until
-its scan and expression carriers have completed source review. -/
+/-- A scan never selects the non-optimizing operator. This Flapjack helper
+supports the rewrite simulation. -/
 theorem scanSing_ne_noop (ctx : List ValueType) (loc : Nat) (e : Bvi.Exp) :
     (scanSing ctx loc e).2.2.2 ≠ some .noop := by
   cases e with
@@ -378,8 +377,7 @@ theorem rewriteTail_nil {C F : Type} (source : BviSem.BviState (Nat × C) F)
   simp at impossible
 
 /-- Variable case of the source rewrite simulation. No optimization can be
-selected by a variable scan. This is untagged until the evaluator and source
-compilation definitions have completed source review. -/
+selected by a variable scan. This Flapjack helper supports the assembly. -/
 theorem rewriteTail_var {C F : Type} (n : Nat) (source : BviSem.BviState (Nat × C) F)
     (env1 : List Value) (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
     (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
@@ -3708,8 +3706,8 @@ theorem rewriteTail_op_memOp_through {C F : Type} (limit : Nat) (operation : Clo
       | exact rewriteTail_op_memory_rejected_through limit _ args source env1 result sourceNext optimized target acc env2 loc ts ty argsIH rfl clockBound hyp
 
 
-/-- All bounded operation cases follow from the remaining integer and block
-cases, which include the accumulator rewrite. These two premises remain open. -/
+/-- The bounded operation assembly reduces to the integer and block cases,
+which include the accumulator rewrite and are discharged in the closed proof. -/
 theorem rewriteTail_op_through_of_int_block {C F : Type} (limit : Nat)
     (operation : ClosLang.Op) (args : List Bvi.Exp)
     (structuralIH : ∀ xs, sizeOf xs < sizeOf [Bvi.Exp.op operation args] →

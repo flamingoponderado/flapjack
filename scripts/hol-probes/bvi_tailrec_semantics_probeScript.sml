@@ -95,3 +95,6 @@ val _ = show_thm "op_type_lem_typed=" bvi_tailrecProofTheory.op_type_lem;
 val _ = show_thm "is_rec_term_ok_typed=" bvi_tailrecProofTheory.is_rec_term_ok;
 val _ = show_thm "scan_expr_Op_typed=" bvi_tailrecProofTheory.scan_expr_Op;
 val _ = show_thm "evaluate_rewrite_tail_typed=" bvi_tailrecProofTheory.evaluate_rewrite_tail;
+val _ = show_thm "decide_ty_simp1_typed=" bvi_tailrecProofTheory.decide_ty_simp1;
+val _ = show_thm "decide_ty_simp_typed=" bvi_tailrecProofTheory.decide_ty_simp;
+val _ = show_thm "to_op_11_typed=" bvi_tailrecProofTheory.to_op_11;

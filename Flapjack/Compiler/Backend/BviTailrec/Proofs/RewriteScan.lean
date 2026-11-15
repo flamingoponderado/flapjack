@@ -389,4 +389,23 @@ theorem scanExpr_Op (ts : List ValueType) (loc : Nat) (op : ClosLang.Op)
     have flag : lr = false := congrArg Prod.fst (premises.2.symm.trans fallback)
     simp [same, flag]
 
+/-- The merged type is specific exactly when both inputs have that type. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "decide_ty_simp1"]
+theorem decideType_simp1 (ty1 ty2 : ValueType) :
+    (decideType ty1 ty2 = .int ↔ ty1 = .int ∧ ty2 = .int) ∧
+      (decideType ty1 ty2 = .list ↔ ty1 = .list ∧ ty2 = .list) := by
+  cases ty1 <;> cases ty2 <;> simp [decideType]
+
+/-- A specific merged type agrees with both inputs. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "decide_ty_simp"]
+theorem decideType_simp (ty1 ty2 ty3 : ValueType) :
+    (decideType ty1 ty2 = ty3 ∧ ty3 ≠ .any) ↔
+      (ty1 = ty3 ∧ ty2 = ty3 ∧ ty3 ≠ .any) := by
+  cases ty1 <;> cases ty2 <;> cases ty3 <;> simp [decideType]
+
+/-- Conversion of accumulator operations to source operations is injective. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "to_op_11"]
+theorem toOp_injective_iff (op1 op2 : AssocOp) : toOp op1 = toOp op2 ↔ op1 = op2 := by
+  cases op1 <;> cases op2 <;> simp [toOp]
+
 end Flapjack.Compiler.Backend.BviTailrec

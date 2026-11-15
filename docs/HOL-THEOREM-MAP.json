@@ -24245,6 +24245,21 @@
     "reviewer": "Compared compile_prog_MEM_typed in bvi_tailrec_semantics_probe.out: arbitrary enabled flag, compilation pair and output-label membership retain both complete original-label and fresh-interval alternatives with the same namespace-stride witness."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "decide_ty_simp1",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteScan.lean", "lean_name": "decideType_simp1", "statement_status": "reviewed_exact",
+    "reviewer": "Compared decide_ty_simp1_typed in bvi_tailrec_semantics_probe.out: both original equivalences for Int and List results are retained as one conjunction over arbitrary input types."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "decide_ty_simp",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteScan.lean", "lean_name": "decideType_simp", "statement_status": "reviewed_exact",
+    "reviewer": "Compared decide_ty_simp_typed in bvi_tailrec_semantics_probe.out: the original equivalence retains arbitrary input and result types and the non-Any conjunct on both sides."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "to_op_11",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteScan.lean", "lean_name": "toOp_injective_iff", "statement_status": "reviewed_exact",
+    "reviewer": "Compared to_op_11_typed in bvi_tailrec_semantics_probe.out: conversion equality is equivalent to equality of arbitrary accumulator operations."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "evaluate_rewrite_tail",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteSimulation.lean", "lean_name": "evaluateRewriteTail",
     "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
