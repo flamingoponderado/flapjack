@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.HeapRelation
 public import Flapjack.Compiler.Backend.Semantics.BviSem.State
+public import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
 public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 
 @[expose] public section
@@ -14,6 +15,16 @@ theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
     (∀ s : BviStateBroad C F, (BviState.ofBroad s).toBroad = s) ∧
       (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
   BviSem.holFmapAsFiniteSupportWitness
+
+/-- Copying a BVL reference update back to its originating BVI state updates
+the same references in that BVI state. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "bvl_to_bvi_refs"
+  (fmap_as_finite_support_relation := [BviState.refs, r])]
+theorem bvlToBvi_refs {C F : Type} (s : BviState C F)
+    (r : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) :
+    BviSem.fromBvl { BviSem.toBvl s with refs := r } s = { s with refs := r } := by
+  cases s
+  rfl
 
 /-- The source state relation tracks pointer renaming, code, namespaces,
 and future compilation obligations. -/

@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "bvl_to_bvi_refs", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/StateRelation.lean",
+  "lean_name": "bvlToBvi_refs", "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BviState.refs", "r"],
+  "reviewer": "Source comparison: Compared bvl_to_bvi_refs_typed in bvi_tmc_proof_source_probe.out: converting a BVI state to BVL, replacing its references, and copying the shared fields back yields the original BVI state with those references replaced. HOL's free state and reference-map variables are general Lean binders; the state type parameters remain independent and the intermediate BVL refs field is exactly the explicit input r, and the named state field and input map use canonical finite support with a same-module state witness. This does not qualify either state-valued conversion separately."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "state_ref_rel_update", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
   "lean_name": "stateRefRel_update", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "source", "target"],
