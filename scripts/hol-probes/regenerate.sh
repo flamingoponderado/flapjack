@@ -10034,6 +10034,7 @@ run_probe word_props_typed_probeScript.sml word_props_typed_probe.out \
   unset_var_with_const_typed word_exp_with_const_typed get_var_set_var_typed get_vars_length_lemma_typed LASTN_stack_size_SOME_typed mem_list_rearrange_typed s_key_eq_def2_typed set_store_const_typed \
   set_var_const_typed set_var_with_const_typed stack_size_eq_typed stack_size_eq2_typed evaluate_code_only_grows_typed evaluate_NONE_stack_size_const_typed \
   inc_clock_def_typed inc_clock_0_typed inc_clock_inc_clock_typed with_locals_same_clock_typed word_cmp_Word_Word_typed \
+  push_env_dec_clock_stack_typed OPTION_MAP2_ADD_0_typed stack_size_some_at_least_one_typed \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 

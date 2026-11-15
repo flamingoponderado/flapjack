@@ -186,3 +186,6 @@ val _ = emit "inc_clock_0_typed" "inc_clock_0";
 val _ = emit "inc_clock_inc_clock_typed" "inc_clock_inc_clock";
 val _ = emit "with_locals_same_clock_typed" "with_locals_same_clock";
 val _ = emit "word_cmp_Word_Word_typed" "word_cmp_Word_Word";
+val _ = emit "push_env_dec_clock_stack_typed" "push_env_dec_clock_stack";
+val _ = emit "OPTION_MAP2_ADD_0_typed" "OPTION_MAP2_ADD_0";
+val _ = emit "stack_size_some_at_least_one_typed" "stack_size_some_at_least_one";

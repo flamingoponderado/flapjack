@@ -309,4 +309,52 @@ theorem wordCmpWordWord {width : Nat} [NeZero width] (cmp : Cmp)
       some (Flapjack.Compiler.Encoders.Asm.wordCmpHOL cmp c c') := by
   cases cmp <;> rfl
 
+namespace WordSemStateFiniteExact
+
+/-- Exact HOL `push_env_dec_clock_stack` (`wordPropsScript.sml:3879`):
+    taking a clock tick before pushing an environment leaves `stack_max` and
+    the stack list unchanged. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "push_env_dec_clock_stack"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem pushEnv_decClock_stack {width : Nat} [NeZero width] {C : Type} {F : Type}
+    (y : Spt (WordLocW width) × Spt (WordLocW width))
+    (opt : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (t : WordSemStateFiniteExact width C F) :
+    (pushEnv y opt (decClock t)).stackMax = (pushEnv y opt t).stackMax ∧
+    (pushEnv y opt (decClock t)).stack = (pushEnv y opt t).stack := by
+  cases opt with
+  | none => simp [pushEnv, decClock]
+  | some h => simp [pushEnv, decClock]
+
+end WordSemStateFiniteExact
+
+/-- Exact HOL `OPTION_MAP2_ADD_0` (`wordPropsScript.sml:4019`): adding a
+    `SOME 0` on either side leaves the operand alone. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "OPTION_MAP2_ADD_0"]
+theorem wordSemOptionAdd_zero (m : Option Nat) :
+    wordSemOptionAdd m (some 0) = m ∧ wordSemOptionAdd (some 0) m = m := by
+  rcases m with _ | _ <;> simp [wordSemOptionAdd]
+
+/-- Exact HOL `stack_size_some_at_least_one` (`wordPropsScript.sml:3896`):
+    a computed stack size is at least one. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "stack_size_some_at_least_one"
+  (words_as_type_indexed_bitvec)]
+theorem stackSizeSomeAtLeastOne {width : Nat} [NeZero width] :
+    ∀ (stk : List (WordSemStackFrame width)) (sz : Nat),
+      wordSemStackSize stk = some sz → 1 ≤ sz := by
+  intro stk
+  induction stk with
+  | nil => intro sz h; simp [wordSemStackSize] at h; omega
+  | cons fr rest ih =>
+    intro sz h
+    change wordSemOptionAdd (wordSemStackSizeFrame fr) (wordSemStackSize rest) = some sz at h
+    rcases hf : wordSemStackSizeFrame fr with _ | a
+    · rw [hf] at h; simp [wordSemOptionAdd] at h
+    · rcases hs : wordSemStackSize rest with _ | b
+      · rw [hf, hs] at h; simp [wordSemOptionAdd] at h
+      · rw [hf, hs] at h
+        simp only [wordSemOptionAdd, Option.some.injEq] at h
+        have hb := ih b hs
+        omega
+
 end Flapjack
