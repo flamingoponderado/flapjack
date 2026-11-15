@@ -208,7 +208,7 @@ theorem linked_frame_block_relation (f g : HolFiniteMapExact Nat Nat)
     have missing : fresh ∉ refs.domain := by simp [fresh, HolFiniteMapExact.domain, leastUnusedRef_unused]
     exact missing inRefs
   have reduced := mutableBlockRel_delete g oldRefs (nextRefs.eraseEq fresh) sourceChild targetChild ptr oldTag
-    oldLeft fresh oldRight childBlocks oldLookupErased freshMissing freshOld outsideNext
+    oldLeft fresh oldRight ⟨childBlocks, oldLookupErased, freshMissing, freshOld, outsideNext⟩
   have eraseComm : (nextRefs.eraseEq fresh).eraseEq ptr = (nextRefs.eraseEq ptr).eraseEq fresh := by
     apply HolFiniteMapExact.ext_lookup
     intro key

@@ -124,17 +124,17 @@ theorem holFmapAsFiniteSupportParamWitness_mutableBlockRel_delete_refs (refs : H
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
 /-- Removing an unfinished block whose child pointer is fresh preserves any
-existing mutable-block relation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_del" (fmap_as_finite_support_parameters := [f, old, refs])] -/
+existing mutable-block relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_del"
+  (fmap_as_finite_support_parameters := [f, old, refs])]
 theorem mutableBlockRel_delete (f : HolFiniteMapExact Nat Nat) (old : HolFiniteMapExact Nat (Ref Value))
     (refs : HolFiniteMapExact Nat (Ref Value)) (source target : Value) (ptr tag : Nat)
     (left : List Value) (childPtr : Nat) (right : List Value)
-    (related : mutableBlockRel f old refs source target)
-    (found : refs.lookup ptr = some (.mutBlock tag false left (.refPtr false childPtr) right))
-    (childFresh : childPtr ∉ refs.domain) (childOldFresh : childPtr ∉ old.domain)
-    (childOutside : childPtr ∉ mapRange f) : mutableBlockRel f old (refs.eraseEq ptr) source target := by
+    (h : mutableBlockRel f old refs source target ∧
+      refs.lookup ptr = some (.mutBlock tag false left (.refPtr false childPtr) right) ∧
+      childPtr ∉ refs.domain ∧ childPtr ∉ old.domain ∧ childPtr ∉ mapRange f) :
+    mutableBlockRel f old (refs.eraseEq ptr) source target := by
+  obtain ⟨related, found, childFresh, childOldFresh, childOutside⟩ := h
   cases source with
   | block sourceTag xs =>
     cases target with
@@ -172,7 +172,7 @@ theorem mutableBlockRel_delete (f : HolFiniteMapExact Nat Nat) (old : HolFiniteM
                 by_cases eq : childPtr = q <;>
                   simp [HolFiniteMapExact.domain, HolFiniteMapExact.lookup_eraseEq, FDOMSUB_HOL, eq, orig]
               have recurse := mutableBlockRel_delete f old (refs.eraseEq q) child child' ptr tag left childPtr right
-                inner found' fresh' childOldFresh childOutside
+                ⟨inner, found', fresh', childOldFresh, childOutside⟩
               simpa [erase_comm] using recurse
             | _ => rw [hq] at related; contradiction
     | _ => rw [mutableBlockRel.eq_def] at related ⊢; exact related

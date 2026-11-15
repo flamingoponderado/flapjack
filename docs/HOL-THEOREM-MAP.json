@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "mb_rel_del", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/MutableBlockRelation.lean",
+  "lean_name": "mutableBlockRel_delete", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "old", "refs"],
+  "reviewer": "Source comparison: Compared mb_rel_del_typed in bvi_tmc_proof_source_probe.out: the original mutable-block relation, matching unfinished-block lookup, and three child-pointer freshness facts conjunctively imply the relation after deleting the original block pointer. Binder order and full Value carriers are retained; the maps use canonical finite support and same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "mb_rel_cons", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/MutableBlockRelation.lean",
   "lean_name": "mutableBlockRel_cons", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["old", "refs", "f"],
