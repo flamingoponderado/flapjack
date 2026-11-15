@@ -1,9 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosInterp.Proofs.NoInstallSimulationFull
-public import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
-public import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsSimulation
-public import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateEventsClockFull
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsRelated
 public import Flapjack.FiniteMap.EmptyExact
 
 @[expose] public section
@@ -59,18 +57,16 @@ theorem attachInterpreter_semantics_source {C F : Type} (expressions : List Clos
   symm
   have sourceSafe := (ClosSem.semantics_ne_fail_iff ffi maxApp HolFiniteMapExact.empty oracle
     (pureCc insertProgram compiler) (attachInterpreter expressions)).1 sourceNoFail
-  apply ClosSem.semantics_eq_of_clocked_simulation _ _ _ _ _ _ _ _ sourceSafe ?_
-    (ClosSem.evaluate_initial_ioEvents_mono ffi maxApp HolFiniteMapExact.empty oracle
-      (pureCc insertProgram compiler) (attachInterpreter expressions))
-    (ClosSem.evaluate_initial_ioEvents_mono ffi maxApp HolFiniteMapExact.empty (pureCo insertProgram ∘ oracle)
-      compiler (attachInterpreter expressions))
+  apply ClosSem.semantics_eq_of_related_clocked_simulation ffi maxApp
+    HolFiniteMapExact.empty HolFiniteMapExact.empty oracle (pureCo insertProgram ∘ oracle)
+    (pureCc insertProgram compiler) compiler (attachInterpreter expressions) (attachInterpreter expressions) sourceSafe
   intro clock result final run
   have notTypeError : result ≠ .err (.abort .typeError) := by
     intro bad
     exact sourceSafe clock (by simpa [run] using bad)
   obtain ⟨extra, targetFinal, targetRun, ffiEq⟩ :=
     attachInterpreter_initial_observation expressions ffi maxApp clock oracle compiler final result assumptions.1 assumptions.2 run notTypeError
-  exact ⟨extra, targetFinal, by simpa [Nat.add_comm] using targetRun, ffiEq⟩
+  exact ⟨extra, result, targetFinal, by simpa [Nat.add_comm] using targetRun, rfl, Iff.rfl, ffiEq⟩
 
 
 end Flapjack.Compiler.Backend.ClosInterp
