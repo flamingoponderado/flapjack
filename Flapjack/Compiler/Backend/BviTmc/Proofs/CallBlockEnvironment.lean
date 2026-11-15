@@ -18,17 +18,16 @@ private def mapofBroad {α β : Type} (lookup : α → Option β)
     (support : ∃ keys : List α, ∀ key, lookup key ≠ none → key ∈ keys) : HolFiniteMapExact α β :=
   ⟨lookup, support⟩
 
-theorem holFmapAsFiniteSupportParamWitness_allocHoleHasVal_f (f : HolFiniteMapExact Nat Nat) :
+theorem holFmapAsFiniteSupportParamWitness_allocHoleHasVal_f {α : Type} (f : HolFiniteMapExact α Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
-theorem holFmapAsFiniteSupportParamWitness_allocHoleHasVal_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
+theorem holFmapAsFiniteSupportParamWitness_allocHoleHasVal_refs {β : Type} (refs : HolFiniteMapExact Nat (Ref β)) :
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
-/-- An extra environment slot identifies a fresh, unfinalised allocated hole.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "alloc_hole_has_val_def" (fmap_as_finite_support_parameters := [f, refs])] -/
-noncomputable def allocHoleHasVal (f : HolFiniteMapExact Nat Nat)
-    (refs : HolFiniteMapExact Nat (Ref Value)) (extras : List Value) (ptrIndex childIndex : Nat) (c : Value) : Prop :=
+/-- An extra environment slot identifies a fresh, unfinalised allocated hole. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "alloc_hole_has_val_def"
+  (fmap_as_finite_support_parameters := [f, refs])]
+noncomputable def allocHoleHasVal {α β : Type} (f : HolFiniteMapExact α Nat)
+    (refs : HolFiniteMapExact Nat (Ref β)) (extras : List Value) (ptrIndex childIndex : Nat) (c : β) : Prop :=
   ∃ holePtr tag left right, ptrIndex < extras.length ∧
     holEl ptrIndex extras = .refPtr false holePtr ∧ childIndex = left.length ∧
     BackendCommon.smallEnoughInt (Int.ofNat left.length) ∧ holePtr ∉ mapRange f ∧

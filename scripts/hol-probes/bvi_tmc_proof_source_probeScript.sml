@@ -405,6 +405,11 @@ val wf_i_i_replay = Q.prove (
 irule WF_LEX >> simp [prim_recTheory.WF_measure]);
 val _ = show "WF_I_I_replay_typed" wf_i_i_replay;
 val _ = show "evaluate_rewrite_tmc_typed" bvi_tmcProofTheory.evaluate_rewrite_tmc;
+val _ = show "hypothesis_def_typed" bvi_tmcProofTheory.hypothesis_def;
+val _ = show "alloc_hole_has_val_def_typed" bvi_tmcProofTheory.alloc_hole_has_val_def;
+val _ = show "wf_vars_list_rel_typed" bvi_tmcProofTheory.wf_vars_list_rel;
+val _ = show "wf_vars_env_rel_typed" bvi_tmcProofTheory.wf_vars_env_rel;
+val _ = show "wf_vars_env_rel_opt_typed" bvi_tmcProofTheory.wf_vars_env_rel_opt;
 val _ = show "hole_has_val_submap_typed" bvi_tmcProofTheory.hole_has_val_submap;
 val _ = show "holes_unchanged_except_trans_typed" bvi_tmcProofTheory.holes_unchanged_except_trans;
 val _ = show "holes_still_not_finalised_trans_typed" bvi_tmcProofTheory.holes_still_not_finalised_trans;

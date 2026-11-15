@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "alloc_hole_has_val_def", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockEnvironment.lean",
+  "lean_name": "allocHoleHasVal", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Source comparison: Compared alloc_hole_has_val_def_typed in bvi_tmc_proof_source_probe.out. The finite-map key type and stored reference value type remain independently generic, while the environment contains BVI values and the hole pointer is natural. All four witnesses and the index, pointer, child index, integer bound, range exclusion and lookup conjuncts retain their original order. Both map parameters use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "evaluate_rewrite_tmc", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/Induction.lean",
   "lean_name": "evaluate_rewrite_tmc", "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
   "fmap_as_finite_support_relation": ["BviState.refs", "f"],
