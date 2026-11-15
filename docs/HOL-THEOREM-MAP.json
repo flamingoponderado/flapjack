@@ -137104,7 +137104,7 @@
   "lean_name": "fixClockEvaluate",
   "statement_status": "reviewed_exact",
   "inherits_reals_as_rational_cuts": true,
-  "reviewer": "Compared fix_clock_evaluate_typed: free variables s then xs, fix_clock instantiated at the evaluator's single state type, and the unconditional equation. Derived from Flapjack fixClock_evaluate. Inherits reals_as_rational_cuts through evaluate (SOUNDNESS item 8)."
+  "reviewer": "Compared fix_clock_evaluate_typed: free variables s then xs, fix_clock instantiated at the evaluator's single state type, and the unconditional equation. Derived directly from evaluate_clock_le. Inherits reals_as_rational_cuts through evaluate (SOUNDNESS item 8)."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/dataPropsScript.sml",
