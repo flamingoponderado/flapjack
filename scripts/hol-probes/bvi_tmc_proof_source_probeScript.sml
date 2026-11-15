@@ -134,6 +134,16 @@ val _ = show "compile_each_keeps_names_typed" bvi_tmcProofTheory.compile_each_ke
 val _ = show "compile_prog_keeps_names_typed" bvi_tmcProofTheory.compile_prog_keeps_names;
 
 (* These local results are replayed with their original source proofs. *)
+val number_list_rel = Q.prove
+  (`∀g ns ys f. LIST_REL (v_rel f) (MAP (Number o g) ns) ys ⇒ ys = MAP (Number o g) ns`,
+   Induct_on `ns` >> rw [] >> gvs [] >> qpat_x_assum `v_rel _ _ _` mp_tac
+   >> simp [Once v_rel_cases] >> rw [] >> res_tac >> gvs []);
+val _ = show "list_rel_v_rel_number_replay_typed" number_list_rel;
+val word_list_rel = Q.prove
+  (`∀ns ys f. LIST_REL (v_rel f) (MAP Word64 ns) ys ⇒ ys = MAP Word64 ns`,
+   Induct_on `ns` >> rw [] >> gvs [] >> qpat_x_assum `v_rel _ _ _` mp_tac
+   >> simp [Once v_rel_cases] >> rw [] >> res_tac >> gvs []);
+val _ = show "list_rel_v_rel_word_replay_typed" word_list_rel;
 val vars_labels = Q.prove
   (`BIGUNION (set (MAP bviProps$get_code_labels (MAP (λn. bvi$Var n) vs))) = ∅`,
    Induct_on `vs` \\ gvs []);

@@ -299,12 +299,19 @@ theorem valueToList_rel (source : Value) (xs : List Value) (target : Value) (f :
           obtain ⟨out, outRun, outRel⟩ := ih _ lastRel
           exact ⟨_, by simp [valueToList, outRun], .cons headRel outRel⟩
 
-private theorem related_bytes_identity (f : HolFiniteMapExact Nat Nat) (bytes : List (BitVec 8))
-    (values : List Value) (related : List.Forall₂ (valueRel f) (bytes.map (fun b => .number b.toNat)) values) :
-    values = bytes.map (fun b => .number b.toNat) := by
-  induction bytes generalizing values with
+theorem holFmapAsFiniteSupportParamWitness_listRel_valueRel_number_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+
+/-- Lists of number values related pointwise are identical. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_rel_v_rel_number"
+  (fmap_as_finite_support_parameters := [f])]
+theorem listRel_valueRel_number {α : Type} (g : α → Int) (numbers : List α) (values : List Value)
+    (f : HolFiniteMapExact Nat Nat)
+    (related : List.Forall₂ (valueRel f) (numbers.map (fun n => .number (g n))) values) :
+    values = numbers.map (fun n => .number (g n)) := by
+  induction numbers generalizing values with
   | nil => cases related; rfl
-  | cons byte bytes ih =>
+  | cons number numbers ih =>
     cases related with
     | cons head tail =>
       cases head
@@ -312,8 +319,14 @@ private theorem related_bytes_identity (f : HolFiniteMapExact Nat Nat) (bytes : 
       congr 1
       exact ih _ tail
 
-private theorem related_words_identity (f : HolFiniteMapExact Nat Nat) (words : List (BitVec 64))
-    (values : List Value) (related : List.Forall₂ (valueRel f) (words.map Value.word64) values) :
+theorem holFmapAsFiniteSupportParamWitness_listRel_valueRel_word_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+
+/-- Lists of word values related pointwise are identical. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_rel_v_rel_word"
+  (fmap_as_finite_support_parameters := [f])]
+theorem listRel_valueRel_word (words : List (BitVec 64)) (values : List Value)
+    (f : HolFiniteMapExact Nat Nat) (related : List.Forall₂ (valueRel f) (words.map Value.word64) values) :
     values = words.map Value.word64 := by
   induction words generalizing values with
   | nil => cases related; rfl
@@ -336,7 +349,7 @@ theorem valueToBytes_rel (v : Value) (bytes : List (BitVec 8)) (f : HolFiniteMap
     (decoded : valueToBytes v = some bytes) (related : valueRel f v v') : valueToBytes v' = some bytes := by
   have listDecoded := (valueToBytes_eq_some v bytes).mp decoded
   obtain ⟨values, targetDecoded, valuesRelated⟩ := valueToList_rel v _ v' f ⟨listDecoded, related⟩
-  have same := related_bytes_identity f bytes values valuesRelated
+  have same := listRel_valueRel_number (fun b : BitVec 8 => (b.toNat : Int)) bytes values f valuesRelated
   exact (valueToBytes_eq_some v' bytes).mpr (by simpa [same] using targetDecoded)
 
 theorem holFmapAsFiniteSupportParamWitness_valueToWords_rel_f (f : HolFiniteMapExact Nat Nat) :
@@ -350,7 +363,7 @@ theorem valueToWords_rel (v : Value) (words : List (BitVec 64)) (f : HolFiniteMa
     (decoded : valueToWords v = some words) (related : valueRel f v v') : valueToWords v' = some words := by
   have listDecoded := (valueToWords_eq_some v words).mp decoded
   obtain ⟨values, targetDecoded, valuesRelated⟩ := valueToList_rel v _ v' f ⟨listDecoded, related⟩
-  have same := related_words_identity f words values valuesRelated
+  have same := listRel_valueRel_word words values f valuesRelated
   exact (valueToWords_eq_some v' words).mpr (by simpa [same] using targetDecoded)
 
 theorem holFmapAsFiniteSupportParamWitness_envRel_el_f (f : HolFiniteMapExact Nat Nat) :

@@ -135699,6 +135699,20 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "list_rel_v_rel_number", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
+  "lean_name": "listRel_valueRel_number", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Source comparison: Replayed the original local proof as list_rel_v_rel_number_replay_typed in bvi_tmc_proof_source_probe.out. The arbitrary source type and function into integers, full pairwise value relation, binder order and equality direction match; f uses canonical finite support with a same-module witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "list_rel_v_rel_word", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
+  "lean_name": "listRel_valueRel_word", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Source comparison: Replayed the original local proof as list_rel_v_rel_word_replay_typed in bvi_tmc_proof_source_probe.out. The fixed 64-bit words, full pairwise value relation, binder order and equality direction match; f uses canonical finite support with a same-module witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "no_mutblock", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
   "lean_name": "no_mutblock", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "source", "target"],
