@@ -3,15 +3,24 @@ module
 import all Flapjack.Compiler.Backend.BviTmc.Proofs.Induction
 meta import Flapjack.HolRef.TmcUniversalBinder
 meta import Flapjack.FiniteMap.BroadCodec
+meta import Flapjack.Test.TmcAttributeFixture
 
 meta section
 
 /-! The preliminary map-binder check accepts the actual predicate and rejects
 hidden, renamed or wrongly typed map binders. It does not certify the full body. -/
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.BviSem
-open Flapjack.Compiler.Backend.BvlSem Flapjack.Compiler.Backend.BviTmc Lean Meta
+open Flapjack.Compiler.Backend.BvlSem Flapjack.Compiler.Backend.BviTmc Lean Meta Elab Command
 
 set_option linter.unusedVariables false
+
+@[tmcFixture] private def tmcFixtureDeclaration : Nat := 0
+
+run_meta do
+  unless (tmcFixtureAttribute.getParam? (← getEnv) ``tmcFixtureDeclaration).isSome do
+    throwError "TMC fixture attribute was not applied"
+  unless ← Lean.Core.liftIOCore tmcFixtureCalled.get do
+    throwError "TMC fixture attribute callback did not run"
 
 private theorem alternativeExpInhabited : Nonempty Bvi.Exp := ⟨.var 0⟩
 private theorem alternativeValueInhabited : Nonempty Value := ⟨.number 0⟩
