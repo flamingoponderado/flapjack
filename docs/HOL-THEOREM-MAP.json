@@ -24245,6 +24245,16 @@
     "reviewer": "Compared compile_prog_MEM_typed in bvi_tailrec_semantics_probe.out: arbitrary enabled flag, compilation pair and output-label membership retain both complete original-label and fresh-interval alternatives with the same namespace-stride witness."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "env_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/Semantics.lean", "lean_name": "envRel", "statement_status": "reviewed_exact",
+    "reviewer": "Compared env_rel_def_typed in bvi_tailrec_semantics_probe.out: prefix, optimization guard, both length conditions and all type-specific branches match. Under the original index bound the optional lookup and its value witness are equivalent to HOL EL; no out-of-range equivalence or additional premise is assumed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "scan_expr_EVERY_SING",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/ScanCorrespondence.lean", "lean_name": "scanExpr_every_single", "statement_status": "reviewed_exact",
+    "reviewer": "Compared scan_expr_EVERY_SING_typed in bvi_tailrec_semantics_probe.out: an arbitrary Boolean predicate holds for every scan entry exactly when it holds for the HOL head of the singleton scan. The explicit Nonempty witness provides the HOL-inhabited scan tuple carrier."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "to_op_eq_simp",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteCorrespondence.lean", "lean_name": "toOp_eq_simp", "statement_status": "reviewed_exact",
     "reviewer": "Compared to_op_eq_simp_typed in bvi_tailrec_semantics_probe.out: all eight original ordered operator equalities and equivalences are retained, including Noop mapping to IntOp Mod."

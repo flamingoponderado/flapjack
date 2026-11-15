@@ -37,6 +37,7 @@ def opIdValue : AssocOp → Value
 
 /-- The source environment relation, using optional lookup for its bounded
 accumulator position. The source uses `EL`; the bound makes the lookup total. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "env_rel_def"]
 def envRel (ty : ValueType) (optimized : Bool) (acc : Nat)
     (env1 env2 : List Value) : Prop :=
   env1 <+: env2 ∧

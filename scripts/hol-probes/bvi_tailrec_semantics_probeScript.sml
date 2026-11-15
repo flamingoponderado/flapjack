@@ -103,3 +103,5 @@ val _ = show_thm "opbinargs_SOME_typed=" bvi_tailrecProofTheory.opbinargs_SOME;
 val _ = show_thm "to_op_eq_simp_typed=" bvi_tailrecProofTheory.to_op_eq_simp;
 val _ = show_thm "op_eq_simp_typed=" bvi_tailrecProofTheory.op_eq_simp;
 val _ = show_thm "scan_expr_not_Noop_typed=" bvi_tailrecProofTheory.scan_expr_not_Noop;
+val _ = show_thm "scan_expr_EVERY_SING_typed=" bvi_tailrecProofTheory.scan_expr_EVERY_SING;
+val _ = show_thm "env_rel_def_typed=" bvi_tailrecProofTheory.env_rel_def;

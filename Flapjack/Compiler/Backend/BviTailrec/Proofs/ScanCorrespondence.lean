@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.ScanTotal
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermCorrespondence
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.HasRecCorrespondence
+public import Flapjack.Misc.ListEl
 
 @[expose] public section
 
@@ -410,5 +411,15 @@ theorem checkExpFuel_eq (fuel loc arity : Nat) (e : Exp) :
   simp [checkExpFuel, checkExpSingle, hasRecBounded_eq_hasRec1, scanBounded_eq]
   split <;> simp_all
   split <;> simp_all
+
+/-- A singleton scan satisfies a predicate exactly when its HOL head does. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "scan_expr_EVERY_SING"]
+theorem scanExpr_every_single
+    (P : (List ValueType × ValueType × Bool × Option AssocOp) → Bool)
+    (ts : List ValueType) (loc : Nat) (x : Exp) :
+    (scanExpr ts loc [x]).all P = true ↔
+      P (@Flapjack.holHd _ ⟨([], .any, false, none)⟩ (scanExpr ts loc [x])) = true := by
+  rw [scanExpr_single]
+  simp [Flapjack.holHd]
 
 end Flapjack.Compiler.Backend.BviTailrec
