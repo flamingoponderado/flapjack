@@ -12195,3 +12195,24 @@ run_probe pegexec_valid_add_typed_probeScript.sml pegexec_valid_add_typed_probe.
 run_probe mlstring_defs_typed_probeScript.sml mlstring_defs_typed_probe.out \
   LENGTH_explode_typed mlstring_typed \
   "$cake_dir/basis/pure/mlstringScript.sml" "$cake_dir/basis/pure"
+
+run_probe lab_filter_defs_typed_probeScript.sml lab_filter_defs_typed_probe.out \
+  filter_skip_MAP_typed filter_skip_def_typed not_skip_def_typed \
+  "$cake_dir/compiler/backend/lab_filterScript.sml" "$cake_dir/compiler/backend"
+
+run_probe flat_lang_ids_typed_probeScript.sml flat_lang_ids_typed_probe.out \
+  ctor_id_typed type_group_id_typed type_id_typed \
+  "$cake_dir/compiler/backend/flatLangScript.sml" "$cake_dir/compiler/backend"
+
+run_probe asm_props_mem_word_typed_probeScript.sml asm_props_mem_word_typed_probe.out \
+  SND_read_mem_word_consts_typed write_mem_word_consts_typed \
+  "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"
+
+run_probe ml_monad_base_m_typed_probeScript.sml ml_monad_base_m_typed_probe.out \
+  M_typed \
+  "$cake_dir/translator/monadic/monad_base/ml_monadBaseScript.sml" "$cake_dir/translator/monadic/monad_base"
+
+
+run_probe flat_to_clos_defs_typed_probeScript.sml flat_to_clos_defs_typed_probe.out \
+  CopyByteAw8_def_typed CopyByteStr_def_typed SmartCons_def_typed dest_Constant_def_typed dest_Constants_def_typed \
+  "$cake_dir/compiler/backend/flat_to_closScript.sml" "$cake_dir/compiler/backend"

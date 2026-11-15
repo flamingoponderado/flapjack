@@ -10786,3 +10786,15 @@ The cakeml semantics tail uses one probe per theory: `ns_types_typed` (namespace
 Datatype rows print the constructor types through `TypeBase`, so the row names
 (`id_typed`, `token_typed`, …) carry the carriers that earlier probes captured
 only under different labels (`id_datatype_typed`, `token_axiom_typed`, …).
+
+Backend stragglers: `lab_filter_defs_typed` (`filter_skip_MAP`, `filter_skip_def`,
+`not_skip_def`), `flat_lang_ids_typed` (`ctor_id`, `type_group_id`, `type_id`),
+`asm_props_mem_word_typed` (the `[local]` `SND_read_mem_word_consts`,
+`write_mem_word_consts`), `ml_monad_base_m_typed` (`M`), and
+`flat_to_clos_defs_typed` (`CopyByteAw8_def`, `CopyByteStr_def`, `SmartCons_def`,
+`dest_Constant_def`, `dest_Constants_def`). `word_cseScript.sml`'s `Seqs_def` has
+no capture: the file ends with `val _ = Theory.delete_const "Seqs"`, so
+`word_cseTheory` exports neither the constant nor its definition (only
+`Seqs_ind`), and a text re-parse of the source resolves the bare `Seqs` to
+`ast$Seqs` and type-errors. Its Lean twin was compared with the source text
+directly instead.
