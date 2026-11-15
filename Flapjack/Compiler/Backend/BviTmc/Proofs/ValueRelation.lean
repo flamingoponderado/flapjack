@@ -386,12 +386,14 @@ theorem holFmapAsFiniteSupportParamWitness_envRel_el_f (f : HolFiniteMapExact Na
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Related environments have related entries at every source index.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_el" (fmap_as_finite_support_parameters := [f])] -/
+The later HOL theorem `env_rel_el` has the same typed statement as
+`env_rel_el_v_rel`; both are captured in the source probe. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_el_v_rel"
+  (fmap_as_finite_support_parameters := [f])]
 theorem envRel_el (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source target : List Value) (index : Nat)
-    (related : envRel opt f source target) (bound : index < source.length) :
+    (h : envRel opt f source target ∧ index < source.length) :
     valueRel f (holEl index source) (holEl index target) := by
+  obtain ⟨related, bound⟩ := h
   obtain ⟨front, extras, rfl, entries, _⟩ := related
   have frontBound : index < front.length := by simpa [← entries.length_eq] using bound
   have targetBound : index < (front ++ extras).length := by simp; omega
@@ -427,10 +429,9 @@ theorem listRel_last {α β : Type} [Nonempty α] [Nonempty β] (r : α → β �
 theorem holFmapAsFiniteSupportParamWitness_listRel_envRel_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
-/-- Pointwise-related values form a non-optimised related environment.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_rel_env_rel" (fmap_as_finite_support_parameters := [f])] -/
+/-- Pointwise-related values form a non-optimised related environment. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_rel_env_rel"
+  (fmap_as_finite_support_parameters := [f])]
 theorem listRel_envRel (f : HolFiniteMapExact Nat Nat) (source target : List Value)
     (related : List.Forall₂ (valueRel f) source target) : envRel false f source target := by
   exact ⟨target, [], by simp, related, by simp⟩

@@ -90,7 +90,7 @@ theorem destThunk_rel {C F : Type} (opt : Bool) (f : HolFiniteMapExact Nat Nat)
     (bound : index < env1.length) :
     destThunkRetRel f (BviSem.destThunk (holEl index env1) source.refs)
       (BviSem.destThunk (holEl index env2) target.refs) := by
-  have related := envRel_el opt f env1 env2 index env bound
+  have related := envRel_el opt f env1 env2 index ⟨env, bound⟩
   generalize sourceValue : holEl index env1 = v at related ⊢
   generalize targetValue : holEl index env2 = w at related ⊢
   cases related with

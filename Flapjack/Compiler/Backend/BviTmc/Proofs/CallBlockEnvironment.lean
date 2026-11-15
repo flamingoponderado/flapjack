@@ -48,7 +48,7 @@ theorem wfVars_list_rel (vars : List Nat) (opt : Bool) (f : HolFiniteMapExact Na
   | nil => exact .nil
   | cons n rest ih =>
     apply List.Forall₂.cons
-    · exact envRel_el opt f env1 env2 n related (wf n (by simp))
+    · exact envRel_el opt f env1 env2 n ⟨related, wf n (by simp)⟩
     · apply ih
       intro k member
       exact wf k (by simp [member])

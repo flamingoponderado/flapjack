@@ -56,7 +56,7 @@ theorem evaluate_variable {C F : Type} (index : Nat)
   have targetBound : index < env2.length := by
     have length := envRel_length opt f env1 env2 environments
     omega
-  have related := envRel_el opt f env1 env2 index environments sourceBound
+  have related := envRel_el opt f env1 env2 index ⟨environments, sourceBound⟩
   have sourceRun : evaluate [.var index] env1 source = (.val [holEl index env1], source) := by
     simp [BviSem.evaluate, sourceBound, holEl_eq_getElem index env1 sourceBound]
   have targetRun : evaluate [.var index] env2 target = (.val [holEl index env2], target) := by
