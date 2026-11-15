@@ -10521,7 +10521,7 @@ run_probe pan_props_local_typed_probeScript.sml pan_props_local_typed_probe.out 
   functions_FILTER_prime_typed is_wf_shape_v_nil_step1_typed dropWhile_eq_cons_IMP_typed not_mem_map_flat_typed \
   opt_mmap_eq_some_helper_typed FEVERY_res_var_FLOOKUP_typed opt_mmap_helper_thm_typed structs_simps_typed \
   evaluate_structs_invariant_typed list_rel_length_shape_of_flatten_better_typed is_wf_shape_nil_typed \
-  fdoms_eq_flookup_some_none_typed is_wf_shape_v_nil_typed \
+  is_wf_shape_v_nil_typed \
   "$cake_dir/pancake/semantics/panPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 
