@@ -12126,3 +12126,19 @@ run_probe pan_common_props_defs_typed_probeScript.sml pan_common_props_defs_type
 run_probe pan_sem_valword_typed_probeScript.sml pan_sem_valword_typed_probe.out \
   ValWord_typed \
   "$cake_dir/pancake/semantics/panSemScript.sml" "$cake_dir/pancake/semantics"
+
+run_probe hol_list_defs_typed_probeScript.sml hol_list_defs_typed_probe.out \
+  EL_def_typed HD_typed LAST_DEF_typed LAST_CONS_typed EVERY2_LUPDATE_same_typed \
+  "$hol_dir/src/list/src/listScript.sml" "$cake_dir/compiler/backend"
+
+run_probe logroot_defs_typed_probeScript.sml logroot_defs_typed_probe.out \
+  log_exists_typed LOG_typed LOG_UNIQUE_typed \
+  "$hol_dir/src/num/extra_theories/logrootScript.sml" "$cake_dir/compiler/backend"
+
+run_probe finite_map_defs_typed_probeScript.sml finite_map_defs_typed_probe.out \
+  FEMPTY_DEF_typed FUNION_DEF_typed \
+  "$hol_dir/src/finite_maps/finite_mapScript.sml" "$cake_dir/compiler/backend"
+
+run_probe pred_set_defs_typed_probeScript.sml pred_set_defs_typed_probe.out \
+  INJ_DEF_typed LINV_LO_typed LINV_OPT_def_typed \
+  "$hol_dir/src/pred_set/src/pred_setScript.sml" "$cake_dir/compiler/backend"

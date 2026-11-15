@@ -10745,3 +10745,17 @@ pan_commonProps (`genlist_distinct_max'`); and panSem's `ValWord` Overload
 (captured with the overload cleared). Regenerate each with `CAKEML=<cakeml
 tree> HOL4=<HOL tree> HOL_PROBE_ONLY=<probe>_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`hol_list_defs_typed_probe.out`, `logroot_defs_typed_probe.out`,
+`finite_map_defs_typed_probe.out` and `pred_set_defs_typed_probe.out`
+(5+3+2+3 rows) capture the reviewed HOL stdlib rows that earlier probes did not
+cover (task 189): list (`EL_def`, `HD`, `LAST_DEF`, `LAST_CONS`,
+`EVERY2_LUPDATE_same`), logroot (`log_exists`, `LOG`, `LOG_UNIQUE`),
+finite_map (`FEMPTY_DEF`, `FUNION_DEF`) and pred_set (`INJ_DEF`, `LINV_LO`,
+`LINV_OPT_def`). The logroot probe captures the `[local]` base `log_exists`,
+because the reviewed row `LOG_exists` is
+`SIMP_RULE bool_ss [SKOLEM_THM, GSYM RIGHT_EXISTS_IMP_THM] log_exists` — a
+Skolemized instance of that local theorem with no quoted statement of its own.
+These read source from `$HOL4`; regenerate with `CAKEML=<cakeml tree>
+HOL4=<HOL tree> HOL_PROBE_ONLY=<probe>_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
