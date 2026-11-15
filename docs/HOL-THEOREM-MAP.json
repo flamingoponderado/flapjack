@@ -135699,6 +135699,24 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "cons_append", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockFrame.lean",
+  "lean_name": "cons_append", "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: Compared cons_append_typed in bvi_tmc_proof_source_probe.out: arbitrary element and list retain the original polymorphic cons equals singleton append equation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "rw_block_args", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockFrame.lean",
+  "lean_name": "rw_block_args", "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: Compared rw_block_args_typed in bvi_tmc_proof_source_probe.out: the independently generic input and output types, ordered lists, child and map function retain the full reversal equation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "shift_cb_suc", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockFrame.lean",
+  "lean_name": "shift_cb_suc", "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: Compared shift_cb_suc_typed in bvi_tmc_proof_source_probe.out: the original natural offset and arbitrary call block appear on both sides of the successor-equals-addition equation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "mb_rel_refs_old_subset", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/MutableBlockOld.lean",
   "lean_name": "mutableBlockRel_old_subset", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "larger", "refs", "smaller"],

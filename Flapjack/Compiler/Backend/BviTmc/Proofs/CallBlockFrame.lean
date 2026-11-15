@@ -10,6 +10,22 @@ public import Flapjack.Compiler.Backend.BviTmc.Proofs.ListSimulation
 namespace Flapjack.Compiler.Backend.BviTmc.CallBlockFrame
 open BviTmc BviSem BvlSem SemanticPrimitivesProps ResultRelation ListSimulation CallBlockEnvironment
 
+/-- A cons is a singleton append. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "cons_append"]
+theorem cons_append {α : Type} (v : α) (l : List α) : v :: l = [v] ++ l := rfl
+
+/-- Reversing constructor arguments swaps the mapped left and right fields. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "rw_block_args"]
+theorem rw_block_args {α β : Type} (left : List α) (child : β) (right : List α) (f : α → β) :
+    (left.map f ++ [child] ++ right.map f).reverse =
+      (right.reverse.map f) ++ [child] ++ (left.reverse.map f) := by
+  simp [List.reverse_append, List.map_reverse, List.append_assoc]
+
+/-- Shifting by two successors is shifting by the sum with two. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "shift_cb_suc"]
+theorem shift_cb_suc (n : Nat) (cb : CallBlock) :
+    shiftBlock (Nat.succ (Nat.succ n)) cb = shiftBlock (n + 2) cb := rfl
+
 /-- Flapjack infrastructure: well-formed constructor-frame variables are
 read without changing the state, so only the child can fail or change it. -/
 theorem evaluate_frame {C F : Type} (loc tag : Nat) (left right : List Nat)
