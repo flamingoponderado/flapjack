@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
+public import Flapjack.Compiler.Backend.BviTailrec.Proofs.AuxSimulation
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteScan
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermExtension
 public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
@@ -3344,7 +3345,11 @@ theorem rewriteTail_op_nonAccumulatorInt_through {C F : Type} (limit : Nat) (ope
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice, notAccumulator]
     rfl
-  · exact stateRel_doApp_intOp_success operation
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.intOp operation) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_intOp_error operation
   · exact clockBound
   · exact hyp
@@ -3367,7 +3372,11 @@ theorem rewriteTail_op_word_through {C F : Type} (limit : Nat) (operation : Clos
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_wordOp_success operation
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.wordOp operation) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_wordOp_error operation
   · exact clockBound
   · exact hyp
@@ -3399,7 +3408,12 @@ theorem rewriteTail_op_accumulator_through {C F : Type} (limit : Nat) (assoc : A
       optimized target acc env2 loc ts ty := by
   obtain ⟨targetNext, ordinary, finalRelated⟩ :=
     evaluate_op_related_through limit (toOp assoc) args source env1 result sourceNext optimized target acc env2 loc ts ty
-      argsIH (stateRel_doApp_toOp assoc) (doApp_toOp_error_type assoc) clockBound hyp
+      argsIH (fun vs source sourceNext target value related run =>
+        stateRel_doApp (toOp assoc) vs source value sourceNext target
+          ⟨run, related, by cases assoc <;> simp [toOp], by
+            intro n
+            cases assoc <;> simp [toOp]⟩)
+      (doApp_toOp_error_type assoc) clockBound hyp
   refine ⟨targetNext, ordinary, finalRelated, ?_⟩
   intro enabled op workerLoc body arity required
   obtain ⟨sourceCode, optCode, opTypeEq, _⟩ := required

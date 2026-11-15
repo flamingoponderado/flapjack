@@ -151,22 +151,6 @@ theorem doApp_toOp_state {C F : Type} (op : AssocOp) (args : List Value)
     simp [found] at run
     exact run.2.symm
 
-/-- Accumulator dispatch produces the same value in related source and target
-states and preserves their relation. -/
-theorem stateRel_doApp_toOp {C F : Type} (op : AssocOp) (args : List Value)
-    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (result : Value) (related : stateRel source target)
-    (run : BviSem.doApp (toOp op) args source = .val (result, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (toOp op) args target = .val (result, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  rw [doApp_toOp_pure] at run
-  cases found : accumulatorApply op args with
-  | none => simp [found] at run
-  | some value =>
-    simp [found] at run
-    obtain ⟨rfl, rfl⟩ := run
-    exact ⟨target, by simp [doApp_toOp_pure, found], related⟩
-
 /-- Updating related states with the same reference map preserves the state
 relation. -/
 theorem stateRel_withRefs {C F : Type} (source : BviSem.BviState (Nat × C) F)
@@ -230,21 +214,6 @@ theorem doApp_intOp_pure {C F : Type} (op : ClosLang.IntOp) (args : List Value)
       BviSem.doAppAux, BvlSem.doApp, BvlSem.applyNumeric]
     all_goals exact convert _
 
-/-- Successful integer primitives preserve related states. -/
-theorem stateRel_doApp_intOp_success {C F : Type} (op : ClosLang.IntOp) (args : List Value)
-    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (value : Value) (related : stateRel source target)
-    (run : BviSem.doApp (.intOp op) args source = .val (value, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (.intOp op) args target = .val (value, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  rw [doApp_intOp_pure] at run
-  cases found : intPrimitiveResult op args with
-  | none => simp [found] at run
-  | some output =>
-    simp [found] at run
-    obtain ⟨rfl, rfl⟩ := run
-    exact ⟨target, by simp [doApp_intOp_pure, found], related⟩
-
 /-- Every integer primitive error is the source type error. -/
 theorem doApp_intOp_error {C F : Type} (op : ClosLang.IntOp) (args : List Value)
     (state : BviSem.BviState C F) (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
@@ -264,21 +233,6 @@ theorem doApp_wordOp_pure {C F : Type} (op : ClosLang.WordOp) (args : List Value
   simp only [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux,
     BvlSem.doApp, BvlSem.applyNumeric]
   cases found : BvlSem.doWordApp op args <;> simp [BviSem.fromBvl_toBvl]
-
-/-- Successful word operations preserve related states. -/
-theorem stateRel_doApp_wordOp_success {C F : Type} (op : ClosLang.WordOp) (args : List Value)
-    (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (value : Value) (related : stateRel source target)
-    (run : BviSem.doApp (.wordOp op) args source = .val (value, sourceNext)) :
-    ∃ targetNext, BviSem.doApp (.wordOp op) args target = .val (value, targetNext) ∧
-      stateRel sourceNext targetNext := by
-  rw [doApp_wordOp_pure] at run ⊢
-  cases found : BvlSem.doWordApp op args with
-  | none => simp [found] at run
-  | some result =>
-    simp [found] at run
-    obtain ⟨rfl, rfl⟩ := run
-    exact ⟨target, by simp, related⟩
 
 /-- Every word primitive error is the source type error. -/
 theorem doApp_wordOp_error {C F : Type} (op : ClosLang.WordOp) (args : List Value)
