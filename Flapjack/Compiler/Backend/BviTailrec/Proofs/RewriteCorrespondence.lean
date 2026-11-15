@@ -10,6 +10,23 @@ source-shaped rewrite, using the source single-expression scan form. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi
 
+/-- Binary operand extraction succeeds exactly on a two-operand operation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "get_bin_args_SOME"]
+theorem getBinArgs_some (e : Exp) (q : Exp × Exp) :
+    getBinArgs e = some q ↔ ∃ e1 e2 op, q = (e1, e2) ∧ e = .op op [e1, e2] := by
+  cases e with
+  | op operation args =>
+    cases args with
+    | nil => simp [getBinArgs]
+    | cons a rest =>
+      cases rest with
+      | nil => simp [getBinArgs]
+      | cons b tail =>
+        cases tail with
+        | nil => simp [getBinArgs, eq_comm]
+        | cons c cs => simp [getBinArgs]
+  | _ => simp [getBinArgs]
+
 /-- A source candidate that does not match the requested operator is rejected. -/
 theorem checkOp_of_not_opEq (ctx : List ValueType) (op : AssocOp) (loc : Nat) (e : Exp)
     (mismatch : opEq op e = false) : checkOp ctx op loc e = none := by
@@ -56,36 +73,47 @@ def sourceDispatch (loc next : Nat) (op : AssocOp) (acc : Nat)
     | none => (false, applyOp op (.var acc) checked)
     | some (value, call) => (true, pushCall next op acc value (argsFrom call))
 
-/-- Extracting binary operands from a recognized accumulator operation
-recovers its exact source operator and operands. -/
-theorem opBinArgs_success_shape (assoc : AssocOp) (e x y : Exp)
-    (run : opBinArgs assoc e = some (x, y)) :
-    assoc ≠ .noop ∧ e = applyOp assoc x y := by
-  unfold opBinArgs at run
-  split at run
-  next guard =>
-    cases e with
-    | op actual args =>
-      cases args with
-      | nil => simp [getBinArgs] at run
-      | cons a rest =>
-        cases rest with
+/-- Accumulator operand extraction succeeds exactly for the corresponding
+non-Noop binary operation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "opbinargs_SOME"]
+theorem opBinArgs_some {q : Exp × Exp} (e : Exp) (assoc : AssocOp) :
+    opBinArgs assoc e = some q ↔
+      assoc ≠ .noop ∧ ∃ x y, q = (x, y) ∧ e = .op (toOp assoc) [x, y] := by
+  have forward (assoc : AssocOp) (e x y : Exp)
+      (run : opBinArgs assoc e = some (x, y)) :
+      assoc ≠ .noop ∧ e = applyOp assoc x y := by
+    unfold opBinArgs at run
+    split at run
+    next guard =>
+      cases e with
+      | op actual args =>
+        cases args with
         | nil => simp [getBinArgs] at run
-        | cons b tail =>
-          cases tail with
-          | cons c cs => simp [getBinArgs] at run
-          | nil =>
-            simp [getBinArgs] at run
-            obtain ⟨rfl, rfl⟩ := run
-            have recognized : fromOp actual = assoc ∧ assoc ≠ .noop := by
-              rw [opEq_guard] at guard
-              cases assoc <;> cases actualFrom : fromOp actual <;>
-                simp_all [BEq.beq, instBEqAssocOp.beq, AssocOp.ctorIdx, bne]
-            have original := toOp_fromOp actual (by simpa [recognized.1] using recognized.2)
-            rw [recognized.1] at original
-            exact ⟨recognized.2, by simp [applyOp, original]⟩
-    | _ => simp [getBinArgs] at run
-  next => simp at run
+        | cons a rest =>
+          cases rest with
+          | nil => simp [getBinArgs] at run
+          | cons b tail =>
+            cases tail with
+            | cons c cs => simp [getBinArgs] at run
+            | nil =>
+              simp [getBinArgs] at run
+              obtain ⟨rfl, rfl⟩ := run
+              have recognized : fromOp actual = assoc ∧ assoc ≠ .noop := by
+                rw [opEq_guard] at guard
+                cases assoc <;> cases actualFrom : fromOp actual <;>
+                  simp_all [BEq.beq, instBEqAssocOp.beq, AssocOp.ctorIdx, bne]
+              have original := toOp_fromOp actual (by simpa [recognized.1] using recognized.2)
+              rw [recognized.1] at original
+              exact ⟨recognized.2, by simp [applyOp, original]⟩
+      | _ => simp [getBinArgs] at run
+    next => simp at run
+  constructor
+  · intro run
+    obtain ⟨x, y⟩ := q
+    obtain ⟨notNoop, shape⟩ := forward assoc e x y run
+    exact ⟨notNoop, x, y, rfl, by simpa [applyOp] using shape⟩
+  · rintro ⟨notNoop, x, y, rfl, rfl⟩
+    cases assoc <;> simp_all [opBinArgs, opEq, getBinArgs, toOp]
 
 /-- A successful candidate after operand normalization came either from the
 original order or from swapping a commutative accumulator's operands. -/
@@ -93,10 +121,15 @@ theorem trySwap_success_shape (loc : Nat) (assoc : AssocOp) (e x y : Exp)
     (run : opBinArgs assoc (trySwap loc assoc e) = some (x, y)) :
     assoc ≠ .noop ∧
       (e = applyOp assoc x y ∨ (assoc ≠ .append ∧ e = applyOp assoc y x)) := by
+  have unpack (candidate x y : Exp) (run : opBinArgs assoc candidate = some (x, y)) :
+      assoc ≠ .noop ∧ candidate = applyOp assoc x y := by
+    obtain ⟨notNoop, x', y', pairEq, shape⟩ := (opBinArgs_some candidate assoc).mp run
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj pairEq
+    exact ⟨notNoop, by simpa [applyOp] using shape⟩
   unfold trySwap at run
   split at run
   next =>
-    obtain ⟨notNoop, shape⟩ := opBinArgs_success_shape assoc e x y run
+    obtain ⟨notNoop, shape⟩ := unpack e x y run
     exact ⟨notNoop, Or.inl shape⟩
   next notAppend =>
     cases original : opBinArgs assoc e with
@@ -107,12 +140,12 @@ theorem trySwap_success_shape (loc : Nat) (assoc : AssocOp) (e x y : Exp)
       cases recursive : isRec loc a with
       | false =>
         simp only [recursive, Bool.false_eq_true, ↓reduceIte] at run
-        obtain ⟨notNoop, shape⟩ := opBinArgs_success_shape assoc e x y run
+        obtain ⟨notNoop, shape⟩ := unpack e x y run
         exact ⟨notNoop, Or.inl shape⟩
       | true =>
         simp only [recursive, ↓reduceIte] at run
-        obtain ⟨notNoop, shape⟩ := opBinArgs_success_shape assoc e a b original
-        obtain ⟨_, swapped⟩ := opBinArgs_success_shape assoc (applyOp assoc b a) x y run
+        obtain ⟨notNoop, shape⟩ := unpack e a b original
+        obtain ⟨_, swapped⟩ := unpack (applyOp assoc b a) x y run
         have operands : (b, a) = (x, y) := by
           have extracted := congrArg getBinArgs swapped
           simpa [applyOp, getBinArgs] using extracted

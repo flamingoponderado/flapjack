@@ -24245,6 +24245,16 @@
     "reviewer": "Compared compile_prog_MEM_typed in bvi_tailrec_semantics_probe.out: arbitrary enabled flag, compilation pair and output-label membership retain both complete original-label and fresh-interval alternatives with the same namespace-stride witness."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "get_bin_args_SOME",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteCorrespondence.lean", "lean_name": "getBinArgs_some", "statement_status": "reviewed_exact",
+    "reviewer": "Compared get_bin_args_SOME_typed in bvi_tailrec_semantics_probe.out: arbitrary expression and operand pair, with the complete equivalence to an operation with exactly two operands and the original pair equality."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "opbinargs_SOME",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteCorrespondence.lean", "lean_name": "opBinArgs_some", "statement_status": "reviewed_exact",
+    "reviewer": "Compared opbinargs_SOME_typed in bvi_tailrec_semantics_probe.out: arbitrary expression, accumulator and free operand pair, with the full equivalence to a non-Noop accumulator and the corresponding two-operand source operation."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "decide_ty_simp1",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteScan.lean", "lean_name": "decideType_simp1", "statement_status": "reviewed_exact",
     "reviewer": "Compared decide_ty_simp1_typed in bvi_tailrec_semantics_probe.out: both original equivalences for Int and List results are retained as one conjunction over arbitrary input types."

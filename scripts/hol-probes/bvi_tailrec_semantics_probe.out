@@ -60,3 +60,5 @@ evaluate_rewrite_tail_typed=∀(xs :bvi$exp list) (s :(num # γ, 'ffi) state) (e
 decide_ty_simp1_typed=(decide_ty (ty1 :v_ty) (ty2 :v_ty) = Int ⇔ ty1 = Int ∧ ty2 = Int) ∧ (decide_ty ty1 ty2 = List ⇔ ty1 = List ∧ ty2 = List)
 decide_ty_simp_typed=decide_ty (ty1 :v_ty) (ty2 :v_ty) = (ty3 :v_ty) ∧ ty3 ≠ Any ⇔ ty1 = ty3 ∧ ty2 = ty3 ∧ ty3 ≠ Any
 to_op_11_typed=to_op (op1 :assoc_op) = to_op (op2 :assoc_op) ⇔ op1 = op2
+get_bin_args_SOME_typed=∀(exp :bvi$exp) (q :bvi$exp # bvi$exp). get_bin_args exp = SOME q ⇔ ∃(e1 :bvi$exp) (e2 :bvi$exp) (op :closLang$op). q = (e1,e2) ∧ exp = (Op op [e1; e2] :bvi$exp)
+opbinargs_SOME_typed=∀(exp :bvi$exp) (opr :assoc_op). opbinargs opr exp = SOME (q :bvi$exp # bvi$exp) ⇔ opr ≠ Noop ∧ ∃(x :bvi$exp) (y :bvi$exp). q = (x,y) ∧ exp = (Op (to_op opr) [x; y] :bvi$exp)

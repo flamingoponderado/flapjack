@@ -98,3 +98,5 @@ val _ = show_thm "evaluate_rewrite_tail_typed=" bvi_tailrecProofTheory.evaluate_
 val _ = show_thm "decide_ty_simp1_typed=" bvi_tailrecProofTheory.decide_ty_simp1;
 val _ = show_thm "decide_ty_simp_typed=" bvi_tailrecProofTheory.decide_ty_simp;
 val _ = show_thm "to_op_11_typed=" bvi_tailrecProofTheory.to_op_11;
+val _ = show_thm "get_bin_args_SOME_typed=" bvi_tailrecProofTheory.get_bin_args_SOME;
+val _ = show_thm "opbinargs_SOME_typed=" bvi_tailrecProofTheory.opbinargs_SOME;
