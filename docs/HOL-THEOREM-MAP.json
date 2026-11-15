@@ -99939,14 +99939,6 @@
     "reviewer": "Source comparison wordConvsProofScript.sml:1035: original SSA flat-expression helper. Unconditional fake sequence/reconciliation; loop setup and fake moves retain actual producer equality as sole premise and complete output predicate (both fake-move outputs). Native arbitrary lists/Spt maps/priorities/counters, literal SSA producers and native flatExpConventions. Only vacuous original fake_moves conf binder omitted, documented locally. No target assumptions or restricted cases. words_as_type_indexed_bitvec records positive HOL word dimension only."
   },
   {
-    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatInst.lean",
-    "lean_name": "ssaCcTrans_flatExpInst",
-    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
-    "hol_name": "ssa_cc_trans_flat_exp_conventions",
-    "statement_status": "documented_mismatch",
-    "reviewer": "codewhale source comparison (2026-11-14, task 171): tag withdrawn. The typed capture ssa_cc_trans_flat_exp_conventions_typed in word_convs_proof_typed_probe.out quantifies an arbitrary prog : alpha prog with ssa : num sptree$num_map, na : num and the loop-table list, and concludes flat_exp_conventions (FST (ssa_cc_trans prog ssa na lt)) from flat_exp_conventions prog. The Lean declaration is the prog = Inst instruction instance of that statement, a specialization of HOL's universally quantified program, not an exact port. The exact general port is the tagged ssaCcTrans_flatExpConventions in SSAFlatProgram.lean. The Inst case itself keeps every native instruction constructor, FP width branch and fallback clause."
-  },
-  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatProgram.lean",
@@ -99977,7 +99969,7 @@
     "hol_name": "ssa_cc_trans_flat_exp_conventions",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison wordConvsProofScript.sml:1417-1465: Original complete recursive arbitrary-program/map/counter/context implication. Sole source flat_exp_conventions premise. Native mutual induction includes nested return/exception handlers; complete Inst, Share and Loop/Break/Continue cases. Literal source setup/reconciliation outputs proven by original helpers; no remaining induction premise, target run or desired output assumption. Native WordLang/Spt/List carriers; words_as_type_indexed_bitvec records positive HOL word dimension only."
+    "reviewer": "Source comparison wordConvsProofScript.sml:1417-1465: Original complete recursive arbitrary-program/map/counter/context implication. Sole source flat_exp_conventions premise. Native mutual induction includes nested return/exception handlers; complete Inst, Share and Loop/Break/Continue cases. Literal source setup/reconciliation outputs proven by original helpers; no remaining induction premise, target run or desired output assumption. Native WordLang/Spt/List carriers; words_as_type_indexed_bitvec records positive HOL word dimension only. The Inst case inlines the former untagged ssaCcTrans_flatExpInst helper, retired once its only user was this proof."
   },
   {
     "hol_path": null,

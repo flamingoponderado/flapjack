@@ -1048,24 +1048,26 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertEqual(exact_record["hol_name"], "is_wf_shape_drop")
         self.assertEqual(exact_record["statement_status"], "documented_mismatch")
 
-    def test_ssa_cc_trans_flat_exp_inst_withdrawn(self):
+    def test_ssa_cc_trans_flat_exp_inst_is_retired(self):
+        # The Inst-case helper is gone; HOL ssa_cc_trans_flat_exp_conventions is
+        # mapped by the tagged general ssaCcTrans_flatExpConventions twin.
+        retired_key = ("Flapjack/Pancake/Proofs/WordConvs/SSAFlatInst.lean",
+                       "ssaCcTrans_flatExpInst")
         inventory = {
             (record["lean_path"], record["lean_name"]): record
             for record in MAP["build_inventory"]()
         }
-        exact_key = ("Flapjack/Pancake/Proofs/WordConvs/SSAFlatInst.lean",
-                     "ssaCcTrans_flatExpInst")
-        self.assertEqual(inventory[exact_key]["hol_name"],
-                         "ssa_cc_trans_flat_exp_conventions")
-        self.assertEqual(inventory[exact_key]["statement_status"],
-                         "documented_mismatch")
-
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
-        exact_record = next(record for record in manifest if
-                            (record["lean_path"], record["lean_name"]) == exact_key)
-        self.assertEqual(exact_record["hol_name"],
-                         "ssa_cc_trans_flat_exp_conventions")
-        self.assertEqual(exact_record["statement_status"], "documented_mismatch")
+        self.assertNotIn(retired_key, inventory)
+        exact_key = ("Flapjack/Pancake/Proofs/WordConvs/SSAFlatProgram.lean",
+                     "ssaCcTrans_flatExpConventions")
+        exact = inventory[exact_key]
+        self.assertEqual(
+            (exact["hol_path"], exact["hol_name"]),
+            ("cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+             "ssa_cc_trans_flat_exp_conventions"),
+        )
+        self.assertNotEqual(exact["statement_status"], "documented_mismatch")
+        self.assertIn(exact_key, MAP["tagged_declarations"]())
 
     def test_fperm_decs_decls_production_variant_removed(self):
         inventory = {
