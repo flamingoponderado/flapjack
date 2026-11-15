@@ -12,3 +12,4 @@ var_name_typed=Glob::tra -> num -> var_name; Local::tra -> mlstring -> var_name
 compile_exps_append_typed=∀(env :environment) (es :ast$exp list) (es' :ast$exp list). (compile_exps (t :mlstring list) env (es ++ es') :exp list) = (compile_exps t env es :exp list) ++ (compile_exps t env es' :exp list)
 compile_funs_dom_typed=∀(funs :(mlstring # mlstring # ast$exp) list). MAP (λ((x :mlstring),(y :mlstring),(z :ast$exp)). x) funs = MAP (λ((x :mlstring),(y :mlstring),(z :exp)). x) (compile_funs (t :mlstring list) (env :environment) funs)
 alloc_defs_append_typed=∀(m :num) (n :num) (l1 :α list) (l2 :α list). alloc_defs m n (l1 ++ l2) = alloc_defs m n l1 ++ alloc_defs (m + LENGTH l1) (n + LENGTH l1) l2
+type_group_id_type_MAP_typed=(type_group_id_type :(α # (β # γ) option) option -> (α # β option) option) = OPTION_MAP ((I :α -> α) ## OPTION_MAP (FST :β # γ -> β))

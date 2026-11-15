@@ -351,3 +351,4 @@ val _ = dt_label "var_name_typed" "var_name";
 val _ = emit_exported "compile_exps_append_typed" "compile_exps_append";
 val _ = emit_exported "compile_funs_dom_typed" "compile_funs_dom";
 val _ = emit_exported "alloc_defs_append_typed" "alloc_defs_append";
+val _ = emit_exported "type_group_id_type_MAP_typed" "type_group_id_type_MAP";

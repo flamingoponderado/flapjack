@@ -11731,6 +11731,7 @@ run_probe source_to_flat_config_typed_probeScript.sml source_to_flat_config_type
   environment_store_typed glob_alloc_def_typed inc_compile_def_typed inc_compile_prog_def_typed \
   lookup_env_id_def_typed next_indices_typed store_env_id_def_typed var_name_typed \
   compile_exps_append_typed compile_funs_dom_typed alloc_defs_append_typed \
+  type_group_id_type_MAP_typed \
   "$cake_dir/compiler/backend/source_to_flatScript.sml" \
   "$cake_dir/compiler/backend"
 run_probe loop_props_local_typed_probeScript.sml loop_props_local_typed_probe.out \

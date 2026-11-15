@@ -68,6 +68,24 @@ def typeGroupIdType {α β γ : Type} : Option (α × Option (β × γ)) → Opt
   | some (cn, none) => some (cn, none)
   | some (cn, some (tyId, _)) => some (cn, some tyId)
 
+/-- Exact HOL `type_group_id_type_MAP` (`source_to_flatScript.sml:94`):
+    `type_group_id_type` is the option map of the identity on the constructor
+    name and the first projection on the optional type id. -/
+@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "type_group_id_type_MAP"]
+theorem typeGroupIdType_map {α β γ : Type} :
+    (typeGroupIdType (α := α) (β := β) (γ := γ)) =
+      Option.map (Prod.map id (Option.map Prod.fst)) := by
+  funext x
+  cases x with
+  | none => rfl
+  | some entry =>
+      obtain ⟨cn, opt⟩ := entry
+      cases opt with
+      | none => rfl
+      | some pair =>
+          obtain ⟨tyId, ty⟩ := pair
+          rfl
+
 /-- Exact HOL `str_sep_def`: the one-character string `«_»` (character code 95). -/
 @[hol "cakeml/compiler/backend/source_to_flatScript.sml" "str_sep_def"]
 def strSep : MlString := .implode [95]
