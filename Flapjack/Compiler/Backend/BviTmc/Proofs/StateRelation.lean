@@ -40,6 +40,16 @@ theorem bviToBvl_refs {C F : Type} (s : BvlSem.State C F) (t : BviState C F) :
     (BviSem.fromBvl s t).refs = s.refs := by
   rfl
 
+/-- Successful finalisation retains every previously allocated reference. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "finalise_cons_refs_SUBSET"
+  (fmap_as_finite_support_relation := [refs, rest])]
+theorem finaliseCons_refs_subset (value : BvlSem.Value)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (result : BvlSem.Value)
+    (rest : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
+    (run : BviSem.finaliseCons value refs = some (result, rest)) : refs.domain ⊆ rest.domain := by
+  intro key present
+  exact (BviSem.finaliseCons_domain value result refs rest run key).1 present
+
 /-- The source state relation tracks pointer renaming, code, namespaces,
 and future compilation obligations. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_def"
