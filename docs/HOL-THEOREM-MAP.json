@@ -135746,6 +135746,29 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_compile_each", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CompileSemantics.lean",
+  "lean_name": "evaluate_compile_each_assembled", "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+  "fmap_as_finite_support_relation": ["BviState.refs"],
+  "fmap_as_finite_support_existentials": ["f"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared evaluate_compile_each_typed in bvi_tmc_proof_source_probe.out. The original five premises include the complete oracle condition, worker bound, initial evaluation and non-type-error condition; the existential target evaluation and result and state relations retain their original order. State refs and the existential pointer map use canonical finite support with same-module witnesses. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "compile_each_semantics", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/Observation.lean",
+  "lean_name": "compileEach_semantics", "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared compile_each_semantics_typed in bvi_tmc_proof_source_probe.out. The original input and oracle conditions, compiled-worker bound, output equality and source non-Fail premise imply equality of complete behaviors for the original source and target states. Semantics inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "state_rel_const", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/StateRelation.lean",
+  "lean_name": "stateRel_const", "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BviState.refs", "f"],
+  "reviewer": "Source comparison: Compared state_rel_const_typed in bvi_tmc_proof_source_probe.out. The original state relation implies equality of target and source clock and FFI in the original order. State refs and the input pointer map use canonical finite support with a same-module state witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "cons_append", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockFrame.lean",
   "lean_name": "cons_append", "statement_status": "reviewed_exact",
   "reviewer": "Source comparison: Compared cons_append_typed in bvi_tmc_proof_source_probe.out: arbitrary element and list retain the original polymorphic cons equals singleton append equation."

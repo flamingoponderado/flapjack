@@ -95,6 +95,15 @@ def stateRel {C F : Type} (f : HolFiniteMapExact Nat Nat)
   (∀ n, sptMem n target.code ∧ inWorkerNamespace n → n < (source.compileOracle 0).1.1) ∧
   fmapInj f
 
+/-- Related states have the same clock and FFI state. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_const"
+  (fmap_as_finite_support_relation := [BviState.refs, f])]
+theorem stateRel_const {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (source : BviState (Nat × C) F) (target : BviState C F)
+    (related : stateRel f source target) :
+    target.clock = source.clock ∧ target.ffi = source.ffi :=
+  ⟨related.2.1, related.2.2.2.1⟩
+
 /-- Clock replacement preserves the state relation. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_with_clock"
   (fmap_as_finite_support_relation := [BviState.refs, f])]
