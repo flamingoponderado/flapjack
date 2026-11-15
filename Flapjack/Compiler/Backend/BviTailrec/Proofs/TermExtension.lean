@@ -125,4 +125,11 @@ theorem tyRel_prefix_extend (env : List Value) (ctx : List ValueType) (suffix : 
     tyRel (env ++ suffix) (ctx ++ List.replicate suffix.length .any) := by
   exact tyRel_append suffix (List.replicate suffix.length .any) ctx env ⟨tyRel_unknown suffix, related⟩
 
+/-- A recursive call and an accepted term are mutually exclusive. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "is_rec_term_ok"]
+theorem isRec_term (e : Bvi.Exp) (ts : List ValueType) (loc : Nat) (ty : ValueType) :
+    (isRec loc e = true → term ts ty e = false) ∧
+      (term ts ty e = true → isRec loc e = false) := by
+  cases e <;> cases ty <;> simp [isRec, term, termInt, termAny]
+
 end Flapjack.Compiler.Backend.BviTailrec
