@@ -131,3 +131,4 @@ val _ = emit "fp_upd_consts_typed" "fp_upd_consts";
 val _ = emit "LENGTH_line_bytes_typed" "LENGTH_line_bytes";
 val _ = emit "read_reg_inc_pc_typed" "read_reg_inc_pc";
 val _ = emit "update_simps_typed" "update_simps";
+val _ = emit "line_get_code_labels_extract_labels_typed" "line_get_code_labels_extract_labels";
