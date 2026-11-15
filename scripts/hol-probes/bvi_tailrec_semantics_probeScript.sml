@@ -46,6 +46,9 @@ val _ = show_thm "code_rel_union_typed=" bvi_tailrecProofTheory.code_rel_union;
 val _ = show_thm "namespace_rel_union_typed=" bvi_tailrecProofTheory.namespace_rel_union;
 val _ = show_thm "compile_each_namespace_rel_typed=" bvi_tailrecProofTheory.compile_each_namespace_rel;
 val _ = show_thm "do_app_to_op_state_typed=" bvi_tailrecProofTheory.do_app_to_op_state;
+val _ = show_thm "state_rel_do_app_aux_typed=" bvi_tailrecProofTheory.state_rel_do_app_aux;
+val _ = show_thm "state_rel_do_app_typed=" bvi_tailrecProofTheory.state_rel_do_app;
+val _ = show_thm "state_rel_do_app_err_typed=" bvi_tailrecProofTheory.state_rel_do_app_err;
 (* The two find-code theorems are local in the original script. Replay their
    original statements and proofs so their inferred types are captured. *)
 open preamble bvi_tailrecProofTheory bvi_tailrecTheory bviPropsTheory bviSemTheory;

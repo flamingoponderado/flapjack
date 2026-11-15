@@ -24142,6 +24142,21 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "state_rel_do_app",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/AuxSimulation.lean", "lean_name": "stateRel_doApp",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared state_rel_do_app_typed in bvi_tailrec_semantics_probe.out: a successful source dispatcher run, full state relation, and original Install and Label exclusions imply existence of a target state with the same result and full post-state relation. Source and target compiler types are Nat × C and C with independent C and FFI F. The refs field uses canonical finite support with a same-module roundtrip witness; code remains an Spt tree. Full dispatch inherits reals_as_rational_cuts as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "state_rel_do_app_aux",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/AuxSimulation.lean", "lean_name": "stateRel_doAppAux",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Compared state_rel_do_app_aux_typed in bvi_tailrec_semantics_probe.out: source and target BVI states have compiler types Nat × C and C with independent C and FFI F; the original source auxiliary equation, full state relation and Install/Label exclusions imply an existential target result related by both original option layers and the value-equality/state relation on pairs. The refs field uses canonical finite support with a same-module roundtrip witness; code remains an Spt tree."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "do_app_to_op_state",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/PrimitiveRelation.lean", "lean_name": "doApp_toOp_state",
     "statement_status": "reviewed_fmap_as_finite_support",
