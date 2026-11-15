@@ -161,3 +161,15 @@ val state_rel_IMP_do_app = prove (
   \\ fs [state_rel_def] \\ rfs [] \\ rveq
   \\ fs [Abbr `t1'`]);
 val _ = show "state_rel_IMP_do_app_replay_typed" state_rel_IMP_do_app;
+
+val jump_exc_IMP_state_rel = prove (
+  ``!s1 t1 s2 t2.
+      (jump_exc s1 = SOME s2) /\ (jump_exc t1 = SOME t2) /\
+      state_rel s1 t1 LN /\ (LENGTH s2.stack = LENGTH t2.stack) ==>
+      state_rel (s2 with handler := s1.handler)
+                (t2 with handler := t1.handler) LN``,
+  REPEAT STRIP_TAC
+  \\ FULL_SIMP_TAC std_ss [jump_exc_def]
+  \\ every_case_tac >> fs[]
+  \\ SRW_TAC [] [] \\ fs [state_rel_def]);
+val _ = show "jump_exc_IMP_state_rel_replay_typed" jump_exc_IMP_state_rel;

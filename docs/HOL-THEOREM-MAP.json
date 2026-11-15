@@ -141169,6 +141169,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/data_liveProofScript.sml",
+    "hol_name": "jump_exc_IMP_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/DataLive/Proofs/State.lean",
+    "lean_name": "jumpExc_imp_stateRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local HOL theorem and literal original proof replay jump_exc_IMP_state_rel_replay_typed in data_live_compile_probe.out, including independent compiler and FFI state parameters, both successful jumps, the initial empty-live state relation, resulting stack-length equality, and restoration of each original handler in the conclusion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_liveProofScript.sml",
     "hol_name": "state_rel_IMP_do_app",
     "lean_path": "Flapjack/Compiler/Backend/DataLive/Proofs/PrimitiveAll.lean",
     "lean_name": "stateRel_doApp_success_exact",

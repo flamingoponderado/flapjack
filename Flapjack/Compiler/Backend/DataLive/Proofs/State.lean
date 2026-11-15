@@ -29,6 +29,26 @@ def stateRel {C F : Type} (source target : State C F) (live : NumSet) : Prop :=
 theorem stateRel_refl {C F : Type} (state : State C F) (live : NumSet) : stateRel state state live := by
   simp [stateRel]
 
+/-- Successful exception jumps retain the state relation when the original
+handlers are restored and the resulting stacks have equal lengths. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "jump_exc_IMP_state_rel"]
+theorem jumpExc_imp_stateRel {C F : Type} (s1 t1 s2 t2 : State C F)
+    (premises : jumpExc s1 = some s2 ∧ jumpExc t1 = some t2 ∧
+      stateRel s1 t1 .ln ∧ s2.stack.length = t2.stack.length) :
+    stateRel { s2 with handler := s1.handler } { t2 with handler := t1.handler } .ln := by
+  obtain ⟨sourceRun, targetRun, related, stack⟩ := premises
+  unfold jumpExc at sourceRun targetRun
+  split at sourceRun <;> try contradiction
+  split at sourceRun <;> try contradiction
+  split at targetRun <;> try contradiction
+  split at targetRun <;> try contradiction
+  simp only [Option.some.injEq] at sourceRun targetRun
+  subst s2
+  subst t2
+  rcases related with ⟨code, clock, space, ffi, refs, global, handler, _, compiler, oracle, stamps, limits, frames, _⟩
+  exact ⟨code, clock, space, ffi, refs, global, handler, stack, compiler, oracle, stamps, limits, frames,
+    by intro key member; simp [sptMem, sptDomain, sptLookup] at member⟩
+
 /-- Deleting a list of keys removes exactly those keys from the domain. -/
 @[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "domain_list_delete"]
 theorem domain_list_delete {α : Type} (keys : List Nat) (tree : Spt α) :

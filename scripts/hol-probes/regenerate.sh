@@ -9814,7 +9814,7 @@ run_probe data_live_compile_probeScript.sml data_live_compile_probe.out \
   is_pure_do_app_Rval_replay_typed is_pure_do_app_Rerr_replay_typed \
   state_rel_IMP_get_vars_replay_typed state_rel_IMP_do_app_aux_err_replay_typed \
   state_rel_IMP_do_app_err_replay_typed state_rel_IMP_do_app_aux_replay_typed \
-  state_rel_IMP_do_app_replay_typed \
+  state_rel_IMP_do_app_replay_typed jump_exc_IMP_state_rel_replay_typed \
   "$cake_dir/compiler/backend/proofs/data_liveProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
