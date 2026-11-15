@@ -81,6 +81,21 @@ separate source definition and is not included here. -/
 def compile (m : List (Option MlString)) (es : List FlatLang.Exp) : List ClosLang.Exp :=
   compileExps m es
 
+/-- Exact HOL `LENGTH_compile`: the translation preserves the number of
+compiled expressions. -/
+@[hol "cakeml/compiler/backend/flat_to_closScript.sml" "LENGTH_compile"]
+theorem length_compile (m : List (Option MlString)) (expressions : List FlatLang.Exp) :
+    (compile m expressions).length = expressions.length := by
+  rw [compile, compileExps_eq_map, List.length_map]
+
+/-- Exact HOL `compile_NOT_NIL`: a non-empty source list compiles to a
+non-empty list. -/
+@[hol "cakeml/compiler/backend/flat_to_closScript.sml" "compile_NOT_NIL"]
+theorem compile_not_nil (m : List (Option MlString)) (head : FlatLang.Exp)
+    (tail : List FlatLang.Exp) :
+    compile m (head :: tail) ≠ [] := by
+  simp [compile, compileExps_eq_map]
+
 /-- Compile each top-level flat declaration in an empty environment. -/
 @[hol "cakeml/compiler/backend/flat_to_closScript.sml" "compile_decs_def"]
 def compileDecs (es : List FlatLang.Exp) : List ClosLang.Exp := compile [] es
