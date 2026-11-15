@@ -71,3 +71,6 @@ val _ = emit "size_of_heap_with_safe_typed" "size_of_heap_with_safe";
 val _ = emit "OPTION_MAP2_ADD_SOME_0_typed" "OPTION_MAP2_ADD_SOME_0";
 val _ = emit "OPTION_MAP2_MAX_CANCEL_typed" "OPTION_MAP2_MAX_CANCEL";
 val _ = emit "OPTION_MAP2_NONE_typed" "OPTION_MAP2_NONE";
+val _ = emit "initial_state_simp_typed" "initial_state_simp";
+val _ = emit "initial_state_with_simp_typed" "initial_state_with_simp";
+val _ = emit "with_same_locals_typed" "with_same_locals";
