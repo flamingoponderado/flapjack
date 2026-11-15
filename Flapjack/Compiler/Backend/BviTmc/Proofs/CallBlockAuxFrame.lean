@@ -164,7 +164,7 @@ theorem linked_frame_old_hole (f : HolFiniteMapExact Nat Nat)
       .mutBlock oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight)).updateEq
         (leastUnusedRef refs, .mutBlock newTag false newLeft (.number 0) newRight)) ptr :=
     ⟨oldTag, oldLeft, .refPtr false (leastUnusedRef refs), oldRight, linkedFound⟩
-  obtain ⟨tag', left', child', right', finalFound⟩ := still ptr outside initialNotFinal
+  obtain ⟨tag', left', child', right', finalFound⟩ := still ptr ⟨outside, initialNotFinal⟩
   rw [preserved] at finalFound
   simp only [Option.some.injEq, Ref.mutBlock.injEq] at finalFound
   have notFinal : fin = false := finalFound.2.1

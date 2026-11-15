@@ -65,13 +65,13 @@ theorem holesStill_sub {α β γ : Type} (ptr : β) (refs : HolFiniteMapExact β
     (absent : ptr ∉ refs.domain) (related : holesStillNotFinalised f refs refsNew) :
     holesStillNotFinalised f refs (@HolFiniteMapExact.eraseEq β (Ref γ) (Classical.decEq β) refsNew ptr) := by
   classical
-  intro key outside original
+  intro key ⟨outside, original⟩
   have different : key ≠ ptr := by
     intro equal
     subst key
     obtain ⟨tag, left, child, right, found⟩ := original
     exact absent (by simp [HolFiniteMapExact.domain, found])
-  obtain ⟨tag, left, child, right, found⟩ := related key outside original
+  obtain ⟨tag, left, child, right, found⟩ := related key ⟨outside, original⟩
   exact ⟨tag, left, child, right, by simpa [HolFiniteMapExact.lookup_eraseEq, FDOMSUB_HOL, different] using found⟩
 
 theorem holFmapAsFiniteSupportParamWitness_holesStill_non_dom_f {α β : Type} (f : HolFiniteMapExact α β) :
@@ -92,13 +92,13 @@ theorem holesStill_non_dom {α β γ : Type} (f : HolFiniteMapExact α β)
     holesStillNotFinalised f refs
       (@HolFiniteMapExact.updateEq β (Ref γ) (Classical.decEq β) refsNew (ptr, .mutBlock tag true left child right)) := by
   classical
-  intro key outside original
+  intro key ⟨outside, original⟩
   have different : key ≠ ptr := by
     intro equal
     subst key
     obtain ⟨oldTag, oldLeft, oldChild, oldRight, found⟩ := original
     exact absent (by simp [HolFiniteMapExact.domain, found])
-  obtain ⟨oldTag, oldLeft, oldChild, oldRight, found⟩ := related key outside original
+  obtain ⟨oldTag, oldLeft, oldChild, oldRight, found⟩ := related key ⟨outside, original⟩
   exact ⟨oldTag, oldLeft, oldChild, oldRight,
     by simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found⟩
 

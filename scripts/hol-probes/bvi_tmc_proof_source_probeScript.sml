@@ -22,6 +22,7 @@ val _ = show "state_rel_def_typed" bvi_tmcProofTheory.state_rel_def;
 val _ = show "state_rel_filled_typed" bvi_tmcProofTheory.state_rel_filled;
 val _ = show "hole_has_val_def_typed" bvi_tmcProofTheory.hole_has_val_def;
 val _ = show "hole_not_finalised_def_typed" bvi_tmcProofTheory.hole_not_finalised_def;
+val _ = show "holes_still_not_finalised_def_typed" bvi_tmcProofTheory.holes_still_not_finalised_def;
 val _ = show "only_fresh_def_typed" bvi_tmcProofTheory.only_fresh_def;
 val _ = show "state_rel_with_clock_typed" bvi_tmcProofTheory.state_rel_with_clock;
 val _ = show "state_rel_dec_typed" bvi_tmcProofTheory.state_rel_dec;

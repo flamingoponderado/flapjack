@@ -75,7 +75,7 @@ theorem evaluate_let_worker {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.E
           have allocated : ptr ∈ target.refs.domain := by simp [HolFiniteMapExact.domain, found]
           have nextOutside := nonFresh_not_in_range f g target.refs ptr allocated ptrOutside fresh
           exact ⟨length, ptr, tag, nextFinal, left, right, ptrEq, idxEq, small, nextOutside, by simpa [childEq] using nextFound⟩
-        have nextNotFinal : holeNotFinalised middleTarget.refs holePtr := still holePtr outside notFinal
+        have nextNotFinal : holeNotFinalised middleTarget.refs holePtr := still holePtr ⟨outside, notFinal⟩
         have extendedHole := holeHasVal_append g env1 env2 middleTarget.refs c values values' nextHole valuesRelated
         have valueLength := evaluate_length bindings env1 source middle values bindingsRun
         have lengthEq := valuesRelated.length_eq

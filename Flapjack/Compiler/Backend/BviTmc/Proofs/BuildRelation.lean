@@ -76,7 +76,7 @@ theorem freshHeapAllocation (f : HolFiniteMapExact Nat Nat)
       contradiction
     exact ⟨finalised, child, by simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found,
       fun _ => rfl⟩
-  · intro ptr _ ⟨tag, left, child, right, found⟩
+  · intro ptr ⟨_, tag, left, child, right, found⟩
     have different : ptr ≠ tgt := by
       intro equal
       subst ptr

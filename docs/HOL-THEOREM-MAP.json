@@ -135692,6 +135692,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "holes_still_not_finalised_def", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "holesStillNotFinalised", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "refs", "refsNew"],
+  "reviewer": "Source comparison: Compared holes_still_not_finalised_def_typed in bvi_tmc_proof_source_probe.out: the original range nonmembership and unfinalised source-hole conjunction implies target-hole nonfinalisation, with independent map-key, pointer and cell-value types. Named finite maps use canonical finite support and same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "hole_not_finalised_def", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
   "lean_name": "holeNotFinalised", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["refs"],

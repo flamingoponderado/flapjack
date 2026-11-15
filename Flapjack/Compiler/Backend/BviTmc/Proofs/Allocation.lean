@@ -73,7 +73,7 @@ theorem stateRel_alloc {C F : Type} (f : HolFiniteMapExact Nat Nat)
       contradiction
     exact ⟨finalised, child, by simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, ne] using found,
       fun _ => rfl⟩
-  · intro ptr _ ⟨tag, left, child, right, found⟩
+  · intro ptr ⟨_, tag, left, child, right, found⟩
     have ne : ptr ≠ tgt := by
       intro eq
       subst ptr

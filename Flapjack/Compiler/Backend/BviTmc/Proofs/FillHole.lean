@@ -101,7 +101,7 @@ theorem evaluate_fill_hole_val {C F : Type} (e : Bvi.Exp)
   obtain ⟨nextFinalised, oldValue, nextFound, _⟩ :=
     unchanged holePtr tag finalised left c right outside found
   obtain ⟨otherTag, otherLeft, otherChild, otherRight, stillFound⟩ :=
-    still holePtr outside unfinalised
+    still holePtr ⟨outside, unfinalised⟩
   rw [nextFound] at stillFound
   simp only [Option.some.injEq, Ref.mutBlock.injEq] at stillFound
   have notFinal : nextFinalised = false := stillFound.2.1
