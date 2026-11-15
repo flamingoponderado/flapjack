@@ -94,3 +94,4 @@ val _ = show_thm "op_type_simp_typed=" bvi_tailrecProofTheory.op_type_simp;
 val _ = show_thm "op_type_lem_typed=" bvi_tailrecProofTheory.op_type_lem;
 val _ = show_thm "is_rec_term_ok_typed=" bvi_tailrecProofTheory.is_rec_term_ok;
 val _ = show_thm "scan_expr_Op_typed=" bvi_tailrecProofTheory.scan_expr_Op;
+val _ = show_thm "evaluate_rewrite_tail_typed=" bvi_tailrecProofTheory.evaluate_rewrite_tail;

@@ -4024,6 +4024,42 @@ theorem rewriteTailProperty_all {C F : Type} :
     exact clockIH called.clock (by omega) [body] called values r last opt target' acc' env2' loc' ts' ty'
       (Nat.le_refl _) h
 
+namespace RewriteSimulationCarrier
+/-- The BVI reference-map carrier roundtrips through its finite-support view. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end RewriteSimulationCarrier
+
+/-- Tail rewriting preserves evaluation and relates the source and target
+states. The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "evaluate_rewrite_tail"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateRewriteTail {C F : Type} (xs : List Bvi.Exp)
+    (source : BviSem.BviState (Nat × C) F) (env1 : List Value)
+    (result : BviSem.BviResult) (sourceNext : BviSem.BviState (Nat × C) F)
+    (optimized : Bool) (target : BviSem.BviState C F) (acc : Nat) (env2 : List Value)
+    (loc : Nat) (ts : List ValueType) (ty : ValueType)
+    (premises : BviSem.evaluate xs env1 source = (result, sourceNext) ∧
+      envRel ty optimized acc env1 env2 ∧ stateRel source target ∧ tyRel env1 ts ∧
+      (optimized = true → xs.length = 1) ∧ result ≠ .err (.abort .typeError)) :
+    ∃ targetNext, BviSem.evaluate xs env2 target = (result, targetNext) ∧
+      stateRel sourceNext targetNext ∧
+      (optimized = true → ∀ op workerLoc body arity,
+        sptLookup loc source.code = some (arity, body) ∧
+        optimizedCode loc arity body workerLoc target.code op ∧
+        opType op = ty ∧
+        (∃ op1 tt resultTy branch,
+          scanExpr ts loc [xs.headD (.var 0)] = [(tt, resultTy, branch, some op1)] ∧
+          resultTy ≠ .any ∧ op1 ≠ .noop ∧ opType op1 = opType op) →
+        let rewritten := (rewriteSource loc workerLoc op acc ts (xs.headD (.var 0))).2
+        ∃ rewrittenResult t1 t2,
+          BviSem.evaluate [rewritten] env2 target = (rewrittenResult, t1) ∧
+          BviSem.evaluate [applyOp op (.var acc) (xs.headD (.var 0))] env2 target = (rewrittenResult, t2) ∧
+          stateRel sourceNext t1 ∧ stateRel sourceNext t2) := by
+  exact rewriteTailProperty_all xs source env1 result sourceNext optimized target acc env2 loc ts ty premises
+
 /-- Initial states satisfy the tail-recursion relation under the source
 program and oracle conditions. This helper is not a HOL declaration port. -/
 theorem initialState_compileEach_related {C F : Type}

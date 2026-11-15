@@ -24245,6 +24245,12 @@
     "reviewer": "Compared compile_prog_MEM_typed in bvi_tailrec_semantics_probe.out: arbitrary enabled flag, compilation pair and output-label membership retain both complete original-label and fresh-interval alternatives with the same namespace-stride witness."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "evaluate_rewrite_tail",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteSimulation.lean", "lean_name": "evaluateRewriteTail",
+    "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared evaluate_rewrite_tail_typed in bvi_tailrec_semantics_probe.out: the original source evaluation, environment, state and type relations, singleton and non-type-error assumptions imply related target evaluation and the complete optimized rewrite/apply simulation. Source and target compiler types are Nat × C and C with independent C and FFI F. The head default is unreachable under the original optimized singleton premise; the bounded environment lookup implements HOL EL. The refs field uses canonical finite support with a same-module roundtrip witness; code remains an Spt tree. The evaluator inherits reals_as_rational_cuts as documented in SOUNDNESS item 8."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "scan_expr_Op",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteScan.lean", "lean_name": "scanExpr_Op",
     "statement_status": "reviewed_exact",
