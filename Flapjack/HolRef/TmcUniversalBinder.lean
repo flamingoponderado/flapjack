@@ -12,9 +12,22 @@ still require separate checks. -/
 namespace Flapjack
 open Lean Meta
 
+private def tmcExists (expression domain : Expr) (name : Name)
+    (next : Expr → Expr → MetaM (Array String)) : MetaM (Array String) := do
+  let .app (.app (.const ``Exists [Level.succ Level.zero]) actualDomain) predicate := expression
+    | return #[s!"{name} must be an existential"]
+  unless actualDomain == domain do return #[s!"{name} has the wrong carrier"]
+  lambdaTelescope predicate fun args body => do
+    unless args.size == 1 do return #[s!"{name} must bind one value"]
+    let binder ← args[0]!.fvarId!.getDecl
+    unless binder.userName == name && binder.binderInfo == .default && binder.type == domain do
+      return #[s!"{name} has the wrong binder"]
+    next args[0]! body
+
 /-- Check the elaborated TMC induction predicate's telescopes, clock guard
-and simulation premise. The caller must independently validate the entire
-conclusion, map scopes, codec and declaration ownership. -/
+and simulation premise, and the ordinary target-simulation conjuncts.
+The caller must independently validate the optimized branches, all map scopes,
+codec and declaration ownership. -/
 def tmcHypothesisUniversalBinderProblems (type value : Expr) : MetaM (Array String) := do
   unless ← isDefEq (← inferType value) type do
     return #["predicate body has the wrong declaration type"]
@@ -124,8 +137,54 @@ def tmcHypothesisUniversalBinderProblems (type value : Expr) : MetaM (Array Stri
       unless clauses[5]! == safe do return #["source type-error premise changed"]
       unless (premise.type.find? (· == map)).isSome && (conclusion.find? (· == map)).isSome do
         return #["universal f must occur in both the premise and conclusion"]
-      unless conclusion.isAppOfArity ``Exists 2 do
-        return #["predicate must have an existential conclusion"]
-      return #[]
+      tmcExists conclusion (state c) `next fun next afterState =>
+        tmcExists afterState expectedMap `nextMap fun nextMap afterMap =>
+          tmcExists afterMap resultType `nextResult fun nextResult ordinary => do
+            let mut ordinaryClauses := #[]
+            let mut optimized := ordinary
+            for _ in [:7] do
+              match optimized with
+              | .app (.app (.const ``And []) first) rest =>
+                ordinaryClauses := ordinaryClauses.push first
+                optimized := rest
+              | _ => return #["ordinary simulation must contain the seven original conjuncts"]
+            let targetEval := mkAppN (mkConst `Flapjack.Compiler.Backend.BviSem.evaluate)
+              #[c, ffi, xs, env2, target]
+            let targetOutput := mkAppN (mkConst `Prod.mk [Level.zero, Level.zero])
+              #[resultType, state c, nextResult, next]
+            let targetRun := mkApp3 (mkConst ``Eq [Level.succ Level.zero])
+              (mkApp2 (mkConst `Flapjack.Compiler.Backend.BviSem.EvalResult) c ffi) targetEval targetOutput
+            let value := mkConst `Flapjack.Compiler.Backend.BvlSem.Value
+            let valueRel := mkApp (mkConst `Flapjack.Compiler.Backend.BviTmc.valueRel) nextMap
+            let listRel := mkApp3 (mkConst `List.Forall₂ [Level.zero, Level.zero]) value value valueRel
+            let eor := mkApp (mkConst `Flapjack.Compiler.Backend.BviTmc.ResultRelation.eorRel) nextMap
+            let resultRel := mkAppN (mkConst `Flapjack.SemanticPrimitivesProps.resultRel)
+              #[values, values, errorType, errorType, listRel, eor, result, nextResult]
+            let states := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.stateRel)
+              #[c, ffi, nextMap, final, next]
+            let submap := mkAppN (mkConst `Flapjack.HolFiniteMapExact.submap) #[nat, nat, map, nextMap]
+            let refs (s : Expr) := mkAppN (mkConst `Flapjack.Compiler.Backend.BviSem.BviState.refs) #[c, ffi, s]
+            let fresh := mkApp3 (mkConst `Flapjack.Compiler.Backend.BviTmc.onlyFresh) map nextMap (refs target)
+            let empty := mkApp2 (mkConst `EmptyCollection.emptyCollection [Level.zero])
+              (mkApp (mkConst `Set [Level.zero]) nat)
+              (mkApp (mkConst `Set.instEmptyCollection [Level.zero]) nat)
+            let unchanged := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.holesUnchangedExcept)
+              #[nat, nat, value, map, refs target, refs next, empty]
+            let notFinal := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.holesStillNotFinalised)
+              #[nat, nat, value, map, refs target, refs next]
+            unless ordinaryClauses == #[targetRun, resultRel, states, submap, fresh, unchanged, notFinal] do
+              return #["ordinary target simulation changed"]
+            let optimizedShape ← forallTelescope optimized fun args body => do
+              unless args.size == 2 do return false
+              let dest ← args[0]!.fvarId!.getDecl
+              let code ← args[1]!.fvarId!.getDecl
+              let codeField (cfg s : Expr) :=
+                mkAppN (mkConst `Flapjack.Compiler.Backend.BviSem.BviState.code) #[cfg, ffi, s]
+              let expectedCode := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.optimisedCode)
+                #[binders[8]!, args[0]!, codeField pair source, codeField c target]
+              return dest.userName == `locOpt && dest.binderInfo == .default && dest.type == nat &&
+                code.binderInfo == .default && code.type == expectedCode && body.isAppOfArity ``And 2
+            unless optimizedShape do return #["optimized branch entry changed"]
+            return #[]
 
 end Flapjack

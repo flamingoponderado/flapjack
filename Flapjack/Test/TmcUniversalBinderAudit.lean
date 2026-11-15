@@ -8,7 +8,7 @@ meta section
 /-! The preliminary map-binder check accepts the actual predicate and rejects
 hidden, renamed or wrongly typed map binders. It does not certify the full body. -/
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.BviSem
-open Flapjack.Compiler.Backend.BvlSem Lean Meta
+open Flapjack.Compiler.Backend.BvlSem Flapjack.Compiler.Backend.BviTmc Lean Meta
 
 set_option linter.unusedVariables false
 
@@ -35,6 +35,23 @@ private def fakeSimulation {C F : Type} (xs : List Bvi.Exp)
     (opt : Bool) (f : HolFiniteMapExact Nat Nat) (target : BviState C F)
     (env2 : List Value) (loc : Nat), f = f → ∃ _n : Nat, f = f
 
+private def fakeConclusion {C F : Type} (xs : List Bvi.Exp)
+    (source : BviState (Nat × C) F) (clock : Nat) : Prop :=
+  source.clock < clock →
+  ∀ (env1 : List Value) (result : BviResult) (final : BviState (Nat × C) F)
+    (opt : Bool) (f : HolFiniteMapExact Nat Nat) (target : BviState C F)
+    (env2 : List Value) (loc : Nat),
+    evaluate xs env1 source = (result, final) ∧ envRel opt f env1 env2 ∧
+      (∀ x ∈ xs, noMutcons x) ∧ stateRel f source target ∧
+      (opt = true → xs.length = 1) ∧ result ≠ .err (.abort .typeError) →
+    ∃ _dummy : Nat, f = f
+
+private def mutateConclusion (value : Expr) (rewrite : Expr → Option Expr) : MetaM Expr :=
+  lambdaTelescope value fun parameters body =>
+    forallTelescope body fun binders conclusion => do
+      let modified ← mkForallFVars binders (conclusion.replace rewrite)
+      mkLambdaFVars parameters modified
+
 run_meta do
   let .defnInfo info ← getConstInfo ``Flapjack.Compiler.Backend.BviTmc.Induction.hypothesis
     | throwError "missing TMC induction predicate"
@@ -42,7 +59,8 @@ run_meta do
   unless good.isEmpty do throwError "actual predicate rejected: {good}"
   for (name, message) in [(``extraMapDomain, "universal binder 1 has the wrong name, visibility or carrier"),
       (``falseClockGuard, "clock guard or simulation premise has the wrong shape"),
-      (``fakeSimulation, "simulation premise must contain the six original conjuncts")] do
+      (``fakeSimulation, "simulation premise must contain the six original conjuncts"),
+      (``fakeConclusion, "next has the wrong carrier")] do
     let .defnInfo decoy ← getConstInfo name | throwError "missing decoy {name}"
     unless ← isDefEq info.type decoy.type do throwError "decoy {name} has the wrong outer signature"
     let problems ← tmcHypothesisUniversalBinderProblems decoy.type decoy.value
@@ -80,11 +98,32 @@ run_meta do
       some (mkConst ``True) else none
   let noTypeSafety := info.value.replace fun e =>
     if e.isAppOfArity ``Ne 3 then some (mkConst ``True) else none
+  let noResultRelation := info.value.replace fun e =>
+    if e.isAppOfArity ``Flapjack.SemanticPrimitivesProps.resultRel 8 then some (mkConst ``True) else none
+  let noSubmap := info.value.replace fun e =>
+    if e.isAppOfArity ``HolFiniteMapExact.submap 4 then some (mkConst ``True) else none
+  let noFresh := info.value.replace fun e =>
+    if e.isAppOfArity ``onlyFresh 3 then some (mkConst ``True) else none
+  let noUnchanged := info.value.replace fun e =>
+    if e.isAppOfArity ``holesUnchangedExcept 7 then some (mkConst ``True) else none
+  let noNotFinal := info.value.replace fun e =>
+    if e.isAppOfArity ``holesStillNotFinalised 6 then some (mkConst ``True) else none
+  let noTargetRun ← mutateConclusion info.value fun e =>
+    if e.isAppOfArity ``Eq 3 &&
+        (e.getAppArgs[1]!).isAppOfArity ``BviSem.evaluate 5 then some (mkConst ``True) else none
+  let noTargetState ← mutateConclusion info.value fun e =>
+    if e.isAppOfArity ``stateRel 5 then some (mkConst ``True) else none
+  let noOptimizedCode ← mutateConclusion info.value fun e =>
+    if e.isAppOfArity ``optimisedCode 4 then some (mkConst ``True) else none
   for (label, bad) in [("hidden map", hidden), ("renamed map", renamed), ("wrong map carrier", wrongCarrier),
       ("missing simulation conclusion", noConclusion), ("missing source run", noSourceRun),
       ("missing environment relation", noEnvRelation), ("missing expression safety", noSafeExpressions),
       ("missing state relation", noStateRelation), ("missing singleton bound", noSingleton),
-      ("missing type safety", noTypeSafety)] do
+      ("missing type safety", noTypeSafety), ("missing result relation", noResultRelation),
+      ("missing submap", noSubmap), ("missing freshness", noFresh),
+      ("missing unchanged holes", noUnchanged), ("missing unfinished holes", noNotFinal),
+      ("missing target run", noTargetRun), ("missing target state", noTargetState),
+      ("missing optimized code premise", noOptimizedCode)] do
     if label != "hidden map" && label != "renamed map" && bad == info.value then
       throwError "mutation did not apply: {label}"
     let problems ← tmcHypothesisUniversalBinderProblems info.type bad
