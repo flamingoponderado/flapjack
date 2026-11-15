@@ -649,4 +649,69 @@ theorem pushEnv_stackMax_eq {width : Nat} [NeZero width] {C : Type} {F : Type}
     obtain ⟨a, b, c, d⟩ := h
     rfl
 
+
+/-- `wordSemOptionAdd` is commutative. -/
+theorem wordSemOptionAdd_comm (a b : Option Nat) :
+    wordSemOptionAdd a b = wordSemOptionAdd b a := by
+  rcases a with _ | x
+  all_goals rcases b with _ | y
+  all_goals simp [wordSemOptionAdd, Nat.add_comm]
+
+/-- A frame size with a handler is at least the bare size. -/
+theorem optionLe_map_add3 (m : Option Nat) :
+    optionLe m (m.map (fun x => 3 + x)) := by
+  rcases m with _ | x
+  all_goals simp [optionLe]
+
+/-- Adding a fixed amount preserves the option order on the right operand. -/
+theorem optionLe_optionAdd_mono_right {a b c : Option Nat} (h : optionLe a b) :
+    optionLe (wordSemOptionAdd c a) (wordSemOptionAdd c b) := by
+  rcases a with _ | x
+  all_goals rcases b with _ | y
+  all_goals rcases c with _ | z
+  all_goals simp only [wordSemOptionAdd, optionLe] at h ⊢
+  all_goals omega
+
+/-- Exact HOL `pop_env_option_le_stack_max_preserved` (`wordPropsScript.sml:3930`):
+    popping a frame keeps the frame-size bound below `stack_max`. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml"
+  "pop_env_option_le_stack_max_preserved"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem popEnv_optionLe_stackMax_preserved {width : Nat} [NeZero width] {C : Type} {F : Type}
+    (state next : WordSemStateFiniteExact width C F) :
+    optionLe (wordSemOptionAdd (wordSemStackSize state.stack) state.localsSize) state.stackMax ∧
+      WordSemStateFiniteExact.popEnv state = some next →
+      optionLe (wordSemOptionAdd (wordSemStackSize next.stack) next.localsSize) next.stackMax := by
+  intro premises
+  obtain ⟨bound, run⟩ := premises
+  cases h : state.stack with
+  | nil =>
+    simp only [WordSemStateFiniteExact.popEnv, h] at run
+    simp at run
+  | cons frame rest =>
+    rw [h] at bound
+    simp only [WordSemStateFiniteExact.popEnv] at run
+    simp only [h] at run
+    cases frame with
+    | stackFrame m e0 e handler =>
+      cases handler with
+      | none =>
+        simp only [Option.some.injEq] at run
+        subst run
+        change optionLe (wordSemOptionAdd (wordSemOptionAdd m (wordSemStackSize rest))
+          state.localsSize) state.stackMax at bound
+        have h1 := optionLe_optionAdd_left bound
+        rw [wordSemOptionAdd_comm] at h1
+        exact h1
+      | some handler =>
+        obtain ⟨n, a, b⟩ := handler
+        simp only [Option.some.injEq] at run
+        subst run
+        change optionLe (wordSemOptionAdd
+          (wordSemOptionAdd (Option.map (fun x => 3 + x) m) (wordSemStackSize rest))
+          state.localsSize) state.stackMax at bound
+        have h1 := optionLe_optionAdd_left bound
+        rw [wordSemOptionAdd_comm] at h1
+        exact optionLe_trans (optionLe_optionAdd_mono_right (optionLe_map_add3 m)) h1
+
 end Flapjack
