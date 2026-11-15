@@ -68,6 +68,8 @@ example : localisedProgHOL
 /-- `opt_mmap_eq_some_helper` transfers success along pointwise-equal maps. -/
 example : [1, 2].mapM (fun n => some (n + 1)) = some [2, 3] :=
   optMmapEqSomeHelper (fun n => some (n + 1)) (fun n => some (n + 1)) [1, 2] [2, 3]
-    ⟨rfl, by intro x _ y hy; exact hy⟩
+    ⟨rfl, by
+      intro x _ y hy
+      exact hy⟩
 
 end Flapjack.Test

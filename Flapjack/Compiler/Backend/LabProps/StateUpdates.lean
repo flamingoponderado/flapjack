@@ -59,7 +59,8 @@ theorem binop_upd_consts {width : Nat} [NeZero width] {C F : Type} (a : Nat) (b 
     (binopUpd a b c d x).codeBuffer = x.codeBuffer ∧
     (binopUpd a b c d x).pc = x.pc ∧
     (binopUpd a b c d x).ffi = x.ffi := by
-  cases b <;> simp [binopUpd, updReg]
+  cases b
+  all_goals simp [binopUpd, updReg]
 
 /-- Exact HOL `arith_upd_consts` (`labPropsScript.sml:209`): the integer
     arithmetic instruction leaves every state component except the registers

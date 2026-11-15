@@ -116,14 +116,18 @@ theorem optMmapFlookupSomeThenSameFdomExact {α β : Type}
 theorem optionNeNoneIffEq {β γ : Type} (a : Option β) (b : Option γ) :
     (a ≠ none ↔ b ≠ none) ↔
       ((∃ v : β, a = some v) → ∃ v : γ, b = some v) ∧ (a = none → b = none) := by
-  cases a <;> cases b <;> simp
+  cases a
+  all_goals cases b
+  all_goals simp
 
 /-- Pointwise form of the `FDOM` subset characterization used by HOL
     `fdom_subset_flookup_thm`; the two options may have different value types.
     Flapjack infrastructure, no separate HOL original. -/
 theorem optionNeNoneImpEq {β γ : Type} (a : Option β) (b : Option γ) :
     (a ≠ none → b ≠ none) ↔ ((∃ p : β, a = some p) → ∃ q : γ, b = some q) := by
-  cases a <;> cases b <;> simp
+  cases a
+  all_goals cases b
+  all_goals simp
 
 /-- Exact HOL `fdom_eq_flookup_thm` (`crep_inlineProofScript.sml:784`):
     `FDOM f1 = FDOM f2` exactly when every key bound in `f1` is bound in `f2`
@@ -164,7 +168,9 @@ theorem fdomSubsetFlookupExact {α β γ : Type} (f : HolFiniteMapExact α β)
   constructor
   · intro h x p hp
     exact Option.isSome_iff_exists.mp ((Option.ne_none_iff_isSome (o := g.lookup x)).mp
-      (h x (by rw [hp]; exact Option.some_ne_none p)))
+      (h x (by
+        rw [hp]
+        exact Option.some_ne_none p)))
   · intro h x hne
     obtain ⟨p, hp⟩ :=
       Option.isSome_iff_exists.mp ((Option.ne_none_iff_isSome (o := f.lookup x)).mp hne)

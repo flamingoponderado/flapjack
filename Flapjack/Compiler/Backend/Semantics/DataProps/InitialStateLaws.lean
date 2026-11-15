@@ -74,9 +74,10 @@ theorem doStack_const {C F : Type} (op : ClosLang.Op) (vs : List Value) (s : Sta
     equal exactly when their Booleans are. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "Boolv_11"]
 theorem boolValue_inj (b1 b2 : Bool) : boolValue b1 = boolValue b2 ↔ b1 = b2 := by
-  cases b1 <;> cases b2 <;>
-    simp [boolValue, Flapjack.Compiler.Backend.BackendCommon.boolToTag,
-      Flapjack.Compiler.Backend.BackendCommon.trueTag,
-      Flapjack.Compiler.Backend.BackendCommon.falseTag]
+  cases b1
+  all_goals cases b2
+  all_goals simp [boolValue, Flapjack.Compiler.Backend.BackendCommon.boolToTag,
+    Flapjack.Compiler.Backend.BackendCommon.trueTag,
+    Flapjack.Compiler.Backend.BackendCommon.falseTag]
 
 end Flapjack.Compiler.Backend.DataSem
