@@ -111,10 +111,9 @@ theorem evaluate_vars_expand_env {C F : Type} (indices : List Nat) (env : List V
   rw [sameValues] at extendedRun
   exact extendedRun.trans ((evaluateVars indices env state wellFormed).symm.trans run)
 
-/-- Shifting variable indices by a prefix length leaves their evaluation unchanged.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_shift_vars" (fmap_as_finite_support := [refs])] -/
+/-- Shifting variable indices by a prefix length leaves their evaluation unchanged. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_shift_vars"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_shift_vars {C F : Type} (indices : List Nat) (env : List Value)
     (state : BviState C F) (prefixValues : List Value) :
     evaluate ((shiftVars prefixValues.length indices).map Bvi.Exp.var) (prefixValues ++ env) state =
@@ -143,10 +142,9 @@ theorem evaluate_shift_vars {C F : Type} (indices : List Nat) (env : List Value)
   · rw [evaluateVars_failure _ _ state (fun shifted => wellFormed (shiftedIff.mp shifted)),
       evaluateVars_failure _ _ state wellFormed]
 
-/-- The one-element prefix instance of variable shifting.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_shift_vars_sing" (fmap_as_finite_support := [refs])] -/
+/-- The one-element prefix instance of variable shifting. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_shift_vars_sing"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_shift_vars_sing {C F : Type} (indices : List Nat) (env : List Value)
     (state : BviState C F) (value : Value) :
     evaluate ((shiftVars 1 indices).map Bvi.Exp.var) (value :: env) state =
