@@ -108,6 +108,21 @@ theorem fst_allocDefs {α : Type} : ∀ (n next : Nat) (names : List α),
   | nil => rfl
   | cons name names ih => simp [allocDefs, ih]
 
+/-- Exact HOL `alloc_defs_append` (`source_to_flatScript.sml:272`): allocating
+    an appended list advances the counters by the length of the first list. -/
+@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "alloc_defs_append"]
+theorem allocDefs_append {α : Type} (m n : Nat) (l1 l2 : List α) :
+    allocDefs m n (l1 ++ l2) =
+      allocDefs m n l1 ++ allocDefs (m + l1.length) (n + l1.length) l2 := by
+  induction l1 generalizing m n with
+  | nil => simp [allocDefs]
+  | cons x xs ih =>
+      simp only [List.cons_append, allocDefs, List.length_cons]
+      rw [ih]
+      have first : m + 1 + xs.length = m + (xs.length + 1) := by omega
+      have second : n + 1 + xs.length = n + (xs.length + 1) := by omega
+      rw [first, second]
+
 /-- Exact HOL `make_varls_def`; the singleton clause precedes the general cons
 clause, as in HOL's clause order. -/
 @[hol "cakeml/compiler/backend/source_to_flatScript.sml" "make_varls_def"]

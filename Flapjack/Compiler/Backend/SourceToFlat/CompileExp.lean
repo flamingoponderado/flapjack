@@ -128,4 +128,30 @@ theorem compileFuns_map (trace : List MlString) :
     rcases entry with ⟨name, arg, body⟩
     simp [compileFuns, ih]
 
+/-- Exact HOL `compile_exps_append` (`source_to_flatScript.sml:214`): compiling
+    an appended expression list is the concatenation of the compiled lists.
+    HOL's free `t : mlstring list` is the explicit trace binder. -/
+@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "compile_exps_append"]
+theorem compileExps_append (trace : List MlString) (env : Environment)
+    (es es' : List AstHOL.Exp) :
+    compileExps trace env (es ++ es') =
+      compileExps trace env es ++ compileExps trace env es' := by
+  induction es with
+  | nil => rfl
+  | cons e es ih => simp [compileExps, ih]
+
+/-- Exact HOL `compile_funs_dom` (`source_to_flatScript.sml:243`): compiling a
+    function group keeps its list of function names. HOL's free
+    `t : mlstring list` and `env : environment` are explicit binders. -/
+@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "compile_funs_dom"]
+theorem compileFuns_fst (trace : List MlString) (env : Environment)
+    (funs : List (MlString × MlString × AstHOL.Exp)) :
+    funs.map Prod.fst = (compileFuns trace env funs).map Prod.fst := by
+  rw [compileFuns_map]
+  induction funs with
+  | nil => rfl
+  | cons entry rest ih =>
+      rcases entry with ⟨name, arg, body⟩
+      simp [ih]
+
 end Flapjack.Compiler.Backend.SourceToFlat

@@ -9,3 +9,6 @@ lookup_env_id_def_typed=∀(env_id :num # num) (envs :environment_store). lookup
 next_indices_typed=recordtype.next_indices::num -> num -> num -> next_indices
 store_env_id_def_typed=∀(gen :num) (id :num). store_env_id gen id = (Let None (SOME «r») (App None (GlobalVarLookup (0 :num)) ([] :exp list) :exp) (App None (Src Opassign) [Var_local None «r»; env_id_tuple gen id] :exp) :exp)
 var_name_typed=Glob::tra -> num -> var_name; Local::tra -> mlstring -> var_name
+compile_exps_append_typed=∀(env :environment) (es :ast$exp list) (es' :ast$exp list). (compile_exps (t :mlstring list) env (es ++ es') :exp list) = (compile_exps t env es :exp list) ++ (compile_exps t env es' :exp list)
+compile_funs_dom_typed=∀(funs :(mlstring # mlstring # ast$exp) list). MAP (λ((x :mlstring),(y :mlstring),(z :ast$exp)). x) funs = MAP (λ((x :mlstring),(y :mlstring),(z :exp)). x) (compile_funs (t :mlstring list) (env :environment) funs)
+alloc_defs_append_typed=∀(m :num) (n :num) (l1 :α list) (l2 :α list). alloc_defs m n (l1 ++ l2) = alloc_defs m n l1 ++ alloc_defs (m + LENGTH l1) (n + LENGTH l1) l2
