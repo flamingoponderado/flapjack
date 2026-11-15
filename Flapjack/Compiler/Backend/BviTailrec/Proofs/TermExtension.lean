@@ -5,12 +5,13 @@ public import Flapjack.Compiler.Backend.BviTailrec.Proofs.Semantics
 @[expose] public section
 
 /-! The source term checks remain valid when their type context is extended.
-These results remain untagged pending carrier review. -/
+The term-check extension theorems follow the original source statements. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi BvlSem
 
 /-- Extending a context preserves accepted integer terms. -/
-theorem termInt_extend (e : Bvi.Exp) (ctx extra : List ValueType)
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "term_ok_int_extend"]
+theorem termInt_extend (ctx : List ValueType) (e : Bvi.Exp) (extra : List ValueType)
     (accepted : termInt ctx e = true) : termInt (ctx ++ extra) e = true := by
   cases e with
   | var n =>
@@ -33,13 +34,14 @@ theorem termInt_extend (e : Bvi.Exp) (ctx extra : List ValueType)
         | nil =>
           rw [termInt.eq_def] at accepted ⊢
           simp only [Bool.and_eq_true] at accepted ⊢
-          exact ⟨⟨accepted.1.1, termInt_extend x ctx extra accepted.1.2⟩,
-            termInt_extend y ctx extra accepted.2⟩
+          exact ⟨⟨accepted.1.1, termInt_extend ctx x extra accepted.1.2⟩,
+            termInt_extend ctx y extra accepted.2⟩
   | _ => simp [termInt.eq_def] at accepted
 termination_by sizeOf e
 
 /-- Extending a context preserves accepted list and arbitrary terms. -/
-theorem termAny_extend (e : Bvi.Exp) (ctx extra : List ValueType) (list : Bool)
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "term_ok_any_extend"]
+theorem termAny_extend (ctx : List ValueType) (list : Bool) (e : Bvi.Exp) (extra : List ValueType)
     (accepted : termAny ctx list e = true) : termAny (ctx ++ extra) list e = true := by
   cases e with
   | var n =>
@@ -78,13 +80,13 @@ theorem termAny_extend (e : Bvi.Exp) (ctx extra : List ValueType) (list : Bool)
             | listAppend =>
               rw [termAny.eq_def] at accepted ⊢
               simp only [Bool.and_eq_true] at accepted ⊢
-              exact ⟨termAny_extend x ctx extra true accepted.1, termAny_extend y ctx extra true accepted.2⟩
+              exact ⟨termAny_extend ctx true x extra accepted.1, termAny_extend ctx true y extra accepted.2⟩
             | cons tag =>
               cases tag with
               | zero =>
                 rw [termAny.eq_def] at accepted ⊢
                 simp only [Bool.and_eq_true] at accepted ⊢
-                exact ⟨termAny_extend x ctx extra true accepted.1, termAny_extend y ctx extra false accepted.2⟩
+                exact ⟨termAny_extend ctx true x extra accepted.1, termAny_extend ctx false y extra accepted.2⟩
               | succ tag => cases list <;> simp [termAny, isArith, isRel] at accepted
             | _ => cases list <;> simp [termAny, isArith, isRel] at accepted
           | intOp operation =>
@@ -93,19 +95,20 @@ theorem termAny_extend (e : Bvi.Exp) (ctx extra : List ValueType) (list : Bool)
             | false =>
               rw [termAny.eq_def] at accepted ⊢
               simp only [Bool.not_false, Bool.true_and, Bool.and_eq_true] at accepted ⊢
-              exact ⟨⟨accepted.1.1, termInt_extend x ctx extra accepted.1.2⟩,
-                termInt_extend y ctx extra accepted.2⟩
+              exact ⟨⟨accepted.1.1, termInt_extend ctx x extra accepted.1.2⟩,
+                termInt_extend ctx y extra accepted.2⟩
           | _ => cases list <;> simp [termAny, isArith, isRel] at accepted
   | _ => simp [termAny.eq_def] at accepted
 termination_by sizeOf e
 
 /-- The type-directed term check is monotone under context extension. -/
-theorem term_extend (e : Bvi.Exp) (ctx extra : List ValueType) (ty : ValueType)
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "term_ok_extend"]
+theorem term_extend (ctx : List ValueType) (ty : ValueType) (e : Bvi.Exp) (extra : List ValueType)
     (accepted : term ctx ty e = true) : term (ctx ++ extra) ty e = true := by
   cases ty with
-  | int => exact termInt_extend e ctx extra accepted
-  | list => exact termAny_extend e ctx extra true accepted
-  | any => exact termAny_extend e ctx extra false accepted
+  | int => exact termInt_extend ctx e extra accepted
+  | list => exact termAny_extend ctx true e extra accepted
+  | any => exact termAny_extend ctx false e extra accepted
 
 /-- Every list of values satisfies an equally long unknown-type context. -/
 theorem tyRel_unknown (values : List Value) : tyRel values (List.replicate values.length .any) := by

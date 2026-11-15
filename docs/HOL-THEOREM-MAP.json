@@ -24245,6 +24245,24 @@
     "reviewer": "Compared compile_prog_MEM_typed in bvi_tailrec_semantics_probe.out: arbitrary enabled flag, compilation pair and output-label membership retain both complete original-label and fresh-interval alternatives with the same namespace-stride witness."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "term_ok_int_extend",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/TermExtension.lean", "lean_name": "termInt_extend",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared term_ok_int_extend_typed in bvi_tailrec_semantics_probe.out: for arbitrary type context, BVI expression and extra context, integer-term acceptance is preserved by appending the extra context."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "term_ok_any_extend",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/TermExtension.lean", "lean_name": "termAny_extend",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared term_ok_any_extend_typed in bvi_tailrec_semantics_probe.out: for arbitrary type context, list flag, BVI expression and extra context, term acceptance is preserved by appending the extra context."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "term_ok_extend",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/TermExtension.lean", "lean_name": "term_extend",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared term_ok_extend_typed in bvi_tailrec_semantics_probe.out: for arbitrary type context, value type, BVI expression and extra context, term acceptance is preserved by appending the extra context."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "scan_expr_check_op",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteScan.lean", "lean_name": "scanExpr_checkOp",
     "statement_status": "reviewed_exact",

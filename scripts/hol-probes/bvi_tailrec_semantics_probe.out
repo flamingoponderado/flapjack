@@ -45,3 +45,6 @@ code_rel_find_code_SOME_replay_typed=∀(c1 :(num # bvi$exp) sptree$num_map) (c2
 code_rel_find_code_NONE_replay_typed=∀(c1 :(num # bvi$exp) sptree$num_map) (c2 :(num # bvi$exp) sptree$num_map) (args :v list) (a :v list) (exp :bvi$exp). code_rel c1 c2 ∧ (find_code (NONE :num option) args c1 :(v list # bvi$exp) option) = SOME (a,exp) ⇒ (find_code (NONE :num option) args c2 :(v list # bvi$exp) option) ≠ (NONE :(v list # bvi$exp) option)
 scan_expr_check_op_typed=scan_expr (ts :v_ty list) (loc :num) [(Op (op :closLang$op) (xs :bvi$exp list) :bvi$exp)] = [((tt :v_ty list),(ty :v_ty),(r :bool),SOME (opr :assoc_op))] ⇒ IS_SOME (check_op ts opr loc (Op op xs :bvi$exp))
 scan_expr_op_same_typed=scan_expr (ts :v_ty list) (loc :num) [(Op (op :closLang$op) (xs :bvi$exp list) :bvi$exp)] = [((tt :v_ty list),(ty :v_ty),(r :bool),SOME (opr :assoc_op))] ⇒ op = to_op opr
+term_ok_int_extend_typed=∀(ts :v_ty list) (exp :bvi$exp) (extra :v_ty list). term_ok_int ts exp ⇒ term_ok_int (ts ++ extra) exp
+term_ok_any_extend_typed=∀(ts :v_ty list) (list :bool) (exp :bvi$exp) (extra :v_ty list). term_ok_any ts list exp ⇒ term_ok_any (ts ++ extra) list exp
+term_ok_extend_typed=∀(ts :v_ty list) (ty :v_ty) (exp :bvi$exp) (extra :v_ty list). term_ok ts ty exp ⇒ term_ok (ts ++ extra) ty exp

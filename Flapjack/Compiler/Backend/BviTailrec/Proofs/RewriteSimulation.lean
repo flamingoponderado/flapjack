@@ -306,7 +306,7 @@ theorem term_prefix_simulation_through {C F : Type} (e : Bvi.Exp) (ctx : List Va
       BviSem.evaluate [e] env2 target = (.val [value], target) := by
   obtain ⟨suffix, rfl⟩ := prefixRel
   have extTypes := tyRel_prefix_extend env1 ctx suffix types
-  have extAccepted := term_extend e ctx (List.replicate suffix.length .any) termTy accepted
+  have extAccepted := term_extend ctx termTy e (List.replicate suffix.length .any) accepted
   obtain ⟨value, typed, sourceRun⟩ := term_total (C := Nat × C) (F := F) ctx termTy e env1 accepted types
   obtain ⟨targetValue, _, targetRun⟩ := term_total (C := C) (F := F)
     (ctx ++ List.replicate suffix.length .any) termTy e (env1 ++ suffix) extAccepted extTypes
@@ -336,7 +336,7 @@ theorem term_prefix_simulation_all_through {C F : Type} (e : Bvi.Exp) (ctx : Lis
   obtain ⟨sourceValue, _, sourceAll⟩ := term_total (C := Nat × C) (F := F) ctx termTy e env1 accepted types
   obtain ⟨suffix, rfl⟩ := prefixRel
   have extTypes := tyRel_prefix_extend env1 ctx suffix types
-  have extAccepted := term_extend e ctx (List.replicate suffix.length .any) termTy accepted
+  have extAccepted := term_extend ctx termTy e (List.replicate suffix.length .any) accepted
   obtain ⟨targetValue, _, targetAll⟩ := term_total (C := C) (F := F)
     (ctx ++ List.replicate suffix.length .any) termTy e (env1 ++ suffix) extAccepted extTypes
   have sourceEq : sourceValue = value := by

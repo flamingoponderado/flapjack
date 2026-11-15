@@ -83,3 +83,6 @@ val code_rel_find_code_none_replay = Q.prove
 val _ = show_thm "code_rel_find_code_NONE_replay_typed=" code_rel_find_code_none_replay;
 val _ = show_thm "scan_expr_check_op_typed=" bvi_tailrecProofTheory.scan_expr_check_op;
 val _ = show_thm "scan_expr_op_same_typed=" bvi_tailrecProofTheory.scan_expr_op_same;
+val _ = show_thm "term_ok_int_extend_typed=" bvi_tailrecProofTheory.term_ok_int_extend;
+val _ = show_thm "term_ok_any_extend_typed=" bvi_tailrecProofTheory.term_ok_any_extend;
+val _ = show_thm "term_ok_extend_typed=" bvi_tailrecProofTheory.term_ok_extend;
