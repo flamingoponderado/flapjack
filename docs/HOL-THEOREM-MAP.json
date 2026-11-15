@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "dest_thunk_not_thunk_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ThunkRelation.lean",
+  "lean_name": "destThunk_notThunk_rel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["refs", "target", "f"],
+  "reviewer": "Source comparison: Compared dest_thunk_not_thunk_rel_typed in bvi_tmc_proof_source_probe.out: the source NotThunk result, full value relation and full heap relation jointly imply the target NotThunk result. Original binder order and full carriers match; the three maps use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "do_app_op_finalise_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/OperationRelation.lean",
   "lean_name": "doApp_op_finalise_rel", "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
   "fmap_as_finite_support_relation": ["BviState.refs", "refsNext", "f"],

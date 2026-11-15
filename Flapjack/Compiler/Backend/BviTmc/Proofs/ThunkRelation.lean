@@ -27,14 +27,14 @@ theorem holFmapAsFiniteSupportParamWitness_destThunk_notThunk_rel_refs (refs : H
 theorem holFmapAsFiniteSupportParamWitness_destThunk_notThunk_rel_target (target : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup target) target.finiteSupport = target := by cases target; rfl
 
-/-- A value that is not a thunk remains so under pointer renaming.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "dest_thunk_not_thunk_rel" (fmap_as_finite_support_parameters := [refs, target, f])] -/
+/-- A value that is not a thunk remains so under pointer renaming. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "dest_thunk_not_thunk_rel"
+  (fmap_as_finite_support_parameters := [refs, target, f])]
 theorem destThunk_notThunk_rel (v v' : Value) (refs : HolFiniteMapExact Nat (Ref Value))
     (target : HolFiniteMapExact Nat (Ref Value)) (f : HolFiniteMapExact Nat Nat)
-    (notThunk : BvlSem.destThunk v refs = .notThunk) (values : valueRel f v v')
-    (heaps : stateRefRel f refs target) : BvlSem.destThunk v' target = .notThunk := by
+    (h : BvlSem.destThunk v refs = .notThunk ∧ valueRel f v v' ∧ stateRefRel f refs target) :
+    BvlSem.destThunk v' target = .notThunk := by
+  obtain ⟨notThunk, values, heaps⟩ := h
   cases values with
   | number i => rfl
   | word64 word => rfl
@@ -59,7 +59,7 @@ theorem goodThunkUpdate_rel (mode : AstHOL.ThunkMode) (v v' : Value)
   apply good
   refine ⟨bad.1, ?_⟩
   intro notThunk
-  exact bad.2 (destThunk_notThunk_rel v v' refs target f notThunk values heaps)
+  exact bad.2 (destThunk_notThunk_rel v v' refs target f ⟨notThunk, values, heaps⟩)
 
 theorem holFmapAsFiniteSupportParamWitness_destThunkRetRel_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
