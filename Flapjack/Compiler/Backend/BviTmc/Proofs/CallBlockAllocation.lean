@@ -25,7 +25,7 @@ theorem alloc_hole_advance (f g : HolFiniteMapExact Nat Nat)
   have same : ptr' = ptr := by simpa using pointer'.symm
   subst ptr'
   have allocated : ptr ∈ refs.domain := by simp [HolFiniteMapExact.domain, oldFound]
-  have outsideNext := nonFresh_not_in_range f g refs ptr allocated outside fresh
+  have outsideNext := nonFresh_not_in_range f g refs ptr ⟨allocated, outside, fresh⟩
   exact ⟨ptr, tag, left, right, bound, pointer, index, small, outsideNext, found⟩
 
 /-- Flapjack infrastructure: a mutable constructor frame allocates one fresh

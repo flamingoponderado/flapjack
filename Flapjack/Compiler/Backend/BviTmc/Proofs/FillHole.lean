@@ -108,7 +108,7 @@ theorem evaluate_fill_hole_val {C F : Type} (e : Bvi.Exp)
   subst nextFinalised
   have allocated : holePtr ∈ target.refs.domain := by
     simp [HolFiniteMapExact.domain, found]
-  have outsideNext : holePtr ∉ mapRange fNext := nonFresh_not_in_range f fNext target.refs holePtr allocated outside fresh
+  have outsideNext : holePtr ∉ mapRange fNext := nonFresh_not_in_range f fNext target.refs holePtr ⟨allocated, outside, fresh⟩
   have ptrBound : env1.length < env2.length := by omega
   have idxBound : env1.length + 1 < env2.length := by omega
   have ptrAt : env2[env1.length]? = some (.refPtr false holePtr) := by

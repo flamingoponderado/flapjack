@@ -111,7 +111,7 @@ theorem evaluate_if_worker {C F : Type} (condition yes no : Bvi.Exp)
             obtain ⟨nextFinal, nextChild, nextFound, sameChild⟩ := unchanged ptr tag finalised left c right ⟨ptrOutside, found⟩
             have childEq : c = nextChild := sameChild (by simp)
             have allocated : ptr ∈ target.refs.domain := by simp [HolFiniteMapExact.domain, found]
-            have nextOutside := nonFresh_not_in_range f g target.refs ptr allocated ptrOutside fresh
+            have nextOutside := nonFresh_not_in_range f g target.refs ptr ⟨allocated, ptrOutside, fresh⟩
             exact ⟨length, ptr, tag, nextFinal, left, right, ptrEq, idxEq, small, nextOutside, by simpa [childEq] using nextFound⟩
           have nextNotFinal : holeNotFinalised middleTarget.refs holePtr := still holePtr ⟨outside, notFinal⟩
           let selected := if boolean then yes else no

@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "non_fresh_not_in_frange", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "nonFresh_not_in_range", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "g", "refs"],
+  "reviewer": "Source comparison: Compared non_fresh_not_in_frange_typed in bvi_tmc_proof_source_probe.out: allocation in the original heap, exclusion from the first map's range and freshness conjunctively imply exclusion from the second map's range. The free HOL pointer and map variables become general Lean binders; all maps use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "only_fresh_submap", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
   "lean_name": "onlyFresh_submap", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "g", "h", "refs"],

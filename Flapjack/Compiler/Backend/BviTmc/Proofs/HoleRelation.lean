@@ -506,13 +506,13 @@ theorem holFmapAsFiniteSupportParamWitness_nonFresh_not_in_range_refs (refs : Ho
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
 /-- A previously allocated non-pointer-map location cannot become a new
-pointer-map target under the freshness relation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "non_fresh_not_in_frange" (fmap_as_finite_support_parameters := [f, g, refs])] -/
+pointer-map target under the freshness relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "non_fresh_not_in_frange"
+  (fmap_as_finite_support_parameters := [f, g, refs])]
 theorem nonFresh_not_in_range (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
-    (refs : HolFiniteMapExact Nat (Ref Value)) (ptr : Nat) (allocated : ptr ∈ refs.domain)
-    (outside : ptr ∉ mapRange f) (fresh : onlyFresh f g refs) : ptr ∉ mapRange g := by
+    (refs : HolFiniteMapExact Nat (Ref Value)) (ptr : Nat)
+    (h : ptr ∈ refs.domain ∧ ptr ∉ mapRange f ∧ onlyFresh f g refs) : ptr ∉ mapRange g := by
+  obtain ⟨allocated, outside, fresh⟩ := h
   intro member
   exact fresh ptr ⟨member, outside⟩ allocated
 
@@ -540,7 +540,7 @@ theorem holesUnchanged_trans (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapEx
   intro ptr tag finalised left child right ⟨outside, found⟩
   obtain ⟨middleFinalised, middleChild, middleFound, same1⟩ := first ptr tag finalised left child right ⟨outside, found⟩
   have allocated : ptr ∈ refs.domain := by simp [HolFiniteMapExact.domain, found]
-  have outsideNew := nonFresh_not_in_range f g refs ptr allocated outside fresh
+  have outsideNew := nonFresh_not_in_range f g refs ptr ⟨allocated, outside, fresh⟩
   obtain ⟨finalFinalised, finalChild, finalFound, same2⟩ :=
     second ptr tag middleFinalised left middleChild right ⟨outsideNew, middleFound⟩
   exact ⟨finalFinalised, finalChild, finalFound, fun unchanged => (same1 unchanged).trans (same2 unchanged)⟩
@@ -652,7 +652,7 @@ theorem holesStill_trans {α : Type} (f : HolFiniteMapExact Nat Nat) (g : HolFin
   have allocated : ptr ∈ refs.domain := by
     obtain ⟨tag, left, child, right, found⟩ := hole
     simp [HolFiniteMapExact.domain, found]
-  have outsideNew := nonFresh_not_in_range f g refs ptr allocated outside fresh
+  have outsideNew := nonFresh_not_in_range f g refs ptr ⟨allocated, outside, fresh⟩
   exact second ptr ⟨outsideNew, first ptr ⟨outside, hole⟩⟩
 
 theorem holFmapAsFiniteSupportParamWitness_fresh_not_in_range_f (f : HolFiniteMapExact Nat Nat) :
