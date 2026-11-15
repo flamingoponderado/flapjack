@@ -24142,6 +24142,18 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/data_spaceProofScript.sml", "hol_name": "IMP_sptree_eq",
+    "lean_path": "Flapjack/Compiler/Backend/DataSpace/Proofs/State.lean", "lean_name": "impSptreeEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local theorem and literal source proof replay IMP_sptree_eq_replay_typed in data_space_code_labels_probe.out: both trees share a polymorphic payload, both are well formed, and all natural-key lookups agree."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_spaceProofScript.sml", "hol_name": "mk_wf_inter",
+    "lean_path": "Flapjack/Compiler/Backend/DataSpace/Proofs/State.lean", "lean_name": "mkWfInter",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local theorem and literal source proof replay mk_wf_inter_replay_typed in data_space_code_labels_probe.out: both payload types are independent and normalization leaves their intersection unchanged for arbitrary trees."
+  },
+  {
     "hol_path": "hol4/src/finite_maps/sptreeScript.sml", "hol_name": "wf_mk_wf",
     "lean_path": "Flapjack/Misc/Sptree/MkWf.lean", "lean_name": "sptWf_mkWf",
     "statement_status": "reviewed_exact",

@@ -90,11 +90,16 @@ private theorem cutEnv_twice {α : Type} (first second : NumSet) (source middle 
     split at secondCut
     · simp only [Option.some.injEq] at secondCut
       subst result
-      exact sptWf_mkWf _
+      rw [← mkWfInter]
+      exact sptWfInter _ _
     · simp at secondCut
-  have targetWf : sptWf target = true := sptWf_mkWf _
+  have targetWf : sptWf target = true := by
+    dsimp only [target]
+    rw [← mkWfInter]
+    exact sptWfInter _ _
   have eq : result = target := by
-    apply (sptEqThm result target ⟨resultWf, targetWf⟩).2
+    apply impSptreeEq result target
+    refine ⟨resultWf, targetWf, ?_⟩
     intro key
     rw [resultLookup key, middleLookup key, DataLive.cutEnv_lookup (sptInter first second) source target targetCut key]
     by_cases a : sptMem key first <;> by_cases b : sptMem key second <;>
