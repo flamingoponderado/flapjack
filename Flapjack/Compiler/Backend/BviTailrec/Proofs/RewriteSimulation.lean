@@ -2996,7 +2996,11 @@ theorem rewriteTail_op_ffi_through {C F : Type} (limit : Nat) (name : Flapjack.B
       optimized target acc env2 loc ts ty := by
   obtain ⟨targetNext, targetRun, targetRelated⟩ :=
     evaluate_op_related_errors_through limit (.ffi name) args source env1 result sourceNext optimized target acc env2 loc ts ty
-      argsIH (stateRel_doApp_ffi name) (stateRel_doApp_ffi_error name) clockBound hyp
+      argsIH (fun vs source sourceNext target value related run =>
+        stateRel_doApp (.ffi name) vs source value sourceNext target
+          ⟨run, related, by simp, by
+            intro n
+            simp⟩) (stateRel_doApp_ffi_error name) clockBound hyp
   apply rewriteTailPost_of_no_scan (.op (.ffi name) args) source env1 result sourceNext
     optimized target targetNext acc env2 loc ts ty targetRun targetRelated
   intro tt resultTy branch op1 scan
@@ -3026,7 +3030,11 @@ theorem rewriteTail_op_blockFromList_through {C F : Type} (limit : Nat) (tag : N
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_blockFromList tag
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.blockOp (.fromList tag)) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_blockFromList_error tag
   · exact clockBound
   · exact hyp
@@ -3048,7 +3056,11 @@ theorem rewriteTail_op_refByte_through {C F : Type} (limit : Nat) (flag : Bool) 
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_refByte flag
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.memOp (.refByte flag)) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_refByte_error flag
   · exact clockBound
   · exact hyp
@@ -3070,7 +3082,11 @@ theorem rewriteTail_op_finaliseCons_through {C F : Type} (limit : Nat) (args : L
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_finaliseCons
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.memOp .finaliseCons) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_finaliseCons_error
   · exact clockBound
   · exact hyp
@@ -3092,7 +3108,11 @@ theorem rewriteTail_op_updateCons_through {C F : Type} (limit : Nat) (args : Lis
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_updateCons
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.memOp .updateCons) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_updateCons_error
   · exact clockBound
   · exact hyp
@@ -3114,7 +3134,11 @@ theorem rewriteTail_op_mutCons_through {C F : Type} (limit : Nat) (tag index : N
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_mutCons tag index
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.memOp (.mutCons tag index)) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_mutCons_error tag index
   · exact clockBound
   · exact hyp
@@ -3135,7 +3159,11 @@ theorem rewriteTail_op_thunkOp_through {C F : Type} (limit : Nat) (operation : A
       optimized target acc env2 loc ts ty := by
   obtain ⟨targetNext, targetRun, targetRelated⟩ :=
     evaluate_op_related_errors_through limit (.thunkOp operation) args source env1 result sourceNext optimized target acc env2 loc ts ty
-      argsIH (stateRel_doApp_thunk operation) (stateRel_doApp_thunk_error operation) clockBound hyp
+      argsIH (fun vs source sourceNext target value related run =>
+        stateRel_doApp (.thunkOp operation) vs source value sourceNext target
+          ⟨run, related, by simp, by
+            intro n
+            simp⟩) (stateRel_doApp_thunk_error operation) clockBound hyp
   apply rewriteTailPost_of_no_scan (.op (.thunkOp operation) args) source env1 result sourceNext
     optimized target targetNext acc env2 loc ts ty targetRun targetRelated
   intro tt resultTy branch op1 scan
@@ -3208,7 +3236,11 @@ theorem rewriteTail_op_globalsPtr_through {C F : Type} (limit : Nat)  (args : Li
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_globalsPtr
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.globOp .globalsPtr) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_globalsPtr_error
   · exact clockBound
   · exact hyp
@@ -3230,7 +3262,11 @@ theorem rewriteTail_op_global_through {C F : Type} (limit : Nat) (index : Nat) (
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_global index
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.globOp (.global index)) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_global_error index
   · exact clockBound
   · exact hyp
@@ -3252,7 +3288,11 @@ theorem rewriteTail_op_setGlobal_through {C F : Type} (limit : Nat) (index : Nat
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_setGlobal index
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.globOp (.setGlobal index)) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_setGlobal_error index
   · exact clockBound
   · exact hyp
@@ -3301,7 +3341,11 @@ theorem rewriteTail_op_setGlobalsPtr_through {C F : Type} (limit : Nat)  (args :
     optimized target acc env2 loc ts ty argsIH
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
-  · exact stateRel_doApp_setGlobalsPtr
+  · intro vs source sourceNext target value related run
+    exact stateRel_doApp (.globOp .setGlobalsPtr) vs source value sourceNext target
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · exact doApp_setGlobalsPtr_error
   · exact clockBound
   · exact hyp
@@ -3572,7 +3616,10 @@ theorem rewriteTail_op_block_delegated_through {C F : Type} (limit : Nat) (opera
   · rw [scanSing_op_choice]
     cases operation <;> simp_all [fromOp, BEq.beq, instBEqAssocOp.beq]
   · intro values s next t value related run
-    exact stateRel_doApp_block_viaBvl operation values s next t value related notFromList run
+    exact stateRel_doApp (.blockOp operation) values s value next t
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · intro values s error run
     exact doApp_block_viaBvl_error operation values s notFromList error run
   · exact clockBound
@@ -3629,7 +3676,10 @@ theorem rewriteTail_op_memory_delegated_through {C F : Type} (limit : Nat) (oper
   · rw [scanSing_op_choice]
     simp [fromOp, BEq.beq, instBEqAssocOp.beq]
   · intro values s next t value related run
-    exact stateRel_doApp_memory_viaBvl operation values s next t value related delegated run
+    exact stateRel_doApp (.memOp operation) values s value next t
+      ⟨run, related, by simp, by
+        intro n
+        simp⟩
   · intro values s error run
     exact doApp_memory_viaBvl_error operation values s delegated error run
   · exact clockBound
