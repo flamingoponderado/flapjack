@@ -24142,6 +24142,27 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "state_rel_const",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "stateRel_const",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Compared state_rel_const_typed in bvi_tailrec_semantics_probe.out: the sole state relation premise implies equality of refs, clock, global and ffi in the original order and orientation. Source and target compiler types are Nat × C and C, with independent C and FFI payload F; refs uses the canonical finite-support state carrier and local roundtrip witness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "state_rel_with_clock",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "stateRel_withClock",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Compared state_rel_with_clock_typed in bvi_tailrec_semantics_probe.out: related states remain related after setting both clocks to an arbitrary common clock. Source and target compiler types are Nat × C and C, with independent C and FFI payload F; refs uses the canonical finite-support state carrier and local roundtrip witness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "state_rel_code_rel",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "stateRel_codeRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Compared state_rel_code_rel_typed in bvi_tailrec_semantics_probe.out: the sole state relation premise implies the full code relation on source and target code. Source and target compiler types are Nat × C and C, with independent C and FFI payload F; refs uses the canonical finite-support state carrier and local roundtrip witness, while code remains an Spt."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "state_rel_def",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "stateRel",
     "statement_status": "reviewed_fmap_as_finite_support",

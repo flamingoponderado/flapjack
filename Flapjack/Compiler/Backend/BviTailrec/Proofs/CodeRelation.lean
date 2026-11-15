@@ -757,6 +757,8 @@ def stateRel {C F : Type} (source : BviSem.BviState (Nat × C) F) (target : BviS
   (∀ n, sptMem n target.code ∧ inWorkerNamespace n → n < (source.compileOracle 0).1.1)
 
 /-- Related states agree on the data fields used by primitive evaluation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "state_rel_const"
+  (fmap_as_finite_support := [refs])]
 theorem stateRel_const {C F : Type} (source : BviSem.BviState (Nat × C) F)
     (target : BviSem.BviState C F) (h : stateRel source target) :
     target.refs = source.refs ∧ target.clock = source.clock ∧
@@ -764,6 +766,8 @@ theorem stateRel_const {C F : Type} (source : BviSem.BviState (Nat × C) F)
   exact ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1⟩
 
 /-- Resetting both clocks to the same value preserves the state relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "state_rel_with_clock"
+  (fmap_as_finite_support := [refs])]
 theorem stateRel_withClock {C F : Type} (source : BviSem.BviState (Nat × C) F)
     (target : BviSem.BviState C F) (clock : Nat) (h : stateRel source target) :
     stateRel { source with clock := clock } { target with clock := clock } := by
@@ -771,6 +775,8 @@ theorem stateRel_withClock {C F : Type} (source : BviSem.BviState (Nat × C) F)
   exact ⟨refs, rfl, global, ffi, oracle, compiler, code, ns, input, bound⟩
 
 /-- The state relation includes the code relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "state_rel_code_rel"
+  (fmap_as_finite_support := [refs])]
 theorem stateRel_codeRel {C F : Type} (source : BviSem.BviState (Nat × C) F)
     (target : BviSem.BviState C F) (h : stateRel source target) : codeRel source.code target.code :=
   h.2.2.2.2.2.2.1

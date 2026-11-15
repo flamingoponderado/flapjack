@@ -10,3 +10,6 @@ val _ = show_thm "compile_prog_semantics_typed=" bvi_tailrecProofTheory.compile_
 val _ = show_thm "compile_each_semantics_typed=" bvi_tailrecProofTheory.compile_each_semantics;
 val _ = show_thm "evaluate_compile_each_typed=" bvi_tailrecProofTheory.evaluate_compile_each;
 val _ = show_thm "state_rel_def_typed=" bvi_tailrecProofTheory.state_rel_def;
+val _ = show_thm "state_rel_const_typed=" bvi_tailrecProofTheory.state_rel_const;
+val _ = show_thm "state_rel_with_clock_typed=" bvi_tailrecProofTheory.state_rel_with_clock;
+val _ = show_thm "state_rel_code_rel_typed=" bvi_tailrecProofTheory.state_rel_code_rel;
