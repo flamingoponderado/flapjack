@@ -10808,3 +10808,17 @@ directly instead.
 the single HOL declaration behind both Lean rows (`closureTotal` and
 `closureTotal_step`), which renders the recursion with fuel and proves the
 step equation.
+
+`flat_to_clos_proof_typed_probe.out` (43 rows) captures the reviewed
+`flat_to_closProofScript.sml` declarations: the compiler-shape lemmas
+(`LIST_REL_EL`, `IMP_PAIR`, `EVERY_IMP_HD`, the `contains_App_SOME` facts), the
+`dest_Constant`/`SmartCons` evaluation lemmas, the environment-relation
+extensions, the syntactic and global-bag properties, the incremental
+pipeline/installation relations (`inc_compile_decs'_def`, both
+`install_config_rel` forms, `initial_state'_def`, `initate_state'_clock`,
+`inc_compile_decs_intro`), and the finite-bag lemmas. `[local]` theorems are
+re-parsed from the source text; `contains_App_SOME_compile_init` is declared
+twice in the script, so the capture pins the line-2549 occurrence cited by the
+manifest (`local_at`). The three conjunction-premise rows
+(`find_recfun_EL`, `env_rel_CONS`, `env_rel_APPEND`) keep HOL's single
+conjunction hypothesis.

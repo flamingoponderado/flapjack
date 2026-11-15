@@ -36,13 +36,16 @@ theorem compileFuns_length (names : List (Option MlString)) (funs : List (VarN �
 to that entry's argument and body. -/
 @[hol "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml" "find_recfun_EL"]
 theorem findRecFun_get {α β : Type} (funs : List (VarN × α × β)) (index : Nat)
-    (bound : index < funs.length) (distinct : (funs.map Prod.fst).Nodup) :
-    findRecFun (funs[index]'bound).1 funs = some (funs[index]'bound).2 := by
+    (premises : index < funs.length ∧ (funs.map Prod.fst).Nodup) :
+    findRecFun (funs[index]'premises.1).1 funs = some (funs[index]'premises.1).2 := by
   induction funs generalizing index with
-  | nil => simp at bound
+  | nil => simp at premises
   | cons first rest ih =>
+    have bound : index < (first :: rest).length := premises.1
+    have distinct : (first.1 :: rest.map Prod.fst).Nodup := by
+      simpa [List.map_cons] using premises.2
     rcases first with ⟨name, arg, body⟩
-    simp only [List.map_cons, List.nodup_cons] at distinct
+    simp only [List.nodup_cons] at distinct
     cases index with
     | zero => simp [findRecFun]
     | succ index =>
@@ -52,7 +55,7 @@ theorem findRecFun_get {α β : Type} (funs : List (VarN × α × β)) (index : 
         apply distinct.1
         rw [same]
         exact List.mem_map_of_mem (List.getElem_mem restBound)
-      simpa [findRecFun, different] using ih index restBound distinct.2
+      simpa [findRecFun, different] using ih index ⟨restBound, distinct.2⟩
 
 /-- The closure function at an index is the corresponding translated body. -/
 theorem compileFuns_get (names : List (Option MlString)) (funs : List (VarN × VarN × FlatLang.Exp))
@@ -119,7 +122,7 @@ theorem envRel_rec (funs : List (VarN × VarN × FlatLang.Exp))
     (entries := funs.map (fun f => (f.1, FlatSem.Value.recclosure env funs f.1)))
     (targets := (List.range funs.length).map (fun i => ClosSem.Value.recclosure none [] values
       (compileFuns (funs.map (fun f => some f.1) ++ names) funs) i))
-    environments (by simpa [List.map_map] using prefixRel) rfl
+    ⟨environments, (by simpa [List.map_map] using prefixRel), rfl⟩
   simpa [replaceEnvValues, FlatProps.buildRecEnv_eq_map, compileFuns_length, List.map_map, Function.comp_def] using extended
 
 end Flapjack.Compiler.Backend.FlatToClos

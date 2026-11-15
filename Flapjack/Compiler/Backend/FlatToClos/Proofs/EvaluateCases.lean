@@ -286,7 +286,7 @@ theorem evaluate_let {C F : Type} (env : FlatSem.Environment FlatSem.Value)
               have bound := FlatSem.evaluate_clock_spec.1 env source [first] _ next flatRun
               simpa [EvalSim, compile, compileExps] using bodySim _ _ next nextTarget head states bound nextEnv notTypeError
             | some key =>
-              have nextEnv := envRel_cons (env := env) (name := key) environments head
+              have nextEnv := envRel_cons (env := env) (name := key) ⟨environments, head⟩
               have bound := FlatSem.evaluate_clock_spec.1 env source [first] _ next flatRun
               simpa [EvalSim, compile, compileExps] using bodySim _ _ next nextTarget head states bound nextEnv notTypeError
           | cons _ _ => simp at length
@@ -404,7 +404,7 @@ theorem evaluate_handle {C F : Type} (env : FlatSem.Environment FlatSem.Value)
         rcases selected with ⟨selectedBindings, selectedBody⟩
         obtain ⟨bindingsEq, bodyEq⟩ := ‹_ ∧ _›
         subst_vars
-        have nextEnv := envRel_cons (env := env) (name := name) environments related
+        have nextEnv := envRel_cons (env := env) (name := name) ⟨environments, related⟩
         have bound := FlatSem.evaluate_clock_spec.1 env source [body] _ next flatRun
         simpa [EvalSim, compile, compileExps] using
           handlerSim _ _ next nextTarget related states bound nextEnv notTypeError

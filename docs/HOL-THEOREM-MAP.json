@@ -133635,7 +133635,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/Recursive.lean",
   "lean_name": "findRecFun_get",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared local find_recfun_EL source and proved find_recfun_el_typed replay in flat_to_clos_relation_probe.out: the two recursive-entry payload types remain independent, with the original bounds, distinct names and indexed lookup conclusion. The in-bounds Lean getElem is HOL EL under the same bound."
+  "reviewer": "Compared local find_recfun_EL source and proved find_recfun_el_typed replay in flat_to_clos_relation_probe.out: the two recursive-entry payload types remain independent, with the original bounds, distinct names and indexed lookup conclusion. The in-bounds Lean getElem is HOL EL under the same bound. The bound and distinct-name facts are one conjunction hypothesis, as in HOL."
 }
 ,
 {
@@ -133664,7 +133664,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ValueRelation.lean",
   "lean_name": "envRel_append",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared local env_rel_APPEND source and proved env_rel_append_typed replay in flat_to_clos_relation_probe.out: the name-prefix equality and all relation premises match; the overwritten environment has the independently polymorphic HOL carrier. replaceEnvValues renders HOL’s type-changing update of its single value field."
+  "reviewer": "Compared local env_rel_APPEND source and proved env_rel_append_typed replay in flat_to_clos_relation_probe.out: the name-prefix equality and all relation premises match; the overwritten environment has the independently polymorphic HOL carrier. replaceEnvValues renders HOL’s type-changing update of its single value field. The three premises are one conjunction, as in HOL."
 }
 ,
 {
@@ -133673,7 +133673,7 @@
   "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Proofs/ValueRelation.lean",
   "lean_name": "envRel_cons",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared local env_rel_CONS source and proved env_rel_cons_typed replay in flat_to_clos_relation_probe.out: related values, both environment updates and binders match, including the independently polymorphic overwritten environment rendered by replaceEnvValues."
+  "reviewer": "Compared local env_rel_CONS source and proved env_rel_cons_typed replay in flat_to_clos_relation_probe.out: related values, both environment updates and binders match, including the independently polymorphic overwritten environment rendered by replaceEnvValues. The environment relation and value relation premises are one conjunction, as in HOL."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
