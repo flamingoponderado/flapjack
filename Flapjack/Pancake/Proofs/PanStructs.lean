@@ -5,6 +5,7 @@ public import Flapjack.Misc.OptMmapCong
 public import Flapjack.Pancake.PanStructs
 public import Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
 public import Flapjack.Pancake.Proofs.PanStructs.CompileShapeExact
+public import Flapjack.Pancake.PanStructs.OldExpShapeExact
 
 @[expose] public section
 
@@ -22,6 +23,23 @@ for the legacy helpers below or final Pancake-to-RISC-V correctness.
 -/
 
 namespace Flapjack
+
+/-- Exact port of HOL `old_exp_shapes_eq` (`pan_structsProofScript.sml:679`).
+The typed capture `old_exp_shapes_eq_typed` gives
+`∀ctxt es. old_exp_shapes ctxt es = MAP (old_exp_shape ctxt) es` with
+`es : α panLang$exp list`, so the only carrier translation is HOL's
+type-indexed `'a word` to `BitVec width`. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "old_exp_shapes_eq"
+  (words_as_type_indexed_bitvec)]
+theorem oldExpShapesExact_eq_map {width : Nat} [NeZero width]
+    (context : Pancake.PanStructs.CompileShapeExact.ContextExact)
+    (expressions : List (Pancake.PanLang.ExpHOL width)) :
+    Pancake.PanStructs.CompileShapeExact.oldExpShapesExact context expressions =
+      expressions.map (Pancake.PanStructs.CompileShapeExact.oldExpShapeExact context) := by
+  induction expressions with
+  | nil => simp only [Pancake.PanStructs.CompileShapeExact.oldExpShapesExact, List.map_nil]
+  | cons expression expressions ih =>
+      simp only [Pancake.PanStructs.CompileShapeExact.oldExpShapesExact, List.map_cons, ih]
 
 /-- Exact port of the local HOL `UNCURRY_EQ_o_SND`
     (`pan_structsProofScript.sml:552`). -/

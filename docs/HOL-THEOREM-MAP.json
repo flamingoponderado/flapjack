@@ -135670,5 +135670,14 @@
     "lean_name": "isWfShapeHOL_drop",
     "statement_status": "reviewed_exact",
     "reviewer": "codewhale source comparison (2026-11-15; bead flapjack-pxn.18.3.7.1.3): typed HOL capture is_wf_shape_drop_typed in pancake_pan_structs_proof_typed_probe.out gives ∀(sh_ctxt :(mlstring # α) list) (sh :shape) (n :num), is_wf_shape (DROP n sh_ctxt) sh ⇒ is_wf_shape sh_ctxt sh, with 0 hypotheses. Lean keeps the payload-polymorphic context List (MlS × α), the ShapeHOL carrier, DROP as List.drop and the Boolean premise as `= true`, with the binder order sh_ctxt sh n. Source review: HOL is_wf_shape only tests name presence in the association-list payload, so α is never inspected; MlS is the mlstring carrier and ShapeHOL the exact shape port. No representation qualifier applies and no premise or clause is changed."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "old_exp_shapes_eq",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "oldExpShapesExact_eq_map",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "codewhale source comparison (2026-11-15, task 198): typed capture old_exp_shapes_eq_typed in scripts/hol-probes/pancake_pan_structs_proof_typed_probe.out gives (ctxt :context) (es :α panLang$exp list). old_exp_shapes ctxt es = MAP (old_exp_shape ctxt) es, with the only type variable inside panLang$exp; the Lean statement keeps both binders, the single equation and the map, and the only carrier translation is the reviewed type-indexed word to BitVec width. old_exp_shapes is the recursive definition (old_exp_shapes_def), rendered by oldExpShapesExact."
   }
 ]
