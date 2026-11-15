@@ -1766,8 +1766,6 @@ mutual
           panIsWfShapeValuesHOL_mapSnd_toHOL context fields]
 end
 
-/-! HOL `fdoms_eq_flookup_some_none` remains to be ported over finite maps. -/
-
 /-- HOL `OPT_MMAP_MEM_IMP` (`panPropsScript.sml:115`): if `OPT_MMAP f xs` succeeds
     with `ys`, every element of `ys` is the image under `f` of an element of `xs`.
     Pure option/list lemma (no Boolean key-equality carrier); `List.mapM` is the

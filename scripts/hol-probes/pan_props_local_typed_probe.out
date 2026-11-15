@@ -9,4 +9,5 @@ structs_simps_typed=(dec_clock (s :(α, β) state)).structs = s.structs ∧ (emp
 evaluate_structs_invariant_typed=evaluate ((p :α prog),(s :(α, β) state)) = ((res :α result option),(s' :(α, β) state)) ⇒ s'.structs = s.structs
 list_rel_length_shape_of_flatten_better_typed=∀(vshs :shape list) (args :α v list). LIST_REL (λ(vsh :shape) (arg :α v). vsh = shape_of arg) vshs args ∧ EVERY is_wf_shape_v_nil args ⇒ size_of_shape (Comb vshs) = LENGTH (FLAT (MAP (flatten :α v -> α word_lab list) args))
 is_wf_shape_nil_typed=is_wf_shape ([] :(mlstring # struct_info) list)
+fdoms_eq_flookup_some_none_typed=∀(fm :α |-> β) (fm' :α |-> γ) (n :α) (v :β) (v' :δ). FDOM fm = FDOM fm' ∧ FLOOKUP fm n = SOME v ⇒ ∃(v :γ). FLOOKUP fm' n = SOME v
 is_wf_shape_v_nil_typed=(is_wf_shape_v ([] :(mlstring # struct_info) list) :α v -> bool)
