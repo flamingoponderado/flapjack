@@ -135699,6 +135699,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "do_app_op_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/OperationRelation.lean",
+  "lean_name": "doApp_op_rel", "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+  "fmap_as_finite_support_relation": ["BviState.refs", "f"],
+  "fmap_as_finite_support_existentials": ["nextMap"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared do_app_op_rel_typed in bvi_tmc_proof_source_probe.out: the complete source primitive result, no-mutcons predicate, argument relation and state relation imply the full target result and six remaining value, state, submap, freshness and hole conclusions. The BviState reference field and pointer map use canonical finite support; existential nextMap has a same-module roundtrip witness. Primitive dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "do_build_const_v_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/BuildRelation.lean",
   "lean_name": "doBuildConst_value_rel", "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
   "fmap_as_finite_support_relation": ["source", "sourceNext", "f", "target"],

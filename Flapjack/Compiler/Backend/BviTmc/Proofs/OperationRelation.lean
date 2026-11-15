@@ -2419,17 +2419,26 @@ theorem doApp_op_rel_install {C F : Type} (f : HolFiniteMapExact Nat Nat)
   · simpa [refsEq] using holesUnchanged_refl f target.refs ∅
   · simpa [refsEq] using holesStill_refl f target.refs
 
-/-- Successful primitive operations are simulated by the TMC target,
-preserving related results, state, freshness and mutable-hole invariants.
+/-- The existential pointer map roundtrips through the canonical codec. -/
+theorem holFmapAsFiniteSupportExistentialWitness_doApp_op_rel_nextMap
+    (nextMap : HolFiniteMapExact Nat Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap)).lookup = nextMap.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap)).finiteSupport = nextMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap) = nextMap := by
+  cases nextMap
+  exact ⟨rfl, rfl, rfl⟩
 
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
+/-- Successful primitive operations are simulated by the TMC target,
+preserving related results, state, freshness and mutable-hole invariants. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f])
+  (fmap_as_finite_support_existentials := [nextMap])]
 theorem doApp_op_rel {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : ClosLang.Op)
     (values relatedValues : List Value) (source : BviState (Nat × C) F)
     (target : BviState C F) (sourceNext : BviState (Nat × C) F) (value : Value)
     (h : BviSem.doApp op values source = .val (value, sourceNext) ∧ noMutconsOp op ∧
       List.Forall₂ (valueRel f) values relatedValues ∧ stateRel f source target) :
-    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+    ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (value' : Value), ∃ (targetNext : BviState C F),
       BviSem.doApp op relatedValues target = .val (value', targetNext) ∧
       valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
