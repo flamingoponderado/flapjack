@@ -406,8 +406,9 @@ theorem listRel_front {α β : Type} (r : α → β → Prop) (xs : List α) (ys
 /-- The last entries of nonempty related lists are related. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_rel_last"]
 theorem listRel_last {α β : Type} [Nonempty α] [Nonempty β] (r : α → β → Prop)
-    (xs : List α) (ys : List β) (related : List.Forall₂ r xs ys) (nonempty : xs ≠ []) :
+    (xs : List α) (ys : List β) (h : List.Forall₂ r xs ys ∧ xs ≠ []) :
     r (holLast xs) (holLast ys) := by
+  obtain ⟨related, nonempty⟩ := h
   induction related with
   | nil => contradiction
   | @cons a b xs ys head tail ih =>

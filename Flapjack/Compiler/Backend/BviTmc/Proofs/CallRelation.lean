@@ -56,7 +56,7 @@ theorem findCode_rel {C F : Type} (f : HolFiniteMapExact Nat Nat)
     | nil => simp [findCode] at found
     | cons first rest =>
       have nonempty : first :: rest ≠ [] := by simp
-      have lastRel := listRel_last (valueRel f) (first :: rest) relatedValues valuesRelated nonempty
+      have lastRel := listRel_last (valueRel f) (first :: rest) relatedValues ⟨valuesRelated, nonempty⟩
       cases last : holLast (first :: rest) with
       | number n => simp [findCode, last] at found
       | word64 w => simp [findCode, last] at found
