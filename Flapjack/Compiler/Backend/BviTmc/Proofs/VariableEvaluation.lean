@@ -86,10 +86,9 @@ theorem evaluate_var_list {C F : Type} (indices : List Nat) (env : List Value)
     rw [run] at failure
     exact (notError (congrArg Prod.fst failure)).elim
 
-/-- Appending extra environment values preserves a successful variable-list evaluation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_vars_expand_env" (fmap_as_finite_support := [refs])] -/
+/-- Appending extra environment values preserves a successful variable-list evaluation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_vars_expand_env"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_vars_expand_env {C F : Type} (indices : List Nat) (env : List Value)
     (state : BviState C F) (values extras : List Value)
     (run : evaluate (indices.map Bvi.Exp.var) env state = (.val values, state)) :

@@ -135699,6 +135699,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_vars_expand_env", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/VariableEvaluation.lean",
+  "lean_name": "evaluate_vars_expand_env", "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared evaluate_vars_expand_env_typed in bvi_tmc_proof_source_probe.out: a successful variable-list evaluation with unchanged state remains exactly the same after arbitrary values are appended to the environment. The state reference field uses canonical finite support with a same-module witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "evaluate_vars_source", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/VariableEvaluation.lean",
   "lean_name": "evaluate_vars_source", "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["refs"],
