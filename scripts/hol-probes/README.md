@@ -10522,3 +10522,12 @@ scripts/hol-probes/regenerate.sh`.
 pinned source with the splice-expanding helper. Regenerate with
 `CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=flat_props_local_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`loop_to_word_defs_typed_probe.out` (7 rows) captures the reviewed
+`loop_to_wordScript.sml` definition rows that earlier probes did not cover
+(task 186): `comp_exp`, `find_reg_imm`, `find_var`, `fromNumSet`,
+`mk_new_cutset`, `toNumSet` and `make_ctxt`. All seven are exported and read
+from the theory DB; `comp_exp` shows HOL's `ShiftN` overload expanded to
+`Shift ... (Const (n2w n))` and the `word5` temporary name. Regenerate with
+`CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=loop_to_word_defs_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.

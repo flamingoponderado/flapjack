@@ -11845,3 +11845,9 @@ run_probe flat_props_local_typed_probeScript.sml flat_props_local_typed_probe.ou
   evaluate_decs_add_to_clock_initial_state_io_events_mono_typed initial_state_with_clock_typed \
   "$cake_dir/compiler/backend/semantics/flatPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
+
+run_probe loop_to_word_defs_typed_probeScript.sml loop_to_word_defs_typed_probe.out \
+  comp_exp_def_typed find_reg_imm_def_typed find_var_def_typed fromNumSet_def_typed \
+  mk_new_cutset_def_typed toNumSet_def_typed make_ctxt_def_typed \
+  "$cake_dir/pancake/loop_to_wordScript.sml" \
+  "$cake_dir/pancake"
