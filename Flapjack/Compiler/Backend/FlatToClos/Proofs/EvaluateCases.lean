@@ -89,25 +89,6 @@ theorem evaluate_var {C F : Type} (env : FlatSem.Environment FlatSem.Value)
   simpa [EvalSim, compile, compileExps, compileExp, FlatSem.evaluate, ClosSem.evaluate, found, targetFound]
     using And.intro states (EvalResultRel.value (.cons related .nil))
 
-/-- Literal compilation evaluates to a related closure value without
-changing either state. -/
-theorem evaluate_lit {C F : Type} (env : FlatSem.Environment FlatSem.Value)
-    (names : List (Option MlString)) (values : List ClosSem.Value)
-    (source : FlatSem.State C F) (target : ClosSem.State C F)
-    (trace : BackendCommon.Tra) (literal : Lit) (states : StateRel source target) :
-    EvalSim env names values source target [.lit trace literal] := by
-  cases literal <;>
-    simp [EvalSim, compile, compileExps, compileExp, compileLit, FlatSem.evaluate,
-      ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyNumeric,
-      ClosSem.doIntApp, ClosSem.applyBlock, ClosSem.makeConst, states]
-  all_goals first
-    | exact EvalResultRel.value (.cons (ValueRel.int _) .nil)
-    | exact EvalResultRel.value (.cons (ValueRel.char _) .nil)
-    | exact EvalResultRel.value (.cons (ValueRel.string _) .nil)
-    | exact EvalResultRel.value (.cons (ValueRel.word8 _) .nil)
-    | exact EvalResultRel.value (.cons (ValueRel.word64 _) .nil)
-    | exact EvalResultRel.value (.cons (ValueRel.float64 _) .nil)
-
 /-- Constructor translation preserves evaluation when its reversed
 argument list is simulated. -/
 theorem evaluate_con {C F : Type} (env : FlatSem.Environment FlatSem.Value)
