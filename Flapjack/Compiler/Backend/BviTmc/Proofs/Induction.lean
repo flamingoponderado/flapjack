@@ -9,6 +9,11 @@ public import Flapjack.Compiler.Backend.BviTmc.Proofs.LetCallSimulation
 namespace Flapjack.Compiler.Backend.BviTmc.Induction
 open BviTmc BviSem BvlSem ListSimulation ClockHypothesis StructuralHypothesis StructuralCases SemanticPrimitivesProps ResultRelation
 
+/-- Lexicographic order on two natural measures is well founded. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "WF_I_I"]
+theorem wfII : WellFounded (Prod.Lex Nat.lt Nat.lt) :=
+  (Prod.lex Nat.lt_wfRel Nat.lt_wfRel).wf
+
 /-- Flapjack infrastructure: all singleton expression cases from the common
 smaller-weight and smaller-clock induction hypotheses. -/
 theorem singleton_from_induction {C F : Type} (loc : Nat) (e : Bvi.Exp)

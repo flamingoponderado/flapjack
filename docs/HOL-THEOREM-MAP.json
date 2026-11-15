@@ -135699,6 +135699,12 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "WF_I_I", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/Induction.lean",
+  "lean_name": "wfII", "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: Replayed the original local statement and proof with types in bvi_tmc_proof_source_probe.out. Both measures are the natural-number identity; HOL LEX and Lean Prod.Lex order ordinary natural pairs by the first component and then the second, so both state well-foundedness of the same relation."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "evaluate_bvi_to_cb", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ListExtraction.lean",
   "lean_name": "evaluate_bvi_to_cb", "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["refs"],

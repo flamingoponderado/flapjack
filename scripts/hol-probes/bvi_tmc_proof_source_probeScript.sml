@@ -399,6 +399,12 @@ ho_match_mp_tac bvi_to_cb_aux_ind
 val _ = show "evaluate_bvi_to_cb_aux_inr_lemma_replay_typed" inr_local_replay;
 val _ = show "evaluate_bvi_to_cb_aux_inr_typed" bvi_tmcProofTheory.evaluate_bvi_to_cb_aux_inr;
 val _ = show "evaluate_bvi_to_cb_typed" bvi_tmcProofTheory.evaluate_bvi_to_cb;
+(* Replay the original local well-foundedness theorem and proof. *)
+val wf_i_i_replay = Q.prove (
+`WF (measure I LEX measure I)`,
+irule WF_LEX >> simp [prim_recTheory.WF_measure]);
+val _ = show "WF_I_I_replay_typed" wf_i_i_replay;
+val _ = show "evaluate_rewrite_tmc_typed" bvi_tmcProofTheory.evaluate_rewrite_tmc;
 val _ = show "hole_has_val_submap_typed" bvi_tmcProofTheory.hole_has_val_submap;
 val _ = show "holes_unchanged_except_trans_typed" bvi_tmcProofTheory.holes_unchanged_except_trans;
 val _ = show "holes_still_not_finalised_trans_typed" bvi_tmcProofTheory.holes_still_not_finalised_trans;
