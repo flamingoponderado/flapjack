@@ -130,5 +130,11 @@ val _ = emit "exps_of_transform_eoc_typed" "exps_of_transform_eoc";
 val _ = emit "exps_of_transform_branch_typed" "exps_of_transform_branch";
 val _ = emit "exps_of_inst_inline_typed" "exps_of_inst_inline";
 val _ = emit "every_inst_crep_inline_typed" "every_inst_crep_inline";
+val _ = emit "fdom_eq_flookup_thm_typed" "fdom_eq_flookup_thm";
+val _ = emit "fdom_subset_flookup_thm_typed" "fdom_subset_flookup_thm";
+val _ = emit "fdoms_eq_opt_mmap_flookup_some_typed" "fdoms_eq_opt_mmap_flookup_some";
+val _ = emit "opt_mmap_some_then_subset_fdom_typed" "opt_mmap_some_then_subset_fdom";
+val _ = emit "res_var_submap_res_var_typed" "res_var_submap_res_var";
+val _ = emit "submap_flookup_alist_to_fmap_typed" "submap_flookup_alist_to_fmap";
 
 val _ = emit_ci "compile_inl_prog_def_typed" "compile_inl_prog_def";

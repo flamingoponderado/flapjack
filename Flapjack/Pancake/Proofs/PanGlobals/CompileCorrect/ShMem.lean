@@ -79,8 +79,15 @@ namespace PanGlobalsCompileCorrect
   rfl
 
 /-- Flapjack-only support: replacing the `ffi` field of both related states
-    with the same value preserves the relation.  HOL's relation only mentions
-    `ffi` in the equality conjunct, so no HOL declaration is needed. -/
+    with the same value preserves the relation, at either relation `flag`.
+    This is a flag-generalised variant of HOL's `state_rel_change_ffi`
+    (`pan_globalsProofScript.sml:1564`); HOL's relation only mentions `ffi` in
+    the equality conjunct, so the flag is irrelevant to the step.  The faithful
+    single-flag port `stateRelChangeFfiHOL` (`PanGlobals/StateRelationFfi.lean`)
+    carries no tag: its row was withdrawn because the typed capture gives the
+    replacement host `γ` independent of the state's `'ffi`, so HOL's update
+    relates states of different carriers while `PanSemStateFiniteExact width σ`
+    fixes the host at `σ`. -/
 theorem stateRelFfiUpdateHOL {width : Nat} {σ : Type} [NeZero width]
     (flag : Bool) (ctxt : PanGlobalsContextExact width)
     (s t : PanSemStateFiniteExact width σ) (f : HolFfiState σ) :

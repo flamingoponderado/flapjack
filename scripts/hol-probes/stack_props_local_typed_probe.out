@@ -1,0 +1,2 @@
+inst_clock_neutral_typed=(inst (i :α inst) (s :(α, β, γ) state) = SOME (t :(α, β, γ) state) ⇒ inst i (s with clock := (k :num)) = SOME (t with clock := k)) ∧ (inst i s = (NONE :(α, β, γ) state option) ⇒ inst i (s with clock := k) = (NONE :(α, β, γ) state option))
+inst_clock_neutral_ffi_typed=(inst (i :α inst) (s :(α, β, γ) state) = SOME (t :(α, β, γ) state) ⇒ inst i (s with ffi := (k :δ ffi_state)) = SOME (t with ffi := k)) ∧ (inst i s = (NONE :(α, β, γ) state option) ⇒ inst i (s with ffi := k) = (NONE :(α, β, δ) state option))

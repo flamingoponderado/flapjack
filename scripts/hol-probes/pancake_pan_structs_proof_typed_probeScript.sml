@@ -296,6 +296,9 @@ val _ = capture "mem_loads_convert_helper_typed" "mem_loads_convert_helper";
 val _ = capture "opt_mmap_eq_every_typed" "opt_mmap_eq_every";
 val _ = capture "shape_of_convert_v_ind_typed" "shape_of_convert_v_ind";
 val _ = capture "size_of_compile_shape_n_typed" "size_of_compile_shape_n";
+val _ = emit_exported "old_exp_shapes_eq_typed" "old_exp_shapes_eq";
+val _ = capture "compile_exps_eq_map_typed" "compile_exps_eq_map";
+val _ = capture "eval_upd_code_eq2_typed" "eval_upd_code_eq2";
 
 (* Derived local theorems: the base statement is captured typed under
    the derived theorem name; the derivation is named in each comment,

@@ -1,0 +1,1 @@
+validAddSym_alt_def_typed=∀(s :string). validAddSym_alt s ⇔ case s of ("" :string) => F | STRING c t => in_set c "+-^" ∨ t ≠ ("" :string) ∧ c = #"|"

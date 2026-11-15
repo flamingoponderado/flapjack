@@ -1,0 +1,3 @@
+ctor_id_typed=Type ctor_id = :num
+type_group_id_typed=Type type_group_id = :(num # (num # num) list) option
+type_id_typed=Type type_id = :num option

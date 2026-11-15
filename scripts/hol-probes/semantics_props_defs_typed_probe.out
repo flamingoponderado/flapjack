@@ -1,0 +1,4 @@
+extend_with_resource_limit_prime_def_typed=∀(precise :bool) (behaviours :behaviour -> bool). extend_with_resource_limit' precise behaviours = if precise then behaviours else extend_with_resource_limit behaviours
+implements_prime_def_typed=∀(precise :bool) (x :behaviour -> bool) (y :behaviour -> bool). implements' precise x y ⇔ Fail ∉ y ⇒ x ⊆ extend_with_resource_limit' precise y
+implements_prime_F_typed=implements' F = implements
+isPREFIX_IMP_LPREFIX_typed=∀(xs :α list) (ys :α list). xs ≼ ys ⇒ LPREFIX (fromList xs :α llist) (fromList ys :α llist)

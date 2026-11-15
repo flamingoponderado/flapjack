@@ -64,21 +64,6 @@ theorem compileExpListEveryLocalised {width : Nat} [NeZero width]
     (try split) <;>
     simp_all [everyExpHOL, everyExpListHOL, localisedExpHOL_eq_every, localisedExpPredHOL]
 
-/-- First genuine conjunct of HOL `localised_exp_shape_val`
-(`pan_globalsProofScript.sml:3207-3212`): arbitrary shapes build localised
-expressions at the original positive word dimension. The complete conjunction
-is assembled below as `localisedExpShapeValHOL`. This untagged supporting
-lemma is not a port of the full two-conjunct theorem. -/
-theorem shapeValLocalised {width : Nat} [NeZero width] :
-    ∀ sh : ShapeHOL, localisedExpHOL (shapeValHOL sh : ExpHOL width) = true := by
-  intro sh
-  rw [localisedExpHOL_eq_every]
-  induction sh using shapeValHOL.induct
-    (motive2 := fun shs => everyExpListHOL localisedExpPredHOL
-      (shapeValsHOL (width := width) shs) = true) <;>
-    (try rw [shapeValHOL]) <;> (try rw [shapeValsHOL]) <;>
-    simp_all [everyExpHOL, everyExpListHOL, localisedExpPredHOL]
-
 /-- Full HOL `localised_exp_shape_val` (source lines 3207-3212), with both
 universally quantified expression and expression-list conjuncts. HOL `EVERY`
 is native `List.all = true`; the reviewed mutual `shape_val`/`shape_vals`
@@ -90,10 +75,20 @@ theorem localisedExpShapeValHOL {width : Nat} [NeZero width] :
     (∀ shape : ShapeHOL, localisedExpHOL (shapeValHOL shape : ExpHOL width) = true) ∧
     (∀ shapes : List ShapeHOL,
       (shapeValsHOL shapes : List (ExpHOL width)).all localisedExpHOL = true) := by
+  have hval : ∀ shape : ShapeHOL,
+      localisedExpHOL (shapeValHOL shape : ExpHOL width) = true := by
+    intro sh
+    rw [localisedExpHOL_eq_every]
+    induction sh using shapeValHOL.induct
+      (motive2 := fun shs => everyExpListHOL localisedExpPredHOL
+        (shapeValsHOL (width := width) shs) = true)
+    all_goals try rw [shapeValHOL]
+    all_goals try rw [shapeValsHOL]
+    all_goals simp_all [everyExpHOL, everyExpListHOL, localisedExpPredHOL]
   constructor
-  · exact shapeValLocalised
+  · exact hval
   · intro shapes
-    simp [shapeValLocalised]
+    simp [hval]
 
 /-- Exact HOL `compile_localised` (`pan_globalsProofScript.sml:3214-3224`). -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "compile_localised"
@@ -105,7 +100,16 @@ theorem compileLocalisedHOL {width : Nat} [NeZero width] :
   intro ctxt body
   have hE := compileExpLocalisedHOL ctxt
   have hL := compileExpListEveryLocalised ctxt
-  have hS := shapeValLocalised (width := width)
+  have hS : ∀ shape : ShapeHOL,
+      localisedExpHOL (shapeValHOL shape : ExpHOL width) = true := by
+    intro sh
+    rw [localisedExpHOL_eq_every]
+    induction sh using shapeValHOL.induct
+      (motive2 := fun shs => everyExpListHOL localisedExpPredHOL
+        (shapeValsHOL (width := width) shs) = true)
+    all_goals try rw [shapeValHOL]
+    all_goals try rw [shapeValsHOL]
+    all_goals simp_all [everyExpHOL, everyExpListHOL, localisedExpPredHOL]
   induction body using compileProgExactHOL.induct ctxt
   case case30 =>
     rename_i p h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19

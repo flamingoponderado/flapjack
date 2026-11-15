@@ -1,0 +1,1 @@
+oracle_function_typed=Type oracle_function = :'ffi -> word8 list -> word8 list -> 'ffi oracle_result

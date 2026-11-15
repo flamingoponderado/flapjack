@@ -516,10 +516,13 @@ theorem list_mapM_congr {α β : Type} (g h : α → Option β) (xs : List α)
   | cons x xs ih =>
     rw [List.mapM_cons, List.mapM_cons, hgh x (by simp), ih (fun y hy => hgh y (by simp [hy]))]
 
-/-- Flapjack-specific support corresponding to HOL `opt_mmap_some_eq_zip_flookup`.
-    This uses raw lookup functions, which admit maps with infinite support;
-    HOL uses finite maps. Any Boolean equality instances are extra assumptions.
-    The faithful HOL declaration remains to be ported. -/
+/-- Flapjack-specific raw-carrier support corresponding to HOL
+    `opt_mmap_some_eq_zip_flookup`.  This uses raw lookup functions, which
+    admit maps with infinite support; HOL uses finite maps, and the Boolean
+    equality instances are extra assumptions.  The faithful HOL declaration is
+    the tagged `optMmapSomeEqZipFlookupExactHOL`
+    (`Flapjack/Pancake/Semantics/PanCommonProps/FiniteMapExact.lean`); this
+    raw form stays for the production-carrier proofs. -/
 theorem opt_mmap_some_eq_zip_flookup [BEq α] [LawfulBEq α]
     (xs : List α) (f : FiniteMap α β) (ys : List β)
     (hdistinct : xs.Nodup) (hlen : xs.length = ys.length) :
@@ -552,10 +555,13 @@ theorem opt_mmap_some_eq_zip_flookup [BEq α] [LawfulBEq α]
       rw [hhead, htail]
       rfl
 
-/-- Flapjack-specific support corresponding to HOL `opt_mmap_disj_zip_flookup`.
-    This uses raw lookup functions, which admit maps with infinite support;
-    HOL uses finite maps. Any Boolean equality instances are extra assumptions.
-    The faithful HOL declaration remains to be ported. -/
+/-- Flapjack-specific raw-carrier support corresponding to HOL
+    `opt_mmap_disj_zip_flookup`.  This uses raw lookup functions, which admit
+    maps with infinite support; HOL uses finite maps, and the Boolean equality
+    instances are extra assumptions.  The faithful HOL declaration is the
+    tagged `optMmapDisjZipFlookupExactHOL`
+    (`Flapjack/Pancake/Semantics/PanCommonProps/FiniteMapExact.lean`); this
+    raw form stays for the production-carrier proofs. -/
 theorem opt_mmap_disj_zip_flookup [BEq α] [LawfulBEq α]
     (xs : List α) (f : FiniteMap α β) (ys : List α) (zs : List β)
     (hdisj : ListDisjoint xs ys) (hlen : xs.length = zs.length) :

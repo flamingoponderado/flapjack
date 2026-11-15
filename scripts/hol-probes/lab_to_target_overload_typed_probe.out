@@ -1,0 +1,1 @@
+all_enc_ok_light_typed=λ(c :α asm_config) (ls :α sec list). EVERY (sec_ok_light c) ls

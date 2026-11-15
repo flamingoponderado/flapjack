@@ -153,4 +153,58 @@ theorem updateEqZipFlookupExactHOL {α β : Type} [DecidableEq α]
               simp only [HolFiniteMapExact.lookup_updateListEq] at hstep
               exact hstep
 
+
+/-- Canonical standalone-map witness for the exact `opt_mmap_some_eq_zip_flookup`
+    parameter. -/
+theorem holFmapAsFiniteSupportParamWitness_optMmapSomeEqZipFlookupExactHOL_f
+    {α β : Type} (f : HolFiniteMapExact α β) :
+    holFiniteMapofBroad (holFiniteMaptoBroadlookup f) f.finiteSupport = f := by
+  cases f
+  rfl
+
+/-- Exact port of HOL `pan_commonProps$opt_mmap_some_eq_zip_flookup`
+    (`pan_commonPropsScript.sml:170-176`): `∀ xs f ys, ALL_DISTINCT xs ∧
+    LENGTH xs = LENGTH ys ⇒ OPT_MMAP (FLOOKUP (f |++ ZIP (xs,ys))) xs =
+    SOME ys`.  `f |++` is `updateListEq`, `OPT_MMAP` is `List.mapM`,
+    `FLOOKUP` is `.lookup`, and the map is a bare parameter entry.  Binder
+    order and the single conjunctive premise follow HOL. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "opt_mmap_some_eq_zip_flookup"
+  (fmap_as_finite_support_parameters := [f])]
+theorem optMmapSomeEqZipFlookupExactHOL {α β : Type} [DecidableEq α]
+    (xs : List α) (f : HolFiniteMapExact α β) (ys : List β)
+    (h : xs.Nodup ∧ xs.length = ys.length) :
+    xs.mapM (fun key => (f.updateListEq (xs.zip ys)).lookup key) = some ys := by
+  obtain ⟨hdistinct, hlen⟩ := h
+  have hraw := opt_mmap_some_eq_zip_flookup (α := α) (β := β) xs f.lookup ys
+    hdistinct hlen
+  simpa only [HolFiniteMapExact.lookup_updateListEq,
+    FUPDATE_LIST_HOL_eq_FUPDATE_LIST, FLOOKUP] using hraw
+
+/-- Canonical standalone-map witness for the exact `opt_mmap_disj_zip_flookup`
+    parameter. -/
+theorem holFmapAsFiniteSupportParamWitness_optMmapDisjZipFlookupExactHOL_f
+    {α β : Type} (f : HolFiniteMapExact α β) :
+    holFiniteMapofBroad (holFiniteMaptoBroadlookup f) f.finiteSupport = f := by
+  cases f
+  rfl
+
+/-- Exact port of HOL `pan_commonProps$opt_mmap_disj_zip_flookup`
+    (`pan_commonPropsScript.sml:188-194`): `∀ xs f ys zs, distinct_lists xs ys
+    ∧ LENGTH xs = LENGTH zs ⇒ OPT_MMAP (FLOOKUP (f |++ ZIP (xs,zs))) ys =
+    OPT_MMAP (FLOOKUP f) ys`.  HOL's Boolean `distinct_lists` is the tagged
+    `distinctListsHol`; `f |++` is `updateListEq`, `OPT_MMAP` is `List.mapM`,
+    and the map is a bare parameter entry. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "opt_mmap_disj_zip_flookup"
+  (fmap_as_finite_support_parameters := [f])]
+theorem optMmapDisjZipFlookupExactHOL {α β : Type} [DecidableEq α]
+    (xs : List α) (f : HolFiniteMapExact α β) (ys : List α) (zs : List β)
+    (h : distinctListsHol xs ys = true ∧ xs.length = zs.length) :
+    ys.mapM (fun key => (f.updateListEq (xs.zip zs)).lookup key) =
+      ys.mapM (fun key => f.lookup key) := by
+  obtain ⟨hdisj, hlen⟩ := h
+  have hraw := opt_mmap_disj_zip_flookup (α := α) (β := β) xs f.lookup ys zs
+    ((distinctListsHol_eq_true_iff_listDisjoint xs ys).mp hdisj) hlen
+  simpa only [HolFiniteMapExact.lookup_updateListEq,
+    FUPDATE_LIST_HOL_eq_FUPDATE_LIST, FLOOKUP] using hraw
+
 end Flapjack

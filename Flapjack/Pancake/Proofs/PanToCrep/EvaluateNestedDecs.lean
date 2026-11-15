@@ -385,48 +385,6 @@ private theorem nestedDecsUpdatedInput_eq_updateListEq
 recursive update state used by the induction helper is linked to the explicit
 `FUPDATE_LIST` ZIP input by `nestedDecsUpdatedInput_eq_updateListEq`. -/
 
-/-- Flapjack-shaped form of HOL `eval_nested_decs_seq_res_var_eq`
-    (`pan_to_crepProofScript.sml:596-620`), with separate premises and the
-    target run named by `let`. The tagged HOL-shaped statement is
-    `evalNestedDecsSeqResVarEqHOL` below; this form stays untagged. -/
-theorem evalNestedDecsSeqResVarEqCrepHOL {width : Nat} [NeZero width]
-    {σ : Type} (state : CrepSemHOLState width σ)
-    (expressions : List (CrepExpHOL width)) (names : List Nat)
-    (values : List (HolWordLab width)) (body : CrepProgHOL width)
-    (hEval : expressions.map (evalCrepSemHOLExpDefault state) = values.map some)
-    (hLength : names.length = expressions.length)
-    (hDistinct : distinctListsHol names (expressions.flatMap crepExpVarsHOL) = true)
-    (hNodup : names.Nodup) :
-    evalCrepSemHOLProgExact state (nestedDecsHOL names expressions body) =
-      let result := evalCrepSemHOLProgExact
-        { state with locals := state.locals.updateListEq (names.zip values) } body
-      (result.1, { result.2 with locals :=
-        ((List.zip names (names.map state.locals.lookup)).foldl
-          (fun current entry => HolFiniteMapExact.resVarEq current entry) result.2.locals) }) := by
-  let memDec : (address : BitVec width) → Decidable (state.memaddrs address) :=
-    fun address => Classical.propDecidable (state.memaddrs address)
-  let shMemDec : (address : BitVec width) → Decidable (state.shMemaddrs address) :=
-    fun address => Classical.propDecidable (state.shMemaddrs address)
-  have hEvalDef : evalCrepSemHOLExpDefault state = crepExactEvalExp state memDec := by
-    funext expression
-    simp [evalCrepSemHOLExpDefault, evalCrepSemHOLExpWithMemDec,
-      crepExactEvalExp_eq_eval]
-  have hEval' : expressions.map (crepExactEvalExp state memDec) = values.map some := by
-    rw [← hEvalDef]
-    exact hEval
-  have hported := evalNestedDecsSeqResVarEqCrepHOLWithDeciders state memDec shMemDec
-    expressions names values body hEval' hLength hDistinct hNodup
-  have hBodyExact :
-      evalCrepSemHOLProgExact
-          { state with locals := state.locals.updateListEq (names.zip values) } body =
-        evalCrepSemHOLProg (nestedDecsUpdatedInput state names values)
-          (nestedDecsMemDec state names values memDec)
-          (nestedDecsShMemDec state names values shMemDec) body := by
-    rw [← nestedDecsUpdatedInput_eq_updateListEq state names values]
-    exact evalCrepSemHOLProgExact_eq_core _ _ _ _
-  rw [hBodyExact]
-  simpa only [evalCrepSemHOLProgExact_eq_core, restoreNestedDecsLocals] using hported
-
 /-- Exact port of HOL `eval_nested_decs_seq_res_var_eq`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:596-620`):
     `!es ns t ev p. MAP (eval t) es = MAP SOME ev /\ LENGTH ns = LENGTH es /\
@@ -459,7 +417,35 @@ theorem evalNestedDecsSeqResVarEqHOL {width : Nat} [NeZero width] {σ : Type} :
               ((ns.zip (ns.map t.locals.lookup)).foldl
                 (fun current entry => HolFiniteMapExact.resVarEq current entry) r.locals) }) := by
   intro es ns t ev p ⟨hEval, hLength, hDistinct, hNodup⟩
-  have h := evalNestedDecsSeqResVarEqCrepHOL t es ns ev p hEval hLength hDistinct hNodup
+  have h : evalCrepSemHOLProgExact t (nestedDecsHOL ns es p) =
+      let result := evalCrepSemHOLProgExact
+        { t with locals := t.locals.updateListEq (ns.zip ev) } p
+      (result.1, { result.2 with locals :=
+        ((List.zip ns (ns.map t.locals.lookup)).foldl
+          (fun current entry => HolFiniteMapExact.resVarEq current entry) result.2.locals) }) := by
+    let memDec : (address : BitVec width) → Decidable (t.memaddrs address) :=
+      fun address => Classical.propDecidable (t.memaddrs address)
+    let shMemDec : (address : BitVec width) → Decidable (t.shMemaddrs address) :=
+      fun address => Classical.propDecidable (t.shMemaddrs address)
+    have hEvalDef : evalCrepSemHOLExpDefault t = crepExactEvalExp t memDec := by
+      funext expression
+      simp [evalCrepSemHOLExpDefault, evalCrepSemHOLExpWithMemDec,
+        crepExactEvalExp_eq_eval]
+    have hEval' : es.map (crepExactEvalExp t memDec) = ev.map some := by
+      rw [← hEvalDef]
+      exact hEval
+    have hported := evalNestedDecsSeqResVarEqCrepHOLWithDeciders t memDec shMemDec
+      es ns ev p hEval' hLength hDistinct hNodup
+    have hBodyExact :
+        evalCrepSemHOLProgExact
+            { t with locals := t.locals.updateListEq (ns.zip ev) } p =
+          evalCrepSemHOLProg (nestedDecsUpdatedInput t ns ev)
+            (nestedDecsMemDec t ns ev memDec)
+            (nestedDecsShMemDec t ns ev shMemDec) p := by
+      rw [← nestedDecsUpdatedInput_eq_updateListEq t ns ev]
+      exact evalCrepSemHOLProgExact_eq_core _ _ _ _
+    rw [hBodyExact]
+    simpa only [evalCrepSemHOLProgExact_eq_core, restoreNestedDecsLocals] using hported
   rw [h]
 
 /-- Exact port of HOL `globals_lookup` (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:435-438`):
@@ -617,9 +603,15 @@ theorem evaluateNestedDecsLoadGlobalsCrepHOL {width : Nat} [NeZero width]
       distinctListsHol names (expressions.flatMap crepExpVarsHOL) = true := by
     rw [hLoadVariables]
     simp [distinctListsHol]
-  have hNested := evalNestedDecsSeqResVarEqCrepHOL state expressions names
-    values body hLoadEval (by simpa [hLoadLength] using hLength)
-    hExpressionDistinct hDistinct
+  have htwin := evalNestedDecsSeqResVarEqHOL expressions names state values body
+    ⟨hLoadEval, by simpa [hLoadLength] using hLength, hExpressionDistinct, hDistinct⟩
+  have hNested : evalCrepSemHOLProgExact state (nestedDecsHOL names expressions body) =
+      let result := evalCrepSemHOLProgExact
+        { state with locals := state.locals.updateListEq (names.zip values) } body
+      (result.1, { result.2 with locals :=
+        ((List.zip names (names.map state.locals.lookup)).foldl
+          (fun current entry => HolFiniteMapExact.resVarEq current entry) result.2.locals) }) := by
+    simpa using htwin
   simpa [expressions, count] using hNested
 
 end Flapjack

@@ -1,0 +1,1 @@
+gen_state_typed=GenState::num -> num list -> gen_state

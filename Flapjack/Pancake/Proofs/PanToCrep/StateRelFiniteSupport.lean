@@ -107,6 +107,32 @@ theorem holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact
     PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context :=
   PanToCrepContextExact.holFmapAsFiniteSupportWitness context
 
+namespace PanToCrepStateRelFiniteSupport
+
+/-- Local same-module witness for the canonical finite-support
+`PanSemStateFiniteExact` carrier used by the `fmap_as_finite_support` qualified
+port below (an imported witness may be re-exported as a local one). -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
+    (∀ (state : PanSemStateExact width σ) (h : state.FiniteSupport),
+        (PanSemStateFiniteExact.ofExact state h).toExact = state) ∧
+    (∀ state : PanSemStateFiniteExact width σ,
+        PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
+  PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+end PanToCrepStateRelFiniteSupport
+
+/-- Exact port of HOL `locals_id_update` (`pan_to_crepProofScript.sml:4054`).
+The typed capture `locals_id_update_typed` gives
+`∀(t :(α, β) panSem$state). t with locals := t.locals = t`; the record
+identity holds on the finite-support state carrier with HOL's `locals`
+finite map, and the only word use is the reviewed type-indexed `'a word`. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_id_update"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem panToCrepLocalsUpdateId {width : Nat} {σ : Type} [NeZero width]
+    (t : PanSemStateFiniteExact width σ) :
+    { t with locals := t.locals } = t := rfl
+
 /-- Exact port of HOL `state_rel_def`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:45-58`). `source.globals`
     is the only finite-map field of an exact state carrier that the relation

@@ -1,0 +1,1 @@
+NextStateARM8_def_typed=∀(s0 :arm8_state). NextStateARM8 s0 = (let (s1 :arm8_state) = Next s0 in if s1.exception = NoException then SOME s1 else (NONE :arm8_state option))

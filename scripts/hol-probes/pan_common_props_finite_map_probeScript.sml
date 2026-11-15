@@ -27,3 +27,27 @@ val _ = (print "update_eq_zip_flookup_typed=";
   print "\n");
 val _ = (print "update_eq_zip_flookup_hypotheses=";
   print (Int.toString (length (hyp update_eq_zip_flookup))); print "\n");
+
+val _ = (print "opt_mmap_some_eq_zip_flookup_typed=";
+  Lib.with_flag (Globals.show_types, true) print_term (concl opt_mmap_some_eq_zip_flookup);
+  print "\n");
+val _ = (print "opt_mmap_some_eq_zip_flookup_hypotheses=";
+  print (Int.toString (length (hyp opt_mmap_some_eq_zip_flookup))); print "\n");
+
+val _ = (print "opt_mmap_disj_zip_flookup_typed=";
+  Lib.with_flag (Globals.show_types, true) print_term (concl opt_mmap_disj_zip_flookup);
+  print "\n");
+val _ = (print "opt_mmap_disj_zip_flookup_hypotheses=";
+  print (Int.toString (length (hyp opt_mmap_disj_zip_flookup))); print "\n");
+
+val _ = (print "fm_empty_zip_alist_typed=";
+  Lib.with_flag (Globals.show_types, true) print_term (concl fm_empty_zip_alist);
+  print "\n");
+val _ = (print "fm_empty_zip_alist_hypotheses=";
+  print (Int.toString (length (hyp fm_empty_zip_alist))); print "\n");
+
+val _ = (print "fm_empty_zip_flookup_typed=";
+  Lib.with_flag (Globals.show_types, true) print_term (concl fm_empty_zip_flookup);
+  print "\n");
+val _ = (print "fm_empty_zip_flookup_hypotheses=";
+  print (Int.toString (length (hyp fm_empty_zip_flookup))); print "\n");

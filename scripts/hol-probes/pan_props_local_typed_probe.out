@@ -1,0 +1,13 @@
+functions_FILTER_prime_typed=∀(prog :α decl list). functions (FILTER (is_decl :α decl -> bool) prog) = ([] :(mlstring # (mlstring # shape) list # α prog # shape) list)
+is_wf_shape_v_nil_step1_typed=∀(sctxt :(mlstring # α) list) (v :β v). sctxt = ([] :(mlstring # α) list) ∧ is_wf_shape sctxt (shape_of v) ⇒ is_wf_shape_v sctxt v
+dropWhile_eq_cons_IMP_typed=dropWhile (P :α -> bool) (xs :α list) = (y :α)::(ys :α list) ⇒ ∃(n :num). n < LENGTH xs ∧ y = xs❲n❳ ∧ ¬P y ∧ DROP n xs = y::ys
+not_mem_map_flat_typed=¬MEM (y :α) (FLAT (MAP (f :β -> α list) (xs :β list))) ⇔ ∀(x :β). MEM x xs ⇒ ¬MEM y (f x)
+opt_mmap_eq_some_helper_typed=∀(xs :α list) (zs :β list). OPT_MMAP (f :α -> β option) xs = SOME zs ∧ (∀(x :α). MEM x xs ⇒ ∀(y :β). f x = SOME y ⇒ (g :α -> β option) x = SOME y) ⇒ OPT_MMAP g xs = SOME zs
+FEVERY_res_var_FLOOKUP_typed=FEVERY (P :α # β -> bool) (fm :α |-> β) ∧ FEVERY P (fm2 :α |-> β) ⇒ FEVERY P (res_var fm ((nm :α),FLOOKUP fm2 nm))
+opt_mmap_helper_thm_typed=∀(f :(α, β) state -> (α, β) state) (st :(α, β) state) (es :α exp list). (∀(x :α exp). MEM x es ⇒ (λ(e :α exp). eval (f st) e) x = (λ(e :α exp). eval st e) x) ⇒ OPT_MMAP (λ(e :α exp). eval (f st) e) es = OPT_MMAP (λ(e :α exp). eval st e) es
+structs_simps_typed=(dec_clock (s :(α, β) state)).structs = s.structs ∧ (empty_locals s).structs = s.structs ∧ (dec_clock s).globals = s.globals ∧ (empty_locals s).globals = s.globals ∧ (dec_clock s).locals = s.locals ∧ (empty_locals s).locals = (FEMPTY :mlstring |-> α v)
+evaluate_structs_invariant_typed=evaluate ((p :α prog),(s :(α, β) state)) = ((res :α result option),(s' :(α, β) state)) ⇒ s'.structs = s.structs
+list_rel_length_shape_of_flatten_better_typed=∀(vshs :shape list) (args :α v list). LIST_REL (λ(vsh :shape) (arg :α v). vsh = shape_of arg) vshs args ∧ EVERY is_wf_shape_v_nil args ⇒ size_of_shape (Comb vshs) = LENGTH (FLAT (MAP (flatten :α v -> α word_lab list) args))
+is_wf_shape_nil_typed=is_wf_shape ([] :(mlstring # struct_info) list)
+fdoms_eq_flookup_some_none_typed=∀(fm :α |-> β) (fm' :α |-> γ) (n :α) (v :β) (v' :δ). FDOM fm = FDOM fm' ∧ FLOOKUP fm n = SOME v ⇒ ∃(v :γ). FLOOKUP fm' n = SOME v
+is_wf_shape_v_nil_typed=(is_wf_shape_v ([] :(mlstring # struct_info) list) :α v -> bool)

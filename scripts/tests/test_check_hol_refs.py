@@ -2516,6 +2516,42 @@ class DataToWordAssignDeclarationsTest(unittest.TestCase):
         self.assertEqual(parse(path, source.replace("val thm = Define q", "val thm = other q")), [])
 
 
+class SmlCommentDeclarationsTest(unittest.TestCase):
+    """SML comments nest and string literals are not comment starts."""
+
+    def fixture(self, text):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        path = Path(directory.name) / "fixtureScript.sml"
+        path.write_text(text)
+        return path
+
+    def test_name_only_in_comment_is_rejected(self):
+        path = self.fixture(
+            "(* Theorem commented_thm: T\nProof simp[] QED *)\n"
+            "Theorem live_thm: T Proof simp[] QED\n")
+        self.assertEqual(sorted(DECL(path, {})), ["live_thm"])
+        self.assertIn("declares no `commented_thm`",
+                      REF_ERROR(path, "commented_thm", None, {}))
+        self.assertIsNone(REF_ERROR(path, "live_thm", None, {}))
+
+    def test_nested_comment_hides_its_declarations(self):
+        path = self.fixture(
+            "(* outer (* inner *) Theorem dead_thm: T Proof simp[] QED *)\n"
+            "Theorem live_thm: T Proof simp[] QED\n")
+        self.assertEqual(sorted(DECL(path, {})), ["live_thm"])
+        self.assertIn("declares no `dead_thm`", REF_ERROR(path, "dead_thm", None, {}))
+        self.assertIsNone(REF_ERROR(path, "live_thm", None, {}))
+
+    def test_comment_open_inside_string_literal_is_not_a_comment(self):
+        path = self.fixture(
+            'Definition string_def:\n  string_def = "(* not a comment"\nEnd\n'
+            "Theorem live_thm: T Proof simp[] QED\n")
+        self.assertEqual(sorted(DECL(path, {})), ["live_thm", "string_def"])
+        self.assertIsNone(REF_ERROR(path, "string_def", None, {}))
+        self.assertIsNone(REF_ERROR(path, "live_thm", None, {}))
+
+
 class HolRelnTupleDeclarationsTest(unittest.TestCase):
     def fixture(self, text):
         directory = tempfile.TemporaryDirectory()

@@ -1,0 +1,1 @@
+check_res_size_of_typed=check_res (refs :v ref sptree$num_map) (size_of (lims :limits) (vs :v list) refs (seen :sptree$num_set)) = size_of lims vs refs seen

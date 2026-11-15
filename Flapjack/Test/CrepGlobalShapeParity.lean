@@ -363,17 +363,10 @@ example :
     emptyCrepHolLocalsW localBase = emptyCrepHolLocals localBase :=
   emptyCrepHolLocalsW_eq_emptyCrepHolLocals localBase
 
-example :
-    decCrepHolClockW localBase = decCrepHolClock localBase :=
-  decCrepHolClockW_eq_decCrepHolClock localBase
-
-example :
-    fixCrepHolClockW localBase
-        ((CrepRuntimeResult.normal : CrepRuntimeResult (BitVec 64) Unit), localBase) =
-      fixCrepHolClock localBase
-        ((CrepRuntimeResult.normal : CrepRuntimeResult (BitVec 64) Unit), localBase) :=
-  fixCrepHolClockW_eq_fixCrepHolClock localBase
-    ((CrepRuntimeResult.normal : CrepRuntimeResult (BitVec 64) Unit), localBase)
+/-- HOL `dec_clock` oracle on the tagged finite-support `decClockCrepSemHOL`:
+    the clock decrements by one and the other fields are untouched. -/
+example : (decClockCrepSemHOL localBaseFinite).clock = localBaseFinite.clock - 1 := by
+  rfl
 
 /-- HOL `fix_clock` leaves the result component unconstrained, so the tagged
     finite-support counterpart is result-polymorphic: here the result carrier
@@ -381,13 +374,6 @@ example :
 example :
     (fixClockCrepSemHOL localBaseFinite ((true, localBaseFinite))).1 = true := by
   rfl
-
-/-- HOL `fix_clock` leaves the result component unconstrained: the original
-    width-indexed `fixCrepHolClockW` threads a plain `Bool` result through
-    unchanged (kept beside the finite-support `fixClockCrepSemHOL` example). -/
-example :
-    (fixCrepHolClockW { localBase with clock := 5 } ((true, localBase))).1 = true := by
-  simp [fixCrepHolClockW]
 
 /-- HOL `fix_clock_IMP_LESS_EQ` oracle: the clock clamped by the tagged
     finite-support result-polymorphic `fixClockCrepSemHOL` never exceeds the

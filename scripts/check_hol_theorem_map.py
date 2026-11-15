@@ -381,15 +381,6 @@ DOCUMENTED_MISMATCHES = {
         "StructContextExact; the induction principle sizeOfShapeWithContextHOL.induct is stated "
         "over that carrier."
     ),
-    ("Flapjack/Pancake/Proofs/WordConvs/SSAFlatInst.lean", "ssaCcTrans_flatExpInst"): (
-        "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
-        "ssa_cc_trans_flat_exp_conventions",
-        "codewhale source comparison (2026-11-14, task 171): tag withdrawn. HOL quantifies an "
-        "arbitrary prog with ssa, na and the loop-table list and concludes flat_exp_conventions "
-        "(FST (ssa_cc_trans prog ssa na lt)) from flat_exp_conventions prog; the Lean declaration "
-        "is the prog = Inst instruction instance, a specialization rather than an exact port. The "
-        "exact general port is the tagged ssaCcTrans_flatExpConventions in SSAFlatProgram.lean."
-    ),
     ("Flapjack/Compiler/Backend/ClosFvs/Source.lean", "compile"): ("cakeml/compiler/backend/clos_fvsScript.sml", "compile_def", "The executable uses removeList; compileSource is the source-shaped definition and compileSource_eq_compile proves agreement."),
     ("Flapjack/Compiler/Backend/ClosFvs/Source.lean", "compileInc"): ("cakeml/compiler/backend/clos_fvsScript.sml", "compile_inc_def", "The executable uses compile; compileIncSource is the source-shaped definition and compileIncSource_eq_compileInc proves agreement."),
     ("Flapjack/Compiler/Backend/ClosKnown/Compile.lean", "knownCompileInc"): ("cakeml/compiler/backend/clos_knownScript.sml", "known_compile_inc_def", "The executable uses the total traversals; knownCompileIncSource is the source-shaped definition and knownCompileIncSource_eq proves agreement."),
@@ -407,13 +398,13 @@ DOCUMENTED_MISMATCHES = {
     ('Flapjack/Pancake/Semantics/PanSem/ValueHOL.lean', 'shapeOfHOLExact'): ('cakeml/pancake/semantics/panSemScript.sml', 'shape_of_def', 'HOL-shaped word-indexed definition retained for faithful proofs; the required word qualifier is blocked until the checker supports the nested ValueHOL to HolWordLab to BitVec carrier.'),
     ('Flapjack/Pancake/CrepToLoop.lean', 'rtVars'): ('cakeml/pancake/crep_to_loopScript.sml', 'rt_vars_def', 'Raw function map admits infinite support, unlike HOL finite maps; retained for faithful finite-map lookup proofs.'),
     ('Flapjack/Pancake/CrepToLoop/StateRel.lean', 'makeVmapHOL'): ('cakeml/pancake/crep_to_loopScript.sml', 'make_vmap_def', 'Raw function map admits infinite support, unlike HOL finite maps; retained for faithful finite-map lookup proofs.'),
-    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'ctxtMax'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'ctxt_max_def', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
-    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'noOverlap'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'no_overlap_def', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
-    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'fmEmptyZipAlist'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'fm_empty_zip_alist', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
-    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'fmEmptyZipFlookup'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'fm_empty_zip_flookup', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
-    ('Flapjack/FiniteMap/Basic.lean', 'opt_mmap_some_eq_zip_flookup'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'opt_mmap_some_eq_zip_flookup', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
-    ('Flapjack/FiniteMap/Basic.lean', 'opt_mmap_disj_zip_flookup'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'opt_mmap_disj_zip_flookup', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
-    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'updateEqZipFlookupHOL'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'update_eq_zip_flookup', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs.'),
+    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'ctxtMax'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'ctxt_max_def', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs. The exact port is the tagged optMmapSomeEqZipFlookupExactHOL / optMmapDisjZipFlookupExactHOL in PanCommonProps/FiniteMapExact.lean.'),
+    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'noOverlap'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'no_overlap_def', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs. The exact port is the tagged optMmapSomeEqZipFlookupExactHOL / optMmapDisjZipFlookupExactHOL in PanCommonProps/FiniteMapExact.lean.'),
+    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'fmEmptyZipAlist'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'fm_empty_zip_alist', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs. The exact port is the tagged optMmapSomeEqZipFlookupExactHOL / optMmapDisjZipFlookupExactHOL in PanCommonProps/FiniteMapExact.lean.'),
+    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'fmEmptyZipFlookup'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'fm_empty_zip_flookup', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs. The exact port is the tagged optMmapSomeEqZipFlookupExactHOL / optMmapDisjZipFlookupExactHOL in PanCommonProps/FiniteMapExact.lean.'),
+    ('Flapjack/FiniteMap/Basic.lean', 'opt_mmap_some_eq_zip_flookup'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'opt_mmap_some_eq_zip_flookup', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs. The exact port is the tagged optMmapSomeEqZipFlookupExactHOL / optMmapDisjZipFlookupExactHOL in PanCommonProps/FiniteMapExact.lean.'),
+    ('Flapjack/FiniteMap/Basic.lean', 'opt_mmap_disj_zip_flookup'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'opt_mmap_disj_zip_flookup', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs. The exact port is the tagged optMmapSomeEqZipFlookupExactHOL / optMmapDisjZipFlookupExactHOL in PanCommonProps/FiniteMapExact.lean.'),
+    ('Flapjack/Pancake/Semantics/PanCommonProps.lean', 'updateEqZipFlookupHOL'): ('cakeml/pancake/semantics/pan_commonPropsScript.sml', 'update_eq_zip_flookup', 'Raw function maps admit infinite support and Boolean equality adds assumptions absent from HOL; retained for faithful finite-map lookup proofs. The exact port is the tagged optMmapSomeEqZipFlookupExactHOL / optMmapDisjZipFlookupExactHOL in PanCommonProps/FiniteMapExact.lean.'),
     ("Flapjack/Pancake/Proofs/CrepInline/UnreachElimProgSize.lean", "unreachElimProgSize"): (
         "cakeml/pancake/proofs/crep_inlineProofScript.sml", "unreach_elim_prog_size",
         "flapjack-ds10 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.5.50; documented_mismatch). HOL unreach_elim_prog_size (crep_inlineProofScript.sml:1730-1733), elaborated type in scripts/hol-probes/crep_inline_prog_size_type_probe.out, is forall (p q : 'a crepLang$prog) (r : early_exit option) (f : 'a -> num). unreach_elim p = (q,r) ==> prog_size f q <= prog_size f p, where 'a is the same bare HOL type index that indexes 'a word. The untagged Lean declaration quantifies an independent {alpha : Type} (f : alpha -> Nat), an extra type quantifier: it is implied by each HOL instance only because prog_size never applies f, which does not license replacing the bare index carrier. A BitVec-width-domain rendering was attempted and rejected by coordinator review (words_as_type_indexed_bitvec licenses HOL word values, not arbitrary bare alpha; checker-green is not review acceptance). Faithful translation/review of the bare index carrier, or a reviewed size-family translation removing the irrelevant function uniformly, remains open."
@@ -797,24 +788,6 @@ DOCUMENTED_MISMATCHES = {
         "finite-support carrier; tag remains withdrawn pending "
         "flapjack-pxn.18.3.7.1.3.1.1.3.1."
     ),
-    ("Flapjack/Pancake/Semantics/CrepSem.lean", "decCrepHolClockW"): (
-        "cakeml/pancake/semantics/crepSemScript.sml",
-        "dec_clock_def",
-        "Codex (source comparison with crepSemScript.sml:145-148: the clause "
-        "`dec_clock s = s with clock := s.clock - 1` matches the Lean clock "
-        "decrement, and [NeZero width] excludes the invalid zero word dimension. "
-        "However the quantified whole-state carrier CrepHolState (BitVec width) "
-        "stores locals/globals/code as unrestricted Nat-to-Option, "
-        "BitVec-5-to-Option and FunName-to-Option functions that admit infinite "
-        "support, a strict superset of HOL's finite maps (crepSemScript.sml:20-31). "
-        "names_as_string cannot authorize that carrier and no NameRanged byte "
-        "witness applies to a state result. Direct HOL rows dec_clock_clock / "
-        "dec_clock_globals / dec_clock_be / dec_clock_top are in "
-        "crep_dec_clock_simp_probe.out and sampled by "
-        "Flapjack/Test/CrepGlobalShapeParity.lean:288-289. No exact "
-        "finite-support carrier; tag remains withdrawn pending "
-        "flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
     ("Flapjack/Pancake/Semantics/CrepSem.lean", "emptyCrepHolLocalsW"): (
         "cakeml/pancake/semantics/crepSemScript.sml",
         "empty_locals_def",
@@ -832,65 +805,6 @@ DOCUMENTED_MISMATCHES = {
         "Flapjack/Test/CrepGlobalShapeParity.lean:284-285. No exact "
         "finite-support carrier; tag remains withdrawn pending "
         "flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Semantics/CrepSem.lean", "fixCrepHolClockW"): (
-        "cakeml/pancake/semantics/crepSemScript.sml",
-        "fix_clock_def",
-        "flapjack-ds4 (source comparison with crepSemScript.sml:150-152: the "
-        "clause `fix_clock old_s (res, new_s) = (res, new_s with clock := if "
-        "old_s.clock < new_s.clock then old_s.clock else new_s.clock)` matches the "
-        "Lean clamp clause for clause, with HOL's result/state pair exposed as the "
-        "explicit `step` binder. However the quantified whole-state carrier "
-        "CrepHolState (BitVec width) stores locals/globals/code as unrestricted "
-        "Nat-to-Option, BitVec-5-to-Option and FunName-to-Option functions that "
-        "admit infinite support, a strict superset of HOL's finite maps "
-        "(crepSemScript.sml:20-31). names_as_string cannot authorize that carrier "
-        "and no NameRanged byte witness applies to a state result. Direct HOL rows "
-        "fix_clock_clamps / fix_clock_keeps_lower are in crep_fix_clock_probe.out "
-        "and the clamp is sampled by "
-        "Flapjack/Test/CrepGlobalShapeParity.lean:292-296. On the CrepSemHOLState "
-        "finite-support carrier the set_var/set_globals/upd_locals/empty_locals/"
-        "res_var bridges exist, but there is still no fix_clock bridge. Tag remains "
-        "withdrawn pending flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "foldl_res_var_zip_lookup_var_hol"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "FOLDL_res_var_ZIP_lookup_var",
-        "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
-        "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq encodes HOL equality and "
-        "removes the [BEq]/[LawfulBEq] side conditions, but the statement quantifies the raw "
-        "function carrier FiniteMap alpha beta := alpha -> Option beta "
-        "(Flapjack/FiniteMap/Basic.lean:19), which admits infinite-support inhabitants whereas "
-        "HOL alpha |-> beta is finite-support. Tag withdrawn; faithful port over "
-        "HolFiniteMapExact (Flapjack/Pancake/Semantics/CrepSem/HOLState.lean) tracked by bead "
-        "flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "res_var_commutes_strong_hol"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "res_var_commutes_strong",
-        "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
-        "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq removes the BEq side condition, "
-        "but resVarHOL quantifies the raw function carrier FiniteMap, which admits infinite "
-        "support whereas HOL res_var ranges over finite maps. Tag withdrawn; faithful port over "
-        "HolFiniteMapExact tracked by bead flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "res_var_foldl_commutes_strong_hol"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "res_var_foldl_commutes_strong",
-        "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
-        "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq removes the BEq side condition, "
-        "but resVarHOL/List.foldl quantify the raw function carrier FiniteMap, which admits "
-        "infinite support whereas HOL res_var/foldl range over finite maps. Tag withdrawn; "
-        "faithful port over HolFiniteMapExact tracked by bead flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "flookup_res_var_is_mem_zip_eq_hol"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "flookup_res_var_is_mem_zip_eq",
-        "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
-        "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq removes the BEq side condition, "
-        "but resVarHOL/FLOOKUP quantify the raw function carrier FiniteMap, which admits infinite "
-        "support whereas HOL res_var/FLOOKUP range over finite maps. Tag withdrawn; faithful port "
-        "over HolFiniteMapExact tracked by bead flapjack-pxn.18.3.7.1.3.1.1.3.1."
     ),
     ("Flapjack/Pancake/Semantics/CrepSem/HOLState.lean", "resVarEq"): (
         "cakeml/pancake/semantics/crepSemScript.sml",

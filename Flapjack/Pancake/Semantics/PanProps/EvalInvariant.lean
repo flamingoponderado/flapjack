@@ -125,7 +125,7 @@ private theorem evalListHOLExact_transfer_of_pointwise {width : Nat} {σ : Type}
     (h : evalListHOLExact (emptyLocalsHOLExact state) expressions = some values) :
     evalListHOLExact state expressions = some values := by
   rw [evalListHOLExact_eq_mapM] at h ⊢
-  exact optMmapEqSomeHelper _ _ expressions values h hpoint
+  exact optMmapEqSomeHelper _ _ expressions values ⟨h, hpoint⟩
 
 /-- Pointwise transfer of a named-struct field-list success from the
     empty-locals state to the original state. -/
@@ -137,7 +137,7 @@ private theorem evalListFieldsHOLExact_transfer_of_pointwise {width : Nat} {σ :
     (h : evalListFieldsHOLExact (emptyLocalsHOLExact state) fields = some values) :
     evalListFieldsHOLExact state fields = some values := by
   rw [evalListFieldsHOLExact_eq_mapM] at h ⊢
-  refine optMmapEqSomeHelper _ _ fields values h ?_
+  refine optMmapEqSomeHelper _ _ fields values ⟨h, ?_⟩
   rintro ⟨name, x⟩ hpair y hy
   simp only [Option.map_eq_some_iff] at hy
   obtain ⟨w, hx, rfl⟩ := hy

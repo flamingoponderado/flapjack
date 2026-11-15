@@ -1,0 +1,3 @@
+compiler_args_typed=Type compiler_args = :(num # num) # v # dec list
+eval_oracle_fun_typed=Type eval_oracle_fun = :num -> (num # num) # v # dec list
+store_ffi_typed=Type store_ffi = :φ store_v list # 'ffi ffi_state

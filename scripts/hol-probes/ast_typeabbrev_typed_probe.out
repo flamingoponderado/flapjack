@@ -1,0 +1,6 @@
+modN_typed=Type modN = :mlstring
+varN_typed=Type varN = :mlstring
+conN_typed=Type conN = :mlstring
+typeN_typed=Type typeN = :mlstring
+tvarN_typed=Type tvarN = :mlstring
+type_def_typed=Type type_def = :(mlstring list # mlstring # (mlstring # ast_t list) list) list

@@ -30,6 +30,16 @@ abbrev CrepAddClock {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) (ck : Nat) : CrepSemHOLState width σ :=
   { state with clock := state.clock + ck }
 
+/-- Flapjack-only congruence: an evaluator equation carries through the clock
+    addition on the result pair.  HOL closes these branches with pair equality;
+    the Lean statements add `CrepAddClock` to the state component. -/
+private theorem crepPairAddClock_congr {width : Nat} [NeZero width] {σ : Type}
+    {r₁ r₂ : Option (CrepResultHOLExact width)} {s₁ s₂ : CrepSemHOLState width σ}
+    (ck : Nat) (h : (r₁, s₁) = (r₂, s₂)) :
+    (r₁, CrepAddClock s₁ ck) = (r₂, CrepAddClock s₂ ck) := by
+  obtain ⟨rfl, rfl⟩ := h
+  rfl
+
 @[simp] theorem CrepAddClock_clock {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) (ck : Nat) :
     (CrepAddClock state ck).clock = state.clock + ck := rfl
@@ -280,17 +290,13 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
   have hmain : ∀ v v1, P (v, v1) := by
     refine evalCrepSemHOLProgExact_induct P ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
     · intro s res st ck heval hnt
-      rw [evalCrepSemHOLProgExact_skip] at heval
-      obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-      rw [evalCrepSemHOLProgExact_skip]
+      rw [evalCrepSemHOLProgExact_skip] at heval ⊢
+      exact crepPairAddClock_congr ck heval
     · intro v e prog s ih res st ck heval hnt
       rw [evalCrepSemHOLProgExact_dec] at heval ⊢
       rw [crepExactEvalExpClassical_addClock] at ⊢
       cases hval : crepExactEvalExpClassical s e with
-      | none =>
-          simp only [hval] at heval ⊢
-          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-          rfl
+      | none => simpa only [hval] using crepPairAddClock_congr ck heval
       | some value =>
           simp only [hval] at heval ⊢
           cases hstep : evalCrepSemHOLProgExact (CrepSemHOLState.setVar v value s) prog with
@@ -306,60 +312,39 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
     · intro lhss pop rhss s res st ck heval hnt
       rw [evalCrepSemHOLProgExact_primitive] at heval ⊢
       cases hmap : rhss.mapM s.locals.lookup with
-      | none =>
-          simp only [hmap] at heval ⊢
-          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-          rfl
+      | none => simpa only [hmap] using crepPairAddClock_congr ck heval
       | some ws =>
           simp only [hmap] at heval ⊢
           cases hprim : crepPrimopHOLExact pop ws with
-          | none =>
-              simp only [hprim] at heval ⊢
-              obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-              rfl
+          | none => simpa only [hprim] using crepPairAddClock_congr ck heval
           | some results =>
               simp only [hprim] at heval ⊢
               by_cases hcond : ((decide (lhss.length = results.length) &&
                   lhss.all (fun v => (s.locals.lookup v).isSome)) && decide lhss.Nodup) = true
               · rw [if_pos hcond] at heval ⊢
-                obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                rfl
+                exact crepPairAddClock_congr ck heval
               · rw [if_neg hcond] at heval ⊢
-                obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                rfl
+                exact crepPairAddClock_congr ck heval
     · intro v src s res st ck heval hnt
       rw [evalCrepSemHOLProgExact_assign] at heval ⊢
       rw [crepExactEvalExp_addClock] at ⊢
       cases hsrc : crepExactEvalExp s (fun a => Classical.propDecidable (s.memaddrs a)) src with
-      | none =>
-          simp only [hsrc] at heval ⊢
-          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-          rfl
+      | none => simpa only [hsrc] using crepPairAddClock_congr ck heval
       | some w =>
           simp only [hsrc] at heval ⊢
           cases hlook : s.locals.lookup v with
-          | none =>
-              simp only [hlook] at heval ⊢
-              obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-              rfl
+          | none => simpa only [hlook] using crepPairAddClock_congr ck heval
           | some val =>
-              simp only [hlook] at heval ⊢
-              obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-              rfl
+              simpa only [hlook, CrepSemHOLState.setVar_addClock]
+                using crepPairAddClock_congr ck heval
     · intro dst src s res st ck heval hnt
       rw [evalCrepSemHOLProgExact_store] at heval ⊢
       rw [crepExactEvalExp_addClock, crepExactEvalExp_addClock] at ⊢
       cases hdst : crepExactEvalExp s (fun a => Classical.propDecidable (s.memaddrs a)) dst with
-      | none =>
-          simp only [hdst] at heval ⊢
-          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-          rfl
+      | none => simpa only [hdst] using crepPairAddClock_congr ck heval
       | some dv =>
           cases hsrc : crepExactEvalExp s (fun a => Classical.propDecidable (s.memaddrs a)) src with
-          | none =>
-              simp only [hdst, hsrc] at heval ⊢
-              obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-              rfl
+          | none => simpa only [hdst, hsrc] using crepPairAddClock_congr ck heval
           | some sv =>
               cases dv with
               | word account =>
@@ -367,27 +352,17 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
                   | word w =>
                       cases hdec : (fun a => Classical.propDecidable (s.memaddrs a)) account with
                       | isTrue ht =>
-                          simp only [hdst, hsrc, hdec] at heval ⊢
-                          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                          rfl
+                          simpa only [hdst, hsrc, hdec] using crepPairAddClock_congr ck heval
                       | isFalse hf =>
-                          simp only [hdst, hsrc, hdec] at heval ⊢
-                          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                          rfl
+                          simpa only [hdst, hsrc, hdec] using crepPairAddClock_congr ck heval
     · intro dst src s res st ck heval hnt
       rw [evalCrepSemHOLProgExact_store32] at heval ⊢
       rw [crepExactEvalExp_addClock, crepExactEvalExp_addClock] at ⊢
       cases hdst : crepExactEvalExp s (fun a => Classical.propDecidable (s.memaddrs a)) dst with
-      | none =>
-          simp only [hdst] at heval ⊢
-          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-          rfl
+      | none => simpa only [hdst] using crepPairAddClock_congr ck heval
       | some dv =>
           cases hsrc : crepExactEvalExp s (fun a => Classical.propDecidable (s.memaddrs a)) src with
-          | none =>
-              simp only [hdst, hsrc] at heval ⊢
-              obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-              rfl
+          | none => simpa only [hdst, hsrc] using crepPairAddClock_congr ck heval
           | some sv =>
               cases dv with
               | word address =>
@@ -397,28 +372,18 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
                       cases hstore : crepExactMemStore32 s
                           (fun a => Classical.propDecidable (s.memaddrs a)) address
                           (BitVec.ofNat 32 w.toNat) with
-                      | none =>
-                          simp only [hdst, hsrc, hstore] at heval ⊢
-                          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                          rfl
+                      | none => simpa only [hdst, hsrc, hstore]
+                        using crepPairAddClock_congr ck heval
                       | some memory =>
-                          simp only [hdst, hsrc, hstore] at heval ⊢
-                          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                          rfl
+                          simpa only [hdst, hsrc, hstore] using crepPairAddClock_congr ck heval
     · intro dst src s res st ck heval hnt
       rw [evalCrepSemHOLProgExact_storeByte] at heval ⊢
       rw [crepExactEvalExp_addClock, crepExactEvalExp_addClock] at ⊢
       cases hdst : crepExactEvalExp s (fun a => Classical.propDecidable (s.memaddrs a)) dst with
-      | none =>
-          simp only [hdst] at heval ⊢
-          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-          rfl
+      | none => simpa only [hdst] using crepPairAddClock_congr ck heval
       | some dv =>
           cases hsrc : crepExactEvalExp s (fun a => Classical.propDecidable (s.memaddrs a)) src with
-          | none =>
-              simp only [hdst, hsrc] at heval ⊢
-              obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-              rfl
+          | none => simpa only [hdst, hsrc] using crepPairAddClock_congr ck heval
           | some sv =>
               cases dv with
               | word address =>
@@ -428,34 +393,23 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
                       cases hstore : crepExactMemStoreByte s
                           (fun a => Classical.propDecidable (s.memaddrs a)) address
                           (UInt8.ofNat w.toNat) with
-                      | none =>
-                          simp only [hdst, hsrc, hstore] at heval ⊢
-                          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                          rfl
+                      | none => simpa only [hdst, hsrc, hstore]
+                        using crepPairAddClock_congr ck heval
                       | some memory =>
-                          simp only [hdst, hsrc, hstore] at heval ⊢
-                          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                          rfl
+                          simpa only [hdst, hsrc, hstore] using crepPairAddClock_congr ck heval
     · intro dst src s res st ck heval hnt
       rw [evalCrepSemHOLProgExact_storeGlob] at heval ⊢
       rw [crepExactEvalExp_addClock] at ⊢
       cases hsrc : crepExactEvalExp s (fun a => Classical.propDecidable (s.memaddrs a)) src with
-      | none =>
-          simp only [hsrc] at heval ⊢
-          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-          rfl
+      | none => simpa only [hsrc] using crepPairAddClock_congr ck heval
       | some w =>
-          simp only [hsrc] at heval ⊢
-          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-          rfl
+          simpa only [hsrc, CrepSemHOLState.setGlobals_addClock]
+            using crepPairAddClock_congr ck heval
     · intro operator name address s res st ck heval hnt
       rw [evalCrepSemHOLProgExact_shMem] at heval ⊢
       rw [crepExactEvalExp_addClock] at ⊢
       cases haddr : crepExactEvalExp s (fun a => Classical.propDecidable (s.memaddrs a)) address with
-      | none =>
-          simp only [haddr] at heval ⊢
-          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-          rfl
+      | none => simpa only [haddr] using crepPairAddClock_congr ck heval
       | some av =>
           cases av with
           | word addressValue =>
@@ -463,10 +417,7 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
               by_cases hload : crepIsLoadMemOp operator
               · simp only [if_pos hload] at heval ⊢
                 cases hlook : s.locals.lookup name with
-                | none =>
-                    simp only [hlook] at heval ⊢
-                    obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                    rfl
+                | none => simpa only [hlook] using crepPairAddClock_congr ck heval
                 | some val =>
                     simp only [crepShMemLoadHOL_addClock]
                     cases hrun : crepShMemLoadHOL operator name addressValue s
@@ -479,10 +430,7 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
                         exact ⟨hr, by subst hs; rfl⟩
               · simp only [if_neg hload] at heval ⊢
                 cases hlook : s.locals.lookup name with
-                | none =>
-                    simp only [hlook] at heval ⊢
-                    obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                    rfl
+                | none => simpa only [hlook] using crepPairAddClock_congr ck heval
                 | some val =>
                     cases val with
                     | word w =>
@@ -520,10 +468,7 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
       rw [evalCrepSemHOLProgExact_ite] at heval ⊢
       rw [crepExactEvalExp_addClock] at ⊢
       cases hcond : crepExactEvalExp s (fun a => Classical.propDecidable (s.memaddrs a)) e with
-      | none =>
-          simp only [hcond] at heval ⊢
-          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-          rfl
+      | none => simpa only [hcond] using crepPairAddClock_congr ck heval
       | some cv =>
           cases cv with
           | word w =>
@@ -537,21 +482,16 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
                 rw [if_neg hw] at hP
                 exact hP res st ck heval hnt
     · intro n s res st ck heval hnt
-      rw [evalCrepSemHOLProgExact_break] at heval
-      obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-      rw [evalCrepSemHOLProgExact_break]
+      rw [evalCrepSemHOLProgExact_break] at heval ⊢
+      exact crepPairAddClock_congr ck heval
     · intro n s res st ck heval hnt
-      rw [evalCrepSemHOLProgExact_continue] at heval
-      obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-      rw [evalCrepSemHOLProgExact_continue]
+      rw [evalCrepSemHOLProgExact_continue] at heval ⊢
+      exact crepPairAddClock_congr ck heval
     · intro e c s ih1 ih2 ih3 res st ck heval hnt
       rw [evalCrepSemHOLProgExact_while_fixClockFree] at heval ⊢
       rw [crepExactEvalExp_addClock] at ⊢
       cases hcond : crepExactEvalExp s (fun a => Classical.propDecidable (s.memaddrs a)) e with
-      | none =>
-          simp only [hcond] at heval ⊢
-          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-          rfl
+      | none => simpa only [hcond] using crepPairAddClock_congr ck heval
       | some cv =>
           cases cv with
           | word w =>
@@ -592,48 +532,35 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
                                   have hp := ih1 (.word w) w (some (.continue 0)) t (.continue 0) 0 hcond rfl hw hclk hbody.symm rfl rfl rfl
                                   exact hp res st ck heval hnt
                               | succ k' =>
-                                  obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                                  rfl
+                                  exact crepPairAddClock_congr ck heval
                           | «break» k =>
                               cases k with
                               | zero =>
-                                  obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                                  rfl
+                                  exact crepPairAddClock_congr ck heval
                               | succ k' =>
-                                  obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                                  rfl
+                                  exact crepPairAddClock_congr ck heval
                           | error =>
-                              obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                              rfl
+                              exact crepPairAddClock_congr ck heval
                           | «return» vs =>
-                              obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                              rfl
+                              exact crepPairAddClock_congr ck heval
                           | «exception» ex =>
-                              obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                              rfl
+                              exact crepPairAddClock_congr ck heval
                           | finalFfi ev =>
-                              obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                              rfl
+                              exact crepPairAddClock_congr ck heval
               · simp only [hcond, if_neg hw] at heval ⊢
-                obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                rfl
+                exact crepPairAddClock_congr ck heval
     · intro es s res st ck heval hnt
       rw [evalCrepSemHOLProgExact_return] at heval ⊢
       rw [evalCrepSemHOLExps_addClock] at ⊢
       cases hval : es.mapM (evalCrepSemHOLExp s) with
-      | none =>
-          simp only [hval] at heval ⊢
-          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-          rfl
+      | none => simpa only [hval] using crepPairAddClock_congr ck heval
       | some ws =>
-          simp only [hval] at heval ⊢
-          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-          rfl
+          simpa only [hval, CrepSemHOLState.emptyLocals_addClock]
+            using crepPairAddClock_congr ck heval
     · intro e s res st ck heval hnt
-      rw [evalCrepSemHOLProgExact_raise] at heval
-      obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-      rw [evalCrepSemHOLProgExact_raise]
-      rfl
+      rw [evalCrepSemHOLProgExact_raise] at heval ⊢
+      rw [CrepSemHOLState.emptyLocals_addClock]
+      exact crepPairAddClock_congr ck heval
     · intro s res st ck heval hnt
       rw [evalCrepSemHOLProgExact_tick] at heval
       by_cases hclk : s.clock = 0
@@ -657,17 +584,11 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
         exact heq.symm
       rw [hargsconv] at heval ⊢
       cases hargs : List.mapM (crepExactEvalExpClassical s) argexps with
-      | none =>
-          simp only [hargs] at heval ⊢
-          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-          rfl
+      | none => simpa only [hargs] using crepPairAddClock_congr ck heval
       | some args =>
           simp only [hargs] at heval ⊢
           cases hcode : lookupCodeFiniteHOL s.code fname args args.length with
-          | none =>
-              simp only [hcode] at heval ⊢
-              obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-              rfl
+          | none => simpa only [hcode] using crepPairAddClock_congr ck heval
           | some pair =>
               obtain ⟨prog, newlocals⟩ := pair
               simp only [hcode] at heval ⊢
@@ -682,8 +603,7 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
                   prog newlocals).mpr hcode'
               by_cases hbad : crepReturnInfoNodupError caltyp
               · rw [if_pos hbad] at heval ⊢
-                obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                rfl
+                exact crepPairAddClock_congr ck heval
               · rw [if_neg hbad] at heval ⊢
                 by_cases hclk : s.clock = 0
                 · rw [if_pos hclk] at heval
@@ -723,56 +643,45 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
                       rw [hbody] at heval
                       cases r with
                       | none =>
-                          obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                          rfl
+                          exact crepPairAddClock_congr ck heval
                       | some r' =>
                           cases r' with
                           | timeOut => exact absurd rfl hne_body
-                          | error =>
-                              obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                              simp only [CrepSemHOLState.emptyLocals_addClock]
-                          | finalFfi ev =>
-                              obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                              simp only [CrepSemHOLState.emptyLocals_addClock]
+                          | error => simpa only [CrepSemHOLState.emptyLocals_addClock]
+                            using crepPairAddClock_congr ck heval
+                          | finalFfi ev => simpa only [CrepSemHOLState.emptyLocals_addClock]
+                            using crepPairAddClock_congr ck heval
                           | «break» l =>
-                              obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                              rfl
+                              exact crepPairAddClock_congr ck heval
                           | «continue» l =>
-                              obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                              rfl
+                              exact crepPairAddClock_congr ck heval
                           | «return» retvs =>
                               cases caltyp with
-                              | none =>
-                                  obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                                  simp only [CrepSemHOLState.emptyLocals_addClock]
+                              | none => simpa only [CrepSemHOLState.emptyLocals_addClock]
+                                using crepPairAddClock_congr ck heval
                               | some cval =>
                                   obtain ⟨rts, handler⟩ := cval
                                   dsimp only at heval ⊢
                                   by_cases hlen : retvs.length ≠ rts.length
                                   · rw [if_pos hlen] at heval ⊢
-                                    obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                                    rfl
+                                    exact crepPairAddClock_congr ck heval
                                   · rw [if_neg hlen] at heval ⊢
                                     cases hmap : List.mapM s.locals.lookup rts with
-                                    | none =>
-                                        simp only [hmap] at heval ⊢
-                                        obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                                        rfl
+                                    | none => simpa only [hmap]
+                                      using crepPairAddClock_congr ck heval
                                     | some val =>
                                         simp only [hmap] at heval ⊢
                                         obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
                                         rw [CrepAddClock_setLocals]
                           | «exception» eid =>
                               cases caltyp with
-                              | none =>
-                                  obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                                  simp only [CrepSemHOLState.emptyLocals_addClock]
+                              | none => simpa only [CrepSemHOLState.emptyLocals_addClock]
+                                using crepPairAddClock_congr ck heval
                               | some cval =>
                                   obtain ⟨rts, handler⟩ := cval
                                   cases handler with
-                                  | none =>
-                                      obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
-                                      simp only [CrepSemHOLState.emptyLocals_addClock]
+                                  | none => simpa only [CrepSemHOLState.emptyLocals_addClock]
+                                    using crepPairAddClock_congr ck heval
                                   | some hval =>
                                       obtain ⟨eid', p⟩ := hval
                                       dsimp only at heval ⊢

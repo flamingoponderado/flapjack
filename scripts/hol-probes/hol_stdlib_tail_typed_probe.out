@@ -1,0 +1,17 @@
+LEX_DEF_typed=∀(R1 :α -> α -> bool) (R2 :β -> β -> bool). R1 LEX R2 = (λ((s :α),(t :β)) ((u :α),(v :β)). R1 s u ∨ s = u ∧ R2 t v)
+RPROD_DEF_typed=∀(R1 :α -> β -> bool) (R2 :γ -> δ -> bool). R1 ### R2 = (λ((s :α),(t :γ)) ((u :β),(v :δ)). R1 s u ∧ R2 t v)
+OLEAST_def_typed=∀(P :num -> bool). $OLEAST P = if ∃(n :num). P n then SOME (LEAST(n :num). P n) else (NONE :num option)
+OLEAST_INTRO_typed=((∀(n :num). ¬(P :num -> bool) n) ⇒ (Q :num option -> bool) (NONE :num option)) ∧ (∀(n :num). P n ∧ (∀(m :num). m < n ⇒ ¬P m) ⇒ Q (SOME n)) ⇒ Q ($OLEAST P)
+OPTREL_def_typed=∀(R :α -> β -> bool) (x :α option) (y :β option). OPTREL R x y ⇔ x = (NONE :α option) ∧ y = (NONE :β option) ∨ ∃(x0 :α) (y0 :β). x = SOME x0 ∧ y = SOME y0 ∧ R x0 y0
+THE_DEF_typed=∀(x :α). THE (SOME x) = x
+LIST_REL_REPLICATE_same_typed=LIST_REL (P :α -> β -> bool) (REPLICATE (n :num) (x :α)) (REPLICATE n (y :β)) ⇔ (0 :num) < n ⇒ P x y
+locn_typed=UNKNOWNpt::locn; EOFpt::locn; POSN::num -> num -> locn
+locs_typed=Locs::locn -> locn -> locs
+merge_list_locs_def_typed=merge_list_locs ([] :locs list) = unknown_loc ∧ (∀(h :locs). merge_list_locs [h] = h) ∧ (∀(h2 :locs) (h1 :locs). merge_list_locs [h1; h2] = merge_locs h1 h2) ∧ ∀(v5 :locs list) (v4 :locs) (h2 :locs) (h1 :locs). merge_list_locs (h1::h2::v4::v5) = merge_list_locs (h1::v4::v5)
+sexp_typed=SX_CONS::sexp -> sexp -> sexp; SX_SYM::string -> sexp; SX_NUM::num -> sexp; SX_STR::string -> sexp
+TotOrder_imp_good_cmp_typed=∀(cmp :α -> α -> ordering). TotOrd cmp ⇒ good_cmp cmp
+TotOrd_typed=∀(c :α -> α -> ordering). TotOrd c ⇔ (∀(x :α) (y :α). c x y = Equal ⇔ x = y) ∧ (∀(x :α) (y :α). c x y = Greater ⇔ c y x = Less) ∧ ∀(x :α) (y :α) (z :α). c x y = Less ∧ c y z = Less ⇒ c x z = Less
+FOR_def_typed=∀(j :num) (i :num) (a :num -> 'state -> unit # 'state). FOR (i,j,a) = if i = j then a i else do (u :unit) <- a i; FOR (if i < j then i + (1 :num) else i − (1 :num),j,a) od
+LOG2_def_typed=LOG2 = LOG (2 :num)
+LOG_exists_typed=∃(f :num -> num -> num). ∀(a :num) (n :num). (1 :num) < a ∧ (0 :num) < n ⇒ a ** f a n ≤ n ∧ n < a ** SUC (f a n)
+HEX_typed=∀(n :num). HEX n = if n < (10 :num) then CHR (ORD #"0" + n) else if n < (16 :num) then CHR (ORD #"A" + (n − (10 :num))) else #"\^@"

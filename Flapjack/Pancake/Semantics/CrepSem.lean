@@ -205,14 +205,14 @@ def setCrepHolGlobalsW {width : Nat} [NeZero width] {σ : Type} (key : BitVec 5)
     CrepHolState (BitVec width) σ :=
   { state with globals := FUPDATE state.globals (key, value) }
 
-/-- Generic production clock decrement on the 11-field `CrepHolState`. HOL
-    `crepSem$dec_clock_def` (`crepSemScript.sml:145-148`) is word-length indexed
-    (`'a crepSem$state`), so this generic-`α` form is deliberately UNTAGGED; the
-    width-indexed exact counterpart is `decCrepHolClockW` below. -/
-def decCrepHolClock (state : CrepHolState α σ) : CrepHolState α σ :=
-  { state with clock := state.clock - 1 }
+/-- Generic production clock decrement on the 11-field `CrepHolState`.
 
-/-! FLAPJACK-SPECIFIC (not a statement-exact HOL port). Source-reviewed against
+    HOL `crepSem$dec_clock_def` (`crepSemScript.sml:145-148`) is word-length
+    indexed (`'a crepSem$state`), so this generic-`α` form is deliberately
+    UNTAGGED; the exact counterpart is the tagged `decClockCrepSemHOL`
+    (`CrepSem/HOLState.lean`) over the finite-support `CrepSemHOLState` carrier.
+
+    FLAPJACK-SPECIFIC (not a statement-exact HOL port). Source-reviewed against
     HOL `crepSem$dec_clock_def` (`cakeml/pancake/semantics/crepSemScript.sml:145-148`),
     which states `dec_clock s = s with clock := s.clock - 1`. The Lean clause
     matches that update (`{ state with clock := state.clock - 1 }`), and
@@ -232,21 +232,15 @@ def decCrepHolClock (state : CrepHolState α σ) : CrepHolState α σ :=
     sampled by the bridge example in `Flapjack/Test/CrepGlobalShapeParity.lean:288-289`
     and used by `Flapjack/Test/CrepInlineRelParity.lean:434-435`. The
     `@[hol dec_clock_def]` tag was withdrawn in the
-    `flapjack-pxn.18.3.7.1.3.1.1.3` audit and remains WITHDRAWN
-    (`docs/HOL-THEOREM-MAP.json` records `decCrepHolClockW` as
-    `documented_mismatch`); The exact finite-support carrier restoration now
-    exists as the tagged `decClockCrepSemHOL` (`CrepSem/HOLState.lean`, reviewed
-    in the manifest); this production-carrier form stays untagged and its
-    executable re-basing remains tracked by `flapjack-pxn.18.3.7.1.3.1.1.3.1`. -/
-def decCrepHolClockW {width : Nat} [NeZero width] {σ : Type} (state : CrepHolState (BitVec width) σ) :
-    CrepHolState (BitVec width) σ :=
+    `flapjack-pxn.18.3.7.1.3.1.1.3` audit and remains WITHDRAWN. The
+    width-indexed raw-carrier mirror `decCrepHolClockW` is retired: nothing but
+    its own bridge example used it, and it restated this clause over the same
+    infinite-support carrier. The exact finite-support carrier restoration is the
+    tagged `decClockCrepSemHOL` (`CrepSem/HOLState.lean`, reviewed in the
+    manifest). This production-carrier form stays untagged and its executable
+    re-basing remains tracked by `flapjack-pxn.18.3.7.1.3.1.1.3.1`. -/
+def decCrepHolClock (state : CrepHolState α σ) : CrepHolState α σ :=
   { state with clock := state.clock - 1 }
-
-/-- Kernel-checked bridge: the width-indexed exact `dec_clock` counterpart
-    agrees with the generic production definition at `BitVec width`. -/
-theorem decCrepHolClockW_eq_decCrepHolClock {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepHolState (BitVec width) σ) :
-    decCrepHolClockW state = decCrepHolClock state := rfl
 
 /-- Generic production local-binding update on the 11-field `CrepHolState`.
     HOL `crepSem$set_var_def` (`crepSemScript.sml:55-57`) is word-length indexed
@@ -924,19 +918,15 @@ inductive CrepResultHOL (α ε : Type u) where
 abbrev CrepRuntimeStep (α σ ε : Type u) :=
   CrepRuntimeResult α ε × CrepRuntimeState α σ
 
-/-- Generic production clock-clamping on the 11-field `CrepHolState`. HOL
-    `crepSem$fix_clock_def` (`crepSemScript.sml:150-152`) is word-length indexed
-    (`'a crepSem$state`), so this generic-`α` form is deliberately UNTAGGED; the
-    width-indexed exact counterpart is `fixCrepHolClockW` below. -/
-def fixCrepHolClock (oldState : CrepHolState α σ)
-    (step : CrepRuntimeResult α ε × CrepHolState α σ) :
-    CrepRuntimeResult α ε × CrepHolState α σ :=
-  (step.1,
-    { step.2 with
-      clock :=
-        if oldState.clock < step.2.clock then oldState.clock else step.2.clock })
+/-- Generic production clock-clamping on the 11-field `CrepHolState`.
 
-/-! FLAPJACK-SPECIFIC (not a statement-exact HOL port). Source-reviewed against
+    HOL `crepSem$fix_clock_def` (`crepSemScript.sml:150-152`) is word-length
+    indexed (`'a crepSem$state`), so this generic-`α` form is deliberately
+    UNTAGGED; the exact counterpart is the tagged `fixClockCrepSemHOL`
+    (`CrepSem/HOLState.lean`) over the finite-support `CrepSemHOLState` carrier,
+    which is result-polymorphic exactly as HOL leaves the result unconstrained.
+
+    FLAPJACK-SPECIFIC (not a statement-exact HOL port). Source-reviewed against
     HOL `crepSem$fix_clock_def` (`cakeml/pancake/semantics/crepSemScript.sml:150-152`),
     which states `fix_clock old_s (res, new_s) = (res, new_s with clock := if old_s.clock < new_s.clock then old_s.clock else new_s.clock)`;
     the Lean clamp is clause-for-clause identical, with the HOL result/state pair
@@ -954,27 +944,20 @@ def fixCrepHolClock (oldState : CrepHolState α σ)
     `scripts/hol-probes/crep_fix_clock_probe.out`; the clamp is sampled by
     `Flapjack/Test/CrepGlobalShapeParity.lean:292-296`. The `@[hol fix_clock_def]`
     tag was withdrawn in the `flapjack-pxn.18.3.7.1.3.1.1.3` audit and remains
-    WITHDRAWN (`docs/HOL-THEOREM-MAP.json` records `fixCrepHolClockW` as
-    `documented_mismatch`); The exact finite-support carrier restoration now
-    exists as the tagged `fixClockCrepSemHOL` (`CrepSem/HOLState.lean`, reviewed
-    in the manifest); this production-carrier form stays untagged and its
-    executable re-basing remains tracked by `flapjack-pxn.18.3.7.1.3.1.1.3.1`. -/
-def fixCrepHolClockW {width : Nat} [NeZero width] {σ : Type} {β : Type}
-    (oldState : CrepHolState (BitVec width) σ)
-    (step : β × CrepHolState (BitVec width) σ) :
-    β × CrepHolState (BitVec width) σ :=
+    WITHDRAWN. The width-indexed raw-carrier mirror `fixCrepHolClockW` is
+    retired: nothing but its own bridge examples used it, and it restated this
+    clamp over the same infinite-support carrier. The exact finite-support
+    carrier restoration is the tagged `fixClockCrepSemHOL`
+    (`CrepSem/HOLState.lean`, reviewed in the manifest). This production-carrier
+    form stays untagged and its executable re-basing remains tracked by
+    `flapjack-pxn.18.3.7.1.3.1.1.3.1`. -/
+def fixCrepHolClock (oldState : CrepHolState α σ)
+    (step : CrepRuntimeResult α ε × CrepHolState α σ) :
+    CrepRuntimeResult α ε × CrepHolState α σ :=
   (step.1,
     { step.2 with
       clock :=
         if oldState.clock < step.2.clock then oldState.clock else step.2.clock })
-
-/-- Kernel-checked bridge: the width-indexed exact `fix_clock` counterpart
-    agrees with the generic production definition at `BitVec width` for the
-    production `CrepRuntimeResult` carrier. -/
-theorem fixCrepHolClockW_eq_fixCrepHolClock {width : Nat} [NeZero width] {σ ε : Type}
-    (oldState : CrepHolState (BitVec width) σ)
-    (step : CrepRuntimeResult (BitVec width) ε × CrepHolState (BitVec width) σ) :
-    fixCrepHolClockW oldState step = fixCrepHolClock oldState step := rfl
 
 /-- The clock bound `fix_clock_IMP_LESS_EQ` (crepSemScript.sml:155-157): the
     clamped clock never exceeds the old state's clock.  Untagged here because

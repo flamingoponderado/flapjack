@@ -113,13 +113,13 @@ theorem memoryRel_blocksDistinctImmediate {width : Nat} [NeZero width] (conf : C
   rw [case1.1, case2.1, tagEq]
 
 /-- If equality of equally long value lists returns false, one pair of
-corresponding elements compares false. -/
+corresponding elements compares false. HOL's `EL` is total, so the conclusion
+uses the total `holEl` and carries only the first list's bound. -/
 @[hol "cakeml/compiler/backend/proofs/data_to_word_memoryProofScript.sml" "do_eq_list_F_IMP_MEM"]
 theorem doEqList_falseElement {α : Type} (refs : Spt (BvlSem.Ref α))
     (xs ys : List Flapjack.Compiler.Backend.DataSem.Value)
     (h : doEqList refs xs ys = .val false ∧ ys.length = xs.length) :
-    ∃ (i : Nat) (hx : i < xs.length) (hy : i < ys.length),
-      doEq refs xs[i] ys[i] = .val false := by
+    ∃ i : Nat, i < xs.length ∧ doEq refs (holEl i xs) (holEl i ys) = .val false := by
   obtain ⟨result, sameLength⟩ := h
   induction xs generalizing ys with
   | nil => cases ys <;> simp_all [doEqList]
@@ -129,14 +129,31 @@ theorem doEqList_falseElement {α : Type} (refs : Spt (BvlSem.Ref α))
     | cons y ys =>
       simp only [List.length_cons, Nat.succ.injEq] at sameLength
       simp only [doEqList] at result
-      cases h : doEq refs x y with
+      cases step : doEq refs x y with
       | val b =>
         cases b with
-        | false => exact ⟨0, by simp, by simp, h⟩
+        | false =>
+          refine ⟨0, by simp, ?_⟩
+          simpa [holEl, holHd] using step
         | true =>
-          simp only [h] at result
-          obtain ⟨i, hx, hy, hit⟩ := ih ys result sameLength
-          exact ⟨i + 1, by simpa using hx, by simpa using hy, by simpa using hit⟩
-      | typeError => simp [h] at result
+          simp only [step] at result
+          obtain ⟨i, hi, hit⟩ := ih ys result sameLength
+          refine ⟨i + 1, by simpa using hi, ?_⟩
+          simpa [holEl] using hit
+      | typeError => simp [step] at result
+
+/-- The `getElem` form of `doEqList_falseElement`, for callers that need both
+index bounds explicitly. This is untagged infrastructure: HOL states the
+total-`EL` conclusion above. -/
+theorem doEqList_falseElement_getElem {α : Type} (refs : Spt (BvlSem.Ref α))
+    (xs ys : List Flapjack.Compiler.Backend.DataSem.Value)
+    (h : doEqList refs xs ys = .val false ∧ ys.length = xs.length) :
+    ∃ (i : Nat) (hx : i < xs.length) (hy : i < ys.length),
+      doEq refs xs[i] ys[i] = .val false := by
+  obtain ⟨i, hi, hit⟩ := doEqList_falseElement refs xs ys h
+  have hy : i < ys.length := by omega
+  exact ⟨i, hi, hy, by
+    rw [holEl_eq_getElem i xs hi, holEl_eq_getElem i ys hy] at hit
+    exact hit⟩
 
 end Flapjack.Compiler.Backend.DataToWord.Proofs.Memory
