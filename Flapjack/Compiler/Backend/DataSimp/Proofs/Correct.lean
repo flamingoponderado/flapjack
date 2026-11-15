@@ -17,8 +17,9 @@ theorem lam_skip_id {C F : Type}
   obtain ⟨result, state⟩ := x
   cases result <;> simp [DataSem.evaluate]
 
-/-- Sequencing with a continuation has the same result as `pSeq`. This is
-untagged pending correspondence review of the data evaluator. -/
+/-- Sequencing with a continuation has the same result as `pSeq`.
+The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_simpProofScript.sml" "evaluate_pSeq"]
 theorem evaluate_pSeq {C F : Type} (first continuation : DataLang.Prog)
     (state : DataSem.State C F) :
     DataSem.evaluate (pSeq first continuation) state = DataSem.evaluate (.seq first continuation) state := by

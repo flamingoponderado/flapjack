@@ -24142,6 +24142,13 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/data_simpProofScript.sml", "hol_name": "evaluate_pSeq",
+    "lean_path": "Flapjack/Compiler/Backend/DataSimp/Proofs/Correct.lean", "lean_name": "evaluate_pSeq",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the local original theorem and literal proof replay evaluate_pSeq_replay_typed in data_simp_probe.out: arbitrary first and continuation programs and state with independent compiler and FFI types, identical complete result and state, and no premises. Evaluation inherits reals_as_rational_cuts as documented in SOUNDNESS item 8."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/data_simpProofScript.sml", "hol_name": "lam_skip_id",
     "lean_path": "Flapjack/Compiler/Backend/DataSimp/Proofs/Correct.lean", "lean_name": "lam_skip_id",
     "statement_status": "reviewed_exact",
