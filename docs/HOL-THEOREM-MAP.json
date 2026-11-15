@@ -24245,6 +24245,24 @@
     "reviewer": "Compared compile_prog_MEM_typed in bvi_tailrec_semantics_probe.out: arbitrary enabled flag, compilation pair and output-label membership retain both complete original-label and fresh-interval alternatives with the same namespace-stride witness."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "term_ok_int_SING",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/Semantics.lean", "lean_name": "termInt_evaluation",
+    "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared term_ok_int_SING_typed in bvi_tailrec_semantics_probe.out: independent compiler and FFI types are shared by both states and the universally quantified state; original acceptance, type relation and evaluation premises imply state equality, the same singleton numeric result, and evaluation in every state. The refs field uses canonical finite support with the same-module roundtrip witness. The evaluator inherits reals_as_rational_cuts as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "term_ok_any_SING",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/Semantics.lean", "lean_name": "termAny_evaluation",
+    "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared term_ok_any_SING_typed in bvi_tailrec_semantics_probe.out: independent compiler and FFI types are shared by both states and the universally quantified state; original acceptance, type relation and evaluation premises imply state equality, a common singleton result, evaluation in every state, and list decoding when the list flag is true. The refs field uses canonical finite support with the same-module roundtrip witness. The evaluator inherits reals_as_rational_cuts as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "term_ok_SING",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/Semantics.lean", "lean_name": "term_evaluation",
+    "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["refs"], "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared term_ok_SING_typed in bvi_tailrec_semantics_probe.out: independent compiler and FFI types are shared by both states and the universally quantified state; original acceptance, type relation and evaluation premises imply state equality, a common singleton result, evaluation in every state, and the original type-dependent result shape. The refs field uses canonical finite support with the same-module roundtrip witness. The evaluator inherits reals_as_rational_cuts as documented in SOUNDNESS item 8."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "term_ok_int_extend",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/TermExtension.lean", "lean_name": "termInt_extend",
     "statement_status": "reviewed_exact",

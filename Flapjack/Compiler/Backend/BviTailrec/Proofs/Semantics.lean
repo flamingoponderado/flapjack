@@ -12,6 +12,14 @@ namespace Flapjack.Compiler.Backend.BviTailrec
 open BvlSem
 open Flapjack.Compiler.Backend.BackendCommon
 
+namespace TermEvaluationCarrier
+/-- The BVI reference-map carrier roundtrips through its finite-support view. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end TermEvaluationCarrier
+
 /-- The inferred type context is sound for each value in the environment. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "ty_rel_def"]
 def tyRel (env : List Value) (types : List ValueType) : Prop :=
@@ -310,9 +318,12 @@ theorem termInt_total {C F : Type} (ts : List ValueType) (e : Bvi.Exp) (env : Li
 termination_by sizeOf e
 
 /-- Integer-term evaluation has the source theorem's result and state shape.
-This is untagged until the BVI evaluator and dispatcher are source-reviewed. -/
+The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "term_ok_int_SING"
+  (fmap_as_finite_support := [refs])]
 theorem termInt_evaluation {C F : Type} (ts : List ValueType) (e : Bvi.Exp)
-    (env : List Value) (state next : BviSem.BviState C F) (result : BviSem.BviResult)
+    (env : List Value) (state : BviSem.BviState C F) (result : BviSem.BviResult)
+    (next : BviSem.BviState C F)
     (h : termInt ts e = true ∧ tyRel env ts ∧ BviSem.evaluate [e] env state = (result, next)) :
     state = next ∧ ∃ value, result = .val [value] ∧
       (∀ state' : BviSem.BviState C F, BviSem.evaluate [e] env state' = (result, state')) ∧
@@ -476,6 +487,23 @@ theorem termAny_total {C F : Type} (ts : List ValueType) (list : Bool)
   | _ => simp [termAny] at accepted
 termination_by sizeOf e
 
+/-- General and list term evaluation preserves state and list shape when
+requested. The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "term_ok_any_SING"
+  (fmap_as_finite_support := [refs])]
+theorem termAny_evaluation {C F : Type} (ts : List ValueType) (list : Bool)
+    (e : Bvi.Exp) (env : List Value) (state : BviSem.BviState C F)
+    (result : BviSem.BviResult) (next : BviSem.BviState C F)
+    (h : termAny ts list e = true ∧ tyRel env ts ∧ BviSem.evaluate [e] env state = (result, next)) :
+    state = next ∧ ∃ value, result = .val [value] ∧
+      (∀ state' : BviSem.BviState C F, BviSem.evaluate [e] env state' = (result, state')) ∧
+      (list = true → ∃ ys, valueToList value = some ys) := by
+  obtain ⟨accepted, related, run⟩ := h
+  obtain ⟨value, typed, evaluate⟩ := termAny_total (C := C) (F := F) ts list e env accepted related
+  have resultEq : (result, next) = (.val [value], state) := run.symm.trans (evaluate state)
+  cases resultEq
+  exact ⟨rfl, value, rfl, evaluate, typed⟩
+
 /-- The type-directed term checker guarantees a state-preserving result with
 the value shape required by the selected source type. -/
 theorem term_total {C F : Type} (ts : List ValueType) (ty : ValueType)
@@ -496,10 +524,13 @@ theorem term_total {C F : Type} (ts : List ValueType) (ty : ValueType)
     obtain ⟨value, _, run⟩ := termAny_total (C := C) (F := F) ts false e env accepted related
     exact ⟨value, trivial, run⟩
 
-/-- The source-shaped type-directed term theorem. Untagged until the BVI
-evaluator and its primitive dispatcher have completed source review. -/
+/-- Type-directed term evaluation preserves state and the original value shape.
+The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "term_ok_SING"
+  (fmap_as_finite_support := [refs])]
 theorem term_evaluation {C F : Type} (ts : List ValueType) (ty : ValueType)
-    (e : Bvi.Exp) (env : List Value) (state next : BviSem.BviState C F) (result : BviSem.BviResult)
+    (e : Bvi.Exp) (env : List Value) (state : BviSem.BviState C F)
+    (result : BviSem.BviResult) (next : BviSem.BviState C F)
     (h : term ts ty e = true ∧ tyRel env ts ∧ BviSem.evaluate [e] env state = (result, next)) :
     state = next ∧ ∃ value, result = .val [value] ∧
       (∀ state' : BviSem.BviState C F, BviSem.evaluate [e] env state' = (result, state')) ∧

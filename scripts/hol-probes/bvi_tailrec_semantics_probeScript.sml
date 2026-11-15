@@ -86,3 +86,6 @@ val _ = show_thm "scan_expr_op_same_typed=" bvi_tailrecProofTheory.scan_expr_op_
 val _ = show_thm "term_ok_int_extend_typed=" bvi_tailrecProofTheory.term_ok_int_extend;
 val _ = show_thm "term_ok_any_extend_typed=" bvi_tailrecProofTheory.term_ok_any_extend;
 val _ = show_thm "term_ok_extend_typed=" bvi_tailrecProofTheory.term_ok_extend;
+val _ = show_thm "term_ok_int_SING_typed=" bvi_tailrecProofTheory.term_ok_int_SING;
+val _ = show_thm "term_ok_any_SING_typed=" bvi_tailrecProofTheory.term_ok_any_SING;
+val _ = show_thm "term_ok_SING_typed=" bvi_tailrecProofTheory.term_ok_SING;
