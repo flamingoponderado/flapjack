@@ -135699,6 +135699,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "do_app_op_finalise_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/OperationRelation.lean",
+  "lean_name": "doApp_op_finalise_rel", "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+  "fmap_as_finite_support_relation": ["BviState.refs", "refsNext", "f"],
+  "fmap_as_finite_support_existentials": ["nextMap", "targetRefsNext"],
+  "reviewer": "Source comparison: Compared do_app_op_finalise_rel_typed in bvi_tmc_proof_source_probe.out: source finalisation, full state relation and value relation imply target finalisation and all six remaining submap, value, state, freshness and hole conclusions. The BviState reference field and input maps use canonical finite support; existential nextMap and targetRefsNext have same-module roundtrip witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "do_app_op_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/OperationRelation.lean",
   "lean_name": "doApp_op_rel", "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
   "fmap_as_finite_support_relation": ["BviState.refs", "f"],

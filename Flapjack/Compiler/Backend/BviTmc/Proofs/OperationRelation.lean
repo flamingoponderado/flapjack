@@ -416,23 +416,42 @@ private theorem finalise_related_identity (f : HolFiniteMapExact Nat Nat) (v w :
     all_goals dsimp only
     all_goals first | rw [sourceFound] | rw [targetFound]
 
-/-- Finalising a related value leaves both related heaps unchanged, since
-the source heap relation excludes mutable constructor blocks.
+/-- The existential finalisation renaming has the canonical finite-map roundtrip. -/
+theorem holFmapAsFiniteSupportExistentialWitness_doApp_op_finalise_rel_nextMap
+    (nextMap : HolFiniteMapExact Nat Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap)).lookup = nextMap.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap)).finiteSupport = nextMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap) = nextMap := by
+  cases nextMap
+  exact ⟨rfl, rfl, rfl⟩
 
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_finalise_rel" (fmap_as_finite_support_relation := [BviState.refs, f, refsNext, nextMap, targetRefsNext])] -/
+/-- The existential finalisation heap has the canonical finite-map roundtrip. -/
+theorem holFmapAsFiniteSupportExistentialWitness_doApp_op_finalise_rel_targetRefsNext
+    (targetRefsNext : HolFiniteMapExact Nat (Ref Value)) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad targetRefsNext)).lookup = targetRefsNext.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad targetRefsNext)).finiteSupport = targetRefsNext.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad targetRefsNext) = targetRefsNext := by
+  cases targetRefsNext
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Finalising a related value leaves both related heaps unchanged, since
+the source heap relation excludes mutable constructor blocks. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_finalise_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, refsNext, f])
+  (fmap_as_finite_support_existentials := [nextMap, targetRefsNext])]
 theorem doApp_op_finalise_rel {C F : Type} (v : Value) (refsNext : HolFiniteMapExact Nat (Ref Value))
     (relatedValue result : Value) (f : HolFiniteMapExact Nat Nat)
     (source : BviState (Nat × C) F) (target : BviState C F)
-    (run : BviSem.finaliseCons v source.refs = some (result, refsNext))
-    (statesRelated : stateRel f source target) (valuesRelated : valueRel f v relatedValue) :
-    ∃ (nextMap : HolFiniteMapExact Nat Nat) (result' : Value)
-      (targetRefsNext : HolFiniteMapExact Nat (Ref Value)),
+    (h : BviSem.finaliseCons v source.refs = some (result, refsNext) ∧
+      stateRel f source target ∧ valueRel f v relatedValue) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (result' : Value),
+      ∃ (targetRefsNext : HolFiniteMapExact Nat (Ref Value)),
       BviSem.finaliseCons relatedValue target.refs = some (result', targetRefsNext) ∧
       f.submap nextMap ∧ valueRel nextMap result result' ∧
       stateRel nextMap { source with refs := refsNext } { target with refs := targetRefsNext } ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetRefsNext ∅ ∧
       holesStillNotFinalised f target.refs targetRefsNext := by
+  obtain ⟨run, statesRelated, valuesRelated⟩ := h
   have ⟨sourceRun, targetRun⟩ := finalise_related_identity f v relatedValue source.refs target.refs valuesRelated statesRelated.1
   rw [sourceRun] at run
   cases run
@@ -466,14 +485,18 @@ theorem doApp_op_rel_finaliseCons {C F : Type} (f : HolFiniteMapExact Nat Nat)
       cases valuesRelated with
       | @cons a b xs ys headRel tailRel =>
         cases tailRel
-        have ⟨sourceRun, targetRun⟩ := finalise_related_identity f head b source.refs target.refs headRel statesRelated.1
-        simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, sourceRun] at run
-        obtain ⟨rfl, rfl⟩ := run
-        refine ⟨f, b, target, ?_, headRel, statesRelated, ?_, onlyFresh_refl f target.refs,
-          holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
-        · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, targetRun]
-        · intro key item found
-          exact found
+        cases finalised : BviSem.finaliseCons head source.refs with
+        | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, finalised] at run
+        | some pair =>
+          obtain ⟨resultValue, refsNext⟩ := pair
+          simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, finalised] at run
+          obtain ⟨rfl, rfl⟩ := run
+          obtain ⟨nextMap, result', targetRefsNext, targetRun, submap, resultRel, nextStates, fresh, holes, still⟩ :=
+            doApp_op_finalise_rel head refsNext b resultValue f source target
+              ⟨finalised, statesRelated, headRel⟩
+          refine ⟨nextMap, result', { target with refs := targetRefsNext }, ?_, resultRel, nextStates,
+            submap, fresh, holes, still⟩
+          simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, targetRun]
 
 /-- Updating a mutable constructor cannot succeed in a related source heap.
 
