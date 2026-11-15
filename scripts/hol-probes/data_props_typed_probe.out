@@ -46,4 +46,18 @@ Seq_Skip_typed=(evaluate (Seq (c :dataLang$prog) Skip,(s :(α, β) dataSem$state
 do_space_alt_typed=do_space (op :closLang$op) (vs :v list) (s :(α, β) dataSem$state) = if op_space_reset op then SOME (s with <|space := (0 :num); safe_for_space := do_space_safe op vs s; peak_heap_length := do_space_peak op vs s|>) else consume_space (op_space_req op (LENGTH vs)) s
 evaluate_safe_alt_typed=∀(c :dataLang$prog) (s :(α, β) dataSem$state). evaluate_safe c s ⇔ (SND (evaluate (c,s) :(v list, v) result option # (α, β) dataSem$state)).safe_for_space
 evaluate_peak_alt_typed=∀(c :dataLang$prog) (s :(α, β) dataSem$state). evaluate_peak c s = (SND (evaluate (c,s) :(v list, v) result option # (α, β) dataSem$state)).peak_heap_length
+set_var_const_typed=(set_var (x :num) (y :v) (z :(β, α) dataSem$state)).ffi = z.ffi ∧ (set_var x y z).clock = z.clock
+set_var_with_const_typed=set_var (x :num) (y :v) ((z :(α, β) dataSem$state) with clock := (k :num)) = set_var x y z with clock := k
+set_vars_const_typed=(set_vars (xs :num list) (ys :v list) (z :(β, α) dataSem$state)).ffi = z.ffi ∧ (set_vars xs ys z).clock = z.clock
+set_vars_with_const_typed=set_vars (xs :num list) (ys :v list) ((z :(α, β) dataSem$state) with clock := (k :num)) = set_vars xs ys z with clock := k
+call_env_const_typed=(call_env (x :v list) (s :num option) (y :(β, α) dataSem$state)).ffi = y.ffi ∧ (call_env x s y).clock = y.clock
+call_env_with_const_typed=call_env (x :v list) (s :num option) ((y :(α, β) dataSem$state) with clock := (z :num)) = call_env x s y with clock := z
+push_env_const_typed=(push_env (x :v sptree$num_map) (y :bool) (z :(β, α) dataSem$state)).ffi = z.ffi ∧ (push_env x y z).clock = z.clock ∧ (push_env x y z).code = z.code ∧ (push_env x y z).compile_oracle = z.compile_oracle ∧ (push_env x y z).compile = z.compile ∧ (push_env x y z).refs = z.refs ∧ (push_env x y z).global = z.global
+push_env_with_const_typed=push_env (x :v sptree$num_map) (y :bool) ((z :(α, β) dataSem$state) with clock := (k :num)) = push_env x y z with clock := k
+dec_clock_const_typed=(dec_clock (s :(β, α) dataSem$state) :(β, α) dataSem$state).ffi = s.ffi ∧ (dec_clock s :(β, α) dataSem$state).code = s.code ∧ (dec_clock s :(β, α) dataSem$state).compile_oracle = s.compile_oracle ∧ (dec_clock s :(β, α) dataSem$state).compile = s.compile ∧ (dec_clock s :(β, α) dataSem$state).refs = s.refs ∧ (dec_clock s :(β, α) dataSem$state).global = s.global
+add_space_const_typed=(add_space (s :(β, α) dataSem$state) (k :num)).ffi = s.ffi
+with_clock_ffi_typed=((s :(γ, 'ffi) dataSem$state) with clock := (y :num)).ffi = s.ffi
+with_same_clock_typed=(s :(γ, 'ffi) dataSem$state) with clock := s.clock = s
+cut_state_eq_some_typed=cut_state (names :sptree$num_set) (s :(α, β) dataSem$state) = SOME (y :(α, β) dataSem$state) ⇔ ∃(z :v sptree$num_map). cut_env names s.locals = SOME z ∧ y = s with locals := z
+cut_state_eq_none_typed=cut_state (names :sptree$num_set) (s :(α, β) dataSem$state) = (NONE :(α, β) dataSem$state option) ⇔ cut_env names s.locals = (NONE :v sptree$num_map option)
 Boolv_11_typed=(Boolv (b1 :bool) :v) = (Boolv (b2 :bool) :v) ⇔ (b1 ⇔ b2)

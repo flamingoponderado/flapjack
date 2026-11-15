@@ -1,5 +1,7 @@
 module
 
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Control
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Heap
 public import Flapjack.Compiler.Backend.Semantics.DataSem.State
 public import Flapjack.Compiler.Backend.Semantics.DataSem.Stack
 public import Flapjack.Compiler.Backend.Semantics.DataSem.Value
@@ -79,5 +81,122 @@ theorem boolValue_inj (b1 b2 : Bool) : boolValue b1 = boolValue b2 ↔ b1 = b2 :
   all_goals simp [boolValue, Flapjack.Compiler.Backend.BackendCommon.boolToTag,
     Flapjack.Compiler.Backend.BackendCommon.trueTag,
     Flapjack.Compiler.Backend.BackendCommon.falseTag]
+
+
+/-- Exact HOL `set_var_const` (`dataPropsScript.sml:1915`). -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "set_var_const"]
+theorem setVar_const {C F : Type} (name : Nat) (value : Value) (state : State C F) :
+    (setVar name value state).ffi = state.ffi ∧ (setVar name value state).clock = state.clock :=
+  ⟨rfl, rfl⟩
+
+/-- Exact HOL `set_var_with_const` (`dataPropsScript.sml:1922`). -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "set_var_with_const"]
+theorem setVar_with_const {C F : Type} (name : Nat) (value : Value) (state : State C F)
+    (clock : Nat) :
+    setVar name value { state with clock := clock } =
+      { setVar name value state with clock := clock } := by
+  simp only [setVar]
+
+/-- Exact HOL `set_vars_const` (`dataPropsScript.sml:1928`). -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "set_vars_const"]
+theorem setVars_const {C F : Type} (names : List Nat) (values : List Value) (state : State C F) :
+    (setVars names values state).ffi = state.ffi ∧
+      (setVars names values state).clock = state.clock :=
+  ⟨rfl, rfl⟩
+
+/-- Exact HOL `set_vars_with_const` (`dataPropsScript.sml:1935`). -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "set_vars_with_const"]
+theorem setVars_with_const {C F : Type} (names : List Nat) (values : List Value)
+    (state : State C F) (clock : Nat) :
+    setVars names values { state with clock := clock } =
+      { setVars names values state with clock := clock } := by
+  simp only [setVars]
+
+/-- Exact HOL `call_env_const` (`dataPropsScript.sml:1941`). -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "call_env_const"]
+theorem callEnv_const {C F : Type} (args : List Value) (size : Option Nat) (state : State C F) :
+    (callEnv args size state).ffi = state.ffi ∧ (callEnv args size state).clock = state.clock :=
+  ⟨rfl, rfl⟩
+
+/-- Exact HOL `call_env_with_const` (`dataPropsScript.sml:1948`). -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "call_env_with_const"]
+theorem callEnv_with_const {C F : Type} (args : List Value) (size : Option Nat)
+    (state : State C F) (clock : Nat) :
+    callEnv args size { state with clock := clock } =
+      { callEnv args size state with clock := clock } := by
+  simp only [callEnv]
+
+/-- Exact HOL `push_env_const` (`dataPropsScript.sml:1954`): the seven fields
+    that pushing a frame leaves alone, in HOL's order. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "push_env_const"]
+theorem pushEnv_const {C F : Type} (env : Spt Value) (handler : Bool) (state : State C F) :
+    (pushEnv env handler state).ffi = state.ffi ∧
+    (pushEnv env handler state).clock = state.clock ∧
+    (pushEnv env handler state).code = state.code ∧
+    (pushEnv env handler state).compileOracle = state.compileOracle ∧
+    (pushEnv env handler state).compile = state.compile ∧
+    (pushEnv env handler state).refs = state.refs ∧
+    (pushEnv env handler state).global = state.global :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Exact HOL `push_env_with_const` (`dataPropsScript.sml:1966`). -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "push_env_with_const"]
+theorem pushEnv_with_const {C F : Type} (env : Spt Value) (handler : Bool)
+    (state : State C F) (clock : Nat) :
+    pushEnv env handler { state with clock := clock } =
+      { pushEnv env handler state with clock := clock } := by
+  simp only [pushEnv]
+
+/-- Exact HOL `dec_clock_const` (`dataPropsScript.sml:2086`): the six fields
+    a clock tick leaves alone, in HOL's order. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "dec_clock_const"]
+theorem decClock_const {C F : Type} (state : State C F) :
+    (decClock state).ffi = state.ffi ∧
+    (decClock state).code = state.code ∧
+    (decClock state).compileOracle = state.compileOracle ∧
+    (decClock state).compile = state.compile ∧
+    (decClock state).refs = state.refs ∧
+    (decClock state).global = state.global :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Exact HOL `add_space_const` (`dataPropsScript.sml:2097`). -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "add_space_const"]
+theorem addSpace_const {C F : Type} (state : State C F) (amount : Nat) :
+    (addSpace state amount).ffi = state.ffi :=
+  rfl
+
+/-- Exact HOL `with_clock_ffi` (`dataPropsScript.sml:2120`). -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "with_clock_ffi"]
+theorem withClock_ffi {C F : Type} (state : State C F) (clock : Nat) :
+    ({ state with clock := clock }).ffi = state.ffi :=
+  rfl
+
+/-- Exact HOL `with_same_clock` (`dataPropsScript.sml:1997`). -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "with_same_clock"]
+theorem withSameClock {C F : Type} (state : State C F) :
+    { state with clock := state.clock } = state :=
+  rfl
+
+/-- Exact HOL `cut_state_eq_some` (`dataPropsScript.sml:1909`). -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "cut_state_eq_some"]
+theorem cutState_eq_some {C F : Type} (names : NumSet) (state : State C F)
+    (next : State C F) :
+    cutState names state = some next ↔
+      ∃ env : Spt Value, cutEnv names state.locals = some env ∧
+        next = { state with locals := env } := by
+  simp only [cutState, Option.map_eq_some_iff]
+  constructor
+  · intro h
+    obtain ⟨env, heq, hnext⟩ := h
+    exact ⟨env, heq, hnext.symm⟩
+  · intro h
+    obtain ⟨env, heq, hnext⟩ := h
+    exact ⟨env, heq, hnext.symm⟩
+
+/-- Exact HOL `cut_state_eq_none` (`dataPropsScript.sml:1991`). -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "cut_state_eq_none"]
+theorem cutState_eq_none {C F : Type} (names : NumSet) (state : State C F) :
+    cutState names state = none ↔ cutEnv names state.locals = none := by
+  simp only [cutState, Option.map_eq_none_iff]
 
 end Flapjack.Compiler.Backend.DataSem
