@@ -70,18 +70,19 @@ theorem holFmapAsFiniteSupportParamWitness_mutableBlockRel_cons_refs (refs : Hol
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
 /-- A fresh unfinished mutable block extends a related child and related
-left and right fields to a related source constructor.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_cons" (fmap_as_finite_support_parameters := [f, old, refs])] -/
-theorem mutableBlockRel_cons (f : HolFiniteMapExact Nat Nat) (old : HolFiniteMapExact Nat (Ref Value))
-    (refs : HolFiniteMapExact Nat (Ref Value)) (ptr tag : Nat) (left left' : List Value)
+left and right fields to a related source constructor. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_cons"
+  (fmap_as_finite_support_parameters := [old, refs, f])]
+theorem mutableBlockRel_cons (old : HolFiniteMapExact Nat (Ref Value))
+    (refs : HolFiniteMapExact Nat (Ref Value)) (ptr : Nat) (f : HolFiniteMapExact Nat Nat)
+    (tag : Nat) (left left' : List Value)
     (child child' : Value) (right right' : List Value)
-    (inner : mutableBlockRel f old (refs.eraseEq ptr) child child')
-    (leftRelated : List.Forall₂ (valueRel f) left left') (rightRelated : List.Forall₂ (valueRel f) right right')
-    (found : refs.lookup ptr = some (.mutBlock tag false left' child' right'))
-    (outsideRange : ptr ∉ mapRange f) (outsideOld : ptr ∉ old.domain) :
+    (h : mutableBlockRel f old (refs.eraseEq ptr) child child' ∧
+      List.Forall₂ (valueRel f) left left' ∧ List.Forall₂ (valueRel f) right right' ∧
+      refs.lookup ptr = some (.mutBlock tag false left' child' right') ∧
+      ptr ∉ mapRange f ∧ ptr ∉ old.domain) :
     mutableBlockRel f old refs (.block tag (left ++ [child] ++ right)) (.refPtr false ptr) := by
+  obtain ⟨inner, leftRelated, rightRelated, found, outsideRange, outsideOld⟩ := h
   rw [mutableBlockRel.eq_def]
   simp only [Bool.false_eq_true, outsideRange, outsideOld, or_self, ↓reduceIte]
   rw [found]

@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "mb_rel_cons", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/MutableBlockRelation.lean",
+  "lean_name": "mutableBlockRel_cons", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["old", "refs", "f"],
+  "reviewer": "Source comparison: Compared mb_rel_cons_typed in bvi_tmc_proof_source_probe.out: the original erased-heap child relation, both list relations, unfinished-block lookup and two pointer-freshness facts conjunctively imply the complete mutable-block constructor relation. Original binder order and all full Value carriers are retained; the maps use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "mb_rel_def", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/MutableBlockRelation.lean",
   "lean_name": "mutableBlockRel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "old", "refs"],

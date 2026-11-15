@@ -219,8 +219,8 @@ theorem linked_frame_block_relation (f g : HolFiniteMapExact Nat Nat)
   have childLookupErased : (nextRefs.eraseEq ptr).lookup fresh =
       some (.mutBlock newTag false newLeft targetChild newRight) := by
     simpa [HolFiniteMapExact.lookup_eraseEq, FDOMSUB_HOL, Ne.symm different'] using childLookup
-  exact mutableBlockRel_cons g oldRefs (nextRefs.eraseEq ptr) fresh newTag sourceLeft newLeft
-    sourceChild targetChild sourceRight newRight inner leftRelated rightRelated childLookupErased outsideNext freshOld
+  exact mutableBlockRel_cons oldRefs (nextRefs.eraseEq ptr) fresh g newTag sourceLeft newLeft
+    sourceChild targetChild sourceRight newRight ⟨inner, leftRelated, rightRelated, childLookupErased, outsideNext, freshOld⟩
 
 /-- Flapjack infrastructure: the auxiliary frame's constant-index update
 stores the new frame pointer into an unfinalised old hole and returns unit. -/
