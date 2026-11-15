@@ -44,7 +44,7 @@ theorem evaluate_bvi_to_cb_aux_inr_call {C F : Type}
         refine ⟨argResult, next, rfl, ?_, ?_⟩
         · intro values valueEq
           subst argResult
-          have vars := evaluate_binders args env state next values 0 last indices argsRun binding [] rfl
+          have vars := evaluate_binders args env state next indices values 0 last ⟨argsRun, binding⟩ [] rfl
           have extended : ∀ extras, evaluate (indices.map Bvi.Exp.var) (values ++ extras) next =
               (.val values, next) := by
             intro extras
@@ -101,7 +101,7 @@ theorem evaluate_bvi_to_cb_call {C F : Type}
           simp only [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun] at run ⊢
           exact run
         | val values =>
-          have vars := evaluate_binders args env state next values 0 last indices argsRun binding [] rfl
+          have vars := evaluate_binders args env state next indices values 0 last ⟨argsRun, binding⟩ [] rfl
           have varsExtended := evaluate_vars_expand_env indices values next values env (by simpa using vars)
           rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
           simp only [callBlockToBvi]

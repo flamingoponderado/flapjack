@@ -78,6 +78,7 @@ val _ = show "evaluate_vars_target_typed" bvi_tmcProofTheory.evaluate_vars_targe
 val _ = show "evaluate_vars_expand_env_typed" bvi_tmcProofTheory.evaluate_vars_expand_env;
 val _ = show "evaluate_var_list_typed" bvi_tmcProofTheory.evaluate_var_list;
 val _ = show "evaluate_var_list_binders_typed" bvi_tmcProofTheory.evaluate_var_list_binders;
+val _ = show "evaluate_binders_typed" bvi_tmcProofTheory.evaluate_binders;
 val _ = show "hole_has_val_submap_typed" bvi_tmcProofTheory.hole_has_val_submap;
 val _ = show "holes_unchanged_except_trans_typed" bvi_tmcProofTheory.holes_unchanged_except_trans;
 val _ = show "holes_still_not_finalised_trans_typed" bvi_tmcProofTheory.holes_still_not_finalised_trans;

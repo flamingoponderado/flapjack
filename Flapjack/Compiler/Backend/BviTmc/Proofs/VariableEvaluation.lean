@@ -190,17 +190,17 @@ private theorem evaluateBindings {C F : Type} (args : List Bvi.Exp) (values : Li
         rw [show evaluate (indices.map Bvi.Exp.var) (ys ++ value :: values) state =
           (.val values, state) by simpa [List.append_assoc] using tail]
 
-/-- The bindings generated for successful arguments retrieve their values.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_binders" (fmap_as_finite_support := [refs])] -/
+/-- The bindings generated for successful arguments retrieve their values. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_binders" (fmap_as_finite_support := [refs])]
 theorem evaluate_binders {C F : Type} (args : List Bvi.Exp) (env : List Value)
-    (state nextState : BviState C F) (values : List Value) (next next' : Nat)
-    (indices : List Nat)
-    (run : evaluate args env state = (.val values, nextState))
-    (binding : bind next args = (indices, next')) (ys : List Value)
-    (prefixLength : ys.length = next) :
-    evaluate (indices.map Bvi.Exp.var) (ys ++ values) nextState = (.val values, nextState) := by
+    (state nextState : BviState C F) (indices : List Nat) (values : List Value)
+    (next next' : Nat)
+    (h : evaluate args env state = (.val values, nextState) ∧
+      bind next args = (indices, next')) :
+    ∀ ys : List Value, ys.length = next →
+      evaluate (indices.map Bvi.Exp.var) (ys ++ values) nextState = (.val values, nextState) := by
+  obtain ⟨run, binding⟩ := h
+  intro ys prefixLength
   have count := BviSem.evaluate_length args env state nextState values run
   have result := evaluateBindings args values count next ys prefixLength nextState
   simpa [binding] using result
