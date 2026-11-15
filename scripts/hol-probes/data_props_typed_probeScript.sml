@@ -74,3 +74,4 @@ val _ = emit "OPTION_MAP2_NONE_typed" "OPTION_MAP2_NONE";
 val _ = emit "initial_state_simp_typed" "initial_state_simp";
 val _ = emit "initial_state_with_simp_typed" "initial_state_with_simp";
 val _ = emit "with_same_locals_typed" "with_same_locals";
+val _ = emit "do_stack_const_typed" "do_stack_const";

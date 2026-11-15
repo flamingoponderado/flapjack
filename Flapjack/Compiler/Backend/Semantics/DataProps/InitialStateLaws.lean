@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.DataSem.State
+public import Flapjack.Compiler.Backend.Semantics.DataSem.Stack
 
 @[expose] public section
 
@@ -45,5 +46,27 @@ theorem initialState_with_simp {C F : Type} (f : HolFfiState F) (c : Spt (Nat ×
 theorem with_same_locals {C F : Type} (s : State C F) :
     ({ s with locals := s.locals } : State C F) = s := by
   rfl
+
+/-- Exact HOL `do_stack_const` (`dataPropsScript.sml:154`): the stack-space
+    computation leaves sixteen fields alone, in HOL's order. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_stack_const"]
+theorem doStack_const {C F : Type} (op : ClosLang.Op) (vs : List Value) (s : State C F) :
+    (doStack op vs s).locals = s.locals ∧
+    (doStack op vs s).localsSize = s.localsSize ∧
+    (doStack op vs s).stack = s.stack ∧
+    (doStack op vs s).stackFrameSizes = s.stackFrameSizes ∧
+    (doStack op vs s).global = s.global ∧
+    (doStack op vs s).handler = s.handler ∧
+    (doStack op vs s).refs = s.refs ∧
+    (doStack op vs s).compile = s.compile ∧
+    (doStack op vs s).clock = s.clock ∧
+    (doStack op vs s).code = s.code ∧
+    (doStack op vs s).ffi = s.ffi ∧
+    (doStack op vs s).space = s.space ∧
+    (doStack op vs s).tstamps = s.tstamps ∧
+    (doStack op vs s).limits = s.limits ∧
+    (doStack op vs s).peakHeapLength = s.peakHeapLength ∧
+    (doStack op vs s).compileOracle = s.compileOracle := by
+  simp [doStack]
 
 end Flapjack.Compiler.Backend.DataSem
