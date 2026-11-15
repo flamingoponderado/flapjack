@@ -10061,6 +10061,7 @@ run_probe word_props_typed_probeScript.sml word_props_typed_probe.out \
   inc_clock_def_typed inc_clock_0_typed inc_clock_inc_clock_typed with_locals_same_clock_typed word_cmp_Word_Word_typed \
   push_env_dec_clock_stack_typed OPTION_MAP2_ADD_0_typed \
   dec_stack_stack_size_some_not_none_typed dec_stack_stack_size_not_none_not_none_typed dec_stack_stack_size_some_leq_typed \
+  LIST_REL_CONJ2_typed push_env_stack_max_eq_typed \
   flush_state_option_le_stack_max_preserved_typed \
   stack_size_some_at_least_one_typed \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" \

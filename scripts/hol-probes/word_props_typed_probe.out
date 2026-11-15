@@ -159,4 +159,6 @@ dec_stack_stack_size_some_not_none_typed=∀(xs :α word_loc list) (stk :α stac
 dec_stack_stack_size_not_none_not_none_typed=∀(xs :α word_loc list) (stk :α stack_frame list) (stk' :α stack_frame list). dec_stack xs stk = SOME stk' ∧ stack_size stk ≠ (NONE :num option) ⇒ stack_size stk' ≠ (NONE :num option)
 dec_stack_stack_size_some_leq_typed=∀(xs :α word_loc list) (stk :α stack_frame list) (stk' :α stack_frame list) (x :num) (y :num). dec_stack xs stk = SOME stk' ∧ stack_size stk = SOME x ∧ stack_size stk' = SOME y ⇒ y ≤ x
 flush_state_option_le_stack_max_preserved_typed=∀(s :(α, β, γ) state) (p :bool). option_le (OPTION_MAP2 $+ (stack_size s.stack) s.locals_size) s.stack_max ⇒ (let (t :(α, β, γ) state) = flush_state p s in option_le (OPTION_MAP2 $+ (stack_size t.stack) t.locals_size) t.stack_max)
+LIST_REL_CONJ2_typed=LIST_REL (λ(a :α) (b :β). (P :α -> β -> bool) a b ∧ (Q :α -> β -> bool) a b) (l1 :α list) (l2 :β list) ⇔ LIST_REL P l1 l2 ∧ LIST_REL Q l1 l2
+push_env_stack_max_eq_typed=(push_env (env :α word_loc sptree$num_map # α word_loc sptree$num_map) (handler :(num # α prog # num # num) option) (s :(α, β, γ) state)).stack_max = OPTION_MAP2 MAX s.stack_max (stack_size (push_env env handler s).stack)
 stack_size_some_at_least_one_typed=∀(stk :α stack_frame list) (sz :num). stack_size stk = SOME sz ⇒ (1 :num) ≤ sz

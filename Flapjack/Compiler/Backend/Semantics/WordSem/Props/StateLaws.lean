@@ -609,4 +609,44 @@ theorem flushStateOptionLeStackMaxPreserved {width : Nat} [NeZero width] {C : Ty
     simpa [WordSemStateFiniteExact.flushState, wordSemOptionAdd_zero]
       using optionLe_optionAdd_left h
 
+
+/-- Exact HOL `LIST_REL_CONJ2` (`wordPropsScript.sml:1973`): a pointwise
+    conjunction splits into the two relations. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "LIST_REL_CONJ2"]
+theorem forall₂_conj {α β : Type} (P Q : α → β → Prop) (l1 : List α) (l2 : List β) :
+    List.Forall₂ (fun a b => P a b ∧ Q a b) l1 l2 ↔
+      List.Forall₂ P l1 l2 ∧ List.Forall₂ Q l1 l2 := by
+  induction l1 generalizing l2 with
+  | nil =>
+    cases l2 with
+    | nil => simp
+    | cons _ _ => simp
+  | cons a as ih =>
+    cases l2 with
+    | nil => simp
+    | cons b bs =>
+      simp only [List.forall₂_cons, ih]
+      constructor
+      · intro h
+        exact ⟨⟨h.1.1, h.2.1⟩, ⟨h.1.2, h.2.2⟩⟩
+      · intro h
+        exact ⟨⟨h.1.1, h.2.1⟩, ⟨h.1.2, h.2.2⟩⟩
+
+/-- Exact HOL `push_env_stack_max_eq` (`wordPropsScript.sml:4288`): pushing a
+    frame sets `stack_max` to the max of the old bound and the new stack size. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "push_env_stack_max_eq"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem pushEnv_stackMax_eq {width : Nat} [NeZero width] {C : Type} {F : Type}
+    (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (s : WordSemStateFiniteExact width C F) :
+    (WordSemStateFiniteExact.pushEnv envs handler s).stackMax =
+      wordSemOptionMax s.stackMax
+        (wordSemStackSize (WordSemStateFiniteExact.pushEnv envs handler s).stack) := by
+  cases handler with
+  | none => rfl
+  | some h =>
+    obtain ⟨a, b, c, d⟩ := h
+    rfl
+
 end Flapjack

@@ -219,8 +219,10 @@ theorem sizeOfHeapArgs_with_clock {C F : Type} (state : State C F) (clock : Nat)
     a type error or an FFI final event. Same statement as HOL `do_app_err`. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_Rerr"]
 theorem doApp_Rerr {C F : Type} (op : ClosLang.Op) (values : List Value) (state : State C F)
-    (error : Flapjack.SemanticPrimitivesHOL.ErrorResult Value) (run : doApp op values state = .err error) :
-    error = .abort .typeError ∨ ∃ name outcome, op = .ffi name ∧ error = .abort (.ffiError outcome) :=
+    (error : Flapjack.SemanticPrimitivesHOL.ErrorResult Value)
+    (run : doApp op values state = .err error) :
+    error = .abort .typeError ∨
+      ∃ name outcome, op = .ffi name ∧ error = .abort (.ffiError outcome) :=
   DataProps.doApp_err op values state error run
 
 /-- Exact HOL `pop_env_with_const` (`dataPropsScript.sml:1972`). -/
