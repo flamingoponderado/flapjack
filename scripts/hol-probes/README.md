@@ -10553,3 +10553,13 @@ probe accepts both ASCII double-backtick and curly-quote delimiters). Regenerate
 with `CAKEML=<cakeml tree> HOL4=<HOL tree>
 HOL_PROBE_ONLY=ast_typeabbrev_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`pan_globals_primed_typed_probe.out` (7 rows) captures the reviewed
+`pan_globalsProofScript.sml` primed rows that earlier probes did not cover
+(task 187): the exported theorems `fresh_name_correct'`, `FLOOKUP_fperm_code'`,
+`evaluate_fperm'`, `semantics_init_call'` and `compile_decs_localised'` are read
+from `pan_globalsProofTheory`, and the `[local]` `LESS_MULT_MONO'` and `v_neq_v'`
+are parsed from the pinned source with the splice-expanding helper. Regenerate
+with `CAKEML=<cakeml tree> HOL4=<HOL tree>
+HOL_PROBE_ONLY=pan_globals_primed_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.

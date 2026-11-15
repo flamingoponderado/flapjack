@@ -11864,3 +11864,10 @@ run_probe ast_typeabbrev_typed_probeScript.sml ast_typeabbrev_typed_probe.out \
   modN_typed varN_typed conN_typed typeN_typed tvarN_typed type_def_typed \
   "$cake_dir/semantics/astScript.sml" \
   "$cake_dir/semantics"
+
+run_probe pan_globals_primed_typed_probeScript.sml pan_globals_primed_typed_probe.out \
+  LESS_MULT_MONO_prime_typed v_neq_v_prime_typed fresh_name_correct_prime_typed \
+  FLOOKUP_fperm_code_prime_typed evaluate_fperm_prime_typed \
+  semantics_init_call_prime_typed compile_decs_localised_prime_typed \
+  "$cake_dir/pancake/proofs/pan_globalsProofScript.sml" \
+  "$cake_dir/pancake/proofs"
