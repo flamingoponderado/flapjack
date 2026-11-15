@@ -1,9 +1,8 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosFvs.Proofs.Simulation
-public import Flapjack.Compiler.Backend.Semantics.ClosSem.Semantics
+public import Flapjack.Compiler.Backend.Semantics.ClosSem.SemanticsRelated
 public import Flapjack.FiniteMap.EmptyExact
-public import Flapjack.Compiler.Backend.Semantics.ClosProps.ResultObservations
 
 @[expose] public section
 
@@ -26,13 +25,11 @@ theorem initialState_related {C F : Type} (ffi : HolFfiState F) (maxApp clock : 
 original non-failure, oracle and maximum-application hypotheses. -/
 theorem semantics_compile_core {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
     (oracle : CompileOracle C) (compiler : Compiler C) (program : List ClosLang.Exp)
-    (notFail : semantics ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) program ≠ .fail)
+    (_notFail : semantics ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) program ≠ .fail)
     (auxEmpty : ∀ index, (oracle index).2.2 = []) (positive : 1 ≤ maxApp) :
     semantics ffi maxApp HolFiniteMapExact.empty (pureCo compileInc ∘ oracle) compiler (compile program) =
       semantics ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) program := by
   classical
-  have sourceSafe := (semantics_ne_fail_iff ffi maxApp HolFiniteMapExact.empty oracle
-    (pureCc compileInc compiler) program).mp notFail
   have simulations : ∀ clock,
       ResultRel
         (evaluate program [] (initialState ffi maxApp HolFiniteMapExact.empty oracle
@@ -54,54 +51,17 @@ theorem semantics_compile_core {C F : Type} (ffi : HolFfiState F) (maxApp : Nat)
       change evaluate (compile program) [] _ = _ at targetRun
       rw [targetRun]
       exact ⟨resultRel, stateRel.2.2.2.2.2.2.1.symm⟩
-  have targetSafe : ∀ clock,
-      (evaluate (compile program) [] (initialState ffi maxApp HolFiniteMapExact.empty
-        (pureCo compileInc ∘ oracle) compiler clock)).1 ≠ .err (.abort .typeError) := by
-    intro clock bad
-    exact sourceSafe clock ((resultRel_observations _ _ (simulations clock).1).1.mpr bad)
-  have terminatingEq :
-      terminatingObservation ffi maxApp HolFiniteMapExact.empty oracle (pureCc compileInc compiler) program =
-      terminatingObservation ffi maxApp HolFiniteMapExact.empty (pureCo compileInc ∘ oracle) compiler
-        (compile program) := by
-    funext behavior
-    apply propext
-    constructor <;> intro observed
-    · obtain ⟨clock, result, final, outcome, run, outcomeEq, behaviorEq⟩ := observed
-      have sim := simulations clock
-      rw [run] at sim
-      refine ⟨clock, _, _, outcome, rfl, ?_, ?_⟩
-      · apply (resultHasOutcome_iff _ outcome).mp
-        apply ((resultRel_observations _ _ sim.1).2 outcome).mp
-        exact (resultHasOutcome_iff result outcome).mpr outcomeEq
-      · simpa [← sim.2] using behaviorEq
-    · obtain ⟨clock, result, final, outcome, run, outcomeEq, behaviorEq⟩ := observed
-      have sim := simulations clock
-      rw [run] at sim
-      refine ⟨clock, _, _, outcome, rfl, ?_, ?_⟩
-      · apply (resultHasOutcome_iff _ outcome).mp
-        apply ((resultRel_observations _ _ sim.1).2 outcome).mpr
-        exact (resultHasOutcome_iff result outcome).mpr outcomeEq
-      · simpa [sim.2] using behaviorEq
-  have tracesEq :
-      (fun trace => ∃ clock, trace = HolLList.fromList
-        (evaluate program [] (initialState ffi maxApp HolFiniteMapExact.empty oracle
-          (pureCc compileInc compiler) clock)).2.ffi.ioEvents) =
-      (fun trace => ∃ clock, trace = HolLList.fromList
-        (evaluate (compile program) [] (initialState ffi maxApp HolFiniteMapExact.empty
-          (pureCo compileInc ∘ oracle) compiler clock)).2.ffi.ioEvents) := by
-    funext trace
-    apply propext
-    constructor <;> rintro ⟨clock, h⟩ <;> refine ⟨clock, ?_⟩
-    · simpa [(simulations clock).2] using h
-    · simpa [← (simulations clock).2] using h
-  unfold semantics
-  simp only [show ¬ ∃ clock, (evaluate program [] (initialState ffi maxApp HolFiniteMapExact.empty oracle
-      (pureCc compileInc compiler) clock)).1 = .err (.abort .typeError) from
-        fun ⟨clock, error⟩ => sourceSafe clock error,
-    show ¬ ∃ clock, (evaluate (compile program) [] (initialState ffi maxApp HolFiniteMapExact.empty
-      (pureCo compileInc ∘ oracle) compiler clock)).1 = .err (.abort .typeError) from
-        fun ⟨clock, error⟩ => targetSafe clock error, if_false]
-  rw [← terminatingEq, ← tracesEq]
+  apply Eq.symm
+  apply semantics_eq_of_related_evaluations
+  intro clock
+  obtain ⟨results, ffiEq⟩ := simulations clock
+  have toStandard (left right : Result (List Value) Value) (h : ResultRel left right) :
+      SemanticPrimitivesProps.resultRel (List.Forall₂ ValueRel) ValueRel left right := by
+    cases left <;> cases right <;> simp_all [ResultRel, SemanticPrimitivesProps.resultRel]
+    case err.err left right =>
+      cases left <;> cases right <;> simp_all [SemanticPrimitivesProps.excRel]
+  have observed := resultRelOutcome (List.Forall₂ ValueRel) ValueRel _ _ (toStandard _ _ results)
+  exact ⟨observed.1, observed.2, ffiEq⟩
 
 /-- Free-variable removal preserves the original whole-program semantics. -/
 @[hol "cakeml/compiler/backend/proofs/clos_fvsProofScript.sml" "semantics_compile"
