@@ -135685,6 +135685,27 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "state_rel_def", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/StateRelation.lean",
+  "lean_name": "stateRel", "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BviState.refs", "f"],
+  "reviewer": "Source comparison: Compared state_rel_def_typed in bvi_tmc_proof_source_probe.out: all original heap, clock, globals, FFI, compiler callback, code, namespace, oracle and injectivity clauses; source configuration is Nat paired with the independent target configuration. BviState refs and the pointer map use canonical finite support, with the imported state roundtrip re-exported locally."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "state_rel_with_clock", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/StateRelation.lean",
+  "lean_name": "stateRel_with_clock", "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BviState.refs", "f"],
+  "reviewer": "Source comparison: Compared state_rel_with_clock_typed in bvi_tmc_proof_source_probe.out: the original relation premise implies the relation after replacing both clocks with the same natural number. BviState refs and the pointer map use canonical finite support, with the imported state roundtrip re-exported locally."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "state_rel_dec", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/StateRelation.lean",
+  "lean_name": "stateRel_dec", "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BviState.refs", "f"],
+  "reviewer": "Source comparison: Compared state_rel_dec_typed in bvi_tmc_proof_source_probe.out: the original conjunction of the relation, both successor-clock equations and the clock bound implies the relation after decrementing both clocks. BviState refs and the pointer map use canonical finite support, with the imported state roundtrip re-exported locally."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "state_ref_rel_filled", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
   "lean_name": "stateRefRel_filled", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "source", "target"],
