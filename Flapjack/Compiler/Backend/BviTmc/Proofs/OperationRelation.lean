@@ -1733,7 +1733,7 @@ theorem doApp_op_rel_fromList {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag 
             cases decoded : valueToList list with
             | none => simp [decoded] at run
             | some fields =>
-              obtain ⟨targetFields, targetDecoded, fieldsRel⟩ := valueToList_rel f list fields targetList decoded listRel
+              obtain ⟨targetFields, targetDecoded, fieldsRel⟩ := valueToList_rel list fields targetList f ⟨decoded, listRel⟩
               by_cases countOk : count = Int.ofNat fields.length
               · have countOk' : count = Int.ofNat targetFields.length := by simpa [List.Forall₂.length_eq fieldsRel] using countOk
                 simp [decoded, countOk] at run
@@ -1783,9 +1783,9 @@ theorem doApp_op_rel_listAppend {C F : Type} (f : HolFiniteMapExact Nat Nat)
               | none => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock, decodedFirst, decodedSecond] at run
               | some fieldsSecond =>
                 obtain ⟨targetFieldsFirst, targetDecodedFirst, firstFieldsRel⟩ :=
-                  valueToList_rel f first fieldsFirst targetFirst decodedFirst firstRel
+                  valueToList_rel first fieldsFirst targetFirst f ⟨decodedFirst, firstRel⟩
                 obtain ⟨targetFieldsSecond, targetDecodedSecond, secondFieldsRel⟩ :=
-                  valueToList_rel f second fieldsSecond targetSecond decodedSecond secondRel
+                  valueToList_rel second fieldsSecond targetSecond f ⟨decodedSecond, secondRel⟩
                 simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,
                   BviSem.fromBvl_toBvl, decodedFirst, decodedSecond] at run
                 obtain ⟨rfl, rfl⟩ := run

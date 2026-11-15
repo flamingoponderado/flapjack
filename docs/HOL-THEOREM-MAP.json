@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "v_to_list_v_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
+  "lean_name": "valueToList_rel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Source comparison: Compared v_to_list_v_rel_typed in bvi_tmc_proof_source_probe.out: successful source list decoding and the full value relation conjunctively imply an existential target list decoding and pairwise value relation. Original binder order and Value/list carriers are retained; the pointer map uses canonical finite support with a same-module witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "fmap_inj_flookup_eq", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
   "lean_name": "fmapInj_lookup_eq", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f"],
