@@ -3000,7 +3000,13 @@ theorem rewriteTail_op_ffi_through {C F : Type} (limit : Nat) (name : Flapjack.B
         stateRel_doApp (.ffi name) vs source value sourceNext target
           ⟨run, related, by simp, by
             intro n
-            simp⟩) (stateRel_doApp_ffi_error name) clockBound hyp
+            simp⟩) (fun vs source target error related run =>
+        stateRel_doAppErr (.ffi name) vs source error target
+          ⟨run, related, by simp, by
+            intro n
+            simp, by
+            intro parts
+            simp⟩) clockBound hyp
   apply rewriteTailPost_of_no_scan (.op (.ffi name) args) source env1 result sourceNext
     optimized target targetNext acc env2 loc ts ty targetRun targetRelated
   intro tt resultTy branch op1 scan
@@ -3163,7 +3169,13 @@ theorem rewriteTail_op_thunkOp_through {C F : Type} (limit : Nat) (operation : A
         stateRel_doApp (.thunkOp operation) vs source value sourceNext target
           ⟨run, related, by simp, by
             intro n
-            simp⟩) (stateRel_doApp_thunk_error operation) clockBound hyp
+            simp⟩) (fun vs source target error related run =>
+        stateRel_doAppErr (.thunkOp operation) vs source error target
+          ⟨run, related, by simp, by
+            intro n
+            simp, by
+            intro parts
+            simp⟩) clockBound hyp
   apply rewriteTailPost_of_no_scan (.op (.thunkOp operation) args) source env1 result sourceNext
     optimized target targetNext acc env2 loc ts ty targetRun targetRelated
   intro tt resultTy branch op1 scan

@@ -441,44 +441,6 @@ theorem doApp_memory_viaBvl_error {C F : Type} (op : ClosLang.MemOp) (args : Lis
   | none => simpa [found] using run.symm
   | some pair => cases pair; simp [found] at run
 
-/-- Thunk application depends only on the reference store and updates only that store. -/
-theorem doApp_thunk_sharedRefs {C D F G : Type} (op : AstHOL.ThunkOp) (args : List Value)
-    (s : BvlSem.State C F) (t : BvlSem.State D G) (refs : t.refs = s.refs) :
-    BvlSem.doApp (.thunkOp op) args t =
-      match BvlSem.doApp (.thunkOp op) args s with
-      | .err error => .err error
-      | .val (value, next) => .val (value, { t with refs := next.refs }) := by
-  simp only [BvlSem.doApp]
-  rw [refs]
-  repeat' split
-  all_goals simp_all
-  all_goals try (cases t; simp_all)
-  all_goals grind
-/-- BVI thunk application delegates to BVL. -/
-theorem doApp_thunk_viaBvl {C F : Type} (op : AstHOL.ThunkOp) (args : List Value) (s : BviSem.BviState C F) :
-    BviSem.doApp (.thunkOp op) args s =
-      match BvlSem.doApp (.thunkOp op) args (BviSem.toBvl s) with
-      | .val (value, next) => .val (value, BviSem.fromBvl next s)
-      | .err (.abort error) => .err (.abort error)
-      | .err (.raise value) => .err (.raise (.exn value)) := by
-  rfl
-/-- Thunk-operation errors agree in related BVI states. -/
-theorem stateRel_doApp_thunk_error {C F : Type} (op : AstHOL.ThunkOp) (args : List Value)
-    (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet) (related : stateRel source target)
-    (run : BviSem.doApp (.thunkOp op) args source = .err error) :
-    BviSem.doApp (.thunkOp op) args target = .err error := by
-  have refs := (stateRel_const source target related).1
-  have eqRefs : (BviSem.toBvl target).refs = (BviSem.toBvl source).refs := by simpa [BviSem.toBvl] using refs
-  have transfer := doApp_thunk_sharedRefs op args (BviSem.toBvl source) (BviSem.toBvl target) eqRefs
-  rw [doApp_thunk_viaBvl op args source] at run
-  rw [doApp_thunk_viaBvl op args target]
-  cases found : BvlSem.doApp (.thunkOp op) args (BviSem.toBvl source) with
-  | err e =>
-    rw [found] at transfer run
-    rw [transfer]
-    cases e <;> simpa using run
-  | val pair => cases pair; simp [found] at run
 /-- A successful installation exposes the exact decoded arguments, compiler
 result, disjointness checks, and shifted oracle. -/
 theorem doInstall_success_inv {C F R : Type} (args : List Value) (s next : BviSem.BviState C F) (v : Value)
@@ -689,20 +651,6 @@ theorem doApp_ffi_effect {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlStr
             all_goals cases xflag <;> cases yflag <;> try simp
             all_goals cases outcome : callFFIHOL state.ffi (.extCall name) config bytes <;>
               simp
-
-/-- External-call errors, including final FFI outcomes, agree in related states. -/
-theorem stateRel_doApp_ffi_error {C F : Type} (name : Flapjack.Basis.Pure.MlString.MlString)
-    (args : List Value) (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (error : SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet) (related : stateRel source target)
-    (run : BviSem.doApp (.ffi name) args source = .err error) :
-    BviSem.doApp (.ffi name) args target = .err error := by
-  have refs := (stateRel_const source target related).1
-  have ffi := (stateRel_const source target related).2.2.2
-  rw [doApp_ffi_effect] at run ⊢
-  rw [refs, ffi]
-  cases effect : ffiEffect name args source.refs source.ffi with
-  | err e => simpa [effect] using run
-  | val pair => cases pair; simp [effect] at run
 
 /-- A global-slot write reports only a type error. -/
 theorem doApp_setGlobal_error {C F : Type} (index : Nat) (args : List Value)
