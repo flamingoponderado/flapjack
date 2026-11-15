@@ -6,6 +6,7 @@ public import Flapjack.Pancake.PanStructs
 public import Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
 public import Flapjack.Pancake.Proofs.PanStructs.CompileShapeExact
 public import Flapjack.Pancake.PanStructs.OldExpShapeExact
+public import Flapjack.Pancake.PanStructs.CompileExpExact
 
 @[expose] public section
 
@@ -40,6 +41,26 @@ theorem oldExpShapesExact_eq_map {width : Nat} [NeZero width]
   | nil => simp only [Pancake.PanStructs.CompileShapeExact.oldExpShapesExact, List.map_nil]
   | cons expression expressions ih =>
       simp only [Pancake.PanStructs.CompileShapeExact.oldExpShapesExact, List.map_cons, ih]
+
+/-- Exact port of HOL `compile_exps_eq_map` (`pan_structsProofScript.sml:11`).
+The typed capture `compile_exps_eq_map_typed` gives the function equality
+`compile_exps (ctxt :context) = MAP (compile_exp ctxt)` with the only type
+variable inside `panLang$exp`; Lean states the same function equality over the
+exact carriers (the pointwise `List.map` form follows by extensionality). -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "compile_exps_eq_map"
+  (words_as_type_indexed_bitvec)]
+theorem compileExpsExact_eq_map {width : Nat} [NeZero width]
+    (context : Pancake.PanStructs.CompileShapeExact.ContextExact) :
+    (Pancake.PanStructs.CompileShapeExact.compileExpsExact context :
+        List (Pancake.PanLang.ExpHOL width) → List (Pancake.PanLang.ExpHOL width)) =
+      (List.map (Pancake.PanStructs.CompileShapeExact.compileExpExact context) :
+        List (Pancake.PanLang.ExpHOL width) → List (Pancake.PanLang.ExpHOL width)) := by
+  funext expressions
+  induction expressions with
+  | nil =>
+      simp only [Pancake.PanStructs.CompileShapeExact.compileExpsExact, List.map_nil]
+  | cons expression expressions ih =>
+      simp only [Pancake.PanStructs.CompileShapeExact.compileExpsExact, List.map_cons, ih]
 
 /-- Exact port of the local HOL `UNCURRY_EQ_o_SND`
     (`pan_structsProofScript.sml:552`). -/

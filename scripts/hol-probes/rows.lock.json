@@ -1384,7 +1384,7 @@
     {"bytes": 26738, "out": "pancake_loop_to_word_proof_typed_probe.out", "rows": 74, "sha256": "99a48b23eaecca4a178cda0333d8c4a0c7c4a39f5d27f988866d3260efb3ca67"},
     {"bytes": 41342, "out": "pancake_pan_globals_proof_typed_probe.out", "rows": 123, "sha256": "24782777841e74dfa0bf2059935f43042be0494442edac25477240fddfeccbbd"},
     {"bytes": 6964, "out": "pancake_pan_simp_proof_typed_probe.out", "rows": 30, "sha256": "9aa055c1f38290c4fcdc0a30cbe58c8f2c0a1854f2bee38c3b409fcc32053115"},
-    {"bytes": 25059, "out": "pancake_pan_structs_proof_typed_probe.out", "rows": 71, "sha256": "326233b1a5e4f984e2b7af240e46d18cfeb2f17c45b1219407c8d2b6917738d8"},
+    {"bytes": 25363, "out": "pancake_pan_structs_proof_typed_probe.out", "rows": 73, "sha256": "8bffeee07753a499152f74140b7b0983cc4ab2b81baf5d62f92dbbfa225de1e9"},
     {"bytes": 28292, "out": "pancake_pan_to_target_proof_typed_probe.out", "rows": 56, "sha256": "8fc1c0de3d5cd5b83a53e5c861cc9a11bb0dcd20381f468d2a91d125d688045c"},
     {"bytes": 32385, "out": "pancake_pan_to_word_proof_typed_probe.out", "rows": 88, "sha256": "d336b809a26409893737330363913ac69b2434857df47ddeb62e6c89fd2ca90c"},
     {"bytes": 296, "out": "pancake_peg_probe.out", "rows": 1, "sha256": "1087f8c89b4f68e7d0e0e4ade5f93a0acf6316a5505fb5148e43d268ac758b80"},

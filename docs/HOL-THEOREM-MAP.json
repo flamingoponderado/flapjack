@@ -135706,5 +135706,14 @@
     "lean_name": "listMapM_eq_none_of_mem_conj",
     "statement_status": "reviewed_exact",
     "reviewer": "codewhale source comparison (2026-11-15, task 199): typed capture OPT_MMAP_NONE_prime_typed in scripts/hol-probes/pancake_pan_simp_proof_typed_probe.out gives MEM (x :α) (xs :α list) ∧ (f :α -> β option) x = NONE ⇒ OPT_MMAP f xs = NONE, one conjunction premise with the element type α and the result type β independent. Lean keeps HOL's single conjunction as one premise (the curried list_mapM_eq_none_of_mem stays an untagged helper) and the same conclusion; OPT_MMAP is List.mapM for Option."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exps_eq_map",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "compileExpsExact_eq_map",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "codewhale source comparison (2026-11-15, task 199): typed capture compile_exps_eq_map_typed in scripts/hol-probes/pancake_pan_structs_proof_typed_probe.out gives the function equality (compile_exps (ctxt :context) :α panLang$exp list -> α panLang$exp list) = MAP (compile_exp ctxt :α panLang$exp -> α panLang$exp), with the only type variable inside panLang$exp. Lean states the same function equality (no extra list binder) over the exact carriers compileExpsExact/compileExpExact, with the width pinned so both sides share it; the only carrier translation is the type-indexed word to BitVec width."
   }
 ]
