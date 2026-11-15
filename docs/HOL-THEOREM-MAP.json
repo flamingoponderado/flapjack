@@ -135699,6 +135699,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_finalise_cons", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/FinaliseRelation.lean",
+  "lean_name": "evaluate_finalise_cons", "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+  "fmap_as_finite_support_relation": ["targetRefs", "f", "fNext", "sourceRefs", "oldRefs"],
+  "fmap_as_finite_support_existentials": ["resultRefs"],
+  "reviewer": "Source comparison: Compared evaluate_finalise_cons_typed in bvi_tmc_proof_source_probe.out. The three original reference, mutable-block and unfinalised-hole premises imply the existence of the final value and resultRefs with the complete finalisation, value, reference and hole relations. The five map parameters and existential resultRefs use canonical finite support with a same-module witness for resultRefs."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "state_ref_rel_sub", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockEnvironment.lean",
   "lean_name": "stateRefRel_sub", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "source", "target"],

@@ -173,7 +173,7 @@ theorem wrapper_finalise_frame (f g : HolFiniteMapExact Nat Nat)
     simp [HolFiniteMapExact.domain, leastUnusedRef_unused]
   have block := mutableBlockRel_cons oldRefs nextRefs (leastUnusedRef oldRefs) g tag
     sourceLeft left sourceChild child sourceRight right ⟨inner, leftRelated, rightRelated, found, outsideNext, absent⟩
-  exact FinaliseRelation.evaluate_finalise_cons _ nextRefs f g sourceRefs _ oldRefs heaps block still
+  exact FinaliseRelation.evaluate_finalise_cons _ nextRefs f g sourceRefs _ oldRefs ⟨heaps, block, still⟩
 
 /-- Flapjack infrastructure: a wrapper propagates errors from its auxiliary
 worker after allocating the constructor frame. -/
