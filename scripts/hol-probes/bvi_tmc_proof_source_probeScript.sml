@@ -38,6 +38,7 @@ val _ = show "only_fresh_trans_typed" bvi_tmcProofTheory.only_fresh_trans;
 val _ = show "only_fresh_submap_typed" bvi_tmcProofTheory.only_fresh_submap;
 val _ = show "non_fresh_not_in_frange_typed" bvi_tmcProofTheory.non_fresh_not_in_frange;
 val _ = show "fresh_ptr_fresh_typed" bvi_tmcProofTheory.fresh_ptr_fresh;
+val _ = show "fresh_not_in_range_f_typed" bvi_tmcProofTheory.fresh_not_in_range_f;
 val _ = show "hole_has_val_submap_typed" bvi_tmcProofTheory.hole_has_val_submap;
 val _ = show "holes_unchanged_except_trans_typed" bvi_tmcProofTheory.holes_unchanged_except_trans;
 val _ = show "holes_still_not_finalised_trans_typed" bvi_tmcProofTheory.holes_still_not_finalised_trans;

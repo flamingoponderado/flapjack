@@ -674,16 +674,17 @@ theorem holFmapAsFiniteSupportParamWitness_fresh_not_in_range_source (source : H
 theorem holFmapAsFiniteSupportParamWitness_fresh_not_in_range_target (target : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup target) target.finiteSupport = target := by cases target; rfl
 
-/-- A fresh target reference is outside the current pointer-map range.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fresh_not_in_range_f" (fmap_as_finite_support_parameters := [f, source, target])] -/
+/-- A fresh target reference is outside the current pointer-map range. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fresh_not_in_range_f"
+  (fmap_as_finite_support_parameters := [f, source, target])]
 theorem fresh_not_in_range (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMapExact Nat (Ref Value))
     (target : HolFiniteMapExact Nat (Ref Value)) (related : stateRefRel f source target) :
     leastUnusedRef target ∉ mapRange f := by
   rintro ⟨key, mapped⟩
   obtain ⟨_, _, _, found, _⟩ := stateRefRel_lookup f key (leastUnusedRef target) source target mapped related
-  rw [leastUnusedRef_unused] at found
-  contradiction
+  have unused : leastUnusedRef target ∉ target.domain := by
+    simpa [leastUnusedRef, unusedRef_exists] using freshPtr_fresh target
+  apply unused
+  simp [HolFiniteMapExact.domain, found]
 
 end Flapjack.Compiler.Backend.BviTmc

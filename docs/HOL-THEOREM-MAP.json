@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "fresh_not_in_range_f", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "fresh_not_in_range", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "source", "target"],
+  "reviewer": "Source comparison: Compared fresh_not_in_range_f_typed in bvi_tmc_proof_source_probe.out: the original state-reference relation implies the least unused target reference lies outside the pointer map's range. The existing leastUnusedRef selects the original least unused reference and the proof uses the generic freshPtr_fresh theorem. All three maps use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "fresh_ptr_fresh", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
   "lean_name": "freshPtr_fresh", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["refs"],
