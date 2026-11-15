@@ -135699,6 +135699,20 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "hole_has_val_append", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "holeHasVal_append", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Source comparison: Compared hole_has_val_append_typed in bvi_tmc_proof_source_probe.out: the original hole relation and pairwise value relation conjunctively imply the hole relation with the corresponding lists prepended. Binder order and value carriers match; both maps use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "hole_has_val_unappend", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "holeHasVal_unappend", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Source comparison: Compared hole_has_val_unappend_typed in bvi_tmc_proof_source_probe.out: the original prefixed hole relation and pairwise value relation conjunctively imply the unprefixed hole relation. HOL's free list, map and value variables are retained as Lean theorem binders; both maps use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "unchanged_hole_has_val", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
   "lean_name": "unchanged_holeHasVal", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "fNext", "refs", "refsNext"],

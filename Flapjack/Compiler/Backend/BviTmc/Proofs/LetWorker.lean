@@ -76,7 +76,7 @@ theorem evaluate_let_worker {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.E
           have nextOutside := nonFresh_not_in_range f g target.refs ptr allocated ptrOutside fresh
           exact ⟨length, ptr, tag, nextFinal, left, right, ptrEq, idxEq, small, nextOutside, by simpa [childEq] using nextFound⟩
         have nextNotFinal : holeNotFinalised middleTarget.refs holePtr := still holePtr ⟨outside, notFinal⟩
-        have extendedHole := holeHasVal_append g env1 env2 middleTarget.refs c values values' nextHole valuesRelated
+        have extendedHole := holeHasVal_append g env1 env2 middleTarget.refs c values values' ⟨nextHole, valuesRelated⟩
         have valueLength := evaluate_length bindings env1 source middle values bindingsRun
         have lengthEq := valuesRelated.length_eq
         have bound : env1.length < env2.length := by have := envRel_length_opt f env1 env2 environments; omega
@@ -108,7 +108,7 @@ theorem evaluate_let_worker {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.E
           simpa [List.length_append, valueLength, Nat.add_comm, Nat.add_assoc] using workRun
         · intro resValue success
           obtain ⟨resValue', block, filledHole⟩ := filled resValue success
-          have baseHole := holeHasVal_unappend g values values' env1 env2 workState.refs resValue' filledHole valuesRelated
+          have baseHole := holeHasVal_unappend g values values' env1 env2 workState.refs resValue' ⟨filledHole, valuesRelated⟩
           refine ⟨resValue', ?_, holeHasVal_submap f g env1 env2 workState.refs resValue' ⟨baseHole, extension⟩⟩
           exact mutableBlockRel_old_subset h middleTarget.refs (workState.refs.eraseEq holePtr)
             resValue resValue' target.refs block domain

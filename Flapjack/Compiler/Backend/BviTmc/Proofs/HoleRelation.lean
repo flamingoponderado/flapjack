@@ -73,14 +73,14 @@ theorem holFmapAsFiniteSupportParamWitness_holeHasVal_append_f (f : HolFiniteMap
 theorem holFmapAsFiniteSupportParamWitness_holeHasVal_append_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
-/-- Related bindings can be added in front of both optimized environments.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_append" (fmap_as_finite_support_parameters := [f, refs])] -/
+/-- Related bindings can be added in front of both optimized environments. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_append"
+  (fmap_as_finite_support_parameters := [f, refs])]
 theorem holeHasVal_append (f : HolFiniteMapExact Nat Nat) (env1 env2 : List Value)
     (refs : HolFiniteMapExact Nat (Ref Value)) (c : Value) (vs vs' : List Value)
-    (hole : holeHasVal f env1 env2 refs c) (bindings : List.Forall₂ (valueRel f) vs vs') :
+    (h : holeHasVal f env1 env2 refs c ∧ List.Forall₂ (valueRel f) vs vs') :
     holeHasVal f (vs ++ env1) (vs' ++ env2) refs c := by
+  obtain ⟨hole, bindings⟩ := h
   obtain ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, outside, found⟩ := hole
   have sameLength := bindings.length_eq
   have ptrBound : env1.length < env2.length := by omega
@@ -95,14 +95,14 @@ theorem holFmapAsFiniteSupportParamWitness_holeHasVal_unappend_f (f : HolFiniteM
 theorem holFmapAsFiniteSupportParamWitness_holeHasVal_unappend_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
-/-- Removing related leading bindings recovers the original hole relation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_unappend" (fmap_as_finite_support_parameters := [f, refs])] -/
+/-- Removing related leading bindings recovers the original hole relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_unappend"
+  (fmap_as_finite_support_parameters := [f, refs])]
 theorem holeHasVal_unappend (f : HolFiniteMapExact Nat Nat) (vs vs' env1 env2 : List Value)
     (refs : HolFiniteMapExact Nat (Ref Value)) (c : Value)
-    (hole : holeHasVal f (vs ++ env1) (vs' ++ env2) refs c)
-    (bindings : List.Forall₂ (valueRel f) vs vs') : holeHasVal f env1 env2 refs c := by
+    (h : holeHasVal f (vs ++ env1) (vs' ++ env2) refs c ∧
+      List.Forall₂ (valueRel f) vs vs') : holeHasVal f env1 env2 refs c := by
+  obtain ⟨hole, bindings⟩ := h
   obtain ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, outside, found⟩ := hole
   have sameLength := bindings.length_eq
   simp only [List.length_append] at length ptrEq idxEq
