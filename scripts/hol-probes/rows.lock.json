@@ -436,7 +436,7 @@
     {"bytes": 78, "out": "crep_vmap_ctxtfc_probe.out", "rows": 7, "sha256": "bb121330b6b5fd571f27e176bb0a19bdbef1c7da6660391d7ae2da984f6bbb79"},
     {"bytes": 477, "out": "ctxt_fc_probe.out", "rows": 6, "sha256": "8a507b00bc204713a4452260d8a316c681b33b0d6c1889cb91a86fcc5488440d"},
     {"bytes": 62, "out": "data_lang_ticks_probe.out", "rows": 1, "sha256": "aed09f49ef9075ba0cdb493882ce921d246fbb555c2e10db54a3939369ecf284"},
-    {"bytes": 11259, "out": "data_live_compile_probe.out", "rows": 14, "sha256": "313c8975705691e214ce07edad0db277cb35a95ca097fec62f3130b6d6fb8cb3"},
+    {"bytes": 11888, "out": "data_live_compile_probe.out", "rows": 15, "sha256": "fb096a504e23c69fed2a0d003934c08081436e2fabb6a4b614a47be668a214a2"},
     {"bytes": 1930, "out": "data_max_heap_limit_probe.out", "rows": 66, "sha256": "349156b177ad7f8ea708bb73cad1707d89898f96bb1e973acaf7f7f3211eb06c"},
     {"bytes": 1199, "out": "data_props_code_labels_probe.out", "rows": 3, "sha256": "330b3574f88c3dd6cc3e0a0ed94cb0465f0f1a39ebf56f2b51ac00c4424c552f"},
     {"bytes": 13095, "out": "data_props_typed_probe.out", "rows": 37, "sha256": "36d33485c0980ac97e526e281dd27eff752ba12a32859193b94186719ce41a99"},

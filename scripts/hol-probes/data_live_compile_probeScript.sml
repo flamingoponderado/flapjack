@@ -113,3 +113,23 @@ val state_rel_IMP_do_app_err = prove (
   \\ drule_then (qspecl_then [`t1'`,`anything`] mp_tac) state_rel_IMP_do_app_aux_err
   \\ fs [state_rel_def] \\ rfs []);
 val _ = show "state_rel_IMP_do_app_err_replay_typed" state_rel_IMP_do_app_err;
+
+val state_rel_IMP_do_app_aux = prove (
+  ``(do_app_aux op args s1 = Rval (v,s2)) /\
+    state_rel s1 t1 anything ==>
+    (s1.handler = s2.handler) /\ (s1.stack = s2.stack) /\
+    (∃safe peak smx lss.
+       do_app_aux op args t1 =
+         Rval (v,s2 with <| locals := t1.locals ; locals_size := lss ;
+                            stack := t1.stack ; stack_max := smx ;
+                            handler := t1.handler ; safe_for_space := safe ;
+                            peak_heap_length := peak |>))``,
+  STRIP_TAC
+  \\ cases_on_op `op` \\ TRY (rename [‘EqualConst cc’] \\ Cases_on ‘cc’)
+  \\ fs [do_app_aux_def,do_space_def,with_fresh_ts_def,state_rel_def,check_lim_def]
+  \\ fs [state_rel_def,consume_space_def,case_eq_thms,do_install_def,UNCURRY]
+  \\ ASM_SIMP_TAC (srw_ss()) [dataSemTheory.state_component_equality]
+  \\ SRW_TAC [] [] \\ fs[]
+  \\ gvs [AllCaseEqs()]
+  \\ ASM_SIMP_TAC (srw_ss()) [dataSemTheory.state_component_equality]);
+val _ = show "state_rel_IMP_do_app_aux_replay_typed" state_rel_IMP_do_app_aux;

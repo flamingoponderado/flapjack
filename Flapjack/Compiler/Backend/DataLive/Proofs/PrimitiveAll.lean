@@ -54,6 +54,46 @@ private theorem stateRel_doAppAux {C F : Type} (source target : State C F) (live
   | install => simp [doAppAux, applyNonFfi, appRel]
   | thunkOp op => exact stateRel_doAppAux_thunk source target live op args related
 
+/-- Reconstruct the target state from the fields preserved by the liveness
+relation and its unchanged local control fields. This is Lean proof infrastructure. -/
+private theorem stateRel_reconstruct {C F : Type} (source target initial : State C F)
+    (live : NumSet) (related : stateRel source target live)
+    (locals : target.locals = initial.locals) (stack : target.stack = initial.stack)
+    (handler : target.handler = initial.handler) :
+    target = { source with locals := initial.locals, localsSize := target.localsSize, stack := initial.stack, stackMax := target.stackMax, handler := initial.handler, safeForSpace := target.safeForSpace, peakHeapLength := target.peakHeapLength } := by
+  rcases related with ⟨code, clock, space, ffi, refs, global, hand, size, compiler, oracle, stamps, limits, frames, liveLocals⟩
+  cases source
+  cases target
+  cases initial
+  simp_all
+
+/-- A successful auxiliary primitive has the complete target-state shape in
+the original liveness proof. The dispatcher inherits SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "state_rel_IMP_do_app_aux"]
+theorem stateRel_doAppAux_success_exact {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
+    (source : State C F) (value : DataSem.Value) (next target : State C F) (live : NumSet)
+    (premises : doAppAux op args source = .val (value, next) ∧ stateRel source target live) :
+    source.handler = next.handler ∧ source.stack = next.stack ∧
+    ∃ safe peak smx lss, doAppAux op args target = .val (value,
+      { next with locals := target.locals, localsSize := lss, stack := target.stack, stackMax := smx, handler := target.handler, safeForSpace := safe, peakHeapLength := peak }) := by
+  obtain ⟨run, related⟩ := premises
+  have sourceFrame := doAppAux_fieldFrame op args source next value run
+  refine ⟨sourceFrame.2.2.2.2.2.2.1.symm, sourceFrame.1.symm, ?_⟩
+  have simulation := stateRel_doAppAux source target live op args related
+  rw [run] at simulation
+  cases targetRun : doAppAux op args target with
+  | err error => simp [targetRun, appRel] at simulation
+  | val pair =>
+    obtain ⟨targetValue, targetNext⟩ := pair
+    simp [targetRun, appRel] at simulation
+    obtain ⟨rfl, nextRel⟩ := simulation
+    have targetFrame := doAppAux_fieldFrame op args target targetNext value targetRun
+    refine ⟨targetNext.safeForSpace, targetNext.peakHeapLength, targetNext.stackMax,
+      targetNext.localsSize, ?_⟩
+    exact congrArg (fun state => (Result.val (value, state) : Result (DataSem.Value × State C F) DataSem.Value))
+      (stateRel_reconstruct next targetNext target live nextRel targetFrame.2.2.2.2.1
+        targetFrame.1 targetFrame.2.2.2.2.2.2.1)
+
 /-- Auxiliary primitive errors are reproduced in any related target state.
 The dispatcher inherits the real-model assumption in SOUNDNESS item 8. -/
 @[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "state_rel_IMP_do_app_aux_err"]
