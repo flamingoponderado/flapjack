@@ -427,16 +427,6 @@ theorem compileEachSource_labels_nodup (code : List (Nat × Nat × Bvi.Exp)) (ne
           · simpa [tail] using distinct
         simpa [compileEachSource, compiled, tail] using all
 
-/-- Compiled code keeps distinct labels and leaves every output label free
-from the next worker namespace. -/
-theorem compileEachSource_distinct_and_free (next : Nat) (code : List (Nat × Nat × Bvi.Exp))
-    (unique : (code.map Prod.fst).Nodup)
-    (free : ∀ name ∈ code.map Prod.fst, freeNames next name) :
-    ((compileEachSource next code).2.map Prod.fst).Nodup ∧
-      ∀ name ∈ (compileEachSource next code).2.map Prod.fst,
-        freeNames (compileEachSource next code).1 name :=
-  ⟨compileEachSource_labels_nodup code next unique free, compileEachSource_output_free next code free⟩
-
 /-- Each original function remains unchanged or is replaced by its wrapper
 and worker in the compiled function list. -/
 theorem compileEachSource_entry (code : List (Nat × Nat × Bvi.Exp)) (next loc arity : Nat) (body : Bvi.Exp) (op : AssocOp)

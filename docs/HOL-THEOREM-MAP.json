@@ -24142,6 +24142,30 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "compile_each_untouched",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean", "lean_name": "compileEach_untouched",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_each_untouched_typed in bvi_tailrec_semantics_probe.out: the original free-label, first-match lookup, check failure, compile failure and complete compilation-equation premises imply the same output-tree lookup. Input labels need not be distinct; next1 remains an arbitrary free source variable."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "compile_each_code_rel",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean", "lean_name": "compileEach_codeRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_each_code_rel_typed in bvi_tailrec_semantics_probe.out: the original bundled compilation equation, distinct input labels and per-label freedom imply the full code relation between input and output sparse trees."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "compile_each_ALL_DISTINCT",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean", "lean_name": "compileEach_allDistinct",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_each_ALL_DISTINCT_typed in bvi_tailrec_semantics_probe.out: the original compilation equation, input distinctness and free-name premises imply both output distinctness and freedom at the output next label."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "compile_prog_ALL_DISTINCT",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean", "lean_name": "compileProg_allDistinct",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_prog_ALL_DISTINCT_typed in bvi_tailrec_semantics_probe.out: for either enabled flag, the full original compilation, distinctness and free-name premises imply both output conclusions."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "compile_each_next_mono",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean", "lean_name": "compileEach_nextMono",
     "statement_status": "reviewed_exact",

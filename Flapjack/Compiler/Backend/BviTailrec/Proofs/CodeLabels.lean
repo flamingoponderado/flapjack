@@ -8,6 +8,92 @@ public import Flapjack.Compiler.Backend.Semantics.BviProps.CodeLabels
 /-! Source-shaped label accounting for the BVI tail-recursion pass. -/
 namespace Flapjack.Compiler.Backend.BviTailrec.Proofs
 
+/-- An unchecked entry at a free label is unchanged by compilation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_each_untouched"]
+theorem compileEach_untouched {next1 : Nat} (next : Nat)
+    (prog prog2 : List (Nat × Nat × Bvi.Exp)) (loc : Nat) (exp : Bvi.Exp) (arity : Nat)
+    (premises : freeNames next loc ∧
+      sptLookup loc (sptFromAList prog) = some (arity, exp) ∧
+      checkExpOriginal loc arity exp = none ∧
+      compileExpSource loc next arity exp = none ∧
+      compileEachSource next prog = (next1, prog2)) :
+    sptLookup loc (sptFromAList prog2) = some (arity, exp) := by
+  induction prog generalizing next next1 prog2 with
+  | nil => simp [sptLookup_sptFromAList, sptAListLookup] at premises
+  | cons entry rest ih =>
+    obtain ⟨head, headArity, headExp⟩ := entry
+    obtain ⟨free, lookup, check, notCompiled, compiled⟩ := premises
+    by_cases same : loc = head
+    · subst head
+      simp only [sptLookup_sptFromAList, sptAListLookup, ↓reduceIte, Option.some.injEq,
+        Prod.mk.injEq] at lookup
+      obtain ⟨rfl, rfl⟩ := lookup
+      cases tail : compileEachSource next rest with
+      | mk last out =>
+        simp only [compileEachSource, notCompiled, tail, Prod.mk.injEq] at compiled
+        obtain ⟨rfl, rfl⟩ := compiled
+        simp [sptLookup_sptFromAList, sptAListLookup]
+    · have lookupTail : sptLookup loc (sptFromAList rest) = some (arity, exp) := by
+        simpa [sptLookup_sptFromAList, sptAListLookup, same] using lookup
+      cases headCompiled : compileExpSource head next headArity headExp with
+      | none =>
+        cases tail : compileEachSource next rest with
+        | mk last out =>
+          simp only [compileEachSource, headCompiled, tail, Prod.mk.injEq] at compiled
+          obtain ⟨rfl, rfl⟩ := compiled
+          have h := ih (next1 := last) next out ⟨free, lookupTail, check, notCompiled, tail⟩
+          simpa [sptLookup_sptFromAList, sptAListLookup, same] using h
+      | some pair =>
+        obtain ⟨wrapper, worker⟩ := pair
+        cases tail : compileEachSource (next + bvlToBviNamespaces) rest with
+        | mk last out =>
+          simp only [compileEachSource, headCompiled, tail, Prod.mk.injEq] at compiled
+          obtain ⟨rfl, rfl⟩ := compiled
+          have freeNext : freeNames (next + bvlToBviNamespaces) loc := by
+            simpa using freeNames_advance next loc 1 free
+          have nextNe : loc ≠ next := (freeNames_ne_current next loc free).symm
+          have noneNext : compileExpSource loc (next + bvlToBviNamespaces) arity exp = none := by
+            simp [compileExpSource, check]
+          have h := ih (next1 := last) (next + bvlToBviNamespaces) out
+            ⟨freeNext, lookupTail, check, noneNext, tail⟩
+          simpa [sptLookup_sptFromAList, sptAListLookup, same, nextNe] using h
+
+/-- Compiling distinct, free function names establishes the source code relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_each_code_rel"]
+theorem compileEach_codeRel (next : Nat) (prog : List (Nat × Nat × Bvi.Exp))
+    (next1 : Nat) (prog2 : List (Nat × Nat × Bvi.Exp))
+    (premises : compileEachSource next prog = (next1, prog2) ∧
+      (prog.map Prod.fst).Nodup ∧ ∀ name ∈ prog.map Prod.fst, freeNames next name) :
+    codeRel (sptFromAList prog) (sptFromAList prog2) := by
+  have h := compileEachSource_codeRel next prog premises.2.1 premises.2.2
+  simpa only [premises.1] using h
+
+/-- Function-list compilation preserves distinct names and future-name freedom. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_each_ALL_DISTINCT"]
+theorem compileEach_allDistinct (n : Nat) (xs : List (Nat × Nat × Bvi.Exp))
+    (n1 : Nat) (ys : List (Nat × Nat × Bvi.Exp))
+    (premises : compileEachSource n xs = (n1, ys) ∧
+      (xs.map Prod.fst).Nodup ∧ ∀ name ∈ xs.map Prod.fst, freeNames n name) :
+    (ys.map Prod.fst).Nodup ∧ ∀ name ∈ ys.map Prod.fst, freeNames n1 name := by
+  have h := And.intro (compileEachSource_labels_nodup xs n premises.2.1 premises.2.2)
+    (compileEachSource_output_free n xs premises.2.2)
+  simpa only [premises.1] using h
+
+/-- Whole-program compilation preserves distinct names and future-name freedom. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_prog_ALL_DISTINCT"]
+theorem compileProg_allDistinct (b : Bool) (n : Nat) (xs : List (Nat × Nat × Bvi.Exp))
+    (n1 : Nat) (ys : List (Nat × Nat × Bvi.Exp))
+    (premises : compileProgSource b n xs = (n1, ys) ∧
+      (xs.map Prod.fst).Nodup ∧ ∀ name ∈ xs.map Prod.fst, freeNames n name) :
+    (ys.map Prod.fst).Nodup ∧ ∀ name ∈ ys.map Prod.fst, freeNames n1 name := by
+  cases b with
+  | false =>
+    simp only [compileProgSource, Bool.false_eq_true, ↓reduceIte, Prod.mk.injEq] at premises
+    simpa [← premises.1.1, ← premises.1.2] using premises.2
+  | true =>
+    simp only [compileProgSource, ↓reduceIte] at premises
+    exact compileEach_allDistinct n xs n1 ys premises
+
 /-- Each function-list compilation advances the next label by namespace steps. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_each_next_mono"]
 theorem compileEach_nextMono (n : Nat) (xs : List (Nat × Nat × Bvi.Exp))

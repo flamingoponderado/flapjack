@@ -37,6 +37,11 @@ val _ = show_thm "compile_each_next_mono_typed=" bvi_tailrecProofTheory.compile_
 val _ = show_thm "compile_prog_next_mono_typed=" bvi_tailrecProofTheory.compile_prog_next_mono;
 val _ = show_thm "compile_each_MEM_typed=" bvi_tailrecProofTheory.compile_each_MEM;
 val _ = show_thm "compile_prog_MEM_typed=" bvi_tailrecProofTheory.compile_prog_MEM;
+val _ = show_thm "compile_each_untouched_typed=" bvi_tailrecProofTheory.compile_each_untouched;
+val _ = show_thm "compile_each_touched_typed=" bvi_tailrecProofTheory.compile_each_touched;
+val _ = show_thm "compile_each_code_rel_typed=" bvi_tailrecProofTheory.compile_each_code_rel;
+val _ = show_thm "compile_each_ALL_DISTINCT_typed=" bvi_tailrecProofTheory.compile_each_ALL_DISTINCT;
+val _ = show_thm "compile_prog_ALL_DISTINCT_typed=" bvi_tailrecProofTheory.compile_prog_ALL_DISTINCT;
 (* The two find-code theorems are local in the original script. Replay their
    original statements and proofs so their inferred types are captured. *)
 open preamble bvi_tailrecProofTheory bvi_tailrecTheory bviPropsTheory bviSemTheory;
