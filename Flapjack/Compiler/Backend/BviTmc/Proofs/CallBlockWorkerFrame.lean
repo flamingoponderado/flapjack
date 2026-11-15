@@ -201,8 +201,8 @@ theorem evaluate_worker_frame_core {C F : Type} (loc dest tag ptr : Nat) (left r
         [unitValue, .refPtr false (leastUnusedRef target.refs)] [.refPtr false (leastUnusedRef target.refs)]
         1 0 right.length (leastUnusedRef target.refs) targetValue newHoleNext
         (by simp [holEl, holHd]) (by simp) (by simp [holEl, holHd])
-      have leftRelated := CallBlockEnvironment.wfVars_list_rel left true f env1 env2 environments wf.1
-      have rightRelated := CallBlockEnvironment.wfVars_list_rel right true f env1 env2 environments wf.2.2.1
+      have leftRelated := CallBlockEnvironment.wfVars_list_rel left true f env1 env2 ⟨environments, wf.1⟩
+      have rightRelated := CallBlockEnvironment.wfVars_list_rel right true f env1 env2 ⟨environments, wf.2.2.1⟩
       have leftNext := listRel_submap f g _ _ ⟨leftRelated, extension⟩
       have rightNext := listRel_submap f g _ _ ⟨rightRelated, extension⟩
       have freshOutside := fresh_not_in_range f source.refs target.refs states.1

@@ -135699,6 +135699,27 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "wf_vars_list_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockEnvironment.lean",
+  "lean_name": "wfVars_list_rel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Source comparison: Compared wf_vars_list_rel_typed in bvi_tmc_proof_source_probe.out. The original related-environments and variable-bound conjunction yields pointwise value relation for the two indexed lists. Parameter f uses canonical finite support with a same-module witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "wf_vars_env_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockEnvironment.lean",
+  "lean_name": "wfVars_env_rel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Source comparison: Compared wf_vars_env_rel_typed in bvi_tmc_proof_source_probe.out. The original related-environments and variable-bound conjunction yields the unoptimized environment relation on both indexed lists. Parameter f uses canonical finite support with a same-module witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "wf_vars_env_rel_opt", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockEnvironment.lean",
+  "lean_name": "wfVars_env_rel_opt", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Source comparison: Compared wf_vars_env_rel_opt_typed in bvi_tmc_proof_source_probe.out. The original related-environments, variable-bound and signed integer smallness conjunction yields the optimized environment relation with the original pointer and integer suffix. Parameter f uses canonical finite support with a same-module witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "alloc_hole_has_val_def", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockEnvironment.lean",
   "lean_name": "allocHoleHasVal", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "refs"],

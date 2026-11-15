@@ -156,7 +156,7 @@ theorem evaluate_aux_arguments {C F : Type} (indices : List Nat) (opt : Bool)
     simp only [BviSem.evaluate, BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux]
     simp only [BackendCommon.smallEnoughInt] at smallIdx ⊢
     split <;> simp_all
-  · exact CallBlockEnvironment.wfVars_env_rel_opt indices opt f env1 env2 ptr (Int.ofNat idx) related wf smallIdx
+  · exact CallBlockEnvironment.wfVars_env_rel_opt indices opt f env1 env2 ptr (Int.ofNat idx) ⟨related, wf, smallIdx⟩
 
 /-- Flapjack infrastructure: a worker call evaluates its ordinary arguments,
 then the hole pointer and index, and executes the resolved worker body. The
@@ -430,7 +430,7 @@ theorem evaluate_aux_rcall {C F : Type} (loc workerLoc ticks : Nat) (indices : L
   · have found : findCode (some loc) (indices.map (fun n => holEl n env1)) source.code =
         some (indices.map (fun n => holEl n env1), body) := by simp [findCode, sourceLookup, arityEq]
     have safe : noMutcons body := (findCode_rel f _ _ source target (some loc) _ body found
-      (CallBlockEnvironment.wfVars_list_rel indices opt f env1 env2 environments wf) states).1
+      (CallBlockEnvironment.wfVars_list_rel indices opt f env1 env2 ⟨environments, wf⟩) states).1
     by_cases timeout : source.clock < ticks + 1
     · simp [found, timeout] at run
       obtain ⟨rfl, rfl⟩ := run.symm

@@ -337,8 +337,8 @@ theorem evaluate_wrapper_core {C F : Type} (loc dest tag : Nat) (left right : Li
       obtain ⟨targetValue, blocks, filledHole⟩ := success sourceValue rfl
       have nextHole := alloc_hole_advance f g _ next.refs _ 0 right.length (.number 0) targetValue
         alloc.2.1 filledHole fresh
-      have leftRelated := CallBlockEnvironment.wfVars_list_rel left opt f env1 env2 environments leftWf
-      have rightRelated := CallBlockEnvironment.wfVars_list_rel right opt f env1 env2 environments rightWf
+      have leftRelated := CallBlockEnvironment.wfVars_list_rel left opt f env1 env2 ⟨environments, leftWf⟩
+      have rightRelated := CallBlockEnvironment.wfVars_list_rel right opt f env1 env2 ⟨environments, rightWf⟩
       have leftNext := listRel_submap f g _ _ ⟨leftRelated, extension⟩
       have rightNext := listRel_submap f g _ _ ⟨rightRelated, extension⟩
       have outside := fresh_not_in_range f source.refs target.refs states.1
