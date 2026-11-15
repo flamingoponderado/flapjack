@@ -67,8 +67,8 @@ theorem evaluate_op_core {C F : Type} (op : ClosLang.Op) (args : List Bvi.Exp)
           obtain ⟨rfl, rfl⟩ := run.symm
           obtain ⟨h, value', lastTarget, targetApp, valueRel', nextStates, appExtension,
             appFresh, appUnchanged, appStill⟩ :=
-            doApp_op_rel g op values.reverse values'.reverse middle final middleTarget value
-              appRun safeOp reversed middleStates
+            doApp_op_rel g op values.reverse values'.reverse middle middleTarget final value
+              ⟨appRun, safeOp, reversed, middleStates⟩
           have submap : f.submap h := by
             intro k v found; exact appExtension k v (extension k v found)
           have domain := BviProps.evaluate_refs_subset args env2 target middleTarget (.val values') targetRun

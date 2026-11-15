@@ -239,24 +239,6 @@ theorem doApp_op_rel_setGlobalsPtr {C F : Type} (f : HolFiniteMapExact Nat Nat)
               · intro key item found
                 exact found
 
-/-- Allocating globals is rejected by the BVI primitive dispatcher, so its
-successful-execution simulation case is impossible.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
-theorem doApp_op_rel_allocGlobal {C F : Type} (f : HolFiniteMapExact Nat Nat)
-    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
-    (target : BviState C F) (value : Value)
-    (run : BviSem.doApp (.globOp .allocGlobal) values source = .val (value, sourceNext))
-    (_noMutcons : noMutconsOp (.globOp .allocGlobal)) (_valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
-    (_statesRelated : stateRel f source target) :
-    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
-      BviSem.doApp (.globOp .allocGlobal) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
-      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
-      holesStillNotFinalised f target.refs targetNext.refs := by
-  simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
-
 private theorem related_getElem (f : HolFiniteMapExact Nat Nat) {xs ys : List Value}
     (related : List.Forall₂ (valueRel f) xs ys) (index : Nat) (x : Value)
     (found : xs[index]? = some x) : ∃ y, ys[index]? = some y ∧ valueRel f x y := by
@@ -413,7 +395,7 @@ theorem doApp_op_rel_glob {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : Clo
   cases op with
   | global index => exact doApp_op_rel_global f index values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
   | setGlobal index => exact doApp_op_rel_setGlobal f index values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
-  | allocGlobal => exact doApp_op_rel_allocGlobal f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | allocGlobal => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
   | globalsPtr => exact doApp_op_rel_globalsPtr f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
   | setGlobalsPtr => exact doApp_op_rel_setGlobalsPtr f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
 
@@ -518,51 +500,6 @@ theorem doApp_op_rel_updateCons {C F : Type} (f : HolFiniteMapExact Nat Nat)
     rename_i args flag ptr index child other tag finalised left old right found condition
     exact (no_mutblock f source.refs target.refs ptr tag finalised left old right ⟨statesRelated.1, found⟩).elim
 
-/-- Allocating an array of related values extends the pointer renaming with
-the fresh source and target addresses.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
-theorem doApp_op_rel_ref {C F : Type} (f : HolFiniteMapExact Nat Nat)
-    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
-    (target : BviState C F) (value : Value)
-    (run : BviSem.doApp (.memOp .ref) values source = .val (value, sourceNext))
-    (_noMutcons : noMutconsOp (.memOp .ref)) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
-    (statesRelated : stateRel f source target) :
-    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
-      BviSem.doApp (.memOp .ref) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
-      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
-      holesStillNotFinalised f target.refs targetNext.refs := by
-  let src := leastUnusedRef source.refs
-  let tgt := leastUnusedRef target.refs
-  have srcFresh : src ∉ source.refs.domain := by simp [HolFiniteMapExact.domain, src, leastUnusedRef_unused]
-  have tgtFresh : tgt ∉ target.refs.domain := by simp [HolFiniteMapExact.domain, tgt, leastUnusedRef_unused]
-  have rangeFresh : tgt ∉ mapRange f := fresh_not_in_range f source.refs target.refs statesRelated.1
-  have srcMissing : f.lookup src = none := by
-    have absent : src ∉ f.domain := by rw [statesRelated.1.1]; exact srcFresh
-    simpa [HolFiniteMapExact.domain] using absent
-  have extension : f.submap (f.updateEq (src, tgt)) := by
-    intro key item found
-    have different : key ≠ src := by
-      intro equal
-      subst key
-      rw [srcMissing] at found
-      contradiction
-    simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found
-  have cells : refRel (f.updateEq (src, tgt)) (.valueArray values) (.valueArray relatedValues) :=
-    .valueArray _ _ (listRel_submap f _ values relatedValues ⟨valuesRelated, extension⟩)
-  have ⟨mapped, nextStates, submap, fresh, holes, unfinalised⟩ :=
-    stateRel_alloc f source target src tgt _ _ ⟨statesRelated, srcFresh, tgtFresh, rangeFresh, cells⟩
-  simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
-    BviSem.toBvl, BviSem.fromBvl] at run
-  obtain ⟨rfl, rfl⟩ := run
-  refine ⟨f.updateEq (src, tgt), .refPtr true tgt,
-    { target with refs := target.refs.updateEq (tgt, .valueArray relatedValues) }, ?_,
-    .refPtr src tgt true mapped, nextStates, submap, fresh, holes, unfinalised⟩
-  simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
-    BviSem.toBvl, BviSem.fromBvl, tgt]
-
 private theorem allocate_related {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (source : BviState (Nat × C) F) (target : BviState C F) (v w : Ref Value)
     (states : stateRel f source target) (cells : refRel f v w) :
@@ -594,6 +531,36 @@ private theorem allocate_related {C F : Type} (f : HolFiniteMapExact Nat Nat)
     simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found
   exact stateRel_alloc f source target src tgt v w
     ⟨states, srcFresh, tgtFresh, rangeFresh, refRel_submap f _ v w ⟨cells, extension⟩⟩
+
+/-- Allocating an array of related values extends the pointer renaming with
+the fresh source and target addresses.
+
+Intended HOL counterpart, pending statement and finite-map carrier source review.
+Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
+theorem doApp_op_rel_ref {C F : Type} (f : HolFiniteMapExact Nat Nat)
+    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
+    (target : BviState C F) (value : Value)
+    (run : BviSem.doApp (.memOp .ref) values source = .val (value, sourceNext))
+    (_noMutcons : noMutconsOp (.memOp .ref)) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
+    (statesRelated : stateRel f source target) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
+      BviSem.doApp (.memOp .ref) relatedValues target = .val (value', targetNext) ∧
+      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
+      holesStillNotFinalised f target.refs targetNext.refs := by
+  let src := leastUnusedRef source.refs
+  let tgt := leastUnusedRef target.refs
+  have ⟨mapped, nextStates, submap, fresh, holes, unfinalised⟩ :=
+    allocate_related f source target (.valueArray values) (.valueArray relatedValues)
+      statesRelated (.valueArray _ _ valuesRelated)
+  simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
+    BviSem.toBvl, BviSem.fromBvl] at run
+  obtain ⟨rfl, rfl⟩ := run
+  refine ⟨f.updateEq (src, tgt), .refPtr true tgt,
+    { target with refs := target.refs.updateEq (tgt, .valueArray relatedValues) }, ?_,
+    .refPtr src tgt true mapped, nextStates, submap, fresh, holes, unfinalised⟩
+  simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
+    BviSem.toBvl, BviSem.fromBvl, tgt]
 
 private theorem replicate_related (f : HolFiniteMapExact Nat Nat) (count : Nat) (v w : Value)
     (related : valueRel f v w) : List.Forall₂ (valueRel f) (List.replicate count v) (List.replicate count w) := by
@@ -1359,138 +1326,6 @@ theorem doApp_op_rel_configGC {C F : Type} (f : HolFiniteMapExact Nat Nat)
             · intro key item present
               exact present
 
-/-- Flapjack infrastructure for memory cases rejected by the BVI dispatcher. -/
-private theorem rejected_memory_simulation {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : ClosLang.MemOp)
-    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
-    (target : BviState C F) (value : Value) (rejected : BviTailrec.memoryRejected op = true)
-    (run : BviSem.doApp (.memOp op) values source = .val (value, sourceNext)) :
-    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
-      BviSem.doApp (.memOp op) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
-      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
-      holesStillNotFinalised f target.refs targetNext.refs := by
-  rw [BviTailrec.doApp_memory_rejected op values source rejected] at run
-  contradiction
-
-/-- The directly rejected byte-list conversion case.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
-theorem doApp_op_rel_fromListByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
-    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
-    (target : BviState C F) (value : Value)
-    (run : BviSem.doApp (.memOp .fromListByte) values source = .val (value, sourceNext))
-    (_noMutcons : noMutconsOp (.memOp .fromListByte)) (_valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
-    (_statesRelated : stateRel f source target) :
-    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
-      BviSem.doApp (.memOp .fromListByte) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
-      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
-      holesStillNotFinalised f target.refs targetNext.refs :=
-  rejected_memory_simulation f .fromListByte values relatedValues source sourceNext target value rfl run
-
-/-- The directly rejected byte-array-to-list conversion case.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
-theorem doApp_op_rel_toListByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
-    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
-    (target : BviState C F) (value : Value)
-    (run : BviSem.doApp (.memOp .toListByte) values source = .val (value, sourceNext))
-    (_noMutcons : noMutconsOp (.memOp .toListByte)) (_valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
-    (_statesRelated : stateRel f source target) :
-    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
-      BviSem.doApp (.memOp .toListByte) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
-      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
-      holesStillNotFinalised f target.refs targetNext.refs :=
-  rejected_memory_simulation f .toListByte values relatedValues source sourceNext target value rfl run
-
-/-- The directly rejected byte-vector concatenation case.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
-theorem doApp_op_rel_concatByteVec {C F : Type} (f : HolFiniteMapExact Nat Nat)
-    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
-    (target : BviState C F) (value : Value)
-    (run : BviSem.doApp (.memOp .concatByteVec) values source = .val (value, sourceNext))
-    (_noMutcons : noMutconsOp (.memOp .concatByteVec)) (_valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
-    (_statesRelated : stateRel f source target) :
-    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
-      BviSem.doApp (.memOp .concatByteVec) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
-      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
-      holesStillNotFinalised f target.refs targetNext.refs :=
-  rejected_memory_simulation f .concatByteVec values relatedValues source sourceNext target value rfl run
-
-/-- The directly rejected allocating byte-copy case.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
-theorem doApp_op_rel_copyByte_new {C F : Type} (f : HolFiniteMapExact Nat Nat)
-    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
-    (target : BviState C F) (value : Value)
-    (run : BviSem.doApp (.memOp (.copyByte true)) values source = .val (value, sourceNext))
-    (_noMutcons : noMutconsOp (.memOp (.copyByte true))) (_valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
-    (_statesRelated : stateRel f source target) :
-    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
-      BviSem.doApp (.memOp (.copyByte true)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
-      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
-      holesStillNotFinalised f target.refs targetNext.refs :=
-  rejected_memory_simulation f (.copyByte true) values relatedValues source sourceNext target value rfl run
-
-/-- Mutable-constructor allocation is excluded by the original pass premise.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
-theorem doApp_op_rel_mutCons {C F : Type} (f : HolFiniteMapExact Nat Nat) (tag index : Nat)
-    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
-    (target : BviState C F) (value : Value)
-    (_run : BviSem.doApp (.memOp (.mutCons tag index)) values source = .val (value, sourceNext))
-    (noMutcons : noMutconsOp (.memOp (.mutCons tag index))) (_valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
-    (_statesRelated : stateRel f source target) :
-    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
-      BviSem.doApp (.memOp (.mutCons tag index)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
-      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
-      holesStillNotFinalised f target.refs targetNext.refs := by
-  exact (noMutcons tag index rfl).elim
-
-/-- Byte-vector length is rejected by the delegated BVL dispatcher.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
-theorem doApp_op_rel_lengthByteVec {C F : Type} (f : HolFiniteMapExact Nat Nat)
-    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
-    (target : BviState C F) (value : Value)
-    (run : BviSem.doApp (.memOp .lengthByteVec) values source = .val (value, sourceNext))
-    (_noMutcons : noMutconsOp (.memOp .lengthByteVec)) (_valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
-    (_statesRelated : stateRel f source target) :
-    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
-      BviSem.doApp (.memOp .lengthByteVec) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
-      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
-      holesStillNotFinalised f target.refs targetNext.refs := by
-  simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
-
-/-- Byte-vector dereference is rejected by the delegated BVL dispatcher.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
-theorem doApp_op_rel_derefByteVec {C F : Type} (f : HolFiniteMapExact Nat Nat)
-    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
-    (target : BviState C F) (value : Value)
-    (run : BviSem.doApp (.memOp .derefByteVec) values source = .val (value, sourceNext))
-    (_noMutcons : noMutconsOp (.memOp .derefByteVec)) (_valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
-    (_statesRelated : stateRel f source target) :
-    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
-      BviSem.doApp (.memOp .derefByteVec) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
-      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
-      holesStillNotFinalised f target.refs targetNext.refs := by
-  simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
-
 /-- In-place byte copying preserves related heaps for independently mapped
 source and destination pointers, including when the pointers alias.
 
@@ -1609,20 +1444,20 @@ theorem doApp_op_rel_mem {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : Clos
   | refArray => exact doApp_op_rel_refArray f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
   | derefByte => exact doApp_op_rel_derefByte f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
   | updateByte => exact doApp_op_rel_updateByte f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
-  | concatByteVec => exact doApp_op_rel_concatByteVec f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | concatByteVec => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
   | copyByte flag =>
     cases flag with
     | false => exact doApp_op_rel_copyByte_inPlace f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
-    | true => exact doApp_op_rel_copyByte_new f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
-  | fromListByte => exact doApp_op_rel_fromListByte f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
-  | toListByte => exact doApp_op_rel_toListByte f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
-  | lengthByteVec => exact doApp_op_rel_lengthByteVec f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
-  | derefByteVec => exact doApp_op_rel_derefByteVec f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+    | true => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
+  | fromListByte => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
+  | toListByte => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux] at run
+  | lengthByteVec => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
+  | derefByteVec => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory] at run
   | stringCmp fast comparison => exact doApp_op_rel_stringCmp f fast comparison values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
   | xorByte => exact doApp_op_rel_xorByte f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
   | boundsCheckArray => exact doApp_op_rel_boundsCheckArray f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
   | boundsCheckByte loose => exact doApp_op_rel_boundsCheckByte f loose values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
-  | mutCons tag index => exact doApp_op_rel_mutCons f tag index values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | mutCons tag index => exact (noMutcons tag index rfl).elim
   | updateCons => exact doApp_op_rel_updateCons f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
   | finaliseCons => exact doApp_op_rel_finaliseCons f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
   | configGC => exact doApp_op_rel_configGC f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
@@ -2318,23 +2153,6 @@ theorem doApp_op_rel_equalConst {C F : Type} (f : HolFiniteMapExact Nat Nat) (pa
               · intro key item present
                 exact present
 
-/-- The BVI/BVL dispatcher rejects the obsolete constant operation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
-theorem doApp_op_rel_constant {C F : Type} (f : HolFiniteMapExact Nat Nat) (constant : ClosLang.Const)
-    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
-    (target : BviState C F) (value : Value)
-    (run : BviSem.doApp (.blockOp (.constant constant)) values source = .val (value, sourceNext))
-    (_noMutcons : noMutconsOp (.blockOp (.constant constant))) (_valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
-    (_statesRelated : stateRel f source target) :
-    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
-      BviSem.doApp (.blockOp (.constant constant)) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
-      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
-      holesStillNotFinalised f target.refs targetNext.refs := by
-  simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
-
 /-- Every block operation satisfies the source primitive simulation.
 
 Intended HOL counterpart, pending statement and finite-map carrier source review.
@@ -2363,7 +2181,7 @@ theorem doApp_op_rel_block {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : Cl
   | consExtend tag => exact doApp_op_rel_consExtend f tag values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
   | fromList tag => exact doApp_op_rel_fromList f tag values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
   | listAppend => exact doApp_op_rel_listAppend f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
-  | constant constant => exact doApp_op_rel_constant f constant values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | constant constant => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock] at run
   | equal => exact doApp_op_rel_equal f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
   | equalConst part => exact doApp_op_rel_equalConst f part values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
   | build parts => exact doApp_op_rel_build f parts values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
@@ -2479,23 +2297,6 @@ theorem doApp_op_rel_updateThunk {C F : Type} (f : HolFiniteMapExact Nat Nat) (m
                         · intro key item present
                           exact present
 
-/-- The force-thunk primitive is rejected by the BVL dispatcher.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
-theorem doApp_op_rel_forceThunk {C F : Type} (f : HolFiniteMapExact Nat Nat)
-    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
-    (target : BviState C F) (value : Value)
-    (run : BviSem.doApp (.thunkOp .forceThunk) values source = .val (value, sourceNext))
-    (_noMutcons : noMutconsOp (.thunkOp .forceThunk)) (_valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
-    (_statesRelated : stateRel f source target) :
-    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
-      BviSem.doApp (.thunkOp .forceThunk) relatedValues target = .val (value', targetNext) ∧
-      valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
-      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
-      holesStillNotFinalised f target.refs targetNext.refs := by
-  simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at run
-
 /-- Every thunk operation satisfies the source primitive simulation.
 
 Intended HOL counterpart, pending statement and finite-map carrier source review.
@@ -2514,7 +2315,7 @@ theorem doApp_op_rel_thunk {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : As
   cases op with
   | allocThunk mode => exact doApp_op_rel_allocThunk f mode values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
   | updateThunk mode => exact doApp_op_rel_updateThunk f mode values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
-  | forceThunk => exact doApp_op_rel_forceThunk f values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
+  | forceThunk => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp] at run
 
 /-- External calls receive the same bytes and preserve related heaps and FFI state.
 
@@ -2624,16 +2425,16 @@ preserving related results, state, freshness and mutable-hole invariants.
 Intended HOL counterpart, pending statement and finite-map carrier source review.
 Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_rel" (fmap_as_finite_support_relation := [BviState.refs, f, nextMap])] -/
 theorem doApp_op_rel {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : ClosLang.Op)
-    (values relatedValues : List Value) (source sourceNext : BviState (Nat × C) F)
-    (target : BviState C F) (value : Value)
-    (run : BviSem.doApp op values source = .val (value, sourceNext))
-    (noMutcons : noMutconsOp op) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues)
-    (statesRelated : stateRel f source target) :
+    (values relatedValues : List Value) (source : BviState (Nat × C) F)
+    (target : BviState C F) (sourceNext : BviState (Nat × C) F) (value : Value)
+    (h : BviSem.doApp op values source = .val (value, sourceNext) ∧ noMutconsOp op ∧
+      List.Forall₂ (valueRel f) values relatedValues ∧ stateRel f source target) :
     ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : BviState C F),
       BviSem.doApp op relatedValues target = .val (value', targetNext) ∧
       valueRel nextMap value value' ∧ stateRel nextMap sourceNext targetNext ∧ f.submap nextMap ∧
       onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs targetNext.refs ∅ ∧
       holesStillNotFinalised f target.refs targetNext.refs := by
+  obtain ⟨run, noMutcons, valuesRelated, statesRelated⟩ := h
   cases op with
   | label label => exact doApp_op_rel_label f label values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
   | ffi name => exact doApp_op_rel_ffi f name values relatedValues source sourceNext target value run noMutcons valuesRelated statesRelated
