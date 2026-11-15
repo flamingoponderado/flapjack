@@ -10531,3 +10531,15 @@ from the theory DB; `comp_exp` shows HOL's `ShiftN` overload expanded to
 `Shift ... (Const (n2w n))` and the `word5` temporary name. Regenerate with
 `CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=loop_to_word_defs_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`crep_inline_local_typed_probe.out` (8 rows) captures the reviewed
+`crep_inlineProofScript.sml` rows that earlier probes did not cover (task 186):
+the three exported primed theorems `evaluate_locals_same_fdom'`,
+`not_has_return_not_evaluate_return'` and
+`opt_mmap_update_list_locals_not_vars_eval_eq'` are read from the theory DB, and
+the five `[local]` finite-map lemmas (`FDIFF_fupdate_list_empty_flookup_var`,
+`FDIFF_fupdate_list_empty_flookup`, `FOLDL_res_var_ZIP_lookup_var`,
+`FOLDL_res_var_ZIP_lookup`, `submap_finish_flookup`) are parsed from the pinned
+source with the splice-expanding helper. Regenerate with
+`CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=crep_inline_local_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.

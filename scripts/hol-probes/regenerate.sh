@@ -11851,3 +11851,11 @@ run_probe loop_to_word_defs_typed_probeScript.sml loop_to_word_defs_typed_probe.
   mk_new_cutset_def_typed toNumSet_def_typed make_ctxt_def_typed \
   "$cake_dir/pancake/loop_to_wordScript.sml" \
   "$cake_dir/pancake"
+
+run_probe crep_inline_local_typed_probeScript.sml crep_inline_local_typed_probe.out \
+  evaluate_locals_same_fdom_prime_typed not_has_return_not_evaluate_return_prime_typed \
+  opt_mmap_update_list_locals_not_vars_eval_eq_prime_typed FDIFF_fupdate_list_empty_flookup_var_typed \
+  FDIFF_fupdate_list_empty_flookup_typed FOLDL_res_var_ZIP_lookup_var_typed \
+  FOLDL_res_var_ZIP_lookup_typed submap_finish_flookup_typed \
+  "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" \
+  "$cake_dir/pancake/proofs"
