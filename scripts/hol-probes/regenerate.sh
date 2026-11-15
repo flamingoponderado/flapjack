@@ -11832,3 +11832,9 @@ run_probe grammar_typed_probeScript.sml grammar_typed_probe.out \
   valid_ptree_def_typed complete_ptree_def_typed valid_lptree_def_typed \
   "$hol_dir/examples/formal-languages/context-free/grammarScript.sml" \
   "$hol_dir/examples/formal-languages/context-free"
+
+run_probe sorting_typed_probeScript.sml sorting_typed_probe.out \
+  PERM_DEF_typed SORTED_DEF_typed SORTED_EQ_typed PART_DEF_typed \
+  PARTs_HAVE_PROP_typed PARTITION_DEF_typed SORTED_TL_typed \
+  "$hol_dir/src/sort/sortingScript.sml" \
+  "$hol_dir/src/sort"

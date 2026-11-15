@@ -10502,3 +10502,13 @@ the splice-expanding helper. The probe takes its source path from `HOL4` rather
 than `CAKEML` and loads no CakeML preamble. Regenerate with
 `CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=grammar_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`sorting_typed_probe.out` (7 rows) captures the reviewed
+`HOL/src/sort/sortingScript.sml` rows that earlier probes did not cover
+(task 186): `PERM_DEF`, `SORTED_DEF`, `SORTED_EQ`, `PART_DEF`,
+`PARTs_HAVE_PROP`, `PARTITION_DEF` and `SORTED_TL`. `sortingTheory` is built in
+the HOL installation (`src/sort/.hol/objs`), so all seven are exported and read
+from the theory DB; the source text in `$HOL4` is read only for the shared
+freshness contract. Regenerate with
+`CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=sorting_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
