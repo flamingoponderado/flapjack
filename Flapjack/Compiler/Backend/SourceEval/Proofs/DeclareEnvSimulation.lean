@@ -10,48 +10,6 @@ public import Lean.Elab.Tactic.Omega
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.SemanticPrimitivesHOL Flapjack.SemanticPrimitivesProps Flapjack.AstHOL
 
-/-- Flapjack proof infrastructure: appending an environment preserves recorded lookups. -/
-private theorem declareForward (oracle : EvalOracleState) (env : SemEnv Value)
-    (valid : oracle.generation < oracle.envs.length) :
-    let generation := oracle.envs[oracle.generation]
-    let updated := { oracle with envs := oracle.envs.set oracle.generation (generation ++ [env]) }
-    envStoreForward oracle updated := by
-  dsimp only
-  refine ⟨by simp, ?_⟩
-  intro id result found
-  rcases id with ⟨g, i⟩
-  simp only [lookupEnv] at found ⊢
-  by_cases same : g = oracle.generation
-  · subst g
-    have prior : oracle.envs[oracle.generation][i]? = some result := by
-      simpa [List.getElem?_eq_getElem valid] using found
-    have bound : i < oracle.envs[oracle.generation].length := by
-      by_contra no
-      simp [List.getElem?_eq_none (by omega : oracle.envs[oracle.generation].length ≤ i)] at prior
-    simpa [valid, List.getElem?_append, bound] using prior
-  · simpa [Ne.symm same] using found
-
-/-- Flapjack proof infrastructure: the appended environment is available at its new index. -/
-private theorem declareLookup (oracle : EvalOracleState) (env : SemEnv Value)
-    (valid : oracle.generation < oracle.envs.length) :
-    let generation := oracle.envs[oracle.generation]
-    let updated := { oracle with envs := oracle.envs.set oracle.generation (generation ++ [env]) }
-    lookupEnv updated (oracle.generation, generation.length) = some env := by
-  dsimp only
-  simp [lookupEnv, valid]
-
-/-- Flapjack proof infrastructure: updating the current generation preserves its prefix. -/
-private theorem declareStack (oracle : EvalOracleState) (env : SemEnv Value)
-    (valid : oracle.generation < oracle.envs.length) :
-    let generation := oracle.envs[oracle.generation]
-    let updated := { oracle with envs := oracle.envs.set oracle.generation (generation ++ [env]) }
-    envStackForward oracle updated := by
-  dsimp only
-  constructor
-  · rfl
-  · intro j bound
-    simp [Flapjack.holEl_set, valid, Nat.ne_of_gt bound]
-
 /-- Declaration recording advances related states and preserves the generation stack. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "declare_env_sim"]
 theorem declareEnv_sim {Config F : Type} (s : State F) (env : SemEnv Value)
@@ -77,10 +35,28 @@ theorem declareEnv_sim {Config F : Type} (s : State F) (env : SemEnv Value)
   cases counter
   let generationEnv := oracle.envs[oracle.generation]
   let updated := { oracle with envs := oracle.envs.set oracle.generation (generationEnv ++ [env']) }
-  have forward : envStoreForward oracle updated := declareForward oracle env' valid
-  have lookup : lookupEnv updated (oracle.generation, generationEnv.length) = some env' :=
-    declareLookup oracle env' valid
-  have stack : envStackForward oracle updated := declareStack oracle env' valid
+  have forward : envStoreForward oracle updated := by
+    dsimp only [updated, generationEnv]
+    refine ⟨by simp, ?_⟩
+    intro id result found
+    rcases id with ⟨g, i⟩
+    simp only [lookupEnv] at found ⊢
+    by_cases same : g = oracle.generation
+    · subst g
+      have prior : oracle.envs[oracle.generation][i]? = some result := by
+        simpa [List.getElem?_eq_getElem valid] using found
+      have bound : i < oracle.envs[oracle.generation].length := by
+        by_contra no
+        simp [List.getElem?_eq_none (by omega : oracle.envs[oracle.generation].length ≤ i)] at prior
+      simpa [valid, List.getElem?_append, bound] using prior
+    · simpa [Ne.symm same] using found
+  have lookup : lookupEnv updated (oracle.generation, generationEnv.length) = some env' := by
+    simp [updated, generationEnv, lookupEnv, valid]
+  have stack : envStackForward oracle updated := by
+    constructor
+    · rfl
+    · intro j bound
+      simp [updated, Flapjack.holEl_set, valid, Nat.ne_of_gt bound]
   refine ⟨.conv none [natToValue oracle.generation, natToValue generationEnv.length],
     some (.evalOracle updated), ?_, ?_, ?_, ?_, ?_⟩
   · exact forward
