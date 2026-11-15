@@ -50,6 +50,7 @@ the cited name occurs in one of the two syntactic forms.
 
 | HOL script | Lean counterpart |
 | --- | --- |
+| `HOL/examples/algorithms/unification/triangular/first-order/termScript.sml` | `Flapjack/HOL/Unification/Term.lean` (first-order term carrier) |
 | `HOL/src/bag/bagScript.sml` | `Flapjack/Misc/Bag.lean` (polymorphic bag carrier and union laws) |
 | `HOL/src/finite_maps/alistScript.sml` | `Flapjack/FiniteMap/AlistExact.lean` and its `Lookup.lean` submodule (canonical finite-support association-list map and HOL ALOOKUP) |
 | `HOL/src/list/src/listScript.sml` | `Flapjack/Misc/List.lean` (shared list-relation results) |

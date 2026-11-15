@@ -10470,6 +10470,12 @@ their inferred types. The environment-relation and REPL theories are not
 fetched by this probe; regenerate with
 `HOL_PROBE_ONLY=env_rel_init_probeScript.sml`.
 
+`unify_encoding_probe.out` captures the polymorphic first-order term carrier,
+inference atom carrier, complete encoding and decoding equations, and the
+inverse and injectivity theorems. Regenerate with
+`HOL_PROBE_ONLY=unify_encoding_probeScript.sml`. The capture is source-review
+evidence; it does not establish unifier equivalence.
+
 `loop_live_proof_typed_probe.out` (12 rows) captures the typed statements of
 the reviewed `loop_liveProofScript.sml` rows that the earlier probes did not
 cover (task 184). `loop_liveProofTheory` is built in the private copy; the

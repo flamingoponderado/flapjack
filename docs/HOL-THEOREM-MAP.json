@@ -137939,5 +137939,101 @@
     "lean_name": "initConfig_eq_tenvToIenv",
     "statement_status": "reviewed_exact",
     "reviewer": "Compared the original theorem and init_config_tenv_to_ienv_replay_typed in env_rel_init_probe.out: the initial inference configuration equals the conversion of the primitive type environment, in the original direction. The capture replays the source proof using a reconstructed conversion, not a fetched repl_typesTheory theorem."
-  }
+  },
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/termScript.sml",
+  "hol_name": "term",
+  "lean_path": "Flapjack/HOL/Unification/Term.lean",
+  "lean_name": "Term",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with unify_encoding_probe.out: The generic constant carrier and Nat variables, Pair children and constructor order match term_axiom_typed."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/termScript.sml",
+  "hol_name": "pair_count_def",
+  "lean_path": "Flapjack/HOL/Unification/Term.lean",
+  "lean_name": "pairCount",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with unify_encoding_probe.out: Var and Const yield zero; Pair yields one plus both recursive counts, as in pair_count_def_typed."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/termScript.sml",
+  "hol_name": "vars_def",
+  "lean_path": "Flapjack/HOL/Unification/Term.lean",
+  "lean_name": "vars",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with unify_encoding_probe.out: Var contributes its singleton Nat, Pair takes set union, and Const is empty, as in vars_def_typed."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml",
+  "hol_name": "atom",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Encoding.lean",
+  "lean_name": "Atom",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with unify_encoding_probe.out: The TC and DB tags carry Nat and the two other tags are nullary, as in atom_axiom_typed."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml",
+  "hol_name": "encode_infer_t_def",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Encoding.lean",
+  "lean_name": "encodeInferT",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with unify_encoding_probe.out: The three inference-type clauses preserve all constructor tags and recursively encode application arguments."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml",
+  "hol_name": "encode_infer_t_def",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Encoding.lean",
+  "lean_name": "encodeInferTs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with unify_encoding_probe.out: The list clauses use Null for empty and Pair of head encoding and tail encoding for cons."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml",
+  "hol_name": "decode_infer_t_def",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Encoding.lean",
+  "lean_name": "decodeInferT",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with unify_encoding_probe.out: Var, DB and application patterns and all other cases returning Tuvar 5 match the complete expanded typed equations."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml",
+  "hol_name": "decode_infer_t_def",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Encoding.lean",
+  "lean_name": "decodeInferTs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with unify_encoding_probe.out: Null and Pair cases and all other cases returning the empty list match the complete expanded typed equations."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml",
+  "hol_name": "decode_left_inverse",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Encoding.lean",
+  "lean_name": "decodeLeftInverse",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with unify_encoding_probe.out: Both universally quantified type and list inverse equalities are present without premises."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml",
+  "hol_name": "encode_infer_t_11",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Encoding.lean",
+  "lean_name": "encodeInferTInjective",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with unify_encoding_probe.out: Both universally quantified type and list injectivity equivalences are preserved."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml",
+  "hol_name": "decode_left_inverse_I",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Encoding.lean",
+  "lean_name": "decodeLeftInverseI",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with unify_encoding_probe.out: The original function equality decode composed with encode equals identity is retained."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml",
+  "hol_name": "encode_eq_var",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Encoding.lean",
+  "lean_name": "encodeEqVar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison with unify_encoding_probe.out: The shared Nat and inference-type binders and both equality-orientation equivalences are preserved."
+}
 ]

@@ -9790,6 +9790,11 @@ run_probe infer_props_tids_probeScript.sml infer_props_tids_probe.out \
   "$cake_dir/compiler/inference/inferPropsScript.sml" \
   "$cake_dir/compiler/inference"
 
+run_probe unify_encoding_probeScript.sml unify_encoding_probe.out \
+  term_axiom_typed pair_count_def_typed vars_def_typed atom_axiom_typed encode_infer_t_def_typed decode_infer_t_def_typed encode_infer_t_11_typed decode_left_inverse_typed decode_left_inverse_I_typed encode_eq_var_typed \
+  "$cake_dir/compiler/inference/unifyScript.sml" \
+  "$cake_dir/compiler/inference"
+
 run_probe env_rel_init_probeScript.sml env_rel_init_probe.out \
   tenv_to_ienv_replay_typed lookup_varE_empty_replay_typed init_config_tenv_to_ienv_replay_typed \
   "$cake_dir/compiler/inference/proofs/envRelScript.sml" \
