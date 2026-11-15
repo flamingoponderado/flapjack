@@ -135699,6 +135699,20 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "v_to_bytes_v_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
+  "lean_name": "valueToBytes_rel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Source comparison: Compared v_to_bytes_v_rel_typed in bvi_tmc_proof_source_probe.out: a successful byte decode and the full value relation jointly imply the identical byte decode on the related value. The fixed word8 result and canonical finite-support pointer map match, with a same-module witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "v_to_words_v_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
+  "lean_name": "valueToWords_rel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Source comparison: Compared v_to_words_v_rel_typed in bvi_tmc_proof_source_probe.out: a successful word decode and the full value relation jointly imply the identical word decode on the related value. The fixed word64 result and canonical finite-support pointer map match, with a same-module witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "list_rel_v_rel_number", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
   "lean_name": "listRel_valueRel_number", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f"],

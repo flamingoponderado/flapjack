@@ -341,12 +341,12 @@ theorem listRel_valueRel_word (words : List (BitVec 64)) (values : List Value)
 theorem holFmapAsFiniteSupportParamWitness_valueToBytes_rel_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
-/-- Related list values decode to the same byte sequence.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_to_bytes_v_rel" (fmap_as_finite_support_parameters := [f])] -/
+/-- Related list values decode to the same byte sequence. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_to_bytes_v_rel"
+  (fmap_as_finite_support_parameters := [f])]
 theorem valueToBytes_rel (v : Value) (bytes : List (BitVec 8)) (f : HolFiniteMapExact Nat Nat) (v' : Value)
-    (decoded : valueToBytes v = some bytes) (related : valueRel f v v') : valueToBytes v' = some bytes := by
+    (h : valueToBytes v = some bytes ∧ valueRel f v v') : valueToBytes v' = some bytes := by
+  obtain ⟨decoded, related⟩ := h
   have listDecoded := (valueToBytes_eq_some v bytes).mp decoded
   obtain ⟨values, targetDecoded, valuesRelated⟩ := valueToList_rel v _ v' f ⟨listDecoded, related⟩
   have same := listRel_valueRel_number (fun b : BitVec 8 => (b.toNat : Int)) bytes values f valuesRelated
@@ -355,12 +355,12 @@ theorem valueToBytes_rel (v : Value) (bytes : List (BitVec 8)) (f : HolFiniteMap
 theorem holFmapAsFiniteSupportParamWitness_valueToWords_rel_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
-/-- Related list values decode to the same word sequence.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_to_words_v_rel" (fmap_as_finite_support_parameters := [f])] -/
+/-- Related list values decode to the same word sequence. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_to_words_v_rel"
+  (fmap_as_finite_support_parameters := [f])]
 theorem valueToWords_rel (v : Value) (words : List (BitVec 64)) (f : HolFiniteMapExact Nat Nat) (v' : Value)
-    (decoded : valueToWords v = some words) (related : valueRel f v v') : valueToWords v' = some words := by
+    (h : valueToWords v = some words ∧ valueRel f v v') : valueToWords v' = some words := by
+  obtain ⟨decoded, related⟩ := h
   have listDecoded := (valueToWords_eq_some v words).mp decoded
   obtain ⟨values, targetDecoded, valuesRelated⟩ := valueToList_rel v _ v' f ⟨listDecoded, related⟩
   have same := listRel_valueRel_word words values f valuesRelated

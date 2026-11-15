@@ -46,6 +46,8 @@ do_eq_v_rel_typed=(∀(refs :num |-> v ref) (x1 :v) (x2 :v) (t_refs :num |-> v r
 do_word_app_v_rel_typed=∀(w :word_op) (vs :v list) (res :v) (vs' :v list) (f :num |-> num). do_word_app w vs = SOME res ∧ LIST_REL (v_rel f) vs vs' ⇒ vs' = vs
 do_word_app_v_rel_refl_typed=∀(w :word_op) (vs :v list) (res :v) (f :num |-> num). do_word_app w vs = SOME res ⇒ v_rel f res res
 no_mutblock_typed=∀(f :num |-> num) (refs :num |-> v ref) (t_refs :num |-> v ref) (ptr :num) (tag :num) (fin :bool) (l :v list) (c :v) (r :v list). state_ref_rel f refs t_refs ∧ FLOOKUP refs ptr = SOME (MutBlock tag fin l c r) ⇒ F
+v_to_bytes_v_rel_typed=v_to_bytes (lv :v) = SOME (bytes :word8 list) ∧ v_rel (f :num |-> num) lv (lw :v) ⇒ v_to_bytes lw = SOME bytes
+v_to_words_v_rel_typed=v_to_words (lv :v) = SOME (ws :word64 list) ∧ v_rel (f :num |-> num) lv (lw :v) ⇒ v_to_words lw = SOME ws
 hole_has_val_submap_typed=∀(f :num |-> num) (f' :num |-> num) (env1 :v list) (env2 :v list) (refs :num |-> v ref) (c :v). hole_has_val f' env1 env2 refs c ∧ f ⊑ f' ⇒ hole_has_val f env1 env2 refs c
 holes_unchanged_except_trans_typed=∀(f :num |-> num) (f' :num |-> num) (refs :num |-> v ref) (refs' :num |-> v ref) (refs'' :num |-> v ref) (changed :num -> bool). holes_unchanged_except f refs refs' changed ∧ holes_unchanged_except f' refs' refs'' changed ∧ only_fresh f f' refs ∧ f ⊑ f' ⇒ holes_unchanged_except f refs refs'' changed
 holes_still_not_finalised_trans_typed=∀(f :num |-> num) (f' :num |-> num) (refs :num |-> v ref) (refs' :num |-> v ref) (refs'' :num |-> v ref) (changed :α). holes_still_not_finalised f refs refs' ∧ holes_still_not_finalised f' refs' refs'' ∧ only_fresh f f' refs ∧ f ⊑ f' ⇒ holes_still_not_finalised f refs refs''
