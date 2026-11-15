@@ -103,31 +103,6 @@ theorem evaluate_if_to_core {C F : Type} (condition yes no yesTarget noTarget : 
             | some false => evaluate [noTarget] env2 middleTarget) = _
           cases boolean <;> simpa [decoded', selectedTarget] using branchRun
 
-/-- Flapjack infrastructure: ordinary conditional simulation from the
-condition and selected-branch induction hypotheses. The source measure,
-safety premises, and optimized wrapper/worker conclusions are not included. -/
-theorem evaluate_if_core {C F : Type} (condition yes no : Bvi.Exp)
-    (source : BviState (Nat × C) F) (env1 : List Value) (result : BviResult)
-    (final : BviState (Nat × C) F) (opt : Bool) (f : HolFiniteMapExact Nat Nat)
-    (target : BviState C F) (env2 : List Value)
-    (run : evaluate [.ifThenElse condition yes no] env1 source = (result, final))
-    (notTypeError : result ≠ .err (.abort .typeError))
-    (environments : envRel opt f env1 env2)
-    (conditionIH : ∀ r mid, evaluate [condition] env1 source = (r, mid) →
-      r ≠ .err (.abort .typeError) → Core [condition] env2 f target r mid)
-    (branchIH : ∀ branch mid (g : HolFiniteMapExact Nat Nat) (t : BviState C F),
-      (∃ r, evaluate [condition] env1 source = (r, mid)) →
-      (branch = yes ∨ branch = no) → evaluate [branch] env1 mid = (result, final) →
-      envRel opt g env1 env2 → stateRel g mid t → Core [branch] env2 g t result final) :
-    Core [.ifThenElse condition yes no] env2 f target result final := by
-  apply evaluate_if_to_core condition yes no yes no source env1 result final opt f target env2
-    run notTypeError environments conditionIH
-  intro branch branchTarget mid g t pair branchRun env states conditionRuns
-  obtain ⟨r, _, sourceCondition, _⟩ := conditionRuns
-  rcases pair with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-  · exact branchIH _ mid g t ⟨r, sourceCondition⟩ (Or.inl rfl) branchRun env states
-  · exact branchIH _ mid g t ⟨r, sourceCondition⟩ (Or.inr rfl) branchRun env states
-
 /-- Flapjack infrastructure: the wrapper branch of conditional simulation,
 assuming the condition and selected-branch induction hypotheses. The branch
 hypothesis covers both a rewritten branch and an unchanged branch. -/

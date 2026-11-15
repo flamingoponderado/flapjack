@@ -461,6 +461,7 @@ val _ = show "dest_thunk_ret_rel_def_typed" bvi_tmcProofTheory.dest_thunk_ret_re
 val _ = show "dest_thunk_rel_typed" bvi_tmcProofTheory.dest_thunk_rel;
 val _ = show "evaluate_compile_each_typed" bvi_tmcProofTheory.evaluate_compile_each;
 val _ = show "state_rel_const_typed" bvi_tmcProofTheory.state_rel_const;
+val _ = show "state_rel_code_rel_typed" bvi_tmcProofTheory.state_rel_code_rel;
 val _ = show "hole_has_val_submap_typed" bvi_tmcProofTheory.hole_has_val_submap;
 val _ = show "holes_unchanged_except_trans_typed" bvi_tmcProofTheory.holes_unchanged_except_trans;
 val _ = show "holes_still_not_finalised_trans_typed" bvi_tmcProofTheory.holes_still_not_finalised_trans;

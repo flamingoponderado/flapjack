@@ -41,10 +41,11 @@ theorem evaluate_let {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp)
         WorkerCore (rewriteWorkerSource loc locOpt env1.length (env1.length + 1) env1.length
           (.let bindings body)) env1 env2 f target holePtr result final) := by
   constructor
-  · apply evaluate_let_core bindings body source env1 result final opt f target env2
+  · apply evaluate_let_to_core bindings body body source env1 result final opt f target env2
       run notTypeError environments bindingsIH
-    intro values values' mid g t bindingsRun bodyRun env states
-    exact (bodyIH values values' mid g t bindingsRun bodyRun env states).1
+    intro values values' mid g t bodyRun valuesRelated env states sourceRun _targetRun
+    exact (bodyIH values values' mid g t sourceRun bodyRun
+      (envRel_append opt g env1 env2 values values' ⟨env, valuesRelated⟩) states).1
   · intro locOpt code
     constructor
     · intro wrapper wrapperRun

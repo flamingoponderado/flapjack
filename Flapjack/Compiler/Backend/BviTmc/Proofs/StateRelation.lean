@@ -124,10 +124,9 @@ theorem stateRel_dec {C F : Type} (n t : Nat) (f : HolFiniteMapExact Nat Nat)
   obtain ⟨related, sourceClock, targetClock, _bound⟩ := h
   simpa [BviSem.decClock, sourceClock, targetClock] using stateRel_with_clock (n + 1 - t) f source target related
 
-/-- The state relation contains the original code relation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_code_rel" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
+/-- The state relation contains the code relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_code_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f])]
 theorem stateRel_codeRel {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (source : BviState (Nat × C) F) (target : BviState C F) (related : stateRel f source target) :
     codeRel source.code target.code := related.2.2.2.2.2.2.1

@@ -135769,6 +135769,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "state_rel_code_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/StateRelation.lean",
+  "lean_name": "stateRel_codeRel", "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BviState.refs", "f"],
+  "reviewer": "Source comparison: Compared state_rel_code_rel_typed in bvi_tmc_proof_source_probe.out. The original state relation implies the code relation between its source and target code trees. State refs and the pointer map use canonical finite support with a same-module state roundtrip witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "cons_append", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockFrame.lean",
   "lean_name": "cons_append", "statement_status": "reviewed_exact",
   "reviewer": "Source comparison: Compared cons_append_typed in bvi_tmc_proof_source_probe.out: arbitrary element and list retain the original polymorphic cons equals singleton append equation."

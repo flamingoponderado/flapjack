@@ -69,28 +69,6 @@ theorem evaluate_let_to_core {C F : Type} (bindings : List Bvi.Exp) (body target
         rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetRun]
         exact bodyRun
 
-/-- Flapjack infrastructure: the ordinary let induction step with the same
-body on both sides. -/
-theorem evaluate_let_core {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp)
-    (source : BviState (Nat × C) F) (env1 : List Value) (result : BviResult)
-    (final : BviState (Nat × C) F) (opt : Bool) (f : HolFiniteMapExact Nat Nat)
-    (target : BviState C F) (env2 : List Value)
-    (run : evaluate [.let bindings body] env1 source = (result, final))
-    (notTypeError : result ≠ .err (.abort .typeError))
-    (environments : envRel opt f env1 env2)
-    (bindingsIH : ∀ r mid, evaluate bindings env1 source = (r, mid) →
-      r ≠ .err (.abort .typeError) → Core bindings env2 f target r mid)
-    (bodyIH : ∀ values values' mid (g : HolFiniteMapExact Nat Nat) (t : BviState C F),
-      evaluate bindings env1 source = (.val values, mid) →
-      evaluate [body] (values ++ env1) mid = (result, final) →
-      envRel opt g (values ++ env1) (values' ++ env2) → stateRel g mid t →
-      Core [body] (values' ++ env2) g t result final) :
-    Core [.let bindings body] env2 f target result final := by
-  apply evaluate_let_to_core bindings body body source env1 result final opt f target env2
-    run notTypeError environments bindingsIH
-  intro values values' mid g t bodyRun valuesRelated env states sourceRun _targetRun
-  exact bodyIH values values' mid g t sourceRun bodyRun (envRel_append opt g env1 env2 values values' ⟨env, valuesRelated⟩) states
-
 /-- Flapjack infrastructure: the let-wrapper simulation from the binding and
 body induction hypotheses, with optimized code preserved through bindings. -/
 theorem evaluate_let_wrapper {C F : Type} (bindings : List Bvi.Exp) (body wrapper : Bvi.Exp)
