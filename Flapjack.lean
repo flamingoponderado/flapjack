@@ -3293,6 +3293,7 @@ import Flapjack.SemanticsProps.Clock
 import Flapjack.SemanticsProps.Determinism
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.BackendCommon
+import Flapjack.Compiler.Backend.BackendCommon.StubParity
 import Flapjack.Compiler.Backend.Semantics.WordSem
 import Flapjack.Compiler.Backend.Semantics.WordSem.State
 import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors

@@ -58,3 +58,5 @@ val _ = emit "subscript_tag_def_typed" "subscript_tag_def";
 val _ = emit "nil_tag_def_typed" "nil_tag_def";
 val _ = emit "cons_tag_def_typed" "cons_tag_def";
 val _ = emit "small_enough_int_def_typed" "small_enough_int_def";
+val _ = emit "data_num_stubs_EVEN_typed" "data_num_stubs_EVEN";
+val _ = emit "lookup_list_delete_typed" "lookup_list_delete";
