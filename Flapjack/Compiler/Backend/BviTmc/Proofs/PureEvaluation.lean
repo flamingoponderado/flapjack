@@ -23,7 +23,7 @@ theorem evaluatePureExp {C F : Type} (e : Bvi.Exp) (n : Nat)
     simp [BviSem.evaluate, indexBound]
   | «let» args body =>
     have parts : pureExp n body = true ∧ pureExps n args = true := by simpa [pureExp] using pure
-    obtain ⟨values, valuesRun⟩ := evaluatePureExps (C := C) (F := F) args n parts.2 env bound
+    obtain ⟨values, valuesRun⟩ := evaluate_pure_exps (C := C) (F := F) n args parts.2 env bound
     obtain ⟨value, valueRun⟩ := evaluatePureExp (C := C) (F := F) body n parts.1 (values ++ env) (by simp; omega)
     refine ⟨value, ?_⟩
     intro state
@@ -47,7 +47,7 @@ theorem evaluatePureExp {C F : Type} (e : Bvi.Exp) (n : Nat)
     | blockOp block =>
       cases block with
       | cons tag =>
-        obtain ⟨values, valuesRun⟩ := evaluatePureExps (C := C) (F := F) args n parts.2 env bound
+        obtain ⟨values, valuesRun⟩ := evaluate_pure_exps (C := C) (F := F) n args parts.2 env bound
         refine ⟨.block tag values.reverse, ?_⟩
         intro state
         simp [BviSem.evaluate, valuesRun, BviSem.fixClock, BviTailrec.doApp_blockCons]
@@ -57,7 +57,10 @@ theorem evaluatePureExp {C F : Type} (e : Bvi.Exp) (n : Nat)
 termination_by expBudget e
 decreasing_by all_goals simp_all [expBudget] <;> omega
 
-private theorem evaluatePureExps {C F : Type} (xs : List Bvi.Exp) (n : Nat)
+/-- Pure expression lists evaluate successfully to state-independent values. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_pure_exps"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_pure_exps {C F : Type} (n : Nat) (xs : List Bvi.Exp)
     (pure : pureExps n xs = true) (env : List Value) (bound : n ≤ env.length) :
     ∃ values, ∀ state : BviState C F, evaluate xs env state = (.val values, state) := by
   cases xs with
@@ -65,7 +68,7 @@ private theorem evaluatePureExps {C F : Type} (xs : List Bvi.Exp) (n : Nat)
   | cons x xs =>
     have parts : pureExp n x = true ∧ pureExps n xs = true := by simpa [pureExps] using pure
     obtain ⟨value, headRun⟩ := evaluatePureExp (C := C) (F := F) x n parts.1 env bound
-    obtain ⟨values, tailRun⟩ := evaluatePureExps (C := C) (F := F) xs n parts.2 env bound
+    obtain ⟨values, tailRun⟩ := evaluate_pure_exps (C := C) (F := F) n xs parts.2 env bound
     refine ⟨value :: values, ?_⟩
     intro state
     change evaluateTuple (x :: xs, env, state) = _
@@ -75,10 +78,9 @@ termination_by listBudget xs
 decreasing_by all_goals simp_all [listBudget]; omega
 end
 
-/-- The mutual pure-expression and pure-list evaluation lemma.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_pure_exp_lemma" (fmap_as_finite_support := [refs])] -/
+/-- The mutual pure-expression and pure-list evaluation lemma. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_pure_exp_lemma"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_pure_exp_lemma {C F : Type} :
     (∀ (e : Bvi.Exp) n, pureExp n e = true → ∀ env, n ≤ env.length →
       ∃ values, ∀ state : BviState C F, evaluate [e] env state = (.val values, state)) ∧
@@ -91,16 +93,7 @@ theorem evaluate_pure_exp_lemma {C F : Type} :
     exact ⟨[value], run⟩
   · intro _; trivial
   · intro xs n pure env bound
-    exact evaluatePureExps xs n pure env bound
-
-/-- Pure expression lists evaluate successfully to state-independent values.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_pure_exps" (fmap_as_finite_support := [refs])] -/
-theorem evaluate_pure_exps {C F : Type} (n : Nat) (xs : List Bvi.Exp)
-    (pure : pureExps n xs = true) (env : List Value) (bound : n ≤ env.length) :
-    ∃ values, ∀ state : BviState C F, evaluate xs env state = (.val values, state) :=
-  evaluatePureExps xs n pure env bound
+    exact evaluate_pure_exps n xs pure env bound
 
 theorem holFmapAsFiniteSupportWitness {C F : Type} :
     (∀ s : BviStateBroad C F, (BviState.ofBroad s).toBroad = s) ∧

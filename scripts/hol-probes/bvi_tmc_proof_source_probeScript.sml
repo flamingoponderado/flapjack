@@ -83,6 +83,44 @@ val _ = show "evaluate_shift_vars_typed" bvi_tmcProofTheory.evaluate_shift_vars;
 val _ = show "evaluate_shift_vars_sing_typed" bvi_tmcProofTheory.evaluate_shift_vars_sing;
 val _ = show "evaluate_shift_cb_typed" bvi_tmcProofTheory.evaluate_shift_cb;
 val _ = show "evaluate_shift_cb_sing_typed" bvi_tmcProofTheory.evaluate_shift_cb_sing;
+(* Replay the original local theorem statement and proof; show rejects hypotheses. *)
+open bvi_tmcTheory bviPropsTheory bviSemTheory;
+val pure_local_replay = Q.prove (
+`(∀e n.
+     pure_exp n e ⇒
+     ∀env.
+       n ≤ LENGTH env ⇒
+       ∃v. ∀(s:('c,'ffi) bviSem$state). evaluate ([e],env,s) = (Rval v,s)) ∧
+  (∀(x:bvi$exp option). T) ∧
+  (∀xs n.
+     pure_exps n xs ⇒
+     ∀env.
+       n ≤ LENGTH env ⇒
+       ∃v. ∀(s:('c,'ffi) bviSem$state). evaluate (xs,env,s) = (Rval v,s))`,
+ho_match_mp_tac bviTheory.exp_induction
+  >> rw []
+  >> gvs [pure_exp_def, evaluate_def]
+  >- (* Let *)
+   (qpat_x_assum ‘∀n. pure_exps n xs ⇒ _’ drule >> strip_tac
+    >> first_x_assum drule >> strip_tac >> gvs []
+    >> qpat_x_assum ‘∀n. pure_exp n e ⇒ _’ drule >> strip_tac
+    >> first_x_assum irule >> gvs [])
+  >- (* Op *)
+   (qpat_x_assum ‘∀n. pure_exps n xs ⇒ _’ drule >> strip_tac
+    >> first_x_assum drule >> strip_tac >> gvs []
+    >> Cases_on ‘x’ >> gvs [pure_op_def, do_app_def, do_app_aux_def]
+    >- (* IntOp *)
+     (Cases_on ‘i’ >> Cases_on ‘xs’ >> gvs [pure_op_def, evaluate_def])
+    (* BlockOp *)
+    >> Cases_on ‘b’ >> gvs [pure_op_def, do_app_def, do_app_aux_def, bvl_to_bvi_id])
+  (* cons *)
+  >> once_rewrite_tac [evaluate_CONS]
+  >> qpat_x_assum ‘∀n. pure_exp n e ⇒ _’ drule >> strip_tac
+  >> first_x_assum drule >> strip_tac >> gvs []
+  >> qpat_x_assum ‘∀n. pure_exps n xs ⇒ _’ drule >> strip_tac
+  >> first_x_assum drule >> strip_tac >> gvs []);
+val _ = show "evaluate_pure_exp_lemma_replay_typed" pure_local_replay;
+val _ = show "evaluate_pure_exps_typed" bvi_tmcProofTheory.evaluate_pure_exps;
 val _ = show "hole_has_val_submap_typed" bvi_tmcProofTheory.hole_has_val_submap;
 val _ = show "holes_unchanged_except_trans_typed" bvi_tmcProofTheory.holes_unchanged_except_trans;
 val _ = show "holes_still_not_finalised_trans_typed" bvi_tmcProofTheory.holes_still_not_finalised_trans;

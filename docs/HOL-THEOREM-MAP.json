@@ -135699,6 +135699,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_pure_exp_lemma", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/PureEvaluation.lean",
+  "lean_name": "evaluate_pure_exp_lemma", "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Replayed the original local statement and proof with types in bvi_tmc_proof_source_probe.out; the expression, option and list conjuncts have the same structure and the semantic conjuncts share independent compiler and FFI parameters. Each successful value list is chosen before quantifying over all full states. The state reference field uses canonical finite support with a same-module witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_pure_exps", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/PureEvaluation.lean",
+  "lean_name": "evaluate_pure_exps", "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared evaluate_pure_exps_typed in bvi_tmc_proof_source_probe.out: for arbitrary bound and pure expression list, every environment of sufficient length admits one value list independent of the full state, and every state evaluates to those values without state changes. The state reference field uses canonical finite support with a same-module witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "evaluate_shift_cb", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/VariableEvaluation.lean",
   "lean_name": "evaluate_shift_cb", "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["refs"],
