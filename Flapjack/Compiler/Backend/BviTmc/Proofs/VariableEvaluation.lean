@@ -71,15 +71,15 @@ private theorem evaluateVars_failure {C F : Type} (indices : List Nat) (env : Li
       simp [BviSem.evaluateTuple, head]
 
 /-- A variable-list evaluation that avoids a type error returns exactly its
-environment entries without changing the state.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_var_list" (fmap_as_finite_support := [refs])] -/
+environment entries without changing the state. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_var_list"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_var_list {C F : Type} (indices : List Nat) (env : List Value)
     (state next : BviState C F) (result : BviResult)
-    (run : evaluate (indices.map Bvi.Exp.var) env state = (result, next))
-    (notError : result ≠ .err (.abort .typeError)) :
+    (h : evaluate (indices.map Bvi.Exp.var) env state = (result, next) ∧
+      result ≠ .err (.abort .typeError)) :
     (result, next) = (.val (indices.map fun n => holEl n env), state) := by
+  obtain ⟨run, notError⟩ := h
   by_cases wellFormed : wfVars env.length indices
   · exact run.symm.trans (evaluateVars indices env state wellFormed)
   · have failure := evaluateVars_failure indices env state wellFormed

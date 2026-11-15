@@ -135699,6 +135699,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_var_list", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/VariableEvaluation.lean",
+  "lean_name": "evaluate_var_list", "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared evaluate_var_list_typed in bvi_tmc_proof_source_probe.out: an arbitrary variable-list run whose full result is not a type error must return exactly the HOL EL values and original state. The conjunctive premise and original state/result binder order match. The state reference field uses canonical finite support with a same-module witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "evaluate_vars_expand_env", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/VariableEvaluation.lean",
   "lean_name": "evaluate_vars_expand_env", "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["refs"],
