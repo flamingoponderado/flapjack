@@ -158,4 +158,5 @@ OPTION_MAP2_ADD_0_typed=OPTION_MAP2 $+ (m :num option) (SOME (0 :num)) = m ∧ O
 dec_stack_stack_size_some_not_none_typed=∀(xs :α word_loc list) (stk :α stack_frame list) (stk' :α stack_frame list) (x :num). dec_stack xs stk = SOME stk' ∧ stack_size stk = SOME x ⇒ stack_size stk' ≠ (NONE :num option)
 dec_stack_stack_size_not_none_not_none_typed=∀(xs :α word_loc list) (stk :α stack_frame list) (stk' :α stack_frame list). dec_stack xs stk = SOME stk' ∧ stack_size stk ≠ (NONE :num option) ⇒ stack_size stk' ≠ (NONE :num option)
 dec_stack_stack_size_some_leq_typed=∀(xs :α word_loc list) (stk :α stack_frame list) (stk' :α stack_frame list) (x :num) (y :num). dec_stack xs stk = SOME stk' ∧ stack_size stk = SOME x ∧ stack_size stk' = SOME y ⇒ y ≤ x
+flush_state_option_le_stack_max_preserved_typed=∀(s :(α, β, γ) state) (p :bool). option_le (OPTION_MAP2 $+ (stack_size s.stack) s.locals_size) s.stack_max ⇒ (let (t :(α, β, γ) state) = flush_state p s in option_le (OPTION_MAP2 $+ (stack_size t.stack) t.locals_size) t.stack_max)
 stack_size_some_at_least_one_typed=∀(stk :α stack_frame list) (sz :num). stack_size stk = SOME sz ⇒ (1 :num) ≤ sz

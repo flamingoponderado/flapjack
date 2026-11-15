@@ -77,4 +77,6 @@ val _ = emit "with_same_locals_typed" "with_same_locals";
 val _ = emit "do_stack_const_typed" "do_stack_const";
 val _ = emit "Seq_Skip_typed" "Seq_Skip";
 val _ = emit "do_space_alt_typed" "do_space_alt";
+val _ = emit "evaluate_safe_alt_typed" "evaluate_safe_alt";
+val _ = emit "evaluate_peak_alt_typed" "evaluate_peak_alt";
 val _ = emit "Boolv_11_typed" "Boolv_11";

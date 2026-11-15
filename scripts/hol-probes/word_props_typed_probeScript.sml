@@ -191,4 +191,5 @@ val _ = emit "OPTION_MAP2_ADD_0_typed" "OPTION_MAP2_ADD_0";
 val _ = emit "dec_stack_stack_size_some_not_none_typed" "dec_stack_stack_size_some_not_none";
 val _ = emit "dec_stack_stack_size_not_none_not_none_typed" "dec_stack_stack_size_not_none_not_none";
 val _ = emit "dec_stack_stack_size_some_leq_typed" "dec_stack_stack_size_some_leq";
+val _ = emit "flush_state_option_le_stack_max_preserved_typed" "flush_state_option_le_stack_max_preserved";
 val _ = emit "stack_size_some_at_least_one_typed" "stack_size_some_at_least_one";

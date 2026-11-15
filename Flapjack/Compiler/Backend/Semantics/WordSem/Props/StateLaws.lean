@@ -1,5 +1,6 @@
 module
 
+public import Flapjack.Compiler.Backend.BackendProps
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackEq
@@ -541,5 +542,58 @@ theorem decStackStackSizeSomeLeq {width : Nat} [NeZero width] :
                 simp only [wordSemOptionAdd, Option.some.injEq] at h3
                 have ihs := ih (xs.drop l.length) s b c hstep hr hs
                 omega
+
+
+open Flapjack.Compiler.Backend.BackendProps
+
+/-- The order on `num option` is transitive. -/
+theorem optionLe_trans {a b c : Option Nat} (first : optionLe a b) (second : optionLe b c) :
+    optionLe a c := by
+  rcases a with _ | x
+  all_goals rcases b with _ | y
+  all_goals rcases c with _ | z
+  all_goals simp only [optionLe] at first second ⊢
+  all_goals omega
+
+/-- A sum of option sizes is bounded below by its left operand. -/
+theorem optionLe_optionAdd_left {a c b : Option Nat}
+    (h : optionLe (wordSemOptionAdd a c) b) : optionLe a b := by
+  rcases a with _ | x
+  all_goals rcases c with _ | y
+  all_goals rcases b with _ | z
+  all_goals simp only [wordSemOptionAdd, optionLe] at h ⊢
+  all_goals omega
+
+/-- A computed stack size is at least one, in the `option_le` order. -/
+theorem optionLe_stackSize {width : Nat} [NeZero width]
+    (stack : List (WordSemStackFrame width)) : optionLe (some 1) (wordSemStackSize stack) := by
+  rcases hs : wordSemStackSize stack with _ | x
+  · simp [optionLe]
+  · have hx := stackSizeSomeAtLeastOne stack x hs
+    simp only [optionLe]
+    omega
+
+/-- Exact HOL `flush_state_option_le_stack_max_preserved`
+    (`wordPropsScript.sml:3984`): flushing locals and (for `T`) the stack keeps
+    the frame-size bound below `stack_max`.  HOL's `let t = flush_state p s in`
+    abbreviation is inlined. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml"
+  "flush_state_option_le_stack_max_preserved" (words_as_type_indexed_bitvec)]
+theorem flushStateOptionLeStackMaxPreserved {width : Nat} [NeZero width] {C : Type} {F : Type}
+    (state : WordSemStateFiniteExact width C F) (all : Bool) :
+    optionLe (wordSemOptionAdd (wordSemStackSize state.stack) state.localsSize)
+        state.stackMax →
+      optionLe (wordSemOptionAdd
+          (wordSemStackSize (WordSemStateFiniteExact.flushState all state).stack)
+        (WordSemStateFiniteExact.flushState all state).localsSize)
+        (WordSemStateFiniteExact.flushState all state).stackMax := by
+  intro h
+  cases all with
+  | true =>
+    simpa [WordSemStateFiniteExact.flushState, wordSemStackSize, wordSemOptionAdd]
+      using optionLe_trans (optionLe_stackSize state.stack) (optionLe_optionAdd_left h)
+  | false =>
+    simpa [WordSemStateFiniteExact.flushState, wordSemOptionAdd_zero]
+      using optionLe_optionAdd_left h
 
 end Flapjack

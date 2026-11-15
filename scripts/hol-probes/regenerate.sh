@@ -10061,6 +10061,7 @@ run_probe word_props_typed_probeScript.sml word_props_typed_probe.out \
   inc_clock_def_typed inc_clock_0_typed inc_clock_inc_clock_typed with_locals_same_clock_typed word_cmp_Word_Word_typed \
   push_env_dec_clock_stack_typed OPTION_MAP2_ADD_0_typed \
   dec_stack_stack_size_some_not_none_typed dec_stack_stack_size_not_none_not_none_typed dec_stack_stack_size_some_leq_typed \
+  flush_state_option_le_stack_max_preserved_typed \
   stack_size_some_at_least_one_typed \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
@@ -10817,7 +10818,7 @@ run_probe data_props_typed_probeScript.sml data_props_typed_probe.out \
   var_corr_def_typed get_vars_thm_typed get_code_labels_def_typed cut_state_opt_with_const_typed do_app_aux_with_locals_typed do_app_aux_with_space_typed consume_space_add_space_typed same_stack_size_def_typed \
   same_stack_size_size_of_stack_typed s_peak_heap_typed evaluate_smx_safe_peak_swap_aux_typed evaluate_smx_safe_peak_swap_typed evaluate_safe_peak_swap_aux_typed evaluate_safe_peak_swap_typed do_app_safe_peak_swap_typed do_app_sm_safe_peak_swap_typed \
   do_app_aux_safe_peak_swap_typed do_app_aux_sm_safe_peak_swap_typed do_app_err_safe_peak_swap_typed do_app_err_sm_safe_peak_swap_typed size_of_heap_with_safe_typed OPTION_MAP2_ADD_SOME_0_typed OPTION_MAP2_MAX_CANCEL_typed OPTION_MAP2_NONE_typed \
-  initial_state_simp_typed initial_state_with_simp_typed with_same_locals_typed do_stack_const_typed Seq_Skip_typed do_space_alt_typed Boolv_11_typed \
+  initial_state_simp_typed initial_state_with_simp_typed with_same_locals_typed do_stack_const_typed Seq_Skip_typed do_space_alt_typed evaluate_safe_alt_typed evaluate_peak_alt_typed Boolv_11_typed \
   "$cake_dir/compiler/backend/semantics/dataPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
