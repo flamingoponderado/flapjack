@@ -24142,6 +24142,24 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml", "hol_name": "update_context_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean", "lean_name": "updateContext",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared update_context_def_typed in bvi_tailrec_frontend_probe.out: the first expression's optional index is refined before the second expression's index, using the original type and context. The executed update unfolds to tryUpdate applied to indexOf."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "try_update_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/ScanCorrespondence.lean", "lean_name": "tryUpdate_length",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared try_update_LENGTH_typed in bvi_tailrec_semantics_probe.out: for every source value type, optional natural index and type context, try_update preserves the full list length without additional premises."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "update_context_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/ScanCorrespondence.lean", "lean_name": "updateContext_length",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared update_context_LENGTH_typed in bvi_tailrec_semantics_probe.out: updating the context for two arbitrary expressions preserves its length with no premises. The original source order and all input carriers are retained."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml", "hol_name": "index_of_def",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean", "lean_name": "indexOf",
     "statement_status": "reviewed_exact",

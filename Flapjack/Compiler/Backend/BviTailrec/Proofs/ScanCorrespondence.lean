@@ -72,16 +72,19 @@ theorem scanExpr_eq :
   exact ⟨fun e ctx loc => scanExpr_single ctx loc e,
     fun es ctx loc => scanExpr_list ctx loc es⟩
 
-/-- Refining an operand never changes the context length. -/
-theorem update_length (ty : ValueType) (e : Exp) (ctx : List ValueType) :
-    (update ty e ctx).length = ctx.length := by
-  cases e <;> simp [update, indexOf, tryUpdate]
-  split <;> simp
+/-- Refining an optional index never changes the context length. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "try_update_LENGTH"]
+theorem tryUpdate_length (ty : ValueType) (idx : Option Nat) (ctx : List ValueType) :
+    (tryUpdate ty idx ctx).length = ctx.length := by
+  cases idx with
+  | none => rfl
+  | some n => simp only [tryUpdate]; split <;> simp
 
 /-- Refining both operands never changes the context length. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "update_context_LENGTH"]
 theorem updateContext_length (ty : ValueType) (ctx : List ValueType) (x y : Exp) :
     (updateContext ty ctx x y).length = ctx.length := by
-  simp [updateContext, update_length]
+  simp [updateContext, update, tryUpdate_length]
 
 /-- Scanning operands produces one result per input expression. -/
 theorem scanList_length (ctx : List ValueType) (loc : Nat) (xs : List Exp) :

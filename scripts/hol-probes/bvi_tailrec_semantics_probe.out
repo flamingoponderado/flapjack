@@ -13,5 +13,7 @@ evaluate_complete_ind_typed=∀(P :bvi$exp list -> (num # γ, 'ffi) state -> boo
 EVERY_LAST1_typed=∀(xs :α list) (y :α). EVERY (P :α -> bool) xs ∧ LAST1 xs = SOME y ⇒ P y
 scan_expr_LENGTH_typed=∀(ts :v_ty list) (loc :num) (xs :bvi$exp list) (ys :(v_ty list # v_ty # bool # assoc_op option) list). scan_expr ts loc xs = ys ⇒ EVERY (λ(y :v_ty list # v_ty # bool # assoc_op option). LENGTH (FST y) = LENGTH ts) ys
 LAST1_thm_typed=∀(xs :α list). LAST1 xs = (NONE :α option) ⇔ xs = ([] :α list)
+try_update_LENGTH_typed=LENGTH (try_update (ty :v_ty) (idx :num option) (ts :v_ty list)) = LENGTH ts
+update_context_LENGTH_typed=LENGTH (update_context (ty :v_ty) (ts :v_ty list) (x :bvi$exp) (y :bvi$exp)) = LENGTH ts
 code_rel_find_code_SOME_replay_typed=∀(c1 :(num # bvi$exp) sptree$num_map) (c2 :(num # bvi$exp) sptree$num_map) (args :v list) (a :v list) (exp :bvi$exp). code_rel c1 c2 ∧ (find_code (SOME (n :num)) args c1 :(v list # bvi$exp) option) = SOME (a,exp) ⇒ (find_code (SOME n) args c2 :(v list # bvi$exp) option) ≠ (NONE :(v list # bvi$exp) option)
 code_rel_find_code_NONE_replay_typed=∀(c1 :(num # bvi$exp) sptree$num_map) (c2 :(num # bvi$exp) sptree$num_map) (args :v list) (a :v list) (exp :bvi$exp). code_rel c1 c2 ∧ (find_code (NONE :num option) args c1 :(v list # bvi$exp) option) = SOME (a,exp) ⇒ (find_code (NONE :num option) args c2 :(v list # bvi$exp) option) ≠ (NONE :(v list # bvi$exp) option)

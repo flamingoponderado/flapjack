@@ -94,6 +94,7 @@ def tryUpdate (ty : ValueType) (index : Option Nat) (ctx : List ValueType) : Lis
 def update (ty : ValueType) (e : Exp) (ctx : List ValueType) : List ValueType :=
   tryUpdate ty (indexOf e) ctx
 /-- Refine the variables used by two operands in source order. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "update_context_def"]
 def updateContext (ty : ValueType) (ctx : List ValueType) (x y : Exp) : List ValueType :=
   update ty y (update ty x ctx)
 
