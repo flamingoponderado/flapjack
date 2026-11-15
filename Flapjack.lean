@@ -1280,6 +1280,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateRejected
 import Flapjack.Compiler.Backend.ClosToBvl.Proofs.EvaluateOrdinary
 import Flapjack.Test.ClosToBvlRecursive
 import Flapjack.Test.TmcUniversalBinderAudit
+import Flapjack.Test.TmcUniversalBinderPublicImportAudit
 import Flapjack.Test.ClosToBvlIncremental
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Value
 import Flapjack.Compiler.Backend.Semantics.BvlSem.Int
