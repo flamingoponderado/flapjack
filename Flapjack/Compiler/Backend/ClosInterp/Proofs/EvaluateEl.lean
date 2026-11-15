@@ -9,6 +9,14 @@ public import Flapjack.Compiler.Backend.FlatToClos.Proofs.Call
 and value carriers remain proof-side and await cross-language review. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 
+namespace EvalElPort
+/-- The closure state uses the canonical finite-support map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end EvalElPort
+
 /-- Looking up index zero returns the first encoded environment element. -/
 theorem evaluate_closInterpEl_zero {C F : Type} (first : ClosSem.Value) (tail : List ClosSem.Value)
     (recursive : ClosSem.Value) (rest : List ClosSem.Value) (state : ClosSem.State C F) :
@@ -137,16 +145,17 @@ theorem evaluate_closInterpEl {C F : Type} (index : Nat) (values captured rest :
 
 
 /-- An in-range environment lookup terminates with the original state after
-some extra target clock. The proof-side evaluator and carriers still need HOL
-correspondence review before this is classified as a theorem port. -/
-theorem closInterpEl_correct {C F : Type} (index : Nat) (values captured rest : List ClosSem.Value)
-    (state : ClosSem.State C F) (bound : index < values.length) (positive : 1 ≤ state.maxApp) :
+some extra target clock. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "clos_interp_el_thm"
+  (fmap_as_finite_support := [refs, code])]
+theorem closInterpEl_correct {C F : Type} (index : Nat) (values rest captured : List ClosSem.Value)
+    (state : ClosSem.State C F) (h : index < values.length ∧ 1 ≤ state.maxApp) :
     ∃ extra, ClosSem.evaluate [closInterpEl]
       (ClosSem.listToValue values :: .number (Int.ofNat index) ::
         .recclosure none [] captured [(1, .fn (Flapjack.Basis.Pure.MlString.ofString "") none none 1 closInterpEl)] 0 :: rest)
-      { state with clock := extra + state.clock } = (.val [values[index]], state) := by
+      { state with clock := extra + state.clock } = (.val [values[index]'h.1], state) := by
   refine ⟨2 * index, ?_⟩
   simpa [Nat.add_comm] using
-    evaluate_closInterpEl index values captured rest values[index] state positive (by simp [bound])
+    evaluate_closInterpEl index values captured rest (values[index]'h.1) state h.2 (by simp [h.1])
 
 end Flapjack.Compiler.Backend.ClosInterp

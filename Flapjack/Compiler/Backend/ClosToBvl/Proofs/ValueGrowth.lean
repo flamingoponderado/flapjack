@@ -18,14 +18,13 @@ theorem unmappedRefsSubmap_trans
   obtain ⟨intermediate, stillFresh⟩ := first key value found fresh
   exact second key value intermediate stillFresh
 
-/-- Extending the protected set and preserving the unprotected part of the
-reference store preserves a closure relation. This candidate remains untagged
-pending review of its finite-map carriers against the original local lemma. -/
+/-- Preserving the unprotected references and keeping them unprotected
+preserves a closure relation. This general frame lemma supports simulations
+across changes to the store and protected set. -/
 theorem clRel_grow_refs {maxApp : Nat} {fs1 fs2 : Nat → Prop}
     {refs1 refs2 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)}
     {code : Spt (Nat × Bvl.Exp)} {env cl target}
     (related : clRel maxApp fs1 refs1 code env cl target)
-    (_subset : ∀ p, fs1 p → fs2 p)
     (frame : ∀ p cell, refs1.lookup p = some cell → ¬ fs1 p →
       refs2.lookup p = some cell ∧ ¬ fs2 p) :
     clRel maxApp fs2 refs2 code env cl target := by
@@ -38,18 +37,96 @@ theorem clRel_grow_refs {maxApp : Nat} {fs1 fs2 : Nat → Prop}
       obtain ⟨stored', fresh'⟩ := frame _ _ stored fresh
       exact .mutualRec exps ps positions values fresh' stored' length index loc vars installed
 
-/-- Growing the relocation map and preserving unmapped references preserves
-related values. This candidate is not tagged as the HOL lemma until its
-finite-map representation and inferred source type are reviewed. -/
+/-- Closure relations survive protected-set growth and preservation of the
+unprotected part of the reference store. The quantified lookup condition is
+the lookup characterization of the submap between the two store differences. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_SUBMAP"
+  (fmap_as_finite_support_relation := [refs1, refs2])]
+theorem clRel_submap (maxApp : Nat) (fs1 fs2 : Nat → Prop)
+    (refs1 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
+    (refs2 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (env : List ClosSem.Value) (ys : List BvlSem.Value) (x : ClosSem.Value) (y : BvlSem.Value)
+    (premises : clRel maxApp fs1 refs1 code (env, ys) x y ∧
+      (∀ p, fs1 p → fs2 p) ∧
+      (∀ p cell, refs1.lookup p = some cell → ¬ fs1 p →
+        refs2.lookup p = some cell ∧ ¬ fs2 p)) :
+    clRel maxApp fs2 refs2 code (env, ys) x y := by
+  exact clRel_grow_refs premises.1 premises.2.2
+
+/-- Adding a fresh target reference preserves the closure relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_NEW_REF"
+  (fmap_as_finite_support_relation := [refs])]
+theorem clRel_newRef (maxApp : Nat) (fs : Nat → Prop)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (env : List ClosSem.Value) (ys : List BvlSem.Value) (r : Nat)
+    (cell : BvlSem.Ref BvlSem.Value) :
+    ∀ x y, clRel maxApp fs refs code (env, ys) x y → refs.lookup r = none →
+      clRel maxApp fs (refs.updateEq (r, cell)) code (env, ys) x y := by
+  intro x y related fresh
+  apply clRel_grow_refs related
+  intro key value found outside
+  have different : key ≠ r := by
+    intro eq
+    subst key
+    rw [fresh] at found
+    contradiction
+  exact ⟨by simpa [HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL, different] using found,
+    outside⟩
+
+/-- Updating a protected target reference preserves the closure relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_UPDATE_REF"
+  (fmap_as_finite_support_relation := [refs])]
+theorem clRel_updateRef (maxApp : Nat) (fs : Nat → Prop)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (env : List ClosSem.Value) (ys : List BvlSem.Value) (r : Nat)
+    (cell : BvlSem.Ref BvlSem.Value) :
+    ∀ x y, clRel maxApp fs refs code (env, ys) x y → fs r →
+      clRel maxApp fs (refs.updateEq (r, cell)) code (env, ys) x y := by
+  intro x y related member
+  apply clRel_grow_refs related
+  intro key value found outside
+  have different : key ≠ r := by
+    intro eq
+    subst key
+    exact outside member
+  exact ⟨by simpa [HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL, different] using found,
+    outside⟩
+
+namespace FreshProtectedRefHOL
+
+/-- The target reference map uses its canonical finite-support carrier. -/
+theorem holFmapAsFiniteSupportRelationWitness_BvlSem.State {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+    (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+
+/-- Adding a fresh reference address to the protected set preserves closure relations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "cl_rel_NEW_F"
+  (fmap_as_finite_support_relation := [BvlSem.State.refs])]
+theorem clRel_newProtected {C F : Type} (maxApp : Nat) (fs : Nat → Prop)
+    (t : BvlSem.State C F) (env : List ClosSem.Value) (ys : List BvlSem.Value) (qq : Nat) :
+    ∀ x y, clRel maxApp fs t.refs t.code (env, ys) x y → t.refs.lookup qq = none →
+      clRel maxApp (fun p => p = qq ∨ fs p) t.refs t.code (env, ys) x y := by
+  intro x y related fresh
+  apply clRel_grow_refs related
+  intro p cell found outside
+  have different : p ≠ qq := by
+    intro equal
+    subst p
+    rw [fresh] at found
+    contradiction
+  exact ⟨found, by simp [different, outside]⟩
+
+end FreshProtectedRefHOL
+
+/-- Curried form of value-relation preservation under the reviewed submap frame,
+used by simulation proofs. -/
 theorem vRel_grow_refs {maxApp : Nat} {f1 f2 : HolFiniteMapExact Nat Nat}
     {refs1 refs2 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)}
     {code : Spt (Nat × Bvl.Exp)} {x y}
     (related : vRel maxApp f1 refs1 code x y)
     (submap : f1.submap f2) (frame : unmappedRefsSubmap refs1 refs2 f1 f2) :
     vRel maxApp f2 refs2 code x y := by
-  have rangeSubset : ∀ p, (∃ n, f1.lookup n = some p) → ∃ n, f2.lookup n = some p := by
-    intro p ⟨n, lookup⟩
-    exact ⟨n, submap n p lookup⟩
   refine vRel.rec
     (motive_1 := fun x y _ => vRel maxApp f2 refs2 code x y)
     (motive_2 := fun xs ys _ => List.Forall₂ (vRel maxApp f2 refs2 code) xs ys)
@@ -66,17 +143,17 @@ theorem vRel_grow_refs {maxApp : Nat} {f1 f2 : HolFiniteMapExact Nat Nat}
   · intro b r1 r2 lookup
     exact .refPtr (submap r1 r2 lookup)
   · intro env fvs cl p n ys envRel closure ih
-    exact .closure ih (clRel_grow_refs closure rangeSubset frame)
+    exact .closure ih (clRel_grow_refs closure frame)
   · intro env fvs argEnv ys numArgs cl clApp cl' envRel argRel nonempty bound lookup added arity closure
       envIh argIh
     exact .partialClosure envIh argIh nonempty bound lookup added arity
-      (clRel_grow_refs closure rangeSubset frame)
+      (clRel_grow_refs closure frame)
   · exact .nil
   · intro a b xs ys head tail headIh tailIh
     exact .cons headIh tailIh
 
-/-- Related environments remain related under the same store growth. This is
-Flapjack infrastructure until the source relation's carrier review is complete. -/
+/-- Curried form of environment-relation preservation under the reviewed
+submap frame, used by simulation proofs. -/
 theorem envRel_grow_refs {maxApp : Nat} {f1 f2 : HolFiniteMapExact Nat Nat}
     {refs1 refs2 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)}
     {code : Spt (Nat × Bvl.Exp)} {env targetEnv}
@@ -90,6 +167,126 @@ theorem envRel_grow_refs {maxApp : Nat} {f1 f2 : HolFiniteMapExact Nat Nat}
       | nil => exact False.elim related
       | cons targetHead targetTail =>
           exact ⟨vRel_grow_refs related.1 submap frame, ih related.2⟩
+
+/-- Value relations persist under the source submap and unmapped-reference frame. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_SUBMAP"
+  (fmap_as_finite_support_relation := [f1, f2, refs1, refs2])]
+theorem vRelSubmap (maxApp : Nat) (f1 : HolFiniteMapExact Nat Nat) (f2 : HolFiniteMapExact Nat Nat)
+    (refs1 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
+    (refs2 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
+    (code : Spt (Nat × Bvl.Exp)) (x : ClosSem.Value) (y : BvlSem.Value) :
+    vRel maxApp f1 refs1 code x y ∧ f1.submap f2 ∧ unmappedRefsSubmap refs1 refs2 f1 f2 →
+      vRel maxApp f2 refs2 code x y := by
+  rintro ⟨related, submap, frame⟩
+  exact vRel_grow_refs related submap frame
+
+/-- Environment relations persist under the same source submap conditions. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "env_rel_SUBMAP"
+  (fmap_as_finite_support_relation := [refs2, refs1, f2, f1])]
+theorem envRelSubmap (refs2 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
+    (refs1 : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value))
+    (maxApp : Nat) (f2 : HolFiniteMapExact Nat Nat) (f1 : HolFiniteMapExact Nat Nat)
+    (code : Spt (Nat × Bvl.Exp))
+    (env1 : List ClosSem.Value) (env2 : List BvlSem.Value) :
+    envRel maxApp f1 refs1 code env1 env2 ∧ f1.submap f2 ∧ unmappedRefsSubmap refs1 refs2 f1 f2 →
+      envRel maxApp f2 refs2 code env1 env2 := by
+  rintro ⟨related, submap, frame⟩
+  exact envRel_grow_refs related submap frame
+
+/-- Adding a fresh reference preserves related values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_NEW_REF"
+  (fmap_as_finite_support_relation := [f, refs])]
+theorem vRelNewRef (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (x : ClosSem.Value) (y : BvlSem.Value) (r : Nat) (cell : BvlSem.Ref BvlSem.Value) :
+    vRel maxApp f refs code x y ∧ refs.lookup r = none →
+      vRel maxApp f (refs.updateEq (r, cell)) code x y := by
+  rintro ⟨related, fresh⟩
+  apply vRel_grow_refs related (fun _ _ found => found)
+  intro key value found outside
+  have different : key ≠ r := by
+    intro eq
+    subst key
+    rw [fresh] at found
+    contradiction
+  exact ⟨by simpa [HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL, different] using found, outside⟩
+
+/-- Updating a reference already in the relocation-map range preserves related values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_UPDATE_REF"
+  (fmap_as_finite_support_relation := [f, refs])]
+theorem vRelUpdateRef (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (x : ClosSem.Value) (y : BvlSem.Value) (r : Nat) (cell : BvlSem.Ref BvlSem.Value) :
+    vRel maxApp f refs code x y ∧ (∃ p, f.lookup p = some r) →
+      vRel maxApp f (refs.updateEq (r, cell)) code x y := by
+  rintro ⟨related, member⟩
+  apply vRel_grow_refs related (fun _ _ found => found)
+  intro key value found outside
+  have different : key ≠ r := by
+    intro eq
+    subst key
+    exact outside member
+  exact ⟨by simpa [HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL, different] using found, outside⟩
+
+/-- Extending the relocation map with a fresh source and target preserves related values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "v_rel_NEW_F"
+  (fmap_as_finite_support_relation := [BvlSem.State.refs, f])]
+theorem vRelNewF {C F : Type} (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (t : BvlSem.State C F) (x : ClosSem.Value) (y : BvlSem.Value) (pp qq : Nat) :
+    vRel maxApp f t.refs t.code x y ∧ f.lookup pp = none ∧ t.refs.lookup qq = none →
+      vRel maxApp (f.updateEq (pp, qq)) t.refs t.code x y := by
+  rintro ⟨related, freshSource, freshTarget⟩
+  apply vRel_grow_refs related
+  · intro key value found
+    have different : key ≠ pp := by
+      intro eq
+      subst key
+      rw [freshSource] at found
+      contradiction
+    simpa [HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL, different] using found
+  · intro key cell found outside
+    refine ⟨found, ?_⟩
+    intro ⟨origin, mapped⟩
+    by_cases eq : origin = pp
+    · subst origin
+      simp [HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL] at mapped
+      subst key
+      rw [freshTarget] at found
+      contradiction
+    · apply outside
+      exact ⟨origin, by simpa [HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL, eq] using mapped⟩
+
+/-- The fresh relocation-map extension also preserves optional value relations. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "OPTREL_v_rel_NEW_F"
+  (fmap_as_finite_support_relation := [BvlSem.State.refs, f])]
+theorem optionValueRelNewF {C F : Type} (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (t : BvlSem.State C F) (x : Option ClosSem.Value) (y : Option BvlSem.Value) (pp qq : Nat) :
+    optionValueRel (vRel maxApp f t.refs t.code) x y ∧ f.lookup pp = none ∧ t.refs.lookup qq = none →
+      optionValueRel (vRel maxApp (f.updateEq (pp, qq)) t.refs t.code) x y := by
+  rintro ⟨related, freshSource, freshTarget⟩
+  cases x <;> cases y <;> simp only [optionValueRel] at related ⊢
+  exact vRelNewF maxApp f t _ _ pp qq ⟨related, freshSource, freshTarget⟩
+
+/-- Extending the target store at a fresh address preserves related environments. -/
+@[hol "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" "env_rel_NEW_REF"
+  (fmap_as_finite_support_relation := [f, refs])]
+theorem envRel_newRef (maxApp : Nat) (f : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)) (code : Spt (Nat × Bvl.Exp))
+    (r : Nat) (cell : BvlSem.Ref BvlSem.Value) :
+    ∀ x y, envRel maxApp f refs code x y ∧ refs.lookup r = none →
+      envRel maxApp f (refs.updateEq (r, cell)) code x y := by
+  intro x y ⟨related, fresh⟩
+  apply envRel_grow_refs related
+  · intro key value found
+    exact found
+  · intro key value found outside
+    have different : key ≠ r := by
+      intro eq
+      subst key
+      rw [fresh] at found
+      contradiction
+    exact ⟨by simpa [HolFiniteMapExact.lookup_updateEq,
+      Flapjack.FUPDATE_HOL, different] using found, outside⟩
 
 /-- Sequential evaluation can grow the relocation map, references, and code
 together while preserving a value relation. -/

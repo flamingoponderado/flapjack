@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosTicks.Proofs.EvaluateSequence
+public import Flapjack.Compiler.Backend.ClosTicks.Proofs.Primitive
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBoolean
 
 @[expose] public section
@@ -36,19 +37,6 @@ theorem remove_ticks_If_IMP_mk_Ticks (expression : ClosLang.Exp) (trace : Backen
       by simp [removeList, Flapjack.holHd], by simp [removeList, Flapjack.holHd]⟩
   all_goals simp [removeList, removeSing] at removed
 termination_by sizeOf expression
-
-/-- Related values have the same Boolean observation. This is Flapjack
-infrastructure for the conditional case rather than a separate HOL theorem. -/
-theorem valueRel_asBool {left right : Value} (related : ValueRel left right) :
-    asBool left = asBool right := by
-  cases related with
-  | block tag left right entries =>
-    cases entries with
-    | nil => rfl
-    | cons head tail => cases tag <;> simp [asBool]
-  | number _ | word64 _ | byteVector _ | refPtr _ _ => rfl
-  | closure => rfl
-  | recclosure => rfl
 
 namespace IfPort
 /-- The closure state has the reviewed canonical finite-map roundtrip. -/
@@ -142,7 +130,8 @@ theorem evaluate_remove_ticks_if {C F : Type} (trace : BackendCommon.Tra)
         | cons valueRel tailRel =>
           cases tailRel
           rename_i sourceValue
-          have boolEq : asBool sourceValue = asBool value := valueRel_asBool valueRel
+          have boolEq : asBool sourceValue = asBool value := Flapjack.Compiler.Backend.ClosProps.PrimitiveBoolean.simpleValRel_asBool
+            ValueRel valueRelSimple sourceValue value valueRel
           cases decision : asBool value with
           | none =>
             have sourceDecision : asBool sourceValue = none := boolEq.trans decision

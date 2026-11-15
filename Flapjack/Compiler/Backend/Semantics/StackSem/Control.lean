@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.Semantics.StackSem.State
+public import Flapjack.FiniteMap.BroadCodec
 
 @[expose] public section
 
@@ -17,13 +18,22 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
         StackSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
   StackSemStateSupport.holFmapAsFiniteSupportWitness
 
+namespace FindCodeMap
+/-- The register map has the canonical lookup and support roundtrip. -/
+theorem holFmapAsFiniteSupportParamWitness_findCode_regs {width : Nat} [NeZero width] {κ : Type}
+    (regs : HolFiniteMapExact κ (WordLocW width)) (key : κ) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad regs)).lookup key = regs.lookup key ∧
+      (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad regs)).finiteSupport = regs.finiteSupport ∧
+      FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad regs) = regs := ⟨rfl, rfl, rfl⟩
+end FindCodeMap
+
 /-- Direct code label lookup or indirect lookup through a zero-offset Loc.
     The register-key carrier is arbitrary, independently of the positive
     register-word dimension and code payload. This is the full original
     `num + β` / `β |-> γ word_loc` signature, not a Nat-key specialization.
     The code tree is sptree, not a finite-support fmap translation. -/
 @[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "find_code_def"
-  (fmap_as_finite_support_relation := [regs]) (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support_parameters := [regs]) (words_as_type_indexed_bitvec)]
 def findCode {width : Nat} [NeZero width] {κ : Type} {α : Type}
     (target : Sum Nat κ) (regs : HolFiniteMapExact κ (WordLocW width))
     (code : Spt α) : Option α :=

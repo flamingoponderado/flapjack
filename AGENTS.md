@@ -262,6 +262,14 @@ replace source-level review. After rebuilding a tagged declaration, run
 `.lake/build/ir/Flapjack.setup.json`, which can otherwise still point at an
 older cached OLean even when `lake test` passes.
 
+For qualifier checks, `check-hol-refs.py` extracts the tagged declaration's
+header through its first top-level `:=`, recognizing definitions, theorems,
+lemmas, abbreviations, instances, structures, inductives, opaque declarations,
+classes, axioms, and constants. When several carriers could own the named
+fields, an explicitly qualified declaration name can disambiguate a local or
+imported carrier; ambiguous or shadowed names remain ineligible. This syntax
+check does not replace elaborated-attribute checking or source review.
+
 Entries marked `pending_statement_review` or
 `no_hol_reference_pending_classification` must not be described as exact HOL
 ports. A reference tag or a successful build does not substitute for the
@@ -537,8 +545,14 @@ modules and the corresponding annotation scripts. An observer may combine it
 only with `(fmap_as_finite_support := [refs, code])`, retaining all finite-map
 owner and witness checks; use status
 `reviewed_fmap_as_finite_support_nested_list_rel_as_mutual` for that
-combination. Producers cannot combine qualifiers, and all other combinations
-remain disallowed. Use manifest status `reviewed_nested_list_rel_as_mutual`
+combination. The sole additional combination is the source-shaped
+`ClosAnnotate.relUpdateThunkSource` theorem for `rel_update_thunk`, with
+`fmap_as_finite_support_relation := [State.refs, State.code, sourceRefs]`
+and `fmap_as_finite_support_existentials := [targetRefs]`, in that order.
+It retains the separate state and existential roundtrip witnesses and uses
+`reviewed_fmap_as_finite_support_relation_existentials_nested_list_rel_as_mutual`.
+Producers cannot combine qualifiers, and all other combinations remain
+disallowed. Use manifest status `reviewed_nested_list_rel_as_mutual`
 for the nested qualifier alone after comparing every source rule and the
 `functionsRel_iff` witness with the typed HOL capture. The elaborated audit
 checks the mutual block, constructor and witness types, and witness axioms; it
@@ -574,7 +588,15 @@ statement that contributes no translated finite-map field needs no witness). Thi
 qualifier is mutually exclusive with `fmap_as_finite_support` and
 `fmap_as_finite_support_result`, cannot use `reviewed_exact`, and requires
 manifest status `reviewed_fmap_as_finite_support_relation` with a
-source-comparison note after the reviewer compares each HOL conjunct.
+source-comparison note after the reviewer compares each HOL conjunct. The
+source checker conservatively requires `Prop` or an arrow chain of identifier
+or fully parenthesized domains ending in `Prop` for a relation-valued
+definition; it does not
+infer a result through an alias. It
+rejects raw-string header syntax, let/have expressions in definition headers,
+and unrecognized declaration names rather than inferring their shape. For a
+theorem, it ignores owner evidence after the first let/have expression. A
+state-valued conversion cannot use this qualifier.
 
 **Qualify existential finite maps.** Use
 `(fmap_as_finite_support_existentials := [binder, ...])` for explicit HOL

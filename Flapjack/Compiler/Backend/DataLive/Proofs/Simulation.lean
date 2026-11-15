@@ -193,17 +193,11 @@ theorem simulationFor_if {C F : Type} (name : Nat) (yes no : DataLang.Prog) (liv
         obtain ⟨rfl, rfl⟩ := run
         exact False.elim (notType rfl)
 
-/-- Sequential composition, conditional on the missing general fact that
-normally continuing evaluations preserve their stack and handler. This extra
-premise is an open proof gap, so this is not the HOL sequence case. -/
-theorem simulationFor_seq_of_control {C F : Type} (first second : DataLang.Prog) (live : NumSet)
+/-- Sequential liveness simulation follows from the two component
+simulations. It remains untagged pending evaluator and carrier review. -/
+theorem simulationFor_seq {C F : Type} (first second : DataLang.Prog) (live : NumSet)
     (firstIH : simulationFor (C := C) (F := F) first (compile second live).2)
-    (secondIH : simulationFor (C := C) (F := F) second live)
-    (firstControl : ∀ (state next : State C F), DataSem.evaluate first state = (none, next) →
-      next.stack = state.stack ∧ next.handler = state.handler)
-    (compiledControl : ∀ (state next : State C F),
-      DataSem.evaluate (compile first (compile second live).2).1 state = (none, next) →
-      next.stack = state.stack ∧ next.handler = state.handler) :
+    (secondIH : simulationFor (C := C) (F := F) second live) :
     simulationFor (C := C) (F := F) (.seq first second) live := by
   intro source target result sourceNext run related notType exception
   have firstRel : stateRel source target (compile first (compile second live).2).2 := by
@@ -217,8 +211,8 @@ theorem simulationFor_seq_of_control {C F : Type} (first second : DataLang.Prog)
         exact run
       obtain ⟨targetMid, targetFirst, midRel⟩ :=
         firstIH source target none sourceMid firstRun firstRel (by simp) exception
-      have sourceControl := firstControl source sourceMid firstRun
-      have targetControl := compiledControl target targetMid targetFirst
+      have sourceControl := evaluate_stackResult first source sourceMid none firstRun
+      have targetControl := evaluate_stackResult (compile first (compile second live).2).1 target targetMid none targetFirst
       have midException := exceptionRel_after source target sourceMid targetMid _ midRel exception
         sourceControl.1 sourceControl.2 targetControl.1 targetControl.2
       obtain ⟨targetNext, targetSecond, finalRel⟩ :=
@@ -237,17 +231,5 @@ theorem simulationFor_seq_of_control {C F : Type} (first second : DataLang.Prog)
       refine ⟨targetNext, ?_, finalRel⟩
       simp only [compile]
       rw [DataSem.evaluate, fixClock_evaluate, targetFirst]
-
-/-- Sequential liveness simulation follows from the two component
-simulations. It remains untagged pending evaluator and carrier review. -/
-theorem simulationFor_seq {C F : Type} (first second : DataLang.Prog) (live : NumSet)
-    (firstIH : simulationFor (C := C) (F := F) first (compile second live).2)
-    (secondIH : simulationFor (C := C) (F := F) second live) :
-    simulationFor (C := C) (F := F) (.seq first second) live := by
-  apply simulationFor_seq_of_control first second live firstIH secondIH
-  · intro state next run
-    exact evaluate_stackResult first state next none run
-  · intro state next run
-    exact evaluate_stackResult (compile first (compile second live).2).1 state next none run
 
 end Flapjack.Compiler.Backend.DataLive

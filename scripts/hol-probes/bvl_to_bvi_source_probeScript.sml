@@ -30,3 +30,4 @@ val _ = show "SumListLength_code_def_typed" bvl_to_bviTheory.SumListLength_code_
 val _ = show "ConcatByte_code_def_typed" bvl_to_bviTheory.ConcatByte_code_def;
 val _ = show "stubs_def_typed" bvl_to_bviTheory.stubs_def;
 val _ = show "get_names_def_typed" bvl_to_bviTheory.get_names_def;
+val _ = show "compile_def_typed" bvl_to_bviTheory.compile_def;

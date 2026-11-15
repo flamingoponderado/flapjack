@@ -10,16 +10,6 @@ public import Flapjack.Compiler.Backend.Semantics.BvlSem.Apply
 /-! Integer primitive correspondence for the closure-to-BVL simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
-/-- A source integer can only be related to the same target integer. -/
-theorem vRel_number_inv {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {n : Int} {target : BvlSem.Value} (related : vRel maxApp f refs code (.number n) target) :
-    target = .number n := by
-  cases related with
-  | number => rfl
-  | closure _ closure => cases closure
-  | partialClosure _ _ _ _ _ added _ closure => cases closure <;> simp [addArgs] at added
-
 /-- Related lists of source numbers contain exactly the corresponding target
 numbers. -/
 theorem vRel_numbers_inv {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}

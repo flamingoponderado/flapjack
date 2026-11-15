@@ -152,18 +152,16 @@ theorem hasRecFuel_eq (fuel loc : Nat) (expression : Exp) (result : Bool)
 decision as the source definition, independently of the initial fuel. -/
 theorem hasRecBounded_eq (fuel loc : Nat) (expression : Exp) :
     hasRecBounded fuel loc expression = some (hasRecSing loc expression) := by
-  obtain ⟨result, run⟩ := hasRecBounded_succeeds fuel loc expression
-  have same : result = hasRecSing loc expression := by
-    cases first : hasRecFuel fuel loc expression with
-    | some initial =>
-      have initialEq : initial = result := by simpa [hasRecBounded, first] using run
-      subst result
-      exact hasRecFuel_eq fuel loc expression initial first
-    | none =>
-      have retry : hasRecFuel (max fuel (expBudget expression + 1)) loc expression = some result := by
-        simpa [hasRecBounded, first] using run
-      exact hasRecFuel_eq _ loc expression result retry
-  simpa [same] using run
+  unfold hasRecBounded
+  cases first : hasRecFuel fuel loc expression with
+  | some initial =>
+    have correct := hasRecFuel_eq fuel loc expression initial first
+    simp [correct]
+  | none =>
+    have enough : expBudget expression < max fuel (expBudget expression + 1) := by omega
+    obtain ⟨result, retry⟩ := hasRecFuel_succeeds (max fuel (expBudget expression + 1)) loc expression enough
+    have correct := hasRecFuel_eq _ loc expression result retry
+    simpa [first, correct] using retry
 
 /-- The executed recursion query agrees with the original CakeML query for
 every expression and every initial traversal budget. -/

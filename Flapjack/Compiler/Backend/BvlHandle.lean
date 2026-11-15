@@ -219,17 +219,25 @@ def compileExpFuel (fuel limit arity : Nat) (e : Exp) : Option Exp := do
   let e ← BvlConst.compileBounded fuel [] e
   compileExpWithoutConstantsFuel fuel limit arity e
 
+/-- Recognize the source compiler's two-expression sequence form. -/
+@[hol "cakeml/compiler/backend/bvl_handleScript.sml" "dest_Seq_def"]
+def destSeq : Exp → Option (Exp × Exp)
+  | .let [x, y] (.var 1) => some (x, y)
+  | _ => none
+
 /-- Lower the original sequence decomposition, including constant propagation. -/
 def compileSeqsFuel : Nat → Nat → Exp → Option Exp → Option Exp
   | 0, _, _, _ => none
-  | fuel + 1, limit, .let [x, y] (.var 1), acc => do
-      let rest ← compileSeqsFuel fuel limit y acc
-      compileSeqsFuel fuel limit x (some rest)
-  | fuel + 1, limit, e, acc => do
-      let e ← compileExpFuel fuel limit 0 e
-      match acc with
-      | none => pure e
-      | some rest => pure (.let [e] (.let [] (.let [] rest)))
+  | fuel + 1, limit, e, acc =>
+      match destSeq e with
+      | some (x, y) => do
+          let rest ← compileSeqsFuel fuel limit y acc
+          compileSeqsFuel fuel limit x (some rest)
+      | none => do
+          let e ← compileExpFuel fuel limit 0 e
+          match acc with
+          | none => pure e
+          | some rest => pure (.let [e] (.let [] (.let [] rest)))
 
 /-- Preserve successful sequence compilation and retry exhaustion with a
 structural budget. -/

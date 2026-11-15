@@ -47,15 +47,14 @@ theorem removeFuel_eq_source (fuel bound : Nat) (expression result : Exp)
 /-- The production retry always returns the source traversal. -/
 theorem removeBounded_eq_source (fuel bound : Nat) (expression : Exp) :
     removeBounded fuel bound expression = some (removeSing bound expression) := by
-  obtain ⟨result, run⟩ := removeBounded_succeeds fuel bound expression
-  unfold removeBounded at run ⊢
+  unfold removeBounded
   cases first : removeFuel fuel bound expression with
   | some value =>
     have equal := removeFuel_eq_source fuel bound expression value first
     simp [equal]
   | none =>
-    have retry : removeFuel (max fuel (expBudget expression + 1)) bound expression = some result := by
-      simpa [first] using run
+    have enough : expBudget expression < max fuel (expBudget expression + 1) := by omega
+    obtain ⟨result, retry⟩ := removeFuel_succeeds (max fuel (expBudget expression + 1)) bound expression enough
     have equal := removeFuel_eq_source _ bound expression result retry
     simpa [first, equal] using retry
 

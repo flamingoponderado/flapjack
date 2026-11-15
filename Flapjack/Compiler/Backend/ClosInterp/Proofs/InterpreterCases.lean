@@ -79,27 +79,6 @@ theorem interpreter_correct_integer_constant {C F : Type} (trace : BackendCommon
   refine ⟨0, target, ?_, related⟩
   simpa [toConstant] using interpreter_integer_constant number env target
 
-/-- Empty expression-list case of the interpreter simulation. -/
-theorem interpreter_correct_list_nil {C F : Type}
-    (env : List ClosSem.Value) (source target sourceFinal : ClosSem.State C F)
-    (result : Result (List ClosSem.Value) ClosSem.Value)
-    (run : ClosSem.evaluate [] env source = (result, sourceFinal))
-    (_valid : canInterpretList [] = true) (_assumption : InterpAssum C F source.clock)
-    (related : StateRel source target) (_notTypeError : result ≠ .err (.abort .typeError)) :
-    ∃ extra targetFinal targetResult,
-      ClosSem.evaluate [closInterpreterBody]
-        [ClosSem.makeConst (toConstantList []), .block 1 [], ClosSem.listToValue env]
-        { target with clock := extra + target.clock } = (targetResult, targetFinal) ∧
-      StateRel sourceFinal targetFinal ∧
-      (match result with
-       | .val values => targetResult = .val [ClosSem.listToValue values]
-       | .err _ => result = targetResult) := by
-  simp only [ClosSem.evaluate] at run
-  cases run
-  refine ⟨0, target, .val [ClosSem.listToValue []], ?_, related, rfl⟩
-  simpa using interpreter_list_nil env target
-
-
 /-- An evaluated Boolean condition selects the corresponding closure branch. -/
 theorem evaluate_if_condition {C F : Type} (condition yes no : ClosLang.Exp)
     (env : List ClosSem.Value) (state : ClosSem.State C F) (choice : Bool)

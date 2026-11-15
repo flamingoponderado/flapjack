@@ -107,14 +107,4 @@ theorem compileFuel_succeeds (fuel : Nat) (env : List Nat) (d : Nat) (exp : Exp)
           obtain ⟨body', hb⟩ := ih (extractList ys ++ env) d _ bb
           exact ⟨_, by simp [compileFuel, hy, hb]; rfl⟩
 
-/-- The production retry cannot fail due to an insufficient traversal bound. -/
-theorem compileBounded_succeeds (fuel : Nat) (env : List Nat) (d : Nat) (exp : Exp) :
-    ∃ result, compileBounded fuel env d exp = some result := by
-  cases h : compileFuel fuel env d exp with
-  | some result => exact ⟨result, by simp [compileBounded, h]⟩
-  | none =>
-    have bound : expBudget exp < max fuel (expBudget exp + 1) := by omega
-    obtain ⟨result, done⟩ := compileFuel_succeeds (max fuel (expBudget exp + 1)) env d exp bound
-    exact ⟨result, by simp [compileBounded, h, done]⟩
-
 end Flapjack.Compiler.Backend.BviLet

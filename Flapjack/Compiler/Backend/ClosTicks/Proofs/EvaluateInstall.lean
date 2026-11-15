@@ -79,7 +79,8 @@ theorem evaluate_install {C F : Type} (trace : BackendCommon.Tra)
       cases sourceArgsResult with
       | err error => cases error <;> simp [ResultRel] at argsRel
       | val sourceValues =>
-        have installs := install_related sourceMiddle targetMiddle sourceValues.reverse values.reverse
+        have installs := ClosProps.install_related install_pair_related
+          (fun s t st => ⟨rfl, st⟩) sourceMiddle targetMiddle sourceValues.reverse values.reverse
           middleRel (List.rel_reverse argsRel)
         cases targetInstall : doInstall values.reverse targetMiddle with
         | mk targetInstallResult targetInstalled =>

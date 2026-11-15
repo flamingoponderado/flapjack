@@ -33,14 +33,6 @@ def BlockInspect.op : BlockInspect → ClosLang.Op
   | .tagEq n => .blockOp (.tagEq n)
   | .tagLengthEq tag n => .blockOp (.tagLenEq tag n)
 
-private theorem fieldsEnvRel {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {xs : List ClosSem.Value} {ys : List BvlSem.Value}
-    (related : List.Forall₂ (vRel maxApp f refs code) xs ys) : envRel maxApp f refs code xs ys := by
-  induction related with
-  | nil => trivial
-  | cons head tail ih => exact ⟨head, ih⟩
-
 /-- A successful block inspection returns related values and leaves both
 states unchanged. -/
 theorem blockInspect_related {C F : Type} {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
@@ -70,7 +62,9 @@ theorem blockInspect_related {C F : Type} {maxApp : Nat} {f : HolFiniteMapExact 
     cases found : fields[index]? with
     | none => simp [BlockInspect.op, ClosSem.doApp, ClosSem.applyBlock, found] at run
     | some field =>
-      obtain ⟨targetField, targetFound, fieldRel⟩ := envRel_lookup (fieldsEnvRel fieldsRel) found
+      have fieldsEnv : envRel maxApp f t.refs t.code fields targetFields := by
+        simpa using listRel_imp_envRel [] fields targetFields fieldsRel
+      obtain ⟨targetField, targetFound, fieldRel⟩ := envRel_lookup fieldsEnv found
       refine ⟨field, targetField, ?_, ?_, fieldRel⟩
       · simp [BlockInspect.op, ClosSem.doApp, ClosSem.applyBlock, found]
       · simp [BlockInspect.op, compileOp, BvlSem.doApp, BvlSem.applyBlock, targetFound]

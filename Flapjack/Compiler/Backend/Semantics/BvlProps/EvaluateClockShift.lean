@@ -513,4 +513,21 @@ theorem evaluateAddClock {C F : Type} (expressions : List Bvl.Exp)
   intro extra
   exact evaluate_addClock expressions env state next result extra h.1 h.2
 
+
+/-- A non-timeout initial evaluation remains the same at every larger clock. -/
+@[hol "cakeml/compiler/backend/semantics/bvlPropsScript.sml" "evaluate_add_clock_initial_state"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateAddClockInitialState {C F : Type} (expressions : List Bvl.Exp)
+    (env : List BvlSem.Value) (ffi : HolFfiState F) (code : Spt (Nat × Bvl.Exp))
+    (oracle : CompileOracle C) (compiler : Compiler C) (clock : Nat)
+    (result : Result (List BvlSem.Value) BvlSem.Value)
+    (final : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (premises : evaluateTuple (expressions, env, initialState ffi code oracle compiler clock) = (result, final) ∧
+      result ≠ .err (.abort .timeoutError)) :
+    ∀ extra, evaluateTuple (expressions, env, initialState ffi code oracle compiler (clock + extra)) =
+      (result, { final with clock := final.clock + extra }) := by
+  intro extra
+  simpa [incClock, initialState] using
+    evaluateAddClock expressions env (initialState ffi code oracle compiler clock) result final premises extra
+
 end Flapjack.Compiler.Backend.BvlProps

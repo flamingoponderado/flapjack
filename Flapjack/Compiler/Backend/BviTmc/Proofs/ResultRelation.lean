@@ -43,32 +43,4 @@ def optResRel (f : HolFiniteMapExact Nat Nat) : BviResult → BviResult → Prop
   | .err a, .err b => excRel (eorRel f) a b
   | _, _ => False
 
-/-- Flapjack infrastructure: exception and return relations survive map extension. -/
-theorem eorRel_submap (f g : HolFiniteMapExact Nat Nat) (a b : ExnOrRet)
-    (related : eorRel f a b) (submap : f.submap g) : eorRel g a b := by
-  cases a <;> cases b <;> simp only [eorRel] at related ⊢
-  · exact valueRel_submap f g _ _ related submap
-  · exact listRel_submap f g _ _ related submap
-
-/-- Flapjack infrastructure: optimized results survive map extension. -/
-theorem optResRel_submap (f g : HolFiniteMapExact Nat Nat) (a b : BviResult)
-    (related : optResRel f a b) (submap : f.submap g) : optResRel g a b := by
-  cases a with
-  | val values =>
-    cases b with
-    | val values' =>
-      cases values' with
-      | nil => exact related
-      | cons value rest =>
-        cases value with
-        | block tag fields =>
-          cases rest <;> cases tag <;> cases fields <;> simp_all [optResRel]
-        | _ => cases rest <;> simp_all [optResRel]
-    | err error => exact related.elim
-  | err error =>
-    cases b with
-    | val values => exact related.elim
-    | err error' =>
-      exact excRel_mono (eorRel f) (eorRel g) (fun a b h => eorRel_submap f g a b h submap) _ _ related
-
 end Flapjack.Compiler.Backend.BviTmc.ResultRelation

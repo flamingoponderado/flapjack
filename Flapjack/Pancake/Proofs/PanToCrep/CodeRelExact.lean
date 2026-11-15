@@ -156,7 +156,7 @@ theorem mkCtxtCodeImpCodeRelExactHOLW {width : Nat} [NeZero width]
     codeRelExactHOLW
       (mkCtxtExactHOL HolFiniteMapExact.empty
         (makeFuncsExactHOL (functionsHOL declarations)) 0
-        (getEidsFromDeclsHOL declarations))
+        (getEidsFromDeclsHOL declarations) : PanToCrepContextExact width)
       (HolFiniteMapExact.empty.updateList (functionsHOL declarations).reverse)
       (HolFiniteMapExact.empty.updateList
         (compileToCrepExactHOLW declarations).reverse) := by

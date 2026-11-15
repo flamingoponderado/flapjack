@@ -131,7 +131,14 @@ theorem compCorrectCall {width : Nat} [NeZero width] {C F : Type}
     (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
     (source : WordSemStateFiniteExact width (Nat × C) F)
     (ih : OriginalInductionHypotheses ac ret dest args handler source) :
-    Seq.Simulation ac (.call ret dest args handler) source := by
+    ∀ (simK simF simFrame : Nat)
+      (simSourcePost : WordSemStateFiniteExact width (Nat × C) F)
+      (simTarget : StackSemStateFiniteExact width C F)
+      (simResult : Option (WordSemResult width))
+      (simBs simBsPost : AppList (BitVec width)) (simN simNPost : Nat)
+      (simCompiled : HolProg width) (simLens : List Nat),
+      Seq.SimulationBody ac (.call ret dest args handler) source simK simF simFrame simSourcePost simTarget simResult
+        simBs simBsPost simN simNPost simCompiled simLens := by
   cases ret with
   | none =>
     intro k f frame sourcePost target result bs bsPost n nPost compiled lens facts

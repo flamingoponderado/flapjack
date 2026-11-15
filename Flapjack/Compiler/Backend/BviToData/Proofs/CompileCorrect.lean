@@ -23,7 +23,7 @@ def isResult (r : BviSem.BviResult) : Prop :=
   ∃ vs, r = .val vs
 
 /-- The source theorem's result-dependent obligations. This is factored
-infrastructure, pending review of the BVI evaluator and the complete proof. -/
+Flapjack infrastructure for the assembled compiler simulation. -/
 def correctOutcome {C F : Type} (res : BviSem.BviResult)
     (t1 t2 : DataSem.State C F) (n next : Nat) (corr live vs : List Nat)
     (env : List BvlSem.Value) (tail : Bool)
@@ -61,7 +61,9 @@ private theorem varCorr_member {α : Type} {values : List α} {names : List Nat}
     · exact ⟨value, lookup⟩
     · exact ih key member
 
-private theorem varCorr_append {α : Type} {values1 values2 : List α} {names1 names2 : List Nat}
+/-- Flapjack infrastructure: append two variable correspondences over the
+same target locals. -/
+theorem varCorr_append {α : Type} {values1 values2 : List α} {names1 names2 : List Nat}
     {env : Spt α} (first : DataProps.varCorr values1 names1 env)
     (second : DataProps.varCorr values2 names2 env) :
     DataProps.varCorr (values1 ++ values2) (names1 ++ names2) env := by
@@ -268,94 +270,6 @@ theorem evaluateSeq_stop {C F : Type} (first rest : DataLang.Prog)
     DataSem.evaluate (.seq first rest) t1 = (some result, t2) := by
   simp [DataSem.evaluate, firstRun, DataSem.fixClock, Nat.min_eq_right clockBound]
 
-/-- Successful non-tail list composition: the two recursive simulations
-combine with the real BVI clock bound into one source and target execution.
-The assembled simulation is proved separately in `Proofs.Simulation`; HOL correspondence review remains open. -/
-theorem compileCorrect_cons_success {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
-    (env : List BvlSem.Value) (head : BvlSem.Value) (values : List BvlSem.Value)
-    (s1 smid s2 : BviSem.BviState C F) (t1 tmid t2 : DataSem.State C F)
-    (n nmid next name : Nat) (corr live names : List Nat) (first rest : DataLang.Prog)
-    (ls1 ls2 : Option Nat)
-    (sourceFirst : BviSem.evaluate [x] env s1 = (.val [head], smid))
-    (sourceRest : BviSem.evaluate (y :: xs) env smid = (.val values, s2))
-    (compileFirst : compileSource n corr false live [x] = (first, [name], nmid))
-    (compileRest : compileSource nmid corr false (name :: live) (y :: xs) = (rest, names, next))
-    (targetFirst : DataSem.evaluate first t1 = (none, tmid))
-    (targetRest : DataSem.evaluate rest tmid = (none, t2))
-    (initialRel : stateRel s1 t1) (middleRel : stateRel smid tmid) (finalRel : stateRel s2 t2)
-    (firstOutcome : correctOutcome (.val [head]) t1 tmid n nmid corr live [name] env false none ls1)
-    (restOutcome : correctOutcome (.val values) tmid t2 nmid next corr (name :: live) names env false none ls2) :
-    BviSem.evaluate (x :: y :: xs) env s1 = (.val (head :: values), s2) ∧
-    compileSource n corr false live (x :: y :: xs) = (.seq first rest, name :: names, next) ∧
-    DataSem.evaluate (.seq first rest) t1 = (none, t2) ∧ stateRel s2 t2 ∧
-    correctOutcome (.val (head :: values)) t1 t2 n next corr live (name :: names) env false none ls2 := by
-  have sourceBound := BviSem.evaluate_clock_le [x] env s1
-  rw [sourceFirst] at sourceBound
-  have targetBound : tmid.clock ≤ t1.clock := by
-    simpa [← initialRel.1, ← middleRel.1] using sourceBound
-  refine ⟨?_, ?_, evaluateSeq_continue first rest t1 tmid _ targetFirst targetBound targetRest, finalRel, ?_⟩
-  · rw [BviSem.evaluate, BviSem.fixClock_evaluate, sourceFirst, sourceRest]
-    rfl
-  · simp [compileSource, compileFirst, compileRest, Flapjack.holHd]
-  · exact correctOutcome_cons head values t1 tmid t2 n nmid next corr live names name env ls1 ls2 firstOutcome restOutcome
-
-/-- An error from the first expression stops the entire compiled list. This
-composes the first recursive simulation without evaluating the remaining
-source expressions or target code. -/
-theorem compileCorrect_cons_firstStop {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
-    (env : List BvlSem.Value) (error : ErrorResult BviSem.ExnOrRet)
-    (s1 s2 : BviSem.BviState C F) (t1 t2 : DataSem.State C F)
-    (n nmid next name : Nat) (corr live names : List Nat) (first rest : DataLang.Prog)
-    (result : Result (List DataSem.Value) DataSem.Value) (ls : Option Nat)
-    (sourceFirst : BviSem.evaluate [x] env s1 = (.err error, s2))
-    (compileFirst : compileSource n corr false live [x] = (first, [name], nmid))
-    (compileRest : compileSource nmid corr false (name :: live) (y :: xs) = (rest, names, next))
-    (targetFirst : DataSem.evaluate first t1 = (some result, t2))
-    (initialRel : stateRel s1 t1) (finalRel : stateRel s2 t2)
-    (outcome : correctOutcome (.err error) t1 t2 n nmid corr live [name] env false (some result) ls) :
-    BviSem.evaluate (x :: y :: xs) env s1 = (.err error, s2) ∧
-    compileSource n corr false live (x :: y :: xs) = (.seq first rest, name :: names, next) ∧
-    DataSem.evaluate (.seq first rest) t1 = (some result, t2) ∧ stateRel s2 t2 ∧
-    correctOutcome (.err error) t1 t2 n next corr live (name :: names) env false (some result) ls := by
-  have sourceBound := BviSem.evaluate_clock_le [x] env s1
-  rw [sourceFirst] at sourceBound
-  have targetBound : t2.clock ≤ t1.clock := by
-    simpa [← initialRel.1, ← finalRel.1] using sourceBound
-  refine ⟨?_, ?_, evaluateSeq_stop first rest t1 t2 result targetFirst targetBound, finalRel, ?_⟩
-  · rw [BviSem.evaluate, BviSem.fixClock_evaluate, sourceFirst]
-  · simp [compileSource, compileFirst, compileRest, Flapjack.holHd]
-  · exact outcome
-
-/-- The first expression continues and the remaining expression list stops.
-The source and target both return that stop, with the source theorem's full
-result obligations transferred through the first compilation. -/
-theorem compileCorrect_cons_restStop {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
-    (env : List BvlSem.Value) (head : BvlSem.Value) (error : ErrorResult BviSem.ExnOrRet)
-    (s1 smid s2 : BviSem.BviState C F) (t1 tmid t2 : DataSem.State C F)
-    (n nmid next name : Nat) (corr live names : List Nat) (first rest : DataLang.Prog)
-    (result : Result (List DataSem.Value) DataSem.Value) (ls1 ls2 : Option Nat)
-    (sourceFirst : BviSem.evaluate [x] env s1 = (.val [head], smid))
-    (sourceRest : BviSem.evaluate (y :: xs) env smid = (.err error, s2))
-    (compileFirst : compileSource n corr false live [x] = (first, [name], nmid))
-    (compileRest : compileSource nmid corr false (name :: live) (y :: xs) = (rest, names, next))
-    (targetFirst : DataSem.evaluate first t1 = (none, tmid))
-    (targetRest : DataSem.evaluate rest tmid = (some result, t2))
-    (initialRel : stateRel s1 t1) (middleRel : stateRel smid tmid) (finalRel : stateRel s2 t2)
-    (firstOutcome : correctOutcome (.val [head]) t1 tmid n nmid corr live [name] env false none ls1)
-    (restOutcome : correctOutcome (.err error) tmid t2 nmid next corr (name :: live) names env false (some result) ls2) :
-    BviSem.evaluate (x :: y :: xs) env s1 = (.err error, s2) ∧
-    compileSource n corr false live (x :: y :: xs) = (.seq first rest, name :: names, next) ∧
-    DataSem.evaluate (.seq first rest) t1 = (some result, t2) ∧ stateRel s2 t2 ∧
-    correctOutcome (.err error) t1 t2 n next corr live (name :: names) env false (some result) ls2 := by
-  have sourceBound := BviSem.evaluate_clock_le [x] env s1
-  rw [sourceFirst] at sourceBound
-  have targetBound : tmid.clock ≤ t1.clock := by
-    simpa [← initialRel.1, ← middleRel.1] using sourceBound
-  refine ⟨?_, ?_, evaluateSeq_continue first rest t1 tmid _ targetFirst targetBound targetRest, finalRel, ?_⟩
-  · rw [BviSem.evaluate, BviSem.fixClock_evaluate, sourceFirst, sourceRest]
-  · simp [compileSource, compileFirst, compileRest, Flapjack.holHd]
-  · exact correctOutcome_stop_after_continue head (.err error) t1 tmid t2 n nmid next name corr live names env result ls1 ls2 firstOutcome restOutcome
-
 /-- The compiler invariant for a fixed source expression list and initial
 state, with arbitrary target state and compiler parameters. This is proof
 infrastructure for assembling the source evaluator induction. -/
@@ -378,8 +292,7 @@ def simulationFor {C F : Type} (xs : List Bvi.Exp) (env : List BvlSem.Value)
 
 /-- The list case assembled from recursive compiler simulations. The second
 induction premise applies to intermediate states reached by a successful
-first expression. This remains untagged until the BVI evaluator is reviewed
-and the assembled induction is in `Proofs.Simulation`. -/
+first expression. This is Flapjack infrastructure for the assembled induction. -/
 theorem compileCorrect_cons {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F)
     (ihFirst : simulationFor [x] env s1)
@@ -411,9 +324,14 @@ theorem compileCorrect_cons {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
         | some result =>
           generalize restCompiled : compileSource nmid corr false (name :: live) (y :: xs) = restTriple
           obtain ⟨rest, names, next⟩ := restTriple
-          obtain ⟨_, compiledAll, targetAll, stateAll, outcomeAll⟩ :=
-            compileCorrect_cons_firstStop x y xs env error s1 s2 t1 t2 n nmid next name corr live names first rest result ls firstRun compiled restCompiled target related state outcome
-          exact ⟨t2, .seq first rest, some result, name :: names, next, ls, compiledAll, targetAll, stateAll, outcomeAll⟩
+          have sourceBound := BviSem.evaluate_clock_le [x] env s1
+          rw [firstRun] at sourceBound
+          have targetBound : t2.clock ≤ t1.clock := by
+            simpa [← related.1, ← state.1] using sourceBound
+          refine ⟨t2, .seq first rest, some result, name :: names, next, ls, ?_,
+            evaluateSeq_stop first rest t1 t2 result target targetBound, state, ?_⟩
+          · simp [compileSource, compiled, restCompiled, Flapjack.holHd]
+          · exact outcome
   | val values =>
     obtain ⟨head, rfl⟩ := BviSem.evaluate_singleton x env s1 smid values firstRun
     obtain ⟨tmid, first, pres, firstNames, nmid, ls1, compiled, target, middleRel, outcome⟩ :=
@@ -448,9 +366,14 @@ theorem compileCorrect_cons {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
             cases pres with
             | some result => simp [correctOutcome, isResult] at restOutcome
             | none =>
-              obtain ⟨_, compiledAll, targetAll, stateAll, outcomeAll⟩ :=
-                compileCorrect_cons_success x y xs env head tailValues s1 smid s2 t1 tmid t2 n nmid next name corr live names first rest ls1 ls2 firstRun restRun compiled restCompiled target targetRest related middleRel finalRel firstOutcome restOutcome
-              exact ⟨t2, .seq first rest, none, name :: names, next, ls2, compiledAll, targetAll, stateAll, outcomeAll⟩
+              have sourceBound := BviSem.evaluate_clock_le [x] env s1
+              rw [firstRun] at sourceBound
+              have targetBound : tmid.clock ≤ t1.clock := by
+                simpa [← related.1, ← middleRel.1] using sourceBound
+              refine ⟨t2, .seq first rest, none, name :: names, next, ls2, ?_,
+                evaluateSeq_continue first rest t1 tmid _ target targetBound targetRest, finalRel, ?_⟩
+              · simp [compileSource, compiled, restCompiled, Flapjack.holHd]
+              · exact correctOutcome_cons head tailValues t1 tmid t2 n nmid next corr live names name env ls1 ls2 firstOutcome restOutcome
           | err error =>
             have whole : BviSem.evaluate (x :: y :: xs) env s1 = (.err error, slast) := by
               rw [BviSem.evaluate, BviSem.fixClock_evaluate, firstRun, restRun]
@@ -462,28 +385,20 @@ theorem compileCorrect_cons {C F : Type} (x y : Bvi.Exp) (xs : List Bvi.Exp)
             cases pres with
             | none => simp [correctOutcome] at restOutcome
             | some result =>
-              obtain ⟨_, compiledAll, targetAll, stateAll, outcomeAll⟩ :=
-                compileCorrect_cons_restStop x y xs env head error s1 smid s2 t1 tmid t2 n nmid next name corr live names first rest result ls1 ls2 firstRun restRun compiled restCompiled target targetRest related middleRel finalRel firstOutcome restOutcome
-              exact ⟨t2, .seq first rest, some result, name :: names, next, ls2, compiledAll, targetAll, stateAll, outcomeAll⟩
+              have sourceBound := BviSem.evaluate_clock_le [x] env s1
+              rw [firstRun] at sourceBound
+              have targetBound : tmid.clock ≤ t1.clock := by
+                simpa [← related.1, ← middleRel.1] using sourceBound
+              refine ⟨t2, .seq first rest, some result, name :: names, next, ls2, ?_,
+                evaluateSeq_continue first rest t1 tmid _ target targetBound targetRest, finalRel, ?_⟩
+              · simp [compileSource, compiled, restCompiled, Flapjack.holHd]
+              · exact correctOutcome_stop_after_continue head (.err error) t1 tmid t2 n nmid next name corr live names env result ls1 ls2 firstOutcome restOutcome
 
-/-- Empty-expression case of the full source simulation invariant. This case
-is not tagged as a HOL port while the source-shaped BVI evaluator awaits its
-own correspondence review. -/
-theorem compileCorrect_nil {C F : Type} (env : List BvlSem.Value)
-    (s1 s2 : BviSem.BviState C F) (res : BviSem.BviResult)
-    (t1 : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
-    (run : BviSem.evaluate [] env s1 = (res, s2))
-    (notTypeError : res ≠ .err (.abort .typeError))
-    (vars : DataProps.varCorr env corr (sptMap dataToBviValue t1.locals))
-    (tailShape : ([] : List Bvi.Exp).length ≠ 1 → tail = false)
-    (fresh : ∀ k, n ≤ k → sptLookup k t1.locals = none)
-    (related : stateRel s1 t1)
-    (_livePresent : ∀ v ∈ live, sptLookup v t1.locals ≠ none)
-    (exceptionJump : isException res → DataSem.jumpExc t1 ≠ none) :
-    ∃ t2 prog pres vs next ls,
-      compileSource n corr tail live [] = (prog, vs, next) ∧
-      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel s2 t2 ∧
-      correctOutcome res t1 t2 n next corr live vs env tail pres ls := by
+/-- The empty list satisfies the reusable evaluator induction invariant.
+This is Flapjack infrastructure for the assembled induction. -/
+theorem simulationFor_nil {C F : Type} (env : List BvlSem.Value) (s1 : BviSem.BviState C F) :
+    simulationFor [] env s1 := by
+  intro res s2 t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
   simp only [BviSem.evaluate, Prod.mk.injEq] at run
   obtain ⟨rfl, rfl⟩ := run
   have notTail : tail = false := tailShape (by simp)
@@ -502,23 +417,11 @@ theorem compileCorrect_nil {C F : Type} (env : List BvlSem.Value)
       exact lookup
     · exact ⟨fun h => h, List.Forall₂.nil⟩
 
-/-- Variable case of the source simulation invariant, including both tail
-and non-tail compilation. The evaluator still awaits correspondence review. -/
-theorem compileCorrect_var {C F : Type} (index : Nat) (env : List BvlSem.Value)
-    (s1 s2 : BviSem.BviState C F) (res : BviSem.BviResult)
-    (t1 : DataSem.State C F) (n : Nat) (corr : List Nat) (tail : Bool) (live : List Nat)
-    (run : BviSem.evaluate [.var index] env s1 = (res, s2))
-    (notTypeError : res ≠ .err (.abort .typeError))
-    (vars : DataProps.varCorr env corr (sptMap dataToBviValue t1.locals))
-    (_tailShape : ([.var index] : List Bvi.Exp).length ≠ 1 → tail = false)
-    (fresh : ∀ k, n ≤ k → sptLookup k t1.locals = none)
-    (related : stateRel s1 t1)
-    (_livePresent : ∀ v ∈ live, sptLookup v t1.locals ≠ none)
-    (_exceptionJump : isException res → DataSem.jumpExc t1 ≠ none) :
-    ∃ t2 prog pres vs next ls,
-      compileSource n corr tail live [.var index] = (prog, vs, next) ∧
-      DataSem.evaluate prog t1 = (pres, t2) ∧ stateRel s2 t2 ∧
-      correctOutcome res t1 t2 n next corr live vs env tail pres ls := by
+/-- A variable expression satisfies the reusable evaluator induction invariant.
+This is Flapjack infrastructure for the assembled induction. -/
+theorem simulationFor_var {C F : Type} (index : Nat) (env : List BvlSem.Value) (s1 : BviSem.BviState C F) :
+    simulationFor [.var index] env s1 := by
+  intro res s2 t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
   cases valueAt : env[index]? with
   | none =>
     simp [BviSem.evaluate, valueAt] at run
@@ -527,47 +430,41 @@ theorem compileCorrect_var {C F : Type} (index : Nat) (env : List BvlSem.Value)
   | some value =>
     simp [BviSem.evaluate, valueAt] at run
     rcases run with ⟨rfl, rfl⟩
-    obtain ⟨name, dataValue, nameAt, read, projected, _, _, _⟩ :=
-      evaluateVar_nonTail index n corr live env s1 t1 value related vars (by simp [BviSem.evaluate, valueAt])
-    cases tail with
-    | false =>
-      refine ⟨t1, .skip, none, [name], max n (name + 1), none, ?_, ?_, related, ?_⟩
-      · simp [compileSource, nameAt]
-      · simp [DataSem.evaluate]
-      · simp only [correctOutcome, true_and, List.mem_singleton, forall_eq, vars]
-        refine ⟨Nat.le_max_left _ _, ?_, ?_, ?_, ?_, ?_, ?_⟩
-        · omega
-        · intro k hk
-          exact fresh k (Nat.le_trans (Nat.le_max_left _ _) hk)
-        · intro k x lookup
-          by_contra bound
-          have absent := fresh k (Nat.le_trans (Nat.le_max_left _ _) (Nat.le_of_not_gt bound))
-          rw [lookup] at absent
-          contradiction
-        · intro k x lookup _
-          exact lookup
-        · exact fun h => h
-        · constructor
-          · simpa [DataSem.getVar, sptLookup_sptMap, read, projected] using congrArg (Option.map dataToBviValue) read
+    obtain ⟨name, nameAt, mappedRead⟩ := DataProps.varCorr_lookup env corr
+      (sptMap dataToBviValue t1.locals) vars index value valueAt
+    simp only [DataSem.getVar, sptLookup_sptMap] at mappedRead
+    cases localFound : sptLookup name t1.locals with
+    | none => simp [localFound] at mappedRead
+    | some dataValue =>
+      have projected : dataToBviValue dataValue = value := by simpa [localFound] using mappedRead
+      have read : DataSem.getVar name t1.locals = some dataValue := by simpa [DataSem.getVar] using localFound
+      cases tail with
+      | false =>
+        refine ⟨t1, .skip, none, [name], max n (name + 1), none, ?_, ?_, related, ?_⟩
+        · simp [compileSource, nameAt]
+        · simp [DataSem.evaluate]
+        · simp only [correctOutcome, true_and, List.mem_singleton, forall_eq, vars]
+          refine ⟨Nat.le_max_left _ _, ?_, ?_, ?_, ?_, ?_, ?_⟩
+          · omega
+          · intro k hk
+            exact fresh k (Nat.le_trans (Nat.le_max_left _ _) hk)
+          · intro k x lookup
+            by_contra bound
+            have absent := fresh k (Nat.le_trans (Nat.le_max_left _ _) (Nat.le_of_not_gt bound))
+            rw [lookup] at absent
+            contradiction
+          · intro k x lookup _
+            exact lookup
+          · exact fun h => h
           · constructor
-    | true =>
-      refine ⟨DataSem.flushState false t1, .return [name], some (.val [dataValue]), [n], n + 1, none, ?_, ?_, ?_, ?_⟩
-      · simp [compileSource, nameAt]
-      · simp [DataSem.evaluate, DataSem.getVars, read]
-      · simpa [stateRel, DataSem.flushState] using related
-      · simp [correctOutcome, isReturn, isResult, isException, dataToBviResult, projected, DataSem.flushState]
-
-/-- The empty list satisfies the reusable evaluator induction invariant. -/
-theorem simulationFor_nil {C F : Type} (env : List BvlSem.Value) (s1 : BviSem.BviState C F) :
-    simulationFor [] env s1 := by
-  intro res s2 t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
-  exact compileCorrect_nil env s1 s2 res t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
-
-/-- A variable expression satisfies the reusable evaluator induction invariant. -/
-theorem simulationFor_var {C F : Type} (index : Nat) (env : List BvlSem.Value) (s1 : BviSem.BviState C F) :
-    simulationFor [.var index] env s1 := by
-  intro res s2 t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
-  exact compileCorrect_var index env s1 s2 res t1 n corr tail live run notTypeError vars tailShape fresh related livePresent exceptionJump
+            · simpa [DataSem.getVar, sptLookup_sptMap, read, projected] using congrArg (Option.map dataToBviValue) read
+            · constructor
+      | true =>
+        refine ⟨DataSem.flushState false t1, .return [name], some (.val [dataValue]), [n], n + 1, none, ?_, ?_, ?_, ?_⟩
+        · simp [compileSource, nameAt]
+        · simp [DataSem.evaluate, DataSem.getVars, read]
+        · simpa [stateRel, DataSem.flushState] using related
+        · simp [correctOutcome, isReturn, isResult, isException, dataToBviResult, projected, DataSem.flushState]
 
 private theorem jumpExc_decClock {C F : Type} (state : DataSem.State C F) :
     DataSem.jumpExc (DataSem.decClock state) = (DataSem.jumpExc state).map DataSem.decClock := by
@@ -590,8 +487,7 @@ private theorem outcome_decClock_initial {C F : Type} (res : BviSem.BviResult)
   cases pres <;> simp only [correctOutcome, DataSem.decClock, sameJump]
 
 /-- The tick case of the compiler simulation, assuming the recursive
-simulation at the decremented source clock. This remains untagged pending
-the source evaluator correspondence review. -/
+simulation at the decremented source clock. This is Flapjack induction infrastructure. -/
 theorem simulationFor_tick {C F : Type} (body : Bvi.Exp) (env : List BvlSem.Value)
     (s1 : BviSem.BviState C F)
     (ih : s1.clock ≠ 0 → simulationFor [body] env (BviSem.decClock 1 s1)) :
@@ -629,7 +525,7 @@ theorem simulationFor_tick {C F : Type} (body : Bvi.Exp) (env : List BvlSem.Valu
     · exact (outcome_decClock_initial res t1 t2 n next corr live names env tail pres ls).mp outcome
 
 /-- Return expressions evaluate their argument list and then return its
-projected values. This remains untagged pending the source evaluator review. -/
+projected values. This is Flapjack induction infrastructure. -/
 theorem simulationFor_return {C F : Type} (args : List Bvi.Exp) (env : List BvlSem.Value)
     (s1 : BviSem.BviState C F) (ih : simulationFor args env s1) :
     simulationFor [.return args] env s1 := by
@@ -694,8 +590,7 @@ private theorem jumpExc_preserves {C F : Type} (s : BviSem.BviState C F)
   · simp at jump
 
 /-- Raise evaluates its operand, projects the raised value, and transfers
-control through the corresponding exception frame. This remains untagged
-pending the source evaluator review. -/
+control through the corresponding exception frame. This is Flapjack induction infrastructure. -/
 theorem simulationFor_raise {C F : Type} (body : Bvi.Exp) (env : List BvlSem.Value)
     (s1 : BviSem.BviState C F) (ih : simulationFor [body] env s1) :
     simulationFor [.raise body] env s1 := by
@@ -763,8 +658,7 @@ theorem simulationFor_raise {C F : Type} (body : Bvi.Exp) (env : List BvlSem.Val
                 exact ⟨rfl, by simpa using jumpAgain⟩
 
 /-- The `let` case composes binding and body simulations, extending the
-environment by the binding results. This remains untagged pending evaluator
-correspondence review. -/
+environment by the binding results. This is Flapjack induction infrastructure. -/
 theorem simulationFor_let {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F)
     (ihBindings : simulationFor bindings env s1)
@@ -882,40 +776,6 @@ theorem correctOutcome_move {C F : Type} (value : BvlSem.Value)
         · simp [DataSem.getVar, sptLookup_sptMap, sptLookup_sptInsert_same, projection]
         · constructor
 
-/-- A selected non-tail conditional branch either stops unchanged or copies
-its single result into the fresh merge local. Its result and state satisfy the
-same simulation invariant at the merge point. -/
-theorem simulation_branch_move {C F : Type} (branch : Bvi.Exp) (env : List BvlSem.Value)
-    (source nextSource : BviSem.BviState C F) (t1 t2 : DataSem.State C F)
-    (res : BviSem.BviResult) (n next dest name : Nat) (corr live : List Nat)
-    (prog : DataLang.Prog) (pres : Option (Result (List DataSem.Value) DataSem.Value)) (ls : Option Nat)
-    (sourceRun : BviSem.evaluate [branch] env source = (res, nextSource))
-    (targetRun : DataSem.evaluate prog t1 = (pres, t2))
-    (initialRel : stateRel source t1) (finalRel : stateRel nextSource t2)
-    (outcome : correctOutcome res t1 t2 n next corr live [name] env false pres ls)
-    (destBound : next ≤ dest) :
-    ∃ t3 presFinal,
-      DataSem.evaluate (.seq prog (.move dest name)) t1 = (presFinal, t3) ∧
-      stateRel nextSource t3 ∧
-      correctOutcome res t1 t3 n (dest + 1) corr live [dest] env false presFinal ls := by
-  have sourceBound := BviSem.evaluate_clock_le [branch] env source
-  rw [sourceRun] at sourceBound
-  have targetBound : t2.clock ≤ t1.clock := by
-    simpa [← initialRel.1, ← finalRel.1] using sourceBound
-  cases pres with
-  | some result =>
-    refine ⟨t2, some result, evaluateSeq_stop prog (.move dest name) t1 t2 result targetRun targetBound, finalRel, ?_⟩
-    exact outcome
-  | none =>
-    cases res with
-    | err error => simp [correctOutcome] at outcome
-    | val values =>
-      obtain ⟨value, rfl⟩ := BviSem.evaluate_singleton branch env source nextSource values sourceRun
-      obtain ⟨dataValue, moveRun, movedRel, movedOutcome⟩ :=
-        correctOutcome_move value nextSource t1 t2 n next dest name corr live env ls finalRel outcome destBound
-      refine ⟨DataSem.setVar dest dataValue t2, none, ?_, movedRel, movedOutcome⟩
-      exact evaluateSeq_continue prog (.move dest name) t1 t2 _ targetRun targetBound moveRun
-
 private theorem destBool_tests (value : DataSem.Value) (result : Bool)
     (decoded : DataSem.destBool value = some result) :
     DataSem.isBool true value = result ∧ DataSem.isBool false value = !result := by
@@ -949,31 +809,9 @@ theorem evaluateIf_projection {C F : Type} (state : DataSem.State C F) (name : N
   obtain ⟨yesTest, noTest⟩ := destBool_tests value condition dataDecoded
   cases condition <;> simp [DataSem.evaluate, read, yesTest, noTest]
 
-/-- A selected branch provides the conditional's result invariant in both
-tail position and non-tail position, where its result is moved to the common
-fresh local. -/
-theorem simulation_branch {C F : Type} (branch : Bvi.Exp) (env : List BvlSem.Value)
-    (source nextSource : BviSem.BviState C F) (t1 t2 : DataSem.State C F)
-    (res : BviSem.BviResult) (n next dest name : Nat) (corr live : List Nat) (tail : Bool)
-    (prog : DataLang.Prog) (pres : Option (Result (List DataSem.Value) DataSem.Value)) (ls : Option Nat)
-    (sourceRun : BviSem.evaluate [branch] env source = (res, nextSource))
-    (targetRun : DataSem.evaluate prog t1 = (pres, t2))
-    (initialRel : stateRel source t1) (finalRel : stateRel nextSource t2)
-    (outcome : correctOutcome res t1 t2 n next corr live [name] env tail pres ls)
-    (destBound : next ≤ dest) :
-    ∃ t3 presFinal,
-      DataSem.evaluate (if tail then prog else .seq prog (.move dest name)) t1 = (presFinal, t3) ∧
-      stateRel nextSource t3 ∧
-      correctOutcome res t1 t3 n (dest + 1) corr live [dest] env tail presFinal ls := by
-  cases tail with
-  | false =>
-    simpa using simulation_branch_move branch env source nextSource t1 t2 res n next dest name corr live prog pres ls sourceRun targetRun initialRel finalRel outcome destBound
-  | true =>
-    cases pres with
-    | none => simp [correctOutcome] at outcome
-    | some result => exact ⟨t2, some result, targetRun, finalRel, outcome⟩
-
-private theorem correctOutcome_weaken_start {C F : Type} (res : BviSem.BviResult)
+/-- Flapjack infrastructure: lower the initial fresh-variable bound in the
+continuing result invariant. -/
+theorem correctOutcome_weaken_start {C F : Type} (res : BviSem.BviResult)
     (t1 t2 : DataSem.State C F) (n n' next : Nat) (corr live names : List Nat)
     (env : List BvlSem.Value) (tail : Bool)
     (pres : Option (Result (List DataSem.Value) DataSem.Value)) (ls : Option Nat)
@@ -998,8 +836,7 @@ private theorem compileSource_single (n : Nat) (env : List Nat) (tail : Bool) (l
     | cons _ _ => simp at len
 
 /-- Conditional simulation, combining condition evaluation, branch choice,
-and the fresh-result merge for non-tail compilation. This remains untagged
-pending evaluator correspondence review. -/
+and the fresh-result merge for non-tail compilation. This is Flapjack induction infrastructure. -/
 theorem simulationFor_if {C F : Type} (condition yes no : Bvi.Exp)
     (env : List BvlSem.Value) (s1 : BviSem.BviState C F)
     (ihCondition : simulationFor [condition] env s1)
@@ -1103,8 +940,39 @@ theorem simulationFor_if {C F : Type} (condition yes no : Bvi.Exp)
           rw [selectedCompiled] at branchCompiled
           simp only [Prod.mk.injEq] at branchCompiled
           obtain ⟨rfl, rfl, rfl⟩ := branchCompiled
-          obtain ⟨t2, finalPres, selectedTarget, finalRel, selectedOutcome⟩ :=
-            simulation_branch (if choice then yes else no) env smid s2 tmid tbranch res branchStart branchNext n3 branchName corr live tail branchCode branchPres ls2 branchRun branchTarget middleRel branchRel branchOutcome destBound
+          have selected : ∃ t2 finalPres,
+              DataSem.evaluate (if tail then branchCode else .seq branchCode (.move n3 branchName)) tmid =
+                (finalPres, t2) ∧ stateRel s2 t2 ∧
+              correctOutcome res tmid t2 branchStart (n3 + 1) corr live [n3] env tail finalPres ls2 := by
+            cases tail with
+            | true =>
+              cases branchPres with
+              | none => simp [correctOutcome] at branchOutcome
+              | some result => exact ⟨tbranch, some result, branchTarget, branchRel, branchOutcome⟩
+            | false =>
+              have sourceBound := BviSem.evaluate_clock_le [if choice then yes else no] env smid
+              rw [branchRun] at sourceBound
+              have targetBound : tbranch.clock ≤ tmid.clock := by
+                simpa [← middleRel.1, ← branchRel.1] using sourceBound
+              cases branchPres with
+              | some result =>
+                refine ⟨tbranch, some result,
+                  evaluateSeq_stop branchCode (.move n3 branchName) tmid tbranch result branchTarget targetBound,
+                  branchRel, ?_⟩
+                exact branchOutcome
+              | none =>
+                cases res with
+                | err error => simp [correctOutcome] at branchOutcome
+                | val values =>
+                  obtain ⟨resultValue, rfl⟩ := BviSem.evaluate_singleton
+                    (if choice then yes else no) env smid s2 values branchRun
+                  obtain ⟨dataResult, moveRun, movedRel, movedOutcome⟩ :=
+                    correctOutcome_move resultValue s2 tmid tbranch branchStart branchNext n3 branchName
+                      corr live env ls2 branchRel branchOutcome destBound
+                  refine ⟨DataSem.setVar n3 dataResult tbranch, none, ?_, movedRel, movedOutcome⟩
+                  exact evaluateSeq_continue branchCode (.move n3 branchName) tmid tbranch _
+                    branchTarget targetBound moveRun
+          obtain ⟨t2, finalPres, selectedTarget, finalRel, selectedOutcome⟩ := selected
           have ifRun : DataSem.evaluate (.ifThenElse condName yesTarget noTarget) tmid = (finalPres, t2) := by
             rw [evaluateIf_projection tmid condName dataValue choice yesTarget noTarget (by simpa [DataSem.getVar] using localFound) dataDecoded]
             cases choice <;> simpa [yesTarget, noTarget, branchCode, branchName] using selectedTarget

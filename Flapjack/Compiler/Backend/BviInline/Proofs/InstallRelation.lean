@@ -33,10 +33,17 @@ theorem inStateRel_after_install {C F : Type}
     intro name present
     apply fresh name
     rwa [← domains]
-  have range := inlineAllSource_cache_subspt (source.compileOracle 0).2
-    (source.compileOracle 0).1.1 target.code distinct cache targetFresh
-  have codes := inlineAllSource_union_related (source.compileOracle 0).2
-    (source.compileOracle 0).1.1 source.code target.code distinct cache targetFresh codeRel
+  have range := inlineAllCacheSubspt (source.compileOracle 0).2
+    (source.compileOracle 0).1.1 target.code
+    (inlineAllSource (source.compileOracle 0).1.1 (source.compileOracle 0).2).1
+    (inlineAllSource (source.compileOracle 0).1.1 (source.compileOracle 0).2).2
+    ⟨(Prod.eta _).symm, cache,
+      Set.disjoint_left.mpr (fun key member present => targetFresh key present member), distinct⟩
+  have codes := inlineAllLookupUnion (source.compileOracle 0).1.1 (source.compileOracle 0).2
+    (inlineAllSource (source.compileOracle 0).1.1 (source.compileOracle 0).2).1
+    (inlineAllSource (source.compileOracle 0).1.1 (source.compileOracle 0).2).2 source.code target.code
+    ⟨(Prod.eta _).symm, cache, domains, codeRel,
+      Set.disjoint_left.mpr (fun key member present => targetFresh key present member), distinct⟩
   have newDomains : sptDomain (sptUnion target.code
       (sptFromAList (inlineAllSource (source.compileOracle 0).1.1 (source.compileOracle 0).2).2)) =
       sptDomain (sptUnion source.code (sptFromAList (source.compileOracle 0).2)) := by
@@ -46,7 +53,7 @@ theorem inStateRel_after_install {C F : Type}
     change sptDomain source.code name ∨ sptMem name (sptFromAList
       (inlineAllSource (source.compileOracle 0).1.1 (source.compileOracle 0).2).2) ↔
       sptDomain source.code name ∨ sptMem name (sptFromAList (source.compileOracle 0).2)
-    rw [BviTailrec.sptFromAList_mem_iff, BviTailrec.sptFromAList_mem_iff, inlineAllSource_names]
+    rw [BviTailrec.sptFromAList_mem_iff, BviTailrec.sptFromAList_mem_iff, Proofs.inlineAll_mapFst]
   refine ⟨refs, clock, global, ffi, ?_, ?_, compiler, newDomains, codes⟩
   · funext n
     exact congrFun oracle (n + 1)
@@ -54,11 +61,11 @@ theorem inStateRel_after_install {C F : Type}
 
 /-- Flapjack infrastructure: a successful source installation is reproduced
 by the inlined target, with the same entry pointer and related states. -/
-theorem doInstall_success_rel {C F : Type} (args : List Value)
+theorem doInstall_success_rel {C F R S : Type} (args : List Value)
     (source sourceNext : BviState (Spt (Nat × Bvi.Exp) × C) F)
     (target : BviState C F) (value : Value) (related : InStateRel source target)
-    (run : doInstall (R := ExnOrRet) args source = .val (value, sourceNext)) :
-    ∃ targetNext, doInstall (R := ExnOrRet) args target = .val (value, targetNext) ∧
+    (run : doInstall (R := R) args source = .val (value, sourceNext)) :
+    ∃ targetNext, doInstall (R := S) args target = .val (value, targetNext) ∧
       InStateRel sourceNext targetNext := by
   obtain ⟨v1, v2, len1, len2, bytes, data, cfg, key, arity, body, rest, cfgNext,
     argsEq, decode1, decode2, lenEq1, lenEq2, oracle0, absent, unique, callback, oracle1, valueEq, stateEq⟩ :=
@@ -72,7 +79,7 @@ theorem doInstall_success_rel {C F : Type} (args : List Value)
     intro entry member
     have memberNames : entry.1 ∈ code.map Prod.fst := by
       have h : entry.1 ∈ compiled.map Prod.fst := List.mem_map_of_mem member
-      simpa [compiled, inlineAllSource_names] using h
+      simpa [compiled, Proofs.inlineAll_mapFst] using h
     obtain ⟨original, originalMem, same⟩ := List.mem_map.mp memberNames
     have no := absent original (by simpa [code] using originalMem)
     cases lookup : sptLookup entry.1 target.code with
@@ -83,7 +90,7 @@ theorem doInstall_success_rel {C F : Type} (args : List Value)
       have absentSource : sptLookup entry.1 source.code = none := by simpa [same] using no
       simp [sptDomain, absentSource] at present
   have targetUnique : (compiled.map Prod.fst).Nodup := by
-    simpa [compiled, inlineAllSource_names, code] using unique
+    simpa [compiled, Proofs.inlineAll_mapFst, code] using unique
   have targetOracle0 : target.compileOracle 0 = (config, compiled) := by
     rw [oracleRelation]
     simp [inCo, stateCo, oracle0, code, compiled]
@@ -113,15 +120,15 @@ theorem doInstall_success_rel {C F : Type} (args : List Value)
     rw [oracleRelation]
     simp [inCo, stateCo, oracle1, cfgNextEq]
   have head' : compiled = (key, arity, inlineExpSource cache body) ::
-      (inlineAllSource (if canonicalWrapper key arity (inlineExpSource cache body) then
+      (inlineAllSource (if wrapperOk key arity (inlineExpSource cache body) then
         sptInsert key (arity, inlineExpSource cache body) cache else cache) rest).2 := by
     simp [compiled, code, inlineAllSource]
-  have targetRun : doInstall (R := ExnOrRet) args target =
+  have targetRun : doInstall (R := S) args target =
       .val (.codePtr key, { target with
         code := sptUnion target.code (sptFromAList compiled)
         compileOracle := fun n => target.compileOracle (n + 1) }) := by
     have targetUniqueHead : (((key, arity, inlineExpSource cache body) ::
-        (inlineAllSource (if canonicalWrapper key arity (inlineExpSource cache body) then
+        (inlineAllSource (if wrapperOk key arity (inlineExpSource cache body) then
           sptInsert key (arity, inlineExpSource cache body) cache else cache) rest).2).map Prod.fst).Nodup := by
       rw [← head']
       exact targetUnique
@@ -145,27 +152,46 @@ theorem doInstall_success_rel {C F : Type} (args : List Value)
   · simpa [valueEq] using targetRun
   · simpa [stateEq, oracle0, code, compiled] using stateRelated
 
-/-- Flapjack infrastructure: the installation case of the primitive
-simulation. A source type error is intentionally unconstrained, matching
-the error convention of the evaluator simulation. -/
-theorem doApp_install_rel {C F : Type} (args : List Value)
+namespace InstallationRelationCarrier
+/-- The canonical BVI reference-map representation has a roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end InstallationRelationCarrier
+
+/-- Every failed installation is a type error, independently of the error
+payload type. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "do_install_Rerr_type"
+  (fmap_as_finite_support := [refs])]
+theorem doInstall_error_type {C F R : Type} (args : List Value) (state : BviState C F)
+    (error : Flapjack.SemanticPrimitivesHOL.ErrorResult R)
+    (run : doInstall (R := R) args state = .err error) : error = .abort .typeError := by
+  unfold BviSem.doInstall at run
+  repeat' split at run
+  all_goals simp_all
+  all_goals split at run <;> simp_all
+
+/-- Installation preserves the inlining state relation unless the source
+installation returns a type error. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_inlineProofScript.sml" "in_state_rel_do_install"
+  (fmap_as_finite_support := [refs])]
+theorem doInstall_rel {C F R S : Type} (args : List Value)
     (source : BviState (Spt (Nat × Bvi.Exp) × C) F) (target : BviState C F)
     (related : InStateRel source target) :
-    match doApp .install args source with
-    | .err error => error ≠ .abort .typeError → doApp .install args target = .err error
+    match doInstall (R := R) args source with
+    | .err error => error ≠ .abort .typeError → doInstall (R := R) args target = .err error
     | .val (value, sourceNext) =>
       ∃ targetNext, InStateRel sourceNext targetNext ∧
-        doApp .install args target = .val (value, targetNext) := by
-  cases run : doApp .install args source with
+        doInstall (R := S) args target = .val (value, targetNext) := by
+  cases run : doInstall (R := R) args source with
   | err error =>
-    have errorEq := BviTailrec.doApp_install_error args source error run
+    have errorEq := doInstall_error_type args source error run
     simp [errorEq]
   | val result =>
     obtain ⟨value, sourceNext⟩ := result
-    have installRun : doInstall (R := ExnOrRet) args source = .val (value, sourceNext) := by
-      simpa only [BviSem.doApp] using run
     obtain ⟨targetNext, targetRun, states⟩ :=
-      doInstall_success_rel args source sourceNext target value related installRun
-    exact ⟨targetNext, states, by simpa only [BviSem.doApp] using targetRun⟩
+      doInstall_success_rel args source sourceNext target value related run
+    exact ⟨targetNext, states, targetRun⟩
 
 end Flapjack.Compiler.Backend.BviInline

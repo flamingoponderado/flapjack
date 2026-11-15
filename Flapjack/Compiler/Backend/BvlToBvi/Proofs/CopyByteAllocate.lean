@@ -161,6 +161,7 @@ theorem simulation_copyByteAllocate {C F : Type} (arguments : List Bvl.Exp)
         rcases argsCompile : compileListSource n arguments with ⟨argsCode, argsAux, finalName⟩
         have valuesLength := BvlSem.evaluate_length arguments env source middle values argsRun
         have codeLength := compileListSource_length n arguments
+        simp only [compileExpsSource_eq_list] at codeLength
         rw [argsCompile] at codeLength
         have codeArity : argsCode.length = 3 := by simp [valuesEq] at valuesLength; simpa [valuesLength] using codeLength
         have lowered : compileOp (.memOp (.copyByte true)) argsCode =

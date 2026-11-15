@@ -10,6 +10,14 @@ public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateExpandEnv
 namespace Flapjack.Compiler.Backend.BvlHandle.Proofs
 open Flapjack.Compiler.Backend.BvlSem
 
+namespace SequenceCorrectCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+    (∀ s : Flapjack.Compiler.Backend.BvlSem.State C F, State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end SequenceCorrectCarrier
+
 /-- A source sequence runs its second expression after a successful first
 expression and returns that second expression's result. -/
 theorem evaluate_sourceSequence {C F : Type} (first second : Bvl.Exp)
@@ -69,8 +77,8 @@ theorem evaluate_compiledSequenceLeaf {C F : Type} (limit : Nat) (expression : B
   cases run : evaluate [expression] [] state with
   | mk result next =>
     have safe' : result ≠ .err (.abort .typeError) := by simpa [run] using safe
-    have compiled := evaluate_compileExpression limit expression [] state next result run safe'
-    simp only [List.length_nil] at compiled
+    have compiled := compileExpression_correct expression [] state result next 0 limit ⟨run, safe', rfl⟩
+    simp only [evaluateTuple, compileExp] at compiled
     cases acc with
     | none => simpa [sequenceLeaf, sequenceContinue, run] using compiled
     | some rest =>
@@ -139,32 +147,72 @@ theorem evaluate_compileSeqsWith {C F : Type} (limit : Nat) (expression : Bvl.Ex
       exact evaluate_compiledSequenceLeaf limit expression (some rest) state safe contSafe
 termination_by sizeOf expression
 
-/-- The executed handler entry point preserves non-type-error expression
-evaluation with sequence splitting either enabled or disabled. Untagged
-pending review of the BVL evaluator and its HOL carrier correspondence. -/
-theorem evaluate_compileAnyFuel {C F : Type} (fuel : Nat) (splitSeq : Bool) (limit : Nat)
-    (expression : Bvl.Exp) (env : List Value) (state final : State C F)
-    (result : SemanticPrimitivesHOL.Result (List Value) Value)
-    (run : evaluate [expression] env state = (result, final))
-    (notType : result ≠ .err (.abort .typeError)) :
-    ∃ output, compileAnyFuel fuel splitSeq limit env.length expression = some output ∧
-      evaluate [output] env state = (result, final) := by
+/-- The source sequence compiler preserves a closed evaluation followed by
+the original optional-continuation behavior. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "compile_seqs_correct"
+  (fmap_as_finite_support := [refs])]
+theorem compileSeqs_correct {C F : Type} (l : Nat) (x : Bvl.Exp) (acc : Option Bvl.Exp)
+    (s1 s2 s3 : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (res res3 : SemanticPrimitivesHOL.Result (List Value) Value)
+    (premises : evaluateTuple ([x], [], s1) = (res, s2) ∧
+      (∀ (y : Bvl.Exp) (r : List Value), acc = some y ∧ res = .val r →
+        res3 ≠ .err (.abort .typeError) ∧ evaluateTuple ([y], [], s2) = (res3, s3)) ∧
+      res ≠ .err (.abort .typeError)) :
+    evaluateTuple ([compileSeqs l x acc], [], s1) =
+      if acc = none then (res, s2) else
+        match res with
+        | .val _ => (res3, s3)
+        | .err _ => (res, s2) := by
+  obtain ⟨run, continuation, safe⟩ := premises
+  simp only [evaluateTuple] at run continuation ⊢
+  have sourceSafe : (evaluate [x] [] s1).1 ≠ .err (.abort .typeError) := by
+    simpa [run] using safe
+  have contSafe : sequenceContinueSafe (evaluate [x] [] s1) acc := by
+    rw [run]
+    cases acc with
+    | none => cases res <;> simp [sequenceContinueSafe]
+    | some y =>
+      cases res with
+      | err error => simp [sequenceContinueSafe]
+      | val values =>
+        obtain ⟨safeNext, nextRun⟩ := continuation y values ⟨rfl, rfl⟩
+        simpa [sequenceContinueSafe, nextRun] using safeNext
+  have simulation := evaluate_compileSeqsWith l x acc s1 sourceSafe contSafe
+  rw [run] at simulation
+  change evaluate [compileSeqs l x acc] [] s1 = _
+  change evaluate [compileSeqs l x acc] [] s1 = sequenceContinue (res, s2) acc at simulation
+  rw [simulation]
+  cases acc with
+  | none => cases res <;> simp [sequenceContinue]
+  | some y =>
+    cases res with
+    | err error => simp [sequenceContinue]
+    | val values =>
+      obtain ⟨_, nextRun⟩ := continuation y values ⟨rfl, rfl⟩
+      simpa [sequenceContinue] using nextRun
+
+/-- The source handler entry point preserves every non-type-error evaluation. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "compile_any_correct"
+  (fmap_as_finite_support := [refs])]
+theorem compileAny_correct {C F : Type} (x : Bvl.Exp) (env : List Value)
+    (s1 : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (res : SemanticPrimitivesHOL.Result (List Value) Value)
+    (s2 : Flapjack.Compiler.Backend.BvlSem.State C F) (k : Nat) (splitSeq : Bool) (l : Nat)
+    (premises : evaluateTuple ([x], env, s1) = (res, s2) ∧
+      res ≠ .err (.abort .typeError) ∧ k = env.length) :
+    evaluateTuple ([compileAny splitSeq l k x], env, s1) = (res, s2) := by
+  rcases premises with ⟨run, safe, rfl⟩
   cases env with
   | nil =>
     cases splitSeq with
-    | false => exact evaluate_compileAnyFuel_noSplit fuel limit expression [] state final result run notType
+    | false =>
+      simpa [compileAny, compileExp, evaluateTuple] using
+        compileExpression_correct x [] s1 res s2 0 l ⟨run, safe, rfl⟩
     | true =>
-      refine ⟨compileSeqsWith (fun l e => compileExpression l 0 e) limit expression none, ?_, ?_⟩
-      · simpa using compileAnyFuel_eq_source fuel true limit 0 expression
-      · have safe : (evaluate [expression] [] state).1 ≠ .err (.abort .typeError) := by simp [run, notType]
-        have contSafe : sequenceContinueSafe (evaluate [expression] [] state) none := by
-          cases eval : evaluate [expression] [] state with
-          | mk result next => cases result <;> simp [sequenceContinueSafe]
-        have correct := evaluate_compileSeqsWith limit expression none state safe contSafe
-        simpa [sequenceContinue, run] using correct
+      simpa [compileAny] using
+        compileSeqs_correct l x none s1 s2 s2 res res ⟨run, by simp, safe⟩
   | cons first rest =>
-    refine ⟨compileExpression limit (first :: rest).length expression, ?_,
-      evaluate_compileExpression limit expression (first :: rest) state final result run notType⟩
-    simpa using compileAnyFuel_eq_source fuel splitSeq limit (first :: rest).length expression
+    simpa [compileAny, compileExp, evaluateTuple] using
+      compileExpression_correct x (first :: rest) s1 res s2 (first :: rest).length l ⟨run, safe, rfl⟩
 
 end Flapjack.Compiler.Backend.BvlHandle.Proofs

@@ -10,6 +10,14 @@ public import Flapjack.Compiler.Backend.Semantics.BvlProps.EvaluateLength
 namespace Flapjack.Compiler.Backend.BvlHandle.Proofs
 open Flapjack.Compiler.Backend.BvlSem
 
+namespace AdjustmentCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+    (∀ s : Flapjack.Compiler.Backend.BvlSem.State C F, State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end AdjustmentCarrier
+
 /-- Inserting a segment after a before agrees with the handler pass's
 adjustment of any de Bruijn index, including out-of-range indices. -/
 theorem getElem?_insert_adjusted {α : Type} (before inserted env : List α) (index : Nat) :
@@ -232,53 +240,69 @@ theorem evaluate_handleAdjVarsList {C F : Type} (expressions : List Bvl.Exp)
               simpa [handleAdjVarsList] using h
   exact allWeights (expsWeight expressions) expressions before inserted env state rfl
 
-/-- Singleton form of environment insertion for handler variable adjustment. -/
-theorem evaluate_handleAdjVars {C F : Type} (expression : Bvl.Exp)
-    (before inserted env : List Value) (state : State C F) :
-    evaluate [handleAdjVars before.length inserted.length expression]
-      (before ++ (inserted ++ env)) state = evaluate [expression] (before ++ env) state := by
-  simpa [handleAdjVarsList] using evaluate_handleAdjVarsList [expression] before inserted env state
+/-- Both expression and expression-list forms of environment insertion. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "evaluate_handle_adj_vars_lemma"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_handleAdjVars_source {C F : Type} :
+    (∀ (x : Bvl.Exp) (xs a env : List Value)
+      (r : Flapjack.Compiler.Backend.BvlSem.State C F),
+      evaluateTuple ([handleAdjVars xs.length a.length x], xs ++ (a ++ env), r) =
+        evaluateTuple ([x], xs ++ env, r)) ∧
+    (∀ (x : List Bvl.Exp) (xs a env : List Value)
+      (r : Flapjack.Compiler.Backend.BvlSem.State C F),
+      evaluateTuple (handleAdjVarsList xs.length a.length x, xs ++ (a ++ env), r) =
+        evaluateTuple (x, xs ++ env, r)) := by
+  constructor
+  · intro x xs a env r
+    simpa [evaluateTuple, handleAdjVarsList] using evaluate_handleAdjVarsList [x] xs a env r
+  · intro x xs a env r
+    exact evaluate_handleAdjVarsList x xs a env r
 
-/-- Extending the inserted segment before an existing adjusted environment
-preserves evaluation when the original segment lies inside the environment. -/
-theorem evaluate_handleAdjVars_extend {C F : Type} (expression : Bvl.Exp) (depth : Nat)
-    (before inserted env : List Value) (state : State C F) (bound : depth ≤ env.length) :
-    evaluate [handleAdjVars before.length (depth + inserted.length) expression]
-      (before ++ (inserted ++ env)) state =
-    evaluate [handleAdjVars before.length depth expression] (before ++ env) state := by
-  let first := env.take depth
-  let rest := env.drop depth
-  have split : first ++ rest = env := List.take_append_drop depth env
-  have length : first.length = depth := by simp [first, Nat.min_eq_left bound]
-  have extended := evaluate_handleAdjVars expression before (inserted ++ first) rest state
-  have original := evaluate_handleAdjVars expression before first rest state
+/-- Inserting an additional segment extends an existing adjustment. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "evaluate_handle_adj_vars"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_handleAdjVars_extend_source {C F : Type} (x : Bvl.Exp)
+    (xs : List Value) (l : Nat) (a env : List Value)
+    (r : Flapjack.Compiler.Backend.BvlSem.State C F) (bound : l ≤ env.length) :
+    evaluateTuple ([handleAdjVars xs.length (l + a.length) x], xs ++ (a ++ env), r) =
+      evaluateTuple ([handleAdjVars xs.length l x], xs ++ env, r) := by
+  simp only [evaluateTuple]
+  let first := env.take l
+  let rest := env.drop l
+  have split : first ++ rest = env := List.take_append_drop l env
+  have length : first.length = l := by simp [first, Nat.min_eq_left bound]
+  have extended := (evaluate_handleAdjVars_source (C := C) (F := F)).1 x xs (a ++ first) rest r
+  have original := (evaluate_handleAdjVars_source (C := C) (F := F)).1 x xs first rest r
   simp only [List.length_append, length, List.append_assoc, split] at extended original
-  simpa [Nat.add_comm] using extended.trans original.symm
+  simpa [Nat.add_comm, evaluateTuple] using extended.trans original.symm
 
-/-- Extensional singleton evaluation equality is preserved under handler
-variable adjustment when the requested segment is available. -/
-theorem handleAdjVars_evaluate_congr {C F : Type} (first second : Bvl.Exp)
-    (depth shift : Nat) (env : List Value) (state : State C F)
-    (equal : ∀ env, evaluate [first] env state = evaluate [second] env state)
-    (bound : depth + shift ≤ env.length) :
-    evaluate [handleAdjVars depth shift first] env state =
-      evaluate [handleAdjVars depth shift second] env state := by
-  let before := env.take depth
-  let afterBefore := env.drop depth
-  let inserted := afterBefore.take shift
-  let rest := afterBefore.drop shift
-  have beforeLength : before.length = depth := by
+/-- Adjustment preserves an extensional equality under the source bound. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "handle_adj_vars_evaluate"
+  (fmap_as_finite_support := [refs])]
+theorem handleAdjVars_evaluate_source {C F : Type} (x1 x2 : Bvl.Exp)
+    (r : Flapjack.Compiler.Backend.BvlSem.State C F) (d l : Nat) (env : List Value)
+    (premises : (∀ env, evaluateTuple ([x1], env, r) = evaluateTuple ([x2], env, r)) ∧
+      d + l ≤ env.length) :
+    evaluateTuple ([handleAdjVars d l x1], env, r) =
+      evaluateTuple ([handleAdjVars d l x2], env, r) := by
+  obtain ⟨equal, bound⟩ := premises
+  simp only [evaluateTuple] at equal ⊢
+  let before := env.take d
+  let afterBefore := env.drop d
+  let inserted := afterBefore.take l
+  let rest := afterBefore.drop l
+  have beforeLength : before.length = d := by
     simp only [before, List.length_take]
     omega
-  have insertedLength : inserted.length = shift := by
+  have insertedLength : inserted.length = l := by
     simp only [inserted, afterBefore, List.length_take, List.length_drop]
     omega
   have decomposition : before ++ (inserted ++ rest) = env := by
-    have parts : inserted ++ rest = afterBefore := List.take_append_drop shift afterBefore
+    have parts : inserted ++ rest = afterBefore := List.take_append_drop l afterBefore
     rw [parts]
-    exact List.take_append_drop depth env
-  have firstEq := evaluate_handleAdjVars first before inserted rest state
-  have secondEq := evaluate_handleAdjVars second before inserted rest state
+    exact List.take_append_drop d env
+  have firstEq := (evaluate_handleAdjVars_source (C := C) (F := F)).1 x1 before inserted rest r
+  have secondEq := (evaluate_handleAdjVars_source (C := C) (F := F)).1 x2 before inserted rest r
   rw [beforeLength, insertedLength, decomposition] at firstEq secondEq
   exact firstEq.trans ((equal (before ++ rest)).trans secondEq.symm)
 

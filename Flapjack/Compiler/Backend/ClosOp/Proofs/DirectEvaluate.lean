@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosOp.Proofs.LiftEvaluate
+public import Flapjack.Compiler.Backend.ClosOp.Proofs.PureEvaluate
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.EvaluateAppend
 
 @[expose] public section
@@ -219,17 +220,14 @@ private theorem evalEqualNil {C F : Type} (trace : BackendCommon.Tra) (i j : Nat
     (env : List Value) (s : State C F) :
     evaluate [.op .none (.blockOp (.tagLenEq i 0)) [.op trace (.blockOp (.cons j)) []]] env s =
       evaluate [mkBool (i == j)] env s := by
-  have evalBool (b : Bool) : evaluate [mkBool b] env s = (.val [boolValue b], s) := by
-    cases b <;> rw [mkBool, evaluate_ordinaryOp_eq _ _ _ _ _ (by simp) (by simp)] <;>
-      simp [evaluate, doApp, applyBlock, boolValue, BackendCommon.falseTag, BackendCommon.trueTag]
   rw [evaluate_ordinaryOp_eq .none _ _ env s (by simp) (by simp)]
   by_cases h : i = j
   · subst j
-    simp [evalNil, doApp, applyBlock, evalBool]
+    simp [evalNil, doApp, applyBlock, evaluateMakeBool]
   · have h' : j ≠ i := Ne.symm h
     have hij : (i == j) = false := beq_eq_false_iff_ne.mpr h
     have hji : (j == i) = false := beq_eq_false_iff_ne.mpr h'
-    simp [evalNil, doApp, applyBlock, evalBool, hij, hji]
+    simp [evalNil, doApp, applyBlock, evaluateMakeBool, hij, hji]
 
 /-- Nullary-constructor case of direct equality after both earlier source
 recognizer stages fail on the other operand. This Flapjack proof helper includes branch-selection premises. -/
@@ -478,12 +476,9 @@ theorem eqDirectThmWordPair {C F : Type} (tx ty : BackendCommon.Tra) (x y : BitV
   rw [stage] at h
   have hz : z = mkBool (decide (y = x)) := by simpa using h.2.2.symm
   subst z
-  have evalBool (b : Bool) : evaluate [mkBool b] env s = (.val [boolValue b], s) := by
-    cases b <;> rw [mkBool, evaluate_ordinaryOp_eq _ _ _ _ _ (by simp) (by simp)] <;>
-      simp [evaluate, doApp, applyBlock, boolValue, BackendCommon.falseTag, BackendCommon.trueTag]
   rw [equalWordLeft tx t x _ env s, evaluate_ordinaryOp_eq .none _ _ env s (by simp) (by simp)] at h
   simp [evalWord, doApp, applyBlock] at h
-  rw [evalBool]
+  rw [evaluateMakeBool]
   rcases h.1 with ⟨rfl, rfl⟩
   simp only [eq_comm]
 
@@ -615,12 +610,9 @@ theorem eqDirectThmBlockIntPair {C F : Type} (tx ty : BackendCommon.Tra) (x y : 
   rw [stage] at h
   have hz : z = mkBool (decide (y = x)) := by simpa using h.2.2.symm
   subst z
-  have evalBool (b : Bool) : evaluate [mkBool b] env s = (.val [boolValue b], s) := by
-    cases b <;> rw [mkBool, evaluate_ordinaryOp_eq _ _ _ _ _ (by simp) (by simp)] <;>
-      simp [evaluate, doApp, applyBlock, boolValue, BackendCommon.falseTag, BackendCommon.trueTag]
   rw [equalBlockIntLeft tx t x _ env s, evaluate_ordinaryOp_eq .none _ _ env s (by simp) (by simp)] at h
   simp [evalBlockInt, doApp, applyBlock] at h
-  rw [evalBool]
+  rw [evaluateMakeBool]
   rcases h.1 with ⟨rfl, rfl⟩
   simp only [eq_comm]
 
@@ -752,12 +744,9 @@ theorem eqDirectThmStringPair {C F : Type} (tx ty : BackendCommon.Tra) (x y : Fl
   rw [stage] at h
   have hz : z = mkBool (decide (y = x)) := by simpa using h.2.2.symm
   subst z
-  have evalBool (b : Bool) : evaluate [mkBool b] env s = (.val [boolValue b], s) := by
-    cases b <;> rw [mkBool, evaluate_ordinaryOp_eq _ _ _ _ _ (by simp) (by simp)] <;>
-      simp [evaluate, doApp, applyBlock, boolValue, BackendCommon.falseTag, BackendCommon.trueTag]
   rw [equalStringLeft tx t x _ env s, evaluate_ordinaryOp_eq .none _ _ env s (by simp) (by simp)] at h
   simp [evalString, doApp, applyBlock] at h
-  rw [evalBool]
+  rw [evaluateMakeBool]
   rcases h.1 with ⟨rfl, rfl⟩
   cases x
   cases y

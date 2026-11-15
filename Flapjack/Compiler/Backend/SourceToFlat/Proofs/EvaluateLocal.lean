@@ -166,7 +166,8 @@ private theorem factoredDecBoundedIH_singleton {C F : Type} [Nonempty C]
     (dec : Dec) : FactoredDecBoundedIH (F := F) interp transform limit [dec] := by
   cases dec with
   | dtabbrev location vars name typ =>
-    exact factoredDecBoundedIH_dtabbrev interp transform limit location vars name typ
+    simpa only [FactoredDecBoundedIH, EvaluateHOL.evaluateDecs, compileDecs] using
+      factoredDecBoundedIH_empty (F := F) interp transform limit
   | dletrec location funs =>
     exact factoredDecBoundedIH_dletrec interp transform limit location funs
   | denv name =>

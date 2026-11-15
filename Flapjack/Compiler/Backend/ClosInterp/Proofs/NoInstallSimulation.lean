@@ -10,10 +10,6 @@ The evaluator and state carriers await HOL correspondence review. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL
 
-/-- Related states have the same clock. -/
-theorem stateRelNoInstall_clock {C F : Type} {source target : ClosSem.State C F}
-    (related : StateRelNoInstall source target) : target.clock = source.clock := related.1.2.2.2.2.2.1
-
 /-- Replacing the clocks of related states by the same value preserves their relation. -/
 theorem stateRelNoInstall_withClock {C F : Type} {source target : ClosSem.State C F}
     (related : StateRelNoInstall source target) (clock : Nat) :
@@ -328,7 +324,7 @@ theorem evaluate_tick_noInstall_relation_step {C F : Type} (trace : BackendCommo
   · simp [zero] at run
     have smaller : (ClosSem.decClock 1 source).clock < source.clock := by simp [ClosSem.decClock]; omega
     obtain ⟨targetFinal, targetBody, finalRel, resultOk⟩ :=
-      bodyIH _ _ final result smaller run (stateRelNoInstall_decClock source target related 1)
+      bodyIH _ _ final result smaller run (stateRelNoInstall_decClock_one source target related)
     refine ⟨targetFinal, ?_, finalRel, resultOk⟩
     simpa [ClosSem.evaluate, clockEq, zero] using targetBody
 
@@ -382,7 +378,7 @@ theorem evaluate_letrec_noInstall_relation_step {C F : Type} (names : List Flapj
         dsimp only at run
         rw [if_pos good, captured] at run
         dsimp only at run
-        have capturedOk := lookupVars_noInstall selected env values envOk captured
+        have capturedOk := lookupVars_ok selected env values ⟨captured, envOk⟩
         have bodyEnvOk : valuesNoInstall
             ((List.range functions.length).map (fun i => ClosSem.Value.recclosure location [] values functions i) ++ env) = true :=
           (valuesNoInstall_append _ _).2 ⟨recursiveClosure_bundle_noInstall location values functions capturedOk functionsOk, envOk⟩

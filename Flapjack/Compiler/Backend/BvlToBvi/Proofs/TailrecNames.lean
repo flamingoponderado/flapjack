@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.InitialStateRel
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteSimulation
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Namespace
 
 @[expose] public section
 
@@ -105,19 +106,6 @@ theorem initialProgram_tailrec_inputCondition (start count counter next : Nat)
   · exact compileIncSource_outside_tailrec_namespace counter program entry.1
       (List.mem_map.mpr ⟨entry, compiled, rfl⟩)
 
-/-- An executed incremental lowering result meets the tail-recursion input
-condition, including the future programs supplied by the compiler oracle. -/
-theorem compileIncFuel_tailrec_inputCondition (fuel optFuel counter next last : Nat)
-    (program : List (Nat × Nat × Bvl.Exp)) (compiled : List (Nat × Nat × Bvi.Exp))
-    (distinct : (program.map Prod.fst).Nodup)
-    (nextBound : bvlNumStubs ≤ next) (worker : inWorkerNamespace next)
-    (run : compileIncFuel fuel optFuel counter program = some (last, compiled)) :
-    inputCondition next compiled := by
-  have equal := (compileIncFuel_eq_source fuel optFuel counter program).symm.trans run
-  have codeEq : (compileIncSource counter program).2 = compiled := congrArg Prod.snd (Option.some.inj equal)
-  rw [← codeEq]
-  exact compileIncSource_tailrec_inputCondition counter next program distinct nextBound worker
-
 /-- The executed initial BVL-to-BVI program, including stubs, meets the
 tail-recursion input condition. -/
 theorem compileProgFuel_tailrec_inputCondition (fuel optFuel start counter next targetStart targetCounter : Nat)
@@ -156,6 +144,74 @@ theorem compileProgFuel_production_tailrec_inputCondition
     targetStart targetCounter program compiled distinct production_tailrec_start_valid.1
     production_tailrec_start_valid.2 run
 
+open Classical in
+/-- Whole-program lowering preserves distinct names and the exact auxiliary namespace bounds. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_prog_distinct_locs"]
+theorem compileProg_distinctLocs (start n loc final : Nat) (prog : List (Nat × Nat × Bvl.Exp)) (code : List (Nat × Nat × Bvi.Exp))
+    (h : compileProgSource start n prog = (loc, code, final) ∧ (prog.map Prod.fst).Nodup) :
+    (code.map Prod.fst).Nodup ∧
+      (∀ x ∈ (code.map Prod.fst).filter (fun x => decide (inNs 1 (x - bvlNumStubs))),
+        bvlToBviNamespaces * n + bvlNumStubs ≤ x ∧ x < bvlToBviNamespaces * final + bvlNumStubs) ∧
+      (∀ x ∈ code.map Prod.fst, ¬inNs 2 (x - bvlNumStubs) ∧ ¬inNs 3 (x - bvlNumStubs)) := by
+  obtain ⟨run, distinct⟩ := h
+  have codeEq : stubs (bvlNumStubs + bvlToBviNamespaces * start)
+      (allocGlobCount (prog.map (fun (_, _, body) => body))) ++ (compileIncSource n prog).2 = code := by
+    simpa only [compileProgSource, compileIncSource] using congrArg (fun q => q.2.1) run
+  have nodup : (code.map Prod.fst).Nodup := by
+    rw [← codeEq]
+    exact stubs_append_compileIncSource_names_nodup _ _ _ prog distinct
+  have domain := compileProg_codeLabelsDomain start n prog loc code final 0 0 run
+  have classify (x : Nat) (member : x ∈ code.map Prod.fst) :
+      (∃ k, k ∈ prog.map Prod.fst ∧ x = bvlNumStubs + k * bvlToBviNamespaces) ∨
+      (∃ k, x = bvlNumStubs + k * bvlToBviNamespaces + 1 ∧ n ≤ k ∧ k < final) ∨
+      x ∈ (stubs 0 0).map Prod.fst := by
+    have m : x ∈ {a | a ∈ code.map Prod.fst} := member
+    rw [domain] at m
+    simpa only [Set.mem_union, Set.mem_ofPred_eq, or_assoc] using m
+  refine ⟨nodup, ?_, ?_⟩
+  · intro x member
+    obtain ⟨member, ns⟩ := List.mem_filter.mp member
+    have nsProp : inNs 1 (x - bvlNumStubs) := of_decide_eq_true ns
+    have nsValue : (x - bvlNumStubs) % 4 = 1 := by simpa [inNs, bvlToBviNamespaces] using nsProp
+    rcases classify x member with ⟨k, _, eq⟩ | ⟨k, eq, lo, hi⟩ | stub
+    · simp only [bvlToBviNamespaces] at eq
+      omega
+    · simp only [bvlToBviNamespaces] at eq ⊢
+      omega
+    · obtain ⟨entry, present, equal⟩ := List.mem_map.mp stub
+      have below := stubs_below_namespace 0 0 entry present
+      have sub : x - bvlNumStubs = 0 := by omega
+      simp [sub] at nsValue
+  · intro x member
+    rcases classify x member with ⟨k, _, eq⟩ | ⟨k, eq, lo, hi⟩ | stub
+    · simp only [inNs, bvlToBviNamespaces] at *
+      omega
+    · simp only [inNs, bvlToBviNamespaces] at *
+      omega
+    · obtain ⟨entry, present, equal⟩ := List.mem_map.mp stub
+      have below := stubs_below_namespace 0 0 entry present
+      have sub : x - bvlNumStubs = 0 := by omega
+      simp [inNs, sub]
+
+/-- Lowering avoids tail-recursion worker locations above the stub boundary. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_prog_avoids_nss_2"]
+theorem compileProgSource_avoidsNss2 (start counter loc final name : Nat) (prog : List (Nat × Nat × Bvl.Exp))
+    (code : List (Nat × Nat × Bvi.Exp))
+    (h : compileProgSource start counter prog = (loc, code, final) ∧
+      (prog.map Prod.fst).Nodup ∧ name % bvlToBviNamespaces = 2 ∧ name ∈ code.map Prod.fst) :
+    name ≤ bvlNumStubs := by
+  obtain ⟨run, _, ns, member⟩ := h
+  have codeEq : stubs (bvlNumStubs + bvlToBviNamespaces * start)
+      (allocGlobCount (prog.map (fun (_, _, body) => body))) ++ (compileIncSource counter prog).2 = code := by
+    simpa only [compileProgSource, compileIncSource] using congrArg (fun q => q.2.1) run
+  rw [← codeEq, List.map_append, List.mem_append] at member
+  rcases member with stub | lowered
+  · obtain ⟨entry, present, equal⟩ := List.mem_map.mp stub
+    have bound := stubs_below_namespace _ _ entry present
+    omega
+  · have outside := compileIncSource_outside_tailrec_namespace counter prog name lowered
+    exact False.elim (outside ns)
+
 /-- Every future BVL oracle program lowers to a tail-recursion input when
 its labels are distinct and its worker counter is valid. -/
 theorem lowered_oracle_tailrec_inputCondition {C : Type}
@@ -171,14 +227,13 @@ theorem lowered_oracle_tailrec_inputCondition {C : Type}
 
 /-- Every worker-namespace label in a tail-recursion output is below the
 returned worker counter, whether the pass is enabled or disabled. -/
-theorem tailrec_output_worker_below_counter (fuel : Nat) (enabled : Bool) (next last : Nat)
+theorem tailrec_output_worker_below_counter (enabled : Bool) (next last : Nat)
     (program compiled : List (Nat × Nat × Bvi.Exp)) (condition : inputCondition next program)
-    (run : BviTailrec.compileProgFuel fuel enabled next program = some (last, compiled)) :
+    (run : BviTailrec.compileProgSource enabled next program = (last, compiled)) :
     ∀ name ∈ compiled.map Prod.fst, inWorkerNamespace name → name < last := by
   cases enabled with
   | false =>
-    simp only [BviTailrec.compileProgFuel, Bool.false_eq_true, ↓reduceIte, Option.some.injEq,
-      Prod.mk.injEq] at run
+    simp only [BviTailrec.compileProgSource, Bool.false_eq_true, ↓reduceIte, Prod.mk.injEq] at run
     obtain ⟨rfl, rfl⟩ := run
     intro name member worker
     obtain ⟨entry, entryMember, nameEq⟩ := List.mem_map.mp member
@@ -187,8 +242,8 @@ theorem tailrec_output_worker_below_counter (fuel : Nat) (enabled : Bool) (next 
     · have notWorker := condition.2.2.1 entry (List.mem_filter.mpr ⟨entryMember, by simpa [nameEq] using (show bvlNumStubs ≤ name by omega)⟩)
       exact (notWorker (by simpa [nameEq] using worker)).elim
   | true =>
-    have equal := (compileEachFuel_eq_source fuel next program).symm.trans (by simpa [BviTailrec.compileProgFuel] using run)
-    have pairEq := Option.some.inj equal
+    have pairEq : compileEachSource next program = (last, compiled) := by
+      simpa [BviTailrec.compileProgSource] using run
     have codeEq : (compileEachSource next program).2 = compiled := congrArg Prod.snd pairEq
     have lastEq : (compileEachSource next program).1 = last := congrArg Prod.fst pairEq
     intro name member worker

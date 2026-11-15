@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.ClosCall.Proofs.FreeTotal
+public import Flapjack.Compiler.Backend.ClosKnown.Inline.Free.Correct
 
 @[expose] public section
 
@@ -29,9 +29,8 @@ private theorem closedFold_succeeds (fuel : Nat) (xs : List ((Nat × Exp) × Exp
       obtain ⟨result, hr⟩ := ih false
       exact ⟨result, by simpa using hr⟩
     | true =>
-      obtain ⟨value, hv⟩ := closedFuel_succeeds fuel (.fn (Flapjack.Basis.Pure.MlString.ofString "") none none arity code)
-      obtain ⟨result, hr⟩ := ih value
-      exact ⟨result, by simpa [hv] using hr⟩
+      obtain ⟨result, hr⟩ := ih (ClosKnown.closedHOL (.fn (Flapjack.Basis.Pure.MlString.ofString "") none none arity code))
+      exact ⟨result, by simpa [ClosKnown.closedFuel_correct] using hr⟩
 
 mutual
 /-- Direct-call conversion succeeds under a structural traversal bound. -/
@@ -92,9 +91,9 @@ theorem callsFuel_succeeds (fuel : Nat) (e : Exp) (state : State) (bound : expBu
       have bb : expBudget body < fuel := by simp_all [expBudget] <;> omega
       let n := loc.getD 0
       obtain ⟨⟨body', newState⟩, hn⟩ := callsFuel_succeeds fuel body (insertEach n 1 state) bb
-      obtain ⟨closed, hc⟩ := closedFuel_succeeds fuel (.fn name loc ws arity body')
       obtain ⟨⟨body'', oldState⟩, ho⟩ := callsFuel_succeeds fuel body state bb
-      cases closed <;> exact ⟨_, by simp [callsFuel, n, hn, hc, ho]; rfl⟩
+      cases closed : ClosKnown.closedHOL (.fn name loc ws arity body') <;>
+        exact ⟨_, by simp [callsFuel, n, hn, ClosKnown.closedFuel_correct, closed, ho]; rfl⟩
     | letrec names loc ws fns body =>
       have bf : funsBudget fns < fuel := by simp_all [expBudget] <;> omega
       have bb : expBudget body < fuel := by simp_all [expBudget] <;> omega
@@ -127,15 +126,5 @@ theorem callsListFuel_succeeds (fuel : Nat) (es : List Exp) (state : State)
       exact ⟨_, by simp [callsListFuel, hx, hxs]; rfl⟩
 termination_by fuel
 end
-
-/-- Retrying the direct-call list traversal cannot exhaust fuel. -/
-theorem callsListBounded_succeeds (fuel : Nat) (es : List Exp) (state : State) :
-    ∃ result, callsListBounded fuel es state = some result := by
-  cases h : callsListFuel fuel es state with
-  | some result => exact ⟨result, by simp [callsListBounded, h]⟩
-  | none =>
-    have bound : listBudget es < max fuel (listBudget es + 1) := by omega
-    obtain ⟨result, done⟩ := callsListFuel_succeeds (max fuel (listBudget es + 1)) es state bound
-    exact ⟨result, by simp [callsListBounded, h, done]⟩
 
 end Flapjack.Compiler.Backend.ClosCall

@@ -196,21 +196,6 @@ theorem evaluate_iAssign_int_control {C F : Type} (op : ClosLang.IntOp) (dest : 
   simp [DataSem.setVar, DataSem.installSfs, stack2, handler2, size2, sizes2, clock2,
     stack1, handler1, size1, sizes1, clock1]
 
-/-- A successful generated integer assignment updates its destination in
-the actual cut environment and preserves the control fields. -/
-theorem evaluate_iAssign_int_locals {C F : Type} (op : ClosLang.IntOp) (dest : Nat)
-    (operands live corr : List Nat) (state next : DataSem.State C F)
-    (run : DataSem.evaluate (iAssign dest (.intOp op) operands live corr) state = (none, next)) :
-    ∃ actualLive prepared value,
-      DataSem.cutStateOpt actualLive state = some prepared ∧
-      next.locals = sptInsert dest value prepared.locals ∧ DataSem.SameControl state next := by
-  obtain ⟨actualOp, actualOperands, actualLive, shape⟩ := iAssign_int_shape op dest operands live corr
-  rw [shape] at run
-  obtain ⟨prepared, value, cut, locals, control⟩ :=
-    DataSem.evaluate_assign_locals (.intOp actualOp) dest actualOperands actualLive state next
-      (fun args before after value run => by simpa using DataSem.doApp_controlFrame (.intOp actualOp) args before after value run) run
-  exact ⟨actualLive, prepared, value, cut, locals, control⟩
-
 /-- A successful generated integer assignment retains every original root
 other than the destination, whether the operation cuts locals or not. -/
 theorem evaluate_iAssign_int_keepRoots {C F : Type} (op : ClosLang.IntOp) (dest : Nat)

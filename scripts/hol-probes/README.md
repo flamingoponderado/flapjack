@@ -1,3 +1,11 @@
+`data_space_code_labels_probe.out` captures the typed original reservation-pass label theorem, the whole-pass label theorem, and variable-read and stack-field lemmas.
+
+`bvl_to_bvi_proof_source_probe.out` also captures the typed exported whole-pass `compile_get_code_labels`, `compile_distinct_names`, full-oracle distinctness, whole-lowering and full-pipeline semantics, and whole-lowering no-mutcons, namespace-avoidance, and distinct-location theorems (including the typed half-open `between` definition), plus the full oracle and callback definitions and typed proof replays of the local namespace/free-names and oddness lemmas.
+
+`bvl_to_bvi_source_probe.out` captures the typed original whole-pass compilation definition, including the eight-result tuple and name-tree carrier.
+
+`bvi_tmc_proof_source_probe.out` captures the typed original function-list and program name-preservation theorems and replays the local variable-list, worker, wrapper, mutual extraction, top-level extraction, rewrite, and expression-compilation label proofs with inferred types. It also captures the exported TMC function-list and whole-program label-closure and semantics theorems with inferred types.
+
 `flat_do_app_preservation_probe.out` also captures the typed original flat
 primitive simulation and its semantic-primitives store-relation and arithmetic
 prerequisites. The local typed-list relation is replayed from its HOL proof.
@@ -307,12 +315,12 @@ finite correspondence evidence, not a proof of equivalence with the complete
 HOL compiler. Regenerate with
 `HOL_PROBE_ONLY=data_to_word_fragment_comp_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-`clos_mti_collect_args_probe.out` captures the typed original argument and
+`clos_mti_collect_args_probe.out` captures the full value-relation characterization and typed operation, result-relation, empty-output, compile-length, and application-safety theorems, replays of local function-list, EVERY_HD, optional relation, and value-decoder lemmas, and the typed original argument and
 application collectors and replays the nested function/application definitions,
 accumulator lemmas, syntax preservation and reconstruction invariants. Regenerate with
 `HOL_PROBE_ONLY=clos_mti_collect_args_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-`clos_mti_install_probe.out` replays the original local installation, reference
+`clos_mti_install_probe.out` replays the original local application-chain, installation, reference
 lookup, and thunk-update simulations with their HOL proofs and captures their
 inferred types. Regenerate with
 `HOL_PROBE_ONLY=clos_mti_install_probeScript.sml scripts/hol-probes/regenerate.sh`.
@@ -371,6 +379,8 @@ The capture supports source review; it is not a cross-language proof.
 
 `bvi_to_data_state_probe.out` captures the typed original primitive and equality simulations, list-append and result projections, variable correspondence and lookup lemmas, original and rewritten expression compilers and their structural theorems,
 code relation, and state relation, plus variable and tail-call observations.
+It captures the typed whole-program part-name preservation theorem and replays
+the local return-range theorem with inferred types.
 It also captures the complete typed compiler simulation statement and typed
 parses of the two local result-name range statements;
 those statements are not re-proved by the probe.
@@ -456,13 +466,35 @@ against the pinned CakeML and HOL revisions; run
 tree. The capture and comparison do not establish whole-evaluator correctness.
 Regenerate with `HOL_PROBE_ONLY=data_sem_stack_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-`bvi_sem_state_probe.out` captures the inferred source exception and result types, all BVI state field types, initial state, both clock updates, thunk inspection, BVL-to-BVI field copy, and mutable-constructor finalisation, BVI-specific and full dispatch, and installation equations, primitive and evaluator clock theorems including clock replacement and extension, code and global-pointer monotonicity statements, evaluator type and representative variable, return, timeout, call and thunk cases. `Flapjack/Test/BviEvaluateParity.lean` kernel-checks those evaluator observations, and Lean proves the source-shaped evaluator clock bound and clamp equality; these do not establish evaluator correspondence. `Flapjack/Test/BviApplyParity.lean` checks installation failure, length validation, special dispatch and BVL fallback. `Flapjack/Test/BviApplyAuxParity.lean` checks representative primitive boundaries and malformed inputs. `Flapjack/Test/BviFinaliseParity.lean` checks non-reference, missing-reference, cyclic and successful cases, observing the updated reference in the successful case. The Lean state uses the canonical finite-support reference carrier and literal sparse-tree code; the field-copy definition remains untagged pending a qualifier covering both state owners. Regenerate with `HOL_PROBE_ONLY=bvi_sem_state_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`bvi_sem_state_probe.out` captures the inferred source exception and result types, all BVI state field types, initial state, both clock updates, thunk inspection, BVL-to-BVI field copy, and mutable-constructor finalisation, BVI-specific and full dispatch, and installation equations, primitive and evaluator clock theorems including clock replacement and extension, code and global-pointer monotonicity statements, evaluator type and representative variable, return, timeout, call and thunk cases. It also reconstructs the full original clamped evaluator equations from the later exported equations and the clock-clamp theorem, with independent binders for each equation, and captures the typed evaluator induction theorem and complete whole-program semantics definition. `Flapjack/Test/BviEvaluateParity.lean` kernel-checks those evaluator observations, and Lean proves the source-shaped evaluator clock bound and clamp equality; these checks do not prove cross-language evaluator correspondence. `Flapjack/Test/BviApplyParity.lean` checks installation failure, length validation, special dispatch and BVL fallback. `Flapjack/Test/BviApplyAuxParity.lean` checks representative primitive boundaries and malformed inputs. `Flapjack/Test/BviFinaliseParity.lean` checks non-reference, missing-reference, cyclic and successful cases, observing the updated reference in the successful case. The Lean state uses the canonical finite-support reference carrier and literal sparse-tree code. Full field-copy and fallback-state equations carry the multi-carrier finite-map relation qualifier; the state-valued definitions themselves remain untagged. Regenerate with `HOL_PROBE_ONLY=bvi_sem_state_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-`bvi_let_proof_probe.out` captures the typed optimizer environment relation and preservation statements, including the independently typed, unused `ys` quantified by `evaluate_env_rel`. Lean proves a corresponding recursive simulation and an executable traversal corollary; these remain untagged pending BVI evaluator and dispatcher review. Regenerate with `HOL_PROBE_ONLY=bvi_let_proof_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`bvi_inline_labels_probe.out` captures the original typed mutual tick-removal
+definition, complete expression-and-list label-preservation theorem, and
+program label/key preservation statements, and the typed incremental inliner
+definitions, cache-label facts, label/key theorems, and the complete typed
+whole-program semantics theorem.
+Regenerate with `HOL_PROBE_ONLY=bvi_inline_labels_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-`bvl_to_bvi_value_rel_probe.out` captures the typed original value-relocation equations and unit/Boolean theorems, plus a nested reference and code-pointer example, the typed auxiliary-code installation definition and lemmas (including a replay of the local append lemma), BVL variable-bound and handler-shape definitions and examples, a replay of the local bounded-environment evaluation theorem, variable-list evaluation statements, the polymorphic code-name invariant, and the source state relation, reference lookup lemmas, value-domain and state well-formedness predicates, BVI clock increment and decrement commutation, value-domain monotonicity, list-value well-formedness, primitive and evaluator domain growth, evaluation preservation of prior well-formed values, and code-lookup, constant-construction, primitive-operation evaluator well-formedness, relocation agreement on valid values, and the complete BVL-to-BVI simulation statement. `Flapjack/Test/BvlToBviValueParity.lean` checks the example; the pass simulation remains open. Regenerate with `HOL_PROBE_ONLY=bvl_to_bvi_value_rel_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`bvi_let_proof_probe.out` captures the typed variable-deletion and compilation code-label theorems and optimizer environment relation and preservation statements, including the independently typed, unused `ys` quantified by `evaluate_env_rel`. Lean proves a corresponding recursive simulation and an executable traversal corollary; these remain untagged pending BVI evaluator and dispatcher review. Regenerate with `HOL_PROBE_ONLY=bvi_let_proof_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-`bvl_sem_values_probe.out` captures the typed original BVL value and reference constructors, integer, word, list and reference-aware equality operations, state field types, code lookup, thunk inspection, closure argument helpers, signed-division examples, constant-building/allocation cases, installation decoders and installation type, array copy, byte XOR and string comparison definitions, selected primitive operations and evaluation cases. The existing `CakeSourceArrayParity`, `CakeSourceThunkParity` and `CakeSourceCompareParity` checks replay the corresponding copy, XOR and comparison observations. HOL leaves the installation decoder examples as symbolic choices; the Lean tests check their encoded results, and the conversion module proves the general successful-result predicates. These observations do not establish the full BVL semantics or pass correctness.
+`bvl_to_bvi_value_rel_probe.out` captures the typed original value-relocation equations and unit/Boolean theorems, plus a nested reference and code-pointer example, the typed auxiliary-code installation definition and lemmas (including a replay of the local append lemma), BVL variable lookup, variable-bound and handler-shape definitions and examples, replays of the local relocated-variable and bounded-environment evaluation theorems, variable-list evaluation statements, the polymorphic code-name invariant, and the source state relation, reference lookup lemmas, value-domain and state well-formedness predicates, BVI clock increment and decrement commutation, value-domain monotonicity, list-value well-formedness, primitive and evaluator domain growth, evaluation preservation of prior well-formed values, and code-lookup, constant-construction, primitive-operation evaluator well-formedness, relocation agreement on valid values, the complete BVL-to-BVI expression, entry-call and whole-program evaluation simulations, the initializer-stub theorem and a replay of its local repeated-zero evaluation lemma, and the generated-label distinctness and namespace theorem. `Flapjack/Test/BvlToBviValueParity.lean` checks the example; end-to-end compiler correctness remains open. Regenerate with `HOL_PROBE_ONLY=bvl_to_bvi_value_rel_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`bvl_to_bvi_value_rel_probe.out` also captures the original inferred types and
+complete statements of `compile_exps_aux_contains` and
+`compile_list_code_labels_domain`, and `compile_prog_code_labels_domain` for
+source review.
+
+It also captures the rebound BVI code-label equations, the polymorphic
+`good_code_labels` definition, and the original `destLet_code_labels` and
+`compile_int_code_labels`, `compile_op_code_labels`, and
+`compile_exps_get_code_labels`, `compile_single_get_code_labels`, and
+`compile_list_get_code_labels`, and `compile_prog_get_code_labels` statements
+with inferred
+types. The BVI source
+definition is referenced at its original declaration line; the later theorem
+rebind is the captured HOL export.
+
+`bvl_sem_values_probe.out` captures the typed original BVL value and reference constructors, integer, word, list and reference-aware equality operations, state field types, code lookup, thunk inspection, closure argument helpers, signed-division examples, constant-building/allocation cases, installation decoders and installation type, array copy, byte XOR and string comparison definitions, selected primitive operations, generated-variable evaluation and reverse-variable evaluation theorems and evaluation cases. The existing `CakeSourceArrayParity`, `CakeSourceThunkParity` and `CakeSourceCompareParity` checks replay the corresponding copy, XOR and comparison observations. HOL leaves the installation decoder examples as symbolic choices; the Lean tests check their encoded results, and the conversion module proves the general successful-result predicates. These observations do not establish the full BVL semantics or pass correctness.
 
 `bvl_handle_frontend_probe.out` captures the typed handler helpers, simplifier, environment-packing and optional-cut definitions, singleton/list compiler equations and equivalence, as well as representative compilation results. The typed `LetLet` capture confirms its sparse tree payload is polymorphic. Both the total source singleton compiler and the executed traversal replay selected original observations; Lean also proves their general correspondence. Regenerate with `HOL_PROBE_ONLY=bvl_handle_frontend_probeScript.sml scripts/hol-probes/regenerate.sh`. These captures support review and do not prove cross-language equivalence.
 
@@ -719,6 +751,10 @@ exported global-invariant equation and replay its original simplifier derivation
 `bvi_tailrec_semantics_probe.out` captures the typed source condition and per-function and whole-program semantics theorems; the condition has a polymorphic program payload. Regenerate with `HOL_PROBE_ONLY=bvi_tailrec_semantics_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `bvl_const_rel_probe.out` captures the typed constant-propagation value and environment relations, unary and general operation correctness and the complete semantic simulation statement, and replays the original local environment lookup, recognizer, binary operand-flip, complete binary rewrite and variable-deletion proofs. Lean checks the complete binary and general operation rewrite theorems; the full constant-propagation simulation is proved for the total traversal, with a singleton consequence for the executed bounded traversal. The simulation and the relations remain untagged because their finite-map state is hidden in a quantifier, while the evaluator theorems carry the canonical state-field qualification. Regenerate with `HOL_PROBE_ONLY=bvl_const_rel_probeScript.sml scripts/hol-probes/regenerate.sh`; the capture is review evidence, not a cross-language equivalence proof.
+
+`bvi_tailrec_proof_source_probe.out` also captures the typed original
+function-list label accounting, name preservation, and rewrite/expression
+label and closure statements.
 
 `bvi_tailrec_frontend_probe.out` captures the original tail-recursion candidate decisions for every BVI function of that example, focused recursion-detector and type-analysis cases, positive accumulator rewrites, worker labels, tail-modulo-constructor decisions, and typed scan, rewrite and compilation equations.
 
@@ -9753,6 +9789,10 @@ carrier and dependency review.
 
 `bvl_to_bvi_compile_probe.out` captures the typed SmartAppend and source conversion equations, a polymorphic auxiliary-code example, a three-branch example that observes left-associated auxiliary tree shape, and incremental compiler examples. The latter include two consecutive calls that exercise the retained inline cache and a default-configuration observation. `Flapjack/Test/BvlToBviSourceParity.lean` replays the examples. Regenerate with `HOL_PROBE_ONLY=bvl_to_bvi_compile_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+The same capture records the typed original whole-program compiler definition,
+allocation-count equations and agreement theorem, plus empty and nested
+allocation-count examples.
+
 `source_to_bvi_incremental_probe.out` captures complete BVI code and selected
 configuration fields for an empty batch, a literal binding, and two batches
 where the second refers to the first batch's environment. It also captures
@@ -9918,7 +9958,7 @@ It also replays the local `evaluate_init1` and
 `show_SUBSET` with its polymorphic set carrier, `REPLICATE_1` with its
 polymorphic list element type, `obvious_arith_comm` over naturals, the
 polymorphic pair-projection lemma, the local closure and BVL initial-clock
-lemmas, bidirectional byte decoding, sparse-tree domain lookup,
+lemmas, partial-application closure layouts, full and partial closure-application destinations, value-relation unpacking and remaining-arity/code lookup, argument arithmetic and source closure environments, partial-application location code, generic partial evaluation and ordinary and existing partial-closure application, completion and general saved-argument selectors, generic overapplication and closure-call evaluation with their independent unused carriers, plus the generated-call specialization, closure-call environment shifting, shifted-tag closure exclusion, list encoding and decoding relations, value and list equality correspondence and symmetry, list equality, primitive-operation success and error simulation, equality-result conversion, closure-tag checks, related-variable selection and finite reference-domain freshness, optional-value relations under fresh and mapped reference updates, fresh-reference environment preservation, argument accumulation, non-closure exclusions, full value-relation simplification theorem, related-environment append and related-list to environment relation, related-environment length and bounded index, and related-state global projection, closure preservation under store submaps, fresh references, protected-set extension, and protected-reference updates, fresh target-reference and mapped reference-update state preservation, indexed recursive-code installation, recursive-closure array and environment construction, application error propagation, polymorphic generated-label projection and list case identity, reversed saved-argument selectors, generated-variable prefix evaluation, argument-suffix variable selectors and related-argument suffix preservation, free-let block selector and recursive-entry selector and execution proofs, closure location, arity, saved-argument and representation shape, bounded and unbounded closure destination definitions and partial-application implications, full-application remaining-argument relations, closure-call environment equality, remaining-arity and no-partial-arguments statements, list-tag shift equivalences, bidirectional byte and word decoding, sparse-tree domain lookup,
 value/closure code-union preservation, finite-map predicate preservation,
 chain-head and compilation accumulator relations, sparse-tree code
 installation, both

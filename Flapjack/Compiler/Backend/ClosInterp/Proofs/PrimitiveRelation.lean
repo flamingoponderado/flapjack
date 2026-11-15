@@ -1,13 +1,39 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosInterp.Proofs.InsertionCorrect
+public import Flapjack.Misc.Option.Rel
+public import Mathlib.Data.List.Forall2
 
 @[expose] public section
 
-/-! Primitive noninterference for the proof-side interpreter simulation.
-The evaluator and state carriers remain pending HOL correspondence review. -/
+/-! Primitive noninterference for the interpreter simulation. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL
+
+/-- Equality lifted to lists is equality of lists, independently of the two
+unused parameters in the original local theorem. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "LIST_REL_eq'"]
+theorem listRel_eq {A B V : Type} :
+    ∀ (_xs : A) (_ys : B),
+      List.Forall₂ (fun v1 v2 : V => v1 = v2) = (fun xs ys : List V => xs = ys) := by
+  intro _ _
+  exact List.forall₂_eq_eq_eq
+
+/-- Equality lifted to optional values is equality of optional values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "OPTREL_eq'"]
+theorem optRel_eq {V : Type} :
+    Flapjack.optionRel (fun v1 v2 : V => v1 = v2) = (fun x y : Option V => x = y) := by
+  funext x y
+  apply propext
+  cases x <;> cases y <;> simp [Flapjack.optionRel]
+
+namespace PrimitivePort
+/-- The closure state uses the canonical finite-support map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end PrimitivePort
 
 /-- Replace compiler fields in an optional successful primitive result. -/
 def replaceCompilerOption {C F : Type} (compiler : ClosSem.Compiler C) (oracle : ClosSem.CompileOracle C)
@@ -249,10 +275,12 @@ theorem applyMemory_globals {C F : Type} (op : ClosLang.MemOp) (args : List Clos
   all_goals aesop
 
 /-- An ordinary successful primitive preserves an initialized first global. -/
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "do_app_oHD_globals"
+  (fmap_as_finite_support := [refs, code])]
 theorem doApp_firstGlobal {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
     (state next : ClosSem.State C F) (value installed : ClosSem.Value)
-    (present : state.globals.head? = some (some installed))
-    (run : ClosSem.doApp op args state = .val (value, next)) :
+    (run : ClosSem.doApp op args state = .val (value, next))
+    (present : state.globals.head? = some (some installed)) :
     next.globals.head? = some (some installed) := by
   cases op with
   | globOp operation =>
@@ -301,21 +329,12 @@ theorem doApp_firstGlobal {C F : Type} (op : ClosLang.Op) (args : List ClosSem.V
     all_goals aesop
   | label | install => simp [ClosSem.doApp] at run
 
-/-- Related states differ only in the compiler callback and oracle. -/
-theorem stateRel_replaceCompiler {C F : Type} (source target : ClosSem.State C F)
-    (related : StateRel source target) :
-    source = { target with compile := source.compile, compileOracle := source.compileOracle } := by
-  rcases related.1 with ⟨_, sourceCode, targetCode, maxEq, _, clockEq, ffiEq, globalsEq, refsEq, _, _⟩
-  cases source
-  cases target
-  simp_all
-
 /-- A successful ordinary primitive preserves the interpreter state relation. -/
 theorem doApp_stateRel {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
     (source target sourceFinal : ClosSem.State C F) (value : ClosSem.Value)
     (related : StateRel source target) (run : ClosSem.doApp op args source = .val (value, sourceFinal)) :
     ∃ targetFinal, ClosSem.doApp op args target = .val (value, targetFinal) ∧ StateRel sourceFinal targetFinal := by
-  have sourceEq := stateRel_replaceCompiler source target related
+  have sourceEq := stateRel1_replaceCompiler source target related.1
   rw [sourceEq, doApp_replaceCompiler] at run
   cases targetRun : ClosSem.doApp op args target with
   | err error => simp [targetRun, replaceCompilerResult] at run
@@ -325,9 +344,9 @@ theorem doApp_stateRel {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Valu
     rcases run with ⟨rfl, rfl⟩
     have fields := doApp_compilerFields op args target targetFinal targetValue targetRun
     have slot := doApp_firstGlobal op args target targetFinal targetValue
-      (.closure none [] [] 1 closInterpreter) (by
+      (.closure none [] [] 1 closInterpreter) targetRun (by
         rw [← related.1.2.2.2.2.2.2.2.1]
-        exact related.2) targetRun
+        exact related.2)
     rcases fields with ⟨compileEq, oracleEq, codeEq, maxEq⟩
     rcases related with ⟨⟨safe, sourceCode, targetCode, oldMaxEq, positive, clockEq,
       ffiEq, globalsEq, refsEq, compilerEq, oracleRel⟩, installed⟩
@@ -344,9 +363,9 @@ theorem doApp_stateRel {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Valu
 /-- Ordinary primitive errors agree in related states. -/
 theorem doApp_error_stateRel {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
     (source target : ClosSem.State C F) (error : ErrorResult ClosSem.Value)
-    (related : StateRel source target) (run : ClosSem.doApp op args source = .err error) :
+    (related : StateRel1 source target) (run : ClosSem.doApp op args source = .err error) :
     ClosSem.doApp op args target = .err error := by
-  have sourceEq := stateRel_replaceCompiler source target related
+  have sourceEq := stateRel1_replaceCompiler source target related
   rw [sourceEq, doApp_replaceCompiler] at run
   cases targetRun : ClosSem.doApp op args target with
   | err targetError =>
@@ -395,7 +414,7 @@ theorem evaluate_ordinaryOp_simulation_step {C F : Type} (trace : BackendCommon.
       | err error =>
         simp [appRun] at run
         rcases run with ⟨rfl, rfl⟩
-        have targetApp := doApp_error_stateRel op values.reverse sourceMid targetMid error midRel appRun
+        have targetApp := doApp_error_stateRel op values.reverse sourceMid targetMid error midRel.1 appRun
         refine ⟨extra, targetMid, ?_, midRel⟩
         rw [ClosSem.evaluate_ordinaryOp_eq trace op args env _ notInstall notForce, targetArgs]
         simp [targetApp]

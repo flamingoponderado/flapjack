@@ -80,6 +80,42 @@ class NestedListQualifierTest(unittest.TestCase):
         self.assertFalse(allowed(("refs",), False, False))
         self.assertFalse(allowed((), False, True))  # includes relation and words qualifiers
 
+    def test_thunk_map_combination_is_narrow(self):
+        allowed = CHECK["nested_thunk_map_combination"]
+        args = [PATH, "rel_update_thunk",
+                "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ThunkOperations.lean",
+                "relUpdateThunkSource", ("FunctionsRel",), (),
+                (("State", "refs"), ("State", "code"), ("sourceRefs", "")), ("targetRefs",)]
+        self.assertTrue(allowed(*args))
+        for index, bad in [(0, "cakeml/otherScript.sml"), (1, "other"),
+                           (2, "Flapjack/Other.lean"), (3, "other"),
+                           (4, ("Other",)), (5, ("refs", "code")),
+                           (6, (("State", "code"), ("State", "refs"), ("sourceRefs", ""))),
+                           (6, (("State", "refs"), ("State", "code"))),
+                           (6, args[6] + (("other", ""),)), (7, ()),
+                           (7, ("targetRefs", "other"))]:
+            changed = args.copy()
+            changed[index] = bad
+            self.assertFalse(allowed(*changed), (index, bad))
+
+    def test_thunk_map_witnesses_remain_required(self):
+        path = CHECK["ROOT"] / "Flapjack/Compiler/Backend/ClosAnnotate/Proofs/ThunkOperations.lean"
+        lines = path.read_text(encoding="utf-8").splitlines()
+        site = next(site for site in CHECK["hol_attribute_sites"](lines, include_nested_list_rel=True)
+                    if site[2] == "rel_update_thunk")
+        signature = CHECK["tagged_declaration_text"](lines, site[0])
+        module = "Flapjack.Compiler.Backend.ClosAnnotate.Proofs.ThunkOperations"
+        relation = (("State", "refs"), ("State", "code"), ("sourceRefs", ""))
+        relation_errors = CHECK["fmap_as_finite_support_relation_errors"]
+        existential_errors = CHECK["fmap_as_finite_support_existentials_errors"]
+        self.assertEqual(relation_errors(lines, relation, module, signature), [])
+        self.assertEqual(existential_errors(lines, module, signature, "relUpdateThunkSource", ("targetRefs",)), [])
+        missing_relation = [line.replace("holFmapAsFiniteSupportRelationWitness_State", "missingWitness") for line in lines]
+        self.assertTrue(relation_errors(missing_relation, relation, module, signature))
+        missing_existential = [line.replace("holFmapAsFiniteSupportExistentialWitness_relUpdateThunkSource_targetRefs", "missingWitness") for line in lines]
+        self.assertTrue(existential_errors(missing_existential, module, signature, "relUpdateThunkSource", ("targetRefs",)))
+        self.assertTrue(existential_errors(lines, module, signature, "relUpdateThunkSource", ("missing",)))
+
 
 if __name__ == "__main__":
     unittest.main()

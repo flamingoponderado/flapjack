@@ -5,6 +5,7 @@ public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteScan
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.TermExtension
 public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateGrowth
 public import Flapjack.Compiler.Backend.Semantics.BviSem.Semantics
+public import Flapjack.Compiler.Backend.BviInline.Proofs.SemanticsSafety
 public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 public import Flapjack.Compiler.Backend.Semantics.BviProps.AdjustOracleEval
 
@@ -323,21 +324,6 @@ theorem term_prefix_simulation_through {C F : Type} (e : Bvi.Exp) (ctx : List Va
   exact ⟨value, typed, sourceRun source, targetRun target⟩
 
 
-/-- The unrestricted term hypothesis supplies the bounded simulation. -/
-theorem term_prefix_simulation {C F : Type} (e : Bvi.Exp) (ctx : List ValueType) (termTy : ValueType)
-    (env1 env2 : List Value) (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (loc : Nat) (termIH : rewriteTailProperty (C := C) (F := F) [e])
-    (accepted : term ctx termTy e = true) (types : tyRel env1 ctx)
-    (prefixRel : env1 <+: env2) (related : stateRel source target) :
-    ∃ value, (match termTy with
-      | .int => ∃ integer, value = .number integer
-      | .list => ∃ ys, valueToList value = some ys
-      | .any => True) ∧
-      BviSem.evaluate [e] env1 source = (.val [value], source) ∧
-      BviSem.evaluate [e] env2 target = (.val [value], target) := by
-  exact term_prefix_simulation_through e ctx termTy env1 env2 source target loc (rewriteTailProperty_through termIH _)
-    accepted types prefixRel related
-
 /-- A scanned term has one common value in prefix-related environments and
 leaves every source and target state unchanged. -/
 theorem term_prefix_simulation_all_through {C F : Type} (e : Bvi.Exp) (ctx : List ValueType) (termTy : ValueType)
@@ -371,18 +357,6 @@ theorem term_prefix_simulation_all_through {C F : Type} (e : Bvi.Exp) (ctx : Lis
   · simpa [sourceEq] using sourceAll
   · simpa [targetEq] using targetAll
 
-
-/-- The unrestricted term hypothesis supplies the bounded simulation. -/
-theorem term_prefix_simulation_all {C F : Type} (e : Bvi.Exp) (ctx : List ValueType) (termTy : ValueType)
-    (env1 env2 : List Value) (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (loc : Nat) (termIH : rewriteTailProperty (C := C) (F := F) [e])
-    (accepted : term ctx termTy e = true) (types : tyRel env1 ctx)
-    (prefixRel : env1 <+: env2) (related : stateRel source target) :
-    ∃ value, valueMatchesType value termTy ∧
-      (∀ s : BviSem.BviState (Nat × C) F, BviSem.evaluate [e] env1 s = (.val [value], s)) ∧
-      (∀ s : BviSem.BviState C F, BviSem.evaluate [e] env2 s = (.val [value], s)) := by
-  exact term_prefix_simulation_all_through e ctx termTy env1 env2 source target loc (rewriteTailProperty_through termIH _)
-    accepted types prefixRel related
 
 /-- An enabled environment relation supplies a well-typed accumulator value. -/
 theorem envRel_accumulator (ty : ValueType) (acc : Nat) (env1 env2 : List Value)
@@ -498,32 +472,6 @@ theorem evaluate_applyOp_var {C F : Type} (op : AssocOp) (acc : Nat)
   apply evaluate_applyOp_pureLeft op (.var acc) body env state value
   simp [BviSem.evaluate, lookup]
 
-/-- Evaluating a checked pure operand and the current accumulator yields the
-same updated, well-typed accumulator used by the worker call. -/
-theorem evaluate_accumulator_update {C F : Type} (op : AssocOp) (pure : Bvi.Exp)
-    (ctx : List ValueType) (loc acc : Nat) (env1 env2 : List Value)
-    (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (termIH : rewriteTailProperty (C := C) (F := F) [pure])
-    (notNoop : op ≠ .noop) (accepted : term ctx (opType op) pure = true)
-    (types : tyRel env1 ctx) (envRelated : envRel (opType op) true acc env1 env2)
-    (related : stateRel source target) :
-    ∃ pureValue oldValue newValue,
-      BviSem.evaluate [pure] env1 source = (.val [pureValue], source) ∧
-      BviSem.evaluate [pure] env2 target = (.val [pureValue], target) ∧
-      env2[acc]? = some oldValue ∧
-      accumulatorApply op [pureValue, oldValue] = some newValue ∧
-      valueMatchesType newValue (opType op) ∧
-      BviSem.evaluate [applyOp op (.var acc) pure] env2 target = (.val [newValue], target) := by
-  obtain ⟨pureValue, pureTyped, sourceRun, targetRun⟩ :=
-    term_prefix_simulation pure ctx (opType op) env1 env2 source target loc termIH accepted types envRelated.1 related
-  obtain ⟨oldValue, lookup, oldTyped⟩ := envRel_accumulator (opType op) acc env1 env2 envRelated
-  have pureTyped' : valueMatchesType pureValue (opType op) := by
-    cases op <;> simp_all [opType, valueMatchesType]
-  obtain ⟨newValue, applied, newTyped⟩ := accumulator_typed op pureValue oldValue notNoop pureTyped' oldTyped
-  refine ⟨pureValue, oldValue, newValue, sourceRun, targetRun, lookup, applied, newTyped, ?_⟩
-  rw [evaluate_applyOp_var op acc pure env2 target oldValue lookup, targetRun]
-  simp [doApp_toOp_pure, applied]
-
 /-- Adding the accumulator identity to a well-typed body result preserves its
 result and final state, including propagated errors. -/
 theorem evaluate_applyOp_identity {C F : Type} (op : AssocOp) (acc : Nat)
@@ -570,21 +518,6 @@ theorem evaluate_applyOp_swap_pure {C F : Type} (op : AssocOp) (pure other : Bvi
       simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
       rw [doApp_toOp_pure, doApp_toOp_pure]
       rw [accumulator_commutative_all op value otherValue notNoop notAppend]
-
-/-- The source candidate check preserves evaluation: its only possible
-change swaps a pure operand with a recursive call for a commutative operator. -/
-theorem checkOp_evaluate {C F : Type} (ctx : List ValueType) (op : AssocOp) (loc : Nat)
-    (e checked : Bvi.Exp) (env : List Value) (state : BviSem.BviState C F)
-    (types : tyRel env ctx) (check : checkOp ctx op loc e = some checked) :
-    BviSem.evaluate [e] env state = BviSem.evaluate [checked] env state := by
-  obtain ⟨recursive, pure, _, termOk, checkedShape, notNoop, original⟩ :=
-    checkOp_candidate ctx op loc e checked check
-  obtain ⟨value, _, pureRun⟩ := term_total (C := C) (F := F) ctx (opType op) pure env termOk types
-  rw [checkedShape]
-  rcases original with direct | ⟨notAppend, swapped⟩
-  · rw [direct]
-  · rw [swapped]
-    exact (evaluate_applyOp_swap_pure op pure recursive env state value notNoop notAppend pureRun).symm
 
 /-- Reassociate a typed pure operand into the current accumulator before
 evaluating the recursive operand. Errors and state changes of that operand
@@ -1851,39 +1784,6 @@ theorem evaluate_checked_worker_candidate_through {C F : Type}
       at appliedRun
     exact appliedRun
 
-
-/-- The unrestricted candidate hypotheses supply the bounded worker proof. -/
-theorem evaluate_checked_worker_candidate {C F : Type}
-    (loc arity workerLoc acc : Nat) (body e checked : Bvi.Exp) (op : AssocOp)
-    (env1 env2 : List Value) (source sourceNext : BviSem.BviState (Nat × C) F)
-    (target : BviSem.BviState C F) (ctx : List ValueType) (ty : ValueType)
-    (sourceResult : BviSem.BviResult)
-    (subIH : ∀ pure ticks args,
-      (e = applyOp op pure (.call ticks (some loc) args none) ∨
-        (op ≠ .append ∧ e = applyOp op (.call ticks (some loc) args none) pure)) →
-      rewriteTailProperty (C := C) (F := F) [pure] ∧ rewriteTailProperty (C := C) (F := F) args)
-    (clockIH : ∀ (body : Bvi.Exp) (called : BviSem.BviState (Nat × C) F)
-      (values : List Value) (r : BviSem.BviResult) (last : BviSem.BviState (Nat × C) F),
-      called.clock < source.clock → ∀ optimized (target : BviSem.BviState C F) acc env2 loc ts ty,
-        rewriteTailHyp [body] called values r last optimized target acc env2 loc ts ty →
-        rewriteTailPost [body] called values r last optimized target acc env2 loc ts ty)
-    (envRelated : envRel ty true acc env1 env2) (related : stateRel source target)
-    (types : tyRel env1 ctx) (sameType : opType op = ty)
-    (sourceCode : sptLookup loc source.code = some (arity, body))
-    (optimized : optimizedCode loc arity body workerLoc target.code op)
-    (check : checkOp ctx op loc e = some checked)
-    (sourceRun : BviSem.evaluate [e] env1 source = (sourceResult, sourceNext))
-    (notTypeError : sourceResult ≠ .err (.abort .typeError)) :
-    ∃ result' t1 t2,
-      BviSem.evaluate [(rewriteSource loc workerLoc op acc ctx e).2] env2 target = (result', t1) ∧
-      BviSem.evaluate [applyOp op (.var acc) e] env2 target = (result', t2) ∧
-      stateRel sourceNext t1 ∧ stateRel sourceNext t2 := by
-  apply evaluate_checked_worker_candidate_through loc arity workerLoc acc body e checked op env1 env2
-    source sourceNext target ctx ty sourceResult ?_ clockIH envRelated related types sameType sourceCode
-    optimized check sourceRun notTypeError
-  intro pure ticks args shape
-  obtain ⟨termIH, argsIH⟩ := subIH pure ticks args shape
-  exact ⟨rewriteTailProperty_through termIH _, rewriteTailProperty_through argsIH _⟩
 
 /-- Force case of the rewrite simulation. The induction hypothesis applies
 to any called body at a strictly smaller clock, as in the source induction. -/
@@ -4143,23 +4043,6 @@ theorem evaluateCompileEach {C F : Type}
   obtain ⟨targetNext, targetRun, targetRelated, _⟩ := simulation
   exact ⟨targetNext, targetRun, targetRelated⟩
 
-/-- A non-failing source semantics excludes a type error at every clock.
-This observation helper is specific to Flapjack's BVI semantics. -/
-theorem semantics_ne_fail_no_type_error {C F : Type} (ffi : HolFfiState F)
-    (code : Spt (Nat × Bvi.Exp)) (oracle : BviSem.CompileOracle C)
-    (compiler : BviSem.Compiler C) (start : Nat)
-    (notFail : BviSem.semantics ffi code oracle compiler start ≠ .fail) :
-    ∀ clock, (BviSem.evaluate [.call 0 (some start) [] none] []
-      (BviSem.initialState ffi code oracle compiler clock)).1 ≠ .err (.abort .typeError) := by
-  intro clock bad
-  apply notFail
-  unfold BviSem.semantics
-  have fatal : ∃ clock error, (BviSem.evaluateTuple ([.call 0 (some start) [] none], [],
-      BviSem.initialState ffi code oracle compiler clock)).1 = .err error ∧
-      error ≠ .abort .timeoutError ∧ ∀ event, error ≠ .abort (.ffiError event) := by
-    exact ⟨clock, .abort .typeError, bad, by simp, by simp⟩
-  simp [fatal]
-
 /-- At each clock, compiling the initial program preserves the result and
 FFI trace whenever the source whole-program semantics does not fail. -/
 theorem compileEach_initial_observations {C F : Type}
@@ -4178,12 +4061,12 @@ theorem compileEach_initial_observations {C F : Type}
           (transformOracle oracle) compiler clock)
       source.1 = target.1 ∧ source.2.ffi.ioEvents = target.2.ffi.ioEvents := by
   intro clock
-  have noType := semantics_ne_fail_no_type_error ffi (sptFromAList program) oracle
+  have noType := BviInline.Proofs.semanticsNoTypeError ffi (sptFromAList program) oracle
     (transformCompiler compiler) start notFail clock
   cases run : BviSem.evaluate [.call 0 (some start) [] none] []
       (BviSem.initialState ffi (sptFromAList program) oracle (transformCompiler compiler) clock) with
   | mk result sourceNext =>
-    have notType : result ≠ .err (.abort .typeError) := by simpa [run] using noType
+    have notType : result ≠ .err (.abort .typeError) := by simpa [BviSem.evaluateTuple, run] using noType
     obtain ⟨targetNext, targetRun, related⟩ := evaluateCompileEach next program ffi oracle compiler clock start
       result sourceNext condition oracleCondition workerBound run notType
     have ffiEqual := (stateRel_const sourceNext targetNext related).2.2.2
@@ -4334,21 +4217,22 @@ theorem semantics_identity_adapter {C D F : Type} (ffi : HolFfiState F)
       BviSem.semantics ffi code (BackendProps.stateCo (fun c p => (c, p)) oracle) compiler start := by
   apply semantics_eq_of_initial_projections
   intro clock
-  have noType := semantics_ne_fail_no_type_error ffi code oracle
+  have noType := BviInline.Proofs.semanticsNoTypeError ffi code oracle
     (BackendProps.stateCc (fun c p => (c, p)) compiler) start notFail clock
   have initialOk := BviProps.adjustOracleOk_identity_initial ffi code oracle compiler clock
   cases run : BviSem.evaluate [.call 0 (some start) [] none] []
       (BviSem.initialState ffi code oracle (BackendProps.stateCc (fun c p => (c, p)) compiler) clock) with
   | mk result next =>
-    have notType : result ≠ .err (.abort .typeError) := by simpa [run] using noType
+    have notType : result ≠ .err (.abort .typeError) := by simpa [BviSem.evaluateTuple, run] using noType
     obtain ⟨adjusted, _⟩ := BviProps.evaluate_adjustOracle compiler Prod.snd
       [.call 0 (some start) [] none] [] _ next result run notType initialOk
     rw [BviProps.adjustOracle_identity_initial] at adjusted
     simp [adjusted, BviProps.adjustOracle]
 
 /-- The tail-recursion program pass preserves BVI behavior in both modes,
-with its incremental compiler and oracle adapters. The evaluator and state
-carriers remain under HOL review. -/
+with its incremental compiler and oracle adapters. The semantics inherit the
+real-model assumption documented in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_prog_semantics"]
 theorem compileProgSource_semantics {C F : Type}
     (next : Nat) (program : List (Nat × Nat × Bvi.Exp))
     (oracle : BviSem.CompileOracle (Nat × C)) (compiled : List (Nat × Nat × Bvi.Exp))

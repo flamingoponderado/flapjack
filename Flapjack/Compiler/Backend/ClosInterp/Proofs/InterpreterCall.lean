@@ -69,28 +69,6 @@ theorem evaluate_interpreter_call {C F : Type} (source target : ClosSem.State C 
   simp [ClosSem.decClock, Nat.sub_sub, nonzero]
 
 
-/-- A selected interpreter replacement enters the interpreter body with the
-encoded original expression and an empty environment. -/
-theorem evaluate_optInterp {C F : Type} (source target : ClosSem.State C F)
-    (related : StateRel source target) (expression replacement : ClosLang.Exp)
-    (selected : optInterp expression = some replacement) (clock : 3 ≤ target.clock) :
-    ClosSem.evaluate [replacement] [] target =
-      ClosSem.evaluate [closInterpreterBody]
-        [ClosSem.makeConst (toConstant expression), .block 0 [], .block 0 []]
-        (ClosSem.decClock 3 target) := by
-  unfold optInterp at selected
-  split at selected
-  · simp only [Option.some.injEq] at selected
-    subst replacement
-    exact evaluate_interpreter_call source target related []
-      (.op .none (.blockOp (.cons 0)) []) (.op .none (.blockOp (.cons 0)) [])
-      (.op .none (.blockOp (.constant (toConstant expression))) [])
-      (.block 0 []) (.block 0 []) (ClosSem.makeConst (toConstant expression))
-      (evaluate_cons_nil .none 0 [] target) (evaluate_cons_nil .none 0 [] target)
-      (evaluate_constant .none (toConstant expression) [] target) clock
-  · contradiction
-
-
 /-- An interpreter recursive call on an encoded constructor field enters the
 body with that field and the original encoded environment. Both expression
 and expression-list modes use this same call sequence. -/

@@ -311,15 +311,6 @@ theorem compileListFuel_success_eq (fuel n : Nat) (env live : List Nat)
 termination_by fuel
 end
 
-/-- Above the structural budget, the executable wrapper returns the total
-source-shaped expression compiler's result. -/
-theorem compileExpBounded_agrees (fuel argc : Nat) (exp : Bvi.Exp)
-    (bound : Bvi.expBudget exp < fuel) :
-    compileExpBounded fuel argc exp = some (compileExp argc exp) := by
-  have agreement := compileFuel_agrees fuel argc (List.range argc) true [] exp bound
-  have sourceForm := compileSource_agrees argc (List.range argc) true [] [exp]
-  simp [compileExpBounded, compileExpFuel, compileExp, agreement, sourceForm]
-
 /-- The retry wrapper agrees with the total compiler at every initial fuel:
 successful first attempts are stable, and failed attempts use enough fuel. -/
 theorem compileExpBounded_agrees_all (fuel argc : Nat) (exp : Bvi.Exp) :
@@ -334,18 +325,5 @@ theorem compileExpBounded_agrees_all (fuel argc : Nat) (exp : Bvi.Exp) :
     have bound : Bvi.expBudget exp < max fuel (Bvi.expBudget exp + 1) := by omega
     have agreement := compileFuel_agrees (max fuel (Bvi.expBudget exp + 1)) argc (List.range argc) true [] exp bound
     simp [compileExpBounded, compileExpFuel, compileExp, first, agreement, sourceForm]
-
-/-- Mapping the executed compiler over a BVI program always produces the
-same function list as the total source-shaped program compiler. -/
-theorem compileProgBounded_agrees (fuel : Nat) (program : List (Nat × Nat × Bvi.Exp)) :
-    (program.mapM fun (name, argc, body) => do
-      pure (name, argc, ← compileExpBounded fuel argc body)) = some (compileProg program) := by
-  induction program with
-  | nil => rfl
-  | cons part rest ih =>
-    obtain ⟨name, argc, body⟩ := part
-    simp only [List.mapM_cons]
-    rw [ih]
-    simp [compileExpBounded_agrees_all, compileProg, compilePart]
 
 end Flapjack.Compiler.Backend.BviToData

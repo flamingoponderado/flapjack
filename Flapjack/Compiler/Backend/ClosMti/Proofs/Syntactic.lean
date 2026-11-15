@@ -641,4 +641,50 @@ theorem introList_containsAppSome (maxApp : Nat) (program : List Exp) :
   | cons head tail ih =>
     simp only [introList_cons, containsAppSome, ← introExp_containsAppSome maxApp head, ih]
 
+/-- Optional multi-argument compilation preserves application safety. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "contains_App_SOME_compile"]
+theorem compile_containsAppSome (enabled : Bool) (maxApp : Nat) (program : List Exp) :
+    containsAppSome maxApp (compile enabled maxApp program) ↔ containsAppSome maxApp program := by
+  cases enabled <;> simp [compile, introList_containsAppSome]
+
+/-- Multi-argument compilation returns an empty list exactly for an empty input. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "compile_EQ_NIL"]
+theorem compile_eq_nil (enabled : Bool) (maxApp : Nat) (program : List Exp) :
+    compile enabled maxApp program = [] ↔ program = [] := by
+  cases enabled <;> simp [compile, introList]
+
+/-- Multi-argument introduction returns an empty list exactly for an empty input. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "intro_multi_EQ_NIL"]
+theorem introList_eq_nil (maxApp : Nat) (program : List Exp) :
+    introList maxApp program = [] ↔ program = [] := by
+  simp [introList]
+
+/-- Multi-argument introduction preserves the empty list. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "intro_multi_nil"]
+theorem introList_nil (maxApp : Nat) : introList maxApp [] = [] := by
+  exact (introList_eq_nil maxApp []).2 rfl
+
+/-- The eta-normalized source equations for the pre-multi-argument invariant. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "no_mti_def"]
+theorem noMti_eqns :
+    (∀ (t : BackendCommon.Tra) (n : Nat), noMti (.var t n) ↔ True) ∧
+    (∀ (t : BackendCommon.Tra) (e3 e2 e1 : Exp), noMti (.ifThenElse t e1 e2 e3) ↔
+      noMti e1 ∧ noMti e2 ∧ noMti e3) ∧
+    (∀ (t : BackendCommon.Tra) (es : List Exp) (e : Exp), noMti (.let t es e) ↔
+      (∀ x ∈ es, noMti x) ∧ noMti e) ∧
+    (∀ (t : BackendCommon.Tra) (e : Exp), noMti (.raise t e) ↔ noMti e) ∧
+    (∀ (t : BackendCommon.Tra) (e2 e1 : Exp), noMti (.handle t e1 e2) ↔ noMti e1 ∧ noMti e2) ∧
+    (∀ (t : BackendCommon.Tra) (e : Exp), noMti (.tick t e) ↔ noMti e) ∧
+    (∀ (ticks : Nat) (t : BackendCommon.Tra) (n : Nat) (es : List Exp), noMti (.call t ticks n es) ↔ False) ∧
+    (∀ (t : BackendCommon.Tra) (opt : Option Nat) (es : List Exp) (e : Exp), noMti (.app t opt e es) ↔
+      es.length = 1 ∧ opt = none ∧ (∀ x ∈ es, noMti x) ∧ noMti e) ∧
+    (∀ (t : Flapjack.Basis.Pure.MlString.MlString) (opt2 : Option (List Nat)) (opt1 : Option Nat)
+      (arity : Nat) (e : Exp), noMti (.fn t opt1 opt2 arity e) ↔
+      arity = 1 ∧ opt1 = none ∧ opt2 = none ∧ noMti e) ∧
+    (∀ (t : List Flapjack.Basis.Pure.MlString.MlString) (opt2 : Option (List Nat)) (opt1 : Option Nat)
+      (funs : List (Nat × Exp)) (e : Exp), noMti (.letrec t opt1 opt2 funs e) ↔
+      noMti e ∧ opt1 = none ∧ opt2 = none ∧ (∀ x ∈ funs, x.1 = 1 ∧ noMti x.2)) ∧
+    (∀ (t : BackendCommon.Tra) (op : Op) (es : List Exp), noMti (.op t op es) ↔ ∀ x ∈ es, noMti x) := by
+  simp [noMti, noMtiList_iff, noMtiFuns_iff]
+
 end Flapjack.Compiler.Backend.ClosMti

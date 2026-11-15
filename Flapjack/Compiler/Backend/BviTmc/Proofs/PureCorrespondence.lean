@@ -91,15 +91,14 @@ theorem pureFuel_success_eq (fuel n : Nat) (expression : Exp) (result : Bool)
 /-- The production retry computes the source purity result for every fuel. -/
 theorem pureBounded_eq_pureExp (fuel n : Nat) (expression : Exp) :
     pureBounded fuel n expression = some (pureExp n expression) := by
-  obtain ⟨result, run⟩ := pureBounded_succeeds fuel n expression
   cases first : pureFuel fuel n expression with
   | some value =>
     have equal := pureFuel_success_eq fuel n expression value first
     simp [pureBounded, first, equal]
   | none =>
-    have retry : pureFuel (max fuel (expBudget expression + 1)) n expression = some result := by
-      simpa [pureBounded, first] using run
+    have enough : expBudget expression < max fuel (expBudget expression + 1) := by omega
+    obtain ⟨result, retry⟩ := pureFuel_succeeds (max fuel (expBudget expression + 1)) n expression enough
     have equal := pureFuel_success_eq _ n expression result retry
-    simpa [equal] using run
+    simp [pureBounded, first, retry, equal]
 
 end Flapjack.Compiler.Backend.BviTmc

@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.ClosNumber.Proofs.StateRelation
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.DecodeRelations
 
 @[expose] public section
 
@@ -10,131 +11,17 @@ namespace Flapjack.Compiler.Backend.ClosNumber
 open Flapjack.Compiler.Backend.ClosSem
 open Flapjack Flapjack.Compiler.Backend.BackendProps
 
-private theorem related_number_list (maxApp : Nat) (bytes : List (BitVec 8))
-    (values : List Value) :
-    List.Forall₂ (ValueRel maxApp) (bytes.map (fun b => .number b.toNat)) values ↔
-      values = bytes.map (fun b => .number b.toNat) := by
-  induction bytes generalizing values with
-  | nil => cases values <;> simp
-  | cons byte bytes ih =>
-    cases values with
-    | nil => simp
-    | cons value values =>
-      simp only [List.map_cons, List.forall₂_cons, List.cons.injEq, ih,
-        valueRel_number_iff]
-
-private theorem related_number_list_right (maxApp : Nat) (bytes : List (BitVec 8))
-    (values : List Value) :
-    List.Forall₂ (ValueRel maxApp) values (bytes.map (fun b => .number b.toNat)) ↔
-      values = bytes.map (fun b => .number b.toNat) := by
-  induction bytes generalizing values with
-  | nil => cases values <;> simp
-  | cons byte bytes ih =>
-    cases values with
-    | nil => simp
-    | cons value values =>
-      simp only [List.map_cons, List.forall₂_cons, List.cons.injEq, ih]
-      constructor
-      · rintro ⟨head, tail⟩
-        cases head
-        exact ⟨rfl, tail⟩
-      · rintro ⟨rfl, rfl⟩
-        exact ⟨.number _, rfl⟩
-
-private theorem related_word_list (maxApp : Nat) (words : List (BitVec 64))
-    (values : List Value) :
-    List.Forall₂ (ValueRel maxApp) (words.map Value.word64) values ↔
-      values = words.map Value.word64 := by
-  induction words generalizing values with
-  | nil => cases values <;> simp
-  | cons word words ih =>
-    cases values with
-    | nil => simp
-    | cons value values =>
-      simp only [List.map_cons, List.forall₂_cons, List.cons.injEq, ih]
-      constructor
-      · rintro ⟨head, tail⟩
-        cases head
-        exact ⟨rfl, tail⟩
-      · rintro ⟨rfl, rfl⟩
-        exact ⟨.word64 _, rfl⟩
-
-private theorem related_word_list_right (maxApp : Nat) (words : List (BitVec 64))
-    (values : List Value) :
-    List.Forall₂ (ValueRel maxApp) values (words.map Value.word64) ↔
-      values = words.map Value.word64 := by
-  induction words generalizing values with
-  | nil => cases values <;> simp
-  | cons word words ih =>
-    cases values with
-    | nil => simp
-    | cons value values =>
-      simp only [List.map_cons, List.forall₂_cons, List.cons.injEq, ih]
-      constructor
-      · rintro ⟨head, tail⟩
-        cases head
-        exact ⟨rfl, tail⟩
-      · rintro ⟨rfl, rfl⟩
-        exact ⟨.word64 _, rfl⟩
-
-/-- Related values yield identical byte decoding results, including failure.
-This is a prerequisite for the installation simulation and is untagged pending
-review of the proof-side value and decoder carriers. -/
+/-- Related values yield identical byte decoding results, including failure. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "v_to_bytes"]
 theorem valueToBytes_related (maxApp : Nat) (source target : Value)
-    (related : ValueRel maxApp source target) : valueToBytes source = valueToBytes target := by
-  have lists := valueToList_related maxApp source target related
-  cases left : valueToList source with
-  | none =>
-    cases right : valueToList target with
-    | none =>
-      cases l : valueToBytes source <;> cases r : valueToBytes target <;>
-        simp_all [valueToBytes_eq_some]
-    | some ys => simp [left, right] at lists
-  | some xs =>
-    cases right : valueToList target with
-    | none => simp [left, right] at lists
-    | some ys =>
-      simp only [left, right] at lists
-      apply Option.ext
-      intro bytes
-      rw [valueToBytes_eq_some, valueToBytes_eq_some, left, right]
-      simp only [Option.some.injEq]
-      constructor
-      · intro eq
-        subst xs
-        exact (related_number_list maxApp bytes ys).mp lists
-      · intro eq
-        subst ys
-        exact (related_number_list_right maxApp bytes xs).mp lists
+    (related : ValueRel maxApp source target) : valueToBytes source = valueToBytes target :=
+  ClosProps.simpleValRel_valueToBytes (ValueRel maxApp) source target ⟨simpleValRel maxApp, related⟩
 
-/-- Related values yield identical 64-bit word decoding results, including
-failure. This remains untagged pending carrier review. -/
+/-- Related values yield identical 64-bit word decoding results, including failure. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "v_to_words"]
 theorem valueToWords_related (maxApp : Nat) (source target : Value)
-    (related : ValueRel maxApp source target) : valueToWords source = valueToWords target := by
-  have lists := valueToList_related maxApp source target related
-  cases left : valueToList source with
-  | none =>
-    cases right : valueToList target with
-    | none =>
-      cases l : valueToWords source <;> cases r : valueToWords target <;>
-        simp_all [valueToWords_eq_some]
-    | some ys => simp [left, right] at lists
-  | some xs =>
-    cases right : valueToList target with
-    | none => simp [left, right] at lists
-    | some ys =>
-      simp only [left, right] at lists
-      apply Option.ext
-      intro words
-      rw [valueToWords_eq_some, valueToWords_eq_some, left, right]
-      simp only [Option.some.injEq]
-      constructor
-      · intro eq
-        subst xs
-        exact (related_word_list maxApp words ys).mp lists
-      · intro eq
-        subst ys
-        exact (related_word_list_right maxApp words xs).mp lists
+    (related : ValueRel maxApp source target) : valueToWords source = valueToWords target :=
+  ClosProps.simpleValRel_valueToWords source target (ValueRel maxApp) ⟨simpleValRel maxApp, related⟩
 
 /-- Advancing both compile oracles preserves the numbering state relation.
 Installation also updates the clock and code; those steps are separate from

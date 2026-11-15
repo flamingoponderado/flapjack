@@ -7,16 +7,6 @@ public import Flapjack.Compiler.Backend.BvlConst.Proofs.Arithmetic
 namespace Flapjack.Compiler.Backend.BvlConst.Proofs
 open Flapjack.Compiler.Backend.BvlSem Flapjack.Compiler.Backend.BvlProps
 
-/-- Evaluate two expressions in source order, retaining errors and state. -/
-theorem evaluate_pair {C F : Type} (x y : Bvl.Exp) (env : List Value) (s : State C F) :
-    evaluateTuple ([x, y], env, s) =
-      match evaluateTuple ([x], env, s) with
-      | (.val values, next) =>
-        match evaluateTuple ([y], env, next) with
-        | (.val tail, last) => (.val (@Flapjack.holHd Value ⟨unitValue⟩ values :: tail), last)
-        | other => other
-      | other => other := evaluateCons x [y] env s
-
 /-- Evaluate a binary integer operation after its operands in source order. -/
 theorem evaluate_int_pair {C F : Type} (op : ClosLang.IntOp) (x y : Bvl.Exp) (env : List Value) (s : State C F) :
     evaluateTuple ([.op (.intOp op) [x, y]], env, s) =
@@ -29,7 +19,7 @@ theorem evaluate_int_pair {C F : Type} (op : ClosLang.IntOp) (x y : Bvl.Exp) (en
           match doApp (.intOp op) ((@Flapjack.holHd Value ⟨unitValue⟩ xs) :: ys).reverse final with
           | .err error => (.err error, final)
           | .val (value, last) => (.val [value], last) := by
-  rw [evaluate_intOp, evaluate_pair]
+  rw [evaluate_intOp, evaluateCons]
   cases h : evaluateTuple ([x], env, s) with
   | mk xr s1 =>
     cases xr with

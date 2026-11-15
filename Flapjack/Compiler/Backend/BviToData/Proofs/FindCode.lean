@@ -76,9 +76,20 @@ theorem findCode_indirect {C F : Type} (source : BviSem.BviState C F) (target : 
           · simp [DataSem.findCode, last, targetLookup, length, argsLength]
         · simp [BvlSem.findCode, lastProjection, last, dataToBviValue, lookup, length] at found
 
+/- The BVI finite-map state has the reviewed canonical lookup carrier. -/
+namespace LookupCarrier
+
+theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
+    (∀ state : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad state).toBroad = state) ∧
+    (∀ state : BviSem.BviState C F, BviSem.BviState.ofBroad state.toBroad = state) :=
+  BviSem.holFmapAsFiniteSupportWitness
+
+end LookupCarrier
+
 /-- Successful BVI code lookup, direct or indirect, has the corresponding data
-lookup and compiled body. This remains untagged pending review of the complete
-source statement and state carriers. -/
+lookup and compiled body. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_to_dataProofScript.sml" "find_code_lemma"
+  (fmap_as_finite_support_relation := [BviState.refs])]
 theorem findCode_projection {C F : Type} (dest : Option Nat) (values : List DataSem.Value)
     (source : BviSem.BviState C F) (target : DataSem.State C F) (args : List BvlSem.Value) (body : Bvi.Exp)
     (related : stateRel source target)

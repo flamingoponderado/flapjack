@@ -216,7 +216,9 @@ private theorem materializedEmpty_iff (vars : DbVarSet) :
 free variables. -/
 private theorem closedFuel_iff_noFreeVars (fuel : Nat) (e : Exp) :
     closedFuel fuel e = some true ↔ ∀ n, ¬ freeVarExp n e := by
-  obtain ⟨⟨result, vars⟩, run⟩ := freeBounded_succeeds fuel e
+  rcases source : ClosKnown.freeExpHOL e with ⟨result, vars⟩
+  have run : freeBounded fuel e = some (result, vars) := by
+    simpa only [source] using ClosKnown.freeBounded_correct fuel e
   have agreement := freeBounded_freeVars fuel e result vars run
   simp only [closedFuel, run, Bind.bind, Option.bind, Pure.pure, Option.some.injEq, materializedEmpty_iff]
   constructor

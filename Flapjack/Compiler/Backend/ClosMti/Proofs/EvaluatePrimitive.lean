@@ -1,13 +1,26 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosMti.Proofs.EvaluateCases
-public import Flapjack.Compiler.Backend.ClosMti.Proofs.PrimitiveNumeric
+public import Flapjack.Compiler.Backend.ClosMti.Proofs.StateRelation
 
 @[expose] public section
 
 /-! Ordinary primitive-operation cases of the closure introduction simulation. -/
 namespace Flapjack.Compiler.Backend.ClosMti
 open Flapjack ClosSem SemanticPrimitivesProps
+
+/-- Target-driven primitive simulation, including corresponding errors. This
+is infrastructure for the closure evaluator's operation case. -/
+def PrimitiveSimulation {C F : Type} (op : ClosLang.Op) : Prop :=
+  ∀ (source target : State C F) (sourceValues targetValues : List Value),
+    StateRel source target → List.Forall₂ (ValueRel source.maxApp) sourceValues targetValues →
+    match (generalizing := false) doApp op targetValues target with
+    | .err targetError => ∃ sourceError,
+        doApp op sourceValues source = .err sourceError ∧
+        excRel (ValueRel source.maxApp) sourceError targetError
+    | .val (targetValue, targetFinal) => ∃ sourceValue sourceFinal,
+        ValueRel source.maxApp sourceValue targetValue ∧ StateRel sourceFinal targetFinal ∧
+        doApp op sourceValues source = .val (sourceValue, sourceFinal)
 
 /-- Introduction preserves an operation and transforms its arguments. -/
 theorem introExp_eq_op (maxApp : Nat) (expression : ClosLang.Exp) (trace : BackendCommon.Tra)
@@ -105,12 +118,5 @@ theorem evaluateRel_ordinaryWithin {C F : Type} (limit : Nat) (trace : BackendCo
               · have valueRel' : ValueRel source.maxApp sourceValue targetValue := by
                   simpa [maxEq] using valueRel
                 simpa [resultRel] using List.Forall₂.cons valueRel' List.Forall₂.nil
-
-/-- Block construction relates all fields, including closures. -/
-theorem primitiveSimulation_block_cons {C F : Type} (tag : Nat) :
-    @PrimitiveSimulation C F (.blockOp (.cons tag)) := by
-  intro source target left right states values
-  simp only [doApp, applyBlock]
-  exact ⟨.block tag left, source, .block tag left right values, states, rfl⟩
 
 end Flapjack.Compiler.Backend.ClosMti

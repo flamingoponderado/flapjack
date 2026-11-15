@@ -669,7 +669,14 @@ numerical FP assertion. -/
 theorem compCorrectShareInst {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (op : WordMemOp) (v : Nat) (exp : WordLangExpHOL (BitVec width))
     (source : WordSemStateFiniteExact width (Nat × C) F) :
-    Seq.Simulation ac (.shareInst op v exp) source := by
+    ∀ (simK simF simFrame : Nat)
+      (simSourcePost : WordSemStateFiniteExact width (Nat × C) F)
+      (simTarget : StackSemStateFiniteExact width C F)
+      (simResult : Option (WordSemResult width))
+      (simBs simBsPost : AppList (BitVec width)) (simN simNPost : Nat)
+      (simCompiled : HolProg width) (simLens : List Nat),
+      Seq.SimulationBody ac (.shareInst op v exp) source simK simF simFrame simSourcePost simTarget simResult
+        simBs simBsPost simN simNPost simCompiled simLens := by
   intro k f frame sourcePost target result bs bsPost n nPost compiled lens premises
   obtain ⟨execution, notError, related, conventions, flat, compilation, -, -, -, -,
     maxBound⟩ := premises

@@ -76,7 +76,13 @@ theorem compileCorrect_Call {width : Nat} {σ : Type} [NeZero width]
         PanSemStateFiniteExact.lookupCodeHOLFinite s.code.lookup fname args = some v7 ∧
         v7 = (prog, v12) ∧ v12 = (newlocals, return_sh) ∧ s.clock ≠ 0 →
       compileCorrectGoal prog { s.decClockHOLFinite with locals := newlocals }) :
-    compileCorrectGoal (.call caltyp fname argexps) s := by
+    ∀ (res : Option (PanSemResultExact width)) (ctxt : PanGlobalsContextExact width)
+      (t s' : PanSemStateFiniteExact width σ),
+      panGlobalsStateRelHOLExact true ctxt s t ∧
+        evaluateHOLFiniteState s (.call caltyp fname argexps) = (res, s') ∧
+        res ≠ some .error →
+      ∃ t', evaluateHOLFiniteState t (compileProgExactHOL ctxt (.call caltyp fname argexps)) =
+        (res, t') ∧ panGlobalsStateRelHOLExact (goodResHOL res) ctxt s' t' := by
   classical
   have calleeIH := fun args body callee returnShape (h :
       s.evalListHOLFinite (h := fun a => Classical.propDecidable (s.memaddrs a)) argexps = some args ∧

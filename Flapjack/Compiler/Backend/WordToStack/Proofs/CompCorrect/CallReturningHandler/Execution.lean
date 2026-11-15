@@ -1738,8 +1738,15 @@ theorem compCorrectCallReturningHandler {width : Nat} [NeZero width] {C F : Type
         v9 = (retHandler, v11) ∧ v11 = (originalL1, originalL2) ∧ ¬ (sptDomainEmpty originalNames.1 ∨ ¬ n.Nodup) ∧
         wordSemCutEnvs originalNames source.locals = some envs ∧ source.clock ≠ 0 →
       Seq.Simulation ac prog (WordSemStateFiniteExact.callEnv args1 ss (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source))))) :
-    Seq.Simulation ac (.call (some (values,names,retCode,l1,l2)) dest args
-      (some (handlerVar,handlerCode,h1,h2))) source :=
+    ∀ (simK simF simFrame : Nat)
+      (simSourcePost : WordSemStateFiniteExact width (Nat × C) F)
+      (simTarget : StackSemStateFiniteExact width C F)
+      (simResult : Option (WordSemResult width))
+      (simBs simBsPost : AppList (BitVec width)) (simN simNPost : Nat)
+      (simCompiled : HolProg width) (simLens : List Nat),
+      Seq.SimulationBody ac (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) source simK simF simFrame simSourcePost
+        simTarget simResult simBs simBsPost simN simNPost simCompiled simLens :=
   returningHandlerCase ac values names retCode l1 l2 dest args handlerVar h1 h2 handlerCode source
     (inductionHypothesesOfOriginal ac values names retCode l1 l2 dest args handlerVar h1 h2
       handlerCode source original)

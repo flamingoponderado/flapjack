@@ -129,8 +129,8 @@ theorem evaluate_mutual_within {C F : Type} (limit : Nat) :
                     targetFinal source targetResult sourceClock
                   · intro targetProgram installedTarget targetSmaller sourceProgram installedSource
                       installedResult installedFinal installedRun installedStates installedCode
-                    have initialClocks := (stateRel_clock_maxApp states).1
-                    have installedClocks := (stateRel_clock_maxApp installedStates).1
+                    have initialClocks := stateRel_clocks states
+                    have installedClocks := stateRel_clocks installedStates
                     have smaller : installedSource.clock < limit := by omega
                     exact (clockIH installedSource.clock smaller).2 sourceProgram targetProgram
                       [] installedTarget [] installedFinal installedSource installedResult (by omega)

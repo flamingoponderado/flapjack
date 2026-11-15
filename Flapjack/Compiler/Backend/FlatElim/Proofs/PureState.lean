@@ -42,16 +42,6 @@ theorem globalsRel_set_unreachable (reachable : NumSet) (source target : List (O
     · simp only [Flapjack.holEl_set _ _ _ _ sourceBound, if_neg (Ne.symm eq)] at isEmpty
       exact empty n ⟨bound, isEmpty⟩
 
-/-- Updating only an unreachable source global preserves the full flat state
-relation. This is a Flapjack helper for the pure-expression simulation. -/
-theorem flatStateRel_set_unreachable {C F : Type} (reachable : NumSet) (source target : FlatSem.State C F)
-    (index : Nat) (value : FlatSem.Value) (related : flatStateRel reachable source target)
-    (sourceEmpty : source.globals[index]? = some none) (unreachable : ¬ sptMem index reachable) :
-    flatStateRel reachable { source with globals := source.globals.set index (some value) } target := by
-  obtain ⟨clock, refs, ffi, globals, refsClosed, refsSafe⟩ := related
-  exact ⟨clock, refs, ffi, globalsRel_set_unreachable reachable source.globals target.globals index value
-    globals sourceEmpty unreachable, refsClosed, refsSafe⟩
-
 /-- A successful initialization of an unreachable global returns an Eval-free
 unit value and leaves the source related to the unchanged target. This is a
 Flapjack helper for the pure-expression simulation. -/
@@ -88,8 +78,12 @@ theorem applyResult_globalInit_unreachable {C F : Type} (reachable : NumSet)
         | none =>
           simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppFlat, lookup] at run
           rcases run with ⟨rfl, rfl⟩
-          refine ⟨[FlatSem.unitValue], flatStateRel_set_unreachable reachable source target index value related lookup unreachable, rfl, ?_⟩
-          simp [valuesNoEval, FlatSem.unitValue, valueHasEval, valuesHaveEval]
+          refine ⟨[FlatSem.unitValue], ?_, rfl, ?_⟩
+          · obtain ⟨clock, refs, ffi, globals, refsClosed, refsSafe⟩ := related
+            exact ⟨clock, refs, ffi,
+              globalsRel_set_unreachable reachable source.globals target.globals index value
+                globals lookup unreachable, refsClosed, refsSafe⟩
+          · simp [valuesNoEval, FlatSem.unitValue, valueHasEval, valuesHaveEval]
 
 /-- The pure-expression simulation at a fixed source state. This Flapjack
 predicate exposes the clock and expression-weight induction hypotheses. -/

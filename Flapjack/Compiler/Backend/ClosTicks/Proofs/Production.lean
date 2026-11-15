@@ -34,23 +34,15 @@ theorem removeFuel_eq_source (fuel : Nat) (expression result : Exp)
 /-- The production retry returns the source traversal for every fuel value. -/
 theorem removeBounded_eq_source (fuel : Nat) (expression : Exp) :
     removeBounded fuel expression = some (removeSing expression) := by
-  obtain ⟨result, run⟩ := removeBounded_succeeds fuel expression
-  unfold removeBounded at run ⊢
+  unfold removeBounded
   cases first : removeFuel fuel expression with
   | some value =>
     have equal := removeFuel_eq_source fuel expression value first
     simp [equal]
   | none =>
-    have retry : removeFuel (max fuel (expBudget expression + 1)) expression = some result := by
-      simpa [first] using run
+    have enough : expBudget expression < max fuel (expBudget expression + 1) := by omega
+    obtain ⟨result, retry⟩ := removeFuel_succeeds (max fuel (expBudget expression + 1)) expression enough
     have equal := removeFuel_eq_source _ expression result retry
     simpa [first, equal] using retry
-
-/-- The production list traversal returns the source-shaped list traversal. -/
-theorem removeBounded_list_eq_source (fuel : Nat) (expressions : List Exp) :
-    expressions.mapM (removeBounded fuel) = some (removeList expressions) := by
-  induction expressions with
-  | nil => rfl
-  | cons first rest ih => simp [removeList, removeBounded_eq_source, ih]
 
 end Flapjack.Compiler.Backend.ClosTicks

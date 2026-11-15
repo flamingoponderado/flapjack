@@ -8,12 +8,29 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.RefRelocate
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value)
 
-/-- Reference-array allocation executes at the least free target address.
-Untagged pending BVI dispatcher correspondence review. -/
+namespace DoRefCarrier
+/-- Canonical BVL reference-map state roundtrip. -/
+theorem holFmapAsFiniteSupportRelationWitness_State {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+
+/-- Canonical BVI reference-map state roundtrip. -/
+theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end DoRefCarrier
+
+/-- Reference-array allocation executes at the least free target address. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "do_app_Ref"
+  (fmap_as_finite_support_relation := [State.refs, BviState.refs])]
 theorem doRef_target {C F : Type} (values : List Value) (target : BviSem.BviState C F) :
     BviSem.doApp (.memOp .ref) values target =
       .val (.refPtr true (BvlSem.leastUnusedRef target.refs),
-        { target with refs := target.refs.updateEq (BvlSem.leastUnusedRef target.refs, .valueArray values) }) := by
+        BviSem.fromBvl
+          { (BviSem.toBvl target : Flapjack.Compiler.Backend.BvlSem.State C F) with
+            refs := target.refs.updateEq (BvlSem.leastUnusedRef target.refs, .valueArray values) } target) := by
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
     BvlSem.applyMemory, BviSem.toBvl, BviSem.fromBvl]
 
@@ -63,7 +80,7 @@ theorem simulation_ref {C F : Type} (arguments : List Bvl.Exp)
         simp only [mapSimulationResult]
         rw [← List.map_reverse, valuesChange]
         rw [doRef_target]
-        simp [adjustBv, keyEq]
+        simp [BviSem.fromBvl, BviSem.toBvl, adjustBv, keyEq]
       · simpa [adjustRef] using relatedAlloc
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

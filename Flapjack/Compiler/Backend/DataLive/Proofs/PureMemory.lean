@@ -241,22 +241,4 @@ theorem simulationFor_removed_memory {C F : Type} (dest : Nat) (op : ClosLang.Me
   case boundsCheckArray => exact simulationFor_removed_memoryBounds dest _ names live rfl dead
   case boundsCheckByte loose => exact simulationFor_removed_memoryBounds dest _ names live rfl dead
 
-/-- Every dead pure unannotated assignment satisfies the liveness
-simulation. The retained and annotated assignment cases remain open; this
-result is untagged pending source evaluator and carrier review. -/
-theorem simulationFor_removed_pure {C F : Type} (dest : Nat) (op : ClosLang.Op)
-    (names : List Nat) (live : NumSet) (pure : isPure op = true)
-    (dead : sptLookup dest live = none) :
-    simulationFor (C := C) (F := F) (.assign dest op names none) live := by
-  cases op with
-  | label label => exact simulationFor_removed_label dest label names live dead
-  | ffi name => simp [isPure] at pure
-  | intOp op => exact simulationFor_removed_int dest op names live pure dead
-  | wordOp op => exact simulationFor_removed_word dest op names live pure dead
-  | blockOp op => exact simulationFor_removed_block dest op names live pure dead
-  | globOp op => exact simulationFor_removed_global dest op names live pure dead
-  | memOp op => exact simulationFor_removed_memory dest op names live pure dead
-  | install => simp [isPure] at pure
-  | thunkOp op => simp [isPure] at pure
-
 end Flapjack.Compiler.Backend.DataLive

@@ -95,8 +95,7 @@ theorem evaluate_remove_ticks_call {C F : Type} (trace : BackendCommon.Tra)
       cases sourceResult with
       | err error => cases error <;> simp [ResultRel] at related
       | val sourceValues =>
-        have sourceEmpty : sourceMiddle.code = HolFiniteMapExact.empty := middleRel.2.1
-        have targetEmpty : targetMiddle.code = HolFiniteMapExact.empty := middleRel.2.2.1
+        obtain ⟨sourceEmpty, targetEmpty⟩ := state_rel_IMP_code_FEMPTY sourceMiddle targetMiddle middleRel
         rw [evaluate, fixClock_evaluate, argsRun] at run
         simp [findCode, targetEmpty, HolFiniteMapExact.empty] at run
         obtain ⟨rfl, rfl⟩ := run

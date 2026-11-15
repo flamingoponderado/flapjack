@@ -8,6 +8,14 @@ public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileMemory
 namespace Flapjack.Compiler.Backend.BvlToBvi.Proofs
 open Flapjack.Compiler.Backend.BvlSem (Value)
 
+namespace CopyGlobalsCarrier
+/-- Canonical BVI reference-map state roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end CopyGlobalsCarrier
+
 /-- One iteration copies the indexed global before evaluating the
 continuation. Untagged pending evaluator and dispatcher review. -/
 theorem evaluate_copyGlobals_iteration {C F : Type} (src dst index : Nat) (srcFlag dstFlag : Bool)
@@ -165,19 +173,22 @@ theorem copyGlobals_prefix_step {α : Type} (source dest : List α) (index : Nat
   simp [List.append_assoc]
 
 /-- The copy-globals stub copies the prefix through the supplied index,
-leaving the remaining destination cells intact. Untagged pending evaluator
-and dispatcher correspondence review. -/
-theorem evaluate_copyGlobals {C F : Type} (index src dst : Nat) (srcFlag dstFlag : Bool)
-    (source dest : List Value) (state : BviSem.BviState C F)
-    (distinct : src ≠ dst)
-    (srcLookup : state.refs.lookup src = some (.valueArray source))
-    (dstLookup : state.refs.lookup dst = some (.valueArray dest))
-    (srcBound : index < source.length) (dstBound : index < dest.length)
-    (code : sptLookup copyGlobalsLocation state.code = some copyGlobalsCode) :
+leaving the remaining destination cells intact. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "evaluate_CopyGlobals_code" 734
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_copyGlobals {C F : Type} (src dst : Nat) (srcFlag dstFlag : Bool)
+    (source : List Value) (index : Nat) (dest : List Value)
+    (state : Flapjack.Compiler.Backend.BviSem.BviState C F)
+    (premises : sptLookup copyGlobalsLocation state.code = some (3, copyGlobalsCode.2) ∧
+      state.refs.lookup src = some (.valueArray source) ∧
+      state.refs.lookup dst = some (.valueArray dest) ∧ src ≠ dst ∧
+      index < source.length ∧ index < dest.length) :
     ∃ clock, BviSem.evaluate [copyGlobalsCode.2]
       [.refPtr dstFlag dst, .refPtr srcFlag src, .number index] (BviProps.incClock clock state) =
       (.val [BvlSem.unitValue],
         { state with refs := state.refs.updateEq (dst, .valueArray (source.take (index + 1) ++ dest.drop (index + 1))) }) := by
+  obtain ⟨code, srcLookup, dstLookup, distinct, srcBound, dstBound⟩ := premises
+  change sptLookup copyGlobalsLocation state.code = some copyGlobalsCode at code
   induction index generalizing dest state with
   | zero =>
     let value := source[0]

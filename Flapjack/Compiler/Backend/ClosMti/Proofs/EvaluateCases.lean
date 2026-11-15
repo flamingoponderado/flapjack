@@ -1,9 +1,11 @@
 module
 
 public import Flapjack.Compiler.Backend.ClosMti.Proofs.Applications
+public import Flapjack.Compiler.Backend.Semantics.ClosProps.PrimitiveBoolean
 public import Mathlib.Data.List.Forall2
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.InstallConst
 public import Flapjack.SemanticPrimitivesProps.ResultRelation
+public import Flapjack.Misc.ListLookupRel
 
 @[expose] public section
 
@@ -154,19 +156,6 @@ theorem introExp_eq_fn (maxApp : Nat) (expression : ClosLang.Exp)
     | mk count body =>
       simp_all
 
-/-- Related closure values either decode to the same Boolean or both fail to
-decode. -/
-theorem valueRel_asBool {maxApp : Nat} {left right : Value}
-    (related : ValueRel maxApp left right) : asBool left = asBool right := by
-  cases related <;> try rfl
-  case block tag left right fields =>
-    cases fields with
-    | nil => rfl
-    | cons head tail =>
-      cases tag with
-      | zero => rfl
-      | succ tag => cases tag <;> rfl
-
 /-- Empty target code is simulated by empty source code. -/
 theorem evaluateRel_nil {C F : Type} (sourceCode : List ClosLang.Exp) :
     @EvaluateRelAt C F sourceCode [] := by
@@ -177,14 +166,6 @@ theorem evaluateRel_nil {C F : Type} (sourceCode : List ClosLang.Exp) :
   simp [evaluate] at run
   obtain ⟨rfl, rfl⟩ := run
   exact ⟨.val [], source, by rw [evaluate], by simp [resultRel], states⟩
-
-/-- Pointwise lookup preserves a list relation, including out-of-range indices. -/
-theorem forall₂_getElemRel {A B : Type} {rel : A → B → Prop} {left : List A} {right : List B}
-    (related : List.Forall₂ rel left right) (index : Nat) :
-    optionRel rel left[index]? right[index]? := by
-  induction related generalizing index with
-  | nil => cases index <;> trivial
-  | cons head tail ih => cases index <;> simp_all [optionRel]
 
 /-- The variable case of the backward evaluation simulation. -/
 theorem evaluateRel_var {C F : Type} (sourceCode : List ClosLang.Exp)
@@ -203,7 +184,7 @@ theorem evaluateRel_var {C F : Type} (sourceCode : List ClosLang.Exp)
         simpa [introList] using code.2.symm
       have same := introExp_eq_var source.maxApp expression trace index unary transformed
       subst expression
-      have lookups := forall₂_getElemRel env index
+      have lookups := Flapjack.forall₂_lookupRel env index
       cases sourceLookup : sourceEnv[index]? with
       | none =>
         cases targetLookup : targetEnv[index]? with
@@ -255,8 +236,8 @@ theorem evaluateRel_consWithin {C F : Type} (limit : Nat) (targetHead targetSeco
     cases sourceRest with
     | nil => simp at length
     | cons sourceSecond sourceTail =>
-      have parts := (codeRel_cons sourceHead targetHead (sourceSecond :: sourceTail)
-        (targetSecond :: targetTail)).mp code
+      have parts := (codeRel_cons_cons source.maxApp sourceHead sourceSecond sourceTail
+        targetHead targetSecond targetTail).mp code
       cases targetHeadRun : evaluate [targetHead] targetEnv target with
       | mk headResult targetMiddle =>
         obtain ⟨sourceHeadResult, sourceMiddle, sourceHeadRun, headRel, middleStates⟩ :=
@@ -354,7 +335,7 @@ theorem evaluateRel_tickWithin {C F : Type} (limit : Nat) (trace : BackendCommon
         simpa [introList] using code.2.symm
       obtain ⟨body, rfl, bodyUnary, bodyEq⟩ :=
         introExp_eq_tick source.maxApp expression trace targetBody unary transformed
-      have clocks := (stateRel_clock_maxApp states).1
+      have clocks := stateRel_clocks states
       by_cases zero : target.clock = 0
       · have sourceZero : source.clock = 0 := clocks.trans zero
         simp [evaluate, zero] at run
@@ -659,7 +640,8 @@ theorem evaluateRel_ifWithin {C F : Type} (limit : Nat) (trace : BackendCommon.T
                   | nil =>
                     have valueRel : ValueRel source.maxApp sourceValue targetValue := by
                       simpa [resultRel] using conditionRel
-                    have sameBool := valueRel_asBool valueRel
+                    have sameBool := ClosProps.PrimitiveBoolean.simpleValRel_asBool
+                      (ValueRel source.maxApp) (simpleValRel source.maxApp) sourceValue targetValue valueRel
                     have envMiddle : List.Forall₂ (ValueRel sourceMiddle.maxApp) sourceEnv targetEnv := by
                       simpa [maxEq] using env
                     cases boolRun : asBool targetValue with
@@ -722,12 +704,12 @@ theorem evaluateRel_fn {C F : Type} (name : Basis.Pure.MlString.MlString)
       obtain ⟨body, remaining, rfl, bodyUnary, rfl, rfl, collected, targetBodyEq⟩ :=
         introExp_eq_fn source.maxApp expression name location vars arity targetBody unary transformed
       have maxPos : 1 ≤ source.maxApp := by
-        have agreement := stateRel_clock_maxApp states
+        have agreement := (And.intro (stateRel_clocks states) (stateRel_maxApp states))
         omega
       have arityBounds := collectArgsBounds source.maxApp 1 body arity remaining collected maxPos
       obtain ⟨names, bodyEq, arityEq, remainingUnary⟩ :=
         collectArgsUnary source.maxApp 1 body arity remaining collected bodyUnary
-      have targetMax : target.maxApp = source.maxApp := (stateRel_clock_maxApp states).2.1.symm
+      have targetMax : target.maxApp = source.maxApp := (stateRel_maxApp states).1.symm
       have targetBound : arity ≤ target.maxApp := by simpa [targetMax] using arityBounds.2
       have arityNonzero : arity ≠ 0 := by omega
       have closureCode : CodeRel source.maxApp [remaining] [targetBody] := by

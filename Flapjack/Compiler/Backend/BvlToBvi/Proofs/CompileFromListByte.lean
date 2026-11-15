@@ -44,7 +44,7 @@ theorem evaluate_fromListByteBody {C F : Type} (value : Value) (bytes : List (Bi
       (BviProps.incClock writerClock allocated) =
       (.val [.refPtr true ptr], { state with refs := state.refs.updateEq (ptr, .byteArray true bytes) }) := by
     simpa [allocated, zeros, updateEq_overwrite] using writerRun
-  have valueEq := valueToList_inverse value _ decode
+  have valueEq := Flapjack.Compiler.Backend.BvlSem.listToValue_valueToList value _ decode
   rw [valueEq] at writerResult
   obtain ⟨lengthClock, lengthRun⟩ := evaluate_listLength_call value (bytes.map (fun b => .number b.toNat)) env state lengthCode decode
   let extra := writerClock + 1
@@ -146,6 +146,7 @@ theorem simulation_fromListByte {C F : Type} (arguments : List Bvl.Exp)
         rcases argsCompile : compileListSource n arguments with ⟨argsCode, argsAux, finalName⟩
         have valuesLength := BvlSem.evaluate_length arguments env source middle values argsRun
         have codeLength := compileListSource_length n arguments
+        simp only [compileExpsSource_eq_list] at codeLength
         rw [argsCompile] at codeLength
         have codeNonempty : argsCode ≠ [] := by intro eq; simp [eq, valuesEq] at codeLength valuesLength; omega
         have lowered : compileOp (.memOp .fromListByte) argsCode =

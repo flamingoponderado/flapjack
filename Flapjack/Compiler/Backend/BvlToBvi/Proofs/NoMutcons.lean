@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.TmcNames
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Namespace
 public import Flapjack.Compiler.Backend.BviLet.SourceList
 public import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteCorrespondence
 
@@ -161,15 +162,6 @@ theorem let_compileExp_noMutcons (expression : Bvi.Exp) (safe : noMutcons expres
   exact let_compileSing_noMutcons [] 0 expression safe
 
 
-/-- Every successful run of the executable let pass preserves the invariant. -/
-theorem let_compileBounded_noMutcons (fuel : Nat) (env : List Nat) (d : Nat)
-    (expression result : Bvi.Exp) (safe : noMutcons expression)
-    (run : BviLet.compileBounded fuel env d expression = some result) : noMutcons result := by
-  rw [BviLet.compileBounded_eq_compileSing] at run
-  have eq := Option.some.inj run
-  rw [← eq]
-  exact let_compileSing_noMutcons env d expression safe
-
 /-- Integer literal lowering never emits mutable-block allocation. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_int_no_mutcons"]
 theorem compileInt_noMutcons (value : Int) : noMutcons (compileInt value) := by
@@ -213,7 +205,7 @@ private theorem auxNoMutcons_append {a b : AppList (Nat × Nat × Bvi.Exp)}
 
 private theorem auxNoMutcons_fresh (n arity : Nat) (body : Bvi.Exp) (safe : noMutcons body) :
     auxNoMutcons (compileAuxSource (n, arity, body)) := by
-  simp [auxNoMutcons, compileAuxSource, appListAppend, appendAux,
+  simp [auxNoMutcons, compileAuxSource, appListAppend, appendAux, BviLet.compileExp_eq,
     let_compileSing_zero_noMutcons body safe]
 
 private theorem destLetBudget' (exp : Bvl.Exp) :
@@ -330,6 +322,15 @@ theorem compile_exps_sing_noMutcons :
   · intro n es c aux n1 run
     simpa only [run] using compileListSource_noMutcons n es
 
+/-- Expression-list compilation emits no mutable constructor operations. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_exps_no_mutcons"]
+theorem compileExps_noMutcons (n : Nat) (xs : List Bvl.Exp) (c : List Bvi.Exp)
+    (aux : AppList (Nat × Nat × Bvi.Exp)) (n1 : Nat)
+    (run : compileExpsSource n xs = (c, aux, n1)) :
+    (∀ e ∈ c, noMutcons e) ∧ (∀ entry ∈ appListAppend aux, noMutcons entry.2.2) := by
+  apply compile_exps_sing_noMutcons.2 n xs c aux n1
+  simpa only [compileExpsSource_eq_list] using run
+
 /-- Each lowered labeled function and its auxiliaries are safe. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_single_no_mutcons"]
 theorem compileSingleSource_noMutcons (n : Nat) (program : Nat × Nat × Bvl.Exp)
@@ -343,7 +344,7 @@ theorem compileSingleSource_noMutcons (n : Nat) (program : Nat × Nat × Bvl.Exp
       BviLet.compileSing [] 0 converted)]) := by
     simp [auxNoMutcons, appListAppend, appendAux, let_compileSing_zero_noMutcons converted safe.1]
   have both := auxNoMutcons_append main safe.2
-  simp [compileSingleSource, h] at run
+  simp [compileSingleSource_eq_impl, compileSingleImpl, h] at run
   obtain ⟨rfl, _⟩ := run
   exact both
 
@@ -685,28 +686,6 @@ theorem tailrec_compileProgFuel_noMutcons (fuel : Nat) (enabled : Bool) (next ne
   rw [BviTailrec.compileProgFuel_eq_source] at compiled
   exact tailrec_compileProg_noMutcons enabled next next' program result (Option.some.inj compiled) safe
 
-/-- The TMC precondition follows from safety of the tail-recursion input;
-the pass itself preserves that safety. -/
-theorem tailrec_output_tmc_inputCondition_of_input_noMutcons
-    (fuel : Nat) (enabled : Bool) (next last tmcNext : Nat)
-    (program output : List (Nat × Nat × Bvi.Exp)) (condition : BviTailrec.inputCondition next program)
-    (outside : ∀ name ∈ program.map Prod.fst, bvlNumStubs ≤ name → ¬BviTmc.inWorkerNamespace name)
-    (safe : ∀ entry ∈ program, noMutcons entry.2.2)
-    (tmcBound : bvlNumStubs ≤ tmcNext) (tmcWorker : BviTmc.inWorkerNamespace tmcNext)
-    (run : BviTailrec.compileProgFuel fuel enabled next program = some (last, output)) :
-    BviTmc.inputCondition tmcNext output := by
-  exact tailrec_output_tmc_inputCondition fuel enabled next last tmcNext program output condition outside
-    (tailrec_compileProgFuel_noMutcons fuel enabled next last program output run safe) tmcBound tmcWorker run
-
-private theorem noMutcons_binary (op : ClosLang.Op) (x y : Bvi.Exp)
-    (safe : noMutconsOp op) (hx : noMutcons x) (hy : noMutcons y) :
-    noMutcons (.op op [x, y]) := by
-  simp [noMutcons, Subtype.forall, safe, hx, hy]
-
-private theorem noMutcons_nullary (op : ClosLang.Op) (safe : noMutconsOp op) :
-    noMutcons (.op op []) := by
-  simp [noMutcons, Subtype.forall, safe]
-
 /-- Every runtime stub is free of mutable-block allocation. This is the
 initial-code portion of the source no-mutcons argument. -/
 @[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "stubs_no_mutcons"]
@@ -720,19 +699,19 @@ theorem stubs_noMutcons (start count : Nat) :
       noMutcons, noMutconsOp, Subtype.forall]
   all_goals repeat' first
     | constructor
-    | apply noMutcons_binary
-    | apply noMutcons_nullary
-    | simp [noMutcons, noMutconsOp, Subtype.forall]
+    | (change noMutcons (.op _ _); simp [noMutcons, noMutconsOp, Subtype.forall])
 
-/-- The production whole-program lowering emits safe stubs and functions. -/
-theorem compileProgFuel_noMutcons (fuel optFuel start counter targetStart targetCounter : Nat)
+/-- The complete source lowering emits safe stubs and functions. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_prog_no_mutcons"]
+theorem compileProgSource_noMutcons (start counter targetStart targetCounter : Nat)
     (program : List (Nat × Nat × Bvl.Exp)) (compiled : List (Nat × Nat × Bvi.Exp))
-    (run : compileProgFuel fuel optFuel start counter program = some (targetStart, compiled, targetCounter)) :
+    (run : compileProgSource start counter program = (targetStart, compiled, targetCounter)) :
     ∀ entry ∈ compiled, noMutcons entry.2.2 := by
-  have equal := (compileProgFuel_eq_source fuel optFuel start counter program).symm.trans run
   have codeEq : stubs (bvlNumStubs + bvlToBviNamespaces * start)
-      (globalCountList (program.map (fun (_, _, body) => body))) ++ (compileIncSource counter program).2 = compiled :=
-    congrArg (fun p => p.2.1) (Option.some.inj equal)
+      (allocGlobCount (program.map (fun (_, _, body) => body))) ++
+      (compileIncSource counter program).2 = compiled := by
+    simpa only [compileProgSource, compileIncSource] using
+      congrArg (fun q => q.2.1) run
   have lowered := compileIncSource_noMutcons counter (compileIncSource counter program).1 program
     (compileIncSource counter program).2 (Prod.eta _).symm
   intro entry member
@@ -740,6 +719,16 @@ theorem compileProgFuel_noMutcons (fuel optFuel start counter targetStart target
   rcases member with stub | body
   · exact stubs_noMutcons _ _ entry stub
   · exact lowered entry body
+
+/-- Names outside the tail-recursion namespace remain free for future workers. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "EVERY_free_names_not_in_ns_2"]
+theorem everyFreeNames_notInNamespaceTwo {α : Type} (xs : List (Nat × α))
+    (outside : ∀ n ∈ xs.map Prod.fst, ¬ inNs 2 (n - bvlNumStubs)) :
+    ∀ e ∈ xs, BviTailrec.freeNames (bvlNumStubs + 2) e.1 := by
+  intro e member k equal
+  have h := outside e.1 (List.mem_map.mpr ⟨e, member, rfl⟩)
+  simp only [inNs, bvlToBviNamespaces] at h equal
+  omega
 
 /-- Production lowering followed by tail-recursion satisfies the complete
 syntactic input condition required by TMC. -/
@@ -750,9 +739,22 @@ theorem lowered_tailrec_tmc_inputCondition_complete
     (lowerRun : compileProgFuel fuel optFuel start counter program = some (targetStart, lowered, targetCounter))
     (tailRun : BviTailrec.compileProgFuel fuel enabled (bvlNumStubs + 2) lowered = some (last, output)) :
     BviTmc.inputCondition (bvlNumStubs + 3) output := by
-  apply lowered_tailrec_tmc_inputCondition fuel optFuel start counter targetStart targetCounter enabled
-    program lowered output last distinct lowerRun tailRun
-  exact tailrec_compileProgFuel_noMutcons fuel enabled _ last lowered output tailRun
-    (compileProgFuel_noMutcons fuel optFuel start counter targetStart targetCounter program lowered lowerRun)
+  have condition := compileProgFuel_production_tailrec_inputCondition fuel optFuel start counter
+    targetStart targetCounter program lowered distinct lowerRun
+  have outside : ∀ name ∈ lowered.map Prod.fst, bvlNumStubs ≤ name → ¬BviTmc.inWorkerNamespace name := by
+    intro name member above worker
+    have sourceRun : compileProgSource start counter program = (targetStart, lowered, targetCounter) := by
+      simpa [compileProgFuel] using lowerRun
+    have bound := compileProgSource_avoidsNss3 start counter targetStart targetCounter name program lowered
+      ⟨sourceRun, distinct, worker, member⟩
+    have stubMod := bvlNumStubMod
+    unfold BviTmc.inWorkerNamespace at worker
+    simp only [bvlToBviNamespaces] at stubMod worker
+    omega
+  have safe := tailrec_compileProgFuel_noMutcons fuel enabled _ last lowered output tailRun
+    (compileProgSource_noMutcons start counter targetStart targetCounter program lowered
+      (by simpa [compileProgFuel] using lowerRun))
+  exact tailrec_output_tmc_inputCondition fuel enabled (bvlNumStubs + 2) last (bvlNumStubs + 3)
+    lowered output condition outside safe production_tmc_start_valid.1 production_tmc_start_valid.2 tailRun
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

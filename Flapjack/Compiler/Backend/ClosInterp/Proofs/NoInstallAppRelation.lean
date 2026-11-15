@@ -161,8 +161,7 @@ theorem evaluate_force_noInstall_relation_step {C F : Type} (trace : BackendComm
       rw [ClosSem.evaluate, ClosSem.fixClock_evaluate, targetArgs]
     | val arguments =>
       dsimp only at run
-      have refsEq : last.refs = targetLast.refs := by
-        rw [stateRel1_replaceCompiler last targetLast lastRel.1]
+      have refsEq : last.refs = targetLast.refs := (stateRelNoInstall_refs lastRel).symm
       cases inspected : ClosSem.destThunk arguments last.refs with
       | badRef | notThunk =>
         simp [inspected] at run
@@ -198,8 +197,7 @@ theorem evaluate_force_noInstall_relation_step {C F : Type} (trace : BackendComm
               simp [targetInspected, targetForce]
             | val forced =>
               dsimp only at run
-              have endRefsEq : sourceEnd.refs = targetEnd.refs := by
-                rw [stateRel1_replaceCompiler sourceEnd targetEnd endRel.1]
+              have endRefsEq : sourceEnd.refs = targetEnd.refs := (stateRelNoInstall_refs endRel).symm
               cases updated : ClosSem.updateThunk arguments sourceEnd.refs forced with
               | none =>
                 simp [updated] at run

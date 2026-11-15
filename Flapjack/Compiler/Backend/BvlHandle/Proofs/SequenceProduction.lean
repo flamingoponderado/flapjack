@@ -53,14 +53,20 @@ theorem compileSeqsFuel_eq_of (compileExp : Nat → Exp → Exp)
     by_cases shape : ∃ x y, e = Exp.let [x, y] (Exp.var 1)
     · obtain ⟨x, y, rfl⟩ := shape
       cases h : compileSeqsFuel fuel limit y acc with
-      | none => simp [compileSeqsFuel, h] at run
+      | none => simp [compileSeqsFuel, destSeq, h] at run
       | some rest =>
         have erest := ih y acc rest h
-        have erun := ih x (some rest) result (by simpa [compileSeqsFuel, h] using run)
+        have erun := ih x (some rest) result (by simpa [compileSeqsFuel, destSeq, h] using run)
         simpa [compileSeqsWith, ← erest] using erun
     · have notShape : ∀ x y, e = Exp.let [x, y] (Exp.var 1) → False := by
         intro x y h; exact shape ⟨x, y, h⟩
-      rw [compileSeqsFuel.eq_3 limit e acc fuel notShape] at run
+      have notSeq : destSeq e = none := by
+        cases found : destSeq e with
+        | none => rfl
+        | some pair =>
+          obtain ⟨x, y⟩ := pair
+          exact False.elim (shape ⟨x, y, (destSeq_iff x y e).1 found⟩)
+      simp only [compileSeqsFuel, notSeq] at run
       rw [expressionEq fuel limit e] at run
       cases acc with
       | none =>
@@ -76,18 +82,16 @@ theorem compileSeqsBounded_eq_of (compileExp : Nat → Exp → Exp)
     (expressionEq : ∀ fuel limit e, compileExpFuel fuel limit 0 e = some (compileExp limit e))
     (fuel limit : Nat) (e : Exp) (acc : Option Exp) :
     compileSeqsBounded fuel limit e acc = some (compileSeqsWith compileExp limit e acc) := by
-  obtain ⟨result, run⟩ := compileSeqsBounded_succeeds fuel limit e acc
-  have correct : result = compileSeqsWith compileExp limit e acc := by
-    cases first : compileSeqsFuel fuel limit e acc with
-    | some initial =>
-      have h : initial = result := by simpa [compileSeqsBounded, first] using run
-      subst result
-      exact compileSeqsFuel_eq_of compileExp expressionEq fuel limit e acc initial first
-    | none =>
-      have second : compileSeqsFuel (max fuel (expBudget e + 1)) limit e acc = some result := by
-        simpa [compileSeqsBounded, first] using run
-      exact compileSeqsFuel_eq_of compileExp expressionEq _ limit e acc result second
-  simpa [correct] using run
+  unfold compileSeqsBounded
+  cases first : compileSeqsFuel fuel limit e acc with
+  | some initial =>
+    have correct := compileSeqsFuel_eq_of compileExp expressionEq fuel limit e acc initial first
+    simp [correct]
+  | none =>
+    have enough : expBudget e < max fuel (expBudget e + 1) := by omega
+    obtain ⟨result, second⟩ := compileSeqsFuel_succeeds (max fuel (expBudget e + 1)) limit e acc enough
+    have correct := compileSeqsFuel_eq_of compileExp expressionEq _ limit e acc result second
+    simpa [first, correct] using second
 
 /-- The complete executable stage agrees with the abstract source-shaped
 pipeline once constant folding supplies the expression correspondence. -/

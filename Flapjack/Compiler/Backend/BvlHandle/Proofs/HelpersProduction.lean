@@ -93,6 +93,54 @@ theorem handleAdjVarsList_eq_map (depth shift : Nat) (xs : List Exp) :
   | nil => simp [handleAdjVarsList]
   | cons x xs ih => simp [handleAdjVarsList, ih]
 
+/-- Zero shift leaves each expression unchanged; used to assemble the source
+mutual expression/list theorem. -/
+private theorem handleAdjVars_zero_expr (x : Exp) (depth : Nat) : handleAdjVars depth 0 x = x := by
+  cases x with
+  | var n => simp [handleAdjVars]
+  | force loc n => simp [handleAdjVars]
+  | ifThenElse x y z => simp [handleAdjVars, handleAdjVars_zero_expr x, handleAdjVars_zero_expr y,
+      handleAdjVars_zero_expr z]
+  | «let» xs body =>
+    simp only [handleAdjVars, handleAdjVarsList_eq_map]
+    have each : xs.map (handleAdjVars depth 0) = xs := by
+      simpa only [List.map_id] using
+        (List.map_congr_left (l := xs) (g := id) (fun x member => handleAdjVars_zero_expr x depth))
+    rw [each, handleAdjVars_zero_expr body]
+  | handle x y => simp [handleAdjVars, handleAdjVars_zero_expr x, handleAdjVars_zero_expr y]
+  | raise x => simp [handleAdjVars, handleAdjVars_zero_expr x]
+  | tick x => simp [handleAdjVars, handleAdjVars_zero_expr x]
+  | op op xs =>
+    simp only [handleAdjVars, handleAdjVarsList_eq_map]
+    have each : xs.map (handleAdjVars depth 0) = xs := by
+      simpa only [List.map_id] using
+        (List.map_congr_left (l := xs) (g := id) (fun x member => handleAdjVars_zero_expr x depth))
+    rw [each]
+  | call ticks dest xs =>
+    simp only [handleAdjVars, handleAdjVarsList_eq_map]
+    have each : xs.map (handleAdjVars depth 0) = xs := by
+      simpa only [List.map_id] using
+        (List.map_congr_left (l := xs) (g := id) (fun x member => handleAdjVars_zero_expr x depth))
+    rw [each]
+termination_by sizeOf x
+decreasing_by
+  all_goals simp_wf
+  all_goals try omega
+  all_goals have h := List.sizeOf_lt_of_mem member
+  all_goals omega
+
+/-- Zero adjustment is identity on expressions and expression lists. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "handle_adj_vars_0"]
+theorem handleAdjVars_zero :
+    (∀ (x : Exp) (l : Nat), handleAdjVars l 0 x = x) ∧
+    (∀ (x : List Exp) (l : Nat), handleAdjVarsList l 0 x = x) := by
+  constructor
+  · exact handleAdjVars_zero_expr
+  · intro xs depth
+    rw [handleAdjVarsList_eq_map]
+    simpa only [List.map_id] using
+      (List.map_congr_left (l := xs) (g := id) (fun x _ => handleAdjVars_zero_expr x depth))
+
 /-- Every successful bounded variable adjustment agrees with HOL. -/
 theorem adjustVarsFuel_eq (fuel depth shift : Nat) (expression result : Exp)
     (run : adjustVarsFuel fuel depth shift expression = some result) :

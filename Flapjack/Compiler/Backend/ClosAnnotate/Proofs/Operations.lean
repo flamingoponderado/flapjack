@@ -23,21 +23,4 @@ def PrimitiveSimulation {C F : Type} (op : ClosLang.Op) : Prop :=
     List.Forall₂ ValueRel values nextValues → StateRel source target →
     ∃ outcome, doApp op nextValues target = outcome ∧ AppResultRel (doApp op values source) outcome
 
-/-- Evaluation of an ordinary operation after its arguments have returned. -/
-theorem evaluate_ordinary_op_values {C F : Type} (trace : BackendCommon.Tra) (op : ClosLang.Op)
-    (args : List ClosLang.Exp) (env : List Value) (source middle : State C F) (values : List Value)
-    (notInstall : op ≠ .install) (notForce : op ≠ .thunkOp .forceThunk)
-    (argsRun : evaluate args env source = (.val values, middle)) :
-    evaluate [.op trace op args] env source =
-      match doApp op values.reverse middle with
-      | .err error => (.err error, middle)
-      | .val (value, last) => (.val [value], last) := by
-  rw [evaluate, fixClock_evaluate, argsRun]
-  cases op with
-  | thunkOp thunk =>
-    cases thunk <;> simp_all <;> rfl
-  | install => exact False.elim (notInstall rfl)
-  | label _ | ffi _ | intOp _ | wordOp _ | blockOp _ | globOp _ | memOp _ =>
-    rfl
-
 end Flapjack.Compiler.Backend.ClosAnnotate

@@ -98,11 +98,6 @@ theorem scanExpr_length (ctx : List ValueType) (loc : Nat) (xs : List Exp) :
     (scanExpr ctx loc xs).length = xs.length := by
   rw [scanExpr_list, scanList_length]
 
-/-- A source-shaped singleton scan cannot be empty. -/
-theorem scanExpr_single_ne_nil (ctx : List ValueType) (loc : Nat) (e : Exp) :
-    scanExpr ctx loc [e] ≠ [] := by
-  simp [scanExpr_single]
-
 mutual
 /-- A single scan preserves the length of the inferred context. -/
 theorem scanSing_context_length (ctx : List ValueType) (loc : Nat) (e : Exp) :

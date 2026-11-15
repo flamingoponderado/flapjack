@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.LetLetEvaluate
 public import Flapjack.Compiler.Backend.BvlHandle.Proofs.CanRaise
+public import Flapjack.Compiler.Backend.BvlHandle.SourceCompile
 
 @[expose] public section
 
@@ -10,9 +11,8 @@ namespace Flapjack.Compiler.Backend.BvlHandle.Proofs
 open Flapjack.Compiler.Backend.DbVars
 open Flapjack.Compiler.Backend.BvlSem
 
-/-- The source-shaped simulation and no-raise guarantee for a compiled
-singleton. This is untagged infrastructure for assembling the HOL theorem;
-the evaluator and indexed environment relation still require source review. -/
+/-- The general simulation and no-raise guarantee for a compiled singleton.
+This is infrastructure for the specialized source compiler theorem. -/
 def compileSingCorrect (limit : Nat) (expression : Bvl.Exp) : Prop :=
   ∀ (C F : Type) (source target extra : List Value) (state : State C F),
     envRel (compileSing limit source.length expression).2.1 source target →
@@ -40,22 +40,44 @@ theorem compileListCorrect_nil (limit : Nat) : compileListCorrect limit [] := by
 /-- Variable compilation preserves evaluation and never raises. -/
 theorem compileSingCorrect_var (limit index : Nat) : compileSingCorrect limit (.var index) := by
   intro C F source target extra state related notType
-  refine ⟨evaluate_compileSing_var limit index source target extra state related notType, ?_⟩
-  intro _ value
-  simp only [evaluate]
-  cases source[index]? <;> simp
+  constructor
+  · by_cases inBounds : index < source.length
+    · have live : hasVar index (compileSing limit source.length (.var index)).2.1 = true := by
+        simp [compileSing, inBounds, hasVar]
+      have lookup := envRel_live_lookup _ source target extra related index inBounds live
+      simp only [compileSing, inBounds, ↓reduceIte, evaluate]
+      rw [lookup]
+    · cases found : source[index]? with
+      | none => simp [evaluate, found] at notType
+      | some value =>
+        have bound := List.getElem?_eq_some_iff.mp found |>.1
+        exact False.elim (inBounds bound)
+  · intro _ value
+    simp only [evaluate]
+    cases source[index]? <;> simp
 
 /-- Force compilation preserves evaluation; its no-raise flag can only be
 true for the out-of-range case, which is excluded by the source premise. -/
 theorem compileSingCorrect_force (limit location index : Nat) :
     compileSingCorrect limit (.force location index) := by
   intro C F source target extra state related notType
-  refine ⟨evaluate_compileSing_force limit location index source target extra state related notType, ?_⟩
-  intro noRaise value
-  by_cases bound : index < source.length
-  · simp [compileSing, bound] at noRaise
-  · have missing : source[index]? = none := List.getElem?_eq_none_iff.mpr (by omega)
-    simp [evaluate, missing] at notType
+  constructor
+  · by_cases inBounds : index < source.length
+    · have live : hasVar index (compileSing limit source.length (.force location index)).2.1 = true := by
+        simp [compileSing, inBounds, hasVar]
+      have lookup := envRel_live_lookup _ source target extra related index inBounds live
+      simp only [compileSing, inBounds, ↓reduceIte, evaluate]
+      rw [lookup]
+    · cases found : source[index]? with
+      | none => simp [evaluate, found] at notType
+      | some value =>
+        have bound := List.getElem?_eq_some_iff.mp found |>.1
+        exact False.elim (inBounds bound)
+  · intro noRaise value
+    by_cases bound : index < source.length
+    · simp [compileSing, bound] at noRaise
+    · have missing : source[index]? = none := List.getElem?_eq_none_iff.mpr (by omega)
+      simp [evaluate, missing] at notType
 
 /-- A tick either times out without raising or inherits both guarantees
 from its body at the decremented clock. -/
@@ -358,107 +380,6 @@ theorem handle_body_safe {C F : Type} (body handler : Bvl.Exp)
     rw [evaluate, fixClock_evaluate, run] at safe
     exact safe rfl
 
-/-- A handler can be discarded when its body is known not to raise. -/
-theorem compileSingCorrect_handle_noRaise (limit : Nat) (body handler : Bvl.Exp)
-    (bodyIH : compileSingCorrect limit body)
-    (C F : Type) (source target extra : List Value) (state : State C F)
-    (flag : (compileSing limit source.length body).2.2.2 = true)
-    (related : envRel (compileSing limit source.length (.handle body handler)).2.1 source target)
-    (notType : (evaluate [.handle body handler] source state).1 ≠ .err (.abort .typeError)) :
-    evaluate [(compileSing limit source.length (.handle body handler)).1] (target ++ extra) state =
-      evaluate [.handle body handler] source state ∧
-    ((compileSing limit source.length (.handle body handler)).2.2.2 = true →
-      ∀ value, (evaluate [.handle body handler] source state).1 ≠ .err (.raise value)) := by
-  generalize compiledEq : compileSing limit source.length body = data
-  obtain ⟨compiled, live, size, noRaise⟩ := data
-  have flag' : noRaise = true := by simpa [compiledEq] using flag
-  simp only [compileSing, compiledEq, flag', ↓reduceIte] at related ⊢
-  have safe := handle_body_safe body handler source state notType
-  have correct := bodyIH C F source target extra state (by simpa [compiledEq] using related) safe
-  have same : evaluate [compiled] (target ++ extra) state = evaluate [body] source state := by
-    simpa [compiledEq] using correct.1
-  have noRaised : ∀ value, (evaluate [body] source state).1 ≠ .err (.raise value) :=
-    correct.2 flag
-  have handlerSame : evaluate [.handle body handler] source state = evaluate [body] source state := by
-    rw [evaluate, fixClock_evaluate]
-    cases run : evaluate [body] source state with
-    | mk result next =>
-      cases result with
-      | val values => simp
-      | err error =>
-        cases error with
-        | abort reason => simp
-        | raise value => exact False.elim (noRaised value (by simp [run]))
-  constructor
-  · exact same.trans handlerSame.symm
-  · intro _ value
-    rw [handlerSame]
-    exact noRaised value
-
-/-- When the body can raise, packing its live variables preserves the body
-run, and the handler simulation applies after extending both environments
-with the raised value. -/
-theorem compileSingCorrect_handle_mayRaise (limit : Nat) (body handler : Bvl.Exp)
-    (bodyIH : compileSingCorrect limit body) (handlerIH : compileSingCorrect limit handler)
-    (C F : Type) (source target extra : List Value) (state : State C F)
-    (flag : (compileSing limit source.length body).2.2.2 = false)
-    (related : envRel (compileSing limit source.length (.handle body handler)).2.1 source target)
-    (notType : (evaluate [.handle body handler] source state).1 ≠ .err (.abort .typeError)) :
-    evaluate [(compileSing limit source.length (.handle body handler)).1] (target ++ extra) state =
-      evaluate [.handle body handler] source state ∧
-    ((compileSing limit source.length (.handle body handler)).2.2.2 = true →
-      ∀ value, (evaluate [.handle body handler] source state).1 ≠ .err (.raise value)) := by
-  generalize bodyEq : compileSing limit source.length body = bodyData
-  obtain ⟨compiledBody, bodyLive, bodySize, bodyFlag⟩ := bodyData
-  have flag' : bodyFlag = false := by simpa [bodyEq] using flag
-  generalize handlerEq : compileSing limit (source.length + 1) handler = handlerData
-  obtain ⟨compiledHandler, handlerLive, handlerSize, handlerFlag⟩ := handlerData
-  simp only [compileSing, bodyEq, flag', Bool.false_eq_true, ↓reduceIte, handlerEq] at related ⊢
-  obtain ⟨bodyRel, handlerRel⟩ := (envRel_mkUnion bodyLive (.shift 1 handlerLive) source target).mp related
-  have safe := handle_body_safe body handler source state notType
-  have bodySimulation : ∀ env suffix, envRel bodyLive source env →
-      evaluate [compiledBody] (env ++ suffix) state = evaluate [body] source state := by
-    intro env suffix rel
-    have correct := bodyIH C F source env suffix state (by simpa [bodyEq] using rel) safe
-    simpa [bodyEq] using correct.1
-  have packedRun : evaluate [letLet source.length (dbToSet bodyLive) compiledBody]
-      (target ++ extra) state = evaluate [body] source state :=
-    evaluate_letLet bodyLive compiledBody source target extra state _ bodySimulation bodyRel
-  cases bodyRun : evaluate [body] source state with
-  | mk result next =>
-    cases result with
-    | val values =>
-      constructor
-      · rw [evaluate, fixClock_evaluate, packedRun, evaluate, fixClock_evaluate, bodyRun]
-      · intro _ value
-        rw [evaluate, fixClock_evaluate, bodyRun]
-        simp
-    | err error =>
-      cases error with
-      | abort reason =>
-        constructor
-        · rw [evaluate, fixClock_evaluate, packedRun, evaluate, fixClock_evaluate, bodyRun]
-        · intro _ value
-          rw [evaluate, fixClock_evaluate, bodyRun]
-          simp
-      | raise raised =>
-        have handlerSafe : (evaluate [handler] (raised :: source) next).1 ≠ .err (.abort .typeError) := by
-          rw [evaluate, fixClock_evaluate, bodyRun] at notType
-          exact notType
-        have extended : envRel handlerLive (raised :: source) (raised :: target) := by
-          simpa using envRel_prepend_shift handlerLive source target [raised] handlerRel
-        have handlerCorrect := handlerIH C F (raised :: source) (raised :: target) extra next
-          (by simpa [handlerEq, Nat.add_comm] using extended) handlerSafe
-        have handlerSame : evaluate [compiledHandler] ((raised :: target) ++ extra) next =
-            evaluate [handler] (raised :: source) next := by
-          simpa [handlerEq, Nat.add_comm] using handlerCorrect.1
-        constructor
-        · rw [evaluate, fixClock_evaluate, packedRun, evaluate, fixClock_evaluate, bodyRun]
-          exact handlerSame
-        · intro flagTrue value
-          rw [evaluate, fixClock_evaluate, bodyRun]
-          exact handlerCorrect.2 (by simpa [handlerEq, Nat.add_comm] using flagTrue) value
-
 /-- Handler compilation preserves evaluation in both the eliminated-handler
 and potentially-raising cases. -/
 theorem compileSingCorrect_handle (limit : Nat) (body handler : Bvl.Exp)
@@ -467,11 +388,82 @@ theorem compileSingCorrect_handle (limit : Nat) (body handler : Bvl.Exp)
   intro C F source target extra state related notType
   cases flag : (compileSing limit source.length body).2.2.2 with
   | false =>
-    exact compileSingCorrect_handle_mayRaise limit body handler bodyIH handlerIH
-      C F source target extra state flag related notType
+    generalize bodyEq : compileSing limit source.length body = bodyData
+    obtain ⟨compiledBody, bodyLive, bodySize, bodyFlag⟩ := bodyData
+    have flag' : bodyFlag = false := by simpa [bodyEq] using flag
+    generalize handlerEq : compileSing limit (source.length + 1) handler = handlerData
+    obtain ⟨compiledHandler, handlerLive, handlerSize, handlerFlag⟩ := handlerData
+    simp only [compileSing, bodyEq, flag', Bool.false_eq_true, ↓reduceIte, handlerEq] at related ⊢
+    obtain ⟨bodyRel, handlerRel⟩ := (envRel_mkUnion bodyLive (.shift 1 handlerLive) source target).mp related
+    have safe := handle_body_safe body handler source state notType
+    have bodySimulation : ∀ env suffix, envRel bodyLive source env →
+        evaluate [compiledBody] (env ++ suffix) state = evaluate [body] source state := by
+      intro env suffix rel
+      have correct := bodyIH C F source env suffix state (by simpa [bodyEq] using rel) safe
+      simpa [bodyEq] using correct.1
+    have packedRun : evaluate [letLet source.length (dbToSet bodyLive) compiledBody]
+        (target ++ extra) state = evaluate [body] source state :=
+      evaluate_letLet bodyLive compiledBody source target extra state _ ⟨bodySimulation, bodyRel⟩
+    cases bodyRun : evaluate [body] source state with
+    | mk result next =>
+      cases result with
+      | val values =>
+        constructor
+        · rw [evaluate, fixClock_evaluate, packedRun, evaluate, fixClock_evaluate, bodyRun]
+        · intro _ value
+          rw [evaluate, fixClock_evaluate, bodyRun]
+          simp
+      | err error =>
+        cases error with
+        | abort reason =>
+          constructor
+          · rw [evaluate, fixClock_evaluate, packedRun, evaluate, fixClock_evaluate, bodyRun]
+          · intro _ value
+            rw [evaluate, fixClock_evaluate, bodyRun]
+            simp
+        | raise raised =>
+          have handlerSafe : (evaluate [handler] (raised :: source) next).1 ≠ .err (.abort .typeError) := by
+            rw [evaluate, fixClock_evaluate, bodyRun] at notType
+            exact notType
+          have extended : envRel handlerLive (raised :: source) (raised :: target) := by
+            simpa using envRel_prepend_shift handlerLive source target [raised] handlerRel
+          have handlerCorrect := handlerIH C F (raised :: source) (raised :: target) extra next
+            (by simpa [handlerEq, Nat.add_comm] using extended) handlerSafe
+          have handlerSame : evaluate [compiledHandler] ((raised :: target) ++ extra) next =
+              evaluate [handler] (raised :: source) next := by
+            simpa [handlerEq, Nat.add_comm] using handlerCorrect.1
+          constructor
+          · rw [evaluate, fixClock_evaluate, packedRun, evaluate, fixClock_evaluate, bodyRun]
+            exact handlerSame
+          · intro flagTrue value
+            rw [evaluate, fixClock_evaluate, bodyRun]
+            exact handlerCorrect.2 (by simpa [handlerEq, Nat.add_comm] using flagTrue) value
   | true =>
-    exact compileSingCorrect_handle_noRaise limit body handler bodyIH
-      C F source target extra state flag related notType
+    generalize compiledEq : compileSing limit source.length body = data
+    obtain ⟨compiled, live, size, noRaise⟩ := data
+    have flag' : noRaise = true := by simpa [compiledEq] using flag
+    simp only [compileSing, compiledEq, flag', ↓reduceIte] at related ⊢
+    have safe := handle_body_safe body handler source state notType
+    have correct := bodyIH C F source target extra state (by simpa [compiledEq] using related) safe
+    have same : evaluate [compiled] (target ++ extra) state = evaluate [body] source state := by
+      simpa [compiledEq] using correct.1
+    have noRaised : ∀ value, (evaluate [body] source state).1 ≠ .err (.raise value) :=
+      correct.2 flag
+    have handlerSame : evaluate [.handle body handler] source state = evaluate [body] source state := by
+      rw [evaluate, fixClock_evaluate]
+      cases run : evaluate [body] source state with
+      | mk result next =>
+        cases result with
+        | val values => simp
+        | err error =>
+          cases error with
+          | abort reason => simp
+          | raise value => exact False.elim (noRaised value (by simp [run]))
+    constructor
+    · exact same.trans handlerSame.symm
+    · intro _ value
+      rw [handlerSame]
+      exact noRaised value
 
 /-- Let compilation composes binding evaluation with the body in the
 extended environment, accounting for the compiled bindings' exact length. -/
@@ -616,5 +608,39 @@ theorem compileListCorrect_all (limit : Nat) (expressions : List Bvl.Exp) :
       (compileListCorrect_all limit tail)
 termination_by sizeOf expressions
 end
+
+namespace CompileCorrectCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+    (∀ s : Flapjack.Compiler.Backend.BvlSem.State C F, State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end CompileCorrectCarrier
+
+/-- The source handler compiler preserves list evaluation and its no-raise guarantee. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "compile_correct" 352
+  (fmap_as_finite_support := [refs])]
+theorem compileCorrect_source {C F : Type} (limit : Nat) (xs : List Bvl.Exp)
+    (env : List Value) (s1 : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (ys : List Bvl.Exp) (res : SemanticPrimitivesHOL.Result (List Value) Value)
+    (s2 : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    ∀ (live : DbVarSet) (size : Nat) (nr : Bool),
+      compile limit env.length xs = (ys, live, size, nr) ∧
+      evaluateTuple (xs, env, s1) = (res, s2) ∧
+      res ≠ .err (.abort .typeError) →
+      evaluateTuple (ys, env, s1) = (res, s2) ∧
+      (nr = true → ∀ value, res ≠ .err (.raise value)) := by
+  intro live size nr ⟨compiled, run, safe⟩
+  simp only [evaluateTuple] at run ⊢
+  have sourceSafe : (evaluate xs env s1).1 ≠ .err (.abort .typeError) := by
+    simpa [run] using safe
+  obtain ⟨evaluation, noRaise⟩ := compileListCorrect_all limit xs C F env env [] s1
+    (envRel_refl _ env) sourceSafe
+  have compiled' : compileList limit env.length xs = (ys, live, size, nr) := compiled
+  rw [compiled'] at evaluation noRaise
+  constructor
+  · simpa [run] using evaluation
+  · intro flag value
+    simpa [run] using noRaise flag value
 
 end Flapjack.Compiler.Backend.BvlHandle.Proofs

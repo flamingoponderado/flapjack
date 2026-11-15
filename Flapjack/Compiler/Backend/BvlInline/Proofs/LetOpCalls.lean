@@ -21,13 +21,9 @@ theorem evaluate_letOpTransform {C F : Type} (splitSeq : Bool) (limit : Nat)
     (run : evaluate [letOpSing body] env state = (result, final))
     (notType : result ≠ .err (.abort .typeError)) :
     evaluate [letOpTransform splitSeq limit env.length body] env state = (result, final) := by
-  obtain ⟨output, compiled, evaluation⟩ := BvlHandle.Proofs.evaluate_compileAnyFuel
-    0 splitSeq limit (letOpSing body) env state final result run notType
-  have source := BvlHandle.compileAnyFuel_eq_compileAny 0 splitSeq limit env.length (letOpSing body)
-  rw [compiled] at source
-  have same : output = letOpTransform splitSeq limit env.length body := by
-    simpa [letOpTransform] using source
-  simpa [same] using evaluation
+  simpa [letOpTransform, evaluateTuple] using
+    BvlHandle.Proofs.compileAny_correct (letOpSing body) env state result final
+      env.length splitSeq limit ⟨run, notType, rfl⟩
 
 /-- Setting both clocks to zero preserves a mapped state relation. -/
 theorem mappedStateRel_zeroClock {C F : Type} (transform : Nat → Bvl.Exp → Bvl.Exp)
@@ -193,7 +189,11 @@ theorem letOpSimulation_all {C F : Type} (splitSeq : Bool) (limit : Nat)
       h => smaller₀ es' s' h environment'
   intro environment
   cases es with
-  | nil => exact letOpSimulation_nil splitSeq limit environment s
+  | nil =>
+    intro result final target related run _
+    simp [evaluate] at run
+    rcases run with ⟨rfl, rfl⟩
+    exact ⟨target, by simp [letOp, letOpList, evaluate], related⟩
   | cons first rest =>
     cases rest with
     | cons second tail =>
@@ -209,7 +209,11 @@ theorem letOpSimulation_all {C F : Type} (splitSeq : Bool) (limit : Nat)
         omega
     | nil =>
       cases first with
-      | var index => exact letOpSimulation_var splitSeq limit index environment s
+      | var index =>
+        intro result final target related run _
+        cases found : environment[index]? <;> simp [evaluate, found] at run
+        all_goals rcases run with ⟨rfl, rfl⟩
+        all_goals exact ⟨target, by simp [letOp, letOpList, letOpOne, evaluate, found], related⟩
       | force location index =>
         apply letOpSimulation_force splitSeq limit location index environment s
         intro body values next smaller
@@ -269,39 +273,27 @@ theorem letOpSimulation_all {C F : Type} (splitSeq : Bool) (limit : Nat)
             simp only [expsWeight, expWeight] at ⊢
             omega
 
-/-- The combined transformation preserves a non-type-error singleton run
-between mapped states, including calls and dynamic code installation. -/
-theorem evaluate_letOpTransform_mapped {C F : Type} (splitSeq : Bool) (limit : Nat)
-    (body : Bvl.Exp) (env : List Value) (source target final : State C F)
-    (result : Result (List Value) Value)
-    (related : mappedStateRel (letOpTransform splitSeq limit) source target)
-    (run : evaluate [body] env source = (result, final))
-    (notType : result ≠ .err (.abort .typeError)) :
-    ∃ targetFinal, evaluate [letOpTransform splitSeq limit env.length body] env target = (result, targetFinal) ∧
-      mappedStateRel (letOpTransform splitSeq limit) final targetFinal := by
-  obtain ⟨targetFinal, transformed, finalRel⟩ :=
-    letOpSimulation_all splitSeq limit [body] env source result final target related run notType
-  have optimized : evaluate [letOpSing body] env target = (result, targetFinal) := by
-    simpa [letOp, letOpList, letOpSing] using transformed
-  exact ⟨targetFinal, evaluate_letOpTransform splitSeq limit body env target targetFinal result optimized notType, finalRel⟩
+namespace LetEvaluationCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+      (∀ s : BvlSem.State C F, State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end LetEvaluationCarrier
 
-/-- Every combined-pass code body satisfies the variable bound and handler
-shape required by BVL-to-BVI. -/
-theorem letOpTransform_wellFormed (splitSeq : Bool) (limit arity : Nat) (body : Bvl.Exp) :
-    BvlProps.bVarBound arity [letOpTransform splitSeq limit arity body] ∧
-      BvlHandle.Proofs.handleOk [letOpTransform splitSeq limit arity body] := by
-  obtain ⟨bounded, boundRun, bound⟩ :=
-    BvlHandle.Proofs.compileAnyFuel_varBound 0 splitSeq limit arity (letOpSing body)
-  obtain ⟨shaped, shapeRun, shape⟩ :=
-    BvlHandle.Proofs.compileAnyFuel_handleOk 0 splitSeq limit arity (letOpSing body)
-  have actual := BvlHandle.compileAnyFuel_eq_compileAny 0 splitSeq limit arity (letOpSing body)
-  have boundEq : bounded = letOpTransform splitSeq limit arity body := by
-    rw [boundRun] at actual
-    simpa [letOpTransform] using actual
-  have shapeEq : shaped = letOpTransform splitSeq limit arity body := by
-    have actual := BvlHandle.compileAnyFuel_eq_compileAny 0 splitSeq limit arity (letOpSing body)
-    rw [shapeRun] at actual
-    simpa [letOpTransform] using actual
-  simpa [boundEq, shapeEq] using And.intro bound shape
+/-- Let optimization simulates every source evaluation that is not a type error. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_inlineProofScript.sml" "evaluate_let_op"
+  (fmap_as_finite_support := [refs])]
+theorem evaluateLetOp {C F : Type} (expressions : List Bvl.Exp) (env : List Value)
+    (source : Flapjack.Compiler.Backend.BvlSem.State C F) (result : Result (List Value) Value)
+    (target sourceFinal : Flapjack.Compiler.Backend.BvlSem.State C F) (splitSeq : Bool) (limit : Nat)
+    (premises : letStateRel splitSeq limit source target ∧
+      evaluateTuple (expressions, env, source) = (result, sourceFinal) ∧
+      result ≠ .err (.abort .typeError)) :
+    ∃ targetFinal, evaluateTuple (letOp expressions, env, target) = (result, targetFinal) ∧
+      letStateRel splitSeq limit sourceFinal targetFinal := by
+  obtain ⟨related, run, safe⟩ := premises
+  exact letOpSimulation_all splitSeq limit expressions env source result sourceFinal target
+    related run safe
 
 end Flapjack.Compiler.Backend.BvlInline.Proofs

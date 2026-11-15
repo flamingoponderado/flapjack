@@ -46,6 +46,7 @@ theorem simulation_install {C F : Type} (arguments : List Bvl.Exp)
         rcases argsCompile : compileListSource n arguments with ⟨argsCode, argsAux, finalName⟩
         have valuesLength := BvlSem.evaluate_length arguments env source middle values argsRun
         have codeLength := compileListSource_length n arguments
+        simp only [compileExpsSource_eq_list] at codeLength
         rw [argsCompile] at codeLength
         change argsCode.length = arguments.length at codeLength
         have twoArgs : argsCode.length = 2 := by simp [valuesEq] at valuesLength; omega
@@ -65,8 +66,8 @@ theorem simulation_install {C F : Type} (arguments : List Bvl.Exp)
         have lengthCode : sptLookup listLengthLocation targetNext.code = some listLengthCode := relatedNext.2.2.2.2.2.2.2.2.1
         obtain ⟨extra, bodyRun⟩ := evaluate_installBody (adjustBv newRelocate byteValue) (adjustBv newRelocate wordValue)
           targetBytes targetWords (env.map (adjustBv newRelocate)) targetNext _ (adjustBv newRelocate result)
-          (valueToBytes_adjust_some newRelocate byteValue targetBytes decodedBytes)
-          (valueToWords_adjust_some newRelocate wordValue targetWords decodedWords) lengthCode targetApplication
+          (valueToBytes_adjust_some newRelocate byteValue targetBytes ((BvlSem.valueToBytes_eq_some _ _).1 decodedBytes))
+          (valueToWords_adjust_some newRelocate wordValue targetWords ((BvlSem.valueToWords_eq_some _ _).1 decodedWords)) lengthCode targetApplication
         have shifted := BviProps.evaluate_inv_clock argsCode (env.map (adjustBv newRelocate))
           (BviProps.incClock clock target) targetNext (.val (values.map (adjustBv newRelocate))) extra
           (by simpa [mapSimulationResult] using targetArgs) (by simp)

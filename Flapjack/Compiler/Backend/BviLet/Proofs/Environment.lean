@@ -1,17 +1,32 @@
 module
 
 public import Flapjack.Compiler.Backend.BviLet.SourceSing
-public import Flapjack.Compiler.Backend.Semantics.BviSem.Evaluate
+public import Flapjack.Compiler.Backend.Semantics.BviSem.EvaluateList
+public import Flapjack.Misc.ListEl
 
 @[expose] public section
 
 /-! Environment invariants for the BVI let-propagation simulation. -/
 namespace Flapjack.Compiler.Backend.BviLet.Proofs
 
+namespace DeleteVarCarrier
+/-- The BVI reference state and its finite-support representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end DeleteVarCarrier
+
+/-- The original variable relation retains its two independently typed,
+unused arguments. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "v_rel_def"]
+def vRel {α β γ : Type} (a : Nat) (x : α) (_y : β) (_xs : γ) (ys : List α) : Prop :=
+  ys[a]? = some x
+
 /-- The displacement at each source position selects the same value in the
 corresponding suffix of the optimized environment. After the displacements
-end, the source is a suffix of the optimized environment. This infrastructure
-is untagged pending comparison of the inferred HOL polymorphic types. -/
+end, the source is a suffix of the optimized environment. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "env_rel_def"]
 def envRel {α : Type} : List Nat → Nat → List α → List α → Prop
   | [], d, source, target => source = target.drop d
   | a :: rest, d, x :: source, y :: target =>
@@ -47,7 +62,46 @@ theorem envRel_lookup {α : Type} (offsets : List Nat) (d : Nat)
           rw [Nat.succ_add, List.getElem?_cons_succ]
           exact ih source target related.2 index lookup
 
+/-- An explicitly mapped environment index satisfies the original variable
+relation on the corresponding suffixes. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "env_rel_LOOKUP_SOME"]
+theorem envRel_lookupSome {α : Type} [Nonempty α] (env env2 : List α) (ax : List Nat)
+    (x n d : Nat) (h : envRel ax d env env2 ∧ ax[n]? = some x) :
+    vRel x (Flapjack.holEl n env) (Flapjack.holEl n env2) (env.drop n) (env2.drop n) := by
+  induction ax generalizing env env2 n with
+  | nil => simp at h
+  | cons a rest ih =>
+    cases env with
+    | nil => simp [envRel] at h
+    | cons v env =>
+      cases env2 with
+      | nil => simp [envRel] at h
+      | cons w env2 =>
+        simp only [envRel] at h
+        cases n with
+        | zero =>
+          simp only [List.getElem?_cons_zero, Option.some.injEq] at h
+          rcases h with ⟨⟨look, _⟩, rfl⟩
+          simpa [vRel, Flapjack.holEl, Flapjack.holHd] using look
+        | succ n =>
+          simp only [List.getElem?_cons_succ] at h
+          simpa [vRel, Flapjack.holEl] using ih env env2 n ⟨h.1.2, h.2⟩
+
+/-- An unmapped in-bounds index is found at the source index plus the
+environment displacement. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "env_rel_LLOOKUP_NONE"]
+theorem envRel_lookupNone {α : Type} [Nonempty α] (ax : List Nat) (env env2 : List α) (n d : Nat)
+    (h : envRel ax d env env2 ∧ ax[n]? = none ∧ n < env.length) :
+    n + d < env2.length ∧ Flapjack.holEl (n + d) env2 = Flapjack.holEl n env := by
+  have sourceLookup : env[n]? = some (Flapjack.holEl n env) := by
+    rw [List.getElem?_eq_getElem h.2.2, Flapjack.holEl_eq_getElem n env h.2.2]
+  have targetLookup := envRel_lookup ax d env env2 h.1 n (Flapjack.holEl n env) sourceLookup
+  simp only [h.2.1, Option.getD_none] at targetLookup
+  obtain ⟨bound, valueEq⟩ := List.getElem?_eq_some_iff.mp targetLookup
+  exact ⟨bound, (Flapjack.holEl_eq_getElem (n + d) env2 bound).trans valueEq⟩
+
 /-- Prefixing matching values gives zero displacements for the new entries. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "env_rel_REPLICATE_0"]
 theorem envRel_replicate {α : Type} (values : List α) (offsets : List Nat)
     (d : Nat) (source target : List α) (related : envRel offsets d source target) :
     envRel (List.replicate values.length 0 ++ offsets) d (values ++ source)
@@ -79,8 +133,9 @@ theorem envRel_shiftOne {α : Type} (offsets : List Nat) (d : Nat)
         · exact ih source target related.2 y
 
 /-- A target-only prefix shifts every displacement by its length. -/
-theorem envRel_shift {α : Type} (added : List α) (offsets : List Nat) (d : Nat)
-    (source target : List α) (related : envRel offsets d source target) :
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "env_rel_MAP"]
+theorem envRel_shift {α : Type} (offsets : List Nat) (source target : List α)
+    (d : Nat) (added : List α) (related : envRel offsets d source target) :
     envRel (offsets.map (added.length + ·)) (d + added.length) source
       (added ++ target) := by
   induction added with
@@ -92,6 +147,7 @@ theorem envRel_shift {α : Type} (added : List α) (offsets : List Nat) (d : Nat
       using shifted
 
 /-- Related source environments are no longer than their targets. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "env_rel_length"]
 theorem envRel_length {α : Type} (offsets : List Nat) (d : Nat)
     (source target : List α) (related : envRel offsets d source target) :
     source.length ≤ target.length := by
@@ -128,14 +184,19 @@ theorem evaluate_compile_var {C F : Type} (offsets : List Nat) (d index : Nat)
     rcases run with ⟨rfl, rfl⟩
     simp [compileSing, BviSem.evaluate, targetLookup]
 
-/-- Removing a variable expression preserves a non-type-error singleton
-failure. Untagged until BVI evaluation is reviewed. -/
+/-- Removing a variable expression preserves a non-type-error singleton failure. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_letProofScript.sml" "evaluate_delete_var_Rerr_SING"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_deleteVar_error {C F : Type} (expression : Bvi.Exp)
-    (env : List BvlSem.Value) (state next : BviSem.BviState C F)
+    (state next : BviSem.BviState C F)
     (error : Flapjack.SemanticPrimitivesHOL.ErrorResult BviSem.ExnOrRet)
-    (run : BviSem.evaluate [expression] env state = (.err error, next))
-    (notTypeError : error ≠ .abort .typeError) :
-    BviSem.evaluate [deleteVar expression] env state = (.err error, next) := by
+    (env : List BvlSem.Value)
+    (premises : BviSem.evaluateTuple ([expression], env, state) = (.err error, next) ∧
+      error ≠ .abort .typeError) :
+    BviSem.evaluateTuple ([deleteVar expression], env, state) = (.err error, next) := by
+  obtain ⟨run, notTypeError⟩ := premises
+  change BviSem.evaluate [expression] env state = (.err error, next) at run
+  change BviSem.evaluate [deleteVar expression] env state = (.err error, next)
   cases expression with
   | var index =>
     cases lookup : env[index]? with

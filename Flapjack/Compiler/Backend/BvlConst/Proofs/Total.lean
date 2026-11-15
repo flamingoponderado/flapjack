@@ -61,14 +61,4 @@ theorem compileFuel_succeeds (fuel : Nat) (env : List (Option Exp)) (e : Exp)
         intro x hx; apply ih; have := member_budget_lt xs x hx; omega)
       exact ⟨_, by simp [compileFuel, hy]; rfl⟩
 
-/-- The executable constant-folding retry cannot exhaust traversal fuel. -/
-theorem compileBounded_succeeds (fuel : Nat) (env : List (Option Exp)) (e : Exp) :
-    ∃ result, compileBounded fuel env e = some result := by
-  cases h : compileFuel fuel env e with
-  | some result => exact ⟨result, by simp [compileBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := compileFuel_succeeds (max fuel (expBudget e + 1)) env e bound
-    exact ⟨result, by simp [compileBounded, h, done]⟩
-
 end Flapjack.Compiler.Backend.BvlConst

@@ -116,22 +116,6 @@ theorem evaluate_makeSpace_names_locals {C F : Type} (amount : Nat) (roots : Lis
       rfl
     · simp at cut
 
-/-- A projected variable correspondence survives a cut that keeps all of
-its names. The projection can have an independent result type. -/
-theorem varCorr_cut_namesOfList {α β : Type} (f : α → β) (kept : List Nat) (env : Spt α)
-    (names : List Nat) (values : List β)
-    (related : DataProps.varCorr values names (sptMap f env))
-    (included : ∀ key ∈ names, key ∈ kept) :
-    DataProps.varCorr values names (sptMap f (sptMkWf (sptInter env (namesOfList kept)))) := by
-  induction related with
-  | nil => constructor
-  | @cons name value names values lookup rest ih =>
-    constructor
-    · simp only [DataSem.getVar, sptLookup_sptMap, lookup_cut_namesOfList]
-      rw [if_pos (included name (by simp))]
-      simpa [DataSem.getVar, sptLookup_sptMap] using lookup
-    · exact ih (fun key member => included key (by simp [member]))
-
 /-- A projected correspondence is preserved when each of its named lookups
 is unchanged. -/
 theorem varCorr_of_lookup_eq {α β : Type} (f : α → β) (before after : Spt α)
@@ -146,15 +130,6 @@ theorem varCorr_of_lookup_eq {α β : Type} (f : α → β) (before after : Spt 
       rw [same name (by simp)]
       exact lookup
     · exact ih (fun key member => same key (by simp [member]))
-
-/-- If the variable correspondence's names are live, a cut preserves the
-entire corresponding read, in the original order. -/
-theorem getVars_cut_namesOfList {α β : Type} (f : α → β) (kept : List Nat) (env : Spt α)
-    (names : List Nat) (values : List β)
-    (related : DataProps.varCorr values names (sptMap f env))
-    (included : ∀ key ∈ names, key ∈ kept) :
-    DataSem.getVars names (sptMap f (sptMkWf (sptInter env (namesOfList kept)))) = some values :=
-  DataProps.getVars_thm names values _ (varCorr_cut_namesOfList f kept env names values related included)
 
 /-- A successful unprojected read is unchanged when the cut retains every
 requested name. -/
@@ -179,24 +154,6 @@ theorem getVars_cut_exact {α : Type} (kept : List Nat) (env : Spt α)
         subst values
         have restRead := ih tail rest (fun key member => included key (by simp [member]))
         simp [restRead]
-
-/-- A successful variable-list read produces one value for each name. -/
-theorem getVars_length {α : Type} (names : List Nat) (env : Spt α) (values : List α)
-    (read : DataSem.getVars names env = some values) : values.length = names.length := by
-  induction names generalizing values with
-  | nil => simpa [DataSem.getVars] using read.symm
-  | cons name names ih =>
-    simp only [DataSem.getVars] at read
-    cases found : DataSem.getVar name env with
-    | none => simp [found] at read
-    | some value =>
-      simp only [found] at read
-      cases rest : DataSem.getVars names env with
-      | none => simp [rest] at read
-      | some tail =>
-        simp [rest] at read
-        subst values
-        simp [ih tail rest]
 
 /-- Every name in a successful variable-list read is present in the tree. -/
 theorem getVars_present {α : Type} (names : List Nat) (env : Spt α) (values : List α)

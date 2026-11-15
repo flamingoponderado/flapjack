@@ -23,11 +23,6 @@ evaluator. This is proof infrastructure, not a separate HOL declaration. -/
 noncomputable def headValue (values : List Value) : Value :=
   @Flapjack.holHd Value ⟨unitValue⟩ values
 
-/-- Unfold the evaluator's private head wrapper to the shared HOL head model.
-This is Flapjack proof infrastructure, not a separate HOL declaration. -/
-theorem headValue_eq_holHd (values : List Value) :
-    headValue values = @Flapjack.holHd Value ⟨unitValue⟩ values := rfl
-
 @[simp] theorem headValue_cons (value : Value) (tail : List Value) :
     headValue (value :: tail) = value := rfl
 

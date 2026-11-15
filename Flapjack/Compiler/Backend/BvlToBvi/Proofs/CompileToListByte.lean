@@ -18,7 +18,12 @@ theorem evaluate_toListByteBody {C F : Type} (bytes : List (BitVec 8))
       [.op (.blockOp (.cons 0)) [], .op (.memOp .lengthByte) [.var 0], .var 0] none]
       (.refPtr flag ptr :: env) (BviProps.incClock clock state) =
       (.val [BvlSem.listToValue (bytes.map (fun b => .number b.toNat))], state) := by
-  obtain ⟨clock, stubRun⟩ := evaluate_toListByte bytes [] ptr flag mutableRef state (by simpa using lookup) code
+  obtain ⟨clock, sourceRun⟩ := evaluate_toListByte bytes [] ptr state flag mutableRef ⟨code, by simpa using lookup⟩
+  have stubRun : BviSem.evaluate [toListByteCode.2]
+      [BvlSem.listToValue ([] : List Value), .number bytes.length, .refPtr flag ptr]
+      (BviProps.incClock clock state) =
+        (.val [BvlSem.listToValue (bytes.map (fun b => .number b.toNat))], state) := by
+    simpa [updateEq_existing state.refs ptr (.byteArray mutableRef bytes) lookup] using sourceRun
   refine ⟨clock + 1, ?_⟩
   let start := BviProps.incClock (clock + 1) state
   let input : List Value := .refPtr flag ptr :: env
@@ -106,6 +111,7 @@ theorem simulation_toListByte {C F : Type} (arguments : List Bvl.Exp)
         rcases argsCompile : compileListSource n arguments with ⟨argsCode, argsAux, finalName⟩
         have valuesLength := BvlSem.evaluate_length arguments env source middle values argsRun
         have codeLength := compileListSource_length n arguments
+        simp only [compileExpsSource_eq_list] at codeLength
         rw [argsCompile] at codeLength
         have codeNonempty : argsCode ≠ [] := by intro eq; simp [eq, valuesEq] at codeLength valuesLength; omega
         have lowered : compileOp (.memOp .toListByte) argsCode =
@@ -132,6 +138,6 @@ theorem simulation_toListByte {C F : Type} (arguments : List Bvl.Exp)
         refine ⟨targetNext, midRelocate, extra + clock, ?_, relatedNext, envEq, refsEq⟩
         rw [BviSem.evaluate, BviSem.fixClock_evaluate, shifted]
         simp only [valuesEq, List.map_cons, List.map_nil, List.cons_append, List.nil_append, mapSimulationResult, adjustBv]
-        simpa [listToValue_adjust, List.map_map, Function.comp_def, adjustBv] using bodyRun
+        simpa [← listToValue_adjust, List.map_map, Function.comp_def, adjustBv] using bodyRun
 
 end Flapjack.Compiler.Backend.BvlToBvi.Proofs

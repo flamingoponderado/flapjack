@@ -84,10 +84,10 @@ namespace Flapjack.Test.FlatElim
 open Flapjack Flapjack.Compiler.Backend.FlatLang Flapjack.Compiler.Backend.FlatElim
 open Flapjack.Basis.Pure.MlString
 
-private def lit : Exp := .lit .none (.intLit 1)
-private def get1 : Exp := .app .none (.globalVarLookup 1) []
-private def set2 : Exp := .app .none (.globalVarInit 2) [get1]
-private def eval : Exp := .app .none (.src .eval) []
+private def lit : Flapjack.Compiler.Backend.FlatLang.Exp := .lit .none (.intLit 1)
+private def get1 : Flapjack.Compiler.Backend.FlatLang.Exp := .app .none (.globalVarLookup 1) []
+private def set2 : Flapjack.Compiler.Backend.FlatLang.Exp := .app .none (.globalVarInit 2) [get1]
+private def eval : Flapjack.Compiler.Backend.FlatLang.Exp := .app .none (.src .eval) []
 open Flapjack.Test.CakeMLFlatOracle
 
 -- Original HOL captures use independent Nat and Bool root payloads.
@@ -100,7 +100,7 @@ open Flapjack.Test.CakeMLFlatOracle
 
 -- Captured by flat_elim_closure_probe: both function bodies and handler
 -- branches contribute global accesses, while Eval is detected recursively.
-private def nestedAnalysis : Exp :=
+private def nestedAnalysis : Flapjack.Compiler.Backend.FlatLang.Exp :=
   .letrec (ofString "group")
     [(ofString "f", ofString "x", .app .none (.globalVarInit 1)
       [.app .none (.globalVarLookup 4) []])]
@@ -121,14 +121,14 @@ private def nestedAnalysis : Exp :=
 #guard (sptLookup 1 (analyseExp set2).1).isSome
 
 -- Function bodies are hidden and pure, but still scanned for dependencies and Eval.
-private def function : Exp := .fn (ofString "f") (ofString "x")
+private def function : Flapjack.Compiler.Backend.FlatLang.Exp := .fn (ofString "f") (ofString "x")
   (.let_ .none none set2 eval)
 #guard isPure function && isHidden function && hasEval function
 #guard (sptLookup 2 (findLoc function)).isSome
 #guard (sptLookup 1 (findLookups function)).isSome
 
 -- A pure assignment can be removed unless its location is reachable.
-private def pureSet : Exp := .app .none (.globalVarInit 2) [lit]
+private def pureSet : Flapjack.Compiler.Backend.FlatLang.Exp := .app .none (.globalVarInit 2) [lit]
 #guard isPure pureSet == pure_init
 #guard isHidden pureSet == hidden_init
 #guard keep (.ln : NumSet) pureSet == keep_empty
@@ -230,7 +230,8 @@ example : Flapjack.Compiler.Backend.FlatToClos.compile []
 #guard compile_nop
 example : Flapjack.Compiler.Backend.FlatToClos.compileProg [] =
     [Flapjack.Compiler.Backend.ClosInterp.compileInit false] := by
-  simp only [compileProg, compileDecs, compile, Compiler.Backend.FlatToClos.compileExps]
+  simp only [Compiler.Backend.FlatToClos.compileProg, compileDecs, compile,
+    Compiler.Backend.FlatToClos.compileExps]
   rfl
 #guard closure_empty_program
 #guard Flapjack.Compiler.Backend.ClosLang.hasInstallList

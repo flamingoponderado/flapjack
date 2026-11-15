@@ -10,32 +10,6 @@ The proof-side evaluator and carriers await HOL correspondence review. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
 open Flapjack.SemanticPrimitivesHOL
 
-/-- States related before installing the interpreter differ only in their
-compiler callback and oracle. -/
-theorem stateRel1_replaceCompiler {C F : Type} (source target : ClosSem.State C F)
-    (related : StateRel1 source target) :
-    source = { target with compile := source.compile, compileOracle := source.compileOracle } := by
-  rcases related with ⟨_, sourceCode, targetCode, maxEq, _, clockEq, ffiEq, globalsEq, refsEq, _, _⟩
-  cases source
-  cases target
-  simp_all
-
-/-- Primitive errors agree across the no-install state relation. -/
-theorem doApp_noInstall_error {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
-    (source target : ClosSem.State C F) (error : ErrorResult ClosSem.Value)
-    (related : StateRelNoInstall source target) (run : ClosSem.doApp op args source = .err error) :
-    ClosSem.doApp op args target = .err error := by
-  have sourceEq := stateRel1_replaceCompiler source target related.1
-  rw [sourceEq, doApp_replaceCompiler] at run
-  cases targetRun : ClosSem.doApp op args target with
-  | err targetError =>
-    simp [targetRun, replaceCompilerResult] at run
-    cases run
-    rfl
-  | val pair =>
-    rcases pair with ⟨value, next⟩
-    simp [targetRun, replaceCompilerResult] at run
-
 /-- Successful ordinary primitives agree across the no-install relation,
 produce a safe value, and preserve that relation. -/
 theorem doApp_noInstall_relation {C F : Type} (op : ClosLang.Op) (args : List ClosSem.Value)
@@ -98,12 +72,12 @@ theorem evaluate_ordinaryOp_noInstall_relation_step {C F : Type} (trace : Backen
       | err error =>
         simp [appRun] at run
         rcases run with ⟨rfl, rfl⟩
-        have targetApp := doApp_noInstall_error op arguments.reverse sourceLast targetLast error lastRel appRun
+        have targetApp := doApp_error_stateRel op arguments.reverse sourceLast targetLast error lastRel.1 appRun
         refine ⟨targetLast, ?_, lastRel, ?_⟩
         · rw [ClosSem.evaluate_ordinaryOp_eq trace op args env target notInstall notForce, targetArgs]
           simp [targetApp]
         · cases error with
-          | raise value => exact False.elim (doApp_not_raise op arguments.reverse sourceLast value appRun)
+          | raise value => exact False.elim (ClosSem.doApp_not_raise op arguments.reverse sourceLast value appRun)
           | abort _ => trivial
       | val pair =>
         rcases pair with ⟨value, final⟩

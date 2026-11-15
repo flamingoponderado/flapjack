@@ -4,6 +4,8 @@ public import Flapjack.Compiler.Backend.ClosMti.Proofs.TotalView
 public import Flapjack.Compiler.Backend.ClosMti.Proofs.CollectArgs
 public import Flapjack.Compiler.Backend.Semantics.ClosSem
 public import Flapjack.Compiler.Backend.Semantics.ClosProps.DecodeRelations
+public import Flapjack.SemanticPrimitivesProps.ResultRelation
+public import Flapjack.Misc.Option.Rel
 public import Mathlib.Data.List.Forall2
 
 @[expose] public section
@@ -12,18 +14,19 @@ public import Mathlib.Data.List.Forall2
 namespace Flapjack.Compiler.Backend.ClosMti
 open ClosLang ClosSem
 
+/-- A result related to a successful result is itself successful with related values. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "result_rel_Rval2"]
+theorem resultRel_val_right {A B C D : Type} (values : A → B → Prop)
+    (errors : C → D → Prop) (result : Flapjack.SemanticPrimitivesHOL.Result A C) (value : B) :
+    Flapjack.SemanticPrimitivesProps.resultRel values errors result (.val value) ↔
+      ∃ source, result = .val source ∧ values source value := by
+  cases result <;> simp [Flapjack.SemanticPrimitivesProps.resultRel]
+
 /-- Source expressions satisfy the unary invariant and transform to the
 target expressions under multi-argument introduction. -/
 @[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "code_rel_def"]
 def CodeRel (maxApp : Nat) (source target : List ClosLang.Exp) : Prop :=
   (∀ e ∈ source, ClosProps.noMti e) ∧ target = introList maxApp source
-
-/-- The source relation is equivalent to successful execution of the pass at
-any initial fuel. This execution connection has no separate HOL original. -/
-theorem codeRel_iff_executed (fuel maxApp : Nat) (source target : List ClosLang.Exp) :
-    CodeRel maxApp source target ↔
-      (∀ e ∈ source, ClosProps.noMti e) ∧ compileFuel fuel true maxApp source = some target := by
-  simp [CodeRel, compileFuel_introList, eq_comm]
 
 /-- Relate a unary source function to a multi-argument target function. -/
 @[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "f_rel_def"]
@@ -81,6 +84,13 @@ def ValueRelOpt (maxApp : Nat) : Option Value → Option Value → Prop
   | some left, some right => ValueRel maxApp left right
   | _, _ => False
 
+/-- Optional values use the standard lifting of the value relation. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "v_rel_opt_thm"]
+theorem valueRelOpt_eq_optionRel (maxApp : Nat) :
+    ValueRelOpt maxApp = Flapjack.optionRel (ValueRel maxApp) := by
+  funext left right
+  cases left <;> cases right <;> rfl
+
 /-- References preserve byte arrays and thunk modes, while their stored values
 follow `ValueRel`. -/
 @[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "ref_rel"]
@@ -91,6 +101,26 @@ inductive RefRel (maxApp : Nat) : Ref Value → Ref Value → Prop where
   | thunk (mode : AstHOL.ThunkMode) (left right : Value) :
       ValueRel maxApp left right → RefRel maxApp (.thunk mode left) (.thunk mode right)
 
+/-- Characterize related value arrays, byte arrays, and thunks. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "ref_rel_simps"]
+theorem refRel_simps (maxApp : Nat) (vs : List Value) (x : Ref Value)
+    (bytes : List (BitVec 8)) (mode : AstHOL.ThunkMode) (v : Value) :
+    (RefRel maxApp (.valueArray vs) x ↔
+      ∃ ys, x = .valueArray ys ∧ List.Forall₂ (ValueRel maxApp) vs ys) ∧
+    (RefRel maxApp (.byteArray bytes) x ↔ x = .byteArray bytes) ∧
+    (RefRel maxApp (.thunk mode v) x ↔
+      ∃ w, x = .thunk mode w ∧ ValueRel maxApp v w) := by
+  refine ⟨?_, ?_, ?_⟩
+  · constructor
+    · intro h; cases h with | valueArray _ ys rel => exact ⟨ys, rfl, rel⟩
+    · rintro ⟨ys, rfl, rel⟩; exact .valueArray vs ys rel
+  · constructor
+    · intro h; cases h; rfl
+    · intro h; subst x; exact .byteArray bytes
+  · constructor
+    · intro h; cases h with | thunk _ _ w rel => exact ⟨w, rfl, rel⟩
+    · rintro ⟨w, rfl, rel⟩; exact .thunk mode v w rel
+
 /-- Related source and target code have the same number of expressions. -/
 @[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "code_rel_IMP_LENGTH"]
 theorem codeRel_length {maxApp : Nat} {source target : List ClosLang.Exp}
@@ -98,10 +128,12 @@ theorem codeRel_length {maxApp : Nat} {source target : List ClosLang.Exp}
   rw [related.2]
   exact introList_length maxApp source
 
-/-- The executed code relation splits over matching list heads. -/
-theorem codeRel_cons {maxApp : Nat} (x y : ClosLang.Exp) (xs ys : List ClosLang.Exp) :
-    CodeRel maxApp (x :: xs) (y :: ys) ↔
-      CodeRel maxApp [x] [y] ∧ CodeRel maxApp xs ys := by
+/-- Related code lists with at least two expressions split at their heads. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "code_rel_CONS_CONS"]
+theorem codeRel_cons_cons (maxApp : Nat) (x1 x2 : ClosLang.Exp) (xs : List ClosLang.Exp)
+    (y1 y2 : ClosLang.Exp) (ys : List ClosLang.Exp) :
+    CodeRel maxApp (x1 :: x2 :: xs) (y1 :: y2 :: ys) ↔
+      CodeRel maxApp [x1] [y1] ∧ CodeRel maxApp (x2 :: xs) (y2 :: ys) := by
   simp [CodeRel, introList, and_assoc, and_left_comm, and_comm]
 
 /-- The multi-argument value relation meets the generic simple-value
@@ -121,10 +153,38 @@ theorem simpleValRel (maxApp : Nat) : ClosProps.simpleValRel (ValueRel maxApp) :
   · intro body arity env args loc x h; cases h; trivial
   · intro index funs env args loc x h; cases h <;> trivial
 
+/-- Related values have identical byte-decoder results. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "v_rel_IMP_v_to_bytes"]
+theorem valueRel_toBytes (maxApp : Nat) (x y : Value) (related : ValueRel maxApp x y) :
+    valueToBytes y = valueToBytes x :=
+  (ClosProps.simpleValRel_valueToBytes (ValueRel maxApp) x y ⟨simpleValRel maxApp, related⟩).symm
+
+/-- Related values have identical 64-bit word-decoder results. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "v_rel_IMP_v_to_words"]
+theorem valueRel_toWords (maxApp : Nat) (x y : Value) (related : ValueRel maxApp x y) :
+    valueToWords y = valueToWords x :=
+  (ClosProps.simpleValRel_valueToWords x y (ValueRel maxApp) ⟨simpleValRel maxApp, related⟩).symm
+
 /-- A source-related target function has positive arity. -/
 theorem functionRel_target_arity_pos {maxApp : Nat} {source target : Nat × ClosLang.Exp}
     (related : FunctionRel maxApp source target) : 0 < target.1 := by
   obtain ⟨_, names, _, _, _, _, _, eq⟩ := related
   omega
+
+/-- No target function in related function lists has zero arity. -/
+@[hol "cakeml/compiler/backend/proofs/clos_mtiProofScript.sml" "LIST_REL_f_rel_IMP"]
+theorem functionRelList_no_zero (maxApp : Nat) (target source : List (Nat × ClosLang.Exp))
+    (related : List.Forall₂ (FunctionRel maxApp) source target) :
+    ∀ body, (0, body) ∉ target := by
+  induction related with
+  | nil => simp
+  | @cons left right ls rs head tail ih =>
+    intro body member
+    simp only [List.mem_cons] at member
+    rcases member with equal | member
+    · have positive := functionRel_target_arity_pos head
+      rw [← equal] at positive
+      omega
+    · exact ih body member
 
 end Flapjack.Compiler.Backend.ClosMti

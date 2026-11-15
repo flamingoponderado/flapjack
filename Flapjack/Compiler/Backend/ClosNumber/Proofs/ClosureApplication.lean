@@ -3,30 +3,50 @@ module
 public import Flapjack.Compiler.Backend.ClosNumber.Proofs.ValueRelation
 public import Flapjack.Compiler.Backend.Semantics.ClosSem.Call
 public import Flapjack.Compiler.Backend.ClosNumber.Proofs.LocationInvariants
+public import Flapjack.Misc.ListEl
 
 @[expose] public section
 
 /-! Closure application prerequisites for numbering correctness. -/
 namespace Flapjack.Compiler.Backend.ClosNumber
+/-- A singleton mapping preserves the second projection of a pair. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "helper"]
+theorem singleton_snd {α β : Type} (x : α × β) :
+    (match x with | (first, second) => (first, [second])).2 = [x.2] := by
+  cases x
+  rfl
+
 open Flapjack.Compiler.Backend.ClosSem
 
-/-- Each numbered list entry comes from numbering its corresponding source
-expression at some intermediate state. -/
-theorem renumberList_getElem (expressions : List ClosLang.Exp) (start index : Nat)
-    (body : ClosLang.Exp) (found : expressions[index]? = some body) :
-    ∃ location, (renumberList start expressions).2[index]? = some (renumber location body).2 := by
-  induction expressions generalizing start index with
-  | nil => simp at found
+local instance : Nonempty ClosLang.Exp := ⟨.var .none 0⟩
+
+/-- Every in-range output element numbers the corresponding input element. -/
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "renumber_code_locs_list_els"]
+theorem renumber_code_locs_list_els :
+    ∀ expressions output start next, renumberList start expressions = (next, output) →
+      ∀ index, index < expressions.length →
+        ∃ location, Flapjack.holEl index output = (renumber location (Flapjack.holEl index expressions)).2 := by
+  intro expressions
+  induction expressions with
+  | nil =>
+    intro output start next run index bound
+    simp at bound
   | cons first rest ih =>
-    cases index with
-    | zero =>
-      simp at found
-      subst body
-      exact ⟨start, by simp [renumberList]⟩
-    | succ index =>
-      have tailFound : rest[index]? = some body := by simpa using found
-      obtain ⟨location, result⟩ := ih (renumber start first).1 index tailFound
-      exact ⟨location, by simpa [renumberList] using result⟩
+    intro output start next run index bound
+    cases firstRun : renumber start first with
+    | mk middle numbered =>
+      cases restRun : renumberList middle rest with
+      | mk final numberedRest =>
+        simp only [renumberList, firstRun, restRun] at run
+        cases run
+        cases index with
+        | zero =>
+          refine ⟨start, ?_⟩
+          simp [Flapjack.holEl, Flapjack.holHd, firstRun]
+        | succ index =>
+          have restBound : index < rest.length := by simpa using bound
+          obtain ⟨location, result⟩ := ih numberedRest middle _ restRun index restBound
+          exact ⟨location, by simpa [Flapjack.holEl] using result⟩
 
 /-- Numbering a recursive function bundle preserves the arity at every
 present index and numbers that function's body at an intermediate location. -/
@@ -36,9 +56,25 @@ theorem renumberedBundle_getElem (functions : List (Nat × ClosLang.Exp)) (start
       some (arity, (renumber location body).2) := by
   have sourceBody : (functions.map Prod.snd)[index]? = some body := by simp [List.getElem?_map, found]
   have sourceArity : (functions.map Prod.fst)[index]? = some arity := by simp [List.getElem?_map, found]
-  obtain ⟨location, result⟩ := renumberList_getElem (functions.map Prod.snd) start index body sourceBody
+  have bound : index < (functions.map Prod.snd).length := by
+    by_contra outside
+    have missing := List.getElem?_eq_none (show (functions.map Prod.snd).length ≤ index by omega)
+    rw [missing] at sourceBody
+    contradiction
+  have sourceEl : Flapjack.holEl index (functions.map Prod.snd) = body := by
+    rw [Flapjack.holEl_eq_getElem index _ bound]
+    simpa [List.getElem?_eq_getElem bound] using sourceBody
+  have outputBound : index < (renumberList start (functions.map Prod.snd)).2.length := by
+    rw [renumberList_length]
+    exact bound
+  obtain ⟨location, result⟩ := renumber_code_locs_list_els _ _ start _
+    (Prod.eta (renumberList start (functions.map Prod.snd))).symm index bound
+  rw [sourceEl, Flapjack.holEl_eq_getElem index _ outputBound] at result
+  have outputBody : (renumberList start (functions.map Prod.snd)).2[index]? =
+      some (renumber location body).2 := by
+    simpa [List.getElem?_eq_getElem outputBound] using result
   refine ⟨location, ?_⟩
-  exact List.getElem?_zip_eq_some.mpr ⟨sourceArity, result⟩
+  exact List.getElem?_zip_eq_some.mpr ⟨sourceArity, outputBody⟩
 
 /-- The recursive-bundle traversal has the same bodies and arities as the
     representation used by the numbered closure relation. -/
@@ -340,12 +376,14 @@ theorem destClosure_related_none (maxApp : Nat) (source : Value) (args : List Va
       functions suppliedRel argsRel rejected
 
 /-- Related closure values preserve successful partial indirect applications. -/
-theorem destClosure_related_partial (maxApp : Nat) (source target : Value) (args nextArgs : List Value)
-    (result : Value) (related : ValueRel maxApp source target)
-    (argsRel : List.Forall₂ (ValueRel maxApp) args nextArgs)
-    (run : destClosure maxApp none source args = some (.partialApp result)) :
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "dest_closure_v_rel_partial"]
+theorem destClosure_related_partial (maxApp : Nat) (result source : Value) (args : List Value)
+    (target : Value) (nextArgs : List Value)
+    (h : ValueRel maxApp source target ∧ List.Forall₂ (ValueRel maxApp) args nextArgs ∧
+      destClosure maxApp none source args = some (.partialApp result)) :
     ∃ nextResult, destClosure maxApp none target nextArgs = some (.partialApp nextResult) ∧
       ValueRel maxApp result nextResult := by
+  obtain ⟨related, argsRel, run⟩ := h
   cases related with
   | number _ | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ => simp [destClosure] at run
   | closure location nextLocation supplied nextSupplied env nextEnv arity start body nextBody envRel suppliedRel safe bodyEq =>
@@ -359,24 +397,28 @@ theorem destClosure_related_partial (maxApp : Nat) (source target : Value) (args
 
 /-- Related closure values preserve successful full indirect applications,
 with a numbered body and related argument and over-application environments. -/
-theorem destClosure_related_full (maxApp : Nat) (source target : Value) (args nextArgs : List Value)
-    (body : ClosLang.Exp) (env remaining : List Value) (related : ValueRel maxApp source target)
-    (argsRel : List.Forall₂ (ValueRel maxApp) args nextArgs)
-    (run : destClosure maxApp none source args = some (.fullApp body env remaining)) :
-    ∃ start nextEnv nextRemaining,
+@[hol "cakeml/compiler/backend/proofs/clos_numberProofScript.sml" "dest_closure_v_rel_full"]
+theorem destClosure_related_full {α : Type} (maxApp : Nat) (body : ClosLang.Exp)
+    (_c : α) (source : Value) (args : List Value) (target : Value) (nextArgs env remaining : List Value)
+    (h : ValueRel maxApp source target ∧ List.Forall₂ (ValueRel maxApp) args nextArgs ∧
+      destClosure maxApp none source args = some (.fullApp body env remaining)) :
+    ∃ nextEnv nextRemaining start,
       destClosure maxApp none target nextArgs = some (.fullApp (renumber start body).2 nextEnv nextRemaining) ∧
       List.Forall₂ (ValueRel maxApp) env nextEnv ∧ List.Forall₂ (ValueRel maxApp) remaining nextRemaining ∧
       ¬ ClosProps.containsAppSome maxApp [body] := by
+  obtain ⟨related, argsRel, run⟩ := h
   cases related with
   | number _ | word64 _ | block _ _ _ _ | byteVector _ | refPtr _ _ => simp [destClosure] at run
   | closure location nextLocation supplied nextSupplied captured nextCaptured arity start original nextBody envRel suppliedRel safe bodyEq =>
     subst nextBody
     obtain ⟨nextEnv, nextRemaining, result⟩ := destClosure_numbered_full maxApp arity start location nextLocation
       supplied nextSupplied captured nextCaptured args nextArgs original body env remaining suppliedRel envRel argsRel safe run
-    exact ⟨start, nextEnv, nextRemaining, result⟩
+    exact ⟨nextEnv, nextRemaining, start, result⟩
   | recclosure location nextLocation supplied nextSupplied captured nextCaptured functions nextFunctions index start envRel suppliedRel safe functionsEq =>
     subst nextFunctions
-    exact destRecclosure_numbered_full maxApp start index location nextLocation supplied nextSupplied captured nextCaptured args nextArgs
-      functions body env remaining suppliedRel envRel argsRel safe run
+    obtain ⟨number, nextEnv, nextRemaining, result⟩ :=
+      destRecclosure_numbered_full maxApp start index location nextLocation supplied nextSupplied captured nextCaptured args nextArgs
+        functions body env remaining suppliedRel envRel argsRel safe run
+    exact ⟨nextEnv, nextRemaining, number, result⟩
 
 end Flapjack.Compiler.Backend.ClosNumber

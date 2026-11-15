@@ -112,18 +112,16 @@ theorem freeFuel_correct (fuel : Nat) :
 /-- The checked retry always returns the source single-expression result. -/
 theorem freeBounded_correct (fuel : Nat) (e : Exp) :
     freeBounded fuel e = some (freeExpHOL e) := by
-  obtain ⟨⟨out, vars⟩, run⟩ := freeBounded_succeeds fuel e
-  have agreement : (out, vars) = freeExpHOL e := by
-    unfold freeBounded at run
-    cases first : freeFuel fuel e with
-    | some result =>
-      simp only [first, Option.some.injEq] at run
-      subst result
-      exact (freeFuel_correct fuel).1 e out vars first
-    | none =>
-      simp only [first] at run
-      exact (freeFuel_correct _).1 e out vars run
-  simpa [agreement] using run
+  cases first : freeFuel fuel e with
+  | some result =>
+    obtain ⟨out, vars⟩ := result
+    have agreement := (freeFuel_correct fuel).1 e out vars first
+    simp [freeBounded, first, agreement]
+  | none =>
+    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
+    obtain ⟨⟨out, vars⟩, retry⟩ := freeFuel_succeeds (max fuel (expBudget e + 1)) e bound
+    have agreement := (freeFuel_correct _).1 e out vars retry
+    simp [freeBounded, first, retry, agreement]
 
 private theorem dbToSetAcc_wf (vars : DbVarSet) :
     ∀ n tree, sptWf tree = true → sptWf (dbToSetAcc n vars tree) = true := by

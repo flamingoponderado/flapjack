@@ -160,7 +160,7 @@ theorem interpreter_cons_continuation {C F : Type} (tag : Nat) (args : ClosLang.
   rcases tags with rfl | rfl | rfl <;>
     simp [workEnv, captured, ClosSem.makeConst, ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp,
       ClosSem.applyBlock, ClosSem.asBool, ClosSem.boolValue, BackendCommon.trueTag, BackendCommon.falseTag,
-      ClosSem.valueToList_listToValue]
+      valueToList_listToValue]
 
 /-- Successful constructor fields are reversed and assembled into the block. -/
 theorem interpreter_cons_arguments_value {C F : Type}

@@ -4,9 +4,16 @@ public import Flapjack.Compiler.Backend.ClosInterp.Proofs.EvaluateEl
 
 @[expose] public section
 
-/-! Correctness of the interpreter's list reversal helper. The evaluator and
-value carriers remain proof-side and await full HOL correspondence review. -/
+/-! Correctness of the interpreter's list reversal helper. -/
 namespace Flapjack.Compiler.Backend.ClosInterp
+
+namespace EvalRevPort
+/-- The closure state uses the canonical finite-support map representation. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : ClosSem.StateBroad C F, (ClosSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : ClosSem.State C F, ClosSem.State.ofBroad s.toBroad = s) :=
+  ClosSem.holFmapAsFiniteSupportWitness
+end EvalRevPort
 
 /-- Reversal returns its accumulator unchanged on an empty input. -/
 theorem evaluate_closInterpRev_nil {C F : Type} (acc : List ClosSem.Value)
@@ -82,7 +89,9 @@ theorem evaluate_closInterpRev_step {C F : Type} (first : ClosSem.Value)
 
 /-- The interpreter reverses an encoded list onto its accumulator, spending
 exactly two clock units for each element. -/
-theorem evaluate_closInterpRev {C F : Type} (items acc captured rest : List ClosSem.Value)
+@[hol "cakeml/compiler/backend/proofs/clos_interpProofScript.sml" "clos_interp_rev_thm"
+  (fmap_as_finite_support := [refs, code])]
+theorem evaluate_closInterpRev {C F : Type} (items acc rest captured : List ClosSem.Value)
     (state : ClosSem.State C F) (positive : 1 ≤ state.maxApp) :
     ClosSem.evaluate [closInterpRev]
       (ClosSem.listToValue acc :: ClosSem.listToValue items ::

@@ -43,14 +43,14 @@ theorem evaluate_compile_let_general {C F : Type} (bindings : List Bvi.Exp) (bod
         exact (congrArg Prod.fst run).symm.trans bad
       have mapped := bindingsIH state next (.err error) original related ok
       have errorOK : error ≠ .abort .typeError := by simpa using ok
-      have deleted := evaluate_deleteVar_list_error (compileList offsets d bindings) target state next error mapped errorOK
+      have deleted := evaluate_deleteVar_list_error (compileList offsets d bindings) state next error target ⟨mapped, errorOK⟩
       change evaluate ((compileList offsets d bindings).map deleteVar) target state = _ at deleted
       rw [deleted]
       exact run
     | val values =>
       have mapped := bindingsIH state next (.val values) original related (by simp)
       obtain ⟨output, deleted, extended⟩ := evaluate_deleteVar_list_success
-        (compileList offsets d bindings) target source state next values offsets d mapped related
+        (compileList offsets d bindings) target state values next offsets source d ⟨mapped, related⟩
       change evaluate ((compileList offsets d bindings).map deleteVar) target state = _ at deleted
       rw [deleted]
       simp only [original] at run

@@ -1,7 +1,10 @@
 module
 
 public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.CompileInstallArgs
+public import Flapjack.Compiler.Backend.BvlToBvi.Proofs.Namespace
 public import Mathlib.Data.List.Nodup
+public import Flapjack.Misc.Sorting
+import Mathlib.Data.List.Sort
 
 @[expose] public section
 
@@ -154,6 +157,63 @@ theorem auxNameRange_nodup {start finish : Nat} {aux : AppList (Nat × Nat × Bv
   simp only [bvlToBviNamespaces] at equal
   omega
 
+
+/-- Auxiliary names are sorted, belong to their namespace and lie within
+its counter interval, and compilation does not decrease the counter. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_exps_aux_sorted"]
+theorem compileExps_auxSorted (n : Nat) (es : List Bvl.Exp) (c : List Bvi.Exp)
+    (aux : AppList (Nat × Nat × Bvi.Exp)) (n1 : Nat)
+    (compiled : compileExpsSource n es = (c, aux, n1)) :
+    holSorted (· < ·) ((appListAppend aux).map Prod.fst) ∧
+      ((appListAppend aux).map Prod.fst).Forall (fun x => ∃ k, x = bvlNumStubs + bvlToBviNamespaces * k + 1) ∧
+      ((appListAppend aux).map Prod.fst).Forall (fun x =>
+        bvlNumStubs + bvlToBviNamespaces * n ≤ x ∧ x < bvlNumStubs + bvlToBviNamespaces * n1) ∧
+      n ≤ n1 := by
+  rw [compileExpsSource_eq_list] at compiled
+  have range := compileListSource_auxNameRange n es
+  rw [compiled] at range
+  dsimp only at range
+  refine ⟨?_, ?_, ?_, auxNameRange_mono range⟩
+  · obtain ⟨count, _, names⟩ := range
+    rw [names]
+    apply holSorted_of_pairwise
+    unfold auxNameSequence
+    apply List.pairwise_map.mpr
+    apply List.Pairwise.imp (fun {a b} h => ?_) (List.pairwise_lt_range' 1 (by omega))
+    simp only [bvlToBviNamespaces]
+    omega
+  · rw [List.forall_iff_forall_mem]
+    intro x member
+    obtain ⟨k, _, _, equal⟩ := auxNameRange_member range x member
+    exact ⟨k, equal⟩
+  · rw [List.forall_iff_forall_mem]
+    intro x member
+    obtain ⟨k, lower, upper, equal⟩ := auxNameRange_member range x member
+    simp only [bvlToBviNamespaces] at equal ⊢
+    omega
+
+/-- Every auxiliary name in the interval consumed by expression compilation
+occurs in the generated auxiliary code. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_exps_aux_contains"]
+theorem compileExps_auxContains (n : Nat) (es : List Bvl.Exp) (c : List Bvi.Exp)
+    (aux : AppList (Nat × Nat × Bvi.Exp)) (n1 : Nat)
+    (compiled : compileExpsSource n es = (c, aux, n1)) :
+    {x : Nat | ∃ k, x = bvlNumStubs + (k * bvlToBviNamespaces + 1) ∧ n ≤ k ∧ k < n1} ⊆
+      {x : Nat | x ∈ (appListAppend aux).map Prod.fst} := by
+  rw [compileExpsSource_eq_list] at compiled
+  have range := compileListSource_auxNameRange n es
+  rw [compiled] at range
+  simp only at range
+  obtain ⟨count, finish, names⟩ := range
+  intro x ⟨k, equal, lower, upper⟩
+  subst x
+  rw [names]
+  simp only [auxNameSequence, List.mem_map]
+  refine ⟨k, ?_, ?_⟩
+  · apply List.mem_range'.mpr
+    refine ⟨k - n, ?_, ?_⟩ <;> omega
+  · simp [Nat.mul_comm, Nat.add_assoc]
+
 /-- The incrementally compiled program's counter is monotone, and every
 emitted name is either the translation of an input function label or a
 fresh auxiliary label in the allocated interval. -/
@@ -175,7 +235,7 @@ theorem compileProgramsSource_nameRange (start : Nat) (programs : List (Nat × N
     have tail := ih next
     simp only [remaining] at tail
     have nextFinish := tail.1
-    simp only [compileProgramsSource, compileSingleSource, first, remaining,
+    simp only [compileProgramsSource, compileSingleSource_eq_impl, compileSingleImpl, first, remaining,
       appListAppend_smartAppend, List.map_append]
     constructor
     · omega
@@ -195,6 +255,136 @@ theorem compileProgramsSource_nameRange (start : Nat) (programs : List (Nat × N
         exact ⟨input, by simp [inputMem], equal⟩
       · right
         exact ⟨index, by omega, upper, equal⟩
+
+open Classical in
+/-- Filtering for translated source labels preserves their original order. -/
+theorem compileProgramsSource_translatedNames (start : Nat) (programs : List (Nat × Nat × Bvl.Exp)) :
+    ((appListAppend (compileProgramsSource start programs).1).map Prod.fst).filter
+      (fun name => decide (inNs 0 (name - bvlNumStubs))) =
+    (programs.map Prod.fst).map (fun name => bvlNumStubs + bvlToBviNamespaces * name) := by
+  induction programs generalizing start with
+  | nil => simp [compileProgramsSource, appListAppend, appendAux]
+  | cons entry rest ih =>
+    rcases entry with ⟨key, arity, body⟩
+    rcases first : compileSingSource start body with ⟨converted, aux, next⟩
+    rcases remaining : compileProgramsSource next rest with ⟨other, finish⟩
+    have range := compileSingSource_auxNameRange start body
+    simp only [first] at range
+    have noneAux : ((appListAppend aux).map Prod.fst).filter
+        (fun name => decide (inNs 0 (name - bvlNumStubs))) = [] := by
+      apply List.filter_eq_nil_iff.mpr
+      intro name member
+      obtain ⟨index, _, _, eq⟩ := auxNameRange_member range name member
+      intro selected
+      have prop : inNs 0 (name - bvlNumStubs) := of_decide_eq_true selected
+      simp only [inNs, bvlToBviNamespaces] at prop
+      simp only [bvlToBviNamespaces] at eq
+      omega
+    have tail := ih next
+    simp only [remaining] at tail
+    simp only [compileProgramsSource, compileSingleSource_eq_impl, compileSingleImpl, first, remaining,
+      appListAppend_smartAppend, List.map_append, List.filter_append]
+    simp only [appListAppend, appendAux, List.map_cons] at ⊢
+    simp only [appListAppend] at noneAux tail
+    rw [noneAux, tail]
+    have head : inNs 0 ((bvlNumStubs + bvlToBviNamespaces * key) - bvlNumStubs) := by
+      simp [inNs, bvlToBviNamespaces]
+    simp only [List.map_cons, List.map_nil, List.filter_cons, head, decide_true,
+      List.filter_nil, ↓reduceIte, List.append_nil, List.singleton_append]
+
+/-- Fresh-label inclusion, factored out of the original HOL list induction. -/
+private theorem compileProgramsSource_freshCoverage (start : Nat) (programs : List (Nat × Nat × Bvl.Exp)) :
+    ∀ k, start ≤ k → k < (compileProgramsSource start programs).2 →
+      bvlNumStubs + bvlToBviNamespaces * k + 1 ∈
+        (appListAppend (compileProgramsSource start programs).1).map Prod.fst := by
+  induction programs generalizing start with
+  | nil => simp [compileProgramsSource, appListAppend, appendAux]
+  | cons entry rest ih =>
+    rcases entry with ⟨key, arity, body⟩
+    rcases first : compileSingSource start body with ⟨converted, aux, next⟩
+    rcases remaining : compileProgramsSource next rest with ⟨other, finish⟩
+    have tail := ih next
+    simp only [remaining] at tail
+    intro k lower upper
+    simp only [compileProgramsSource, compileSingleSource_eq_impl, compileSingleImpl, first, remaining] at upper ⊢
+    simp only [appListAppend_smartAppend, List.map_append, List.mem_append]
+    by_cases before : k < next
+    · left
+      right
+      have compiledBody : compileListSource start [body] = ([converted], aux, next) := by
+        simp only [compileListSource, first]
+        cases aux <;> rfl
+      have present := compileExps_auxContains start [body] [converted] aux next
+        (by simpa only [compileExpsSource_eq_list] using compiledBody)
+      simpa [Nat.mul_comm, Nat.add_assoc] using (present ⟨k, rfl, lower, before⟩)
+    · right
+      exact tail k (by omega) upper
+
+open Classical in
+/-- Compiling a list of functions preserves the original exact description
+of its generated label set and the fresh-counter bound. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_list_code_labels_domain"]
+theorem compileList_codeLabelsDomain (n : Nat) (p : List (Nat × Nat × Bvl.Exp))
+    (code : AppList (Nat × Nat × Bvi.Exp)) (m : Nat)
+    (compiled : compileProgramsSource n p = (code, m)) :
+    n ≤ m ∧
+      {x : Nat | x ∈ (appListAppend code).map Prod.fst} =
+        {x : Nat | ∃ k, k ∈ p.map Prod.fst ∧ x = bvlNumStubs + k * bvlToBviNamespaces} ∪
+        {x : Nat | ∃ k, x = bvlNumStubs + k * bvlToBviNamespaces + 1 ∧ n ≤ k ∧ k < m} := by
+  have upper := compileProgramsSource_nameRange n p
+  have inputs : ∀ input ∈ p.map Prod.fst,
+      bvlNumStubs + bvlToBviNamespaces * input ∈
+        (appListAppend (compileProgramsSource n p).1).map Prod.fst := by
+    intro input member
+    have ordered := compileProgramsSource_translatedNames n p
+    have selected : bvlNumStubs + bvlToBviNamespaces * input ∈
+        ((appListAppend (compileProgramsSource n p).1).map Prod.fst).filter
+          (fun name => decide (inNs 0 (name - bvlNumStubs))) := by
+      rw [ordered]
+      exact List.mem_map.mpr ⟨input, member, rfl⟩
+    exact (List.mem_filter.mp selected).1
+  have fresh := compileProgramsSource_freshCoverage n p
+  rw [compiled] at upper inputs fresh
+  simp only at upper inputs fresh
+  refine ⟨upper.1, ?_⟩
+  ext x
+  constructor
+  · intro member
+    rcases upper.2 x member with ⟨k, present, equal⟩ | ⟨k, lower, bound, equal⟩
+    · left
+      exact ⟨k, present, by simpa [Nat.mul_comm] using equal⟩
+    · right
+      exact ⟨k, by simpa [Nat.mul_comm] using equal, lower, bound⟩
+  · rintro (⟨k, present, equal⟩ | ⟨k, equal, lower, bound⟩)
+    · subst x
+      simpa [Nat.mul_comm] using inputs k present
+    · subst x
+      simpa [Nat.mul_comm] using fresh k lower bound
+
+/-- The complete whole-program label set is the union of translated input
+labels, fresh auxiliary labels, and the original stub labels. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml" "compile_prog_code_labels_domain"]
+theorem compileProg_codeLabelsDomain (s n : Nat) (p : List (Nat × Nat × Bvl.Exp))
+    (t : Nat) (q : List (Nat × Nat × Bvi.Exp)) (m x y : Nat)
+    (compiled : compileProgSource s n p = (t, q, m)) :
+    {a : Nat | a ∈ q.map Prod.fst} =
+      {a : Nat | ∃ k, k ∈ p.map Prod.fst ∧ a = bvlNumStubs + k * bvlToBviNamespaces} ∪
+      {a : Nat | ∃ k, a = bvlNumStubs + k * bvlToBviNamespaces + 1 ∧ n ≤ k ∧ k < m} ∪
+      {a : Nat | a ∈ (stubs x y).map Prod.fst} := by
+  rcases run : compileProgramsSource n p with ⟨code, next⟩
+  simp only [compileProgSource, run, Prod.mk.injEq] at compiled
+  obtain ⟨rfl, rfl, rfl⟩ := compiled
+  have domains := (compileList_codeLabelsDomain n p code next run).2
+  ext a
+  simp only [Set.mem_ofPred_eq, List.map_append, List.mem_append, Set.mem_union] at *
+  have stubKeys : (stubs (bvlNumStubs + bvlToBviNamespaces * s)
+      (allocGlobCount (p.map fun (_, _, body) => body))).map Prod.fst =
+      (stubs x y).map Prod.fst := by
+    simp [stubs]
+  have domain := Set.ext_iff.mp domains a
+  simp only [Set.mem_ofPred_eq, Set.mem_union] at domain
+  rw [stubKeys]
+  rw [domain, or_comm]
 
 /-- Incremental compilation does not decrease its fresh-name counter. -/
 theorem compileIncSource_counter_mono (start : Nat) (programs : List (Nat × Nat × Bvl.Exp)) :
@@ -314,7 +504,7 @@ theorem compileProgramsSource_names_nodup (start : Nat) (programs : List (Nat ×
           simp only [bvlToBviNamespaces] at auxEq targetEq
           omega
     have combined : (([label] ++ auxKeys) ++ tailKeys).Nodup := List.nodup_append.mpr ⟨leftNodup, tail, disjoint⟩
-    simp only [compileProgramsSource, compileSingleSource, first, remaining, appListAppend_smartAppend, List.map_append]
+    simp only [compileProgramsSource, compileSingleSource_eq_impl, compileSingleImpl, first, remaining, appListAppend_smartAppend, List.map_append]
     simpa [appListAppend, appendAux, label, auxKeys, tailKeys] using combined
 
 /-- Incremental compilation preserves distinctness of input function labels. -/

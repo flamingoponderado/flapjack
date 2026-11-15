@@ -29,13 +29,6 @@ def BlockObservation.result : BlockObservation → Nat → List Value → Value
   | .tagLenEq tag n, actual, fields => BvlSem.boolValue (actual == tag && fields.length == n)
   | .length, _, fields => .number fields.length
 
-/-- Relocation preserves block observations. -/
-theorem BlockObservation.result_adjust (observation : BlockObservation) (tag : Nat)
-    (fields : List Value) (relocate : Nat → Nat) :
-    observation.result tag (fields.map (adjustBv relocate)) =
-      adjustBv relocate (observation.result tag fields) := by
-  cases observation <;> simp [BlockObservation.result, adjustBv, adjustBv_bool]
-
 /-- Observing a relocated block gives the relocated result and leaves the
 target state unchanged. Untagged pending BVI dispatcher review. -/
 theorem doBlockObservation_target {C F : Type} (observation : BlockObservation)

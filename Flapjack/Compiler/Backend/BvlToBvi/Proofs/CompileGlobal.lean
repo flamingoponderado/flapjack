@@ -33,36 +33,6 @@ theorem doGlobal_target {C F : Type} (relocate : Nat → Nat)
   obtain ⟨fields, lookup, selected⟩ := stateRel_globalSlot relocate source target ptr index value related globalPtr slot
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, globalPtr, lookup, selected]
 
-/-- A nullary global read satisfies the pass simulation. Untagged pending
-BVI evaluator and dispatcher correspondence review. -/
-theorem simulation_global_empty {C F : Type} (index : Nat) (env : List Value)
-    (source : BvlSem.State (Nat × C) F) :
-    simulation [.op (.globOp (.global index)) []] env source := by
-  intro n res next target n2 ys aux relocate run notTypeError compiled related sourceOk envOk installed handlers global
-  simp [BvlSem.evaluate, BvlSem.fixClock, BvlSem.doApp, BvlSem.applyGlobal] at run
-  cases slot : source.globals[index]? with
-  | none =>
-    simp [slot] at run
-    exact (notTypeError run.1.symm).elim
-  | some item =>
-    cases item with
-    | none =>
-      simp [slot] at run
-      exact (notTypeError run.1.symm).elim
-    | some value =>
-      simp [slot] at run
-      rcases run with ⟨rfl, rfl⟩
-      simp [compileListSource, compileSingSource, compileOp, smartAppend] at compiled
-      rcases compiled with ⟨rfl, rfl, rfl⟩
-      cases globalPtr : target.global with
-      | none => simp [globalPtr] at global
-      | some ptr =>
-        refine ⟨target, relocate, 0, ?_, related, rfl, ?_⟩
-        · simp [BviSem.evaluate, BviSem.fixClock, BviProps.incClock, mapSimulationResult,
-            doGlobal_target relocate source target ptr index value related globalPtr slot]
-        · intro key present
-          rfl
-
 /-- Writing the target global array does not change any related source cell.
 This follows from separation of the global pointer from relocated references. -/
 theorem refsRel_writeGlobal (relocate : Nat → Nat)

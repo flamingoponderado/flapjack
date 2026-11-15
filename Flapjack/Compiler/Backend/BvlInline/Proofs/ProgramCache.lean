@@ -9,33 +9,6 @@ public import Flapjack.Misc.Sptree.Subspt
 namespace Flapjack.Compiler.Backend.BvlInline.Proofs
 open Bvl
 
-/-- Inlining may add a cache key only if it occurs among the input labels.
-This helper corresponds to a local argument in the HOL proof and has no
-standalone exported HOL declaration. -/
-theorem tickInlineAll_cacheDomain (limit : Nat) (program : List (Nat × Nat × Exp))
-    (cache : Spt (Nat × Exp)) (acc : List (Nat × Nat × Exp)) (key : Nat) :
-    sptMem key (tickInlineAll limit cache program acc).1 →
-      sptMem key cache ∨ key ∈ program.map Prod.fst := by
-  induction program generalizing cache acc with
-  | nil => simp [tickInlineAll]
-  | cons entry rest ih =>
-    obtain ⟨name, arity, body⟩ := entry
-    simp only [tickInlineAll]
-    split
-    · intro present
-      have h := ih (sptInsert name (arity, tickInlineSing cache body) cache)
-        ((name, arity, tickInlineSing cache body) :: acc) present
-      simp only [List.map_cons, List.mem_cons]
-      rcases h with inserted | restMember
-      · rcases (sptMem_sptInsert key name _ cache).1 inserted with same | old
-        · exact Or.inr (Or.inl same)
-        · exact Or.inl old
-      · exact Or.inr (Or.inr restMember)
-    · intro present
-      have h := ih cache ((name, arity, tickInlineSing cache body) :: acc) present
-      simp only [List.map_cons, List.mem_cons]
-      exact h.imp_right Or.inr
-
 /-- Processing a program cannot change a cache lookup at an absent label.
 This proof helper has no standalone HOL declaration. -/
 theorem tickInlineAll_cacheUntouched (limit : Nat) (program : List (Nat × Nat × Exp))

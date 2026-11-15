@@ -14,7 +14,8 @@ open Flapjack.Compiler.Backend.BvlSem
 /-- Construct the BVL state used by the source fallback dispatcher. The
 unspecified fields come from one arbitrary BVL state, as in the source record
 literal; code retains its source tree shape with arbitrary BVL payloads. This
-remains untagged until both state-carrier map translations are qualified. -/
+remains untagged: HOL bvi_to_bvl_def needs a qualifier for a state-valued
+conversion between the two finite-map carriers. -/
 noncomputable def toBvl {C F : Type} (s : BviState C F) : BvlSem.State C F :=
   let config := (s.compileOracle 0).1
   let arbitraryCode : Nat × Bvl.Exp := @Flapjack.holArb (Nat × Bvl.Exp) ⟨(0, .var 0)⟩
@@ -60,13 +61,22 @@ noncomputable def doAppFallback {C F : Type} (op : ClosLang.Op) (args : List Val
       | .err (.abort error) => .err (.abort error)
       | .err (.raise value) => .err (.raise (.exn value))
 
-/-- The complete BVI primitive dispatcher. This follows `do_app_def` but is
-untagged until the two state-carrier representations and the delegated
-primitive correspondence have been reviewed together. -/
+namespace ApplyCarrier
+/-- The BVI reference carrier and its finite-support view roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviStateBroad C F, (BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end ApplyCarrier
+
+/-- The complete BVI primitive dispatcher. -/
+@[hol "cakeml/compiler/backend/semantics/bviSemScript.sml" "do_app_def"
+  (fmap_as_finite_support := [refs])]
 noncomputable def doApp {C F : Type} (op : ClosLang.Op) (args : List Value) (s : BviState C F) :
     Flapjack.SemanticPrimitivesHOL.Result (Value × BviState C F) ExnOrRet :=
   match op with
   | .install => doInstall args s
   | _ => doAppFallback op args s
+
 
 end Flapjack.Compiler.Backend.BviSem

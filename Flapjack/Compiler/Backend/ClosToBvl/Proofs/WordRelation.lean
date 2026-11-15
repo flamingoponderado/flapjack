@@ -8,16 +8,6 @@ public import Flapjack.Compiler.Backend.Semantics.BvlSem.Word
 /-! Word primitive correspondence for the closure-to-BVL simulation. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
 
-/-- Word-sized values cannot change representation through the value relation. -/
-theorem vRel_word64_inv {maxApp : Nat} {f : HolFiniteMapExact Nat Nat}
-    {refs : HolFiniteMapExact Nat (BvlSem.Ref BvlSem.Value)} {code : Spt (Nat × Bvl.Exp)}
-    {w : BitVec 64} {target : BvlSem.Value} (related : vRel maxApp f refs code (.word64 w) target) :
-    target = .word64 w := by
-  cases related with
-  | word64 => rfl
-  | closure _ closure => cases closure
-  | partialClosure _ _ _ _ _ added _ closure => cases closure <;> simp [addArgs] at added
-
 def wordPrimitive : ClosSem.Value → Prop
   | .number _ | .word64 _ => True
   | _ => False

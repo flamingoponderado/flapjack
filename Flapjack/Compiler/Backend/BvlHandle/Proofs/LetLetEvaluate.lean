@@ -11,23 +11,49 @@ namespace Flapjack.Compiler.Backend.BvlHandle.Proofs
 open Flapjack.Compiler.Backend.DbVars
 open Flapjack.Compiler.Backend.BvlSem
 
-/-- Evaluating a list of variable references reads each specified value in
-order and does not change the state. -/
-theorem evaluate_vars {C F : Type} (indices : List Nat) (env : List Value)
-    (state : State C F) (value : Nat → Value)
-    (lookup : ∀ index ∈ indices, env[index]? = some (value index)) :
-    evaluate (indices.map Bvl.Exp.var) env state = (.val (indices.map value), state) := by
+namespace LetLetEvaluateCarrier
+/-- Canonical BVL reference-map state representation roundtrip. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : StateBroad C F, (State.ofBroad s).toBroad = s) ∧
+    (∀ s : Flapjack.Compiler.Backend.BvlSem.State C F, State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end LetLetEvaluateCarrier
+
+/-- Generated variables recover an environment prefix, even with a suffix. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "evaluate_GENLIST"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_genlist {C F : Type} (env suffix : List Value)
+    (state : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    evaluateTuple ((List.range env.length).map Bvl.Exp.var, env ++ suffix, state) =
+      (.val env, state) := by
+  have h := BvlProps.evaluateGenlistVars 0 (env ++ suffix) env.length state (by simp)
+  simpa using h
+
+/-- A smart let evaluates exactly as the corresponding ordinary let. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "evaluate_SmartLet"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_smartLet {C F : Type} (bindings : List Bvl.Exp) (body : Bvl.Exp)
+    (env : List Value) (state : Flapjack.Compiler.Backend.BvlSem.State C F) :
+    evaluateTuple ([smartLet bindings body], env, state) =
+      evaluateTuple ([.let bindings body], env, state) := by
+  cases bindings <;> simp [smartLet, evaluateTuple, evaluate, fixClock]
+
+/-- Independent, state-preserving singleton evaluations compose in order. -/
+theorem evaluate_map_pure {C F : Type} (indices : List Nat) (expression : Nat → Bvl.Exp)
+    (value : Nat → Value) (env : List Value) (state : State C F)
+    (runs : ∀ index ∈ indices, evaluate [expression index] env state = (.val [value index], state)) :
+    evaluate (indices.map expression) env state = (.val (indices.map value), state) := by
   induction indices with
   | nil => simp [evaluate]
   | cons index indices ih =>
-    have head := lookup index (by simp)
-    have tail : ∀ i ∈ indices, env[i]? = some (value i) := by
+    have head := runs index (by simp)
+    have tail : ∀ i ∈ indices, evaluate [expression i] env state = (.val [value i], state) := by
       intro i member
-      exact lookup i (by simp [member])
-    have cons := BvlProps.evaluateCons (.var index) (indices.map Bvl.Exp.var) env state
+      exact runs i (by simp [member])
+    have cons := BvlProps.evaluateCons (expression index) (indices.map expression) env state
     simp only [evaluateTuple] at cons
     rw [List.map_cons, cons]
-    simp [evaluate, head, ih tail, Flapjack.holHd]
+    simp [head, ih tail, Flapjack.holHd]
 
 /-- The first let in environment packing extracts exactly the original
 values at the live indices, even when the target environment has a suffix. -/
@@ -38,8 +64,9 @@ theorem evaluate_retained_vars {C F : Type} (live : DbVarSet)
     evaluate (retained.map Bvl.Exp.var) (target ++ extra) state =
       (.val (retained.map fun i => (source[i]?).getD (.number 0)), state) := by
   dsimp only
-  apply evaluate_vars
+  apply evaluate_map_pure
   intro index member
+  simp only [evaluate]
   have bounds : index < source.length := by
     have h := (List.mem_filter.mp member).1
     simpa using h
@@ -110,23 +137,6 @@ theorem evaluate_reconstructed_binding {C F : Type} (live : DbVarSet)
       simp [List.getElem?_append, packedBound, slotEq]
     simp [present, evaluate, read]
 
-/-- Independent, state-preserving singleton evaluations compose in order. -/
-theorem evaluate_map_pure {C F : Type} (indices : List Nat) (expression : Nat → Bvl.Exp)
-    (value : Nat → Value) (env : List Value) (state : State C F)
-    (runs : ∀ index ∈ indices, evaluate [expression index] env state = (.val [value index], state)) :
-    evaluate (indices.map expression) env state = (.val (indices.map value), state) := by
-  induction indices with
-  | nil => simp [evaluate]
-  | cons index indices ih =>
-    have head := runs index (by simp)
-    have tail : ∀ i ∈ indices, evaluate [expression i] env state = (.val [value i], state) := by
-      intro i member
-      exact runs i (by simp [member])
-    have cons := BvlProps.evaluateCons (expression index) (indices.map expression) env state
-    simp only [evaluateTuple] at cons
-    rw [List.map_cons, cons]
-    simp [head, ih tail, Flapjack.holHd]
-
 /-- The second set of bindings reconstructs the source environment with
 non-live positions replaced by zero. -/
 theorem evaluate_reconstructed_vars {C F : Type} (live : DbVarSet)
@@ -157,14 +167,18 @@ theorem evaluate_reconstructed_vars {C F : Type} (live : DbVarSet)
   exact runs.trans (by rw [valuesEq])
 
 /-- The handler pass's environment packer preserves any body evaluation
-that depends only on live variables. This is untagged while the underlying
-BVL evaluator and indexed environment relation await HOL correspondence review. -/
+that depends only on live variables. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "evaluate_LetLet"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_letLet {C F : Type} (live : DbVarSet) (body : Bvl.Exp)
-    (source target extra : List Value) (state : State C F)
-    (result : SemanticPrimitivesHOL.Result (List Value) Value × State C F)
-    (bodyRun : ∀ env suffix, envRel live source env → evaluate [body] (env ++ suffix) state = result)
-    (related : envRel live source target) :
-    evaluate [letLet source.length (dbToSet live) body] (target ++ extra) state = result := by
+    (source target extra : List Value) (state : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List Value) Value ×
+      Flapjack.Compiler.Backend.BvlSem.State C F)
+    (premises : (∀ env suffix, envRel live source env →
+      evaluateTuple ([body], env ++ suffix, state) = result) ∧ envRel live source target) :
+    evaluateTuple ([letLet source.length (dbToSet live) body], target ++ extra, state) = result := by
+  obtain ⟨bodyRun, related⟩ := premises
+  simp only [evaluateTuple] at bodyRun ⊢
   let retained := (List.range source.length).filter (fun n => (sptLookup n (dbToSet live)).isSome)
   let value : Nat → Value := fun i => (source[i]?).getD (.number 0)
   let long := (List.range source.length).map fun index =>
@@ -185,46 +199,65 @@ theorem evaluate_letLet {C F : Type} (live : DbVarSet) (body : Bvl.Exp)
     rfl
   rw [definition, evaluate, fixClock_evaluate, retainedRun]
   simp only
-  by_cases empty : source = []
-  · subst source
-    simpa [retained, value, long, masked, smartLet] using finalRun
-  · have nonempty : long.isEmpty = false := by
-      simp [long, empty]
-    simp only [smartLet, nonempty, Bool.false_eq_true, ↓reduceIte, evaluate, fixClock_evaluate]
-    rw [rebuiltRun]
-    simpa [List.append_assoc] using finalRun
+  have smartEq := evaluate_smartLet long body ((retained.map value) ++ (target ++ extra)) state
+  simp only [evaluateTuple] at smartEq
+  rw [smartEq]
+  simp only [evaluate, rebuiltRun, fixClock]
+  simpa [List.append_assoc] using finalRun
 
-/-- Both branches of the singleton size cut preserve the body's evaluation
-under the live-variable relation returned by the cut. Untagged pending
-review of the evaluator and environment relation against HOL. -/
+/-- The source optional cut preserves evaluation and an arbitrary Boolean fact. -/
+@[hol "cakeml/compiler/backend/proofs/bvl_handleProofScript.sml" "OptionalLetLet_IMP"
+  (fmap_as_finite_support := [refs])]
+theorem optionalLetLet_imp {C F : Type} (ys : List Bvl.Exp) (resultLive : DbVarSet)
+    (resultSize : Nat) (resultNoRaise : Bool) (body : Bvl.Exp) (source : List Value)
+    (live : DbVarSet) (size limit : Nat) (noRaise : Bool)
+    (state : Flapjack.Compiler.Backend.BvlSem.State C F)
+    (result : SemanticPrimitivesHOL.Result (List Value) Value ×
+      Flapjack.Compiler.Backend.BvlSem.State C F)
+    (target extra : List Value) (b : Bool)
+    (premises : (ys, resultLive, resultSize, resultNoRaise) =
+        optionalLetLet body source.length live size limit noRaise ∧
+      (∀ env suffix, envRel resultLive source env →
+        evaluateTuple ([body], env ++ suffix, state) = result) ∧
+      envRel resultLive source target ∧ b = true) :
+    evaluateTuple (ys, target ++ extra, state) = result ∧ b = true := by
+  obtain ⟨compiled, bodyRun, related, truth⟩ := premises
+  by_cases small : size < limit
+  · simp only [optionalLetLet, small, ↓reduceIte, Prod.mk.injEq] at compiled
+    obtain ⟨rfl, rfl, rfl, rfl⟩ := compiled
+    exact ⟨bodyRun target extra related, truth⟩
+  · simp only [optionalLetLet, small, ↓reduceIte, Prod.mk.injEq] at compiled
+    obtain ⟨rfl, rfl, rfl, rfl⟩ := compiled
+    have bodyRun' : ∀ env suffix, envRel live source env →
+        evaluateTuple ([body], env ++ suffix, state) = result := by
+      intro env suffix rel
+      exact bodyRun env suffix ((envRel_flatten live source env).2 rel)
+    have related' := (envRel_flatten live source target).1 related
+    have run := evaluate_letLet live body source target extra state result ⟨bodyRun', related'⟩
+    have emptyLet := evaluate_smartLet [] (letLet source.length (dbToSet live) body)
+      (target ++ extra) state
+    simp only [smartLet, List.isEmpty_nil, ↓reduceIte] at emptyLet
+    exact ⟨emptyLet.symm.trans run, truth⟩
+
+/-- The executable singleton cut uses the reviewed source result, with its
+input live-set relation transported across optional flattening. -/
 theorem evaluate_optionalLetLetSing {C F : Type} (live : DbVarSet) (body : Bvl.Exp)
     (size limit : Nat) (noRaise : Bool) (source target extra : List Value)
     (state : State C F) (result : SemanticPrimitivesHOL.Result (List Value) Value × State C F)
     (bodyRun : ∀ env suffix, envRel live source env → evaluate [body] (env ++ suffix) state = result)
     (related : envRel (optionalLetLetSing body source.length live size limit noRaise).2.1 source target) :
     evaluate [(optionalLetLetSing body source.length live size limit noRaise).1] (target ++ extra) state = result := by
-  by_cases small : size < limit
-  · simp only [optionalLetLetSing, small, ↓reduceIte] at related ⊢
-    exact bodyRun target extra related
-  · simp only [optionalLetLetSing, small, ↓reduceIte] at related ⊢
-    have related' : envRel live source target := (envRel_flatten live source target).mp related
-    have run := evaluate_letLet live body source target extra state result bodyRun related'
-    simpa [evaluate, fixClock] using run
-
-/-- The list-valued size cut has the same evaluation behavior as the
-singleton cut, with the same returned live-variable relation. -/
-theorem evaluate_optionalLetLet {C F : Type} (live : DbVarSet) (body : Bvl.Exp)
-    (size limit : Nat) (noRaise : Bool) (source target extra : List Value)
-    (state : State C F) (result : SemanticPrimitivesHOL.Result (List Value) Value × State C F)
-    (bodyRun : ∀ env suffix, envRel live source env → evaluate [body] (env ++ suffix) state = result)
-    (related : envRel (optionalLetLet body source.length live size limit noRaise).2.1 source target) :
-    evaluate (optionalLetLet body source.length live size limit noRaise).1 (target ++ extra) state = result := by
-  by_cases small : size < limit
-  · simp only [optionalLetLet, small, ↓reduceIte] at related ⊢
-    exact bodyRun target extra related
-  · simp only [optionalLetLet, small, ↓reduceIte] at related ⊢
-    have related' : envRel live source target := (envRel_flatten live source target).mp related
-    have run := evaluate_letLet live body source target extra state result bodyRun related'
-    simpa [evaluate, fixClock] using run
+  let output := optionalLetLetSing body source.length live size limit noRaise
+  have compiled : ([output.1], output.2.1, output.2.2.1, output.2.2.2) =
+      optionalLetLet body source.length live size limit noRaise := by
+    simp only [optionalLetLetSing_eq]
+    rfl
+  have transport : ∀ env, envRel output.2.1 source env → envRel live source env := by
+    intro env rel
+    exact optionalLetLet_limit [output.1] output.2.1 output.2.2.1 output.2.2.2
+      body source env live size limit noRaise ⟨compiled, rel⟩
+  exact (optionalLetLet_imp [output.1] output.2.1 output.2.2.1 output.2.2.2 body source
+    live size limit noRaise state result target extra true
+    ⟨compiled, fun env suffix rel => bodyRun env suffix (transport env rel), related, rfl⟩).1
 
 end Flapjack.Compiler.Backend.BvlHandle.Proofs

@@ -119,8 +119,7 @@ theorem compileCommon_semantics {C F : Type} (ffi : HolFfiState F) (c c' : Confi
             (pureCc ClosAnnotate.compileIncSource cc))
         let nco := stateCo (ClosNumber.ignoreTable ClosNumber.compileInc) mco
         have numberInput : ¬ containsAppSome c.maxApp source := by
-          cases enabled : c.doMti <;>
-            simpa [source, ClosMti.compile, enabled, ClosMti.introList_containsAppSome] using appSafe
+          exact fun bad => appSafe ((ClosMti.compile_containsAppSome c.doMti c.maxApp es).mp bad)
         have numberOracleSafe : ∀ n, (mco n).2.2 = [] ∧
             ¬ containsAppSome c.maxApp (mco n).2.1 := by
           intro n
@@ -197,7 +196,7 @@ theorem compileCommon_semantics {C F : Type} (ffi : HolFfiState F) (c c' : Confi
             · simpa [nco, stateCo, ClosNumber.ignoreTable] using free'
           · simpa [nco, stateCo, ClosNumber.ignoreTable] using (numberOracleSafe n).1
         have sourceLength : source.length = es.length := by
-          cases h : c.doMti <;> simp [source, ClosMti.compile, h, ClosMti.introList_length]
+          exact ClosMti.compile_length c.doMti c.maxApp es
         have postEq : compileIncPostKcompile c es = (knownConf, optimized) := by
           simp only [compileIncPostKcompile]
           change ClosKnown.compile c.knownConf

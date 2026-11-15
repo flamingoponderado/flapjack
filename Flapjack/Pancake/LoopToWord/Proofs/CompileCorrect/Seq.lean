@@ -66,7 +66,17 @@ theorem compileCorrect_Seq {width : Nat} [NeZero width] {C F : Type}
     (c1 c2 : HolLoopProg width) (s : LoopSemStateFiniteExact width F) :
     ((∀ res s1, (res, s1) = LoopSemStateFiniteExact.evaluate c1 s ∧ res = none →
         PropertyAt C c2 s1) ∧ PropertyAt C c1 s) →
-      PropertyAt C (.seq c1 c2) s := by
+      ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))
+        (s1 : LoopSemStateFiniteExact width F) (t : WordSemStateFiniteExact width C F)
+        (ctxt : Spt Nat) (retv : WordLocW width) (l : Nat × Nat),
+        LoopSemStateFiniteExact.evaluate (.seq c1 c2) s = (res, s1) ∧ res ≠ some .error ∧
+          loopToWordStateRelHOLExact s t ∧ LoopToWord.localsRelHOL ctxt s.locals t.locals ∧
+          sptLookup 0 t.locals = some retv ∧ goodDimindex width ∧
+          ¬ wordSemIsWordLoc retv = true ∧
+          (∀ k, sptMem k (accVarsHOL (.seq c1 c2) .ln) → sptMem k ctxt) →
+        ∃ t1 res1,
+          WordSemStateFiniteExact.evaluate (LoopToWord.compHOL ctxt (.seq c1 c2) l).1 t = (res1, t1) ∧
+            t1.ffi = s1.ffi ∧ resultCase ctxt retv t res s1 res1 t1 := by
   rintro ⟨hSecond, hFirst⟩ res sFinal t ctxt retv l
       ⟨hSourceSeq, hNonError, hState, hLocals, hRetv, hDim, hWord, hAcc⟩
   have hAccFirst : ∀ k, sptMem k (accVarsHOL c1 .ln) → sptMem k ctxt := by

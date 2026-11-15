@@ -84,14 +84,4 @@ theorem compileFuel_succeeds (fuel : Nat) (e : Exp) (bound : expBudget e < fuel)
       rw [hf, hb]
       rfl
 
-/-- The executable retry cannot exhaust let-operation fuel. -/
-theorem compileBounded_succeeds (fuel : Nat) (e : Exp) :
-    ∃ result, compileBounded fuel e = some result := by
-  cases h : compileFuel fuel e with
-  | some result => exact ⟨result, by simp [compileBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := compileFuel_succeeds (max fuel (expBudget e + 1)) e bound
-    exact ⟨result, by simp [compileBounded, h, done]⟩
-
 end Flapjack.Compiler.Backend.ClosLetop

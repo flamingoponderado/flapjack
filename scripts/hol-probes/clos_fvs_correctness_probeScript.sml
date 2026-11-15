@@ -14,10 +14,58 @@ val _ = show "compile_typed=" clos_fvsTheory.compile_def;
 val _ = show "compile_eq_typed=" clos_fvsTheory.compile_eq;
 val _ = show "compile_inc_typed=" clos_fvsTheory.compile_inc_def;
 val _ = show "code_rel_typed=" clos_fvsProofTheory.code_rel_def;
+val _ = show "proof_remove_length_typed=" clos_fvsProofTheory.LENGTH_remove_fvs;
+val _ = show "proof_remove_sing_typed=" clos_fvsProofTheory.remove_fvs_SING;
+val _ = show "proof_remove_head_typed=" clos_fvsProofTheory.HD_remove_fvs_SING;
+val _ = show "proof_remove_every_typed=" clos_fvsProofTheory.EVERY_remove_fvs_SING;
+val _ = show "code_rel_length_typed=" clos_fvsProofTheory.code_rel_IMP_LENGTH;
+val _ = show "code_rel_cons_typed=" clos_fvsProofTheory.code_rel_CONS_CONS;
 val _ = show "function_rel_typed=" clos_fvsProofTheory.f_rel_def;
 val _ = show "value_rel_typed=" clos_fvsProofTheory.v_rel_rules;
+val _ = show "value_rel_simps_typed=" clos_fvsProofTheory.v_rel_simps;
 val _ = show "ref_rel_typed=" clos_fvsProofTheory.ref_rel_rules;
 val _ = show "state_rel_typed=" clos_fvsProofTheory.state_rel_def;
+val bytes_list_replay = Q.prove (
+  `!x y. clos_fvsProof$v_rel x y ==>
+     !ns. (closSem$v_to_list x = SOME (MAP (closSem$Number o $& o (w2n:word8->num)) ns)) <=>
+          (closSem$v_to_list y = SOME (MAP (closSem$Number o $& o (w2n:word8->num)) ns))`,
+  ho_match_mp_tac closSemTheory.v_to_list_ind >> rw [] >>
+  fs [closSemTheory.v_to_list_def] >>
+  Cases_on `tag = cons_tag` >> fs [] >>
+  res_tac >> fs [closSemTheory.case_eq_thms] >>
+  Cases_on `ns` >> fs [] >> eq_tac >> rw [] >> fs [] >> Cases_on `h` >> fs []);
+val _ = show "bytes_list_typed=" bytes_list_replay;
+val words_list_replay = Q.prove (
+  `!x y. clos_fvsProof$v_rel x y ==>
+     !ns. (closSem$v_to_list x = SOME (MAP closSem$Word64 ns)) <=>
+          (closSem$v_to_list y = SOME (MAP closSem$Word64 ns))`,
+  ho_match_mp_tac closSemTheory.v_to_list_ind >> rw [] >>
+  fs [closSemTheory.v_to_list_def] >>
+  Cases_on `tag = cons_tag` >> fs [] >>
+  res_tac >> fs [closSemTheory.case_eq_thms] >>
+  Cases_on `ns` >> fs [] >> eq_tac >> rw [] >> fs [] >> Cases_on `h` >> fs []);
+val _ = show "words_list_typed=" words_list_replay;
+val simple_state_rel_replay = Q.prove (
+  `closProps$simple_state_rel clos_fvsProof$v_rel clos_fvsProof$state_rel`,
+  fs [closPropsTheory.simple_state_rel_def, clos_fvsProofTheory.state_rel_def]
+  \\ rw [] \\ fs [finite_mapTheory.fmap_rel_def, finite_mapTheory.FLOOKUP_DEF] \\ rfs []
+  \\ TRY (first_x_assum drule \\ fs [clos_fvsProofTheory.ref_rel_cases])
+  \\ fs [finite_mapTheory.FAPPLY_FUPDATE_THM]
+  \\ rw [] \\ fs [clos_fvsProofTheory.ref_rel_cases]);
+val _ = show "simple_state_rel_typed=" simple_state_rel_replay;
+val state_rel_opt_rel_refs_replay = Q.prove (
+  `(clos_fvsProof$state_rel (s1 :('c,'ffi) closSem$state) s2 /\ FLOOKUP s1.refs n = r1 ==>
+       ?r2. FLOOKUP s2.refs n = r2 /\ OPTREL clos_fvsProof$ref_rel r1 r2) /\
+   (clos_fvsProof$state_rel s1 s2 /\ FLOOKUP s2.refs n = r2 ==>
+       ?r1. FLOOKUP s1.refs n = r1 /\ OPTREL clos_fvsProof$ref_rel r1 r2)`,
+  rw [] \\ gvs [clos_fvsProofTheory.state_rel_def, finite_mapTheory.fmap_rel_def,
+    finite_mapTheory.FLOOKUP_DEF] \\ rw []);
+val _ = show "state_rel_opt_rel_refs_typed=" state_rel_opt_rel_refs_replay;
+val state_rel_clocks_eqs_replay = Q.prove (
+  `clos_fvsProof$state_rel (s1 :('c,'ffi) closSem$state) s2 ==>
+   s1.clock = s2.clock`,
+  simp [clos_fvsProofTheory.state_rel_def]);
+val _ = show "state_rel_clocks_eqs_typed=" state_rel_clocks_eqs_replay;
 val state_rel_dec_clock_replay = Q.prove (
   `clos_fvsProof$state_rel (s1 :('c,'ffi) closSem$state) s2 ==>
    clos_fvsProof$state_rel (closSem$dec_clock 1 s1) (closSem$dec_clock 1 s2)`,
@@ -52,6 +100,8 @@ val update_thunk_statement = ``clos_fvsProof$state_rel (s1 :('c,'ffi) closSem$st
                clos_fvsProof$state_rel (s1 with refs := refs1) (s2 with refs := refs2))``;
 val _ = (print "update_thunk_statement_typed="; print_term update_thunk_statement; print "\n");
 val _ = show "dest_closure_some_typed=" clos_fvsProofTheory.dest_closure_SOME_IMP;
+val _ = show "lookup_vars_lemma_typed=" clos_fvsProofTheory.lookup_vars_lemma;
+val _ = show "find_code_lemma_typed=" clos_fvsProofTheory.find_code_lemma;
 val _ = show "dest_closure_full_typed=" clos_fvsProofTheory.dest_closure_SOME_Full_app;
 val _ = show "evaluate_remove_typed=" clos_fvsProofTheory.evaluate_remove_fvs;
 val _ = show "remove_correct_typed=" clos_fvsProofTheory.remove_fvs_correct;
@@ -63,3 +113,6 @@ val _ = show "remove_fv_max_typed=" clos_fvsProofTheory.fv_max_remove_fvs;
 val _ = show "remove_set_globals_typed=" clos_fvsProofTheory.remove_fvs_set_globals;
 val _ = show "remove_elist_globals_typed=" clos_fvsProofTheory.remove_fvs_elist_globals;
 val _ = show "remove_esgc_free_typed=" clos_fvsProofTheory.remove_fvs_esgc_free;
+val _ = show "remove_code_labels_typed=" clos_fvsProofTheory.get_code_labels_remove_fvs;
+val _ = show "remove_every_sing_typed=" clos_fvsProofTheory.EVERY_remove_fvs_sing;
+val _ = show "remove_sing_head_globals_typed=" clos_fvsProofTheory.set_globals_HD_remove_fvs_SING;

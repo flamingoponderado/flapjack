@@ -25,7 +25,7 @@ theorem destThunk_related {C F : Type} (source target : State C F) (value nextVa
     DestThunkRel (destThunk [value] source.refs) (destThunk [nextValue] target.refs) := by
   cases values with
   | refPtr flag index =>
-    have refs := stateRel_lookupRefs states index
+    obtain ⟨_, rfl, refs⟩ := (state_rel_opt_rel_refs source target index (source.refs.lookup index) (target.refs.lookup index)).1 ⟨states, rfl⟩
     cases left : source.refs.lookup index <;> cases right : target.refs.lookup index <;>
       simp_all [Flapjack.optionRel, destThunk, DestThunkRel]
     cases refs with
@@ -79,7 +79,7 @@ theorem updateThunk_related {C F : Type} (source target : State C F)
               cases left : destThunk [result] source.refs <;>
                 cases right : destThunk [nextResult] target.refs <;>
                 simp_all [DestThunkRel, updateThunk]
-              have refs := stateRel_lookupRefs states index
+              obtain ⟨_, rfl, refs⟩ := (state_rel_opt_rel_refs source target index (source.refs.lookup index) (target.refs.lookup index)).1 ⟨states, rfl⟩
               cases leftRef : source.refs.lookup index <;> cases rightRef : target.refs.lookup index <;>
                 simp_all [Flapjack.optionRel, storeThunk]
               cases refs with

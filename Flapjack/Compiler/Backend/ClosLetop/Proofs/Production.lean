@@ -72,24 +72,15 @@ theorem compileFuel_eq_source (fuel : Nat) (expression result : Exp)
 This is Flapjack infrastructure for the production agreement proof. -/
 theorem compileBounded_eq_source (fuel : Nat) (expression : Exp) :
     compileBounded fuel expression = some (compileSing expression) := by
-  obtain ⟨result, run⟩ := compileBounded_succeeds fuel expression
-  unfold compileBounded at run ⊢
+  unfold compileBounded
   cases first : compileFuel fuel expression with
   | some value =>
     have equal := compileFuel_eq_source fuel expression value first
     simp [equal]
   | none =>
-    have retry : compileFuel (max fuel (expBudget expression + 1)) expression = some result := by
-      simpa [first] using run
+    have bound : expBudget expression < max fuel (expBudget expression + 1) := by omega
+    obtain ⟨result, retry⟩ := compileFuel_succeeds (max fuel (expBudget expression + 1)) expression bound
     have equal := compileFuel_eq_source _ expression result retry
     simpa [first, equal] using retry
-
-/-- The production list traversal returns the source-shaped list traversal.
-This is Flapjack infrastructure for the production agreement proof. -/
-theorem compileBounded_list_eq_source (fuel : Nat) (expressions : List Exp) :
-    expressions.mapM (compileBounded fuel) = some (compileList expressions) := by
-  induction expressions with
-  | nil => rfl
-  | cons first rest ih => simp [compileList, compileBounded_eq_source, ih]
 
 end Flapjack.Compiler.Backend.ClosLetop

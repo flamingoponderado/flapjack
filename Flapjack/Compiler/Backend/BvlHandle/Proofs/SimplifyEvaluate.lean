@@ -47,7 +47,8 @@ theorem evaluate_makeHandle_raise {C F : Type} (operand handler : Bvl.Exp) (dept
       evaluate [handleAdjVars 1 depth (handleSimp handler)] (value :: env) next =
         evaluate [handleAdjVars 1 depth handler] (value :: env) next := by
     intro value next
-    apply handleAdjVars_evaluate_congr _ _ 1 depth (value :: env) next
+    apply handleAdjVars_evaluate_source _ _ next 1 depth (value :: env)
+    constructor
     · exact fun env => handlerIH env next
     · simp only [List.length_cons]; omega
   cases raises : canRaise operand with
@@ -97,7 +98,8 @@ theorem evaluate_handle_let_push {C F : Type} (bindings : List Bvl.Exp)
           cases error with
           | abort reason => simp [Nat.min_eq_right bodyBound]
           | raise value =>
-            have shifted := evaluate_handleAdjVars_extend handler depth [value] values env after bound
+            have shifted := evaluate_handleAdjVars_extend_source handler [value] depth values env after bound
+            simp only [evaluateTuple] at shifted
             simp only [List.length_singleton, List.cons_append, List.nil_append, ← len] at shifted
             simpa [bodyRun, fixClock, Nat.min_eq_right bodyBound] using shifted.symm
 
@@ -121,7 +123,8 @@ theorem evaluate_makeHandle_let {C F : Type} (bindings : List Bvl.Exp)
       evaluate [handleAdjVars 1 depth (handleSimp handler)] (value :: env) next =
         evaluate [handleAdjVars 1 depth handler] (value :: env) next := by
     intro value next
-    apply handleAdjVars_evaluate_congr _ _ 1 depth (value :: env) next
+    apply handleAdjVars_evaluate_source _ _ next 1 depth (value :: env)
+    constructor
     · exact fun env => handlerIH env next
     · simp only [List.length_cons]; omega
   cases raises : canRaiseList bindings with
@@ -231,7 +234,8 @@ theorem evaluate_makeHandle_if {C F : Type} (condition yes no handler : Bvl.Exp)
       evaluate [handleAdjVars 1 depth (handleSimp handler)] (value :: env) next =
         evaluate [handleAdjVars 1 depth handler] (value :: env) next := by
     intro value next
-    apply handleAdjVars_evaluate_congr _ _ 1 depth (value :: env) next
+    apply handleAdjVars_evaluate_source _ _ next 1 depth (value :: env)
+    constructor
     · exact fun env => handlerIH env next
     · simp only [List.length_cons]; omega
   have conditionSame : ∀ next : State C F,

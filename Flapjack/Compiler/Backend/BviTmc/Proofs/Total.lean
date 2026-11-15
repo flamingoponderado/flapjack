@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractTotal
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.ExtractCorrespondence
 
 @[expose] public section
 
@@ -31,12 +31,12 @@ theorem rewriteWrapperFuel_succeeds (fuel loc next n : Nat) (e : Exp)
       obtain ⟨out, h⟩ := ih n x bx
       exact ⟨_, by simp [rewriteWrapperFuel, h]; rfl⟩
     | op op xs =>
-      obtain ⟨out, h⟩ := toBlockFuel_succeeds fuel n loc (.op op xs)
-      cases out with
-      | none => exact ⟨_, by simp [rewriteWrapperFuel, h]; rfl⟩
+      have h := toBlockFuel_eq_source fuel n loc (.op op xs)
+      cases out : toBlockSource n loc (.op op xs) with
+      | none => exact ⟨_, by simp [rewriteWrapperFuel, h, out]; rfl⟩
       | some item =>
         obtain ⟨bs, cb⟩ := item
-        cases cb <;> exact ⟨_, by simp [rewriteWrapperFuel, h]; rfl⟩
+        cases cb <;> exact ⟨_, by simp [rewriteWrapperFuel, h, out]; rfl⟩
     | _ => exact ⟨_, rfl⟩
 
 /-- Worker rewriting succeeds under a structural fuel bound. -/
@@ -61,15 +61,15 @@ theorem rewriteWorkerFuel_succeeds (fuel loc next ptr idx n : Nat) (e : Exp)
       obtain ⟨out, h⟩ := ih ptr idx n x bx
       exact ⟨_, by simp [rewriteWorkerFuel, h]; rfl⟩
     | op op xs =>
-      obtain ⟨out, h⟩ := toBlockFuel_succeeds fuel n loc (.op op xs)
-      cases out with
-      | none => exact ⟨_, by simp [rewriteWorkerFuel, h]; rfl⟩
-      | some item => obtain ⟨bs, cb⟩ := item; exact ⟨_, by simp [rewriteWorkerFuel, h]; rfl⟩
+      have h := toBlockFuel_eq_source fuel n loc (.op op xs)
+      cases out : toBlockSource n loc (.op op xs) with
+      | none => exact ⟨_, by simp [rewriteWorkerFuel, h, out]; rfl⟩
+      | some item => obtain ⟨bs, cb⟩ := item; exact ⟨_, by simp [rewriteWorkerFuel, h, out]; rfl⟩
     | call ticks dest xs handler =>
-      obtain ⟨out, h⟩ := toBlockFuel_succeeds fuel n loc (.call ticks dest xs handler)
-      cases out with
-      | none => exact ⟨_, by simp [rewriteWorkerFuel, h]; rfl⟩
-      | some item => obtain ⟨bs, cb⟩ := item; exact ⟨_, by simp [rewriteWorkerFuel, h]; rfl⟩
+      have h := toBlockFuel_eq_source fuel n loc (.call ticks dest xs handler)
+      cases out : toBlockSource n loc (.call ticks dest xs handler) with
+      | none => exact ⟨_, by simp [rewriteWorkerFuel, h, out]; rfl⟩
+      | some item => obtain ⟨bs, cb⟩ := item; exact ⟨_, by simp [rewriteWorkerFuel, h, out]; rfl⟩
     | _ => exact ⟨_, rfl⟩
 
 /-- A structurally sufficient budget makes both wrapper and worker rewriting
@@ -82,32 +82,5 @@ theorem compileExpFuel_succeeds (fuel loc next arity : Nat) (e : Exp)
   | some w =>
     obtain ⟨worker, hs⟩ := rewriteWorkerFuel_succeeds fuel loc next arity (arity + 1) arity e bound
     exact ⟨_, by simp [compileExpFuel, hw, hs]; rfl⟩
-
-/-- The executable retry never fails due to TMC traversal fuel. -/
-theorem compileExpBounded_succeeds (fuel loc next arity : Nat) (e : Exp) :
-    ∃ result, compileExpBounded fuel loc next arity e = some result := by
-  cases h : compileExpFuel fuel loc next arity e with
-  | some result => exact ⟨result, by simp [compileExpBounded, h]⟩
-  | none =>
-    have bound : expBudget e < max fuel (expBudget e + 1) := by omega
-    obtain ⟨result, done⟩ := compileExpFuel_succeeds (max fuel (expBudget e + 1)) loc next arity e bound
-    exact ⟨result, by simp [compileExpBounded, h, done]⟩
-
-/-- Processing a program cannot fail due to TMC traversal fuel. -/
-theorem compileEachFuel_succeeds (fuel next : Nat) (code : List (Nat × Nat × Exp)) :
-    ∃ result, compileEachFuel fuel next code = some result := by
-  induction code generalizing next with
-  | nil => exact ⟨_, rfl⟩
-  | cons p ps ih =>
-    obtain ⟨loc, arity, body⟩ := p
-    obtain ⟨decision, hd⟩ := compileExpBounded_succeeds fuel loc next arity body
-    cases decision with
-    | none =>
-      obtain ⟨⟨next', rest⟩, hr⟩ := ih next
-      exact ⟨_, by simp [compileEachFuel, hd, hr]; rfl⟩
-    | some pair =>
-      obtain ⟨wrapper, worker⟩ := pair
-      obtain ⟨⟨next', rest⟩, hr⟩ := ih (next + Flapjack.bvlToBviNamespaces)
-      exact ⟨_, by simp [compileEachFuel, hd, hr]; rfl⟩
 
 end Flapjack.Compiler.Backend.BviTmc

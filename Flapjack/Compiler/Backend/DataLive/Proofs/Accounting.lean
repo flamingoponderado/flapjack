@@ -8,22 +8,6 @@ public import Flapjack.Compiler.Backend.DataLive.Proofs.PureMemory
 namespace Flapjack.Compiler.Backend.DataLive
 open Flapjack Flapjack.Compiler.Backend.DataSem Flapjack.SemanticPrimitivesHOL
 
-/-- Updating the unobserved resource bookkeeping fields preserves the
-liveness relation. This is auxiliary infrastructure. -/
-theorem stateRel_bookkeeping {C F : Type} (source target : State C F) (live : NumSet)
-    (sourceSafe targetSafe : Bool) (sourceMax targetMax : Option Nat) (sourcePeak targetPeak : Nat)
-    (related : stateRel source target live) :
-    stateRel { source with safeForSpace := sourceSafe, stackMax := sourceMax, peakHeapLength := sourcePeak }
-      { target with safeForSpace := targetSafe, stackMax := targetMax, peakHeapLength := targetPeak } live := related
-
-/-- Setting the same amount of available space in related states preserves
-their relation. -/
-theorem stateRel_setSpace {C F : Type} (source target : State C F) (live : NumSet)
-    (amount : Nat) (related : stateRel source target live) :
-    stateRel { source with space := amount } { target with space := amount } live := by
-  rcases related with ⟨code, clock, _, ffi, refs, global, handler, stack, compiler, oracle, stamps, limits, frames, locals⟩
-  exact ⟨code, clock, rfl, ffi, refs, global, handler, stack, compiler, oracle, stamps, limits, frames, locals⟩
-
 /-- Resource-limit and stack bookkeeping retain the liveness relation even
 when their unobserved safety and maximum-stack fields differ. -/
 theorem stateRel_doStackLim {C F : Type} (source target : State C F) (live : NumSet)
