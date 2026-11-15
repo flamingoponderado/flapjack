@@ -121,7 +121,9 @@ theorem evaluate_simp {C F : Type} (program continuation : DataLang.Prog) (state
 termination_by sizeOf program
 decreasing_by all_goals (simp_wf; omega)
 
-/-- Simplifying with a trailing skip preserves the program's evaluation. -/
+/-- Simplifying with a trailing skip preserves the program's evaluation.
+The evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_simpProofScript.sml" "simp_correct"]
 theorem simp_correct {C F : Type} (program : DataLang.Prog) (state : DataSem.State C F) :
     DataSem.evaluate (simp program .skip) state = DataSem.evaluate program state := by
   simpa [DataSem.evaluate_seq_skip] using evaluate_simp program .skip state

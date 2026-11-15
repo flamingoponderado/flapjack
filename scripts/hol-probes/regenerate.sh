@@ -9819,7 +9819,8 @@ run_probe data_live_compile_probeScript.sml data_live_compile_probe.out \
   "$cake_dir/compiler/backend/proofs"
 
 run_probe data_simp_probeScript.sml data_simp_probe.out \
-  pSeq_def_typed simp_def_typed get_code_labels_simp_typed \
+  pSeq_def_typed simp_def_typed get_code_labels_simp_typed simp_correct_typed \
+  evaluate_Seq_Skip_replay_typed evaluate_pSeq_replay_typed lam_skip_id_replay_typed evaluate_simp_replay_typed \
   "$cake_dir/compiler/backend/proofs/data_simpProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 

@@ -24142,6 +24142,13 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/data_simpProofScript.sml", "hol_name": "simp_correct",
+    "lean_path": "Flapjack/Compiler/Backend/DataSimp/Proofs/Correct.lean", "lean_name": "simp_correct",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the original typed simp_correct in data_simp_probe.out: arbitrary program and state with independent compiler and FFI parameters, identical complete evaluation results and states, and no additional premises. Evaluation inherits reals_as_rational_cuts as documented in SOUNDNESS item 8."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/data_liveScript.sml", "hol_name": "is_pure_pmatch",
     "lean_path": "Flapjack/Compiler/Backend/DataLive.lean", "lean_name": "isPure_pmatch",
     "statement_status": "reviewed_exact",
