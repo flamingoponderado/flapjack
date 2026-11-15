@@ -135685,6 +135685,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "state_rel_filled", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/StateRelation.lean",
+  "lean_name": "stateRel_filled", "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BviState.refs", "f"],
+  "reviewer": "Source comparison: Compared state_rel_filled_typed in bvi_tmc_proof_source_probe.out: the original state relation and range nonmembership jointly imply the relation after the target reference-map update. Range nonmembership is the absence of a successful lookup as in HOL FRANGE_FLOOKUP; the complete reference value and independent state carriers are preserved. State refs and the pointer map use canonical finite support with the local state roundtrip witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "state_rel_def", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/StateRelation.lean",
   "lean_name": "stateRel", "statement_status": "reviewed_fmap_as_finite_support_relation",
   "fmap_as_finite_support_relation": ["BviState.refs", "f"],

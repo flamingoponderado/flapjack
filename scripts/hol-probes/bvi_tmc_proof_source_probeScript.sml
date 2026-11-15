@@ -19,6 +19,7 @@ val _ = show "env_rel_def_typed" bvi_tmcProofTheory.env_rel_def;
 val _ = show "state_ref_rel_def_typed" bvi_tmcProofTheory.state_ref_rel_def;
 val _ = show "state_ref_rel_filled_typed" bvi_tmcProofTheory.state_ref_rel_filled;
 val _ = show "state_rel_def_typed" bvi_tmcProofTheory.state_rel_def;
+val _ = show "state_rel_filled_typed" bvi_tmcProofTheory.state_rel_filled;
 val _ = show "state_rel_with_clock_typed" bvi_tmcProofTheory.state_rel_with_clock;
 val _ = show "state_rel_dec_typed" bvi_tmcProofTheory.state_rel_dec;
 val _ = show "v_rel_submap_typed" bvi_tmcProofTheory.v_rel_submap;

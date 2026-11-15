@@ -65,15 +65,14 @@ theorem stateRel_codeRel {C F : Type} (f : HolFiniteMapExact Nat Nat)
     codeRel source.code target.code := related.2.2.2.2.2.2.1
 
 /-- Updating a target reference outside the pointer-map range preserves the
-state relation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_filled" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
+state relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_filled"
+  (fmap_as_finite_support_relation := [BviState.refs, f])]
 theorem stateRel_filled {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (source : BviState (Nat × C) F) (target : BviState C F) (key : Nat) (value : BvlSem.Ref BvlSem.Value)
-    (related : stateRel f source target) (fresh : ∀ i, f.lookup i ≠ some key) :
+    (h : stateRel f source target ∧ ¬ ∃ i, f.lookup i = some key) :
     stateRel f source { target with refs := target.refs.updateEq (key, value) } := by
-  exact ⟨stateRefRel_filled f source.refs target.refs key value ⟨related.1, fun ⟨i, mapped⟩ => fresh i mapped⟩, related.2⟩
+  exact ⟨stateRefRel_filled f source.refs target.refs key value ⟨h.1.1, h.2⟩, h.1.2⟩
 
 /-- Flapjack installation helper: disjoint source and transformed code can be
 installed together while both compiler oracles advance. -/
