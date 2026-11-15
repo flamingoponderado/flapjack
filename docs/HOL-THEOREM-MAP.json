@@ -135565,6 +135565,27 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "v_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
+  "lean_name": "valueRel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Compared v_rel_rules_typed in bvi_tmc_proof_source_probe.out: Number, fixed word64, Block with the full list relation, CodePtr and mapped RefPtr constructors and carriers match. The pointer map uses canonical finite support and the same-module parameter witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "ref_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
+  "lean_name": "refRel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Compared ref_rel_rules_typed in bvi_tmc_proof_source_probe.out: byte arrays with fixed word8 elements, value arrays and thunk constructors retain all original fields and relations; mutable blocks have no rule. The pointer map uses canonical finite support and the same-module parameter witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "env_rel_def", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
+  "lean_name": "envRel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Compared env_rel_def_typed in bvi_tmc_proof_source_probe.out: arbitrary optimization flag, environments and finite pointer map retain the original split, value relation, guarded length, HOL EL and typed hole-pointer/index clauses. The pointer map uses canonical finite support and the same-module parameter witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "fmap_inj_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
   "lean_name": "fmapInj", "statement_status": "reviewed_fmap_as_finite_support_parameters",

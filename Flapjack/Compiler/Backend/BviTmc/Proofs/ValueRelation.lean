@@ -25,10 +25,9 @@ theorem holFmapAsFiniteSupportParamWitness_valueRel_f (f : HolFiniteMapExact Nat
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Values are unchanged except that reference pointers are translated by
-the finite pointer map.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_rel" (fmap_as_finite_support_parameters := [f])] -/
+the finite pointer map. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "v_rel"
+  (fmap_as_finite_support_parameters := [f])]
 inductive valueRel (f : HolFiniteMapExact Nat Nat) : Value → Value → Prop where
   | number (i : Int) : valueRel f (.number i) (.number i)
   | word64 (w : BitVec 64) : valueRel f (.word64 w) (.word64 w)
@@ -41,10 +40,9 @@ theorem holFmapAsFiniteSupportParamWitness_refRel_f (f : HolFiniteMapExact Nat N
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- Related reference cells contain related values; mutable blocks are
-intentionally absent from the source relation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "ref_rel" (fmap_as_finite_support_parameters := [f])] -/
+intentionally absent from the source relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "ref_rel"
+  (fmap_as_finite_support_parameters := [f])]
 inductive refRel (f : HolFiniteMapExact Nat Nat) : Ref Value → Ref Value → Prop where
   | byteArray (b : Bool) (bytes : List (BitVec 8)) : refRel f (.byteArray b bytes) (.byteArray b bytes)
   | valueArray (xs ys : List Value) : List.Forall₂ (valueRel f) xs ys → refRel f (.valueArray xs) (.valueArray ys)
@@ -54,10 +52,9 @@ theorem holFmapAsFiniteSupportParamWitness_envRel_f (f : HolFiniteMapExact Nat N
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- An optimized environment has two additional values describing the
-mutable hole; the non-optimized relation permits arbitrary extra values.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_def" (fmap_as_finite_support_parameters := [f])] -/
+mutable hole; the non-optimized relation permits arbitrary extra values. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "env_rel_def"
+  (fmap_as_finite_support_parameters := [f])]
 noncomputable def envRel (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source target : List Value) : Prop :=
   ∃ xs ys, target = xs ++ ys ∧ List.Forall₂ (valueRel f) source xs ∧
     (opt = true → ys.length = 2 ∧ ∃ ptr idx,
