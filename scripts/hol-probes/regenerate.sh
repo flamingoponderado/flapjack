@@ -12036,3 +12036,33 @@ run_probe lab_sem_local_typed_probeScript.sml lab_sem_local_typed_probe.out \
   asm_fetch_IMP_typed \
   "$cake_dir/compiler/backend/semantics/labSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
+
+run_probe data_to_word_gc_local_typed_probeScript.sml data_to_word_gc_local_typed_probe.out \
+  heap_split_APPEND_prime_typed traverse_heap_typed size_of_Block_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe source_let_proof_local_typed_probeScript.sml source_let_proof_local_typed_probe.out \
+  env_c_lemma_typed evaluate_lift_start_typed lift_lets_mod_local_typed \
+  "$cake_dir/compiler/backend/proofs/source_letProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe data_to_word_assign_typed_probeScript.sml data_to_word_assign_typed_probe.out \
+  size_of_seen_SUBSET_typed size_of_seen_Block_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_word_assignProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe word_remove_proof_local_typed_probeScript.sml word_remove_proof_local_typed_probe.out \
+  evaluate_add_clock_compile_state_typed \
+  "$cake_dir/compiler/backend/proofs/word_removeProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe backend_proof_typed_probeScript.sml backend_proof_typed_probe.out \
+  compile_to_word_conventions2_typed \
+  "$cake_dir/compiler/backend/proofs/backendProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe data_to_word_proof_typed_probeScript.sml data_to_word_proof_typed_probe.out \
+  memory_rel_Thunk_bits_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

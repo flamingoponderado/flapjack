@@ -10687,3 +10687,20 @@ lines); `inst_clock_neutral`, `inst_clock_neutral_ffi` (stackProps); and
 the pinned source with the splice-expanding helper. Regenerate each with
 `CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=<probe>_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`data_to_word_gc_local_typed_probe.out`, `source_let_proof_local_typed_probe.out`,
+`data_to_word_assign_typed_probe.out`, `word_remove_proof_local_typed_probe.out`,
+`backend_proof_typed_probe.out` and `data_to_word_proof_typed_probe.out`
+(3+3+2+1+1+1 rows) capture the reviewed compiler/backend/proofs rows that
+earlier probes did not cover (task 188): `heap_split_APPEND'`, the
+`traverse_heap` Inductive (captured as its generated `traverse_heap_rules`) and
+`size_of_Block` (data_to_word_gcProof); `env_c_lemma`,
+`lift_lets_mod_local` and `evaluate_lift_start` (source_letProof;
+`evaluate_lift_start` is `Q.SPEC ‘[]’ evaluate_lift_lets |> SIMP_RULE`, so the
+probe captures the exported base `evaluate_lift_lets`, whose instance the Lean
+statement implements); `size_of_seen_SUBSET`, `size_of_seen_Block`
+(data_to_word_assignProof); `evaluate_add_clock_compile_state`
+(word_removeProof); `compile_to_word_conventions2` (backendProof); and
+`memory_rel_Thunk_bits` (data_to_wordProof). Regenerate each with
+`CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=<probe>_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
