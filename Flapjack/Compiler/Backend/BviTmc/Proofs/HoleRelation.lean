@@ -516,6 +516,18 @@ theorem nonFresh_not_in_range (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapE
   intro member
   exact fresh ptr ⟨member, outside⟩ allocated
 
+theorem holFmapAsFiniteSupportParamWitness_freshPtr_fresh_refs {α : Type}
+    (refs : HolFiniteMapExact Nat α) :
+    mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+
+open Classical in
+/-- The least natural outside a finite map's domain is outside that domain. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fresh_ptr_fresh"
+  (fmap_as_finite_support_parameters := [refs])]
+theorem freshPtr_fresh {α : Type} (refs : HolFiniteMapExact Nat α) :
+    Nat.find (holFiniteMapExact_exists_unused refs) ∉ refs.domain := by
+  simpa [HolFiniteMapExact.domain] using Nat.find_spec (holFiniteMapExact_exists_unused refs)
+
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_trans_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_trans_g (g : HolFiniteMapExact Nat Nat) :

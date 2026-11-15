@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "fresh_ptr_fresh", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "freshPtr_fresh", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["refs"],
+  "reviewer": "Source comparison: Compared fresh_ptr_fresh_typed in bvi_tmc_proof_source_probe.out: for an arbitrary-value finite map on naturals, the least natural outside its domain is outside its domain. Nat.find computes the least natural with absent lookup, equivalent to the original LEAST over domain nonmembership; the map uses canonical finite support with a same-module witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "non_fresh_not_in_frange", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
   "lean_name": "nonFresh_not_in_range", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "g", "refs"],
