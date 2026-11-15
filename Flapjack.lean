@@ -1024,6 +1024,7 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.ForceSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.CallSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.LetCallSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Induction
+import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockCorrectness
 import Flapjack.Compiler.Backend.BviTmc.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Observation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.Equality
