@@ -135699,6 +135699,20 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "holes_unchanged_except_changed", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "holesUnchanged_changed", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "refsOld", "refsNew"],
+  "reviewer": "Source comparison: Compared holes_unchanged_except_changed_typed in bvi_tmc_proof_source_probe.out: the original updated-source invariant and matching old block lookup imply the singleton-changed invariant over the original source heap. The unused changed binder has an independent type, all mutable-block fields and independent map-key, pointer and cell types remain, and named maps use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "holes_unchanged_except_filled", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "holesUnchanged_filled", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "refsOld", "refsNew"],
+  "reviewer": "Source comparison: Compared holes_unchanged_except_filled_typed in bvi_tmc_proof_source_probe.out: the original empty-changed invariant and matching old block lookup imply the singleton-changed invariant after updating the target heap. The unused changed binder has an independent type, all mutable-block fields and independent map-key, pointer and cell types remain, and named maps use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "holes_unchanged_except_del", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
   "lean_name": "holesUnchanged_delete", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "refs", "refsNew"],

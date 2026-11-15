@@ -113,7 +113,7 @@ theorem linked_frame_return_invariants (f g : HolFiniteMapExact Nat Nat)
     have h := holesUnchanged_changed f refs nextRefs () ptr oldTag false oldLeft
       (.refPtr false (leastUnusedRef refs)) oldRight false initial
     rw [sameDec] at h
-    exact h reducedUnchanged found
+    exact h ⟨reducedUnchanged, found⟩
   have oldStill : holesStillNotFinalised f refs nextRefs := by
     have h := holesStill_delete f refs nextRefs ptr oldTag oldLeft (.refPtr false (leastUnusedRef refs)) oldRight
     rw [sameDec] at h

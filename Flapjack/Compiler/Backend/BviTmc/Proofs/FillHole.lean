@@ -131,7 +131,7 @@ theorem evaluate_fill_hole_val {C F : Type} (e : Bvi.Exp)
   · exact stateRel_filled fNext sourceNext targetNext holePtr (.mutBlock tag false left relatedValue right)
       ⟨nextStates, outsideNext⟩
   · have unchangedFilled := holesUnchanged_filled f target.refs targetNext.refs () holePtr tag false left relatedValue right
-      finalised c unchanged found
+      finalised c ⟨unchanged, found⟩
     rw [sameDec] at unchangedFilled
     exact unchangedFilled
   · have stillFilled := holesStill_insert f target.refs targetNext.refs holePtr tag left relatedValue right still
