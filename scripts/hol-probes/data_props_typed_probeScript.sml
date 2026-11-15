@@ -68,3 +68,6 @@ val _ = emit "do_app_aux_sm_safe_peak_swap_typed" "do_app_aux_sm_safe_peak_swap"
 val _ = emit "do_app_err_safe_peak_swap_typed" "do_app_err_safe_peak_swap";
 val _ = emit "do_app_err_sm_safe_peak_swap_typed" "do_app_err_sm_safe_peak_swap";
 val _ = emit "size_of_heap_with_safe_typed" "size_of_heap_with_safe";
+val _ = emit "OPTION_MAP2_ADD_SOME_0_typed" "OPTION_MAP2_ADD_SOME_0";
+val _ = emit "OPTION_MAP2_MAX_CANCEL_typed" "OPTION_MAP2_MAX_CANCEL";
+val _ = emit "OPTION_MAP2_NONE_typed" "OPTION_MAP2_NONE";
