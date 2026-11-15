@@ -256,3 +256,5 @@ val _ = emit_exported "state_rel_imp_evaluate_decls_typed" "state_rel_imp_evalua
 val _ = emit_exported "state_rel_imp_semantics_typed" "state_rel_imp_semantics";
 val _ = emit_exported "state_rel_imp_semantics_decls_typed" "state_rel_imp_semantics_decls";
 val _ = emit_exported "state_rel_intro_typed" "state_rel_intro";
+val _ = emit_exported "OPT_MMAP_NONE_typed" "OPT_MMAP_NONE";
+val _ = emit_exported "OPT_MMAP_NONE_prime_typed" "OPT_MMAP_NONE'";

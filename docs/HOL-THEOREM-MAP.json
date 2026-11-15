@@ -90131,12 +90131,12 @@
     "reviewer": "Codex (proof inventory)"
   },
   {
-    "hol_path": null,
-    "hol_name": null,
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "OPT_MMAP_NONE",
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
     "lean_name": "list_mapM_eq_none_exists",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Codex (proof inventory)"
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison (2026-11-15, task 199): typed capture OPT_MMAP_NONE_typed in scripts/hol-probes/pancake_pan_simp_proof_typed_probe.out gives OPT_MMAP (f :β -> α option) (xs :β list) = NONE ⇒ ∃(x :β). MEM x xs ∧ f x = NONE, with the element type β and the result type α independent. Lean keeps the binder order f xs, the implication premise and the same existential (x ∈ xs ∧ f x = none); OPT_MMAP is List.mapM for Option and NONE is none, so no representation qualifier applies."
   },
   {
     "hol_path": null,
@@ -135698,5 +135698,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "codewhale source comparison (2026-11-15, task 199): typed capture flatten_nil_no_size_typed in scripts/hol-probes/pan_to_crep_local_typed_probe.out gives (x :α v). is_wf_shape_nil (shape_of x) ⇒ (flatten x = ([] :α word_lab list) ⇔ size_of_shape (shape_of x) = 0), with the value's word dimension α the only type variable. Lean keeps the single binder, the well-formedness premise as isWfShapeExactHOL [] = true (HOL's empty-context overload, as in the tagged length_flatten_eq_size_of_shape port), and the iff between flattenHOL = [] and sizeOfShapeHOL = 0; the only carrier translation is the type-indexed word to BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "OPT_MMAP_NONE'",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp.lean",
+    "lean_name": "listMapM_eq_none_of_mem_conj",
+    "statement_status": "reviewed_exact",
+    "reviewer": "codewhale source comparison (2026-11-15, task 199): typed capture OPT_MMAP_NONE_prime_typed in scripts/hol-probes/pancake_pan_simp_proof_typed_probe.out gives MEM (x :α) (xs :α list) ∧ (f :α -> β option) x = NONE ⇒ OPT_MMAP f xs = NONE, one conjunction premise with the element type α and the result type β independent. Lean keeps HOL's single conjunction as one premise (the curried list_mapM_eq_none_of_mem stays an untagged helper) and the same conclusion; OPT_MMAP is List.mapM for Option."
   }
 ]

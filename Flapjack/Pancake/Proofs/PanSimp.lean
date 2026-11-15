@@ -155,8 +155,12 @@ theorem list_mapM_updatePanValueMap_not_mem {γ : Type} [BEq γ] [LawfulBEq γ]
   have hne : x ≠ name := fun heq => hnotmem (heq ▸ hx)
   simp [updatePanValueMap, beq_iff_eq, hne, hy]
 
-/-- Cake's `OPT_MMAP_NONE` (`pan_simpProofScript.sml:500`): a failing map has
-    a failing element. -/
+/-- Exact port of HOL `OPT_MMAP_NONE` (`pan_simpProofScript.sml:500`): a
+    failing map has a failing element.  The typed capture `OPT_MMAP_NONE_typed`
+    gives `OPT_MMAP (f :β -> α option) (xs :β list) = NONE ⇒
+    ∃(x :β). MEM x xs ∧ f x = NONE`, with the element and result types
+    independent; Lean keeps the binder order `f xs` and the same existential. -/
+@[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "OPT_MMAP_NONE"]
 theorem list_mapM_eq_none_exists {α β : Type} (f : α → Option β) (xs : List α)
     (h : xs.mapM f = none) : ∃ x ∈ xs, f x = none := by
   induction xs with
@@ -174,8 +178,9 @@ theorem list_mapM_eq_none_exists {α β : Type} (f : α → Option β) (xs : Lis
               simp [hys] at h
               exact absurd hx (h y)
 
-/-- Cake's `OPT_MMAP_NONE'` (`pan_simpProofScript.sml:509`): a failing element
-    makes the whole map fail. -/
+/-- Untagged helper: the curried form of HOL `OPT_MMAP_NONE'`, used by the
+    `OPT_MMAP` case work below.  The exact conjunction-premise port is
+    `listMapM_eq_none_of_mem_conj`. -/
 theorem list_mapM_eq_none_of_mem {α β : Type} (f : α → Option β) {x : α} {xs : List α}
     (hx : x ∈ xs) (hf : f x = none) : xs.mapM f = none := by
   induction xs with
@@ -187,6 +192,17 @@ theorem list_mapM_eq_none_of_mem {α β : Type} (f : α → Option β) {x : α} 
       · cases hy : f y with
         | none => simp
         | some b => simp [ih hx']
+
+/-- Exact port of HOL `OPT_MMAP_NONE'` (`pan_simpProofScript.sml:509`): a failing
+    element makes the whole map fail.  The typed capture
+    `OPT_MMAP_NONE_prime_typed` gives one conjunction premise
+    `MEM (x :α) (xs :α list) ∧ (f :α -> β option) x = NONE`, with the element
+    and result types independent; the statement keeps that single conjunction
+    (the curried `list_mapM_eq_none_of_mem` stays untagged). -/
+@[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "OPT_MMAP_NONE'"]
+theorem listMapM_eq_none_of_mem_conj {α β : Type} (f : α → Option β) (x : α) (xs : List α)
+    (h : x ∈ xs ∧ f x = none) : xs.mapM f = none :=
+  list_mapM_eq_none_of_mem f h.1 h.2
 
 /-- Cake's `OPT_MMAP_MEM_IMP`
 (`cakeml/pancake/semantics/panPropsScript.sml:115-123`): every element of a
