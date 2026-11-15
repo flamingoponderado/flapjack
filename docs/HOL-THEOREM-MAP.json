@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "bvi_to_bvl_refs", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/StateRelation.lean",
+  "lean_name": "bviToBvl_refs", "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BvlSem.State.refs", "BviState.refs"],
+  "reviewer": "Source comparison: Compared bvi_to_bvl_refs_typed in bvi_tmc_proof_source_probe.out: copying a BVL state into a BVI state takes the reference field from the BVL state, with the same independent state type parameters. Both state reference fields use canonical finite support and same-module carrier roundtrip witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "do_app_op_err_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/OperationError.lean",
   "lean_name": "doApp_op_err_rel", "statement_status": "reviewed_fmap_as_finite_support_relation",
   "fmap_as_finite_support_relation": ["BviState.refs", "f"],

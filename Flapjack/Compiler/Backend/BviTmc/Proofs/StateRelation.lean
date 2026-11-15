@@ -26,6 +26,20 @@ theorem bvlToBvi_refs {C F : Type} (s : BviState C F)
   cases s
   rfl
 
+namespace BvlReferenceProjection
+theorem holFmapAsFiniteSupportRelationWitness_BvlSem.State {C F : Type} :
+    (∀ s : BvlSem.StateBroad C F, (BvlSem.State.ofBroad s).toBroad = s) ∧
+      (∀ s : BvlSem.State C F, BvlSem.State.ofBroad s.toBroad = s) :=
+  BvlSem.holFmapAsFiniteSupportWitness
+end BvlReferenceProjection
+
+/-- Copying BVL fields into a BVI state takes references from the BVL state. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "bvi_to_bvl_refs"
+  (fmap_as_finite_support_relation := [BvlSem.State.refs, BviState.refs])]
+theorem bviToBvl_refs {C F : Type} (s : BvlSem.State C F) (t : BviState C F) :
+    (BviSem.fromBvl s t).refs = s.refs := by
+  rfl
+
 /-- The source state relation tracks pointer renaming, code, namespaces,
 and future compilation obligations. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_rel_def"
