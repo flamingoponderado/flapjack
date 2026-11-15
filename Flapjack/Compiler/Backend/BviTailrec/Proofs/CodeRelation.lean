@@ -733,8 +733,17 @@ def transformCompiler {C : Type} (compiler : BviSem.Compiler C) : BviSem.Compile
     let (next', compiled) := compileEachSource next program
     (compiler config compiled).map fun (bytes, data, config') => (bytes, data, (next', config'))
 
-/-- Source-shaped state relation used by the tail-recursion simulation. It is
-untagged until the evaluator and the source compilation carriers are reviewed. -/
+namespace StateRelCarrier
+/-- The BVI reference-map carrier roundtrips through its finite-support view. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end StateRelCarrier
+
+/-- State relation used by the tail-recursion simulation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "state_rel_def"
+  (fmap_as_finite_support := [refs])]
 def stateRel {C F : Type} (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F) : Prop :=
   target.refs = source.refs ∧
   target.clock = source.clock ∧

@@ -24142,6 +24142,13 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "stateRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["refs"],
+    "reviewer": "Compared all ten conjuncts and their orientations with state_rel_def_typed in bvi_tailrec_semantics_probe.out. The source and target compiler types are Nat × C and C, with independent compiler payload C and FFI payload F. The oracle and compiler adapters coincide with state_co and state_cc by transformOracle_eq_stateCo and transformCompiler_eq_stateCc; the code uses Spt. The refs field uses canonical finite support, witnessed by the same-module BviState/BviStateBroad roundtrip."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "evaluate_compile_each",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteSimulation.lean", "lean_name": "evaluateCompileEach",
     "statement_status": "reviewed_fmap_as_finite_support",
