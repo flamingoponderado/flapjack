@@ -808,28 +808,6 @@ theorem panToCrepSourceLoad32HOLCase
   simp only [Option.map_map]
   rfl
 
-/-- Source-shaped port of HOL `state_rel_globals[local]`
-    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:65`), a projection of
-    `state_rel`.
-
-    FLAPJACK-SPECIFIC (not an exact HOL port; review `flapjack-pxn.18.3.7.1.3`): the
-    hypothesis is the Flapjack-specific `stateRel` over production `PanSemState`/
-    `CrepRuntimeState`, not HOL `state_rel`, and the conclusion is stated over the
-    production carrier `FiniteMap VarName (PanValue α)` rather than HOL
-    `varname |-> 'a v`. The mismatch is not limited to the String-vs-`mlstring` domain
-    key (`VarName` vs `varname`): `stateRel` also relates an optional `PanValue`
-    source memory to a total `word_lab` target memory and the value type is
-    `PanValue α` vs `'a v` (see `stateRel_structs` above and the `state_rel_def` note),
-    so the `(names_as_string := ...)` qualifier does not apply. The exact projection
-    is the tagged `panToCrepStateRelFiniteExact_globals`
-    (`Proofs/PanToCrep/StateRelFiniteSupport.lean`); this production-carrier
-    declaration is Flapjack-specific infrastructure and carries no manifest row.
-    Carrier work remains tracked by `flapjack-pxn.18.3.5.8`. -/
-theorem stateRel_globals (s : PanSemState α (FfiState σ)) (t : CrepRuntimeState α σ)
-    (hrel : stateRel s t) : s.globals = (FEMPTY : FiniteMap VarName (PanValue α)) := by
-  rcases hrel with ⟨_, _, _, _, hglobals, _, _, _, _, _⟩
-  exact hglobals
-
 /-- Canonicalizing the target with `riscv64CrepRuntimeTarget` does not change
     the state relation: it only edits fields (`bytesInWord`, `memoryModel`,
     `ffiContext`) that `stateRel` does not constrain, together with `bigEndian`,

@@ -1003,6 +1003,24 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertNotEqual(record["statement_status"], "documented_mismatch")
         self.assertIn(key, MAP["tagged_declarations"]())
 
+    def test_state_rel_globals_projection_is_retired(self):
+        # The production-carrier projection is gone; HOL state_rel_globals is
+        # mapped by the tagged panToCrepStateRelFiniteExact_globals.
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        self.assertNotIn(
+            ("Flapjack/Pancake/Proofs/PanToCrep.lean", "stateRel_globals"),
+            inventory,
+        )
+        key = ("Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+               "panToCrepStateRelFiniteExact_globals")
+        record = inventory[key]
+        self.assertEqual(record["hol_name"], "state_rel_globals")
+        self.assertNotEqual(record["statement_status"], "documented_mismatch")
+        self.assertIn(key, MAP["tagged_declarations"]())
+
     def test_stack_size_eq2_mismatch_is_retired(self):
         # The unused width-specialized stack_size_eq2 analogue is gone; HOL
         # stack_size_eq2 has no exact Lean port (independent frame types), and
