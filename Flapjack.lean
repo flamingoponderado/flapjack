@@ -1039,6 +1039,7 @@ import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteCorrespondence
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.Semantics
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.ScanSound
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.CodeRelation
+import Flapjack.Compiler.Backend.BviTailrec.Proofs.CompleteInduction
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.PrimitiveRelation
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.RewriteSimulation
 import Flapjack.Compiler.Backend.ClosFvs.Proofs.Total
