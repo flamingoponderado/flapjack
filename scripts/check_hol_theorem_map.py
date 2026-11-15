@@ -844,45 +844,6 @@ DOCUMENTED_MISMATCHES = {
         "res_var bridges exist, but there is still no fix_clock bridge. Tag remains "
         "withdrawn pending flapjack-pxn.18.3.7.1.3.1.1.3.1."
     ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "foldl_res_var_zip_lookup_var_hol"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "FOLDL_res_var_ZIP_lookup_var",
-        "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
-        "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq encodes HOL equality and "
-        "removes the [BEq]/[LawfulBEq] side conditions, but the statement quantifies the raw "
-        "function carrier FiniteMap alpha beta := alpha -> Option beta "
-        "(Flapjack/FiniteMap/Basic.lean:19), which admits infinite-support inhabitants whereas "
-        "HOL alpha |-> beta is finite-support. Tag withdrawn; faithful port over "
-        "HolFiniteMapExact (Flapjack/Pancake/Semantics/CrepSem/HOLState.lean) tracked by bead "
-        "flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "res_var_commutes_strong_hol"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "res_var_commutes_strong",
-        "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
-        "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq removes the BEq side condition, "
-        "but resVarHOL quantifies the raw function carrier FiniteMap, which admits infinite "
-        "support whereas HOL res_var ranges over finite maps. Tag withdrawn; faithful port over "
-        "HolFiniteMapExact tracked by bead flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "res_var_foldl_commutes_strong_hol"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "res_var_foldl_commutes_strong",
-        "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
-        "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq removes the BEq side condition, "
-        "but resVarHOL/List.foldl quantify the raw function carrier FiniteMap, which admits "
-        "infinite support whereas HOL res_var/foldl range over finite maps. Tag withdrawn; "
-        "faithful port over HolFiniteMapExact tracked by bead flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "flookup_res_var_is_mem_zip_eq_hol"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "flookup_res_var_is_mem_zip_eq",
-        "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): "
-        "FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq removes the BEq side condition, "
-        "but resVarHOL/FLOOKUP quantify the raw function carrier FiniteMap, which admits infinite "
-        "support whereas HOL res_var/FLOOKUP range over finite maps. Tag withdrawn; faithful port "
-        "over HolFiniteMapExact tracked by bead flapjack-pxn.18.3.7.1.3.1.1.3.1."
-    ),
     ("Flapjack/Pancake/Semantics/CrepSem/HOLState.lean", "resVarEq"): (
         "cakeml/pancake/semantics/crepSemScript.sml",
         "res_var_def",

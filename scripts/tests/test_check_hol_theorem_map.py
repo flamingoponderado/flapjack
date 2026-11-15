@@ -1341,30 +1341,43 @@ class ValidateInventoryTest(unittest.TestCase):
         errors = MAP["validate_inventory"]([record], {key}, {key: reference})
         self.assertTrue(any("must not carry an @[hol] tag" in error for error in errors))
 
-    def test_res_var_hol_equality_forms_are_documented_mismatch(self):
+    def test_res_var_hol_equality_forms_are_retired(self):
+        # The raw-carrier res_var cluster is gone; HOL res_var_commutes_strong,
+        # res_var_foldl_commutes_strong, flookup_res_var_is_mem_zip_eq and
+        # FOLDL_res_var_ZIP_lookup_var are mapped by the tagged exact twins.
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
         manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
         by_key = {
-            (record["lean_path"], record["lean_name"]): record for record in manifest
+            (record["lean_path"], record["lean_name"]): record
+            for record in manifest
         }
-        hol_forms = {
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "foldl_res_var_zip_lookup_var_hol"): "FOLDL_res_var_ZIP_lookup_var",
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "res_var_commutes_strong_hol"): "res_var_commutes_strong",
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "res_var_foldl_commutes_strong_hol"): "res_var_foldl_commutes_strong",
-            ("Flapjack/Pancake/Proofs/CrepInline.lean",
-             "flookup_res_var_is_mem_zip_eq_hol"): "flookup_res_var_is_mem_zip_eq",
+        retired = {
+            "foldl_res_var_zip_lookup_var_hol",
+            "res_var_commutes_strong_hol",
+            "res_var_foldl_commutes_strong_hol",
+            "flookup_res_var_is_mem_zip_eq_hol",
         }
-        for key, hol_name in hol_forms.items():
-            with self.subTest(key=key):
+        for name in retired:
+            key = ("Flapjack/Pancake/Proofs/CrepInline.lean", name)
+            self.assertNotIn(key, inventory)
+            self.assertNotIn(key, by_key)
+        twins = {
+            "res_var_commutes_strong_exact": "res_var_commutes_strong",
+            "res_var_foldl_commutes_strong_exact": "res_var_foldl_commutes_strong",
+            "flookup_res_var_is_mem_zip_eq_exact": "flookup_res_var_is_mem_zip_eq",
+            "foldl_res_var_zip_lookup_var_exact": "FOLDL_res_var_ZIP_lookup_var",
+        }
+        for name, hol_name in twins.items():
+            with self.subTest(name=name):
+                key = ("Flapjack/Pancake/Proofs/CrepInline.lean", name)
                 record = by_key[key]
                 self.assertEqual(record["hol_name"], hol_name)
-                self.assertEqual(record["statement_status"], "documented_mismatch")
-                self.assertIn("infinite-support", record["reviewer"])
-                self.assertIn("flapjack-pxn.18.3.7.1.3.1.1.3.1",
-                              record["reviewer"])
-                self.assertNotIn(key, MAP["tagged_declarations"]())
+                self.assertEqual(record["statement_status"],
+                                 "reviewed_fmap_as_finite_support_relation")
+                self.assertIn(key, MAP["tagged_declarations"]())
 
 
     def test_globals_lookup_carrier_mismatch_is_documented(self):

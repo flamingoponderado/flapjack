@@ -10,6 +10,7 @@ public meta import Flapjack.Pancake.Semantics.PanSem.ShMemExact
 namespace Flapjack.Test.CrepInlineGenlistParity
 
 open Flapjack
+open Flapjack.HolFiniteMapExact
 
 /-! Executable regression for the exact `crep_inlineProofScript.sml` GENLIST
     interval lemmas (`genlist_less_than`, `genlist_not_in`,
@@ -147,22 +148,31 @@ theorem crepInlineOptMmapAllEq :
   OPT_MMAP_ALL_EQ _ _ _ (fun _ _ => rfl)
 
 
-theorem crepInlineResVarHOLCommutesStrong (lc lc' : FiniteMap Nat Nat) (n h : Nat) :
-    resVarHOL (resVarHOL lc (h, FLOOKUP lc' h)) (n, FLOOKUP lc' n) =
-      resVarHOL (resVarHOL lc (n, FLOOKUP lc' n)) (h, FLOOKUP lc' h) :=
-  res_var_commutes_strong_hol lc lc' n h
+def crepInlineResVarLc1Exact : HolFiniteMapExact Nat Nat := HolFiniteMapExact.empty
 
-theorem crepInlineResVarHOLFoldl (h : Nat) (vs : List Nat) (lc1 lc2 : FiniteMap Nat Nat) :
-    resVarHOL ((vs.zip (vs.map (FLOOKUP lc2))).foldl resVarHOL lc1) (h, FLOOKUP lc2 h) =
-      (vs.zip (vs.map (FLOOKUP lc2))).foldl resVarHOL (resVarHOL lc1 (h, FLOOKUP lc2 h)) :=
-  res_var_foldl_commutes_strong_hol h vs lc1 lc2
+def crepInlineResVarLc2Exact : HolFiniteMapExact Nat Nat :=
+  HolFiniteMapExact.empty.updateEq (2, 20)
 
-theorem crepInlineFlookupResVarHOLIsMemZip :
-    FLOOKUP ((crepInlineResVarKeys.zip (crepInlineResVarKeys.map (FLOOKUP crepInlineResVarLc2))).foldl
-        resVarHOL crepInlineResVarLc1) 2 =
-      FLOOKUP crepInlineResVarLc2 2 :=
-  flookup_res_var_is_mem_zip_eq_hol crepInlineResVarKeys 2 crepInlineResVarLc1 crepInlineResVarLc2
-    (by decide)
+theorem crepInlineResVarEqCommutesStrong (lc lc' : HolFiniteMapExact Nat Nat) (n h : Nat) :
+    resVarEq (resVarEq lc (h, lc'.lookup h)) (n, lc'.lookup n) =
+      resVarEq (resVarEq lc (n, lc'.lookup n)) (h, lc'.lookup h) :=
+  res_var_commutes_strong_exact lc lc' n h
+
+theorem crepInlineResVarEqFoldl (h : Nat) (vs : List Nat)
+    (lc1 lc2 : HolFiniteMapExact Nat Nat) :
+    resVarEq ((vs.zip (vs.map (fun x => lc2.lookup x))).foldl resVarEq lc1)
+        (h, lc2.lookup h) =
+      (vs.zip (vs.map (fun x => lc2.lookup x))).foldl resVarEq
+        (resVarEq lc1 (h, lc2.lookup h)) :=
+  res_var_foldl_commutes_strong_exact h vs lc1 lc2
+
+theorem crepInlineFlookupResVarEqIsMemZip :
+    ((crepInlineResVarKeys.zip
+        (crepInlineResVarKeys.map (fun n => crepInlineResVarLc2Exact.lookup n))).foldl
+          resVarEq crepInlineResVarLc1Exact).lookup 2 =
+      crepInlineResVarLc2Exact.lookup 2 :=
+  flookup_res_var_is_mem_zip_eq_exact crepInlineResVarKeys 2 crepInlineResVarLc1Exact
+    crepInlineResVarLc2Exact (by decide)
 
 def crepInlineResVarHOLBase : FiniteMap Nat Nat :=
   fun n => if n = 1 then some 3 else none

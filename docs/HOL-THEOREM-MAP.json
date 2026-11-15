@@ -78589,15 +78589,7 @@
       "lc1",
       "lc2"
     ],
-    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.2; crep_inlineProofScript.sml:802): exact HOL `flookup_res_var_is_mem_zip_eq` over the canonical finite-support carrier `HolFiniteMapExact` (the same statement as the untagged `_hol` raw-function form, which quantified `FiniteMap α β = α → Option β` and admitted infinite support). Uses HOL-equality DecidableEq with `resVarEq` and no BEq/LawfulBEq side conditions; the cited map binders are the finite-support translation of HOL `α |-> β` (relation qualifier). The bridges `resVarEq_lookup`/`foldl_resVarEq_lookup` (untagged Flapjack infrastructure) relate the exact lookup to HOL's raw `res_var` and justify the reduction to the untagged raw statements."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-    "hol_name": "flookup_res_var_is_mem_zip_eq",
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
-    "lean_name": "flookup_res_var_is_mem_zip_eq_hol",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19; mismatch originally recorded on bead flapjack-pxn.18.3.7.1.3.1.1.3.1): FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq is Lean's encoding of HOL equality and removes the [BEq]/[LawfulBEq] side conditions, but the statement still quantifies the raw function carrier FiniteMap alpha beta := alpha -> Option beta (Flapjack/FiniteMap/Basic.lean:19), which admits infinite-support inhabitants whereas HOL alpha |-> beta is finite-support. The @[hol] tag is withdrawn; the faithful port over HolFiniteMapExact (Flapjack/Pancake/Semantics/CrepSem/HOLState.lean) is the tagged flookup_res_var_is_mem_zip_eq_exact below, and this raw-carrier lemma is the proof infrastructure it delegates to. The row is kept because Proofs theorems require manifest coverage. HOL: flookup_res_var_is_mem_zip_eq."
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.2; crep_inlineProofScript.sml:802): exact HOL `flookup_res_var_is_mem_zip_eq` over the canonical finite-support carrier `HolFiniteMapExact`, proved directly over the carrier using the untagged lookup bridges `resVarEq_lookup`/`foldl_resVarEq_lookup`, which relate the exact lookup to HOL's raw `res_var`. Uses HOL-equality DecidableEq with `resVarEq` and no BEq/LawfulBEq side conditions; the cited map binders are the finite-support translation of HOL `α |-> β` (relation qualifier). The former raw-function `_hol` mirror, which quantified `FiniteMap α β = α → Option β` and admitted infinite support, is retired."
   },
   {
     "hol_path": null,
@@ -78631,15 +78623,7 @@
       "l'",
       "l1"
     ],
-    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.2; crep_inlineProofScript.sml:2661): exact HOL `FOLDL_res_var_ZIP_lookup_var` over the canonical finite-support carrier `HolFiniteMapExact` (the same statement as the untagged `_hol` raw-function form, which quantified `FiniteMap α β = α → Option β` and admitted infinite support). Uses HOL-equality DecidableEq with `resVarEq` and no BEq/LawfulBEq side conditions; the cited map binders are the finite-support translation of HOL `α |-> β` (relation qualifier). The bridges `resVarEq_lookup`/`foldl_resVarEq_lookup` (untagged Flapjack infrastructure) relate the exact lookup to HOL's raw `res_var` and justify the reduction to the untagged raw statements."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-    "hol_name": "FOLDL_res_var_ZIP_lookup_var",
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
-    "lean_name": "foldl_res_var_zip_lookup_var_hol",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19; mismatch originally recorded on bead flapjack-pxn.18.3.7.1.3.1.1.3.1): FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq is Lean's encoding of HOL equality and removes the [BEq]/[LawfulBEq] side conditions, but the statement still quantifies the raw function carrier FiniteMap alpha beta := alpha -> Option beta (Flapjack/FiniteMap/Basic.lean:19), which admits infinite-support inhabitants whereas HOL alpha |-> beta is finite-support. The @[hol] tag is withdrawn; the faithful port over HolFiniteMapExact (Flapjack/Pancake/Semantics/CrepSem/HOLState.lean) is the tagged foldl_res_var_zip_lookup_var_exact below, and this raw-carrier lemma is the proof infrastructure it delegates to. The row is kept because Proofs theorems require manifest coverage. HOL: FOLDL_res_var_ZIP_lookup_var."
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.2; crep_inlineProofScript.sml:2661): exact HOL `FOLDL_res_var_ZIP_lookup_var` over the canonical finite-support carrier `HolFiniteMapExact`, proved directly over the carrier using the untagged lookup bridge `foldl_resVarEq_lookup`, which relates the exact lookup to HOL's raw `res_var`. Uses HOL-equality DecidableEq with `resVarEq` and no BEq/LawfulBEq side conditions; the cited map binders are the finite-support translation of HOL `α |-> β` (relation qualifier). The former raw-function `_hol` mirror, which quantified `FiniteMap α β = α → Option β` and admitted infinite support, is retired."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
@@ -79090,15 +79074,7 @@
       "lc",
       "lc'"
     ],
-    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.2; crep_inlineProofScript.sml:699): exact HOL `res_var_commutes_strong` over the canonical finite-support carrier `HolFiniteMapExact` (the same statement as the untagged `_hol` raw-function form, which quantified `FiniteMap α β = α → Option β` and admitted infinite support). Uses HOL-equality DecidableEq with `resVarEq` and no BEq/LawfulBEq side conditions; the cited map binders are the finite-support translation of HOL `α |-> β` (relation qualifier). The bridges `resVarEq_lookup`/`foldl_resVarEq_lookup` (untagged Flapjack infrastructure) relate the exact lookup to HOL's raw `res_var` and justify the reduction to the untagged raw statements."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-    "hol_name": "res_var_commutes_strong",
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
-    "lean_name": "res_var_commutes_strong_hol",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19; mismatch originally recorded on bead flapjack-pxn.18.3.7.1.3.1.1.3.1): FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq is Lean's encoding of HOL equality and removes the [BEq]/[LawfulBEq] side conditions, but the statement still quantifies the raw function carrier FiniteMap alpha beta := alpha -> Option beta (Flapjack/FiniteMap/Basic.lean:19), which admits infinite-support inhabitants whereas HOL alpha |-> beta is finite-support. The @[hol] tag is withdrawn; the faithful port over HolFiniteMapExact (Flapjack/Pancake/Semantics/CrepSem/HOLState.lean) is the tagged res_var_commutes_strong_exact below, and this raw-carrier lemma is its untagged counterpart; the exact twin is proved directly over HolFiniteMapExact rather than by delegation. The row is kept because Proofs theorems require manifest coverage. HOL: res_var_commutes_strong."
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.2; crep_inlineProofScript.sml:699): exact HOL `res_var_commutes_strong` over the canonical finite-support carrier `HolFiniteMapExact`, proved directly over the carrier. Uses HOL-equality DecidableEq with `resVarEq` and no BEq/LawfulBEq side conditions; the cited map binders are the finite-support translation of HOL `α |-> β` (relation qualifier). The former raw-function `_hol` mirror, which quantified `FiniteMap α β = α → Option β` and admitted infinite support, is retired."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
@@ -79110,15 +79086,7 @@
       "lc1",
       "lc2"
     ],
-    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.2; crep_inlineProofScript.sml:706): exact HOL `res_var_foldl_commutes_strong` over the canonical finite-support carrier `HolFiniteMapExact` (the same statement as the untagged `_hol` raw-function form, which quantified `FiniteMap α β = α → Option β` and admitted infinite support). Uses HOL-equality DecidableEq with `resVarEq` and no BEq/LawfulBEq side conditions; the cited map binders are the finite-support translation of HOL `α |-> β` (relation qualifier). The bridges `resVarEq_lookup`/`foldl_resVarEq_lookup` (untagged Flapjack infrastructure) relate the exact lookup to HOL's raw `res_var` and justify the reduction to the untagged raw statements."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-    "hol_name": "res_var_foldl_commutes_strong",
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
-    "lean_name": "res_var_foldl_commutes_strong_hol",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19; mismatch originally recorded on bead flapjack-pxn.18.3.7.1.3.1.1.3.1): FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq is Lean's encoding of HOL equality and removes the [BEq]/[LawfulBEq] side conditions, but the statement still quantifies the raw function carrier FiniteMap alpha beta := alpha -> Option beta (Flapjack/FiniteMap/Basic.lean:19), which admits infinite-support inhabitants whereas HOL alpha |-> beta is finite-support. The @[hol] tag is withdrawn; the faithful port over HolFiniteMapExact (Flapjack/Pancake/Semantics/CrepSem/HOLState.lean) is the tagged res_var_foldl_commutes_strong_exact below, and this raw-carrier lemma is its untagged counterpart; the exact twin is proved directly over HolFiniteMapExact rather than by delegation. The row is kept because Proofs theorems require manifest coverage. HOL: res_var_foldl_commutes_strong."
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.2; crep_inlineProofScript.sml:706): exact HOL `res_var_foldl_commutes_strong` over the canonical finite-support carrier `HolFiniteMapExact`, proved directly over the carrier by induction on the list. Uses HOL-equality DecidableEq with `resVarEq` and no BEq/LawfulBEq side conditions; the cited map binders are the finite-support translation of HOL `α |-> β` (relation qualifier). The former raw-function `_hol` mirror, which quantified `FiniteMap α β = α → Option β` and admitted infinite support, is retired."
   },
   {
     "hol_path": null,
