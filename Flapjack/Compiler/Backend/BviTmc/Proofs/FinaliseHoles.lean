@@ -4,38 +4,35 @@ public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockEnvironment
 
 @[expose] public section
 
--- Public declarations below use private helpers.
-set_option backward.privateInPublic true
-set_option backward.privateInPublic.warn false
-
 /-! Hole preservation during mutable-block finalisation. -/
 namespace Flapjack.Compiler.Backend.BviTmc.FinaliseHoles
 open BviTmc BvlSem
 
-private def maptoBroadlookup {α β : Type} (f : HolFiniteMapExact α β) : α → Option β := f.lookup
-private def mapofBroad {α β : Type} (lookup : α → Option β)
-    (support : ∃ keys : List α, ∀ key, lookup key ≠ none → key ∈ keys) : HolFiniteMapExact α β :=
-  ⟨lookup, support⟩
-
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_finalised_f {α β : Type} (f : HolFiniteMapExact α β) :
-    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup key = f.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f := by cases f; exact ⟨fun _ => rfl, rfl, rfl⟩
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_finalised_old {β γ : Type} (old : HolFiniteMapExact β (Ref γ)) :
-    mapofBroad (maptoBroadlookup old) old.finiteSupport = old := by cases old; rfl
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad old)).lookup key = old.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad old)).finiteSupport = old.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad old) = old := by cases old; exact ⟨fun _ => rfl, rfl, rfl⟩
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_finalised_new {β γ : Type} (new : HolFiniteMapExact β (Ref γ)) :
-    mapofBroad (maptoBroadlookup new) new.finiteSupport = new := by cases new; rfl
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad new)).lookup key = new.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad new)).finiteSupport = new.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad new) = new := by cases new; exact ⟨fun _ => rfl, rfl, rfl⟩
 
-/-- Restoring a removed mutable block with the same child preserves holes.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_finalised" (fmap_as_finite_support_parameters := [f, old, new])] -/
+/-- Restoring a removed mutable block with the same child preserves holes. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_finalised"
+  (fmap_as_finite_support_parameters := [f, old, new])]
 theorem holesUnchanged_finalised {α β γ δ : Type} (f : HolFiniteMapExact α β) (_p : δ) (ptr : β)
     (old : HolFiniteMapExact β (Ref γ)) (new : HolFiniteMapExact β (Ref γ))
     (tag : Nat) (fin1 : Bool) (left : List γ) (child : γ) (right : List γ) (fin2 : Bool)
-    (related : holesUnchangedExcept f (@HolFiniteMapExact.eraseEq β (Ref γ) (Classical.decEq β) old ptr) new ∅)
-    (found : old.lookup ptr = some (.mutBlock tag fin1 left child right)) (_outside : ptr ∉ mapRange f) :
+    (h : holesUnchangedExcept f (@HolFiniteMapExact.eraseEq β (Ref γ) (Classical.decEq β) old ptr) new ∅ ∧
+      old.lookup ptr = some (.mutBlock tag fin1 left child right) ∧ ptr ∉ mapRange f) :
     holesUnchangedExcept f old
       (@HolFiniteMapExact.updateEq β (Ref γ) (Classical.decEq β) new (ptr, .mutBlock tag fin2 left child right)) ∅ := by
   classical
+  obtain ⟨related, found, _⟩ := h
   intro key otherTag otherFin otherLeft otherChild otherRight ⟨keyOutside, keyFound⟩
   by_cases same : key = ptr
   · subst key
@@ -50,21 +47,27 @@ theorem holesUnchanged_finalised {α β γ δ : Type} (f : HolFiniteMapExact α 
     simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using lookup
 
 theorem holFmapAsFiniteSupportParamWitness_holesStill_sub_f {α β : Type} (f : HolFiniteMapExact α β) :
-    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup key = f.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f := by cases f; exact ⟨fun _ => rfl, rfl, rfl⟩
 theorem holFmapAsFiniteSupportParamWitness_holesStill_sub_refs {β γ : Type} (refs : HolFiniteMapExact β (Ref γ)) :
-    mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).lookup key = refs.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).finiteSupport = refs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs) = refs := by cases refs; exact ⟨fun _ => rfl, rfl, rfl⟩
 theorem holFmapAsFiniteSupportParamWitness_holesStill_sub_refsNew {β γ : Type} (refsNew : HolFiniteMapExact β (Ref γ)) :
-    mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refsNew)).lookup key = refsNew.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refsNew)).finiteSupport = refsNew.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refsNew) = refsNew := by cases refsNew; exact ⟨fun _ => rfl, rfl, rfl⟩
 
-/-- Removing a location absent from the old domain preserves unfinalised holes.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_sub" (fmap_as_finite_support_parameters := [f, refs, refsNew])] -/
+/-- Removing a location absent from the old domain preserves unfinalised holes. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_sub"
+  (fmap_as_finite_support_parameters := [f, refs, refsNew])]
 theorem holesStill_sub {α β γ : Type} (ptr : β) (refs : HolFiniteMapExact β (Ref γ))
     (f : HolFiniteMapExact α β) (refsNew : HolFiniteMapExact β (Ref γ))
-    (absent : ptr ∉ refs.domain) (related : holesStillNotFinalised f refs refsNew) :
+    (h : ptr ∉ refs.domain ∧ holesStillNotFinalised f refs refsNew) :
     holesStillNotFinalised f refs (@HolFiniteMapExact.eraseEq β (Ref γ) (Classical.decEq β) refsNew ptr) := by
   classical
+  obtain ⟨absent, related⟩ := h
   intro key ⟨outside, original⟩
   have different : key ≠ ptr := by
     intro equal
@@ -75,23 +78,29 @@ theorem holesStill_sub {α β γ : Type} (ptr : β) (refs : HolFiniteMapExact β
   exact ⟨tag, left, child, right, by simpa [HolFiniteMapExact.lookup_eraseEq, FDOMSUB_HOL, different] using found⟩
 
 theorem holFmapAsFiniteSupportParamWitness_holesStill_non_dom_f {α β : Type} (f : HolFiniteMapExact α β) :
-    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup key = f.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f := by cases f; exact ⟨fun _ => rfl, rfl, rfl⟩
 theorem holFmapAsFiniteSupportParamWitness_holesStill_non_dom_refs {β γ : Type} (refs : HolFiniteMapExact β (Ref γ)) :
-    mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).lookup key = refs.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).finiteSupport = refs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs) = refs := by cases refs; exact ⟨fun _ => rfl, rfl, rfl⟩
 theorem holFmapAsFiniteSupportParamWitness_holesStill_non_dom_refsNew {β γ : Type} (refsNew : HolFiniteMapExact β (Ref γ)) :
-    mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refsNew)).lookup key = refsNew.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refsNew)).finiteSupport = refsNew.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refsNew) = refsNew := by cases refsNew; exact ⟨fun _ => rfl, rfl, rfl⟩
 
-/-- Finalising a location outside the old domain preserves unfinalised holes.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_non_dom" (fmap_as_finite_support_parameters := [f, refs, refsNew])] -/
+/-- Finalising a location outside the old domain preserves unfinalised holes. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_non_dom"
+  (fmap_as_finite_support_parameters := [f, refs, refsNew])]
 theorem holesStill_non_dom {α β γ : Type} (f : HolFiniteMapExact α β)
     (refs : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ)) (ptr : β)
     (tag : Nat) (left : List γ) (child : γ) (right : List γ)
-    (related : holesStillNotFinalised f refs refsNew) (absent : ptr ∉ refs.domain) :
+    (h : holesStillNotFinalised f refs refsNew ∧ ptr ∉ refs.domain) :
     holesStillNotFinalised f refs
       (@HolFiniteMapExact.updateEq β (Ref γ) (Classical.decEq β) refsNew (ptr, .mutBlock tag true left child right)) := by
   classical
+  obtain ⟨related, absent⟩ := h
   intro key ⟨outside, original⟩
   have different : key ≠ ptr := by
     intro equal

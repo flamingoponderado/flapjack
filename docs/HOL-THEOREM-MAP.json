@@ -135699,6 +135699,34 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "state_ref_rel_sub", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockEnvironment.lean",
+  "lean_name": "stateRefRel_sub", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "source", "target"],
+  "reviewer": "Source comparison: Compared state_ref_rel_sub_typed in bvi_tmc_proof_source_probe.out. The original pointer-range exclusion and state-reference relation conjunction implies the same relation after deleting the target reference. The three map parameters use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "holes_unchanged_except_finalised", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/FinaliseHoles.lean",
+  "lean_name": "holesUnchanged_finalised", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "old", "new"],
+  "reviewer": "Source comparison: Compared holes_unchanged_except_finalised_typed in bvi_tmc_proof_source_probe.out. Independent generic map, pointer, reference-value and unused p types, the full three-premise conjunction, deletion and mutable-block update are preserved. The three map parameters use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "holes_still_not_finalised_sub", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/FinaliseHoles.lean",
+  "lean_name": "holesStill_sub", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "refs", "refsNew"],
+  "reviewer": "Source comparison: Compared holes_still_not_finalised_sub_typed in bvi_tmc_proof_source_probe.out. The generic old-domain exclusion and unfinalised-hole relation conjunction implies the original relation after target deletion. The three map parameters use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "holes_still_not_finalised_non_dom", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/FinaliseHoles.lean",
+  "lean_name": "holesStill_non_dom", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "refs", "refsNew"],
+  "reviewer": "Source comparison: Compared holes_still_not_finalised_non_dom_typed in bvi_tmc_proof_source_probe.out. The generic unfinalised-hole relation and old-domain exclusion conjunction implies the original relation after updating the target with a finalised block. The three map parameters use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "wf_vars_list_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockEnvironment.lean",
   "lean_name": "wfVars_list_rel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f"],

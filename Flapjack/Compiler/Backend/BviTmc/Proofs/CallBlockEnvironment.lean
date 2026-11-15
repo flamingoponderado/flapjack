@@ -96,14 +96,14 @@ theorem holFmapAsFiniteSupportParamWitness_stateRefRel_sub_target (target : HolF
     FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad target) = target := by cases target; exact ⟨fun _ => rfl, rfl, rfl⟩
 
 /-- Removing a target reference outside the pointer-map range preserves the
-state-reference relation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_sub" (fmap_as_finite_support_parameters := [f, source, target])] -/
+state-reference relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_sub"
+  (fmap_as_finite_support_parameters := [f, source, target])]
 theorem stateRefRel_sub (ptr : Nat) (f : HolFiniteMapExact Nat Nat)
     (source : HolFiniteMapExact Nat (Ref Value)) (target : HolFiniteMapExact Nat (Ref Value))
-    (outside : ptr ∉ mapRange f) (related : stateRefRel f source target) :
+    (h : ptr ∉ mapRange f ∧ stateRefRel f source target) :
     stateRefRel f source (target.eraseEq ptr) := by
+  obtain ⟨outside, related⟩ := h
   refine ⟨related.1, ?_⟩
   intro i v found
   obtain ⟨j, w, mapped, cells, lookup⟩ := related.2 i v found

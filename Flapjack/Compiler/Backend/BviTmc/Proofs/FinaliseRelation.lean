@@ -70,10 +70,10 @@ theorem evaluate_finalise_cons (v2 : Value) (targetRefs : HolFiniteMapExact Nat 
               by_cases equal : k = ptr <;> simp [HolFiniteMapExact.lookup_eraseEq, FDOMSUB_HOL, equal]
             have stillErased : holesStillNotFinalised f oldRefs (targetRefs.eraseEq ptr) := by
               rw [← eraseEq]
-              exact holesStill_sub ptr oldRefs f targetRefs absent still
+              exact holesStill_sub ptr oldRefs f targetRefs ⟨absent, still⟩
             obtain ⟨childValue, childRefs, childRun, childRelated, childHeaps, childUnchanged, childStill⟩ :=
               evaluate_finalise_cons child (targetRefs.eraseEq ptr) f fNext sourceRefs sourceChild oldRefs
-                (stateRefRel_sub ptr fNext sourceRefs targetRefs outside heaps) inner
+                (stateRefRel_sub ptr fNext sourceRefs targetRefs ⟨outside, heaps⟩) inner
                 stillErased
             have listRel : List.Forall₂ (valueRel fNext) (sourceLeft ++ [sourceChild] ++ sourceRight)
                 (left ++ [childValue] ++ right) := by
@@ -106,14 +106,14 @@ theorem evaluate_finalise_cons (v2 : Value) (targetRefs : HolFiniteMapExact Nat 
                 by_cases equal : k = ptr <;> simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, equal]
               rw [← updateEq]
               exact holesUnchanged_finalised fNext () ptr targetRefs childRefs tag false left child right true
-                childUnchanged' found outside
+                ⟨childUnchanged', found, outside⟩
             · have updateEq : (@HolFiniteMapExact.updateEq Nat (Ref Value) (Classical.decEq Nat) childRefs
                   (ptr, .mutBlock tag true left child right)) = childRefs.updateEq (ptr, .mutBlock tag true left child right) := by
                 apply HolFiniteMapExact.ext_lookup
                 intro k
                 by_cases equal : k = ptr <;> simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, equal]
               rw [← updateEq]
-              exact holesStill_non_dom f oldRefs childRefs ptr tag left child right childStill absent
+              exact holesStill_non_dom f oldRefs childRefs ptr tag left child right ⟨childStill, absent⟩
           | _ => rw [found] at blocks; contradiction
     | _ => rw [mutableBlockRel.eq_def] at blocks; exact plain _ _ blocks
   | _ => cases v2 <;> rw [mutableBlockRel.eq_def] at blocks <;> exact plain _ _ blocks
