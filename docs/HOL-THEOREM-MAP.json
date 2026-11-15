@@ -24142,6 +24142,12 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "compile_each_touched",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean", "lean_name": "compileEach_touched",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_each_touched_typed in bvi_tailrec_semantics_probe.out: the original six bundled distinctness, free-name, lookup, check and compilation premises imply an existential namespace-stride index before the universally quantified wrapper and worker; successful compilation implies both original output-tree lookups. The source-free next1 and operator remain arbitrary."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "compile_each_untouched",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean", "lean_name": "compileEach_untouched",
     "statement_status": "reviewed_exact",

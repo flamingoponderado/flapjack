@@ -432,10 +432,12 @@ and worker in the compiled function list. -/
 theorem compileEachSource_entry (code : List (Nat × Nat × Bvi.Exp)) (next loc arity : Nat) (body : Bvi.Exp) (op : AssocOp)
     (member : (loc, arity, body) ∈ code) :
     (checkExpOriginal loc arity body = none → (loc, arity, body) ∈ (compileEachSource next code).2) ∧
-    (checkExpOriginal loc arity body = some op → ∃ workerLoc,
-      ∀ wrapper worker, compileExpSource loc workerLoc arity body = some (wrapper, worker) →
+    (checkExpOriginal loc arity body = some op → ∃ k,
+      ∀ wrapper worker, compileExpSource loc (next + Flapjack.bvlToBviNamespaces * k) arity body =
+          some (wrapper, worker) →
         (loc, arity, wrapper) ∈ (compileEachSource next code).2 ∧
-        (workerLoc, arity + 1, worker) ∈ (compileEachSource next code).2) := by
+        (next + Flapjack.bvlToBviNamespaces * k, arity + 1, worker) ∈
+          (compileEachSource next code).2) := by
   induction code generalizing next with
   | nil => simp at member
   | cons entry rest ih =>
@@ -459,8 +461,8 @@ theorem compileEachSource_entry (code : List (Nat × Nat × Bvi.Exp)) (next loc 
           constructor
           · intro check; exact List.mem_cons_of_mem _ (both.1 check)
           · intro check
-            obtain ⟨workerLoc, found⟩ := both.2 check
-            exact ⟨workerLoc, fun wrapper worker run =>
+            obtain ⟨k, found⟩ := both.2 check
+            exact ⟨k, fun wrapper worker run =>
               ⟨List.mem_cons_of_mem _ (found wrapper worker run).1,
                 List.mem_cons_of_mem _ (found wrapper worker run).2⟩⟩
     | some pair =>
@@ -474,8 +476,9 @@ theorem compileEachSource_entry (code : List (Nat × Nat × Bvi.Exp)) (next loc 
           · intro check
             simp [compileExpSource, check] at compiled
           · intro _
-            refine ⟨next, ?_⟩
+            refine ⟨0, ?_⟩
             intro wrapper worker run
+            simp only [Nat.mul_zero, Nat.add_zero] at run ⊢
             rw [compiled] at run
             cases run
             exact ⟨by simp, by simp⟩
@@ -484,10 +487,16 @@ theorem compileEachSource_entry (code : List (Nat × Nat × Bvi.Exp)) (next loc 
           constructor
           · intro check; exact List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (both.1 check))
           · intro check
-            obtain ⟨workerLoc, found⟩ := both.2 check
-            exact ⟨workerLoc, fun wrapper worker run =>
-              ⟨List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (found wrapper worker run).1),
-                List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (found wrapper worker run).2)⟩⟩
+            obtain ⟨k, found⟩ := both.2 check
+            refine ⟨k + 1, ?_⟩
+            intro wrapper worker run
+            have labelEq : next + Flapjack.bvlToBviNamespaces * (k + 1) =
+                (next + Flapjack.bvlToBviNamespaces) + Flapjack.bvlToBviNamespaces * k := by
+              simp [Nat.mul_add]
+              omega
+            rw [labelEq] at run ⊢
+            exact ⟨List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (found wrapper worker run).1),
+              List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (found wrapper worker run).2)⟩
 
 /-- A distinct association list maps each present key to its listed value. -/
 theorem sptFromAList_lookup_of_mem {α : Type} (entries : List (Nat × α)) (key : Nat) (value : α)
@@ -527,12 +536,13 @@ theorem compileEachSource_codeRel (next : Nat) (code : List (Nat × Nat × Bvi.E
   · intro check
     exact sptFromAList_lookup_of_mem _ loc (arity, body) compiledUnique (facts.1 check)
   · intro check
-    obtain ⟨workerLoc, entries⟩ := facts.2 check
-    refine ⟨workerLoc, ?_⟩
+    obtain ⟨k, entries⟩ := facts.2 check
+    refine ⟨next + Flapjack.bvlToBviNamespaces * k, ?_⟩
     intro wrapper worker run
     obtain ⟨wrapperMem, workerMem⟩ := entries wrapper worker run
     exact ⟨sptFromAList_lookup_of_mem _ loc (arity, wrapper) compiledUnique wrapperMem,
-      sptFromAList_lookup_of_mem _ workerLoc (arity + 1, worker) compiledUnique workerMem⟩
+      sptFromAList_lookup_of_mem _ (next + Flapjack.bvlToBviNamespaces * k)
+        (arity + 1, worker) compiledUnique workerMem⟩
 
 /-- Worker labels use namespace residue two. -/
 def inWorkerNamespace (name : Nat) : Prop := name % Flapjack.bvlToBviNamespaces = 2

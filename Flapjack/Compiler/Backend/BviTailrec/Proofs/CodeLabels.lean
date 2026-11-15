@@ -58,6 +58,37 @@ theorem compileEach_untouched {next1 : Nat} (next : Nat)
             ⟨freeNext, lookupTail, check, noneNext, tail⟩
           simpa [sptLookup_sptFromAList, sptAListLookup, same, nextNe] using h
 
+/-- An optimized entry installs its wrapper and a worker at an allocated label. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_each_touched"]
+theorem compileEach_touched {next1 : Nat} {op : AssocOp} (next : Nat)
+    (prog prog2 : List (Nat × Nat × Bvi.Exp)) (loc : Nat) (exp : Bvi.Exp) (arity : Nat)
+    (premises : (prog.map Prod.fst).Nodup ∧
+      (∀ name ∈ prog.map Prod.fst, freeNames next name) ∧ freeNames next loc ∧
+      sptLookup loc (sptFromAList prog) = some (arity, exp) ∧
+      checkExpOriginal loc arity exp = some op ∧
+      compileEachSource next prog = (next1, prog2)) :
+    ∃ k, ∀ wrapper worker,
+      compileExpSource loc (next + bvlToBviNamespaces * k) arity exp = some (wrapper, worker) →
+      sptLookup loc (sptFromAList prog2) = some (arity, wrapper) ∧
+      sptLookup (next + bvlToBviNamespaces * k) (sptFromAList prog2) =
+        some (arity + 1, worker) := by
+  obtain ⟨unique, free, _, lookup, check, compiled⟩ := premises
+  have member : (loc, arity, exp) ∈ prog :=
+    sptAListLookup_mem loc prog (arity, exp) (by simpa [sptLookup_sptFromAList] using lookup)
+  have outUnique : (prog2.map Prod.fst).Nodup := by
+    have h := compileEachSource_labels_nodup prog next unique free
+    simpa only [compiled] using h
+  obtain ⟨k, entries⟩ := (compileEachSource_entry prog next loc arity exp op member).2 check
+  refine ⟨k, ?_⟩
+  intro wrapper worker run
+  obtain ⟨wrapperMem, workerMem⟩ := entries wrapper worker run
+  have wrapperMem' : (loc, arity, wrapper) ∈ prog2 := by simpa only [compiled] using wrapperMem
+  have workerMem' : (next + bvlToBviNamespaces * k, arity + 1, worker) ∈ prog2 := by
+    simpa only [compiled] using workerMem
+  exact ⟨sptFromAList_lookup_of_mem _ loc (arity, wrapper) outUnique wrapperMem',
+    sptFromAList_lookup_of_mem _ (next + bvlToBviNamespaces * k)
+      (arity + 1, worker) outUnique workerMem'⟩
+
 /-- Compiling distinct, free function names establishes the source code relation. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_each_code_rel"]
 theorem compileEach_codeRel (next : Nat) (prog : List (Nat × Nat × Bvi.Exp))
