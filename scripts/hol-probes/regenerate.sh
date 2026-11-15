@@ -11826,3 +11826,9 @@ run_probe set_sep_typed_probeScript.sml set_sep_typed_probe.out \
   fun2set_thm_typed write_fun2set_typed \
   "$hol_dir/examples/machine-code/hoare-triple/set_sepScript.sml" \
   "$hol_dir/examples/machine-code/hoare-triple"
+
+run_probe grammar_typed_probeScript.sml grammar_typed_probe.out \
+  grammar_typed ptree_fringe_def_typed real_fringe_def_typed valid_locs_def_typed \
+  valid_ptree_def_typed complete_ptree_def_typed valid_lptree_def_typed \
+  "$hol_dir/examples/formal-languages/context-free/grammarScript.sml" \
+  "$hol_dir/examples/formal-languages/context-free"

@@ -1,0 +1,7 @@
+grammar_typed=recordtype.grammar::β + num -> (β + num |-> ((α, β) symbol list -> bool)) -> (α, β) grammar
+ptree_fringe_def_typed=ptree_fringe (Lf ((t :(α, β) symbol),(_0 :γ))) = [t] ∧ ptree_fringe (Nd (_1 :(ε + num) # ζ) (children :(δ, ε, ζ) parsetree list)) = FLAT (MAP (ptree_fringe :(δ, ε, ζ) parsetree -> (δ, ε) symbol list) children)
+real_fringe_def_typed=real_fringe (Lf (t :(α, β) symbol # γ)) = [t] ∧ real_fringe (Nd (n :(ε + num) # ζ) (ptl :(δ, ε, ζ) parsetree list)) = FLAT (MAP (real_fringe :(δ, ε, ζ) parsetree -> ((δ, ε) symbol # ζ) list) ptl)
+valid_locs_def_typed=(valid_locs (Lf (_0 :(α, β) symbol # locs)) ⇔ T) ∧ (valid_locs (Nd ((_1 :δ + num),(l :locs)) (children :(γ, δ, locs) parsetree list)) ⇔ l = merge_list_locs (MAP (ptree_loc :(γ, δ, locs) parsetree -> locs) children) ∧ ∀(pt :(γ, δ, locs) parsetree). MEM pt children ⇒ valid_locs pt)
+valid_ptree_def_typed=(valid_ptree (G :(α, β) grammar) (Lf (_0 :(α, β) symbol # γ)) ⇔ T) ∧ (valid_ptree G (Nd ((nt :β + num),(l :δ)) (children :(α, β, δ) parsetree list)) ⇔ nt ∈ FDOM G.rules ∧ MAP (ptree_head :(α, β, δ) parsetree -> (α, β) symbol) children ∈ G.rules⟨nt⟩ ∧ ∀(pt :(α, β, δ) parsetree). MEM pt children ⇒ valid_ptree G pt)
+complete_ptree_def_typed=complete_ptree (G :(α, β) grammar) (pt :(α, β, γ) parsetree) ⇔ valid_ptree G pt ∧ ptree_head pt = (NT G.start :(α, β) symbol) ∧ ∀(t :(α, β) symbol). MEM t (ptree_fringe pt) ⇒ isTOK t
+valid_lptree_def_typed=valid_lptree (G :(α, β) grammar) (pt :(α, β, locs) parsetree) ⇔ valid_locs pt ∧ valid_ptree G pt

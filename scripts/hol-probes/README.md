@@ -10491,3 +10491,14 @@ polymorphic `'a -> 'a -> 'a -> 'a` rendering, and `compile_top` shows the
 `ALOOKUP (functions decs) start` first-match selection. Regenerate with
 `CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=pan_globals_defs_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`grammar_typed_probe.out` (7 rows) captures the reviewed
+`HOL/examples/formal-languages/context-free/grammarScript.sml` rows that earlier
+probes did not cover (task 186). `grammarTheory` is built in the HOL
+installation, so the record datatype `grammar` is read from TypeBase (showing
+the `β + num` start field and the `β + num |-> symbol list set` rules field)
+and the six definitions are parsed from the pinned source text in `$HOL4` with
+the splice-expanding helper. The probe takes its source path from `HOL4` rather
+than `CAKEML` and loads no CakeML preamble. Regenerate with
+`CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=grammar_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.

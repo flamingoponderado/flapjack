@@ -544,6 +544,7 @@
     {"bytes": 88, "out": "globals_lookup_probe.out", "rows": 3, "sha256": "c446a12949f8e3acf58fee8139991a07cd8d7559f6eb5a367123f21021b4c978"},
     {"bytes": 626, "out": "gram_valid_sym_probe.out", "rows": 5, "sha256": "a613e15d9d33dac5c95f4fe027b8cfd9d94efc53e60bbd742b8c7dcae1fb32e5"},
     {"bytes": 1003, "out": "grammar_parsetree_typed_probe.out", "rows": 7, "sha256": "f5aab4d344e291988820a3790e5634fc9deffb254804a54b714b3e723773d0f5"},
+    {"bytes": 1649, "out": "grammar_typed_probe.out", "rows": 7, "sha256": "f260ed4c74f2aa4acce9d632910557a690b817cd2399c76502524f06c0158f00"},
     {"bytes": 1044, "out": "hol_alignment_words_typed_probe.out", "rows": 9, "sha256": "4e91157a47d85e4dc6828507451b52ec7bc2a325587c8164c32df4683228de66"},
     {"bytes": 294, "out": "hol_asciinumbers_typed_probe.out", "rows": 3, "sha256": "02c00458ead0594bfe97610e49a0ab3ddc837ebc3cc537c2f12ee51c4f59bd65"},
     {"bytes": 35, "out": "hol_bit_typed_probe.out", "rows": 1, "sha256": "488c312f0daa4c1ae2b28f1b33b645c7fe2f336c41ff4a714cea45db0d83b508"},
