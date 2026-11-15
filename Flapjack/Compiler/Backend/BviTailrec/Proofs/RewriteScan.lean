@@ -360,4 +360,33 @@ theorem opType_simp (op : AssocOp) :
 theorem opType_lem (op : AssocOp) : op ≠ .noop ↔ opType op ≠ .any := by
   cases op <;> simp [opType]
 
+/-- A selected operation and its rewrite flag agree with the requested
+accumulator operation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "scan_expr_Op"]
+theorem scanExpr_Op (ts : List ValueType) (loc : Nat) (op : ClosLang.Op)
+    (xs : List Bvi.Exp) (tt : List ValueType) (ty : ValueType) (r : Bool) (opr : AssocOp)
+    (n : Nat) (op1 : AssocOp) (acc : Nat) (lr : Bool) (x : Bvi.Exp)
+    (premises : scanExpr ts loc [.op op xs] = [(tt, ty, r, some opr)] ∧
+      rewriteSource loc n op1 acc ts (.op op xs) = (lr, x)) :
+    op = toOp opr ∧ (op1 = opr ↔ lr = true) := by
+  have sourceOp := scanExpr_opSame ts loc op xs tt ty r opr premises.1
+  refine ⟨sourceOp, ?_⟩
+  by_cases same : op1 = opr
+  · subst op1
+    have checked := scanExpr_checkOp ts loc op xs tt ty r opr premises.1
+    cases checkedRun : checkOp ts opr loc (.op op xs) with
+    | none => simp [checkedRun] at checked
+    | some checkedValue =>
+      obtain ⟨pure, ticks, callArgs, _, _, _, worked⟩ :=
+        checkOp_rewrite_worker ts opr loc n acc (.op op xs) checkedValue checkedRun
+      have flag : lr = true := congrArg Prod.fst (premises.2.symm.trans worked)
+      simp [flag]
+  · have guard : (fromOp op == op1 && op1 != .noop) = false := by
+      rw [sourceOp, fromOp_toOp]
+      cases opr <;> cases op1 <;>
+        simp_all [BEq.beq, instBEqAssocOp.beq, AssocOp.ctorIdx, bne]
+    have fallback := rewriteSource_op_fallback ts loc n acc op1 op xs (Or.inl guard)
+    have flag : lr = false := congrArg Prod.fst (premises.2.symm.trans fallback)
+    simp [same, flag]
+
 end Flapjack.Compiler.Backend.BviTailrec

@@ -93,3 +93,4 @@ val _ = show_thm "decide_ty_imp_typed=" bvi_tailrecProofTheory.decide_ty_imp;
 val _ = show_thm "op_type_simp_typed=" bvi_tailrecProofTheory.op_type_simp;
 val _ = show_thm "op_type_lem_typed=" bvi_tailrecProofTheory.op_type_lem;
 val _ = show_thm "is_rec_term_ok_typed=" bvi_tailrecProofTheory.is_rec_term_ok;
+val _ = show_thm "scan_expr_Op_typed=" bvi_tailrecProofTheory.scan_expr_Op;

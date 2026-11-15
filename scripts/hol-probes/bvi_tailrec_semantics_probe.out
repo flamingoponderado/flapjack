@@ -55,3 +55,4 @@ decide_ty_imp_typed=decide_ty (ty1 :v_ty) (ty2 :v_ty) ≠ Any ⇒ ty1 ≠ Any �
 op_type_simp_typed=(List = op_type (op :assoc_op) ⇔ op = Append) ∧ (Any = op_type op ⇔ op = Noop) ∧ (Int = op_type op ⇔ op = Plus ∨ op = Times)
 op_type_lem_typed=(op :assoc_op) ≠ Noop ⇔ op_type op ≠ Any
 is_rec_term_ok_typed=∀(exp :bvi$exp) (ts :v_ty list) (loc :num) (ty :v_ty). (is_rec loc exp ⇒ ¬term_ok ts ty exp) ∧ (term_ok ts ty exp ⇒ ¬is_rec loc exp)
+scan_expr_Op_typed=scan_expr (ts :v_ty list) (loc :num) [(Op (op :closLang$op) (xs :bvi$exp list) :bvi$exp)] = [((tt :v_ty list),(ty :v_ty),(r :bool),SOME (opr :assoc_op))] ∧ rewrite loc (n :num) (op1 :assoc_op) (acc :num) ts (Op op xs :bvi$exp) = ((lr :bool),(x :bvi$exp)) ⇒ op = to_op opr ∧ (op1 = opr ⇔ lr)
