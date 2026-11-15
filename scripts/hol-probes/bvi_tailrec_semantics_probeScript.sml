@@ -33,6 +33,10 @@ val _ = show_thm "code_rel_subspt_typed=" bvi_tailrecProofTheory.code_rel_subspt
 val _ = show_thm "compile_each_LENGTH_typed=" bvi_tailrecProofTheory.compile_each_LENGTH;
 val _ = show_thm "rewrite_scan_expr_typed=" bvi_tailrecProofTheory.rewrite_scan_expr;
 val _ = show_thm "scan_expr_op_type_typed=" bvi_tailrecProofTheory.scan_expr_op_type;
+val _ = show_thm "compile_each_next_mono_typed=" bvi_tailrecProofTheory.compile_each_next_mono;
+val _ = show_thm "compile_prog_next_mono_typed=" bvi_tailrecProofTheory.compile_prog_next_mono;
+val _ = show_thm "compile_each_MEM_typed=" bvi_tailrecProofTheory.compile_each_MEM;
+val _ = show_thm "compile_prog_MEM_typed=" bvi_tailrecProofTheory.compile_prog_MEM;
 (* The two find-code theorems are local in the original script. Replay their
    original statements and proofs so their inferred types are captured. *)
 open preamble bvi_tailrecProofTheory bvi_tailrecTheory bviPropsTheory bviSemTheory;

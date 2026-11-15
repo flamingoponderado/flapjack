@@ -24142,6 +24142,30 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "compile_each_next_mono",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean", "lean_name": "compileEach_nextMono",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_each_next_mono_typed in bvi_tailrec_semantics_probe.out: any compilation output pair implies that the output next label equals the input next label plus a natural multiple of the original namespace stride."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "compile_prog_next_mono",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean", "lean_name": "compileProg_nextMono",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_prog_next_mono_typed in bvi_tailrec_semantics_probe.out: arbitrary enabled flag, input and output pair retain the original exact label-advance existential without further premises."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "compile_each_MEM",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean", "lean_name": "compileEach_mem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_each_MEM_typed in bvi_tailrec_semantics_probe.out: the bundled compilation equation and output-label membership imply the original-label alternative or the complete allocated interval and stride witness alternative."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "compile_prog_MEM",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeLabels.lean", "lean_name": "compileProg_mem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared compile_prog_MEM_typed in bvi_tailrec_semantics_probe.out: arbitrary enabled flag, compilation pair and output-label membership retain both complete original-label and fresh-interval alternatives with the same namespace-stride witness."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "rewrite_scan_expr",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/RewriteScan.lean", "lean_name": "rewrite_scan_expr",
     "statement_status": "reviewed_exact",

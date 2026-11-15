@@ -8,6 +8,54 @@ public import Flapjack.Compiler.Backend.Semantics.BviProps.CodeLabels
 /-! Source-shaped label accounting for the BVI tail-recursion pass. -/
 namespace Flapjack.Compiler.Backend.BviTailrec.Proofs
 
+/-- Each function-list compilation advances the next label by namespace steps. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_each_next_mono"]
+theorem compileEach_nextMono (n : Nat) (xs : List (Nat × Nat × Bvi.Exp))
+    (n1 : Nat) (ys : List (Nat × Nat × Bvi.Exp))
+    (compiled : compileEachSource n xs = (n1, ys)) :
+    ∃ k, n1 = n + bvlToBviNamespaces * k := by
+  have h := compileEachSource_next_mono n xs
+  simpa only [compiled] using h
+
+/-- Whole-program compilation advances the next label by namespace steps. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_prog_next_mono"]
+theorem compileProg_nextMono (b : Bool) (n : Nat) (xs : List (Nat × Nat × Bvi.Exp))
+    (n1 : Nat) (ys : List (Nat × Nat × Bvi.Exp))
+    (compiled : compileProgSource b n xs = (n1, ys)) :
+    ∃ k, n1 = n + bvlToBviNamespaces * k := by
+  cases b with
+  | false =>
+    simp only [compileProgSource, Bool.false_eq_true, ↓reduceIte, Prod.mk.injEq] at compiled
+    exact ⟨0, by simp [← compiled.1]⟩
+  | true =>
+    simp only [compileProgSource, ↓reduceIte] at compiled
+    exact compileEach_nextMono n xs n1 ys compiled
+
+/-- Every emitted label is original or is a fresh worker in the allocated interval. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_each_MEM"]
+theorem compileEach_mem (n : Nat) (xs : List (Nat × Nat × Bvi.Exp))
+    (n1 : Nat) (ys : List (Nat × Nat × Bvi.Exp)) (e : Nat)
+    (premises : compileEachSource n xs = (n1, ys) ∧ e ∈ ys.map Prod.fst) :
+    e ∈ xs.map Prod.fst ∨
+      (n ≤ e ∧ e < n1 ∧ ∃ k, e = n + k * bvlToBviNamespaces) := by
+  have h := compileEachSource_mem xs n e (by simpa only [premises.1] using premises.2)
+  simpa only [premises.1] using h
+
+/-- The whole-program pass emits only original or freshly allocated labels. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_prog_MEM"]
+theorem compileProg_mem (b : Bool) (n : Nat) (xs : List (Nat × Nat × Bvi.Exp))
+    (n1 : Nat) (ys : List (Nat × Nat × Bvi.Exp)) (e : Nat)
+    (premises : compileProgSource b n xs = (n1, ys) ∧ e ∈ ys.map Prod.fst) :
+    e ∈ xs.map Prod.fst ∨
+      (n ≤ e ∧ e < n1 ∧ ∃ k, e = n + k * bvlToBviNamespaces) := by
+  cases b with
+  | false =>
+    simp only [compileProgSource, Bool.false_eq_true, ↓reduceIte, Prod.mk.injEq] at premises
+    exact Or.inl (by simpa [← premises.1.2] using premises.2)
+  | true =>
+    simp only [compileProgSource, ↓reduceIte] at premises
+    exact compileEach_mem n xs n1 ys e premises
+
 private theorem freshCoverage (code : List (Nat × Nat × Bvi.Exp)) (next k : Nat)
     (bounded : next + k * bvlToBviNamespaces < (compileEachSource next code).1) :
     next + k * bvlToBviNamespaces ∈ (compileEachSource next code).2.map Prod.fst := by
