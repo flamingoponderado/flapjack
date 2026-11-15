@@ -135699,6 +135699,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_bvi_to_cb_aux_inr_lemma", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ListExtraction.lean",
+  "lean_name": "evaluate_inr_lemma", "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Replayed the original local statement and proof with types in bvi_tmc_proof_source_probe.out. Both singleton and list conjuncts preserve the extraction, source evaluation and environment-bound conjunction, existential intermediate result and full state, success and arbitrary-extension evaluations, and error result equality. Both use the same independent compiler and FFI parameters. The state reference field uses canonical finite support with a same-module witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_bvi_to_cb_aux_inr", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ListExtraction.lean",
+  "lean_name": "evaluateList_inr", "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared evaluate_bvi_to_cb_aux_inr_typed in bvi_tmc_proof_source_probe.out. The full list extraction and source run conjunction yields the intermediate result and state and both success, extension and error conclusions with the original quantifiers. The state reference field uses canonical finite support with a same-module witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "evaluate_bvi_to_cb_aux_inl_lemma", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/PureExtraction.lean",
   "lean_name": "evaluate_bvi_to_cb_aux_inl_lemma", "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["refs"],
