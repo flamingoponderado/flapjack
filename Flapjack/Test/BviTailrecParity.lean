@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTailrec.Rewrite
+public import Batteries.Data.List.Lemmas
 
 -- Checks below run compiled code from these modules.
 public meta import Flapjack.Compiler.Backend.Bvi.Syntax
@@ -14,6 +15,35 @@ namespace Flapjack.Test.BviTailrecParity
 open Flapjack.Compiler.Backend BviTailrec
 
 private def c (n : Int) : Bvi.Exp := .op (.intOp (.const n)) []
+
+-- The original probe's NONE, bounds, unknown, and already-refined cases.
+#guard [
+    (none, []), (some 0, []), (some 0, [.any]), (some 0, [.list]),
+    (some 1, [.any, .any]), (some 2, [.any, .any])
+  ].map (fun (idx, ts) => tryUpdate .int idx ts) ==
+    [[], [], [.int], [.list], [.any, .int], [.any, .any]]
+
+-- The refactoring leaves the previously executed operation unchanged for all inputs.
+example (ty : ValueType) (e : Bvi.Exp) (ctx : List ValueType) :
+    update ty e ctx = (match e with
+      | .var n => if ctx[n]? == some .any then ctx.set n ty else ctx
+      | _ => ctx) := by
+  cases e <;> rfl
+
+-- For every in-range index this is HOL's TAKE/singleton/DROP update; the
+-- out-of-range branch is unchanged as well.
+example (ty : ValueType) (n : Nat) (ctx : List ValueType) :
+    tryUpdate ty (some n) ctx =
+      if h : n < ctx.length then
+        if ctx[n] = .any then ctx.take n ++ [ty] ++ ctx.drop (n + 1) else ctx
+      else ctx := by
+  by_cases h : n < ctx.length
+  · cases ht : ctx[n] <;> simp [tryUpdate, h, ht, List.set_eq_take_cons_drop ty h] <;>
+      simp_all only [show (ValueType.int == ValueType.any) = false from rfl,
+        show (ValueType.list == ValueType.any) = false from rfl,
+        show (ValueType.any == ValueType.any) = true from rfl, Bool.false_eq_true,
+        Bool.true_eq_false, false_implies]
+  · simp [tryUpdate, h]
 
 #guard [
     Bvi.Exp.call 0 (some 3) [] none,

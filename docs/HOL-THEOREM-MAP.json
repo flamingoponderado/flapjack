@@ -24142,6 +24142,18 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml", "hol_name": "index_of_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean", "lean_name": "indexOf",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared index_of_def_typed in bvi_tailrec_frontend_probe.out: the variable constructor returns its natural index and each other BVI expression constructor returns NONE. The executed update uses this definition."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml", "hol_name": "try_update_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean", "lean_name": "tryUpdate",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared try_update_def_typed in bvi_tailrec_frontend_probe.out: NONE, out-of-bounds indices, and present non-Any entries leave the context unchanged; a present Any entry is replaced by the requested type. Optional lookup combines the original bound and value tests, while List.set implements the original TAKE, singleton and DROP update. The executed update uses this definition."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "EVERY_LAST1",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/ScanCorrespondence.lean", "lean_name": "every_last1",
     "statement_status": "reviewed_exact",

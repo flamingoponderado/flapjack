@@ -64,3 +64,10 @@ val _ = show_thm "compile_exp_def_typed=" bvi_tailrecTheory.compile_exp_def;
 val _ = show_thm "compile_each_def_typed=" bvi_tailrecTheory.compile_each_def;
 val _ = show_thm "compile_prog_def_typed=" bvi_tailrecTheory.compile_prog_def;
 val _ = show_thm "scan_expr_eq_typed=" bvi_tailrecTheory.scan_expr_eq;
+val _ = show_thm "index_of_def_typed=" bvi_tailrecTheory.index_of_def;
+val _ = show_thm "try_update_def_typed=" bvi_tailrecTheory.try_update_def;
+val _ = (print "try_update_cases="; print_term (rhs (concl (EVAL ``
+  MAP (\(idx,ts). bvi_tailrec$try_update bvi_tailrec$Int idx ts)
+    [(NONE,[]); (SOME 0,[]); (SOME 0,[bvi_tailrec$Any]);
+     (SOME 0,[bvi_tailrec$List]); (SOME 1,[bvi_tailrec$Any;bvi_tailrec$Any]);
+     (SOME 2,[bvi_tailrec$Any;bvi_tailrec$Any])]``))); print "\n");

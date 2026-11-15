@@ -75,7 +75,7 @@ theorem scanExpr_eq :
 /-- Refining an operand never changes the context length. -/
 theorem update_length (ty : ValueType) (e : Exp) (ctx : List ValueType) :
     (update ty e ctx).length = ctx.length := by
-  cases e <;> simp [update]
+  cases e <;> simp [update, indexOf, tryUpdate]
   split <;> simp
 
 /-- Refining both operands never changes the context length. -/

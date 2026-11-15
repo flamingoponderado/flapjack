@@ -105,7 +105,7 @@ theorem tyRel_update {env : List Value} {types : List ValueType} (related : tyRe
     tyRel env (update ty e types) := by
   cases e with
   | var n =>
-    simp only [update]
+    simp only [update, indexOf, tryUpdate]
     split
     · obtain ⟨value, lookup, typed⟩ := sound n rfl
       exact tyRel_set related n value ty lookup typed
