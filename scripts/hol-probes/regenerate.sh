@@ -11927,3 +11927,53 @@ run_probe word_cse_defs_typed_probeScript.sml word_cse_defs_typed_probe.out \
   knowledge_typed canonicalRegs_prime_def_typed canonicalImmReg_prime_def_typed Seqs_ind_typed \
   "$cake_dir/compiler/backend/word_cseScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe pattern_comp_local_typed_probeScript.sml pattern_comp_local_typed_probe.out \
+  is_True_thm_typed dt_eval_guard_mk_Conj_typed mk_If_thm_typed \
+  "$cake_dir/compiler/backend/pattern_matching/pattern_compScript.sml" \
+  "$cake_dir/compiler/backend/pattern_matching"
+
+run_probe backend_defs_typed_probeScript.sml backend_defs_typed_probe.out \
+  ensure_fp_conf_ok_def_typed ffinames_to_string_list_def_typed \
+  "$cake_dir/compiler/backend/backendScript.sml" \
+  "$cake_dir/compiler/backend"
+
+run_probe lab_to_target_overload_typed_probeScript.sml lab_to_target_overload_typed_probe.out \
+  all_enc_ok_light_typed \
+  "$cake_dir/compiler/backend/lab_to_targetScript.sml" \
+  "$cake_dir/compiler/backend"
+
+run_probe pres_lang_datatype_typed_probeScript.sml pres_lang_datatype_typed_probe.out \
+  tap_config_typed \
+  "$cake_dir/compiler/backend/presLangScript.sml" \
+  "$cake_dir/compiler/backend"
+
+run_probe x64_config_names_typed_probeScript.sml x64_config_names_typed_probe.out \
+  x64_names_def_typed \
+  "$cake_dir/compiler/backend/x64/x64_configScript.sml" \
+  "$cake_dir/compiler/backend/x64"
+
+run_probe mips_config_names_typed_probeScript.sml mips_config_names_typed_probe.out \
+  mips_names_def_typed \
+  "$cake_dir/compiler/backend/mips/mips_configScript.sml" \
+  "$cake_dir/compiler/backend/mips"
+
+run_probe word_alloc_typeabbrev_typed_probeScript.sml word_alloc_typeabbrev_typed_probe.out \
+  heu_data_typed \
+  "$cake_dir/compiler/backend/word_allocScript.sml" \
+  "$cake_dir/compiler/backend"
+
+run_probe word_depth_datatype_typed_probeScript.sml word_depth_datatype_typed_probe.out \
+  call_tree_typed \
+  "$cake_dir/compiler/backend/word_depthScript.sml" \
+  "$cake_dir/compiler/backend"
+
+run_probe word_remove_defs_typed_probeScript.sml word_remove_defs_typed_probe.out \
+  remove_must_terminate_def_typed \
+  "$cake_dir/compiler/backend/word_removeScript.sml" \
+  "$cake_dir/compiler/backend"
+
+run_probe pattern_common_datatype_typed_probeScript.sml pattern_common_datatype_typed_probe.out \
+  position_typed pmatchResult_typed matchResult_typed \
+  "$cake_dir/compiler/backend/pattern_matching/pattern_commonScript.sml" \
+  "$cake_dir/compiler/backend/pattern_matching"

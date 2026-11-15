@@ -10631,3 +10631,28 @@ therefore captures the typed `Seqs_ind` induction theorem, which fixes
 at lines 642-646. Regenerate each with
 `CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=<probe>_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`pattern_comp_local_typed_probe.out`, `backend_defs_typed_probe.out`,
+`lab_to_target_overload_typed_probe.out`, `pres_lang_datatype_typed_probe.out`,
+`x64_config_names_typed_probe.out`, `mips_config_names_typed_probe.out`,
+`word_alloc_typeabbrev_typed_probe.out`, `word_depth_datatype_typed_probe.out`,
+`word_remove_defs_typed_probe.out` and `pattern_common_datatype_typed_probe.out`
+(3+2+1+1+1+1+1+1+1+3 rows) capture the remaining reviewed compiler/backend
+rows (task 187): `is_True_thm`, `dt_eval_guard_mk_Conj`, `mk_If_thm`
+(pattern_comp); `ensure_fp_conf_ok_def`, `ffinames_to_string_list_def`
+(backend); the `all_enc_ok_light` Overload (lab_to_target, captured with the
+overload cleared); the `tap_config` record type (presLang); `x64_names_def` and
+`mips_names_def` (parsed from source because each script rebinds the name with a
+`compute` theorem); the `heu_data` type abbreviation (word_alloc); the
+`call_tree` datatype (word_depth); `remove_must_terminate_def` (word_remove); and
+`position`, `pmatchResult`, `matchResult` (pattern_common). Regenerate each with
+`CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=<probe>_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+Not captured: `linear_scanScript.sml`'s `map_colors_sub_def` and
+`map_colors_sub_eq`. Both live inside the large commented-out translation block
+that opens at line 1148 and closes at the end of the file, so neither exists in
+`linear_scanTheory` and no typed capture can be taken. `check-hol-refs.py`
+accepts the citation because it matches the name textually without stripping
+SML comments; the Lean `mapColorsSub`/`mapColorsSubEq` declarations port that
+commented source text. Recorded for the maintainer rather than withdrawn here.

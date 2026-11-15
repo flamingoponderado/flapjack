@@ -1,0 +1,2 @@
+ensure_fp_conf_ok_def_typed=∀(asm_c :α asm_config) (c :data_to_word$config). ensure_fp_conf_ok asm_c c = c with <|has_fp_ops := ((1 :num) < asm_c.fp_reg_count); has_fp_tern := (asm_c.ISA = ARMv7 ∧ (2 :num) < asm_c.fp_reg_count)|>
+ffinames_to_string_list_def_typed=ffinames_to_string_list ([] :ffiname list) = ([] :mlstring list) ∧ (∀(s :mlstring) (rest :ffiname list). ffinames_to_string_list (ExtCall s::rest) = s::ffinames_to_string_list rest) ∧ ∀(v0 :shmem_op) (rest :ffiname list). ffinames_to_string_list (SharedMem v0::rest) = ffinames_to_string_list rest

@@ -1,0 +1,3 @@
+is_True_thm_typed=is_True (t :dGuard) ⇔ t = True
+dt_eval_guard_mk_Conj_typed=dt_eval_guard (refs :num |-> term) (v :term) (mk_Conj (p :dGuard) (q :dGuard)) = dt_eval_guard refs v (Conj p q)
+mk_If_thm_typed=dt_eval (refs :num |-> term) (v :term) (mk_If (g :dGuard) (p :dTree) (q :dTree)) = dt_eval refs v (If g p q)

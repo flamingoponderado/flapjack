@@ -1,0 +1,3 @@
+position_typed=EmptyPos::position; Pos::num -> position -> position
+pmatchResult_typed=PMatchSuccess::pmatchResult; PMatchFailure::pmatchResult; PTypeFailure::pmatchResult
+matchResult_typed=MatchSuccess::num -> matchResult; MatchFailure::matchResult
