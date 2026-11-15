@@ -31,7 +31,7 @@ theorem evaluate_rcall_core {C F : Type} (loc ticks : Nat) (indices : List Nat)
       Core [body'] args' f (BviSem.decClock (ticks + 1) target) bodyResult final) :
     Core [callBlockToBvi loc (.rCall ticks indices)] env2 f target result final := by
   have sourceArgs := evaluate_vars_source indices env1 source wf
-  have targetArgs := evaluate_vars_target indices env1.length env2 target wf (envRel_length opt f env1 env2 environments)
+  have targetArgs := evaluate_vars_target indices env1.length env2 target ⟨wf, envRel_length opt f env1 env2 environments⟩
   have argsRelated := wfVars_list_rel indices opt f env1 env2 environments wf
   simp only [callBlockToBvi] at run ⊢
   rw [BviSem.evaluate, BviSem.fixClock_evaluate, sourceArgs] at run

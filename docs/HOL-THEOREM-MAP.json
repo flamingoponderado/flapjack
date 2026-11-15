@@ -135699,6 +135699,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_vars_source", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/VariableEvaluation.lean",
+  "lean_name": "evaluate_vars_source", "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared evaluate_vars_source_typed in bvi_tmc_proof_source_probe.out: a well-formed list of variable indices evaluates to the corresponding HOL EL values with the original source state unchanged. The source compiler configuration retains its Nat × C shape; the state reference field uses canonical finite support with a same-module witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_vars_target", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/VariableEvaluation.lean",
+  "lean_name": "evaluate_vars_target", "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared evaluate_vars_target_typed in bvi_tmc_proof_source_probe.out: well-formed indices and the environment-length bound jointly imply evaluation to the corresponding HOL EL values with the original target state unchanged. The target compiler configuration remains arbitrary; the state reference field uses canonical finite support with a same-module witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "evaluate_fill_hole", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/FillHole.lean",
   "lean_name": "evaluate_fill_hole", "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
   "fmap_as_finite_support_relation": ["BviState.refs", "f", "fNext"],

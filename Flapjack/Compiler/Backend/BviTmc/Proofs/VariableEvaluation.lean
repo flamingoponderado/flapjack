@@ -28,23 +28,22 @@ private theorem evaluateVars {C F : Type} (indices : List Nat) (env : List Value
   rw [results] at run
   exact run
 
-/-- Well-formed source variable lists evaluate to their environment entries.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_vars_source" (fmap_as_finite_support := [refs])] -/
+/-- Well-formed source variable lists evaluate to their environment entries. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_vars_source"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_vars_source {C F : Type} (indices : List Nat) (env : List Value)
     (state : BviState (Nat × C) F) (wellFormed : wfVars env.length indices) :
     evaluate (indices.map Bvi.Exp.var) env state = (.val (indices.map fun n => holEl n env), state) :=
   evaluateVars indices env state wellFormed
 
-/-- A larger target environment also evaluates well-formed variable lists.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_vars_target" (fmap_as_finite_support := [refs])] -/
+/-- A larger target environment also evaluates well-formed variable lists. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_vars_target"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_vars_target {C F : Type} (indices : List Nat) (n : Nat) (env : List Value)
-    (state : BviState C F) (wellFormed : wfVars n indices) (length : n ≤ env.length) :
-    evaluate (indices.map Bvi.Exp.var) env state = (.val (indices.map fun k => holEl k env), state) :=
-  evaluateVars indices env state (wfVars_expand n env.length indices wellFormed length)
+    (state : BviState C F) (h : wfVars n indices ∧ n ≤ env.length) :
+    evaluate (indices.map Bvi.Exp.var) env state = (.val (indices.map fun k => holEl k env), state) := by
+  obtain ⟨wellFormed, length⟩ := h
+  exact evaluateVars indices env state (wfVars_expand n env.length indices wellFormed length)
 
 private theorem evaluateVars_failure {C F : Type} (indices : List Nat) (env : List Value)
     (state : BviState C F) (invalid : ¬wfVars env.length indices) :
@@ -216,6 +215,39 @@ def callBlockToBvi (loc : Nat) : CallBlock → Bvi.Exp
       .op (.blockOp (.cons tag))
         (left.map Bvi.Exp.var ++ [callBlockToBvi loc child] ++ right.map Bvi.Exp.var)
 
+/-- Flapjack infrastructure: compose shifted variable fields with a supplied
+child evaluation equality; there is no separately named HOL original. -/
+private theorem evaluate_shift_frame_args_of_child {C F : Type} (loc : Nat) (left right : List Nat)
+    (child : CallBlock) (env : List Value) (state : BviState C F) (prefixValues : List Value)
+    (childRun : ∀ next : BviState C F,
+      evaluate [callBlockToBvi loc (shiftBlock prefixValues.length child)] (prefixValues ++ env) next =
+        evaluate [callBlockToBvi loc child] env next) :
+    evaluate ((shiftVars prefixValues.length left).map Bvi.Exp.var ++
+      [callBlockToBvi loc (shiftBlock prefixValues.length child)] ++
+      (shiftVars prefixValues.length right).map Bvi.Exp.var) (prefixValues ++ env) state =
+    evaluate (left.map Bvi.Exp.var ++ [callBlockToBvi loc child] ++ right.map Bvi.Exp.var) env state := by
+  change evaluateTuple (_, prefixValues ++ env, state) = evaluateTuple (_, env, state)
+  simp only [List.append_assoc]
+  conv_lhs => rw [evaluateAppend]
+  conv_rhs => rw [evaluateAppend]
+  simp only [BviSem.evaluateTuple, evaluate_shift_vars]
+  cases h : evaluate (left.map Bvi.Exp.var) env state with
+  | mk result next =>
+    cases result with
+    | err error => rfl
+    | val values =>
+      have tailEqual : evaluateTuple ([callBlockToBvi loc (shiftBlock prefixValues.length child)] ++
+          (shiftVars prefixValues.length right).map Bvi.Exp.var, prefixValues ++ env, next) =
+          evaluateTuple ([callBlockToBvi loc child] ++ right.map Bvi.Exp.var, env, next) := by
+        conv_lhs => rw [evaluateAppend]
+        conv_rhs => rw [evaluateAppend]
+        simp only [BviSem.evaluateTuple, childRun, evaluate_shift_vars]
+      change evaluate ([callBlockToBvi loc (shiftBlock prefixValues.length child)] ++
+        (shiftVars prefixValues.length right).map Bvi.Exp.var) (prefixValues ++ env) next =
+        evaluate ([callBlockToBvi loc child] ++ right.map Bvi.Exp.var) env next at tailEqual
+      dsimp only
+      rw [tailEqual]
+
 /-- Shifting a call skeleton preserves its evaluation under a prefixed environment.
 
 Intended HOL counterpart, pending statement and finite-map carrier source review.
@@ -229,31 +261,7 @@ theorem evaluate_shift_cb {C F : Type} (cb : CallBlock) (loc : Nat) (env : List 
     simp only [shiftBlock, callBlockToBvi, BviSem.evaluate]
     rw [evaluate_shift_vars]
   | callBlock tag left child right ih =>
-    have argsEqual : evaluateTuple (((shiftVars bs.length left).map Bvi.Exp.var) ++
-        [callBlockToBvi loc (shiftBlock bs.length child)] ++
-        (shiftVars bs.length right).map Bvi.Exp.var, bs ++ env, state) =
-        evaluateTuple (left.map Bvi.Exp.var ++ [callBlockToBvi loc child] ++
-        right.map Bvi.Exp.var, env, state) := by
-      simp only [List.append_assoc]
-      conv_lhs => rw [evaluateAppend]
-      conv_rhs => rw [evaluateAppend]
-      simp only [BviSem.evaluateTuple, evaluate_shift_vars]
-      cases h : evaluate (left.map Bvi.Exp.var) env state with
-      | mk result next =>
-        cases result with
-        | err error => rfl
-        | val values =>
-          simp only
-          have tailEqual : evaluateTuple ([callBlockToBvi loc (shiftBlock bs.length child)] ++
-              (shiftVars bs.length right).map Bvi.Exp.var, bs ++ env, next) =
-              evaluateTuple ([callBlockToBvi loc child] ++ right.map Bvi.Exp.var, env, next) := by
-            conv_lhs => rw [evaluateAppend]
-            conv_rhs => rw [evaluateAppend]
-            simp only [BviSem.evaluateTuple, ih, evaluate_shift_vars]
-          change evaluate ([callBlockToBvi loc (shiftBlock bs.length child)] ++
-            (shiftVars bs.length right).map Bvi.Exp.var) (bs ++ env) next =
-            evaluate ([callBlockToBvi loc child] ++ right.map Bvi.Exp.var) env next at tailEqual
-          rw [tailEqual]
+    have argsEqual := evaluate_shift_frame_args_of_child loc left right child env state bs ih
     simp only [shiftBlock, callBlockToBvi, BviSem.evaluate]
     rw [show evaluate _ _ state = evaluate _ env state from argsEqual]
 
@@ -275,27 +283,8 @@ theorem evaluate_shift_frame_args {C F : Type} (loc : Nat) (left right : List Na
       [callBlockToBvi loc (shiftBlock prefixValues.length child)] ++
       (shiftVars prefixValues.length right).map Bvi.Exp.var) (prefixValues ++ env) state =
     evaluate (left.map Bvi.Exp.var ++ [callBlockToBvi loc child] ++ right.map Bvi.Exp.var) env state := by
-  change evaluateTuple (_, prefixValues ++ env, state) = evaluateTuple (_, env, state)
-  simp only [List.append_assoc]
-  conv_lhs => rw [evaluateAppend]
-  conv_rhs => rw [evaluateAppend]
-  simp only [BviSem.evaluateTuple, evaluate_shift_vars]
-  cases h : evaluate (left.map Bvi.Exp.var) env state with
-  | mk result next =>
-    cases result with
-    | err error => rfl
-    | val values =>
-      have tailEqual : evaluateTuple ([callBlockToBvi loc (shiftBlock prefixValues.length child)] ++
-          (shiftVars prefixValues.length right).map Bvi.Exp.var, prefixValues ++ env, next) =
-          evaluateTuple ([callBlockToBvi loc child] ++ right.map Bvi.Exp.var, env, next) := by
-        conv_lhs => rw [evaluateAppend]
-        conv_rhs => rw [evaluateAppend]
-        simp only [BviSem.evaluateTuple, evaluate_shift_cb, evaluate_shift_vars]
-      change evaluate ([callBlockToBvi loc (shiftBlock prefixValues.length child)] ++
-        (shiftVars prefixValues.length right).map Bvi.Exp.var) (prefixValues ++ env) next =
-        evaluate ([callBlockToBvi loc child] ++ right.map Bvi.Exp.var) env next at tailEqual
-      dsimp only
-      rw [tailEqual]
+  exact evaluate_shift_frame_args_of_child loc left right child env state prefixValues
+    (fun next => evaluate_shift_cb child loc env next prefixValues)
 
 /-- Flapjack infrastructure for the list simulation: a leading binding is
 added to the reconstructed block after the original frame arguments run. -/

@@ -148,9 +148,9 @@ theorem evaluate_aux_arguments {C F : Type} (indices : List Nat) (opt : Bool)
     simpa [List.getElem_append_left, bound, holEl_eq_getElem slot extras bound] using pointer
   refine ⟨?_, ?_, ?_, ?_⟩
   · rw [evaluate_shift_vars]
-    exact evaluate_vars_target indices env1.length env2 state wf (envRel_length opt f env1 env2 related)
+    exact evaluate_vars_target indices env1.length env2 state ⟨wf, envRel_length opt f env1 env2 related⟩
   · have run := evaluate_vars_target [slot] (extras ++ env2).length (extras ++ env2) state
-      (by intro n member; simp only [List.mem_singleton] at member; subst n; exact fullBound) (Nat.le_refl _)
+      ⟨(by intro n member; simp only [List.mem_singleton] at member; subst n; exact fullBound), Nat.le_refl _⟩
     simpa [holEl_eq_getElem slot (extras ++ env2) fullBound, slotEq] using run
   · rw [BviSem.evaluate, BviSem.fixClock_evaluate]
     simp only [BviSem.evaluate, BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux]

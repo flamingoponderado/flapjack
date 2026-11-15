@@ -21,7 +21,7 @@ theorem evaluate_frame {C F : Type} (loc tag : Nat) (left right : List Nat)
       | (.val values, next) =>
         (.val [.block tag ((right.map (fun n => holEl n env)).reverse ++
           [holHd values] ++ (left.map (fun n => holEl n env)).reverse)], next) := by
-  have leftRun := evaluate_vars_target left env.length env state leftWf (Nat.le_refl _)
+  have leftRun := evaluate_vars_target left env.length env state ⟨leftWf, Nat.le_refl _⟩
   have argsRun : evaluate (left.map Bvi.Exp.var ++ [callBlockToBvi loc child] ++ right.map Bvi.Exp.var) env state =
       match evaluate [callBlockToBvi loc child] env state with
       | (.err error, next) => (.err error, next)
@@ -31,7 +31,7 @@ theorem evaluate_frame {C F : Type} (loc tag : Nat) (left right : List Nat)
     change BviSem.evaluateTuple (_, env, state) = _
     rw [evaluateAppend]
     simp only [BviSem.evaluateTuple, leftRun]
-    have rightRun (next : BviState C F) := evaluate_vars_target right env.length env next rightWf (Nat.le_refl _)
+    have rightRun (next : BviState C F) := evaluate_vars_target right env.length env next ⟨rightWf, Nat.le_refl _⟩
     have tailRun : evaluate ([callBlockToBvi loc child] ++ right.map Bvi.Exp.var) env state =
         match evaluate [callBlockToBvi loc child] env state with
         | (.err error, next) => (.err error, next)

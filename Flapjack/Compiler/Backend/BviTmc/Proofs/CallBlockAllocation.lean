@@ -40,8 +40,8 @@ theorem evaluate_mutCons {C F : Type} (tag : Nat) (left right : List Nat)
             (left.map (fun n => holEl n env)).reverse) }) := by
   let leftVals := left.map (fun n => holEl n env)
   let rightVals := right.map (fun n => holEl n env)
-  have leftRun := evaluate_vars_target left env.length env state leftWf (Nat.le_refl _)
-  have rightRun := evaluate_vars_target right env.length env state rightWf (Nat.le_refl _)
+  have leftRun := evaluate_vars_target left env.length env state ⟨leftWf, Nat.le_refl _⟩
+  have rightRun := evaluate_vars_target right env.length env state ⟨rightWf, Nat.le_refl _⟩
   have zeroRun : evaluate [.op (.intOp (.const 0)) []] env state = (.val [.number 0], state) := by
     rw [BviSem.evaluate, BviSem.fixClock_evaluate]
     simp [BviSem.evaluate, BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux,

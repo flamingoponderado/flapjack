@@ -42,7 +42,7 @@ theorem evaluate_worker_rcall_body {C F : Type} (loc dest ticks ptr : Nat) (indi
   have clockBound : ticks + 1 ≤ source.clock := by rw [← states.2.1]; omega
   have workerRun := bodyIH ticks indices target ptr idx initial body worker result final wf clockBound states code found bodyRun
     notTypeError safe (by simpa using rewrite) envRelated workerHole.1 workerHole.2
-  have argsRun := evaluate_vars_target indices env1.length env2 target wf (envRel_length true f env1 env2 environments)
+  have argsRun := evaluate_vars_target indices env1.length env2 target ⟨wf, envRel_length true f env1 env2 environments⟩
   have ptrBound : env1.length < env2.length := by have h := hole.1; omega
   have idxBound : env1.length + 1 < env2.length := by have h := hole.1; omega
   have ptrAt : env2[env1.length]? = some (.refPtr false ptr) := by
@@ -105,7 +105,7 @@ theorem evaluate_worker_rcall {C F : Type} (loc dest ticks ptr : Nat) (indices :
         simp [BviSem.evaluate, ptrAt]
       have idxRun : evaluate [.var (env1.length + 1)] env2 target = (.val [.number (Int.ofNat idx)], target) := by
         simp [BviSem.evaluate, idxAt]
-      have argsRun := evaluate_vars_target indices env1.length env2 target wf (envRel_length true f env1 env2 environments)
+      have argsRun := evaluate_vars_target indices env1.length env2 target ⟨wf, envRel_length true f env1 env2 environments⟩
       have sameLength : (indices.map (fun n => holEl n env1)).length =
           (indices.map (fun n => holEl n env2)).length := by simp
       obtain ⟨workerBody, workerFound, _⟩ := find_worker_code loc dest source.code target.code

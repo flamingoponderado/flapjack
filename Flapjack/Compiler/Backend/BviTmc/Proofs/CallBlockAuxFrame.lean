@@ -282,8 +282,8 @@ theorem evaluate_shifted_mutCons {C F : Type} (tag : Nat) (left right : List Nat
       (shiftVars extras.length vars).map (fun n => holEl n (extras ++ env)) =
         vars.map (fun n => holEl n env) := by
     have shifted := evaluate_vars_target (shiftVars extras.length vars) (extras ++ env).length
-      (extras ++ env) state (shiftedWf vars wf) (Nat.le_refl _)
-    have original := evaluate_vars_target vars env.length env state wf (Nat.le_refl _)
+      (extras ++ env) state ⟨shiftedWf vars wf, Nat.le_refl _⟩
+    have original := evaluate_vars_target vars env.length env state ⟨wf, Nat.le_refl _⟩
     have equal := evaluate_shift_vars vars env state extras
     rw [shifted, original] at equal
     have results := congrArg Prod.fst equal
