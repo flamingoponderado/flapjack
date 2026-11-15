@@ -135699,6 +135699,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_pres_opt_code", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/WrapperCases.lean",
+  "lean_name": "evaluate_pres_opt_code", "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared evaluate_pres_opt_code_typed in bvi_tmc_proof_source_probe.out. The two evaluations use independent compiler and FFI type parameters, with original state/result binder order and the optimized-code and both evaluation premises grouped together. The conclusion retains optimized code for the full resulting states. The state reference field uses canonical finite support with a same-module witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "cons_append", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockFrame.lean",
   "lean_name": "cons_append", "statement_status": "reviewed_exact",
   "reviewer": "Source comparison: Compared cons_append_typed in bvi_tmc_proof_source_probe.out: arbitrary element and list retain the original polymorphic cons equals singleton append equation."

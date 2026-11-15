@@ -85,8 +85,8 @@ theorem evaluate_let_worker_block {C F : Type} (bindings : List Bvi.Exp) (body :
           rw [holEl_eq_getElem _ _ bound] at pointer
           rw [holEl_eq_getElem _ _ extendedBound]
           simpa [List.length_append, lengthEq, List.getElem_append_right] using pointer
-        have nextCode := WrapperCases.evaluate_pres_opt_code loc locOpt source middle target middleTarget
-          bindings env1 env2 (.val values) (.val values') code bindingsRun targetRun
+        have nextCode := WrapperCases.evaluate_pres_opt_code loc locOpt source target
+          bindings env1 env2 (.val values) middle (.val values') middleTarget ⟨code, bindingsRun, targetRun⟩
         obtain ⟨workResult, h, workState, workRun, workRel, states, bodyExtension,
           bodyFresh, bodyUnchanged, bodyStill, filled⟩ :=
           bodyIH values values' middle g middleTarget valueLength bindingsRun run

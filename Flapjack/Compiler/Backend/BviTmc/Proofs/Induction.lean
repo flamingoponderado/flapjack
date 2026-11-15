@@ -229,4 +229,67 @@ theorem evaluate_rewrite_tmc {C F : Type} (n : Nat × Nat) (xs : List Bvi.Exp)
         simpa only [rewrite, IfWorker.WorkerCore] using worker
       | cons first tail => simp at length
 
+/-- Source-shaped counterpart of `hypothesis_def` in
+`cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml`. The finite map `f` is
+universally quantified inside the definition body and represented by
+`HolFiniteMapExact`. It remains untagged until a reviewed qualifier covers
+that map together with the state and existential map representations. Its
+evaluator dependencies inherit the rational-cuts real model (SOUNDNESS item 8). -/
+noncomputable def hypothesis {C F : Type} (xs : List Bvi.Exp)
+    (source : BviState (Nat × C) F) (clock : Nat) : Prop :=
+  source.clock < clock →
+  ∀ (env1 : List Value) (result : BviResult) (final : BviState (Nat × C) F)
+    (opt : Bool) (f : HolFiniteMapExact Nat Nat) (target : BviState C F)
+    (env2 : List Value) (loc : Nat),
+    evaluate xs env1 source = (result, final) ∧ envRel opt f env1 env2 ∧
+      (∀ x ∈ xs, noMutcons x) ∧ stateRel f source target ∧
+      (opt = true → xs.length = 1) ∧ result ≠ .err (.abort .typeError) →
+    ∃ (next : BviState C F), ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (nextResult : BviResult),
+      evaluate xs env2 target = (nextResult, next) ∧
+      resultRel (List.Forall₂ (valueRel nextMap)) (eorRel nextMap) result nextResult ∧
+      stateRel nextMap final next ∧ f.submap nextMap ∧
+      onlyFresh f nextMap target.refs ∧ holesUnchangedExcept f target.refs next.refs ∅ ∧
+      holesStillNotFinalised f target.refs next.refs ∧
+      (∀ locOpt, optimisedCode loc locOpt source.code target.code →
+        (∀ wrap, xs.length = 1 ∧ rewriteWrapperSource loc locOpt env1.length
+            (@holHd Bvi.Exp ⟨.var 0⟩ xs) = some wrap →
+          ∃ (wrapState : BviState C F), ∃ (wrapMap : HolFiniteMapExact Nat Nat), ∃ (wrapResult : BviResult),
+            evaluate [wrap] env2 target = (wrapResult, wrapState) ∧
+            resultRel (List.Forall₂ (valueRel wrapMap)) (eorRel wrapMap) result wrapResult ∧
+            stateRel wrapMap final wrapState ∧ f.submap wrapMap ∧
+            onlyFresh f wrapMap target.refs ∧ holesUnchangedExcept f target.refs wrapState.refs ∅ ∧
+            holesStillNotFinalised f target.refs wrapState.refs) ∧
+        (opt = true → ∀ holePtr,
+          (∃ c, holeHasVal f env1 env2 target.refs c) ∧
+          holeNotFinalised target.refs holePtr ∧
+          holEl env1.length env2 = .refPtr false holePtr →
+          ∃ (workResult : BviResult), ∃ (workMap : HolFiniteMapExact Nat Nat), ∃ (workState : BviState C F),
+            evaluate [rewriteWorkerSource loc locOpt env1.length (env1.length + 1) env1.length
+              (@holHd Bvi.Exp ⟨.var 0⟩ xs)] env2 target = (workResult, workState) ∧
+            optResRel workMap result workResult ∧ stateRel workMap final workState ∧
+            f.submap workMap ∧ onlyFresh f workMap target.refs ∧
+            holesUnchangedExcept f target.refs workState.refs {holePtr} ∧
+            holesStillNotFinalised f target.refs workState.refs ∧
+            ∀ resValue, result = .val [resValue] →
+              ∃ resValue', mutableBlockRel workMap target.refs (workState.refs.eraseEq holePtr) resValue resValue' ∧
+                holeHasVal f env1 env2 workState.refs resValue'))
+
+/-- Flapjack infrastructure: the smaller-clock predicate follows from the
+TMC simulation theorem; this unconditional proof has no separate HOL original. -/
+theorem hypothesis_holds {C F : Type} (xs : List Bvi.Exp) (source : BviState (Nat × C) F)
+    (clock : Nat) : hypothesis xs source clock := by
+  intro _ env1 result final opt f target env2 loc h
+  obtain ⟨run, env, safe, states, length, noError⟩ := h
+  have post := evaluate_rewrite_tmc (source.clock, Bvi.expListSizeHOL xs) xs source env1 result final
+    opt f target env2 loc ⟨run, rfl, env, safe, states, length, noError⟩
+  obtain ⟨next, g, r, eval, rel, states, ext, fresh, unchanged, still, optimized⟩ := post
+  refine ⟨next, g, r, eval, rel, states, ext, fresh, unchanged, still, ?_⟩
+  intro dest code
+  obtain ⟨wrap, worker⟩ := optimized dest code
+  refine ⟨wrap, ?_⟩
+  intro optTrue ptr h
+  exact worker optTrue env1.length (env1.length + 1) ptr
+    (rewriteWorkerSource loc dest env1.length (env1.length + 1) env1.length (@holHd Bvi.Exp ⟨.var 0⟩ xs))
+    ⟨rfl, rfl, h.1, h.2.1, rfl, h.2.2⟩
+
 end Flapjack.Compiler.Backend.BviTmc.Induction

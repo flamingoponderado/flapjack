@@ -116,8 +116,8 @@ theorem evaluate_let_wrapper {C F : Type} (bindings : List Bvi.Exp) (body wrappe
   apply evaluate_let_to_core bindings body body' source env1 result final opt f target env2
     run notTypeError environments bindingsIH
   intro values values' mid g t bodyRun valuesRelated env states sourceBindings targetBindings
-  have nextCode := WrapperCases.evaluate_pres_opt_code loc locOpt source mid target t
-    bindings env1 env2 (.val values) (.val values') code sourceBindings targetBindings
+  have nextCode := WrapperCases.evaluate_pres_opt_code loc locOpt source target
+    bindings env1 env2 (.val values) mid (.val values') t ⟨code, sourceBindings, targetBindings⟩
   have valueLength := evaluate_length bindings env1 source mid values sourceBindings
   exact bodyIH values values' mid g t body' sourceBindings bodyRun
     (envRel_append opt g env1 env2 values values' ⟨env, valuesRelated⟩) states nextCode (by

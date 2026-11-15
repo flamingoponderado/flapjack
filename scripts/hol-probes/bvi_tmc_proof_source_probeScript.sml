@@ -420,6 +420,7 @@ val _ = show "cons_append_typed" bvi_tmcProofTheory.cons_append;
 val _ = show "rw_block_args_typed" bvi_tmcProofTheory.rw_block_args;
 val _ = show "shift_cb_suc_typed" bvi_tmcProofTheory.shift_cb_suc;
 val _ = show "evaluate_cb_typed" bvi_tmcProofTheory.evaluate_cb;
+val _ = show "evaluate_pres_opt_code_typed" bvi_tmcProofTheory.evaluate_pres_opt_code;
 val _ = show "hole_has_val_submap_typed" bvi_tmcProofTheory.hole_has_val_submap;
 val _ = show "holes_unchanged_except_trans_typed" bvi_tmcProofTheory.holes_unchanged_except_trans;
 val _ = show "holes_still_not_finalised_trans_typed" bvi_tmcProofTheory.holes_still_not_finalised_trans;

@@ -159,8 +159,8 @@ theorem evaluate_if_wrapper {C F : Type} (condition yes no wrapper : Bvi.Exp)
       run notTypeError environments conditionIH
     intro branch branchTarget mid g t pair branchRun env states conditionRuns
     obtain ⟨r, r', sourceCondition, targetCondition⟩ := conditionRuns
-    have nextCode := WrapperCases.evaluate_pres_opt_code loc locOpt source mid target t
-      [condition] env1 env2 r r' code sourceCondition targetCondition
+    have nextCode := WrapperCases.evaluate_pres_opt_code loc locOpt source target
+      [condition] env1 env2 r mid r' t ⟨code, sourceCondition, targetCondition⟩
     rcases pair with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
     · apply branchIH _ _ mid g t r sourceCondition (Or.inl rfl) ?_ branchRun env states nextCode
       simp_all
