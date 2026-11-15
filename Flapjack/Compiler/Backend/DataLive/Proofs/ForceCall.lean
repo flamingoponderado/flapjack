@@ -62,7 +62,7 @@ theorem force_nonTail_running_correct {C F : Type} (dest : Nat) (names : NumSet)
       cases called : DataSem.evaluate body sourceEntry with
       | mk outcome last =>
         have sourceClamped : fixClock sourceEntry (DataSem.evaluate body sourceEntry) = (outcome, last) := by
-          rw [fixClock_evaluate, called]
+          rw [fixClockEvaluate, called]
         simp only [sourceEntry] at sourceClamped
         cases outcome with
         | none =>
@@ -78,7 +78,7 @@ theorem force_nonTail_running_correct {C F : Type} (dest : Nat) (names : NumSet)
               bodyIH body sourceEntry targetEntry last (some (.err error)) smaller entryRel.1 entryRel.2 entryException notType called
             refine ⟨targetLast, ?_, lastRel⟩
             have targetClamped : fixClock targetEntry (DataSem.evaluate body targetEntry) = (some (.err error), targetLast) := by
-              rw [fixClock_evaluate, targetRun]
+              rw [fixClockEvaluate, targetRun]
             simp only [targetEntry] at targetClamped
             simp [compile, DataSem.evaluate, targetRead, targetThunk, targetFound, targetCut, targetNonzero, targetClamped]
           | val values =>
@@ -105,7 +105,7 @@ theorem force_nonTail_running_correct {C F : Type} (dest : Nat) (names : NumSet)
                 obtain ⟨rfl, rfl⟩ := run
                 refine ⟨setVar dest value targetPop, ?_, stateRel_setVar sourcePop targetPop live dest value popRel⟩
                 have targetClamped : fixClock targetEntry (DataSem.evaluate body targetEntry) = (some (.val [value]), targetLast) := by
-                  rw [fixClock_evaluate, targetRun]
+                  rw [fixClockEvaluate, targetRun]
                 simp only [targetEntry] at targetClamped
                 simp [compile, DataSem.evaluate, targetRead, targetThunk, targetFound, targetCut, targetNonzero, targetClamped, targetPopRun]
 

@@ -84,7 +84,7 @@ theorem evaluate_force_stack_handler {C F : Type} (ret : Option (Nat × NumSet))
                 cases called : fixClock entered (evaluate body entered) with
                 | mk outcome last =>
                   have bodyRun : evaluate body entered = (outcome, last) := by
-                    simpa [fixClock_evaluate] using called
+                    simpa [fixClockEvaluate] using called
                   simp only [entered] at called
                   cases outcome with
                   | none => simp [evaluate, read, inspect, found, cut, zero, called] at run

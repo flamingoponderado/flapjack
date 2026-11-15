@@ -318,20 +318,15 @@ theorem evaluateClock {C F : Type} (program : DataLang.Prog) (state : State C F)
   have bound := evaluate_clock_le program state
   simpa only [run] using bound
 
-/-- The evaluator's termination clamp is inert on a completed evaluation. -/
-theorem fixClock_evaluate {C F : Type} (program : DataLang.Prog) (state : State C F) :
+/-- The HOL clock clamp is inert on an evaluation result. -/
+@[hol "cakeml/compiler/backend/semantics/dataSemScript.sml" "fix_clock_evaluate"]
+theorem fixClockEvaluate {C F : Type} (state : State C F) (program : DataLang.Prog) :
     fixClock state (evaluate program state) = evaluate program state := by
   have bound := evaluate_clock_le program state
   cases run : evaluate program state with
   | mk result next =>
     simp only [run] at bound
     simp [fixClock, Nat.min_eq_right bound]
-
-/-- The HOL clock clamp is inert on an evaluation result. -/
-@[hol "cakeml/compiler/backend/semantics/dataSemScript.sml" "fix_clock_evaluate"]
-theorem fixClockEvaluate {C F : Type} (state : State C F) (program : DataLang.Prog) :
-    fixClock state (evaluate program state) = evaluate program state :=
-  fixClock_evaluate program state
 
 /-- A trailing skip does not change a data-language evaluation. This is
 untagged while the evaluator correspondence is under review. -/

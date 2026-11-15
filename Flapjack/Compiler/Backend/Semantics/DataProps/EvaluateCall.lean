@@ -55,7 +55,7 @@ theorem evaluate_call_stack_handler {C F : Type} (ret : Option (List Nat × NumS
               cases called : fixClock entered (evaluate body entered) with
               | mk result last =>
                 have bodyRun : evaluate body entered = (result, last) := by
-                  simpa [fixClock_evaluate] using called
+                  simpa [fixClockEvaluate] using called
                 have lastClock : last.clock < state.clock := by
                   have bound := evaluate_clock_le body entered
                   rw [bodyRun] at bound

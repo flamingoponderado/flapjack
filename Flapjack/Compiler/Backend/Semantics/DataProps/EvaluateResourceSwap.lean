@@ -200,14 +200,14 @@ private theorem resourceSwap_seq {C F : Type} (first second : DataLang.Prog)
     cases outcome with
     | none =>
       simp only [evaluate] at run
-      rw [fixClock_evaluate, firstRun] at run
+      rw [fixClockEvaluate, firstRun] at run
       cases flag with
       | false =>
         obtain ⟨safe1, peak1, firstSwap⟩ := firstIH none mid false mx safe peak firstRun
         obtain ⟨safe2, peak2, secondSwap⟩ := secondIH mid clockBound result next false mx safe1 peak1 run
         refine ⟨safe2, peak2, ?_⟩
         simp only [evaluate]
-        rw [fixClock_evaluate, firstSwap]
+        rw [fixClockEvaluate, firstSwap]
 
         exact secondSwap
       | true =>
@@ -215,11 +215,11 @@ private theorem resourceSwap_seq {C F : Type} (first second : DataLang.Prog)
         obtain ⟨mx2, safe2, peak2, secondSwap⟩ := secondIH mid clockBound result next true mx1 safe1 peak1 run
         refine ⟨mx2, safe2, peak2, ?_⟩
         simp only [evaluate]
-        rw [fixClock_evaluate, firstSwap]
+        rw [fixClockEvaluate, firstSwap]
         exact secondSwap
     | some stopped =>
       simp only [evaluate] at run
-      rw [fixClock_evaluate, firstRun] at run
+      rw [fixClockEvaluate, firstRun] at run
       simp only [Prod.mk.injEq] at run
       obtain ⟨rfl, rfl⟩ := run
       cases flag with
@@ -227,12 +227,12 @@ private theorem resourceSwap_seq {C F : Type} (first second : DataLang.Prog)
         obtain ⟨safe1, peak1, firstSwap⟩ := firstIH (some stopped) mid false mx safe peak firstRun
         refine ⟨safe1, peak1, ?_⟩
         simp only [evaluate]
-        rw [fixClock_evaluate, firstSwap]
+        rw [fixClockEvaluate, firstSwap]
       | true =>
         obtain ⟨mx1, safe1, peak1, firstSwap⟩ := firstIH (some stopped) mid true mx safe peak firstRun
         refine ⟨mx1, safe1, peak1, ?_⟩
         simp only [evaluate]
-        rw [fixClock_evaluate, firstSwap]
+        rw [fixClockEvaluate, firstSwap]
 
 private theorem resourceSwap_tailCall {C F : Type} (dest : Option Nat) (names : List Nat)
     (handler : Option (Nat × DataLang.Prog)) (state : State C F)
@@ -428,7 +428,7 @@ private theorem resourceSwap_returningForce {C F : Type} (dest : Nat) (live : Nu
                       (outcome, { last with safeForSpace := safe1, peakHeapLength := peak1 }) := by
                     simpa [changed, called, DataSem.callEnv, pushEnv, decClock] using swapped
                   simp only [evaluate, read, th, found, cut, zero, if_false] at run ⊢
-                  simp only [fixClock_evaluate] at run ⊢
+                  simp only [fixClockEvaluate] at run ⊢
                   simp only [called] at bodyRun
                   rw [bodyRun] at run
                   refine ⟨safe1, peak1, ?_⟩
@@ -461,7 +461,7 @@ private theorem resourceSwap_returningForce {C F : Type} (dest : Nat) (live : Nu
                       (outcome, { last with stackMax := mx1, safeForSpace := safe1, peakHeapLength := peak1 }) := by
                     simpa [changed, called, DataSem.callEnv, pushEnv, decClock] using swapped
                   simp only [evaluate, read, th, found, cut, zero, if_false] at run ⊢
-                  simp only [fixClock_evaluate] at run ⊢
+                  simp only [fixClockEvaluate] at run ⊢
                   simp only [called] at bodyRun
                   rw [bodyRun] at run
                   refine ⟨mx1, safe1, peak1, ?_⟩
@@ -539,7 +539,7 @@ private theorem resourceSwap_returningCall {C F : Type} (returns : List Nat) (li
                     (outcome, { last with safeForSpace := safe1, peakHeapLength := peak1 }) := by
                   simpa [changed, called, DataSem.callEnv, pushEnv, decClock] using swapped
                 simp only [evaluate, read, found, distinct, cut, zero, if_false] at run ⊢
-                simp only [fixClock_evaluate] at run ⊢
+                simp only [fixClockEvaluate] at run ⊢
                 simp only [called] at bodyRun
                 rw [bodyRun] at run
                 simp only [changed] at changedRun
@@ -592,7 +592,7 @@ private theorem resourceSwap_returningCall {C F : Type} (returns : List Nat) (li
                     (outcome, { last with stackMax := mx1, safeForSpace := safe1, peakHeapLength := peak1 }) := by
                   simpa [changed, called, DataSem.callEnv, pushEnv, decClock] using swapped
                 simp only [evaluate, read, found, distinct, cut, zero, if_false] at run ⊢
-                simp only [fixClock_evaluate] at run ⊢
+                simp only [fixClockEvaluate] at run ⊢
                 simp only [called] at bodyRun
                 rw [bodyRun] at run
                 simp only [changed] at changedRun

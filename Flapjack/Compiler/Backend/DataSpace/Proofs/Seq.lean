@@ -24,7 +24,7 @@ private theorem composeSimulation {C F : Type} (first second : DataLang.Prog)
             else { sourceNext with safeForSpace := safe, peakHeapLength := peak, stackMax := stackMax }) ∧
         sptSubspt sourceNext.locals out := by
   intro source sourceNext result locals notType run included
-  rw [DataSem.evaluate, fixClock_evaluate] at run
+  rw [DataSem.evaluate, fixClockEvaluate] at run
   cases firstRun : DataSem.evaluate first source with
   | mk firstResult sourceMid =>
     rw [firstRun] at run
@@ -41,7 +41,7 @@ private theorem composeSimulation {C F : Type} (first second : DataLang.Prog)
             else { sourceNext with safeForSpace := safe2, peakHeapLength := peak2, stackMax := stack2 })
           { sourceMid with locals := midLocals } result peak1 (compile second) targetSecond
       refine ⟨out, safe3, peak3, stack3, ?_, finalIncluded⟩
-      rw [DataSem.evaluate, fixClock_evaluate, targetFirst]
+      rw [DataSem.evaluate, fixClockEvaluate, targetFirst]
       cases result <;> simpa using transported
     | some outcome =>
       have eqs : result = some outcome ∧ sourceNext = sourceMid := Prod.mk.inj run.symm
@@ -49,7 +49,7 @@ private theorem composeSimulation {C F : Type} (first second : DataLang.Prog)
       obtain ⟨out, safe, peak, stackMax, targetFirst, finalIncluded⟩ :=
         firstIH source sourceNext (some outcome) locals notType firstRun included
       refine ⟨out, safe, peak, stackMax, ?_, finalIncluded⟩
-      rw [DataSem.evaluate, fixClock_evaluate, targetFirst]
+      rw [DataSem.evaluate, fixClockEvaluate, targetFirst]
 
 
 private theorem compileSeqSkip (second : DataLang.Prog) :
@@ -62,8 +62,8 @@ private theorem compileSeqSkip (second : DataLang.Prog) :
 
 private theorem evalSeqSkipAssoc {C F : Type} (first second : DataLang.Prog) (state : State C F) :
     evaluate (.seq (.seq first .skip) second) state = evaluate (.seq first second) state := by
-  conv_lhs => rw [DataSem.evaluate, fixClock_evaluate, evaluate_seq_skip]
-  rw [DataSem.evaluate, fixClock_evaluate]
+  conv_lhs => rw [DataSem.evaluate, fixClockEvaluate, evaluate_seq_skip]
+  rw [DataSem.evaluate, fixClockEvaluate]
 
 /-- Two successful cuts equal a single cut by the intersection. -/
 private theorem cutEnv_twice {α : Type} (first second : NumSet) (source middle result : Spt α)
@@ -390,12 +390,12 @@ private theorem mergeReservations {C F : Type} (amount1 amount2 : Nat) (names1 n
       exact False.elim (notType rfl)
     | some env2 =>
       have combined := cutEnv_twice names1 names2 state.locals env1 env2 cut1 cut2
-      rw [DataSem.evaluate, fixClock_evaluate] at run
+      rw [DataSem.evaluate, fixClockEvaluate] at run
       have eval1 : evaluate (.makeSpace amount1 names1) state =
           (none, addSpace { state with locals := env1 } amount1) := by simp [DataSem.evaluate, cut1]
       rw [eval1] at run
       simp only at run
-      rw [DataSem.evaluate, fixClock_evaluate] at run
+      rw [DataSem.evaluate, fixClockEvaluate] at run
       have eval2 : evaluate (.makeSpace amount2 names2)
           (addSpace { state with locals := env1 } amount1) =
           (none, addSpace { addSpace { state with locals := env1 } amount1 with locals := env2 } amount2) := by
@@ -403,7 +403,7 @@ private theorem mergeReservations {C F : Type} (amount1 amount2 : Nat) (names1 n
         simp only [DataSem.evaluate, localEq, cut2]
       rw [eval2] at run
       simp only at run
-      rw [DataSem.evaluate, fixClock_evaluate]
+      rw [DataSem.evaluate, fixClockEvaluate]
       have evalCombined : evaluate (.makeSpace amount2 (sptInter names1 names2)) state =
           (none, addSpace { state with locals := env2 } amount2) := by simp [DataSem.evaluate, combined]
       rw [evalCombined]
@@ -446,21 +446,21 @@ private theorem moveReservation {C F : Type} (dest src amount : Nat) (names : Nu
         cutEnv_before_move state.locals state.locals names dest src value env ((sptSubsptLookup _ _).2 (localsOk_refl _)) found cut
       have moveRun : evaluate (.move dest src) state = (none, setVar dest value state) := by
         simp [DataSem.evaluate, read]
-      rw [DataSem.evaluate, fixClock_evaluate, moveRun] at run
+      rw [DataSem.evaluate, fixClockEvaluate, moveRun] at run
       simp only at run
-      rw [DataSem.evaluate, fixClock_evaluate] at run
+      rw [DataSem.evaluate, fixClockEvaluate] at run
       have spaceRun : evaluate (.makeSpace amount names) (setVar dest value state) =
           (none, addSpace { setVar dest value state with locals := env } amount) := by
         simp only [DataSem.evaluate, setVar, cut]
       rw [spaceRun] at run
       simp only at run
-      rw [DataSem.evaluate, fixClock_evaluate]
+      rw [DataSem.evaluate, fixClockEvaluate]
       have spaceBefore : evaluate (.makeSpace amount (sptInsert src () (sptDelete dest names))) state =
           (none, addSpace { state with locals := before } amount) := by
         simp [DataSem.evaluate, cutBefore]
       rw [spaceBefore]
       simp only
-      rw [DataSem.evaluate, fixClock_evaluate]
+      rw [DataSem.evaluate, fixClockEvaluate]
       have movedBefore : evaluate (.move dest src) (addSpace { state with locals := before } amount) =
           (none, setVar dest value (addSpace { state with locals := before } amount)) := by
         simp [DataSem.evaluate, DataSem.getVar, readBefore, addSpace]
@@ -517,7 +517,7 @@ private theorem assignReservation {C F : Type} (dest : Nat) (op : ClosLang.Op) (
         let assigned := setVar dest value (installSfs op applied)
         have assignRun : evaluate (.assign dest op arguments none) state = (none, assigned) := by
           simp [DataSem.evaluate, valid, read, cutStateOpt, app, assigned]
-        rw [DataSem.evaluate, fixClock_evaluate, assignRun] at run
+        rw [DataSem.evaluate, fixClockEvaluate, assignRun] at run
         simp only at run
         cases cut : cutEnv names assigned.locals with
         | none =>
@@ -529,7 +529,7 @@ private theorem assignReservation {C F : Type} (dest : Nat) (op : ClosLang.Op) (
             simpa [assigned, setVar, installSfs, control.1] using cut
           obtain ⟨before, beforeCut, beforeRead, afterIncluded⟩ :=
             cutEnv_before_assign state.locals state.locals names dest arguments values value resultEnv ((sptSubsptLookup _ _).2 (localsOk_refl _)) read sourceCut
-          rw [DataSem.evaluate, fixClock_evaluate] at run
+          rw [DataSem.evaluate, fixClockEvaluate] at run
           have spaceRun : evaluate (.makeSpace amount names) assigned =
               (none, addSpace { assigned with locals := resultEnv } amount) := by
             simp [DataSem.evaluate, cut]
@@ -555,9 +555,9 @@ private theorem assignReservation {C F : Type} (dest : Nat) (op : ClosLang.Op) (
           have reserveRun : evaluate (.makeSpace (opSpaceReq op arguments.length + amount)
               (sptListInsert arguments (sptDelete dest names))) state = (none, targetMid) := by
             simp [DataSem.evaluate, beforeCut, targetMid, requirement, reqEq]
-          rw [DataSem.evaluate, fixClock_evaluate, reserveRun]
+          rw [DataSem.evaluate, fixClockEvaluate, reserveRun]
           simp only
-          rw [DataSem.evaluate, fixClock_evaluate]
+          rw [DataSem.evaluate, fixClockEvaluate]
           have targetRead : DataSem.getVars arguments targetMid.locals = some values := by
             simpa [targetMid, addSpace] using beforeRead
           have targetRun : evaluate (.assign dest op arguments none) targetMid = (none, targetNext) := by
