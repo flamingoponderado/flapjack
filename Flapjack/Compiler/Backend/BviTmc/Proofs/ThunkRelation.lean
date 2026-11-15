@@ -4,28 +4,26 @@ public import Flapjack.Compiler.Backend.BviTmc.Proofs.HeapRelation
 public import Flapjack.Compiler.Backend.Semantics.BvlSem.Thunk
 public import Flapjack.Compiler.Backend.Semantics.BviSem.Thunk
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.StateRelation
+public import Flapjack.FiniteMap.BroadCodec
 
 @[expose] public section
-
--- Public declarations below use private helpers.
-set_option backward.privateInPublic true
-set_option backward.privateInPublic.warn false
 
 /-! Thunk inspection under the TMC heap relation. -/
 namespace Flapjack.Compiler.Backend.BviTmc
 open BvlSem
 
-private def maptoBroadlookup {α β : Type} (f : HolFiniteMapExact α β) : α → Option β := f.lookup
-private def mapofBroad {α β : Type} (lookup : α → Option β)
-    (support : ∃ keys : List α, ∀ key, lookup key ≠ none → key ∈ keys) : HolFiniteMapExact α β :=
-  ⟨lookup, support⟩
-
 theorem holFmapAsFiniteSupportParamWitness_destThunk_notThunk_rel_f (f : HolFiniteMapExact Nat Nat) :
-    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup key = f.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f := by cases f; exact ⟨fun _ => rfl, rfl, rfl⟩
 theorem holFmapAsFiniteSupportParamWitness_destThunk_notThunk_rel_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
-    mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).lookup key = refs.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).finiteSupport = refs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs) = refs := by cases refs; exact ⟨fun _ => rfl, rfl, rfl⟩
 theorem holFmapAsFiniteSupportParamWitness_destThunk_notThunk_rel_target (target : HolFiniteMapExact Nat (Ref Value)) :
-    mapofBroad (maptoBroadlookup target) target.finiteSupport = target := by cases target; rfl
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad target)).lookup key = target.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad target)).finiteSupport = target.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad target) = target := by cases target; exact ⟨fun _ => rfl, rfl, rfl⟩
 
 /-- A value that is not a thunk remains so under pointer renaming. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "dest_thunk_not_thunk_rel"
@@ -62,13 +60,14 @@ theorem goodThunkUpdate_rel (mode : AstHOL.ThunkMode) (v v' : Value)
   exact bad.2 (destThunk_notThunk_rel v v' refs target f ⟨notThunk, values, heaps⟩)
 
 theorem holFmapAsFiniteSupportParamWitness_destThunkRetRel_f (f : HolFiniteMapExact Nat Nat) :
-    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup key = f.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f := by cases f; exact ⟨fun _ => rfl, rfl, rfl⟩
 
 /-- Related thunk observations agree on errors and modes and relate the
-payload values returned by thunk inspection.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "dest_thunk_ret_rel_def" (fmap_as_finite_support_parameters := [f])] -/
+payload values returned by thunk inspection. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "dest_thunk_ret_rel_def"
+  (fmap_as_finite_support_parameters := [f])]
 def destThunkRetRel (f : HolFiniteMapExact Nat Nat) (a b : BviSem.DestThunkResult) : Prop :=
   (a = .badRef ∧ b = .badRef) ∨ (a = .notThunk ∧ b = .notThunk) ∨
     ∃ mode mode' v v', a = .isThunk mode v ∧ b = .isThunk mode' v' ∧ mode = mode' ∧ valueRel f v v'
@@ -80,16 +79,15 @@ theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
   BviSem.holFmapAsFiniteSupportWitness
 end ThunkWitness
 
-/-- Thunk observations at related environment entries are related.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "dest_thunk_rel" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
+/-- Thunk observations at related environment entries are related. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "dest_thunk_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f])]
 theorem destThunk_rel {C F : Type} (opt : Bool) (f : HolFiniteMapExact Nat Nat)
     (env1 env2 : List Value) (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (index : Nat) (env : envRel opt f env1 env2) (states : stateRel f source target)
-    (bound : index < env1.length) :
+    (index : Nat) (h : envRel opt f env1 env2 ∧ stateRel f source target ∧ index < env1.length) :
     destThunkRetRel f (BviSem.destThunk (holEl index env1) source.refs)
       (BviSem.destThunk (holEl index env2) target.refs) := by
+  obtain ⟨env, states, bound⟩ := h
   have related := envRel_el opt f env1 env2 index ⟨env, bound⟩
   generalize sourceValue : holEl index env1 = v at related ⊢
   generalize targetValue : holEl index env2 = w at related ⊢

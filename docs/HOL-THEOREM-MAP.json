@@ -135732,6 +135732,20 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "dest_thunk_ret_rel_def", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ThunkRelation.lean",
+  "lean_name": "destThunkRetRel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "reviewer": "Source comparison: Compared dest_thunk_ret_rel_def_typed in bvi_tmc_proof_source_probe.out. The BadRef and NotThunk alternatives and the existential thunk modes and related payloads agree. The pointer map uses canonical finite support with a same-module codec witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "dest_thunk_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ThunkRelation.lean",
+  "lean_name": "destThunk_rel", "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BviState.refs", "f"],
+  "reviewer": "Source comparison: Compared dest_thunk_rel_typed in bvi_tmc_proof_source_probe.out. The original environment relation, state relation and source-index bound conjunction implies related thunk observations, with original source and target state types. State refs and the pointer map use canonical finite support, with a same-module state roundtrip witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "cons_append", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockFrame.lean",
   "lean_name": "cons_append", "statement_status": "reviewed_exact",
   "reviewer": "Source comparison: Compared cons_append_typed in bvi_tmc_proof_source_probe.out: arbitrary element and list retain the original polymorphic cons equals singleton append equation."

@@ -51,7 +51,7 @@ theorem evaluate_force_core {C F : Type} (location index : Nat)
     apply List.getElem?_eq_some_iff.mpr
     exact ⟨targetBound, (holEl_eq_getElem index env2 targetBound).symm⟩
   have thunkValues := envRel_el opt f env1 env2 index ⟨environments, bound⟩
-  have thunkRelated := destThunk_rel opt f env1 env2 source target index environments states bound
+  have thunkRelated := destThunk_rel opt f env1 env2 source target index ⟨environments, states, bound⟩
   simp only [destThunkRetRel] at thunkRelated
   rcases thunkRelated with ⟨sourceBad, targetBad⟩ | ⟨sourceBad, targetBad⟩ |
     ⟨mode, targetMode, value, value', sourceThunk, targetThunk, rfl, valuesRelated⟩
