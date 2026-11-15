@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.HeapRelation
 public import Flapjack.Compiler.Backend.Semantics.BviSem.State
 public import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
+public import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyRefs
 public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 
 @[expose] public section
@@ -49,6 +50,16 @@ theorem finaliseCons_refs_subset (value : BvlSem.Value)
     (run : BviSem.finaliseCons value refs = some (result, rest)) : refs.domain ⊆ rest.domain := by
   intro key present
   exact (BviSem.finaliseCons_domain value result refs rest run key).1 present
+
+/-- Successful primitive application preserves the reference domain. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_refs_SUBSET"
+  (fmap_as_finite_support_relation := [BviState.refs])]
+theorem doApp_refs_subset {C F : Type} (op : ClosLang.Op) (args : List BvlSem.Value)
+    (source : BviState C F) (value : BvlSem.Value) (target : BviState C F)
+    (run : BviSem.doApp op args source = .val (value, target)) :
+    source.refs.domain ⊆ target.refs.domain := by
+  intro key present
+  exact BviProps.doApp_refs_mono op args source target value run key present
 
 /-- The source state relation tracks pointer renaming, code, namespaces,
 and future compilation obligations. -/

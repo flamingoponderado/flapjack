@@ -135699,6 +135699,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "do_app_refs_SUBSET", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/StateRelation.lean",
+  "lean_name": "doApp_refs_subset", "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BviState.refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared do_app_refs_SUBSET_typed in bvi_tmc_proof_source_probe.out: successful primitive application on arbitrary full states implies inclusion of the original reference domain in the resulting domain. The BviState reference field uses canonical finite support and a same-module carrier witness. Primitive dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "finalise_cons_refs_SUBSET", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/StateRelation.lean",
   "lean_name": "finaliseCons_refs_subset", "statement_status": "reviewed_fmap_as_finite_support_relation",
   "fmap_as_finite_support_relation": ["refs", "rest"],

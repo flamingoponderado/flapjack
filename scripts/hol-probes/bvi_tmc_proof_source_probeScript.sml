@@ -68,6 +68,7 @@ val _ = show "dest_thunk_not_thunk_rel_typed" bvi_tmcProofTheory.dest_thunk_not_
 val _ = show "do_app_op_err_rel_typed" bvi_tmcProofTheory.do_app_op_err_rel;
 val _ = show "bvi_to_bvl_refs_typed" bvi_tmcProofTheory.bvi_to_bvl_refs;
 val _ = show "finalise_cons_refs_SUBSET_typed" bvi_tmcProofTheory.finalise_cons_refs_SUBSET;
+val _ = show "do_app_refs_SUBSET_typed" bvi_tmcProofTheory.do_app_refs_SUBSET;
 val _ = show "hole_has_val_submap_typed" bvi_tmcProofTheory.hole_has_val_submap;
 val _ = show "holes_unchanged_except_trans_typed" bvi_tmcProofTheory.holes_unchanged_except_trans;
 val _ = show "holes_still_not_finalised_trans_typed" bvi_tmcProofTheory.holes_still_not_finalised_trans;

@@ -25,10 +25,6 @@ private theorem refsGrowth_trans {C F : Type} {a b c : BviState C F}
 private theorem refsGrowth_decClock {C F : Type} (n : Nat) (s : BviState C F) :
     refsGrowth s (decClock n s) := refsGrowth_refl s
 
-private theorem refsGrowth_doApp {C F : Type} (op : ClosLang.Op) (args : List Value)
-    (s t : BviState C F) (value : Value) (run : doApp op args s = .val (value, t)) :
-    refsGrowth s t := doApp_refs_mono op args s t value run
-
 /-- Flapjack infrastructure: BVI evaluation preserves reference-domain
 membership. It remains untagged until the BVI evaluator is source-reviewed. -/
 theorem evaluate_refs_mono {C F : Type} (expressions : List Bvi.Exp) (env : List Value)
@@ -137,7 +133,7 @@ theorem evaluate_refs_mono {C F : Type} (expressions : List Bvi.Exp) (env : List
             | val pair =>
               obtain ⟨value, last⟩ := pair
               simpa [appRun] using refsGrowth_trans firstGrowth
-                (refsGrowth_doApp op values.reverse next last value appRun)
+                (doApp_refs_mono op values.reverse next last value appRun)
       | force location index =>
         rw [evaluate]
         split
