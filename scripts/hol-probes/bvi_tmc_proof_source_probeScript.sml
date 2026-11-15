@@ -46,6 +46,7 @@ val _ = show "mb_rel_cons_typed" bvi_tmcProofTheory.mb_rel_cons;
 val _ = show "mb_rel_del_typed" bvi_tmcProofTheory.mb_rel_del;
 val _ = show "state_ref_rel_update_typed" bvi_tmcProofTheory.state_ref_rel_update;
 val _ = show "bvl_to_bvi_refs_typed" bvi_tmcProofTheory.bvl_to_bvi_refs;
+val _ = show "holes_unchanged_except_frange_update_typed" bvi_tmcProofTheory.holes_unchanged_except_frange_update;
 val _ = show "hole_has_val_submap_typed" bvi_tmcProofTheory.hole_has_val_submap;
 val _ = show "holes_unchanged_except_trans_typed" bvi_tmcProofTheory.holes_unchanged_except_trans;
 val _ = show "holes_still_not_finalised_trans_typed" bvi_tmcProofTheory.holes_still_not_finalised_trans;

@@ -594,11 +594,11 @@ theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_rangeUpdate_f {α β :
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_rangeUpdate_refs {β γ : Type}
     (refs : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
-/-- Updating a mapped location cannot change a mutable hole outside the map range.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_frange_update" (fmap_as_finite_support_parameters := [f, refs])] -/
-theorem holesUnchanged_rangeUpdate {α β γ : Type} [DecidableEq β] (f : HolFiniteMapExact α β)
+open Classical in
+/-- Updating a mapped location cannot change a mutable hole outside the map range. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_frange_update"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem holesUnchanged_rangeUpdate {α β γ : Type} (f : HolFiniteMapExact α β)
     (p : α) (key : β) (value : Ref γ) (refs : HolFiniteMapExact β (Ref γ))
     (mapped : f.lookup p = some key) : holesUnchangedExcept f refs (refs.updateEq (key, value)) ∅ := by
   intro ptr tag finalised left child right ⟨outside, found⟩
