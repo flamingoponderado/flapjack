@@ -60,4 +60,10 @@ with_clock_ffi_typed=((s :(γ, 'ffi) dataSem$state) with clock := (y :num)).ffi 
 with_same_clock_typed=(s :(γ, 'ffi) dataSem$state) with clock := s.clock = s
 cut_state_eq_some_typed=cut_state (names :sptree$num_set) (s :(α, β) dataSem$state) = SOME (y :(α, β) dataSem$state) ⇔ ∃(z :v sptree$num_map). cut_env names s.locals = SOME z ∧ y = s with locals := z
 cut_state_eq_none_typed=cut_state (names :sptree$num_set) (s :(α, β) dataSem$state) = (NONE :(α, β) dataSem$state option) ⇔ cut_env names s.locals = (NONE :v sptree$num_map option)
+size_of_heap_with_clock_typed=∀(s :(α, β) dataSem$state) (z :num). size_of_heap (s with clock := z) = size_of_heap s
+size_of_heap_args_with_clock_typed=∀(s :(α, β) dataSem$state) (z :num) (a :v list). size_of_heap_args a (s with clock := z) = size_of_heap_args a s
+do_app_Rerr_typed=(do_app (op :closLang$op) (vs :v list) (s :(α, β) dataSem$state) :(v # (α, β) dataSem$state, v) result) = (Rerr (e :v error_result) :(v # (α, β) dataSem$state, v) result) ⇒ e = (Rabort Rtype_error :v error_result) ∨ ∃(i :mlstring) (x :final_event). op = (FFI i :closLang$op) ∧ e = (Rabort (Rffi_error x) :v error_result)
+pop_env_with_const_typed=pop_env ((z :(α, β) dataSem$state) with clock := (k :num)) = OPTION_MAP (λ(z :(α, β) dataSem$state). z with clock := k) (pop_env z)
+jump_exc_with_const_typed=jump_exc ((s :(α, β) dataSem$state) with clock := (k :num)) = OPTION_MAP (λ(s :(α, β) dataSem$state). s with clock := k) (jump_exc s)
+cut_state_opt_const_typed=cut_state_opt (x :sptree$num_set option) (y :(α, β) dataSem$state) = SOME (z :(α, β) dataSem$state) ⇒ z.ffi = y.ffi ∧ z.global = y.global
 Boolv_11_typed=(Boolv (b1 :bool) :v) = (Boolv (b2 :bool) :v) ⇔ (b1 ⇔ b2)

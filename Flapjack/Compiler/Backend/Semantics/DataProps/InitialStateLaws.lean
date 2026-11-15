@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.Semantics.DataSem.Control
 public import Flapjack.Compiler.Backend.Semantics.DataSem.Heap
+public import Flapjack.Compiler.Backend.Semantics.DataProps.ApplyErrors
 public import Flapjack.Compiler.Backend.Semantics.DataSem.State
 public import Flapjack.Compiler.Backend.Semantics.DataSem.Stack
 public import Flapjack.Compiler.Backend.Semantics.DataSem.Value
@@ -198,5 +199,69 @@ theorem cutState_eq_some {C F : Type} (names : NumSet) (state : State C F)
 theorem cutState_eq_none {C F : Type} (names : NumSet) (state : State C F) :
     cutState names state = none ↔ cutEnv names state.locals = none := by
   simp only [cutState, Option.map_eq_none_iff]
+
+
+/-- Exact HOL `size_of_heap_with_clock` (`dataPropsScript.sml:1849`): the heap
+    size does not depend on the clock. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "size_of_heap_with_clock"]
+theorem sizeOfHeap_with_clock {C F : Type} (state : State C F) (clock : Nat) :
+    sizeOfHeap { state with clock := clock } = sizeOfHeap state :=
+  rfl
+
+/-- Exact HOL `size_of_heap_args_with_clock` (`dataPropsScript.sml:1855`). -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "size_of_heap_args_with_clock"]
+theorem sizeOfHeapArgs_with_clock {C F : Type} (state : State C F) (clock : Nat)
+    (args : List Value) :
+    sizeOfHeapArgs args { state with clock := clock } = sizeOfHeapArgs args state :=
+  rfl
+
+/-- Exact HOL `do_app_Rerr` (`dataPropsScript.sml:1841`): a primitive error is
+    a type error or an FFI final event. Same statement as HOL `do_app_err`. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_Rerr"]
+theorem doApp_Rerr {C F : Type} (op : ClosLang.Op) (values : List Value) (state : State C F)
+    (error : Flapjack.SemanticPrimitivesHOL.ErrorResult Value) (run : doApp op values state = .err error) :
+    error = .abort .typeError ∨ ∃ name outcome, op = .ffi name ∧ error = .abort (.ffiError outcome) :=
+  DataProps.doApp_err op values state error run
+
+/-- Exact HOL `pop_env_with_const` (`dataPropsScript.sml:1972`). -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "pop_env_with_const"]
+theorem popEnv_with_const {C F : Type} (state : State C F) (clock : Nat) :
+    popEnv { state with clock := clock } =
+      (popEnv state).map (fun next => { next with clock := clock }) := by
+  cases h : state.stack with
+  | nil => simp [popEnv, h]
+  | cons frame rest =>
+    cases frame with
+    | env size env => simp [popEnv, h]
+    | exc size env handler => simp [popEnv, h]
+
+/-- Exact HOL `jump_exc_with_const` (`dataPropsScript.sml:2126`). -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "jump_exc_with_const"]
+theorem jumpExc_with_const {C F : Type} (state : State C F) (clock : Nat) :
+    jumpExc { state with clock := clock } =
+      (jumpExc state).map (fun next => { next with clock := clock }) := by
+  simp only [jumpExc]
+  split
+  · split
+    · simp
+    · simp
+  · simp
+
+/-- Exact HOL `cut_state_opt_const` (`dataPropsScript.sml:2054`): a live-name
+    cut leaves `ffi` and `global` alone. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "cut_state_opt_const"]
+theorem cutStateOpt_const {C F : Type} (names : Option NumSet) (state next : State C F)
+    (run : cutStateOpt names state = some next) :
+    next.ffi = state.ffi ∧ next.global = state.global := by
+  cases names with
+  | none =>
+    simp only [cutStateOpt, Option.some.injEq] at run
+    subst run
+    exact ⟨rfl, rfl⟩
+  | some names =>
+    simp only [cutStateOpt, cutState, Option.map_eq_some_iff] at run
+    obtain ⟨env, _, hnext⟩ := run
+    subst hnext
+    exact ⟨rfl, rfl⟩
 
 end Flapjack.Compiler.Backend.DataSem
