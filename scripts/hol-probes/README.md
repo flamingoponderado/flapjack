@@ -10671,3 +10671,19 @@ compiler/backend/proofs rows that earlier probes did not cover (task 187):
 `push_env_handler` and `evaluate_Loop_body_eq` (word_unreach, all `[local]`).
 Regenerate each with `CAKEML=<cakeml tree> HOL4=<HOL tree>
 HOL_PROBE_ONLY=<probe>_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`gc_combined_datatype_typed_probe.out`, `copying_gc_local_typed_probe.out`,
+`gc_shared_local_typed_probe.out`, `target_props_local_typed_probe.out`,
+`word_sem_local_typed_probe.out`, `stack_props_local_typed_probe.out` and
+`lab_sem_local_typed_probe.out` (1+1+2+2+3+2+1 rows) capture the reviewed
+compiler/backend semantics and GC rows that earlier probes did not cover
+(task 187): the `gen_state` datatype (gc_combined); `heap_addresses_SNOC`
+(copying_gc); `heap_length_heap_filter_INSERT`, `heap_lookup_IMP_heap_filter`
+(gc_shared); `enc_ok_not_empty`, `shift_interfer_intro` (targetProps);
+`termdep_rw`, `inst_clock` and the multi-line `gc_fun_type` Type abbreviation
+(wordSem; the generator now reads a `Type` body that continues on the following
+lines); `inst_clock_neutral`, `inst_clock_neutral_ffi` (stackProps); and
+`asm_fetch_IMP` (labSem). All the theorems are `[local]`, so they are parsed from
+the pinned source with the splice-expanding helper. Regenerate each with
+`CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=<probe>_probeScript.sml
+scripts/hol-probes/regenerate.sh`.

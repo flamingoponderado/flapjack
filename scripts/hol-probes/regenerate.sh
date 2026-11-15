@@ -12001,3 +12001,38 @@ run_probe word_unreach_proof_local_typed_probeScript.sml word_unreach_proof_loca
   evaluate_Loop_body_eq_typed \
   "$cake_dir/compiler/backend/proofs/word_unreachProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe gc_combined_datatype_typed_probeScript.sml gc_combined_datatype_typed_probe.out \
+  gen_state_typed \
+  "$cake_dir/compiler/backend/gc/gc_combinedScript.sml" \
+  "$cake_dir/compiler/backend/gc"
+
+run_probe copying_gc_local_typed_probeScript.sml copying_gc_local_typed_probe.out \
+  heap_addresses_SNOC_typed \
+  "$cake_dir/compiler/backend/gc/copying_gcScript.sml" \
+  "$cake_dir/compiler/backend/gc"
+
+run_probe gc_shared_local_typed_probeScript.sml gc_shared_local_typed_probe.out \
+  heap_length_heap_filter_INSERT_typed heap_lookup_IMP_heap_filter_typed \
+  "$cake_dir/compiler/backend/gc/gc_sharedScript.sml" \
+  "$cake_dir/compiler/backend/gc"
+
+run_probe target_props_local_typed_probeScript.sml target_props_local_typed_probe.out \
+  enc_ok_not_empty_typed shift_interfer_intro_typed \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+run_probe word_sem_local_typed_probeScript.sml word_sem_local_typed_probe.out \
+  termdep_rw_typed inst_clock_typed gc_fun_type_typed \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_props_local_typed_probeScript.sml stack_props_local_typed_probe.out \
+  inst_clock_neutral_typed inst_clock_neutral_ffi_typed \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+run_probe lab_sem_local_typed_probeScript.sml lab_sem_local_typed_probe.out \
+  asm_fetch_IMP_typed \
+  "$cake_dir/compiler/backend/semantics/labSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"

@@ -1,0 +1,2 @@
+heap_length_heap_filter_INSERT_typed=∀(heap :(α, β) heap_element list). (e :num) ∉ (s :num -> bool) ⇒ heap_length (heap_filter (e INSERT s) heap) = heap_length (heap_filter {e} heap) + heap_length (heap_filter s heap)
+heap_lookup_IMP_heap_filter_typed=∀(heap :(α, β) heap_element list) (e :num) (x :(α, β) heap_element). heap_lookup e heap = SOME x ⇒ heap_filter {e} heap = [x]
