@@ -135699,6 +135699,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_bvi_to_cb_aux_inl_lemma", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/PureExtraction.lean",
+  "lean_name": "evaluate_bvi_to_cb_aux_inl_lemma", "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Replayed the original local statement and proof with types in bvi_tmc_proof_source_probe.out. Both singleton and list conjuncts retain the complete extraction premise, original bindings, environment bound, state-independent existential values, and both full evaluations preserving the state; their compiler and FFI parameters are shared. The state reference field uses canonical finite support with a same-module witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_bvi_to_cb_aux_inl", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/PureExtraction.lean",
+  "lean_name": "evaluate_bvi_to_cb_aux_inl", "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared evaluate_bvi_to_cb_aux_inl_typed in bvi_tmc_proof_source_probe.out. A successful pure-list extraction yields the original bindings and a state-independent value list whose source and generated-variable evaluations both preserve the full state. The state reference field uses canonical finite support with a same-module witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "evaluate_pure_exp_lemma", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/PureEvaluation.lean",
   "lean_name": "evaluate_pure_exp_lemma", "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["refs"],

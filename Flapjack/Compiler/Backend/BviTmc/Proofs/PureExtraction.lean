@@ -43,25 +43,6 @@ theorem holFmapAsFiniteSupportWitness {C F : Type} :
       (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
   BviSem.holFmapAsFiniteSupportWitness
 
-/-- The singleton conjunct of the source extraction lemma.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inl_lemma" (fmap_as_finite_support := [refs])] -/
-theorem evaluate_bvi_to_cb_aux_inl_single {C F : Type}
-    (n loc tag : Nat) (e : Bvi.Exp) (bs : List Bvi.Exp) (vs : List Nat)
-    (run : extractOneSource n loc tag e = some (bs, .inl vs)) :
-    bs = [e] ∧ ∀ env, n ≤ env.length → ∃ values,
-      ∀ state : BviState C F,
-        evaluate [e] env state = (.val values, state) ∧
-        evaluate (vs.map Bvi.Exp.var) values state = (.val values, state) := by
-  obtain ⟨rfl, rfl, pure⟩ := extractOne_inl_shape n loc tag e bs vs run
-  refine ⟨rfl, ?_⟩
-  intro env bound
-  obtain ⟨value, evaluates⟩ := PureEvaluation.evaluatePureExp (C := C) (F := F) e n pure env bound
-  refine ⟨[value], ?_⟩
-  intro state
-  exact ⟨evaluates state, by simp [BviSem.evaluate]⟩
-
 private theorem extractList_inl_shape (n loc tag : Nat) (args bs : List Bvi.Exp) (vs : List Nat)
     (run : extractListSource n loc tag args = some (bs, .inl vs)) :
     bs = args ∧ vs = List.range args.length ∧ pureExps n args = true ∧ vs.length ≤ 268435457 := by
@@ -141,10 +122,9 @@ theorem extractList_wf_inl (n loc tag : Nat) (args bs : List Bvi.Exp) (vs : List
     · exact le_trans (by decide) (Int.natCast_nonneg _)
     · exact Int.ofNat_le.mpr bound
 
-/-- Pure extraction preserves the expressions and retrieves their evaluated values.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inl" (fmap_as_finite_support := [refs])] -/
+/-- Pure extraction preserves the expressions and retrieves their evaluated values. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inl"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_bvi_to_cb_aux_inl {C F : Type}
     (n loc tag : Nat) (args bs : List Bvi.Exp) (vs : List Nat)
     (run : extractListSource n loc tag args = some (bs, .inl vs)) :
@@ -160,6 +140,27 @@ theorem evaluate_bvi_to_cb_aux_inl {C F : Type}
   intro state
   have length := BviSem.evaluate_length bs env state state values (valuesRun state)
   exact ⟨valuesRun state, by simpa only [length] using BviTailrec.evaluate_var_range values state⟩
+
+/-- Pure extraction preserves evaluation for both single expressions and lists. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inl_lemma"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_bvi_to_cb_aux_inl_lemma {C F : Type} :
+    (∀ n loc tag (e : Bvi.Exp) (bs : List Bvi.Exp) (vs : List Nat),
+      extractOneSource n loc tag e = some (bs, .inl vs) →
+      bs = [e] ∧ ∀ env, n ≤ env.length → ∃ values,
+        ∀ state : BviState C F,
+          evaluate [e] env state = (.val values, state) ∧
+          evaluate (vs.map Bvi.Exp.var) values state = (.val values, state)) ∧
+    (∀ n loc tag (args bs : List Bvi.Exp) (vs : List Nat),
+      extractListSource n loc tag args = some (bs, .inl vs) →
+      bs = args ∧ ∀ env, n ≤ env.length → ∃ values,
+        ∀ state : BviState C F,
+          evaluate args env state = (.val values, state) ∧
+          evaluate (vs.map Bvi.Exp.var) values state = (.val values, state)) := by
+  constructor
+  · intro n loc tag e bs vs run
+    exact evaluate_bvi_to_cb_aux_inl n loc tag [e] bs vs (by simpa only [extractListSource] using run)
+  · exact evaluate_bvi_to_cb_aux_inl
 
 end PureExtraction
 end Flapjack.Compiler.Backend.BviTmc

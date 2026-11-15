@@ -121,6 +121,96 @@ ho_match_mp_tac bviTheory.exp_induction
   >> first_x_assum drule >> strip_tac >> gvs []);
 val _ = show "evaluate_pure_exp_lemma_replay_typed" pure_local_replay;
 val _ = show "evaluate_pure_exps_typed" bvi_tmcProofTheory.evaluate_pure_exps;
+(* Replay the original local extraction theorem and its proof. *)
+val inl_local_replay = Q.prove (
+`(∀n loc tag exp bs vs.
+     bvi_to_cb_aux_sing n loc tag exp = SOME (bs,INL vs) ⇒
+     bs = [exp] ∧
+     ∀env.
+       n ≤ LENGTH env ⇒
+       ∃v.
+         ∀(s:('c,'ffi) bviSem$state).
+           evaluate ([exp],env,s) = (Rval v,s) ∧
+           evaluate (MAP (λn. Var n) vs,v,s) = (Rval v,s)) ∧
+  (∀n loc tag args bs vs.
+     bvi_to_cb_aux n loc tag args = SOME (bs,INL vs) ⇒
+     bs = args ∧
+     ∀env.
+       n ≤ LENGTH env ⇒
+       ∃v.
+         ∀(s:('c,'ffi) bviSem$state).
+           evaluate (args,env,s) = (Rval v,s) ∧
+           evaluate (MAP (λn. Var n) vs,v,s) = (Rval v,s))`,
+ho_match_mp_tac bvi_to_cb_aux_ind >> rw [bvi_to_cb_aux_def, call_to_cb_def] >> gvs [evaluate_def]
+  >- gvs [CaseEq "prod", CaseEq "option", CaseEq "sum"]
+  >- gvs [CaseEq "prod", CaseEq "option", CaseEq "sum"]
+  >- gvs [CaseEq "option", CaseEq "prod", CaseEq "sum", evaluate_def]
+  >-
+   (gvs [AllCaseEqs()]
+    >> ‘pure_exps n [Op op args]’ by gvs [pure_exp_def]
+    >> ‘∃w. ∀(s:('c,'ffi) bviSem$state). evaluate ([Op op args],env,s) = (Rval w,s)’
+         by metis_tac [evaluate_pure_exps]
+    >> qexists ‘w’
+    >> gen_tac
+    >> first_assum $ qspec_then ‘s’ assume_tac
+    >> imp_res_tac evaluate_SING_IMP
+    >> gvs [evaluate_def, AllCaseEqs()])
+  >- gvs [CaseEq "option", CaseEq "prod", CaseEq "sum"]
+  >- gvs [CaseEq "option", CaseEq "prod", CaseEq "sum"]
+  >- (rename1 ‘pure_exp n (Var k)’
+      >> gvs [pure_exp_def] >> qexists ‘[env❲k❳]’ >> gvs [])
+  >- gvs [pure_exp_def]
+  >-
+   (rename1 ‘pure_exp n (Let es e)’
+    >> ‘pure_exps n [Let es e]’ by gvs [pure_exp_def]
+    >> ‘∃w. ∀(s:('c,'ffi) bviSem$state). evaluate ([Let es e],env,s) = (Rval w,s)’
+         by metis_tac [evaluate_pure_exps]
+    >> qexists ‘w’
+    >> gen_tac
+    >> first_assum $ qspec_then ‘s’ assume_tac
+    >> imp_res_tac evaluate_SING_IMP
+    >> gvs [evaluate_def])
+  >- gvs [pure_exp_def]
+  >- gvs [pure_exp_def]
+  >- gvs [pure_exp_def]
+  >- gvs [pure_exp_def]
+  >- gvs [pure_exp_def]
+  >-
+   (gvs [CaseEq "option"]
+    >> gvs [CaseEq "prod"]
+    >> reverse $ gvs [CaseEq "sum"]
+    >- (Cases_on ‘cb’ >> gvs [shift_cb_def])
+    >> gvs [CaseEq "option"]
+    >> gvs [CaseEq "prod"]
+    >> gvs [CaseEq "sum"]
+    >> gvs [CaseEq "call_block"]
+    >> gvs [CaseEq "list"])
+  >> gvs [CaseEq "option"]
+  >> gvs [CaseEq "prod"]
+  >> reverse $ gvs [CaseEq "sum"]
+  >- (Cases_on ‘cb’ >> gvs [shift_cb_def])
+  >> gvs [CaseEq "option"]
+  >> gvs [CaseEq "prod"]
+  >> gvs [CaseEq "sum"]
+  >> gvs [CaseEq "call_block"]
+  >> gvs [CaseEq "list"]
+  >> last_x_assum drule
+  >> strip_tac
+  >> gvs []
+  >> first_x_assum drule
+  >> strip_tac
+  >> qexists ‘v ++ v'’
+  >> gen_tac
+  >> rpt $ first_x_assum $ qspec_then ‘s’ assume_tac
+  >> gvs []
+  >> imp_res_tac evaluate_SING_IMP
+  >> gvs [evaluate_APPEND, evaluate_shift_vars_sing]
+  >> imp_res_tac evaluate_vars_expand_env
+  >> pop_assum $ qspec_then ‘v'’ mp_tac
+  >> strip_tac
+  >> gvs [APPEND]);
+val _ = show "evaluate_bvi_to_cb_aux_inl_lemma_replay_typed" inl_local_replay;
+val _ = show "evaluate_bvi_to_cb_aux_inl_typed" bvi_tmcProofTheory.evaluate_bvi_to_cb_aux_inl;
 val _ = show "hole_has_val_submap_typed" bvi_tmcProofTheory.hole_has_val_submap;
 val _ = show "holes_unchanged_except_trans_typed" bvi_tmcProofTheory.holes_unchanged_except_trans;
 val _ = show "holes_still_not_finalised_trans_typed" bvi_tmcProofTheory.holes_still_not_finalised_trans;
