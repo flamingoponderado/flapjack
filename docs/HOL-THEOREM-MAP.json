@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "do_eq_v_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/Equality.lean",
+  "lean_name": "doEq_value_rel", "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["f", "refs", "target"],
+  "reviewer": "Source comparison: Compared do_eq_v_rel_typed in bvi_tmc_proof_source_probe.out: the original conjunction states equality preservation separately for values and lists, each under its full four-part relation/injectivity premise. The two heap pairs remain independently universally quantified in their respective conjuncts; the free pointer map is generalized. All named map binders use canonical finite support."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "list_to_v_v_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
   "lean_name": "listToValue_rel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f"],

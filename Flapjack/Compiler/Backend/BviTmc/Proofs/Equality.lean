@@ -84,20 +84,19 @@ termination_by sizeOf x1
 end
 
 /-- Related values and heaps produce the same structural equality result,
-both for single values and for value lists.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_eq_v_rel" (fmap_as_finite_support_relation := [f, refs, target])] -/
+both for single values and for value lists. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_eq_v_rel"
+  (fmap_as_finite_support_relation := [f, refs, target])]
 theorem doEq_value_rel (f : HolFiniteMapExact Nat Nat) :
     (∀ (refs : HolFiniteMapExact Nat (Ref Value)) x1 x2 (target : HolFiniteMapExact Nat (Ref Value)) y1 y2,
-      valueRel f x1 y1 → valueRel f x2 y2 → stateRefRel f refs target → fmapInj f →
+      valueRel f x1 y1 ∧ valueRel f x2 y2 ∧ stateRefRel f refs target ∧ fmapInj f →
         doEq refs x1 x2 = doEq target y1 y2) ∧
     (∀ (refs : HolFiniteMapExact Nat (Ref Value)) x1s x2s (target : HolFiniteMapExact Nat (Ref Value)) y1s y2s,
-      List.Forall₂ (valueRel f) x1s y1s → List.Forall₂ (valueRel f) x2s y2s →
-        stateRefRel f refs target → fmapInj f → doEqList refs x1s x2s = doEqList target y1s y2s) := by
-  exact ⟨fun refs x1 x2 target y1 y2 first second heaps injective =>
+      List.Forall₂ (valueRel f) x1s y1s ∧ List.Forall₂ (valueRel f) x2s y2s ∧
+        stateRefRel f refs target ∧ fmapInj f → doEqList refs x1s x2s = doEqList target y1s y2s) := by
+  exact ⟨fun refs x1 x2 target y1 y2 ⟨first, second, heaps, injective⟩ =>
       doEq_rel f refs target x1 x2 y1 y2 first second heaps injective,
-    fun refs x1 x2 target y1 y2 first second heaps injective =>
+    fun refs x1 x2 target y1 y2 ⟨first, second, heaps, injective⟩ =>
       doEqList_rel f refs target x1 x2 y1 y2 first second heaps injective⟩
 
 end Flapjack.Compiler.Backend.BviTmc

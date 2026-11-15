@@ -1657,7 +1657,7 @@ theorem doApp_op_rel_equal {C F : Type} (f : HolFiniteMapExact Nat Nat)
           | @cons a second' xs ys secondRel tailRel =>
             cases tailRel
             have equalResult := (doEq_value_rel f).1 source.refs first second target.refs first' second'
-              firstRel secondRel statesRelated.1 statesRelated.2.2.2.2.2.2.2.2.2.2
+              ⟨firstRel, secondRel, statesRelated.1, statesRelated.2.2.2.2.2.2.2.2.2.2⟩
             cases result : doEq source.refs first second with
             | typeError => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,
                 BviSem.toBvl, result] at run
