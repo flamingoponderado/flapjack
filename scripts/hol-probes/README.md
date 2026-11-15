@@ -10543,3 +10543,13 @@ the five `[local]` finite-map lemmas (`FDIFF_fupdate_list_empty_flookup_var`,
 source with the splice-expanding helper. Regenerate with
 `CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=crep_inline_local_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`ast_typeabbrev_typed_probe.out` (6 rows) captures the reviewed
+`astScript.sml` type abbreviations that earlier probes did not cover (task 186):
+`modN`, `varN`, `conN`, `typeN` and `tvarN` are `mlstring` aliases, and
+`type_def` is the nested declaration list type. Each `Type` line is read from
+the pinned source and its right-hand side is parsed and printed with types (the
+probe accepts both ASCII double-backtick and curly-quote delimiters). Regenerate
+with `CAKEML=<cakeml tree> HOL4=<HOL tree>
+HOL_PROBE_ONLY=ast_typeabbrev_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.

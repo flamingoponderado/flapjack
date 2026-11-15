@@ -11859,3 +11859,8 @@ run_probe crep_inline_local_typed_probeScript.sml crep_inline_local_typed_probe.
   FOLDL_res_var_ZIP_lookup_typed submap_finish_flookup_typed \
   "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" \
   "$cake_dir/pancake/proofs"
+
+run_probe ast_typeabbrev_typed_probeScript.sml ast_typeabbrev_typed_probe.out \
+  modN_typed varN_typed conN_typed typeN_typed tvarN_typed type_def_typed \
+  "$cake_dir/semantics/astScript.sml" \
+  "$cake_dir/semantics"
