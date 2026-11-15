@@ -1,0 +1,1 @@
+genlist_distinct_max_prime_typed=∀(n :num) (ys :num list) (m :num) (p :num). (∀(y :num). MEM y ys ⇒ y ≤ m) ⇒ distinct_lists (GENLIST (λ(x :num). SUC x + (m + p)) n) ys

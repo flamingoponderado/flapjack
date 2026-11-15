@@ -1,0 +1,1 @@
+update_locals_not_vars_eval_eq_prime_typed=∀(s :(α, β) state) (e :α crepLang$exp) (v :γ) (n :num) (w :α word_lab). ¬MEM n (var_cexp e) ⇒ (eval (s with locals := s.locals⟨n ↦ w⟩) e :α word_lab option) = (eval s e :α word_lab option)

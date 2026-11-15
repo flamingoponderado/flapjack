@@ -12090,3 +12090,39 @@ run_probe semantics_props_defs_typed_probeScript.sml semantics_props_defs_typed_
   implements_prime_F_typed isPREFIX_IMP_LPREFIX_typed \
   "$cake_dir/semantics/proofs/semanticsPropsScript.sml" \
   "$cake_dir/semantics/proofs"
+
+run_probe crep_sem_defs_typed_probeScript.sml crep_sem_defs_typed_probe.out \
+  crep_op_def_typed crep_primop_def_typed clock_eq_simp_typed sh_mem_op_clock_typed \
+  "$cake_dir/pancake/semantics/crepSemScript.sml" "$cake_dir/pancake/semantics"
+
+run_probe loop_lang_defs_typed_probeScript.sml loop_lang_defs_typed_probe.out \
+  loop_arith_typed acc_vars_def_typed locals_touched_def_typed \
+  "$cake_dir/pancake/loopLangScript.sml" "$cake_dir/pancake"
+
+run_probe pan_simp_defs_typed_probeScript.sml pan_simp_defs_typed_probe.out \
+  seq_assoc_def_typed seq_call_ret_def_typed ret_to_tail_def_typed \
+  "$cake_dir/pancake/pan_simpScript.sml" "$cake_dir/pancake"
+
+run_probe loop_sem_defs_typed_probeScript.sml loop_sem_defs_typed_probe.out \
+  loop_arith_def_typed cut_res_def_typed loop_primop_def_typed \
+  "$cake_dir/pancake/semantics/loopSemScript.sml" "$cake_dir/pancake/semantics"
+
+run_probe pan_common_defs_typed_probeScript.sml pan_common_defs_typed_probe.out \
+  distinct_lists_def_typed \
+  "$cake_dir/pancake/pan_commonScript.sml" "$cake_dir/pancake"
+
+run_probe pan_to_target_defs_typed_probeScript.sml pan_to_target_defs_typed_probe.out \
+  compile_prog_eq_typed \
+  "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
+
+run_probe crep_props_defs_typed_probeScript.sml crep_props_defs_typed_probe.out \
+  update_locals_not_vars_eval_eq_prime_typed \
+  "$cake_dir/pancake/semantics/crepPropsScript.sml" "$cake_dir/pancake/semantics"
+
+run_probe pan_common_props_defs_typed_probeScript.sml pan_common_props_defs_typed_probe.out \
+  genlist_distinct_max_prime_typed \
+  "$cake_dir/pancake/semantics/pan_commonPropsScript.sml" "$cake_dir/pancake/semantics"
+
+run_probe pan_sem_valword_typed_probeScript.sml pan_sem_valword_typed_probe.out \
+  ValWord_typed \
+  "$cake_dir/pancake/semantics/panSemScript.sml" "$cake_dir/pancake/semantics"

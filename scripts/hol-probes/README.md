@@ -10727,3 +10727,21 @@ abbreviations plus the `type_p` Inductive captured as its generated
 (semanticsProps). Regenerate each with `CAKEML=<cakeml tree>
 HOL4=<HOL tree> HOL_PROBE_ONLY=<probe>_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`crep_sem_defs_typed_probe.out`, `loop_lang_defs_typed_probe.out`,
+`pan_simp_defs_typed_probe.out`, `loop_sem_defs_typed_probe.out`,
+`pan_common_defs_typed_probe.out`, `pan_to_target_defs_typed_probe.out`,
+`crep_props_defs_typed_probe.out`, `pan_common_props_defs_typed_probe.out` and
+`pan_sem_valword_typed_probe.out` (4+3+3+3+1+1+1+1+1 rows) capture the reviewed
+Pancake semantics rows that earlier probes did not cover (task 189): crepSem
+(`crep_op_def`, `crep_primop_def`, the local clock laws `clock_eq_simp` and
+`sh_mem_op_clock`); loopLang (the `loop_arith` datatype, `acc_vars_def`,
+`locals_touched_def`); pan_simp (`seq_assoc_def`, `seq_call_ret_def`,
+`ret_to_tail_def`); loopSem (`loop_arith_def`, `cut_res_def`,
+`loop_primop_def`); pan_common (`distinct_lists_def`); pan_to_target
+(`compile_prog_eq`); crepProps (`update_locals_not_vars_eval_eq'`, cited at its
+exported line 194 because line 131 rebinds the same name locally);
+pan_commonProps (`genlist_distinct_max'`); and panSem's `ValWord` Overload
+(captured with the overload cleared). Regenerate each with `CAKEML=<cakeml
+tree> HOL4=<HOL tree> HOL_PROBE_ONLY=<probe>_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
