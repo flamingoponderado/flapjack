@@ -63,3 +63,11 @@ val pure_do_app_Rval_replay = prove (
   \\ rw[] \\ fs [state_component_equality,is_pure_def,dataLangTheory.op_space_reset_def,
                 data_spaceTheory.op_space_req_def,allowed_op_def,do_stack_def,AllCaseEqs()]);
 val _ = show "is_pure_do_app_Rval_replay_typed" pure_do_app_Rval_replay;
+
+val pure_do_app_Rerr_replay = prove (
+  ``is_pure op /\ do_app op xs s = Rerr e ==> Rabort Rtype_error = e``,
+  cases_on_op `op` \\ TRY (rename [‘EqualConst cc’] \\ Cases_on ‘cc’)
+  \\ fs [is_pure_def,do_app_def,do_app_aux_def]
+  \\ simp[do_space_def,data_spaceTheory.op_space_req_def,
+          case_eq_thms,do_install_def,UNCURRY] \\ rw[]);
+val _ = show "is_pure_do_app_Rerr_replay_typed" pure_do_app_Rerr_replay;

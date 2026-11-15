@@ -16,14 +16,16 @@ theorem isPure_ne_ffi (op : ClosLang.Op) (pure : isPure op = true)
   subst op
   simp [isPure] at pure
 
-/-- A pure primitive application can fail only with a type error. This
-statement is untagged until the source evaluator and carriers are reviewed. -/
+/-- A pure primitive application can fail only with a type error. The
+primitive evaluator inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "is_pure_do_app_Rerr_IMP"]
 theorem pure_doApp_error {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
     (state : State C F) (error : ErrorResult DataSem.Value)
-    (pure : isPure op = true) (run : doApp op args state = .err error) :
-    error = .abort .typeError := by
+    (premises : isPure op = true ∧ doApp op args state = .err error) :
+    ErrorResult.abort .typeError = error := by
+  obtain ⟨pure, run⟩ := premises
   rcases DataProps.doApp_err op args state error run with typeError | ⟨name, _, ffi, _⟩
-  · exact typeError
+  · exact typeError.symm
   · exact False.elim (isPure_ne_ffi op pure name ffi)
 
 /-- Pure word primitives do not consume or reset heap space. -/

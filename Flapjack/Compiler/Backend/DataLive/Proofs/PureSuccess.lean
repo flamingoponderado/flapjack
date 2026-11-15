@@ -153,7 +153,7 @@ theorem simulationFor_removed_pure {C F : Type} (dest : Nat) (op : ClosLang.Op)
     | some args =>
       cases app : doApp op args source with
       | err error =>
-        have errorEq := pure_doApp_error op args source error pure app
+        have errorEq := pure_doApp_error op args source error ⟨pure, app⟩
         subst error
         simp [DataSem.evaluate, invalid, read, cutStateOpt, app] at run
         obtain ⟨rfl, rfl⟩ := run

@@ -141149,5 +141149,14 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the complete local HOL theorem and inferred is_pure_do_app_Rval_replay_typed in data_live_compile_probe.out, replaying the original local HOL proof. The pure operation and successful do_app are the only premises; the witnesses update precisely safe_for_space and stack_max. DataSem.State and the evaluator are separately reviewed, and doApp inherits reals_as_rational_cuts as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_liveProofScript.sml",
+    "hol_name": "is_pure_do_app_Rerr_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/DataLive/Proofs/PureError.lean",
+    "lean_name": "pure_doApp_error",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Compared the local HOL theorem and the original proof replay is_pure_do_app_Rerr_replay_typed in data_live_compile_probe.out. Both require precisely operation purity and an error from do_app, and conclude that the error equals type error in the source direction. Compiler and FFI state parameters remain independent. doApp inherits reals_as_rational_cuts as documented in SOUNDNESS item 8."
   }
 ]
