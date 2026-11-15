@@ -135679,5 +135679,15 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "codewhale source comparison (2026-11-15, task 198): typed capture old_exp_shapes_eq_typed in scripts/hol-probes/pancake_pan_structs_proof_typed_probe.out gives (ctxt :context) (es :α panLang$exp list). old_exp_shapes ctxt es = MAP (old_exp_shape ctxt) es, with the only type variable inside panLang$exp; the Lean statement keeps both binders, the single equation and the map, and the only carrier translation is the reviewed type-indexed word to BitVec width. old_exp_shapes is the recursive definition (old_exp_shapes_def), rendered by oldExpShapesExact."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "locals_id_update",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepLocalsUpdateId",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "codewhale source comparison (2026-11-15, task 198): typed capture locals_id_update_typed in scripts/hol-probes/pan_to_crep_local_typed_probe.out gives ∀(t :(α, β) panSem$state). t with locals := t.locals = t, with the state's word dimension α and FFI host β independent. Lean keeps the single binder t and the same record identity over PanSemStateFiniteExact width σ, whose finite-map fields are the reviewed canonical HolFiniteMapExact translation (locals, globals, code, eshapes) and whose only word use is BitVec width."
   }
 ]
