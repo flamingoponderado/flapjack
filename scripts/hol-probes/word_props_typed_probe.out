@@ -148,3 +148,8 @@ stack_size_eq_typed=stack_size (StackFrame (n :num option) (_0 :(num # α word_l
 stack_size_eq2_typed=stack_size ((sfrm :α stack_frame)::(stack :α stack_frame list)) = OPTION_MAP2 $+ (stack_size_frame sfrm) (stack_size stack) ∧ stack_size ([] :β stack_frame list) = SOME (1 :num)
 evaluate_code_only_grows_typed=∀(p :α prog) (s :(α, β, γ) state) (r :α result option) (t :(α, β, γ) state). evaluate (p,s) = (r,t) ⇒ subspt s.code t.code
 evaluate_NONE_stack_size_const_typed=∀(p :α prog) (s :(α, β, γ) state) (t :(α, β, γ) state). evaluate (p,s) = ((NONE :α result option),t) ⇒ stack_size t.stack = stack_size s.stack
+inc_clock_def_typed=∀(n :num) (t :(α, γ, 'ffi) state). inc_clock n t = t with clock := t.clock + n
+inc_clock_0_typed=∀(t :(α, β, γ) state). inc_clock (0 :num) t = t
+inc_clock_inc_clock_typed=∀(t :(α, β, γ) state). inc_clock (n :num) (inc_clock (m :num) t) = inc_clock (n + m) t
+with_locals_same_clock_typed=(s :(α, β, γ) state) with <|locals := (l :α word_loc sptree$num_map); clock := s.clock|> = s with locals := l
+word_cmp_Word_Word_typed=(word_cmp (cmp :cmp) (Word (c :α word)) (Word (c' :α word)) :bool option) = SOME (word_cmp cmp c c' :bool)
