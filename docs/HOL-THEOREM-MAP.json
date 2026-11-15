@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "mb_rel_refs_old_subset", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/MutableBlockOld.lean",
+  "lean_name": "mutableBlockRel_old_subset", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "larger", "refs", "smaller"],
+  "reviewer": "Source comparison: Compared mb_rel_refs_old_subset_typed in bvi_tmc_proof_source_probe.out. The original mutable-block relation and domain-subset conjunction implies the same relation using the smaller old-reference map, with all original map carriers and binder order preserved. The four map parameters use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "evaluate_finalise_cons", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/FinaliseRelation.lean",
   "lean_name": "evaluate_finalise_cons", "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
   "fmap_as_finite_support_relation": ["targetRefs", "f", "fNext", "sourceRefs", "oldRefs"],
@@ -136464,7 +136471,7 @@
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CodeRelation.lean",
   "lean_name": "codeRel_cases",
   "statement_status": "reviewed_exact",
-  "reviewer": "Compared code_rel_cases_typed with source lines 3330-3348: the no_mutcons conclusion, the existential loc_opt/body2, the (arity, body2) lookup and the body1 <> body2 implication to optimised_code and rewrite_wrapper ... = SOME body2 match."
+  "reviewer": "Compared code_rel_cases_typed with source lines 3330-3348: the source lookup and code relation form the original premise conjunction; the no_mutcons conclusion, existential loc_opt/body2, (arity, body2) lookup and body1 <> body2 implication to optimised_code and rewrite_wrapper ... = SOME body2 match."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",

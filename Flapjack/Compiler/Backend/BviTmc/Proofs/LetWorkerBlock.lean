@@ -109,6 +109,6 @@ theorem evaluate_let_worker_block {C F : Type} (bindings : List Bvi.Exp) (body :
           have baseHole := holeHasVal_unappend g values values' env1 env2 workState.refs resValue' ⟨filledHole, valuesRelated⟩
           refine ⟨resValue', ?_, holeHasVal_submap f g env1 env2 workState.refs resValue' ⟨baseHole, extension⟩⟩
           exact mutableBlockRel_old_subset h middleTarget.refs (workState.refs.eraseEq holePtr)
-            resValue resValue' target.refs block domain
+            resValue resValue' target.refs ⟨block, domain⟩
 
 end Flapjack.Compiler.Backend.BviTmc.LetWorkerBlock

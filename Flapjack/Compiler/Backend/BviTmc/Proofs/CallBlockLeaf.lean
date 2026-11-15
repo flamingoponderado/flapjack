@@ -54,7 +54,7 @@ theorem evaluate_rcall_core {C F : Type} (loc ticks : Nat) (indices : List Nat)
         · simp [findCode, lookup, arityEq] at found
           obtain ⟨rfl, rfl⟩ := found
           obtain ⟨safe, worker, targetBody, targetLookup, changed⟩ :=
-            codeRel_cases loc arity sourceBody source.code target.code lookup (stateRel_codeRel f source target states)
+            codeRel_cases loc arity sourceBody source.code target.code ⟨lookup, stateRel_codeRel f source target states⟩
           have lengths := argsRelated.length_eq
           refine ⟨safe, _, targetBody, ?_, listRel_envRel f _ _ argsRelated, ?_⟩
           · simp [findCode, targetLookup, ← lengths, arityEq]

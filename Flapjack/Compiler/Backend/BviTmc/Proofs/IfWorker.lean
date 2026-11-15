@@ -145,6 +145,6 @@ theorem evaluate_if_worker {C F : Type} (condition yes no : Bvi.Exp)
             obtain ⟨resValue', block, filledHole⟩ := filled resValue success
             refine ⟨resValue', ?_, holeHasVal_submap f g env1 env2 workState.refs resValue' ⟨filledHole, extension⟩⟩
             exact mutableBlockRel_old_subset h middleTarget.refs (workState.refs.eraseEq holePtr)
-              resValue resValue' target.refs block domain
+              resValue resValue' target.refs ⟨block, domain⟩
 
 end Flapjack.Compiler.Backend.BviTmc.IfWorker

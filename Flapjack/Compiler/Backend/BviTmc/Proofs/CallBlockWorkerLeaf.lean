@@ -290,7 +290,7 @@ theorem evaluate_aux_call_from_worker {C F : Type} (ticks dest : Nat) (indices :
   obtain ⟨targetValue, blocks, hole'⟩ := success sourceValue resultEq
   have finalNotFinal : holeNotFinalised next.refs ptr := still ptr ⟨outside, initialHole.2⟩
   exact ⟨targetValue,
-    MutableBlockOld.mutableBlockRel_old_subset g target.refs (next.refs.eraseEq ptr) sourceValue targetValue oldRefs blocks domain,
+    MutableBlockOld.mutableBlockRel_old_subset g target.refs (next.refs.eraseEq ptr) sourceValue targetValue oldRefs ⟨blocks, domain⟩,
     worker_hole_to_aux_general f sourceArgs targetArgs extras slot ptr idx next.refs targetValue
       sameLength hole' finalNotFinal bound pointer⟩
 

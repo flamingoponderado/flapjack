@@ -415,6 +415,7 @@ val _ = show "holes_unchanged_except_finalised_typed" bvi_tmcProofTheory.holes_u
 val _ = show "holes_still_not_finalised_sub_typed" bvi_tmcProofTheory.holes_still_not_finalised_sub;
 val _ = show "holes_still_not_finalised_non_dom_typed" bvi_tmcProofTheory.holes_still_not_finalised_non_dom;
 val _ = show "evaluate_finalise_cons_typed" bvi_tmcProofTheory.evaluate_finalise_cons;
+val _ = show "mb_rel_refs_old_subset_typed" bvi_tmcProofTheory.mb_rel_refs_old_subset;
 val _ = show "hole_has_val_submap_typed" bvi_tmcProofTheory.hole_has_val_submap;
 val _ = show "holes_unchanged_except_trans_typed" bvi_tmcProofTheory.holes_unchanged_except_trans;
 val _ = show "holes_still_not_finalised_trans_typed" bvi_tmcProofTheory.holes_still_not_finalised_trans;

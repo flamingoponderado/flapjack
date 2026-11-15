@@ -43,7 +43,7 @@ theorem findCode_rel {C F : Type} (f : HolFiniteMapExact Nat Nat)
       · simp [findCode, lookup, arityEq] at found
         obtain ⟨rfl, rfl⟩ := found
         obtain ⟨safe, worker, targetBody, targetLookup, changed⟩ :=
-          codeRel_cases loc arity sourceBody source.code target.code lookup codes
+          codeRel_cases loc arity sourceBody source.code target.code ⟨lookup, codes⟩
         refine ⟨safe, relatedValues, targetBody, loc, ?_, listRel_envRel f values relatedValues valuesRelated,
           lengths, ?_⟩
         · simp [findCode, targetLookup, ← lengths, arityEq]
@@ -76,7 +76,7 @@ theorem findCode_rel {C F : Type} (f : HolFiniteMapExact Nat Nat)
               simp [findCode, last, lookup, arityRest] at found
               obtain ⟨rfl, rfl⟩ := found
               obtain ⟨safe, worker, targetBody, targetLookup, changed⟩ :=
-                codeRel_cases loc arity sourceBody source.code target.code lookup codes
+                codeRel_cases loc arity sourceBody source.code target.code ⟨lookup, codes⟩
               have targetNonempty : relatedValues ≠ [] := by
                 intro empty
                 simp [empty] at lengths
