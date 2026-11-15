@@ -1,5 +1,6 @@
 free_names_def_typed=∀(n :num) (name :num). free_names n name ⇔ ∀(k :num). n + bvl_to_bvi_namespaces * k ≠ name
 fmap_inj_def_typed=∀(f :num |-> num). fmap_inj f ⇔ ∀(p1 :num) (p2 :num) (q :num). FLOOKUP f p1 = SOME q ∧ FLOOKUP f p2 = SOME q ⇒ p1 = p2
+fmap_inj_FEMPTY_typed=fmap_inj (FEMPTY :num |-> num)
 fmap_inj_update_typed=∀(f :num |-> num) (k :num) (v :num). fmap_inj f ∧ v ∉ FRANGE f ⇒ fmap_inj f⟨k ↦ v⟩
 v_rel_rules_typed=(∀(f :num |-> num) (i :int). v_rel f (Number i :v) (Number i :v)) ∧ (∀(f :num |-> num) (w :word64). v_rel f (Word64 w :v) (Word64 w :v)) ∧ (∀(f :num |-> num) (n :num) (xs :v list) (ys :v list). LIST_REL (v_rel f) xs ys ⇒ v_rel f (Block n xs) (Block n ys)) ∧ (∀(f :num |-> num) (n :num). v_rel f (CodePtr n) (CodePtr n)) ∧ ∀(f :num |-> num) (n :num) (m :num) (b :bool). FLOOKUP f n = SOME m ⇒ v_rel f (RefPtr b n :v) (RefPtr b m :v)
 ref_rel_rules_typed=∀(f :num |-> num). (∀(b :bool) (bs :word8 list). ref_rel f (ByteArray b bs :v ref) (ByteArray b bs :v ref)) ∧ (∀(xs :v list) (ys :v list). LIST_REL (v_rel f) xs ys ⇒ ref_rel f (ValueArray xs :v ref) (ValueArray ys :v ref)) ∧ ∀(tm :thunk_mode) (x :v) (y :v). v_rel f x y ⇒ ref_rel f (Thunk tm x :v ref) (Thunk tm y :v ref)

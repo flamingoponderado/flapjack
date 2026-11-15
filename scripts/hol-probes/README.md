@@ -4,7 +4,7 @@
 
 `bvl_to_bvi_source_probe.out` captures the typed original whole-pass compilation definition, including the eight-result tuple and name-tree carrier.
 
-`bvi_tmc_proof_source_probe.out` captures the typed original TMC exception/return and optimized-result relations, function-list and program name-preservation theorems and replays the local variable-list, worker, wrapper, mutual extraction, top-level extraction, rewrite, and expression-compilation label proofs with inferred types. It also captures the exported TMC function-list and whole-program label-closure and semantics theorems with inferred types.
+`bvi_tmc_proof_source_probe.out` captures the typed original TMC exception/return and optimized-result relations, empty-map injectivity, function-list and program name-preservation theorems and replays the local variable-list, worker, wrapper, mutual extraction, top-level extraction, rewrite, and expression-compilation label proofs with inferred types. It also captures the exported TMC function-list and whole-program label-closure and semantics theorems with inferred types.
 
 `flat_do_app_preservation_probe.out` also captures the typed original flat
 primitive simulation and its semantic-primitives store-relation and arithmetic

@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.ValueRelation
 public import Flapjack.FiniteMap.CardinalityExact
+public import Flapjack.FiniteMap.EmptyExact
 
 @[expose] public section
 
@@ -46,6 +47,13 @@ theorem holFmapAsFiniteSupportParamWitness_fmapInj_f (f : HolFiniteMapExact Nat 
   (fmap_as_finite_support_parameters := [f])]
 def fmapInj (f : HolFiniteMapExact Nat Nat) : Prop :=
   ∀ p1 p2 q, f.lookup p1 = some q ∧ f.lookup p2 = some q → p1 = p2
+
+/-- The empty pointer map is injective. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fmap_inj_FEMPTY"
+  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.holEmpty]), simp]
+theorem fmapInj_empty : fmapInj (HolFiniteMapExact.holEmpty : HolFiniteMapExact Nat Nat) := by
+  intro p1 p2 q h
+  cases h.1
 
 theorem holFmapAsFiniteSupportParamWitness_refRel_submap_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl

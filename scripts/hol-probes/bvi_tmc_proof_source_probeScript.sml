@@ -12,6 +12,7 @@ fun show label th = if null (hyp th) then
 
 val _ = show "free_names_def_typed" bvi_tmcProofTheory.free_names_def;
 val _ = show "fmap_inj_def_typed" bvi_tmcProofTheory.fmap_inj_def;
+val _ = show "fmap_inj_FEMPTY_typed" bvi_tmcProofTheory.fmap_inj_FEMPTY;
 val _ = show "fmap_inj_update_typed" bvi_tmcProofTheory.fmap_inj_update;
 val _ = show "v_rel_rules_typed" bvi_tmcProofTheory.v_rel_rules;
 val _ = show "ref_rel_rules_typed" bvi_tmcProofTheory.ref_rel_rules;

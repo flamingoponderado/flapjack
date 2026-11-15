@@ -136528,6 +136528,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "fmap_inj_FEMPTY",
+  "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
+  "lean_name": "fmapInj_empty", "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+  "reviewer": "Compared fmap_inj_FEMPTY_typed in bvi_tmc_proof_source_probe.out: the proposition asserts injectivity of the empty map from Nat to Nat, without premises. The reviewed holEmpty producer represents HOL FEMPTY."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "fmap_inj_update",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
   "lean_name": "fmapInj_update", "statement_status": "reviewed_fmap_as_finite_support_parameters",
