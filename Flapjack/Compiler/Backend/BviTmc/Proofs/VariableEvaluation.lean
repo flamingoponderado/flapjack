@@ -244,10 +244,9 @@ private theorem evaluate_shift_frame_args_of_child {C F : Type} (loc : Nat) (lef
       dsimp only
       rw [tailEqual]
 
-/-- Shifting a call skeleton preserves its evaluation under a prefixed environment.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_shift_cb" (fmap_as_finite_support := [refs])] -/
+/-- Shifting a call skeleton preserves its evaluation under a prefixed environment. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_shift_cb"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_shift_cb {C F : Type} (cb : CallBlock) (loc : Nat) (env : List Value)
     (state : BviState C F) (bs : List Value) :
     evaluate [callBlockToBvi loc (shiftBlock bs.length cb)] (bs ++ env) state =
@@ -261,10 +260,9 @@ theorem evaluate_shift_cb {C F : Type} (cb : CallBlock) (loc : Nat) (env : List 
     simp only [shiftBlock, callBlockToBvi, BviSem.evaluate]
     rw [show evaluate _ _ state = evaluate _ env state from argsEqual]
 
-/-- The single-value environment-prefix instance for a call skeleton.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_shift_cb_sing" (fmap_as_finite_support := [refs])] -/
+/-- The single-value environment-prefix instance for a call skeleton. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_shift_cb_sing"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_shift_cb_sing {C F : Type} (cb : CallBlock) (loc : Nat) (env : List Value)
     (state : BviState C F) (b : Value) :
     evaluate [callBlockToBvi loc (shiftBlock 1 cb)] (b :: env) state =

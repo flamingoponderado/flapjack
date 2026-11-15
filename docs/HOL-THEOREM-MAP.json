@@ -135699,6 +135699,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_shift_cb", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/VariableEvaluation.lean",
+  "lean_name": "evaluate_shift_cb", "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared evaluate_shift_cb_typed in bvi_tmc_proof_source_probe.out: arbitrary call block, location, environment, state and prefix yield equality of complete evaluation results and states after shifting the block by the prefix length, including errors. The state reference field uses canonical finite support with a same-module witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_shift_cb_sing", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/VariableEvaluation.lean",
+  "lean_name": "evaluate_shift_cb_sing", "statement_status": "reviewed_fmap_as_finite_support",
+  "fmap_as_finite_support": ["refs"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared evaluate_shift_cb_sing_typed in bvi_tmc_proof_source_probe.out: arbitrary call block, location, environment, state and value yield equality of complete evaluation results and states after a single-value prefix and shift by one, including errors. The state reference field uses canonical finite support with a same-module witness. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "evaluate_shift_vars", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/VariableEvaluation.lean",
   "lean_name": "evaluate_shift_vars", "statement_status": "reviewed_fmap_as_finite_support",
   "fmap_as_finite_support": ["refs"],
