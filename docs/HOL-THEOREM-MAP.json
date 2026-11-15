@@ -142717,5 +142717,17 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Compared the local HOL theorem and literal original proof replay state_rel_IMP_do_app_err_replay_typed in data_live_compile_probe.out, including both independent state parameters, the source-error and state-relation conjunction and the identical target error. doApp inherits reals_as_rational_cuts as documented in SOUNDNESS item 8."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+    "hol_name": "hypothesis_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/Induction.lean",
+    "lean_name": "hypothesis",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_existentials_universals",
+    "fmap_as_finite_support_relation": ["BviState.refs"],
+    "fmap_as_finite_support_existentials": ["nextMap", "wrapMap", "workMap"],
+    "fmap_as_finite_support_universals": ["f"],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison with hypothesis_def_typed in bvi_tmc_proof_source_probe.out: independent compiler and FFI types, clock guard, complete simulation premise, ordinary nextMap result and the wrapper wrapMap and worker workMap conclusions are retained. The universal f, those three existential maps, and BviState.refs use the canonical finite-support representation with unconditional codec witnesses; their checked elaborated shapes do not replace HOL correspondence review. Evaluation inherits reals_as_rational_cuts (SOUNDNESS item 8)."
   }
 ]

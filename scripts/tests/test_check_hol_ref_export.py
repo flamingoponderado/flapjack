@@ -59,6 +59,13 @@ class HolRefExportTest(unittest.TestCase):
             "reviewed_fmap_as_finite_support_parameter_predicate_domain",
             {key: ["code1", "rel"]}, {key: ["code1", "rel"]}, {key: ["rel", "code1"]})
 
+    def test_tmc_universal_binder_must_match_export(self):
+        fields = {"fmap_as_finite_support_relation": ["BviState.refs"],
+                  "fmap_as_finite_support_existentials": ["nextMap", "wrapMap", "workMap"],
+                  "fmap_as_finite_support_universals": ["f"]}
+        self.check_qualifier("reviewed_fmap_as_finite_support_relation_existentials_universals",
+                             fields, fields, {**fields, "fmap_as_finite_support_universals": ["other"]})
+
     def test_nested_list_qualifier_must_match_both_directions(self):
         self.check_qualifier(
             "reviewed_nested_list_rel_as_mutual",

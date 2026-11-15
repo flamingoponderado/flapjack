@@ -282,6 +282,27 @@ elab "#emit_hol_ref_export" : command => do
     match env.find? name with
     | none => throwError "missing declaration {name}"
     | some info =>
+        if ref.path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" &&
+            ref.name == "hypothesis_def" && ref.fmapAsFiniteSupportUniversals.isEmpty then
+          throwError "missing TMC universal map qualifier on {name}"
+        if !ref.fmapAsFiniteSupportUniversals.isEmpty then
+          unless ref.path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" &&
+              ref.name == "hypothesis_def" && ref.fmapAsFiniteSupportUniversals == #["f"] &&
+              ref.fmapAsFiniteSupportRelation == #[("BviState", "refs")] &&
+              ref.fmapAsFiniteSupportExistentials == #["nextMap", "wrapMap", "workMap"] &&
+              ref.line?.isNone && ref.listAsArray.isEmpty && ref.namesAsString.isEmpty &&
+              ref.namesAsStringBoundary.isEmpty && ref.fmapAsFiniteSupport.isEmpty &&
+              !ref.fmapAsFiniteSupportResult && ref.fmapAsFiniteSupportFunction.isEmpty &&
+              ref.fmapAsFiniteSupportTuple.isEmpty && ref.fmapAsFiniteSupportHeterogeneousFunction.isEmpty &&
+              ref.fmapAsFiniteSupportParameters.isEmpty && ref.fmapAsFiniteSupportParameterPredicateDomain.isEmpty &&
+              !ref.fmapAsFiniteSupportEqualities && !ref.fmapAsFiniteSupportEquality &&
+              ref.fmapAsFiniteSupportResultObservations.isEmpty && !ref.fmapAsFiniteSupportParameterObservations &&
+              !ref.wordsAsTypeIndexedBitvec && ref.wordDimensionAsWidth.isNone &&
+              ref.wordDimensionsAsWidths.isEmpty && !ref.realsAsRationalCuts && ref.nestedListRelAsMutual.isEmpty do
+            throwError "invalid TMC universal map reference or binders on {name}"
+          let problems ← liftTermElabM (tmcHypothesisDeclarationProblems name)
+          unless problems.isEmpty do
+            throwError "invalid TMC hypothesis {name}: {problems}"
         if !ref.fmapAsFiniteSupportParameterPredicateDomain.isEmpty then
           unless ref.path == "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml" &&
               (ref.name == "eval_sim_def" || ref.name == "IMP_semantics_eq") &&
@@ -348,6 +369,9 @@ elab "#emit_hol_ref_export" : command => do
         if !ref.fmapAsFiniteSupportParameterPredicateDomain.isEmpty then
           qualifiers := qualifiers ++ [("fmap_as_finite_support_parameter_predicate_domain",
             toJson ref.fmapAsFiniteSupportParameterPredicateDomain)]
+        if !ref.fmapAsFiniteSupportUniversals.isEmpty then
+          qualifiers := qualifiers ++ [("fmap_as_finite_support_universals",
+            toJson ref.fmapAsFiniteSupportUniversals)]
         if !ref.fmapAsFiniteSupportHeterogeneousFunction.isEmpty then
           qualifiers := qualifiers ++ [
             ("fmap_as_finite_support_heterogeneous_function",

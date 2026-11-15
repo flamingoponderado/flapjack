@@ -487,6 +487,20 @@ These gates do not replace source review or authorize any other carrier,
 premise, result, evaluator, or semantic difference. Record the inherited
 real-model assumption separately when it applies.
 
+**Qualify the TMC hypothesis's body-bound map.** The narrow
+`(fmap_as_finite_support_universals := [f])` qualifier is restricted to
+`hypothesis_def` and its exact `Induction.hypothesis` counterpart. It requires
+`(fmap_as_finite_support_relation := [BviState.refs])` and
+`(fmap_as_finite_support_existentials := [nextMap, wrapMap, workMap])`, with
+no other representation qualifiers. Record these exact ordered lists and
+`reviewed_fmap_as_finite_support_relation_existentials_universals` after
+comparing the complete typed HOL definition. The source checker validates
+the map binders and local codec witnesses; the attribute and export additionally
+audit the checked definition, map-binder scopes, witness types, owners, codec
+bodies and axiom closure. These checks do not establish HOL correspondence or
+authorize other semantic differences. Record inherited real-model assumptions
+separately. The qualifier does not cover `evaluate_cb` or any other declaration.
+
 **Qualify observations of computed finite-map results.** Use
 `(fmap_as_finite_support_result_observations := [Producer, ...])` only
 for explicitly named imported map producers used in the tagged observer's

@@ -1149,6 +1149,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_existentials_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_relation_existentials_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_relation_existentials",
+    "reviewed_fmap_as_finite_support_relation_existentials_universals",
     "reviewed_fmap_as_finite_support_relation_existentials_nested_list_rel_as_mutual",
     "reviewed_fmap_as_finite_support_relation",
     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
@@ -1319,7 +1320,7 @@ def tagged_declarations(
              fmap_function_positions,
              fmap_heterogeneous_function_positions, reals_cuts,
              fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
-             predicate_domain) in HOL_ATTRIBUTE_SITES(
+             predicate_domain, fmap_universals) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
@@ -1331,6 +1332,7 @@ def tagged_declarations(
                  include_fmap_tuple=True,
                  include_nested_list_rel=True,
                  include_predicate_domain=True,
+                 include_fmap_universals=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -1341,7 +1343,7 @@ def tagged_declarations(
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
                      fmap_equalities, words_bitvec, fmap_parameters,
                      fmap_existentials, dimension_width, fmap_function_positions,
-                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel, predicate_domain)
+                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel, predicate_domain, fmap_universals)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1357,7 +1359,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
         fmap_existentials, dimension_width,
         fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
-        fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel, predicate_domain,
+        fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel, predicate_domain, fmap_universals,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1393,6 +1395,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["fmap_as_finite_support_parameters"] = list(fmap_parameters)
         if predicate_domain:
             entry["fmap_as_finite_support_parameter_predicate_domain"] = list(predicate_domain)
+        if fmap_universals:
+            entry["fmap_as_finite_support_universals"] = list(fmap_universals)
         if fmap_existentials:
             entry["fmap_as_finite_support_existentials"] = list(fmap_existentials)
         if fmap_relation:
@@ -1714,6 +1718,23 @@ def validate_inventory(
         fmap_tuple = tag[19] if tag is not None and len(tag) > 19 else ()
         nested_list_rel = tag[20] if tag is not None and len(tag) > 20 else ()
         predicate_domain = tag[21] if tag is not None and len(tag) > 21 else ()
+        fmap_universals = tag[22] if tag is not None and len(tag) > 22 else ()
+        universal_status = "reviewed_fmap_as_finite_support_relation_existentials_universals"
+        if tuple(record.get("fmap_as_finite_support_universals", ())) != fmap_universals:
+            errors.append(f"{key[0]}:{key[1]}: universal map binders do not match @[hol] tag")
+        if bool(fmap_universals) != (status == universal_status):
+            errors.append(f"{key[0]}:{key[1]}: universal maps require their combined reviewed status")
+        if fmap_universals:
+            expected_site = ("cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml", "hypothesis_def",
+                             "Flapjack/Compiler/Backend/BviTmc/Proofs/Induction.lean", "hypothesis")
+            if ((hol_path, hol_name, key[0], key[1]) != expected_site or fmap_universals != ("f",) or
+                    fmap_relation != (("BviState", "refs"),) or
+                    fmap_existentials != ("nextMap", "wrapMap", "workMap") or
+                    any(tag[2:7]) or any(tag[8:11]) or any(tag[12:22])):
+                errors.append(f"{key[0]}:{key[1]}: TMC universal qualifier requires its exact site and maps")
+            if (not isinstance(reviewer, str) or "source" not in reviewer.lower() or
+                    any(name not in reviewer for name in ("BviState.refs", "nextMap", "wrapMap", "workMap"))):
+                errors.append(f"{key[0]}:{key[1]}: TMC universal map review must name its source and maps")
         predicate_status = "reviewed_fmap_as_finite_support_parameter_predicate_domain"
         if tuple(record.get("fmap_as_finite_support_parameter_predicate_domain", ())) != predicate_domain:
             errors.append(f"{key[0]}:{key[1]}: predicate-domain binders do not match @[hol] tag")
@@ -2206,6 +2227,7 @@ def validate_inventory(
             "reviewed_fmap_as_finite_support_existentials",
             combined_existential_words_status,
             combined_relation_existential_status,
+            universal_status,
             combined_relation_existential_words_status,
             nested_relation_existential_status,
         }:
@@ -2218,6 +2240,7 @@ def validate_inventory(
             "reviewed_fmap_as_finite_support_existentials",
             combined_existential_words_status,
             combined_relation_existential_status,
+            universal_status,
             combined_relation_existential_words_status,
             nested_relation_existential_status,
         }:
@@ -2243,6 +2266,7 @@ def validate_inventory(
             "reviewed_fmap_as_finite_support_relation",
             combined_relation_words_status,
             combined_relation_existential_status,
+            universal_status,
             combined_relation_existential_words_status,
             nested_relation_existential_status,
         }:

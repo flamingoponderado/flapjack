@@ -1687,6 +1687,37 @@ class ValidateInventoryTest(unittest.TestCase):
         self.assertNotIn(mismatch, MAP["tagged_declarations"]())
 
 
+class TmcUniversalStatusTest(unittest.TestCase):
+    def test_exact_site_and_all_map_qualifiers_are_required(self):
+        key = ("Flapjack/Compiler/Backend/BviTmc/Proofs/Induction.lean", "hypothesis")
+        record = {
+            "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+            "hol_name": "hypothesis_def", "lean_path": key[0], "lean_name": key[1],
+            "statement_status": "reviewed_fmap_as_finite_support_relation_existentials_universals",
+            "fmap_as_finite_support_relation": ["BviState.refs"],
+            "fmap_as_finite_support_existentials": ["nextMap", "wrapMap", "workMap"],
+            "fmap_as_finite_support_universals": ["f"],
+            "reviewer": "Source comparison BviState.refs f nextMap wrapMap workMap.",
+        }
+        tag = (record["hol_path"], record["hol_name"], (), (), (), (), False,
+               (("BviState", "refs"),), False, False, (), ("nextMap", "wrapMap", "workMap"),
+               None, (), (), False, False, (), (), (), (), (), ("f",))
+        validate = MAP["validate_inventory"]
+        self.assertEqual(validate([record], set(), {key: tag}, set()), [])
+        for changed in ({"statement_status": "reviewed_exact"},
+                        {"fmap_as_finite_support_universals": []},
+                        {"fmap_as_finite_support_existentials": ["wrapMap", "nextMap", "workMap"]},
+                        {"fmap_as_finite_support_relation": ["Other.refs"]},
+                        {"reviewer": "Source comparison."}):
+            self.assertTrue(validate([{**record, **changed}], set(), {key: tag}, set()))
+        bad_key = (key[0], "other")
+        self.assertTrue(validate([{**record, "lean_name": "other"}], set(), {bad_key: tag}, set()))
+        for index in (7, 11, 22):
+            modified = list(tag)
+            modified[index] = ()
+            self.assertTrue(validate([record], set(), {key: tuple(modified)}, set()))
+
+
 class PredicateDomainStatusTest(unittest.TestCase):
     def test_exact_site_binders_status_and_review_are_required(self):
         key = ("Flapjack/Compiler/Backend/ClosToBvl/Proofs/EvalSim.lean", "evalSim")

@@ -22,6 +22,24 @@ run_meta do
   unless ← Lean.Core.liftIOCore tmcFixtureCalled.get do
     throwError "TMC fixture attribute callback did not run"
 
+/--
+error: @[hol]: universal maps require the reviewed TMC hypothesis and its exact map binders
+-/
+#guard_msgs in @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hypothesis_def"
+  (fmap_as_finite_support_relation := [BviState.refs])
+  (fmap_as_finite_support_existentials := [wrapMap, nextMap, workMap])
+  (fmap_as_finite_support_universals := [f])]
+private def tmcWrongMapOrder : Nat := 0
+
+/--
+error: @[hol]: universal map qualifier may appear only once
+-/
+#guard_msgs in @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hypothesis_def"
+  (fmap_as_finite_support_relation := [BviState.refs])
+  (fmap_as_finite_support_existentials := [nextMap, wrapMap, workMap])
+  (fmap_as_finite_support_universals := [f]) (fmap_as_finite_support_universals := [f])]
+private def tmcDuplicateUniversal : Nat := 0
+
 private theorem alternativeExpInhabited : Nonempty Bvi.Exp := ⟨.var 0⟩
 private theorem alternativeValueInhabited : Nonempty Value := ⟨.number 0⟩
 

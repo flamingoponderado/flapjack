@@ -338,6 +338,9 @@ FMAP_AS_FINITE_SUPPORT_PARAMS_RE = re.compile(
 FMAP_PARAMETER_PREDICATE_DOMAIN_RE = re.compile(
     r'\(\s*fmap_as_finite_support_parameter_predicate_domain\s*:=\s*\[([^]]*)\]\s*\)'
 )
+FMAP_UNIVERSALS_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_universals\s*:=\s*\[([^]]*)\]\s*\)'
+)
 FMAP_AS_FINITE_SUPPORT_EXISTENTIALS_RE = re.compile(
     r'\(\s*fmap_as_finite_support_existentials\s*:=\s*\[([^]]*)\]\s*\)'
 )
@@ -573,7 +576,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_word_dimensions_widths: bool = False,
                         include_fmap_tuple: bool = False,
                         include_nested_list_rel: bool = False,
-                        include_predicate_domain: bool = False):
+                        include_predicate_domain: bool = False,
+                        include_fmap_universals: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -683,6 +687,12 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     site += (names,)
                 if include_predicate_domain:
                     matches = list(FMAP_PARAMETER_PREDICATE_DOMAIN_RE.finditer(attribute))
+                    names = tuple(field.strip() for match in matches for field in match.group(1).split(","))
+                    if len(matches) > 1:
+                        names += ("",)
+                    site += (names,)
+                if include_fmap_universals:
+                    matches = list(FMAP_UNIVERSALS_RE.finditer(attribute))
                     names = tuple(field.strip() for match in matches for field in match.group(1).split(","))
                     if len(matches) > 1:
                         names += ("",)
@@ -3413,6 +3423,32 @@ def fmap_as_finite_support_heterogeneous_function_errors(
     return errors
 
 
+def tmc_hypothesis_map_witness_errors(lines: list[str]) -> list[str]:
+    """Check source witnesses; the elaborated audit checks complete proof types and bodies."""
+    source = strip_lean_comments("\n".join(lines))
+    errors: list[str] = []
+    names = [("Universal", "f"), ("Existential", "nextMap"),
+             ("Existential", "wrapMap"), ("Existential", "workMap")]
+    for kind, binder in names:
+        name = f"holFmapAsFiniteSupport{kind}Witness_hypothesis_{binder}"
+        pattern = re.compile(r"(?m)^\s*theorem\s+" + re.escape(name) +
+                             r"\s*\(\s*" + re.escape(binder) +
+                             r"\s*:\s*HolFiniteMapExact\s+Nat\s+Nat\s*\)\s*:\s*"
+                             r"(?P<statement>[\s\S]*?):=")
+        matches = list(pattern.finditer(source))
+        if len(matches) != 1:
+            errors.append(f"TMC map witness `{name}` must be unique and unconditionally bind its map")
+            continue
+        statement = matches[0].group("statement")
+        if (not re.search(r"∀\s*key\s*,", statement) or
+                not re.search(r"\.lookup\s+key\s*=\s*" + re.escape(binder) + r"\.lookup\s+key", statement) or
+                not re.search(r"\.finiteSupport\s*=\s*" + re.escape(binder) + r"\.finiteSupport", statement) or
+                not re.search(r"ofBroad[\s\S]*?toBroad\s+" + re.escape(binder) +
+                              r"\s*\)\s*=\s*" + re.escape(binder) + r"\b", statement)):
+            errors.append(f"TMC map witness `{name}` must state the pointwise canonical roundtrip")
+    return errors
+
+
 def fmap_as_finite_support_existentials_errors(
     lines: list[str], module: str, declaration_text: str, decl_name: str,
     binders: tuple[str, ...],
@@ -5480,7 +5516,7 @@ def main(argv: list[str]) -> int:
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
              fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
-             predicate_domain) in hol_attribute_sites(
+             predicate_domain, fmap_universals) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
@@ -5492,8 +5528,32 @@ def main(argv: list[str]) -> int:
                 include_fmap_tuple=True,
                 include_nested_list_rel=True,
                 include_predicate_domain=True,
+                include_fmap_universals=True,
              ):
             where = f"{rel}:{number}"
+            tmc_ref = (hol_path == "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" and
+                       hol_name == "hypothesis_def")
+            if tmc_ref and not fmap_universals:
+                errors.append(f"{where}: TMC hypothesis requires its universal map qualifier")
+            if fmap_universals:
+                lean_name = find_lean_decl(lines, number - 1)
+                if (not tmc_ref or rel != "Flapjack/Compiler/Backend/BviTmc/Proofs/Induction.lean" or
+                        lean_name != "hypothesis" or hol_line is not None or fmap_universals != ("f",) or
+                        fmap_relation != (("BviState", "refs"),) or
+                        fmap_existentials != ("nextMap", "wrapMap", "workMap")):
+                    errors.append(f"{where}: universal maps require the reviewed TMC hypothesis and exact binders")
+                if (list_fields or names_fields or boundary_fields or fmap_fields or fmap_result or
+                        fmap_equalities or words_bitvec or fmap_parameters or dimension_width or
+                        fmap_function_positions or fmap_heterogeneous_function_positions or reals_cuts or
+                        fmap_equality or result_observations or dimension_widths or fmap_tuple or
+                        nested_list_rel or predicate_domain):
+                    errors.append(f"{where}: TMC universal maps cannot combine with other representation qualifiers")
+                source = tagged_declaration_source(lines, number)
+                if not re.search(r"∀[\s\S]*?\(f\s*:\s*HolFiniteMapExact\s+Nat\s+Nat\s*\)", source):
+                    errors.append(f"{where}: TMC hypothesis must bind f as a universal Nat map")
+                witness = "holFmapAsFiniteSupportUniversalWitness_hypothesis_f"
+                if not re.search(r"(?m)^\s*theorem\s+" + witness + r"\b", strip_lean_comments("\n".join(lines))):
+                    errors.append(f"{where}: TMC universal map requires its same-module witness")
             if predicate_domain:
                 lean_name = find_lean_decl(lines, number - 1)
                 if predicate_domain != ("code1", "rel"):
@@ -5604,13 +5664,21 @@ def main(argv: list[str]) -> int:
                     )
                 )
             if fmap_existentials:
-                errors.extend(
-                    f"{where}: {error}"
-                    for error in fmap_as_finite_support_existentials_errors(
-                        lines, module, tagged_declaration_source(lines, number),
-                        lean_decl, fmap_existentials,
+                if fmap_universals and tmc_ref:
+                    errors.extend(f"{where}: {error}" for error in tmc_hypothesis_map_witness_errors(lines))
+                    source = tagged_declaration_source(lines, number)
+                    for binder in fmap_existentials:
+                        if not re.search(r"∃\s*\(" + re.escape(binder) +
+                                         r"\s*:\s*HolFiniteMapExact\s+Nat\s+Nat\s*\)", source):
+                            errors.append(f"{where}: TMC map `{binder}` must be existentially bound")
+                else:
+                    errors.extend(
+                        f"{where}: {error}"
+                        for error in fmap_as_finite_support_existentials_errors(
+                            lines, module, tagged_declaration_source(lines, number),
+                            lean_decl, fmap_existentials,
+                        )
                     )
-                )
             if fmap_result:
                 errors.extend(
                     f"{where}: {error}"

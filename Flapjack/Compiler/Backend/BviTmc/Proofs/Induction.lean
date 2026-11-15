@@ -259,12 +259,13 @@ theorem holFmapAsFiniteSupportExistentialWitness_hypothesis_workMap (workMap : H
     FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad workMap) = workMap :=
   holFmapAsFiniteSupportUniversalWitness_hypothesis_f workMap
 
-/-- Source-shaped counterpart of `hypothesis_def` in
-`cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml`. The finite map `f` is
-universally quantified inside the definition body and represented by
-`HolFiniteMapExact`. It remains untagged until a reviewed qualifier covers
-that map together with the state and existential map representations. Its
-evaluator dependencies inherit the rational-cuts real model (SOUNDNESS item 8). -/
+/-- The smaller-clock simulation predicate. The universal and existential
+maps and BVI reference field use canonical finite-support representations.
+Evaluator dependencies inherit the rational-cuts real model (SOUNDNESS item 8). -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hypothesis_def"
+  (fmap_as_finite_support_relation := [BviState.refs])
+  (fmap_as_finite_support_existentials := [nextMap, wrapMap, workMap])
+  (fmap_as_finite_support_universals := [f])]
 noncomputable def hypothesis {C F : Type} (xs : List Bvi.Exp)
     (source : BviState (Nat × C) F) (clock : Nat) : Prop :=
   source.clock < clock →
@@ -303,23 +304,5 @@ noncomputable def hypothesis {C F : Type} (xs : List Bvi.Exp)
             ∀ resValue, result = .val [resValue] →
               ∃ resValue', mutableBlockRel workMap target.refs (workState.refs.eraseEq holePtr) resValue resValue' ∧
                 holeHasVal f env1 env2 workState.refs resValue'))
-
-/-- Flapjack infrastructure: the smaller-clock predicate follows from the
-TMC simulation theorem; this unconditional proof has no separate HOL original. -/
-theorem hypothesis_holds {C F : Type} (xs : List Bvi.Exp) (source : BviState (Nat × C) F)
-    (clock : Nat) : hypothesis xs source clock := by
-  intro _ env1 result final opt f target env2 loc h
-  obtain ⟨run, env, safe, states, length, noError⟩ := h
-  have post := evaluate_rewrite_tmc (source.clock, Bvi.expListSizeHOL xs) xs source env1 result final
-    opt f target env2 loc ⟨run, rfl, env, safe, states, length, noError⟩
-  obtain ⟨next, g, r, eval, rel, states, ext, fresh, unchanged, still, optimized⟩ := post
-  refine ⟨next, g, r, eval, rel, states, ext, fresh, unchanged, still, ?_⟩
-  intro dest code
-  obtain ⟨wrap, worker⟩ := optimized dest code
-  refine ⟨wrap, ?_⟩
-  intro optTrue ptr h
-  exact worker optTrue env1.length (env1.length + 1) ptr
-    (rewriteWorkerSource loc dest env1.length (env1.length + 1) env1.length (@holHd Bvi.Exp ⟨.var 0⟩ xs))
-    ⟨rfl, rfl, h.1, h.2.1, rfl, h.2.2⟩
 
 end Flapjack.Compiler.Backend.BviTmc.Induction
