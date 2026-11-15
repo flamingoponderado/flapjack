@@ -9,10 +9,54 @@ namespace Flapjack.Compiler.Backend.BviTmc.CallBlockCorrectness
 open BviTmc BviSem BvlSem SemanticPrimitivesProps ResultRelation
 open CallBlockAuxFrame CallBlockAuxSimulation ClockHypothesis
 
+/-- The BVI reference-map carrier roundtrips through its broad representation. -/
+theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
+    (∀ s : BviStateBroad C F, (BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+
+/-- The quantified reference map has the canonical finite-map representation. -/
+theorem holFmapAsFiniteSupportUniversalWitness_evaluate_cb_refs
+    (refs : HolFiniteMapExact Nat (Ref Value)) :
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).lookup key = refs.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs)).finiteSupport = refs.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad refs) = refs := by
+  cases refs
+  exact ⟨fun _ => rfl, rfl, rfl⟩
+
+/-- Canonical map roundtrips for the four result-map binders of the simulation. -/
+theorem holFmapAsFiniteSupportExistentialWitness_evaluate_cb_ordinaryMap
+    (ordinaryMap : HolFiniteMapExact Nat Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad ordinaryMap)).lookup = ordinaryMap.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad ordinaryMap)).finiteSupport = ordinaryMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad ordinaryMap) = ordinaryMap :=
+  Induction.holFmapAsFiniteSupportExistentialWitness_evaluate_rewrite_tmc_nextMap ordinaryMap
+
+theorem holFmapAsFiniteSupportExistentialWitness_evaluate_cb_wrapMap
+    (wrapMap : HolFiniteMapExact Nat Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad wrapMap)).lookup = wrapMap.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad wrapMap)).finiteSupport = wrapMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad wrapMap) = wrapMap :=
+  Induction.holFmapAsFiniteSupportExistentialWitness_evaluate_rewrite_tmc_wrapMap wrapMap
+
+theorem holFmapAsFiniteSupportExistentialWitness_evaluate_cb_auxMap
+    (auxMap : HolFiniteMapExact Nat Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad auxMap)).lookup = auxMap.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad auxMap)).finiteSupport = auxMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad auxMap) = auxMap :=
+  Induction.holFmapAsFiniteSupportExistentialWitness_evaluate_rewrite_tmc_nextMap auxMap
+
+theorem holFmapAsFiniteSupportExistentialWitness_evaluate_cb_workMap
+    (workMap : HolFiniteMapExact Nat Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad workMap)).lookup = workMap.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad workMap)).finiteSupport = workMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad workMap) = workMap :=
+  Induction.holFmapAsFiniteSupportExistentialWitness_evaluate_rewrite_tmc_workMap workMap
+
 /-- Source-shaped `evaluate_cb` from `bvi_tmcProofScript.sml`. This remains
-untagged pending a reviewed representation qualifier for the body-universal map
-in `Induction.hypothesis`. Evaluation inherits the rational-cuts real model
-(SOUNDNESS item 8). -/
+untagged pending review of the theorem's universally quantified reference map,
+input map, existential result maps, and BVI state reference representation.
+Evaluation inherits the rational-cuts real model (SOUNDNESS item 8). -/
 theorem evaluate_cb {C F A : Type} (cb : CallBlock) (loc : Nat)
     (f : HolFiniteMapExact Nat Nat) (opt : Bool) (env1 env2 : List Value)
     (source : BviState (Nat × C) F) (target : BviState C F)
