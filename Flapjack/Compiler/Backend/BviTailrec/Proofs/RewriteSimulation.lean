@@ -8,6 +8,7 @@ public import Flapjack.Compiler.Backend.Semantics.BviSem.Semantics
 public import Flapjack.Compiler.Backend.BviInline.Proofs.SemanticsSafety
 public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 public import Flapjack.Compiler.Backend.Semantics.BviProps.AdjustOracleEval
+public import Flapjack.Misc.ClockWeightInduction
 
 @[expose] public section
 
@@ -192,20 +193,15 @@ theorem rewriteTailProperty_of_bounded_step {C F : Type}
       rewriteTailPropertyThrough (C := C) (F := F) limit xs) :
     ∀ xs, rewriteTailProperty (C := C) (F := F) xs := by
   have bounded : ∀ limit xs, rewriteTailPropertyThrough (C := C) (F := F) limit xs := by
-    intro limit
-    induction limit using Nat.strong_induction_on with
-    | h limit clockIH =>
-      have bySize : ∀ n xs, sizeOf xs = n → rewriteTailPropertyThrough (C := C) (F := F) limit xs := by
-        intro n
-        induction n using Nat.strong_induction_on with
-        | h n sizeIH =>
-          intro xs sizeEq
-          apply step limit xs
-          · intro ys smaller
-            exact sizeIH (sizeOf ys) (by omega) ys rfl
-          · exact clockIH
-      intro xs
-      exact bySize (sizeOf xs) xs rfl
+    intro limit xs
+    apply clockWeightInduction (α := List Bvi.Exp) (σ := Nat) id sizeOf
+      (motive := fun xs limit => rewriteTailPropertyThrough (C := C) (F := F) limit xs) ?_ xs limit
+    intro xs limit structuralIH clockIH
+    apply step limit xs
+    · intro ys smaller
+      exact structuralIH ys limit (Nat.le_refl _) smaller
+    · intro smaller smallerLt ys
+      exact clockIH ys smaller smallerLt
   intro xs source env1 result sourceNext optimized target acc env2 loc ts ty hyp
   exact bounded source.clock xs source env1 result sourceNext optimized target acc env2 loc ts ty
     (Nat.le_refl _) hyp

@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.BviTailrec.Proofs.CodeRelation
 import Flapjack.Compiler.Backend.Bvi.GeneratedSize
+import Flapjack.Misc.ClockWeightInduction
 
 namespace Flapjack.Compiler.Backend.BviTailrec
 
@@ -20,26 +21,13 @@ theorem evaluate_complete_ind {C F : Type}
       (Bvi.expListSizeHOL ys < Bvi.expListSizeHOL xs ∧ t.clock ≤ s.clock) ∨
         t.clock < s.clock → P ys t) → P xs s) :
     ∀ xs s, P xs s := by
-  have all : ∀ clock size xs (s : BviSem.BviState (Nat × C) F),
-      s.clock = clock → Bvi.expListSizeHOL xs = size → P xs s := by
-    intro clock
-    induction clock using Nat.strong_induction_on with
-    | h clock clockIH =>
-      intro size
-      induction size using Nat.strong_induction_on with
-      | h size sizeIH =>
-        intro xs s clockEq sizeEq
-        apply step xs s
-        intro ys t smaller
-        rcases smaller with ⟨sizeLt, clockLe⟩ | clockLt
-        · by_cases earlier : t.clock < clock
-          · exact clockIH t.clock earlier _ ys t rfl rfl
-          · have sameClock : t.clock = clock := by omega
-            have lessSize : Bvi.expListSizeHOL ys < size := by omega
-            exact sizeIH _ lessSize ys t sameClock rfl
-        · have earlier : t.clock < clock := by omega
-          exact clockIH t.clock earlier _ ys t rfl rfl
-  intro xs s
-  exact all s.clock (Bvi.expListSizeHOL xs) xs s rfl rfl
+  apply clockWeightInduction (α := List Bvi.Exp) (σ := BviSem.BviState (Nat × C) F)
+    (·.clock) Bvi.expListSizeHOL (motive := P)
+  intro xs s sizeIH clockIH
+  apply step xs s
+  intro ys t smaller
+  rcases smaller with ⟨sizeLt, clockLe⟩ | clockLt
+  · exact sizeIH ys t clockLe sizeLt
+  · exact clockIH ys t clockLt
 
 end Flapjack.Compiler.Backend.BviTailrec
