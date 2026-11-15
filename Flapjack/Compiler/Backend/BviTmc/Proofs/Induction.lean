@@ -229,6 +229,36 @@ theorem evaluate_rewrite_tmc {C F : Type} (n : Nat × Nat) (xs : List Bvi.Exp)
         simpa only [rewrite, IfWorker.WorkerCore] using worker
       | cons first tail => simp at length
 
+/-- Canonical pointwise and finite-support roundtrip for the map quantified in
+the induction predicate. -/
+theorem holFmapAsFiniteSupportUniversalWitness_hypothesis_f (f : HolFiniteMapExact Nat Nat) :
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup key = f.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f := by
+  cases f
+  exact ⟨fun _ => rfl, rfl, rfl⟩
+
+/-- The same unconditional codec roundtrip for the ordinary result map. -/
+theorem holFmapAsFiniteSupportExistentialWitness_hypothesis_nextMap (nextMap : HolFiniteMapExact Nat Nat) :
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap)).lookup key = nextMap.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap)).finiteSupport = nextMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap) = nextMap :=
+  holFmapAsFiniteSupportUniversalWitness_hypothesis_f nextMap
+
+/-- The same unconditional codec roundtrip for the wrapper result map. -/
+theorem holFmapAsFiniteSupportExistentialWitness_hypothesis_wrapMap (wrapMap : HolFiniteMapExact Nat Nat) :
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad wrapMap)).lookup key = wrapMap.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad wrapMap)).finiteSupport = wrapMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad wrapMap) = wrapMap :=
+  holFmapAsFiniteSupportUniversalWitness_hypothesis_f wrapMap
+
+/-- The same unconditional codec roundtrip for the worker result map. -/
+theorem holFmapAsFiniteSupportExistentialWitness_hypothesis_workMap (workMap : HolFiniteMapExact Nat Nat) :
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad workMap)).lookup key = workMap.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad workMap)).finiteSupport = workMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad workMap) = workMap :=
+  holFmapAsFiniteSupportUniversalWitness_hypothesis_f workMap
+
 /-- Source-shaped counterpart of `hypothesis_def` in
 `cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml`. The finite map `f` is
 universally quantified inside the definition body and represented by

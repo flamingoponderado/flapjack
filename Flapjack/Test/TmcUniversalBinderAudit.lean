@@ -1,7 +1,8 @@
 module
 
-meta import Flapjack.Compiler.Backend.BviTmc.Proofs.Induction
+import all Flapjack.Compiler.Backend.BviTmc.Proofs.Induction
 meta import Flapjack.HolRef.TmcUniversalBinder
+meta import Flapjack.FiniteMap.BroadCodec
 
 meta section
 
@@ -14,6 +15,28 @@ set_option linter.unusedVariables false
 
 private theorem alternativeExpInhabited : Nonempty Bvi.Exp := ⟨.var 0⟩
 private theorem alternativeValueInhabited : Nonempty Value := ⟨.number 0⟩
+
+private def erasedToBroad {K V : Type} (_map : HolFiniteMapExact K V) : FiniteMapBroad K V :=
+  ⟨fun _ => none, ⟨[], by simp⟩⟩
+
+private def erasedFromBroad {K V : Type} (_map : FiniteMapBroad K V) : HolFiniteMapExact K V :=
+  HolFiniteMapExact.empty
+
+private theorem conditionalMapWitness (f : HolFiniteMapExact Nat Nat) (_extra : True) :
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup key = f.lookup key) ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).finiteSupport = f.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f :=
+  Induction.holFmapAsFiniteSupportUniversalWitness_hypothesis_f f
+
+private theorem vacuousMapWitness (f : HolFiniteMapExact Nat Nat) :
+    (∀ key, f.lookup key = f.lookup key) ∧ f.finiteSupport = f.finiteSupport ∧ f = f := by
+  exact ⟨fun _ => rfl, rfl, rfl⟩
+
+private theorem missingSupportWitness (f : HolFiniteMapExact Nat Nat) :
+    (∀ key, (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f)).lookup key = f.lookup key) ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad f) = f := by
+  cases f
+  exact ⟨fun _ => rfl, rfl⟩
 
 private abbrev HiddenPointerMap := HolFiniteMapExact Nat Nat
 
@@ -185,6 +208,18 @@ private def mutateWorker (value : Expr) (rewrite : Expr → Option Expr) : MetaM
 run_meta do
   let .defnInfo info ← getConstInfo ``Flapjack.Compiler.Backend.BviTmc.Induction.hypothesis
     | throwError "missing TMC induction predicate"
+  let declarationProblems ← tmcHypothesisDeclarationProblems ``Flapjack.Compiler.Backend.BviTmc.Induction.hypothesis
+  unless declarationProblems.isEmpty do throwError "actual hypothesis declaration rejected: {declarationProblems}"
+  let wrongOwner ← tmcHypothesisDeclarationProblems ``inventoryValid
+  if wrongOwner.isEmpty then throwError "unrelated declaration accepted by TMC hypothesis audit"
+  for (name, toBroad) in [(``erasedToBroad, true), (``erasedFromBroad, false)] do
+    let .defnInfo codec ← getConstInfo name | throwError "missing codec decoy {name}"
+    let problems ← tmcCodecBodyProblems codec.type codec.value toBroad
+    if problems.isEmpty then throwError "erased codec accepted: {name}"
+  for name in [``conditionalMapWitness, ``vacuousMapWitness, ``missingSupportWitness] do
+    let witness ← getConstInfo name
+    let problems ← tmcMapWitnessTypeProblems witness.type
+    if problems.isEmpty then throwError "invalid map witness accepted: {name}"
   lambdaTelescope info.value fun _ body => do
     let inventory ← tmcHypothesisMapInventoryProblems body
     unless inventory.isEmpty do throwError "actual predicate map inventory rejected: {inventory}"

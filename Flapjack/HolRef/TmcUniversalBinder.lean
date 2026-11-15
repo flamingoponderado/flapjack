@@ -1,6 +1,7 @@
 module
 
 public meta import Lean
+public meta import Lean.Util.CollectAxioms
 
 public meta section
 
@@ -479,5 +480,118 @@ def tmcHypothesisUniversalBinderProblems (type value : Expr) : MetaM (Array Stri
               tmcWorkerProblems worker c ffi xs env1 env2 target final result map binders[8]! args[0]! opt
     unless structureProblems.isEmpty do return structureProblems
     tmcHypothesisMapInventoryProblems body
+
+private def tmcDefiningModule (env : Environment) (name : Name) : Name :=
+  match env.getModuleIdxFor? name with
+  | some idx => env.header.moduleNames[idx.toNat]!
+  | none => env.mainModule
+
+/-- Check an elaborated codec body against the two canonical projections.
+The caller must separately check the declaration's owner and axiom closure. -/
+def tmcCodecBodyProblems (type value : Expr) (toBroad : Bool) : MetaM (Array String) := do
+  unless ← isDefEq (← inferType value) type do return #["codec value has the wrong declaration type"]
+  lambdaTelescope value fun args body => do
+    unless args.size == 3 do return #["codec must have two type parameters and one input"]
+    let key ← args[0]!.fvarId!.getDecl
+    let item ← args[1]!.fvarId!.getDecl
+    let map ← args[2]!.fvarId!.getDecl
+    let exact := mkApp2 (mkConst `Flapjack.HolFiniteMapExact) args[0]! args[1]!
+    let broad := mkApp2 (mkConst `Flapjack.FiniteMapBroad) args[0]! args[1]!
+    unless key.binderInfo == .implicit && key.type == mkSort (Level.succ Level.zero) &&
+        item.binderInfo == .implicit && item.type == mkSort (Level.succ Level.zero) &&
+        map.binderInfo == .default && map.type == (if toBroad then exact else broad) do
+      return #["codec has the wrong input telescope"]
+    let constructor := if toBroad then `Flapjack.FiniteMapBroad.mk else `Flapjack.HolFiniteMapExact.mk
+    let lookup := if toBroad then `Flapjack.HolFiniteMapExact.lookup else `Flapjack.FiniteMapBroad.lookup
+    let support := if toBroad then `Flapjack.HolFiniteMapExact.finiteSupport else `Flapjack.FiniteMapBroad.finiteSupport
+    let expected := mkAppN (mkConst constructor) #[args[0]!, args[1]!,
+      mkAppN (mkConst lookup) #[args[0]!, args[1]!, args[2]!],
+      mkAppN (mkConst support) #[args[0]!, args[1]!, args[2]!]]
+    unless body == expected do return #["codec changes the lookup or finite-support evidence"]
+    return #[]
+
+/-- Validate the actual shared finite-map codec definitions and their owner.
+This is a Lean-side check, not a HOL correspondence proof. -/
+def tmcCanonicalCodecProblems : MetaM (Array String) := do
+  let env ← getEnv
+  let owner := `Flapjack.FiniteMap.BroadCodec
+  let codecNames := #[`Flapjack.FiniteMapBroad.toBroad, `Flapjack.FiniteMapBroad.ofBroad]
+  for i in [:codecNames.size] do
+    let name := codecNames[i]!
+    unless tmcDefiningModule env name == owner do return #[s!"{name} has the wrong defining module"]
+    let some (.defnInfo info) := env.checked.get.find? name
+      | return #[s!"{name} must be a checked definition"]
+    unless info.safety == .safe && info.levelParams.isEmpty do
+      return #[s!"{name} must be safe and monomorphic"]
+    unless (← collectAxioms name).isEmpty do return #[s!"{name} has axiom dependencies"]
+    let problems ← tmcCodecBodyProblems info.type info.value (i == 0)
+    unless problems.isEmpty do return problems.map (s!"{name}: " ++ ·)
+  return #[]
+
+/-- Check an unconditional Nat-to-Nat codec witness's elaborated statement.
+Owner, proof axioms and the codec definitions must be checked separately. -/
+def tmcMapWitnessTypeProblems (type : Expr) : MetaM (Array String) := do
+  forallTelescope type fun args body => do
+    unless args.size == 1 do return #["map witness must have exactly one explicit input"]
+    let binder ← args[0]!.fvarId!.getDecl
+    let nat := mkConst `Nat
+    let mapType := mkApp2 (mkConst `Flapjack.HolFiniteMapExact) nat nat
+    unless binder.binderInfo == .default && binder.type == mapType do
+      return #["map witness must take the canonical Nat-to-Nat map"]
+    let map := args[0]!
+    let toBroad := mkAppN (mkConst `Flapjack.FiniteMapBroad.toBroad) #[nat, nat, map]
+    let roundtrip := mkAppN (mkConst `Flapjack.FiniteMapBroad.ofBroad) #[nat, nat, toBroad]
+    let lookup (m : Expr) := mkAppN (mkConst `Flapjack.HolFiniteMapExact.lookup) #[nat, nat, m]
+    let support (m : Expr) := mkAppN (mkConst `Flapjack.HolFiniteMapExact.finiteSupport) #[nat, nat, m]
+    let .app (.app (.const ``And []) pointwise) (.app (.app (.const ``And []) supportEq) fullEq) := body
+      | return #["map witness must contain lookup, support and map equalities"]
+    let lookupProblems ← forallTelescope pointwise fun keys equality => do
+      unless keys.size == 1 do return #["map witness must quantify one lookup key"]
+      let key ← keys[0]!.fvarId!.getDecl
+      unless key.binderInfo == .default && key.type == nat do return #["map witness has the wrong lookup key"]
+      let expected ← mkEq (mkApp (lookup roundtrip) keys[0]!) (mkApp (lookup map) keys[0]!)
+      unless equality == expected do return #["map witness lookup equality changed"]
+      return #[]
+    unless lookupProblems.isEmpty do return lookupProblems
+    let expectedSupport ← mkEq (support roundtrip) (support map)
+    let expectedFull ← mkEq roundtrip map
+    unless supportEq == expectedSupport && fullEq == expectedFull do
+      return #["map witness support or full roundtrip equality changed"]
+    return #[]
+
+/-- Validate the fixed TMC hypothesis declaration and its local map-codec
+witnesses. This does not register a qualifier or replace HOL source review. -/
+def tmcHypothesisDeclarationProblems (decl : Name) : MetaM (Array String) := do
+  let expected := `Flapjack.Compiler.Backend.BviTmc.Induction.hypothesis
+  let owner := `Flapjack.Compiler.Backend.BviTmc.Proofs.Induction
+  unless decl == expected do return #["TMC hypothesis audit is restricted to the reviewed declaration"]
+  let env ← getEnv
+  unless tmcDefiningModule env decl == owner do return #["TMC hypothesis has the wrong defining module"]
+  let some (.defnInfo info) := env.checked.get.find? decl
+    | return #["TMC hypothesis must be a checked definition"]
+  unless info.safety == .safe && info.levelParams.isEmpty do
+    return #["TMC hypothesis must be safe and monomorphic"]
+  let bodyProblems ← tmcHypothesisUniversalBinderProblems info.type info.value
+  unless bodyProblems.isEmpty do return bodyProblems
+  for axiomName in (← collectAxioms decl) do
+    unless #[`propext, `Classical.choice, `Quot.sound].contains axiomName do
+      return #[s!"TMC hypothesis depends on unapproved axiom {axiomName}"]
+  let codecProblems ← tmcCanonicalCodecProblems
+  unless codecProblems.isEmpty do return codecProblems
+  let namespaceName := `Flapjack.Compiler.Backend.BviTmc.Induction
+  let witnessNames := #["holFmapAsFiniteSupportUniversalWitness_hypothesis_f",
+    "holFmapAsFiniteSupportExistentialWitness_hypothesis_nextMap",
+    "holFmapAsFiniteSupportExistentialWitness_hypothesis_wrapMap",
+    "holFmapAsFiniteSupportExistentialWitness_hypothesis_workMap"]
+  for shortName in witnessNames do
+    let name := Name.str namespaceName shortName
+    unless tmcDefiningModule env name == owner do return #[s!"{name} has the wrong defining module"]
+    let some (.thmInfo witness) := env.checked.get.find? name
+      | return #[s!"{name} must be a checked theorem"]
+    unless witness.levelParams.isEmpty && (← collectAxioms name).isEmpty do
+      return #[s!"{name} must be monomorphic and axiom-free"]
+    let witnessProblems ← tmcMapWitnessTypeProblems witness.type
+    unless witnessProblems.isEmpty do return witnessProblems
+  return #[]
 
 end Flapjack
