@@ -153,17 +153,16 @@ theorem evaluate_shift_vars_sing {C F : Type} (indices : List Nat) (env : List V
       evaluate (indices.map Bvi.Exp.var) env state := by
   simpa using evaluate_shift_vars indices env state [value]
 
-/-- Adding binders and shifting variable indices preserves a non-type-error run.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_var_list_binders" (fmap_as_finite_support := [refs])] -/
+/-- Adding binders and shifting variable indices preserves a non-type-error run. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_var_list_binders"
+  (fmap_as_finite_support := [refs])]
 theorem evaluate_var_list_binders {C F : Type} (indices : List Nat) (extras env : List Value)
     (state : BviState C F) (result : BviResult) (next : BviState C F)
-    (run : evaluate (indices.map Bvi.Exp.var) env state = (result, next))
-    (_notError : result ≠ .err (.abort .typeError)) :
+    (h : evaluate (indices.map Bvi.Exp.var) env state = (result, next) ∧
+      result ≠ .err (.abort .typeError)) :
     evaluate (indices.map fun n => Bvi.Exp.var (n + extras.length)) (extras ++ env) state = (result, next) := by
   simpa [shiftVars, List.map_map, Function.comp_def] using
-    (evaluate_shift_vars indices env state extras).trans run
+    (evaluate_shift_vars indices env state extras).trans h.1
 
 private theorem evaluateBindings {C F : Type} (args : List Bvi.Exp) (values : List Value)
     (count : values.length = args.length) (n : Nat) (ys : List Value)
