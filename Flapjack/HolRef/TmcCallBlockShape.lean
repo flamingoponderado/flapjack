@@ -322,4 +322,129 @@ def tmcCallBlockWorkerEntryProblems (type : Expr) : MetaM (Array String) := do
           tmcExists afterResult map `workMap fun _ afterMap =>
             tmcExists afterMap (state c) `s fun _ _ => return #[]
 
+private def tmcCallBlockOptimizedFrameProblems
+    (body c ffi program environment start originalTarget final result f frameRefs ptr next nextMap nextResult : Expr)
+    (finalHole : Expr → Expr) : MetaM (Array String) := do
+  let nat := mkConst `Nat
+  let value := mkConst `Flapjack.Compiler.Backend.BvlSem.Value
+  let values := mkApp (mkConst `List [Level.zero]) value
+  let resultType := mkConst `Flapjack.Compiler.Backend.BviSem.BviResult
+  let state := mkApp2 (mkConst `Flapjack.Compiler.Backend.BviSem.BviState) c ffi
+  let refs (s : Expr) := mkAppN (mkConst `Flapjack.Compiler.Backend.BviSem.BviState.refs) #[c, ffi, s]
+  let mut clauses := #[]
+  let mut tail := body
+  for _ in [:7] do
+    match tail with
+    | .app (.app (.const ``And []) first) rest =>
+      clauses := clauses.push first
+      tail := rest
+    | _ => return #["optimized result must have seven frame conjuncts and a success case"]
+  let evaluation := mkAppN (mkConst `Flapjack.Compiler.Backend.BviSem.evaluate)
+    #[c, ffi, program, environment, start]
+  let output := mkAppN (mkConst `Prod.mk [Level.zero, Level.zero]) #[resultType, state, nextResult, next]
+  let run := mkApp3 (mkConst ``Eq [Level.succ Level.zero])
+    (mkApp2 (mkConst `Flapjack.Compiler.Backend.BviSem.EvalResult) c ffi) evaluation output
+  let relation := mkApp3 (mkConst `Flapjack.Compiler.Backend.BviTmc.ResultRelation.optResRel)
+    nextMap result nextResult
+  let states := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.stateRel) #[c, ffi, nextMap, final, next]
+  let submap := mkAppN (mkConst `Flapjack.HolFiniteMapExact.submap) #[nat, nat, f, nextMap]
+  let fresh := mkApp3 (mkConst `Flapjack.Compiler.Backend.BviTmc.onlyFresh) f nextMap frameRefs
+  let singleton := mkAppN (mkConst `Singleton.singleton [Level.zero, Level.zero])
+    #[nat, mkApp (mkConst `Set [Level.zero]) nat, mkApp (mkConst `Set.instSingletonSet [Level.zero]) nat, ptr]
+  let unchanged := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.holesUnchangedExcept)
+    #[nat, nat, value, f, frameRefs, refs next, singleton]
+  let still := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.holesStillNotFinalised)
+    #[nat, nat, value, f, frameRefs, refs next]
+  unless clauses == #[run, relation, states, submap, fresh, unchanged, still] do
+    return #["optimized evaluation or result frame changed"]
+  forallTelescope tail fun xs conclusion => do
+    unless xs.size == 2 do return #["optimized singleton-success case changed"]
+    let returned ← xs[0]!.fvarId!.getDecl
+    let premise ← xs[1]!.fvarId!.getDecl
+    let singletonValue := mkApp3 (mkConst `List.cons [Level.zero]) value xs[0]!
+      (mkApp (mkConst `List.nil [Level.zero]) value)
+    let success := mkApp3 (mkConst `Flapjack.SemanticPrimitivesHOL.Result.val)
+      values (mkConst `Flapjack.Compiler.Backend.BviSem.ExnOrRet) singletonValue
+    let equality := mkApp3 (mkConst ``Eq [Level.succ Level.zero]) resultType result success
+    unless returned.userName == `v && returned.binderInfo == .default && returned.type == value &&
+        premise.binderInfo == .default && premise.type == equality do
+      return #["optimized singleton-success premise changed"]
+    tmcExists conclusion value `v' fun v' resultBody => do
+      let refType := mkApp (mkConst `Flapjack.Compiler.Backend.BvlSem.Ref) value
+      let erased := mkAppN (mkConst `Flapjack.HolFiniteMapExact.eraseEq)
+        #[nat, refType, mkConst `instDecidableEqNat, refs next, ptr]
+      let block := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.mutableBlockRel)
+        #[nextMap, refs originalTarget, erased, xs[0]!, v']
+      unless resultBody == mkApp2 (mkConst ``And) block (finalHole v') do
+        return #["optimized success relation or final hole changed"]
+      return #[]
+
+/-- Check both optimized execution frames and singleton-success conclusions.
+This audits the theorem type only; declaration and HOL correspondence checks
+remain necessary before a qualifier can use it. -/
+def tmcCallBlockOptimizedResultProblems (type : Expr) : MetaM (Array String) := do
+  let entry ← tmcCallBlockWorkerEntryProblems type
+  unless entry.isEmpty do return entry
+  forallTelescope type fun args conclusion => do
+    let .app (.app (.const ``And []) _) optimized := conclusion
+      | return #["missing optimized branch"]
+    forallTelescope optimized fun destArgs body => do
+      let .app (.app (.const ``And []) _)
+          (.app (.app (.const ``And []) auxiliary) worker) := body
+        | return #["missing optimized result branches"]
+      let nat := mkConst `Nat
+      let value := mkConst `Flapjack.Compiler.Backend.BvlSem.Value
+      let values := mkApp (mkConst `List [Level.zero]) value
+      let exp := mkConst `Flapjack.Compiler.Backend.Bvi.Exp
+      let c := args[0]!
+      let ffi := args[1]!
+      let state := mkApp2 (mkConst `Flapjack.Compiler.Backend.BviSem.BviState) c ffi
+      let resultType := mkConst `Flapjack.Compiler.Backend.BviSem.BviResult
+      let map := mkApp2 (mkConst `Flapjack.HolFiniteMapExact) nat nat
+      let refs (s : Expr) := mkAppN (mkConst `Flapjack.Compiler.Backend.BviSem.BviState.refs) #[c, ffi, s]
+      let cb := args[3]!
+      let f := args[5]!
+      let env1 := args[7]!
+      let env2 := args[8]!
+      let target := args[10]!
+      let final := args[11]!
+      let result := args[12]!
+      let program (e : Expr) := mkApp3 (mkConst `List.cons [Level.zero]) exp e
+        (mkApp (mkConst `List.nil [Level.zero]) exp)
+      let auxiliaryProblems ← forallTelescope auxiliary fun xs rest => do
+        let field (name : Name) := mkAppN (mkConst name) #[c, ffi, target]
+        let start := mkAppN (mkConst `Flapjack.Compiler.Backend.BviSem.BviState.mk)
+          #[c, ffi, xs[0]!, field `Flapjack.Compiler.Backend.BviSem.BviState.clock,
+            field `Flapjack.Compiler.Backend.BviSem.BviState.global,
+            field `Flapjack.Compiler.Backend.BviSem.BviState.compile,
+            field `Flapjack.Compiler.Backend.BviSem.BviState.compileOracle,
+            field `Flapjack.Compiler.Backend.BviSem.BviState.code,
+            field `Flapjack.Compiler.Backend.BviSem.BviState.ffi]
+        let length := mkApp2 (mkConst `List.length [Level.zero]) value xs[1]!
+        let shifted := mkApp2 (mkConst `Flapjack.Compiler.Backend.BviTmc.shiftBlock) length cb
+        let rewritten := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.workerAuxSource)
+          #[shifted, destArgs[0]!, xs[2]!, xs[3]!]
+        let appendInst := mkApp2 (mkConst `instHAppendOfAppend [Level.zero]) values
+          (mkApp (mkConst `List.instAppend [Level.zero]) value)
+        let environment := mkAppN (mkConst `HAppend.hAppend [Level.zero, Level.zero, Level.zero])
+          #[values, values, values, appendInst, xs[1]!, env2]
+        tmcExists rest resultType `r fun r afterResult =>
+          tmcExists afterResult state `s fun s afterState =>
+            tmcExists afterState map `auxMap fun g resultBody => do
+              let finalHole v := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.CallBlockEnvironment.allocHoleHasVal)
+                #[nat, value, f, refs s, xs[1]!, xs[2]!, xs[3]!, v]
+              tmcCallBlockOptimizedFrameProblems resultBody c ffi (program rewritten) environment start
+                target final result f xs[0]! xs[4]! s g r finalHole
+      unless auxiliaryProblems.isEmpty do return auxiliaryProblems
+      forallTelescope worker fun xs rest => do
+        let rewritten := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.workerBlockSource)
+          #[cb, destArgs[0]!, xs[1]!, xs[2]!]
+        tmcExists rest resultType `r fun r afterResult =>
+          tmcExists afterResult map `workMap fun g afterMap =>
+            tmcExists afterMap state `s fun s resultBody => do
+              let finalHole v := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.holeHasVal)
+                #[f, env1, env2, refs s, v]
+              tmcCallBlockOptimizedFrameProblems resultBody c ffi (program rewritten) env2 target
+                target final result f (refs target) xs[4]! s g r finalHole
+
 end Flapjack

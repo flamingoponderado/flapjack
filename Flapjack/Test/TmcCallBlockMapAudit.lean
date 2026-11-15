@@ -87,6 +87,128 @@ run_meta do
   unless wrapper.isEmpty do throwError "actual call-block wrapper branch rejected: {wrapper}"
   let entries ← tmcCallBlockWorkerEntryProblems info.type
   unless entries.isEmpty do throwError "actual auxiliary/worker entries rejected: {entries}"
+  let optimized ← tmcCallBlockOptimizedResultProblems info.type
+  unless optimized.isEmpty do throwError "actual optimized results rejected: {optimized}"
+  for binder in [`auxMap, `workMap] do
+    for (name, arity) in [
+        (`Flapjack.Compiler.Backend.BviTmc.ResultRelation.optResRel, 3),
+        (`Flapjack.Compiler.Backend.BviTmc.stateRel, 5),
+        (`Flapjack.HolFiniteMapExact.submap, 4),
+        (`Flapjack.Compiler.Backend.BviTmc.onlyFresh, 3),
+        (`Flapjack.Compiler.Backend.BviTmc.holesUnchangedExcept, 7),
+        (`Flapjack.Compiler.Backend.BviTmc.holesStillNotFinalised, 6),
+        (`Flapjack.Compiler.Backend.BviTmc.mutableBlockRel, 5)] do
+      let changed := info.type.replace fun expression =>
+        match expression with
+        | .lam n _ _ _ =>
+          if n == binder then
+            some (expression.replace fun term =>
+              if term.isAppOfArity name arity then some (mkConst ``True) else none)
+          else none
+        | _ => none
+      if changed == info.type then throwError "optimized result mutation did not apply: {binder}, {name}"
+      unless ← isDefEq (← inferType changed) (mkSort Level.zero) do
+        throwError "optimized result mutation is not well typed: {binder}, {name}"
+      unless (← tmcCallBlockWorkerEntryProblems changed).isEmpty do
+        throwError "result mutation unexpectedly changed branch entry: {binder}, {name}"
+      if (← tmcCallBlockOptimizedResultProblems changed).isEmpty then
+        throwError "optimized audit accepted a removed result clause: {binder}, {name}"
+    let noRun := info.type.replace fun expression =>
+      match expression with
+      | .lam n _ _ _ =>
+        if n == binder then
+          some (expression.replace fun term =>
+            if term.isAppOfArity ``Eq 3 &&
+                term.getAppArgs[1]!.isAppOfArity `Flapjack.Compiler.Backend.BviSem.evaluate 5 then
+              some (mkConst ``True)
+            else none)
+        else none
+      | _ => none
+    if noRun == info.type then throwError "optimized evaluation mutation did not apply: {binder}"
+    unless ← isDefEq (← inferType noRun) (mkSort Level.zero) do
+      throwError "optimized evaluation mutation is not well typed: {binder}"
+    unless (← tmcCallBlockWorkerEntryProblems noRun).isEmpty do
+      throwError "evaluation mutation unexpectedly changed branch entry: {binder}"
+    if (← tmcCallBlockOptimizedResultProblems noRun).isEmpty then
+      throwError "optimized audit accepted removed evaluation: {binder}"
+    let holeName := if binder == `auxMap then
+      `Flapjack.Compiler.Backend.BviTmc.CallBlockEnvironment.allocHoleHasVal
+      else `Flapjack.Compiler.Backend.BviTmc.holeHasVal
+    let holeArity := if binder == `auxMap then 8 else 5
+    let changedTail := info.type.replace fun expression =>
+      match expression with
+      | .lam n _ _ _ =>
+        if n == binder then
+          some (expression.replace fun term =>
+            if term.isAppOfArity holeName holeArity then some (mkConst ``True) else none)
+        else none
+      | _ => none
+    if changedTail == info.type then throwError "final hole mutation did not apply: {binder}"
+    unless ← isDefEq (← inferType changedTail) (mkSort Level.zero) do
+      throwError "final hole mutation is not well typed: {binder}"
+    unless (← tmcCallBlockWorkerEntryProblems changedTail).isEmpty do
+      throwError "final hole mutation unexpectedly changed entry: {binder}"
+    if (← tmcCallBlockOptimizedResultProblems changedTail).isEmpty then
+      throwError "optimized audit accepted a removed final hole: {binder}"
+    let wrongBaseline := info.type.replace fun expression =>
+      match expression with
+      | .lam n _ _ _ =>
+        if n == binder then
+          some (expression.replace fun term =>
+            if term.isAppOfArity `Flapjack.Compiler.Backend.BviTmc.mutableBlockRel 5 then
+              let a := term.getAppArgs
+              some (mkAppN term.getAppFn #[a[0]!, a[2]!, a[2]!, a[3]!, a[4]!])
+            else none)
+        else none
+      | _ => none
+    if wrongBaseline == info.type then throwError "heap baseline mutation did not apply: {binder}"
+    unless ← isDefEq (← inferType wrongBaseline) (mkSort Level.zero) do
+      throwError "heap baseline mutation is not well typed: {binder}"
+    unless (← tmcCallBlockWorkerEntryProblems wrongBaseline).isEmpty do
+      throwError "heap baseline mutation unexpectedly changed entry: {binder}"
+    if (← tmcCallBlockOptimizedResultProblems wrongBaseline).isEmpty then
+      throwError "optimized audit accepted a changed heap baseline: {binder}"
+    let sourceName := if binder == `auxMap then
+      `Flapjack.Compiler.Backend.BviTmc.workerAuxSource
+      else `Flapjack.Compiler.Backend.BviTmc.workerBlockSource
+    let wrongProgram := info.type.replace fun expression =>
+      match expression with
+      | .lam n _ _ _ =>
+        if n == binder then
+          some (expression.replace fun term =>
+            if term.isAppOfArity sourceName 4 then
+              some (mkApp (mkConst `Flapjack.Compiler.Backend.Bvi.Exp.var) (mkNatLit 0))
+            else none)
+        else none
+      | _ => none
+    if wrongProgram == info.type then throwError "program mutation did not apply: {binder}"
+    unless ← isDefEq (← inferType wrongProgram) (mkSort Level.zero) do
+      throwError "program mutation is not well typed: {binder}"
+    unless (← tmcCallBlockWorkerEntryProblems wrongProgram).isEmpty do
+      throwError "program mutation unexpectedly changed entry: {binder}"
+    if (← tmcCallBlockOptimizedResultProblems wrongProgram).isEmpty then
+      throwError "optimized audit accepted a changed program: {binder}"
+  for kind in [0, 1, 2] do
+    let changed := info.type.replace fun expression =>
+      match expression with
+      | .lam `auxMap _ _ _ =>
+        some (expression.replace fun term =>
+          if kind == 0 && term.isAppOfArity `Flapjack.Compiler.Backend.BviTmc.shiftBlock 2 then
+            some term.getAppArgs[1]!
+          else if kind == 1 && term.isAppOfArity `HAppend.hAppend 6 then
+            let a := term.getAppArgs
+            some (mkAppN term.getAppFn #[a[0]!, a[1]!, a[2]!, a[3]!, a[5]!, a[4]!])
+          else if kind == 2 && term.isAppOfArity `Flapjack.Compiler.Backend.BviSem.BviState.clock 3 then
+            some (mkNatLit 0)
+          else none)
+      | _ => none
+    if changed == info.type then throwError "auxiliary execution mutation did not apply: {kind}"
+    unless ← isDefEq (← inferType changed) (mkSort Level.zero) do
+      throwError "auxiliary execution mutation is not well typed: {kind}"
+    unless (← tmcCallBlockWorkerEntryProblems changed).isEmpty do
+      throwError "auxiliary execution mutation unexpectedly changed entry: {kind}"
+    if (← tmcCallBlockOptimizedResultProblems changed).isEmpty then
+      throwError "optimized audit accepted changed auxiliary execution: {kind}"
   for (binder, name, arity) in [
       (`refs, `Flapjack.Compiler.Backend.BviTmc.stateRefRel, 3),
       (`refs, `Flapjack.Compiler.Backend.BviTmc.CallBlockEnvironment.allocHoleHasVal, 8),
