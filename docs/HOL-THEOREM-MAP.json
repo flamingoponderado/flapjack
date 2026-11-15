@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "mb_rel_def", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/MutableBlockRelation.lean",
+  "lean_name": "mutableBlockRel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "old", "refs"],
+  "reviewer": "Source comparison: Compared mb_rel_def_typed in bvi_tmc_proof_source_probe.out: the Block/RefPtr clause tests the flag, pointer range and old heap domain, matches an unfinished mutable block, relates its side lists and recurses on the child after deleting the pointer. All other value-constructor combinations use the original value relation. All three maps use canonical finite support and same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "flookup_com_neq", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
   "lean_name": "flookupComNeq", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["m"],

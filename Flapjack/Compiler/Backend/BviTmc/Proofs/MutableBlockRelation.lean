@@ -41,10 +41,9 @@ theorem holFmapAsFiniteSupportParamWitness_mutableBlockRel_refs (refs : HolFinit
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
 /-- Relate a source value to an unfinished chain of target mutable blocks,
-removing each visited pointer to make cyclic structures fail.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_def" (fmap_as_finite_support_parameters := [f, old, refs])] -/
+removing each visited pointer to make cyclic structures fail. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "mb_rel_def"
+  (fmap_as_finite_support_parameters := [f, old, refs])]
 noncomputable def mutableBlockRel (f : HolFiniteMapExact Nat Nat) (old : HolFiniteMapExact Nat (Ref Value))
     (refs : HolFiniteMapExact Nat (Ref Value)) (source target : Value) : Prop := by
   classical
