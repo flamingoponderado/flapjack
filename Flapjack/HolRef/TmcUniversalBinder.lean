@@ -12,6 +12,118 @@ still require separate checks. -/
 namespace Flapjack
 open Lean Meta
 
+private inductive TmcMapBinderKind where
+  | universal | existential | other
+  deriving BEq, Repr
+
+private structure TmcMapBinder where
+  name : Name
+  kind : TmcMapBinderKind
+  positive : Option Bool
+  deriving BEq, Repr
+
+private def tmcIsRawLookup (expression : Expr) : MetaM Bool := do
+  let .forallE name domain body visibility := expression | return false
+  withLocalDecl name visibility domain fun localVar => do
+    let result ← whnf (body.instantiate1 localVar)
+    return result.isAppOfArity `Option 1
+
+-- Inspect carrier arguments after reducing aliases. Only data carriers are
+-- passed here; proof propositions are traversed separately with polarity.
+private partial def tmcContainsNestedMap (expression : Expr) (fuel : Nat) : MetaM Bool := do
+  if fuel == 0 then return true
+  let reduced ← whnf expression
+  if reduced.isAppOfArity `Flapjack.HolFiniteMapExact 2 then return true
+  if ← tmcIsRawLookup reduced then return true
+  match reduced with
+  | .forallE name domain body visibility =>
+    if ← tmcContainsNestedMap domain (fuel - 1) then return true
+    withLocalDecl name visibility domain fun localVar =>
+      tmcContainsNestedMap (body.instantiate1 localVar) (fuel - 1)
+  | .app function argument =>
+    if ← tmcContainsNestedMap function (fuel - 1) then return true
+    tmcContainsNestedMap argument (fuel - 1)
+  | .mdata _ body => tmcContainsNestedMap body (fuel - 1)
+  | .mvar _ => return true
+  | _ => return false
+
+private def tmcMapBinder (name : Name) (domain : Expr) (kind : TmcMapBinderKind)
+    (visibility : BinderInfo) (positive : Option Bool) : MetaM (Array TmcMapBinder × Array String) := do
+  let normal ← whnf domain
+  let canonical := mkApp2 (mkConst `Flapjack.HolFiniteMapExact) (mkConst `Nat) (mkConst `Nat)
+  if normal.isAppOfArity `Flapjack.HolFiniteMapExact 2 then
+    if domain != canonical || normal != canonical || visibility != .default then
+      return (#[], #[s!"map binder {name} has an aliased, noncanonical or hidden carrier"])
+    return (#[⟨name, kind, positive⟩], #[])
+  if (normal.find? (·.isConstOf `Flapjack.HolFiniteMapExact)).isSome then
+    return (#[], #[s!"map binder {name} is nested in an unsupported carrier"])
+  if ← tmcIsRawLookup normal then
+    return (#[], #[s!"map binder {name} uses a raw lookup function"])
+  unless ← isProp domain do
+    if ← tmcContainsNestedMap normal 64 then
+      return (#[], #[s!"map binder {name} is nested in an unsupported carrier"])
+  return (#[], #[])
+
+private partial def tmcMapInventoryVisit (expression : Expr) (positive : Option Bool) :
+    MetaM (Array TmcMapBinder × Array String) := do
+  match expression with
+  | .app (.app (.const ``Exists _) domain) (.lam name binderDomain body visibility) =>
+    unless domain == binderDomain do return (#[], #["existential binder domain changed"])
+    let (binderMaps, binderErrors) ← tmcMapBinder name domain .existential visibility positive
+    let (domainMaps, domainErrors) ← tmcMapInventoryVisit domain positive
+    withLocalDecl name visibility domain fun localVar => do
+      let (bodyMaps, bodyErrors) ← tmcMapInventoryVisit (body.instantiate1 localVar) positive
+      return (binderMaps ++ domainMaps ++ bodyMaps, binderErrors ++ domainErrors ++ bodyErrors)
+  | .forallE name domain body visibility =>
+    let (binderMaps, binderErrors) ← tmcMapBinder name domain .universal visibility positive
+    let domainPositive := if ← isProp domain then positive.map (!·) else positive
+    let (domainMaps, domainErrors) ← tmcMapInventoryVisit domain domainPositive
+    withLocalDecl name visibility domain fun localVar => do
+      let (bodyMaps, bodyErrors) ← tmcMapInventoryVisit (body.instantiate1 localVar) positive
+      return (binderMaps ++ domainMaps ++ bodyMaps, binderErrors ++ domainErrors ++ bodyErrors)
+  | .lam name domain body visibility =>
+    let (binderMaps, binderErrors) ← tmcMapBinder name domain .other visibility none
+    let (domainMaps, domainErrors) ← tmcMapInventoryVisit domain none
+    withLocalDecl name visibility domain fun localVar => do
+      let (bodyMaps, bodyErrors) ← tmcMapInventoryVisit (body.instantiate1 localVar) none
+      return (binderMaps ++ domainMaps ++ bodyMaps, binderErrors ++ domainErrors ++ bodyErrors)
+  | .letE name type value body _ =>
+    let (binderMaps, binderErrors) ← tmcMapBinder name type .other .default none
+    let (typeMaps, typeErrors) ← tmcMapInventoryVisit type none
+    let (valueMaps, valueErrors) ← tmcMapInventoryVisit value none
+    withLetDecl name type value fun localVar => do
+      let (bodyMaps, bodyErrors) ← tmcMapInventoryVisit (body.instantiate1 localVar) none
+      return (binderMaps ++ typeMaps ++ valueMaps ++ bodyMaps,
+        binderErrors ++ typeErrors ++ valueErrors ++ bodyErrors)
+  | .app (.app (.const ``And []) left) right
+  | .app (.app (.const ``Or []) left) right =>
+    let (leftMaps, leftErrors) ← tmcMapInventoryVisit left positive
+    let (rightMaps, rightErrors) ← tmcMapInventoryVisit right positive
+    return (leftMaps ++ rightMaps, leftErrors ++ rightErrors)
+  | .app (.const ``Not []) proposition =>
+    tmcMapInventoryVisit proposition (positive.map (!·))
+  | .app function argument =>
+    let (functionMaps, functionErrors) ← tmcMapInventoryVisit function none
+    let (argumentMaps, argumentErrors) ← tmcMapInventoryVisit argument none
+    return (functionMaps ++ argumentMaps, functionErrors ++ argumentErrors)
+  | .mdata _ body => tmcMapInventoryVisit body positive
+  | .proj _ _ body => tmcMapInventoryVisit body none
+  | .mvar _ => return (#[], #["map inventory cannot inspect metavariables"])
+  | _ => return (#[], #[])
+
+/-- Inventory the direct map binders in an opened TMC hypothesis body.
+This check does not establish the predicate's semantic shape or qualify a tag. -/
+def tmcHypothesisMapInventoryProblems (body : Expr) : MetaM (Array String) := do
+  let (found, errors) ← tmcMapInventoryVisit body (some true)
+  unless errors.isEmpty do return errors
+  let expected : Array TmcMapBinder := #[
+    ⟨`f, .universal, some true⟩,
+    ⟨`nextMap, .existential, some true⟩,
+    ⟨`wrapMap, .existential, some true⟩,
+    ⟨`workMap, .existential, some true⟩]
+  unless found == expected do return #[s!"unexpected finite-map binder inventory: {repr found}"]
+  return #[]
+
 private def tmcExists (expression domain : Expr) (name : Name)
     (next : Expr → Expr → MetaM (Array String)) : MetaM (Array String) := do
   let .app (.app (.const ``Exists [Level.succ Level.zero]) actualDomain) predicate := expression
@@ -197,7 +309,7 @@ def tmcHypothesisUniversalBinderProblems (type value : Expr) : MetaM (Array Stri
       unless binder.userName == outerNames[i]! && binder.binderInfo == visibility &&
           binder.type == outerTypes[i]! do
         return #[s!"outer binder {i} has the wrong name, visibility or carrier"]
-    forallTelescope body fun binders conclusion => do
+    let structureProblems ← forallTelescope body fun binders conclusion => do
       unless binders.size == 10 do
         return #["predicate body has the wrong universal telescope"]
       let map := binders[5]!
@@ -365,5 +477,7 @@ def tmcHypothesisUniversalBinderProblems (type value : Expr) : MetaM (Array Stri
                       return #[]
               unless wrapperProblems.isEmpty do return wrapperProblems
               tmcWorkerProblems worker c ffi xs env1 env2 target final result map binders[8]! args[0]! opt
+    unless structureProblems.isEmpty do return structureProblems
+    tmcHypothesisMapInventoryProblems body
 
 end Flapjack

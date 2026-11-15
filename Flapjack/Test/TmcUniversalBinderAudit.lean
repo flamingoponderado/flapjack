@@ -15,6 +15,97 @@ set_option linter.unusedVariables false
 private theorem alternativeExpInhabited : Nonempty Bvi.Exp := ⟨.var 0⟩
 private theorem alternativeValueInhabited : Nonempty Value := ⟨.number 0⟩
 
+private abbrev HiddenPointerMap := HolFiniteMapExact Nat Nat
+
+private def inventoryValid : Prop :=
+  ∀ (f : HolFiniteMapExact Nat Nat),
+    ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (wrapMap : HolFiniteMapExact Nat Nat),
+      ∃ (workMap : HolFiniteMapExact Nat Nat), True
+
+private def inventoryAliased : Prop :=
+  ∀ (f : HiddenPointerMap),
+    ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (wrapMap : HolFiniteMapExact Nat Nat),
+      ∃ (workMap : HolFiniteMapExact Nat Nat), True
+
+private def inventoryExtraNegative : Prop :=
+  (∀ (_extra : HolFiniteMapExact Nat Nat), True) → inventoryValid
+
+private def inventoryNegativeF : Prop :=
+  (∀ (f : HolFiniteMapExact Nat Nat), True) →
+    ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (wrapMap : HolFiniteMapExact Nat Nat),
+      ∃ (workMap : HolFiniteMapExact Nat Nat), True
+
+private def inventoryNegatedF : Prop :=
+  (¬ ∀ (f : HolFiniteMapExact Nat Nat), False) ∧
+    ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (wrapMap : HolFiniteMapExact Nat Nat),
+      ∃ (workMap : HolFiniteMapExact Nat Nat), True
+
+private def inventoryEqualityF : Prop :=
+  ((∀ (f : HolFiniteMapExact Nat Nat), True) = True) ∧
+    ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (wrapMap : HolFiniteMapExact Nat Nat),
+      ∃ (workMap : HolFiniteMapExact Nat Nat), True
+
+private def inventoryNegatedAll : Prop :=
+  ¬ ∀ (f : HolFiniteMapExact Nat Nat),
+    ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (wrapMap : HolFiniteMapExact Nat Nat),
+      ∃ (workMap : HolFiniteMapExact Nat Nat), True
+
+private def inventoryInertLet : Prop :=
+  let _ignored : Prop := ∀ (f : HolFiniteMapExact Nat Nat),
+    ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (wrapMap : HolFiniteMapExact Nat Nat),
+      ∃ (workMap : HolFiniteMapExact Nat Nat), True
+  True
+
+private def inventoryInertApplication : Prop :=
+  (fun _ : Prop => True) (∀ (f : HolFiniteMapExact Nat Nat),
+    ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (wrapMap : HolFiniteMapExact Nat Nat),
+      ∃ (workMap : HolFiniteMapExact Nat Nat), True)
+
+private def inventoryNested : Prop :=
+  ∀ (_extra : Option (HolFiniteMapExact Nat Nat)), inventoryValid
+
+private def inventoryNestedAlias : Prop :=
+  ∀ (_extra : Option HiddenPointerMap) (f : HolFiniteMapExact Nat Nat),
+    ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (wrapMap : HolFiniteMapExact Nat Nat),
+      ∃ (workMap : HolFiniteMapExact Nat Nat), True
+
+private def inventoryRaw : Prop :=
+  ∀ (_extra : Nat → Option Nat), inventoryValid
+
+private abbrev HiddenLookup := Nat → Option Nat
+private abbrev HiddenKey := Nat
+private abbrev HiddenOptional := Option Nat
+
+private def inventoryRawAliasedKey : Prop :=
+  ∀ (_extra : HiddenKey → Option Nat) (f : HolFiniteMapExact Nat Nat),
+    ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (wrapMap : HolFiniteMapExact Nat Nat),
+      ∃ (workMap : HolFiniteMapExact Nat Nat), True
+
+private def inventoryNestedRawAliasedKey : Prop :=
+  ∀ (_extra : Option (HiddenKey → Option Nat)) (f : HolFiniteMapExact Nat Nat),
+    ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (wrapMap : HolFiniteMapExact Nat Nat),
+      ∃ (workMap : HolFiniteMapExact Nat Nat), True
+
+private def inventoryRawAliasedResult : Prop :=
+  ∀ (_extra : Nat → HiddenOptional) (f : HolFiniteMapExact Nat Nat),
+    ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (wrapMap : HolFiniteMapExact Nat Nat),
+      ∃ (workMap : HolFiniteMapExact Nat Nat), True
+
+private def inventoryRawWrongKey : Prop :=
+  ∀ (_extra : Bool → Option Nat) (f : HolFiniteMapExact Nat Nat),
+    ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (wrapMap : HolFiniteMapExact Nat Nat),
+      ∃ (workMap : HolFiniteMapExact Nat Nat), True
+
+private def inventoryNestedRaw : Prop :=
+  ∀ (_extra : Option HiddenLookup) (f : HolFiniteMapExact Nat Nat),
+    ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (wrapMap : HolFiniteMapExact Nat Nat),
+      ∃ (workMap : HolFiniteMapExact Nat Nat), True
+
+private def inventoryShadowed : Prop :=
+  ∀ (f : HolFiniteMapExact Nat Nat), ∃ (nextMap : HolFiniteMapExact Nat Nat),
+    ∃ (wrapMap : HolFiniteMapExact Nat Nat), ∃ (workMap : HolFiniteMapExact Nat Nat),
+      ∃ (f : HolFiniteMapExact Nat Nat), True
+
 -- These are well-typed counterexamples, not mutations of an expression with
 -- potentially inconsistent applications after a binder type is changed.
 private def extraMapDomain {C F : Type} (xs : List Bvi.Exp)
@@ -94,6 +185,20 @@ private def mutateWorker (value : Expr) (rewrite : Expr → Option Expr) : MetaM
 run_meta do
   let .defnInfo info ← getConstInfo ``Flapjack.Compiler.Backend.BviTmc.Induction.hypothesis
     | throwError "missing TMC induction predicate"
+  lambdaTelescope info.value fun _ body => do
+    let inventory ← tmcHypothesisMapInventoryProblems body
+    unless inventory.isEmpty do throwError "actual predicate map inventory rejected: {inventory}"
+  let .defnInfo inventory ← getConstInfo ``inventoryValid | throwError "missing valid inventory fixture"
+  let validInventory ← tmcHypothesisMapInventoryProblems inventory.value
+  unless validInventory.isEmpty do throwError "valid map inventory rejected: {validInventory}"
+  for name in [``inventoryAliased, ``inventoryExtraNegative, ``inventoryNegativeF, ``inventoryNegatedF,
+      ``inventoryEqualityF, ``inventoryNegatedAll, ``inventoryInertLet, ``inventoryInertApplication,
+      ``inventoryNested, ``inventoryNestedAlias, ``inventoryRaw, ``inventoryNestedRaw,
+      ``inventoryRawAliasedKey, ``inventoryNestedRawAliasedKey, ``inventoryRawAliasedResult, ``inventoryRawWrongKey,
+      ``inventoryShadowed] do
+    let .defnInfo decoy ← getConstInfo name | throwError "missing inventory decoy {name}"
+    let problems ← tmcHypothesisMapInventoryProblems decoy.value
+    if problems.isEmpty then throwError "invalid map inventory accepted: {name}"
   let good ← tmcHypothesisUniversalBinderProblems info.type info.value
   unless good.isEmpty do throwError "actual predicate rejected: {good}"
   let alternativeWitness := info.value.replace fun e =>
