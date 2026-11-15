@@ -135707,6 +135707,24 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "bvi_to_cb_no_mutcons", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ExtractionSafety.lean",
+  "lean_name": "toBlock_safe", "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: Compared bvi_to_cb_no_mutcons_typed in bvi_tmc_proof_source_probe.out. Binder order, extraction result and safety conjunction, and safety of every extracted binding match the original."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "bvi_to_cb_aux_no_mutcons", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ExtractionSafety.lean",
+  "lean_name": "extractList_no_mutcons", "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: Compared bvi_to_cb_aux_no_mutcons_typed in bvi_tmc_proof_source_probe.out. The original sum carrier, binder order, extraction and safe-constructor conjunction, and safety of every extracted binding match."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "bvi_to_cb_aux_no_mutcons_lemma", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ExtractionSafety.lean",
+  "lean_name": "extract_no_mutcons_lemma", "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: Compared both conjuncts with bvi_to_cb_aux_no_mutcons_lemma_replay_typed, obtained by replaying the original local proof. The singleton and list clauses retain their respective extraction results, safe-constructor premises and binding conclusions."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "cons_append", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/CallBlockFrame.lean",
   "lean_name": "cons_append", "statement_status": "reviewed_exact",
   "reviewer": "Source comparison: Compared cons_append_typed in bvi_tmc_proof_source_probe.out: arbitrary element and list retain the original polymorphic cons equals singleton append equation."

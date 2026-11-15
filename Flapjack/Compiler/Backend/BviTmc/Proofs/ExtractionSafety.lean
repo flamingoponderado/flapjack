@@ -131,6 +131,37 @@ termination_by listBudget args
 decreasing_by all_goals simp_all only [listBudget]; omega
 end
 
+/-- Complete mutual safety theorem for call-block extraction. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "bvi_to_cb_aux_no_mutcons_lemma"]
+theorem extract_no_mutcons_lemma :
+    (∀ (n loc tag : Nat) (e : Bvi.Exp) (kind : Sum (List Nat) CallBlock) (bs : List Bvi.Exp),
+      extractOneSource n loc tag e = some (bs, kind) ∧
+        noMutcons (.op (.blockOp (.cons tag)) [e]) →
+      ∀ x ∈ bs, noMutcons x) ∧
+    (∀ (n loc tag : Nat) (args : List Bvi.Exp) (kind : Sum (List Nat) CallBlock) (bs : List Bvi.Exp),
+      extractListSource n loc tag args = some (bs, kind) ∧
+        noMutcons (.op (.blockOp (.cons tag)) args) →
+      ∀ x ∈ bs, noMutcons x) := by
+  constructor
+  · intro n loc tag e kind bs h
+    apply extractOne_safe n loc tag e bs kind h.1
+    have safe := h.2
+    rw [noMutcons.eq_def] at safe
+    exact safe.2 ⟨e, by simp⟩
+  · intro n loc tag args kind bs h
+    apply extractList_safe n loc tag args bs kind h.1
+    rw [noMutcons.eq_def] at h
+    exact fun x member => h.2.2 ⟨x, member⟩
+
+/-- Safe constructor arguments yield safe extracted bindings. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "bvi_to_cb_aux_no_mutcons"]
+theorem extractList_no_mutcons (n loc tag : Nat) (args : List Bvi.Exp)
+    (kind : Sum (List Nat) CallBlock) (bs : List Bvi.Exp)
+    (h : extractListSource n loc tag args = some (bs, kind) ∧
+      noMutcons (.op (.blockOp (.cons tag)) args)) :
+    ∀ x ∈ bs, noMutcons x := by
+  exact extract_no_mutcons_lemma.2 n loc tag args kind bs h
+
 mutual
 /-- Flapjack infrastructure: extraction from one expression produces a
 binding list whose structural weight is at most that expression's weight
@@ -241,12 +272,13 @@ termination_by listBudget args
 decreasing_by all_goals simp_all only [listBudget]; omega
 end
 
-/-- Flapjack infrastructure: successful top-level recursive-call extraction
-preserves the no-mutable-allocation property of every generated binding.
-The exact HOL theorem remains untagged pending its carrier review. -/
-theorem toBlock_safe (n loc : Nat) (e : Bvi.Exp) (bs : List Bvi.Exp) (cb : CallBlock)
-    (run : toBlockSource n loc e = some (bs, cb)) (safe : noMutcons e) :
+/-- Successful extraction from a safe expression produces only safe bindings. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "bvi_to_cb_no_mutcons"]
+theorem toBlock_safe (cb : CallBlock) (bs : List Bvi.Exp) (n loc : Nat) (e : Bvi.Exp)
+    (h : toBlockSource n loc e = some (bs, cb) ∧ noMutcons e) :
     ∀ x ∈ bs, noMutcons x := by
+  obtain ⟨run, safe⟩ := h
+  apply extractOne_safe n loc 0 e bs (.inr (.callBlock 0 [] cb [])) ?_ safe
   rcases toBlock_cases n loc e bs cb run with ⟨tag, args, left, child, right, rfl, rfl⟩ |
     ⟨ticks, args, vars, rfl, rfl⟩
   · simp only [toBlockSource] at run
@@ -258,23 +290,10 @@ theorem toBlock_safe (n loc : Nat) (e : Bvi.Exp) (bs : List Bvi.Exp) (cb : CallB
       | inl vs => simp [h] at run
       | inr block =>
         simp only [h, Option.some.injEq, Prod.mk.injEq] at run
-        obtain ⟨rfl, _⟩ := run
-        rw [noMutcons.eq_def] at safe
-        dsimp only at safe
-        exact extractList_safe n loc tag args bindings (.inr block) h (fun x member => safe.2 ⟨x, member⟩)
-  · simp only [toBlockSource, callToBlockSource] at run
-    split at run
-    next =>
-      cases h : bind 0 args with
-      | mk indices last =>
-        simp only [h, Option.some.injEq, Prod.mk.injEq] at run
-        obtain ⟨eq, _⟩ := run
-        subst bs
-        rw [noMutcons.eq_def] at safe
-        dsimp only at safe
-        intro x member
-        exact safe.1 ⟨x, member⟩
-    next => simp at run
+        obtain ⟨rfl, rfl⟩ := run
+        simp [extractOneSource, h]
+  · simp only [toBlockSource] at run
+    simp only [extractOneSource, run, Option.map_some]
 
 /-- Flapjack infrastructure: top-level extraction strictly decreases the BVI
 structural weight. Source review is required before tagging the HOL theorem. -/
@@ -325,7 +344,7 @@ theorem evaluate_extracted_from_structural_induction {C F : Type} (loc : Nat) (c
   have bindingsIH : ∀ r mid, BviSem.evaluate bindings env1 source = (r, mid) →
       r ≠ .err (.abort .typeError) → ListSimulation.Core bindings env2 f target r mid :=
     listIH bindings (toBlock_weight env1.length loc e bindings cb extracted)
-      (toBlock_safe env1.length loc e bindings cb extracted safe)
+      (toBlock_safe cb bindings env1.length loc e ⟨extracted, safe⟩)
   exact ClockHypothesis.evaluate_extracted_from_smaller_clock loc cb e bindings source target env1 env2 opt f
     result final run extracted notTypeError environments bindingsIH clockIH
 

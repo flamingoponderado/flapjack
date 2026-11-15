@@ -421,6 +421,41 @@ val _ = show "rw_block_args_typed" bvi_tmcProofTheory.rw_block_args;
 val _ = show "shift_cb_suc_typed" bvi_tmcProofTheory.shift_cb_suc;
 val _ = show "evaluate_cb_typed" bvi_tmcProofTheory.evaluate_cb;
 val _ = show "evaluate_pres_opt_code_typed" bvi_tmcProofTheory.evaluate_pres_opt_code;
+open bvi_tmcTheory closLangTheory;
+val bvi_to_cb_aux_no_mutcons_lemma_replay = Q.prove (
+`
+  (∀n loc tag exp cb bs.
+     bvi_to_cb_aux_sing n loc tag exp = SOME (bs,cb) ∧
+     no_mutcons (Op (BlockOp (Cons tag)) [exp]) ⇒
+     EVERY (λx. no_mutcons x) bs) ∧
+  (∀n loc tag args cb bs.
+     bvi_to_cb_aux n loc tag args = SOME (bs,cb) ∧
+     no_mutcons (Op (BlockOp (Cons tag)) args) ⇒
+     EVERY (λx. no_mutcons x) bs)`,
+  ho_match_mp_tac bvi_to_cb_aux_ind
+  >> rw []
+  (* Call *)
+  >- gvs [bvi_to_cb_aux_def, call_to_cb_def, AllCaseEqs ()]
+  (* Op *)
+  >-
+   (Cases_on ‘op’ >> gvs [bvi_to_cb_aux_def, dest_Cons_def, AllCaseEqs ()]
+    >> Cases_on ‘b’ >> gvs [bvi_to_cb_aux_def, dest_Cons_def, AllCaseEqs ()])
+  (* remaining single expressions, [] and [exp] *)
+  >- gvs [bvi_to_cb_aux_def]
+  >- gvs [bvi_to_cb_aux_def]
+  >- gvs [bvi_to_cb_aux_def]
+  >- gvs [bvi_to_cb_aux_def]
+  >- gvs [bvi_to_cb_aux_def]
+  >- gvs [bvi_to_cb_aux_def]
+  >- gvs [bvi_to_cb_aux_def]
+  >- gvs [bvi_to_cb_aux_def]
+  >- gvs [bvi_to_cb_aux_def]
+  >- gvs [bvi_to_cb_aux_def]
+  (* cons *)
+  >> gvs [bvi_to_cb_aux_def, AllCaseEqs ()]);
+val _ = show "bvi_to_cb_aux_no_mutcons_lemma_replay_typed" bvi_to_cb_aux_no_mutcons_lemma_replay;
+val _ = show "bvi_to_cb_no_mutcons_typed" bvi_tmcProofTheory.bvi_to_cb_no_mutcons;
+val _ = show "bvi_to_cb_aux_no_mutcons_typed" bvi_tmcProofTheory.bvi_to_cb_aux_no_mutcons;
 val _ = show "hole_has_val_submap_typed" bvi_tmcProofTheory.hole_has_val_submap;
 val _ = show "holes_unchanged_except_trans_typed" bvi_tmcProofTheory.holes_unchanged_except_trans;
 val _ = show "holes_still_not_finalised_trans_typed" bvi_tmcProofTheory.holes_still_not_finalised_trans;
