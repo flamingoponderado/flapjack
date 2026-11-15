@@ -13,16 +13,16 @@ theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
       (∀ s : BviState C F, BviState.ofBroad s.toBroad = s) :=
   BviSem.holFmapAsFiniteSupportWitness
 
-/-- A final FFI error is identical for related argument values and states.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_err_rel" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
+/-- A final FFI error is identical for related argument values and states. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_app_op_err_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f])]
 theorem doApp_op_err_rel {C F : Type} (name : Basis.Pure.MlString.MlString)
     (values relatedValues : List Value) (source : BviState (Nat × C) F) (target : BviState C F)
     (f : HolFiniteMapExact Nat Nat) (outcome : HolFinalEvent)
-    (run : BviSem.doApp (.ffi name) values source = .err (.abort (.ffiError outcome)))
-    (statesRelated : stateRel f source target) (valuesRelated : List.Forall₂ (valueRel f) values relatedValues) :
+    (h : BviSem.doApp (.ffi name) values source = .err (.abort (.ffiError outcome)) ∧
+      stateRel f source target ∧ List.Forall₂ (valueRel f) values relatedValues) :
     BviSem.doApp (.ffi name) relatedValues target = .err (.abort (.ffiError outcome)) := by
+  obtain ⟨run, statesRelated, valuesRelated⟩ := h
   rw [BviTailrec.doApp_ffi_effect] at run ⊢
   cases values with
   | nil => simp [BviTailrec.ffiEffect] at run

@@ -135699,6 +135699,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "do_app_op_err_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/OperationError.lean",
+  "lean_name": "doApp_op_err_rel", "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BviState.refs", "f"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared do_app_op_err_rel_typed in bvi_tmc_proof_source_probe.out: the complete source terminal FFI error, full state relation and pairwise value relation jointly imply the identical target terminal error. The BviState reference field and pointer map use canonical finite support with a same-module carrier witness. Primitive dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "dest_thunk_not_thunk_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ThunkRelation.lean",
   "lean_name": "destThunk_notThunk_rel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["refs", "target", "f"],

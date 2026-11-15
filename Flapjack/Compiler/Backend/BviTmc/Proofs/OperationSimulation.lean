@@ -55,7 +55,7 @@ theorem evaluate_op_core {C F : Type} (op : ClosLang.Op) (args : List Bvi.Exp)
           rcases classification with bad | ⟨name, outcome, rfl, rfl⟩
           · exact False.elim (notTypeError (congrArg _ bad))
           · have targetApp := doApp_op_err_rel name values.reverse values'.reverse final middleTarget g outcome
-              appRun middleStates reversed
+              ⟨appRun, middleStates, reversed⟩
             refine ⟨middleTarget, g, .err (.abort (.ffiError outcome)), ?_, ?_, middleStates,
               extension, fresh, unchanged, still⟩
             · rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetRun]
