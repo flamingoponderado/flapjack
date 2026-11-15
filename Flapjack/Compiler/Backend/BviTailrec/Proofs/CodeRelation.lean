@@ -10,6 +10,7 @@ namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi BvlSem
 
 /-- Relation between an original code tree and its transformed code tree. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "code_rel_def"]
 def codeRel (source target : Spt (Nat × Bvi.Exp)) : Prop :=
   ∀ loc arity body op, sptLookup loc source = some (arity, body) →
     (checkExpOriginal loc arity body = none → sptLookup loc target = some (arity, body)) ∧

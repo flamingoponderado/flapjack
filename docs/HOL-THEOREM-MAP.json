@@ -24142,6 +24142,12 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "code_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "codeRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared code_rel_def_typed in bvi_tailrec_semantics_probe.out: both code carriers are Spt trees of arity and BVI expression pairs; the universal lookup premise, both check_exp branches, existential worker label, universally quantified wrapper and worker, conditional compile_exp equation and both target lookups match the original in order. checkExpOriginal and compileExpSource are the reviewed source definitions."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "state_rel_const",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "stateRel_const",
     "statement_status": "reviewed_fmap_as_finite_support",

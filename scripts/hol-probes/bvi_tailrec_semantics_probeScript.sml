@@ -13,3 +13,4 @@ val _ = show_thm "state_rel_def_typed=" bvi_tailrecProofTheory.state_rel_def;
 val _ = show_thm "state_rel_const_typed=" bvi_tailrecProofTheory.state_rel_const;
 val _ = show_thm "state_rel_with_clock_typed=" bvi_tailrecProofTheory.state_rel_with_clock;
 val _ = show_thm "state_rel_code_rel_typed=" bvi_tailrecProofTheory.state_rel_code_rel;
+val _ = show_thm "code_rel_def_typed=" bvi_tailrecProofTheory.code_rel_def;
