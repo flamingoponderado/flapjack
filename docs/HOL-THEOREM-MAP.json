@@ -86266,14 +86266,6 @@
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.2.37) against the statement captured with types by pan_globals_localised_probe: !ps. localised_prog (nested_seq ps) <=> EVERY localised_prog ps, as Bool equality with List.all."
   },
   {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
-    "lean_name": "shapeValLocalised",
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "localised_exp_shape_val",
-    "statement_status": "documented_mismatch",
-    "reviewer": "PR1213 review repair: untagged supporting conjunct only, not the complete cited HOL theorem. Full conjunction is separately tagged in the counterpart module."
-  },
-  {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopNames.lean",
     "lean_name": "allDistinctCompileTopHOL",
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",

@@ -984,6 +984,25 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertNotEqual(record["statement_status"], "documented_mismatch")
         self.assertIn(key, MAP["tagged_declarations"]())
 
+    def test_shape_val_localised_conjunct_is_retired(self):
+        # The standalone first conjunct is gone; HOL localised_exp_shape_val is
+        # mapped by the tagged two-conjunct localisedExpShapeValHOL.
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        self.assertNotIn(
+            ("Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
+             "shapeValLocalised"),
+            inventory,
+        )
+        key = ("Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
+               "localisedExpShapeValHOL")
+        record = inventory[key]
+        self.assertEqual(record["hol_name"], "localised_exp_shape_val")
+        self.assertNotEqual(record["statement_status"], "documented_mismatch")
+        self.assertIn(key, MAP["tagged_declarations"]())
+
     def test_stack_size_eq2_mismatch_is_retired(self):
         # The unused width-specialized stack_size_eq2 analogue is gone; HOL
         # stack_size_eq2 has no exact Lean port (independent frame types), and
