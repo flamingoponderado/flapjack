@@ -28,13 +28,21 @@ private def falseClockGuard {C F : Type} (xs : List Bvi.Exp)
     (opt : Bool) (f : HolFiniteMapExact Nat Nat) (target : BviState C F)
     (env2 : List Value) (loc : Nat), f = f → ∃ _n : Nat, f = f
 
+private def fakeSimulation {C F : Type} (xs : List Bvi.Exp)
+    (source : BviState (Nat × C) F) (clock : Nat) : Prop :=
+  source.clock < clock →
+  ∀ (env1 : List Value) (result : BviResult) (final : BviState (Nat × C) F)
+    (opt : Bool) (f : HolFiniteMapExact Nat Nat) (target : BviState C F)
+    (env2 : List Value) (loc : Nat), f = f → ∃ _n : Nat, f = f
+
 run_meta do
   let .defnInfo info ← getConstInfo ``Flapjack.Compiler.Backend.BviTmc.Induction.hypothesis
     | throwError "missing TMC induction predicate"
   let good ← tmcHypothesisUniversalBinderProblems info.type info.value
   unless good.isEmpty do throwError "actual predicate rejected: {good}"
   for (name, message) in [(``extraMapDomain, "universal binder 1 has the wrong name, visibility or carrier"),
-      (``falseClockGuard, "clock guard or simulation premise has the wrong shape")] do
+      (``falseClockGuard, "clock guard or simulation premise has the wrong shape"),
+      (``fakeSimulation, "simulation premise must contain the six original conjuncts")] do
     let .defnInfo decoy ← getConstInfo name | throwError "missing decoy {name}"
     unless ← isDefEq info.type decoy.type do throwError "decoy {name} has the wrong outer signature"
     let problems ← tmcHypothesisUniversalBinderProblems decoy.type decoy.value
@@ -58,7 +66,26 @@ run_meta do
     | _ => none
   let noConclusion := info.value.replace fun e =>
     if e.isAppOfArity ``Exists 2 then some (mkConst ``True) else none
+  let noSourceRun := info.value.replace fun e =>
+    if e.isAppOfArity ``Eq 3 &&
+        (e.getAppArgs[1]!).isAppOfArity ``BviSem.evaluate 5 then some (mkConst ``True) else none
+  let noEnvRelation := info.value.replace fun e =>
+    if e.isAppOfArity ``Flapjack.Compiler.Backend.BviTmc.envRel 4 then some (mkConst ``True) else none
+  let noSafeExpressions := info.value.replace fun e =>
+    if e.isAppOfArity ``Flapjack.Compiler.Backend.BviTmc.noMutcons 1 then some (mkConst ``True) else none
+  let noStateRelation := info.value.replace fun e =>
+    if e.isAppOfArity ``Flapjack.Compiler.Backend.BviTmc.stateRel 5 then some (mkConst ``True) else none
+  let noSingleton := info.value.replace fun e =>
+    if e.isAppOfArity ``Eq 3 && (e.getAppArgs[1]!).isAppOfArity ``List.length 2 then
+      some (mkConst ``True) else none
+  let noTypeSafety := info.value.replace fun e =>
+    if e.isAppOfArity ``Ne 3 then some (mkConst ``True) else none
   for (label, bad) in [("hidden map", hidden), ("renamed map", renamed), ("wrong map carrier", wrongCarrier),
-      ("missing simulation conclusion", noConclusion)] do
+      ("missing simulation conclusion", noConclusion), ("missing source run", noSourceRun),
+      ("missing environment relation", noEnvRelation), ("missing expression safety", noSafeExpressions),
+      ("missing state relation", noStateRelation), ("missing singleton bound", noSingleton),
+      ("missing type safety", noTypeSafety)] do
+    if label != "hidden map" && label != "renamed map" && bad == info.value then
+      throwError "mutation did not apply: {label}"
     let problems ← tmcHypothesisUniversalBinderProblems info.type bad
     if problems.isEmpty then throwError "invalid predicate accepted: {label}"

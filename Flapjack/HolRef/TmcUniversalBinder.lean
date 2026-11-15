@@ -12,9 +12,9 @@ still require separate checks. -/
 namespace Flapjack
 open Lean Meta
 
-/-- Check the elaborated TMC induction predicate's outer and universal
-telescopes, their carriers and the clock guard. The caller must independently
-validate the whole simulation premise and conclusion. -/
+/-- Check the elaborated TMC induction predicate's telescopes, clock guard
+and simulation premise. The caller must independently validate the entire
+conclusion, map scopes, codec and declaration ownership. -/
 def tmcHypothesisUniversalBinderProblems (type value : Expr) : MetaM (Array String) := do
   unless ← isDefEq (← inferType value) type do
     return #["predicate body has the wrong declaration type"]
@@ -63,6 +63,65 @@ def tmcHypothesisUniversalBinderProblems (type value : Expr) : MetaM (Array Stri
       unless guard.binderInfo == .default && premise.binderInfo == .default &&
           guard.type == expectedGuard && (← isProp premise.type) do
         return #["clock guard or simulation premise has the wrong shape"]
+      let mut clauses := #[]
+      let mut remainder := premise.type
+      for _ in [:5] do
+        match remainder with
+        | .app (.app (.const ``And []) first) rest =>
+          clauses := clauses.push first
+          remainder := rest
+        | _ => return #["simulation premise must contain the six original conjuncts"]
+      clauses := clauses.push remainder
+      let env1 := binders[1]!
+      let result := binders[2]!
+      let final := binders[3]!
+      let opt := binders[4]!
+      let target := binders[6]!
+      let env2 := binders[7]!
+      let xs := parameters[2]!
+      let source := parameters[3]!
+      let resultType := mkConst `Flapjack.Compiler.Backend.BviSem.BviResult
+      let evaluation := mkAppN (mkConst `Flapjack.Compiler.Backend.BviSem.evaluate)
+        #[pair, ffi, xs, env1, source]
+      let output := mkAppN (mkConst `Prod.mk [Level.zero, Level.zero])
+        #[resultType, state pair, result, final]
+      let expectedEvaluation := mkApp3 (mkConst ``Eq [Level.succ Level.zero])
+        (mkApp2 (mkConst `Flapjack.Compiler.Backend.BviSem.EvalResult) pair ffi) evaluation output
+      let expectedEnv := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.envRel) #[opt, map, env1, env2]
+      let expectedStates := mkAppN (mkConst `Flapjack.Compiler.Backend.BviTmc.stateRel)
+        #[c, ffi, map, source, target]
+      unless clauses[0]! == expectedEvaluation && clauses[1]! == expectedEnv &&
+          clauses[3]! == expectedStates do
+        return #["simulation evaluation, environment or state relation changed"]
+      let allSafe ← forallTelescope clauses[2]! fun args conclusion => do
+        unless args.size == 2 do return false
+        let expression ← args[0]!.fvarId!.getDecl
+        let membership ← args[1]!.fvarId!.getDecl
+        let exp := mkConst `Flapjack.Compiler.Backend.Bvi.Exp
+        let expectedMember := mkAppN (mkConst `Membership.mem [Level.zero, Level.zero])
+          #[exp, expressions, mkApp (mkConst `List.instMembership [Level.zero]) exp, xs, args[0]!]
+        return expression.binderInfo == .default && expression.type == exp &&
+          membership.binderInfo == .default && membership.type == expectedMember &&
+          conclusion == mkApp (mkConst `Flapjack.Compiler.Backend.BviTmc.noMutcons) args[0]!
+      unless allSafe do return #["no-mutcons premise changed"]
+      let singleton ← forallTelescope clauses[4]! fun args conclusion => do
+        unless args.size == 1 do return false
+        let assumption ← args[0]!.fvarId!.getDecl
+        let eqBool := mkApp3 (mkConst ``Eq [Level.succ Level.zero]) (mkConst `Bool) opt (mkConst `Bool.true)
+        let length := mkApp2 (mkConst `List.length [Level.zero])
+          (mkConst `Flapjack.Compiler.Backend.Bvi.Exp) xs
+        let oneLiteral := Expr.lit (.natVal 1)
+        let one := mkAppN (mkConst `OfNat.ofNat [Level.zero])
+          #[nat, oneLiteral, mkApp (mkConst `instOfNatNat) oneLiteral]
+        let lengthEq := mkApp3 (mkConst ``Eq [Level.succ Level.zero]) nat length one
+        return assumption.binderInfo == .default && assumption.type == eqBool && conclusion == lengthEq
+      unless singleton do return #["optimized singleton premise changed"]
+      let errorType := mkConst `Flapjack.Compiler.Backend.BviSem.ExnOrRet
+      let abort := mkApp2 (mkConst `Flapjack.SemanticPrimitivesHOL.ErrorResult.abort)
+        errorType (mkConst `Flapjack.SemanticPrimitivesHOL.Abort.typeError)
+      let typeError := mkApp3 (mkConst `Flapjack.SemanticPrimitivesHOL.Result.err) values errorType abort
+      let safe := mkApp3 (mkConst ``Ne [Level.succ Level.zero]) resultType result typeError
+      unless clauses[5]! == safe do return #["source type-error premise changed"]
       unless (premise.type.find? (· == map)).isSome && (conclusion.find? (· == map)).isSome do
         return #["universal f must occur in both the premise and conclusion"]
       unless conclusion.isAppOfArity ``Exists 2 do
