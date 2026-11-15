@@ -233,14 +233,35 @@ theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_refl_f {α β : Type} 
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_refl_refs {β γ : Type} (refs : HolFiniteMapExact β (Ref γ)) :
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
-/-- A heap trivially preserves its own mutable holes.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_refl" (fmap_as_finite_support_parameters := [f, refs])] -/
+/-- A heap trivially preserves its own mutable holes. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_refl"
+  (fmap_as_finite_support_parameters := [f, refs])]
 theorem holesUnchanged_refl {α β γ : Type} (f : HolFiniteMapExact α β)
     (refs : HolFiniteMapExact β (Ref γ)) (changed : Set β) : holesUnchangedExcept f refs refs changed := by
   intro ptr tag finalised left child right ⟨_, found⟩
   exact ⟨finalised, child, found, fun _ => rfl⟩
+
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_submap_f {α β : Type}
+    (f : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_submap_g {α β : Type}
+    (g : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup g) g.finiteSupport = g := by cases g; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_submap_refs {β γ : Type}
+    (refs : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_submap_refsNew {β γ : Type}
+    (refsNew : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
+
+/-- Extending the pointer map preserves the unchanged-hole invariant. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_submap"
+  (fmap_as_finite_support_parameters := [f, g, refs, refsNew])]
+theorem holesUnchanged_submap {α β γ : Type} (f : HolFiniteMapExact α β) (g : HolFiniteMapExact α β)
+    (refs : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ)) (changed : Set β)
+    (h : holesUnchangedExcept f refs refsNew changed ∧ f.submap g) :
+    holesUnchangedExcept g refs refsNew changed := by
+  intro ptr tag finalised left child right ⟨outside, found⟩
+  apply h.1 ptr tag finalised left child right
+  refine ⟨?_, found⟩
+  rintro ⟨key, mapped⟩
+  exact outside ⟨key, h.2 key ptr mapped⟩
 
 theorem holFmapAsFiniteSupportParamWitness_holesStill_refl_f {α β : Type} (f : HolFiniteMapExact α β) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
