@@ -135699,6 +135699,15 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "evaluate_rewrite_tmc", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/Induction.lean",
+  "lean_name": "evaluate_rewrite_tmc", "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+  "fmap_as_finite_support_relation": ["BviState.refs", "f"],
+  "fmap_as_finite_support_existentials": ["nextMap", "wrapMap", "workMap"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared evaluate_rewrite_tmc_typed in bvi_tmc_proof_source_probe.out, including the original generated-size measure and ordered premise conjunction, source and target state carriers, complete result, state, freshness and hole relations, and nested wrapper and worker conclusions with their quantifier and existential order. The state reference field, input map f and existential maps nextMap, wrapMap and workMap use canonical finite support with same-module roundtrip witnesses. Evaluator dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "WF_I_I", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/Induction.lean",
   "lean_name": "wfII", "statement_status": "reviewed_exact",
   "reviewer": "Source comparison: Replayed the original local statement and proof with types in bvi_tmc_proof_source_probe.out. Both measures are the natural-number identity; HOL LEX and Lean Prod.Lex order ordinary natural pairs by the first component and then the second, so both state well-foundedness of the same relation."

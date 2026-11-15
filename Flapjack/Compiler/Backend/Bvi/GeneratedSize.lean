@@ -1,5 +1,9 @@
-import Flapjack.Compiler.Backend.Bvi.Syntax
-import Flapjack.Compiler.Backend.ClosLang.GeneratedSize
+module
+
+public import Flapjack.Compiler.Backend.Bvi.Syntax
+public import Flapjack.Compiler.Backend.ClosLang.GeneratedSize
+
+@[expose] public section
 
 /-! HOL-generated sizes for BVI expressions and expression lists. -/
 namespace Flapjack.Compiler.Backend.Bvi
