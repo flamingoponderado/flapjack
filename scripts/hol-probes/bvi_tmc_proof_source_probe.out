@@ -27,6 +27,7 @@ only_fresh_submap_typed=∀(f :num |-> num) (f' :num |-> num) (f'' :num |-> num)
 non_fresh_not_in_frange_typed=(ptr :num) ∈ FDOM (refs_old :num |-> v ref) ∧ ptr ∉ FRANGE (f :num |-> num) ∧ only_fresh f (f' :num |-> num) refs_old ⇒ ptr ∉ FRANGE f'
 fresh_ptr_fresh_typed=∀(refs :num |-> α). (LEAST(ptr :num). ptr ∉ FDOM refs) ∉ FDOM refs
 fresh_not_in_range_f_typed=∀(f :num |-> num) (s_refs :num |-> v ref) (t_refs :num |-> v ref). state_ref_rel f s_refs t_refs ⇒ (LEAST(ptr :num). ptr ∉ FDOM t_refs) ∉ FRANGE f
+only_fresh_del_typed=∀(f :num |-> num) (f' :num |-> num) (refs :num |-> v ref) (ptr :num) (v :v ref). only_fresh f f' refs⟨ptr ↦ v⟩ ∧ ptr ∉ FRANGE f ⇒ only_fresh f f' refs
 hole_has_val_submap_typed=∀(f :num |-> num) (f' :num |-> num) (env1 :v list) (env2 :v list) (refs :num |-> v ref) (c :v). hole_has_val f' env1 env2 refs c ∧ f ⊑ f' ⇒ hole_has_val f env1 env2 refs c
 holes_unchanged_except_trans_typed=∀(f :num |-> num) (f' :num |-> num) (refs :num |-> v ref) (refs' :num |-> v ref) (refs'' :num |-> v ref) (changed :num -> bool). holes_unchanged_except f refs refs' changed ∧ holes_unchanged_except f' refs' refs'' changed ∧ only_fresh f f' refs ∧ f ⊑ f' ⇒ holes_unchanged_except f refs refs'' changed
 holes_still_not_finalised_trans_typed=∀(f :num |-> num) (f' :num |-> num) (refs :num |-> v ref) (refs' :num |-> v ref) (refs'' :num |-> v ref) (changed :α). holes_still_not_finalised f refs refs' ∧ holes_still_not_finalised f' refs' refs'' ∧ only_fresh f f' refs ∧ f ⊑ f' ⇒ holes_still_not_finalised f refs refs''

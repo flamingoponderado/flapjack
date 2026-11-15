@@ -379,14 +379,29 @@ theorem holesUnchanged_delete_fresh {α β γ δ : Type} (f : HolFiniteMapExact 
       ptr ∉ refs.domain) : holesUnchangedExcept f refs refsNew ∅ := by
   simpa using holesUnchanged_delete f refs refsNew {ptr} ptr value h
 
-/-- Flapjack infrastructure: a freshness relation over an extended heap also
-holds over the original heap. The HOL theorem `only_fresh_del` still needs a
-full carrier review. -/
+/-- Flapjack infrastructure: freshness over an updated heap implies freshness
+over the original heap, without needing a range condition on the updated key.
+This stronger fact supports the original theorem and existing frame proofs. -/
 theorem onlyFresh_delete_frame (f g : HolFiniteMapExact Nat Nat)
     (refs : HolFiniteMapExact Nat (Ref Value)) (ptr : Nat) (value : Ref Value)
     (fresh : onlyFresh f g (refs.updateEq (ptr, value))) : onlyFresh f g refs := by
   intro key newKey present
   exact fresh key newKey (BvlProps.refs_update_mono refs _ key _ present)
+
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_delete_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_delete_g (g : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup g) g.finiteSupport = g := by cases g; rfl
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_delete_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+
+/-- Freshness of an updated heap entails freshness of the original heap. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "only_fresh_del"
+  (fmap_as_finite_support_parameters := [f, g, refs])]
+theorem onlyFresh_delete (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
+    (refs : HolFiniteMapExact Nat (Ref Value)) (ptr : Nat) (value : Ref Value)
+    (h : onlyFresh f g (refs.updateEq (ptr, value)) ∧ ptr ∉ mapRange f) : onlyFresh f g refs := by
+  exact onlyFresh_delete_frame f g refs ptr value h.1
 
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_filled_f {α β : Type}
     (f : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl

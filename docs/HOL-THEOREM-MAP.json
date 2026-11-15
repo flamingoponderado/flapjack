@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "only_fresh_del", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "onlyFresh_delete", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "g", "refs"],
+  "reviewer": "Source comparison: Compared only_fresh_del_typed in bvi_tmc_proof_source_probe.out: freshness for the heap updated at ptr and exclusion of ptr from the original pointer-map range conjunctively imply freshness for the original heap. All original types, update value, and binder order are retained; the maps use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "fresh_not_in_range_f", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
   "lean_name": "fresh_not_in_range", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "source", "target"],
