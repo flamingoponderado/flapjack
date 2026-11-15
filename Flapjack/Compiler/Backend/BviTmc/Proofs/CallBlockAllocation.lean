@@ -115,10 +115,9 @@ theorem wrapper_frame_invariants (f g : HolFiniteMapExact Nat Nat)
     congr 1
     exact Subsingleton.elim _ _
   refine ⟨onlyFresh_delete_frame f g refs _ _ fresh, ?_, ?_⟩
-  · have relation := holesUnchanged_delete_fresh f refs nextRefs (leastUnusedRef refs)
+  · have relation := holesUnchanged_delete_fresh f refs nextRefs () (leastUnusedRef refs)
       (.mutBlock tag false left child right)
-    apply relation ?_ (by
-      simp [HolFiniteMapExact.domain, leastUnusedRef_unused])
+    apply relation ⟨?_, by simp [HolFiniteMapExact.domain, leastUnusedRef_unused]⟩
     simpa only [sameUpdate] using unchanged
   · apply holesStill_delete f refs nextRefs (leastUnusedRef refs) tag left child right
     simpa only [sameUpdate] using unfinalised

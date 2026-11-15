@@ -330,15 +330,24 @@ theorem holesStill_delete {α β γ : Type} (f : HolFiniteMapExact α β)
     exact ⟨oldTag, oldLeft, oldChild, oldRight,
       by simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using lookup⟩
 
-/-- Flapjack infrastructure for removing a freshly allocated wrapper frame
-from the initial heap of an unchanged-hole relation. The HOL theorem
-`holes_unchanged_except_del_SING` still needs a full carrier review. -/
-theorem holesUnchanged_delete_fresh {α β γ : Type} (f : HolFiniteMapExact α β)
-    (refs refsNew : HolFiniteMapExact β (Ref γ)) (ptr : β) (value : Ref γ)
-    (related : holesUnchangedExcept f
-      (@HolFiniteMapExact.updateEq β (Ref γ) (Classical.decEq β) refs (ptr, value)) refsNew {ptr})
-    (fresh : ptr ∉ refs.domain) : holesUnchangedExcept f refs refsNew ∅ := by
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_delete_f {α β : Type}
+    (f : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_delete_refs {β γ : Type}
+    (refs : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_delete_refsNew {β γ : Type}
+    (refsNew : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
+
+/-- Removing a fresh source update removes that location from the changed set. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_del"
+  (fmap_as_finite_support_parameters := [f, refs, refsNew])]
+theorem holesUnchanged_delete {α β γ : Type} (f : HolFiniteMapExact α β)
+    (refs : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ))
+    (changed : Set β) (ptr : β) (value : Ref γ)
+    (h : holesUnchangedExcept f
+      (@HolFiniteMapExact.updateEq β (Ref γ) (Classical.decEq β) refs (ptr, value)) refsNew changed ∧
+      ptr ∉ refs.domain) : holesUnchangedExcept f refs refsNew (changed \ {ptr}) := by
   classical
+  obtain ⟨related, fresh⟩ := h
   intro key tag finalised left child right ⟨outside, found⟩
   have different : key ≠ ptr := by
     intro same
@@ -349,7 +358,27 @@ theorem holesUnchanged_delete_fresh {α β γ : Type} (f : HolFiniteMapExact α 
       some (.mutBlock tag finalised left child right) := by
     simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found
   obtain ⟨fin, childNew, result, unchanged⟩ := related key tag finalised left child right ⟨outside, updated⟩
-  exact ⟨fin, childNew, result, fun _ => unchanged (by simpa using different)⟩
+  refine ⟨fin, childNew, result, fun absent => unchanged ?_⟩
+  intro member
+  exact absent ⟨member, by simpa using different⟩
+
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_delete_fresh_f {α β : Type}
+    (f : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_delete_fresh_refs {β γ : Type}
+    (refs : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_delete_fresh_refsNew {β γ : Type}
+    (refsNew : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
+
+/-- The singleton changed-set case of removing a fresh source update. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_del_SING"
+  (fmap_as_finite_support_parameters := [f, refs, refsNew])]
+theorem holesUnchanged_delete_fresh {α β γ δ : Type} (f : HolFiniteMapExact α β)
+    (refs : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ))
+    (_changed : δ) (ptr : β) (value : Ref γ)
+    (h : holesUnchangedExcept f
+      (@HolFiniteMapExact.updateEq β (Ref γ) (Classical.decEq β) refs (ptr, value)) refsNew {ptr} ∧
+      ptr ∉ refs.domain) : holesUnchangedExcept f refs refsNew ∅ := by
+  simpa using holesUnchanged_delete f refs refsNew {ptr} ptr value h
 
 /-- Flapjack infrastructure: a freshness relation over an extended heap also
 holds over the original heap. The HOL theorem `only_fresh_del` still needs a

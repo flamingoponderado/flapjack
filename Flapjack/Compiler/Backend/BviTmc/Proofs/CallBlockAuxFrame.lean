@@ -101,10 +101,10 @@ theorem linked_frame_return_invariants (f g : HolFiniteMapExact Nat Nat)
     simp [first, HolFiniteMapExact.domain, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL,
       Ne.symm different, leastUnusedRef_unused]
   have reducedUnchanged : holesUnchangedExcept f first nextRefs ∅ := by
-    have h := holesUnchanged_delete_fresh f first nextRefs (leastUnusedRef refs)
+    have h := holesUnchanged_delete_fresh f first nextRefs () (leastUnusedRef refs)
       (.mutBlock newTag false newLeft (.number 0) newRight)
     rw [sameDec] at h
-    exact h unchanged newFresh
+    exact h ⟨unchanged, newFresh⟩
   have reducedStill : holesStillNotFinalised f first nextRefs := by
     have h := holesStill_delete f first nextRefs (leastUnusedRef refs) newTag newLeft (.number 0) newRight
     rw [sameDec] at h

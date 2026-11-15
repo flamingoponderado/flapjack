@@ -135699,6 +135699,20 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "holes_unchanged_except_del", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "holesUnchanged_delete", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "refs", "refsNew"],
+  "reviewer": "Source comparison: Compared holes_unchanged_except_del_typed in bvi_tmc_proof_source_probe.out: the original updated-source invariant and source-domain freshness conjunction implies the relation with the updated key removed from the arbitrary changed set. The map-key, pointer and reference-value types remain independent; named maps use canonical finite support and same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "holes_unchanged_except_del_SING", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "holesUnchanged_delete_fresh", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "refs", "refsNew"],
+  "reviewer": "Source comparison: Compared holes_unchanged_except_del_SING_typed in bvi_tmc_proof_source_probe.out: the original singleton changed-set premise and source freshness imply the empty-set relation, retaining the independent unused changed parameter. The map-key, pointer and reference-value types remain independent; named maps use canonical finite support and same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "holes_unchanged_except_subset", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
   "lean_name": "holesUnchanged_subset", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "refs", "refsNew"],
