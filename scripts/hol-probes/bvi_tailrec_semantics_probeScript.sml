@@ -105,3 +105,13 @@ val _ = show_thm "op_eq_simp_typed=" bvi_tailrecProofTheory.op_eq_simp;
 val _ = show_thm "scan_expr_not_Noop_typed=" bvi_tailrecProofTheory.scan_expr_not_Noop;
 val _ = show_thm "scan_expr_EVERY_SING_typed=" bvi_tailrecProofTheory.scan_expr_EVERY_SING;
 val _ = show_thm "env_rel_def_typed=" bvi_tailrecProofTheory.env_rel_def;
+val more_free_names_replay = Q.prove
+  (`free_names n name ⇒ free_names (n + bvl_to_bvi_namespaces) name`,
+   fs [bvi_tailrecProofTheory.free_names_def] \\ rpt strip_tac
+   \\ first_x_assum (qspec_then `k + 1` mp_tac) \\ strip_tac \\ rw []);
+val _ = show_thm "more_free_names_replay_typed=" more_free_names_replay;
+val is_free_name_replay = Q.prove
+  (`free_names n name ⇒ n ≠ name`,
+   fs [bvi_tailrecProofTheory.free_names_def] \\ strip_tac
+   \\ first_x_assum (qspec_then `0` mp_tac) \\ strip_tac \\ rw []);
+val _ = show_thm "is_free_name_replay_typed=" is_free_name_replay;

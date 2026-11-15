@@ -67,3 +67,5 @@ op_eq_simp_typed=(op_eq Plus (x :bvi$exp) ⇔ ∃(xs :bvi$exp list). x = (Op (In
 scan_expr_not_Noop_typed=∀(exp :bvi$exp) (ts :v_ty list) (loc :num) (tt :v_ty list) (ty :v_ty) (r :bool) (ok :α) (op :assoc_op). scan_expr ts loc [exp] = [(tt,ty,r,SOME op)] ⇒ op ≠ Noop
 scan_expr_EVERY_SING_typed=EVERY (P :v_ty list # v_ty # bool # assoc_op option -> bool) (scan_expr (ts :v_ty list) (loc :num) [(x :bvi$exp)]) ⇔ P (HD (scan_expr ts loc [x]))
 env_rel_def_typed=∀(ty :v_ty) (opt :bool) (acc :num) (env1 :v list) (env2 :v list). env_rel ty opt acc env1 env2 ⇔ env1 ≼ env2 ∧ (opt ⇒ LENGTH env1 = acc ∧ LENGTH env2 > acc ∧ case ty of Int => ∃(k :int). env2❲acc❳ = (Number k :v) | List => ∃(ys :v list). v_to_list env2❲acc❳ = SOME ys | Any => F)
+more_free_names_replay_typed=free_names (n :num) (name :num) ⇒ free_names (n + bvl_to_bvi_namespaces) name
+is_free_name_replay_typed=free_names (n :num) (name :num) ⇒ n ≠ name

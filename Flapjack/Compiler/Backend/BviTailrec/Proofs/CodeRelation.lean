@@ -339,7 +339,14 @@ theorem freeNames_advance (next name steps : Nat) (free : freeNames next name) :
   apply free (steps + k)
   simpa [Nat.mul_add, Nat.add_assoc] using eq
 
-/-- The current worker label itself is not free. -/
+/-- A free name remains free after advancing by one worker namespace. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "more_free_names"]
+theorem freeNames_advance_one (next name : Nat) (free : freeNames next name) :
+    freeNames (next + Flapjack.bvlToBviNamespaces) name := by
+  simpa using freeNames_advance next name 1 free
+
+/-- A free name differs from the current worker label. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "is_free_name"]
 theorem freeNames_ne_current (next name : Nat) (free : freeNames next name) : next ≠ name := by
   simpa using free 0
 

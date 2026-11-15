@@ -24245,6 +24245,16 @@
     "reviewer": "Compared compile_prog_MEM_typed in bvi_tailrec_semantics_probe.out: arbitrary enabled flag, compilation pair and output-label membership retain both complete original-label and fresh-interval alternatives with the same namespace-stride witness."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "more_free_names",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "freeNames_advance_one", "statement_status": "reviewed_exact",
+    "reviewer": "Compared more_free_names_replay_typed in bvi_tailrec_semantics_probe.out, replaying the original local HOL proof: an arbitrary free name remains free after one namespace increment. The general multi-step helper remains live infrastructure."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "is_free_name",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "freeNames_ne_current", "statement_status": "reviewed_exact",
+    "reviewer": "Compared is_free_name_replay_typed in bvi_tailrec_semantics_probe.out, replaying the original local HOL proof: the initial namespace location differs from every free name."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "env_rel_def",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/Semantics.lean", "lean_name": "envRel", "statement_status": "reviewed_exact",
     "reviewer": "Compared env_rel_def_typed in bvi_tailrec_semantics_probe.out: prefix, optimization guard, both length conditions and all type-specific branches match. Under the original index bound the optional lookup and its value witness are equivalent to HOL EL; no out-of-range equivalence or additional premise is assumed."
