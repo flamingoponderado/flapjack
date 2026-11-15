@@ -403,6 +403,23 @@ theorem onlyFresh_delete (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact 
     (h : onlyFresh f g (refs.updateEq (ptr, value)) ∧ ptr ∉ mapRange f) : onlyFresh f g refs := by
   exact onlyFresh_delete_frame f g refs ptr value h.1
 
+theorem holFmapAsFiniteSupportParamWitness_flookupComNeq_m {α β : Type}
+    (m : HolFiniteMapExact α β) :
+    mapofBroad (maptoBroadlookup m) m.finiteSupport = m := by cases m; rfl
+
+open Classical in
+/-- Updates at distinct keys commute on the canonical finite-map carrier. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "flookup_com_neq"
+  (fmap_as_finite_support_parameters := [m])]
+theorem flookupComNeq {α β : Type} (m : HolFiniteMapExact α β)
+    (k1 : α) (v1 : β) (k2 : α) (v2 : β) (different : k1 ≠ k2) :
+    (m.updateEq (k1, v1)).updateEq (k2, v2) =
+      (m.updateEq (k2, v2)).updateEq (k1, v1) := by
+  cases m with
+  | mk lookup support =>
+    simp only [HolFiniteMapExact.updateEq, HolFiniteMapExact.mk.injEq]
+    exact FUPDATE_HOL_comm lookup k1 v1 k2 v2 different
+
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_filled_f {α β : Type}
     (f : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_filled_refsOld {β γ : Type}

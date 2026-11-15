@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "flookup_com_neq", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "flookupComNeq", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["m"],
+  "reviewer": "Source comparison: Compared flookup_com_neq_typed in bvi_tmc_proof_source_probe.out: updates of a map at two distinct keys commute, retaining independent arbitrary key and value types, original binder order and inequality. Updates use HOL equality with local classical decidability; the map uses canonical finite support and a same-module witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "only_fresh_del", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
   "lean_name": "onlyFresh_delete", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "g", "refs"],
