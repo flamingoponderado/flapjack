@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "state_rel_alloc", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/Allocation.lean",
+  "lean_name": "stateRel_alloc", "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": ["BviState.refs", "f"],
+  "reviewer": "Source comparison: Compared state_rel_alloc_typed in bvi_tmc_proof_source_probe.out: the original state relation and four allocation facts conjunctively imply the six original lookup, state, submap, freshness and hole-invariant conclusions. Source and target compiler payloads retain the original Nat-product relationship and FFI type is shared. Named state and pointer maps use canonical finite support with the same-module state witness."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "state_ref_rel_alloc", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
   "lean_name": "stateRefRel_alloc", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "source", "target"],

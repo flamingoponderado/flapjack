@@ -538,12 +538,7 @@ theorem doApp_op_rel_ref {C F : Type} (f : HolFiniteMapExact Nat Nat)
   let tgt := leastUnusedRef target.refs
   have srcFresh : src ∉ source.refs.domain := by simp [HolFiniteMapExact.domain, src, leastUnusedRef_unused]
   have tgtFresh : tgt ∉ target.refs.domain := by simp [HolFiniteMapExact.domain, tgt, leastUnusedRef_unused]
-  have rangeFresh : tgt ∉ mapRange f := by
-    rintro ⟨key, mapped⟩
-    obtain ⟨_, _, _, found, _⟩ := stateRefRel_lookup f key tgt source.refs target.refs mapped statesRelated.1
-    have absent : target.refs.lookup tgt = none := by simpa [HolFiniteMapExact.domain] using tgtFresh
-    rw [absent] at found
-    contradiction
+  have rangeFresh : tgt ∉ mapRange f := fresh_not_in_range f source.refs target.refs statesRelated.1
   have srcMissing : f.lookup src = none := by
     have absent : src ∉ f.domain := by rw [statesRelated.1.1]; exact srcFresh
     simpa [HolFiniteMapExact.domain] using absent
@@ -558,7 +553,7 @@ theorem doApp_op_rel_ref {C F : Type} (f : HolFiniteMapExact Nat Nat)
   have cells : refRel (f.updateEq (src, tgt)) (.valueArray values) (.valueArray relatedValues) :=
     .valueArray _ _ (listRel_submap f _ values relatedValues ⟨valuesRelated, extension⟩)
   have ⟨mapped, nextStates, submap, fresh, holes, unfinalised⟩ :=
-    stateRel_alloc f source target src tgt _ _ statesRelated srcFresh tgtFresh rangeFresh cells
+    stateRel_alloc f source target src tgt _ _ ⟨statesRelated, srcFresh, tgtFresh, rangeFresh, cells⟩
   simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
     BviSem.toBvl, BviSem.fromBvl] at run
   obtain ⟨rfl, rfl⟩ := run
@@ -585,12 +580,7 @@ private theorem allocate_related {C F : Type} (f : HolFiniteMapExact Nat Nat)
   let tgt := leastUnusedRef target.refs
   have srcFresh : src ∉ source.refs.domain := by simp [HolFiniteMapExact.domain, src, leastUnusedRef_unused]
   have tgtFresh : tgt ∉ target.refs.domain := by simp [HolFiniteMapExact.domain, tgt, leastUnusedRef_unused]
-  have rangeFresh : tgt ∉ mapRange f := by
-    rintro ⟨key, mapped⟩
-    obtain ⟨_, _, _, found, _⟩ := stateRefRel_lookup f key tgt source.refs target.refs mapped states.1
-    have absent : target.refs.lookup tgt = none := by simpa [HolFiniteMapExact.domain] using tgtFresh
-    rw [absent] at found
-    contradiction
+  have rangeFresh : tgt ∉ mapRange f := fresh_not_in_range f source.refs target.refs states.1
   have srcMissing : f.lookup src = none := by
     have absent : src ∉ f.domain := by rw [states.1.1]; exact srcFresh
     simpa [HolFiniteMapExact.domain] using absent
@@ -602,8 +592,8 @@ private theorem allocate_related {C F : Type} (f : HolFiniteMapExact Nat Nat)
       rw [srcMissing] at found
       contradiction
     simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found
-  exact stateRel_alloc f source target src tgt v w states srcFresh tgtFresh rangeFresh
-    (refRel_submap f _ v w ⟨cells, extension⟩)
+  exact stateRel_alloc f source target src tgt v w
+    ⟨states, srcFresh, tgtFresh, rangeFresh, refRel_submap f _ v w ⟨cells, extension⟩⟩
 
 private theorem replicate_related (f : HolFiniteMapExact Nat Nat) (count : Nat) (v w : Value)
     (related : valueRel f v w) : List.Forall₂ (valueRel f) (List.replicate count v) (List.replicate count w) := by
