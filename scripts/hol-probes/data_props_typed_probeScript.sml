@@ -75,4 +75,6 @@ val _ = emit "initial_state_simp_typed" "initial_state_simp";
 val _ = emit "initial_state_with_simp_typed" "initial_state_with_simp";
 val _ = emit "with_same_locals_typed" "with_same_locals";
 val _ = emit "do_stack_const_typed" "do_stack_const";
+val _ = emit "Seq_Skip_typed" "Seq_Skip";
+val _ = emit "do_space_alt_typed" "do_space_alt";
 val _ = emit "Boolv_11_typed" "Boolv_11";

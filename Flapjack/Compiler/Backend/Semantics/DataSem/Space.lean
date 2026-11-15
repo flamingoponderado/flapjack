@@ -60,4 +60,48 @@ noncomputable def doSpace {C F : Type} (op : ClosLang.Op) (values : List Value)
     let required := DataSpace.opSpaceReq op values.length
     if required = 0 then some state else consumeSpace required state
 
+/-- The source's post-reset heap-space safety test. HOL renders it as the
+`Overload do_space_safe` (`dataSemScript.sml:405`), which is not a database
+declaration, so this definition carries no `@[hol]` tag. -/
+noncomputable def doSpaceSafe {C F : Type} (op : ClosLang.Op) (values : List Value)
+    (state : State C F) : Bool :=
+  if DataLang.opSpaceReset op then
+    state.safeForSpace && decide (noThunksInRefs state.refs ∧
+      sizeOfHeapArgs values state + spaceConsumed state op values ≤ state.limits.heapLimit)
+  else state.safeForSpace
+
+/-- The source's post-reset peak-heap estimate. HOL renders it as the
+`Overload do_space_peak` (`dataSemScript.sml:414`), so this definition carries
+no `@[hol]` tag. -/
+noncomputable def doSpacePeak {C F : Type} (op : ClosLang.Op) (values : List Value)
+    (state : State C F) : Nat :=
+  if DataLang.opSpaceReset op then
+    max state.peakHeapLength (sizeOfHeapArgs values state + spaceConsumed state op values)
+  else state.peakHeapLength
+
+/-- A zero space requirement is always satisfied, so consuming it is inert. -/
+theorem consumeSpace_zero {C F : Type} (state : State C F) :
+    consumeSpace 0 state = some state := by
+  simp [consumeSpace]
+
+/-- Exact HOL `do_space_alt` (`dataPropsScript.sml:443`): the reset branch is the
+`do_space_safe`/`do_space_peak` pair, and the other branch consumes the
+requirement, which includes the zero requirement (`consume_space 0 s = SOME s`). -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_space_alt"]
+theorem doSpaceAlt {C F : Type} (op : ClosLang.Op) (values : List Value) (state : State C F) :
+    doSpace op values state =
+      if DataLang.opSpaceReset op then
+        some { state with
+          space := 0
+          safeForSpace := doSpaceSafe op values state
+          peakHeapLength := doSpacePeak op values state }
+      else consumeSpace (DataSpace.opSpaceReq op values.length) state := by
+  simp only [doSpace, doSpaceSafe, doSpacePeak]
+  split
+  · rfl
+  · split
+    · rename_i hreq
+      rw [hreq, consumeSpace_zero]
+    · rfl
+
 end Flapjack.Compiler.Backend.DataSem

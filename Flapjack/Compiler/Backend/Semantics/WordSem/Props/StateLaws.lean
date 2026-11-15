@@ -1,5 +1,6 @@
 module
 
+public import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Env
 public import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackEq
 public import Mathlib.Data.List.Forall2
@@ -356,5 +357,189 @@ theorem stackSizeSomeAtLeastOne {width : Nat} [NeZero width] :
         simp only [wordSemOptionAdd, Option.some.injEq] at h
         have hb := ih b hs
         omega
+
+
+/-- Exact HOL `dec_stack_stack_size_some_not_none` (`wordPropsScript.sml:3948`):
+    refilling a stack whose size is known leaves a known size. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml"
+  "dec_stack_stack_size_some_not_none" (words_as_type_indexed_bitvec)]
+theorem decStackStackSizeSomeNotNone {width : Nat} [NeZero width] :
+    ∀ (xs : List (WordLocW width)) (stk stk' : List (WordSemStackFrame width)) (x : Nat),
+      wordSemDecStack xs stk = some stk' → wordSemStackSize stk = some x →
+        wordSemStackSize stk' ≠ none := by
+  intro xs stk
+  induction stk generalizing xs with
+  | nil =>
+    intro stk' x h1 h2
+    cases xs with
+    | nil =>
+      simp [wordSemDecStack] at h1
+      subst h1
+      simp [wordSemStackSize]
+    | cons _ _ => simp [wordSemDecStack] at h1
+  | cons fr rest ih =>
+    intro stk' x h1 h2
+    cases fr with
+    | stackFrame n l0 l handler =>
+      simp only [wordSemDecStack] at h1
+      change wordSemOptionAdd (wordSemStackSizeFrame (.stackFrame n l0 l handler))
+        (wordSemStackSize rest) = some x at h2
+      rcases hf : wordSemStackSizeFrame (.stackFrame n l0 l handler) with _ | a
+      · rw [hf] at h2
+        simp [wordSemOptionAdd] at h2
+      · rcases hr : wordSemStackSize rest with _ | b
+        · rw [hf, hr] at h2
+          simp [wordSemOptionAdd] at h2
+        · by_cases hlt : xs.length < l.length
+          · simp only [hlt, if_true] at h1
+            simp at h1
+          · simp only [hlt, if_false] at h1
+            cases hstep : wordSemDecStack (xs.drop l.length) rest with
+            | none =>
+              rw [hstep] at h1
+              simp at h1
+            | some s =>
+              rw [hstep] at h1
+              simp only [Option.some.injEq] at h1
+              rw [← h1]
+              have ihs : wordSemStackSize s ≠ none :=
+                ih (xs.drop l.length) s b hstep hr
+              have hf' : wordSemStackSizeFrame
+                  (.stackFrame n l0 ((l.map Prod.fst).zip (xs.take l.length)) handler) =
+                  some a := by
+                cases handler with
+                | none => simpa [wordSemStackSizeFrame] using hf
+                | some h => simpa [wordSemStackSizeFrame] using hf
+              change wordSemOptionAdd (wordSemStackSizeFrame
+                (.stackFrame n l0 ((l.map Prod.fst).zip (xs.take l.length)) handler))
+                (wordSemStackSize s) ≠ none
+              rw [hf']
+              rcases hs : wordSemStackSize s with _ | c
+              · exact absurd hs ihs
+              · simp [wordSemOptionAdd]
+
+/-- Exact HOL `dec_stack_stack_size_not_none_not_none`
+    (`wordPropsScript.sml:3959`): an unknown stack size stays unknown. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml"
+  "dec_stack_stack_size_not_none_not_none" (words_as_type_indexed_bitvec)]
+theorem decStackStackSizeNotNoneNotNone {width : Nat} [NeZero width] :
+    ∀ (xs : List (WordLocW width)) (stk stk' : List (WordSemStackFrame width)),
+      wordSemDecStack xs stk = some stk' → wordSemStackSize stk ≠ none →
+        wordSemStackSize stk' ≠ none := by
+  intro xs stk
+  induction stk generalizing xs with
+  | nil =>
+    intro stk' h1 h2
+    cases xs with
+    | nil =>
+      simp [wordSemDecStack] at h1
+      subst h1
+      simp [wordSemStackSize]
+    | cons _ _ => simp [wordSemDecStack] at h1
+  | cons fr rest ih =>
+    intro stk' h1 h2
+    cases fr with
+    | stackFrame n l0 l handler =>
+      simp only [wordSemDecStack] at h1
+      change wordSemOptionAdd (wordSemStackSizeFrame (.stackFrame n l0 l handler))
+        (wordSemStackSize rest) ≠ none at h2
+      rcases hf : wordSemStackSizeFrame (.stackFrame n l0 l handler) with _ | a
+      · rw [hf] at h2
+        simp [wordSemOptionAdd] at h2
+      · have hr : wordSemStackSize rest ≠ none := by
+          intro hr0
+          rw [hf, hr0] at h2
+          simp [wordSemOptionAdd] at h2
+        by_cases hlt : xs.length < l.length
+        · simp only [hlt, if_true] at h1
+          simp at h1
+        · simp only [hlt, if_false] at h1
+          cases hstep : wordSemDecStack (xs.drop l.length) rest with
+          | none =>
+            rw [hstep] at h1
+            simp at h1
+          | some s =>
+            rw [hstep] at h1
+            simp only [Option.some.injEq] at h1
+            rw [← h1]
+            have ihs : wordSemStackSize s ≠ none := ih (xs.drop l.length) s hstep hr
+            have hf' : wordSemStackSizeFrame
+                (.stackFrame n l0 ((l.map Prod.fst).zip (xs.take l.length)) handler) =
+                some a := by
+              cases handler with
+              | none => simpa [wordSemStackSizeFrame] using hf
+              | some h => simpa [wordSemStackSizeFrame] using hf
+            change wordSemOptionAdd (wordSemStackSizeFrame
+              (.stackFrame n l0 ((l.map Prod.fst).zip (xs.take l.length)) handler))
+              (wordSemStackSize s) ≠ none
+            rw [hf']
+            rcases hs : wordSemStackSize s with _ | c
+            · exact absurd hs ihs
+            · simp [wordSemOptionAdd]
+
+/-- Exact HOL `dec_stack_stack_size_some_leq` (`wordPropsScript.sml:3970`):
+    refilling never grows the stack size. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml"
+  "dec_stack_stack_size_some_leq" (words_as_type_indexed_bitvec)]
+theorem decStackStackSizeSomeLeq {width : Nat} [NeZero width] :
+    ∀ (xs : List (WordLocW width)) (stk stk' : List (WordSemStackFrame width))
+      (x y : Nat),
+      wordSemDecStack xs stk = some stk' → wordSemStackSize stk = some x →
+        wordSemStackSize stk' = some y → y ≤ x := by
+  intro xs stk
+  induction stk generalizing xs with
+  | nil =>
+    intro stk' x y h1 h2 h3
+    cases xs with
+    | nil =>
+      simp [wordSemDecStack] at h1
+      subst h1
+      simp [wordSemStackSize] at h2 h3
+      omega
+    | cons _ _ => simp [wordSemDecStack] at h1
+  | cons fr rest ih =>
+    intro stk' x y h1 h2 h3
+    cases fr with
+    | stackFrame n l0 l handler =>
+      simp only [wordSemDecStack] at h1
+      change wordSemOptionAdd (wordSemStackSizeFrame (.stackFrame n l0 l handler))
+        (wordSemStackSize rest) = some x at h2
+      rcases hf : wordSemStackSizeFrame (.stackFrame n l0 l handler) with _ | a
+      · rw [hf] at h2
+        simp [wordSemOptionAdd] at h2
+      · rcases hr : wordSemStackSize rest with _ | b
+        · rw [hf, hr] at h2
+          simp [wordSemOptionAdd] at h2
+        · rw [hf, hr] at h2
+          simp only [wordSemOptionAdd, Option.some.injEq] at h2
+          by_cases hlt : xs.length < l.length
+          · simp only [hlt, if_true] at h1
+            simp at h1
+          · simp only [hlt, if_false] at h1
+            cases hstep : wordSemDecStack (xs.drop l.length) rest with
+            | none =>
+              rw [hstep] at h1
+              simp at h1
+            | some s =>
+              rw [hstep] at h1
+              simp only [Option.some.injEq] at h1
+              rw [← h1] at h3
+              have hf' : wordSemStackSizeFrame
+                  (.stackFrame n l0 ((l.map Prod.fst).zip (xs.take l.length)) handler) =
+                  some a := by
+                cases handler with
+                | none => simpa [wordSemStackSizeFrame] using hf
+                | some h => simpa [wordSemStackSizeFrame] using hf
+              change wordSemOptionAdd (wordSemStackSizeFrame
+                (.stackFrame n l0 ((l.map Prod.fst).zip (xs.take l.length)) handler))
+                (wordSemStackSize s) = some y at h3
+              rw [hf'] at h3
+              rcases hs : wordSemStackSize s with _ | c
+              · rw [hs] at h3
+                simp [wordSemOptionAdd] at h3
+              · rw [hs] at h3
+                simp only [wordSemOptionAdd, Option.some.injEq] at h3
+                have ihs := ih (xs.drop l.length) s b c hstep hr hs
+                omega
 
 end Flapjack

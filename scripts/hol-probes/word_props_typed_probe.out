@@ -155,4 +155,7 @@ with_locals_same_clock_typed=(s :(α, β, γ) state) with <|locals := (l :α wor
 word_cmp_Word_Word_typed=(word_cmp (cmp :cmp) (Word (c :α word)) (Word (c' :α word)) :bool option) = SOME (word_cmp cmp c c' :bool)
 push_env_dec_clock_stack_typed=(push_env (y :α word_loc sptree$num_map # α word_loc sptree$num_map) (opt :(num # α prog # num # num) option) (dec_clock (t :(α, β, γ) state))).stack_max = (push_env y opt t).stack_max ∧ (push_env y opt (dec_clock t)).stack = (push_env y opt t).stack
 OPTION_MAP2_ADD_0_typed=OPTION_MAP2 $+ (m :num option) (SOME (0 :num)) = m ∧ OPTION_MAP2 $+ (SOME (0 :num)) m = m
+dec_stack_stack_size_some_not_none_typed=∀(xs :α word_loc list) (stk :α stack_frame list) (stk' :α stack_frame list) (x :num). dec_stack xs stk = SOME stk' ∧ stack_size stk = SOME x ⇒ stack_size stk' ≠ (NONE :num option)
+dec_stack_stack_size_not_none_not_none_typed=∀(xs :α word_loc list) (stk :α stack_frame list) (stk' :α stack_frame list). dec_stack xs stk = SOME stk' ∧ stack_size stk ≠ (NONE :num option) ⇒ stack_size stk' ≠ (NONE :num option)
+dec_stack_stack_size_some_leq_typed=∀(xs :α word_loc list) (stk :α stack_frame list) (stk' :α stack_frame list) (x :num) (y :num). dec_stack xs stk = SOME stk' ∧ stack_size stk = SOME x ∧ stack_size stk' = SOME y ⇒ y ≤ x
 stack_size_some_at_least_one_typed=∀(stk :α stack_frame list) (sz :num). stack_size stk = SOME sz ⇒ (1 :num) ≤ sz
