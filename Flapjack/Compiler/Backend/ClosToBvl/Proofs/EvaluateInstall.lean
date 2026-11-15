@@ -58,7 +58,7 @@ theorem evaluatePost_install_success {C F : Type}
   | val targetValues =>
     have valuesRel : List.Forall₂ (vRel sArgs.maxApp fArgs tArgs.refs tArgs.code)
         values.reverse targetValues.reverse := by
-      simpa [resultRel, maxApp] using reverse_related related
+      simpa [resultRel, maxApp] using List.rel_reverse related
     obtain ⟨auxiliary, start, body, extra, finalResult, tFinal, fFinal,
       targetInstall, found, bodyTargetRun, resultRelated, finalStates, map2, refs2,
       finalAnnotations, finalClocks⟩ :=
@@ -114,7 +114,7 @@ theorem evaluatePost_install_timeout {C F : Type}
   | val targetValues =>
     have valuesRel : List.Forall₂ (vRel sArgs.maxApp fArgs tArgs.refs tArgs.code)
         values.reverse targetValues.reverse := by
-      simpa [resultRel, maxApp] using reverse_related related
+      simpa [resultRel, maxApp] using List.rel_reverse related
     obtain ⟨sourceBytes, sourceWords, bytes, words, config, expressions, auxiliary, nextConfig,
       valuesEq, bytesRun, wordsRun, sourceHead, compiledBytes, sourceNext, nonempty, _, _, nextEq, resultEq⟩ :=
         install_source_inv sArgs sFinal values.reverse (.err (.abort .timeoutError)) installRun (by simp)

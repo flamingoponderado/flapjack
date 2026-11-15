@@ -40,7 +40,7 @@ theorem evaluatePost_copyByteNew_success {C F : Type} (s sMiddle sLast : ClosSem
   | val targetValues =>
     have argsRel : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
         values.reverse targetValues.reverse := by
-      simpa [resultRel, maxApp] using reverse_related related
+      simpa [resultRel, maxApp] using List.rel_reverse related
     obtain ⟨target, targetNext, targetApp, stateEq, valueRel, nextState, nextRefs, nextClock⟩ :=
       copyByteNew_dispatch values.reverse targetValues.reverse sMiddle sLast tMiddle state argsRel value run
     subst sLast
@@ -137,7 +137,7 @@ theorem evaluatePost_copyByteInto_success {C F : Type} (s sMiddle sLast : ClosSe
   | val targetValues =>
     have argsRel : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
         [source, .number offset, .number length, .refPtr flag dst, .number dstOffset] targetValues.reverse := by
-      simpa [resultRel, maxApp, argsEq] using reverse_related related
+      simpa [resultRel, maxApp, argsEq] using List.rel_reverse related
     generalize reversed : targetValues.reverse = targetList at argsRel
     cases argsRel with
     | cons sourceRel tail =>

@@ -39,7 +39,7 @@ theorem evaluatePost_updateByte_success {C F : Type} (s sMiddle sLast : ClosSem.
   | val targetValues =>
     have argsRel : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
         [.refPtr flag ptr, .number index, .number number] targetValues.reverse := by
-      simpa [resultRel, maxApp, argsEq] using reverse_related related
+      simpa [resultRel, maxApp, argsEq] using List.rel_reverse related
     cases reversed : targetValues.reverse with
     | nil => rw [reversed] at argsRel; cases argsRel
     | cons targetPtrValue tail =>
@@ -163,7 +163,7 @@ theorem evaluatePost_updateArray_success {C F : Type} (s sMiddle sLast : ClosSem
   | val targetValues =>
     have argsRel : List.Forall₂ (vRel sMiddle.maxApp fMiddle tMiddle.refs tMiddle.code)
         [.refPtr flag ptr, .number index, stored] targetValues.reverse := by
-      simpa [resultRel, maxApp, argsEq] using reverse_related related
+      simpa [resultRel, maxApp, argsEq] using List.rel_reverse related
     cases reversed : targetValues.reverse with
     | nil => rw [reversed] at argsRel; cases argsRel
     | cons targetPtrValue tail =>

@@ -135699,6 +135699,12 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "list_rel_reverse", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/ValueRelation.lean",
+  "lean_name": "listRel_reverse", "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison: Compared list_rel_reverse_typed in bvi_tmc_proof_source_probe.out: an arbitrary heterogeneous relation holds pointwise on two lists exactly when it holds on both reversed lists. Both element types and the relation remain independent."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "evaluate_refs_SUBSET", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/StateRelation.lean",
   "lean_name": "evaluate_refs_subset", "statement_status": "reviewed_fmap_as_finite_support_relation",
   "fmap_as_finite_support_relation": ["BviState.refs"],

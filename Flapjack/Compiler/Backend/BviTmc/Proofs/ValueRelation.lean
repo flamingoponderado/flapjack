@@ -385,6 +385,12 @@ theorem envRel_el (opt : Bool) (f : HolFiniteMapExact Nat Nat) (source target : 
   have entry := (List.forall₂_iff_get.mp entries).2 index bound frontBound
   simpa [List.getElem_append_left, frontBound] using entry
 
+/-- Reversing both lists preserves and reflects their pointwise relation. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_rel_reverse"]
+theorem listRel_reverse {α β : Type} (r : α → β → Prop) (xs : List α) (ys : List β) :
+    List.Forall₂ r xs ys ↔ List.Forall₂ r xs.reverse ys.reverse := by
+  exact List.forall₂_reverse_iff.symm
+
 /-- Dropping the last entry preserves a pointwise list relation. -/
 @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "list_rel_front"]
 theorem listRel_front {α β : Type} (r : α → β → Prop) (xs : List α) (ys : List β)
