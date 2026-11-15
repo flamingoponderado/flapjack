@@ -62,7 +62,7 @@ theorem evaluate_call_no_handler_core {C F : Type} (loc ticks : Nat) (dest : Opt
         | some pair =>
           obtain ⟨callArgs, body⟩ := pair
           obtain ⟨bodySafe, callArgs', body', bodyLoc, targetFound, callEnv, _, changed⟩ :=
-            findCode_rel g values values' middle middleTarget dest callArgs body found argsRelated middleStates
+            findCode_rel g values values' middle middleTarget dest callArgs body ⟨found, argsRelated, middleStates⟩
           by_cases timeout : middle.clock < ticks + 1
           · have targetTimeout : middleTarget.clock < ticks + 1 := by simpa [middleStates.2.1] using timeout
             rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun] at run
@@ -290,7 +290,7 @@ theorem evaluate_call_handled_exception {C F : Type} (loc ticks destination : Na
   | err error => simp [resultRel] at argsRelated
   | val values' =>
     obtain ⟨bodySafe, callArgs', body', bodyLoc, targetFound, callEnv, _, changed⟩ :=
-      findCode_rel g values values' middle middleTarget (some destination) callArgs body found argsRelated middleStates
+      findCode_rel g values values' middle middleTarget (some destination) callArgs body ⟨found, argsRelated, middleStates⟩
     have targetEnough : ¬middleTarget.clock < ticks + 1 := by simpa [middleStates.2.1] using enough
     have argsClock := BviSem.evaluate_clock_le args env1 source
     rw [argsRun] at argsClock

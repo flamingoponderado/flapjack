@@ -1,7 +1,6 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockLeaf
-public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallRelation
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.IfWorker
 
 @[expose] public section
@@ -430,8 +429,7 @@ theorem evaluate_aux_rcall {C F : Type} (loc workerLoc ticks : Nat) (indices : L
   by_cases arityEq : (indices.map (fun n => holEl n env1)).length = arity
   · have found : findCode (some loc) (indices.map (fun n => holEl n env1)) source.code =
         some (indices.map (fun n => holEl n env1), body) := by simp [findCode, sourceLookup, arityEq]
-    have safe : noMutcons body := (findCode_rel f _ _ source target (some loc) _ body found
-      (CallBlockEnvironment.wfVars_list_rel indices opt f env1 env2 ⟨environments, wf⟩) states).1
+    have safe : noMutcons body := (stateRel_codeRel f source target states loc arity body sourceLookup).1
     by_cases timeout : source.clock < ticks + 1
     · simp [found, timeout] at run
       obtain ⟨rfl, rfl⟩ := run.symm

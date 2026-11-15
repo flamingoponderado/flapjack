@@ -92,7 +92,7 @@ theorem evaluate_letcall_return {C F : Type} (loc rets ticks destination : Nat)
   | err error => simp [resultRel] at argsRelated
   | val values' =>
     obtain ⟨bodySafe, callArgs', body', bodyLoc, targetFound, callEnv, _, changed⟩ :=
-      findCode_rel g values values' middle middleTarget (some destination) callArgs body found argsRelated middleStates
+      findCode_rel g values values' middle middleTarget (some destination) callArgs body ⟨found, argsRelated, middleStates⟩
     have targetEnough : ¬middleTarget.clock < ticks + 1 := by simpa [middleStates.2.1] using enough
     have argsClock := BviSem.evaluate_clock_le args env1 source
     rw [argsRun] at argsClock

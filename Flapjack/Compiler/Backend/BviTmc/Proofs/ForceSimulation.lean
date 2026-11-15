@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.ClockHypothesis
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallRelation
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.ThunkRelation
 
 @[expose] public section
@@ -76,7 +77,7 @@ theorem evaluate_force_core {C F : Type} (location index : Nat)
         have values : List.Forall₂ (valueRel f) [holEl index env1, value] [holEl index env2, value'] :=
           .cons thunkValues (.cons valuesRelated .nil)
         obtain ⟨safe, args', body', loc', targetFound, argsRel, _, changed⟩ :=
-          findCode_rel f _ _ source target (some location) args body sourceFound values states
+          findCode_rel f _ _ source target (some location) args body ⟨sourceFound, values, states⟩
         by_cases zero : source.clock = 0
         · have targetZero : target.clock = 0 := by simpa [states.2.1] using zero
           simp [BviSem.evaluate, sourceAt, sourceThunk, sourceFound, zero] at run

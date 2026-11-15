@@ -89,8 +89,7 @@ theorem evaluate_worker_rcall {C F : Type} (loc dest ticks ptr : Nat) (indices :
   by_cases arityEq : (indices.map (fun n => holEl n env1)).length = arity
   · have found : findCode (some loc) (indices.map (fun n => holEl n env1)) source.code =
         some (indices.map (fun n => holEl n env1), body) := by simp [findCode, sourceLookup, arityEq]
-    have safe : noMutcons body := (findCode_rel f _ _ source target (some loc) _ body found
-      (CallBlockEnvironment.wfVars_list_rel indices true f env1 env2 ⟨environments, wf⟩) states).1
+    have safe : noMutcons body := (stateRel_codeRel f source target states loc arity body sourceLookup).1
     by_cases timeout : source.clock < ticks + 1
     · obtain ⟨idx, _, index⟩ := worker_hole_as_alloc f env1 env2 target.refs ptr initial hole notFinal pointer
       have ptrBound : env1.length < env2.length := by have h := hole.1; omega

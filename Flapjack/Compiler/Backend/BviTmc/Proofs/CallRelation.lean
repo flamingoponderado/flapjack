@@ -17,20 +17,20 @@ theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
 end CallWitness
 
 /-- A successful direct or indirect source call resolves to related target
-arguments and either the same body or its wrapper and worker.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "find_code_rel" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
+arguments and either the same body or its wrapper and worker. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "find_code_rel"
+  (fmap_as_finite_support_relation := [BviState.refs, f])]
 theorem findCode_rel {C F : Type} (f : HolFiniteMapExact Nat Nat)
     (values relatedValues : List Value) (source : BviState (Nat × C) F) (target : BviState C F)
     (dest : Option Nat) (args : List Value) (body : Bvi.Exp)
-    (found : findCode dest values source.code = some (args, body))
-    (valuesRelated : List.Forall₂ (valueRel f) values relatedValues) (statesRelated : stateRel f source target) :
+    (h : findCode dest values source.code = some (args, body) ∧
+      List.Forall₂ (valueRel f) values relatedValues ∧ stateRel f source target) :
     noMutcons body ∧ ∃ args' body' loc,
       findCode dest relatedValues target.code = some (args', body') ∧ envRel false f args args' ∧
       args.length = args'.length ∧
       (body ≠ body' → ∃ workerLoc, optimisedCode loc workerLoc source.code target.code ∧
         rewriteWrapperSource loc workerLoc args.length body = some body') := by
+  obtain ⟨found, valuesRelated, statesRelated⟩ := h
   have codes := stateRel_codeRel f source target statesRelated
   have lengths := valuesRelated.length_eq
   cases dest with
