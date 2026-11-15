@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.HoleRelation
+public import Flapjack.FiniteMap.BroadCodec
 
 @[expose] public section
 
@@ -50,16 +51,11 @@ theorem freshHeapAllocation (f : HolFiniteMapExact Nat Nat)
       rw [mapMissing] at found
       contradiction
     simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found
-  have notRange : ∀ key, f.lookup key ≠ some tgt := by
-    intro key found
-    exact outside ⟨key, found⟩
   refine ⟨by simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL],
     stateRefRel_alloc f source target src tgt v w
-      ⟨related, srcFresh, tgtFresh, (by rintro ⟨key, found⟩; exact notRange key found),
+      ⟨related, srcFresh, tgtFresh, outside,
         refRel_submap f _ v w ⟨cells, extension⟩⟩,
-    fmapInj_update f src tgt ⟨injective, by
-      rintro ⟨key, found⟩
-      exact notRange key found⟩, extension, ?_, ?_, ?_, ?_⟩
+    fmapInj_update f src tgt ⟨injective, outside⟩, extension, ?_, ?_, ?_, ?_⟩
   · intro ptr ⟨⟨key, found⟩, absent⟩
     by_cases equal : key = src
     · subst key
@@ -186,22 +182,41 @@ theorem doBuild_related (parts : List ClosLang.ConstPart) (f : HolFiniteMapExact
       · intro key value found
         exact secondSubmap key value (firstSubmap key value found)
 
-/-- The source constant-building loop preserves the value and heap relations,
-including freshness and hole invariants across every component.
+/-- The existential renaming map has the canonical finite-map roundtrip. -/
+theorem holFmapAsFiniteSupportExistentialWitness_doBuild_value_rel_nextMap
+    (nextMap : HolFiniteMapExact Nat Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap)).lookup = nextMap.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap)).finiteSupport = nextMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap) = nextMap := by
+  cases nextMap
+  exact ⟨rfl, rfl, rfl⟩
 
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_build_v_rel" (fmap_as_finite_support_relation := [source, sourceNext, f, target, nextMap, targetNext])] -/
+/-- The existential target heap has the canonical finite-map roundtrip. -/
+theorem holFmapAsFiniteSupportExistentialWitness_doBuild_value_rel_targetNext
+    (targetNext : HolFiniteMapExact Nat (Ref Value)) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad targetNext)).lookup = targetNext.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad targetNext)).finiteSupport = targetNext.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad targetNext) = targetNext := by
+  cases targetNext
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- The source constant-building loop preserves the value and heap relations,
+including freshness and hole invariants across every component. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_build_v_rel"
+  (fmap_as_finite_support_relation := [source, sourceNext, f, target])
+  (fmap_as_finite_support_existentials := [nextMap, targetNext])]
 theorem doBuild_value_rel (parts : List ClosLang.ConstPart) (m : Nat → Value) (i : Nat)
     (source : HolFiniteMapExact Nat (Ref Value)) (value : Value)
     (sourceNext : HolFiniteMapExact Nat (Ref Value)) (f : HolFiniteMapExact Nat Nat)
     (m' : Nat → Value) (target : HolFiniteMapExact Nat (Ref Value))
-    (run : doBuild m i parts source = (value, sourceNext)) (related : stateRefRel f source target)
-    (injective : fmapInj f) (values : ∀ key, valueRel f (m key) (m' key)) :
-    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : HolFiniteMapExact Nat (Ref Value)),
+    (h : doBuild m i parts source = (value, sourceNext) ∧ stateRefRel f source target ∧
+      fmapInj f ∧ (∀ key, valueRel f (m key) (m' key))) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (value' : Value), ∃ (targetNext : HolFiniteMapExact Nat (Ref Value)),
       doBuild m' i parts target = (value', targetNext) ∧ valueRel nextMap value value' ∧
       stateRefRel nextMap sourceNext targetNext ∧ fmapInj nextMap ∧ f.submap nextMap ∧
       onlyFresh f nextMap target ∧ holesUnchangedExcept f target targetNext ∅ ∧
       holesStillNotFinalised f target targetNext := by
+  obtain ⟨run, related, injective, values⟩ := h
   obtain ⟨nextMap, value', targetNext, targetRun, result, heaps, inj, submap, fresh, holes, still, _⟩ :=
     doBuild_related parts f m m' i source target related injective values
   simp only [run] at result heaps
@@ -223,6 +238,6 @@ theorem doBuildConst_value_rel (parts : List ClosLang.ConstPart)
       onlyFresh f nextMap target ∧ holesUnchangedExcept f target targetNext ∅ ∧
       holesStillNotFinalised f target targetNext := by
   exact doBuild_value_rel parts (fun _ => .number 0) 0 source value sourceNext f
-    (fun _ => .number 0) target run related injective (fun _ => .number 0)
+    (fun _ => .number 0) target ⟨run, related, injective, fun _ => .number 0⟩
 
 end Flapjack.Compiler.Backend.BviTmc
