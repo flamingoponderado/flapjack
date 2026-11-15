@@ -269,17 +269,6 @@ theorem evaluate_shift_cb_sing {C F : Type} (cb : CallBlock) (loc : Nat) (env : 
       evaluate [callBlockToBvi loc cb] env state := by
   simpa using evaluate_shift_cb cb loc env state [b]
 
-/-- Flapjack infrastructure: evaluating the arguments of a shifted constructor
-frame gives the original argument result, including errors and state changes. -/
-theorem evaluate_shift_frame_args {C F : Type} (loc : Nat) (left right : List Nat)
-    (child : CallBlock) (env : List Value) (state : BviState C F) (prefixValues : List Value) :
-    evaluate ((shiftVars prefixValues.length left).map Bvi.Exp.var ++
-      [callBlockToBvi loc (shiftBlock prefixValues.length child)] ++
-      (shiftVars prefixValues.length right).map Bvi.Exp.var) (prefixValues ++ env) state =
-    evaluate (left.map Bvi.Exp.var ++ [callBlockToBvi loc child] ++ right.map Bvi.Exp.var) env state := by
-  exact evaluate_shift_frame_args_of_child loc left right child env state prefixValues
-    (fun next => evaluate_shift_cb child loc env next prefixValues)
-
 /-- Flapjack infrastructure for the list simulation: a leading binding is
 added to the reconstructed block after the original frame arguments run. -/
 theorem evaluate_prefixed_frame {C F : Type} (loc tag : Nat) (left right : List Nat)
@@ -300,7 +289,8 @@ theorem evaluate_prefixed_frame {C F : Type} (loc tag : Nat) (left right : List 
     have head : evaluate [.var 0] (value :: env) state = (.val [value], state) := by simp [BviSem.evaluate]
     rw [head]
     dsimp only
-    have tail := evaluate_shift_frame_args loc left right child env state [value]
+    have tail := evaluate_shift_frame_args_of_child loc left right child env state [value]
+      (fun next => evaluate_shift_cb child loc env next [value])
     simp only [List.length_singleton, List.singleton_append] at tail
     rw [tail]
     cases evaluate (left.map Bvi.Exp.var ++ [callBlockToBvi loc child] ++ right.map Bvi.Exp.var) env state with
