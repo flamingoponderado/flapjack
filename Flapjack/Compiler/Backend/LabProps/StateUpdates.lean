@@ -214,4 +214,73 @@ theorem fp_upd_consts {width : Nat} [NeZero width] {C F : Type} (f : HolFp)
   case fpFromInt d1 d2 =>
     simp [fpUpd, updFpReg]
 
+/-- Exact HOL `read_reg_inc_pc` (`labPropsScript.sml:112`): advancing the
+    program counter leaves the register file alone. HOL's `read_reg` is the
+    overload `λr s. s.regs r`, so the equation is stated on `.regs`. -/
+@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "read_reg_inc_pc"
+  (words_as_type_indexed_bitvec)]
+theorem read_reg_inc_pc {width : Nat} [NeZero width] {C F : Type} (r : Nat)
+    (x : State width C F) :
+    (incPc x).regs r = x.regs r := by
+  rfl
+
+/-- Exact HOL `update_simps` (`labPropsScript.sml:130`): the 51-conjunct
+    `[simp]` conjunction of `upd_pc`, `dec_clock` and `inc_pc` projections, in
+    HOL's order and with HOL's repeated `ffi` conjuncts retained. -/
+@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "update_simps"
+  (words_as_type_indexed_bitvec)]
+theorem update_simps {width : Nat} [NeZero width] {C F : Type} (x : Nat)
+    (s : State width C F) :
+    ((updPc x s).ffi = s.ffi) ∧
+    ((decClock s).ffi = s.ffi) ∧
+    ((updPc x s).pc = x) ∧
+    ((decClock s).pc = s.pc) ∧
+    ((updPc x s).clock = s.clock) ∧
+    ((updPc x s).ffi = s.ffi) ∧
+    ((decClock s).clock = s.clock - 1) ∧
+    ((decClock s).lenReg = s.lenReg) ∧
+    ((decClock s).len2Reg = s.len2Reg) ∧
+    ((decClock s).linkReg = s.linkReg) ∧
+    ((decClock s).code = s.code) ∧
+    ((decClock s).ptrReg = s.ptrReg) ∧
+    ((decClock s).ptr2Reg = s.ptr2Reg) ∧
+    ((decClock s).ffi = s.ffi) ∧
+    ((updPc x s).lenReg = s.lenReg) ∧
+    ((updPc x s).len2Reg = s.len2Reg) ∧
+    ((updPc x s).linkReg = s.linkReg) ∧
+    ((updPc x s).code = s.code) ∧
+    ((updPc x s).ptrReg = s.ptrReg) ∧
+    ((updPc x s).ptr2Reg = s.ptr2Reg) ∧
+    ((updPc x s).memDomain = s.memDomain) ∧
+    ((updPc x s).sharedMemDomain = s.sharedMemDomain) ∧
+    ((updPc x s).failed = s.failed) ∧
+    ((updPc x s).be = s.be) ∧
+    ((updPc x s).memory = s.memory) ∧
+    ((updPc x s).regs = s.regs) ∧
+    ((updPc x s).fpRegs = s.fpRegs) ∧
+    ((updPc x s).ffi = s.ffi) ∧
+    ((incPc s).ptrReg = s.ptrReg) ∧
+    ((incPc s).ptr2Reg = s.ptr2Reg) ∧
+    ((incPc s).lenReg = s.lenReg) ∧
+    ((incPc s).len2Reg = s.len2Reg) ∧
+    ((incPc s).linkReg = s.linkReg) ∧
+    ((incPc s).code = s.code) ∧
+    ((incPc s).be = s.be) ∧
+    ((incPc s).failed = s.failed) ∧
+    ((incPc s).memDomain = s.memDomain) ∧
+    ((incPc s).sharedMemDomain = s.sharedMemDomain) ∧
+    ((incPc s).ioRegs = s.ioRegs) ∧
+    ((incPc s).ioFpRegs = s.ioFpRegs) ∧
+    ((incPc s).ccRegs = s.ccRegs) ∧
+    ((incPc s).ccFpRegs = s.ccFpRegs) ∧
+    ((incPc s).compile = s.compile) ∧
+    ((incPc s).compileOracle = s.compileOracle) ∧
+    ((incPc s).codeBuffer = s.codeBuffer) ∧
+    ((incPc s).memory = s.memory) ∧
+    ((incPc s).regs = s.regs) ∧
+    ((incPc s).fpRegs = s.fpRegs) ∧
+    ((incPc s).pc = s.pc + 1) ∧
+    ((incPc s).ffi = s.ffi) := by
+  simp [updPc, decClock, incPc]
+
 end Flapjack.Compiler.Backend.LabSem

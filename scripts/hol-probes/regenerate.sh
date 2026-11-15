@@ -10222,6 +10222,7 @@ run_probe lab_props_typed_probeScript.sml lab_props_typed_probe.out \
   labs_of_def_typed line_get_code_labels_def_typed line_get_labels_def_typed sec_get_code_labels_def_typed sec_get_labels_def_typed sec_label_ok_def_typed sec_labels_ok_def_typed line_length_def_typed \
   line_ok_pre_def_typed sec_ok_pre_def_typed sec_ends_with_label_def_typed EVERY_sec_label_ok_typed \
   with_same_clock_typed inc_pc_dec_clock_typed binop_upd_consts_typed arith_upd_consts_typed fp_upd_consts_typed LENGTH_line_bytes_typed \
+  read_reg_inc_pc_typed update_simps_typed \
   "$cake_dir/compiler/backend/semantics/labPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
