@@ -135699,6 +135699,27 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "holes_still_not_finalised_refl", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "holesStill_refl", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Source comparison: Compared holes_still_not_finalised_refl_typed in bvi_tmc_proof_source_probe.out: the arbitrary heap preserves its own unfinalised holes, retaining the three independent map-key, pointer and cell types. Named maps use canonical finite support and same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "holes_still_not_finalised_ins", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "holesStill_insert", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "refs", "refsNew"],
+  "reviewer": "Source comparison: Compared holes_still_not_finalised_ins_typed in bvi_tmc_proof_source_probe.out: the original relation implies the same relation after updating the target heap with the full false-finalised mutable block, retaining the three independent map-key, pointer and cell types. Named maps use canonical finite support and same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "holes_still_not_finalised_del", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "holesStill_delete", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "refs", "refsNew"],
+  "reviewer": "Source comparison: Compared holes_still_not_finalised_del_typed in bvi_tmc_proof_source_probe.out: the original relation from an updated source heap implies the relation from the original source heap, retaining the three independent map-key, pointer and cell types. Named maps use canonical finite support and same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "holes_still_not_finalised_def", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
   "lean_name": "holesStillNotFinalised", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "refs", "refsNew"],

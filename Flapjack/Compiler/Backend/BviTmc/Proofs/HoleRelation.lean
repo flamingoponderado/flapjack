@@ -247,10 +247,9 @@ theorem holFmapAsFiniteSupportParamWitness_holesStill_refl_f {α β : Type} (f :
 theorem holFmapAsFiniteSupportParamWitness_holesStill_refl_refs {β γ : Type} (refs : HolFiniteMapExact β (Ref γ)) :
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
-/-- A heap trivially preserves its own unfinalised holes.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_refl" (fmap_as_finite_support_parameters := [f, refs])] -/
+/-- A heap trivially preserves its own unfinalised holes. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_refl"
+  (fmap_as_finite_support_parameters := [f, refs])]
 theorem holesStill_refl {α β γ : Type} (f : HolFiniteMapExact α β)
     (refs : HolFiniteMapExact β (Ref γ)) : holesStillNotFinalised f refs refs := by
   intro _ ⟨_, found⟩
@@ -263,10 +262,9 @@ theorem holFmapAsFiniteSupportParamWitness_holesStill_insert_refs {β γ : Type}
 theorem holFmapAsFiniteSupportParamWitness_holesStill_insert_refsNew {β γ : Type}
     (refsNew : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
 
-/-- Inserting an unfinalised mutable block preserves all unfinalised holes.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_ins" (fmap_as_finite_support_parameters := [f, refs, refsNew])] -/
+/-- Inserting an unfinalised mutable block preserves all unfinalised holes. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_ins"
+  (fmap_as_finite_support_parameters := [f, refs, refsNew])]
 theorem holesStill_insert {α β γ : Type} (f : HolFiniteMapExact α β)
     (refs : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ)) (ptr : β) (tag : Nat)
     (left : List γ) (child : γ) (right : List γ)
@@ -290,10 +288,9 @@ theorem holFmapAsFiniteSupportParamWitness_holesStill_delete_refs {β γ : Type}
 theorem holFmapAsFiniteSupportParamWitness_holesStill_delete_refsNew {β γ : Type}
     (refsNew : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
 
-/-- Dropping an inserted unfinalised source hole preserves the hole invariant.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_del" (fmap_as_finite_support_parameters := [f, refs, refsNew])] -/
+/-- Dropping an inserted unfinalised source hole preserves the hole invariant. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_del"
+  (fmap_as_finite_support_parameters := [f, refs, refsNew])]
 theorem holesStill_delete {α β γ : Type} (f : HolFiniteMapExact α β)
     (refs : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ)) (ptr : β) (tag : Nat)
     (left : List γ) (child : γ) (right : List γ)
