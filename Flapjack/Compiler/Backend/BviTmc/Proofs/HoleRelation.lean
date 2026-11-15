@@ -609,6 +609,25 @@ theorem onlyFresh_trans (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact N
   · intro allocated
     exact second ptr ⟨new, intermediate⟩ (domain allocated)
 
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_submap_f (f : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_submap_g (g : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup g) g.finiteSupport = g := by cases g; rfl
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_submap_h (h : HolFiniteMapExact Nat Nat) :
+    mapofBroad (maptoBroadlookup h) h.finiteSupport = h := by cases h; rfl
+theorem holFmapAsFiniteSupportParamWitness_onlyFresh_submap_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
+    mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
+
+/-- Freshness for a larger pointer map holds for any of its submaps. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "only_fresh_submap"
+  (fmap_as_finite_support_parameters := [f, g, h, refs])]
+theorem onlyFresh_submap (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
+    (h : HolFiniteMapExact Nat Nat) (refs : HolFiniteMapExact Nat (Ref Value))
+    (conditions : onlyFresh f h refs ∧ g.submap h) : onlyFresh f g refs := by
+  obtain ⟨fresh, submap⟩ := conditions
+  intro ptr ⟨⟨key, found⟩, outside⟩
+  exact fresh ptr ⟨⟨key, submap key ptr found⟩, outside⟩
+
 theorem holFmapAsFiniteSupportParamWitness_holesStill_trans_f (f : HolFiniteMapExact Nat Nat) :
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 theorem holFmapAsFiniteSupportParamWitness_holesStill_trans_g (g : HolFiniteMapExact Nat Nat) :

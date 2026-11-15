@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "only_fresh_submap", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "onlyFresh_submap", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "g", "h", "refs"],
+  "reviewer": "Source comparison: Compared only_fresh_submap_typed in bvi_tmc_proof_source_probe.out: freshness from the first to the third map and inclusion of the second map in the third conjunctively imply freshness from the first to the second. All four original map carriers and binder order are retained with canonical finite support and same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "only_fresh_trans", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
   "lean_name": "onlyFresh_trans", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "g", "h", "refs", "middle"],

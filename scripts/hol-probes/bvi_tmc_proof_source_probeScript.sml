@@ -35,6 +35,7 @@ val _ = show "hole_has_val_unappend_typed" bvi_tmcProofTheory.hole_has_val_unapp
 val _ = show "hole_has_val_dec_typed" bvi_tmcProofTheory.hole_has_val_dec;
 val _ = show "only_fresh_refl_typed" bvi_tmcProofTheory.only_fresh_refl;
 val _ = show "only_fresh_trans_typed" bvi_tmcProofTheory.only_fresh_trans;
+val _ = show "only_fresh_submap_typed" bvi_tmcProofTheory.only_fresh_submap;
 val _ = show "hole_has_val_submap_typed" bvi_tmcProofTheory.hole_has_val_submap;
 val _ = show "holes_unchanged_except_trans_typed" bvi_tmcProofTheory.holes_unchanged_except_trans;
 val _ = show "holes_still_not_finalised_trans_typed" bvi_tmcProofTheory.holes_still_not_finalised_trans;
