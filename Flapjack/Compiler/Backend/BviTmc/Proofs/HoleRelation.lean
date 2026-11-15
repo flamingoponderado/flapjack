@@ -122,15 +122,14 @@ theorem holFmapAsFiniteSupportRelationWitness_BviState {C F : Type} :
       (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
   BviSem.holFmapAsFiniteSupportWitness
 
-/-- Decrementing the evaluator clock does not affect the hole's heap entry.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_dec" (fmap_as_finite_support_relation := [BviState.refs, f])] -/
+/-- Decrementing the evaluator clock does not affect the hole's heap entry. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "hole_has_val_dec"
+  (fmap_as_finite_support_relation := [BviState.refs, f])]
 theorem holeHasVal_dec {C F : Type} (f : HolFiniteMapExact Nat Nat) (env1 env2 : List Value)
     (state : BviSem.BviState C F) (c : Value) (n : Nat)
-    (hole : holeHasVal f env1 env2 state.refs c) (_clock : state.clock = n + 1) :
+    (h : holeHasVal f env1 env2 state.refs c ∧ state.clock = n + 1) :
     holeHasVal f env1 env2 (BviSem.decClock 1 state).refs c := by
-  exact hole
+  exact h.1
 
 theorem holFmapAsFiniteSupportParamWitness_holesUnchangedExcept_f {α β : Type}
     (f : HolFiniteMapExact α β) : mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
@@ -472,10 +471,9 @@ theorem holFmapAsFiniteSupportParamWitness_onlyFresh_refl_f (f : HolFiniteMapExa
 theorem holFmapAsFiniteSupportParamWitness_onlyFresh_refl_refs (refs : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
-/-- A pointer map adds no targets relative to itself.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "only_fresh_refl" (fmap_as_finite_support_parameters := [f, refs])] -/
+/-- A pointer map adds no targets relative to itself. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "only_fresh_refl"
+  (fmap_as_finite_support_parameters := [f, refs])]
 theorem onlyFresh_refl (f : HolFiniteMapExact Nat Nat) (refs : HolFiniteMapExact Nat (Ref Value)) :
     onlyFresh f f refs := by
   intro _ ⟨member, absent⟩
