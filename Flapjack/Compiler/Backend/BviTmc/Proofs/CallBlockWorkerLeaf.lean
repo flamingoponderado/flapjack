@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallBlockLeaf
+public import Flapjack.Compiler.Backend.BviTmc.Proofs.CallRelation
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.IfWorker
 
 @[expose] public section

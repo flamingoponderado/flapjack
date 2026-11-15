@@ -134,27 +134,4 @@ theorem evaluate_frame_core {C F : Type} (loc tag : Nat) (left right : List Nat)
           rfl
         · exact .cons (.block _ _ _ (by simpa [List.append_assoc] using fields)) .nil
 
-/-- Flapjack infrastructure: ordinary simulation of any well-formed call
-block, assuming simulation of its recursive-call leaf. The optimized worker
-and wrapper conclusions are not included. -/
-theorem evaluate_cb_core {C F : Type} (loc : Nat) (cb : CallBlock)
-    (source : BviState (Nat × C) F) (env1 : List Value) (opt : Bool)
-    (f : HolFiniteMapExact Nat Nat) (target : BviState C F) (env2 : List Value)
-    (environments : envRel opt f env1 env2)
-    (leafIH : ∀ ticks args result final, wfVars env1.length args →
-      evaluate [callBlockToBvi loc (.rCall ticks args)] env1 source = (result, final) →
-      result ≠ .err (.abort .typeError) →
-      Core [callBlockToBvi loc (.rCall ticks args)] env2 f target result final)
-    (result : BviResult) (final : BviState (Nat × C) F)
-    (wf : wfBlock env1.length cb) (run : evaluate [callBlockToBvi loc cb] env1 source = (result, final))
-    (notTypeError : result ≠ .err (.abort .typeError)) :
-    Core [callBlockToBvi loc cb] env2 f target result final := by
-  induction cb generalizing result final with
-  | rCall ticks args => exact leafIH ticks args result final wf run notTypeError
-  | callBlock tag left child right ih =>
-    apply evaluate_frame_core loc tag left right child source env1 result final opt f target env2
-      run notTypeError environments wf.1 wf.2.2.1
-    intro r mid childRun childSafe
-    exact ih r mid wf.2.1 childRun childSafe
-
 end Flapjack.Compiler.Backend.BviTmc.CallBlockFrame
