@@ -71,10 +71,13 @@ theorem codeRel_lookup_arity (source target : Spt (Nat × Bvi.Exp)) (h : codeRel
 
 /-- A direct call that resolves in the original code also resolves in the
 related target code. -/
-theorem codeRel_findCode_some (source target : Spt (Nat × Bvi.Exp)) (h : codeRel source target)
-    (loc : Nat) (args actualArgs : List Value) (body : Bvi.Exp)
-    (run : findCode (some loc) args source = some (actualArgs, body)) :
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "code_rel_find_code_SOME"]
+theorem codeRel_findCode_some {loc : Nat} (source target : Spt (Nat × Bvi.Exp))
+    (args actualArgs : List Value) (body : Bvi.Exp)
+    (premises : codeRel source target ∧
+      findCode (some loc) args source = some (actualArgs, body)) :
     findCode (some loc) args target ≠ none := by
+  obtain ⟨h, run⟩ := premises
   cases lookup : sptLookup loc source with
   | none => simp [findCode, lookup] at run
   | some pair =>
@@ -87,10 +90,12 @@ theorem codeRel_findCode_some (source target : Spt (Nat × Bvi.Exp)) (h : codeRe
 
 /-- An indirect call that resolves through a code pointer in the original
 code also resolves in the related target code. -/
-theorem codeRel_findCode_none (source target : Spt (Nat × Bvi.Exp)) (h : codeRel source target)
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "code_rel_find_code_NONE"]
+theorem codeRel_findCode_none (source target : Spt (Nat × Bvi.Exp))
     (args actualArgs : List Value) (body : Bvi.Exp)
-    (run : findCode none args source = some (actualArgs, body)) :
+    (premises : codeRel source target ∧ findCode none args source = some (actualArgs, body)) :
     findCode none args target ≠ none := by
+  obtain ⟨h, run⟩ := premises
   cases empty : args.isEmpty with
   | true => simp [findCode, empty] at run
   | false =>
@@ -108,6 +113,7 @@ theorem codeRel_findCode_none (source target : Spt (Nat × Bvi.Exp)) (h : codeRe
     | _ => simp [findCode, empty, last] at run
 
 /-- The source code domain is included in the related target code domain. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "code_rel_domain"]
 theorem codeRel_domain (source target : Spt (Nat × Bvi.Exp)) (h : codeRel source target) :
     ∀ loc, sptMem loc source → sptMem loc target := by
   intro loc mem

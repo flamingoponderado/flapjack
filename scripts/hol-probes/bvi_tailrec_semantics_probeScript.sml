@@ -1,4 +1,5 @@
 load "bvi_tailrecProofTheory";
+load "preamble";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 fun show_thm label th =
@@ -14,3 +15,36 @@ val _ = show_thm "state_rel_const_typed=" bvi_tailrecProofTheory.state_rel_const
 val _ = show_thm "state_rel_with_clock_typed=" bvi_tailrecProofTheory.state_rel_with_clock;
 val _ = show_thm "state_rel_code_rel_typed=" bvi_tailrecProofTheory.state_rel_code_rel;
 val _ = show_thm "code_rel_def_typed=" bvi_tailrecProofTheory.code_rel_def;
+val _ = show_thm "code_rel_domain_typed=" bvi_tailrecProofTheory.code_rel_domain;
+(* The two find-code theorems are local in the original script. Replay their
+   original statements and proofs so their inferred types are captured. *)
+open preamble bvi_tailrecProofTheory bvi_tailrecTheory bviPropsTheory bviSemTheory;
+val find_code_def = bvlSemTheory.find_code_def;
+val code_rel_find_code_some_replay = Q.prove
+  (`∀c1 c2 (args: v list) a exp.
+      code_rel c1 c2 ∧ find_code (SOME n) args c1 = SOME (a, exp) ⇒
+        find_code (SOME n) args c2 ≠ NONE`,
+   rw [find_code_def, code_rel_def]
+   \\ pop_assum mp_tac
+   \\ rpt (PURE_TOP_CASE_TAC \\ fs [])
+   \\ first_x_assum drule
+   \\ fs [compile_exp_def]
+   \\ CASE_TAC \\ fs [] \\ rw []
+   \\ pairarg_tac \\ fs []);
+val _ = show_thm "code_rel_find_code_SOME_replay_typed=" code_rel_find_code_some_replay;
+val code_rel_find_code_none_replay = Q.prove
+  (`∀c1 c2 (args: v list) a exp.
+      code_rel c1 c2 ∧ find_code NONE args c1 = SOME (a, exp) ⇒
+        find_code NONE args c2 ≠ NONE`,
+   rw [find_code_def, code_rel_def]
+   \\ pop_assum mp_tac
+   \\ rpt (PURE_TOP_CASE_TAC \\ fs []) \\ rw []
+   >- (first_x_assum drule
+       \\ fs [compile_exp_def]
+       \\ CASE_TAC \\ fs [] \\ rw []
+       \\ pairarg_tac \\ fs [])
+   \\ first_x_assum drule
+   \\ fs [compile_exp_def]
+   \\ CASE_TAC \\ fs [] \\ rw []
+   \\ pairarg_tac \\ fs []);
+val _ = show_thm "code_rel_find_code_NONE_replay_typed=" code_rel_find_code_none_replay;

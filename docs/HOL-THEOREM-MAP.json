@@ -24142,6 +24142,24 @@
     "reviewer": "Compared the typed original captured in bvi_to_data_state_probe.out: an arbitrary polymorphic successful variable-list read implies the reversed names read the reversed values from the same sparse tree."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "code_rel_find_code_SOME",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "codeRel_findCode_some",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original local theorem and literal proof replay code_rel_find_code_SOME_replay_typed in bvi_tailrec_semantics_probe.out. The arbitrary free label and five quantified source, target, argument, result-argument and expression variables retain their original types; the two conjunctive premises imply that the target direct lookup is not NONE."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "code_rel_find_code_NONE",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "codeRel_findCode_none",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original local theorem and literal proof replay code_rel_find_code_NONE_replay_typed in bvi_tailrec_semantics_probe.out. The original five quantified source, target, argument, result-argument and expression variables and both conjunctive premises imply that the target indirect lookup is not NONE."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "code_rel_domain",
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "codeRel_domain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared code_rel_domain_typed in bvi_tailrec_semantics_probe.out: the full code relation implies inclusion of the source sparse-tree domain in the target domain. The pointwise Lean conclusion unfolds the original set subset; the source and target code carriers are Spt trees of arity and BVI expression pairs."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml", "hol_name": "code_rel_def",
     "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Proofs/CodeRelation.lean", "lean_name": "codeRel",
     "statement_status": "reviewed_exact",
