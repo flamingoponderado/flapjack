@@ -1371,7 +1371,6 @@ import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Install
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.LocalSteps
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.Evaluate
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.AnnotateCorrect
-import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.SemanticsCorrect
 import Flapjack.Compiler.Backend.ClosAnnotate.Proofs.InstalledSemantics
 import Flapjack.Compiler.Backend.Semantics.ClosSem.InstallGrowth
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateCodeGrowth
