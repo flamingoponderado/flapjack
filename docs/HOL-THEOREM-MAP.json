@@ -135699,6 +135699,22 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "do_word_app_v_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/WordRelation.lean",
+  "lean_name": "doWordApp_rel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared do_word_app_v_rel_typed in bvi_tmc_proof_source_probe.out: successful word application and the full pairwise value relation conjunctively imply equality of the related and original argument lists. Original binder order and carriers match; the pointer map uses canonical finite support with a same-module witness. Word-operation dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "do_word_app_v_rel_refl", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/WordRelation.lean",
+  "lean_name": "doWordApp_result_rel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f"],
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Source comparison: Compared do_word_app_v_rel_refl_typed in bvi_tmc_proof_source_probe.out: successful word application implies the full value relation of its result with itself. Original binder order and carriers match; the pointer map uses canonical finite support with a same-module witness. Word-operation dependencies inherit reals_as_rational_cuts and SOUNDNESS item 8."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "do_eq_v_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/Equality.lean",
   "lean_name": "doEq_value_rel", "statement_status": "reviewed_fmap_as_finite_support_relation",
   "fmap_as_finite_support_relation": ["f", "refs", "target"],

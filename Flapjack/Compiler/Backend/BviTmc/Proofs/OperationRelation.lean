@@ -85,9 +85,9 @@ theorem doApp_op_rel_word {C F : Type} (f : HolFiniteMapExact Nat Nat) (op : Clo
   | some actual =>
     simp [result] at run
     obtain ⟨rfl, rfl⟩ := run
-    have sameValues := doWordApp_rel f op values relatedValues actual result valuesRelated
+    have sameValues := doWordApp_rel op values actual relatedValues f ⟨result, valuesRelated⟩
     subst relatedValues
-    refine ⟨f, actual, target, ?_, doWordApp_result_rel f op values actual result, statesRelated, ?_,
+    refine ⟨f, actual, target, ?_, doWordApp_result_rel op values actual f result, statesRelated, ?_,
       onlyFresh_refl f target.refs, holesUnchanged_refl f target.refs ∅, holesStill_refl f target.refs⟩
     · simp [BviTailrec.doApp_wordOp_pure, result]
     · intro key item found
