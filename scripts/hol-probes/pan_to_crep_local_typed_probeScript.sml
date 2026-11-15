@@ -76,3 +76,9 @@ val locals_id_update_statement =
   ``∀(t :('a,'b) panSem$state). t with locals := t.locals = t``;
 val _ = (print "locals_id_update_typed=";
   print_term locals_id_update_statement; print "\n");
+(* flatten_nil_no_size: parsed typed statement of the local flatten/size iff. *)
+val flatten_nil_no_size_statement =
+  ``∀(x :'a v). is_wf_shape_nil (shape_of x) ⇒
+      (flatten x = [] ⇔ size_of_shape (shape_of x) = 0)``;
+val _ = (print "flatten_nil_no_size_typed=";
+  print_term flatten_nil_no_size_statement; print "\n");

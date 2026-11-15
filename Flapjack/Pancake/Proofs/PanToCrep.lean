@@ -2018,4 +2018,18 @@ theorem ctxtFcVmaxHOL_bare {width : Nat} [NeZero width]
     (ctxtFcExactHOL cvs em vs shs ns : PanToCrepContextExact width).vmax =
       maxList ns := rfl
 
+/-- Exact port of HOL `flatten_nil_no_size` (`pan_to_crepProofScript.sml:3001`).
+The typed capture `flatten_nil_no_size_typed` gives
+`∀(x :α v). is_wf_shape_nil (shape_of x) ⇒
+  (flatten x = ([] :α word_lab list) ⇔ size_of_shape (shape_of x) = 0)`.
+`is_wf_shape_nil` is the empty-context overload, rendered as
+`isWfShapeExactHOL [] = true` by the tagged `length_flatten_eq_size_of_shape`
+port; the equivalence follows from its length form. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "flatten_nil_no_size"
+  (words_as_type_indexed_bitvec)]
+theorem flattenHOL_eq_nil_iff_sizeOfShapeHOL {width : Nat} [NeZero width] (v : ValueHOL width)
+    (h : isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact v) = true) :
+    flattenHOL v = [] ↔ sizeOfShapeHOL (shapeOfHOLExact v) = 0 := by
+  rw [← List.length_eq_zero_iff, flattenHOL_length_eq_sizeOfShapeHOL v h]
+
 end Flapjack

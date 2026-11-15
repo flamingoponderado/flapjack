@@ -135689,5 +135689,14 @@
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "codewhale source comparison (2026-11-15, task 198): typed capture locals_id_update_typed in scripts/hol-probes/pan_to_crep_local_typed_probe.out gives ∀(t :(α, β) panSem$state). t with locals := t.locals = t, with the state's word dimension α and FFI host β independent. Lean keeps the single binder t and the same record identity over PanSemStateFiniteExact width σ, whose finite-map fields are the reviewed canonical HolFiniteMapExact translation (locals, globals, code, eshapes) and whose only word use is BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "flatten_nil_no_size",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "flattenHOL_eq_nil_iff_sizeOfShapeHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "codewhale source comparison (2026-11-15, task 199): typed capture flatten_nil_no_size_typed in scripts/hol-probes/pan_to_crep_local_typed_probe.out gives (x :α v). is_wf_shape_nil (shape_of x) ⇒ (flatten x = ([] :α word_lab list) ⇔ size_of_shape (shape_of x) = 0), with the value's word dimension α the only type variable. Lean keeps the single binder, the well-formedness premise as isWfShapeExactHOL [] = true (HOL's empty-context overload, as in the tagged length_flatten_eq_size_of_shape port), and the iff between flattenHOL = [] and sizeOfShapeHOL = 0; the only carrier translation is the type-indexed word to BitVec width."
   }
 ]
