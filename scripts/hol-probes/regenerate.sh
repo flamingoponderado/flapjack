@@ -3675,6 +3675,8 @@ run_probe pan_common_props_zip_disjoint_probeScript.sml pan_common_props_zip_dis
 
 run_probe pan_common_props_finite_map_probeScript.sml pan_common_props_finite_map_probe.out \
   ctxt_max_def_typed ctxt_max_def_hypotheses no_overlap_def_typed no_overlap_def_hypotheses update_eq_zip_flookup_typed update_eq_zip_flookup_hypotheses \
+  opt_mmap_some_eq_zip_flookup_typed opt_mmap_some_eq_zip_flookup_hypotheses opt_mmap_disj_zip_flookup_typed opt_mmap_disj_zip_flookup_hypotheses \
+  fm_empty_zip_alist_typed fm_empty_zip_alist_hypotheses fm_empty_zip_flookup_typed fm_empty_zip_flookup_hypotheses \
   "$cake_dir/pancake/semantics/pan_commonPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 

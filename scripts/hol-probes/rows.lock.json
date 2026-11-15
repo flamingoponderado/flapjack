@@ -1067,7 +1067,7 @@
     {"bytes": 115, "out": "pan_common_defs_typed_probe.out", "rows": 1, "sha256": "59ba5493be94c6331f5dc9667876537e7a7230401fb0044604d4cd45b1ec23d0"},
     {"bytes": 377, "out": "pan_common_distinct_lists_probe.out", "rows": 10, "sha256": "2606100553ada745c2c80d181112f14df636cfaab63ecf358dbcfe612764d90d"},
     {"bytes": 179, "out": "pan_common_props_defs_typed_probe.out", "rows": 1, "sha256": "8d32dc055c5ab169b25d0bdec146b0596e38a6a6e108ba3716684de52abc5005"},
-    {"bytes": 841, "out": "pan_common_props_finite_map_probe.out", "rows": 6, "sha256": "6effb950646fc425d45f5822e10870609566b2576e5bea9374b1cc9a1f3a66eb"},
+    {"bytes": 1809, "out": "pan_common_props_finite_map_probe.out", "rows": 14, "sha256": "acf479496cd214ecb85047ee0955187410f37ef84c328a8f44bc3df08a1b8139"},
     {"bytes": 95, "out": "pan_common_props_fm_update_diff_vars_probe.out", "rows": 6, "sha256": "636c0f4590a406aefaad01875cbedbc7c32d3d736335eb05b401a32d6ecf4563"},
     {"bytes": 63, "out": "pan_common_props_genlist_probe.out", "rows": 4, "sha256": "f1a27eebf327df5895922ac2251f8fbd94ad6270e5dec7022d975e83c600da3e"},
     {"bytes": 89, "out": "pan_common_props_no_overlap_probe.out", "rows": 5, "sha256": "5ad42c6202ac849adcb1370705aaa0b430cb9dc593b53c8a0c9dc857a26974bd"},

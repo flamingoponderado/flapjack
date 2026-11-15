@@ -102911,27 +102911,11 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
-    "hol_name": "opt_mmap_disj_zip_flookup",
-    "lean_path": "Flapjack/FiniteMap/Basic.lean",
-    "lean_name": "opt_mmap_disj_zip_flookup",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Raw lookup functions admit infinite-support maps unlike HOL finite maps; Boolean equality instances are extra assumptions. Retained as support for finite-map lookup proofs; the faithful HOL declaration remains unported."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
     "hol_name": "opt_mmap_eq_some",
     "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
     "lean_name": "optMmapEqSome",
     "statement_status": "reviewed_exact",
     "reviewer": "Codex (source comparison)"
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
-    "hol_name": "opt_mmap_some_eq_zip_flookup",
-    "lean_path": "Flapjack/FiniteMap/Basic.lean",
-    "lean_name": "opt_mmap_some_eq_zip_flookup",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Raw lookup functions admit infinite-support maps unlike HOL finite maps; Boolean equality instances are extra assumptions. Retained as support for finite-map lookup proofs; the faithful HOL declaration remains unported."
   },
   {
     "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
@@ -135656,5 +135640,27 @@
     "lean_path": "Flapjack/CakeParser/PtreeConversion/Exact.lean", "lean_name": "ptreeStructNameHOL",
     "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml", "hol_name": "ptree_StructName_def",
     "statement_status": "reviewed_exact", "reviewer": "task-160 source comparison against cml_ptree_conversion_source_probe.out ptree_StructName_def_typed: HOL ptree_StructName (Lf _) = NONE and, for Nd (nm, args), if FST nm ≠ mkNT nStructName then NONE else case args of [] => NONE | [pt] => OPTION_BIND (OPTION_BIND (destLf pt) destTOK) destAlphaT | pt::v6::v7 => NONE, result mlstring option, generic in the location type α. Lean's ptreeStructNameHOL keeps every clause. No premise added."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "opt_mmap_some_eq_zip_flookup",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps/FiniteMapExact.lean",
+    "lean_name": "optMmapSomeEqZipFlookupExactHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "f"
+    ],
+    "reviewer": "codewhale source comparison (2026-11-15; bead flapjack-4ac.4.28; pan_commonPropsScript.sml:170-176): typed HOL capture opt_mmap_some_eq_zip_flookup_typed in pan_common_props_finite_map_probe.out gives ∀(xs :α list) (f :α |-> β) (ys :β list), ALL_DISTINCT xs ∧ LENGTH xs = LENGTH ys ⇒ OPT_MMAP (FLOOKUP (f |++ ZIP (xs,ys))) xs = SOME ys, with 0 hypotheses. Lean keeps the same binder order xs f ys and HOL's single conjunctive premise; f |++ is updateListEq, OPT_MMAP is List.mapM, FLOOKUP is .lookup, and the map is a bare parameter entry over HolFiniteMapExact with witness holFmapAsFiniteSupportParamWitness_optMmapSomeEqZipFlookupExactHOL_f. The raw-function opt_mmap_some_eq_zip_flookup helper stays untagged infrastructure for the production-carrier proofs. Binder order and premise grouping compared with HOL: `ALL_DISTINCT xs ∧ LENGTH xs = LENGTH ys` is one conjoined premise in HOL order."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "opt_mmap_disj_zip_flookup",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps/FiniteMapExact.lean",
+    "lean_name": "optMmapDisjZipFlookupExactHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "f"
+    ],
+    "reviewer": "codewhale source comparison (2026-11-15; bead flapjack-4ac.4.28; pan_commonPropsScript.sml:188-194): typed HOL capture opt_mmap_disj_zip_flookup_typed in pan_common_props_finite_map_probe.out gives ∀(xs :α list) (f :α |-> β) (ys :α list) (zs :β list), distinct_lists xs ys ∧ LENGTH xs = LENGTH zs ⇒ OPT_MMAP (FLOOKUP (f |++ ZIP (xs,zs))) ys = OPT_MMAP (FLOOKUP f) ys, with 0 hypotheses. Lean keeps the same binder order xs f ys zs and HOL's single conjunctive premise; HOL's Boolean distinct_lists is the tagged distinctListsHol ... = true, f |++ is updateListEq, OPT_MMAP is List.mapM, and the map is a bare parameter entry over HolFiniteMapExact with witness holFmapAsFiniteSupportParamWitness_optMmapDisjZipFlookupExactHOL_f. The raw-function opt_mmap_disj_zip_flookup helper stays untagged infrastructure for the production-carrier proofs. Binder order and premise grouping compared with HOL: `distinct_lists xs ys ∧ LENGTH xs = LENGTH zs` is one conjoined premise in HOL order."
   }
 ]
