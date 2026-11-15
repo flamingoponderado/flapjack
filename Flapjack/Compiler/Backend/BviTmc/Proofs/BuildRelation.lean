@@ -68,7 +68,7 @@ theorem freshHeapAllocation (f : HolFiniteMapExact Nat Nat)
     · have old : f.lookup key = some ptr := by
         simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, equal] using found
       exact (absent ⟨key, old⟩).elim
-  · intro ptr tag finalised left child right _ found
+  · intro ptr tag finalised left child right ⟨_, found⟩
     have different : ptr ≠ tgt := by
       intro equal
       subst ptr

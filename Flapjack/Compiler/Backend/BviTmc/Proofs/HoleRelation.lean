@@ -140,13 +140,12 @@ theorem holFmapAsFiniteSupportParamWitness_holesUnchangedExcept_refsNew {β γ :
     (refsNew : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refsNew) refsNew.finiteSupport = refsNew := by cases refsNew; rfl
 
 /-- Existing mutable blocks outside the original pointer-map range keep
-their tag and surrounding values; listed holes may change their child.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_def" (fmap_as_finite_support_parameters := [f, refs, refsNew])] -/
+their tag and surrounding values; listed holes may change their child. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_def"
+  (fmap_as_finite_support_parameters := [f, refs, refsNew])]
 def holesUnchangedExcept {α β γ : Type} (f : HolFiniteMapExact α β)
     (refs : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ)) (changed : Set β) : Prop :=
-  ∀ ptr tag finalised left child right, ptr ∉ mapRange f →
+  ∀ ptr tag finalised left child right, ptr ∉ mapRange f ∧
     refs.lookup ptr = some (.mutBlock tag finalised left child right) →
     ∃ finalised' child', refsNew.lookup ptr = some (.mutBlock tag finalised' left child' right) ∧
       (ptr ∉ changed → child = child')
@@ -219,7 +218,7 @@ theorem unchanged_holeHasVal (f : HolFiniteMapExact Nat Nat) (fNext : HolFiniteM
   have ptrSame : ptr = holePtr := by simpa using ptrEq.symm
   subst ptr
   obtain ⟨newFinal, newChild, newFound, sameChild⟩ :=
-    unchanged holePtr tag finalised left c right outside found
+    unchanged holePtr tag finalised left c right ⟨outside, found⟩
   have childEq := sameChild notChanged
   subst newChild
   have outsideNext : holePtr ∉ mapRange fNext := by
@@ -240,7 +239,7 @@ Intended HOL counterpart, pending statement and finite-map carrier source review
 Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_refl" (fmap_as_finite_support_parameters := [f, refs])] -/
 theorem holesUnchanged_refl {α β γ : Type} (f : HolFiniteMapExact α β)
     (refs : HolFiniteMapExact β (Ref γ)) (changed : Set β) : holesUnchangedExcept f refs refs changed := by
-  intro ptr tag finalised left child right _ found
+  intro ptr tag finalised left child right ⟨_, found⟩
   exact ⟨finalised, child, found, fun _ => rfl⟩
 
 theorem holFmapAsFiniteSupportParamWitness_holesStill_refl_f {α β : Type} (f : HolFiniteMapExact α β) :
@@ -322,7 +321,7 @@ theorem holesUnchanged_delete_fresh {α β γ : Type} (f : HolFiniteMapExact α 
       (@HolFiniteMapExact.updateEq β (Ref γ) (Classical.decEq β) refs (ptr, value)) refsNew {ptr})
     (fresh : ptr ∉ refs.domain) : holesUnchangedExcept f refs refsNew ∅ := by
   classical
-  intro key tag finalised left child right outside found
+  intro key tag finalised left child right ⟨outside, found⟩
   have different : key ≠ ptr := by
     intro same
     subst key
@@ -331,7 +330,7 @@ theorem holesUnchanged_delete_fresh {α β γ : Type} (f : HolFiniteMapExact α 
   have updated : (refs.updateEq (ptr, value)).lookup key =
       some (.mutBlock tag finalised left child right) := by
     simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different] using found
-  obtain ⟨fin, childNew, result, unchanged⟩ := related key tag finalised left child right outside updated
+  obtain ⟨fin, childNew, result, unchanged⟩ := related key tag finalised left child right ⟨outside, updated⟩
   exact ⟨fin, childNew, result, fun _ => unchanged (by simpa using different)⟩
 
 /-- Flapjack infrastructure: a freshness relation over an extended heap also
@@ -365,7 +364,7 @@ theorem holesUnchanged_filled {α β γ δ : Type} (f : HolFiniteMapExact α β)
       (@HolFiniteMapExact.updateEq β (Ref γ) (Classical.decEq β) refsNew
         (ptr, .mutBlock tag finalised left child right)) {ptr} := by
   classical
-  intro key oldTag oldFinal oldLeft oldValue oldRight outside found
+  intro key oldTag oldFinal oldLeft oldValue oldRight ⟨outside, found⟩
   by_cases same : key = ptr
   · subst key
     rw [oldFound] at found
@@ -375,7 +374,7 @@ theorem holesUnchanged_filled {α β γ δ : Type} (f : HolFiniteMapExact α β)
     · simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
     · intro absent
       exact (absent (by simp)).elim
-  · obtain ⟨newFinal, newChild, lookup, equal⟩ := related key oldTag oldFinal oldLeft oldValue oldRight outside found
+  · obtain ⟨newFinal, newChild, lookup, equal⟩ := related key oldTag oldFinal oldLeft oldValue oldRight ⟨outside, found⟩
     refine ⟨newFinal, newChild, ?_, fun _ => equal (by simp)⟩
     simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using lookup
 
@@ -401,7 +400,7 @@ theorem holesUnchanged_changed {α β γ δ : Type} (f : HolFiniteMapExact α β
     (oldFound : refsOld.lookup ptr = some (.mutBlock tag oldFinalised left oldChild right)) :
     holesUnchangedExcept f refsOld refsNew {ptr} := by
   classical
-  intro key oldTag oldFinal oldLeft oldValue oldRight outside found
+  intro key oldTag oldFinal oldLeft oldValue oldRight ⟨outside, found⟩
   by_cases same : key = ptr
   · subst key
     rw [oldFound] at found
@@ -411,14 +410,14 @@ theorem holesUnchanged_changed {α β γ δ : Type} (f : HolFiniteMapExact α β
         (ptr, .mutBlock tag finalised left child right)).lookup ptr =
         some (.mutBlock tag finalised left child right) := by
       simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
-    obtain ⟨newFinal, newChild, lookup, _⟩ := related ptr tag finalised left child right outside inserted
+    obtain ⟨newFinal, newChild, lookup, _⟩ := related ptr tag finalised left child right ⟨outside, inserted⟩
     exact ⟨newFinal, newChild, lookup, fun absent => (absent (by simp)).elim⟩
   · have inserted : (@HolFiniteMapExact.updateEq β (Ref γ) (Classical.decEq β) refsOld
         (ptr, .mutBlock tag finalised left child right)).lookup key =
         some (.mutBlock oldTag oldFinal oldLeft oldValue oldRight) := by
       simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using found
     obtain ⟨newFinal, newChild, lookup, equal⟩ :=
-      related key oldTag oldFinal oldLeft oldValue oldRight outside inserted
+      related key oldTag oldFinal oldLeft oldValue oldRight ⟨outside, inserted⟩
     exact ⟨newFinal, newChild, lookup, fun _ => equal (by simp)⟩
 
 theorem holFmapAsFiniteSupportParamWitness_onlyFresh_refl_f (f : HolFiniteMapExact Nat Nat) :
@@ -450,8 +449,8 @@ theorem holesUnchanged_subset {α β γ : Type} (f : HolFiniteMapExact α β)
     (refs : HolFiniteMapExact β (Ref γ)) (refsNew : HolFiniteMapExact β (Ref γ))
     (changed larger : Set β) (related : holesUnchangedExcept f refs refsNew changed)
     (subset : changed ⊆ larger) : holesUnchangedExcept f refs refsNew larger := by
-  intro ptr tag finalised left child right outside found
-  obtain ⟨finalised', child', lookup, same⟩ := related ptr tag finalised left child right outside found
+  intro ptr tag finalised left child right ⟨outside, found⟩
+  obtain ⟨finalised', child', lookup, same⟩ := related ptr tag finalised left child right ⟨outside, found⟩
   exact ⟨finalised', child', lookup, fun absent => same (fun mem => absent (subset mem))⟩
 
 theorem holFmapAsFiniteSupportParamWitness_nonFresh_not_in_range_f (f : HolFiniteMapExact Nat Nat) :
@@ -493,12 +492,12 @@ theorem holesUnchanged_trans (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapEx
     (final : HolFiniteMapExact Nat (Ref Value)) (changed : Set Nat)
     (first : holesUnchangedExcept f refs middle changed) (second : holesUnchangedExcept g middle final changed)
     (fresh : onlyFresh f g refs) (_submap : f.submap g) : holesUnchangedExcept f refs final changed := by
-  intro ptr tag finalised left child right outside found
-  obtain ⟨middleFinalised, middleChild, middleFound, same1⟩ := first ptr tag finalised left child right outside found
+  intro ptr tag finalised left child right ⟨outside, found⟩
+  obtain ⟨middleFinalised, middleChild, middleFound, same1⟩ := first ptr tag finalised left child right ⟨outside, found⟩
   have allocated : ptr ∈ refs.domain := by simp [HolFiniteMapExact.domain, found]
   have outsideNew := nonFresh_not_in_range f g refs ptr allocated outside fresh
   obtain ⟨finalFinalised, finalChild, finalFound, same2⟩ :=
-    second ptr tag middleFinalised left middleChild right outsideNew middleFound
+    second ptr tag middleFinalised left middleChild right ⟨outsideNew, middleFound⟩
   exact ⟨finalFinalised, finalChild, finalFound, fun unchanged => (same1 unchanged).trans (same2 unchanged)⟩
 
 theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_rangeUpdate_f {α β : Type}
@@ -513,7 +512,7 @@ Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" 
 theorem holesUnchanged_rangeUpdate {α β γ : Type} [DecidableEq β] (f : HolFiniteMapExact α β)
     (p : α) (key : β) (value : Ref γ) (refs : HolFiniteMapExact β (Ref γ))
     (mapped : f.lookup p = some key) : holesUnchangedExcept f refs (refs.updateEq (key, value)) ∅ := by
-  intro ptr tag finalised left child right outside found
+  intro ptr tag finalised left child right ⟨outside, found⟩
   have different : ptr ≠ key := by
     intro equal
     subst ptr

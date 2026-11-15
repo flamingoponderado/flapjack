@@ -142,7 +142,7 @@ theorem wrapper_frame_contents (f g : HolFiniteMapExact Nat Nat)
       some (.mutBlock tag false left initial right) := by
     simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
   obtain ⟨finalised, nextChild, preserved, _⟩ :=
-    unchanged ptr tag false left initial right outside initialFound
+    unchanged ptr tag false left initial right ⟨outside, initialFound⟩
   rw [holeFound] at preserved
   cases preserved
   exact ⟨holeOutside, holeFound⟩

@@ -157,7 +157,7 @@ theorem linked_frame_old_hole (f : HolFiniteMapExact Nat Nat)
       some (.mutBlock oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight) := by
     simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different]
   obtain ⟨fin, newChild, preserved, unchangedChild⟩ :=
-    unchanged ptr oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight outside linkedFound
+    unchanged ptr oldTag false oldLeft (.refPtr false (leastUnusedRef refs)) oldRight ⟨outside, linkedFound⟩
   have sameChild := unchangedChild (by simpa using different)
   subst newChild
   have initialNotFinal : holeNotFinalised ((refs.updateEq (ptr,

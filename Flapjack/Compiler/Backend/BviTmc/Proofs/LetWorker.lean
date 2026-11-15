@@ -70,7 +70,7 @@ theorem evaluate_let_worker {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.E
         rw [BviSem.evaluate, BviSem.fixClock_evaluate, bindingsRun] at run
         have nextHole : holeHasVal g env1 env2 middleTarget.refs c := by
           obtain ⟨length, ptr, tag, finalised, left, right, ptrEq, idxEq, small, ptrOutside, found⟩ := hole
-          obtain ⟨nextFinal, nextChild, nextFound, sameChild⟩ := unchanged ptr tag finalised left c right ptrOutside found
+          obtain ⟨nextFinal, nextChild, nextFound, sameChild⟩ := unchanged ptr tag finalised left c right ⟨ptrOutside, found⟩
           have childEq : c = nextChild := sameChild (by simp)
           have allocated : ptr ∈ target.refs.domain := by simp [HolFiniteMapExact.domain, found]
           have nextOutside := nonFresh_not_in_range f g target.refs ptr allocated ptrOutside fresh

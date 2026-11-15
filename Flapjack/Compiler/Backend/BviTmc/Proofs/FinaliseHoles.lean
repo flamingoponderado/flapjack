@@ -36,7 +36,7 @@ theorem holesUnchanged_finalised {α β γ δ : Type} (f : HolFiniteMapExact α 
     holesUnchangedExcept f old
       (@HolFiniteMapExact.updateEq β (Ref γ) (Classical.decEq β) new (ptr, .mutBlock tag fin2 left child right)) ∅ := by
   classical
-  intro key otherTag otherFin otherLeft otherChild otherRight keyOutside keyFound
+  intro key otherTag otherFin otherLeft otherChild otherRight ⟨keyOutside, keyFound⟩
   by_cases same : key = ptr
   · subst key
     rw [found] at keyFound
@@ -45,7 +45,7 @@ theorem holesUnchanged_finalised {α β γ δ : Type} (f : HolFiniteMapExact α 
     simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
   · have erased : (old.eraseEq ptr).lookup key = some (.mutBlock otherTag otherFin otherLeft otherChild otherRight) := by
       simpa [HolFiniteMapExact.lookup_eraseEq, FDOMSUB_HOL, same] using keyFound
-    obtain ⟨newFin, newChild, lookup, sameChild⟩ := related key otherTag otherFin otherLeft otherChild otherRight keyOutside erased
+    obtain ⟨newFin, newChild, lookup, sameChild⟩ := related key otherTag otherFin otherLeft otherChild otherRight ⟨keyOutside, erased⟩
     refine ⟨newFin, newChild, ?_, sameChild⟩
     simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, same] using lookup
 

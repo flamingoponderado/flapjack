@@ -99,7 +99,7 @@ theorem evaluate_fill_hole_val {C F : Type} (e : Bvi.Exp)
   have ptrSame : ptr = holePtr := by simpa using ptrEq.symm
   subst ptr
   obtain ⟨nextFinalised, oldValue, nextFound, _⟩ :=
-    unchanged holePtr tag finalised left c right outside found
+    unchanged holePtr tag finalised left c right ⟨outside, found⟩
   obtain ⟨otherTag, otherLeft, otherChild, otherRight, stillFound⟩ :=
     still holePtr ⟨outside, unfinalised⟩
   rw [nextFound] at stillFound

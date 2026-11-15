@@ -65,7 +65,7 @@ theorem stateRel_alloc {C F : Type} (f : HolFiniteMapExact Nat Nat)
     · have oldLookup : f.lookup key = some ptr := by
         simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, eq] using lookup
       exact (outside ⟨key, oldLookup⟩).elim
-  · intro ptr tag finalised left child right _ found
+  · intro ptr tag finalised left child right ⟨_, found⟩
     have ne : ptr ≠ tgt := by
       intro eq
       subst ptr
