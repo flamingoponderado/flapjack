@@ -367,7 +367,10 @@ theorem isWfShapeHOL_drop {α : Type} (sh_ctxt : List (MlS × α)) (sh : ShapeHO
         (structContextLookupHOL name ctxt).isSome = true := by
     intro ctxt
     induction ctxt with
-    | nil => intro name k; cases k <;> simp [structContextLookupHOL]
+    | nil =>
+      intro name k
+      cases k
+      all_goals simp [structContextLookupHOL]
     | cons entry rest ih =>
         intro name k
         obtain ⟨candidate, info⟩ := entry
@@ -388,14 +391,16 @@ theorem isWfShapeHOL_drop {α : Type} (sh_ctxt : List (MlS × α)) (sh : ShapeHO
       isWfShapesExactHOL contextDrop shapes = true →
         isWfShapesExactHOL sh_ctxt shapes = true)
     ?_ ?_ ?_ ?_ ?_ sh
-  · intro _; rfl
+  · intro _
+    rfl
   · intro shapes ih hwf
     simpa only [isWfShapeExactHOL] using ih hwf
   · intro name hwf
     have hctx := hlookupDrop sh_ctxt name n (by
       simpa [contextDrop, isWfShapeExactHOL] using hwf)
     simpa [isWfShapeExactHOL] using hctx
-  · intro _; rfl
+  · intro _
+    rfl
   · intro shape rest ihShape ihRest hwf
     simp only [isWfShapesExactHOL, Bool.and_eq_true] at hwf ⊢
     exact ⟨ihShape hwf.1, ihRest hwf.2⟩

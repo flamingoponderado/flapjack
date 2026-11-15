@@ -27,7 +27,9 @@ theorem lineGetCodeLabels_extractLabels {width : Nat} [NeZero width]
     ⋃₀ (lineGetCodeLabels '' {line | line ∈ l}) =
       (Prod.snd '' {p | p ∈ extractLabels l}) := by
   induction l with
-  | nil => ext p; simp [extractLabels]
+  | nil =>
+    ext p
+    simp [extractLabels]
   | cons line xs ih =>
     have ih' : ∀ p : Nat, (∃ x ∈ xs, p ∈ lineGetCodeLabels x) ↔
         (∃ q ∈ extractLabels xs, q.2 = p) := by
@@ -52,7 +54,9 @@ theorem memExtractLabelsOfLabel {width : Nat} [NeZero width] :
       Line.label a b len ∈ lines → (a, b) ∈ extractLabels lines := by
   intro lines
   induction lines with
-  | nil => intro a b len h; simp at h
+  | nil =>
+    intro a b len h
+    simp at h
   | cons line rest ih =>
     intro a b len h
     cases line with
@@ -86,7 +90,9 @@ theorem memLabelOfExtractLabels {width : Nat} [NeZero width]
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) (a b : Nat) :
     (a, b) ∈ extractLabels lines → ∃ len, Line.label a b len ∈ lines := by
   induction lines with
-  | nil => intro h; simp [extractLabels] at h
+  | nil =>
+    intro h
+    simp [extractLabels] at h
   | cons line rest ih =>
     intro h
     cases line with
@@ -153,7 +159,10 @@ theorem getCodeLabelsExtractLabels {width : Nat} [NeZero width]
       (fun sec => (sec.sectionId, 0)) '' {sec | sec ∈ code} ∪
       {p | p ∈ ((code.map (fun sec => extractLabels sec.lines)).flatten)} := by
   induction code with
-  | nil => intro _; ext p; simp [getCodeLabels]
+  | nil =>
+    intro _
+    ext p
+    simp [getCodeLabels]
   | cons sec rest ih =>
     intro hok
     have hokrest : ∀ s ∈ rest, secLabelsOk s :=

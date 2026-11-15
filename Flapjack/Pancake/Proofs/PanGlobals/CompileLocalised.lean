@@ -81,9 +81,10 @@ theorem localisedExpShapeValHOL {width : Nat} [NeZero width] :
     rw [localisedExpHOL_eq_every]
     induction sh using shapeValHOL.induct
       (motive2 := fun shs => everyExpListHOL localisedExpPredHOL
-        (shapeValsHOL (width := width) shs) = true) <;>
-      (try rw [shapeValHOL]) <;> (try rw [shapeValsHOL]) <;>
-      simp_all [everyExpHOL, everyExpListHOL, localisedExpPredHOL]
+        (shapeValsHOL (width := width) shs) = true)
+    all_goals try rw [shapeValHOL]
+    all_goals try rw [shapeValsHOL]
+    all_goals simp_all [everyExpHOL, everyExpListHOL, localisedExpPredHOL]
   constructor
   · exact hval
   · intro shapes
@@ -105,9 +106,10 @@ theorem compileLocalisedHOL {width : Nat} [NeZero width] :
     rw [localisedExpHOL_eq_every]
     induction sh using shapeValHOL.induct
       (motive2 := fun shs => everyExpListHOL localisedExpPredHOL
-        (shapeValsHOL (width := width) shs) = true) <;>
-      (try rw [shapeValHOL]) <;> (try rw [shapeValsHOL]) <;>
-      simp_all [everyExpHOL, everyExpListHOL, localisedExpPredHOL]
+        (shapeValsHOL (width := width) shs) = true)
+    all_goals try rw [shapeValHOL]
+    all_goals try rw [shapeValsHOL]
+    all_goals simp_all [everyExpHOL, everyExpListHOL, localisedExpPredHOL]
   induction body using compileProgExactHOL.induct ctxt
   case case30 =>
     rename_i p h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19

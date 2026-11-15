@@ -130760,7 +130760,7 @@
   "lean_path": "Flapjack/Compiler/Backend/BvlHandle/Proofs/VarBound.lean",
   "lean_name": "bVarBound_mono",
   "statement_status": "reviewed_exact",
-  "reviewer": "Independently compared the typed bvl_handle_proof_shape_probe capture (`\u2200m xs n. bVarBound m xs \u2227 m \u2264 n \u21d2 bVarBound n xs`) with bVarBound_mono (expressions) (n m) (le : n \u2264 m) (bound : bVarBound n expressions) : bVarBound m expressions; only the bound-variable names differ, and both state monotonicity in the environment size."
+  "reviewer": "codewhale source comparison (2026-11-15, PR #1404 round 1): typed capture bVarBound_LESS_EQ_typed in scripts/hol-probes/bvl_handle_proof_shape_probe.out gives ∀(m :num) (xs :bvl$exp list) (n :num). bVarBound m xs ∧ m ≤ n ⇒ bVarBound n xs. Lean's bVarBound_mono takes the same three binders in the order n, expressions, m (HOL's m is the Lean n and HOL's n is the Lean m) and the same single conjunction premise bVarBound n expressions ∧ n ≤ m, with conclusion bVarBound m expressions. No extra hypothesis and no separate monotonicity hypothesis."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvl_to_bviProofScript.sml",

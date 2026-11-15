@@ -60,7 +60,8 @@ theorem ssaCcTrans_flatExpConventions {width : Nat} [NeZero width]
     all_goals try simp_all [ssaCcTrans, flatExpConventions, nextVarRename, listNextVarRenameMove]
     case inst =>
       rename_i instruction tree counter context
-      fun_cases ssaCcTransInst instruction tree counter <;> simp [flatExpConventions]
+      fun_cases ssaCcTransInst instruction tree counter
+      all_goals simp [flatExpConventions]
     case set =>
       rename_i store value tree counter context premise
       cases value <;> simp_all [flatExpConventions, ssaCcTransExp]

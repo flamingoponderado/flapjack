@@ -309,7 +309,8 @@ theorem wordCmpWordWord {width : Nat} [NeZero width] (cmp : Cmp)
     (c c' : BitVec width) :
     wordSemWordCmp cmp (.word c) (.word c') =
       some (Flapjack.Compiler.Encoders.Asm.wordCmpHOL cmp c c') := by
-  cases cmp <;> rfl
+  cases cmp
+  all_goals rfl
 
 namespace WordSemStateFiniteExact
 
@@ -335,7 +336,8 @@ end WordSemStateFiniteExact
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "OPTION_MAP2_ADD_0"]
 theorem wordSemOptionAdd_zero (m : Option Nat) :
     wordSemOptionAdd m (some 0) = m ∧ wordSemOptionAdd (some 0) m = m := by
-  rcases m with _ | _ <;> simp [wordSemOptionAdd]
+  rcases m with _ | _
+  all_goals simp [wordSemOptionAdd]
 
 /-- Exact HOL `stack_size_some_at_least_one` (`wordPropsScript.sml:3896`):
     a computed stack size is at least one. -/
@@ -346,14 +348,19 @@ theorem stackSizeSomeAtLeastOne {width : Nat} [NeZero width] :
       wordSemStackSize stk = some sz → 1 ≤ sz := by
   intro stk
   induction stk with
-  | nil => intro sz h; simp [wordSemStackSize] at h; omega
+  | nil =>
+    intro sz h
+    simp [wordSemStackSize] at h
+    omega
   | cons fr rest ih =>
     intro sz h
     change wordSemOptionAdd (wordSemStackSizeFrame fr) (wordSemStackSize rest) = some sz at h
     rcases hf : wordSemStackSizeFrame fr with _ | a
-    · rw [hf] at h; simp [wordSemOptionAdd] at h
+    · rw [hf] at h
+      simp [wordSemOptionAdd] at h
     · rcases hs : wordSemStackSize rest with _ | b
-      · rw [hf, hs] at h; simp [wordSemOptionAdd] at h
+      · rw [hf, hs] at h
+        simp [wordSemOptionAdd] at h
       · rw [hf, hs] at h
         simp only [wordSemOptionAdd, Option.some.injEq] at h
         have hb := ih b hs
