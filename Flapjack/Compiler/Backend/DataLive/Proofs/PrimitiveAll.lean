@@ -24,6 +24,53 @@ theorem stateRel_doAppAux_block {C F : Type} (source target : State C F) (live :
     case equal => exact stateRel_doAppAux_equal source target live args related
     case build parts => exact stateRel_doAppAux_build source target live parts args related
 
+/-- Related states yield matching auxiliary primitive outcomes. This helper
+assembles the operation-specific simulations and has no separate HOL declaration. -/
+private theorem stateRel_doAppAux {C F : Type} (source target : State C F) (live : NumSet)
+    (op : ClosLang.Op) (args : List DataSem.Value) (related : stateRel source target live) :
+    appRel live (doAppAux op args source) (doAppAux op args target) := by
+  cases op with
+  | label label =>
+    cases args with
+    | cons first rest => simp [doAppAux, applyNonFfi, appRel]
+    | nil =>
+      cases found : sptLookup label source.code with
+      | none =>
+        have other : sptLookup label target.code = none := by rw [← related.1, found]
+        simp [doAppAux, applyNonFfi, found, other, appRel]
+      | some entry =>
+        have other : sptLookup label target.code = some entry := by rw [← related.1, found]
+        simpa [doAppAux, applyNonFfi, found, other, appRel] using related
+  | ffi name => exact stateRel_doAppAux_ffi source target live name args related
+  | intOp op =>
+    rw [doAppAux_int_exact, doAppAux_int_exact]
+    split <;> (simp only [appRel, true_and]; try exact related)
+  | wordOp op =>
+    rw [doAppAux_word_exact, doAppAux_word_exact]
+    split <;> (simp only [appRel, true_and]; try exact related)
+  | blockOp op => exact stateRel_doAppAux_block source target live op args related
+  | globOp op => exact stateRel_doAppAux_global source target live op args related
+  | memOp op => exact stateRel_doAppAux_memory source target live op args related
+  | install => simp [doAppAux, applyNonFfi, appRel]
+  | thunkOp op => exact stateRel_doAppAux_thunk source target live op args related
+
+/-- Auxiliary primitive errors are reproduced in any related target state.
+The dispatcher inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "state_rel_IMP_do_app_aux_err"]
+theorem stateRel_doAppAux_error {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
+    (source : State C F) (error : ErrorResult DataSem.Value) (target : State C F) (live : NumSet)
+    (premises : doAppAux op args source = .err error ∧ stateRel source target live) :
+    doAppAux op args target = .err error := by
+  obtain ⟨run, related⟩ := premises
+  have simulation := stateRel_doAppAux source target live op args related
+  rw [run] at simulation
+  cases targetRun : doAppAux op args target with
+  | err targetError =>
+    simp [targetRun, appRel] at simulation
+    cases simulation
+    rfl
+  | val value => simp [targetRun, appRel] at simulation
+
 /-- Every primitive application produces matching errors or values and
 related successful states. This is the current Lean evaluator's counterpart
 of the source primitive simulation, untagged pending source review. -/
