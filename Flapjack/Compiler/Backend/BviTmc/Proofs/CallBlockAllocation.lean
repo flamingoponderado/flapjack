@@ -353,6 +353,6 @@ theorem evaluate_wrapper_core {C F : Type} (loc dest tag : Nat) (left right : Li
       refine ⟨{ next with refs := refs }, g, .val [value], targetRun, ?_, ⟨heaps, nextStates.2⟩,
         extension, invariants.1, ?_, finalStill⟩
       · exact .cons (by simpa using valueRelated) .nil
-      · exact holesUnchanged_trans f g target.refs next.refs refs ∅ invariants.2.1 finalUnchanged invariants.1 extension
+      · exact holesUnchanged_trans f g target.refs next.refs refs ∅ ⟨invariants.2.1, finalUnchanged, invariants.1, extension⟩
 
 end Flapjack.Compiler.Backend.BviTmc.CallBlockAllocation

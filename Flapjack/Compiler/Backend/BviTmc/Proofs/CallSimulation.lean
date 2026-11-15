@@ -120,8 +120,8 @@ theorem evaluate_call_no_handler_core {C F : Type} (loc ticks : Nat) (dest : Opt
               have totalExtension : f.submap h := fun key value found => bodyExtension key value (extension key value found)
               have totalFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh bodyFresh domain
               have totalUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs next.refs ∅
-                unchanged bodyUnchanged fresh extension
-              have totalStill := holesStill_trans f g target.refs middleTarget.refs next.refs () still bodyStill fresh extension
+                ⟨unchanged, bodyUnchanged, fresh, extension⟩
+              have totalStill := holesStill_trans f g target.refs middleTarget.refs next.refs () ⟨still, bodyStill, fresh, extension⟩
               refine ⟨next, h, targetResult, ?_, related, nextStates, totalExtension, totalFresh, totalUnchanged, totalStill⟩
               rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgsRun]
               simp only [Option.isSome_none, Bool.and_false, Bool.false_eq_true, ↓reduceIte,
@@ -324,14 +324,14 @@ theorem evaluate_call_handled_exception {C F : Type} (loc ticks destination : Na
     have firstExtension : f.submap h := fun key value present => bodyExtension key value (extension key value present)
     have firstFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh bodyFresh argsDomain
     have firstUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs next.refs ∅
-      unchanged bodyUnchanged fresh extension
-    have firstStill := holesStill_trans f g target.refs middleTarget.refs next.refs () still bodyStill fresh extension
+      ⟨unchanged, bodyUnchanged, fresh, extension⟩
+    have firstStill := holesStill_trans f g target.refs middleTarget.refs next.refs () ⟨still, bodyStill, fresh, extension⟩
     have allExtension : f.submap k := fun key value present => handlerExtension key value (firstExtension key value present)
     have allFresh := onlyFresh_trans f h k target.refs next.refs firstFresh handlerFresh
       (Set.Subset.trans argsDomain bodyDomain)
     have allUnchanged := holesUnchanged_trans f h target.refs next.refs last.refs ∅
-      firstUnchanged handlerUnchanged firstFresh firstExtension
-    have allStill := holesStill_trans f h target.refs next.refs last.refs () firstStill handlerStill firstFresh firstExtension
+      ⟨firstUnchanged, handlerUnchanged, firstFresh, firstExtension⟩
+    have allStill := holesStill_trans f h target.refs next.refs last.refs () ⟨firstStill, handlerStill, firstFresh, firstExtension⟩
     refine ⟨last, k, targetResult, ?_, related, lastStates, allExtension, allFresh, allUnchanged, allStill⟩
     rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgsRun]
     simp only [Option.isNone_some, Bool.false_and, Bool.false_eq_true, ↓reduceIte, targetFound, targetEnough]

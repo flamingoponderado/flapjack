@@ -62,9 +62,9 @@ theorem evaluate_let_to_core {C F : Type} (bindings : List Bvi.Exp) (body target
         have domain := BviProps.evaluate_refs_subset bindings env2 target middleTarget (.val values') targetRun
         have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh bodyFresh domain
         have allUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs last.refs ∅
-          unchanged bodyUnchanged fresh extension
+          ⟨unchanged, bodyUnchanged, fresh, extension⟩
         have allStill := holesStill_trans f g target.refs middleTarget.refs last.refs ()
-          still bodyStill fresh extension
+          ⟨still, bodyStill, fresh, extension⟩
         refine ⟨last, h, bodyResult, ?_, bodyRel, states, submap, allFresh, allUnchanged, allStill⟩
         rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetRun]
         exact bodyRun

@@ -135685,6 +135685,20 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "holes_unchanged_except_trans", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "holesUnchanged_trans", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "g", "refs", "middle", "final"],
+  "reviewer": "Source comparison: Compared holes_unchanged_except_trans_typed in bvi_tmc_proof_source_probe.out: both original unchanged-hole relations, freshness, and submap premises jointly imply the unchanged-hole relation across the original and final heaps with the same changed set. Named maps use canonical finite support and same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "holes_still_not_finalised_trans", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "holesStill_trans", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "g", "refs", "middle", "final"],
+  "reviewer": "Source comparison: Compared holes_still_not_finalised_trans_typed in bvi_tmc_proof_source_probe.out: both original unfinalised-hole relations, freshness, and submap premises jointly imply the relation across the original and final heaps; the unused changed parameter retains its independent type. Named maps use canonical finite support and same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "holes_unchanged_except_refl", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
   "lean_name": "holesUnchanged_refl", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "refs"],

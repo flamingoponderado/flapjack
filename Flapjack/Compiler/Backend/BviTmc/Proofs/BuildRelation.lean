@@ -176,8 +176,8 @@ theorem doBuild_related (parts : List ClosLang.ConstPart) (f : HolFiniteMapExact
           midHeaps midInj nextValues
       refine ⟨lastMap, lastValue, lastTarget, ?_, ?_, ?_, lastInj, ?_,
         onlyFresh_trans f midMap lastMap target midTarget firstFresh secondFresh firstDomain,
-        holesUnchanged_trans f midMap target midTarget lastTarget ∅ firstHoles secondHoles firstFresh firstSubmap,
-        holesStill_trans f midMap target midTarget lastTarget () firstStill secondStill firstFresh firstSubmap,
+        holesUnchanged_trans f midMap target midTarget lastTarget ∅ ⟨firstHoles, secondHoles, firstFresh, firstSubmap⟩,
+        holesStill_trans f midMap target midTarget lastTarget () ⟨firstStill, secondStill, firstFresh, firstSubmap⟩,
         firstDomain.trans secondDomain⟩
       · simpa [doBuild, targetPart] using targetRun
       · simpa [doBuild, sourcePart] using resultRel

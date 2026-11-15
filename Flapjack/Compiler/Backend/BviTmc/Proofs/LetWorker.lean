@@ -99,9 +99,9 @@ theorem evaluate_let_worker {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.E
         have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh bodyFresh domain
         have widened := holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} unchanged (by simp)
         have allUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs workState.refs {holePtr}
-          widened bodyUnchanged fresh extension
+          ⟨widened, bodyUnchanged, fresh, extension⟩
         have allStill := holesStill_trans f g target.refs middleTarget.refs workState.refs ()
-          still bodyStill fresh extension
+          ⟨still, bodyStill, fresh, extension⟩
         refine ⟨workResult, h, workState, ?_, workRel, states, submap, allFresh, allUnchanged, allStill, ?_⟩
         · simp only [rewriteWorkerSource]
           rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetRun]

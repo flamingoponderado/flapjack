@@ -125,14 +125,14 @@ theorem evaluate_letcall_return {C F : Type} (loc rets ticks destination : Nat)
     have firstExtension : f.submap h := fun key value present => bodyExtension key value (extension key value present)
     have firstFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh bodyFresh argsDomain
     have firstUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs next.refs ∅
-      unchanged bodyUnchanged fresh extension
-    have firstStill := holesStill_trans f g target.refs middleTarget.refs next.refs () still bodyStill fresh extension
+      ⟨unchanged, bodyUnchanged, fresh, extension⟩
+    have firstStill := holesStill_trans f g target.refs middleTarget.refs next.refs () ⟨still, bodyStill, fresh, extension⟩
     have allExtension : f.submap k := fun key value present => continuationExtension key value (firstExtension key value present)
     have allFresh := onlyFresh_trans f h k target.refs next.refs firstFresh continuationFresh
       (Set.Subset.trans argsDomain bodyDomain)
     have allUnchanged := holesUnchanged_trans f h target.refs next.refs last.refs ∅
-      firstUnchanged continuationUnchanged firstFresh firstExtension
-    have allStill := holesStill_trans f h target.refs next.refs last.refs () firstStill continuationStill firstFresh firstExtension
+      ⟨firstUnchanged, continuationUnchanged, firstFresh, firstExtension⟩
+    have allStill := holesStill_trans f h target.refs next.refs last.refs () ⟨firstStill, continuationStill, firstFresh, firstExtension⟩
     refine ⟨last, k, targetResult, ?_, related, lastStates, allExtension, allFresh, allUnchanged, allStill⟩
     rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetArgsRun]
     simp only [targetFound, targetEnough, ↓reduceIte]

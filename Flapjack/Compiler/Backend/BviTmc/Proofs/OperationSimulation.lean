@@ -74,9 +74,9 @@ theorem evaluate_op_core {C F : Type} (op : ClosLang.Op) (args : List Bvi.Exp)
           have domain := BviProps.evaluate_refs_subset args env2 target middleTarget (.val values') targetRun
           have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh appFresh domain
           have allUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs lastTarget.refs ∅
-            unchanged appUnchanged fresh extension
+            ⟨unchanged, appUnchanged, fresh, extension⟩
           have allStill := holesStill_trans f g target.refs middleTarget.refs lastTarget.refs ()
-            still appStill fresh extension
+            ⟨still, appStill, fresh, extension⟩
           refine ⟨lastTarget, h, .val [value'], ?_, ?_, nextStates, submap, allFresh, allUnchanged, allStill⟩
           · rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetRun]
             simp [targetApp]

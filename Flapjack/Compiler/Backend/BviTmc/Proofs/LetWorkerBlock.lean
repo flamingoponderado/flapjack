@@ -98,9 +98,9 @@ theorem evaluate_let_worker_block {C F : Type} (bindings : List Bvi.Exp) (body :
         have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh bodyFresh domain
         have widened := holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} unchanged (by simp)
         have allUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs workState.refs {holePtr}
-          widened bodyUnchanged fresh extension
+          ⟨widened, bodyUnchanged, fresh, extension⟩
         have allStill := holesStill_trans f g target.refs middleTarget.refs workState.refs ()
-          still bodyStill fresh extension
+          ⟨still, bodyStill, fresh, extension⟩
         refine ⟨workResult, h, workState, ?_, workRel, states, submap, allFresh, allUnchanged, allStill, ?_⟩
         · rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetRun]
           simpa [List.length_append, valueLength, Nat.add_comm, Nat.add_assoc] using workRun

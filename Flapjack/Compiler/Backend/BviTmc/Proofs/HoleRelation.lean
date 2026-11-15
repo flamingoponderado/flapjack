@@ -501,15 +501,15 @@ theorem holFmapAsFiniteSupportParamWitness_holesUnchanged_trans_final (final : H
     mapofBroad (maptoBroadlookup final) final.finiteSupport = final := by cases final; rfl
 
 /-- Hole preservation composes as the pointer map grows only into fresh
-heap locations.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_trans" (fmap_as_finite_support_parameters := [f, g, refs, middle, final])] -/
+heap locations. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_unchanged_except_trans"
+  (fmap_as_finite_support_parameters := [f, g, refs, middle, final])]
 theorem holesUnchanged_trans (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
     (refs : HolFiniteMapExact Nat (Ref Value)) (middle : HolFiniteMapExact Nat (Ref Value))
     (final : HolFiniteMapExact Nat (Ref Value)) (changed : Set Nat)
-    (first : holesUnchangedExcept f refs middle changed) (second : holesUnchangedExcept g middle final changed)
-    (fresh : onlyFresh f g refs) (_submap : f.submap g) : holesUnchangedExcept f refs final changed := by
+    (h : holesUnchangedExcept f refs middle changed ∧ holesUnchangedExcept g middle final changed ∧
+      onlyFresh f g refs ∧ f.submap g) : holesUnchangedExcept f refs final changed := by
+  obtain ⟨first, second, fresh, _submap⟩ := h
   intro ptr tag finalised left child right ⟨outside, found⟩
   obtain ⟨middleFinalised, middleChild, middleFound, same1⟩ := first ptr tag finalised left child right ⟨outside, found⟩
   have allocated : ptr ∈ refs.domain := by simp [HolFiniteMapExact.domain, found]
@@ -593,15 +593,15 @@ theorem holFmapAsFiniteSupportParamWitness_holesStill_trans_middle (middle : Hol
 theorem holFmapAsFiniteSupportParamWitness_holesStill_trans_final (final : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup final) final.finiteSupport = final := by cases final; rfl
 
-/-- Unfinalised-hole preservation composes across fresh map extensions.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_trans" (fmap_as_finite_support_parameters := [f, g, refs, middle, final])] -/
+/-- Unfinalised-hole preservation composes across fresh map extensions. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_trans"
+  (fmap_as_finite_support_parameters := [f, g, refs, middle, final])]
 theorem holesStill_trans {α : Type} (f : HolFiniteMapExact Nat Nat) (g : HolFiniteMapExact Nat Nat)
     (refs : HolFiniteMapExact Nat (Ref Value)) (middle : HolFiniteMapExact Nat (Ref Value))
     (final : HolFiniteMapExact Nat (Ref Value)) (_changed : α)
-    (first : holesStillNotFinalised f refs middle) (second : holesStillNotFinalised g middle final)
-    (fresh : onlyFresh f g refs) (_submap : f.submap g) : holesStillNotFinalised f refs final := by
+    (h : holesStillNotFinalised f refs middle ∧ holesStillNotFinalised g middle final ∧
+      onlyFresh f g refs ∧ f.submap g) : holesStillNotFinalised f refs final := by
+  obtain ⟨first, second, fresh, _submap⟩ := h
   intro ptr ⟨outside, hole⟩
   have allocated : ptr ∈ refs.domain := by
     obtain ⟨tag, left, child, right, found⟩ := hole

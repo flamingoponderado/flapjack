@@ -92,9 +92,9 @@ theorem evaluate_if_to_core {C F : Type} (condition yes no yesTarget noTarget : 
           have domain := BviProps.evaluate_refs_subset [condition] env2 target middleTarget (.val [value']) targetRun
           have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs fresh branchFresh domain
           have allUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs last.refs ∅
-            unchanged branchUnchanged fresh extension
+            ⟨unchanged, branchUnchanged, fresh, extension⟩
           have allStill := holesStill_trans f g target.refs middleTarget.refs last.refs ()
-            still branchStill fresh extension
+            ⟨still, branchStill, fresh, extension⟩
           refine ⟨last, h, branchResult, ?_, branchRel, states, submap, allFresh, allUnchanged, allStill⟩
           rw [BviSem.evaluate, BviSem.fixClock_evaluate, targetRun]
           change (match asBool value' with
