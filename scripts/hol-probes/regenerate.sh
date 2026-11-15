@@ -12216,3 +12216,7 @@ run_probe ml_monad_base_m_typed_probeScript.sml ml_monad_base_m_typed_probe.out 
 run_probe flat_to_clos_defs_typed_probeScript.sml flat_to_clos_defs_typed_probe.out \
   CopyByteAw8_def_typed CopyByteStr_def_typed SmartCons_def_typed dest_Constant_def_typed dest_Constants_def_typed \
   "$cake_dir/compiler/backend/flat_to_closScript.sml" "$cake_dir/compiler/backend"
+
+run_probe spt_closure_defs_typed_probeScript.sml spt_closure_defs_typed_probe.out \
+  num_set_tree_union_def_typed domain_spt_fold_union_typed closure_spt_def_typed is_adjacent_def_typed is_reachable_def_typed num_set_tree_union_sym_typed lookup_num_set_tree_union_typed is_adjacent_num_set_tree_union_typed is_reachable_num_set_tree_union_typed closure_spt_thm_typed \
+  "$hol_dir/examples/algorithms/spt_closureScript.sml" "$cake_dir/compiler/backend"

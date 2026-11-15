@@ -10798,3 +10798,13 @@ no capture: the file ends with `val _ = Theory.delete_const "Seqs"`, so
 `Seqs_ind`), and a text re-parse of the source resolves the bare `Seqs` to
 `ast$Seqs` and type-errors. Its Lean twin was compared with the source text
 directly instead.
+
+`spt_closure_defs_typed_probe.out` (10 rows) captures the HOL
+`examples/algorithms/spt_closureScript.sml` declarations: the recursive
+`num_set_tree_union_def` (16 case clauses), `domain_spt_fold_union`,
+`closure_spt_def` (with its `WF_REL_TAC` termination proof), `is_adjacent_def`,
+`is_reachable_def` (`RTC`), and the five theorems. The probe needs
+`Globals.HOLDIR ^ "/examples/algorithms"` on the load path; `closure_spt_def` is
+the single HOL declaration behind both Lean rows (`closureTotal` and
+`closureTotal_step`), which renders the recursion with fuel and proves the
+step equation.
