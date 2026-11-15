@@ -51,6 +51,7 @@ val _ = show "holes_still_not_finalised_frange_update_typed" bvi_tmcProofTheory.
 val _ = show "state_ref_rel_alloc_typed" bvi_tmcProofTheory.state_ref_rel_alloc;
 val _ = show "state_rel_alloc_typed" bvi_tmcProofTheory.state_rel_alloc;
 val _ = show "state_ref_rel_lookup_typed" bvi_tmcProofTheory.state_ref_rel_lookup;
+val _ = show "fmap_inj_flookup_eq_typed" bvi_tmcProofTheory.fmap_inj_flookup_eq;
 val _ = show "hole_has_val_submap_typed" bvi_tmcProofTheory.hole_has_val_submap;
 val _ = show "holes_unchanged_except_trans_typed" bvi_tmcProofTheory.holes_unchanged_except_trans;
 val _ = show "holes_still_not_finalised_trans_typed" bvi_tmcProofTheory.holes_still_not_finalised_trans;

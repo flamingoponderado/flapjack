@@ -247,13 +247,13 @@ theorem holFmapAsFiniteSupportParamWitness_fmapInj_lookup_eq_f (f : HolFiniteMap
     mapofBroad (maptoBroadlookup f) f.finiteSupport = f := by cases f; rfl
 
 /-- An injective pointer map identifies target pointers exactly when it
-identifies their source pointers.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fmap_inj_flookup_eq" (fmap_as_finite_support_parameters := [f])] -/
+identifies their source pointers. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "fmap_inj_flookup_eq"
+  (fmap_as_finite_support_parameters := [f])]
 theorem fmapInj_lookup_eq (f : HolFiniteMapExact Nat Nat) (n m n' m' : Nat)
-    (injective : fmapInj f) (left : f.lookup n = some m) (right : f.lookup n' = some m') :
+    (h : fmapInj f ∧ f.lookup n = some m ∧ f.lookup n' = some m') :
     m = m' ↔ n = n' := by
+  obtain ⟨injective, left, right⟩ := h
   constructor
   · intro equal
     subst m'
