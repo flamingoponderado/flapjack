@@ -110,36 +110,6 @@ theorem evaluate_bvi_to_cb_call {C F : Type}
           exact run
   next => simp at extracted
 
-/-- The singleton direct-call constructor case of reconstruction correctness.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb" (fmap_as_finite_support := [refs])] -/
-theorem evaluate_bvi_to_cb_constructor_call {C F : Type}
-    (cb : CallBlock) (n loc tag ticks : Nat) (dest : Option Nat) (args : List Bvi.Exp)
-    (handler : Option Bvi.Exp) (env : List Value) (state final : BviState C F)
-    (result : BviResult) (bs : List Bvi.Exp)
-    (run : evaluate [.op (.blockOp (.cons tag)) [.call ticks dest args handler]] env state = (result, final))
-    (extracted : toBlockSource n loc (.op (.blockOp (.cons tag)) [.call ticks dest args handler]) =
-      some (bs, cb)) (bound : n ≤ env.length) :
-    evaluate [.let bs (callBlockToBvi loc cb)] env state = (result, final) := by
-  simp only [toBlockSource, extractListSource] at extracted
-  cases source : extractOneSource n loc tag (.call ticks dest args handler) with
-  | none => simp [source] at extracted
-  | some pair =>
-    obtain ⟨bindings, kind⟩ := pair
-    cases kind with
-    | inl vs => simp [source] at extracted
-    | inr child =>
-      simp [source] at extracted
-      obtain ⟨rfl, rfl⟩ := extracted.symm
-      obtain ⟨argResult, next, argsRun, success, failure⟩ :=
-        evaluate_bvi_to_cb_aux_inr_call n loc tag ticks dest args handler env state final result
-          bindings child source run bound
-      rw [BviSem.evaluate, BviSem.fixClock_evaluate, argsRun]
-      cases argResult with
-      | err error => exact failure error rfl
-      | val values => exact (success values rfl).2 env
-
 /-- The constructor-expression case, using the source induction hypothesis for
 the constructor's argument list.
 
@@ -200,33 +170,5 @@ theorem evaluate_bvi_to_cb_aux_inr_constructor {C F : Type}
           rw [← bad] at innerRun
           rw [BviSem.evaluate, BviSem.fixClock_evaluate, innerRun] at run
           simpa [errorEq] using run
-
-/-- The singleton-list case of the original mutual extraction simulation.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_bvi_to_cb_aux_inr_lemma" (fmap_as_finite_support := [refs])] -/
-theorem evaluate_bvi_to_cb_aux_inr_singleton {C F : Type}
-    (n loc tag : Nat) (e : Bvi.Exp)
-    (ih : ∀ (env : List Value) (state final : BviState C F) (result : BviResult)
-      (bs : List Bvi.Exp) (cb : CallBlock),
-      extractOneSource n loc tag e = some (bs, .inr cb) →
-      evaluate [.op (.blockOp (.cons tag)) [e]] env state = (result, final) →
-      n ≤ env.length →
-      ∃ argResult next, evaluate bs env state = (argResult, next) ∧
-        (∀ values, argResult = .val values →
-          evaluate [callBlockToBvi loc cb] values next = (result, final) ∧
-          ∀ extras, evaluate [callBlockToBvi loc cb] (values ++ extras) next = (result, final)) ∧
-        (∀ error, argResult = .err error → (argResult, next) = (result, final)))
-    (env : List Value) (state final : BviState C F) (result : BviResult)
-    (bs : List Bvi.Exp) (cb : CallBlock)
-    (extracted : extractListSource n loc tag [e] = some (bs, .inr cb))
-    (run : evaluate [.op (.blockOp (.cons tag)) [e]] env state = (result, final))
-    (bound : n ≤ env.length) :
-    ∃ argResult next, evaluate bs env state = (argResult, next) ∧
-      (∀ values, argResult = .val values →
-        evaluate [callBlockToBvi loc cb] values next = (result, final) ∧
-        ∀ extras, evaluate [callBlockToBvi loc cb] (values ++ extras) next = (result, final)) ∧
-      (∀ error, argResult = .err error → (argResult, next) = (result, final)) :=
-  ih env state final result bs cb (by simpa [extractListSource] using extracted) run bound
 
 end Flapjack.Compiler.Backend.BviTmc.CallExtraction
