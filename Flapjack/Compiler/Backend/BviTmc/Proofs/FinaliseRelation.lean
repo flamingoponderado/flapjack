@@ -20,7 +20,7 @@ private theorem valueRel_finalise (f : HolFiniteMapExact Nat Nat)
   | block tag xs ys related => rw [finaliseCons.eq_def]
   | codePtr n => rw [finaliseCons.eq_def]
   | refPtr n m flag mapped =>
-    obtain ⟨_, _, _, targetFound, cells⟩ := stateRefRel_lookup f n m sourceHeap targetHeap mapped heaps
+    obtain ⟨_, _, _, targetFound, cells⟩ := stateRefRel_lookup f n m sourceHeap targetHeap ⟨mapped, heaps⟩
     cases cells <;> rw [finaliseCons.eq_def] <;> dsimp only <;> rw [targetFound]
 
 /-- Flapjack infrastructure: finalising a related mutable chain produces a

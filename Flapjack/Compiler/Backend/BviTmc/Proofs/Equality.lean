@@ -16,8 +16,8 @@ private theorem doEq_refPtr (f : HolFiniteMapExact Nat Nat)
     (left : f.lookup n = some m) (right : f.lookup n' = some m')
     (heaps : stateRefRel f refs target) (injective : fmapInj f) :
     doEq refs (.refPtr a n) (.refPtr b n') = doEq target (.refPtr a m) (.refPtr b m') := by
-  obtain ⟨v, w, sourceLeft, targetLeft, relLeft⟩ := stateRefRel_lookup f n m refs target left heaps
-  obtain ⟨v', w', sourceRight, targetRight, relRight⟩ := stateRefRel_lookup f n' m' refs target right heaps
+  obtain ⟨v, w, sourceLeft, targetLeft, relLeft⟩ := stateRefRel_lookup f n m refs target ⟨left, heaps⟩
+  obtain ⟨v', w', sourceRight, targetRight, relRight⟩ := stateRefRel_lookup f n' m' refs target ⟨right, heaps⟩
   have addressEq : (m = m') ↔ (n = n') := fmapInj_lookup_eq f n m n' m' injective left right
   cases relLeft <;> cases relRight <;> cases a <;> cases b <;>
     simp [doEq, sourceLeft, sourceRight, targetLeft, targetRight, addressEq]

@@ -223,14 +223,14 @@ theorem holFmapAsFiniteSupportParamWitness_stateRefRel_lookup_source (source : H
 theorem holFmapAsFiniteSupportParamWitness_stateRefRel_lookup_target (target : HolFiniteMapExact Nat (Ref Value)) :
     mapofBroad (maptoBroadlookup target) target.finiteSupport = target := by cases target; rfl
 
-/-- Every mapped source pointer resolves to related cells in both heaps.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_lookup" (fmap_as_finite_support_parameters := [f, source, target])] -/
+/-- Every mapped source pointer resolves to related cells in both heaps. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_lookup"
+  (fmap_as_finite_support_parameters := [f, source, target])]
 theorem stateRefRel_lookup (f : HolFiniteMapExact Nat Nat) (n m : Nat)
     (source : HolFiniteMapExact Nat (Ref Value)) (target : HolFiniteMapExact Nat (Ref Value))
-    (mapped : f.lookup n = some m) (related : stateRefRel f source target) :
+    (h : f.lookup n = some m ∧ stateRefRel f source target) :
     ∃ v w, source.lookup n = some v ∧ target.lookup m = some w ∧ refRel f v w := by
+  obtain ⟨mapped, related⟩ := h
   have member : n ∈ source.domain := by
     rw [← related.1]
     simp [HolFiniteMapExact.domain, mapped]

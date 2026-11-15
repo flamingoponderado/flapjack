@@ -41,7 +41,7 @@ theorem destThunk_notThunk_rel (v v' : Value) (refs : HolFiniteMapExact Nat (Ref
   | block tag xs ys related => rfl
   | codePtr n => rfl
   | refPtr n m flag mapped =>
-    obtain ⟨_, _, sourceFound, targetFound, cells⟩ := stateRefRel_lookup f n m refs target mapped heaps
+    obtain ⟨_, _, sourceFound, targetFound, cells⟩ := stateRefRel_lookup f n m refs target ⟨mapped, heaps⟩
     cases cells with
     | byteArray b bytes => simp [BvlSem.destThunk, targetFound]
     | valueArray xs ys related => simp [BvlSem.destThunk, targetFound]
@@ -99,7 +99,7 @@ theorem destThunk_rel {C F : Type} (opt : Bool) (f : HolFiniteMapExact Nat Nat)
   | block tag xs ys fields => exact Or.inr (Or.inl ⟨rfl, rfl⟩)
   | codePtr n => exact Or.inr (Or.inl ⟨rfl, rfl⟩)
   | refPtr n m flag mapped =>
-    obtain ⟨_, _, sourceFound, targetFound, cells⟩ := stateRefRel_lookup f n m source.refs target.refs mapped states.1
+    obtain ⟨_, _, sourceFound, targetFound, cells⟩ := stateRefRel_lookup f n m source.refs target.refs ⟨mapped, states.1⟩
     cases cells with
     | byteArray b bytes => simp [destThunkRetRel, BviSem.destThunk, sourceFound, targetFound]
     | valueArray xs ys fields => simp [destThunkRetRel, BviSem.destThunk, sourceFound, targetFound]

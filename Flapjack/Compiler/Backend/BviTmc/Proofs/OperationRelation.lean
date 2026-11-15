@@ -310,7 +310,7 @@ theorem doApp_op_rel_global {C F : Type} (f : HolFiniteMapExact Nat Nat) (index 
         have mapped : f.lookup ptr = some targetPtr := by
           simpa [sourceGlobal, targetGlobal] using statesRelated.2.2.1
         obtain ⟨sourceCell, targetCell, sourceFound, targetFound, cells⟩ :=
-          stateRefRel_lookup f ptr targetPtr source.refs target.refs mapped statesRelated.1
+          stateRefRel_lookup f ptr targetPtr source.refs target.refs ⟨mapped, statesRelated.1⟩
         cases cells with
         | byteArray b bytes =>
           simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, sourceGlobal, sourceFound] at run
@@ -362,7 +362,7 @@ theorem doApp_op_rel_setGlobal {C F : Type} (f : HolFiniteMapExact Nat Nat) (ind
             have mapped : f.lookup ptr = some targetPtr := by
               simpa [sourceGlobal, targetGlobal] using statesRelated.2.2.1
             obtain ⟨sourceCell, targetCell, sourceFound, targetFound, cells⟩ :=
-              stateRefRel_lookup f ptr targetPtr source.refs target.refs mapped statesRelated.1
+              stateRefRel_lookup f ptr targetPtr source.refs target.refs ⟨mapped, statesRelated.1⟩
             cases cells with
             | byteArray b bytes =>
               simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, sourceGlobal, sourceFound] at run
@@ -428,7 +428,7 @@ private theorem finalise_related_identity (f : HolFiniteMapExact Nat Nat) (v w :
   | codePtr n => simp [BviSem.finaliseCons]
   | refPtr n m flag mapped =>
     obtain ⟨sourceCell, targetCell, sourceFound, targetFound, cells⟩ :=
-      stateRefRel_lookup f n m source target mapped heaps
+      stateRefRel_lookup f n m source target ⟨mapped, heaps⟩
     cases cells <;> constructor
     all_goals rw [BviSem.finaliseCons.eq_def]
     all_goals dsimp only
@@ -735,7 +735,7 @@ theorem doApp_op_rel_length {C F : Type} (f : HolFiniteMapExact Nat Nat)
           cases headRel with
           | refPtr _ targetPtr _ mapped =>
             obtain ⟨_, _, sourceFound, targetFound, cells⟩ :=
-              stateRefRel_lookup f ptr targetPtr source.refs target.refs mapped statesRelated.1
+              stateRefRel_lookup f ptr targetPtr source.refs target.refs ⟨mapped, statesRelated.1⟩
             cases cells with
             | byteArray b bytes =>
               simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory, BviSem.toBvl, sourceFound] at run
@@ -786,7 +786,7 @@ theorem doApp_op_rel_lengthByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
           cases headRel with
           | refPtr _ targetPtr _ mapped =>
             obtain ⟨_, _, sourceFound, targetFound, cells⟩ :=
-              stateRefRel_lookup f ptr targetPtr source.refs target.refs mapped statesRelated.1
+              stateRefRel_lookup f ptr targetPtr source.refs target.refs ⟨mapped, statesRelated.1⟩
             cases cells with
             | valueArray xs ys rel =>
               simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory, BviSem.toBvl, sourceFound] at run
@@ -857,7 +857,7 @@ theorem doApp_op_rel_el {C F : Type} (f : HolFiniteMapExact Nat Nat)
                       exact found
               | refPtr ptr targetPtr flag mapped =>
                 obtain ⟨_, _, sourceFound, targetFound, cells⟩ :=
-                  stateRefRel_lookup f ptr targetPtr source.refs target.refs mapped statesRelated.1
+                  stateRefRel_lookup f ptr targetPtr source.refs target.refs ⟨mapped, statesRelated.1⟩
                 cases cells with
                 | byteArray b bytes => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory, BviSem.toBvl, sourceFound] at run
                 | thunk mode x y rel => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory, BviSem.toBvl, sourceFound] at run
@@ -918,7 +918,7 @@ theorem doApp_op_rel_derefByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
               cases indexRel
               cases tailRel
               obtain ⟨_, _, sourceFound, targetFound, cells⟩ :=
-                stateRefRel_lookup f ptr targetPtr source.refs target.refs mapped statesRelated.1
+                stateRefRel_lookup f ptr targetPtr source.refs target.refs ⟨mapped, statesRelated.1⟩
               cases cells with
               | valueArray xs ys rel => simp [sourceFound] at run
               | thunk mode x y rel => simp [sourceFound] at run
@@ -973,7 +973,7 @@ theorem doApp_op_rel_boundsCheckByte {C F : Type} (f : HolFiniteMapExact Nat Nat
               cases indexRel
               cases tailRel
               obtain ⟨_, _, sourceFound, targetFound, cells⟩ :=
-                stateRefRel_lookup f ptr targetPtr source.refs target.refs mapped statesRelated.1
+                stateRefRel_lookup f ptr targetPtr source.refs target.refs ⟨mapped, statesRelated.1⟩
               cases cells with
               | valueArray xs ys rel => simp [sourceFound] at run
               | thunk mode x y rel => simp [sourceFound] at run
@@ -1026,7 +1026,7 @@ theorem doApp_op_rel_boundsCheckArray {C F : Type} (f : HolFiniteMapExact Nat Na
               cases indexRel
               cases tailRel
               obtain ⟨_, _, sourceFound, targetFound, cells⟩ :=
-                stateRefRel_lookup f ptr targetPtr source.refs target.refs mapped statesRelated.1
+                stateRefRel_lookup f ptr targetPtr source.refs target.refs ⟨mapped, statesRelated.1⟩
               cases cells with
               | byteArray b bytes => simp [sourceFound] at run
               | thunk mode x y rel => simp [sourceFound] at run
@@ -1085,7 +1085,7 @@ theorem doApp_op_rel_update {C F : Type} (f : HolFiniteMapExact Nat Nat)
                 | @cons a b xs ys newRel tailRel =>
                   cases tailRel
                   obtain ⟨_, _, sourceFound, targetFound, cells⟩ :=
-                    stateRefRel_lookup f ptr targetPtr source.refs target.refs mapped statesRelated.1
+                    stateRefRel_lookup f ptr targetPtr source.refs target.refs ⟨mapped, statesRelated.1⟩
                   cases cells with
                   | byteArray flag bytes => simp [sourceFound] at run
                   | thunk mode x y rel => simp [sourceFound] at run
@@ -1157,7 +1157,7 @@ theorem doApp_op_rel_updateByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
                   cases byteRel
                   cases tailRel
                   obtain ⟨_, _, sourceFound, targetFound, cells⟩ :=
-                    stateRefRel_lookup f ptr targetPtr source.refs target.refs mapped statesRelated.1
+                    stateRefRel_lookup f ptr targetPtr source.refs target.refs ⟨mapped, statesRelated.1⟩
                   cases cells with
                   | valueArray xs ys rel => simp [sourceFound] at run
                   | thunk mode x y rel => simp [sourceFound] at run
@@ -1224,9 +1224,9 @@ theorem doApp_op_rel_stringCmp {C F : Type} (f : HolFiniteMapExact Nat Nat)
               | refPtr _ targetPtr2 _ mapped2 =>
                 cases tailRel
                 obtain ⟨_, _, sourceFound1, targetFound1, cells1⟩ :=
-                  stateRefRel_lookup f ptr1 targetPtr1 source.refs target.refs mapped1 statesRelated.1
+                  stateRefRel_lookup f ptr1 targetPtr1 source.refs target.refs ⟨mapped1, statesRelated.1⟩
                 obtain ⟨_, _, sourceFound2, targetFound2, cells2⟩ :=
-                  stateRefRel_lookup f ptr2 targetPtr2 source.refs target.refs mapped2 statesRelated.1
+                  stateRefRel_lookup f ptr2 targetPtr2 source.refs target.refs ⟨mapped2, statesRelated.1⟩
                 cases cells1 with
                 | valueArray xs ys rel => simp [sourceFound1] at run
                 | thunk mode x y rel => simp [sourceFound1] at run
@@ -1284,9 +1284,9 @@ theorem doApp_op_rel_xorByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
               | refPtr _ targetPtr2 _ mapped2 =>
                 cases tailRel
                 obtain ⟨_, _, sourceFound1, targetFound1, cells1⟩ :=
-                  stateRefRel_lookup f ptr1 targetPtr1 source.refs target.refs mapped1 statesRelated.1
+                  stateRefRel_lookup f ptr1 targetPtr1 source.refs target.refs ⟨mapped1, statesRelated.1⟩
                 obtain ⟨_, _, sourceFound2, targetFound2, cells2⟩ :=
-                  stateRefRel_lookup f ptr2 targetPtr2 source.refs target.refs mapped2 statesRelated.1
+                  stateRefRel_lookup f ptr2 targetPtr2 source.refs target.refs ⟨mapped2, statesRelated.1⟩
                 cases cells2 with
                 | valueArray xs ys rel => simp [sourceFound2] at run
                 | thunk mode x y rel => simp [sourceFound2] at run
@@ -1550,9 +1550,9 @@ theorem doApp_op_rel_copyByte_inPlace {C F : Type} (f : HolFiniteMapExact Nat Na
                             cases dstOffsetRel
                             cases tailRel
                             obtain ⟨_, _, sourceFound, targetFound, sourceCells⟩ :=
-                              stateRefRel_lookup f src targetSrc source.refs target.refs srcMapped statesRelated.1
+                              stateRefRel_lookup f src targetSrc source.refs target.refs ⟨srcMapped, statesRelated.1⟩
                             obtain ⟨_, _, destFound, targetDestFound, destCells⟩ :=
-                              stateRefRel_lookup f dst targetDst source.refs target.refs dstMapped statesRelated.1
+                              stateRefRel_lookup f dst targetDst source.refs target.refs ⟨dstMapped, statesRelated.1⟩
                             cases sourceCells with
                             | valueArray xs ys rel => simp [sourceFound] at run
                             | thunk mode x y rel => simp [sourceFound] at run
@@ -2301,7 +2301,7 @@ theorem doApp_op_rel_equalConst {C F : Type} (f : HolFiniteMapExact Nat Nat) (pa
         case str.refPtr =>
           rename_i text ptr targetPtr flag mapped
           obtain ⟨_, _, sourceFound, targetFound, cells⟩ :=
-            stateRefRel_lookup f ptr targetPtr source.refs target.refs mapped statesRelated.1
+            stateRefRel_lookup f ptr targetPtr source.refs target.refs ⟨mapped, statesRelated.1⟩
           cases cells with
           | valueArray xs ys rel => simp [sourceFound] at run
           | thunk mode x y rel => simp [sourceFound] at run
@@ -2452,7 +2452,7 @@ theorem doApp_op_rel_updateThunk {C F : Type} (f : HolFiniteMapExact Nat Nat) (m
                   · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BviSem.toBvl, bad] at run
                   · have targetGood := goodThunkUpdate_rel mode payload targetPayload source.refs target.refs f bad payloadRel statesRelated.1
                     obtain ⟨_, _, sourceFound, targetFound, cells⟩ :=
-                      stateRefRel_lookup f ptr targetPtr source.refs target.refs mapped statesRelated.1
+                      stateRefRel_lookup f ptr targetPtr source.refs target.refs ⟨mapped, statesRelated.1⟩
                     cases cells with
                     | byteArray b bytes => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BviSem.toBvl, bad, sourceFound] at run
                     | valueArray xs ys rel => simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BviSem.toBvl, bad, sourceFound] at run
@@ -2553,9 +2553,9 @@ theorem doApp_op_rel_ffi {C F : Type} (f : HolFiniteMapExact Nat Nat)
               | refPtr _ targetDataPtr _ dataMapped =>
                 cases tailRel
                 obtain ⟨_, _, sourceConfig, targetConfig, configCells⟩ :=
-                  stateRefRel_lookup f configPtr targetConfigPtr source.refs target.refs configMapped statesRelated.1
+                  stateRefRel_lookup f configPtr targetConfigPtr source.refs target.refs ⟨configMapped, statesRelated.1⟩
                 obtain ⟨_, _, sourceData, targetData, dataCells⟩ :=
-                  stateRefRel_lookup f dataPtr targetDataPtr source.refs target.refs dataMapped statesRelated.1
+                  stateRefRel_lookup f dataPtr targetDataPtr source.refs target.refs ⟨dataMapped, statesRelated.1⟩
                 cases configCells with
                 | valueArray xs ys rel => simp [sourceConfig] at run
                 | thunk mode x y rel => simp [sourceConfig] at run

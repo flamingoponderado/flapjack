@@ -45,9 +45,9 @@ theorem doApp_op_err_rel {C F : Type} (name : Basis.Pure.MlString.MlString)
               | refPtr _ targetDataPtr _ dataMapped =>
                 cases tailRel
                 obtain ⟨_, _, sourceConfig, targetConfig, configCells⟩ :=
-                  stateRefRel_lookup f configPtr targetConfigPtr source.refs target.refs configMapped statesRelated.1
+                  stateRefRel_lookup f configPtr targetConfigPtr source.refs target.refs ⟨configMapped, statesRelated.1⟩
                 obtain ⟨_, _, sourceData, targetData, dataCells⟩ :=
-                  stateRefRel_lookup f dataPtr targetDataPtr source.refs target.refs dataMapped statesRelated.1
+                  stateRefRel_lookup f dataPtr targetDataPtr source.refs target.refs ⟨dataMapped, statesRelated.1⟩
                 cases configCells with
                 | valueArray xs ys rel => simp [sourceConfig] at run
                 | thunk mode x y rel => simp [sourceConfig] at run

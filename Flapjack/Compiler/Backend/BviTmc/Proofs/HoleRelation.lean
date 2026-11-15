@@ -709,7 +709,7 @@ theorem fresh_not_in_range (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMa
     (target : HolFiniteMapExact Nat (Ref Value)) (related : stateRefRel f source target) :
     leastUnusedRef target ∉ mapRange f := by
   rintro ⟨key, mapped⟩
-  obtain ⟨_, _, _, found, _⟩ := stateRefRel_lookup f key (leastUnusedRef target) source target mapped related
+  obtain ⟨_, _, _, found, _⟩ := stateRefRel_lookup f key (leastUnusedRef target) source target ⟨mapped, related⟩
   have unused : leastUnusedRef target ∉ target.domain := by
     simpa [leastUnusedRef, unusedRef_exists] using freshPtr_fresh target
   apply unused

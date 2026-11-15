@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "state_ref_rel_lookup", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
+  "lean_name": "stateRefRel_lookup", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "source", "target"],
+  "reviewer": "Source comparison: Compared state_ref_rel_lookup_typed in bvi_tmc_proof_source_probe.out: the original successful pointer lookup and complete state-reference relation conjunctively imply the existence of source and target cells with both exact lookups and the full reference relation. All binder types and order match; maps use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "state_rel_alloc", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/Allocation.lean",
   "lean_name": "stateRel_alloc", "statement_status": "reviewed_fmap_as_finite_support_relation",
   "fmap_as_finite_support_relation": ["BviState.refs", "f"],
