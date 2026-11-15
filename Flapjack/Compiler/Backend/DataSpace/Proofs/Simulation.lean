@@ -129,7 +129,7 @@ theorem simulationFor_unannotatedAssign {C F : Type} (dest : Nat) (op : ClosLang
         exact ⟨code, clock, spaceEq, ffi, refs, global, handler, stack, compiler, oracle, stamps, limits, frames, by simp [sptMem, sptDomain, sptLookup]⟩
       cases app : doApp op values source with
       | err error =>
-        have targetApp := DataLive.stateRel_doApp_error source target .ln op values error related app
+        have targetApp := DataLive.stateRel_doApp_error op values source error target .ln ⟨app, related⟩
         simp [DataSem.evaluate, invalid, read, cutStateOpt, app] at run
         obtain ⟨rfl, rfl⟩ := run
         refine ⟨.ln, (installSfs op source).safeForSpace, source.peakHeapLength, source.stackMax, ?_, ?_⟩

@@ -88,3 +88,28 @@ val state_rel_get_vars_replay = prove (
   \\ every_case_tac >> fs[]
   \\ RES_TAC \\ fs [] \\ SRW_TAC [] []);
 val _ = show "state_rel_IMP_get_vars_replay_typed" state_rel_get_vars_replay;
+
+val state_rel_IMP_do_app_aux_err = prove (
+  ``(do_app_aux op args s1 = Rerr e) /\ state_rel s1 t1 anything ==>
+    (do_app_aux op args t1 = Rerr e)``,
+  STRIP_TAC
+  \\ cases_on_op `op` \\ TRY (rename [‘EqualConst cc’] \\ Cases_on ‘cc’)
+  \\ fs [do_app_aux_def,do_space_def,with_fresh_ts_def]
+  \\ fs [state_rel_def,consume_space_def,case_eq_thms,do_install_def,UNCURRY]
+  \\ ASM_SIMP_TAC (srw_ss()) [dataSemTheory.state_component_equality]
+  \\ SRW_TAC [] [] \\ fs[]
+  \\ gvs [AllCaseEqs()]
+  \\ ASM_SIMP_TAC (srw_ss()) [dataSemTheory.state_component_equality]);
+val _ = show "state_rel_IMP_do_app_aux_err_replay_typed" state_rel_IMP_do_app_aux_err;
+val state_rel_IMP_do_app_err = prove (
+  ``(do_app op args s1 = Rerr e) /\ state_rel s1 t1 anything ==>
+    (do_app op args t1 = Rerr e)``,
+  STRIP_TAC \\ fs [do_app_def,do_space_def]
+  \\ fs [state_rel_def,consume_space_def,case_eq_thms,do_install_def,UNCURRY]
+  \\ TRY (rveq \\ fs [] \\ rfs [] \\ NO_TAC)
+  \\ qmatch_goalsub_abbrev_tac `do_app_aux op args t1'`
+  \\ TRY (qpat_x_assum `_ = s1'` (ASSUME_TAC o GSYM))
+  \\ `state_rel s1' t1' anything` by (UNABBREV_ALL_TAC \\ fs [state_rel_def])
+  \\ drule_then (qspecl_then [`t1'`,`anything`] mp_tac) state_rel_IMP_do_app_aux_err
+  \\ fs [state_rel_def] \\ rfs []);
+val _ = show "state_rel_IMP_do_app_err_replay_typed" state_rel_IMP_do_app_err;

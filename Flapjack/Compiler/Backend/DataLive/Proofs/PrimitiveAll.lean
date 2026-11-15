@@ -47,11 +47,14 @@ theorem stateRel_doApp {C F : Type} (source target : State C F) (live : NumSet)
   | install => exact stateRel_doApp_install source target live args related
   | thunkOp op => exact stateRel_doApp_thunk source target live op args related
 
-/-- A source primitive error is reproduced by every related target state. -/
-theorem stateRel_doApp_error {C F : Type} (source target : State C F) (live : NumSet)
-    (op : ClosLang.Op) (args : List DataSem.Value) (error : ErrorResult DataSem.Value)
-    (related : stateRel source target live) (run : doApp op args source = .err error) :
+/-- A source primitive error is reproduced by every related target state.
+The dispatcher inherits the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "state_rel_IMP_do_app_err"]
+theorem stateRel_doApp_error {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
+    (source : State C F) (error : ErrorResult DataSem.Value) (target : State C F) (live : NumSet)
+    (premises : doApp op args source = .err error ∧ stateRel source target live) :
     doApp op args target = .err error := by
+  obtain ⟨run, related⟩ := premises
   have simulation := stateRel_doApp source target live op args related
   rw [run] at simulation
   cases targetRun : doApp op args target with
