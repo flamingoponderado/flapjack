@@ -2173,8 +2173,8 @@ theorem doApp_op_rel_build {C F : Type} (f : HolFiniteMapExact Nat Nat) (parts :
     cases built : doBuildConst parts source.refs with
     | mk builtValue builtRefs =>
       obtain ⟨nextMap, targetValue, targetRefs, targetRun, valueRel, heaps, inj, submap, fresh, holes, still⟩ :=
-        doBuildConst_value_rel parts source.refs builtValue builtRefs f target.refs built statesRelated.1
-          statesRelated.2.2.2.2.2.2.2.2.2.2
+        doBuildConst_value_rel parts source.refs builtValue builtRefs f target.refs
+          ⟨built, statesRelated.1, statesRelated.2.2.2.2.2.2.2.2.2.2⟩
       simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyBlock,
         BviSem.toBvl, BviSem.fromBvl, built] at run
       obtain ⟨rfl, rfl⟩ := run

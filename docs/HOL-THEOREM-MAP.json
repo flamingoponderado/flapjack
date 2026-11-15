@@ -135699,6 +135699,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "do_build_const_v_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/BuildRelation.lean",
+  "lean_name": "doBuildConst_value_rel", "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
+  "fmap_as_finite_support_relation": ["source", "sourceNext", "f", "target"],
+  "fmap_as_finite_support_existentials": ["nextMap", "targetNext"],
+  "reviewer": "Source comparison: Compared do_build_const_v_rel_typed in bvi_tmc_proof_source_probe.out: the source construction, full heap relation and injectivity imply the target construction and all seven remaining value, heap, injectivity, submap, freshness and hole conclusions. The four input maps and existential nextMap and targetNext use canonical finite support; both existential maps have same-module roundtrip witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "do_build_v_rel", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/BuildRelation.lean",
   "lean_name": "doBuild_value_rel", "statement_status": "reviewed_fmap_as_finite_support_relation_existentials",
   "fmap_as_finite_support_relation": ["source", "sourceNext", "f", "target"],

@@ -61,6 +61,7 @@ val _ = show "no_mutblock_typed" bvi_tmcProofTheory.no_mutblock;
 val _ = show "v_to_bytes_v_rel_typed" bvi_tmcProofTheory.v_to_bytes_v_rel;
 val _ = show "v_to_words_v_rel_typed" bvi_tmcProofTheory.v_to_words_v_rel;
 val _ = show "do_build_v_rel_typed" bvi_tmcProofTheory.do_build_v_rel;
+val _ = show "do_build_const_v_rel_typed" bvi_tmcProofTheory.do_build_const_v_rel;
 val _ = show "hole_has_val_submap_typed" bvi_tmcProofTheory.hole_has_val_submap;
 val _ = show "holes_unchanged_except_trans_typed" bvi_tmcProofTheory.holes_unchanged_except_trans;
 val _ = show "holes_still_not_finalised_trans_typed" bvi_tmcProofTheory.holes_still_not_finalised_trans;

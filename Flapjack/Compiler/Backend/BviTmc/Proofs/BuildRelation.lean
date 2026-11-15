@@ -222,21 +222,39 @@ theorem doBuild_value_rel (parts : List ClosLang.ConstPart) (m : Nat → Value) 
   simp only [run] at result heaps
   exact ⟨nextMap, value', targetNext, targetRun, result, heaps, inj, submap, fresh, holes, still⟩
 
-/-- Source constant construction preserves the value and heap relations.
+/-- The existential renaming map roundtrips through the canonical codec. -/
+theorem holFmapAsFiniteSupportExistentialWitness_doBuildConst_value_rel_nextMap
+    (nextMap : HolFiniteMapExact Nat Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap)).lookup = nextMap.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap)).finiteSupport = nextMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad nextMap) = nextMap := by
+  cases nextMap
+  exact ⟨rfl, rfl, rfl⟩
 
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_build_const_v_rel" (fmap_as_finite_support_relation := [source, sourceNext, f, target, nextMap, targetNext])] -/
+/-- The existential target heap roundtrips through the canonical codec. -/
+theorem holFmapAsFiniteSupportExistentialWitness_doBuildConst_value_rel_targetNext
+    (targetNext : HolFiniteMapExact Nat (Ref Value)) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad targetNext)).lookup = targetNext.lookup ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad targetNext)).finiteSupport = targetNext.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad targetNext) = targetNext := by
+  cases targetNext
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Source constant construction preserves the value and heap relations. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "do_build_const_v_rel"
+  (fmap_as_finite_support_relation := [source, sourceNext, f, target])
+  (fmap_as_finite_support_existentials := [nextMap, targetNext])]
 theorem doBuildConst_value_rel (parts : List ClosLang.ConstPart)
     (source : HolFiniteMapExact Nat (Ref Value)) (value : Value)
     (sourceNext : HolFiniteMapExact Nat (Ref Value)) (f : HolFiniteMapExact Nat Nat)
     (target : HolFiniteMapExact Nat (Ref Value))
-    (run : doBuildConst parts source = (value, sourceNext)) (related : stateRefRel f source target)
-    (injective : fmapInj f) :
-    ∃ (nextMap : HolFiniteMapExact Nat Nat) (value' : Value) (targetNext : HolFiniteMapExact Nat (Ref Value)),
+    (h : doBuildConst parts source = (value, sourceNext) ∧ stateRefRel f source target ∧ fmapInj f) :
+    ∃ (nextMap : HolFiniteMapExact Nat Nat), ∃ (value' : Value), ∃ (targetNext : HolFiniteMapExact Nat (Ref Value)),
       doBuildConst parts target = (value', targetNext) ∧ valueRel nextMap value value' ∧
       stateRefRel nextMap sourceNext targetNext ∧ fmapInj nextMap ∧ f.submap nextMap ∧
       onlyFresh f nextMap target ∧ holesUnchangedExcept f target targetNext ∅ ∧
       holesStillNotFinalised f target targetNext := by
+  obtain ⟨run, related, injective⟩ := h
   exact doBuild_value_rel parts (fun _ => .number 0) 0 source value sourceNext f
     (fun _ => .number 0) target ⟨run, related, injective, fun _ => .number 0⟩
 
