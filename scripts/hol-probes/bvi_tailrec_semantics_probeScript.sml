@@ -115,3 +115,17 @@ val is_free_name_replay = Q.prove
    fs [bvi_tailrecProofTheory.free_names_def] \\ strip_tac
    \\ first_x_assum (qspec_then `0` mp_tac) \\ strip_tac \\ rw []);
 val _ = show_thm "is_free_name_replay_typed=" is_free_name_replay;
+val compile_exp_next_addr_replay = Q.prove
+  (`compile_exp loc next args exp = NONE ⇒
+      compile_exp loc (next + bvl_to_bvi_namespaces) args exp = NONE`,
+   fs [bvi_tailrecTheory.compile_exp_def] \\ every_case_tac \\ pairarg_tac \\ fs []);
+val _ = show_thm "compile_exp_next_addr_replay_typed=" compile_exp_next_addr_replay;
+val check_exp_NONE_compile_exp_replay = Q.prove
+  (`check_exp loc arity exp = NONE ⇒ compile_exp loc next arity exp = NONE`,
+   fs [bvi_tailrecTheory.compile_exp_def]);
+val _ = show_thm "check_exp_NONE_compile_exp_replay_typed=" check_exp_NONE_compile_exp_replay;
+val check_exp_SOME_compile_exp_replay = Q.prove
+  (`check_exp loc arity exp = SOME p ⇒ ∃q. compile_exp loc next arity exp = SOME q`,
+   fs [bvi_tailrecTheory.compile_exp_def, bvi_tailrecTheory.check_exp_def]
+   \\ rw [] \\ rw [] \\ pairarg_tac \\ fs []);
+val _ = show_thm "check_exp_SOME_compile_exp_replay_typed=" check_exp_SOME_compile_exp_replay;

@@ -52,11 +52,25 @@ theorem optimizedCode_find_worker (loc arity : Nat) (body : Bvi.Exp) (workerLoc 
   have found := optimizedCode_worker_lookup loc arity body workerLoc code op optimized
   simp [findCode, found, length]
 
-/-- A positive source check always determines a wrapper and worker for any
-chosen fresh worker location. -/
-theorem compileExpSource_of_check (loc next arity : Nat) (body : Bvi.Exp) (op : AssocOp)
+/-- A failed source compilation remains failed at the next worker location. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "compile_exp_next_addr"]
+theorem compileExpSource_none_next (loc next arity : Nat) (body : Bvi.Exp)
+    (failed : compileExpSource loc next arity body = none) :
+    compileExpSource loc (next + Flapjack.bvlToBviNamespaces) arity body = none := by
+  cases check : checkExpOriginal loc arity body <;> simp_all [compileExpSource]
+
+/-- A failed source check produces no compiled expression pair. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "check_exp_NONE_compile_exp"]
+theorem compileExpSource_of_check_none (loc arity : Nat) (body : Bvi.Exp) (next : Nat)
+    (check : checkExpOriginal loc arity body = none) :
+    compileExpSource loc next arity body = none := by
+  simp [compileExpSource, check]
+
+/-- A successful source check produces a compiled expression pair. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "check_exp_SOME_compile_exp"]
+theorem compileExpSource_of_check_some (loc arity : Nat) (body : Bvi.Exp) (op : AssocOp) (next : Nat)
     (check : checkExpOriginal loc arity body = some op) :
-    ∃ wrapper worker, compileExpSource loc next arity body = some (wrapper, worker) := by
+    ∃ pair, compileExpSource loc next arity body = some pair := by
   simp [compileExpSource, check]
 
 /-- Related code retains the original arity at every original location. -/
@@ -67,7 +81,7 @@ theorem codeRel_lookup_arity (source target : Spt (Nat × Bvi.Exp)) (h : codeRel
   | none => exact ⟨body, (h loc arity body .noop lookup).1 check⟩
   | some op =>
     obtain ⟨workerLoc, workerLookup⟩ := (h loc arity body op lookup).2 check
-    obtain ⟨wrapper, worker, compiled⟩ := compileExpSource_of_check loc workerLoc arity body op check
+    obtain ⟨⟨wrapper, worker⟩, compiled⟩ := compileExpSource_of_check_some loc arity body op workerLoc check
     exact ⟨wrapper, (workerLookup wrapper worker compiled).1⟩
 
 /-- A direct call that resolves in the original code also resolves in the
@@ -461,7 +475,7 @@ theorem compileEachSource_entry (code : List (Nat × Nat × Bvi.Exp)) (next loc 
           constructor
           · intro _; simp
           · intro check
-            obtain ⟨wrapper, worker, existsRun⟩ := compileExpSource_of_check loc next arity body op check
+            obtain ⟨⟨wrapper, worker⟩, existsRun⟩ := compileExpSource_of_check_some loc arity body op next check
             rw [compiled] at existsRun
             contradiction
         · have both := ih next other

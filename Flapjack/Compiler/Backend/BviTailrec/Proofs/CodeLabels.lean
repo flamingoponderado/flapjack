@@ -53,7 +53,7 @@ theorem compileEach_untouched {next1 : Nat} (next : Nat)
             simpa using freeNames_advance next loc 1 free
           have nextNe : loc ≠ next := (freeNames_ne_current next loc free).symm
           have noneNext : compileExpSource loc (next + bvlToBviNamespaces) arity exp = none := by
-            simp [compileExpSource, check]
+            exact compileExpSource_none_next loc next arity exp notCompiled
           have h := ih (next1 := last) (next + bvlToBviNamespaces) out
             ⟨freeNext, lookupTail, check, noneNext, tail⟩
           simpa [sptLookup_sptFromAList, sptAListLookup, same, nextNe] using h

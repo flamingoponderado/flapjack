@@ -69,3 +69,6 @@ scan_expr_EVERY_SING_typed=EVERY (P :v_ty list # v_ty # bool # assoc_op option -
 env_rel_def_typed=∀(ty :v_ty) (opt :bool) (acc :num) (env1 :v list) (env2 :v list). env_rel ty opt acc env1 env2 ⇔ env1 ≼ env2 ∧ (opt ⇒ LENGTH env1 = acc ∧ LENGTH env2 > acc ∧ case ty of Int => ∃(k :int). env2❲acc❳ = (Number k :v) | List => ∃(ys :v list). v_to_list env2❲acc❳ = SOME ys | Any => F)
 more_free_names_replay_typed=free_names (n :num) (name :num) ⇒ free_names (n + bvl_to_bvi_namespaces) name
 is_free_name_replay_typed=free_names (n :num) (name :num) ⇒ n ≠ name
+compile_exp_next_addr_replay_typed=(compile_exp (loc :num) (next :num) (args :num) (exp :bvi$exp) :(bvi$exp # bvi$exp) option) = (NONE :(bvi$exp # bvi$exp) option) ⇒ (compile_exp loc (next + bvl_to_bvi_namespaces) args exp :(bvi$exp # bvi$exp) option) = (NONE :(bvi$exp # bvi$exp) option)
+check_exp_NONE_compile_exp_replay_typed=check_exp (loc :num) (arity :num) (exp :bvi$exp) = (NONE :assoc_op option) ⇒ (compile_exp loc (next :num) arity exp :(bvi$exp # bvi$exp) option) = (NONE :(bvi$exp # bvi$exp) option)
+check_exp_SOME_compile_exp_replay_typed=check_exp (loc :num) (arity :num) (exp :bvi$exp) = SOME (p :assoc_op) ⇒ ∃(q :bvi$exp # bvi$exp). (compile_exp loc (next :num) arity exp :(bvi$exp # bvi$exp) option) = SOME q
