@@ -5,7 +5,8 @@ public import Flapjack.Compiler.Backend.BviTailrec.Proofs.CodeRelation
 @[expose] public section
 
 /-! State-independent accumulator primitive behavior for the tail-recursion
-simulation. The evaluator and dispatcher remain subject to source review. -/
+simulation. Dispatcher-dependent results inherit the real-model assumption
+documented in SOUNDNESS item 8. -/
 namespace Flapjack.Compiler.Backend.BviTailrec
 open Bvi BvlSem
 
@@ -229,20 +230,6 @@ theorem doApp_intOp_pure {C F : Type} (op : ClosLang.IntOp) (args : List Value)
       BviSem.doAppAux, BvlSem.doApp, BvlSem.applyNumeric]
     all_goals exact convert _
 
-/-- Integer primitive application preserves state relations, including the
-source type-error outcome. -/
-theorem stateRel_doApp_intOp {C F : Type} (op : ClosLang.IntOp) (args : List Value)
-    (source : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
-    (related : stateRel source target) :
-    (BviSem.doApp (.intOp op) args source = .err (.abort .typeError) ∧
-      BviSem.doApp (.intOp op) args target = .err (.abort .typeError)) ∨
-    ∃ value, BviSem.doApp (.intOp op) args source = .val (value, source) ∧
-      BviSem.doApp (.intOp op) args target = .val (value, target) ∧ stateRel source target := by
-  rw [doApp_intOp_pure, doApp_intOp_pure]
-  cases h : intPrimitiveResult op args with
-  | none => exact Or.inl ⟨rfl, rfl⟩
-  | some value => exact Or.inr ⟨value, rfl, rfl, related⟩
-
 /-- Successful integer primitives preserve related states. -/
 theorem stateRel_doApp_intOp_success {C F : Type} (op : ClosLang.IntOp) (args : List Value)
     (source sourceNext : BviSem.BviState (Nat × C) F) (target : BviSem.BviState C F)
@@ -250,12 +237,13 @@ theorem stateRel_doApp_intOp_success {C F : Type} (op : ClosLang.IntOp) (args : 
     (run : BviSem.doApp (.intOp op) args source = .val (value, sourceNext)) :
     ∃ targetNext, BviSem.doApp (.intOp op) args target = .val (value, targetNext) ∧
       stateRel sourceNext targetNext := by
-  rcases stateRel_doApp_intOp op args source target related with failed | ⟨v, sourceRun, targetRun, rel⟩
-  · rw [failed.1] at run
-    contradiction
-  · rw [sourceRun] at run
-    cases run
-    exact ⟨target, targetRun, rel⟩
+  rw [doApp_intOp_pure] at run
+  cases found : intPrimitiveResult op args with
+  | none => simp [found] at run
+  | some output =>
+    simp [found] at run
+    obtain ⟨rfl, rfl⟩ := run
+    exact ⟨target, by simp [doApp_intOp_pure, found], related⟩
 
 /-- Every integer primitive error is the source type error. -/
 theorem doApp_intOp_error {C F : Type} (op : ClosLang.IntOp) (args : List Value)
