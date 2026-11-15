@@ -26,10 +26,9 @@ theorem holFmapAsFiniteSupportParamWitness_stateRefRel_target (target : HolFinit
     mapofBroad (maptoBroadlookup target) target.finiteSupport = target := by cases target; rfl
 
 /-- Every original reference is translated to a related target reference,
-and the pointer map is defined exactly on the source reference domain.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_def" (fmap_as_finite_support_parameters := [f, source, target])] -/
+and the pointer map is defined exactly on the source reference domain. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_def"
+  (fmap_as_finite_support_parameters := [f, source, target])]
 def stateRefRel (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMapExact Nat (Ref Value))
     (target : HolFiniteMapExact Nat (Ref Value)) : Prop :=
   f.domain = source.domain ∧ ∀ i v, source.lookup i = some v →

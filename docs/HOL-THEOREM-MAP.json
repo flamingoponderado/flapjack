@@ -135586,6 +135586,14 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "state_ref_rel_def",
+  "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
+  "lean_name": "stateRefRel", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "source", "target"],
+  "reviewer": "Compared state_ref_rel_def_typed in bvi_tmc_proof_source_probe.out: the pointer-map domain equals the source heap domain, and each source lookup has a mapped target lookup with related reference cells. The original permits extra target cells and imposes no injectivity or target-domain equality. All three maps use canonical finite support with separate same-module parameter witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "fmap_inj_def",
   "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
   "lean_name": "fmapInj", "statement_status": "reviewed_fmap_as_finite_support_parameters",
