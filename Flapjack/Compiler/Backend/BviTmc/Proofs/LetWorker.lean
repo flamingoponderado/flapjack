@@ -95,7 +95,7 @@ theorem evaluate_let_worker {C F : Type} (bindings : List Bvi.Exp) (body : Bvi.E
             middleStates extendedHole nextNotFinal extendedPointer nextCode
         have submap : f.submap h := by
           intro k v found; exact bodyExtension k v (extension k v found)
-        have domain := BviProps.evaluate_refs_subset bindings env2 target middleTarget (.val values') targetRun
+        have domain := BviTmc.evaluate_refs_subset bindings env2 target (.val values') middleTarget targetRun
         have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs ⟨fresh, bodyFresh, domain⟩
         have widened := holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} ⟨unchanged, by simp⟩
         have allUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs workState.refs {holePtr}

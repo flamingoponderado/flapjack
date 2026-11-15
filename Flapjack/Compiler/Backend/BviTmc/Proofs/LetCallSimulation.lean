@@ -119,9 +119,9 @@ theorem evaluate_letcall_return {C F : Type} (loc rets ticks destination : Nat)
         continuationRun notTypeError safe.2 environments extension weightIH
     obtain ⟨last, k, targetResult, targetContinuationRun, related, lastStates, continuationExtension,
       continuationFresh, continuationUnchanged, continuationStill⟩ := continuationCore
-    have argsDomain := BviProps.evaluate_refs_subset args env2 target middleTarget (.val values') targetArgsRun
-    have bodyDomain := BviProps.evaluate_refs_subset [body'] callArgs' (decClock (ticks + 1) middleTarget) next
-      (.err (.raise (.ret returnedTarget))) targetBodyRun
+    have argsDomain := BviTmc.evaluate_refs_subset args env2 target (.val values') middleTarget targetArgsRun
+    have bodyDomain := BviTmc.evaluate_refs_subset [body'] callArgs' (decClock (ticks + 1) middleTarget)
+      (.err (.raise (.ret returnedTarget))) next targetBodyRun
     have firstExtension : f.submap h := fun key value present => bodyExtension key value (extension key value present)
     have firstFresh := onlyFresh_trans f g h target.refs middleTarget.refs ⟨fresh, bodyFresh, argsDomain⟩
     have firstUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs next.refs ∅

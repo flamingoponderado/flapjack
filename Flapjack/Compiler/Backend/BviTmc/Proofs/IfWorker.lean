@@ -126,7 +126,7 @@ theorem evaluate_if_worker {C F : Type} (condition yes no : Bvi.Exp)
                 [condition] env1 env2 (.val [value]) (.val [value']) code conditionRun targetRun)
           have submap : f.submap h := by
             intro k v found; exact branchExtension k v (extension k v found)
-          have domain := BviProps.evaluate_refs_subset [condition] env2 target middleTarget (.val [value']) targetRun
+          have domain := BviTmc.evaluate_refs_subset [condition] env2 target (.val [value']) middleTarget targetRun
           have allFresh := onlyFresh_trans f g h target.refs middleTarget.refs ⟨fresh, branchFresh, domain⟩
           have widened := holesUnchanged_subset f target.refs middleTarget.refs ∅ {holePtr} ⟨unchanged, by simp⟩
           have allUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs workState.refs {holePtr}

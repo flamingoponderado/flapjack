@@ -116,7 +116,7 @@ theorem evaluate_call_no_handler_core {C F : Type} (loc ticks : Nat) (dest : Opt
               obtain ⟨next, h, targetResult, targetBodyRun, related, nextStates, bodyExtension,
                 bodyFresh, bodyUnchanged, bodyStill⟩ := bodyCore
               have targetNoReturn := ForceSimulation.related_no_return h result targetResult related noReturn
-              have domain := BviProps.evaluate_refs_subset args env2 target middleTarget (.val values') targetArgsRun
+              have domain := BviTmc.evaluate_refs_subset args env2 target (.val values') middleTarget targetArgsRun
               have totalExtension : f.submap h := fun key value found => bodyExtension key value (extension key value found)
               have totalFresh := onlyFresh_trans f g h target.refs middleTarget.refs ⟨fresh, bodyFresh, domain⟩
               have totalUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs next.refs ∅
@@ -318,9 +318,9 @@ theorem evaluate_call_handled_exception {C F : Type} (loc ticks destination : Na
     obtain ⟨last, k, targetResult, targetHandlerRun, related, lastStates, handlerExtension,
       handlerFresh, handlerUnchanged, handlerStill⟩ := handlerPost.1
     have targetNoReturn := ForceSimulation.related_no_return k result targetResult related noReturn
-    have argsDomain := BviProps.evaluate_refs_subset args env2 target middleTarget (.val values') targetArgsRun
-    have bodyDomain := BviProps.evaluate_refs_subset [body'] callArgs' (decClock (ticks + 1) middleTarget) next
-      (.err (.raise (.exn raisedTarget))) targetBodyRun
+    have argsDomain := BviTmc.evaluate_refs_subset args env2 target (.val values') middleTarget targetArgsRun
+    have bodyDomain := BviTmc.evaluate_refs_subset [body'] callArgs' (decClock (ticks + 1) middleTarget)
+      (.err (.raise (.exn raisedTarget))) next targetBodyRun
     have firstExtension : f.submap h := fun key value present => bodyExtension key value (extension key value present)
     have firstFresh := onlyFresh_trans f g h target.refs middleTarget.refs ⟨fresh, bodyFresh, argsDomain⟩
     have firstUnchanged := holesUnchanged_trans f g target.refs middleTarget.refs next.refs ∅

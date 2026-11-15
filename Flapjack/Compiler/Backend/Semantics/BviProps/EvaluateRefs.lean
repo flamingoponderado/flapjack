@@ -259,14 +259,4 @@ theorem evaluate_refs_mono {C F : Type} (expressions : List Bvi.Exp) (env : List
                         · exact beforeBody
 
 
-/-- Flapjack infrastructure: a completed BVI evaluation preserves reference
-keys. -/
-theorem evaluate_refs_subset {C F : Type} (expressions : List Bvi.Exp) (env : List Value)
-    (s t : BviState C F) (result : BviResult)
-    (run : evaluate expressions env s = (result, t)) : s.refs.domain ⊆ t.refs.domain := by
-  have growth := evaluate_refs_mono expressions env s
-  have preserved : refsGrowth s t := by simpa [run] using growth
-  intro key present
-  exact preserved key present
-
 end Flapjack.Compiler.Backend.BviProps

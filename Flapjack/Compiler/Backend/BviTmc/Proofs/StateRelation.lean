@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Backend.BviTmc.Proofs.HeapRelation
 public import Flapjack.Compiler.Backend.Semantics.BviSem.State
 public import Flapjack.Compiler.Backend.Semantics.BviSem.Apply
 public import Flapjack.Compiler.Backend.Semantics.BviProps.ApplyRefs
+public import Flapjack.Compiler.Backend.Semantics.BviProps.EvaluateRefs
 public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
 
 @[expose] public section
@@ -60,6 +61,18 @@ theorem doApp_refs_subset {C F : Type} (op : ClosLang.Op) (args : List BvlSem.Va
     source.refs.domain ⊆ target.refs.domain := by
   intro key present
   exact BviProps.doApp_refs_mono op args source target value run key present
+
+/-- Every BVI evaluation preserves the reference domain. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "evaluate_refs_SUBSET"
+  (fmap_as_finite_support_relation := [BviState.refs])]
+theorem evaluate_refs_subset {C F : Type} (expressions : List Bvi.Exp) (env : List BvlSem.Value)
+    (source : BviState C F) (result : BviResult) (target : BviState C F)
+    (run : BviSem.evaluate expressions env source = (result, target)) :
+    source.refs.domain ⊆ target.refs.domain := by
+  have growth := BviProps.evaluate_refs_mono expressions env source
+  have preserved : BviProps.refsGrowth source target := by simpa [run] using growth
+  intro key present
+  exact preserved key present
 
 /-- The source state relation tracks pointer renaming, code, namespaces,
 and future compilation obligations. -/
