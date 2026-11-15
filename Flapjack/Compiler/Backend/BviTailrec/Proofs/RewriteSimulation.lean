@@ -756,7 +756,7 @@ theorem evaluate_related_callee {C F : Type} (loc arity : Nat) (body : Bvi.Exp)
     subst r
     refine ⟨wrapper, t1, wrapperFound, ?_, finalRelated⟩
     change BviSem.evaluate [letWrap arity (identity op) worker] env target = _
-    rw [← lengthEq, evaluate_letWrap worker op env target notNoop]
+    rw [← lengthEq, evaluate_letWrap worker op env target () () notNoop]
     exact workerRun
 
 /-- A known accumulator can be applied after the selected conditional branch.

@@ -16,6 +16,7 @@ val _ = show_thm "state_rel_with_clock_typed=" bvi_tailrecProofTheory.state_rel_
 val _ = show_thm "state_rel_code_rel_typed=" bvi_tailrecProofTheory.state_rel_code_rel;
 val _ = show_thm "code_rel_def_typed=" bvi_tailrecProofTheory.code_rel_def;
 val _ = show_thm "code_rel_domain_typed=" bvi_tailrecProofTheory.code_rel_domain;
+val _ = show_thm "evaluate_let_wrap_typed=" bvi_tailrecProofTheory.evaluate_let_wrap;
 (* The two find-code theorems are local in the original script. Replay their
    original statements and proofs so their inferred types are captured. *)
 open preamble bvi_tailrecProofTheory bvi_tailrecTheory bviPropsTheory bviSemTheory;

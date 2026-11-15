@@ -1258,10 +1258,21 @@ theorem envRel_worker (op : AssocOp) (args : List Value) (value : Value)
     simp [envRel, opType, decode]
   | noop => contradiction
 
+namespace EvaluateLetWrapCarrier
+/-- The BVI reference-map carrier roundtrips through its finite-support view. -/
+theorem holFmapAsFiniteSupportWitness {C F : Type} :
+    (∀ s : BviSem.BviStateBroad C F, (BviSem.BviState.ofBroad s).toBroad = s) ∧
+      (∀ s : BviSem.BviState C F, BviSem.BviState.ofBroad s.toBroad = s) :=
+  BviSem.holFmapAsFiniteSupportWitness
+end EvaluateLetWrapCarrier
+
 /-- The wrapper evaluates its worker under the original arguments, followed
-by the accumulator identity and the original environment. -/
-theorem evaluate_letWrap {C F : Type} (body : Bvi.Exp) (op : AssocOp)
-    (env : List Value) (state : BviSem.BviState C F) (notNoop : op ≠ .noop) :
+by the accumulator identity and the original environment. Evaluation inherits
+the real-model assumption in SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tailrecProofScript.sml" "evaluate_let_wrap"
+  (fmap_as_finite_support := [refs])]
+theorem evaluate_letWrap {C F R T : Type} (body : Bvi.Exp) (op : AssocOp)
+    (env : List Value) (state : BviSem.BviState C F) (_r : R) (_t : T) (notNoop : op ≠ .noop) :
     BviSem.evaluate [letWrap env.length (identity op) body] env state =
       BviSem.evaluate [body] (env ++ [opIdValue op] ++ env) state := by
   have bindings : BviSem.evaluate (((List.range env.length).map Bvi.Exp.var) ++ [identity op]) env state =
