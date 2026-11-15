@@ -993,8 +993,6 @@ import Flapjack.Compiler.Backend.BviTmc.Proofs.ListExtraction
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ResultRelation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.FillHole
 import Flapjack.Compiler.Backend.BviTmc.Proofs.TickSimulation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.RaiseSimulation
-import Flapjack.Compiler.Backend.BviTmc.Proofs.ReturnSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.ListSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.IfSimulation
 import Flapjack.Compiler.Backend.BviTmc.Proofs.WrapperCases

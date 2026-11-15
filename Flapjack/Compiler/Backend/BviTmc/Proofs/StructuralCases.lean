@@ -1,8 +1,6 @@
 module
 
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.StructuralHypothesis
-public import Flapjack.Compiler.Backend.BviTmc.Proofs.ReturnSimulation
-public import Flapjack.Compiler.Backend.BviTmc.Proofs.RaiseSimulation
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.TickSimulation
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.IfAssembly
 public import Flapjack.Compiler.Backend.BviTmc.Proofs.LetAssembly
@@ -11,7 +9,7 @@ public import Flapjack.Compiler.Backend.BviTmc.Proofs.LetAssembly
 
 /-! Singleton expression cases for the TMC structural induction. -/
 namespace Flapjack.Compiler.Backend.BviTmc.StructuralCases
-open BviTmc BviSem BvlSem ListSimulation ClockHypothesis StructuralHypothesis
+open BviTmc BviSem BvlSem ListSimulation ClockHypothesis StructuralHypothesis SemanticPrimitivesProps ResultRelation
 
 /-- Flapjack infrastructure: the singleton simulation in the shape used by
 the earlier case proofs, with explicit worker indices and result names. -/
@@ -83,14 +81,67 @@ theorem evaluate_return_from_weight {C F : Type} (loc : Nat) (args : List Bvi.Ex
   have weight : expsWeight args < expsWeight [.return args] := by
     simp [BviSem.expsWeight, BviSem.expWeight]
     omega
-  apply raw_to_singleton
-  apply ReturnSimulation.evaluate_return args source env1 result final opt f target env2 loc run notTypeError
-  intro childResult childFinal childRun childSafe
-  exact (ih args source target env1 env2 false f loc childResult childFinal (Nat.le_refl _) weight childRun argsSafe
-    (envRel_relax opt f env1 env2 environments) states (by simp) childSafe).1
-
+  have childIH : ∀ childResult childFinal,
+      evaluate args env1 source = (childResult, childFinal) →
+      childResult ≠ .err (.abort .typeError) → Core args env2 f target childResult childFinal := by
+    intro childResult childFinal childRun childSafe
+    exact (ih args source target env1 env2 false f loc childResult childFinal (Nat.le_refl _) weight childRun argsSafe
+      (envRel_relax opt f env1 env2 environments) states (by simp) childSafe).1
+  have finish (sourceError targetError : SemanticPrimitivesHOL.ErrorResult ExnOrRet)
+      (next : BviState C F) (nextMap : HolFiniteMapExact Nat Nat)
+      (sourceResult : result = .err sourceError)
+      (targetRun : evaluate [.return args] env2 target = (.err targetError, next))
+      (related : excRel (eorRel nextMap) sourceError targetError)
+      (states : stateRel nextMap final next) (extension : f.submap nextMap)
+      (fresh : onlyFresh f nextMap target.refs)
+      (unchanged : holesUnchangedExcept f target.refs next.refs ∅)
+      (still : holesStillNotFinalised f target.refs next.refs) :
+      SingletonPost (.return args) source target env1 env2 opt f loc result final := by
+    subst result
+    refine ⟨⟨next, nextMap, .err targetError, targetRun, related, states, extension, fresh,
+      unchanged, still⟩, ?_⟩
+    intro locOpt _code
+    constructor
+    · intro wrap wrapper
+      simp [rewriteWrapperSource] at wrapper
+    · intro _opt holePtr _c _hole _notFinal _pointer
+      simp only [rewriteWorkerSource]
+      have workRun := FillHole.evaluate_fillHole_error (.return args)
+        env1.length (env1.length + 1) env2 target next targetError targetRun
+      refine ⟨.err targetError, nextMap, next, workRun, related, states, extension, fresh,
+        holesUnchanged_subset f target.refs next.refs ∅ {holePtr} ⟨unchanged, by simp⟩, still, ?_⟩
+      intro _ impossible; cases impossible
+  cases childRun : evaluate args env1 source with
+  | mk childResult childFinal =>
+    have childSafe : childResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst childResult
+      simp [BviSem.evaluate, childRun] at run
+      exact notTypeError run.1.symm
+    obtain ⟨next, nextMap, nextResult, targetRun, related, states, extension, fresh,
+      unchanged, still⟩ := childIH childResult childFinal childRun childSafe
+    cases childResult with
+    | err error =>
+      cases nextResult with
+      | val values => simp [resultRel] at related
+      | err error' =>
+        have eq : (.err error, childFinal) = (result, final) := by
+          simpa [BviSem.evaluate, childRun] using run
+        cases eq
+        apply finish error error' next nextMap rfl _ related states extension fresh unchanged still
+        simp [BviSem.evaluate, targetRun]
+    | val values =>
+      cases nextResult with
+      | err error => simp [resultRel] at related
+      | val values' =>
+        have eq : (.err (.raise (.ret values)), childFinal) = (result, final) := by
+          simpa [BviSem.evaluate, childRun] using run
+        cases eq
+        apply finish (.raise (.ret values)) (.raise (.ret values')) next nextMap rfl _
+          related states extension fresh unchanged still
+        simp [BviSem.evaluate, targetRun]
 /-- Flapjack infrastructure: the raise case follows from the smaller-weight
-body hypothesis. -/
+body induction hypothesis. -/
 theorem evaluate_raise_from_weight {C F : Type} (loc : Nat) (body : Bvi.Exp)
     (source : BviState (Nat × C) F) (target : BviState C F) (env1 env2 : List Value)
     (opt : Bool) (f : HolFiniteMapExact Nat Nat) (result : BviResult) (final : BviState (Nat × C) F)
@@ -103,11 +154,71 @@ theorem evaluate_raise_from_weight {C F : Type} (loc : Nat) (body : Bvi.Exp)
   dsimp only at safe
   have weight : expsWeight [body] < expsWeight [.raise body] := by
     simp [BviSem.expsWeight, BviSem.expWeight]
-  apply raw_to_singleton
-  apply RaiseSimulation.evaluate_raise body source env1 result final opt f target env2 loc run notTypeError
-  intro childResult childFinal childRun childSafe
-  exact (ih [body] source target env1 env2 false f loc childResult childFinal (Nat.le_refl _) weight childRun
-    (by simpa using safe) (envRel_relax opt f env1 env2 environments) states (by simp) childSafe).1
+  have childIH : ∀ childResult childFinal,
+      evaluate [body] env1 source = (childResult, childFinal) →
+      childResult ≠ .err (.abort .typeError) → Core [body] env2 f target childResult childFinal := by
+    intro childResult childFinal childRun childSafe
+    exact (ih [body] source target env1 env2 false f loc childResult childFinal (Nat.le_refl _) weight childRun
+      (by simpa using safe) (envRel_relax opt f env1 env2 environments) states (by simp) childSafe).1
+  have finish (sourceError targetError : SemanticPrimitivesHOL.ErrorResult ExnOrRet)
+      (next : BviState C F) (nextMap : HolFiniteMapExact Nat Nat)
+      (sourceResult : result = .err sourceError)
+      (targetRun : evaluate [.raise body] env2 target = (.err targetError, next))
+      (related : excRel (eorRel nextMap) sourceError targetError)
+      (states : stateRel nextMap final next) (extension : f.submap nextMap)
+      (fresh : onlyFresh f nextMap target.refs)
+      (unchanged : holesUnchangedExcept f target.refs next.refs ∅)
+      (still : holesStillNotFinalised f target.refs next.refs) :
+      SingletonPost (.raise body) source target env1 env2 opt f loc result final := by
+    subst result
+    refine ⟨⟨next, nextMap, .err targetError, targetRun, related, states, extension, fresh,
+      unchanged, still⟩, ?_⟩
+    intro locOpt _code
+    constructor
+    · intro wrap wrapper
+      simp [rewriteWrapperSource] at wrapper
+    · intro _opt holePtr _c _hole _notFinal _pointer
+      simp only [rewriteWorkerSource]
+      refine ⟨.err targetError, nextMap, next, targetRun, related, states, extension, fresh,
+        holesUnchanged_subset f target.refs next.refs ∅ {holePtr} ⟨unchanged, by simp⟩, still, ?_⟩
+      intro _ impossible; cases impossible
+  cases childRun : evaluate [body] env1 source with
+  | mk childResult childFinal =>
+    have childSafe : childResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst childResult
+      simp [BviSem.evaluate, childRun] at run
+      exact notTypeError run.1.symm
+    obtain ⟨next, nextMap, nextResult, targetRun, related, states, extension, fresh,
+      unchanged, still⟩ := childIH childResult childFinal childRun childSafe
+    cases childResult with
+    | err error =>
+      cases nextResult with
+      | val values => simp [resultRel] at related
+      | err error' =>
+        have eq : (.err error, childFinal) = (result, final) := by
+          simpa [BviSem.evaluate, childRun] using run
+        cases eq
+        apply finish error error' next nextMap rfl _ related states extension fresh unchanged still
+        simp [BviSem.evaluate, targetRun]
+    | val values =>
+      obtain ⟨value, rfl⟩ := evaluate_singleton body env1 source childFinal values childRun
+      cases nextResult with
+      | err error => simp [resultRel] at related
+      | val values' =>
+        obtain ⟨value', rfl⟩ := evaluate_singleton body env2 target next values' targetRun
+        have valueRelated : valueRel nextMap value value' := by
+          simp only [resultRel] at related
+          cases related with
+          | cons h _ => exact h
+        have eq : (.err (.raise (.exn value)), childFinal) = (result, final) := by
+          rw [BviSem.evaluate, childRun] at run
+          exact run
+        cases eq
+        apply finish (.raise (.exn value)) (.raise (.exn value')) next nextMap rfl _
+          valueRelated states extension fresh unchanged still
+        rw [BviSem.evaluate, targetRun]
+        rfl
 
 /-- Flapjack infrastructure: the tick case follows from the smaller-clock
 singleton hypothesis. -/
