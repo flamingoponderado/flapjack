@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "holes_still_not_finalised_frange_update", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
+  "lean_name": "holesStill_rangeUpdate", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "refs"],
+  "reviewer": "Source comparison: Compared holes_still_not_finalised_frange_update_typed in bvi_tmc_proof_source_probe.out: a successful pointer-map lookup implies the full unfinalised-hole preservation relation after updating that mapped target. All three key, pointer and reference-value types remain independent; update uses HOL equality without an extra decidability assumption. Both maps use canonical finite support with same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "holes_unchanged_except_frange_update", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HoleRelation.lean",
   "lean_name": "holesUnchanged_rangeUpdate", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "refs"],

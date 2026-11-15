@@ -387,7 +387,8 @@ theorem doApp_op_rel_setGlobal {C F : Type} (f : HolFiniteMapExact Nat Nat) (ind
                   ?_, ?_, nextRelated', ?_, onlyFresh_refl f target.refs,
                   (by simpa only [natUpdateClassical] using
                     holesUnchanged_rangeUpdate f ptr targetPtr _ target.refs mapped),
-                  holesStill_rangeUpdate f ptr targetPtr _ target.refs mapped⟩
+                  (by simpa only [natUpdateClassical] using
+                    holesStill_rangeUpdate f ptr targetPtr _ target.refs mapped)⟩
                 · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, targetGlobal, targetFound, bound']
                 · exact .block _ [] [] .nil
                 · intro key item found
@@ -1116,7 +1117,8 @@ theorem doApp_op_rel_update {C F : Type} (f : HolFiniteMapExact Nat Nat)
                         ?_, ?_, nextRelated, ?_, onlyFresh_refl f target.refs,
                         (by simpa only [natUpdateClassical] using
                           holesUnchanged_rangeUpdate f ptr targetPtr _ target.refs mapped),
-                        holesStill_rangeUpdate f ptr targetPtr _ target.refs mapped⟩
+                        (by simpa only [natUpdateClassical] using
+                          holesStill_rangeUpdate f ptr targetPtr _ target.refs mapped)⟩
                       · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
                           BviSem.toBvl, BviSem.fromBvl, targetFound, invalid']
                       · exact .block _ [] [] .nil
@@ -1187,7 +1189,8 @@ theorem doApp_op_rel_updateByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
                           ?_, ?_, nextRelated, ?_, onlyFresh_refl f target.refs,
                           (by simpa only [natUpdateClassical] using
                             holesUnchanged_rangeUpdate f ptr targetPtr _ target.refs mapped),
-                          holesStill_rangeUpdate f ptr targetPtr _ target.refs mapped⟩
+                          (by simpa only [natUpdateClassical] using
+                            holesStill_rangeUpdate f ptr targetPtr _ target.refs mapped)⟩
                         · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
                             BviSem.toBvl, BviSem.fromBvl, targetFound, invalid, converted]
                         · exact .block _ [] [] .nil
@@ -1316,7 +1319,8 @@ theorem doApp_op_rel_xorByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
                         ?_, ?_, nextRelated, ?_, onlyFresh_refl f target.refs,
                         (by simpa only [natUpdateClassical] using
                           holesUnchanged_rangeUpdate f ptr1 targetPtr1 _ target.refs mapped1),
-                        holesStill_rangeUpdate f ptr1 targetPtr1 _ target.refs mapped1⟩
+                        (by simpa only [natUpdateClassical] using
+                          holesStill_rangeUpdate f ptr1 targetPtr1 _ target.refs mapped1)⟩
                       · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
                           BviSem.toBvl, BviSem.fromBvl, targetFound1, targetFound2, result]
                       · exact .block _ [] [] .nil
@@ -1582,7 +1586,8 @@ theorem doApp_op_rel_copyByte_inPlace {C F : Type} (f : HolFiniteMapExact Nat Na
                                     ?_, ?_, nextRelated, ?_, onlyFresh_refl f target.refs,
                                     (by simpa only [natUpdateClassical] using
                                       holesUnchanged_rangeUpdate f dst targetDst _ target.refs dstMapped),
-                                    holesStill_rangeUpdate f dst targetDst _ target.refs dstMapped⟩
+                                    (by simpa only [natUpdateClassical] using
+                                      holesStill_rangeUpdate f dst targetDst _ target.refs dstMapped)⟩
                                   · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp, BvlSem.applyMemory,
                                       BviSem.toBvl, BviSem.fromBvl, targetFound, targetDestFound, copied]
                                   · exact .block _ [] [] .nil
@@ -2477,7 +2482,8 @@ theorem doApp_op_rel_updateThunk {C F : Type} (f : HolFiniteMapExact Nat Nat) (m
                           ?_, .block _ [] [] .nil, nextStates, ?_, onlyFresh_refl f target.refs,
                           (by simpa only [natUpdateClassical] using
                             holesUnchanged_rangeUpdate f ptr targetPtr _ target.refs mapped),
-                          holesStill_rangeUpdate f ptr targetPtr _ target.refs mapped⟩
+                          (by simpa only [natUpdateClassical] using
+                            holesStill_rangeUpdate f ptr targetPtr _ target.refs mapped)⟩
                         · simp [BviSem.doApp, BviSem.doAppFallback, BviSem.doAppAux, BvlSem.doApp,
                             BviSem.toBvl, BviSem.fromBvl, targetGood, targetFound]
                         · intro key item present
@@ -2590,7 +2596,8 @@ theorem doApp_op_rel_ffi {C F : Type} (f : HolFiniteMapExact Nat Nat)
                             ?_, .block _ [] [] .nil, nextStates, ?_, onlyFresh_refl f target.refs,
                             (by simpa only [natUpdateClassical] using
                               holesUnchanged_rangeUpdate f dataPtr targetDataPtr _ target.refs dataMapped),
-                            holesStill_rangeUpdate f dataPtr targetDataPtr _ target.refs dataMapped⟩
+                            (by simpa only [natUpdateClassical] using
+                              holesStill_rangeUpdate f dataPtr targetDataPtr _ target.refs dataMapped)⟩
                           · rw [BviTailrec.doApp_ffi_effect]
                             simp [BviTailrec.ffiEffect, targetConfig, targetData, statesRelated.2.2.2.1, outcome]
                           · intro key item present

@@ -614,11 +614,11 @@ theorem holFmapAsFiniteSupportParamWitness_holesStill_rangeUpdate_f {α β : Typ
 theorem holFmapAsFiniteSupportParamWitness_holesStill_rangeUpdate_refs {β γ : Type}
     (refs : HolFiniteMapExact β (Ref γ)) : mapofBroad (maptoBroadlookup refs) refs.finiteSupport = refs := by cases refs; rfl
 
-/-- Updating a mapped location preserves unfinalised holes outside the map range.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_frange_update" (fmap_as_finite_support_parameters := [f, refs])] -/
-theorem holesStill_rangeUpdate {α β γ : Type} [DecidableEq β] (f : HolFiniteMapExact α β)
+open Classical in
+/-- Updating a mapped location preserves unfinalised holes outside the map range. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "holes_still_not_finalised_frange_update"
+  (fmap_as_finite_support_parameters := [f, refs])]
+theorem holesStill_rangeUpdate {α β γ : Type} (f : HolFiniteMapExact α β)
     (p : α) (key : β) (value : Ref γ) (refs : HolFiniteMapExact β (Ref γ))
     (mapped : f.lookup p = some key) : holesStillNotFinalised f refs (refs.updateEq (key, value)) := by
   intro ptr ⟨outside, tag, left, child, right, found⟩
