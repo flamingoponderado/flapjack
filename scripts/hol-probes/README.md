@@ -10563,3 +10563,18 @@ are parsed from the pinned source with the splice-expanding helper. Regenerate
 with `CAKEML=<cakeml tree> HOL4=<HOL tree>
 HOL_PROBE_ONLY=pan_globals_primed_typed_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`mllist_defs_typed_probe.out` (5 rows) captures the reviewed
+`mllistScript.sml` rows that earlier probes did not cover (task 187): the
+`sort_def` definition and the `sort_SORTED`, `sort_MEM`, `sort_PERM` and
+`sort_LENGTH` theorems, all exported from `mllistTheory`. Regenerate with
+`CAKEML=<cakeml tree> HOL4=<HOL tree> HOL_PROBE_ONLY=mllist_defs_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+`mlstring_char_typed_probe.out` (2 rows) captures the reviewed
+`mlstringScript.sml` byte/character definitions (task 187):
+`char_to_word8_def` (`n2w (ORD c)`) and `word8_to_char_def` (`CHR (w2n w)`).
+The `strlen_def` and `LENGTH_explode` rows are already captured by
+`mlstring_length_probe.out`. Regenerate with `CAKEML=<cakeml tree>
+HOL4=<HOL tree> HOL_PROBE_ONLY=mlstring_char_typed_probeScript.sml
+scripts/hol-probes/regenerate.sh`.

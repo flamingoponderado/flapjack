@@ -11871,3 +11871,13 @@ run_probe pan_globals_primed_typed_probeScript.sml pan_globals_primed_typed_prob
   semantics_init_call_prime_typed compile_decs_localised_prime_typed \
   "$cake_dir/pancake/proofs/pan_globalsProofScript.sml" \
   "$cake_dir/pancake/proofs"
+
+run_probe mllist_defs_typed_probeScript.sml mllist_defs_typed_probe.out \
+  sort_def_typed sort_SORTED_typed sort_MEM_typed sort_PERM_typed sort_LENGTH_typed \
+  "$cake_dir/basis/pure/mllistScript.sml" \
+  "$cake_dir/basis/pure"
+
+run_probe mlstring_char_typed_probeScript.sml mlstring_char_typed_probe.out \
+  char_to_word8_def_typed word8_to_char_def_typed \
+  "$cake_dir/basis/pure/mlstringScript.sml" \
+  "$cake_dir/basis/pure"
