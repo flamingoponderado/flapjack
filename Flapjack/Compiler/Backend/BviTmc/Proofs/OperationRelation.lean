@@ -369,8 +369,8 @@ theorem doApp_op_rel_setGlobal {C F : Type} (f : HolFiniteMapExact Nat Nat) (ind
                 have nextRelated : stateRel f
                     { source with refs := source.refs.updateEq (ptr, .valueArray (xs.set index head)) }
                     { target with refs := target.refs.updateEq (targetPtr, .valueArray (ys.set index b)) } := by
-                  exact ⟨stateRefRel_update f source.refs target.refs ptr targetPtr _ _ statesRelated.1
-                    statesRelated.2.2.2.2.2.2.2.2.2.2 mapped (.valueArray _ _ (related_set f rel index _ _ headRel)),
+                  exact ⟨stateRefRel_update f source.refs target.refs ptr targetPtr _ _ ⟨statesRelated.1,
+                    statesRelated.2.2.2.2.2.2.2.2.2.2, mapped, .valueArray _ _ (related_set f rel index _ _ headRel)⟩,
                     statesRelated.2⟩
                 have nextRelated' : stateRel f
                     { source with global := some ptr, refs := source.refs.updateEq (ptr, .valueArray (xs.set index head)) }
@@ -1100,9 +1100,9 @@ theorem doApp_op_rel_update {C F : Type} (f : HolFiniteMapExact Nat Nat)
                       have nextRelated : stateRel f
                           { source with refs := source.refs.updateEq (ptr, .valueArray (xs.set index.toNat newValue)) }
                           { target with refs := target.refs.updateEq (targetPtr, .valueArray (ys.set index.toNat b)) } := by
-                        exact ⟨stateRefRel_update f source.refs target.refs ptr targetPtr _ _ statesRelated.1
-                          statesRelated.2.2.2.2.2.2.2.2.2.2 mapped
-                          (.valueArray _ _ (related_set f rel index.toNat _ _ newRel)), statesRelated.2⟩
+                        exact ⟨stateRefRel_update f source.refs target.refs ptr targetPtr _ _ ⟨statesRelated.1,
+                          statesRelated.2.2.2.2.2.2.2.2.2.2, mapped,
+                          .valueArray _ _ (related_set f rel index.toNat _ _ newRel)⟩, statesRelated.2⟩
                       refine ⟨f, unitValue,
                         { target with refs := target.refs.updateEq (targetPtr, .valueArray (ys.set index.toNat b)) },
                         ?_, ?_, nextRelated, ?_, onlyFresh_refl f target.refs,
@@ -1171,8 +1171,8 @@ theorem doApp_op_rel_updateByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
                         have nextRelated : stateRel f
                             { source with refs := source.refs.updateEq (ptr, .byteArray flag (bytes.set index.toNat actual)) }
                             { target with refs := target.refs.updateEq (targetPtr, .byteArray flag (bytes.set index.toNat actual)) } := by
-                          exact ⟨stateRefRel_update f source.refs target.refs ptr targetPtr _ _ statesRelated.1
-                            statesRelated.2.2.2.2.2.2.2.2.2.2 mapped (.byteArray _ _), statesRelated.2⟩
+                          exact ⟨stateRefRel_update f source.refs target.refs ptr targetPtr _ _ ⟨statesRelated.1,
+                            statesRelated.2.2.2.2.2.2.2.2.2.2, mapped, .byteArray _ _⟩, statesRelated.2⟩
                         refine ⟨f, unitValue,
                           { target with refs := target.refs.updateEq (targetPtr, .byteArray flag (bytes.set index.toNat actual)) },
                           ?_, ?_, nextRelated, ?_, onlyFresh_refl f target.refs,
@@ -1300,8 +1300,8 @@ theorem doApp_op_rel_xorByte {C F : Type} (f : HolFiniteMapExact Nat Nat)
                       have nextRelated : stateRel f
                           { source with refs := source.refs.updateEq (ptr1, .byteArray b1 updated) }
                           { target with refs := target.refs.updateEq (targetPtr1, .byteArray b1 updated) } := by
-                        exact ⟨stateRefRel_update f source.refs target.refs ptr1 targetPtr1 _ _ statesRelated.1
-                          statesRelated.2.2.2.2.2.2.2.2.2.2 mapped1 (.byteArray _ _), statesRelated.2⟩
+                        exact ⟨stateRefRel_update f source.refs target.refs ptr1 targetPtr1 _ _ ⟨statesRelated.1,
+                          statesRelated.2.2.2.2.2.2.2.2.2.2, mapped1, .byteArray _ _⟩, statesRelated.2⟩
                       refine ⟨f, unitValue, { target with refs := target.refs.updateEq (targetPtr1, .byteArray b1 updated) },
                         ?_, ?_, nextRelated, ?_, onlyFresh_refl f target.refs,
                         holesUnchanged_rangeUpdate f ptr1 targetPtr1 _ target.refs mapped1,
@@ -1564,8 +1564,8 @@ theorem doApp_op_rel_copyByte_inPlace {C F : Type} (f : HolFiniteMapExact Nat Na
                                   have nextRelated : stateRel f
                                       { source with refs := source.refs.updateEq (dst, .byteArray destFlag updated) }
                                       { target with refs := target.refs.updateEq (targetDst, .byteArray destFlag updated) } := by
-                                    exact ⟨stateRefRel_update f source.refs target.refs dst targetDst _ _ statesRelated.1
-                                      statesRelated.2.2.2.2.2.2.2.2.2.2 dstMapped (.byteArray _ _), statesRelated.2⟩
+                                    exact ⟨stateRefRel_update f source.refs target.refs dst targetDst _ _ ⟨statesRelated.1,
+                                      statesRelated.2.2.2.2.2.2.2.2.2.2, dstMapped, .byteArray _ _⟩, statesRelated.2⟩
                                   refine ⟨f, unitValue,
                                     { target with refs := target.refs.updateEq (targetDst, .byteArray destFlag updated) },
                                     ?_, ?_, nextRelated, ?_, onlyFresh_refl f target.refs,
@@ -2459,8 +2459,8 @@ theorem doApp_op_rel_updateThunk {C F : Type} (f : HolFiniteMapExact Nat Nat) (m
                         have nextStates : stateRel f
                             { source with refs := source.refs.updateEq (ptr, .thunk mode payload) }
                             { target with refs := target.refs.updateEq (targetPtr, .thunk mode targetPayload) } := by
-                          exact ⟨stateRefRel_update f source.refs target.refs ptr targetPtr _ _ statesRelated.1
-                            statesRelated.2.2.2.2.2.2.2.2.2.2 mapped (.thunk _ _ _ payloadRel), statesRelated.2⟩
+                          exact ⟨stateRefRel_update f source.refs target.refs ptr targetPtr _ _ ⟨statesRelated.1,
+                            statesRelated.2.2.2.2.2.2.2.2.2.2, mapped, .thunk _ _ _ payloadRel⟩, statesRelated.2⟩
                         refine ⟨f, unitValue, { target with refs := target.refs.updateEq (targetPtr, .thunk mode targetPayload) },
                           ?_, .block _ [] [] .nil, nextStates, ?_, onlyFresh_refl f target.refs,
                           holesUnchanged_rangeUpdate f ptr targetPtr _ target.refs mapped,
@@ -2570,8 +2570,8 @@ theorem doApp_op_rel_ffi {C F : Type} (f : HolFiniteMapExact Nat Nat)
                               { source with refs := source.refs.updateEq (dataPtr, .byteArray false updated), ffi := nextFfi }
                               { target with refs := target.refs.updateEq (targetDataPtr, .byteArray false updated), ffi := nextFfi } := by
                             rcases statesRelated with ⟨heap, clock, global, _, oracle, compiler, code, names, inputs, workers, inj⟩
-                            exact ⟨stateRefRel_update f source.refs target.refs dataPtr targetDataPtr _ _ heap inj dataMapped
-                              (.byteArray _ _), clock, global, rfl, oracle, compiler, code, names, inputs, workers, inj⟩
+                            exact ⟨stateRefRel_update f source.refs target.refs dataPtr targetDataPtr _ _
+                              ⟨heap, inj, dataMapped, .byteArray _ _⟩, clock, global, rfl, oracle, compiler, code, names, inputs, workers, inj⟩
                           refine ⟨f, unitValue,
                             { target with refs := target.refs.updateEq (targetDataPtr, .byteArray false updated), ffi := nextFfi },
                             ?_, .block _ [] [] .nil, nextStates, ?_, onlyFresh_refl f target.refs,

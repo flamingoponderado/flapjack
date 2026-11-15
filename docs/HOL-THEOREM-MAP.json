@@ -135699,6 +135699,13 @@
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
+  "hol_name": "state_ref_rel_update", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/HeapRelation.lean",
+  "lean_name": "stateRefRel_update", "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["f", "source", "target"],
+  "reviewer": "Source comparison: Compared state_ref_rel_update_typed in bvi_tmc_proof_source_probe.out: the original heap relation, pointer-map injectivity, successful pointer lookup and full reference relation conjunctively imply the heap relation after both corresponding updates. All binder types and order match; maps use canonical finite support and same-module witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml",
   "hol_name": "mb_rel_del", "lean_path": "Flapjack/Compiler/Backend/BviTmc/Proofs/MutableBlockRelation.lean",
   "lean_name": "mutableBlockRel_delete", "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["f", "old", "refs"],

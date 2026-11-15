@@ -126,15 +126,15 @@ theorem holFmapAsFiniteSupportParamWitness_stateRefRel_update_target (target : H
     mapofBroad (maptoBroadlookup target) target.finiteSupport = target := by cases target; rfl
 
 /-- Updating related source and target cells preserves the heap relation
-when pointer renaming is injective.
-
-Intended HOL counterpart, pending statement and finite-map carrier source review.
-Former reference: @[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_update" (fmap_as_finite_support_parameters := [f, source, target])] -/
+when pointer renaming is injective. -/
+@[hol "cakeml/compiler/backend/proofs/bvi_tmcProofScript.sml" "state_ref_rel_update"
+  (fmap_as_finite_support_parameters := [f, source, target])]
 theorem stateRefRel_update (f : HolFiniteMapExact Nat Nat) (source : HolFiniteMapExact Nat (Ref Value))
     (target : HolFiniteMapExact Nat (Ref Value)) (ptr ptr' : Nat) (v w : Ref Value)
-    (related : stateRefRel f source target) (injective : fmapInj f)
-    (mapped : f.lookup ptr = some ptr') (cells : refRel f v w) :
+    (h : stateRefRel f source target ∧ fmapInj f ∧
+      f.lookup ptr = some ptr' ∧ refRel f v w) :
     stateRefRel f (source.updateEq (ptr, v)) (target.updateEq (ptr', w)) := by
+  obtain ⟨related, injective, mapped, cells⟩ := h
   constructor
   · apply Set.ext
     intro i
