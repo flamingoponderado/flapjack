@@ -10656,3 +10656,18 @@ that opens at line 1148 and closes at the end of the file, so neither exists in
 accepts the citation because it matches the name textually without stripping
 SML comments; the Lean `mapColorsSub`/`mapColorsSubEq` declarations port that
 commented source text. Recorded for the maintainer rather than withdrawn here.
+
+`stack_to_lab_primed_typed_probe.out` (5 rows), `word_simp_local_typed_probe.out`
+(5 rows), `word_copy_local_typed_probe.out` (4 rows) and
+`word_unreach_proof_local_typed_probe.out` (4 rows) capture the reviewed
+compiler/backend/proofs rows that earlier probes did not cover (task 187):
+`dest_to_loc'_def`, `code_installed'_def` and its `cons_label`, `simp` and
+`cons_non_label` corollaries (stack_to_lab; `cons_non_label` is a
+`Theorem ... = Q.prove(...)`, so its statement is taken from the source);
+`pop_env_stack_gc`, `lookup_FOLDR_delete`, `evaluate_try_if_hoist2`,
+`evaluate_try_if_hoist1` and `push_out_if_aux_T` (word_simp, all `[local]`);
+`unique_rep`, `n_lt_n1`, `same_classD'` and `remove_eq_model_insert'`
+(word_copy); and `get_vars_IS_SOME_lookup`, `evaluate_SimpSeq`,
+`push_env_handler` and `evaluate_Loop_body_eq` (word_unreach, all `[local]`).
+Regenerate each with `CAKEML=<cakeml tree> HOL4=<HOL tree>
+HOL_PROBE_ONLY=<probe>_probeScript.sml scripts/hol-probes/regenerate.sh`.

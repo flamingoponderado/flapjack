@@ -11977,3 +11977,27 @@ run_probe pattern_common_datatype_typed_probeScript.sml pattern_common_datatype_
   position_typed pmatchResult_typed matchResult_typed \
   "$cake_dir/compiler/backend/pattern_matching/pattern_commonScript.sml" \
   "$cake_dir/compiler/backend/pattern_matching"
+
+run_probe stack_to_lab_primed_typed_probeScript.sml stack_to_lab_primed_typed_probe.out \
+  dest_to_loc_prime_def_typed code_installed_prime_def_typed \
+  code_installed_prime_cons_label_typed code_installed_prime_simp_typed \
+  code_installed_prime_cons_non_label_typed \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe word_simp_local_typed_probeScript.sml word_simp_local_typed_probe.out \
+  pop_env_stack_gc_typed lookup_FOLDR_delete_typed evaluate_try_if_hoist2_typed \
+  evaluate_try_if_hoist1_typed push_out_if_aux_T_typed \
+  "$cake_dir/compiler/backend/proofs/word_simpProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe word_copy_local_typed_probeScript.sml word_copy_local_typed_probe.out \
+  unique_rep_typed n_lt_n1_typed same_classD_prime_typed remove_eq_model_insert_prime_typed \
+  "$cake_dir/compiler/backend/proofs/word_copyProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe word_unreach_proof_local_typed_probeScript.sml word_unreach_proof_local_typed_probe.out \
+  get_vars_IS_SOME_lookup_typed evaluate_SimpSeq_typed push_env_handler_typed \
+  evaluate_Loop_body_eq_typed \
+  "$cake_dir/compiler/backend/proofs/word_unreachProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
