@@ -133,6 +133,16 @@ theorem stateRel_getVars_listInsert {C F : Type} (source target : State C F) (na
   intro key member
   exact (mem_listInsert names live key).2 (Or.inl member)
 
+/-- Related states return the same successful read of the inserted live names. -/
+@[hol "cakeml/compiler/backend/proofs/data_liveProofScript.sml" "state_rel_IMP_get_vars"]
+theorem stateRel_imp_getVars {C F : Type} (names : List Nat) (source target : State C F)
+    (live : NumSet) (values : List Value)
+    (premises : stateRel source target (sptListInsert names live) ∧
+      DataSem.getVars names source.locals = some values) :
+    DataSem.getVars names target.locals = some values := by
+  rw [← stateRel_getVars_listInsert source target names live premises.1]
+  exact premises.2
+
 /-- Writing the same value to both states restores agreement on the written
 name and retains agreement on the other live names. -/
 theorem stateRel_setVar {C F : Type} (source target : State C F) (live : NumSet)

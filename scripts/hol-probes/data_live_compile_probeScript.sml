@@ -71,3 +71,20 @@ val pure_do_app_Rerr_replay = prove (
   \\ simp[do_space_def,data_spaceTheory.op_space_req_def,
           case_eq_thms,do_install_def,UNCURRY] \\ rw[]);
 val _ = show "is_pure_do_app_Rerr_replay_typed" pure_do_app_Rerr_replay;
+
+open sptreeTheory data_liveProofTheory;
+val _ = temp_bring_to_front_overload "get_vars" {Name="get_vars",Thy="dataSem"};
+val _ = temp_bring_to_front_overload "get_var" {Name="get_var",Thy="dataSem"};
+val state_rel_get_vars_replay = prove (
+  ``!args s1 t1 t xs.
+      state_rel s1 t1 (list_insert args t) /\
+      (get_vars args s1.locals = SOME xs) ==>
+      (get_vars args t1.locals = SOME xs)``,
+  Induct \\ fs [get_vars_def] \\ REPEAT STRIP_TAC
+  \\ `state_rel s1 t1 (list_insert args t) /\
+      (get_var h s1.locals = get_var h t1.locals)` by
+   (fs [state_rel_def,list_insert_def,domain_list_insert,get_var_def]
+    \\ METIS_TAC []) \\ fs []
+  \\ every_case_tac >> fs[]
+  \\ RES_TAC \\ fs [] \\ SRW_TAC [] []);
+val _ = show "state_rel_IMP_get_vars_replay_typed" state_rel_get_vars_replay;
