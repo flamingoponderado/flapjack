@@ -373,12 +373,13 @@ theorem stackSizeSomeAtLeastOne {width : Nat} [NeZero width] :
   "dec_stack_stack_size_some_not_none" (words_as_type_indexed_bitvec)]
 theorem decStackStackSizeSomeNotNone {width : Nat} [NeZero width] :
     ∀ (xs : List (WordLocW width)) (stk stk' : List (WordSemStackFrame width)) (x : Nat),
-      wordSemDecStack xs stk = some stk' → wordSemStackSize stk = some x →
+      wordSemDecStack xs stk = some stk' ∧ wordSemStackSize stk = some x →
         wordSemStackSize stk' ≠ none := by
   intro xs stk
   induction stk generalizing xs with
   | nil =>
-    intro stk' x h1 h2
+    intro stk' x premises
+    obtain ⟨h1, h2⟩ := premises
     cases xs with
     | nil =>
       simp [wordSemDecStack] at h1
@@ -386,7 +387,8 @@ theorem decStackStackSizeSomeNotNone {width : Nat} [NeZero width] :
       simp [wordSemStackSize]
     | cons _ _ => simp [wordSemDecStack] at h1
   | cons fr rest ih =>
-    intro stk' x h1 h2
+    intro stk' x premises
+    obtain ⟨h1, h2⟩ := premises
     cases fr with
     | stackFrame n l0 l handler =>
       simp only [wordSemDecStack] at h1
@@ -411,7 +413,7 @@ theorem decStackStackSizeSomeNotNone {width : Nat} [NeZero width] :
               simp only [Option.some.injEq] at h1
               rw [← h1]
               have ihs : wordSemStackSize s ≠ none :=
-                ih (xs.drop l.length) s b hstep hr
+                ih (xs.drop l.length) s b ⟨hstep, hr⟩
               have hf' : wordSemStackSizeFrame
                   (.stackFrame n l0 ((l.map Prod.fst).zip (xs.take l.length)) handler) =
                   some a := by
@@ -432,12 +434,13 @@ theorem decStackStackSizeSomeNotNone {width : Nat} [NeZero width] :
   "dec_stack_stack_size_not_none_not_none" (words_as_type_indexed_bitvec)]
 theorem decStackStackSizeNotNoneNotNone {width : Nat} [NeZero width] :
     ∀ (xs : List (WordLocW width)) (stk stk' : List (WordSemStackFrame width)),
-      wordSemDecStack xs stk = some stk' → wordSemStackSize stk ≠ none →
+      wordSemDecStack xs stk = some stk' ∧ wordSemStackSize stk ≠ none →
         wordSemStackSize stk' ≠ none := by
   intro xs stk
   induction stk generalizing xs with
   | nil =>
-    intro stk' h1 h2
+    intro stk' premises
+    obtain ⟨h1, h2⟩ := premises
     cases xs with
     | nil =>
       simp [wordSemDecStack] at h1
@@ -445,7 +448,8 @@ theorem decStackStackSizeNotNoneNotNone {width : Nat} [NeZero width] :
       simp [wordSemStackSize]
     | cons _ _ => simp [wordSemDecStack] at h1
   | cons fr rest ih =>
-    intro stk' h1 h2
+    intro stk' premises
+    obtain ⟨h1, h2⟩ := premises
     cases fr with
     | stackFrame n l0 l handler =>
       simp only [wordSemDecStack] at h1
@@ -470,7 +474,8 @@ theorem decStackStackSizeNotNoneNotNone {width : Nat} [NeZero width] :
             rw [hstep] at h1
             simp only [Option.some.injEq] at h1
             rw [← h1]
-            have ihs : wordSemStackSize s ≠ none := ih (xs.drop l.length) s hstep hr
+            have ihs : wordSemStackSize s ≠ none :=
+              ih (xs.drop l.length) s ⟨hstep, hr⟩
             have hf' : wordSemStackSizeFrame
                 (.stackFrame n l0 ((l.map Prod.fst).zip (xs.take l.length)) handler) =
                 some a := by
@@ -492,12 +497,13 @@ theorem decStackStackSizeNotNoneNotNone {width : Nat} [NeZero width] :
 theorem decStackStackSizeSomeLeq {width : Nat} [NeZero width] :
     ∀ (xs : List (WordLocW width)) (stk stk' : List (WordSemStackFrame width))
       (x y : Nat),
-      wordSemDecStack xs stk = some stk' → wordSemStackSize stk = some x →
+      wordSemDecStack xs stk = some stk' ∧ wordSemStackSize stk = some x ∧
         wordSemStackSize stk' = some y → y ≤ x := by
   intro xs stk
   induction stk generalizing xs with
   | nil =>
-    intro stk' x y h1 h2 h3
+    intro stk' x y premises
+    obtain ⟨h1, h2, h3⟩ := premises
     cases xs with
     | nil =>
       simp [wordSemDecStack] at h1
@@ -506,7 +512,8 @@ theorem decStackStackSizeSomeLeq {width : Nat} [NeZero width] :
       omega
     | cons _ _ => simp [wordSemDecStack] at h1
   | cons fr rest ih =>
-    intro stk' x y h1 h2 h3
+    intro stk' x y premises
+    obtain ⟨h1, h2, h3⟩ := premises
     cases fr with
     | stackFrame n l0 l handler =>
       simp only [wordSemDecStack] at h1
@@ -547,7 +554,7 @@ theorem decStackStackSizeSomeLeq {width : Nat} [NeZero width] :
                 simp [wordSemOptionAdd] at h3
               · rw [hs] at h3
                 simp only [wordSemOptionAdd, Option.some.injEq] at h3
-                have ihs := ih (xs.drop l.length) s b c hstep hr hs
+                have ihs := ih (xs.drop l.length) s b c ⟨hstep, hr, hs⟩
                 omega
 
 
@@ -590,11 +597,10 @@ theorem flushStateOptionLeStackMaxPreserved {width : Nat} [NeZero width] {C : Ty
     (state : WordSemStateFiniteExact width C F) (all : Bool) :
     optionLe (wordSemOptionAdd (wordSemStackSize state.stack) state.localsSize)
         state.stackMax →
-      optionLe (wordSemOptionAdd
-          (wordSemStackSize (WordSemStateFiniteExact.flushState all state).stack)
-        (WordSemStateFiniteExact.flushState all state).localsSize)
-        (WordSemStateFiniteExact.flushState all state).stackMax := by
+      (let t := WordSemStateFiniteExact.flushState all state
+       optionLe (wordSemOptionAdd (wordSemStackSize t.stack) t.localsSize) t.stackMax) := by
   intro h
+  dsimp only
   cases all with
   | true =>
     simpa [WordSemStateFiniteExact.flushState, wordSemStackSize, wordSemOptionAdd]
