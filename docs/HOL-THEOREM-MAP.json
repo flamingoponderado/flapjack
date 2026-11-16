@@ -1,5 +1,29 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "ts_tid_rename_def",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps.lean", "lean_name": "tsTidRename",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and ts_tid_rename_typed confirms all type constructors and identifier carriers; tsTidRenameList_eq_map proves the recursive list helper implements the source MAP."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "set_tids_ts_tid_rename",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps.lean", "lean_name": "setTidsTsTidRename",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and set_tids_ts_tid_rename_typed confirms the quantifiers and set equality; predicate existential membership represents IMAGE."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "remap_tenv_def",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps.lean", "lean_name": "remapTenv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and remap_tenv_typed confirms all namespace fields and payload mappings, including constructor argument types and identifier."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "set_tids_tenv_remap",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "setTidsTenvRemap",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and direct set_tids_tenv_remap_typed capture confirm the environment premise and remapped IMAGE conclusion; predicate existential membership represents IMAGE."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "set_tids_tenv_extend_dec_tenv",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "setTidsTenvExtendDecTenv",
   "statement_status": "reviewed_exact",

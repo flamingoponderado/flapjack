@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Inference.InferProps
+public import Flapjack.NamespaceProps.MapLookup
 
 @[expose] public section
 
@@ -43,6 +44,35 @@ theorem setTidsTenvExtendDecTenv (s : Nat → Prop) (t : TypeEnv)
           | none => exact hb (.long name rest) value (by simpa [nsAppend, nsLookup, List.lookup_append, h] using found)
           | some env => exact ha (.long name rest) value (by simpa [nsAppend, nsLookup, List.lookup_append, h] using found)
   exact ⟨append _ _ _ ht' ht, append _ _ _ hc' hc, append _ _ _ hv' hv⟩
+
+/-- Renaming an environment maps its permitted type identifiers pointwise. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "set_tids_tenv_remap"]
+theorem setTidsTenvRemap (tids : Nat → Prop) (tenv : TypeEnv) (f : Nat → Nat) :
+    setTidsTenv tids tenv →
+      setTidsTenv (fun id => ∃ old, tids old ∧ f old = id) (remapTenv f tenv) := by
+  intro ⟨ht, hc, hv⟩
+  have rename (t : SemanticT) (h : setTidsSubset tids t) :
+      setTidsSubset (fun id => ∃ old, tids old ∧ f old = id) (tsTidRename f t) := by
+    intro id hid
+    rw [setTidsTsTidRename] at hid
+    obtain ⟨old, hold, heq⟩ := hid
+    exact ⟨old, h old hold, heq⟩
+  simp only [setTidsTenv, remapTenv]
+  refine ⟨?_, ?_, ?_⟩
+  · rw [nsAll_nsMap]
+    intro id entry found
+    exact rename _ (ht id entry found)
+  · rw [nsAll_nsMap]
+    intro id entry found
+    obtain ⟨hargs, hid⟩ := hc id entry found
+    constructor
+    · intro t mem
+      obtain ⟨old, oldMem, rfl⟩ := List.mem_map.mp mem
+      exact rename old (hargs old oldMem)
+    · exact ⟨entry.2.2, hid, rfl⟩
+  · rw [nsAll_nsMap]
+    intro id entry found
+    exact rename _ (hv id entry found)
 
 /-- Enlarging the permitted set preserves the type's identifier condition. -/
 @[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "set_tids_subset_mono"]

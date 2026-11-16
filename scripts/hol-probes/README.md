@@ -10484,7 +10484,10 @@ store, environment and type-soundness invariant definitions with inferred
 types. It captures `set_tids_subset` and `start_type_id` and replays
 `set_tids_tenv` with its inferred namespace carriers, together with the
 source proofs of the type and environment identifier-set monotonicity lemmas
-and the local environment-extension lemma. The
+the local environment-extension lemma, and the environment-remapping theorem.
+The latter is also captured directly from `type_dCanonTheory`.
+It also captures the original type-identifier renaming definitions and their
+identifier-set theorem. The
 environment-relation, REPL, and type-soundness theories are not fetched by this
 probe; regenerate with
 `HOL_PROBE_ONLY=env_rel_init_probeScript.sml`.

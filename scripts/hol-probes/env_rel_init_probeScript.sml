@@ -5,6 +5,8 @@ load "namespacePropsTheory";
 load "primTypesTheory";
 load "typeSysPropsTheory";
 load "semanticPrimitivesTheory";
+val _ = loadPath := "proofs" :: !loadPath;
+load "type_dCanonTheory";
 load "preamble";
 open HolKernel Parse boolLib bossLib;
 open preamble inferPropsTheory inferTheory typeSystemTheory primTypesTheory semanticPrimitivesTheory;
@@ -433,6 +435,9 @@ val _ = show "type_s_def_typed" typeSoundInvariantsTheory.type_s_def;
 val _ = show "type_all_env_def_typed" typeSoundInvariantsTheory.type_all_env_def;
 val _ = show "type_sound_invariant_def_typed" typeSoundInvariantsTheory.type_sound_invariant_def;
 val _ = show "set_tids_subset_typed" inferPropsTheory.set_tids_subset_def;
+val _ = show "ts_tid_rename_typed" inferPropsTheory.ts_tid_rename_def;
+val _ = show "set_tids_ts_tid_rename_typed" inferPropsTheory.set_tids_ts_tid_rename;
+val _ = show "remap_tenv_typed" inferPropsTheory.remap_tenv_def;
 val _ = show "start_type_id_typed" inferTheory.start_type_id_def;
 val probe_set_tids_tenv_def = Define `
   probe_set_tids_tenv tids tenv <=>
@@ -440,6 +445,16 @@ val probe_set_tids_tenv_def = Define `
     nsAll (\i (ls,ts,tid). EVERY (\t. set_tids_subset tids t) ts /\ tid IN tids) tenv.c /\
     nsAll (\i (n,t). set_tids_subset tids t) tenv.v`;
 val _ = show "set_tids_tenv_replay_typed" probe_set_tids_tenv_def;
+val _ = show "set_tids_tenv_remap_typed" type_dCanonTheory.set_tids_tenv_remap;
+val set_tids_tenv_remap_replay = Q.prove(
+  `probe_set_tids_tenv tids tenv ==>
+     probe_set_tids_tenv (IMAGE f tids) (remap_tenv f tenv)`,
+  rw[probe_set_tids_tenv_def, remap_tenv_def, namespacePropsTheory.nsAll_nsMap,
+     set_tids_subset_def, UNCURRY, set_tids_ts_tid_rename, EVERY_MAP] >>
+  fs[LAMBDA_PROD] >>
+  first_assum(mp_then Any match_mp_tac namespacePropsTheory.nsAll_mono) >>
+  simp[FORALL_PROD, EVERY_MEM] >> metis_tac[]);
+val _ = show "set_tids_tenv_remap_replay_typed" set_tids_tenv_remap_replay;
 val set_tids_tenv_extend_dec_tenv_replay = Q.prove(
   `!s t s' t'. probe_set_tids_tenv (s' UNION s) t' /\
      probe_set_tids_tenv (s' UNION s) t ==>

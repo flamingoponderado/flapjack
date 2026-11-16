@@ -33,6 +33,77 @@ termination_by ts => sizeOf ts
 end
 
 mutual
+/-- Rename every type identifier in a declarative type. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "ts_tid_rename_def"]
+def tsTidRename (f : Nat → Nat) : SemanticT → SemanticT
+  | .app ts id => .app (tsTidRenameList f ts) (f id)
+  | t => t
+termination_by t => sizeOf t
+
+/-- List traversal for the source renaming's `MAP` clause. -/
+def tsTidRenameList (f : Nat → Nat) : List SemanticT → List SemanticT
+  | [] => []
+  | t :: ts => tsTidRename f t :: tsTidRenameList f ts
+termination_by ts => sizeOf ts
+end
+
+/-- The recursive traversal is the source's list map. -/
+theorem tsTidRenameList_eq_map (f : Nat → Nat) (ts : List SemanticT) :
+    tsTidRenameList f ts = ts.map (tsTidRename f) := by
+  induction ts with
+  | nil => simp [tsTidRenameList]
+  | cons t ts ih => simp [tsTidRenameList, ih]
+
+mutual
+/-- Renaming maps precisely the set of identifiers occurring in a type. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "set_tids_ts_tid_rename"]
+theorem setTidsTsTidRename (f : Nat → Nat) (t : SemanticT) :
+    setTids (tsTidRename f t) = (fun id => ∃ old, setTids t old ∧ f old = id) := by
+  funext id
+  apply propext
+  cases t with
+  | var name => simp [tsTidRename, setTids]
+  | varDb n => simp [tsTidRename, setTids]
+  | app ts name =>
+    simp only [tsTidRename, setTids, setTidsTsTidRenameList f ts]
+    constructor
+    · rintro (h | ⟨old, hold, heq⟩)
+      · exact ⟨name, Or.inl rfl, h.symm⟩
+      · exact ⟨old, Or.inr hold, heq⟩
+    · rintro ⟨old, (h | h), heq⟩
+      · subst old
+        exact Or.inl heq.symm
+      · exact Or.inr ⟨old, h, heq⟩
+termination_by sizeOf t
+
+private theorem setTidsTsTidRenameList (f : Nat → Nat) (ts : List SemanticT) :
+    setTidsList (tsTidRenameList f ts) =
+      (fun id => ∃ old, setTidsList ts old ∧ f old = id) := by
+  funext id
+  apply propext
+  cases ts with
+  | nil => simp [tsTidRenameList, setTidsList]
+  | cons t ts =>
+    simp only [tsTidRenameList, setTidsList, setTidsTsTidRename f t,
+      setTidsTsTidRenameList f ts]
+    constructor
+    · rintro (⟨old, h, heq⟩ | ⟨old, h, heq⟩)
+      · exact ⟨old, Or.inl h, heq⟩
+      · exact ⟨old, Or.inr h, heq⟩
+    · rintro ⟨old, (h | h), heq⟩
+      · exact Or.inl ⟨old, h, heq⟩
+      · exact Or.inr ⟨old, h, heq⟩
+termination_by sizeOf ts
+end
+
+/-- Rename type identifiers throughout a declarative environment. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "remap_tenv_def"]
+def remapTenv (f : Nat → Nat) (tenv : TypeEnv) : TypeEnv :=
+  ⟨nsMap (fun entry => (entry.1, tsTidRename f entry.2)) tenv.v,
+   nsMap (fun entry => (entry.1, entry.2.1.map (tsTidRename f), f entry.2.2)) tenv.c,
+   nsMap (fun entry => (entry.1, tsTidRename f entry.2)) tenv.t⟩
+
+mutual
 /-- Convert semantic types back to inference types, retaining HOL's `ARB`
 for named type variables. -/
 @[hol "cakeml/compiler/inference/inferPropsScript.sml" "unconvert_t_def"]
