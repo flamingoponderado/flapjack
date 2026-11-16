@@ -11,6 +11,7 @@ open preamble inferPropsTheory inferTheory typeSystemTheory primTypesTheory sema
 val _ = new_theory "flapjack_env_rel_init_replay";
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
+val _ = Datatype `probe_store_t = ProbeRef_t t | ProbeW8array_t | ProbeVarray_t t`;
 
 fun show label th = if null (hyp th) then
   (print (label ^ "="); print_term (concl th); print "\n")
@@ -394,3 +395,28 @@ val probe_ctMap_ok_def = Define `
       FLOOKUP ctMap stamp1 = SOME (tvs1,ts1,ti) /\
       FLOOKUP ctMap stamp2 = SOME (tvs2,ts2,ti) ==> same_type stamp1 stamp2)`;
 val _ = show "ctMap_ok_replay_typed" probe_ctMap_ok_def;
+val probe_ctMap_has_exns_def = Define `
+  probe_ctMap_has_exns ctMap <=>
+    FLOOKUP ctMap bind_stamp = SOME ([],[],Texn_num) /\
+    FLOOKUP ctMap chr_stamp = SOME ([],[],Texn_num) /\
+    FLOOKUP ctMap div_stamp = SOME ([],[],Texn_num) /\
+    FLOOKUP ctMap subscript_stamp = SOME ([],[],Texn_num)`;
+val _ = show "ctMap_has_exns_replay_typed" probe_ctMap_has_exns_def;
+val probe_ctMap_has_lists_def = Define `
+  probe_ctMap_has_lists ctMap <=>
+    FLOOKUP ctMap (TypeStamp «[]» list_type_num) = SOME ([«'a»],[],Tlist_num) /\
+    FLOOKUP ctMap (TypeStamp «::» list_type_num) =
+      SOME ([«'a»],[Tvar «'a»; Tlist (Tvar «'a»)],Tlist_num) /\
+    (!cn. cn <> «::» /\ cn <> «[]» ==> FLOOKUP ctMap (TypeStamp cn list_type_num) = NONE)`;
+val _ = show "ctMap_has_lists_replay_typed" probe_ctMap_has_lists_def;
+val probe_ctMap_has_bools_def = Define `
+  probe_ctMap_has_bools ctMap <=>
+    FLOOKUP ctMap (TypeStamp «True» bool_type_num) = SOME ([],[],Tbool_num) /\
+    FLOOKUP ctMap (TypeStamp «False» bool_type_num) = SOME ([],[],Tbool_num) /\
+    (!cn. cn <> «True» /\ cn <> «False» ==> FLOOKUP ctMap (TypeStamp cn bool_type_num) = NONE)`;
+val _ = show "ctMap_has_bools_replay_typed" probe_ctMap_has_bools_def;
+val probe_good_ctMap_def = Define `
+  probe_good_ctMap ctMap <=> probe_ctMap_ok ctMap /\ probe_ctMap_has_bools ctMap /\
+    probe_ctMap_has_exns ctMap /\ probe_ctMap_has_lists ctMap`;
+val _ = show "good_ctMap_replay_typed" probe_good_ctMap_def;
+val _ = (print "store_t_replay_typed="; print_thm (TypeBase.axiom_of ``:probe_store_t``); print "\n");

@@ -10474,7 +10474,8 @@ the read-only reference checkout. Regenerate with
 and replays the `lookup_varE_empty` and `init_config_tenv_to_ienv` proofs with
 their inferred types. It also reconstructs `tenv_val_exp_ok` and `add_tenvE`
 from the type-soundness source, including the polymorphic module carrier, and
-reconstructs `type_ctor` and `ctMap_ok` with inferred finite-map types. The
+reconstructs `type_ctor`, `ctMap_ok`, the primitive constructor-map
+invariants with inferred finite-map types, and the store-typing datatype. The
 environment-relation, REPL, and type-soundness theories are not fetched by this
 probe; regenerate with
 `HOL_PROBE_ONLY=env_rel_init_probeScript.sml`.

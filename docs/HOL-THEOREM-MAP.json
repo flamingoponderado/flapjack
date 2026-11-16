@@ -1,5 +1,39 @@
 [
 {
+  "hol_path": "cakeml/semantics/proofs/typeSoundInvariantsScript.sml", "hol_name": "store_t",
+  "lean_path": "Flapjack/TypeSoundInvariants/CtorMap.lean", "lean_name": "StoreT",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison confirms all three constructors and SemanticT payloads. The local store_t_replay_typed reconstruction records their inferred carrier and recursion axiom."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/typeSoundInvariantsScript.sml", "hol_name": "ctMap_has_exns_def",
+  "lean_path": "Flapjack/TypeSoundInvariants/CtorMap.lean", "lean_name": "ctMapHasExns",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["ctMap"],
+  "reviewer": "Independent comparison with HOL source and ctMap_has_exns_replay_typed confirms all four exception entries and independent list element types; the canonical finite-map parameter has a same-module codec witness."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/typeSoundInvariantsScript.sml", "hol_name": "ctMap_has_lists_def",
+  "lean_path": "Flapjack/TypeSoundInvariants/CtorMap.lean", "lean_name": "ctMapHasLists",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["ctMap"],
+  "reviewer": "Independent comparison with HOL source and ctMap_has_lists_replay_typed confirms both list entries, their type payloads and the universal exclusion of other constructors; the canonical finite-map parameter has a same-module codec witness."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/typeSoundInvariantsScript.sml", "hol_name": "ctMap_has_bools_def",
+  "lean_path": "Flapjack/TypeSoundInvariants/CtorMap.lean", "lean_name": "ctMapHasBools",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["ctMap"],
+  "reviewer": "Independent comparison with HOL source and ctMap_has_bools_replay_typed confirms both boolean entries, the exclusion of other constructors and independent list element types; the canonical finite-map parameter has a same-module codec witness."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/typeSoundInvariantsScript.sml", "hol_name": "good_ctMap_def",
+  "lean_path": "Flapjack/TypeSoundInvariants/CtorMap.lean", "lean_name": "goodCtMap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["ctMap"],
+  "reviewer": "Independent comparison with HOL source and good_ctMap_replay_typed confirms the exact constructor-map carrier and four conjuncts in order; the canonical finite-map parameter has a same-module codec witness."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/typeSoundInvariantsScript.sml", "hol_name": "type_ctor_def",
   "lean_path": "Flapjack/TypeSoundInvariants/CtorMap.lean", "lean_name": "typeCtor",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
