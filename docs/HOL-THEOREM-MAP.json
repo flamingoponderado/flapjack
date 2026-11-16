@@ -138278,5 +138278,59 @@
   "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/Idempotent.lean", "lean_name": "tWalkstarIdempotent",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
   "reviewer": "Compared the typed HOL source: for any well-formed substitution, normalizing every inference type twice equals normalizing once, with no additional premise. The canonical map has a codec witness."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkScript.sml", "hol_name": "vwalk_SUBMAP",
+  "lean_path": "Flapjack/HOL/Unification/Walk/Submap.lean", "lean_name": "vwalkSubmap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["sx", "s"],
+  "reviewer": "Compared typed HOL source: the larger map's well-formedness precedes the universally quantified variable and smaller submap; the complete variable, pair and constant result cases are preserved. Both canonical map binders have codec witnesses."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkstarScript.sml", "hol_name": "walkstar_ind",
+  "lean_path": "Flapjack/HOL/Unification/Walkstar/Induction.lean", "lean_name": "walkstarInd",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared typed HOL source with its well-formedness hypothesis discharged: the arbitrary predicate, both independently quantified child cases in original order, and universal conclusion are preserved. The canonical map has a codec witness."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkstarScript.sml", "hol_name": "walkstar_SUBMAP",
+  "lean_path": "Flapjack/HOL/Unification/Walkstar/Submap.lean", "lean_name": "walkstarSubmap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s", "sx"],
+  "reviewer": "Compared typed HOL source: the original smaller-submap and larger-well-formedness conjunction implies the same big-after-small normalization equality, for arbitrary terms and atom types. Both maps have codec witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "encode_walkstar",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/Encoding.lean", "lean_name": "encodeWalkstar",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared typed HOL source and replayed local proof: for any substitution and type, well-formedness implies first-order normalization of the encoding equals encoding the inference normalization. The map has a codec witness."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_walkstar_SUBMAP",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/Submap.lean", "lean_name": "tWalkstarSubmap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s1", "s2"],
+  "reviewer": "Compared typed HOL source: the original smaller-submap and larger-well-formedness conjunction gives the full big-after-small normalization equality for every inference type. Both maps have codec witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_compat_def",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Compat.lean", "lean_name": "tCompat",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s1", "s2"],
+  "reviewer": "Compared typed HOL source: both well-formedness conjuncts and the universal normalization equality are retained. If either conjunct fails the predicate is false; otherwise its observations are on well-formed maps, where the original equation and induction determine normalization. Both maps have codec witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_compat_refl",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Compat.lean", "lean_name": "tCompatRefl",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared typed HOL source: well-formedness of the substitution implies its full self-compatibility. The canonical map has a codec witness."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_compat_trans",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Compat.lean", "lean_name": "tCompatTrans",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["a", "b", "c"],
+  "reviewer": "Compared typed HOL source: both compatibility premises on independently quantified maps imply compatibility in the original direction. All three canonical maps have codec witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "SUBMAP_t_compat",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Compat.lean", "lean_name": "submapTCompat",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["sx", "s"],
+  "reviewer": "Compared typed HOL source: the larger map's well-formedness and smaller-to-larger submap imply compatibility in that direction. Both canonical maps have codec witnesses."
 }
 ]

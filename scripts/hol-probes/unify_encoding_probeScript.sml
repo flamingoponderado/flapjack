@@ -79,3 +79,32 @@ val _ = show "t_walkstar_ind_typed" unifyTheory.t_walkstar_ind;
 val _ = show "t_walkstar_vars_notin_typed" unifyTheory.t_walkstar_vars_notin;
 val _ = show "t_walkstar_tuvar_props_typed" unifyTheory.t_walkstar_tuvar_props;
 val _ = show "t_walkstar_idempotent_typed" unifyTheory.t_walkstar_idempotent;
+val _ = show "vwalk_SUBMAP_typed" walkTheory.vwalk_SUBMAP;
+val _ = show "walkstar_ind_discharged_typed" (DISCH_ALL walkstarTheory.walkstar_ind);
+val _ = show "walkstar_SUBMAP_typed" walkstarTheory.walkstar_SUBMAP;
+
+(* Replay the local inference encoding theorem in its original proof order. *)
+val encode_walkstar_replay = Q.prove (
+  `!s t. t_wfs s ==> walkstar (encode_infer_t o_f s) (encode_infer_t t) = encode_infer_t (t_walkstar s t)`,
+  rw [] >>
+  imp_res_tac t_walkstar_ind >>
+  Q.SPEC_TAC (`t`,`t`) >>
+  pop_assum ho_match_mp_tac >>
+  rw [] >>
+  rw [Once t_walkstar_eqn] >>
+  `wfs (encode_infer_t o_f s)` by fs [t_wfs_def] >>
+  rw [Once walkstar_def] >>
+  rw [Once encode_walk_replay] >>
+  Cases_on `t_walk s t` >>
+  rw [encode_infer_t_def] >>
+  pop_assum mp_tac >>
+  pop_assum (fn _ => all_tac) >>
+  Induct_on `l` >>
+  rw [encode_infer_t_def] >>
+  rw [Once walkstar_def]);
+val _ = show "encode_walkstar_replay_typed" encode_walkstar_replay;
+val _ = show "t_walkstar_SUBMAP_typed" unifyTheory.t_walkstar_SUBMAP;
+val _ = show "t_compat_def_typed" unifyTheory.t_compat_def;
+val _ = show "t_compat_refl_typed" unifyTheory.t_compat_refl;
+val _ = show "t_compat_trans_typed" unifyTheory.t_compat_trans;
+val _ = show "SUBMAP_t_compat_typed" unifyTheory.SUBMAP_t_compat;

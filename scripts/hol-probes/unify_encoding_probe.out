@@ -38,3 +38,12 @@ t_walkstar_ind_typed=∀(s :num |-> infer_t). t_wfs s ⇒ ∀(P :infer_t -> bool
 t_walkstar_vars_notin_typed=∀(s :num |-> infer_t). t_wfs s ⇒ ∀(t :infer_t) (x :num). x ∈ t_vars (t_walkstar s t) ⇒ x ∉ FDOM s
 t_walkstar_tuvar_props_typed=t_wfs (s :num |-> infer_t) ⇒ ((uv :num) ∉ FDOM s ⇔ t_walkstar s (Infer_Tuvar uv) = Infer_Tuvar uv)
 t_walkstar_idempotent_typed=∀(s :num |-> infer_t). t_wfs s ⇒ ∀(t :infer_t). t_walkstar s (t_walkstar s t) = t_walkstar s t
+vwalk_SUBMAP_typed=wfs (sx :α subst) ⇒ ∀(v :num) (s :α subst). s ⊑ sx ⇒ case vwalk s v of (Var u :α term) => vwalk sx v = vwalk sx u | Pair v6 v7 => vwalk sx v = Pair v6 v7 | Const v8 => vwalk sx v = Const v8
+walkstar_ind_discharged_typed=wfs (s :α subst) ⇒ ∀(P :α term -> bool). (∀(t :α term). (∀(t1 :α term) (t2 :α term). walk s t = Pair t1 t2 ⇒ P t2) ∧ (∀(t1 :α term) (t2 :α term). walk s t = Pair t1 t2 ⇒ P t1) ⇒ P t) ⇒ ∀(v :α term). P v
+walkstar_SUBMAP_typed=(s :α subst) ⊑ (sx :α subst) ∧ wfs sx ⇒ sx ◁ (t :α term) = sx ◁ s ◁ t
+encode_walkstar_replay_typed=∀(s :num |-> infer_t) (t :infer_t). t_wfs s ⇒ encode_infer_t o_f s ◁ encode_infer_t t = encode_infer_t (t_walkstar s t)
+t_walkstar_SUBMAP_typed=∀(s1 :num |-> infer_t) (s2 :num |-> infer_t) (t :infer_t). s1 ⊑ s2 ∧ t_wfs s2 ⇒ t_walkstar s2 t = t_walkstar s2 (t_walkstar s1 t)
+t_compat_def_typed=∀(s :num |-> infer_t) (s' :num |-> infer_t). t_compat s s' ⇔ t_wfs s ∧ t_wfs s' ∧ ∀(t :infer_t). t_walkstar s' (t_walkstar s t) = t_walkstar s' t
+t_compat_refl_typed=t_wfs (s :num |-> infer_t) ⇒ t_compat s s
+t_compat_trans_typed=t_compat (a :num |-> infer_t) (b :num |-> infer_t) ∧ t_compat b (c :num |-> infer_t) ⇒ t_compat a c
+SUBMAP_t_compat_typed=t_wfs (s' :num |-> infer_t) ∧ (s :num |-> infer_t) ⊑ s' ⇒ t_compat s s'

@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Inference.Unify.Walkstar.Variable
+public import Flapjack.Compiler.Inference.Unify.Walkstar.Submap
 
 @[expose] public section
 
@@ -18,29 +18,7 @@ theorem holFmapAsFiniteSupportParamWitness_tWalkstarIdempotent_s
   (fmap_as_finite_support_parameters := [s])]
 theorem tWalkstarIdempotent (s : HolFiniteMapExact Nat InferT) (hw : tWfs s) : ∀ t,
     tWalkstar s (tWalkstar s t) = tWalkstar s t := by
-  apply tWalkstarInd s hw
-  intro t ih
-  have orig := walkstarEqn s hw t
-  cases heq : tWalk s t with
-  | varDb n =>
-    simp only [heq] at orig
-    rw [orig, walkstarEqn s hw (.varDb n), tWalkEqn.2.2 s n]
-  | uvar u =>
-    simp only [heq] at orig
-    have absent : u ∉ s.domain := by
-      apply tWalkstarVarsNotin s hw t u
-      rw [orig, tVarsEqn.2.2 u]
-      rfl
-    rw [orig]
-    exact (tWalkstarTuvarProps s u hw).mp absent
-  | app ts tc =>
-    simp only [heq] at orig
-    rw [orig, walkstarEqn s hw (.app (ts.map (tWalkstar s)) tc),
-      tWalkEqn.2.1 s (ts.map (tWalkstar s)) tc]
-    apply congrArg (InferT.app · tc)
-    simp only [List.map_map]
-    apply List.map_congr_left
-    intro a ha
-    exact ih ts tc a ⟨heq, ha⟩
+  intro t
+  exact (tWalkstarSubmap s s t ⟨HolFiniteMapExact.submap_refl s, hw⟩).symm
 
 end Flapjack.Compiler.Inference.Unify

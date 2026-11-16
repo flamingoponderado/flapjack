@@ -3791,6 +3791,9 @@ import Flapjack.Compiler.Inference.Unify.Walk.Term
 import Flapjack.Compiler.Inference.Unify.Walkstar
 import Flapjack.Compiler.Inference.Unify.Walkstar.Empty
 import Flapjack.Compiler.Inference.Unify.Walkstar.Idempotent
+import Flapjack.Compiler.Inference.Unify.Walkstar.Variable
+import Flapjack.Compiler.Inference.Unify.Walkstar.Submap
+import Flapjack.Compiler.Inference.Unify.Compat
 import Flapjack.Compiler.Inference.InferProps.DeBruijn
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.Bounded
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.PreservesCheck
