@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Inference.Unify.EncodingInvariant
+public import Flapjack.Compiler.Inference.Unify.Unification.Soundness
 public import Flapjack.Compiler.Inference.Unify.Extension
 
 @[expose] public section
@@ -17,19 +17,6 @@ noncomputable def tsUnifyModel (s : HolFiniteMapExact Nat InferT) :
   | [], [] => some s
   | x :: xs, y :: ys => (tUnifyModel s x y).bind (fun sx => tsUnifyModel sx xs ys)
   | _, _ => none
-
-/-- A successful inference-model unification preserves well-formedness. The
-    proof derives the encoded result from the full encoding invariant; this
-    is not yet tagged as HOL's `t_unify_wfs`. -/
-theorem tUnifyModelWfs (s : HolFiniteMapExact Nat InferT) (t1 t2 : InferT)
-    (sx : HolFiniteMapExact Nat InferT) (h : tWfs s ∧ tUnifyModel s t1 t2 = some sx) :
-    tWfs sx := by
-  have eq := encodeUnifyModelAll 0 (encodeSubst s) (encodeInferT t1) (encodeInferT t2)
-    s t1 t2 ⟨rfl, Or.inl ⟨rfl, rfl⟩, h.1⟩
-  have result : tunifyAux (encodeSubst s) (encodeInferT t1) (encodeInferT t2) =
-      some (encodeSubst sx) := by simpa [h.2] using eq
-  change wfs (encodeSubst sx)
-  exact (tunifyAuxUP _ _ _ _ ⟨h.1, result⟩).1
 
 /-- Encoding a pair of type lists agrees with sequential inference unification
     on well-formed substitutions. This is proof-model infrastructure for the
@@ -65,7 +52,7 @@ theorem tsUnifyModelEncoding (xs ys : List InferT) (s : HolFiniteMapExact Nat In
       | some mid =>
         have headEncoded : tunifyAux (encodeSubst s) (encodeInferT x) (encodeInferT y) =
             some (encodeSubst mid) := by simpa [head] using headEq
-        have hmid := tUnifyModelWfs s x y mid ⟨hw, head⟩
+        have hmid := (tUnifyModelSound s x y mid ⟨hw, head⟩).1
         simp only [headEncoded, Option.bind]
         exact ih ys mid hmid
 

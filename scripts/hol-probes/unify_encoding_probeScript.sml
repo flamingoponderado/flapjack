@@ -31,6 +31,7 @@ val _ = show "cunify_thm_typed" (DISCH_ALL unifyTheory.cunify_thm);
 val _ = show "cunify_preserves_cwfs_typed" unifyTheory.cunify_preserves_cwfs;
 val _ = show "cwalkstar_def_typed" unifyTheory.cwalkstar_def;
 val _ = show "cunify_unifier_typed" unifyTheory.cunify_unifier;
+val _ = show "t_unify_unifier_typed" unifyTheory.t_unify_unifier;
 val _ = show "cunifyl_def_typed" unifyTheory.cunifyl_def;
 val _ = show "cunifyl_thm_typed" unifyTheory.cunifyl_thm;
 val _ = show "apply_cunif_NONE_typed" unifyTheory.apply_cunif_NONE;

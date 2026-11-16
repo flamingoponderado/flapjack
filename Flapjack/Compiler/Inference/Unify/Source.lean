@@ -75,7 +75,7 @@ theorem cunifyPreservesCwfsModel (s : Spt InferT) (a b : InferT) (out : Spt Infe
     change wfs (encodeSubst (sp2fm s))
     rw [← sparseEncode]
     exact h.1.1
-  have hout := tUnifyModelWfs (sp2fm s) a b (sp2fm out) ⟨hw, hmodel⟩
+  have hout := (tUnifyModelSound (sp2fm s) a b (sp2fm out) ⟨hw, hmodel⟩).1
   constructor
   · change wfs (sp2fm (sptMap encodeInferT out))
     rw [sparseEncode]

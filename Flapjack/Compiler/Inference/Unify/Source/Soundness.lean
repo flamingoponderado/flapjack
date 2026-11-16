@@ -1,7 +1,6 @@
 module
 
 public import Flapjack.Compiler.Inference.Unify.Source.Continuation
-public import Flapjack.HOL.Unification.UnifProps.Soundness
 public import Flapjack.Misc.Sptree.Subspt
 
 @[expose] public section
@@ -27,25 +26,12 @@ theorem cunifyUnifierModel (s : Spt InferT) (t1 t2 : InferT) (sx : Spt InferT)
     change wfs (encodeSubst (sp2fm s))
     rw [← sparseEncode]
     exact h.1.1
-  have aux := encodeUnifyModelAll 0 (encodeSubst (sp2fm s)) (encodeInferT t1) (encodeInferT t2)
-    (sp2fm s) t1 t2 ⟨rfl, Or.inl ⟨rfl, rfl⟩, hws⟩
-  rw [he] at aux
-  simp only [Option.map_some] at aux
-  have sound := tunifyAuxSound _ _ _ _ ⟨hws, aux⟩
+  have sound := tUnifyModelSound (sp2fm s) t1 t2 (sp2fm sx) ⟨hws, he⟩
   refine ⟨original, ?_, ?_⟩
   · apply (sptSubsptLookup s sx).2
     intro key val found
-    have encoded : (encodeSubst (sp2fm s)).lookup key = some (encodeInferT val) := by
-      simp [encodeSubst, HolFiniteMapExact.lookup_map2, sp2fm, found]
-    have mapped := sound.2.1 key (encodeInferT val) encoded
-    cases target : sptLookup key sx with
-    | none => simp [encodeSubst, HolFiniteMapExact.lookup_map2, sp2fm, target] at mapped
-    | some value =>
-      simp only [encodeSubst, HolFiniteMapExact.lookup_map2, sp2fm, target,
-        Option.map_some, Option.some.injEq] at mapped
-      have same := congrArg decodeInferT mapped
-      simpa [decodeLeftInverse.1] using same
+    exact sound.2.1 key val found
   · unfold cwalkstarModel
-    exact congrArg decodeInferT sound.2.2
+    exact sound.2.2
 
 end Flapjack.Compiler.Inference.Unify
