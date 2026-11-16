@@ -18,5 +18,15 @@ unconvert_db_subst_replay_typed=∀(t :t) (subst :t list) (fvs :α) (l :num). ch
 infer_type_subst_nil_replay_typed=(∀(t :t). check_freevars (n :num) ([] :mlstring list) t ⇒ infer_type_subst ([] :(mlstring # infer_t) list) t = unconvert_t t) ∧ ∀(ts :t list). EVERY (check_freevars n ([] :mlstring list)) ts ⇒ MAP (infer_type_subst ([] :(mlstring # infer_t) list)) ts = MAP unconvert_t ts
 db_subst_inc_id_typed=∀(inst :infer_t list) (t :infer_t). infer_deBruijn_subst inst (infer_deBruijn_inc (LENGTH inst) t) = t
 deBruijn_subst_nothing_typed=(∀(t :t). deBruijn_subst (0 :num) ([] :t list) t = t) ∧ ∀(ts :t list). MAP (deBruijn_subst (0 :num) ([] :t list)) ts = ts
+Saved definition ____ "probe_tscheme_approx_def"
+tscheme_approx_replay_typed=∀(max_tvs :num) (s :num |-> infer_t) (tvs :num) (t :infer_t) (tvs' :num) (t' :infer_t). probe_tscheme_approx max_tvs s (tvs,t) (tvs',t') ⇔ ∃(subst' :infer_t list). LENGTH subst' = tvs' ∧ EVERY (check_t (max_tvs + tvs) (FDOM s)) subst' ∧ ∀(subst :infer_t list). LENGTH subst = tvs ⇒ t_walkstar s (infer_deBruijn_subst subst t) = t_walkstar s (infer_deBruijn_subst (MAP (infer_deBruijn_subst subst) subst') t')
+Saved definition ____ "probe_env_rel_sound_def"
+env_rel_sound_replay_typed=∀(s :num |-> infer_t) (ienv :inf_env) (tenv :type_env) (tenvE :tenv_val_exp). probe_env_rel_sound s ienv tenv tenvE ⇔ ienv.inf_t = tenv.t ∧ ienv.inf_c = tenv.c ∧ ∀(x :(mlstring, mlstring) id) (ts :num # infer_t). nsLookup ienv.inf_v x = SOME ts ⇒ ∃(tvs' :num) (t' :t). check_freevars (tvs' + num_tvs tenvE) ([] :mlstring list) t' ∧ lookup_var x tenvE tenv = SOME (tvs',t') ∧ probe_tscheme_approx (num_tvs tenvE) s ts (tvs',unconvert_t t')
+Saved definition ____ "probe_env_rel_complete_def"
+env_rel_complete_replay_typed=∀(s :num |-> infer_t) (ienv :inf_env) (tenv :type_env) (tenvE :tenv_val_exp). probe_env_rel_complete s ienv tenv tenvE ⇔ ienv.inf_t = tenv.t ∧ ienv.inf_c = tenv.c ∧ ∀(x :(mlstring, mlstring) id) (tvs :num) (t :t). lookup_var x tenvE tenv = SOME (tvs,t) ⇒ (∃(n :num). check_freevars n ([] :mlstring list) t) ∧ ∃(tvs' :num) (t' :infer_t). nsLookup ienv.inf_v x = SOME (tvs',t') ∧ probe_tscheme_approx (num_tvs tenvE) s (tvs,unconvert_t t) (tvs',t')
+Saved definition ____ "probe_env_rel_def"
+env_rel_replay_typed=∀(tenv :type_env) (ienv :inf_env). probe_env_rel tenv ienv ⇔ ienv_ok (∅ :num -> bool) ienv ∧ tenv_ok tenv ∧ (∀(x :mlstring list). nsLookupMod ienv.inf_v x = (NONE :(mlstring, mlstring, num # infer_t) namespace option) ⇔ nsLookupMod tenv.v x = (NONE :(mlstring, mlstring, num # t) namespace option)) ∧ probe_env_rel_sound (FEMPTY :num |-> infer_t) ienv tenv Empty ∧ probe_env_rel_complete (FEMPTY :num |-> infer_t) ienv tenv Empty
+tscheme_approx_refl_replay_typed=∀(max_tvs :num) (s :num |-> infer_t) (tvs :num) (t :infer_t). probe_tscheme_approx max_tvs s (tvs,t) (tvs,t)
+type_config_ok_replay_typed=probe_env_rel prim_tenv init_config ∧ inf_set_tids_ienv prim_type_ids init_config
 lookup_varE_empty_replay_typed=∀(x :(mlstring, mlstring) id). lookup_varE x Empty = (NONE :(num # t) option)
 init_config_tenv_to_ienv_replay_typed=init_config = probe_tenv_to_ienv prim_tenv

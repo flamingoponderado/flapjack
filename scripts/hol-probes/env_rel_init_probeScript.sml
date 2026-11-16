@@ -121,6 +121,66 @@ val _ = show "infer_type_subst_nil_replay_typed" infer_type_subst_nil_replay;
 val _ = show "db_subst_inc_id_typed" inferPropsTheory.db_subst_inc_id;
 val _ = show "deBruijn_subst_nothing_typed" inferPropsTheory.deBruijn_subst_nothing;
 
+val probe_tscheme_approx_def = Define `
+  probe_tscheme_approx max_tvs s (tvs,t) (tvs',t') ⇔
+    ∃subst'. LENGTH subst' = tvs' ∧
+      EVERY (check_t (max_tvs + tvs) (FDOM s)) subst' ∧
+      ∀subst. LENGTH subst = tvs ⇒
+        t_walkstar s (infer_deBruijn_subst subst t) =
+        t_walkstar s (infer_deBruijn_subst (MAP (infer_deBruijn_subst subst) subst') t')`;
+val _ = show "tscheme_approx_replay_typed" probe_tscheme_approx_def;
+
+val probe_env_rel_sound_def = Define `
+  probe_env_rel_sound s ienv tenv tenvE ⇔
+    ienv.inf_t = tenv.t ∧ ienv.inf_c = tenv.c ∧
+    ∀x ts. nsLookup ienv.inf_v x = SOME ts ⇒
+      ∃tvs' t'. check_freevars (tvs' + num_tvs tenvE) [] t' ∧
+        lookup_var x tenvE tenv = SOME (tvs', t') ∧
+        probe_tscheme_approx (num_tvs tenvE) s ts (tvs', unconvert_t t')`;
+val _ = show "env_rel_sound_replay_typed" probe_env_rel_sound_def;
+
+val probe_env_rel_complete_def = Define `
+  probe_env_rel_complete s ienv tenv tenvE ⇔
+    ienv.inf_t = tenv.t ∧ ienv.inf_c = tenv.c ∧
+    ∀x tvs t. lookup_var x tenvE tenv = SOME (tvs, t) ⇒
+      (∃n. check_freevars n [] t) ∧
+      ∃tvs' t'. nsLookup ienv.inf_v x = SOME (tvs',t') ∧
+        probe_tscheme_approx (num_tvs tenvE) s (tvs,unconvert_t t) (tvs',t')`;
+val _ = show "env_rel_complete_replay_typed" probe_env_rel_complete_def;
+
+val probe_env_rel_def = Define `
+  probe_env_rel tenv ienv ⇔
+    ienv_ok {} ienv ∧ typeSoundInvariants$tenv_ok tenv ∧
+    (∀x. nsLookupMod ienv.inf_v x = NONE ⇔ nsLookupMod tenv.v x = NONE) ∧
+    probe_env_rel_sound FEMPTY ienv tenv Empty ∧
+    probe_env_rel_complete FEMPTY ienv tenv Empty`;
+val _ = show "env_rel_replay_typed" probe_env_rel_def;
+
+val tscheme_approx_refl_replay = Q.prove(
+  `!max_tvs s tvs t. probe_tscheme_approx max_tvs s (tvs,t) (tvs,t)`,
+  rw [probe_tscheme_approx_def] >>
+  qexists_tac `MAP Infer_Tvar_db (COUNT_LIST tvs)` >>
+  rw [LENGTH_COUNT_LIST, EVERY_MAP, every_count_list, check_t_def,
+      MAP_MAP_o, combinTheory.o_DEF, infer_deBruijn_subst_alt] >>
+  irule (METIS_PROVE [] ``y = y' ⇒ f x y = f x y'``) >>
+  irule (METIS_PROVE [] ``y = y' ⇒ f y x = f y' x``) >>
+  irule LIST_EQ >> rw [LENGTH_COUNT_LIST, EL_MAP, EL_COUNT_LIST]);
+val _ = show "tscheme_approx_refl_replay_typed" tscheme_approx_refl_replay;
+
+val type_config_ok_replay = Q.prove(
+  `probe_env_rel prim_tenv init_config ∧ inf_set_tids_ienv prim_type_ids init_config`,
+  rw [probe_env_rel_def, inf_set_tids_ienv_def, ienv_ok_def, ienv_val_ok_def,
+      typeSoundInvariantsTheory.tenv_ok_def, typeSoundInvariantsTheory.tenv_ctor_ok_def,
+      typeSoundInvariantsTheory.tenv_abbrev_ok_def,
+      probe_env_rel_sound_def, probe_env_rel_complete_def, init_config_def,
+      primTypesTheory.prim_tenv_def, typeSystemTheory.lookup_var_def] >>
+  TRY (Cases_on `x`) >> rw [namespaceTheory.nsLookupMod_def] >>
+  simp [primTypesTheory.prim_type_ids_def, inf_set_tids_subset_def] >>
+  rpt (irule namespacePropsTheory.nsAll_nsBind >>
+       rw [unconvert_t_def, inf_set_tids_def, typeSystemTheory.check_freevars_def]) >>
+  rw [typeSystemTheory.prim_type_nums_def, lookup_varE_def, tveLookup_def]);
+val _ = show "type_config_ok_replay_typed" type_config_ok_replay;
+
 val lookup_varE_empty_replay = Q.prove(
   `!x. lookup_varE x Empty = NONE`,
   rw [lookup_varE_def, tveLookup_def] \\ every_case_tac);
