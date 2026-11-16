@@ -139012,6 +139012,18 @@
   "reviewer": "Compared typed HOL source: the sole cwfs premise implies the complete cwalkstar and singleton-worklist normalization equality. The source-shaped model agrees under cwfs; the result is proved a singleton, making headD's fallback unreachable and agreeing with HOL HD. The visible sp2fm result uses the reviewed canonical map."
 },
 {
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml", "hol_name": "vwalk_irrelevant_FUPDATE",
+  "lean_path": "Flapjack/HOL/Unification/UnifProps.lean", "lean_name": "vwalkIrrelevantFupdate",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared HOL source and vwalk_irrelevant_FUPDATE_typed: well-formedness after update and freshness of the updated key imply unchanged walking for every variable with no reflexive-transitive path from the updated key. The substitution uses the canonical finite-map codec."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml", "hol_name": "vwalk_FUPDATE_var",
+  "lean_path": "Flapjack/HOL/Unification/UnifProps.lean", "lean_name": "vwalkFupdateVar",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared HOL source and vwalk_FUPDATE_var_typed: when the variable update is well formed and its key was fresh, walking the updated variable's target agrees with walking it before the update. The substitution uses the canonical finite-map codec."
+},
+{
   "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml", "hol_name": "TC_vR_SUBMAP",
   "lean_path": "Flapjack/HOL/Unification/UnifProps.lean", "lean_name": "tcVRSubmap",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s", "sx"],
