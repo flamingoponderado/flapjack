@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Inference.Unify.Occurs
+public import Flapjack.Compiler.Inference.Unify.Occurs.Encoding
 public import Flapjack.Compiler.Inference.Unify.Walkstar.Encoding
 public import Flapjack.HOL.Unification.Walkstar.Occurs
 
@@ -28,6 +29,37 @@ theorem socEncodeTs (s : Spt InferT) (ts : List InferT) (n : Nat)
   | cons t ts ih =>
     rw [ocWalking _ _ _ hw.1]
     simp [encodeInferTs, walk, cocModel, ih]
+
+/-- The source occurrence equation on a well-formed sparse substitution. -/
+@[hol "cakeml/compiler/inference/unifyScript.sml" "coc_thm"]
+theorem cocThm (s : Spt InferT) (it : InferT) (n : Nat) (hw : cwfs s) :
+    cocModel s it n ↔ match cwalkModel s it with
+      | .varDb _ => False
+      | .app ts _ => ∃ t ∈ ts, cocModel s t n
+      | .uvar u => n = u := by
+  have heq : sp2fm (sptMap encodeInferT s) =
+      (sp2fm s).map2 (fun p => encodeInferT p.2) := by
+    apply HolFiniteMapExact.ext_lookup
+    intro key
+    exact sptLookup_sptMap encodeInferT s key
+  have hws : tWfs (sp2fm s) := by
+    change wfs ((sp2fm s).map2 (fun p => encodeInferT p.2))
+    rw [← heq]
+    exact hw.1
+  have hoc : ∀ t, cocModel s t n ↔ tOc (sp2fm s) t n := by
+    intro t
+    simp only [cocModel, tOc, heq]
+  rw [hoc it]
+  change tOc (sp2fm s) it n ↔ match tWalk (sp2fm s) it with
+    | .varDb _ => False
+    | .app ts _ => ∃ t ∈ ts, cocModel s t n
+    | .uvar u => n = u
+  rw [tOcEqn (sp2fm s) hws it n]
+  cases tWalk (sp2fm s) it with
+  | varDb _ => rfl
+  | uvar _ => rfl
+  | app ts _ =>
+    simp only [hoc]
 
 /-- The source list occurrence rules over the first-order relation model. -/
 def coclModel (s : Spt InferT) : List InferT → Nat → Prop
