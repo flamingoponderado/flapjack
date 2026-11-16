@@ -8,15 +8,10 @@ public import Flapjack.Compiler.Inference.InferT.Display
 set_option backward.privateInPublic true
 set_option backward.privateInPublic.warn false
 
-/-! Byte-oriented output for CakeML's `--types` mode. The combined namespace
-traversal is Flapjack infrastructure: HOL separately nubs namespaces,
-flattens them, and formats the resulting list. Full correspondence remains
-pending review. -/
+/-! Namespace traversal and byte-oriented output for CakeML's `--types` mode. -/
 namespace Flapjack.Compiler.Inference.Infer.TypesOutput
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL
 open Flapjack.Compiler.Inference.Infer Flapjack.Compiler.Inference.InferTDisplay
-
-private abbrev ValEnv := Namespace MlString MlString (Nat × InferT)
 
 /-- Executable deduplication using the key type's decidable equality. -/
 def alistNub {α β : Type} [DecidableEq α] : List (α × β) → List (α × β)
@@ -40,24 +35,73 @@ theorem alistNubHOL_eq {α β : Type} [inst : DecidableEq α] (entries : List (�
   rw [same]
 
 mutual
-private def flatten : ValEnv → List (MlString × (Nat × InferT))
-  | .bind entries modules => alistNub entries ++ flattenModules modules []
+/-- Deduplicate each namespace's value and module bindings. -/
+def nsNub {M N V : Type} [DecidableEq M] [DecidableEq N] :
+    Namespace M N V → Namespace M N V
+  | .bind entries modules => .bind (alistNub entries) (alistNub (innerNsNubs modules))
 termination_by env => sizeOf env
 
-private def flattenModules : List (MlString × ValEnv) → List MlString → List (MlString × (Nat × InferT))
-  | [], _ => []
-  | (name, env) :: rest, seen =>
-    if name ∈ seen then flattenModules rest seen
-    else (flatten env).map (fun (child, value) =>
-      (MlString.concat [name, ofString ".", child], value)) ++ flattenModules rest (name :: seen)
-termination_by modules _ => sizeOf modules
+/-- Deduplicate nested namespaces before filtering duplicate module names. -/
+def innerNsNubs {M N V : Type} [DecidableEq M] [DecidableEq N] :
+    List (M × Namespace M N V) → List (M × Namespace M N V)
+  | [] => []
+  | (name, env) :: rest => (name, nsNub env) :: innerNsNubs rest
+termination_by modules => sizeOf modules
 end
+
+/-- Source-polymorphic namespace deduplication. -/
+@[hol "cakeml/compiler/inference/inferScript.sml" "ns_nub_def"]
+noncomputable def nsNubHOL {M N V : Type} (env : Namespace M N V) : Namespace M N V :=
+  @nsNub M N V (Classical.typeDecidableEq M) (Classical.typeDecidableEq N) env
+
+/-- Source-polymorphic traversal of nested namespaces. -/
+@[hol "cakeml/compiler/inference/inferScript.sml" "ns_nub_def"]
+noncomputable def innerNsNubsHOL {M N V : Type} (modules : List (M × Namespace M N V)) :
+    List (M × Namespace M N V) :=
+  @innerNsNubs M N V (Classical.typeDecidableEq M) (Classical.typeDecidableEq N) modules
+
+/-- The HOL-shaped operation agrees with the executable equality dictionaries. -/
+theorem nsNubHOL_eq {M N V : Type} [hm : DecidableEq M] [hn : DecidableEq N]
+    (env : Namespace M N V) : nsNubHOL env = nsNub env := by
+  unfold nsNubHOL
+  have em : Classical.typeDecidableEq M = hm := Subsingleton.elim _ _
+  have en : Classical.typeDecidableEq N = hn := Subsingleton.elim _ _
+  rw [em, en]
+
+/-- The nested traversal likewise agrees with the executable dictionaries. -/
+theorem innerNsNubsHOL_eq {M N V : Type} [hm : DecidableEq M] [hn : DecidableEq N]
+    (modules : List (M × Namespace M N V)) : innerNsNubsHOL modules = innerNsNubs modules := by
+  unfold innerNsNubsHOL
+  have em : Classical.typeDecidableEq M = hm := Subsingleton.elim _ _
+  have en : Classical.typeDecidableEq N = hn := Subsingleton.elim _ _
+  rw [em, en]
+
+mutual
+/-- Flatten namespace bindings in the source type printer's order. -/
+@[hol "cakeml/compiler/inference/inferScript.sml" "ns_to_alist_def"]
+def nsToAlist {V : Type} : Namespace MlString MlString V → List (MlString × V)
+  | .bind entries modules => entries ++ nsToAlistModules modules
+termination_by env => sizeOf env
+
+private def nsToAlistModules {V : Type} :
+    List (MlString × Namespace MlString MlString V) → List (MlString × V)
+  | [] => []
+  | (name, env) :: rest =>
+    (nsToAlist env).map (fun (child, value) =>
+      (MlString.concat [name, ofString ".", child], value)) ++ nsToAlistModules rest
+termination_by modules => sizeOf modules
+end
+
+/-- Format the value namespace in the order used by the source compiler. -/
+@[hol "cakeml/compiler/inference/inferScript.sml" "inf_env_to_types_string_def"]
+def infEnvToTypesString (env : Env) : List MlString :=
+  let lines := (nsToAlist (nsNub env.infV)).map fun (name, (_, t)) =>
+    MlString.concat [name, ofString ": ", inferTypeToString env.infT t, ofString "\n"]
+  lines.reverse
 
 /-- Render the final inference environment as raw HOL bytes, including the
 source driver's leading and trailing newlines. -/
 def render (env : Env) : List HolChar :=
-  let lines := (flatten env.infV).map fun (name, (_, t)) =>
-    MlString.concat [name, ofString ": ", inferTypeToString env.infT t, ofString "\n"]
-  (MlString.concat ([ofString "\n"] ++ lines.reverse ++ [ofString "\n"])).explode
+  (MlString.concat ([ofString "\n"] ++ infEnvToTypesString env ++ [ofString "\n"])).explode
 
 end Flapjack.Compiler.Inference.Infer.TypesOutput

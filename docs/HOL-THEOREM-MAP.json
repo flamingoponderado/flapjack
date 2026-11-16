@@ -1,5 +1,29 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "ns_nub_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/TypesOutput.lean", "lean_name": "nsNubHOL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with cake_type_display_probe.out:9 confirms the three independent namespace carriers and both deduplication stages. Classical equality supplies the unrestricted HOL key types, and nsNubHOL_eq connects the executable dictionaries."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "ns_nub_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/TypesOutput.lean", "lean_name": "innerNsNubsHOL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with cake_type_display_probe.out:9 confirms the nil and cons equations and the independent namespace key and value carriers. innerNsNubsHOL_eq connects the executable dictionaries."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "ns_to_alist_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/TypesOutput.lean", "lean_name": "nsToAlist",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with cake_type_display_probe.out:10 confirms the polymorphic value carrier, local-before-module ordering and byte-string module prefixes, including traversal of all remaining bindings."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "inf_env_to_types_string_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/TypesOutput.lean", "lean_name": "infEnvToTypesString",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with cake_type_display_probe.out:11 confirms the inf_env input and mlstring-list result, deduplicated namespace traversal, ignored count field, type-name environment, exact message pieces and final reversal. nsNubHOL_eq relates the executable equality dictionaries to the generic HOL operation; render's driver framing is separate."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "alist_nub_def",
   "lean_path": "Flapjack/Compiler/Inference/Infer/TypesOutput.lean", "lean_name": "alistNubHOL",
   "statement_status": "reviewed_exact",
