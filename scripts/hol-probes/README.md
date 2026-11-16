@@ -10458,7 +10458,8 @@ the alternative de Bruijn substitution equation. Regenerate with
 
 `infer_props_tids_probe.out` captures typed identifier-set and conversion
 definitions, `inf_set_tids_unconvert`, and the de Bruijn substitution
-identities, check-preservation and check-monotonicity theorems, prerequisites for the initial
+identities, check-preservation, check-monotonicity and variable-set theorems,
+prerequisites for the initial
 inference environment in `compilerProof$type_config_ok`. Regenerate with
 `HOL_PROBE_ONLY=infer_props_tids_probeScript.sml`. The capture supports source
 review; it is not a cross-language equivalence proof.
@@ -10481,7 +10482,7 @@ inverse and injectivity theorems, and the substitution dependency and
 well-formedness declarations, the conditional variable-walk equation, its
 domain properties, its dependency-closure theorem, and the conditional
 normalization equation, inference substitution dependencies, and typed
-inference walker and normalization equations, including replays of their
+inference walker, variable-set and normalization equations, including replays of their
 local encoding and list lemmas, and the empty-substitution theorems.
 Regenerate with
 `HOL_PROBE_ONLY=unify_encoding_probeScript.sml`. The capture is source-review

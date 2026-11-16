@@ -138236,5 +138236,23 @@
   "lean_path": "Flapjack/Compiler/Inference/InferProps/CheckMonotone.lean", "lean_name": "checkTMore5",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared typed HOL and source: both independently quantified type and list conjuncts preserve the original quantifier and implication order. Pointwise implication expresses HOL subset, and membership quantification expresses EVERY."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_vars_eqn",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Vars.lean", "lean_name": "tVarsEqn",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL theorem and source: all three independently quantified cases are retained. Set union over the image of the argument list matches BIGUNION of the mapped list's set."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_vwalk_to_var",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walk/ToVar.lean", "lean_name": "tVwalkToVar",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["subst"],
+  "reviewer": "Compared typed HOL and source: under the original well-formedness premise, any variable returned by the inference walk is outside the original substitution domain. The canonical map parameter has a codec witness."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "check_t_t_vars",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/CheckVars.lean", "lean_name": "checkTTVars",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL and source: checking any inference type with any variable set implies that its variable set is a subset, with the original quantifiers and premise."
 }
 ]

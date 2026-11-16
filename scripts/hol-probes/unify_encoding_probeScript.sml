@@ -73,3 +73,5 @@ val _ = show "ts_walkstar_replay_typed" ts_walkstar_replay;
 val _ = show "wfs_FEMPTY_typed" substTheory.wfs_FEMPTY;
 val _ = show "walkstar_FEMPTY_typed" walkstarTheory.walkstar_FEMPTY;
 val _ = show "t_walkstar_FEMPTY_typed" unifyTheory.t_walkstar_FEMPTY;
+val _ = show "t_vars_eqn_typed" unifyTheory.t_vars_eqn;
+val _ = show "t_vwalk_to_var_typed" unifyTheory.t_vwalk_to_var;

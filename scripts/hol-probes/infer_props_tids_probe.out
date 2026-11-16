@@ -12,3 +12,4 @@ infer_deBruijn_subst_id2_typed=(∀(t :infer_t). check_t (tvs :num) (∅ :num ->
 check_t_infer_deBruijn_subst_typed=∀(subst :infer_t list) (t :infer_t) (tvs :num) (uvs :num -> bool). check_t (tvs + LENGTH subst) uvs t ∧ EVERY (check_t tvs uvs) subst ⇒ check_t tvs uvs (infer_deBruijn_subst subst t)
 infer_deBruijn_subst_uncheck_typed=∀(s :infer_t list) (t :infer_t) (max_tvs :num) (uvs :num -> bool). check_t max_tvs uvs (infer_deBruijn_subst s t) ⇒ check_t (max_tvs + LENGTH s) uvs t
 check_t_more5_typed=(∀(t :infer_t) (uvs :num -> bool) (tvs :num). check_t tvs uvs t ⇒ ∀(uvs' :num -> bool). uvs ⊆ uvs' ⇒ check_t tvs uvs' t) ∧ ∀(ts :infer_t list) (uvs :num -> bool) (tvs :num). EVERY (check_t tvs uvs) ts ⇒ ∀(uvs' :num -> bool). uvs ⊆ uvs' ⇒ EVERY (check_t tvs uvs') ts
+check_t_t_vars_typed=∀(tvs :num) (uvs :num -> bool) (t :infer_t). check_t tvs uvs t ⇒ t_vars t ⊆ uvs

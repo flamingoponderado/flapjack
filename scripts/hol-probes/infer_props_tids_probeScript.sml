@@ -22,3 +22,4 @@ val _ = show "infer_deBruijn_subst_id2_typed" inferPropsTheory.infer_deBruijn_su
 val _ = show "check_t_infer_deBruijn_subst_typed" inferPropsTheory.check_t_infer_deBruijn_subst;
 val _ = show "infer_deBruijn_subst_uncheck_typed" inferPropsTheory.infer_deBruijn_subst_uncheck;
 val _ = show "check_t_more5_typed" inferPropsTheory.check_t_more5;
+val _ = show "check_t_t_vars_typed" inferPropsTheory.check_t_t_vars;
