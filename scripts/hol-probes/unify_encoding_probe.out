@@ -6,6 +6,7 @@ varb_def_typed=(∀(s :num). varb (Var s :α term) = {|s|}) ∧ (∀(t1 :α term
 FINITE_varb_typed=FINITE_BAG (varb (t :α term))
 IN_varb_vars_typed=(e :num) ⋲ varb (t :α term) ⇔ e ∈ vars t
 mlt1_def_typed=∀(r :α -> α -> bool) (b1 :α -> num) (b2 :α -> num). mlt1 r b1 b2 ⇔ FINITE_BAG b1 ∧ FINITE_BAG b2 ∧ ∃(e :α) (rep :α -> num) (res :α -> num). b1 = rep ⊎ res ∧ b2 = res ⊎ {|e|} ∧ ∀(e' :α). e' ⋲ rep ⇒ r e' e
+mlt1_BAG_INSERT_typed=FINITE_BAG (b :α -> num) ⇒ mlt1 (R :α -> α -> bool) b (BAG_INSERT (e :α) b)
 TC_mlt1_FINITE_BAG_typed=∀(b1 :α -> num) (b2 :α -> num). mlt (R :α -> α -> bool) b1 b2 ⇒ FINITE_BAG b1 ∧ FINITE_BAG b2
 TC_mlt1_UNION2_I_typed=∀(b2 :α -> num) (b1 :α -> num). FINITE_BAG b2 ∧ FINITE_BAG b1 ∧ b2 ≠ ({||} :α -> num) ⇒ mlt (R :α -> α -> bool) b1 (b1 ⊎ b2)
 TC_mlt1_UNION1_I_typed=∀(b2 :α -> num) (b1 :α -> num). FINITE_BAG b2 ∧ FINITE_BAG b1 ∧ b1 ≠ ({||} :α -> num) ⇒ mlt (R :α -> α -> bool) b2 (b1 ⊎ b2)

@@ -1,28 +1,12 @@
 module
 
-public import Flapjack.Misc.Bag
+public import Flapjack.HOL.Unification.TcallUnif
 public import Mathlib.Logic.Relation
 
 @[expose] public section
 
 /-! The one-step multiset ordering used by HOL's unification termination proof. -/
 namespace Flapjack
-
-@[hol "HOL/src/bag/bagScript.sml" "mlt1_def"]
-def bagMultisetStep {α : Type} (r : α → α → Prop) (b1 b2 : Bag α) : Prop :=
-  finiteBag b1 ∧ finiteBag b2 ∧
-    ∃ e rep res, b1 = bagUnion rep res ∧ b2 = bagUnion res (bagInsert e emptyBag) ∧
-      ∀ e', bagIn e' rep → r e' e
-
-private theorem stepInsert {α : Type} (r : α → α → Prop) (b : Bag α)
-    (hb : finiteBag b) (e : α) : bagMultisetStep r b (bagInsert e b) := by
-  refine ⟨hb, finiteBagInsert b hb e, e, emptyBag, b, ?_, ?_, ?_⟩
-  · exact (bagUnion_empty_left b).symm
-  · classical
-    funext x
-    by_cases h : x = e <;> simp [bagInsert, bagUnion, emptyBag, h]
-  · intro e' h
-    simp [bagIn, bagInn, emptyBag] at h
 
 @[hol "HOL/src/bag/bagScript.sml" "TC_mlt1_FINITE_BAG"]
 theorem tcMlt1FiniteBag {α : Type} (r : α → α → Prop) (b1 b2 : Bag α)
@@ -52,8 +36,8 @@ theorem tcMlt1Union2I {α : Type} (r : α → α → Prop) (b2 b1 : Bag α)
     by_cases empty : b = emptyBag
     · subst b
       rw [bagUnion_empty_right]
-      exact Relation.TransGen.single (stepInsert r a ha e)
-    · exact (ih a ha empty).tail (stepInsert r _ (finiteBagUnion a ha b hb) e)
+      exact Relation.TransGen.single (HOL.Unification.mlt1BagInsert r a e ha)
+    · exact (ih a ha empty).tail (HOL.Unification.mlt1BagInsert r _ e (finiteBagUnion a ha b hb))
   exact (induction ⟨base, next⟩).2 b1 h.2.1 h.2.2
 
 @[hol "HOL/src/bag/bagScript.sml" "TC_mlt1_UNION1_I"]

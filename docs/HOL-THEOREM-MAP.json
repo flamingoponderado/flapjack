@@ -138838,8 +138838,14 @@
   "reviewer": "Compared the typed HOL source: both bags are finite, the first union operand is nonempty, and the full transitive multiset order relates the second operand to their union."
 },
 {
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/compilation/tcallUnifScript.sml", "hol_name": "mlt1_BAG_INSERT",
+  "lean_path": "Flapjack/HOL/Unification/TcallUnif.lean", "lean_name": "mlt1BagInsert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: for any polymorphic bag, element and relation, finiteBag b implies the original one-step multiset relation from b to insertion of the element."
+},
+{
   "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "mlt1_def",
-  "lean_path": "Flapjack/Misc/Bag/MultisetOrder.lean", "lean_name": "bagMultisetStep",
+  "lean_path": "Flapjack/Misc/Bag/MultisetOrder/Core.lean", "lean_name": "bagMultisetStep",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the typed HOL source: both finite-bag premises, polymorphic bag and relation carriers, all three witnesses, union equations and replacement-element relation are retained."
 },

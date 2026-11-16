@@ -16,6 +16,7 @@ val _ = show "varb_def_typed" termTheory.varb_def;
 val _ = show "FINITE_varb_typed" termTheory.FINITE_varb;
 val _ = show "IN_varb_vars_typed" termTheory.IN_varb_vars;
 val _ = show "mlt1_def_typed" bagTheory.mlt1_def;
+val _ = show "mlt1_BAG_INSERT_typed" tcallUnifTheory.mlt1_BAG_INSERT;
 val _ = show "TC_mlt1_FINITE_BAG_typed" bagTheory.TC_mlt1_FINITE_BAG;
 val _ = show "TC_mlt1_UNION2_I_typed" bagTheory.TC_mlt1_UNION2_I;
 val _ = show "TC_mlt1_UNION1_I_typed" bagTheory.TC_mlt1_UNION1_I;
