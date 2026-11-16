@@ -27,12 +27,20 @@ def applySubstList (s : Spt InferT) : List InferT → List InferT
 termination_by ts => sizeOf ts
 end
 
+@[hol "cakeml/compiler/inference/unifyScript.sml" "cvwalk_code_def"]
+def cvwalkCode (s : Spt InferT) (n : Nat) : Sum Nat InferT :=
+  match sptLookup n s with
+  | none => .inr (.uvar n)
+  | some (.uvar u) => .inl u
+  | some (.varDb k) => .inr (.varDb k)
+  | some (.app ts tc) => .inr (.app ts tc)
+
 /-- Follow variable bindings. `none` means the supplied fuel was exhausted. -/
 def walkFuel : Nat → Spt InferT → InferT → Option InferT
   | 0, _, _ => none
-  | fuel + 1, s, .uvar n => match sptLookup n s with
-    | none => some (.uvar n)
-    | some t => walkFuel fuel s t
+  | fuel + 1, s, .uvar n => match cvwalkCode s n with
+    | .inl u => walkFuel fuel s (.uvar u)
+    | .inr t => some t
   | _ + 1, _, t => some t
 
 mutual

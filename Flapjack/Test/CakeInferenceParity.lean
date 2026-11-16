@@ -21,6 +21,17 @@ open Flapjack Flapjack.Compiler.Inference Flapjack.Compiler.Inference.Infer Flap
   | (count, s, t) => count == 2 && sptLookup 2 s == some 0 && sptLookup 4 s == some 1 &&
       t == .app [.uvar 1, .varDb 0, .varDb 0, .varDb 1] 9
 
+-- These cases are captured from `unify_exec_walk_probe.out`.
+#guard cvwalkCode .ln 7 == .inr (.uvar 7)
+#guard cvwalkCode (sptInsert 2 (.varDb 4) .ln) 2 == .inr (.varDb 4)
+#guard cvwalkCode (sptInsert 2 (.app [.uvar 3] 5) .ln) 2 == .inr (.app [.uvar 3] 5)
+#guard cvwalkCode (sptInsert 2 (.uvar 7) .ln) 2 == .inl 7
+#guard walkFuel 1 (sptInsert 2 (.varDb 4) .ln) (.uvar 2) == some (.varDb 4)
+#guard walkFuel 1 (sptInsert 2 (.app [.uvar 3] 5) .ln) (.uvar 2) == some (.app [.uvar 3] 5)
+#guard walkFuel 1 (sptInsert 2 (.uvar 7) (sptInsert 7 (.varDb 4) .ln)) (.uvar 2) == none
+#guard walkFuel 2 (sptInsert 2 (.uvar 7) (sptInsert 7 (.varDb 4) .ln)) (.uvar 2) == some (.varDb 4)
+#guard walkFuel 4 (sptInsert 2 (.uvar 2) .ln) (.uvar 2) == none
+
 #guard match unifyFuel 100 .ln (.app [.uvar 0, .uvar 1] 4) (.app [.app [] 5, .uvar 0] 4) with
   | some (some s) => sptLookup 0 s == some (.app [] 5) && sptLookup 1 s == some (.app [] 5)
   | _ => false

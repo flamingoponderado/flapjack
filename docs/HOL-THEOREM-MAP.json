@@ -138332,5 +138332,11 @@
   "lean_path": "Flapjack/Compiler/Inference/Unify/Compat.lean", "lean_name": "submapTCompat",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["sx", "s"],
   "reviewer": "Compared typed HOL source: the larger map's well-formedness and smaller-to-larger submap imply compatibility in that direction. Both canonical maps have codec witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "cvwalk_code_def",
+  "lean_path": "Flapjack/Compiler/Inference/Unify.lean", "lean_name": "cvwalkCode",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the generated typed HOL definition and source: the literal sptree carrier and lookup, all four absent/variable/de Bruijn/application cases, and both sum constructors agree. The executable bounded walker uses this step; its remaining fuel limit is not claimed as the unbounded HOL walker."
 }
 ]

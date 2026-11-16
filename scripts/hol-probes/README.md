@@ -10489,6 +10489,10 @@ Regenerate with
 `HOL_PROBE_ONLY=unify_encoding_probeScript.sml`. The capture is source-review
 evidence; it does not establish unifier equivalence.
 
+`unify_exec_walk_probe.out` records CakeML's computational walker step for
+unbound, de Bruijn, application, and variable bindings, plus a two-binding
+walk. Regenerate with `HOL_PROBE_ONLY=unify_exec_walk_probeScript.sml`.
+
 `loop_live_proof_typed_probe.out` (12 rows) captures the typed statements of
 the reviewed `loop_liveProofScript.sml` rows that the earlier probes did not
 cover (task 184). `loop_liveProofTheory` is built in the private copy; the
