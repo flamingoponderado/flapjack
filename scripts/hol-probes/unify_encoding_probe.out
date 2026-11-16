@@ -12,6 +12,8 @@ mlt1_BAG_INSERT_typed=FINITE_BAG (b :α -> num) ⇒ mlt1 (R :α -> α -> bool) b
 mlt_BAG_INSERT2_typed=FINITE_BAG (b :α -> num) ⇒ mlt (R :α -> α -> bool) b (BAG_INSERT (x :α) (BAG_INSERT (y :α) b))
 vwalk_rangevars_typed=wfs (s :α subst) ∧ vwalk s (v :num) = (t :α term) ⇒ t = (Var v :α term) ∧ v ∉ FDOM s ∨ vars t ⊆ rangevars s
 substvars_FUPDATE_typed=substvars (fm :α subst)⟨(v :num) ↦ (t :α term)⟩ = substvars (fm \\ v) ∪ {v} ∪ vars t
+SUBMAP_FDOM_SUBSET_typed=(f1 :α |-> β) ⊑ (f2 :α |-> β) ⇒ FDOM f1 ⊆ FDOM f2
+EQ_FDOM_SUBMAP_typed=(f :α |-> β) = (g :α |-> β) ⇔ f ⊑ g ∧ FDOM f = FDOM g
 walk_rangevars_typed=wfs (s :α subst) ∧ walk s (t :α term) = (u :α term) ⇒ vars u ⊆ rangevars s ∪ vars t
 tcvwalk_substvars_typed=cwfs (s :infer_t sptree$num_map) ∧ tcvwalk s (v :num) = (t :infer_t) ⇒ t = Infer_Tuvar v ∧ v ∉ (domain s :num -> bool) ∨ vars (encode_infer_t t) ⊆ substvars (encode_infer_t o_f sp2fm s)
 tcwalk_rangevars_typed=cwfs (s :infer_t sptree$num_map) ∧ tcwalk s (t :infer_t) = (u :infer_t) ⇒ vars (encode_infer_t u) ⊆ rangevars (encode_infer_t o_f sp2fm s) ∪ vars (encode_infer_t t)

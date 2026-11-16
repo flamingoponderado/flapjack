@@ -16717,6 +16717,24 @@
     "reviewer": "Compared alist_to_fmap_typed and alist_to_fmap_clauses_typed with HOL's right fold. The key and value types remain independently polymorphic with no caller-supplied equality instance; the canonical result updates the reversed list so the first occurrence wins. The unconditional lookup witness compares the result with an independent raw-map operation, and lookup_alistToFmap_head and lookup_alistToFmap_tail check duplicate and distinct-key behavior. Source review and Lean checking do not establish cross-language equivalence. Task-164 typed capture from the built HOL4 core theory (no rebuild): scripts/hol-probes/hol_finitemap_alist_typed_probe.out `alist_to_fmap_def_typed` re-confirms the capture is HOL's right fold of `|+` from `FEMPTY`; the Lean construction is the same update fold over the reversed list (earlier entries keep precedence) and carries the same-module lookup witness."
   },
 {
+    "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
+    "hol_name": "SUBMAP_FDOM_SUBSET",
+    "lean_path": "Flapjack/FiniteMap/Exact/Submap.lean",
+    "lean_name": "submapFdomSubset",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["f1", "f2"],
+    "reviewer": "Compared SUBMAP_FDOM_SUBSET_typed with HOL: arbitrary key and value types, one submap premise and the domain subset conclusion match. The canonical map codec witnesses cover both parameters. Independently source-reviewed against the typed capture and SUBMAP_DEF."
+  },
+{
+    "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
+    "hol_name": "EQ_FDOM_SUBMAP",
+    "lean_path": "Flapjack/FiniteMap/Exact/Submap.lean",
+    "lean_name": "eqFdomSubmap",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["f", "g"],
+    "reviewer": "Compared EQ_FDOM_SUBMAP_typed with HOL: equality iff submap and equality of domains, for arbitrary key and value types, with no additional premise. The canonical map codec witnesses cover both parameters. Independently source-reviewed against the typed capture and SUBMAP_DEF."
+  },
+{
   "hol_path": "HOL/src/finite_maps/finite_mapScript.sml",
   "hol_name": "FEMPTY_DEF",
   "lean_path": "Flapjack/FiniteMap/EmptyExact.lean",
