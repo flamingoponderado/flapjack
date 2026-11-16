@@ -138430,6 +138430,24 @@
   "reviewer": "Compared typed HOL source: for every substitution and type, cwfs implies equality of cwalk and the selected tcwalk model. Model correspondence is claimed only under cwfs, where the underlying walker terminates."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "kcocwl_tcallish",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Occurs/WorklistTotal.lean", "lean_name": "kcocwlTcallishModel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source and continuation definitions: the worklist model denotes the original continuation's disjunction, and the full TAILCALL equation retains the cwfs guard. The selected walker corresponds under that guard."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "kcocwl_cleaned",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Occurs/WorklistTotal.lean", "lean_name": "kcocwlCleanedModel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: the full continuation equals a selected TAILREC solution for every worklist under cwfs. Well-founded decrease makes the otherwise unspecified divergent choice irrelevant under that guard."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "tcocwl_correct0",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Occurs/WorklistTotal.lean", "lean_name": "tcocwlCorrect0Model",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: for every worklist, cwfs implies equality of the continuation and named total worklist operation. The selected models correspond on this guard, where the tail recursion terminates."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "tcocwl_correct",
   "lean_path": "Flapjack/Compiler/Inference/Unify/Occurs/WorklistTotal.lean", "lean_name": "tcocwlCorrectModel",
   "statement_status": "reviewed_exact",

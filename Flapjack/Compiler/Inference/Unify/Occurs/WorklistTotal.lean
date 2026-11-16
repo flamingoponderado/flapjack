@@ -14,6 +14,72 @@ open Flapjack.HOL.Unification Flapjack.HOL.Transfer.Fmsp
 noncomputable def tcocwlModel (s : Spt InferT) (n : Nat) (work : List (List InferT)) : Bool :=
   Flapjack.HOL.tailRecModel (kcocwlCodeModel s n) work
 
+/-- A flattened model of the source continuation's disjunction across all
+    worklist entries. It is not tagged as the continuation-passing definition. -/
+noncomputable def kcocwlModel (s : Spt InferT) (n : Nat) (work : List (List InferT)) : Bool := by
+  classical
+  exact if coclModel s work.flatten n then true else false
+
+private theorem coclAppend (s : Spt InferT) (xs ys : List InferT) (n : Nat) :
+    coclModel s (xs ++ ys) n ↔ coclModel s xs n ∨ coclModel s ys n := by
+  simp [coclExists, List.mem_append, or_and_right, exists_or]
+
+/-- The complete guarded tail-call equation for the source worklist model. -/
+@[hol "cakeml/compiler/inference/unifyScript.sml" "kcocwl_tcallish"]
+theorem kcocwlTcallishModel (s : Spt InferT) (n : Nat) : ∀ x,
+    (fun _ : List (List InferT) => cwfs s) x →
+      kcocwlModel s n x = Flapjack.HOL.tailCall (kcocwlCodeModel s n) (kcocwlModel s n) x := by
+  classical
+  intro x hw
+  cases x with
+  | nil => simp [kcocwlModel, coclModel, kcocwlCodeModel, Flapjack.HOL.tailCall]
+  | cons head rest =>
+    cases head with
+    | nil => simp [kcocwlModel, kcocwlCodeModel, Flapjack.HOL.tailCall]
+    | cons i xs =>
+      have hc := cocThm s i n hw
+      rw [tcwalkCorrectModel s i hw] at hc
+      cases found : tcwalkModel s i with
+      | varDb k =>
+        simp [found] at hc
+        simp [kcocwlModel, kcocwlCodeModel, Flapjack.HOL.tailCall, coclModel, hc, found]
+      | app args name =>
+        simp only [found] at hc
+        simp only [← coclExists] at hc
+        simp [kcocwlModel, kcocwlCodeModel, Flapjack.HOL.tailCall, coclModel, coclAppend, hc, found]
+      | uvar v =>
+        simp only [found] at hc
+        by_cases eq : n = v
+        · subst n
+          have yes : cocModel s i v := hc.mpr rfl
+          simp [kcocwlModel, kcocwlCodeModel, Flapjack.HOL.tailCall, coclModel, yes, found]
+        · simp [kcocwlModel, kcocwlCodeModel, Flapjack.HOL.tailCall, coclModel, hc, found, eq]
+
+/-- The original guarded continuation agrees with the selected total
+    tail-recursive solution for every worklist. -/
+@[hol "cakeml/compiler/inference/unifyScript.sml" "kcocwl_cleaned"]
+theorem kcocwlCleanedModel (s : Spt InferT) (n : Nat) : ∀ x,
+    (fun _ : List (List InferT) => cwfs s) x →
+      kcocwlModel s n x = Flapjack.HOL.tailRecModel (kcocwlCodeModel s n) x := by
+  intro x hw
+  have wf : WellFounded (kcocwlRModel s n) := wfKcocwlRModel s n hw
+  induction x using wf.induction with
+  | h x ih =>
+    rw [kcocwlTcallishModel s n x hw, Flapjack.HOL.tailRecModelEq]
+    cases step : kcocwlCodeModel s n x with
+    | inl y =>
+      simp only [Flapjack.HOL.tailCall, step]
+      exact ih y (kcocwlEnsuresDecreaseModel s n x y ⟨hw, step⟩)
+    | inr result => simp [Flapjack.HOL.tailCall, step]
+
+/-- The named total worklist operation agrees with the source continuation
+    on every worklist under the original guard. -/
+@[hol "cakeml/compiler/inference/unifyScript.sml" "tcocwl_correct0"]
+theorem tcocwlCorrect0Model (s : Spt InferT) (n : Nat) : ∀ x,
+    cwfs s → kcocwlModel s n x = tcocwlModel s n x := by
+  intro x hw
+  exact kcocwlCleanedModel s n x hw
+
 private theorem occursWorkPartialEqTail (s : Spt InferT) (n : Nat) (hw : cwfs s) :
     ∀ work, occursWorkPartial s n work = Flapjack.HOL.tailRecPartial (kcocwlCodeModel s n) work := by
   have wf : WellFounded (kcocwlRModel s n) := wfKcocwlRModel s n hw
