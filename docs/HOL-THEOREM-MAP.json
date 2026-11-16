@@ -138382,6 +138382,30 @@
   "reviewer": "Compared the generated typed HOL definition and source: the literal sptree carrier and lookup, all four absent/variable/de Bruijn/application cases, and both sum constructors agree. The executable bounded walker uses this step; its remaining fuel limit is not claimed as the unbounded HOL walker."
 },
 {
+  "hol_path": "HOL/src/transfer/examples/fmspScript.sml", "hol_name": "fm2sp_def",
+  "lean_path": "Flapjack/HOL/Transfer/Fmsp/Inverse.lean", "lean_name": "fm2sp",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["fm"],
+  "reviewer": "Source comparison: Compared fm2sp_def_typed: the canonical map has natural keys and arbitrary values. Finite-support enumeration filters absent keys and inserts every present key; duplicate support keys carry the same lookup value. HOL's ITFMAPR_unique makes its insert fold order-independent, and lookupFm2sp plus wfFm2sp establish the same unique well-formed tree. The parameter witness covers the canonical map codec. Independently source-reviewed."
+},
+{
+  "hol_path": "HOL/src/transfer/examples/fmspScript.sml", "hol_name": "lookup_fm2sp",
+  "lean_path": "Flapjack/HOL/Transfer/Fmsp/Inverse.lean", "lean_name": "lookupFm2sp",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["fm"],
+  "reviewer": "Source comparison: Compared lookup_fm2sp_typed: for arbitrary natural key and canonical finite map, lookup of the converted tree equals finite-map lookup, with no premises. The parameter witness covers the canonical map codec."
+},
+{
+  "hol_path": "HOL/src/transfer/examples/fmspScript.sml", "hol_name": "wf_fm2sp",
+  "lean_path": "Flapjack/HOL/Transfer/Fmsp/Inverse.lean", "lean_name": "wfFm2sp",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["fm"],
+  "reviewer": "Source comparison: Compared wf_fm2sp_typed: conversion produces a well-formed sparse tree for every canonical finite map, with arbitrary value type and no premise. The parameter witness covers the map codec."
+},
+{
+  "hol_path": "HOL/src/transfer/examples/fmspScript.sml", "hol_name": "fm2sp_sp2fm",
+  "lean_path": "Flapjack/HOL/Transfer/Fmsp/Inverse.lean", "lean_name": "fm2spSp2fm",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm"],
+  "reviewer": "Compared fm2sp_sp2fm_typed: for arbitrary value type and sparse tree, the original wf guard implies exact tree equality after the map roundtrip. The observed sp2fm result uses the reviewed canonical finite-support map."
+},
+{
   "hol_path": "HOL/src/transfer/examples/fmspScript.sml", "hol_name": "sp2fm_def",
   "lean_path": "Flapjack/HOL/Transfer/Fmsp.lean", "lean_name": "sp2fm",
   "statement_status": "reviewed_fmap_as_finite_support_result", "fmap_as_finite_support_result": true,
