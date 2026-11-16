@@ -1,5 +1,12 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "assign_StringCmp_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "assignStringCmp",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with assign_string_cmp_typed confirms the full binder types and ordering, both byte-comparison branches, name sets, register and label choices, final comparison and counter. The executable arg2 dispatch uses this definition."
+ },
+{
   "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "arg4_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "arg4",
   "statement_status": "reviewed_exact",

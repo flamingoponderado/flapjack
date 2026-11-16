@@ -7,3 +7,4 @@ val _ = (print "force_thunk_typed="; print_thm data_to_wordTheory.force_thunk_de
 val _ = (print "arg4_typed="; print_thm data_to_wordTheory.arg4_def; print "\n");
 val _ = (print "set_bool_typed="; print_thm data_to_wordTheory.SetBool_def; print "\n");
 val _ = (print "assign_cmp_typed="; print_thm data_to_wordTheory.AssignCmp_def; print "\n");
+val _ = (print "assign_string_cmp_typed="; print_thm data_to_wordTheory.assign_StringCmp_def; print "\n");

@@ -736,6 +736,31 @@ def forceThunk {width : Nat} [NeZero width] {α : Type} (conf : Config) (secn l 
         .ite .equal 3 (.imm 56) evaluated
           (.ite .notEqual 3 (.imm 24) unchanged (wordListSeq [.assign 5 loaded, call]))]), l + 1)
 
+/-- Compile the original byte-string comparison operation. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_StringCmp_def"
+  (words_as_type_indexed_bitvec)]
+def assignStringCmp {width : Nat} [NeZero width] (conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (fast : Bool) (cmp : Opb) (first second : Nat) :
+    WordLangProgHOL (BitVec width) × Nat :=
+  let bytes := (wordSemBytesInWord : BitVec width)
+  let offset := width - conf.lenSize - wordShiftAmount width
+  let names := adjustSets (names.getD .ln)
+  let call (args : List Nat) := WordLangProgHOL.mustTerminate
+    (.call (some ([5, 7], names, .skip, secn, l)) (some stringCmpLoopLocation) args none)
+  let compareBytes := if fast then
+      WordLangProgHOL.ite .equal 5 (.reg 7) (wordListSeq [
+        .assign 11 (.op .add [.var 1, .const bytes]),
+        .assign 13 (.op .add [.var 3, .const bytes]), call [11, 13, 7, 7, 7]]) .skip
+    else wordListSeq [
+      .assign 11 (.op .add [.var 1, .const bytes]),
+      .assign 13 (.op .add [.var 3, .const bytes]), .assign 9 (.var 5),
+      .ite .lower 7 (.reg 5) (.assign 9 (.var 7)) .skip, call [11, 13, 9, 5, 7]]
+  (wordListSeq [
+    .assign 1 (realAddr conf (adjustVar first)), .assign 3 (realAddr conf (adjustVar second)),
+    .assign 5 (shiftN .lsr (.load (.var 1)) offset),
+    .assign 7 (shiftN .lsr (.load (.var 3)) offset), compareBytes,
+    assignCmp (adjustVar dest) cmp 5 7], l + 1)
+
 /-- Flapjack's option-valued traversal. Its totality is proved separately;
 source-level correspondence with HOL's `comp` remains to be reviewed. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
@@ -1135,27 +1160,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
             boolResult dest .lower 3 (.reg 1)], l)
       | _ => some (.skip, l)
   | l, .assign dest (.memOp (.stringCmp fast cmp)) args names =>
-      match args with
-      | [first, second] =>
-          let bytes := (wordSemBytesInWord : BitVec width)
-          let offset := width - conf.lenSize - wordShiftAmount width
-          let names := adjustSets (names.getD .ln)
-          let call (args : List Nat) := WordLangProgHOL.mustTerminate
-            (.call (some ([5, 7], names, .skip, secn, l)) (some stringCmpLoopLocation) args none)
-          let compareBytes := if fast then
-              WordLangProgHOL.ite .equal 5 (.reg 7) (wordListSeq [
-                .assign 11 (.op .add [.var 1, .const bytes]),
-                .assign 13 (.op .add [.var 3, .const bytes]), call [11, 13, 7, 7, 7]]) .skip
-            else wordListSeq [
-              .assign 11 (.op .add [.var 1, .const bytes]),
-              .assign 13 (.op .add [.var 3, .const bytes]), .assign 9 (.var 5),
-              .ite .lower 7 (.reg 5) (.assign 9 (.var 7)) .skip, call [11, 13, 9, 5, 7]]
-          let result := assignCmp (adjustVar dest) cmp 5 7
-          some (wordListSeq [
-            .assign 1 (realAddr conf (adjustVar first)), .assign 3 (realAddr conf (adjustVar second)),
-            .assign 5 (shiftN .lsr (.load (.var 1)) offset),
-            .assign 7 (shiftN .lsr (.load (.var 3)) offset), compareBytes, result], l + 1)
-      | _ => some (.skip, l)
+      some (arg2 args (assignStringCmp conf secn l dest names fast cmp) (.skip, l))
   | l, .assign dest (.memOp (.boundsCheckByte leq)) args _ =>
       match args with
       | [base, index] =>
