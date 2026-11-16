@@ -43,4 +43,41 @@ theorem checkTMore5 :
   · intro ts uvs tvs h uvs' sub t ht
     exact checkMonoType t uvs tvs (h t ht) uvs' sub
 
+mutual
+/-- Structural induction for increasing the bound on de Bruijn variables. -/
+private theorem checkBoundType (t : InferT) (tvs : Nat) (uvs : Nat → Prop)
+    (h : checkT tvs uvs t) (extra : Nat) : checkT (extra + tvs) uvs t := by
+  cases t with
+  | varDb n =>
+    have hn : n < tvs := by simpa using h
+    have : n < extra + tvs := by omega
+    simpa using this
+  | uvar n => simpa using h
+  | app ts tc =>
+    exact (checkT_app (extra + tvs) tc uvs ts).mpr
+      (checkBoundList ts tvs uvs ((checkT_app tvs tc uvs ts).mp h) extra)
+termination_by sizeOf t
+
+/-- List recursion for increasing the bound on de Bruijn variables. -/
+private theorem checkBoundList (ts : List InferT) (tvs : Nat) (uvs : Nat → Prop)
+    (h : checkTList tvs uvs ts) (extra : Nat) : checkTList (extra + tvs) uvs ts := by
+  cases ts with
+  | nil => simp
+  | cons t ts =>
+    have hs := (checkTList_cons tvs uvs t ts).mp h
+    exact (checkTList_cons (extra + tvs) uvs t ts).mpr
+      ⟨checkBoundType t tvs uvs hs.1 extra, checkBoundList ts tvs uvs hs.2 extra⟩
+termination_by sizeOf ts
+end
+
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "check_t_more2"]
+theorem checkTMore2 :
+    (∀ t tvs uvs, checkT tvs uvs t → ∀ extra, checkT (extra + tvs) uvs t) ∧
+    (∀ (ts : List InferT) tvs uvs, (∀ t ∈ ts, checkT tvs uvs t) →
+      ∀ extra t, t ∈ ts → checkT (extra + tvs) uvs t) := by
+  constructor
+  · exact checkBoundType
+  · intro ts tvs uvs h extra t ht
+    exact checkBoundType t tvs uvs (h t ht) extra
+
 end Flapjack.Compiler.Inference.InferProps

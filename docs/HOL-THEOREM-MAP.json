@@ -138061,6 +138061,18 @@
   "reviewer": "Compared HOL source and deBruijn_subst_convert_replay_typed: the shared bound and arbitrary inference substitution, empty-uvar guards, both type and list conjuncts, and equality directions agree. The source-defined conversion's unspecified uvar clause is excluded by the original checks on the input types."
 },
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "infer_deBruijn_subst_twice",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/Compose.lean", "lean_name": "inferDeBruijnSubstTwice",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and infer_deBruijn_subst_twice_typed: shared arbitrary substitution lists and uvar set, original bound check, and both type and list substitution-composition equalities are retained."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "check_t_more2",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/CheckMonotone.lean", "lean_name": "checkTMore2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and check_t_more2_typed: both independently quantified type and list conjuncts retain the original check and arbitrary added de Bruijn bound, with EVERY represented by membership quantification."
+},
+{
   "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml", "hol_name": "convert_t_subst",
   "lean_path": "Flapjack/Compiler/Inference/EnvRel/NamedSubst.lean", "lean_name": "convertTSubst",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations",

@@ -162,6 +162,8 @@ val infer_type_subst_nil_replay = Q.prove(
 val _ = show "infer_type_subst_nil_replay_typed" infer_type_subst_nil_replay;
 
 val _ = show "db_subst_inc_id_typed" inferPropsTheory.db_subst_inc_id;
+val _ = show "infer_deBruijn_subst_twice_typed" inferPropsTheory.infer_deBruijn_subst_twice;
+val _ = show "check_t_more2_typed" inferPropsTheory.check_t_more2;
 val _ = show "deBruijn_subst_nothing_typed" inferPropsTheory.deBruijn_subst_nothing;
 
 val probe_tscheme_approx_def = Define `
@@ -209,6 +211,22 @@ val tscheme_approx_refl_replay = Q.prove(
   irule (METIS_PROVE [] ``y = y' ⇒ f y x = f y' x``) >>
   irule LIST_EQ >> rw [LENGTH_COUNT_LIST, EL_MAP, EL_COUNT_LIST]);
 val _ = show "tscheme_approx_refl_replay_typed" tscheme_approx_refl_replay;
+
+val tscheme_approx_trans_replay = Q.prove(
+  `probe_tscheme_approx max_tvs s (tvs1,t1) (tvs2,t2) ∧
+   probe_tscheme_approx 0 s (tvs2,t2) (tvs3,t3) ⇒
+   probe_tscheme_approx max_tvs s (tvs1,t1) (tvs3,t3)`,
+  rw [probe_tscheme_approx_def] >>
+  qexists_tac `MAP (infer_deBruijn_subst subst') subst''` >>
+  simp [] >>
+  conj_asm1_tac >-
+    (fs [EVERY_MAP, EVERY_MEM] >> rw [] >>
+     irule check_t_infer_deBruijn_subst >> rw [EVERY_MEM] >>
+     first_x_assum drule >> metis_tac [check_t_more2, ADD_ASSOC, ADD_COMM]) >>
+  rw [MAP_MAP_o] >> AP_TERM_TAC >> AP_THM_TAC >> AP_TERM_TAC >>
+  irule (GSYM (CONJUNCT2 infer_deBruijn_subst_twice)) >>
+  qexists_tac `FDOM s` >> metis_tac [check_t_more2, ADD_COMM, ADD_ASSOC]);
+val _ = show "tscheme_approx_trans_replay_typed" tscheme_approx_trans_replay;
 
 val type_config_ok_replay = Q.prove(
   `probe_env_rel prim_tenv init_config ∧ inf_set_tids_ienv prim_type_ids init_config`,
