@@ -198,3 +198,25 @@ val _ = emit "pop_env_option_le_stack_max_preserved_typed" "pop_env_option_le_st
 val _ = emit "stack_size_some_at_least_one_typed" "stack_size_some_at_least_one";
 val _ = emit "set_store_stack_max_greater_bound_typed" "set_store_stack_max_greater_bound";
 val _ = emit "domain_fromAList_toAList_typed" "domain_fromAList_toAList";
+val _ = emit "s_val_eq_def2_typed" "s_val_eq_def2";
+
+(* The next three are declared [local], so they are absent from the wordProps
+   theory database; capture each typed statement by replaying its HOL proof. *)
+val _ = show "s_frame_val_and_key_eq_typed"
+  (prove(``!(s :'a stack_frame) (t :'a stack_frame).
+      s_frame_val_eq s t /\ s_frame_key_eq s t ==> s = t``,
+     recInduct s_frame_val_eq_ind >>
+     simp[s_frame_val_eq_def,s_frame_key_eq_def,LIST_EQ_MAP_PAIR]));
+
+val _ = show "get_vars_stack_swap_typed"
+  (prove(``!(l :num list) (s :('a,'b,'c) state) (t :('a,'b,'c) state).
+      s.locals = t.locals ==> get_vars l s = get_vars l t``,
+     Induct >> full_simp_tac(srw_ss())[wordSemTheory.get_vars_def,wordSemTheory.get_var_def] >>
+     srw_tac[][] >> every_case_tac >> metis_tac[NOT_NONE_SOME,SOME_11]));
+
+val _ = show "option_le_stack_size_nil_typed"
+  (prove(``!(stack :'a stack_frame list) (opt :num option).
+      option_le (stack_size ([] :'a stack_frame list))
+        (OPTION_MAP2 $+ (stack_size stack) opt)``,
+     rw[OPTION_MAP2_DEF,IS_SOME_EXISTS] >> drule stack_size_some_at_least_one >>
+     rw[wordSemTheory.stack_size_def]));

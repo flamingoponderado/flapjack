@@ -165,3 +165,7 @@ pop_env_option_le_stack_max_preserved_typed=∀(s :(α, β, γ) state) (t :(α, 
 stack_size_some_at_least_one_typed=∀(stk :α stack_frame list) (sz :num). stack_size stk = SOME sz ⇒ (1 :num) ≤ sz
 set_store_stack_max_greater_bound_typed=∀(v :store_name) (x :α word_loc) (s :(α, β, γ) state) (t :(α, β, γ) state). set_store v x s = t ∧ option_le (OPTION_MAP2 $+ (stack_size s.stack) s.locals_size) s.stack_max ⇒ option_le (OPTION_MAP2 $+ (stack_size t.stack) t.locals_size) t.stack_max
 domain_fromAList_toAList_typed=(domain (fromAList (toAList (l :α sptree$num_map))) :num -> bool) = (domain l :num -> bool)
+s_val_eq_def2_typed=∀(l1 :α stack_frame list) (l2 :α stack_frame list). s_val_eq l1 l2 ⇔ LIST_REL (s_frame_val_eq :α stack_frame -> α stack_frame -> bool) l1 l2
+s_frame_val_and_key_eq_typed=∀(s :α stack_frame) (t :α stack_frame). s_frame_val_eq s t ∧ s_frame_key_eq s t ⇒ s = t
+get_vars_stack_swap_typed=∀(l :num list) (s :(α, β, γ) state) (t :(α, β, γ) state). s.locals = t.locals ⇒ get_vars l s = get_vars l t
+option_le_stack_size_nil_typed=∀(stack :α stack_frame list) (opt :num option). option_le (stack_size ([] :α stack_frame list)) (OPTION_MAP2 $+ (stack_size stack) opt)

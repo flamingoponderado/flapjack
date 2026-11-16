@@ -130,6 +130,19 @@ private theorem listEqOfMapFstSnd {α β : Type} :
       simp only [List.map_cons, List.cons.injEq] at h1 h2
       rw [h1.1, h2.1, listEqOfMapFstSnd l l' h1.2 h2.2]
 
+/-- Exact HOL `s_frame_val_and_key_eq` (`wordPropsScript.sml:1966-1972`): a
+single frame agreeing on both relations is equal. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "s_frame_val_and_key_eq"
+  (words_as_type_indexed_bitvec)]
+theorem sFrameValAndKeyEq {width : Nat} [NeZero width] :
+    ∀ s t : WordSemStackFrame width, sFrameValEq s t ∧ sFrameKeyEq s t → s = t := by
+  rintro ⟨n, ls0, ls, y⟩ ⟨n', ls0', ls', y'⟩ ⟨hv, hk⟩
+  rw [sFrameValEqDef2] at hv
+  rw [sFrameKeyEqDef2] at hk
+  obtain ⟨hsnd, rfl, rfl⟩ := hv
+  obtain ⟨hfst, -, rfl, -⟩ := hk
+  rw [listEqOfMapFstSnd ls ls' hfst hsnd]
+
 /-- Exact HOL `s_val_and_key_eq` (`wordPropsScript.sml:1983-1992`). -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "s_val_and_key_eq"
   (words_as_type_indexed_bitvec)]

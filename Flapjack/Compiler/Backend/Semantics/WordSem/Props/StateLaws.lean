@@ -237,6 +237,18 @@ theorem sKeyEqDef2 {width : Nat} [NeZero width] :
   | x :: xs, y :: ys => by
       rw [WordSemStackEq.sKeyEq, List.forall₂_cons, sKeyEqDef2 xs ys, and_comm]
 
+/-- Exact HOL `s_val_eq_def2` (`wordPropsScript.sml:1849-1854`). -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "s_val_eq_def2"
+  (words_as_type_indexed_bitvec)]
+theorem sValEqDef2 {width : Nat} [NeZero width] :
+    ∀ l1 l2 : List (WordSemStackFrame width),
+      WordSemStackEq.sValEq l1 l2 ↔ List.Forall₂ WordSemStackEq.sFrameValEq l1 l2
+  | [], [] => by simp [WordSemStackEq.sValEq]
+  | [], _ :: _ => by simp [WordSemStackEq.sValEq]
+  | _ :: _, [] => by simp [WordSemStackEq.sValEq]
+  | x :: xs, y :: ys => by
+      rw [WordSemStackEq.sValEq, List.forall₂_cons, sValEqDef2 xs ys, and_comm]
+
 /-- Exact HOL `LASTN_stack_size_SOME` (`wordPropsScript.sml:4003-4014`). -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "LASTN_stack_size_SOME"
   (words_as_type_indexed_bitvec)]
@@ -740,5 +752,44 @@ theorem popEnv_optionLe_stackMax_preserved {width : Nat} [NeZero width] {C : Typ
         have h1 := optionLe_optionAdd_left bound
         rw [wordSemOptionAdd_comm] at h1
         exact optionLe_trans (optionLe_optionAdd_mono_right (optionLe_map_add3 m)) h1
+
+/-- Exact HOL `get_vars_stack_swap` (`wordPropsScript.sml:2135-2141`): the same
+local variable map yields the same values. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "get_vars_stack_swap"
+  (words_as_type_indexed_bitvec)]
+theorem getVarsStackSwap {width : Nat} [NeZero width] {C F : Type}
+    (vars : List Nat) (s t : WordSemStateFiniteExact width C F)
+    (sameLocals : s.locals = t.locals) :
+    WordSemStateFiniteExact.getVars vars s = WordSemStateFiniteExact.getVars vars t := by
+  induction vars generalizing s t with
+  | nil => rfl
+  | cons v vs ih =>
+      have hv : WordSemStateFiniteExact.getVar v s = WordSemStateFiniteExact.getVar v t := by
+        simp only [WordSemStateFiniteExact.getVar, sameLocals]
+      simp only [WordSemStateFiniteExact.getVars, hv, ih s t sameLocals]
+
+/-- Exact HOL `option_le_stack_size_nil` (`wordPropsScript.sml:4026-4030`): the
+empty stack's size is dominated by any stack-plus-slack sum. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "option_le_stack_size_nil"
+  (words_as_type_indexed_bitvec)]
+theorem optionLeStackSizeNil {width : Nat} [NeZero width]
+    (stack : List (WordSemStackFrame width)) (opt : Option Nat) :
+    optionLe (wordSemStackSize ([] : List (WordSemStackFrame width)))
+      (wordSemOptionAdd (wordSemStackSize stack) opt) := by
+  have nilSize : wordSemStackSize ([] : List (WordSemStackFrame width)) = some 1 := rfl
+  cases hs : wordSemStackSize stack with
+  | none =>
+      have addNone : wordSemOptionAdd none opt = none := rfl
+      simp only [nilSize, addNone, optionLe]
+  | some size =>
+      cases opt with
+      | none =>
+          have addNone : wordSemOptionAdd (some size) none = none := rfl
+          simp only [nilSize, addNone, optionLe]
+      | some extra =>
+          have atLeast : 1 ≤ size := stackSizeSomeAtLeastOne stack size hs
+          have addSome : wordSemOptionAdd (some size) (some extra) = some (size + extra) := rfl
+          simp only [nilSize, addSome, optionLe]
+          omega
 
 end Flapjack
