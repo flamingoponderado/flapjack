@@ -20,14 +20,13 @@ def coclModel (s : Spt InferT) : List InferT → Nat → Prop
   | [], _ => False
   | t :: ts, n => cocModel s t n ∨ coclModel s ts n
 
-/-- Observe whether the executed partial worklist returns true. Its result on
-    a nonterminating input is not claimed to match HOL outside `cwfs`. -/
-def tcocwlModel (s : Spt InferT) (n : Nat) (work : List (List InferT)) : Prop :=
-  occursWorkPartial s n work = some true
-
-@[hol "cakeml/compiler/inference/unifyScript.sml" "tcocwl_correct"]
-theorem tcocwlCorrect (s : Spt InferT) (ts : List InferT) (n : Nat)
-    (hw : cwfs s) : coclModel s ts n ↔ tcocwlModel s n [ts] := by
+/-- The executed partial worklist returns a Boolean agreeing with the source
+    occurrence relation on well-formed substitutions. This execution result
+    is not tagged as HOL's `tcocwl_correct`: the HOL operation returns a
+    Boolean directly, while this one returns an `Option` for nontermination. -/
+theorem occursWorkListCoclCorrect (s : Spt InferT) (ts : List InferT) (n : Nat)
+    (hw : cwfs s) : ∃ b, occursWorkPartial s n [ts] = some b ∧
+      (coclModel s ts n ↔ b = true) := by
   have cocEq : ∀ t, cocModel s t n ↔ tVars (tWalkstar (sp2fm s) t) n := by
     intro t
     have heq : sp2fm (sptMap encodeInferT s) =
@@ -40,10 +39,8 @@ theorem tcocwlCorrect (s : Spt InferT) (ts : List InferT) (n : Nat)
     unfold cocModel
     rw [ocEqVarsWalkstar _ _ _ hs, heq, encodeWalkstar (sp2fm s) t hws]
     rfl
-  unfold tcocwlModel
   obtain ⟨b, hb, hiff⟩ := occursWorkListCorrect s hw n ts
-  rw [hb]
-  simp only [Option.some.injEq]
+  refine ⟨b, hb, ?_⟩
   rw [hiff]
   clear b hb hiff
   induction ts with
