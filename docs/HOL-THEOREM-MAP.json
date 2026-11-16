@@ -1,5 +1,41 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "lookup_var_tenv_equiv",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "lookupVarTenvEquiv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and lookup_var_tenv_equiv_typed confirms the declarative environments, identifier and local environment carriers, single equivalence premise and complete lookup equality."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAll2_nsLift",
+  "lean_path": "Flapjack/NamespaceProps/LiftLookup.lean", "lean_name": "nsAll2_nsLift",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and nsAll2_nsLift_typed confirms all four polymorphic carriers, the relation and both lookup and module-absence directions."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "tenv_equiv_def",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "tenvEquiv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and tenv_equiv_typed confirms all three equality relations on the declarative environment namespaces."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "tenv_equiv_refl",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "tenvEquivRefl",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and tenv_equiv_refl_typed confirms reflexivity for an arbitrary declarative environment."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "tenv_equiv_sym",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "tenvEquivSym",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and tenv_equiv_sym_typed confirms symmetry of the full two-sided environment relation."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "tenv_equiv_tenvLift",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "tenvEquivTenvLift",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and tenv_equiv_tenvLift_typed confirms preservation by lifting under the same mlstring module name."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsMap_I",
   "lean_path": "Flapjack/NamespaceProps/MapLookup.lean", "lean_name": "nsMapId",
   "statement_status": "reviewed_exact",

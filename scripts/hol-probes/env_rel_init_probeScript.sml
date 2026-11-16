@@ -52,6 +52,7 @@ val _ = show "nsAll_nsMap_typed" namespacePropsTheory.nsAll_nsMap;
 val _ = show "nsMap_I_typed" namespacePropsTheory.nsMap_I;
 val _ = show "nsMap_nsAppend_typed" namespacePropsTheory.nsMap_nsAppend;
 val _ = show "nsAll_nsLift_typed" namespacePropsTheory.nsAll_nsLift;
+val _ = show "nsAll2_nsLift_typed" namespacePropsTheory.nsAll2_nsLift;
 val _ = show "ienv_ok_lift_typed" inferPropsTheory.ienv_ok_lift;
 val _ = show "ienv_ok_extend_dec_ienv_typed" inferPropsTheory.ienv_ok_extend_dec_ienv;
 val _ = show "extend_dec_tenv_ok_typed" typeSysPropsTheory.extend_dec_tenv_ok;
@@ -449,6 +450,11 @@ val probe_set_tids_tenv_def = Define `
     nsAll (\i (ls,ts,tid). EVERY (\t. set_tids_subset tids t) ts /\ tid IN tids) tenv.c /\
     nsAll (\i (n,t). set_tids_subset tids t) tenv.v`;
 val _ = show "set_tids_tenv_replay_typed" probe_set_tids_tenv_def;
+val _ = show "tenv_equiv_typed" type_dCanonTheory.tenv_equiv_def;
+val _ = show "tenv_equiv_refl_typed" type_dCanonTheory.tenv_equiv_refl;
+val _ = show "tenv_equiv_sym_typed" type_dCanonTheory.tenv_equiv_sym;
+val _ = show "tenv_equiv_tenvLift_typed" type_dCanonTheory.tenv_equiv_tenvLift;
+val _ = show "lookup_var_tenv_equiv_typed" type_dCanonTheory.lookup_var_tenv_equiv;
 val _ = show "set_tids_tenv_remap_typed" type_dCanonTheory.set_tids_tenv_remap;
 val set_tids_tenv_remap_replay = Q.prove(
   `probe_set_tids_tenv tids tenv ==>

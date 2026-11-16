@@ -58,4 +58,44 @@ theorem nsAll_nsLift {M N V : Type} [DecidableEq M] [DecidableEq N]
         exact h rest value (by simpa [nsLookup_nsLift] using found)
       · simp [nsLookup_nsLift, same] at found
 
+private theorem nsSubLift {M N V W : Type} [DecidableEq M] [DecidableEq N]
+    (R : Ident M N → V → W → Prop) (mn : M)
+    (e1 : Namespace M N V) (e2 : Namespace M N W) :
+    nsSub R (nsLift mn e1) (nsLift mn e2) ↔
+      nsSub (fun id => R (.long mn id)) e1 e2 := by
+  constructor
+  · rintro ⟨look, modules⟩
+    constructor
+    · intro id value found
+      simpa [nsLookup_nsLift] using look (.long mn id) value (by simpa [nsLookup_nsLift] using found)
+    · intro path absent
+      simpa [nsLookupMod_nsLift] using modules (mn :: path) (by simpa [nsLookupMod_nsLift] using absent)
+  · rintro ⟨look, modules⟩
+    constructor
+    · intro id value found
+      cases id with
+      | short name => simp [nsLookup_nsLift] at found
+      | long name rest =>
+        by_cases same : mn = name
+        · subst name
+          simpa [nsLookup_nsLift] using look rest value (by simpa [nsLookup_nsLift] using found)
+        · simp [nsLookup_nsLift, same] at found
+    · intro path absent
+      cases path with
+      | nil => simp [nsLookupMod_nsLift] at absent
+      | cons name rest =>
+        by_cases same : mn = name
+        · subst name
+          simpa [nsLookupMod_nsLift] using modules rest (by simpa [nsLookupMod_nsLift] using absent)
+        · simp [nsLookupMod_nsLift, same]
+
+/-- Lifting related namespaces prepends the module name in the relation. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsAll2_nsLift"]
+theorem nsAll2_nsLift {M N V W : Type} [DecidableEq M] [DecidableEq N]
+    (R : Ident M N → V → W → Prop) (mn : M)
+    (e1 : Namespace M N V) (e2 : Namespace M N W) :
+    nsAll2 R (nsLift mn e1) (nsLift mn e2) ↔
+      nsAll2 (fun id => R (.long mn id)) e1 e2 := by
+  simp only [nsAll2, nsSubLift]
+
 end Flapjack.NamespaceHOL

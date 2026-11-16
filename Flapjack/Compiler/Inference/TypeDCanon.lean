@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Inference.InferProps
 public import Flapjack.NamespaceProps.MapLookup
+public import Flapjack.NamespaceProps.LiftLookup
 
 @[expose] public section
 
@@ -10,6 +11,65 @@ namespace Flapjack.Compiler.Inference.TypeDCanon
 open Flapjack.NamespaceHOL Flapjack.TypeSystemHOL
   Flapjack.Compiler.Inference.InferProps
   Flapjack.Basis.Pure.MlString
+
+/-- Declarative environments agree on all namespace lookups. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "tenv_equiv_def"]
+def tenvEquiv (t1 t2 : TypeEnv) : Prop :=
+  nsAll2 (fun _ a b => a = b) t1.t t2.t ∧
+  nsAll2 (fun _ a b => a = b) t1.c t2.c ∧
+  nsAll2 (fun _ a b => a = b) t1.v t2.v
+
+/-- Every declarative environment is equivalent to itself. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "tenv_equiv_refl"]
+theorem tenvEquivRefl (tenv : TypeEnv) : tenvEquiv tenv tenv := by
+  have refl {V : Type} (env : Namespace MlString MlString V) :
+      nsAll2 (fun _ a b => a = b) env env := by
+    constructor <;> constructor
+    all_goals first | (intro id v found; exact ⟨v, found, rfl⟩) | (intro path absent; exact absent)
+  exact ⟨refl tenv.t, refl tenv.c, refl tenv.v⟩
+
+/-- Environment equivalence is symmetric. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "tenv_equiv_sym"]
+theorem tenvEquivSym (t1 t2 : TypeEnv) : tenvEquiv t1 t2 → tenvEquiv t2 t1 := by
+  have sym {V : Type} {a b : Namespace MlString MlString V}
+      (h : nsAll2 (fun _ x y => x = y) a b) :
+      nsAll2 (fun _ x y => x = y) b a := by
+    obtain ⟨⟨forward, fm⟩, ⟨backward, bm⟩⟩ := h
+    refine ⟨⟨?_, bm⟩, ⟨?_, fm⟩⟩
+    · intro id v found
+      obtain ⟨w, hw, eq⟩ := backward id v found
+      exact ⟨w, hw, eq.symm⟩
+    · intro id v found
+      obtain ⟨w, hw, eq⟩ := forward id v found
+      exact ⟨w, hw, eq.symm⟩
+  intro ⟨ht, hc, hv⟩
+  exact ⟨sym ht, sym hc, sym hv⟩
+
+/-- Lifting equivalent environments under the same module preserves equivalence. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "tenv_equiv_tenvLift"]
+theorem tenvEquivTenvLift (t1 t2 : TypeEnv) (m : MlString) :
+    tenvEquiv t1 t2 → tenvEquiv (tenvLift m t1) (tenvLift m t2) := by
+  intro h
+  simpa only [tenvEquiv, tenvLift, nsAll2_nsLift] using h
+
+/-- Equivalent environments give the same variable lookup. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "lookup_var_tenv_equiv"]
+theorem lookupVarTenvEquiv (t1 t2 : TypeEnv) (n : Ident MlString MlString)
+    (bvs : TenvValExp) : tenvEquiv t1 t2 → lookupVar n bvs t1 = lookupVar n bvs t2 := by
+  intro ⟨_, _, hv⟩
+  have same : nsLookup t1.v n = nsLookup t2.v n := by
+    cases first : nsLookup t1.v n with
+    | none =>
+      cases second : nsLookup t2.v n with
+      | none => rfl
+      | some v =>
+        obtain ⟨w, found, _⟩ := hv.2.1 n v second
+        simp [first] at found
+    | some v =>
+      obtain ⟨w, found, eq⟩ := hv.1.1 n v first
+      cases eq
+      simp [found]
+  simp only [lookupVar, same]
 
 /-- Every type identifier in the declarative environment belongs to the set. -/
 @[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "set_tids_tenv_def"]

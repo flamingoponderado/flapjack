@@ -25,6 +25,7 @@ nsAll_nsMap_typed=∀(f :α -> β) (n :(γ, δ, α) namespace) (P :(γ, δ) id -
 nsMap_I_typed=∀(ns :(α, β, γ) namespace). nsMap (I :γ -> γ) ns = ns
 nsMap_nsAppend_typed=∀(n1 :(α, β, γ) namespace) (n2 :(α, β, γ) namespace) (f :γ -> δ). nsMap f (nsAppend n1 n2) = nsAppend (nsMap f n1) (nsMap f n2)
 nsAll_nsLift_typed=∀(R :(α, β) id -> γ -> bool) (mn :α) (e :(α, β, γ) namespace). nsAll R (nsLift mn e) ⇔ nsAll (λ(id :(α, β) id). R (Long mn id)) e
+nsAll2_nsLift_typed=∀(R :(α, β) id -> γ -> δ -> bool) (mn :α) (e1 :(α, β, γ) namespace) (e2 :(α, β, δ) namespace). nsAll2 R (nsLift mn e1) (nsLift mn e2) ⇔ nsAll2 (λ(id :(α, β) id). R (Long mn id)) e1 e2
 ienv_ok_lift_typed=∀(mn :mlstring) (ienv :inf_env) (n :num -> bool). ienv_ok n ienv ⇒ ienv_ok n (lift_ienv mn ienv)
 ienv_ok_extend_dec_ienv_typed=∀(e1 :inf_env) (e2 :inf_env) (n :num -> bool). ienv_ok n e1 ∧ ienv_ok n e2 ⇒ ienv_ok n (extend_dec_ienv e1 e2)
 extend_dec_tenv_ok_typed=∀(tenv :type_env) (tenv' :type_env). tenv_ok tenv ∧ tenv_ok tenv' ⇒ tenv_ok (extend_dec_tenv tenv tenv')
@@ -112,6 +113,11 @@ remap_tenv_I_typed=remap_tenv (I :num -> num) = (I :type_env -> type_env)
 start_type_id_typed=start_type_id = (15 :num)
 Saved definition ____ "probe_set_tids_tenv_def"
 set_tids_tenv_replay_typed=∀(tids :num -> bool) (tenv :type_env). probe_set_tids_tenv tids tenv ⇔ nsAll (λ(i :(mlstring, mlstring) id) ((ls :mlstring list),(t :t)). set_tids_subset tids t) tenv.t ∧ nsAll (λ(i :(mlstring, mlstring) id) ((ls :mlstring list),(ts :t list),(tid :num)). EVERY (λ(t :t). set_tids_subset tids t) ts ∧ tid ∈ tids) tenv.c ∧ nsAll (λ(i :(mlstring, mlstring) id) ((n :num),(t :t)). set_tids_subset tids t) tenv.v
+tenv_equiv_typed=∀(tenv1 :type_env) (tenv2 :type_env). tenv_equiv tenv1 tenv2 ⇔ nsAll2 (λ(i :(mlstring, mlstring) id) (v1 :mlstring list # t) (v2 :mlstring list # t). v1 = v2) tenv1.t tenv2.t ∧ nsAll2 (λ(i :(mlstring, mlstring) id) (v1 :mlstring list # t list # num) (v2 :mlstring list # t list # num). v1 = v2) tenv1.c tenv2.c ∧ nsAll2 (λ(i :(mlstring, mlstring) id) (v1 :num # t) (v2 :num # t). v1 = v2) tenv1.v tenv2.v
+tenv_equiv_refl_typed=tenv_equiv (tenv :type_env) tenv
+tenv_equiv_sym_typed=tenv_equiv (t1 :type_env) (t2 :type_env) ⇒ tenv_equiv t2 t1
+tenv_equiv_tenvLift_typed=tenv_equiv (t1 :type_env) (t2 :type_env) ⇒ tenv_equiv (tenvLift (m :mlstring) t1) (tenvLift m t2)
+lookup_var_tenv_equiv_typed=tenv_equiv (tenv1 :type_env) (tenv2 :type_env) ⇒ lookup_var (n :(mlstring, mlstring) id) (bvs :tenv_val_exp) tenv1 = lookup_var n bvs tenv2
 set_tids_tenv_remap_typed=set_tids_tenv (tids :num -> bool) (tenv :type_env) ⇒ set_tids_tenv (IMAGE (f :num -> num) tids) (remap_tenv f tenv)
 set_tids_tenv_remap_replay_typed=probe_set_tids_tenv (tids :num -> bool) (tenv :type_env) ⇒ probe_set_tids_tenv (IMAGE (f :num -> num) tids) (remap_tenv f tenv)
 remap_tenv_extend_dec_tenv_replay_typed=remap_tenv (f :num -> num) (extend_dec_tenv (t :type_env) (t' :type_env)) = extend_dec_tenv (remap_tenv f t) (remap_tenv f t')
