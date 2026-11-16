@@ -138029,6 +138029,30 @@
   "reviewer": "Compared HOL source and check_t_empty_unconvert_convert_id_replay_typed: for arbitrary type and bound the empty-uvar check implies the complete unconvert-after-convert identity. The original guard excludes the unspecified conversion case."
 },
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml",
+  "hol_name": "infer_deBruijn_inc_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer.lean",
+  "lean_name": "inferDeBruijnInc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and infer_deBruijn_inc_typed: de Bruijn indices increase by n, all application arguments are traversed in order, and unification variables remain unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
+  "hol_name": "convert_inc",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
+  "lean_name": "convertInc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and convert_inc_replay_typed: the original empty-uvar check implies conversion after shifting equals a zero-cutoff declarative shift, preserving arbitrary type, shift, and bound."
+},
+{
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
+  "hol_name": "inc_convert_t",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
+  "lean_name": "incConvertT",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and inc_convert_t_replay_typed: both type and list conjuncts preserve the empty-uvar check, arbitrary bound and shift, and the complete unchanged conversion conclusion."
+},
+{
     "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
     "hol_name": "tenv_to_ienv_def",
     "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",

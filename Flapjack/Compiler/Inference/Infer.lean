@@ -28,6 +28,22 @@ termination_by ts => sizeOf ts
 end
 
 mutual
+/-- Shift every de Bruijn index in an inference type. -/
+@[hol "cakeml/compiler/inference/inferScript.sml" "infer_deBruijn_inc_def"]
+def inferDeBruijnInc (n : Nat) : InferT → InferT
+  | .varDb m => .varDb (m + n)
+  | .app ts tc => .app (inferDeBruijnIncList n ts) tc
+  | .uvar m => .uvar m
+termination_by t => sizeOf t
+
+/-- Structural list traversal for the source MAP clause. -/
+def inferDeBruijnIncList (n : Nat) : List InferT → List InferT
+  | [] => []
+  | t :: ts => inferDeBruijnInc n t :: inferDeBruijnIncList n ts
+termination_by ts => sizeOf ts
+end
+
+mutual
 @[hol "cakeml/compiler/inference/inferScript.sml" "infer_deBruijn_subst_def"]
 def inferDeBruijnSubst (s : List InferT) : InferT → InferT
   | .varDb n => (s[n]?).getD (.varDb (n - s.length))

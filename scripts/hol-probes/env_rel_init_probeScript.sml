@@ -52,6 +52,24 @@ val probe_convert_t_def = tDefine "probe_convert_t" `
    induct_on `ts` >> rw [infer_tTheory.infer_t_size_def] >> res_tac >> decide_tac);
 val _ = show "convert_t_replay_typed" probe_convert_t_def;
 
+val _ = show "infer_deBruijn_inc_typed" inferTheory.infer_deBruijn_inc_def;
+
+val convert_inc_replay = Q.prove(
+  `!t tvs tvs'. check_t tvs' {} t ⇒
+     probe_convert_t (infer_deBruijn_inc tvs t) = deBruijn_inc 0 tvs (probe_convert_t t)`,
+  ho_match_mp_tac (fetch "-" "probe_convert_t_ind") >>
+  rw [check_t_def, probe_convert_t_def, infer_deBruijn_inc_def, deBruijn_inc_def] >>
+  induct_on `ts` >> fs [] >> metis_tac []);
+val _ = show "convert_inc_replay_typed" convert_inc_replay;
+
+val inc_convert_t_replay = Q.prove(
+  `(!t tvs' tvs. check_t tvs' {} t ⇒ deBruijn_inc tvs' tvs (probe_convert_t t) = probe_convert_t t) ∧
+   (!ts tvs' tvs. EVERY (check_t tvs' {}) ts ⇒
+      MAP (deBruijn_inc tvs' tvs o probe_convert_t) ts = MAP probe_convert_t ts)`,
+  ho_match_mp_tac infer_tTheory.infer_t_induction >>
+  rw [check_t_def, probe_convert_t_def, deBruijn_inc_def] >> metis_tac [MAP_MAP_o]);
+val _ = show "inc_convert_t_replay_typed" inc_convert_t_replay;
+
 val check_convert_freevars_replay = Q.prove(
   `!tvs uvs t. check_t tvs uvs t ⇒ (uvs = {}) ⇒ check_freevars tvs [] (probe_convert_t t)`,
   ho_match_mp_tac check_t_ind >>

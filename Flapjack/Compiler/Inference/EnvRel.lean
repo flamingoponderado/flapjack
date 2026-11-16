@@ -122,6 +122,84 @@ theorem checkTEmptyUnconvertConvertId (t : InferT) (n : Nat)
     (h : Infer.checkT n (fun _ => False) t) : unconvertT (convertT t) = t :=
   (closedConvertType t n h).2
 
+mutual
+/-- Structural induction for the source conversion-shift theorem. -/
+private theorem convertIncType (t : InferT) (bound amount : Nat)
+    (h : Infer.checkT bound (fun _ => False) t) :
+    convertT (Infer.inferDeBruijnInc amount t) = deBruijnInc 0 amount (convertT t) := by
+  cases t with
+  | uvar v => simp at h
+  | varDb v => simp [Infer.inferDeBruijnInc, convertT, deBruijnInc]
+  | app ts tc =>
+    have hl := (Infer.checkT_app bound tc _ ts).mp h
+    simp [Infer.inferDeBruijnInc, convertT, deBruijnInc, convertIncList ts bound amount hl]
+termination_by sizeOf t
+
+/-- List induction for the conversion-shift theorem. -/
+private theorem convertIncList (ts : List InferT) (bound amount : Nat)
+    (h : Infer.checkTList bound (fun _ => False) ts) :
+    convertTList (Infer.inferDeBruijnIncList amount ts) =
+      deBruijnIncList 0 amount (convertTList ts) := by
+  cases ts with
+  | nil => simp [Infer.inferDeBruijnIncList, convertTList, deBruijnIncList]
+  | cons t ts =>
+    have hs := (Infer.checkTList_cons bound _ t ts).mp h
+    simp [Infer.inferDeBruijnIncList, convertTList, deBruijnIncList,
+      convertIncType t bound amount hs.1, convertIncList ts bound amount hs.2]
+termination_by sizeOf ts
+end
+
+@[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "convert_inc"]
+theorem convertInc (t : InferT) (tvs bound : Nat)
+    (h : Infer.checkT bound (fun _ => False) t) :
+    convertT (Infer.inferDeBruijnInc tvs t) = deBruijnInc 0 tvs (convertT t) :=
+  convertIncType t bound tvs h
+
+mutual
+/-- Structural induction for shifting beyond the free-variable bound. -/
+private theorem incConvertType (t : InferT) (bound amount : Nat)
+    (h : Infer.checkT bound (fun _ => False) t) :
+    deBruijnInc bound amount (convertT t) = convertT t := by
+  cases t with
+  | uvar v => simp at h
+  | varDb v =>
+    have hv : v < bound := by simpa using h
+    simp [convertT, deBruijnInc, hv]
+  | app ts tc =>
+    have hl := (Infer.checkT_app bound tc _ ts).mp h
+    simp [convertT, deBruijnInc, incConvertList ts bound amount hl]
+termination_by sizeOf t
+
+/-- List induction for shifting beyond the free-variable bound. -/
+private theorem incConvertList (ts : List InferT) (bound amount : Nat)
+    (h : Infer.checkTList bound (fun _ => False) ts) :
+    deBruijnIncList bound amount (convertTList ts) = convertTList ts := by
+  cases ts with
+  | nil => simp [convertTList, deBruijnIncList]
+  | cons t ts =>
+    have hs := (Infer.checkTList_cons bound _ t ts).mp h
+    simp [convertTList, deBruijnIncList, incConvertType t bound amount hs.1,
+      incConvertList ts bound amount hs.2]
+termination_by sizeOf ts
+end
+
+@[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "inc_convert_t"]
+theorem incConvertT :
+    (∀ (t : InferT) bound amount, Infer.checkT bound (fun _ => False) t →
+      deBruijnInc bound amount (convertT t) = convertT t) ∧
+    (∀ (ts : List InferT) bound amount,
+      (∀ t ∈ ts, Infer.checkT bound (fun _ => False) t) →
+      ts.map (fun t => deBruijnInc bound amount (convertT t)) = ts.map convertT) := by
+  constructor
+  · intro t bound amount h
+    exact incConvertType t bound amount h
+  · intro ts bound amount h
+    induction ts with
+    | nil => rfl
+    | cons t ts ih =>
+      simp only [List.mem_cons, forall_eq_or_imp] at h
+      simp [incConvertType t bound amount h.1, ih h.2]
+
 @[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "tenv_to_ienv_def"]
 noncomputable def tenvToIenv (env : TypeEnv) : Infer.Env :=
   ⟨nsMap (fun entry => (entry.1, unconvertT entry.2)) env.v, env.c, env.t⟩
