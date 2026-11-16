@@ -3804,6 +3804,7 @@ import Flapjack.HOL.Unification.UnifDef.Tunify
 import Flapjack.Compiler.Inference.Unify.Occurs.Encoding
 import Flapjack.Compiler.Inference.Unify.Extension
 import Flapjack.Compiler.Inference.Unify.Unification
+import Flapjack.Compiler.Inference.Unify.EncodingInvariant
 import Flapjack.HOL.Transfer.Fmsp.Lookup
 import Flapjack.Compiler.Inference.InferProps.DeBruijn
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.Bounded
