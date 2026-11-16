@@ -22,3 +22,10 @@ t_vR_def_typed=∀(s :α |-> infer_t). t_vR s = vR (encode_infer_t o_f s)
 t_vR_eqn_typed=∀(s :α |-> infer_t) (x :α) (y :num). t_vR s y x ⇔ case FLOOKUP s x of (NONE :infer_t option) => F | SOME t => y ∈ t_vars t
 t_wfs_eqn_typed=∀(s :num |-> infer_t). t_wfs s ⇔ WF (t_vR s)
 t_wfs_SUBMAP_typed=∀(s1 :num |-> infer_t) (s2 :num |-> infer_t). t_wfs s2 ∧ s1 ⊑ s2 ⇒ t_wfs s1
+t_vwalk_eqn_typed=∀(s :num |-> infer_t). t_wfs s ⇒ ∀(v :num). t_vwalk s v = case FLOOKUP s v of (NONE :infer_t option) => Infer_Tuvar v | SOME (Infer_Tvar_db n) => Infer_Tvar_db n | SOME (Infer_Tapp ts tc) => Infer_Tapp ts tc | SOME (Infer_Tuvar u) => t_vwalk s u
+encode_vwalk_replay_typed=∀(s :num |-> infer_t). t_wfs s ⇒ ∀(u :num). vwalk (encode_infer_t o_f s) u = encode_infer_t (t_vwalk s u)
+t_walk_def_typed=∀(s :num |-> infer_t) (t :infer_t). t_walk s t = decode_infer_t (walk (encode_infer_t o_f s) (encode_infer_t t))
+t_walk_eqn_typed=(∀(s :num |-> infer_t) (v :num). t_walk s (Infer_Tuvar v) = t_vwalk s v) ∧ (∀(s :num |-> infer_t) (ts :infer_t list) (tc :num). t_walk s (Infer_Tapp ts tc) = Infer_Tapp ts tc) ∧ ∀(s :num |-> infer_t) (n :num). t_walk s (Infer_Tvar_db n) = Infer_Tvar_db n
+t_walkstar_eqn_typed=∀(s :num |-> infer_t). t_wfs s ⇒ ∀(t :infer_t). t_walkstar s t = case t_walk s t of Infer_Tvar_db n => Infer_Tvar_db n | Infer_Tapp ts tctor => Infer_Tapp (MAP (t_walkstar s) ts) tctor | Infer_Tuvar v => Infer_Tuvar v
+encode_walk_replay_typed=∀(s :num |-> infer_t). t_wfs s ⇒ ∀(t :infer_t). walk (encode_infer_t o_f s) (encode_infer_t t) = encode_infer_t (t_walk s t)
+ts_walkstar_replay_typed=∀(l :infer_t list) (s :num |-> infer_t). t_wfs s ⇒ decode_infer_ts (encode_infer_t o_f s ◁ encode_infer_ts l) = MAP (t_walkstar s) l

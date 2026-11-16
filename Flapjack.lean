@@ -3786,6 +3786,9 @@ import Flapjack.Compiler.Inference.InferProps
 import Flapjack.Compiler.Inference.Unify.Encoding
 import Flapjack.Compiler.Inference.Unify.Substitution
 import Flapjack.Compiler.Inference.Unify.Substitution.Submap
+import Flapjack.Compiler.Inference.Unify.Walk
+import Flapjack.Compiler.Inference.Unify.Walk.Term
+import Flapjack.Compiler.Inference.Unify.Walkstar
 import Flapjack.HOL.Unification.Subst
 import Flapjack.HOL.Unification.Walk
 import Flapjack.HOL.Unification.Walk.ToVar

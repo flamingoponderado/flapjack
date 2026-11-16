@@ -32,3 +32,41 @@ val _ = show "t_vR_def_typed" unifyTheory.t_vR_def;
 val _ = show "t_vR_eqn_typed" unifyTheory.t_vR_eqn;
 val _ = show "t_wfs_eqn_typed" unifyTheory.t_wfs_eqn;
 val _ = show "t_wfs_SUBMAP_typed" unifyTheory.t_wfs_SUBMAP;
+val _ = show "t_vwalk_eqn_typed" unifyTheory.t_vwalk_eqn;
+
+(* Replay the local theorem, which is not exported by unifyTheory. *)
+open unifyTheory walkTheory substTheory finite_mapTheory;
+val encode_vwalk_replay = Q.prove (
+  `!s. t_wfs s ==> !u. vwalk (encode_infer_t o_f s) u = encode_infer_t (t_vwalk s u)`,
+  NTAC 2 STRIP_TAC >>
+  ho_match_mp_tac t_vwalk_ind >>
+  rw [] >>
+  `wfs (encode_infer_t o_f s)` by metis_tac[t_wfs_def] >>
+  rw [Once vwalk_def] >>
+  rw [Once t_vwalk_eqn, FLOOKUP_o_f] >>
+  Cases_on `FLOOKUP s u` >>
+  rw [encode_infer_t_def] >>
+  Cases_on `x` >>
+  rw [encode_infer_t_def]);
+val _ = show "encode_vwalk_replay_typed" encode_vwalk_replay;
+val _ = show "t_walk_def_typed" unifyTheory.t_walk_def;
+val _ = show "t_walk_eqn_typed" unifyTheory.t_walk_eqn;
+val _ = show "t_walkstar_eqn_typed" unifyTheory.t_walkstar_eqn;
+
+open walkstarTheory;
+val encode_walk_replay = Q.prove (
+  `!s. t_wfs s ==> !t. walk (encode_infer_t o_f s) (encode_infer_t t) = encode_infer_t (t_walk s t)`,
+  rw [walk_def] >>
+  imp_res_tac encode_vwalk_replay >>
+  fs [] >>
+  BasicProvers.EVERY_CASE_TAC >>
+  rw [t_walk_def, decode_left_inverse] >>
+  metis_tac [decode_left_inverse]);
+val _ = show "encode_walk_replay_typed" encode_walk_replay;
+
+val ts_walkstar_replay = Q.prove (
+  `!l s. t_wfs s ==> (decode_infer_ts ((encode_infer_t o_f s) ◁ encode_infer_ts l) = MAP (t_walkstar s) l)`,
+  Induct_on `l` >>
+  rw [t_wfs_def, encode_infer_t_def, Once walkstar_def, decode_infer_t_def] >>
+  rw [t_walkstar_def]);
+val _ = show "ts_walkstar_replay_typed" ts_walkstar_replay;

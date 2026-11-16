@@ -10475,7 +10475,9 @@ inference atom carrier, complete encoding and decoding equations, and the
 inverse and injectivity theorems, and the substitution dependency and
 well-formedness declarations, the conditional variable-walk equation, its
 domain properties, its dependency-closure theorem, and the conditional
-normalization equation, and inference substitution dependency relations.
+normalization equation, inference substitution dependencies, and typed
+inference walker and normalization equations, including replays of their
+local encoding and list lemmas.
 Regenerate with
 `HOL_PROBE_ONLY=unify_encoding_probeScript.sml`. The capture is source-review
 evidence; it does not establish unifier equivalence.
