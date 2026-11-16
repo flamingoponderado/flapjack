@@ -617,7 +617,8 @@ theorem optionLe_stackSize {width : Nat} [NeZero width]
     the frame-size bound below `stack_max`.  HOL's `let t = flush_state p s in`
     abbreviation is inlined. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml"
-  "flush_state_option_le_stack_max_preserved" (words_as_type_indexed_bitvec)]
+  "flush_state_option_le_stack_max_preserved"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem flushStateOptionLeStackMaxPreserved {width : Nat} [NeZero width] {C : Type} {F : Type}
     (state : WordSemStateFiniteExact width C F) (all : Bool) :
     optionLe (wordSemOptionAdd (wordSemStackSize state.stack) state.localsSize)
