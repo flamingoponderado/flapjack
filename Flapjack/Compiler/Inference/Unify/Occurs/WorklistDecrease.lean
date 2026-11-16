@@ -39,10 +39,6 @@ theorem kcocwlPreservesPrecondModel (s : Spt InferT) (n : Nat) : ∀ x y,
   intro x y h
   exact h.1
 
-private theorem finiteBagOfList {α : Type} (xs : List α) : finiteBag (bagOfList xs) := by
-  apply (finiteBagFoldrInsert xs emptyBag).2
-  exact finiteEmptyBag
-
 private theorem bagOfListAppend {α : Type} (xs ys : List α) :
     bagOfList (xs ++ ys) = bagUnion (bagOfList xs) (bagOfList ys) := by
   unfold bagOfList

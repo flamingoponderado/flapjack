@@ -26,14 +26,14 @@ theorem finiteStarKwork (kont : List KclKont) : finiteBag (starKwork kont) := by
     cases frame with
     | db _ | app _ _ | uv _ => exact ih
     | cons items _ =>
-      exact finiteBagUnion _ ((finiteBagFoldrInsert items emptyBag).2 finiteEmptyBag) _ ih
+      exact finiteBagUnion _ (finiteBagOfList items) _ ih
 
 @[hol "cakeml/compiler/inference/unifyScript.sml" "FINITE_star_workbag"]
 theorem finiteStarWorkbag (ready : Bool) (items : List InferT) (kont : List KclKont) :
     finiteBag (starWorkbag ready items kont) := by
   cases ready with
   | false =>
-    exact finiteBagUnion _ ((finiteBagFoldrInsert items emptyBag).2 finiteEmptyBag) _ (finiteStarKwork kont)
+    exact finiteBagUnion _ (finiteBagOfList items) _ (finiteStarKwork kont)
   | true => exact finiteStarKwork kont
 
 @[hol "cakeml/compiler/inference/unifyScript.sml" "isCONSk_def"]

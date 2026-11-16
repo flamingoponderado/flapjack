@@ -62,6 +62,10 @@ theorem finiteBagFoldrInsert {α : Type} (xs : List α) (b : Bag α) :
     · intro h
       exact finiteBagInsert _ h x
 
+/-- Finite list bags support the source worklist decrease proofs. -/
+theorem finiteBagOfList {α : Type} (xs : List α) : finiteBag (bagOfList xs) :=
+  (finiteBagFoldrInsert xs emptyBag).2 finiteEmptyBag
+
 @[hol "cakeml/compiler/inference/unifyScript.sml" "FOLDR_BAG_INSERT_UNION"]
 theorem foldrBagInsertUnion {α : Type} (xs : List α) (b : Bag α) :
     xs.foldr bagInsert b = bagUnion b (bagOfList xs) := by

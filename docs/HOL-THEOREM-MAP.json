@@ -138928,6 +138928,24 @@
   "reviewer": "Compared typed HOL source: the Boolean test recognizes exactly the CONSk continuation constructor and rejects the other three constructors."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "kcwalkstarwl_preserves_precond",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/WorklistDecrease.lean", "lean_name": "kcwalkstarwlPreservesPrecondModel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: the original cwfs and INL-step premises imply the unchanged cwfs guard for the successor state. The selected walker model agrees with the source under cwfs."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "kcwalkstarwl_ensures_decrease",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/WorklistDecrease.lean", "lean_name": "kcwalkstarwlEnsuresDecreaseModel",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm"],
+  "reviewer": "Compared typed HOL source and all transition cases: the original cwfs and INL premises imply the full source ordering on successor and predecessor. The selected walker corresponds under cwfs, and the parameterized source relation exposes the canonical sp2fm observation."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "tcwalkstarwl_correct",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/WorklistTotal.lean", "lean_name": "tcwalkstarwlCorrectModel",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm"],
+  "reviewer": "Compared typed HOL source: the sole cwfs premise implies the complete cwalkstar and singleton-worklist normalization equality. The source-shaped model agrees under cwfs; the result is proved a singleton, making headD's fallback unreachable and agreeing with HOL HD. The visible sp2fm result uses the reviewed canonical map."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "WF_kcwalkstarwlR",
   "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/WorklistWellFounded.lean", "lean_name": "wfKcwalkstarwlRModel",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm"],
