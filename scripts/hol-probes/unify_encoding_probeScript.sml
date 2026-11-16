@@ -211,6 +211,7 @@ val _ = show "isvars_def_typed" unifyTheory.isvars_def;
 val _ = show "FINITE_isvars_typed" unifyTheory.FINITE_isvars;
 val _ = show "cplist_vars_def_typed" unifyTheory.cplist_vars_def;
 val _ = show "FINITE_cplist_vars_typed" unifyTheory.FINITE_cplist_vars;
+val _ = show "vars_encode_infer_ts_typed" unifyTheory.vars_encode_infer_ts;
 val _ = show "PFLAT_def_typed" unifyTheory.PFLAT_def;
 val _ = show "FINITE_BAG_PFLAT_typed" unifyTheory.FINITE_BAG_PFLAT;
 val _ = show "kcunifywlR_def_typed" unifyTheory.kcunifywlR_def;

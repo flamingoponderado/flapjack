@@ -33,4 +33,21 @@ theorem finiteCplistVars (wl : List (List InferT × List InferT)) : (cplistVars 
     rcases pair with ⟨ts, us⟩
     exact ((finiteIsvars ts).union (finiteIsvars us)).union ih
 
+@[hol "cakeml/compiler/inference/unifyScript.sml" "vars_encode_infer_ts"]
+theorem varsEncodeInferTs (ts : List InferT) : vars (encodeInferTs ts) = isvars ts := by
+  induction ts with
+  | nil =>
+    funext v
+    apply propext
+    simp only [encodeInferTs, vars, isvars]
+    change False ↔ False
+    rfl
+  | cons t ts ih =>
+    funext v
+    apply propext
+    simp only [encodeInferTs, vars, isvars]
+    change (vars (encodeInferT t) v ∨ vars (encodeInferTs ts) v) ↔
+      (vars (encodeInferT t) v ∨ isvars ts v)
+    rw [ih]
+
 end Flapjack.Compiler.Inference.Unify
