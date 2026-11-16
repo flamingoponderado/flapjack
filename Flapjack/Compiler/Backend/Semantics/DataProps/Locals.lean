@@ -78,4 +78,38 @@ theorem cutEnv_of_subspt {α : Type} (names : NumSet) (source target result : Sp
   rw [if_pos targetPresent, ← interEq]
   exact cut
 
+/-- Inclusion of local environments preserves domain membership. HOL writes the
+conclusion as `domain l1 SUBSET domain l2`, i.e. set inclusion on the domain
+predicate. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "locals_ok_IMP"]
+theorem domain_of_localsOk {α : Type} (source target : Spt α)
+    (included : localsOk source target) :
+    ∀ key, sptDomain source key → sptDomain target key := by
+  intro key member
+  rw [sptDomain_iff_lookup] at member ⊢
+  obtain ⟨value, found⟩ := member
+  exact ⟨value, included key value found⟩
+
+/-- A successful single-variable read transports along the relation. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "locals_ok_get_var"]
+theorem getVar_of_localsOk {α : Type} (source target : Spt α) (name : Nat)
+    (value : α) (included : localsOk source target)
+    (read : DataSem.getVar name source = some value) :
+    DataSem.getVar name target = some value := by
+  exact included name value read
+
+/-- Inserting the same binding into both environments preserves the relation. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "locals_ok_insert"]
+theorem sptInsert_of_localsOk {α : Type} (source target : Spt α) (key : Nat)
+    (value : α) (included : localsOk source target) :
+    localsOk (sptInsert key value source) (sptInsert key value target) := by
+  intro other found_value found
+  by_cases hkey : other = key
+  · subst hkey
+    rw [sptLookup_sptInsert_same] at found ⊢
+    exact found
+  · rw [sptLookup_sptInsert_ne key other value source hkey] at found
+    rw [sptLookup_sptInsert_ne key other value target hkey]
+    exact included other found_value found
+
 end Flapjack.Compiler.Backend.DataProps

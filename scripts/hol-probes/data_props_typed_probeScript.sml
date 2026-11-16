@@ -139,3 +139,8 @@ val _ = show "do_app_lim_swap_aux_typed"
     metis_tac [dataPropsTheory.do_app_lim_swap]));
 val _ = emit "jump_exc_NONE_typed" "jump_exc_NONE";
 val _ = emit "size_of_stack_eq_typed" "size_of_stack_eq";
+val _ = emit "locals_ok_IMP_typed" "locals_ok_IMP";
+val _ = emit "locals_ok_get_var_typed" "locals_ok_get_var";
+val _ = show "locals_ok_insert_typed"
+  (prove(``!a b k (v:'a). locals_ok a b ==> locals_ok (insert k v a) (insert k v b)``,
+    rw[locals_ok_def, sptreeTheory.lookup_insert] \\ every_case_tac \\ gvs[]));
