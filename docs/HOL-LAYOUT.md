@@ -54,7 +54,9 @@ the cited name occurs in one of the two syntactic forms.
 | `HOL/examples/algorithms/unification/triangular/first-order/substScript.sml` | `Flapjack/HOL/Unification/Subst.lean` (substitution dependency relation) |
 | `HOL/examples/algorithms/unification/triangular/first-order/walkScript.sml` | `Flapjack/HOL/Unification/Walk.lean` (first-order variable walking) |
 | `HOL/examples/algorithms/unification/triangular/first-order/walkstarScript.sml` | `Flapjack/HOL/Unification/Walkstar.lean` (first-order substitution normalization) |
+| `HOL/examples/algorithms/unification/triangular/first-order/compilation/rmfmapScript.sml` | `Flapjack/HOL/Unification/Rmfmap.lean` (sparse-tree substitution well-formedness) |
 | `HOL/src/bag/bagScript.sml` | `Flapjack/Misc/Bag.lean` (polymorphic bag carrier and union laws) |
+| `HOL/src/transfer/examples/fmspScript.sml` | `Flapjack/HOL/Transfer/Fmsp.lean` (sparse-tree to finite-map conversion) |
 | `HOL/src/finite_maps/alistScript.sml` | `Flapjack/FiniteMap/AlistExact.lean` and its `Lookup.lean` submodule (canonical finite-support association-list map and HOL ALOOKUP) |
 | `HOL/src/list/src/listScript.sml` | `Flapjack/Misc/List.lean` (shared list-relation results) |
 | `HOL/src/list/src/rich_listScript.sml` | `Flapjack/Misc/RichList.lean` (shared rich-list relation results) |
