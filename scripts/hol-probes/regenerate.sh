@@ -10068,6 +10068,7 @@ run_probe word_props_typed_probeScript.sml word_props_typed_probe.out \
   flush_state_option_le_stack_max_preserved_typed \
   stack_size_some_at_least_one_typed \
   set_store_stack_max_greater_bound_typed \
+  domain_fromAList_toAList_typed \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
@@ -10354,7 +10355,7 @@ run_probe flat_props_typed_probeScript.sml flat_props_typed_probe.out \
   evaluate_add_to_clock_typed evaluate_decs_add_to_clock_typed do_app_io_events_mono_typed store_v_vs_def_typed ctor_same_type_OPTREL_typed pats_bindings_FLAT_MAP_typed evaluate_Mat_typed evaluate_Handle_typed \
   evaluate_match_NIL_typed evaluate_match_CONS_typed simple_do_app_thm_typed isClosure_simps_typed evaluate_decs_add_to_clock_io_events_mono_alt_typed elist_globals_FOLDR_typed elist_globals_REVERSE_typed initial_state_clock_typed \
   IMP_semantics_eq_typed pmatch_list_MAP_Pvar_typed evaluate_MAP_Var_local_typed bind_locals_list_def_typed evaluate_vars_typed evaluate_add_to_clock_io_events_mono_typed evaluate_dec_add_to_clock_io_events_mono_typed evaluate_decs_add_to_clock_io_events_mono_typed \
-  evaluate_io_events_mono_typed evaluate_io_events_mono_IMP_typed evaluate_dec_io_events_mono_typed evaluate_decs_io_events_mono_typed \
+  evaluate_io_events_mono_typed evaluate_io_events_mono_IMP_typed evaluate_dec_io_events_mono_typed evaluate_decs_io_events_mono_typed SND_SND_lemma_typed \
   "$cake_dir/compiler/backend/semantics/flatPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 

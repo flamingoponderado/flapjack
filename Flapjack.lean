@@ -110,6 +110,8 @@ import Flapjack.Compiler.Backend.FlatProps.SimpleType
 import Flapjack.Compiler.Backend.FlatProps.SimpleDoApp
 import Flapjack.Compiler.Backend.FlatProps.NoMat
 import Flapjack.Compiler.Backend.FlatProps.InstallConfig
+import Flapjack.Compiler.Backend.FlatProps.PairLemmas
+import Flapjack.Compiler.Backend.FlatProps.ValueSize
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PatternRowsSame
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationInduction
@@ -3231,6 +3233,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackEq
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackLists
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.DomainFromAList
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Motive
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Leaves
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Alloc
