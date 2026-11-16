@@ -139030,6 +139030,18 @@
   "reviewer": "Compared HOL source and walkstar_extend_typed: both well-formedness conditions, freshness of the updated key, the normalization equality premise, and the universal normalization equality conclusion are preserved. Both substitutions use canonical finite-map codecs."
 },
 {
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml", "hol_name": "vars_measure",
+  "lean_path": "Flapjack/HOL/Unification/UnifProps/Occurs.lean", "lean_name": "varsMeasure",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared HOL source and vars_measure_typed: membership, non-variable condition and well-formedness imply the original measure relation, expanded as strict comparison of normalized pair counts. The substitution uses the canonical finite-map codec."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml", "hol_name": "oc_subterm_neq",
+  "lean_path": "Flapjack/HOL/Unification/UnifProps/Occurs.lean", "lean_name": "ocSubtermNeq",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s", "s2"],
+  "reviewer": "Compared HOL source and oc_subterm_neq_typed: occurrence, non-variable condition, and well-formedness of both substitutions imply the original normalization inequality. The occurrence relation agrees with source under the original well-formedness guard. Both substitutions use canonical finite-map codecs."
+},
+{
   "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml", "hol_name": "TC_vR_SUBMAP",
   "lean_path": "Flapjack/HOL/Unification/UnifProps.lean", "lean_name": "tcVRSubmap",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s", "sx"],

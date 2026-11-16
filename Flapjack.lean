@@ -3821,6 +3821,7 @@ import Flapjack.HOL.Unification.UnifDef.WellFounded
 import Flapjack.HOL.Unification.UnifDef.Tunify
 import Flapjack.HOL.Unification.UnifProps
 import Flapjack.HOL.Unification.UnifProps.Extend
+import Flapjack.HOL.Unification.UnifProps.Occurs
 import Flapjack.HOL.Unification.UnifProps.MostGeneral
 import Flapjack.HOL.Transfer.Fmsp.Inverse
 import Flapjack.Compiler.Inference.Unify.Occurs.Encoding
