@@ -8617,6 +8617,7 @@ run_probe backend_props_state_oracle_probeScript.sml backend_props_state_oracle_
   syntax_to_full_oracle_o_assoc_typed FST_add_state_co_0_typed is_state_oracle_shift_imp_typed is_state_oracle_add_state_co_typed \
   oracle_monotonic_step_typed oracle_monotonic_init_typed oracle_monotonic_step2_typed oracle_monotonic_SND_syntax_to_full_typed \
   oracle_monotonic_shift_subset_typed is_state_oracle_shift_typed the_eqn_typed the_F_eq_typed \
+  syntax_oracle_unpack_typed \
   "$cake_dir/compiler/backend/semantics/backendPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe backend_props_option_max_probeScript.sml backend_props_option_max_probe.out \

@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+public import Flapjack.Compiler.Backend.BackendProps.OracleCombinators
 public import Flapjack.Misc.ShiftSeq
 public import Mathlib.Data.Set.Lattice
 
@@ -234,5 +235,41 @@ theorem isStateOracle_addStateCo {S C P Q : Type} (f : S → P → S × Q) (st :
     isStateOracle f (syntaxToFullOracle (addStateCo f st mk) progs) := by
   intro n
   rfl
+
+/-- Exact HOL `syntax_oracle_unpack` (`backendPropsScript.sml:283-289`): the
+    conjunction of the six oracle-adaptation facts, in HOL's conjunct order and
+    with HOL's `GEN_ALL` binder order in each conjunct.  HOL's boolean
+    equality of the two `oracle_monotonic` applications is Lean equality of the
+    two propositions, and HOL's `I` is `id`. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "syntax_oracle_unpack"]
+theorem syntaxOracle_unpack :
+    (∀ {α β γ : Type} (progs : Nat → γ) (mk : (Nat → β) → Nat → α) (f : γ → β),
+      (pureCo f : α × γ → α × β) ∘ syntaxToFullOracle (mk ∘ pureCoProgs f) progs =
+        syntaxToFullOracle mk (pureCoProgs f progs)) ∧
+    (∀ {α β γ δ : Type} (st : γ) (progs : Nat → δ) (mk : (Nat → β) → Nat → α)
+      (f : γ → δ → γ × β),
+      stateCo f (syntaxToFullOracle (addStateCo f st mk) progs) =
+        syntaxToFullOracle mk (stateCoProgs f st progs)) ∧
+    (∀ {α β γ δ ε : Type} (progs : α → γ) (h : (α → γ) → ε) (g : ε → δ)
+      (f : δ → α → β),
+      syntaxToFullOracle (f ∘ g ∘ h) progs = syntaxToFullOracle ((f ∘ g) ∘ h) progs) ∧
+    (∀ {α β γ : Type} (mk : (γ → β) → γ → α) (progs : γ → β) (i : γ),
+      syntaxToFullOracle mk progs i = (mk progs i, progs i)) ∧
+    (∀ {α β γ δ ε ζ η : Type} (progs : Nat → β) (mk : (Nat → β) → Nat → α)
+      (f : β → Set γ) (c : ε → η) (b : η → ζ) (a : ζ → Set δ)
+      (St : Set γ) (R : γ → γ → Prop),
+      (oracleMonotonic (f ∘ Prod.snd) R St (syntaxToFullOracle mk progs) ↔
+        oracleMonotonic (f ∘ Prod.snd) R St (syntaxToFullOracle id progs)) ∧
+      oracleMonotonic (a ∘ b ∘ c) = oracleMonotonic ((a ∘ b) ∘ c)) ∧
+    (∀ {α β γ δ : Type} (st : α) (progs : Nat → β) (mk : (Nat → γ) → Nat → δ)
+      (f : α → β → α × γ),
+      isStateOracle f (syntaxToFullOracle (addStateCo f st mk) progs)) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · exact fun progs mk f => pureCoSyntaxToFullOracle f mk progs
+  · exact fun st progs mk f => stateCoAddStateCo f st mk progs
+  · exact fun progs h g f => syntaxToFullOracle_comp_assoc f g h progs
+  · exact fun mk progs i => rfl
+  · exact fun progs mk f c b a St R => oracleMonotonic_SND_syntaxToFull f R St mk progs a b c
+  · exact fun st progs mk f => isStateOracle_addStateCo f st mk progs
 
 end Flapjack.Compiler.Backend.BackendProps
