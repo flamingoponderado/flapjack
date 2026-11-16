@@ -505,6 +505,38 @@ theorem evaluate_stack_limit_stack_max {width : Nat} [NeZero width] {C : Type} {
   rcases h1 : s1.stackMax with _ | m <;> rcases h2 : s2.stackMax with _ | m2 <;>
     (simp_all [miscThe]; try omega)
 
+/-- Exact HOL `evaluate_call_push_dec_option_le_stack_max`
+    (`wordPropsScript.sml:4459-4470`): the stack maximum reached by calling into
+    a body from the decremented clock dominates the maximum of the call frame
+    pushed on the incoming state.  The clock does not affect the pushed frame,
+    so the two call states agree on their stack maximum.  Inherits
+    `reals_as_rational_cuts` through `evaluate`. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml"
+  "evaluate_call_push_dec_option_le_stack_max"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem evaluate_call_push_dec_option_le_stack_max {width : Nat} [NeZero width]
+    {C : Type} {F : Type} :
+    ∀ (p : WordLangProgHOL (BitVec width)) (args : List (WordLocW width))
+      (sz : Option Nat) (env : Spt (WordLocW width) × Spt (WordLocW width))
+      (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+      (s : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))
+      (t : WordSemStateFiniteExact width C F) (ck : Nat),
+      evaluate p (callEnv args sz (pushEnv env handler (decClock { s with clock := ck }))) =
+        (res, t) →
+      optionLe (callEnv args sz (pushEnv env handler s)).stackMax t.stackMax := by
+  intro p args sz env handler s res t ck h
+  have same :
+      (callEnv args sz (pushEnv env handler (decClock { s with clock := ck }))).stackMax =
+        (callEnv args sz (pushEnv env handler s)).stackMax := by
+    cases handler with
+    | none => simp [callEnv, pushEnv, decClock]
+    | some handler =>
+      obtain ⟨_, _, _, _⟩ := handler
+      simp [callEnv, pushEnv, decClock]
+  have le := evaluate_stack_max_le p
+    (callEnv args sz (pushEnv env handler (decClock { s with clock := ck }))) res t h
+  rwa [same] at le
+
 end WordSemStateFiniteExact
 
 end Flapjack

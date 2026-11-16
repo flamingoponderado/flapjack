@@ -297,3 +297,4 @@ val _ = show "evaluate_clock_const_typed"
      metis_tac[alloc_const,inst_const,mem_store_const,jump_exc_const,share_inst_const]));
 
 val _ = emit "get_code_labels_not_created_typed" "get_code_labels_not_created";
+val _ = emit "evaluate_call_push_dec_option_le_stack_max_typed" "evaluate_call_push_dec_option_le_stack_max";
