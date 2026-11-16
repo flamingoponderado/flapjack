@@ -10479,7 +10479,9 @@ their inferred types. It also reconstructs `tenv_val_exp_ok` and `add_tenvE`
 from the type-soundness source, including the polymorphic module carrier, and
 reconstructs `type_ctor`, `ctMap_ok`, the primitive constructor-map
 invariants, and `consistent_ctMap` with inferred finite-map types, plus the
-store-typing datatype. The
+store-typing datatype. It also captures the original `type_v` rules and the
+store, environment and type-soundness invariant definitions with inferred
+types. The
 environment-relation, REPL, and type-soundness theories are not fetched by this
 probe; regenerate with
 `HOL_PROBE_ONLY=env_rel_init_probeScript.sml`.

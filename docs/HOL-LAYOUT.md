@@ -220,6 +220,7 @@ the cited name occurs in one of the two syntactic forms.
 | `semantics/proofs/namespacePropsScript.sml` | `Flapjack/NamespaceProps.lean` (namespace operation properties) |
 | `semantics/primTypesScript.sml` | `Flapjack/PrimTypesHOL.lean` and `Flapjack/PrimTypesHOL/Types.lean` (primitive declaration program, semantic initialization and declarative type environment) |
 | `semantics/proofs/primSemEnvScript.sml` | `Flapjack/PrimSemEnv.lean` (primitive semantic environment proof) |
+| `semantics/proofs/typeSoundInvariantsScript.sml` | `Flapjack/TypeSoundInvariants.lean` and submodules (source type-soundness invariant) |
 | `compiler/backend/stack_namesScript.sml` | `Flapjack/Compiler/Backend/StackNames.lean` |
 | `compiler/backend/proofs/stack_namesProofScript.sml` | `Flapjack/Compiler/Backend/StackNames/` (`NamesOk.lean` names_ok lemmas, `AsmAdmissibility/` stack_asm_ok, `Proofs/RenameState.lean` rename_state group over the MAP_KEYS rendering in `Flapjack/FiniteMap/MapKeys.lean`, `Proofs/CompCorrect.lean` comp_correct, `Proofs/CompileSemantics.lean` compile_semantics(_alt), `Proofs/MakeInit.lean` make_init_def/make_init_semantics, `Proofs/LabelsCallArgs.lean` stack_names_lab_pres/stack_names_call_args) |
 | `compiler/backend/riscv/export_riscvScript.sml` | `Flapjack/RiscV/CakeArtifactFormat.lean` and `Flapjack/RiscV/ArtifactFormat.lean` (Flapjack formatting infrastructure; returning and non-returning outputs tested against the pinned HOL exporter, source correspondence remains pending) |

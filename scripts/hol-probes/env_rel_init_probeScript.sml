@@ -427,3 +427,8 @@ val probe_consistent_ctMap_def = Define `
       (ExnStamp id IN FDOM ctMap ==> id < st.next_exn_stamp)`;
 val _ = show "consistent_ctMap_replay_typed" probe_consistent_ctMap_def;
 val _ = (print "store_t_replay_typed="; print_thm (TypeBase.axiom_of ``:probe_store_t``); print "\n");
+val _ = show "type_v_rules_typed" typeSoundInvariantsTheory.type_v_rules;
+val _ = show "type_sv_def_typed" typeSoundInvariantsTheory.type_sv_def;
+val _ = show "type_s_def_typed" typeSoundInvariantsTheory.type_s_def;
+val _ = show "type_all_env_def_typed" typeSoundInvariantsTheory.type_all_env_def;
+val _ = show "type_sound_invariant_def_typed" typeSoundInvariantsTheory.type_sound_invariant_def;
