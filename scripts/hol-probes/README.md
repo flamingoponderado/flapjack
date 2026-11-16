@@ -9689,6 +9689,9 @@ The capture is finite regression evidence, not a cross-language equivalence proo
 
 `prim_sem_env_probeScript.sml` captures the original semantic initialization types for `Flapjack/PrimTypesHOL.lean`.
 
+`prim_sem_env_eq_probe.out` replays the original `prim_sem_env_eq` EVAL theorem,
+including its polymorphic FFI and the complete initialized environment.
+
 `cake_evaluate_ffi_props_probeScript.sml` captures the pinned typed evaluator, primitive-application, FFI trace, and oracle-preservation lemmas used by `Flapjack/EvaluateProps.lean`.
 
 `source_to_flat_env_domain_probe.out` records the polymorphic type and four
@@ -10807,12 +10810,12 @@ Lean twin omits as a documented vacuous binder. Regenerate with
 scripts/hol-probes/regenerate.sh`.
 
 `gram_defs_typed_probe.out`, `type_system_defs_typed_probe.out` and
-`semantics_props_defs_typed_probe.out` (5+4+4 rows) capture the reviewed
+`semantics_props_defs_typed_probe.out` (5+6+4 rows) capture
 cakeml semantics rows that earlier probes did not cover (task 189):
 `validMultSym_def`, `validAddSym_def`, `validRelSym_def`, `validListSym_def`,
 `validPrefixSym_def` (gram); the `tenv_abbrev`, `tenv_ctor` and `tenv_val` Type
-abbreviations plus the `type_p` Inductive captured as its generated
-`type_p_rules` (typeSystem); and `extend_with_resource_limit'_def`,
+abbreviations plus the `type_p` and `type_e` inductive rules and
+`type_pe_determ_def` (typeSystem); and `extend_with_resource_limit'_def`,
 `implements'_def`, `implements'_F` and the `[local]` `isPREFIX_IMP_LPREFIX`
 (semanticsProps). Regenerate each with `CAKEML=<cakeml tree>
 HOL4=<HOL tree> HOL_PROBE_ONLY=<probe>_probeScript.sml

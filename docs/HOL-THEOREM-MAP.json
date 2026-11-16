@@ -1,5 +1,36 @@
 [
 {
+  "hol_path": "cakeml/semantics/proofs/primSemEnvScript.sml", "hol_name": "prim_sem_env_eq",
+  "lean_path": "Flapjack/PrimSemEnv.lean", "lean_name": "primSemEnvEq",
+  "statement_status": "reviewed_exact",
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Independent comparison with prim_sem_env_eq_typed confirms the arbitrary FFI state, all state fields and the complete ordered primitive constructor namespace. The proof evaluates the reviewed source declarations; reals_as_rational_cuts is inherited through the evaluator's dependency closure and documented in SOUNDNESS item 8."
+ },
+{
+  "hol_path": "cakeml/semantics/typeSystemScript.sml", "hol_name": "type_e",
+  "lean_path": "Flapjack/TypeSystemHOL/Expressions.lean", "lean_name": "TypeE",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and type_e_typed confirms all expression typing rules and carriers. The local TypeBranches encoding of the handler and match premises is equivalent to the source membership-indexed existential by typeBranches_iff, including duplicate clauses."
+ },
+{
+  "hol_path": "cakeml/semantics/typeSystemScript.sml", "hol_name": "type_e",
+  "lean_path": "Flapjack/TypeSystemHOL/Expressions.lean", "lean_name": "TypeEs",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and type_e_typed confirms the mutually defined expression-list nil and cons rules, their carriers and premises."
+ },
+{
+  "hol_path": "cakeml/semantics/typeSystemScript.sml", "hol_name": "type_e",
+  "lean_path": "Flapjack/TypeSystemHOL/Expressions.lean", "lean_name": "TypeFuns",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and type_e_typed confirms the mutually defined function-list rules, free-variable check, body and tail judgments, lookup condition, and result bindings."
+ },
+{
+  "hol_path": "cakeml/semantics/typeSystemScript.sml", "hol_name": "type_pe_determ_def",
+  "lean_path": "Flapjack/TypeSystemHOL/Declarations.lean", "lean_name": "typePeDeterm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and type_pe_determ_typed confirms the binder order, four typing premises and equality conclusion. Its expression-typing dependency was reviewed against type_e_typed, with typeBranches_iff establishing the source branch premises."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/typeSoundInvariantsScript.sml", "hol_name": "consistent_ctMap_def",
   "lean_path": "Flapjack/TypeSoundInvariants/CtorMap.lean", "lean_name": "consistentCtMap",
   "statement_status": "reviewed_fmap_as_finite_support_parameters",

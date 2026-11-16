@@ -12184,7 +12184,7 @@ run_probe gram_defs_typed_probeScript.sml gram_defs_typed_probe.out \
   "$cake_dir/semantics"
 
 run_probe type_system_defs_typed_probeScript.sml type_system_defs_typed_probe.out \
-  tenv_abbrev_typed tenv_ctor_typed tenv_val_typed type_p_typed \
+  tenv_abbrev_typed tenv_ctor_typed tenv_val_typed type_p_typed type_e_typed type_pe_determ_typed \
   "$cake_dir/semantics/typeSystemScript.sml" \
   "$cake_dir/semantics"
 
@@ -12274,6 +12274,9 @@ run_probe tokens_defs_typed_probeScript.sml tokens_defs_typed_probe.out \
 run_probe prim_types_defs_typed_probeScript.sml prim_types_defs_typed_probe.out \
   add_to_sem_env_def_typed prim_sem_env_def_typed \
   "$cake_dir/semantics/primTypesScript.sml" "$cake_dir/semantics"
+
+run_probe prim_sem_env_eq_probeScript.sml prim_sem_env_eq_probe.out \
+  prim_sem_env_eq_typed "$cake_dir/semantics/proofs/primSemEnvScript.sml" "$cake_dir/semantics/proofs"
 
 run_probe ffi_defs_typed_probeScript.sml ffi_defs_typed_probe.out \
   oracle_function_typed \

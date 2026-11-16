@@ -6,9 +6,8 @@ public import Flapjack.SemanticPrimitivesHOL.Control
 
 @[expose] public section
 
-/-! Prerequisites for declarative declaration typing. The expression judgment
-uses a proved-equivalent branch-list encoding and remains pending full source
-and carrier review. -/
+/-! Prerequisites for declarative declaration typing. The declaration
+judgments remain pending source and carrier review. -/
 namespace Flapjack.TypeSystemHOL
 open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL
 open Flapjack.SemanticPrimitivesHOL
@@ -43,8 +42,8 @@ def buildCtorTenv {α β γ δ ε : Type} (env : TenvAbbrev) :
 def tenvAddTvs (tvs : Nat) (bindings : List (MlString × SemanticT)) : List (MlString × (Nat × SemanticT)) :=
   bindings.map (fun (name, t) => (name, (tvs, t)))
 
-/-- Flapjack infrastructure corresponding to the shape of source pattern and
-expression determinacy. It uses the unreviewed `TypeE` encoding. -/
+/-- Determinacy of the bindings assigned to a pattern and expression. -/
+@[hol "cakeml/semantics/typeSystemScript.sml" "type_pe_determ_def"]
 def typePeDeterm (env : TypeEnv) (localEnv : TenvValExp) (p : Pat) (e : AstHOL.Exp) : Prop :=
   ∀ t₁ bindings₁ t₂ bindings₂,
     TypeP 0 env p t₁ bindings₁ ∧ TypeE env localEnv e t₁ ∧
