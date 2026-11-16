@@ -203,6 +203,7 @@ val _ = show "t_unify_wfs_typed" unifyTheory.t_unify_wfs;
 val _ = show "oc_tvar_db_typed" unifyTheory.oc_tvar_db;
 val _ = show "oc_unit_typed" unifyTheory.oc_unit;
 val _ = show "t_walkstar_eqn_typed" unifyTheory.t_walkstar_eqn;
+val _ = show "t_walkstar_eqn1_typed" unifyTheory.t_walkstar_eqn1;
 
 open walkstarTheory;
 val encode_walk_replay = Q.prove (

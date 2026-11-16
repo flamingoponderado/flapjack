@@ -84,6 +84,19 @@ val deBruijn_subst_convert_replay = Q.prove(
   fs [MAP_MAP_o, EVERY_MEM, MAP_EQ_f]);
 val _ = show "deBruijn_subst_convert_replay_typed" deBruijn_subst_convert_replay;
 
+val db_subst_infer_subst_swap3_replay = Q.prove(
+  `!t tvs s subst. t_wfs s ∧ check_freevars tvs [] t ⇒
+    probe_convert_t (t_walkstar s (infer_deBruijn_subst subst (unconvert_t t))) =
+    deBruijn_subst 0 (MAP (probe_convert_t o t_walkstar s) subst) t`,
+  ho_match_mp_tac unconvert_t_ind >>
+  rw [unconvert_t_def, infer_deBruijn_subst_alt, deBruijn_subst_def,
+      check_freevars_def, probe_convert_t_def, unifyTheory.t_walkstar_eqn1] >-
+    rw [EL_MAP] >>
+  rw [MAP_MAP_o, combinTheory.o_DEF] >>
+  rw [MAP_EQ_f] >> first_x_assum drule >>
+  fs [EVERY_MEM] >> metis_tac []);
+val _ = show "db_subst_infer_subst_swap3_replay_typed" db_subst_infer_subst_swap3_replay;
+
 val check_convert_freevars_replay = Q.prove(
   `!tvs uvs t. check_t tvs uvs t ⇒ (uvs = {}) ⇒ check_freevars tvs [] (probe_convert_t t)`,
   ho_match_mp_tac check_t_ind >>

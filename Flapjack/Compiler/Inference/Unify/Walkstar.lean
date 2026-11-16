@@ -68,5 +68,23 @@ theorem walkstarEqn (s : HolFiniteMapExact Nat InferT) (h : tWfs s) : ∀ t,
     rw [walkstarEq _ h]
     simp [walk, decodeInferT, listWalkstar ts s h, tWalkstar]
 
+/-- The substitution parameter survives the canonical finite-map codec. -/
+theorem holFmapAsFiniteSupportParamWitness_tWalkstarEqn1_s
+    (s : HolFiniteMapExact Nat InferT) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s :=
+  holFmapAsFiniteSupportParamWitness_tVR_subst s key
+
+@[hol "cakeml/compiler/inference/unifyScript.sml" "t_walkstar_eqn1"
+  (fmap_as_finite_support_parameters := [s])]
+theorem tWalkstarEqn1 (s : HolFiniteMapExact Nat InferT) (idx : Nat)
+    (ts : List InferT) (tc : Nat) (h : tWfs s) :
+    tWalkstar s (.varDb idx) = .varDb idx ∧
+      tWalkstar s (.app ts tc) = .app (ts.map (tWalkstar s)) tc := by
+  constructor
+  · simpa [tWalkEqn.2.2] using walkstarEqn s h (.varDb idx)
+  · simpa [tWalkEqn.2.1] using walkstarEqn s h (.app ts tc)
+
 end Flapjack.Compiler.Inference.Unify
 

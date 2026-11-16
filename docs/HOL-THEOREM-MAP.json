@@ -138061,6 +138061,12 @@
   "reviewer": "Compared HOL source and deBruijn_subst_convert_replay_typed: the shared bound and arbitrary inference substitution, empty-uvar guards, both type and list conjuncts, and equality directions agree. The source-defined conversion's unspecified uvar clause is excluded by the original checks on the input types."
 },
 {
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml", "hol_name": "db_subst_infer_subst_swap3",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel/Walkstar.lean", "lean_name": "dbSubstInferSubstSwap3",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared HOL source and db_subst_infer_subst_swap3_replay_typed: the arbitrary declarative type, bound, substitution map and replacement list retain the well-formedness and closed-free-variable conjuncts and full conversion/substitution equality. The canonical finite-map parameter has its codec witness, and normalization is used under its original guard."
+},
+{
   "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
   "hol_name": "unconvert_db_subst",
   "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
@@ -138349,6 +138355,12 @@
   "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar.lean", "lean_name": "walkstarEqn",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
   "reviewer": "Compared the complete typed HOL theorem and source: under well-formedness, all inference-walk cases are retained, including mapping normalization over the entire application list. The canonical map has a codec witness; no off-wfs correspondence is claimed."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_walkstar_eqn1",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar.lean", "lean_name": "tWalkstarEqn1",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared t_walkstar_eqn1_typed and source: the arbitrary substitution, index, type list and type constructor share the original well-formedness premise and both full normalization equations. The canonical substitution has a codec witness; the guarded equation does not claim off-wfs correspondence."
 },
 {
   "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/substScript.sml", "hol_name": "wfs_FEMPTY",
