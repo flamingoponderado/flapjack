@@ -309,6 +309,12 @@
   "reviewer": "Independent typed HOL comparison confirms all four binder types and order, faithful trace and operation carriers, and the full ordered list equality."
  },
 {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "FINITE_BAG_UNION",
+  "lean_path": "Flapjack/Misc/Bag/SubBag.lean", "lean_name": "finiteBagUnionIff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: the union of arbitrary polymorphic bags is finite exactly when both bags are finite."
+},
+{
   "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "FINITE_SUB_BAG",
   "lean_path": "Flapjack/Misc/Bag/SubBag.lean", "lean_name": "finiteSubBag",
   "statement_status": "reviewed_exact",
@@ -138854,6 +138860,24 @@
   "lean_path": "Flapjack/HOL/Unification/TcallUnif.lean", "lean_name": "mlt1BagInsert",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared typed HOL source: for any polymorphic bag, element and relation, finiteBag b implies the original one-step multiset relation from b to insertion of the element."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "WF_mlt1",
+  "lean_path": "Flapjack/Misc/Bag/MultisetOrder/WellFounded.lean", "lean_name": "wfBagMultisetStep",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: well-foundedness of an arbitrary relation alone implies well-foundedness of its one-step finite-bag order. The proof represents finite bags by count-equivalent multisets and uses the relation's well-founded transitive closure without assuming transitivity."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkstarScript.sml", "hol_name": "walkstar_thWF",
+  "lean_path": "Flapjack/HOL/Unification/Walkstar/WellFounded.lean", "lean_name": "walkstarThWF",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared typed HOL source: the same term payload type is used for the substitution and ordering, and wfs implies well-foundedness of the full walkstar relation. The canonical substitution has its codec witness."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "WF_kcocwlR",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Occurs/WorklistWellFounded.lean", "lean_name": "wfKcocwlRModel",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm"],
+  "reviewer": "Compared typed HOL source: cwfs implies well-foundedness of the full source worklist relation, with its original unused n parameter. The relation is unfolded to expose the reviewed canonical sp2fm observation."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "mlt1_def",

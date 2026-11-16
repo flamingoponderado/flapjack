@@ -40,4 +40,21 @@ theorem finiteSubBag {α : Type} (b : Bag α) (hb : finiteBag b) :
         by_cases hx : x = e <;> simp [bagInsert, smaller, hx] <;> omega
       rw [← eq]
       exact finiteBagInsert smaller (ih smaller smallerSub) e
+
+@[hol "HOL/src/bag/bagScript.sml" "FINITE_BAG_UNION"]
+theorem finiteBagUnionIff {α : Type} (a b : Bag α) :
+    finiteBag (bagUnion a b) ↔ finiteBag a ∧ finiteBag b := by
+  constructor
+  · intro h
+    constructor
+    · apply finiteSubBag _ h a
+      intro x n hn
+      change n ≤ a x + b x
+      exact Nat.le_trans hn (Nat.le_add_right _ _)
+    · apply finiteSubBag _ h b
+      intro x n hn
+      change n ≤ a x + b x
+      exact Nat.le_trans hn (Nat.le_add_left _ _)
+  · rintro ⟨ha, hb⟩
+    exact finiteBagUnion a ha b hb
 end Flapjack
