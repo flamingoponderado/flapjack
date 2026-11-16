@@ -138446,5 +138446,23 @@
   "lean_path": "Flapjack/Compiler/Inference/Unify/ComputationalWf/Insert.lean", "lean_name": "cwfsVar2Extend",
   "statement_status": "reviewed_exact",
   "reviewer": "Independent typed source review confirms all four ordered original premises and the full cwfs conclusion for insertion of the distinct fresh variable. The proof derives both encoded-substitution and sparse-tree well-formedness."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "tcvwalk_correct",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/ComputationalWalk/Correctness.lean", "lean_name": "tcvwalkCorrect",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed source review confirms the universal variable, original cwfs premise and equality direction. Under cwfs the source TAILREC equation has the same unique result as the executed partial walker; the total model makes no off-cwfs correspondence claim."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "tcwalk_correct",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/ComputationalWalk/Correctness.lean", "lean_name": "tcwalkCorrect",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed source review confirms both original universal inputs, the cwfs premise and equality direction. The tail-recursive model is uniquely determined by its source equation under that premise."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "tcwalk_EQ_Infer_Tuvar",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/ComputationalWalk/Correctness.lean", "lean_name": "tcwalkEqInferTuvar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed source review confirms both original conjunctive premises and both ordered conclusions: returned-variable domain absence and existence of an input variable. The computational model matches the source under the retained cwfs premise."
 }
 ]
