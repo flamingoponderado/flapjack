@@ -127,6 +127,28 @@ theorem callPushEnv_optionLe_stackMax {width : Nat} [NeZero width] {C : Type} {F
     simp only [pushEnv, wordSemOptionMax_eq, optionLe_max_right] <;>
     exact Or.inl (optionLe_refl _)
 
+/-- Exact HOL `push_call_option_le_stack_max_preserved`
+    (`wordPropsScript.sml:3903-3920`): pushing the call frame and then calling
+    keeps the frame size plus the locals size below the resulting stack
+    maximum, because `stack_max` takes the maximum with exactly that sum. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml"
+  "push_call_option_le_stack_max_preserved"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem pushCall_optionLe_stackMax_preserved {width : Nat} [NeZero width] {C : Type}
+    {F : Type} :
+    ∀ (args : List (WordLocW width)) (sz : Option Nat)
+      (env : Spt (WordLocW width) × Spt (WordLocW width))
+      (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+      (s : WordSemStateFiniteExact width C F),
+      optionLe
+        (wordSemOptionAdd (wordSemStackSize (callEnv args sz (pushEnv env handler s)).stack)
+          (callEnv args sz (pushEnv env handler s)).localsSize)
+        (callEnv args sz (pushEnv env handler s)).stackMax := by
+  intro args sz env handler s
+  rcases handler with _ | ⟨_, _, _, _⟩ <;>
+    simp only [callEnv, pushEnv, wordSemOptionMax_eq, optionLe_max_right] <;>
+    exact Or.inr (optionLe_refl _)
+
 variable {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- The motive of the combined recursion: the stack limit is unchanged and

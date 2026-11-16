@@ -298,3 +298,4 @@ val _ = show "evaluate_clock_const_typed"
 
 val _ = emit "get_code_labels_not_created_typed" "get_code_labels_not_created";
 val _ = emit "evaluate_call_push_dec_option_le_stack_max_typed" "evaluate_call_push_dec_option_le_stack_max";
+val _ = emit "push_call_option_le_stack_max_preserved_typed" "push_call_option_le_stack_max_preserved";
