@@ -84,6 +84,22 @@ val deBruijn_subst_convert_replay = Q.prove(
   fs [MAP_MAP_o, EVERY_MEM, MAP_EQ_f]);
 val _ = show "deBruijn_subst_convert_replay_typed" deBruijn_subst_convert_replay;
 
+val convert_t_subst_replay = Q.prove(
+  `(!t tvs ts'. LENGTH tvs = LENGTH ts' ∧ check_freevars 0 tvs t ⇒
+      probe_convert_t (infer_type_subst (ZIP (tvs,ts')) t) =
+      type_subst (alist_to_fmap (ZIP (tvs, MAP probe_convert_t ts'))) t) ∧
+   (!ts tvs ts'. LENGTH tvs = LENGTH ts' ∧ EVERY (check_freevars 0 tvs) ts ⇒
+      MAP probe_convert_t (MAP (infer_type_subst (ZIP (tvs,ts'))) ts) =
+      MAP (type_subst (alist_to_fmap (ZIP (tvs, MAP probe_convert_t ts')))) ts)`,
+  ho_match_mp_tac t_induction >>
+  rw [check_freevars_def, probe_convert_t_def, type_subst_def, infer_type_subst_alt] >|
+  [full_case_tac >> full_case_tac >> fs [ALOOKUP_FAILS] >>
+   imp_res_tac ALOOKUP_MEM >> REPEAT (pop_assum mp_tac) >> rw [MAP_ZIP] >>
+   REPEAT (pop_assum mp_tac) >> Q.SPEC_TAC (`tvs`,`tvs`) >> induct_on `ts'` >>
+   rw [] >> cases_on `tvs` >> fs [] >> metis_tac [optionTheory.SOME_11],
+   metis_tac []]);
+val _ = show "convert_t_subst_replay_typed" convert_t_subst_replay;
+
 val db_subst_infer_subst_swap3_replay = Q.prove(
   `!t tvs s subst. t_wfs s ∧ check_freevars tvs [] t ⇒
     probe_convert_t (t_walkstar s (infer_deBruijn_subst subst (unconvert_t t))) =

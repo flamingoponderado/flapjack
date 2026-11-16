@@ -138061,6 +138061,13 @@
   "reviewer": "Compared HOL source and deBruijn_subst_convert_replay_typed: the shared bound and arbitrary inference substitution, empty-uvar guards, both type and list conjuncts, and equality directions agree. The source-defined conversion's unspecified uvar clause is excluded by the original checks on the input types."
 },
 {
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml", "hol_name": "convert_t_subst",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel/NamedSubst.lean", "lean_name": "convertTSubst",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.alistToFmap"],
+  "reviewer": "Compared HOL source and convert_t_subst_replay_typed: the two conjuncts independently quantify the declarative type or list, name list and inference-type list, preserving equal-length and free-variable checks and the complete substitution equalities. The canonical alist-to-finite-map producer retains first-match behavior, including duplicate names, and is separately reviewed."
+},
+{
   "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml", "hol_name": "db_subst_infer_subst_swap3",
   "lean_path": "Flapjack/Compiler/Inference/EnvRel/Walkstar.lean", "lean_name": "dbSubstInferSubstSwap3",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
