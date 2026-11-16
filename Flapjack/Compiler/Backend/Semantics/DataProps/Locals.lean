@@ -112,4 +112,30 @@ theorem sptInsert_of_localsOk {α : Type} (source target : Spt α) (key : Nat)
     rw [sptLookup_sptInsert_ne key other value target hkey]
     exact included other found_value found
 
+/-- Exact HOL `cut_state_opt_locals_ok`: when the locals of the smaller state
+    are included in the larger locals, the narrow cut of the larger locals
+    succeeds, agrees on its locals with the cut of the smaller state, and
+    those locals still include the smaller cut's locals. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "cut_state_opt_locals_ok"]
+theorem cutStateOpt_localsOk {C F : Type} (names : Option NumSet) (state : State C F)
+    (locals : Spt Value) (next : State C F)
+    (premise : localsOk state.locals locals ∧ cutStateOpt names state = some next) :
+    ∃ locals', cutStateOpt names { state with locals := locals } =
+        some { next with locals := locals' } ∧ localsOk next.locals locals' := by
+  obtain ⟨included, cut⟩ := premise
+  cases names with
+  | none =>
+    simp only [cutStateOpt, Option.some.injEq] at cut
+    subst next
+    exact ⟨locals, by simp [cutStateOpt], included⟩
+  | some names =>
+    simp only [cutStateOpt, cutState] at cut ⊢
+    cases found : cutEnv names state.locals with
+    | none => simp [found] at cut
+    | some env =>
+      simp [found] at cut
+      subst next
+      have targetCut := cutEnv_of_subspt names state.locals locals env included found
+      exact ⟨env, by simp [targetCut], localsOk_refl env⟩
+
 end Flapjack.Compiler.Backend.DataProps

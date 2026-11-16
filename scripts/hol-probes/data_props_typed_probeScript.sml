@@ -200,3 +200,15 @@ val _ = show "cut_cc_co_typed"
 val _ = emit "do_app_cc_co_only_diff_rval_typed" "do_app_cc_co_only_diff_rval";
 val _ = emit "do_app_cc_co_only_diff_rerr_typed" "do_app_cc_co_only_diff_rerr";
 val _ = emit "v_to_list_SOME_NIL_IFF_typed" "v_to_list_SOME_NIL_IFF";
+val _ = emit "locals_ok_cut_env_typed" "locals_ok_cut_env";
+val _ = show "cut_state_opt_locals_ok_typed"
+  (prove(``!names_opt (s :('c,'ffi) dataSem$state) (l :v sptree$num_map) (s1 :('c,'ffi) dataSem$state).
+      locals_ok s.locals l /\ cut_state_opt names_opt s = SOME s1 ==>
+      ?l'. cut_state_opt names_opt (s with locals := l) = SOME (s1 with locals := l') /\
+           locals_ok s1.locals l'``,
+    Cases_on `names_opt` \\ rw[dataSemTheory.cut_state_opt_def, dataSemTheory.cut_state_def]
+    >- (qexists_tac `l` \\ fs[dataSemTheory.state_component_equality])
+    \\ gvs[AllCaseEqs()]
+    \\ rename1 `cut_env nm s.locals = SOME env`
+    \\ drule_all locals_ok_cut_env \\ rw[]
+    \\ qexists_tac `env` \\ fs[dataSemTheory.state_component_equality, locals_ok_refl]));
