@@ -138898,6 +138898,42 @@
   "reviewer": "Compared typed HOL source: the same term payload type is used for the substitution and ordering, and wfs implies well-foundedness of the full walkstar relation. The canonical substitution has its codec witness."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "star_kwork_def",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/WorklistMeasure.lean", "lean_name": "starKwork",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: the empty continuation has an empty bag, CONSk contributes its entire item bag, and all other frame constructors preserve the remaining bag."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "star_workbag_def",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/WorklistMeasure.lean", "lean_name": "starWorkbag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: the ready branch uses the continuation bag and the other branch unions it with the current items' bag."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "FINITE_star_kwork",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/WorklistMeasure.lean", "lean_name": "finiteStarKwork",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: every continuation work bag is finite without additional premises."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "FINITE_star_workbag",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/WorklistMeasure.lean", "lean_name": "finiteStarWorkbag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: every ready flag, item list, and continuation gives a finite work bag without additional premises."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "isCONSk_def",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/WorklistMeasure.lean", "lean_name": "isConsK",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: the Boolean test recognizes exactly the CONSk continuation constructor and rejects the other three constructors."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "WF_kcwalkstarwlR",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/WorklistWellFounded.lean", "lean_name": "wfKcwalkstarwlRModel",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm"],
+  "reviewer": "Compared typed HOL source: the original cwfs guard implies well-foundedness of the full four-level normalization worklist relation. The equivalent map-parameterized relation exposes the reviewed canonical sp2fm observation."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "WF_kcocwlR",
   "lean_path": "Flapjack/Compiler/Inference/Unify/Occurs/WorklistWellFounded.lean", "lean_name": "wfKcocwlRModel",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm"],
