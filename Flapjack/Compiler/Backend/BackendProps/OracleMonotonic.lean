@@ -57,6 +57,53 @@ theorem oracleMonotonic_disjointInit {A B : Type} (f : A → Set B) (r : B → B
   intro x hx hy
   exact h.2 x (h.1.2 i x x hx hy)
 
+/-- Exact HOL `oracle_monotonic_step` (`backendPropsScript.sml:111`): the
+    definition's first conjunct as a standalone step fact, with HOL's
+    conjunction premise kept in source order. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "oracle_monotonic_step"]
+theorem oracleMonotonic_step {A B : Type} (f : A → Set B) (r : B → B → Prop) (st : Set B)
+    (co : Nat → A) :
+    oracleMonotonic f r st co →
+      ∀ i j x y, i < j ∧ x ∈ f (co i) ∧ y ∈ f (co j) → r x y := by
+  intro h i j x y premises
+  exact h.1 i j x y premises.1 premises.2.1 premises.2.2
+
+/-- Exact HOL `oracle_monotonic_init` (`backendPropsScript.sml:112`): the
+    definition's second conjunct as a standalone fact. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "oracle_monotonic_init"]
+theorem oracleMonotonic_init {A B : Type} (f : A → Set B) (r : B → B → Prop) (st : Set B)
+    (co : Nat → A) :
+    oracleMonotonic f r st co →
+      ∀ i x y, x ∈ st ∧ y ∈ f (co i) → r x y := by
+  intro h i x y premises
+  exact h.2 i x y premises.1 premises.2
+
+/-- Exact HOL `oracle_monotonic_step2` (`backendPropsScript.sml:114`): the step
+    fact with HOL's premise order `x ∈ f (orac i) ∧ y ∈ f (orac j) ∧ i < j`. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "oracle_monotonic_step2"]
+theorem oracleMonotonic_step2 {A B : Type} (f : A → Set B) (r : B → B → Prop) (st : Set B)
+    (co : Nat → A) :
+    oracleMonotonic f r st co →
+      ∀ i j x y, x ∈ f (co i) ∧ y ∈ f (co j) ∧ i < j → r x y := by
+  intro h i j x y premises
+  exact h.1 i j x y premises.2.2 premises.1 premises.2.1
+
+/-- Exact HOL `oracle_monotonic_SND_syntax_to_full`
+    (`backendPropsScript.sml:267`): both conjuncts of the source theorem.  HOL's
+    boolean equality of the two `oracle_monotonic` applications is Lean equality
+    of the two propositions, and HOL's `I syntax_to_full_oracle I` is
+    `syntaxToFullOracle id`; both sides reduce to the same proposition. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml"
+  "oracle_monotonic_SND_syntax_to_full"]
+theorem oracleMonotonic_SND_syntaxToFull {Program Config B : Type}
+    (f : Program → Set B) (r : B → B → Prop) (st : Set B)
+    (mk : (Nat → Program) → Nat → Config) (progs : Nat → Program)
+    {A D E B' : Type} (a : E → Set B') (b : D → E) (c : A → D) :
+    (oracleMonotonic (f ∘ Prod.snd) r st (syntaxToFullOracle mk progs) ↔
+      oracleMonotonic (f ∘ Prod.snd) r st (syntaxToFullOracle id progs)) ∧
+    oracleMonotonic (a ∘ b ∘ c) = oracleMonotonic ((a ∘ b) ∘ c) := by
+  exact ⟨⟨fun h => h, fun h => h⟩, rfl⟩
+
 /-- Each entry's next compiler state equals the next oracle entry's state. -/
 @[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "is_state_oracle_def"]
 def isStateOracle {S C P Q : Type} (compile : S → P → S × Q)

@@ -21,3 +21,7 @@ val _ = show_thm "syntax_to_full_oracle_o_assoc_typed=" backendPropsTheory.synta
 val _ = show_thm "FST_add_state_co_0_typed=" backendPropsTheory.FST_add_state_co_0;
 val _ = show_thm "is_state_oracle_shift_imp_typed=" backendPropsTheory.is_state_oracle_shift_imp;
 val _ = show_thm "is_state_oracle_add_state_co_typed=" backendPropsTheory.is_state_oracle_add_state_co;
+val _ = show_thm "oracle_monotonic_step_typed=" backendPropsTheory.oracle_monotonic_step;
+val _ = show_thm "oracle_monotonic_init_typed=" backendPropsTheory.oracle_monotonic_init;
+val _ = show_thm "oracle_monotonic_step2_typed=" backendPropsTheory.oracle_monotonic_step2;
+val _ = show_thm "oracle_monotonic_SND_syntax_to_full_typed=" backendPropsTheory.oracle_monotonic_SND_syntax_to_full;
