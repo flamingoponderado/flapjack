@@ -78,6 +78,13 @@ val _ = show "t_vwalk_eqn_typed" unifyTheory.t_vwalk_eqn;
 
 (* Replay the local theorem, which is not exported by unifyTheory. *)
 open unifyTheory walkTheory substTheory finite_mapTheory;
+val encode_pair_cases_replay = Q.prove (
+  `!t t1 t2.
+    encode_infer_t t = Pair t1 t2 ==>
+    (t1 = Const Tapp_tag) /\
+    (?tc ts. t2 = Pair (Const (TC_tag tc)) (encode_infer_ts ts))`,
+  Cases >> rw [encode_infer_t_def] >> PROVE_TAC[]);
+val _ = show "encode_pair_cases_replay_typed" encode_pair_cases_replay;
 val encode_vwalk_replay = Q.prove (
   `!s. t_wfs s ==> !u. vwalk (encode_infer_t o_f s) u = encode_infer_t (t_vwalk s u)`,
   NTAC 2 STRIP_TAC >>

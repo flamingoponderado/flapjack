@@ -103,4 +103,16 @@ theorem encodeEqVar (n : Nat) (t : InferT) :
       (encodeInferT t = Term.var n ↔ t = .uvar n) := by
   constructor <;> cases t <;> simp [encodeInferT, eq_comm]
 
+@[hol "cakeml/compiler/inference/unifyScript.sml" "encode_pair_cases"]
+theorem encodePairCases (t : InferT) (t1 t2 : Term Atom)
+    (h : encodeInferT t = .pair t1 t2) :
+    t1 = .const .tappTag ∧ ∃ tc ts,
+      t2 = .pair (.const (.tcTag tc)) (encodeInferTs ts) := by
+  cases t with
+  | varDb n => simp [encodeInferT] at h
+  | uvar n => simp [encodeInferT] at h
+  | app ts tc =>
+    simp only [encodeInferT, Term.pair.injEq] at h
+    exact ⟨h.1.symm, tc, ts, h.2.symm⟩
+
 end Flapjack.Compiler.Inference.Unify
