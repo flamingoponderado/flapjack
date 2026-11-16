@@ -3813,6 +3813,7 @@ import Flapjack.HOL.Unification.Walkstar.Decrease
 import Flapjack.HOL.Unification.UnifDef.WellFounded
 import Flapjack.HOL.Unification.UnifDef.Tunify
 import Flapjack.Compiler.Inference.Unify.Occurs.Encoding
+import Flapjack.Compiler.Inference.Unify.Occurs.WorklistDecrease
 import Flapjack.Compiler.Inference.Unify.Extension
 import Flapjack.Compiler.Inference.Unify.Unification
 import Flapjack.Compiler.Inference.Unify.EncodingInvariant
