@@ -31,6 +31,29 @@ theorem oracleMonotonic_subset {α β γ : Type} (small large : Set α)
   · intro i x y hx hy
     exact ordered.2 i x y (subsets.1 hx) (subsets.2 i hy)
 
+/-- Exact HOL `oracle_monotonic_shift_subset` (`backendPropsScript.sml:130`):
+    shifting both the initial set and every observed set by a fixed offset
+    preserves monotonicity, with HOL's single conjunction premise and its
+    independent oracle-entry types `α` (shifted) and `β` (original). -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "oracle_monotonic_shift_subset"]
+theorem oracleMonotonic_shiftSubset {α β : Type} (st' : Set Nat) (i : Nat) (st : Set Nat)
+    (f' : α → Set Nat) (co' : Nat → α) (f : β → Set Nat) (co : Nat → β) :
+    (st' ⊆ Nat.add i '' st ∪ Set.Iio i ∧
+      ∀ n, f' (co' n) ⊆ Nat.add i '' f (co n)) →
+      oracleMonotonic f (· < ·) st co → oracleMonotonic f' (· < ·) st' co' := by
+  intro subsets ordered
+  constructor
+  · intro j k x y lt hx hy
+    obtain ⟨x₀, hx₀, rfl⟩ := subsets.2 j hx
+    obtain ⟨y₀, hy₀, rfl⟩ := subsets.2 k hy
+    exact Nat.add_lt_add_left (ordered.1 j k x₀ y₀ lt hx₀ hy₀) i
+  · intro j x y hx hy
+    obtain ⟨y₀, hy₀, rfl⟩ := subsets.2 j hy
+    rcases subsets.1 hx with ⟨x₀, hx₀, rfl⟩ | hxlt
+    · exact Nat.add_lt_add_left (ordered.2 j x₀ y₀ hx₀ hy₀) i
+    · have small : x < i := hxlt
+      exact Nat.lt_of_lt_of_le small (Nat.le_add_right i y₀)
+
 /-- Shifting a monotonic oracle preserves its ordering for an initial set
 contained in the previous entry and the original initial set. -/
 @[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "oracle_monotonic_shift_seq"]
@@ -170,6 +193,26 @@ theorem oracleMonotonic_stateWithInv {S C P Q : Type}
     have ybound := (stage i).2.2 y ymem
     have middle := monotone 0 i (Nat.zero_le i)
     omega
+
+/-- Exact HOL `is_state_oracle_shift` (`backendPropsScript.sml:179`): the state
+    oracle condition splits at the first entry, so it holds for the whole
+    oracle exactly when it holds for the one-step shift and at entry one. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "is_state_oracle_shift"]
+theorem isStateOracle_shift {S C P Q : Type} (compile : S → P → S × Q)
+    (co : Nat → (S × C) × P) :
+    isStateOracle compile co ↔
+      (isStateOracle compile (Flapjack.holShiftSeq 1 co) ∧
+        (co 1).1.1 = (compile (co 0).1.1 (co 0).2).1) := by
+  constructor
+  · intro h
+    refine ⟨?_, h 0⟩
+    intro n
+    simpa [Flapjack.holShiftSeq] using h (n + 1)
+  · intro ⟨shifted, base⟩ n
+    cases n with
+    | zero => exact base
+    | succ n =>
+      simpa [Flapjack.holShiftSeq] using shifted n
 
 /-- Exact HOL `is_state_oracle_shift_imp`: shifting the oracle preserves the
 state-oracle condition. -/
