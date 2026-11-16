@@ -9,6 +9,67 @@ public import Flapjack.TypeSystemHOL.Declarations
 namespace Flapjack.Compiler.Inference.EnvRel
 open Flapjack.NamespaceHOL Flapjack.TypeSystemHOL Flapjack.Compiler.Inference.InferProps
 
+mutual
+/-- Inference-to-declarative conversion. HOL specifies only the de Bruijn and
+    application clauses; the unification-variable case is an arbitrary value. -/
+noncomputable def convertT : InferT → SemanticT
+  | .varDb n => .varDb n
+  | .app ts tc => .app (convertTList ts) tc
+  | .uvar _ => by
+      letI : Nonempty SemanticT := ⟨.varDb 0⟩
+      exact Flapjack.holArb SemanticT
+termination_by t => sizeOf t
+
+/-- Structural list recursion for the source MAP clause. -/
+noncomputable def convertTList : List InferT → List SemanticT
+  | [] => []
+  | t :: ts => convertT t :: convertTList ts
+termination_by ts => sizeOf ts
+end
+
+private theorem convertTListMap (ts : List InferT) : convertTList ts = ts.map convertT := by
+  induction ts with
+  | nil => simp [convertTList]
+  | cons t ts ih => simp [convertTList, ih]
+
+/-- The complete source equations; HOL imposes no unification-variable clause. -/
+@[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "convert_t_def"]
+theorem convertTEqn :
+    (∀ n, convertT (.varDb n) = .varDb n) ∧
+    (∀ ts tc, convertT (.app ts tc) = .app (ts.map convertT) tc) := by
+  constructor
+  · intro n; simp [convertT]
+  · intro ts tc; simp [convertT, convertTListMap]
+
+mutual
+/-- Structural induction for closed declarative type conversion. -/
+private theorem convertUnconvertType (t : SemanticT) (n : Nat)
+    (h : checkFreevars n [] t = true) : convertT (unconvertT t) = t := by
+  cases t with
+  | var name => simp [checkFreevars] at h
+  | varDb k => simp [unconvertT, convertT]
+  | app ts tc =>
+    have hl : checkFreevarsList n [] ts = true := by simpa [checkFreevars] using h
+    simp [unconvertT, convertT, convertUnconvertList ts n hl]
+termination_by sizeOf t
+
+/-- List induction for closed declarative type conversion. -/
+private theorem convertUnconvertList (ts : List SemanticT) (n : Nat)
+    (h : checkFreevarsList n [] ts = true) : convertTList (unconvertTList ts) = ts := by
+  cases ts with
+  | nil => simp [convertTList, unconvertTList]
+  | cons t ts =>
+    simp only [checkFreevarsList, Bool.and_eq_true] at h
+    simp [unconvertTList, convertTList, convertUnconvertType t n h.1,
+      convertUnconvertList ts n h.2]
+termination_by sizeOf ts
+end
+
+@[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "check_freevars_empty_convert_unconvert_id"]
+theorem checkFreevarsEmptyConvertUnconvertId (t : SemanticT) (n : Nat)
+    (h : checkFreevars n [] t = true) : convertT (unconvertT t) = t :=
+  convertUnconvertType t n h
+
 @[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "tenv_to_ienv_def"]
 noncomputable def tenvToIenv (env : TypeEnv) : Infer.Env :=
   ⟨nsMap (fun entry => (entry.1, unconvertT entry.2)) env.v, env.c, env.t⟩

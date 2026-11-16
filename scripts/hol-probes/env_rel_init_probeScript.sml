@@ -45,6 +45,21 @@ val check_freevars_to_check_t_replay = Q.prove(
   fs [EVERY_MAP, EVERY_MEM]);
 val _ = show "check_freevars_to_check_t_replay_typed" check_freevars_to_check_t_replay;
 
+val probe_convert_t_def = tDefine "probe_convert_t" `
+  (probe_convert_t (Infer_Tvar_db n) = Tvar_db n) ∧
+  (probe_convert_t (Infer_Tapp ts tc) = Tapp (MAP probe_convert_t ts) tc)`
+  (WF_REL_TAC `measure infer_t_size` >> rw [] >>
+   induct_on `ts` >> rw [infer_tTheory.infer_t_size_def] >> res_tac >> decide_tac);
+val _ = show "convert_t_replay_typed" probe_convert_t_def;
+
+val check_freevars_empty_convert_unconvert_id_replay = Q.prove(
+  `!t. check_freevars n [] t ⇒ probe_convert_t (unconvert_t t) = t`,
+  ho_match_mp_tac unconvert_t_ind >>
+  rw [] >> fs [unconvert_t_def, probe_convert_t_def, check_freevars_def] >>
+  fs [MAP_MAP_o, MAP_EQ_ID, EVERY_MEM]);
+val _ = show "check_freevars_empty_convert_unconvert_id_replay_typed"
+  check_freevars_empty_convert_unconvert_id_replay;
+
 val infer_type_subst_nil_replay = Q.prove(
   `(∀t. check_freevars n [] t ⇒ infer_type_subst [] t = unconvert_t t) ∧
    (∀ts. EVERY (check_freevars n []) ts ⇒ MAP (infer_type_subst []) ts = MAP unconvert_t ts)`,

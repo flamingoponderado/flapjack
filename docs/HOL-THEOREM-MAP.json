@@ -137989,6 +137989,22 @@
   "reviewer": "Compared HOL source and check_freevars_to_check_t_replay_typed: the full closed-free-variable premise implies the empty-uvar inference check at the same bound. The source polymorphic z binder is vacuous in both premise and conclusion and is omitted."
 },
 {
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
+  "hol_name": "convert_t_def",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
+  "lean_name": "convertTEqn",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and convert_t_replay_typed: both de Bruijn and application equations are retained in full, including the list MAP clause. The source supplies no unification-variable equation; the untagged Lean conversion chooses an arbitrary value there and does not claim its off-clause behavior matches HOL."
+},
+{
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
+  "hol_name": "check_freevars_empty_convert_unconvert_id",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
+  "lean_name": "checkFreevarsEmptyConvertUnconvertId",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and check_freevars_empty_convert_unconvert_id_replay_typed: the arbitrary bound and closed-free-variable premise imply the exact declarative type roundtrip. The premise excludes named variables and the conversion only uses the specified source clauses."
+},
+{
     "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
     "hol_name": "tenv_to_ienv_def",
     "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
