@@ -138005,6 +138005,30 @@
   "reviewer": "Compared HOL source and check_freevars_empty_convert_unconvert_id_replay_typed: the arbitrary bound and closed-free-variable premise imply the exact declarative type roundtrip. The premise excludes named variables and the conversion only uses the specified source clauses."
 },
 {
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
+  "hol_name": "check_convert_freevars",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
+  "lean_name": "checkConvertFreevars",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and check_convert_freevars_replay_typed: the arbitrary bound, set, and inference type retain both curried premises, including equality of the set to empty, and the complete closed-free-variable conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
+  "hol_name": "check_t_to_check_freevars",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
+  "lean_name": "checkTToCheckFreevars",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and check_t_to_check_freevars_replay_typed: the empty-uvar inference check implies the full closed-free-variable check for the converted type. The source num-set binder n is unused in premise and conclusion and is omitted."
+},
+{
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
+  "hol_name": "check_t_empty_unconvert_convert_id",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
+  "lean_name": "checkTEmptyUnconvertConvertId",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and check_t_empty_unconvert_convert_id_replay_typed: for arbitrary type and bound the empty-uvar check implies the complete unconvert-after-convert identity. The original guard excludes the unspecified conversion case."
+},
+{
     "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
     "hol_name": "tenv_to_ienv_def",
     "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",

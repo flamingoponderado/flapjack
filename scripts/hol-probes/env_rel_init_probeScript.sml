@@ -52,6 +52,28 @@ val probe_convert_t_def = tDefine "probe_convert_t" `
    induct_on `ts` >> rw [infer_tTheory.infer_t_size_def] >> res_tac >> decide_tac);
 val _ = show "convert_t_replay_typed" probe_convert_t_def;
 
+val check_convert_freevars_replay = Q.prove(
+  `!tvs uvs t. check_t tvs uvs t ⇒ (uvs = {}) ⇒ check_freevars tvs [] (probe_convert_t t)`,
+  ho_match_mp_tac check_t_ind >>
+  rw [check_freevars_def, check_t_def, probe_convert_t_def] >>
+  fs [EVERY_MEM, MEM_MAP] >> metis_tac []);
+val _ = show "check_convert_freevars_replay_typed" check_convert_freevars_replay;
+
+val check_t_to_check_freevars_replay = Q.prove(
+  `!tvs (n:num set) t. check_t tvs {} t ⇒ check_freevars tvs [] (probe_convert_t t)`,
+  ho_match_mp_tac check_t_ind >>
+  rw [check_t_def, check_freevars_def, probe_convert_t_def, EVERY_MAP] >>
+  fs [EVERY_MEM]);
+val _ = show "check_t_to_check_freevars_replay_typed" check_t_to_check_freevars_replay;
+
+val check_t_empty_unconvert_convert_id_replay = Q.prove(
+  `!t n. check_t n {} t ⇒ unconvert_t (probe_convert_t t) = t`,
+  ho_match_mp_tac (fetch "-" "probe_convert_t_ind") >>
+  rw [] >> fs [unconvert_t_def, probe_convert_t_def, check_t_def] >>
+  fs [MAP_MAP_o, MAP_EQ_ID, EVERY_MEM] >> metis_tac []);
+val _ = show "check_t_empty_unconvert_convert_id_replay_typed"
+  check_t_empty_unconvert_convert_id_replay;
+
 val check_freevars_empty_convert_unconvert_id_replay = Q.prove(
   `!t. check_freevars n [] t ⇒ probe_convert_t (unconvert_t t) = t`,
   ho_match_mp_tac unconvert_t_ind >>

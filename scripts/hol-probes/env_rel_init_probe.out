@@ -7,6 +7,9 @@ check_freevars_to_check_t_replay_typed=∀(t :t) (z :α). check_freevars (n :num
 Saved definition ____ "probe_convert_t_def"
 Saved induction _____ "probe_convert_t_ind"
 convert_t_replay_typed=(∀(n :num). probe_convert_t (Infer_Tvar_db n) = Tvar_db n) ∧ ∀(ts :infer_t list) (tc :num). probe_convert_t (Infer_Tapp ts tc) = Tapp (MAP (λ(a :infer_t). probe_convert_t a) ts) tc
+check_convert_freevars_replay_typed=∀(tvs :num) (uvs :num -> bool) (t :infer_t). check_t tvs uvs t ⇒ uvs = (∅ :num -> bool) ⇒ check_freevars tvs ([] :mlstring list) (probe_convert_t t)
+check_t_to_check_freevars_replay_typed=∀(tvs :num) (n :num -> bool) (t :infer_t). check_t tvs (∅ :num -> bool) t ⇒ check_freevars tvs ([] :mlstring list) (probe_convert_t t)
+check_t_empty_unconvert_convert_id_replay_typed=∀(t :infer_t) (n :num). check_t n (∅ :num -> bool) t ⇒ unconvert_t (probe_convert_t t) = t
 check_freevars_empty_convert_unconvert_id_replay_typed=∀(t :t). check_freevars (n :num) ([] :mlstring list) t ⇒ probe_convert_t (unconvert_t t) = t
 infer_type_subst_nil_replay_typed=(∀(t :t). check_freevars (n :num) ([] :mlstring list) t ⇒ infer_type_subst ([] :(mlstring # infer_t) list) t = unconvert_t t) ∧ ∀(ts :t list). EVERY (check_freevars n ([] :mlstring list)) ts ⇒ MAP (infer_type_subst ([] :(mlstring # infer_t) list)) ts = MAP unconvert_t ts
 lookup_varE_empty_replay_typed=∀(x :(mlstring, mlstring) id). lookup_varE x Empty = (NONE :(num # t) option)

@@ -70,6 +70,58 @@ theorem checkFreevarsEmptyConvertUnconvertId (t : SemanticT) (n : Nat)
     (h : checkFreevars n [] t = true) : convertT (unconvertT t) = t :=
   convertUnconvertType t n h
 
+mutual
+/-- Structural induction for closed inference-type conversion. -/
+private theorem closedConvertType (t : InferT) (n : Nat)
+    (h : Infer.checkT n (fun _ => False) t) :
+    checkFreevars n [] (convertT t) = true ∧ unconvertT (convertT t) = t := by
+  cases t with
+  | uvar v => simp at h
+  | varDb v =>
+    constructor
+    · simpa [convertT, checkFreevars] using h
+    · simp [convertT, unconvertT]
+  | app ts tc =>
+    have hl : Infer.checkTList n (fun _ => False) ts := (Infer.checkT_app n tc _ ts).mp h
+    have result := closedConvertList ts n hl
+    constructor
+    · simpa [convertT, checkFreevars] using result.1
+    · simpa [convertT, unconvertT] using congrArg (fun xs => InferT.app xs tc) result.2
+termination_by sizeOf t
+
+/-- List induction for the closed inference-type conversion. -/
+private theorem closedConvertList (ts : List InferT) (n : Nat)
+    (h : Infer.checkTList n (fun _ => False) ts) :
+    checkFreevarsList n [] (convertTList ts) = true ∧
+      unconvertTList (convertTList ts) = ts := by
+  cases ts with
+  | nil => simp [convertTList, checkFreevarsList, unconvertTList]
+  | cons t ts =>
+    have hs := (Infer.checkTList_cons n _ t ts).mp h
+    have first := closedConvertType t n hs.1
+    have rest := closedConvertList ts n hs.2
+    simp [convertTList, checkFreevarsList, unconvertTList, first.1, first.2, rest.1, rest.2]
+termination_by sizeOf ts
+end
+
+/-- The source has an unused universally quantified set `n`; it is omitted. -/
+@[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "check_t_to_check_freevars"]
+theorem checkTToCheckFreevars (tvs : Nat) (t : InferT)
+    (h : Infer.checkT tvs (fun _ => False) t) : checkFreevars tvs [] (convertT t) = true :=
+  (closedConvertType t tvs h).1
+
+@[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "check_convert_freevars"]
+theorem checkConvertFreevars (tvs : Nat) (uvs : Nat → Prop) (t : InferT)
+    (checked : Infer.checkT tvs uvs t) (empty : uvs = (fun _ => False)) :
+    checkFreevars tvs [] (convertT t) = true := by
+  subst uvs
+  exact (closedConvertType t tvs checked).1
+
+@[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "check_t_empty_unconvert_convert_id"]
+theorem checkTEmptyUnconvertConvertId (t : InferT) (n : Nat)
+    (h : Infer.checkT n (fun _ => False) t) : unconvertT (convertT t) = t :=
+  (closedConvertType t n h).2
+
 @[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "tenv_to_ienv_def"]
 noncomputable def tenvToIenv (env : TypeEnv) : Infer.Env :=
   ⟨nsMap (fun entry => (entry.1, unconvertT entry.2)) env.v, env.c, env.t⟩
