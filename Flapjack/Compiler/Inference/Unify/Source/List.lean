@@ -14,7 +14,9 @@ open Flapjack.HOL.Unification Flapjack.HOL.Transfer.Fmsp
 noncomputable def cunifylModel (s : Spt InferT) (xs ys : List InferT) : Option (Spt InferT) :=
   (sunifyModel (sptMap encodeInferT s) (encodeInferTs xs) (encodeInferTs ys)).map (sptMap decodeInferT)
 
-private theorem listMap (s : Spt InferT) (xs ys : List InferT) (hw : cwfs s) :
+/-- Project the source list model to the inference map model; this is
+    infrastructure for proving the full source equations. -/
+theorem cunifylModelMap (s : Spt InferT) (xs ys : List InferT) (hw : cwfs s) :
     (cunifylModel s xs ys).map sp2fm = tsUnifyModel (sp2fm s) xs ys := by
   have hws : tWfs (sp2fm s) := by
     change wfs (encodeSubst (sp2fm s))
@@ -30,7 +32,9 @@ private theorem listMap (s : Spt InferT) (xs ys : List InferT) (hw : cwfs s) :
     simp only [Option.map_some, Option.some.injEq]
     exact sparseDecode result
 
-private theorem listWf (s out : Spt InferT) (xs ys : List InferT)
+/-- Every successful source list result is a well-formed tree. This is a
+    Lean helper for comparing sparse-tree representations. -/
+theorem cunifylModelTreeWf (s out : Spt InferT) (xs ys : List InferT)
     (h : cunifylModel s xs ys = some out) : sptWf out = true := by
   unfold cunifylModel sunifyModel at h
   cases hr : specifiedUnify (sp2fm (sptMap encodeInferT s)) (encodeInferTs xs) (encodeInferTs ys) with
@@ -41,7 +45,9 @@ private theorem listWf (s out : Spt InferT) (xs ys : List InferT)
     rw [sptWfMap]
     exact wfFm2sp _
 
-private theorem optionTreesEq (left right : Option (Spt InferT))
+/-- Well-formed optional trees agree when their finite-map projections agree.
+    This is Lean representation infrastructure, with no separate HOL claim. -/
+theorem optionTreesEq (left right : Option (Spt InferT))
     (lm : ∀ t, left = some t → sptWf t = true)
     (rm : ∀ t, right = some t → sptWf t = true)
     (h : left.map sp2fm = right.map sp2fm) : left = right := by
@@ -65,38 +71,38 @@ theorem cunifylThmModel (s : Spt InferT) (xs ys : List InferT) (hw : cwfs s) :
   | nil =>
     cases ys with
     | nil =>
-      apply optionTreesEq _ _ (fun t => listWf s t [] []) ?_ ?_
+      apply optionTreesEq _ _ (fun t => cunifylModelTreeWf s t [] []) ?_ ?_
       · intro t ht; cases ht; exact hw.2
-      · simpa [tsUnifyModel] using listMap s [] [] hw
+      · simpa [tsUnifyModel] using cunifylModelMap s [] [] hw
     | cons y yt =>
-      apply optionTreesEq _ _ (fun t => listWf s t [] (y :: yt)) ?_ ?_
+      apply optionTreesEq _ _ (fun t => cunifylModelTreeWf s t [] (y :: yt)) ?_ ?_
       · intro t ht; contradiction
-      · simpa [tsUnifyModel] using listMap s [] (y :: yt) hw
+      · simpa [tsUnifyModel] using cunifylModelMap s [] (y :: yt) hw
   | cons x xt =>
     cases ys with
     | nil =>
-      apply optionTreesEq _ _ (fun t => listWf s t (x :: xt) []) ?_ ?_
+      apply optionTreesEq _ _ (fun t => cunifylModelTreeWf s t (x :: xt) []) ?_ ?_
       · intro t ht; contradiction
-      · simpa [tsUnifyModel] using listMap s (x :: xt) [] hw
+      · simpa [tsUnifyModel] using cunifylModelMap s (x :: xt) [] hw
     | cons y yt =>
       cases head : cunifyModel s x y with
       | none =>
         have hm := cunifyModelMap s x y hw
         rw [head] at hm
-        apply optionTreesEq _ _ (fun t => listWf s t (x :: xt) (y :: yt)) ?_ ?_
+        apply optionTreesEq _ _ (fun t => cunifylModelTreeWf s t (x :: xt) (y :: yt)) ?_ ?_
         · intro t ht; simp [head] at ht
-        · simpa [tsUnifyModel, ← hm, head] using listMap s (x :: xt) (y :: yt) hw
+        · simpa [tsUnifyModel, ← hm, head] using cunifylModelMap s (x :: xt) (y :: yt) hw
       | some mid =>
         have hmid := cunifyPreservesCwfsModel s x y mid ⟨hw, head⟩
         have hm := cunifyModelMap s x y hw
         rw [head] at hm
-        apply optionTreesEq _ _ (fun t => listWf s t (x :: xt) (y :: yt)) ?_ ?_
+        apply optionTreesEq _ _ (fun t => cunifylModelTreeWf s t (x :: xt) (y :: yt)) ?_ ?_
         · intro t ht
           simp only [head, Option.bind] at ht
-          exact listWf mid t xt yt ht
+          exact cunifylModelTreeWf mid t xt yt ht
         · simp only [head, Option.bind]
-          have first := listMap s (x :: xt) (y :: yt) hw
+          have first := cunifylModelMap s (x :: xt) (y :: yt) hw
           simp only [tsUnifyModel, ← hm, Option.map_some, Option.bind] at first
-          exact first.trans (listMap mid xt yt hmid).symm
+          exact first.trans (cunifylModelMap mid xt yt hmid).symm
 
 end Flapjack.Compiler.Inference.Unify

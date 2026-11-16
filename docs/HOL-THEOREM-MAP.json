@@ -139012,6 +139012,12 @@
   "reviewer": "Compared typed HOL source: the sole cwfs premise implies the complete cwalkstar and singleton-worklist normalization equality. The source-shaped model agrees under cwfs; the result is proved a singleton, making headD's fallback unreachable and agreeing with HOL HD. The visible sp2fm result uses the reviewed canonical map."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "cunify_thm",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Source/Equation.lean", "lean_name": "cunifyThmModel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cunify_thm_typed after discharging HOL's cwfs hypothesis: the sole cwfs guard and all cwalk cases match, including equal and unequal variables, bound variables, application names, the existential coc occurs check, and recursive cunifyl on application arguments. Source-shaped models use the original selected specification under its guard; well-formed tree extensionality establishes exact sparse results."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "cunifyl_thm",
   "lean_path": "Flapjack/Compiler/Inference/Unify/Source/List.lean", "lean_name": "cunifylThmModel",
   "statement_status": "reviewed_exact",

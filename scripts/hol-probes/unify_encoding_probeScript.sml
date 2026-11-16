@@ -25,6 +25,7 @@ val _ = show "substvars_FUPDATE_typed" tcallUnifTheory.substvars_FUPDATE;
 val _ = show "unify_def_typed" unifDefTheory.unify_def;
 val _ = show "sunify_def_typed" rmfmapTheory.sunify_def;
 val _ = show "cunify_def_typed" unifyTheory.cunify_def;
+val _ = show "cunify_thm_typed" (DISCH_ALL unifyTheory.cunify_thm);
 val _ = show "cunify_preserves_cwfs_typed" unifyTheory.cunify_preserves_cwfs;
 val _ = show "cunifyl_def_typed" unifyTheory.cunifyl_def;
 val _ = show "cunifyl_thm_typed" unifyTheory.cunifyl_thm;

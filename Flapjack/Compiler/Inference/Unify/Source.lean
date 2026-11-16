@@ -52,7 +52,9 @@ theorem cunifyModelMap (s : Spt InferT) (a b : InferT) (hw : cwfs s) :
     simp only [Option.map_some, Option.some.injEq]
     exact sparseDecode result
 
-private theorem sourceWf (s out : Spt InferT) (a b : InferT) (h : cunifyModel s a b = some out) :
+/-- Every successful source-shaped unifier result is a well-formed sparse
+    tree. This Lean helper supports exact equality of converted trees. -/
+theorem cunifyModelTreeWf (s out : Spt InferT) (a b : InferT) (h : cunifyModel s a b = some out) :
     sptWf out = true := by
   unfold cunifyModel sunifyModel at h
   cases hr : specifiedUnify (sp2fm (sptMap encodeInferT s)) (encodeInferT a) (encodeInferT b) with
@@ -78,6 +80,6 @@ theorem cunifyPreservesCwfsModel (s : Spt InferT) (a b : InferT) (out : Spt Infe
   · change wfs (sp2fm (sptMap encodeInferT out))
     rw [sparseEncode]
     exact hout
-  · exact sourceWf s out a b h.2
+  · exact cunifyModelTreeWf s out a b h.2
 
 end Flapjack.Compiler.Inference.Unify
