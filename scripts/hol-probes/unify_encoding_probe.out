@@ -22,6 +22,8 @@ cunify_preserves_cwfs_typed=cwfs (s0 :infer_t sptree$num_map) ∧ cunify s0 (t1 
 cwalkstar_def_typed=∀(s :infer_t sptree$num_map) (it :infer_t). cwalkstar s it = decode_infer_t (encode_infer_t o_f sp2fm s ◁ encode_infer_t it)
 cunify_unifier_typed=cwfs (s :infer_t sptree$num_map) ∧ cunify s (t1 :infer_t) (t2 :infer_t) = SOME (sx :infer_t sptree$num_map) ⇒ cwfs sx ∧ subspt s sx ∧ cwalkstar sx t1 = cwalkstar sx t2
 t_unify_unifier_typed=t_wfs (s :num |-> infer_t) ∧ t_unify s (t1 :infer_t) (t2 :infer_t) = SOME (sx :num |-> infer_t) ⇒ t_wfs sx ∧ s ⊑ sx ∧ t_walkstar sx t1 = t_walkstar sx t2
+t_walk_vwalk_id_typed=t_wfs (s :num |-> infer_t) ⇒ ∀(n :num). t_walk s (t_vwalk s n) = t_vwalk s n
+t_walk_walk_id_typed=t_wfs (s :num |-> infer_t) ⇒ t_walk s (t_walk s (h :infer_t)) = t_walk s h
 cunifyl_def_typed=∀(s :infer_t sptree$num_map) (ts1 :infer_t list) (ts2 :infer_t list). cunifyl s ts1 ts2 = OPTION_MAP (map decode_infer_t) (sunify (map encode_infer_t s) (encode_infer_ts ts1) (encode_infer_ts ts2))
 cunifyl_thm_typed=cwfs (s :infer_t sptree$num_map) ⇒ cunifyl s (ts1 :infer_t list) (ts2 :infer_t list) = case (ts1,ts2) of (([] :infer_t list),([] :infer_t list)) => SOME s | (([] :infer_t list),v10::v11) => (NONE :infer_t sptree$num_map option) | (t1::ts1,([] :infer_t list)) => (NONE :infer_t sptree$num_map option) | (t1::ts1,t2::ts2) => monad_bind (cunify s t1 t2) (λ(s' :infer_t sptree$num_map). cunifyl s' ts1 ts2)
 apply_cunif_NONE_typed=apply_cunifk (k :(infer_t list # infer_t list) list) (NONE :infer_t sptree$num_map option) = (NONE :infer_t sptree$num_map option)

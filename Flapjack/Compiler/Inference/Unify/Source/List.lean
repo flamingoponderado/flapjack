@@ -1,6 +1,6 @@
 module
 
-public import Flapjack.Compiler.Inference.Unify.Source
+public import Flapjack.Compiler.Inference.Unify.Source.Soundness
 
 @[expose] public section
 
@@ -93,7 +93,7 @@ theorem cunifylThmModel (s : Spt InferT) (xs ys : List InferT) (hw : cwfs s) :
         · intro t ht; simp [head] at ht
         · simpa [tsUnifyModel, ← hm, head] using cunifylModelMap s (x :: xt) (y :: yt) hw
       | some mid =>
-        have hmid := cunifyPreservesCwfsModel s x y mid ⟨hw, head⟩
+        have hmid := (cunifyUnifierModel s x y mid ⟨hw, head⟩).1
         have hm := cunifyModelMap s x y hw
         rw [head] at hm
         apply optionTreesEq _ _ (fun t => cunifylModelTreeWf s t (x :: xt) (y :: yt)) ?_ ?_

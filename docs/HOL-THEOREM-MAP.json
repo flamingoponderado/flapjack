@@ -139018,6 +139018,18 @@
   "reviewer": "Source comparison with walkstar_walk_SUBMAP_typed: for arbitrary term atoms and canonical substitution maps, the sole conjunction is s SUBMAP sx and wfs sx; the conclusion preserves equality of normalization by sx before and after walking by s. Local witnesses cover both map parameters."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_walk_vwalk_id",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walk/Idempotence.lean", "lean_name": "tWalkVwalkId",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Source comparison with t_walk_vwalk_id_typed: the sole t_wfs guard precedes universal quantification of n, and walking the variable-walk result leaves it unchanged. The substitution uses the canonical finite-map codec."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_walk_walk_id",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walk/Idempotence.lean", "lean_name": "tWalkWalkId",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Source comparison with t_walk_walk_id_typed: the sole t_wfs guard implies exact idempotence of t_walk on any inference type. The substitution uses the canonical finite-map codec."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "cunify_unifier",
   "lean_path": "Flapjack/Compiler/Inference/Unify/Source/Soundness.lean", "lean_name": "cunifyUnifierModel",
   "statement_status": "reviewed_exact",
@@ -139058,12 +139070,6 @@
   "lean_path": "Flapjack/Compiler/Inference/Unify/Source/List.lean", "lean_name": "cunifylThmModel",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared cunifyl_def_typed and cunifyl_thm_typed: under exactly the source cwfs guard, list unification returns the initial tree for two empty lists, fails for unequal list shapes, and otherwise binds the source head unifier into the recursive tail unifier. The source-shaped sparse model uses the original list encoding and selected unifier; well-formed sparse-tree extensionality recovers exact tree equality."
-},
-{
-  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "cunify_preserves_cwfs",
-  "lean_path": "Flapjack/Compiler/Inference/Unify/Source.lean", "lean_name": "cunifyPreservesCwfsModel",
-  "statement_status": "reviewed_exact",
-  "reviewer": "Compared cunify_preserves_cwfs_typed, cunify_def_typed and sunify_def_typed: the original cwfs input and successful source-shaped unifier are the only premises, and the result is cwfs. The sparse model follows the original encoding, specified unifier, fm2sp and decoding composition. The chosen specification agrees with the restricted recursion under the original guard; the internal canonical map conversion preserves lookups and well-formed trees."
 },
 {
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "kcunifywl_ensures_decrease",

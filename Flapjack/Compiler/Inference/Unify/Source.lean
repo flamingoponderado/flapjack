@@ -65,21 +65,4 @@ theorem cunifyModelTreeWf (s out : Spt InferT) (a b : InferT) (h : cunifyModel s
     rw [sptWfMap]
     exact wfFm2sp _
 
-@[hol "cakeml/compiler/inference/unifyScript.sml" "cunify_preserves_cwfs"]
-theorem cunifyPreservesCwfsModel (s : Spt InferT) (a b : InferT) (out : Spt InferT)
-    (h : cwfs s ∧ cunifyModel s a b = some out) : cwfs out := by
-  have hmodel : tUnifyModel (sp2fm s) a b = some (sp2fm out) := by
-    rw [← cunifyModelMap s a b h.1, h.2]
-    rfl
-  have hw : tWfs (sp2fm s) := by
-    change wfs (encodeSubst (sp2fm s))
-    rw [← sparseEncode]
-    exact h.1.1
-  have hout := (tUnifyModelSound (sp2fm s) a b (sp2fm out) ⟨hw, hmodel⟩).1
-  constructor
-  · change wfs (sp2fm (sptMap encodeInferT out))
-    rw [sparseEncode]
-    exact hout
-  · exact cunifyModelTreeWf s out a b h.2
-
 end Flapjack.Compiler.Inference.Unify

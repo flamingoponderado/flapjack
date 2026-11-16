@@ -111,7 +111,7 @@ theorem tcunifyCorrectModel (s : Spt InferT) (a b : InferT) (hw : cwfs s) :
   cases result : cunifyModel s a b with
   | none => simp [result]
   | some mid =>
-    have hm := cunifyPreservesCwfsModel s a b mid ⟨hw, result⟩
+    have hm := (cunifyUnifierModel s a b mid ⟨hw, result⟩).1
     simp only [result, Option.bind]
     rw [cunifylThmModel mid [] [] hm]
 
