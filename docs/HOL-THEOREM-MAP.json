@@ -138574,6 +138574,48 @@
   "reviewer": "Independent typed source review confirms the original four ordered premises and full relation conclusion after updating the fresh variable to the walked second term."
 },
 {
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "uR_def",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "uREq",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["sx", "s"],
+  "reviewer": "Independent typed source review confirms the complete equation over both triples, one shared atom type, all four conjuncts and the strict normalized measure direction."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "uR_subterm",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "uRSubterm",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms all three premises and both original recursive decrease conclusions."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "tca_thm",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "tcaThm",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms the original premises and first recursive-case decrease conclusion."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "uR_IMP_uP",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "uRImpUP",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["sx", "s"],
+  "reviewer": "Independent typed source review confirms the complete relation premise and substitution invariant conclusion over the shared atom type."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "uR_subterm_FUPDATE",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "uRSubtermFupdate",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms every original premise, both symmetric variable cases, and the full updated recursive decrease conclusion."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "walk_SUBMAP",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "walkSubmap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["sx", "s"],
+  "reviewer": "Independent typed source review confirms the original two premises and complete variable, pair, and constant result cases."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "uP_IMP_subterm_uR",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "uPImpSubtermUR",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["sx", "s"],
+  "reviewer": "Independent typed source review confirms the original pair premises, the full disjunction over head and tail invariants, and the tail decrease conclusion."
+},
+{
   "hol_path": "HOL/src/transfer/examples/fmspScript.sml", "hol_name": "sp2fm_thm",
   "lean_path": "Flapjack/HOL/Transfer/Fmsp/Operations.lean", "lean_name": "sp2fmThm",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm", "Flapjack.HolFiniteMapExact.holEmpty"],
