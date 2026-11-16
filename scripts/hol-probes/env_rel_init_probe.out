@@ -15,5 +15,7 @@ check_t_to_check_freevars_replay_typed=∀(tvs :num) (n :num -> bool) (t :infer_
 check_t_empty_unconvert_convert_id_replay_typed=∀(t :infer_t) (n :num). check_t n (∅ :num -> bool) t ⇒ unconvert_t (probe_convert_t t) = t
 check_freevars_empty_convert_unconvert_id_replay_typed=∀(t :t). check_freevars (n :num) ([] :mlstring list) t ⇒ probe_convert_t (unconvert_t t) = t
 infer_type_subst_nil_replay_typed=(∀(t :t). check_freevars (n :num) ([] :mlstring list) t ⇒ infer_type_subst ([] :(mlstring # infer_t) list) t = unconvert_t t) ∧ ∀(ts :t list). EVERY (check_freevars n ([] :mlstring list)) ts ⇒ MAP (infer_type_subst ([] :(mlstring # infer_t) list)) ts = MAP unconvert_t ts
+db_subst_inc_id_typed=∀(inst :infer_t list) (t :infer_t). infer_deBruijn_subst inst (infer_deBruijn_inc (LENGTH inst) t) = t
+deBruijn_subst_nothing_typed=(∀(t :t). deBruijn_subst (0 :num) ([] :t list) t = t) ∧ ∀(ts :t list). MAP (deBruijn_subst (0 :num) ([] :t list)) ts = ts
 lookup_varE_empty_replay_typed=∀(x :(mlstring, mlstring) id). lookup_varE x Empty = (NONE :(num # t) option)
 init_config_tenv_to_ienv_replay_typed=init_config = probe_tenv_to_ienv prim_tenv

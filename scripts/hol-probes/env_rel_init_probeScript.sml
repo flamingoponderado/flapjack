@@ -108,6 +108,9 @@ val infer_type_subst_nil_replay = Q.prove(
   fsrw_tac [boolSimps.ETA_ss] []);
 val _ = show "infer_type_subst_nil_replay_typed" infer_type_subst_nil_replay;
 
+val _ = show "db_subst_inc_id_typed" inferPropsTheory.db_subst_inc_id;
+val _ = show "deBruijn_subst_nothing_typed" inferPropsTheory.deBruijn_subst_nothing;
+
 val lookup_varE_empty_replay = Q.prove(
   `!x. lookup_varE x Empty = NONE`,
   rw [lookup_varE_def, tveLookup_def] \\ every_case_tac);

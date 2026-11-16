@@ -138362,6 +138362,22 @@
   "reviewer": "Compared typed HOL and source: all three conjuncts retain the shared substitution and index, in-bounds list selection, out-of-bounds subtraction fallback, and complete mapped application arguments."
 },
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml",
+  "hol_name": "db_subst_inc_id",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/ShiftCancel.lean",
+  "lean_name": "dbSubstIncId",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and db_subst_inc_id_typed: for every substitution list and inference type, shifting by the list length then substituting gives the original type, with no premises."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml",
+  "hol_name": "deBruijn_subst_nothing",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/ShiftCancel.lean",
+  "lean_name": "deBruijnSubstNothing",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and deBruijn_subst_nothing_typed: both the arbitrary declarative type equality and arbitrary list MAP equality are preserved with cutoff zero and empty substitution."
+},
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "infer_deBruijn_subst_id",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn.lean", "lean_name": "inferDeBruijnSubstId",
   "statement_status": "reviewed_exact",
