@@ -333,6 +333,56 @@ theorem unconvertDbSubst (t : SemanticT) (subst : List SemanticT) (bound : Nat)
       Infer.inferDeBruijnSubst (subst.map unconvertT) (unconvertT t) :=
   unconvertDbSubstType t subst bound h
 
+mutual
+/-- Structural induction used to relate the two de Bruijn substitutions. -/
+private theorem deBruijnSubstConvertType (t : InferT) (n : Nat) (subst : List InferT)
+    (h : Infer.checkT n (fun _ => False) t) :
+    deBruijnSubst 0 (subst.map convertT) (convertT t) =
+      convertT (Infer.inferDeBruijnSubst subst t) := by
+  cases t with
+  | uvar v => simp at h
+  | varDb k =>
+    by_cases hk : k < subst.length
+    · simp [convertT, deBruijnSubst, Infer.inferDeBruijnSubst, hk]
+    · simp [convertT, deBruijnSubst, Infer.inferDeBruijnSubst, hk]
+  | app ts tc =>
+    have hl := (Infer.checkT_app n tc _ ts).mp h
+    simp [convertT, deBruijnSubst, Infer.inferDeBruijnSubst,
+      deBruijnSubstConvertList ts n subst hl]
+termination_by sizeOf t
+
+/-- List recursion for the de Bruijn substitution correspondence. -/
+private theorem deBruijnSubstConvertList (ts : List InferT) (n : Nat) (subst : List InferT)
+    (h : Infer.checkTList n (fun _ => False) ts) :
+    deBruijnSubstList 0 (subst.map convertT) (convertTList ts) =
+      convertTList (Infer.inferDeBruijnSubstList subst ts) := by
+  cases ts with
+  | nil => simp [convertTList, deBruijnSubstList, Infer.inferDeBruijnSubstList]
+  | cons t ts =>
+    have hs := (Infer.checkTList_cons n _ t ts).mp h
+    simp [convertTList, deBruijnSubstList, Infer.inferDeBruijnSubstList,
+      deBruijnSubstConvertType t n subst hs.1, deBruijnSubstConvertList ts n subst hs.2]
+termination_by sizeOf ts
+end
+
+/-- Conversion commutes with de Bruijn substitution for checked types and lists. -/
+@[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "deBruijn_subst_convert"]
+theorem deBruijnSubstConvert (n : Nat) (subst : List InferT) :
+    (∀ t, Infer.checkT n (fun _ => False) t →
+      deBruijnSubst 0 (subst.map convertT) (convertT t) =
+        convertT (Infer.inferDeBruijnSubst subst t)) ∧
+    (∀ ts : List InferT, (∀ t ∈ ts, Infer.checkT n (fun _ => False) t) →
+      ts.map (deBruijnSubst 0 (subst.map convertT) ∘ convertT) =
+        ts.map (convertT ∘ Infer.inferDeBruijnSubst subst)) := by
+  constructor
+  · exact fun t h => deBruijnSubstConvertType t n subst h
+  · intro ts h
+    induction ts with
+    | nil => rfl
+    | cons t ts ih =>
+      simp only [List.mem_cons, forall_eq_or_imp] at h
+      simp [deBruijnSubstConvertType t n subst h.1, ih h.2]
+
 /-- Lookup in the empty local type environment always fails. -/
 @[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "lookup_varE_empty"]
 theorem lookupVarEEmpty (id : Ident Flapjack.Basis.Pure.MlString.MlString

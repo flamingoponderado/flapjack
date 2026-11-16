@@ -70,6 +70,20 @@ val inc_convert_t_replay = Q.prove(
   rw [check_t_def, probe_convert_t_def, deBruijn_inc_def] >> metis_tac [MAP_MAP_o]);
 val _ = show "inc_convert_t_replay_typed" inc_convert_t_replay;
 
+val deBruijn_subst_convert_replay = Q.prove(
+  `(∀t. check_t n {} t ⇒
+      deBruijn_subst 0 (MAP probe_convert_t subst) (probe_convert_t t) =
+      probe_convert_t (infer_deBruijn_subst subst t)) ∧
+   (∀ts. EVERY (check_t n {}) ts ⇒
+      MAP ((deBruijn_subst 0 (MAP probe_convert_t subst)) o probe_convert_t) ts =
+      MAP (probe_convert_t o (infer_deBruijn_subst subst)) ts)`,
+  ho_match_mp_tac infer_tTheory.infer_t_induction >>
+  rw [check_t_def] >>
+  fs [probe_convert_t_def, deBruijn_subst_def, infer_deBruijn_subst_alt] >-
+    (IF_CASES_TAC >> fs [EL_MAP, probe_convert_t_def]) >>
+  fs [MAP_MAP_o, EVERY_MEM, MAP_EQ_f]);
+val _ = show "deBruijn_subst_convert_replay_typed" deBruijn_subst_convert_replay;
+
 val check_convert_freevars_replay = Q.prove(
   `!tvs uvs t. check_t tvs uvs t ⇒ (uvs = {}) ⇒ check_freevars tvs [] (probe_convert_t t)`,
   ho_match_mp_tac check_t_ind >>

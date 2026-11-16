@@ -138054,6 +138054,14 @@
 },
 {
   "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
+  "hol_name": "deBruijn_subst_convert",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
+  "lean_name": "deBruijnSubstConvert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and deBruijn_subst_convert_replay_typed: the shared bound and arbitrary inference substitution, empty-uvar guards, both type and list conjuncts, and equality directions agree. The source-defined conversion's unspecified uvar clause is excluded by the original checks on the input types."
+},
+{
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
   "hol_name": "unconvert_db_subst",
   "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
   "lean_name": "unconvertDbSubst",
