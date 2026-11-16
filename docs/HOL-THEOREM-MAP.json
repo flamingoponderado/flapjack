@@ -1,5 +1,30 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/backendScript.sml", "hol_name": "to_flat_def",
+  "lean_path": "Flapjack/Compiler/Backend/Backend/SourcePipeline.lean", "lean_name": "toFlat",
+  "statement_status": "reviewed_exact", "reviewer": "Independent comparison with to_flat_typed confirms pass order, source configuration update, input and result carriers."
+ },
+{
+  "hol_path": "cakeml/compiler/backend/backendScript.sml", "hol_name": "to_clos_def",
+  "lean_path": "Flapjack/Compiler/Backend/Backend/SourcePipeline.lean", "lean_name": "toClos",
+  "statement_status": "reviewed_exact", "reviewer": "Independent comparison with to_clos_typed confirms the full configuration and flat-to-closure result."
+ },
+{
+  "hol_path": "cakeml/compiler/backend/backendScript.sml", "hol_name": "to_bvl_def",
+  "lean_path": "Flapjack/Compiler/Backend/Backend/SourcePipeline.lean", "lean_name": "toBvl",
+  "statement_status": "reviewed_exact", "reviewer": "Independent comparison with to_bvl_typed confirms the closure configuration update and full BVL program and sparse name results."
+ },
+{
+  "hol_path": "cakeml/compiler/backend/backendScript.sml", "hol_name": "to_bvi_def",
+  "lean_path": "Flapjack/Compiler/Backend/Backend/SourcePipeline.lean", "lean_name": "toBvi",
+  "statement_status": "reviewed_exact", "reviewer": "Independent comparison with to_bvi_typed confirms all compile results, configuration updates and ordered stub-name union. toBvi_executable relates the complete result to the configured executable pipeline."
+ },
+{
+  "hol_path": "cakeml/compiler/backend/backendScript.sml", "hol_name": "to_data_def",
+  "lean_path": "Flapjack/Compiler/Backend/Backend/SourcePipeline.lean", "lean_name": "toData",
+  "statement_status": "reviewed_exact", "reviewer": "Independent comparison with to_data_typed confirms BVI-to-data compilation and unchanged configuration and names."
+ },
+{
   "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml", "hol_name": "compute_stack_frame_sizes_def",
   "lean_path": "Flapjack/Compiler/Backend/BackendProof/StackFrameSizes.lean", "lean_name": "computeStackFrameSizes",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",

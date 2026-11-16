@@ -60,6 +60,7 @@
     {"bytes": 415, "out": "backend_read_limits_probe.out", "rows": 1, "sha256": "a5351f4d32a5143bf9c106cf7f527cf20ed21079a08dd7b6a5f5ab6dc94caf20"},
     {"bytes": 203, "out": "backend_restrict_zero_probe.out", "rows": 8, "sha256": "3f228e5d30cea9ec11092d89764a02c196433ddafc470c32a9896cd4da3a9820"},
     {"bytes": 795, "out": "backend_runtime_stub_names_probe.out", "rows": 10, "sha256": "2de45e8c9fc9b32ccee4bea6367f57eca5b23d4d262e26a7066b74d7a4189213"},
+    {"bytes": 2058, "out": "backend_source_pipeline_probe.out", "rows": 5, "sha256": "5934030652d2afd4cf1fe7a50480b746b38099e1f2f5e63347ae75e9020b8a36"},
     {"bytes": 912, "out": "backend_stack_frames_probe.out", "rows": 2, "sha256": "b709f36742f8bdd92e64c8d25671dec24cfd6c9f06f08c3aa5ed4729e3a2f5c9"},
     {"bytes": 1283, "out": "backend_word_conventions2_probe.out", "rows": 3, "sha256": "a4a40fc328759f350582f07178b51808d1e072979ec3083009a0b13e21e7caf7"},
     {"bytes": 209, "out": "backendprops_nonzero_labels_probe.out", "rows": 15, "sha256": "79dbfaff328f99645e594adf91217ba216d2da03e230f88c3b46a1308bf1c014"},

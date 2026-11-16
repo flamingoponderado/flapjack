@@ -923,6 +923,9 @@ run_probe compiler_config_probeScript.sml compiler_config_probe.out \
 run_probe backend_stack_frames_probeScript.sml backend_stack_frames_probe.out \
   stack_frames_def_typed stack_frames_thm_typed "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend"
 
+run_probe backend_source_pipeline_probeScript.sml backend_source_pipeline_probe.out \
+  to_flat_typed to_clos_typed to_bvl_typed to_bvi_typed to_data_typed "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
+
 run_probe cake_infer_core_probeScript.sml cake_infer_core_probe.out \
   function pattern application recursive annotation "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
 
