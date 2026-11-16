@@ -10924,3 +10924,7 @@ inferred field and result types, including its word-indexed assembler carrier,
 and replays the backend limits definition and its top-level wrapper with
 inferred machine-state and projection types. These support source review of
 the top-level correctness prerequisites; the replay uses local names.
+
+`backend_stack_frames_probe.out` replays the original stack-frame sizing
+definition and its compiler equation. The inferred definition has independent
+assembler and program word types; the equation instantiates them to one type.

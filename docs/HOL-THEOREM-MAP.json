@@ -1,5 +1,19 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml", "hol_name": "compute_stack_frame_sizes_def",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProof/StackFrameSizes.lean", "lean_name": "computeStackFrameSizes",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with stack_frames_def_typed confirms the independent assembler and program word dimensions, exact arithmetic, sparse-tree traversal and result."
+ },
+{
+  "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml", "hol_name": "compute_stack_frame_sizes_thm",
+  "lean_path": "Flapjack/Compiler/Backend/BackendProof/StackFrameSizes.lean", "lean_name": "computeStackFrameSizesThm",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with stack_frames_thm_typed confirms the shared word dimension and original compilation frame projection, including false and (Nil,0) arguments."
+ },
+{
   "hol_path": "cakeml/compiler/compilerScript.sml", "hol_name": "config",
   "lean_path": "Flapjack/Compiler/Compiler.lean", "lean_name": "CompilerConfig",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",

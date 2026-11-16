@@ -920,6 +920,9 @@ run_probe cake_inference_probeScript.sml cake_inference_probe.out \
 run_probe compiler_config_probeScript.sml compiler_config_probe.out \
   compiler_config_axiom compiler_read_limits_replay "$cake_dir/compiler/compilerScript.sml" "$cake_dir/compiler"
 
+run_probe backend_stack_frames_probeScript.sml backend_stack_frames_probe.out \
+  stack_frames_def_typed stack_frames_thm_typed "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend"
+
 run_probe cake_infer_core_probeScript.sml cake_infer_core_probe.out \
   function pattern application recursive annotation "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
 
