@@ -220,3 +220,5 @@ val _ = show "option_le_stack_size_nil_typed"
         (OPTION_MAP2 $+ (stack_size stack) opt)``,
      rw[OPTION_MAP2_DEF,IS_SOME_EXISTS] >> drule stack_size_some_at_least_one >>
      rw[wordSemTheory.stack_size_def]));
+
+val _ = emit "PERM_ALL_DISTINCT_MAP_typed" "PERM_ALL_DISTINCT_MAP";

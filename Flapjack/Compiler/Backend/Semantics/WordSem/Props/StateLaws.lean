@@ -756,7 +756,7 @@ theorem popEnv_optionLe_stackMax_preserved {width : Nat} [NeZero width] {C : Typ
 /-- Exact HOL `get_vars_stack_swap` (`wordPropsScript.sml:2135-2141`): the same
 local variable map yields the same values. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "get_vars_stack_swap"
-  (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem getVarsStackSwap {width : Nat} [NeZero width] {C F : Type}
     (vars : List Nat) (s t : WordSemStateFiniteExact width C F)
     (sameLocals : s.locals = t.locals) :

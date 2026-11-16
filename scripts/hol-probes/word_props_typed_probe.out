@@ -169,3 +169,4 @@ s_val_eq_def2_typed=∀(l1 :α stack_frame list) (l2 :α stack_frame list). s_va
 s_frame_val_and_key_eq_typed=∀(s :α stack_frame) (t :α stack_frame). s_frame_val_eq s t ∧ s_frame_key_eq s t ⇒ s = t
 get_vars_stack_swap_typed=∀(l :num list) (s :(α, β, γ) state) (t :(α, β, γ) state). s.locals = t.locals ⇒ get_vars l s = get_vars l t
 option_le_stack_size_nil_typed=∀(stack :α stack_frame list) (opt :num option). option_le (stack_size ([] :α stack_frame list)) (OPTION_MAP2 $+ (stack_size stack) opt)
+PERM_ALL_DISTINCT_MAP_typed=∀(xs :α list) (ys :α list). PERM xs ys ⇒ ALL_DISTINCT (MAP (f :α -> β) xs) ⇒ ALL_DISTINCT (MAP f ys) ∧ ∀(x :α). MEM x ys ⇔ MEM x xs
