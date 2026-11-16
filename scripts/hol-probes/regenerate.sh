@@ -9796,7 +9796,7 @@ run_probe unify_encoding_probeScript.sml unify_encoding_probe.out \
   "$cake_dir/compiler/inference"
 
 run_probe unify_exec_walk_probeScript.sml unify_exec_walk_probe.out \
-  code_none code_db code_app code_var walk_chain occurs_empty occurs_var occurs_db occurs_nested occurs_chain star_empty star_var star_nested star_chain star_order \
+  code_none code_db code_app code_var walk_chain occurs_empty occurs_var occurs_db occurs_nested occurs_chain star_empty star_var star_nested star_chain star_order unify_empty unify_arity unify_db_mismatch unify_occurs unify_nested \
   "$cake_dir/compiler/inference/unifyScript.sml" \
   "$cake_dir/compiler/inference"
 

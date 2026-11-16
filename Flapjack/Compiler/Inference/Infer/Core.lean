@@ -106,9 +106,9 @@ private def freshMany (n : Nat) : M (List InferT) := do
   set s
   return ts
 
-private def constrain (fuel : Nat) (a b : InferT) : M Unit := do
+private def constrain (_fuel : Nat) (a b : InferT) : M Unit := do
   let s ← get
-  match unifyFuel fuel s.subst a b with
+  match unifyPartial s.subst a b with
   | none => fail .exhausted
   | some none =>
     match walkStar s.subst a, walkStar s.subst b with

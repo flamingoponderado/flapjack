@@ -34,8 +34,8 @@ open Flapjack Flapjack.Compiler.Inference Flapjack.Compiler.Inference.Infer Flap
     (fun s n => sptInsert n (.uvar (n + 1)) s) (sptInsert 256 (.varDb 4) .ln)
   walkExecutable chain (.uvar 0) == some (.varDb 4)
 
--- The unifier's worklist bound no longer truncates a longer variable chain.
-#guard match unifyFuel 2
+-- Unification follows an unbounded variable chain.
+#guard match unifyPartial
     (sptInsert 2 (.uvar 7) (sptInsert 7 (.uvar 9) (sptInsert 9 (.varDb 4) .ln)))
     (.uvar 2) (.varDb 4) with
   | some (some _) => true
@@ -64,19 +64,33 @@ open Flapjack Flapjack.Compiler.Inference Flapjack.Compiler.Inference.Infer Flap
   let deep := (List.range 256).foldl (fun t _ => InferT.app [t] 5) (InferT.uvar 3)
   walkStar .ln deep == some deep
 
--- Occurs traversal no longer inherits the smaller worklist bound.
-#guard match unifyFuel 2 .ln (.uvar 0) (.app [.varDb 1] 5) with
+-- These unification outcomes include cases captured from the HOL probe.
+#guard match unifyWorkPartial .ln [] with
+  | some (some .ln) => true
+  | _ => false
+#guard match unifyPartial .ln (.app [.varDb 1] 4) (.app [] 4) with
+  | some none => true
+  | _ => false
+#guard match unifyPartial .ln (.varDb 1) (.varDb 2) with
+  | some none => true
+  | _ => false
+#guard
+  let deep := (List.range 256).foldl (fun t _ => InferT.app [t] 5) (InferT.varDb 1)
+  match unifyPartial .ln deep deep with
   | some (some _) => true
   | _ => false
-#guard match unifyFuel 2 .ln (.uvar 0) (.app [.app [.uvar 0] 6] 5) with
+#guard match unifyPartial .ln (.uvar 0) (.app [.varDb 1] 5) with
+  | some (some _) => true
+  | _ => false
+#guard match unifyPartial .ln (.uvar 0) (.app [.app [.uvar 0] 6] 5) with
   | some none => true
   | _ => false
 
-#guard match unifyFuel 100 .ln (.app [.uvar 0, .uvar 1] 4) (.app [.app [] 5, .uvar 0] 4) with
+#guard match unifyPartial .ln (.app [.uvar 0, .uvar 1] 4) (.app [.app [] 5, .uvar 0] 4) with
   | some (some s) => sptLookup 0 s == some (.app [] 5) && sptLookup 1 s == some (.app [] 5)
   | _ => false
 
-#guard match unifyFuel 100 .ln (.uvar 0) (.app [.uvar 0] 6) with
+#guard match unifyPartial .ln (.uvar 0) (.app [.uvar 0] 6) with
   | some none => true
   | _ => false
 

@@ -5,7 +5,7 @@ public import Flapjack.Misc.Sptree
 
 @[expose] public section
 
-/-! Executable inference-type substitutions and bounded unification. -/
+/-! Executable inference-type substitutions and unification. -/
 namespace Flapjack.Compiler.Inference.Unify
 
 mutual
@@ -101,35 +101,38 @@ def walkStar (s : Spt InferT) (t : InferT) : Option InferT := do
   let ts ← walkStarList s [t]
   ts.head?
 
-/-- A structurally bounded worklist implementation of the source unification
-equations. The outer option reports worklist fuel exhaustion; the inner option
-reports unification failure. Variable walking and the occurs check are
-unbounded and can diverge on cyclic substitutions. Preservation of the
-well-formedness required for their termination has not yet been proved for
-this unifier. -/
-def unifyWorkFuel : Nat → Spt InferT → List (InferT × InferT) → Option (Option (Spt InferT))
-  | 0, _, _ => none
-  | _ + 1, s, [] => some (some s)
-  | fuel + 1, s, (a, b) :: rest => do
+/-- Execute the source paired-list unification worklist. The outer option
+models nontermination, while the inner option reports unification failure.
+Termination and preservation of well-formed substitutions remain to be proved,
+so this is not tagged as the total HOL operation. -/
+def unifyWorkPartial (s : Spt InferT) (work : List (List InferT × List InferT)) :
+    Option (Option (Spt InferT)) := do
+  match work with
+  | [] => some (some s)
+  | ([], []) :: rest => unifyWorkPartial s rest
+  | ([], _ :: _) :: _ | (_ :: _, []) :: _ => some none
+  | (a :: left, b :: right) :: rest =>
     let a ← walkExecutable s a
     let b ← walkExecutable s b
     match a, b with
     | .uvar x, .uvar y =>
-      unifyWorkFuel fuel (if x == y then s else sptInsert x (.uvar y) s) rest
-    | .uvar x, t | t, .uvar x =>
-      if ← occursPartial s x t then some none
-      else unifyWorkFuel fuel (sptInsert x t s) rest
+      unifyWorkPartial (if x == y then s else sptInsert x (.uvar y) s) ((left, right) :: rest)
+    | .uvar x, .varDb y | .varDb y, .uvar x =>
+      unifyWorkPartial (sptInsert x (.varDb y) s) ((left, right) :: rest)
+    | .uvar x, .app ts name | .app ts name, .uvar x =>
+      if ← occursWorkPartial s x [ts] then some none
+      else unifyWorkPartial (sptInsert x (.app ts name) s) ((left, right) :: rest)
     | .varDb x, .varDb y =>
-      if x == y then unifyWorkFuel fuel s rest else some none
+      if x == y then unifyWorkPartial s ((left, right) :: rest) else some none
     | .app xs x, .app ys y =>
-      if x == y && xs.length == ys.length then
-        unifyWorkFuel fuel s (List.zip xs ys ++ rest)
+      if x == y then
+        unifyWorkPartial s ((xs, ys) :: (left, right) :: rest)
       else some none
     | _, _ => some none
+partial_fixpoint
 
-/-- Unify one pair with a worklist bound. Variable walking and the occurs
-check are unbounded, so this is not a total execution bound. -/
-def unifyFuel (fuel : Nat) (s : Spt InferT) (a b : InferT) : Option (Option (Spt InferT)) :=
-  unifyWorkFuel fuel s [(a, b)]
+/-- Unify one pair using the source worklist shape. -/
+def unifyPartial (s : Spt InferT) (a b : InferT) : Option (Option (Spt InferT)) :=
+  unifyWorkPartial s [([a], [b])]
 
 end Flapjack.Compiler.Inference.Unify
