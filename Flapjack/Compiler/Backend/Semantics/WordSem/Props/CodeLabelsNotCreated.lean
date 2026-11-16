@@ -144,35 +144,64 @@ theorem notCreatedLabelTest_spec {width : Nat} [NeZero width] :
   | .ffi _ _ _ _ _ _, _ => by simp [getCodeLabelsHOL, notCreatedSubprogsHOL]
   | .shareInst _ _ _, _ => by simp [getCodeLabelsHOL, notCreatedSubprogsHOL, notCreatedLabelTest]
 
+set_option linter.unusedSimpArgs false in
 /-- The helper is HOL's predicate written structurally: it returns `false`
-    exactly on `Call NONE (SOME x) [] NONE` and `LocValue 0 x`. -/
+    exactly on `Call NONE (SOME x) [] NONE` and `LocValue 0 x`, which is HOL's
+    `λsp. sp ≠ Call NONE (SOME x) [] NONE ∧ sp ≠ LocValue 0 x`. -/
 theorem notCreatedLabelTest_eq {width : Nat} [NeZero width] (x : Nat) :
     notCreatedLabelTest (width := width) x =
-      fun sp : WordLangProgHOL (BitVec width) =>
-        match sp with
-        | .call none (some label) [] none => decide (label ≠ x)
-        | .locValue 0 label => decide (label ≠ x)
-        | _ => true := rfl
+      fun sp : WordLangProgHOL (BitVec width) => by
+        classical exact decide (sp ≠ .call none (some x) [] none ∧ sp ≠ .locValue 0 x) := by
+  funext sp
+  cases sp with
+  | call returns target arguments handler =>
+      by_cases h1 : returns = none
+      · by_cases h2 : arguments = []
+        · by_cases h3 : handler = none
+          · rcases target with _ | label
+            · simp [notCreatedLabelTest, h1, h2, h3, decide_eq_true_eq,
+                decide_eq_false_iff_not]
+            · by_cases h4 : label = x
+              · subst h4
+                simp [notCreatedLabelTest, h1, h2, h3, decide_eq_true_eq,
+                  decide_eq_false_iff_not]
+              · simp [notCreatedLabelTest, h1, h2, h3, h4, decide_eq_true_eq,
+                  decide_eq_false_iff_not]
+          · simp [notCreatedLabelTest, h1, h2, h3, decide_eq_true_eq,
+              decide_eq_false_iff_not]
+        · simp [notCreatedLabelTest, h1, h2, decide_eq_true_eq, decide_eq_false_iff_not]
+      · simp [notCreatedLabelTest, h1, decide_eq_true_eq, decide_eq_false_iff_not]
+  | locValue destination source =>
+      by_cases h1 : destination = 0
+      · by_cases h2 : source = x
+        · subst h1
+          subst h2
+          simp [notCreatedLabelTest, decide_eq_true_eq, decide_eq_false_iff_not]
+        · simp [notCreatedLabelTest, h1, h2, decide_eq_true_eq, decide_eq_false_iff_not]
+      · simp [notCreatedLabelTest, h1, decide_eq_true_eq, decide_eq_false_iff_not]
+  | _ => simp [notCreatedLabelTest, decide_eq_true_eq, decide_eq_false_iff_not]
 
 /-- Exact HOL `get_code_labels_not_created` (`wordPropsScript.sml:4760-4768`):
     `x` is a code label of `p` exactly when `not_created_subprogs` fails at the
     inline predicate excluding `Call NONE (SOME x) [] NONE` and `LocValue 0 x`.
-    HOL writes that predicate as `sp ≠ Call NONE (SOME x) [] NONE ∧
+    HOL writes that predicate as `λsp. sp ≠ Call NONE (SOME x) [] NONE ∧
     sp ≠ LocValue 0 x`; `WordLangProgHOL` has no decidable equality instance
     (Lean cannot derive one for an inductive with nested recursive occurrences
-    such as `List (WordLangProgHOL α)`), so the same predicate is stated as the
-    structural match that returns `false` exactly on those two programs. -/
+    such as `List (WordLangProgHOL α)`), so the predicate is decided classically
+    (`fun sp => by classical exact decide (…)`), as in
+    `Pancake/WordConvs/NotCreated.lean`, and `notCreatedLabelTest_eq` identifies
+    it with the executable structural helper. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "get_code_labels_not_created"
   (words_as_type_indexed_bitvec)]
 theorem getCodeLabels_notCreated {width : Nat} [NeZero width] :
     ∀ (p : WordLangProgHOL (BitVec width)) (x : Nat),
       x ∈ getCodeLabelsHOL p ↔
-        notCreatedSubprogsHOL (fun sp =>
-          match sp with
-          | .call none (some label) [] none => decide (label ≠ x)
-          | .locValue 0 label => decide (label ≠ x)
-          | _ => true) p = false := by
+        notCreatedSubprogsHOL
+          (fun sp : WordLangProgHOL (BitVec width) => by
+            classical exact decide (sp ≠ .call none (some x) [] none ∧
+              sp ≠ .locValue 0 x)) p = false := by
   intro p x
+  rw [← notCreatedLabelTest_eq x]
   exact notCreatedLabelTest_spec p x
 
 end Flapjack

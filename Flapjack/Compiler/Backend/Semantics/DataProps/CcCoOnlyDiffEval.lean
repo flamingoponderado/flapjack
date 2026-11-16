@@ -28,42 +28,52 @@ open Flapjack Flapjack.SemanticPrimitivesHOL
 open Flapjack.SemanticPrimitivesProps
 open Flapjack.Compiler.Backend.DataSem
 
-/-- Replacing the locals commutes with the rebuild. -/
+/-- Replacing the locals commutes with the rebuild.  Flapjack infrastructure
+    toward the parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem castCompiler_locals {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (env : Spt DataSem.Value) :
     { castCompiler s t with locals := env } = castCompiler { s with locals := env } t := rfl
 
-/-- Reading a local variable reads only the environment. -/
+/-- Reading a local variable reads only the environment.  Flapjack infrastructure
+    toward the parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem getVar_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) (name : Nat) :
     getVar name (castCompiler s t).locals = getVar name s.locals := rfl
 
-/-- Reading several local variables reads only the environment. -/
+/-- Reading several local variables reads only the environment.  Flapjack
+    infrastructure toward the parked HOL theorem `evaluate_cc_co_only_diff`;
+    no separate HOL original. -/
 theorem getVars_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (names : List Nat) :
     getVars names (castCompiler s t).locals = getVars names s.locals := rfl
 
-/-- Writing a local variable commutes with the rebuild. -/
+/-- Writing a local variable commutes with the rebuild.  Flapjack infrastructure
+    toward the parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem setVar_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (name : Nat) (value : DataSem.Value) :
     setVar name value (castCompiler s t) = castCompiler (setVar name value s) t := rfl
 
-/-- Writing several local variables commutes with the rebuild. -/
+/-- Writing several local variables commutes with the rebuild.  Flapjack
+    infrastructure toward the parked HOL theorem `evaluate_cc_co_only_diff`;
+    no separate HOL original. -/
 theorem setVars_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (names : List Nat) (values : List DataSem.Value) :
     setVars names values (castCompiler s t) = castCompiler (setVars names values s) t := rfl
 
-/-- Clock decrement commutes with the rebuild. -/
+/-- Clock decrement commutes with the rebuild.  Flapjack infrastructure toward
+    the parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem decClock_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) :
     decClock (castCompiler s t) = castCompiler (decClock s) t := rfl
 
-/-- Clock clamping commutes with the rebuild. -/
+/-- Clock clamping commutes with the rebuild.  Flapjack infrastructure toward
+    the parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem fixClock_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (outcome : Option (Result (List DataSem.Value) DataSem.Value)) (mid : State C1 F) :
     fixClock (castCompiler s t) (outcome, castCompiler mid t) =
       (outcome, castCompiler (fixClock s (outcome, mid)).2 t) := rfl
 
 /-- Clock clamping preserves agreement of the resulting states when the two
-clamping states agree on the clock as well. -/
+    clamping states agree on the clock as well.  Flapjack infrastructure toward
+    the parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem fixClock_agree_clocks {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (outcome : Option (Result (List DataSem.Value) DataSem.Value)) (mid : State C1 F)
     (other : State C2 F) (clocks : ccCoOnlyDiff s t) (agree : ccCoOnlyDiff mid other) :
@@ -73,7 +83,9 @@ theorem fixClock_agree_clocks {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
   simp only [fixClock, ccCoOnlyDiff]
   simp_all
 
-/-- Clock clamping preserves agreement of the resulting states. -/
+/-- Clock clamping preserves agreement of the resulting states.  Flapjack
+    infrastructure toward the parked HOL theorem `evaluate_cc_co_only_diff`;
+    no separate HOL original. -/
 theorem fixClock_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (outcome : Option (Result (List DataSem.Value) DataSem.Value)) (mid : State C1 F)
     (other : State C2 F) (agree : ccCoOnlyDiff mid other) :
@@ -82,28 +94,36 @@ theorem fixClock_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
   simp only [fixClock, ccCoOnlyDiff] at agree ⊢
   simp_all
 
-/-- Flushing the locals commutes with the rebuild. -/
+/-- Flushing the locals commutes with the rebuild.  Flapjack infrastructure
+    toward the parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem flushState_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (all : Bool) :
     flushState all (castCompiler s t) = castCompiler (flushState all s) t := by
   cases all <;> rfl
 
-/-- The installation safety update commutes with the rebuild. -/
+/-- The installation safety update commutes with the rebuild.  Flapjack
+    infrastructure toward the parked HOL theorem `evaluate_cc_co_only_diff`;
+    no separate HOL original. -/
 theorem installSfs_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (op : ClosLang.Op) :
     installSfs op (castCompiler s t) = castCompiler (installSfs op s) t := rfl
 
-/-- Space allocation commutes with the rebuild. -/
+/-- Space allocation commutes with the rebuild.  Flapjack infrastructure toward
+    the parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem addSpace_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (amount : Nat) :
     addSpace (castCompiler s t) amount = castCompiler (addSpace s amount) t := rfl
 
-/-- Cutting the local environment reads only the environment. -/
+/-- Cutting the local environment reads only the environment.  Flapjack
+    infrastructure toward the parked HOL theorem `evaluate_cc_co_only_diff`;
+    no separate HOL original. -/
 theorem cutEnv_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (names : NumSet) :
     cutEnv names (castCompiler s t).locals = cutEnv names s.locals := rfl
 
-/-- Cutting the local environment of the state commutes with the rebuild. -/
+/-- Cutting the local environment of the state commutes with the rebuild.
+    Flapjack infrastructure toward the parked HOL theorem
+    `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem cutState_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (names : NumSet) :
     cutState names (castCompiler s t) =
@@ -113,7 +133,9 @@ theorem cutState_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
   | none => rfl
   | some env => rfl
 
-/-- The optional environment cut commutes with the rebuild. -/
+/-- The optional environment cut commutes with the rebuild.  Flapjack
+    infrastructure toward the parked HOL theorem `evaluate_cc_co_only_diff`;
+    no separate HOL original. -/
 theorem cutStateOpt_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (names : Option NumSet) :
     cutStateOpt names (castCompiler s t) =
@@ -122,7 +144,8 @@ theorem cutStateOpt_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2
   | none => rfl
   | some names => exact cutState_castCompiler s t names
 
-/-- Exception unwinding commutes with the rebuild. -/
+/-- Exception unwinding commutes with the rebuild.  Flapjack infrastructure
+    toward the parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem jumpExc_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) :
     jumpExc (castCompiler s t) =
       (jumpExc s).map (fun next => castCompiler next t) := by
@@ -137,7 +160,8 @@ theorem jumpExc_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) 
       | exc size env handler => rfl
   · simp [inside]
 
-/-- Popping a frame commutes with the rebuild. -/
+/-- Popping a frame commutes with the rebuild.  Flapjack infrastructure toward
+    the parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem popEnv_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) :
     popEnv (castCompiler s t) = (popEnv s).map (fun next => castCompiler next t) := by
   simp only [popEnv]
@@ -148,17 +172,21 @@ theorem popEnv_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) :
     | env size env => rfl
     | exc size env handler => rfl
 
-/-- Entering a call commutes with the rebuild. -/
+/-- Entering a call commutes with the rebuild.  Flapjack infrastructure toward
+    the parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem callEnv_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (args : List DataSem.Value) (size : Option Nat) :
     callEnv args size (castCompiler s t) = castCompiler (callEnv args size s) t := rfl
 
-/-- Pushing an environment commutes with the rebuild. -/
+/-- Pushing an environment commutes with the rebuild.  Flapjack infrastructure
+    toward the parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem pushEnv_castCompiler {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (env : Spt DataSem.Value) (handler : Bool) :
     pushEnv env handler (castCompiler s t) = castCompiler (pushEnv env handler s) t := rfl
 
-/-- Exception unwinding keeps the two states in agreement. -/
+/-- Exception unwinding keeps the two states in agreement.  Flapjack
+    infrastructure toward the parked HOL theorem `evaluate_cc_co_only_diff`;
+    no separate HOL original. -/
 theorem jumpExc_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) (s1 : State C1 F)
     (premises : ccCoOnlyDiff s t ∧ jumpExc s = some s1) :
     ∃ t1, jumpExc t = some t1 ∧ ccCoOnlyDiff s1 t1 := by
@@ -167,26 +195,33 @@ theorem jumpExc_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) (s1 : S
   simp only [Option.map_some]
   exact ⟨castCompiler s1 t, rfl, ccCoOnlyDiff_castCompiler s1 t⟩
 
-/-- The installation safety update only clears the flag for installation. -/
+/-- The installation safety update only clears the flag for installation.
+    Flapjack infrastructure toward the parked HOL theorem
+    `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem installSfs_safeForSpace_of_ne {C F : Type} (op : ClosLang.Op) (state : State C F)
     (ne : op ≠ .install) : (installSfs op state).safeForSpace = state.safeForSpace := by
   cases op <;> simp_all [installSfs]
 
-/-- Installing clears the safety flag. -/
+/-- Installing clears the safety flag.  Flapjack infrastructure toward the
+    parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem installSfs_safeForSpace_install {C F : Type} (state : State C F) :
     (installSfs .install state).safeForSpace = false := by
   simp [installSfs]
 
-/-- Flushing the locals never changes the safety flag. -/
+/-- Flushing the locals never changes the safety flag.  Flapjack infrastructure
+    toward the parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem flushState_safeForSpace {C F : Type} (all : Bool) (state : State C F) :
     (flushState all state).safeForSpace = state.safeForSpace := by
   cases all <;> rfl
 
-/-- Writing a local variable never changes the safety flag. -/
+/-- Writing a local variable never changes the safety flag.  Flapjack
+    infrastructure toward the parked HOL theorem `evaluate_cc_co_only_diff`;
+    no separate HOL original. -/
 theorem setVar_safeForSpace {C F : Type} (name : Nat) (value : DataSem.Value)
     (state : State C F) : (setVar name value state).safeForSpace = state.safeForSpace := rfl
 
-/-- Writing a local variable preserves agreement. -/
+/-- Writing a local variable preserves agreement.  Flapjack infrastructure
+    toward the parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem setVar_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) (name : Nat)
     (value : DataSem.Value) (diff : ccCoOnlyDiff s t) :
     ccCoOnlyDiff (setVar name value s) (setVar name value t) := by
@@ -194,7 +229,9 @@ theorem setVar_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) (name : 
   rw [← same]
   exact ccCoOnlyDiff_castCompiler (setVar name value s) t
 
-/-- Writing several local variables preserves agreement. -/
+/-- Writing several local variables preserves agreement.  Flapjack
+    infrastructure toward the parked HOL theorem `evaluate_cc_co_only_diff`;
+    no separate HOL original. -/
 theorem setVars_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) (names : List Nat)
     (values : List DataSem.Value) (diff : ccCoOnlyDiff s t) :
     ccCoOnlyDiff (setVars names values s) (setVars names values t) := by
@@ -202,14 +239,16 @@ theorem setVars_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) (names 
   rw [← same]
   exact ccCoOnlyDiff_castCompiler (setVars names values s) t
 
-/-- Clock decrement preserves agreement. -/
+/-- Clock decrement preserves agreement.  Flapjack infrastructure toward the
+    parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem decClock_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (diff : ccCoOnlyDiff s t) : ccCoOnlyDiff (decClock s) (decClock t) := by
   have same := (ccCoOnlyDiff_iff_castCompiler s t).1 diff
   rw [← same]
   exact ccCoOnlyDiff_castCompiler (decClock s) t
 
-/-- Flushing the locals preserves agreement. -/
+/-- Flushing the locals preserves agreement.  Flapjack infrastructure toward
+    the parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem flushState_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) (all : Bool)
     (diff : ccCoOnlyDiff s t) :
     ccCoOnlyDiff (flushState all s) (flushState all t) := by
@@ -219,7 +258,9 @@ theorem flushState_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) (all
   · exact ccCoOnlyDiff_castCompiler (flushState false s) t
   · exact ccCoOnlyDiff_castCompiler (flushState true s) t
 
-/-- The installation safety update preserves agreement. -/
+/-- The installation safety update preserves agreement.  Flapjack
+    infrastructure toward the parked HOL theorem `evaluate_cc_co_only_diff`;
+    no separate HOL original. -/
 theorem installSfs_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (op : ClosLang.Op) (diff : ccCoOnlyDiff s t) :
     ccCoOnlyDiff (installSfs op s) (installSfs op t) := by
@@ -227,7 +268,8 @@ theorem installSfs_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
   rw [← same]
   cases op <;> exact ccCoOnlyDiff_castCompiler (installSfs _ s) t
 
-/-- Space allocation preserves agreement. -/
+/-- Space allocation preserves agreement.  Flapjack infrastructure toward the
+    parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem addSpace_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) (amount : Nat)
     (diff : ccCoOnlyDiff s t) :
     ccCoOnlyDiff (addSpace s amount) (addSpace t amount) := by
@@ -235,7 +277,8 @@ theorem addSpace_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F) (amoun
   rw [← same]
   exact ccCoOnlyDiff_castCompiler (addSpace s amount) t
 
-/-- Replacing the locals preserves agreement. -/
+/-- Replacing the locals preserves agreement.  Flapjack infrastructure toward
+    the parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem localsUpdate_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (env : Spt DataSem.Value) (diff : ccCoOnlyDiff s t) :
     ccCoOnlyDiff { s with locals := env } { t with locals := env } := by
@@ -243,7 +286,8 @@ theorem localsUpdate_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
   rw [← same]
   exact ccCoOnlyDiff_castCompiler { s with locals := env } t
 
-/-- Entering a call preserves agreement. -/
+/-- Entering a call preserves agreement.  Flapjack infrastructure toward the
+    parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem callEnv_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (args : List DataSem.Value) (size : Option Nat) (diff : ccCoOnlyDiff s t) :
     ccCoOnlyDiff (callEnv args size (decClock s)) (callEnv args size (decClock t)) := by
@@ -251,7 +295,8 @@ theorem callEnv_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
   rw [← same]
   exact ccCoOnlyDiff_castCompiler (callEnv args size (decClock s)) t
 
-/-- Pushing an environment preserves agreement. -/
+/-- Pushing an environment preserves agreement.  Flapjack infrastructure
+    toward the parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem pushEnv_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (env : Spt DataSem.Value) (handler : Bool) (diff : ccCoOnlyDiff s t) :
     ccCoOnlyDiff (pushEnv env handler (decClock s)) (pushEnv env handler (decClock t)) := by
@@ -588,7 +633,9 @@ private theorem ccCoOnlyDiffAt_if {C F : Type} (name : Nat) (yes no : DataLang.P
         · exact ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock,
             code, ffi, space, tstamps, limits, safeFlag, peak⟩
 
-/-- Clearing the stack and locals preserves agreement. -/
+/-- Clearing the stack and locals preserves agreement.  Flapjack
+    infrastructure toward the parked HOL theorem `evaluate_cc_co_only_diff`;
+    no separate HOL original. -/
 theorem stackClear_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (diff : ccCoOnlyDiff s t) :
     ccCoOnlyDiff { s with stack := [], locals := .ln } { t with stack := [], locals := .ln } := by
@@ -596,7 +643,9 @@ theorem stackClear_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
   rw [← same]
   exact ccCoOnlyDiff_castCompiler { s with stack := [], locals := .ln } t
 
-/-- Entering a call through a pushed environment preserves agreement. -/
+/-- Entering a call through a pushed environment preserves agreement.
+    Flapjack infrastructure toward the parked HOL theorem
+    `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem callEnvPush_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (args : List DataSem.Value) (size : Option Nat) (env : Spt DataSem.Value)
     (handler : Bool) (diff : ccCoOnlyDiff s t) :
@@ -606,7 +655,8 @@ theorem callEnvPush_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
   rw [← same]
   exact ccCoOnlyDiff_castCompiler (callEnv args size (pushEnv env handler (decClock s))) t
 
-/-- Popping a frame never changes the safety flag. -/
+/-- Popping a frame never changes the safety flag.  Flapjack infrastructure
+    toward the parked HOL theorem `evaluate_cc_co_only_diff`; no separate HOL original. -/
 theorem popEnv_safeForSpace {C F : Type} (state next : State C F)
     (run : popEnv state = some next) : next.safeForSpace = state.safeForSpace := by
   cases frames : state.stack with
@@ -620,7 +670,9 @@ theorem popEnv_safeForSpace {C F : Type} (state next : State C F)
       simp only [popEnv, frames, Option.some.injEq] at run
       rw [← run]
 
-/-- A stackless source frame means the target is stackless too. -/
+/-- A stackless source frame means the target is stackless too.  Flapjack
+    infrastructure toward the parked HOL theorem `evaluate_cc_co_only_diff`;
+    no separate HOL original. -/
 theorem popEnv_none_of_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (diff : ccCoOnlyDiff s t) (run : popEnv s = none) : popEnv t = none := by
   have same := (ccCoOnlyDiff_iff_castCompiler s t).1 diff
