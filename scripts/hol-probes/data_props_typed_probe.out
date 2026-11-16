@@ -96,3 +96,4 @@ cut_state_opt_with_sfs_typed=∀(names_opt :sptree$num_set option) (s :(α, β) 
 cut_state_opt_stack_typed=∀(names_opt :sptree$num_set option) (s :(α, β) dataSem$state) (s1 :(α, β) dataSem$state). cut_state_opt names_opt s = SOME s1 ⇒ s1.stack = s.stack
 OPTION_CASE_OPTION_MAP_typed=∀(f :α -> β) (a :α option) (e :γ) (g :β -> γ). (option_CASE (OPTION_MAP f a) e g :γ) = (option_CASE a e (g ∘ f) :γ)
 cut_state_opt_cc_co_full_typed=∀(t :(β, 'ffi) dataSem$state) (s :(α, 'ffi) dataSem$state) (names_opt :sptree$num_set option). t.locals = s.locals ⇒ cut_state_opt names_opt t = OPTION_MAP (λ(u :(α, 'ffi) dataSem$state). t with locals := u.locals) (cut_state_opt names_opt s)
+v_to_list_SOME_CONS_IMP_typed=∀(v :v) (x :v) (xs :v list) (ts :α). v_to_list v = SOME (x::xs) ⇒ ∃(ts' :num) (ys :v). v = (Block ts' cons_tag [x; ys] :v) ∧ v_to_list ys = SOME xs

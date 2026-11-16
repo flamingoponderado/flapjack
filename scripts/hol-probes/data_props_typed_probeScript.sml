@@ -184,3 +184,4 @@ val _ = show "cut_state_opt_cc_co_full_typed"
     strip_tac \\ Cases_on `names_opt`
     \\ rw[dataSemTheory.cut_state_opt_def, dataSemTheory.cut_state_def, dataSemTheory.cut_env_def]
     \\ gvs[dataSemTheory.state_component_equality]));
+val _ = emit "v_to_list_SOME_CONS_IMP_typed" "v_to_list_SOME_CONS_IMP";
