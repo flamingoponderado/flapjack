@@ -75,7 +75,25 @@ private theorem extraPremiseEquation {α : Type}
     wfs sx ∧ s.submap sx ∧ Set.Subset (allVars sx c1 c2) (allVars s t1 t2) ∧
       pairCount (walkstar sx c1) < pairCount (walkstar sx t1) := uREq sx c1 c2 s t1 t2
 
+private theorem selfIffEquation {α : Type}
+    (sx : HolFiniteMapExact Nat (Term α)) (c1 c2 : Term α)
+    (s : HolFiniteMapExact Nat (Term α)) (t1 t2 : Term α) :
+    uR (sx, c1, c2) (s, t1, t2) ↔ uR (sx, c1, c2) (s, t1, t2) := Iff.rfl
+
+private theorem extraEquationWitness {α : Type}
+    (s : HolFiniteMapExact Nat (Term α)) (key : Nat) (_ : True) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s :=
+  holFmapAsFiniteSupportParamWitness_uREq_s s key
+
+private theorem vacuousEquationWitness {α : Type}
+    (s : HolFiniteMapExact Nat (Term α)) (key : Nat) :
+    s.lookup key = s.lookup key ∧ s.finiteSupport = s.finiteSupport ∧ s = s := ⟨rfl, rfl, rfl⟩
+
 run_meta do
+  let bundleProblems ← unificationTupleElaboratedProblems
+  unless bundleProblems.isEmpty do throwError "valid elaborated bundle rejected: {bundleProblems}"
   let ownerProblems ← unificationTupleOwnerAndAxiomProblems
   unless ownerProblems.isEmpty do throwError "valid owners rejected: {ownerProblems}"
   let good ← getConstInfo ``uRWellFounded
@@ -98,10 +116,21 @@ run_meta do
   let equation ← getConstInfo ``uREq
   let equationProblems ← unificationTupleEquationProblems equation.type
   unless equationProblems.isEmpty do throwError "valid relation equation rejected: {equationProblems}"
-  for bad in [``wrongRelationEquation, ``extraPremiseEquation] do
+  for bad in [``wrongRelationEquation, ``extraPremiseEquation, ``selfIffEquation] do
     let info ← getConstInfo bad
     let problems ← unificationTupleEquationProblems info.type
     if problems.isEmpty then throwError "invalid relation equation {bad} accepted"
+  for name in [``holFmapAsFiniteSupportParamWitness_uREq_s,
+      ``holFmapAsFiniteSupportParamWitness_uREq_sx] do
+    let info ← getConstInfo name
+    let problems ← unificationEquationMapWitnessTypeProblems info.type
+    unless problems.isEmpty do throwError "valid map witness {name} rejected: {problems}"
+  let badMapWitness ← getConstInfo ``extraEquationWitness
+  let badMapProblems ← unificationEquationMapWitnessTypeProblems badMapWitness.type
+  if badMapProblems.isEmpty then throwError "conditional map witness accepted"
+  let vacuousMapWitness ← getConstInfo ``vacuousEquationWitness
+  let vacuousMapProblems ← unificationEquationMapWitnessTypeProblems vacuousMapWitness.type
+  if vacuousMapProblems.isEmpty then throwError "vacuous map witness accepted"
   for bad in [``wrongMapRelation, ``wrongPositionRelation, ``extraTypeRelation,
       ``extraTupleSlotRelation] do
     let info ← getConstInfo bad
@@ -124,3 +153,23 @@ run_meta do
     let info ← getConstInfo name
     let problems ← unificationTupleWitnessTypeProblems info.type true
     if problems.isEmpty then throwError "invalid witness {name} accepted"
+
+section HostileOrder
+
+local instance (priority := 1000000) hostileNatOrder : LT Nat := ⟨fun _ _ => False⟩
+
+private def falseMeasureRelation {α : Type}
+    (left right : HolFiniteMapExact Nat (Term α) × Term α × Term α) : Prop :=
+  wfs left.1 ∧ right.1.submap left.1 ∧
+  Set.Subset (allVars left.1 left.2.1 left.2.2) (allVars right.1 right.2.1 right.2.2) ∧
+  False
+
+run_meta do
+  let .defnInfo good ← getConstInfo ``uR | throwError "missing relation"
+  let goodProblems ← unificationTupleRelationBodyProblems good.value
+  unless goodProblems.isEmpty do throwError "hostile order rejected valid relation: {goodProblems}"
+  let .defnInfo bad ← getConstInfo ``falseMeasureRelation | throwError "missing hostile-order fixture"
+  let problems ← unificationTupleRelationBodyProblems bad.value
+  if problems.isEmpty then throwError "hostile order accepted a false decrease"
+
+end HostileOrder

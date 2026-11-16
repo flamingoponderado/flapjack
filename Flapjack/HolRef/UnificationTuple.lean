@@ -56,13 +56,7 @@ def unificationTupleRelationTypeProblems (type : Expr) : MetaM (Array String) :=
     unless ← isDefEq result (mkSort Level.zero) do return #["relation must return Prop"]
     return #[]
 
-/-- Check the elaborated body of `uR` against the four source conjuncts. The
-source audit and imported-owner checks remain separate requirements. -/
-def unificationTupleRelationBodyProblems (value : Expr) : MetaM (Array String) := do
-  lambdaTelescope value fun args body => do
-    unless args.size == 3 do return #["relation body needs atom and two tuple binders"]
-    let left := args[1]!
-    let right := args[2]!
+private def unificationTupleExpectedBody (left right : Expr) : MetaM Expr := do
     let leftMap := mkProj ``Prod 0 left
     let rightMap := mkProj ``Prod 0 right
     let leftTail := mkProj ``Prod 1 left
@@ -80,9 +74,16 @@ def unificationTupleRelationBodyProblems (value : Expr) : MetaM (Array String) :
     let rightWalk ← mkAppM `Flapjack.HOL.Unification.walkstar #[leftMap, rightFirst]
     let leftSize ← mkAppM `Flapjack.HOL.Unification.pairCount #[leftWalk]
     let rightSize ← mkAppM `Flapjack.HOL.Unification.pairCount #[rightWalk]
-    let smaller ← mkAppM ``LT.lt #[leftSize, rightSize]
-    let expected := mkApp2 (mkConst ``And) wf
+    let smaller := mkApp2 (mkConst ``Nat.lt) leftSize rightSize
+    return mkApp2 (mkConst ``And) wf
       (mkApp2 (mkConst ``And) sub (mkApp2 (mkConst ``And) subset smaller))
+
+/-- Check the elaborated body of `uR` against the four source conjuncts. The
+source audit and imported-owner checks remain separate requirements. -/
+def unificationTupleRelationBodyProblems (value : Expr) : MetaM (Array String) := do
+  lambdaTelescope value fun args body => do
+    unless args.size == 3 do return #["relation body needs atom and two tuple binders"]
+    let expected ← unificationTupleExpectedBody args[1]! args[2]!
     unless ← isDefEq body expected do return #["relation body differs from the four source conjuncts"]
     return #[]
 
@@ -114,7 +115,14 @@ def unificationTupleEquationProblems (type : Expr) : MetaM (Array String) := do
     let right ← mkAppM ``Prod.mk #[args[4]!, rightTail]
     let expectedRelation ← mkAppM `Flapjack.HOL.Unification.uR #[left, right]
     unless ← isDefEq lhs expectedRelation do return #["equation lhs has wrong tuple components"]
-    unless ← isDefEq iffArgs[1]! expectedRelation do
+    let rhs := iffArgs[1]!
+    let mut spine := rhs
+    for _ in [:3] do
+      unless spine.getAppFn.isConstOf ``And && spine.getAppArgs.size == 2 do
+        return #["equation rhs must have the direct four-conjunct source shape"]
+      spine := spine.getAppArgs[1]!
+    let expected ← unificationTupleExpectedBody left right
+    unless ← isDefEq rhs expected do
       return #["equation rhs differs from the imported relation body"]
     return #[]
 
@@ -205,6 +213,36 @@ def unificationTupleWitnessTypeProblems (type : Expr) (forward : Bool) : MetaM (
     unless ← isDefEq result expected do return #["witness must state the complete roundtrip"]
     return #[]
 
+/-- Check one imported `uREq` map witness against the canonical substitution
+codec theorem, with no extra binder or premise. -/
+def unificationEquationMapWitnessTypeProblems (type : Expr) : MetaM (Array String) := do
+  forallTelescope type fun args result => do
+    unless args.size == 3 do return #["equation map witness needs exactly three binders"]
+    let atom ← args[0]!.fvarId!.getDecl
+    let mapBinder ← args[1]!.fvarId!.getDecl
+    let key ← args[2]!.fvarId!.getDecl
+    unless atom.binderInfo == .implicit && mapBinder.binderInfo == .default &&
+        key.binderInfo == .default do return #["equation map witness has wrong binder visibility"]
+    unless ← isDefEq atom.type (mkSort (Level.succ Level.zero)) do
+      return #["equation map witness atom binder must be Type"]
+    let term := mkApp (mkConst `Flapjack.HOL.Unification.Term) args[0]!
+    let map := mkApp2 (mkConst `Flapjack.HolFiniteMapExact) (mkConst ``Nat) term
+    unless ← isDefEq mapBinder.type map do return #["equation map witness has the wrong map carrier"]
+    unless ← isDefEq key.type (mkConst ``Nat) do return #["equation map witness has the wrong key carrier"]
+    let broad ← mkAppM `Flapjack.FiniteMapBroad.toBroad #[args[1]!]
+    let restored ← mkAppM `Flapjack.FiniteMapBroad.ofBroad #[broad]
+    let restoredLookup ← mkAppM `Flapjack.HolFiniteMapExact.lookup #[restored]
+    let originalLookup ← mkAppM `Flapjack.HolFiniteMapExact.lookup #[args[1]!]
+    let lookupEq ← mkEq (mkApp restoredLookup args[2]!) (mkApp originalLookup args[2]!)
+    let restoredSupport ← mkAppM `Flapjack.HolFiniteMapExact.finiteSupport #[restored]
+    let originalSupport ← mkAppM `Flapjack.HolFiniteMapExact.finiteSupport #[args[1]!]
+    let supportEq ← mkEq restoredSupport originalSupport
+    let mapEq ← mkEq restored args[1]!
+    let expected := mkApp2 (mkConst ``And) lookupEq (mkApp2 (mkConst ``And) supportEq mapEq)
+    unless ← withTransparency .reducible (isDefEq result expected) do
+      return #["equation map witness must state the canonical codec roundtrip"]
+    return #[]
+
 /-- Resolve the exact owners and reject axioms in the tuple codec and witness
 bundle. Relation bodies and attribute metadata are checked separately. -/
 def unificationTupleOwnerAndAxiomProblems : CoreM (Array String) := do
@@ -218,13 +256,16 @@ def unificationTupleOwnerAndAxiomProblems : CoreM (Array String) := do
     `Flapjack.HOL.Unification.uRTupleOfBroad]
   let witnesses := #[`Flapjack.HOL.Unification.holFmapAsFiniteSupportTupleWitness_uRWellFounded,
     `Flapjack.HOL.Unification.holFmapAsFiniteSupportTupleWitness_uRWellFounded_reverse]
+  let equationWitnesses := #[`Flapjack.HOL.Unification.holFmapAsFiniteSupportParamWitness_uREq_sx,
+    `Flapjack.HOL.Unification.holFmapAsFiniteSupportParamWitness_uREq_s]
   let definingModule (name : Name) :=
     match env.getModuleIdxFor? name with
     | some idx => env.header.moduleNames[idx.toNat]!
     | none => env.mainModule
   let mut errors : Array String := #[]
-  for name in #[target, relation, equation] ++ codecs ++ witnesses do
-    let expectedModule := if name == relation || name == equation then relationModule else targetModule
+  for name in #[target, relation, equation] ++ codecs ++ witnesses ++ equationWitnesses do
+    let expectedModule := if name == relation || name == equation || equationWitnesses.contains name then
+      relationModule else targetModule
     unless definingModule name == expectedModule do
       errors := errors.push s!"{name} has the wrong defining module"
     let info := env.checked.get.find? name
@@ -237,7 +278,7 @@ def unificationTupleOwnerAndAxiomProblems : CoreM (Array String) := do
       unless !isDefinition && t.levelParams.isEmpty do
         errors := errors.push s!"{name} must have the expected theorem kind"
     | _ => errors := errors.push s!"{name} is missing or has the wrong declaration kind"
-  for name in codecs ++ witnesses do
+  for name in codecs ++ witnesses ++ equationWitnesses do
     if (env.checked.get.find? name).isSome then
       let axioms ← collectAxioms name
       unless axioms.isEmpty do errors := errors.push s!"{name} depends on axioms {axioms}"
@@ -248,6 +289,53 @@ def unificationTupleOwnerAndAxiomProblems : CoreM (Array String) := do
       for axiomName in axioms do
         unless allowed.contains axiomName do
           errors := errors.push s!"{name} depends on unexpected axiom {axiomName}"
+  let dependencies : Array (Name × Name) := #[
+    (`Flapjack.HolFiniteMapExact, `Flapjack.FiniteMap.Exact),
+    (`Flapjack.FiniteMapBroad, `Flapjack.FiniteMap.BroadCodec),
+    (`Flapjack.FiniteMapBroad.toBroad, `Flapjack.FiniteMap.BroadCodec),
+    (`Flapjack.FiniteMapBroad.ofBroad, `Flapjack.FiniteMap.BroadCodec),
+    (`Flapjack.HolFiniteMapExact.submap, `Flapjack.FiniteMap.SubmapExact),
+    (`Flapjack.HOL.Unification.Term, `Flapjack.HOL.Unification.Term),
+    (`Flapjack.HOL.Unification.pairCount, `Flapjack.HOL.Unification.Term),
+    (`Flapjack.HOL.Unification.wfs, `Flapjack.HOL.Unification.Subst),
+    (`Flapjack.HOL.Unification.allVars, relationModule),
+    (`Flapjack.HOL.Unification.walkstar, `Flapjack.HOL.Unification.Walkstar),
+    (`Flapjack.HOL.Unification.holFmapAsFiniteSupportParamWitness_vR_subst,
+      `Flapjack.HOL.Unification.Subst)]
+  for (name, owner) in dependencies do
+    if (env.find? name).isNone || definingModule name != owner then
+      errors := errors.push s!"{name} is missing or has the wrong defining module"
   return errors
+
+/-- Run all prospective elaborated checks over the exact resolved declaration
+bundle. HOL-reference metadata and source-level checks are still separate, and
+this function does not enable a qualifier. -/
+def unificationTupleElaboratedProblems : MetaM (Array String) := do
+  let ownerProblems ← unificationTupleOwnerAndAxiomProblems
+  unless ownerProblems.isEmpty do return ownerProblems
+  let target ← getConstInfo `Flapjack.HOL.Unification.uRWellFounded
+  let .defnInfo relation ← getConstInfo `Flapjack.HOL.Unification.uR
+    | return #["uR is not a definition"]
+  let equation ← getConstInfo `Flapjack.HOL.Unification.uREq
+  let mut problems ← unificationTupleSignatureProblems target.type
+  problems := problems ++ (← unificationTupleRelationTypeProblems relation.type)
+  if problems.isEmpty then
+    problems := problems ++ (← unificationTupleRelationBodyProblems relation.value)
+  problems := problems ++ (← unificationTupleEquationProblems equation.type)
+  for (name, direction) in #[(
+      `Flapjack.HOL.Unification.uRTupleToBroad, true),
+      (`Flapjack.HOL.Unification.uRTupleOfBroad, false)] do
+    let .defnInfo codec ← getConstInfo name | return problems.push s!"{name} is not a definition"
+    problems := problems ++ (← unificationTupleCodecProblems codec.type codec.value direction)
+  for (name, direction) in #[(
+      `Flapjack.HOL.Unification.holFmapAsFiniteSupportTupleWitness_uRWellFounded, true),
+      (`Flapjack.HOL.Unification.holFmapAsFiniteSupportTupleWitness_uRWellFounded_reverse, false)] do
+    let witness ← getConstInfo name
+    problems := problems ++ (← unificationTupleWitnessTypeProblems witness.type direction)
+  for name in #[`Flapjack.HOL.Unification.holFmapAsFiniteSupportParamWitness_uREq_sx,
+      `Flapjack.HOL.Unification.holFmapAsFiniteSupportParamWitness_uREq_s] do
+    let witness ← getConstInfo name
+    problems := problems ++ (← unificationEquationMapWitnessTypeProblems witness.type)
+  return problems
 
 end Flapjack
