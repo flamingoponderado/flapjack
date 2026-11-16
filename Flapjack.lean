@@ -3784,6 +3784,8 @@ import Flapjack.RiscV.CakeArtifactFormat
 import Flapjack.Compiler.Inference.Infer
 import Flapjack.Compiler.Inference.InferProps
 import Flapjack.Compiler.Inference.Unify.Encoding
+import Flapjack.Compiler.Inference.Unify.Substitution
+import Flapjack.Compiler.Inference.Unify.Substitution.Submap
 import Flapjack.HOL.Unification.Subst
 import Flapjack.HOL.Unification.Walk
 import Flapjack.HOL.Unification.Walk.ToVar

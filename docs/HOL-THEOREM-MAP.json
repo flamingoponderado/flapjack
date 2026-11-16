@@ -138107,5 +138107,41 @@
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["subst"],
   "reviewer": "Compared the typed HOL theorem, walk definition and source: under well-formedness, the equation walks once and recursively normalizes both children of a returned pair, preserving variable and constant results. The well-founded model is unbounded; no off-wfs correspondence is claimed. The canonical map parameter has a codec witness."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_vars_def",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Substitution.lean", "lean_name": "tVars",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL definition: the variable predicate is vars applied to the reviewed inference-type encoding."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_vR_def",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Substitution.lean", "lean_name": "tVR",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["subst"],
+  "reviewer": "Compared typed HOL and source: generic map keys remain independent of Nat variables, and map2 preserves each lookup while applying the encoding exactly as o_f. The parameter has a canonical codec witness."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_wfs_def",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Substitution.lean", "lean_name": "tWfs",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["subst"],
+  "reviewer": "Compared typed HOL and source: the substitution uses Nat keys and the same value-encoding map composition before wfs. The parameter has a canonical codec witness."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_vR_eqn",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Substitution.lean", "lean_name": "tVREqn",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["subst"],
+  "reviewer": "Compared typed HOL and source: the generic map-key and Nat-variable binder order, relation orientation, and absent/present lookup cases match. The parameter has a canonical codec witness."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_wfs_eqn",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Substitution.lean", "lean_name": "tWfsEqn",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["subst"],
+  "reviewer": "Compared typed HOL and source: well-formedness is equivalent to well-foundedness of the same inference dependency relation. The Nat-key map parameter has a canonical codec witness."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_wfs_SUBMAP",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Substitution/Submap.lean", "lean_name": "tWfsSubmap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s1", "s2"],
+  "reviewer": "Compared typed HOL and source: well-formedness of s2 and s1 SUBMAP s2 imply well-formedness of s1 in the original argument order. Value encoding preserves every binding; both canonical map parameters have codec witnesses."
 }
 ]

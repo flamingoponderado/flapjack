@@ -9791,7 +9791,7 @@ run_probe infer_props_tids_probeScript.sml infer_props_tids_probe.out \
   "$cake_dir/compiler/inference"
 
 run_probe unify_encoding_probeScript.sml unify_encoding_probe.out \
-  term_axiom_typed pair_count_def_typed vars_def_typed atom_axiom_typed encode_infer_t_def_typed decode_infer_t_def_typed encode_infer_t_11_typed decode_left_inverse_typed decode_left_inverse_I_typed encode_eq_var_typed vR_def_typed wfs_def_typed wfs_SUBMAP_typed vwalk_def_typed NOT_FDOM_vwalk_typed vwalk_to_var_typed vwalk_vR_typed walkstar_def_typed \
+  term_axiom_typed pair_count_def_typed vars_def_typed atom_axiom_typed encode_infer_t_def_typed decode_infer_t_def_typed encode_infer_t_11_typed decode_left_inverse_typed decode_left_inverse_I_typed encode_eq_var_typed vR_def_typed wfs_def_typed wfs_SUBMAP_typed vwalk_def_typed NOT_FDOM_vwalk_typed vwalk_to_var_typed vwalk_vR_typed walkstar_def_typed t_vars_def_typed t_wfs_def_typed t_vR_def_typed t_vR_eqn_typed t_wfs_eqn_typed t_wfs_SUBMAP_typed \
   "$cake_dir/compiler/inference/unifyScript.sml" \
   "$cake_dir/compiler/inference"
 

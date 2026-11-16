@@ -61,6 +61,7 @@ the cited name occurs in one of the two syntactic forms.
 | `HOL/src/num/theories/WhileScript.sml` | `Flapjack/Misc/OptionLeast.lean` (optional least natural witness) |
 | `compiler/backend/backend_passesScript.sml` | `Flapjack/Compiler/Backend/BackendPasses/Frontend.lean`, `BackendPasses/Closure.lean`, `BackendPasses/Bvi.lean`, `BackendPasses/Data.lean`, `BackendPasses/Word.lean`, `BackendPasses/WordOptimise.lean` and `BackendPasses/Stack.lean` (explorer snapshots through lab filtering) |
 | `compiler/backend/presLangScript.sml` | `Flapjack/Compiler/Backend/PresLang/Config.lean`, `PresLang/Source.lean`, `PresLang/Flat.lean`, `PresLang/Clos.lean`, `PresLang/Bvl.lean`, `PresLang/Bvi.lean`, `PresLang/Data.lean`, `PresLang/Asm.lean`, `PresLang/Lab.lean`, `PresLang/Word.lean` and `PresLang/Stack.lean` (explorer display; representation review and explorer wiring remain open) |
+| `compiler/inference/unifyScript.sml` | `Flapjack/Compiler/Inference/Unify.lean` and its `Unify/` submodules (inference unification) |
 | `semantics/tokensScript.sml` | `Flapjack/CakeParser/Tokens.lean` |
 | `semantics/tokenUtilsScript.sml` | `Flapjack/CakeParser/Tokens.lean` (token destructors) and `Flapjack/Misc/Grammar.lean` (`destTOK`, `destTyvarPT`, `destLf`) |
 | `HOL/src/string/stringScript.sml` | `Flapjack/Basis/Pure/MlString.lean` (character classification on the `HolChar` carrier) |

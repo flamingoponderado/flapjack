@@ -16,3 +16,9 @@ NOT_FDOM_vwalk_typed=wfs (s :α subst) ∧ (v :num) ∉ FDOM s ⇒ vwalk s v = (
 vwalk_to_var_typed=wfs (s :α subst) ⇒ ∀(v :num) (u :num). vwalk s v = (Var u :α term) ⇒ u ∉ FDOM s
 vwalk_vR_typed=wfs (s :α subst) ⇒ ∀(v :num) (u :num). u ∈ vars (vwalk s v) ∧ vwalk s v ≠ (Var v :α term) ⇒ (vR s)⁺ u v
 walkstar_def_typed=wfs (s :α subst) ⇒ ∀(t :α term). s ◁ t = case walk s t of (Var v4 :α term) => (Var v4 :α term) | Pair t1 t2 => Pair (s ◁ t1) (s ◁ t2) | Const v7 => Const v7
+t_vars_def_typed=∀(t :infer_t). t_vars t = vars (encode_infer_t t)
+t_wfs_def_typed=∀(s :num |-> infer_t). t_wfs s ⇔ wfs (encode_infer_t o_f s)
+t_vR_def_typed=∀(s :α |-> infer_t). t_vR s = vR (encode_infer_t o_f s)
+t_vR_eqn_typed=∀(s :α |-> infer_t) (x :α) (y :num). t_vR s y x ⇔ case FLOOKUP s x of (NONE :infer_t option) => F | SOME t => y ∈ t_vars t
+t_wfs_eqn_typed=∀(s :num |-> infer_t). t_wfs s ⇔ WF (t_vR s)
+t_wfs_SUBMAP_typed=∀(s1 :num |-> infer_t) (s2 :num |-> infer_t). t_wfs s2 ∧ s1 ⊑ s2 ⇒ t_wfs s1
