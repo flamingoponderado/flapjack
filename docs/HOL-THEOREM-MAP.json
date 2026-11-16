@@ -16749,7 +16749,8 @@
     "lean_name": "union_spec",
     "statement_status": "reviewed_fmap_as_finite_support_parameters",
     "fmap_as_finite_support_parameters": ["left", "right"],
-    "reviewer": "Source comparison with funion_spec_typed: the two polymorphic input maps share key and value types, and the domain-union and unconditional FAPPLY conjuncts have the same order and conclusions as HOL. Nonempty beta renders HOL type inhabitedness. The canonical map codec witnesses cover both parameters; holFapply preserves the single unspecified out-of-domain value. Task-164 audit against the existing typed capture (built HOL4 core theory, no rebuild): the existing capture `funion_spec_typed` in scripts/hol-probes/finite_map_empty_probe.out already records the typed HOL statement; the carriers and quantifier order match the Lean declaration."
+    "total_function_inhabitants": ["β"],
+    "reviewer": "Source comparison with funion_spec_typed: the two polymorphic input maps share key and value types, and the domain-union and unconditional FAPPLY conjuncts have the same order and conclusions as HOL. Nonempty beta renders HOL type inhabitedness. The canonical map codec witnesses cover both parameters; holFapply preserves the single unspecified out-of-domain value. Task-164 audit against the existing typed capture (built HOL4 core theory, no rebuild): the existing capture `funion_spec_typed` in scripts/hol-probes/finite_map_empty_probe.out already records the typed HOL statement; the carriers and quantifier order match the Lean declaration. total_function_inhabitants records the instance that renders HOL THE (through holFapply)."
   },
 {
     "hol_path": "cakeml/compiler/backend/proofs/flat_to_closProofScript.sml",
@@ -97775,7 +97776,8 @@
     "fmap_as_finite_support_parameters": [
       "m"
     ],
-    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): pan_to_targetProof FLOOKUP_MAP_KEYS_LINV (258-275), compared with the typed literal-source replay pan_to_target_init_helpers_source_replay (re-proved there with HOL's tactic). HOL's free f m i explicit with f : α → α, m : α |-> β, i : α; f PERMUTES 𝕌(:α) (BIJ f UNIV UNIV) is Function.Bijective f as in the tagged stack_names make_init; LINV f 𝕌(:α) is the tagged holLinv on fun _ => True (its [Nonempty α] is HOL type inhabitedness); MAP_KEYS is the finite-support Hilbert-choice rendering mapKeys; FLOOKUP is lookup. The map parameter m is the canonical HolFiniteMapExact carrier with the same-module witness holFmapAsFiniteSupportParamWitness_FLOOKUP_MAP_KEYS_LINV_m; no other statement difference."
+    "total_function_inhabitants": ["α"],
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): pan_to_targetProof FLOOKUP_MAP_KEYS_LINV (258-275), compared with the typed literal-source replay pan_to_target_init_helpers_source_replay (re-proved there with HOL's tactic). HOL's free f m i explicit with f : α → α, m : α |-> β, i : α; f PERMUTES 𝕌(:α) (BIJ f UNIV UNIV) is Function.Bijective f as in the tagged stack_names make_init; LINV f 𝕌(:α) is the tagged holLinv on fun _ => True (its [Nonempty α] is HOL type inhabitedness); MAP_KEYS is the finite-support Hilbert-choice rendering mapKeys; FLOOKUP is lookup. The map parameter m is the canonical HolFiniteMapExact carrier with the same-module witness holFmapAsFiniteSupportParamWitness_FLOOKUP_MAP_KEYS_LINV_m; no other statement difference. total_function_inhabitants records the instance that renders HOL LINV (through THE)."
   },
 {
     "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
@@ -108035,8 +108037,9 @@
     "lean_name": "«raise'exception»",
     "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
     "hol_name": "raise'exception_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol-c source comparison: riscvScript366-375 original Def parameter e:exception, Close state, tuple LX(VTy a) and conditional update only when state.exception=NoException. Lean retains generic return carrier and whole native state, canonical per-carrier holArb, exact first-exception conditional and full record update. Nonempty Ta represents intrinsic HOL type-kind nonemptiness, following already reviewed generic LINV/HD/EL/THE ports; no chosen Lean default or extra source hypothesis. Native exception/riscv_state carriers are reviewed source Types counterparts; derived BEq against payload-free NoException agrees with HOL equality. Fresh original full type and assumption-free full tuple equation are captured in l3_raise_exception probe, with matching generic Lean whole-result regression."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["Ta"],
+    "reviewer": "flapjack-sol-c source comparison: riscvScript366-375 original Def parameter e:exception, Close state, tuple LX(VTy a) and conditional update only when state.exception=NoException. Lean retains generic return carrier and whole native state, canonical per-carrier holArb, exact first-exception conditional and full record update. Nonempty Ta represents intrinsic HOL type-kind nonemptiness, following already reviewed generic LINV/HD/EL/THE ports; no chosen Lean default or extra source hypothesis. Native exception/riscv_state carriers are reviewed source Types counterparts; derived BEq against payload-free NoException agrees with HOL equality. Fresh original full type and assumption-free full tuple equation are captured in l3_raise_exception probe, with matching generic Lean whole-result regression. total_function_inhabitants records the instance that renders HOL ARB."
   },
 {
     "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Flush.lean",
@@ -124011,8 +124014,9 @@
     "hol_name": "raise'exception_def",
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/L3/Defs.lean",
     "lean_name": "«raise'exception»",
-    "statement_status": "reviewed_exact",
-    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:379` `raise'exception_def`. The Lean `«raise'exception»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: `holArb` is an arbitrary value, as HOL's `ARB`."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["Ta"],
+    "reviewer": "codewhale source comparison 2026-11-04 (issue #1239): HOL `arm8Script.sml:379` `raise'exception_def`. The Lean `«raise'exception»` is the renderer output of the elaborated HOL definition theorem (`scripts/l3/arm8_defs.sexp.gz`), checked by `scripts/l3/check-renderings.py`; the ARM8 translation rules are reviewed in `docs/ARM8.md` \"Transition review\". The definitional equation matches HOL clause-for-clause; no hypothesis, side condition, or conclusion is added or dropped. Rendering notes: `holArb` is an arbitrary value, as HOL's `ARB`. total_function_inhabitants records the instance that renders HOL ARB."
   },
 {
     "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
