@@ -93,6 +93,7 @@ OPTIONAL_FIELDS: frozenset[str] = frozenset(
         "words_as_type_indexed_bitvec",
         "word_dimension_as_width",
         "word_dimensions_as_widths",
+        "total_function_inhabitants",
         "hol_line",
     }
 )

@@ -797,6 +797,32 @@ applies; otherwise the status the other qualifiers require is kept and the
 manifest records `"reals_as_rational_cuts": true`. The manifest note must
 name the qualifier and SOUNDNESS item 8, and it can never be `reviewed_exact`.
 
+**Qualify total-function inhabitant instances.** HOL's total functions `EL`,
+`HD`, `THE`, `LAST`, `ALOOKUP`, `LINV` and `ARB` return an unspecified value on
+bad input, so their HOL statements need no inhabitancy premise. The Lean
+renderings (`holEl`, `holHd`, `holLast`, `holThe`, `holLinv`, `holArb`,
+`holHdNil`, `holFapply`, `holFapplyOutside`) instead take a `[Nonempty _]` or
+`[Inhabited _]` instance on the element type. Record that rendering with
+`(total_function_inhabitants := [α, β, ...])`, naming the declaration's type
+binders whose single instance exists only for it:
+
+```lean
+@[hol "cakeml/compiler/backend/proofs/wordPropsScript.sml" "ALOOKUP_lemma"
+  (total_function_inhabitants := [α, β])]
+```
+
+Every listed name must be a type binder with exactly one
+`Nonempty`/`Inhabited` instance, every such instance in the signature must be
+listed, and the declaration's own source must use at least one reviewed
+rendering. The qualifier may combine with any other representation qualifier
+and can never have `reviewed_exact` status: keep the status the other
+qualifiers require, otherwise use `reviewed_total_function_inhabitants`, with a
+note naming the qualifier and the HOL total function(s) rendered. It records
+only that the instance renders HOL's unspecified value; it authorises no other
+instance, hypothesis, or statement change, and source review must confirm the
+instance is used only through those renderings. `check_hol_ref_export.py`
+compares the manifest field with the elaborated attribute in both directions.
+
 **Port the executable path, too.** As HOL definitions are ported, make the
 compiler that `flapjack-compile` actually runs call the reviewed `@[hol]`
 definitions. A tagged proof-only duplicate beside a different production

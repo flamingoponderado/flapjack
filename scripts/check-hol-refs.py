@@ -364,6 +364,17 @@ WORD_DIMENSIONS_AS_WIDTHS_RE = re.compile(
 REALS_AS_RATIONAL_CUTS_RE = re.compile(
     r'\(\s*reals_as_rational_cuts\s*\)'
 )
+TOTAL_FUNCTION_INHABITANTS_RE = re.compile(
+    r'\(\s*total_function_inhabitants\s*:=\s*\[([^]]*)\]\s*\)'
+)
+# The reviewed renderings of HOL's total functions on bad input.  HOL returns
+# an unspecified value for `EL`/`HD`/`THE`/`LAST`/`ALOOKUP`/`LINV`/`ARB`; Lean
+# takes it from a `Nonempty`/`Inhabited` instance on the element type.
+TOTAL_FUNCTION_RENDERING_NAMES = (
+    "holEl", "holHd", "holLast", "holThe", "holLinv", "holArb",
+    "holHdNil", "holFapply", "holFapplyOutside",
+)
+TOTAL_FUNCTION_INSTANCE_RE = re.compile(r"\[\s*(?:Nonempty|Inhabited)\s+([^\]]+)\]")
 # The reviewed binary64 real renderings: HOL `binary_ieee`/`machine_ieee`
 # reals as Lean `Rat`, and `fp64_sqrt`'s real square root as its rational cut
 # (docs/SOUNDNESS.md item 8).  A tagged declaration whose own source uses a
@@ -575,7 +586,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_word_dimensions_widths: bool = False,
                         include_fmap_tuple: bool = False,
                         include_nested_list_rel: bool = False,
-                        include_predicate_domain: bool = False):
+                        include_predicate_domain: bool = False,
+                        include_total_function_inhabitants: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -688,6 +700,13 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     names = tuple(field.strip() for match in matches for field in match.group(1).split(","))
                     if len(matches) > 1:
                         names += ("",)
+                    site += (names,)
+                if include_total_function_inhabitants:
+                    matches = list(TOTAL_FUNCTION_INHABITANTS_RE.finditer(attribute))
+                    names = tuple(field.strip() for match in matches
+                                  for field in match.group(1).split(",") if field.strip())
+                    if len(matches) > 1:
+                        names += ("",)  # Repeated qualifiers fail closed.
                     site += (names,)
                 yield site
         start = None
@@ -4511,6 +4530,48 @@ def reals_as_rational_cuts_errors(declaration_source: str, qualified: bool,
     return []
 
 
+def total_function_inhabitants_errors(signature: str, declaration_source: str,
+                                      listed: tuple[str, ...]) -> list[str]:
+    """`(total_function_inhabitants := [...])` records that each listed type
+    binder's single `Nonempty`/`Inhabited` instance exists only to render a HOL
+    total function's unspecified value on bad input.  The qualifier records only
+    that rendering; it authorises no other instance, hypothesis, or statement
+    change, and source review must confirm the instance is used only through
+    those renderings."""
+    signature_code = strip_lean_comments(signature)
+    if not listed or "" in listed:
+        return ["total_function_inhabitants requires distinct type binders"]
+    errors: list[str] = []
+    instances = [name.strip() for name in TOTAL_FUNCTION_INSTANCE_RE.findall(signature_code)]
+    for name in listed:
+        count = instances.count(name)
+        if count == 0:
+            errors.append(
+                f"total_function_inhabitants names {name}, which has no "
+                "Nonempty/Inhabited instance binder in the signature")
+        elif count > 1:
+            errors.append(
+                f"total_function_inhabitants names {name}, which has {count} "
+                "Nonempty/Inhabited instance binders; exactly one is required")
+        if not re.search(rf"[{{(]\s*{re.escape(name)}\s*:\s*Type\b", signature_code):
+            errors.append(
+                f"total_function_inhabitants names {name}, which is not a type binder "
+                "of the declaration")
+    for name in instances:
+        if name not in listed:
+            errors.append(
+                f"the signature binds a Nonempty/Inhabited instance for {name}, which "
+                "total_function_inhabitants does not list")
+    source_code = strip_lean_comments(declaration_source)
+    if not any(identifier_token_occurs(source_code, name)
+               for name in TOTAL_FUNCTION_RENDERING_NAMES):
+        errors.append(
+            "total_function_inhabitants requires the declaration's own source to use a "
+            "reviewed total-function rendering ("
+            + ", ".join(TOTAL_FUNCTION_RENDERING_NAMES) + ")")
+    return errors
+
+
 def _qualified_word_owner_names(module: str, name: str, root: str) -> set[str]:
     """Read declaration namespaces, rather than infer them from file paths.
 
@@ -5546,7 +5607,7 @@ def main(argv: list[str]) -> int:
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
              fmap_equality, result_observations, dimension_widths, fmap_tuple, nested_list_rel,
-             predicate_domain) in hol_attribute_sites(
+             predicate_domain, total_function_inhabitants) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
@@ -5558,6 +5619,7 @@ def main(argv: list[str]) -> int:
                 include_fmap_tuple=True,
                 include_nested_list_rel=True,
                 include_predicate_domain=True,
+                include_total_function_inhabitants=True,
              ):
             where = f"{rel}:{number}"
             if predicate_domain:
@@ -5630,6 +5692,15 @@ def main(argv: list[str]) -> int:
                 else:
                     errors.extend(f"{where}: {error}" for error in fmap_result_observation_errors(
                         lines, module, declaration_source, result_observations, observation_records))
+            if total_function_inhabitants:
+                errors.extend(
+                    f"{where}: {error}"
+                    for error in total_function_inhabitants_errors(
+                        tagged_declaration_text(lines, number),
+                        tagged_declaration_source(lines, number),
+                        total_function_inhabitants,
+                    )
+                )
             errors.extend(
                 f"{where}: {error}"
                 for error in reals_as_rational_cuts_errors(
