@@ -842,6 +842,64 @@ def assignLessEq {width : Nat} [NeZero width] (_conf : Config) (secn l dest : Na
         (some compareLocation) [1, 3] none)) (.assign 3 (.const 1))),
     boolResult dest .notLess 3 (.reg 1)], l + 1)
 
+/-- Compile a block length equality test. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_LenEq_def"
+  (words_as_type_indexed_bitvec)]
+def assignLenEq {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
+    (_names : Option NumSet) (len src : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let src := adjustVar src
+  if len = 0 then
+    (boolResult dest .test src (.imm 1), l)
+  else if len < 2 ^ conf.lenBits - 1 then
+    let mask := allOnes (width := width) (conf.lenBits + 1) 0
+    let bits := ptrBits conf 0 len ||| 1
+    (.seq (.assign 1 (.op .and [.var src, .const mask]))
+      (boolResult dest .equal 1 (.imm bits)), l)
+  else if len < 2 ^ width then
+    (wordListSeq [
+      .assign 1 (.const 0),
+      .ite .test src (.imm 1) .skip
+        (.assign 1 (shiftN .lsr (.load (realAddr conf src)) (width - conf.lenSize))),
+      boolResult dest .equal 1 (.imm (BitVec.ofNat width len))], l)
+  else (.assign (adjustVar dest) (.const 2), l)
+
+/-- Compile a combined block tag and length equality test. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_TagLenEq_def"
+  (words_as_type_indexed_bitvec)]
+def assignTagLenEq {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
+    (_names : Option NumSet) (tag len src : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let src := adjustVar src
+  if len = 0 then
+    if tag < 2 ^ width / 16 then
+      (boolResult dest .equal src (.imm (BitVec.ofNat width (16 * tag + 2))), l)
+    else (.assign (adjustVar dest) (.const 2), l)
+  else if tag < 2 ^ conf.tagBits - 1 ∧ len < 2 ^ conf.lenBits - 1 then
+    let mask := allOnes (width := width) (conf.lenBits + conf.tagBits + 1) 0
+    let bits := ptrBits conf tag len ||| 1
+    (.seq (.assign 1 (.op .and [.var src, .const mask]))
+      (boolResult dest .equal 1 (.imm bits)), l)
+  else
+    match encodeHeader (width := width) conf (4 * tag) len with
+    | none => (.assign (adjustVar dest) (.const 2), l)
+    | some header => (wordListSeq [
+        .assign 1 (.const 0),
+        .ite .test src (.imm 1) .skip (.assign 1 (.load (realAddr conf src))),
+        boolResult dest .equal 1 (.imm header)], l)
+
+/-- Compile a block tag equality test. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_TagEq_def"
+  (words_as_type_indexed_bitvec)]
+def assignTagEq {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
+    (_names : Option NumSet) (tag src : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let src := adjustVar src
+  if tag < 2 ^ width / 16 then
+    (wordListSeq [
+      .assign 1 (.var src),
+      .ite .test src (.imm 1) .skip
+        (.assign 1 (.op .and [.load (realAddr conf src), .const (tagMask conf ||| 2)])),
+      boolResult dest .equal 1 (.imm (BitVec.ofNat width (16 * tag + 2)))], l)
+  else (.assign (adjustVar dest) (.const 2), l)
+
 /-- Flapjack's option-valued traversal. Its totality is proved separately;
 source-level correspondence with HOL's `comp` remains to be reviewed. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
@@ -908,59 +966,12 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       some (arg1 args (assignBoolNot l dest) (.skip, l))
   | l, .assign dest (.blockOp .lengthBlock) args names =>
       some (arg1 args (assignLengthBlock conf secn l dest names) (.skip, l))
-  | l, .assign dest (.blockOp (.lenEq len)) args _ =>
-      match args with
-      | [src] =>
-          let src := adjustVar src
-          if len = 0 then
-            some (boolResult dest .test src (.imm 1), l)
-          else if len < 2 ^ conf.lenBits - 1 then
-            let mask := BitVec.ofNat width (2 ^ (conf.lenBits + 1) - 1)
-            let bits := ptrBits conf 0 len ||| 1
-            some (.seq (.assign 1 (.op .and [.var src, .const mask]))
-              (boolResult dest .equal 1 (.imm bits)), l)
-          else if len < 2 ^ width then
-            some (wordListSeq [
-              .assign 1 (.const 0),
-              .ite .test src (.imm 1) .skip
-                (.assign 1 (shiftN .lsr (.load (realAddr conf src)) (width - conf.lenSize))),
-              boolResult dest .equal 1 (.imm (BitVec.ofNat width len))], l)
-          else some (.assign (adjustVar dest) (.const 2), l)
-      | _ => some (.skip, l)
-  | l, .assign dest (.blockOp (.tagLenEq tag len)) args _ =>
-      match args with
-      | [src] =>
-          let src := adjustVar src
-          if len = 0 then
-            if tag < 2 ^ width / 16 then
-              some (boolResult dest .equal src (.imm (BitVec.ofNat width (16 * tag + 2))), l)
-            else some (.assign (adjustVar dest) (.const 2), l)
-          else if tag < 2 ^ conf.tagBits - 1 ∧ len < 2 ^ conf.lenBits - 1 then
-            let mask := BitVec.ofNat width (2 ^ (conf.lenBits + conf.tagBits + 1) - 1)
-            let bits := (BitVec.ofNat width tag <<< (1 + conf.lenBits)) |||
-              (BitVec.ofNat width len <<< 1) ||| 1
-            some (.seq (.assign 1 (.op .and [.var src, .const mask]))
-              (boolResult dest .equal 1 (.imm bits)), l)
-          else
-            match encodeHeader (width := width) conf (4 * tag) len with
-            | none => some (.assign (adjustVar dest) (.const 2), l)
-            | some header => some (wordListSeq [
-                .assign 1 (.const 0),
-                .ite .test src (.imm 1) .skip (.assign 1 (.load (realAddr conf src))),
-                boolResult dest .equal 1 (.imm header)], l)
-      | _ => some (.skip, l)
-  | l, .assign dest (.blockOp (.tagEq tag)) args _ =>
-      match args with
-      | [src] =>
-          let src := adjustVar src
-          if tag < 2 ^ width / 16 then
-            some (wordListSeq [
-              .assign 1 (.var src),
-              .ite .test src (.imm 1) .skip
-                (.assign 1 (.op .and [.load (realAddr conf src), .const (tagMask conf ||| 2)])),
-              boolResult dest .equal 1 (.imm (BitVec.ofNat width (16 * tag + 2)))], l)
-          else some (.assign (adjustVar dest) (.const 2), l)
-      | _ => some (.skip, l)
+  | l, .assign dest (.blockOp (.lenEq len)) args names =>
+      some (arg1 args (assignLenEq conf secn l dest names len) (.skip, l))
+  | l, .assign dest (.blockOp (.tagLenEq tag len)) args names =>
+      some (arg1 args (assignTagLenEq conf secn l dest names tag len) (.skip, l))
+  | l, .assign dest (.blockOp (.tagEq tag)) args names =>
+      some (arg1 args (assignTagEq conf secn l dest names tag) (.skip, l))
   | l, .assign dest (.blockOp (.boolTest test)) args _ =>
       some (arg2 args (assignBoolTest l dest test) (.skip, l))
   | l, .assign dest (.blockOp .equal) args names =>

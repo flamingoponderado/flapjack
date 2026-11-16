@@ -1,5 +1,26 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "assign_LenEq_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "assignLenEq",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with assign_len_eq_typed confirms ordered binders, num_set carrier, all three length boundaries, shared bit encodings and immediate/header branches. The arg1 dispatch preserves the HOL fallback."
+ },
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "assign_TagLenEq_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "assignTagLenEq",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with assign_tag_len_eq_typed confirms ordered binders, num_set carrier, zero-length and compact boundaries, shared bit encodings and encode_header fallback. The arg1 dispatch preserves the HOL fallback."
+ },
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "assign_TagEq_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "assignTagEq",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with assign_tag_eq_typed confirms ordered binders, num_set carrier, tag boundary, immediate/header distinction, tag mask and result. The arg1 dispatch preserves the HOL fallback."
+ },
+{
   "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "assign_Equal_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "assignEqual",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",

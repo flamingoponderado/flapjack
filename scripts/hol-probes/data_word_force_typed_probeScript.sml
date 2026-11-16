@@ -14,3 +14,6 @@ val _ = (print "assign_bounds_block_typed="; print_thm data_to_wordTheory.assign
 val _ = (print "assign_equal_typed="; print_thm data_to_wordTheory.assign_Equal_def; print "\n");
 val _ = (print "assign_less_typed="; print_thm data_to_wordTheory.assign_Less_def; print "\n");
 val _ = (print "assign_less_eq_typed="; print_thm data_to_wordTheory.assign_LessEq_def; print "\n");
+val _ = (print "assign_len_eq_typed="; print_thm data_to_wordTheory.assign_LenEq_def; print "\n");
+val _ = (print "assign_tag_len_eq_typed="; print_thm data_to_wordTheory.assign_TagLenEq_def; print "\n");
+val _ = (print "assign_tag_eq_typed="; print_thm data_to_wordTheory.assign_TagEq_def; print "\n");

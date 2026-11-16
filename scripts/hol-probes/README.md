@@ -10937,5 +10937,5 @@ configuration updates, code and name carriers.
 equation and its independent sparse-tree payload type, plus the inferred
 four-argument dispatch, word comparison, string comparison, and byte-array,
 array and block bounds-check equations, and general equality and integer
-ordering equations. Concrete equality, ordering, tail-call, returning-call,
+ordering, block length, tag-length and tag equality equations. Concrete equality, ordering, tail-call, returning-call,
 and bad-header cases are in `cake_word_array_probe.out`.
