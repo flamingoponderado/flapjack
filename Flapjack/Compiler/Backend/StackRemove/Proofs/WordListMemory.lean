@@ -154,7 +154,7 @@ private theorem wrapFree {width : Nat} [NeZero width] {β : Type} (xs : List β)
 /-- Complete original wrap-free forward list on the actual set of its indexed
 graph, with the original good dimension and unsigned end-address bound. -/
 @[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "word_list_set"
-  (words_as_type_indexed_bitvec)]
+  (words_as_type_indexed_bitvec) (total_function_inhabitants := [β])]
 theorem wordListSet {width : Nat} [NeZero width] {β : Type} [Nonempty β] :
     ∀ (xs : List β) (a : BitVec width),
       goodDimindex width ∧
@@ -168,7 +168,7 @@ theorem wordListSet {width : Nat} [NeZero width] {β : Type} [Nonempty β] :
 /-- Complete original characterisation of the wrap-free forward list
 assertion as equality with its indexed graph. -/
 @[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "word_list_seteq"
-  (words_as_type_indexed_bitvec)]
+  (words_as_type_indexed_bitvec) (total_function_inhabitants := [β])]
 theorem wordListSeteq {width : Nat} [NeZero width] {β : Type} [Nonempty β] :
     ∀ (xs : List β) (a : BitVec width),
       goodDimindex width ∧
@@ -188,7 +188,7 @@ theorem wordListSeteq {width : Nat} [NeZero width] {β : Type} [Nonempty β] :
 /-- Complete original framed element read. The frames, memory and domain are
 arbitrary; the original good-dimension and no-wrap premises are retained. -/
 @[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "word_list_EL_in_memory"
-  (words_as_type_indexed_bitvec)]
+  (words_as_type_indexed_bitvec) (total_function_inhabitants := [β])]
 theorem wordListElInMemory {width : Nat} [NeZero width] {β : Type} [Nonempty β]
     (a : BitVec width) (xs : List β) (r1 r2 : ((BitVec width × β) → Prop) → Prop)
     (m : BitVec width → β) (dm : BitVec width → Prop) (i : Nat)
@@ -212,7 +212,7 @@ theorem wordListElInMemory {width : Nat} [NeZero width] {β : Type} [Nonempty β
 /-- Complete original identification of the framed wrap-free list with the
 memory assertion on its address range. -/
 @[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "word_list_in_memory"
-  (words_as_type_indexed_bitvec)]
+  (words_as_type_indexed_bitvec) (total_function_inhabitants := [β])]
 theorem wordListInMemory {width : Nat} [NeZero width] {β : Type} [Nonempty β]
     (a : BitVec width) (xs : List β) (r1 r2 : ((BitVec width × β) → Prop) → Prop)
     (m : BitVec width → β) (dm : BitVec width → Prop)

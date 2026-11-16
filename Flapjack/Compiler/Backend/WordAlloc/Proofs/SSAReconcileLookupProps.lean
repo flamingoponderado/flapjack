@@ -12,7 +12,8 @@ namespace Flapjack.Compiler.Backend.WordAlloc
 inhabited element types and opaque HOL EL outside its bound. Nonempty alpha
 and beta render HOL inhabitance; DecidableEq gamma supplies lawful classical
 equality for association-list lookup, not a key restriction. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "alookup_zip_map_some"]
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "alookup_zip_map_some"
+  (total_function_inhabitants := [α, β])]
 theorem alookupZipMapSome {α β γ : Type} [Nonempty α] [Nonempty β]
     [DecidableEq γ] (ls : List α) (vs : List β) (i : Nat) (f : α → γ)
     (h : (ls.map f).Nodup ∧ i < ls.length ∧ vs.length = ls.length) :

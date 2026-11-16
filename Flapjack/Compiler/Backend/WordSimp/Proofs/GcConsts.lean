@@ -469,7 +469,8 @@ theorem LASTN_TL_res {α : Type} :
   rw [hl]; rfl
 
 /-- Exact HOL `HD_LASTN` (`word_simpProofScript.sml:654-658`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "HD_LASTN"]
+@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "HD_LASTN"
+  (total_function_inhabitants := [α])]
 theorem HD_LASTN {α : Type} [Nonempty α] :
     ∀ (l : List α) (n : Nat), 0 < n ∧ n ≤ l.length → holHd (wordSemLastN n l) = holEl (l.length - n) l := by
   intro l n ⟨h0, hn⟩

@@ -300,7 +300,8 @@ theorem lower_2w_eq {width : Nat} [NeZero width] :
 /-- Exact HOL `EL_LENGTH_ADD_LEMMA` (`stack_allocProofScript.sml:307-312`).
 `Nonempty α` renders HOL's inhabited type variables and makes the total
 opaque out-of-range holEl value available; it adds no list-bound premise. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "EL_LENGTH_ADD_LEMMA" 307]
+@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "EL_LENGTH_ADD_LEMMA" 307
+  (total_function_inhabitants := [α])]
 theorem EL_LENGTH_ADD_LEMMA {α : Type} [Nonempty α] {init old st1 : List α} {x : α} :
     holEl (init.length + old.length) (init ++ old ++ [x] ++ st1) = x := by
   rw [holEl_eq_getElem]
@@ -310,7 +311,8 @@ theorem EL_LENGTH_ADD_LEMMA {α : Type} [Nonempty α] {init old st1 : List α} {
 /-- Exact HOL `EL_LENGTH_ADD_LEMMA` (second declaration,
 `stack_allocProofScript.sml:347-351`). `Nonempty α` renders HOL type
 inhabitance for total holEl; the conclusion's index is derived in range. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "EL_LENGTH_ADD_LEMMA" 347]
+@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "EL_LENGTH_ADD_LEMMA" 347
+  (total_function_inhabitants := [α])]
 theorem EL_LENGTH_ADD_LEMMA' {α : Type} [Nonempty α] :
     ∀ (n : Nat) (xs : List α) (y : α) (ys : List α), xs.length = n → holEl n (xs ++ y :: ys) = y := by
   intro n xs y ys h
