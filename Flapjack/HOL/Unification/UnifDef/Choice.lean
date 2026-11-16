@@ -34,8 +34,20 @@ noncomputable def specifiedUnify {α : Type}
     (s : HolFiniteMapExact Nat (Term α)) (t1 t2 : Term α) : Option (HolFiniteMapExact Nat (Term α)) :=
   Classical.choose (@unifySpecExists α) s t1 t2
 
-private theorem specifiedUnifySpec {α : Type} : @UnifySpec α specifiedUnify :=
-  Classical.choose_spec (@unifySpecExists α)
+/-- The selected unifier satisfies the complete guarded source equation.
+    This remains untagged until the option-wrapped finite-map representation
+    and the source choice specification have been independently reviewed. -/
+theorem specifiedUnifyEquation {α : Type} (s : HolFiniteMapExact Nat (Term α))
+    (t1 t2 : Term α) (hw : wfs s) : specifiedUnify s t1 t2 = by
+      classical
+      exact match walk s t1, walk s t2 with
+        | .var v1, .var v2 => some (if v1 = v2 then s else s.updateEq (v1, .var v2))
+        | .var v, other => if Oc s other v then none else some (s.updateEq (v, other))
+        | other, .var v => if Oc s other v then none else some (s.updateEq (v, other))
+        | .pair a d, .pair b e => (specifiedUnify s a b).bind (fun sx => specifiedUnify sx d e)
+        | .const a, .const b => if a = b then some s else none
+        | _, _ => none :=
+  (Classical.choose_spec (@unifySpecExists α)) s t1 t2 hw
 
 private theorem unifySpecEqAux {α : Type}
     (u : HolFiniteMapExact Nat (Term α) → Term α → Term α → Option (HolFiniteMapExact Nat (Term α)))
@@ -61,6 +73,6 @@ private theorem unifySpecEqAux {α : Type}
     side is the Lean auxiliary model, not yet a reviewed HOL `tunify` port. -/
 theorem specifiedUnifyEqAux {α : Type} (s : HolFiniteMapExact Nat (Term α)) (t1 t2 : Term α)
     (hw : wfs s) : specifiedUnify s t1 t2 = tunifyAux s t1 t2 :=
-  unifySpecEqAux specifiedUnify specifiedUnifySpec s t1 t2 hw
+  unifySpecEqAux specifiedUnify (fun s a b h => specifiedUnifyEquation s a b h) s t1 t2 hw
 
 end Flapjack.HOL.Unification
