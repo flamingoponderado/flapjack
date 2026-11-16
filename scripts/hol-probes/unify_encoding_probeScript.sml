@@ -24,3 +24,5 @@ val _ = show "wfs_SUBMAP_typed" substTheory.wfs_SUBMAP;
 val _ = show "vwalk_def_typed" walkTheory.vwalk_def;
 val _ = show "NOT_FDOM_vwalk_typed" walkTheory.NOT_FDOM_vwalk;
 val _ = show "vwalk_to_var_typed" walkTheory.vwalk_to_var;
+val _ = show "vwalk_vR_typed" walkTheory.vwalk_vR;
+val _ = show "walkstar_def_typed" walkstarTheory.walkstar_def;

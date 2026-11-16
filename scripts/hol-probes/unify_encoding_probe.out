@@ -14,3 +14,5 @@ wfs_SUBMAP_typed=wfs (sx :α subst) ∧ (s :α subst) ⊑ sx ⇒ wfs s
 vwalk_def_typed=wfs (s :α subst) ⇒ ∀(v :num). vwalk s v = case FLOOKUP s v of (NONE :α term option) => (Var v :α term) | SOME (Var u :α term) => vwalk s u | SOME (Pair v7 v8) => Pair v7 v8 | SOME (Const v9) => Const v9
 NOT_FDOM_vwalk_typed=wfs (s :α subst) ∧ (v :num) ∉ FDOM s ⇒ vwalk s v = (Var v :α term)
 vwalk_to_var_typed=wfs (s :α subst) ⇒ ∀(v :num) (u :num). vwalk s v = (Var u :α term) ⇒ u ∉ FDOM s
+vwalk_vR_typed=wfs (s :α subst) ⇒ ∀(v :num) (u :num). u ∈ vars (vwalk s v) ∧ vwalk s v ≠ (Var v :α term) ⇒ (vR s)⁺ u v
+walkstar_def_typed=wfs (s :α subst) ⇒ ∀(t :α term). s ◁ t = case walk s t of (Var v4 :α term) => (Var v4 :α term) | Pair t1 t2 => Pair (s ◁ t1) (s ◁ t2) | Const v7 => Const v7

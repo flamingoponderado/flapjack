@@ -3787,6 +3787,8 @@ import Flapjack.Compiler.Inference.Unify.Encoding
 import Flapjack.HOL.Unification.Subst
 import Flapjack.HOL.Unification.Walk
 import Flapjack.HOL.Unification.Walk.ToVar
+import Flapjack.HOL.Unification.Walk.Dependency
+import Flapjack.HOL.Unification.Walkstar
 import Flapjack.Test.CakeUnifyEncodingParity
 import Flapjack.TypeSoundInvariants
 import Flapjack.Compiler.Repl.ReplTypes

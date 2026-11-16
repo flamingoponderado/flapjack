@@ -138089,5 +138089,23 @@
   "statement_status": "reviewed_fmap_as_finite_support_parameters",
   "fmap_as_finite_support_parameters": ["subst"],
   "reviewer": "Compared the typed HOL theorem and source: for a well-formed substitution, any variable returned by the walk is outside the substitution domain. The original quantifiers and equality premise are preserved; the canonical map parameter has a codec witness."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkScript.sml",
+  "hol_name": "vwalk_vR",
+  "lean_path": "Flapjack/HOL/Unification/Walk/Dependency.lean",
+  "lean_name": "vwalkVR",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["subst"],
+  "reviewer": "Compared the typed HOL theorem and source: all binders and both antecedents are preserved, and TransGen is the nonempty transitive closure in the original direction from the output variable to the input. The canonical map parameter has a codec witness."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkstarScript.sml",
+  "hol_name": "walkstar_def",
+  "lean_path": "Flapjack/HOL/Unification/Walkstar.lean",
+  "lean_name": "walkstarEq",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["subst"],
+  "reviewer": "Compared the typed HOL theorem, walk definition and source: under well-formedness, the equation walks once and recursively normalizes both children of a returned pair, preserving variable and constant results. The well-founded model is unbounded; no off-wfs correspondence is claimed. The canonical map parameter has a codec witness."
 }
 ]
