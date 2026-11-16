@@ -1,5 +1,26 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "assign_Equal_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "assignEqual",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with assign_equal_typed confirms the ordered binders, num_set carrier, low-bit and equality tests, call and result assignment. The executable arg2 dispatch preserves the HOL fallback."
+ },
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "assign_Less_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "assignLess",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with assign_less_typed confirms the ordered binders, num_set carrier, low-bit test, comparison call and signed less-than result. The executable arg2 dispatch preserves the HOL fallback."
+ },
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "assign_LessEq_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "assignLessEq",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with assign_less_eq_typed confirms the ordered binders, num_set carrier, low-bit test, comparison call and reversed not-less operands. The executable arg2 dispatch preserves the HOL fallback."
+ },
+{
   "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "assign_BoundsCheckByte_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "assignBoundsCheckByte",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",

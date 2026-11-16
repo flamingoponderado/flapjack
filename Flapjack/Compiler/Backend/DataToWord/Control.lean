@@ -799,6 +799,49 @@ def assignBoundsCheckBlock {width : Nat} [NeZero width] (conf : Config) (_secn l
     .assign 3 (shiftVar .ror (adjustVar index) 2),
     boolResult dest .lower 3 (.reg 1)], l)
 
+/-- Compile a general equality operation. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Equal_def"
+  (words_as_type_indexed_bitvec)]
+def assignEqual {width : Nat} [NeZero width] (_conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (x y : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let cutsets := adjustSets (names.getD .ln)
+  (wordListSeq [
+    .assign 1 (.var (adjustVar x)), .assign 3 (.var (adjustVar y)),
+    .assign 5 (.op .and [.var 1, .var 3]),
+    .ite .test 5 (.imm 1) .skip
+      (.ite .equal 1 (.reg 3) .skip
+        (.seq (.mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
+          (some equalLocation) [1, 3] none)) (.assign 3 (.const 1)))),
+    boolResult dest .equal 1 (.reg 3)], l + 1)
+
+/-- Compile integer less-than. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_Less_def"
+  (words_as_type_indexed_bitvec)]
+def assignLess {width : Nat} [NeZero width] (_conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (x y : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let cutsets := adjustSets (names.getD .ln)
+  (wordListSeq [
+    .assign 1 (.var (adjustVar x)), .assign 3 (.var (adjustVar y)),
+    .assign 5 (.op .or [.var 1, .var 3]),
+    .ite .test 5 (.imm 1) .skip
+      (.seq (.mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
+        (some compareLocation) [1, 3] none)) (.assign 3 (.const 1))),
+    boolResult dest .less 1 (.reg 3)], l + 1)
+
+/-- Compile integer less-than-or-equal. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_LessEq_def"
+  (words_as_type_indexed_bitvec)]
+def assignLessEq {width : Nat} [NeZero width] (_conf : Config) (secn l dest : Nat)
+    (names : Option NumSet) (x y : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let cutsets := adjustSets (names.getD .ln)
+  (wordListSeq [
+    .assign 1 (.var (adjustVar x)), .assign 3 (.var (adjustVar y)),
+    .assign 5 (.op .or [.var 1, .var 3]),
+    .ite .test 5 (.imm 1) .skip
+      (.seq (.mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
+        (some compareLocation) [1, 3] none)) (.assign 3 (.const 1))),
+    boolResult dest .notLess 3 (.reg 1)], l + 1)
+
 /-- Flapjack's option-valued traversal. Its totality is proved separately;
 source-level correspondence with HOL's `comp` remains to be reviewed. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
@@ -921,18 +964,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
   | l, .assign dest (.blockOp (.boolTest test)) args _ =>
       some (arg2 args (assignBoolTest l dest test) (.skip, l))
   | l, .assign dest (.blockOp .equal) args names =>
-      match args with
-      | [x, y] =>
-          let cutsets := adjustSets (names.getD .ln)
-          some (wordListSeq [
-            .assign 1 (.var (adjustVar x)), .assign 3 (.var (adjustVar y)),
-            .assign 5 (.op .and [.var 1, .var 3]),
-            .ite .test 5 (.imm 1) .skip
-              (.ite .equal 1 (.reg 3) .skip
-                (.seq (.mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
-                  (some equalLocation) [1, 3] none)) (.assign 3 (.const 1)))),
-            boolResult dest .equal 1 (.reg 3)], l + 1)
-      | _ => some (.skip, l)
+      some (arg2 args (assignEqual conf secn l dest names) (.skip, l))
   | l, .assign dest (.blockOp (.equalConst part)) args _ =>
       match args with
       | [src] =>
@@ -956,29 +988,9 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
   | l, .assign dest (.intOp (.lessConstSmall i)) args _ =>
       some (arg1 args (assignLessConstSmall l dest i) (.skip, l))
   | l, .assign dest (.intOp .less) args names =>
-      match args with
-      | [x, y] =>
-          let cutsets := adjustSets (names.getD .ln)
-          some (wordListSeq [
-            .assign 1 (.var (adjustVar x)), .assign 3 (.var (adjustVar y)),
-            .assign 5 (.op .or [.var 1, .var 3]),
-            .ite .test 5 (.imm 1) .skip
-              (.seq (.mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
-                (some compareLocation) [1, 3] none)) (.assign 3 (.const 1))),
-            boolResult dest .less 1 (.reg 3)], l + 1)
-      | _ => some (.skip, l)
+      some (arg2 args (assignLess conf secn l dest names) (.skip, l))
   | l, .assign dest (.intOp .lessEq) args names =>
-      match args with
-      | [x, y] =>
-          let cutsets := adjustSets (names.getD .ln)
-          some (wordListSeq [
-            .assign 1 (.var (adjustVar x)), .assign 3 (.var (adjustVar y)),
-            .assign 5 (.op .or [.var 1, .var 3]),
-            .ite .test 5 (.imm 1) .skip
-              (.seq (.mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
-                (some compareLocation) [1, 3] none)) (.assign 3 (.const 1))),
-            boolResult dest .notLess 3 (.reg 1)], l + 1)
-      | _ => some (.skip, l)
+      some (arg2 args (assignLessEq conf secn l dest names) (.skip, l))
   | l, .assign dest (.intOp op) args names =>
       match op, args with
       | .add, [x, y] | .sub, [x, y] =>

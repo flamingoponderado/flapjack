@@ -60,6 +60,27 @@ private def conf : Config := ⟨1, 2, 3, 16, true, false, false, false, false, f
   | some (.seq (.assign 1 (.const header)) (.alloc 1 (.ls (), .ln)), 2) => header == -1
   | _ => false
 
+-- These three cases replay equal_general, less_general and lesseq_general
+-- from the pinned HOL compiler.
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp .equal) [1, 2] none) with
+  | some (.seq (.assign 1 (.var 4)) (.seq (.assign 3 (.var 6))
+      (.seq (.assign 5 (.op .and [.var 1, .var 3]))
+      (.seq (.ite .test 5 (.imm 1) .skip
+        (.ite .equal 1 (.reg 3) .skip
+          (.seq (.mustTerminate (.call (some ([1], (.ls (), .ln), .skip, 5, 2)) (some 21) [1, 3] none))
+            (.assign 3 (.const 1)))))
+        (.ite .equal 1 (.reg 3) (.assign 8 (.const 18)) (.assign 8 (.const 2)))))), 3) => true
+  | _ => false
+
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.intOp .less) [1, 2] none) with
+  | some (.seq (.assign 1 (.var 4)) (.seq (.assign 3 (.var 6))
+      (.seq (.assign 5 (.op .or [.var 1, .var 3]))
+      (.seq (.ite .test 5 (.imm 1) .skip
+        (.seq (.mustTerminate (.call (some ([1], (.ls (), .ln), .skip, 5, 2)) (some 19) [1, 3] none))
+          (.assign 3 (.const 1))))
+        (.ite .less 1 (.reg 3) (.assign 8 (.const 18)) (.assign 8 (.const 2)))))), 3) => true
+  | _ => false
+
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.intOp .lessEq) [1, 2] none) with
   | some (.seq (.assign 1 (.var 4)) (.seq (.assign 3 (.var 6))
       (.seq (.assign 5 (.op .or [.var 1, .var 3]))

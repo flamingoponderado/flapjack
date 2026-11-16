@@ -11,3 +11,6 @@ val _ = (print "assign_string_cmp_typed="; print_thm data_to_wordTheory.assign_S
 val _ = (print "assign_bounds_byte_typed="; print_thm data_to_wordTheory.assign_BoundsCheckByte_def; print "\n");
 val _ = (print "assign_bounds_array_typed="; print_thm data_to_wordTheory.assign_BoundsCheckArray_def; print "\n");
 val _ = (print "assign_bounds_block_typed="; print_thm data_to_wordTheory.assign_BoundsCheckBlock_def; print "\n");
+val _ = (print "assign_equal_typed="; print_thm data_to_wordTheory.assign_Equal_def; print "\n");
+val _ = (print "assign_less_typed="; print_thm data_to_wordTheory.assign_Less_def; print "\n");
+val _ = (print "assign_less_eq_typed="; print_thm data_to_wordTheory.assign_LessEq_def; print "\n");
