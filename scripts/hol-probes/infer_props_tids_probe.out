@@ -9,3 +9,6 @@ ienv_val_ok_def_typed=∀(uvars :num -> bool) (env :(α, β, num # infer_t) name
 ienv_ok_def_typed=∀(uvars :num -> bool) (ienv :inf_env). ienv_ok uvars ienv ⇔ ienv_val_ok uvars ienv.inf_v ∧ tenv_ctor_ok ienv.inf_c ∧ tenv_abbrev_ok ienv.inf_t
 infer_deBruijn_subst_id_typed=(∀(t :infer_t). infer_deBruijn_subst ([] :infer_t list) t = t) ∧ ∀(ts :infer_t list). MAP (infer_deBruijn_subst ([] :infer_t list)) ts = ts
 infer_deBruijn_subst_id2_typed=(∀(t :infer_t). check_t (tvs :num) (∅ :num -> bool) t ⇒ infer_deBruijn_subst (GENLIST Infer_Tvar_db tvs) t = t) ∧ ∀(ts :infer_t list). EVERY (check_t tvs (∅ :num -> bool)) ts ⇒ MAP (infer_deBruijn_subst (GENLIST Infer_Tvar_db tvs)) ts = ts
+check_t_infer_deBruijn_subst_typed=∀(subst :infer_t list) (t :infer_t) (tvs :num) (uvs :num -> bool). check_t (tvs + LENGTH subst) uvs t ∧ EVERY (check_t tvs uvs) subst ⇒ check_t tvs uvs (infer_deBruijn_subst subst t)
+infer_deBruijn_subst_uncheck_typed=∀(s :infer_t list) (t :infer_t) (max_tvs :num) (uvs :num -> bool). check_t max_tvs uvs (infer_deBruijn_subst s t) ⇒ check_t (max_tvs + LENGTH s) uvs t
+check_t_more5_typed=(∀(t :infer_t) (uvs :num -> bool) (tvs :num). check_t tvs uvs t ⇒ ∀(uvs' :num -> bool). uvs ⊆ uvs' ⇒ check_t tvs uvs' t) ∧ ∀(ts :infer_t list) (uvs :num -> bool) (tvs :num). EVERY (check_t tvs uvs) ts ⇒ ∀(uvs' :num -> bool). uvs ⊆ uvs' ⇒ EVERY (check_t tvs uvs') ts

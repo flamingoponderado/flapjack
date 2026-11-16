@@ -138218,5 +138218,23 @@
   "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/Bounded.lean", "lean_name": "inferDeBruijnSubstId2",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared typed HOL and source: the shared bound, empty unification-variable set, type and list hypotheses and both identity conclusions are retained. Range-map generates the same indexed de Bruijn variables as HOL GENLIST."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "check_t_infer_deBruijn_subst",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/PreservesCheck.lean", "lean_name": "checkTInferDeBruijnSubst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL and source: all binders, arbitrary variable set and both conjunctive checking premises are retained; EVERY is expressed by membership quantification over the substitution list."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "infer_deBruijn_subst_uncheck",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/PreservesCheck.lean", "lean_name": "inferDeBruijnSubstUncheck",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL and source: the single premise checks the substituted type and the conclusion checks the original at the length-adjusted bound; no replacement-list premise is added."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "check_t_more5",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/CheckMonotone.lean", "lean_name": "checkTMore5",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL and source: both independently quantified type and list conjuncts preserve the original quantifier and implication order. Pointwise implication expresses HOL subset, and membership quantification expresses EVERY."
 }
 ]
