@@ -127,6 +127,28 @@ theorem callPushEnv_optionLe_stackMax {width : Nat} [NeZero width] {C : Type} {F
     simp only [pushEnv, wordSemOptionMax_eq, optionLe_max_right] <;>
     exact Or.inl (optionLe_refl _)
 
+/-- Exact HOL `push_call_option_le_stack_max_preserved`
+    (`wordPropsScript.sml:3903-3920`): pushing the call frame and then calling
+    keeps the frame size plus the locals size below the resulting stack
+    maximum, because `stack_max` takes the maximum with exactly that sum. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml"
+  "push_call_option_le_stack_max_preserved"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem pushCall_optionLe_stackMax_preserved {width : Nat} [NeZero width] {C : Type}
+    {F : Type} :
+    ∀ (args : List (WordLocW width)) (sz : Option Nat)
+      (env : Spt (WordLocW width) × Spt (WordLocW width))
+      (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+      (s : WordSemStateFiniteExact width C F),
+      optionLe
+        (wordSemOptionAdd (wordSemStackSize (callEnv args sz (pushEnv env handler s)).stack)
+          (callEnv args sz (pushEnv env handler s)).localsSize)
+        (callEnv args sz (pushEnv env handler s)).stackMax := by
+  intro args sz env handler s
+  rcases handler with _ | ⟨_, _, _, _⟩ <;>
+    simp only [callEnv, pushEnv, wordSemOptionMax_eq, optionLe_max_right] <;>
+    exact Or.inr (optionLe_refl _)
+
 variable {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- The motive of the combined recursion: the stack limit is unchanged and
@@ -504,6 +526,38 @@ theorem evaluate_stack_limit_stack_max {width : Nat} [NeZero width] {C : Type} {
   rw [hl]
   rcases h1 : s1.stackMax with _ | m <;> rcases h2 : s2.stackMax with _ | m2 <;>
     (simp_all [miscThe]; try omega)
+
+/-- Exact HOL `evaluate_call_push_dec_option_le_stack_max`
+    (`wordPropsScript.sml:4459-4470`): the stack maximum reached by calling into
+    a body from the decremented clock dominates the maximum of the call frame
+    pushed on the incoming state.  The clock does not affect the pushed frame,
+    so the two call states agree on their stack maximum.  Inherits
+    `reals_as_rational_cuts` through `evaluate`. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml"
+  "evaluate_call_push_dec_option_le_stack_max"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem evaluate_call_push_dec_option_le_stack_max {width : Nat} [NeZero width]
+    {C : Type} {F : Type} :
+    ∀ (p : WordLangProgHOL (BitVec width)) (args : List (WordLocW width))
+      (sz : Option Nat) (env : Spt (WordLocW width) × Spt (WordLocW width))
+      (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+      (s : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))
+      (t : WordSemStateFiniteExact width C F) (ck : Nat),
+      evaluate p (callEnv args sz (pushEnv env handler (decClock { s with clock := ck }))) =
+        (res, t) →
+      optionLe (callEnv args sz (pushEnv env handler s)).stackMax t.stackMax := by
+  intro p args sz env handler s res t ck h
+  have same :
+      (callEnv args sz (pushEnv env handler (decClock { s with clock := ck }))).stackMax =
+        (callEnv args sz (pushEnv env handler s)).stackMax := by
+    cases handler with
+    | none => simp [callEnv, pushEnv, decClock]
+    | some handler =>
+      obtain ⟨_, _, _, _⟩ := handler
+      simp [callEnv, pushEnv, decClock]
+  have le := evaluate_stack_max_le p
+    (callEnv args sz (pushEnv env handler (decClock { s with clock := ck }))) res t h
+  rwa [same] at le
 
 end WordSemStateFiniteExact
 

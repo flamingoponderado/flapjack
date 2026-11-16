@@ -115,3 +115,8 @@ val _ = emit "evaluate_io_events_mono_typed" "evaluate_io_events_mono";
 val _ = emit "evaluate_io_events_mono_IMP_typed" "evaluate_io_events_mono_IMP";
 val _ = emit "evaluate_dec_io_events_mono_typed" "evaluate_dec_io_events_mono";
 val _ = emit "evaluate_decs_io_events_mono_typed" "evaluate_decs_io_events_mono";
+(* `SND_SND_lemma` is declared `[local]`, so it is not in the flatProps theory
+   database; capture its typed statement by replaying the original proof. *)
+val _ = show "SND_SND_lemma_typed"
+  (prove(``!(x :'a # 'b) (y :'b). (SND x = y) <=> (?y1 :'a. x = (y1,y))``,
+     rpt strip_tac >> PairCases_on `x` >> fs []));

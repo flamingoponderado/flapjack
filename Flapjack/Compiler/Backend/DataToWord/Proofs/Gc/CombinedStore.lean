@@ -67,7 +67,7 @@ theorem collector_hasSpace_false_bound {width : Nat} [NeZero width] {C F : Type}
     (state : WordSemStateFiniteExact width C F) (good : goodDimindex width)
     (heapMem : heapInMemoryStore heap a sp sp1 gens conf store memory domain limit)
     (bound : sp * (width / 8) < 2 ^ width)
-    (failed : WordSemStateFiniteExact.hasSpace (.word (gcAllocSize requested))
+    (failed : WordSemStateFiniteExact.hasSpace (.word (gcAllocSize requested) : WordLocW width)
       { state with store := store } = some false) : sp < requested := by
   obtain ⟨_, _, _, _, _, _, _, curr, other, _, _, _, _, next, trigger, _⟩ := heapMem
   have gap : (curr + StackRemove.bytesInWord width * BitVec.ofNat width (a + sp)) -

@@ -536,11 +536,22 @@ theorem flushStateWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
   all_goals constConj_tac
 
 /-- Exact HOL `has_space_with_const` (`wordPropsScript.sml:599-608`): all 8
-    original conjuncts in source order. -/
+    original conjuncts in source order.  HOL's `x` is a `'a word_loc` at a
+    register width independent of `y`'s word width (`has_space_with_const_typed`
+    binds `x : α word_loc` and `y : (β, γ, δ) state`), so both widths are
+    separate parameters.
+    -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "has_space_with_const"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem hasSpaceWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
-    (k : Nat) (x : WordLocW width) (y : WordSemStateFiniteExact width C F) (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (code : Spt (Nat × WordLangProgHOL (BitVec width))) (termdep : Nat) (l : Spt (WordLocW width)) (ls : Option Nat) (xs : List (WordSemStackFrame width)) :
+theorem hasSpaceWithConst {wordLocWidth : Nat} {width : Nat} [NeZero wordLocWidth] [NeZero width]
+    {C : Type} {F : Type}
+    (k : Nat) (x : WordLocW wordLocWidth) (y : WordSemStateFiniteExact width C F)
+    (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) →
+      Option (List (BitVec 8) × List (BitVec width) × C))
+    (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width)))
+    (code : Spt (Nat × WordLangProgHOL (BitVec width)))
+    (termdep : Nat) (l : Spt (WordLocW width)) (ls : Option Nat)
+    (xs : List (WordSemStackFrame width)) :
     hasSpace x { y with clock := k } = hasSpace x y ∧
     hasSpace x { y with compile := c } = hasSpace x y ∧
     hasSpace x { y with compileOracle := co } = hasSpace x y ∧

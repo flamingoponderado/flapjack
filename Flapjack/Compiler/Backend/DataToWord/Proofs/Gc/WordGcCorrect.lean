@@ -135,7 +135,8 @@ theorem wordGcFun_correct {width : Nat} [NeZero width] {C F : Type}
       wordAddr conf root1 = holFapply outStore .globals ∧
       List.Forall₂ (fun v w => wordAddr conf v = w) roots1 (((stack.map Prod.fst).zip stack1).map Prod.snd) ∧
       (store.lookup .allocSize = some (.word (gcAllocSize requested)) ∧
-        WordSemStateFiniteExact.hasSpace (.word (gcAllocSize requested)) { state with store := outStore } = some false ∧
+        WordSemStateFiniteExact.hasSpace (.word (gcAllocSize requested) : WordLocW width)
+          { state with store := outStore } = some false ∧
         conf.gcKind ≠ .none →
         free1 + free2 < requested ∧ allReachableFromRoots (root1 :: roots1) heap1 ∧
         heapLength heap1 = dataLength heap1 + free1 + free2) := by

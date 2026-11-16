@@ -1021,20 +1021,26 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertNotEqual(record["statement_status"], "documented_mismatch")
         self.assertIn(key, MAP["tagged_declarations"]())
 
-    def test_stack_size_eq2_mismatch_is_retired(self):
-        # The unused width-specialized stack_size_eq2 analogue is gone; HOL
-        # stack_size_eq2 has no exact Lean port (independent frame types), and
-        # the reviewed stack_size_eq instance stackSizeEq remains mapped.
-        inventory = {
+    def test_stack_size_eq2_independent_widths_are_reviewed(self):
+        # HOL stack_size_eq2 puts the empty-list conjunct at a type variable
+        # independent of the frame list's. Under words_as_type_indexed_bitvec
+        # that dimension is bound at its own Nat width with its own NeZero
+        # discharge, so the port is exact rather than width-specialized.
+        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest_by_key = {
             (record["lean_path"], record["lean_name"]): record
-            for record in MAP["build_inventory"]()
+            for record in manifest
         }
-        self.assertNotIn(
-            ("Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateLaws.lean",
-             "stackSizeEq2"),
-            inventory,
-        )
-        reviewed = inventory[
+        tagged = MAP["tagged_declarations"]()
+        key = ("Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateLaws.lean",
+               "stackSizeEq2")
+        record = manifest_by_key[key]
+        self.assertEqual(record["hol_name"], "stack_size_eq2")
+        self.assertEqual(record["statement_status"],
+                         "reviewed_words_as_type_indexed_bitvec")
+        self.assertTrue(record["words_as_type_indexed_bitvec"])
+        self.assertIn(key, tagged)
+        reviewed = manifest_by_key[
             ("Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateLaws.lean",
              "stackSizeEq")
         ]

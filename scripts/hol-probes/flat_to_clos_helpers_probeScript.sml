@@ -15,3 +15,5 @@ val _ = show "smart_cons_typed" flat_to_closTheory.SmartCons_def;
 fun eval name term = (print (name ^ "="); print_term (rhs (concl (EVAL term))); print "\n");
 val _ = eval "dest_pat_numeric" ``flat_to_clos$dest_pat [(flatLang$Pvar «x», 42n)]``;
 val _ = eval "smart_cons_fold" ``flat_to_clos$SmartCons None 5 [closLang$Op None (IntOp (Const 7)) []; closLang$Op None (IntOp (Const 9)) []]``;
+val _ = show "length_compile_typed" flat_to_closTheory.LENGTH_compile;
+val _ = show "compile_not_nil_typed" flat_to_closTheory.compile_NOT_NIL;
