@@ -57,7 +57,7 @@ private def firstRepeatedName : List MlString → Option MlString
 
 /-- Preserve the innermost source location for errors that carry enough
 information for original-style rendering. Other error classes remain unchanged. -/
-private def withLoc (loc : Flapjack.Misc.Location.Locs) (env : Env) (action : M α) : M α := fun state =>
+def withLoc (loc : Flapjack.Misc.Location.Locs) (env : Env) (action : M α) : M α := fun state =>
   match action state with
   | .error .valueRestriction => .error (.located loc .valueRestriction)
   | .error .floatPattern => .error (.located loc .floatPattern)

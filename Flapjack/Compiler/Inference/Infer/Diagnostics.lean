@@ -89,6 +89,24 @@ def renderTypeMismatch (input : List HolChar) : Error → Option (List HolChar)
   | .located loc (.typeMismatchEnv names left right) => some (renderTypes input loc names left right)
   | _ => none
 
+/-- The executable framing preserves the bytes of the source-shaped mismatch message. -/
+theorem renderTypeMismatch_message (input : List HolChar) (loc : Locs)
+    (names : Flapjack.TypeSystemHOL.TenvAbbrev) (a b : InferT) :
+    renderTypeMismatch input (.located loc (.typeMismatchEnv names a b)) =
+      some ((ofString "### ERROR: type error\n").explode ++
+        (MlString.concat [ofString "Type mismatch between ",
+          Flapjack.Compiler.Inference.InferTDisplay.inferTypeToString names a,
+          ofString " and ",
+          Flapjack.Compiler.Inference.InferTDisplay.inferTypeToString names b]).explode ++
+        (ofString " at ").explode ++ sourceLocation input (some loc) ++
+        (ofString "\nProgram exited with nonzero exit code.\n").explode) := by
+  have hp : (ofString "### ERROR: type error\nType mismatch between ").explode =
+      (ofString "### ERROR: type error\n").explode ++
+        (ofString "Type mismatch between ").explode := by decide
+  simp [renderTypeMismatch, renderTypes, ascii, MlString.concat, MlString.explode,
+    List.append_assoc] at hp ⊢
+  rw [hp, List.append_assoc]
+
 /-- Render unbound type variables at the point where the source type is checked. -/
 def renderUnboundTypeVariable (input : List HolChar) : Error → Option (List HolChar)
   | .located loc error => do

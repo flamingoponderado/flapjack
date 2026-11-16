@@ -3799,6 +3799,7 @@ import Flapjack.Compiler.Inference.InferSound
 import Flapjack.Compiler.Inference.Infer.HOLState
 import Flapjack.Compiler.Inference.Infer.Operations
 import Flapjack.Compiler.Inference.Infer.Constraint
+import Flapjack.Compiler.Inference.Infer.ConstraintDiagnostics
 import Flapjack.NamespaceProps.MapLookup
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.Compose
 import Flapjack.Compiler.Inference.Unify.Walkstar.Empty
