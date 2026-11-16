@@ -137,3 +137,5 @@ val _ = show "do_app_lim_swap_aux_typed"
         Rval (q, s' with <|limits := lim; stack_max := smx;
                            safe_for_space := safe; peak_heap_length := peak |>)``,
     metis_tac [dataPropsTheory.do_app_lim_swap]));
+val _ = emit "jump_exc_NONE_typed" "jump_exc_NONE";
+val _ = emit "size_of_stack_eq_typed" "size_of_stack_eq";

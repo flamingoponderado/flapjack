@@ -10829,6 +10829,7 @@ run_probe data_props_typed_probeScript.sml data_props_typed_probe.out \
   do_app_lss_sm_safe_peak_swap_typed do_app_aux_lss_sm_safe_peak_swap_typed do_app_err_lss_sm_safe_peak_swap_typed do_app_lss_sm_safe_peak_swap_aux_typed do_app_sm_safe_peak_swap_aux_typed \
   do_app_lss_stk_stfrm_swap_typed do_app_err_lss_stk_stfrm_swap_typed do_app_lss_stk_stfrm_swap_aux_typed \
   do_app_lim_swap_typed do_app_err_lim_swap_typed do_app_lim_swap_aux_typed \
+  jump_exc_NONE_typed size_of_stack_eq_typed \
   "$cake_dir/compiler/backend/semantics/dataPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
