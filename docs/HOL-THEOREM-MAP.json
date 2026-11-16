@@ -138988,6 +138988,12 @@
   "reviewer": "Compared typed HOL source: the sole cwfs premise implies the complete cwalkstar and singleton-worklist normalization equality. The source-shaped model agrees under cwfs; the result is proved a singleton, making headD's fallback unreachable and agreeing with HOL HD. The visible sp2fm result uses the reviewed canonical map."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "WF_kcunifywlR",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistWellFounded.lean", "lean_name": "wfKcunifywlR",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm"],
+  "reviewer": "Compared WF_kcunifywlR_typed and kcunifywlR_def_typed: the unconditional well-foundedness result uses the complete source relation, unfolded to expose the reviewed canonical sp2fm producer. Both cwfs guards, parent-to-child submap, variable-set inclusion and the lexicographic transitive bag and worklist-length order are retained."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "WF_kcwalkstarwlR",
   "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/WorklistWellFounded.lean", "lean_name": "wfKcwalkstarwlRModel",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm"],
