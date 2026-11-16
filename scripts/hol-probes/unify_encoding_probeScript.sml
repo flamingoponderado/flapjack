@@ -119,6 +119,9 @@ val _ = show "FLOOKUP_sp2fm_typed" fmspTheory.FLOOKUP_sp2fm;
 val _ = show "swfs_def_typed" rmfmapTheory.swfs_def;
 val _ = show "cwfs_def_typed" unifyTheory.cwfs_def;
 val _ = show "cvwalk_preserves_precond_typed" unifyTheory.cvwalk_preserves_precond;
+(* These source theorem values carry HOL assumptions; retain them as premises. *)
+val _ = show "cvwalk_thm_typed" (DISCH_ALL unifyTheory.cvwalk_thm);
+val _ = show "cwalk_thm_typed" (DISCH_ALL unifyTheory.cwalk_thm);
 val _ = show "sp2fm_map_typed" unifyTheory.sp2fm_map;
 val _ = show "cvwalkR_def_typed" unifyTheory.cvwalkR_def;
 val _ = show "cvwalk_ensures_decrease_typed" unifyTheory.cvwalk_ensures_decrease;

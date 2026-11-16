@@ -58,6 +58,8 @@ FLOOKUP_sp2fm_typed=FLOOKUP (sp2fm (sp :α sptree$num_map)) (k :num) = lookup k 
 swfs_def_typed=∀(sp :α term sptree$num_map). swfs sp ⇔ wfs (sp2fm sp)
 cwfs_def_typed=∀(s :infer_t sptree$num_map). cwfs s ⇔ swfs (map encode_infer_t s) ∧ wf s
 cvwalk_preserves_precond_typed=∀(x :num) (y :num). (λ(n :num). cwfs (s :infer_t sptree$num_map)) x ∧ cvwalk_code s x = (INL y :num + infer_t) ⇒ (λ(n :num). cwfs s) y
+cvwalk_thm_typed=wf (map encode_infer_t (s :infer_t sptree$num_map)) ⇒ swfs (map encode_infer_t s) ⇒ cvwalk s (n :num) = case lookup n s of (NONE :infer_t option) => Infer_Tuvar n | SOME (Infer_Tvar_db v9) => Infer_Tvar_db v9 | SOME (Infer_Tapp l n) => Infer_Tapp l n | SOME (Infer_Tuvar u) => cvwalk s u
+cwalk_thm_typed=cwfs (s :infer_t sptree$num_map) ⇒ cwalk s (it :infer_t) = case it of Infer_Tvar_db v8 => Infer_Tvar_db v8 | Infer_Tapp l n => Infer_Tapp l n | Infer_Tuvar v => cvwalk s v
 sp2fm_map_typed=sp2fm (map (f :β -> α) (sp :β sptree$num_map)) = f o_f sp2fm sp
 cvwalkR_def_typed=∀(σ :infer_t sptree$num_map). cvwalkR σ = (λ(v :num) (v0 :num). vR (encode_infer_t o_f sp2fm σ) v v0)
 cvwalk_ensures_decrease_typed=∀(x :num) (y :num). (λ(n :num). cwfs (s :infer_t sptree$num_map)) x ∧ cvwalk_code s x = (INL y :num + infer_t) ⇒ cvwalkR s y x

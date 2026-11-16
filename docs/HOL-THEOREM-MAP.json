@@ -138386,5 +138386,17 @@
   "lean_path": "Flapjack/HOL/Transfer/Fmsp/Lookup.lean", "lean_name": "flookupSp2fm",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm"],
   "reviewer": "Independent typed source review confirms arbitrary value type, natural key and sparse tree, and unconditional equality of converted-map and tree lookups in the original direction, including malformed trees. The imported producer and its lookup witness are separately reviewed."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "cvwalk_thm",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/ComputationalWalk.lean", "lean_name": "cvwalkThm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed source review retains both discharged HOL assumptions in order, all sparse-tree lookup branches and the recursive variable. The proof-side walker agrees with the full HOL-shaped encoding on this well-formed domain; no unconditional definition correspondence is claimed."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "cwalk_thm",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/ComputationalWalk.lean", "lean_name": "cwalkThm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed source review retains the discharged cwfs premise and all three term cases. The proof-side walkers agree with the full HOL-shaped encoding under that premise; no unconditional definition correspondence is claimed."
 }
 ]
