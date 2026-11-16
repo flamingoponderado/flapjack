@@ -4,11 +4,14 @@ vars_def_typed=(∀(x :num). vars (Var x :α term) = {x}) ∧ (∀(t1 :α term) 
 FINITE_vars_typed=FINITE (vars (t :α term))
 varb_def_typed=(∀(s :num). varb (Var s :α term) = {|s|}) ∧ (∀(t1 :α term) (t2 :α term). varb (Pair t1 t2) = varb t1 ⊎ varb t2) ∧ ∀(c :α). varb (Const c) = ({||} :num -> num)
 FINITE_varb_typed=FINITE_BAG (varb (t :α term))
+IN_varb_vars_typed=(e :num) ⋲ varb (t :α term) ⇔ e ∈ vars t
 mlt1_def_typed=∀(r :α -> α -> bool) (b1 :α -> num) (b2 :α -> num). mlt1 r b1 b2 ⇔ FINITE_BAG b1 ∧ FINITE_BAG b2 ∧ ∃(e :α) (rep :α -> num) (res :α -> num). b1 = rep ⊎ res ∧ b2 = res ⊎ {|e|} ∧ ∀(e' :α). e' ⋲ rep ⇒ r e' e
 TC_mlt1_FINITE_BAG_typed=∀(b1 :α -> num) (b2 :α -> num). mlt (R :α -> α -> bool) b1 b2 ⇒ FINITE_BAG b1 ∧ FINITE_BAG b2
 TC_mlt1_UNION2_I_typed=∀(b2 :α -> num) (b1 :α -> num). FINITE_BAG b2 ∧ FINITE_BAG b1 ∧ b2 ≠ ({||} :α -> num) ⇒ mlt (R :α -> α -> bool) b1 (b1 ⊎ b2)
 TC_mlt1_UNION1_I_typed=∀(b2 :α -> num) (b1 :α -> num). FINITE_BAG b2 ∧ FINITE_BAG b1 ∧ b1 ≠ ({||} :α -> num) ⇒ mlt (R :α -> α -> bool) b2 (b1 ⊎ b2)
 walkstarR_def_typed=∀(s :β subst). (walkstarR s :α term -> α term -> bool) = inv_image (mlt (vR s)⁺ LEX measure (pair_count :α term -> num)) (λ(t :α term). (varb t,t))
+walkstar_th1_typed=wfs (s :α subst) ⇒ ∀(t :α term) (t1 :α term) (t2 :α term). walk s t = Pair t1 t2 ⇒ walkstarR s t1 t
+walkstar_th2_typed=wfs (s :α subst) ⇒ ∀(t :α term) (t1 :α term) (t2 :α term). walk s t = Pair t1 t2 ⇒ walkstarR s t2 t
 walkstarR_trans_typed=walkstarR (s :α subst) (t1 :β term) (t2 :β term) ∧ walkstarR s t2 (t3 :β term) ⇒ walkstarR s t1 t3
 subterm_def_typed=(subterm :α term -> α term -> bool) = (λ(a :α term) (b :α term). (∃(t :α term). b = Pair a t) ∨ ∃(t :α term). b = Pair t a)⁺
 subterm_thm_typed=(subterm (t :α term) (Pair (u :α term) (v :α term)) ⇔ t = u ∨ t = v ∨ subterm t u ∨ subterm t v) ∧ (subterm t (Var (vnm :num) :α term) ⇔ F) ∧ (subterm t (Const (c :α)) ⇔ F)

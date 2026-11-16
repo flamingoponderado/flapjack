@@ -138718,6 +138718,24 @@
   "reviewer": "Compared the typed HOL source: generic term constants, natural variable identifiers, singleton variable bags, pairwise bag union and the empty constant bag are retained."
 },
 {
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/termScript.sml", "hol_name": "IN_varb_vars",
+  "lean_path": "Flapjack/HOL/Unification/Term/VarBag.lean", "lean_name": "inVarbVars",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: membership of a natural-number variable in the term's bag is equivalent to its membership in the term's variable set."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkstarScript.sml", "hol_name": "walkstar_th1",
+  "lean_path": "Flapjack/HOL/Unification/Walkstar/Decrease.lean", "lean_name": "walkstarTh1",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared typed HOL source: under well-formedness, the first component of every pair produced by walk decreases in walkstarR. The same term payload type is used throughout and the substitution has its codec witness."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkstarScript.sml", "hol_name": "walkstar_th2",
+  "lean_path": "Flapjack/HOL/Unification/Walkstar/Decrease.lean", "lean_name": "walkstarTh2",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared typed HOL source: under well-formedness, the second component of every pair produced by walk decreases in walkstarR. The same term payload type is used throughout and the substitution has its codec witness."
+},
+{
   "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/termScript.sml", "hol_name": "FINITE_varb",
   "lean_path": "Flapjack/HOL/Unification/Term/VarBag.lean", "lean_name": "finiteVarb",
   "statement_status": "reviewed_exact",
