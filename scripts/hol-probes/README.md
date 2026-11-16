@@ -10477,7 +10477,7 @@ well-formedness declarations, the conditional variable-walk equation, its
 domain properties, its dependency-closure theorem, and the conditional
 normalization equation, inference substitution dependencies, and typed
 inference walker and normalization equations, including replays of their
-local encoding and list lemmas.
+local encoding and list lemmas, and the empty-substitution theorems.
 Regenerate with
 `HOL_PROBE_ONLY=unify_encoding_probeScript.sml`. The capture is source-review
 evidence; it does not establish unifier equivalence.

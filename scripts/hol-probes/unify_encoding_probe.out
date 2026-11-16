@@ -29,3 +29,6 @@ t_walk_eqn_typed=(∀(s :num |-> infer_t) (v :num). t_walk s (Infer_Tuvar v) = t
 t_walkstar_eqn_typed=∀(s :num |-> infer_t). t_wfs s ⇒ ∀(t :infer_t). t_walkstar s t = case t_walk s t of Infer_Tvar_db n => Infer_Tvar_db n | Infer_Tapp ts tctor => Infer_Tapp (MAP (t_walkstar s) ts) tctor | Infer_Tuvar v => Infer_Tuvar v
 encode_walk_replay_typed=∀(s :num |-> infer_t). t_wfs s ⇒ ∀(t :infer_t). walk (encode_infer_t o_f s) (encode_infer_t t) = encode_infer_t (t_walk s t)
 ts_walkstar_replay_typed=∀(l :infer_t list) (s :num |-> infer_t). t_wfs s ⇒ decode_infer_ts (encode_infer_t o_f s ◁ encode_infer_ts l) = MAP (t_walkstar s) l
+wfs_FEMPTY_typed=wfs (FEMPTY :α subst)
+walkstar_FEMPTY_typed=∀(t :α term). (FEMPTY :α subst) ◁ t = t
+t_walkstar_FEMPTY_typed=∀(t :infer_t). t_walkstar (FEMPTY :num |-> infer_t) t = t

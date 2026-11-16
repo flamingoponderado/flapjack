@@ -138179,5 +138179,26 @@
   "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar.lean", "lean_name": "walkstarEqn",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
   "reviewer": "Compared the complete typed HOL theorem and source: under well-formedness, all inference-walk cases are retained, including mapping normalization over the entire application list. The canonical map has a codec witness; no off-wfs correspondence is claimed."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/substScript.sml", "hol_name": "wfs_FEMPTY",
+  "lean_path": "Flapjack/HOL/Unification/Subst/Empty.lean", "lean_name": "wfsEmpty",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+  "reviewer": "Compared the typed original and source: the empty Nat-key substitution is well formed for every atom carrier, without assumptions. The observed empty map is the reviewed canonical HOL FEMPTY producer."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkstarScript.sml", "hol_name": "walkstar_FEMPTY",
+  "lean_path": "Flapjack/HOL/Unification/Walkstar/Empty.lean", "lean_name": "walkstarEmpty",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+  "reviewer": "Compared the typed original and source: normalization with the empty substitution is the identity for every term and arbitrary atom carrier. The observed empty map is the reviewed canonical HOL FEMPTY producer."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_walkstar_FEMPTY",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/Empty.lean", "lean_name": "tWalkstarEmpty",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+  "reviewer": "Compared the typed original and source: inference-type normalization with the empty substitution is the identity on every type. Encoding preserves the empty map, and the observed map is the reviewed canonical HOL FEMPTY producer."
 }
 ]

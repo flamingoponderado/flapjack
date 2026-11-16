@@ -70,3 +70,6 @@ val ts_walkstar_replay = Q.prove (
   rw [t_wfs_def, encode_infer_t_def, Once walkstar_def, decode_infer_t_def] >>
   rw [t_walkstar_def]);
 val _ = show "ts_walkstar_replay_typed" ts_walkstar_replay;
+val _ = show "wfs_FEMPTY_typed" substTheory.wfs_FEMPTY;
+val _ = show "walkstar_FEMPTY_typed" walkstarTheory.walkstar_FEMPTY;
+val _ = show "t_walkstar_FEMPTY_typed" unifyTheory.t_walkstar_FEMPTY;
