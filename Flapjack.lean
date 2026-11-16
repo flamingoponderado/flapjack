@@ -3835,6 +3835,7 @@ import Flapjack.Compiler.Inference.Unify.Source
 import Flapjack.Compiler.Inference.Unify.Source.List
 import Flapjack.Compiler.Inference.Unify.Source.Equation
 import Flapjack.Compiler.Inference.Unify.Source.Continuation
+import Flapjack.Compiler.Inference.Unify.Source.Soundness
 import Flapjack.Compiler.Inference.Unify.EncodingInvariant
 import Flapjack.Compiler.Inference.Unify.ListUnification
 import Flapjack.HOL.Transfer.Fmsp.Lookup

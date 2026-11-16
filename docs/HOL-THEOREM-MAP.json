@@ -139018,6 +139018,12 @@
   "reviewer": "Source comparison with walkstar_walk_SUBMAP_typed: for arbitrary term atoms and canonical substitution maps, the sole conjunction is s SUBMAP sx and wfs sx; the conclusion preserves equality of normalization by sx before and after walking by s. Local witnesses cover both map parameters."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "cunify_unifier",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Source/Soundness.lean", "lean_name": "cunifyUnifierModel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cunify_unifier_typed, cwalkstar_def_typed and unify_unifier_typed: the exact cwfs input and successful cunify result imply cwfs output, original sparse-tree subspt and equal cwalkstar results. The source-shaped choice unifier agrees under the guard; the full first-order soundness proof is transferred through the encoding invariant and sparse lookup correspondence."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "apply_cunif_NONE",
   "lean_path": "Flapjack/Compiler/Inference/Unify/Source/Continuation.lean", "lean_name": "applyCunifNoneModel",
   "statement_status": "reviewed_exact",
