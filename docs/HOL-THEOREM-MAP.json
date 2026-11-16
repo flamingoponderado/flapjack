@@ -139024,6 +139024,12 @@
   "reviewer": "Compared HOL source and vwalk_FUPDATE_var_typed: when the variable update is well formed and its key was fresh, walking the updated variable's target agrees with walking it before the update. The substitution uses the canonical finite-map codec."
 },
 {
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml", "hol_name": "walkstar_extend",
+  "lean_path": "Flapjack/HOL/Unification/UnifProps/Extend.lean", "lean_name": "walkstarExtend",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s1", "s"],
+  "reviewer": "Compared HOL source and walkstar_extend_typed: both well-formedness conditions, freshness of the updated key, the normalization equality premise, and the universal normalization equality conclusion are preserved. Both substitutions use canonical finite-map codecs."
+},
+{
   "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml", "hol_name": "TC_vR_SUBMAP",
   "lean_path": "Flapjack/HOL/Unification/UnifProps.lean", "lean_name": "tcVRSubmap",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s", "sx"],

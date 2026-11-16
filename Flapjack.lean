@@ -3820,6 +3820,7 @@ import Flapjack.HOL.Unification.Walkstar.Decrease
 import Flapjack.HOL.Unification.UnifDef.WellFounded
 import Flapjack.HOL.Unification.UnifDef.Tunify
 import Flapjack.HOL.Unification.UnifProps
+import Flapjack.HOL.Unification.UnifProps.Extend
 import Flapjack.HOL.Transfer.Fmsp.Inverse
 import Flapjack.Compiler.Inference.Unify.Occurs.Encoding
 import Flapjack.Compiler.Inference.Unify.Occurs.WorklistDecrease
