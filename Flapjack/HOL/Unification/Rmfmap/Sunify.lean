@@ -10,8 +10,8 @@ namespace Flapjack.HOL.Unification
 open Flapjack.HOL.Transfer.Fmsp
 
 /-- Select a source-specification unifier and convert a successful map to a
-    sparse tree. This is untagged until the option-wrapped canonical map
-    returned by the selected unifier has a reviewed representation qualifier. -/
+    sparse tree. This is untagged because agreement with HOL's selected
+    unifier outside the well-formedness guard is not established. -/
 noncomputable def sunifyModel {α : Type} (s : Spt (Term α)) (a b : Term α) :
     Option (Spt (Term α)) :=
   (specifiedUnify (sp2fm s) a b).map fm2sp

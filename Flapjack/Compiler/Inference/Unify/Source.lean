@@ -11,18 +11,23 @@ public import Flapjack.Compiler.Inference.Unify.ListUnification
 namespace Flapjack.Compiler.Inference.Unify
 open Flapjack.HOL.Unification Flapjack.HOL.Transfer.Fmsp
 
-/-- Source-shaped choice model, untagged pending review of its nested
-    option-wrapped finite-map result. -/
+/-- Source-shaped choice model. It remains untagged because agreement with
+    HOL's selected unifier outside the well-formedness guard is not established;
+    the finite-map representation is internal to the sparse-tree result. -/
 noncomputable def cunifyModel (s : Spt InferT) (a b : InferT) : Option (Spt InferT) :=
   (sunifyModel (sptMap encodeInferT s) (encodeInferT a) (encodeInferT b)).map (sptMap decodeInferT)
 
-private theorem sparseEncode (s : Spt InferT) :
+/-- The sparse-tree encoding projects to the encoded finite map. This
+    specialization is infrastructure for the source unifier proofs. -/
+theorem sparseEncode (s : Spt InferT) :
     sp2fm (sptMap encodeInferT s) = encodeSubst (sp2fm s) := by
   apply HolFiniteMapExact.ext_lookup
   intro key
   exact sptLookup_sptMap encodeInferT s key
 
-private theorem sparseDecode (s : HolFiniteMapExact Nat (Term Atom)) :
+/-- The sparse-tree decoding projects to the decoded finite map. This is
+    source-unifier proof infrastructure rather than a separate HOL theorem. -/
+theorem sparseDecode (s : HolFiniteMapExact Nat (Term Atom)) :
     sp2fm (sptMap decodeInferT (fm2sp s)) = decodeSubst s := by
   apply HolFiniteMapExact.ext_lookup
   intro key
