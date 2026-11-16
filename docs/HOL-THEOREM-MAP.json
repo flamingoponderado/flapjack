@@ -138061,6 +138061,25 @@
   "reviewer": "Compared HOL source and deBruijn_subst_convert_replay_typed: the shared bound and arbitrary inference substitution, empty-uvar guards, both type and list conjuncts, and equality directions agree. The source-defined conversion's unspecified uvar clause is excluded by the original checks on the input types."
 },
 {
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "ienv_ok_extend_dec_ienv",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/Extend.lean", "lean_name": "ienvOkExtendDecIenv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and ienv_ok_extend_dec_ienv_typed: both arbitrary environments and the shared uvar set retain the conjunction of well-formedness premises and the complete extension conclusion."
+},
+{
+  "hol_path": "cakeml/semantics/proofs/typeSysPropsScript.sml", "hol_name": "extend_dec_tenv_ok",
+  "lean_path": "Flapjack/TypeSysProps/Environment.lean", "lean_name": "extendDecTenvOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and extend_dec_tenv_ok_typed: the original conjunction of both declarative environment well-formedness premises implies well-formedness of the same ordered extension."
+},
+{
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml", "hol_name": "env_rel_extend",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel/Extend.lean", "lean_name": "envRelExtend",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+  "reviewer": "Compared HOL source and env_rel_extend_statement_typed, which captures the inferred reconstructed statement rather than replaying its proof: both original relation premises and the complete ordered extension conclusion are retained. Lean expands env_rel_def one level to expose the fixed empty maps; both normalizers are identity there. Namespace lookup transfer retains left-biased module shadowing."
+},
+{
   "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAll_nsLift",
   "lean_path": "Flapjack/NamespaceProps/LiftLookup.lean", "lean_name": "nsAll_nsLift",
   "statement_status": "reviewed_exact",

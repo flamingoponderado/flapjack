@@ -3,6 +3,7 @@
 load "inferPropsTheory";
 load "namespacePropsTheory";
 load "primTypesTheory";
+load "typeSysPropsTheory";
 load "preamble";
 open HolKernel Parse boolLib bossLib;
 open preamble inferPropsTheory inferTheory typeSystemTheory primTypesTheory;
@@ -28,6 +29,8 @@ val _ = show "nsLookupMod_nsMap_typed" namespacePropsTheory.nsLookupMod_nsMap;
 val _ = show "nsAll_nsMap_typed" namespacePropsTheory.nsAll_nsMap;
 val _ = show "nsAll_nsLift_typed" namespacePropsTheory.nsAll_nsLift;
 val _ = show "ienv_ok_lift_typed" inferPropsTheory.ienv_ok_lift;
+val _ = show "ienv_ok_extend_dec_ienv_typed" inferPropsTheory.ienv_ok_extend_dec_ienv;
+val _ = show "extend_dec_tenv_ok_typed" typeSysPropsTheory.extend_dec_tenv_ok;
 
 val tenv_to_ienv_lift_replay = Q.prove(
   `!mn tenv. probe_tenv_to_ienv (tenvLift mn tenv) =
@@ -252,6 +255,12 @@ val _ = show "tscheme_inst_to_approx_replay_typed" tscheme_inst_to_approx_replay
 val _ = print "env_rel_tenv_to_ienv_statement_typed=";
 val _ = print_term (Parse.Term `!tenv. typeSoundInvariants$tenv_ok tenv ⇒
   probe_env_rel tenv (probe_tenv_to_ienv tenv)`);
+val _ = print "\n";
+
+val _ = print "env_rel_extend_statement_typed=";
+val _ = print_term (Parse.Term `!tenv1 ienv1 tenv2 ienv2.
+  probe_env_rel tenv1 ienv1 ∧ probe_env_rel tenv2 ienv2 ⇒
+  probe_env_rel (extend_dec_tenv tenv1 tenv2) (extend_dec_ienv ienv1 ienv2)`);
 val _ = print "\n";
 
 val _ = print "env_rel_lift_statement_typed=";
