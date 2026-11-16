@@ -24,7 +24,7 @@ noncomputable def tExtSCheck (s : HolFiniteMapExact Nat InferT) (v : Nat) (t : I
 
 /-- Decode the encoded update, including both the updated and all untouched
     entries. This is a map-encoding helper for the source extension equation. -/
-private theorem decodeEncodeUpdate (s : HolFiniteMapExact Nat InferT) (v : Nat)
+theorem decodeEncodeUpdate (s : HolFiniteMapExact Nat InferT) (v : Nat)
     (t : InferT) :
     ((s.map2 (fun p => encodeInferT p.2)).updateEq (v, encodeInferT t)).map2
         (fun p => decodeInferT p.2) = s.updateEq (v, t) := by
