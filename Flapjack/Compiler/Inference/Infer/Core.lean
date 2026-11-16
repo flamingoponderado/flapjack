@@ -106,7 +106,9 @@ private def freshMany (n : Nat) : M (List InferT) := do
   set s
   return ts
 
-private def constrain (_fuel : Nat) (a b : InferT) : M Unit := do
+/-- Executable constraint step. Its error carrier is Flapjack-specific;
+    source and executable behavior are related in the constraint proof. -/
+def constrain (_fuel : Nat) (a b : InferT) : M Unit := do
   let s ← get
   match unifyPartial s.subst a b with
   | none => fail .exhausted
