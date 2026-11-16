@@ -3821,6 +3821,7 @@ import Flapjack.HOL.Unification.UnifDef.WellFounded
 import Flapjack.HOL.Unification.UnifDef.Tunify
 import Flapjack.HOL.Unification.UnifProps
 import Flapjack.HOL.Unification.UnifProps.Extend
+import Flapjack.HOL.Unification.UnifProps.MostGeneral
 import Flapjack.HOL.Transfer.Fmsp.Inverse
 import Flapjack.Compiler.Inference.Unify.Occurs.Encoding
 import Flapjack.Compiler.Inference.Unify.Occurs.WorklistDecrease
@@ -3832,6 +3833,7 @@ import Flapjack.Compiler.Inference.Unify.Walkstar.WorklistTotal
 import Flapjack.Compiler.Inference.Unify.Extension
 import Flapjack.Compiler.Inference.Unify.Unification
 import Flapjack.Compiler.Inference.Unify.Unification.Choice
+import Flapjack.Compiler.Inference.Unify.Unification.MostGeneral
 import Flapjack.Compiler.Inference.Unify.Source
 import Flapjack.Compiler.Inference.Unify.Source.List
 import Flapjack.Compiler.Inference.Unify.Source.Equation
