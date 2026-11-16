@@ -138398,5 +138398,53 @@
   "lean_path": "Flapjack/Compiler/Inference/Unify/ComputationalWalk.lean", "lean_name": "cwalkThm",
   "statement_status": "reviewed_exact",
   "reviewer": "Independent typed source review retains the discharged cwfs premise and all three term cases. The proof-side walkers agree with the full HOL-shaped encoding under that premise; no unconditional definition correspondence is claimed."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "TC_vR_update",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "tcVRUpdate",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms generic term atoms, the strict updated path, original freshness premise and both alternatives with the original existential and reflexive-path directions. The canonical substitution has a codec witness and update uses HOL equality."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/substScript.sml", "hol_name": "wfs_no_cycles",
+  "lean_path": "Flapjack/HOL/Unification/Subst/NoCycles.lean", "lean_name": "wfsNoCycles",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms the full iff for arbitrary term atoms and all natural variables, with strict transitive closure. The converse derives finite domain from the canonical map support and lifts accessibility to all natural variables without extra premises."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkstarScript.sml", "hol_name": "NOT_FDOM_walkstar",
+  "lean_path": "Flapjack/HOL/Unification/Walkstar/NotDomain.lean", "lean_name": "notFdomWalkstar",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms the original well-formedness premise, universally quantified term and two successive domain and membership premises. Normalization is used only on the reviewed well-formed domain."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkstarScript.sml", "hol_name": "TC_vR_vars_walkstar",
+  "lean_path": "Flapjack/HOL/Unification/Walkstar/Dependency.lean", "lean_name": "tcVRVarsWalkstar",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms the original ordered conjunction, strict dependency path and direction, and full normalized-variable membership conclusion. The proof uses normalization only under the original well-formedness premise."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "wfs_extend",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "wfsExtend",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms all three ordered original premises and full well-formedness of the equality-updated map. The proof uses the original no-cycles, update-path and normalization dependency results, with no added invariant."
+},
+{
+  "hol_path": "HOL/src/transfer/examples/fmspScript.sml", "hol_name": "sp2fm_thm",
+  "lean_path": "Flapjack/HOL/Transfer/Fmsp/Operations.lean", "lean_name": "sp2fmThm",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm", "Flapjack.HolFiniteMapExact.holEmpty"],
+  "reviewer": "Independent typed source review confirms both full map equalities for all trees and the independent value types of the empty and insertion conjuncts. Both imported finite-map producers have separately reviewed lookup witnesses."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "cwfs_insert_tvar_db",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/ComputationalWf/Insert.lean", "lean_name": "cwfsInsertTvarDb",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed source review confirms the original freshness and cwfs conjunction and full cwfs conclusion after sparse-tree insertion. Both encoded-substitution and tree well-formedness components are proved."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "cwfs_var2_extend",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/ComputationalWf/Insert.lean", "lean_name": "cwfsVar2Extend",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed source review confirms all four ordered original premises and the full cwfs conclusion for insertion of the distinct fresh variable. The proof derives both encoded-substitution and sparse-tree well-formedness."
 }
 ]

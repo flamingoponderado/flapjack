@@ -3796,6 +3796,7 @@ import Flapjack.Compiler.Inference.Unify.Walkstar.Submap
 import Flapjack.Compiler.Inference.Unify.Compat
 import Flapjack.Compiler.Inference.Unify.ComputationalWf
 import Flapjack.Compiler.Inference.Unify.ComputationalWalk
+import Flapjack.Compiler.Inference.Unify.ComputationalWf.Insert
 import Flapjack.HOL.Transfer.Fmsp.Lookup
 import Flapjack.Compiler.Inference.InferProps.DeBruijn
 import Flapjack.Compiler.Inference.InferProps.DeBruijn.Bounded

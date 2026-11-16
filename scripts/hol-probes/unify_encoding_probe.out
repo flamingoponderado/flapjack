@@ -11,6 +11,11 @@ encode_eq_var_typed=((Var (n :num) :atom term) = encode_infer_t (i :infer_t) ⇔
 vR_def_typed=∀(s :α |-> β term) (y :num) (x :α). vR s y x ⇔ case FLOOKUP s x of (NONE :β term option) => F | SOME t => y ∈ vars t
 wfs_def_typed=∀(s :α subst). wfs s ⇔ WF (vR s)
 wfs_SUBMAP_typed=wfs (sx :α subst) ∧ (s :α subst) ⊑ sx ⇒ wfs s
+wfs_no_cycles_typed=wfs (s :α subst) ⇔ ∀(v :num). ¬(vR s)⁺ v v
+TC_vR_update_typed=∀(y :num) (x :num). (vR (s :α subst)⟨(v :num) ↦ (t :α term)⟩)⁺ y x ⇒ v ∉ FDOM s ⇒ (vR s)⁺ y x ∨ ∃(u :num). (vR s)꙳ v x ∧ u ∈ vars t ∧ (vR s)꙳ y u
+wfs_extend_typed=wfs (s :α subst) ∧ (v :num) ∉ FDOM s ∧ v ∉ vars (s ◁ (t :α term)) ⇒ wfs s⟨v ↦ t⟩
+TC_vR_vars_walkstar_typed=wfs (s :α subst) ∧ (u :num) ∈ vars (t :α term) ∧ (vR s)⁺ (v :num) u ∧ v ∉ FDOM s ⇒ v ∈ vars (s ◁ t)
+NOT_FDOM_walkstar_typed=wfs (s :α subst) ⇒ ∀(t :α term). (v :num) ∉ FDOM s ⇒ v ∈ vars t ⇒ v ∈ vars (s ◁ t)
 vwalk_def_typed=wfs (s :α subst) ⇒ ∀(v :num). vwalk s v = case FLOOKUP s v of (NONE :α term option) => (Var v :α term) | SOME (Var u :α term) => vwalk s u | SOME (Pair v7 v8) => Pair v7 v8 | SOME (Const v9) => Const v9
 NOT_FDOM_vwalk_typed=wfs (s :α subst) ∧ (v :num) ∉ FDOM s ⇒ vwalk s v = (Var v :α term)
 vwalk_to_var_typed=wfs (s :α subst) ⇒ ∀(v :num) (u :num). vwalk s v = (Var u :α term) ⇒ u ∉ FDOM s
@@ -55,8 +60,11 @@ cunify_code_def_typed=cunify_code = (λ((s :infer_t sptree$num_map),(v :(infer_t
 tcunify_thm_typed=∀(s :infer_t sptree$num_map) (wl :(infer_t list # infer_t list) list). tcunify s wl = case wl of ([] :(infer_t list # infer_t list) list) => SOME s | (([] :infer_t list),([] :infer_t list))::v2 => tcunify s v2 | (([] :infer_t list),h::t)::v2 => (NONE :infer_t sptree$num_map option) | (h::t,([] :infer_t list))::v2 => (NONE :infer_t sptree$num_map option) | (h::t,h'::t')::v2 => case tcwalk s h of Infer_Tvar_db c => (case tcwalk s h' of Infer_Tvar_db c' => if c = c' then tcunify s ((t,t')::v2) else (NONE :infer_t sptree$num_map option) | Infer_Tapp l n => (NONE :infer_t sptree$num_map option) | Infer_Tuvar v => tcunify (insert v (Infer_Tvar_db c) s) ((t,t')::v2)) | Infer_Tapp l n => (case tcwalk s h' of Infer_Tvar_db c => (NONE :infer_t sptree$num_map option) | Infer_Tapp l' n' => if n = n' then tcunify s ((l,l')::(t,t')::v2) else (NONE :infer_t sptree$num_map option) | Infer_Tuvar v => if tcocwl s v [l] then (NONE :infer_t sptree$num_map option) else tcunify (insert v (Infer_Tapp l n) s) ((t,t')::v2)) | Infer_Tuvar v => case tcwalk s h' of Infer_Tvar_db c => tcunify (insert v (Infer_Tvar_db c) s) ((t,t')::v2) | Infer_Tapp l n => if tcocwl s v [l] then (NONE :infer_t sptree$num_map option) else tcunify (insert v (Infer_Tapp l n) s) ((t,t')::v2) | Infer_Tuvar v' => if v = v' then tcunify s ((t,t')::v2) else tcunify (insert v (Infer_Tuvar v') s) ((t,t')::v2)
 sp2fm_def_typed=∀(sp :α sptree$num_map). sp2fm sp = FUN_FMAP (λ(k :num). THE (lookup k sp)) (domain sp :num -> bool)
 FLOOKUP_sp2fm_typed=FLOOKUP (sp2fm (sp :α sptree$num_map)) (k :num) = lookup k sp
+sp2fm_thm_typed=sp2fm (LN :α sptree$num_map) = (FEMPTY :num |-> α) ∧ sp2fm (insert (k :num) (v :β) (sp :β sptree$num_map)) = (sp2fm sp)⟨k ↦ v⟩
 swfs_def_typed=∀(sp :α term sptree$num_map). swfs sp ⇔ wfs (sp2fm sp)
 cwfs_def_typed=∀(s :infer_t sptree$num_map). cwfs s ⇔ swfs (map encode_infer_t s) ∧ wf s
+cwfs_insert_tvar_db_typed=(v :num) ∉ (domain (s :infer_t sptree$num_map) :num -> bool) ∧ cwfs s ⇒ cwfs (insert v (Infer_Tvar_db (c :num)) s)
+cwfs_var2_extend_typed=cwfs (s :infer_t sptree$num_map) ∧ (v1 :num) ≠ (v2 :num) ∧ v1 ∉ (domain s :num -> bool) ∧ v2 ∉ (domain s :num -> bool) ⇒ cwfs (insert v1 (Infer_Tuvar v2) s)
 cvwalk_preserves_precond_typed=∀(x :num) (y :num). (λ(n :num). cwfs (s :infer_t sptree$num_map)) x ∧ cvwalk_code s x = (INL y :num + infer_t) ⇒ (λ(n :num). cwfs s) y
 cvwalk_thm_typed=wf (map encode_infer_t (s :infer_t sptree$num_map)) ⇒ swfs (map encode_infer_t s) ⇒ cvwalk s (n :num) = case lookup n s of (NONE :infer_t option) => Infer_Tuvar n | SOME (Infer_Tvar_db v9) => Infer_Tvar_db v9 | SOME (Infer_Tapp l n) => Infer_Tapp l n | SOME (Infer_Tuvar u) => cvwalk s u
 cwalk_thm_typed=cwfs (s :infer_t sptree$num_map) ⇒ cwalk s (it :infer_t) = case it of Infer_Tvar_db v8 => Infer_Tvar_db v8 | Infer_Tapp l n => Infer_Tapp l n | Infer_Tuvar v => cvwalk s v
