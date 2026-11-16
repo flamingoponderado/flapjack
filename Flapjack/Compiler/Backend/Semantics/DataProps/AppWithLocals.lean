@@ -57,4 +57,38 @@ theorem doStack_locals {C F : Type} (op : ClosLang.Op) (values : List Value)
       { doStack op values state with locals := locals } := by
   simp [doStack]
 
+/-- The space stage leaves the stack, frame sizes, limits, stack maximum and
+locals unchanged. -/
+theorem doSpace_fields {C F : Type} (op : ClosLang.Op) (values : List Value)
+    (state next : State C F) (run : doSpace op values state = some next) :
+    next.stack = state.stack ∧ next.localsSize = state.localsSize ∧
+      next.stackFrameSizes = state.stackFrameSizes ∧ next.limits = state.limits ∧
+      next.stackMax = state.stackMax ∧ next.locals = state.locals := by
+  unfold doSpace at run
+  simp only [] at run
+  split at run
+  · simp only [Option.some.injEq] at run
+    subst next
+    exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+  · split at run
+    · simp only [Option.some.injEq] at run
+      subst next
+      exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    · unfold consumeSpace at run
+      split at run
+      · simp at run
+      · simp only [Option.some.injEq] at run
+        subst next
+        exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Installation carries the locals through unchanged. -/
+theorem doInstall_locals {C F R : Type} (args : List Value) (state : State C F)
+    (locals : Spt Value) :
+    doInstall args { state with locals := locals } =
+      mapResult (fun ((value, next) : Value × State C F) =>
+          (value, { next with locals := locals })) (id : R → R)
+        (doInstall args state) := by
+  simp only [doInstall, mapResult, mapErrorResult]
+  repeat' (split <;> try rfl)
+
 end Flapjack.Compiler.Backend.DataProps
