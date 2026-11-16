@@ -3,6 +3,7 @@ module
 public import Flapjack.Compiler.Inference.Unify.WorklistVars
 public import Flapjack.Misc.Bag
 public import Flapjack.Misc.Bag.SubBag
+public import Flapjack.Misc.Bag.MultisetOrder
 
 @[expose] public section
 
@@ -65,6 +66,13 @@ theorem finiteBagFoldrInsert {α : Type} (xs : List α) (b : Bag α) :
 /-- Finite list bags support the source worklist decrease proofs. -/
 theorem finiteBagOfList {α : Type} (xs : List α) : finiteBag (bagOfList xs) :=
   (finiteBagFoldrInsert xs emptyBag).2 finiteEmptyBag
+
+@[hol "cakeml/compiler/inference/unifyScript.sml" "mlt_BAG_INSERT2"]
+theorem mltBagInsert2 {α : Type} (r : α → α → Prop) (b : Bag α) (x y : α)
+    (h : finiteBag b) :
+    Relation.TransGen (bagMultisetStep r) b (bagInsert x (bagInsert y b)) := by
+  exact (Relation.TransGen.single (mlt1BagInsert r b y h)).tail
+    (mlt1BagInsert r (bagInsert y b) x (finiteBagInsert b h y))
 
 @[hol "cakeml/compiler/inference/unifyScript.sml" "FOLDR_BAG_INSERT_UNION"]
 theorem foldrBagInsertUnion {α : Type} (xs : List α) (b : Bag α) :

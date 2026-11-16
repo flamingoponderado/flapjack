@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Inference.Unify.ComputationalWalk
+public import Flapjack.Compiler.Inference.Unify.ComputationalWalk.Total
 public import Flapjack.Compiler.Inference.Unify.Walk.ToVar
 
 @[expose] public section
@@ -37,5 +38,13 @@ theorem walkExecutableToVar (s : Spt InferT) (t : InferT) (v : Nat)
       change sptLookup v s ≠ none
       simp [found]
     · exact ⟨u, rfl⟩
+
+@[hol "cakeml/compiler/inference/unifyScript.sml" "tcwalk_EQ_Infer_Tuvar"]
+theorem tcwalkEqInferTuvarModel (s : Spt InferT) (t : InferT) (v : Nat)
+    (h : cwfs s ∧ tcwalkModel s t = .uvar v) :
+    ¬ sptDomain s v ∧ ∃ u, t = .uvar u := by
+  apply walkExecutableToVar s t v
+  refine ⟨h.1, ?_⟩
+  rw [walkExecutableCorrect s h.1 t, tcwalkCorrectModel s t h.1, h.2]
 
 end Flapjack.Compiler.Inference.Unify

@@ -9,6 +9,11 @@ mlt1_def_typed=∀(r :α -> α -> bool) (b1 :α -> num) (b2 :α -> num). mlt1 r 
 WF_mlt1_typed=WF (R :α -> α -> bool) ⇒ WF (mlt1 R)
 FINITE_BAG_UNION_typed=∀(b1 :α -> num) (b2 :α -> num). FINITE_BAG (b1 ⊎ b2) ⇔ FINITE_BAG b1 ∧ FINITE_BAG b2
 mlt1_BAG_INSERT_typed=FINITE_BAG (b :α -> num) ⇒ mlt1 (R :α -> α -> bool) b (BAG_INSERT (e :α) b)
+mlt_BAG_INSERT2_typed=FINITE_BAG (b :α -> num) ⇒ mlt (R :α -> α -> bool) b (BAG_INSERT (x :α) (BAG_INSERT (y :α) b))
+vwalk_rangevars_typed=wfs (s :α subst) ∧ vwalk s (v :num) = (t :α term) ⇒ t = (Var v :α term) ∧ v ∉ FDOM s ∨ vars t ⊆ rangevars s
+walk_rangevars_typed=wfs (s :α subst) ∧ walk s (t :α term) = (u :α term) ⇒ vars u ⊆ rangevars s ∪ vars t
+tcvwalk_substvars_typed=cwfs (s :infer_t sptree$num_map) ∧ tcvwalk s (v :num) = (t :infer_t) ⇒ t = Infer_Tuvar v ∧ v ∉ (domain s :num -> bool) ∨ vars (encode_infer_t t) ⊆ substvars (encode_infer_t o_f sp2fm s)
+tcwalk_rangevars_typed=cwfs (s :infer_t sptree$num_map) ∧ tcwalk s (t :infer_t) = (u :infer_t) ⇒ vars (encode_infer_t u) ⊆ rangevars (encode_infer_t o_f sp2fm s) ∪ vars (encode_infer_t t)
 TC_mlt1_FINITE_BAG_typed=∀(b1 :α -> num) (b2 :α -> num). mlt (R :α -> α -> bool) b1 b2 ⇒ FINITE_BAG b1 ∧ FINITE_BAG b2
 TC_mlt1_UNION2_I_typed=∀(b2 :α -> num) (b1 :α -> num). FINITE_BAG b2 ∧ FINITE_BAG b1 ∧ b2 ≠ ({||} :α -> num) ⇒ mlt (R :α -> α -> bool) b1 (b1 ⊎ b2)
 TC_mlt1_UNION1_I_typed=∀(b2 :α -> num) (b1 :α -> num). FINITE_BAG b2 ∧ FINITE_BAG b1 ∧ b1 ≠ ({||} :α -> num) ⇒ mlt (R :α -> α -> bool) b2 (b1 ⊎ b2)
