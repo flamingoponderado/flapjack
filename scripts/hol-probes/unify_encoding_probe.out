@@ -19,6 +19,7 @@ subterm_pair_count_typed=∀(t :α term) (u :α term). subterm t u ⇒ pair_coun
 subterm_REFL_typed=¬subterm (t :α term) t
 subterm_TRANS_typed=subterm (t :α term) (u :α term) ∧ subterm u (v :α term) ⇒ subterm t v
 subterm_walkstarR_typed=∀(t :α term) (u :α term). subterm t u ⇒ walkstarR (s :β subst) t u
+walkstar_opth_typed=cwfs (s :infer_t sptree$num_map) ∧ tcwalk s (i :infer_t) = Infer_Tapp (is :infer_t list) (nm :num) ∧ MEM (i0 :infer_t) is ⇒ walkstarR (sp2fm (map encode_infer_t s)) (encode_infer_t i0) (encode_infer_t i)
 MEM_subterm_encode_typed=∀(i :infer_t) (is :infer_t list). MEM i is ⇒ subterm (encode_infer_t i) (encode_infer_ts is)
 rangevars_def_typed=∀(s :α |-> β term). rangevars s = BIGUNION (IMAGE (vars :β term -> num -> bool) (FRANGE s))
 FINITE_rangevars_typed=FINITE (rangevars (s :α |-> β term))

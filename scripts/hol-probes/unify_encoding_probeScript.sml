@@ -29,6 +29,7 @@ val _ = show "subterm_pair_count_typed" unifyTheory.subterm_pair_count;
 val _ = show "subterm_REFL_typed" unifyTheory.subterm_REFL;
 val _ = show "subterm_TRANS_typed" unifyTheory.subterm_TRANS;
 val _ = show "subterm_walkstarR_typed" unifyTheory.subterm_walkstarR;
+val _ = show "walkstar_opth_typed" unifyTheory.walkstar_opth;
 val _ = show "MEM_subterm_encode_typed" unifyTheory.MEM_subterm_encode;
 val _ = show "rangevars_def_typed" substTheory.rangevars_def;
 val _ = show "FINITE_rangevars_typed" substTheory.FINITE_rangevars;

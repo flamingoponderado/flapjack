@@ -138412,6 +138412,24 @@
   "reviewer": "Compared typed HOL source: input, recursive-call state, and result types are independently polymorphic; the left and right sum cases call the continuation and return the result respectively."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "tcvwalk_correct",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/ComputationalWalk/Total.lean", "lean_name": "tcvwalkCorrectModel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: for every variable, cwfs implies equality of cvwalk and the selected tcvwalk model. The model is claimed to correspond only under cwfs, where its partial tail recursion terminates and the divergent-case choice is irrelevant."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "tcwalk_correct",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/ComputationalWalk/Total.lean", "lean_name": "tcwalkCorrectModel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: for every substitution and type, cwfs implies equality of cwalk and the selected tcwalk model. Model correspondence is claimed only under cwfs, where the underlying walker terminates."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "walkstar_opth",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/ComputationalWalk/Order.lean", "lean_name": "walkstarOpthModel",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm"],
+  "reviewer": "Compared typed HOL source: all three ordered premises and the encoded walkstarR conclusion are retained. The selected tcwalk model corresponds under the original cwfs premise, where its computation terminates. The observed sp2fm result has the reviewed canonical finite-map representation."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "cvwalk_tcallish",
   "lean_path": "Flapjack/Compiler/Inference/Unify/ComputationalWalk.lean", "lean_name": "cvwalkTcallish",
   "statement_status": "reviewed_exact",
