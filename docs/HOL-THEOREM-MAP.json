@@ -1,5 +1,35 @@
 [
 {
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsMap_I",
+  "lean_path": "Flapjack/NamespaceProps/MapLookup.lean", "lean_name": "nsMapId",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and nsMap_I_typed confirms identity mapping and the three independent polymorphic namespace carriers."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsMap_nsAppend",
+  "lean_path": "Flapjack/NamespaceProps/MapLookup.lean", "lean_name": "nsMap_nsAppend",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and nsMap_nsAppend_typed confirms the equation, binder order and four independent polymorphic carriers."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "ts_tid_rename_I",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps.lean", "lean_name": "tsTidRenameId",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and ts_tid_rename_I_typed confirms the identity type-renaming function equality."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "remap_tenv_I",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps.lean", "lean_name": "remapTenvId",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with source and remap_tenv_I_typed confirms the identity environment-remapping function equality."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "remap_tenv_extend_dec_tenv",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "remapTenvExtendDecTenv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL-local theorem and remap_tenv_extend_dec_tenv_replay_typed confirms the typed equation, binder order and environment-extension order."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "ts_tid_rename_def",
   "lean_path": "Flapjack/Compiler/Inference/InferProps.lean", "lean_name": "tsTidRename",
   "statement_status": "reviewed_exact",

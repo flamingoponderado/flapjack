@@ -7,6 +7,34 @@ public import Flapjack.NamespaceHOL
 /-! Lookup and quantification through a mapped namespace. -/
 namespace Flapjack.NamespaceHOL
 
+/-- Mapping the identity function preserves the namespace. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsMap_I"]
+theorem nsMapId {M N V : Type} (env : Namespace M N V) : nsMap id env = env := by
+  cases env with
+  | bind values modules =>
+    simp only [nsMap]
+    congr 1
+    · simp
+    · have h : modules.map (fun p => (p.1, nsMap id p.2)) = modules.map id := by
+        apply List.map_congr_left
+        intro p mem
+        cases p with
+        | mk name sub => simp only [id_eq, nsMapId sub]
+      simpa using h
+termination_by sizeOf env
+decreasing_by
+  have h := List.sizeOf_lt_of_mem mem
+  simp only [Prod.mk.sizeOf_spec, Namespace.bind.sizeOf_spec] at h ⊢
+  omega
+
+/-- Mapping commutes with appending namespaces. -/
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsMap_nsAppend"]
+theorem nsMap_nsAppend {M N V W : Type} (n1 n2 : Namespace M N V) (f : V → W) :
+    nsMap f (nsAppend n1 n2) = nsAppend (nsMap f n1) (nsMap f n2) := by
+  cases n1
+  cases n2
+  simp [nsAppend, nsMap, List.map_append]
+
 /-- Mapping association-list values commutes with first-match lookup. -/
 private theorem lookupMapValues {K V W : Type} [BEq K]
     (entries : List (K × V)) (key : K) (f : V → W) :

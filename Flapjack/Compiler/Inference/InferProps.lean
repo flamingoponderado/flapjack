@@ -4,6 +4,7 @@ public import Flapjack.Compiler.Inference.Infer
 public import Flapjack.Compiler.Inference.Infer.EnvironmentInvariant
 public import Flapjack.HolArb
 public import Flapjack.TypeSoundInvariants
+public import Flapjack.NamespaceProps.MapLookup
 
 @[expose] public section
 
@@ -55,6 +56,27 @@ theorem tsTidRenameList_eq_map (f : Nat → Nat) (ts : List SemanticT) :
   | cons t ts ih => simp [tsTidRenameList, ih]
 
 mutual
+private theorem tsTidRenameIdApply (t : SemanticT) : tsTidRename id t = t := by
+  cases t with
+  | var name => simp [tsTidRename]
+  | varDb n => simp [tsTidRename]
+  | app ts name => simp [tsTidRename, tsTidRenameIdList ts]
+termination_by sizeOf t
+
+private theorem tsTidRenameIdList (ts : List SemanticT) : tsTidRenameList id ts = ts := by
+  cases ts with
+  | nil => simp [tsTidRenameList]
+  | cons t ts => simp [tsTidRenameList, tsTidRenameIdApply t, tsTidRenameIdList ts]
+termination_by sizeOf ts
+end
+
+/-- Renaming with the identity function leaves every type unchanged. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "ts_tid_rename_I"]
+theorem tsTidRenameId : tsTidRename id = id := by
+  funext t
+  exact tsTidRenameIdApply t
+
+mutual
 /-- Renaming maps precisely the set of identifiers occurring in a type. -/
 @[hol "cakeml/compiler/inference/inferPropsScript.sml" "set_tids_ts_tid_rename"]
 theorem setTidsTsTidRename (f : Nat → Nat) (t : SemanticT) :
@@ -102,6 +124,14 @@ def remapTenv (f : Nat → Nat) (tenv : TypeEnv) : TypeEnv :=
   ⟨nsMap (fun entry => (entry.1, tsTidRename f entry.2)) tenv.v,
    nsMap (fun entry => (entry.1, entry.2.1.map (tsTidRename f), f entry.2.2)) tenv.c,
    nsMap (fun entry => (entry.1, tsTidRename f entry.2)) tenv.t⟩
+
+/-- Identity renaming preserves every declarative environment. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "remap_tenv_I"]
+theorem remapTenvId : remapTenv id = id := by
+  funext tenv
+  cases tenv
+  simp [remapTenv, tsTidRenameId, Prod.eta]
+  exact ⟨nsMapId _, nsMapId _, nsMapId _⟩
 
 mutual
 /-- Convert semantic types back to inference types, retaining HOL's `ARB`

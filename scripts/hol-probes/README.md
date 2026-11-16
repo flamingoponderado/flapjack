@@ -10487,7 +10487,8 @@ source proofs of the type and environment identifier-set monotonicity lemmas
 the local environment-extension lemma, and the environment-remapping theorem.
 The latter is also captured directly from `type_dCanonTheory`.
 It also captures the original type-identifier renaming definitions and their
-identifier-set theorem. The
+identifier-set and identity theorems, namespace map laws, and a replay of
+remapping over environment extension. The
 environment-relation, REPL, and type-soundness theories are not fetched by this
 probe; regenerate with
 `HOL_PROBE_ONLY=env_rel_init_probeScript.sml`.

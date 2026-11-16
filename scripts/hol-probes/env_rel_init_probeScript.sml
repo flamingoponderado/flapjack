@@ -49,6 +49,8 @@ val _ = show "extend_dec_ienv_typed" inferTheory.extend_dec_ienv_def;
 val _ = show "nsLookup_nsMap_typed" namespacePropsTheory.nsLookup_nsMap;
 val _ = show "nsLookupMod_nsMap_typed" namespacePropsTheory.nsLookupMod_nsMap;
 val _ = show "nsAll_nsMap_typed" namespacePropsTheory.nsAll_nsMap;
+val _ = show "nsMap_I_typed" namespacePropsTheory.nsMap_I;
+val _ = show "nsMap_nsAppend_typed" namespacePropsTheory.nsMap_nsAppend;
 val _ = show "nsAll_nsLift_typed" namespacePropsTheory.nsAll_nsLift;
 val _ = show "ienv_ok_lift_typed" inferPropsTheory.ienv_ok_lift;
 val _ = show "ienv_ok_extend_dec_ienv_typed" inferPropsTheory.ienv_ok_extend_dec_ienv;
@@ -436,8 +438,10 @@ val _ = show "type_all_env_def_typed" typeSoundInvariantsTheory.type_all_env_def
 val _ = show "type_sound_invariant_def_typed" typeSoundInvariantsTheory.type_sound_invariant_def;
 val _ = show "set_tids_subset_typed" inferPropsTheory.set_tids_subset_def;
 val _ = show "ts_tid_rename_typed" inferPropsTheory.ts_tid_rename_def;
+val _ = show "ts_tid_rename_I_typed" inferPropsTheory.ts_tid_rename_I;
 val _ = show "set_tids_ts_tid_rename_typed" inferPropsTheory.set_tids_ts_tid_rename;
 val _ = show "remap_tenv_typed" inferPropsTheory.remap_tenv_def;
+val _ = show "remap_tenv_I_typed" inferPropsTheory.remap_tenv_I;
 val _ = show "start_type_id_typed" inferTheory.start_type_id_def;
 val probe_set_tids_tenv_def = Define `
   probe_set_tids_tenv tids tenv <=>
@@ -455,6 +459,11 @@ val set_tids_tenv_remap_replay = Q.prove(
   first_assum(mp_then Any match_mp_tac namespacePropsTheory.nsAll_mono) >>
   simp[FORALL_PROD, EVERY_MEM] >> metis_tac[]);
 val _ = show "set_tids_tenv_remap_replay_typed" set_tids_tenv_remap_replay;
+val remap_tenv_extend_dec_tenv_replay = Q.prove(
+  `remap_tenv f (extend_dec_tenv t t') =
+     extend_dec_tenv (remap_tenv f t) (remap_tenv f t')`,
+  fs[remap_tenv_def, extend_dec_tenv_def, namespacePropsTheory.nsMap_nsAppend]);
+val _ = show "remap_tenv_extend_dec_tenv_replay_typed" remap_tenv_extend_dec_tenv_replay;
 val set_tids_tenv_extend_dec_tenv_replay = Q.prove(
   `!s t s' t'. probe_set_tids_tenv (s' UNION s) t' /\
      probe_set_tids_tenv (s' UNION s) t ==>

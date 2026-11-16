@@ -22,6 +22,8 @@ extend_dec_ienv_typed=∀(ienv' :inf_env) (ienv :inf_env). extend_dec_ienv ienv'
 nsLookup_nsMap_typed=∀(n :(α, β, γ) namespace) (x :(α, β) id) (f :γ -> δ). nsLookup (nsMap f n) x = OPTION_MAP f (nsLookup n x)
 nsLookupMod_nsMap_typed=∀(n :(α, β, γ) namespace) (x :α list) (f :γ -> δ). nsLookupMod (nsMap f n) x = OPTION_MAP (nsMap f :(α, β, γ) namespace -> (α, β, δ) namespace) (nsLookupMod n x)
 nsAll_nsMap_typed=∀(f :α -> β) (n :(γ, δ, α) namespace) (P :(γ, δ) id -> β -> bool). nsAll P (nsMap f n) ⇔ nsAll (λ(x :(γ, δ) id) (y :α). P x (f y)) n
+nsMap_I_typed=∀(ns :(α, β, γ) namespace). nsMap (I :γ -> γ) ns = ns
+nsMap_nsAppend_typed=∀(n1 :(α, β, γ) namespace) (n2 :(α, β, γ) namespace) (f :γ -> δ). nsMap f (nsAppend n1 n2) = nsAppend (nsMap f n1) (nsMap f n2)
 nsAll_nsLift_typed=∀(R :(α, β) id -> γ -> bool) (mn :α) (e :(α, β, γ) namespace). nsAll R (nsLift mn e) ⇔ nsAll (λ(id :(α, β) id). R (Long mn id)) e
 ienv_ok_lift_typed=∀(mn :mlstring) (ienv :inf_env) (n :num -> bool). ienv_ok n ienv ⇒ ienv_ok n (lift_ienv mn ienv)
 ienv_ok_extend_dec_ienv_typed=∀(e1 :inf_env) (e2 :inf_env) (n :num -> bool). ienv_ok n e1 ∧ ienv_ok n e2 ⇒ ienv_ok n (extend_dec_ienv e1 e2)
@@ -103,13 +105,16 @@ type_all_env_def_typed=∀(ctMap :stamp |-> mlstring list # t list # num) (tenvS
 type_sound_invariant_def_typed=∀(st :α state) (env :v sem_env) (ctMap :stamp |-> mlstring list # t list # num) (tenvS :num |-> store_t) (type_idents :num -> bool) (tenv :type_env). type_sound_invariant st env ctMap tenvS type_idents tenv ⇔ tenv_ok tenv ∧ good_ctMap ctMap ∧ consistent_ctMap st type_idents ctMap ∧ type_all_env ctMap tenvS env tenv ∧ type_s ctMap st.refs tenvS
 set_tids_subset_typed=∀(tids :num -> bool) (t :t). set_tids_subset tids t ⇔ set_tids t ⊆ tids
 ts_tid_rename_typed=(∀(ts :t list) (tn :num) (f :num -> num). ts_tid_rename f (Tapp ts tn) = Tapp (MAP (λ(a :t). ts_tid_rename f a) ts) (f tn)) ∧ (∀(v2 :mlstring) (f :num -> num). ts_tid_rename f (Tvar v2) = Tvar v2) ∧ ∀(v3 :num) (f :num -> num). ts_tid_rename f (Tvar_db v3) = Tvar_db v3
+ts_tid_rename_I_typed=ts_tid_rename (I :num -> num) = (I :t -> t)
 set_tids_ts_tid_rename_typed=∀(f :num -> num) (t :t). set_tids (ts_tid_rename f t) = IMAGE f (set_tids t)
 remap_tenv_typed=∀(f :num -> num) (tenv :type_env). remap_tenv f tenv = <|t := nsMap (λ((ls :mlstring list),(t :t)). (ls,ts_tid_rename f t)) tenv.t; c := nsMap (λ((ls :mlstring list),(ts :t list),(tid :num)). (ls,MAP (ts_tid_rename f) ts,f tid)) tenv.c; v := nsMap (λ((n :num),(t :t)). (n,ts_tid_rename f t)) tenv.v|>
+remap_tenv_I_typed=remap_tenv (I :num -> num) = (I :type_env -> type_env)
 start_type_id_typed=start_type_id = (15 :num)
 Saved definition ____ "probe_set_tids_tenv_def"
 set_tids_tenv_replay_typed=∀(tids :num -> bool) (tenv :type_env). probe_set_tids_tenv tids tenv ⇔ nsAll (λ(i :(mlstring, mlstring) id) ((ls :mlstring list),(t :t)). set_tids_subset tids t) tenv.t ∧ nsAll (λ(i :(mlstring, mlstring) id) ((ls :mlstring list),(ts :t list),(tid :num)). EVERY (λ(t :t). set_tids_subset tids t) ts ∧ tid ∈ tids) tenv.c ∧ nsAll (λ(i :(mlstring, mlstring) id) ((n :num),(t :t)). set_tids_subset tids t) tenv.v
 set_tids_tenv_remap_typed=set_tids_tenv (tids :num -> bool) (tenv :type_env) ⇒ set_tids_tenv (IMAGE (f :num -> num) tids) (remap_tenv f tenv)
 set_tids_tenv_remap_replay_typed=probe_set_tids_tenv (tids :num -> bool) (tenv :type_env) ⇒ probe_set_tids_tenv (IMAGE (f :num -> num) tids) (remap_tenv f tenv)
+remap_tenv_extend_dec_tenv_replay_typed=remap_tenv (f :num -> num) (extend_dec_tenv (t :type_env) (t' :type_env)) = extend_dec_tenv (remap_tenv f t) (remap_tenv f t')
 set_tids_tenv_extend_dec_tenv_replay_typed=∀(s :num -> bool) (t :type_env) (s' :num -> bool) (t' :type_env). probe_set_tids_tenv (s' ∪ s) t' ∧ probe_set_tids_tenv (s' ∪ s) t ⇒ probe_set_tids_tenv (s' ∪ s) (extend_dec_tenv t' t)
 set_tids_subset_mono_replay_typed=∀(tids :num -> bool) (t :t) (tids' :num -> bool). set_tids_subset tids t ∧ tids ⊆ tids' ⇒ set_tids_subset tids' t
 set_tids_tenv_mono_replay_typed=probe_set_tids_tenv (tids :num -> bool) (tenv :type_env) ∧ tids ⊆ (tids' :num -> bool) ⇒ probe_set_tids_tenv tids' tenv

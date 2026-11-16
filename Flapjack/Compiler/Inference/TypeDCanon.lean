@@ -74,6 +74,15 @@ theorem setTidsTenvRemap (tids : Nat → Prop) (tenv : TypeEnv) (f : Nat → Nat
     intro id entry found
     exact rename _ (hv id entry found)
 
+/-- Renaming commutes with extending declarative environments. -/
+@[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "remap_tenv_extend_dec_tenv"]
+theorem remapTenvExtendDecTenv (f : Nat → Nat) (t t' : TypeEnv) :
+    remapTenv f (extendDecTenv t t') =
+      extendDecTenv (remapTenv f t) (remapTenv f t') := by
+  cases t
+  cases t'
+  simp [remapTenv, extendDecTenv, nsMap_nsAppend]
+
 /-- Enlarging the permitted set preserves the type's identifier condition. -/
 @[hol "cakeml/compiler/inference/proofs/type_dCanonScript.sml" "set_tids_subset_mono"]
 theorem setTidsSubsetMono (tids : Nat → Prop) (t : SemanticT) (tids' : Nat → Prop) :
