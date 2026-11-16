@@ -66,6 +66,29 @@ def coclModel (s : Spt InferT) : List InferT → Nat → Prop
   | [], _ => False
   | t :: ts, n => cocModel s t n ∨ coclModel s ts n
 
+@[hol "cakeml/compiler/inference/unifyScript.sml" "cocl_EXISTS"]
+theorem coclExists (s : Spt InferT) (ts : List InferT) (n : Nat) :
+    coclModel s ts n ↔ ∃ t ∈ ts, cocModel s t n := by
+  induction ts with
+  | nil => simp [coclModel]
+  | cons t ts ih => simp [coclModel, ih]
+
+@[hol "cakeml/compiler/inference/unifyScript.sml" "coc_thm'"]
+theorem cocThmList (s : Spt InferT) (it : InferT) (n : Nat) (hw : cwfs s) :
+    (cocModel s it n ↔ match cwalkModel s it with
+      | .varDb _ => False
+      | .app ts _ => coclModel s ts n
+      | .uvar u => n = u) ∧
+    (∀ s n, coclModel s [] n ↔ False) ∧
+    (∀ s t ts n, coclModel s (t :: ts) n ↔ cocModel s t n ∨ coclModel s ts n) := by
+  constructor
+  · rw [cocThm s it n hw]
+    cases cwalkModel s it with
+    | varDb _ => rfl
+    | uvar _ => rfl
+    | app ts _ => exact (coclExists s ts n).symm
+  · exact ⟨fun _ _ => Iff.rfl, fun _ _ _ _ => Iff.rfl⟩
+
 /-- The executed partial worklist returns a Boolean agreeing with the source
     occurrence relation on well-formed substitutions. This execution result
     is not tagged as HOL's `tcocwl_correct`: the HOL operation returns a
@@ -88,9 +111,7 @@ theorem occursWorkListCoclCorrect (s : Spt InferT) (ts : List InferT) (n : Nat)
   obtain ⟨b, hb, hiff⟩ := occursWorkListCorrect s hw n ts
   refine ⟨b, hb, ?_⟩
   rw [hiff]
-  clear b hb hiff
-  induction ts with
-  | nil => simp [coclModel]
-  | cons t ts ih => simp [coclModel, cocEq t, ih]
+  rw [coclExists]
+  simp only [cocEq]
 
 end Flapjack.Compiler.Inference.Unify

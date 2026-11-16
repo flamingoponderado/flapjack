@@ -165,6 +165,7 @@ val _ = show "soc_encode_ts_typed" unifyTheory.soc_encode_ts;
 val _ = show "coc_thm_typed" (DISCH_ALL unifyTheory.coc_thm);
 val _ = show "cocl_def_typed" unifyTheory.cocl_def;
 val _ = show "cocl_EXISTS_typed" unifyTheory.cocl_EXISTS;
+val _ = show "coc_thm_prime_typed" (DISCH_ALL unifyTheory.coc_thm');
 val _ = show "tcocwl_correct_typed" unifyTheory.tcocwl_correct;
 val _ = show "kcwalkstarwl_code_def_typed" unifyTheory.kcwalkstarwl_code_def;
 val _ = show "kclkont_axiom_typed" unifyTheory.kclkont_Axiom;
