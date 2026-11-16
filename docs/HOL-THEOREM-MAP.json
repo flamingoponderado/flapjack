@@ -138061,6 +138061,60 @@
   "reviewer": "Compared HOL source and deBruijn_subst_convert_replay_typed: the shared bound and arbitrary inference substitution, empty-uvar guards, both type and list conjuncts, and equality directions agree. The source-defined conversion's unspecified uvar clause is excluded by the original checks on the input types."
 },
 {
+  "hol_path": "cakeml/compiler/inference/infer_tScript.sml", "hol_name": "id_to_string_def",
+  "lean_path": "Flapjack/Compiler/Inference/InferT/Display.lean", "lean_name": "idToString",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and id_to_string_typed: short identifiers return their name and long identifiers concatenate the module, dot and recursive rendering. The executable diagnostic byte renderer is related by nameBytes_eq_idToString."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "err_var",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Operations.lean", "lean_name": "ErrVar",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the HOL type binding and loc_err_info_axiom_typed: the carrier is the type-abbreviation namespace of mlstring names and (mlstring list, semantic type) entries."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "loc_err_info",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Operations.lean", "lean_name": "LocErrInfo",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and loc_err_info_axiom_typed: optional source locations and the type-abbreviation error namespace retain their original carriers and field order."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "failwith_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Operations.lean", "lean_name": "failwith",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared failwith_typed: arbitrary state, success and error carriers remain independent; failure returns the location and supplied error while preserving the state."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "guard_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Operations.lean", "lean_name": "guard",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared guard_typed: for arbitrary state and error carriers true returns unit and false invokes the original location-aware failure."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "read_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Operations.lean", "lean_name": "read",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared infer_read_typed: arbitrary state and exception carriers remain independent and reading returns the state as both value and resulting state."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "write_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Operations.lean", "lean_name": "write",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared infer_write_typed: arbitrary state and exception carriers remain independent and writing returns unit and the supplied new state."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "lookup_st_ex_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/Operations.lean", "lean_name": "lookupStEx",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared lookup_st_ex_typed: arbitrary namespace value and state carriers remain independent; successful lookup returns its value and failures preserve location and state with the complete byte-backed Undefined diagnostic."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "get_next_uvar_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/HOLState.lean", "lean_name": "getNextUvar",
+  "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["subst"],
+  "reviewer": "Compared get_next_uvar_typed: for arbitrary exception carrier the operation returns the current next_uvar and leaves the inference state unchanged; subst uses the canonical finite-support state carrier."
+},
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "infer_st",
   "lean_path": "Flapjack/Compiler/Inference/Infer/HOLState.lean", "lean_name": "InferState",
   "statement_status": "reviewed_fmap_as_finite_support", "fmap_as_finite_support": ["subst"],

@@ -11,6 +11,11 @@ open Flapjack.Compiler.Inference.Infer
 
 abbrev TypeNames (α : Type) := Namespace MlString MlString (α × SemanticT)
 
+@[hol "cakeml/compiler/inference/infer_tScript.sml" "id_to_string_def"]
+def idToString : Ident MlString MlString → MlString
+  | .short s => s
+  | .long name id => MlString.concat [name, ofString ".", idToString id]
+
 mutual
 @[hol "cakeml/compiler/inference/infer_tScript.sml" "get_tyname_def"]
 def getTyName {α : Type} (id : Nat) : TypeNames α → Option MlString

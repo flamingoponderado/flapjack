@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Inference.Infer.Core
+public import Flapjack.Compiler.Inference.InferT.Display
 
 @[expose] public section
 
@@ -19,6 +20,21 @@ private def ascii (s : String) : List HolChar := (ofString s).explode
 private def nameBytes : Ident MlString MlString → List HolChar
   | .short name => name.explode
   | .long name rest => name.explode ++ ascii "." ++ nameBytes rest
+
+/-- The executable diagnostic's identifier bytes are the source renderer's
+    bytes, including every module separator. -/
+theorem nameBytes_eq_idToString (id : Ident MlString MlString) :
+    nameBytes id = (Flapjack.Compiler.Inference.InferTDisplay.idToString id).explode := by
+  induction id with
+  | short name => rfl
+  | long name rest ih =>
+    cases name with
+    | implode bytes =>
+      cases found : Flapjack.Compiler.Inference.InferTDisplay.idToString rest with
+      | implode restBytes =>
+        simp [nameBytes, Flapjack.Compiler.Inference.InferTDisplay.idToString,
+          MlString.concat, MlString.explode, ascii, found] at ih ⊢
+        exact ih
 
 private def lineAt (input : List HolChar) (row : Nat) : List HolChar :=
   let lines := input.splitOn 10

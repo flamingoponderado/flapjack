@@ -67,6 +67,11 @@ def freshIds {ε : Type} (n : Nat) : M InferState (List Nat) ε :=
   fun s => (.success ((List.range n).map (fun i => s.nextId + i)),
     { s with nextId := s.nextId + n })
 
+@[hol "cakeml/compiler/inference/inferScript.sml" "get_next_uvar_def"
+  (fmap_as_finite_support := [subst])]
+def getNextUvar {ε : Type} : M InferState Nat ε :=
+  fun s => (.success s.nextUvar, s)
+
 /-- Convert the executable sparse-tree state to the canonical source carrier. -/
 def ofExecutable (s : Infer.State) : InferState :=
   ⟨s.nextUvar, sp2fm s.subst, s.nextId⟩
