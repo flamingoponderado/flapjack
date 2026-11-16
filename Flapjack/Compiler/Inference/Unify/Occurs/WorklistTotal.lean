@@ -115,16 +115,25 @@ private theorem occursWorkPartialEqTail (s : Spt InferT) (n : Nat) (hw : cwfs s)
               ⟨hw, by simp [kcocwlCodeModel, found, eq]⟩
             simpa [kcocwlCodeModel, found, eq] using ih (xs :: rest) decrease
 
+/-- On the source guard the executed list check returns the selected total
+    result. This connects the Option-valued execution to the unifier step. -/
+theorem occursWorkListMatchesModel (s : Spt InferT) (n : Nat) (ts : List InferT) (hw : cwfs s) :
+    occursWorkPartial s n [ts] = some (tcocwlModel s n [ts]) := by
+  obtain ⟨b, run, _⟩ := occursWorkListCoclCorrect s ts n hw
+  have htail : Flapjack.HOL.tailRecPartial (kcocwlCodeModel s n) [ts] = some b := by
+    rw [← occursWorkPartialEqTail s n hw]
+    exact run
+  have result : tcocwlModel s n [ts] = b := Flapjack.HOL.tailRecModelOfSome _ _ _ htail
+  simpa [result] using run
+
 /-- The complete source list-occurrence result on the original cwfs guard. -/
 @[hol "cakeml/compiler/inference/unifyScript.sml" "tcocwl_correct"]
 theorem tcocwlCorrectModel (s : Spt InferT) (ts : List InferT) (n : Nat) (hw : cwfs s) :
     coclModel s ts n ↔ tcocwlModel s n [ts] = true := by
   obtain ⟨b, run, agreement⟩ := occursWorkListCoclCorrect s ts n hw
-  have htail : Flapjack.HOL.tailRecPartial (kcocwlCodeModel s n) [ts] = some b := by
-    rw [← occursWorkPartialEqTail s n hw]
-    exact run
-  have result : tcocwlModel s n [ts] = b :=
-    Flapjack.HOL.tailRecModelOfSome _ _ _ htail
+  have result : tcocwlModel s n [ts] = b := by
+    rw [occursWorkListMatchesModel s n ts hw] at run
+    exact Option.some.inj run
   rw [result]
   exact agreement
 
