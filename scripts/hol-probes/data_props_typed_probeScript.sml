@@ -171,3 +171,16 @@ val _ = show "cut_state_opt_stack_typed"
     Cases_on `names_opt`
     \\ rw[dataSemTheory.cut_state_opt_def, dataSemTheory.cut_state_def]
     \\ every_case_tac \\ gvs[]));
+val _ = show "OPTION_CASE_OPTION_MAP_typed"
+  (prove(``!(f:'a -> 'b) (a:'a option) (e:'c) (g:'b -> 'c).
+      option_CASE (OPTION_MAP f a) e g = option_CASE a e (g o f)``,
+    Cases_on `a` >> fs[]));
+val _ = show "cut_state_opt_cc_co_full_typed"
+  (prove(``!(t:('b,'ffi)dataSem$state) (s:('a,'ffi)dataSem$state)
+      (names_opt:sptree$num_set option).
+      t.locals = s.locals ==>
+      cut_state_opt names_opt t =
+      OPTION_MAP (λu. t with locals := u.locals) (cut_state_opt names_opt s)``,
+    strip_tac \\ Cases_on `names_opt`
+    \\ rw[dataSemTheory.cut_state_opt_def, dataSemTheory.cut_state_def, dataSemTheory.cut_env_def]
+    \\ gvs[dataSemTheory.state_component_equality]));
