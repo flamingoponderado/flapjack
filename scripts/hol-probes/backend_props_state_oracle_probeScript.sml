@@ -17,3 +17,7 @@ val _ = show_thm "state_oracle_example=" (EVAL
   ``(backendProps$state_orac_states (\s p. (2 * s + p, s + p)) 3 (\n. n + 1) 3,
      backendProps$state_co_progs (\s p. (2 * s + p, s + p)) 3 (\n. n + 1) 2,
      backendProps$add_state_co (\s p. (2 * s + p, s + p)) 3 (\xs i. xs i + 10) (\n. n + 1) 2)``);
+val _ = show_thm "syntax_to_full_oracle_o_assoc_typed=" backendPropsTheory.syntax_to_full_oracle_o_assoc;
+val _ = show_thm "FST_add_state_co_0_typed=" backendPropsTheory.FST_add_state_co_0;
+val _ = show_thm "is_state_oracle_shift_imp_typed=" backendPropsTheory.is_state_oracle_shift_imp;
+val _ = show_thm "is_state_oracle_add_state_co_typed=" backendPropsTheory.is_state_oracle_add_state_co;

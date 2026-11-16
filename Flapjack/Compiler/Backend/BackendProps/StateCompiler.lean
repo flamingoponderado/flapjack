@@ -67,4 +67,20 @@ def stateCc {S SNext C CNext P Q Code Data : Type}
   | none => none
   | some (code, data, nextConfig) => some (code, data, nextState, nextConfig)
 
+/-- Exact HOL `syntax_to_full_oracle_o_assoc`: composing the configuration
+callback is associative, so the two groupings agree. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "syntax_to_full_oracle_o_assoc"]
+theorem syntaxToFullOracle_comp_assoc {Index Program Config B C : Type}
+    (f : C → Index → Config) (g : B → C) (h : (Index → Program) → B)
+    (progs : Index → Program) :
+    syntaxToFullOracle (f ∘ g ∘ h) progs = syntaxToFullOracle ((f ∘ g) ∘ h) progs := rfl
+
+/-- Exact HOL `FST_add_state_co_0`: the threaded state starts at the initial
+one. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "FST_add_state_co_0"]
+theorem fst_addStateCo_zero {S Program Output Config : Type}
+    (f : S → Program → S × Output) (st : S) (mk : (Nat → Output) → Nat → Config)
+    (progs : Nat → Program) :
+    (addStateCo f st mk progs 0).1 = st := rfl
+
 end Flapjack.Compiler.Backend.BackendProps

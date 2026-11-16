@@ -124,4 +124,25 @@ theorem oracleMonotonic_stateWithInv {S C P Q : Type}
     have middle := monotone 0 i (Nat.zero_le i)
     omega
 
+/-- Exact HOL `is_state_oracle_shift_imp`: shifting the oracle preserves the
+state-oracle condition. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "is_state_oracle_shift_imp"]
+theorem isStateOracle_shiftSeq {S C P Q : Type} (compile : S → P → S × Q)
+    (co : Nat → (S × C) × P) (n : Nat) (h : isStateOracle compile co) :
+    isStateOracle compile (Flapjack.holShiftSeq n co) := by
+  intro k
+  have step := h (k + n)
+  simp only [Flapjack.holShiftSeq]
+  rw [show k + 1 + n = k + n + 1 from by omega]
+  exact step
+
+/-- Exact HOL `is_state_oracle_add_state_co`: threading the incremental pass
+through the oracle keeps the state-oracle condition. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "is_state_oracle_add_state_co"]
+theorem isStateOracle_addStateCo {S C P Q : Type} (f : S → P → S × Q) (st : S)
+    (mk : (Nat → Q) → Nat → C) (progs : Nat → P) :
+    isStateOracle f (syntaxToFullOracle (addStateCo f st mk) progs) := by
+  intro n
+  rfl
+
 end Flapjack.Compiler.Backend.BackendProps
