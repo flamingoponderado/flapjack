@@ -138700,10 +138700,46 @@
   "reviewer": "Compared the typed HOL source, soc_def and sparse-tree encoding: the original cwfs premise and existential over exactly the input list are retained. The occurrence model is used only under well-formedness; the observed sp2fm result uses the reviewed canonical finite-map representation."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "vars_walkstar_encode_infer_ts",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistVars/Normalized.lean", "lean_name": "varsWalkstarEncodeInferTs",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared the typed HOL source: the original atom substitution, well-formedness premise and entire list are retained, and the union is over the normalized encoding of every list member. The canonical finite-map parameter has its codec witness."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "vars_encode_infer_ts",
   "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistVars.lean", "lean_name": "varsEncodeInferTs",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared the typed HOL source: the variables of the entire encoded list equal the union over every inference type in that list, with no additional premise."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/termScript.sml", "hol_name": "varb_def",
+  "lean_path": "Flapjack/HOL/Unification/Term/VarBag.lean", "lean_name": "varb",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: generic term constants, natural variable identifiers, singleton variable bags, pairwise bag union and the empty constant bag are retained."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/termScript.sml", "hol_name": "FINITE_varb",
+  "lean_path": "Flapjack/HOL/Unification/Term/VarBag.lean", "lean_name": "finiteVarb",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: the complete variable-multiplicity bag of every generic first-order term is finite, with no additional assumptions."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_UNION_INSERT",
+  "lean_path": "Flapjack/Misc/Bag.lean", "lean_name": "bagUnionInsert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: both union/insertion identities are retained for arbitrary elements and polymorphic function-valued bags, with no additional premises."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "PFLAT_NIL1",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistBag.lean", "lean_name": "pflatNil1",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: flattening an empty left list includes the complete right-list bag and remaining worklist, preserving multiplicities and adding no premises."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "PFLAT_eqn",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistBag.lean", "lean_name": "pflatEqn",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: arbitrary left and right lists and the full remaining worklist contribute their separate bags in the original nested-union structure."
 },
 {
   "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_INSERT_commutes",

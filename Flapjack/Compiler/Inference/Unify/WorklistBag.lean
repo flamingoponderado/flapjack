@@ -37,4 +37,36 @@ theorem pflatCons2 (l1 : List InferT) (h2 : InferT) (t2 : List InferT)
   | cons x xs ih =>
     rw [pflat, pflat, ih, bagInsertCommutes]
 
+/-- The source `BAG_OF_LIST` overload, a right fold of bag insertion. -/
+noncomputable def bagOfList {α : Type} (xs : List α) : Bag α :=
+  xs.foldr bagInsert emptyBag
+
+@[hol "cakeml/compiler/inference/unifyScript.sml" "PFLAT_NIL1"]
+theorem pflatNil1 (l2 : List InferT) (rest : List (List InferT × List InferT)) :
+    pflat (([], l2) :: rest) =
+      bagUnion (bagOfList (l2.map encodeInferT)) (pflat rest) := by
+  induction l2 with
+  | nil =>
+    funext x
+    simp [pflat, bagOfList, bagUnion, emptyBag]
+  | cons y ys ih =>
+    rw [pflat, ih]
+    simp only [List.map_cons, bagOfList, List.foldr_cons]
+    exact (bagUnionInsert _ _ _).1.symm
+
+@[hol "cakeml/compiler/inference/unifyScript.sml" "PFLAT_eqn"]
+theorem pflatEqn (l1 l2 : List InferT) (rest : List (List InferT × List InferT)) :
+    pflat ((l1, l2) :: rest) =
+      bagUnion (bagOfList (l1.map encodeInferT))
+        (bagUnion (bagOfList (l2.map encodeInferT)) (pflat rest)) := by
+  induction l1 with
+  | nil =>
+    rw [pflatNil1]
+    funext x
+    simp [bagOfList, bagUnion, emptyBag]
+  | cons x xs ih =>
+    rw [pflat, ih]
+    simp only [List.map_cons, bagOfList, List.foldr_cons]
+    exact (bagUnionInsert _ _ _).1.symm
+
 end Flapjack.Compiler.Inference.Unify

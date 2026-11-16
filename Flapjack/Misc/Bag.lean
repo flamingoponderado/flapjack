@@ -91,6 +91,15 @@ private theorem bagUnion_insert_left {α : Type} (e : α) (a b : Bag α) :
   funext x
   by_cases h : x = e <;> simp [bagUnion, bagInsert, h, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
 
+@[hol "HOL/src/bag/bagScript.sml" "BAG_UNION_INSERT"]
+theorem bagUnionInsert {α : Type} (e : α) (b1 b2 : Bag α) :
+    bagUnion (bagInsert e b1) b2 = bagInsert e (bagUnion b1 b2) ∧
+    bagUnion b1 (bagInsert e b2) = bagInsert e (bagUnion b1 b2) := by
+  refine ⟨bagUnion_insert_left e b1 b2, ?_⟩
+  classical
+  funext x
+  by_cases h : x = e <;> simp [bagUnion, bagInsert, h, Nat.add_assoc]
+
 /-- The union of two finite bags is finite. -/
 @[hol "HOL/src/bag/bagScript.sml" "FINITE_BAG_UNION_1"]
 theorem finiteBagUnion {α : Type} (a : Bag α) (ha : finiteBag a)
