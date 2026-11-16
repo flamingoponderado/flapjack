@@ -138886,6 +138886,24 @@
   "reviewer": "Compared the typed HOL source and exact function-valued bag carrier: all four recursive clauses, original traversal order and insertion multiplicities are retained."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "FINITE_BAG_FOLDR_INSERT",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistBag.lean", "lean_name": "finiteBagFoldrInsert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: for arbitrary polymorphic lists and bags, finiteness after folding insertions is equivalent to finiteness of the original bag."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "FOLDR_BAG_INSERT_UNION",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistBag.lean", "lean_name": "foldrBagInsertUnion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: folding insertion into an arbitrary polymorphic bag equals its union with the bag of the list."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "BAG_IN_BAG_OF_LIST",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistBag.lean", "lean_name": "bagInBagOfList",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: an element belongs to the bag of an arbitrary polymorphic list exactly when it is a member of that list."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "FINITE_BAG_PFLAT",
   "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistBag.lean", "lean_name": "finitePflat",
   "statement_status": "reviewed_exact",

@@ -1,4 +1,9 @@
-import Flapjack.Misc.Bag
+module
+
+public import Flapjack.Misc.Bag
+import Lean.Elab.Tactic.Omega
+
+@[expose] public section
 /-! Finiteness of sub-bags. -/
 namespace Flapjack
 

@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Inference.Unify.WorklistVars
 public import Flapjack.Misc.Bag
+public import Flapjack.Misc.Bag.SubBag
 
 @[expose] public section
 
@@ -40,6 +41,49 @@ theorem pflatCons2 (l1 : List InferT) (h2 : InferT) (t2 : List InferT)
 /-- The source `BAG_OF_LIST` overload, a right fold of bag insertion. -/
 noncomputable def bagOfList {α : Type} (xs : List α) : Bag α :=
   xs.foldr bagInsert emptyBag
+
+private theorem subBagInsert {α : Type} (b : Bag α) (e : α) :
+    subBag b (bagInsert e b) := by
+  classical
+  intro x n hn
+  by_cases hx : x = e <;> simp [bagInn, bagInsert, hx] at hn ⊢ <;> omega
+
+@[hol "cakeml/compiler/inference/unifyScript.sml" "FINITE_BAG_FOLDR_INSERT"]
+theorem finiteBagFoldrInsert {α : Type} (xs : List α) (b : Bag α) :
+    finiteBag (xs.foldr bagInsert b) ↔ finiteBag b := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih =>
+    change finiteBag (bagInsert x (xs.foldr bagInsert b)) ↔ finiteBag b
+    rw [← ih]
+    constructor
+    · intro h
+      exact finiteSubBag _ h _ (subBagInsert _ x)
+    · intro h
+      exact finiteBagInsert _ h x
+
+@[hol "cakeml/compiler/inference/unifyScript.sml" "FOLDR_BAG_INSERT_UNION"]
+theorem foldrBagInsertUnion {α : Type} (xs : List α) (b : Bag α) :
+    xs.foldr bagInsert b = bagUnion b (bagOfList xs) := by
+  induction xs with
+  | nil => exact (bagUnion_empty_right b).symm
+  | cons x xs ih =>
+    change bagInsert x (xs.foldr bagInsert b) =
+      bagUnion b (bagInsert x (bagOfList xs))
+    rw [ih, (bagUnionInsert x b (bagOfList xs)).2]
+
+@[hol "cakeml/compiler/inference/unifyScript.sml" "BAG_IN_BAG_OF_LIST"]
+theorem bagInBagOfList {α : Type} (e : α) (xs : List α) :
+    bagIn e (bagOfList xs) ↔ e ∈ xs := by
+  classical
+  induction xs with
+  | nil => simp [bagOfList, bagIn, bagInn, emptyBag]
+  | cons x xs ih =>
+    simp only [bagOfList, List.foldr_cons, List.mem_cons] at ih ⊢
+    by_cases h : e = x
+    · simp [bagIn, bagInn, bagInsert, h]
+    · simp [bagIn, bagInn, bagInsert, h] at ih ⊢
+      exact ih
 
 @[hol "cakeml/compiler/inference/unifyScript.sml" "PFLAT_NIL1"]
 theorem pflatNil1 (l2 : List InferT) (rest : List (List InferT × List InferT)) :
