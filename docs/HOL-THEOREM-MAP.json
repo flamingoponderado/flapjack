@@ -138658,6 +138658,12 @@
   "reviewer": "Independent typed source review confirms the original well-formedness premise and all three walker cases, including equality direction and ordered pair disjunction. The occurrence and walker models are compared with HOL only on that domain."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "soc_encode_ts",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Occurs/Correctness.lean", "lean_name": "socEncodeTs",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm"],
+  "reviewer": "Compared the typed HOL source, soc_def and sparse-tree encoding: the original cwfs premise and existential over exactly the input list are retained. The occurrence model is used only under well-formedness; the observed sp2fm result uses the reviewed canonical finite-map representation."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "kclkont",
   "lean_path": "Flapjack/Compiler/Inference/Unify.lean", "lean_name": "KclKont",
   "statement_status": "reviewed_exact",

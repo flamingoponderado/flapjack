@@ -161,6 +161,7 @@ val _ = show "tcwalk_correct_typed" unifyTheory.tcwalk_correct;
 val _ = show "tcwalk_EQ_Infer_Tuvar_typed" unifyTheory.tcwalk_EQ_Infer_Tuvar;
 val _ = show "kcocwl_code_def_typed" unifyTheory.kcocwl_code_def;
 val _ = show "tcocwl_thm_typed" unifyTheory.tcocwl_thm;
+val _ = show "soc_encode_ts_typed" unifyTheory.soc_encode_ts;
 val _ = show "cocl_def_typed" unifyTheory.cocl_def;
 val _ = show "cocl_EXISTS_typed" unifyTheory.cocl_EXISTS;
 val _ = show "tcocwl_correct_typed" unifyTheory.tcocwl_correct;

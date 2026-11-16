@@ -15,6 +15,20 @@ open Flapjack.HOL.Unification Flapjack.HOL.Transfer.Fmsp
 def cocModel (s : Spt InferT) (t : InferT) (v : Nat) : Prop :=
   Oc (sp2fm (sptMap encodeInferT s)) (encodeInferT t) v
 
+@[hol "cakeml/compiler/inference/unifyScript.sml" "soc_encode_ts"
+  (fmap_as_finite_support_result_observations := [Flapjack.HOL.Transfer.Fmsp.sp2fm])]
+theorem socEncodeTs (s : Spt InferT) (ts : List InferT) (n : Nat)
+    (hw : cwfs s) :
+    Oc (sp2fm (sptMap encodeInferT s)) (encodeInferTs ts) n ↔
+      ∃ t ∈ ts, cocModel s t n := by
+  induction ts with
+  | nil =>
+    rw [ocWalking _ _ _ hw.1]
+    simp [encodeInferTs, walk]
+  | cons t ts ih =>
+    rw [ocWalking _ _ _ hw.1]
+    simp [encodeInferTs, walk, cocModel, ih]
+
 /-- The source list occurrence rules over the first-order relation model. -/
 def coclModel (s : Spt InferT) : List InferT → Nat → Prop
   | [], _ => False
