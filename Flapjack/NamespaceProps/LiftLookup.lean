@@ -41,4 +41,21 @@ theorem nsLookupMod_nsLift {M N V : Type} [DecidableEq M]
     · have different : name ≠ mn := Ne.symm same
       simp [nsLookupMod, nsLift, List.lookup, BEq.beq, same, different]
 
+@[hol "cakeml/semantics/proofs/namespacePropsScript.sml" "nsAll_nsLift"]
+theorem nsAll_nsLift {M N V : Type} [DecidableEq M] [DecidableEq N]
+    (R : Ident M N → V → Prop) (mn : M) (env : Namespace M N V) :
+    nsAll R (nsLift mn env) ↔ nsAll (fun id => R (.long mn id)) env := by
+  constructor
+  · intro h id value found
+    apply h (.long mn id) value
+    simpa [nsLookup_nsLift] using found
+  · intro h id value found
+    cases id with
+    | short name => simp [nsLookup_nsLift] at found
+    | long moduleName rest =>
+      by_cases same : mn = moduleName
+      · subst moduleName
+        exact h rest value (by simpa [nsLookup_nsLift] using found)
+      · simp [nsLookup_nsLift, same] at found
+
 end Flapjack.NamespaceHOL

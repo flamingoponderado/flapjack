@@ -138061,6 +138061,25 @@
   "reviewer": "Compared HOL source and deBruijn_subst_convert_replay_typed: the shared bound and arbitrary inference substitution, empty-uvar guards, both type and list conjuncts, and equality directions agree. The source-defined conversion's unspecified uvar clause is excluded by the original checks on the input types."
 },
 {
+  "hol_path": "cakeml/semantics/proofs/namespacePropsScript.sml", "hol_name": "nsAll_nsLift",
+  "lean_path": "Flapjack/NamespaceProps/LiftLookup.lean", "lean_name": "nsAll_nsLift",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and nsAll_nsLift_typed: arbitrary predicate, module name and namespace retain independent module, name and value carriers and the complete two-way equivalence with Long-prefixed identifiers."
+},
+{
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "ienv_ok_lift",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps/Lift.lean", "lean_name": "ienvOkLift",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and ienv_ok_lift_typed: arbitrary module name, inference environment and unification-variable set retain the original well-formedness premise and complete lifted-environment conclusion."
+},
+{
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml", "hol_name": "env_rel_lift",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel/Lift.lean", "lean_name": "envRelLift",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+  "reviewer": "Compared HOL source and env_rel_lift_statement_typed, which captures the inferred reconstructed statement rather than replaying its proof: arbitrary declarative and inference environments and module name retain the original relation premise and complete lifted relation. Lean expands env_rel_def one level in both premise and conclusion to expose its fixed empty maps; both normalizers are identity there."
+},
+{
   "hol_path": "cakeml/compiler/proofs/compilerProofScript.sml", "hol_name": "type_config_ok",
   "lean_path": "Flapjack/Compiler/Proofs/CompilerProof.lean", "lean_name": "typeConfigOk",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations",
