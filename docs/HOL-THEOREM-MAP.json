@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "alist_nub_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer/TypesOutput.lean", "lean_name": "alistNubHOL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with inferScript.sml and cake_type_display_probe.out:8 confirms both polymorphic carriers, the nil and cons equations, first-binding order and the key inequality in the filter. The source-polymorphic definition uses classical equality; alistNubHOL_eq proves agreement with the decidable implementation used by the executable."
+ },
+{
   "hol_path": "cakeml/compiler/backend/proofs/clos_to_bvlProofScript.sml", "hol_name": "renumber_code_locs_fv1",
   "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Proofs/NumberFreeVars.lean", "lean_name": "renumberCodeLocs_freeVar",
   "statement_status": "reviewed_exact",
