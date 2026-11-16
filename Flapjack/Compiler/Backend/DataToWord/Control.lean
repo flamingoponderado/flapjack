@@ -761,6 +761,44 @@ def assignStringCmp {width : Nat} [NeZero width] (conf : Config) (secn l dest : 
     .assign 7 (shiftN .lsr (.load (.var 3)) offset), compareBytes,
     assignCmp (adjustVar dest) cmp 5 7], l + 1)
 
+/-- Compile a byte-array bounds check. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_BoundsCheckByte_def"
+  (words_as_type_indexed_bitvec)]
+def assignBoundsCheckByte {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
+    (_names : Option NumSet) (leq : Bool) (base index : Nat) :
+    WordLangProgHOL (BitVec width) × Nat :=
+  let header := WordLangExpHOL.load (realAddr conf (adjustVar base))
+  let shift := width - conf.lenSize - (if width = 32 then 2 else 3)
+  let result := if leq then boolResult dest .notLower 1 (.reg 3)
+    else boolResult dest .lower 3 (.reg 1)
+  (wordListSeq [
+    .assign 1 (.op .sub [shiftN .lsr header shift, .const (wordSemBytesInWord : BitVec width)]),
+    .assign 3 (shiftVar .ror (adjustVar index) 2), result], l)
+
+/-- Compile an array bounds check. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_BoundsCheckArray_def"
+  (words_as_type_indexed_bitvec)]
+def assignBoundsCheckArray {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
+    (_names : Option NumSet) (base index : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let header := WordLangExpHOL.load (realAddr conf (adjustVar base))
+  (wordListSeq [
+    .assign 1 (shiftN .lsr header (width - conf.lenSize)),
+    .assign 3 (shiftVar .ror (adjustVar index) 2),
+    boolResult dest .lower 3 (.reg 1)], l)
+
+/-- Compile a block bounds check. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "assign_BoundsCheckBlock_def"
+  (words_as_type_indexed_bitvec)]
+def assignBoundsCheckBlock {width : Nat} [NeZero width] (conf : Config) (_secn l dest : Nat)
+    (_names : Option NumSet) (base index : Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  let base := adjustVar base
+  let header := WordLangExpHOL.load (realAddr conf base)
+  (wordListSeq [
+    .ite .test base (.imm 1) (.assign 1 (.const 0))
+      (.assign 1 (shiftN .lsr header (width - conf.lenSize))),
+    .assign 3 (shiftVar .ror (adjustVar index) 2),
+    boolResult dest .lower 3 (.reg 1)], l)
+
 /-- Flapjack's option-valued traversal. Its totality is proved separately;
 source-level correspondence with HOL's `comp` remains to be reviewed. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
@@ -1090,17 +1128,8 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       some (arg1 args (assignWordFromInt conf secn l dest names) (.skip, l))
   | l, .assign dest (.wordOp .wordToInt) args names =>
       some (arg1 args (assignWordToInt conf secn l dest names) (.skip, l))
-  | l, .assign dest (.blockOp .boundsCheckBlock) args _ =>
-      match args with
-      | [base, index] =>
-          let base := adjustVar base
-          let header := WordLangExpHOL.load (realAddr conf base)
-          some (wordListSeq [
-            .ite .test base (.imm 1) (.assign 1 (.const 0))
-              (.assign 1 (shiftN .lsr header (width - conf.lenSize))),
-            .assign 3 (shiftVar .ror (adjustVar index) 2),
-            boolResult dest .lower 3 (.reg 1)], l)
-      | _ => some (.skip, l)
+  | l, .assign dest (.blockOp .boundsCheckBlock) args names =>
+      some (arg2 args (assignBoundsCheckBlock conf secn l dest names) (.skip, l))
   | l, .assign dest (.blockOp (.cons tag)) args _ =>
       some (compileCons conf l dest tag args)
   | l, .assign dest (.blockOp (.consExtend tag)) args names =>
@@ -1150,28 +1179,12 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
               .ffi ffiName 1 3 5 7 (adjustSets (names.getD .ln)),
               .assign (adjustVar dest) (.const 2)], l)
       | _ => some (.skip, l)
-  | l, .assign dest (.memOp .boundsCheckArray) args _ =>
-      match args with
-      | [base, index] =>
-          let header := WordLangExpHOL.load (realAddr conf (adjustVar base))
-          some (wordListSeq [
-            .assign 1 (shiftN .lsr header (width - conf.lenSize)),
-            .assign 3 (shiftVar .ror (adjustVar index) 2),
-            boolResult dest .lower 3 (.reg 1)], l)
-      | _ => some (.skip, l)
+  | l, .assign dest (.memOp .boundsCheckArray) args names =>
+      some (arg2 args (assignBoundsCheckArray conf secn l dest names) (.skip, l))
   | l, .assign dest (.memOp (.stringCmp fast cmp)) args names =>
       some (arg2 args (assignStringCmp conf secn l dest names fast cmp) (.skip, l))
-  | l, .assign dest (.memOp (.boundsCheckByte leq)) args _ =>
-      match args with
-      | [base, index] =>
-          let header := WordLangExpHOL.load (realAddr conf (adjustVar base))
-          let shift := width - conf.lenSize - (if width = 32 then 2 else 3)
-          let result := if leq then boolResult dest .notLower 1 (.reg 3)
-            else boolResult dest .lower 3 (.reg 1)
-          some (wordListSeq [
-            .assign 1 (.op .sub [shiftN .lsr header shift, .const ((wordSemBytesInWord : BitVec width))]),
-            .assign 3 (shiftVar .ror (adjustVar index) 2), result], l)
-      | _ => some (.skip, l)
+  | l, .assign dest (.memOp (.boundsCheckByte leq)) args names =>
+      some (arg2 args (assignBoundsCheckByte conf secn l dest names leq) (.skip, l))
   | l, .assign dest (.memOp (.refByte immutable)) args names =>
       match args with
       | [x, y] => some (.seq (.assign 1 (.const (if immutable then 0 else 16)))

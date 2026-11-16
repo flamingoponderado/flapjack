@@ -1,5 +1,26 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "assign_BoundsCheckByte_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "assignBoundsCheckByte",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with assign_bounds_byte_typed confirms the ordered binders, num_set carrier, width-dependent shift, both comparisons, adjusted variables and unchanged counter. The executable dispatch uses arg2 with the HOL fallback."
+ },
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "assign_BoundsCheckArray_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "assignBoundsCheckArray",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with assign_bounds_array_typed confirms the ordered binders, num_set carrier, header and index shifts, comparison, adjusted variables and unchanged counter. The executable dispatch uses arg2 with the HOL fallback."
+ },
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "assign_BoundsCheckBlock_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "assignBoundsCheckBlock",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with assign_bounds_block_typed confirms the ordered binders, num_set carrier, low-bit test and branches, header and index shifts, comparison and unchanged counter. The executable dispatch uses arg2 with the HOL fallback."
+ },
+{
   "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "assign_StringCmp_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "assignStringCmp",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",

@@ -10935,5 +10935,6 @@ configuration updates, code and name carriers.
 
 `data_word_force_typed_probe.out` captures the complete thunk-force compilation
 equation and its independent sparse-tree payload type, plus the inferred
-four-argument dispatch, word comparison and string comparison equations. Concrete tail-call,
-returning-call, and bad-header cases are in `cake_word_array_probe.out`.
+four-argument dispatch, word comparison, string comparison, and byte-array,
+array and block bounds-check equations. Concrete tail-call, returning-call,
+and bad-header cases are in `cake_word_array_probe.out`.

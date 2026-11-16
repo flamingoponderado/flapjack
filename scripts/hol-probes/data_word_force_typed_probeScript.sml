@@ -8,3 +8,6 @@ val _ = (print "arg4_typed="; print_thm data_to_wordTheory.arg4_def; print "\n")
 val _ = (print "set_bool_typed="; print_thm data_to_wordTheory.SetBool_def; print "\n");
 val _ = (print "assign_cmp_typed="; print_thm data_to_wordTheory.AssignCmp_def; print "\n");
 val _ = (print "assign_string_cmp_typed="; print_thm data_to_wordTheory.assign_StringCmp_def; print "\n");
+val _ = (print "assign_bounds_byte_typed="; print_thm data_to_wordTheory.assign_BoundsCheckByte_def; print "\n");
+val _ = (print "assign_bounds_array_typed="; print_thm data_to_wordTheory.assign_BoundsCheckArray_def; print "\n");
+val _ = (print "assign_bounds_block_typed="; print_thm data_to_wordTheory.assign_BoundsCheckBlock_def; print "\n");
