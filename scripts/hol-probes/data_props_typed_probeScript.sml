@@ -155,3 +155,19 @@ val _ = show "cut_state_opt_with_lim_typed"
       OPTION_MAP (λt. t with limits := lim) (cut_state_opt names_opt s)``,
     Cases_on `names_opt` \\ rw[dataSemTheory.cut_state_opt_def, dataSemTheory.cut_state_def, dataSemTheory.cut_env_def]
     \\ rw[dataSemTheory.state_component_equality]));
+val _ = show "cut_state_opt_with_sfs_typed"
+  (prove(``!names_opt (s:('a,'b) dataSem$state) (lsz:num option) (xs:stack list)
+      (sfs:num sptree$num_map).
+      cut_state_opt names_opt
+        (s with <|locals_size := lsz; stack := xs; stack_frame_sizes := sfs|>) =
+      OPTION_MAP (λt. t with <|locals_size := lsz; stack := xs; stack_frame_sizes := sfs|>)
+        (cut_state_opt names_opt s)``,
+    Cases_on `names_opt`
+    \\ rw[dataSemTheory.cut_state_opt_def, dataSemTheory.cut_state_def, dataSemTheory.cut_env_def]
+    \\ rw[dataSemTheory.state_component_equality]));
+val _ = show "cut_state_opt_stack_typed"
+  (prove(``!names_opt (s:('a,'b) dataSem$state) (s1:('a,'b) dataSem$state).
+      cut_state_opt names_opt s = SOME s1 ==> s1.stack = s.stack``,
+    Cases_on `names_opt`
+    \\ rw[dataSemTheory.cut_state_opt_def, dataSemTheory.cut_state_def]
+    \\ every_case_tac \\ gvs[]));
