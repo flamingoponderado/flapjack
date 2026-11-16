@@ -139012,6 +139012,30 @@
   "reviewer": "Compared typed HOL source: the sole cwfs premise implies the complete cwalkstar and singleton-worklist normalization equality. The source-shaped model agrees under cwfs; the result is proved a singleton, making headD's fallback unreachable and agreeing with HOL HD. The visible sp2fm result uses the reviewed canonical map."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "apply_cunif_NONE",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Source/Continuation.lean", "lean_name": "applyCunifNoneModel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared apply_cunif_NONE_typed: applying any paired-list continuation to NONE yields NONE, with no guard or extra hypothesis; the source-shaped continuation has the original recursive clauses."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "kcunifywl_tcallish",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Source/Continuation.lean", "lean_name": "kcunifywlTcallishModel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared kcunifywl_tcallish_typed: for every substitution/worklist pair, the original cwfs guard implies the same source-shaped continuation equals TAILCALL of the unifier step and continuation. Under cwfs the selected walkers and occurs check agree with the source."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "kcunifywl_cleaned",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Source/Continuation.lean", "lean_name": "kcunifywlCleanedModel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared kcunifywl_cleaned_typed: the original cwfs guard implies equality of the source-shaped continuation and selected TAILREC result at every paired worklist. The proof uses the complete source decrease and guard-preservation results."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "tcunify_correct",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Source/Continuation.lean", "lean_name": "tcunifyCorrectModel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared tcunify_correct_typed and tcunify_def_typed: under exactly cwfs s, source-shaped unification equals the selected tail-recursive result on the original singleton pair of singleton type lists. Result and failure remain exact sparse-tree options."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "cunify_thm",
   "lean_path": "Flapjack/Compiler/Inference/Unify/Source/Equation.lean", "lean_name": "cunifyThmModel",
   "statement_status": "reviewed_exact",

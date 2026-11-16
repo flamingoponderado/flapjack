@@ -19,6 +19,11 @@ cunify_thm_typed=cwfs (s :infer_t sptree$num_map) ⇒ cunify s (t1 :infer_t) (t2
 cunify_preserves_cwfs_typed=cwfs (s0 :infer_t sptree$num_map) ∧ cunify s0 (t1 :infer_t) (t2 :infer_t) = SOME (s :infer_t sptree$num_map) ⇒ cwfs s
 cunifyl_def_typed=∀(s :infer_t sptree$num_map) (ts1 :infer_t list) (ts2 :infer_t list). cunifyl s ts1 ts2 = OPTION_MAP (map decode_infer_t) (sunify (map encode_infer_t s) (encode_infer_ts ts1) (encode_infer_ts ts2))
 cunifyl_thm_typed=cwfs (s :infer_t sptree$num_map) ⇒ cunifyl s (ts1 :infer_t list) (ts2 :infer_t list) = case (ts1,ts2) of (([] :infer_t list),([] :infer_t list)) => SOME s | (([] :infer_t list),v10::v11) => (NONE :infer_t sptree$num_map option) | (t1::ts1,([] :infer_t list)) => (NONE :infer_t sptree$num_map option) | (t1::ts1,t2::ts2) => monad_bind (cunify s t1 t2) (λ(s' :infer_t sptree$num_map). cunifyl s' ts1 ts2)
+apply_cunif_NONE_typed=apply_cunifk (k :(infer_t list # infer_t list) list) (NONE :infer_t sptree$num_map option) = (NONE :infer_t sptree$num_map option)
+kcunifywl_tcallish_typed=∀(x :infer_t sptree$num_map # (infer_t list # infer_t list) list). (λ((s :infer_t sptree$num_map),(k :(infer_t list # infer_t list) list)). cwfs s) x ⇒ (λ((s :infer_t sptree$num_map),(k :(infer_t list # infer_t list) list)). kcunifywl s k) x = TAILCALL cunify_code (λ((s :infer_t sptree$num_map),(k :(infer_t list # infer_t list) list)). kcunifywl s k) x
+kcunifywl_cleaned_typed=∀(x :infer_t sptree$num_map # (infer_t list # infer_t list) list). (λ((s :infer_t sptree$num_map),(wl :(infer_t list # infer_t list) list)). cwfs s) x ⇒ (λ((s :infer_t sptree$num_map),(wl :(infer_t list # infer_t list) list)). kcunifywl s wl) x = (TAILREC cunify_code x :infer_t sptree$num_map option)
+tcunify_def_typed=∀(s :infer_t sptree$num_map) (wl :(infer_t list # infer_t list) list). tcunify s wl = (TAILREC cunify_code (s,wl) :infer_t sptree$num_map option)
+tcunify_correct_typed=cwfs (s :infer_t sptree$num_map) ⇒ cunify s (t1 :infer_t) (t2 :infer_t) = tcunify s [([t1],[t2])]
 fm2sp_def_typed=∀(fm :num |-> α). fm2sp fm = ITFMAP (insert :num -> α -> α sptree$num_map -> α sptree$num_map) fm (LN :α sptree$num_map)
 wf_fm2sp_typed=∀(fm :num |-> α). wf (fm2sp fm)
 lookup_fm2sp_typed=lookup (k :num) (fm2sp (fm :num |-> α)) = FLOOKUP fm k
