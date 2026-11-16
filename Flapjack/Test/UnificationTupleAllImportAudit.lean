@@ -18,3 +18,15 @@ run_meta do
     throwError "checked import owners rejected: {problems}"
   unless ← Lean.Core.liftIOCore unificationTupleFixtureCalled.get do
     throwError "checked-owner attribute callback did not run"
+  let source := HolRef.get? (← getEnv) `Flapjack.HOL.Unification.uREq
+  unless unificationRelationReferenceValid source do
+    throwError "reviewed unification relation metadata rejected"
+  if unificationRelationReferenceValid none then
+    throwError "missing unification relation metadata accepted"
+  unless (unificationRelationMetadataProblems none (← getEnv)).size == 1 do
+    throwError "missing HOL attribute registry accepted"
+  let some source := source | throwError "missing unification relation reference"
+  if unificationRelationReferenceValid (some { source with name := "other" }) ||
+      unificationRelationReferenceValid (some { source with fmapAsFiniteSupportParameters := #["s", "sx"] }) ||
+      unificationRelationReferenceValid (some { source with wordsAsTypeIndexedBitvec := true }) then
+    throwError "changed unification relation metadata accepted"
