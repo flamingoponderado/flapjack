@@ -564,4 +564,398 @@ theorem doApp_err_lssStackSafePeakSwap {C F : Type} (op : ClosLang.Op) (values :
                       peakHeapLength := peak } = .err error :=
   doApp_error_lssResource op values state safe peak mx lss error run
 
+/-- Failed space reservation is independent of a locals-size, stack and frame
+sizes update. This Flapjack helper supports the HOL three-field swap. -/
+theorem doSpace_none_lssStackFrameResource {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value) (state : State C F) (lss : Option Nat) (stk : List Stack)
+    (stfrm : Spt Nat) (run : doSpace op values state = none) :
+    doSpace op values { state with
+                        localsSize := lss
+                        stack := stk
+                        stackFrameSizes := stfrm } = none := by
+  cases reset : DataLang.opSpaceReset op
+  · by_cases zero : DataSpace.opSpaceReq op values.length = 0
+    · simp [doSpace, reset, zero] at run
+    · by_cases low : state.space < DataSpace.opSpaceReq op values.length <;>
+        simp_all [doSpace, consumeSpace]
+  · simp [doSpace, reset] at run
+
+/-- Successful space accounting preserves the swapped fields apart from the
+safety and peak observations. This Flapjack helper supports the HOL three-field
+swap. -/
+theorem doSpace_some_lssStackFrameResource {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value) (state next : State C F) (lss : Option Nat)
+    (stk : List Stack) (stfrm : Spt Nat) (run : doSpace op values state = some next) :
+    ∃ safe' peak',
+      doSpace op values { state with
+                          localsSize := lss
+                          stack := stk
+                          stackFrameSizes := stfrm } =
+        some { next with
+               localsSize := lss
+               stack := stk
+               stackFrameSizes := stfrm
+               safeForSpace := safe'
+               peakHeapLength := peak' } := by
+  classical
+  let target := { state with
+                  localsSize := lss
+                  stack := stk
+                  stackFrameSizes := stfrm }
+  cases reset : DataLang.opSpaceReset op
+  · by_cases zero : DataSpace.opSpaceReq op values.length = 0
+    · simp [doSpace, reset, zero] at run
+      subst next
+      exact ⟨state.safeForSpace, state.peakHeapLength, by simp [doSpace, reset, zero]⟩
+    · by_cases low : state.space < DataSpace.opSpaceReq op values.length
+      · simp [doSpace, reset, zero, consumeSpace, low] at run
+      · simp [doSpace, reset, zero, consumeSpace, low] at run
+        subst next
+        exact ⟨state.safeForSpace, state.peakHeapLength,
+          by simp [doSpace, reset, zero, consumeSpace, low]⟩
+  · simp [doSpace, reset] at run
+    subst next
+    refine ⟨target.safeForSpace && decide (noThunksInRefs target.refs ∧
+      sizeOfHeapArgs values target + spaceConsumed target op values ≤ target.limits.heapLimit),
+      max target.peakHeapLength (sizeOfHeapArgs values target + spaceConsumed target op values), ?_⟩
+    simp [doSpace, reset, target]
+
+/-- Stack and limit accounting respect a locals-size, stack and frame-sizes
+update. This is proof infrastructure for the three-field swap. -/
+private theorem doStack_doLimSafe_lssStackFrameResource {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value) (state : State C F) (safe : Bool) (peak : Nat)
+    (mx : Option Nat) (lss : Option Nat) (stk : List Stack) (stfrm : Spt Nat) :
+    ∃ safe' mx',
+      doStack op values (doLimSafe { state with
+                                     localsSize := lss
+                                     safeForSpace := safe
+                                     peakHeapLength := peak
+                                     stackMax := mx
+                                     stack := stk
+                                     stackFrameSizes := stfrm } op values) =
+        { doStack op values (doLimSafe state op values) with
+          safeForSpace := safe'
+          peakHeapLength := peak
+          stackMax := mx'
+          localsSize := lss
+          stack := stk
+          stackFrameSizes := stfrm } := by
+  simp [doStack, doLimSafe]
+
+/-- Installation keeps the locals size, stack and frame sizes while changing
+only its own returned fields. This Flapjack helper supports the HOL three-field
+swap. -/
+theorem doInstall_lssStackFrame {C F R : Type} (values : List DataSem.Value) (state : State C F)
+    (lss : Option Nat) (stk : List Stack) (stfrm : Spt Nat) :
+    doInstall (R := R) values { state with
+                                localsSize := lss
+                                stack := stk
+                                stackFrameSizes := stfrm } =
+      match doInstall (R := R) values state with
+      | .val (value, next) =>
+        .val (value, { next with
+                       localsSize := lss
+                       stack := stk
+                       stackFrameSizes := stfrm })
+      | .err error => .err error := by
+  rcases values with _ | ⟨v1, _ | ⟨v2, _ | ⟨v3, _ | ⟨v4, _ | ⟨v5, rest⟩⟩⟩⟩⟩ <;> try rfl
+  cases bytes : valueToBytes v1 <;> cases words : valueToWords v2 <;>
+    simp [doInstall, bytes, words]
+  all_goals repeat' (split <;> simp_all)
+
+/-- Auxiliary success under locals-size, stack, frame-sizes, stack-maximum and
+safety updates. This Flapjack helper supports the HOL three-field swap. -/
+private theorem doAppAux_lssStackFrameSwap {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value) (state : State C F) (value : DataSem.Value) (next : State C F)
+    (lss : Option Nat) (stk : List Stack) (stfrm : Spt Nat) (mx : Option Nat) (safe : Bool)
+    (peak : Nat) (run : doAppAux op values state = .val (value, next)) :
+    ∃ safe',
+      doAppAux op values { state with
+                           localsSize := lss
+                           stack := stk
+                           stackFrameSizes := stfrm
+                           stackMax := mx
+                           safeForSpace := safe
+                           peakHeapLength := peak } =
+        .val (value, { next with
+                       localsSize := lss
+                       stack := stk
+                       stackFrameSizes := stfrm
+                       stackMax := mx
+                       safeForSpace := safe'
+                       peakHeapLength := peak }) := by
+  obtain ⟨safe', changed⟩ := doAppAux_safeSuccess op values state next value safe run
+  have fields := doAppAux_withFields op values { state with safeForSpace := safe } stk lss mx
+    peak state.locals state.space state.handler state.clock stfrm state.compile
+  rw [changed] at fields
+  refine ⟨safe', ?_⟩
+  obtain ⟨stackEq, localsSizeEq, mxEq, peakEq, localsEq, spaceEq,
+    handlerEq, clockEq, frameSizesEq, compileEq⟩ :=
+    doAppAux_fieldFrame op values state next value run
+  simpa [Flapjack.SemanticPrimitivesProps.mapResult, stackEq, localsSizeEq, mxEq, peakEq,
+    localsEq, spaceEq, handlerEq, clockEq, frameSizesEq, compileEq] using fields
+
+/-- Non-FFI primitive applications are independent of locals-size, stack,
+frame-sizes, stack-maximum, safety and space updates on their failure path. -/
+private theorem applyNonFfi_none_lssStackFrameResource {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value) (state : State C F) (lss : Option Nat) (stk : List Stack)
+    (stfrm : Spt Nat) (mx : Option Nat) (safe : Bool) (peak : Nat)
+    (locals : Spt DataSem.Value) (space : Nat)
+    (run : applyNonFfi op values state = none) :
+    applyNonFfi op values { state with
+                            localsSize := lss
+                            stack := stk
+                            stackFrameSizes := stfrm
+                            stackMax := mx
+                            safeForSpace := safe
+                            peakHeapLength := peak
+                            locals := locals
+                            space := space } = none := by
+  simp only [applyNonFfi] at run ⊢
+  all_goals repeat' (split <;> simp_all [withFreshTimestamp])
+  all_goals aesop
+
+/-- Auxiliary errors under locals-size, stack, frame-sizes, stack-maximum,
+safety and space updates. This Flapjack helper supports the HOL three-field
+swap. -/
+theorem doAppAux_error_lssStackFrameResource {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value) (state : State C F) (lss : Option Nat) (stk : List Stack)
+    (stfrm : Spt Nat) (mx : Option Nat) (safe : Bool) (peak : Nat)
+    (locals : Spt DataSem.Value) (space : Nat)
+    (error : Flapjack.SemanticPrimitivesHOL.ErrorResult DataSem.Value)
+    (run : doAppAux op values state = .err error) :
+    doAppAux op values { state with
+                         localsSize := lss
+                         stack := stk
+                         stackFrameSizes := stfrm
+                         stackMax := mx
+                         safeForSpace := safe
+                         peakHeapLength := peak
+                         locals := locals
+                         space := space } = .err error := by
+  simp only [doAppAux] at run ⊢
+  all_goals repeat' (split <;> simp_all)
+  all_goals cases original : applyNonFfi op values state <;> simp_all
+  all_goals
+    have changed := applyNonFfi_none_lssStackFrameResource op values state lss stk stfrm mx safe
+      peak locals space original
+    simp_all
+
+/-- The normal success path preserves the value under locals-size, stack and
+frame-sizes updates. This is proof infrastructure for the three-field swap. -/
+private theorem appSpace_lssStackFrameSuccess {C F : Type} (op : ClosLang.Op)
+    (args : List DataSem.Value) (state : State C F) (value : DataSem.Value) (next : State C F)
+    (lss : Option Nat) (stk : List Stack) (stfrm : Spt Nat)
+    (run : (match doSpace op args state with
+      | none => Result.err (.abort .typeError)
+      | some accounted =>
+        doAppAux op args (doStack op args (doLimSafe accounted op args))) =
+        .val (value, next)) :
+    ∃ safe' peak' mx',
+      (match doSpace op args { state with
+                               localsSize := lss
+                               stack := stk
+                               stackFrameSizes := stfrm } with
+      | none => Result.err (.abort .typeError)
+      | some accounted =>
+        doAppAux op args (doStack op args (doLimSafe accounted op args))) =
+        .val (value, { next with
+                       localsSize := lss
+                       stack := stk
+                       stackFrameSizes := stfrm
+                       stackMax := mx'
+                       safeForSpace := safe'
+                       peakHeapLength := peak' }) := by
+  cases source : doSpace op args state with
+  | none => simp [source] at run
+  | some accounted =>
+    have appRun : doAppAux op args (doStack op args (doLimSafe accounted op args)) =
+        .val (value, next) := by
+      simpa [source] using run
+    obtain ⟨safe', peak', target⟩ :=
+      doSpace_some_lssStackFrameResource op args state accounted lss stk stfrm source
+    obtain ⟨safe'', mx'', account⟩ :=
+      doStack_doLimSafe_lssStackFrameResource op args accounted safe' peak' accounted.stackMax lss
+      stk stfrm
+    obtain ⟨safe''', result⟩ := doAppAux_lssStackFrameSwap op args
+      (doStack op args (doLimSafe accounted op args)) value next lss stk stfrm mx'' safe'' peak'
+      appRun
+    exact ⟨safe''', peak', mx'', by simpa only [target, account] using result⟩
+
+/-- Exact HOL `do_app_lss_stk_stfrm_swap` (`dataPropsScript.sml:608`): primitive
+success is preserved when locals size, stack and frame sizes change. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_lss_stk_stfrm_swap"]
+theorem doApp_lssStackFrameSwap {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
+    (state : State C F) (value : DataSem.Value) (next : State C F)
+    (lss : Option Nat) (stk : List Stack) (stfrm : Spt Nat)
+    (run : doApp op args state = .val (value, next)) :
+    ∃ safe' peak' mx',
+      doApp op args { state with
+                      localsSize := lss
+                      stack := stk
+                      stackFrameSizes := stfrm } =
+        .val (value, { next with
+                       localsSize := lss
+                       stack := stk
+                       stackFrameSizes := match op with | .install => .ln | _ => stfrm
+                       stackMax := mx'
+                       safeForSpace := safe'
+                       peakHeapLength := peak' }) := by
+  cases op with
+  | install =>
+    simp only [doApp] at run ⊢
+    have equation := doInstall_lssStackFrame (R := DataSem.Value) args
+      { state with stackMax := none, stackFrameSizes := .ln } lss stk .ln
+    rw [run] at equation
+    refine ⟨next.safeForSpace, next.peakHeapLength, next.stackMax, ?_⟩
+    simpa using equation
+  | intOp intop =>
+    have normal := appSpace_lssStackFrameSuccess (.intOp intop) args state value next lss stk stfrm
+    cases intop <;> simp only [doApp] at run ⊢
+    all_goals first | exact normal run | contradiction
+  | label label =>
+    simp only [doApp] at run ⊢
+    exact appSpace_lssStackFrameSuccess (.label label) args state value next lss stk stfrm run
+  | ffi name =>
+    simp only [doApp] at run ⊢
+    exact appSpace_lssStackFrameSuccess (.ffi name) args state value next lss stk stfrm run
+  | wordOp wordop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_lssStackFrameSuccess (.wordOp wordop) args state value next lss stk stfrm run
+  | blockOp blockop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_lssStackFrameSuccess (.blockOp blockop) args state value next lss stk stfrm run
+  | globOp globop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_lssStackFrameSuccess (.globOp globop) args state value next lss stk stfrm run
+  | memOp memop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_lssStackFrameSuccess (.memOp memop) args state value next lss stk stfrm run
+  | thunkOp thunkop =>
+    simp only [doApp] at run ⊢
+    exact appSpace_lssStackFrameSuccess (.thunkOp thunkop) args state value next lss stk stfrm run
+
+/-- Exact HOL `do_app_lss_stk_stfrm_swap_aux` (`dataPropsScript.sml:621`): the
+local auxiliary form of the three-field swap, which HOL derives from the same
+proof by `SIMP_RULE std_ss [LET_DEF]`. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml"
+  "do_app_lss_stk_stfrm_swap_aux"]
+theorem doApp_lssStackFrameSwap_aux {C F : Type} (op : ClosLang.Op) (args : List DataSem.Value)
+    (state : State C F) (value : DataSem.Value) (next : State C F)
+    (lss : Option Nat) (stk : List Stack) (stfrm : Spt Nat)
+    (run : doApp op args state = .val (value, next)) :
+    ∃ safe' peak' mx',
+      doApp op args { state with
+                      localsSize := lss
+                      stack := stk
+                      stackFrameSizes := stfrm } =
+        .val (value, { next with
+                       localsSize := lss
+                       stack := stk
+                       stackFrameSizes := match op with | .install => .ln | _ => stfrm
+                       stackMax := mx'
+                       safeForSpace := safe'
+                       peakHeapLength := peak' }) :=
+  doApp_lssStackFrameSwap op args state value next lss stk stfrm run
+
+/-- The space-and-auxiliary path preserves errors under locals-size, stack and
+frame-sizes updates. This assembles the three-field error case. -/
+private theorem doApp_space_error_lssStackFrameResource {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value) (state : State C F) (lss : Option Nat) (stk : List Stack)
+    (stfrm : Spt Nat) (error : Flapjack.SemanticPrimitivesHOL.ErrorResult DataSem.Value)
+    (run : (match doSpace op values state with
+      | none => Flapjack.SemanticPrimitivesHOL.Result.err (.abort .typeError)
+      | some next =>
+        doAppAux op values (doStack op values (doLimSafe next op values))) =
+        .err error) :
+    (match doSpace op values { state with
+                               localsSize := lss
+                               stack := stk
+                               stackFrameSizes := stfrm } with
+      | none => Flapjack.SemanticPrimitivesHOL.Result.err (.abort .typeError)
+      | some next =>
+        doAppAux op values (doStack op values (doLimSafe next op values))) =
+        .err error := by
+  cases source : doSpace op values state with
+  | none =>
+    have target := doSpace_none_lssStackFrameResource op values state lss stk stfrm source
+    simpa [source, target] using run
+  | some next =>
+    have appRun : doAppAux op values (doStack op values (doLimSafe next op values)) =
+        .err error := by
+      simpa [source] using run
+    obtain ⟨safe', peak', target⟩ :=
+      doSpace_some_lssStackFrameResource op values state next lss stk stfrm source
+    obtain ⟨safe'', mx'', account⟩ :=
+      doStack_doLimSafe_lssStackFrameResource op values next safe' peak' next.stackMax lss stk
+        stfrm
+    have result := doAppAux_error_lssStackFrameResource op values
+      (doStack op values (doLimSafe next op values)) lss stk stfrm mx'' safe'' peak'
+      (doStack op values (doLimSafe next op values)).locals
+      (doStack op values (doLimSafe next op values)).space error appRun
+    simpa only [target, account] using result
+
+/-- Primitive errors remain unchanged when locals size, stack and frame sizes
+change. -/
+private theorem doApp_error_lssStackFrameResource {C F : Type} (op : ClosLang.Op)
+    (values : List DataSem.Value) (state : State C F) (lss : Option Nat) (stk : List Stack)
+    (stfrm : Spt Nat) (error : Flapjack.SemanticPrimitivesHOL.ErrorResult DataSem.Value)
+    (run : doApp op values state = .err error) :
+    doApp op values { state with
+                      localsSize := lss
+                      stack := stk
+                      stackFrameSizes := stfrm } = .err error := by
+  cases op with
+  | install =>
+    simp only [doApp] at run ⊢
+    have equation := doInstall_lssStackFrame (R := DataSem.Value) values
+      { state with stackMax := none, stackFrameSizes := .ln } lss stk .ln
+    rw [run] at equation
+    simpa using equation
+  | intOp intop =>
+    have normal := doApp_space_error_lssStackFrameResource (.intOp intop) values state lss stk
+      stfrm error
+    cases intop <;> simp only [doApp] at run ⊢
+    all_goals first | exact normal run | exact run
+  | label label =>
+    simp only [doApp] at run ⊢
+    exact doApp_space_error_lssStackFrameResource (.label label) values state lss stk stfrm
+      error run
+  | ffi name =>
+    simp only [doApp] at run ⊢
+    exact doApp_space_error_lssStackFrameResource (.ffi name) values state lss stk stfrm error run
+  | wordOp wordop =>
+    simp only [doApp] at run ⊢
+    exact doApp_space_error_lssStackFrameResource (.wordOp wordop) values state lss stk stfrm
+      error run
+  | blockOp blockop =>
+    simp only [doApp] at run ⊢
+    exact doApp_space_error_lssStackFrameResource (.blockOp blockop) values state lss stk stfrm
+      error run
+  | globOp globop =>
+    simp only [doApp] at run ⊢
+    exact doApp_space_error_lssStackFrameResource (.globOp globop) values state lss stk stfrm
+      error run
+  | memOp memop =>
+    simp only [doApp] at run ⊢
+    exact doApp_space_error_lssStackFrameResource (.memOp memop) values state lss stk stfrm
+      error run
+  | thunkOp thunkop =>
+    simp only [doApp] at run ⊢
+    exact doApp_space_error_lssStackFrameResource (.thunkOp thunkop) values state lss stk stfrm
+      error run
+
+/-- Exact HOL `do_app_err_lss_stk_stfrm_swap` (`dataPropsScript.sml:623`):
+primitive errors are unchanged when locals size, stack and frame sizes change. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "do_app_err_lss_stk_stfrm_swap"]
+theorem doApp_err_lssStackFrameSwap {C F : Type} (op : ClosLang.Op) (values : List DataSem.Value)
+    (state : State C F) (error : Flapjack.SemanticPrimitivesHOL.ErrorResult DataSem.Value)
+    (lss : Option Nat) (stk : List Stack) (stfrm : Spt Nat)
+    (run : doApp op values state = .err error) :
+    doApp op values { state with
+                      localsSize := lss
+                      stack := stk
+                      stackFrameSizes := stfrm } = .err error :=
+  doApp_error_lssStackFrameResource op values state lss stk stfrm error run
+
 end Flapjack.Compiler.Backend.DataProps

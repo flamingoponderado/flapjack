@@ -118,3 +118,13 @@ val _ = show "do_app_sm_safe_peak_swap_aux_typed"
         dataSem$do_app op vs (s with <|stack_max := smx; safe_for_space := safe; peak_heap_length := peak |>) =
         Rval (q, s' with <|stack_max := smx'; safe_for_space := safe'; peak_heap_length := peak' |>)``,
     metis_tac [dataPropsTheory.do_app_sm_safe_peak_swap]));
+val _ = emit "do_app_lss_stk_stfrm_swap_typed" "do_app_lss_stk_stfrm_swap";
+val _ = emit "do_app_err_lss_stk_stfrm_swap_typed" "do_app_err_lss_stk_stfrm_swap";
+val _ = show "do_app_lss_stk_stfrm_swap_aux_typed"
+  (prove(``!op vs s q s' lss stk stfrm. dataSem$do_app op vs s = Rval (q,s') ==>
+      ?ss pk smx.
+        dataSem$do_app op vs (s with <|locals_size := lss; stack := stk; stack_frame_sizes := stfrm |>) =
+        Rval (q, s' with <|locals_size := lss; stack := stk;
+                           stack_frame_sizes := if op = closLang$Install then LN else stfrm;
+                           stack_max := smx; safe_for_space := ss; peak_heap_length := pk|>)``,
+    metis_tac [dataPropsTheory.do_app_lss_stk_stfrm_swap]));
