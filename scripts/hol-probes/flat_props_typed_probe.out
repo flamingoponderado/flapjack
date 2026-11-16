@@ -83,3 +83,4 @@ evaluate_io_events_mono_typed=(∀(env :v environment) (s :(γ, 'ffi) state) (es
 evaluate_io_events_mono_IMP_typed=((evaluate (env :v environment) (s :(α, β) state) (es :exp list) :(α, β) state # (v list, v) result) = ((s' :(α, β) state),(r :(v list, v) result)) ⇒ s.ffi.io_events ≼ s'.ffi.io_events) ∧ (evaluate_dec s (d :exp) = (s',(r' :v error_result option)) ⇒ s.ffi.io_events ≼ s'.ffi.io_events) ∧ ((evaluate_decs s (ds :exp list) :(α, β) state # v error_result option) = (s',(r'' :v error_result option)) ⇒ s.ffi.io_events ≼ s'.ffi.io_events)
 evaluate_dec_io_events_mono_typed=∀(z :exp) (y :(α, β) state). y.ffi.io_events ≼ (FST (evaluate_dec y z)).ffi.io_events
 evaluate_decs_io_events_mono_typed=∀(ds :exp list) (s :(γ, 'ffi) state) (s' :(γ, 'ffi) state) (y :v error_result option). (evaluate_decs s ds :(γ, 'ffi) state # v error_result option) = (s',y) ⇒ s.ffi.io_events ≼ s'.ffi.io_events
+SND_SND_lemma_typed=∀(x :α # β) (y :β). SND x = y ⇔ ∃(y1 :α). x = (y1,y)

@@ -51,7 +51,8 @@ theorem wordGcFun_failed_sourceSize {width : Nat} [NeZero width] {C F : Type}
       (outStore : HolFiniteMapExact WordStoreHOL (WordLocW width)),
       wordGcFun conf (stack.map Prod.snd, memory, domain, store) = some (stack1, outMemory, outStore) ∧
       (store.lookup .allocSize = some (.word (gcAllocSize requested)) ∧
-        WordSemStateFiniteExact.hasSpace (.word (gcAllocSize requested)) { state with store := outStore } = some false ∧
+        WordSemStateFiniteExact.hasSpace (.word (gcAllocSize requested) : WordLocW width)
+          { state with store := outStore } = some false ∧
         conf.gcKind ≠ .none →
         ∀ roots2 dups,
           roots2.Perm (dups ++ (value :: stack.map Prod.fst)) →

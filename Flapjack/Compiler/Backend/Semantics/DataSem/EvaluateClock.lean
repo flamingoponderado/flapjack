@@ -343,8 +343,9 @@ theorem evaluate_seq_skip_of_clock {C F : Type} (program : DataLang.Prog) (state
     simp only [run] at clockBound
     cases result <;> simp [evaluate, run, fixClock, Nat.min_eq_right clockBound]
 
-/-- A trailing skip does not change a data-language evaluation. This is
-untagged while the evaluator correspondence is under review. -/
+/-- Exact HOL `Seq_Skip` (`dataPropsScript.sml:455`): a trailing `Skip` does not
+change a data-language evaluation. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "Seq_Skip"]
 theorem evaluate_seq_skip {C F : Type} (program : DataLang.Prog) (state : State C F) :
     evaluate (.seq program .skip) state = evaluate program state :=
   evaluate_seq_skip_of_clock program state (evaluate_clock_le program state)

@@ -21,6 +21,18 @@ noncomputable def evaluateSafe {C F : Type} (program : DataLang.Prog) (state : S
 noncomputable def evaluatePeak {C F : Type} (program : DataLang.Prog) (state : State C F) : Nat :=
   (evaluate program state).2.peakHeapLength
 
+/-- Exact HOL `evaluate_safe_alt` (`dataPropsScript.sml:462`): the whole-program
+safety observation is the final state's `safe_for_space` field. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_safe_alt"]
+theorem evaluateSafeAlt {C F : Type} (program : DataLang.Prog) (state : State C F) :
+    evaluateSafe program state = (evaluate program state).2.safeForSpace := rfl
+
+/-- Exact HOL `evaluate_peak_alt` (`dataPropsScript.sml:470`): the whole-program
+peak observation is the final state's `peak_heap_length` field. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "evaluate_peak_alt"]
+theorem evaluatePeakAlt {C F : Type} (program : DataLang.Prog) (state : State C F) :
+    evaluatePeak program state = (evaluate program state).2.peakHeapLength := rfl
+
 /-- A terminating observation of the initial call. This predicate factors the
 source's guarded choice and has no independent HOL declaration. -/
 def terminatingObservation {C F : Type} (ffi : HolFfiState F)

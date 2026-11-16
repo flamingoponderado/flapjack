@@ -1,6 +1,7 @@
 module
 
 public import Flapjack.Compiler.Backend.BackendProps.StateCompiler
+public import Flapjack.Compiler.Backend.BackendProps.OracleCombinators
 public import Flapjack.Misc.ShiftSeq
 public import Mathlib.Data.Set.Lattice
 
@@ -31,6 +32,29 @@ theorem oracleMonotonic_subset {α β γ : Type} (small large : Set α)
   · intro i x y hx hy
     exact ordered.2 i x y (subsets.1 hx) (subsets.2 i hy)
 
+/-- Exact HOL `oracle_monotonic_shift_subset` (`backendPropsScript.sml:130`):
+    shifting both the initial set and every observed set by a fixed offset
+    preserves monotonicity, with HOL's single conjunction premise and its
+    independent oracle-entry types `α` (shifted) and `β` (original). -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "oracle_monotonic_shift_subset"]
+theorem oracleMonotonic_shiftSubset {α β : Type} (st' : Set Nat) (i : Nat) (st : Set Nat)
+    (f' : α → Set Nat) (co' : Nat → α) (f : β → Set Nat) (co : Nat → β) :
+    (st' ⊆ Nat.add i '' st ∪ Set.Iio i ∧
+      ∀ n, f' (co' n) ⊆ Nat.add i '' f (co n)) →
+      oracleMonotonic f (· < ·) st co → oracleMonotonic f' (· < ·) st' co' := by
+  intro subsets ordered
+  constructor
+  · intro j k x y lt hx hy
+    obtain ⟨x₀, hx₀, rfl⟩ := subsets.2 j hx
+    obtain ⟨y₀, hy₀, rfl⟩ := subsets.2 k hy
+    exact Nat.add_lt_add_left (ordered.1 j k x₀ y₀ lt hx₀ hy₀) i
+  · intro j x y hx hy
+    obtain ⟨y₀, hy₀, rfl⟩ := subsets.2 j hy
+    rcases subsets.1 hx with ⟨x₀, hx₀, rfl⟩ | hxlt
+    · exact Nat.add_lt_add_left (ordered.2 j x₀ y₀ hx₀ hy₀) i
+    · have small : x < i := hxlt
+      exact Nat.lt_of_lt_of_le small (Nat.le_add_right i y₀)
+
 /-- Shifting a monotonic oracle preserves its ordering for an initial set
 contained in the previous entry and the original initial set. -/
 @[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "oracle_monotonic_shift_seq"]
@@ -56,6 +80,53 @@ theorem oracleMonotonic_disjointInit {A B : Type} (f : A → Set B) (r : B → B
   apply Set.disjoint_left.mpr
   intro x hx hy
   exact h.2 x (h.1.2 i x x hx hy)
+
+/-- Exact HOL `oracle_monotonic_step` (`backendPropsScript.sml:111`): the
+    definition's first conjunct as a standalone step fact, with HOL's
+    conjunction premise kept in source order. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "oracle_monotonic_step"]
+theorem oracleMonotonic_step {A B : Type} (f : A → Set B) (r : B → B → Prop) (st : Set B)
+    (co : Nat → A) :
+    oracleMonotonic f r st co →
+      ∀ i j x y, i < j ∧ x ∈ f (co i) ∧ y ∈ f (co j) → r x y := by
+  intro h i j x y premises
+  exact h.1 i j x y premises.1 premises.2.1 premises.2.2
+
+/-- Exact HOL `oracle_monotonic_init` (`backendPropsScript.sml:112`): the
+    definition's second conjunct as a standalone fact. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "oracle_monotonic_init"]
+theorem oracleMonotonic_init {A B : Type} (f : A → Set B) (r : B → B → Prop) (st : Set B)
+    (co : Nat → A) :
+    oracleMonotonic f r st co →
+      ∀ i x y, x ∈ st ∧ y ∈ f (co i) → r x y := by
+  intro h i x y premises
+  exact h.2 i x y premises.1 premises.2
+
+/-- Exact HOL `oracle_monotonic_step2` (`backendPropsScript.sml:114`): the step
+    fact with HOL's premise order `x ∈ f (orac i) ∧ y ∈ f (orac j) ∧ i < j`. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "oracle_monotonic_step2"]
+theorem oracleMonotonic_step2 {A B : Type} (f : A → Set B) (r : B → B → Prop) (st : Set B)
+    (co : Nat → A) :
+    oracleMonotonic f r st co →
+      ∀ i j x y, x ∈ f (co i) ∧ y ∈ f (co j) ∧ i < j → r x y := by
+  intro h i j x y premises
+  exact h.1 i j x y premises.2.2 premises.1 premises.2.1
+
+/-- Exact HOL `oracle_monotonic_SND_syntax_to_full`
+    (`backendPropsScript.sml:267`): both conjuncts of the source theorem.  HOL's
+    boolean equality of the two `oracle_monotonic` applications is Lean equality
+    of the two propositions, and HOL's `I syntax_to_full_oracle I` is
+    `syntaxToFullOracle id`; both sides reduce to the same proposition. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml"
+  "oracle_monotonic_SND_syntax_to_full"]
+theorem oracleMonotonic_SND_syntaxToFull {Program Config B : Type}
+    (f : Program → Set B) (r : B → B → Prop) (st : Set B)
+    (mk : (Nat → Program) → Nat → Config) (progs : Nat → Program)
+    {A D E B' : Type} (a : E → Set B') (b : D → E) (c : A → D) :
+    (oracleMonotonic (f ∘ Prod.snd) r st (syntaxToFullOracle mk progs) ↔
+      oracleMonotonic (f ∘ Prod.snd) r st (syntaxToFullOracle id progs)) ∧
+    oracleMonotonic (a ∘ b ∘ c) = oracleMonotonic ((a ∘ b) ∘ c) := by
+  exact ⟨⟨fun h => h, fun h => h⟩, rfl⟩
 
 /-- Each entry's next compiler state equals the next oracle entry's state. -/
 @[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "is_state_oracle_def"]
@@ -123,5 +194,82 @@ theorem oracleMonotonic_stateWithInv {S C P Q : Type}
     have ybound := (stage i).2.2 y ymem
     have middle := monotone 0 i (Nat.zero_le i)
     omega
+
+/-- Exact HOL `is_state_oracle_shift` (`backendPropsScript.sml:179`): the state
+    oracle condition splits at the first entry, so it holds for the whole
+    oracle exactly when it holds for the one-step shift and at entry one. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "is_state_oracle_shift"]
+theorem isStateOracle_shift {S C P Q : Type} (compile : S → P → S × Q)
+    (co : Nat → (S × C) × P) :
+    isStateOracle compile co ↔
+      (isStateOracle compile (Flapjack.holShiftSeq 1 co) ∧
+        (co 1).1.1 = (compile (co 0).1.1 (co 0).2).1) := by
+  constructor
+  · intro h
+    refine ⟨?_, h 0⟩
+    intro n
+    simpa [Flapjack.holShiftSeq] using h (n + 1)
+  · intro ⟨shifted, base⟩ n
+    cases n with
+    | zero => exact base
+    | succ n =>
+      simpa [Flapjack.holShiftSeq] using shifted n
+
+/-- Exact HOL `is_state_oracle_shift_imp`: shifting the oracle preserves the
+state-oracle condition. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "is_state_oracle_shift_imp"]
+theorem isStateOracle_shiftSeq {S C P Q : Type} (compile : S → P → S × Q)
+    (co : Nat → (S × C) × P) (n : Nat) (h : isStateOracle compile co) :
+    isStateOracle compile (Flapjack.holShiftSeq n co) := by
+  intro k
+  have step := h (k + n)
+  simp only [Flapjack.holShiftSeq]
+  rw [show k + 1 + n = k + n + 1 from by omega]
+  exact step
+
+/-- Exact HOL `is_state_oracle_add_state_co`: threading the incremental pass
+through the oracle keeps the state-oracle condition. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "is_state_oracle_add_state_co"]
+theorem isStateOracle_addStateCo {S C P Q : Type} (f : S → P → S × Q) (st : S)
+    (mk : (Nat → Q) → Nat → C) (progs : Nat → P) :
+    isStateOracle f (syntaxToFullOracle (addStateCo f st mk) progs) := by
+  intro n
+  rfl
+
+/-- Exact HOL `syntax_oracle_unpack` (`backendPropsScript.sml:283-289`): the
+    conjunction of the six oracle-adaptation facts, in HOL's conjunct order and
+    with HOL's `GEN_ALL` binder order in each conjunct.  HOL's boolean
+    equality of the two `oracle_monotonic` applications is Lean equality of the
+    two propositions, and HOL's `I` is `id`. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "syntax_oracle_unpack"]
+theorem syntaxOracle_unpack :
+    (∀ {α β γ : Type} (progs : Nat → γ) (mk : (Nat → β) → Nat → α) (f : γ → β),
+      (pureCo f : α × γ → α × β) ∘ syntaxToFullOracle (mk ∘ pureCoProgs f) progs =
+        syntaxToFullOracle mk (pureCoProgs f progs)) ∧
+    (∀ {α β γ δ : Type} (st : γ) (progs : Nat → δ) (mk : (Nat → β) → Nat → α)
+      (f : γ → δ → γ × β),
+      stateCo f (syntaxToFullOracle (addStateCo f st mk) progs) =
+        syntaxToFullOracle mk (stateCoProgs f st progs)) ∧
+    (∀ {α β γ δ ε : Type} (progs : α → γ) (h : (α → γ) → ε) (g : ε → δ)
+      (f : δ → α → β),
+      syntaxToFullOracle (f ∘ g ∘ h) progs = syntaxToFullOracle ((f ∘ g) ∘ h) progs) ∧
+    (∀ {α β γ : Type} (mk : (γ → β) → γ → α) (progs : γ → β) (i : γ),
+      syntaxToFullOracle mk progs i = (mk progs i, progs i)) ∧
+    (∀ {α β γ δ ε ζ η : Type} (progs : Nat → β) (mk : (Nat → β) → Nat → α)
+      (f : β → Set γ) (c : ε → η) (b : η → ζ) (a : ζ → Set δ)
+      (St : Set γ) (R : γ → γ → Prop),
+      (oracleMonotonic (f ∘ Prod.snd) R St (syntaxToFullOracle mk progs) ↔
+        oracleMonotonic (f ∘ Prod.snd) R St (syntaxToFullOracle id progs)) ∧
+      oracleMonotonic (a ∘ b ∘ c) = oracleMonotonic ((a ∘ b) ∘ c)) ∧
+    (∀ {α β γ δ : Type} (st : α) (progs : Nat → β) (mk : (Nat → γ) → Nat → δ)
+      (f : α → β → α × γ),
+      isStateOracle f (syntaxToFullOracle (addStateCo f st mk) progs)) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · exact fun progs mk f => pureCoSyntaxToFullOracle f mk progs
+  · exact fun st progs mk f => stateCoAddStateCo f st mk progs
+  · exact fun progs h g f => syntaxToFullOracle_comp_assoc f g h progs
+  · exact fun mk progs i => rfl
+  · exact fun progs mk f c b a St R => oracleMonotonic_SND_syntaxToFull f R St mk progs a b c
+  · exact fun st progs mk f => isStateOracle_addStateCo f st mk progs
 
 end Flapjack.Compiler.Backend.BackendProps

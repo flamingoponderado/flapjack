@@ -9,3 +9,5 @@ dest_constants_typed=dest_Constants ([] :closLang$exp list) = SOME ([] :const li
 smart_cons_typed=!(t :tra) (tag :num) (xs :closLang$exp list). SmartCons t tag xs = if NULL xs then Op t (BlockOp (Cons tag :block_op)) ([] :closLang$exp list) else case dest_Constants xs of (NONE :const list option) => Op t (BlockOp (Cons tag :block_op)) xs | SOME cs => Op t (BlockOp (Constant (ConstCons tag (REVERSE cs)))) ([] :closLang$exp list)
 dest_pat_numeric=SOME («x»,42)
 smart_cons_fold=Op None (BlockOp (Constant (ConstCons 5 [ConstInt 9; ConstInt 7]))) []
+length_compile_typed=!(m :mlstring option list) (xs :exp list). LENGTH (compile m xs) = LENGTH xs
+compile_not_nil_typed=compile (m :mlstring option list) ((x :exp)::(xs :exp list)) <> ([] :closLang$exp list)

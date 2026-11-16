@@ -34,4 +34,12 @@ theorem optionMap2_none {α β γ : Type} (f : α → β → γ) (x : Option α)
   all_goals rcases x with _ | _
   all_goals simp
 
+/-- HOL's `OPTION_CASE` applied to an `OPTION_MAP` fuses the mapping into the
+`SOME` branch; HOL writes `option_CASE` and Lean's `Option.elim` takes the same
+three arguments in the same order. -/
+@[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "OPTION_CASE_OPTION_MAP"]
+theorem optionElim_optionMap {α β γ : Type} (f : α → β) (a : Option α) (e : γ)
+    (g : β → γ) : Option.elim (Option.map f a) e g = Option.elim a e (g ∘ f) := by
+  cases a <;> rfl
+
 end Flapjack
