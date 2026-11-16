@@ -115,11 +115,17 @@ def gc {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `has_space_def` (`wordSemScript.sml:663-668`):
     `case (wl, get_store NextFree s, get_store TriggerGC s) of (Word w, SOME
-    (Word n), SOME (Word l)) => SOME (w2n w <= w2n (l - n)) | _ => NONE`. -/
+    (Word n), SOME (Word l)) => SOME (w2n w <= w2n (l - n)) | _ => NONE`.
+    HOL's `wl` is a `'a word_loc` whose register width is independent of the
+    state's word width `β` (`has_space_def_typed` binds `wl : α word_loc` and
+    `s : (β, γ, 'ffi) state`), so the two widths are separate parameters, as in
+    the stackSem counterpart `StackSemAllocation.hasSpace`.  `alloc` only ever
+    calls it at a single width, which unifies both. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "has_space_def"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-def hasSpace {width : Nat} [NeZero width] {C : Type} {F : Type}
-    (wl : WordLocW width) (state : WordSemStateFiniteExact width C F) : Option Bool :=
+def hasSpace {wordLocWidth : Nat} {width : Nat} [NeZero wordLocWidth] [NeZero width]
+    {C : Type} {F : Type}
+    (wl : WordLocW wordLocWidth) (state : WordSemStateFiniteExact width C F) : Option Bool :=
   match wl, getStore .nextFree state, getStore .triggerGC state with
   | .word w, some (.word n), some (.word l) => some (decide (w.toNat ≤ (l - n).toNat))
   | _, _, _ => none

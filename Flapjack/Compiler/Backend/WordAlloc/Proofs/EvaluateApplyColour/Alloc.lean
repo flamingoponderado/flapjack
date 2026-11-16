@@ -359,7 +359,7 @@ theorem allocSim {width : Nat} [NeZero width] {C F : Type}
     have hstoreXC : CXX.store = XX.store := by rw [pCst, hstXT, ← pXst]
     have hgs : getStore .allocSize CXX = getStore .allocSize XX := by
       simp only [getStore, hstoreXC]
-    have hsp : ∀ w, hasSpace w CXX = hasSpace w XX := by
+    have hsp : ∀ (w : WordLocW width), hasSpace w CXX = hasSpace w XX := by
       intro w; simp only [hasSpace, getStore, hstoreXC]
     rw [hgs]
     cases hga : getStore .allocSize XX with
