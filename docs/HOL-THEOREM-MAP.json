@@ -1,5 +1,17 @@
 [
 {
+  "hol_path": "cakeml/semantics/proofs/typeSoundInvariantsScript.sml", "hol_name": "tenv_val_exp_ok_def",
+  "lean_path": "Flapjack/TypeSoundInvariants.lean", "lean_name": "tenvValExpOk",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with tenv_val_exp_ok_replay_typed and HOL source confirms the local environment carrier and all three recursive equations, including the type-variable count in the name-binding case."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/typeSoundInvariantsScript.sml", "hol_name": "add_tenvE_def",
+  "lean_path": "Flapjack/TypeSoundInvariants.lean", "lean_name": "addTenvE",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with add_tenvE_replay_typed and HOL source confirms all three recursive equations, namespace binding order and the independent polymorphic module-name carrier."
+ },
+{
   "hol_path": "cakeml/compiler/proofs/compilerProofScript.sml", "hol_name": "config_ok_def",
   "lean_path": "Flapjack/Compiler/Proofs/CompilerProof.lean", "lean_name": "configOk",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",

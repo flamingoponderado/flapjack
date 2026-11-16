@@ -27,5 +27,22 @@ def tenvValOk {M N : Type} (env : Namespace M N (Nat × SemanticT)) : Prop :=
 def tenvOk (env : TypeEnv) : Prop :=
   tenvValOk env.v ∧ tenvCtorOk env.c ∧ tenvAbbrevOk env.t
 
+/-- Check free type variables throughout the local value environment. -/
+@[hol "cakeml/semantics/proofs/typeSoundInvariantsScript.sml" "tenv_val_exp_ok_def"]
+def tenvValExpOk : TenvValExp → Prop
+  | .empty => True
+  | .bindTvar _ env => tenvValExpOk env
+  | .bindName _ tvs t env =>
+      checkFreevars (tvs + numTvs env) [] t = true ∧ tenvValExpOk env
+
+/-- Add the named local value bindings to a type namespace. -/
+@[hol "cakeml/semantics/proofs/typeSoundInvariantsScript.sml" "add_tenvE_def"]
+def addTenvE {M : Type} : TenvValExp → Namespace M MlString (Nat × SemanticT) →
+    Namespace M MlString (Nat × SemanticT)
+  | .empty, env => env
+  | .bindTvar _ localEnv, env => addTenvE localEnv env
+  | .bindName name tvs t localEnv, env =>
+      nsBind name (tvs, t) (addTenvE localEnv env)
+
 end
 end Flapjack.TypeSoundInvariants

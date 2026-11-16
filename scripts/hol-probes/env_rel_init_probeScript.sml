@@ -361,3 +361,18 @@ val init_config_tenv_to_ienv_replay = Q.prove(
   `init_config = probe_tenv_to_ienv prim_tenv`,
   rw [init_config_def, probe_tenv_to_ienv_def] \\ EVAL_TAC);
 val _ = show "init_config_tenv_to_ienv_replay_typed" init_config_tenv_to_ienv_replay;
+
+(* Replay the original type-soundness local-environment definitions; the
+   source theory is not required to be built in the oracle checkout. *)
+val probe_tenv_val_exp_ok_def = Define `
+  (probe_tenv_val_exp_ok Empty <=> T) /\
+  (probe_tenv_val_exp_ok (Bind_tvar n tenv) <=> probe_tenv_val_exp_ok tenv) /\
+  (probe_tenv_val_exp_ok (Bind_name x tvs t tenv) <=>
+    check_freevars (tvs + num_tvs tenv) [] t /\ probe_tenv_val_exp_ok tenv)`;
+val _ = show "tenv_val_exp_ok_replay_typed" probe_tenv_val_exp_ok_def;
+val probe_add_tenvE_def = Define `
+  (probe_add_tenvE Empty tenvV = tenvV) /\
+  (probe_add_tenvE (Bind_tvar n tenvE) tenvV = probe_add_tenvE tenvE tenvV) /\
+  (probe_add_tenvE (Bind_name x tvs t tenvE) tenvV =
+    nsBind x (tvs,t) (probe_add_tenvE tenvE tenvV))`;
+val _ = show "add_tenvE_replay_typed" probe_add_tenvE_def;

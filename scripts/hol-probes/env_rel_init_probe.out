@@ -77,3 +77,7 @@ env_rel_lift_statement_typed=∀(tenv :type_env) (ienv :inf_env) (mn :mlstring).
 type_config_ok_replay_typed=probe_env_rel prim_tenv init_config ∧ inf_set_tids_ienv prim_type_ids init_config
 lookup_varE_empty_replay_typed=∀(x :(mlstring, mlstring) id). lookup_varE x Empty = (NONE :(num # t) option)
 init_config_tenv_to_ienv_replay_typed=init_config = probe_tenv_to_ienv prim_tenv
+Saved definition ____ "probe_tenv_val_exp_ok_def"
+tenv_val_exp_ok_replay_typed=(probe_tenv_val_exp_ok Empty ⇔ T) ∧ (∀(n :num) (tenv :tenv_val_exp). probe_tenv_val_exp_ok (Bind_tvar n tenv) ⇔ probe_tenv_val_exp_ok tenv) ∧ ∀(x :mlstring) (tvs :num) (t :t) (tenv :tenv_val_exp). probe_tenv_val_exp_ok (Bind_name x tvs t tenv) ⇔ check_freevars (tvs + num_tvs tenv) ([] :mlstring list) t ∧ probe_tenv_val_exp_ok tenv
+Saved definition ____ "probe_add_tenvE_def"
+add_tenvE_replay_typed=(∀(tenvV :(α, mlstring, num # t) namespace). probe_add_tenvE Empty tenvV = tenvV) ∧ (∀(n :num) (tenvE :tenv_val_exp) (tenvV :(α, mlstring, num # t) namespace). probe_add_tenvE (Bind_tvar n tenvE) tenvV = probe_add_tenvE tenvE tenvV) ∧ ∀(x :mlstring) (tvs :num) (t :t) (tenvE :tenv_val_exp) (tenvV :(α, mlstring, num # t) namespace). probe_add_tenvE (Bind_name x tvs t tenvE) tenvV = nsBind x (tvs,t) (probe_add_tenvE tenvE tenvV)
