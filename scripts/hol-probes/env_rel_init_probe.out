@@ -14,6 +14,7 @@ check_convert_freevars_replay_typed=∀(tvs :num) (uvs :num -> bool) (t :infer_t
 check_t_to_check_freevars_replay_typed=∀(tvs :num) (n :num -> bool) (t :infer_t). check_t tvs (∅ :num -> bool) t ⇒ check_freevars tvs ([] :mlstring list) (probe_convert_t t)
 check_t_empty_unconvert_convert_id_replay_typed=∀(t :infer_t) (n :num). check_t n (∅ :num -> bool) t ⇒ unconvert_t (probe_convert_t t) = t
 check_freevars_empty_convert_unconvert_id_replay_typed=∀(t :t). check_freevars (n :num) ([] :mlstring list) t ⇒ probe_convert_t (unconvert_t t) = t
+unconvert_db_subst_replay_typed=∀(t :t) (subst :t list) (fvs :α) (l :num). check_freevars l ([] :mlstring list) t ⇒ unconvert_t (deBruijn_subst (0 :num) subst t) = infer_deBruijn_subst (MAP unconvert_t subst) (unconvert_t t)
 infer_type_subst_nil_replay_typed=(∀(t :t). check_freevars (n :num) ([] :mlstring list) t ⇒ infer_type_subst ([] :(mlstring # infer_t) list) t = unconvert_t t) ∧ ∀(ts :t list). EVERY (check_freevars n ([] :mlstring list)) ts ⇒ MAP (infer_type_subst ([] :(mlstring # infer_t) list)) ts = MAP unconvert_t ts
 db_subst_inc_id_typed=∀(inst :infer_t list) (t :infer_t). infer_deBruijn_subst inst (infer_deBruijn_inc (LENGTH inst) t) = t
 deBruijn_subst_nothing_typed=(∀(t :t). deBruijn_subst (0 :num) ([] :t list) t = t) ∧ ∀(ts :t list). MAP (deBruijn_subst (0 :num) ([] :t list)) ts = ts

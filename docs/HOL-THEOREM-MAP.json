@@ -138053,6 +138053,14 @@
   "reviewer": "Compared HOL source and inc_convert_t_replay_typed: both type and list conjuncts preserve the empty-uvar check, arbitrary bound and shift, and the complete unchanged conversion conclusion."
 },
 {
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
+  "hol_name": "unconvert_db_subst",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
+  "lean_name": "unconvertDbSubst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and unconvert_db_subst_replay_typed: the arbitrary declarative type, substitution list and bound retain the closed-free-variable premise and full conversion/substitution equality. The source polymorphic fvs binder is vacuous in premise and conclusion and is omitted."
+},
+{
     "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
     "hol_name": "tenv_to_ienv_def",
     "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",

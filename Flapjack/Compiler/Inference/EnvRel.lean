@@ -293,6 +293,46 @@ theorem inferTypeSubstNil (n : Nat) :
       simp only [List.mem_cons, forall_eq_or_imp] at h
       simp [inferTypeSubstNilType t n h.1, ih h.2]
 
+mutual
+/-- Structural induction for converting declarative substitutions. -/
+private theorem unconvertDbSubstType (t : SemanticT) (subst : List SemanticT) (bound : Nat)
+    (h : checkFreevars bound [] t = true) :
+    unconvertT (deBruijnSubst 0 subst t) =
+      Infer.inferDeBruijnSubst (subst.map unconvertT) (unconvertT t) := by
+  cases t with
+  | var name => simp [checkFreevars] at h
+  | varDb k =>
+    by_cases hk : k < subst.length
+    · simp [deBruijnSubst, unconvertT, Infer.inferDeBruijnSubst, hk]
+    · simp [deBruijnSubst, unconvertT, Infer.inferDeBruijnSubst, hk]
+  | app ts tc =>
+    have hl : checkFreevarsList bound [] ts = true := by simpa [checkFreevars] using h
+    simp [deBruijnSubst, unconvertT, Infer.inferDeBruijnSubst,
+      unconvertDbSubstList ts subst bound hl]
+termination_by sizeOf t
+
+/-- Structural list induction for converting declarative substitutions. -/
+private theorem unconvertDbSubstList (ts : List SemanticT) (subst : List SemanticT) (bound : Nat)
+    (h : checkFreevarsList bound [] ts = true) :
+    unconvertTList (deBruijnSubstList 0 subst ts) =
+      Infer.inferDeBruijnSubstList (subst.map unconvertT) (unconvertTList ts) := by
+  cases ts with
+  | nil => simp [deBruijnSubstList, unconvertTList, Infer.inferDeBruijnSubstList]
+  | cons t ts =>
+    simp only [checkFreevarsList, Bool.and_eq_true] at h
+    simp [deBruijnSubstList, unconvertTList, Infer.inferDeBruijnSubstList,
+      unconvertDbSubstType t subst bound h.1, unconvertDbSubstList ts subst bound h.2]
+termination_by sizeOf ts
+end
+
+/-- The source also quantifies an unused polymorphic `fvs`; it is vacuous. -/
+@[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "unconvert_db_subst"]
+theorem unconvertDbSubst (t : SemanticT) (subst : List SemanticT) (bound : Nat)
+    (h : checkFreevars bound [] t = true) :
+    unconvertT (deBruijnSubst 0 subst t) =
+      Infer.inferDeBruijnSubst (subst.map unconvertT) (unconvertT t) :=
+  unconvertDbSubstType t subst bound h
+
 /-- Lookup in the empty local type environment always fails. -/
 @[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "lookup_varE_empty"]
 theorem lookupVarEEmpty (id : Ident Flapjack.Basis.Pure.MlString.MlString

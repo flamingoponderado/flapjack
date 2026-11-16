@@ -100,6 +100,16 @@ val check_freevars_empty_convert_unconvert_id_replay = Q.prove(
 val _ = show "check_freevars_empty_convert_unconvert_id_replay_typed"
   check_freevars_empty_convert_unconvert_id_replay;
 
+val unconvert_db_subst_replay = Q.prove(
+  `!t subst fvs l. check_freevars l [] t ⇒
+    unconvert_t (deBruijn_subst 0 subst t) =
+    infer_deBruijn_subst (MAP unconvert_t subst) (unconvert_t t)`,
+  ho_match_mp_tac t_ind >>
+  rw [deBruijn_subst_def, unconvert_t_def, infer_deBruijn_subst_alt,
+      check_freevars_def, EL_MAP] >>
+  irule LIST_EQ >> rw [EL_MAP] >> fs [EVERY_MEM, MEM_EL] >> metis_tac []);
+val _ = show "unconvert_db_subst_replay_typed" unconvert_db_subst_replay;
+
 val infer_type_subst_nil_replay = Q.prove(
   `(∀t. check_freevars n [] t ⇒ infer_type_subst [] t = unconvert_t t) ∧
    (∀ts. EVERY (check_freevars n []) ts ⇒ MAP (infer_type_subst []) ts = MAP unconvert_t ts)`,
