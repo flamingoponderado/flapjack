@@ -3,6 +3,8 @@ module
 public import Flapjack.HOL.Unification.Walk
 public import Flapjack.HOL.Unification.Walk.ToVar
 public import Flapjack.HOL.Unification.Walk.Range
+public import Flapjack.HOL.Unification.Walk.Submap
+public import Flapjack.HOL.Unification.Walkstar.Walk
 public import Flapjack.HOL.Unification.Subst.NoCycles
 public import Flapjack.HOL.Unification.Subst.Vars
 public import Flapjack.HOL.Unification.UnifDef.FiniteSubset
@@ -317,5 +319,151 @@ theorem allVarsSubsetFupdate {α : Type} (s : HolFiniteMapExact Nat (Term α))
     · rcases walked t2a new with old | old
       · exact second x old
       · exact range x old
+
+/-- Canonical map codec roundtrip for normalized size after update. -/
+theorem holFmapAsFiniteSupportParamWitness_walkstarSubtermFupdate_s {α : Type}
+    (s : HolFiniteMapExact Nat (Term α)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s :=
+  holFmapAsFiniteSupportParamWitness_vR_subst s key
+
+@[hol "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" "walkstar_subterm_FUPDATE"
+  (fmap_as_finite_support_parameters := [s])]
+theorem walkstarSubtermFupdate {α : Type} (s : HolFiniteMapExact Nat (Term α))
+    (v : Nat) (t t1 t1a t1d : Term α)
+    (h : wfs s ∧ v ∉ s.domain ∧ ¬ vars (walkstar s t) v ∧
+      walk s t1 = .pair t1a t1d) :
+    pairCount (walkstar (s.updateEq (v, t)) t1d) <
+      pairCount (walkstar (s.updateEq (v, t)) t1) := by
+  have hw := wfsExtend s v t ⟨h.1, h.2.1, h.2.2.1⟩
+  have sub : s.submap (s.updateEq (v, t)) := by
+    intro key value found
+    have ne : key ≠ v := by
+      intro eq
+      subst key
+      exact h.2.1 (by change s.lookup v ≠ none; rw [found]; simp)
+    simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, ne] using found
+  have walked : walk (s.updateEq (v, t)) t1 = .pair t1a t1d := by
+    cases t1 with
+    | var n =>
+      have step := vwalkSubmap (s.updateEq (v, t)) hw n s sub
+      have initial : vwalk s n = .pair t1a t1d := h.2.2.2
+      rw [initial] at step
+      exact step
+    | pair a b => exact h.2.2.2
+    | const c => cases h.2.2.2
+  exact (walkstarSubtermSmaller (s.updateEq (v, t)) t1 t1a t1d ⟨hw, walked⟩).2
+
+/-- Canonical map codec roundtrip for the larger substitution in `uP`. -/
+theorem holFmapAsFiniteSupportParamWitness_uP_sx {α : Type}
+    (sx : HolFiniteMapExact Nat (Term α)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad sx)).lookup key = sx.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad sx)).finiteSupport = sx.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad sx) = sx :=
+  holFmapAsFiniteSupportParamWitness_vR_subst sx key
+
+/-- Canonical map codec roundtrip for the smaller substitution in `uP`. -/
+theorem holFmapAsFiniteSupportParamWitness_uP_s {α : Type}
+    (s : HolFiniteMapExact Nat (Term α)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s :=
+  holFmapAsFiniteSupportParamWitness_vR_subst s key
+
+@[hol "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" "uP_def"
+  (fmap_as_finite_support_parameters := [sx, s])]
+def uP {α β : Type} (sx : HolFiniteMapExact Nat (Term α))
+    (s : HolFiniteMapExact Nat (Term α)) (t1 t2 : Term β) : Prop :=
+  wfs sx ∧ s.submap sx ∧ Set.Subset (substVars sx) (allVars s t1 t2)
+
+/-- Canonical map codec roundtrip for the larger substitution in `uPSym`. -/
+theorem holFmapAsFiniteSupportParamWitness_uPSym_sx {α : Type}
+    (sx : HolFiniteMapExact Nat (Term α)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad sx)).lookup key = sx.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad sx)).finiteSupport = sx.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad sx) = sx :=
+  holFmapAsFiniteSupportParamWitness_vR_subst sx key
+
+/-- Canonical map codec roundtrip for the smaller substitution in `uPSym`. -/
+theorem holFmapAsFiniteSupportParamWitness_uPSym_s {α : Type}
+    (s : HolFiniteMapExact Nat (Term α)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s :=
+  holFmapAsFiniteSupportParamWitness_vR_subst s key
+
+@[hol "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" "uP_sym"
+  (fmap_as_finite_support_parameters := [sx, s])]
+theorem uPSym {α β : Type} (sx : HolFiniteMapExact Nat (Term α))
+    (s : HolFiniteMapExact Nat (Term α)) (t1 t2 : Term β) :
+    uP sx s t1 t2 ↔ uP sx s t2 t1 := by
+  simp only [uP, allVarsSym s t1 t2]
+
+/-- Canonical map codec roundtrip for `uP` after an update. -/
+theorem holFmapAsFiniteSupportParamWitness_uPFupdate_s {α : Type}
+    (s : HolFiniteMapExact Nat (Term α)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s :=
+  holFmapAsFiniteSupportParamWitness_vR_subst s key
+
+@[hol "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" "uP_FUPDATE"
+  (fmap_as_finite_support_parameters := [s])]
+theorem uPFupdate {α : Type} (s : HolFiniteMapExact Nat (Term α))
+    (v : Nat) (t1 t2 : Term α)
+    (h : wfs s ∧ v ∉ s.domain ∧ ¬ vars (walkstar s t2) v ∧ walk s t1 = .var v) :
+    uP (s.updateEq (v, walk s t2)) s t1 t2 := by
+  classical
+  have notOccurs : ¬ vars (walkstar s (walk s t2)) v := by
+    rw [walkstarWalk s t2 h.1]
+    exact h.2.2.1
+  have hw := wfsExtend s v (walk s t2) ⟨h.1, h.2.1, notOccurs⟩
+  have sub : s.submap (s.updateEq (v, walk s t2)) := by
+    intro key value found
+    have ne : key ≠ v := by
+      intro eq
+      subst key
+      exact h.2.1 (by change s.lookup v ≠ none; rw [found]; simp)
+    simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, ne] using found
+  have walked : ∀ t : Term α, Set.Subset (vars (walk s t))
+      (Set.union (vars t) (rangeVars s)) := by
+    intro t x hx
+    by_cases same : walk s t = t
+    · exact Or.inl (same ▸ hx)
+    · exact Or.inr (inFrangeRangeVars s (walk s t) (walkInFrange s t ⟨h.1, same⟩) hx)
+  have inV : allVars s t1 t2 v := by
+    have hv : vars (walk s t1) v := by rw [h.2.2.2]; rfl
+    rcases walked t1 hv with hv | hv
+    · exact Or.inl (Or.inl hv)
+    · exact Or.inr (Or.inr hv)
+  have updatedRange : rangeVars (s.updateEq (v, walk s t2)) =
+      Set.union (rangeVars s) (vars (walk s t2)) := by
+    have eqUpdate : s.updateEq (v, walk s t2) =
+        @HolFiniteMapExact.updateEq Nat (Term α) (Classical.decEq Nat) s (v, walk s t2) := by
+      congr 1
+      exact Subsingleton.elim _ _
+    rw [eqUpdate]
+    exact rangeVarsUpdate s v (walk s t2) h.2.1
+  refine ⟨hw, sub, ?_⟩
+  intro x hx
+  change (s.updateEq (v, walk s t2)).domain x ∨
+    rangeVars (s.updateEq (v, walk s t2)) x at hx
+  rcases hx with hdom | hran
+  · by_cases eq : x = v
+    · subst x; exact inV
+    · have old : s.domain x := by
+        change (s.updateEq (v, walk s t2)).lookup x ≠ none at hdom
+        change s.lookup x ≠ none
+        simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, eq] using hdom
+      exact Or.inr (Or.inl old)
+  · change x ∈ rangeVars (s.updateEq (v, walk s t2)) at hran
+    rw [updatedRange] at hran
+    change rangeVars s x ∨ vars (walk s t2) x at hran
+    rcases hran with old | new
+    · exact Or.inr (Or.inr old)
+    · rcases walked t2 new with old | old
+      · exact Or.inl (Or.inr old)
+      · exact Or.inr (Or.inr old)
 
 end Flapjack.HOL.Unification

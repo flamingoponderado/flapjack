@@ -138544,6 +138544,36 @@
   "reviewer": "Independent typed source review confirms the original four ordered premises, the update with the walked second subterm, and the complete subset conclusion with the same shared atom type."
 },
 {
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "walkstar_subterm_FUPDATE",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "walkstarSubtermFupdate",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms all four ordered premises and the original strict inequality for the normalized right subterm after the equality update."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkstarScript.sml", "hol_name": "walkstar_walk",
+  "lean_path": "Flapjack/HOL/Unification/Walkstar/Walk.lean", "lean_name": "walkstarWalk",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms the original well-formedness premise and equality between normalization after walking and normalization of the original term."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "uP_def",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "uP",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["sx", "s"],
+  "reviewer": "Independent typed source review confirms both map binders, all three ordered conjuncts, and independent atom types for the substitutions and input terms."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "uP_sym",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "uPSym",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["sx", "s"],
+  "reviewer": "Independent typed source review confirms both directions of symmetry and the independent substitution and input-term atom types."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "uP_FUPDATE",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "uPFupdate",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms the original four ordered premises and full relation conclusion after updating the fresh variable to the walked second term."
+},
+{
   "hol_path": "HOL/src/transfer/examples/fmspScript.sml", "hol_name": "sp2fm_thm",
   "lean_path": "Flapjack/HOL/Transfer/Fmsp/Operations.lean", "lean_name": "sp2fmThm",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm", "Flapjack.HolFiniteMapExact.holEmpty"],
