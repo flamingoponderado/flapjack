@@ -3,6 +3,7 @@ module
 public import Flapjack.HOL.Unification.Walk
 public import Flapjack.HOL.Unification.Walk.ToVar
 public import Flapjack.HOL.Unification.Subst.NoCycles
+public import Flapjack.HOL.Unification.Subst.Vars
 public import Flapjack.HOL.Unification.Walkstar.Dependency
 public import Mathlib.Logic.Relation
 
@@ -124,5 +125,48 @@ theorem vwalkFdom {α : Type} (s : HolFiniteMapExact Nat (Term α)) (v : Nat) (t
     · obtain ⟨u, heq, hu⟩ := endpoint v present
       exact ⟨u, heq, by simpa [result] using hu⟩
   · exact Or.inl ⟨present, result.symm.trans (notFdomVwalk s v ⟨hw, present⟩)⟩
+
+/-- Canonical map codec roundtrip for the unification variable measure. -/
+theorem holFmapAsFiniteSupportParamWitness_allVars_s {α : Type}
+    (s : HolFiniteMapExact Nat (Term α)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s :=
+  holFmapAsFiniteSupportParamWitness_vR_subst s key
+
+@[hol "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" "allvars_def"
+  (fmap_as_finite_support_parameters := [s])]
+def allVars {α β : Type} (s : HolFiniteMapExact Nat (Term α)) (t1 t2 : Term β) : Set Nat :=
+  Set.union (Set.union (vars t1) (vars t2)) (substVars s)
+
+/-- Canonical map codec roundtrip for finiteness of the unification measure. -/
+theorem holFmapAsFiniteSupportParamWitness_finiteAllVars_s {α : Type}
+    (s : HolFiniteMapExact Nat (Term α)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s :=
+  holFmapAsFiniteSupportParamWitness_vR_subst s key
+
+@[hol "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" "FINITE_allvars"
+  (fmap_as_finite_support_parameters := [s])]
+theorem finiteAllVars {α β : Type} (s : HolFiniteMapExact Nat (Term α)) (t1 t2 : Term β) :
+    Set.Finite (allVars s t1 t2) :=
+  ((finiteVars t1).union (finiteVars t2)).union (finiteSubstVars s)
+
+/-- Canonical map codec roundtrip for symmetry of the unification measure. -/
+theorem holFmapAsFiniteSupportParamWitness_allVarsSym_s {α : Type}
+    (s : HolFiniteMapExact Nat (Term α)) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s :=
+  holFmapAsFiniteSupportParamWitness_vR_subst s key
+
+@[hol "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml" "allvars_sym"
+  (fmap_as_finite_support_parameters := [s])]
+theorem allVarsSym {α β : Type} (s : HolFiniteMapExact Nat (Term α)) (t1 t2 : Term β) :
+    allVars s t1 t2 = allVars s t2 t1 := by
+  unfold allVars
+  congr 1
+  exact Set.union_comm (vars t1) (vars t2)
 
 end Flapjack.HOL.Unification

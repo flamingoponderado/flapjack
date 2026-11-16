@@ -2109,7 +2109,7 @@
     {"bytes": 777, "out": "type_sound_env_probe.out", "rows": 5, "sha256": "de3323dfbf3f8d637b83c91731d2a46c19f43cb806fee547fd412d6b04873b73"},
     {"bytes": 2842, "out": "type_system_defs_typed_probe.out", "rows": 4, "sha256": "75385d7561fd641fa08cd973b9968128b72a1e0f394f14972fb093bef8d4bb4e"},
     {"bytes": 22124, "out": "type_system_typed_probe.out", "rows": 60, "sha256": "4aef21a3dde4e1168771f4093f6f805e993e18c0bb0eacfe472519e7469557cd"},
-    {"bytes": 22951, "out": "unify_encoding_probe.out", "rows": 90, "sha256": "f5f140028bef5860b2fb4caf6644549cef3fa34f836442793dd51a04d9040817"},
+    {"bytes": 23590, "out": "unify_encoding_probe.out", "rows": 98, "sha256": "ae2164560d8bf03be2bf379199153635a10000321a04778ef1343d0367480de5"},
     {"bytes": 570, "out": "unify_exec_walk_probe.out", "rows": 20, "sha256": "fa5c9e04351c5e45617744c7a3fa733706042879837a585eb3744bce738e8a37"},
     {"bytes": 309, "out": "unify_subst_probe.out", "rows": 1, "sha256": "aa2102cd191a98f32d89c62eb099466c3886905ea3f36c7a68134395372e99ab"},
     {"bytes": 119, "out": "vars_of_exp_probe.out", "rows": 5, "sha256": "651e7a7f6d1e3e8ccd709c151039320d3b6f6d5c1d68f8ce0377d98ed60d4834"},

@@ -138436,6 +138436,54 @@
   "reviewer": "Independent typed source review confirms the generic term carrier, both ordered premises, each disjunct and conjunction, equality directions, and the existential endpoint. The canonical substitution map has a premise-free codec witness; the walker's off-well-formedness choice is irrelevant under the original premise."
 },
 {
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/termScript.sml", "hol_name": "FINITE_vars",
+  "lean_path": "Flapjack/HOL/Unification/Term/Finite.lean", "lean_name": "finiteVars",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent typed source review confirms the unconditional finiteness result for terms over an arbitrary atom type and all three original constructors."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/substScript.sml", "hol_name": "rangevars_def",
+  "lean_path": "Flapjack/HOL/Unification/Subst/Vars.lean", "lean_name": "rangeVars",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms arbitrary independent map-key and term-atom types and the original union of variable sets over the finite-map range, expressed by the equivalent existential lookup characterization."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/substScript.sml", "hol_name": "FINITE_rangevars",
+  "lean_path": "Flapjack/HOL/Unification/Subst/Vars.lean", "lean_name": "finiteRangeVars",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms the unconditional finiteness result over independent arbitrary map-key and term-atom types; the proof uses the canonical map's finite support."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/substScript.sml", "hol_name": "substvars_def",
+  "lean_path": "Flapjack/HOL/Unification/Subst/Vars.lean", "lean_name": "substVars",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms the natural-key substitution and the original union of its domain with its range variables."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/substScript.sml", "hol_name": "FINITE_substvars",
+  "lean_path": "Flapjack/HOL/Unification/Subst/Vars.lean", "lean_name": "finiteSubstVars",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms the unconditional finiteness result for the natural-key substitution and its arbitrary term atoms."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "allvars_def",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "allVars",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms the original unions and retains independent atom types for the substitution and the two input terms."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "FINITE_allvars",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "finiteAllVars",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms the unconditional finite-union result and the independent substitution and input-term atom types."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "allvars_sym",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "allVarsSym",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms that only the two input terms are exchanged, with their shared atom type independent of the substitution atom type."
+},
+{
   "hol_path": "HOL/src/transfer/examples/fmspScript.sml", "hol_name": "sp2fm_thm",
   "lean_path": "Flapjack/HOL/Transfer/Fmsp/Operations.lean", "lean_name": "sp2fmThm",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm", "Flapjack.HolFiniteMapExact.holEmpty"],
