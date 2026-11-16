@@ -9801,7 +9801,7 @@ run_probe unify_exec_walk_probeScript.sml unify_exec_walk_probe.out \
   "$cake_dir/compiler/inference"
 
 run_probe env_rel_init_probeScript.sml env_rel_init_probe.out \
-  tenv_to_ienv_replay_typed lift_ienv_typed extend_dec_ienv_typed tenv_to_ienv_lift_replay_typed tenv_to_ienv_extend_replay_typed check_freevars_to_check_t_replay_typed lookup_varE_empty_replay_typed init_config_tenv_to_ienv_replay_typed \
+  tenv_to_ienv_replay_typed lift_ienv_typed extend_dec_ienv_typed tenv_to_ienv_lift_replay_typed tenv_to_ienv_extend_replay_typed check_freevars_to_check_t_replay_typed infer_type_subst_nil_replay_typed lookup_varE_empty_replay_typed init_config_tenv_to_ienv_replay_typed \
   "$cake_dir/compiler/inference/proofs/envRelScript.sml" \
   "$cake_dir/compiler/inference"
 

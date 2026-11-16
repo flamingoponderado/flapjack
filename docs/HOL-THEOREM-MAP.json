@@ -137974,6 +137974,14 @@
 },
 {
   "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
+  "hol_name": "infer_type_subst_nil",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
+  "lean_name": "inferTypeSubstNil",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and infer_type_subst_nil_replay_typed: both conjuncts retain the closed-free-variable premises and exact pointwise and list-map equalities, with arbitrary de Bruijn bound."
+},
+{
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
   "hol_name": "check_freevars_to_check_t",
   "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
   "lean_name": "checkFreevarsToCheckT",

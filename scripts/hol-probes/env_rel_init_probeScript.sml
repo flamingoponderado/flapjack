@@ -45,6 +45,14 @@ val check_freevars_to_check_t_replay = Q.prove(
   fs [EVERY_MAP, EVERY_MEM]);
 val _ = show "check_freevars_to_check_t_replay_typed" check_freevars_to_check_t_replay;
 
+val infer_type_subst_nil_replay = Q.prove(
+  `(∀t. check_freevars n [] t ⇒ infer_type_subst [] t = unconvert_t t) ∧
+   (∀ts. EVERY (check_freevars n []) ts ⇒ MAP (infer_type_subst []) ts = MAP unconvert_t ts)`,
+  ho_match_mp_tac (TypeBase.induction_of ``:t``) >>
+  rw [infer_type_subst_alt, unconvert_t_def, check_freevars_def] >>
+  fsrw_tac [boolSimps.ETA_ss] []);
+val _ = show "infer_type_subst_nil_replay_typed" infer_type_subst_nil_replay;
+
 val lookup_varE_empty_replay = Q.prove(
   `!x. lookup_varE x Empty = NONE`,
   rw [lookup_varE_def, tveLookup_def] \\ every_case_tac);
