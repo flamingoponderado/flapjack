@@ -170,3 +170,4 @@ s_frame_val_and_key_eq_typed=∀(s :α stack_frame) (t :α stack_frame). s_frame
 get_vars_stack_swap_typed=∀(l :num list) (s :(α, β, γ) state) (t :(α, β, γ) state). s.locals = t.locals ⇒ get_vars l s = get_vars l t
 option_le_stack_size_nil_typed=∀(stack :α stack_frame list) (opt :num option). option_le (stack_size ([] :α stack_frame list)) (OPTION_MAP2 $+ (stack_size stack) opt)
 PERM_ALL_DISTINCT_MAP_typed=∀(xs :α list) (ys :α list). PERM xs ys ⇒ ALL_DISTINCT (MAP (f :α -> β) xs) ⇒ ALL_DISTINCT (MAP f ys) ∧ ∀(x :α). MEM x ys ⇔ MEM x xs
+no_mt_find_code_typed=∀(code :(num # α prog) sptree$num_map) (dest :num option) (args :β word_loc list) (lsize :γ sptree$num_map) (args1 :β word_loc list) (expr :α prog) (ps :γ option). find_code dest args code lsize = SOME (args1,expr,ps) ∧ no_mt_code code ⇒ no_mt expr

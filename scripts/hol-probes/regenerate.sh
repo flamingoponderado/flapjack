@@ -10071,7 +10071,7 @@ run_probe word_props_typed_probeScript.sml word_props_typed_probe.out \
   domain_fromAList_toAList_typed \
   s_val_eq_def2_typed s_frame_val_and_key_eq_typed get_vars_stack_swap_typed \
   option_le_stack_size_nil_typed \
-  PERM_ALL_DISTINCT_MAP_typed \
+  PERM_ALL_DISTINCT_MAP_typed no_mt_find_code_typed \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 

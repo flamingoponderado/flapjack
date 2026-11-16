@@ -222,3 +222,4 @@ val _ = show "option_le_stack_size_nil_typed"
      rw[wordSemTheory.stack_size_def]));
 
 val _ = emit "PERM_ALL_DISTINCT_MAP_typed" "PERM_ALL_DISTINCT_MAP";
+val _ = emit "no_mt_find_code_typed" "no_mt_find_code";
