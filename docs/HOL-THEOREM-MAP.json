@@ -1,5 +1,11 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "set_tids_tenv_extend_dec_tenv",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "setTidsTenvExtendDecTenv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL-local theorem and set_tids_tenv_extend_dec_tenv_replay_typed confirms the quantified environment and set carriers, union, premise order and conclusion. The typed replay uses the source-shaped probe environment predicate."
+ },
+{
   "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "set_tids_subset_mono",
   "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "setTidsSubsetMono",
   "statement_status": "reviewed_exact",

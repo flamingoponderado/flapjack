@@ -10483,7 +10483,8 @@ store-typing datatype. It also captures the original `type_v` rules and the
 store, environment and type-soundness invariant definitions with inferred
 types. It captures `set_tids_subset` and `start_type_id` and replays
 `set_tids_tenv` with its inferred namespace carriers, together with the
-source proofs of the type and environment identifier-set monotonicity lemmas. The
+source proofs of the type and environment identifier-set monotonicity lemmas
+and the local environment-extension lemma. The
 environment-relation, REPL, and type-soundness theories are not fetched by this
 probe; regenerate with
 `HOL_PROBE_ONLY=env_rel_init_probeScript.sml`.

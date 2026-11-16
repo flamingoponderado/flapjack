@@ -440,6 +440,12 @@ val probe_set_tids_tenv_def = Define `
     nsAll (\i (ls,ts,tid). EVERY (\t. set_tids_subset tids t) ts /\ tid IN tids) tenv.c /\
     nsAll (\i (n,t). set_tids_subset tids t) tenv.v`;
 val _ = show "set_tids_tenv_replay_typed" probe_set_tids_tenv_def;
+val set_tids_tenv_extend_dec_tenv_replay = Q.prove(
+  `!s t s' t'. probe_set_tids_tenv (s' UNION s) t' /\
+     probe_set_tids_tenv (s' UNION s) t ==>
+     probe_set_tids_tenv (s' UNION s) (extend_dec_tenv t' t)`,
+  rw[extend_dec_tenv_def,probe_set_tids_tenv_def,namespacePropsTheory.nsAll_nsAppend]);
+val _ = show "set_tids_tenv_extend_dec_tenv_replay_typed" set_tids_tenv_extend_dec_tenv_replay;
 val set_tids_subset_mono_replay = Q.prove(
   `!tids t tids'. set_tids_subset tids t /\ tids SUBSET tids' ==>
      set_tids_subset tids' t`,

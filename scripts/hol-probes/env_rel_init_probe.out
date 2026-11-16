@@ -105,5 +105,6 @@ set_tids_subset_typed=∀(tids :num -> bool) (t :t). set_tids_subset tids t ⇔ 
 start_type_id_typed=start_type_id = (15 :num)
 Saved definition ____ "probe_set_tids_tenv_def"
 set_tids_tenv_replay_typed=∀(tids :num -> bool) (tenv :type_env). probe_set_tids_tenv tids tenv ⇔ nsAll (λ(i :(mlstring, mlstring) id) ((ls :mlstring list),(t :t)). set_tids_subset tids t) tenv.t ∧ nsAll (λ(i :(mlstring, mlstring) id) ((ls :mlstring list),(ts :t list),(tid :num)). EVERY (λ(t :t). set_tids_subset tids t) ts ∧ tid ∈ tids) tenv.c ∧ nsAll (λ(i :(mlstring, mlstring) id) ((n :num),(t :t)). set_tids_subset tids t) tenv.v
+set_tids_tenv_extend_dec_tenv_replay_typed=∀(s :num -> bool) (t :type_env) (s' :num -> bool) (t' :type_env). probe_set_tids_tenv (s' ∪ s) t' ∧ probe_set_tids_tenv (s' ∪ s) t ⇒ probe_set_tids_tenv (s' ∪ s) (extend_dec_tenv t' t)
 set_tids_subset_mono_replay_typed=∀(tids :num -> bool) (t :t) (tids' :num -> bool). set_tids_subset tids t ∧ tids ⊆ tids' ⇒ set_tids_subset tids' t
 set_tids_tenv_mono_replay_typed=probe_set_tids_tenv (tids :num -> bool) (tenv :type_env) ∧ tids ⊆ (tids' :num -> bool) ⇒ probe_set_tids_tenv tids' tenv
