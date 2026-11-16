@@ -103,4 +103,3 @@ theorem tWalkstarInd (s : HolFiniteMapExact Nat InferT) (hw : tWfs s) :
   exact buildP s P step t (fun v _ => allVars v)
 
 end Flapjack.Compiler.Inference.Unify
-
