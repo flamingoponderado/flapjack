@@ -12,6 +12,7 @@ mlt1_BAG_INSERT_typed=FINITE_BAG (b :α -> num) ⇒ mlt1 (R :α -> α -> bool) b
 mlt_BAG_INSERT2_typed=FINITE_BAG (b :α -> num) ⇒ mlt (R :α -> α -> bool) b (BAG_INSERT (x :α) (BAG_INSERT (y :α) b))
 vwalk_rangevars_typed=wfs (s :α subst) ∧ vwalk s (v :num) = (t :α term) ⇒ t = (Var v :α term) ∧ v ∉ FDOM s ∨ vars t ⊆ rangevars s
 substvars_FUPDATE_typed=substvars (fm :α subst)⟨(v :num) ↦ (t :α term)⟩ = substvars (fm \\ v) ∪ {v} ∪ vars t
+unify_def_typed=∀(s :α subst) (t1 :α term) (t2 :α term). wfs s ⇒ unify s t1 t2 = case (walk s t1,walk s t2) of ((Var v1 :α term),(Var v2 :α term)) => SOME (if v1 = v2 then s else s⟨v1 ↦ (Var v2 :α term)⟩) | ((Var v1 :α term),Pair v27 v28) => ext_s_check s v1 (Pair v27 v28) | ((Var v1 :α term),Const v29) => ext_s_check s v1 (Const v29) | (Pair t1a t1d,(Var v34 :α term)) => ext_s_check s v34 (Pair t1a t1d) | (Pair t1a t1d,Pair t2a t2d) => monad_bind (unify s t1a t2a) (λ(sx :α subst). unify sx t1d t2d) | (Pair t1a t1d,Const v37) => (NONE :α subst option) | (Const c1,(Var v42 :α term)) => ext_s_check s v42 (Const c1) | (Const c1,Pair v43 v44) => (NONE :α subst option) | (Const c1,Const c2) => if c1 = c2 then SOME s else (NONE :α subst option)
 SUBMAP_FDOM_SUBSET_typed=(f1 :α |-> β) ⊑ (f2 :α |-> β) ⇒ FDOM f1 ⊆ FDOM f2
 EQ_FDOM_SUBMAP_typed=(f :α |-> β) = (g :α |-> β) ⇔ f ⊑ g ∧ FDOM f = FDOM g
 walk_rangevars_typed=wfs (s :α subst) ∧ walk s (t :α term) = (u :α term) ⇒ vars u ⊆ rangevars s ∪ vars t

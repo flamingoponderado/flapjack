@@ -22,6 +22,7 @@ val _ = show "mlt1_BAG_INSERT_typed" tcallUnifTheory.mlt1_BAG_INSERT;
 val _ = show "mlt_BAG_INSERT2_typed" unifyTheory.mlt_BAG_INSERT2;
 val _ = show "vwalk_rangevars_typed" tcallUnifTheory.vwalk_rangevars;
 val _ = show "substvars_FUPDATE_typed" tcallUnifTheory.substvars_FUPDATE;
+val _ = show "unify_def_typed" unifDefTheory.unify_def;
 val _ = show "SUBMAP_FDOM_SUBSET_typed" finite_mapTheory.SUBMAP_FDOM_SUBSET;
 val _ = show "EQ_FDOM_SUBMAP_typed" finite_mapTheory.EQ_FDOM_SUBMAP;
 val _ = show "walk_rangevars_typed" tcallUnifTheory.walk_rangevars;
