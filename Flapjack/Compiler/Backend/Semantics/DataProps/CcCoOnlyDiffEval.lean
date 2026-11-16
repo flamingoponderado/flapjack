@@ -269,6 +269,8 @@ private def CcCoOnlyDiffAt {C F : Type} (program : DataLang.Prog) (state : State
     ccCoOnlyDiff state target →
     ∃ t1, evaluate program target = (result, t1) ∧ ccCoOnlyDiff next t1
 
+/-- Flapjack infrastructure toward the parked HOL `evaluate_cc_co_only_diff`
+    (Skip case); no separate HOL original. -/
 private theorem ccCoOnlyDiffAt_skip {C F : Type} (state : State C F) :
     CcCoOnlyDiffAt .skip state := by
   intro C' target result next run safe diff
@@ -276,6 +278,8 @@ private theorem ccCoOnlyDiffAt_skip {C F : Type} (state : State C F) :
   obtain ⟨rfl, rfl⟩ := run
   exact ⟨target, by simp only [evaluate], diff⟩
 
+/-- Flapjack infrastructure toward the parked HOL `evaluate_cc_co_only_diff`
+    (Move case); no separate HOL original. -/
 private theorem ccCoOnlyDiffAt_move {C F : Type} (dest src : Nat) (state : State C F) :
     CcCoOnlyDiffAt (.move dest src) state := by
   intro C' target result next run safe diff
@@ -298,6 +302,8 @@ private theorem ccCoOnlyDiffAt_move {C F : Type} (dest src : Nat) (state : State
         ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
           ffi, space, tstamps, limits, safeFlag, peak⟩
 
+/-- Flapjack infrastructure toward the parked HOL `evaluate_cc_co_only_diff`
+    (Assign case); no separate HOL original. -/
 private theorem ccCoOnlyDiffAt_assign {C F : Type} (dest : Nat) (op : ClosLang.Op)
     (names : List Nat) (live : Option NumSet) (state : State C F) :
     CcCoOnlyDiffAt (.assign dest op names live) state := by
@@ -372,6 +378,8 @@ private theorem ccCoOnlyDiffAt_assign {C F : Type} (dest : Nat) (op : ClosLang.O
           · exact setVar_agree (installSfs op last) (installSfs op lastT) dest value
               (installSfs_agree last lastT op agreeLast)
 
+/-- Flapjack infrastructure toward the parked HOL `evaluate_cc_co_only_diff`
+    (Tick case); no separate HOL original. -/
 private theorem ccCoOnlyDiffAt_tick {C F : Type} (state : State C F) :
     CcCoOnlyDiffAt .tick state := by
   intro C' target result next run safe diff
@@ -401,6 +409,8 @@ private theorem ccCoOnlyDiffAt_tick {C F : Type} (state : State C F) :
         ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
           ffi, space, tstamps, limits, safeFlag, peak⟩
 
+/-- Flapjack infrastructure toward the parked HOL `evaluate_cc_co_only_diff`
+    (MakeSpace case); no separate HOL original. -/
 private theorem ccCoOnlyDiffAt_makeSpace {C F : Type} (amount : Nat) (names : NumSet)
     (state : State C F) : CcCoOnlyDiffAt (.makeSpace amount names) state := by
   intro C' target result next run safe diff
@@ -427,6 +437,8 @@ private theorem ccCoOnlyDiffAt_makeSpace {C F : Type} (amount : Nat) (names : Nu
           ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
             ffi, space, tstamps, limits, safeFlag, peak⟩)
 
+/-- Flapjack infrastructure toward the parked HOL `evaluate_cc_co_only_diff`
+    (Raise case); no separate HOL original. -/
 private theorem ccCoOnlyDiffAt_raise {C F : Type} (name : Nat) (state : State C F) :
     CcCoOnlyDiffAt (.raise name) state := by
   intro C' target result next run safe diff
@@ -463,6 +475,8 @@ private theorem ccCoOnlyDiffAt_raise {C F : Type} (name : Nat) (state : State C 
           ffi, space, tstamps, limits, safeFlag, peak⟩, exc⟩
       exact ⟨targetNext, by simp only [evaluate, ← locals, read, tExc], agreeNext⟩
 
+/-- Flapjack infrastructure toward the parked HOL `evaluate_cc_co_only_diff`
+    (Return case); no separate HOL original. -/
 private theorem ccCoOnlyDiffAt_return {C F : Type} (names : List Nat) (state : State C F) :
     CcCoOnlyDiffAt (.return names) state := by
   intro C' target result next run safe diff
@@ -485,6 +499,8 @@ private theorem ccCoOnlyDiffAt_return {C F : Type} (names : List Nat) (state : S
         ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
           ffi, space, tstamps, limits, safeFlag, peak⟩
 
+/-- Flapjack infrastructure toward the parked HOL `evaluate_cc_co_only_diff`
+    (Seq case); no separate HOL original. -/
 private theorem ccCoOnlyDiffAt_seq {C F : Type} (first second : DataLang.Prog)
     (state : State C F) (firstIH : CcCoOnlyDiffAt first state)
     (secondIH : ∀ mid : State C F, mid.clock ≤ state.clock → CcCoOnlyDiffAt second mid) :
@@ -534,6 +550,8 @@ private theorem ccCoOnlyDiffAt_seq {C F : Type} (first second : DataLang.Prog)
       exact ⟨(fixClock target (some stopped, t1)).2,
         by simp only [evaluate, tFirst, fixClock], agreeFix⟩
 
+/-- Flapjack infrastructure toward the parked HOL `evaluate_cc_co_only_diff`
+    (If case); no separate HOL original. -/
 private theorem ccCoOnlyDiffAt_if {C F : Type} (name : Nat) (yes no : DataLang.Prog)
     (state : State C F) (yesIH : CcCoOnlyDiffAt yes state) (noIH : CcCoOnlyDiffAt no state) :
     CcCoOnlyDiffAt (.ifThenElse name yes no) state := by
@@ -618,6 +636,8 @@ theorem popEnv_none_of_agree {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
       simp only [popEnv, frames] at run
       simp_all
 
+/-- Flapjack infrastructure toward the parked HOL `evaluate_cc_co_only_diff`
+    (tail-call Force case); no separate HOL original. -/
 private theorem ccCoOnlyDiffAt_tailForce {C F : Type} (label src : Nat) (state : State C F)
     (bodyIH : ∀ (body : DataLang.Prog) (called : State C F),
       called.clock < state.clock → CcCoOnlyDiffAt body called) :
@@ -719,6 +739,8 @@ private theorem ccCoOnlyDiffAt_tailForce {C F : Type} (label src : Nat) (state :
               rw [← clock]
               rw [if_neg zero]
               simp only [targetCalled, tRun]
+/-- Flapjack infrastructure toward the parked HOL `evaluate_cc_co_only_diff`
+    (returning-call Force case); no separate HOL original. -/
 private theorem ccCoOnlyDiffAt_returningForce {C F : Type} (dest : Nat) (live : NumSet)
     (label src : Nat) (state : State C F)
     (bodyIH : ∀ (body : DataLang.Prog) (called : State C F),
@@ -932,6 +954,8 @@ private theorem ccCoOnlyDiffAt_returningForce {C F : Type} (dest : Nat) (live : 
                             simp only [targetCallState, clampedT, tPop, setVar]
                           · exact setVar_agree popped t2 dest head agreePopped
 
+/-- Flapjack infrastructure toward the parked HOL `evaluate_cc_co_only_diff`
+    (tail-call case); no separate HOL original. -/
 private theorem ccCoOnlyDiffAt_tailCall {C F : Type} (dest : Option Nat) (names : List Nat)
     (handler : Option (Nat × DataLang.Prog)) (state : State C F)
     (bodyIH : ∀ (body : DataLang.Prog) (called : State C F),
