@@ -128,6 +128,8 @@ cplist_vars_def_typed=cplist_vars ([] :(infer_t list # infer_t list) list) = (�
 FINITE_cplist_vars_typed=FINITE (cplist_vars (wl :(infer_t list # infer_t list) list))
 vars_encode_infer_ts_typed=vars (encode_infer_ts (is :infer_t list)) = isvars is
 PFLAT_def_typed=PFLAT ([] :(infer_t list # infer_t list) list) = ({||} :atom term -> num) ∧ (∀(ps :(infer_t list # infer_t list) list). PFLAT ((([] :infer_t list),([] :infer_t list))::ps) = PFLAT ps) ∧ (∀(ps :(infer_t list # infer_t list) list) (js :infer_t list) (j :infer_t). PFLAT ((([] :infer_t list),j::js)::ps) = BAG_INSERT (encode_infer_t j) (PFLAT ((([] :infer_t list),js)::ps))) ∧ ∀(ps :(infer_t list # infer_t list) list) (js :infer_t list) (is :infer_t list) (i :infer_t). PFLAT ((i::is,js)::ps) = BAG_INSERT (encode_infer_t i) (PFLAT ((is,js)::ps))
+BAG_INSERT_commutes_typed=∀(b :α -> num) (e1 :α) (e2 :α). BAG_INSERT e1 (BAG_INSERT e2 b) = BAG_INSERT e2 (BAG_INSERT e1 b)
+PFLAT_CONS2_typed=PFLAT (((l1 :infer_t list),(h2 :infer_t)::(t2 :infer_t list))::(rest :(infer_t list # infer_t list) list)) = BAG_INSERT (encode_infer_t h2) (PFLAT ((l1,t2)::rest))
 FINITE_BAG_PFLAT_typed=∀(ps :(infer_t list # infer_t list) list). FINITE_BAG (PFLAT ps)
 kcunifywlR_def_typed=∀(s :infer_t sptree$num_map) (wl :(infer_t list # infer_t list) list) (s0 :infer_t sptree$num_map) (wl0 :(infer_t list # infer_t list) list). kcunifywlR (s,wl) (s0,wl0) ⇔ cwfs s ∧ cwfs s0 ∧ sp2fm s0 ⊑ sp2fm s ∧ substvars (encode_infer_t o_f sp2fm s) ∪ cplist_vars wl ⊆ substvars (encode_infer_t o_f sp2fm s0) ∪ cplist_vars wl0 ∧ (mlt (walkstarR (sp2fm (map encode_infer_t s)) :atom term -> atom term -> bool) LEX $<) (PFLAT wl,LENGTH wl) (PFLAT wl0,LENGTH wl0)
 WF_kcunifywlR_typed=WF kcunifywlR

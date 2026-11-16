@@ -138706,6 +138706,18 @@
   "reviewer": "Compared the typed HOL source: the variables of the entire encoded list equal the union over every inference type in that list, with no additional premise."
 },
 {
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_INSERT_commutes",
+  "lean_path": "Flapjack/Misc/Bag.lean", "lean_name": "bagInsertCommutes",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: both insertions on an arbitrary polymorphic function-valued bag commute, without an additional equality instance premise."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "PFLAT_CONS2",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistBag.lean", "lean_name": "pflatCons2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: inserting the second-list head preserves the full arbitrary first list, remaining second list and worklist, with no added premises."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "PFLAT_def",
   "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistBag.lean", "lean_name": "pflat",
   "statement_status": "reviewed_exact",

@@ -59,6 +59,14 @@ noncomputable def bagInsert {α : Type} (element : α) (bag : Bag α) : Bag α :
   classical
   exact fun x => if x = element then bag element + 1 else bag x
 
+@[hol "HOL/src/bag/bagScript.sml" "BAG_INSERT_commutes"]
+theorem bagInsertCommutes {α : Type} (b : Bag α) (e1 e2 : α) :
+    bagInsert e1 (bagInsert e2 b) = bagInsert e2 (bagInsert e1 b) := by
+  classical
+  funext x
+  by_cases h1 : x = e1 <;> by_cases h2 : x = e2 <;>
+    simp_all [bagInsert, Nat.add_comm, Nat.add_left_comm]
+
 /-- A finite bag belongs to every collection closed under insertion. -/
 @[hol "HOL/src/bag/bagScript.sml" "FINITE_BAG"]
 def finiteBag {α : Type} (bag : Bag α) : Prop :=

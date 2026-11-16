@@ -27,4 +27,14 @@ theorem finitePflat (work : List (List InferT × List InferT)) : finiteBag (pfla
   | case3 y ys rest ih => exact finiteBagInsert _ ih _
   | case4 x xs ys rest ih => exact finiteBagInsert _ ih _
 
+@[hol "cakeml/compiler/inference/unifyScript.sml" "PFLAT_CONS2"]
+theorem pflatCons2 (l1 : List InferT) (h2 : InferT) (t2 : List InferT)
+    (rest : List (List InferT × List InferT)) :
+    pflat ((l1, h2 :: t2) :: rest) =
+      bagInsert (encodeInferT h2) (pflat ((l1, t2) :: rest)) := by
+  induction l1 with
+  | nil => rw [pflat]
+  | cons x xs ih =>
+    rw [pflat, pflat, ih, bagInsertCommutes]
+
 end Flapjack.Compiler.Inference.Unify
