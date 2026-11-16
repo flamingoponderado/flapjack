@@ -27,3 +27,5 @@ val _ = show_thm "oracle_monotonic_step2_typed=" backendPropsTheory.oracle_monot
 val _ = show_thm "oracle_monotonic_SND_syntax_to_full_typed=" backendPropsTheory.oracle_monotonic_SND_syntax_to_full;
 val _ = show_thm "oracle_monotonic_shift_subset_typed=" backendPropsTheory.oracle_monotonic_shift_subset;
 val _ = show_thm "is_state_oracle_shift_typed=" backendPropsTheory.is_state_oracle_shift;
+val _ = show_thm "the_eqn_typed=" backendPropsTheory.the_eqn;
+val _ = show_thm "the_F_eq_typed=" backendPropsTheory.the_F_eq;
