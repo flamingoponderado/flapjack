@@ -199,18 +199,31 @@ end WordSemStateFiniteExact
 
 /-- Exact HOL `stack_size_eq` (`wordPropsScript.sml:1776-1783`).  HOL's
     wildcards are distinct universally quantified frame lists in each
-    conjunct. -/
+    conjunct, and the empty-list conjunct is at a type variable independent of
+    the frame lists' (`β` in the probe capture). -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "stack_size_eq"
   (words_as_type_indexed_bitvec)]
-theorem stackSizeEq {width : Nat} [NeZero width] (n : Option Nat)
+theorem stackSizeEq {width other : Nat} [NeZero width] [NeZero other] (n : Option Nat)
     (l0 l l0' l' : List (Nat × WordLocW width)) (handler : Nat × Nat × Nat)
     (stack : List (WordSemStackFrame width)) :
     wordSemStackSize (.stackFrame n l0 l none :: stack) =
         wordSemOptionAdd n (wordSemStackSize stack) ∧
       wordSemStackSize (.stackFrame n l0' l' (some handler) :: stack) =
         wordSemOptionAdd (n.map (fun m => 3 + m)) (wordSemStackSize stack) ∧
-      wordSemStackSize ([] : List (WordSemStackFrame width)) = some 1 :=
+      wordSemStackSize ([] : List (WordSemStackFrame other)) = some 1 :=
   ⟨rfl, rfl, rfl⟩
+
+/-- Exact HOL `stack_size_eq2` (`wordPropsScript.sml:1785`).  HOL's empty-list
+    conjunct is at a type variable independent of the frame list's, so each
+    width carries its own `NeZero` discharge of `dimindex (:α) ≥ 1`. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "stack_size_eq2"
+  (words_as_type_indexed_bitvec)]
+theorem stackSizeEq2 {width other : Nat} [NeZero width] [NeZero other]
+    (frame : WordSemStackFrame width) (stack : List (WordSemStackFrame width)) :
+    wordSemStackSize (frame :: stack) =
+        wordSemOptionAdd (wordSemStackSizeFrame frame) (wordSemStackSize stack) ∧
+      wordSemStackSize ([] : List (WordSemStackFrame other)) = some 1 :=
+  ⟨rfl, rfl⟩
 
 /-- Exact HOL `s_key_eq_def2` (`wordPropsScript.sml:1841-1846`). -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "s_key_eq_def2"
