@@ -139012,6 +139012,12 @@
   "reviewer": "Compared typed HOL source: the sole cwfs premise implies the complete cwalkstar and singleton-worklist normalization equality. The source-shaped model agrees under cwfs; the result is proved a singleton, making headD's fallback unreachable and agreeing with HOL HD. The visible sp2fm result uses the reviewed canonical map."
 },
 {
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml", "hol_name": "TC_vR_SUBMAP",
+  "lean_path": "Flapjack/HOL/Unification/UnifProps.lean", "lean_name": "tcVRSubmap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s", "sx"],
+  "reviewer": "Compared TC_vR_SUBMAP_typed: the source submap premise implies preservation of every transitive dependency path, with the original quantified variables and direction. Both substitutions use the canonical finite-map codec."
+},
+{
   "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml", "hol_name": "walkstar_walk_SUBMAP",
   "lean_path": "Flapjack/HOL/Unification/UnifProps.lean", "lean_name": "walkstarWalkSubmap",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s", "sx"],
