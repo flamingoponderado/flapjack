@@ -228,6 +228,22 @@ val tscheme_approx_trans_replay = Q.prove(
   qexists_tac `FDOM s` >> metis_tac [check_t_more2, ADD_COMM, ADD_ASSOC]);
 val _ = show "tscheme_approx_trans_replay_typed" tscheme_approx_trans_replay;
 
+val tscheme_inst_to_approx_replay = Q.prove(
+  `tscheme_inst (tvs,t) (tvs',t') ⇒
+   probe_tscheme_approx 0 FEMPTY (tvs,unconvert_t t) (tvs',unconvert_t t')`,
+  rw [tscheme_inst_def, probe_tscheme_approx_def, unifyTheory.t_walkstar_FEMPTY] >>
+  qexists_tac `MAP unconvert_t subst` >>
+  rw [EVERY_MAP] >-
+    (fs [EVERY_MEM] >> metis_tac [check_freevars_to_check_t_replay]) >>
+  rw [MAP_MAP_o, combinTheory.o_DEF] >>
+  drule unconvert_db_subst_replay >> rw [] >>
+  drule check_freevars_to_check_t_replay >> rw [] >>
+  `check_t (LENGTH (MAP unconvert_t subst)) {} (unconvert_t t')` by rw [] >>
+  `check_t (LENGTH (MAP unconvert_t subst)) uvs (unconvert_t t')` by metis_tac [check_t_more] >>
+  drule (GEN_ALL (CONJUNCT1 infer_deBruijn_subst_twice)) >>
+  rw [MAP_MAP_o, combinTheory.o_DEF]);
+val _ = show "tscheme_inst_to_approx_replay_typed" tscheme_inst_to_approx_replay;
+
 val type_config_ok_replay = Q.prove(
   `probe_env_rel prim_tenv init_config ∧ inf_set_tids_ienv prim_type_ids init_config`,
   rw [probe_env_rel_def, inf_set_tids_ienv_def, ienv_ok_def, ienv_val_ok_def,

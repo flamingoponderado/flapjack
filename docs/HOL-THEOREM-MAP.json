@@ -138061,6 +138061,13 @@
   "reviewer": "Compared HOL source and deBruijn_subst_convert_replay_typed: the shared bound and arbitrary inference substitution, empty-uvar guards, both type and list conjuncts, and equality directions agree. The source-defined conversion's unspecified uvar clause is excluded by the original checks on the input types."
 },
 {
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml", "hol_name": "tscheme_inst_to_approx",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel/Instantiation.lean", "lean_name": "tschemeInstToApprox",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+  "reviewer": "Compared HOL source and tscheme_inst_to_approx_replay_typed: the original declarative instantiation premise implies approximation of the converted types at bound zero and FEMPTY, with no additional premise. Both HOL and Lean normalizers are identity at this fixed empty map, so the model's off-wfs choice is irrelevant here; the canonical FEMPTY producer is separately reviewed."
+},
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "infer_deBruijn_subst_twice",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/DeBruijn/Compose.lean", "lean_name": "inferDeBruijnSubstTwice",
   "statement_status": "reviewed_exact",

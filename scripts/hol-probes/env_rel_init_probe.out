@@ -33,6 +33,7 @@ Saved definition ____ "probe_env_rel_def"
 env_rel_replay_typed=∀(tenv :type_env) (ienv :inf_env). probe_env_rel tenv ienv ⇔ ienv_ok (∅ :num -> bool) ienv ∧ tenv_ok tenv ∧ (∀(x :mlstring list). nsLookupMod ienv.inf_v x = (NONE :(mlstring, mlstring, num # infer_t) namespace option) ⇔ nsLookupMod tenv.v x = (NONE :(mlstring, mlstring, num # t) namespace option)) ∧ probe_env_rel_sound (FEMPTY :num |-> infer_t) ienv tenv Empty ∧ probe_env_rel_complete (FEMPTY :num |-> infer_t) ienv tenv Empty
 tscheme_approx_refl_replay_typed=∀(max_tvs :num) (s :num |-> infer_t) (tvs :num) (t :infer_t). probe_tscheme_approx max_tvs s (tvs,t) (tvs,t)
 tscheme_approx_trans_replay_typed=probe_tscheme_approx (max_tvs :num) (s :num |-> infer_t) ((tvs1 :num),(t1 :infer_t)) ((tvs2 :num),(t2 :infer_t)) ∧ probe_tscheme_approx (0 :num) s (tvs2,t2) ((tvs3 :num),(t3 :infer_t)) ⇒ probe_tscheme_approx max_tvs s (tvs1,t1) (tvs3,t3)
+tscheme_inst_to_approx_replay_typed=tscheme_inst ((tvs :num),(t :t)) ((tvs' :num),(t' :t)) ⇒ probe_tscheme_approx (0 :num) (FEMPTY :num |-> infer_t) (tvs,unconvert_t t) (tvs',unconvert_t t')
 type_config_ok_replay_typed=probe_env_rel prim_tenv init_config ∧ inf_set_tids_ienv prim_type_ids init_config
 lookup_varE_empty_replay_typed=∀(x :(mlstring, mlstring) id). lookup_varE x Empty = (NONE :(num # t) option)
 init_config_tenv_to_ienv_replay_typed=init_config = probe_tenv_to_ienv prim_tenv
