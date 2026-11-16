@@ -103,8 +103,8 @@ def walkStar (s : Spt InferT) (t : InferT) : Option InferT := do
 
 /-- Execute the source paired-list unification worklist. The outer option
 models nontermination, while the inner option reports unification failure.
-Termination and preservation of well-formed substitutions remain to be proved,
-so this is not tagged as the total HOL operation. -/
+The total HOL operation has no outer option, so this definition is untagged;
+`Unify.WorklistTotal` proves termination under the original cwfs guard. -/
 def unifyWorkPartial (s : Spt InferT) (work : List (List InferT × List InferT)) :
     Option (Option (Spt InferT)) := do
   match work with
