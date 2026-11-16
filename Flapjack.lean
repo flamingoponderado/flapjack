@@ -3799,6 +3799,7 @@ import Flapjack.Compiler.Inference.Unify.ComputationalWalk
 import Flapjack.Compiler.Inference.Unify.ComputationalWalk.ToVar
 import Flapjack.Compiler.Inference.Unify.ComputationalWalk.Range
 import Flapjack.Compiler.Inference.Unify.ComputationalWf.Step
+import Flapjack.HOL.Unification.TcallUnif.SubstVars
 import Flapjack.Compiler.Inference.Unify.ComputationalWalk.Order
 import Flapjack.Compiler.Inference.Unify.Occurs.Correctness
 import Flapjack.Compiler.Inference.Unify.Walkstar.Computational

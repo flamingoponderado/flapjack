@@ -21,6 +21,7 @@ val _ = show "FINITE_BAG_UNION_typed" bagTheory.FINITE_BAG_UNION;
 val _ = show "mlt1_BAG_INSERT_typed" tcallUnifTheory.mlt1_BAG_INSERT;
 val _ = show "mlt_BAG_INSERT2_typed" unifyTheory.mlt_BAG_INSERT2;
 val _ = show "vwalk_rangevars_typed" tcallUnifTheory.vwalk_rangevars;
+val _ = show "substvars_FUPDATE_typed" tcallUnifTheory.substvars_FUPDATE;
 val _ = show "walk_rangevars_typed" tcallUnifTheory.walk_rangevars;
 val _ = show "tcvwalk_substvars_typed" unifyTheory.tcvwalk_substvars;
 val _ = show "tcwalk_rangevars_typed" unifyTheory.tcwalk_rangevars;

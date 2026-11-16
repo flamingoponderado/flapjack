@@ -138988,6 +138988,12 @@
   "reviewer": "Compared typed HOL source: for any relation, two elements and a finite bag, the transitive multiset order relates the bag to insertion of y followed by x."
 },
 {
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/compilation/tcallUnifScript.sml", "hol_name": "substvars_FUPDATE",
+  "lean_path": "Flapjack/HOL/Unification/TcallUnif/SubstVars.lean", "lean_name": "substVarsFupdate",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared typed HOL source: for arbitrary update, the full substitution-variable set is the union of the erased substitution variables, the updated key, and the inserted term variables. The canonical parameter s has its codec witness; HOL-equality erase and update handle an existing key by erase-then-update."
+},
+{
   "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/compilation/tcallUnifScript.sml", "hol_name": "vwalk_rangevars",
   "lean_path": "Flapjack/HOL/Unification/TcallUnif/WalkRange.lean", "lean_name": "vwalkRangeVars",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
