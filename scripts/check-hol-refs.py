@@ -2460,6 +2460,114 @@ def _is_top_level_hol_finite_map_type(type_text: str) -> bool:
     )) == 1
 
 
+def unification_tuple_relation_errors(
+    source: str, owner: str, positions: tuple[str, ...],
+    hol_reference: tuple[str, str],
+) -> list[str]:
+    """Audit the prospective WF_uR tuple codec and its exact relation owner.
+
+    This source-level check is not an elaborated-type or axiom audit and does
+    not authorize the qualifier by itself. It is intentionally restricted to
+    the existing unification relation and the first slot of its shared domain.
+    """
+    errors: list[str] = []
+    if hol_reference != (
+        "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml",
+        "WF_uR",
+    ) or positions != ("component_1",):
+        errors.append("unification tuple qualifier requires WF_uR and component_1")
+    clean = strip_lean_comments(source)
+    owner_clean = strip_lean_comments(owner)
+    code = lean_code_without_strings(source)
+    owner_code = lean_code_without_strings(owner)
+    if re.search(r'(?<![A-Za-z0-9_])r\#*"', clean) or re.search(r'(?<![A-Za-z0-9_])r\#*"', owner_clean):
+        errors.append("unification tuple audit rejects raw string literals")
+    if not re.search(r"(?m)^public import Flapjack\.HOL\.Unification\.UnifDef\s*$", code):
+        errors.append("unification tuple qualifier requires the exact relation owner import")
+    for label, scoped_code in (("target", code), ("owner", owner_code)):
+        if re.search(r"(?m)^[ \t]*(?:variable|variables|include|omit)\b", scoped_code):
+            errors.append(f"unification tuple qualifier forbids ambient variables in {label}")
+        if re.search(r"(?m)^[ \t]*(?:(?:local|scoped)\s+)*(?:syntax|notation|macro|macro_rules|elab|elab_rules|infix|infixl|infixr|prefix|postfix|open)\b", scoped_code):
+            errors.append(f"unification tuple qualifier forbids local syntax or name rebinding in {label}")
+        if (len(re.findall(r"(?m)^namespace\s+Flapjack\.HOL\.Unification\s*$", scoped_code)) != 1 or
+                len(re.findall(r"(?m)^namespace\b", scoped_code)) != 1):
+            errors.append(f"unification tuple qualifier requires the exact namespace in {label}")
+    if re.search(r"(?m)^[ \t]*(?:(?:private|protected|noncomputable|local|scoped)\s+)*(?:def|abbrev|theorem|axiom|constant|opaque|inductive|structure|class)\s+(?:[\w'.]+\.)?(?:uR|HolFiniteMapExact|FiniteMapBroad|Term)\b", code):
+        errors.append("unification tuple qualifier rejects shadowed relation or carriers")
+    if re.search(r"(?m)^[ \t]*(?:(?:private|protected|noncomputable|local|scoped)\s+)*(?:def|abbrev|theorem|axiom|constant|opaque|inductive|structure|class)\s+(?:[\w'.]+\.)?(?:HolFiniteMapExact|FiniteMapBroad|Term|wfs|walkstar|pairCount)\b", owner_code):
+        errors.append("unification tuple qualifier rejects shadowed owner carriers or primitives")
+    if re.search(r"(?m)^[ \t]*(?:(?:private|protected|noncomputable|local|scoped)\s+)*(?:def|abbrev|theorem|axiom|constant|opaque|inductive|structure|class)\s+[\w'.]+\.uR\b", owner_code):
+        errors.append("unification tuple qualifier rejects an alternative qualified uR")
+
+    def declaration_block(text: str, masked: str, kind: str, name: str) -> str:
+        matches = list(re.finditer(rf"(?m)^[ \t]*{kind}\s+{re.escape(name)}\b", masked))
+        if len(matches) != 1:
+            return ""
+        start = matches[0].start()
+        tail = masked[start:]
+        following = re.search(r"(?m)^[ \t]*(?:@\[|def\b|abbrev\b|theorem\b|lemma\b|axiom\b|end\b)", tail[1:])
+        end = start + following.start() + 1 if following else len(text)
+        return " ".join(text[start:end].split())
+
+    canonical = "HolFiniteMapExact Nat (Term α) × Term α × Term α"
+    broad = "FiniteMapBroad Nat (Term α) × Term α × Term α"
+    expected = {
+        ("def", "uRTupleToBroad"):
+            f"def uRTupleToBroad {{α : Type}} (p : {canonical}) : {broad} := "
+            "(FiniteMapBroad.toBroad p.1, p.2.1, p.2.2)",
+        ("def", "uRTupleOfBroad"):
+            f"def uRTupleOfBroad {{α : Type}} (p : {broad}) : {canonical} := "
+            "(FiniteMapBroad.ofBroad p.1, p.2.1, p.2.2)",
+        ("theorem", "holFmapAsFiniteSupportTupleWitness_uRWellFounded"):
+            f"theorem holFmapAsFiniteSupportTupleWitness_uRWellFounded {{α : Type}} (p : {canonical}) : "
+            "uRTupleOfBroad (uRTupleToBroad p) = p := by rcases p with ⟨⟨lookup, support⟩, left, right⟩ rfl",
+        ("theorem", "holFmapAsFiniteSupportTupleWitness_uRWellFounded_reverse"):
+            f"theorem holFmapAsFiniteSupportTupleWitness_uRWellFounded_reverse {{α : Type}} (p : {broad}) : "
+            "uRTupleToBroad (uRTupleOfBroad p) = p := by rcases p with ⟨⟨lookup, support⟩, left, right⟩ rfl",
+    }
+    for (kind, name), wanted in expected.items():
+        if declaration_block(clean, code, kind, name) != wanted:
+            errors.append(f"unification tuple qualifier requires exact {name} codec or witness")
+    statements = _statements_of_declaration(code, "uRWellFounded")
+    if len(statements) != 1 or " ".join(statements[0].split()) != "{α : Type} : WellFounded (@uR α)":
+        errors.append("unification tuple qualifier requires the complete WF_uR signature")
+    owner_def = (
+        f"def uR {{α : Type}} (left right : {canonical}) : Prop := "
+        "wfs left.1 ∧ right.1.submap left.1 ∧ "
+        "Set.Subset (allVars left.1 left.2.1 left.2.2) (allVars right.1 right.2.1 right.2.2) ∧ "
+        "pairCount (walkstar left.1 left.2.1) < pairCount (walkstar left.1 right.2.1)"
+    )
+    if declaration_block(owner_clean, owner_code, "def", "uR") != owner_def:
+        errors.append("unification tuple qualifier requires the reviewed relation body")
+    all_vars_def = (
+        "def allVars {α β : Type} (s : HolFiniteMapExact Nat (Term α)) (t1 t2 : Term β) : Set Nat := "
+        "Set.union (Set.union (vars t1) (vars t2)) (substVars s)"
+    )
+    if declaration_block(owner_clean, owner_code, "def", "allVars") != all_vars_def:
+        errors.append("unification tuple qualifier requires the reviewed allVars body")
+    owner_tag = re.compile(
+        r'@\[hol\s+"HOL/examples/algorithms/unification/triangular/first-order/'
+        r'unifDefScript\.sml"\s+"uR_def"\s+'
+        r'\(fmap_as_finite_support_parameters\s*:=\s*\[sx,\s*s\]\)\s*\]'
+    )
+    tags = [m for m in owner_tag.finditer(owner_clean)
+            if owner_code[m.start():m.start() + 1] == "@" and
+            re.match(r"\s*theorem\s+uREq\b", owner_code[m.end():])]
+    if len(tags) != 1:
+        errors.append("unification tuple qualifier requires the reviewed uREq attribute")
+    expected_equation = (
+        "{α : Type} (sx : HolFiniteMapExact Nat (Term α)) (c1 c2 : Term α) "
+        "(s : HolFiniteMapExact Nat (Term α)) (t1 t2 : Term α) : "
+        "uR (sx, c1, c2) (s, t1, t2) ↔ wfs sx ∧ s.submap sx ∧ "
+        "Set.Subset (allVars sx c1 c2) (allVars s t1 t2) ∧ "
+        "pairCount (walkstar sx c1) < pairCount (walkstar sx t1)"
+    )
+    owner_statements = _statements_of_declaration(owner_code, "uREq")
+    if len(owner_statements) != 1 or " ".join(owner_statements[0].split()) != expected_equation:
+        errors.append("unification tuple qualifier requires the complete uREq statement")
+    return errors
+
+
 def fmap_value_context_tuple_errors(
     lines: list[str], declaration: str, positions: tuple[str, ...],
     hol_reference: tuple[str, str],

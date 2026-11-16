@@ -7,6 +7,32 @@ public import Flapjack.FiniteMap.MapKeys
 
 namespace Flapjack.HOL.Unification
 
+/-- The canonical tuple viewed through the finite-support-preserving map codec. -/
+def uRTupleToBroad {α : Type}
+    (p : HolFiniteMapExact Nat (Term α) × Term α × Term α) :
+    FiniteMapBroad Nat (Term α) × Term α × Term α :=
+  (FiniteMapBroad.toBroad p.1, p.2.1, p.2.2)
+
+/-- Reconstruct the canonical tuple from its finite-support-preserving view. -/
+def uRTupleOfBroad {α : Type}
+    (p : FiniteMapBroad Nat (Term α) × Term α × Term α) :
+    HolFiniteMapExact Nat (Term α) × Term α × Term α :=
+  (FiniteMapBroad.ofBroad p.1, p.2.1, p.2.2)
+
+/-- The tuple codec preserves the complete canonical map and both terms. -/
+theorem holFmapAsFiniteSupportTupleWitness_uRWellFounded {α : Type}
+    (p : HolFiniteMapExact Nat (Term α) × Term α × Term α) :
+    uRTupleOfBroad (uRTupleToBroad p) = p := by
+  rcases p with ⟨⟨lookup, support⟩, left, right⟩
+  rfl
+
+/-- The tuple codec also reconstructs every finite-support-preserving view. -/
+theorem holFmapAsFiniteSupportTupleWitness_uRWellFounded_reverse {α : Type}
+    (p : FiniteMapBroad Nat (Term α) × Term α × Term α) :
+    uRTupleToBroad (uRTupleOfBroad p) = p := by
+  rcases p with ⟨⟨lookup, support⟩, left, right⟩
+  rfl
+
 /-- The unification relation is well founded on its tuple model. This proof is
     untagged while the representation of finite maps inside tuple-valued
     relation arguments has no reviewed qualifier. -/
