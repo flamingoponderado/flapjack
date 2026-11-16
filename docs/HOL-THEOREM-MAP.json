@@ -138724,6 +138724,24 @@
   "reviewer": "Compared the typed HOL source: the complete variable-multiplicity bag of every generic first-order term is finite, with no additional assumptions."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "walkstarR_trans",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistRelation.lean", "lean_name": "walkstarRTrans",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared the typed HOL source: the substitution and term payload types remain independent, both original relation premises imply the full transitive conclusion, and the canonical map has its codec witness."
+},
+{
+  "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "mlt1_def",
+  "lean_path": "Flapjack/Misc/Bag/MultisetOrder.lean", "lean_name": "bagMultisetStep",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared the typed HOL source: both finite-bag premises, polymorphic bag and relation carriers, all three witnesses, union equations and replacement-element relation are retained."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkstarScript.sml", "hol_name": "walkstarR_def",
+  "lean_path": "Flapjack/HOL/Unification/Walkstar/Relation.lean", "lean_name": "walkstarR",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared the typed HOL source: the term and substitution payload types remain independent, and both transitive closures, variable-multiplicity bag order and pair-count lexicographic tie are retained. The canonical substitution has a codec witness."
+},
+{
   "hol_path": "HOL/src/bag/bagScript.sml", "hol_name": "BAG_UNION_INSERT",
   "lean_path": "Flapjack/Misc/Bag.lean", "lean_name": "bagUnionInsert",
   "statement_status": "reviewed_exact",
