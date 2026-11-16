@@ -14,6 +14,8 @@ check_freevars_to_check_t_replay_typed=∀(t :t) (z :α). check_freevars (n :num
 Saved definition ____ "probe_convert_t_def"
 Saved induction _____ "probe_convert_t_ind"
 convert_t_replay_typed=(∀(n :num). probe_convert_t (Infer_Tvar_db n) = Tvar_db n) ∧ ∀(ts :infer_t list) (tc :num). probe_convert_t (Infer_Tapp ts tc) = Tapp (MAP (λ(a :infer_t). probe_convert_t a) ts) tc
+Saved definition ____ "probe_ienv_to_tenv_def"
+ienv_to_tenv_replay_typed=∀(ienv :inf_env). probe_ienv_to_tenv ienv = <|v := nsMap (λ((tvs :num),(t :infer_t)). (tvs,probe_convert_t t)) ienv.inf_v; c := ienv.inf_c; t := ienv.inf_t|>
 infer_deBruijn_inc_typed=(∀(n :num) (m :num). infer_deBruijn_inc n (Infer_Tvar_db m) = Infer_Tvar_db (m + n)) ∧ (∀(ts :infer_t list) (tn :num) (n :num). infer_deBruijn_inc n (Infer_Tapp ts tn) = Infer_Tapp (MAP (λ(a :infer_t). infer_deBruijn_inc n a) ts) tn) ∧ ∀(n :num) (m :num). infer_deBruijn_inc n (Infer_Tuvar m) = Infer_Tuvar m
 convert_inc_replay_typed=∀(t :infer_t) (tvs :num) (tvs' :num). check_t tvs' (∅ :num -> bool) t ⇒ probe_convert_t (infer_deBruijn_inc tvs t) = deBruijn_inc (0 :num) tvs (probe_convert_t t)
 inc_convert_t_replay_typed=(∀(t :infer_t) (tvs' :num) (tvs :num). check_t tvs' (∅ :num -> bool) t ⇒ deBruijn_inc tvs' tvs (probe_convert_t t) = probe_convert_t t) ∧ ∀(ts :infer_t list) (tvs' :num) (tvs :num). EVERY (check_t tvs' (∅ :num -> bool)) ts ⇒ MAP (deBruijn_inc tvs' tvs ∘ probe_convert_t) ts = MAP probe_convert_t ts
@@ -42,6 +44,7 @@ tscheme_approx_refl_replay_typed=∀(max_tvs :num) (s :num |-> infer_t) (tvs :nu
 tscheme_approx_trans_replay_typed=probe_tscheme_approx (max_tvs :num) (s :num |-> infer_t) ((tvs1 :num),(t1 :infer_t)) ((tvs2 :num),(t2 :infer_t)) ∧ probe_tscheme_approx (0 :num) s (tvs2,t2) ((tvs3 :num),(t3 :infer_t)) ⇒ probe_tscheme_approx max_tvs s (tvs1,t1) (tvs3,t3)
 tscheme_inst_to_approx_replay_typed=tscheme_inst ((tvs :num),(t :t)) ((tvs' :num),(t' :t)) ⇒ probe_tscheme_approx (0 :num) (FEMPTY :num |-> infer_t) (tvs,unconvert_t t) (tvs',unconvert_t t')
 env_rel_tenv_to_ienv_statement_typed=∀(tenv :type_env). tenv_ok tenv ⇒ probe_env_rel tenv (probe_tenv_to_ienv tenv)
+env_rel_ienv_to_tenv_statement_typed=∀(ienv :inf_env). ienv_ok (∅ :num -> bool) ienv ⇒ probe_env_rel (probe_ienv_to_tenv ienv) ienv
 env_rel_extend_statement_typed=∀(tenv1 :type_env) (ienv1 :inf_env) (tenv2 :type_env) (ienv2 :inf_env). probe_env_rel tenv1 ienv1 ∧ probe_env_rel tenv2 ienv2 ⇒ probe_env_rel (extend_dec_tenv tenv1 tenv2) (extend_dec_ienv ienv1 ienv2)
 env_rel_lift_statement_typed=∀(tenv :type_env) (ienv :inf_env) (mn :mlstring). probe_env_rel tenv ienv ⇒ probe_env_rel (tenvLift mn tenv) (lift_ienv mn ienv)
 type_config_ok_replay_typed=probe_env_rel prim_tenv init_config ∧ inf_set_tids_ienv prim_type_ids init_config

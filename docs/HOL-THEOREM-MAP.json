@@ -138061,6 +138061,13 @@
   "reviewer": "Compared HOL source and deBruijn_subst_convert_replay_typed: the shared bound and arbitrary inference substitution, empty-uvar guards, both type and list conjuncts, and equality directions agree. The source-defined conversion's unspecified uvar clause is excluded by the original checks on the input types."
 },
 {
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml", "hol_name": "env_rel_ienv_to_tenv",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel/Relation.lean", "lean_name": "envRelIenvToTenv",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+  "fmap_as_finite_support_result_observations": ["Flapjack.HolFiniteMapExact.holEmpty"],
+  "reviewer": "Compared HOL source, ienv_to_tenv_replay_typed and env_rel_ienv_to_tenv_statement_typed (the latter captures the inferred reconstructed statement, not a proof replay). The original closed-inference-environment premise implies the complete relation for its converted environment. The premise excludes unification variables in lookup-observable entries; Lean expands env_rel one level to expose its fixed empty maps where both normalizers are identity."
+},
+{
   "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "ienv_ok_extend_dec_ienv",
   "lean_path": "Flapjack/Compiler/Inference/InferProps/Extend.lean", "lean_name": "ienvOkExtendDecIenv",
   "statement_status": "reviewed_exact",

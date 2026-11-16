@@ -40,6 +40,69 @@ noncomputable def envRelModel (tenv : TypeEnv) (ienv : Env) : Prop :=
     envRelSoundModel HolFiniteMapExact.holEmpty ienv tenv .empty ∧
     envRelCompleteModel HolFiniteMapExact.holEmpty ienv tenv .empty
 
+/-- Inference-to-declarative conversion in the source-shaped model. This
+    remains untagged because `convertT` has an unspecified source case for
+    unification variables; checked environments exclude that case. -/
+noncomputable def ienvToTenvModel (ienv : Env) : TypeEnv :=
+  ⟨nsMap (fun entry => (entry.1, convertT entry.2)) ienv.infV, ienv.infC, ienv.infT⟩
+
+/-- A closed inference environment relates to its converted declarative
+    environment; the relation is expanded to expose the fixed empty maps. -/
+@[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "env_rel_ienv_to_tenv"
+  (fmap_as_finite_support_result_observations := [Flapjack.HolFiniteMapExact.holEmpty])]
+theorem envRelIenvToTenv (ienv : Env) (h : ienvOk (fun _ => False) ienv) :
+    ienvOk (fun _ => False) ienv ∧ tenvOk (ienvToTenvModel ienv) ∧
+      (∀ path, nsLookupMod ienv.infV path = none ↔ nsLookupMod (ienvToTenvModel ienv).v path = none) ∧
+      envRelSoundModel HolFiniteMapExact.holEmpty ienv (ienvToTenvModel ienv) .empty ∧
+      envRelCompleteModel HolFiniteMapExact.holEmpty ienv (ienvToTenvModel ienv) .empty := by
+  change envRelModel (ienvToTenvModel ienv) ienv
+  classical
+  have decEq : Classical.typeDecidableEq Flapjack.Basis.Pure.MlString.MlString =
+      Flapjack.Basis.Pure.MlString.instDecidableEqMlString := by
+    funext a b
+    exact Subsingleton.elim _ _
+  have valueOk := h.1
+  unfold ienvValOk nsAll at valueOk
+  change ∀ id v, @nsLookup _ _ _ (Classical.typeDecidableEq _) (Classical.typeDecidableEq _)
+    ienv.infV id = some v → checkT v.1 (fun _ => False) v.2 at valueOk
+  rw [decEq] at valueOk
+  refine ⟨h, ?_, ?_, ?_, ?_⟩
+  · refine ⟨?_, h.2.1, h.2.2⟩
+    unfold tenvValOk
+    change @nsAll _ _ _ (Classical.typeDecidableEq _) (Classical.typeDecidableEq _)
+      (fun _ entry => checkFreevars entry.1 [] entry.2 = true)
+      (nsMap (fun entry => (entry.1, convertT entry.2)) ienv.infV)
+    rw [decEq, nsAll_nsMap]
+    intro id entry found
+    exact checkTToCheckFreevars entry.1 entry.2 (valueOk id entry found)
+  · intro path
+    change nsLookupMod ienv.infV path = none ↔
+      nsLookupMod (nsMap (fun entry => (entry.1, convertT entry.2)) ienv.infV) path = none
+    rw [nsLookupMod_nsMap]
+    cases nsLookupMod ienv.infV path <;> simp
+  · refine ⟨rfl, rfl, ?_⟩
+    intro id ⟨tvs, t⟩ found
+    have valid := valueOk id (tvs, t) found
+    refine ⟨tvs, convertT t, ?_, ?_, ?_⟩
+    · simpa [numTvs] using checkTToCheckFreevars tvs t valid
+    · simp [lookupVar, lookupVarEEmpty, ienvToTenvModel, nsLookup_nsMap, found]
+    · rw [checkTEmptyUnconvertConvertId t tvs valid]
+      exact tschemeApproxModelRefl 0 HolFiniteMapExact.holEmpty tvs t
+  · refine ⟨rfl, rfl, ?_⟩
+    intro id tvs t found
+    have found' : (nsLookup ienv.infV id).map (fun entry => (entry.1, convertT entry.2)) = some (tvs, t) := by
+      simpa [lookupVar, lookupVarEEmpty, ienvToTenvModel, nsLookup_nsMap] using found
+    cases src : nsLookup ienv.infV id with
+    | none => simp [src] at found'
+    | some entry =>
+      obtain ⟨n, ty⟩ := entry
+      simp [src] at found'
+      obtain ⟨rfl, rfl⟩ := found'
+      have valid := valueOk id (n, ty) src
+      refine ⟨⟨n, checkTToCheckFreevars n ty valid⟩, n, ty, rfl, ?_⟩
+      rw [checkTEmptyUnconvertConvertId ty n valid]
+      exact tschemeApproxModelRefl 0 HolFiniteMapExact.holEmpty n ty
+
 /-- A well-formed declarative environment relates to its inference conversion;
     the relation is expanded one level to expose its fixed empty maps. -/
 @[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "env_rel_tenv_to_ienv"

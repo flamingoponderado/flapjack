@@ -60,6 +60,13 @@ val probe_convert_t_def = tDefine "probe_convert_t" `
    induct_on `ts` >> rw [infer_tTheory.infer_t_size_def] >> res_tac >> decide_tac);
 val _ = show "convert_t_replay_typed" probe_convert_t_def;
 
+val probe_ienv_to_tenv_def = Define `
+  probe_ienv_to_tenv ienv =
+    <| v := nsMap (\(tvs, t). (tvs, probe_convert_t t)) ienv.inf_v;
+       c := ienv.inf_c;
+       t := ienv.inf_t |>`;
+val _ = show "ienv_to_tenv_replay_typed" probe_ienv_to_tenv_def;
+
 val _ = show "infer_deBruijn_inc_typed" inferTheory.infer_deBruijn_inc_def;
 
 val convert_inc_replay = Q.prove(
@@ -255,6 +262,11 @@ val _ = show "tscheme_inst_to_approx_replay_typed" tscheme_inst_to_approx_replay
 val _ = print "env_rel_tenv_to_ienv_statement_typed=";
 val _ = print_term (Parse.Term `!tenv. typeSoundInvariants$tenv_ok tenv ⇒
   probe_env_rel tenv (probe_tenv_to_ienv tenv)`);
+val _ = print "\n";
+
+val _ = print "env_rel_ienv_to_tenv_statement_typed=";
+val _ = print_term (Parse.Term `!ienv. ienv_ok {} ienv ⇒
+  probe_env_rel (probe_ienv_to_tenv ienv) ienv`);
 val _ = print "\n";
 
 val _ = print "env_rel_extend_statement_typed=";
