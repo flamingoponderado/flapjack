@@ -140,4 +140,8 @@ def freshIds (n : Nat) (s : State) : List Nat × State :=
 def resetState (s : State) : State :=
   { s with nextUvar := 0, subst := .ln }
 
+/-- First type identifier after the primitive type identifiers. -/
+@[hol "cakeml/compiler/inference/inferScript.sml" "start_type_id_def"]
+def startTypeId : Nat := 15
+
 end Flapjack.Compiler.Inference.Infer

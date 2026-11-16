@@ -10481,7 +10481,8 @@ reconstructs `type_ctor`, `ctMap_ok`, the primitive constructor-map
 invariants, and `consistent_ctMap` with inferred finite-map types, plus the
 store-typing datatype. It also captures the original `type_v` rules and the
 store, environment and type-soundness invariant definitions with inferred
-types. The
+types. It captures `set_tids_subset` and `start_type_id` and replays
+`set_tids_tenv` with its inferred namespace carriers. The
 environment-relation, REPL, and type-soundness theories are not fetched by this
 probe; regenerate with
 `HOL_PROBE_ONLY=env_rel_init_probeScript.sml`.

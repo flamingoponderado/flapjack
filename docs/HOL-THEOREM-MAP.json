@@ -1,5 +1,23 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "start_type_id_def",
+  "lean_path": "Flapjack/Compiler/Inference/Infer.lean", "lean_name": "startTypeId",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent source comparison and start_type_id_typed confirm the primitive type ID bound evaluates to 15. The production inference core uses this constant; this does not establish equivalence of its fuel-bounded evaluator."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/inferPropsScript.sml", "hol_name": "set_tids_subset_def",
+  "lean_path": "Flapjack/Compiler/Inference/InferProps.lean", "lean_name": "setTidsSubset",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and set_tids_subset_typed confirms the semantic type carrier and subset predicate."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "set_tids_tenv_def",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "setTidsTenv",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and set_tids_tenv_replay_typed confirms all three namespace predicates and their type and constructor ID requirements."
+ },
+{
   "hol_path": "cakeml/semantics/typeSystemScript.sml", "hol_name": "type_d",
   "lean_path": "Flapjack/TypeSystemHOL/Declarations.lean", "lean_name": "TypeD",
   "statement_status": "reviewed_exact",

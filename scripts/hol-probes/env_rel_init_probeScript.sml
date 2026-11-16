@@ -432,3 +432,11 @@ val _ = show "type_sv_def_typed" typeSoundInvariantsTheory.type_sv_def;
 val _ = show "type_s_def_typed" typeSoundInvariantsTheory.type_s_def;
 val _ = show "type_all_env_def_typed" typeSoundInvariantsTheory.type_all_env_def;
 val _ = show "type_sound_invariant_def_typed" typeSoundInvariantsTheory.type_sound_invariant_def;
+val _ = show "set_tids_subset_typed" inferPropsTheory.set_tids_subset_def;
+val _ = show "start_type_id_typed" inferTheory.start_type_id_def;
+val probe_set_tids_tenv_def = Define `
+  probe_set_tids_tenv tids tenv <=>
+    nsAll (\i (ls,t). set_tids_subset tids t) tenv.t /\
+    nsAll (\i (ls,ts,tid). EVERY (\t. set_tids_subset tids t) ts /\ tid IN tids) tenv.c /\
+    nsAll (\i (n,t). set_tids_subset tids t) tenv.v`;
+val _ = show "set_tids_tenv_replay_typed" probe_set_tids_tenv_def;

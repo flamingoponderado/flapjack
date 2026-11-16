@@ -602,7 +602,7 @@ def inferDeclsFuel (fuel unifFuel : Nat) (env : Env) (decls : List Dec) (state :
 /-- The successful whole-program inference environment, starting with CakeML's
 primitive type environment and the first non-primitive type identifier. -/
 def inferProgramFuel (fuel unifFuel : Nat) (decls : List Dec) : Except Error Env := do
-  let (env, _) ← inferDeclsFuel fuel unifFuel initConfig decls ⟨0, .ln, 15⟩
+  let (env, _) ← inferDeclsFuel fuel unifFuel initConfig decls ⟨0, .ln, startTypeId⟩
   return extendDecIenv env initConfig
 
 end Flapjack.Compiler.Inference.Infer.Core

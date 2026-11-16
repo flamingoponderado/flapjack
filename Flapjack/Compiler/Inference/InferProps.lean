@@ -93,6 +93,11 @@ private theorem infSetTidsUnconvertList (ts : List SemanticT) :
 termination_by sizeOf ts
 end
 
+/-- Every identifier appearing in the type belongs to the given set. -/
+@[hol "cakeml/compiler/inference/inferPropsScript.sml" "set_tids_subset_def"]
+def setTidsSubset (tids : Nat → Prop) (t : SemanticT) : Prop :=
+  ∀ id, setTids t id → tids id
+
 @[hol "cakeml/compiler/inference/inferPropsScript.sml" "inf_set_tids_subset_def"]
 def infSetTidsSubset (tids : Nat → Prop) (t : InferT) : Prop :=
   ∀ id, infSetTids t id → tids id
