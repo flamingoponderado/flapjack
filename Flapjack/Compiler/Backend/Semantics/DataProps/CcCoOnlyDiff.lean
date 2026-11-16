@@ -36,7 +36,7 @@ theorem popEnv_ccCoOnlyDiff {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (premises : ccCoOnlyDiff s t ∧ popEnv s = some s1) :
     ∃ t1, popEnv t = some t1 ∧ ccCoOnlyDiff s1 t1 := by
   obtain ⟨diff, pop⟩ := premises
-  obtain ⟨locals, localsSize, stack, stackMax, frameSizes, global, handler, refs, clock, code,
+  obtain ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
     ffi, space, tstamps, limits, safe, peak⟩ := diff
   cases shape : s.stack with
   | nil =>
@@ -49,10 +49,10 @@ theorem popEnv_ccCoOnlyDiff {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
       refine ⟨{ t with locals := env, stack := rest, localsSize := size }, ?_, ?_⟩
       · simp [popEnv, ← stack, shape]
       · simp_all [ccCoOnlyDiff]
-    | exc size env handler' =>
+    | exc sz env hdl =>
       simp [popEnv, shape] at pop
       obtain rfl := pop
-      refine ⟨{ t with locals := env, stack := rest, localsSize := size, handler := handler' }, ?_, ?_⟩
+      refine ⟨{ t with locals := env, stack := rest, localsSize := sz, handler := hdl }, ?_, ?_⟩
       · simp [popEnv, ← stack, shape]
       · simp_all [ccCoOnlyDiff]
 
@@ -63,11 +63,11 @@ theorem callEnv_ccCoOnlyDiff {C1 C2 F : Type} (s : State C1 F) (t : State C2 F)
     (diff : ccCoOnlyDiff s t) :
     ccCoOnlyDiff (callEnv args1 ss (pushEnv env b (decClock s)))
       (callEnv args1 ss (pushEnv env b (decClock t))) := by
-  obtain ⟨locals, localsSize, stack, stackMax, frameSizes, global, handler, refs, clock, code,
+  obtain ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
     ffi, space, tstamps, limits, safe, peak⟩ := diff
   cases b <;>
     simp [ccCoOnlyDiff, callEnv, pushEnv, decClock, locals, localsSize, stack, stackMax,
-      frameSizes, global, handler, refs, clock, code, ffi, space, tstamps, limits, safe, peak]
+      frameSizes, global, handlerEq, refs, clock, code, ffi, space, tstamps, limits, safe, peak]
 
 /-- The narrow cut keeps the two states in agreement. -/
 @[hol "cakeml/compiler/backend/semantics/dataPropsScript.sml" "cut_cc_co"]
@@ -76,7 +76,7 @@ theorem cutStateOpt_ccCoOnlyDiff {C1 C2 F : Type} (s : State C1 F) (t : State C2
     (premises : ccCoOnlyDiff s t ∧ cutStateOpt names s = some s1) :
     ∃ t1, cutStateOpt names t = some t1 ∧ ccCoOnlyDiff s1 t1 := by
   obtain ⟨diff, cut⟩ := premises
-  obtain ⟨locals, localsSize, stack, stackMax, frameSizes, global, handler, refs, clock, code,
+  obtain ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code,
     ffi, space, tstamps, limits, safe, peak⟩ := diff
   cases names with
   | none =>
@@ -84,7 +84,7 @@ theorem cutStateOpt_ccCoOnlyDiff {C1 C2 F : Type} (s : State C1 F) (t : State C2
     simp only [Option.some.injEq] at cut
     obtain rfl := cut
     exact ⟨t, by simp [cutStateOpt],
-      ⟨locals, localsSize, stack, stackMax, frameSizes, global, handler, refs, clock, code, ffi,
+      ⟨locals, localsSize, stack, stackMax, frameSizes, global, handlerEq, refs, clock, code, ffi,
         space, tstamps, limits, safe, peak⟩⟩
   | some names =>
     simp only [cutStateOpt, cutState] at cut ⊢
