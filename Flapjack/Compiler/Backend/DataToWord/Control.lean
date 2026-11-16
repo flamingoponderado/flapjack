@@ -99,11 +99,28 @@ def realAddr {width : Nat} [NeZero width] (conf : Config) (r : Nat) : WordLangEx
       (.shift .lsr (.var r) (.const (BitVec.ofNat width l))) (.const (BitVec.ofNat width k))
   .op .add [.lookup .currHeap, offset]
 
-/-- Internal helper for supported comparisons; the source `SetBool` uses an
-already adjusted destination and remains a separate unported declaration. -/
-private def boolResult {width : Nat} (dest : Nat) (cmp : Cmp) (r : Nat)
+/-- Set an already-adjusted destination to the source boolean encoding. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "SetBool_def"
+  (words_as_type_indexed_bitvec)]
+def setBool {width : Nat} [NeZero width] (dest : Nat) (cmp : Cmp) (r : Nat)
     (other : WordRegImm (BitVec width)) : WordLangProgHOL (BitVec width) :=
-  .ite cmp r other (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2))
+  .ite cmp r other (.assign dest (.const 18)) (.assign dest (.const 2))
+
+/-- Lower the four source ordering comparisons to word comparisons. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "AssignCmp_def"
+  (words_as_type_indexed_bitvec)]
+def assignCmp {width : Nat} [NeZero width] (dest : Nat) (cmp : Opb) (v1 v2 : Nat) :
+    WordLangProgHOL (BitVec width) :=
+  match cmp with
+  | .lt => setBool dest .lower v1 (.reg v2)
+  | .gt => setBool dest .lower v2 (.reg v1)
+  | .leq => setBool dest .notLower v2 (.reg v1)
+  | .geq => setBool dest .notLower v1 (.reg v2)
+
+/-- Adapt a source destination to the word-register convention. -/
+private def boolResult {width : Nat} [NeZero width] (dest : Nat) (cmp : Cmp) (r : Nat)
+    (other : WordRegImm (BitVec width)) : WordLangProgHOL (BitVec width) :=
+  setBool (adjustVar dest) cmp r other
 
 /-- Internal constructor for HOL's `ShiftN` overload. -/
 def shiftN {width : Nat} (op : Shift) (e : WordLangExpHOL (BitVec width)) (n : Nat) :
@@ -376,6 +393,13 @@ def arg2 {α β : Type} (args : List α) (f : α → α → β) (fallback : β) 
 def arg3 {α β : Type} (args : List α) (f : α → α → α → β) (fallback : β) : β :=
   match args with
   | [first, second, third] => f first second third
+  | _ => fallback
+
+/-- Apply a quaternary assignment only to an argument list of length four. -/
+@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "arg4_def"]
+def arg4 {α β : Type} (args : List α) (f : α → α → α → α → β) (fallback : β) : β :=
+  match args with
+  | [first, second, third, fourth] => f first second third fourth
   | _ => fallback
 
 /-- Construct the word offset of a block element. -/
@@ -1126,11 +1150,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
               .assign 11 (.op .add [.var 1, .const bytes]),
               .assign 13 (.op .add [.var 3, .const bytes]), .assign 9 (.var 5),
               .ite .lower 7 (.reg 5) (.assign 9 (.var 7)) .skip, call [11, 13, 9, 5, 7]]
-          let result := match cmp with
-            | .lt => boolResult dest .lower 5 (.reg 7)
-            | .gt => boolResult dest .lower 7 (.reg 5)
-            | .leq => boolResult dest .notLower 7 (.reg 5)
-            | .geq => boolResult dest .notLower 5 (.reg 7)
+          let result := assignCmp (adjustVar dest) cmp 5 7
           some (wordListSeq [
             .assign 1 (realAddr conf (adjustVar first)), .assign 3 (realAddr conf (adjustVar second)),
             .assign 5 (shiftN .lsr (.load (.var 1)) offset),
@@ -1253,14 +1273,13 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
   | l, .assign dest (.thunkOp (.updateThunk mode)) args _ =>
       some (arg2 args (assignUpdateThunk mode conf l dest) (.skip, l))
   | l, .assign dest .install args names =>
-      match args with
-      | [code, data, codeLen, dataLen] =>
+      some (arg4 args (fun code data codeLen dataLen =>
           let code := adjustVar code
           let data := adjustVar data
           let codeLen := adjustVar codeLen
           let dataLen := adjustVar dataLen
           let halt (r : Nat) := WordLangProgHOL.ite .test r (.imm 1) .skip giveUp
-          some (wordListSeq [
+          (wordListSeq [
             halt codeLen, halt dataLen,
             .assign 1 (.lookup .bitmapBuffer),
             .assign 3 (.op .sub [.lookup .bitmapBufferEnd, .var 1]),
@@ -1272,8 +1291,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
             .assign 5 (shiftVar .lsr codeLen 2),
             .ite .lower 3 (.reg 5) giveUp .skip,
             .mustTerminate (.call (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
-              (some installCodeLocation) [code, data, 1] none)], l + 1)
-      | _ => some (.skip, l)
+              (some installCodeLocation) [code, data, 1] none)], l + 1)) (.skip, l))
   | l, .assign dest (.label n) _ _ => some (.locValue (adjustVar dest) n, l)
   -- HOL's final assignment case returns Skip for operations that should
   -- have been lowered by earlier passes, including AllocGlobal and Constant.

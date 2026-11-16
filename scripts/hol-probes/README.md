@@ -10934,5 +10934,6 @@ closure, BVL, BVI, and data pipeline definitions, including their intermediate
 configuration updates, code and name carriers.
 
 `data_word_force_typed_probe.out` captures the complete thunk-force compilation
-equation and its independent sparse-tree payload type. Concrete tail-call,
+equation and its independent sparse-tree payload type, plus the inferred
+four-argument dispatch and word comparison equations. Concrete tail-call,
 returning-call, and bad-header cases are in `cake_word_array_probe.out`.

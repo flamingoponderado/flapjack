@@ -18,6 +18,20 @@ open Flapjack.Basis.Pure.MlString
 
 private def conf : Config := ⟨1, 2, 3, 16, true, false, false, false, false, false, .simple⟩
 
+-- The four original AssignCmp equations in data_word_force_typed_probe.out.
+#guard match assignCmp (width := 64) 8 .lt 5 7 with
+  | .ite .lower 5 (.reg 7) (.assign 8 (.const 18)) (.assign 8 (.const 2)) => true
+  | _ => false
+#guard match assignCmp (width := 64) 8 .gt 5 7 with
+  | .ite .lower 7 (.reg 5) (.assign 8 (.const 18)) (.assign 8 (.const 2)) => true
+  | _ => false
+#guard match assignCmp (width := 64) 8 .leq 5 7 with
+  | .ite .notLower 7 (.reg 5) (.assign 8 (.const 18)) (.assign 8 (.const 2)) => true
+  | _ => false
+#guard match assignCmp (width := 64) 8 .geq 5 7 with
+  | .ite .notLower 5 (.reg 7) (.assign 8 (.const 18)) (.assign 8 (.const 2)) => true
+  | _ => false
+
 -- Original HOL `force_thunk_tail`, `force_thunk_return`, and
 -- `force_thunk_bad_header` in cake_word_array_probe.out.
 #guard match compileControl? (width := 64) conf 5 2 (.force none 42 1) with

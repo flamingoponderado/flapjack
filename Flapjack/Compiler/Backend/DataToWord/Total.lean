@@ -22,7 +22,7 @@ theorem compileControl_exists {width : Nat} [NeZero width] (conf : Config) (secn
     obtain ⟨a, b, ha⟩ := ihx
     obtain ⟨c, d, hc⟩ := ihy b
     simp [ha, hc]
-  case case137 l ns names target args n handler ih =>
+  case case136 l ns names target args n handler ih =>
     obtain ⟨a, b, ha⟩ := ih
     simp [ha]
 

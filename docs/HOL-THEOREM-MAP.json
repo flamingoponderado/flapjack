@@ -1,5 +1,25 @@
 [
 {
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "arg4_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "arg4",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with arg4_typed confirms independent argument/result types, exact four-element dispatch, order and fallback for every other length."
+ },
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "SetBool_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "setBool",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with set_bool_typed confirms the unchanged destination and operands, word-width carrier, and true/false encodings 18 and 2."
+ },
+{
+  "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "AssignCmp_def",
+  "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "assignCmp",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Independent comparison with assign_cmp_typed confirms all four cases, each operand order and shared positive word width. The string-comparison execution path uses the reviewed operation."
+ },
+{
   "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml", "hol_name": "force_thunk_def",
   "lean_path": "Flapjack/Compiler/Backend/DataToWord/Control.lean", "lean_name": "forceThunk",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
