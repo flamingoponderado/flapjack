@@ -440,3 +440,17 @@ val probe_set_tids_tenv_def = Define `
     nsAll (\i (ls,ts,tid). EVERY (\t. set_tids_subset tids t) ts /\ tid IN tids) tenv.c /\
     nsAll (\i (n,t). set_tids_subset tids t) tenv.v`;
 val _ = show "set_tids_tenv_replay_typed" probe_set_tids_tenv_def;
+val set_tids_subset_mono_replay = Q.prove(
+  `!tids t tids'. set_tids_subset tids t /\ tids SUBSET tids' ==>
+     set_tids_subset tids' t`,
+  rw[set_tids_subset_def, SUBSET_DEF]);
+val _ = show "set_tids_subset_mono_replay_typed" set_tids_subset_mono_replay;
+val set_tids_tenv_mono_replay = Q.prove(
+  `probe_set_tids_tenv tids tenv /\ tids SUBSET tids' ==>
+     probe_set_tids_tenv tids' tenv`,
+  fs[probe_set_tids_tenv_def] >> rw[] >>
+  irule namespacePropsTheory.nsAll_mono >>
+  goal_assum(first_assum o mp_then Any mp_tac) >>
+  rw[] >> pairarg_tac >> fs[EVERY_MEM,SUBSET_DEF] >>
+  metis_tac[set_tids_subset_mono_replay,SUBSET_DEF]);
+val _ = show "set_tids_tenv_mono_replay_typed" set_tids_tenv_mono_replay;

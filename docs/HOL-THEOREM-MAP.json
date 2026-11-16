@@ -1,5 +1,17 @@
 [
 {
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "set_tids_subset_mono",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "setTidsSubsetMono",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with HOL source and set_tids_subset_mono_replay_typed confirms the quantified type and set carriers, subset premise and conclusion."
+ },
+{
+  "hol_path": "cakeml/compiler/inference/proofs/type_dCanonScript.sml", "hol_name": "set_tids_tenv_mono",
+  "lean_path": "Flapjack/Compiler/Inference/TypeDCanon.lean", "lean_name": "setTidsTenvMono",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Independent comparison with the HOL-local theorem and set_tids_tenv_mono_replay_typed confirms its environment carrier, subset premise and conclusion; the typed replay uses the source-shaped probe definition."
+ },
+{
   "hol_path": "cakeml/compiler/inference/inferScript.sml", "hol_name": "start_type_id_def",
   "lean_path": "Flapjack/Compiler/Inference/Infer.lean", "lean_name": "startTypeId",
   "statement_status": "reviewed_exact",
