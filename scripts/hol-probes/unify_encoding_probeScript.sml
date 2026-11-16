@@ -258,6 +258,7 @@ val _ = show "tcwalkstarwl_thm_typed" unifyTheory.tcwalkstarwl_thm;
 val _ = show "tcwalkstarwl_correct_typed" unifyTheory.tcwalkstarwl_correct;
 val _ = show "cunify_code_def_typed" unifyTheory.cunify_code_def;
 val _ = show "kcunifywl_preserves_precond_typed" unifyTheory.kcunifywl_preserves_precond;
+val _ = show "kcunifywl_ensures_decrease_typed" unifyTheory.kcunifywl_ensures_decrease;
 val _ = show "isvars_def_typed" unifyTheory.isvars_def;
 val _ = show "FINITE_isvars_typed" unifyTheory.FINITE_isvars;
 val _ = show "cplist_vars_def_typed" unifyTheory.cplist_vars_def;

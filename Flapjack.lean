@@ -3812,6 +3812,7 @@ import Flapjack.HOL.Unification.Term.VarBag
 import Flapjack.Compiler.Inference.Unify.WorklistBag
 import Flapjack.Compiler.Inference.Unify.WorklistRelation
 import Flapjack.Compiler.Inference.Unify.WorklistWellFounded
+import Flapjack.Compiler.Inference.Unify.WorklistDecrease
 import Flapjack.Compiler.Inference.Unify.Subterm
 import Flapjack.Compiler.Inference.Unify.Subterm.Walkstar
 import Flapjack.HOL.Unification.Walkstar.Decrease

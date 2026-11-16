@@ -138988,6 +138988,12 @@
   "reviewer": "Compared typed HOL source: the sole cwfs premise implies the complete cwalkstar and singleton-worklist normalization equality. The source-shaped model agrees under cwfs; the result is proved a singleton, making headD's fallback unreachable and agreeing with HOL HD. The visible sp2fm result uses the reviewed canonical map."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "kcunifywl_ensures_decrease",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistDecrease.lean", "lean_name": "kcunifywlEnsuresDecreaseModel",
+  "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm"],
+  "reviewer": "Compared kcunifywl_ensures_decrease_typed and kcunifywlR_def_typed: the original cwfs guard and continuing step imply the full relation, expanded to expose the reviewed sp2fm result. The selected source-shaped step uses the walkers and occurs check under the same cwfs guard, where reviewed component correspondences establish their agreement with HOL. Whole-step agreement follows the source comparison; there is no separate kernel-checked whole-step correspondence theorem. Both cwfs guards, original submap and variable-inclusion directions, and full lexicographic bag and length decrease are retained. Independently source-reviewed."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "WF_kcunifywlR",
   "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistWellFounded.lean", "lean_name": "wfKcunifywlR",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm"],
