@@ -62,6 +62,44 @@ theorem inFrangeRangeVars {α κ : Type} (s : HolFiniteMapExact κ (Term α)) (t
   intro v hv
   exact Set.mem_sUnion.mpr ⟨vars t, ⟨t, h, rfl⟩, hv⟩
 
+/-- Canonical map codec roundtrip for range variables after update. -/
+theorem holFmapAsFiniteSupportParamWitness_rangeVarsUpdate_s {α κ : Type}
+    (s : HolFiniteMapExact κ (Term α)) (key : κ) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s :=
+  holFmapAsFiniteSupportParamWitness_vR_subst s key
+
+@[hol "HOL/examples/algorithms/unification/triangular/first-order/substScript.sml" "rangevars_FUPDATE"
+  (fmap_as_finite_support_parameters := [s])]
+theorem rangeVarsUpdate {α κ : Type} (s : HolFiniteMapExact κ (Term α)) (v : κ) (t : Term α)
+    (h : v ∉ s.domain) :
+    rangeVars (@HolFiniteMapExact.updateEq κ (Term α) (Classical.decEq κ) s (v, t)) =
+      Set.union (rangeVars s) (vars t) := by
+  classical
+  have absent : s.lookup v = none := Classical.not_not.mp h
+  ext x
+  simp only [rangeVars, Set.mem_sUnion]
+  constructor
+  · rintro ⟨_, ⟨u, ⟨k, found⟩, rfl⟩, hu⟩
+    by_cases eq : k = v
+    · subst k
+      simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL] at found
+      subst u
+      exact Or.inr hu
+    · have found' : s.lookup k = some u := by
+        simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, eq] using found
+      exact Or.inl ⟨vars u, ⟨u, ⟨k, found'⟩, rfl⟩, hu⟩
+  · rintro (⟨_, ⟨u, ⟨k, found⟩, rfl⟩, hu⟩ | ht)
+    · have ne : k ≠ v := by
+        intro eq
+        subst k
+        rw [absent] at found
+        cases found
+      refine ⟨vars u, ⟨u, ⟨k, ?_⟩, rfl⟩, hu⟩
+      simpa [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, ne] using found
+    · exact ⟨vars t, ⟨t, ⟨v, by simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]⟩, rfl⟩, ht⟩
+
 /-- Canonical map codec roundtrip for the substitution-variable operation. -/
 theorem holFmapAsFiniteSupportParamWitness_substVars_s {α : Type}
     (s : HolFiniteMapExact Nat (Term α)) (key : Nat) :

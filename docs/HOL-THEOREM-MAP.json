@@ -138508,6 +138508,42 @@
   "reviewer": "Independent typed source review confirms the original well-formedness and both walked-pair premises, the two ordered subset conclusions, and the shared term atom type."
 },
 {
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/substScript.sml", "hol_name": "rangevars_FUPDATE",
+  "lean_path": "Flapjack/HOL/Unification/Subst/Vars.lean", "lean_name": "rangeVarsUpdate",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms arbitrary independent key and atom types, the original freshness premise and full range union after equality update. Explicit classical equality adds no instance hypothesis."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkScript.sml", "hol_name": "vwalk_IN_FRANGE",
+  "lean_path": "Flapjack/HOL/Unification/Walk/Range.lean", "lean_name": "vwalkInFrange",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms the original well-formedness and domain premises and full range-membership conclusion, using the equivalent existential lookup characterization."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkScript.sml", "hol_name": "walk_to_var",
+  "lean_path": "Flapjack/HOL/Unification/Walk/Range.lean", "lean_name": "walkToVar",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms the original well-formedness and variable-result premises and both conclusions, including the unrestricted existential input variable."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/walkScript.sml", "hol_name": "walk_IN_FRANGE",
+  "lean_path": "Flapjack/HOL/Unification/Walk/Range.lean", "lean_name": "walkInFrange",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms the original well-formedness and changed-result premises and the full range conclusion via its existential lookup characterization."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "walkstar_subterm_smaller",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "walkstarSubtermSmaller",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms both original premises and both strict pair-count inequalities on normalized terms."
+},
+{
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml", "hol_name": "allvars_SUBSET_FUPDATE",
+  "lean_path": "Flapjack/HOL/Unification/UnifDef.lean", "lean_name": "allVarsSubsetFupdate",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Independent typed source review confirms the original four ordered premises, the update with the walked second subterm, and the complete subset conclusion with the same shared atom type."
+},
+{
   "hol_path": "HOL/src/transfer/examples/fmspScript.sml", "hol_name": "sp2fm_thm",
   "lean_path": "Flapjack/HOL/Transfer/Fmsp/Operations.lean", "lean_name": "sp2fmThm",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm", "Flapjack.HolFiniteMapExact.holEmpty"],
