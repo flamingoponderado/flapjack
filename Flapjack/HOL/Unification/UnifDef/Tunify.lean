@@ -186,4 +186,23 @@ theorem tunifyAuxInd {α : Type}
   intro s t1 t2
   exact induction (s, t1, t2)
 
+/-- The restricted proof unifier leaves a well-formed substitution unchanged
+    when both inputs coincide. This supports the identical-constant case of
+    the encoding proof; correspondence with HOL's `unify_same` is pending. -/
+theorem tunifyAuxSelf {α : Type} (s : HolFiniteMapExact Nat (Term α))
+    (t : Term α) (hw : wfs s) : tunifyAux s t t = some s := by
+  have all : ∀ s (t1 t2 : Term α), t1 = t2 → wfs s → tunifyAux s t1 t2 = some s := by
+    apply tunifyAuxInd
+    intro s t1 t2 ih same hw
+    subst t2
+    rw [tunifyAuxEquation s t1 t1 hw]
+    cases walked : walk s t1 with
+    | var v => simp
+    | const c => simp
+    | pair a d =>
+      have head := ih.2 a d a d ⟨hw, walked, walked⟩ rfl hw
+      have tail := ih.1 a d a d s ⟨hw, walked, walked, head⟩ rfl hw
+      simp [head, tail]
+  exact all s t t rfl hw
+
 end Flapjack.HOL.Unification

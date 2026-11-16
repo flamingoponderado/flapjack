@@ -1,0 +1,57 @@
+module
+
+public import Flapjack.Compiler.Inference.Unify.Encoding
+public import Flapjack.HOL.Unification.UnifDef.Tunify
+
+@[expose] public section
+
+/-! Proof-side inference unification through the first-order encoding. -/
+namespace Flapjack.Compiler.Inference.Unify
+open Flapjack.HOL.Unification
+
+/-- Encode every value of an inference substitution, preserving its keys. -/
+def encodeSubst (s : HolFiniteMapExact Nat InferT) : HolFiniteMapExact Nat (Term Atom) :=
+  s.map2 (fun p => encodeInferT p.2)
+
+/-- Decode every value of a first-order substitution, preserving its keys. -/
+def decodeSubst (s : HolFiniteMapExact Nat (Term Atom)) : HolFiniteMapExact Nat InferT :=
+  s.map2 (fun p => decodeInferT p.2)
+
+/-- The source type encoding is a left inverse on the entire substitution. -/
+theorem decodeEncodeSubst (s : HolFiniteMapExact Nat InferT) :
+    decodeSubst (encodeSubst s) = s := by
+  apply HolFiniteMapExact.ext_lookup
+  intro key
+  simp only [decodeSubst, encodeSubst, HolFiniteMapExact.lookup_map2]
+  cases s.lookup key <;> simp [decodeLeftInverse.1]
+
+/-- Re-encoding a decoded substitution is exact precisely when every stored
+    term is the encoding of an inference type. This is map infrastructure for
+    the source unifier's encoding argument, not a separate HOL port. -/
+theorem encodeDecodeSubstIff (s : HolFiniteMapExact Nat (Term Atom)) :
+    encodeSubst (decodeSubst s) = s ↔
+      ∀ key t, s.lookup key = some t → ∃ it, t = encodeInferT it := by
+  constructor
+  · intro eq key t found
+    have h := congrArg (fun map => map.lookup key) eq
+    simp only [encodeSubst, decodeSubst, HolFiniteMapExact.lookup_map2, found,
+      Option.map_some, Option.some.injEq] at h
+    exact ⟨decodeInferT t, h.symm⟩
+  · intro image
+    apply HolFiniteMapExact.ext_lookup
+    intro key
+    simp only [encodeSubst, decodeSubst, HolFiniteMapExact.lookup_map2]
+    cases h : s.lookup key with
+    | none => rfl
+    | some t =>
+      obtain ⟨it, rfl⟩ := image key t h
+      simp [decodeLeftInverse.1]
+
+/-- Decoding the restricted first-order unifier gives an inference-side proof
+    model. It is not tagged as HOL's `t_unify_def`: correspondence with HOL's
+    specified unifier and the option-valued map representation remain open. -/
+noncomputable def tUnifyModel (s : HolFiniteMapExact Nat InferT) (t1 t2 : InferT) :
+    Option (HolFiniteMapExact Nat InferT) :=
+  (tunifyAux (encodeSubst s) (encodeInferT t1) (encodeInferT t2)).map decodeSubst
+
+end Flapjack.Compiler.Inference.Unify

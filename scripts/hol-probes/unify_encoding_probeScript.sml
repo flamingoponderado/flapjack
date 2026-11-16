@@ -24,6 +24,7 @@ val _ = show "uR_lex_def_typed" unifDefTheory.uR_lex_def;
 val _ = show "uR_RSUBSET_uR_lex_typed" unifDefTheory.uR_RSUBSET_uR_lex;
 val _ = show "WF_FINITE_PSUBSET_typed" unifDefTheory.WF_FINITE_PSUBSET;
 val _ = show "WF_uR_typed" unifDefTheory.WF_uR;
+val _ = show "unify_same_typed" unifPropsTheory.unify_same;
 val _ = show "IN_FRANGE_rangevars_typed" substTheory.IN_FRANGE_rangevars;
 val _ = show "vwalk_to_Pair_SUBSET_rangevars_typed" unifDefTheory.vwalk_to_Pair_SUBSET_rangevars;
 val _ = show "allvars_SUBSET_typed" unifDefTheory.allvars_SUBSET;
@@ -85,6 +86,25 @@ val encode_pair_cases_replay = Q.prove (
     (?tc ts. t2 = Pair (Const (TC_tag tc)) (encode_infer_ts ts))`,
   Cases >> rw [encode_infer_t_def] >> PROVE_TAC[]);
 val _ = show "encode_pair_cases_replay_typed" encode_pair_cases_replay;
+(* This local theorem's complete statement is parsed with inferred types;
+   its source proof is not replayed by this capture. *)
+val encode_unify_lemma_statement = ``
+  !s t1 t2 s' t1' t2'.
+  (s = (encode_infer_t o_f s')) /\
+  (((t1 = encode_infer_t t1') /\ (t2 = encode_infer_t t2')) \/
+   (?c. (t1 = Const c) /\ (t2 = Const c) /\ (t1' = t2')) \/
+   (?c ts1 ts2.
+     (t1 = Pair (Const c) (encode_infer_ts ts1)) /\
+     (t2 = Pair (Const c) (encode_infer_ts ts2)) /\
+     (t1' = Infer_Tapp ts1 ARB) /\ (t2' = Infer_Tapp ts2 ARB)) \/
+   (?ts1 ts2.
+      (t1 = encode_infer_ts ts1) /\ (t2 = encode_infer_ts ts2) /\
+      (t1' = Infer_Tapp ts1 ARB) /\ (t2' = Infer_Tapp ts2 ARB))) /\
+  t_wfs s' ==>
+  (unify s t1 t2 =
+   OPTION_MAP ((o_f) encode_infer_t) (t_unify s' t1' t2'))``;
+val _ = (print "encode_unify_lemma_statement_typed=";
+         print_term encode_unify_lemma_statement; print "\n");
 val encode_vwalk_replay = Q.prove (
   `!s. t_wfs s ==> !u. vwalk (encode_infer_t o_f s) u = encode_infer_t (t_vwalk s u)`,
   NTAC 2 STRIP_TAC >>

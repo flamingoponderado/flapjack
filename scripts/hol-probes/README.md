@@ -10485,6 +10485,8 @@ normalization equation, inference substitution dependencies, and typed
 inference walker, occurrence, encoded-list occurrence, variable-set and normalization equations and invariants, including replays of their
 local encoding and list lemmas, the empty-substitution and submap theorems,
 inference substitution compatibility, and computational walker well-formedness.
+It also parses the full local `encode_unify_lemma` statement with inferred types;
+that capture does not replay the theorem's proof.
 Regenerate with
 `HOL_PROBE_ONLY=unify_encoding_probeScript.sml`. The capture is source-review
 evidence; it does not establish unifier equivalence.

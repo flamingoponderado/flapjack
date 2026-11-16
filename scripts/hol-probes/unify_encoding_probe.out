@@ -14,6 +14,7 @@ uR_lex_def_typed=(uR_lex :α subst # α term # α term -> α subst # α term # �
 uR_RSUBSET_uR_lex_typed=(uR :α subst # α term # α term -> α subst # α term # α term -> bool) ⊆ᵣ (uR_lex :α subst # α term # α term -> α subst # α term # α term -> bool)
 WF_FINITE_PSUBSET_typed=WF (λ(s1 :α -> bool) (s2 :α -> bool). s1 ⊂ s2 ∧ FINITE s2)
 WF_uR_typed=WF (uR :α subst # α term # α term -> α subst # α term # α term -> bool)
+unify_same_typed=∀(s :α subst). wfs s ⇒ ∀(t :α term). unify s t t = SOME s
 IN_FRANGE_rangevars_typed=(t :α term) ∈ FRANGE (s :β |-> α term) ⇒ vars t ⊆ rangevars s
 vwalk_to_Pair_SUBSET_rangevars_typed=wfs (s :α subst) ∧ vwalk s (v :num) = Pair (t1 :α term) (t2 :α term) ⇒ vars t1 ⊆ rangevars s ∧ vars t2 ⊆ rangevars s
 allvars_SUBSET_typed=wfs (s :α subst) ∧ walk s (t1 :α term) = Pair (t1a :α term) (t1d :α term) ∧ walk s (t2 :α term) = Pair (t2a :α term) (t2d :α term) ⇒ allvars s t1a t2a ⊆ allvars s t1 t2 ∧ allvars s t1d t2d ⊆ allvars s t1 t2
@@ -66,6 +67,7 @@ t_wfs_eqn_typed=∀(s :num |-> infer_t). t_wfs s ⇔ WF (t_vR s)
 t_wfs_SUBMAP_typed=∀(s1 :num |-> infer_t) (s2 :num |-> infer_t). t_wfs s2 ∧ s1 ⊑ s2 ⇒ t_wfs s1
 t_vwalk_eqn_typed=∀(s :num |-> infer_t). t_wfs s ⇒ ∀(v :num). t_vwalk s v = case FLOOKUP s v of (NONE :infer_t option) => Infer_Tuvar v | SOME (Infer_Tvar_db n) => Infer_Tvar_db n | SOME (Infer_Tapp ts tc) => Infer_Tapp ts tc | SOME (Infer_Tuvar u) => t_vwalk s u
 encode_pair_cases_replay_typed=∀(t :infer_t) (t1 :atom term) (t2 :atom term). encode_infer_t t = Pair t1 t2 ⇒ t1 = Const Tapp_tag ∧ ∃(tc :num) (ts :infer_t list). t2 = Pair (Const (TC_tag tc)) (encode_infer_ts ts)
+encode_unify_lemma_statement_typed=∀(s :atom subst) (t1 :atom term) (t2 :atom term) (s' :num |-> infer_t) (t1' :infer_t) (t2' :infer_t). s = encode_infer_t o_f s' ∧ (t1 = encode_infer_t t1' ∧ t2 = encode_infer_t t2' ∨ (∃(c :atom). t1 = Const c ∧ t2 = Const c ∧ t1' = t2') ∨ (∃(c :atom) (ts1 :infer_t list) (ts2 :infer_t list). t1 = Pair (Const c) (encode_infer_ts ts1) ∧ t2 = Pair (Const c) (encode_infer_ts ts2) ∧ t1' = Infer_Tapp ts1 (ARB :num) ∧ t2' = Infer_Tapp ts2 (ARB :num)) ∨ ∃(ts1 :infer_t list) (ts2 :infer_t list). t1 = encode_infer_ts ts1 ∧ t2 = encode_infer_ts ts2 ∧ t1' = Infer_Tapp ts1 (ARB :num) ∧ t2' = Infer_Tapp ts2 (ARB :num)) ∧ t_wfs s' ⇒ unify s t1 t2 = OPTION_MAP ($o_f encode_infer_t :(num |-> infer_t) -> atom subst) (t_unify s' t1' t2')
 encode_vwalk_replay_typed=∀(s :num |-> infer_t). t_wfs s ⇒ ∀(u :num). vwalk (encode_infer_t o_f s) u = encode_infer_t (t_vwalk s u)
 t_walk_def_typed=∀(s :num |-> infer_t) (t :infer_t). t_walk s t = decode_infer_t (walk (encode_infer_t o_f s) (encode_infer_t t))
 t_walk_eqn_typed=(∀(s :num |-> infer_t) (v :num). t_walk s (Infer_Tuvar v) = t_vwalk s v) ∧ (∀(s :num |-> infer_t) (ts :infer_t list) (tc :num). t_walk s (Infer_Tapp ts tc) = Infer_Tapp ts tc) ∧ ∀(s :num |-> infer_t) (n :num). t_walk s (Infer_Tvar_db n) = Infer_Tvar_db n
