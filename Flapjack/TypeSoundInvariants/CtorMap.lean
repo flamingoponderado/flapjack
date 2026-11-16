@@ -126,4 +126,24 @@ theorem holFmapAsFiniteSupportParamWitness_goodCtMap_ctMap
 def goodCtMap (ctMap : HolFiniteMapExact Stamp (List MlString × List SemanticT × TypeIdent)) : Prop :=
   ctMapOk ctMap ∧ ctMapHasBools ctMap ∧ ctMapHasExns ctMap ∧ ctMapHasLists ctMap
 
+/-- The consistent-map parameter's canonical codec. -/
+theorem holFmapAsFiniteSupportParamWitness_consistentCtMap_ctMap {A B C : Type}
+    (ctMap : HolFiniteMapExact Stamp (A × B × C)) (key : Stamp) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad ctMap)).lookup key = ctMap.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad ctMap)).finiteSupport = ctMap.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad ctMap) = ctMap := by
+  cases ctMap
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Constructor identifiers are fresh relative to the type-ID set and the
+    state's next type and exception stamps. -/
+@[hol "cakeml/semantics/proofs/typeSoundInvariantsScript.sml" "consistent_ctMap_def"
+  (fmap_as_finite_support_parameters := [ctMap])]
+def consistentCtMap {σ A B C : Type} (st : State σ) (typeIds : C → Prop)
+    (ctMap : HolFiniteMapExact Stamp (A × B × C)) : Prop :=
+  (∀ id, typeIds id → ¬ ∃ stamp a b, ctMap.lookup stamp = some (a, b, id)) ∧
+  ∀ cn id,
+    (ctMap.lookup (.typeStamp cn id) ≠ none → id < st.nextTypeStamp) ∧
+    (ctMap.lookup (.exnStamp id) ≠ none → id < st.nextExnStamp)
+
 end Flapjack.TypeSoundInvariants

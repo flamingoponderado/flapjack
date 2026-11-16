@@ -1,5 +1,12 @@
 [
 {
+  "hol_path": "cakeml/semantics/proofs/typeSoundInvariantsScript.sml", "hol_name": "consistent_ctMap_def",
+  "lean_path": "Flapjack/TypeSoundInvariants/CtorMap.lean", "lean_name": "consistentCtMap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["ctMap"],
+  "reviewer": "Independent comparison with HOL source and consistent_ctMap_replay_typed confirms independent FFI and map payload carriers, the disjoint projected range and both stamp-domain bounds. The canonical finite-map parameter has a same-module codec witness."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/typeSoundInvariantsScript.sml", "hol_name": "store_t",
   "lean_path": "Flapjack/TypeSoundInvariants/CtorMap.lean", "lean_name": "StoreT",
   "statement_status": "reviewed_exact",

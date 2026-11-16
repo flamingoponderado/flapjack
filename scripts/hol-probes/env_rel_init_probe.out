@@ -93,4 +93,6 @@ Saved definition ____ "probe_ctMap_has_bools_def"
 ctMap_has_bools_replay_typed=∀(ctMap :stamp |-> α list # β list # num). probe_ctMap_has_bools ctMap ⇔ FLOOKUP ctMap (TypeStamp «True» bool_type_num) = SOME (([] :α list),([] :β list),Tbool_num) ∧ FLOOKUP ctMap (TypeStamp «False» bool_type_num) = SOME (([] :α list),([] :β list),Tbool_num) ∧ ∀(cn :mlstring). cn ≠ «True» ∧ cn ≠ «False» ⇒ FLOOKUP ctMap (TypeStamp cn bool_type_num) = (NONE :(α list # β list # num) option)
 Saved definition ____ "probe_good_ctMap_def"
 good_ctMap_replay_typed=∀(ctMap :stamp |-> mlstring list # t list # num). probe_good_ctMap ctMap ⇔ probe_ctMap_ok ctMap ∧ probe_ctMap_has_bools ctMap ∧ probe_ctMap_has_exns ctMap ∧ probe_ctMap_has_lists ctMap
+Saved definition ____ "probe_consistent_ctMap_def"
+consistent_ctMap_replay_typed=∀(st :'ffi state) (type_ids :α -> bool) (ctMap :stamp |-> β # γ # α). probe_consistent_ctMap st type_ids ctMap ⇔ DISJOINT type_ids (FRANGE (((SND :γ # α -> α) ∘ (SND :β # γ # α -> γ # α)) o_f ctMap)) ∧ ∀(cn :mlstring) (id :num). (TypeStamp cn id ∈ FDOM ctMap ⇒ id < st.next_type_stamp) ∧ (ExnStamp id ∈ FDOM ctMap ⇒ id < st.next_exn_stamp)
 store_t_replay_typed=⊢ ∀(f0 :t -> α) (f1 :α) (f2 :t -> α). ∃(fn :probe_store_t -> α). (∀(a :t). fn (ProbeRef_t a) = f0 a) ∧ fn ProbeW8array_t = f1 ∧ ∀(a :t). fn (ProbeVarray_t a) = f2 a

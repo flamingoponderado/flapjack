@@ -419,4 +419,11 @@ val probe_good_ctMap_def = Define `
   probe_good_ctMap ctMap <=> probe_ctMap_ok ctMap /\ probe_ctMap_has_bools ctMap /\
     probe_ctMap_has_exns ctMap /\ probe_ctMap_has_lists ctMap`;
 val _ = show "good_ctMap_replay_typed" probe_good_ctMap_def;
+val probe_consistent_ctMap_def = Define `
+  probe_consistent_ctMap (st:'ffi semanticPrimitives$state) type_ids ctMap <=>
+    DISJOINT type_ids (FRANGE ((SND o SND) o_f ctMap)) /\
+    !cn id.
+      (TypeStamp cn id IN FDOM ctMap ==> id < st.next_type_stamp) /\
+      (ExnStamp id IN FDOM ctMap ==> id < st.next_exn_stamp)`;
+val _ = show "consistent_ctMap_replay_typed" probe_consistent_ctMap_def;
 val _ = (print "store_t_replay_typed="; print_thm (TypeBase.axiom_of ``:probe_store_t``); print "\n");
