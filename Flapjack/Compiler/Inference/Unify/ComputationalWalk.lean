@@ -2,6 +2,7 @@ module
 
 public import Flapjack.Compiler.Inference.Unify.ComputationalWf
 public import Flapjack.Compiler.Inference.Unify.Walk.Term
+public import Flapjack.Misc.OptionLeast.TailCall
 
 @[expose] public section
 
@@ -55,6 +56,19 @@ theorem cwalkThm (s : Spt InferT) (it : InferT) (h : cwfs s) :
   | varDb n => exact tWalkEqn.2.2 (sp2fm s) n
   | app ts tc => exact tWalkEqn.2.1 (sp2fm s) ts tc
   | uvar u => exact tWalkEqn.1 (sp2fm s) u
+
+@[hol "cakeml/compiler/inference/unifyScript.sml" "cvwalk_tcallish"]
+theorem cvwalkTcallish (s : Spt InferT) : ∀ x,
+    (fun _ : Nat => cwfs s) x →
+      cvwalkModel s x = Flapjack.HOL.tailCall (cvwalkCode s) (cvwalkModel s) x := by
+  intro x hw
+  have htree : sptWf (sptMap encodeInferT s) = true := by
+    rw [sptWfMap]
+    exact hw.2
+  rw [cvwalkThm s x htree hw.1]
+  cases found : sptLookup x s with
+  | none => simp [Flapjack.HOL.tailCall, cvwalkCode, found]
+  | some t => cases t <;> simp [Flapjack.HOL.tailCall, cvwalkCode, found]
 
 /-- The executed partial walker terminates with the HOL-shaped result on
     well-formed substitutions. This connects the executable to the source

@@ -138406,6 +138406,18 @@
   "reviewer": "Independent typed source review confirms arbitrary value type, natural key and sparse tree, and unconditional equality of converted-map and tree lookups in the original direction, including malformed trees. The imported producer and its lookup witness are separately reviewed."
 },
 {
+  "hol_path": "HOL/src/num/theories/WhileScript.sml", "hol_name": "TAILCALL_def",
+  "lean_path": "Flapjack/Misc/OptionLeast/TailCall.lean", "lean_name": "tailCall",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: input, recursive-call state, and result types are independently polymorphic; the left and right sum cases call the continuation and return the result respectively."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "cvwalk_tcallish",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/ComputationalWalk.lean", "lean_name": "cvwalkTcallish",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: for every variable, under the original cwfs guard, the sparse-tree walker equals its TAILCALL step using cvwalk_code and the same walker as continuation. The proof-side cvwalkModel is claimed to correspond only under cwfs, using the reviewed cvwalk_thm equations."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "cvwalk_thm",
   "lean_path": "Flapjack/Compiler/Inference/Unify/ComputationalWalk.lean", "lean_name": "cvwalkThm",
   "statement_status": "reviewed_exact",

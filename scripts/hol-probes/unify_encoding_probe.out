@@ -121,6 +121,8 @@ t_compat_refl_typed=t_wfs (s :num |-> infer_t) ⇒ t_compat s s
 t_compat_trans_typed=t_compat (a :num |-> infer_t) (b :num |-> infer_t) ∧ t_compat b (c :num |-> infer_t) ⇒ t_compat a c
 SUBMAP_t_compat_typed=t_wfs (s' :num |-> infer_t) ∧ (s :num |-> infer_t) ⊑ s' ⇒ t_compat s s'
 cvwalk_code_def_typed=∀(s :infer_t sptree$num_map). cvwalk_code s = (λ(n :num). case lookup n s of (NONE :infer_t option) => (INR (Infer_Tuvar n) :num + infer_t) | SOME (Infer_Tvar_db v9) => (INR (Infer_Tvar_db v9) :num + infer_t) | SOME (Infer_Tapp l n) => (INR (Infer_Tapp l n) :num + infer_t) | SOME (Infer_Tuvar u) => (INL u :num + infer_t))
+TAILCALL_def_typed=∀(f :β -> γ + α) (k :γ -> α) (x :β). TAILCALL f k x = case f x of (INL cv :γ + α) => k cv | (INR tv :γ + α) => tv
+cvwalk_tcallish_typed=∀(x :num). (λ(n :num). cwfs (s :infer_t sptree$num_map)) x ⇒ cvwalk s x = TAILCALL (cvwalk_code s) (cvwalk s) x
 tcvwalk_def_typed=∀(s :infer_t sptree$num_map) (n :num). tcvwalk s n = (TAILREC (cvwalk_code s) n :infer_t)
 tcvwalk_thm_typed=∀(s :infer_t sptree$num_map) (n :num). tcvwalk s n = case lookup n s of (NONE :infer_t option) => Infer_Tuvar n | SOME (Infer_Tvar_db v9) => Infer_Tvar_db v9 | SOME (Infer_Tapp l n) => Infer_Tapp l n | SOME (Infer_Tuvar u) => tcvwalk s u
 tcvwalk_correct_typed=∀(x :num). cwfs (s :infer_t sptree$num_map) ⇒ cvwalk s x = tcvwalk s x
