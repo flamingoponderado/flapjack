@@ -197,3 +197,5 @@ val _ = show "cut_cc_co_typed"
     \\ gvs[dataSemTheory.cut_state_opt_def, dataSemTheory.cut_state_def, AllCaseEqs(),
         dataSemTheory.cut_env_def]
     \\ fs[cc_co_only_diff_def, SUBSET_DEF] \\ metis_tac[]));
+val _ = emit "do_app_cc_co_only_diff_rval_typed" "do_app_cc_co_only_diff_rval";
+val _ = emit "do_app_cc_co_only_diff_rerr_typed" "do_app_cc_co_only_diff_rerr";
