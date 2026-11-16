@@ -3815,6 +3815,7 @@ import Flapjack.HOL.Unification.UnifDef.Tunify
 import Flapjack.Compiler.Inference.Unify.Occurs.Encoding
 import Flapjack.Compiler.Inference.Unify.Occurs.WorklistDecrease
 import Flapjack.Compiler.Inference.Unify.Occurs.WorklistWellFounded
+import Flapjack.Compiler.Inference.Unify.Occurs.WorklistTotal
 import Flapjack.Compiler.Inference.Unify.Extension
 import Flapjack.Compiler.Inference.Unify.Unification
 import Flapjack.Compiler.Inference.Unify.EncodingInvariant

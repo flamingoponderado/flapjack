@@ -138430,6 +138430,12 @@
   "reviewer": "Compared typed HOL source: for every substitution and type, cwfs implies equality of cwalk and the selected tcwalk model. Model correspondence is claimed only under cwfs, where the underlying walker terminates."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "tcocwl_correct",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Occurs/WorklistTotal.lean", "lean_name": "tcocwlCorrectModel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared typed HOL source: under the sole cwfs premise, the complete cocl predicate is equivalent to the singleton-worklist tcocwl result. HOL Boolean equivalence is expressed as a proposition iff the Lean Boolean equals true. The selected tail-recursive model corresponds under cwfs, where the executed worklist terminates."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "kcocwl_preserves_precond",
   "lean_path": "Flapjack/Compiler/Inference/Unify/Occurs/WorklistDecrease.lean", "lean_name": "kcocwlPreservesPrecondModel",
   "statement_status": "reviewed_exact",
