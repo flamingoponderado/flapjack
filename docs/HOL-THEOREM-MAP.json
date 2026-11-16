@@ -139012,6 +139012,12 @@
   "reviewer": "Compared typed HOL source: the sole cwfs premise implies the complete cwalkstar and singleton-worklist normalization equality. The source-shaped model agrees under cwfs; the result is proved a singleton, making headD's fallback unreachable and agreeing with HOL HD. The visible sp2fm result uses the reviewed canonical map."
 },
 {
+  "hol_path": "HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml", "hol_name": "walkstar_walk_SUBMAP",
+  "lean_path": "Flapjack/HOL/Unification/UnifProps.lean", "lean_name": "walkstarWalkSubmap",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s", "sx"],
+  "reviewer": "Source comparison with walkstar_walk_SUBMAP_typed: for arbitrary term atoms and canonical substitution maps, the sole conjunction is s SUBMAP sx and wfs sx; the conclusion preserves equality of normalization by sx before and after walking by s. Local witnesses cover both map parameters."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "apply_cunif_NONE",
   "lean_path": "Flapjack/Compiler/Inference/Unify/Source/Continuation.lean", "lean_name": "applyCunifNoneModel",
   "statement_status": "reviewed_exact",

@@ -53,6 +53,7 @@ the cited name occurs in one of the two syntactic forms.
 | `HOL/examples/algorithms/unification/triangular/first-order/termScript.sml` | `Flapjack/HOL/Unification/Term.lean` (first-order term carrier) |
 | `HOL/examples/algorithms/unification/triangular/first-order/substScript.sml` | `Flapjack/HOL/Unification/Subst.lean` (substitution dependency relation) |
 | `HOL/examples/algorithms/unification/triangular/first-order/unifDefScript.sml` | `Flapjack/HOL/Unification/UnifDef.lean` (unification update dependencies) |
+| `HOL/examples/algorithms/unification/triangular/first-order/unifPropsScript.sml` | `Flapjack/HOL/Unification/UnifProps.lean` (first-order unifier properties) |
 | `HOL/examples/algorithms/unification/triangular/first-order/walkScript.sml` | `Flapjack/HOL/Unification/Walk.lean` (first-order variable walking) |
 | `HOL/examples/algorithms/unification/triangular/first-order/walkstarScript.sml` | `Flapjack/HOL/Unification/Walkstar.lean` (first-order substitution normalization) |
 | `HOL/examples/algorithms/unification/triangular/first-order/compilation/tcallUnifScript.sml` | `Flapjack/HOL/Unification/TcallUnif.lean` (tail-recursive unification prerequisites) |
