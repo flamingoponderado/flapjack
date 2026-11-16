@@ -185,3 +185,15 @@ val _ = show "cut_state_opt_cc_co_full_typed"
     \\ rw[dataSemTheory.cut_state_opt_def, dataSemTheory.cut_state_def, dataSemTheory.cut_env_def]
     \\ gvs[dataSemTheory.state_component_equality]));
 val _ = emit "v_to_list_SOME_CONS_IMP_typed" "v_to_list_SOME_CONS_IMP";
+val _ = emit "cc_co_only_diff_def_typed" "cc_co_only_diff_def";
+val _ = emit "pop_env_cc_co_only_diff_typed" "pop_env_cc_co_only_diff";
+val _ = emit "cc_co_only_diff_call_env_typed" "cc_co_only_diff_call_env";
+val _ = show "cut_cc_co_typed"
+  (prove(``!(s:('a,'ffi)dataSem$state) (t:('b,'ffi)dataSem$state)
+      (names_opt:sptree$num_set option) (s1:('a,'ffi)dataSem$state).
+      cc_co_only_diff s t /\ cut_state_opt names_opt s = SOME s1 ==>
+      ?t1. cut_state_opt names_opt t = SOME t1 /\ cc_co_only_diff s1 t1``,
+    strip_tac \\ Cases_on `names_opt`
+    \\ gvs[dataSemTheory.cut_state_opt_def, dataSemTheory.cut_state_def, AllCaseEqs(),
+        dataSemTheory.cut_env_def]
+    \\ fs[cc_co_only_diff_def, SUBSET_DEF] \\ metis_tac[]));
