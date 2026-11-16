@@ -141,5 +141,26 @@ theorem walkstarEq {α : Type} (subst : HolFiniteMapExact Nat (Term α))
   simp only [walkstar, dif_pos h]
   exact normalizeEq subst h t
 
+/-- Shared structural step for the occurrence and dependency proofs: a
+    variable occurrence in one normalized input variable lifts through a
+    term containing it. This helper has no separate HOL declaration. -/
+theorem walkstarVarLift {α : Type} (s : HolFiniteMapExact Nat (Term α)) (hw : wfs s)
+    (t : Term α) (u v : Nat) (hu : vars t u) (hv : vars (walkstar s (.var u)) v) :
+    vars (walkstar s t) v := by
+  classical
+  simp only [walkstar, dif_pos hw] at hv ⊢
+  induction t with
+  | var x =>
+    change u = x at hu
+    subst x
+    exact hv
+  | const c => exact hu.elim
+  | pair a b iha ihb =>
+    change vars a u ∨ vars b u at hu
+    change vars (normalizeWF s hw a) v ∨ vars (normalizeWF s hw b) v
+    rcases hu with ha | hb
+    · exact Or.inl (iha ha)
+    · exact Or.inr (ihb hb)
+
 end Flapjack.HOL.Unification
 

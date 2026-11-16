@@ -3797,7 +3797,7 @@ import Flapjack.Compiler.Inference.Unify.Compat
 import Flapjack.Compiler.Inference.Unify.ComputationalWf
 import Flapjack.Compiler.Inference.Unify.ComputationalWalk
 import Flapjack.Compiler.Inference.Unify.ComputationalWalk.Correctness
-import Flapjack.Compiler.Inference.Unify.Occurs
+import Flapjack.Compiler.Inference.Unify.Occurs.Correctness
 import Flapjack.Compiler.Inference.Unify.ComputationalWf.Insert
 import Flapjack.HOL.Transfer.Fmsp.Lookup
 import Flapjack.Compiler.Inference.InferProps.DeBruijn

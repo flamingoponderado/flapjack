@@ -22,30 +22,13 @@ theorem tcVRVarsWalkstar {α : Type} (s : HolFiniteMapExact Nat (Term α)) (t : 
     (h : wfs s ∧ vars t u ∧ Relation.TransGen (vR s) v u ∧ v ∉ s.domain) :
     vars (walkstar s t) v := by
   obtain ⟨hw, htu, path, absent⟩ := h
-  have liftVar : ∀ (t : Term α) u, vars t u →
-      vars (walkstar s (.var u)) v → vars (walkstar s t) v := by
-    intro t u huv hv
-    classical
-    simp only [walkstar, dif_pos hw] at hv ⊢
-    induction t with
-    | var n =>
-      change u = n at huv
-      subst n
-      exact hv
-    | const c => exact huv.elim
-    | pair a b iha ihb =>
-      change vars a u ∨ vars b u at huv
-      change vars (normalizeWF s hw a) v ∨ vars (normalizeWF s hw b) v
-      rcases huv with h | h
-      · exact Or.inl (iha h)
-      · exact Or.inr (ihb h)
   have main : ∀ u, Relation.TransGen (vR s) v u →
       ∀ t : Term α, vars t u → vars (walkstar s t) v := by
     intro u p
     induction p with
     | @single u edge =>
       intro t htu
-      apply liftVar t u htu
+      apply walkstarVarLift s hw t u v htu
       cases found : s.lookup u with
       | none => simp [vR, found] at edge
       | some q =>
@@ -57,7 +40,7 @@ theorem tcVRVarsWalkstar {α : Type} (s : HolFiniteMapExact Nat (Term α)) (t : 
         exact hvnorm
     | @tail z u chain edge ih =>
       intro t htu
-      apply liftVar t u htu
+      apply walkstarVarLift s hw t u v htu
       cases found : s.lookup u with
       | none => simp [vR, found] at edge
       | some q =>
