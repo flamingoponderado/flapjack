@@ -3703,16 +3703,18 @@
   "hol_name": "LIST_REL_IMP_EL2",
   "lean_name": "listRel_imp_el2",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateCases.lean",
-  "statement_status": "reviewed_exact",
-  "reviewer": "Compared the polymorphic relation, independent element carriers, right-list index bound and EL conclusion with list_rel_imp_el2_replay in source_to_flat_init_probe.out; the HOL proof is replayed. The original EL is the tagged holEl, with inherited nonempty HOL type carriers."
+  "statement_status": "reviewed_total_function_inhabitants",
+  "total_function_inhabitants": ["α", "β"],
+  "reviewer": "Compared the polymorphic relation, independent element carriers, right-list index bound and EL conclusion with list_rel_imp_el2_replay in source_to_flat_init_probe.out; the HOL proof is replayed. The original EL is the tagged holEl, with inherited nonempty HOL type carriers. total_function_inhabitants records the instance that renders HOL EL."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
   "hol_name": "LIST_REL_IMP_EL",
   "lean_name": "listRel_imp_el",
   "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateCases.lean",
-  "statement_status": "reviewed_exact",
-  "reviewer": "Compared the polymorphic relation, independent element carriers, left-list index bound and EL conclusion with list_rel_imp_el_replay in source_to_flat_init_probe.out; the HOL proof is replayed. The original EL is the tagged holEl, with inherited nonempty HOL type carriers."
+  "statement_status": "reviewed_total_function_inhabitants",
+  "total_function_inhabitants": ["α", "β"],
+  "reviewer": "Compared the polymorphic relation, independent element carriers, left-list index bound and EL conclusion with list_rel_imp_el_replay in source_to_flat_init_probe.out; the HOL proof is replayed. The original EL is the tagged holEl, with inherited nonempty HOL type carriers. total_function_inhabitants records the instance that renders HOL EL."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -18516,8 +18518,9 @@
     "lean_name": "holEl_append_if",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "EL_APPEND_IF",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared el_append_if_typed in source_to_flat_init_probe.out: the index and lists, unconditional append equation and original conditional are retained. Nonempty α expresses HOL type inhabitance required by EL, including out-of-range indices."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "Compared el_append_if_typed in source_to_flat_init_probe.out: the index and lists, unconditional append equation and original conditional are retained. Nonempty α expresses HOL type inhabitance required by EL, including out-of-range indices. total_function_inhabitants records the instance that renders HOL EL."
   },
 {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/AllocDefsLookup.lean",
@@ -18532,8 +18535,9 @@
     "lean_name": "aLookup_allocDefs_el",
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "ALOOKUP_alloc_defs_EL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared alookup_alloc_defs_el_replay in source_to_flat_init_probe.out with the local source theorem: the three tuple component types are independent, the quantified binders and grouped distinctness and index premises agree, and the existential trace and original reverse-allocation index formula are retained. Nonempty K expresses HOL type inhabitance for EL. The original local HOL proof is replayed."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["K"],
+    "reviewer": "Compared alookup_alloc_defs_el_replay in source_to_flat_init_probe.out with the local source theorem: the three tuple component types are independent, the quantified binders and grouped distinctness and index premises agree, and the existential trace and original reverse-allocation index formula are retained. Nonempty K expresses HOL type inhabitance for EL. The original local HOL proof is replayed. total_function_inhabitants records the instance that renders HOL EL."
   },
 {
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalOracleSimulation.lean",
@@ -22888,8 +22892,9 @@
     "hol_name": "drop_4_via_el",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalPattern.lean",
     "lean_name": "dropFour_viaEl",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed drop_4_via_el_replay with the local source lemma: the same arbitrary HOL list element type and six-element length premise yield [EL 4 vs, LAST vs] = DROP 4 vs. Nonempty models HOL's inhabited element type for the shared total EL and LAST operations."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["α"],
+    "reviewer": "Compared the typed drop_4_via_el_replay with the local source lemma: the same arbitrary HOL list element type and six-element length premise yield [EL 4 vs, LAST vs] = DROP 4 vs. Nonempty models HOL's inhabited element type for the shared total EL and LAST operations. total_function_inhabitants records the instance that renders HOL EL/HD/LAST."
   },
 {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -22976,8 +22981,9 @@
     "hol_name": "orac_rel_inner_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleRel.lean",
     "lean_name": "oracRelInner",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the typed orac_rel_inner probe: the arbitrary decoder payload is exactly the flat install-config state type; source compiler output uses fixed word8 and word64 lists, and both require the same oracle entry, compiled declaration list, successful callback witness, and decoding implication. The shared holThe preserves HOL THE including unspecified NONE; Nonempty C models HOL type inhabitation."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["C"],
+    "reviewer": "Compared the typed orac_rel_inner probe: the arbitrary decoder payload is exactly the flat install-config state type; source compiler output uses fixed word8 and word64 lists, and both require the same oracle entry, compiled declaration list, successful callback witness, and decoding implication. The shared holThe preserves HOL THE including unspecified NONE; Nonempty C models HOL type inhabitation. total_function_inhabitants records the instance that renders HOL THE."
   },
 {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
@@ -23048,16 +23054,18 @@
     "hol_name": "src_orac_step_invs_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
     "lean_name": "srcOracStepInvs",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the complete typed orac_step probe: the decoder's second component remains arbitrary, NONE/NONE is true, SOME EvalOracle requires the two original universally quantified decoding and incremental-step clauses, and all other cases are false. Lean uses the reviewed holThe for the original THE, including its unspecified NONE value; Nonempty C models HOL type inhabitation, and the concrete Config carrier is inhabited."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["C"],
+    "reviewer": "Source comparison of the typed capture; Compared the complete typed orac_step probe: the decoder's second component remains arbitrary, NONE/NONE is true, SOME EvalOracle requires the two original universally quantified decoding and incremental-step clauses, and all other cases are false. Lean uses the reviewed holThe for the original THE, including its unspecified NONE value; Nonempty C models HOL type inhabitation, and the concrete Config carrier is inhabited. total_function_inhabitants records the instance that renders HOL THE."
   },
 {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "step_1",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
     "lean_name": "sourceOracle_firstStep",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Compared the local source theorem with the typed orac_first_step replay of its HOL proof: both retain the arbitrary decoder payload type and the same twelve existential witnesses, source oracle entries, two decoded pairs, incremental compilation result, and next-config equality. Nonempty C reflects HOL's inhabited types for the THE used by the premise."
+    "statement_status": "reviewed_total_function_inhabitants",
+    "total_function_inhabitants": ["C"],
+    "reviewer": "Compared the local source theorem with the typed orac_first_step replay of its HOL proof: both retain the arbitrary decoder payload type and the same twelve existential witnesses, source oracle entries, two decoded pairs, incremental compilation result, and next-config equality. Nonempty C reflects HOL's inhabited types for the THE used by the premise. total_function_inhabitants records the instance that renders HOL THE."
   },
 {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",

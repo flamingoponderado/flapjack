@@ -25,7 +25,8 @@ theorem incCompileProg_nonempty (envId : Nat × Nat) (config next : Config)
 /-- Each source oracle entry corresponds to a flat compilation entry, and a
 successful source compiler callback has a matching flat callback result. HOL
 types are inhabited; `Nonempty C` supplies the payload needed by `THE`. -/
-@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "orac_rel_inner_def"]
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "orac_rel_inner_def"
+  (total_function_inhabitants := [C])]
 noncomputable def oracRelInner {C : Type} [Nonempty C] (decode : Value → Option (Config × C))
     (state : EvalOracleState) (compiler : CompilerFun) (transform : List Dec → List Dec)
     (flat : FlatSem.InstallConfig C) : Prop :=
