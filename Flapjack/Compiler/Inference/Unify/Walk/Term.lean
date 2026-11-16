@@ -52,4 +52,23 @@ theorem tWalkEqn :
   · intros
     simp [tWalk, walk, encodeInferT, decodeInferT]
 
+/-- The inference substitution survives the canonical finite-map codec. -/
+theorem holFmapAsFiniteSupportParamWitness_encodeWalk_s
+    (s : HolFiniteMapExact Nat InferT) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s :=
+  holFmapAsFiniteSupportParamWitness_tVR_subst s key
+
+@[hol "cakeml/compiler/inference/unifyScript.sml" "encode_walk"
+  (fmap_as_finite_support_parameters := [s])]
+theorem encodeWalk (s : HolFiniteMapExact Nat InferT) (h : tWfs s) : ∀ t,
+    walk (s.map2 (fun p => encodeInferT p.2)) (encodeInferT t) =
+      encodeInferT (tWalk s t) := by
+  intro t
+  cases t with
+  | uvar n => simpa [walk, encodeInferT, tWalkEqn.1] using encodeVwalk s h n
+  | varDb n => simp [walk, encodeInferT, tWalkEqn.2.2]
+  | app ts tc => simp [walk, encodeInferT, tWalkEqn.2.1]
+
 end Flapjack.Compiler.Inference.Unify

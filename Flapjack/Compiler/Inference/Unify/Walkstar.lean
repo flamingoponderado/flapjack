@@ -39,23 +39,6 @@ theorem listWalkstar : ∀ ts (s : HolFiniteMapExact Nat InferT), tWfs s →
     simp [encodeInferTs, walk, decodeInferTs, tWalkstar, ih s h]
 
 /-- The canonical inference substitution survives the broad-map codec. -/
-theorem holFmapAsFiniteSupportParamWitness_encodeWalk_s
-    (s : HolFiniteMapExact Nat InferT) (key : Nat) :
-    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
-    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
-    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s :=
-  holFmapAsFiniteSupportParamWitness_tVR_subst s key
-
-@[hol "cakeml/compiler/inference/unifyScript.sml" "encode_walk"
-  (fmap_as_finite_support_parameters := [s])]
-theorem encodeWalk (s : HolFiniteMapExact Nat InferT) (h : tWfs s) (t : InferT) :
-    walk (s.map2 (fun p => encodeInferT p.2)) (encodeInferT t) = encodeInferT (tWalk s t) := by
-  cases t with
-  | uvar v => simpa [walk, encodeInferT, tWalk, tVwalk] using encodeVwalk s h v
-  | varDb n => simp [walk, encodeInferT, tWalk, decodeInferT]
-  | app ts tc => simp [walk, encodeInferT, tWalk, decodeInferT, decodeLeftInverse]
-
-/-- The canonical inference substitution survives the broad-map codec. -/
 theorem holFmapAsFiniteSupportParamWitness_walkstarEqn_s
     (s : HolFiniteMapExact Nat InferT) (key : Nat) :
     (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧

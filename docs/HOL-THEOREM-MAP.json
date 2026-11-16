@@ -138170,7 +138170,7 @@
 },
 {
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "encode_walk",
-  "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar.lean", "lean_name": "encodeWalk",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walk/Term.lean", "lean_name": "encodeWalk",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
   "reviewer": "Compared the typed replay of the local HOL theorem and source proof: under the original well-formedness premise, walking the encoded type equals encoding the inference walk for every type. The map has a canonical codec witness."
 },
