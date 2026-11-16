@@ -56,4 +56,34 @@ theorem tOcEqn (s : HolFiniteMapExact Nat InferT) (hw : tWfs s)
     simp only [walk, false_or]
     exact encodedListOc s hw ts v
 
+/-- The canonical substitution survives the finite-map codec roundtrip. -/
+theorem holFmapAsFiniteSupportParamWitness_ocTvarDb_s
+    (s : HolFiniteMapExact Nat InferT) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s :=
+  holFmapAsFiniteSupportParamWitness_tVR_subst s key
+
+@[hol "cakeml/compiler/inference/unifyScript.sml" "oc_tvar_db"
+  (fmap_as_finite_support_parameters := [s])]
+theorem ocTvarDb (s : HolFiniteMapExact Nat InferT) (uv tvs : Nat) (hw : tWfs s) :
+    ¬ tOc s (.varDb tvs) uv := by
+  rw [tOcEqn s hw, tWalkEqn.2.2]
+  exact id
+
+/-- The canonical substitution survives the finite-map codec roundtrip. -/
+theorem holFmapAsFiniteSupportParamWitness_ocUnit_s
+    (s : HolFiniteMapExact Nat InferT) (key : Nat) :
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).lookup key = s.lookup key ∧
+    (FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s)).finiteSupport = s.finiteSupport ∧
+    FiniteMapBroad.ofBroad (FiniteMapBroad.toBroad s) = s :=
+  holFmapAsFiniteSupportParamWitness_tVR_subst s key
+
+@[hol "cakeml/compiler/inference/unifyScript.sml" "oc_unit"
+  (fmap_as_finite_support_parameters := [s])]
+theorem ocUnit (s : HolFiniteMapExact Nat InferT) (uv tc : Nat) (hw : tWfs s) :
+    ¬ tOc s (.app [] tc) uv := by
+  rw [tOcEqn s hw, tWalkEqn.2.1]
+  simp
+
 end Flapjack.Compiler.Inference.Unify

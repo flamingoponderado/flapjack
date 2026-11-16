@@ -138175,6 +138175,18 @@
   "reviewer": "Compared the typed replay of the local HOL theorem and source proof: under the original well-formedness premise, walking the encoded type equals encoding the inference walk for every type. The map has a canonical codec witness."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "oc_tvar_db",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Occurs/Encoding.lean", "lean_name": "ocTvarDb",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared the typed HOL source: the original substitution and both independent natural-number binders, well-formedness premise and negative occurrence conclusion are retained. The canonical finite-map parameter has its codec witness."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "oc_unit",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Occurs/Encoding.lean", "lean_name": "ocUnit",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared the typed HOL source: the original substitution and both independent natural-number binders, well-formedness premise and negative occurrence conclusion for the empty application are retained. The canonical finite-map parameter has its codec witness."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_oc_eqn",
   "lean_path": "Flapjack/Compiler/Inference/Unify/Occurs/Encoding.lean", "lean_name": "tOcEqn",
   "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],

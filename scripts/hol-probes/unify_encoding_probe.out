@@ -70,6 +70,8 @@ t_walk_def_typed=∀(s :num |-> infer_t) (t :infer_t). t_walk s t = decode_infer
 t_walk_eqn_typed=(∀(s :num |-> infer_t) (v :num). t_walk s (Infer_Tuvar v) = t_vwalk s v) ∧ (∀(s :num |-> infer_t) (ts :infer_t list) (tc :num). t_walk s (Infer_Tapp ts tc) = Infer_Tapp ts tc) ∧ ∀(s :num |-> infer_t) (n :num). t_walk s (Infer_Tvar_db n) = Infer_Tvar_db n
 t_oc_def_typed=∀(s :num |-> infer_t) (t :infer_t) (v :num). t_oc s t v ⇔ oc (encode_infer_t o_f s) (encode_infer_t t) v
 t_oc_eqn_typed=∀(s :num |-> infer_t). t_wfs s ⇒ ∀(t :infer_t) (v :num). t_oc s t v ⇔ case t_walk s t of Infer_Tvar_db n => F | Infer_Tapp ts tc => EXISTS (λ(t :infer_t). t_oc s t v) ts | Infer_Tuvar u => v = u
+oc_tvar_db_typed=∀(s :num |-> infer_t) (uv :num) (tvs :num). t_wfs s ⇒ ¬t_oc s (Infer_Tvar_db tvs) uv
+oc_unit_typed=∀(s :num |-> infer_t) (uv :num) (tc :num). t_wfs s ⇒ ¬t_oc s (Infer_Tapp ([] :infer_t list) tc) uv
 t_walkstar_eqn_typed=∀(s :num |-> infer_t). t_wfs s ⇒ ∀(t :infer_t). t_walkstar s t = case t_walk s t of Infer_Tvar_db n => Infer_Tvar_db n | Infer_Tapp ts tctor => Infer_Tapp (MAP (t_walkstar s) ts) tctor | Infer_Tuvar v => Infer_Tuvar v
 encode_walk_replay_typed=∀(s :num |-> infer_t). t_wfs s ⇒ ∀(t :infer_t). walk (encode_infer_t o_f s) (encode_infer_t t) = encode_infer_t (t_walk s t)
 ts_walkstar_replay_typed=∀(l :infer_t list) (s :num |-> infer_t). t_wfs s ⇒ decode_infer_ts (encode_infer_t o_f s ◁ encode_infer_ts l) = MAP (t_walkstar s) l
