@@ -521,6 +521,32 @@ theorem evaluate_add_clock {width : Nat} [NeZero width] {C : Type} {F : Type} (e
   rw [h] at this
   exact this
 
+/-- Exact HOL `wordProps$cont_loop_not_timeout` (`wordPropsScript.sml:1457-1460`):
+    a result that continues the loop is never `TimeOut`. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "cont_loop_not_timeout"
+  (words_as_type_indexed_bitvec)]
+theorem contLoopNotTimeout {width : Nat} [NeZero width]
+    (res : Option (WordSemResult width)) :
+    wordSemContLoop res = true → res ≠ some .timeOut := by
+  cases res with
+  | none => simp [wordSemContLoop]
+  | some r =>
+    cases r <;> simp [wordSemContLoop]
+
+/-- Exact HOL `wordProps$evaluate_add_clock_body` (`wordPropsScript.sml:1464-1471`):
+    a continuing evaluation keeps the same result under any larger clock. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_add_clock_body"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem evaluate_add_clock_body {width : Nat} [NeZero width] {C : Type} {F : Type} :
+    ∀ (c : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
+      (res : Option (WordSemResult width)) (s' : WordSemStateFiniteExact width C F),
+      evaluate c s = (res, s') ∧ wordSemContLoop res = true →
+      ∀ extra,
+        evaluate c { s with clock := s.clock + extra } =
+          (res, { s' with clock := s'.clock + extra }) := by
+  intro c s res s' ⟨h, hcont⟩ extra
+  exact evaluate_add_clock extra c s res s' ⟨h, contLoopNotTimeout res hcont⟩
+
 end AddClock
 
 end WordSemStateFiniteExact

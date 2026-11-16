@@ -3235,6 +3235,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackLists
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.DomainFromAList
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.ListUtilities
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PairUtilities
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Motive
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Leaves
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Alloc
