@@ -67,3 +67,6 @@ pop_env_with_const_typed=pop_env ((z :(α, β) dataSem$state) with clock := (k :
 jump_exc_with_const_typed=jump_exc ((s :(α, β) dataSem$state) with clock := (k :num)) = OPTION_MAP (λ(s :(α, β) dataSem$state). s with clock := k) (jump_exc s)
 cut_state_opt_const_typed=cut_state_opt (x :sptree$num_set option) (y :(α, β) dataSem$state) = SOME (z :(α, β) dataSem$state) ⇒ z.ffi = y.ffi ∧ z.global = y.global
 Boolv_11_typed=(Boolv (b1 :bool) :v) = (Boolv (b2 :bool) :v) ⇔ (b1 ⇔ b2)
+do_app_with_clock_typed=(do_app (op :closLang$op) (vs :v list) ((s :(α, β) dataSem$state) with clock := (z :num)) :(v # (α, β) dataSem$state, v) result) = map_result (λ((x :v),(y :(α, β) dataSem$state)). (x,y with clock := z)) (I :v -> v) (do_app op vs s :(v # (α, β) dataSem$state, v) result)
+do_app_change_clock_typed=(do_app (op :closLang$op) (args :v list) (s1 :(α, β) dataSem$state) :(v # (α, β) dataSem$state, v) result) = (Rval ((res :v),(s2 :(α, β) dataSem$state)) :(v # (α, β) dataSem$state, v) result) ⇒ (do_app op args (s1 with clock := (ck :num)) :(v # (α, β) dataSem$state, v) result) = (Rval (res,s2 with clock := ck) :(v # (α, β) dataSem$state, v) result)
+space_consumed_with_clock_typed=∀(s :(α, β) dataSem$state) (op :closLang$op) (vs :v list). space_consumed (s with clock := (z :num)) op vs = space_consumed s op vs

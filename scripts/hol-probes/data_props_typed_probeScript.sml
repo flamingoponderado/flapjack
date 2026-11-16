@@ -100,3 +100,6 @@ val _ = emit "pop_env_with_const_typed" "pop_env_with_const";
 val _ = emit "jump_exc_with_const_typed" "jump_exc_with_const";
 val _ = emit "cut_state_opt_const_typed" "cut_state_opt_const";
 val _ = emit "Boolv_11_typed" "Boolv_11";
+val _ = emit "do_app_with_clock_typed" "do_app_with_clock";
+val _ = emit "do_app_change_clock_typed" "do_app_change_clock";
+val _ = emit "space_consumed_with_clock_typed" "space_consumed_with_clock";
