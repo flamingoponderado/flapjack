@@ -17,7 +17,7 @@ theorem findCode_size_upto {α β γ : Type} (dest : Option Nat) (args : List Va
     (success : findCode dest args code sizes = found) :
     ∃ otherSize : Option γ,
       findCode dest args code otherSizes =
-        found.map (fun entry => (entry.1, entry.2.1, otherSize)) := by
+        found.map (fun (args, exp, _size) => (args, exp, otherSize)) := by
   subst success
   cases dest with
   | some label =>
