@@ -34,3 +34,7 @@ walkstar_FEMPTY_typed=∀(t :α term). (FEMPTY :α subst) ◁ t = t
 t_walkstar_FEMPTY_typed=∀(t :infer_t). t_walkstar (FEMPTY :num |-> infer_t) t = t
 t_vars_eqn_typed=(∀(x :num). t_vars (Infer_Tvar_db x) = (∅ :num -> bool)) ∧ (∀(ts :infer_t list) (tc :num). t_vars (Infer_Tapp ts tc) = BIGUNION (set (MAP t_vars ts))) ∧ ∀(u :num). t_vars (Infer_Tuvar u) = {u}
 t_vwalk_to_var_typed=t_wfs (s :num |-> infer_t) ⇒ ∀(v :num) (u :num). t_vwalk s v = Infer_Tuvar u ⇒ u ∉ FDOM s
+t_walkstar_ind_typed=∀(s :num |-> infer_t). t_wfs s ⇒ ∀(P :infer_t -> bool). (∀(t :infer_t). (∀(ts :infer_t list) (tt :num) (a :infer_t). t_walk s t = Infer_Tapp ts tt ∧ MEM a ts ⇒ P a) ⇒ P t) ⇒ ∀(t :infer_t). P t
+t_walkstar_vars_notin_typed=∀(s :num |-> infer_t). t_wfs s ⇒ ∀(t :infer_t) (x :num). x ∈ t_vars (t_walkstar s t) ⇒ x ∉ FDOM s
+t_walkstar_tuvar_props_typed=t_wfs (s :num |-> infer_t) ⇒ ((uv :num) ∉ FDOM s ⇔ t_walkstar s (Infer_Tuvar uv) = Infer_Tuvar uv)
+t_walkstar_idempotent_typed=∀(s :num |-> infer_t). t_wfs s ⇒ ∀(t :infer_t). t_walkstar s (t_walkstar s t) = t_walkstar s t

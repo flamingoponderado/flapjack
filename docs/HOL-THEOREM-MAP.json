@@ -138254,5 +138254,29 @@
   "lean_path": "Flapjack/Compiler/Inference/InferProps/CheckVars.lean", "lean_name": "checkTTVars",
   "statement_status": "reviewed_exact",
   "reviewer": "Compared typed HOL and source: checking any inference type with any variable set implies that its variable set is a subset, with the original quantifiers and premise."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_walkstar_ind",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/Induction.lean", "lean_name": "tWalkstarInd",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared the typed HOL source: the full induction principle retains the well-formedness premise, arbitrary predicate, original step over all walked application children, and conclusion for every type. The canonical map has a codec witness."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_walkstar_vars_notin",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/NoVars.lean", "lean_name": "tWalkstarVarsNotin",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared the typed HOL source: under well-formedness every variable of every normalized type lies outside the substitution domain. The canonical map has a codec witness."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_walkstar_tuvar_props",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/Variable.lean", "lean_name": "tWalkstarTuvarProps",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared the typed HOL source: for a well-formed substitution the original two-way equivalence between domain absence and normalization to the same variable is preserved. The canonical map has a codec witness."
+},
+{
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "t_walkstar_idempotent",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Walkstar/Idempotent.lean", "lean_name": "tWalkstarIdempotent",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters", "fmap_as_finite_support_parameters": ["s"],
+  "reviewer": "Compared the typed HOL source: for any well-formed substitution, normalizing every inference type twice equals normalizing once, with no additional premise. The canonical map has a codec witness."
 }
 ]

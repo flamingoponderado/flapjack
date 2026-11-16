@@ -75,3 +75,7 @@ val _ = show "walkstar_FEMPTY_typed" walkstarTheory.walkstar_FEMPTY;
 val _ = show "t_walkstar_FEMPTY_typed" unifyTheory.t_walkstar_FEMPTY;
 val _ = show "t_vars_eqn_typed" unifyTheory.t_vars_eqn;
 val _ = show "t_vwalk_to_var_typed" unifyTheory.t_vwalk_to_var;
+val _ = show "t_walkstar_ind_typed" unifyTheory.t_walkstar_ind;
+val _ = show "t_walkstar_vars_notin_typed" unifyTheory.t_walkstar_vars_notin;
+val _ = show "t_walkstar_tuvar_props_typed" unifyTheory.t_walkstar_tuvar_props;
+val _ = show "t_walkstar_idempotent_typed" unifyTheory.t_walkstar_idempotent;

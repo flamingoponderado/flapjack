@@ -10482,7 +10482,7 @@ inverse and injectivity theorems, and the substitution dependency and
 well-formedness declarations, the conditional variable-walk equation, its
 domain properties, its dependency-closure theorem, and the conditional
 normalization equation, inference substitution dependencies, and typed
-inference walker, variable-set and normalization equations, including replays of their
+inference walker, variable-set and normalization equations and invariants, including replays of their
 local encoding and list lemmas, and the empty-substitution theorems.
 Regenerate with
 `HOL_PROBE_ONLY=unify_encoding_probeScript.sml`. The capture is source-review
