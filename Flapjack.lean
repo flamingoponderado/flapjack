@@ -3830,6 +3830,7 @@ import Flapjack.Compiler.Inference.Unify.Walkstar.WorklistTotal
 import Flapjack.Compiler.Inference.Unify.Extension
 import Flapjack.Compiler.Inference.Unify.Unification
 import Flapjack.Compiler.Inference.Unify.Unification.Choice
+import Flapjack.Compiler.Inference.Unify.Source
 import Flapjack.Compiler.Inference.Unify.EncodingInvariant
 import Flapjack.Compiler.Inference.Unify.ListUnification
 import Flapjack.HOL.Transfer.Fmsp.Lookup

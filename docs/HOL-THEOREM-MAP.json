@@ -139012,6 +139012,12 @@
   "reviewer": "Compared typed HOL source: the sole cwfs premise implies the complete cwalkstar and singleton-worklist normalization equality. The source-shaped model agrees under cwfs; the result is proved a singleton, making headD's fallback unreachable and agreeing with HOL HD. The visible sp2fm result uses the reviewed canonical map."
 },
 {
+  "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "cunify_preserves_cwfs",
+  "lean_path": "Flapjack/Compiler/Inference/Unify/Source.lean", "lean_name": "cunifyPreservesCwfsModel",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared cunify_preserves_cwfs_typed, cunify_def_typed and sunify_def_typed: the original cwfs input and successful source-shaped unifier are the only premises, and the result is cwfs. The sparse model follows the original encoding, specified unifier, fm2sp and decoding composition. The chosen specification agrees with the restricted recursion under the original guard; the internal canonical map conversion preserves lookups and well-formed trees."
+},
+{
   "hol_path": "cakeml/compiler/inference/unifyScript.sml", "hol_name": "kcunifywl_ensures_decrease",
   "lean_path": "Flapjack/Compiler/Inference/Unify/WorklistDecrease.lean", "lean_name": "kcunifywlEnsuresDecreaseModel",
   "statement_status": "reviewed_fmap_as_finite_support_result_observations", "fmap_as_finite_support_result_observations": ["Flapjack.HOL.Transfer.Fmsp.sp2fm"],
