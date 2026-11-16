@@ -199,3 +199,4 @@ val _ = show "cut_cc_co_typed"
     \\ fs[cc_co_only_diff_def, SUBSET_DEF] \\ metis_tac[]));
 val _ = emit "do_app_cc_co_only_diff_rval_typed" "do_app_cc_co_only_diff_rval";
 val _ = emit "do_app_cc_co_only_diff_rerr_typed" "do_app_cc_co_only_diff_rerr";
+val _ = emit "v_to_list_SOME_NIL_IFF_typed" "v_to_list_SOME_NIL_IFF";

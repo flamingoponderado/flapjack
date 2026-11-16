@@ -29,12 +29,11 @@ def notCreatedLabelTest {width : Nat} [NeZero width] (x : Nat) :
   | .locValue 0 label => decide (label ≠ x)
   | _ => true
 
-/-- Exact HOL `get_code_labels_not_created` (`wordPropsScript.sml:4760-4768`):
-    `x` is a code label of `p` exactly when `not_created_subprogs` fails at the
-    predicate excluding `Call NONE (SOME x) [] NONE` and `LocValue 0 x`. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "get_code_labels_not_created"
-  (words_as_type_indexed_bitvec)]
-theorem getCodeLabels_notCreated {width : Nat} [NeZero width] :
+/-- Flapjack infrastructure: the same statement as `get_code_labels_not_created`
+    with HOL's predicate factored into `notCreatedLabelTest`, proved by the
+    constructor case analysis. Untagged because HOL states the predicate
+    inline; the tagged theorem below restates it that way. -/
+theorem notCreatedLabelTest_spec {width : Nat} [NeZero width] :
     ∀ (p : WordLangProgHOL (BitVec width)) (x : Nat),
       x ∈ getCodeLabelsHOL p ↔
         notCreatedSubprogsHOL (notCreatedLabelTest x) p = false
@@ -48,18 +47,18 @@ theorem getCodeLabels_notCreated {width : Nat} [NeZero width] :
   | .mustTerminate body, x => by
     simp only [getCodeLabelsHOL, notCreatedSubprogsHOL, notCreatedLabelTest,
       Bool.true_and]
-    rw [← getCodeLabels_notCreated body x]
+    rw [← notCreatedLabelTest_spec body x]
   | .seq first second, x => by
     simp only [getCodeLabelsHOL, notCreatedSubprogsHOL, Set.mem_union]
-    rw [Bool.and_eq_false_iff, ← getCodeLabels_notCreated first x,
-      ← getCodeLabels_notCreated second x]
+    rw [Bool.and_eq_false_iff, ← notCreatedLabelTest_spec first x,
+      ← notCreatedLabelTest_spec second x]
   | .ite _ _ _ first second, x => by
     simp only [getCodeLabelsHOL, notCreatedSubprogsHOL, Set.mem_union]
-    rw [Bool.and_eq_false_iff, ← getCodeLabels_notCreated first x,
-      ← getCodeLabels_notCreated second x]
+    rw [Bool.and_eq_false_iff, ← notCreatedLabelTest_spec first x,
+      ← notCreatedLabelTest_spec second x]
   | .loop _ body _, x => by
     simp only [getCodeLabelsHOL, notCreatedSubprogsHOL]
-    rw [← getCodeLabels_notCreated body x]
+    rw [← notCreatedLabelTest_spec body x]
   | .call returns target args handler, x => by
     cases target with
     | none =>
@@ -74,7 +73,7 @@ theorem getCodeLabels_notCreated {width : Nat} [NeZero width] :
           obtain ⟨_, body, _, _⟩ := h
           simp only [getCodeLabelsHOL, notCreatedSubprogsHOL, notCreatedLabelTest,
             Bool.true_and, Bool.and_true, Set.mem_union, Set.mem_empty_iff_false]
-          rw [← getCodeLabels_notCreated body x]
+          rw [← notCreatedLabelTest_spec body x]
           simp
       | some r =>
         obtain ⟨_, _, body, _, _⟩ := r
@@ -82,14 +81,14 @@ theorem getCodeLabels_notCreated {width : Nat} [NeZero width] :
         | none =>
           simp only [getCodeLabelsHOL, notCreatedSubprogsHOL, notCreatedLabelTest,
             Bool.true_and, Bool.and_true, Set.mem_union, Set.mem_empty_iff_false]
-          rw [← getCodeLabels_notCreated body x]
+          rw [← notCreatedLabelTest_spec body x]
           simp
         | some h =>
           obtain ⟨_, hbody, _, _⟩ := h
           simp only [getCodeLabelsHOL, notCreatedSubprogsHOL, notCreatedLabelTest,
             Bool.true_and, Set.mem_union, Set.mem_empty_iff_false]
-          rw [Bool.and_eq_false_iff, ← getCodeLabels_notCreated body x,
-            ← getCodeLabels_notCreated hbody x]
+          rw [Bool.and_eq_false_iff, ← notCreatedLabelTest_spec body x,
+            ← notCreatedLabelTest_spec hbody x]
           simp
     | some label =>
       cases returns with
@@ -107,7 +106,7 @@ theorem getCodeLabels_notCreated {width : Nat} [NeZero width] :
             Bool.true_and, Bool.and_true, Set.mem_union, Set.mem_singleton_iff,
             Set.mem_empty_iff_false]
           rw [Bool.and_eq_false_iff, decide_eq_false_iff_not,
-            ← getCodeLabels_notCreated body x]
+            ← notCreatedLabelTest_spec body x]
           simp [ne_eq, eq_comm]
       | some r =>
         obtain ⟨_, _, body, _, _⟩ := r
@@ -117,14 +116,14 @@ theorem getCodeLabels_notCreated {width : Nat} [NeZero width] :
             Bool.and_true, Set.mem_union, Set.mem_singleton_iff,
             Set.mem_empty_iff_false]
           rw [Bool.and_eq_false_iff, decide_eq_false_iff_not,
-            ← getCodeLabels_notCreated body x]
+            ← notCreatedLabelTest_spec body x]
           simp [ne_eq, eq_comm]
         | some h =>
           obtain ⟨_, hbody, _, _⟩ := h
           simp only [getCodeLabelsHOL, notCreatedSubprogsHOL, notCreatedLabelTest,
             Bool.true_and, Set.mem_union, Set.mem_singleton_iff]
           rw [Bool.and_eq_false_iff, Bool.and_eq_false_iff, decide_eq_false_iff_not,
-            ← getCodeLabels_notCreated body x, ← getCodeLabels_notCreated hbody x]
+            ← notCreatedLabelTest_spec body x, ← notCreatedLabelTest_spec hbody x]
           simp [ne_eq, eq_comm]
   | .alloc _ _, _ => by simp [getCodeLabelsHOL, notCreatedSubprogsHOL, notCreatedLabelTest]
   | .storeConsts _ _ _ _ _, _ => by simp [getCodeLabelsHOL, notCreatedSubprogsHOL]
@@ -144,5 +143,36 @@ theorem getCodeLabels_notCreated {width : Nat} [NeZero width] :
   | .dataBufferWrite _ _, _ => by simp [getCodeLabelsHOL, notCreatedSubprogsHOL]
   | .ffi _ _ _ _ _ _, _ => by simp [getCodeLabelsHOL, notCreatedSubprogsHOL]
   | .shareInst _ _ _, _ => by simp [getCodeLabelsHOL, notCreatedSubprogsHOL, notCreatedLabelTest]
+
+/-- The helper is HOL's predicate written structurally: it returns `false`
+    exactly on `Call NONE (SOME x) [] NONE` and `LocValue 0 x`. -/
+theorem notCreatedLabelTest_eq {width : Nat} [NeZero width] (x : Nat) :
+    notCreatedLabelTest (width := width) x =
+      fun sp : WordLangProgHOL (BitVec width) =>
+        match sp with
+        | .call none (some label) [] none => decide (label ≠ x)
+        | .locValue 0 label => decide (label ≠ x)
+        | _ => true := rfl
+
+/-- Exact HOL `get_code_labels_not_created` (`wordPropsScript.sml:4760-4768`):
+    `x` is a code label of `p` exactly when `not_created_subprogs` fails at the
+    inline predicate excluding `Call NONE (SOME x) [] NONE` and `LocValue 0 x`.
+    HOL writes that predicate as `sp ≠ Call NONE (SOME x) [] NONE ∧
+    sp ≠ LocValue 0 x`; `WordLangProgHOL` has no decidable equality instance
+    (Lean cannot derive one for an inductive with nested recursive occurrences
+    such as `List (WordLangProgHOL α)`), so the same predicate is stated as the
+    structural match that returns `false` exactly on those two programs. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "get_code_labels_not_created"
+  (words_as_type_indexed_bitvec)]
+theorem getCodeLabels_notCreated {width : Nat} [NeZero width] :
+    ∀ (p : WordLangProgHOL (BitVec width)) (x : Nat),
+      x ∈ getCodeLabelsHOL p ↔
+        notCreatedSubprogsHOL (fun sp =>
+          match sp with
+          | .call none (some label) [] none => decide (label ≠ x)
+          | .locValue 0 label => decide (label ≠ x)
+          | _ => true) p = false := by
+  intro p x
+  exact notCreatedLabelTest_spec p x
 
 end Flapjack
