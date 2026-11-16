@@ -1,5 +1,19 @@
 [
 {
+  "hol_path": "cakeml/semantics/proofs/typeSoundInvariantsScript.sml", "hol_name": "type_ctor_def",
+  "lean_path": "Flapjack/TypeSoundInvariants/CtorMap.lean", "lean_name": "typeCtor",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["ctMap"],
+  "reviewer": "Independent comparison with HOL source and type_ctor_replay_typed confirms all five independent type variables, the ignored name, lookup and arity conditions. The canonical map parameter has a same-module lookup and finite-support codec roundtrip."
+ },
+{
+  "hol_path": "cakeml/semantics/proofs/typeSoundInvariantsScript.sml", "hol_name": "ctMap_ok_def",
+  "lean_path": "Flapjack/TypeSoundInvariants/CtorMap.lean", "lean_name": "ctMapOk",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters",
+  "fmap_as_finite_support_parameters": ["ctMap"],
+  "reviewer": "Independent comparison with HOL source and ctMap_ok_replay_typed confirms the constructor-map carrier, lookup rendering of FEVERY, exception and primitive-type exclusions, and same-type condition. The canonical map parameter has a same-module lookup and finite-support codec roundtrip."
+ },
+{
   "hol_path": "cakeml/semantics/proofs/typeSoundInvariantsScript.sml", "hol_name": "tenv_val_exp_ok_def",
   "lean_path": "Flapjack/TypeSoundInvariants.lean", "lean_name": "tenvValExpOk",
   "statement_status": "reviewed_exact",

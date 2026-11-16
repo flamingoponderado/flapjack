@@ -4,9 +4,10 @@ load "inferPropsTheory";
 load "namespacePropsTheory";
 load "primTypesTheory";
 load "typeSysPropsTheory";
+load "semanticPrimitivesTheory";
 load "preamble";
 open HolKernel Parse boolLib bossLib;
-open preamble inferPropsTheory inferTheory typeSystemTheory primTypesTheory;
+open preamble inferPropsTheory inferTheory typeSystemTheory primTypesTheory semanticPrimitivesTheory;
 val _ = new_theory "flapjack_env_rel_init_replay";
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
@@ -376,3 +377,20 @@ val probe_add_tenvE_def = Define `
   (probe_add_tenvE (Bind_name x tvs t tenvE) tenvV =
     nsBind x (tvs,t) (probe_add_tenvE tenvE tenvV))`;
 val _ = show "add_tenvE_replay_typed" probe_add_tenvE_def;
+
+val probe_type_ctor_def = Define `
+  probe_type_ctor ctMap name (n, stamp) (tvs, ts, ti) <=>
+    FLOOKUP ctMap stamp = SOME (tvs, ts, ti) /\ LENGTH ts = n`;
+val _ = show "type_ctor_replay_typed" probe_type_ctor_def;
+
+val probe_ctMap_ok_def = Define `
+  probe_ctMap_ok ctMap <=>
+    FEVERY (\(stamp,(tvs,ts,ti)). EVERY (check_freevars 0 tvs) ts) ctMap /\
+    (!ex tvs ts ti. FLOOKUP ctMap (ExnStamp ex) = SOME (tvs,ts,ti) ==>
+      tvs = [] /\ ti = Texn_num) /\
+    (!cn x tvs ts ti. FLOOKUP ctMap (TypeStamp cn x) = SOME (tvs,ts,ti) ==>
+      ~MEM ti prim_type_nums) /\
+    (!stamp1 tvs1 ts1 ti stamp2 tvs2 ts2.
+      FLOOKUP ctMap stamp1 = SOME (tvs1,ts1,ti) /\
+      FLOOKUP ctMap stamp2 = SOME (tvs2,ts2,ti) ==> same_type stamp1 stamp2)`;
+val _ = show "ctMap_ok_replay_typed" probe_ctMap_ok_def;

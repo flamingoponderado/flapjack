@@ -3876,6 +3876,7 @@ import Flapjack.HOL.Unification.Walk.Dependency
 import Flapjack.HOL.Unification.Walkstar
 import Flapjack.Test.CakeUnifyEncodingParity
 import Flapjack.TypeSoundInvariants
+import Flapjack.TypeSoundInvariants.CtorMap
 import Flapjack.Compiler.Repl.ReplTypes
 import Flapjack.Compiler.Proofs.CompilerProof
 import Flapjack.Test.CakeTypeInvariantParity
