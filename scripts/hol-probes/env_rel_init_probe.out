@@ -3,5 +3,6 @@ lift_ienv_typed=∀(mn :mlstring) (ienv :inf_env). lift_ienv mn ienv = <|inf_v :
 extend_dec_ienv_typed=∀(ienv' :inf_env) (ienv :inf_env). extend_dec_ienv ienv' ienv = <|inf_v := nsAppend ienv'.inf_v ienv.inf_v; inf_c := nsAppend ienv'.inf_c ienv.inf_c; inf_t := nsAppend ienv'.inf_t ienv.inf_t|>
 tenv_to_ienv_lift_replay_typed=∀(mn :mlstring) (tenv :type_env). probe_tenv_to_ienv (tenvLift mn tenv) = lift_ienv mn (probe_tenv_to_ienv tenv)
 tenv_to_ienv_extend_replay_typed=∀(tenv1 :type_env) (tenv2 :type_env). probe_tenv_to_ienv (extend_dec_tenv tenv2 tenv1) = extend_dec_ienv (probe_tenv_to_ienv tenv2) (probe_tenv_to_ienv tenv1)
+check_freevars_to_check_t_replay_typed=∀(t :t) (z :α). check_freevars (n :num) ([] :mlstring list) t ⇒ check_t n (∅ :num -> bool) (unconvert_t t)
 lookup_varE_empty_replay_typed=∀(x :(mlstring, mlstring) id). lookup_varE x Empty = (NONE :(num # t) option)
 init_config_tenv_to_ienv_replay_typed=init_config = probe_tenv_to_ienv prim_tenv

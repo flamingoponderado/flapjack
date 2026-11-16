@@ -137973,6 +137973,14 @@
   "reviewer": "Compared HOL source and tenv_to_ienv_extend_replay_typed: the original order of both environment inputs and namespace extension is preserved by conversion. The replay reconstructs the source conversion definition."
 },
 {
+  "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
+  "hol_name": "check_freevars_to_check_t",
+  "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",
+  "lean_name": "checkFreevarsToCheckT",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Compared HOL source and check_freevars_to_check_t_replay_typed: the full closed-free-variable premise implies the empty-uvar inference check at the same bound. The source polymorphic z binder is vacuous in both premise and conclusion and is omitted."
+},
+{
     "hol_path": "cakeml/compiler/inference/proofs/envRelScript.sml",
     "hol_name": "tenv_to_ienv_def",
     "lean_path": "Flapjack/Compiler/Inference/EnvRel.lean",

@@ -38,6 +38,13 @@ val tenv_to_ienv_extend_replay = Q.prove(
       namespacePropsTheory.nsMap_nsAppend]);
 val _ = show "tenv_to_ienv_extend_replay_typed" tenv_to_ienv_extend_replay;
 
+val check_freevars_to_check_t_replay = Q.prove(
+  `!t z. check_freevars n [] t ==> check_t n {} (unconvert_t t)`,
+  ho_match_mp_tac unconvert_t_ind >> rw [] >>
+  fs [unconvert_t_def, check_freevars_def, check_t_def] >>
+  fs [EVERY_MAP, EVERY_MEM]);
+val _ = show "check_freevars_to_check_t_replay_typed" check_freevars_to_check_t_replay;
+
 val lookup_varE_empty_replay = Q.prove(
   `!x. lookup_varE x Empty = NONE`,
   rw [lookup_varE_def, tveLookup_def] \\ every_case_tac);

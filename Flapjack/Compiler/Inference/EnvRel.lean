@@ -33,6 +33,35 @@ theorem tenvToIenvExtend (tenv1 tenv2 : TypeEnv) :
         | bind values2 modules2 =>
           simp [tenvToIenv, extendDecTenv, Infer.extendDecIenv, nsAppend, nsMap, List.map_append]
 
+mutual
+/-- Closed declarative types convert to inference types with no unification variables.
+    The source also quantifies an unused polymorphic `z`; it is vacuous in
+    both premise and conclusion. -/
+@[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "check_freevars_to_check_t"]
+theorem checkFreevarsToCheckT (t : SemanticT) (n : Nat)
+    (h : checkFreevars n [] t = true) :
+    Infer.checkT n (fun _ => False) (unconvertT t) := by
+  cases t with
+  | var name => simp [checkFreevars] at h
+  | varDb k => simpa [checkFreevars, unconvertT] using h
+  | app ts name =>
+    have hl : checkFreevarsList n [] ts = true := by simpa [checkFreevars] using h
+    simpa [unconvertT] using checkFreevarsListToCheckT ts n hl
+termination_by sizeOf t
+
+/-- Structural list induction for the source type conversion theorem. -/
+private theorem checkFreevarsListToCheckT (ts : List SemanticT) (n : Nat)
+    (h : checkFreevarsList n [] ts = true) :
+    Infer.checkTList n (fun _ => False) (unconvertTList ts) := by
+  cases ts with
+  | nil => simp [unconvertTList]
+  | cons t ts =>
+    simp only [checkFreevarsList, Bool.and_eq_true] at h
+    simp only [unconvertTList, Infer.checkTList_cons]
+    exact ⟨checkFreevarsToCheckT t n h.1, checkFreevarsListToCheckT ts n h.2⟩
+termination_by sizeOf ts
+end
+
 /-- Lookup in the empty local type environment always fails. -/
 @[hol "cakeml/compiler/inference/proofs/envRelScript.sml" "lookup_varE_empty"]
 theorem lookupVarEEmpty (id : Ident Flapjack.Basis.Pure.MlString.MlString
